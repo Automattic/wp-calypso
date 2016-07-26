@@ -232,7 +232,7 @@ const JetpackSSOForm = React.createClass( {
 
 	getReturnToSiteText() {
 		const text = (
-			<span className="jetpack-connect__sso__return-to-site">
+			<span className="jetpack-connect__sso-return-to-site">
 				<Gridicon icon="arrow-left" size={ 18 } />
 				{
 					this.translate( 'Return to %(siteName)s', {
@@ -256,7 +256,7 @@ const JetpackSSOForm = React.createClass( {
 						<a
 							href="#"
 							onClick={ this.onClickSharedDetailsModal }
-							className="jetpack-connect__sso__actions__modal-link"
+							className="jetpack-connect__sso-actions-modal-link"
 						/>
 					)
 				},
@@ -287,7 +287,7 @@ const JetpackSSOForm = React.createClass( {
 		}
 
 		return (
-			<span className="jetpack-connect__sso__placeholder">
+			<span className="jetpack-connect__sso-placeholder">
 				{ input }
 			</span>
 		);
@@ -309,15 +309,15 @@ const JetpackSSOForm = React.createClass( {
 		const sharedDetails = this.props.sharedDetails || expectedSharedDetails;
 
 		return (
-			<table className="jetpack-connect__sso__shared-details-table">
+			<table className="jetpack-connect__sso-shared-details-table">
 				<tbody>
 					{ map( sharedDetails, ( value, key ) => {
 						return (
-							<tr key={ key } className="jetpack-connect__sso__shared-detail-row">
-								<td className="jetpack-connect__sso__shared-detail-label">
+							<tr key={ key } className="jetpack-connect__sso-shared-detail-row">
+								<td className="jetpack-connect__sso-shared-detail-label">
 									{ this.getSharedDetailLabel( key ) }
 								</td>
-								<td className="jetpack-connect__sso__shared-detail-value">
+								<td className="jetpack-connect__sso-shared-detail-value">
 									{ this.getSharedDetailValue( key, value ) }
 								</td>
 							</tr>
@@ -341,9 +341,9 @@ const JetpackSSOForm = React.createClass( {
 				buttons={ buttons }
 				onClose={ this.closeTermsDialog }
 				isVisible={ this.state.showTermsDialog }
-				className="jetpack-connect__sso_terms-dialog">
-				<div className="jetpack-connect__sso_terms-dialog-content">
-					<p className="jetpack-connect__sso_shared-details-intro">
+				className="jetpack-connect__sso-terms-dialog">
+				<div className="jetpack-connect__sso-terms-dialog-content">
+					<p className="jetpack-connect__sso-shared-details-intro">
 						{
 							this.translate(
 								'When you approve logging in with WordPress.com, we will send the following details to your site.'
@@ -401,25 +401,25 @@ const JetpackSSOForm = React.createClass( {
 
 					<Card>
 						{ this.maybeRenderErrorNotice() }
-						<div className="jetpack-connect__sso__user-profile">
+						<div className="jetpack-connect__sso-user-profile">
 							<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
-							<h3 className="jetpack-connect__sso__log-in-as">
+							<h3 className="jetpack-connect__sso-log-in-as">
 								{ this.translate(
 									'Log in as {{strong}}%s{{/strong}}',
 									{
 										args: user.display_name,
 										components: {
-											strong: <strong className="jetpack-connect__sso__display-name"/>
+											strong: <strong className="jetpack-connect__sso-display-name"/>
 										}
 									}
 								) }
 							</h3>
-							<div className="jetpack-connect__sso__user-email">
+							<div className="jetpack-connect__sso-user-email">
 								{ user.email }
 							</div>
 						</div>
 
-						<LoggedOutFormFooter className="jetpack-connect__sso__actions">
+						<LoggedOutFormFooter className="jetpack-connect__sso-actions">
 							<p className="jetpack-connect__tos-link">
 								{ this.getTOSText() }
 							</p>
