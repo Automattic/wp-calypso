@@ -17,7 +17,7 @@ var Sites = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/sites">Site and All Sites</a>
+					<a href="/devdocs/blocks/sites">Site and All Sites</a>
 				</h2>
 				<Card style={ { padding: 0 } }>
 					<Site site={ sites.getPrimary() } />

@@ -42,7 +42,7 @@ export default React.createClass( {
 	},
 
 	backToComponents() {
-		page( '/devdocs/app-components/' );
+		page( '/devdocs/blocks/' );
 	},
 
 	render() {

@@ -16,7 +16,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/upgrade-nudge">Upgrade Nudges</a>
+					<a href="/devdocs/blocks/upgrade-nudge">Upgrade Nudges</a>
 				</h2>
 				<div>
 					<UpgradeNudge
