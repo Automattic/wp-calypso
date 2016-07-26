@@ -10,6 +10,7 @@ import {
 	getSite,
 	getSiteCollisions,
 	isSiteConflicting,
+	isSingleUserSite,
 	isJetpackSite,
 	isJetpackModuleActive,
 	isJetpackMinimumVersion,
@@ -120,6 +121,42 @@ describe( 'selectors', () => {
 			}, 77203199 );
 
 			expect( isConflicting ).to.be.true;
+		} );
+	} );
+
+	describe( '#isSingleUserSite()', () => {
+		it( 'should return null if the site is not known', () => {
+			const singleUserSite = isSingleUserSite( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( singleUserSite ).to.be.null;
+		} );
+
+		it( 'it should return true if the site is a single user site', () => {
+			const singleUserSite = isSingleUserSite( {
+				sites: {
+					items: {
+						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', single_user_site: true }
+					}
+				}
+			}, 77203074 );
+
+			expect( singleUserSite ).to.be.true;
+		} );
+
+		it( 'it should return false if the site is not a single user site', () => {
+			const singleUserSite = isSingleUserSite( {
+				sites: {
+					items: {
+						77203074: { ID: 77203074, URL: 'https://example.wordpress.com', single_user_site: false }
+					}
+				}
+			}, 77203074 );
+
+			expect( singleUserSite ).to.be.false;
 		} );
 	} );
 
