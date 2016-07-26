@@ -23,7 +23,8 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 				icon="speaker"
 				title={ translate( 'Advertising Removed' ) }
 				description={ translate(
-					'With your plan, all WordPress.com advertising has been removed from your site.'
+					'With your plan, all WordPress.com advertising has been removed from your site. ' +
+					'You can upgrade to a Business plan to also remove the WordPress.com footer credit.'
 				) }
 			/>
 		</div>
