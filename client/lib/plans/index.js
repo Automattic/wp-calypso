@@ -183,7 +183,7 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 }
 
 export const isPlanFeaturesEnabled = () => {
-	return true;
+	return isEnabled( 'manage/plan-features' );
 };
 
 export function plansLink( url, site, intervalType ) {
