@@ -50,13 +50,13 @@ export default React.createClass( {
 			<div className="design-assets" role="main">
 				{
 					this.props.component
-					? <HeaderCake onClick={ this.backToComponents } backText="All App Components">
+					? <HeaderCake onClick={ this.backToComponents } backText="All Blocks">
 						{ toTitleCase( this.props.component ) }
 					</HeaderCake>
 					: <SearchCard
 						onSearch={ this.onSearch }
 						initialValue={ this.state.filter }
-						placeholder="Search app components…"
+						placeholder="Search blocks…"
 						analyticsGroup="Docs">
 					</SearchCard>
 				}
