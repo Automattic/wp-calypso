@@ -31,14 +31,6 @@ import {
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/upgrades/navigation';
 import { isPlanFeaturesEnabled } from 'lib/plans';
-import {
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_JETPACK_FREE,
-	PLAN_JETPACK_BUSINESS,
-	PLAN_JETPACK_PREMIUM,
-	PLAN_PERSONAL
-} from 'lib/plans/constants';
 import PlanIcon from 'components/plans/plan-icon';
 
 const PlanDetailsComponent = React.createClass( {
@@ -56,7 +48,8 @@ const PlanDetailsComponent = React.createClass( {
 	render: function() {
 		const { selectedSite } = this.props;
 		const { hasLoadedFromServer } = this.props.sitePlans;
-		let currentPlan, title, tagLine, featuresList;
+		const currentPlan = this.props.selectedSite.plan.product_slug;
+		let title, tagLine, featuresList;
 
 		if ( ! selectedSite || ! hasLoadedFromServer ) {
 			featuresList = (
@@ -68,15 +61,12 @@ const PlanDetailsComponent = React.createClass( {
 		} else if ( isFreePlan( this.props.selectedSite.plan ) ) {
 			page.redirect( '/plans/' + this.props.selectedSite.slug );
 		} else if ( this.props.selectedSite.jetpack ) {
-			currentPlan = PLAN_JETPACK_FREE;
 			title = this.translate( 'Your site is on a Free plan' );
 			tagLine = this.translate( 'Unlock the full potential of your site with all the features included in your plan.' );
 
 			if ( isJetpackPremium( this.props.selectedSite.plan ) ) {
-				currentPlan = PLAN_JETPACK_PREMIUM;
 				title = this.translate( 'Your site is on a Premium plan' );
 			} else if ( isJetpackBusiness( this.props.selectedSite.plan ) ) {
-				currentPlan = PLAN_JETPACK_BUSINESS;
 				title = this.translate( 'Your site is on a Professional plan' );
 			}
 
@@ -87,7 +77,6 @@ const PlanDetailsComponent = React.createClass( {
 				/>
 			);
 		} else if ( isPersonal( this.props.selectedSite.plan ) ) {
-			currentPlan = PLAN_PERSONAL;
 			title = this.translate( 'Your site is on a Personal plan' );
 			tagLine = this.translate( 'Unlock the full potential of your site with all the features included in your plan.' );
 
@@ -98,7 +87,6 @@ const PlanDetailsComponent = React.createClass( {
 				/>
 			);
 		} else if ( isPremium( this.props.selectedSite.plan ) ) {
-			currentPlan = PLAN_PREMIUM;
 			title = this.translate( 'Your site is on a Premium plan' );
 			tagLine = this.translate( 'Unlock the full potential of your site with the premium features included in your plan.' );
 
@@ -109,7 +97,6 @@ const PlanDetailsComponent = React.createClass( {
 				/>
 			);
 		} else if ( isBusiness( selectedSite.plan ) ) {
-			currentPlan = PLAN_BUSINESS;
 			title = this.translate( 'Your site is on a Business plan' );
 			tagLine = this.translate( 'Learn more about everything included with Business and take advantage of' +
 				' its professional features.' );
