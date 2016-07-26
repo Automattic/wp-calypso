@@ -20,6 +20,7 @@ var config = require( 'config' ),
 	_user;
 
 import { retarget } from 'lib/analytics/ad-tracking';
+import emitter from 'lib/mixins/emitter';
 
 // Load tracking scripts
 window._tkq = window._tkq || [];
@@ -112,6 +113,7 @@ var analytics = {
 			mostRecentUrlPath = urlPath;
 			analytics.tracks.recordPageView( urlPath );
 			analytics.ga.recordPageView( urlPath, pageTitle );
+			analytics.emit( 'page-view', urlPath, pageTitle );
 		}
 	},
 
@@ -149,6 +151,7 @@ var analytics = {
 			debug( 'Recording event "%s" with actual props %o', eventName, eventProperties );
 
 			window._tkq.push( [ 'recordEvent', eventName, eventProperties ] );
+			analytics.emit( 'record-event', eventName, eventProperties );
 		},
 
 		recordPageView: function( urlPath ) {
@@ -311,5 +314,5 @@ var analytics = {
 		window._tkq.push( [ 'clearIdentity' ] );
 	}
 };
-
+emitter( analytics );
 module.exports = analytics;

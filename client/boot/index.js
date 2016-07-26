@@ -54,6 +54,9 @@ var config = require( 'config' ),
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
+import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+import { getSavedVariations } from 'lib/abtest';
+
 function init() {
 	var i18nLocaleStringsObject = null;
 
@@ -228,6 +231,29 @@ function reduxStoreReady( reduxStore ) {
 	// Layout themselves when logged in.
 	if ( ! isIsomorphic || user.get() ) {
 		renderLayout( reduxStore );
+
+		if ( config.isEnabled( 'catch-js-errors' ) ) {
+			const Logger = require( 'lib/catch-js-errors' );
+			const errorLogger = new Logger();
+			//Save data to JS error logger
+			errorLogger.saveDiagnosticData( {
+				user_id: user.get().ID,
+				calypso_env: config( 'env_id' )
+			} );
+			errorLogger.saveDiagnosticReducer( function() {
+				const state = reduxStore.getState();
+				return {
+					blog_id: getSelectedSiteId( state ),
+					calypso_section: getSectionName( state )
+				};
+			} );
+			errorLogger.saveDiagnosticReducer( () => ( { tests: getSavedVariations() } ) );
+			analytics.on( 'record-event', ( eventName, eventProperties ) => errorLogger.saveExtraData( { lastTracksEvent: eventProperties } ) );
+			page( '*', function( context, next ) {
+				errorLogger.saveNewPath( context.canonicalPath.replace( route.getSiteFragment( context.canonicalPath ), ':siteId' ) );
+				next();
+			} );
+		}
 	}
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
