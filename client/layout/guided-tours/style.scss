@@ -39,6 +39,7 @@
 	animation-timing-function: ease-out;
 	animation-delay: 2s;
 	animation-fill-mode: both;
+	width: calc( 100% - 10px );
 }
 
 .guided-tours__step-finish {

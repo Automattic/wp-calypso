@@ -201,6 +201,7 @@ class SelectDropdown extends Component {
 					aria-owns={ 'select-submenu-' + this.state.instanceId }
 					aria-controls={ 'select-submenu-' + this.state.instanceId }
 					aria-expanded={ this.state.isOpen }
+					data-tip-target={ this.props.tipTarget }
 					onClick={ this.toggleDropdown }
 				>
 					<div
