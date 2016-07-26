@@ -1,6 +1,5 @@
 // Initialize localStorage polyfill before any dependencies are loaded
-import localStoragePolyfill from 'lib/local-storage';
-localStoragePolyfill();
+require( 'lib/local-storage' )();
 
 /**
  * External dependencies
@@ -24,7 +23,9 @@ var React = require( 'react' ),
  */
 // lib/local-storage must be run before lib/user
 var config = require( 'config' ),
-	abtest = require( 'lib/abtest' ).abtest,
+	abtestModule = require( 'lib/abtest' ),
+	abtest = abtestModule.abtest,
+	getSavedVariations = abtestModule.getSavedVariations,
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
@@ -56,7 +57,6 @@ var config = require( 'config' ),
 	Layout;
 
 import { getSelectedSiteId, getSectionName, isSectionIsomorphic } from 'state/ui/selectors';
-import { getSavedVariations } from 'lib/abtest';
 
 function init() {
 	var i18nLocaleStringsObject = null;
