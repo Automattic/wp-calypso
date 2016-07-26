@@ -11,6 +11,7 @@ import get from 'lodash/get';
 import Main from 'components/main';
 import DocumentHead from 'components/data/document-head';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 import PostTypeFilter from 'my-sites/post-type-filter';
 import PostTypeList from 'my-sites/post-type-list';
 import PostTypeUnsupported from './post-type-unsupported';
@@ -26,6 +27,7 @@ function Types( { siteId, query, postType, postTypeSupported, userCanEdit } ) {
 			<PageViewTracker
 				path={ siteId ? '/types/:site' : '/types' }
 				title="Custom Post Type" />
+			<SidebarNavigation />
 			{ false !== userCanEdit && false !== postTypeSupported && [
 				<PostTypeFilter
 					key="filter"
