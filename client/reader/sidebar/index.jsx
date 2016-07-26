@@ -24,7 +24,7 @@ import SidebarHeading from 'layout/sidebar/heading';
 import SidebarMenu from 'layout/sidebar/menu';
 import SidebarRegion from 'layout/sidebar/region';
 import Gridicon from 'components/gridicon';
-import discoverHelper from 'reader/discover/helper';
+import { isEnabled as discoverIsEnabled } from 'reader/discover/helper';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import ReaderSidebarLists from './reader-sidebar-lists';
 import ReaderSidebarTeams from './reader-sidebar-teams';
@@ -199,7 +199,7 @@ const ReaderSidebar = React.createClass( {
 						}
 
 						{
-							discoverHelper.isEnabled()
+							discoverIsEnabled()
 							? (
 									<li className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, { 'sidebar-streams__discover': true } ) }>
 										<a href="/discover">

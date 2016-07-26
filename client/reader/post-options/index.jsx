@@ -19,7 +19,7 @@ import SiteBlockStore from 'lib/reader-site-blocks';
 import SiteBlockActions from 'lib/reader-site-blocks/actions';
 import PostUtils from 'lib/posts/utils';
 import FollowButton from 'reader/follow-button';
-import DiscoverHelper from 'reader/discover/helper';
+import * as DiscoverHelper from 'reader/discover/helper';
 
 const stats = require( 'reader/stats' );
 
