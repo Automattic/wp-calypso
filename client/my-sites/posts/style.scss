@@ -622,14 +622,14 @@
 	}
 
 	@include breakpoint( ">1600px" ) {
-		.post-type-list__post.is-mini.card.is-compact {
+		.post-item.is-mini.card.is-compact {
 			padding: 16px 24px;
 
-			.post-type-list__post-meta {
+			.post-item__meta {
 				display: block;
 			}
 
-			.post-type-list__post-title {
+			.post-item__title {
 				display: inline;
 				font-size: 15px;
 				margin-bottom: 2px;
@@ -654,15 +654,6 @@
 
 	&::after {
 		display: none;
-	}
-}
-
-.posts.is-single-site .section-nav-tab.is-draft {
-	@include breakpoint( ">1280px" ) {
-		display: none;
-		&.is-selected {
-			display: block;
-		}
 	}
 }
 
