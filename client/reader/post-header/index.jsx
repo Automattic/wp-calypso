@@ -7,7 +7,7 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
-import Site from 'my-sites/site';
+import Site from 'blocks/site';
 import FollowButton from 'reader/follow-button';
 
 const PostHeader = ( { site, siteUrl, showFollow, onSiteSelect, onSiteClick } ) => (

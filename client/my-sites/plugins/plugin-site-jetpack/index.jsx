@@ -14,7 +14,7 @@ var FoldableCard = require( 'components/foldable-card' ),
 	PluginInstallButton = require( 'my-sites/plugins/plugin-install-button' ),
 	PluginRemoveButton = require( 'my-sites/plugins/plugin-remove-button' ),
 	PluginSiteDisabledManage = require( 'my-sites/plugins/plugin-site-disabled-manage' ),
-	Site = require( 'my-sites/site' );
+	Site = require( 'blocks/site' );
 
 module.exports = React.createClass( {
 

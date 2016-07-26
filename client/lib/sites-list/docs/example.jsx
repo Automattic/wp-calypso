@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var Site = require( 'my-sites/site' ),
+var Site = require( 'blocks/site' ),
 	AllSites = require( 'my-sites/all-sites' ),
 	sites = require( 'lib/sites-list' )();
 
