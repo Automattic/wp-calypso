@@ -674,18 +674,13 @@ const PostEditor = React.createClass( {
 	},
 
 	onSaveSuccess: function( message, action, link ) {
-		var post = PostEditStore.get(), nextState;
+		const post = PostEditStore.get();
 
 		if ( 'draft' === post.status ) {
 			this.props.setEditorLastDraft( post.site_ID, post.ID );
 		} else {
 			this.props.resetEditorLastDraft();
 		}
-
-		// Reset previous edits, preserving type
-		this.props.resetPostEdits( this.props.siteId );
-		this.props.resetPostEdits( post.site_ID, post.ID );
-		this.props.editPost( { type: this.props.type }, post.site_ID, post.ID );
 
 		// Assign editor post ID to saved value (especially important when
 		// transitioning from an unsaved post to a saved one)
@@ -696,7 +691,12 @@ const PostEditor = React.createClass( {
 		// Receive updated post into state
 		this.props.receivePost( post );
 
-		nextState = {
+		// Reset previous edits, preserving type
+		this.props.resetPostEdits( this.props.siteId );
+		this.props.resetPostEdits( post.site_ID, post.ID );
+		this.props.editPost( { type: this.props.type }, post.site_ID, post.ID );
+
+		const nextState = {
 			isSaving: false,
 			isPublishing: false
 		};
