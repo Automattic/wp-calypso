@@ -10,6 +10,8 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { isRequestingPostTypes, getPostTypes } from 'state/post-types/selectors';
+import { getSiteSlug, isJetpackMinimumVersion } from 'state/sites/selectors';
+import { addSiteFragment } from 'lib/route';
 import QueryPostTypes from 'components/data/query-post-types';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
@@ -17,6 +19,9 @@ import FormToggle from 'components/forms/form-toggle';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
+import FeatureExample from 'components/feature-example';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 class CustomPostTypesFieldset extends Component {
 	constructor( props ) {
@@ -97,7 +102,8 @@ class CustomPostTypesFieldset extends Component {
 	}
 
 	render() {
-		const { translate, siteId, siteUrl, className } = this.props;
+		const { translate, siteId, siteSlug, siteUrl, className, siteSupportsCustomTypes } = this.props;
+		const ToggleWrapper = siteSupportsCustomTypes ? 'div' : FeatureExample;
 
 		return (
 			<FormFieldset className={ className }>
@@ -112,45 +118,57 @@ class CustomPostTypesFieldset extends Component {
 						}
 					} ) }
 				</p>
-				<div className="site-settings__custom-post-type">
-					<SectionHeader label={ translate( 'Testimonials' ) }>
-						<FormToggle
-							checked={ this.isEnabled( 'jetpack-testimonial' ) }
-							onChange={ this.boundToggleTestimonial }
-							disabled={ this.isDisabled( 'jetpack-testimonial' ) } />
-					</SectionHeader>
-					<Card>
-						{ this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) && (
-							<FormSettingExplanation>{ translate( 'Your theme supports Testimonials' ) }</FormSettingExplanation>
-						) }
-						{ translate( 'The Testimonial custom content type allows you to add, organize, and display your testimonials. If your theme doesn’t support it yet, you can display testimonials using the {{shortcodeLink}}testimonial shortcode{{/shortcodeLink}} ( {{code}}[testimonials]{{/code}} ) or you can {{archiveLink}}view a full archive of your testimonials{{/archiveLink}}.', {
-							components: {
-								shortcodeLink: <a href="https://support.wordpress.com/testimonials-shortcode/" />,
-								code: <code />,
-								archiveLink: <a href={ siteUrl.replace( /\/$/, '' ) + '/testimonial' } />
-							}
-						} ) }
-					</Card>
-				</div>
-				<div className="site-settings__custom-post-type">
-					<SectionHeader label={ translate( 'Portfolio Projects' ) }>
-						<FormToggle
-							checked={ this.isEnabled( 'jetpack-portfolio' ) }
-							onChange={ this.boundTogglePortfolio }
-							disabled={ this.isDisabled( 'jetpack-portfolio' ) } />
-					</SectionHeader>
-					<Card>
-						{ this.hasDefaultPostTypeEnabled( 'jetpack-portfolio' ) && (
-							<FormSettingExplanation>{ translate( 'Your theme supports Portfolio Projects' ) }</FormSettingExplanation>
-						) }
-						{ translate( 'The Portfolio custom content type gives you an easy way to manage and showcase projects on your site. If your theme doesn’t support it yet, you can display the portfolio using the {{shortcodeLink}}portfolio shortcode{{/shortcodeLink}} ( {{code}}[portfolio]{{/code}} ) or with a link to the portfolio in the menu.', {
-							components: {
-								shortcodeLink: <a href="https://support.wordpress.com/portfolios/portfolio-shortcode/" />,
-								code: <code />
-							}
-						} ) }
-					</Card>
-				</div>
+				{ ! siteSupportsCustomTypes && (
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate( 'You must update to the latest version of Jetpack to use this feature' ) }>
+						<NoticeAction href={ addSiteFragment( '/plugins/jetpack', siteSlug ) }>
+							{ translate( 'Update', { context: 'verb' } ) }
+						</NoticeAction>
+					</Notice>
+				) }
+				<ToggleWrapper>
+					<div className="site-settings__custom-post-type">
+						<SectionHeader label={ translate( 'Testimonials' ) }>
+							<FormToggle
+								checked={ this.isEnabled( 'jetpack-testimonial' ) }
+								onChange={ this.boundToggleTestimonial }
+								disabled={ this.isDisabled( 'jetpack-testimonial' ) } />
+						</SectionHeader>
+						<Card>
+							{ this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) && (
+								<FormSettingExplanation>{ translate( 'Your theme supports Testimonials' ) }</FormSettingExplanation>
+							) }
+							{ translate( 'The Testimonial custom content type allows you to add, organize, and display your testimonials. If your theme doesn’t support it yet, you can display testimonials using the {{shortcodeLink}}testimonial shortcode{{/shortcodeLink}} ( {{code}}[testimonials]{{/code}} ) or you can {{archiveLink}}view a full archive of your testimonials{{/archiveLink}}.', {
+								components: {
+									shortcodeLink: <a href="https://support.wordpress.com/testimonials-shortcode/" />,
+									code: <code />,
+									archiveLink: <a href={ siteUrl.replace( /\/$/, '' ) + '/testimonial' } />
+								}
+							} ) }
+						</Card>
+					</div>
+					<div className="site-settings__custom-post-type">
+						<SectionHeader label={ translate( 'Portfolio Projects' ) }>
+							<FormToggle
+								checked={ this.isEnabled( 'jetpack-portfolio' ) }
+								onChange={ this.boundTogglePortfolio }
+								disabled={ this.isDisabled( 'jetpack-portfolio' ) } />
+						</SectionHeader>
+						<Card>
+							{ this.hasDefaultPostTypeEnabled( 'jetpack-portfolio' ) && (
+								<FormSettingExplanation>{ translate( 'Your theme supports Portfolio Projects' ) }</FormSettingExplanation>
+							) }
+							{ translate( 'The Portfolio custom content type gives you an easy way to manage and showcase projects on your site. If your theme doesn’t support it yet, you can display the portfolio using the {{shortcodeLink}}portfolio shortcode{{/shortcodeLink}} ( {{code}}[portfolio]{{/code}} ) or with a link to the portfolio in the menu.', {
+								components: {
+									shortcodeLink: <a href="https://support.wordpress.com/portfolios/portfolio-shortcode/" />,
+									code: <code />
+								}
+							} ) }
+						</Card>
+					</div>
+				</ToggleWrapper>
 			</FormFieldset>
 		);
 	}
@@ -158,12 +176,17 @@ class CustomPostTypesFieldset extends Component {
 
 CustomPostTypesFieldset.propTypes = {
 	translate: PropTypes.func,
-	siteId: PropTypes.number,
-	requestingPostTypes: PropTypes.bool,
 	requestingSettings: PropTypes.bool,
 	value: PropTypes.object,
+	onChange: PropTypes.func,
 	recordEvent: PropTypes.func,
-	className: PropTypes.string
+	className: PropTypes.string,
+	siteId: PropTypes.number,
+	siteSlug: PropTypes.string,
+	siteUrl: PropTypes.string,
+	requestingPostTypes: PropTypes.bool,
+	postTypes: PropTypes.object,
+	siteSupportsCustomTypes: PropTypes.bool
 };
 
 export default connect( ( state ) => {
@@ -172,8 +195,10 @@ export default connect( ( state ) => {
 
 	return {
 		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
 		siteUrl: site ? site.URL : '',
 		requestingPostTypes: isRequestingPostTypes( state, siteId ),
-		postTypes: getPostTypes( state, siteId )
+		postTypes: getPostTypes( state, siteId ),
+		siteSupportsCustomTypes: false !== isJetpackMinimumVersion( state, siteId, '4.2.0' )
 	};
 } )( localize( CustomPostTypesFieldset ) );

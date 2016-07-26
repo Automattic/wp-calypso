@@ -142,13 +142,13 @@ const SiteSettingsFormWriting = React.createClass( {
 						</FormSelect>
 					</FormFieldset>
 
-					{ this.isCustomPostTypesSettingsEnabled() && (
+					{ config.isEnabled( 'manage/custom-post-types' ) && (
 						<CustomPostTypeFieldset
 							requestingSettings={ this.state.fetchingSettings }
 							value={ pick( this.state, 'jetpack_testimonial', 'jetpack_portfolio' ) }
 							onChange={ this.setCustomPostTypeSetting }
 							recordEvent={ this.recordEvent }
-							className="has-divider is-top-only" />
+							className="site-settings__custom-post-type-fieldset has-divider is-top-only" />
 					) }
 					{ markdownSupported &&
 						<FormFieldset className="has-divider is-top-only">
