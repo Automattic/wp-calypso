@@ -354,6 +354,12 @@ function reduxStoreReady( reduxStore ) {
 				return;
 			}
 
+			if ( '/plans' === context.pathname ) {
+				// pricing page is outside of Calypso, needs a full page load
+				window.location = 'https://wordpress.com/pricing';
+				return;
+			}
+
 			if ( isValidSection ) {
 				next();
 			}
