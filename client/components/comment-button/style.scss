@@ -1,7 +1,8 @@
 .comment-button {
 	color: lighten( $gray, 10 );
+	display: flex;
 	list-style-type: none;
-	padding: 4px 4px 4px 27px;
+	padding: 4px;
 	position: relative;
 
 	&:hover {
@@ -21,12 +22,13 @@
 	}
 }
 
+.comment-button__label {
+	font-size: 14px;
+	margin-left: 4px;
+}
+
 .comment-button__icon {
 	fill: lighten( $gray, 10% );
-	position: absolute;
-		left: 0;
-		top: 3px;
-
 	&:hover {
 		fill: $blue-light;
 	}
