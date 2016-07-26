@@ -10,8 +10,8 @@ import PureRenderMixin from 'react-pure-render/mixin';
 import FollowButton from 'components/follow-button/button';
 import Card from 'components/card/compact';
 
-const FollowButtons = React.createClass( {
-	displayName: 'FollowButtons',
+export default React.createClass( {
+	displayName: 'FollowButton',
 
 	mixins: [ PureRenderMixin ],
 
@@ -19,7 +19,7 @@ const FollowButtons = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-component/follow-buttons">Follow Button</a>
+					<a href="/devdocs/app-components/follow-button">Follow Button</a>
 				</h2>
 				<Card compact>
 					<FollowButton following={ false } />
@@ -34,5 +34,3 @@ const FollowButtons = React.createClass( {
 		);
 	}
 } );
-
-export default FollowButtons;

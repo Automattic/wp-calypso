@@ -12,7 +12,7 @@ import trim from 'lodash/trim';
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
 import CommentButtons from 'components/comment-button/docs/example';
-import FollowButtons from 'components/follow-button/docs/example';
+import FollowButton from 'components/follow-button/docs/example';
 import LikeButtons from 'components/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
@@ -62,7 +62,7 @@ export default React.createClass( {
 				}
 				<Collection component={ this.props.component } filter={ this.state.filter }>
 					<CommentButtons />
-					<FollowButtons />
+					<FollowButton />
 					<HappinessSupport />
 					<LikeButtons />
 					<PlanStorage />
