@@ -28,7 +28,7 @@ function createDomainObjects( dataTransferObject ) {
 			googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
 			hasPrivacyProtection: domain.has_private_registration,
 			isAutoRenewing: domain.auto_renewing,
-			isCurrentUserOwner: domain.is_current_user_owner,
+			currentUserCanManage: domain.current_user_can_manage || domain.is_current_user_owner,
 			isPendingIcannVerification: domain.is_pending_icann_verification,
 			isPrimary: domain.primary_domain,
 			manualTransferRequired: domain.manual_transfer_required,

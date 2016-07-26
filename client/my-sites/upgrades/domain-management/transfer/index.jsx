@@ -32,10 +32,10 @@ const Transfer = React.createClass( {
 
 	renderSection() {
 		const { locked, transferProhibited } = this.props.wapiDomainInfo.data,
-			{ isPendingIcannVerification, isCurrentUserOwner } = getSelectedDomain( this.props );
+			{ isPendingIcannVerification, currentUserCanManage } = getSelectedDomain( this.props );
 		let section = null;
 
-		if ( ! isCurrentUserOwner ) {
+		if ( ! currentUserCanManage ) {
 			section = NonOwnerCard;
 		} else if ( transferProhibited ) {
 			section = TransferProhibited;

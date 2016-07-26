@@ -55,7 +55,7 @@ describe( 'index', () => {
 				name: 'example.com',
 				registrationMoment: moment(),
 				type: domainTypes.REGISTERED,
-				isCurrentUserOwner: true
+				currentUserCanManage: true
 			},
 			selectedSite: { domain: 'example.wordpress.com' }
 		};
@@ -71,7 +71,7 @@ describe( 'index', () => {
 				name: 'example.com',
 				registrationMoment: moment(),
 				type: domainTypes.REGISTERED,
-				isCurrentUserOwner: true
+				currentUserCanManage: true
 			},
 			selectedSite: { domain: 'example.com' }
 		};
@@ -84,8 +84,8 @@ describe( 'index', () => {
 	it( 'should render the multi version of the component if more than two domains match the same rule', () => {
 		const props = {
 			domains: [
-				{ name: '1.com', registrationMoment: moment(), type: domainTypes.REGISTERED, isCurrentUserOwner: true },
-				{ name: '2.com', registrationMoment: moment(), type: domainTypes.REGISTERED, isCurrentUserOwner: true },
+				{ name: '1.com', registrationMoment: moment(), type: domainTypes.REGISTERED, currentUserCanManage: true },
+				{ name: '2.com', registrationMoment: moment(), type: domainTypes.REGISTERED, currentUserCanManage: true },
 			],
 			selectedSite: { domain: 'example.com' }
 		};

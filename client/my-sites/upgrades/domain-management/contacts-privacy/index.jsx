@@ -33,7 +33,7 @@ const ContactsPrivacy = React.createClass( {
 		}
 
 		const domain = getSelectedDomain( this.props ),
-			{ hasPrivacyProtection, privateDomain, isCurrentUserOwner } = domain;
+			{ hasPrivacyProtection, privateDomain, currentUserCanManage } = domain;
 
 		return (
 			<Main className="domain-management-contacts-privacy">
@@ -50,7 +50,7 @@ const ContactsPrivacy = React.createClass( {
 						selectedSite={ this.props.selectedSite }
 						hasPrivacyProtection={ hasPrivacyProtection }
 						privateDomain={ privateDomain }
-						isCurrentUserOwner={ isCurrentUserOwner } />
+						currentUserCanManage={ currentUserCanManage } />
 
 					<VerticalNavItem
 							path={ paths.domainManagementEditContactInfo( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
