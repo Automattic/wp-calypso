@@ -6,12 +6,10 @@ This component displays a Site item using the data structure provided by sites-l
 #### How to use:
 
 ```js
-var Site = require( 'blocks/site' );
+import Site from 'blocks/site';
 
-render: function() {
-	return (
-		<Site site={ siteObject } />
-	);
+render() {
+	return <Site site={ siteObject } indicator={ true } />;
 }
 ```
 
