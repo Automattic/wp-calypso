@@ -44,9 +44,14 @@ export function nextGuidedTourStep( { tour, stepName } ) {
 		stepName,
 	};
 
+	const config = guidedToursConfig.get( tour );
+	if ( ! config || ! config.meta ) {
+		return nextAction;
+	}
+
 	const trackEvent = recordTracksEvent( 'calypso_guided_tours_next_step', {
 		step: stepName,
-		tour_version: guidedToursConfig.get( tour ).meta.version,
+		tour_version: config.meta.version,
 		tour,
 	} );
 

@@ -170,6 +170,13 @@ const getStepConfig = ( state, tourConfig, stepName ) => {
  */
 const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 
+export const selectStep = ( state, stepComponents ) => {
+	const tourState = getRawGuidedTourState( state );
+	const { stepName = 'init' } = tourState;
+	return find( stepComponents, component =>
+		component.props.name === stepName );
+};
+
 export const getGuidedTourState = createSelector(
 	state => {
 		const tourState = getRawGuidedTourState( state );

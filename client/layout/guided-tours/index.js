@@ -15,16 +15,18 @@ import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 import { errorNotice } from 'state/notices/actions';
 import { getScrollableSidebar, targetForSlug } from './positioning';
-import {
-	BasicStep,
-	FirstStep,
-	LinkStep,
-	FinishStep,
-	ActionStep,
-} from './steps';
+//import {
+//	BasicStep,
+//	FirstStep,
+//	LinkStep,
+//	FinishStep,
+//	ActionStep,
+//} from './steps';
 import wait from './wait';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
+
+import { DemoTour } from 'layout/guided-tours/config-elements';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -109,25 +111,29 @@ class GuidedTours extends Component {
 	}
 
 	render() {
-		const { stepConfig, shouldShow } = this.props.tourState;
+		//const { stepConfig, shouldShow } = this.props.tourState;
 
-		if ( ! shouldShow || ! stepConfig ) {
-			return null;
-		}
+		//if ( ! shouldShow || ! stepConfig ) {
+		//	return null;
+		//}
 
 		debug( 'GuidedTours#render() tourState', this.props.tourState );
 
-		const StepComponent = {
-			FirstStep,
-			ActionStep,
-			LinkStep,
-			FinishStep,
-		}[ stepConfig.type ] || BasicStep;
+		//const StepComponent = {
+		//	FirstStep,
+		//	ActionStep,
+		//	LinkStep,
+		//	FinishStep,
+		//}[ stepConfig.type ] || BasicStep;
+
+		const { state, nextGuidedTourStep: next } = this.props;
 
 		return (
 			<RootChild>
 				<div className="guided-tours">
 					<QueryPreferences />
+					{ React.cloneElement( DemoTour, { state, next } ) }
+					{ /*
 					<StepComponent
 						{ ...stepConfig }
 						key={ stepConfig.target }
@@ -135,6 +141,7 @@ class GuidedTours extends Component {
 						onNext={ this.next }
 						onQuit={ this.quit }
 						onFinish={ this.finish } />
+					*/ }
 				</div>
 			</RootChild>
 		);
