@@ -8,7 +8,7 @@ import { keys, difference, isEmpty } from 'lodash';
  */
 import {
 	SIGNUP_DEPENDENCY_STORE_RESET,
-	SIGNUP_DEPENDENCY_STORE_UPDATE_STATE,
+	SIGNUP_DEPENDENCY_STORE_UPDATE,
 } from 'state/action-types';
 
 import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
@@ -56,7 +56,7 @@ SignupDependencyStore.dispatchToken = Dispatcher.register( function( payload ) {
 			case 'SUBMIT_SIGNUP_STEP':
 				if ( assertValidDependencies( action ) ) {
 					SignupDependencyStore.reduxStore.dispatch( {
-						type: SIGNUP_DEPENDENCY_STORE_UPDATE_STATE,
+						type: SIGNUP_DEPENDENCY_STORE_UPDATE,
 						data: action.providedDependencies
 					} );
 				}
