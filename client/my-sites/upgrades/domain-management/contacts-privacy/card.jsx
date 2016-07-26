@@ -23,7 +23,7 @@ const ContactsPrivacyCard = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
-		isCurrentUserOwner: React.PropTypes.bool.isRequired
+		currentUserCanManage: React.PropTypes.bool.isRequired
 	},
 
 	render() {
@@ -44,7 +44,7 @@ const ContactsPrivacyCard = React.createClass( {
 						) }
 					</p>
 
-					{ this.props.isCurrentUserOwner && this.getNotice() }
+					{ this.props.currentUserCanManage && this.getNotice() }
 
 					<ContactDisplay
 						contactInformation={ this.props.contactInformation } />
