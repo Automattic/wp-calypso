@@ -102,7 +102,8 @@ const FirstView = React.createClass( {
 	},
 
 	updateDocumentStylesForVisibleFirstView() {
-		document.documentElement.classList.add( 'no-scroll', 'is-first-view-active' );
+		document.documentElement.classList.add( 'no-scroll' );
+		document.documentElement.classList.add( 'is-first-view-active' );
 		process.nextTick( () => {
 			if ( this.props.isVisible ) {
 				document.documentElement.classList.add( 'is-first-view-visible' );
