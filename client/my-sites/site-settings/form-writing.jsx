@@ -62,8 +62,7 @@ const SiteSettingsFormWriting = React.createClass( {
 	isCustomPostTypesSettingsEnabled() {
 		return (
 			config.isEnabled( 'manage/custom-post-types' ) &&
-			false !== this.props.jetpackVersionSupportsCustomTypes &&
-			false !== this.props.jetpackCustomTypesModuleActive
+			false !== this.props.jetpackVersionSupportsCustomTypes
 		);
 	},
 
@@ -92,15 +91,42 @@ const SiteSettingsFormWriting = React.createClass( {
 		this.markChanged();
 	},
 
+	submitFormAndActivateCustomContentModule( event ) {
+		this.submitForm( event );
+
+		// Only need to activate module for Jetpack sites
+		if ( ! this.props.site || ! this.props.site.jetpack ) {
+			return;
+		}
+
+		// Jetpack support applies only to more recent versions
+		if ( ! this.props.jetpackVersionSupportsCustomTypes ) {
+			return;
+		}
+
+		// No action necessary if neither content type is enabled in form
+		if ( ! this.state.jetpack_testimonial && ! this.state.jetpack_portfolio ) {
+			return;
+		}
+
+		// Only activate module if not already activated (saves an unnecessary
+		// request for post types after submission completes)
+		if ( ! this.props.jetpackCustomTypesModuleActive ) {
+			// [TODO]: This should be migrated to a Redux action creator, but
+			// is complicated by requirements to sync back to legacy sites-list
+			this.props.site.activateModule( 'custom-content-types', this.onSaveComplete );
+		}
+	},
+
 	render: function() {
 		const markdownSupported = this.state.markdown_supported;
 		return (
-			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
+			<form id="site-settings" onSubmit={ this.submitFormAndActivateCustomContentModule } onChange={ this.markChanged }>
 				<SectionHeader label={ this.translate( 'Writing Settings' ) }>
 					<Button
 						compact
 						primary
-						onClick={ this.submitForm }
+						onClick={ this.submitFormAndActivateCustomContentModule }
 						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
 						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
 					</Button>
