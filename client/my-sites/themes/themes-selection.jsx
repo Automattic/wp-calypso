@@ -32,7 +32,7 @@ const ThemesSelection = React.createClass( {
 	},
 
 	doSearch( searchString ) {
-		const filterRegex = /[a-zA-Z0-9]+\:\s*([a-zA-Z0-9-_]+)/g;
+		const filterRegex = /\w+\:\s*([\w-]+)/g;
 
 		let matches;
 		const filterStrings = [];
