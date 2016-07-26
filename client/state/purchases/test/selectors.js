@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 // Internal dependencies
-import { getPurchases, getByPurchaseId, isFetchingUserPurchases, isFetchingSitePurchases } from '../selectors';
+import { getPurchases, getByPurchaseId, isFetchingUserPurchases, isFetchingSitePurchases, getIncludedDomainPurchase, getSitePurchases } from '../selectors';
 import purchasesAssembler from 'lib/purchases/assembler';
 
 describe( 'selectors', () => {
@@ -130,6 +130,79 @@ describe( 'selectors', () => {
 			};
 
 			expect( isFetchingSitePurchases( state ) ).to.be.true;
+		} );
+	} );
+
+	describe( 'getSitePurchases', () => {
+		it( 'should return purchases of specific site', () => {
+			const state = {
+				purchases: {
+					data: [
+						{
+							ID: '81414',
+							blog_id: '1234'
+						},
+						{
+							ID: '82867',
+							blog_id: '1234'
+						},
+						{
+							ID: '105103',
+							blog_id: '123'
+						}
+					],
+					error: null,
+					isFetchingSitePurchases: true,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: false
+				}
+			};
+
+			const result = getSitePurchases( state, 1234 );
+
+			expect( result.length ).to.equal( 2 );
+			expect( result[ 0 ].siteId ).to.equal( 1234 );
+			expect( result[ 1 ].siteId ).to.equal( 1234 );
+		} );
+	} );
+
+	describe( 'getIncludedDomainPurchase', () => {
+		it( 'should return included domain with subscription', () => {
+			const state = {
+				purchases: {
+					data: [
+						{
+							ID: '81414',
+							meta: 'dev.live',
+							blog_id: '123',
+							is_domain_registration: 'true',
+							product_slug: 'dotlive_domain'
+						},
+						{
+							ID: '82867',
+							blog_id: '123',
+							product_slug: 'value_bundle',
+							included_domain: 'dev.live'
+						},
+						{
+							ID: '105103',
+							blog_id: '123',
+							meta: 'wordpress.com',
+							product_slug: 'domain_map'
+						}
+					],
+					error: null,
+					isFetchingSitePurchases: true,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: false
+				}
+			};
+
+			const subscriptionPurchase = getPurchases( state ).find( purchase => purchase.productSlug === 'value_bundle' );
+
+			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).to.equal( 'dev.live' );
 		} );
 	} );
 } );
