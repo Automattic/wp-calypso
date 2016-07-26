@@ -44,8 +44,8 @@ const PlanFeaturesActions = ( {
 			>
 				{
 					freePlan
-						? translate( 'Select Free' )
-						: translate( 'Upgrade' )
+						? translate( 'Select Free', { context: 'button' } )
+						: translate( 'Upgrade', { context: 'verb' } )
 				}
 			</Button>
 		);
