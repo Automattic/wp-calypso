@@ -42,7 +42,7 @@ const ThemesSelection = React.createClass( {
 			}
 		}
 		filterStrings.sort();
-		const filter = filterStrings.join( ' ' );
+		const filter = filterStrings.join( ',' );
 
 		searchString = searchString.replace( filterRegex, '' ).trim();
 		this.updateUrl( this.props.tier || 'all', filter, searchString );
@@ -51,7 +51,7 @@ const ThemesSelection = React.createClass( {
 	prependFilterKeys() {
 		const { filter } = this.props;
 		if ( filter ) {
-			return filter.split( ' ' ).map( value => `filter:${ value }` ).join( ' ' ) + ' ';
+			return filter.split( ',' ).map( value => `filter:${ value }` ).join( ' ' ) + ' ';
 		}
 		return '';
 	},
@@ -89,7 +89,7 @@ const ThemesSelection = React.createClass( {
 	updateUrl( tier, filter, searchString = this.props.search ) {
 		const siteId = this.props.siteId ? `/${this.props.siteId}` : '';
 		const tierSection = tier === 'all' ? '' : `/${ tier }`;
-		const filterSection = filter ? `/filter/${ filter.replace( ' ', '+' ) }` : '';
+		const filterSection = filter ? `/filter/${ filter }` : '';
 		const url = `/design${ tierSection }${ filterSection }${siteId}`;
 
 		page( buildUrl( url, searchString ) );
