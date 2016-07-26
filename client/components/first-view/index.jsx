@@ -16,6 +16,8 @@ import RootChild from 'components/root-child';
 import { getSectionName } from 'state/ui/selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import { hideView } from 'state/ui/first-view/actions';
+import { abtest } from 'lib/abtest';
+import { isEnabled } from 'config';
 
 // component to avoid having a wrapper element for the transition
 // see: https://facebook.github.io/react/docs/animation.html#rendering-a-single-child
@@ -121,9 +123,11 @@ const FirstView = React.createClass( {
 
 export default connect(
 	( state ) => {
+		const participantInFirstViewAbTest = isEnabled( 'ui/first-view-ab-test' ) && abtest( 'firstView' ) === 'enabled';
+
 		return {
 			sectionName: getSectionName( state ),
-			isVisible: shouldViewBeVisible( state ),
+			isVisible: ( isEnabled( 'ui/first-view' ) || participantInFirstViewAbTest ) && shouldViewBeVisible( state ),
 		};
 	},
 	{
