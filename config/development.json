@@ -38,6 +38,7 @@
 		"devdocs/components-usage-stats": false,
 		"dev/test-helper": true,
 		"guided-tours": true,
+		"guided-tours/themes": true,
 		"help": true,
 		"jetpack/connect": true,
 		"jetpack/sso": true,
