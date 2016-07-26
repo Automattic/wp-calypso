@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
+import { mc } from 'lib/analytics';
 import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getPost } from 'state/posts/selectors';
 
@@ -17,8 +18,15 @@ function PostActionsEllipsisMenuStats( { translate, siteSlug, postId, status, is
 		return null;
 	}
 
+	function bumpStat() {
+		mc.bumpStat( 'calypso_cpt_actions', 'stats' );
+	}
+
 	return (
-		<PopoverMenuItem href={ `/stats/post/${ postId }/${ siteSlug }` } icon="stats-alt">
+		<PopoverMenuItem
+			href={ `/stats/post/${ postId }/${ siteSlug }` }
+			onClick={ bumpStat }
+			icon="stats-alt">
 			{ translate( 'Stats' ) }
 		</PopoverMenuItem>
 	);

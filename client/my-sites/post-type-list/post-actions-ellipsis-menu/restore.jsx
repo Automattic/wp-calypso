@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
+import { mc } from 'lib/analytics';
 import { getPost } from 'state/posts/selectors';
 import { restorePost } from 'state/posts/actions';
 import { getCurrentUserId, canCurrentUser } from 'state/current-user/selectors';
@@ -36,6 +37,7 @@ class PostActionsEllipsisMenuRestore extends Component {
 			return;
 		}
 
+		mc.bumpStat( 'calypso_cpt_actions', 'restore' );
 		this.props.restorePost( siteId, postId );
 	}
 

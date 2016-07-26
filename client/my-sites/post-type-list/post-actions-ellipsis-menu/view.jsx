@@ -10,6 +10,7 @@ import includes from 'lodash/includes';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
+import { mc } from 'lib/analytics';
 import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
 import { setPreviewUrl } from 'state/ui/actions';
 import layoutFocus from 'lib/layout-focus';
@@ -31,6 +32,7 @@ class PostActionsEllipsisMenuView extends Component {
 
 	previewPost( event ) {
 		this.props.setPreviewUrl( this.props.previewUrl );
+		mc.bumpStat( 'calypso_cpt_actions', 'view' );
 		layoutFocus.set( 'preview' );
 		event.preventDefault();
 	}
