@@ -30,7 +30,6 @@ import {
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
-import { abtest } from 'lib/abtest';
 
 /**
  * Module vars
@@ -184,7 +183,7 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 }
 
 export const isPlanFeaturesEnabled = () => {
-	return isEnabled( 'manage/plan-features' ) && abtest( 'planFeatures' ) === 'show';
+	return true;
 };
 
 export function plansLink( url, site, intervalType ) {
