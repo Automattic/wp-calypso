@@ -6,7 +6,7 @@ This component displays a Site item using the data structure provided by sites-l
 #### How to use:
 
 ```js
-var Site = require( 'my-sites/site' );
+var Site = require( 'blocks/site' );
 
 render: function() {
 	return (

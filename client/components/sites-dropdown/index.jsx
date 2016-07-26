@@ -9,8 +9,8 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
-import Site from 'my-sites/site';
-import SitePlaceholder from 'my-sites/site/placeholder';
+import Site from 'blocks/site';
+import SitePlaceholder from 'blocks/site/placeholder';
 import SiteSelector from 'components/site-selector';
 import sitesList from 'lib/sites-list';
 import Gridicon from 'components/gridicon';

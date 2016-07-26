@@ -9,7 +9,7 @@ var React = require( 'react' );
 var config = require( 'config' ),
 	FormButton = require( 'components/forms/form-button' ),
 	Notice = require( 'components/notice' ),
-	Site = require( 'my-sites/site' ),
+	Site = require( 'blocks/site' ),
 	sites = require( 'lib/sites-list' )(),
 	eventRecorder = require( 'me/event-recorder' );
 
