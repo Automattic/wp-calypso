@@ -1,22 +1,9 @@
 /**
- * External dependencies
- */
-import includes from 'lodash/includes';
-
-/**
  * Internal dependencies
  */
 import { DOCUMENT_HEAD_TITLE_SET, DOCUMENT_HEAD_UNREAD_COUNT_SET } from 'state/action-types';
-import { setTitle as legacySetTitle } from './actions';
+import { setTitle as legacySetTitle, setCount as legacySetCount } from './actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
-
-/**
- * Constants
- */
-const TITLE_UPDATING_ACTIONS = [
-	DOCUMENT_HEAD_TITLE_SET,
-	DOCUMENT_HEAD_UNREAD_COUNT_SET
-];
 
 /**
  * Middleware that updates the screen title when a title updating action is
@@ -26,16 +13,15 @@ const TITLE_UPDATING_ACTIONS = [
  * @param {Object} store Redux store instance
  * @returns {Function} A configured middleware with store
  */
-export const screenTitleMiddleware = store => next => action => {
-	if ( action && includes( TITLE_UPDATING_ACTIONS, action.type ) ) {
-		const state = store.getState();
-		const { title, unreadCount } = state.documentHead;
-		const siteId = getSelectedSiteId( state );
+export const screenTitleMiddleware = ( { getState } ) => ( next ) => ( action ) => {
+	switch ( action.type ) {
+		case DOCUMENT_HEAD_TITLE_SET:
+			legacySetTitle( action.title, { siteID: getSelectedSiteId( getState() ) } );
+			break;
 
-		legacySetTitle( title, {
-			siteID: siteId,
-			count: unreadCount
-		} );
+		case DOCUMENT_HEAD_UNREAD_COUNT_SET:
+			legacySetCount( action.count, { siteID: getSelectedSiteId( getState() ) } );
+			break;
 	}
 
 	return next( action );
