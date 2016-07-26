@@ -426,7 +426,34 @@ describe( 'reducer', () => {
 			);
 		} );
 
-		it( 'should remove item when post delete action dispatched', () => {
+		it( 'should apply pending delete status on delete actions', () => {
+			let original = deepFreeze( {} );
+			original = queries( original, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { status: 'trash' },
+				found: 1,
+				posts: [ {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '48b6010b559efe6a77a429773e0cbf12',
+					title: 'Trashed',
+					status: 'trash',
+					type: 'post'
+				} ]
+			} );
+
+			const state = queries( original, {
+				type: POST_DELETE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( '__DELETE_PENDING' );
+			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
+		} );
+
+		it( 'should remove item when post delete action success dispatched', () => {
 			const original = deepFreeze( queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,

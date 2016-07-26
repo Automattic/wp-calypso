@@ -195,6 +195,12 @@ export const queries = ( () => {
 				...post
 			}, { patch: true } );
 		},
+		[ POST_DELETE ]: ( state, { siteId, postId } ) => {
+			return applyToManager( state, siteId, 'receive', false, {
+				ID: postId,
+				status: '__DELETE_PENDING'
+			}, { patch: true } );
+		},
 		[ POST_DELETE_SUCCESS ]: ( state, { siteId, postId } ) => {
 			return applyToManager( state, siteId, 'removeItem', false, postId );
 		}
