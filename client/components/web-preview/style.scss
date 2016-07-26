@@ -107,7 +107,11 @@
 .web-preview__external {
 	display: flex;
 	align-items: center;
-	margin-right: 8px;
+}
+
+.web-preview__device-switcher {
+	display: flex;
+	margin-left: 8px;
 }
 
 .web-preview__device-button {
