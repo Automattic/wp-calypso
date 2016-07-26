@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugModule from 'debug';
 import noop from 'lodash/noop';
-import shallowCompare from 'react-addons-shallow-compare';
 
 /**
  * Internal dependencies
@@ -61,10 +60,6 @@ export class WebPreview extends Component {
 			document.documentElement.classList.add( 'no-scroll', 'is-previewing' );
 		}
 		this.props.setPreviewShowing( this.props.showPreview );
-	}
-
-	shouldComponentUpdate( nextProps, nextState ) {
-		return shallowCompare( this, nextProps, nextState );
 	}
 
 	componentDidUpdate( prevProps ) {
