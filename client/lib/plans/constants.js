@@ -47,6 +47,8 @@ export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
 
 // jetpack features constants
+export const FEATURE_SINGLE_SITE_SUPPORT = 'single-site-support';
+export const FEATURE_MULTI_SITE_SUPPORT = 'multi-site-support';
 export const FEATURE_SPAM_AKISMET_PLUS = 'spam-akismet-plus';
 export const FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY = 'offsite-backup-vaultpress-daily';
 export const FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME = 'offsite-backup-vaultpress-realtime';
@@ -165,13 +167,14 @@ export const plansList = {
 			' and secure, as well as spam-free.'
 		),
 		getFeatures: () => [
-			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_SINGLE_SITE_SUPPORT,
+			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
@@ -186,13 +189,14 @@ export const plansList = {
 			' up and secure, as well as spam-free.'
 		),
 		getFeatures: () => [
-			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_SINGLE_SITE_SUPPORT,
+			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
@@ -207,13 +211,14 @@ export const plansList = {
 			'the ultimate peace of mind.'
 		),
 		getFeatures: () => [
-			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_MULTI_SITE_SUPPORT,
+			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 			FEATURE_POLLS_PRO
@@ -230,13 +235,14 @@ export const plansList = {
 			'More powerful security tools and realtime content backup for the ultimate peace of mind.'
 		),
 		getFeatures: () => [
-			FEATURE_SPAM_AKISMET_PLUS,
+			FEATURE_MULTI_SITE_SUPPORT,
+			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 			FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 			FEATURE_AUTOMATED_RESTORES,
+			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 			FEATURE_POLLS_PRO
@@ -415,6 +421,14 @@ export const featuresList = {
 		),
 		plans: allPaidPlans
 	},
+	[ FEATURE_SINGLE_SITE_SUPPORT ]: {
+		getTitle: () => i18n.translate( 'Supports 1 Site' ),
+		getDescription: () => i18n.translate( 'For use on 1 WordPress site.' )
+	},
+	[ FEATURE_MULTI_SITE_SUPPORT ]: {
+		getTitle: () => i18n.translate( 'Supports 1-3 Sites' ),
+		getDescription: () => i18n.translate( 'For use on up to 3 WordPress sites.' )
+	},
 	[ FEATURE_SPAM_AKISMET_PLUS ]: {
 		getTitle: () => i18n.translate( 'Spam Protection' ),
 		getDescription: () => i18n.translate( 'State-of-the-art spam defense powered by Akismet.' )
@@ -427,7 +441,7 @@ export const featuresList = {
 		)
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
-		getTitle: () => i18n.translate( 'Realtime offsite backups' ),
+		getTitle: () => i18n.translate( 'Realtime Offsite Backups' ),
 		getDescription: () => i18n.translate(
 			'Automatic realtime backups of every single aspect of your site. ' +
 			'Stored safely and optimized for WordPress.'
@@ -468,7 +482,7 @@ export const featuresList = {
 		)
 	},
 	[ FEATURE_ONE_CLICK_THREAT_RESOLUTION ]: {
-		getTitle: () => i18n.translate( 'One-Click Threat Resolution' ),
+		getTitle: () => i18n.translate( 'One-click Threat Resolution' ),
 		getDescription: () => i18n.translate(
 			'Repair any security issues found on your site with just a single click.'
 		)
