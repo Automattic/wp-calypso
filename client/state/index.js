@@ -77,15 +77,14 @@ export const reducer = combineReducers( {
 	wordads
 } );
 
-let middleware = [ thunkMiddleware, noticesMiddleware ];
+const middleware = [ thunkMiddleware, noticesMiddleware ];
 
-// Analytics middleware currently only works in the browser
 if ( typeof window === 'object' ) {
-	middleware = [
-		require( 'lib/screen-title' ).screenTitleMiddleware,
-		...middleware,
+	// Browser-specific middlewares
+	middleware.push(
+		require( './document-head/middleware' ),
 		require( './analytics/middleware.js' ).analyticsMiddleware
-	];
+	);
 }
 
 let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
