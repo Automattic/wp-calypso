@@ -31,6 +31,10 @@ const ThemesSelection = React.createClass( {
 		tier: React.PropTypes.string,
 	},
 
+	getDefaultProps() {
+		return { search: '' };
+	},
+
 	doSearch( searchString ) {
 		const filterRegex = /\w+\:\s*([\w-]+)/g;
 
@@ -112,7 +116,7 @@ const ThemesSelection = React.createClass( {
 					<ThemesSearchCard
 							site={ site }
 							onSearch={ this.doSearch }
-							search={ this.prependFilterKeys() + ( this.props.search || '' ) }
+							search={ this.prependFilterKeys() + this.props.search }
 							tier={ this.props.tier }
 							select={ this.onTierSelect } />
 				</StickyPanel>
