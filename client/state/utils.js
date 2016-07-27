@@ -26,18 +26,21 @@ export function isValidStateWithSchema( state, schema, checkForCycles = false, b
 
 /**
  * Given an action object or thunk, returns an updated object or thunk which
- * will include additional meta in the action (as provided) when dispatched.
+ * will include additional data in the action (as provided) when dispatched.
  *
  * @param  {(Function|Object)} action Action object or thunk
- * @param  {Object}            meta   Additional meta to include in action
+ * @param  {Object}            data   Additional data to include in action
  * @return {(Function|Object)}        Augmented action object or thunk
  */
-export function dispatchWithMeta( action, meta ) {
+export function extendAction( action, data ) {
 	if ( 'function' !== typeof action ) {
-		return { ...action, meta };
+		return { ...action, ...data };
 	}
 
-	return ( dispatch ) => action( ( thunkAction ) => dispatch( { ...thunkAction, meta } ) );
+	return ( dispatch ) => {
+		const newDispatch = ( thunkAction ) => dispatch( { ...thunkAction, ...data } );
+		return action( newDispatch );
+	};
 }
 
 /**

@@ -547,7 +547,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'addTermForPost', () => {
+	describe( 'addTermForPost()', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -572,9 +572,7 @@ describe( 'actions', () => {
 					} ],
 					query: undefined,
 					found: undefined,
-					meta: {
-						postId: 13640
-					}
+					postId: 13640
 				} );
 			} );
 		} );

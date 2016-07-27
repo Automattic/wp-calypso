@@ -22,31 +22,29 @@ describe( 'utils', () => {
 		} ),
 		actionSerialize = { type: SERIALIZE },
 		actionDeserialize = { type: DESERIALIZE };
-	let dispatchWithMeta, createReducer, reducer;
+	let extendAction, createReducer, reducer;
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/warn', noop );
 
-		( { dispatchWithMeta, createReducer } = require( 'state/utils' ) );
+		( { extendAction, createReducer } = require( 'state/utils' ) );
 	} );
 
-	describe( 'dispatchWithMeta()', () => {
+	describe( 'extendAction()', () => {
 		it( 'should return an updated action object', () => {
-			const action = dispatchWithMeta( {
+			const action = extendAction( {
 				type: 'ACTION_TEST'
 			}, { ok: true } );
 
 			expect( action ).to.eql( {
 				type: 'ACTION_TEST',
-				meta: {
-					ok: true
-				}
+				ok: true
 			} );
 		} );
 
 		it( 'should return an updated action thunk', () => {
 			const dispatch = spy();
-			const action = dispatchWithMeta(
+			const action = extendAction(
 				( thunkDispatch ) => thunkDispatch( { type: 'ACTION_TEST' } ),
 				{ ok: true }
 			);
@@ -54,9 +52,7 @@ describe( 'utils', () => {
 			action( dispatch );
 			expect( dispatch ).to.have.been.calledWithExactly( {
 				type: 'ACTION_TEST',
-				meta: {
-					ok: true
-				}
+				ok: true
 			} );
 		} );
 	} );
