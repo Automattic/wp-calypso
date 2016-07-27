@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import EmptyContent from 'components/empty-content';
-import discoverHelper from 'reader/discover/helper';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 import QueryReaderList from 'components/data/query-reader-list';
 
 const stats = require( 'reader/stats' );
@@ -32,11 +32,11 @@ const ListMissing = React.createClass( {
 	},
 
 	render() {
-		var action = ( <a
+		const action = ( <a
 			className="empty-content__action button is-primary"
 			onClick={ this.recordAction }
 			href="/">{ this.translate( 'Back to Followed Sites' ) }</a> ),
-			secondaryAction = discoverHelper.isEnabled()
+			secondaryAction = isDiscoverEnabled()
 			? ( <a
 				className="empty-content__action button"
 				onClick={ this.recordSecondaryAction }

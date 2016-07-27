@@ -26,7 +26,7 @@ var ListEmptyContent = React.createClass( {
 			className="empty-content__action button is-primary"
 			onClick={ this.recordAction }
 			href="/">{ this.translate( 'Back to Following' ) }</a> ),
-			secondaryAction = discoverHelper.isEnabled()
+			secondaryAction = discoverHelper.isDiscoverEnabled()
 			? ( <a
 				className="empty-content__action button"
 				onClick={ this.recordSecondaryAction }
