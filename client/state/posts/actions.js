@@ -7,7 +7,7 @@ import omit from 'lodash/omit';
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { dispatchWithMeta } from 'state/utils';
+import { extendAction } from 'state/utils';
 import { addTerm } from 'state/terms/actions';
 import {
 	POST_DELETE,
@@ -311,5 +311,5 @@ export function restorePost( siteId, postId ) {
  * @return {Function}          Action thunk
  */
 export function addTermForPost( siteId, taxonomy, term, postId ) {
-	return dispatchWithMeta( addTerm( siteId, taxonomy, term ), { postId } );
+	return extendAction( addTerm( siteId, taxonomy, term ), { postId } );
 }
