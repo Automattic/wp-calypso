@@ -84,6 +84,12 @@ const Account = React.createClass( {
 		this.debouncedUsernameValidate = debounce( this.validateUsername, 600 );
 	},
 
+	componentDidUpdate( ) {
+		if ( ! this.state.langSlug ) {
+			this.setState( { langSlug: this.props.userSettings.getOriginalSetting( 'locale_variant' ) || this.props.userSettings.getOriginalSetting( 'language' ) } );
+		}
+	},
+
 	componentWillUnmount() {
 		debug( this.constructor.displayName + ' component is unmounting.' );
 	},
@@ -106,7 +112,17 @@ const Account = React.createClass( {
 
 	updateLanguage( event ) {
 		const { value } = event.target;
-		const originalLanguage = this.props.userSettings.getOriginalSetting( 'language' );
+		const originalLanguage = this.props.userSettings.getOriginalSetting( 'locale_variant' ) || this.props.userSettings.getOriginalSetting( 'language' );
+
+		this.props.userSettings.updateSetting( 'language', value );
+		this.setState( { langSlug: value } );
+
+		if ( value !== originalLanguage ) {
+			this.setState( { redirect: '/me/account' } );
+		} else {
+			this.setState( { redirect: false } );
+		}
+
 
 		this.updateUserSetting( 'language', value );
 		const redirect = value !== originalLanguage ? '/me/account' : false;
