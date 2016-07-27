@@ -121,12 +121,13 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_AUTHORIZE:
 			return Object.assign(
 				{},
-				state,
+				omit( state, 'userData', 'bearerToken' ),
 				{
 					isAuthorizing: true,
 					authorizeSuccess: false,
 					authorizeError: false,
-					isRedirectingToWpAdmin: false
+					isRedirectingToWpAdmin: false,
+					autoAuthorize: false
 				}
 			);
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE:
@@ -206,7 +207,8 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 				{
 					isAuthorizing: true,
 					authorizeSuccess: false,
-					authorizeError: false
+					authorizeError: false,
+					autoAuthorize: true
 				}
 			);
 		case JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE:
