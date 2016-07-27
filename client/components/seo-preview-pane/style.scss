@@ -32,12 +32,14 @@
 	}
 }
 
+.seo-preview-pane__preview-area {
+	margin: 10px auto;
+}
+
 .seo-preview-pane__preview {
 	padding: 10px;
-	margin: 10px;
 	min-width: 400px;
 	height: auto;
-	width: 100%;
 
 	background-color: $white;
 	border: 1px solid lighten( $gray, 25% );
