@@ -13,7 +13,7 @@ const debug = Debug( 'calypso:reader:discover' ); // eslint-disable-line
 import userUtils from 'lib/user/utils';
 import { getSiteUrl as readerRouteGetSiteUrl } from 'reader/route';
 
-export function isEnabled() {
+export function isDiscoverEnabled() {
 	return userUtils.getLocaleSlug() === 'en';
 }
 

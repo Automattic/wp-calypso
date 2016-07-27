@@ -22,7 +22,7 @@ var SiteEmptyContent = React.createClass( {
 	},
 
 	render: function() {
-		var action = discoverHelper.isEnabled()
+		var action = discoverHelper.isDiscoverEnabled()
 		? (
 			<a
 				className="empty-content__action button is-primary"
