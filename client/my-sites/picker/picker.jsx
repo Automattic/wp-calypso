@@ -39,19 +39,10 @@ const SitePicker = React.createClass( {
 			return;
 		}
 
-		// The 200ms delay here is necessary to accomodate for LayoutFocus
-		// toggling the visibility of inactive views via `setFocusHideClass`
-		clearTimeout( this._autofocusTimeout );
-		this._autofocusTimeout = setTimeout( function() {
-			this.setState( {
-				isAutoFocused: nextProps.layoutFocus.getCurrent() === 'sites'
-			} );
-		}.bind( this ), 200 );
-	},
-
-	componentWillUnmount: function() {
-		clearTimeout( this._autofocusTimeout );
-		this._autofocusTimeout = null;
+		const isAutoFocused = nextProps.layoutFocus.getCurrent() === 'sites';
+		if ( isAutoFocused !== this.state.isAutoFocused ) {
+			this.setState( { isAutoFocused } );
+		}
 	},
 
 	onClose: function( event ) {
