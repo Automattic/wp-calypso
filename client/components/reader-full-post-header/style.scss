@@ -68,8 +68,6 @@
 
     &::after {
     	@include long-content-fade( $size: 35% );
-    	position: absolute;
-    	float: right;
     }
 
 	li {
