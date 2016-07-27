@@ -51,15 +51,6 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	planFeatures: {
-		datestamp: '20160720',
-		variations: {
-			original: 50,
-			show: 50
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: false
-	},
 	signupStore: {
 		datestamp: '20160707',
 		variations: {
