@@ -354,6 +354,7 @@ function reduxStoreReady( reduxStore ) {
 				return;
 			}
 
+			//see server/pages/index for prod redirect
 			if ( '/plans' === context.pathname ) {
 				// pricing page is outside of Calypso, needs a full page load
 				window.location = 'https://wordpress.com/pricing';

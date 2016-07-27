@@ -319,6 +319,13 @@ module.exports = function() {
 
 	app.get( '/theme', ( req, res ) => res.redirect( '/design' ) );
 
+	app.get( '/plans', function( req, res, next ) {
+		if ( config( 'env' ) !== 'development' && ! req.cookies.wordpress_logged_in ) {
+			res.redirect( 'https://wordpress.com/pricing' );
+		}
+		next();
+	} );
+
 	sections
 		.forEach( section => {
 			section.paths.forEach( path => {
