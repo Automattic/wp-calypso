@@ -39,6 +39,36 @@ export function getPostType( state, siteId, slug ) {
 }
 
 /**
+ * Returns true if the post type supports the specified feature, false if the
+ * post type does not support the specified feature, or null if post type
+ * support cannot be determined.
+ *
+ * @param  {Object}   state   Global state tree
+ * @param  {Number}   siteId  Site ID
+ * @param  {String}   slug    Post type slug
+ * @param  {String}   feature Feature slug
+ * @return {?Boolean}         Whether post type supports feature
+ */
+export function postTypeSupports( state, siteId, slug, feature ) {
+	// Hard-coded overrides; even if we know the post type object, continue to
+	// defer to these values. Indicates that REST API supports are inaccurate.
+	switch ( slug ) {
+		case 'post':
+			switch ( feature ) {
+				case 'publicize':
+					return true;
+			}
+	}
+
+	const postType = getPostType( state, siteId, slug );
+	if ( postType ) {
+		return !! postType.supports[ feature ];
+	}
+
+	return null;
+}
+
+/**
  * Returns true if the site supported the post type, false if the site does not
  * support the post type, or null if support cannot be determined (if site is
  * not currently known).
