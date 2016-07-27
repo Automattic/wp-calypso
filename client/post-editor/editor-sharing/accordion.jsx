@@ -122,13 +122,7 @@ const EditorSharingAccordion = React.createClass( {
 				) }
 				<AccordionSection>
 					{ ! hideSharing && (
-						<Sharing
-							site={ this.props.site }
-							post={ this.props.post }
-							isNew={ this.props.isNew }
-							connections={ this.props.connections }
-							fetchConnections={ this.props.requestConnections }
-						/>
+						<Sharing site={ this.props.site } post={ this.props.post } />
 					) }
 					{ this.renderShortUrl() }
 				</AccordionSection>
