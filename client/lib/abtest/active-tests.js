@@ -52,7 +52,7 @@ module.exports = {
 		defaultVariation: 'singlePurchaseFlow'
 	},
 	signupStore: {
-		datestamp: '20160707',
+		datestamp: '20160727',
 		variations: {
 			designTypeWithoutStore: 80,
 			designTypeWithStore: 20,
