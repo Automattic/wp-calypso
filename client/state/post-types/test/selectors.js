@@ -10,6 +10,7 @@ import {
 	isRequestingPostTypes,
 	getPostTypes,
 	getPostType,
+	postTypeSupports,
 	isPostTypeSupported
 } from '../selectors';
 
@@ -113,6 +114,86 @@ describe( 'selectors', () => {
 			}, 2916284, 'post' );
 
 			expect( postType ).to.eql( { name: 'post', label: 'Posts' } );
+		} );
+	} );
+
+	describe( 'postTypeSupports()', () => {
+		it( 'should return true for post publicize if type is unknown', () => {
+			const isSupported = postTypeSupports( {
+				postTypes: {
+					items: {}
+				}
+			}, 2916284, 'post', 'publicize' );
+
+			expect( isSupported ).to.be.true;
+		} );
+
+		it( 'should return true for post publicize even if type is known', () => {
+			const isSupported = postTypeSupports( {
+				postTypes: {
+					items: {
+						2916284: {
+							post: {
+								name: 'post',
+								label: 'Posts',
+								supports: {
+									publicize: false
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'post', 'publicize' );
+
+			expect( isSupported ).to.be.true;
+		} );
+
+		it( 'should return null if post type is not known', () => {
+			const isSupported = postTypeSupports( {
+				postTypes: {
+					items: {}
+				}
+			}, 2916284, 'jetpack-portfolio', 'publicize' );
+
+			expect( isSupported ).to.be.null;
+		} );
+
+		it( 'should return false if post type support omits feature', () => {
+			const isSupported = postTypeSupports( {
+				postTypes: {
+					items: {
+						2916284: {
+							'jetpack-testimonial': {
+								name: 'jetpack-testimonial',
+								label: 'Testimonials',
+								supports: {}
+							}
+						}
+					}
+				}
+			}, 2916284, 'jetpack-testimonial', 'publicize' );
+
+			expect( isSupported ).to.be.false;
+		} );
+
+		it( 'should return true if post type supports feature', () => {
+			const isSupported = postTypeSupports( {
+				postTypes: {
+					items: {
+						2916284: {
+							'jetpack-portfolio': {
+								name: 'jetpack-portfolio',
+								label: 'Projects',
+								supports: {
+									publicize: true
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'jetpack-portfolio', 'publicize' );
+
+			expect( isSupported ).to.be.true;
 		} );
 	} );
 
