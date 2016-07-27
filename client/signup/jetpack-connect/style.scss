@@ -291,33 +291,33 @@
 	color: $gray;
 }
 
-.jetpack-connect__sso__user-profile {
+.jetpack-connect__sso-user-profile {
 	margin-bottom: 16px;
 }
 
-.jetpack-connect__sso__user-profile .gravatar {
+.jetpack-connect__sso-user-profile .gravatar {
 	display: block;
 	margin: 0 auto 16px;
 }
 
-.jetpack-connect__sso__log-in-as{
+.jetpack-connect__sso-log-in-as{
 	font-family: $sans;
 	font-size: 21px;
 	font-weight: 300;
 	text-align: center;
 }
 
-.jetpack-connect__sso__display-name {
+.jetpack-connect__sso-display-name {
 	font-family: $serif;
 }
 
-.jetpack-connect__sso__user-email {
+.jetpack-connect__sso-user-email {
 	color: lighten( $gray, 10% );
 	font-weight: 400;
 	text-align: center;
 }
 
-.jetpack-connect__sso__actions .button {
+.jetpack-connect__sso-actions .button {
 	display: block;
 	text-align: center;
 	width: 100%;
@@ -368,16 +368,16 @@
 	padding: 0;
 }
 
-.jetpack-connect_sso_terms-dialog {
+.jetpack-connect__sso-terms-dialog {
 	max-height: 70vh;
 	overflow-y: auto;
 }
 
-.jetpack-connect__sso__shared-details-table {
+.jetpack-connect__sso-shared-details-table {
 	border-collapse: separate;
 }
 
-.jetpack-connect__sso__shared-detail-row {
+.jetpack-connect__sso-shared-detail-row {
 	margin-bottom: 16px;
 
 	&:last-child {
@@ -385,39 +385,39 @@
 	}
 }
 
-.jetpack-connect__sso__shared-detail-label {
+.jetpack-connect__sso-shared-detail-label {
 	font-weight: bold;
 }
 
-.jetpack-connect__sso__shared-detail-value {
+.jetpack-connect__sso-shared-detail-value {
 	padding-left: 16px;
 }
 
-.jetpack-connect__sso__shared-detail-label,
-.jetpack-connect__sso__shared-detail-value {
+.jetpack-connect__sso-shared-detail-label,
+.jetpack-connect__sso-shared-detail-value {
 	padding-bottom: 8px;
 }
 
 @include breakpoint( "<480px" ) {
-	.jetpack-connect__sso__shared-detail-label,
-	.jetpack-connect__sso__shared-detail-value {
+	.jetpack-connect__sso-shared-detail-label,
+	.jetpack-connect__sso-shared-detail-value {
 		display: block;
 	}
 
-	.jetpack-connect__sso__shared-detail-label {
+	.jetpack-connect__sso-shared-detail-label {
 		padding-bottom: 0;
 	}
 
-	.jetpack-connect__sso__shared-detail-value {
+	.jetpack-connect__sso-shared-detail-value {
 		padding-left: 0;
 	}
 }
 
-.jetpack-connect__sso__placeholder {
+.jetpack-connect__sso-placeholder {
 	@include placeholder( 23% );
 	background-color: transparent;
 }
 
-.jetpack-connect__sso__placeholder a {
+.jetpack-connect__sso-placeholder a {
 	color: transparent;
 }
