@@ -101,7 +101,11 @@ const PostOptions = React.createClass( {
 	},
 
 	getFollowUrl( feed ) {
-		return feed ? feed.get( 'feed_URL' ) : this.props.post.site_URL;
+		const post = this.props.post;
+		if ( DiscoverHelper.isDiscoverPost( post ) ) {
+			return DiscoverHelper.getSourceFollowUrl( post );
+		}
+		return feed ? feed.get( 'feed_URL' ) : get( post, 'site_URL' );
 	},
 
 	getFeed() {
@@ -163,7 +167,8 @@ const PostOptions = React.createClass( {
 	render() {
 		const post = this.props.post,
 			isEditPossible = PostUtils.userCan( 'edit_post', post ),
-			isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
+			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
+			isFollowable = !! this.state.followUrl;
 
 		let triggerClasses = [ 'post-options__trigger', 'ignore-click' ],
 			isBlockPossible = false;
@@ -195,7 +200,7 @@ const PostOptions = React.createClass( {
 						position={ this.state.popoverPosition }
 						context={ this.refs && this.refs.popoverMenuButton }>
 
-					<FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } />
+					{ isFollowable ? <FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } /> : null }
 
 					{ isEditPossible ? <PopoverMenuItem onClick={ this.editPost } className="post-options__edit has-icon">
 						<svg className="gridicon gridicon__edit" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
