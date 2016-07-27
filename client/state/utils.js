@@ -2,6 +2,7 @@
  * External dependencies
  */
 import tv4 from 'tv4';
+import { merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,11 +35,11 @@ export function isValidStateWithSchema( state, schema, checkForCycles = false, b
  */
 export function extendAction( action, data ) {
 	if ( 'function' !== typeof action ) {
-		return { ...action, ...data };
+		return merge( {}, action, data );
 	}
 
 	return ( dispatch ) => {
-		const newDispatch = ( thunkAction ) => dispatch( { ...thunkAction, ...data } );
+		const newDispatch = ( thunkAction ) => dispatch( merge( {}, thunkAction, data ) );
 		return action( newDispatch );
 	};
 }

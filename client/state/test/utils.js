@@ -31,28 +31,50 @@ describe( 'utils', () => {
 	} );
 
 	describe( 'extendAction()', () => {
-		it( 'should return an updated action object', () => {
+		it( 'should return an updated action object, merging data', () => {
 			const action = extendAction( {
-				type: 'ACTION_TEST'
-			}, { ok: true } );
+				type: 'ACTION_TEST',
+				meta: {
+					preserve: true
+				}
+			}, {
+				meta: {
+					ok: true
+				}
+			} );
 
 			expect( action ).to.eql( {
 				type: 'ACTION_TEST',
-				ok: true
+				meta: {
+					preserve: true,
+					ok: true
+				}
 			} );
 		} );
 
-		it( 'should return an updated action thunk', () => {
+		it( 'should return an updated action thunk, merging data on dispatch', () => {
 			const dispatch = spy();
 			const action = extendAction(
-				( thunkDispatch ) => thunkDispatch( { type: 'ACTION_TEST' } ),
-				{ ok: true }
+				( thunkDispatch ) => thunkDispatch( {
+					type: 'ACTION_TEST',
+					meta: {
+						preserve: true
+					}
+				} ),
+				{
+					meta: {
+						ok: true
+					}
+				}
 			);
 
 			action( dispatch );
 			expect( dispatch ).to.have.been.calledWithExactly( {
 				type: 'ACTION_TEST',
-				ok: true
+				meta: {
+					preserve: true,
+					ok: true
+				}
 			} );
 		} );
 	} );
