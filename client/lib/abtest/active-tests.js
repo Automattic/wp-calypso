@@ -82,6 +82,15 @@ module.exports = {
 		defaultVariation: 'designTypeWithoutStore',
 		allowExistingUsers: false,
 	},
+	signupThemePreview: {
+		datestamp: '20160727',
+		variations: {
+			disabled: 95,
+			enabled: 5,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
 	firstView: {
 		datestamp: '20160726',
 		variations: {
