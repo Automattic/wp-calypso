@@ -71,3 +71,125 @@
 		padding-right: 24px;
 	}
 }
+
+// discover extended styles
+.reader-discover-card {
+	margin-bottom: 25px;
+	padding: 0;
+	width: 100%;
+	height: 470px;
+
+	// Loading Placeholders
+	&.is-placeholder {
+		pointer-events: none;
+		user-select: none;
+		margin-right: 14px !important;
+
+		.reader-discover-card__site-title,
+		.reader-discover-post-preview__title,
+		.reader-discover-post-preview__byline,
+		.reader-discover-post-preview__excerpt,
+		.reader-discover-card__follower-count,
+		.site-icon {
+			color: transparent;
+			background-color: lighten( $gray, 30% );
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.reader-discover-card__site-title {
+			margin-bottom: 2px;
+		}
+
+		.reader-discover-post-preview__title,
+		.reader-discover-post-preview__byline {
+			width: 60%;
+		}
+
+		.reader-discover-post-preview__excerpt {
+			margin-bottom: 0;
+		}
+
+		.reader-discover-post-preview__post-content {
+			padding-bottom: 1em;
+		}
+
+		.site-icon {
+			float: left;
+			margin: 5px 5px 0 0;
+		}
+
+		.reader-discover-post-preview__featured-label {
+			display: none;
+		}
+
+		.reader-discover-post-preview__post-content {
+			margin-top: 0;
+			padding: 15px 10px 20px;
+		}
+	}
+
+	@include breakpoint( ">960px" ) {
+		display: inline-block;
+			margin: 0px 0px 14px 0px;
+			width: 47%;
+	}
+
+	&:first-child {
+
+		@include breakpoint( "<480px" ) {
+			margin-top: 20px;
+		}
+	}
+
+	&:nth-child( even ),
+	&:last-child {
+		margin-right: 0;
+	}
+
+	.site-icon__img {
+		position: static; // Makes sure site icons show up on second column of column-count
+	}
+
+
+	.is-byline {
+    font-size: 11px;
+    line-height: 1.5;
+	}
+
+	.reader-discover-card__post-content {
+ 		padding: 18px;
+ 	}
+
+	.reader-discover-card__footer {
+		width: 100%;
+		height: 30px;
+		position: absolute;
+		bottom: 0;
+		padding: 18px;
+
+		.site-icon {
+			clear: both;
+			float: left;
+		}
+
+		.reader-discover-card__site-info {
+			float: left;
+			padding-left: 12px;
+		}
+
+	}
+	.has-image {
+		.reader-discover-card__featured-image {
+			position: relative;
+			width: 100%;
+			height: 135px;
+			background-position: center;
+			background-size: cover;
+
+			@include breakpoint( "<680px" ) {
+				height: 470px;
+			}
+		}
+
+	}
+}

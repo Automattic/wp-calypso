@@ -6,6 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import controller from './controller';
 import readerController from 'reader/controller';
 
@@ -17,6 +18,6 @@ export default function() {
 		readerController.initAbTests,
 		readerController.removePost,
 		readerController.sidebar,
-		controller.discover
+		config.isEnabled( 'reader/expanded-discover' ) ? controller.expanded : controller.discover
 	);
 }
