@@ -77,9 +77,10 @@ export default class ErrorLogger {
 	}
 
 	saveNewPath( newPath ) {
-		this.diagnosticData.extra.previousPaths.unshift( this.diagnosticData.path );
-		this.diagnosticData.extra.previousPaths = this.diagnosticData.extra.previousPaths.slice( 0, 4 );
-		this.diagnosticData.path = newPath;
+		const paths = this.diagnosticData.extra.previousPaths;
+		paths.unshift( newPath );
+		this.diagnosticData.extra.previousPaths = paths.slice( 0, 5 );
+		this.diagnosticData.calypso_path = newPath;
 	}
 
 	saveDiagnosticReducer( fn ) {
