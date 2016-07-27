@@ -60,8 +60,17 @@
 	color: $gray;
 	list-style: none;
 	margin-left: 20px;
-	padding: 0;
-	overflow: hidden;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &::after {
+    	@include long-content-fade( $size: 35% );
+    	position: absolute;
+    	float: right;
+    }
 
 	li {
 		color: $gray;
