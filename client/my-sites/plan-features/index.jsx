@@ -7,6 +7,7 @@ import { map, reduce, noop } from 'lodash';
 import page from 'page';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -203,6 +204,12 @@ class PlanFeatures extends Component {
 				'is-placeholder': isPlaceholder
 			} );
 
+			let description = planConstantObj.getDescription();
+
+			if ( abtest( 'plansWording' ) === 'targetedWording' ) {
+				description = planConstantObj.getTargetedDescription();
+			}
+
 			return (
 				<td key={ planName } className={ classes }>
 					{
@@ -212,7 +219,7 @@ class PlanFeatures extends Component {
 					}
 
 					<p className="plan-features__description">
-						{ planConstantObj.getDescription() }
+						{ description }
 					</p>
 				</td>
 			);

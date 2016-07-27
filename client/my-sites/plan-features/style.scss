@@ -361,6 +361,11 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( "<660px" ) {
 		padding: 20px 20px 0 20px;
 	}
+
+	strong {
+		display: block;
+		color: lighten( $gray-dark, 25% );
+	}
 }
 
 .plan-features__item {

@@ -76,4 +76,12 @@ module.exports = {
 		defaultVariation: 'showPopover',
 		allowExistingUsers: false,
 	},
+	plansWording: {
+		datestamp: '20160727',
+		variations: {
+			originalWording: 50,
+			targetedWording: 50
+		},
+		defaultVariation: 'originalWording'
+	}
 };
