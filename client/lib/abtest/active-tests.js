@@ -85,10 +85,10 @@ module.exports = {
 	signupThemePreview: {
 		datestamp: '20160727',
 		variations: {
-			disabled: 95,
-			enabled: 5,
+			showThemePreview: 20,
+			hideThemePreview: 80,
 		},
-		defaultVariation: 'disabled',
+		defaultVariation: 'hideThemePreview',
 		allowExistingUsers: true,
 	},
 	firstView: {
