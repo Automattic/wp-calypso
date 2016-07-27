@@ -41,7 +41,8 @@ module.exports = React.createClass( {
 	},
 
 	render() {
-		const actionLabel = ( abtest( 'signupThemePreview' ) === 'showThemePreview' ) ? this.translate( 'Preview' ) : this.translate( 'Pick' );
+		const actionLabel = ( abtest( 'signupThemePreview' ) === 'showThemePreview' )
+			? this.translate( 'Preview' ) : this.translate( 'Pick' );
 		const getActionLabel = () => actionLabel;
 		const themes = this.getComputedThemes().map( theme => {
 			return {
