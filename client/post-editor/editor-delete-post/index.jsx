@@ -49,6 +49,9 @@ export default React.createClass( {
 
 	onSendToTrash() {
 		let message;
+		if ( this.state.isTrashing ) {
+			return;
+		}
 
 		if ( this.props.post.type === 'page' ) {
 			message = this.translate( 'Are you sure you want to trash this page?' );
@@ -80,7 +83,7 @@ export default React.createClass( {
 			<Button
 				borderless
 				className={ classes }
-				onClick={ ! this.state.isTrashing && this.onSendToTrash }
+				onClick={ this.onSendToTrash }
 				onMouseEnter={ () => this.setState( { tooltip: true } ) }
 				onMouseLeave={ () => this.setState( { tooltip: false } ) }
 				aria-label={ tooltipText }
