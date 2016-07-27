@@ -157,15 +157,15 @@ $plan-features-sidebar-width: 272px;
 		padding: 12px 12px 0 12px;
 	}
 
-	&.is-personal {
+	&.is-personal-plan {
 		border-bottom: solid 2px $alert-yellow;
 	}
 
-	&.is-premium {
+	&.is-premium-plan {
 		border-bottom: solid 2px $alert-green;
 	}
 
-	&.is-business {
+	&.is-business-plan {
 		border-bottom: solid 2px $alert-purple;
 	}
 }

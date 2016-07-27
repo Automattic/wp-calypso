@@ -32,7 +32,8 @@ import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
-	getPlanFeaturesObject
+	getPlanFeaturesObject,
+	getPlanClass
 } from 'lib/plans/constants';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
@@ -120,6 +121,7 @@ class PlanFeatures extends Component {
 						{ planConstantObj.getDescription() }
 					</p>
 					<PlanFeaturesActions
+						className={ getPlanClass( planName ) }
 						current={ current }
 						popular={ popular }
 						available = { available }
@@ -234,6 +236,7 @@ class PlanFeatures extends Component {
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
+						className={ getPlanClass( planName ) }
 						current={ current }
 						available = { available }
 						popular={ popular }
@@ -317,6 +320,7 @@ class PlanFeatures extends Component {
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
+						className={ getPlanClass( planName ) }
 						current={ current }
 						available = { available }
 						popular={ popular }

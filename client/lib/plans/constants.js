@@ -519,3 +519,23 @@ export function isMonthly( plan ) {
 export function isPopular( plan ) {
 	return includes( POPULAR_PLANS, plan );
 }
+
+export function getPlanClass( plan ) {
+	switch ( plan ) {
+		case PLAN_JETPACK_FREE:
+		case PLAN_FREE:
+			return 'is-free-plan';
+		case PLAN_PERSONAL:
+			return 'is-personal-plan';
+		case PLAN_PREMIUM:
+		case PLAN_JETPACK_PREMIUM:
+		case PLAN_JETPACK_PREMIUM_MONTHLY:
+			return 'is-premium-plan';
+		case PLAN_BUSINESS:
+		case PLAN_JETPACK_BUSINESS:
+		case PLAN_JETPACK_BUSINESS_MONTHLY:
+			return 'is-business-plan';
+		default:
+			return '';
+	}
+}
