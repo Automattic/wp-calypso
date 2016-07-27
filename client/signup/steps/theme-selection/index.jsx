@@ -12,9 +12,7 @@ import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
 import ThemePreview from 'my-sites/themes/theme-preview';
 import Button from 'components/button';
-import config from 'config';
-
-const themeDemosEnabled = config.isEnabled( 'signup/theme-demos' );
+import abtest from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'ThemeSelection',
@@ -74,7 +72,7 @@ module.exports = React.createClass( {
 	},
 
 	handleScreenshotClick( theme ) {
-		if ( themeDemosEnabled ) {
+		if ( abtest( 'signupThemePreview' ) === 'showThemePreview' ) {
 			this.showPreview( theme );
 		} else {
 			this.pickTheme( theme );

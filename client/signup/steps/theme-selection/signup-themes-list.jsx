@@ -9,9 +9,7 @@ import noop from 'lodash/noop';
  */
 import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
-import config from 'config';
-
-const themeDemosEnabled = config.isEnabled( 'signup/theme-demos' );
+import abtest from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'SignupThemesList',
@@ -43,7 +41,7 @@ module.exports = React.createClass( {
 	},
 
 	render() {
-		const actionLabel = themeDemosEnabled ? this.translate( 'Preview' ) : this.translate( 'Pick' );
+		const actionLabel = ( abtest( 'signupThemePreview' ) === 'showThemePreview' ) ? this.translate( 'Preview' ) : this.translate( 'Pick' );
 		const getActionLabel = () => actionLabel;
 		const themes = this.getComputedThemes().map( theme => {
 			return {
