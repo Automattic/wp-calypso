@@ -43,7 +43,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
-import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
+import { receivePost, resetPostEdits } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 import EditorDocumentHead from 'post-editor/editor-document-head';
@@ -694,7 +694,6 @@ const PostEditor = React.createClass( {
 		// Reset previous edits, preserving type
 		this.props.resetPostEdits( this.props.siteId );
 		this.props.resetPostEdits( post.site_ID, post.ID );
-		this.props.editPost( { type: this.props.type }, post.site_ID, post.ID );
 
 		const nextState = {
 			isSaving: false,
@@ -778,7 +777,6 @@ export default connect(
 			setEditorLastDraft,
 			resetEditorLastDraft,
 			receivePost,
-			editPost,
 			resetPostEdits,
 			setEditorPostId,
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
