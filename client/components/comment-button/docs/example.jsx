@@ -18,12 +18,10 @@ export default React.createClass( {
 				<h2>
 					<a href="/devdocs/blocks/comment-button">Comment Buttons</a>
 				</h2>
-				<Card>
-					<span>No comments:</span>
+				<Card compact>
 					<CommentButton commentCount={ 0 } />
 				</Card>
-				<Card>
-					<span>With comments:</span>
+				<Card compact>
 					<CommentButton commentCount={ 42 } />
 				</Card>
 			</div>
