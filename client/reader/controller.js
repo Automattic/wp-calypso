@@ -178,6 +178,11 @@ module.exports = {
 		next();
 	},
 
+	unmountSidebar: function( context, next ) {
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		next();
+	},
+
 	following: function( context ) {
 		var FollowingComponent = require( 'reader/following/main' ),
 			basePath = route.sectionify( context.path ),
