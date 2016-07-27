@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditedPost } from 'state/posts/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import PageParent from 'post-editor/editor-page-parent';
@@ -49,9 +49,8 @@ function EditorDrawerPageOptions( { translate, siteId, postId, post, postType, h
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
-	const post = getEditedPost( state, siteId, postId );
-	const postType = get( post, 'type' );
+	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const hierarchical = 'page' === postType || get( getPostType( state, siteId, postType ), 'hierarchical' );
 
-	return { siteId, postId, post, postType, hierarchical };
+	return { siteId, postId, postType, hierarchical };
 } )( localize( EditorDrawerPageOptions ) );
