@@ -1,3 +1,8 @@
+/** @ssr-ready **/
+
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import find from 'lodash/find';
@@ -66,6 +71,12 @@ SearchPreview.propTypes = {
 	title: PropTypes.string,
 	url: PropTypes.string,
 	snippet: PropTypes.string
+};
+
+SearchPreview.defaultProps = {
+	title: '',
+	url: '',
+	snippet: ''
 };
 
 export default SearchPreview;
