@@ -1,4 +1,26 @@
 
+3.0.0 / 2016-07-27
+==================
+
+ * examples: add wp-api example
+ * client-test-app: add index.html
+ * Add test stuff - Add tests - Add rules to compile the browser application
+ * core: improve WP-API integration - detect response error in envelope mode - remove _headers from body and add a thrid response parameter in the callback - add status to headers parameter
+ * examples: eslint
+ * examples: update bundle path and global var
+ * create bundle file only for testing purpose
+ * pkg: make build in prepublish hook
+ * pkg: publish only useful files in npm package
+ * rewrite using ES6
+ * Add eslint rules
+ * change compiling process - Use n8-make to make pre-compilation - Make bundle file using Webpack``
+ * index: opt-in to `supports_error_obj` better Errors
+ * Use `wp-error` module for common Error handling logic
+ * index: add missing `uninstall()` function
+ * Fix TypeError on string body 'error' from rest-proxy
+ * Add pinghub example
+ * Add support for persistent connections
+
 2.0.0 / 2016-03-11
 ==================
 
