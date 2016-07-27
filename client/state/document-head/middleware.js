@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { DOCUMENT_HEAD_TITLE_SET, DOCUMENT_HEAD_UNREAD_COUNT_SET } from 'state/action-types';
-import { setTitle as legacySetTitle, setCount as legacySetCount } from './actions';
+import { setTitle as legacySetTitle, setCount as legacySetCount } from 'lib/screen-title/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
@@ -13,7 +13,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
  * @param {Object} store Redux store instance
  * @returns {Function} A configured middleware with store
  */
-export const screenTitleMiddleware = ( { getState } ) => ( next ) => ( action ) => {
+export default ( { getState } ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
 		case DOCUMENT_HEAD_TITLE_SET:
 			legacySetTitle( action.title, { siteID: getSelectedSiteId( getState() ) } );
