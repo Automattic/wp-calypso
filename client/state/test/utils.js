@@ -4,7 +4,7 @@
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 import noop from 'lodash/noop';
-import { stub } from 'sinon';
+import { stub, spy } from 'sinon';
 
 /**
  * Internal dependencies
@@ -22,12 +22,61 @@ describe( 'utils', () => {
 		} ),
 		actionSerialize = { type: SERIALIZE },
 		actionDeserialize = { type: DESERIALIZE };
-	let createReducer, reducer;
+	let extendAction, createReducer, reducer;
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'lib/warn', noop );
 
-		createReducer = require( 'state/utils' ).createReducer;
+		( { extendAction, createReducer } = require( 'state/utils' ) );
+	} );
+
+	describe( 'extendAction()', () => {
+		it( 'should return an updated action object, merging data', () => {
+			const action = extendAction( {
+				type: 'ACTION_TEST',
+				meta: {
+					preserve: true
+				}
+			}, {
+				meta: {
+					ok: true
+				}
+			} );
+
+			expect( action ).to.eql( {
+				type: 'ACTION_TEST',
+				meta: {
+					preserve: true,
+					ok: true
+				}
+			} );
+		} );
+
+		it( 'should return an updated action thunk, merging data on dispatch', () => {
+			const dispatch = spy();
+			const action = extendAction(
+				( thunkDispatch ) => thunkDispatch( {
+					type: 'ACTION_TEST',
+					meta: {
+						preserve: true
+					}
+				} ),
+				{
+					meta: {
+						ok: true
+					}
+				}
+			);
+
+			action( dispatch );
+			expect( dispatch ).to.have.been.calledWithExactly( {
+				type: 'ACTION_TEST',
+				meta: {
+					preserve: true,
+					ok: true
+				}
+			} );
+		} );
 	} );
 
 	describe( '#createReducer()', () => {
