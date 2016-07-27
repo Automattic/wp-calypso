@@ -107,6 +107,14 @@
 			width: 100%;
 		}
 
+		.post-card__search-title {
+			display: block;
+
+			@include breakpoint( ">480px" ) {
+				display: inline;
+			}
+		}
+
 		.post-card__search-title-link {
 			color: $white;
 			padding-right: 20px;
@@ -178,8 +186,8 @@
 }
 
 .post-card__search-title {
-	@extend %content-font;
 	display: inline;
+	@extend %content-font;
 	font-size: 20px;
 	line-height: 20px;
 	font-weight: 700;
@@ -208,14 +216,14 @@
 		bottom: 0;
 		left: 0;
 		top: 0;
-	width: 90px;
+	width: 230px;
 
 	@include breakpoint( "660px-960px" ) {
 		width: 115px;
 	}
 
-	@include breakpoint( ">480px" ) {
-		width: 230px;
+	@include breakpoint( "<480px" ) {
+		width: 90px;
 	}
 }
 
@@ -238,10 +246,10 @@
 	font-size: 13px;
 	list-style: none;
 	margin: 6px 0;
-	padding-bottom: 10px;
+	padding: 0 0 10px 0;
 
 	@include breakpoint( ">480px" ) {
-		padding-bottom: 20px;
+		padding: 0 0 20px 0;
 	}
 
 	.gravatar {
