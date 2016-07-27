@@ -26,8 +26,8 @@ var wpcom = require( 'wpcom' )( '<your-token>' );
 wpcom
 	.site( 'your-blog.wordpress.com' )
 	.postsList( { number: 8 } )
-		then( list => { ... } )
-		catch( error => { ... } );
+		.then( list => { ... } )
+		.catch( error => { ... } );
 ```
 
 ### Browser
@@ -88,8 +88,8 @@ If you do need a token, here are some links that will help you generate one:
 var wpcom = require( 'wpcom' )( '<your-token>' );
 var blog = wpcom.site( 'your-blog.wordpress.com' );
 blog.post( { slug: 'a-post-slug' } ).update( data )
-	then( res => { ... } )
-	catch( err => { ... } );
+	.then( res => { ... } )
+	.catch( err => { ... } );
 ```
 
 You can omit the API token for operations that don't require permissions:
