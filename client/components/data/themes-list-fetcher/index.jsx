@@ -54,13 +54,13 @@ const ThemesListFetcher = React.createClass( {
 		}
 		if (
 			nextProps.filter !== this.props.filter ||
-				nextProps.tier !== this.props.tier || (
-					nextProps.search !== this.props.search && (
-						! nextProps.lastQuery.isJetpack ||
-						nextProps.lastQuery.hasSiteChanged
-						)
-					)
-			) {
+			nextProps.tier !== this.props.tier || (
+				nextProps.search !== this.props.search && (
+					! nextProps.lastQuery.isJetpack ||
+					nextProps.lastQuery.hasSiteChanged
+				)
+			)
+		) {
 			this.refresh( nextProps );
 		}
 	},
