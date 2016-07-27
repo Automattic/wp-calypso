@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { omit, uniqueId, isUndefined } from 'lodash';
+import omit from 'lodash/omit';
+import uniqueId from 'lodash/uniqueId';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE
 } from 'state/action-types';
-import { setEditorAddedTerm } from 'state/ui/editor/terms/actions';
 
 /**
  * Returns an action thunk, dispatching progress of a request to add a new term
@@ -23,10 +23,9 @@ import { setEditorAddedTerm } from 'state/ui/editor/terms/actions';
  * @param  {Number} siteId   Site ID
  * @param  {String} taxonomy Taxonomy Slug
  * @param  {Object} term     Object of new term attributes
- * @param  {Number} postId   Post ID
  * @return {Object}          Action object
  */
-export function addTerm( siteId, taxonomy, term, postId ) {
+export function addTerm( siteId, taxonomy, term ) {
 	return ( dispatch ) => {
 		const temporaryId = uniqueId( 'temporary' );
 
@@ -36,15 +35,7 @@ export function addTerm( siteId, taxonomy, term, postId ) {
 		} ) );
 
 		return wpcom.site( siteId ).taxonomy( taxonomy ).term().add( term ).then(
-			( data ) => {
-				const newTerm = omit( data, '_headers' );
-				dispatch( receiveTerm( siteId, taxonomy, newTerm ) );
-
-				// if a postId is set dispatch action to select term
-				if ( ! isUndefined( postId ) ) {
-					dispatch( setEditorAddedTerm( siteId, postId, taxonomy, newTerm.ID ) );
-				}
-			},
+			( data ) => dispatch( receiveTerm( siteId, taxonomy, omit( data, '_headers' ) ) ),
 			() => Promise.resolve() // Silently ignore failure so we can proceed to remove temporary
 		).then( () => dispatch( removeTerm( siteId, taxonomy, temporaryId ) ) );
 	};

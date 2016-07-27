@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { merge } from 'lodash';
+import { merge, get, isUndefined } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { EDITOR_TERM_ADDED_SET } from 'state/action-types';
+import { TERMS_RECEIVE, EDITOR_TERM_ADDED_SET } from 'state/action-types';
 
 /**
  * Returns the updated editor term taxonomy added state after action has been
@@ -19,6 +19,18 @@ import { EDITOR_TERM_ADDED_SET } from 'state/action-types';
  */
 export function added( state = null, action ) {
 	switch ( action.type ) {
+		case TERMS_RECEIVE:
+			if ( isUndefined( action.postId ) ) {
+				return state;
+			}
+			return merge( {}, state, {
+				[ action.siteId ]: {
+					[ action.postId ]: {
+						[ action.taxonomy ]: get( action.terms, '[0].ID' )
+					}
+				}
+			} );
+
 		case EDITOR_TERM_ADDED_SET:
 			return merge( {}, state, {
 				[ action.siteId ]: {

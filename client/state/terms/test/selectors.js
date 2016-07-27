@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import TermQueryManager from 'lib/query-manager/term';
 import {
+	getTerm,
 	getTerms,
 	getTermsForQuery,
 	getTermsForQueryIgnoringPage,
@@ -21,6 +22,55 @@ describe( 'selectors', () => {
 	beforeEach( () => {
 		getTermsForQuery.memoizedSelector.cache.clear();
 		getTermsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
+	} );
+
+	describe( 'getTerm()', () => {
+		it( 'should return undefined if no term by siteId, taxonomy, term ID combo exists', () => {
+			const term = getTerm( {
+				terms: {
+					queries: {
+						2916284: {
+							category: new TermQueryManager( {
+								items: {
+									111: {
+										ID: 111,
+										name: 'Ribs'
+									}
+								},
+								queries: {}
+							} )
+						}
+					}
+				},
+			}, 2916284, 'category', 777 );
+
+			expect( term ).to.be.undefined;
+		} );
+
+		it( 'should return a term by siteId, taxonomy, term ID combo', () => {
+			const term = getTerm( {
+				terms: {
+					queries: {
+						2916284: {
+							category: new TermQueryManager( {
+								items: {
+									111: {
+										ID: 111,
+										name: 'Ribs'
+									}
+								},
+								queries: {}
+							} )
+						}
+					}
+				},
+			}, 2916284, 'category', 111 );
+
+			expect( term ).to.eql( {
+				ID: 111,
+				name: 'Ribs'
+			} );
+		} );
 	} );
 
 	describe( 'isRequestingTermsForQuery()', () => {
