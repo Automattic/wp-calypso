@@ -166,8 +166,7 @@ const EditorDrawer = React.createClass( {
 		return (
 			<EditorSharingAccordion
 				site={ this.props.site }
-				post={ this.props.post }
-				isNew={ this.props.isNew } />
+				post={ this.props.post } />
 		);
 	},
 
