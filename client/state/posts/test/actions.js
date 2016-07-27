@@ -570,8 +570,6 @@ describe( 'actions', () => {
 						name: 'ribs',
 						description: ''
 					} ],
-					query: undefined,
-					found: undefined,
 					postId: 13640
 				} );
 			} );
