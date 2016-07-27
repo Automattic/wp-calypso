@@ -109,21 +109,19 @@
 
 		.post-card__search-title {
 			display: block;
+			padding-right: 20px;
+			position: relative;
+				top: 100px;
+			z-index: 1;
 
 			@include breakpoint( ">480px" ) {
 				display: inline;
+				top: 80px;
 			}
 		}
 
 		.post-card__search-title-link {
 			color: $white;
-			padding-right: 20px;
-			position: relative;
-				top: 80px;
-
-				@include breakpoint( "<480px" ) {
-					top: 100px;
-				}
 
 			&:hover {
 				opacity: .8;
@@ -132,10 +130,10 @@
 
 		.post-card__search-byline {
 			position: relative;
-				top: 80px;
+				top: 100px;
 
-				@include breakpoint( "<480px" ) {
-					top: 100px;
+				@include breakpoint( ">480px" ) {
+					top: 80px;
 				}
 
 			a,
