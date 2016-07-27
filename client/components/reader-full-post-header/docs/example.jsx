@@ -22,8 +22,29 @@ module.exports = React.createClass( {
 			tags: {
 				'banana': {
 					name: 'Banana',
-					slug: 'banana'
-				}
+					slug: 'banana',
+					display_name: 'banana'
+				},
+				'pineapple': {
+					name: 'Pineapple',
+					slug: 'pineapple',
+					display_name: 'pineapple'
+				},
+				'mango': {
+					name: 'Mango',
+					slug: 'mango',
+					display_name: 'mango'
+				},
+				'feijoa': {
+					name: 'Feijoa',
+					slug: 'feijoa',
+					display_name: 'feijoa'
+				},
+				'pear': {
+					name: 'Pear',
+					slug: 'pear',
+					display_name: 'pear'
+				},
 			}
 		};
 

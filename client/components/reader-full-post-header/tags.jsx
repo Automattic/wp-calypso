@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { take } from 'lodash';
+import { take, map, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,15 +10,14 @@ import { take } from 'lodash';
 
 const ReaderFullPostHeaderTags = ( { tags } ) => {
 	const numberOfTagsToDisplay = 5;
-	const tagsToDisplay = take( tags, numberOfTagsToDisplay );
+	const tagsToDisplay = take( values( tags ), numberOfTagsToDisplay );
+	const listItems = map( tagsToDisplay, tag => {
+		return ( <li><a href={ `/tag/${tag.slug}` }>{ tag.display_name }</a></li> );
+	} );
 
 	return (
 		<ul className="reader-full-post-header__tag-list">
-			<li><a href="">Tag 1</a></li>
-			<li><a href="">Tag 2</a></li>
-			<li><a href="">Tag 3</a></li>
-			<li><a href="">Tag 4</a></li>
-			<li><a href="">Tag 5</a></li>
+			{ listItems }
 		</ul>
 	);
 };

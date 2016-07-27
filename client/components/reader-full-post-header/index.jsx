@@ -32,7 +32,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 				</h1>
 				: null }
 			<div className="reader-full-post-header__meta">
-				{ post.date && post.URL
+				{ post.date
 					? <span className="reader-full-post-header__date">
 						<a className="reader-full-post-header__date-link"
 							onClick={ recordDateClick }
@@ -42,12 +42,11 @@ const ReaderFullPostHeader = ( { post } ) => {
 						</a>
 					</span> : null }
 
-				<div className="reader-full-post-header__tags">
+				{ post.tags
+					? <div className="reader-full-post-header__tags">
 					<Gridicon icon="tag" size={ 18 } />
-					{ post.tags
-					? <ReaderFullPostHeaderTags tags={ post.tags } />
-				 	: null }
-				</div>
+					<ReaderFullPostHeaderTags tags={ post.tags } />
+				</div> : null }
 			</div>
 		</div>
 	);
