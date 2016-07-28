@@ -132,6 +132,14 @@
 	}
 }
 
+.web-preview__back-to-preview-button {
+	display: none;
+
+	@include breakpoint( "<660px" ) {
+		display: block;
+	}
+}
+
 .web-preview__toolbar-tray {
 	margin-left: auto;
 	display: flex;

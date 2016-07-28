@@ -71,6 +71,19 @@ export const PreviewToolbar = props => {
 				) )
 			}
 			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
+			<button
+				aria-hidden={ true }
+				key={ 'back-to-preview' }
+				className={ classNames(
+					'web-preview__device-button',
+					'web-preview__back-to-preview-button'
+				) }
+				onClick={ partial( setDeviceViewport, 'phone' ) }
+			>
+				<Gridicon icon="phone" />
+			</button>
+			}
+			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
 				<button
 					aria-label={ translate( 'Show SEO and search previews' ) }
 					className={ classNames(
