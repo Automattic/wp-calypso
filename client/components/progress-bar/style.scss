@@ -19,6 +19,7 @@
 	height: 100%;
 	background-color: lighten( $blue-dark, 10% );
 	border-radius: 4.5px;
+	transition: width 200ms;
 }
 
 /* Percentage bar */
