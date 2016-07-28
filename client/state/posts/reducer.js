@@ -2,15 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import get from 'lodash/get';
-import set from 'lodash/set';
-import omit from 'lodash/omit';
-import omitBy from 'lodash/omitBy';
-import isEqual from 'lodash/isEqual';
-import reduce from 'lodash/reduce';
-import groupBy from 'lodash/groupBy';
-import merge from 'lodash/merge';
-import findKey from 'lodash/findKey';
+import { get, set, omit, omitBy, isEqual, reduce, groupBy, merge, findKey, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -40,7 +32,8 @@ import {
 	getSerializedPostsQuery,
 	mergeIgnoringArrays,
 } from './utils';
-import { createReducer } from 'state/utils';
+import { createReducer, isValidStateWithSchema } from 'state/utils';
+import { itemsSchema, queriesSchema } from './schema';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -78,7 +71,7 @@ export const items = createReducer( {}, {
 
 		return omit( state, globalId );
 	}
-} );
+}, itemsSchema );
 
 /**
  * Returns the updated site post requests state after an action has been
@@ -209,6 +202,16 @@ export const queries = ( () => {
 		},
 		[ POST_DELETE_SUCCESS ]: ( state, { siteId, postId } ) => {
 			return applyToManager( state, siteId, 'removeItem', false, postId );
+		},
+		[ SERIALIZE ]: ( state ) => {
+			return mapValues( state, ( manager ) => manager.toJSON() );
+		},
+		[ DESERIALIZE ]: ( state ) => {
+			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
+				return {};
+			}
+
+			return mapValues( state, ( manager ) => PostQueryManager.parse( manager ) );
 		}
 	} );
 } )();
