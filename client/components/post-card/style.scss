@@ -125,8 +125,8 @@
 		.post-card__search-byline {
 			position: relative;
 
-			a,
-			a:visited {
+			.post-card__byline-link,
+			.post-card__byline-link:visited {
 				color: $white;
 			}
 
@@ -244,6 +244,10 @@
 	}
 }
 
+.post-card__byline-author-and-site {
+	margin-right: 6px;
+}
+
 .post-card__author-and-site {
 	color: lighten( $gray, 10% );
 	margin-right: 10px;
@@ -315,16 +319,14 @@
 }
 
 // Custom colors for Site and Author info
+
 .reader__content {
 
-	.post-card__author-and-site {
+	.post-card__byline-link,
+	.post-card__byline-link:visited {
+		color: lighten( $gray, 10% );
 
-		a,
-		a:visited {
-			color: lighten( $gray, 10% );
-		}
-
-		a:hover {
+		&:hover {
 			color: $blue-wordpress;
 		}
 	}
