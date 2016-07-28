@@ -50,14 +50,14 @@ function createNavigation( context ) {
 		basePath = route.sectionify( context.pathname );
 	}
 
-	return React.createElement( ReduxProvider, { store: context.store },
-		React.createElement( NavigationComponent, {
-			path: context.path,
-			allSitesPath: basePath,
-			siteBasePath: basePath,
-			user,
-			sites
-		} )
+	return (
+		<ReduxProvider store={ context.store }>
+			<NavigationComponent path={ context.path }
+				allSitesPath={ basePath }
+				siteBasePath={ basePath }
+				user={ user }
+				sites={ sites } />
+		</ReduxProvider>
 	);
 }
 
