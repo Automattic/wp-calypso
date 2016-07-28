@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
+import PureComponent from 'react-pure-render/component';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 
@@ -12,12 +13,15 @@ import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import PopoverMenu from 'components/popover/menu';
 
-class EllipsisMenu extends Component {
+class EllipsisMenu extends PureComponent {
 	static propTypes = {
 		translate: PropTypes.func,
 		toggleTitle: PropTypes.string,
 		position: PropTypes.string,
-		children: PropTypes.node,
+		children: PropTypes.oneOfType( [
+			PropTypes.node,
+			PropTypes.func
+		] ),
 		disabled: PropTypes.bool,
 	};
 
@@ -47,8 +51,21 @@ class EllipsisMenu extends Component {
 		}
 	}
 
+	getChildren() {
+		const { children } = this.props;
+		if ( 'function' !== typeof children ) {
+			return children;
+		}
+
+		if ( ! this.state.isMenuVisible ) {
+			return null;
+		}
+
+		return children();
+	}
+
 	render() {
-		const { toggleTitle, translate, position, children, disabled } = this.props;
+		const { toggleTitle, translate, position, disabled } = this.props;
 		const { isMenuVisible, popoverContext } = this.state;
 		const classes = classnames( 'ellipsis-menu', {
 			'is-menu-visible': isMenuVisible,
@@ -74,7 +91,7 @@ class EllipsisMenu extends Component {
 					position={ position }
 					context={ popoverContext }
 					className="ellipsis-menu__menu popover">
-					{ children }
+					{ this.getChildren() }
 				</PopoverMenu>
 			</span>
 		);

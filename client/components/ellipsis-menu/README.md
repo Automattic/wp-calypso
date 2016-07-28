@@ -47,12 +47,12 @@ The position at which the menu should be rendered. If omitted, uses the default 
 ### `children`
 
 <table>
-	<tr><td>Type</td><td><code>PropTypes.node</code></td></tr>
+	<tr><td>Type</td><td>Function, <code>PropTypes.node</code></td></tr>
 	<tr><td>Required</td><td>No</td></tr>
 	<tr><td>Default</td><td><code>null</code></td></tr>
 </table>
 
-Menu children to be rendered.
+Menu children to be rendered. If specified as a function, the function will be invoked only when the menu is open, and is expected to return the child elements for display in the menu. This can be a performance optimization if the child menu items rendering is prohibitively expensive.
 
 ### `disabled`
 
