@@ -35,7 +35,7 @@ function PostActionsEllipsisMenuStats( { translate, siteSlug, postId, status, is
 PostActionsEllipsisMenuStats.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
-	siteSlug: PropTypes.number,
+	siteSlug: PropTypes.string,
 	postId: PropTypes.number,
 	status: PropTypes.string,
 	isStatsActive: PropTypes.bool
