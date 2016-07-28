@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:signup-flow-controller:test' ), // eslint-disable-line no-unused-vars
-	assert = require( 'assert' ),
-	defer = require( 'lodash/defer' ),
-	ary = require( 'lodash/ary' );
+import assert from 'assert';
+import defer from 'lodash/defer';
+import ary from 'lodash/ary';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import { createStore } from 'redux';
+import { reducer } from 'state';
 
 describe( 'flow-controller', function() {
-	var SignupProgressStore,
+	let SignupProgressStore,
 		SignupDependencyStore,
 		SignupFlowController,
 		SignupActions,
@@ -27,6 +28,9 @@ describe( 'flow-controller', function() {
 		SignupFlowController = require( '../flow-controller' );
 		SignupActions = require( '../actions' );
 		SignupProgressStore.reset();
+
+		const store = createStore( reducer );
+		SignupDependencyStore.setReduxStore( store );
 	} );
 
 	afterEach( function() {
@@ -154,6 +158,6 @@ describe( 'flow-controller', function() {
 					SignupActions.submitSignupStep( { stepName: 'stepA' } );
 				} );
 			} );
-		} )
+		} );
 	} );
 } );

@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:signup-dependency-store:test' ), // eslint-disable-line no-unused-vars
-	assert = require( 'assert' );
+import assert from 'assert';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import { createStore } from 'redux';
+import { reducer } from 'state';
 
 describe( 'dependency-store', function() {
-	var SignupProgressStore,
+	let SignupProgressStore,
 		SignupDependencyStore,
 		SignupActions;
 
@@ -21,6 +22,9 @@ describe( 'dependency-store', function() {
 		SignupProgressStore = require( '../progress-store' );
 		SignupDependencyStore = require( '../dependency-store' );
 		SignupActions = require( '../actions' );
+
+		const store = createStore( reducer );
+		SignupDependencyStore.setReduxStore( store );
 	} );
 
 	afterEach( function() {

@@ -3,28 +3,36 @@
  */
 import sinon from 'sinon';
 
-var debug = require( 'debug' )( 'calypso:signup-progress-store:test' ), // eslint-disable-line no-unused-vars
-	assert = require( 'assert' ),
-	omit = require( 'lodash/omit' ),
-	find = require( 'lodash/find' ),
-	last = require( 'lodash/last' ),
-	defer = require( 'lodash/defer' );
+import assert from 'assert';
+import omit from 'lodash/omit';
+import find from 'lodash/find';
+import last from 'lodash/last';
+import defer from 'lodash/defer';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery' ;
 
 describe( 'progress-store', function() {
-	var SignupProgressStore, SignupActions, Dispatcher;
+	let SignupProgressStore, SignupActions, Dispatcher;
 
 	useFakeDom();
 	require( 'test/helpers/use-filesystem-mocks' )( __dirname );
 
 	before( () => {
+		Dispatcher = require( 'dispatcher' );
+
+		useMockery( ( mockery ) => {
+			mockery.registerMock( 'dispatcher', Dispatcher );
+			mockery.registerMock( './dependency-store', {
+				dispatchToken: Dispatcher.register( ()=> {} )
+			} );
+		} );
+
 		SignupProgressStore = require( '../progress-store' );
 		SignupActions = require( '../actions' );
-		Dispatcher = require( 'dispatcher' );
 	} );
 
 	it( 'should return an empty at first', function() {
