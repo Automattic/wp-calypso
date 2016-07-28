@@ -27,6 +27,7 @@ var staticFiles = [
 ];
 
 var sections = sectionsModule.get();
+var commitChecksum = getCurrentCommitShortChecksum();
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -128,7 +129,7 @@ function getDefaultContext( request ) {
 		isDebug: context.env === 'development' || context.isDebug,
 		tinymceWpSkin: context.urls[ 'tinymce/skins/wordpress/wp-content.css' ],
 		tinymceEditorCss: context.urls[ 'editor.css' ],
-		commitChecksum: getCurrentCommitShortChecksum()
+		commitChecksum: commitChecksum
 	};
 
 	if ( CALYPSO_ENV === 'wpcalypso' ) {

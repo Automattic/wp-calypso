@@ -240,7 +240,7 @@ function reduxStoreReady( reduxStore ) {
 				calypso_env: config( 'env_id' )
 			} );
 
-			if ( window && window.app && window.app.commitChecksum ) {
+			if ( global.window && window.app && window.app.commitChecksum ) {
 				errorLogger.saveDiagnosticData( { commit: window.app.commitChecksum } );
 			}
 
