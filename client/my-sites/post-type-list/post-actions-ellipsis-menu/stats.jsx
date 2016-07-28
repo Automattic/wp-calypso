@@ -13,13 +13,13 @@ import { mc } from 'lib/analytics';
 import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getPost } from 'state/posts/selectors';
 
+function bumpStat() {
+	mc.bumpStat( 'calypso_cpt_actions', 'stats' );
+}
+
 function PostActionsEllipsisMenuStats( { translate, siteSlug, postId, status, isStatsActive } ) {
 	if ( ! isStatsActive || 'publish' !== status ) {
 		return null;
-	}
-
-	function bumpStat() {
-		mc.bumpStat( 'calypso_cpt_actions', 'stats' );
 	}
 
 	return (
