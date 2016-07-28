@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { cloneDeep, findIndex, map } from 'lodash';
 
@@ -17,11 +17,14 @@ import { getEditedPostValue } from 'state/posts/selectors';
 
 class EditorTermSelector extends Component {
 	static propTypes = {
-		siteId: React.PropTypes.number,
-		postId: React.PropTypes.number,
-		postTerms: React.PropTypes.object,
-		postType: React.PropTypes.string,
-		taxonomyName: React.PropTypes.string
+		siteId: PropTypes.number,
+		postId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.string
+		] ),
+		postTerms: PropTypes.object,
+		postType: PropTypes.string,
+		taxonomyName: PropTypes.string
 	};
 
 	constructor( props ) {
@@ -56,7 +59,7 @@ class EditorTermSelector extends Component {
 	}
 
 	render() {
-		const { postType, siteId, taxonomyName } = this.props;
+		const { postType, postId, siteId, taxonomyName } = this.props;
 
 		return (
 			<div>
@@ -68,7 +71,7 @@ class EditorTermSelector extends Component {
 					siteId={ siteId }
 					multiple={ true }
 				/>
-				<AddTerm taxonomy={ taxonomyName } postType={ postType } />
+				<AddTerm taxonomy={ taxonomyName } postType={ postType } postId={ postId } />
 			</div>
 		);
 	}
@@ -77,7 +80,7 @@ class EditorTermSelector extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
+		const postId = getEditorPostId( state ) || '';
 
 		return {
 			postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' ),

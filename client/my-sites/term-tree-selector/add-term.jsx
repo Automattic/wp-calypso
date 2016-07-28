@@ -26,7 +26,7 @@ import viewport from 'lib/viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
-import { addTerm } from 'state/terms/actions';
+import { addTermForPost } from 'state/posts/actions';
 
 class TermSelectorAddTerm extends Component {
 	static initialState = {
@@ -40,6 +40,10 @@ class TermSelectorAddTerm extends Component {
 	static propTypes = {
 		labels: PropTypes.object,
 		postType: PropTypes.string,
+		postId: PropTypes.oneOfType( [
+			PropTypes.string,
+			PropTypes.number
+		] ),
 		siteId: PropTypes.number,
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
@@ -142,9 +146,9 @@ class TermSelectorAddTerm extends Component {
 			return;
 		}
 
-		const { siteId, taxonomy } = this.props;
+		const { postId, siteId, taxonomy } = this.props;
 
-		this.props.addTerm( siteId, taxonomy, term );
+		this.props.addTermForPost( siteId, taxonomy, term, postId );
 		this.closeDialog();
 	}
 
@@ -227,5 +231,5 @@ export default connect(
 			siteId
 		};
 	},
-	{ addTerm }
+	{ addTermForPost }
 )( localize( TermSelectorAddTerm ) );
