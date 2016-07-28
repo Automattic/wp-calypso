@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { cloneDeep, findIndex, map } from 'lodash';
 
@@ -11,22 +11,35 @@ import { cloneDeep, findIndex, map } from 'lodash';
 import TermTreeSelector from 'my-sites/term-tree-selector';
 import AddTerm from 'my-sites/term-tree-selector/add-term';
 import { editPost } from 'state/posts/actions';
+import { resetEditorTermAdded } from 'state/ui/editor/terms/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
+import { getEditorTermAdded } from 'state/ui/editor/terms/selectors';
 
 class EditorTermSelector extends Component {
 	static propTypes = {
-		siteId: React.PropTypes.number,
-		postId: React.PropTypes.number,
-		postTerms: React.PropTypes.object,
-		postType: React.PropTypes.string,
-		taxonomyName: React.PropTypes.string
+		siteId: PropTypes.number,
+		postId: PropTypes.oneOfType( [
+			PropTypes.number,
+			PropTypes.string
+		] ),
+		postTerms: PropTypes.object,
+		postType: PropTypes.string,
+		taxonomyName: PropTypes.string
 	};
 
 	constructor( props ) {
 		super( props );
 		this.boundOnTermsChange = this.onTermsChange.bind( this );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.addedTerm && ( nextProps.addedTerm !== this.props.addedTerm ) ) {
+			const { siteId, postId, taxonomyName, addedTerm } = nextProps;
+			this.onTermsChange( addedTerm );
+			nextProps.resetEditorTermAdded( siteId, postId, taxonomyName );
+		}
 	}
 
 	onTermsChange( selectedTerm ) {
@@ -56,7 +69,7 @@ class EditorTermSelector extends Component {
 	}
 
 	render() {
-		const { postType, siteId, taxonomyName } = this.props;
+		const { postType, postId, siteId, taxonomyName } = this.props;
 
 		return (
 			<div>
@@ -68,23 +81,24 @@ class EditorTermSelector extends Component {
 					siteId={ siteId }
 					multiple={ true }
 				/>
-				<AddTerm taxonomy={ taxonomyName } postType={ postType } />
+				<AddTerm taxonomy={ taxonomyName } postType={ postType } postId={ postId } />
 			</div>
 		);
 	}
 }
 
 export default connect(
-	( state ) => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state );
+		const postId = getEditorPostId( state ) || '';
 
 		return {
 			postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' ),
 			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
+			addedTerm: getEditorTermAdded( state, siteId, postId, ownProps.taxonomyName ),
 			siteId,
 			postId
 		};
 	},
-	{ editPost }
+	{ editPost, resetEditorTermAdded }
 )( EditorTermSelector );
