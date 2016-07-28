@@ -211,15 +211,15 @@ describe( 'index', function() {
 		} );
 
 		it( 'should have all the default headers', function() {
-			expect( output ).to.have.string( '"Project-Id-Version: _s i18nTest"\n' );
+			expect( output ).to.have.string( '"Project-Id-Version: _s i18nTest\\n"\n' );
 			expect( output ).to.have.string( '"Report-Msgid-Bugs-To:' );
 			expect( output ).to.have.string( '"POT-Creation-Date:' );
-			expect( output ).to.have.string( '"MIME-Version: 1.0"\n' );
-			expect( output ).to.have.string( '"Content-Type: text/plain; charset=UTF-8"\n' );
-			expect( output ).to.have.string( '"Content-Transfer-Encoding: 8bit"\n' );
+			expect( output ).to.have.string( '"MIME-Version: 1.0\\n"\n' );
+			expect( output ).to.have.string( '"Content-Type: text/plain; charset=UTF-8\\n"\n' );
+			expect( output ).to.have.string( '"Content-Transfer-Encoding: 8bit\\n"\n' );
 			expect( output ).to.have.string( '"PO-Revision-Date:' );
-			expect( output ).to.have.string( '"Last-Translator: FULL NAME <EMAIL@ADDRESS>"\n' );
-			expect( output ).to.have.string( '"Language-Team: LANGUAGE <LL@li.org>"\n' );
+			expect( output ).to.have.string( '"Last-Translator: FULL NAME <EMAIL@ADDRESS>\\n"\n' );
+			expect( output ).to.have.string( '"Language-Team: LANGUAGE <LL@li.org>\\n"\n' );
 		} );
 
 		it( 'should create a simple translation', function() {
