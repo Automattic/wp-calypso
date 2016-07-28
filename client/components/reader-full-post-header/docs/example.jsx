@@ -8,6 +8,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
  * Internal dependencies
  */
 import ReaderFullPostHeader from 'components/reader-full-post-header';
+import Card from 'components/card';
 
 module.exports = React.createClass( {
 	displayName: 'ReaderFullPostHeader',
@@ -53,8 +54,9 @@ module.exports = React.createClass( {
 				<h2>
 					<a href="/devdocs/app-components/reader-full-post-header">Reader Full Post Header</a>
 				</h2>
-
-				<ReaderFullPostHeader post={ post } />
+				<Card>
+					<ReaderFullPostHeader post={ post } />
+				</Card>
 			</div>
 		);
 	}
