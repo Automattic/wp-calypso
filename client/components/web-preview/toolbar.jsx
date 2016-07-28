@@ -76,8 +76,9 @@ export const PreviewToolbar = props => {
 				key={ 'back-to-preview' }
 				className={ classNames(
 					'web-preview__device-button',
-					'web-preview__back-to-preview-button'
-				) }
+					'web-preview__back-to-preview-button', {
+					'is-active': currentDevice !== 'seo'
+				} ) }
 				onClick={ partial( setDeviceViewport, 'phone' ) }
 			>
 				<Gridicon icon="phone" />
