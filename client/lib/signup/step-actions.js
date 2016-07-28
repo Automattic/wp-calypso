@@ -5,6 +5,7 @@ import assign from 'lodash/assign';
 import defer from 'lodash/defer';
 import isEmpty from 'lodash/isEmpty';
 import async from 'async';
+import { parse as parseURL } from 'url';
 
 /**
  * Internal dependencies
@@ -34,7 +35,9 @@ function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsC
 			return;
 		}
 
-		const siteSlug = response.blog_details.blogname + '.wordpress.com';
+		const parsedBlogURL = parseURL( response.blog_details.url );
+
+		const siteSlug = parsedBlogURL.hostname;
 		const siteId = response.blog_details.blogid;
 		const isFreeThemePreselected = themeSlug && ! themeItem;
 		const providedDependencies = {
@@ -191,7 +194,9 @@ module.exports = {
 			let providedDependencies, siteSlug;
 
 			if ( response && response.blog_details ) {
-				siteSlug = response.blog_details.blogname + '.wordpress.com';
+				const parsedBlogURL = parseURL( response.blog_details.url );
+				siteSlug = parsedBlogURL.hostname;
+
 				providedDependencies = { siteSlug };
 			}
 
