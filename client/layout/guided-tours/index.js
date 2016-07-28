@@ -132,7 +132,7 @@ class GuidedTours extends Component {
 			<RootChild>
 				<div className="guided-tours">
 					<QueryPreferences />
-					{ React.cloneElement( DemoTour, { state, next } ) }
+					<DemoTour state={ state } next={ next } />
 					{ /*
 					<StepComponent
 						{ ...stepConfig }
