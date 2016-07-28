@@ -64,6 +64,20 @@ describe( 'I18n', function() {
 			} );
 		} );
 
+		describe( 'translate with comments', function() {
+			it( 'should find a string with comment', function() {
+				assert.equal( 'translation4', translate( {
+					original: 'test4',
+					comment: 'thecomment'
+				} ) );
+			} );
+			it( 'should allow original text as options attribute or initial argument', function() {
+				assert.equal( 'translation4', translate( 'test4', {
+					comment: 'thecomment'
+				} ) );
+			} );
+		} );
+
 		describe( 'plural translation', function() {
 			it( 'should use the singular form for one item', function() {
 				assert.equal( 'plural-test singular translation', translate( {

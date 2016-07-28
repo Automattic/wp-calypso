@@ -63,6 +63,10 @@ function test() {
 
 	content = this.translate( 'The string key text',
 		{ 'context': 'context with a literal string key' } );
+
+	i18n.translate( 'My hat has three corners.', {
+		'comment': 'Second ocurrence'
+	} );
 }
 
 module.exports = test;

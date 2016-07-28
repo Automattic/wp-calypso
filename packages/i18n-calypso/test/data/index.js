@@ -19,6 +19,10 @@ var locale = {
 		null,
 		'translation3'
 	],
+	'test4': [
+		null,
+		'translation4'
+	],
 	'Featured': [
 		null,
 		'translation-without-context'
