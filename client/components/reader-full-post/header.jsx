@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { keys } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,7 +43,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 						</a>
 					</span> : null }
 
-				{ post.tags
+				{ post.tags && keys( post.tags ).length > 0
 					? <div className="reader-full-post__header-tags">
 					<Gridicon icon="tag" size={ 18 } />
 					<ReaderFullPostHeaderTags tags={ post.tags } />
