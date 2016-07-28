@@ -19,7 +19,7 @@ var ReactDom = require( 'react-dom' ),
  */
 var abtest = require( 'lib/abtest' ).abtest,
 	config = require( 'config' ),
-	CommentButton = require( 'components/comment-button' ),
+	CommentButton = require( 'blocks/comment-button' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	EmbedContainer = require( 'components/embed-container' ),

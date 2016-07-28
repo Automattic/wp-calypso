@@ -12,7 +12,7 @@ import Card from 'components/card';
 import AuthorAndSite from './author-and-site';
 import FollowButton from 'reader/follow-button';
 import LikeButton from 'reader/like-button';
-import CommentButton from 'components/comment-button';
+import CommentButton from 'blocks/comment-button';
 import DisplayTypes from 'state/reader/posts/display-types';
 
 function FeaturedImage( { image, href } ) {
