@@ -53,6 +53,7 @@ module.exports = {
 				'email_verified',
 				'is_valid_google_apps_country',
 				'logout_URL',
+				'primary_blog',
 				'primary_blog_url',
 				'meta',
 				'is_new_reader'
