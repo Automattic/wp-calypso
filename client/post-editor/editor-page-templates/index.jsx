@@ -75,11 +75,17 @@ export default React.createClass( {
 	},
 
 	_getSelectedTemplateText() {
-		let post = this.props.post;
-		let selectedTemplate = find( this.props.pageTemplates, ( template ) => template.file === post.page_template );
+		const { post, pageTemplates } = this.props;
+
+		let selectedTemplate;
+		if ( post ) {
+			selectedTemplate = find( pageTemplates, { file: post.page_template } );
+		}
+
 		if ( selectedTemplate ) {
 			return selectedTemplate.label;
 		}
+
 		return this.translate( 'Default Template' );
 	}
 
