@@ -200,7 +200,7 @@ const PostOptions = React.createClass( {
 						position={ this.state.popoverPosition }
 						context={ this.refs && this.refs.popoverMenuButton }>
 
-					{ isFollowable ? <FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } /> : null }
+					<FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } disabled={ ! isFollowable } />
 
 					{ isEditPossible ? <PopoverMenuItem onClick={ this.editPost } className="post-options__edit has-icon">
 						<svg className="gridicon gridicon__edit" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
