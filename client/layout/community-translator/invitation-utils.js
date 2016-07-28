@@ -21,7 +21,6 @@ var translator = require( 'lib/translator-jumpstart' ),
 	preferencesStore = require( 'lib/preferences/store' ),
 	preferencesActions = require( 'lib/preferences/actions' ),
 	notices = require( 'notices' ),
-	abModule = require( 'lib/abtest' ),
 	tracks = require( 'lib/analytics' ).tracks;
 
 var invitationUtils, userPromise, userSettingsPromise, preferencesPromise,
@@ -48,16 +47,9 @@ var invitationUtils, userPromise, userSettingsPromise, preferencesPromise,
 		'sv'
 	];
 
-// Temporary clean up
-// This shipped without the 'en' check, and users that visited while that was
-// live could have pending invitations.
-// We should reomve this line after, say, two weeks - November 12th 2015
-store.remove( 'calypsoTranslatorInvitationPending' );
-
 function maybeInvite() {
 	var preferences = preferencesStore.getAll(),
-		locale = user.get().localeSlug,
-		abBucket;
+		locale = user.get().localeSlug;
 
 	debug( 'Checking if we should show invitation notice' );
 
@@ -82,18 +74,6 @@ function maybeInvite() {
 		return;
 	}
 
-	if ( inclusionPercent < user.get().ID % 100 ) {
-		debug( `Not inviting, user ${user.get().ID} is not part of test cohort (${inclusionPercent}%)` );
-		return;
-	}
-
-	abBucket = abModule.abtest( 'translatorInvitation' );
-	debug( `user was allocated to abtest: ${abBucket} ` );
-	if ( abBucket === 'noNotice' ) {
-		debug( 'Not inviting, user part of control group' );
-		return;
-	}
-
 	// We had to wait for multiple async to get to this point, and we're above
 	// most of the content, so we'll show the invitation on next load to avoid
 	// an ugly visual jump
@@ -113,7 +93,6 @@ function permanentlyDisableInvitation() {
 function analyticsProperties() {
 	return {
 		locale: user.data.localeSlug,
-		abtest_variation: abModule.getABTestVariation( 'translatorInvitation' )
 	};
 }
 
@@ -126,30 +105,6 @@ invitationUtils = {
 	// look bad, so don't show it there
 	isValidSection: function( section ) {
 		return section !== 'post';
-	},
-
-	// Provide variant-driven overides for ./invitation-component.jsx
-	subComponentVariations: function() {
-		// see client/abtest/active-tests.js and for relevant fields
-		var result;
-		switch ( abModule.getABTestVariation( 'translatorInvitation' ) ) {
-			case 'tryItNow':
-				result = { acceptButtonText: translate( 'Try it now!' ) };
-				break;
-			case 'startTranslating':
-				result = { acceptButtonText: translate( 'Start Translating' ) };
-				break;
-			case 'helpUs':
-				result = { title: translate( 'Help us translate WordPress.com' ) };
-				break;
-			case 'improve':
-				result = { title: translate( 'Translate and improve WordPress.com in your language.' ) };
-				break;
-			case 'startNow': // fallthrough
-			default:
-				result = {};
-		}
-		return result;
 	},
 
 	dismiss: function() {
