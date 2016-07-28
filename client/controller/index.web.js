@@ -23,7 +23,7 @@ import debugFactory from 'debug';
 /**
  * Re-export
  */
-export { setSection } from './index.node.js';
+export { setSection } from './shared.js';
 
 const user = userFactory();
 const sites = sitesFactory();
