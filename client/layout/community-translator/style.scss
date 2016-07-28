@@ -95,7 +95,7 @@ body {
 	max-width: 400px;
 }
 
-.translator-invitation {
+.community-translator__translator-invitation {
 	background: none;
 	position: relative;
 	padding: 24px 18px 0;
@@ -113,13 +113,13 @@ body {
 			right: 0;
 		height: 1px;
 		margin-top: 35px;
-		z-index: z-index( 'root', '.translator-invitation:before' );
+		z-index: z-index( 'root', '.community-translator__translator-invitation:before' );
 		background: linear-gradient( to right, fade-out( lighten( $gray, 20% ), 1 ) 0%, lighten( $gray, 20% ) 20%, lighten( $gray, 20% ) 80%, fade-out( lighten( $gray, 20% ), 1 ) 100% );
 	}
 	.close-button {
 		padding: 6px;
 	}
-	.translator-invitation__decoration {
+	.community-translator__translator-invitation__decoration {
 		// copied from noticons styling
 		background-color: $gray-light;
 		color: $gray;
@@ -135,7 +135,7 @@ body {
 	}
 }
 
-.translator-invitation__title {
+.community-translator__translator-invitation__title {
 	@extend %heading;
 	color: $gray-dark;
 	font-family: $serif;
@@ -145,7 +145,7 @@ body {
 	margin: 0 0 12px;
 }
 
-.translator-invitation__primary-content {
+.community-translator__translator-invitation__primary-content {
 	font-size: 16px;
 	line-height: 24px;
 	.button {
@@ -157,16 +157,16 @@ body {
 	}
 }
 
-.translator-invitation__secondary-content {
+.community-translator__translator-invitation__secondary-content {
 	flex-direction: column;
 }
 
-.translator-invitation__intro {
+.community-translator__translator-invitation__intro {
 	flex-grow: 100%;
 	margin-bottom: 20px;
 }
 
-.translator-invitation__link {
+.community-translator__translator-invitation__link {
 	color: $blue-medium;
 	text-shadow: 1px 0 lighten( $gray, 30% ), 2px 0 lighten( $gray, 30% ), -1px 0 lighten( $gray, 30% ), -2px 0 lighten( $gray, 30% );
 	background-image: linear-gradient( to bottom, transparent 50%, $blue-medium 50% );
@@ -175,7 +175,7 @@ body {
 	background-position: 0 85%;
 }
 
-.translator-invitation__actions {
+.community-translator__translator-invitation__actions {
 	flex-grow: 100%;
 	> :last-child {
 		margin-right: 0;
@@ -183,15 +183,15 @@ body {
 }
 
 @include breakpoint( ">660px" ) {
-	.translator-invitation {
+	.community-translator__translator-invitation {
 		padding: 12px 0 0;
 	}
 
-	.translator-invitation__title {
+	.community-translator__translator-invitation__title {
 		clear: none;
 	}
 
-	.translator-invitation__primary-content {
+	.community-translator__translator-invitation__primary-content {
 		margin-bottom: 0;
 		.button {
 			display: inline-block;
@@ -202,17 +202,17 @@ body {
 		}
 	}
 
-	.translator-invitation__intro {
+	.community-translator__translator-invitation__intro {
 		flex: 0 1 auto;
 		margin-bottom: 0px;
 	}
 
-	.translator-invitation__actions {
+	.community-translator__translator-invitation__actions {
 		flex: 0 0 auto;
 		margin-left: 2%;
 	}
 
-	.translator-invitation__secondary-content {
+	.community-translator__translator-invitation__secondary-content {
 		align-items: center;
 		display: flex;
 		flex-direction: row;
