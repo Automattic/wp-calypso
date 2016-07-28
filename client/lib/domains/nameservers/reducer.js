@@ -15,11 +15,11 @@ const initialDomainState = {
 };
 
 /**
- * @desc Updates nameservers entry for given domain.
+ * @desc Updates name servers entry for given domain.
  *
  * @param {Object} [state] Current state.
  * @param {string} [domainName] Domain name.
- * @param {Object} [data] Domain nameservers data.
+ * @param {Object} [data] Domain name servers data.
  * @return {Object} New state
  */
 function updateState( state, domainName, data ) {
