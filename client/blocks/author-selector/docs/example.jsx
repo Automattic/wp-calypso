@@ -2,50 +2,44 @@
  * External dependencies
  */
 import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import AuthorSelector from '../';
 import Card from 'components/card';
-import observe from 'lib/mixins/data-observe';
-import sites from 'lib/sites-list';
-import userLib from 'lib/user';
+import { getCurrentUser } from 'state/current-user/selectors';
 
-const user = userLib();
+function AuthorSelectorExample( { primarySiteId, displayName } ) {
+	return (
+		<div className="docs__design-assets-group">
+			<h2>
+				<a href="/devdocs/blocks/author-selector">Author Selector</a>
+			</h2>
+			<Card>
+				<AuthorSelector
+					siteId={ primarySiteId }
+					allowSingleUser
+					popoverPosition="bottom"
+				>
+					<span>You are { displayName } </span>
+				</AuthorSelector>
+			</Card>
+		</div>
+	);
+}
 
-const AuthorSelectorExample = React.createClass( {
-	mixins: [ observe( 'sites' ), PureRenderMixin ],
+AuthorSelectorExample.displayName = 'AuthorSelector';
 
-	render() {
-		const primary = this.props.sites.getPrimary();
-
-		return (
-			<div className="docs__design-assets-group">
-				<h2>
-					<a href="/devdocs/blocks/author-selector">Author Selector</a>
-				</h2>
-				<Card>
-					<AuthorSelector
-						siteId={ primary.ID }
-						allowSingleUser
-						popoverPosition="bottom"
-					>
-						<span>You are { user.get().display_name } </span>
-					</AuthorSelector>
-				</Card>
-			</div>
-		);
+export default connect( ( state ) => {
+	const user = getCurrentUser( state );
+	if ( ! user ) {
+		return {};
 	}
-} );
 
-export default React.createClass( {
-	displayName: 'AuthorSelector',
-
-	mixins: [ PureRenderMixin ],
-
-	render() {
-		return <AuthorSelectorExample sites={ sites() } />;
-	}
-} );
+	return {
+		primarySiteId: user.primary_blog,
+		displayName: user.display_name
+	};
+} )( AuthorSelectorExample );
