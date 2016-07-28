@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { get, set, omit, omitBy, isEqual, reduce, groupBy, merge, findKey, mapValues } from 'lodash';
+import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,6 +31,7 @@ import counts from './counts/reducer';
 import {
 	getSerializedPostsQuery,
 	mergeIgnoringArrays,
+	normalizePostForState
 } from './utils';
 import { createReducer, isValidStateWithSchema } from 'state/utils';
 import { itemsSchema, queriesSchema } from './schema';
@@ -175,10 +176,20 @@ export const queries = ( () => {
 			}, { patch: true } );
 		},
 		[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
-			return applyToManager( state, siteId, 'receive', true, posts, { query, found } );
+			const normalizedPosts = posts.map( normalizePostForState );
+			return applyToManager( state, siteId, 'receive', true, normalizedPosts, { query, found } );
 		},
 		[ POSTS_RECEIVE ]: ( state, { posts } ) => {
-			return reduce( groupBy( posts, 'site_ID' ), ( memo, sitePosts, siteId ) => {
+			const postsBySiteId = reduce( posts, ( memo, post ) => {
+				return Object.assign( memo, {
+					[ post.site_ID ]: [
+						...( memo[ post.site_ID ] || [] ),
+						normalizePostForState( post )
+					]
+				} );
+			}, {} );
+
+			return reduce( postsBySiteId, ( memo, sitePosts, siteId ) => {
 				return applyToManager( memo, siteId, 'receive', true, sitePosts );
 			}, state );
 		},
