@@ -510,7 +510,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000515"
+      "version": "1.0.30000517"
     },
     "caseless": {
       "version": "0.11.0"
@@ -576,7 +576,7 @@
       "version": "0.3.1"
     },
     "classnames": {
-      "version": "1.1.1"
+      "version": "2.2.5"
     },
     "clean-css": {
       "version": "3.4.19",
@@ -1774,7 +1774,7 @@
       "version": "1.0.1"
     },
     "is-buffer": {
-      "version": "1.1.3"
+      "version": "1.1.4"
     },
     "is-builtin-module": {
       "version": "1.0.0"
@@ -2853,12 +2853,7 @@
       }
     },
     "react-virtualized": {
-      "version": "7.9.1",
-      "dependencies": {
-        "classnames": {
-          "version": "2.2.5"
-        }
-      }
+      "version": "7.9.1"
     },
     "read-all-stream": {
       "version": "3.1.0"
