@@ -12,6 +12,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import FacebookPreview from 'components/seo/facebook-preview';
 import SearchPreview from 'components/seo/search-preview';
 import VerticalMenu from 'components/vertical-menu';
 import { SocialItem } from 'components/vertical-menu/items';
@@ -29,6 +30,26 @@ const GooglePreview = site =>
 		url={ site.URL }
 		snippet={ site.description }
 	/>;
+
+const PreviewFacebook = site => (
+	<div>
+		<FacebookPreview
+			title={ site.name }
+			url={ site.URL }
+			type="website"
+			description={ site.description }
+			image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		/>
+		<div style={ { marginBottom: '2em' } } />
+		<FacebookPreview
+			title={ site.name }
+			url={ site.URL }
+			type="article"
+			description={ site.description }
+			image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		/>
+	</div>
+);
 
 export class SeoPreviewPane extends PureComponent {
 	constructor( props ) {
@@ -71,14 +92,13 @@ export class SeoPreviewPane extends PureComponent {
 					<VerticalMenu onClick={ this.selectPreview }>
 						<SocialItem service="google" />
 						<SocialItem service="facebook" />
-						<SocialItem service="wordpress" />
-						<SocialItem service="linkedin" />
 						<SocialItem service="twitter" />
 					</VerticalMenu>
 				</div>
 				<div className="seo-preview-pane__preview-area">
 					<div className="seo-preview-pane__preview">
 						{ get( {
+							facebook: PreviewFacebook( site ),
 							google: GooglePreview( site )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 					</div>
