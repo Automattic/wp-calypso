@@ -38,7 +38,7 @@ module.exports = {
 		const loggedOutRoutes = [ '/login', '/oauth', '/start', '/authorize', '/api/oauth/token' ],
 			isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
 
-		if ( config( 'env' ) === 'desktop' ) {
+		if ( config( 'env_id' ) === 'desktop' ) {
 			// Check we have an OAuth token, otherwise redirect to login page
 			if ( OAuthToken.getToken() === false && ! isValidSection ) {
 				return page( '/login' );
