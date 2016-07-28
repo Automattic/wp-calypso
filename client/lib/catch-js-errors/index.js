@@ -17,7 +17,7 @@ export default class ErrorLogger {
 	constructor() {
 		this.diagnosticData = {
 			extra: {
-				previousPaths: []
+				previous_paths: []
 			}
 		};
 		this.diagnosticReducers = [];
@@ -77,9 +77,9 @@ export default class ErrorLogger {
 	}
 
 	saveNewPath( newPath ) {
-		const paths = this.diagnosticData.extra.previousPaths;
+		const paths = this.diagnosticData.extra.previous_paths;
 		paths.unshift( newPath );
-		this.diagnosticData.extra.previousPaths = paths.slice( 0, 5 );
+		this.diagnosticData.extra.previous_paths = paths.slice( 0, 5 );
 		this.diagnosticData.calypso_path = newPath;
 	}
 
