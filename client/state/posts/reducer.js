@@ -39,7 +39,6 @@ import {
 	getSerializedPostsQuery,
 	mergeIgnoringArrays,
 } from './utils';
-import { itemsSchema } from './schema';
 import { createReducer } from 'state/utils';
 
 /**
@@ -78,7 +77,7 @@ export const items = createReducer( {}, {
 
 		return omit( state, globalId );
 	}
-}, itemsSchema );
+} );
 
 /**
  * Returns the updated site post requests state after an action has been
