@@ -88,10 +88,10 @@
 	}
 
 	&.is-photo {
-		height: 168px;
-		padding: 20px;
+		min-height: 160px;
+		padding: 20px 20px 12px;
 
-		&:before{
+		&::before{
 			background: $gray-dark;
 			content: '';
 			height: 100%;
@@ -107,11 +107,19 @@
 			width: 100%;
 		}
 
+		.post-card__search-title {
+			display: block;
+			padding: 30px 20px 0 0;
+			position: relative;
+			z-index: 1;
+		}
+
+		.post-card__byline-author-and-site {
+			color: $white;
+		}
+
 		.post-card__search-title-link {
 			color: $white;
-			padding-right: 20px;
-			position: absolute;
-				bottom: 43px;
 
 			&:hover {
 				opacity: .8;
@@ -119,11 +127,10 @@
 		}
 
 		.post-card__search-byline {
-			position: absolute;
-				bottom: 10px;
+			position: relative;
 
-			a,
-			a:visited {
+			.post-card__byline-link,
+			.post-card__byline-link:visited {
 				color: $white;
 			}
 
@@ -138,6 +145,10 @@
 
 		.post-card__search-social {
 			position: relative;
+		}
+
+		.post-card__search-excerpt {
+			display: none;
 		}
 
 		.gridicon {
@@ -170,10 +181,10 @@
 }
 
 .post-card__search-title {
-	@extend %content-font;
 	display: inline;
+	@extend %content-font;
 	font-size: 20px;
-	line-height: 20px;
+	line-height: 1.2;
 	font-weight: 700;
 
 	@include breakpoint( ">480px" ) {
@@ -222,7 +233,6 @@
 	font-size: 13px;
 	list-style: none;
 	margin: 6px 0;
-	padding: 0;
 
 	.gravatar {
 		vertical-align: text-bottom;
@@ -230,8 +240,9 @@
 	}
 }
 
-.post-card__search-byline-item {
-	display: inline-block;
+.post-card__byline-author-and-site {
+	color: lighten( $gray, 10% );
+	margin-right: 6px;
 }
 
 .post-card__author-and-site {
@@ -305,16 +316,14 @@
 }
 
 // Custom colors for Site and Author info
+
 .reader__content {
 
-	.post-card__author-and-site {
+	.post-card__byline-link,
+	.post-card__byline-link:visited {
+		color: lighten( $gray, 10% );
 
-		a,
-		a:visited {
-			color: lighten( $gray, 10% );
-		}
-
-		a:hover {
+		&:hover {
 			color: $blue-wordpress;
 		}
 	}
