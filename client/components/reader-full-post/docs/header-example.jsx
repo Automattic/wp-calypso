@@ -7,7 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import ReaderFullPostHeader from 'components/reader-full-post-header';
+import ReaderFullPostHeader from 'components/reader-full-post/header';
 import Card from 'components/card';
 
 module.exports = React.createClass( {

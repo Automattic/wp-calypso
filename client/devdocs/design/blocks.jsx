@@ -30,7 +30,7 @@ import DomainTip from 'my-sites/domain-tip/docs/example';
 import PostCard from 'components/post-card/docs/example';
 import ReaderAuthorLink from 'components/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'components/reader-site-stream-link/docs/example';
-import ReaderFullPostHeader from 'components/reader-full-post-header/docs/example';
+import ReaderFullPostHeader from 'components/reader-full-post/docs/header-example';
 
 export default React.createClass( {
 

@@ -9,7 +9,7 @@ import React from 'react';
 import ExternalLink from 'components/external-link';
 import { recordPermalinkClick, recordGaEvent } from 'reader/stats';
 import PostTime from 'reader/post-time';
-import ReaderFullPostHeaderTags from './tags';
+import ReaderFullPostHeaderTags from './header-tags';
 import Gridicon from 'components/gridicon';
 
 const ReaderFullPostHeader = ( { post } ) => {
@@ -23,18 +23,18 @@ const ReaderFullPostHeader = ( { post } ) => {
 	};
 
 	return (
-		<div className="reader-full-post-header">
+		<div className="reader-full-post__header">
 			{ post.title
-				? <h1 className="reader-full-post-header__title" onClick={ handlePermalinkClick }>
-					<ExternalLink className="reader-full-post-header__title-link" href={ post.URL } target="_blank" icon={ false }>
+				? <h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
+					<ExternalLink className="reader-full-post__header-title-link" href={ post.URL } target="_blank" icon={ false }>
 						{ post.title }
 					</ExternalLink>
 				</h1>
 				: null }
-			<div className="reader-full-post-header__meta">
+			<div className="reader-full-post__header-meta">
 				{ post.date
-					? <span className="reader-full-post-header__date">
-						<a className="reader-full-post-header__date-link"
+					? <span className="reader-full-post__header-date">
+						<a className="reader-full-post__header-date-link"
 							onClick={ recordDateClick }
 							href={ post.URL }
 							target="_blank">
@@ -43,7 +43,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 					</span> : null }
 
 				{ post.tags
-					? <div className="reader-full-post-header__tags">
+					? <div className="reader-full-post__header-tags">
 					<Gridicon icon="tag" size={ 18 } />
 					<ReaderFullPostHeaderTags tags={ post.tags } />
 				</div> : null }

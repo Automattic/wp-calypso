@@ -1,4 +1,4 @@
-.reader-full-post-header__title {
+.reader-full-post__header-title {
 	clear: none;
 	color: $gray-dark;
 	font-family: $serif;
@@ -15,35 +15,35 @@
 		line-height: 1.4;
 	}
 
-	.reader-full-post-header__title-link,
-	.reader-full-post-header__title-link:hover {
+	.reader-full-post__header-title-link,
+	.reader-full-post__header-title-link:hover {
 		color: $gray-dark;
 	}
 }
 
-.reader-full-post-header__meta {
+.reader-full-post__header-meta {
 	font-size: 15px;
 	max-width: 750px;
 }
 
-.reader-full-post-header__date {
+.reader-full-post__header-date {
 	float: left;
 }
 
-.reader-full-post-header__date-link {
+.reader-full-post__header-date-link {
 	margin-right: 25px;
 }
 
-.reader-full-post-header__date-link,
-.reader-full-post-header__date-link:visited {
+.reader-full-post__header-date-link,
+.reader-full-post__header-date-link:visited {
 	color: $gray;
 }
 
-.reader-full-post-header__date-link:hover {
+.reader-full-post__header-date-link:hover {
 	color: darken( $gray, 20% );
 }
 
-.reader-full-post-header__tags {
+.reader-full-post__header-tags {
 	display: inline-block;
     width: calc(100% - 120px);
 
@@ -56,7 +56,7 @@
 	}
 }
 
-.reader-full-post-header__tag-list {
+.reader-full-post__header-tag-list {
 	color: $gray;
 	list-style: none;
 	margin-left: 20px;

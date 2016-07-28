@@ -4,19 +4,15 @@
 import React from 'react';
 import { take, map, values } from 'lodash';
 
-/**
- * Internal dependencies
- */
-
 const ReaderFullPostHeaderTags = ( { tags } ) => {
 	const numberOfTagsToDisplay = 5;
 	const tagsToDisplay = take( values( tags ), numberOfTagsToDisplay );
 	const listItems = map( tagsToDisplay, tag => {
-		return ( <li><a href={ `/tag/${tag.slug}` }>{ tag.display_name }</a></li> );
+		return ( <li key={ `post-tag-${tag.slug}` }><a href={ `/tag/${tag.slug}` }>{ tag.display_name }</a></li> );
 	} );
 
 	return (
-		<ul className="reader-full-post-header__tag-list">
+		<ul className="reader-full-post__header-tag-list">
 			{ listItems }
 		</ul>
 	);
