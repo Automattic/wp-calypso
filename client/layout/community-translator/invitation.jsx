@@ -27,7 +27,7 @@ export default React.createClass( {
 
 		let subComponents = {
 			title: this.translate( 'Translate WordPress.com as you go' ),
-			acceptButtonText: this.translate( 'Start now' ),
+			acceptButtonText: this.translate( 'Try it now!' ),
 			dismissButtonText: this.translate( 'No thanks' ),
 			content: this.translate( 'Help translate the WordPress.com dashboard into your' +
 			' native language using the Community Translator tool. ' +
@@ -37,9 +37,6 @@ export default React.createClass( {
 						href="https://en.support.wordpress.com/community-translator/"
 						onClick={ this.docsLink } /> } } )
 		};
-
-		// Apply ABTest related changes
-		subComponents = merge( subComponents, invitationUtils.subComponentVariations() );
 
 		return (
 			<div className="translator-invitation welcome-message">
