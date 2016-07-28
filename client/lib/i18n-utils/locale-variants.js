@@ -14,18 +14,19 @@ const debug = debugFactory( 'calypso:i18n' );
 
 const localeVariants = {
 	init() {
-		const locale_variant = userSettings.getSetting( 'locale_variant' );
-		switch ( locale_variant ) {
+		const localeVariant = userSettings.getSetting( 'locale_variant' );
+		switch ( localeVariant ) {
 			case 'sr_latin':
+				debug( 'Applying mods for ' + localeVariant );
 				i18n.registerTranslateHook( ( translation ) => {
-					return this.cyrillic_to_latin( translation );
+					return this.cyrillicToLatin( translation );
 				} );
 				i18n.reRenderTranslations();
 				break;
 		}
 	},
 
-	cyrillic_to_latin( translation ) {
+	cyrillicToLatin( translation ) {
 		switch ( typeof( translation ) ) {
 			case 'object':
 				for ( let prop in translation ) {
