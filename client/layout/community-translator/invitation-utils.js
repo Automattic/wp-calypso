@@ -5,28 +5,25 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:community-translator-invitation' ),
-	includes = require( 'lodash/includes' ),
-	store = require( 'store' ),
-	once = require( 'lodash/once'),
-	translate = require( 'i18n-calypso' ).translate;
+import Debug from 'debug';
+import includes from 'lodash/includes';
+import store from 'store';
+import once from 'lodash/once';
 
 /**
  * Internal dependencies
  */
-var translator = require( 'lib/translator-jumpstart' ),
-	user = require( 'lib/user' )(),
-	userSettings = require( 'lib/user-settings' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	preferencesStore = require( 'lib/preferences/store' ),
-	preferencesActions = require( 'lib/preferences/actions' ),
-	notices = require( 'notices' ),
-	tracks = require( 'lib/analytics' ).tracks;
+import translator from 'lib/translator-jumpstart';
+import userFactory from 'lib/user';
+import userSettings from 'lib/user-settings';
+import emitter from 'lib/mixins/emitter';
+import preferencesStore from 'lib/preferences/store';
+import preferencesActions from 'lib/preferences/actions';
+import notices from 'notices';
+import analytics from 'lib/analytics';
 
-var invitationUtils, userPromise, userSettingsPromise, preferencesPromise,
-	invitePromise,
-	invitationPending = store.get( 'calypsoTranslatorInvitationIsPending' ),
-	inclusionPercent = 10,
+const debug = Debug( 'calypso:community-translator-invitation' ),
+	user = userFactory(),
 	excludedLocales = [
 		'en',
 		'es',
@@ -46,9 +43,10 @@ var invitationUtils, userPromise, userSettingsPromise, preferencesPromise,
 		'ar',
 		'sv'
 	];
+let invitationPending = store.get( 'calypsoTranslatorInvitationIsPending' );
 
 function maybeInvite() {
-	var preferences = preferencesStore.getAll(),
+	const preferences = preferencesStore.getAll(),
 		locale = user.get().localeSlug;
 
 	debug( 'Checking if we should show invitation notice' );
@@ -78,9 +76,52 @@ function maybeInvite() {
 	// most of the content, so we'll show the invitation on next load to avoid
 	// an ugly visual jump
 	debug( 'Translator invitation queued up for next load' );
-	tracks.recordEvent( 'calypso_community_translator_invitation_queued', analyticsProperties() );
+	analytics.tracks.recordEvent( 'calypso_community_translator_invitation_queued', analyticsProperties() );
 	store.set( 'calypsoTranslatorInvitationIsPending', true );
 }
+
+const invitationUtils = {
+	isPending: function() {
+		return invitationPending;
+	},
+
+	// The calypso editor is styled flush to the top, and makes the invitation
+	// look bad, so don't show it there
+	isValidSection: function( section ) {
+		return section !== 'post';
+	},
+
+	dismiss: function() {
+		debug( 'dismissed' );
+		permanentlyDisableInvitation();
+		analytics.tracks.recordEvent( 'calypso_community_translator_invitation_dismissed', analyticsProperties() );
+	},
+
+	activate: function() {
+		debug( 'activated' );
+		analytics.tracks.recordEvent( 'calypso_community_translator_invitation_accepted', analyticsProperties() );
+		userSettings.saveSettings( function( error, response ) {
+			if ( error || ! response || ! response.enable_translator ) {
+				debug( 'Error saving settings: ' + JSON.stringify( error ), 'response:', response );
+				notices.error( 'There was a problem enabling the Community Translator' );
+				return;
+			}
+			translator.toggle();
+			permanentlyDisableInvitation();
+		}, { enable_translator: true }
+		);
+	},
+	recordDocsEvent: function() {
+		debug( 'docs' );
+		analytics.tracks.recordEvent( 'calypso_community_translator_invitation_docsLink', analyticsProperties() );
+	},
+	recordInvitationDisplayed: once( function() {
+		debug( 'displayed' );
+		analytics.tracks.recordEvent( 'calypso_community_translator_invitation_displayed', analyticsProperties() );
+	} )
+};
+
+emitter( invitationUtils );
 
 function permanentlyDisableInvitation() {
 	debug( 'disabling' );
@@ -96,59 +137,16 @@ function analyticsProperties() {
 	};
 }
 
-invitationUtils = {
-	isPending: function() {
-		return invitationPending;
-	},
-
-	// The calypso editor is styled flush to the top, and makes the invitation
-	// look bad, so don't show it there
-	isValidSection: function( section ) {
-		return section !== 'post';
-	},
-
-	dismiss: function() {
-		debug( 'dismissed' );
-		permanentlyDisableInvitation();
-		tracks.recordEvent( 'calypso_community_translator_invitation_dismissed', analyticsProperties() );
-	},
-
-	activate: function() {
-		debug( 'activated' );
-		tracks.recordEvent( 'calypso_community_translator_invitation_accepted', analyticsProperties() );
-		userSettings.saveSettings( function( error, response ) {
-			if ( error || ! response || ! response.enable_translator ) {
-				debug( 'Error saving settings: ' + JSON.stringify( error ), 'response:', response );
-				notices.error( 'There was a problem enabling the Community Translator' );
-				return;
-			}
-			translator.toggle();
-			permanentlyDisableInvitation();
-		}, { enable_translator: true }
-		);
-	},
-	recordDocsEvent: function() {
-		debug( 'docs' );
-		tracks.recordEvent( 'calypso_community_translator_invitation_docsLink', analyticsProperties() );
-	},
-	recordInvitationDisplayed: once( function() {
-		debug( 'displayed' );
-		tracks.recordEvent( 'calypso_community_translator_invitation_displayed', analyticsProperties() );
-	} )
-};
-
-emitter( invitationUtils );
-
 /*
  * Check for and/or kick off the data we need.  Each source might require a
  * call to the REST api, but we can resolve immediately if it's in localStorage
  * and already available.
  */
-userPromise = new Promise( function( resolve ) {
+const userPromise = new Promise( function( resolve ) {
 	user.get() ? resolve() : user.once( 'change', resolve );
 } );
 
-userSettingsPromise = new Promise( function( resolve ) {
+const userSettingsPromise = new Promise( function( resolve ) {
 	if ( userSettings.hasSettings() ) {
 		return resolve();
 	}
@@ -157,7 +155,7 @@ userSettingsPromise = new Promise( function( resolve ) {
 	userSettings.fetchSettings();
 } );
 
-preferencesPromise = new Promise( function( resolve ) {
+const preferencesPromise = new Promise( function( resolve ) {
 	if ( preferencesStore.getAll() ) {
 		return resolve();
 	}
@@ -166,7 +164,7 @@ preferencesPromise = new Promise( function( resolve ) {
 	preferencesActions.fetch();
 } );
 
-invitePromise = Promise.all( [ userPromise, userSettingsPromise, preferencesPromise ] );
+const invitePromise = Promise.all( [ userPromise, userSettingsPromise, preferencesPromise ] );
 invitePromise.then( function() {
 	maybeInvite();
 } );
