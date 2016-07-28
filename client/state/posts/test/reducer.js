@@ -105,35 +105,22 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		describe( 'persistence', () => {
-			it( 'persists state', () => {
-				const original = deepFreeze( {
-					'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
-				} );
-				const state = items( original, { type: SERIALIZE } );
-				expect( state ).to.eql( original );
+		it( 'should not persist state', () => {
+			const original = deepFreeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
 			} );
+			const state = items( original, { type: SERIALIZE } );
 
-			it( 'loads valid persisted state', () => {
-				const original = deepFreeze( {
-					'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
-				} );
-				const state = items( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( original );
-			} );
+			expect( state ).to.eql( {} );
+		} );
 
-			it( 'loads default state when schema does not match', () => {
-				const original = deepFreeze( {
-					'3d097cb7c5473c169bba0eb8e3c6cb64': {
-						ID: 841,
-						site_ID: 2916284,
-						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-						title: 'Hello World'
-					}
-				} );
-				const state = items( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
+		it( 'should not load persisted state', () => {
+			const original = deepFreeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
 			} );
+			const state = items( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
 		} );
 	} );
 
