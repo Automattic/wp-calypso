@@ -27,7 +27,7 @@
 }
 
 .reader-full-post__header-date {
-	float: left;
+	display: inline-flex;
 }
 
 .reader-full-post__header-date-link {
@@ -44,12 +44,11 @@
 }
 
 .reader-full-post__header-tags {
-	display: inline-block;
+	display: inline-flex;
     width: calc(100% - 120px);
 
 	.gridicon {
 		fill: $gray;
-		float: left;
 		margin-right: 5px;
 		position: relative;
 			top: 4px;
@@ -59,12 +58,13 @@
 .reader-full-post__header-tag-list {
 	color: $gray;
 	list-style: none;
-	margin-left: 20px;
+	margin: 0;
     padding: 0;
     position: relative;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    width: 100%;
 
     &::after {
     	@include long-content-fade( $size: 35% );
