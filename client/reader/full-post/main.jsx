@@ -164,7 +164,8 @@ FullPostView = React.createClass( {
 			siteName = utils.siteNameFromSiteAndPost( site, post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
 			discoverSiteUrl,
-			discoverSiteName;
+			discoverSiteName,
+			followUrl = utils.getFollowUrlFromFeedOrPost( feed, post );
 
 		if ( isDiscoverPost && post.discover_metadata ) {
 			discoverSiteUrl = DiscoverHelper.getSiteUrl( post );
@@ -209,7 +210,7 @@ FullPostView = React.createClass( {
 							onClick={ this.handleSiteClick } />
 
 						<div className="full-post__follow">
-							{ feed && feed.feed_URL && <FollowButton siteUrl={ feed && feed.feed_URL } /> }
+							<FollowButton siteUrl={ followUrl } disabled={ !! followUrl } />
 						</div>
 					</div>
 

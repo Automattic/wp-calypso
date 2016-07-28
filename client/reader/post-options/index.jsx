@@ -19,6 +19,7 @@ import SiteBlockStore from 'lib/reader-site-blocks';
 import SiteBlockActions from 'lib/reader-site-blocks/actions';
 import PostUtils from 'lib/posts/utils';
 import FollowButton from 'reader/follow-button';
+import { getFollowUrlFromFeedOrPost as getFollowUrl } from 'reader/utils';
 import * as DiscoverHelper from 'reader/discover/helper';
 
 const stats = require( 'reader/stats' );
@@ -59,7 +60,7 @@ const PostOptions = React.createClass( {
 	getStateFromStores() {
 		const siteId = this.props.post.site_ID,
 			feed = this.getFeed(),
-			followUrl = this.getFollowUrl( feed );
+			followUrl = getFollowUrl( feed, this.props.post );
 
 		return {
 			isBlocked: SiteBlockStore.getIsBlocked( siteId ),
@@ -98,14 +99,6 @@ const PostOptions = React.createClass( {
 		stats.recordTrackForPost( 'calypso_reader_post_reported', this.props.post );
 
 		window.open( 'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ), '_blank' );
-	},
-
-	getFollowUrl( feed ) {
-		const post = this.props.post;
-		if ( DiscoverHelper.isDiscoverPost( post ) ) {
-			return DiscoverHelper.getSourceFollowUrl( post );
-		}
-		return feed ? feed.get( 'feed_URL' ) : get( post, 'site_URL' );
 	},
 
 	getFeed() {

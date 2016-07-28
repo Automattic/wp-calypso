@@ -78,3 +78,9 @@ export function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
+export function getFollowUrlFromFeedOrPost( feed, post ) {
+	if ( discoverHelper.isDiscoverPost( post ) ) {
+		return discoverHelper.getSourceFollowUrl( post );
+	}
+	return feed ? feed.get( 'feed_URL' ) : get( post, 'site_URL' );
+}
