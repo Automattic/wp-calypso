@@ -1,7 +1,20 @@
 /**
  * External dependencies
  */
-import { isEmpty, isPlainObject, flow, map, mapValues, mergeWith, omit, omitBy, reduce, toArray, cloneDeep } from 'lodash';
+import {
+	isEmpty,
+	isPlainObject,
+	flow,
+	map,
+	mapValues,
+	mergeWith,
+	omit,
+	omitBy,
+	reduce,
+	toArray,
+	cloneDeep,
+	cloneDeepWith
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +38,7 @@ const normalizeEditedFlow = flow( [
 	getTermIdsFromEdits
 ] );
 
-const normalizeFlow = flow( [
+const normalizeDisplayFlow = flow( [
 	firstPassCanonicalImage,
 	decodeEntities,
 	stripHtml
@@ -116,12 +129,12 @@ export function mergeIgnoringArrays( object, ...sources ) {
  * @param  {Object} post Raw post object
  * @return {Object}      Normalized post object
  */
-export function normalizePost( post ) {
+export function normalizePostForDisplay( post ) {
 	if ( ! post ) {
 		return null;
 	}
 
-	return normalizeFlow( cloneDeep( post ) );
+	return normalizeDisplayFlow( cloneDeep( post ) );
 }
 
 /**
@@ -130,12 +143,27 @@ export function normalizePost( post ) {
  * @param  {Ojbect} post Raw edited post object
  * @return {Object}      Normalized post object
  */
-export function normalizeEditedPost( post ) {
+export function normalizePostForEditing( post ) {
 	if ( ! post ) {
 		return null;
 	}
 
 	return normalizeEditedFlow( post );
+}
+
+/**
+ * Given a post object, returns a normalized post object prepared for storing
+ * in the global state object.
+ *
+ * @param  {Object} post Raw post object
+ * @return {Object}      Normalized post object
+ */
+export function normalizePostForState( post ) {
+	return cloneDeepWith( post, ( value, key ) => {
+		if ( 'meta' === key ) {
+			return null;
+		}
+	} );
 }
 
 /**
