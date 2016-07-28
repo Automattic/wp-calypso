@@ -114,6 +114,10 @@
 			z-index: 1;
 		}
 
+		.post-card__byline-author-and-site {
+			color: $white;
+		}
+
 		.post-card__search-title-link {
 			color: $white;
 
@@ -245,6 +249,7 @@
 }
 
 .post-card__byline-author-and-site {
+	color: $gray;
 	margin-right: 6px;
 }
 
