@@ -131,7 +131,7 @@ const NameServers = React.createClass( {
 			if ( error ) {
 				notices.error( error.message );
 			} else {
-				this.props.successNotice( this.translate( 'Yay, the nameservers have been successfully updated!' ) );
+				this.props.successNotice( this.translate( 'Yay, the name servers have been successfully updated!' ) );
 			}
 
 			this.setState( { formSubmitting: false } );
