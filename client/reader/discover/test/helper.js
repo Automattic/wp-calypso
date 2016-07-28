@@ -139,9 +139,9 @@ describe( 'helper', () => {
 			assert.equal( followUrl, get( discoverPost, 'discover_metadata.attribution.blog_url' ) );
 		} );
 
-		it( 'returns undefined if the discover pick is to an external site', () => {
+		it( 'returns an empty string if the discover pick is to an external site', () => {
 			const followUrl = helper.getSourceFollowUrl( fixtures.externalDiscoverPost );
-			assert.isUndefined( followUrl );
+			assert.equal( followUrl, '' );
 		} );
 
 		it( 'returns undefined if the post is not a discover pick', () => {

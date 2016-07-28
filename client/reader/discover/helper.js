@@ -64,7 +64,14 @@ export function getLinkProps( linkUrl ) {
 }
 
 export function getSourceFollowUrl( post ) {
-	if ( isInternalDiscoverPost( post ) ) {
-		return get( post, 'discover_metadata.attribution.blog_url' );
+	let followUrl;
+
+	if ( ! isDiscoverPost( post ) ) {
+		return;
 	}
+
+	if ( isInternalDiscoverPost( post ) ) {
+		followUrl = get( post, 'discover_metadata.attribution.blog_url' );
+	}
+	return followUrl || '';
 }
