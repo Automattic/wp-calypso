@@ -1,11 +1,19 @@
-const url = require( 'url' );
+/**
+ * External dependencies
+ */
+import url from 'url';
+import { get } from 'lodash';
 
-const i18n = require( 'i18n-calypso' ),
-	SiteState = require( 'lib/reader-site-store/constants' ).state,
-	FeedDisplayHelper = require( 'reader/lib/feed-display-helper' );
+/**
+ * Internal dependencies
+ */
+import i18n from 'i18n-calypso';
+import { state as SiteState } from 'lib/reader-site-store/constants';
+import FeedDisplayHelper from 'reader/lib/feed-display-helper';
+import * as discoverHelper from 'reader/discover/helper';
 
-function siteNameFromSiteAndPost( site, post ) {
-	var siteName;
+export function siteNameFromSiteAndPost( site, post ) {
+	let siteName;
 
 	if ( site && site.get( 'state' ) === SiteState.COMPLETE ) {
 		siteName = site.get( 'title' ) || site.get( 'domain' );
@@ -32,7 +40,15 @@ function siteNameFromSiteAndPost( site, post ) {
  * @param  {Object} post A Reader post
  * @return {Object}      A site like object
  */
-function siteishFromSiteAndPost( site, post ) {
+export function siteishFromSiteAndPost( site, post ) {
+	if ( discoverHelper.isDiscoverSitePick( post ) ) {
+		const discoverAttribution = discoverHelper.getAttribution( post );
+		return {
+			title: get( discoverAttribution, 'blog_name' ),
+			domain: FeedDisplayHelper.formatUrlForDisplay( get( discoverAttribution, 'blog_url' ) )
+		};
+	}
+
 	if ( site ) {
 		return site.toJS();
 	}
@@ -40,7 +56,7 @@ function siteishFromSiteAndPost( site, post ) {
 	if ( post ) {
 		return {
 			title: siteNameFromSiteAndPost( site, post ),
-			domain: FeedDisplayHelper.formatUrlForDisplay( post.site_URL )
+			domain: FeedDisplayHelper.formatUrlForDisplay( get( post, 'site_URL' ) )
 		};
 	}
 
@@ -50,11 +66,11 @@ function siteishFromSiteAndPost( site, post ) {
 	};
 }
 
-function isSpecialClick( event ) {
+export function isSpecialClick( event ) {
 	return event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey;
 }
 
-function isPostNotFound( post ) {
+export function isPostNotFound( post ) {
 	if ( post === undefined ) {
 		return false;
 	}
@@ -62,9 +78,3 @@ function isPostNotFound( post ) {
 	return post.statusCode === 404;
 }
 
-module.exports = {
-	siteNameFromSiteAndPost,
-	siteishFromSiteAndPost,
-	isSpecialClick,
-	isPostNotFound
-};
