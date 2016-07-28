@@ -6,6 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import PostQueryManager from 'lib/query-manager/post';
 import {
 	getEditorPostId,
 	isEditorNewPost,
@@ -138,7 +139,7 @@ describe( 'selectors', () => {
 					}
 				},
 				posts: {
-					items: {},
+					queries: {},
 					edits: {}
 				}
 			}, 2916284, 841 );
@@ -152,7 +153,7 @@ describe( 'selectors', () => {
 					items: {}
 				},
 				posts: {
-					items: {},
+					queries: {},
 					edits: {}
 				}
 			}, 2916284, 841 );
@@ -171,8 +172,12 @@ describe( 'selectors', () => {
 					}
 				},
 				posts: {
-					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', type: 'post' }
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', type: 'post' }
+							}
+						} )
 					},
 					edits: {}
 				}
@@ -192,8 +197,12 @@ describe( 'selectors', () => {
 					}
 				},
 				posts: {
-					items: {
-						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', type: 'page' }
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								413: { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', type: 'page' }
+							}
+						} )
 					},
 					edits: {}
 				}
@@ -213,8 +222,12 @@ describe( 'selectors', () => {
 					}
 				},
 				posts: {
-					items: {
-						'0fcb4eb16f493c19b627438fdc18d57c': { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', type: 'jetpack-portfolio' }
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								120: { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', type: 'jetpack-portfolio' }
+							}
+						} )
 					},
 					edits: {}
 				}
@@ -234,7 +247,7 @@ describe( 'selectors', () => {
 					}
 				},
 				posts: {
-					items: {},
+					queries: {},
 					edits: {
 						2916284: {
 							'': {
@@ -259,7 +272,7 @@ describe( 'selectors', () => {
 					}
 				},
 				posts: {
-					items: {},
+					queries: {},
 					edits: {}
 				}
 			}, 2916284, null, 'jetpack-portfolio' );
