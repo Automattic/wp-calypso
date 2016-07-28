@@ -19,6 +19,7 @@ export default React.createClass( {
 	propTypes: {
 		theme: React.PropTypes.object,
 		showPreview: React.PropTypes.bool,
+		showExternal: React.PropTypes.bool,
 		onClose: React.PropTypes.func,
 		primaryButtonLabel: React.PropTypes.string.isRequired,
 		onPrimaryButtonClick: React.PropTypes.func,
@@ -65,6 +66,7 @@ export default React.createClass( {
 
 		return (
 			<WebPreview showPreview={ this.props.showPreview }
+				showExternal={ this.props.showExternal }
 				onClose={ this.props.onClose }
 				previewUrl={ previewUrl }
 				externalUrl={ this.props.theme.demo_uri } >
