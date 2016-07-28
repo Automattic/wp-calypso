@@ -312,7 +312,8 @@ export default React.createClass( {
 			this.props.isDirty &&
 			this.props.hasContent &&
 			!! this.props.post &&
-			! postUtils.isPublished( this.props.post );
+			! postUtils.isPublished( this.props.post ) &&
+			! ( this.props.post.status === 'future' );
 	},
 
 	isPreviewEnabled: function() {

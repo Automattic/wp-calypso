@@ -89,6 +89,31 @@ export class EditorNotice extends Component {
 					comment: 'Editor: Message displayed when a post is published, with a link to the site it was published on.'
 				} );
 
+			case 'scheduled':
+				if ( ! site ) {
+					if ( 'page' === type ) {
+						return translate( 'Page scheduled!' );
+					}
+
+					return translate( 'Post scheduled!' );
+				}
+
+				if ( 'page' === type ) {
+					return translate( 'Page scheduled on {{siteLink/}}!', {
+						components: {
+							siteLink: <a href={ site.URL } target="_blank">{ site.name }</a>
+						},
+						comment: 'Editor: Message displayed when a page is scheduled, with a link to the site it was scheduled on.'
+					} );
+				}
+
+				return translate( 'Post scheduled on {{siteLink/}}!', {
+					components: {
+						siteLink: <a href={ site.URL } target="_blank">{ site.name }</a>
+					},
+					comment: 'Editor: Message displayed when a post is scheduled, with a link to the site it was scheduled on.'
+				} );
+
 			case 'publishedPrivately':
 				if ( ! site ) {
 					if ( 'page' === type ) {
@@ -117,6 +142,10 @@ export class EditorNotice extends Component {
 				} );
 
 			case 'view':
+				if ( 'scheduled' === this.props.message ) {
+					return translate( 'View Preview' );
+				}
+
 				if ( 'page' === type ) {
 					return translate( 'View Page' );
 				} else if ( 'post' !== type && typeObject ) {
