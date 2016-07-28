@@ -37,10 +37,10 @@
 .reader-full-post__header-date-link,
 .reader-full-post__header-date-link:visited {
 	color: $gray;
-}
 
-.reader-full-post__header-date-link:hover {
-	color: darken( $gray, 20% );
+	&:hover {
+		color: darken( $gray, 20% );
+	}
 }
 
 .reader-full-post__header-tags {
@@ -76,25 +76,22 @@
 	display: inline;
 	margin-right: 5px;
 
-	&:after {
+	&::after {
 		content: ',';
 	}
 
 	&:last-child {
 		margin-right: 0;
 
-		&:after {
+		&::after {
 			content: '';
 		}
 	}
 }
 
-.reader-full-post__header-tag-list-item-link {
+.reader-full-post__header-tag-list-item-link,
+.reader-full-post__header-tag-list-item-link:visited {
 	color: $gray;
-
-	&:visited {
-		color: $gray;
-	}
 
 	&:hover {
 		color: darken( $gray, 20% );
