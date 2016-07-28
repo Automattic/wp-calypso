@@ -126,6 +126,10 @@
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
+
+	&.web-preview__seo-button {
+		display: block;
+	}
 }
 
 .web-preview__toolbar-tray {
