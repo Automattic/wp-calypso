@@ -75,3 +75,7 @@ export function getSourceFollowUrl( post ) {
 	}
 	return followUrl || '';
 }
+
+export function getAttribution( post ) {
+	return get( post, 'discover_metadata.attribution' );
+}
