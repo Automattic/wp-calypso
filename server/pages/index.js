@@ -3,6 +3,7 @@ var express = require( 'express' ),
 	crypto = require( 'crypto' ),
 	qs = require( 'qs' ),
 	execSync = require( 'child_process' ).execSync,
+	exec = require( 'child_process' ).exec,
 	cookieParser = require( 'cookie-parser' ),
 	debug = require( 'debug' )( 'calypso:pages' );
 
@@ -27,7 +28,12 @@ var staticFiles = [
 ];
 
 var sections = sectionsModule.get();
-var commitChecksum = getCurrentCommitShortChecksum();
+var commitChecksum = '';
+exec( 'git rev-parse --short HEAD', function( error, stdout ) {
+	if ( ! error && stdout ) {
+		commitChecksum = stdout.toString().replace( /\s/gm, '' );
+	}
+} );
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -92,14 +98,6 @@ function generateStaticUrls( request ) {
 function getCurrentBranchName() {
 	try {
 		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
-	}
-}
-
-function getCurrentCommitShortChecksum() {
-	try {
-		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
 	} catch ( err ) {
 		return undefined;
 	}
