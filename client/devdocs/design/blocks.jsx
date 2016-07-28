@@ -31,6 +31,7 @@ import PostCard from 'components/post-card/docs/example';
 import ReaderAuthorLink from 'components/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'components/reader-site-stream-link/docs/example';
 import ReaderFullPostHeader from 'components/reader-full-post/docs/header-example';
+import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 
 export default React.createClass( {
 
@@ -83,6 +84,7 @@ export default React.createClass( {
 					<ReaderAuthorLink />
 					<ReaderSiteStreamLink />
 					<ReaderFullPostHeader />
+					<AuthorCompactProfile />
 				</Collection>
 			</div>
 		);
