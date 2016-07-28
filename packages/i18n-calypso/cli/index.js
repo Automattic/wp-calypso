@@ -6,13 +6,11 @@ var fs = require( 'fs' ),
 	Xgettext = require( 'xgettext-js' ),
 	preProcessXGettextJSMatch = require( './preprocess-xgettextjs-match.js' ),
 	formatters = require( './formatters' ),
-	concatAllFiles = require( './util' ).concatAllFiles,
 	debug = require( 'debug' )( 'glotpress-js' );
 
 module.exports = function( config ) {
 	var keywords,
 		data,
-		extraFiles,
 		matches,
 		parser,
 		parserKeywords,
@@ -24,17 +22,6 @@ module.exports = function( config ) {
 
 	if ( ! config.data && ! config.inputPaths ) {
 		throw new Error( 'Must provide input `data` or `inputPaths`' );
-	}
-
-	// TODO: parse input files one after the other to improve memory perfomance
-	// and have the file location of each i18n string
-	data = config.data || concatAllFiles( config.inputPaths );
-
-	if ( config.extras ) {
-		extraFiles = config.extras.map( function( extra ) {
-			return path.join( __dirname, 'extras', extra + '.js' );
-		} );
-		data += '\n' + concatAllFiles( extraFiles );
 	}
 
 	parserKeywords = config.parserKeywords || {};
@@ -50,7 +37,37 @@ module.exports = function( config ) {
 		keywords: parserKeywords
 	} );
 
-	matches = parser.getMatches( data );
+	function getFileMatches( inputFiles ) {
+		return inputFiles.map( function( inputFile ) {
+			var relativeInputFilePath = path.relative( __dirname, inputFile ).replace( /^[\/.]+/, '' );
+			return parser.getMatches( fs.readFileSync( inputFile, 'utf8' ) ).map( function( match ) {
+				match.line = relativeInputFilePath + ':' + match.line;
+				return match;
+			});
+		} );
+	}
+
+	if ( config.data ) {
+		// If data is provided, feed it directly to the parser and call the file <unknown>
+		matches = [ parser.getMatches( data ).map( function( match ) {
+			match.location = '<unknown>:' + match.line;
+			return match;
+		}) ];
+	} else {
+		matches = getFileMatches( config.inputPaths );
+	}
+
+	if ( config.extras ) {
+		matches = matches.concat( getFileMatches( config.extras.map( function( extra ) {
+			return path.join( __dirname, 'extras', extra + '.js' );
+		} ) ) );
+	}
+
+	// The matches array now contains the entries for each file in it's own array:
+	// [ [ 'file1 match1', 'file1 match2' ], [ 'file2 match1' ] ]
+
+	// Flatten array, so that it has all entries in just one level.
+	matches = [].concat.apply( [], matches );
 
 	debug( 'matches', matches );
 

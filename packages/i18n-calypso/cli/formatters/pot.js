@@ -99,25 +99,51 @@ module.exports = function( matches, options ) {
 
 	output += '\n';
 
-	output += matches.map( function( match ) {
-		var matchPotStr = "",
-			matchId = uniqueMatchId( match );
+	matches = matches.map( function( match ) {
+		var matchId = uniqueMatchId( match ),
+			firstMatch = uniqueMatchesMap[ matchId ];
 
-		if ( uniqueMatchesMap[ matchId ] ) {
-			return undefined;
-		} else {
-			uniqueMatchesMap[ matchId ] = true;
+		if ( ! firstMatch ) {
+			match.lines = {};
+			match.comments = {};
+			uniqueMatchesMap[ matchId ] = match;
 		}
 
+		// Aggregate lines and comments for output later.
+		if ( match.line ) {
+			uniqueMatchesMap[ matchId ].lines[ match.line ] = true;
+		}
 		if ( match.comment ) {
-			matchPotStr += match.comment.split( '\n' ).map( function( commentLine ) {
-				return '#. ' + commentLine + '\n';
-			} ).join( '' );
+			uniqueMatchesMap[ matchId ].comments[ match.comment ] = true;
 		}
+
+		// ignore this match now that we have updated the first match
+		if ( firstMatch ) {
+			return undefined;
+		}
+
+		return match;
+	} ).filter( function( match ) { // removes undefined
+		return match;
+	} );
+
+	output += matches.map( function( match ) {
+		var matchPotStr = "";
+
+		matchPotStr += Object.keys( match.lines ).map( function( line ) {
+			return '#: ' + line + '\n';
+		} ).join( '' );
+
+		matchPotStr += Object.keys( match.comments ).map( function( commentLine ) {
+			return '#. ' + commentLine + '\n';
+		} ).join( '' );
+
 		if ( match.context ) {
 			matchPotStr += 'msgctxt ' + multiline( match.context, 'msgctxt ' ) + '\n';
 		}
+
 		matchPotStr += 'msgid ' + multiline( match.single, 'msgid ' ) + '\n';
+
 		if ( match.plural ) {
 			matchPotStr += 'msgid_plural ' + multiline( match.plural, 'msgid_plural ' ) + '\n';
 			matchPotStr += 'msgstr[0] ""\n';
@@ -125,9 +151,8 @@ module.exports = function( matches, options ) {
 		} else {
 			matchPotStr += 'msgstr ""\n';
 		}
+
 		return matchPotStr;
-	} ).filter( function( match ) { // removes undefined
-		return match;
 	} ).join( '\n' );
 
 	return output;

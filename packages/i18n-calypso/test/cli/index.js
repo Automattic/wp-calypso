@@ -239,6 +239,14 @@ describe( 'index', function() {
 			expect( output ).to.have.string( '#. draft saved date format, see http://php.net/date' );
 		} );
 
+		it( 'should prepend the line number', function() {
+			expect( output ).to.have.string( '#: test/cli/out/i18n-test-examples.js:9\nmsgid "My hat has three corners too."' );
+		} );
+
+		it( 'should combine strings', function() {
+			expect( output ).to.have.string( '#: test/cli/out/i18n-test-examples.js:6\n#: test/cli/out/i18n-test-examples.js:68\n#. Second ocurrence\nmsgid "My hat has three corners."' );
+		} );
+
 		it( 'should pass through an sprintf as a regular translation', function() {
 			expect( output ).to.have.string( 'msgid "Your city is %(city)s and your zip is %(zip)s."\nmsgstr ""\n' );
 		} );
@@ -312,6 +320,10 @@ describe( 'index', function() {
 
 		it( 'should prepend a translator comment', function() {
 			expect( output ).to.have.string( '/* translators: draft saved date format, see http://php.net/date */\n__( "g:i:s a" ),' );
+		} );
+
+		it( 'should append the line number', function() {
+			expect( output ).to.have.string( '__( "My hat has three corners." ), // test/cli/out/i18n-test-examples.js:6' );
 		} );
 
 		it( 'should pass through an sprintf as a regular __() method', function() {

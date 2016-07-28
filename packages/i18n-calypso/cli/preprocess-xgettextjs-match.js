@@ -12,7 +12,7 @@
  * @return {object} data object combining the strings and options passed into translate();
  */
 module.exports = function preProcessXGettextJSMatch( match ) {
-	var finalProps = {},
+	var finalProps = { line: match.line },
 		options, i, keyName, args;
 
 	if ( ! match.arguments.length ) {

@@ -34,6 +34,7 @@ function getGlotPressFunction( properties ) {
 function buildPHPString( properties, textdomain ) {
 	var wpFunc = getGlotPressFunction( properties ),
 		response = [],
+		string,
 		closing = textdomain ? ( ', "' + textdomain.replace( /"/g, '\\"' ) + '" ),' ) : ' ),',
 		stringFromFunc = {
 			__: '__( ' + properties.single + closing,
@@ -48,7 +49,13 @@ function buildPHPString( properties, textdomain ) {
 		response.push( '/* translators: ' + properties.comment.replace( /\*\//g, '*\\/' ) + ' */' );
 	}
 
-	response.push( stringFromFunc[ wpFunc ] );
+	string = stringFromFunc[ wpFunc ];
+
+	if ( properties.line ) {
+		string += ' // ' + properties.line;
+	}
+
+	response.push( string );
 
 	return response.join( '\n' );
 }
