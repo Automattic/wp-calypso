@@ -69,31 +69,34 @@
     &::after {
     	@include long-content-fade( $size: 35% );
     }
+}
 
-	li {
-		color: $gray;
-		display: inline;
-		margin-right: 5px;
+.reader-full-post__header-tag-list-item {
+	color: $gray;
+	display: inline;
+	margin-right: 5px;
+
+	&:after {
+		content: ',';
+	}
+
+	&:last-child {
+		margin-right: 0;
 
 		&:after {
-			content: ',';
-		}
-
-		&:last-child {
-			margin-right: 0;
-
-			&:after {
-				content: '';
-			}
+			content: '';
 		}
 	}
+}
 
-	a,
-	a:visited {
+.reader-full-post__header-tag-list-item-link {
+	color: $gray;
+
+	&:visited {
 		color: $gray;
 	}
 
-	a:hover {
+	&:hover {
 		color: darken( $gray, 20% );
 	}
 }
