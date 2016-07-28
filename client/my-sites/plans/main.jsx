@@ -9,24 +9,20 @@ import find from 'lodash/find';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getCurrentPlan } from 'lib/plans';
 import { getPlans } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
-import { isEnabled } from 'config';
 import { isJpphpBundle } from 'lib/products-values';
 import Main from 'components/main';
 import Notice from 'components/notice';
 import observe from 'lib/mixins/data-observe';
 import paths from './paths';
-import PlanList from 'components/plans/plan-list' ;
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import PlanOverview from './plan-overview';
-import { plansLink, isPlanFeaturesEnabled } from 'lib/plans';
+import { plansLink } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { SUBMITTING_WPCOM_REQUEST } from 'lib/store-transactions/step-types';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -44,39 +40,6 @@ const Plans = React.createClass( {
 		sites: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
 		transaction: React.PropTypes.object.isRequired
-	},
-
-	getInitialState() {
-		return { openPlan: '' };
-	},
-
-	openPlan( planId ) {
-		this.setState( { openPlan: planId === this.state.openPlan ? '' : planId } );
-	},
-
-	recordComparePlansClick() {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Compare Plans Link' );
-	},
-
-	comparePlansLink() {
-		if ( this.props.plans.length <= 0 ) {
-			return '';
-		}
-
-		const selectedSite = this.props.sites.getSelectedSite();
-		let url = plansLink( '/plans/compare', selectedSite, this.props.intervalType ),
-			compareString = this.translate( 'Compare Plans' );
-
-		if ( selectedSite.jetpack ) {
-			compareString = this.translate( 'Compare Options' );
-		}
-
-		return (
-			<a href={ url } className="compare-plans-link" onClick={ this.recordComparePlansClick }>
-				<Gridicon icon="clipboard" size={ 18 } />
-				{ compareString }
-			</a>
-		);
 	},
 
 	showMonthlyPlansLink() {
@@ -130,9 +93,7 @@ const Plans = React.createClass( {
 
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite(),
-			mainClassNames = {},
-			siteId = this.props.siteId,
-			isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
+			siteId = this.props.siteId;
 
 		let	hasJpphpBundle,
 			currentPlan;
@@ -154,16 +115,11 @@ const Plans = React.createClass( {
 			);
 		}
 
-		mainClassNames[ 'has-personal-plan' ] = ! isPlanFeaturesEnabled() && isPersonalPlanEnabled;
-
 		return (
 			<div>
 				{ this.renderNotice() }
 
-				<Main
-					className={ mainClassNames }
-					wideLayout={ isPlanFeaturesEnabled() }
-				>
+				<Main wideLayout={ true } >
 					<SidebarNavigation />
 
 					<div id="plans" className="plans has-sidebar">
@@ -178,27 +134,12 @@ const Plans = React.createClass( {
 						<QueryPlans />
 						<QuerySitePlans siteId={ siteId } />
 
-						{
-							isPlanFeaturesEnabled()
-								? <PlansFeaturesMain
-									site={ selectedSite }
-									intervalType={ this.props.intervalType }
-									hideFreePlan={ true }
-									selectedFeature={ this.props.selectedFeature }
-								/>
-
-								: <PlanList
-									site={ selectedSite }
-									plans={ this.props.plans }
-									sitePlans={ this.props.sitePlans }
-									onOpen={ this.openPlan }
-									cart={ this.props.cart }
-									intervalType={ this.props.intervalType }
-									isSubmitting={ this.props.transaction.step.name === SUBMITTING_WPCOM_REQUEST }
-								/>
-						}
-
-						{ ! hasJpphpBundle && ! isPlanFeaturesEnabled() && this.comparePlansLink() }
+						<PlansFeaturesMain
+							site={ selectedSite }
+							intervalType={ this.props.intervalType }
+							hideFreePlan={ true }
+							selectedFeature={ this.props.selectedFeature }
+						/>
 					</div>
 				</Main>
 			</div>
