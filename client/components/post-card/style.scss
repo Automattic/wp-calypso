@@ -249,7 +249,7 @@
 }
 
 .post-card__byline-author-and-site {
-	color: $gray;
+	color: lighten( $gray, 10% );
 	margin-right: 6px;
 }
 
