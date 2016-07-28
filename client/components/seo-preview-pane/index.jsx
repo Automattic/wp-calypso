@@ -92,8 +92,6 @@ export class SeoPreviewPane extends PureComponent {
 					<VerticalMenu onClick={ this.selectPreview }>
 						<SocialItem service="google" />
 						<SocialItem service="facebook" />
-						<SocialItem service="wordpress" />
-						<SocialItem service="linkedin" />
 						<SocialItem service="twitter" />
 					</VerticalMenu>
 				</div>
