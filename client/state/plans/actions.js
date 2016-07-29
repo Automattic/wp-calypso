@@ -9,7 +9,6 @@ import {
 	PLANS_REQUEST_FAILURE
 } from '../action-types';
 
-import { insertPersonalPlan } from 'lib/plans/personal-plan';
 /**
  * Action creator function: RECEIVE
  *
@@ -19,7 +18,7 @@ import { insertPersonalPlan } from 'lib/plans/personal-plan';
 export const plansReceiveAction = plans => {
 	return {
 		type: PLANS_RECEIVE,
-		plans: insertPersonalPlan( plans )
+		plans
 	};
 };
 
@@ -82,7 +81,7 @@ export const requestPlans = () => {
 		return wpcom
 			.withLocale()
 			.plans()
-			.list( { apiVersion: '1.2' } )
+			.list( { apiVersion: '1.4' } )
 			.then( data => {
 				dispatch( plansRequestSuccessAction() );
 				dispatch( plansReceiveAction( getValidDataFromResponse( data ) ) );
