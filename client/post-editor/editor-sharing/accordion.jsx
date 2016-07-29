@@ -39,12 +39,8 @@ const EditorSharingAccordion = React.createClass( {
 
 	getSubtitle: function() {
 		const { isPublicizeEnabled, post, connections } = this.props;
-		if ( ! isPublicizeEnabled ) {
+		if ( ! isPublicizeEnabled || ! post || ! connections ) {
 			return;
-		}
-
-		if ( ! post || ! connections ) {
-			return this.translate( 'Loading…' );
 		}
 
 		const skipped = PostMetadata.publicizeSkipped( post );
