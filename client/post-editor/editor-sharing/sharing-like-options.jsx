@@ -1,19 +1,21 @@
 /**
  * External dependencies
  */
-const React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-const EditorFieldset = require( 'post-editor/editor-fieldset' ),
-	FormCheckbox = require( 'components/forms/form-checkbox' ),
-	PostActions = require( 'lib/posts/actions' ),
-	stats = require( 'lib/posts/stats' );
+import EditorFieldset from 'post-editor/editor-fieldset';
+import FormCheckbox from 'components/forms/form-checkbox';
+import PostActions from 'lib/posts/actions';
+import { recordStat, recordEvent } from 'lib/posts/stats';
+import { isEditorNewPost } from 'state/ui/editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackModuleActive } from 'state/sites/selectors';
 
-export default React.createClass( {
-	displayName: 'SharingLikeOptions',
-
+const SharingLikeOptions = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
@@ -94,11 +96,15 @@ export default React.createClass( {
 		mcStat += event.target.checked ? '_enabled' : '_disabled';
 		eventStat += event.target.checked ? ' Enabled' : ' Disabled';
 
-		stats.recordStat( mcStat );
-		stats.recordEvent( eventStat );
+		recordStat( mcStat );
+		recordEvent( eventStat );
 	},
 
 	render: function() {
+		if ( ! this.props.isSharingButtonsEnabled && ! this.props.isLikesEnabled ) {
+			return null;
+		}
+
 		return (
 			<EditorFieldset
 				className="editor-sharing__sharing-like-options"
@@ -110,3 +116,13 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
+
+	return {
+		isSharingButtonsEnabled: false !== isJetpackModuleActive( state, siteId, 'sharedaddy' ),
+		isLikesEnabled: false !== isJetpackModuleActive( state, siteId, 'likes' ),
+		isNew: isEditorNewPost( state )
+	};
+} )( SharingLikeOptions );
