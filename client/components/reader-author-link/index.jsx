@@ -7,10 +7,10 @@ import React from 'react';
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
 
 const ReaderAuthorLink = ( { author, children } ) => {
-	const recordAuthorClick = ( { author } ) => {
+	const recordAuthorClick = ( { } ) => {
 		recordAction( 'click_author' );
 		recordGaEvent( 'Clicked Author Link' );
 		recordTrack( 'calypso_reader_author_link_clicked' );
