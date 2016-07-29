@@ -31,6 +31,7 @@ class EditorPageOrder extends Component {
 		super( ...arguments );
 
 		this.editMenuOrder = this.editMenuOrder.bind( this );
+		this.statTracked = false;
 	}
 
 	editMenuOrder( event ) {
@@ -40,8 +41,12 @@ class EditorPageOrder extends Component {
 			return;
 		}
 
-		recordStat( 'advanced_menu_order_changed' );
-		recordEvent( 'Changed page menu order' );
+		if ( ! this.statTracked ) {
+			this.statTracked = true;
+			recordStat( 'advanced_menu_order_changed' );
+			recordEvent( 'Changed page menu order' );
+		}
+
 		this.props.editPost( { menu_order: newOrder }, siteId, postId );
 	}
 
