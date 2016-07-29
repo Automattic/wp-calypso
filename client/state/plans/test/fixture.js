@@ -161,6 +161,68 @@ export const PLAN_1008 = {
 	raw_price: 299
 };
 
+export const PLAN_1009 = {
+	product_id: 1009,
+	product_name: "WordPress.com Personal",
+	prices: {
+		USD: 71.88
+	},
+	product_name_short: "Personal",
+	product_slug: "personal-bundle",
+	tagline: "Get your own domain",
+	description: "Use your own domain and establish your online presence without ads.",
+	icon: "https://s0.wordpress.com/i/store/plan-personal.png",
+	icon_active: "https://s0.wordpress.com/i/store/plan-personal-active.png",
+	capability: "manage_options",
+	cost: 71.88,
+	apple_sku: "com.wordpress.test.personal.subscription.1year",
+	android_sku: "sub_test_plan_personal_001",
+	features_highlight: [
+		{
+			items: [ "no-adverts/no-adverts.php", "custom-domain", "support", "space" ]
+		},
+		{
+			title : "Included with all plans:",
+			items: ["free-blog"]
+		}
+	],
+	bill_period: 365,
+	product_type: "bundle",
+	available: "yes",
+	bundle_product_ids: [
+		12,
+		9,
+		50,
+		5,
+		6,
+		46,
+		54,
+		56,
+		57,
+		58,
+		59,
+		60,
+		61,
+		62,
+		63,
+		64,
+		65,
+		66,
+		67,
+		68,
+		72,
+		73,
+		74,
+		75,
+		16
+	],
+	bill_period_label: "per year",
+	price: "$71.88",
+	formatted_price: "$71.88",
+	raw_price: 71.88,
+	currency_code: "USD"
+};
+
 export const PLAN_2000 = {
 	product_id: 2000,
 	product_name: 'Premium',
@@ -252,7 +314,7 @@ export const PLAN_2002 = {
 };
 
 export const WPCOM_RESPONSE = [
-	PLAN_1, PLAN_1003, PLAN_1008, PLAN_2000, PLAN_2001, PLAN_2002
+	PLAN_1, PLAN_1003, PLAN_1008, PLAN_1009, PLAN_2000, PLAN_2001, PLAN_2002
 ];
 
 WPCOM_RESPONSE._headers = {
