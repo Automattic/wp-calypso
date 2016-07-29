@@ -20,10 +20,10 @@ const selectedSiteIsCustomizable = state =>
 const previewIsNotShowing = state =>
 	! isPreviewShowing( state );
 
-export const MainTour = ( { state, next } ) => React.cloneElement(
+export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 	<Tour name="main" version="20160601" path="/" context={ () => true }>
 		<Step name="init" placement="right" next="my-sites">
-			{
+			<p>{
 				translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place," +
 										'and give you some ideas for what to do next.',
 					{
@@ -31,7 +31,7 @@ export const MainTour = ( { state, next } ) => React.cloneElement(
 							strong: <strong />,
 						}
 					} )
-			}
+			}</p>
 			<Next>{ translate( "Let's go!" ) }</Next>
 			<Quit>{ translate( 'No thanks.' ) }</Quit>
 		</Step>
@@ -147,5 +147,5 @@ export const MainTour = ( { state, next } ) => React.cloneElement(
 			</Link>
 		</Step>
 	</Tour>,
-	{ state, next }
+	{ state, next, quit }
 );

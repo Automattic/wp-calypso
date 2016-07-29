@@ -13,6 +13,7 @@ const bindTourName = ( nextFn, tourName ) => stepName =>
 
 export const Tour = ( { name, context, children, state, next, quit } ) => {
 	console.log( 'tour state ', state );
+	console.log( 'tour props ', next, quit );
 	const nextStep = selectStep( state, children );
 	if ( ! nextStep || ! context( state ) ) {
 		return null;
@@ -63,12 +64,13 @@ export class Step extends Component {
 	}
 
 	render() {
+		console.log( this.props );
 		const { context, children, state } = this.props;
 		if ( context && ! context( state ) ) {
 			return null;
 		}
 		return (
-			<div className="step">
+			<div className="guided-tours__step">
 				{ React.cloneElement( children, {
 					next: this.next.bind( this, this.props ),
 					quit: this.quit.bind( this, this.props ),
