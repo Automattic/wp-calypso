@@ -13,12 +13,6 @@
 			margin-top: 15px;
 		}
 
-		&.is-missing-avatar {
-			&.is-post {
-				padding-left: 26px;
-			}
-		}
-
 		.gridicon-arrow {
 			height: 12px;
 			width: 12px;
@@ -40,19 +34,19 @@
 			margin: 1px 6px 1px 0;
 		}
 
-		&.is-post a {
-			padding-left: 3px;
-			padding-right: 3px;
-		}
-
 		.discover-attribution__author,
 		.discover-attribution__blog {
-			text-transform: none;
 			color: $blue-medium;
 			text-decoration: none;
+			text-transform: none;
+
 			&:hover {
 				color: $blue-light;
 			}
+		}
+
+		.discover-attribution__blog {
+			margin-right: 6px;
 		}
 
 		.noticon {
@@ -67,8 +61,7 @@
 			position: static;
 			border: none;
 			padding: 0;
-			vertical-align: text-bottom;;
-			margin: 0 6px;
+			vertical-align: text-bottom;
 			color: lighten( $gray, 10% );
 			font-size: 13px;
 			line-height: 16px;
@@ -80,6 +73,13 @@
 
 			&:focus {
 				box-shadow: none;
+			}
+
+			.follow-button__label {
+
+				@include breakpoint( "<660px" ) {
+					display: inline-block;
+				}
 			}
 		}
 	}

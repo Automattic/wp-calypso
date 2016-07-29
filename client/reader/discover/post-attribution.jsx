@@ -51,9 +51,9 @@ const DiscoverPostAttribution = React.createClass( {
 				{ attribution.avatar_url ? <img className="gravatar" src={ encodeURI( attribution.avatar_url ) } alt="Avatar" width="20" height="20" /> : arrowGridicon }
 				<span className="discover-attribution__text">
 					{ this.translate( 'Originally posted by' ) }
-					<a className="discover-attribution__author" rel="external" target="_blank" onClick={ this.recordAuthorClick } href={ encodeURI( attribution.author_url ) }>{ attribution.author_name }</a>
+					&nbsp;<a className="discover-attribution__author" rel="external" target="_blank" onClick={ this.recordAuthorClick } href={ encodeURI( attribution.author_url ) }>{ attribution.author_name }</a>&nbsp;
 					{ this.translate( 'on' ) }
-					<a { ...siteLinkProps } className={ siteClasses } onClick={ this.recordSiteClick } href={ encodeURI( this.props.siteUrl ) }>{ attribution.blog_name }</a>
+					&nbsp;<a { ...siteLinkProps } className={ siteClasses } onClick={ this.recordSiteClick } href={ encodeURI( this.props.siteUrl ) }>{ attribution.blog_name }</a>
 					{ !! this.props.followUrl ? <FollowButton siteUrl={ this.props.followUrl } iconSize={ 20 } /> : null }
 				</span>
 			</div>
