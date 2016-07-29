@@ -25,10 +25,14 @@ const AuthorCompactProfile = React.createClass( {
 	render() {
 		const { author, siteName, siteUrl, followCount, feedId, siteId } = this.props;
 
+		if ( ! author ) {
+			return null;
+		}
+
 		return (
 			<div className="author-compact-profile">
 				<Gravatar size={ 96 } user={ author } />
-				<ReaderAuthorLink author={ author }>{ author.display_name }</ReaderAuthorLink>
+				<ReaderAuthorLink author={ author }>{ author.name }</ReaderAuthorLink>
 				{ siteName && siteUrl
 					? <ReaderSiteStreamLink feedId={ feedId } siteId={ siteId }>
 						{ siteName }

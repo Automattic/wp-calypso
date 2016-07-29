@@ -33,7 +33,13 @@ export class FullPostView extends React.Component {
 					{ translate( 'Back' ) }
 					</div>
 				</StickyPanel>
-				<AuthorCompactProfile author={ post.author } />
+				<AuthorCompactProfile
+					author={ post.author }
+					siteName={ post.site_name }
+					siteUrl= { post.site_URL }
+					followCount={ 99999 }
+					feedId={ post.feed_ID }
+					siteId={ post.site_ID } />
 				<ReaderFullPostHeader post={ post } />
 				<div dangerouslySetInnerHTML={ { __html: post.content } } />
 			</Main>

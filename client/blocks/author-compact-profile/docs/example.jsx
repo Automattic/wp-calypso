@@ -16,7 +16,7 @@ export default React.createClass( {
 	render() {
 		const author = {
 			avatar_URL: 'https://0.gravatar.com/avatar/cf55adb1a5146c0a11a808bce7842f7b?s=96&d=identicon',
-			display_name: 'Bob The Tester',
+			name: 'Bob The Tester',
 			URL: 'http://wpcalypso.wordpress.com'
 		};
 
