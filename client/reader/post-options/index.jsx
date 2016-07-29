@@ -19,6 +19,7 @@ import SiteBlockStore from 'lib/reader-site-blocks';
 import SiteBlockActions from 'lib/reader-site-blocks/actions';
 import PostUtils from 'lib/posts/utils';
 import FollowButton from 'reader/follow-button';
+import { getFollowUrlFromFeedOrPost as getFollowUrl } from 'reader/utils';
 import * as DiscoverHelper from 'reader/discover/helper';
 
 const stats = require( 'reader/stats' );
@@ -59,7 +60,7 @@ const PostOptions = React.createClass( {
 	getStateFromStores() {
 		const siteId = this.props.post.site_ID,
 			feed = this.getFeed(),
-			followUrl = this.getFollowUrl( feed );
+			followUrl = getFollowUrl( feed, this.props.post );
 
 		return {
 			isBlocked: SiteBlockStore.getIsBlocked( siteId ),
@@ -98,10 +99,6 @@ const PostOptions = React.createClass( {
 		stats.recordTrackForPost( 'calypso_reader_post_reported', this.props.post );
 
 		window.open( 'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ), '_blank' );
-	},
-
-	getFollowUrl( feed ) {
-		return feed ? feed.get( 'feed_URL' ) : this.props.post.site_URL;
 	},
 
 	getFeed() {
@@ -163,7 +160,8 @@ const PostOptions = React.createClass( {
 	render() {
 		const post = this.props.post,
 			isEditPossible = PostUtils.userCan( 'edit_post', post ),
-			isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
+			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
+			isFollowable = !! this.state.followUrl;
 
 		let triggerClasses = [ 'post-options__trigger', 'ignore-click' ],
 			isBlockPossible = false;
@@ -195,7 +193,7 @@ const PostOptions = React.createClass( {
 						position={ this.state.popoverPosition }
 						context={ this.refs && this.refs.popoverMenuButton }>
 
-					<FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } />
+					<FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } disabled={ ! isFollowable } />
 
 					{ isEditPossible ? <PopoverMenuItem onClick={ this.editPost } className="post-options__edit has-icon">
 						<svg className="gridicon gridicon__edit" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

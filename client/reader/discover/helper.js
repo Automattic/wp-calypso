@@ -62,3 +62,20 @@ export function getLinkProps( linkUrl ) {
 		target: isExternal ? '_blank' : ''
 	};
 }
+
+export function getSourceFollowUrl( post ) {
+	let followUrl;
+
+	if ( ! isDiscoverPost( post ) ) {
+		return;
+	}
+
+	if ( isInternalDiscoverPost( post ) ) {
+		followUrl = get( post, 'discover_metadata.attribution.blog_url' );
+	}
+	return followUrl || '';
+}
+
+export function getAttribution( post ) {
+	return get( post, 'discover_metadata.attribution' );
+}
