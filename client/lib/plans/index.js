@@ -26,6 +26,7 @@ import {
 	featuresList,
 	plansList,
 	PLAN_FREE,
+	PLAN_JETPACK_FREE, 
 	PLAN_PERSONAL,
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
@@ -37,6 +38,10 @@ import SitesList from 'lib/sites-list';
 const sitesList = SitesList();
 const debug = debugFactory( 'calypso:plans' );
 const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
+
+export function isFreePlan( plan ) {
+	return plan === PLAN_FREE || plan === PLAN_JETPACK_FREE;
+}
 
 export function getPlan( plan ) {
 	return plansList[ plan ];
