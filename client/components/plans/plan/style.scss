@@ -49,6 +49,11 @@
 	overflow: hidden;
 	transition: all 0.4s ease-in-out;
 	width: 100%;
+	padding-bottom: 56px;
+
+	.is-current-plan & {
+		padding-bottom: 102px;
+	}
 
 	.jetpack_free &,
 	.jetpack_premium &,
@@ -125,6 +130,15 @@
 		border-top: 2px solid lighten( $gray, 20% );
 		float: left;
 	}
+
+	.plan .plan-actions {
+		float:left;
+		position: static;
+	}
+
+	.plan__plan-expand {
+		padding-bottom: 0;
+	}
 }
 
 @mixin plans-in-three-columns() {
@@ -159,10 +173,6 @@
 		margin: 0 0 5px 0;
 		padding: 0;
 		text-align: center;
-	}
-
-	.plan__plan-details {
-		min-height: 209px;
 	}
 
 	.plan-list {

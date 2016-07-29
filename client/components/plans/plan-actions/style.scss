@@ -1,12 +1,16 @@
 .plan { // This nesting is necessary to prevent these styles bleeding onto the /plans/compare screen
 	.plan-actions {
-		float: left;
 		width: 100%;
 		padding: 0 16px 16px 16px;
 		box-sizing: border-box;
+		position: absolute;
+		bottom: 0;
+		left: 0;
 
 		&.is-image-button {
 			padding: 0;
+			float: left;
+			position: static;
 		}
 
 		.plan-actions__upgrade-button {
@@ -25,6 +29,7 @@
 
 .plan-actions__upgrade-button {
 	display: block;
+	white-space: nowrap;
 	text-align: center;
 	width: 100%;
 }
@@ -76,6 +81,7 @@
 	opacity: .6;
 	padding: 0.5em 1.2em 0.62em;
 	text-align: center;
+	white-space: nowrap;
 
 	&:before {
 		@extend %clear-text;

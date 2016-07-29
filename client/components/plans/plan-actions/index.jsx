@@ -250,7 +250,7 @@ const PlanActions = React.createClass( {
 		return (
 			<div>
 				<span className="plan-actions__current-plan-label" onClick={ this.recordCurrentPlanClick }>
-				{ this.translate( 'Your current plan', { context: 'Informing the user of their current plan on /plans/' } ) }</span>
+				{ this.translate( 'Current Plan', { context: 'Informing the user of their current plan on /plans/' } ) }</span>
 				{ this.freePlanExpiration() }
 			</div>
 		);
