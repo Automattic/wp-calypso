@@ -40,10 +40,7 @@ class TermSelectorAddTerm extends Component {
 	static propTypes = {
 		labels: PropTypes.object,
 		postType: PropTypes.string,
-		postId: PropTypes.oneOfType( [
-			PropTypes.string,
-			PropTypes.number
-		] ),
+		postId: PropTypes.number,
 		siteId: PropTypes.number,
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,

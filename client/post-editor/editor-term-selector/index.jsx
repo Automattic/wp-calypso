@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
-import { cloneDeep, findIndex, map } from 'lodash';
+import { cloneDeep, findIndex, map, toArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,10 +18,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 class EditorTermSelector extends Component {
 	static propTypes = {
 		siteId: PropTypes.number,
-		postId: PropTypes.oneOfType( [
-			PropTypes.number,
-			PropTypes.string
-		] ),
+		postId: PropTypes.number,
 		postTerms: PropTypes.object,
 		postType: PropTypes.string,
 		taxonomyName: PropTypes.string
@@ -37,7 +34,7 @@ class EditorTermSelector extends Component {
 		const terms = cloneDeep( postTerms ) || {};
 
 		// map call transforms object returned by API into an array
-		const taxonomyTerms = map( terms[ taxonomyName ] ) || [];
+		const taxonomyTerms = toArray( terms[ taxonomyName ] );
 		const existingSelectionIndex = findIndex( taxonomyTerms, { ID: selectedTerm.ID } );
 		if ( existingSelectionIndex !== -1 ) {
 			taxonomyTerms.splice( existingSelectionIndex, 1 );
@@ -80,7 +77,7 @@ class EditorTermSelector extends Component {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
-		const postId = getEditorPostId( state ) || '';
+		const postId = getEditorPostId( state );
 
 		return {
 			postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' ),
