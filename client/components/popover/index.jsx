@@ -29,7 +29,7 @@ class Popover extends Component {
 	constructor() {
 		super();
 
-		this.setContainerElement = this.setContainerElement.bind( this );
+		this.setDOMBehavior = this.setDOMBehavior.bind( this );
 		this.onPopoverClickout = this.onPopoverClickout.bind( this );
 		this.onKeydown = this.onKeydown.bind( this );
 
@@ -45,13 +45,14 @@ class Popover extends Component {
 		debug( '[%s] init', this.id );
 	}
 
-	componentDidMount() {
-		this.addEscKeyListener();
+	// - lifecycle -
+
+	componentWillMount() {
+		this.domContext = ReactDOM.findDOMNode( this.props.context );
 	}
 
-	componentWillUnmount() {
-		this.unsetClickoutHandler();
-		this.removeEscKeyListener();
+	componentDidMount() {
+		this.addEscKeyListener();
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -59,9 +60,8 @@ class Popover extends Component {
 			return null;
 		}
 
-		this.setState( {
-			positionClass: this.getPositionClass( 'top' )
-		} );
+		this.domContext = ReactDOM.findDOMNode( nextProps.context );
+		this.setPosition();
 
 		if ( nextProps.isVisible ) {
 			this.setClickoutHandler();
@@ -70,25 +70,19 @@ class Popover extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		this.unsetClickoutHandler();
+		this.removeEscKeyListener();
+	}
+
+	// - bound events -
+
 	onKeydown( event ) {
 		if ( event.keyCode !== 27 ) {
 			return null;
 		}
 
 		this.close();
-	}
-
-	getPositionClass( position = this.props.position ) {
-		return `popover-${ position.replace( /\s+/g, '-' ) }`;
-	}
-
-	setClickoutHandler( el = this.domContainer ) {
-		if ( this._unbindClickHandler ) {
-			return debug( 'clickout event already bound' );
-		}
-
-		debug( '[%s] binding `clickout` event', this.id );
-		this._unbindClickHandler = clickOutside( el, this.onPopoverClickout );
 	}
 
 	unsetClickoutHandler() {
@@ -126,43 +120,80 @@ class Popover extends Component {
 		document.removeEventListener( 'keydown', this.onKeydown, true );
 	}
 
-	reposition( domContainer ) {
-		const { context, position } = this.props;
+	// - generic methods -
 
-		if ( ! domContainer || ! context ) {
+	getPositionClass( position = this.props.position ) {
+		return `popover-${ position.replace( /\s+/g, '-' ) }`;
+	}
+
+	setClickoutHandler( el = this.domContainer ) {
+		if ( this._unbindClickHandler ) {
+			return debug( 'clickout event already bound' );
+		}
+
+		debug( '[%s] binding `clickout` event', this.id );
+		this._unbindClickHandler = clickOutside( el, this.onPopoverClickout );
+	}
+
+	/**
+	 * Computes the position of the Popover in function
+	 * of its main container (DOM element) and the target(context)
+	 *
+	 * @return {Object} reposition parameters
+	 */
+	getReposition() {
+		const { domContainer, domContext } = this;
+		const { position } = this.props;
+
+		if ( ! domContainer || ! domContext ) {
+			debug( 'no DOM elements to work' );
 			return null;
 		}
 
-		const domTarget = ReactDOM.findDOMNode( context );
-		const suggestedPosition = suggestPosition( position, domContainer, domTarget );
+		const suggestedPosition = suggestPosition( position, domContainer, domContext );
 
 		debug( 'suggested position: %o', suggestedPosition );
 
-		const state = Object.assign(
+		const reposition = Object.assign(
 			{},
 			constrainLeft(
-				offset( suggestedPosition, domContainer, domTarget ),
+				offset( suggestedPosition, domContainer, domContext ),
 				domContainer
 			),
 			{ positionClass: this.getPositionClass( suggestedPosition ) }
 		);
 
-		debug( 'updating postion state: ', state );
-		this.setState( state );
+		debug( 'updating postion reposition: ', reposition );
+		return reposition;
+	}
+
+	setPosition() {
+		const position = this.getReposition();
+
+		if ( ! position ) {
+			return null;
+		}
+
+		this.setState( position );
 	}
 
 	getStylePosition() {
 		return { left: this.state.left, top: this.state.top, };
 	}
 
-	setContainerElement( el ) {
-		if ( ! el ) {
+	setDOMBehavior( domContainer ) {
+		debug( 'setting DOM behavior' );
+
+		if ( ! domContainer ) {
 			return;
 		}
 
-		this.domContainer = el;
-		this.reposition( el );
-		this.setClickoutHandler( el );
+		// store DOM element referencies
+		this.domContainer = domContainer;
+		this.domContext = ReactDOM.findDOMNode( this.props.context );
+
+		this.setPosition();
+		this.setClickoutHandler( domContainer );
 	}
 
 	onPopoverClickout() {
@@ -198,12 +229,15 @@ class Popover extends Component {
 
 		debug( 'rendering ...' );
 
+		// React supports a special attribute that you can attach to any component.
+		// The ref attribute can be a callback function, and this callback will be
+		// executed immediately after the component is mounted.
 		return (
 			<RootChild>
 				<div
 					style={ this.getStylePosition() }
 					className={ classes }
-					ref={ this.setContainerElement }
+					ref={ this.setDOMBehavior }
 				>
 					<div className="popover__arrow" />
 

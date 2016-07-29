@@ -22,25 +22,26 @@ const Popovers = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			popoverPosition: 'top',
 			showPopover: true,
+
+			popoverPosition: 'top',
 			showPopoverMenu: false,
-			popoverReference: null
+			popoverReference: null,
+			currentPopoverContent: 0,
+			showMultiplePopover: true
 		};
 	},
 
-	_changePopoverPosition( event ) {
-		this.setState( { popoverPosition: event.target.value } );
+	swapPopoverVisibility() {
+		this.setState( { showPopover: ! this.state.showPopover } );
 	},
 
 	closePopover() {
-		console.log( 'closePopover' );
 		this.setState( { showPopover: false } );
 	},
 
-	_showPopoverMenu() {
+	showPopoverMenu() {
 		this.setState( {
-			showPopover: false,
 			showPopoverMenu: ! this.state.showPopoverMenu
 		} );
 	},
@@ -50,14 +51,18 @@ const Popovers = React.createClass( {
 
 		if ( action ) {
 			setTimeout( () => {
-				console.log( 'PopoverMenu action: ' + action );
+				//console.log( 'PopoverMenu action: ' + action );
 			}, 0 );
 		}
 	},
 
 	onPopoverMenuItemBClick( closePopover ) {
-		console.log( 'Custom onClick handler' );
+		//console.log( 'Custom onClick handler' );
 		closePopover();
+	},
+
+	changePopoverPosition( event ) {
+		this.setState( { popoverPosition: event.target.value } );
 	},
 
 	createOnShowHandler( reference ) {
@@ -125,18 +130,91 @@ const Popovers = React.createClass( {
 		);
 	},
 
-	showPopover( event ) {
-		//console.log( 'event: ', event );
+	updateOnlyOnePopoverContent( event ) {
+		event.preventDefault();
+
+		const { currentTarget } = event;
+
+		// this.setState( {
+		// 	showMultiplePopover: true,
+		// 	currentTarget: null,
+		// } );
+
+		// setTimeout( () => {
+		// 	console.log( 'currentTarget: %o', currentTarget );
+
 		this.setState( {
-			showPopover: ! this.state.showPopover,
-			popoverReference: event.currentTarget,
-			showPopoverMenu: false
+			showMultiplePopover: true,
+			currentContext: currentTarget,
+			currentPopoverContent: this.state.currentPopoverContent + 1,
+		} );
+		// }, 1000 );
+	},
+
+	closeOnlyOnePopoverContent() {
+		this.setState( { showMultiplePopover: false } );
+	},
+
+	closeMultiplePopover() {
+		this.setState( {
+			showMultiplePopover: false,
+			currentContext: null
 		} );
 	},
 
-	swapPopoverVisibility() {
-		console.log( 'swapPopoverVisibility' );
-		this.setState( { showPopover: ! this.state.showPopover } );
+	renderPopoverContent() {
+		const content = this.state.currentPopoverContent || 'init';
+
+		if ( ! content ) {
+			return null;
+		}
+
+		return (
+			<div
+				style={ { padding: '10px' } }
+				className="docs__popover-hover-example__content"
+			>
+				Lorem ipsum&nbsp;
+					<strong style={ { color: 'green' } }>
+						{ content }
+					</strong>
+				&nbsp;dolor sit amet.
+			</div>
+		);
+	},
+
+	renderMultipleInOnlyOnePopover() {
+		const bullets = [];
+		for ( let n = 0; n < 999; n++ ) {
+			bullets.push(
+				<li
+					ref={ n === 100 ? 'target-100' : null }
+					className="docs__popover-hover-example__bullet"
+					key={ `bullet-${ n }` }
+					//onClick={ this.updateOnlyOnePopoverContent }
+					onMouseEnter={ this.updateOnlyOnePopoverContent }
+					//onMouseLeave={ this.closeMultiplePopover }
+				>
+					{ n }
+				</li>
+			);
+		}
+
+		return (
+			<div className="docs__popover-hover-example">
+				<ul
+					onMouseLeave={ this.closeOnlyOnePopoverContent }
+				>{ bullets }</ul>
+				<Popover
+					isVisible={ this.state.showMultiplePopover }
+					onClose={ this.closePopover }
+					position={ this.state.popoverPosition }
+					context={ this.state.currentContext || this.getContext( 'target-100' ) }
+				>
+					{ this.renderPopoverContent() }
+				</Popover>
+			</div>
+		);
 	},
 
 	getContext( reference ) {
@@ -158,7 +236,7 @@ const Popovers = React.createClass( {
 					isVisible={ this.state.showPopover }
 					onClose={ this.closePopover }
 					position={ this.state.popoverPosition }
-					context={ this.getContext( 'popoverButton' ) || this.state.popoverReference }
+					context={ this.getContext( 'popoverButton' ) }
 				>
 					<div style={ { padding: '16px' } }>Your popover content.</div>
 				</Popover>
@@ -170,9 +248,9 @@ const Popovers = React.createClass( {
 		return (
 			<div>
 				<button
-						className="button"
+						//className="button"
 						ref="popoverMenuButton"
-						onClick={ this._showPopoverMenu }
+						onClick={ this.showPopoverMenu }
 					>
 					Show Popover Menu
 				</button>
@@ -202,7 +280,7 @@ const Popovers = React.createClass( {
 				<label>Position
 					<select
 						value={ this.state.popoverPosition }
-						onChange={ this._changePopoverPosition }
+						onChange={ this.changePopoverPosition }
 					>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
@@ -215,9 +293,17 @@ const Popovers = React.createClass( {
 					</select>
 				</label>
 
+				{
+					this.renderPopover()
+				}
+
 				<br />
 
-				{ this.renderPopover() }
+				{
+					this.renderMultipleInOnlyOnePopover()
+				}
+
+				<br />
 
 				{
 					// this.renderMenuPopover()
