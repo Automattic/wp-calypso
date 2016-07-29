@@ -1,160 +1,237 @@
 /**
  * External dependencies
  */
+import React, { PropTypes, Component } from 'react';
+import ReactDOM from 'react-dom';
+import debugFactory from 'debug';
+import classNames from 'classnames';
 import clickOutside from 'click-outside';
-import defer from 'lodash/defer';
-import ReactDom from 'react-dom';
-import React from 'react';
-import omit from 'lodash/omit';
-import Tip from 'component-tip';
-import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import closeOnEsc from 'lib/mixins/close-on-esc';
-import warn from 'lib/warn';
+import RootChild from 'components/root-child';
+import {
+	suggested as suggestPosition,
+	constrainLeft,
+	offset
+} from './util';
 
-var Content = React.createClass( {
-	mixins: [ closeOnEsc( '_close' ) ],
+/**
+ * Module variables
+ */
+const noop = () => {};
+const debug = debugFactory( 'calypso:popover' );
+const __popovers = new Set();
+let __popoverNumber = 0;
 
-	render: function() {
-		return (
-			<div { ...this.props } tabIndex="-1" />
+class Popover extends Component {
+	constructor() {
+		super();
+
+		this.setContainerElement = this.setContainerElement.bind( this );
+		this.onPopoverClickout = this.onPopoverClickout.bind( this );
+		this.onKeydown = this.onKeydown.bind( this );
+
+		this.state = {
+			left: -99999,
+			top: -99999,
+			positionClass: 'popover-top'
+		};
+
+		this.id = `pop-${__popoverNumber}`;
+		__popovers.add( this.id );
+		__popoverNumber++;
+		debug( '[%s] init', this.id );
+	}
+
+	componentDidMount() {
+		this.addEscKeyListener();
+	}
+
+	componentWillUnmount() {
+		this.unsetClickoutHandler();
+		this.removeEscKeyListener();
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( ! this.domContainer ) {
+			return null;
+		}
+
+		this.setState( {
+			positionClass: this.getPositionClass( 'top' )
+		} );
+
+		if ( nextProps.isVisible ) {
+			this.setClickoutHandler();
+		} else {
+			this.unsetClickoutHandler();
+		}
+	}
+
+	onKeydown( event ) {
+		if ( event.keyCode !== 27 ) {
+			return null;
+		}
+
+		this.close();
+	}
+
+	getPositionClass( position = this.props.position ) {
+		return `popover-${ position.replace( /\s+/g, '-' ) }`;
+	}
+
+	setClickoutHandler( el = this.domContainer ) {
+		if ( this._unbindClickHandler ) {
+			return debug( 'clickout event already bound' );
+		}
+
+		debug( '[%s] binding `clickout` event', this.id );
+		this._unbindClickHandler = clickOutside( el, this.onPopoverClickout );
+	}
+
+	unsetClickoutHandler() {
+		if ( this._unbindClickHandler ) {
+			debug( '[%s] unbinding `clickout` event', this.id );
+			this._unbindClickHandler();
+			this._unbindClickHandler = null;
+		}
+	}
+
+	addEscKeyListener() {
+		if ( ! this.props.closeOnEsc ) {
+			return null;
+		}
+
+		if ( this.escEventHandlerAdd ) {
+			return null;
+		}
+
+		debug( '[%s] adding escKey handler ...', this.id );
+		this.escEventHandlerAdd = true;
+		document.addEventListener( 'keydown', this.onKeydown, true );
+	}
+
+	removeEscKeyListener() {
+		if ( ! this.props.closeOnEsc ) {
+			return null;
+		}
+
+		if ( ! this.escEventHandlerAdd ) {
+			return null;
+		}
+
+		debug( '[%s] removing escKey handler ...', this.id );
+		document.removeEventListener( 'keydown', this.onKeydown, true );
+	}
+
+	reposition( domContainer ) {
+		const { context, position } = this.props;
+
+		if ( ! domContainer || ! context ) {
+			return null;
+		}
+
+		const domTarget = ReactDOM.findDOMNode( context );
+		const suggestedPosition = suggestPosition( position, domContainer, domTarget );
+
+		debug( 'suggested position: %o', suggestedPosition );
+
+		const state = Object.assign(
+			{},
+			constrainLeft(
+				offset( suggestedPosition, domContainer, domTarget ),
+				domContainer
+			),
+			{ positionClass: this.getPositionClass( suggestedPosition ) }
 		);
-	},
 
-	_close: function() {
+		debug( 'updating postion state: ', state );
+		this.setState( state );
+	}
+
+	getStylePosition() {
+		return { left: this.state.left, top: this.state.top, };
+	}
+
+	setContainerElement( el ) {
+		if ( ! el ) {
+			return;
+		}
+
+		this.domContainer = el;
+		this.reposition( el );
+		this.setClickoutHandler( el );
+	}
+
+	onPopoverClickout() {
+		this.close();
+	}
+
+	close() {
+		if ( ! this.props.isVisible ) {
+			debug( 'popover should be already closed' );
+			return null;
+		}
+
 		this.props.onClose();
 	}
-} );
 
-var Popover = React.createClass( {
-	propTypes: {
-		isVisible: React.PropTypes.bool.isRequired,
-		onClose: React.PropTypes.func.isRequired,
-		position: React.PropTypes.string,
-		ignoreContext: React.PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
-	},
+	render() {
+		const { isVisible, context } = this.props;
 
-	contextTypes: {
-		store: React.PropTypes.object
-	},
-
-	getDefaultProps: function() {
-		return {
-			position: 'top',
-			className: 'popover'
-		};
-	},
-
-	componentDidMount: function() {
-		this._showOrHideTip( {} );
-	},
-
-	componentDidUpdate: function( prevProps ) {
-		this._showOrHideTip( prevProps );
-	},
-
-	componentWillUnmount: function() {
-		clearTimeout( this._clickOutsideTimeout );
-		if ( this._unbindClickOutside ) {
-			this._unbindClickOutside();
-			this._unbindClickOutside = null;
-		}
-		this._tip.remove();
-		ReactDom.unmountComponentAtNode( this._container );
-		this._container = null;
-	},
-
-	render: function() {
-		return null;
-	},
-
-	_showOrHideTip: function( prevProps ) {
-		if ( ! this._tip ) {
-			this._tip = new Tip( '' );
-			this._tip.classname = this.props.className;
-			this._container = this._tip.inner;
+		if ( ! isVisible ) {
+			debug( 'Popover is not visible.' );
+			return null;
 		}
 
-		if ( this.props.isVisible && this.props.context ) {
-			let content = <Content { ...omit( this.props, 'className' ) } onClose={ this._close } />;
-
-			// Context is lost when creating a new render hierarchy, so ensure
-			// that we preserve the context that we care about
-			if ( this.context.store ) {
-				content = (
-					<ReduxProvider store={ this.context.store }>
-						{ content }
-					</ReduxProvider>
-				);
-			}
-
-			// this schedules a render, but does not actually render the content
-			ReactDom.render( content, this._container );
-
-			if ( ! prevProps.isVisible ) {
-				// defer showing the content to give it a chance to render
-				defer( () => {
-					const contextNode = ReactDom.findDOMNode( this.props.context );
-					if ( contextNode.nodeType !== Node.ELEMENT_NODE || contextNode.nodeName.toLowerCase() === 'svg' ) {
-						warn(
-							'Popover is attached to a %s element (nodeType %d).  ' +
-							'This causes problems in IE11 - see 12168-gh-calypso-pre-oss.',
-							contextNode.nodeName,
-							contextNode.nodeType
-						);
-					}
-
-					this._tip.position( this.props.position, { auto: true } );
-					this._tip.show( contextNode );
-
-					if ( this.props.onShow ) {
-						this.props.onShow();
-					}
-				} );
-
-				this._setupClickOutside();
-			}
-		} else {
-			ReactDom.unmountComponentAtNode( this._container );
-			this._tip.hide();
-
-			if ( this._unbindClickOutside ) {
-				this._unbindClickOutside();
-				this._unbindClickOutside = null;
-			}
-		}
-	},
-
-	_setupClickOutside: function() {
-		if ( this._unbindClickOutside ) {
-			this._unbindClickOutside();
+		if ( ! context ) {
+			debug( '`context` is not defined.' );
+			return null;
 		}
 
-		// have to setup clickOutside after a short delay, otherwise it counts the current
-		// click to show the tip and the tip will never be shown
-		this._clickOutsideTimeout = setTimeout( function() {
-			this._unbindClickOutside = clickOutside( this._container, function( event ) {
-				const contextNode = ReactDom.findDOMNode( this.props.context );
-				let shouldClose = ( contextNode && contextNode.contains && ! contextNode.contains( event.target ) );
+		const classes = classNames(
+			'popover__container',
+			this.state.positionClass
+		);
 
-				if ( this.props.ignoreContext && shouldClose ) {
-					const ignoreContext = ReactDom.findDOMNode( this.props.ignoreContext );
-					shouldClose = shouldClose && ( ignoreContext && ignoreContext.contains && ! ignoreContext.contains( event.target ) );
-				}
+		debug( 'rendering ...' );
 
-				if ( shouldClose ) {
-					this._close( event );
-				}
-			}.bind( this ) );
-		}.bind( this ), 10 );
-	},
+		return (
+			<RootChild>
+				<div
+					style={ this.getStylePosition() }
+					className={ classes }
+					ref={ this.setContainerElement }
+				>
+					<div className="popover__arrow" />
 
-	_close: function( event ) {
-		this.props.onClose( event );
+					<div className="popover__inner">
+						{ this.props.children }
+					</div>
+				</div>
+			</RootChild>
+		);
 	}
-} );
+}
 
-module.exports = Popover;
+Popover.propTypes = {
+	className: PropTypes.string,
+	closeOnEsc: PropTypes.bool,
+	group: PropTypes.string,
+	position: PropTypes.string,
+
+	onClose: PropTypes.func.isRequired,
+	onShow: PropTypes.func,
+};
+
+Popover.defaultProps = {
+	className: 'popover',
+	closeOnEsc: true,
+	position: 'top',
+	isVisible: false,
+	onShow: noop,
+};
+
+export default Popover;
