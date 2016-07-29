@@ -45,6 +45,7 @@ import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import Head from 'layout/head';
 import { decodeEntities } from 'lib/formatting';
 
 const ThemeSheet = React.createClass( {
@@ -346,14 +347,10 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const Head = this.props.isLoggedIn
-			? require( 'layout/head' )
-			: require( 'my-sites/themes/head' );
-
 		const themeName = this.props.name;
 		const title = i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
-		} );
+		} ); // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
 
 		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
 
