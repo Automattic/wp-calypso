@@ -14,6 +14,7 @@ import {
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
+	THEME_ACTIVATED,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
@@ -214,6 +215,36 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
+			} );
+		} );
+
+		it( 'should update the theme slug option when a theme is activated', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					options: {
+						theme_slug: 'pub/twentythirteen'
+					}
+				}
+			} );
+			const state = items( original, {
+				type: THEME_ACTIVATED,
+				siteId: 2916284,
+				theme: {
+					name: 'Twenty Sixteen',
+					stylesheet: 'pub/twentysixteen'
+				}
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					options: {
+						theme_slug: 'pub/twentysixteen'
+					}
+				}
 			} );
 		} );
 
