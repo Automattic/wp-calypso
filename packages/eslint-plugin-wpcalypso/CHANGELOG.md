@@ -1,4 +1,4 @@
-#### v1.3.4 (July 29, 2016)
+#### v1.4.0 (July 29, 2016)
 
 - Add: i18n-no-newlines: Warn on newlines in translatable text
 
