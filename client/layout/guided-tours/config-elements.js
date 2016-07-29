@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,37 +10,49 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import Button from 'components/button';
 import { selectStep } from 'state/ui/guided-tours/selectors';
-import { posToCss, getStepPosition, getValidatedArrowPosition, targetForSlug } from './positioning';
+import { posToCss, getStepPosition, getValidatedArrowPosition } from './positioning';
 
 const bindTourName = ( nextFn, tourName ) => stepName =>
 	nextFn( { tour: tourName, stepName } );
 
-export const Tour = ( { name, context, children, state, next, quit } ) => {
-	console.log( 'tour state ', state );
-	console.log( 'tour props ', next, quit );
-	const nextStep = selectStep( state, children );
-	if ( ! nextStep || ! context( state ) ) {
-		return null;
+export class Tour extends Component {
+	getChildContext() {
+		const { next, quit } = this.tourMethods;
+		return { next, quit };
 	}
 
-	return React.cloneElement( nextStep, {
-		state,
-		quit,
-		next: bindTourName( next, name )
-	} );
-};
+	constructor( props, context ) {
+		super( props, context );
+		const { quit, next } = props;
+		this.tourMethods = { quit, next };
+	}
+
+	render() {
+		const { context, children, state } = this.props;
+		const nextStep = selectStep( state, children );
+		if ( ! nextStep || ! context( state ) ) {
+			return null;
+		}
+
+		return React.cloneElement( nextStep, { state } );
+	}
+}
 
 Tour.propTypes = {
 	name: PropTypes.string.isRequired
 };
 
+Tour.childContextTypes = {
+	next: PropTypes.func.isRequired,
+	quit: PropTypes.func.isRequired,
+};
+
 export class Step extends Component {
-	constructor( props ) {
-		super( props );
+	constructor( props, context ) {
+		super( props, context );
 	}
 
 	componentWillMount() {
-		console.log( 'state', this.props.state );
 		this.skipIfInvalidContext( this.props );
 	}
 
@@ -56,16 +67,6 @@ export class Step extends Component {
 		}
 	}
 
-	next = ( props = this.props ) => {
-		const { next, nextStep } = props;
-		next( nextStep );
-	}
-
-	quit = ( props = this.props ) => {
-		const { quit } = props;
-		quit( /** finished **/ );
-	}
-
 	render() {
 		const { context, children, state } = this.props;
 
@@ -75,7 +76,7 @@ export class Step extends Component {
 
 		const stepPos = getStepPosition( this.props );
 		const stepCoords = posToCss( stepPos );
-		const { text, onNext, onQuit, targetSlug, arrow } = this.props;
+		const { targetSlug, arrow } = this.props;
 
 		const classes = [
 			'guided-tours__step',
@@ -90,13 +91,7 @@ export class Step extends Component {
 
 		return (
 			<Card className={ classNames( ...classes ) } style={ stepCoords } >
-				{ React.Children.map( children, ( child ) =>
-						React.cloneElement( child, {
-						next: this.next,
-						quit: this.quit,
-						nextStep: this.props.nextStep,
-					} ) )
-				}
+				{ children }
 			</Card>
 		);
 	}
@@ -106,15 +101,15 @@ Step.propTypes = {
 	name: PropTypes.string.isRequired,
 };
 
-export const Next = localize( class Next extends Component {
-	constructor( props ) {
-		super( props );
-	}
+Step.contextTypes = {
+	next: PropTypes.func.isRequired,
+	quit: PropTypes.func.isRequired,
+};
 
-	next = () => {
-		const { next, nextStep } = this.props;
-		console.log( 'next', next, this.props );
-		next( nextStep );
+export class Next extends Component {
+	constructor( props, context ) {
+		super( props, context );
+		this.next = context.next;
 	}
 
 	render() {
@@ -125,13 +120,18 @@ export const Next = localize( class Next extends Component {
 			</Button>
 		);
 	}
-} );
+}
 
 Next.propTypes = {
 	children: PropTypes.node,
 };
 
-export const Quit = localize( class Quit extends Component {
+Next.contextTypes = {
+	next: PropTypes.func.isRequired,
+	quit: PropTypes.func.isRequired,
+};
+
+export class Quit extends Component {
 	constructor( props ) {
 		super( props );
 	}
@@ -149,10 +149,15 @@ export const Quit = localize( class Quit extends Component {
 			</Button>
 		);
 	}
-} );
+}
 
 Quit.propTypes = {
 	children: PropTypes.node,
+};
+
+Quit.contextTypes = {
+	next: PropTypes.func.isRequired,
+	quit: PropTypes.func.isRequired,
 };
 
 export class Continue extends Component {

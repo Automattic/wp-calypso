@@ -126,14 +126,16 @@ class GuidedTours extends Component {
 		//	FinishStep,
 		//}[ stepConfig.type ] || BasicStep;
 
-		const { state, nextGuidedTourStep: next } = this.props;
-		console.log( 'gt state', state );
+		const { state } = this.props;
 
 		return (
 			<RootChild>
 				<div className="guided-tours">
 					<QueryPreferences />
-					<MainTour state={ state } next={ next } quit={ this.quit }/>
+					<MainTour
+							state={ state }
+							next={ this.next }
+							quit={ this.quit }/>
 					{ /*
 					<StepComponent
 						{ ...stepConfig }

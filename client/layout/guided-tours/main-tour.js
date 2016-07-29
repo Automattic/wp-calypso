@@ -35,7 +35,7 @@ export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 				}
 			</p>
 			<div className="guided-tours__choice-button-row">
-				<Next>{ translate( "Let's go!" ) }</Next>
+				<Next step="my-sites">{ translate( "Let's go!" ) }</Next>
 				<Quit>{ translate( 'No thanks.' ) }</Quit>
 			</div>
 		</Step>
@@ -46,15 +46,17 @@ export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 			arrow="top-left"
 			next="sidebar"
 		>
-			{
-				translate( "{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing " +
-										"your site's content and design.",
-					{
-						components: {
-							strong: <strong />,
-						}
-					} )
-			}
+			<p>
+				{
+					translate( "{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing " +
+											"your site's content and design.",
+						{
+							components: {
+								strong: <strong />,
+							}
+						} )
+				}
+			</p>
 			<Continue icon="my-sites" target="my-sites" click/>
 		</Step>
 
