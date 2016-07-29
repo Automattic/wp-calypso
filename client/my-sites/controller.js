@@ -39,21 +39,26 @@ const sites = sitesFactory();
 /*
  * The main navigation of My Sites consists of a component with
  * the site selector list and the sidebar section items
+ * @param { object } context - Middleware context
+ * @returns { object } React element containing the site selector and sidebar
  */
-function renderNavigation( context, allSitesPath, siteBasePath ) {
-	// Render the My Sites navigation in #secondary
-	ReactDom.render(
-		React.createElement( ReduxProvider, { store: context.store },
-			React.createElement( NavigationComponent, {
-				layoutFocus,
-				path: context.path,
-				allSitesPath,
-				siteBasePath,
-				user,
-				sites
-			} )
-		),
-		document.getElementById( 'secondary' )
+function createNavigation( context ) {
+	const siteFragment = route.getSiteFragment( context.pathname );
+	let basePath = context.pathname;
+
+	if ( siteFragment ) {
+		basePath = route.sectionify( context.pathname );
+	}
+
+	return React.createElement( ReduxProvider, { store: context.store },
+		React.createElement( NavigationComponent, {
+			layoutFocus,
+			path: context.path,
+			allSitesPath: basePath,
+			siteBasePath: basePath,
+			user,
+			sites
+		} )
 	);
 }
 
@@ -241,15 +246,17 @@ module.exports = {
 		checkSiteShouldFetch();
 	},
 
-	navigation( context, next ) {
-		const siteFragment = route.getSiteFragment( context.pathname );
-		let basePath = context.pathname;
+	makeNavigation: function( context, next ) {
+		context.secondary = createNavigation( context );
+		next();
+	},
 
-		if ( siteFragment ) {
-			basePath = route.sectionify( context.pathname );
-		}
-
-		renderNavigation( context, basePath, basePath );
+	navigation: function( context, next ) {
+		// Render the My Sites navigation in #secondary
+		ReactDom.render(
+			createNavigation( context ),
+			document.getElementById( 'secondary' )
+		);
 		next();
 	},
 
