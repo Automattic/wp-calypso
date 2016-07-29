@@ -22,4 +22,4 @@ test:
   post:
     - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -regex  "./test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
         parallel: true
-    - if [[ $CIRCLE_BRANCH == "master" ]]; then make translate; mkdir $CIRCLE_ARTIFACTS/translate; cp calypso-strings.php $CIRCLE_ARTIFACTS/translate/calypso-strings.php; fi;
+    - if [[ $CIRCLE_BRANCH == "master" ]]; then make translate; mkdir $CIRCLE_ARTIFACTS/translate; cp calypso-strings.pot $CIRCLE_ARTIFACTS/translate/calypso-strings.pot; fi;
