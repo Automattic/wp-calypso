@@ -65,6 +65,17 @@ export function postTypeSupports( state, siteId, slug, feature ) {
 		return !! postType.supports[ feature ];
 	}
 
+	// Hard-coded fallbacks; while themes can technically override these
+	// supports, we can be relatively safe in making the assumption. By
+	// defining fallbacks, we avoid UI flickering after request completes.
+	switch ( slug ) {
+		case 'page':
+			switch ( feature ) {
+				case 'publicize':
+					return false;
+			}
+	}
+
 	return null;
 }
 
