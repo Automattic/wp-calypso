@@ -50,6 +50,17 @@ module.exports = {
 		defaultVariation: 'designTypeWithoutStore',
 		allowExistingUsers: false,
 	},
+	signupStoreBenchmarking: {
+		datestamp: '20160803',
+		variations: {
+			pressable: 94,
+			bluehost: 2,
+			bluehostWithWoo: 2,
+			siteground: 2
+		},
+		defaultVariation: 'pressable',
+		allowExistingUsers: false,
+	},
 	signupThemePreview: {
 		datestamp: '20160727',
 		variations: {

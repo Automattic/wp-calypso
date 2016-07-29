@@ -20,6 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import StepHeader from 'signup/step-header';
 import Button from 'components/button';
+import analytics from 'lib/analytics';
 
 import HeroImage from './hero-image';
 
@@ -67,7 +68,9 @@ export default React.createClass( {
 			return;
 		}
 
-		window.location.href = `https://my.pressable.com/signup/ecommerce-five-sites?email=${ encodeURIComponent( this.state.email ) }&utm_source=wordpresscom&utm_medium=signupref&utm_campaign=wpcomecomm2`;
+		analytics.tracks.recordEvent( 'calypso_triforce_partner_redirect', { partner_name: 'Pressable' } );
+
+		window.open( `https://my.pressable.com/signup/ecommerce-five-sites?email=${ encodeURIComponent( this.state.email ) }&utm_source=wordpresscom&utm_medium=signupref&utm_campaign=wpcomecomm2` );
 	},
 
 	onEmailInputRef( input ) {
