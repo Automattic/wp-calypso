@@ -13,7 +13,8 @@ var sites = require( 'lib/sites-list' )(),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	titleActions = require( 'lib/screen-title/actions' ),
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 var controller = {
 
@@ -43,7 +44,7 @@ var controller = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( Pages, {
 				context: context,
 				siteID: siteID,
@@ -57,7 +58,8 @@ var controller = {
 					'Pages'
 				)
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };
