@@ -26,4 +26,4 @@ var getCallee = module.exports = function( node ) {
 	}
 
 	return callee;
-}
+};

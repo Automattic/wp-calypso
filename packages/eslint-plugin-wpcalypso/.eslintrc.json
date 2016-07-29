@@ -3,7 +3,8 @@
 	"parser": "babel-eslint",
 	"env": {
 		"mocha": true,
-		"node": true
+		"node": true,
+		"es6": true
 	},
 	"rules": {
 		"brace-style": [ 2, "1tbs" ],

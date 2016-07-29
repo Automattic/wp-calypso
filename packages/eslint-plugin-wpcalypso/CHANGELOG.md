@@ -1,3 +1,7 @@
+#### v1.3.4 (July 29, 2016)
+
+- Add: i18n-no-newlines: Warn on newlines in translatable text
+
 #### v1.3.3 (June 28, 2016)
 
 - Fix: jsx-classname-namespace: Only consider components in index.js(x) as being eligible for root export
