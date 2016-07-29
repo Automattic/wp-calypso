@@ -69,10 +69,7 @@ export const plansList = {
 		getProductId: () => 1,
 		getStoreSlug: () => PLAN_FREE,
 		getPathSlug: () => 'beginner',
-		getDescription: () => i18n.translate(
-			'Get a free blog and be on your way to publishing your first post' +
-			' in less than five minutes.'
-		),
+		getDescription: () => i18n.translate( 'Get a free website and be on your way to publishing your first post in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_COMMUNITY_SUPPORT,
@@ -89,7 +86,11 @@ export const plansList = {
 		getStoreSlug: () => PLAN_PERSONAL,
 		availableFor: ( plan ) => includes( [ PLAN_FREE ], plan ),
 		getPathSlug: () => 'personal',
-		getDescription: () => i18n.translate( 'Use your own domain and establish your online presence without ads.' ),
+		getDescription: () => i18n.translate( '{{strong}}Best for Personal Use:{{/strong}} Boost your website with a custom domain name, and remove all WordPress.com advertising. Get access to high quality email and live chat support.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
 		getFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -108,9 +109,28 @@ export const plansList = {
 		getPathSlug: () => 'premium',
 		getStoreSlug: () => PLAN_PREMIUM,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL ], plan ),
-		getDescription: () => i18n.translate( 'Your own domain name, powerful' +
-			' customization options, easy monetization with WordAds, and lots of space for audio and video.'
-		),
+		getDescription: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescriptionWithGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescriptionWithWordAdsInstantActivation: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescriptionWithWordAdsInstantActivationAndGoogleVouchers: () => i18n.translate( '{{strong}}Best for Entrepenuers & Freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video, and the ability to monetize your site with ads.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getOldDescriptionWithGoogleVouchers: () => i18n.translate( 'Your own domain name, powerful customization options,' +
+			' lots of space for audio and video, and $100 advertising voucher.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -131,10 +151,20 @@ export const plansList = {
 		getStoreSlug: () => PLAN_BUSINESS,
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
-		getDescription: () => i18n.translate(
-			'Everything included with Premium, as well as live chat support,' +
-			' unlimited access to premium themes, and Google Analytics.'
-		),
+		getDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your business website with unlimited premium and business theme templates, Google Analytics support, unlimited storage, and the ability to remove WordPress.com branding.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescriptionWithWordAdsCredit: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your business website with unlimited premium and business theme templates, Google Analytics support, unlimited storage, and the ability to remove WordPress.com branding.', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getOldDescription: () => i18n.translate( 'Everything included with Premium, as well as live chat support,' +
+			' unlimited access to premium themes, and Google Analytics.' ),
+		getOldDescriptionWithWordAdsCredit: () => i18n.translate( 'Everything included with Premium, as well as' +
+			' live chat support, unlimited access to premium themes, Google Analytics, and $200 advertising vouchers.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
