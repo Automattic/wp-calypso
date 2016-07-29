@@ -240,6 +240,11 @@ function reduxStoreReady( reduxStore ) {
 				user_id: user.get().ID,
 				calypso_env: config( 'env_id' )
 			} );
+
+			if ( global.window && window.app && window.app.commitChecksum ) {
+				errorLogger.saveDiagnosticData( { commit: window.app.commitChecksum } );
+			}
+
 			errorLogger.saveDiagnosticReducer( function() {
 				const state = reduxStore.getState();
 				return {

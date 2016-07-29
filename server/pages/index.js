@@ -3,6 +3,7 @@ var express = require( 'express' ),
 	crypto = require( 'crypto' ),
 	qs = require( 'qs' ),
 	execSync = require( 'child_process' ).execSync,
+	exec = require( 'child_process' ).exec,
 	cookieParser = require( 'cookie-parser' ),
 	debug = require( 'debug' )( 'calypso:pages' );
 
@@ -27,6 +28,12 @@ var staticFiles = [
 ];
 
 var sections = sectionsModule.get();
+var commitChecksum = '';
+exec( 'git rev-parse --short HEAD', function( error, stdout ) {
+	if ( ! error && stdout ) {
+		commitChecksum = stdout.toString().replace( /\s/gm, '' );
+	}
+} );
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -96,14 +103,6 @@ function getCurrentBranchName() {
 	}
 }
 
-function getCurrentCommitShortChecksum() {
-	try {
-		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
-	}
-}
-
 function getDefaultContext( request ) {
 	var context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
@@ -127,7 +126,8 @@ function getDefaultContext( request ) {
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
 		isDebug: context.env === 'development' || context.isDebug,
 		tinymceWpSkin: context.urls[ 'tinymce/skins/wordpress/wp-content.css' ],
-		tinymceEditorCss: context.urls[ 'editor.css' ]
+		tinymceEditorCss: context.urls[ 'editor.css' ],
+		commitChecksum: commitChecksum
 	};
 
 	if ( CALYPSO_ENV === 'wpcalypso' ) {
@@ -155,7 +155,6 @@ function getDefaultContext( request ) {
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
 		context.branchName = getCurrentBranchName();
-		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	return context;
