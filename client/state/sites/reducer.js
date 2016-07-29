@@ -21,6 +21,7 @@ import {
 	SITES_REQUEST_SUCCESS,
 	DESERIALIZE,
 	SERIALIZE,
+	THEME_ACTIVATED,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
@@ -62,6 +63,22 @@ export function items( state = {}, action ) {
 				memo[ site.ID ] = pick( site, VALID_SITE_KEYS );
 				return memo;
 			}, {} );
+
+		case THEME_ACTIVATED:
+			const { siteId, theme } = action;
+			const site = state[ siteId ];
+			if ( ! site ) {
+				break;
+			}
+
+			return {
+				...state,
+				[ siteId ]: merge( {}, site, {
+					options: {
+						theme_slug: theme.stylesheet
+					}
+				} )
+			};
 
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, sitesSchema ) ) {

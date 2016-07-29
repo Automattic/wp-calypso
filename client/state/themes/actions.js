@@ -219,7 +219,8 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 		const action = {
 			type: THEME_ACTIVATED,
 			theme,
-			site
+			site,
+			siteId: site.ID
 		};
 
 		const trackThemeActivation = recordTracksEvent(
