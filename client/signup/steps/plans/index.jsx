@@ -1,114 +1,60 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:steps:plans' ),
-	isEmpty = require( 'lodash/isEmpty' );
-
+import React, { Component } from 'react';
+import { isEmpty } from 'lodash';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var productsList = require( 'lib/products-list' )(),
-	analytics = require( 'lib/analytics' ),
-	featuresList = require( 'lib/features-list' )(),
-	plansList = require( 'lib/plans-list' )(),
-	PlanList = require( 'components/plans/plan-list' ),
-	PlansCompare = require( 'components/plans/plans-compare' ),
-	SignupActions = require( 'lib/signup/actions' ),
-	signupUtils = require( 'signup/utils' ),
-	StepWrapper = require( 'signup/step-wrapper' ),
-	Gridicon = require( 'components/gridicon' );
-
-import { isEnabled } from 'config';
+import analytics from 'lib/analytics';
+import SignupActions from 'lib/signup/actions';
+import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import QueryPlans from 'components/data/query-plans';
-import { isPlanFeaturesEnabled } from 'lib/plans';
 
-module.exports = React.createClass( {
-	displayName: 'PlansStep',
+class PlansStep extends Component {
+	constructor( props ) {
+		super( props );
 
-	getInitialState: function() {
-		return { plans: [] };
-	},
+		this.onSelectPlan = this.onSelectPlan.bind( this );
+	}
 
-	componentDidMount: function() {
-		debug( 'PlansStep component mounted' );
-		plansList.on( 'change', this.updatePlans );
-		productsList.on( 'change', this.updatePlans );
-		featuresList.on( 'change', this.updatePlans );
+	onSelectPlan( cartItem ) {
+		const {
+			stepSectionName,
+			stepName,
+			goToNextStep,
+			translate
+		} = this.props;
 
-		this.updatePlans();
-	},
-
-	componentWillUnmount: function() {
-		debug( 'PlansStep component unmounted' );
-		plansList.off( 'change', this.updatePlans );
-		productsList.off( 'change', this.updatePlans );
-		featuresList.off( 'change', this.updatePlans );
-	},
-
-	updatePlans: function() {
-		this.setState( {
-			plans: plansList.get(),
-			features: featuresList.get(),
-			productsList: productsList.get()
-		} );
-	},
-
-	onSelectPlan: function( cartItem ) {
 		if ( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
-				from_section: this.props.stepSectionName ? this.props.stepSectionName : 'default'
+				from_section: stepSectionName ? stepSectionName : 'default'
 			} );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
-				from_section: this.props.stepSectionName ? this.props.stepSectionName : 'default'
+				from_section: stepSectionName ? stepSectionName : 'default'
 			} );
 		}
 
 		SignupActions.submitSignupStep( {
-			processingMessage: isEmpty( cartItem ) ? this.translate( 'Free plan selected' ) : this.translate( 'Adding your plan' ),
-			stepName: this.props.stepName,
-			stepSectionName: this.props.stepSectionName,
+			processingMessage: isEmpty( cartItem )
+				? translate( 'Free plan selected' )
+				: translate( 'Adding your plan' ),
+			stepName: stepName,
+			stepSectionName: stepSectionName,
 			cartItem
 		}, [], { cartItem } );
 
-		this.props.goToNextStep();
-	},
+		goToNextStep();
+	}
 
-	comparePlansUrl: function() {
-		return signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'compare', this.props.locale );
-	},
-
-	handleComparePlansLinkClick: function( linkLocation ) {
-		analytics.tracks.recordEvent( 'calypso_signup_compare_plans_click', { location: linkLocation } );
-	},
-
-	plansList: function() {
-		return (
-			<div>
-				<PlanList
-					plans={ this.state.plans }
-					comparePlansUrl={ this.comparePlansUrl() }
-					hideFreePlan={ this.props.hideFreePlan }
-					isInSignup={ true }
-					onSelectPlan={ this.onSelectPlan } />
-				<a
-					href={ this.comparePlansUrl() }
-					className="plans-step__compare-plans-link"
-					onClick={ this.handleComparePlansLinkClick.bind( null, 'footer' ) }>
-						<Gridicon icon="clipboard" size={ 18 } />
-						{ this.translate( 'Compare Plans' ) }
-				</a>
-			</div>
-		);
-	},
-
-	plansFeaturesList: function() {
+	plansFeaturesList() {
 		const {	hideFreePlan } = this.props;
 
 		return (
@@ -119,45 +65,20 @@ module.exports = React.createClass( {
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					onUpgradeClick={ this.onSelectPlan }
-					showFAQ={ false } />
+					showFAQ={ false }
+				/>
 			</div>
 		);
-	},
+	}
 
-	plansSelection: function() {
-		const headerText = this.translate( 'Pick a plan that\'s right for you.' );
-		const subHeaderText = this.translate(
-				'Not sure which plan to choose? Take a look at our {{a}}plan comparison chart{{/a}}.', {
-					components: { a: <a
-						href={ this.comparePlansUrl() }
-						onClick={ this.handleComparePlansLinkClick.bind( null, 'header' ) } /> }
-				}
-			);
-
-		return (
-			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
-				headerText={ headerText }
-				subHeaderText={ subHeaderText }
-				fallbackHeaderText={ headerText }
-				fallbackSubHeaderText={ subHeaderText }
-				signupProgressStore={ this.props.signupProgressStore }
-				isWideLayout={ false }
-				stepContent={ this.plansList() } />
-		);
-	},
-
-	plansFeaturesSelection: function() {
+	plansFeaturesSelection() {
 		const {
 			flowName,
 			stepName,
 			positionInFlow,
-			signupProgressStore
+			signupProgressStore,
+			translate
 		} = this.props;
-
-		const translate = this.translate;
 
 		const headerText = translate( "Pick a plan that's right for you." );
 
@@ -172,42 +93,20 @@ module.exports = React.createClass( {
 				isWideLayout={ true }
 				stepContent={ this.plansFeaturesList() } />
 		);
-	},
+	}
 
-	plansCompare: function() {
-		return <PlansCompare
-			className="plans-step__compare"
-			hideFreePlan={ this.props.hideFreePlan }
-			onSelectPlan={ this.onSelectPlan }
-			isInSignup={ true }
-			backUrl={ this.props.path.replace( '/compare', '' ) }
-			plans={ plansList }
-			features={ featuresList }
-			productsList={ productsList } />;
-	},
-
-	render: function() {
-		const personalPlanTestEnabled = isEnabled( 'plans/personal-plan' );
-
+	render() {
 		const classes = classNames( 'plans plans-step', {
 			'has-no-sidebar': true,
-			'is-wide-layout': isPlanFeaturesEnabled(),
-			'has-personal-plan': personalPlanTestEnabled
+			'is-wide-layout': true
 		} );
-
-		const renderPlans = () => (
-			'compare' === this.props.stepSectionName
-				? this.plansCompare()
-				: this.plansSelection()
-		);
 
 		const renderPlansFeatures = () => ( this.plansFeaturesSelection() );
 
 		return <div className={ classes }>
-			{ isPlanFeaturesEnabled()
-				? renderPlansFeatures()
-				: renderPlans()
-			}
+			{ renderPlansFeatures() }
 		</div>;
 	}
-} );
+}
+
+export default localize( PlansStep );
