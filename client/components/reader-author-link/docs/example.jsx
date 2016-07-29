@@ -14,14 +14,14 @@ export default React.createClass( {
 	displayName: 'ReaderAuthorLink',
 
 	render() {
-		const post = { author: { URL: 'http://wpcalypso.wordpress.com' } };
+		const author = { URL: 'http://wpcalypso.wordpress.com' };
 		return (
 			<div className="design-assets__group">
 				<h2>
 					<a href="/devdocs/blocks/reader-author-link">Reader Author Link</a>
 				</h2>
 				<Card>
-					<ReaderAuthorLink post={ post }>Author site</ReaderAuthorLink>
+					<ReaderAuthorLink author={ author }>Author site</ReaderAuthorLink>
 				</Card>
 			</div>
 		);
