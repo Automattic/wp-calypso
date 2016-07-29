@@ -107,9 +107,15 @@ export function currentUserHasFlag( state, flagName ) {
 /**
  * Returns true if the current user is email-verified.
  *
- * @param {Object} state Global state tree
- * @returns {boolean Whether the current user is email-verified.
+ * @param   {Object } state Global state tree
+ * @returns {boolean}       Whether the current user is email-verified.
  */
 export function isCurrentUserEmailVerified( state ) {
-	return state.currentUser.email_verified;
+	const user = getCurrentUser( state );
+
+	if ( ! user ) {
+		return false;
+	}
+
+	return user.email_verified || false;
 }
