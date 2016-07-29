@@ -3,7 +3,6 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -49,9 +48,5 @@ export default connect(
 			requestingPostTypes: isRequestingPostTypes( state, ownProps.siteId )
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestPostTypes
-		}, dispatch );
-	}
+	{ requestPostTypes }
 )( QueryPostTypes );
