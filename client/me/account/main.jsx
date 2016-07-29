@@ -114,30 +114,62 @@ const Account = React.createClass( {
 		const showTranslator = userLocale && userLocale !== 'en';
 		if ( config.isEnabled( 'community-translator' ) && showTranslator ) {
 			return (
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Community Translator' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox
-							checkedLink={ this.valueLink( 'enable_translator' ) }
-							disabled={ this.getDisabledState() }
-							id="enable_translator"
-							name="enable_translator"
-							onClick={ this.recordCheckboxEvent( 'Community Translator' ) } />
-						<span>
-							{ this.translate( 'Enable the in-page translator where available. {{a}}Learn more{{/a}}', {
+					<FormFieldset>
+						<FormLegend>{ this.translate( 'Community Translator' ) }</FormLegend>
+						<FormLabel>
+							<FormCheckbox
+								checkedLink={ this.valueLink( 'enable_translator' ) }
+								disabled={ this.getDisabledState() }
+								id="enable_translator"
+								name="enable_translator"
+								onClick={ this.recordCheckboxEvent( 'Community Translator' ) } />
+							<span>
+							{ this.translate( 'Enable the in-page translator where available.', {
 								components: {
 									a: <a
-											target="_blank"
-											href="https://en.support.wordpress.com/community-translator/"
-											onClick={ this.recordClickEvent( 'Community Translator Learn More Link' ) }
+										target="_blank"
+										href="https://en.support.wordpress.com/community-translator/"
+										onClick={ this.recordClickEvent( 'Community Translator Learn More Link' ) }
 									/>
 								}
 							} ) }
 						</span>
+						</FormLabel>
+					</FormFieldset>
+			);
+		}
+	},
+
+	srLatin() {
+		const userLocale = this.props.userSettings.getSetting( 'language' );
+		const showSrLatin = userLocale && userLocale === 'sr';
+		if ( showSrLatin ) {
+			return (
+				<FormFieldset>
+					<FormLegend>{ this.translate( 'Serbian Transliteration' ) }</FormLegend>
+					<FormLabel>
+						<FormCheckbox
+							checkedLink={ this.valueLink( 'enable_sr_latin' ) }
+							disabled={ this.getDisabledState() }
+							id="enable_sr_latin"
+							name="enable_sr_latin"
+							onClick={ this.recordCheckboxEvent( 'Serbian Latin' ) } />
+						<span>
+						{ this.translate( 'Enable Serbian Latin.' ) }
+					</span>
 					</FormLabel>
 				</FormFieldset>
 			);
 		}
+	},
+
+	i18nCustomSettings() {
+		return (
+			<div>
+				{ this.communityTranslator() }
+				{ this.srLatin() }
+			</div>
+		);
 	},
 
 	thankTranslationContributors() {
@@ -483,7 +515,7 @@ const Account = React.createClass( {
 					{ this.thankTranslationContributors() }
 				</FormFieldset>
 
-				{ this.communityTranslator() }
+				{ this.i18nCustomSettings() }
 
 				{ this.renderHolidaySnow() }
 

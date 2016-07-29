@@ -45,6 +45,7 @@
     "cookie": "0.1.2",
     "cookie-parser": "1.3.2",
     "creditcards": "1.1.1",
+    "cyrillic-to-latin": "2.0.0",
     "debug": "2.2.0",
     "dom-helpers": "2.4.0",
     "dom-scroll-into-view": "1.0.1",
