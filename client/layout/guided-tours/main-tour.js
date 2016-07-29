@@ -6,9 +6,10 @@ import { Tour,
 	Step,
 	Next,
 	Quit,
-	ClickToContinue,
+	Continue,
 	Link,
-} from 'layout/guided-tours';
+} from 'layout/guided-tours/config-elements';
+import { translate } from 'i18n-calypso';
 
 const selectedSiteIsPreviewable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_previewable;
@@ -19,7 +20,7 @@ const selectedSiteIsCustomizable = state =>
 const previewIsNotShowing = state =>
 	! isPreviewShowing( state );
 
-export const MainTour = ( { translate } ) => (
+export const MainTour = ( { state, next } ) => React.cloneElement(
 	<Tour name="main" version="20160601" path="/" context={ isNewUser }>
 		<Step name="init" placement="right" next="my-sites">
 			{
@@ -50,7 +51,7 @@ export const MainTour = ( { translate } ) => (
 						}
 					} )
 			}
-			<ClickToContinue icon="my-sites" target="my-sites" />
+			<Continue icon="my-sites" target="my-sites" click/>
 		</Step>
 
 		<Step name="sidebar"
@@ -78,11 +79,11 @@ export const MainTour = ( { translate } ) => (
 					}
 				} )
 			}
-			<ClickToContinue>
+			<Continue target="site-card-preview" click>
 				{ translate( "your site's name", {
 					context: "Click your site's name to continue.",
 				} ) }
-			</ClickToContinue>
+			</Continue>
 		</Step>
 
 		<Step name="in-preview"
@@ -110,7 +111,7 @@ export const MainTour = ( { translate } ) => (
 			next="themes"
 		>
 			{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
-			<ClickToContinue target="web-preview__close" icon="cross-small" />
+			<Continue target="web-preview__close" icon="cross-small" click/>
 		</Step>
 
 		<Step name="themes"

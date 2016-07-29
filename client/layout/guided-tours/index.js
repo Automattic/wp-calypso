@@ -26,7 +26,7 @@ import wait from './wait';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
 
-import { DemoTour } from 'layout/guided-tours/config-elements';
+import { MainTour } from 'layout/guided-tours/main-tour';
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -132,7 +132,7 @@ class GuidedTours extends Component {
 			<RootChild>
 				<div className="guided-tours">
 					<QueryPreferences />
-					<DemoTour state={ state } next={ next } />
+					<MainTour state={ state } next={ next } quit={ this.quit }/>
 					{ /*
 					<StepComponent
 						{ ...stepConfig }

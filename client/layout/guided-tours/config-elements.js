@@ -8,19 +8,19 @@ import React, { Component, PropTypes } from 'react';
  */
 import { selectStep } from 'state/ui/guided-tours/selectors';
 
-const t = () => true;
-const f = () => false;
-
 const bindTourName = ( nextFn, tourName ) => stepName =>
 	nextFn( { tour: tourName, stepName } );
 
-export const Tour = ( { name, context, children, state, next } ) => {
+export const Tour = ( { name, context, children, state, next, quit } ) => {
+	console.log( 'tour state ');
 	const nextStep = selectStep( state, children );
 	if ( ! nextStep || ! context( state ) ) {
 		return null;
 	}
+
 	return React.cloneElement( nextStep, {
 		state,
+		quit,
 		next: bindTourName( next, name )
 	} );
 };
@@ -29,13 +29,15 @@ Tour.propTypes = {
 	name: PropTypes.string.isRequired
 };
 
-class Step extends Component {
+export class Step extends Component {
 	constructor( props ) {
 		super( props );
 		this.next = this.next.bind( this );
+		this.quit = this.quit.bind( this );
 	}
 
 	componentWillMount() {
+		console.log( 'state', this.props.state );
 		this.skipIfInvalidContext( this.props );
 	}
 
@@ -55,8 +57,14 @@ class Step extends Component {
 		next( nextStep );
 	}
 
+	quit( props ) {
+		const { quit } = props;
+		quit( /** finished **/ );
+	}
+
 	render() {
 		const { context, children, state } = this.props;
+		console.log( 'state', state );
 		if ( ! context( state ) ) {
 			return null;
 		}
@@ -64,6 +72,7 @@ class Step extends Component {
 			<div className="step">
 				{ React.cloneElement( children, {
 					next: this.next.bind( this, this.props ),
+					quit: this.quit.bind( this, this.props ),
 					nextStep: this.props.nextStep,
 				} ) }
 			</div>
@@ -75,7 +84,7 @@ Step.propTypes = {
 	name: PropTypes.string.isRequired,
 };
 
-class Next extends Component {
+export class Next extends Component {
 	constructor( props ) {
 		super( props );
 		console.log( 'props', this.props );
@@ -92,7 +101,7 @@ class Next extends Component {
 		console.log( 'props', this.props );
 		return (
 			<button className="next" onClick={ this.props.next }>
-				{ this.props.children }
+				{ this.props.children || 'Next' }
 			</button>
 		);
 	}
@@ -102,14 +111,47 @@ Next.propTypes = {
 	children: PropTypes.node.isRequired,
 };
 
-export const DemoTour = ( { state, next } ) => React.cloneElement(
-	<Tour name="A" context={ t }>
-		<Step name="init" nextStep="C" context={ f }>
-			<div>Wat</div>
-		</Step>
-		<Step name="C" context={ t }>
-			<Next>Proceed</Next>
-		</Step>
-	</Tour>,
-	{ state, next }
-);
+export class Quit extends Component {
+	constructor( props ) {
+		super( props );
+		this.quit = this.quit.bind( this );
+	}
+
+	quit() {
+		const { quit } = this.props;
+		quit( /** finished **/ );
+	}
+
+	render() {
+		console.log( 'props', this.props );
+		return (
+			<button className="next" onClick={ this.props.quit }>
+				{ this.props.children || 'Quit' }
+			</button>
+		);
+	}
+}
+
+Next.propTypes = {
+	children: PropTypes.node.isRequired,
+};
+
+export class Continue extends Component {
+	constructor( props ) {
+		super( props );
+	}
+
+	render() {
+		return <i>Click to continue</i>;
+	}
+}
+
+export class Link extends Component {
+	constructor( props ) {
+		super( props );
+	}
+
+	render() {
+		return <a>Some link</a>;
+	}
+}
