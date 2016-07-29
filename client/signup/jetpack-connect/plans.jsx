@@ -9,24 +9,18 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getFlowType } from 'state/jetpack-connect/selectors';
 import Main from 'components/main';
 import ConnectHeader from './connect-header';
 import observe from 'lib/mixins/data-observe';
-import PlanList from 'components/plans/plan-list' ;
-import plansFactory from 'lib/plans-list';
-import { shouldFetchSitePlans } from 'lib/plans';
+import PlansFeaturesMain from 'my-sites/plans-features-main';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
-import * as upgradesActions from 'lib/upgrades/actions';
 import { userCan } from 'lib/site/utils';
-import { cartItems } from 'lib/cart-values';
-import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import { goBackToWpAdmin } from 'state/jetpack-connect/actions';
-
-const plans = plansFactory();
+import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 
@@ -44,40 +38,10 @@ const Plans = React.createClass( {
 		showJetpackFreePlan: React.PropTypes.bool
 	},
 
-	componentWillUnmount: function() {
-		plans.off( 'change', this.autoselectPlan );
-	},
-
 	componentDidMount() {
-		plans.on( 'change', this.autoselectPlan );
-
-		if ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) {
-			return this.autoselectPlan();
-		}
-
 		this.props.recordTracksEvent( 'calypso_jpc_plans_view', {
 			user: this.props.userId
 		} );
-		this.updateSitePlans( this.props.sitePlans );
-	},
-
-	autoselectPlan() {
-		if ( this.props.flowType === 'pro' ) {
-			plans.get();
-			const plan = plans.getPlanBySlug( 'jetpack_business' );
-			if ( plan ) {
-				this.selectPlan( cartItems.getItemForPlan( plan ) );
-				return;
-			}
-		}
-		if ( this.props.flowType === 'premium' ) {
-			plans.get();
-			const plan = plans.getPlanBySlug( 'jetpack_premium' );
-			if ( plan ) {
-				this.selectPlan( cartItems.getItemForPlan( plan ) );
-				return;
-			}
-		}
 	},
 
 	componentWillReceiveProps( props ) {
@@ -90,47 +54,10 @@ const Plans = React.createClass( {
 		}
 	},
 
-	updateSitePlans( sitePlans ) {
-		const selectedSite = this.props.sites.getSelectedSite();
-		this.props.fetchSitePlans( sitePlans, selectedSite );
-	},
-
-	selectFreeJetpackPlan() {
-		const selectedSite = this.props.sites.getSelectedSite();
-		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
-			user: this.props.userId
-		} );
-		if ( isCalypsoStartedConnection( this.props.jetpackConnectSessions, selectedSite.slug ) ) {
-			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
-		} else {
-			const { queryObject } = this.props.jetpackConnectAuthorize;
-			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
-		}
-	},
-
 	hasPlan( site ) {
 		return site &&
 			site.plan &&
 			( site.plan.product_slug === 'jetpack_business' || site.plan.product_slug === 'jetpack_premium' );
-	},
-
-	selectPlan( cartItem ) {
-		const selectedSite = this.props.sites.getSelectedSite();
-		const checkoutPath = `/checkout/${ selectedSite.slug }`;
-		if ( cartItem.product_slug === 'jetpack_premium' ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_99', {
-				user: this.props.userId
-			} );
-			upgradesActions.addItem( cartItem );
-			page( checkoutPath );
-		}
-		if ( cartItem.product_slug === 'jetpack_business' ) {
-			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_299', {
-				user: this.props.userId
-			} );
-			upgradesActions.addItem( cartItem );
-			page( checkoutPath );
-		}
 	},
 
 	render() {
@@ -147,6 +74,8 @@ const Plans = React.createClass( {
 		return (
 			<div>
 				<Main>
+					<QueryPlans />
+					<QuerySitePlans siteId={ selectedSite.ID } />
 					<div className="jetpack-connect__plans">
 						<ConnectHeader
 							showLogo={ false }
@@ -156,16 +85,10 @@ const Plans = React.createClass( {
 							steps={ 3 } />
 
 						<div id="plans" className="plans has-sidebar">
-							<PlanList
-								isInSignup={ true }
+							<PlansFeaturesMain
 								site={ selectedSite }
-								plans={ plans.get() }
-								sitePlans={ this.props.sitePlans }
-								cart={ this.props.cart }
-								showJetpackFreePlan={ true }
-								isSubmitting={ false }
-								onSelectPlan={ this.selectPlan }
-								onSelectFreeJetpackPlan={ this.selectFreeJetpackPlan }/>
+								intervalType="yearly"
+								hideFreePlan={ false } />
 						</div>
 					</div>
 				</Main>
@@ -191,11 +114,6 @@ export default connect(
 		return Object.assign( {},
 			bindActionCreators( { goBackToWpAdmin }, dispatch ),
 			{
-				fetchSitePlans( sitePlans, site ) {
-					if ( shouldFetchSitePlans( sitePlans, site ) ) {
-						dispatch( fetchSitePlans( site.ID ) );
-					}
-				},
 				recordTracksEvent( eventName, props ) {
 					dispatch( recordTracksEvent( eventName, props ) );
 				}
