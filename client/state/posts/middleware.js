@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { cloneDeep, isNumber, map } from 'lodash';
+import { isNumber, toArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,10 +28,10 @@ export function onTermsReceive( dispatch, state, action ) {
 		return;
 	}
 
-	const postTerms = cloneDeep( post.terms ) || {};
+	const postTerms = post.terms || {};
 
-	// map call transforms object returned by API into an array
-	const taxonomyTerms = map( postTerms[ taxonomy ] ) || [];
+	// ensure we have an array since API returns an object
+	const taxonomyTerms = toArray( postTerms[ taxonomy ] );
 	taxonomyTerms.push( newTerm );
 
 	dispatch( editPost( {
