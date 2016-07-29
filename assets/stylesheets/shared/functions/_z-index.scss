@@ -91,7 +91,7 @@ $z-layers: (
 		'.select-dropdown.is-open .select-dropdown__container': 170,
 		'.accessible-focus .select-dropdown.is-open .select-dropdown__container': 170,
 		'.sites-dropdown.is-open .sites-dropdown__wrapper' : 170,
-		'.popover.editor-visibility__popover': 179,
+		'.popover__container.editor-visibility__popover': 179,
 		'.feature-example__gradient': 179,
 		'.global-notices': 179,
 		'.notices-list.is-pinned': 180,
@@ -125,7 +125,7 @@ $z-layers: (
 		'.wplink__dialog.dialog.card': 100200,
 		'.web-preview': 100200,
 		'.category-selector__add-category-info': 100201,
-		'popover.is-dialog-visible': 100300,
+		'popover__container.is-dialog-visible': 100300,
 		'body .webui-popover': 100300,
 		'.fullscreen-fader': 200000,
 		'.first-view': 2000010,
@@ -147,10 +147,10 @@ $z-layers: (
 	'.detail-page__backdrop': (
 		'.detail-page__action-buttons': 200
 	),
-	'.popover': (
+	'.popover__container': (
 		'.input-chrono__container .gridicons-calendar': 0,
 		'input.input-chrono': 1,
-		'.popover .tip-arrow': 1,
+		'.popover__container .popover__arrow': 1,
 		'.post-schedule__header': 1
 	),
 	'.search': (
