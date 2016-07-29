@@ -77,7 +77,7 @@ export default connect(
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
 		const parent = getEditedPostValue( state, siteId, postId, 'parent' );
 		const parentId = get( parent, 'ID', parent ) || 0;
-		const { labels = {} } = getPostType( state, siteId, postType ) || {};
+		const labels = get( getPostType( state, siteId, postType ), 'labels', {} );
 
 		return { siteId, postId, postType, parentId, labels };
 	},
