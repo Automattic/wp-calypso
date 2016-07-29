@@ -87,12 +87,12 @@ $z-layers: (
 		//'tinymce-toolbar': 20, client/components/tinymce/index.jsx
 		'.search': 22,
 		'.community-translator': 99,
-		'.author-selector__popover.popover': 100,
+		'.author-selector__popover.popover__container': 100,
 		'.select-dropdown.is-open .select-dropdown__container': 170,
 		'.accessible-focus .select-dropdown.is-open .select-dropdown__container': 170,
 		'.sites-dropdown.is-open .sites-dropdown__wrapper' : 170,
 		'.first-view': 175,
-		'.popover.editor-visibility__popover': 179,
+		'.popover__container.editor-visibility__popover': 179,
 		'.feature-example__gradient': 179,
 		'.global-notices': 179,
 		'.notices-list.is-pinned': 180,
@@ -106,7 +106,7 @@ $z-layers: (
 		'.customizer-loading-panel__placeholder-change-theme': 999,
 		'.module-overlay': 1000,
 		'.drop-zone': 1000,
-		'.popover': 1000,
+		'.popover__container': 1000,
 		'.sharing-buttons-preview-buttons__more': 1000,
 		'.sortable-list__item.is-draggable.is-active': 1000,
 		'.chart__tooltip': 1000,
@@ -126,7 +126,7 @@ $z-layers: (
 		'.wplink__dialog.dialog.card': 100200,
 		'.web-preview': 100200,
 		'.category-selector__add-category-info': 100201,
-		'popover.is-dialog-visible': 100300,
+		'popover__container.is-dialog-visible': 100300,
 		'body .webui-popover': 100300,
 		'.fullscreen-fader': 200000,
 		'.guided-tours__overlay': 200050,
@@ -147,10 +147,10 @@ $z-layers: (
 	'.detail-page__backdrop': (
 		'.detail-page__action-buttons': 200
 	),
-	'.popover': (
+	'.popover__container': (
 		'.input-chrono__container .gridicons-calendar': 0,
 		'input.input-chrono': 1,
-		'.popover .tip-arrow': 1,
+		'.popover__container .popover__arrow': 1,
 		'.post-schedule__header': 1
 	),
 	'.search': (
