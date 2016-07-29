@@ -21,7 +21,8 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/';
 	const customizerInAdmin = adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
 	const customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : customizerInAdmin;
-	const plan = find( sitePlans.data, isPremium );
+	const plan = find( sitePlans.data, isPremium ),
+		isPremiumPlan = isPremium( selectedSite.plan );
 
 	return (
 		<div>
@@ -29,12 +30,11 @@ const PremiumPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 
 			<PurchaseDetail
 				icon="speaker"
-				title={ i18n.translate( 'No Ads' ) }
-				description={
-					i18n.translate(
-						'Your plan removes advertising from your site so ' +
-						'your visitors can enjoy your content without distractions!'
-					)
+				title={ i18n.translate( 'Advertising Removed' ) }
+				description={ isPremiumPlan
+					? i18n.translate( 'With your plan, all WordPress.com advertising has been removed from your site.' +
+						' You can upgrade to a Business plan to also remove the WordPress.com footer credit.' )
+					: i18n.translate( 'With your plan, all WordPress.com advertising has been removed from your site.' )
 				}
 			/>
 
