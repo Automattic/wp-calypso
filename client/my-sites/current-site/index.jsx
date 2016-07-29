@@ -94,6 +94,7 @@ const CurrentSite = React.createClass( {
 			domains = domainStore && domainStore.list || [];
 		return (
 			<DomainWarnings
+				isCompact
 				selectedSite={ this.getSelectedSite() }
 				domains={ domains }
 				ruleWhiteList={ [ 'expiredDomains', 'expiringDomains', 'wrongNSMappedDomains' ] } />
