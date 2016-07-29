@@ -118,6 +118,10 @@ describe( 'utils', () => {
 					reducer( currentState, actionDeserialize )
 				).to.be.null;
 			} );
+
+			it( 'should throw an error when passed an undefined type', () => {
+				expect( () => reducer( undefined, { type: undefined } ) ).to.throw;
+			} );
 		} );
 
 		context( 'with reducers and default state provided', () => {
