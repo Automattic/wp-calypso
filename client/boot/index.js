@@ -211,7 +211,8 @@ function reduxStoreReady( reduxStore ) {
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 		reduxStore.dispatch( setCurrentUserFlags( user.get().meta.data.flags.active_flags ) );
 
-		const participantInPushNotificationsAbTest = config.isEnabled('push-notifications-ab-test') && abtest('browserNotifications') === 'enabled';
+		const participantInPushNotificationsAbTest = config.isEnabled( 'push-notifications-ab-test' ) &&
+			( abtest( 'browserNotifications' ) === 'enabled' || abtest( 'browserNotificationsPreferences' ) === 'enabled' );
 		if ( config.isEnabled( 'push-notifications' ) || participantInPushNotificationsAbTest ) {
 			// If the browser is capable, registers a service worker & exposes the API
 			reduxStore.dispatch( pushNotificationsInit() );
