@@ -1,14 +1,14 @@
-.post-card__site-info-title {
+.post-card__compact-site-info-title {
 	color: $gray;
 	float: left;
 	width: 100%;
 }
 
-.has-image .post-card__site-info-title {
+.has-image .post-card__compact-site-info-title {
 	width: calc( 100% - 120px );
 }
 
-.post-card__site-info {
+.post-card__compact-site-info {
 	color: $gray;
 	display: block;
 	font-size: 13px;
@@ -18,19 +18,6 @@
 	white-space: nowrap;
 	width: 100%;
 
-	a {
-		color: $gray;
-		text-decoration: none;
-
-		&:visited {
-			color: inherit;
-		}
-
-		&:hover {
-			color: $blue-wordpress;
-		}
-	}
-
 	.site-icon {
 		align-self: auto;
 		float: left;
@@ -39,18 +26,29 @@
 	}
 }
 
-.post-card__title {
+.post-card__byline-link,
+.post-card__byline-link:visited {
+	color: $gray;
+	text-decoration: none;
+
+	&:hover {
+		color: $blue-wordpress;
+	}
+}
+
+.post-card__compact-title {
 	float: left;
 	line-height: 1.2;
 	margin-top: 6px;
 	width: 98%;
 }
 
-.post-card__anchor {
+.post-card__compact-anchor {
 	color: $gray-dark;
 	font-size: 15px;
 	font-weight: 600;
 	line-height: 1.4;
+	text-decoration: none;
 	@extend %content-font;
 
 	&:visited {
@@ -62,7 +60,7 @@
 	}
 }
 
-.post-card__thumbnail {
+.post-card__compact-thumbnail {
 	border-radius: 2px;
 	clear: right;
 	float: right;
@@ -256,7 +254,7 @@
 	margin-top: 6px;
 }
 
-// Custom styles for Follow button
+// Custom styles for Follow button in Search
 .post-card__search .follow-button {
 	background: none;
 	border-style: none;
@@ -315,16 +313,12 @@
 	}
 }
 
-// Custom colors for Site and Author info
+.reader__content .post-card__byline-link,
+.reader__content .post-card__byline-link:visited {
+	color: $gray;
+	text-decoration: none;
 
-.reader__content {
-
-	.post-card__byline-link,
-	.post-card__byline-link:visited {
-		color: lighten( $gray, 10% );
-
-		&:hover {
-			color: $blue-wordpress;
-		}
+	&:hover {
+		color: $blue-wordpress;
 	}
 }
