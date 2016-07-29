@@ -361,8 +361,7 @@ const ThemeSheet = React.createClass( {
 				description={ decodeEntities( this.props.description || '' ) }
 				type={ 'website' }
 				canonicalUrl={ canonicalUrl }
-				image={ this.props.screenshot }
-				tier={ this.props.tier || 'all' }>
+				image={ this.props.screenshot }>
 				<Main className="theme__sheet">
 					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
 						{ this.renderBar() }
