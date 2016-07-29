@@ -4,6 +4,7 @@
 import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -74,9 +75,9 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const postType = getEditedPostValue( state, siteId, postId, 'type' );
-		const parent = getEditedPostValue( state, siteId, postId, 'parent' ) || 0;
-		const parentId = parent.ID ? parent.ID : parent;
-		const { labels } = getPostType( state, siteId, postType ) || {};
+		const parent = getEditedPostValue( state, siteId, postId, 'parent' );
+		const parentId = get( parent, 'ID', parent ) || 0;
+		const { labels = {} } = getPostType( state, siteId, postType ) || {};
 
 		return { siteId, postId, postType, parentId, labels };
 	},
