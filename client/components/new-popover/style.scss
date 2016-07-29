@@ -1,0 +1,200 @@
+/**
+ * "popover" theme for `component/tip`.
+ */
+
+// not sure if we need this
+.popover-hide {
+	opacity: 0;
+}
+
+.popover__container {
+	font-size: 11px;
+	padding: 10px;
+	z-index: z-index( 'root', '.popover__container' );
+	position: absolute;
+	top: 0;
+	left: 0 #{"/*rtl:ignore*/"};
+	right: auto #{"/*rtl:ignore*/"};
+
+	.popover__inner {
+		background-color: $white;
+		border: 1px solid lighten( $gray, 20% );
+		border-radius: 4px;
+		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),
+			0 0 56px rgba( 0, 0, 0, 0.075 );
+		text-align: center;
+	}
+
+	.popover__arrow {
+		border: 10px dashed lighten( $gray, 20% );
+		height: 0;
+		line-height: 0;
+		position: absolute;
+		width: 0;
+		z-index: z-index( '.popover__container', '.popover__container .popover__arrow' );
+	}
+
+	&.fade {
+		transition: opacity 100ms;
+	}
+
+	@mixin popover__arrow( $side ) {
+		@if $side == "top" {
+			$opposite-side: "bottom";
+			$cross-side: "left";
+			$cross-opposite-side: "right";
+		} @else if $side == "bottom" {
+			$opposite-side: "top";
+			$cross-side: "left";
+			$cross-opposite-side: "right";
+		} @else if $side == "left" {
+			$opposite-side: "right";
+			$cross-side: "top";
+			$cross-opposite-side: "bottom";
+		} @else if $side == "right" {
+			$opposite-side: "left";
+			$cross-side: "top";
+			$cross-opposite-side: "bottom";
+		}
+
+		&.popover-#{$side} .popover__arrow,
+		&.popover-#{$side}-#{$cross-side} .popover__arrow,
+		&.popover-#{$side}-#{$cross-opposite-side} .popover__arrow {
+			@mixin shared-between-base-and-before {
+				#{$cross-side}: 50% #{"/*rtl:ignore*/"};
+				margin-#{$cross-side}: -10px#{"/*rtl:ignore*/"};
+				border-#{$side}-style: solid#{"/*rtl:ignore*/"};
+				border-#{$opposite-side}: none#{"/*rtl:ignore*/"};
+				border-#{$cross-side}-color: transparent#{"/*rtl:ignore*/"};
+				border-#{$cross-opposite-side}-color: transparent#{"/*rtl:ignore*/"};
+			}
+
+			#{$opposite-side}: 0 #{"/*rtl:ignore*/"};
+			@include shared-between-base-and-before;
+
+			&::before {
+				#{$opposite-side}: 2px #{"/*rtl:ignore*/"};
+				border: 10px solid $white;
+				content: " ";
+				position: absolute;
+				@include shared-between-base-and-before;
+			}
+		}
+	}
+
+	@include popover__arrow( "top" );
+	@include popover__arrow( "bottom" );
+	@include popover__arrow( "left" );
+	@include popover__arrow( "right" );
+
+	&.popover-top-left,
+	&.popover-bottom-left,
+	&.popover-top-right,
+	&.popover-bottom-right {
+		padding-right: 0;
+		padding-left: 0;
+	}
+
+	&.popover-top-left .popover__arrow,
+	&.popover-bottom-left .popover__arrow {
+		left: auto #{"/*rtl:ignore*/"};
+		right: 5px #{"/*rtl:ignore*/"};
+	}
+
+	&.popover-top-right .popover__arrow,
+	&.popover-bottom-right .popover__arrow {
+		left: 15px #{"/*rtl:ignore*/"};
+	}
+
+	&.popover-top-left .popover__inner,
+	&.popover-bottom-left .popover__inner {
+		position: relative;
+		left: 10px #{"/*rtl:ignore*/"};
+	}
+
+	&.popover-top-right .popover__inner,
+	&.popover-bottom-right .popover__inner {
+		position: relative;
+		left: -10px #{"/*rtl:ignore*/"};
+	}
+
+	&.is-dialog-visible {
+		z-index: z-index( 'root', 'popover__container.is-dialog-visible' ); /* Above .dialog */
+	}
+}
+
+.popover__menu {
+	display: flex;
+	flex-direction: column;
+	min-width: 200px;
+}
+
+.popover__menu-item {
+	position: relative;
+	background: inherit;
+	border: none;
+	border-radius: 0;
+	cursor: pointer;
+	display: block;
+	font-size: 14px;
+	font-weight: 400;
+	margin: 0;
+	padding: 8px 16px;
+	text-align: left;
+	text-decoration: none;
+	line-height: normal;
+	transition: all 0.05s ease-in-out;
+
+	&:first-child {
+		margin-top: 5px;
+	}
+
+	&,
+	&:visited {
+		color: $gray-dark;
+	}
+
+	&:hover,
+	&:focus {
+		background-color: $blue-medium;
+		border: 0;
+		box-shadow: none;
+		color: white;
+
+		.gridicon {
+			color: $white;
+		}
+	}
+
+	&[ disabled ]:hover,
+	&[ disabled ]:focus {
+		background: transparent;
+		cursor: default;
+	}
+
+	&:last-child {
+		margin-bottom: 5px;
+	}
+
+	&::-moz-focus-inner {
+		border: 0;
+	}
+
+	// Menu Items with Icons
+	&.has-icon {
+		padding-left: 42px;
+	}
+
+	// with gridicons
+	.gridicon {
+		color: lighten( $gray, 10 );
+		vertical-align: bottom;
+		margin-right: 8px;
+	}
+}
+
+.popover__menu-separator,
+.popover__hr {
+	margin: 8px 0;
+	background: lighten( $gray, 30 );
+}
