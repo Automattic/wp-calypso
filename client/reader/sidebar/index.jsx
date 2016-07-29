@@ -12,7 +12,6 @@ import { defer, startsWith } from 'lodash';
 /**
  * Internal Dependencies
  */
-import layoutFocus from 'lib/layout-focus';
 import ReaderTagsSubscriptionStore from 'lib/reader-tags/subscriptions';
 import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
 import ReaderListsStore from 'lib/reader-lists/lists';
@@ -36,6 +35,7 @@ import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
 import AppPromo from 'components/app-promo';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
 const ReaderSidebar = React.createClass( {
 
@@ -88,7 +88,7 @@ const ReaderSidebar = React.createClass( {
 
 	handleClick( event ) {
 		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span', true ) ) {
-			layoutFocus.setNext( 'content' );
+			this.props.setNextLayoutFocus( 'content' );
 			window.scrollTo( 0, 0 );
 		}
 	},
@@ -275,7 +275,8 @@ export default connect(
 	( dispatch ) => {
 		return bindActionCreators( {
 			toggleListsVisibility: toggleReaderSidebarLists,
-			toggleTagsVisibility: toggleReaderSidebarTags
+			toggleTagsVisibility: toggleReaderSidebarTags,
+			setNextLayoutFocus,
 		}, dispatch );
 	}
 )( ReaderSidebar );
