@@ -12,7 +12,7 @@ const bindTourName = ( nextFn, tourName ) => stepName =>
 	nextFn( { tour: tourName, stepName } );
 
 export const Tour = ( { name, context, children, state, next, quit } ) => {
-	console.log( 'tour state ');
+	console.log( 'tour state ', state );
 	const nextStep = selectStep( state, children );
 	if ( ! nextStep || ! context( state ) ) {
 		return null;
@@ -47,7 +47,7 @@ export class Step extends Component {
 
 	skipIfInvalidContext( props ) {
 		const { context, state } = props;
-		if ( ! context( state ) ) {
+		if ( context && ! context( state ) ) {
 			this.next( props );
 		}
 	}
@@ -64,8 +64,7 @@ export class Step extends Component {
 
 	render() {
 		const { context, children, state } = this.props;
-		console.log( 'state', state );
-		if ( ! context( state ) ) {
+		if ( context && ! context( state ) ) {
 			return null;
 		}
 		return (

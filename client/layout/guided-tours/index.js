@@ -127,6 +127,7 @@ class GuidedTours extends Component {
 		//}[ stepConfig.type ] || BasicStep;
 
 		const { state, nextGuidedTourStep: next } = this.props;
+		console.log( 'gt state', state );
 
 		return (
 			<RootChild>

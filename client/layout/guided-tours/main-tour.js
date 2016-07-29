@@ -21,7 +21,7 @@ const previewIsNotShowing = state =>
 	! isPreviewShowing( state );
 
 export const MainTour = ( { state, next } ) => React.cloneElement(
-	<Tour name="main" version="20160601" path="/" context={ isNewUser }>
+	<Tour name="main" version="20160601" path="/" context={ () => true }>
 		<Step name="init" placement="right" next="my-sites">
 			{
 				translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place," +
@@ -146,5 +146,6 @@ export const MainTour = ( { state, next } ) => React.cloneElement(
 				{ translate( 'Learn more about WordPress.com' ) }
 			</Link>
 		</Step>
-	</Tour>
+	</Tour>,
+	{ state, next }
 );
