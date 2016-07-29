@@ -3,17 +3,16 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import Button from 'components/button';
+import ExternalLink from 'components/external-link';
 import { selectStep } from 'state/ui/guided-tours/selectors';
-import { posToCss, getStepPosition, getValidatedArrowPosition } from './positioning';
-
-const bindTourName = ( nextFn, tourName ) => stepName =>
-	nextFn( { tour: tourName, stepName } );
+import { posToCss, getStepPosition, getValidatedArrowPosition, targetForSlug } from './positioning';
 
 export class Tour extends Component {
 	getChildContext() {
@@ -68,15 +67,15 @@ export class Step extends Component {
 	}
 
 	render() {
-		const { context, children, state } = this.props;
+		const { context, children, state, placement, target } = this.props;
 
 		if ( context && ! context( state ) ) {
 			return null;
 		}
 
-		const stepPos = getStepPosition( this.props );
+		const stepPos = getStepPosition( { placement, targetSlug: target } );
 		const stepCoords = posToCss( stepPos );
-		const { targetSlug, arrow } = this.props;
+		const { arrow, target: targetSlug } = this.props;
 
 		const classes = [
 			'guided-tours__step',
@@ -113,7 +112,7 @@ export class Next extends Component {
 	}
 
 	render() {
-		const { children, translate } = this.props;
+		const { children } = this.props;
 		return (
 			<Button primary onClick={ this.next }>
 				{ children || translate( 'Next' ) }
@@ -132,17 +131,13 @@ Next.contextTypes = {
 };
 
 export class Quit extends Component {
-	constructor( props ) {
-		super( props );
-	}
-
-	quit = () => {
-		const { quit } = this.props;
-		quit( /** finished **/ );
+	constructor( props, context ) {
+		super( props, context );
+		this.quit = context.quit;
 	}
 
 	render() {
-		const { children, translate } = this.props;
+		const { children } = this.props;
 		return (
 			<Button onClick={ this.quit }>
 				{ children || translate( 'Quit' ) }
@@ -161,8 +156,45 @@ Quit.contextTypes = {
 };
 
 export class Continue extends Component {
-	constructor( props ) {
-		super( props );
+	constructor( props, context ) {
+		super( props, context );
+		this.next = context.next;
+	}
+
+	componentDidMount() {
+		this.addTargetListener();
+	}
+
+	componentWillUnmount() {
+		this.removeTargetListener();
+	}
+
+	componentWillUpdate() {
+		this.removeTargetListener();
+	}
+
+	componentDidUpdate() {
+		this.addTargetListener();
+	}
+
+	addTargetListener() {
+		const { target = false, click } = this.props;
+		const targetNode = targetForSlug( target );
+
+		if ( click && targetNode && targetNode.addEventListener ) {
+			targetNode.addEventListener( 'click', this.next );
+			targetNode.addEventListener( 'touchstart', this.next );
+		}
+	}
+
+	removeTargetListener() {
+		const { target = false, click } = this.props;
+		const targetNode = targetForSlug( target );
+
+		if ( click && targetNode && targetNode.removeEventListener ) {
+			targetNode.removeEventListener( 'click', this.next );
+			targetNode.removeEventListener( 'touchstart', this.next );
+		}
 	}
 
 	render() {
@@ -170,12 +202,21 @@ export class Continue extends Component {
 	}
 }
 
+Continue.contextTypes = {
+	next: PropTypes.func.isRequired,
+	quit: PropTypes.func.isRequired,
+};
+
 export class Link extends Component {
 	constructor( props ) {
 		super( props );
 	}
 
 	render() {
-		return <a>Some link</a>;
+		return (
+			<div className="guided-tours__external-link">
+				<ExternalLink target="_blank" icon={ true } href={ this.props.href }>{ this.props.children }</ExternalLink>
+			</div>
+		);
 	}
 }

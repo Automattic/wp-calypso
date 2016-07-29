@@ -46,7 +46,7 @@ export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 			arrow="top-left"
 			next="sidebar"
 		>
-			<p>
+			<p className="guided-tours__step-text">
 				{
 					translate( "{{strong}}First things first.{{/strong}} Up here, you'll find tools for managing " +
 											"your site's content and design.",
@@ -57,7 +57,9 @@ export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 						} )
 				}
 			</p>
-			<Continue icon="my-sites" target="my-sites" click/>
+			<p className="guided-tours__actionstep-instructions">
+				<Continue icon="my-sites" target="my-sites" click/>
+			</p>
 		</Step>
 
 		<Step name="sidebar"
@@ -66,9 +68,13 @@ export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 			placement="beside"
 			next="click-preview"
 		>
-			{ translate( 'This menu lets you navigate around, and will adapt to give you the tools you need when you need them.' ) }
-			<Next/>
-			<Quit/>
+			<p className="guided-tours__step-text">
+				{ translate( 'This menu lets you navigate around, and will adapt to give you the tools you need when you need them.' ) }
+			</p>
+			<div className="guided-tours__choice-button-row">
+				<Next/>
+				<Quit/>
+			</div>
 		</Step>
 
 		<Step name="click-preview"
@@ -78,18 +84,22 @@ export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 			context={ selectedSiteIsPreviewable }
 			next="in-preview"
 		>
-			{
-				translate( "This shows your currently {{strong}}selected site{{/strong}}'s name and address.", {
-					components: {
-						strong: <strong />,
-					}
-				} )
-			}
-			<Continue target="site-card-preview" click>
-				{ translate( "your site's name", {
-					context: "Click your site's name to continue.",
-				} ) }
-			</Continue>
+			<p className="guided-tours__step-text">
+				{
+					translate( "This shows your currently {{strong}}selected site{{/strong}}'s name and address.", {
+						components: {
+							strong: <strong />,
+						}
+					} )
+				}
+			</p>
+			<p className="guided-tours__actionstep-instructions">
+				<Continue target="site-card-preview" click>
+					{ translate( "your site's name", {
+						context: "Click your site's name to continue.",
+					} ) }
+				</Continue>
+			</p>
 		</Step>
 
 		<Step name="in-preview"
@@ -98,15 +108,19 @@ export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 			continueWhen={ previewIsNotShowing }
 			next="close-preview"
 		>
-			{
-				translate( "This is your site's {{strong}}Preview{{/strong}}. From here you can see how your site looks to others.", {
-					components: {
-						strong: <strong />,
-					}
-				} )
-			}
-			<Next/>
-			<Quit/>
+			<p className="guided-tours__step-text">
+				{
+					translate( "This is your site's {{strong}}Preview{{/strong}}. From here you can see how your site looks to others.", {
+						components: {
+							strong: <strong />,
+						}
+					} )
+				}
+			</p>
+			<div className="guided-tours__choice-button-row">
+				<Next/>
+				<Quit/>
+			</div>
 		</Step>
 
 		<Step name="close-preview"
@@ -116,8 +130,12 @@ export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 			continueWhen={ previewIsNotShowing }
 			next="themes"
 		>
-			{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
-			<Continue target="web-preview__close" icon="cross-small" click/>
+			<p className="guided-tours__step-text">
+				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
+			</p>
+			<p className="guided-tours__actionstep-instructions">
+				<Continue target="web-preview__close" icon="cross-small" click/>
+			</p>
 		</Step>
 
 		<Step name="themes"
@@ -127,27 +145,39 @@ export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 			context={ selectedSiteIsCustomizable }
 			next="finish"
 		>
-			{
-				translate( 'Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}}' +
-										"your theme's colors, fonts, and more.",
-					{
-						components: {
-							strong: <strong />,
-						}
-					} )
-			}
+			<p className="guided-tours__step-text">
+				{
+					translate( 'Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}}' +
+											"your theme's colors, fonts, and more.",
+						{
+							components: {
+								strong: <strong />,
+							}
+						} )
+				}
+			</p>
+			<div className="guided-tours__choice-button-row">
+				<Next/>
+				<Quit/>
+			</div>
 		</Step>
 
 		<Step name="finish"
 			placement="center"
 		>
-			{
-				translate( "{{strong}}That's it!{{/strong}} Now that you know a few of the basics, feel free to wander around.", {
-					components: {
-						strong: <strong />,
-					}
-				} )
-			}
+			<p className="guided-tours__step-text">
+				{
+					translate( "{{strong}}That's it!{{/strong}} Now that you know a few of the basics, feel free to wander around.", {
+						components: {
+							strong: <strong />,
+						}
+					} )
+				}
+			</p>
+			<div className="guided-tours__choice-button-row">
+				<Next/>
+				<Quit/>
+			</div>
 			<Link href="https://lean.wordpress.com">
 				{ translate( 'Learn more about WordPress.com' ) }
 			</Link>
