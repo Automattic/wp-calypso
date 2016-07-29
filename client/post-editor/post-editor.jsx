@@ -444,14 +444,7 @@ const PostEditor = React.createClass( {
 			return;
 		}
 
-		if (
-			utils.isPublished( this.state.savedPost ) ||
-			utils.isPublished( this.state.post ) ||
-			(
-				this.state.post.status === 'future' &&
-				utils.isFutureDated( this.state.post )
-			)
-		) {
+		if ( utils.isPublished( this.state.savedPost ) || utils.isPublished( this.state.post ) ) {
 			callback = function() {};
 		} else {
 			this.setState( { isSaving: true } );
@@ -622,8 +615,6 @@ const PostEditor = React.createClass( {
 
 		if ( utils.isPublished( post ) ) {
 			this.onSaveSuccess( 'updated', 'view', post.URL );
-		} else if ( post.status === 'future' && utils.isFutureDated( post ) ) {
-			this.onSaveSuccess( 'scheduled', 'view', this.state.previewUrl );
 		} else {
 			this.onSaveSuccess();
 		}
@@ -638,6 +629,8 @@ const PostEditor = React.createClass( {
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {
 			edits.status = 'private';
+		} else if ( utils.isFutureDated( this.state.post ) ) {
+			edits.status = 'future';
 		}
 
 		// Update content on demand to avoid unnecessary lag and because it is expensive
@@ -664,10 +657,18 @@ const PostEditor = React.createClass( {
 	},
 
 	onPublishSuccess: function() {
-		const { savedPost, post } = this.state;
-		const message = utils.isPrivate( savedPost ) ? 'publishedPrivately' : 'published';
+		const { savedPost } = this.state;
 
-		this.onSaveSuccess( message, 'view', post.URL );
+		let message;
+		if ( utils.isPrivate( savedPost ) ) {
+			message = 'publishedPrivately';
+		} else if ( utils.isFutureDated( savedPost ) ) {
+			message = 'scheduled';
+		} else {
+			message = 'published';
+		}
+
+		this.onSaveSuccess( message, 'view', savedPost.URL );
 		this.toggleSidebar();
 	},
 
