@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -107,7 +108,7 @@ Step.propTypes = {
 	name: PropTypes.string.isRequired,
 };
 
-export class Next extends Component {
+export const Next = localize( class Next extends Component {
 	constructor( props ) {
 		super( props );
 		console.log( 'props', this.props );
@@ -121,20 +122,20 @@ export class Next extends Component {
 	}
 
 	render() {
-		console.log( 'props', this.props );
+		const { children, translate } = this.props;
 		return (
-			<Button primary onClick={ this.props.next }>
-				{ this.props.children || 'Next' }
+			<Button primary onClick={ this.next }>
+				{ children || translate( 'Next' ) }
 			</Button>
 		);
 	}
-}
+} );
 
 Next.propTypes = {
-	children: PropTypes.node.isRequired,
+	children: PropTypes.node,
 };
 
-export class Quit extends Component {
+export const Quit = localize( class Quit extends Component {
 	constructor( props ) {
 		super( props );
 		this.quit = this.quit.bind( this );
@@ -146,17 +147,17 @@ export class Quit extends Component {
 	}
 
 	render() {
-		console.log( 'props', this.props );
+		const { children, translate } = this.props;
 		return (
-			<Button onClick={ this.props.quit }>
-				{ this.props.children || 'Quit' }
+			<Button onClick={ this.quit }>
+				{ children || translate( 'Quit' ) }
 			</Button>
 		);
 	}
-}
+} );
 
-Next.propTypes = {
-	children: PropTypes.node.isRequired,
+Quit.propTypes = {
+	children: PropTypes.node,
 };
 
 export class Continue extends Component {
