@@ -24,7 +24,7 @@ module.exports = {
 	browserNotificationsPreferences: {
 		datestamp: '20160801',
 		variations: {
-			disabled: 0,
+			disabled: 60,
 			enabled: 40,
 		},
 		defaultVariation: 'disabled',
