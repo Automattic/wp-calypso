@@ -7,18 +7,21 @@ import React from 'react';
  * Internal dependencies
  */
 import { getStreamUrl } from 'reader/route';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
 const ReaderSiteStreamLink = React.createClass( {
 	propTypes: {
 		feedId: React.PropTypes.number,
-		siteId: React.PropTypes.number
+		siteId: React.PropTypes.number,
+		post: React.PropTypes.object // for stats only
 	},
 
 	recordClick() {
 		recordAction( 'visit_blog_feed' );
 		recordGaEvent( 'Clicked Feed Link' );
-		recordTrack( 'calypso_reader_feed_link_clicked' );
+		if ( this.props.post ) {
+			recordTrackForPost( 'calypso_reader_feed_link_clicked', this.props.post );
+		}
 	},
 
 	render() {
