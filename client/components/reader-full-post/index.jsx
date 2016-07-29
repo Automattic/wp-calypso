@@ -19,9 +19,11 @@ import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
+import AuthorCompactProfile from 'blocks/author-compact-profile';
 
 export class FullPostView extends React.Component {
 	render() {
+		const post = this.props.post;
 		/*eslint-disable react/no-danger*/
 		return (
 			<Main className="reader-full-post">
@@ -31,8 +33,9 @@ export class FullPostView extends React.Component {
 					{ translate( 'Back' ) }
 					</div>
 				</StickyPanel>
-				<ReaderFullPostHeader post={ this.props.post } />
-				<div dangerouslySetInnerHTML={ { __html: this.props.post.content } } />
+				<AuthorCompactProfile author={ post.author } />
+				<ReaderFullPostHeader post={ post } />
+				<div dangerouslySetInnerHTML={ { __html: post.content } } />
 			</Main>
 		);
 	}
