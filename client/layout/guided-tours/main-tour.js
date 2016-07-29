@@ -23,17 +23,21 @@ const previewIsNotShowing = state =>
 export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 	<Tour name="main" version="20160601" path="/" context={ () => true }>
 		<Step name="init" placement="right" next="my-sites">
-			<p>{
-				translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place," +
-										'and give you some ideas for what to do next.',
-					{
-						components: {
-							strong: <strong />,
-						}
-					} )
-			}</p>
-			<Next>{ translate( "Let's go!" ) }</Next>
-			<Quit>{ translate( 'No thanks.' ) }</Quit>
+			<p className="guided-tours__step-text">
+				{
+					translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place," +
+											'and give you some ideas for what to do next.',
+						{
+							components: {
+								strong: <strong />,
+							}
+						} )
+				}
+			</p>
+			<div className="guided-tours__choice-button-row">
+				<Next>{ translate( "Let's go!" ) }</Next>
+				<Quit>{ translate( 'No thanks.' ) }</Quit>
+			</div>
 		</Step>
 
 		<Step name="my-sites"

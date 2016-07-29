@@ -2,11 +2,15 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import Card from 'components/card';
+import Button from 'components/button';
 import { selectStep } from 'state/ui/guided-tours/selectors';
+import { posToCss, getStepPosition, getValidatedArrowPosition, targetForSlug } from './positioning';
 
 const bindTourName = ( nextFn, tourName ) => stepName =>
 	nextFn( { tour: tourName, stepName } );
@@ -64,13 +68,29 @@ export class Step extends Component {
 	}
 
 	render() {
-		console.log( this.props );
 		const { context, children, state } = this.props;
+
 		if ( context && ! context( state ) ) {
 			return null;
 		}
+
+		const stepPos = getStepPosition( this.props );
+		const stepCoords = posToCss( stepPos );
+		const { text, onNext, onQuit, targetSlug, arrow } = this.props;
+
+		const classes = [
+			'guided-tours__step',
+			'guided-tours__step-glow',
+			targetSlug && 'guided-tours__step-pointing',
+			targetSlug && 'guided-tours__step-pointing-' + getValidatedArrowPosition( {
+				targetSlug,
+				arrow,
+				stepPos
+			} ),
+		].filter( Boolean );
+
 		return (
-			<div className="guided-tours__step">
+			<Card className={ classNames( ...classes ) } style={ stepCoords } >
 				{ React.Children.map( children, ( child ) =>
 						React.cloneElement( child, {
 						next: this.next.bind( this, this.props ),
@@ -78,7 +98,7 @@ export class Step extends Component {
 						nextStep: this.props.nextStep,
 					} ) )
 				}
-			</div>
+			</Card>
 		);
 	}
 }
@@ -103,9 +123,9 @@ export class Next extends Component {
 	render() {
 		console.log( 'props', this.props );
 		return (
-			<button className="next" onClick={ this.props.next }>
+			<Button primary onClick={ this.props.next }>
 				{ this.props.children || 'Next' }
-			</button>
+			</Button>
 		);
 	}
 }
@@ -128,9 +148,9 @@ export class Quit extends Component {
 	render() {
 		console.log( 'props', this.props );
 		return (
-			<button className="next" onClick={ this.props.quit }>
+			<Button onClick={ this.props.quit }>
 				{ this.props.children || 'Quit' }
-			</button>
+			</Button>
 		);
 	}
 }
