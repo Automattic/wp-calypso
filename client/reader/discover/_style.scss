@@ -1,4 +1,4 @@
-.discover-attribution {
+.reader__card.card  .discover-attribution {
 	font-size: 13px;
 	font-family: $sans;
 	text-transform: lowercase;
@@ -17,18 +17,18 @@
 		}
 	}
 
-	.gridicon {
+	.gridicon-arrow {
 		height: 12px;
 		width: 12px;
-		display: inline-block;
 		fill: $white;
 		background: $gray;
 		padding: 4px;
 		border-radius: 100%;
 		transform: rotate(180deg);
-		position: absolute;
-			top: 0;
-			left: 0;
+		position: relative;
+			top: 6px;
+		margin-right: 6px;
+
 	}
 
 	.gravatar {
@@ -55,7 +55,22 @@
 		color: #fff;
 		margin-right: 6px;
 	}
+
+	.follow-button {
+		position: relative;
+		border: none;
+		padding: 0;
+		margin: 10px 11px 0;
+		color: lighten( $gray, 10% );
+		font-size: 12px;
+		line-height: 18px;
+
+		&.is-following {
+			color: $alert-green;
+		}
+	}
 }
+
 
 .discover-visit-link {
 	background: $gray-light;
