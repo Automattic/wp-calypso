@@ -32,7 +32,7 @@ const SearchEmptyContent = React.createClass( {
 			onClick={ this.recordAction }
 			href="/">{ this.translate( 'Back to Following' ) }</a> );
 
-		const secondaryAction = discoverHelper.isEnabled()
+		const secondaryAction = discoverHelper.isDiscoverEnabled()
 			? ( <a
 			className="empty-content__action button"
 			onClick={ this.recordSecondaryAction }
