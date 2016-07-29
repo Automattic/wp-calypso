@@ -36,6 +36,6 @@ env-config.sh
 *.rdb
 *.db
 
-/calypso-strings.php
+/calypso-strings.pot
 cover.html
 .test.log
