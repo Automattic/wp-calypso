@@ -373,7 +373,7 @@ const Account = React.createClass( {
 					href={ config( 'signup_url' ) }
 					onClick={ this.recordClickEvent( 'Primary Site Add New WordPress Button' ) }
 				>
-					{ this.translate( 'Add New WordPress' ) }
+					{ this.translate( 'Add New Site' ) }
 				</a>
 			);
 		}
