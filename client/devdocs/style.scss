@@ -211,3 +211,48 @@
 	float: right;
 	margin-top: -120px;
 }
+
+
+.docs__popover-hover-example__bullet {
+	list-style: none;
+	float: left;
+	cursor: pointer;
+	width: 25px;
+	height: 25px;
+	line-height: 25px;
+	text-align: center;
+	font-size: 10px;
+	background-color: #e0ffe0;
+
+	&:hover {
+		background-color: $gray;
+		color: $white;
+	}
+
+	&:nth-child(4n) {
+		background-color: #e0ffff;
+
+		&:hover {
+			background-color: $gray;
+			color: $white;
+		}
+	}
+
+	&:nth-child(4n + 1) {
+		background-color: #e0e0ff;
+
+		&:hover {
+			background-color: $gray;
+			color: $white;
+		}
+	}
+
+	&:nth-child(4n + 2) {
+		background-color: #ffffe0;
+
+		&:hover {
+			background-color: $gray;
+			color: $white;
+		}
+	}
+}
