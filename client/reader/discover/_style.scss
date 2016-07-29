@@ -9,15 +9,6 @@
 		margin-top: 13px;
 		margin-bottom: 8px;
 
-		a {
-			color: $blue-medium;
-			text-decoration: none;
-
-				&:hover {
-				color: $blue-light;
-			}
-		}
-
 		&.is-site {
 			margin-top: 15px;
 		}
@@ -57,13 +48,18 @@
 		.discover-attribution__author,
 		.discover-attribution__blog {
 			text-transform: none;
+			color: $blue-medium;
+			text-decoration: none;
+			&:hover {
+				color: $blue-light;
+			}
 		}
 
 		.noticon {
 			font-size: 20px;
 			height: 20px;
-			background-color: #c8d7e1;
-			color: #fff;
+			background-color: lighten( $gray, 20% );
+			color: $white;
 			margin-right: 6px;
 		}
 
