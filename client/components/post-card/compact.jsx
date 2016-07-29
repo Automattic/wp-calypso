@@ -16,7 +16,7 @@ import resizeImageUrl from 'lib/resize-image-url';
 import AuthorAndSite from './author-and-site';
 
 export function CompactPostCard( { translate, post, site, onPostClick = noop, onSiteClick = noop } ) {
-	const classes = classnames( 'post-card__compact small', {
+	const classes = classnames( 'post-card__compact', {
 		'has-image': post.canonical_image
 	} );
 	const displayName = post.author.name;
