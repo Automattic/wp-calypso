@@ -7,7 +7,6 @@ import { map, reduce, noop } from 'lodash';
 import page from 'page';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,13 +27,10 @@ import {
 import {
 	isPopular,
 	isMonthly,
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
 	getPlanFeaturesObject,
 	getPlanClass
 } from 'lib/plans/constants';
+import { isFreePlan } from 'lib/plans';
 import { getSiteSlug } from 'state/sites/selectors';
 import {
 	getPlanPath,
@@ -80,17 +76,23 @@ class PlanFeatures extends Component {
 	}
 
 	renderMobileView() {
-		const { isPlaceholder, translate } = this.props;
-		const planProperties = [];
+		const { isPlaceholder, translate, planProperties } = this.props;
 
-		[ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_FREE ].forEach( planName => {
-			const planObject = find( this.props.planProperties, plan => plan.planName === planName );
-			if ( planObject ) {
-				planProperties.push( planObject );
+		// move any free plan to last place in mobile view
+		let freePlanProperties;
+		const reorderedPlans = planProperties.filter( ( properties ) => {
+			if ( isFreePlan( properties.planName ) ) {
+				freePlanProperties = properties;
+				return false;
 			}
+			return true;
 		} );
 
-		return map( planProperties, ( properties ) => {
+		if ( freePlanProperties ) {
+			reorderedPlans.push( freePlanProperties );
+		}
+
+		return map( reorderedPlans, ( properties ) => {
 			const {
 				available,
 				currencyCode,
@@ -126,7 +128,7 @@ class PlanFeatures extends Component {
 						popular={ popular }
 						available = { available }
 						onUpgradeClick={ onUpgradeClick }
-						freePlan={ planName === PLAN_FREE }
+						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 					/>
 					<FoldableCard
@@ -241,7 +243,7 @@ class PlanFeatures extends Component {
 						available = { available }
 						popular={ popular }
 						onUpgradeClick={ onUpgradeClick }
-						freePlan={ planName === PLAN_FREE }
+						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 					/>
 				</td>
@@ -325,7 +327,7 @@ class PlanFeatures extends Component {
 						available = { available }
 						popular={ popular }
 						onUpgradeClick={ onUpgradeClick }
-						freePlan={ planName === PLAN_FREE }
+						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 					/>
 				</td>
