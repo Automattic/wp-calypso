@@ -71,11 +71,13 @@ export class Step extends Component {
 		}
 		return (
 			<div className="guided-tours__step">
-				{ React.cloneElement( children, {
-					next: this.next.bind( this, this.props ),
-					quit: this.quit.bind( this, this.props ),
-					nextStep: this.props.nextStep,
-				} ) }
+				{ React.Children.map( children, ( child ) =>
+						React.cloneElement( child, {
+						next: this.next.bind( this, this.props ),
+						quit: this.quit.bind( this, this.props ),
+						nextStep: this.props.nextStep,
+					} ) )
+				}
 			</div>
 		);
 	}
