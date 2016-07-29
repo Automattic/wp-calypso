@@ -8,23 +8,36 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { isRequestingPostTypes } from 'state/post-types/selectors';
+import { getSiteOption } from 'state/sites/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
 
 class QueryPostTypes extends Component {
+	static propTypes = {
+		siteId: PropTypes.number.isRequired,
+		requestingPostTypes: PropTypes.bool,
+		themeSlug: PropTypes.string,
+		requestPostTypes: PropTypes.func
+	};
+
 	componentWillMount() {
-		if ( ! this.props.requestingPostTypes && this.props.siteId ) {
-			this.props.requestPostTypes( this.props.siteId );
-		}
+		this.request( this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.requestingPostTypes ||
-				! nextProps.siteId ||
-				( this.props.siteId === nextProps.siteId ) ) {
+		const { siteId, themeSlug } = this.props;
+		const { siteId: nextSiteId, themeSlug: nextThemeSlug } = nextProps;
+		const hasThemeChanged = themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug;
+		if ( siteId !== nextSiteId || hasThemeChanged ) {
+			this.request( nextProps );
+		}
+	}
+
+	request( props ) {
+		if ( props.requestingPostTypes ) {
 			return;
 		}
 
-		nextProps.requestPostTypes( nextProps.siteId );
+		props.requestPostTypes( props.siteId );
 	}
 
 	render() {
@@ -32,20 +45,11 @@ class QueryPostTypes extends Component {
 	}
 }
 
-QueryPostTypes.propTypes = {
-	siteId: PropTypes.number,
-	requestingPostTypes: PropTypes.bool,
-	requestPostTypes: PropTypes.func
-};
-
-QueryPostTypes.defaultProps = {
-	requestPostTypes: () => {}
-};
-
 export default connect(
 	( state, ownProps ) => {
 		return {
-			requestingPostTypes: isRequestingPostTypes( state, ownProps.siteId )
+			requestingPostTypes: isRequestingPostTypes( state, ownProps.siteId ),
+			themeSlug: getSiteOption( state, ownProps.siteId, 'theme_slug' )
 		};
 	},
 	{ requestPostTypes }
