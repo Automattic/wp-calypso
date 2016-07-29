@@ -207,6 +207,7 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 }
 
 if ( config.isEnabled( 'reader' ) ) {
+	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	sections.push( {
 		name: 'reader',
 		paths: [ '/', '/read' ],
