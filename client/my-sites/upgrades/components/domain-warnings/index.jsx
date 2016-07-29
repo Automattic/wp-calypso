@@ -34,10 +34,25 @@ export default React.createClass( {
 		domains: React.PropTypes.array,
 		ruleWhiteList: React.PropTypes.array,
 		domain: React.PropTypes.object,
+		isCompact: React.PropTypes.bool,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired
+	},
+
+	getDefaultProps() {
+		return {
+			isCompact: false,
+			ruleWhiteList: [
+				'expiredDomains',
+				'expiringDomains',
+				'unverifiedDomains',
+				'pendingGappsToAcceptanceDomains',
+				'wrongNSMappedDomains',
+				'newDomains'
+			]
+		}
 	},
 
 	renewLink( count ) {
@@ -56,24 +71,17 @@ export default React.createClass( {
 	},
 
 	getPipe() {
-		let allRules = [
+		const allRules = [
 				this.expiredDomains,
 				this.expiringDomains,
 				this.unverifiedDomains,
 				this.pendingGappsTosAcceptanceDomains,
 				this.wrongNSMappedDomains,
 				this.newDomains
-			], rules;
+			],
+			validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
 
-		if ( ! this.props.ruleWhiteList ) {
-			debug( 'All rules are active' );
-			rules = allRules;
-		} else {
-			debug( 'Rules:', this.props.ruleWhiteList );
-			const validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
-			rules = intersection( allRules, validRules ); // avoid leaking other functions
-		}
-		return rules;
+		return intersection( allRules, validRules );
 	},
 
 	getDomains() {
@@ -85,7 +93,6 @@ export default React.createClass( {
 		const wrongMappedDomains = this.getDomains().filter( domain =>
 			domain.type === domainTypes.MAPPED && ! domain.pointsToWpcom );
 
-		debug( 'Domains:', this.getDomains() );
 		debug( 'NS error domains:', wrongMappedDomains );
 		let learnMoreUrl,
 			text,
@@ -98,13 +105,13 @@ export default React.createClass( {
 		if ( wrongMappedDomains.length === 1 ) {
 			const domain = wrongMappedDomains[ 0 ];
 			if ( isSubdomain( domain.name ) ) {
-				text = this.translate( '%(domainName)s\'s CNAME records should be configured', {
+				text = this.translate( '%(domainName)s\'s CNAME records should be configured.', {
 					args: { domainName: domain.name },
 					context: 'Notice for mapped subdomain that has CNAME records need to set up'
 				} );
 				learnMoreUrl = support.MAP_SUBDOMAIN;
 			} else {
-				text = this.translate( '%(domainName)s\'s name server records should be configured', {
+				text = this.translate( '%(domainName)s\'s name server records should be configured.', {
 					args: { domainName: domain.name },
 					context: 'Notice for mapped domain notice with NS records pointing to somewhere else'
 				} );
@@ -113,18 +120,23 @@ export default React.createClass( {
 		} else {
 			offendingList = <ul>{ wrongMappedDomains.map( domain => <li key={ domain.name }>{ domain.name }</li> ) }</ul>;
 			if ( every( map( wrongMappedDomains, 'name' ), isSubdomain ) ) {
-				text = this.translate( 'Some of your domains\' CNAME records should be configured', {
+				text = this.translate( 'Some of your domains\' CNAME records should be configured.', {
 					context: 'Notice for mapped subdomain that has CNAME records need to set up'
 				} );
 				learnMoreUrl = support.MAP_SUBDOMAIN;
 			} else {
-				text = this.translate( 'Some of your domains\' name server records should be configured', {
+				text = this.translate( 'Some of your domains\' name server records should be configured.', {
 					context: 'Mapped domain notice with NS records pointing to somewhere else'
 				} );
 				learnMoreUrl = support.MAP_EXISTING_DOMAIN_UPDATE_DNS;
 			}
 		}
-		return <Notice status="is-warning" className="domain-warnings-notice" showDismiss={ false } key="wrong-ns-mapped-domain">{ text } <a href={ learnMoreUrl }>{ this.translate( 'Learn more.' ) }</a>{ offendingList }</Notice>;
+		return <Notice
+			isCompact={ this.props.isCompact }
+			status="is-warning"
+			className="domain-warnings__notice"
+			showDismiss={ false }
+			key="wrong-ns-mapped-domain">{ text } <a href={ learnMoreUrl } target="_blank">{ this.translate( 'Learn more' ) }</a>{ ! this.props.isCompact && offendingList }</Notice>;
 	},
 
 	expiredDomains() {
@@ -145,7 +157,11 @@ export default React.createClass( {
 			} );
 		}
 		renewLink = this.renewLink( expiredDomains.length );
-		return <Notice status="is-error" showDismiss={ false } key="expired-domains">{ text } { renewLink }</Notice>;
+		return <Notice
+			isCompact={ this.props.isCompact }
+			status="is-error"
+			showDismiss={ false }
+			key="expired-domains">{ text } { renewLink }</Notice>;
 	},
 
 	expiringDomains() {
@@ -167,7 +183,11 @@ export default React.createClass( {
 			} );
 		}
 		renewLink = this.renewLink( expiringDomains.length );
-		return <Notice status="is-error" showDismiss={ false } key="expiring-domains">{ text } { renewLink }</Notice>;
+		return <Notice
+			isCompact={ this.props.isCompact }
+			status="is-error"
+			showDismiss={ false }
+			key="expiring-domains">{ text } { renewLink }</Notice>;
 	},
 
 	newDomains() {
@@ -231,15 +251,20 @@ export default React.createClass( {
 			}
 		}
 
-		return <Notice status="is-warning" showDismiss={ false } key="new-domains">{ text }</Notice>;
+		return <Notice
+			isCompact={ this.props.isCompact }
+			status="is-warning"
+			showDismiss={ false }
+			key="new-domains">{ text }</Notice>;
 	},
 
 	unverifiedDomainNotice( domain ) {
 		return (
 			<Notice
+				isCompact={ this.props.isCompact }
 				status="is-error"
 				showDismiss={ false }
-				className="domain-warnings-notice"
+				className="domain-warnings__notice"
 				key="unverified-domains"
 				text={ this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified.', { args: { domain } } ) }>
 
@@ -252,7 +277,12 @@ export default React.createClass( {
 
 	unverifiedDomainsNotice( domains ) {
 		return (
-			<Notice status="is-error" showDismiss={ false } className="domain-warnings-notice" key="unverified-domains">
+			<Notice
+				isCompact={ this.props.isCompact }
+				status="is-error"
+				showDismiss={ false }
+				className="domain-warnings__notice"
+				key="unverified-domains">
 				{ this.translate( 'Urgent! Some of your domains may be lost forever because your email address is not verified:' ) }
 				<ul>{
 					domains.map( ( domain ) => {
@@ -278,7 +308,12 @@ export default React.createClass( {
 
 	pendingGappsTosAcceptanceDomains() {
 		const pendingDomains = this.getDomains().filter( hasPendingGoogleAppsUsers );
-		return pendingDomains.length !== 0 && <PendingGappsTosNotice key="pending-gapps-tos-notice" siteSlug={ this.props.selectedSite && this.props.selectedSite.slug } domains={ pendingDomains } section="domain-management" />;
+		return pendingDomains.length !== 0 && <PendingGappsTosNotice
+				isCompact={ this.props.isCompact }
+				key="pending-gapps-tos-notice"
+				siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
+				domains={ pendingDomains }
+				section="domain-management" />;
 	},
 
 	componentWillMount: function() {
@@ -287,6 +322,7 @@ export default React.createClass( {
 		}
 	},
 	render: function() {
+		debug( 'Domains:', this.getDomains() );
 		const notices = this.getPipe().map( renderer => renderer() ).filter( notice => notice );
 		return notices.length ? <div>{ notices }</div> : null;
 	}
