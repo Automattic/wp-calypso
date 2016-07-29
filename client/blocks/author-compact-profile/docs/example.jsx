@@ -26,7 +26,13 @@ export default React.createClass( {
 					<a href="/devdocs/blocks/author-compact-profile">Author Compact Profile</a>
 				</h2>
 				<Card>
-					<AuthorCompactProfile author={ author } />
+					<AuthorCompactProfile
+						author={ author }
+						siteName={ 'Bananas' }
+						siteUrl={ 'http://wpcalypso.wordpress.com' }
+						followCount={ 123 }
+						feedId={ 1 }
+						siteId={ null } />
 				</Card>
 			</div>
 		);

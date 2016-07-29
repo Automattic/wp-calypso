@@ -14,27 +14,28 @@ import { localize } from 'i18n-calypso';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
-		author: React.PropTypes.object.isRequired
+		author: React.PropTypes.object.isRequired,
+		siteName: React.PropTypes.string,
+		siteUrl: React.PropTypes.string,
+		followCount: React.PropTypes.number,
+		feedId: React.PropTypes.number,
+		siteId: React.PropTypes.number
 	},
 
 	render() {
-		const author = this.props.author;
-
-		// @todo these need to come from props
-		const siteName = 'Bananas';
-		const siteUrl = 'http://wpcalypso.wordpress.com';
-		const followCount = 123;
-		const feedId = 123;
-		const siteId = 123;
+		const { author, siteName, siteUrl, followCount, feedId, siteId } = this.props;
 
 		return (
 			<div className="author-compact-profile">
 				<Gravatar size={ 96 } user={ author } />
 				<ReaderAuthorLink author={ author }>{ author.display_name }</ReaderAuthorLink>
-				<ReaderSiteStreamLink feedId={ feedId } siteId={ siteId }>
-					{ siteName }
-				</ReaderSiteStreamLink>
-				<div className="author-compact-profile__follower-count">
+				{ siteName && siteUrl
+					? <ReaderSiteStreamLink feedId={ feedId } siteId={ siteId }>
+						{ siteName }
+					</ReaderSiteStreamLink> : null }
+
+				{ followCount
+					? <div className="author-compact-profile__follow-count">
 					{ this.props.translate(
 						'%(followCount)d follower',
 						'%(followCount)d followers',
@@ -45,7 +46,8 @@ const AuthorCompactProfile = React.createClass( {
 							}
 						}
 					) }
-				</div>
+					</div> : null }
+
 				<ReaderFollowButton siteUrl={ siteUrl } />
 			</div>
 		);
