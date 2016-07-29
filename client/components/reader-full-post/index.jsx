@@ -18,6 +18,7 @@ import PostStore from 'lib/feed-post-store';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { fetchPost } from 'lib/feed-post-store/actions';
+import ReaderFullPostHeader from './header';
 
 export class FullPostView extends React.Component {
 	render() {
@@ -30,7 +31,7 @@ export class FullPostView extends React.Component {
 					{ translate( 'Back' ) }
 					</div>
 				</StickyPanel>
-				<h1 className="reader-full-post__title">{ this.props.post.title }</h1>
+				<ReaderFullPostHeader post={ this.props.post } />
 				<div dangerouslySetInnerHTML={ { __html: this.props.post.content } } />
 			</Main>
 		);
