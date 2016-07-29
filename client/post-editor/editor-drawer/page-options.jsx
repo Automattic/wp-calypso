@@ -41,7 +41,7 @@ function EditorDrawerPageOptions( { translate, siteId, postId, post, postType, h
 					<PageTemplates post={ post } />
 				</PageTemplatesData>
 			) }
-			<PageOrder menuOrder={ get( post, 'menu_order', 0 ) } />
+			<PageOrder />
 		</Accordion>
 	);
 }

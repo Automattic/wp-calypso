@@ -10,7 +10,13 @@
 	text-transform: uppercase;
 }
 
-.editor-page-order input[type="text"] {
+input[type="number"].editor-page-order__input {
+	-moz-appearance: textfield;
 	font-size: 13px;
 	width: 50px;
+
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+	}
 }
