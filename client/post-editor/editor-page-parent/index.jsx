@@ -1,69 +1,84 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
-import AccordionSection from 'components/accordion/section';
+import React, { PropTypes, Component } from 'react';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
 import PostSelector from 'my-sites/post-selector';
-import postActions from 'lib/posts/actions';
 import FormLabel from 'components/forms/form-label';
 import FormToggle from 'components/forms/form-toggle/compact';
+import AccordionSection from 'components/accordion/section';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { editPost } from 'state/posts/actions';
+import { getPostType } from 'state/post-types/selectors';
 
-export default React.createClass( {
-	displayName: 'EditorPageParent',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
+class EditorPageParent extends Component {
+	static propTypes = {
 		siteId: PropTypes.number,
-		parent: PropTypes.number,
-		postId: PropTypes.number
-	},
+		postId: PropTypes.number,
+		parentId: PropTypes.number,
+		postType: PropTypes.string,
+		translate: PropTypes.func,
+		labels: PropTypes.object
+	};
+
+	constructor( props ) {
+		super( props );
+		this.boundUpdatePageParent = this.updatePageParent.bind( this );
+	}
 
 	updatePageParent( item ) {
+		const { siteId, postId } = this.props;
 		const parentId = item && item.ID ? item.ID : null;
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		postActions.edit( {
-			parent: parentId
-		} );
-	},
-
-	getEmptyMessage() {
-		if ( this.props.postId ) {
-			return this.translate( 'You have no other pages yet.' );
-		}
-
-		return this.translate( 'You have no pages yet.' );
-	},
+		this.props.editPost( { parent: parentId }, siteId, postId );
+	}
 
 	render() {
+		const { parentId, translate, postId, siteId, postType, labels } = this.props;
 		return (
 			<AccordionSection className="editor-page-parent">
 				<FormLabel>
-					<span className="editor-page-parent__label-text">{ this.translate( 'Parent Page' ) }</span>
+					<span className="editor-page-parent__label-text">{ labels.parent || translate( 'Parent Page' ) }</span>
 				</FormLabel>
 				<FormLabel className="editor-page-parent__top-level">
 					<span className="editor-page-parent__top-level-label">
-						{ this.translate( 'Top level page', { context: 'Editor: Page being edited is top level i.e. has no parent' } ) }
+						{ translate( 'Top level', { context: 'Editor: Page being edited is top level i.e. has no parent' } ) }
 					</span>
 					<FormToggle
-						checked={ ! this.props.parent }
-						onChange={ this.updatePageParent }
-						aria-label={ this.translate( 'Toggle to set page as top level' ) }
+						checked={ ! parentId }
+						onChange={ this.boundUpdatePageParent }
+						aria-label={ translate( 'Toggle to set as top level' ) }
 					/>
 				</FormLabel>
 				<PostSelector
-					type="page"
-					siteId={ this.props.siteId }
-					onChange={ this.updatePageParent }
-					selected={ this.props.parent }
-					excludeTree={ this.props.postId }
-					emptyMessage={ this.getEmptyMessage() }
+					type={ postType }
+					siteId={ siteId }
+					onChange={ this.boundUpdatePageParent }
+					selected={ parentId }
+					excludeTree={ postId }
+					emptyMessage={ labels.not_found || translate( 'You have no other pages yet.' ) }
 				/>
 			</AccordionSection>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const postType = getEditedPostValue( state, siteId, postId, 'type' );
+		const parent = getEditedPostValue( state, siteId, postId, 'parent' ) || 0;
+		const parentId = parent.ID ? parent.ID : parent;
+		const { labels } = getPostType( state, siteId, postType ) || {};
+
+		return { siteId, postId, postType, parentId, labels };
+	},
+	{ editPost }
+)( localize( EditorPageParent ) );
