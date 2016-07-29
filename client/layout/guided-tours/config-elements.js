@@ -38,8 +38,6 @@ Tour.propTypes = {
 export class Step extends Component {
 	constructor( props ) {
 		super( props );
-		this.next = this.next.bind( this );
-		this.quit = this.quit.bind( this );
 	}
 
 	componentWillMount() {
@@ -58,12 +56,12 @@ export class Step extends Component {
 		}
 	}
 
-	next( props ) {
+	next = ( props = this.props ) => {
 		const { next, nextStep } = props;
 		next( nextStep );
 	}
 
-	quit( props ) {
+	quit = ( props = this.props ) => {
 		const { quit } = props;
 		quit( /** finished **/ );
 	}
@@ -94,8 +92,8 @@ export class Step extends Component {
 			<Card className={ classNames( ...classes ) } style={ stepCoords } >
 				{ React.Children.map( children, ( child ) =>
 						React.cloneElement( child, {
-						next: this.next.bind( this, this.props ),
-						quit: this.quit.bind( this, this.props ),
+						next: this.next,
+						quit: this.quit,
 						nextStep: this.props.nextStep,
 					} ) )
 				}
@@ -111,11 +109,9 @@ Step.propTypes = {
 export const Next = localize( class Next extends Component {
 	constructor( props ) {
 		super( props );
-		console.log( 'props', this.props );
-		this.next = this.next.bind( this );
 	}
 
-	next() {
+	next = () => {
 		const { next, nextStep } = this.props;
 		console.log( 'next', next, this.props );
 		next( nextStep );
@@ -138,10 +134,9 @@ Next.propTypes = {
 export const Quit = localize( class Quit extends Component {
 	constructor( props ) {
 		super( props );
-		this.quit = this.quit.bind( this );
 	}
 
-	quit() {
+	quit = () => {
 		const { quit } = this.props;
 		quit( /** finished **/ );
 	}
