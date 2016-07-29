@@ -28,6 +28,7 @@ describe( 'index', function() {
 		require( 'test/helpers/mocks/component-tip' )( mockery );
 		require( 'test/helpers/mocks/data-poller' )( mockery );
 		mockery.registerMock( 'components/section-nav', EmptyComponent );
+		mockery.registerMock( 'components/sidebar-navigation', EmptyComponent );
 	} );
 
 	before( () => {
