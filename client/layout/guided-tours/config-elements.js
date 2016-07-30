@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,7 +12,6 @@ import { translate } from 'i18n-calypso';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
-import { selectStep } from 'state/ui/guided-tours/selectors';
 import {
 	posToCss,
 	getStepPosition,
@@ -38,18 +38,15 @@ export class Tour extends Component {
 
 	constructor( props, context ) {
 		super( props, context );
-		const { quit, next } = props;
-		this.tourMethods = { quit, next };
-	}
-
-	isValid = ( context ) => {
-		return !! context( this.props.state );
+		const { next, quit } = props;
+		this.tourMethods = { next, quit };
 	}
 
 	render() {
-		const { isValid } = this;
-		const { context, children, state } = this.props;
-		const nextStep = selectStep( state, children );
+		const { context, children, isValid, stepName } = this.props;
+		const nextStep = find( children, stepComponent =>
+			stepComponent.props.name === stepName );
+
 		if ( ! nextStep || ! isValid( context ) ) {
 			return null;
 		}
@@ -222,11 +219,12 @@ export class Link extends Component {
 }
 
 export const makeTour = tree => {
-	const tour = ( { state, next, quit } ) =>
-		React.cloneElement( tree, { state, next, quit } );
+	const tour = ( { stepName, isValid, next, quit } ) =>
+		React.cloneElement( tree, { stepName, isValid, next, quit } );
 
 	tour.propTypes = {
-		state: PropTypes.object.isRequired,
+		stepName: PropTypes.string.isRequired,
+		isValid: PropTypes.func.isRequired,
 		next: PropTypes.func.isRequired,
 		quit: PropTypes.func.isRequired,
 	};

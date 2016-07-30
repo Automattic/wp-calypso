@@ -100,12 +100,14 @@ class GuidedTours extends Component {
 	}
 
 	render() {
+		const { stepName = 'init' } = this.props.tourState;
 		return (
 			<RootChild>
 				<div className="guided-tours">
 					<QueryPreferences />
 					<MainTour
-							state={ this.props.state }
+							stepName={ stepName }
+							isValid={ this.props.isValid }
 							next={ this.next }
 							quit={ this.quit }/>
 				</div>
@@ -116,7 +118,7 @@ class GuidedTours extends Component {
 
 export default connect( ( state ) => ( {
 	tourState: getGuidedTourState( state ),
-	state,
+	isValid: ( context ) => !! context( state ),
 } ), {
 	nextGuidedTourStep,
 	quitGuidedTour,
