@@ -42,14 +42,19 @@ export class Tour extends Component {
 		this.tourMethods = { quit, next };
 	}
 
+	isValid = ( context ) => {
+		return !! context( this.props.state );
+	}
+
 	render() {
+		const { isValid } = this;
 		const { context, children, state } = this.props;
 		const nextStep = selectStep( state, children );
-		if ( ! nextStep || ! context( state ) ) {
+		if ( ! nextStep || ! isValid( context ) ) {
 			return null;
 		}
 
-		return React.cloneElement( nextStep, { state } );
+		return React.cloneElement( nextStep, { isValid } );
 	}
 }
 
@@ -73,16 +78,16 @@ export class Step extends Component {
 	}
 
 	skipIfInvalidContext( props ) {
-		const { context, state } = props;
-		if ( context && ! context( state ) ) {
+		const { context, isValid } = props;
+		if ( context && ! isValid( context ) ) {
 			this.next( props );
 		}
 	}
 
 	render() {
-		const { context, children, state, placement, target } = this.props;
+		const { context, children, isValid, placement, target } = this.props;
 
-		if ( context && ! context( state ) ) {
+		if ( context && ! isValid( context ) ) {
 			return null;
 		}
 
