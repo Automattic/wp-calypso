@@ -1,40 +1,61 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal Dependencies
  */
-var ExternalLink = require( 'components/external-link' ),
-	Gravatar = require( 'components/gravatar' ),
-	Gridicon = require( 'components/gridicon' ),
-	PostTime = require( 'reader/post-time' ),
-	utils = require( 'reader/utils' ),
-	stats = require( 'reader/stats' );
+import ExternalLink from 'components/external-link';
+import Gravatar from 'components/gravatar';
+import Gridicon from 'components/gridicon';
+import PostTime from 'reader/post-time';
+import { siteNameFromSiteAndPost } from 'reader/utils';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrackForPost,
+	recordPermalinkClick
+ } from 'reader/stats';
 
-var PostByline = React.createClass( {
+class PostByline extends React.Component {
 
-	recordTagClick: function() {
-		stats.recordAction( 'click_tag' );
-		stats.recordGaEvent( 'Clicked Tag Link' );
-		stats.recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
+	constructor( ) {
+		super( );
+		this.recordTagClick = this.recordTagClick.bind( this );
+		this.recordAuthorClick = this.recordAuthorClick.bind( this );
+	}
+
+	static propTypes = {
+		post: React.PropTypes.object.isRequired,
+		site: React.PropTypes.object,
+		icon: React.PropTypes.bool,
+	}
+
+	static defaultProps = {
+		icon: false,
+	}
+
+	recordTagClick() {
+		recordAction( 'click_tag' );
+		recordGaEvent( 'Clicked Tag Link' );
+		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
 			tag: this.props.post.primary_tag.slug
 		} );
-	},
+	}
 
-	recordDateClick: function() {
-		stats.recordPermalinkClick( 'timestamp' );
-		stats.recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
-	},
+	recordDateClick() {
+		recordPermalinkClick( 'timestamp' );
+		recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
+	}
 
-	recordAuthorClick: function() {
-		stats.recordAction( 'click_author' );
-		stats.recordGaEvent( 'Clicked Author Link' );
-		stats.recordTrackForPost( 'calypso_reader_author_link_clicked', this.props.post );
-	},
+	recordAuthorClick() {
+		recordAction( 'click_author' );
+		recordGaEvent( 'Clicked Author Link' );
+		recordTrackForPost( 'calypso_reader_author_link_clicked', this.props.post );
+	}
 
-	renderAuthorName: function() {
+	renderAuthorName() {
 		const post = this.props.post,
 			gravatar = ( <Gravatar user={ post.author } size={ 24 } /> ),
 			authorName = ( <span className="byline__author-name">{ post.author.name }</span> );
@@ -54,13 +75,12 @@ var PostByline = React.createClass( {
 				{ authorName }
 			</ExternalLink>
 		);
-	},
+	}
 
-	render: function() {
-		var post = this.props.post,
-			site = this.props.site,
-			siteName = utils.siteNameFromSiteAndPost( site, post ),
+	render() {
+		const { post, site } = this.props,
 			primaryTag = post && post.primary_tag;
+		let siteName = siteNameFromSiteAndPost( site, post );
 
 		if ( ! siteName ) {
 			siteName = this.translate( '(no title)' );
@@ -89,6 +109,6 @@ var PostByline = React.createClass( {
 		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
 
-} );
+}
 
-module.exports = PostByline;
+export default PostByline;
