@@ -2,7 +2,9 @@ import React from 'react';
 
 import { getSelectedSite, isPreviewShowing } from 'state/ui/selectors';
 import { isNewUser } from 'state/ui/guided-tours/selectors';
-import { Tour,
+import {
+	makeTour,
+	Tour,
 	Step,
 	Next,
 	Quit,
@@ -20,8 +22,11 @@ const selectedSiteIsCustomizable = state =>
 const previewIsNotShowing = state =>
 	! isPreviewShowing( state );
 
-export const MainTour = ( { state, next, quit } ) => React.cloneElement(
-	<Tour name="main" version="20160601" path="/" context={ () => true }>
+const context = state =>
+	true || isNewUser( state );
+
+export const MainTour = makeTour(
+	<Tour name="main" version="20160601" path="/" context={ context }>
 		<Step name="init" placement="right" next="my-sites">
 			<p className="guided-tours__step-text">
 				{
@@ -182,6 +187,5 @@ export const MainTour = ( { state, next, quit } ) => React.cloneElement(
 				{ translate( 'Learn more about WordPress.com' ) }
 			</Link>
 		</Step>
-	</Tour>,
-	{ state, next, quit }
+	</Tour>
 );

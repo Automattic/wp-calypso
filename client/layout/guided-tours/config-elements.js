@@ -220,3 +220,16 @@ export class Link extends Component {
 		);
 	}
 }
+
+export const makeTour = tree => {
+	const tour = ( { state, next, quit } ) =>
+		React.cloneElement( tree, { state, next, quit } );
+
+	tour.propTypes = {
+		state: PropTypes.object.isRequired,
+		next: PropTypes.func.isRequired,
+		quit: PropTypes.func.isRequired,
+	};
+
+	return tour;
+};
