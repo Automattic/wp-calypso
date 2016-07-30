@@ -19,6 +19,7 @@ import PostQueryManager from 'lib/query-manager/post';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
+	POST_DELETE_FAILURE,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
@@ -198,6 +199,12 @@ export const queries = ( () => {
 			return applyToManager( state, siteId, 'receive', false, {
 				ID: postId,
 				status: '__DELETE_PENDING'
+			}, { patch: true } );
+		},
+		[ POST_DELETE_FAILURE ]: ( state, { siteId, postId } ) => {
+			return applyToManager( state, siteId, 'receive', false, {
+				ID: postId,
+				status: 'trash'
 			}, { patch: true } );
 		},
 		[ POST_DELETE_SUCCESS ]: ( state, { siteId, postId } ) => {

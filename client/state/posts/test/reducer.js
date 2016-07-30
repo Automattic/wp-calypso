@@ -11,6 +11,7 @@ import sinon from 'sinon';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
+	POST_DELETE_FAILURE,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
@@ -438,6 +439,40 @@ describe( 'reducer', () => {
 
 			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( '__DELETE_PENDING' );
 			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
+		} );
+
+		it( 'should restore item when post delete fails', () => {
+			let original = deepFreeze( {} );
+			original = queries( original, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { status: 'trash' },
+				found: 1,
+				posts: [ {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '48b6010b559efe6a77a429773e0cbf12',
+					title: 'Trashed',
+					status: 'trash',
+					type: 'post'
+				} ]
+			} );
+			original = queries( original, {
+				type: POST_DELETE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( original[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
+
+			const state = queries( original, {
+				type: POST_DELETE_FAILURE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( 'trash' );
+			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
 		} );
 
 		it( 'should remove item when post delete action success dispatched', () => {
