@@ -12,9 +12,25 @@ import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
 import { selectStep } from 'state/ui/guided-tours/selectors';
-import { posToCss, getStepPosition, getValidatedArrowPosition, targetForSlug } from './positioning';
+import {
+	posToCss,
+	getStepPosition,
+	getValidatedArrowPosition,
+	targetForSlug
+} from './positioning';
+
+const contextTypes = Object.freeze( {
+	next: PropTypes.func.isRequired,
+	quit: PropTypes.func.isRequired,
+} );
 
 export class Tour extends Component {
+	static propTypes = {
+		name: PropTypes.string.isRequired
+	}
+
+	static childContextTypes = contextTypes;
+
 	getChildContext() {
 		const { next, quit } = this.tourMethods;
 		return { next, quit };
@@ -37,16 +53,13 @@ export class Tour extends Component {
 	}
 }
 
-Tour.propTypes = {
-	name: PropTypes.string.isRequired
-};
-
-Tour.childContextTypes = {
-	next: PropTypes.func.isRequired,
-	quit: PropTypes.func.isRequired,
-};
-
 export class Step extends Component {
+	static propTypes = {
+		name: PropTypes.string.isRequired,
+	}
+
+	static contextTypes = contextTypes;
+
 	constructor( props, context ) {
 		super( props, context );
 	}
@@ -96,16 +109,13 @@ export class Step extends Component {
 	}
 }
 
-Step.propTypes = {
-	name: PropTypes.string.isRequired,
-};
-
-Step.contextTypes = {
-	next: PropTypes.func.isRequired,
-	quit: PropTypes.func.isRequired,
-};
-
 export class Next extends Component {
+	static propTypes = {
+		children: PropTypes.node,
+	}
+
+	static contextTypes = contextTypes;
+
 	constructor( props, context ) {
 		super( props, context );
 		this.next = context.next;
@@ -121,16 +131,13 @@ export class Next extends Component {
 	}
 }
 
-Next.propTypes = {
-	children: PropTypes.node,
-};
-
-Next.contextTypes = {
-	next: PropTypes.func.isRequired,
-	quit: PropTypes.func.isRequired,
-};
-
 export class Quit extends Component {
+	static propTypes = {
+		children: PropTypes.node,
+	}
+
+	static contextTypes = contextTypes;
+
 	constructor( props, context ) {
 		super( props, context );
 		this.quit = context.quit;
@@ -146,16 +153,9 @@ export class Quit extends Component {
 	}
 }
 
-Quit.propTypes = {
-	children: PropTypes.node,
-};
-
-Quit.contextTypes = {
-	next: PropTypes.func.isRequired,
-	quit: PropTypes.func.isRequired,
-};
-
 export class Continue extends Component {
+	static contextTypes = contextTypes;
+
 	constructor( props, context ) {
 		super( props, context );
 		this.next = context.next;
@@ -201,11 +201,6 @@ export class Continue extends Component {
 		return <i>Click to continue</i>;
 	}
 }
-
-Continue.contextTypes = {
-	next: PropTypes.func.isRequired,
-	quit: PropTypes.func.isRequired,
-};
 
 export class Link extends Component {
 	constructor( props ) {
