@@ -10,21 +10,14 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import scrollTo from 'lib/scroll-to';
-import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
-import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
-import { errorNotice } from 'state/notices/actions';
-import { getScrollableSidebar, targetForSlug } from './positioning';
-//import {
-//	BasicStep,
-//	FirstStep,
-//	LinkStep,
-//	FinishStep,
-//	ActionStep,
-//} from './steps';
-import wait from './wait';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
+import scrollTo from 'lib/scroll-to';
+import wait from './wait';
+import { errorNotice } from 'state/notices/actions';
+import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { getScrollableSidebar, targetForSlug } from './positioning';
+import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 
 import { MainTour } from 'layout/guided-tours/main-tour';
 
@@ -33,11 +26,6 @@ const debug = debugFactory( 'calypso:guided-tours' );
 class GuidedTours extends Component {
 	constructor() {
 		super();
-		this.bind( 'next', 'quit', 'finish' );
-	}
-
-	bind( ...methods ) {
-		methods.forEach( m => this[ m ] = this[ m ].bind( this ) );
 	}
 
 	componentDidMount() {
@@ -52,6 +40,7 @@ class GuidedTours extends Component {
 			stepConfig.continueIf( nextProps.state ) &&
 			this.next();
 	}
+
 	shouldComponentUpdate( nextProps ) {
 		return this.props.tourState !== nextProps.tourState;
 	}
@@ -65,7 +54,7 @@ class GuidedTours extends Component {
 		this.currentTarget = step && step.target && targetForSlug( step.target );
 	}
 
-	next() {
+	next = () => {
 		const nextStepName = this.props.tourState.stepConfig.next;
 		const nextStepConfig = this.props.tourState.nextStepConfig;
 
@@ -94,7 +83,7 @@ class GuidedTours extends Component {
 		defer( () => wait( { condition: nextTargetFound, consequence: proceedToNextStep, onError: abortTour } ) );
 	}
 
-	quit( options = {} ) {
+	quit = ( options = {} ) => {
 		// TODO: put into step specific callback?
 		const sidebar = getScrollableSidebar();
 		scrollTo( { y: 0, container: sidebar } );
@@ -106,45 +95,19 @@ class GuidedTours extends Component {
 		}, options ) );
 	}
 
-	finish() {
+	finish = () => {
 		this.quit( { finished: true } );
 	}
 
 	render() {
-		//const { stepConfig, shouldShow } = this.props.tourState;
-
-		//if ( ! shouldShow || ! stepConfig ) {
-		//	return null;
-		//}
-
-		debug( 'GuidedTours#render() tourState', this.props.tourState );
-
-		//const StepComponent = {
-		//	FirstStep,
-		//	ActionStep,
-		//	LinkStep,
-		//	FinishStep,
-		//}[ stepConfig.type ] || BasicStep;
-
-		const { state } = this.props;
-
 		return (
 			<RootChild>
 				<div className="guided-tours">
 					<QueryPreferences />
 					<MainTour
-							state={ state }
+							state={ this.props.state }
 							next={ this.next }
 							quit={ this.quit }/>
-					{ /*
-					<StepComponent
-						{ ...stepConfig }
-						key={ stepConfig.target }
-						targetSlug={ stepConfig.target }
-						onNext={ this.next }
-						onQuit={ this.quit }
-						onFinish={ this.finish } />
-					*/ }
 				</div>
 			</RootChild>
 		);
