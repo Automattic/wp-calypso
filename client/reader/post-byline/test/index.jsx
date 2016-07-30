@@ -10,7 +10,6 @@ import { each, partial, omit } from 'lodash';
 /**
  * Internal dependencies
  */
- import Gridicon from 'components/gridicon';
  import useMockery from 'test/helpers/use-mockery';
  import { post } from './fixtures';
 
@@ -29,18 +28,6 @@ describe( 'PostByline', () => {
 
 	before( () => {
 		PostByline = require( 'reader/post-byline' );
-	} );
-
-	context( 'prop requirements', () => {
-		it( 'requires a post', () => {
-			const shallowRender = partial( shallow, <PostByline /> );
-			assert.throws( shallowRender );
-		} );
-
-		it( 'requires a valid post', () => {
-			const shallowRender = partial( shallow, <PostByline post={ post } /> );
-			assert.doesNotThrow( shallowRender );
-		} );
 	} );
 
 	describe( 'tracking', () => {
@@ -122,10 +109,16 @@ describe( 'PostByline', () => {
 				const authorLessByline = shallow( <PostByline post={ omit( post, 'author' ) } /> );
 				assert.lengthOf( authorLessByline.find( authorSelector ), 0 );
 			} );
+
 			it( 'does not render if the post author does not have a name', () => {
 				const author = omit( post.author, 'name' );
-				const nameLessByline = shallow( <postByline post={ Object.assign( {}, post, { author } ) } /> );
+				const nameLessByline = shallow( <PostByline post={ Object.assign( {}, post, { author } ) } /> );
 				assert.lengthOf( nameLessByline.find( authorSelector ), 0 );
+			} );
+
+			it( 'does not render if the post is a discover pick', () => {
+				const disoverPick = shallow( <PostByline post={ post } isDiscoverPost={ true } /> );
+				assert.lengthOf( disoverPick.find( authorSelector ), 0 );
 			} );
 		} );
 

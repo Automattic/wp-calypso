@@ -30,10 +30,12 @@ class PostByline extends React.Component {
 		post: React.PropTypes.object.isRequired,
 		site: React.PropTypes.object,
 		icon: React.PropTypes.bool,
+		isDiscoverPost: React.PropTypes.bool
 	}
 
 	static defaultProps = {
 		icon: false,
+		isDiscoverPost: false
 	}
 
 	recordTagClick() {
@@ -78,7 +80,7 @@ class PostByline extends React.Component {
 	}
 
 	render() {
-		const { post, site } = this.props,
+		const { post, site, icon, isDiscoverPost } = this.props,
 			primaryTag = post && post.primary_tag;
 		let siteName = siteNameFromSiteAndPost( site, post );
 
@@ -89,7 +91,7 @@ class PostByline extends React.Component {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<ul className="reader-post-byline">
-			{ post.author && post.author.name ?
+			{ ! isDiscoverPost && post.author && post.author.name ?
 				<li className="reader-post-byline__author">
 					{ this.renderAuthorName() }
 				</li> : null }
@@ -98,7 +100,7 @@ class PostByline extends React.Component {
 					<a className="reader-post-byline__date-link"
 						onClick={ this.recordDateClick }
 						href={ post.URL }
-						target="_blank"><PostTime date={ post.date } />{ this.props.icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
+						target="_blank"><PostTime date={ post.date } />{ icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
 				</li> : null }
 			{ primaryTag ?
 				<li className="reader-post-byline__tag">

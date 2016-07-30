@@ -419,7 +419,7 @@ const Post = React.createClass( {
 
 				{ post.title ? <h1 className="reader__post-title"><a className="reader__post-title-link" href={ post.URL } target="_blank">{ post.title }</a></h1> : null }
 
-				<PostByline post={ post } site={ this.props.site } />
+				<PostByline post={ post } site={ this.props.site } isDiscoverPost={ isDiscoverPost } />
 
 				{ shouldUseFullExcerpt
 					? <EmbedContainer>

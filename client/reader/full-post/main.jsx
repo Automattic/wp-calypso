@@ -221,7 +221,7 @@ FullPostView = React.createClass( {
 
 					{ post.title ? <h1 className="reader__post-title" onClick={ this.handlePermalinkClick }><ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" icon={ false }>{ post.title }</ExternalLink></h1> : null }
 
-					<PostByline post={ post } site={ site } icon={ true }/>
+					<PostByline post={ post } site={ site } icon={ true } isDiscoverPost={ isDiscoverPost }/>
 
 					{ post && post.use_excerpt
 						? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
