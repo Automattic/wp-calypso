@@ -10,6 +10,7 @@ import debounce from 'lodash/debounce';
  */
 import Search from 'components/search';
 import ThemesSelectDropdown from './select-dropdown';
+import ThemesSelectButtons from './select-buttons';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
@@ -82,15 +83,6 @@ const ThemesSearchCard = React.createClass( {
 				<SectionNav selectedText={ this.getSelectedTierFormatted( tiers ) }>
 					<NavTabs>
 						{ ! isJetpack && this.getTierNavItems( selectedTiers ) }
-
-						{ isPremiumThemesEnabled && <hr className="section-nav__hr" /> }
-
-						{ isPremiumThemesEnabled && <NavItem
-							path={ getExternalThemesUrl( this.props.site ) }
-							onClick={ this.onMore }
-							isExternalLink={ true }>
-							{ this.translate( 'More' ) + ' ' }
-						</NavItem> }
 					</NavTabs>
 
 					<Search
@@ -124,26 +116,21 @@ const ThemesSearchCard = React.createClass( {
 
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
-				<Search
-					onSearch={ this.props.onSearch }
-					initialValue={ this.props.search }
-					ref="url-search"
-					placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
-					analyticsGroup="Themes"
-					delaySearch={ true }
-				/>
-
-				{ isPremiumThemesEnabled && ! isJetpack && <ThemesSelectDropdown
-										tier={ this.props.tier }
-										options={ tiers }
-										onSelect={ this.props.select } /> }
-				{ isPremiumThemesEnabled && <a className="button more"
-												href={ getExternalThemesUrl( this.props.site ) }
-												target="_blank"
-												onClick={ this.onMore }>
-
-												{ this.translate( 'More' ) }
-											</a> }
+				<SectionNav selectedText={ this.getSelectedTierFormatted( tiers ) }>
+					<Search
+						onSearch={ this.props.onSearch }
+						initialValue={ this.props.search }
+						ref="url-search"
+						placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
+						analyticsGroup="Themes"
+						delaySearch={ true }
+					/>
+					<ThemesSelectButtons
+						tier={ this.props.tier }
+						options={ tiers }
+						onSelect={ this.props.select }
+					/>
+				</SectionNav>
 			</div>
 		);
 	}
