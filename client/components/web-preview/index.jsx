@@ -37,6 +37,8 @@ export class WebPreview extends Component {
 			loaded: false
 		};
 
+		this.setIframeInstance = ref => this.iframe = ref;
+
 		this.keyDown = this.keyDown.bind( this );
 		this.setDeviceViewport = this.setDeviceViewport.bind( this );
 		this.setIframeMarkup = this.setIframeMarkup.bind( this );
@@ -156,7 +158,7 @@ export class WebPreview extends Component {
 	shouldRenderIframe() {
 		// Don't preload iframe on mobile devices as bandwidth is typically more limited and
 		// the preview causes weird issues
-		return ( ! this._isMobile || this.props.showPreview ) && 'seo' !== this.state.device;
+		return ! this._isMobile || this.props.showPreview;
 	}
 
 	setDeviceViewport( device = 'computer' ) {
@@ -216,8 +218,9 @@ export class WebPreview extends Component {
 							}
 							{ this.shouldRenderIframe() &&
 								<iframe
-									ref={ r => this.iframe = r }
+									ref={ this.setIframeInstance }
 									className="web-preview__frame"
+									style={ { display: ('seo' === this.state.device ? 'none' : 'inherit') } }
 									src="about:blank"
 									onLoad={ this.setLoaded }
 									title={ this.props.iframeTitle || translate( 'Preview' ) }
