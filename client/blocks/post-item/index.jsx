@@ -17,9 +17,16 @@ import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
-export function PostItem( { translate, globalId, post, editUrl, className } ) {
+/**
+ * Constants
+ */
+const PLACEHOLDER_POST = { status: 'draft', modified: '2015-08-10T19:44:08+00:00' };
+
+function PostItem( { translate, globalId, post, editUrl, className } ) {
+	const title = post ? post.title : null;
 	const classes = classnames( 'post-item', className, {
-		'is-untitled': ! post.title
+		'is-untitled': ! title,
+		'is-placeholder': ! globalId
 	} );
 
 	return (
@@ -28,11 +35,11 @@ export function PostItem( { translate, globalId, post, editUrl, className } ) {
 				<div className="post-item__title-meta">
 					<h1 className="post-item__title">
 						<a href={ editUrl } className="post-item__title-link">
-							{ post.title || translate( 'Untitled' ) }
+							{ title || translate( 'Untitled' ) }
 						</a>
 					</h1>
 					<div className="post-item__meta">
-						<PostRelativeTimeStatus post={ post } />
+						<PostRelativeTimeStatus post={ post || PLACEHOLDER_POST } />
 						<PostTypePostAuthor globalId={ globalId } />
 					</div>
 				</div>
@@ -52,6 +59,9 @@ PostItem.propTypes = {
 
 export default connect( ( state, ownProps ) => {
 	const post = getNormalizedPost( state, ownProps.globalId );
+	if ( ! post ) {
+		return {};
+	}
 
 	return {
 		post,
