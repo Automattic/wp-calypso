@@ -31,6 +31,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	GOOGLE_TRACKING_SCRIPT_URL = 'https://www.googleadservices.com/pagead/conversion_async.js',
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
 	GOOGLE_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
+	ONE_BY_AOL_PIXEL_URL = 'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -261,6 +262,19 @@ function recordOrderInAtlas( cart, orderId ) {
 	loadScript.loadScript( urlWithParams );
 }
 
+/**
+ * Tracks the purchase conversion with One by AOL
+ *
+ * @note One by AOL does not record any specifics about the purchase
+ */
+function recordConversionInOneByAOL() {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	new Image().src = ONE_BY_AOL_PIXEL_URL;
+}
+
 module.exports = {
 	retarget: function( context, next ) {
 		const nextFunction = typeof next === 'function' ? next : noop;
@@ -274,5 +288,6 @@ module.exports = {
 
 	recordAddToCart,
 	recordPurchase,
-	recordOrderInAtlas
+	recordOrderInAtlas,
+	recordConversionInOneByAOL
 };
