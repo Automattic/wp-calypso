@@ -181,9 +181,8 @@ export const MainTour = makeTour(
 					} )
 				}
 			</p>
-			<div className="guided-tours__choice-button-row">
-				<Next/>
-				<Quit/>
+			<div className="guided-tours__single-button-row">
+				<Quit primary>{ translate( "We're all done!" ) }</Quit>
 			</div>
 			<Link href="https://lean.wordpress.com">
 				{ translate( 'Learn more about WordPress.com' ) }

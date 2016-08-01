@@ -148,9 +148,9 @@ export class Quit extends Component {
 	}
 
 	render() {
-		const { children } = this.props;
+		const { children, primary } = this.props;
 		return (
-			<Button onClick={ this.quit }>
+			<Button onClick={ this.quit } primary={ primary }>
 				{ children || translate( 'Quit' ) }
 			</Button>
 		);
