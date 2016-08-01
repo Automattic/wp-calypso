@@ -75,7 +75,7 @@ const ThemeSheet = React.createClass( {
 			label: React.PropTypes.string.isRequired,
 			action: React.PropTypes.func,
 			getUrl: React.PropTypes.func,
-		} ).isRequired,
+		} ),
 		secondaryOption: React.PropTypes.shape( {
 			label: React.PropTypes.string.isRequired,
 			action: React.PropTypes.func,
