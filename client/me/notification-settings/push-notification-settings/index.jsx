@@ -250,6 +250,7 @@ const PushNotificationSettings = React.createClass( {
 							) }</p>
 						</div>
 					</div>
+					<Notice className="notification-settings-push-notification-settings__instruction-refresh-notice" showDismiss={ false } text={ this.translate( 'Once you\'ve allowed notifications, you may need to refresh your browser.' ) } />
 				</div>
 				<span tabIndex="0" className="notification-settings-push-notification-settings__instruction-dismiss" onClick={ this.props.toggleUnblockInstructions } >
 					<Gridicon icon="cross" size={ 24 } />
