@@ -347,17 +347,18 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const title = decodeEntities( i18n.translate( '%(themeName)s Theme', {
-			args: { themeName: this.props.name }
-		} ) ) + ' — WordPress.com'; // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
+		const themeName = this.props.name;
+		const title = i18n.translate( '%(themeName)s Theme', {
+			args: { themeName }
+		} ); // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
 
 		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
 
 		return (
 
 			<Head
-				title= { title }
-				description={ decodeEntities( this.props.description ) }
+				title= { decodeEntities( title || '' ) + ' — WordPress.com' }
+				description={ decodeEntities( this.props.description || '' ) }
 				type={ 'website' }
 				canonicalUrl={ canonicalUrl }
 				image={ this.props.screenshot }>
