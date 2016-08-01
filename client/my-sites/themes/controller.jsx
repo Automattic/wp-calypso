@@ -24,7 +24,6 @@ function getProps( context ) {
 	const { basePath, analyticsPageTitle } = getAnalyticsData(
 		context.path,
 		tier,
-		filter,
 		siteId
 	);
 

@@ -35,12 +35,12 @@ const ThemesSelection = React.createClass( {
 		return { search: '' };
 	},
 
-	doSearch( searchString ) {
+	doSearch( searchBoxContent ) {
 		const filterRegex = /\w+\:\s*([\w-]+)/g;
 
 		let matches;
 		const filterStrings = [];
-		while ( ( matches = filterRegex.exec( searchString ) ) !== null ) {
+		while ( ( matches = filterRegex.exec( searchBoxContent ) ) !== null ) {
 			if ( matches[ 1 ] ) {
 				filterStrings.push( matches[ 1 ] );
 			}
@@ -48,7 +48,7 @@ const ThemesSelection = React.createClass( {
 		filterStrings.sort();
 		const filter = filterStrings.join( ',' );
 
-		searchString = searchString.replace( filterRegex, '' ).trim();
+		const searchString = searchBoxContent.replace( filterRegex, '' ).trim();
 		this.updateUrl( this.props.tier || 'all', filter, searchString );
 	},
 
