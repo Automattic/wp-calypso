@@ -1,15 +1,15 @@
 /**
 * External dependencies
 */
-import ReactDom from 'react-dom';
-import React from 'react';
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' );
 
 /**
 * Internal dependencies
 */
-import Popover from 'components/popover';
+var Popover = require( 'components/popover' );
 
-const PopoverMenu = React.createClass( {
+var PopoverMenu = React.createClass( {
 	propTypes: {
 		isVisible: React.PropTypes.bool.isRequired,
 		onClose: React.PropTypes.func.isRequired,
@@ -29,7 +29,7 @@ const PopoverMenu = React.createClass( {
 	},
 
 	render: function() {
-		const children = React.Children.map( this.props.children, this._setPropsOnChild, this );
+		var children = React.Children.map( this.props.children, this._setPropsOnChild, this );
 
 		return (
 			<Popover
@@ -51,8 +51,8 @@ const PopoverMenu = React.createClass( {
 			return child;
 		}
 
-		const boundOnClose = this._onClose.bind( this, child.props.action );
-		let onClick = boundOnClose;
+		let boundOnClose = this._onClose.bind( this, child.props.action ),
+			onClick = boundOnClose;
 
 		if ( child.props.onClick ) {
 			onClick = child.props.onClick.bind( null, boundOnClose );
@@ -64,7 +64,7 @@ const PopoverMenu = React.createClass( {
 	},
 
 	_onShow: function() {
-		const elementToFocus = ReactDom.findDOMNode( this.refs.menu );
+		var elementToFocus = ReactDom.findDOMNode( this.refs.menu );
 
 		this._previouslyFocusedElement = document.activeElement;
 
@@ -98,22 +98,20 @@ const PopoverMenu = React.createClass( {
 			return first;
 		}
 
-		const closest = target[ isDownwardMotion
-			? 'nextSibling'
-			: 'previousSibling'
-		];
+		const closest = target[ isDownwardMotion ?
+			'nextSibling' : 'previousSibling' ];
 
 		const sibling = closest || last;
 
-		return this._isInvalidTarget( sibling )
-			? this._getClosestSibling( sibling, isDownwardMotion )
-			: sibling;
+		return this._isInvalidTarget( sibling ) ?
+			this._getClosestSibling( sibling, isDownwardMotion ) :
+			sibling;
 	},
 
 	_onKeyDown: function( event ) {
-		const target = event.target;
-		let handled = false;
-		let elementToFocus;
+		var handled = false,
+			target = event.target,
+			elementToFocus;
 
 		switch ( event.keyCode ) {
 			case 9: // tab
@@ -153,4 +151,4 @@ const PopoverMenu = React.createClass( {
 	}
 } );
 
-export default PopoverMenu;
+module.exports = PopoverMenu;

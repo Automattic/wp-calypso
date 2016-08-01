@@ -3,20 +3,22 @@
  */
 
 // not sure if we need this
-.popover-hide {
+.tip-hide {
 	opacity: 0;
 }
 
-.popover__container {
+.popover {
 	font-size: 11px;
 	padding: 10px;
-	z-index: z-index( 'root', '.popover__container' );
+	z-index: z-index( 'root', '.popover' );
 	position: absolute;
+	/* default offset for edge-cases: https://github.com/component/tip/pull/12 */
 	top: 0;
 	left: 0 #{"/*rtl:ignore*/"};
 	right: auto #{"/*rtl:ignore*/"};
 
-	.popover__inner {
+	// class coming from `component/tip`
+	.tip-inner {
 		background-color: $white;
 		border: 1px solid lighten( $gray, 20% );
 		border-radius: 4px;
@@ -25,20 +27,21 @@
 		text-align: center;
 	}
 
-	.popover__arrow {
+	// class coming from `component/tip`
+	.tip-arrow {
 		border: 10px dashed lighten( $gray, 20% );
 		height: 0;
 		line-height: 0;
 		position: absolute;
 		width: 0;
-		z-index: z-index( '.popover__container', '.popover__container .popover__arrow' );
+		z-index: z-index( '.popover', '.popover .tip-arrow' );
 	}
 
 	&.fade {
 		transition: opacity 100ms;
 	}
 
-	@mixin popover__arrow( $side ) {
+	@mixin tip-arrow( $side ) {
 		@if $side == "top" {
 			$opposite-side: "bottom";
 			$cross-side: "left";
@@ -57,9 +60,9 @@
 			$cross-opposite-side: "bottom";
 		}
 
-		&.popover-#{$side} .popover__arrow,
-		&.popover-#{$side}-#{$cross-side} .popover__arrow,
-		&.popover-#{$side}-#{$cross-opposite-side} .popover__arrow {
+		&.tip-#{$side} .tip-arrow,
+		&.tip-#{$side}-#{$cross-side} .tip-arrow,
+		&.tip-#{$side}-#{$cross-opposite-side} .tip-arrow {
 			@mixin shared-between-base-and-before {
 				#{$cross-side}: 50% #{"/*rtl:ignore*/"};
 				margin-#{$cross-side}: -10px#{"/*rtl:ignore*/"};
@@ -82,44 +85,44 @@
 		}
 	}
 
-	@include popover__arrow( "top" );
-	@include popover__arrow( "bottom" );
-	@include popover__arrow( "left" );
-	@include popover__arrow( "right" );
+	@include tip-arrow( "top" );
+	@include tip-arrow( "bottom" );
+	@include tip-arrow( "left" );
+	@include tip-arrow( "right" );
 
-	&.popover-top-left,
-	&.popover-bottom-left,
-	&.popover-top-right,
-	&.popover-bottom-right {
+	&.tip-top-left,
+	&.tip-bottom-left,
+	&.tip-top-right,
+	&.tip-bottom-right {
 		padding-right: 0;
 		padding-left: 0;
 	}
 
-	&.popover-top-left .popover__arrow,
-	&.popover-bottom-left .popover__arrow {
+	&.tip-top-left .tip-arrow,
+	&.tip-bottom-left .tip-arrow {
 		left: auto #{"/*rtl:ignore*/"};
 		right: 5px #{"/*rtl:ignore*/"};
 	}
 
-	&.popover-top-right .popover__arrow,
-	&.popover-bottom-right .popover__arrow {
+	&.tip-top-right .tip-arrow,
+	&.tip-bottom-right .tip-arrow {
 		left: 15px #{"/*rtl:ignore*/"};
 	}
 
-	&.popover-top-left .popover__inner,
-	&.popover-bottom-left .popover__inner {
+	&.tip-top-left .tip-inner,
+	&.tip-bottom-left .tip-inner {
 		position: relative;
 		left: 10px #{"/*rtl:ignore*/"};
 	}
 
-	&.popover-top-right .popover__inner,
-	&.popover-bottom-right .popover__inner {
+	&.tip-top-right .tip-inner,
+	&.tip-bottom-right .tip-inner {
 		position: relative;
 		left: -10px #{"/*rtl:ignore*/"};
 	}
 
 	&.is-dialog-visible {
-		z-index: z-index( 'root', 'popover__container.is-dialog-visible' ); /* Above .dialog */
+		z-index: z-index( 'root', 'popover.is-dialog-visible' ); /* Above .dialog */
 	}
 }
 
