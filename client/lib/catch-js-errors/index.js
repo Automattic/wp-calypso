@@ -11,6 +11,14 @@ export default class ErrorLogger {
 
 		if ( ! window.onerror ) {
 			TraceKit.report.subscribe( errorReport => {
+				if ( Array.isArray( errorReport.stack ) ) {
+					errorReport.stack.forEach( report => Object.keys( report ).forEach( key => {
+						if ( typeof report[ key ] === 'string' && report[ key ].length > 512 ) {
+							report[ key ] = report[ key ].substring( 0, 512 );
+						}
+					} ) );
+				}
+
 				const error = {
 					message: errorReport.message,
 					url: document.location.href,
