@@ -14,11 +14,8 @@ import ThemesList from 'components/themes-list';
 import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
-import urlSearch from 'lib/mixins/url-search';
 
 const ThemesSelection = React.createClass( {
-	mixins: [ urlSearch ],
-
 	propTypes: {
 		selectedSite: PropTypes.oneOfType( [
 			PropTypes.object,
@@ -32,6 +29,35 @@ const ThemesSelection = React.createClass( {
 		themesList: PropTypes.array.isRequired,
 		getActionLabel: React.PropTypes.func,
 		tier: React.PropTypes.string,
+	},
+
+	getDefaultProps() {
+		return { search: '' };
+	},
+
+	doSearch( searchBoxContent ) {
+		const filterRegex = /\w+\:\s*([\w-]+)/g;
+
+		let matches;
+		const filterStrings = [];
+		while ( ( matches = filterRegex.exec( searchBoxContent ) ) !== null ) {
+			if ( matches[ 1 ] ) {
+				filterStrings.push( matches[ 1 ] );
+			}
+		}
+		filterStrings.sort();
+		const filter = filterStrings.join( ',' );
+
+		const searchString = searchBoxContent.replace( filterRegex, '' ).trim();
+		this.updateUrl( this.props.tier || 'all', filter, searchString );
+	},
+
+	prependFilterKeys() {
+		const { filter } = this.props;
+		if ( filter ) {
+			return filter.split( ',' ).map( value => `filter:${ value }` ).join( ' ' ) + ' ';
+		}
+		return '';
 	},
 
 	onMoreButtonClick( theme, resultsRank ) {
@@ -60,11 +86,17 @@ const ThemesSelection = React.createClass( {
 	},
 
 	onTierSelect( { value: tier } ) {
-		const siteId = this.props.siteId ? `/${this.props.siteId}` : '';
-		const url = `/design${ tier === 'all' ? '' : '/' + tier }${siteId}`;
-
 		trackClick( 'search bar filter', tier );
-		page( buildUrl( url, this.props.search ) );
+		this.updateUrl( tier, this.props.filter );
+	},
+
+	updateUrl( tier, filter, searchString = this.props.search ) {
+		const siteId = this.props.siteId ? `/${this.props.siteId}` : '';
+		const tierSection = tier === 'all' ? '' : `/${ tier }`;
+		const filterSection = filter ? `/filter/${ filter }` : '';
+		const url = `/design${ tierSection }${ filterSection }${siteId}`;
+
+		page( buildUrl( url, searchString ) );
 	},
 
 	onScreenshotClick( theme, resultsRank ) {
@@ -84,7 +116,7 @@ const ThemesSelection = React.createClass( {
 					<ThemesSearchCard
 							site={ site }
 							onSearch={ this.doSearch }
-							search={ this.props.search }
+							search={ this.prependFilterKeys() + this.props.search }
 							tier={ this.props.tier }
 							select={ this.onTierSelect } />
 				</StickyPanel>
@@ -93,6 +125,7 @@ const ThemesSelection = React.createClass( {
 						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
 						search={ this.props.search }
 						tier={ this.props.tier }
+						filter={ this.props.filter }
 						onRealScroll={ this.trackScrollPage }
 						onLastPage={ this.trackLastPage } >
 					<ThemesList getButtonOptions={ this.props.getOptions }
