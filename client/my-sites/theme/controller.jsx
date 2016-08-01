@@ -12,6 +12,7 @@ import i18n from 'i18n-calypso';
  */
 import ThemeSheetComponent from './main';
 import ThemeDetailsComponent from 'components/data/theme-details';
+import LayoutHead from 'layout/head';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import {
@@ -24,7 +25,7 @@ import config from 'config';
 import { decodeEntities } from 'lib/formatting';
 
 const debug = debugFactory( 'calypso:themes' );
-let themeDetailsCache = new Map();
+const themeDetailsCache = new Map();
 
 export function makeElement( ThemesComponent, Head, store, props ) {
 	return (
@@ -81,9 +82,6 @@ export function details( context, next ) {
 	const title = i18n.translate( '%(themeName)s Theme', {
 		args: { themeName }
 	} );
-	const Head = user
-		? require( 'layout/head' )
-		: require( 'my-sites/themes/head' );
 
 	const props = {
 		themeSlug: slug,
@@ -105,7 +103,7 @@ export function details( context, next ) {
 		</ThemeDetailsComponent>
 	);
 
-	context.primary = makeElement( ConnectedComponent, Head, context.store, props );
+	context.primary = makeElement( ConnectedComponent, LayoutHead, context.store, props );
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
 }
