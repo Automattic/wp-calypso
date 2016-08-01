@@ -336,6 +336,7 @@
 	color: lighten( $gray, 30% );
 	cursor: pointer;
 	transition: all ease-in-out 100ms;
+	animation: themes__sheet-fade-from-bottom 1.0s ease-in-out;
 
 	&:hover {
 		color: $white;
@@ -380,5 +381,22 @@
 		display: block;
 		margin: -12px auto 0;
 		background: $gray-light;
+	}
+}
+
+@keyframes themes__sheet-fade-from-bottom {
+	0% {
+		opacity: 0.0; // Let's add a small delay
+	}
+	20% {
+		opacity: 0.0;
+		transform: translateY(10px);
+	}
+	70% {
+		opacity: 1.0;
+	}
+	100% {
+		opacity: 1.0;
+		transform: none;
 	}
 }
