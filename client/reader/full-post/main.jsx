@@ -46,7 +46,7 @@ var abtest = require( 'lib/abtest' ).abtest,
 	ShareButton = require( 'reader/share' ),
 	ShareHelper = require( 'reader/share/helper' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
-	DiscoverVisitLink = require( 'reader/discover/visit-link' ),
+	DiscoverSiteAttribution = require( 'reader/discover/site-attribution' ),
 	readerRoute = require( 'reader/route' ),
 	showReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).showReaderFullPost,
 	smartSetState = require( 'lib/react-smart-set-state' ),
@@ -163,12 +163,11 @@ FullPostView = React.createClass( {
 			shouldShowExcerptOnly = ( post && post.use_excerpt ? post.use_excerpt : false ),
 			siteName = utils.siteNameFromSiteAndPost( site, post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
-			discoverSiteUrl,
-			discoverSiteName;
+			isDiscoverSitePick = DiscoverHelper.isDiscoverSitePick( post ),
+			discoverSiteUrl;
 
 		if ( isDiscoverPost && post.discover_metadata ) {
 			discoverSiteUrl = DiscoverHelper.getSiteUrl( post );
-			discoverSiteName = post.discover_metadata.attribution.blog_name;
 		}
 
 		if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
@@ -231,7 +230,7 @@ FullPostView = React.createClass( {
 					}
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
-					{ discoverSiteName && discoverSiteUrl ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
+					{ isDiscoverSitePick ? <DiscoverSiteAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } followUrl={ DiscoverHelper.getSourceFollowUrl( post ) } /> : null }
 					{ relatedPostsEnabled && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } onPostClick={ this.recordRelatedPostClicks } onSiteClick={ this.recordRelatedPostSiteClicks }/> }
 					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } initialSize={ 25 } pageSize={ 25 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</article>

@@ -1,73 +1,86 @@
-.discover-attribution {
-	font-size: 13px;
-	font-family: $sans;
-	text-transform: lowercase;
-	color: $gray;
-	position: relative;
-	margin-top: 13px;
-	margin-bottom: 8px;
+.reader__card.card, .reader__full-post {
 
-	&.is-site {
-		margin-top: 15px;
-	}
-
-	&.is-missing-avatar {
-		&.is-post {
-			padding-left: 26px;
-		}
-	}
-
-	.gridicon {
-		height: 12px;
-		width: 12px;
-		display: inline-block;
-		fill: $white;
-		background: $gray;
-		padding: 4px;
-		border-radius: 100%;
-		transform: rotate(180deg);
-		position: absolute;
-			top: 0;
-			left: 0;
-	}
-
-	.gravatar {
-		background: $gray-light;
+	.discover-attribution {
+		font-size: 13px;
+		font-family: $sans;
+		text-transform: lowercase;
+		color: $gray;
 		position: relative;
-			top: 6px;
-		margin: 1px 6px 1px 0;
-	}
+		margin-top: 13px;
+		margin-bottom: 8px;
 
-	&.is-post a {
-		padding-left: 3px;
-		padding-right: 3px;
-	}
+		&.is-site {
+			margin-top: 15px;
+		}
 
-	.discover-attribution__author,
-	.discover-attribution__blog {
-		text-transform: none;
-	}
+		.gridicon-arrow {
+			height: 12px;
+			width: 12px;
+			fill: $white;
+			background: $gray;
+			padding: 4px;
+			border-radius: 100%;
+			transform: rotate(180deg);
+			position: relative;
+				top: 6px;
+			margin-right: 6px;
 
-	.noticon {
-		font-size: 20px;
-		height: 20px;
-		background-color: #c8d7e1;
-		color: #fff;
-		margin-right: 6px;
-	}
-}
+		}
 
-.discover-visit-link {
-	background: $gray-light;
-	color: darken( $gray, 20 );
-	padding: 16px 32px 16px 24px;
-	margin: 20px -24px 8px -24px;
-	position: relative;
+		.gravatar {
+			background: $gray-light;
+			position: relative;
+				top: 6px;
+			margin: 1px 6px 1px 0;
+		}
 
-	@include breakpoint( "<480px" ) {
-		margin-left: -16px;
-		margin-right: -16px;
-		padding-left: 16px;
-		padding-right: 24px;
+		.discover-attribution__author,
+		.discover-attribution__blog {
+			color: $blue-medium;
+			text-decoration: none;
+			text-transform: none;
+
+			&:hover {
+				color: $blue-light;
+			}
+		}
+
+		.discover-attribution__blog {
+			margin-right: 6px;
+		}
+
+		.noticon {
+			font-size: 20px;
+			height: 20px;
+			background-color: lighten( $gray, 20% );
+			color: $white;
+			margin-right: 6px;
+		}
+
+		.follow-button {
+			position: static;
+			border: none;
+			padding: 0;
+			vertical-align: text-bottom;
+			color: lighten( $gray, 10% );
+			font-size: 13px;
+			line-height: 16px;
+			background: transparent;
+
+			&.is-following {
+				color: $alert-green;
+			}
+
+			&:focus {
+				box-shadow: none;
+			}
+
+			.follow-button__label {
+
+				@include breakpoint( "<660px" ) {
+					display: inline-block;
+				}
+			}
+		}
 	}
 }
