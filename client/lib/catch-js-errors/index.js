@@ -13,8 +13,12 @@ export default class ErrorLogger {
 			TraceKit.report.subscribe( errorReport => {
 				if ( Array.isArray( errorReport.stack ) ) {
 					errorReport.stack.forEach( report => Object.keys( report ).forEach( key => {
-						if ( typeof report[ key ] === 'string' && report[ key ].length > 512 ) {
+						if ( key === 'context' ) {
+							report[ key ] = JSON.stringify( report[ key ] ).substring( 0, 512 );
+						} else if ( typeof report[ key ] === 'string' && report[ key ].length > 512 ) {
 							report[ key ] = report[ key ].substring( 0, 512 );
+						} else if ( Array.isArray( report[ key ] ) ) {
+							report[ key ] = report[ key ].slice( 0, 3 );
 						}
 					} ) );
 				}
