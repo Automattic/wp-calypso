@@ -23,7 +23,6 @@ import {
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
 	DESERIALIZE,
-	SERIALIZE,
 	THEME_ACTIVATED,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
@@ -94,26 +93,19 @@ export function items( state = {}, action ) {
 }
 
 /**
- * Tracks sites fetching state
+ * Returns the updated requesting state after an action has been dispatched.
+ * Requesting state tracks whether a network request is in progress for all
+ * sites.
  *
  * @param  {Object} state  Current state
- * @param  {Object} action Action payload
+ * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export function fetchingItems( state = {}, action ) {
-	switch ( action.type ) {
-		case SITES_REQUEST:
-		case SITES_REQUEST_FAILURE:
-		case SITES_REQUEST_SUCCESS:
-			return Object.assign( {}, state, {
-				all: action.type === SITES_REQUEST
-			} );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
-	return state;
-}
+export const requestingAll = createReducer( false, {
+	[ SITES_REQUEST ]: () => true,
+	[ SITES_REQUEST_FAILURE ]: () => false,
+	[ SITES_REQUEST_SUCCESS ]: () => false
+} );
 
 /**
  * Returns the updated requesting state after an action has been dispatched.
@@ -137,7 +129,7 @@ export const requesting = createReducer( {}, {
 
 export default combineReducers( {
 	domains,
-	fetchingItems,
+	requestingAll,
 	items,
 	mediaStorage,
 	plans,

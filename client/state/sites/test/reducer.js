@@ -22,7 +22,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import reducer, { items, fetchingItems, requesting } from '../reducer';
+import reducer, { items, requestingAll, requesting } from '../reducer';
 
 describe( 'reducer', () => {
 	before( function() {
@@ -35,7 +35,7 @@ describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'domains',
-			'fetchingItems',
+			'requestingAll',
 			'items',
 			'mediaStorage',
 			'plans',
@@ -44,44 +44,35 @@ describe( 'reducer', () => {
 		] );
 	} );
 
-	describe( '#fetchingItems()', () => {
-		it( 'should default an empty object', () => {
-			const state = fetchingItems( undefined, {} );
-			expect( state ).to.eql( {} );
+	describe( 'requestingAll()', () => {
+		it( 'should default false', () => {
+			const state = requestingAll( undefined, {} );
+
+			expect( state ).to.be.false;
 		} );
+
 		it( 'should update fetching state on fetch', () => {
-			const state = fetchingItems( undefined, {
+			const state = requestingAll( undefined, {
 				type: SITES_REQUEST
 			} );
-			expect( state ).to.eql( { all: true } );
+
+			expect( state ).to.be.true;
 		} );
+
 		it( 'should update fetching state on success', () => {
-			const original = { all: true };
-			const state = fetchingItems( original, {
+			const state = requestingAll( true, {
 				type: SITES_REQUEST_SUCCESS
 			} );
-			expect( state ).to.eql( { all: false } );
+
+			expect( state ).to.be.false;
 		} );
+
 		it( 'should update fetching state on failure', () => {
-			const original = { all: true };
-			const state = fetchingItems( original, {
+			const state = requestingAll( true, {
 				type: SITES_REQUEST_FAILURE
 			} );
-			expect( state ).to.eql( { all: false } );
-		} );
-		it( 'should never persist state', () => {
-			const original = { all: true };
-			const state = fetchingItems( original, {
-				type: SERIALIZE
-			} );
-			expect( state ).to.eql( {} );
-		} );
-		it( 'should never load persisted state', () => {
-			const original = { all: true };
-			const state = fetchingItems( original, {
-				type: DESERIALIZE
-			} );
-			expect( state ).to.eql( {} );
+
+			expect( state ).to.be.false;
 		} );
 	} );
 
