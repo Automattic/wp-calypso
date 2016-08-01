@@ -285,7 +285,7 @@ module.exports = React.createClass( {
 					{ title }
 				</a>
 				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
-				<span className="page__actions-toggle noticon noticon-ellipsis" onClick={ this.togglePageActions } ref="popoverMenuButton" />
+				<Gridicon icon="ellipsis" className="page__actions-toggle" onClick={ this.togglePageActions } ref="popoverMenuButton" />
 				<PopoverMenu
 					isVisible={ this.state.showPageActions }
 					onClose={ this.togglePageActions }
