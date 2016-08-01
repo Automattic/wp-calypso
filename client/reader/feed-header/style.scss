@@ -31,7 +31,8 @@
 	}
 }
 
-.is-group-reader .card.feed-header__site { // Extra specific to override the :hover
+.is-group-reader .card.feed-header__site,
+.is-group-reader-refresh .card.feed-header__site { // Extra specific to override the :hover
 	&:hover {
 		cursor: default;
 		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),

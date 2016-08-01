@@ -26,6 +26,7 @@ module.exports = React.createClass( {
 		// Determine and cache vertical threshold from rendered element's
 		// offset relative the document
 		this.threshold = ReactDom.findDOMNode( this ).offsetTop;
+		console.log( this.threshold );
 		this.throttleOnResize = throttle( this.onWindowResize, 200 );
 
 		window.addEventListener( 'scroll', this.onWindowScroll );

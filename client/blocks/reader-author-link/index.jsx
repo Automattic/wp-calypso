@@ -19,11 +19,11 @@ const ReaderAuthorLink = ( { author, post, children } ) => {
 	};
 
 	if ( ! author.URL ) {
-		return ( <span>{ children }</span> );
+		return ( <span className="reader-author-link">{ children }</span> );
 	}
 
 	return (
-		<ExternalLink href={ author.URL } target="_blank" onClick={ recordAuthorClick }>
+		<ExternalLink className="reader-author-link" href={ author.URL } target="_blank" onClick={ recordAuthorClick }>
 			{ children }
 		</ExternalLink>
 	);

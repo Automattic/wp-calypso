@@ -1,3 +1,7 @@
+.is-group-reader-refresh .layout__content {
+ 	padding-top: 0;
+ }
+
 .reader__content {
 	a {
 		color: $blue-medium;
@@ -291,7 +295,8 @@
 	opacity: 0;
 }
 
-.is-group-reader .main .empty-content {
+.is-group-reader .main .empty-content,
+.is-group-reader-refresh .main .empty-content {
 	margin-top: -120px;
 	padding-top: 0;
 
@@ -308,7 +313,8 @@
 	}
 }
 
-.is-group-reader .empty-content__action {
+.is-group-reader .empty-content__action,
+.is-group-reader-refresh .empty-content__action {
 	@include breakpoint( "<480px" ) {
 		margin-bottom: 10px;
 	}
