@@ -147,15 +147,7 @@ export const findEligibleTour = createSelector(
 );
 
 const getStepConfig = ( state, tourConfig, stepName ) => {
-	const step = tourConfig[ stepName ] || false;
-	const shouldSkip = !! (
-		step &&
-		( step.showInContext && ! step.showInContext( state ) ) ||
-		( step.continueIf && step.continueIf( state ) )
-	);
-	return shouldSkip
-		? getStepConfig( state, tourConfig, step.next )
-		: step;
+	return tourConfig[ stepName ] || false;
 };
 
 /**

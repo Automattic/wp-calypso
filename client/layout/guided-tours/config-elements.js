@@ -176,10 +176,10 @@ export class Continue extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		console.log( nextProps );
-		nextProps.context && this.isValid( nextProps.context ) && this.next();
 	}
 
 	componentWillUpdate() {
+		this.props.context && this.isValid( this.props.context ) && this.next();
 		this.removeTargetListener();
 	}
 
@@ -188,20 +188,20 @@ export class Continue extends Component {
 	}
 
 	addTargetListener() {
-		const { target = false, click } = this.props;
+		const { target = false, click, context } = this.props;
 		const targetNode = targetForSlug( target );
 
-		if ( click && targetNode && targetNode.addEventListener ) {
+		if ( click && ! context && targetNode && targetNode.addEventListener ) {
 			targetNode.addEventListener( 'click', this.next );
 			targetNode.addEventListener( 'touchstart', this.next );
 		}
 	}
 
 	removeTargetListener() {
-		const { target = false, click } = this.props;
+		const { target = false, click, context } = this.props;
 		const targetNode = targetForSlug( target );
 
-		if ( click && targetNode && targetNode.removeEventListener ) {
+		if ( click && ! context && targetNode && targetNode.removeEventListener ) {
 			targetNode.removeEventListener( 'click', this.next );
 			targetNode.removeEventListener( 'touchstart', this.next );
 		}
