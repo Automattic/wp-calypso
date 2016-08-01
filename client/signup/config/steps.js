@@ -55,6 +55,11 @@ module.exports = {
 		providesDependencies: [ 'bearer_token', 'username' ]
 	},
 
+	'site-title': {
+		stepName: 'site-title',
+		providesDependencies: [ 'siteTitle' ]
+	},
+
 	test: {
 		stepName: 'test'
 	},
