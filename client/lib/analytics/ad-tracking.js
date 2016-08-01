@@ -20,6 +20,7 @@ import userModule from 'lib/user';
  */
 const user = userModule();
 let hasStartedFetchingScripts = false,
+	hasFinishedFetchingScripts = false,
 	retargetingInitialized = false;
 
 /**
@@ -102,6 +103,8 @@ function loadTrackingScripts( callback ) {
 				window.uetq.push( 'pageLoad' );
 			}
 
+			hasFinishedFetchingScripts = true;
+
 			if ( typeof callback === 'function' ) {
 				callback();
 			}
@@ -116,7 +119,11 @@ function retarget() {
 		return loadTrackingScripts( retarget );
 	}
 
-	if ( ! retargetingInitialized ) {
+	// The reason we check whether the scripts have finished is to avoid a situation
+	// where retarget is called once (which starts the load process) then immediately
+	// again (in which case they've started to be fetched, but haven't finished) which
+	// would cause an undefined function error for `google_trackConversion` below.
+	if ( hasFinishedFetchingScripts && ! retargetingInitialized ) {
 		debug( 'Retargeting initialized' );
 
 		retargetingInitialized = true;
@@ -125,14 +132,10 @@ function retarget() {
 		window.fbq( 'track', 'PageView' );
 
 		// AdWords
-
-		// Ensure the AdWords Remarketing Tag has finished loading
-		if ( window.google_trackConversion ) {
-			window.google_trackConversion( {
-				google_conversion_id: GOOGLE_CONVERSION_ID,
-				google_remarketing_only: true
-			} );
-		}
+		window.google_trackConversion( {
+			google_conversion_id: GOOGLE_CONVERSION_ID,
+			google_remarketing_only: true
+		} );
 	}
 }
 
