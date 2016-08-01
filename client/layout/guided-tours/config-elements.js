@@ -243,3 +243,8 @@ export const makeTour = tree => {
 
 	return tour;
 };
+
+export const combineTours = tours => ( props ) => {
+	const tour = tours[ props.tourName ];
+	return tour ? tour( props ) : null;
+};

@@ -19,7 +19,13 @@ import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { getScrollableSidebar, targetForSlug } from './positioning';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 
+import { combineTours } from 'layout/guided-tours/config-elements';
 import { MainTour } from 'layout/guided-tours/main-tour';
+
+// move to guided-tours/config or equivalent
+const AllTours = combineTours( {
+	main: MainTour
+} );
 
 const debug = debugFactory( 'calypso:guided-tours' );
 
@@ -91,7 +97,11 @@ class GuidedTours extends Component {
 	}
 
 	render() {
-		const { stepName = 'init', shouldShow } = this.props.tourState;
+		const {
+			tour: tourName,
+			stepName = 'init',
+			shouldShow
+		} = this.props.tourState;
 
 		if ( ! shouldShow ) {
 			return null;
@@ -101,11 +111,12 @@ class GuidedTours extends Component {
 			<RootChild>
 				<div className="guided-tours">
 					<QueryPreferences />
-					<MainTour
+					<AllTours
+							tourName={ tourName }
 							stepName={ stepName }
 							isValid={ this.props.isValid }
 							next={ this.next }
-							quit={ this.quit }/>
+							quit={ this.quit } />
 				</div>
 			</RootChild>
 		);
