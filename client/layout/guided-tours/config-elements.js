@@ -176,10 +176,10 @@ export class Continue extends Component {
 
 	componentWillReceiveProps( nextProps ) {
 		console.log( nextProps );
+		nextProps.context && this.isValid( nextProps.context ) && this.next();
 	}
 
 	componentWillUpdate() {
-		this.props.context && this.isValid( this.props.context ) && this.next();
 		this.removeTargetListener();
 	}
 

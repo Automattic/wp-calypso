@@ -25,6 +25,9 @@ const previewIsNotShowing = state =>
 const context = state =>
 	true || isNewUser( state );
 
+const and = ( ...args ) => state =>
+	args.every( fn => !! fn( state ) );
+
 export const MainTour = makeTour(
 	<Tour name="main" version="20160601" path="/" context={ context }>
 		<Step name="init" placement="right" next="my-sites" className="guided-tours__step-first">
@@ -133,14 +136,14 @@ export const MainTour = makeTour(
 			className="guided-tours__step-action"
 			target="web-preview__close"
 			arrow="left-top"
-			context={ selectedSiteIsPreviewable }
+			context={ and( selectedSiteIsPreviewable, isPreviewShowing ) }
 			next="themes"
 		>
 			<p className="guided-tours__step-text">
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue target="web-preview__close" icon="cross-small" context={ previewIsNotShowing } click />
+				<Continue target="web-preview__close" icon="cross-small" context={ previewIsNotShowing } />
 			</p>
 		</Step>
 
