@@ -77,8 +77,14 @@
 	font-size: 24px;
 	margin: 17px 24px;
 	position: absolute;
-	right: 0;
-	top: 0;
+		right: 0;
+		top: 0;
+	transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+	&.is-active {
+		color: $blue-medium;
+		transform: rotate( 90deg );
+	}
 }
 
 .page__popover-more-info {
