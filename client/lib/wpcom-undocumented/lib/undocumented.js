@@ -1991,22 +1991,6 @@ Undocumented.prototype.getGuidedTransferStatus = function( siteId ) {
 };
 
 /**
- * Saves user details for a guided transfer
- *
- * @param {int} siteId  The site ID
- * @param {Object} details The user details to save
- * @returns {Promise} Resolves to the response containing the updated transfer status
- */
-Undocumented.prototype.saveGuidedTransferDetails = function( siteId, details ) {
-	const query = Object.assign( {}, {
-		apiNamespace: 'wpcom/v2',
-	}, details );
-
-	debug( '/sites/:site:/transfer' );
-	return this.wpcom.req.post( '/sites/' + siteId + '/transfer', query );
-};
-
-/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
