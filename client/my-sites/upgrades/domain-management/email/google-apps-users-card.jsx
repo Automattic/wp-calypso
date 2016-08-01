@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import groupBy from 'lodash/groupBy';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -43,6 +44,12 @@ const GoogleAppsUsers = React.createClass( {
 		);
 	},
 
+	isNewUser( user ) {
+		const domain = find( this.props.domains.list, { name: user.domain } );
+
+		return this.moment().subtract( 1, 'day' ).isBefore( domain.googleAppsSubscription.subscribedDate );
+	},
+
 	generateClickHandler( user ) {
 		return () => {
 			this.recordEvent( 'manageClick', this.props.selectedDomainName, user );
@@ -81,12 +88,22 @@ const GoogleAppsUsers = React.createClass( {
 
 	renderUser( user, index ) {
 		if ( user.error ) {
+			let status = 'is-warning',
+				text = user.error;
+
+			if ( this.isNewUser( user ) ) {
+				status = null;
+				text = this.translate( 'Please be patient while we are setting up %(email)s for you.', {
+					args: { email: user.email }
+				} );
+			}
+
 			return (
 				<Notice
 					key={ `google-apps-user-notice-${ user.domain }-${ index }` }
 					showDismiss={ false }
-					status="is-warning"
-					text={ user.error } />
+					status={ status }
+					text={ text } />
 			);
 		}
 
