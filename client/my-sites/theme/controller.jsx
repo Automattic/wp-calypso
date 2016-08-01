@@ -4,6 +4,7 @@
 import React from 'react';
 import debugFactory from 'debug';
 import startsWith from 'lodash/startsWith';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Internal Dependencies
@@ -16,6 +17,7 @@ import {
 	receiveThemeDetailsFailure,
 	setBackPath
 } from 'state/themes/actions';
+import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import wpcom from 'lib/wp';
 import config from 'config';
 
@@ -23,12 +25,20 @@ const debug = debugFactory( 'calypso:themes' );
 const themeDetailsCache = new Map();
 
 export function fetchThemeDetailsData( context, next ) {
-	if ( ! config.isEnabled( 'manage/themes/details' ) || ! context.isServerSide ) {
+	if ( ! config.isEnabled( 'manage/themes/details' ) ) {
 		return next();
 	}
 
 	const themeSlug = context.params.slug;
-	const theme = themeDetailsCache.get( themeSlug );
+
+	// If theme details for the given slug are present in the Redux state,
+	// it has been filled earlier during this request, so we can re-use it.
+	let theme = getThemeDetails( context.store.getState(), themeSlug );
+	if ( ! isEmpty( theme ) ) {
+		return next();
+	}
+
+	theme = themeDetailsCache.get( themeSlug );
 
 	const HOUR_IN_MS = 3600000;
 	if ( theme && ( theme.timestamp + HOUR_IN_MS > Date.now() ) ) {
