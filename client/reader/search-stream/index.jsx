@@ -165,6 +165,13 @@ const FeedStream = React.createClass( {
 		};
 	},
 
+	getDefaultProps() {
+		return {
+			showBlankContent: true,
+			searchPlaceholderText: this.translate( 'Search billions of WordPress.com posts…' )
+		};
+	},
+
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.query !== this.props.query ) {
 			this.updateState( nextProps );
@@ -198,7 +205,7 @@ const FeedStream = React.createClass( {
 	render() {
 		const emptyContent = this.props.query
 			? <EmptyContent query={ this.props.query } />
-			: <BlankContent suggestions={ this.state.suggestions }/>;
+			: this.props.showBlankContent && <BlankContent suggestions={ this.state.suggestions }/>;
 
 		if ( this.props.setPageTitle ) {
 			this.props.setPageTitle( this.state.title || this.translate( 'Search' ) );
@@ -221,7 +228,7 @@ const FeedStream = React.createClass( {
 						autoFocus={ true }
 						delaySearch={ true }
 						delayTimeout={ 500 }
-						placeholder={ this.translate( 'Search billions of WordPress.com posts…' ) } />
+						placeholder={ this.props.searchPlaceholderText } />
 				</CompactCard>
 			</Stream>
 		);

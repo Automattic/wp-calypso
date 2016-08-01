@@ -19,6 +19,7 @@ import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import smartSetState from 'lib/react-smart-set-state';
 import CardPlaceholder from './card-placeholder';
 import { recordTrack } from 'reader/stats';
+import StartSearch from './search';
 
 const tracksSource = 'recommended_cold_start';
 
@@ -118,6 +119,8 @@ const Start = React.createClass( {
 					<h1 className="reader-start__title">{ this.translate( 'This is Reader' ) }</h1>
 					<p className="reader-start__description">{ this.translate( 'Reader is a customizable magazine of stories from WordPress.com and across the web. Follow a few sites and their latest posts will appear here. Below are some suggestions. Give it a try!' ) }</p>
 				</header>
+
+				<StartSearch />
 
 				{ ! hasRecommendations && this.renderLoadingPlaceholders() }
 
