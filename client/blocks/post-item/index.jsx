@@ -27,7 +27,7 @@ export function PostItem( { translate, globalId, post, editUrl, className } ) {
 			<div className="post-item__detail">
 				<div className="post-item__title-meta">
 					<h1 className="post-item__title">
-						<a href={ editUrl }>
+						<a href={ editUrl } className="post-item__title-link">
 							{ post.title || translate( 'Untitled' ) }
 						</a>
 					</h1>
