@@ -55,6 +55,6 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		post,
-		editUrl: getEditorPath( state, state.ui.selectedSiteId, post.ID )
+		editUrl: getEditorPath( state, post.site_ID, post.ID )
 	};
 } )( localize( PostItem ) );
