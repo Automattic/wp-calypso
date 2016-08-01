@@ -342,7 +342,8 @@ PlanFeatures.propTypes = {
 	plans: PropTypes.array,
 	planProperties: PropTypes.array,
 	isPlaceholder: PropTypes.bool,
-	isInSignup: PropTypes.bool
+	isInSignup: PropTypes.bool,
+	selectedFeature: PropTypes.string
 };
 
 PlanFeatures.defaultProps = {

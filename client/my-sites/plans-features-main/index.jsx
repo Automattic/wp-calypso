@@ -284,7 +284,8 @@ PlansFeaturesMain.PropTypes = {
 	intervalType: PropTypes.string,
 	onUpgradeClick: PropTypes.func,
 	hideFreePlan: PropTypes.bool,
-	showFAQ: PropTypes.bool
+	showFAQ: PropTypes.bool,
+	selectedFeature: PropTypes.string
 };
 
 PlansFeaturesMain.defaultProps = {
