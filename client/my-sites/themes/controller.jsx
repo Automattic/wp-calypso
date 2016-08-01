@@ -15,7 +15,7 @@ import { getAnalyticsData } from './helpers';
 import { makeElement } from 'my-sites/theme/controller';
 
 function getProps( context ) {
-	const { tier, site_id: siteId } = context.params;
+	const { tier, filter, site_id: siteId } = context.params;
 
 	const title = buildTitle(
 		i18n.translate( 'Themes', { textOnly: true } ),
@@ -38,6 +38,7 @@ function getProps( context ) {
 	return {
 		title,
 		tier,
+		filter,
 		analyticsPageTitle,
 		analyticsPath: basePath,
 		search: context.query.s,
