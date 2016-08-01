@@ -95,6 +95,7 @@ export const PreviewToolbar = props => {
 					onClick={ selectSeoPreview }
 				>
 					<Gridicon icon="share" />
+					<span className="web-preview__seo-label">{ translate( 'Social Previews' ) }</span>
 				</button>
 			}
 			<div className="web-preview__toolbar-tray">
