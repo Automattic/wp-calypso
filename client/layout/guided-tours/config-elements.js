@@ -93,6 +93,7 @@ export class Step extends Component {
 		const { arrow, target: targetSlug } = this.props;
 
 		const classes = [
+			this.props.className,
 			'guided-tours__step',
 			'guided-tours__step-glow',
 			targetSlug && 'guided-tours__step-pointing',

@@ -27,7 +27,7 @@ const context = state =>
 
 export const MainTour = makeTour(
 	<Tour name="main" version="20160601" path="/" context={ context }>
-		<Step name="init" placement="right" next="my-sites">
+		<Step name="init" placement="right" next="my-sites" className="guided-tours__step-first">
 			<p className="guided-tours__step-text">
 				{
 					translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place," +
@@ -83,6 +83,7 @@ export const MainTour = makeTour(
 		</Step>
 
 		<Step name="click-preview"
+			className="guided-tours__step-action"
 			target="site-card-preview"
 			arrow="top-left"
 			placement="below"
@@ -129,6 +130,7 @@ export const MainTour = makeTour(
 		</Step>
 
 		<Step name="close-preview"
+			className="guided-tours__step-action"
 			target="web-preview__close"
 			arrow="left-top"
 			context={ selectedSiteIsPreviewable }
@@ -169,6 +171,7 @@ export const MainTour = makeTour(
 
 		<Step name="finish"
 			placement="center"
+			className="guided-tours__step-finish"
 		>
 			<p className="guided-tours__step-text">
 				{
