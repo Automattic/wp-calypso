@@ -29,6 +29,7 @@ import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'my-sites/domain-tip/docs/example';
 import PostCard from 'components/post-card/docs/example';
+import PostItem from 'blocks/post-item/docs/example';
 import ReaderAuthorLink from 'components/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'components/reader-site-stream-link/docs/example';
 import ReaderFullPostHeader from 'components/reader-full-post/docs/header-example';
@@ -82,6 +83,7 @@ export default React.createClass( {
 					<FeatureComparison />
 					<DomainTip />
 					<PostCard />
+					<PostItem />
 					<ReaderAuthorLink />
 					<ReaderSiteStreamLink />
 					<ReaderFullPostHeader />

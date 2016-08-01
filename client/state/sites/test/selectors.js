@@ -16,6 +16,7 @@ import {
 	isJetpackMinimumVersion,
 	getSiteSlug,
 	isRequestingSites,
+	isRequestingSite,
 	getSiteByUrl,
 	getSitePlan,
 	isCurrentSitePlan,
@@ -417,32 +418,60 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isRequestingSites()', () => {
-		it( 'should return fetching sites state', () => {
-			const state = {
+		it( 'should return false if a request is not in progress', () => {
+			const isRequesting = isRequestingSites( {
 				sites: {
-					fetchingItems: {
-						all: true
-					}
+					requestingAll: false
 				}
-			};
-			const emptyState = {
-				sites: {
-					fetchingItems: {
+			} );
 
-					}
-				}
-			};
-			const falseState = {
-				sites: {
-					fetchingItems: {
-						all: false
-					}
-				}
-			};
+			expect( isRequesting ).to.be.false;
+		} );
 
-			expect( isRequestingSites( state ) ).to.equal( true );
-			expect( isRequestingSites( emptyState ) ).to.equal( false );
-			expect( isRequestingSites( falseState ) ).to.equal( false );
+		it( 'should return true if a request is in progress', () => {
+			const isRequesting = isRequestingSites( {
+				sites: {
+					requestingAll: true
+				}
+			} );
+
+			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
+	describe( 'isRequestingSite()', () => {
+		it( 'should return false if no requests have been triggered', () => {
+			const isRequesting = isRequestingSite( {
+				sites: {
+					requesting: {}
+				}
+			}, 2916284 );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true if a request is in progress', () => {
+			const isRequesting = isRequestingSite( {
+				sites: {
+					requesting: {
+						2916284: true
+					}
+				}
+			}, 2916284 );
+
+			expect( isRequesting ).to.be.true;
+		} );
+
+		it( 'should return false after a request has completed', () => {
+			const isRequesting = isRequestingSite( {
+				sites: {
+					requesting: {
+						2916284: false
+					}
+				}
+			}, 2916284 );
+
+			expect( isRequesting ).to.be.false;
 		} );
 	} );
 

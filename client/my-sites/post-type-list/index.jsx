@@ -23,7 +23,7 @@ import {
 	getSitePostsForQueryIgnoringPage,
 	getSitePostsLastPageForQuery
 } from 'state/posts/selectors';
-import PostTypeListPost from './post';
+import PostItem from 'blocks/post-item';
 import PostTypeListPostPlaceholder from './post-placeholder';
 import PostTypeListEmptyContent from './empty-content';
 
@@ -115,7 +115,7 @@ class PostTypeList extends Component {
 
 	renderPostRow( { index } ) {
 		const { global_ID: globalId } = this.props.posts[ index ];
-		return <PostTypeListPost key={ globalId } globalId={ globalId } />;
+		return <PostItem key={ globalId } globalId={ globalId } />;
 	}
 
 	render() {

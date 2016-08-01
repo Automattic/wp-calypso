@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { PostTypeListPost } from './post';
+import { PostItem } from 'blocks/post-item';
 
 function PostTypeListPostPlaceholder( { translate } ) {
 	const post = {
@@ -17,7 +17,7 @@ function PostTypeListPostPlaceholder( { translate } ) {
 	};
 
 	return (
-		<PostTypeListPost
+		<PostItem
 			post={ post }
 			className="post-type-list__post-placeholder" />
 	);
