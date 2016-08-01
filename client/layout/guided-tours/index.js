@@ -21,10 +21,12 @@ import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/action
 
 import { combineTours } from 'layout/guided-tours/config-elements';
 import { MainTour } from 'layout/guided-tours/main-tour';
+import { ThemesTour } from 'layout/guided-tours/themes-tour';
 
 // move to guided-tours/config or equivalent
 const AllTours = combineTours( {
-	main: MainTour
+	main: MainTour,
+	themes: ThemesTour
 } );
 
 const debug = debugFactory( 'calypso:guided-tours' );
