@@ -250,7 +250,7 @@ const PushNotificationSettings = React.createClass( {
 							) }</p>
 						</div>
 					</div>
-					<Notice className="notification-settings-push-notification-settings__instruction-refresh-notice" showDismiss={ false } text={ this.translate( 'Once you\'ve allowed notifications, you may need to refresh your browser.' ) } />
+					<Notice className="push-notification-settings__instruction-refresh-notice" showDismiss={ false } text={ this.translate( 'Once you\'ve allowed notifications, you may need to refresh your browser.' ) } />
 				</div>
 				<span tabIndex="0" className="notification-settings-push-notification-settings__instruction-dismiss" onClick={ this.props.toggleUnblockInstructions } >
 					<Gridicon icon="cross" size={ 24 } />
@@ -310,7 +310,7 @@ const PushNotificationSettings = React.createClass( {
 				stateClass = { 'is-disabled': true };
 				stateText = this.translate( 'Disabled' );
 
-				deniedText = <Notice className="push-notification-settings__instruction" showDismiss={ false } text={
+				deniedText = <Notice className="notification-settings-push-notification-settings__instruction" showDismiss={ false } text={
 					<div>
 						<div>{ this.translate( 'Your browser is currently set to block notifications from WordPress.com.' ) }</div>
 						<div>{ this.translate(
