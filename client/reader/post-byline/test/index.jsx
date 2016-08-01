@@ -117,8 +117,8 @@ describe( 'PostByline', () => {
 			} );
 
 			it( 'does not render if the post is a discover pick', () => {
-				const disoverPick = shallow( <PostByline post={ post } isDiscoverPost={ true } /> );
-				assert.lengthOf( disoverPick.find( authorSelector ), 0 );
+				const discoverPick = shallow( <PostByline post={ post } isDiscoverPost={ true } /> );
+				assert.lengthOf( discoverPick.find( authorSelector ), 0 );
 			} );
 		} );
 
