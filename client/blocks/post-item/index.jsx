@@ -13,25 +13,25 @@ import { getEditorPath } from 'state/ui/editor/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import Card from 'components/card';
 import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
-import PostTypeListPostThumbnail from './post-thumbnail';
-import PostActionsEllipsisMenu from './post-actions-ellipsis-menu';
-import PostTypePostAuthor from './post-type-post-author';
+import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
+import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
+import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
 
-export function PostTypeListPost( { translate, globalId, post, editUrl, className } ) {
-	const classes = classnames( 'post-type-list__post', className, {
+export function PostItem( { translate, globalId, post, editUrl, className } ) {
+	const classes = classnames( 'post-item', className, {
 		'is-untitled': ! post.title
 	} );
 
 	return (
 		<Card compact className={ classes }>
-			<div className="post-type-list__post-detail">
-				<div className="post-type-list__post-title-meta">
-					<h1 className="post-type-list__post-title">
-						<a href={ editUrl }>
+			<div className="post-item__detail">
+				<div className="post-item__title-meta">
+					<h1 className="post-item__title">
+						<a href={ editUrl } className="post-item__title-link">
 							{ post.title || translate( 'Untitled' ) }
 						</a>
 					</h1>
-					<div className="post-type-list__post-meta">
+					<div className="post-item__meta">
 						<PostRelativeTimeStatus post={ post } />
 						<PostTypePostAuthor globalId={ globalId } />
 					</div>
@@ -43,7 +43,7 @@ export function PostTypeListPost( { translate, globalId, post, editUrl, classNam
 	);
 }
 
-PostTypeListPost.propTypes = {
+PostItem.propTypes = {
 	translate: PropTypes.func,
 	globalId: PropTypes.string,
 	post: PropTypes.object,
@@ -55,6 +55,6 @@ export default connect( ( state, ownProps ) => {
 
 	return {
 		post,
-		editUrl: getEditorPath( state, state.ui.selectedSiteId, post.ID )
+		editUrl: getEditorPath( state, post.site_ID, post.ID )
 	};
-} )( localize( PostTypeListPost ) );
+} )( localize( PostItem ) );

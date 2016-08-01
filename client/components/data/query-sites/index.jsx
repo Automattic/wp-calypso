@@ -3,19 +3,31 @@
  */
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
-import { isRequestingSites } from 'state/sites/selectors';
-import { requestSites } from 'state/sites/actions';
+import { isRequestingSites, isRequestingSite } from 'state/sites/selectors';
+import { requestSites, requestSite } from 'state/sites/actions';
 
 class QuerySites extends Component {
-
 	componentWillMount() {
-		if ( ! this.props.requestingSites ) {
-			this.props.requestSites();
+		this.request( this.props );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.siteId !== this.props.siteId ) {
+			this.request( nextProps );
+		}
+	}
+
+	request( props ) {
+		if ( ! props.siteId && ! props.requestingSites ) {
+			props.requestSites();
+		}
+
+		if ( props.siteId && ! props.requestingSite ) {
+			props.requestSite( props.siteId );
 		}
 	}
 
@@ -25,23 +37,24 @@ class QuerySites extends Component {
 }
 
 QuerySites.propTypes = {
+	siteId: PropTypes.number,
 	requestingSites: PropTypes.bool,
-	requestSites: PropTypes.func
+	requestingSite: PropTypes.bool,
+	requestSites: PropTypes.func,
+	requestSite: PropTypes.func
 };
 
 QuerySites.defaultProps = {
-	requestSites: () => {}
+	requestSites: () => {},
+	requestSite: () => {}
 };
 
 export default connect(
-	( state ) => {
+	( state, { siteId } ) => {
 		return {
-			requestingSites: isRequestingSites( state )
+			requestingSites: isRequestingSites( state ),
+			requestingSite: isRequestingSite( state, siteId )
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators( {
-			requestSites
-		}, dispatch );
-	}
+	{ requestSites, requestSite }
 )( QuerySites );

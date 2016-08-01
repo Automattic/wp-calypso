@@ -3,25 +3,6 @@
 		0 1px 2px lighten( $gray, 30% );
 }
 
-.post-type-list__post {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.post-type-list__post-detail {
-	position: relative;
-	display: flex;
-	width: 100%;
-	overflow: hidden;
-	margin-right: auto;
-
-	&::after {
-		@include long-content-fade( $size: 40px );
-		right: 0;
-	}
-}
-
 .post-type-list__post-thumbnail-wrapper {
 	display: none;
 	position: relative;
@@ -49,55 +30,12 @@
 	max-width: none;
 }
 
-.post-type-list__post-title-meta {
-	padding: 6px 0;
-}
-
-.post-type-list__post-title {
-	@extend %content-font;
-	margin-bottom: 2px;
-	font-weight: 700;
-	white-space: nowrap;
-
-	a {
-		color: $gray-dark;
-
-		&:hover {
-			color: darken( $gray, 20% );
-		}
-
-		.post-type-list__post-placeholder & {
-			@include placeholder;
-		}
-
-		.post-type-list__post.is-untitled & {
-			color: $gray;
-			font-style: italic;
-		}
-	}
-}
-
-.post-type-list__post-meta {
-	font-size: 12px;
-	color: lighten( $gray, 10% );
-}
-
-.post-type-list__post-meta .post-relative-time-status,
-.post-type-list__post-meta .post-type-post-author {
-	float: left;
-}
-
-.post-type-list__post-meta .post-relative-time-status {
-	margin-bottom: 0;
-
-	.post-type-list__post-placeholder & {
+.post-type-list__post-placeholder {
+	.post-relative-time-status {
 		@include placeholder;
 	}
-}
 
-.post-type-list__post-meta .post-relative-time-status .gridicon {
-	width: 14px;
-	height: 14px;
-	margin-top: -3px;
-	margin-right: 6px;
+	.post-item__title a {
+		@include placeholder;
+	}
 }

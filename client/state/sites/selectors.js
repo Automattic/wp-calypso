@@ -179,7 +179,19 @@ export function getSiteOption( state, siteId, optionName ) {
  * @return {Boolean}        Request State
  */
 export function isRequestingSites( state ) {
-	return !! state.sites.fetchingItems.all;
+	return !! state.sites.requestingAll;
+}
+
+/**
+ * Returns true if a network request is in progress to fetch the specified, or
+ * false otherwise.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {Boolean}        Whether request is in progress
+ */
+export function isRequestingSite( state, siteId ) {
+	return !! state.sites.requesting[ siteId ];
 }
 
 /**
