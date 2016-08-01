@@ -179,7 +179,7 @@ export function getSiteOption( state, siteId, optionName ) {
  * @return {Boolean}        Request State
  */
 export function isRequestingSites( state ) {
-	return !! state.sites.fetchingItems.all;
+	return !! state.sites.requestingAll;
 }
 
 /**
