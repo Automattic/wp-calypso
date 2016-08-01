@@ -26,18 +26,18 @@
 	margin-bottom: 2px;
 	font-weight: 700;
 	white-space: nowrap;
+}
 
-	a {
-		color: $gray-dark;
+a.post-item__title-link {
+	color: $gray-dark;
 
-		&:hover {
-			color: darken( $gray, 20% );
-		}
+	&:hover {
+		color: darken( $gray, 20% );
+	}
 
-		.post-item.is-untitled & {
-			color: $gray;
-			font-style: italic;
-		}
+	.post-item.is-untitled & {
+		color: $gray;
+		font-style: italic;
 	}
 }
 
