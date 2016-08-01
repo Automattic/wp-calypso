@@ -88,7 +88,6 @@ class GuidedTours extends Component {
 		const sidebar = getScrollableSidebar();
 		scrollTo( { y: 0, container: sidebar } );
 
-		this.currentTarget && this.currentTarget.classList.remove( 'guided-tours__overlay' );
 		this.props.quitGuidedTour( Object.assign( {
 			stepName: this.props.tourState.stepName,
 			tour: this.props.tourState.tour,
@@ -100,7 +99,12 @@ class GuidedTours extends Component {
 	}
 
 	render() {
-		const { stepName = 'init' } = this.props.tourState;
+		const { stepName = 'init', shouldShow } = this.props.tourState;
+
+		if ( ! shouldShow ) {
+			return null;
+		}
+
 		return (
 			<RootChild>
 				<div className="guided-tours">
