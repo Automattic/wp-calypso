@@ -167,8 +167,7 @@ const FeedStream = React.createClass( {
 
 	getDefaultProps() {
 		return {
-			showBlankContent: true,
-			searchPlaceholderText: this.translate( 'Search billions of WordPress.com posts…' )
+			showBlankContent: true
 		};
 	},
 
@@ -213,6 +212,11 @@ const FeedStream = React.createClass( {
 
 		const store = this.props.store || emptyStore;
 
+		let searchPlaceholderText = this.props.searchPlaceholderText;
+		if ( ! searchPlaceholderText ) {
+			searchPlaceholderText = this.translate( 'Search billions of WordPress.com posts…' );
+		}
+
 		return (
 			<Stream { ...this.props } store={ store }
 				listName={ this.translate( 'Search' ) }
@@ -228,7 +232,7 @@ const FeedStream = React.createClass( {
 						autoFocus={ true }
 						delaySearch={ true }
 						delayTimeout={ 500 }
-						placeholder={ this.props.searchPlaceholderText } />
+						placeholder={ searchPlaceholderText } />
 				</CompactCard>
 			</Stream>
 		);
