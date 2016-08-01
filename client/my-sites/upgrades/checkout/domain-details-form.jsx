@@ -78,8 +78,6 @@ export default React.createClass( {
 				if ( fieldName === 'postalCode' ) {
 					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
 				}
-			} else {
-				sanitizedFieldValues[ fieldName ] = fieldValues[ fieldName ];
 			}
 		} );
 
