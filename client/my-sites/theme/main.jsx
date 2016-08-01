@@ -347,7 +347,7 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const themeName = this.props.name;
+		const { name: themeName, description } = this.props;
 		const title = i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
 		} ); // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
@@ -357,8 +357,8 @@ const ThemeSheet = React.createClass( {
 		return (
 
 			<Head
-				title= { decodeEntities( title || '' ) + ' — WordPress.com' }
-				description={ decodeEntities( this.props.description || '' ) }
+				title= { themeName && decodeEntities( title ) + ' — WordPress.com' }
+				description={ description && decodeEntities( description ) }
 				type={ 'website' }
 				canonicalUrl={ canonicalUrl }
 				image={ this.props.screenshot }>
