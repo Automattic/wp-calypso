@@ -125,10 +125,14 @@ function retarget() {
 		window.fbq( 'track', 'PageView' );
 
 		// AdWords
-		window.google_trackConversion( {
-			google_conversion_id: GOOGLE_CONVERSION_ID,
-			google_remarketing_only: true
-		} );
+
+		// Ensure the AdWords Remarketing Tag has finished loading
+		if ( window.google_trackConversion ) {
+			window.google_trackConversion( {
+				google_conversion_id: GOOGLE_CONVERSION_ID,
+				google_remarketing_only: true
+			} );
+		}
 	}
 }
 
