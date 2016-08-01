@@ -17,7 +17,8 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	SiteIcon = require( 'components/site-icon' ),
 	helpers = require( './helpers' ),
 	analytics = require( 'lib/analytics' ),
-	utils = require( 'lib/posts/utils' );
+	utils = require( 'lib/posts/utils' ),
+	classNames = require( 'classnames' );
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -285,7 +286,14 @@ module.exports = React.createClass( {
 					{ title }
 				</a>
 				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
-				<Gridicon icon="ellipsis" className="page__actions-toggle" onClick={ this.togglePageActions } ref="popoverMenuButton" />
+				<Gridicon
+					icon="ellipsis"
+					className={ classNames( {
+						'page__actions-toggle': true,
+						'is-active': this.state.showPageActions
+					} ) }
+					onClick={ this.togglePageActions }
+					ref="popoverMenuButton" />
 				<PopoverMenu
 					isVisible={ this.state.showPageActions }
 					onClose={ this.togglePageActions }
