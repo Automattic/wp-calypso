@@ -12,6 +12,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import support from 'lib/url/support';
 import { getExportingState } from 'state/site-settings/exporter/selectors';
+import { isGuidedTransferAwaitingPurchase } from 'state/sites/guided-transfer/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { States } from 'state/site-settings/exporter/constants';
 
@@ -19,7 +20,7 @@ import { States } from 'state/site-settings/exporter/constants';
  * Displays local notices for the Export tab of Site Settings
  */
 class Notices extends Component {
-	render() {
+	exportNotice() {
 		const {
 			exportDidComplete,
 			exportDidFail,
@@ -59,12 +60,48 @@ class Notices extends Component {
 
 		return null;
 	}
+
+	guidedTransferNotice() {
+		const {
+			translate,
+			siteSlug
+		} = this.props;
+
+		if ( this.props.isGuidedTransferAwaitingPurchase ) {
+			return (
+				<Notice
+					status="is-warning"
+					showDismiss={ false }
+					text={ translate(
+						"It looks like you've started a Guided Transfer. " +
+						"We just need your payment to confirm the transfer and " +
+						"then we'll get started!" ) }
+				>
+					<NoticeAction href={ `/settings/export/guided/${ siteSlug }` }>
+						{ translate( 'Continue' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
+		return null;
+	}
+
+	render() {
+		return (
+			<div>
+				{ this.exportNotice() }
+				{ this.guidedTransferNotice() }
+			</div>
+		);
+	}
 }
 
-const mapStateToProps = state => ( {
+const mapStateToProps = ( state, { siteId } ) => ( {
 	exportDidComplete: getExportingState( state, getSelectedSiteId( state ) ) === States.COMPLETE,
 	exportDidFail: getExportingState( state, getSelectedSiteId( state ) ) === States.FAILED,
 	exportDownloadURL: state.siteSettings.exporter.downloadURL,
+	isGuidedTransferAwaitingPurchase: isGuidedTransferAwaitingPurchase( state, siteId ),
 } );
 
 export default connect( mapStateToProps )( localize( Notices ) );
