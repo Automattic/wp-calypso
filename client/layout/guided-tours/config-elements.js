@@ -22,6 +22,7 @@ import {
 const contextTypes = Object.freeze( {
 	next: PropTypes.func.isRequired,
 	quit: PropTypes.func.isRequired,
+	isValid: PropTypes.func.isRequired,
 } );
 
 export class Tour extends Component {
@@ -32,14 +33,14 @@ export class Tour extends Component {
 	static childContextTypes = contextTypes;
 
 	getChildContext() {
-		const { next, quit } = this.tourMethods;
-		return { next, quit };
+		const { next, quit, isValid } = this.tourMethods;
+		return { next, quit, isValid };
 	}
 
 	constructor( props, context ) {
 		super( props, context );
-		const { next, quit } = props;
-		this.tourMethods = { next, quit };
+		const { next, quit, isValid } = props;
+		this.tourMethods = { next, quit, isValid };
 	}
 
 	render() {
@@ -162,14 +163,20 @@ export class Continue extends Component {
 	constructor( props, context ) {
 		super( props, context );
 		this.next = context.next;
+		this.isValid = context.isValid;
 	}
 
 	componentDidMount() {
-		this.addTargetListener();
+		! this.props.hidden && this.addTargetListener();
 	}
 
 	componentWillUnmount() {
-		this.removeTargetListener();
+		! this.props.hidden && this.removeTargetListener();
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		console.log( nextProps );
+		nextProps.context && this.isValid( nextProps.context ) && this.next();
 	}
 
 	componentWillUpdate() {
@@ -201,7 +208,11 @@ export class Continue extends Component {
 	}
 
 	render() {
-		return <i>Click to continue</i>;
+		if ( this.props.hidden ) {
+			return null;
+		}
+
+		return <i>{ this.props.children || translate( 'Click to continue.' ) }</i>;
 	}
 }
 

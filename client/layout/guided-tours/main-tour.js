@@ -111,7 +111,6 @@ export const MainTour = makeTour(
 		<Step name="in-preview"
 			placement="center"
 			context={ selectedSiteIsPreviewable }
-			continueWhen={ previewIsNotShowing }
 			next="close-preview"
 		>
 			<p className="guided-tours__step-text">
@@ -126,6 +125,7 @@ export const MainTour = makeTour(
 			<div className="guided-tours__choice-button-row">
 				<Next/>
 				<Quit/>
+				<Continue context={ previewIsNotShowing } hidden />
 			</div>
 		</Step>
 
@@ -134,14 +134,13 @@ export const MainTour = makeTour(
 			target="web-preview__close"
 			arrow="left-top"
 			context={ selectedSiteIsPreviewable }
-			continueWhen={ previewIsNotShowing }
 			next="themes"
 		>
 			<p className="guided-tours__step-text">
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue target="web-preview__close" icon="cross-small" click/>
+				<Continue target="web-preview__close" icon="cross-small" context={ previewIsNotShowing } click />
 			</p>
 		</Step>
 
