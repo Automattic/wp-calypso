@@ -47,7 +47,8 @@ module.exports = React.createClass( {
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
+		showEmptyContent: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -56,7 +57,8 @@ module.exports = React.createClass( {
 			suppressSiteNameLink: false,
 			showFollowInHeader: false,
 			onShowUpdates: noop,
-			className: ''
+			className: '',
+			showEmptyContent: true
 		};
 	},
 
@@ -432,7 +434,7 @@ module.exports = React.createClass( {
 			body, showingStream;
 
 		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
-			body = this.props.emptyContent || ( <EmptyContent /> );
+			body = this.props.showEmptyContent ? ( this.props.emptyContent || ( <EmptyContent /> ) ) : null;
 			showingStream = false;
 		} else {
 			body = ( <InfiniteList

@@ -22,6 +22,9 @@ import { recordTrackForPost } from 'reader/stats';
 import sampleSize from 'lodash/sampleSize';
 import i18nUtils from 'lib/i18n-utils';
 
+import debugFactory from 'debug';
+const debug = debugFactory( 'calypso:reader:search' );
+
 const SearchCardAdapter = React.createClass( {
 	getInitialState() {
 		return this.getStateFromStores();
@@ -206,6 +209,12 @@ const FeedStream = React.createClass( {
 			? <EmptyContent query={ this.props.query } />
 			: this.props.showBlankContent && <BlankContent suggestions={ this.state.suggestions }/>;
 
+		// Override showing of EmptyContent in Reader stream
+		let showEmptyContent = true;
+		if ( this.props.showBlankContent === false || this.props.query ) {
+			showEmptyContent = false;
+		}
+
 		if ( this.props.setPageTitle ) {
 			this.props.setPageTitle( this.state.title || this.translate( 'Search' ) );
 		}
@@ -221,6 +230,7 @@ const FeedStream = React.createClass( {
 			<Stream { ...this.props } store={ store }
 				listName={ this.translate( 'Search' ) }
 				emptyContent={ emptyContent }
+				showEmptyContent={ showEmptyContent }
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory }
 				className="search-stream" >
