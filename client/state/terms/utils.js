@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import omitBy from 'lodash/omitBy';
+import { omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,4 +29,15 @@ export function getNormalizedTermsQuery( query ) {
 export function getSerializedTermsQuery( query = {} ) {
 	const normalizedQuery = getNormalizedTermsQuery( query );
 	return JSON.stringify( normalizedQuery ).toLocaleLowerCase();
+}
+
+/**
+ * Returns a serialized terms query, excluding any page parameter
+ *
+ * @param  {Object} query  Terms query
+ * @param  {Number} siteId Optional site ID
+ * @return {String}        Serialized terms query
+ */
+export function getSerializedTermsQueryWithoutPage( query, siteId ) {
+	return getSerializedTermsQuery( omit( query, 'page' ), siteId );
 }

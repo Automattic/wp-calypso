@@ -7,9 +7,11 @@ import range from 'lodash/range';
 /**
  * Internal dependencies
  */
-import TreeConvert from 'lib/tree-convert';
 import createSelector from 'lib/create-selector';
-import { getSerializedTermsQuery } from './utils';
+import {
+	getSerializedTermsQuery,
+	getSerializedTermsQueryWithoutPage
+} from './utils';
 
 /**
  * Returns true if currently requesting terms for the taxonomies query, or false
@@ -84,47 +86,18 @@ export const getTermsForQuery = createSelector(
  * @param  {Object}  query    Terms query object
  * @return {?Array}           Terms for the query
  */
-export function getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ) {
-	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
-	if ( ! manager ) {
-		return null;
-	}
-
-	return manager.getItemsIgnoringPage( query );
-}
-
-/**
- * Returns an hierarchical array of terms for the taxonomies query, or null if no terms have been
- * received.
- *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {String}  taxonomy Taxonomy slug
- * @param  {Object}  query    Term query object
- * @return {?Array}           Terms for the query
- */
-export const getTermsHierarchyForQueryIgnoringPage = createSelector(
+export const getTermsForQueryIgnoringPage = createSelector(
 	( state, siteId, taxonomy, query ) => {
-		const terms = getTermsForQueryIgnoringPage( state, siteId, taxonomy, query );
-		if ( ! terms ) {
-			return terms;
+		const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+		if ( ! manager ) {
+			return null;
 		}
 
-		// For each site term object, add `parent` and `order` properties.
-		// These are used by the TreeConvert library ( which mutates ) to build the hierarchy.
-		const treeReadyTerms = terms.map( ( term, i ) => {
-			return {
-				...term,
-				parent: term.parent || 0,
-				order: i
-			};
-		} );
-
-		return ( new TreeConvert( 'ID' ) ).treeify( treeReadyTerms );
+		return manager.getItemsIgnoringPage( query );
 	},
-	( state, siteId, taxonomy ) => get( state.terms.queries, [ siteId, taxonomy ] ),
+	( state, siteId, taxonomy ) => getTerms( state, siteId, taxonomy ),
 	( state, siteId, taxonomy, query ) => {
-		const serializedQuery = getSerializedTermsQuery( query );
+		const serializedQuery = getSerializedTermsQueryWithoutPage( query );
 		return [ siteId, taxonomy, serializedQuery ].join();
 	}
 );
