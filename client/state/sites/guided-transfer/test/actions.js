@@ -12,6 +12,7 @@ import {
 	GUIDED_TRANSFER_STATUS_RECEIVE,
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
+	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
 import {
 	receiveGuidedTransferStatus,
@@ -31,6 +32,7 @@ describe( 'actions', () => {
 
 	const sampleSiteId = 100658273;
 	const sampleStatus = {
+		issues: [],
 		upgrade_purchased: true,
 		host_details_entered: false,
 	};
@@ -50,9 +52,10 @@ describe( 'actions', () => {
 	describe( '#requestProductsList()', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( `/rest/v1.1/sites/${sampleSiteId}/guided-transfer` )
-				.twice().reply( 200, sampleStatus )
-				.get( `/rest/v1.1/sites/${sampleSiteId}/guided-transfer` )
+				.get( `/wpcom/v2/sites/${sampleSiteId}/transfer` )
+				.times( 3 )
+				.reply( 200, sampleStatus )
+				.get( `/wpcom/v2/sites/${sampleSiteId}/transfer` )
 				.reply( 500, {
 					error: 'server_error',
 					message: 'A server error occurred',
@@ -68,7 +71,16 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch product list receive action when request completes', () => {
+		it( 'should dispatch success action when request completes', () => {
+			return requestGuidedTransferStatus( sampleSiteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
+					siteId: sampleSiteId,
+				} );
+			} );
+		} );
+
+		it( 'should dispatch receive action when request completes', () => {
 			return requestGuidedTransferStatus( sampleSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GUIDED_TRANSFER_STATUS_RECEIVE,

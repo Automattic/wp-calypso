@@ -13,6 +13,7 @@ import {
 	GUIDED_TRANSFER_STATUS_RECEIVE,
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
+	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 	SERIALIZE,
 } from 'state/action-types';
 import reducer, {
@@ -113,7 +114,7 @@ describe( 'reducer', () => {
 
 		it( 'should be false when a request completes', () => {
 			const state = isFetching( true, {
-				type: GUIDED_TRANSFER_STATUS_RECEIVE,
+				type: GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 				siteId: testSiteId,
 			} );
 			expect( state[ testSiteId ] ).to.eql( false );

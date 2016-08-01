@@ -1981,11 +1981,29 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
  * Requests the status of a guided transfer
  *
  * @param {int} siteId  The site ID
- * @returns {Promise} Resolves to the API response containing the status
+ * @returns {Promise} Resolves to the response containing the transfer status
  */
 Undocumented.prototype.getGuidedTransferStatus = function( siteId ) {
-	debug( '/sites/:site:/guided-transfer' );
-	return this.wpcom.req.get( '/sites/' + siteId + '/guided-transfer' );
+	debug( '/sites/:site:/transfer' );
+	return this.wpcom.req.get( '/sites/' + siteId + '/transfer', {
+		apiNamespace: 'wpcom/v2'
+	} );
+};
+
+/**
+ * Saves user details for a guided transfer
+ *
+ * @param {int} siteId  The site ID
+ * @param {Object} details The user details to save
+ * @returns {Promise} Resolves to the response containing the updated transfer status
+ */
+Undocumented.prototype.saveGuidedTransferDetails = function( siteId, details ) {
+	const query = Object.assign( {}, {
+		apiNamespace: 'wpcom/v2',
+	}, details );
+
+	debug( '/sites/:site:/transfer' );
+	return this.wpcom.req.post( '/sites/' + siteId + '/transfer', query );
 };
 
 /**

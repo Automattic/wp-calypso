@@ -11,6 +11,7 @@ import {
 	GUIDED_TRANSFER_STATUS_RECEIVE,
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
+	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 /**
@@ -41,6 +42,7 @@ export function requestGuidedTransferStatus( siteId ) {
 		return wpcom.undocumented().getGuidedTransferStatus( siteId )
 			.then( response => omit( response, '_headers' ) )
 			.then( guidedTransferStatus => dispatch( receiveGuidedTransferStatus( siteId, guidedTransferStatus ) ) )
+			.then( () => dispatch( { type: GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS, siteId } ) )
 			.catch( error => dispatch( {
 				type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 				siteId,
