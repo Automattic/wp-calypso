@@ -45,6 +45,8 @@ import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
+import Head from 'layout/head';
+import { decodeEntities } from 'lib/formatting';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -73,7 +75,7 @@ const ThemeSheet = React.createClass( {
 			label: React.PropTypes.string.isRequired,
 			action: React.PropTypes.func,
 			getUrl: React.PropTypes.func,
-		} ).isRequired,
+		} ),
 		secondaryOption: React.PropTypes.shape( {
 			label: React.PropTypes.string.isRequired,
 			action: React.PropTypes.func,
@@ -345,33 +347,48 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
+		const { name: themeName, description } = this.props;
+		const title = i18n.translate( '%(themeName)s Theme', {
+			args: { themeName }
+		} ); // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
+
+		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
+
 		return (
-			<Main className="theme__sheet">
-			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
-				{ this.renderBar() }
-				{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
-				<ThanksModal
-					site={ this.props.selectedSite }
-					source={ 'details' }/>
-				{ this.state.showPreview && this.renderPreview() }
-				<HeaderCake className="theme__sheet-action-bar"
-							backHref={ this.props.backPath }
-							backText={ i18n.translate( 'All Themes' ) }>
-					{ this.renderButton() }
-				</HeaderCake>
-				<div className="theme__sheet-columns">
-					<div className="theme__sheet-column-left">
-						<div className="theme__sheet-content">
-							{ this.renderSectionNav( section ) }
-							{ this.renderSectionContent( section ) }
-							<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
+
+			<Head
+				title= { themeName && decodeEntities( title ) + ' — WordPress.com' }
+				description={ description && decodeEntities( description ) }
+				type={ 'website' }
+				canonicalUrl={ canonicalUrl }
+				image={ this.props.screenshot }>
+				<Main className="theme__sheet">
+					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
+						{ this.renderBar() }
+						{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
+					<ThanksModal
+						site={ this.props.selectedSite }
+						source={ 'details' }/>
+					{ this.state.showPreview && this.renderPreview() }
+					<HeaderCake className="theme__sheet-action-bar"
+								backHref={ this.props.backPath }
+								backText={ i18n.translate( 'All Themes' ) }>
+						{ this.renderButton() }
+					</HeaderCake>
+					<div className="theme__sheet-columns">
+						<div className="theme__sheet-column-left">
+							<div className="theme__sheet-content">
+								{ this.renderSectionNav( section ) }
+								{ this.renderSectionContent( section ) }
+								<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
+							</div>
+						</div>
+						<div className="theme__sheet-column-right">
+							{ this.renderScreenshot() }
 						</div>
 					</div>
-					<div className="theme__sheet-column-right">
-						{ this.renderScreenshot() }
-					</div>
-				</div>
-			</Main>
+				</Main>
+			</Head>
 		);
 	},
 

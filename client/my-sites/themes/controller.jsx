@@ -1,7 +1,9 @@
 /**
  * External Dependencies
  */
+import React from 'react';
 import i18n from 'i18n-calypso';
+import omit from 'lodash/omit';
 
 /**
  * Internal Dependencies
@@ -12,7 +14,20 @@ import LoggedOutComponent from './logged-out';
 import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
 import { getAnalyticsData } from './helpers';
-import { makeElement } from 'my-sites/theme/controller';
+
+function makeElement( ThemesComponent, Head, store, props ) {
+	return (
+		<Head
+			title={ props.title }
+			description={ props.description }
+			type={ 'website' }
+			canonicalUrl={ props.canonicalUrl }
+			image={ props.image }
+			tier={ props.tier || 'all' }>
+			<ThemesComponent { ...omit( props, [ 'title' ] ) } />
+		</Head>
+	);
+}
 
 function getProps( context ) {
 	const { tier, filter, site_id: siteId } = context.params;
