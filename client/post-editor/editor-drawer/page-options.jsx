@@ -20,7 +20,7 @@ import PageOrder from 'post-editor/editor-page-order';
 import Accordion from 'components/accordion';
 import Gridicon from 'components/gridicon';
 
-function EditorDrawerPageOptions( { translate, siteId, postId, post, postType, hierarchical } ) {
+function EditorDrawerPageOptions( { translate, siteId, post, postType, hierarchical } ) {
 	let title;
 	if ( 'page' === postType ) {
 		title = translate( 'Page Attributes' );
@@ -31,10 +31,7 @@ function EditorDrawerPageOptions( { translate, siteId, postId, post, postType, h
 	return (
 		<Accordion title={ title } icon={ <Gridicon icon="pages" /> }>
 			{ hierarchical && (
-				<PageParent
-					siteId={ siteId }
-					postId={ postId }
-					parent={ get( post, 'parent_id', 0 ) } />
+				<PageParent />
 			) }
 			{ siteId && 'page' === postType && (
 				<PageTemplatesData siteId={ siteId } >
@@ -52,5 +49,5 @@ export default connect( ( state ) => {
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const hierarchical = 'page' === postType || get( getPostType( state, siteId, postType ), 'hierarchical' );
 
-	return { siteId, postId, postType, hierarchical };
+	return { siteId, postType, hierarchical };
 } )( localize( EditorDrawerPageOptions ) );
