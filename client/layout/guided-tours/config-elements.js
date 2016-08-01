@@ -65,6 +65,7 @@ export class Step extends Component {
 
 	constructor( props, context ) {
 		super( props, context );
+		this.next = context.next;
 	}
 
 	componentWillMount() {
@@ -175,7 +176,6 @@ export class Continue extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		console.log( nextProps );
 		nextProps.context && this.isValid( nextProps.context ) && this.next();
 	}
 
