@@ -96,10 +96,14 @@ $plan-features-sidebar-width: 272px;
 	border-left: solid 1px lighten( $gray, 27% );
 	background-color: lighten( $gray, 35% );
 	position: relative;
-}
 
-.plan-features__table-item.is-selected {
-	display: table-cell;
+	&.is-highlighted {
+		border: 1px solid $alert-yellow;
+	}
+
+	&.is-selected {
+		display: table-cell;
+	}
 }
 
 .plan-features__table-item.has-partial-border {

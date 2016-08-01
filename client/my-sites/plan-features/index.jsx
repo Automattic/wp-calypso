@@ -274,19 +274,27 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
-		const { planProperties } = this.props;
+		const {
+			planProperties,
+			selectedFeature
+		} = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
 				features,
 				planName
 			} = properties;
-			const featureKeys = Object.keys( features );
-			const key = featureKeys[ rowIndex ];
+
+			const featureKeys = Object.keys( features ),
+				key = featureKeys[ rowIndex ],
+				currentFeature = features[ key ];
+
 			const classes = classNames( 'plan-features__table-item', {
-				'has-partial-border': rowIndex + 1 < featureKeys.length
+				'has-partial-border': rowIndex + 1 < featureKeys.length,
+				'is-highlighted': selectedFeature && currentFeature &&
+					selectedFeature === currentFeature.getSlug()
 			} );
-			const currentFeature = features[ key ];
+
 			return (
 				currentFeature
 					? <td key={ `${ planName }-${ key }` } className={ classes }>
