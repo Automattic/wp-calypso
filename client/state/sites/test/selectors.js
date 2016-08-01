@@ -16,6 +16,7 @@ import {
 	isJetpackMinimumVersion,
 	getSiteSlug,
 	isRequestingSites,
+	isRequestingSite,
 	getSiteByUrl,
 	getSitePlan,
 	isCurrentSitePlan,
@@ -443,6 +444,42 @@ describe( 'selectors', () => {
 			expect( isRequestingSites( state ) ).to.equal( true );
 			expect( isRequestingSites( emptyState ) ).to.equal( false );
 			expect( isRequestingSites( falseState ) ).to.equal( false );
+		} );
+	} );
+
+	describe( 'isRequestingSite()', () => {
+		it( 'should return false if no requests have been triggered', () => {
+			const isRequesting = isRequestingSite( {
+				sites: {
+					requesting: {}
+				}
+			}, 2916284 );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true if a request is in progress', () => {
+			const isRequesting = isRequestingSite( {
+				sites: {
+					requesting: {
+						2916284: true
+					}
+				}
+			}, 2916284 );
+
+			expect( isRequesting ).to.be.true;
+		} );
+
+		it( 'should return false after a request has completed', () => {
+			const isRequesting = isRequestingSite( {
+				sites: {
+					requesting: {
+						2916284: false
+					}
+				}
+			}, 2916284 );
+
+			expect( isRequesting ).to.be.false;
 		} );
 	} );
 

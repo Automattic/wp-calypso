@@ -15,6 +15,9 @@ import vouchers from './vouchers/reducer';
 import mediaStorage from './media-storage/reducer';
 import {
 	SITE_RECEIVE,
+	SITE_REQUEST,
+	SITE_REQUEST_FAILURE,
+	SITE_REQUEST_SUCCESS,
 	SITES_RECEIVE,
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
@@ -25,7 +28,7 @@ import {
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
+import { isValidStateWithSchema, createReducer } from 'state/utils';
 
 /**
  * Constants
@@ -112,11 +115,32 @@ export function fetchingItems( state = {}, action ) {
 	return state;
 }
 
+/**
+ * Returns the updated requesting state after an action has been dispatched.
+ * Requesting state tracks whether a network request is in progress for a site.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
+ */
+export const requesting = createReducer( {}, {
+	[ SITE_REQUEST ]: ( state, { siteId } ) => {
+		return { ...state, [ siteId ]: true };
+	},
+	[ SITE_REQUEST_FAILURE ]: ( state, { siteId } ) => {
+		return { ...state, [ siteId ]: false };
+	},
+	[ SITE_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+		return { ...state, [ siteId ]: false };
+	}
+} );
+
 export default combineReducers( {
 	domains,
 	fetchingItems,
 	items,
 	mediaStorage,
 	plans,
-	vouchers
+	vouchers,
+	requesting
 } );

@@ -10,6 +10,9 @@ import deepFreeze from 'deep-freeze';
  */
 import {
 	SITE_RECEIVE,
+	SITE_REQUEST,
+	SITE_REQUEST_FAILURE,
+	SITE_REQUEST_SUCCESS,
 	SITES_RECEIVE,
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
@@ -19,7 +22,7 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import reducer, { items, fetchingItems } from '../reducer';
+import reducer, { items, fetchingItems, requesting } from '../reducer';
 
 describe( 'reducer', () => {
 	before( function() {
@@ -36,7 +39,8 @@ describe( 'reducer', () => {
 			'items',
 			'mediaStorage',
 			'plans',
-			'vouchers'
+			'vouchers',
+			'requesting'
 		] );
 	} );
 
@@ -279,6 +283,72 @@ describe( 'reducer', () => {
 			const state = items( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'requesting()', () => {
+		it( 'should default to an empty object', () => {
+			const state = requesting( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should track site request started', () => {
+			const state = requesting( undefined, {
+				type: SITE_REQUEST,
+				siteId: 2916284
+			} );
+
+			expect( state ).to.eql( {
+				2916284: true
+			} );
+		} );
+
+		it( 'should accumulate site requests started', () => {
+			const original = deepFreeze( {
+				2916284: true
+			} );
+			const state = requesting( original, {
+				type: SITE_REQUEST,
+				siteId: 77203074
+			} );
+
+			expect( state ).to.eql( {
+				2916284: true,
+				77203074: true
+			} );
+		} );
+
+		it( 'should track site request succeeded', () => {
+			const original = deepFreeze( {
+				2916284: true,
+				77203074: true
+			} );
+			const state = requesting( original, {
+				type: SITE_REQUEST_SUCCESS,
+				siteId: 2916284
+			} );
+
+			expect( state ).to.eql( {
+				2916284: false,
+				77203074: true
+			} );
+		} );
+
+		it( 'should track site request failed', () => {
+			const original = deepFreeze( {
+				2916284: false,
+				77203074: true
+			} );
+			const state = requesting( original, {
+				type: SITE_REQUEST_FAILURE,
+				siteId: 77203074
+			} );
+
+			expect( state ).to.eql( {
+				2916284: false,
+				77203074: false
+			} );
 		} );
 	} );
 } );
