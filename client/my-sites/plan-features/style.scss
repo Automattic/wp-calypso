@@ -91,6 +91,10 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features__row {
+	background: $white;
+}
+
 .plan-features__table-item {
 	border-right: solid 1px lighten( $gray, 27% );
 	border-left: solid 1px lighten( $gray, 27% );
@@ -98,7 +102,37 @@ $plan-features-sidebar-width: 272px;
 	position: relative;
 
 	&.is-highlighted {
-		border: 1px solid $alert-yellow;
+
+		&.is-personal-plan {
+			border: 1px solid $alert-yellow;
+			background-color: rgba( $alert-yellow, 0.1 );
+			.plan-features__item-checkmark {
+				fill: $alert-yellow;
+			}
+		}
+
+		&.is-premium-plan {
+			border: 1px solid $alert-green;
+			background-color: rgba( $alert-green, 0.1 );
+			.plan-features__item-checkmark {
+				fill: $alert-green;
+			}
+		}
+
+		&.is-business-plan {
+			border: 1px solid $alert-purple;
+			background-color: rgba( $alert-purple, 0.1 );
+			.plan-features__item-checkmark {
+				fill: $alert-purple;
+			}
+		}
+
+		position: relative;
+			top: -1px;
+
+		&.has-partial-border::after {
+			display: none;
+		}
 	}
 
 	&.is-selected {

@@ -266,7 +266,7 @@ class PlanFeatures extends Component {
 		const longestFeatures = this.getLongestFeaturesList();
 		return map( longestFeatures, ( featureKey, rowIndex ) => {
 			return (
-				<tr key={ rowIndex }>
+				<tr key={ rowIndex } className="plan-features__row">
 					{ this.renderPlanFeatureColumns( rowIndex ) }
 				</tr>
 			);
@@ -289,7 +289,7 @@ class PlanFeatures extends Component {
 				key = featureKeys[ rowIndex ],
 				currentFeature = features[ key ];
 
-			const classes = classNames( 'plan-features__table-item', {
+			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': rowIndex + 1 < featureKeys.length,
 				'is-highlighted': selectedFeature && currentFeature &&
 					selectedFeature === currentFeature.getSlug()
