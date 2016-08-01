@@ -2,10 +2,8 @@
  * External Dependencies
  */
 import React from 'react';
-import omit from 'lodash/omit';
 import debugFactory from 'debug';
 import startsWith from 'lodash/startsWith';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -13,7 +11,6 @@ import i18n from 'i18n-calypso';
 import ThemeSheetComponent from './main';
 import ThemeDetailsComponent from 'components/data/theme-details';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getThemeDetails } from 'state/themes/theme-details/selectors';
 import {
 	receiveThemeDetails,
 	receiveThemeDetailsFailure,
@@ -21,24 +18,9 @@ import {
 } from 'state/themes/actions';
 import wpcom from 'lib/wp';
 import config from 'config';
-import { decodeEntities } from 'lib/formatting';
 
 const debug = debugFactory( 'calypso:themes' );
-let themeDetailsCache = new Map();
-
-export function makeElement( ThemesComponent, Head, store, props ) {
-	return (
-		<Head
-			title={ props.title }
-			description={ props.description }
-			type={ 'website' }
-			canonicalUrl={ props.canonicalUrl }
-			image={ props.image }
-			tier={ props.tier || 'all' }>
-			<ThemesComponent { ...omit( props, [ 'title' ] ) } />
-		</Head>
-	);
-}
+const themeDetailsCache = new Map();
 
 export function fetchThemeDetailsData( context, next ) {
 	if ( ! config.isEnabled( 'manage/themes/details' ) || ! context.isServerSide ) {
@@ -76,24 +58,6 @@ export function fetchThemeDetailsData( context, next ) {
 export function details( context, next ) {
 	const { slug } = context.params;
 	const user = getCurrentUser( context.store.getState() );
-	const themeDetails = getThemeDetails( context.store.getState(), slug ) || false;
-	const themeName = themeDetails.name;
-	const title = i18n.translate( '%(themeName)s Theme', {
-		args: { themeName }
-	} );
-	const Head = user
-		? require( 'layout/head' )
-		: require( 'my-sites/themes/head' );
-
-	const props = {
-		themeSlug: slug,
-		contentSection: context.params.section,
-		title: decodeEntities( title ) + ' — WordPress.com', // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
-		description: decodeEntities( themeDetails.description ),
-		canonicalUrl: `https://wordpress.com/theme/${ slug }`, // TODO: use getDetailsUrl() When it becomes availavle
-		image: themeDetails.screenshot,
-		isLoggedIn: !! user
-	};
 
 	if ( startsWith( context.prevPath, '/design' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
@@ -105,7 +69,7 @@ export function details( context, next ) {
 		</ThemeDetailsComponent>
 	);
 
-	context.primary = makeElement( ConnectedComponent, Head, context.store, props );
+	context.primary = ConnectedComponent( { themeSlug: slug, contentSection: context.params.section, isLoggedIn: !! user } );
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
 }
