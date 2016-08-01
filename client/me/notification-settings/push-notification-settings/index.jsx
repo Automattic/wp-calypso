@@ -310,7 +310,7 @@ const PushNotificationSettings = React.createClass( {
 				stateClass = { 'is-disabled': true };
 				stateText = this.translate( 'Disabled' );
 
-				deniedText = <Notice className="notification-settings-push-notification-settings__instruction" showDismiss={ false } text={
+				deniedText = <Notice className="push-notification-settings__instruction" showDismiss={ false } text={
 					<div>
 						<div>{ this.translate( 'Your browser is currently set to block notifications from WordPress.com.' ) }</div>
 						<div>{ this.translate(
