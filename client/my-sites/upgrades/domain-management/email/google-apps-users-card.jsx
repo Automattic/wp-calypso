@@ -17,6 +17,7 @@ import analyticsMixin from 'lib/mixins/analytics';
 import SectionHeader from 'components/section-header';
 import GoogleAppsUserItem from './google-apps-user-item';
 import { getSelectedDomain, hasPendingGoogleAppsUsers } from 'lib/domains';
+import support from 'lib/url/support';
 
 const GoogleAppsUsers = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'googleApps' ) ],
@@ -89,21 +90,24 @@ const GoogleAppsUsers = React.createClass( {
 	renderUser( user, index ) {
 		if ( user.error ) {
 			let status = 'is-warning',
-				text = user.error;
+				text = user.error,
+				supportLink = <a href={ support.CALYPSO_CONTACT }><strong>{ this.translate( 'Please contact support' ) }</strong></a>;
 
 			if ( this.isNewUser( user ) ) {
 				status = null;
 				text = this.translate( 'Please be patient while we are setting up %(email)s for you.', {
 					args: { email: user.email }
 				} );
+				supportLink = null;
 			}
 
 			return (
 				<Notice
 					key={ `google-apps-user-notice-${ user.domain }-${ index }` }
 					showDismiss={ false }
-					status={ status }
-					text={ text } />
+					status={ status }>
+					{ text } { supportLink }
+				</Notice>
 			);
 		}
 
