@@ -102,33 +102,14 @@ $plan-features-sidebar-width: 272px;
 	position: relative;
 
 	&.is-highlighted {
-
-		&.is-personal-plan {
-			border: 1px solid $alert-yellow;
-			background-color: rgba( $alert-yellow, 0.1 );
-			.plan-features__item-checkmark {
-				fill: $alert-yellow;
-			}
-		}
-
-		&.is-premium-plan {
-			border: 1px solid $alert-green;
-			background-color: rgba( $alert-green, 0.1 );
-			.plan-features__item-checkmark {
-				fill: $alert-green;
-			}
-		}
-
-		&.is-business-plan {
-			border: 1px solid $alert-purple;
-			background-color: rgba( $alert-purple, 0.1 );
-			.plan-features__item-checkmark {
-				fill: $alert-purple;
-			}
-		}
-
+		border: 1px solid $blue-wordpress;
+		background-color: rgba( $blue-wordpress, 0.1 );
 		position: relative;
 			top: -1px;
+
+		.plan-features__item-checkmark {
+			fill: $blue-wordpress;
+		}
 
 		&.has-partial-border::after {
 			display: none;
