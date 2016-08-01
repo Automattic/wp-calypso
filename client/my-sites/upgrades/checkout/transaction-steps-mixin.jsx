@@ -97,6 +97,7 @@ var TransactionStepsMixin = {
 							adTracking.recordPurchase( product, step.data.receipt_id );
 						} );
 						adTracking.recordOrderInAtlas( cartValue, step.data.receipt_id );
+						adTracking.recordConversionInOneByAOL();
 					}
 
 					analytics.tracks.recordEvent( 'calypso_checkout_payment_success', {
