@@ -39,14 +39,25 @@ export function requestGuidedTransferStatus( siteId ) {
 	return ( dispatch ) => {
 		dispatch( { type: GUIDED_TRANSFER_STATUS_REQUEST, siteId } );
 
+		const success = response => {
+			const guidedTransferStatus = omit( response, '_headers' );
+
+			dispatch( {
+				type: GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
+				siteId
+			} );
+
+			dispatch( receiveGuidedTransferStatus( siteId, guidedTransferStatus ) );
+		};
+
+		const failure = error => dispatch( {
+			type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
+			siteId,
+			error,
+		} );
+
 		return wpcom.undocumented().getGuidedTransferStatus( siteId )
-			.then( response => omit( response, '_headers' ) )
-			.then( guidedTransferStatus => dispatch( receiveGuidedTransferStatus( siteId, guidedTransferStatus ) ) )
-			.then( () => dispatch( { type: GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS, siteId } ) )
-			.catch( error => dispatch( {
-				type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
-				siteId,
-				error,
-			} ) );
+			.then( success )
+			.catch( failure );
 	};
 }
