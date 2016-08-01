@@ -24,7 +24,6 @@ import {
 	getSitePostsLastPageForQuery
 } from 'state/posts/selectors';
 import PostItem from 'blocks/post-item';
-import PostTypeListPostPlaceholder from './post-placeholder';
 import PostTypeListEmptyContent from './empty-content';
 
 /**
@@ -110,7 +109,7 @@ class PostTypeList extends Component {
 	}
 
 	renderPlaceholder() {
-		return <PostTypeListPostPlaceholder key="placeholder" />;
+		return <PostItem key="placeholder" />;
 	}
 
 	renderPostRow( { index } ) {

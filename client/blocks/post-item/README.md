@@ -21,7 +21,7 @@ The component does not render a [query component](https://github.com/Automattic/
 
 <table>
 	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>Yes</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-The global ID of the post to be displayed.
+The global ID of the post to be displayed. If omitted, it's assumed that the post is currently loading, and a post with placeholder styling will be shown instead.
