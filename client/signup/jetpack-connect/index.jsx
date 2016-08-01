@@ -17,7 +17,7 @@ import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
 import { getSiteByUrl } from 'state/sites/selectors';
-import { requestSites } from 'state/sites/actions';
+import QuerySites from 'components/data/query-sites';
 import JetpackExampleInstall from './exampleComponents/jetpack-install';
 import JetpackExampleActivate from './exampleComponents/jetpack-activate';
 import JetpackExampleConnect from './exampleComponents/jetpack-connect';
@@ -56,7 +56,6 @@ const JetpackConnectMain = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_url_view', {
 			jpc_from: from
 		} );
-		this.props.requestSites();
 	},
 
 	getInitialState() {
@@ -296,6 +295,7 @@ const JetpackConnectMain = React.createClass( {
 			<Main className="jetpack-connect">
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
+					<QuerySites/>
 					<ConnectHeader
 						showLogo={ false }
 						headerText={ this.getTexts().headerTitle }
@@ -313,9 +313,10 @@ const JetpackConnectMain = React.createClass( {
 	renderSiteEntryInstall() {
 		const status = this.getStatus();
 		return (
-			<Main className="jetpack-connect">
+			<Main className="jetpack-connect jetpack-connect__main">
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
+					<QuerySites/>
 					<ConnectHeader
 						showLogo={ false }
 						headerText={ this.getTexts().headerTitle }
@@ -332,7 +333,7 @@ const JetpackConnectMain = React.createClass( {
 
 	renderInstallInstructions() {
 		return (
-			<Main className="jetpack-connect-wide">
+			<Main className="jetpack-connect jetpack-connect__wide">
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader
@@ -394,7 +395,7 @@ const JetpackConnectMain = React.createClass( {
 
 	renderActivateInstructions() {
 		return (
-			<Main className="jetpack-connect-wide">
+			<Main className="jetpack-connect jetpack-connect__wide">
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader showLogo={ false }
@@ -455,7 +456,6 @@ export default connect(
 		confirmJetpackInstallStatus,
 		checkUrl,
 		dismissUrl,
-		requestSites,
 		goToRemoteAuth,
 		goToPluginInstall,
 		goToPluginActivation
