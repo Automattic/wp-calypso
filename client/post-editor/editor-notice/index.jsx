@@ -142,10 +142,6 @@ export class EditorNotice extends Component {
 				} );
 
 			case 'view':
-				if ( 'scheduled' === this.props.message ) {
-					return translate( 'View Preview' );
-				}
-
 				if ( 'page' === type ) {
 					return translate( 'View Page' );
 				} else if ( 'post' !== type && typeObject ) {
@@ -153,6 +149,9 @@ export class EditorNotice extends Component {
 				}
 
 				return translate( 'View Post' );
+
+			case 'preview':
+				return translate( 'View Preview' );
 
 			case 'updated':
 				if ( ! site ) {
