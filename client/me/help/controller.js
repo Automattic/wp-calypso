@@ -13,6 +13,7 @@ import analytics from 'lib/analytics';
 import route from 'lib/route';
 import titleActions from 'lib/screen-title/actions';
 import config from 'config';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 module.exports = {
 	help: function( context ) {
@@ -23,9 +24,10 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Help' );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( Help ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
