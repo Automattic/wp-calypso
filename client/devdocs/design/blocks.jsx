@@ -11,6 +11,7 @@ import trim from 'lodash/trim';
  */
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
+import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'components/comment-button/docs/example';
 import FollowButton from 'components/follow-button/docs/example';
 import LikeButtons from 'components/like-button/docs/example';
@@ -64,6 +65,7 @@ export default React.createClass( {
 					</SearchCard>
 				}
 				<Collection component={ this.props.component } filter={ this.state.filter }>
+					<AuthorSelector />
 					<CommentButtons />
 					<FollowButton />
 					<HappinessSupport />
