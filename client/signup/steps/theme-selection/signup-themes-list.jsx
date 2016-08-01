@@ -9,7 +9,7 @@ import noop from 'lodash/noop';
  */
 import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
-import abtest from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'SignupThemesList',
