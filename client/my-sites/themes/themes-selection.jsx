@@ -57,18 +57,26 @@ const ThemesSelection = React.createClass( {
 		return '';
 	},
 
+	filterIsValid( key, value ) {
+		return this.getTermTable()[ value ] === key;
+	},
+
 	doSearch( searchBoxContent ) {
-		const filterRegex = /\w+\:\s*([\w-]+)/g;
+		const filterRegex = /(\w+)\:\s*([\w-]+)/g;
+		const KEY = 1;
+		const VALUE = 2;
 
 		let matches;
-		const filterStrings = [];
+		const validFilters = [];
 		while ( ( matches = filterRegex.exec( searchBoxContent ) ) !== null ) {
-			if ( matches[ 1 ] ) {
-				filterStrings.push( matches[ 1 ] );
+			const value = matches[ VALUE ];
+			const key = matches[ KEY ];
+			if ( key && value && this.filterIsValid( key, value ) ) {
+				validFilters.push( value );
 			}
 		}
-		filterStrings.sort();
-		const filter = filterStrings.join( ',' );
+		validFilters.sort();
+		const filter = validFilters.join( ',' );
 
 		const searchString = searchBoxContent.replace( filterRegex, '' ).trim();
 		this.updateUrl( this.props.tier || 'all', filter, searchString );
