@@ -44,4 +44,32 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 	} );
+
+	describe( 'getPageTemplates()', () => {
+		it( 'should return null if the site is not tracked', () => {
+			const templates = getPageTemplates( {
+				pageTemplates: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( templates ).to.be.null;
+		} );
+
+		it( 'should return the page templates for the site', () => {
+			const templates = getPageTemplates( {
+				pageTemplates: {
+					items: {
+						2916284: [
+							{ label: 'Full Width', file: 'fullwidth.php' }
+						]
+					}
+				}
+			}, 2916284 );
+
+			expect( templates ).to.eql( [
+				{ label: 'Full Width', file: 'fullwidth.php' }
+			] );
+		} );
+	} );
 } );

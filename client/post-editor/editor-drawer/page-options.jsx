@@ -14,13 +14,12 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import PageParent from 'post-editor/editor-page-parent';
-import PageTemplatesData from 'components/data/page-templates-data';
 import PageTemplates from 'post-editor/editor-page-templates';
 import PageOrder from 'post-editor/editor-page-order';
 import Accordion from 'components/accordion';
 import Gridicon from 'components/gridicon';
 
-function EditorDrawerPageOptions( { translate, siteId, post, postType, hierarchical } ) {
+function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	let title;
 	if ( 'page' === postType ) {
 		title = translate( 'Page Attributes' );
@@ -33,11 +32,7 @@ function EditorDrawerPageOptions( { translate, siteId, post, postType, hierarchi
 			{ hierarchical && (
 				<PageParent />
 			) }
-			{ siteId && 'page' === postType && (
-				<PageTemplatesData siteId={ siteId } >
-					<PageTemplates post={ post } />
-				</PageTemplatesData>
-			) }
+			<PageTemplates />
 			<PageOrder />
 		</Accordion>
 	);
@@ -49,5 +44,5 @@ export default connect( ( state ) => {
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
 	const hierarchical = 'page' === postType || get( getPostType( state, siteId, postType ), 'hierarchical' );
 
-	return { siteId, postType, hierarchical };
+	return { postType, hierarchical };
 } )( localize( EditorDrawerPageOptions ) );
