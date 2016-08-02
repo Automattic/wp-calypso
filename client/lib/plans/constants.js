@@ -47,6 +47,10 @@ export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
 
 // jetpack features constants
+export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
+export const FEATURE_SITE_STATS = 'site-stats';
+export const FEATURE_TRAFFIC_TOOLS = 'traffic-tools';
+export const FEATURE_MANAGE = 'jetpack-manage';
 export const FEATURE_SINGLE_SITE_SUPPORT = 'single-site-support';
 export const FEATURE_MULTI_SITE_SUPPORT = 'multi-site-support';
 export const FEATURE_SPAM_AKISMET_PLUS = 'spam-akismet-plus';
@@ -153,8 +157,16 @@ export const plansList = {
 	[ PLAN_JETPACK_FREE ]: {
 		getTitle: () => i18n.translate( 'Free' ),
 		getProductId: () => 2002,
-		getDescription: () => '',
-		getFeatures: () => [],
+		getDescription: () => i18n.translate(
+			'The features most needed by WordPress sites' + 
+			' — perfectly packaged and optimized for everyone.'
+		),
+		getFeatures: () => [
+			FEATURE_STANDARD_SECURITY_TOOLS,
+			FEATURE_SITE_STATS,
+			FEATURE_TRAFFIC_TOOLS,
+			FEATURE_MANAGE
+		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' )
 	},
 	[ PLAN_JETPACK_PREMIUM ]: {
@@ -163,8 +175,8 @@ export const plansList = {
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getPathSlug: () => 'premium',
 		getDescription: () => i18n.translate(
-			'All the features you need to keep your site’s content backed up' +
-			' and secure, as well as spam-free.'
+			'Advanced security features to keep your site safe and sound.' +
+			' With daily backups, malware scanning, and spam defense.'
 		),
 		getFeatures: () => [
 			FEATURE_SINGLE_SITE_SUPPORT,
@@ -185,9 +197,8 @@ export const plansList = {
 		getPathSlug: () => 'premium-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE ], plan ),
 		getDescription: () => i18n.translate(
-			'All the features you need to keep your site’s content backed' +
-			' up and secure, as well as spam-free.'
-		),
+			'Advanced security features to keep your site safe and sound.' +
+			' With daily backups, malware scanning, and spam defense.'		),
 		getFeatures: () => [
 			FEATURE_SINGLE_SITE_SUPPORT,
 			FEATURE_MALWARE_SCANNING_DAILY,
@@ -207,8 +218,7 @@ export const plansList = {
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
 		getPathSlug: () => 'professional',
 		getDescription: () => i18n.translate(
-			'More powerful security tools and realtime content backup for ' +
-			'the ultimate peace of mind.'
+			'More powerful security tools, including malware removal and realtime content backup, for the ultimate peace of mind.'
 		),
 		getFeatures: () => [
 			FEATURE_MULTI_SITE_SUPPORT,
@@ -232,7 +242,7 @@ export const plansList = {
 		getPathSlug: () => 'professional-monthly',
 		availableFor: ( plan ) => includes( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_PREMIUM_MONTHLY ], plan ),
 		getDescription: () => i18n.translate(
-			'More powerful security tools and realtime content backup for the ultimate peace of mind.'
+			'More powerful security tools, including malware removal and realtime content backup, for the ultimate peace of mind.'
 		),
 		getFeatures: () => [
 			FEATURE_MULTI_SITE_SUPPORT,
@@ -436,6 +446,22 @@ export const featuresList = {
 			'and running and working how you want it.'
 		),
 		plans: allPaidPlans
+	},
+	[ FEATURE_STANDARD_SECURITY_TOOLS ]: {
+		getTitle: () => i18n.translate( 'Standard Security Tools' ),
+		getDescription: () => i18n.translate( 'Brute force protection, uptime monitoring, secure sign on, and automatic updates for your plugins.' )
+	},
+	[ FEATURE_SITE_STATS ]: {
+		getTitle: () => i18n.translate( 'Site Stats and Analytics' ),
+		getDescription: () => i18n.translate( 'The most important metrics for your site.' )
+	},
+	[ FEATURE_TRAFFIC_TOOLS ]: {
+		getTitle: () => i18n.translate( 'Traffic and Promotion Tools' ),
+		getDescription: () => i18n.translate( 'Build and engage your audience with more than a dozen optimization tools.' )
+	},
+	[ FEATURE_MANAGE ]: {
+		getTitle: () => i18n.translate( 'Centralized Dashboard' ),
+		getDescription: () => i18n.translate( 'Manage all of your WordPress sites from one location.' )
 	},
 	[ FEATURE_SINGLE_SITE_SUPPORT ]: {
 		getSlug: () => FEATURE_SINGLE_SITE_SUPPORT,
