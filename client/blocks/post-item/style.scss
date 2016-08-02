@@ -50,23 +50,22 @@ a.post-item__title-link {
 	color: lighten( $gray, 10% );
 }
 
-.post-item__meta .post-relative-time-status,
+.post-item__meta .post-relative-time,
+.post-item__meta .post-status,
 .post-item__meta .post-type-post-author {
 	float: left;
+	margin-right: 12px;
 }
 
-.post-item__meta .post-relative-time-status {
+.post-item__meta .post-relative-time,
+.post-item__meta .post-status {
 	margin-bottom: 0;
-
-
-	.post-item.is-placeholder & {
-		@include placeholder;
-	}
 }
 
-.post-item__meta .post-relative-time-status .gridicon {
+.post-item__meta .post-relative-time__icon,
+.post-item__meta .post-status__icon {
 	width: 14px;
 	height: 14px;
-	margin-top: -3px;
+	margin-top: -1px;
 	margin-right: 6px;
 }

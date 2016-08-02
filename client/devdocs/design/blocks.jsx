@@ -30,6 +30,8 @@ import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'my-sites/domain-tip/docs/example';
 import PostCard from 'components/post-card/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
+import PostRelativeTime from 'blocks/post-relative-time/docs/example';
+import PostStatus from 'blocks/post-status/docs/example';
 import ReaderAuthorLink from 'components/reader-author-link/docs/example';
 import ReaderSiteStreamLink from 'components/reader-site-stream-link/docs/example';
 import ReaderFullPostHeader from 'components/reader-full-post/docs/header-example';
@@ -85,6 +87,8 @@ export default React.createClass( {
 					<DomainTip />
 					<PostCard />
 					<PostItem />
+					<PostRelativeTime />
+					<PostStatus />
 					<ReaderAuthorLink />
 					<ReaderSiteStreamLink />
 					<ReaderFullPostHeader />
