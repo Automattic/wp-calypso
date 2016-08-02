@@ -1,16 +1,16 @@
-.tooltip.popover {
-	.tip-arrow {
+.tooltip.popover__container {
+	.popover__arrow {
 		border-width: 6px;
 	}
 
-	&.tip-bottom .tip-arrow {
+	&.is-bottom .popover__arrow {
 		border-width: 10px;
 	}
 
-	&.tip-bottom-right,
-	&.tip-bottom-left,
-	&.tip-bottom {
-		.tip-arrow {
+	&.is-bottom-right,
+	&.is-bottom-left,
+	&.is-bottom {
+		.popover__arrow {
 			border-bottom-color: darken( $gray, 30% );
 			position: absolute;
 			top: 9px;
@@ -22,28 +22,35 @@
 		}
 
 		&.is-error {
-			.tip-arrow {
+			.popover__arrow {
 				border-bottom-color: $alert-red;
 			}
 		}
 
 		&.is-warning {
-			.tip-arrow {
+			.popover__arrow {
 				border-bottom-color: $alert-yellow;
 			}
 		}
 
 		&.is-success {
-			.tip-arrow {
+			.popover__arrow {
 				border-bottom-color: $alert-green;
 			}
 		}
 	}
 
-	&.tip-top,
-	&.tip-top-left,
-	&.tip-top-right {
-		.tip-arrow {
+	&.is-left,
+	&.is-right {
+		.popover__arrow {
+			margin-top: -6px;
+		}
+	}
+
+	&.is-top,
+	&.is-top-left,
+	&.is-top-right {
+		.popover__arrow {
 			border-top-color: darken( $gray, 30% );
 			position: absolute;
 			bottom: 4px;
@@ -55,27 +62,27 @@
 		}
 
 		&.is-error {
-			.tip-arrow {
+			.popover__arrow {
 				border-top-color: $alert-red;
 			}
 		}
 
 		&.is-warning {
-			.tip-arrow {
+			.popover__arrow {
 				border-top-color: $alert-yellow;
 			}
 		}
 
 		&.is-success {
-			.tip-arrow {
+			.popover__arrow {
 				border-top-color: $alert-green;
 			}
 		}
 	}
 
-	&.tip-right {
+	&.is-right {
 		padding-top: 0;
-		.tip-arrow {
+		.popover__arrow {
 			border-right-color: darken( $gray, 30% );
 			position: absolute;
 			margin-left: 4px;
@@ -86,25 +93,25 @@
 		}
 
 		&.is-error {
-			.tip-arrow {
+			.popover__arrow {
 				border-right-color: $alert-red;
 			}
 		}
 
 		&.is-warning {
-			.tip-arrow {
+			.popover__arrow {
 				border-right-color: $alert-yellow;
 			}
 		}
 
 		&.is-success {
-			.tip-arrow {
+			.popover__arrow {
 				border-right-color: $alert-green;
 			}
 		}
 	}
 
-	.tip-inner {
+	.popover__inner {
 		border: 0px;
 		box-shadow: none;
 		border-radius: 2px;
@@ -112,24 +119,23 @@
 		background: darken( $gray, 30% );
 		font-size: 12px;
 		padding: 6px 10px;
-		margin-top: 5px;
 		text-align: left;
 	}
 
 	&.is-error {
-		.tip-inner {
+		.popover__inner {
 			background: $alert-red;
 		}
 	}
 
 	&.is-warning {
-		.tip-inner {
+		.popover__inner {
 			background: $alert-yellow;
 		}
 	}
 
 	&.is-success {
-		.tip-inner {
+		.popover__inner {
 			background: $alert-green;
 		}
 	}
