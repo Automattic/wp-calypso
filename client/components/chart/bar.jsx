@@ -107,11 +107,15 @@ module.exports = React.createClass( {
 		};
 
 		if ( this.props.data.tooltipData && this.props.data.tooltipData.length && ! this.props.isTouch ) {
-			tooltip = <Popover context={ this.refs && this.refs.valueBar }
+			tooltip = <Popover
+							id="popover__chart-bar"
+							showDelay={ 200 }
+							context={ this.refs && this.refs.valueBar }
 							isVisible={ this.state.showPopover }
 							position={ this.props.tooltipPosition }
 							onClose={ noop }
-							className="chart__tooltip">
+							className="chart__tooltip"
+						>
 							<Tooltip data={ this.props.data.tooltipData } />
 						</Popover>;
 		}
