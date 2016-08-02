@@ -14,14 +14,15 @@ export default React.createClass( {
 	displayName: 'ReaderSiteStreamLink',
 
 	render() {
-		const post = { feed_ID: 40474296 };
+		const feedId = 40474296;
+		const siteId = null;
 		return (
 			<div className="design-assets__group">
 				<h2>
 					<a href="/devdocs/blocks/reader-site-stream-link">Reader Site Stream Link</a>
 				</h2>
 				<Card>
-					<ReaderSiteStreamLink post={ post }>futonbleu</ReaderSiteStreamLink>
+					<ReaderSiteStreamLink feedId={ feedId } siteId={ siteId }>futonbleu</ReaderSiteStreamLink>
 				</Card>
 			</div>
 		);
