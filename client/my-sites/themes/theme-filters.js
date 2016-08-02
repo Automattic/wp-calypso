@@ -1,4 +1,8 @@
 /**
+* Functions for validating theme search filters.
+*/
+
+/**
  * External dependencies
  */
 import forIn from 'lodash/forIn';
@@ -157,6 +161,9 @@ const taxonomies = {
 
 let termTable;
 
+/**
+ * @return {Object} a table of terms to taxonomies.
+ */
 function getTermTable() {
 	if ( ! termTable ) {
 		termTable = {};
@@ -169,6 +176,13 @@ function getTermTable() {
 	return termTable;
 }
 
+/**
+ * Given the value part, returns a complete filter
+ * in "key:value" search-box format.
+ *
+ * @param {string} value - the term part of a filter
+ * @returns {string} - complete key:value filter, or empty string if value is not a term
+ */
 export function getFilterFromValue( value ) {
 	const terms = getTermTable();
 	if ( terms[ value ] ) {
@@ -177,6 +191,13 @@ export function getFilterFromValue( value ) {
 	return '';
 }
 
+/**
+ * Checks that [key, value] is a valid [taxonomy, term] pair.
+ *
+ * @param {string} key - taxonomy
+ * @param {string} value - term
+ * @returns {boolean} true if pair is valid
+ */
 export function filterIsValid( key, value ) {
 	return getTermTable()[ value ] === key;
 }
