@@ -121,18 +121,7 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		background: $white;
-		color: $blue-medium;
-		opacity: 1;
-
-		.gridicon {
-			width: 24px;
-			height: 24px;
-		}
-
-		&:hover {
-			color: $blue-medium;
-		}
+		display: none;
 	}
 }
 
