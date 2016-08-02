@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 import React from 'react';
 
 import { getSectionName, isPreviewShowing } from 'state/ui/selectors';
