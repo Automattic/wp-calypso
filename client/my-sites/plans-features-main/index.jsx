@@ -55,7 +55,10 @@ class PlansFeaturesMain extends Component {
 		if ( this.isJetpackSite( site ) ) {
 			return (
 				<div className="plans-features-main__group">
-					<PlanFeatures plans={ [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ] } />
+					<PlanFeatures
+						plans={ [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ] }
+						selectedFeature={ selectedFeature }
+					/>
 				</div>
 			);
 		}
