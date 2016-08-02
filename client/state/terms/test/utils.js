@@ -8,7 +8,8 @@ import { expect } from 'chai';
  */
 import {
 	getNormalizedTermsQuery,
-	getSerializedTermsQuery
+	getSerializedTermsQuery,
+	getSerializedTermsQueryWithoutPage
 } from '../utils';
 
 describe( 'utils', () => {
@@ -42,6 +43,17 @@ describe( 'utils', () => {
 			} );
 
 			expect( serializedQuery ).to.equal( '{"search":"chicken","page":"2"}' );
+		} );
+	} );
+
+	describe( 'getSerializedTermsQueryWithoutPage()', () => {
+		it( 'should return a JSON string of a normalized query without page', () => {
+			const serializedQuery = getSerializedTermsQueryWithoutPage( {
+				search: 'Chicken',
+				page: '2'
+			} );
+
+			expect( serializedQuery ).to.equal( '{"search":"chicken"}' );
 		} );
 	} );
 } );

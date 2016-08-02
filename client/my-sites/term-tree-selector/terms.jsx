@@ -11,7 +11,11 @@ import {
 	difference,
 	includes,
 	isEqual,
-	range
+	filter,
+	map,
+	memoize,
+	range,
+	reduce,
 } from 'lodash';
 
 /**
@@ -27,7 +31,6 @@ import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
-	getTermsHierarchyForQueryIgnoringPage
 } from 'state/terms/selectors';
 
 /**
@@ -42,7 +45,6 @@ const TermTreeSelectorList = React.createClass( {
 
 	propTypes: {
 		terms: PropTypes.array,
-		termsHierarchy: PropTypes.array,
 		taxonomy: PropTypes.string,
 		multiple: PropTypes.bool,
 		selected: PropTypes.array,
@@ -80,6 +82,8 @@ const TermTreeSelectorList = React.createClass( {
 		this.hasPerformedSearch = false;
 		this.virtualScroll = null;
 
+		this.termIds = map( this.props.terms, 'ID' );
+		this.getTermChildren = memoize( this.getTermChildren );
 		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
 		this.debouncedSearch = debounce( () => {
 			this.props.onSearch( this.state.searchTerm );
@@ -89,6 +93,11 @@ const TermTreeSelectorList = React.createClass( {
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
 			this.setState( this.getInitialState() );
+		}
+
+		if ( this.props.terms !== nextProps.terms ) {
+			this.getTermChildren.cache.clear();
+			this.termIds = map( nextProps.terms, 'ID' );
 		}
 	},
 
@@ -185,8 +194,8 @@ const TermTreeSelectorList = React.createClass( {
 	},
 
 	getItem( index ) {
-		if ( this.props.termsHierarchy ) {
-			return this.props.termsHierarchy[ index ];
+		if ( this.props.terms ) {
+			return this.props.terms[ index ];
 		}
 	},
 
@@ -202,20 +211,28 @@ const TermTreeSelectorList = React.createClass( {
 		return this.props.lastPage || !! this.getItem( index );
 	},
 
-	getItemHeight( item ) {
-		if ( item && this.itemHeights[ item.ID ] ) {
+	getTermChildren( termId ) {
+		const { terms } = this.props;
+		return filter( terms, ( { parent } ) => parent === termId );
+	},
+
+	getItemHeight( item, _recurse = false ) {
+		if ( ! item ) {
+			return ITEM_HEIGHT;
+		}
+
+		// if item has a parent, and parent is in payload, height is already part of parent
+		if ( item.parent && ! _recurse && includes( this.termIds, item.parent ) ) {
+			return 0;
+		}
+
+		if ( this.itemHeights[ item.ID ] ) {
 			return this.itemHeights[ item.ID ];
 		}
 
-		let height = ITEM_HEIGHT;
-
-		if ( item && item.items ) {
-			height += item.items.reduce( ( memo, nestedItem ) => {
-				return memo + this.getItemHeight( nestedItem );
-			}, 0 );
-		}
-
-		return height;
+		return reduce( this.getTermChildren( item.ID ), ( memo, childItem ) => {
+			return memo + this.getItemHeight( childItem, true );
+		}, ITEM_HEIGHT );
 	},
 
 	getRowHeight( { index } ) {
@@ -240,8 +257,8 @@ const TermTreeSelectorList = React.createClass( {
 	getRowCount() {
 		let count = 0;
 
-		if ( this.props.termsHierarchy ) {
-			count += this.props.termsHierarchy.length;
+		if ( this.props.terms ) {
+			count += this.props.terms.length;
 		}
 
 		if ( this.props.loading || ! this.props.terms ) {
@@ -274,9 +291,15 @@ const TermTreeSelectorList = React.createClass( {
 		this.virtualScroll = ref;
 	},
 
-	renderItem( item ) {
+	renderItem( item, _recurse = false ) {
+		// if item has a parent and it is in current props.terms, do not render
+		if ( item.parent && ! _recurse && includes( this.termIds, item.parent ) ) {
+			return;
+		}
+
 		const onChange = ( ...args ) => this.props.onChange( item, ...args );
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
+		const children = this.getTermChildren( item.ID );
 
 		const { multiple, defaultTermId, translate, selected } = this.props;
 		const itemId = item.ID;
@@ -310,9 +333,9 @@ const TermTreeSelectorList = React.createClass( {
 					{ input }
 					<span className="term-tree-selector__label">{ name }</span>
 				</label>
-				{ item.items && (
+				{ children.length > 0 && (
 					<div className="term-tree-selector__nested-list">
-						{ item.items.map( this.renderItem ) }
+						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
 			</div>
@@ -403,7 +426,6 @@ export default connect( ( state, ownProps ) => {
 	return {
 		loading: isRequestingTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		terms: getTermsForQueryIgnoringPage( state, siteId, taxonomy, query ),
-		termsHierarchy: getTermsHierarchyForQueryIgnoringPage( state, siteId, taxonomy, query ),
 		lastPage: getTermsLastPageForQuery( state, siteId, taxonomy, query ),
 		siteId,
 		query
