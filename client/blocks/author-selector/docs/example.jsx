@@ -30,9 +30,7 @@ function AuthorSelectorExample( { primarySiteId, displayName } ) {
 	);
 }
 
-AuthorSelectorExample.displayName = 'AuthorSelector';
-
-export default connect( ( state ) => {
+const ConnectedAuthorSelectorExample = connect( ( state ) => {
 	const user = getCurrentUser( state );
 	if ( ! user ) {
 		return {};
@@ -43,3 +41,7 @@ export default connect( ( state ) => {
 		displayName: user.display_name
 	};
 } )( AuthorSelectorExample );
+
+ConnectedAuthorSelectorExample.displayName = 'AuthorSelector';
+
+export default ConnectedAuthorSelectorExample;
