@@ -3,10 +3,9 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import map from 'lodash/map';
+import { map, times } from 'lodash';
 import page from 'page';
 import Masonry from 'react-masonry-component';
-import times from 'lodash/times';
 
 /**
  * Internal dependencies
@@ -20,6 +19,7 @@ import smartSetState from 'lib/react-smart-set-state';
 import CardPlaceholder from './card-placeholder';
 import { recordTrack } from 'reader/stats';
 import StartSearch from './search';
+import { localize } from 'i18n-calypso';
 
 const tracksSource = 'recommended_cold_start';
 
@@ -83,6 +83,7 @@ const Start = React.createClass( {
 		const totalSubscriptionsDisplay = totalSubscriptions > 0 ? totalSubscriptions - 1 : 0;
 		const canGraduate = ( this.state.totalSubscriptions > 1 );
 		const hasRecommendations = this.props.recommendationIds.length > 0;
+		const hasSearchQuery = !! this.props.query;
 
 		return (
 			<Main className="reader-start">
@@ -124,7 +125,11 @@ const Start = React.createClass( {
 
 				{ ! hasRecommendations && this.renderLoadingPlaceholders() }
 
-				{ hasRecommendations && <Masonry className="reader-start__cards" updateOnEachImageLoad={ true } ref={ this.bindMasonry } options={ { gutter: 14 } }>
+				{ hasRecommendations && ! hasSearchQuery && <h2 className="reader-start__subtitle">
+					{ this.props.translate( 'Or browse suggestions:' ) }
+				</h2> }
+
+				{ hasRecommendations && ! hasSearchQuery && <Masonry className="reader-start__cards" updateOnEachImageLoad={ true } ref={ this.bindMasonry } options={ { gutter: 14 } }>
 					{ this.props.recommendationIds ? map( this.props.recommendationIds, ( recId ) => {
 						return (
 							<StartCard
@@ -134,7 +139,7 @@ const Start = React.createClass( {
 					} ) : null }
 				</Masonry> }
 
-				{ hasRecommendations &&
+				{ hasRecommendations && ! hasSearchQuery &&
 				<div className="reader-start__manage">{ this.translate( 'Didn\'t find a site you\'re looking for?' ) }
 					&nbsp;<a href="/following/edit" onClick={ this.handleFollowByUrlClick }>Follow by URL</a>.
 				</div> }
@@ -149,4 +154,4 @@ export default connect(
 			recommendationIds: getRecommendationIds( state )
 		};
 	}
-)( Start );
+)( localize( Start ) );
