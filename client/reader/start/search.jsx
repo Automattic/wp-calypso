@@ -10,6 +10,7 @@ const StartSearch = React.createClass( {
 		return (
 			<div className="start__search">
 				<SearchStream
+					{ ...this.props }
 					showBlankContent={ false }
 					searchPlaceholderText={ this.props.translate( 'What are you really into?' ) }
 				/>
