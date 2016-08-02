@@ -175,6 +175,8 @@ const PostCards = React.createClass( {
 
 				<div>
 					{ searchItems.map( item => <SearchPostCard key={ item.post.site_ID } post={ item.post } site={ item.site } /> ) }
+					<h4>With prominent follow button</h4>
+					{ searchItems.map( item => <SearchPostCard key={ item.post.site_ID } post={ item.post } site={ item.site } showProminentFollowButton={ true } /> ) }
 				</div>
 			</div>
 		);

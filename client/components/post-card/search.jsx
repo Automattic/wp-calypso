@@ -25,18 +25,18 @@ function FeaturedImage( { image, href } ) {
 		} } ></a> );
 }
 
-function SearchByline( { post, site, feed } ) {
+function SearchByline( { post, site, feed, showFollowButton = true } ) {
 	return (
 		<div className="post-card__search-byline ignore-click">
 			<span className="post-card__search-byline-item">
 				<AuthorAndSite post={ post } site={ site } feed={ feed } showGravatar={ true } />
-				<FollowButton siteUrl={ post.site_URL } railcar={ post.railcar } />
+				{ showFollowButton && <FollowButton siteUrl={ post.site_URL } railcar={ post.railcar } /> }
 			</span>
 		</div>
 	);
 }
 
-export function SearchPostCard( { post, site, feed, onClick = noop, onCommentClick = noop } ) {
+export function SearchPostCard( { post, site, feed, onClick = noop, onCommentClick = noop, showProminentFollowButton = false } ) {
 	const featuredImage = post.canonical_image;
 	const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
 	const title = truncate( post.title, {
@@ -51,17 +51,18 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 	return (
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
 		{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
-			<div className="post-card__search-social ignore-click">
+			{ ! showProminentFollowButton && <div className="post-card__search-social ignore-click">
 				<CommentButton
 					commentCount={ post.discussion.comment_count }
 					tagName="span" showLabel={ false }
 					onClick={ onCommentClick }/>
 				<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } />
-			</div>
+			</div> }
+			{ showProminentFollowButton && <FollowButton siteUrl={ post.site_URL } railcar={ post.railcar } /> }
 			<h1 className="post-card__search-title">
 				<a className="post-card__search-title-link" href={ post.URL }>{ title }</a>
 			</h1>
-			<SearchByline post={ post } site={ site } feed={ feed } />
+			<SearchByline post={ post } site={ site } feed={ feed } showFollowButton={ ! showProminentFollowButton } />
 			<div className="post-card__search-excerpt">{ post.short_excerpt }</div>
 		</Card>
 	);
