@@ -12,15 +12,11 @@ import { localize } from 'i18n-calypso';
 import { getEditorPath } from 'state/ui/editor/selectors';
 import { getNormalizedPost } from 'state/posts/selectors';
 import Card from 'components/card';
-import PostRelativeTimeStatus from 'my-sites/post-relative-time-status';
+import PostRelativeTime from 'blocks/post-relative-time';
+import PostStatus from 'blocks/post-status';
 import PostTypeListPostThumbnail from 'my-sites/post-type-list/post-thumbnail';
 import PostActionsEllipsisMenu from 'my-sites/post-type-list/post-actions-ellipsis-menu';
 import PostTypePostAuthor from 'my-sites/post-type-list/post-type-post-author';
-
-/**
- * Constants
- */
-const PLACEHOLDER_POST = { status: 'draft', modified: '2015-08-10T19:44:08+00:00' };
 
 function PostItem( { translate, globalId, post, editUrl, className } ) {
 	const title = post ? post.title : null;
@@ -39,7 +35,8 @@ function PostItem( { translate, globalId, post, editUrl, className } ) {
 						</a>
 					</h1>
 					<div className="post-item__meta">
-						<PostRelativeTimeStatus post={ post || PLACEHOLDER_POST } />
+						<PostRelativeTime globalId={ globalId } />
+						<PostStatus globalId={ globalId } />
 						<PostTypePostAuthor globalId={ globalId } />
 					</div>
 				</div>
