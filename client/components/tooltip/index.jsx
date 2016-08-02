@@ -35,7 +35,7 @@ export default React.createClass( {
 		}
 
 		const classes = classnames(
-			'popover',
+			'popover__container',
 			'tooltip',
 			`is-${ this.props.status }`
 		);
