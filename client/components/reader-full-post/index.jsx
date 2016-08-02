@@ -17,13 +17,15 @@ import smartSetState from 'lib/react-smart-set-state';
 import PostStore from 'lib/feed-post-store';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
+import { fetch as fetchFeed } from 'lib/feed-store/actions';
+import { fetch as fetchSite } from 'lib/reader-site-store/actions';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
 
 export class FullPostView extends React.Component {
 	render() {
-		const post = this.props.post;
+		const { post, site, feed } = this.props;
 		/*eslint-disable react/no-danger*/
 		return (
 			<Main className="reader-full-post">
@@ -37,7 +39,7 @@ export class FullPostView extends React.Component {
 					author={ post.author }
 					siteName={ post.site_name }
 					siteUrl= { post.site_URL }
-					followCount={ 99999 }
+					followCount={ site && site.subscribers_count }
 					feedId={ post.feed_ID }
 					siteId={ post.site_ID } />
 				<ReaderFullPostHeader post={ post } />
@@ -75,9 +77,15 @@ export class FullPostFluxContainer extends React.Component {
 
 		if ( post && post.feed_ID ) {
 			feed = FeedStore.get( post.feed_ID );
+			if ( ! feed ) {
+				fetchFeed( post.feed_ID );
+			}
 		}
 		if ( post && post.site_ID ) {
 			site = SiteStore.get( post.site_ID );
+			if ( ! site ) {
+				fetchSite( post.site_ID );
+			}
 		}
 
 		return {
@@ -109,7 +117,7 @@ export class FullPostFluxContainer extends React.Component {
 
 	render() {
 		return this.state.post
-			? <FullPostView post={ this.state.post } site={ this.state.site } feed={ this.state.feed } />
+			? <FullPostView post={ this.state.post } site={ this.state.site && this.state.site.toJS() } feed={ this.state.feed && this.state.feed.toJS() } />
 			: null;
 	}
 }
