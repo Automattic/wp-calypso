@@ -35,7 +35,8 @@ class PlansFeaturesMain extends Component {
 			intervalType,
 			onUpgradeClick,
 			hideFreePlan,
-			isInSignup
+			isInSignup,
+			selectedFeature
 		} = this.props;
 
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
@@ -43,7 +44,10 @@ class PlansFeaturesMain extends Component {
 		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
 			return (
 				<div className="plans-features-main__group">
-					<PlanFeatures plans={ [ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ] } />
+					<PlanFeatures
+						plans={ [ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ] }
+						selectedFeature={ selectedFeature }
+					/>
 				</div>
 			);
 		}
@@ -51,7 +55,10 @@ class PlansFeaturesMain extends Component {
 		if ( this.isJetpackSite( site ) ) {
 			return (
 				<div className="plans-features-main__group">
-					<PlanFeatures plans={ [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ] } />
+					<PlanFeatures
+						plans={ [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ] }
+						selectedFeature={ selectedFeature }
+					/>
 				</div>
 			);
 		}
@@ -72,6 +79,7 @@ class PlansFeaturesMain extends Component {
 					plans={ plans }
 					onUpgradeClick={ onUpgradeClick }
 					isInSignup={ isInSignup }
+					selectedFeature={ selectedFeature }
 				/>
 			</div>
 		);
@@ -279,7 +287,8 @@ PlansFeaturesMain.PropTypes = {
 	intervalType: PropTypes.string,
 	onUpgradeClick: PropTypes.func,
 	hideFreePlan: PropTypes.bool,
-	showFAQ: PropTypes.bool
+	showFAQ: PropTypes.bool,
+	selectedFeature: PropTypes.string
 };
 
 PlansFeaturesMain.defaultProps = {
