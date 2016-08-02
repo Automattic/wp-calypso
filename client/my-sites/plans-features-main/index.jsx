@@ -241,7 +241,7 @@ class PlansFeaturesMain extends Component {
 				<FAQItem
 					question={ translate( 'Have more questions?' ) }
 					answer={ translate(
-						'Need help deciding which plan works for you? Our hapiness engineers are available for' +
+						'Need help deciding which plan works for you? Our happiness engineers are available for' +
 						' any questions you may have. {{a}}Get help{{/a}}.',
 						{
 							components: { a: <a href="https://wordpress.com/help" target="_blank" /> }
