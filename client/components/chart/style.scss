@@ -361,8 +361,8 @@
 	left: 0 #{"/*rtl:ignore*/"};
 	right: auto #{"/*rtl:ignore*/"};
 
-	&.tip-bottom-left {
-		.tip-arrow {
+	&.is-bottom-left {
+		.popover__arrow {
 			border-color: $transparent;
 			position: absolute;
 
@@ -382,9 +382,9 @@
 		}
 	}
 
-	&.tip-bottom-right,
-	&.tip-bottom {
-		.tip-arrow {
+	&.is-bottom-right,
+	&.is-bottom {
+		.popover__arrow {
 			border-color: $transparent;
 			position: absolute;
 
@@ -404,8 +404,8 @@
 		}
 	}
 
-	&.tip-top {
-		.tip-arrow {
+	&.is-top {
+		.popover__arrow {
 			border-color: $transparent;
 			position: absolute;
 
@@ -420,8 +420,8 @@
 		}
 	}
 
-	&.tip-bottom {
-		.tip-arrow {
+	&.is-bottom {
+		.popover__arrow {
 			&::before {
 				left: 86px  #{"/*rtl:ignore*/"};
 				top: -4px;
@@ -433,7 +433,7 @@
 		}
 	}
 
-	.tip-inner {
+	.popover__inner {
 		border: 0;
 		box-shadow: none;
 		border-radius: 2px;
@@ -493,12 +493,12 @@
 		margin-top: -5px;
 		height: 35px;
 
-		.tip-arrow::before {
+		.popover__arrow::before {
 			left: 85px;
 			top: 30px;
 		}
 
-		.tip-inner {
+		.popover__inner {
 			width: 160px;
 			position: relative;
 			top: -10px;
