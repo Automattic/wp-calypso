@@ -13,7 +13,8 @@ var sites = require( 'lib/sites-list' )(),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	titleActions = require( 'lib/screen-title/actions' ),
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 import { renderWithReduxStore } from 'lib/react-helpers';
 
