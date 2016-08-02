@@ -26,8 +26,15 @@ function PostItemExample( { primarySiteId, globalId } ) {
 					siteId={ primarySiteId }
 					query={ { number: 1, type: 'any' } } />
 			) }
-			{ ! globalId && <em>No posts found</em> }
-			{ globalId && <PostItem globalId={ globalId } /> }
+			<p>
+				<strong>Standard</strong>
+				{ ! globalId && <em style={ { display: 'block' } }>No posts found</em> }
+				{ globalId && <PostItem globalId={ globalId } /> }
+			</p>
+			<p>
+				<strong>Placeholder</strong>
+				<PostItem />
+			</p>
 		</div>
 	);
 }
