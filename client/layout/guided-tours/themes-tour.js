@@ -105,9 +105,9 @@ export const ThemesTour = makeTour(
 
 		<Step name="live-preview"
 			className="guided-tours__step-action"
-			target=".section-nav"
+			target="theme-sheet-preview"
+			placement="below"
 			arrow="top-left"
-			placement="center"
 			context={ inThemeSection }
 			next="close-preview"
 		>
@@ -135,7 +135,7 @@ export const ThemesTour = makeTour(
 		</Step>
 
 		<Step name="back-to-list"
-			target="theme__sheet-action-bar .header-cake__back.button"
+			target=".theme__sheet-action-bar .header-cake__back.button"
 			placement="beside"
 			icon="arrow-left"
 			arrow="left-top"
