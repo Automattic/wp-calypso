@@ -24,18 +24,29 @@ import {
 	getSelectedSite
 } from 'state/ui/selectors';
 
+const largeBlavatar = site => `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512`;
+
 const ComingSoonMessage = translate => (
 	<div className="seo-preview-pane__message">
 		{ translate( 'Coming Soon!' ) }
 	</div>
 );
 
-const GooglePreview = site =>
+const GoogleSite = site => (
 	<SearchPreview
 		title={ site.name }
 		url={ site.URL }
 		snippet={ site.description }
-	/>;
+	/>
+);
+
+const GooglePost = ( site, post ) => (
+	<SearchPreview
+		title={ post.title }
+		url={ post.URL }
+		snippet={ post.excerpt || post.content }
+	/>
+);
 
 const FacebookSite = site => (
 	<FacebookPreview
@@ -43,17 +54,17 @@ const FacebookSite = site => (
 		url={ site.URL }
 		type="website"
 		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		image={ largeBlavatar( site ) }
 	/>
 );
 
 const FacebookPost = ( site, post ) => (
 	<FacebookPreview
-		title={ site.name }
-		url={ site.URL }
+		title={ post.title }
+		url={ post.URL }
 		type="article"
-		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		description={ post.excerpt || post.content }
+		image={ post.featured_image || largeBlavatar( site ) }
 	/>
 );
 
@@ -63,17 +74,17 @@ const TwitterSite = site => (
 		url={ site.URL }
 		type="summary"
 		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		image={ largeBlavatar( site ) }
 	/>
 );
 
 const TwitterPost = ( site, post ) => (
 	<TwitterPreview
-		title={ site.name }
-		url={ site.URL }
+		title={ post.title }
+		url={ post.URL }
 		type="large_image_summary"
-		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		description={ post.excerpt || post.content }
+		image={ post.featured_image || largeBlavatar( site ) }
 	/>
 );
 
@@ -126,12 +137,12 @@ export class SeoPreviewPane extends PureComponent {
 					<div className="seo-preview-pane__preview">
 						{ post && get( {
 							facebook: FacebookPost( site, post ),
-							google: GooglePreview( site ),
+							google: GooglePost( site, post ),
 							twitter: TwitterPost( site, post )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 						{ ! post && get( {
 							facebook: FacebookSite( site ),
-							google: GooglePreview( site ),
+							google: GoogleSite( site ),
 							twitter: TwitterSite( site )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 					</div>
