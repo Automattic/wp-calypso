@@ -74,7 +74,9 @@ export default {
 					sites={ sites }
 					context={ context }
 					intervalType={ context.params.intervalType }
-					destinationType={ context.params.destinationType } />
+					destinationType={ context.params.destinationType }
+					selectedFeature={ context.query.feature }
+				/>
 			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store

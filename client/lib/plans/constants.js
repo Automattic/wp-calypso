@@ -259,6 +259,7 @@ const allPaidPlans = [
 
 export const featuresList = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
+		getSlug: () => FEATURE_GOOGLE_ANALYTICS,
 		getTitle: () => i18n.translate( 'Google Analytics Integration' ),
 		getDescription: () => i18n.translate(
 			'Track website statistics with Google Analytics for a ' +
@@ -268,6 +269,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
+		getSlug: () => FEATURE_UNLIMITED_STORAGE,
 		getTitle: () => i18n.translate( '{{strong}}Unlimited{{/strong}} Storage Space', {
 			components: {
 				strong: <strong />
@@ -282,6 +284,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
+		getSlug: () => FEATURE_CUSTOM_DOMAIN,
 		getTitle: () => i18n.translate( 'Custom Domain Name' ),
 		getDescription: () => i18n.translate(
 			'Get a free custom domain name (mywebsite.com) with this plan ' +
@@ -291,6 +294,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
+		getSlug: () => FEATURE_UNLIMITED_PREMIUM_THEMES,
 		getTitle: () => i18n.translate( '{{strong}}Unlimited{{/strong}} Premium Themes', {
 			components: {
 				strong: <strong />
@@ -305,6 +309,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
+		getSlug: () => FEATURE_VIDEO_UPLOADS,
 		getTitle: () => i18n.translate( 'VideoPress Support' ),
 		getDescription: () => i18n.translate(
 			'The easiest way to upload videos to your website and display them ' +
@@ -315,6 +320,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_BASIC_DESIGN ]: {
+		getSlug: () => FEATURE_BASIC_DESIGN,
 		getTitle: () => i18n.translate( 'Basic Design Customization' ),
 		getDescription: () => i18n.translate(
 			'Customize your selected theme template with pre-set color schemes, ' +
@@ -325,6 +331,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_ADVANCED_DESIGN ]: {
+		getSlug: () => FEATURE_ADVANCED_DESIGN,
 		getTitle: () => i18n.translate( '{{strong}}Advanced{{/strong}} Design Customization', {
 			components: {
 				strong: <strong />
@@ -339,6 +346,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_NO_ADS ]: {
+		getSlug: () => FEATURE_NO_ADS,
 		getTitle: () => i18n.translate( 'Remove WordPress.com Ads' ),
 		getDescription: () => i18n.translate(
 			'Allow your visitors to visit and read your website without ' +
@@ -349,6 +357,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_NO_BRANDING ]: {
+		getSlug: () => FEATURE_NO_BRANDING,
 		getTitle: () => i18n.translate( 'Remove WordPress.com Branding' ),
 		getDescription: () => i18n.translate(
 			"Keep the focus on your site's brand by removing the WordPress.com footer branding."
@@ -358,6 +367,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_WORDADS_INSTANT ]: {
+		getSlug: () => FEATURE_WORDADS_INSTANT,
 		getTitle: () => i18n.translate( 'Monetize Your Site' ),
 		getDescription: () => i18n.translate(
 			'Add your own advertising to your site through our WordAds program and earn money from impressions.'
@@ -366,6 +376,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_WP_SUBDOMAIN ]: {
+		getSlug: () => FEATURE_WP_SUBDOMAIN,
 		getTitle: () => i18n.translate( 'WordPress.com Subdomain' ),
 		getDescription: () => i18n.translate(
 			'Your site address will use a WordPress.com subdomain (sitename.wordpress.com).'
@@ -374,6 +385,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_FREE_THEMES ]: {
+		getSlug: () => FEATURE_FREE_THEMES,
 		getTitle: () => i18n.translate( 'Hundreds of Free Themes' ),
 		getDescription: () => i18n.translate(
 			'Access to a wide range of professional theme templates ' +
@@ -383,6 +395,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_3GB_STORAGE ]: {
+		getSlug: () => FEATURE_3GB_STORAGE,
 		getTitle: () => i18n.translate( '3GB Storage Space' ),
 		getDescription: () => i18n.translate(
 			"With increased storage space you'll be able to upload " +
@@ -392,6 +405,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_13GB_STORAGE ]: {
+		getSlug: () => FEATURE_13GB_STORAGE,
 		getTitle: () => i18n.translate( '{{strong}}13GB{{/strong}} Storage Space', {
 			components: {
 				strong: <strong />
@@ -405,6 +419,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
+		getSlug: () => FEATURE_COMMUNITY_SUPPORT,
 		getTitle: () => i18n.translate( 'Community support' ),
 		getDescription: () => i18n.translate(
 			'Get support through our ' +
@@ -414,6 +429,7 @@ export const featuresList = {
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
+		getSlug: () => FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 		getTitle: () => i18n.translate( 'Email & Live Chat Support' ),
 		getDescription: () => i18n.translate(
 			'High quality support to help you get your website up ' +
@@ -422,18 +438,22 @@ export const featuresList = {
 		plans: allPaidPlans
 	},
 	[ FEATURE_SINGLE_SITE_SUPPORT ]: {
+		getSlug: () => FEATURE_SINGLE_SITE_SUPPORT,
 		getTitle: () => i18n.translate( 'Supports 1 Site' ),
 		getDescription: () => i18n.translate( 'For use on 1 WordPress site.' )
 	},
 	[ FEATURE_MULTI_SITE_SUPPORT ]: {
+		getSlug: () => FEATURE_MULTI_SITE_SUPPORT,
 		getTitle: () => i18n.translate( 'Supports 1-3 Sites' ),
 		getDescription: () => i18n.translate( 'For use on up to 3 WordPress sites.' )
 	},
 	[ FEATURE_SPAM_AKISMET_PLUS ]: {
+		getSlug: () => FEATURE_SPAM_AKISMET_PLUS,
 		getTitle: () => i18n.translate( 'Spam Protection' ),
 		getDescription: () => i18n.translate( 'State-of-the-art spam defense powered by Akismet.' )
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY ]: {
+		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 		getTitle: () => i18n.translate( 'Daily Offsite Backups' ),
 		getDescription: () => i18n.translate(
 			'Automatic daily backups of every single aspect of your site. ' +
@@ -441,6 +461,7 @@ export const featuresList = {
 		)
 	},
 	[ FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME ]: {
+		getSlug: () => FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 		getTitle: () => i18n.translate( 'Realtime Offsite Backups' ),
 		getDescription: () => i18n.translate(
 			'Automatic realtime backups of every single aspect of your site. ' +
@@ -448,46 +469,55 @@ export const featuresList = {
 		)
 	},
 	[ FEATURE_BACKUP_ARCHIVE_30 ]: {
+		getSlug: () => FEATURE_BACKUP_ARCHIVE_30,
 		getTitle: () => i18n.translate( '30-day Backup Archive' ),
 		getDescription: () => i18n.translate( 'Browse or restore any backup made within the past 30 days.' )
 	},
 	[ FEATURE_BACKUP_ARCHIVE_UNLIMITED ]: {
+		getSlug: () => FEATURE_BACKUP_ARCHIVE_UNLIMITED,
 		getTitle: () => i18n.translate( 'Unlimited Backup Archive' ),
 		getDescription: () => i18n.translate(
 			'Browse or restore any backup made since you activated the service.'
 		)
 	},
 	[ FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED ]: {
+		getSlug: () => FEATURE_BACKUP_STORAGE_SPACE_UNLIMITED,
 		getTitle: () => i18n.translate( 'Unlimited Backup Storage Space' ),
 		getDescription: () => i18n.translate( 'Absolutely no limits on storage space for your backups.' )
 	},
 	[ FEATURE_AUTOMATED_RESTORES ]: {
+		getSlug: () => FEATURE_AUTOMATED_RESTORES,
 		getTitle: () => i18n.translate( 'Automated Restores' ),
 		getDescription: () => i18n.translate( 'Restore your site from any available backup with a single click.' )
 	},
 	[ FEATURE_EASY_SITE_MIGRATION ]: {
+		getSlug: () => FEATURE_EASY_SITE_MIGRATION,
 		getTitle: () => i18n.translate( 'Easy Site Migration' ),
 		getDescription: () => i18n.translate( 'Easily and quickly move or duplicate your site to any location.' )
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY ]: {
+		getSlug: () => FEATURE_MALWARE_SCANNING_DAILY,
 		getTitle: () => i18n.translate( 'Daily Malware Scanning' ),
 		getDescription: () => i18n.translate(
 			'Comprehensive and automated scanning for any security vulnerabilities or threats on your site.'
 		)
 	},
 	[ FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND ]: {
+		getSlug: () => FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 		getTitle: () => i18n.translate( 'Daily and On-demand Malware Scanning' ),
 		getDescription: () => i18n.translate(
 			'Automated security scanning with the option to run complete site scans at any time.'
 		)
 	},
 	[ FEATURE_ONE_CLICK_THREAT_RESOLUTION ]: {
+		getSlug: () => FEATURE_ONE_CLICK_THREAT_RESOLUTION,
 		getTitle: () => i18n.translate( 'One-click Threat Resolution' ),
 		getDescription: () => i18n.translate(
 			'Repair any security issues found on your site with just a single click.'
 		)
 	},
 	[ FEATURE_POLLS_PRO ]: {
+		getSlug: () => FEATURE_POLLS_PRO,
 		getTitle: () => i18n.translate( 'Advanced Polls and Ratings' ),
 		getDescription: () => i18n.translate(
 			'Custom polls, surveys, ratings, and quizzes for the ultimate in customer and reader engagement.'

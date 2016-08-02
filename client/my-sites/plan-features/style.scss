@@ -91,15 +91,34 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features__row {
+	background: $white;
+}
+
 .plan-features__table-item {
 	border-right: solid 1px lighten( $gray, 27% );
 	border-left: solid 1px lighten( $gray, 27% );
 	background-color: lighten( $gray, 35% );
 	position: relative;
-}
 
-.plan-features__table-item.is-selected {
-	display: table-cell;
+	&.is-highlighted {
+		border: 1px solid $blue-wordpress;
+		background-color: rgba( $blue-wordpress, 0.1 );
+		position: relative;
+			top: -1px;
+
+		.plan-features__item-checkmark {
+			fill: $blue-wordpress;
+		}
+
+		&.has-partial-border::after {
+			display: none;
+		}
+	}
+
+	&.is-selected {
+		display: table-cell;
+	}
 }
 
 .plan-features__table-item.has-partial-border {
