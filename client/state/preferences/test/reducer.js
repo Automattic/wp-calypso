@@ -40,7 +40,7 @@ describe( 'reducer', () => {
 
 	describe( '#fetching()', () => {
 		it( 'should default to false', () => {
-			const state = fetching( undefined, false );
+			const state = fetching( undefined, {} );
 			expect( state ).to.eql( false );
 		} );
 		it( 'should update fetching state on fetch', () => {
@@ -87,7 +87,7 @@ describe( 'reducer', () => {
 
 		describe( 'created reducer', () => {
 			it( `should default to "${ defaultValue }"`, () => {
-				const state = keyReducer( undefined, false );
+				const state = keyReducer( undefined, {} );
 				expect( state ).to.eql( defaultValue );
 			} );
 
