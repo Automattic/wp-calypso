@@ -92,6 +92,7 @@ export const MainTour = makeTour(
 			placement="below"
 			context={ selectedSiteIsPreviewable }
 			next="in-preview"
+			scrollContainer=".sidebar__region"
 		>
 			<p className="guided-tours__step-text">
 				{
@@ -154,6 +155,7 @@ export const MainTour = makeTour(
 			placement="below"
 			context={ selectedSiteIsCustomizable }
 			next="finish"
+			scrollContainer=".sidebar__region"
 		>
 			<p className="guided-tours__step-text">
 				{
