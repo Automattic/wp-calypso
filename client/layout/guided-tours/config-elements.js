@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { find } from 'lodash';
+import { find, debounce } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +13,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
 import {
+	query,
 	posToCss,
 	getStepPosition,
 	getValidatedArrowPosition,
@@ -71,15 +72,37 @@ export class Step extends Component {
 	constructor( props, context ) {
 		super( props, context );
 		this.next = context.next;
+		this.scrollContainer = query( props.scrollContainer )[ 0 ] || global.window;
 	}
 
 	componentWillMount() {
 		this.skipIfInvalidContext( this.props );
+		this.setStepPosition( this.props );
+	}
+
+	componentDidMount() {
+		global.window.addEventListener( 'resize', this.onScrollOrResize );
+		this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		this.skipIfInvalidContext( nextProps );
+		this.setStepPosition( nextProps );
+		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
 	}
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		return this.props !== nextProps || this.state !== nextState;
+	}
+
+	componentWillUnmount() {
+		global.window.removeEventListener( 'resize', this.onScrollOrResize );
+		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+	}
+
+	onScrollOrResize = debounce( () => {
+		this.setStepPosition( this.props );
+	}, 100 )
 
 	skipIfInvalidContext( props ) {
 		const { context, isValid } = props;
@@ -88,16 +111,22 @@ export class Step extends Component {
 		}
 	}
 
+	setStepPosition( props ) {
+		const { placement, target } = props;
+		const stepPos = getStepPosition( { placement, targetSlug: target } );
+		const stepCoords = posToCss( stepPos );
+		this.setState( { stepPos, stepCoords } );
+	}
+
 	render() {
-		const { context, children, isValid, placement, target } = this.props;
+		const { context, children, isValid } = this.props;
 
 		if ( context && ! isValid( context ) ) {
 			return null;
 		}
 
-		const stepPos = getStepPosition( { placement, targetSlug: target } );
-		const stepCoords = posToCss( stepPos );
 		const { arrow, target: targetSlug } = this.props;
+		const { stepCoords, stepPos } = this.state;
 
 		const classes = [
 			this.props.className,
@@ -107,7 +136,7 @@ export class Step extends Component {
 			targetSlug && 'guided-tours__step-pointing-' + getValidatedArrowPosition( {
 				targetSlug,
 				arrow,
-				stepPos
+				stepPos,
 			} ),
 		].filter( Boolean );
 
