@@ -38,21 +38,16 @@ module.exports = {
 		const loggedOutRoutes = [ '/login', '/oauth', '/start', '/authorize', '/api/oauth/token' ],
 			isValidSection = loggedOutRoutes.some( route => startsWith( context.path, route ) );
 
-		if ( config( 'env_id' ) === 'desktop' ) {
-			// Check we have an OAuth token, otherwise redirect to login page
-			if ( OAuthToken.getToken() === false && ! isValidSection ) {
+		// Check we have an OAuth token, otherwise redirect to auth/login page
+		if ( OAuthToken.getToken() === false && ! isValidSection ) {
+			if ( config( 'env_id' ) === 'desktop' ) {
 				return page( '/login' );
-			} else {
-				next();
 			}
+
+			return page( '/authorize' );
 		}
 
-		// Check we have an OAuth token, otherwise redirect to auth page
-		if ( OAuthToken.getToken() === false && ! isValidSection ) {
-			return page( '/authorize' );
-		} else {
-			next();
-		}
+		next();
 	},
 
 	// This controller renders the API authentication screen
