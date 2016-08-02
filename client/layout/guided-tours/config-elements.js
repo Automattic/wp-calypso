@@ -43,6 +43,11 @@ export class Tour extends Component {
 		this.tourMethods = { next, quit, isValid };
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		const { next, quit, isValid } = nextProps;
+		this.tourMethods = { next, quit, isValid };
+	}
+
 	render() {
 		const { context, children, isValid, stepName } = this.props;
 		const nextStep = find( children, stepComponent =>
