@@ -187,6 +187,12 @@ module.exports = {
 				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
 				if ( sites.select( siteID ) ) {
 					onSelectedSiteAvailable();
+				} else if ( ( currentUser.visible_site_count !== sites.getVisible().length ) ) {
+					setTimeout( () => {
+						page.redirect( context.canonicalPath );
+					}, 1000 );
+					// We haven't set the main site, so we don't want to continue `next()`
+					return;
 				} else {
 					page.redirect( allSitesPath );
 				}
