@@ -136,6 +136,7 @@ export const MainTour = makeTour(
 			className="guided-tours__step-action"
 			target="web-preview__close"
 			arrow="left-top"
+			placement="beside"
 			context={ and( selectedSiteIsPreviewable, isPreviewShowing ) }
 			next="themes"
 		>
