@@ -25,7 +25,7 @@ export default function createBetterExcerpt( post ) {
 	dom.innerHTML = post.content;
 
 	// Ditch any photo captions with the wp-caption-text class, styles, scripts
-	forEach( dom.querySelectorAll( '.wp-caption-text, style, script, blockquote[class^="instagram-"]' ), removeElement );
+	forEach( dom.querySelectorAll( '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure' ), removeElement );
 
 	// limit to paras and brs
 	dom.innerHTML = striptags( dom.innerHTML, [ 'p', 'br' ] );
