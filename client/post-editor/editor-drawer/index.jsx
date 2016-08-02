@@ -294,7 +294,7 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 
-		return <EditorDrawerPageOptions post={ this.props.post } />;
+		return <EditorDrawerPageOptions />;
 	},
 
 	render: function() {
