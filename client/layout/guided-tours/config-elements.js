@@ -180,8 +180,8 @@ export class Continue extends Component {
 		! this.props.hidden && this.removeTargetListener();
 	}
 
-	componentWillReceiveProps( nextProps ) {
-		nextProps.context && this.isValid( nextProps.context ) && this.next();
+	componentWillReceiveProps( nextProps, nextContext ) {
+		nextProps.context && nextContext.isValid( nextProps.context ) && this.next();
 	}
 
 	componentWillUpdate() {
