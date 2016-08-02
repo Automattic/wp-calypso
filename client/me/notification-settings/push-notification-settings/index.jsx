@@ -199,7 +199,11 @@ const PushNotificationSettings = React.createClass( {
 										<rect id="Rectangle-70-Copy-6" fill="#E9EFF3" fillRule="evenodd" x="91" y="187" width="121" height="11"/>
 										<rect id="Rectangle-70-Copy" fill="#E9EFF3" fillRule="evenodd" x="67" y="62" width="97" height="11"/>
 										<text id="Notifications:-Ask-b" fill="none" fontFamily="SFUIText-Regular, SF UI Text" fontSize="10.442623" fontWeight="normal">
-											<tspan x="91" y="148" fill="#3D596D">Notifications: Ask by default</tspan>
+											<tspan x="91" y="148" fill="#3D596D">{
+												this.translate( 'Notifications: Ask by default', {
+													comment: 'This should match the string displayed in Google Chrome when you click on the green lock in the address bar, under "Permissions" for the line "Notifications".'
+												} )
+											}</tspan>
 										</text>
 										<g id="Group-12" strokeWidth="1" fill="none" fillRule="evenodd" transform="translate(236.000000, 139.000000)">
 											<polyline id="Shape" fill="#C8D7E1" points="0 2.86363636 3 0 6 2.86363636 5.46975 3.36978409 3 1.01229545 0.53025 3.36978409"/>
@@ -212,7 +216,11 @@ const PushNotificationSettings = React.createClass( {
 												<use stroke="#C8D7E1" mask="url(#mask-12)" strokeWidth="2" fill="#F3F6F8" fillRule="evenodd" xlinkHref="#path-10"/>
 											</g>
 											<text id="Always-allow-on-this" fontFamily="SFUIText-Regular, SF UI Text" fontSize="9.56521739" fontWeight="normal" fill="#3D596D">
-												<tspan x="26.434555" y="20.1594203">Always allow on this site</tspan>
+												<tspan x="26.434555" y="20.1594203">{
+													this.translate( 'Always allow on this site', {
+														comment: 'This should match the string displayed in Google Chrome when you click on the green lock in the address bar, under "Permissions" for the line "Notifications".'
+													} )
+												}</tspan>
 											</text>
 											<rect id="Rectangle-89" fill="#C8D7E1" opacity="0.5" x="26.434555" y="32.6811594" width="98.5287958" height="11.1594203"/>
 										</g>
