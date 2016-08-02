@@ -242,26 +242,28 @@ const LoggedInForm = React.createClass( {
 
 	handleSubmit() {
 		const {
-			siteReceived,
 			queryObject,
 			manageActivated,
 			activateManageSecret,
-			plansUrl,
 			authorizeError
 		} = this.props.jetpackConnectAuthorize;
 
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
-			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
-		} else 	if ( activateManageSecret && ! manageActivated ) {
-			this.activateManage();
-		} else if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
-			window.location.href = queryObject.site + authUrl;
-		} else if ( this.props.isAlreadyOnSitesList || ( siteReceived && plansUrl ) ) {
-			page( plansUrl );
-		} else {
-			this.props.authorize( queryObject );
+			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
+		if ( activateManageSecret && ! manageActivated ) {
+			return this.activateManage();
+		}
+		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+			window.location.href = queryObject.site + authUrl;
+			return;
+		}
+		if ( this.props.isAlreadyOnSitesList ) {
+			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		}
+
+		return this.props.authorize( queryObject );
 	},
 
 	handleSignOut() {
@@ -302,7 +304,6 @@ const LoggedInForm = React.createClass( {
 			isAuthorizing,
 			authorizeSuccess,
 			isRedirectingToWpAdmin,
-			siteReceived,
 			authorizeError
 		} = this.props.jetpackConnectAuthorize;
 
@@ -319,10 +320,6 @@ const LoggedInForm = React.createClass( {
 			return this.translate( 'Preparing authorization' );
 		}
 
-		if ( this.props.isAlreadyOnSitesList || siteReceived ) {
-			return this.translate( 'Browse Available Upgrades' );
-		}
-
 		if ( authorizeSuccess && isRedirectingToWpAdmin ) {
 			return this.translate( 'Returning to your site' );
 		}
@@ -335,6 +332,10 @@ const LoggedInForm = React.createClass( {
 
 		if ( isAuthorizing ) {
 			return this.translate( 'Authorizing your connection' );
+		}
+
+		if ( this.props.isAlreadyOnSitesList ) {
+			return this.translate( 'Return to your site' );
 		}
 
 		return this.translate( 'Approve' );
