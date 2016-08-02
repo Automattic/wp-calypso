@@ -231,7 +231,8 @@
 		}
 	}
 
-	.wp-caption-text {
+	.wp-caption-text,
+	figure figcaption {
 		padding: 12px;
 		margin: 0;
 		font-size: 13px;
