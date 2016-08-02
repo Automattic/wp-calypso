@@ -29,11 +29,8 @@ const themeFreeFilterChosen = state => {
 	return params && params.tier === 'free';
 };
 
-const inThemeSection = state =>
-	getSectionName( state ) === 'theme';
-
-const inThemesSection = state =>
-	getSectionName( state ) === 'themes';
+const inSection = ( sectionName ) => state =>
+	getSectionName( state ) === sectionName;
 
 export const ThemesTour = makeTour(
 	<Tour name="themes" version="20160601" path="/design" context={ context }>
@@ -78,20 +75,20 @@ export const ThemesTour = makeTour(
 		<Step name="choose-theme"
 			className="guided-tours__step-action"
 			placement="center"
-			context={ inThemesSection }
+			context={ inSection( 'themes' ) }
 			next="tab-bar"
 		>
 			<p className="guided-tours__step-text">
 				Tap on a theme to see more details — such as screenshots, the theme's features, or a preview.
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue context={ inThemeSection } />
+				<Continue context={ inSection( 'theme' ) } />
 			</p>
 		</Step>
 
 		<Step name="tab-bar"
 			placement="center"
-			context={ inThemeSection }
+			context={ inSection( 'themes' ) }
 			next="live-preview"
 		>
 			<p className="guided-tours__step-text">
@@ -108,7 +105,7 @@ export const ThemesTour = makeTour(
 			target="theme-sheet-preview"
 			placement="below"
 			arrow="top-left"
-			context={ inThemeSection }
+			context={ inSection( 'theme' ) }
 			next="close-preview"
 		>
 			<p className="guided-tours__step-text">
@@ -144,14 +141,14 @@ export const ThemesTour = makeTour(
 				You can go back to the themes list here.
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue context={ inThemesSection } />
+				<Continue context={ inSection( 'themes' ) } />
 			</p>
 		</Step>
 
 		<Step name="finish"
 			placement="center"
 			className="guided-tours__step-finish"
-			context={ inThemesSection }
+			context={ inSection( 'themes' ) }
 		>
 			<p className="guided-tours__step-text">
 				That's it!
