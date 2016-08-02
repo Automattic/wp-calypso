@@ -13,7 +13,7 @@ import qs from 'qs';
 import useMockery from 'test/helpers/use-mockery';
 import { sitesList, dailyPromptPost } from './fixtures';
 
-describe( 'DailyPostButton', () =>{
+describe( 'DailyPostButton', () => {
 	const SitesPopover = props => <span { ...props } />;
 	const pageSpy = spy();
 	let DailyPostButton;

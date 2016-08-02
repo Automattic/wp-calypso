@@ -5,13 +5,13 @@ import React from 'react';
 import classnames from 'classnames';
 import page from 'page';
 import qs from 'qs';
-import { defer } from 'lodash/defer';
+import defer from 'lodash/defer';
 
 /**
  * Internal Dependencies
  */
 import { translate } from 'i18n-calypso';
-import sections from 'sections-preload';
+import { preload } from 'sections-preload';
 import SitesPopover from 'components/sites-popover';
 import getSitesList from 'lib/sites-list';
 
@@ -29,7 +29,7 @@ function preventDefault( event ) {
 }
 
 function preloadEditor() {
-	sections.preload( 'post-editor' );
+	preload( 'post-editor' );
 }
 
 class DailyPostButton extends React.Component {
@@ -81,7 +81,7 @@ class DailyPostButton extends React.Component {
 
 	pickSiteToPostTo( siteSlug ) {
 		const pingbackAttributes = getPingbackAttributes( this.props.post );
-		page( `post/${ siteSlug }?${ qs.stringify( pingbackAttributes ) }` );
+		page( `/post/${ siteSlug }?${ qs.stringify( pingbackAttributes ) }` );
 		return true;
 	}
 

@@ -45,6 +45,8 @@ var abtest = require( 'lib/abtest' ).abtest,
 	PostExcerptLink = require( 'reader/post-excerpt-link' ),
 	ShareButton = require( 'reader/share' ),
 	ShareHelper = require( 'reader/share/helper' ),
+	DailyPostHelper = require( 'reader/daily-post/helper' ),
+	DailyPostButton = require( 'reader/daily-post' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
 	DiscoverSiteAttribution = require( 'reader/discover/site-attribution' ),
 	readerRoute = require( 'reader/route' ),
@@ -231,6 +233,7 @@ FullPostView = React.createClass( {
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
 					{ isDiscoverSitePick ? <DiscoverSiteAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } followUrl={ DiscoverHelper.getSourceFollowUrl( post ) } /> : null }
+					{ DailyPostHelper.isDailyPost( post ) ? <DailyPostButton post={ post } tagName="div" /> : null }
 					{ relatedPostsEnabled && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } onPostClick={ this.recordRelatedPostClicks } onSiteClick={ this.recordRelatedPostSiteClicks }/> }
 					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } initialSize={ 25 } pageSize={ 25 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</article>
