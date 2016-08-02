@@ -34,10 +34,11 @@ const AuthorCompactProfile = React.createClass( {
 				<Gravatar size={ 96 } user={ author } />
 				<ReaderAuthorLink author={ author }>{ author.name }</ReaderAuthorLink>
 				{ siteName && siteUrl
-					? <ReaderSiteStreamLink feedId={ feedId } siteId={ siteId }>
+					? <ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId }>
 						{ siteName }
 					</ReaderSiteStreamLink> : null }
 
+				<div className="author-compact-profile__follow">
 				{ followCount
 					? <div className="author-compact-profile__follow-count">
 					{ this.props.translate(
@@ -53,6 +54,7 @@ const AuthorCompactProfile = React.createClass( {
 					</div> : null }
 
 				<ReaderFollowButton siteUrl={ siteUrl } />
+				</div>
 			</div>
 		);
 	}
