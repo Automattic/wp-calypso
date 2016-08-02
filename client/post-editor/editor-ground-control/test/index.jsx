@@ -375,41 +375,41 @@ describe( 'EditorGroundControl', function() {
 		it( 'should schedule a posted dated in future', function() {
 			var now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
-				onSave = sinon.spy(),
+				onPublish = sinon.spy(),
 				tree;
 
 			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'draft', date: nextMonth } }
 					post={ { title: 'change', status: 'draft', date: nextMonth } }
-					onSave={ onSave }
+					onPublish={ onPublish }
 					site={ MOCK_SITE }
 				/>
 			).instance();
 
 			tree.onPrimaryButtonClick();
 
-			expect( onSave ).to.have.been.calledWith( 'future' );
+			expect( onPublish ).to.have.been.called;
 		} );
 
 		it( 'should save a scheduled post dated in future', function() {
 			var now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
-				onSave = sinon.spy(),
+				onPublish = sinon.spy(),
 				tree;
 
 			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'future', date: nextMonth } }
 					post={ { title: 'change', status: 'future', date: nextMonth } }
-					onSave={ onSave }
+					onPublish={ onPublish }
 					site={ MOCK_SITE }
 				/>
 			).instance();
 
 			tree.onPrimaryButtonClick();
 
-			expect( onSave ).to.have.been.calledWith( 'future' );
+			expect( onPublish ).to.have.been.called;
 		} );
 
 		it( 'should publish a scheduled post dated in past', function() {
