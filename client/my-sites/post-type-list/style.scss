@@ -12,11 +12,11 @@
 	overflow: hidden;
 
 	&.has-image,
-	.post-type-list__post-placeholder & {
+	.post-item.is-placeholder & {
 		display: block;
 	}
 
-	.post-type-list__post-placeholder & {
+	.post-item.is-placeholder & {
 		@include placeholder;
 	}
 }
@@ -28,14 +28,4 @@
 	transform: translate( -50%, -50% );
 	max-height: 100%;
 	max-width: none;
-}
-
-.post-type-list__post-placeholder {
-	.post-relative-time-status {
-		@include placeholder;
-	}
-
-	.post-item__title a {
-		@include placeholder;
-	}
 }

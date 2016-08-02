@@ -39,6 +39,10 @@ a.post-item__title-link {
 		color: $gray;
 		font-style: italic;
 	}
+
+	.post-item.is-placeholder & {
+		@include placeholder;
+	}
 }
 
 .post-item__meta {
@@ -53,6 +57,11 @@ a.post-item__title-link {
 
 .post-item__meta .post-relative-time-status {
 	margin-bottom: 0;
+
+
+	.post-item.is-placeholder & {
+		@include placeholder;
+	}
 }
 
 .post-item__meta .post-relative-time-status .gridicon {
