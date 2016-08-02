@@ -1,53 +1,34 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:local-storage' );
-
-var _data = {},
-	storage = {
-		setItem: function( id, val ) {
-			_data[ id ] = String( val );
-			return _data[ id ];
-		},
-		getItem: function( id ) {
-			return _data.hasOwnProperty( id ) ? _data[ id ] : null;
-		},
-		removeItem: function( id ) {
-			return delete _data[ id ];
-		},
-		clear: function() {
-			_data = {};
-			return _data;
-		}
-	},
-	getLength = function() {
-		return Object.keys( _data ).length;
-	};
+import debug from 'debug';
 
 /**
- * Overwrite window.localStorage if necessary
- * @param  {object} root Object to instantiate `windows` object to test in node.js
+ * Module variables
  */
-module.exports = function( root ) {
-	root = root || window;
+const log = debug( 'calypso:local-storage' );
 
+export default function( root ) {
 	if ( ! root.localStorage ) {
-		debug( 'localStorage is missing, setting to polyfill' );
+		log( 'localStorage is missing, setting to polyfill' );
 		root.localStorage = {};
 	}
 
-	// test in case we are in safari private mode which fails on any storage
 	try {
 		root.localStorage.setItem( 'localStorageTest', '' );
 		root.localStorage.removeItem( 'localStorageTest' );
-		debug( 'localStorage tested and working correctly' );
-	} catch( error ) {
-		debug( 'localStorage not working correctly, setting to polyfill' );
-		// we cannot overwrite window.localStorage directly, but we can overwrite its methods
-		root.localStorage.setItem = storage.setItem;
-		root.localStorage.getItem = storage.getItem;
-		root.localStorage.removeItem = storage.removeItem;
-		root.localStorage.clear = storage.clear;
-		root.localStorage.__defineGetter__( 'length', getLength );
+		log( 'localStorage tested and working correctly' );
+	} catch ( error ) {
+		log( 'localStorage not working correctly, setting to polyfill' );
+		let _data = {};
+		Object.setPrototypeOf( root.localStorage, {
+			setItem: ( id, val ) => Object.assign( _data, { [ id ]: String( val ) } ),
+			getItem: ( id ) => _data.hasOwnProperty( id ) ? _data[ id ] : null,
+			removeItem: ( id ) => delete _data[ id ],
+			clear: () => _data = {},
+			get length() {
+				return Object.keys( _data ).length;
+			}
+		} );
 	}
-};
+}
