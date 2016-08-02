@@ -10,6 +10,7 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
+import AllTours from 'layout/guided-tours/all-tours';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
 import scrollTo from 'lib/scroll-to';
@@ -18,16 +19,6 @@ import { errorNotice } from 'state/notices/actions';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { getScrollableSidebar, targetForSlug } from './positioning';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
-
-import { combineTours } from 'layout/guided-tours/config-elements';
-import { MainTour } from 'layout/guided-tours/main-tour';
-import { ThemesTour } from 'layout/guided-tours/themes-tour';
-
-// move to guided-tours/config or equivalent
-const AllTours = combineTours( {
-	main: MainTour,
-	themes: ThemesTour
-} );
 
 const debug = debugFactory( 'calypso:guided-tours' );
 

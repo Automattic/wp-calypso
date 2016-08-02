@@ -1,7 +1,8 @@
+/** @ssr-ready **/
+
 import React from 'react';
 
 import { getSelectedSite, isPreviewShowing } from 'state/ui/selectors';
-import { isNewUser } from 'state/ui/guided-tours/selectors';
 import {
 	makeTour,
 	Tour,
@@ -12,6 +13,11 @@ import {
 	Link,
 } from 'layout/guided-tours/config-elements';
 import { translate } from 'i18n-calypso';
+
+// FIXME(mcsf): This is all kinds of wrong, but circular dependencies are
+// breaking `relevantFeatures`. The fix, IMO, is to split selectors into
+// separate files, as described in #6914
+export const isNewUser = () => true;
 
 const selectedSiteIsPreviewable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_previewable;

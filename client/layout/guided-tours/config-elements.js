@@ -1,10 +1,12 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { find, debounce } from 'lodash';
+import { find, debounce, mapValues, omit, property } from 'lodash';
 
 /**
  * Internal dependencies
@@ -274,11 +276,15 @@ export const makeTour = tree => {
 		next: PropTypes.func.isRequired,
 		quit: PropTypes.func.isRequired,
 	};
-
+	tour.meta = omit( tree.props, 'children' );
 	return tour;
 };
 
-export const combineTours = tours => ( props ) => {
-	const tour = tours[ props.tourName ];
-	return tour ? tour( props ) : null;
+export const combineTours = tours => {
+	const combined = ( props ) => {
+		const tour = tours[ props.tourName ];
+		return tour ? tour( props ) : null;
+	};
+	combined.meta = mapValues( tours, property( 'meta' ) );
+	return combined;
 };

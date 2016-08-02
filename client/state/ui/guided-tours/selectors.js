@@ -14,19 +14,19 @@ import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getPreference } from 'state/preferences/selectors';
+import AllTours from 'layout/guided-tours/all-tours';
 import createSelector from 'lib/create-selector';
 import guidedToursConfig from 'layout/guided-tours/config';
 
 const getToursConfig = memoize( ( tour ) => guidedToursConfig.get( tour ) );
 const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
-const relevantFeatures = map( guidedToursConfig.getAll(), ( tour, key ) => {
-	return {
-		tour: key,
-		path: tour.meta.path,
-		context: tour.meta.context,
-	};
-} );
+
+const relevantFeatures = map( AllTours.meta, ( tourMeta, key ) => ( {
+	tour: key,
+	path: tourMeta.path,
+	context: tourMeta.context
+} ) );
 
 const DAY_IN_MILLISECONDS = 1000 * 3600 * 24;
 
