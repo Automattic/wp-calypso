@@ -3,7 +3,6 @@
  */
 import React, { PropTypes } from 'react';
 import page from 'page';
-import forIn from 'lodash/forIn';
 
 /**
  * Internal dependencies
@@ -15,7 +14,7 @@ import ThemesList from 'components/themes-list';
 import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
-import taxonomies from './theme-filters.js';
+import { getFilterFromValue, filterIsValid } from './theme-filters.js';
 
 const ThemesSelection = React.createClass( {
 	propTypes: {
@@ -37,30 +36,6 @@ const ThemesSelection = React.createClass( {
 		return { search: '' };
 	},
 
-	getTermTable() {
-		if ( ! this.termTable ) {
-			this.termTable = {};
-			forIn( taxonomies, ( terms, taxonomy ) => {
-				terms.forEach( ( term ) => {
-					this.termTable[ term ] = taxonomy;
-				} );
-			} );
-		}
-		return this.termTable;
-	},
-
-	getFilterFromValue( value ) {
-		const termTable = this.getTermTable();
-		if ( termTable[ value ] ) {
-			return `${ termTable[ value ] }:${ value }`;
-		}
-		return '';
-	},
-
-	filterIsValid( key, value ) {
-		return this.getTermTable()[ value ] === key;
-	},
-
 	doSearch( searchBoxContent ) {
 		const filterRegex = /(\w+)\:\s*([\w-]+)/g;
 		const KEY = 1;
@@ -71,7 +46,7 @@ const ThemesSelection = React.createClass( {
 		while ( ( matches = filterRegex.exec( searchBoxContent ) ) !== null ) {
 			const value = matches[ VALUE ];
 			const key = matches[ KEY ];
-			if ( key && value && this.filterIsValid( key, value ) ) {
+			if ( key && value && filterIsValid( key, value ) ) {
 				validFilters.push( value );
 			}
 		}
@@ -86,7 +61,7 @@ const ThemesSelection = React.createClass( {
 		const { filter } = this.props;
 		if ( filter ) {
 			return filter.split( ',' ).map(
-				value => this.getFilterFromValue( value )
+				value => getFilterFromValue( value )
 			).join( ' ' ) + ' ';
 		}
 		return '';
