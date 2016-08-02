@@ -57,18 +57,20 @@ export const PreviewToolbar = props => {
 				</a>
 			}
 			{ showDeviceSwitcher &&
-				possibleDevices.map( device => (
-					<button
-						aria-hidden={ true }
-						key={ device }
-						className={ classNames( 'web-preview__device-button', {
-							'is-active': device === currentDevice,
-						} ) }
-						onClick={ partial( setDeviceViewport, device ) }
-					>
-						<Gridicon icon={ device } />
-					</button>
-				) )
+				<div className="web-preview__device-switcher">
+					{ possibleDevices.map( device => (
+						<button
+							aria-hidden={ true }
+							key={ device }
+							className={ classNames( 'web-preview__device-button', {
+								'is-active': device === currentDevice,
+							} ) }
+							onClick={ partial( setDeviceViewport, device ) }
+						>
+							<Gridicon icon={ device } />
+						</button>
+					) ) }
+				</div>
 			}
 			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
 			<button
