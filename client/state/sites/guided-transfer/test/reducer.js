@@ -47,10 +47,10 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should store the status received', () => {
-			const guidedTransferStatus = {
+			const guidedTransferStatus = deepFreeze( {
 				upgrade_purchased: true,
 				host_details_entered: false,
-			};
+			} );
 
 			const state = status( {}, {
 				type: GUIDED_TRANSFER_STATUS_RECEIVE,
