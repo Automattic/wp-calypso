@@ -41,6 +41,7 @@ import Button from 'components/button';
 import { requestSites } from 'state/sites/actions';
 import { isRequestingSites } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
+import LiveChatButton from './live-chat-button';
 
 /**
  * Constants
@@ -473,6 +474,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 					action={ this.translate( 'Get back to Jetpack Connect screen' ) }
 					actionURL="/jetpack/connect"
 				/>
+				<LiveChatButton />
 			</Main>
 		);
 	},
@@ -505,6 +507,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderForm() }
 				</div>
+				<LiveChatButton />
 			</MainWrapper>
 		);
 	}

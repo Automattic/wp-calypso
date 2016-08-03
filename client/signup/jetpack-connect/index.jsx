@@ -26,6 +26,7 @@ import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Gridicon from 'components/gridicon';
 import MainWrapper from './main-wrapper';
+import LiveChatButton from './live-chat-button';
 import {
 	confirmJetpackInstallStatus,
 	dismissUrl,
@@ -305,6 +306,7 @@ const JetpackConnectMain = React.createClass( {
 
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
+					<LiveChatButton />
 				</div>
 			</MainWrapper>
 		);
@@ -326,6 +328,7 @@ const JetpackConnectMain = React.createClass( {
 
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
+					<LiveChatButton />
 				</div>
 			</MainWrapper>
 		);
@@ -364,6 +367,7 @@ const JetpackConnectMain = React.createClass( {
 						<div>{ this.renderBackButton() }</div>
 					</div>
 				</div>
+				<LiveChatButton />
 			</MainWrapper>
 		);
 	},
@@ -418,6 +422,7 @@ const JetpackConnectMain = React.createClass( {
 						{ this.renderBackButton() }
 					</div>
 				</div>
+				<LiveChatButton />
 			</MainWrapper>
 		);
 	},
