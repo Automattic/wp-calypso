@@ -76,6 +76,7 @@ const ThemesSearchCard = React.createClass( {
 	renderMobile( tiers ) {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
+		const isM5Enabled = config.isEnabled( 'manage/themes/m5' );
 		const selectedTiers = isPremiumThemesEnabled ? tiers : [ tiers.find( tier => tier.value === 'free' ) ];
 
 		return (
@@ -83,6 +84,17 @@ const ThemesSearchCard = React.createClass( {
 				<SectionNav selectedText={ this.getSelectedTierFormatted( tiers ) }>
 					<NavTabs>
 						{ ! isJetpack && this.getTierNavItems( selectedTiers ) }
+
+						{ isPremiumThemesEnabled && ! isM5Enabled &&
+							<hr className="section-nav__hr" /> }
+
+						{ isPremiumThemesEnabled && ! isM5Enabled &&
+							<NavItem
+								path={ getExternalThemesUrl( this.props.site ) }
+								onClick={ this.onMore }
+								isExternalLink={ true }>
+								{ this.translate( 'More' ) + ' ' }
+							</NavItem> }
 					</NavTabs>
 
 					<Search
@@ -103,6 +115,7 @@ const ThemesSearchCard = React.createClass( {
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
+		const isM5Enabled = config.isEnabled( 'manage/themes/m5' );
 
 		const tiers = [
 			{ value: 'all', label: this.translate( 'All' ) },
@@ -114,25 +127,58 @@ const ThemesSearchCard = React.createClass( {
 			return this.renderMobile( tiers );
 		}
 
-		return (
-			<div className="themes__search-card" data-tip-target="themes-search-card">
-				<SectionNav selectedText={ this.getSelectedTierFormatted( tiers ) }>
-					<Search
-						onSearch={ this.props.onSearch }
-						initialValue={ this.props.search }
-						ref="url-search"
-						placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
-						analyticsGroup="Themes"
-						delaySearch={ true }
-					/>
-					<ThemesSelectButtons
-						tier={ this.props.tier }
-						options={ tiers }
-						onSelect={ this.props.select }
-					/>
-				</SectionNav>
-			</div>
+		const search = (
+			<Search
+				onSearch={ this.props.onSearch }
+				initialValue={ this.props.search }
+				ref="url-search"
+				placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
+				analyticsGroup="Themes"
+				delaySearch={ true }
+			/>
 		);
+
+		let searchCard;
+
+		if ( isM5Enabled ) {
+			searchCard = (
+				<div className="themes__search-card" data-tip-target="themes-search-card">
+					<SectionNav selectedText={ this.getSelectedTierFormatted( tiers ) }>
+						{ search }
+						{ isPremiumThemesEnabled && ! isJetpack &&
+							<ThemesSelectButtons
+								tier={ this.props.tier }
+								options={ tiers }
+								onSelect={ this.props.select }
+							/>
+						}
+					</SectionNav>
+				</div>
+			);
+		} else {
+			searchCard = (
+				<div className="themes__search-card" data-tip-target="themes-search-card">
+					{ search }
+					{ isPremiumThemesEnabled && ! isJetpack &&
+						<ThemesSelectDropdown
+							tier={ this.props.tier }
+							options={ tiers }
+							onSelect={ this.props.select }
+						/>
+					}
+					{ isPremiumThemesEnabled &&
+						<a className="button more"
+							href={ getExternalThemesUrl( this.props.site ) }
+							target="_blank"
+							onClick={ this.onMore }>
+							{ this.translate( 'More' ) }
+						</a>
+					}
+				</div>
+			);
+		}
+
+		return searchCard;
 	}
 } );
 
