@@ -27,7 +27,6 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Count from 'components/count';
 import Gridicon from 'components/gridicon';
-import NoResults from 'my-sites/no-results';
 import { sectionify } from 'lib/route/path';
 import { getAllPostCount } from 'state/posts/counts/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
@@ -45,25 +44,26 @@ const PostsMain = React.createClass( {
 		this.setWarning( selectedSite );
 	},
 
-	showNoDraftsMessage() {
+	showDrafts() {
 		const site = this.props.sites.getSelectedSite();
-		const noResults = <NoResults text={ this.translate( 'You have no drafts at the moment.' ) } />;
 
 		// Jetpack sites can have malformed counts
 		if ( site.jetpack && ! this.props.loadingDrafts && this.props.drafts && this.props.drafts.length === 0 ) {
-			return noResults;
+			return false;
 		}
 
 		if ( ! site.jetpack && this.props.draftCount === 0 ) {
-			return noResults;
+			return false;
 		}
+
+		return true;
 	},
 
 	mostRecentDrafts() {
 		const site = this.props.sites.getSelectedSite();
 		const isLoading = this.props.draftCount !== 0 && this.props.loadingDrafts;
 
-		if ( ! site ) {
+		if ( ! site || ! this.showDrafts() ) {
 			return null;
 		}
 
@@ -81,7 +81,6 @@ const PostsMain = React.createClass( {
 				</Card>
 				{ this.props.drafts && this.props.drafts.map( this.renderDraft, this ) }
 				{ isLoading && <Draft isPlaceholder /> }
-				{ this.showNoDraftsMessage() }
 				{ this.props.draftCount > 6 &&
 					<Button compact borderless className="posts__see-all-drafts" href={ `/posts/drafts/${ site.slug }` }>
 						{ this.translate( 'See all drafts' ) }
