@@ -46,6 +46,7 @@ import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
 import HeaderCake from 'components/header-cake';
 import InfoPopover from 'components/info-popover/docs/example';
+import Tooltip from 'components/tooltip/docs/example';
 import FoldableCard from 'components/foldable-card/docs/example';
 import SectionHeader from 'components/section-header/docs/example';
 import PaymentLogo from 'components/payment-logo/docs/example';
@@ -122,6 +123,7 @@ let DesignAssets = React.createClass( {
 					<Gridicons />
 					<Headers />
 					<InfoPopover />
+					<Tooltip />
 					<InputChrono />
 					<Notices />
 					<PaymentLogo />
