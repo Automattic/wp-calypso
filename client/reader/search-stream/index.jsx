@@ -22,9 +22,6 @@ import { recordTrackForPost } from 'reader/stats';
 import sampleSize from 'lodash/sampleSize';
 import i18nUtils from 'lib/i18n-utils';
 
-import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:reader:search' );
-
 const SearchCardAdapter = React.createClass( {
 	getInitialState() {
 		return this.getStateFromStores();
