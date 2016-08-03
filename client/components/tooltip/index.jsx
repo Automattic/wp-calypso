@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/noop';
 import classnames from 'classnames';
 
 /**
@@ -10,6 +9,11 @@ import classnames from 'classnames';
  */
 import Popover from 'components/popover';
 import viewport from 'lib/viewport';
+
+/**
+ * Module variables
+ */
+ const noop = () => {};
 
 export default React.createClass( {
 
