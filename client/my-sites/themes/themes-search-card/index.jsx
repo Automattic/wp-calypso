@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import find from 'lodash/find';
+import noop from 'lodash/noop';
 import debounce from 'lodash/debounce';
 
 /**
@@ -47,7 +48,10 @@ const ThemesSearchCard = React.createClass( {
 	},
 
 	getInitialState() {
-		return { isMobile: isMobile() };
+		return {
+			isMobile: isMobile(),
+			searchIsOpen: false
+		};
 	},
 
 	getDefaultProps() {
@@ -76,7 +80,7 @@ const ThemesSearchCard = React.createClass( {
 	renderMobile( tiers ) {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
-		const isM5Enabled = config.isEnabled( 'manage/themes/m5' );
+		const isMagicSearchEnabled = config.isEnabled( 'manage/themes/m5' );
 		const selectedTiers = isPremiumThemesEnabled ? tiers : [ tiers.find( tier => tier.value === 'free' ) ];
 
 		return (
@@ -85,10 +89,10 @@ const ThemesSearchCard = React.createClass( {
 					<NavTabs>
 						{ ! isJetpack && this.getTierNavItems( selectedTiers ) }
 
-						{ isPremiumThemesEnabled && ! isM5Enabled &&
+						{ isPremiumThemesEnabled && ! isMagicSearchEnabled &&
 							<hr className="section-nav__hr" /> }
 
-						{ isPremiumThemesEnabled && ! isM5Enabled &&
+						{ isPremiumThemesEnabled && ! isMagicSearchEnabled &&
 							<NavItem
 								path={ getExternalThemesUrl( this.props.site ) }
 								onClick={ this.onMore }
@@ -112,10 +116,25 @@ const ThemesSearchCard = React.createClass( {
 		);
 	},
 
+	onSearchOpen( ) {
+		this.setState( { searchIsOpen : true } );
+	},
+
+	onSearchClose( event ) {
+		this.setState( { searchIsOpen : false } );
+	},
+
+	onBlur() {
+		const searchString = this.refs['url-search'].getCurrentSearchValue();
+		if ( searchString === "" ) {
+			this.setState( { searchIsOpen : false } );
+		}
+	},
+
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
-		const isM5Enabled = config.isEnabled( 'manage/themes/magic_search' );
+		const isMagicSearchEnabled = config.isEnabled( 'manage/themes/magic_search' );
 
 		const tiers = [
 			{ value: 'all', label: this.translate( 'All' ) },
@@ -123,8 +142,8 @@ const ThemesSearchCard = React.createClass( {
 			{ value: 'premium', label: this.translate( 'Premium' ) },
 		];
 
-		if ( this.state.isMobile ) {
-			return this.renderMobile( tiers );
+		if ( this.state.isMobile && ! isMagicSearchEnabled ) {
+		 	return this.renderMobile( tiers );
 		}
 
 		const searchField = (
@@ -135,15 +154,18 @@ const ThemesSearchCard = React.createClass( {
 				placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
 				analyticsGroup="Themes"
 				delaySearch={ true }
+				onSearchOpen={ isMagicSearchEnabled ? this.onSearchOpen : noop }
+				onSearchClose={ isMagicSearchEnabled ? this.onSearchClose : noop }
+				onBlur={ isMagicSearchEnabled ? this.onBlur : noop }
+				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
 			/>
 		);
 
 		let searchCard;
 
-		if ( isM5Enabled ) {
+		if ( isMagicSearchEnabled ) {
 			searchCard = (
 				<div className="themes__search-card" data-tip-target="themes-search-card">
-					<SectionNav selectedText={ this.getSelectedTierFormatted( tiers ) }>
 						{ searchField }
 						{ isPremiumThemesEnabled && ! isJetpack &&
 							<ThemesSelectButtons
@@ -152,7 +174,6 @@ const ThemesSearchCard = React.createClass( {
 								onSelect={ this.props.select }
 							/>
 						}
-					</SectionNav>
 				</div>
 			);
 		} else {
