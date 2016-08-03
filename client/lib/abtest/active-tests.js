@@ -89,7 +89,6 @@ module.exports = {
 			hideThemePreview: 80,
 		},
 		defaultVariation: 'hideThemePreview',
-		allowExistingUsers: true,
 	},
 	firstView: {
 		datestamp: '20160726',
