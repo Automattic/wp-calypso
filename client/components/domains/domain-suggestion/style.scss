@@ -12,6 +12,15 @@
 		}
 	}
 
+	&.is-clickable {
+		cursor: pointer;
+
+		&:hover {
+			box-shadow: 0 0 0 1px #87a6bc, 0 2px 4px #c8d7e1;
+			z-index: z-index('root', '.domain-suggestion.is-clickable:hover');
+		}
+	}
+
 	&.is-added {
 		background-color: lighten( $gray, 35% );
 
@@ -57,6 +66,25 @@
 			height: 32px;
 		}
 	}
+}
+
+.domain-suggestion__non-button-action {
+	flex: 1 0 auto;
+	min-width: 100px;
+	text-align: right;
+	color: $blue-medium;
+
+	> span {
+		vertical-align: top;
+	}
+
+	@include breakpoint( ">660px" ) {
+		margin: 8px 0 0 0;
+	}
+}
+
+.domain-suggestion__chevron {
+	color: $gray;
 }
 
 .domain-suggestion__action {
