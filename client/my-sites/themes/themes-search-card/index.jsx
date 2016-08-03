@@ -80,7 +80,7 @@ const ThemesSearchCard = React.createClass( {
 	renderMobile( tiers ) {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
-		const isMagicSearchEnabled = config.isEnabled( 'manage/themes/m5' );
+		const isMagicSearchEnabled = config.isEnabled( 'manage/themes/magic_search' );
 		const selectedTiers = isPremiumThemesEnabled ? tiers : [ tiers.find( tier => tier.value === 'free' ) ];
 
 		return (
