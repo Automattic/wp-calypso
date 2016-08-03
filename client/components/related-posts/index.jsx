@@ -12,12 +12,12 @@ import noop from 'lodash/noop';
 import { relatedPostsForPost } from 'state/reader/related-posts/selectors';
 import { getPost } from 'state/reader/posts/selectors';
 import { getSite } from 'state/reader/sites/selectors';
-import SmallPost from 'components/post-card/small';
+import CompactPost from 'components/post-card/compact';
 import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
 
 const RelatedPost = React.createClass( {
 	render() {
-		return <SmallPost
+		return <CompactPost
 			post={ this.props.post }
 			site={ this.props.site }
 			onPostClick={ this.props.onPostClick }
