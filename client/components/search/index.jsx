@@ -49,6 +49,7 @@ const Search = React.createClass( {
 		delayTimeout: PropTypes.number,
 		onSearch: PropTypes.func.isRequired,
 		onSearchChange: PropTypes.func,
+		onSearchOpen: PropTypes.func,
 		onSearchClose: PropTypes.func,
 		analyticsGroup: PropTypes.string,
 		autoFocus: PropTypes.bool,
@@ -77,6 +78,7 @@ const Search = React.createClass( {
 			autoFocus: false,
 			disabled: false,
 			onSearchChange: noop,
+			onSearchOpen: noop,
 			onSearchClose: noop,
 			onKeyDown: noop,
 			disableAutocorrect: false,
@@ -252,6 +254,8 @@ const Search = React.createClass( {
 			input.value = '';
 			input.value = setValue;
 		}
+
+		this.props.onSearchOpen( );
 	},
 
 	render: function() {
