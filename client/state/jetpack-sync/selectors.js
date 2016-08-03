@@ -81,11 +81,14 @@ function isFullSyncing( state, siteId ) {
  * @return {Number}          The percentage of sync completed, expressed as an integer
  */
 function getSyncProgressPercentage( state, siteId ) {
-	const syncStatus = getSyncStatus( state, siteId );
-	const queued = get( syncStatus, 'queue' );
-	const sent = get( syncStatus, 'sent' );
+	const syncStatus = getSyncStatus( state, siteId ),
+		queued = get( syncStatus, 'queue' ),
+		sent = get( syncStatus, 'sent' ),
+		total = get( syncStatus, 'total' ),
+		queuedMultiplier = 0.1,
+		sentMultiplier = 0.9;
 
-	if ( isPendingSyncStart( state, siteId ) || ! queued || ! sent ) {
+	if ( isPendingSyncStart( state, siteId ) || ! queued || ! sent || ! total ) {
 		return 0;
 	}
 
@@ -97,7 +100,14 @@ function getSyncProgressPercentage( state, siteId ) {
 		return sum += value;
 	}, 0 );
 
-	return Math.ceil( countSent / countQueued * 100 );
+	const countTotal = reduce( total, ( sum, value ) => {
+		return sum += value;
+	}, 0 );
+
+	const percentQueued = countQueued / countTotal * queuedMultiplier * 100;
+	const percentSent = countSent / countTotal * sentMultiplier * 100;
+
+	return Math.ceil( percentQueued + percentSent );
 }
 
 export default {
