@@ -13,7 +13,7 @@ const StartSearch = React.createClass( {
 					{ ...this.props }
 					store={ this.props.feedStore }
 					showBlankContent={ false }
-					showProminentFollowButtonOnCards={ true }
+					showPrimaryFollowButtonOnCards={ true }
 					showBack={ false }
 					showMobileBackToSidebar={ false }
 					searchPlaceholderText={ this.props.translate( 'What are you really into?' ) }

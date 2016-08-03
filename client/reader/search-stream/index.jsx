@@ -74,7 +74,7 @@ const SearchCardAdapter = React.createClass( {
 			feed={ this.state.feed }
 			onClick={ this.onCardClick }
 			onCommentClick={ this.onCommentClick }
-			showProminentFollowButton={ this.props.showProminentFollowButtonOnCards } />;
+			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards } />;
 	}
 } );
 

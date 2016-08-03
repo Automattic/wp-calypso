@@ -49,7 +49,7 @@ module.exports = React.createClass( {
 		emptyContent: React.PropTypes.object,
 		className: React.PropTypes.string,
 		showEmptyContent: React.PropTypes.bool,
-		showProminentFollowButtonOnCards: React.PropTypes.bool,
+		showPrimaryFollowButtonOnCards: React.PropTypes.bool,
 		showMobileBackToSidebar: React.PropTypes.bool
 	},
 
@@ -61,7 +61,7 @@ module.exports = React.createClass( {
 			onShowUpdates: noop,
 			className: '',
 			showEmptyContent: true,
-			showProminentFollowButtonOnCards: false,
+			showPrimaryFollowButtonOnCards: false,
 			showMobileBackToSidebar: true
 		};
 	},
@@ -425,7 +425,7 @@ module.exports = React.createClass( {
 						showPostHeader: this.props.showPostHeader,
 						showFollowInHeader: this.props.showFollowInHeader,
 						handleClick: this.showFullPost,
-						showProminentFollowButtonOnCards: this.props.showProminentFollowButtonOnCards
+						showPrimaryFollowButtonOnCards: this.props.showPrimaryFollowButtonOnCards
 					} );
 				}
 

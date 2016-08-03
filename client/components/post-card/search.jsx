@@ -36,7 +36,7 @@ function SearchByline( { post, site, feed, showFollowButton = true } ) {
 	);
 }
 
-export function SearchPostCard( { post, site, feed, onClick = noop, onCommentClick = noop, showProminentFollowButton = false } ) {
+export function SearchPostCard( { post, site, feed, onClick = noop, onCommentClick = noop, showPrimaryFollowButton = false } ) {
 	const featuredImage = post.canonical_image;
 	const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
 	const title = truncate( post.title, {
@@ -46,24 +46,24 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 	const classes = classnames( 'post-card__search', {
 		'has-thumbnail': !! featuredImage,
 		'is-photo': isPhotoOnly,
-		'has-prominent-follow-button': showProminentFollowButton
+		'has-primary-follow-button': showPrimaryFollowButton
 	} );
 
 	return (
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
 		{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
-			{ ! showProminentFollowButton && <div className="post-card__search-social ignore-click">
+			{ ! showPrimaryFollowButton && <div className="post-card__search-social ignore-click">
 				<CommentButton
 					commentCount={ post.discussion.comment_count }
 					tagName="span" showLabel={ false }
 					onClick={ onCommentClick }/>
 				<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } />
 			</div> }
-			{ showProminentFollowButton && <FollowButton siteUrl={ post.site_URL } railcar={ post.railcar } /> }
+			{ showPrimaryFollowButton && <FollowButton siteUrl={ post.site_URL } railcar={ post.railcar } /> }
 			<h1 className="post-card__search-title">
 				<a className="post-card__search-title-link" href={ post.URL }>{ title }</a>
 			</h1>
-			<SearchByline post={ post } site={ site } feed={ feed } showFollowButton={ ! showProminentFollowButton } />
+			<SearchByline post={ post } site={ site } feed={ feed } showFollowButton={ ! showPrimaryFollowButton } />
 			<div className="post-card__search-excerpt">{ post.short_excerpt }</div>
 		</Card>
 	);
