@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFetching } from 'state/products-list/selectors';
+import { isProductsListFetching as isFetching } from 'state/products-list/selectors';
 import { requestProductsList } from 'state/products-list/actions';
 
 class QueryProductsList extends Component {

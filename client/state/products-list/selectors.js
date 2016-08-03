@@ -1,3 +1,3 @@
-export function isFetching( state ) {
+export function isProductsListFetching( state ) {
 	return state.productsList.isFetching;
 }
