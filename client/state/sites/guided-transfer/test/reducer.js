@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 				type: GUIDED_TRANSFER_STATUS_REQUEST,
 				siteId: testSiteId
 			} );
-			expect( state[ testSiteId ] ).to.eql( true );
+			expect( state[ testSiteId ] ).to.be.true;
 		} );
 
 		it( 'should be false when a request completes', () => {
@@ -117,7 +117,7 @@ describe( 'reducer', () => {
 				type: GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 				siteId: testSiteId,
 			} );
-			expect( state[ testSiteId ] ).to.eql( false );
+			expect( state[ testSiteId ] ).to.be.false;
 		} );
 
 		it( 'should be false when a request fails', () => {
@@ -125,7 +125,7 @@ describe( 'reducer', () => {
 				type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 				siteId: testSiteId
 			} );
-			expect( state[ testSiteId ] ).to.eql( false );
+			expect( state[ testSiteId ] ).to.be.false;
 		} );
 
 		it( 'should never persist state', () => {
