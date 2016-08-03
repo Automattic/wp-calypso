@@ -165,7 +165,7 @@ class PlansFeaturesMain extends Component {
 				<FAQItem
 					question={ translate( 'Do you sell domains?' ) }
 					answer={ translate(
-						'Yes! The premium and business plans include a free custom domain. That includes new' +
+						'Yes! The personal, premium, and business plans include a free custom domain. That includes new' +
 						' domains purchased through WordPress.com or your own existing domain that you can map' +
 						' to your WordPress.com site. {{a}}Find out more about domains.{{/a}}',
 						{
