@@ -104,8 +104,8 @@ function getSyncProgressPercentage( state, siteId ) {
 		return sum += value;
 	}, 0 );
 
-	const percentQueued = Math.ceil( countQueued / countTotal * queuedMultiplier * 100 );
-	const percentSent = Math.ceil( countSent / countTotal * sentMultiplier * 100 );
+	const percentQueued = countQueued / countTotal * queuedMultiplier * 100;
+	const percentSent = countSent / countTotal * sentMultiplier * 100;
 
 	return Math.ceil( percentQueued + percentSent );
 }
