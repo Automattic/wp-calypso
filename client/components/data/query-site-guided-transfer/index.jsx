@@ -29,12 +29,9 @@ class QuerySiteGuidedTransfer extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isRequesting ||
-			! nextProps.siteId ||
-			( this.props.siteId === nextProps.siteId ) ) {
-			return;
+		if ( this.props.siteId !== nextProps.siteId ) {
+			this.request( nextProps );
 		}
-		this.request( nextProps );
 	}
 
 	render() {
