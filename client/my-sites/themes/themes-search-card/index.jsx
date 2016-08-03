@@ -127,7 +127,7 @@ const ThemesSearchCard = React.createClass( {
 			return this.renderMobile( tiers );
 		}
 
-		const search = (
+		const searchField = (
 			<Search
 				onSearch={ this.props.onSearch }
 				initialValue={ this.props.search }
@@ -144,7 +144,7 @@ const ThemesSearchCard = React.createClass( {
 			searchCard = (
 				<div className="themes__search-card" data-tip-target="themes-search-card">
 					<SectionNav selectedText={ this.getSelectedTierFormatted( tiers ) }>
-						{ search }
+						{ searchField }
 						{ isPremiumThemesEnabled && ! isJetpack &&
 							<ThemesSelectButtons
 								tier={ this.props.tier }
@@ -158,7 +158,7 @@ const ThemesSearchCard = React.createClass( {
 		} else {
 			searchCard = (
 				<div className="themes__search-card" data-tip-target="themes-search-card">
-					{ search }
+					{ searchField }
 					{ isPremiumThemesEnabled && ! isJetpack &&
 						<ThemesSelectDropdown
 							tier={ this.props.tier }
