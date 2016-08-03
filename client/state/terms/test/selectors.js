@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import TermQueryManager from 'lib/query-manager/term';
 import {
+	getTerm,
 	getTerms,
 	getTermsForQuery,
 	getTermsForQueryIgnoringPage,
@@ -469,6 +470,47 @@ describe( 'selectors', () => {
 					name: 'Ribs'
 				}
 			] );
+		} );
+	} );
+
+	describe( 'getTerm()', () => {
+		it( 'should return null if no site exists', () => {
+			const term = getTerm( {
+				terms: {
+					queries: {}
+				}
+			}, 2916284, 'jetpack-portfolio', 111 );
+
+			expect( term ).to.be.null;
+		} );
+
+		it( 'should return term', () => {
+			const term = getTerm( {
+				terms: {
+					queries: {
+						2916284: {
+							'jetpack-portfolio': new TermQueryManager( {
+								items: {
+									111: {
+										ID: 111,
+										name: 'Chicken and a biscuit'
+									},
+									112: {
+										ID: 112,
+										name: 'Ribs'
+									}
+								},
+								queries: {}
+							} )
+						}
+					}
+				}
+			}, 2916284, 'jetpack-portfolio', 111 );
+
+			expect( term ).to.eql( {
+				ID: 111,
+				name: 'Chicken and a biscuit'
+			} );
 		} );
 	} );
 } );

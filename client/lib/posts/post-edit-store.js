@@ -85,19 +85,6 @@ function getSlug( post ) {
 	return post.slug || null;
 }
 
-function getCategoryIds( post ) {
-	if ( ! post || ! post.categories ) {
-		return;
-	}
-
-	return map( post.categories, function( category ) {
-		if ( category.ID ) {
-			return category.ID;
-		}
-		return category;
-	} );
-}
-
 function getParentId( post ) {
 	if ( ! post || ! post.parent ) {
 		return null;
@@ -201,11 +188,6 @@ function set( attributes ) {
 }
 
 function normalize( post ) {
-	var categoryIds = getCategoryIds( post );
-	if ( categoryIds ) {
-		post.category_ids = categoryIds;
-	}
-
 	post.parent_id = getParentId( post );
 	if ( post.type === 'page' ) {
 		post.page_template = getPageTemplate( post );
@@ -237,29 +219,6 @@ function setRawContent( content ) {
 
 function isContentEmpty( content ) {
 	return ! content || ( content.length < CONTENT_LENGTH_ASSUME_SET && REGEXP_EMPTY_CONTENT.test( content ) );
-}
-
-function receiveCategory( category ) {
-	var existingIndex, temporaryId, postCategories;
-
-	if ( ! category ) {
-		return;
-	}
-
-	postCategories = clone( getCategoryIds( _post ) ) || [];
-	temporaryId = category.temporaryId;
-
-	if ( temporaryId ) {
-		existingIndex = postCategories.indexOf( temporaryId );
-		if ( -1 !== existingIndex ) {
-			postCategories.splice( existingIndex, 1, category.ID );
-		}
-	} else {
-		postCategories.push( category.ID );
-	}
-
-	set( { categories: postCategories } );
-	PostEditStore.emit( 'change' );
 }
 
 function dispatcherCallback( payload ) {
@@ -367,30 +326,6 @@ function dispatcherCallback( payload ) {
 				_previewUrl = utils.getPreviewURL( assign( { preview_URL: action.autosave.preview_URL }, _savedPost ) );
 			}
 			PostEditStore.emit( 'change' );
-			break;
-
-		case 'CREATE_TERM':
-		case 'RECEIVE_ADD_TERM':
-			if ( action.error ||
-					! _post ||
-					! action.data ||
-					! action.siteId ||
-					! Array.isArray( action.data.terms ) ||
-					! action.data.terms.length ) {
-				break;
-			}
-
-			category = action.data.terms[ 0 ];
-			postId = _post.ID;
-
-			// Only add term if it is a category, siteId matches, and transient postId if present matches _post.ID
-			if ( action.siteId !== _post.site_ID ||
-					( category.postId && category.postId !== postId ) ||
-					action.data.termType !== 'categories' ) {
-				break;
-			}
-
-			receiveCategory( category );
 			break;
 	}
 }
