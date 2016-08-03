@@ -49,7 +49,8 @@ module.exports = React.createClass( {
 		emptyContent: React.PropTypes.object,
 		className: React.PropTypes.string,
 		showEmptyContent: React.PropTypes.bool,
-		showProminentFollowButtonOnCards: React.PropTypes.bool
+		showProminentFollowButtonOnCards: React.PropTypes.bool,
+		showMobileBackToSidebar: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -59,7 +60,9 @@ module.exports = React.createClass( {
 			showFollowInHeader: false,
 			onShowUpdates: noop,
 			className: '',
-			showEmptyContent: true
+			showEmptyContent: true,
+			showProminentFollowButtonOnCards: false,
+			showMobileBackToSidebar: true
 		};
 	},
 
@@ -456,9 +459,9 @@ module.exports = React.createClass( {
 
 		return (
 			<Main className={ classnames( 'following', this.props.className ) }>
-				<MobileBackToSidebar>
+				{ this.props.showMobileBackToSidebar && <MobileBackToSidebar>
 					<h1>{ this.props.listName }</h1>
-				</MobileBackToSidebar>
+				</MobileBackToSidebar> }
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.showUpdates } />
 				{ this.props.children }

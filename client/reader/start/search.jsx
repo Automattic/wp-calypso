@@ -14,6 +14,8 @@ const StartSearch = React.createClass( {
 					store={ this.props.feedStore }
 					showBlankContent={ false }
 					showProminentFollowButtonOnCards={ true }
+					showBack={ false }
+					showMobileBackToSidebar={ false }
 					searchPlaceholderText={ this.props.translate( 'What are you really into?' ) }
 				/>
 			</div>
