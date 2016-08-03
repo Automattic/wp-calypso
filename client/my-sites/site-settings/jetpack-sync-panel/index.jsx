@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import debugModule from 'debug';
-import { get } from 'lodash';
+import { get, delay } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,10 +20,8 @@ import {
 	getSyncStatus,
 	scheduleJetpackFullysync
 } from 'state/jetpack-sync/actions';
-import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
 import analytics from 'lib/analytics';
-
 /*
  * Module variables
  */
@@ -36,9 +34,19 @@ const JetpackSyncPanel = React.createClass( {
 	componentWillMount() {
 		this.fetchSyncStatus();
 	},
+	componentWillReceiveProps( nextProps ) {
+		if ( this.shouldDisableSync( nextProps ) ) {
+			delay( this.getFetchSyncStatus, 5000 );
+		}
+	},
+	getFetchSyncStatus() {
+		return this.fetchSyncStatus();
+	},
 
 	fetchSyncStatus() {
-		this.props.getSyncStatus( this.props.siteId );
+		if ( ! get( this.props, 'syncStatus.isRequesting' ) ) {
+			this.props.getSyncStatus( this.props.siteId );
+		}
 	},
 
 	isErrored() {
@@ -47,8 +55,8 @@ const JetpackSyncPanel = React.createClass( {
 		return !! ( syncRequestError || ( syncStatusErrorCount >= SYNC_STATUS_ERROR_NOTICE_THRESHOLD ) );
 	},
 
-	shouldDisableSync() {
-		return !! ( this.props.isFullSyncing || this.props.isPendingSyncStart );
+	shouldDisableSync( props ) {
+		return !! ( get( props, 'isFullSyncing' ) || get( props, 'isPendingSyncStart' ) );
 	},
 
 	onSyncRequestButtonClick( event ) {
@@ -132,7 +140,7 @@ const JetpackSyncPanel = React.createClass( {
 		const finished = get( this.props, 'syncStatus.finished' );
 		const finishedTimestamp = this.moment( parseInt( finished, 10 ) * 1000 );
 		let text = '';
-		if ( this.shouldDisableSync() ) {
+		if ( this.shouldDisableSync( this.props ) ) {
 			text = this.translate( 'Full sync in progress' );
 		} else if ( finishedTimestamp.isValid() ) {
 			text = this.translate( 'Last synced %(ago)s', {
@@ -154,7 +162,7 @@ const JetpackSyncPanel = React.createClass( {
 	},
 
 	renderProgressBar() {
-		if ( ! this.shouldDisableSync() || this.isErrored() ) {
+		if ( ! this.shouldDisableSync( this.props ) || this.isErrored() ) {
 			return null;
 		}
 
@@ -181,7 +189,7 @@ const JetpackSyncPanel = React.createClass( {
 					</div>
 
 					<div className="jetpack-sync-panel__action">
-						<Button onClick={ this.onSyncRequestButtonClick } disabled={ this.shouldDisableSync() }>
+						<Button onClick={ this.onSyncRequestButtonClick } disabled={ this.shouldDisableSync( this.props ) }>
 							{ this.translate( 'Perform full sync', { context: 'Button' } ) }
 						</Button>
 					</div>
@@ -190,7 +198,6 @@ const JetpackSyncPanel = React.createClass( {
 				{ this.renderErrorNotice() }
 				{ this.renderStatusNotice() }
 				{ this.renderProgressBar() }
-				{ this.shouldDisableSync() && <Interval onTick={ this.fetchSyncStatus } period={ EVERY_FIVE_SECONDS } /> }
 			</CompactCard>
 		);
 	}
