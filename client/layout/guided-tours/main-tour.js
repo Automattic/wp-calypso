@@ -14,6 +14,8 @@ import {
 } from 'layout/guided-tours/config-elements';
 import { translate } from 'i18n-calypso';
 
+import Gridicon from 'components/gridicon';
+
 // FIXME(mcsf): This is all kinds of wrong, but circular dependencies are
 // breaking `relevantFeatures`. The fix, IMO, is to split selectors into
 // separate files, as described in #6914
@@ -72,7 +74,15 @@ export const MainTour = makeTour(
 				}
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue icon="my-sites" target="my-sites" click/>
+				<Continue icon="my-sites" target="my-sites" click>
+					{
+						translate( 'Click the {{GridIcon/}} to continue.', {
+							components: {
+								GridIcon: <Gridicon icon="my-sites" size={ 24 } />,
+							}
+						} )
+					}
+				</Continue>
 			</p>
 		</Step>
 
@@ -111,9 +121,13 @@ export const MainTour = makeTour(
 			</p>
 			<p className="guided-tours__actionstep-instructions">
 				<Continue target="site-card-preview" click>
-					{ translate( "your site's name", {
-						context: "Click your site's name to continue.",
-					} ) }
+					{
+						translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
+							components: {
+								strong: <strong/>,
+							},
+						} )
+					}
 				</Continue>
 			</p>
 		</Step>
@@ -151,7 +165,15 @@ export const MainTour = makeTour(
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue target="web-preview__close" icon="cross-small" context={ previewIsNotShowing } />
+				<Continue target="web-preview__close" context={ previewIsNotShowing }>
+					{
+						translate( 'Click the {{GridIcon/}} to continue.', {
+							components: {
+								GridIcon: <Gridicon icon="cross-small" size={ 24 } />,
+							}
+						} )
+					}
+				</Continue>
 			</p>
 		</Step>
 
@@ -165,7 +187,7 @@ export const MainTour = makeTour(
 		>
 			<p className="guided-tours__step-text">
 				{
-					translate( 'Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}}' +
+					translate( 'Change your {{strong}}Theme{{/strong}} to choose a new layout, or {{strong}}Customize{{/strong}} ' +
 											"your theme's colors, fonts, and more.",
 						{
 							components: {
