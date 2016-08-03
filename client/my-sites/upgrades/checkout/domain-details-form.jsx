@@ -57,7 +57,7 @@ export default React.createClass( {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
 			loadFunction: wpcom.getDomainContactInformation.bind( wpcom ),
-			sanitizerFunction: this.trimWhitespace,
+			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError
@@ -70,17 +70,18 @@ export default React.createClass( {
 		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
 	},
 
-	trimWhitespace( fieldValues, onComplete ) {
-		const trimmedFieldValues = Object.assign( {}, fieldValues );
+	sanitize( fieldValues, onComplete ) {
+		const sanitizedFieldValues = Object.assign( {}, fieldValues );
 		this.fieldNames.forEach( ( fieldName ) => {
 			if ( typeof fieldValues[ fieldName ] === 'string' ) {
-				trimmedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
-			} else {
-				trimmedFieldValues[ fieldName ] = fieldValues[ fieldName ];
+				sanitizedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
+				if ( fieldName === 'postalCode' ) {
+					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
+				}
 			}
 		} );
 
-		onComplete( trimmedFieldValues );
+		onComplete( sanitizedFieldValues );
 	},
 
 	validate( fieldValues, onComplete ) {
