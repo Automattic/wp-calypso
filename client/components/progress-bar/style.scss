@@ -9,6 +9,10 @@
 	&.is-compact {
 		height: 4px;
 	}
+
+	&.is-pulsing {
+		@include placeholder( 20% );
+	}
 }
 
 .progress-bar__progress {
