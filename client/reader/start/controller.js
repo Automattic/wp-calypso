@@ -24,10 +24,10 @@ export function start( context ) {
 		searchSlug = context.query.q,
 		mcKey = 'start';
 
-	let store;
+	let feedStore;
 	if ( searchSlug ) {
-		store = feedStreamFactory( 'search:' + searchSlug ),
-		ensureStoreLoading( store, context );
+		feedStore = feedStreamFactory( 'search:' + searchSlug ),
+		ensureStoreLoading( feedStore, context );
 	}
 
 	setPageTitle( i18n.translate( 'Start' ) );
@@ -46,7 +46,7 @@ export function start( context ) {
 		React.createElement( ReduxProvider, { store: context.store },
 			React.createElement( startComponent, {
 				key: 'start',
-				store: store,
+				feedStore: feedStore,
 				query: searchSlug,
 				setPageTitle: setPageTitle,
 				trackScrollPage: trackScrollPage.bind(
