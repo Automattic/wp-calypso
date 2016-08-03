@@ -87,6 +87,12 @@
 		}
 	}
 
+	&.has-prominent-follow-button {
+		.follow-button {
+			float: right;
+		}
+	}
+
 	&.is-photo {
 		min-height: 160px;
 		padding: 20px 20px 12px;
@@ -257,7 +263,7 @@
 }
 
 // Custom styles for Follow button
-.post-card__search .follow-button {
+.post-card__search-byline .follow-button {
 	background: none;
 	border-style: none;
 	font-size: 13px;

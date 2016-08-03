@@ -45,7 +45,8 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 	} );
 	const classes = classnames( 'post-card__search', {
 		'has-thumbnail': !! featuredImage,
-		'is-photo': isPhotoOnly
+		'is-photo': isPhotoOnly,
+		'has-prominent-follow-button': showProminentFollowButton
 	} );
 
 	return (
