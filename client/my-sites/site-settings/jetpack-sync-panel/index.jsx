@@ -20,7 +20,7 @@ import {
 	getSyncStatus,
 	scheduleJetpackFullysync
 } from 'state/jetpack-sync/actions';
-import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
+import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
 import analytics from 'lib/analytics';
 
@@ -190,7 +190,7 @@ const JetpackSyncPanel = React.createClass( {
 				{ this.renderErrorNotice() }
 				{ this.renderStatusNotice() }
 				{ this.renderProgressBar() }
-				{ this.shouldDisableSync() && <Interval onTick={ this.fetchSyncStatus } period={ EVERY_FIVE_SECONDS } /> }
+				{ this.shouldDisableSync() && <Interval onTick={ this.fetchSyncStatus } period={ EVERY_TEN_SECONDS } /> }
 			</CompactCard>
 		);
 	}
