@@ -12,6 +12,12 @@ export function getExpectedResponseKeys() {
 		'finished',
 		'queue',
 		'sent',
-		'is_scheduled'
+		'is_scheduled',
+		'total',
+		'config',
+		'queue_size',
+		'queue_lag',
+		'full_queue_size',
+		'full_queue_lag'
 	];
 }
