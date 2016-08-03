@@ -85,8 +85,8 @@ module.exports = {
 	firstView: {
 		datestamp: '20160726',
 		variations: {
-			disabled: 95,
-			enabled: 5,
+			disabled: 60,
+			enabled: 40,
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: false,
