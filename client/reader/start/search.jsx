@@ -12,6 +12,7 @@ const StartSearch = React.createClass( {
 				<SearchStream
 					{ ...this.props }
 					showBlankContent={ false }
+					showProminentFollowButtonOnCards={ true }
 					searchPlaceholderText={ this.props.translate( 'What are you really into?' ) }
 				/>
 			</div>

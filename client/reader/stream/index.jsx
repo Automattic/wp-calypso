@@ -48,7 +48,8 @@ module.exports = React.createClass( {
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
 		className: React.PropTypes.string,
-		showEmptyContent: React.PropTypes.bool
+		showEmptyContent: React.PropTypes.bool,
+		showProminentFollowButtonOnCards: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -420,7 +421,8 @@ module.exports = React.createClass( {
 						suppressSiteNameLink: this.props.suppressSiteNameLink,
 						showPostHeader: this.props.showPostHeader,
 						showFollowInHeader: this.props.showFollowInHeader,
-						handleClick: this.showFullPost
+						handleClick: this.showFullPost,
+						showProminentFollowButtonOnCards: this.props.showProminentFollowButtonOnCards
 					} );
 				}
 
