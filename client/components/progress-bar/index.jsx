@@ -11,7 +11,8 @@ module.exports = React.createClass( {
 	getDefaultProps() {
 		return {
 			total: 100,
-			compact: false
+			compact: false,
+			isPulsing: false
 		};
 	},
 
@@ -21,7 +22,8 @@ module.exports = React.createClass( {
 		color: React.PropTypes.string,
 		title: React.PropTypes.string,
 		compact: React.PropTypes.bool,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
+		isPulsing: React.PropTypes.bool
 	},
 
 	renderBar() {
@@ -39,7 +41,8 @@ module.exports = React.createClass( {
 
 	render() {
 		const classes = classnames( this.props.className, 'progress-bar', {
-			'is-compact': this.props.compact
+			'is-compact': this.props.compact,
+			'is-pulsing': this.props.isPulsing
 		} );
 		return (
 			<div className={ classes }>
