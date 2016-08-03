@@ -6,6 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import config from 'config';
+import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	getSite,
 	getSiteCollisions,
@@ -16,6 +18,7 @@ import {
 	isJetpackMinimumVersion,
 	getSiteSlug,
 	getSiteDomain,
+	isSitePreviewable,
 	isRequestingSites,
 	isRequestingSite,
 	getSiteByUrl,
@@ -26,6 +29,10 @@ import {
 
 describe( 'selectors', () => {
 	describe( '#getSite()', () => {
+		useSandbox( ( sandbox ) => {
+			sandbox.stub( config, 'isEnabled' ).withArgs( 'preview-layout' ).returns( true );
+		} );
+
 		it( 'should return null if the site is not known', () => {
 			const site = getSite( {
 				sites: {
@@ -36,29 +43,37 @@ describe( 'selectors', () => {
 			expect( site ).to.be.null;
 		} );
 
-		it( 'should return the site object', () => {
+		it( 'should return a normalized site with computed attributes', () => {
 			const site = getSite( {
 				sites: {
 					items: {
-						2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'https://example.com' }
+						2916284: {
+							ID: 2916284,
+							name: 'WordPress.com Example Blog',
+							URL: 'https://example.com',
+							options: {
+								unmapped_url: 'https://example.wordpress.com'
+							}
+						}
 					}
 				}
 			}, 2916284 );
 
-			expect( site ).to.contain( { ID: 2916284, name: 'WordPress.com Example Blog' } );
-		} );
-
-		it( 'should return computed attributes', () => {
-			const site = getSite( {
-				sites: {
-					items: {
-						2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'https://example.com' }
-					}
+			expect( site ).to.eql( {
+				ID: 2916284,
+				name: 'WordPress.com Example Blog',
+				URL: 'https://example.com',
+				title: 'WordPress.com Example Blog',
+				domain: 'example.com',
+				slug: 'example.com',
+				hasConflict: false,
+				is_customizable: false,
+				is_previewable: true,
+				options: {
+					default_post_format: 'standard',
+					unmapped_url: 'https://example.wordpress.com'
 				}
-			}, 2916284 );
-
-			expect( site ).to.contain( { ID: 2916284, title: 'WordPress.com Example Blog', domain: 'example.com', slug: 'example.com' } );
-			expect( site.options ).to.contain( { default_post_format: 'standard' } );
+			} );
 		} );
 	} );
 
@@ -499,6 +514,118 @@ describe( 'selectors', () => {
 			}, 77203199 );
 
 			expect( domain ).to.equal( 'testtwosites2014.wordpress.com' );
+		} );
+	} );
+
+	describe( 'isSitePreviewable()', () => {
+		context( 'config disabled', () => {
+			useSandbox( ( sandbox ) => {
+				sandbox.stub( config, 'isEnabled' ).withArgs( 'preview-layout' ).returns( false );
+			} );
+
+			it( 'should return false', () => {
+				const isPreviewable = isSitePreviewable( {
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								options: {
+									unmapped_url: 'https://example.wordpress.com'
+								}
+							}
+						}
+					}
+				}, 77203199 );
+
+				expect( isPreviewable ).to.be.false;
+			} );
+		} );
+
+		context( 'config enabled', () => {
+			useSandbox( ( sandbox ) => {
+				sandbox.stub( config, 'isEnabled' ).withArgs( 'preview-layout' ).returns( true );
+			} );
+
+			it( 'should return null if the site is not known', () => {
+				const isPreviewable = isSitePreviewable( {
+					sites: {
+						items: {}
+					}
+				}, 77203199 );
+
+				expect( isPreviewable ).to.be.null;
+			} );
+
+			it( 'should return false if the site is VIP', () => {
+				const isPreviewable = isSitePreviewable( {
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								is_vip: true,
+								options: {
+									unmapped_url: 'https://example.wordpress.com'
+								}
+							}
+						}
+					}
+				}, 77203199 );
+
+				expect( isPreviewable ).to.be.false;
+			} );
+
+			it( 'should return false if the site unmapped URL is unknown', () => {
+				const isPreviewable = isSitePreviewable( {
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com'
+							}
+						}
+					}
+				}, 77203199 );
+
+				expect( isPreviewable ).to.be.false;
+			} );
+
+			it( 'should return false if the site unmapped URL is non-HTTPS', () => {
+				const isPreviewable = isSitePreviewable( {
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'http://example.com',
+								options: {
+									unmapped_url: 'http://example.com'
+								}
+							}
+						}
+					}
+				}, 77203199 );
+
+				expect( isPreviewable ).to.be.false;
+			} );
+
+			it( 'should return true if the site unmapped URL is HTTPS', () => {
+				const isPreviewable = isSitePreviewable( {
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								options: {
+									unmapped_url: 'https://example.wordpress.com'
+								}
+							}
+						}
+					}
+				}, 77203199 );
+
+				expect( isPreviewable ).to.be.true;
+			} );
 		} );
 	} );
 
