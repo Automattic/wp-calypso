@@ -51,14 +51,17 @@ const DomainSuggestion = React.createClass( {
 		}, extraClasses );
 
 		return (
-			<div className={ classes } onClick={ clickableRow ? this.props.onButtonClick : undefined } aria-role={ clickableRow ? 'button' : undefined }>
+			<div
+				className={ classes }
+				onClick={ clickableRow ? this.props.onButtonClick : undefined }
+				aria-role={ clickableRow ? 'button' : undefined }>
 				<div className="domain-suggestion__content">
 					{ children }
 					<DomainProductPrice
 						rule={ priceRule }
 						price={ price }/>
 				</div>
-				<div className={ clickableRow? 'domain-suggestion__non-button-action' : 'domain-suggestion__action' }>
+				<div className={ clickableRow ? 'domain-suggestion__non-button-action' : 'domain-suggestion__action' }>
 					{ clickableRow ? this.renderNonButton() : this.renderButton() }
 				</div>
 			</div>
