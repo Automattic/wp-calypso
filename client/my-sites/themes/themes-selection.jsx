@@ -14,7 +14,7 @@ import ThemesList from 'components/themes-list';
 import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
-import { getFilterFromValue, filterIsValid } from './theme-filters.js';
+import { getFilterFromTerm, filterIsValid } from './theme-filters.js';
 
 const ThemesSelection = React.createClass( {
 	propTypes: {
@@ -61,7 +61,7 @@ const ThemesSelection = React.createClass( {
 		const { filter } = this.props;
 		if ( filter ) {
 			return filter.split( ',' ).map(
-				value => getFilterFromValue( value )
+				value => getFilterFromTerm( value )
 			).join( ' ' ) + ' ';
 		}
 		return '';

@@ -177,27 +177,27 @@ function getTermTable() {
 }
 
 /**
- * Given the value part, returns a complete filter
- * in "key:value" search-box format.
+ * Given the 'term' part, returns a complete filter
+ * in "taxonomy:term" search-box format.
  *
- * @param {string} value - the term part of a filter
- * @returns {string} - complete key:value filter, or empty string if value is not a term
+ * @param {string} term - the term slug
+ * @returns {string} - complete taxonomy:term filter, or empty string if term is not valid
  */
-export function getFilterFromValue( value ) {
+export function getFilterFromTerm( term ) {
 	const terms = getTermTable();
-	if ( terms[ value ] ) {
-		return `${ terms[ value ] }:${ value }`;
+	if ( terms[ term ] ) {
+		return `${ terms[ term ] }:${ term }`;
 	}
 	return '';
 }
 
 /**
- * Checks that [key, value] is a valid [taxonomy, term] pair.
+ * Checks that [taxonomy, term] is a valid theme taxonomy pair.
  *
- * @param {string} key - taxonomy
- * @param {string} value - term
+ * @param {string} taxonomy - theme taxonomy
+ * @param {string} term - the taxonomy term slug
  * @returns {boolean} true if pair is valid
  */
-export function filterIsValid( key, value ) {
-	return getTermTable()[ value ] === key;
+export function filterIsValid( taxonomy, term ) {
+	return getTermTable()[ term ] === taxonomy;
 }
