@@ -79,14 +79,21 @@ function getLocation() {
 export function recordTrack( eventName, eventProperties ) {
 	debug( 'reader track', ...arguments );
 	const subCount = SubscriptionStore.getTotalSubscriptions();
+
+	// Add location as ui_algo prop
+	const location = getLocation();
+	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
+
 	if ( subCount != null ) {
 		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
 	}
+
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'blog_id' in eventProperties && 'post_id' in eventProperties && ! ( 'is_jetpack' in eventProperties ) ) {
 			console.warn( 'consider using recordTrackForPost...', eventName, eventProperties ); //eslint-disable-line no-console
 		}
 	}
+
 	tracks.recordEvent( eventName, eventProperties );
 }
 
