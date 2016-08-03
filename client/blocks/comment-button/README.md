@@ -6,7 +6,7 @@ This component is used to display a button with an embedded number indicator.
 #### How to use:
 
 ```js
-import CommentButton from 'components/comment-button';
+import CommentButton from 'blocks/comment-button';
 
 render() {
 	return (

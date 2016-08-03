@@ -21,7 +21,7 @@ const ReactDom = require( 'react-dom' ),
  */
 const
 	Card = require( 'components/card' ),
-	CommentButton = require( 'components/comment-button' ),
+	CommentButton = require( 'blocks/comment-button' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	EmbedContainer = require( 'components/embed-container' ),
 	LikeButton = require( 'reader/like-button' ),
