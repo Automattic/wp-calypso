@@ -51,7 +51,7 @@ const DomainSuggestion = React.createClass( {
 		}, extraClasses );
 
 		return (
-			<div className={ classes } onClick={ clickableRow ? this.props.onButtonClick : undefined }>
+			<div className={ classes } onClick={ clickableRow ? this.props.onButtonClick : undefined } aria-role={ clickableRow ? 'button' : undefined }>
 				<div className="domain-suggestion__content">
 					{ children }
 					<DomainProductPrice
