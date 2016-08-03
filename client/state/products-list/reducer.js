@@ -15,7 +15,7 @@ import { productsListSchema } from './schema';
 import { createReducer } from 'state/utils';
 
 // Stores the complete list of products, indexed by the product key
-export const items = createReducer( null, {
+export const items = createReducer( {}, {
 	[ PRODUCTS_LIST_RECEIVE ]: ( state, action ) => action.productsList,
 }, productsListSchema );
 
