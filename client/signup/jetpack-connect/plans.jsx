@@ -87,8 +87,7 @@ const Plans = React.createClass( {
 						<div id="plans" className="plans has-sidebar">
 							<PlansFeaturesMain
 								site={ selectedSite }
-								intervalType="yearly"
-								hideFreePlan={ false } />
+								intervalType="yearly" />
 						</div>
 					</div>
 				</Main>

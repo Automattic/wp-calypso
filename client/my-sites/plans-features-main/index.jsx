@@ -43,7 +43,7 @@ class PlansFeaturesMain extends Component {
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
 		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
-			let jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
+			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
 			}
@@ -55,7 +55,7 @@ class PlansFeaturesMain extends Component {
 		}
 
 		if ( this.isJetpackSite( site ) ) {
-			let jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ];
+			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
 			}
