@@ -215,14 +215,16 @@ export const queries = ( () => {
 			return applyToManager( state, siteId, 'removeItem', false, postId );
 		},
 		[ SERIALIZE ]: ( state ) => {
-			return mapValues( state, ( manager ) => manager.toJSON() );
+			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
 		},
 		[ DESERIALIZE ]: ( state ) => {
 			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
 				return {};
 			}
 
-			return mapValues( state, ( manager ) => PostQueryManager.parse( manager ) );
+			return mapValues( state, ( { data, options } ) => {
+				return new PostQueryManager( data, options );
+			} );
 		}
 	} );
 } )();

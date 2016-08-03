@@ -18,22 +18,6 @@ describe( 'QueryManager', () => {
 		manager = new QueryManager();
 	} );
 
-	describe( '.parse()', () => {
-		it( 'should return an instance from a serialized JSON string', () => {
-			manager = QueryManager.parse( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"[]":{"itemKeys":[152],"found":1}}},"options":{"itemKey":"ID"}}' );
-
-			expect( manager.getItems() ).to.eql( [ { ID: 144 }, { ID: 152 } ] );
-			expect( manager.getItems( {} ) ).to.eql( [ { ID: 152 } ] );
-		} );
-
-		it( 'should return a new empty instance on invalid input', () => {
-			manager = QueryManager.parse( '{"data":{"item"!!!---INVALID---"ID"}}' );
-
-			expect( manager ).to.be.an.instanceof( QueryManager );
-			expect( manager.getItems() ).to.eql( [] );
-		} );
-	} );
-
 	describe( '#constructor()', () => {
 		it( 'should accept initial data', () => {
 			manager = new QueryManager( {
@@ -58,15 +42,6 @@ describe( 'QueryManager', () => {
 			manager = manager.receive( { name: 'foo' } );
 
 			expect( manager.data.items ).to.have.keys( [ 'foo' ] );
-		} );
-	} );
-
-	describe( '#toJSON()', () => {
-		it( 'should return a serialized JSON string', () => {
-			manager = manager.receive( { ID: 144 } );
-			manager = manager.receive( { ID: 152 }, { query: {}, found: 1 } );
-
-			expect( manager.toJSON() ).to.equal( '{"data":{"items":{"144":{"ID":144},"152":{"ID":152}},"queries":{"[]":{"itemKeys":[152],"found":1}}},"options":{"itemKey":"ID"}}' );
 		} );
 	} );
 

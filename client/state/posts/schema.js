@@ -18,9 +18,45 @@ export const queriesSchema = {
 	patternProperties: {
 		// Site ID
 		'^\\d+$': {
-			// Serialized QueryManager is a JSON string
-			type: 'string',
-			pattern: '^\\{.*\\}$'
+			type: 'object',
+			properties: {
+				data: {
+					type: 'object',
+					required: [ 'items', 'queries' ],
+					properties: {
+						items: {
+							type: 'object'
+						},
+						queries: {
+							patternProperties: {
+								// Query key pairs
+								'^\\[.*\\]$': {
+									type: 'object',
+									required: [ 'itemKeys' ],
+									properties: {
+										itemKeys: {
+											type: 'array'
+										},
+										found: {
+											type: 'number'
+										}
+									}
+								}
+							},
+							additionalProperties: false
+						}
+					}
+				},
+				options: {
+					type: 'object',
+					required: [ 'itemKey' ],
+					properties: {
+						itemKey: {
+							type: 'string'
+						}
+					}
+				}
+			}
 		}
 	},
 	additionalProperties: false
