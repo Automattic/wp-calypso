@@ -645,7 +645,11 @@
 }
 
 #habla_window_div #habla_sizebutton_a:hover {
-	background-color: rgba(255, 255, 255, 0.15);
+	background-color: transparent !important;
+}
+
+.olrk-state-compressed #habla_window_div #habla_sizebutton_a:hover {
+	background-color: lighten($blue-wordpress, 20%) !important;
 }
 
 #habla_window_div #habla_closebutton_a {
@@ -920,7 +924,7 @@
 }
 
 .olrk-state-compressed .olrk-fixed-bottom #habla_topbar_div {
-	-webkit-animation-name:tab_in_bottom;
+	-webkit-animation-name: none !important;
 	-webkit-animation-duration:1s;
 	-webkit-animation-iteration-count:1;
 	-webkit-animation-direction:alternate;
@@ -1031,8 +1035,8 @@ div.hbl_pal_main_width {
 	margin-right: -10px;
 	background: transparent;
 	padding: 0;
-	width: 26px;
-	height: 26px;
+	width: 32px;
+	height: 32px;
 }
 
 .olrk-state-compressed #habla_panel_div {
@@ -1041,7 +1045,8 @@ div.hbl_pal_main_width {
 
 .olrk-state-compressed #habla_window_div #habla_sizebutton_a {
 	background-color: $blue-medium;
-	padding: 5px 5px 5px 5px;
+	transition: background-color .2s;
+	padding: 8px;
 	text-decoration: none;
 	margin: 0 !important;
 	border-radius: 0 !important;
@@ -1055,5 +1060,5 @@ div.hbl_pal_main_width {
 }
 
 .olrk-state-compressed div.hbl_pal_main_width {
-	width: 28px !important;
+	width: 32px !important;
 }
