@@ -28,6 +28,7 @@ export default class FormToggle extends PureComponent {
 		super( ...arguments );
 
 		this.onKeyDown = this.onKeyDown.bind( this );
+		this.onClick = this.onClick.bind( this );
 	}
 
 	componentWillMount() {
@@ -35,14 +36,23 @@ export default class FormToggle extends PureComponent {
 	}
 
 	onKeyDown( event ) {
-		if ( ! this.props.disabled ) {
-			if ( event.key === 'Enter' || event.key === ' ' ) {
-				event.preventDefault();
-				this.props.onChange();
-			}
+		if ( this.props.disabled ) {
+			return;
 		}
+
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			this.props.onChange();
+		}
+
 		if ( this.props.onKeyDown ) {
 			this.props.onKeyDown( event );
+		}
+	}
+
+	onClick() {
+		if ( ! this.props.disabled && this.props.onChange ) {
+			this.props.onChange();
 		}
 	}
 
@@ -65,7 +75,7 @@ export default class FormToggle extends PureComponent {
 					<span className="form-toggle__switch"
 						disabled={ this.props.disabled }
 						id={ id }
-						onClick={ this.props.onChange }
+						onClick={ this.onClick }
 						onKeyDown={ this.onKeyDown }
 						role="checkbox"
 						aria-checked={ this.props.checked }
