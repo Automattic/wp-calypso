@@ -8,6 +8,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
+import Gridicon from 'components/gridicon';
+import { abtest } from 'lib/abtest';
 
 const DomainSuggestion = React.createClass( {
 
@@ -34,22 +36,30 @@ const DomainSuggestion = React.createClass( {
 		);
 	},
 
+	renderNonButton() {
+		return (
+			<span>{ this.props.buttonContent } <Gridicon className="domain-suggestion__chevron" icon="chevron-right" /></span>
+		);
+	},
+
 	render() {
+		const clickableRow = true;//abtest( 'domainSuggestionClickableRow' ) === 'clickableRow';
 		const { price, isAdded, extraClasses, children, priceRule } = this.props;
 		let classes = classNames( 'domain-suggestion', 'card', 'is-compact', {
-			'is-added': isAdded
+			'is-added': isAdded,
+			'is-clickable': clickableRow,
 		}, extraClasses );
 
 		return (
-			<div className={ classes }>
+			<div className={ classes } onClick={ clickableRow ? this.props.onButtonClick : undefined }>
 				<div className="domain-suggestion__content">
 					{ children }
 					<DomainProductPrice
 						rule={ priceRule }
 						price={ price }/>
 				</div>
-				<div className="domain-suggestion__action">
-					{ this.renderButton() }
+				<div className={ clickableRow? 'domain-suggestion__non-button-action' : 'domain-suggestion__action' }>
+					{ clickableRow ? this.renderNonButton() : this.renderButton() }
 				</div>
 			</div>
 		);
