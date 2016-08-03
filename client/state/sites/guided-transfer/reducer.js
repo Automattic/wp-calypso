@@ -17,21 +17,20 @@ import { createReducer } from 'state/utils';
 
 // Stores the status of guided transfers per site
 export const status = createReducer( {}, {
-	[ GUIDED_TRANSFER_STATUS_RECEIVE ]: ( state, action ) => Object.assign( {}, state, {
-		[ action.siteId ]: action.guidedTransferStatus,
-	} )
+	[ GUIDED_TRANSFER_STATUS_RECEIVE ]: ( state, action ) =>
+		( { ...state, [ action.siteId ]: action.guidedTransferStatus } )
 }, guidedTransferStatusSchema );
 
 // Tracks whether we're fetching the status of a guided transfer for a site
 export const isFetching = createReducer( {}, {
 	[ GUIDED_TRANSFER_STATUS_REQUEST ]: ( state, action ) =>
-		Object.assign( {}, state, { [ action.siteId ]: true } ),
+		( { ...state, [ action.siteId ]: true } ),
 
 	[ GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS ]: ( state, action ) =>
-		Object.assign( {}, state, { [ action.siteId ]: false } ),
+		( { ...state, [ action.siteId ]: false } ),
 
 	[ GUIDED_TRANSFER_STATUS_REQUEST_FAILURE ]: ( state, action ) =>
-		Object.assign( {}, state, { [ action.siteId ]: false } ),
+		( { ...state, [ action.siteId ]: false } ),
 } );
 
 export default combineReducers( {
