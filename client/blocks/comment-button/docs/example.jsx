@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CommentButton from 'components/comment-button';
+import CommentButton from 'blocks/comment-button';
 import Card from 'components/card';
 
 export default React.createClass( {
