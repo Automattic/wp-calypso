@@ -203,9 +203,10 @@ const FeedStream = React.createClass( {
 	},
 
 	render() {
+		const blankContent = this.props.showBlankContent ? <BlankContent suggestions={ this.state.suggestions }/> : null;
 		const emptyContent = this.props.query
 			? <EmptyContent query={ this.props.query } />
-			: this.props.showBlankContent ? <BlankContent suggestions={ this.state.suggestions }/> : null;
+			: blankContent;
 
 		// Override showing of EmptyContent in Reader stream
 		let showEmptyContent = true;
