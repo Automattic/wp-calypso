@@ -92,6 +92,7 @@
 .seo-preview-pane__preview {
 	min-width: 400px;
 	height: auto;
+	margin: 0 10px;
 
 	background-color: $white;
 	border: 1px solid lighten( $gray, 25% );

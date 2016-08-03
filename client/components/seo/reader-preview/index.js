@@ -51,7 +51,7 @@ export class ReaderPreview extends PureComponent {
 							<a className="reader-post-byline__date-link" href="#">Now</a>
 						</li>
 					</ul>
-					<div className="post-excerpt"><p>We are excited to announce that Mildred Bay, MD is joining our practice in September 2016. She has been in practice in Port Angeles for the past 11 years and is relocating with her family to the Seattle area at the &ellip;</p></div>
+					<div className="post-excerpt"><p>We are excited to announce that Mildred Bay, MD is joining our practice in September 2016. She has been in practice in Port Angeles for the past 11 years and is relocating with her family to the Seattle area at the We are excited to announce that Mildred Bay, MD is joining our practice in September 2016. She has been in practice in Port Angeles for the past 11 years and is relocating with her family to the Seattle area at the</p></div>
 				</div>
 			</article>
 		);

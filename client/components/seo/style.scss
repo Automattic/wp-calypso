@@ -275,6 +275,7 @@
 
 .reader-preview__post {
 	max-width: 540px;
+	pointer-events: none;
 
 	.reader__post-header {
 		margin: 0;
