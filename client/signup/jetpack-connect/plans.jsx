@@ -25,6 +25,7 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { requestPlans } from 'state/plans/actions';
 import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
+import LiveChatButton from './live-chat-button';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 
@@ -154,6 +155,7 @@ const Plans = React.createClass( {
 								intervalType="yearly" />
 						</div>
 					</div>
+					<LiveChatButton />
 				</Main>
 			</div>
 		);
