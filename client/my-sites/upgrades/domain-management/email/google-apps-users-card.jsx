@@ -95,9 +95,10 @@ const GoogleAppsUsers = React.createClass( {
 
 			if ( this.isNewUser( user ) ) {
 				status = null;
-				text = this.translate( 'Please be patient while we are setting up %(email)s for you.', {
-					args: { email: user.email }
-				} );
+				text = this.translate(
+					'We are setting up %(email)s for you. It should start working immediately, but may take up to 24 hours.',
+					{ args: { email: user.email } }
+				);
 				supportLink = null;
 			}
 
