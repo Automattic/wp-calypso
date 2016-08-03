@@ -15,6 +15,7 @@ import {
 	isJetpackModuleActive,
 	isJetpackMinimumVersion,
 	getSiteSlug,
+	getSiteDomain,
 	isRequestingSites,
 	isRequestingSite,
 	getSiteByUrl,
@@ -39,12 +40,25 @@ describe( 'selectors', () => {
 			const site = getSite( {
 				sites: {
 					items: {
-						2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
+						2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'https://example.com' }
 					}
 				}
 			}, 2916284 );
 
-			expect( site ).to.eql( { ID: 2916284, name: 'WordPress.com Example Blog' } );
+			expect( site ).to.contain( { ID: 2916284, name: 'WordPress.com Example Blog' } );
+		} );
+
+		it( 'should return computed attributes', () => {
+			const site = getSite( {
+				sites: {
+					items: {
+						2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'https://example.com' }
+					}
+				}
+			}, 2916284 );
+
+			expect( site ).to.contain( { ID: 2916284, title: 'WordPress.com Example Blog', domain: 'example.com', slug: 'example.com' } );
+			expect( site.options ).to.contain( { default_post_format: 'standard' } );
 		} );
 	} );
 
@@ -414,6 +428,77 @@ describe( 'selectors', () => {
 			}, 77203199 );
 
 			expect( slug ).to.equal( 'testtwosites2014.wordpress.com::path::to::site' );
+		} );
+	} );
+
+	describe( '#getSiteDomain()', () => {
+		beforeEach( () => {
+			getSiteCollisions.memoizedSelector.cache.clear();
+		} );
+
+		it( 'should return null if the site is not known', () => {
+			const domain = getSiteDomain( {
+				sites: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( domain ).to.be.null;
+		} );
+
+		it( 'should strip the protocol off', () => {
+			const domain = getSiteDomain( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.com',
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( domain ).to.equal( 'example.com' );
+		} );
+
+		it( 'should return the unmapped slug for a redirect site', () => {
+			const domain = getSiteDomain( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							options: {
+								is_redirect: true,
+								unmapped_url: 'https://example.wordpress.com'
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( domain ).to.equal( 'example.wordpress.com' );
+		} );
+
+		it( 'should return the site slug for a conflicting site', () => {
+			const domain = getSiteDomain( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							jetpack: false,
+							options: {
+								is_redirect: false,
+								unmapped_url: 'https://testtwosites2014.wordpress.com'
+							}
+						},
+						77203074: { ID: 77203074, URL: 'https://example.com', jetpack: true }
+					}
+				}
+			}, 77203199 );
+
+			expect( domain ).to.equal( 'testtwosites2014.wordpress.com' );
 		} );
 	} );
 
