@@ -115,7 +115,7 @@ const ThemesSearchCard = React.createClass( {
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
-		const isM5Enabled = config.isEnabled( 'manage/themes/m5' );
+		const isM5Enabled = config.isEnabled( 'manage/themes/magic_search' );
 
 		const tiers = [
 			{ value: 'all', label: this.translate( 'All' ) },

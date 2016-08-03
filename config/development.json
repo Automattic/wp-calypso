@@ -85,7 +85,7 @@
 		"manage/themes-jetpack": true,
 		"manage/themes/details": true,
 		"manage/themes/logged-out": true,
-		"manage/themes/m5": true,
+		"manage/themes/magic_search": true,
 		"me/account": true,
 		"me/billing-history": true,
 		"me/find-friends": false,
