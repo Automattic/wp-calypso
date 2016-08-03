@@ -113,6 +113,8 @@ module.exports = {
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
 	 */
 	siteSelection( context, next ) {
+		const Main = require( 'components/main' );
+		const JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
 		const siteID = route.getSiteFragment( context.path );
 		const analyticsPageTitle = 'Sites';
 		const basePath = route.sectionify( context.path );
@@ -188,6 +190,12 @@ module.exports = {
 				if ( sites.select( siteID ) ) {
 					onSelectedSiteAvailable();
 				} else if ( ( currentUser.visible_site_count !== sites.getVisible().length ) ) {
+					ReactDom.render( (
+						<Main>
+							<JetpackManageErrorPage template="waitForJetpackSite" />
+						</Main>
+					), document.getElementById( 'primary' ) );
+
 					setTimeout( () => {
 						page.redirect( context.canonicalPath );
 					}, 1000 );

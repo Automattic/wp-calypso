@@ -58,7 +58,11 @@ module.exports = React.createClass( {
 				action: this.translate( 'View Plans' ),
 				actionURL: '/plans/' + ( this.props.site ? this.props.site.slug : '' )
 			},
-			default: {}
+			waitForJetpackSite: {
+				title: this.translate( 'Waiting for site to connect…' ),
+				illustration: '/calypso/images/drake/drake-jetpack.svg',
+			},
+			'default': {}
 		};
 		return Object.assign( {}, defaults[ this.props.template ] || defaults.default, this.props );
 	},
