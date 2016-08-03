@@ -5,17 +5,15 @@ var debug = require( 'debug' )( 'calypso:site' ),
 	i18n = require( 'i18n-calypso' ),
 	isEqual = require( 'lodash/isEqual' ),
 	find = require( 'lodash/find' ),
-	omit = require( 'lodash/omit' ),
-	trim = require( 'lodash/trim' );
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies
  */
 var wpcom = require( 'lib/wp' ),
-	config = require( 'config' ),
 	notices = require( 'notices' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	isHttps = require( 'lib/url' ).isHttps;
+	getAttributes = require( './computed-attributes' );
 
 function Site( attributes ) {
 	if ( ! ( this instanceof Site ) ) {
@@ -86,46 +84,7 @@ Site.prototype.set = function( attributes ) {
  * Update any computed attributes
  */
 Site.prototype.updateComputedAttributes = function() {
-	/**
-	 * If the user has no access to site.options create it as an empty
-	 * attribute to avoid potential errors when trying to access its sub properties
-	 */
-	this.options = this.options || {};
-
-	// Add URL without protocol as a `domain` attribute
-	if ( this.URL ) {
-		this.domain = this.URL.replace( /^https?:\/\//, '' );
-		this.slug = this.domain.replace( /\//g, '::' );
-	}
-	this.title = trim( this.name ) || this.domain;
-
-	// If a WordPress.com site has a mapped domain create a `wpcom_url`
-	// attribute to allow site selection with either domain.
-	if ( this.options && this.options.is_mapped_domain && ! this.is_jetpack ) {
-		this.wpcom_url = this.options.unmapped_url.replace( /^https?:\/\//, '' );
-	}
-
-	// If a site has an `is_redirect` property use the `unmapped_url`
-	// for the slug and domain to match the wordpress.com original site.
-	if ( ( this.options && this.options.is_redirect ) || this.hasConflict ) {
-		this.slug = this.options.unmapped_url.replace( /^https?:\/\//, '' );
-		this.domain = this.slug;
-	}
-
-	// The 'standard' post format is saved as an option of '0'
-	if ( ! this.options.default_post_format || this.options.default_post_format === '0' ) {
-		this.options.default_post_format = 'standard';
-	}
-	this.is_previewable = !! (
-		config.isEnabled( 'preview-layout' ) &&
-		this.options.unmapped_url &&
-		! this.is_vip &&
-		isHttps( this.options.unmapped_url )
-	);
-	this.is_customizable = !! (
-		this.capabilities &&
-		this.capabilities.edit_theme_options
-	);
+	Object.assign( this, getAttributes( this ) );
 };
 
 /**
