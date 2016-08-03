@@ -3,7 +3,7 @@
 import React from 'react';
 
 import { getSectionName, isPreviewShowing } from 'state/ui/selectors';
-import { isNewUser } from 'state/ui/guided-tours/selectors';
+//import { isNewUser } from 'state/ui/guided-tours/selectors';
 import { isFetchingNextPage, getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import {
 	makeTour,
@@ -14,6 +14,11 @@ import {
 	Continue,
 } from 'layout/guided-tours/config-elements';
 import { translate } from 'i18n-calypso';
+
+// FIXME(mcsf): This is all kinds of wrong, but circular dependencies are
+// breaking `relevantFeatures`. The fix, IMO, is to split selectors into
+// separate files, as described in #6914
+const isNewUser = () => true;
 
 const previewIsNotShowing = state =>
 	! isPreviewShowing( state );
