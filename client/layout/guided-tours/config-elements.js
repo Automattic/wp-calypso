@@ -55,12 +55,13 @@ export class Tour extends Component {
 		const { context, children, isValid, stepName } = this.props;
 		const nextStep = find( children, stepComponent =>
 			stepComponent.props.name === stepName );
+		const isLastStep = nextStep === children[ children.length - 1 ];
 
 		if ( ! nextStep || ! isValid( context ) ) {
 			return null;
 		}
 
-		return React.cloneElement( nextStep, { isValid } );
+		return React.cloneElement( nextStep, { isValid, isLastStep } );
 	}
 }
 
@@ -100,6 +101,10 @@ export class Step extends Component {
 	componentWillUnmount() {
 		global.window.removeEventListener( 'resize', this.onScrollOrResize );
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+
+		if ( this.props.isLastStep ) {
+			console.log( 'last step unmounted' );
+		}
 	}
 
 	onScrollOrResize = debounce( () => {
