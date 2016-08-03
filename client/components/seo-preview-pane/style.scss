@@ -1,6 +1,7 @@
 .seo-preview-pane {
 	display: flex;
 	flex-direction: column;
+	height: 100%;
 
 	@include breakpoint( ">660px" ) {
 		flex-direction: row;
@@ -85,10 +86,10 @@
 
 .seo-preview-pane__preview-area {
 	margin: 10px auto;
+	overflow-y: scroll;
 }
 
 .seo-preview-pane__preview {
-	padding: 10px;
 	min-width: 400px;
 	height: auto;
 

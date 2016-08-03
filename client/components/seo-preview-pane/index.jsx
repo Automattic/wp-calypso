@@ -12,6 +12,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
+import ReaderPreview from 'components/seo/reader-preview';
 import FacebookPreview from 'components/seo/facebook-preview';
 import TwitterPreview from 'components/seo/twitter-preview';
 import SearchPreview from 'components/seo/search-preview';
@@ -25,7 +26,17 @@ const ComingSoonMessage = translate => (
 	</div>
 );
 
-const GooglePreview = site =>
+const PreviewReader = site =>
+	<ReaderPreview
+		title={ site.name }
+		slug={ site.slug }
+		url={ site.URL }
+		description={ site.description }
+		siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
+		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+	/>;
+
+const PreviewGoogle = site =>
 	<SearchPreview
 		title={ site.name }
 		url={ site.URL }
@@ -77,7 +88,7 @@ export class SeoPreviewPane extends PureComponent {
 		super( props );
 
 		this.state = {
-			selectedService: 'google'
+			selectedService: 'wordpress'
 		};
 
 		this.selectPreview = this.selectPreview.bind( this );
@@ -111,6 +122,7 @@ export class SeoPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview }>
+						<SocialItem service="wordpress" />
 						<SocialItem service="google" />
 						<SocialItem service="facebook" />
 						<SocialItem service="twitter" />
@@ -119,8 +131,9 @@ export class SeoPreviewPane extends PureComponent {
 				<div className="seo-preview-pane__preview-area">
 					<div className="seo-preview-pane__preview">
 						{ get( {
+							wordpress: PreviewReader( site ),
 							facebook: PreviewFacebook( site ),
-							google: GooglePreview( site ),
+							google: PreviewGoogle( site ),
 							twitter: PreviewTwitter( site )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 					</div>
