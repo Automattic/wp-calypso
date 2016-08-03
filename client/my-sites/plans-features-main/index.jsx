@@ -49,7 +49,12 @@ class PlansFeaturesMain extends Component {
 			}
 			return (
 				<div className="plans-features-main__group">
-					<PlanFeatures plans={ jetpackPlans } selectedFeature={ selectedFeature } />
+					<PlanFeatures
+						plans={ jetpackPlans }
+						selectedFeature={ selectedFeature }
+						onUpgradeClick={ onUpgradeClick }
+						isInSignup={ isInSignup }
+					/>
 				</div>
 			);
 		}
@@ -61,7 +66,12 @@ class PlansFeaturesMain extends Component {
 			}
 			return (
 				<div className="plans-features-main__group">
-					<PlanFeatures plans={ jetpackPlans } selectedFeature={ selectedFeature } />
+					<PlanFeatures
+						plans={ jetpackPlans }
+						selectedFeature={ selectedFeature }
+						onUpgradeClick={ onUpgradeClick }
+						isInSignup={ isInSignup }
+					/>
 				</div>
 			);
 		}

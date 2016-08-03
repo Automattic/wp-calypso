@@ -17,7 +17,9 @@ import observe from 'lib/mixins/data-observe';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
+import * as upgradesActions from 'lib/upgrades/actions';
 import { userCan } from 'lib/site/utils';
+import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import { goBackToWpAdmin } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -31,8 +33,6 @@ const Plans = React.createClass( {
 		cart: React.PropTypes.object.isRequired,
 		context: React.PropTypes.object.isRequired,
 		destinationType: React.PropTypes.string,
-		plans: React.PropTypes.object.isRequired,
-		fetchSitePlans: React.PropTypes.func.isRequired,
 		sites: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
 		showJetpackFreePlan: React.PropTypes.bool
@@ -60,6 +60,39 @@ const Plans = React.createClass( {
 			( site.plan.product_slug === 'jetpack_business' || site.plan.product_slug === 'jetpack_premium' );
 	},
 
+	selectFreeJetpackPlan() {
+		const selectedSite = this.props.sites.getSelectedSite();
+		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
+			user: this.props.userId
+		} );
+		if ( isCalypsoStartedConnection( this.props.jetpackConnectSessions, selectedSite.slug ) ) {
+			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
+		} else {
+			const { queryObject } = this.props.jetpackConnectAuthorize;
+			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		}
+	},
+
+	selectPlan( cartItem ) {
+		const selectedSite = this.props.sites.getSelectedSite();
+		const checkoutPath = `/checkout/${ selectedSite.slug }`;
+		if ( cartItem.product_slug === 'jetpack_free' ) {
+			return this.selectFreeJetpackPlan();
+		}
+		if ( cartItem.product_slug === 'jetpack_premium' ) {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_99', {
+				user: this.props.userId
+			} );
+		}
+		if ( cartItem.product_slug === 'jetpack_business' ) {
+			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_299', {
+				user: this.props.userId
+			} );
+		}
+		upgradesActions.addItem( cartItem );
+		page( checkoutPath );
+	},
+
 	render() {
 		if ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) {
 			return null;
@@ -73,7 +106,7 @@ const Plans = React.createClass( {
 
 		return (
 			<div>
-				<Main>
+				<Main isWideLayout={ true }>
 					<QueryPlans />
 					<QuerySitePlans siteId={ selectedSite.ID } />
 					<div className="jetpack-connect__plans">
@@ -87,6 +120,8 @@ const Plans = React.createClass( {
 						<div id="plans" className="plans has-sidebar">
 							<PlansFeaturesMain
 								site={ selectedSite }
+								isInSignup={ true }
+								onUpgradeClick={ this.selectPlan }
 								intervalType="yearly" />
 						</div>
 					</div>
