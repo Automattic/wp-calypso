@@ -5,16 +5,10 @@ import {
 	GUIDED_TOUR_UPDATE,
 } from 'state/action-types';
 
-import {
-	withAnalytics,
-	recordTracksEvent,
-} from 'state/analytics/actions';
-
-import guidedToursConfig from 'layout/guided-tours/config';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 
-export function quitGuidedTour( { tour, stepName, finished, error } ) {
+export function quitGuidedTour( { tour, stepName, finished } ) {
 	const quitAction = {
 		type: GUIDED_TOUR_UPDATE,
 		shouldShow: false,
@@ -24,38 +18,18 @@ export function quitGuidedTour( { tour, stepName, finished, error } ) {
 		finished,
 	};
 
-	const trackEvent = recordTracksEvent( `calypso_guided_tours_${ finished ? 'finished' : 'quit' }`, {
-		step: stepName,
-		tour_version: guidedToursConfig.get( tour ).meta.version,
-		tour,
-		error,
-	} );
-
 	return ( dispatch, getState ) => {
 		dispatch( addSeenGuidedTour( getState, tour, finished ) );
-		dispatch( withAnalytics( trackEvent, quitAction ) );
+		dispatch( quitAction );
 	};
 }
 
 export function nextGuidedTourStep( { tour, stepName } ) {
-	const nextAction = {
+	return {
 		type: GUIDED_TOUR_UPDATE,
 		tour,
 		stepName,
 	};
-
-	const config = guidedToursConfig.get( tour );
-	if ( ! config || ! config.meta ) {
-		return nextAction;
-	}
-
-	const trackEvent = recordTracksEvent( 'calypso_guided_tours_next_step', {
-		step: stepName,
-		tour_version: config.meta.version,
-		tour,
-	} );
-
-	return withAnalytics( trackEvent, nextAction );
 }
 
 // TODO(mcsf): come up with a much better (read: safer) solution

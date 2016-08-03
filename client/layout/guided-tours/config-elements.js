@@ -11,6 +11,7 @@ import { find, debounce, mapValues, omit, property } from 'lodash';
 /**
  * Internal dependencies
  */
+import { tracks } from 'lib/analytics';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
@@ -26,6 +27,9 @@ const contextTypes = Object.freeze( {
 	next: PropTypes.func.isRequired,
 	quit: PropTypes.func.isRequired,
 	isValid: PropTypes.func.isRequired,
+	tour: PropTypes.string.isRequired,
+	tourVersion: PropTypes.string.isRequired,
+	step: PropTypes.string.isRequired,
 } );
 
 export class Tour extends Component {
@@ -36,19 +40,19 @@ export class Tour extends Component {
 	static childContextTypes = contextTypes;
 
 	getChildContext() {
-		const { next, quit, isValid } = this.tourMethods;
-		return { next, quit, isValid };
+		const { next, quit, isValid, tour, tourVersion, step } = this.tourMethods;
+		return { next, quit, isValid, tour, tourVersion, step };
 	}
 
 	constructor( props, context ) {
 		super( props, context );
-		const { next, quit, isValid } = props;
-		this.tourMethods = { next, quit, isValid };
+		const { next, quit, isValid, name, version, stepName } = props;
+		this.tourMethods = { next, quit, isValid, tour: name, tourVersion: version, step: stepName };
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { next, quit, isValid } = nextProps;
-		this.tourMethods = { next, quit, isValid };
+		const { next, quit, isValid, name, version, stepName } = nextProps;
+		this.tourMethods = { next, quit, isValid, tour: name, tourVersion: version, step: stepName };
 	}
 
 	render() {
@@ -75,6 +79,12 @@ export class Step extends Component {
 	constructor( props, context ) {
 		super( props, context );
 		this.next = context.next;
+		this.quit = context.quit;
+		//TODO(ehg): DRY; store in object?
+		this.step = context.step;
+		this.tour = context.tour;
+		this.tourVersion = context.tourVersion;
+
 		this.scrollContainer = query( props.scrollContainer )[ 0 ] || global.window;
 	}
 
@@ -88,7 +98,11 @@ export class Step extends Component {
 		this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
 	}
 
-	componentWillReceiveProps( nextProps ) {
+	componentWillReceiveProps( nextProps, nextContext ) {
+		this.step = nextContext.step;
+		this.tour = nextContext.tour;
+		this.tourVersion = nextContext.tourVersion;
+
 		this.skipIfInvalidContext( nextProps );
 		this.setStepPosition( nextProps );
 		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
@@ -102,8 +116,16 @@ export class Step extends Component {
 		global.window.removeEventListener( 'resize', this.onScrollOrResize );
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 
-		if ( this.props.isLastStep ) {
-			console.log( 'last step unmounted' );
+		const { isLastStep } = this.props;
+
+		if ( isLastStep ) {
+			tracks.recordEvent( 'calypso_guided_tours_finished', {
+				step: this.step,
+				tour_version: this.tourVersion,
+				tour: this.tour,
+			} );
+
+			this.quit( { finished: isLastStep } );
 		}
 	}
 
@@ -165,12 +187,32 @@ export class Next extends Component {
 	constructor( props, context ) {
 		super( props, context );
 		this.next = context.next;
+		//TODO(ehg): DRY; store in object?
+		this.step = context.step;
+		this.tour = context.tour;
+		this.tourVersion = context.tourVersion;
+	}
+
+	componentWillReceiveProps( nextProps, nextContext ) {
+		this.step = nextContext.step;
+		this.tour = nextContext.tour;
+		this.tourVersion = nextContext.tourVersion;
+	}
+
+	onClick = () => {
+		tracks.recordEvent( 'calypso_guided_tours_next', {
+			step: this.step,
+			tour_version: this.tourVersion,
+			tour: this.tour,
+		} );
+
+		this.next();
 	}
 
 	render() {
 		const { children } = this.props;
 		return (
-			<Button primary onClick={ this.next }>
+			<Button primary onClick={ this.onClick }>
 				{ children || translate( 'Next' ) }
 			</Button>
 		);
@@ -187,12 +229,35 @@ export class Quit extends Component {
 	constructor( props, context ) {
 		super( props, context );
 		this.quit = context.quit;
+		//TODO(ehg): DRY; store in object?
+		this.step = context.step;
+		this.tour = context.tour;
+		this.tourVersion = context.tourVersion;
+	}
+
+	componentWillReceiveProps( nextProps, nextContext ) {
+		this.step = nextContext.step;
+		this.tour = nextContext.tour;
+		this.tourVersion = nextContext.tourVersion;
+	}
+
+	onClick = () => {
+		const { isLastStep } = this.props;
+
+		if ( ! this.props.isLastStep ) {
+			tracks.recordEvent( 'calypso_guided_tours_quit', {
+				step: this.step,
+				tour_version: this.tourVersion,
+				tour: this.tour,
+			} );
+		}
+		this.quit( { finished: isLastStep } );
 	}
 
 	render() {
 		const { children, primary } = this.props;
 		return (
-			<Button onClick={ this.quit } primary={ primary }>
+			<Button onClick={ this.onClick } primary={ primary }>
 				{ children || translate( 'Quit' ) }
 			</Button>
 		);
@@ -206,6 +271,10 @@ export class Continue extends Component {
 		super( props, context );
 		this.next = context.next;
 		this.isValid = context.isValid;
+		//TODO(ehg): DRY; store in object?
+		this.step = context.step;
+		this.tour = context.tour;
+		this.tourVersion = context.tourVersion;
 	}
 
 	componentDidMount() {
@@ -217,7 +286,10 @@ export class Continue extends Component {
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
-		nextProps.context && nextContext.isValid( nextProps.context ) && this.next();
+		this.step = nextContext.step;
+		this.tour = nextContext.tour;
+		this.tourVersion = nextContext.tourVersion;
+		nextProps.context && nextContext.isValid( nextProps.context ) && this.onContinue();
 	}
 
 	componentWillUpdate() {
@@ -228,13 +300,23 @@ export class Continue extends Component {
 		this.addTargetListener();
 	}
 
+	onContinue = () => {
+		tracks.recordEvent( 'calypso_guided_tours_next', {
+			step: this.step,
+			tour_version: this.tourVersion,
+			tour: this.tour,
+		} );
+
+		this.next();
+	}
+
 	addTargetListener() {
 		const { target = false, click, context } = this.props;
 		const targetNode = targetForSlug( target );
 
 		if ( click && ! context && targetNode && targetNode.addEventListener ) {
-			targetNode.addEventListener( 'click', this.next );
-			targetNode.addEventListener( 'touchstart', this.next );
+			targetNode.addEventListener( 'click', this.onContinue );
+			targetNode.addEventListener( 'touchstart', this.onContinue );
 		}
 	}
 
@@ -243,8 +325,8 @@ export class Continue extends Component {
 		const targetNode = targetForSlug( target );
 
 		if ( click && ! context && targetNode && targetNode.removeEventListener ) {
-			targetNode.removeEventListener( 'click', this.next );
-			targetNode.removeEventListener( 'touchstart', this.next );
+			targetNode.removeEventListener( 'click', this.onContinue );
+			targetNode.removeEventListener( 'touchstart', this.onContinue );
 		}
 	}
 
