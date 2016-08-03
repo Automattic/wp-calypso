@@ -158,7 +158,7 @@ export const plansList = {
 		getTitle: () => i18n.translate( 'Free' ),
 		getProductId: () => 2002,
 		getDescription: () => i18n.translate(
-			'The features most needed by WordPress sites' + 
+			'The features most needed by WordPress sites' +
 			' — perfectly packaged and optimized for everyone.'
 		),
 		getFeatures: () => [
@@ -448,18 +448,25 @@ export const featuresList = {
 		plans: allPaidPlans
 	},
 	[ FEATURE_STANDARD_SECURITY_TOOLS ]: {
+		getSlug: () => FEATURE_STANDARD_SECURITY_TOOLS,
 		getTitle: () => i18n.translate( 'Standard Security Tools' ),
-		getDescription: () => i18n.translate( 'Brute force protection, uptime monitoring, secure sign on, and automatic updates for your plugins.' )
+		getDescription: () => i18n.translate(
+			'Brute force protection, uptime monitoring, secure sign on,' +
+			'and automatic updates for your plugins.'
+		)
 	},
 	[ FEATURE_SITE_STATS ]: {
+		getSlug: () => FEATURE_SITE_STATS,
 		getTitle: () => i18n.translate( 'Site Stats and Analytics' ),
 		getDescription: () => i18n.translate( 'The most important metrics for your site.' )
 	},
 	[ FEATURE_TRAFFIC_TOOLS ]: {
+		getSlug: () => FEATURE_TRAFFIC_TOOLS,
 		getTitle: () => i18n.translate( 'Traffic and Promotion Tools' ),
 		getDescription: () => i18n.translate( 'Build and engage your audience with more than a dozen optimization tools.' )
 	},
 	[ FEATURE_MANAGE ]: {
+		getSlug: () => FEATURE_MANAGE,
 		getTitle: () => i18n.translate( 'Centralized Dashboard' ),
 		getDescription: () => i18n.translate( 'Manage all of your WordPress sites from one location.' )
 	},
