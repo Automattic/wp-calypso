@@ -18,8 +18,8 @@ import {
 	getDeserializedPostsQueryDetails,
 	getSerializedPostsQueryWithoutPage,
 	mergeIgnoringArrays,
-	normalizeEditedPost,
-	normalizePost
+	normalizePostForEditing,
+	normalizePostForDisplay
 } from './utils';
 import { DEFAULT_POST_QUERY, DEFAULT_NEW_POST_VALUES } from './constants';
 import addQueryArgs from 'lib/route/add-query-args';
@@ -56,7 +56,7 @@ export function getPost( state, globalId ) {
  * @return {?Object}          Post object
  */
 export const getNormalizedPost = createSelector(
-	( state, globalId ) => normalizePost( getPost( state, globalId ) ),
+	( state, globalId ) => normalizePostForDisplay( getPost( state, globalId ) ),
 	( state ) => [ state.posts.items, state.posts.queries ]
 );
 
@@ -129,7 +129,7 @@ export const getSitePostsForQuery = createSelector(
 			return null;
 		}
 
-		return posts.map( normalizePost );
+		return posts.map( normalizePostForDisplay );
 	},
 	( state ) => state.posts.queries,
 	( state, siteId, query ) => getSerializedPostsQuery( query, siteId )
@@ -227,7 +227,7 @@ export const getSitePostsForQueryIgnoringPage = createSelector(
 			return null;
 		}
 
-		return itemsIgnoringPage.map( normalizePost );
+		return itemsIgnoringPage.map( normalizePostForDisplay );
 	},
 	( state ) => state.posts.queries,
 	( state, siteId, query ) => getSerializedPostsQueryWithoutPage( query, siteId )
@@ -314,7 +314,7 @@ export function getEditedPost( state, siteId, postId ) {
  */
 export function getPostEdits( state, siteId, postId ) {
 	const { edits } = state.posts;
-	return normalizeEditedPost( get( edits, [ siteId, postId || '' ], null ) );
+	return normalizePostForEditing( get( edits, [ siteId, postId || '' ], null ) );
 }
 
 /**
