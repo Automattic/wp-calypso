@@ -6,6 +6,7 @@ import { shallow } from 'enzyme';
 import { assert } from 'chai';
 import { stub, spy } from 'sinon';
 import qs from 'qs';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -20,11 +21,19 @@ describe( 'DailyPostButton', () => {
 
 	useMockery( ( mockery ) => {
 		const getPrimary = stub();
+		const statsMocks = {
+			recordAction: noop,
+			recordGaEvent: noop,
+			recordTrackForPost: noop,
+		};
+		mockery.registerMock( 'reader/stats', statsMocks );
+
 		getPrimary.onFirstCall().returns( );
 		getPrimary.returns( sitesList );
 		mockery.registerMock( 'lib/sites-list', () => {
 			return { getPrimary };
 		} );
+
 		mockery.registerMock( 'page', pageSpy );
 		mockery.registerMock( 'components/sites-popover', SitesPopover );
 	} );
