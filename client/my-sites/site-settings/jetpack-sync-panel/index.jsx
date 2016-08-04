@@ -163,7 +163,7 @@ const JetpackSyncPanel = React.createClass( {
 		}
 
 		return (
-			<ProgressBar value={ this.props.syncProgress || 0 } />
+			<ProgressBar isPulsing value={ this.props.syncProgress || 0 } />
 		);
 	},
 
