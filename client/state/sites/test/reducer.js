@@ -39,6 +39,7 @@ describe( 'reducer', () => {
 			'items',
 			'mediaStorage',
 			'plans',
+			'guidedTransfer',
 			'vouchers',
 			'requesting'
 		] );
