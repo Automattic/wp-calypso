@@ -197,3 +197,6 @@ export default connect(
 		};
 	}
 )( localize( EditorCategoriesTagsAccordion ) );
+
+// Expose a pure, non connect-ed version of this component for testing
+export { EditorCategoriesTagsAccordion as PureEditorCategoriesTagsAccordion };
