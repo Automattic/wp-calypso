@@ -60,7 +60,6 @@ export const MainTour = makeTour(
 			target="my-sites"
 			placement="below"
 			arrow="top-left"
-			next="sidebar"
 		>
 			<p className="guided-tours__step-text">
 				{
@@ -90,14 +89,13 @@ export const MainTour = makeTour(
 			target="sidebar"
 			arrow="left-middle"
 			placement="beside"
-			next="click-preview"
 		>
 			<p className="guided-tours__step-text">
 				{ translate( 'This menu lets you navigate around, and will adapt to give you the tools you need when you need them.' ) }
 			</p>
 			<div className="guided-tours__choice-button-row">
-				<Next/>
-				<Quit/>
+				<Next step="click-preview" />
+				<Quit />
 			</div>
 		</Step>
 
@@ -107,7 +105,6 @@ export const MainTour = makeTour(
 			arrow="top-left"
 			placement="below"
 			context={ selectedSiteIsPreviewable }
-			next="in-preview"
 			scrollContainer=".sidebar__region"
 		>
 			<p className="guided-tours__step-text">
@@ -120,7 +117,7 @@ export const MainTour = makeTour(
 				}
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue target="site-card-preview" click>
+				<Continue step="in-preview" target="site-card-preview" click>
 					{
 						translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
 							components: {
@@ -135,7 +132,6 @@ export const MainTour = makeTour(
 		<Step name="in-preview"
 			placement="center"
 			context={ selectedSiteIsPreviewable }
-			next="close-preview"
 		>
 			<p className="guided-tours__step-text">
 				{
@@ -147,9 +143,9 @@ export const MainTour = makeTour(
 				}
 			</p>
 			<div className="guided-tours__choice-button-row">
-				<Next/>
-				<Quit/>
-				<Continue context={ previewIsNotShowing } hidden />
+				<Next step="close-preview" />
+				<Quit />
+				<Continue step="close-preview" context={ previewIsNotShowing } hidden />
 			</div>
 		</Step>
 
@@ -159,13 +155,12 @@ export const MainTour = makeTour(
 			arrow="left-top"
 			placement="beside"
 			context={ and( selectedSiteIsPreviewable, isPreviewShowing ) }
-			next="themes"
 		>
 			<p className="guided-tours__step-text">
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue target="web-preview__close" context={ previewIsNotShowing }>
+				<Continue step="themes" target="web-preview__close" context={ previewIsNotShowing }>
 					{
 						translate( 'Click the {{GridIcon/}} to continue.', {
 							components: {
@@ -182,7 +177,6 @@ export const MainTour = makeTour(
 			arrow="top-left"
 			placement="below"
 			context={ selectedSiteIsCustomizable }
-			next="finish"
 			scrollContainer=".sidebar__region"
 		>
 			<p className="guided-tours__step-text">
@@ -197,8 +191,8 @@ export const MainTour = makeTour(
 				}
 			</p>
 			<div className="guided-tours__choice-button-row">
-				<Next/>
-				<Quit/>
+				<Next step="finish" />
+				<Quit />
 			</div>
 		</Step>
 

@@ -46,9 +46,23 @@ class GuidedTours extends Component {
 		this.currentTarget = step && step.target && targetForSlug( step.target );
 	}
 
-	next = () => {
-		const nextStepName = this.props.tourState.stepConfig.next;
-		const nextStepConfig = this.props.tourState.nextStepConfig;
+	next = ( tour, nextStepName ) => {
+		tour = tour || this.props.tourState.tour;
+
+		// FIXME(mcsf): the following logic should become obsolete, but keeping
+		// it right now
+		if ( ! nextStepName ) {
+			const { stepName = 'init' } = this.props.tourState;
+			const stepBranching = AllTours.branching[ tour ][ stepName ] || {};
+			const firstKey = Object.keys( stepBranching )[ 0 ];
+			nextStepName = stepBranching[ firstKey ] || stepName;
+		}
+		const nextStepConfig = false;
+
+		console.log( '#next:', nextStepName );
+
+		//const nextStepName = this.props.tourState.stepConfig.next;
+		//const nextStepConfig = this.props.tourState.nextStepConfig;
 
 		const nextTargetFound = () => {
 			if ( nextStepConfig && nextStepConfig.target ) {

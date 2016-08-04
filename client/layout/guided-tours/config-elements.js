@@ -167,9 +167,9 @@ export class Step extends Component {
 			for ( const child of children ) {
 				if ( res || ( isContinue( child ) ) ) {
 					return true;
-				} else if ( Array.isArray( child.props.children ) ) {
+				} else if ( child.props && Array.isArray( child.props.children ) ) {
 					res = res || hasContinue( child.props.children );
-				} else if ( typeof child.props.children === 'object' ) {
+				} else if ( child.props && typeof child.props.children === 'object' ) {
 					res = res || isContinue( child.props.children );
 				}
 			}
@@ -232,6 +232,7 @@ export class Step extends Component {
 
 export class Next extends Component {
 	static propTypes = {
+		step: PropTypes.string.isRequired,
 		children: PropTypes.node,
 	}
 
@@ -259,7 +260,7 @@ export class Next extends Component {
 			tour: this.tour,
 		} );
 
-		this.next();
+		this.next( this.tour, this.props.step );
 	}
 
 	render() {
@@ -321,6 +322,11 @@ var globalTimer = null;
 
 export class Continue extends Component {
 	static contextTypes = contextTypes;
+
+	static propTypes = {
+		step: PropTypes.string.isRequired,
+		children: PropTypes.node,
+	}
 
 	constructor( props, context ) {
 		super( props, context );
@@ -440,7 +446,7 @@ export class Continue extends Component {
 			tour: this.tour,
 		} );
 
-		this.next();
+		this.next( this.tour, this.props.step );
 	}
 
 	addTargetListener() {
