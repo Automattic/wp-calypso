@@ -3,17 +3,12 @@
 		border-width: 6px;
 	}
 
-	&.is-bottom .popover__arrow {
-		border-width: 10px;
-	}
-
 	&.is-bottom-right,
 	&.is-bottom-left,
 	&.is-bottom {
 		.popover__arrow {
 			border-bottom-color: darken( $gray, 30% );
-			position: absolute;
-			top: 9px;
+			top: 4px;
 			right: 10px;
 
 			&::before {
@@ -40,21 +35,13 @@
 		}
 	}
 
-	&.is-left,
-	&.is-right {
-		.popover__arrow {
-			margin-top: -6px;
-		}
-	}
-
 	&.is-top,
 	&.is-top-left,
 	&.is-top-right {
 		.popover__arrow {
 			border-top-color: darken( $gray, 30% );
-			position: absolute;
 			bottom: 4px;
-			margin-left: -6px;
+			right: 10px;
 
 			&::before {
 				display: none;
@@ -80,12 +67,18 @@
 		}
 	}
 
+	&.is-top,
+	&.is-bottom {
+		.popover__arrow {
+			margin-left: -6px;
+		}
+	}
+
+	&.is-left,
 	&.is-right {
 		padding-top: 0;
 		.popover__arrow {
-			border-right-color: darken( $gray, 30% );
-			position: absolute;
-			margin-left: 4px;
+			margin-top: -6px;
 
 			&::before {
 				display: none;
@@ -108,6 +101,20 @@
 			.popover__arrow {
 				border-right-color: $alert-green;
 			}
+		}
+	}
+
+	&.is-left {
+		.popover__arrow {
+			margin-right: 4px;
+			border-left-color: darken( $gray, 30% );
+		}
+	}
+
+	&.is-right {
+		.popover__arrow {
+			margin-left: 4px;
+			border-right-color: darken( $gray, 30% );
 		}
 	}
 
