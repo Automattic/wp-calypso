@@ -93,7 +93,7 @@ class DailyPostButton extends React.Component {
 	pickSiteToPostTo( siteSlug ) {
 		recordAction( 'daily_post_challenge' );
 		recordGaEvent( 'Clicked on Daily Post challenge' );
-		recordTrack( 'calypso_reader_daily_post_challenge_to_site' );
+		recordTrack( 'calypso_reader_daily_post_challenge_site_picked' );
 		const pingbackAttributes = getPingbackAttributes( this.props.post );
 		page( `/post/${ siteSlug }?${ qs.stringify( pingbackAttributes ) }` );
 		return true;
