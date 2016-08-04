@@ -16,7 +16,7 @@
 		cursor: pointer;
 
 		&:hover {
-			box-shadow: 0 0 0 1px #87a6bc, 0 2px 4px #c8d7e1;
+			box-shadow: 0 0 0 1px $gray;
 			z-index: z-index('root', '.domain-suggestion.is-clickable:hover');
 		}
 	}
