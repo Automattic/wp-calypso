@@ -121,11 +121,13 @@ const Start = React.createClass( {
 					<p className="reader-start__description">{ this.translate( 'Reader is a customizable magazine of stories from WordPress.com and across the web. Follow a few sites and their latest posts will appear here. Below are some suggestions. Give it a try!' ) }</p>
 				</header>
 
-				<StartSearch {...this.props } />
+				<StartSearch { ...this.props } />
 
-				<h2 className="reader-start__subtitle">
-					{ this.props.translate( 'Or browse suggestions:' ) }
-				</h2>
+				{ hasRecommendations && ! hasSearchQuery && (
+					<h2 className="reader-start__subtitle">
+						{ this.props.translate( 'Or browse suggestions:' ) }
+					</h2> )
+				}
 
 				<div className="reader-start__cards">{ ! hasRecommendations && this.renderLoadingPlaceholders() }</div>
 
