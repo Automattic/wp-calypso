@@ -46,18 +46,12 @@ const DomainProductPrice = React.createClass( {
 	renderFree() {
 		return (
 			<div className="domain-product-price">
-				<span className="domain-product-price__price">{ this.translate( 'Free' ) }</span>
 			</div>
 		);
 	},
 	renderIncludedInPremium() {
 		return (
 			<div className="domain-product-price is-with-plans-only">
-				<small className="domain-product-price__premium-text" ref="subMessage">
-					<PremiumPopover
-						position="bottom left"
-						textLabel={ this.translate( 'Included in WordPress.com Premium' ) }/>
-				</small>
 			</div>
 		);
 	},

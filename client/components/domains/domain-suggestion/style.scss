@@ -6,10 +6,6 @@
 
 	@include breakpoint( ">660px" ) {
 		padding: 15px 20px;
-
-		.domain-product-price {
-			margin-left: 5%;
-		}
 	}
 
 	&.is-added {

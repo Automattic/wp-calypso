@@ -1,15 +1,11 @@
 .domain-product-price {
 	color: darken( $gray, 30% );
 	display: inline-block;
-	font-size: 17px;
 	font-weight: 600;
 
 	@include breakpoint( ">660px" ) {
 		min-width: 130px;
-	}
-
-	@include breakpoint( "<660px" ) {
-		font-size: 14px;
+		text-align: right;
 	}
 
 	&.is-with-plans-only:not( .is-free-domain ) {
