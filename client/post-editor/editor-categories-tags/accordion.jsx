@@ -108,9 +108,9 @@ export class EditorCategoriesTagsAccordion extends Component {
 			case 0:
 				return null; // No tags subtitle
 			case 1:
-				return '#' + tags[0];
+				return '#' + tags[ 0 ];
 			case 2:
-				return '#' + tags[0] + ', #' + tags[1];
+				return '#' + tags[ 0 ] + ', #' + tags[ 1 ];
 			default:
 				return translate(
 					'%d tag',
@@ -122,14 +122,13 @@ export class EditorCategoriesTagsAccordion extends Component {
 
 	getSubtitle() {
 		const subtitlePieces = [];
-		const { translate, postType } = this.props;
-		const isPost = postType === 'post';
+		const { postType } = this.props;
 
 		if ( this.isLoading() ) {
 			return null;
 		}
 
-		if ( isPost ) {
+		if ( postType === 'post' ) {
 			const categoriesSubtitle = this.getCategoriesSubtitle();
 			if ( categoriesSubtitle ) {
 				subtitlePieces.push( categoriesSubtitle );
@@ -139,10 +138,6 @@ export class EditorCategoriesTagsAccordion extends Component {
 		const tagsSubtitle = this.getTagsSubtitle();
 		if ( tagsSubtitle ) {
 			subtitlePieces.push( tagsSubtitle );
-		}
-
-		if ( isPost && this.isLoading() ) {
-			return translate( 'Loading…' );
 		}
 
 		return subtitlePieces.join( ', ' );
