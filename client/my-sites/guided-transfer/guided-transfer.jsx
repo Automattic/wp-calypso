@@ -12,6 +12,7 @@ import i18n from 'i18n-calypso';
 import HeaderCake from 'components/header-cake';
 import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
+import Issues from './issues';
 
 const guidedTransferHosts = {
 	bluehost: {
@@ -31,6 +32,7 @@ export default React.createClass( {
 
 	propTypes: {
 		hostSlug: PropTypes.string,
+		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired
 	},
 
@@ -74,12 +76,16 @@ export default React.createClass( {
 					</HeaderCake>
 				</div>
 
-				<div className="guided-transfer__content">
-					{ hostInfo
-						? <HostCredentialsPage hostSlug={ this.props.hostSlug } hostInfo={ hostInfo } />
-						: <HostSelect hosts={ hosts } />
-					}
-				</div>
+				<Issues siteId={ this.props.siteId } />
+
+				{ this.props.isEligibleForGuidedTransfer &&
+					<div className="guided-transfer__content">
+						{ hostInfo
+							? <HostCredentialsPage hostSlug={ this.props.hostSlug } hostInfo={ hostInfo } />
+							: <HostSelect hosts={ hosts } />
+						}
+					</div>
+				}
 			</div>
 		);
 	}
