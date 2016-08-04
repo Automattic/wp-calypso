@@ -2,15 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import get from 'lodash/get';
-import set from 'lodash/set';
-import omit from 'lodash/omit';
-import omitBy from 'lodash/omitBy';
-import isEqual from 'lodash/isEqual';
-import reduce from 'lodash/reduce';
-import groupBy from 'lodash/groupBy';
-import merge from 'lodash/merge';
-import findKey from 'lodash/findKey';
+import { get, set, omit, omitBy, isEqual, reduce, merge, findKey, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,8 +31,10 @@ import counts from './counts/reducer';
 import {
 	getSerializedPostsQuery,
 	mergeIgnoringArrays,
+	normalizePostForState
 } from './utils';
-import { createReducer } from 'state/utils';
+import { createReducer, isValidStateWithSchema } from 'state/utils';
+import { itemsSchema, queriesSchema } from './schema';
 
 /**
  * Tracks all known post objects, indexed by post global ID.
@@ -78,7 +72,7 @@ export const items = createReducer( {}, {
 
 		return omit( state, globalId );
 	}
-} );
+}, itemsSchema );
 
 /**
  * Returns the updated site post requests state after an action has been
@@ -182,10 +176,20 @@ export const queries = ( () => {
 			}, { patch: true } );
 		},
 		[ POSTS_REQUEST_SUCCESS ]: ( state, { siteId, query, posts, found } ) => {
-			return applyToManager( state, siteId, 'receive', true, posts, { query, found } );
+			const normalizedPosts = posts.map( normalizePostForState );
+			return applyToManager( state, siteId, 'receive', true, normalizedPosts, { query, found } );
 		},
 		[ POSTS_RECEIVE ]: ( state, { posts } ) => {
-			return reduce( groupBy( posts, 'site_ID' ), ( memo, sitePosts, siteId ) => {
+			const postsBySiteId = reduce( posts, ( memo, post ) => {
+				return Object.assign( memo, {
+					[ post.site_ID ]: [
+						...( memo[ post.site_ID ] || [] ),
+						normalizePostForState( post )
+					]
+				} );
+			}, {} );
+
+			return reduce( postsBySiteId, ( memo, sitePosts, siteId ) => {
 				return applyToManager( memo, siteId, 'receive', true, sitePosts );
 			}, state );
 		},
@@ -209,6 +213,18 @@ export const queries = ( () => {
 		},
 		[ POST_DELETE_SUCCESS ]: ( state, { siteId, postId } ) => {
 			return applyToManager( state, siteId, 'removeItem', false, postId );
+		},
+		[ SERIALIZE ]: ( state ) => {
+			return mapValues( state, ( { data, options } ) => ( { data, options } ) );
+		},
+		[ DESERIALIZE ]: ( state ) => {
+			if ( ! isValidStateWithSchema( state, queriesSchema ) ) {
+				return {};
+			}
+
+			return mapValues( state, ( { data, options } ) => {
+				return new PostQueryManager( data, options );
+			} );
 		}
 	} );
 } )();

@@ -269,7 +269,7 @@ describe( 'reducer', () => {
 
 			expect( state ).to.have.keys( [ '2916284' ] );
 			expect( state[ 2916284 ] ).to.have.keys( [ 'category' ] );
-			expect( state[ 2916284 ].category ).to.be.a( 'string' );
+			expect( state[ 2916284 ].category ).to.have.keys( [ 'data', 'options' ] );
 		} );
 
 		it( 'should load persisted state', () => {

@@ -106,18 +106,32 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should not persist state', () => {
+		it( 'should persist state', () => {
 			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
 			} );
 			const state = items( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.eql( original );
 		} );
 
-		it( 'should not load persisted state', () => {
+		it( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
 				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
+			} );
+			const state = items( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( original );
+		} );
+
+		it( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World'
+				}
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 
@@ -236,15 +250,25 @@ describe( 'reducer', () => {
 				query: { search: 'Hello' },
 				found: 1,
 				posts: [
-					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World',
+						meta: {}
+					}
 				]
 			} );
 
 			expect( state ).to.have.keys( [ '2916284' ] );
 			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
-			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).to.eql( [
-				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			] );
+			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).to.eql( [ {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+				meta: null
+			} ] );
 		} );
 
 		it( 'should accumulate query request success', () => {
@@ -495,7 +519,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems() ).to.have.length( 0 );
 		} );
 
-		it( 'should not persist state', () => {
+		it( 'should persist state', () => {
 			const original = deepFreeze( queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -508,12 +532,81 @@ describe( 'reducer', () => {
 
 			const state = queries( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.eql( {
+				2916284: {
+					data: {
+						items: {
+							841: {
+								ID: 841,
+								site_ID: 2916284,
+								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+								title: 'Hello World'
+							}
+						},
+						queries: {
+							'[["search","Hello"]]': {
+								itemKeys: [ 841 ],
+								found: 1
+							}
+						}
+					},
+					options: {
+						itemKey: 'ID'
+					}
+				}
+			} );
 		} );
 
-		it( 'should load persisted state', () => {
+		it( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
-				2916284: '{}'
+				2916284: {
+					data: {
+						items: {
+							841: {
+								ID: 841,
+								site_ID: 2916284,
+								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+								title: 'Hello World'
+							}
+						},
+						queries: {
+							'[["search","Hello"]]': {
+								itemKeys: [ 841 ],
+								found: 1
+							}
+						}
+					},
+					options: {
+						itemKey: 'ID'
+					}
+				}
+			} );
+
+			const state = queries( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {
+				2916284: new PostQueryManager( {
+					items: {
+						841: {
+							ID: 841,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							site_ID: 2916284,
+							title: 'Hello World'
+						}
+					},
+					queries: {
+						'[["search","Hello"]]': {
+							found: 1,
+							itemKeys: [ 841 ]
+						}
+					}
+				} )
+			} );
+		} );
+
+		it( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				2916284: '{INVALID'
 			} );
 
 			const state = queries( original, { type: DESERIALIZE } );
