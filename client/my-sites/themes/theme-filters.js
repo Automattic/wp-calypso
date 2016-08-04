@@ -242,7 +242,7 @@ function filterIsValid( filter ) {
  * @return {array} sorted array
  */
 export function sortFilterTerms( terms ) {
-	return terms.map( getFilter ).sort().map( getTerm );
+	return terms.map( getFilter ).filter( filterIsValid ).sort().map( getTerm );
 }
 
 /**
