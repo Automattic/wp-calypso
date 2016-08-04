@@ -110,7 +110,12 @@ class DailyPostButton extends React.Component {
 	}
 
 	closeMenu() {
-		this.setState( { showingMenu: false } );
+		// have to defer this to let the mouseup / click escape.
+		// If we don't defer and remove the DOM node on this turn of the event loop,
+		// Chrome (at least) will not fire the click
+		if ( this._isMounted() ) {
+			this._deferMenuChange( false );
+		}
 	}
 
 	render() {
