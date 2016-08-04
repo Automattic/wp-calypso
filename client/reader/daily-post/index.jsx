@@ -122,7 +122,7 @@ class DailyPostButton extends React.Component {
 		const canParticipate = !! sitesList.getPrimary();
 		const title = get( this.props, 'post.title' );
 		const buttonClasses = classnames( {
-			'reader__daily_post_button': true,
+			reader__daily_post_button: true,
 			'ignore-click': true,
 			'is-active': this.state.showingMenu
 		} );
