@@ -5,7 +5,7 @@ import React from 'react';
 import classnames from 'classnames';
 import page from 'page';
 import qs from 'qs';
-import { get, defer, noop } from 'lodash';
+import { get, defer } from 'lodash';
 
 /**
  * Internal Dependencies
