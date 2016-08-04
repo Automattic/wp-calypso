@@ -177,7 +177,7 @@ export function getTermIdsFromEdits( post ) {
 		return post;
 	}
 
-	// Skip "post_tag" taxonomies until legacy token-field
+	// Skip "post_tag" taxonomies until legacy token-field is removed
 	let taxonomies = omit( post.terms, [ 'post_tag' ] );
 
 	// Filter taxonomies that are set as arrays ( i.e. tags )
