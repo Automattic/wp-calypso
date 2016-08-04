@@ -13,7 +13,6 @@ import Card from 'components/card';
 import ConnectHeader from './connect-header';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
 import { getSiteByUrl } from 'state/sites/selectors';
