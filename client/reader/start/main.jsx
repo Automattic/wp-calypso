@@ -118,7 +118,7 @@ const Start = React.createClass( {
 				<QueryReaderStartRecommendations />
 				<header className="reader-start__intro">
 					<h1 className="reader-start__title">{ this.translate( 'This is Reader' ) }</h1>
-					<p className="reader-start__description">{ this.translate( 'Reader is a customizable magazine of stories from WordPress.com and across the web. Follow a few sites and their latest posts will appear here. Below are some suggestions. Give it a try!' ) }</p>
+					<p className="reader-start__description">{ this.translate( 'Reader is a customizable magazine of stories from WordPress.com and across the web. Follow a few sites and their latest posts will appear here. To begin, tell us something you like.' ) }</p>
 				</header>
 
 				<StartSearch { ...this.props } />
