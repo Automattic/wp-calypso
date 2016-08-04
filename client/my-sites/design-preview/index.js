@@ -4,7 +4,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
+import includes from 'lodash/includes';
 import debugFactory from 'debug';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -21,6 +23,7 @@ import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 import DesignMenu from 'my-sites/design-menu';
+import { getSiteFragment } from 'lib/route/path';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -168,17 +171,24 @@ const DesignPreview = React.createClass( {
 		if ( this.props.customizations && this.props.isUnsaved ) {
 			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
 				if ( accepted ) {
-					this.props.clearPreviewUrl( this.props.selectedSiteId );
-					this.props.clearCustomizations( this.props.selectedSiteId );
-					this.props.hidePreviewSidebar();
-					this.props.setLayoutFocus( 'sidebar' );
+					this.cleanAndClosePreview();
 				}
 			} );
 		}
+		this.cleanAndClosePreview();
+	},
+
+	cleanAndClosePreview() {
 		this.props.clearPreviewUrl( this.props.selectedSiteId );
 		this.props.clearCustomizations( this.props.selectedSiteId );
 		this.props.hidePreviewSidebar();
 		this.props.setLayoutFocus( 'sidebar' );
+		const siteFragment = getSiteFragment( page.current );
+		const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
+		// If this route has nothing but the preview, redirect to somewhere else
+		if ( isEmptyRoute ) {
+			page.redirect( `/stats/${siteFragment}` );
+		}
 	},
 
 	onPreviewClick( event ) {
