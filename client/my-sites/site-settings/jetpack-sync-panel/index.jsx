@@ -131,8 +131,12 @@ const JetpackSyncPanel = React.createClass( {
 
 		const finished = get( this.props, 'syncStatus.finished' );
 		const finishedTimestamp = this.moment( parseInt( finished, 10 ) * 1000 );
+		const { isPendingSyncStart, isFullSyncing } = this.props;
+
 		let text = '';
-		if ( this.shouldDisableSync() ) {
+		if ( isPendingSyncStart ) {
+			text = this.translate( 'Full sync will begin shortly' );
+		} else if ( isFullSyncing ) {
 			text = this.translate( 'Full sync in progress' );
 		} else if ( finishedTimestamp.isValid() ) {
 			text = this.translate( 'Last synced %(ago)s', {
