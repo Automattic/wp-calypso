@@ -135,7 +135,7 @@ const Plans = React.createClass( {
 
 		return (
 			<div>
-				<Main isWideLayout={ true }>
+				<Main wideLayout>
 					<QueryPlans />
 					<QuerySitePlans siteId={ selectedSite.ID } />
 					<div className="jetpack-connect__plans">
