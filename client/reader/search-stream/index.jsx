@@ -70,7 +70,8 @@ const SearchCardAdapter = React.createClass( {
 			site={ this.state.site }
 			feed={ this.state.feed }
 			onClick={ this.onCardClick }
-			onCommentClick={ this.onCommentClick } />;
+			onCommentClick={ this.onCommentClick }
+			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards } />;
 	}
 } );
 
@@ -165,6 +166,12 @@ const FeedStream = React.createClass( {
 		};
 	},
 
+	getDefaultProps() {
+		return {
+			showBlankContent: true
+		};
+	},
+
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.query !== this.props.query ) {
 			this.updateState( nextProps );
@@ -196,9 +203,16 @@ const FeedStream = React.createClass( {
 	},
 
 	render() {
+		const blankContent = this.props.showBlankContent ? <BlankContent suggestions={ this.state.suggestions }/> : null;
 		const emptyContent = this.props.query
 			? <EmptyContent query={ this.props.query } />
-			: <BlankContent suggestions={ this.state.suggestions }/>;
+			: blankContent;
+
+		// Override showing of EmptyContent in Reader stream
+		let showEmptyContent = true;
+		if ( this.props.showBlankContent === false || this.props.query ) {
+			showEmptyContent = false;
+		}
 
 		if ( this.props.setPageTitle ) {
 			this.props.setPageTitle( this.state.title || this.translate( 'Search' ) );
@@ -206,10 +220,16 @@ const FeedStream = React.createClass( {
 
 		const store = this.props.store || emptyStore;
 
+		let searchPlaceholderText = this.props.searchPlaceholderText;
+		if ( ! searchPlaceholderText ) {
+			searchPlaceholderText = this.translate( 'Search billions of WordPress.com posts…' );
+		}
+
 		return (
 			<Stream { ...this.props } store={ store }
 				listName={ this.translate( 'Search' ) }
 				emptyContent={ emptyContent }
+				showEmptyContent={ showEmptyContent }
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory }
 				className="search-stream" >
@@ -221,7 +241,7 @@ const FeedStream = React.createClass( {
 						autoFocus={ true }
 						delaySearch={ true }
 						delayTimeout={ 500 }
-						placeholder={ this.translate( 'Search billions of WordPress.com posts…' ) } />
+						placeholder={ searchPlaceholderText } />
 				</CompactCard>
 			</Stream>
 		);
