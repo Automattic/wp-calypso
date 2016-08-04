@@ -61,7 +61,7 @@
 		pointer-events: none;
 		user-select: none;
 
-		&:nth-child(1n+1) {
+		&:nth-child(n+1) {
 			margin-right: 14px;
 		}
 
