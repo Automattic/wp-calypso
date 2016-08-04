@@ -74,7 +74,7 @@ export const MainTour = makeTour(
 				}
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue icon="my-sites" target="my-sites" click>
+				<Continue icon="my-sites" target="my-sites" step="sidebar" click>
 					{
 						translate( 'Click the {{GridIcon/}} to continue.', {
 							components: {

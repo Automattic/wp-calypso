@@ -6,7 +6,17 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { find, debounce, mapValues, omit, property } from 'lodash';
+import {
+	chunk,
+	debounce,
+	find,
+	flatMap,
+	fromPairs,
+	mapValues,
+	omit,
+	property,
+	zipObject,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -353,6 +363,36 @@ export class Link extends Component {
 	}
 }
 
+const branching = element => {
+	if ( ! element || ! element.props ) {
+		return [];
+	}
+
+	if ( element.props.step ) {
+		return [ element.type.name.toLowerCase(), element.props.step ];
+	}
+
+	return flatMap(
+		React.Children.toArray( element.props.children ),
+		c => branching( c ) || []
+	);
+};
+
+const tourBranching = tourTree => {
+	const steps = React.Children
+		.toArray( tourTree.props.children );
+
+	const stepsBranching = steps
+		.map( branching )
+		.map( xs => chunk( xs, 2 ) )
+		.map( fromPairs );
+
+	return zipObject(
+		steps.map( property( 'props.name' ) ),
+		stepsBranching
+	);
+};
+
 export const makeTour = tree => {
 	const tour = ( { stepName, isValid, next, quit } ) =>
 		React.cloneElement( tree, { stepName, isValid, next, quit } );
@@ -364,6 +404,7 @@ export const makeTour = tree => {
 		quit: PropTypes.func.isRequired,
 	};
 	tour.meta = omit( tree.props, 'children' );
+	tour.branching = tourBranching( tree );
 	return tour;
 };
 
@@ -373,5 +414,11 @@ export const combineTours = tours => {
 		return tour ? tour( props ) : null;
 	};
 	combined.meta = mapValues( tours, property( 'meta' ) );
+	combined.branching = mapValues( tours, property( 'branching' ) );
+
+	// FIXME(mcsf): debuggin'
+	window.tours = tours;
+	window.allTours = combined;
+
 	return combined;
 };
