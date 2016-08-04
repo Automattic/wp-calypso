@@ -5,7 +5,7 @@ import React from 'react';
 import classnames from 'classnames';
 import page from 'page';
 import qs from 'qs';
-import defer from 'lodash/defer';
+import { get, defer } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -58,7 +58,7 @@ class DailyPostButton extends React.Component {
 	}
 
 	static propTypes = {
-		post: React.PropTypes.object,
+		post: React.PropTypes.object.required,
 		position: React.PropTypes.string,
 		tagName: React.PropTypes.string
 	}
@@ -106,6 +106,7 @@ class DailyPostButton extends React.Component {
 
 	render() {
 		const canParticipate = !! sitesList.getPrimary();
+		const title = get( this.props, 'post.title' );
 		const buttonClasses = classnames( {
 			'reader__daily_post_button': true,
 			'ignore-click': true,
@@ -124,7 +125,7 @@ class DailyPostButton extends React.Component {
 			onMouseEnter: preloadEditor
 		}, [
 			( <Button ref="dailyPostButton" key="button" compact primary className={ buttonClasses }>
-					<Gridicon icon="create" /><span>{ translate( 'Post about ' ) + this.props.post.title } </span>
+					<Gridicon icon="create" /><span>{ translate( 'Post about ' ) + title } </span>
 				</Button> ),
 			( this.state.showingMenu
 				? <SitesPopover

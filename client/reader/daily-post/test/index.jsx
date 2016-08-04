@@ -35,27 +35,27 @@ describe( 'DailyPostButton', () => {
 
 	describe( 'rendering', () => {
 		it( 'does not render if the user does not have any sites', () => {
-			const dailyPostPrompt = shallow( <DailyPostButton /> );
+			const dailyPostPrompt = shallow( <DailyPostButton post={ dailyPromptPost }/> );
 			assert.isNull( dailyPostPrompt.type() );
 		} );
 
 		it( 'renders as an li tag by default', () => {
-			const renderAsLi = shallow( <DailyPostButton /> );
+			const renderAsLi = shallow( <DailyPostButton post={ dailyPromptPost } /> );
 			assert.equal( 'li', renderAsLi.type() );
 		} );
 
 		it( 'renders as the tag specified in props tagName', () => {
-			const renderAsSpan = shallow( <DailyPostButton tagName="span" /> );
+			const renderAsSpan = shallow( <DailyPostButton tagName="span" post={ dailyPromptPost } /> );
 			assert.equal( 'span', renderAsSpan.type() );
 		} );
 
 		it( 'hides the sites list by default', () => {
-			const inactive = shallow( <DailyPostButton /> );
+			const inactive = shallow( <DailyPostButton post={ dailyPromptPost } /> );
 			assert.isFalse( inactive.containsMatchingElement( <SitesPopover /> ) );
 		} );
 
 		it( 'shows the sites list if showingMenu is true', () => {
-			const active = shallow( <DailyPostButton /> ).setState( { showingMenu: true } );
+			const active = shallow( <DailyPostButton post={ dailyPromptPost } /> ).setState( { showingMenu: true } );
 			assert.isTrue( active.containsMatchingElement( <SitesPopover /> ) );
 		} );
 	} );
