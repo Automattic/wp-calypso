@@ -30,7 +30,7 @@ describe( 'DailyPostButton', () => {
 	} );
 
 	before( () =>{
-		DailyPostButton = require( '../button' );
+		DailyPostButton = require( '../index' );
 	} );
 
 	describe( 'rendering', () => {
