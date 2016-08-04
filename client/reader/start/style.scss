@@ -60,7 +60,11 @@
 	&.is-placeholder {
 		pointer-events: none;
 		user-select: none;
-		margin-right: 14px !important;
+		margin-right: 14px;
+
+		&:nth-child(2n+2) {
+			margin-right: 0;
+		}
 
 		.reader-start-card__site-title,
 		.reader-start-post-preview__title,
@@ -107,8 +111,8 @@
 
 	@include breakpoint( ">960px" ) {
 		display: inline-block;
-			margin: 0px 0px 14px 0px;
-			width: 47%;
+		margin: 0 0 14px;
+		width: calc( 100% - 368px );
 	}
 
 	&:first-child {
@@ -269,6 +273,7 @@
 .reader-start-card__follow {
 	position: absolute;
 		right: 16px;
+	z-index: 1;
 }
 
 .reader-start-post-preview {
@@ -378,6 +383,7 @@
 	}
 
 	.follow-button {
+		background: none;
 		border-color: $white;
 		z-index: 1;
 

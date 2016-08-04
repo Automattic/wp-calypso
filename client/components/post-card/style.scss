@@ -87,9 +87,76 @@
 		}
 	}
 
-	&.has-primary-follow-button {
-		.follow-button {
-			float: right;
+	&.has-primary-follow-button.is-photo {
+
+		&::before{
+			opacity: .65;
+		}
+	}
+
+	// Search in CS
+	&.has-primary-follow-button .follow-button,
+	&.has-primary-follow-button.is-photo .follow-button {
+		background: none;
+		border-color: $blue-wordpress;
+		float: right;
+		position: relative;
+		z-index: 1;
+
+		.gridicon {
+			fill: $blue-wordpress;
+		}
+
+		.follow-button__label {
+			color: $blue-wordpress;
+		}
+
+		&:hover {
+			border-color: $gray-dark;
+
+			.gridicon {
+				fill: $gray-dark;
+			}
+
+			.follow-button__label {
+				color: $gray-dark
+			}
+		}
+
+		&.is-following {
+			border-color: $alert-green;
+
+			.gridicon {
+				fill: $alert-green;
+			}
+
+			.follow-button__label {
+				color: $alert-green;
+			}
+		}
+	}
+
+	&.has-primary-follow-button.is-photo .follow-button {
+		border-color: $white;
+
+		.gridicon {
+			fill: $white;
+		}
+
+		.follow-button__label {
+			color: $white;
+		}
+
+		&:hover {
+			border-color: lighten( $gray, 20% );
+
+			.gridicon {
+				fill: lighten( $gray, 20% );
+			}
+
+			.follow-button__label {
+				color: lighten( $gray, 20% );
+			}
 		}
 	}
 
