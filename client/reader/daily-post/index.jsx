@@ -14,6 +14,7 @@ import { translate } from 'i18n-calypso';
 import { preload } from 'sections-preload';
 import SitesPopover from 'components/sites-popover';
 import Button from 'components/button';
+import Gridicon from 'components/gridicon';
 import getSitesList from 'lib/sites-list';
 import { getDailyPostType } from './helper';
 
@@ -25,7 +26,7 @@ function getPingbackAttributes( post ) {
 		photo: translate( 'Photo Challenge: ' ),
 		discover: translate( 'Discover Challenge: ' )
 	};
-	let title = typeTitles[ getDailyPostType( post ) ] + post.title;
+	const title = typeTitles[ getDailyPostType( post ) ] + post.title;
 
 	return {
 		title,
@@ -122,7 +123,9 @@ class DailyPostButton extends React.Component {
 			onTouchStart: preloadEditor,
 			onMouseEnter: preloadEditor
 		}, [
-			( <Button ref="dailyPostButton" key="button" compact className={ buttonClasses }> { translate( 'Start your post' ) }</Button> ),
+			( <Button ref="dailyPostButton" key="button" compact primary className={ buttonClasses }>
+					<Gridicon icon="create" /><span>{ translate( 'Post about ' ) + this.props.post.title } </span>
+				</Button> ),
 			( this.state.showingMenu
 				? <SitesPopover
 					key="menu"
