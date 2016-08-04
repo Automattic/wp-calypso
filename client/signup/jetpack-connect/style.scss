@@ -385,6 +385,20 @@
 	}
 }
 
+.jetpack-connect__plans-interval-toggle {
+	clear: both;
+	display: block;
+	font-size: 12px;
+	margin: 20px 0 20px 0;
+	text-align: center;
+	cursor: pointer;
+
+	.gridicon {
+		margin: -2px 3px 0 0;
+		vertical-align: middle;
+	}
+}
+
 .jetpack-connect__sso-shared-detail-label {
 	font-weight: bold;
 }

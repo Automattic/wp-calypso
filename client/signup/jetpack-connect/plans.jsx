@@ -25,6 +25,7 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { requestPlans } from 'state/plans/actions';
 import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
+import Gridicon from 'components/gridicon';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 
@@ -38,6 +39,10 @@ const Plans = React.createClass( {
 		sites: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
 		showJetpackFreePlan: React.PropTypes.bool
+	},
+
+	getInitialState() {
+		return { intervalType: 'yearly' };
 	},
 
 	componentDidMount() {
@@ -122,6 +127,32 @@ const Plans = React.createClass( {
 		page( checkoutPath );
 	},
 
+	clickIntervalToggle() {
+		if ( this.state.intervalType === 'monthly' ) {
+			this.setState( { intervalType: 'yearly' } );
+		} else {
+			this.setState( { intervalType: 'monthly' } );
+		}
+		this.props.recordTracksEvent( 'calypso_jpc_plans_toggle', {
+			user: this.props.userId
+		} );
+	},
+
+	renderIntervalToggle() {
+		const showText = ( this.state.intervalType === 'yearly' )
+			? this.translate( 'Show Monthly Plans' )
+			: this.translate( 'Show Yearly Plans' );
+		return (
+			<a
+				onClick={ this.clickIntervalToggle }
+				className="jetpack-connect__plans-interval-toggle"
+			>
+				<Gridicon icon="refresh" size={ 18 } />
+				{ showText }
+			</a>
+		);
+	},
+
 	render() {
 		if ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) {
 			return null;
@@ -146,12 +177,14 @@ const Plans = React.createClass( {
 							step={ 1 }
 							steps={ 3 } />
 
+						{ this.renderIntervalToggle() }
+
 						<div id="plans" className="plans has-sidebar">
 							<PlansFeaturesMain
 								site={ selectedSite }
 								isInSignup={ true }
 								onUpgradeClick={ this.selectPlan }
-								intervalType="yearly" />
+								intervalType={ this.state.intervalType } />
 						</div>
 					</div>
 				</Main>
