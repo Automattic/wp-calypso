@@ -5,7 +5,7 @@ import React from 'react';
 import classnames from 'classnames';
 import page from 'page';
 import qs from 'qs';
-import { get, defer } from 'lodash';
+import { get, defer, noop } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -15,6 +15,8 @@ import { preload } from 'sections-preload';
 import SitesPopover from 'components/sites-popover';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
+import { markSeen as markPostSeen } from 'lib/feed-post-store/actions';
+
 import getSitesList from 'lib/sites-list';
 import { recordGaEvent, recordAction, recordTrackForPost } from 'reader/stats';
 import { getDailyPostType } from './helper';
@@ -59,10 +61,11 @@ class DailyPostButton extends React.Component {
 	}
 
 	static propTypes = {
-		post: React.PropTypes.object.required,
+		post: React.PropTypes.object.isRequired,
 		position: React.PropTypes.string,
-		tagName: React.PropTypes.string
+		tagName: React.PropTypes.string,
 	}
+
 	static defaultProps = {
 		position: 'top',
 		tagName: 'li'
@@ -91,10 +94,14 @@ class DailyPostButton extends React.Component {
 	}
 
 	pickSiteToPostTo( siteSlug ) {
+		const pingbackAttributes = getPingbackAttributes( this.props.post );
+
 		recordAction( 'daily_post_challenge' );
 		recordGaEvent( 'Clicked on Daily Post challenge' );
 		recordTrackForPost( 'calypso_reader_daily_post_challenge_site_picked', this.props.post );
-		const pingbackAttributes = getPingbackAttributes( this.props.post );
+
+		markPostSeen( this.props.post );
+
 		page( `/post/${ siteSlug }?${ qs.stringify( pingbackAttributes ) }` );
 		return true;
 	}
@@ -113,7 +120,7 @@ class DailyPostButton extends React.Component {
 		// have to defer this to let the mouseup / click escape.
 		// If we don't defer and remove the DOM node on this turn of the event loop,
 		// Chrome (at least) will not fire the click
-		if ( this._isMounted() ) {
+		if ( this._isMounted ) {
 			this._deferMenuChange( false );
 		}
 	}
