@@ -220,7 +220,7 @@ export default connect(
 	( state, ownProps ) => {
 		const { taxonomy, postType } = ownProps;
 		const siteId = getSelectedSiteId( state );
-		const { labels } = getPostTypeTaxonomy( state, siteId, postType, taxonomy ) || {};
+		const { labels } = getPostTypeTaxonomy( state, siteId, postType, taxonomy ) || { labels: {} };
 
 		return {
 			terms: getTerms( state, siteId, taxonomy ),

@@ -14,6 +14,7 @@ import { editPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
 
 class EditorTermSelector extends Component {
 	static propTypes = {
@@ -21,7 +22,8 @@ class EditorTermSelector extends Component {
 		postId: PropTypes.number,
 		postTerms: PropTypes.object,
 		postType: PropTypes.string,
-		taxonomyName: PropTypes.string
+		taxonomyName: PropTypes.string,
+		canEditTerms: PropTypes.bool
 	};
 
 	constructor( props ) {
@@ -56,7 +58,7 @@ class EditorTermSelector extends Component {
 	}
 
 	render() {
-		const { postType, postId, siteId, taxonomyName } = this.props;
+		const { postType, postId, siteId, taxonomyName, canEditTerms } = this.props;
 
 		return (
 			<div>
@@ -68,7 +70,7 @@ class EditorTermSelector extends Component {
 					siteId={ siteId }
 					multiple={ true }
 				/>
-				<AddTerm taxonomy={ taxonomyName } postType={ postType } postId={ postId } />
+				{ canEditTerms && <AddTerm taxonomy={ taxonomyName } postType={ postType } postId={ postId } /> }
 			</div>
 		);
 	}
@@ -82,6 +84,7 @@ export default connect(
 		return {
 			postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' ),
 			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
+			canEditTerms: canCurrentUser( state, siteId, 'manage_categories' ),
 			siteId,
 			postId
 		};
