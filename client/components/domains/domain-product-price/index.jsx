@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import PremiumPopover from 'components/plans/premium-popover';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 
@@ -74,11 +73,10 @@ const DomainProductPrice = React.createClass( {
 
 		switch ( this.props.rule ) {
 			case 'FREE_DOMAIN':
-				return this.renderFree();
+			case 'INCLUDED_IN_PREMIUM':
+				return null;
 			case 'FREE_WITH_PLAN':
 				return this.renderFreeWithPlan();
-			case 'INCLUDED_IN_PREMIUM':
-				return this.renderIncludedInPremium();
 			case 'PRICE':
 			default:
 				return this.renderPrice();
@@ -87,8 +85,8 @@ const DomainProductPrice = React.createClass( {
 } );
 
 export default connect(
-	state => ( { domainsWithPlansOnly: getCurrentUser( state ) ?
-		currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) :
-		true
+	state => ( { domainsWithPlansOnly: getCurrentUser( state )
+		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+		: true
 	} )
 )( DomainProductPrice );
