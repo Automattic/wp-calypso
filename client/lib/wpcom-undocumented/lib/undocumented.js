@@ -1978,6 +1978,17 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
 };
 
 /**
+ * Get WordAds Status of a site.
+ *
+ * @param {int}       siteId            The site ID
+ * @returns {XMLHttpRequest}          The XHR instance
+ */
+Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
+	debug( '/sites/:site:/wordads/status' );
+	return this.wpcom.req.get( '/sites/' + siteId + '/wordads/status', fn );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;
