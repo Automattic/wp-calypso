@@ -266,7 +266,7 @@ export default React.createClass( {
 				onClose={ this.closeSchedulePopover }
 				position={ 'bottom left' }
 				context={ this.refs && this.refs.schedulePost }
-				id='editor-post-schedule'
+				id="editor-post-schedule"
 			>
 				<span className="editor-ground-control__schedule-post">
 					{ postUtils.isPage( this.props.post )
