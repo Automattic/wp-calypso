@@ -11,13 +11,13 @@ import * as posts from './fixtures';
 import * as helper from '../helper';
 
 describe( 'daily post helper', () => {
-	describe( 'isDailyPost', () => {
+	describe( 'isDailyPostChallengeOrPrompt', () => {
 		it( 'returns false if the post is not from daily post', () => {
-			assert.isFalse( helper.isDailyPost( posts.basicPost ) );
+			assert.isFalse( helper.isDailyPostChallengeOrPrompt( posts.basicPost ) );
 		} );
 
-		it( 'returns true if the post is from daily post ', () => {
-			assert.isTrue( helper.isDailyPost( posts.dailyPostSitePost ) );
+		it( 'returns false if the post is from daily post but is not a challenge or prompt', () => {
+			assert.isFalse( helper.isDailyPostChallengeOrPrompt( posts.dailyPostSitePost ) );
 		} );
 	} );
 
