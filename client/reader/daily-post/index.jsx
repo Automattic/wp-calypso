@@ -16,6 +16,7 @@ import SitesPopover from 'components/sites-popover';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import getSitesList from 'lib/sites-list';
+import { recordGaEvent, recordAction, recordTrack } from 'reader/stats';
 import { getDailyPostType } from './helper';
 
 const sitesList = getSitesList();
@@ -90,6 +91,9 @@ class DailyPostButton extends React.Component {
 	}
 
 	pickSiteToPostTo( siteSlug ) {
+		recordAction( 'daily_post_challenge' );
+		recordGaEvent( 'Clicked on Daily Post challenge' );
+		recordTrack( 'calypso_reader_daily_post_challenge_to_site' );
 		const pingbackAttributes = getPingbackAttributes( this.props.post );
 		page( `/post/${ siteSlug }?${ qs.stringify( pingbackAttributes ) }` );
 		return true;
@@ -97,6 +101,11 @@ class DailyPostButton extends React.Component {
 
 	toggle( event ) {
 		preventDefault( event );
+		if ( ! this.state.showingMenu ) {
+			recordAction( 'open_daily_post_challenge' );
+			recordGaEvent( 'Opened Daily Post Challenge' );
+			recordTrack( 'calypso_reader_daily_post_challenge_opened' );
+		}
 		this._deferMenuChange( ! this.state.showingMenu );
 	}
 
