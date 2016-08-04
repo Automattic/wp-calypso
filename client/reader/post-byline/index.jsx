@@ -104,7 +104,7 @@ class PostByline extends React.Component {
 				</li> : null }
 			{ primaryTag ?
 				<li className="reader-post-byline__tag">
-					<a href={ '/tag/' + primaryTag.slug } className="ignore-click" onClick={ this.recordTagClick }><Gridicon icon="tag" size={ 16 } /> { primaryTag.display_name }</a>
+					<a href={ '/tag/' + primaryTag.slug } className="ignore-click" onClick={ this.recordTagClick }><Gridicon icon="tag" size={ 16 } /> { primaryTag.name }</a>
 				</li> : null }
 			</ul>
 		);
