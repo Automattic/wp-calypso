@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-import { defer } from 'lodash';
+import { defer, last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,6 +17,7 @@ import scrollTo from 'lib/scroll-to';
 import wait from './wait';
 import { errorNotice } from 'state/notices/actions';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { getActionLog } from 'state/ui/action-log/selectors';
 import { getScrollableSidebar, targetForSlug } from './positioning';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 
@@ -107,6 +108,7 @@ class GuidedTours extends Component {
 					<AllTours
 							tourName={ tourName }
 							stepName={ stepName }
+							lastAction={ this.props.lastAction }
 							isValid={ this.props.isValid }
 							next={ this.next }
 							quit={ this.quit } />
@@ -119,6 +121,7 @@ class GuidedTours extends Component {
 export default connect( ( state ) => ( {
 	tourState: getGuidedTourState( state ),
 	isValid: ( context ) => !! context( state ),
+	lastAction: last( getActionLog( state ) ),
 } ), {
 	nextGuidedTourStep,
 	quitGuidedTour,

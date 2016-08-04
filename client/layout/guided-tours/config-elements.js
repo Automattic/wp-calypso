@@ -40,6 +40,7 @@ const contextTypes = Object.freeze( {
 	tour: PropTypes.string.isRequired,
 	tourVersion: PropTypes.string.isRequired,
 	step: PropTypes.string.isRequired,
+	lastAction: PropTypes.object,
 } );
 
 export class Tour extends Component {
@@ -50,23 +51,23 @@ export class Tour extends Component {
 	static childContextTypes = contextTypes;
 
 	getChildContext() {
-		const { next, quit, isValid, tour, tourVersion, step } = this.tourMethods;
-		return { next, quit, isValid, tour, tourVersion, step };
+		const { next, quit, isValid, lastAction, tour, tourVersion, step } = this.tourMethods;
+		return { next, quit, isValid, lastAction, tour, tourVersion, step };
 	}
 
 	constructor( props, context ) {
 		super( props, context );
-		const { next, quit, isValid, name, version, stepName } = props;
-		this.tourMethods = { next, quit, isValid, tour: name, tourVersion: version, step: stepName };
+		const { next, quit, isValid, lastAction, name, version, stepName } = props;
+		this.tourMethods = { next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { next, quit, isValid, name, version, stepName } = nextProps;
-		this.tourMethods = { next, quit, isValid, tour: name, tourVersion: version, step: stepName };
+		const { next, quit, isValid, lastAction, name, version, stepName } = nextProps;
+		this.tourMethods = { next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
 	}
 
 	render() {
-		const { context, children, isValid, stepName } = this.props;
+		const { children, context, isValid, lastAction, stepName } = this.props;
 		const nextStep = find( children, stepComponent =>
 			stepComponent.props.name === stepName );
 		const isLastStep = nextStep === children[ children.length - 1 ];
@@ -75,7 +76,7 @@ export class Tour extends Component {
 			return null;
 		}
 
-		return React.cloneElement( nextStep, { isValid, isLastStep } );
+		return React.cloneElement( nextStep, { isLastStep, isValid, lastAction } );
 	}
 }
 
@@ -114,6 +115,7 @@ export class Step extends Component {
 		this.tourVersion = nextContext.tourVersion;
 
 		this.skipIfInvalidContext( nextProps );
+		this.quitIfInvalidRoute( nextProps );
 		this.setStepPosition( nextProps );
 		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
 	}
@@ -142,6 +144,47 @@ export class Step extends Component {
 	onScrollOrResize = debounce( () => {
 		this.setStepPosition( this.props );
 	}, 100 )
+
+	quitIfInvalidRoute( props ) {
+		const hasContinue = ( children ) => {
+			// traverse children looking for a Continue element here
+			const isContinue = ( child ) => {
+				// console.log( '*** testing child: ', child );
+				// console.log(  'typeof child', typeof child );
+				// console.log(  'child.type', child.type );
+				// console.log(  'child.name', child.name );
+				// console.log(  'typeof child.type', typeof child.type );
+				// console.log(  'child.type.name', child.type.name );
+
+				// if ( typeof child === 'object' ) {
+				// 	if ( typeof child.type === 'function' ) {
+
+				// 	}
+				// }
+				return typeof child.type === 'function' && child.type.name === 'Continue';
+			};
+			var res = false;
+			for ( const child of children ) {
+				if ( res || ( isContinue( child ) ) ) {
+					return true;
+				} else if ( Array.isArray( child.props.children ) ) {
+					res = res || hasContinue( child.props.children );
+				} else if ( typeof child.props.children === 'object' ) {
+					res = res || isContinue( child.props.children );
+				}
+			}
+			return res;
+		};
+
+		console.log( 'hasContinue( this.props.children )', hasContinue( props.children ) );
+
+		if ( props.lastAction.type === 'ROUTE_SET' ) {
+			if ( ! hasContinue( props.children ) ) {
+				console.log( '*********** quitting from Step.quitIfInvalidRoute' );
+				this.quit();
+			}
+		}
+	}
 
 	skipIfInvalidContext( props ) {
 		const { context, isValid } = props;
@@ -274,17 +317,22 @@ export class Quit extends Component {
 	}
 }
 
+var globalTimer = null;
+
 export class Continue extends Component {
 	static contextTypes = contextTypes;
 
 	constructor( props, context ) {
 		super( props, context );
+		this.lastAction = context.lastAction;
+		this.isValid = context.isValid;
 		this.next = context.next;
 		this.isValid = context.isValid;
 		//TODO(ehg): DRY; store in object?
 		this.step = context.step;
 		this.tour = context.tour;
 		this.tourVersion = context.tourVersion;
+		this.quit = context.quit;
 	}
 
 	componentDidMount() {
@@ -299,11 +347,86 @@ export class Continue extends Component {
 		this.step = nextContext.step;
 		this.tour = nextContext.tour;
 		this.tourVersion = nextContext.tourVersion;
+		this.quitIfInvalidRoute( nextProps, nextContext );
+		console.log( '++++++++++++++++++++++ globalTimer:', globalTimer );
 		nextProps.context && nextContext.isValid( nextProps.context ) && this.onContinue();
 	}
 
-	componentWillUpdate() {
+	componentWillUpdate( nextProps ) {
 		this.removeTargetListener();
+	}
+
+	quitIfInvalidRoute( props, context ) {
+		console.log( 'Continue.quitIfInvalidRoute' );
+		if ( globalTimer && context.isValid( props.context ) ) {
+			console.log( 'clearing timeout' );
+			clearTimeout( globalTimer );
+			globalTimer = null;
+		}
+		if ( context.lastAction && props.context && context.lastAction.type === 'ROUTE_SET' ) {
+			// console.log( 'context.lastAction', context.lastAction );
+			// console.log( 'context', context );
+			// console.log( 'props.context', props.context );
+			if ( props.context ) {
+				// console.log( 'this.isValid( props.context )', this.isValid( props.context ) );
+			}
+			if ( ! context.isValid( props.context ) ) {
+				if ( ! globalTimer ) {
+					console.log( 'setting timeout' );
+					const isValid = context.isValid;
+					const quit = this.quit;
+					globalTimer = setTimeout( function() {
+						if ( ! isValid( props.context ) ) {
+							quit();
+						}
+					}, 2000 );
+				} else {
+					console.log( 'there is a timeout already, not doing anything.' );
+				}
+				// console.log( '------------------- globalTimer', globalTimer );
+				// console.log( 'new Date.getTime() - globalTimer', ( new Date().getTime() - globalTimer ) );
+				// if ( ! globalTimer ) {
+				// 	console.log( 'creating a timer' );
+				// 	globalTimer = new Date().getTime();
+				// } else if ( new Date().getTime() - globalTimer > 2000 ) {
+				// 	console.log( 'calling it quits.' );
+				// 	globalTimer = null;
+				// 	this.quit();
+				// }
+				// start a global timer.
+				// maybe in localStorage? state tree?
+				// next time this is called, look at the timer.
+				// if more than, say 2s has passed, reset timer and really quit.
+				// make sure that if isValid before timer runs out, reset timer as well
+
+
+				// console.log( 'looking again ...' );
+				// console.log( 'this.isValid( props.context )', this.isValid( props.context ) );
+
+				// console.log( 'looking once again ...' );
+				// console.log( 'this.isValid( props.context )', this.isValid( props.context ) );
+
+				// const contextIsValid = () => {
+				// 	console.log( '+++++ contextIsValid?' );
+				// 	console.log( 'props.context', props.context );
+				// 	console.log( 'this.isValid( props.context )', this.isValid( props.context ) );
+				// 	return this.isValid( props.context );
+				// };
+
+				// const validConfirmed = () => {
+				// 	console.log( '+++++ validConfirmed!' );
+				// };
+
+				// const validErrored = () => {
+				// 	console.log( '+++++ validErrored!' );
+				// 	this.quit();
+				// };
+
+				// wait( { condition: contextIsValid, consequence: validConfirmed, onError: validErrored } );
+				// console.log( '*********** quitting from Continue.quitIfInvalidRoute' );
+				// this.quit();
+			}
+		}
 	}
 
 	componentDidUpdate() {
@@ -394,12 +517,13 @@ const tourBranching = tourTree => {
 };
 
 export const makeTour = tree => {
-	const tour = ( { stepName, isValid, next, quit } ) =>
-		React.cloneElement( tree, { stepName, isValid, next, quit } );
+	const tour = ( { stepName, isValid, lastAction, next, quit } ) =>
+		React.cloneElement( tree, { stepName, isValid, lastAction, next, quit } );
 
 	tour.propTypes = {
 		stepName: PropTypes.string.isRequired,
 		isValid: PropTypes.func.isRequired,
+		lastAction: PropTypes.object,
 		next: PropTypes.func.isRequired,
 		quit: PropTypes.func.isRequired,
 	};
