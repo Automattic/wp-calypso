@@ -59,7 +59,9 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 					onClick={ onCommentClick }/>
 				<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } />
 			</div> }
-			{ showPrimaryFollowButton && <FollowButton siteUrl={ post.site_URL } railcar={ post.railcar } /> }
+			{ showPrimaryFollowButton && <div className="post-card__search-follow-primary ignore-click">
+				<FollowButton siteUrl={ post.site_URL } railcar={ post.railcar } />
+			</div> }
 			<h1 className="post-card__search-title">
 				<a className="post-card__search-title-link" href={ post.URL }>{ title }</a>
 			</h1>
