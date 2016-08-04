@@ -1,10 +1,7 @@
 /*
  * External dependencies
  */
-import filter from 'lodash/filter';
-import includes from 'lodash/includes';
-import sortBy from 'lodash/sortBy';
-import find from 'lodash/find';
+import { filter, includes, sortBy, find } from 'lodash/filter';
 
 /**
  * Internal dependencies
@@ -57,7 +54,9 @@ export const getSubscribedTags = createSelector(
  * @return {?Object}        Reader tag
  */
 export function getTagByName( state, name ) {
-	if ( ! name ) return;
-	const slug = slugify(name);
+	if ( ! name ) {
+		return;
+	}
+	const slug = slugify( name );
 	return find( state.reader.tags.items, ( tag ) => tag.slug === slug );
 }
