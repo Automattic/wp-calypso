@@ -6,13 +6,21 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import config from 'config';
-import { partial } from 'lodash';
+import { connect } from 'react-redux';
+import {
+	overSome,
+	partial
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
+import { isBusiness, isEnterprise } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
+import { getSelectedSite } from 'state/ui/selectors';
+
+const hasBusinessPlan = overSome( isBusiness, isEnterprise );
 
 const possibleDevices = [
 	'computer',
@@ -123,4 +131,8 @@ PreviewToolbar.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-export default localize( PreviewToolbar );
+const mapStateToProps = state => ( {
+	showSeo: hasBusinessPlan( getSelectedSite( state ).plan )
+} );
+
+export default connect( mapStateToProps )( localize( PreviewToolbar ) );
