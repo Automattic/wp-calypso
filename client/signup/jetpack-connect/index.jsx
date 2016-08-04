@@ -334,7 +334,7 @@ const JetpackConnectMain = React.createClass( {
 
 	renderInstallInstructions() {
 		return (
-			<Main className="jetpack-connect jetpack-connect__wide">
+			<MainWrapper isWide>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader
@@ -365,7 +365,7 @@ const JetpackConnectMain = React.createClass( {
 						<div>{ this.renderBackButton() }</div>
 					</div>
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	},
 
@@ -396,7 +396,7 @@ const JetpackConnectMain = React.createClass( {
 
 	renderActivateInstructions() {
 		return (
-			<Main className="jetpack-connect jetpack-connect__wide">
+			<MainWrapper isWide>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader showLogo={ false }
@@ -419,7 +419,7 @@ const JetpackConnectMain = React.createClass( {
 						{ this.renderBackButton() }
 					</div>
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	},
 
