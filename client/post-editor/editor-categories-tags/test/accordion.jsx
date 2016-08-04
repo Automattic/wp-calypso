@@ -13,7 +13,7 @@ import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'EditorCategoriesTagsAccordion', function() {
-	let mount, common, tagStore, i18n, accordion, PureEditorCategoriesTagsAccordion;
+	let mount, common, tagStore, i18n, accordion, EditorCategoriesTagsAccordion;
 
 	useMockery();
 	useFakeDom();
@@ -30,14 +30,14 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 		i18n = require( 'i18n-calypso' );
 
 		// require needs to be here in order for mocking of VirtualScroll to work
-		PureEditorCategoriesTagsAccordion = require ( 'post-editor/editor-categories-tags/accordion' ).PureEditorCategoriesTagsAccordion;
+		EditorCategoriesTagsAccordion = require ( 'post-editor/editor-categories-tags/accordion' ).EditorCategoriesTagsAccordion;
 
 		common.dispatchReceiveTagTerms();
 	} );
 
 	function render( postTaxonomiesProps, postTerms = {} ) {
 		accordion = mount(
-			<PureEditorCategoriesTagsAccordion
+			<EditorCategoriesTagsAccordion
 				site={ { ID: common.TEST_SITE_ID } }
 				post={ postTaxonomiesProps }
 				postTerms={ postTerms }

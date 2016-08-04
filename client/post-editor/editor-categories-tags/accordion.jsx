@@ -23,7 +23,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getTerm } from 'state/terms/selectors';
 
-class EditorCategoriesTagsAccordion extends Component {
+export class EditorCategoriesTagsAccordion extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
@@ -197,6 +197,3 @@ export default connect(
 		};
 	}
 )( localize( EditorCategoriesTagsAccordion ) );
-
-// Expose a pure, non connect-ed version of this component for testing
-export { EditorCategoriesTagsAccordion as PureEditorCategoriesTagsAccordion };
