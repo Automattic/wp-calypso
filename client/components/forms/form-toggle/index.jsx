@@ -1,51 +1,71 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React, { PureComponent, PropTypes } from 'react';
+import classNames from 'classnames';
 
-var idNum = 0;
+export default class FormToggle extends PureComponent {
+	static propTypes = {
+		onChange: PropTypes.func,
+		onKeyDown: PropTypes.func,
+		checked: PropTypes.bool,
+		disabled: PropTypes.bool,
+		id: PropTypes.string,
+		className: PropTypes.string,
+		toggling: PropTypes.bool,
+		'aria-label': PropTypes.string,
+		children: PropTypes.node
+	};
 
-module.exports = React.createClass( {
+	static defaultProps = {
+		checked: false,
+		disabled: false,
+		onKeyDown: () => {},
+		onChange: () => {}
+	};
 
-	displayName: 'FormToggle',
+	static idNum = 0;
 
-	propTypes: {
-		onChange: React.PropTypes.func,
-		checked: React.PropTypes.bool,
-		disabled: React.PropTypes.bool,
-		id: React.PropTypes.string
-	},
+	constructor() {
+		super( ...arguments );
 
-	getDefaultProps: function() {
-		return {
-			checked: false,
-			disabled: false
-		};
-	},
-	_onKeyDown: function( event ) {
+		this.onKeyDown = this.onKeyDown.bind( this );
+		this.onClick = this.onClick.bind( this );
+	}
+
+	componentWillMount() {
+		this.id = this.constructor.idNum++;
+	}
+
+	onKeyDown( event ) {
+		if ( this.props.disabled ) {
+			return;
+		}
+
+		if ( event.key === 'Enter' || event.key === ' ' ) {
+			event.preventDefault();
+			this.props.onChange();
+		}
+
+		this.props.onKeyDown( event );
+	}
+
+	onClick() {
 		if ( ! this.props.disabled ) {
-			if ( event.key === 'Enter' || event.key === ' ' ) {
-				event.preventDefault();
-				this.props.onChange();
-			}
+			this.props.onChange();
 		}
-		if ( this.props.onKeyDown ) {
-			this.props.onKeyDown( event );
-		}
-	},
+	}
 
-	render: function() {
-		var id = this.props.id || 'toggle-' + idNum++,
-			toggleClasses = classNames( {
-				'form-toggle': true,
-				'is-toggling': this.props.toggling
-			} );
+	render() {
+		const id = this.props.id || 'toggle-' + this.id;
+		const toggleClasses = classNames( 'form-toggle', this.props.className, {
+			'is-toggling': this.props.toggling
+		} );
 
 		return (
 			<span>
 				<input
-					className={ classNames( this.props.className, toggleClasses ) }
+					className={ toggleClasses }
 					type="checkbox"
 					checked={ this.props.checked }
 					readOnly={ true }
@@ -55,8 +75,8 @@ module.exports = React.createClass( {
 					<span className="form-toggle__switch"
 						disabled={ this.props.disabled }
 						id={ id }
-						onClick={ this.props.onChange }
-						onKeyDown={ this._onKeyDown }
+						onClick={ this.onClick }
+						onKeyDown={ this.onKeyDown }
 						role="checkbox"
 						aria-checked={ this.props.checked }
 						aria-label={ this.props[ 'aria-label' ] }
@@ -67,4 +87,4 @@ module.exports = React.createClass( {
 			</span>
 		);
 	}
-} );
+}
