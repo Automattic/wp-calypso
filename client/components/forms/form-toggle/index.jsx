@@ -19,7 +19,9 @@ export default class FormToggle extends PureComponent {
 
 	static defaultProps = {
 		checked: false,
-		disabled: false
+		disabled: false,
+		onKeyDown: () => {},
+		onChange: () => {}
 	};
 
 	static idNum = 0;
@@ -45,13 +47,11 @@ export default class FormToggle extends PureComponent {
 			this.props.onChange();
 		}
 
-		if ( this.props.onKeyDown ) {
-			this.props.onKeyDown( event );
-		}
+		this.props.onKeyDown( event );
 	}
 
 	onClick() {
-		if ( ! this.props.disabled && this.props.onChange ) {
+		if ( ! this.props.disabled ) {
 			this.props.onChange();
 		}
 	}
