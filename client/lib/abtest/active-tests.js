@@ -90,5 +90,14 @@ module.exports = {
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: false,
+	},
+	readerSearchSuggestions: {
+		datestamp: '20160804',
+		variations: {
+			staffSuggestions: 50,
+			popularSuggestions: 50
+		},
+		defaultVariation: 'staffSuggestions',
+		allowExistingUsers: false,
 	}
 };
