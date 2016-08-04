@@ -14,12 +14,10 @@ import ThemesList from 'components/themes-list';
 import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
-import { 
+import {
 	getFilter,
-	getTerm,
-	filterIsValid,
-	FILTER_REGEX_GLOBAL,
-	sortFilterTerms,
+	getSortedFilterTerms,
+	stripFilters,
 } from './theme-filters.js';
 
 const ThemesSelection = React.createClass( {
@@ -43,16 +41,8 @@ const ThemesSelection = React.createClass( {
 	},
 
 	doSearch( searchBoxContent ) {
-		let matches;
-		const validFilters = [];
-		while ( ( matches = FILTER_REGEX_GLOBAL.exec( searchBoxContent ) ) !== null ) {
-			if ( filterIsValid( matches[ 0 ] ) ) {
-				validFilters.push( getTerm( matches[ 0 ] ) );
-			}
-		}
-		const filter = sortFilterTerms( validFilters ).join( ',' );
-
-		const searchString = searchBoxContent.replace( FILTER_REGEX_GLOBAL, '' ).trim();
+		const filter = getSortedFilterTerms( searchBoxContent );
+		const searchString = stripFilters( searchBoxContent );
 		this.updateUrl( this.props.tier || 'all', filter, searchString );
 	},
 
