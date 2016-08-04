@@ -30,6 +30,7 @@ var config = require( 'config' ),
 	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
 	normalize = require( 'lib/route/normalize' ),
+	{ isLegacyRoute } = require( 'lib/route/legacy-routes' ),
 	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
@@ -255,18 +256,6 @@ function reduxStoreReady( reduxStore ) {
 			} );
 		}
 	}
-
-	const isLegacyRoute = ( path ) => {
-		return ( /.php$/.test( path ) ||
-			/^\/?$/.test( path ) && ! config.isEnabled( 'reader' ) ||
-			/^\/my-stats/.test( path ) ||
-			/^\/notifications/.test( path ) ||
-			/^\/themes/.test( path ) ||
-			/^\/manage/.test( path ) ||
-			/^\/plans/.test( path ) && ! config.isEnabled( 'manage/plans' ) ||
-			/^\/me/.test( path ) && ! /^\/me\/billing/.test( path ) &&
-			! /^\/me\/next/.test( path ) && ! config.isEnabled( 'me/my-profile' ) );
-	};
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
 	// This can be removed when the legacy version is retired.
