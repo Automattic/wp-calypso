@@ -43,6 +43,8 @@ const
 	readerRoute = require( 'reader/route' ),
 	stats = require( 'reader/stats' ),
 	PostPermalink = require( 'reader/post-permalink' ),
+	DailyPostHelper = require( 'reader/daily-post/helper' ),
+	DailyPostButton = require( 'reader/daily-post' ),
 	DiscoverPostAttribution = require( 'reader/discover/post-attribution' ),
 	DiscoverSiteAttribution = require( 'reader/discover/site-attribution' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
@@ -447,6 +449,8 @@ const Post = React.createClass( {
 						</div>
 					: null
 				}
+
+				{ DailyPostHelper.isDailyPostChallengeOrPrompt( post ) ? <DailyPostButton post={ post } tagName="span" /> : null }
 
 				<ul className="reader__post-footer">
 					<PostPermalink siteName={ siteName } postUrl={ post.URL } />
