@@ -123,7 +123,7 @@ const Start = React.createClass( {
 
 				<StartSearch { ...this.props } />
 
-				{ hasRecommendations && ! hasSearchQuery && (
+				{ ! hasSearchQuery && (
 					<h2 className="reader-start__subtitle">
 						{ this.props.translate( 'Or browse suggestions:' ) }
 					</h2> )
