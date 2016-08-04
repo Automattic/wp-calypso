@@ -49,9 +49,7 @@ const ThemesSelection = React.createClass( {
 	prependFilterKeys() {
 		const { filter } = this.props;
 		if ( filter ) {
-			return filter.split( ',' ).map(
-				value => getFilter( value )
-			).join( ' ' ) + ' ';
+			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
 		}
 		return '';
 	},
