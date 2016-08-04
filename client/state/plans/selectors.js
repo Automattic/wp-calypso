@@ -40,6 +40,17 @@ export const getPlan = createSelector(
 );
 
 /**
+ * Returns a plan searched by its slug
+ * @param  {Object} state      global state
+ * @param  {String} planSlug the plan slug
+ * @return {Object} the matching plan
+ */
+export const getPlanBySlug = createSelector(
+	( state, planSlug ) => getPlans( state ).filter( plan => plan.product_slug === planSlug ).shift(),
+	( state ) => getPlans( state )
+);
+
+/**
  * Returns a plan price
  * @param  {Object}  state     global state
  * @param  {Number}  productId the plan productId

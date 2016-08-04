@@ -11,6 +11,7 @@ import { filter } from 'lodash';
 import PlanFeatures from 'my-sites/plan-features';
 import {
 	PLAN_FREE,
+	PLAN_JETPACK_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
@@ -42,22 +43,34 @@ class PlansFeaturesMain extends Component {
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
 		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
+			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
+			if ( hideFreePlan ) {
+				jetpackPlans.shift();
+			}
 			return (
 				<div className="plans-features-main__group">
 					<PlanFeatures
-						plans={ [ PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ] }
+						plans={ jetpackPlans }
 						selectedFeature={ selectedFeature }
+						onUpgradeClick={ onUpgradeClick }
+						isInSignup={ isInSignup }
 					/>
 				</div>
 			);
 		}
 
 		if ( this.isJetpackSite( site ) ) {
+			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ];
+			if ( hideFreePlan ) {
+				jetpackPlans.shift();
+			}
 			return (
 				<div className="plans-features-main__group">
 					<PlanFeatures
-						plans={ [ PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ] }
+						plans={ jetpackPlans }
 						selectedFeature={ selectedFeature }
+						onUpgradeClick={ onUpgradeClick }
+						isInSignup={ isInSignup }
 					/>
 				</div>
 			);
