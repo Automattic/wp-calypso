@@ -75,7 +75,7 @@ describe( 'DailyPostButton', () => {
 			const pageArgs = pageSpy.lastCall.args[ 0 ];
 			const query = qs.parse( pageArgs.split( '?' )[ 1 ] );
 			const { title, URL } = dailyPromptPost;
-			assert.deepEqual( query, { title, url: URL } );
+			assert.deepEqual( query, { title: `Daily Prompt: ${ title }`, url: URL } );
 		} );
 	} );
 } );
