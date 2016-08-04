@@ -8,21 +8,33 @@
  */
 import config from 'config';
 
+const notEnabled = feature => () => ! config.isEnabled( feature );
+
+const legacyRoutes = [
+	{ match: /.php$/ },
+	{ match: /^\/?$/, predicate: notEnabled( 'reader' ) },
+	{ match: /^\/my-stats/ },
+	{ match: /^\/notifications/ },
+	{ match: /^\/themes/ },
+	{ match: /^\/manage/ },
+	{ match: /^\/plans/, predicate: notEnabled( 'manage/plans' ) },
+	{
+		match: /^\/me/,
+		noMatch: /^\/me\/(billing|next)/,
+		predicate: notEnabled( 'me/my-profile' ),
+	},
+];
+
 /**
  * Determines if a path is a legacy route, and should be ignored by Calypso
  *
  * @param {any} path      The path to check
- * @param {any} isEnabled For stubbing
  * @returns {boolean} True if legacy path, false otherwise
  */
 export function isLegacyRoute( path ) {
-	return ( /.php$/.test( path ) ||
-		/^\/?$/.test( path ) && ! config.isEnabled( 'reader' ) ||
-		/^\/my-stats/.test( path ) ||
-		/^\/notifications/.test( path ) ||
-		/^\/themes/.test( path ) ||
-		/^\/manage/.test( path ) ||
-		/^\/plans/.test( path ) && ! config.isEnabled( 'manage/plans' ) ||
-		/^\/me/.test( path ) && ! /^\/me\/billing/.test( path ) &&
-		! /^\/me\/next/.test( path ) && ! config.isEnabled( 'me/my-profile' ) );
+	return legacyRoutes.some( ( {
+		match,
+		noMatch = { test: () => false },
+		predicate = () => true
+	} ) => predicate( path ) && match.test( path ) && ! noMatch.test( path ) );
 }

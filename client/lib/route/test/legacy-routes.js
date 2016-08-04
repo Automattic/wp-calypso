@@ -37,10 +37,13 @@ describe( 'legacy-routes', function() {
 		} );
 
 		it( 'should return true for / when reader is disabled', () => {
+			// config.isEnabled( 'reader' ) === false
+			features = [];
 			expect( isLegacyRoute( '/' ) ).to.be.true;
 		} );
 
 		it( 'should return false for / when reader is enabled', () => {
+			// config.isEnabled( 'reader' ) === true
 			features = [ 'reader' ];
 			expect( isLegacyRoute( '/' ) ).to.be.false;
 		} );
@@ -52,12 +55,53 @@ describe( 'legacy-routes', function() {
 		} );
 
 		it( 'should return true for /plans when `manage/plans` feature flag disabled', () => {
+			// config.isEnabled( 'manage/plans' ) === false
+			features = [];
 			expect( isLegacyRoute( '/plans' ) ).to.be.true;
 		} );
 
 		it( 'should return false for /plans when `manage/plans` feature flag enabled', () => {
+			// config.isEnabled( 'manage/plans' ) === true
 			features = [ 'manage/plans' ];
 			expect( isLegacyRoute( '/plans' ) ).to.be.false;
+		} );
+
+		describe( 'when `me/my-profile` feature flag is enabled', () => {
+			// config.isEnabled( 'me/my-profile' ) === true
+			beforeEach( () => {
+				features = [ 'me/my-profile' ];
+			} );
+
+			it( 'should return false for /me', () => {
+				expect( isLegacyRoute( '/me' ) ).to.be.false;
+			} );
+
+			it( 'should return false for /me/billing', () => {
+				expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
+			} );
+
+			it( 'should return false for /me/next', () => {
+				expect( isLegacyRoute( '/me/next' ) ).to.be.false;
+			} );
+		} );
+
+		describe( 'when `me/my-profile` feature flag is disabled', () => {
+			// config.isEnabled( 'me/my-profile' ) === false
+			beforeEach( () => {
+				features = [];
+			} );
+
+			it( 'should return true for /me', () => {
+				expect( isLegacyRoute( '/me' ) ).to.be.true;
+			} );
+
+			it( 'should return false for /me/billing', () => {
+				expect( isLegacyRoute( '/me/billing' ) ).to.be.false;
+			} );
+
+			it( 'should return false for /me/next', () => {
+				expect( isLegacyRoute( '/me/next' ) ).to.be.false;
+			} );
 		} );
 	} );
 } );
