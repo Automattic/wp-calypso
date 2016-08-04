@@ -40,6 +40,7 @@ import safeImageUrl from 'lib/safe-image-url';
 import Button from 'components/button';
 import { requestSites } from 'state/sites/actions';
 import { isRequestingSites } from 'state/sites/selectors';
+import MainWrapper from './main-wrapper';
 
 /**
  * Constants
@@ -499,11 +500,11 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		}
 
 		return (
-			<Main className="jetpack-connect">
+			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderForm() }
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	}
 } );

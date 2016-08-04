@@ -26,6 +26,7 @@ import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Gridicon from 'components/gridicon';
+import MainWrapper from './main-wrapper';
 import {
 	confirmJetpackInstallStatus,
 	dismissUrl,
@@ -293,7 +294,7 @@ const JetpackConnectMain = React.createClass( {
 	renderSiteEntry() {
 		const status = this.getStatus();
 		return (
-			<Main className="jetpack-connect">
+			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<ConnectHeader
@@ -306,14 +307,14 @@ const JetpackConnectMain = React.createClass( {
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	},
 
 	renderSiteEntryInstall() {
 		const status = this.getStatus();
 		return (
-			<Main className="jetpack-connect">
+			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<ConnectHeader
@@ -326,7 +327,7 @@ const JetpackConnectMain = React.createClass( {
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	},
 
