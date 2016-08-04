@@ -12,19 +12,20 @@ import {
 
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
-import { bucketedTimeSpentOnCurrentView } from './selectors';
+import { bucketedTimeSpentOnCurrentView, getConfigForCurrentView } from './selectors';
 
-export function hideView( { view, enabled } ) {
-	const hideAction = {
-		type: FIRST_VIEW_HIDE,
-		view,
-	};
-
+export function hideView( { enabled } ) {
 	return ( dispatch, getState ) => {
 		const timeBucket = bucketedTimeSpentOnCurrentView( getState() );
+		const config = getConfigForCurrentView( getState() );
+
+		const hideAction = {
+			type: FIRST_VIEW_HIDE,
+			view: config.name,
+		};
 
 		const tracksEvent = recordTracksEvent( `calypso_first_view_dismissed`, {
-			view,
+			view: config.name,
 			showAgain: enabled,
 			timeSpent: timeBucket,
 		} );
@@ -34,7 +35,7 @@ export function hideView( { view, enabled } ) {
 		dispatch( bumpStat( 'calypso_first_view_duration', timeBucket ) );
 		dispatch( tracksEvent );
 		dispatch( hideAction );
-		dispatch( persistToPreferences( { getState, view, disabled: ! enabled } ) );
+		dispatch( persistToPreferences( { getState, view: config.name, disabled: ! enabled } ) );
 	};
 }
 

@@ -84,7 +84,7 @@ const FirstView = React.createClass( {
 	},
 
 	hide() {
-		this.props.hideView( { view: this.props.sectionName, enabled: this.state.isEnabled } );
+		this.props.hideView( { enabled: this.state.isEnabled } );
 	},
 
 	enableOrDisableNextTime( event ) {

@@ -12,17 +12,21 @@ import takeRightWhile from 'lodash/takeRightWhile';
 /**
  * Internal dependencies
  */
-import { FIRST_VIEW_START_DATES } from './constants';
+import { FIRST_VIEW_CONFIG } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { getSectionName, isSectionLoading } from 'state/ui/selectors';
+import { isSectionLoading } from 'state/ui/selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 
-export function doesViewHaveFirstView( view ) {
-	return !! ( FIRST_VIEW_START_DATES[ view ] );
+export function getConfigForCurrentView( state ) {
+	const currentRoute = last( filter( getActionLog( state ), { type: ROUTE_SET } ) );
+	const path = currentRoute.path ? currentRoute.path : '';
+	const config = FIRST_VIEW_CONFIG.filter( entry  => some( entry.paths, entryPath => startsWith( path, entryPath ) ) );
+
+	return config.pop() || false;
 }
 
-export function isViewEnabled( state, view ) {
+export function isViewEnabled( state, config ) {
 	// in order to avoid using an out-of-date preference for whether a
 	// FV should be enabled or not, wait until we have fetched the
 	// preferences from the API
@@ -30,20 +34,19 @@ export function isViewEnabled( state, view ) {
 		return false;
 	}
 
-	const firstViewHistory = getPreference( state, 'firstViewHistory' ).filter( entry => entry.view === view );
+	const firstViewHistory = getPreference( state, 'firstViewHistory' ).filter( entry => entry.view === config.name );
 	const latestFirstViewHistory = [ ...firstViewHistory ].pop();
 	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
-	return doesViewHaveFirstView( view ) && ! isViewDisabled;
+	return ! isViewDisabled;
 }
 
-export function wasFirstViewHiddenSinceEnteringCurrentSection( state ) {
-	const sectionName = getSectionName( state );
+export function wasFirstViewHiddenSinceEnteringCurrentSection( state, config ) {
 	const actionsSinceEnteringCurrentSection = takeRightWhile( getActionLog( state ), ( action ) => {
 		return ( action.type !== ROUTE_SET ) || ( action.type === ROUTE_SET && routeSetIsInCurrentSection( state, action ) );
 	} );
 
 	return some( actionsSinceEnteringCurrentSection,
-		action => action.type === FIRST_VIEW_HIDE && action.view === sectionName );
+		action => action.type === FIRST_VIEW_HIDE && action.view === config.name );
 }
 
 function routeSetIsInCurrentSection( state, routeSet ) {
@@ -52,10 +55,14 @@ function routeSetIsInCurrentSection( state, routeSet ) {
 }
 
 export function shouldViewBeVisible( state ) {
-	const sectionName = getSectionName( state );
+	const firstViewConfig = getConfigForCurrentView( state );
 
-	return isViewEnabled( state, sectionName ) &&
-		! wasFirstViewHiddenSinceEnteringCurrentSection( state ) &&
+	if ( ! firstViewConfig ) {
+		return false;
+	}
+
+	return isViewEnabled( state, firstViewConfig ) &&
+		! wasFirstViewHiddenSinceEnteringCurrentSection( state, firstViewConfig ) &&
 		! isSectionLoading( state );
 }
 
