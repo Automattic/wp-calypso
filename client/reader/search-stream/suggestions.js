@@ -1,0 +1,63 @@
+export const staffSuggestions = {
+	en: [
+		'2016 Election',
+		'Astrology',
+		'Batman',
+		'Beach',
+		'Beautiful',
+		'Bloom',
+		'Chickens',
+		'Clinton',
+		'Cocktails',
+		'Colorado',
+		'Craft Beer',
+		'Cute',
+		'DIY',
+		'Delicious',
+		'Dogs',
+		'Elasticsearch',
+		'Fabulous',
+		'Farm',
+		'Flowers',
+		'Funny',
+		'Garden',
+		'Groovy',
+		'Happy Place',
+		'Hiking',
+		'Homesteading',
+		'Iceland',
+		'Inspiration',
+		'Juno',
+		'Mathematics',
+		'Michigan',
+		'Monkeys',
+		'Mountain Biking',
+		'Obama',
+		'Overwatch',
+		'Pokemon GO',
+		'Pride',
+		'Recipe',
+		'Red Sox',
+		'Robots',
+		'Scenic',
+		'Sharks',
+		'Sous vide',
+		'Sunday Brunch',
+		'Tibet',
+		'Toddlers',
+		'Travel Backpacks',
+		'Travel',
+		'Trump',
+		'Woodworking',
+		'WordPress',
+		'Zombies'
+	]
+};
+
+export const popularSuggestions = {
+	en: [
+		'Popular1',
+		'Popular2',
+		'Popular3'
+	]
+};

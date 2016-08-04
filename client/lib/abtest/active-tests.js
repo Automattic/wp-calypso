@@ -98,6 +98,6 @@ module.exports = {
 			popularSuggestions: 50
 		},
 		defaultVariation: 'staffSuggestions',
-		allowExistingUsers: false,
+		allowExistingUsers: true
 	}
 };
