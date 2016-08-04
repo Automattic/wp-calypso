@@ -60,7 +60,10 @@
 	&.is-placeholder {
 		pointer-events: none;
 		user-select: none;
-		margin-right: 14px;
+
+		&:nth-child(1n+1) {
+			margin-right: 14px;
+		}
 
 		&:nth-child(2n+2) {
 			margin-right: 0;
@@ -122,7 +125,7 @@
 		}
 	}
 
-	&:nth-child( even ),
+	&:nth-child(2n+2),
 	&:last-child {
 		margin-right: 0;
 	}

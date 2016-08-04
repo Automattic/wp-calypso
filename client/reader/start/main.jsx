@@ -123,11 +123,11 @@ const Start = React.createClass( {
 
 				<StartSearch {...this.props } />
 
-				{ ! hasRecommendations && this.renderLoadingPlaceholders() }
-
-				{ hasRecommendations && ! hasSearchQuery && <h2 className="reader-start__subtitle">
+				<h2 className="reader-start__subtitle">
 					{ this.props.translate( 'Or browse suggestions:' ) }
-				</h2> }
+				</h2>
+
+				<div className="reader-start__cards">{ ! hasRecommendations && this.renderLoadingPlaceholders() }</div>
 
 				{ hasRecommendations && ! hasSearchQuery && <Masonry className="reader-start__cards" updateOnEachImageLoad={ true } ref={ this.bindMasonry } options={ { gutter: 14 } }>
 					{ this.props.recommendationIds ? map( this.props.recommendationIds, ( recId ) => {
