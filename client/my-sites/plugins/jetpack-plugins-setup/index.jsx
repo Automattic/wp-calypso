@@ -450,9 +450,7 @@ const PlansSetup = React.createClass( {
 
 		let turnOnManage;
 		if ( site && ! site.canManage() ) {
-			const returnTitle = encodeURIComponent( this.translate( 'Back to Plan Setup' ) );
-			const returnUrl = encodeURIComponent( window.location.href );
-			const manageUrl = site.getRemoteManagementURL() + '&return_url=' + returnUrl + '&return_title=' + returnTitle;
+			const manageUrl = site.getRemoteManagementURL() + '&section=plugins-setup';
 			turnOnManage = (
 				<Card className="jetpack-plugins-setup__need-manage">
 					<p>{
