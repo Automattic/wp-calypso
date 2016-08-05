@@ -143,7 +143,7 @@ export class SeoPreviewPane extends PureComponent {
 				<div className="seo-preview-pane__preview-area">
 					<div className="seo-preview-pane__preview">
 						{ post && get( {
-							wordpress: PreviewReader( site ),
+							wordpress: PreviewReader( site, post ),
 							facebook: FacebookPost( site, post ),
 							google: PreviewGoogle( site ),
 							twitter: TwitterPost( site, post )
