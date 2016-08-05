@@ -13,18 +13,18 @@ export default React.createClass( {
 	displayName: 'JetpackConnectMainWrapper',
 
 	propTypes: {
-	    isWide: React.PropTypes.bool
+		isWide: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
-	    return {
-	        isWide: false
-	    }
+		return {
+			isWide: false
+		}
 	},
 
 	render() {
 		const wrapperClassName = classNames( 'jetpack-connect__main', {
-		    'is-wide': this.props.isWide
+			'is-wide': this.props.isWide
 		} );
 		return (
 			<Main className={ classNames( this.props.className, wrapperClassName ) }>
