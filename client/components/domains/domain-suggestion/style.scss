@@ -53,12 +53,13 @@
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background-color: lighten( $gray, 30% );
 		color: transparent;
-
+		min-height: 44px;
 	}
 
 	@include breakpoint( ">660px" ) {
 		.is-placeholder & {
 			margin-right: 50%;
+			min-height: 32px;
 		}
 
 		.is-placeholder:nth-of-type(2n+1) & {
@@ -105,6 +106,8 @@
 		border-radius: 0;
 		color: transparent;
 		margin-left: 40px;
+		min-height: 0;
+		max-height: 26px;
 	}
 }
 
