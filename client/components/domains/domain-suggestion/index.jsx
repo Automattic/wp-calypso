@@ -62,8 +62,8 @@ const DomainSuggestion = React.createClass( {
 				<div className={ clickableRow ? 'domain-suggestion__non-button-action' : 'domain-suggestion__action' }>
 					{ clickableRow ? this.renderNonButton() : this.renderButton() }
 				</div>
-				{ clickableRow
-					&& <div className="domain-suggestion__chevron"><Gridicon icon="chevron-right" /></div> }
+				{ clickableRow &&
+					<div className="domain-suggestion__chevron"><Gridicon icon="chevron-right" /></div> }
 			</div>
 		);
 	}
@@ -81,8 +81,8 @@ DomainSuggestion.Placeholder = React.createClass( {
 					<h3 />
 				</div>
 				<div className={ clickableRow ? 'domain-suggestion__non-button-action' : 'domain-suggestion__action' } />
-				{ clickableRow
-					&& <div className="domain-suggestion__chevron"><Gridicon icon="chevron-right" /></div> }
+				{ clickableRow &&
+					<div className="domain-suggestion__chevron"><Gridicon icon="chevron-right" /></div> }
 			</div>
 		);
 	}
