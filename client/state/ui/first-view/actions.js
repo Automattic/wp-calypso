@@ -19,6 +19,10 @@ export function hideView( { enabled } ) {
 		const timeBucket = bucketedTimeSpentOnCurrentView( getState() );
 		const config = getConfigForCurrentView( getState() );
 
+		if ( ! config || ! config.name ) {
+			return false;
+		}
+
 		const hideAction = {
 			type: FIRST_VIEW_HIDE,
 			view: config.name,

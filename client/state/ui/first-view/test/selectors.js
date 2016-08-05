@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	doesViewHaveFirstView,
+	getConfigForCurrentView,
 	isViewEnabled,
 	wasFirstViewHiddenSinceEnteringCurrentSection,
 	secondsSpentOnCurrentView,
@@ -19,22 +19,54 @@ import {
 } from 'state/action-types';
 
 describe( 'selectors', () => {
-	describe( '#doesViewHaveFirstView()', () => {
-		it( 'should return false if the the first view is not listed along with its start date', () => {
-			const hasFirstView = doesViewHaveFirstView( 'devdocs' );
+	describe( '#getConfigForCurrentView()', () => {
+		it( 'should return false if there is no first view config for the active path', () => {
+			const firstViewConfig = getConfigForCurrentView( {
+				ui: {
+					actionLog: [
+						{
+							type: ROUTE_SET,
+							path: '/devdocs',
+						}
+					]
+				}
+			} );
 
-			expect( hasFirstView ).to.be.false;
+			expect( firstViewConfig ).to.be.false;
 		} );
 
-		it( 'should return true if the the first view is listed along with its start date', () => {
-			const hasFirstView = doesViewHaveFirstView( 'stats' );
+		it( 'should return the stats config object when the stats first view is enabled and the most recent route is a stats page', () => {
+			const firstViewConfig = getConfigForCurrentView( {
+				ui: {
+					actionLog: [
+						{
+							type: ROUTE_SET,
+							path: '/stats',
+						}
+					]
+				}
+			} );
 
-			expect( hasFirstView ).to.be.true;
+			expect( firstViewConfig ).to.deep.equal ( { name: 'stats', paths: [ '/stats' ], enabled: true } );
 		} );
 	} );
 
 	describe( '#isViewEnabled()', () => {
-		it( 'should return true if the preferences have been fetched, the view has a first view, and it is not disabled', () => {
+		const actions = [
+			{
+				type: ROUTE_SET,
+				path: '/stats',
+			}
+		];
+
+		const config = {
+			name: 'stats',
+			paths: [ '/stats' ],
+			enabled: true,
+		};
+
+		it( 'should return true if the preferences have been fetched, the config has a first view for the current view, and it is not disabled', () => {
+			
 			const viewEnabled = isViewEnabled( {
 				preferences: {
 					values: {
@@ -47,8 +79,11 @@ describe( 'selectors', () => {
 						]
 					},
 					lastFetchedTimestamp: 123456,
+				},
+				ui: {
+					actionLog: actions,
 				}
-			}, 'stats' );
+			}, config );
 
 			expect( viewEnabled ).to.be.true;
 		} );
@@ -60,8 +95,11 @@ describe( 'selectors', () => {
 						firstViewHistory: []
 					},
 					lastFetchedTimestamp: 123456,
+				},
+				ui: {
+					actionLog: actions,
 				}
-			}, 'stats' );
+			}, config );
 
 			expect( viewEnabled ).to.be.true;
 		} );
@@ -79,21 +117,32 @@ describe( 'selectors', () => {
 						]
 					},
 					lastFetchedTimestamp: 123456,
+				},
+				ui: {
+					actionLog: actions,
 				}
-			}, 'stats' );
+			}, config );
 
 			expect( viewEnabled ).to.be.false;
 		} );
 
-		it( 'should return false if the view has no first view', () => {
+		it( 'should return false if the view is disabled in the config', () => {
 			const viewEnabled = isViewEnabled( {
 				preferences: {
 					values: {
 						firstViewHistory: []
 					},
 					lastFetchedTimestamp: 123456,
+				},
+				ui: {
+					actionLog: [
+						{
+							type: ROUTE_SET,
+							path: '/devdocs',
+						}
+					],
 				}
-			}, 'devdocs' );
+			}, { name: 'devdocs', paths: [ '/devdocs' ], enabled: false } );
 
 			expect( viewEnabled ).to.be.false;
 		} );
@@ -105,14 +154,23 @@ describe( 'selectors', () => {
 						firstViewHistory: []
 					},
 					lastFetchedTimestamp: false,
+				},
+				ui: {
+					actionLog: actions,
 				}
-			}, 'stats' );
+			}, config );
 
 			expect( viewEnabled ).to.be.false;
 		} )
 	} );
 
 	describe( '#wasFirstViewHiddenSinceEnteringCurrentSection()', () => {
+		const config = {
+			name: 'stats',
+			paths: [ '/stats' ],
+			enabled: true,
+		};
+
 		it( 'should return true if the first view was hidden since entering the current section', () => {
 			const actions = [
 				{
@@ -141,7 +199,7 @@ describe( 'selectors', () => {
 					},
 					actionLog: actions
 				}
-			} );
+			}, config );
 
 			expect( wasFirstViewHidden ).to.be.true;
 		} );
@@ -174,7 +232,7 @@ describe( 'selectors', () => {
 					},
 					actionLog: actions
 				}
-			} );
+			}, config );
 
 			expect( wasFirstViewHidden ).to.be.false;
 		} );
