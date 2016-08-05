@@ -202,6 +202,7 @@ export class WebPreview extends Component {
 							{ ...this.props }
 							showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
 							showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
+							showSeo={ true }
 							selectSeoPreview={ this.setDeviceViewport.bind( null, 'seo' ) }
 						/>
 						<div className="web-preview__placeholder">
