@@ -56,8 +56,34 @@ export const staffSuggestions = {
 
 export const popularSuggestions = {
 	en: [
-		'Popular1',
-		'Popular2',
-		'Popular3'
+		'Food',
+		'Writing',
+		'Life',
+		'Happy Place',
+		'Art',
+		'DIY',
+		'Love',
+		'Health',
+		'Funny',
+		'Trump',
+		'Fashion',
+		'Fitness',
+		'Anime',
+		'Philosophy',
+		'Yoga',
+		'Travel',
+		'Beauty',
+		'Politics',
+		'Parenting',
+		'Photography',
+		'Books',
+		'Technology',
+		'Vegan',
+		'Motivation',
+		'Poetry',
+		'Psychology',
+		'Makeup',
+		'Homeschool',
+		'Community Pool'
 	]
 };
