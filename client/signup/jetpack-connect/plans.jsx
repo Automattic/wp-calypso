@@ -134,7 +134,8 @@ const Plans = React.createClass( {
 			this.setState( { intervalType: 'monthly' } );
 		}
 		this.props.recordTracksEvent( 'calypso_jpc_plans_toggle', {
-			user: this.props.userId
+			user: this.props.userId,
+			intervalType: this.state.intervalType
 		} );
 	},
 
