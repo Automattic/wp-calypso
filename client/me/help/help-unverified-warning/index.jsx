@@ -34,8 +34,8 @@ class HelpUnverifiedWarning extends Component {
 		const resendStateToMessage = ( val ) => {
 			switch ( val ) {
 				case RESEND_IDLE:
-					return this.props.translate( 'Trouble activating your account?\
-							Just click this button and we\'ll resend the activation for you.' );
+					return this.props.translate( 'Trouble activating your account? ' +
+							'Just click this button and we\'ll resend the activation for you.' );
 				case RESEND_IN_PROGRESS:
 					return '';
 				case RESEND_SUCCESS:
