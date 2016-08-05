@@ -34,7 +34,6 @@ var _initialRawContent = null,
 	_queueChanges = false,
 	_rawContent = null,
 	_savedPost = null,
-	_suggestedSlug = null,
 	PostEditStore;
 
 function resetState() {
@@ -50,35 +49,7 @@ function resetState() {
 	_queue = [];
 	_queueChanges = false;
 	_rawContent = null;
-	_suggestedSlug = null;
 	_savedPost = null;
-}
-
-function getSlug( post ) {
-	var suggestedSlug = utils.getSuggestedSlug( post );
-
-	if ( ! post ) {
-		return null;
-	}
-
-	if ( utils.isPublished( post ) ) {
-		return post.slug;
-	}
-
-	// if the existing post is using the suggested slug, accept the new suggestion
-	if ( _savedPost &&
-			_savedPost.slug === _suggestedSlug &&
-			suggestedSlug
-	) {
-		return suggestedSlug;
-	}
-
-	// loading a draft if no slug is present, use suggestedSlug
-	if ( ! _savedPost && ! post.slug && suggestedSlug ) {
-		return suggestedSlug;
-	}
-
-	return post.slug || null;
 }
 
 function getParentId( post ) {
@@ -103,12 +74,10 @@ function getPageTemplate( post ) {
 function startEditing( post ) {
 	resetState();
 	post = normalize( post );
-	post.slug = getSlug( post );
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
 	_previewUrl = utils.getPreviewURL( post );
-	_suggestedSlug = utils.getSuggestedSlug( post );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_isLoading = false;
@@ -116,12 +85,10 @@ function startEditing( post ) {
 
 function updatePost( post ) {
 	post = normalize( post );
-	post.slug = getSlug( post );
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
 	_previewUrl = utils.getPreviewURL( post );
-	_suggestedSlug = utils.getSuggestedSlug( post );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_isNew = false;

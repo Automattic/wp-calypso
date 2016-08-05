@@ -445,8 +445,7 @@ describe( 'post-edit-store', function() {
 				type: 'post',
 				parent_id: null,
 				title: '',
-				content: '',
-				slug: null
+				content: ''
 			} ) );
 		} );
 	} );
@@ -754,112 +753,6 @@ describe( 'post-edit-store', function() {
 			} );
 
 			assert( PostEditStore.hasContent() === false );
-		} );
-	} );
-
-	describe( 'slugs', function() {
-		it( 'should use existing slug on puglished posts', function() {
-			var post;
-			dispatcherCallback( {
-				action: {
-					type: 'RECEIVE_POST_TO_EDIT',
-					post: {
-						ID: 777,
-						site_ID: 123,
-						title: 'Super Slug',
-						slug: 'super-rad-slug',
-						status: 'publish',
-						other_URLs: {
-							suggested_slug: 'no-slugs-for-you'
-						}
-					}
-				}
-			} );
-			post = PostEditStore.get();
-			assert( post.slug === 'super-rad-slug' );
-		} );
-
-		it( 'should use new suggested slug if prior _savedPost did', function() {
-			var post;
-			dispatcherCallback( {
-				action: {
-					type: 'RECEIVE_POST_TO_EDIT',
-					post: {
-						ID: 777,
-						site_ID: 123,
-						title: 'Oh My Slugness',
-						status: 'draft',
-						slug: 'oh-my-slugness',
-						other_URLs: {
-							suggested_slug: 'oh-my-slugness'
-						}
-
-					}
-				}
-			} );
-
-			post = PostEditStore.get();
-			assert( post.slug === 'oh-my-slugness' );
-
-			dispatcherCallback( {
-				action: {
-					type: 'RECEIVE_POST_BEING_EDITED',
-					post: {
-						ID: 777,
-						site_ID: 123,
-						title: 'Oh My Slugness Wat!',
-						status: 'draft',
-						other_URLs: {
-							suggested_slug: 'oh-my-slugness-wat'
-						}
-					}
-				}
-			} );
-
-			post = PostEditStore.get();
-			assert( post.slug === 'oh-my-slugness-wat' );
-		} );
-
-		it( 'should not use suggested slug if a custom one has been set', function() {
-			var post;
-			dispatcherCallback( {
-				action: {
-					type: 'RECEIVE_POST_TO_EDIT',
-					post: {
-						ID: 777,
-						site_ID: 123,
-						title: 'Too Many Slugs',
-						status: 'draft',
-						slug: 'too-many-slugs',
-						other_URLs: {
-							suggested_slug: 'oh-my-slugness'
-						}
-
-					}
-				}
-			} );
-
-			post = PostEditStore.get();
-			assert( post.slug === 'too-many-slugs' );
-
-			dispatcherCallback( {
-				action: {
-					type: 'RECEIVE_POST_BEING_EDITED',
-					post: {
-						ID: 777,
-						site_ID: 123,
-						title: 'Too Many Slugs on my API',
-						status: 'draft',
-						slug: 'sluga-saurus-rex',
-						other_URLs: {
-							suggested_slug: 'too-many-slugs-on-my-api'
-						}
-					}
-				}
-			} );
-
-			post = PostEditStore.get();
-			assert( post.slug === 'sluga-saurus-rex' );
 		} );
 	} );
 

@@ -273,11 +273,7 @@ const EditorDrawer = React.createClass( {
 				icon={ <Gridicon icon="ellipsis" /> }
 				className="editor-drawer__more-options"
 			>
-				{ siteUtils.isPermalinkEditable( this.props.site ) && (
-					<EditorMoreOptionsSlug
-						slug={ this.props.post ? this.props.post.slug : '' }
-						type={ this.props.type } />
-				) }
+				{ siteUtils.isPermalinkEditable( this.props.site ) && <EditorMoreOptionsSlug /> }
 				{ this.renderExcerpt() }
 				{ this.renderLocation() }
 				{ this.renderDiscussion() }

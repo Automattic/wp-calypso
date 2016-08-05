@@ -1,12 +1,9 @@
 /**
  * External dependencies
  */
-import get from 'lodash/get';
+import { get, includes, isEqual, omit, some } from 'lodash';
 import createSelector from 'lib/create-selector';
-import includes from 'lodash/includes';
-import some from 'lodash/some';
-import omit from 'lodash/omit';
-import isEqual from 'lodash/isEqual';
+import moment from 'moment-timezone';
 
 /**
  * Internal dependencies
@@ -360,6 +357,61 @@ export const isEditedPostDirty = createSelector(
 	},
 	( state ) => [ state.posts.items, state.posts.edits ]
 );
+
+/**
+ * Returns true if the post status is publish, private, or future
+ * and the date is in the past
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @param  {Number}  postId Post ID
+ * @return {Boolean}        Whether post is published
+ */
+export const isPostPublished = createSelector(
+	( state, siteId, postId ) => {
+		const post = getSitePost( state, siteId, postId );
+
+		if ( ! post ) {
+			return null;
+		}
+
+		return includes( [ 'publish', 'private' ], post.status ) ||
+			( post.status === 'future' && moment( post.date ).isBefore( moment() ) );
+	},
+	( state ) => state.posts.items
+);
+
+/**
+ * Returns the slug, or suggested_slug, for the edited post
+ *
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @param  {Number} postId Post ID
+ * @return {String}             Slug value
+ */
+export function getEditedPostSlug( state, siteId, postId ) {
+	const post = getSitePost( state, siteId, postId );
+	const postEdits = getPostEdits( state, siteId, postId ) || {};
+	const suggestedSlug = get( post, [ 'other_URLs', 'suggested_slug' ] );
+	const postSlug = get( post, 'slug' );
+
+	// if local edits exists, return them regardless of post status
+	if ( postEdits.hasOwnProperty( 'slug' ) ) {
+		return postEdits.slug;
+	}
+
+	// when post is published, return the slug
+	if ( isPostPublished( state, siteId, postId ) ) {
+		return postSlug;
+	}
+
+	// only return suggested_slug if slug has not been edited
+	if ( suggestedSlug && ! postSlug ) {
+		return suggestedSlug;
+	}
+
+	return postSlug;
+}
 
 /**
  * Returns the most reliable preview URL for the post by site ID, post ID pair,
