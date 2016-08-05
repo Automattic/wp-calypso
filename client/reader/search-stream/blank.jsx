@@ -1,12 +1,28 @@
+/**
+ * External Dependencies
+ */
 import React from 'react';
+
+/**
+ * Internal Dependencies
+ */
 import { localize } from 'i18n-calypso';
+import { recordTrack } from 'reader/stats';
 
 export function BlankContent( { translate, suggestions } ) {
+	const handleSuggestionClick = ( suggestion ) => {
+		recordTrack( 'calypso_reader_search_suggestion_click', { suggestion } );
+	};
+
 	let suggest = null;
 	if ( suggestions ) {
 		let sugList = suggestions
 			.map( function( query ) {
-				return <a href={ '/read/search?q=' + encodeURIComponent( query ) } >{ query }</a>;
+				return (
+					<a onClick={ () => handleSuggestionClick( query ) } href={ '/read/search?q=' + encodeURIComponent( query ) } >
+						{ query }
+					</a>
+				);
 			} );
 		sugList = sugList
 			.slice( 1 )
@@ -21,6 +37,7 @@ export function BlankContent( { translate, suggestions } ) {
 	}
 
 	const imgPath = '/calypso/images/drake/drake-404.svg';
+
 	return (
 		<div className="search-stream__blank">
 			{ suggest }
