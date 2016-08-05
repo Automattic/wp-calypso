@@ -19,7 +19,7 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			isWide: false
-		}
+		};
 	},
 
 	render() {
