@@ -152,8 +152,7 @@ const PostEditor = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		const { siteId, postId } = this.props;
-		if ( nextProps.siteId === siteId && nextProps.postId !== postId ) {
+		if ( nextProps.editPath !== this.props.editPath ) {
 			// make sure the history entry has the post ID in it, but don't dispatch
 			page.replace( nextProps.editPath, null, false, false );
 		}
