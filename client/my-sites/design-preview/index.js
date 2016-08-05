@@ -35,8 +35,6 @@ const DesignPreview = React.createClass( {
 		className: React.PropTypes.string,
 		// True to show the preview; same as WebPreview.
 		showPreview: React.PropTypes.bool,
-		// The viewport device to show initially; same as WebPreview but defaults to 'tablet'.
-		defaultViewportDevice: React.PropTypes.string,
 		// Show close button; same as WebPreview.
 		showClose: React.PropTypes.bool,
 		// Elements to render on the right side of the toolbar; same as WebPreview.
@@ -68,7 +66,6 @@ const DesignPreview = React.createClass( {
 	getDefaultProps() {
 		return {
 			showPreview: false,
-			defaultViewportDevice: 'tablet',
 			showClose: true,
 			showSidebar: false,
 			customizations: {},
@@ -237,7 +234,6 @@ const DesignPreview = React.createClass( {
 					showClose={ this.props.showClose }
 					showPreview={ this.props.showPreview }
 					hasSidebar={ this.props.showSidebar }
-					defaultViewportDevice={ this.props.defaultViewportDevice }
 					previewMarkup={ useEndpoint ? this.props.previewMarkup : null }
 					onClose={ this.onClosePreview }
 					onLoad={ useEndpoint ? this.onLoad : noop }
