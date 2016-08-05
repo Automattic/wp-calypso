@@ -252,7 +252,7 @@ describe( 'actions', () => {
 
 	describe( '#editPost()', () => {
 		it( 'should return an action object for a new post', () => {
-			const action = editPost( {
+			const action = editPost( 2916284, undefined, {
 				title: 'Hello World'
 			}, 2916284 );
 
@@ -265,9 +265,9 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should return an action object for an existing post', () => {
-			const action = editPost( {
+			const action = editPost( 2916284, 413, {
 				title: 'Hello World'
-			}, 2916284, 413 );
+			} );
 
 			expect( action ).to.eql( {
 				type: POST_EDIT,

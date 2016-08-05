@@ -149,12 +149,12 @@ export function requestPosts( query = {} ) {
  * Returns an action object to be used in signalling that the specified
  * post updates should be applied to the set of edits.
  *
- * @param  {Object} post   Post attribute updates
  * @param  {Number} siteId Site ID
  * @param  {Number} postId Post ID
+ * @param  {Object} post   Post attribute updates
  * @return {Object}        Action object
  */
-export function editPost( post, siteId, postId ) {
+export function editPost( siteId, postId, post ) {
 	return {
 		type: POST_EDIT,
 		post,
