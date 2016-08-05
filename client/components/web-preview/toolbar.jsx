@@ -131,8 +131,12 @@ PreviewToolbar.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ( {
-	showSeo: hasBusinessPlan( getSelectedSite( state ).plan )
-} );
+const mapStateToProps = state => {
+	const site = getSelectedSite( state );
+
+	return {
+		showSeo: site && site.plan && hasBusinessPlan( site.plan )
+	}
+};
 
 export default connect( mapStateToProps )( localize( PreviewToolbar ) );
