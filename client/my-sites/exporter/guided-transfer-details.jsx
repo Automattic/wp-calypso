@@ -26,9 +26,9 @@ const GuidedTransferDetails = ( { translate } ) => {
 					{ translate( 'Hassle-free migration with two weeks of support' ) }
 				</h1>
 				{ translate(
-`Have one of our Happiness Engineers {{strong}}transfer your
-site{{/strong}} to a self-hosted WordPress.org installation with
-one of our hosting partners.`, { components: { strong: <strong /> } }
+					'Have one of our Happiness Engineers {{strong}}transfer your ' +
+					'site{{/strong}} to a self-hosted WordPress.org installation with ' +
+					'one of our hosting partners.', { components: { strong: <strong /> } }
 				) }
 				<br/>
 				<a href="https://en.support.wordpress.com/guided-transfer/" >
