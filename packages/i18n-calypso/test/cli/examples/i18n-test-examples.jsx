@@ -12,11 +12,20 @@ function test() {
 	var numHats = howManyHats(); // returns integer
 	content = i18n.translate( {
 		original: {
-			single: 'My hat has three corners.',
-			plural: 'My hats have three corners.',
+			single: 'My hat has four corners.',
+			plural: 'My hats have five corners.',
 			count: numHats
 		}
 	} );
+
+	// Should be merged in POT with the pluralized form
+	content = i18n.translate( { original: 'My hat has four corners.' } );
+
+	// Should catch template literals
+	content = i18n.translate( `My hat has six corners.` );
+	content = i18n.translate( `My hat
+has seventeen
+corners.` );
 
 	// providing context
 	content = i18n.translate( {

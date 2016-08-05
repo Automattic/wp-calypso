@@ -34,7 +34,8 @@ module.exports = function( config ) {
 	}
 
 	parser = new Xgettext( {
-		keywords: parserKeywords
+		keywords: parserKeywords,
+		parseOptions: { plugins: [ 'jsx', 'classProperties', 'objectRestSpread', 'exportExtensions', 'trailingFunctionCommas', 'asyncFunctions' ], allowImportExportEverywhere: true }
 	} );
 
 	function getFileMatches( inputFiles ) {

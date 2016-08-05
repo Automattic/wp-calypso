@@ -21,43 +21,33 @@ module.exports = function preProcessXGettextJSMatch( match ) {
 
 	args = match.arguments;
 
-	// first string argument
-	if ( args[ 0 ].type === 'Literal' ) {
-		finalProps.single = makeDoubleQuoted( args[ 0 ].raw );
-	} else if ( args[ 0 ].type === 'BinaryExpression' ) {
-		finalProps.single = encapsulateString( concatenateBinaryExpression( args[ 0 ] ) );
-	}
-
-	// second string argument
-	if ( args[ 1 ] ) {
-		if ( args[ 1 ].type === 'Literal' ) {
-			finalProps.plural = makeDoubleQuoted( args[ 1 ].raw );
-		} else if ( args[ 1 ].type === 'BinaryExpression' ) {
-			finalProps.plural = encapsulateString( concatenateBinaryExpression( args[ 1 ] ) );
-		}
-	}
-
-	// options could be in position 0, 1, or 2, but there can only be one
-	for ( i = 0; i < args.length; i++ ) {
-		if ( args[ i ].type === 'ObjectExpression' ) {
+	[ 'single', 'plural' ].slice( 0, args.length ).forEach( function( field, i ) {
+		if ( 'StringLiteral' === args[i].type ) {
+			finalProps[field] = makeDoubleQuoted( args[i].extra.raw );
+		} else if ( 'BinaryExpression' === args[i].type ) {
+			finalProps[field] = encapsulateString( concatenateBinaryExpression( args[i] ) );
+		} else if ( 'ObjectExpression' === args[i].type && 'undefined' === typeof options ) {
 			options = args[ i ];
-			break;
+		} else if ( 'TemplateLiteral' === args[i].type ) {
+			finalProps[field] = makeDoubleQuoted( '`' + args[i].quasis[0].value.raw + '`' );
 		}
-	}
+	} );
 
 	if ( 'undefined' !== typeof options ) {
 		// map options to finalProps object
 		options.properties.forEach( function( property ) {
-			// key might be an  Identifier (name), or a Literal (value)
+			// key might be an  Identifier (name), or a StringLiteral (value)
 			var key = property.key.name || property.key.value;
-			if ( 'Literal' === property.value.type ) {
+			if ( 'StringLiteral' === property.value.type ) {
 				keyName = ( key === 'original' ) ? 'single' : key;
-				finalProps[ keyName ] = ( 'comment' === key ) ? property.value.value : makeDoubleQuoted( property.value.raw );
+				finalProps[ keyName ] = ( 'comment' === key ) ? property.value.value : makeDoubleQuoted( property.value.extra.raw );
 			} else if ( 'ObjectExpression' === property.value.type && 'original' === key ) {
 				// Get pluralization strings. This clause can be removed when all translations
 				// are updated to the new approach for plurals.
 				property.value.properties.forEach( function( innerProp ) {
-					finalProps[ innerProp.key.name || innerProp.key.value ] = makeDoubleQuoted( innerProp.value.raw );
+					if ( 'StringLiteral' === innerProp.value.type ) {
+						finalProps[ innerProp.key.name || innerProp.key.value ] = makeDoubleQuoted( innerProp.value.extra.raw );
+					}
 				} );
 			}
 		} );
@@ -91,8 +81,8 @@ function concatenateBinaryExpression( ASTNode ) {
 	if ( ASTNode.operator !== '+' ) {
 		return false;
 	}
-	result = ( ASTNode.left.type === 'Literal' ) ? ASTNode.left.value : concatenateBinaryExpression( ASTNode.left );
-	result += ( ASTNode.right.type === 'Literal' ) ? ASTNode.right.value : concatenateBinaryExpression( ASTNode.right );
+	result = ( 'StringLiteral' === ASTNode.left.type ) ? ASTNode.left.value : concatenateBinaryExpression( ASTNode.left );
+	result += ( 'StringLiteral' === ASTNode.right.type ) ? ASTNode.right.value : concatenateBinaryExpression( ASTNode.right );
 
 	return result;
 }

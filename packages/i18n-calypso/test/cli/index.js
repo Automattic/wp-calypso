@@ -3,7 +3,6 @@
  */
 var expect = require( 'chai' ).expect,
 	path = require( 'path' ),
-	babel = require( 'babel-core' ),
 	fs = require( 'fs'),
 	rewire = require( 'rewire' );
 
@@ -13,66 +12,11 @@ var expect = require( 'chai' ).expect,
 var i18nCalypsoCLI = require( '../../cli' );
 
 // generate whitelist file
-var buildFiles, sourceFiles;
+var sourceFiles;
 
 sourceFiles = [ 'examples/i18n-test-examples.jsx', 'examples/i18n-test-example-second-file.jsx' ].map( function( file ) {
 	return path.join( __dirname, file );
 } );
-
-buildFiles = [ 'out/i18n-test-examples.js', 'out/i18n-test-example-second-file.js' ].map( function( file ) {
-	return path.join( __dirname, file );
-} );
-
-function compileExamples( done ) {
-	// We run babel to compile the files under examples folder to out folder.
-	// This is because i18n is run on babel-generated files.
-	// This process is done in a Makefile previously but we are getting rid of those so here it goes
-	Promise.all( sourceFiles.map( function( sourcePath, index ) {
-		return new Promise( function( resolve, reject ) {
-			var options = {
-				presets: [ 'react' ]
-			};
-			babel.transformFile( sourcePath, options, function( err, result ) {
-				if ( err ) {
-					return reject( err );
-				}
-				// Ensure there's out directory
-				fs.mkdir( path.join( __dirname, 'out' ), function( mkdirErr ) {
-					// If it exists already, all is well
-					if ( mkdirErr && mkdirErr.code !== 'EEXIST' ) {
-						return reject( mkdirErr );
-					}
-					fs.writeFile( buildFiles[ index ], result.code, function( writeErr ) {
-						if ( writeErr ) {
-							return reject( writeErr );
-						}
-						resolve();
-					} );
-				} );
-			} );
-		} );
-	} ) ).then( function() { done(); }, done );
-}
-
-function cleanupExamples( done ) {
-	// Cleanup
-	Promise.all( buildFiles.map( function( buildPath ) {
-		return new Promise( function( resolve, reject ) {
-			fs.unlink( buildPath, function( err ) {
-				if ( err ) {
-					return reject( err );
-				}
-				resolve();
-			} );
-		} );
-	} ) ).then( function() {
-		fs.rmdir( path.join( __dirname, 'out' ), function( err ) {
-			done( err );
-		} );
-	}, function( err ) {
-		done( err );
-	} );
-}
 
 /**
  * In these tests we are taking the translate requests from
@@ -81,17 +25,6 @@ function cleanupExamples( done ) {
  * the output file contains what we expect.
  */
 describe( 'index', function() {
-	before( function( done ) {
-		// Work around occasional Circle CI slowness
-		this.timeout( 0 );
-		compileExamples( done );
-	} );
-
-	after( function( done ) {
-		this.timeout( 0 );
-		cleanupExamples( done );
-	} );
-
 	describe( 'POT helpers', function() {
 		describe( '#multiline()', function() {
 			var multiline = rewire( '../../cli/formatters/pot.js' ).__get__( 'multiline' );
@@ -204,7 +137,7 @@ describe( 'index', function() {
 		before( function() {
 			output = i18nCalypsoCLI( {
 				projectName: 'i18nTest',
-				inputPaths: buildFiles,
+				inputPaths: sourceFiles,
 				format: 'POT',
 				extras: [ 'date' ]
 			} );
@@ -227,7 +160,11 @@ describe( 'index', function() {
 		} );
 
 		it( 'should create a plural translation', function() {
-			expect( output ).to.have.string( 'msgid "My hat has three corners."\nmsgid_plural "My hats have three corners."\nmsgstr[0] ""\n' );
+			expect( output ).to.have.string( 'msgid "My hat has four corners."\nmsgid_plural "My hats have five corners."\nmsgstr[0] ""\n' );
+		} );
+
+		it( 'should combine singular with plural translation', function() {
+			expect( output ).not.to.have.string( 'msgid "My hat has four corners."\nmsgstr ""\n' );
 		} );
 
 		it( 'should create a context translation', function() {
@@ -240,11 +177,11 @@ describe( 'index', function() {
 		} );
 
 		it( 'should prepend the line number', function() {
-			expect( output ).to.have.string( '#: test/cli/out/i18n-test-examples.js:9\nmsgid "My hat has three corners too."' );
+			expect( output ).to.have.string( '#: test/cli/examples/i18n-test-examples.jsx:9\nmsgid "My hat has three corners too."' );
 		} );
 
 		it( 'should combine strings', function() {
-			expect( output ).to.have.string( '#: test/cli/out/i18n-test-examples.js:6\n#: test/cli/out/i18n-test-examples.js:68\n#. Second ocurrence\nmsgid "My hat has three corners."' );
+			expect( output ).to.match( /#: test\/cli\/examples\/i18n-test-examples.jsx:\d+\n#: test\/cli\/examples\/i18n-test-examples.jsx:\d+\n#. Second ocurrence\nmsgid "My hat has three corners."/ );
 		} );
 
 		it( 'should pass through an sprintf as a regular translation', function() {
@@ -279,6 +216,11 @@ describe( 'index', function() {
 		it( 'should find options with a literal string key', function() {
 			expect( output ).to.have.string( 'msgctxt "context with a literal string key"\nmsgid "The string key text"\nmsgstr ""\n' );
 		} );
+
+		it( 'should handle template literals', function() {
+			expect( output ).to.have.string( 'msgid "My hat has six corners."' );
+			expect( output ).to.have.string( 'msgid "My hat\nhas seventeen\ncorners."' );
+		} );
 	} );
 
 	describe( 'PHP', function() {
@@ -287,7 +229,7 @@ describe( 'index', function() {
 		before( function() {
 			output = i18nCalypsoCLI( {
 				projectName: 'i18nTest',
-				inputPaths: buildFiles,
+				inputPaths: sourceFiles,
 				phpArrayName: 'arrayName',
 				format: 'PHP',
 				extras: [ 'date' ]
@@ -307,7 +249,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should create a plural _n() translation', function() {
-			expect( output ).to.have.string( '_n( "My hat has three corners.", "My hats have three corners.", 1 ),' );
+			expect( output ).to.have.string( '_n( "My hat has four corners.", "My hats have five corners.", 1 ),' );
 		} );
 
 		it( 'should create a context _x() translation', function() {
@@ -323,7 +265,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'should append the line number', function() {
-			expect( output ).to.have.string( '__( "My hat has three corners." ), // test/cli/out/i18n-test-examples.js:6' );
+			expect( output ).to.have.string( '__( "My hat has three corners." ), // test/cli/examples/i18n-test-examples.jsx:6' );
 		} );
 
 		it( 'should pass through an sprintf as a regular __() method', function() {
@@ -370,7 +312,7 @@ describe( 'index', function() {
 			before( function() {
 				output = i18nCalypsoCLI( {
 					projectName: 'i18nTest',
-					inputPaths: buildFiles,
+					inputPaths: sourceFiles,
 					phpArrayName: 'arrayName',
 					format: 'PHP',
 					extras: [ 'date' ],
@@ -387,7 +329,7 @@ describe( 'index', function() {
 			before( function() {
 				output = i18nCalypsoCLI( {
 					projectName: 'i18nTest',
-					inputPaths: buildFiles,
+					inputPaths: sourceFiles,
 					phpArrayName: 'arrayName',
 					format: 'PHP',
 					extras: [ 'date' ],

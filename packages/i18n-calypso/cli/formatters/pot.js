@@ -55,8 +55,7 @@ function multiline( literal, startAt ) {
 }
 
 function uniqueMatchId( match ) {
-	return ( match.plural ? 'p' : 's' ) +
-		' msgid=' + ( match.plural || match.single ) +
+	return ' msgid=' + ( match.single ) +
 		' ctxt=' + ( match.context || '' );
 }
 
@@ -115,6 +114,11 @@ module.exports = function( matches, options ) {
 		}
 		if ( match.comment ) {
 			uniqueMatchesMap[ matchId ].comments[ match.comment ] = true;
+		}
+
+		if ( ! uniqueMatchesMap[ matchId ].plural && match.plural ) {
+			// We group singular only-s and version with plurals, so make sure that we keep the plural
+			uniqueMatchesMap[ matchId ].plural = match.plural;
 		}
 
 		// ignore this match now that we have updated the first match
