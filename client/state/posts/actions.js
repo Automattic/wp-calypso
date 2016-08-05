@@ -183,12 +183,12 @@ export function resetPostEdits( siteId, postId ) {
  * Returns an action thunk which, when dispatched, triggers a network request
  * to save the specified post object.
  *
- * @param  {Object}   post   Post attributes
  * @param  {Number}   siteId Site ID
  * @param  {Number}   postId Post ID
+ * @param  {Object}   post   Post attributes
  * @return {Function}        Action thunk
  */
-export function savePost( post, siteId, postId ) {
+export function savePost( siteId, postId, post ) {
 	return async ( dispatch ) => {
 		dispatch( {
 			type: POST_SAVE,
@@ -228,7 +228,7 @@ export function savePost( post, siteId, postId ) {
  * @return {Function}        Action thunk
  */
 export function trashPost( siteId, postId ) {
-	return savePost( { status: 'trash' }, siteId, postId );
+	return savePost( siteId, postId, { status: 'trash' } );
 }
 
 /**
