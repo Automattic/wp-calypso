@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import page from 'page';
 import React from 'react';
 import find from 'lodash/find';
 
@@ -16,11 +15,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import { isJpphpBundle } from 'lib/products-values';
 import Main from 'components/main';
-import Notice from 'components/notice';
 import observe from 'lib/mixins/data-observe';
-import paths from './paths';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
-import PlanOverview from './plan-overview';
 import { plansLink } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
@@ -39,7 +35,6 @@ const Plans = React.createClass( {
 		plans: React.PropTypes.array.isRequired,
 		sites: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
-		transaction: React.PropTypes.object.isRequired
 	},
 
 	showMonthlyPlansLink() {
@@ -69,26 +64,11 @@ const Plans = React.createClass( {
 			<a
 				href={ plansLink( '/plans', selectedSite, intervalType ) }
 				className="show-monthly-plans-link"
-				onClick={ this.recordComparePlansClick }
 			>
 				<Gridicon icon="refresh" size={ 18 } />
 				{ showString }
 			</a>
 		);
-	},
-
-	redirectToDefault() {
-		page.redirect( paths.plans( this.props.sites.getSelectedSite().slug ) );
-	},
-
-	renderNotice() {
-		if ( 'free-trial-canceled' === this.props.destinationType ) {
-			return (
-				<Notice onDismissClick={ this.redirectToDefault } status="is-success">
-					{ this.translate( 'Your trial has been removed. Thanks for giving it a try!' ) }
-				</Notice>
-			);
-		}
 	},
 
 	render() {
@@ -101,18 +81,6 @@ const Plans = React.createClass( {
 		if ( this.props.sitePlans.hasLoadedFromServer ) {
 			currentPlan = getCurrentPlan( this.props.sitePlans.data );
 			hasJpphpBundle = isJpphpBundle( currentPlan );
-		}
-
-		if ( this.props.sitePlans.hasLoadedFromServer && currentPlan.freeTrial ) {
-			return (
-				<PlanOverview
-					sitePlans={ this.props.sitePlans }
-					path={ this.props.context.path }
-					cart={ this.props.cart }
-					destinationType={ this.props.context.params.destinationType }
-					plan={ currentPlan }
-					selectedSite={ selectedSite } />
-			);
 		}
 
 		return (
