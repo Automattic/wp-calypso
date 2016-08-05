@@ -45,6 +45,10 @@ function preloadEditor() {
 	preload( 'post-editor' );
 }
 
+function onlyOneSite() {
+	return sitesList.data.length === 1;
+}
+
 class DailyPostButton extends React.Component {
 	constructor() {
 		super();
@@ -112,6 +116,11 @@ class DailyPostButton extends React.Component {
 			recordAction( 'open_daily_post_challenge' );
 			recordGaEvent( 'Opened Daily Post Challenge' );
 			recordTrackForPost( 'calypso_reader_daily_post_challenge_opened', this.props.post );
+
+			if ( onlyOneSite() ) {
+				const primarySlug = get( sitesList.getPrimary(), 'slug' );
+				return this.openEditorWithSite( primarySlug );
+			}
 		}
 		this._deferMenuChange( ! this.state.showingMenu );
 	}
