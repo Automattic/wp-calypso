@@ -8,7 +8,7 @@ import React from 'react';
  */
 import EmptyContent from 'components/empty-content';
 import * as stats from 'reader/stats';
-import discoverHelper from 'reader/discover/helper';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 
 const TagEmptyContent = React.createClass( {
 	propTypes: {
@@ -37,7 +37,7 @@ const TagEmptyContent = React.createClass( {
 			onClick={ this.recordAction }
 			href="/">{ this.translate( 'Back to Following' ) }</a> );
 
-		const secondaryAction = discoverHelper.isDiscoverEnabled()
+		const secondaryAction = isDiscoverEnabled()
 			? ( <a
 			className="empty-content__action button"
 			onClick={ this.recordSecondaryAction }

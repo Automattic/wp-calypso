@@ -11,23 +11,26 @@ export default class ErrorLogger {
 
 		if ( ! window.onerror ) {
 			TraceKit.report.subscribe( errorReport => {
+				const error = {
+					message: errorReport.message,
+					url: document.location.href
+				};
+
 				if ( Array.isArray( errorReport.stack ) ) {
-					errorReport.stack.forEach( report => Object.keys( report ).forEach( key => {
+					const trace = errorReport.stack.slice( 0, 10 );
+					trace.forEach( report => Object.keys( report ).forEach( key => {
 						if ( key === 'context' && report[ key ] ) {
-							report[ key ] = JSON.stringify( report[ key ] ).substring( 0, 512 );
+							report[ key ] = JSON.stringify( report[ key ] ).substring( 0, 256 );
 						} else if ( typeof report[ key ] === 'string' && report[ key ].length > 512 ) {
 							report[ key ] = report[ key ].substring( 0, 512 );
 						} else if ( Array.isArray( report[ key ] ) ) {
 							report[ key ] = report[ key ].slice( 0, 3 );
 						}
 					} ) );
+					if ( JSON.stringify( trace ).length < 8192 ) {
+						error.trace = trace;
+					}
 				}
-
-				const error = {
-					message: errorReport.message,
-					url: document.location.href,
-					trace: errorReport.stack,
-				};
 
 				this.diagnose();
 				this.sendToApi( Object.assign( error, this.diagnosticData ) );

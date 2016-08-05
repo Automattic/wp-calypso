@@ -195,6 +195,12 @@ describe( 'selectors', () => {
 
 			expect( isSupported ).to.be.true;
 		} );
+
+		it( 'should return hard-coded fallback values for unknown post types', () => {
+			const state = { postTypes: { items: {} } };
+
+			expect( postTypeSupports( state, 2916284, 'page', 'publicize' ) ).to.be.false;
+		} );
 	} );
 
 	describe( 'isPostTypeSupported', () => {

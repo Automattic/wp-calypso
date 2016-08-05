@@ -30,7 +30,7 @@ describe( 'selectors', () => {
 			const selected = getSelectedSite( {
 				sites: {
 					items: {
-						2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
+						2916284: { ID: 2916284, name: 'WordPress.com Example Blog', URL: 'https://example.com' }
 					}
 				},
 				ui: {
@@ -38,7 +38,20 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( selected ).to.eql( { ID: 2916284, name: 'WordPress.com Example Blog' } );
+			expect( selected ).to.eql( {
+				ID: 2916284,
+				name: 'WordPress.com Example Blog',
+				URL: 'https://example.com',
+				domain: 'example.com',
+				hasConflict: false,
+				is_customizable: false,
+				is_previewable: false,
+				options: {
+					default_post_format: 'standard',
+				},
+				slug: 'example.com',
+				title: 'WordPress.com Example Blog',
+			} );
 		} );
 	} );
 

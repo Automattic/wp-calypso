@@ -69,7 +69,7 @@ export const getTermsForQuery = createSelector(
 
 		return manager.getItems( query );
 	},
-	( state, siteId, taxonomy ) => getTerms( state, siteId, taxonomy ),
+	( state, siteId, taxonomy ) => get( state.terms.queries, [ siteId, taxonomy ] ),
 	( state, siteId, taxonomy, query ) => {
 		const serializedQuery = getSerializedTermsQuery( query );
 		return [ siteId, taxonomy, serializedQuery ].join();
@@ -95,7 +95,7 @@ export const getTermsForQueryIgnoringPage = createSelector(
 
 		return manager.getItemsIgnoringPage( query );
 	},
-	( state, siteId, taxonomy ) => getTerms( state, siteId, taxonomy ),
+	( state, siteId, taxonomy ) => get( state.terms.queries, [ siteId, taxonomy ] ),
 	( state, siteId, taxonomy, query ) => {
 		const serializedQuery = getSerializedTermsQueryWithoutPage( query );
 		return [ siteId, taxonomy, serializedQuery ].join();

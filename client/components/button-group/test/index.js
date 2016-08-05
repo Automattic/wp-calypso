@@ -35,6 +35,8 @@ describe( 'ButtonGroup', function() {
 	it( 'should throw an error if any of the children is not a <Button>', function() {
 		shallow( <ButtonGroup><div id="test">test</div></ButtonGroup> );
 
-		sinon.assert.calledWithExactly( console.error, 'Warning: Failed propType: All children elements should be a Button.' );
+		/* eslint-disable no-console */
+		sinon.assert.calledWithMatch( console.error, 'All children elements should be a Button.' );
+		/* eslint-enable no-console */
 	} );
 } );

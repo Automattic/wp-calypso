@@ -3,21 +3,24 @@
  */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	debug = require( 'debug' )( 'calypso:help-search' );
+	debug = require( 'debug' )( 'calypso:help-search' ),
+	reactRedux = require( 'react-redux' );
 /**
  * Internal dependencies
  */
 var Main = require( 'components/main' ),
 	analytics = require( 'lib/analytics' ),
+	currentUser = require( 'state/current-user/selectors' ),
 	HappinessEngineers = require( 'me/help/help-happiness-engineers' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	HelpSearch = require( './help-search' ),
 	CompactCard = require( 'components/card/compact' ),
 	Button = require( 'components/button' ),
 	SectionHeader = require( 'components/section-header' ),
-	HelpResult = require( './help-results/item' );
+	HelpResult = require( './help-results/item' ),
+	HelpUnverifiedWarning = require( './help-unverified-warning' );
 
-module.exports = React.createClass( {
+const Help = React.createClass( {
 	displayName: 'Help',
 
 	mixins: [ PureRenderMixin ],
@@ -95,6 +98,7 @@ module.exports = React.createClass( {
 			<Main className="help">
 				<MeSidebarNavigation />
 				<HelpSearch />
+				{ ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
 				<HappinessEngineers />
@@ -102,3 +106,11 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+module.exports = reactRedux.connect(
+	( state ) => {
+		return {
+			isEmailVerified: currentUser.isCurrentUserEmailVerified( state ),
+		};
+	}
+)( Help );

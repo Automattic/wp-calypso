@@ -76,7 +76,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderMobileView() {
-		const { isPlaceholder, translate, planProperties } = this.props;
+		const { isPlaceholder, translate, planProperties, isInSignup } = this.props;
 
 		// move any free plan to last place in mobile view
 		let freePlanProperties;
@@ -130,6 +130,7 @@ class PlanFeatures extends Component {
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
+						isInSignup={ isInSignup }
 					/>
 					<FoldableCard
 						header={ translate( 'Show features' ) }
@@ -218,7 +219,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderTopButtons() {
-		const { planProperties, isPlaceholder } = this.props;
+		const { planProperties, isPlaceholder, isInSignup } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -245,6 +246,7 @@ class PlanFeatures extends Component {
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
+						isInSignup={ isInSignup }
 					/>
 				</td>
 			);
@@ -312,7 +314,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderBottomButtons() {
-		const { planProperties, isPlaceholder } = this.props;
+		const { planProperties, isPlaceholder, isInSignup } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -337,6 +339,7 @@ class PlanFeatures extends Component {
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
+						isInSignup={ isInSignup }
 					/>
 				</td>
 			);

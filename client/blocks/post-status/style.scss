@@ -1,0 +1,18 @@
+.post-status,
+.post-status__icon,
+.post-status__text {
+	display: inline-block;
+}
+
+.post-status__icon,
+.post-status__text {
+	vertical-align: middle;
+}
+
+.post-status__icon {
+	margin-right: 8px;
+}
+
+.post-status__text {
+	line-height: 1;
+}

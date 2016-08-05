@@ -29,7 +29,7 @@
 	"features": {
 		"accept-invite": true,
 		"ad-tracking": false,
-		"catch-js-errors": true,
+		"catch-js-errors": false,
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,

@@ -16,7 +16,7 @@
 		"accept-invite": true,
 		"ad-tracking": false,
 		"brazil-survey-invitation": false,
-		"catch-js-errors": true,
+		"catch-js-errors": false,
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,

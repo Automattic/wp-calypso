@@ -31,7 +31,7 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	coldStartReader: {
-		datestamp: '20160622',
+		datestamp: '20160804',
 		variations: {
 			noEmailColdStart: 20,
 			noChanges: 80
@@ -85,10 +85,19 @@ module.exports = {
 	firstView: {
 		datestamp: '20160726',
 		variations: {
-			disabled: 95,
-			enabled: 5,
+			disabled: 60,
+			enabled: 40,
 		},
 		defaultVariation: 'disabled',
 		allowExistingUsers: false,
+	},
+	readerSearchSuggestions: {
+		datestamp: '20160804',
+		variations: {
+			staffSuggestions: 50,
+			popularSuggestions: 50
+		},
+		defaultVariation: 'staffSuggestions',
+		allowExistingUsers: true
 	}
 };

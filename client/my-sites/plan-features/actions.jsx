@@ -20,6 +20,7 @@ const PlanFeaturesActions = ( {
 	freePlan = false,
 	onUpgradeClick = noop,
 	isPlaceholder = false,
+	isInSignup,
 	translate
 } ) => {
 	let upgradeButton;
@@ -32,7 +33,7 @@ const PlanFeaturesActions = ( {
 		className
 	);
 
-	if ( current ) {
+	if ( current && ! isInSignup ) {
 		upgradeButton = (
 			<Button className={ classes } disabled>
 				<Gridicon size={ 18 } icon="checkmark" />

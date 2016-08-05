@@ -21,7 +21,7 @@ const ReactDom = require( 'react-dom' ),
  */
 const
 	Card = require( 'components/card' ),
-	CommentButton = require( 'components/comment-button' ),
+	CommentButton = require( 'blocks/comment-button' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	EmbedContainer = require( 'components/embed-container' ),
 	LikeButton = require( 'reader/like-button' ),
@@ -43,6 +43,8 @@ const
 	readerRoute = require( 'reader/route' ),
 	stats = require( 'reader/stats' ),
 	PostPermalink = require( 'reader/post-permalink' ),
+	DailyPostHelper = require( 'reader/daily-post/helper' ),
+	DailyPostButton = require( 'reader/daily-post' ),
 	DiscoverPostAttribution = require( 'reader/discover/post-attribution' ),
 	DiscoverSiteAttribution = require( 'reader/discover/site-attribution' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
@@ -419,7 +421,7 @@ const Post = React.createClass( {
 
 				{ post.title ? <h1 className="reader__post-title"><a className="reader__post-title-link" href={ post.URL } target="_blank">{ post.title }</a></h1> : null }
 
-				<PostByline post={ post } site={ this.props.site } />
+				<PostByline post={ post } site={ this.props.site } isDiscoverPost={ isDiscoverPost } />
 
 				{ shouldUseFullExcerpt
 					? <EmbedContainer>
@@ -447,6 +449,8 @@ const Post = React.createClass( {
 						</div>
 					: null
 				}
+
+				{ DailyPostHelper.isDailyPostChallengeOrPrompt( post ) ? <DailyPostButton post={ post } tagName="span" /> : null }
 
 				<ul className="reader__post-footer">
 					<PostPermalink siteName={ siteName } postUrl={ post.URL } />

@@ -12,6 +12,7 @@ import includes from 'lodash/includes';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
 import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
+import { isSitePreviewable } from 'state/sites/selectors';
 import { setPreviewUrl } from 'state/ui/actions';
 import layoutFocus from 'lib/layout-focus';
 
@@ -20,6 +21,7 @@ class PostActionsEllipsisMenuView extends Component {
 		globalId: PropTypes.string,
 		translate: PropTypes.func.isRequired,
 		status: PropTypes.string,
+		isPreviewable: PropTypes.bool,
 		previewUrl: PropTypes.string,
 		setPreviewUrl: PropTypes.func.isRequired
 	};
@@ -31,8 +33,13 @@ class PostActionsEllipsisMenuView extends Component {
 	}
 
 	previewPost( event ) {
-		this.props.setPreviewUrl( this.props.previewUrl );
+		const { isPreviewable, previewUrl } = this.props;
 		mc.bumpStat( 'calypso_cpt_actions', 'view' );
+		if ( ! isPreviewable ) {
+			return;
+		}
+
+		this.props.setPreviewUrl( previewUrl );
 		layoutFocus.set( 'preview' );
 		event.preventDefault();
 	}
@@ -60,9 +67,14 @@ class PostActionsEllipsisMenuView extends Component {
 export default connect(
 	( state, ownProps ) => {
 		const post = getPost( state, ownProps.globalId );
+		if ( ! post ) {
+			return {};
+		}
+
 		return {
-			status: post ? post.status : null,
-			previewUrl: post ? getPostPreviewUrl( state, post.site_ID, post.ID ) : null
+			status: post.status,
+			isPreviewable: false !== isSitePreviewable( state, post.site_ID ),
+			previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID )
 		};
 	},
 	{ setPreviewUrl }

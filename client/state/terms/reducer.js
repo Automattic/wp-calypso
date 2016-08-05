@@ -98,8 +98,8 @@ export const queries = createReducer( {}, {
 	},
 	[ SERIALIZE ]: ( state ) => {
 		return mapValues( state, ( taxonomies ) => {
-			return mapValues( taxonomies, ( manager ) => {
-				return manager.toJSON();
+			return mapValues( taxonomies, ( { data, options } ) => {
+				return { data, options };
 			} );
 		} );
 	},
@@ -109,8 +109,8 @@ export const queries = createReducer( {}, {
 		}
 
 		return mapValues( state, ( taxonomies ) => {
-			return mapValues( taxonomies, ( manager ) => {
-				return TermQueryManager.parse( manager );
+			return mapValues( taxonomies, ( { data, options } ) => {
+				return new TermQueryManager( data, options );
 			} );
 		} );
 	}

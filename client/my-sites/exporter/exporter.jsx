@@ -16,6 +16,7 @@ import Interval, { EVERY_SECOND } from 'lib/interval';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import support from 'lib/url/support';
+import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 
 export default React.createClass( {
 	displayName: 'Exporter',
@@ -99,6 +100,7 @@ export default React.createClass( {
 
 		return (
 			<div className="exporter">
+				<QuerySiteGuidedTransfer siteId={ siteId } />
 				{ notice }
 				{ isGuidedTransferInProgress && <GuidedTransferInProgress /> }
 				<FoldableCard

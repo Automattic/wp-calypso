@@ -10,6 +10,7 @@ import merge from 'lodash/merge';
  */
 import { plans } from './plans/reducer';
 import domains from './domains/reducer';
+import guidedTransfer from './guided-transfer/reducer';
 import vouchers from './vouchers/reducer';
 
 import mediaStorage from './media-storage/reducer';
@@ -133,6 +134,7 @@ export default combineReducers( {
 	items,
 	mediaStorage,
 	plans,
+	guidedTransfer,
 	vouchers,
 	requesting
 } );

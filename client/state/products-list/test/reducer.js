@@ -37,10 +37,10 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#items()', () => {
-		it( 'should default to null', () => {
+		it( 'should default to empty object', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should store the product list received', () => {
@@ -57,7 +57,7 @@ describe( 'reducer', () => {
 				}
 			} ];
 
-			const state = items( null, {
+			const state = items( {}, {
 				type: PRODUCTS_LIST_RECEIVE,
 				productsList
 			} );
@@ -109,7 +109,7 @@ describe( 'reducer', () => {
 					}
 				} );
 				const state = items( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( null );
+				expect( state ).to.eql( {} );
 			} );
 		} );
 	} );

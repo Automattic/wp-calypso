@@ -134,7 +134,7 @@ function setUpContext( reduxStore ) {
 }
 
 function loadDevModulesAndBoot() {
-	if ( config.isEnabled( 'render-visualizer' ) ) {
+	if ( process.env.NODE_ENV === 'development' && config.isEnabled( 'render-visualizer' ) ) {
 		// Use Webpack's code splitting feature to put the render visualizer in a separate fragment.
 		// This way it won't get downloaded unless this feature is enabled.
 		// Since loading this fragment is asynchronous and we need to inject this mixin into all React classes,

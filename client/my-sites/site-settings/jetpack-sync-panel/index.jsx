@@ -20,7 +20,7 @@ import {
 	getSyncStatus,
 	scheduleJetpackFullysync
 } from 'state/jetpack-sync/actions';
-import Interval, { EVERY_FIVE_SECONDS } from 'lib/interval';
+import Interval, { EVERY_TEN_SECONDS } from 'lib/interval';
 import NoticeAction from 'components/notice/notice-action';
 import analytics from 'lib/analytics';
 
@@ -131,8 +131,12 @@ const JetpackSyncPanel = React.createClass( {
 
 		const finished = get( this.props, 'syncStatus.finished' );
 		const finishedTimestamp = this.moment( parseInt( finished, 10 ) * 1000 );
+		const { isPendingSyncStart, isFullSyncing } = this.props;
+
 		let text = '';
-		if ( this.shouldDisableSync() ) {
+		if ( isPendingSyncStart ) {
+			text = this.translate( 'Full sync will begin shortly' );
+		} else if ( isFullSyncing ) {
 			text = this.translate( 'Full sync in progress' );
 		} else if ( finishedTimestamp.isValid() ) {
 			text = this.translate( 'Last synced %(ago)s', {
@@ -159,7 +163,7 @@ const JetpackSyncPanel = React.createClass( {
 		}
 
 		return (
-			<ProgressBar value={ this.props.syncProgress || 0 } />
+			<ProgressBar isPulsing value={ this.props.syncProgress || 0 } />
 		);
 	},
 
@@ -190,7 +194,7 @@ const JetpackSyncPanel = React.createClass( {
 				{ this.renderErrorNotice() }
 				{ this.renderStatusNotice() }
 				{ this.renderProgressBar() }
-				{ this.shouldDisableSync() && <Interval onTick={ this.fetchSyncStatus } period={ EVERY_FIVE_SECONDS } /> }
+				{ this.shouldDisableSync() && <Interval onTick={ this.fetchSyncStatus } period={ EVERY_TEN_SECONDS } /> }
 			</CompactCard>
 		);
 	}

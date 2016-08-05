@@ -8,7 +8,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	normalizePost,
+	normalizePostForDisplay,
+	normalizePostForState,
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
@@ -18,9 +19,9 @@ import {
 } from '../utils';
 
 describe( 'utils', () => {
-	describe( 'normalizePost()', () => {
+	describe( 'normalizePostForDisplay()', () => {
 		it( 'should return null if post is falsey', () => {
-			const normalizedPost = normalizePost();
+			const normalizedPost = normalizePostForDisplay();
 			expect( normalizedPost ).to.be.null;
 		} );
 
@@ -36,7 +37,7 @@ describe( 'utils', () => {
 				featured_image: 'https://example.com/logo.png'
 			};
 
-			const normalizedPost = normalizePost( post );
+			const normalizedPost = normalizePostForDisplay( post );
 			expect( normalizedPost ).to.eql( {
 				...post,
 				title: 'Ribs & Chicken',
@@ -46,6 +47,38 @@ describe( 'utils', () => {
 				canonical_image: {
 					type: 'image',
 					uri: 'https://example.com/logo.png'
+				}
+			} );
+		} );
+	} );
+
+	describe( 'normalizePostForState()', () => {
+		it( 'should deeply unset all meta', () => {
+			const original = deepFreeze( {
+				ID: 814,
+				meta: {},
+				terms: {
+					category: {
+						Code: {
+							ID: 6,
+							meta: {}
+						}
+					}
+				}
+			} );
+			const revised = normalizePostForState( original );
+
+			expect( revised ).to.not.equal( original );
+			expect( revised ).to.eql( {
+				ID: 814,
+				meta: null,
+				terms: {
+					category: {
+						Code: {
+							ID: 6,
+							meta: null
+						}
+					}
 				}
 			} );
 		} );
