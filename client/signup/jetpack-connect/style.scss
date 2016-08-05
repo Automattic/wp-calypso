@@ -1,4 +1,4 @@
-.jetpack-connect {
+.jetpack-connect__main {
 	max-width: 400px;
 
 	.logged-out-form__links {
@@ -12,10 +12,9 @@
 		}
 
 	}
-
 }
 
-.jetpack-connect__wide {
+.jetpack-connect__main.is-wide {
 	max-width: 100%;
 	text-align: center;
 	margin-bottom: 24px;

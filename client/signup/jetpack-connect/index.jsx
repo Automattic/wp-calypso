@@ -13,7 +13,6 @@ import Card from 'components/card';
 import ConnectHeader from './connect-header';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
 import { getSiteByUrl } from 'state/sites/selectors';
@@ -26,6 +25,7 @@ import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Gridicon from 'components/gridicon';
+import MainWrapper from './main-wrapper';
 import {
 	confirmJetpackInstallStatus,
 	dismissUrl,
@@ -292,7 +292,7 @@ const JetpackConnectMain = React.createClass( {
 	renderSiteEntry() {
 		const status = this.getStatus();
 		return (
-			<Main className="jetpack-connect">
+			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<QuerySites/>
@@ -306,14 +306,14 @@ const JetpackConnectMain = React.createClass( {
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	},
 
 	renderSiteEntryInstall() {
 		const status = this.getStatus();
 		return (
-			<Main className="jetpack-connect jetpack-connect__main">
+			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<QuerySites/>
@@ -327,13 +327,13 @@ const JetpackConnectMain = React.createClass( {
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	},
 
 	renderInstallInstructions() {
 		return (
-			<Main className="jetpack-connect jetpack-connect__wide">
+			<MainWrapper isWide>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader
@@ -364,7 +364,7 @@ const JetpackConnectMain = React.createClass( {
 						<div>{ this.renderBackButton() }</div>
 					</div>
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	},
 
@@ -395,7 +395,7 @@ const JetpackConnectMain = React.createClass( {
 
 	renderActivateInstructions() {
 		return (
-			<Main className="jetpack-connect jetpack-connect__wide">
+			<MainWrapper isWide>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader showLogo={ false }
@@ -418,7 +418,7 @@ const JetpackConnectMain = React.createClass( {
 						{ this.renderBackButton() }
 					</div>
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	},
 
