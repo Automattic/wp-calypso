@@ -37,9 +37,7 @@ const DomainSuggestion = React.createClass( {
 	},
 
 	renderNonButton() {
-		return (
-			<span>{ this.props.buttonContent } <Gridicon className="domain-suggestion__chevron" icon="chevron-right" /></span>
-		);
+		return this.props.buttonContent;
 	},
 
 	render() {
@@ -64,6 +62,8 @@ const DomainSuggestion = React.createClass( {
 				<div className={ clickableRow ? 'domain-suggestion__non-button-action' : 'domain-suggestion__action' }>
 					{ clickableRow ? this.renderNonButton() : this.renderButton() }
 				</div>
+				{ clickableRow
+					&& <div className="domain-suggestion__chevron"><Gridicon icon="chevron-right" /></div> }
 			</div>
 		);
 	}
@@ -71,12 +71,18 @@ const DomainSuggestion = React.createClass( {
 
 DomainSuggestion.Placeholder = React.createClass( {
 	render() {
+		const clickableRow = true;//abtest( 'domainSuggestionClickableRow' ) === 'clickableRow';
+		const classes = classNames( 'domain-suggestion', 'card', 'is-compact', 'is-placeholder', {
+			'is-clickable': clickableRow,
+		} );
 		return (
-			<div className="domain-suggestion card is-compact is-placeholder">
+			<div className={ classes }>
 				<div className="domain-suggestion__content">
 					<h3 />
 				</div>
-				<div className="domain-suggestion__action" />
+				<div className={ clickableRow ? 'domain-suggestion__non-button-action' : 'domain-suggestion__action' } />
+				{ clickableRow
+					&& <div className="domain-suggestion__chevron"><Gridicon icon="chevron-right" /></div> }
 			</div>
 		);
 	}
