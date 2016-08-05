@@ -1,12 +1,22 @@
+/**
+ * External Dependencies
+ */
 import React from 'react';
+
+/**
+ * Internal Dependencies
+ */
 import { localize } from 'i18n-calypso';
+import Suggestion from './suggestion';
 
 export function BlankContent( { translate, suggestions } ) {
 	let suggest = null;
 	if ( suggestions ) {
 		let sugList = suggestions
 			.map( function( query ) {
-				return <a href={ '/read/search?q=' + encodeURIComponent( query ) } >{ query }</a>;
+				return (
+					<Suggestion suggestion={ query } />
+				);
 			} );
 		sugList = sugList
 			.slice( 1 )
@@ -16,11 +26,12 @@ export function BlankContent( { translate, suggestions } ) {
 
 		suggest = (
 			<p className="search-stream__blank-suggestions">
-				{ translate( 'Staff Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
+				{ translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
 			</p> );
 	}
 
 	const imgPath = '/calypso/images/drake/drake-404.svg';
+
 	return (
 		<div className="search-stream__blank">
 			{ suggest }

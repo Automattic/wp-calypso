@@ -21,6 +21,8 @@ import FeedStore from 'lib/feed-store';
 import { recordTrackForPost } from 'reader/stats';
 import sampleSize from 'lodash/sampleSize';
 import i18nUtils from 'lib/i18n-utils';
+import { staffSuggestions, popularSuggestions } from './suggestions';
+import { abtest } from 'lib/abtest';
 
 const SearchCardAdapter = React.createClass( {
 	getInitialState() {
@@ -94,74 +96,28 @@ const emptyStore = {
 
 const FeedStream = React.createClass( {
 
-	searchSuggestions: {
-		en: [
-			'2016 Election',
-			'Astrology',
-			'Batman',
-			'Beach',
-			'Beautiful',
-			'Bloom',
-			'Chickens',
-			'Clinton',
-			'Cocktails',
-			'Colorado',
-			'Craft Beer',
-			'Cute',
-			'DIY',
-			'Delicious',
-			'Dogs',
-			'Elasticsearch',
-			'Fabulous',
-			'Farm',
-			'Flowers',
-			'Funny',
-			'Garden',
-			'Groovy',
-			'Happy Place',
-			'Hiking',
-			'Homesteading',
-			'Iceland',
-			'Inspiration',
-			'Juno',
-			'Mathematics',
-			'Michigan',
-			'Monkeys',
-			'Mountain Biking',
-			'Obama',
-			'Overwatch',
-			'Pokemon GO',
-			'Pride',
-			'Recipe',
-			'Red Sox',
-			'Robots',
-			'Scenic',
-			'Sharks',
-			'Sous vide',
-			'Sunday Brunch',
-			'Tibet',
-			'Toddlers',
-			'Travel Backpacks',
-			'Travel',
-			'Trump',
-			'Woodworking',
-			'WordPress',
-			'Zombies'
-		]
-	},
-
 	propTypes: {
 		query: React.PropTypes.string
 	},
 
 	getInitialState() {
-		let suggestions = null;
 		const lang = i18nUtils.getLocaleSlug();
-		if ( this.searchSuggestions[ lang ] ) {
-			suggestions = sampleSize( this.searchSuggestions[ lang ], 3 );
+		let sourceSuggestions = null;
+		let pickedSuggestions = null;
+
+		// Which set of suggestions should we use?
+		if ( abtest( 'readerSearchSuggestions' ) === 'popularSuggestions' ) {
+			sourceSuggestions = popularSuggestions;
+		} else {
+			sourceSuggestions = staffSuggestions;
 		}
+
+		if ( sourceSuggestions[ lang ] ) {
+			pickedSuggestions = sampleSize( sourceSuggestions[ lang ], 3 );
+		}
+
 		return {
-			suggestions: suggestions,
+			suggestions: pickedSuggestions,
 			title: this.getTitle()
 		};
 	},
@@ -203,7 +159,7 @@ const FeedStream = React.createClass( {
 	},
 
 	render() {
-		const blankContent = this.props.showBlankContent ? <BlankContent suggestions={ this.state.suggestions }/> : null;
+		const blankContent = this.props.showBlankContent ? <BlankContent suggestions={ this.state.suggestions } /> : null;
 		const emptyContent = this.props.query
 			? <EmptyContent query={ this.props.query } />
 			: blankContent;
