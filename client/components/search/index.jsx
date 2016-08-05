@@ -60,7 +60,8 @@ const Search = React.createClass( {
 		searching: PropTypes.bool,
 		isOpen: PropTypes.bool,
 		dir: PropTypes.string,
-		fitsContainer: PropTypes.bool
+		fitsContainer: PropTypes.bool,
+		hideCloseOnMobile: PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -85,7 +86,8 @@ const Search = React.createClass( {
 			searching: false,
 			isOpen: false,
 			dir: undefined,
-			fitsContainer: false
+			fitsContainer: false,
+			hideCloseOnMobile: false
 		};
 	},
 
@@ -284,6 +286,9 @@ const Search = React.createClass( {
 			search: true
 		} );
 
+		const isCloseButtonVisible = ( isMobile() && this.props.hideCloseOnMobile ) ?
+			' no-close-button ' : '';
+
 		return (
 			<div className={ searchClass } role="search">
 				<Spinner />
@@ -302,7 +307,7 @@ const Search = React.createClass( {
 				<input
 					type="search"
 					id={ 'search-component-' + this.state.instanceId }
-					className={ 'search__input' + ( this.props.dir ? ' ' + this.props.dir : '' ) }
+					className={ 'search__input' + isCloseButtonVisible + ( this.props.dir ? ' ' + this.props.dir : '' ) }
 					placeholder={ placeholder }
 					role="search"
 					value={ searchValue }
@@ -317,22 +322,34 @@ const Search = React.createClass( {
 					autoCapitalize="none"
 					dir={ this.props.dir }
 					{ ...autocorrect } />
-				{ ( searchValue || this.state.isOpen ) ? this.closeButton() : null }
+					{ this.closeButton() }
 			</div>
 		);
 	},
 
 	closeButton: function() {
-		return (
-			<span
-				onTouchTap={ this.closeSearch }
-				tabIndex="0"
-				onKeyDown={ this.closeListener }
-				aria-controls={ 'search-component-' + this.state.instanceId }
-				aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
-			<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
-			</span>
-		);
+		let showIfSearchIsNotEmpty;
+
+		if( isMobile() && this.props.hideCloseOnMobile ) {
+			showIfSearchIsNotEmpty = false;
+		} else {
+			showIfSearchIsNotEmpty = true;
+		}
+
+		if ( ( this.state.keyword && showIfSearchIsNotEmpty ) || this.state.isOpen ) {
+			return (
+				<span
+					onTouchTap={ this.closeSearch }
+					tabIndex="0"
+					onKeyDown={ this.closeListener }
+					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
+				<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
+				</span>
+			);
+		}
+
+		return null;
 	}
 } );
 

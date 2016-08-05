@@ -125,8 +125,7 @@ const ThemesSearchCard = React.createClass( {
 	},
 
 	onBlur() {
-		const searchString = this.refs['url-search'].getCurrentSearchValue();
-		if ( searchString === "" ) {
+		if ( this.state.isMobile ) {//searchString === "" ) {
 			this.setState( { searchIsOpen : false } );
 		}
 	},
@@ -158,6 +157,7 @@ const ThemesSearchCard = React.createClass( {
 				onSearchClose={ isMagicSearchEnabled ? this.onSearchClose : noop }
 				onBlur={ isMagicSearchEnabled ? this.onBlur : noop }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
+				hideCloseOnMobile={ isMagicSearchEnabled }
 			/>
 		);
 
