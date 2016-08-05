@@ -34,8 +34,8 @@ export const discoverChallengePost = {
 	type: 'dp_discover'
 };
 
-export const sitesList = [
-	{ ID: 108516984, name: 'Join the Narwhal Club' },
-	{ ID: 6200060, name: '"I expected:"' },
-	{ ID: 72386110, name: 'Calypso Project P2' }
+export const sites = [
+	{ ID: 72386110, name: 'Calypso Project P2', slug: 'calypsop2.wordpress.com' },
+	{ ID: 108516984, name: 'Join the Narwhal Club', slug: 'jointhnarwhal.club' },
+	{ ID: 6200060, name: '"I expected:"', slug: 'iexpected' }
 ];
