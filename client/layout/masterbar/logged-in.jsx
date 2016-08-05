@@ -17,6 +17,7 @@ import layoutFocus from 'lib/layout-focus';
 import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
+import { PLAN_FREE } from 'lib/plans/constants';
 
 export default React.createClass( {
 	displayName: 'Masterbar',
@@ -62,7 +63,11 @@ export default React.createClass( {
 	},
 
 	render() {
-		const upgradeLinkEnabled = config.isEnabled( 'masterbar/upgrade-link' );
+		const { user, sites } = this.props;
+
+		const upgradeLinkEnabled = config.isEnabled( 'masterbar/upgrade-link' ) &&
+			user && user.data.site_count === 1 &&
+			sites && sites.data[ 0 ] && sites.data[ 0 ].plan.product_slug === PLAN_FREE;
 
 		return (
 			<Masterbar>
