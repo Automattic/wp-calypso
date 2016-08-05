@@ -28,6 +28,11 @@ import {
 } from '../selectors';
 
 describe( 'selectors', () => {
+	beforeEach( () => {
+		getSite.memoizedSelector.cache.clear();
+		getSiteCollisions.memoizedSelector.cache.clear();
+	} );
+
 	describe( '#getSite()', () => {
 		useSandbox( ( sandbox ) => {
 			sandbox.stub( config, 'isEnabled' ).withArgs( 'preview-layout' ).returns( true );
@@ -78,10 +83,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSiteCollisions', () => {
-		beforeEach( () => {
-			getSiteCollisions.memoizedSelector.cache.clear();
-		} );
-
 		it( 'should not consider distinct URLs as conflicting', () => {
 			const collisions = getSiteCollisions( {
 				sites: {
@@ -123,10 +124,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isSiteConflicting()', () => {
-		beforeEach( () => {
-			getSiteCollisions.memoizedSelector.cache.clear();
-		} );
-
 		it( 'it should return false if the specified site ID is not included in conflicting set', () => {
 			const isConflicting = isSiteConflicting( {
 				sites: {
@@ -376,10 +373,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSiteSlug()', () => {
-		beforeEach( () => {
-			getSiteCollisions.memoizedSelector.cache.clear();
-		} );
-
 		it( 'should return null if the site is not known', () => {
 			const slug = getSiteSlug( {
 				sites: {
@@ -447,10 +440,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getSiteDomain()', () => {
-		beforeEach( () => {
-			getSiteCollisions.memoizedSelector.cache.clear();
-		} );
-
 		it( 'should return null if the site is not known', () => {
 			const domain = getSiteDomain( {
 				sites: {
