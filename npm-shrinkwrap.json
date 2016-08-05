@@ -1654,11 +1654,20 @@
     "html-minifier": {
       "version": "1.5.0",
       "dependencies": {
+        "async": {
+          "version": "0.2.10"
+        },
         "commander": {
           "version": "2.9.0"
         },
         "he": {
           "version": "1.0.0"
+        },
+        "source-map": {
+          "version": "0.5.6"
+        },
+        "uglify-js": {
+          "version": "2.6.4"
         }
       }
     },
@@ -3625,7 +3634,7 @@
       "version": "0.7.10"
     },
     "uglify-js": {
-      "version": "2.6.1",
+      "version": "2.7.0",
       "dependencies": {
         "async": {
           "version": "0.2.10"
@@ -3730,13 +3739,21 @@
       "version": "3.0.1"
     },
     "webpack": {
-      "version": "1.12.15",
+      "version": "1.13.1",
       "dependencies": {
         "async": {
           "version": "1.5.2"
         },
-        "esprima": {
-          "version": "2.7.2"
+        "source-map": {
+          "version": "0.5.6"
+        },
+        "uglify-js": {
+          "version": "2.6.4",
+          "dependencies": {
+            "async": {
+              "version": "0.2.10"
+            }
+          }
         }
       }
     },
