@@ -92,7 +92,7 @@ Layout = React.createClass( {
 	},
 
 	renderPushNotificationPrompt: function() {
-		const participantInAbTest = config.isEnabled( 'push-notifications-ab-test' ) && abtest( 'browserNotifications' ) === 'enabled';
+		const participantInAbTest = abtest( 'browserNotifications' ) === 'enabled';
 		if ( ! config.isEnabled( 'push-notifications' ) && ! participantInAbTest ) {
 			return null;
 		}
