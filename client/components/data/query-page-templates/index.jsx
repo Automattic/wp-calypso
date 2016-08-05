@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { isRequestingPageTemplates } from 'state/page-templates/selectors';
+import { getSiteOption } from 'state/sites/selectors';
 import { requestPageTemplates } from 'state/page-templates/actions';
 
 class QueryPageTemplates extends Component {
@@ -16,7 +17,14 @@ class QueryPageTemplates extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId !== nextProps.siteId ) {
+		const { siteId, themeSlug } = this.props;
+		const { siteId: nextSiteId, themeSlug: nextThemeSlug } = nextProps;
+		const hasSiteOrThemeChanged = (
+			siteId !== nextSiteId ||
+			( themeSlug && nextThemeSlug && themeSlug !== nextThemeSlug )
+		);
+
+		if ( hasSiteOrThemeChanged ) {
 			this.request( nextProps );
 		}
 	}
@@ -41,7 +49,8 @@ QueryPageTemplates.propTypes = {
 export default connect(
 	( state, { siteId } ) => {
 		return {
-			isRequesting: isRequestingPageTemplates( state, siteId )
+			isRequesting: isRequestingPageTemplates( state, siteId ),
+			themeSlug: getSiteOption( state, siteId, 'theme_slug' )
 		};
 	},
 	{ requestPageTemplates }
