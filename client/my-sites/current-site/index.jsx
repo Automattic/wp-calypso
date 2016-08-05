@@ -97,7 +97,7 @@ const CurrentSite = React.createClass( {
 				isCompact
 				selectedSite={ this.getSelectedSite() }
 				domains={ domains }
-				ruleWhiteList={ [ 'expiredDomains', 'expiringDomains', 'wrongNSMappedDomains' ] } />
+				ruleWhiteList={ [ 'unverifiedDomains', 'expiredDomains', 'expiringDomains', 'wrongNSMappedDomains' ] } />
 		);
 	},
 
