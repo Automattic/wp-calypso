@@ -47,7 +47,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( firstViewConfig ).to.deep.equal ( { name: 'stats', paths: [ '/stats' ], enabled: true } );
+			expect( firstViewConfig ).to.deep.equal( { name: 'stats', paths: [ '/stats' ], enabled: true } );
 		} );
 	} );
 
@@ -65,27 +65,27 @@ describe( 'selectors', () => {
 			enabled: true,
 		};
 
-		it( 'should return true if the preferences have been fetched, the config has a first view for the current view, and it is not disabled', () => {
-			
-			const viewEnabled = isViewEnabled( {
-				preferences: {
-					values: {
-						firstViewHistory: [
-							{
-								view: 'stats',
-								timestamp: 123456,
-								disabled: false
-							}
-						]
+		it( 'should return true if the preferences have been fetched, the config has a first view for the current view,' +
+			' and it is not disabled', () => {
+				const viewEnabled = isViewEnabled( {
+					preferences: {
+						values: {
+							firstViewHistory: [
+								{
+									view: 'stats',
+									timestamp: 123456,
+									disabled: false
+								}
+							]
+						},
+						lastFetchedTimestamp: 123456,
 					},
-					lastFetchedTimestamp: 123456,
-				},
-				ui: {
-					actionLog: actions,
-				}
-			}, config );
+					ui: {
+						actionLog: actions,
+					}
+				}, config );
 
-			expect( viewEnabled ).to.be.true;
+				expect( viewEnabled ).to.be.true;
 		} );
 
 		it( 'should return true if preferences have been fetched and the history is empty', () => {
@@ -161,7 +161,7 @@ describe( 'selectors', () => {
 			}, config );
 
 			expect( viewEnabled ).to.be.false;
-		} )
+		} );
 	} );
 
 	describe( '#wasFirstViewHiddenSinceEnteringCurrentSection()', () => {
