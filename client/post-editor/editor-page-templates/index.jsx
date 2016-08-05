@@ -56,12 +56,21 @@ class EditorPageTemplates extends Component {
 		return translate( 'Default Template' );
 	}
 
+	getTemplates() {
+		const { translate, templates } = this.props;
+		return [ {
+			label: translate( 'Default Template' ),
+			file: ''
+		} ].concat( templates || [] );
+	}
+
 	render() {
-		const { postType, templates, template, siteId, translate } = this.props;
+		const { postType, template, siteId, translate } = this.props;
 		if ( 'page' !== postType ) {
 			return null;
 		}
 
+		const templates = this.getTemplates();
 		return (
 			<div>
 				{ siteId && <QueryPageTemplates siteId={ siteId } /> }
