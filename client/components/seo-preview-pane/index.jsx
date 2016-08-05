@@ -31,15 +31,20 @@ const ComingSoonMessage = translate => (
 	</div>
 );
 
-const PreviewReader = site =>
+const PreviewReader = ( site, post ) => (
 	<ReaderPreview
-		title={ site.name }
-		slug={ site.slug }
-		url={ site.URL }
-		description={ site.description }
+		siteTitle={ site.name }
+		siteSlug={ site.slug }
+		siteUrl={ site.URL }
 		siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
-	/>;
+		postTitle={ post.title }
+		postContent={ post.content }
+		postImage={ post.featured_image && post.featured_image + '?s=540' }
+		postDate={ post.date }
+		authorName={ post.author.name }
+		authorIcon={ post.author.avatar_URL }
+	/>
+);
 
 const PreviewGoogle = site =>
 	<SearchPreview
@@ -109,6 +114,7 @@ export class SeoPreviewPane extends PureComponent {
 			site,
 			translate
 		} = this.props;
+
 		const { selectedService } = this.state;
 
 		return (
@@ -163,7 +169,7 @@ const mapStateToProps = state => {
 	return {
 		site: site,
 		post: isEditorShowing && getSitePost( state, site.ID, postId )
-	}
+	};
 };
 
 export default connect( mapStateToProps, null )( localize( SeoPreviewPane ) );

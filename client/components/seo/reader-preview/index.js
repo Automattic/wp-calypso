@@ -2,6 +2,10 @@
 
 import React, { PropTypes } from 'react';
 import PureComponent from 'react-pure-render/component';
+import { localize } from 'i18n-calypso';
+
+import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
+import humanDate from 'lib/human-date';
 
 const baseDomain = url =>
 	url
@@ -11,47 +15,61 @@ const baseDomain = url =>
 export class ReaderPreview extends PureComponent {
 	render() {
 		const {
-			url,
-			slug,
-			title,
-			type,
-			description,
+			translate,
+			siteTitle,
+			siteSlug,
+			siteUrl,
 			siteIcon,
-			image,
+			postTitle,
+			postContent,
+			postImage,
+			postDate,
+			authorName,
+			authorIcon
 		} = this.props;
+
+		const postExcerpt = postContent ? formatExcerpt( postContent  ) : '';
 
 		return (
 			<article className="reader-preview__post">
 				<div className="reader__post-header">
 					<div className="site has-edit-capabilities">
-						<div className="site__content" title={ title }>
+						<div className="site__content" title={ siteTitle }>
 							<div className="site-icon">
 								<img className="site-icon__img" src={ siteIcon } />
 							</div>
 							<div className="site__info">
-								<div className="site__title">{ title }</div>
-								<div className="site__domain">{ slug }</div>
+								<div className="site__title">{ siteTitle }</div>
+								<div className="site__domain">{ siteSlug }</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div className="reader-preview__image">
-					<img src={ image } />
-				</div>
+				{ postImage &&
+					<div className="reader__post-featured-image">
+						<img className="reader__post-featured-image-image" src={ postImage } />
+					</div>
+				}
 				<div className="reader-preview__text">
-					<h1 className="reader__post-title">{ title }</h1>
+				{ postTitle &&
+					<h1 className="reader__post-title">{ postTitle }</h1>
+				}
+				{ authorName &&
 					<ul className="reader-post-byline">
 						<li className="reader-post-byline__author">
-							<a href="http://zandyring.com" className="external-link">
-								<img className="gravatar" src={ image } width="24" height="24" />
-								<span className="byline__author-name">Darth Vader</span>
+							<a href="#" className="external-link">
+								<img className="gravatar" src={ authorIcon } width="16" height="16" />
+								<span className="byline__author-name">{ authorName }</span>
 							</a>
 						</li>
 						<li className="reader-post-byline__date">
-							<a className="reader-post-byline__date-link" href="#">Now</a>
+							<a className="reader-post-byline__date-link" href="#">{ humanDate( postDate ) }</a>
 						</li>
 					</ul>
-					<div className="post-excerpt"><p>We are excited to announce that Mildred Bay, MD is joining our practice in September 2016. She has been in practice in Port Angeles for the past 11 years and is relocating with her family to the Seattle area at the We are excited to announce that Mildred Bay, MD is joining our practice in September 2016. She has been in practice in Port Angeles for the past 11 years and is relocating with her family to the Seattle area at the</p></div>
+				}
+				{ postExcerpt &&
+					<div className="post-excerpt"><p>{ postExcerpt }</p></div>
+				}
 				</div>
 			</article>
 		);
@@ -59,11 +77,16 @@ export class ReaderPreview extends PureComponent {
 }
 
 ReaderPreview.propTypes = {
-	url: PropTypes.string,
-	title: PropTypes.string,
-	type: PropTypes.string,
-	description: PropTypes.string,
-	image: PropTypes.string
+	siteTitle: PropTypes.string,
+	siteSlug: PropTypes.string,
+	siteUrl: PropTypes.string,
+	siteIcon: PropTypes.string,
+	postTitle: PropTypes.string,
+	postContent: PropTypes.string,
+	postImage: PropTypes.string,
+	postDate: PropTypes.string,
+	authorName: PropTypes.string,
+	authorIcon: PropTypes.string
 };
 
-export default ReaderPreview;
+export default localize( ReaderPreview );

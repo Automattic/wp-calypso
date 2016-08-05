@@ -277,42 +277,37 @@
 	max-width: 540px;
 	pointer-events: none;
 
+	.site__content {
+		padding: 16px 4px 0 16px
+	}
+
 	.reader__post-header {
 		margin: 0;
+	}
+
+	.reader__post-featured-image {
+		margin-top: 16px;
+		left: 0;
+		width: 100%;
 	}
 
 	.reader-post-byline {
 		margin: 8px 0;
 		padding: 0;
+		font-size: 14px;
 
 		a {
-			color: $blue-wordpress;
+			color: $blue-medium;
 		}
-	}
 
-	.post-excerpt {
-		font-family: Merriweather, Georgia, "Times New Roman", Times, serif;
-	    font-weight: 400;
-	    -webkit-font-smoothing: antialiased;
-	    -moz-osx-font-smoothing: grayscale;
-	    color: #3d596d;
+		.reader-post-byline__author .gravatar {
+			height: 16px;
+    		width: 16px;
+    		top: 4px;
+		}
 	}
 }
 
 .reader-preview__text {
 	padding: 0 16px 16px;
-}
-
-.reader-preview__image {
-	display: flex;
-	margin-bottom: 16px;
-	box-shadow: inset 0 0 2px 2px rgba( lighten( $gray, 10 ), 0.1 );
-	background: rgba( lighten( $gray, 30 ), 0.3 );
-	border-bottom: 1px solid lighten( $gray, 20 );
-
-	img {
-		width: 100%;
-		height: auto;
-		max-height: 400px;
-	}
 }
