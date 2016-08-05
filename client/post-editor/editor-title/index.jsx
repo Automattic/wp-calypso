@@ -96,7 +96,6 @@ export default React.createClass( {
 			<div className={ classes }>
 				{ post && post.ID && ! PostUtils.isPage( post ) &&
 					<EditorPermalink
-						slug={ post.slug }
 						path={ isPermalinkEditable ? PostUtils.getPermalinkBasePath( post ) : post.URL }
 						isEditable={ isPermalinkEditable } />
 				}

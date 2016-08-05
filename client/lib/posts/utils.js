@@ -207,14 +207,6 @@ var utils = {
 		return pathParts.join( '/' );
 	},
 
-	getSuggestedSlug: function( post ) {
-		if ( ! post || ! post.other_URLs || ! post.other_URLs.suggested_slug ) {
-			return null;
-		}
-
-		return post.other_URLs.suggested_slug;
-	},
-
 	/**
 	 * Returns the ID of the featured image assigned to the specified post, or
 	 * `undefined` otherwise. A utility function is useful because the format
