@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -61,6 +62,8 @@ export default React.createClass( {
 	},
 
 	render() {
+		const upgradeLinkEnabled = config.isEnabled( 'masterbar/upgrade-link' );
+
 		return (
 			<Masterbar>
 				<Stats
@@ -78,7 +81,11 @@ export default React.createClass( {
 				</Stats>
 				<Item
 					tipTarget="reader"
-					className="masterbar__reader"
+					className={
+						classNames( 'masterbar__reader', {
+							'is-upgrade-link': upgradeLinkEnabled
+						} )
+					}
 					url="/"
 					icon="reader"
 					onClick={ this.clickReader }
@@ -88,6 +95,18 @@ export default React.createClass( {
 				>
 					{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
+				{ upgradeLinkEnabled &&
+					<Item
+						tipTarget="upgrade-link"
+						className="masterbar__upgrade-link"
+						url="/plans"
+						onClick={ this.clickReader }
+						tooltip={ this.translate( 'Upgrade to more powerful plans', { textOnly: true } ) }
+						preloadSection={ () => preload( 'plans' ) }
+					>
+						{ this.translate( 'Upgrade', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+					</Item>
+				}
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				<Publish
 					sites={ this.props.sites }
