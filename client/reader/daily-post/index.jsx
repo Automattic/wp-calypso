@@ -55,7 +55,7 @@ class DailyPostButton extends React.Component {
 		this._closeTimerId = null;
 		this._isMounted = false;
 
-		[ 'pickSiteToPostTo', 'toggle', 'closeMenu' ].forEach(
+		[ 'openEditorWithSite', 'toggle', 'closeMenu', 'renderSitesPopover' ].forEach(
 			( method ) => this[ method ] = this[ method ].bind( this )
 		);
 	}
@@ -93,7 +93,7 @@ class DailyPostButton extends React.Component {
 		} );
 	}
 
-	pickSiteToPostTo( siteSlug ) {
+	openEditorWithSite( siteSlug ) {
 		const pingbackAttributes = getPingbackAttributes( this.props.post );
 
 		recordAction( 'daily_post_challenge' );
@@ -125,6 +125,22 @@ class DailyPostButton extends React.Component {
 		}
 	}
 
+	renderSitesPopover() {
+		return (
+			<SitesPopover
+				key="menu"
+				header={ <div> { translate( 'Post on' ) } </div> }
+				sites={ sitesList }
+				context={ this.refs && this.refs.dailyPostButton }
+				visible={ this.state.showingMenu }
+				groups={ true }
+				onSiteSelect={ this.openEditorWithSite }
+				onClose={ this.closeMenu }
+				position="top"
+				className="is-reader"/>
+		);
+	}
+
 	render() {
 		const canParticipate = !! sitesList.getPrimary();
 		const title = get( this.props, 'post.title' );
@@ -148,19 +164,7 @@ class DailyPostButton extends React.Component {
 			( <Button ref="dailyPostButton" key="button" compact primary className={ buttonClasses }>
 					<Gridicon icon="create" /><span>{ translate( 'Post about ' ) + title } </span>
 				</Button> ),
-			( this.state.showingMenu
-				? <SitesPopover
-					key="menu"
-					header={ <div> { translate( 'Post on' ) } </div> }
-					sites={ sitesList }
-					context={ this.refs && this.refs.dailyPostButton }
-					visible={ this.state.showingMenu }
-					groups={ true }
-					onSiteSelect={ this.pickSiteToPostTo }
-					onClose={ this.closeMenu }
-					position="top"
-					className="is-reader"/>
-				: null )
+			( this.state.showingMenu ? this.renderSitesPopover() : null )
 		] );
 	}
 }

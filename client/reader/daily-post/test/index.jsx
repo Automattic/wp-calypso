@@ -7,8 +7,6 @@ import { assert } from 'chai';
 import { stub, spy } from 'sinon';
 import qs from 'qs';
 import noop from 'lodash/noop';
-import defer from 'lodash/defer';
-import delay from 'lodash/delay';
 
 /**
  * Internal dependencies
