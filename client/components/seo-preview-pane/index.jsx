@@ -154,7 +154,6 @@ export class SeoPreviewPane extends PureComponent {
 							twitter: TwitterSite( site )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 					</div>
-					<div className="seo-preview-pane__preview-spacer" />
 				</div>
 			</div>
 		);
