@@ -16,7 +16,7 @@ export function BlankContent( { translate, suggestions } ) {
 
 		suggest = (
 			<p className="search-stream__blank-suggestions">
-				{ translate( 'Staff Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
+				{ translate( 'Suggestions: {{suggestions /}}.', { components: { suggestions: sugList } } ) }
 			</p> );
 	}
 
