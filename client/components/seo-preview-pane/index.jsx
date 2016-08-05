@@ -17,7 +17,12 @@ import TwitterPreview from 'components/seo/twitter-preview';
 import SearchPreview from 'components/seo/search-preview';
 import VerticalMenu from 'components/vertical-menu';
 import { SocialItem } from 'components/vertical-menu/items';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getSitePost } from 'state/posts/selectors';
+import {
+	getSectionName,
+	getSelectedSite
+} from 'state/ui/selectors';
 
 const ComingSoonMessage = translate => (
 	<div className="seo-preview-pane__message">
@@ -32,44 +37,44 @@ const GooglePreview = site =>
 		snippet={ site.description }
 	/>;
 
-const PreviewFacebook = site => (
-	<div>
-		<FacebookPreview
-			title={ site.name }
-			url={ site.URL }
-			type="website"
-			description={ site.description }
-			image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
-		/>
-		<div style={ { marginBottom: '2em' } } />
-		<FacebookPreview
-			title={ site.name }
-			url={ site.URL }
-			type="article"
-			description={ site.description }
-			image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
-		/>
-	</div>
+const FacebookSite = site => (
+	<FacebookPreview
+		title={ site.name }
+		url={ site.URL }
+		type="website"
+		description={ site.description }
+		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+	/>
 );
 
-const PreviewTwitter = site => (
-	<div>
-		<TwitterPreview
-			title={ site.name }
-			url={ site.URL }
-			type="summary"
-			description={ site.description }
-			image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
-		/>
-		<div style={ { marginBottom: '2em' } } />
-		<TwitterPreview
-			title={ site.name }
-			url={ site.URL }
-			type="large_image_summary"
-			description={ site.description }
-			image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
-		/>
-	</div>
+const FacebookPost = ( site, post ) => (
+	<FacebookPreview
+		title={ site.name }
+		url={ site.URL }
+		type="article"
+		description={ site.description }
+		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+	/>
+);
+
+const TwitterSite = site => (
+	<TwitterPreview
+		title={ site.name }
+		url={ site.URL }
+		type="summary"
+		description={ site.description }
+		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+	/>
+);
+
+const TwitterPost = ( site, post ) => (
+	<TwitterPreview
+		title={ site.name }
+		url={ site.URL }
+		type="large_image_summary"
+		description={ site.description }
+		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+	/>
 );
 
 export class SeoPreviewPane extends PureComponent {
@@ -89,6 +94,7 @@ export class SeoPreviewPane extends PureComponent {
 
 	render() {
 		const {
+			post,
 			site,
 			translate
 		} = this.props;
@@ -118,10 +124,15 @@ export class SeoPreviewPane extends PureComponent {
 				</div>
 				<div className="seo-preview-pane__preview-area">
 					<div className="seo-preview-pane__preview">
-						{ get( {
-							facebook: PreviewFacebook( site ),
+						{ post && get( {
+							facebook: FacebookPost( site, post ),
 							google: GooglePreview( site ),
-							twitter: PreviewTwitter( site )
+							twitter: TwitterPost( site, post )
+						}, selectedService, ComingSoonMessage( translate ) ) }
+						{ ! post && get( {
+							facebook: FacebookSite( site ),
+							google: GooglePreview( site ),
+							twitter: TwitterSite( site )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 					</div>
 					<div className="seo-preview-pane__preview-spacer" />
@@ -131,12 +142,15 @@ export class SeoPreviewPane extends PureComponent {
 	}
 }
 
-SeoPreviewPane.propTypes = {
-	type: PropTypes.oneOf( [ 'site', 'page', 'post' ] ).isRequired
-};
+const mapStateToProps = state => {
+	const site = getSelectedSite( state );
+	const postId = getEditorPostId( state );
+	const isEditorShowing = 'post-editor' === getSectionName( state );
 
-const mapStateToProps = state => ( {
-	site: getSelectedSite( state )
-} );
+	return {
+		site: site,
+		post: isEditorShowing && getSitePost( state, site.ID, postId )
+	}
+};
 
 export default connect( mapStateToProps, null )( localize( SeoPreviewPane ) );
