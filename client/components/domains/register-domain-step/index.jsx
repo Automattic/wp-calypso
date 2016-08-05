@@ -541,10 +541,20 @@ const RegisterDomainStep = React.createClass( {
 				severity = 'info';
 				break;
 			case 'not_registrable':
-				if ( domain.indexOf( '.' ) ) {
-					message = this.translate( 'Sorry but %(domain)s cannot be registered on WordPress.com.', {
-						args: { domain: domain }
-					} );
+				const tldIndex = domain.lastIndexOf( '.' );
+				if ( tldIndex !== -1 ) {
+					message = this.translate(
+						'To use a domain ending with {{strong}}%(tld)s{{/strong}} on your site, ' +
+						'you can register it elsewhere and then add it here. {{a}}Learn more{{/a}}.',
+						{
+							args: { tld: domain.substring( tldIndex ) },
+							components: {
+								strong: <strong />,
+								a: <a target="_blank" href={ support.MAP_EXISTING_DOMAIN } />
+							}
+						}
+					);
+					severity = 'info';
 				}
 				break;
 			case 'not_available':
