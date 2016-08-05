@@ -321,7 +321,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch save action when thunk triggered for new post', () => {
-			savePost( { title: 'Hello World' }, 2916284 )( spy );
+			savePost( 2916284, undefined, { title: 'Hello World' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: POST_SAVE,
@@ -334,7 +334,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch post save save success action when request completes for new post', () => {
-			return savePost( { title: 'Hello World' }, 2916284 )( spy ).then( () => {
+			return savePost( 2916284, undefined, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_SUCCESS,
 					siteId: 2916284,
@@ -349,7 +349,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch received post action when request completes for new post', () => {
-			return savePost( { title: 'Hello World' }, 2916284 )( spy ).then( () => {
+			return savePost( 2916284, undefined, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [
@@ -363,7 +363,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch save action when thunk triggered for existing post', () => {
-			savePost( { title: 'Updated' }, 2916284, 13640 )( spy );
+			savePost( 2916284, 13640, { title: 'Updated' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: POST_SAVE,
@@ -376,7 +376,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch post save save success action when request completes for existing post', () => {
-			return savePost( { title: 'Updated' }, 2916284, 13640 )( spy ).then( () => {
+			return savePost( 2916284, 13640, { title: 'Updated' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_SUCCESS,
 					siteId: 2916284,
@@ -391,7 +391,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch received post action when request completes for existing post', () => {
-			return savePost( { title: 'Updated' }, 2916284, 13640 )( spy ).then( () => {
+			return savePost( 2916284, 13640, { title: 'Updated' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [
@@ -405,7 +405,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch failure action when error occurs while saving new post', () => {
-			return savePost( { title: 'Hello World' }, 77203074 )( spy ).then( () => {
+			return savePost( 77203074, undefined, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_FAILURE,
 					siteId: 77203074,
@@ -416,7 +416,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch failure action when error occurs while saving existing post', () => {
-			return savePost( { title: 'Hello World' }, 77203074, 102 )( spy ).then( () => {
+			return savePost( 77203074, 102, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_FAILURE,
 					siteId: 77203074,
