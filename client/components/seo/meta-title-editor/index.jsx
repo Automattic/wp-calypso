@@ -3,28 +3,17 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
-	difference,
-	findKey,
 	get,
 	identity,
-	isString,
-	isUndefined,
-	map,
-	matches,
 	noop,
-	pick,
-	property,
-	values as valuesOf
 } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import SegmentedControl from 'components/segmented-control';
-import TokenField from 'components/token-field';
+import TitleFormatEditor from 'components/title-format-editor';
 import { localize } from 'i18n-calypso';
-
-import { removeBlanks } from './mappings';
 
 const titleTypes = translate => [
 	{ value: 'frontPage', label: translate( 'Front Page' ) },
@@ -51,21 +40,6 @@ const tokenMap = {
 	archives: [ 'siteName', 'tagline', 'date' ]
 };
 
-const tokenize = translate => value => {
-	if ( ! isString( value ) ) {
-		return value;
-	}
-
-	// find token key from translated label
-	// e.g. "Post Title" > postTitle: translate( 'Post Title' )
-	//         value          type           translation
-	const type = findKey( getValidTokens( translate ), matches( value ) );
-
-	return isUndefined( type )
-		? { type: 'string', isBorderless: true, value }
-		: { type, value };
-};
-
 export class MetaTitleEditor extends Component {
 	constructor( props ) {
 		super( props );
@@ -83,34 +57,25 @@ export class MetaTitleEditor extends Component {
 	}
 
 	updateTitleFormat( values ) {
-		const { onChange, translate, titleFormats } = this.props;
+		const { onChange, titleFormats } = this.props;
 		const { type } = this.state;
-
-		const tokens = removeBlanks( map( values, tokenize( translate ) ) );
 
 		onChange( {
 			...titleFormats,
-			[ type ]: tokens
+			[ type ]: values
 		} );
 	}
 
 	render() {
-		const { disabled, translate, titleFormats } = this.props;
+		const { disabled, titleFormats, translate } = this.props;
 		const { type } = this.state;
 
-		const validTokens = getValidTokens( translate );
-
-		const values = map(
-			get( titleFormats, type, [] ),
-			token => 'string' !== token.type
-				? { ...token, value: validTokens[ token.type ] } // use translations of token names
-				: { ...token, isBorderless: true }               // and remove the styling on plain text
-		);
-
-		const suggestions = difference(
-			valuesOf( pick( validTokens, tokenMap[ type ] ) ), // grab list of translated tokens for this type
-			map( values, property( 'value' ) )                 // but remove tokens already in use in the format
-		);
+		const tokens =
+			get( tokenMap, type, [] )
+				.map( name => ( {
+					title: get( getValidTokens( translate ), name, '' ),
+					tokenName: name,
+				} ) );
 
 		return (
 			<div className="meta-title-editor">
@@ -119,12 +84,12 @@ export class MetaTitleEditor extends Component {
 					options={ titleTypes( translate ) }
 					onSelect={ this.switchType }
 				/>
-				<TokenField
+				<TitleFormatEditor
 					disabled={ disabled }
 					onChange={ this.updateTitleFormat }
-					saveTransform={ identity } // don't trim whitespace
-					suggestions={ suggestions }
-					value={ values }
+					type={ disabled ? '' : type }
+					titleFormats={ get( titleFormats, type, [] ) }
+					tokens={ tokens }
 				/>
 			</div>
 		);
@@ -134,7 +99,7 @@ export class MetaTitleEditor extends Component {
 MetaTitleEditor.propTypes = {
 	disabled: PropTypes.bool,
 	onChange: PropTypes.func,
-	titleFormats: PropTypes.object.isRequired
+	titleFormats: PropTypes.object.isRequired,
 };
 
 MetaTitleEditor.defaultProps = {
