@@ -56,17 +56,19 @@ export default React.createClass( {
 	},
 
 	renewLink( count ) {
+		const fullMessage = this.translate(
+			'Renew it now.',
+			'Renew them now.',
+			{
+				count,
+				context: 'Call to action link for renewing an expiring/expired domain'
+			}
+		),
+			compactMessage = this.translate( 'Renew', { context: 'Call to action link for renewing an expiring/expired domain' } );
 		return (
-			<a href={ purchasesPaths.list() }>
-				{ this.translate(
-					'Renew it now.',
-					'Renew them now.',
-					{
-						count,
-						context: 'Call to action link for renewing an expiring/expired domain'
-					}
-				) }
-			</a>
+			<NoticeAction href={ purchasesPaths.list() }>
+				{ this.props.isCompact ? compactMessage : fullMessage }
+			</NoticeAction>
 		);
 	},
 
@@ -131,12 +133,21 @@ export default React.createClass( {
 				learnMoreUrl = support.MAP_EXISTING_DOMAIN_UPDATE_DNS;
 			}
 		}
-		return <Notice
-			isCompact={ this.props.isCompact }
-			status="is-warning"
-			className="domain-warnings__notice"
-			showDismiss={ false }
-			key="wrong-ns-mapped-domain">{ text } <a href={ learnMoreUrl } target="_blank">{ this.translate( 'Learn more' ) }</a>{ ! this.props.isCompact && offendingList }</Notice>;
+		const noticeProps = {
+			isCompact: this.props.isCompact,
+			status: "is-warning",
+			className: "domain-warnings__notice",
+			showDismiss: false,
+			key: "wrong-ns-mapped-domain"
+		};
+		let children;
+		if ( this.props.isCompact ) {
+			noticeProps.text = this.translate( 'DNS configuration required' );
+			children = <NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>{ this.translate( 'Fix' ) }</NoticeAction>;
+		} else {
+			children = <span>{ text } <a href={ learnMoreUrl } target="_blank">{ this.translate( 'Learn more' ) }</a>{ offendingList }</span>;
+		}
+		return <Notice { ...noticeProps }>{ children }</Notice>;
 	},
 
 	expiredDomains() {
@@ -161,7 +172,8 @@ export default React.createClass( {
 			isCompact={ this.props.isCompact }
 			status="is-error"
 			showDismiss={ false }
-			key="expired-domains">{ text } { renewLink }</Notice>;
+			key="expired-domains"
+			text={ text }>{ renewLink }</Notice>;
 	},
 
 	expiringDomains() {
@@ -187,7 +199,8 @@ export default React.createClass( {
 			isCompact={ this.props.isCompact }
 			status="is-error"
 			showDismiss={ false }
-			key="expiring-domains">{ text } { renewLink }</Notice>;
+			key="expiring-domains"
+			text={ text }>{ renewLink }</Notice>;
 	},
 
 	newDomains() {
@@ -259,6 +272,8 @@ export default React.createClass( {
 	},
 
 	unverifiedDomainNotice( domain ) {
+		const fullMessage = this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified.', { args: { domain } } ),
+			compactMessage = this.translate( '%(domain)s may be suspended.', { args: { domain } } );
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
@@ -266,31 +281,40 @@ export default React.createClass( {
 				showDismiss={ false }
 				className="domain-warnings__notice"
 				key="unverified-domains"
-				text={ this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified.', { args: { domain } } ) }>
-
+				text={ this.props.isCompact ? compactMessage : fullMessage }>
 				<NoticeAction href={ paths.domainManagementEdit( this.props.selectedSite.slug, domain ) }>
-					{ this.translate( 'Fix now' ) }
+					{ this.translate( 'Fix' ) }
 				</NoticeAction>
 			</Notice>
 		);
 	},
 
 	unverifiedDomainsNotice( domains ) {
+		const fullContent = (
+				<span>
+					{ this.translate( 'Urgent! Some of your domains may be lost forever because your email address is not verified.' ) }
+					<ul>
+						{ domains.map( ( { name } ) =>
+							<li key={ name }>{ name } <a href={ paths.domainManagementEdit( this.props.selectedSite.slug, name ) }>{ this.translate( 'Fix now' ) }</a></li>
+						) }
+					</ul>
+				</span>
+			),
+			compactNoticeText = this.translate( 'Your domains may be suspended.' ),
+			compactContent = (
+				<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+					{ this.translate( 'Fix' ) }
+				</NoticeAction>
+			);
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
 				status="is-error"
 				showDismiss={ false }
 				className="domain-warnings__notice"
-				key="unverified-domains">
-				{ this.translate( 'Urgent! Some of your domains may be lost forever because your email address is not verified:' ) }
-				<ul>{
-					domains.map( ( domain ) => {
-						return <li key={ domain.name }>
-							{ domain.name } <a href={ paths.domainManagementEdit( this.props.selectedSite.slug, domain.name ) }>{ this.translate( 'Fix now' ) }</a>
-						</li>;
-					} )
-				}</ul>
+				key="unverified-domains"
+				text={ this.props.isCompact && compactNoticeText } >
+				{ this.props.isCompact ? compactContent: fullContent }
 			</Notice>
 		);
 	},
@@ -324,7 +348,7 @@ export default React.createClass( {
 	render: function() {
 		debug( 'Domains:', this.getDomains() );
 		const notices = this.getPipe().map( renderer => renderer() ).filter( notice => notice );
-		return notices.length ? <div>{ notices }</div> : null;
+		return notices.length ? <div className="site__notices">{ notices }</div> : null;
 	}
 
 } );
