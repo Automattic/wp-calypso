@@ -227,6 +227,22 @@ I18N.prototype.getLocaleSlug = function() {
 	return this.state.localeSlug;
 };
 
+
+/**
+ * Adds new translations to the locale data, overwriting any existing translations with a matching key
+ **/
+I18N.prototype.addTranslations = function( localeData ) {
+	for ( var prop in localeData ) {
+		if ( prop !== '' ) {
+			this.state.jed.options.locale_data.messages[prop] = localeData[prop];
+		}
+	}
+
+	this.state.translations.reset();
+	this.stateObserver.emit( 'change' );
+};
+
+
 /**
  * Exposes single translation method, which is converted into its respective Jed method.
  * See sibling README
