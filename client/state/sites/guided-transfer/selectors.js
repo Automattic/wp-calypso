@@ -1,3 +1,5 @@
+import { matches } from 'lodash/util';
+
 export function isRequestingGuidedTransferStatus( state, siteId ) {
 	return state.sites.guidedTransfer.isFetching[ siteId ] === true;
 }
@@ -57,12 +59,12 @@ export function isEligibleForGuidedTransfer( state, siteId ) {
 	return ! issues.some( issue => issue.prevents_transfer );
 }
 
-export function hasGuidedTransferIssue( state, siteId, reason ) {
+export function getGuidedTransferIssue( state, siteId, options = {} ) {
 	const issues = getGuidedTransferIssues( state, siteId );
 	if ( issues === null ) {
 		// No information available
 		return false;
 	}
 
-	return issues.find( issue => issue.reason === reason ) || null;
+	return issues.find( matches( options ) ) || null;
 }

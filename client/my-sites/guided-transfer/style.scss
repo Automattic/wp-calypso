@@ -52,3 +52,16 @@
 		}
 	}
 }
+
+.guided-transfer__transfer-unavailable-card {
+	display: flex;
+}
+
+.guided-transfer__transfer-unavailable-icon {
+	flex: 1;
+	padding: 24px;
+}
+
+.guided-transfer__transfer-unavailable-text {
+	padding: 0px 24px 0 24px;
+}
