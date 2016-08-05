@@ -171,6 +171,29 @@ describe( 'I18n', function() {
 				assert.equal( expectedResultString, stripReactAttributes( ReactDomServer.renderToStaticMarkup( instance ) ) );
 			} );
 		} );
+
+		describe( 'adding new translations', function() {
+			it( 'should find a new translation after it has been added', function() {
+				i18n.addTranslations( {
+					'test-does-not-exist': [
+						null,
+						'translation3'
+					]
+				} );
+
+				assert.equal( 'translation3', translate( 'test-does-not-exist' ) );
+			} );
+			it( 'should return the new translation if it has been overwritten', function() {
+				i18n.addTranslations( {
+					'test-will-overwrite': [
+						null,
+						'not-translation1'
+					]
+				} );
+
+				assert.equal( 'not-translation1', translate( 'test-will-overwrite' ) );
+			} );
+		} );
 	} );
 
 	describe( 'moment()', function() {

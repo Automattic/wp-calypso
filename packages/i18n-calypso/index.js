@@ -12,6 +12,7 @@ module.exports = {
 	setLocale: i18n.setLocale.bind( i18n ),
 	getLocale: i18n.getLocale.bind( i18n ),
 	getLocaleSlug: i18n.getLocaleSlug.bind( i18n ),
+	addTranslations: i18n.addTranslations.bind( i18n ),
 	reRenderTranslations: i18n.reRenderTranslations.bind( i18n ),
 	registerComponentUpdateHook: i18n.registerComponentUpdateHook.bind( i18n ),
 	registerTranslateHook: i18n.registerTranslateHook.bind( i18n ),

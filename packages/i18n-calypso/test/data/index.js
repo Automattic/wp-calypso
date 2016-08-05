@@ -23,6 +23,10 @@ var locale = {
 		null,
 		'translation4'
 	],
+	'test-will-overwrite': [
+		null,
+		'translation1'
+	],
 	'Featured': [
 		null,
 		'translation-without-context'
