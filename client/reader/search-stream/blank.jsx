@@ -7,21 +7,15 @@ import React from 'react';
  * Internal Dependencies
  */
 import { localize } from 'i18n-calypso';
-import { recordTrack } from 'reader/stats';
+import Suggestion from './suggestion';
 
 export function BlankContent( { translate, suggestions } ) {
-	const handleSuggestionClick = ( suggestion ) => {
-		recordTrack( 'calypso_reader_search_suggestion_click', { suggestion } );
-	};
-
 	let suggest = null;
 	if ( suggestions ) {
 		let sugList = suggestions
 			.map( function( query ) {
 				return (
-					<a onClick={ () => handleSuggestionClick( query ) } href={ '/read/search?q=' + encodeURIComponent( query ) } >
-						{ query }
-					</a>
+					<Suggestion suggestion={ query } />
 				);
 			} );
 		sugList = sugList
