@@ -1,4 +1,3 @@
-import React from 'react';
 import { expect } from 'chai';
 import { spy } from 'sinon';
 
@@ -64,7 +63,7 @@ describe( 'middleware', () => {
 		} );
 
 		it( 'should call analytics events with wrapped actions', () => {
-			dispatch( withAnalytics( bumpStat( 'name', 'value' ), { type: 'TEST_ACTION'} ) );
+			dispatch( withAnalytics( bumpStat( 'name', 'value' ), { type: 'TEST_ACTION' } ) );
 
 			expect( mock ).to.have.been.calledWith( 'mc.bumpStat' );
 		} );

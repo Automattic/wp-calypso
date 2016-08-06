@@ -1,7 +1,6 @@
 /**
  * External Dependencies
  */
-import assign from 'lodash/assign';
 import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';

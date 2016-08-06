@@ -1,14 +1,11 @@
 // External dependencies
 import Dispatcher from 'dispatcher';
 import wpcom from 'lib/wp';
-import debugModule from 'debug';
 
 // Internal dependencies
 import ReaderListsStore from 'lib/reader-lists/lists';
 import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
 import { action as actionTypes } from './constants';
-
-const debug = debugModule( 'calypso:reader:list-management' );
 
 var fetchingLists = {};
 

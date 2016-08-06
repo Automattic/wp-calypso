@@ -8,7 +8,6 @@ import defer from 'lodash/defer';
  */
 import Dispatcher from 'dispatcher';
 import page from 'page';
-import wpcom from 'lib/wp';
 import { addItem } from 'lib/upgrades/actions/cart';
 import { trackClick } from '../themes/helpers';
 import { themeItem } from 'lib/cart-values/cart-items';
