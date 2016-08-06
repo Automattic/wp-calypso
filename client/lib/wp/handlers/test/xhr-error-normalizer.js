@@ -1,10 +1,11 @@
+
 /* eslint-disable valid-jsdoc */
 
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	mockery = require( 'mockery' );
+import { expect } from 'chai';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
@@ -12,24 +13,27 @@ var expect = require( 'chai' ).expect,
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'index', function() {
-	let testError, testResponse, xhr;
+	let testError, testResponse, xhrErrorNormalizer;
 
 	function testRequest( params, callback ) {
 		callback( testError, testResponse );
 	}
 
+	const fakeWindow = {};
+
 	useMockery();
 
 	before( function() {
 		mockery.registerMock( 'wpcom-xhr-request', testRequest );
-		xhr = require( 'lib/wpcom-xhr-wrapper' );
+		mockery.registerMock( 'window', fakeWindow );
+		xhrErrorNormalizer = require( 'lib/wp/handlers/xhr-error-normalizer' ).xhrErrorNormalizer;
 	} );
 
 	it( 'should still return a valid response', function( done ) {
 		testError = false;
 		testResponse = 'response';
 
-		xhr( '/test', function( error, response ) {
+		xhrErrorNormalizer( '/test', function( error, response ) {
 			expect( error ).to.be.false;
 			expect( response ).to.be.equals( 'response' );
 			done();
@@ -37,7 +41,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should return proxified error details', function( done ) {
-		var response = {
+		const response = {
 			body: {
 				error: 'code',
 				message: 'response text'
@@ -51,7 +55,7 @@ describe( 'index', function() {
 			response: response
 		};
 
-		xhr( '/test', function( error ) {
+		xhrErrorNormalizer( '/test', function( error ) {
 			expect( error ).to.be.deep.equals( {
 				message: response.body.message,
 				error: response.body.error,
@@ -73,7 +77,7 @@ describe( 'index', function() {
 			response: null
 		};
 
-		xhr( '/test', function( error ) {
+		xhrErrorNormalizer( '/test', function( error ) {
 			expect( error ).to.be.deep.equals( {
 				error: testError.error,
 				status: testError.status,

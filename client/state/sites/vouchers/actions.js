@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcomBase from 'lib/wp';
-import { injectHandler } from 'lib/wp/handlers/http-envelope-normalizer';
+import wpcom from 'lib/wp';
 import {
 	SITE_VOUCHERS_ASSIGN_RECEIVE,
 	SITE_VOUCHERS_ASSIGN_REQUEST,
@@ -13,9 +12,6 @@ import {
 	SITE_VOUCHERS_REQUEST_SUCCESS,
 	SITE_VOUCHERS_REQUEST_FAILURE,
 } from 'state/action-types';
-
-// Inject httpEnvelopeNormalizer handler to wpcom
-const wpcom = injectHandler( wpcomBase );
 
 /**
  * Action creator function

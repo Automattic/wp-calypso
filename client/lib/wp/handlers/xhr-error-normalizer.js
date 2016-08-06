@@ -1,16 +1,24 @@
 /**
  * External dependencies
  */
-import xhr from 'wpcom-xhr-request';
-import debugModule from 'debug';
+import wpcomXhrRequest from 'wpcom-xhr-request';
+import debugFactory from 'debug';
 
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:wpcom-xhr-wrapper' );
+const debug = debugFactory( 'calypso:wpcom-handler' );
 
-export default function( params, callback ) {
-	return xhr( params, function( error, response ) {
+/**
+ * Provides a wrapper around the `wpcom-xhr-request` library
+ * so it returns errors in the same format as `wpcom-proxy-request`.
+ *
+ * @param {Object} params - request parameters
+ * @param {Function} callback - request response callback
+ * @return {Function} handler wrapper
+ */
+export function xhrErrorNormalizer( params, callback ) {
+	return wpcomXhrRequest( params, ( error, response ) => {
 		if ( error ) {
 			if ( error.response && typeof error.response.body ) {
 				// Extend the error object in a way to match wpcom-proxy-request
