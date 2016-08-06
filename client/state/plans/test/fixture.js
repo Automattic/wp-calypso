@@ -8,8 +8,6 @@ import {
 	PLANS_REQUEST_FAILURE
 } from 'state/action-types';
 
-import { getValidDataFromResponse } from '../actions';
-
 // WP REST-API error response
 export const ERROR_MESSAGE_RESPONSE = 'There was a problem fetching plans. Please try again later or contact support.';
 

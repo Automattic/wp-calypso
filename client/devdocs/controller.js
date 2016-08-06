@@ -84,7 +84,7 @@ const devdocs = {
 			React.createElement( SingleDocComponent, {
 				path: context.params.path,
 				term: context.query.term,
-				sectionId: Object.keys( context.hash )[0]
+				sectionId: Object.keys( context.hash )[ 0 ]
 			} ),
 			document.getElementById( 'primary' )
 		);
@@ -132,7 +132,7 @@ const devdocs = {
 		);
 	},
 
-	pleaseLogIn: function( context ) {
+	pleaseLogIn: function( context ) { // eslint-disable-line no-unused-vars
 		const currentUrl = url.parse( location.href );
 		const redirectUrl = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
 
@@ -153,7 +153,7 @@ const devdocs = {
 	},
 
 	// Welcome screen
-	welcome: function( context ) {
+	welcome: function( context ) { // eslint-disable-line no-unused-vars
 		ReactDom.render(
 			React.createElement( DevWelcome, {} ),
 			document.getElementById( 'primary' )

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import PureComponent from 'react-pure-render/component';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -207,10 +207,8 @@ export class SeoPreviewPane extends PureComponent {
 						</h1>
 						<p className="seo-preview-pane__description">
 							{ translate(
-								`Below you'll find previews that ` +
-								`represent how your post will look ` +
-								`when it's found or shared across a ` +
-								`variety of networks.`
+								"Below you'll find previews that represent how your post will look " +
+								"when it's found or shared across a variety of networks."
 							) }
 						</p>
 					</div>

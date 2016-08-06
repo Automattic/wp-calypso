@@ -48,7 +48,7 @@ module.exports = React.createClass( {
 
 	render() {
 		try {
-			const isFileSaverSupported = !! new Blob();
+			const isFileSaverSupported = !! new Blob(); // eslint-disable-line no-unused-vars
 		} catch ( e ) {
 			return null;
 		}

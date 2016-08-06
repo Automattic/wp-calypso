@@ -48,7 +48,10 @@ const DnsAddNew = React.createClass( {
 	],
 
 	getFieldsForType( type ) {
+		/* eslint-disable no-unused-vars, no-shadow */
+		// _ is not used anywhere, it is only a positional arg to have more readable code
 		const [ Component, _ ] = find( this.recordTypes, ( [ _, types ] ) => {
+		/* eslint-enable no-unused-vars, no-shadow */
 			return includes( types, type );
 		} );
 

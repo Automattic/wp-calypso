@@ -110,7 +110,7 @@ SitesList.prototype.sync = function( data ) {
 		}
 	}
 	store.set( 'SitesList', sites );
-}
+};
 
 /**
  * Initialize data with Site objects
@@ -189,8 +189,7 @@ SitesList.prototype.parse = function( data ) {
  **/
 SitesList.prototype.update = function( sites ) {
 	var sitesMap = {},
-		changed = false,
-		oldSelected = this.getSelectedSite();
+		changed = false;
 
 	// Create ID -> site map from existing data
 	this.data.forEach( function( site ) {
@@ -291,7 +290,6 @@ SitesList.prototype.propagateChange = function() {
  */
 SitesList.prototype.getNetworkSites = function( multisite ) {
 	return this.get().filter( function( site ) {
-
 		return site.jetpack &&
 			site.visible &&
 			( this.isConnectedSecondaryNetworkSite( site ) || site.isMainNetworkSite() ) &&
@@ -426,7 +424,7 @@ SitesList.prototype.getRecentlySelected = function() {
 	this.recentlySelected.forEach( function( id, index ) {
 		sites[ index ] = this.get().filter( function( site ) {
 			return id === site.ID;
-		}, this )[0];
+		}, this )[ 0 ];
 	}, this );
 
 	// remove undefined sites
@@ -557,7 +555,7 @@ SitesList.prototype.getSelectedOrAllWithPlugins = function() {
 		return site.capabilities &&
 			site.capabilities.manage_options &&
 			site.jetpack &&
-			( site.visible || this.selected )
+			( site.visible || this.selected );
 	} );
 };
 

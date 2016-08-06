@@ -8,8 +8,6 @@ import React from 'react';
  */
 import serviceConnections from './service-connections';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
-import classNames from 'classnames';
 
 module.exports = React.createClass( {
 	displayName: 'SharingServiceAction',

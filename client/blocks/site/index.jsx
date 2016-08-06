@@ -12,13 +12,10 @@ import SiteIcon from 'components/site-icon';
 import Gridicon from 'components/gridicon';
 import SiteIndicator from 'my-sites/site-indicator';
 import { getCustomizeUrl } from 'my-sites/themes/helpers';
-import sitesList from 'lib/sites-list';
 import { userCan } from 'lib/site/utils';
 import Tooltip from 'components/tooltip';
 import ExternalLink from 'components/external-link';
 import analytics from 'lib/analytics';
-
-const sites = sitesList();
 
 export default React.createClass( {
 	displayName: 'Site',

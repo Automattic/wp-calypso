@@ -13,7 +13,6 @@ import noop from 'lodash/noop';
  */
 import useMockery from 'test/helpers/use-mockery';
 import { sites, dailyPromptPost } from './fixtures';
-import Button from 'components/button';
 
 describe( 'DailyPostButton', () => {
 	const SitesPopover = props => <span { ...props } />;
