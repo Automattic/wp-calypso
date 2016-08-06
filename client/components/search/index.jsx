@@ -61,7 +61,7 @@ const Search = React.createClass( {
 		isOpen: PropTypes.bool,
 		dir: PropTypes.string,
 		fitsContainer: PropTypes.bool,
-		hideCloseOnMobile: PropTypes.bool
+		hideClose: PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -87,7 +87,7 @@ const Search = React.createClass( {
 			isOpen: false,
 			dir: undefined,
 			fitsContainer: false,
-			hideCloseOnMobile: false
+			hideClose: false
 		};
 	},
 
@@ -281,13 +281,13 @@ const Search = React.createClass( {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
+			'no-close-button' : this.props.hideClose,
 			rtl: this.props.dir === 'rtl',
 			ltr: this.props.dir === 'ltr',
 			search: true
 		} );
 
-		const isCloseButtonVisible = ( isMobile() && this.props.hideCloseOnMobile ) ?
-			' no-close-button ' : '';
+		const isCloseButtonVisible = this.props.hideClose ? ' no-close-button ' : '';
 
 		return (
 			<div className={ searchClass } role="search">
@@ -328,15 +328,7 @@ const Search = React.createClass( {
 	},
 
 	closeButton: function() {
-		let showIfSearchIsNotEmpty;
-
-		if( isMobile() && this.props.hideCloseOnMobile ) {
-			showIfSearchIsNotEmpty = false;
-		} else {
-			showIfSearchIsNotEmpty = true;
-		}
-
-		if ( ( this.state.keyword && showIfSearchIsNotEmpty ) || this.state.isOpen ) {
+		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
 				<span
 					onTouchTap={ this.closeSearch }
@@ -344,7 +336,7 @@ const Search = React.createClass( {
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
-				<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
+					<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
 				</span>
 			);
 		}

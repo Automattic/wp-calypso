@@ -153,7 +153,13 @@
 }
 
 .search__input.no-close-button {
-	padding-right: 1px;
+	padding-right: 0px;
+}
+
+.search.is-open.no-close-button {
+	&::before {
+		right: 0px;
+	}
 }
 
 // When search input is opened
@@ -192,6 +198,11 @@
 
 	.search__input {
 		display: block;
+	}
+
+	&::before {
+		@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1);
+		right: 50px;
 	}
 }
 
