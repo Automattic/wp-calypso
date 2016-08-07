@@ -34,4 +34,8 @@ export default function() {
 	}
 
 	page( '/me/get-apps', controller.sidebar, controller.apps );
-};
+
+	if ( config.isEnabled( 'me/gravatar' ) ) {
+		page( '/me/gravatar', controller.sidebar, controller.gravatar );
+	}
+}
