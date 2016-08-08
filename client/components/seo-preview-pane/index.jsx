@@ -27,6 +27,7 @@ import {
 } from 'state/ui/selectors';
 
 const PREVIEW_IMAGE_WIDTH = 512;
+const largeBlavatar = site => `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }`;
 
 const getPostImage = ( post ) => {
 	if ( ! post ) {
@@ -54,9 +55,8 @@ const ComingSoonMessage = translate => (
 	</div>
 );
 
-const PreviewReader = ( site, post ) => {
-	const postImage = getPostImage( post );
 
+const ReaderPost = ( site, post ) => {
 	return (
 		<ReaderPreview
 			siteTitle={ site.name }
@@ -65,7 +65,7 @@ const PreviewReader = ( site, post ) => {
 			siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
 			postTitle={ post.title }
 			postContent={ post.content }
-			postImage={ postImage }
+			postImage={ getPostImage( post ) }
 			postDate={ post.date }
 			authorName={ post.author.name }
 			authorIcon={ post.author.avatar_URL }
@@ -73,12 +73,22 @@ const PreviewReader = ( site, post ) => {
 	);
  };
 
-const PreviewGoogle = site =>
+const GoogleSite = site => (
+
 	<SearchPreview
 		title={ site.name }
 		url={ site.URL }
 		snippet={ site.description }
-	/>;
+	/>
+);
+
+const GooglePost = ( site, post ) => (
+	<SearchPreview
+		title={ post.title }
+		url={ post.URL }
+		snippet={ post.excerpt || post.content }
+	/>
+);
 
 const FacebookSite = site => (
 	<FacebookPreview
@@ -86,17 +96,17 @@ const FacebookSite = site => (
 		url={ site.URL }
 		type="website"
 		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }` }
+		image={ largeBlavatar( site ) }
 	/>
 );
 
 const FacebookPost = ( site, post ) => (
 	<FacebookPreview
-		title={ site.name }
-		url={ site.URL }
+		title={ post.title }
+		url={ post.URL }
 		type="article"
-		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }` }
+		description={ post.excerpt || post.content }
+		image={ getPostImage( post ) }
 	/>
 );
 
@@ -106,17 +116,17 @@ const TwitterSite = site => (
 		url={ site.URL }
 		type="summary"
 		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }` }
+		image={ largeBlavatar( site ) }
 	/>
 );
 
 const TwitterPost = ( site, post ) => (
 	<TwitterPreview
-		title={ site.name }
-		url={ site.URL }
+		title={ post.title }
+		url={ post.URL }
 		type="large_image_summary"
-		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }` }
+		description={ post.excerpt || post.content }
+		image={ getPostImage( post ) }
 	/>
 );
 
@@ -173,14 +183,14 @@ export class SeoPreviewPane extends PureComponent {
 				<div className="seo-preview-pane__preview-area">
 					<div className="seo-preview-pane__preview">
 						{ post && get( {
-							wordpress: PreviewReader( site, post ),
+							wordpress: ReaderPost( site, post ),
 							facebook: FacebookPost( site, post ),
-							google: PreviewGoogle( site ),
+							google: GooglePost( site, post ),
 							twitter: TwitterPost( site, post )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 						{ ! post && get( {
 							facebook: FacebookSite( site ),
-							google: PreviewGoogle( site ),
+							google: GoogleSite( site ),
 							twitter: TwitterSite( site )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 					</div>

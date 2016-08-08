@@ -15,21 +15,6 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
 	},
-	// `browserNotificationsPreferences` controls whether or not users see the
-	// preference to enable browser notifications in /me/notifications;
-	// any users with `browserNotifications` enabled will also see the preference;
-	// this is a temporary test just to allow us to ramp up the load gradually so
-	// that make sure things will be smooth when we go to launching browser
-	// notifications for 100% of users
-	browserNotificationsPreferences: {
-		datestamp: '20160801',
-		variations: {
-			disabled: 60,
-			enabled: 40,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: true,
-	},
 	coldStartReader: {
 		datestamp: '20160804',
 		variations: {
@@ -81,6 +66,14 @@ module.exports = {
 		},
 		defaultVariation: 'designTypeWithoutStore',
 		allowExistingUsers: false,
+	},
+	signupThemePreview: {
+		datestamp: '20160727',
+		variations: {
+			showThemePreview: 20,
+			hideThemePreview: 80,
+		},
+		defaultVariation: 'hideThemePreview',
 	},
 	firstView: {
 		datestamp: '20160726',
