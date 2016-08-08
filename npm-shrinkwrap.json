@@ -329,7 +329,7 @@
       "version": "6.11.4",
       "dependencies": {
         "babel-core": {
-          "version": "6.13.1"
+          "version": "6.13.2"
         },
         "minimatch": {
           "version": "3.0.2"
@@ -510,7 +510,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000517"
+      "version": "1.0.30000519"
     },
     "caseless": {
       "version": "0.11.0"
@@ -1112,7 +1112,7 @@
       "version": "1.0.3"
     },
     "escodegen": {
-      "version": "1.8.0",
+      "version": "1.8.1",
       "dependencies": {
         "esprima": {
           "version": "2.7.2"
@@ -1701,7 +1701,7 @@
       "version": "0.0.0"
     },
     "i18n-calypso": {
-      "version": "1.6.0",
+      "version": "1.6.2",
       "dependencies": {
         "async": {
           "version": "1.5.2"
@@ -2648,7 +2648,7 @@
       "version": "1.2.1"
     },
     "postcss": {
-      "version": "5.1.1",
+      "version": "5.1.2",
       "dependencies": {
         "source-map": {
           "version": "0.5.6"
@@ -2671,7 +2671,7 @@
       "version": "0.1.9"
     },
     "postcss-selector-parser": {
-      "version": "2.1.1"
+      "version": "2.2.0"
     },
     "postcss-value-parser": {
       "version": "3.3.0"
@@ -3159,7 +3159,7 @@
       "version": "1.0.0"
     },
     "shelljs": {
-      "version": "0.6.0"
+      "version": "0.6.1"
     },
     "sigmund": {
       "version": "1.0.1"
