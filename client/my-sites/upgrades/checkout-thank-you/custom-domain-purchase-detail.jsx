@@ -20,7 +20,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 					'Your plan includes a free custom domain. Replace {{em}}%(siteDomain)s{{/em}} ' +
 					'with a custom domain to personalize your site.',
 					{
-						args: { siteDomain: selectedSite.slug },
+						args: { siteDomain: selectedSite.domain },
 						components: { em: <em /> }
 					}
 				)
@@ -35,20 +35,9 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 			title={ translate( 'Custom Domain' ) }
 			description={ translate(
 				'Your plan includes the custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.', {
-					args: { siteDomain: selectedSite.slug },
+					args: { siteDomain: selectedSite.domain },
 					components: { em: <em /> }
 				}
-			) }
-			buttonText={ translate( 'Manage my domain(s)' ) }
-			href={ `/domains/manage/${ selectedSite.slug }` }
-		/>;
-
-	const renderMaybeHasCustomDomain = () =>
-		<PurchaseDetail
-			icon="globe"
-			title={ translate( 'Custom Domain' ) }
-			description={ translate(
-				'Your plan includes a free custom domain.'
 			) }
 			buttonText={ translate( 'Manage my domain(s)' ) }
 			href={ `/domains/manage/${ selectedSite.slug }` }
@@ -59,7 +48,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 			return renderHasCustomDomain();
 		}
 
-		return renderMaybeHasCustomDomain();
+		return null;
 	};
 
 	return (
