@@ -13,6 +13,8 @@ var route = require( 'lib/route' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	sites = require( 'lib/sites-list' )();
 
+import { renderWithReduxStore } from 'lib/react-helpers';
+
 module.exports = {
 
 	vip: function() {
@@ -26,14 +28,15 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP', { textOnly: true } ), { siteID: siteUrl } );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( vipdashboard, {
 				context: context,
 				sites: sites,
 				site: site,
 				path: context.path
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -44,14 +47,15 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP Deploys', { textOnly: true } ), { siteID: siteUrl } );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( vipdeploys, {
 				context: context,
 				sites: sites,
 				site: site,
 				path: context.path
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -62,14 +66,15 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP Billing', { textOnly: true } ), { siteID: siteUrl } );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( vipbilling, {
 				context: context,
 				sites: sites,
 				site: site,
 				path: context.path
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -80,14 +85,15 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP Support', { textOnly: true } ), { siteID: siteUrl } );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( vipsupport, {
 				context: context,
 				sites: sites,
 				site: site,
 				path: context.path
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -98,14 +104,15 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP Backups', { textOnly: true } ), { siteID: siteUrl } );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( vipbackups, {
 				context: context,
 				sites: sites,
 				site: site,
 				path: context.path
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -118,7 +125,7 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'VIP Logs', { textOnly: true } ), { siteID: siteUrl } );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( viplogs, {
 				context: context,
 				search: search,
@@ -127,7 +134,8 @@ module.exports = {
 				status: status,
 				path: context.path
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

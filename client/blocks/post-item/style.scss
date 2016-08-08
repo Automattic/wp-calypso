@@ -1,0 +1,71 @@
+.card.post-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.post-item__detail {
+	position: relative;
+	display: flex;
+	width: 100%;
+	overflow: hidden;
+	margin-right: auto;
+
+	&::after {
+		@include long-content-fade( $size: 40px );
+		right: 0;
+	}
+}
+
+.post-item__title-meta {
+	padding: 6px 0;
+}
+
+.post-item__title {
+	@extend %content-font;
+	margin-bottom: 2px;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+a.post-item__title-link {
+	color: $gray-dark;
+
+	&:hover {
+		color: darken( $gray, 20% );
+	}
+
+	.post-item.is-untitled & {
+		color: $gray;
+		font-style: italic;
+	}
+
+	.post-item.is-placeholder & {
+		@include placeholder;
+	}
+}
+
+.post-item__meta {
+	font-size: 12px;
+	color: lighten( $gray, 10% );
+}
+
+.post-item__meta .post-relative-time,
+.post-item__meta .post-status,
+.post-item__meta .post-type-post-author {
+	float: left;
+	margin-right: 12px;
+}
+
+.post-item__meta .post-relative-time,
+.post-item__meta .post-status {
+	margin-bottom: 0;
+}
+
+.post-item__meta .post-relative-time__icon,
+.post-item__meta .post-status__icon {
+	width: 14px;
+	height: 14px;
+	margin-top: -1px;
+	margin-right: 6px;
+}

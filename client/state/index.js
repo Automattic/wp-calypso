@@ -8,6 +8,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  * Internal dependencies
  */
 import noticesMiddleware from './notices/middleware';
+import postsEditMiddleware from './posts/middleware';
 import application from './application/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
@@ -18,12 +19,14 @@ import googleAppsUsers from './google-apps-users/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import notices from './notices/reducer';
+import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
 import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
 import preferences from './preferences/reducer';
 import preview from './preview/reducer';
+import productsList from './products-list/reducer';
 import pushNotifications from './push-notifications/reducer';
 import purchases from './purchases/reducer';
 import reader from './reader/reducer';
@@ -55,12 +58,14 @@ export const reducer = combineReducers( {
 	jetpackConnect,
 	jetpackSync,
 	notices,
+	pageTemplates,
 	plugins,
 	plans,
 	preferences,
 	preview,
 	posts,
 	postTypes,
+	productsList,
 	purchases,
 	pushNotifications,
 	reader,
@@ -79,15 +84,14 @@ export const reducer = combineReducers( {
 	wordads
 } );
 
-let middleware = [ thunkMiddleware, noticesMiddleware ];
+const middleware = [ thunkMiddleware, noticesMiddleware, postsEditMiddleware ];
 
-// Analytics middleware currently only works in the browser
 if ( typeof window === 'object' ) {
-	middleware = [
-		require( 'lib/screen-title' ).screenTitleMiddleware,
-		...middleware,
+	// Browser-specific middlewares
+	middleware.push(
+		require( './document-head/middleware' ),
 		require( './analytics/middleware.js' ).analyticsMiddleware
-	];
+	);
 }
 
 let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );

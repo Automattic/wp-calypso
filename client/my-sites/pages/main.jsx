@@ -16,7 +16,9 @@ var PageList = require( './page-list' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	URLSearch = require( 'lib/mixins/url-search' ),
 	config = require( 'config' ),
-	notices = require( 'notices' );
+	notices = require( 'notices' ),
+	Main = require( 'components/main' ),
+	PagesFirstView = require( './first-view' );
 
 const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
@@ -65,7 +67,8 @@ module.exports = React.createClass( {
 			trashed: this.translate( 'Search Trashed…', { context: 'Search placeholder for pages list', textOnly: true } )
 		};
 		return (
-			<div className="main main-column pages" role="main">
+			<Main classname="pages">
+				<PagesFirstView />
 				<SidebarNavigation />
 				<SectionNav selectedText={ filterStrings[ status ] }>
 					<NavTabs label={ this.translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
@@ -82,7 +85,7 @@ module.exports = React.createClass( {
 					/>
 				</SectionNav>
 				<PageList { ...this.props } />
-			</div>
+			</Main>
 		);
 	},
 

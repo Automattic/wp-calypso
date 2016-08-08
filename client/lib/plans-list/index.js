@@ -10,7 +10,6 @@ import store from 'store';
  */
 import wpcom from 'lib/wp';
 import Emitter from 'lib/mixins/emitter';
-import { insertPersonalPlan } from 'lib/plans/personal-plan';
 
 /**
  * Module vars
@@ -71,7 +70,7 @@ PlansList.prototype.fetch = function() {
 			return;
 		}
 
-		const plans = insertPersonalPlan( this.parse( data ) );
+		const plans = this.parse( data );
 
 		debug( 'PlansList fetched from api:', plans );
 

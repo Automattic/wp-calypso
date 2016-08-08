@@ -36,7 +36,7 @@ function EditorStatusLabelPlaceholder( { translate, siteId, typeSlug, type, clas
 
 	return (
 		<button className={ classes }>
-			{ 'post' !== typeSlug && 'page' !== typeSlug && (
+			{ 'post' !== typeSlug && 'page' !== typeSlug && siteId && (
 				<QueryPostTypes siteId={ siteId } />
 			) }
 			<strong>{ label }</strong>

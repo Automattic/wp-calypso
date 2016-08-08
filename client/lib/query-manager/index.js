@@ -34,23 +34,6 @@ export const DELETE_PATCH_KEY = '__DELETE';
  */
 export default class QueryManager {
 	/**
-	 * Returns an instance of QueryManager or extending class given a
-	 * serialized string representation of the instance. If the serialized
-	 * string is invalid, a new empty instance is returned.
-	 *
-	 * @param  {String}       serialized Serialized QueryManager
-	 * @return {QueryManager}            QueryManager instance
-	 */
-	static parse( serialized ) {
-		try {
-			const { data, options } = JSON.parse( serialized );
-			return new this.prototype.constructor( data, options );
-		} catch ( e ) {
-			return new this.prototype.constructor();
-		}
-	}
-
-	/**
 	 * Constructs a new instance of QueryManager
 	 *
 	 * @param {Object} data            Initial data
@@ -66,16 +49,6 @@ export default class QueryManager {
 		this.options = Object.assign( {
 			itemKey: 'ID'
 		}, options );
-	}
-
-	/**
-	 * Returns a serialized string representation of the instance
-	 *
-	 * @return {String} String representation of the instance
-	 */
-	toJSON() {
-		const { data, options } = this;
-		return JSON.stringify( { data, options } );
 	}
 
 	/**

@@ -33,7 +33,7 @@ export default [
 		value: 'transfer',
 		label: i18n.translate( 'I want to transfer my domain to another registrar' ),
 		helpMessage: i18n.translate(
-			'You may not transfer a domain name for 60 days after its purchase, renewal, nameserver change, ' +
+			'You may not transfer a domain name for 60 days after its purchase, renewal, name server change, ' +
 			'or any contact information change. This is a rule set by the Internet Corporation for ' +
 			'Assigned Names and Numbers (ICANN) and standard across all registrars. ' +
 			'You will need to {{a}}update your name servers{{/a}} instead.', {

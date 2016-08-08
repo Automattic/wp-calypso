@@ -40,6 +40,7 @@ import safeImageUrl from 'lib/safe-image-url';
 import Button from 'components/button';
 import { requestSites } from 'state/sites/actions';
 import { isRequestingSites } from 'state/sites/selectors';
+import MainWrapper from './main-wrapper';
 
 /**
  * Constants
@@ -201,12 +202,12 @@ const LoggedInForm = React.createClass( {
 			authorizeSuccess
 		} = props.jetpackConnectAuthorize;
 
-		// Always and forever redirect SSO to wp-admin.
-		if ( ! isRedirectingToWpAdmin && props.isSSO && authorizeSuccess ) {
-			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
-		}
-
-		if ( siteReceived && ! isActivating ) {
+		// SSO specific logic here.
+		if ( props.isSSO ) {
+			if ( ! isRedirectingToWpAdmin && authorizeSuccess ) {
+				this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+			}
+		} else if ( siteReceived && ! isActivating ) {
 			this.activateManage();
 		}
 	},
@@ -242,26 +243,28 @@ const LoggedInForm = React.createClass( {
 
 	handleSubmit() {
 		const {
-			siteReceived,
 			queryObject,
 			manageActivated,
 			activateManageSecret,
-			plansUrl,
 			authorizeError
 		} = this.props.jetpackConnectAuthorize;
 
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
-			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
-		} else 	if ( activateManageSecret && ! manageActivated ) {
-			this.activateManage();
-		} else if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
-			window.location.href = queryObject.site + authUrl;
-		} else if ( this.props.isAlreadyOnSitesList || ( siteReceived && plansUrl ) ) {
-			page( plansUrl );
-		} else {
-			this.props.authorize( queryObject );
+			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
+		if ( activateManageSecret && ! manageActivated ) {
+			return this.activateManage();
+		}
+		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+			window.location.href = queryObject.site + authUrl;
+			return;
+		}
+		if ( this.props.isAlreadyOnSitesList ) {
+			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		}
+
+		return this.props.authorize( queryObject );
 	},
 
 	handleSignOut() {
@@ -302,7 +305,6 @@ const LoggedInForm = React.createClass( {
 			isAuthorizing,
 			authorizeSuccess,
 			isRedirectingToWpAdmin,
-			siteReceived,
 			authorizeError
 		} = this.props.jetpackConnectAuthorize;
 
@@ -319,10 +321,6 @@ const LoggedInForm = React.createClass( {
 			return this.translate( 'Preparing authorization' );
 		}
 
-		if ( this.props.isAlreadyOnSitesList || siteReceived ) {
-			return this.translate( 'Browse Available Upgrades' );
-		}
-
 		if ( authorizeSuccess && isRedirectingToWpAdmin ) {
 			return this.translate( 'Returning to your site' );
 		}
@@ -335,6 +333,10 @@ const LoggedInForm = React.createClass( {
 
 		if ( isAuthorizing ) {
 			return this.translate( 'Authorizing your connection' );
+		}
+
+		if ( this.props.isAlreadyOnSitesList ) {
+			return this.translate( 'Return to your site' );
 		}
 
 		return this.translate( 'Approve' );
@@ -499,11 +501,11 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		}
 
 		return (
-			<Main className="jetpack-connect">
+			<MainWrapper>
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderForm() }
 				</div>
-			</Main>
+			</MainWrapper>
 		);
 	}
 } );

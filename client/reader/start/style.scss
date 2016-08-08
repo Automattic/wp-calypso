@@ -22,7 +22,7 @@
 	}
 }
 
-.reader-start__description {
+.reader-start__description, .reader-start__subtitle {
 	color: darken( $gray, 10% );
 	font-size: 16px;
 	font-weight: 100;
@@ -60,7 +60,14 @@
 	&.is-placeholder {
 		pointer-events: none;
 		user-select: none;
-		margin-right: 14px !important;
+
+		&:nth-child(n+1) {
+			margin-right: 14px;
+		}
+
+		&:nth-child(2n+2) {
+			margin-right: 0;
+		}
 
 		.reader-start-card__site-title,
 		.reader-start-post-preview__title,
@@ -107,8 +114,8 @@
 
 	@include breakpoint( ">960px" ) {
 		display: inline-block;
-			margin: 0px 0px 14px 0px;
-			width: 47%;
+		margin: 0 0 14px;
+		width: calc( 100% - 368px );
 	}
 
 	&:first-child {
@@ -118,7 +125,7 @@
 		}
 	}
 
-	&:nth-child( even ),
+	&:nth-child(2n+2),
 	&:last-child {
 		margin-right: 0;
 	}
@@ -269,6 +276,7 @@
 .reader-start-card__follow {
 	position: absolute;
 		right: 16px;
+	z-index: 1;
 }
 
 .reader-start-post-preview {
@@ -378,6 +386,7 @@
 	}
 
 	.follow-button {
+		background: none;
 		border-color: $white;
 		z-index: 1;
 

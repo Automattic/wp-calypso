@@ -84,13 +84,20 @@ class CustomPostTypesFieldset extends Component {
 	}
 
 	onChange( postType ) {
-		this.props.onChange( {
+		const { recordEvent, onChange } = this.props;
+
+		switch ( postType ) {
+			case 'jetpack-testimonial': recordEvent( 'Clicked Jetpack Testimonial CPT Checkbox' ); break;
+			case 'jetpack-portfolio': recordEvent( 'Clicked Jetpack Portfolio CPT Checkbox' ); break;
+		}
+
+		onChange( {
 			[ this.getPostTypeValueKey( postType ) ]: ! this.isEnabled( postType )
 		} );
 	}
 
 	render() {
-		const { translate, siteId, siteUrl, recordEvent, className } = this.props;
+		const { translate, siteId, siteUrl, className } = this.props;
 
 		return (
 			<FormFieldset className={ className }>
@@ -110,8 +117,7 @@ class CustomPostTypesFieldset extends Component {
 						<FormToggle
 							checked={ this.isEnabled( 'jetpack-testimonial' ) }
 							onChange={ this.boundToggleTestimonial }
-							disabled={ this.isDisabled( 'jetpack-testimonial' ) }
-							onClick={ recordEvent( 'Clicked Jetpack Testimonial CPT Checkbox' ) } />
+							disabled={ this.isDisabled( 'jetpack-testimonial' ) } />
 					</SectionHeader>
 					<Card>
 						{ this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) && (
@@ -131,8 +137,7 @@ class CustomPostTypesFieldset extends Component {
 						<FormToggle
 							checked={ this.isEnabled( 'jetpack-portfolio' ) }
 							onChange={ this.boundTogglePortfolio }
-							disabled={ this.isDisabled( 'jetpack-portfolio' ) }
-							onClick={ recordEvent( 'Clicked Jetpack Portfolio CPT Checkbox' ) } />
+							disabled={ this.isDisabled( 'jetpack-portfolio' ) } />
 					</SectionHeader>
 					<Card>
 						{ this.hasDefaultPostTypeEnabled( 'jetpack-portfolio' ) && (

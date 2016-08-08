@@ -403,7 +403,7 @@ const PostSelectorPosts = React.createClass( {
 						siteId={ siteId }
 						query={ { ...query, page } } />
 				) ) }
-				{ isTypeLabelsVisible && (
+				{ isTypeLabelsVisible && siteId && (
 					<QueryPostTypes siteId={ siteId } />
 				) }
 				{ showSearch && (

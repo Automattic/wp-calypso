@@ -16,7 +16,7 @@ import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
 import titleActions from 'lib/screen-title/actions';
 import get from 'lodash/get';
-import { isValidFeatureKey, isPlanFeaturesEnabled } from 'lib/plans';
+import { isValidFeatureKey } from 'lib/plans';
 
 const sites = sitesFactory();
 
@@ -74,7 +74,9 @@ export default {
 					sites={ sites }
 					context={ context }
 					intervalType={ context.params.intervalType }
-					destinationType={ context.params.destinationType } />
+					destinationType={ context.params.destinationType }
+					selectedFeature={ context.query.feature }
+				/>
 			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store
@@ -89,13 +91,8 @@ export default {
 			productsList = require( 'lib/products-list' )(),
 			analyticsPageTitle = 'Plans > Compare',
 			site = sites.getSelectedSite(),
-			siteDomain = context.params.domain || '',
 			basePath = route.sectionify( context.path );
 		let baseAnalyticsPath;
-
-		if ( isPlanFeaturesEnabled() ) {
-			return page.redirect( `/plans/features/${ siteDomain }` );
-		}
 
 		if ( site && ! site.isUpgradeable() ) {
 			return page.redirect( '/plans/compare' );
@@ -150,5 +147,15 @@ export default {
 	redirectToCheckout( context ) {
 		// this route is deprecated, use `/checkout/:site/:plan` to link to plan checkout
 		page.redirect( `/checkout/${ context.params.domain }/${ context.params.plan }` );
+	},
+
+	redirectToPlans( context ) {
+		const siteDomain = context.params.domain;
+
+		if ( siteDomain ) {
+			return page.redirect( `/plans/${ siteDomain }` );
+		}
+
+		return page.redirect( '/plans' );
 	}
 };

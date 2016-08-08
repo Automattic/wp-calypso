@@ -42,7 +42,6 @@ import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-loa
 const READER_CONTENT_WIDTH = 720,
 	DISCOVER_FULL_BLEED_WIDTH = 1082,
 	PHOTO_ONLY_MIN_WIDTH = READER_CONTENT_WIDTH * 0.8,
-	ONE_LINER_THRESHOLD = ( 20 * 10 ), // roughly 10 lines of words
 	DISCOVER_BLOG_ID = 53424024;
 
 function discoverFullBleedImages( post, dom ) {
@@ -111,12 +110,6 @@ function classifyPost( post ) {
 		if ( ! canonicalImage || post.content_embeds.length === 1 ) {
 			displayType ^= DISPLAY_TYPES.FEATURED_VIDEO;
 		}
-	}
-
-	if ( post.word_count <= ONE_LINER_THRESHOLD &&
-			( ! post.content_images || post.content_images.length === 0 ) &&
-			( ! post.content_embeds || post.content_embeds.length === 0 ) ) {
-		displayType ^= DISPLAY_TYPES.ONE_LINER;
 	}
 
 	if ( post.content_images && post.content_images.length > 2 ) {

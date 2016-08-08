@@ -29,7 +29,7 @@
 	"features": {
 		"accept-invite": true,
 		"ad-tracking": false,
-		"catch-js-errors": true,
+		"catch-js-errors": false,
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,
@@ -99,6 +99,7 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/scan": true,
+		"signup/theme-demos": true,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": false,

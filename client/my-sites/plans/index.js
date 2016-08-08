@@ -25,7 +25,28 @@ export default function() {
 			'/plans/compare',
 			controller.siteSelection,
 			controller.navigation,
-			plansController.plansCompare
+			plansController.redirectToPlans
+		);
+
+		page(
+			'/plans/compare/:domain',
+			controller.siteSelection,
+			controller.navigation,
+			plansController.redirectToPlans
+		);
+
+		page(
+			'/plans/features',
+			controller.siteSelection,
+			controller.navigation,
+			plansController.redirectToPlans
+		);
+
+		page(
+			'/plans/features/:domain',
+			controller.siteSelection,
+			controller.navigation,
+			plansController.redirectToPlans
 		);
 
 		page(
@@ -33,27 +54,6 @@ export default function() {
 			controller.siteSelection,
 			controller.navigation,
 			yourPlan
-		);
-
-		page(
-			'/plans/compare/:domain',
-			controller.siteSelection,
-			controller.navigation,
-			plansController.plansCompare
-		);
-
-		page(
-			'/plans/compare/:intervalType?/:domain',
-			controller.siteSelection,
-			controller.navigation,
-			plansController.plansCompare
-		);
-
-		page(
-			'/plans/compare/:feature/:domain',
-			controller.siteSelection,
-			controller.navigation,
-			plansController.plansCompare
 		);
 
 		page(

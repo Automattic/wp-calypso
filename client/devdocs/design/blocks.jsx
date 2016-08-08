@@ -11,8 +11,9 @@ import trim from 'lodash/trim';
  */
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
-import CommentButtons from 'components/comment-button/docs/example';
-import FollowButtons from 'components/follow-button/docs/example';
+import AuthorSelector from 'blocks/author-selector/docs/example';
+import CommentButtons from 'blocks/comment-button/docs/example';
+import FollowButton from 'components/follow-button/docs/example';
 import LikeButtons from 'components/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
@@ -28,6 +29,13 @@ import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'my-sites/domain-tip/docs/example';
 import PostCard from 'components/post-card/docs/example';
+import PostItem from 'blocks/post-item/docs/example';
+import PostRelativeTime from 'blocks/post-relative-time/docs/example';
+import PostStatus from 'blocks/post-status/docs/example';
+import ReaderAuthorLink from 'components/reader-author-link/docs/example';
+import ReaderSiteStreamLink from 'components/reader-site-stream-link/docs/example';
+import ReaderFullPostHeader from 'components/reader-full-post/docs/header-example';
+import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 
 export default React.createClass( {
 
@@ -42,7 +50,7 @@ export default React.createClass( {
 	},
 
 	backToComponents() {
-		page( '/devdocs/app-components/' );
+		page( '/devdocs/blocks/' );
 	},
 
 	render() {
@@ -61,8 +69,9 @@ export default React.createClass( {
 					</SearchCard>
 				}
 				<Collection component={ this.props.component } filter={ this.state.filter }>
+					<AuthorSelector />
 					<CommentButtons />
-					<FollowButtons />
+					<FollowButton />
 					<HappinessSupport />
 					<LikeButtons />
 					<PlanStorage />
@@ -77,6 +86,13 @@ export default React.createClass( {
 					<FeatureComparison />
 					<DomainTip />
 					<PostCard />
+					<PostItem />
+					<PostRelativeTime />
+					<PostStatus />
+					<ReaderAuthorLink />
+					<ReaderSiteStreamLink />
+					<ReaderFullPostHeader />
+					<AuthorCompactProfile />
 				</Collection>
 			</div>
 		);

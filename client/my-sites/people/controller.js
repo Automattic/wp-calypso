@@ -37,7 +37,7 @@ export default {
 	},
 
 	enforceSiteEnding( context, next ) {
-		let siteId = route.getSiteFragment( context.path );
+		const siteId = route.getSiteFragment( context.path );
 
 		if ( ! siteId ) {
 			this.redirectToTeam();
@@ -62,14 +62,15 @@ export default {
 function renderPeopleList( filter, context ) {
 	titleActions.setTitle( i18n.translate( 'People', { textOnly: true } ), { siteID: route.getSiteFragment( context.path ) } );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( PeopleList, {
 			sites: sites,
 			peopleLog: PeopleLogStore,
 			filter: filter,
 			search: context.query.s
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 	analytics.pageView.record( 'people/' + filter + '/:site', 'People > ' + titlecase( filter ) );
 }
@@ -133,7 +134,7 @@ function renderSingleTeamMember( context ) {
 		}
 	}
 
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( EditTeamMember, {
 			siteSlug: site && site.slug ? site.slug : undefined,
 			siteId: site && site.ID ? site.ID : undefined,
@@ -142,6 +143,7 @@ function renderSingleTeamMember( context ) {
 			userLogin: userLogin,
 			prevPath: context.prevPath
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }

@@ -1,85 +1,48 @@
 import TraceKit from 'tracekit';
 
-// Props http://stackoverflow.com/a/17604754/379063
-function isLocalStorageNameSupported() {
-	var testKey = 'test',
-		storage = window.localStorage;
-	try {
-		storage.setItem( testKey, '1' );
-		storage.removeItem( testKey );
-		return true;
-	} catch ( error ) {
-		return false;
-	}
-}
-
 export default class ErrorLogger {
 	constructor() {
 		this.diagnosticData = {
 			extra: {
-				previousPaths: []
+				previous_paths: []
 			}
 		};
 		this.diagnosticReducers = [];
-		if ( isLocalStorageNameSupported() && ! window.onerror ) {
-			const assignment = Math.random();
-			let errorLogger = localStorage.getItem( 'log-errors' );
-			// Randomly assign 1% of users to log errors
-			if ( ! errorLogger ) {
-				if ( assignment <= 0.01 ) {
-					localStorage.setItem( 'log-errors', 'rest-api' );
-					errorLogger = 'rest-api';
-				} else if ( assignment <= 0.02 ) {
-					localStorage.setItem( 'log-errors', 'analytics' );
-					errorLogger = 'analytics';
-				} else if ( assignment <= 0.03 ) {
-					localStorage.setItem( 'log-errors', 'external' );
-					//Prep the stage up for Google Stackdriver or other service experiment
-				} else {
-					localStorage.setItem( 'log-errors', 'false' );
-				}
-			}
 
-			if ( errorLogger === 'true' ) {
-				//Fix up any outstanding old settings
-				localStorage.setItem( 'log-errors', 'rest-api' );
-				errorLogger = 'rest-api';
-			}
+		if ( ! window.onerror ) {
+			TraceKit.report.subscribe( errorReport => {
+				const error = {
+					message: errorReport.message,
+					url: document.location.href
+				};
 
-			if ( errorLogger === 'rest-api' ) {
-				// set up handler to POST errors
-				TraceKit.report.subscribe( errorReport => {
-					const error = {
-						message: errorReport.message,
-						url: document.location.href,
-						trace: errorReport.stack,
-					};
-
-					this.diagnose();
-					this.sendToApi( Object.assign( error, this.diagnosticData ) );
-				} );
-			} else if ( errorLogger === 'analytics' ) {
-				TraceKit.report.subscribe( function gaApiLogger( errorReport ) {
-					if ( typeof window.ga === 'function' ) {
-						window.ga(
-							'send',
-							'event',
-							'JS Error',
-							'URL: ' + document.location.href,
-							errorReport.message + ' ' + JSON.stringify( errorReport.stack ),
-							0,
-							{ nonInteraction: true }
-						);
+				if ( Array.isArray( errorReport.stack ) ) {
+					const trace = errorReport.stack.slice( 0, 10 );
+					trace.forEach( report => Object.keys( report ).forEach( key => {
+						if ( key === 'context' && report[ key ] ) {
+							report[ key ] = JSON.stringify( report[ key ] ).substring( 0, 256 );
+						} else if ( typeof report[ key ] === 'string' && report[ key ].length > 512 ) {
+							report[ key ] = report[ key ].substring( 0, 512 );
+						} else if ( Array.isArray( report[ key ] ) ) {
+							report[ key ] = report[ key ].slice( 0, 3 );
+						}
+					} ) );
+					if ( JSON.stringify( trace ).length < 8192 ) {
+						error.trace = trace;
 					}
-				} );
-			}
+				}
+
+				this.diagnose();
+				this.sendToApi( Object.assign( error, this.diagnosticData ) );
+			} );
 		}
 	}
 
 	saveNewPath( newPath ) {
-		this.diagnosticData.extra.previousPaths.unshift( this.diagnosticData.path );
-		this.diagnosticData.extra.previousPaths = this.diagnosticData.extra.previousPaths.slice( 0, 4 );
-		this.diagnosticData.path = newPath;
+		const paths = this.diagnosticData.extra.previous_paths;
+		paths.unshift( newPath );
+		this.diagnosticData.extra.previous_paths = paths.slice( 0, 5 );
+		this.diagnosticData.calypso_path = newPath;
 	}
 
 	saveDiagnosticReducer( fn ) {

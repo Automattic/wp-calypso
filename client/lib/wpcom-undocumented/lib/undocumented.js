@@ -1429,6 +1429,7 @@ Undocumented.prototype.themes = function( site, query, fn ) {
 	return this.wpcom.req.get( path, {
 		search: query.search,
 		tier: query.tier,
+		filter: query.filter,
 		page: query.page,
 		number: query.perPage,
 		apiVersion: site.jetpack ? '1' : '1.2'
@@ -1974,6 +1975,19 @@ Undocumented.prototype.unregisterDevice = function( deviceId, fn ) {
 Undocumented.prototype.wordAdsApprove = function( siteId ) {
 	debug( '/sites/:site:/wordads/approve' );
 	return this.wpcom.req.post( '/sites/' + siteId + '/wordads/approve' );
+};
+
+/**
+ * Requests the status of a guided transfer
+ *
+ * @param {int} siteId  The site ID
+ * @returns {Promise} Resolves to the response containing the transfer status
+ */
+Undocumented.prototype.getGuidedTransferStatus = function( siteId ) {
+	debug( '/sites/:site:/transfer' );
+	return this.wpcom.req.get( '/sites/' + siteId + '/transfer', {
+		apiNamespace: 'wpcom/v2'
+	} );
 };
 
 /**

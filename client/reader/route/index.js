@@ -25,6 +25,14 @@ export function getFeedUrl( feedID ) {
 	return getPrettyFeedUrl( feedID ) || FEED_URL_BASE + feedID;
 }
 
+export function getStreamUrl( feedID, siteID ) {
+	if ( feedID ) {
+		return getFeedUrl( feedID );
+	}
+
+	return getSiteUrl( siteID );
+}
+
 export function getStreamUrlFromPost( post ) {
 	if ( post.feed_ID ) {
 		return getFeedUrl( post.feed_ID );

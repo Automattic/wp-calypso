@@ -24,67 +24,113 @@ const syncStartedSiteId = '87654321';
 const syncInProgressSiteId = '7654321';
 
 const syncStatusSuccessful = {
-	isRequesting: false,
-	error: false,
-	lastSuccessfulStatus: 1467926563436,
-	started: 1466010260,
-	queue_finished: 1466010260,
-	sent_started: 1466010290,
-	finished: 1466010313,
+	started: 1470085369,
+	queue_finished: 1470085370,
+	sent_started: 1470085392,
+	finished: 1470087342,
+	total: {
+		constants: 1,
+		functions: 1,
+		options: 1,
+		terms: 25,
+		themes: 1,
+		users: 1,
+		posts: 402,
+		comments: 28,
+		updates: 1
+	},
 	queue: {
 		constants: 1,
 		functions: 1,
 		options: 1,
-		terms: 3,
+		terms: 25,
 		themes: 1,
-		users: 2,
-		posts: 15,
-		comments: 1,
-		updates: 6
+		users: 1,
+		posts: 402,
+		comments: 28,
+		updates: 1
 	},
 	sent: {
 		constants: 1,
 		functions: 1,
 		options: 1,
-		terms: 3,
+		terms: 25,
 		themes: 1,
-		users: 2,
-		posts: 15,
-		comments: 1
+		users: 1,
+		posts: 193
 	},
-	is_scheduled: false
+	config: {
+		constants: true,
+		functions: true,
+		options: true,
+		terms: true,
+		themes: true,
+		users: true,
+		posts: true,
+		comments: true,
+		updates: true
+	},
+	queue_size: 0,
+	queue_lag: 0,
+	full_queue_size: 239,
+	full_queue_lag: 957.49082708359,
+	is_scheduled: false,
+	lastSuccessfulStatus: 1470087342000
 };
 
 const syncStatusScheduled = {
-	isRequesting: false,
-	error: false,
-	lastSuccessfulStatus: 1467926563436,
-	started: 1466010260,
-	queue_finished: 1466010260,
-	sent_started: 1466010290,
-	finished: 1466010313,
+	started: 1470085369,
+	queue_finished: 1470085370,
+	sent_started: 1470085392,
+	finished: 1470087342,
+	total: {
+		constants: 1,
+		functions: 1,
+		options: 1,
+		terms: 25,
+		themes: 1,
+		users: 1,
+		posts: 402,
+		comments: 28,
+		updates: 1
+	},
 	queue: {
 		constants: 1,
 		functions: 1,
 		options: 1,
-		terms: 3,
+		terms: 25,
 		themes: 1,
-		users: 2,
-		posts: 15,
-		comments: 1,
-		updates: 6
+		users: 1,
+		posts: 402,
+		comments: 28,
+		updates: 1
 	},
 	sent: {
 		constants: 1,
 		functions: 1,
 		options: 1,
-		terms: 3,
+		terms: 25,
 		themes: 1,
-		users: 2,
-		posts: 15,
-		comments: 1
+		users: 1,
+		posts: 193
 	},
-	is_scheduled: true
+	config: {
+		constants: true,
+		functions: true,
+		options: true,
+		terms: true,
+		themes: true,
+		users: true,
+		posts: true,
+		comments: true,
+		updates: true
+	},
+	queue_size: 0,
+	queue_lag: 0,
+	full_queue_size: 239,
+	full_queue_lag: 957.49082708359,
+	is_scheduled: true,
+	lastSuccessfulStatus: 1470087343000
 };
 
 const syncStatusErrored = {
@@ -95,48 +141,99 @@ const syncStatusErrored = {
 };
 
 const syncStatusStarted = {
-	started: 1467998622,
-	queue_finished: 1467998622,
+	started: 1470163982,
+	queue_finished: 1470163982,
+	total: {
+		constants: 1,
+		functions: 1,
+		options: 1,
+		terms: 25,
+		themes: 1,
+		users: 1,
+		posts: 404,
+		comments: 27,
+		updates: 1
+	},
 	queue: {
 		constants: 1,
 		functions: 1,
 		options: 1,
-		terms: 1,
+		terms: 25,
 		themes: 1,
 		users: 1,
-		posts: 102,
-		comments: 1,
+		posts: 404,
+		comments: 27,
 		updates: 1
 	},
 	sent: [],
-	is_scheduled: false
+	config: {
+		constants: true,
+		functions: true,
+		options: true,
+		terms: true,
+		themes: true,
+		users: true,
+		posts: true,
+		comments: true,
+		updates: true
+	},
+	queue_size: 0,
+	queue_lag: 0,
+	full_queue_size: 464,
+	full_queue_lag: 4.1990218162537,
+	is_scheduled: false,
+	lastSuccessfulStatus: 1470163983000
 };
 
 const syncStatusInProgress = {
-	started: 1467998622,
-	queue_finished: 1467998622,
-	sent_started: 1467999200,
+	started: 1470069379,
+	queue_finished: 1470069380,
+	sent_started: 1470069405,
+	total: {
+		constants: 1,
+		functions: 1,
+		options: 1,
+		terms: 25,
+		themes: 1,
+		users: 1,
+		posts: 402,
+		comments: 28,
+		updates: 1
+	},
 	queue: {
 		constants: 1,
 		functions: 1,
 		options: 1,
-		terms: 1,
+		terms: 25,
 		themes: 1,
 		users: 1,
-		posts: 102,
-		comments: 1,
+		posts: 402,
+		comments: 28,
 		updates: 1
 	},
 	sent: {
 		constants: 1,
 		functions: 1,
 		options: 1,
-		terms: 1,
-		themes: 1,
-		users: 1,
-		posts: 25
+		terms: 2
 	},
+	config: {
+		constants: true,
+		functions: true,
+		options: true,
+		terms: true,
+		themes: true,
+		users: true,
+		posts: true,
+		comments: true,
+		updates: true
+	},
+	queue_size: 0,
+	queue_lag: 0,
+	full_queue_size: 457,
+	full_queue_lag: 33.257718086243,
 	is_scheduled: false,
+	lastSuccessfulStatus: 1470069406000
 };
 
 const fullSyncRequested = {
@@ -148,7 +245,7 @@ const fullSyncRequestSuccessful = {
 	isRequesting: true,
 	scheduled: true,
 	error: false,
-	lastRequested: 1467944517955
+	lastRequested: 1470087343001
 };
 
 const fullSyncRequestOld = {
@@ -273,7 +370,7 @@ describe( 'selectors', () => {
 
 		it( 'should return a non-zero integer if site has sent data to be synced', () => {
 			const test = getSyncProgressPercentage( testState, syncInProgressSiteId );
-			expect( test ).to.be.eql( 29 )
+			expect( test ).to.be.eql( 11 )
 		} );
 	} );
 } );

@@ -60,7 +60,7 @@ describe( 'store', () => {
 		} );
 	} );
 
-	it( 'should return a list with nameservers when fetching domain data completed', () => {
+	it( 'should return a list with name servers when fetching domain data completed', () => {
 		Dispatcher.handleViewAction( {
 			type: ActionTypes.NAMESERVERS_FETCH_COMPLETED,
 			domainName: DOMAIN_NAME,
@@ -74,7 +74,7 @@ describe( 'store', () => {
 		} );
 	} );
 
-	it( 'should return an updated list with nameservers when nameservers update completed', () => {
+	it( 'should return an updated list with name servers when name servers update completed', () => {
 		const UPDATED_NAMESERVERS = [
 			'ns1.foo.com',
 			'ns2.foo.com'

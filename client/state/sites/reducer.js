@@ -10,21 +10,25 @@ import merge from 'lodash/merge';
  */
 import { plans } from './plans/reducer';
 import domains from './domains/reducer';
+import guidedTransfer from './guided-transfer/reducer';
 import vouchers from './vouchers/reducer';
 
 import mediaStorage from './media-storage/reducer';
 import {
 	SITE_RECEIVE,
+	SITE_REQUEST,
+	SITE_REQUEST_FAILURE,
+	SITE_REQUEST_SUCCESS,
 	SITES_RECEIVE,
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
 	DESERIALIZE,
-	SERIALIZE,
+	THEME_ACTIVATED,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { sitesSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
+import { isValidStateWithSchema, createReducer } from 'state/utils';
 
 /**
  * Constants
@@ -63,6 +67,22 @@ export function items( state = {}, action ) {
 				return memo;
 			}, {} );
 
+		case THEME_ACTIVATED:
+			const { siteId, theme } = action;
+			const site = state[ siteId ];
+			if ( ! site ) {
+				break;
+			}
+
+			return {
+				...state,
+				[ siteId ]: merge( {}, site, {
+					options: {
+						theme_slug: theme.stylesheet
+					}
+				} )
+			};
+
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, sitesSchema ) ) {
 				return state;
@@ -74,32 +94,47 @@ export function items( state = {}, action ) {
 }
 
 /**
- * Tracks sites fetching state
+ * Returns the updated requesting state after an action has been dispatched.
+ * Requesting state tracks whether a network request is in progress for all
+ * sites.
  *
  * @param  {Object} state  Current state
- * @param  {Object} action Action payload
+ * @param  {Object} action Action object
  * @return {Object}        Updated state
  */
-export function fetchingItems( state = {}, action ) {
-	switch ( action.type ) {
-		case SITES_REQUEST:
-		case SITES_REQUEST_FAILURE:
-		case SITES_REQUEST_SUCCESS:
-			return Object.assign( {}, state, {
-				all: action.type === SITES_REQUEST
-			} );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
+export const requestingAll = createReducer( false, {
+	[ SITES_REQUEST ]: () => true,
+	[ SITES_REQUEST_FAILURE ]: () => false,
+	[ SITES_REQUEST_SUCCESS ]: () => false
+} );
+
+/**
+ * Returns the updated requesting state after an action has been dispatched.
+ * Requesting state tracks whether a network request is in progress for a site.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @return {Object}        Updated state
+ */
+export const requesting = createReducer( {}, {
+	[ SITE_REQUEST ]: ( state, { siteId } ) => {
+		return { ...state, [ siteId ]: true };
+	},
+	[ SITE_REQUEST_FAILURE ]: ( state, { siteId } ) => {
+		return { ...state, [ siteId ]: false };
+	},
+	[ SITE_REQUEST_SUCCESS ]: ( state, { siteId } ) => {
+		return { ...state, [ siteId ]: false };
 	}
-	return state;
-}
+} );
 
 export default combineReducers( {
 	domains,
-	fetchingItems,
+	requestingAll,
 	items,
 	mediaStorage,
 	plans,
-	vouchers
+	guidedTransfer,
+	vouchers,
+	requesting
 } );

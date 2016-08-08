@@ -21,7 +21,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/feature-comparison">Feature Comparison</a>
+					<a href="/devdocs/blocks/feature-comparison">Feature Comparison</a>
 				</h2>
 				<FeatureComparison>
 					<PlanCompareCard

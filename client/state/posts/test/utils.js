@@ -8,6 +8,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	normalizePostForDisplay,
+	normalizePostForState,
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
@@ -17,6 +19,71 @@ import {
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( 'normalizePostForDisplay()', () => {
+		it( 'should return null if post is falsey', () => {
+			const normalizedPost = normalizePostForDisplay();
+			expect( normalizedPost ).to.be.null;
+		} );
+
+		it( 'should return a normalized post object', () => {
+			const post = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Ribs &amp; Chicken',
+				author: {
+					name: 'Badman <img onerror= />'
+				},
+				featured_image: 'https://example.com/logo.png'
+			};
+
+			const normalizedPost = normalizePostForDisplay( post );
+			expect( normalizedPost ).to.eql( {
+				...post,
+				title: 'Ribs & Chicken',
+				author: {
+					name: 'Badman '
+				},
+				canonical_image: {
+					type: 'image',
+					uri: 'https://example.com/logo.png'
+				}
+			} );
+		} );
+	} );
+
+	describe( 'normalizePostForState()', () => {
+		it( 'should deeply unset all meta', () => {
+			const original = deepFreeze( {
+				ID: 814,
+				meta: {},
+				terms: {
+					category: {
+						Code: {
+							ID: 6,
+							meta: {}
+						}
+					}
+				}
+			} );
+			const revised = normalizePostForState( original );
+
+			expect( revised ).to.not.equal( original );
+			expect( revised ).to.eql( {
+				ID: 814,
+				meta: null,
+				terms: {
+					category: {
+						Code: {
+							ID: 6,
+							meta: null
+						}
+					}
+				}
+			} );
+		} );
+	} );
+
 	describe( '#getNormalizedPostsQuery()', () => {
 		it( 'should exclude default values', () => {
 			const query = getNormalizedPostsQuery( {

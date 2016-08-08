@@ -13,28 +13,21 @@
 }
 
 .current-plan__header-icon {
-	display: block;
-	margin: 0 auto;
-	position: relative;
-	text-align: center;
-
 	@include breakpoint( ">660px" ) {
+		width: 132px;
 		height: 132px;
 		margin-right: 16px;
-		width: 132px;
 	}
 
-	.gridicon {
-		background: white;
-		color: $alert-yellow;
-		height: 48px;
-		margin: 21px 0 0 21px;
+	.plan-icon {
 		width: 48px;
+		height: 48px;
+		margin: 0 auto;
 
 		@include breakpoint( ">660px" ) {
+			width: 72px;
 			height: 72px;
 			margin: 30px 0 0 30px;
-			width: 72px;
 		}
 	}
 }

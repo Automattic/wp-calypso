@@ -8,7 +8,7 @@ const React = require( 'react' );
  */
 const Gravatar = require( 'components/gravatar' ),
 	user = require( 'lib/user' )(),
-	AuthorSelector = require( 'components/author-selector' ),
+	AuthorSelector = require( 'blocks/author-selector' ),
 	PostActions = require( 'lib/posts/actions' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	sites = require( 'lib/sites-list' )(),

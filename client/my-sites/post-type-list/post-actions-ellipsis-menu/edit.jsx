@@ -11,6 +11,7 @@ import get from 'lodash/get';
  */
 import PopoverMenuItem from 'components/popover/menu-item';
 import QueryPostTypes from 'components/data/query-post-types';
+import { mc } from 'lib/analytics';
 import { getPost } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { getCurrentUserId, isValidCapability, canCurrentUser } from 'state/current-user/selectors';
@@ -21,8 +22,12 @@ function PostActionsEllipsisMenuEdit( { translate, siteId, canEdit, status, edit
 		return null;
 	}
 
+	function bumpStat() {
+		mc.bumpStat( 'calypso_cpt_actions', 'edit' );
+	}
+
 	return (
-		<PopoverMenuItem href={ editUrl } icon="pencil">
+		<PopoverMenuItem href={ editUrl } onClick={ bumpStat } icon="pencil">
 			{ siteId && ! isKnownType && <QueryPostTypes siteId={ siteId } /> }
 			{ translate( 'Edit', { context: 'verb' } ) }
 		</PopoverMenuItem>

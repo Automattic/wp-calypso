@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { map, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,48 +19,37 @@ import Sharing from './';
 import AccordionSection from 'components/accordion/section';
 import postUtils from 'lib/posts/utils';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { isJetpackModuleActive, getSiteOption } from 'state/sites/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { postTypeSupports } from 'state/post-types/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
 
 const EditorSharingAccordion = React.createClass( {
-	displayName: 'EditorSharingAccordion',
-
 	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		isNew: React.PropTypes.bool,
-		connections: React.PropTypes.array,
-		requestConnections: React.PropTypes.func
+		site: PropTypes.object,
+		post: PropTypes.object,
+		isNew: PropTypes.bool,
+		connections: PropTypes.array,
+		isPublicizeEnabled: PropTypes.bool
 	},
 
 	getSubtitle: function() {
-		var skipped, targeted;
-
-		if ( this.props.site && (
-				( this.props.site.jetpack && ! this.props.site.isModuleActive( 'publicize' ) ) ||
-				this.props.site.options.publicize_permanently_disabled
-		) ) {
+		const { isPublicizeEnabled, post, connections } = this.props;
+		if ( ! isPublicizeEnabled || ! post || ! connections ) {
 			return;
 		}
 
-		if ( postUtils.isPage( this.props.post ) ) {
-			return;
-		}
-
-		if ( ! this.props.post || ! this.props.connections ) {
-			return this.translate( 'Loading…' );
-		}
-
-		skipped = PostMetadata.publicizeSkipped( this.props.post );
-		targeted = this.props.connections.filter( function( connection ) {
-			return -1 === skipped.indexOf( connection.keyring_connection_ID );
+		const skipped = PostMetadata.publicizeSkipped( post );
+		const targeted = connections.filter( ( connection ) => {
+			return ! includes( skipped, connection.keyring_connection_ID );
 		} );
+		const targetedServices = serviceConnections.getServicesFromConnections( targeted );
 
-		return serviceConnections.getServicesFromConnections( targeted ).map( function( service ) {
-			return service.label;
-		} ).join( ', ' );
+		return map( targetedServices, 'label' ).join( ', ' );
 	},
 
 	renderShortUrl: function() {
@@ -122,13 +112,7 @@ const EditorSharingAccordion = React.createClass( {
 				) }
 				<AccordionSection>
 					{ ! hideSharing && (
-						<Sharing
-							site={ this.props.site }
-							post={ this.props.post }
-							isNew={ this.props.isNew }
-							connections={ this.props.connections }
-							fetchConnections={ this.props.requestConnections }
-						/>
+						<Sharing site={ this.props.site } post={ this.props.post } />
 					) }
 					{ this.renderShortUrl() }
 				</AccordionSection>
@@ -139,13 +123,19 @@ const EditorSharingAccordion = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const site = getSelectedSite( state );
-		const user = getCurrentUser( state );
+		const siteId = getSelectedSiteId( state );
+		const userId = getCurrentUserId( state );
+		const postId = getEditorPostId( state );
+		const postType = getEditedPostValue( state, siteId, postId, 'type' );
+		const isPublicizeEnabled = (
+			false !== isJetpackModuleActive( state, siteId, 'publicize' ) &&
+			true !== getSiteOption( state, siteId, 'publicize_permanently_disabled' ) &&
+			postTypeSupports( state, siteId, postType, 'publicize' )
+		);
 
 		return {
-			// [TODO]: Reintroduce selected site from Redux state once needs
-			// have been met for use (e.g. `site.isModuleActive`)
-			connections: site && user ? getSiteUserConnections( state, site.ID, user.ID ) : null
+			isPublicizeEnabled,
+			connections: getSiteUserConnections( state, siteId, userId )
 		};
 	},
 	( dispatch ) => {

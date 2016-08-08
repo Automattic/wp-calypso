@@ -34,7 +34,7 @@ export default function MyPostTypesList( { postTypes } ) {
 
 <table>
 	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
 The site ID for which post types should be requested.

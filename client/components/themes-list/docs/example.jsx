@@ -57,7 +57,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/themes-list-example">Themes List</a>
+					<a href="/devdocs/blocks/themes-list-example">Themes List</a>
 				</h2>
 				<ThemesList
 					themes={ demoThemes }

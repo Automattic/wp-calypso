@@ -15,7 +15,7 @@ export default React.createClass( {
 	render() {
 		return (
 			<div className="design-assets__group">
-				<h2><a href="/devdocs/app-components/happiness-support">HappinessSupport</a></h2>
+				<h2><a href="/devdocs/blocks/happiness-support">HappinessSupport</a></h2>
 				<Card>
 					<HappinessSupport />
 				</Card>

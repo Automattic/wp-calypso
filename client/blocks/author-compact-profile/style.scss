@@ -1,0 +1,64 @@
+.author-compact-profile {
+	font-size: 14px;
+
+	.gravatar {
+    	display: flex;
+    	margin: auto;
+    }
+
+    .follow-button {
+    	border: 0;
+    	border-radius: 0;
+    	padding: 0;
+
+    	.gridicon__follow {
+    		fill: $blue-medium;
+    	}
+
+    	.follow-button__label {
+    		color: $blue-medium;
+
+    		@include breakpoint( "<660px" ) {
+    			display: inline-block;
+    		}
+    	}
+
+		&:hover {
+
+			.gridicon__follow {
+				fill: lighten( $gray, 10% );
+			}
+
+			.follow-button__label {
+				color: lighten( $gray, 10% );
+			}
+		}
+    }
+}
+
+.author-compact-profile .external-link,
+.author-compact-profile__site-link,
+.author-compact-profile__follow {
+    align-items: center;
+    color: $blue-medium;
+    display: flex;
+    justify-content: center;
+
+    &:hover {
+    	color: lighten( $gray, 10% );
+    }
+}
+
+.author-compact-profile .external-link {
+	font-weight: 600;
+	margin-top: 15px;
+}
+
+.author-compact-profile__follow-count {
+	display: inline-flex;
+}
+
+.author-compact-profile__follow-count {
+	color: lighten( $gray, 10% );
+	margin-right: 15px;
+}

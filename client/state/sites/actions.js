@@ -4,11 +4,15 @@
 import wpcom from 'lib/wp';
 import {
 	SITE_RECEIVE,
+	SITE_REQUEST,
+	SITE_REQUEST_FAILURE,
+	SITE_REQUEST_SUCCESS,
 	SITES_RECEIVE,
 	SITES_REQUEST,
 	SITES_REQUEST_SUCCESS,
 	SITES_REQUEST_FAILURE
 } from 'state/action-types';
+import { omit } from 'lodash';
 
 /**
  * Returns an action object to be used in signalling that a site object has
@@ -61,3 +65,32 @@ export function requestSites() {
 	};
 }
 
+/**
+ * Returns a function which, when invoked, triggers a network request to fetch
+ * a site.
+ *
+ * @param  {Number}   siteId Site ID
+ * @return {Function}        Action thunk
+ */
+export function requestSite( siteId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_REQUEST,
+			siteId
+		} );
+
+		return wpcom.site( siteId ).get().then( ( site ) => {
+			dispatch( receiveSite( omit( site, '_headers' ) ) );
+			dispatch( {
+				type: SITE_REQUEST_SUCCESS,
+				siteId
+			} );
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: SITE_REQUEST_FAILURE,
+				siteId,
+				error
+			} );
+		} );
+	};
+}

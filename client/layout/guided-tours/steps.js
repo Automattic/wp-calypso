@@ -24,7 +24,7 @@ class BasicStep extends Component {
 			'guided-tours__step',
 			'guided-tours__step-glow',
 			targetSlug && 'guided-tours__step-pointing',
-			targetSlug && arrow && 'guided-tours__step-pointing-' + getValidatedArrowPosition( {
+			targetSlug && 'guided-tours__step-pointing-' + getValidatedArrowPosition( {
 				targetSlug,
 				arrow,
 				stepPos
@@ -78,9 +78,12 @@ class FinishStep extends Component {
 				<div className="guided-tours__single-button-row">
 					<Button onClick={ onFinish } primary>{ this.props.translate( "We're all done!" ) }</Button>
 				</div>
-				<div className="guided-tours__external-link">
-					<ExternalLink target="_blank" icon={ true } href={ linkUrl }>{ linkLabel }</ExternalLink>
-				</div>
+				{
+					linkUrl && linkLabel &&
+						<div className="guided-tours__external-link">
+							<ExternalLink target="_blank" icon={ true } href={ linkUrl }>{ linkLabel }</ExternalLink>
+						</div>
+				}
 			</Card>
 		);
 	}
@@ -164,8 +167,10 @@ class ActionStep extends Component {
 					iconText: <strong>{ this.props.iconText }</strong>,
 				},
 			} );
-		} else {
+		} else if ( ! this.props.continueIf ) {
 			instructions = this.props.translate( 'Click to continue.' );
+		} else {
+			instructions = null;
 		}
 
 		const classes = [
@@ -173,7 +178,7 @@ class ActionStep extends Component {
 			'guided-tours__step-action',
 			'guided-tours__step-glow',
 			'guided-tours__step-pointing',
-			arrow && 'guided-tours__step-pointing-' + getValidatedArrowPosition( {
+			'guided-tours__step-pointing-' + getValidatedArrowPosition( {
 				targetSlug,
 				arrow,
 				stepPos
@@ -222,8 +227,8 @@ BasicStep.propTypes = {
 };
 
 ActionStep.propTypes = {
-	targetSlug: PropTypes.string.isRequired,
-	arrow: PropTypes.oneOf( ARROW_TYPES ).isRequired,
+	targetSlug: PropTypes.string,
+	arrow: PropTypes.oneOf( ARROW_TYPES ),
 	placement: PropTypes.string,
 	// text can be a translated string or a translated string with components
 	text: PropTypes.oneOfType( [

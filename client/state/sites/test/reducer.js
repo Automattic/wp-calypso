@@ -10,15 +10,19 @@ import deepFreeze from 'deep-freeze';
  */
 import {
 	SITE_RECEIVE,
+	SITE_REQUEST,
+	SITE_REQUEST_FAILURE,
+	SITE_REQUEST_SUCCESS,
 	SITES_RECEIVE,
 	SITES_REQUEST,
 	SITES_REQUEST_FAILURE,
 	SITES_REQUEST_SUCCESS,
+	THEME_ACTIVATED,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
-import reducer, { items, fetchingItems } from '../reducer';
+import reducer, { items, requestingAll, requesting } from '../reducer';
 
 describe( 'reducer', () => {
 	before( function() {
@@ -31,52 +35,45 @@ describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'domains',
-			'fetchingItems',
+			'requestingAll',
 			'items',
 			'mediaStorage',
 			'plans',
-			'vouchers'
+			'guidedTransfer',
+			'vouchers',
+			'requesting'
 		] );
 	} );
 
-	describe( '#fetchingItems()', () => {
-		it( 'should default an empty object', () => {
-			const state = fetchingItems( undefined, {} );
-			expect( state ).to.eql( {} );
+	describe( 'requestingAll()', () => {
+		it( 'should default false', () => {
+			const state = requestingAll( undefined, {} );
+
+			expect( state ).to.be.false;
 		} );
+
 		it( 'should update fetching state on fetch', () => {
-			const state = fetchingItems( undefined, {
+			const state = requestingAll( undefined, {
 				type: SITES_REQUEST
 			} );
-			expect( state ).to.eql( { all: true } );
+
+			expect( state ).to.be.true;
 		} );
+
 		it( 'should update fetching state on success', () => {
-			const original = { all: true };
-			const state = fetchingItems( original, {
+			const state = requestingAll( true, {
 				type: SITES_REQUEST_SUCCESS
 			} );
-			expect( state ).to.eql( { all: false } );
+
+			expect( state ).to.be.false;
 		} );
+
 		it( 'should update fetching state on failure', () => {
-			const original = { all: true };
-			const state = fetchingItems( original, {
+			const state = requestingAll( true, {
 				type: SITES_REQUEST_FAILURE
 			} );
-			expect( state ).to.eql( { all: false } );
-		} );
-		it( 'should never persist state', () => {
-			const original = { all: true };
-			const state = fetchingItems( original, {
-				type: SERIALIZE
-			} );
-			expect( state ).to.eql( {} );
-		} );
-		it( 'should never load persisted state', () => {
-			const original = { all: true };
-			const state = fetchingItems( original, {
-				type: DESERIALIZE
-			} );
-			expect( state ).to.eql( {} );
+
+			expect( state ).to.be.false;
 		} );
 	} );
 
@@ -169,7 +166,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', slug: 'example.wordpress.com' }
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
 		} );
 
@@ -185,7 +182,7 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', slug: 'example.wordpress.com' }
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
 			} );
 		} );
 
@@ -214,6 +211,36 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				2916284: { ID: 2916284, name: 'WordPress.com Example Blog' }
+			} );
+		} );
+
+		it( 'should update the theme slug option when a theme is activated', () => {
+			const original = deepFreeze( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					options: {
+						theme_slug: 'pub/twentythirteen'
+					}
+				}
+			} );
+			const state = items( original, {
+				type: THEME_ACTIVATED,
+				siteId: 2916284,
+				theme: {
+					name: 'Twenty Sixteen',
+					stylesheet: 'pub/twentysixteen'
+				}
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					ID: 2916284,
+					name: 'WordPress.com Example Blog',
+					options: {
+						theme_slug: 'pub/twentysixteen'
+					}
+				}
 			} );
 		} );
 
@@ -248,6 +275,72 @@ describe( 'reducer', () => {
 			const state = items( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
+		} );
+	} );
+
+	describe( 'requesting()', () => {
+		it( 'should default to an empty object', () => {
+			const state = requesting( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should track site request started', () => {
+			const state = requesting( undefined, {
+				type: SITE_REQUEST,
+				siteId: 2916284
+			} );
+
+			expect( state ).to.eql( {
+				2916284: true
+			} );
+		} );
+
+		it( 'should accumulate site requests started', () => {
+			const original = deepFreeze( {
+				2916284: true
+			} );
+			const state = requesting( original, {
+				type: SITE_REQUEST,
+				siteId: 77203074
+			} );
+
+			expect( state ).to.eql( {
+				2916284: true,
+				77203074: true
+			} );
+		} );
+
+		it( 'should track site request succeeded', () => {
+			const original = deepFreeze( {
+				2916284: true,
+				77203074: true
+			} );
+			const state = requesting( original, {
+				type: SITE_REQUEST_SUCCESS,
+				siteId: 2916284
+			} );
+
+			expect( state ).to.eql( {
+				2916284: false,
+				77203074: true
+			} );
+		} );
+
+		it( 'should track site request failed', () => {
+			const original = deepFreeze( {
+				2916284: false,
+				77203074: true
+			} );
+			const state = requesting( original, {
+				type: SITE_REQUEST_FAILURE,
+				siteId: 77203074
+			} );
+
+			expect( state ).to.eql( {
+				2916284: false,
+				77203074: false
+			} );
 		} );
 	} );
 } );

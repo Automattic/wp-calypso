@@ -53,3 +53,13 @@ The position at which the menu should be rendered. If omitted, uses the default 
 </table>
 
 Menu children to be rendered.
+
+### `disabled`
+
+<table>
+	<tr><td>Type</td><td><code>PropTypes.bool</code></td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+	<tr><td>Default</td><td><code>null</code></td></tr>
+</table>
+
+If `true`, then the menu icon will be displayed in light gray and will not be clickable.

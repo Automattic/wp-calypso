@@ -160,7 +160,8 @@ describe( 'reducer', () => {
 			const nowTime = ( new Date() ).getTime();
 			const state = jetpackSSOSessions( undefined, {
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-				ssoUrl: 'https://website.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}'
+				ssoUrl: 'https://website.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://website.com'
 			} );
 
 			expect( state ).to.have.property( 'website.com' )
@@ -258,7 +259,8 @@ describe( 'reducer', () => {
 			const actions = [
 				{
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-					ssoUrl: 'http://website.com'
+					ssoUrl: 'http://website.com',
+					siteUrl: 'http://website.com'
 				},
 				{
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -277,7 +279,8 @@ describe( 'reducer', () => {
 		it( 'should store sso_url after authorization', () => {
 			const action = deepFreeze( {
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-				ssoUrl: 'http://website.com'
+				ssoUrl: 'http://website.com',
+				siteUrl: 'http://website.com'
 			} );
 
 			const state = jetpackSSO( undefined, action );

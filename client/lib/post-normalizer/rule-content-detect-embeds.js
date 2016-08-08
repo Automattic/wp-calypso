@@ -33,7 +33,8 @@ export default function detectEmbeds( post, dom ) {
 		'me.sh',
 		'bandcamp.com',
 		'kickstarter.com',
-		'facebook.com'
+		'facebook.com',
+		'embed.itunes.apple.com'
 	];
 
 	// hosts that we trust that don't work in a sandboxed iframe

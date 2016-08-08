@@ -13,24 +13,29 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
 const PlanFeaturesActions = ( {
+	className,
 	available = true,
 	current = false,
 	popular = false,
 	freePlan = false,
 	onUpgradeClick = noop,
 	isPlaceholder = false,
+	isInSignup,
 	translate
 } ) => {
 	let upgradeButton;
-	const className = classNames( {
-		'plan-features__actions-button': true,
-		'is-current': current,
-		'is-primary': popular && ! isPlaceholder,
-	} );
+	const classes = classNames(
+		'plan-features__actions-button',
+		{
+			'is-current': current,
+			'is-primary': popular && ! isPlaceholder
+		},
+		className
+	);
 
-	if ( current ) {
+	if ( current && ! isInSignup ) {
 		upgradeButton = (
-			<Button className={ className } disabled>
+			<Button className={ classes } disabled>
 				<Gridicon size={ 18 } icon="checkmark" />
 				{ translate( 'Your plan' ) }
 			</Button>
@@ -38,14 +43,14 @@ const PlanFeaturesActions = ( {
 	} else if ( available || isPlaceholder ) {
 		upgradeButton = (
 			<Button
-				className={ className }
+				className={ classes }
 				onClick={ isPlaceholder ? noop : onUpgradeClick }
 				disabled={ isPlaceholder }
 			>
 				{
 					freePlan
-						? translate( 'Select Free' )
-						: translate( 'Upgrade' )
+						? translate( 'Select Free', { context: 'button' } )
+						: translate( 'Upgrade', { context: 'verb' } )
 				}
 			</Button>
 		);
@@ -61,6 +66,7 @@ const PlanFeaturesActions = ( {
 };
 
 PlanFeaturesActions.propTypes = {
+	className: PropTypes.string,
 	popular: PropTypes.bool,
 	current: PropTypes.bool,
 	available: PropTypes.bool,

@@ -11,6 +11,7 @@ import sinon from 'sinon';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
+	POST_DELETE_FAILURE,
 	POST_EDIT,
 	POST_EDITS_RESET,
 	POST_REQUEST,
@@ -62,8 +63,8 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		it( 'should index posts by global ID', () => {
-			const state = items( null, {
+		it( 'should index received posts by global ID', () => {
+			const state = items( undefined, {
 				type: POSTS_RECEIVE,
 				posts: [
 					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
@@ -72,14 +73,14 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-				'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+				'6c831c187ffef321eb43a67761a525a3': [ 2916284, 413 ]
 			} );
 		} );
 
 		it( 'should accumulate posts', () => {
 			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
 			} );
 			const state = items( original, {
 				type: POSTS_RECEIVE,
@@ -87,33 +88,14 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.eql( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
-				'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
-			} );
-		} );
-
-		it( 'should override previous post of same ID', () => {
-			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			} );
-			const state = items( original, {
-				type: POSTS_RECEIVE,
-				posts: [ { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs & Chicken' } ]
-			} );
-
-			expect( state ).to.eql( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Ribs & Chicken' }
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
+				'6c831c187ffef321eb43a67761a525a3': [ 2916284, 413 ]
 			} );
 		} );
 
 		it( 'should remove an item when delete action is dispatched', () => {
 			const original = deepFreeze( {
-				'3d097cb7c5473c169bba0eb8e3c6cb64': {
-					ID: 841,
-					site_ID: 2916284,
-					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-					title: 'Hello World'
-				}
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
 			} );
 			const state = items( original, {
 				type: POST_DELETE_SUCCESS,
@@ -124,45 +106,36 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 
-		describe( 'persistence', () => {
-			it( 'persists state', () => {
-				const original = deepFreeze( {
-					'3d097cb7c5473c169bba0eb8e3c6cb64': {
-						ID: 841,
-						site_ID: 2916284,
-						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-						title: 'Hello World'
-					}
-				} );
-				const state = items( original, { type: SERIALIZE } );
-				expect( state ).to.eql( original );
+		it( 'should persist state', () => {
+			const original = deepFreeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
 			} );
+			const state = items( original, { type: SERIALIZE } );
 
-			it( 'loads valid persisted state', () => {
-				const original = deepFreeze( {
-					'3d097cb7c5473c169bba0eb8e3c6cb64': {
-						ID: 841,
-						site_ID: 2916284,
-						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-						title: 'Hello World'
-					}
-				} );
-				const state = items( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( original );
-			} );
+			expect( state ).to.eql( original );
+		} );
 
-			it( 'loads default state when schema does not match', () => {
-				const original = deepFreeze( {
-					'3d097cb7c5473c169bba0eb8e3c6cb64': {
-						ID: 841,
-						site_ID: 'foo',
-						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-						title: 'Hello World'
-					}
-				} );
-				const state = items( original, { type: DESERIALIZE } );
-				expect( state ).to.eql( {} );
+		it( 'should load valid persisted state', () => {
+			const original = deepFreeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
 			} );
+			const state = items( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( original );
+		} );
+
+		it( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				'3d097cb7c5473c169bba0eb8e3c6cb64': {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+					title: 'Hello World'
+				}
+			} );
+			const state = items( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {} );
 		} );
 	} );
 
@@ -277,15 +250,25 @@ describe( 'reducer', () => {
 				query: { search: 'Hello' },
 				found: 1,
 				posts: [
-					{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
+					{
+						ID: 841,
+						site_ID: 2916284,
+						global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+						title: 'Hello World',
+						meta: {}
+					}
 				]
 			} );
 
 			expect( state ).to.have.keys( [ '2916284' ] );
 			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
-			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).to.eql( [
-				{ ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
-			] );
+			expect( state[ 2916284 ].getItems( { search: 'Hello' } ) ).to.eql( [ {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World',
+				meta: null
+			} ] );
 		} );
 
 		it( 'should accumulate query request success', () => {
@@ -328,6 +311,23 @@ describe( 'reducer', () => {
 			const state = queries( original, action );
 
 			expect( state ).to.equal( original );
+		} );
+
+		it( 'should track posts even if not associated with an existing site or query', () => {
+			const postObject = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Hello World'
+			};
+			const state = queries( deepFreeze( {} ), {
+				type: POSTS_RECEIVE,
+				posts: [ postObject ]
+			} );
+
+			expect( state ).to.have.keys( [ '2916284' ] );
+			expect( state[ 2916284 ] ).to.be.an.instanceof( PostQueryManager );
+			expect( state[ 2916284 ].getItems() ).to.eql( [ postObject ] );
 		} );
 
 		it( 'should update received posts', () => {
@@ -438,7 +438,68 @@ describe( 'reducer', () => {
 			);
 		} );
 
-		it( 'should remove item when post delete action dispatched', () => {
+		it( 'should apply pending delete status on delete actions', () => {
+			let original = deepFreeze( {} );
+			original = queries( original, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { status: 'trash' },
+				found: 1,
+				posts: [ {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '48b6010b559efe6a77a429773e0cbf12',
+					title: 'Trashed',
+					status: 'trash',
+					type: 'post'
+				} ]
+			} );
+
+			const state = queries( original, {
+				type: POST_DELETE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( '__DELETE_PENDING' );
+			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
+		} );
+
+		it( 'should restore item when post delete fails', () => {
+			let original = deepFreeze( {} );
+			original = queries( original, {
+				type: POSTS_REQUEST_SUCCESS,
+				siteId: 2916284,
+				query: { status: 'trash' },
+				found: 1,
+				posts: [ {
+					ID: 841,
+					site_ID: 2916284,
+					global_ID: '48b6010b559efe6a77a429773e0cbf12',
+					title: 'Trashed',
+					status: 'trash',
+					type: 'post'
+				} ]
+			} );
+			original = queries( original, {
+				type: POST_DELETE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( original[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 0 );
+
+			const state = queries( original, {
+				type: POST_DELETE_FAILURE,
+				siteId: 2916284,
+				postId: 841
+			} );
+
+			expect( state[ 2916284 ].getItem( 841 ).status ).to.equal( 'trash' );
+			expect( state[ 2916284 ].getItems( { status: 'trash' } ) ).to.have.length( 1 );
+		} );
+
+		it( 'should remove item when post delete action success dispatched', () => {
 			const original = deepFreeze( queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -450,7 +511,7 @@ describe( 'reducer', () => {
 			} ) );
 
 			const state = queries( original, {
-				type: POST_DELETE,
+				type: POST_DELETE_SUCCESS,
 				siteId: 2916284,
 				postId: 841
 			} );
@@ -458,7 +519,7 @@ describe( 'reducer', () => {
 			expect( state[ 2916284 ].getItems() ).to.have.length( 0 );
 		} );
 
-		it( 'should not persist state', () => {
+		it( 'should persist state', () => {
 			const original = deepFreeze( queries( deepFreeze( {} ), {
 				type: POSTS_REQUEST_SUCCESS,
 				siteId: 2916284,
@@ -471,12 +532,81 @@ describe( 'reducer', () => {
 
 			const state = queries( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.eql( {
+				2916284: {
+					data: {
+						items: {
+							841: {
+								ID: 841,
+								site_ID: 2916284,
+								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+								title: 'Hello World'
+							}
+						},
+						queries: {
+							'[["search","Hello"]]': {
+								itemKeys: [ 841 ],
+								found: 1
+							}
+						}
+					},
+					options: {
+						itemKey: 'ID'
+					}
+				}
+			} );
 		} );
 
-		it( 'should load persisted state', () => {
+		it( 'should load valid persisted state', () => {
 			const original = deepFreeze( {
-				2916284: '{}'
+				2916284: {
+					data: {
+						items: {
+							841: {
+								ID: 841,
+								site_ID: 2916284,
+								global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+								title: 'Hello World'
+							}
+						},
+						queries: {
+							'[["search","Hello"]]': {
+								itemKeys: [ 841 ],
+								found: 1
+							}
+						}
+					},
+					options: {
+						itemKey: 'ID'
+					}
+				}
+			} );
+
+			const state = queries( original, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( {
+				2916284: new PostQueryManager( {
+					items: {
+						841: {
+							ID: 841,
+							global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+							site_ID: 2916284,
+							title: 'Hello World'
+						}
+					},
+					queries: {
+						'[["search","Hello"]]': {
+							found: 1,
+							itemKeys: [ 841 ]
+						}
+					}
+				} )
+			} );
+		} );
+
+		it( 'should not load invalid persisted state', () => {
+			const original = deepFreeze( {
+				2916284: '{INVALID'
 			} );
 
 			const state = queries( original, { type: DESERIALIZE } );

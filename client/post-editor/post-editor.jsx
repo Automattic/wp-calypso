@@ -43,7 +43,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { toggleEditorDraftsVisible, setEditorPostId } from 'state/ui/editor/actions';
-import { receivePost, editPost, resetPostEdits } from 'state/posts/actions';
+import { receivePost, resetPostEdits } from 'state/posts/actions';
 import { getPostEdits, isEditedPostDirty } from 'state/posts/selectors';
 import EditorSidebarHeader from 'post-editor/editor-sidebar/header';
 import EditorDocumentHead from 'post-editor/editor-document-head';
@@ -152,7 +152,8 @@ const PostEditor = React.createClass( {
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.editPath !== this.props.editPath ) {
+		const { siteId, postId } = this.props;
+		if ( nextProps.siteId === siteId && nextProps.postId !== postId ) {
 			// make sure the history entry has the post ID in it, but don't dispatch
 			page.replace( nextProps.editPath, null, false, false );
 		}
@@ -674,18 +675,13 @@ const PostEditor = React.createClass( {
 	},
 
 	onSaveSuccess: function( message, action, link ) {
-		var post = PostEditStore.get(), nextState;
+		const post = PostEditStore.get();
 
 		if ( 'draft' === post.status ) {
 			this.props.setEditorLastDraft( post.site_ID, post.ID );
 		} else {
 			this.props.resetEditorLastDraft();
 		}
-
-		// Reset previous edits, preserving type
-		this.props.resetPostEdits( this.props.siteId );
-		this.props.resetPostEdits( post.site_ID, post.ID );
-		this.props.editPost( { type: this.props.type }, post.site_ID, post.ID );
 
 		// Assign editor post ID to saved value (especially important when
 		// transitioning from an unsaved post to a saved one)
@@ -696,7 +692,11 @@ const PostEditor = React.createClass( {
 		// Receive updated post into state
 		this.props.receivePost( post );
 
-		nextState = {
+		// Reset previous edits, preserving type
+		this.props.resetPostEdits( this.props.siteId );
+		this.props.resetPostEdits( post.site_ID, post.ID );
+
+		const nextState = {
 			isSaving: false,
 			isPublishing: false
 		};
@@ -778,7 +778,6 @@ export default connect(
 			setEditorLastDraft,
 			resetEditorLastDraft,
 			receivePost,
-			editPost,
 			resetPostEdits,
 			setEditorPostId,
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),

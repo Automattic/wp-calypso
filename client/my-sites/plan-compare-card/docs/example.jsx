@@ -20,7 +20,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/plan-compare-card">Plan Compare Card</a>
+					<a href="/devdocs/blocks/plan-compare-card">Plan Compare Card</a>
 				</h2>
 				<div>
 					<PlanCompareCard

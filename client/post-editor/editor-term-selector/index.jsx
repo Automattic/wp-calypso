@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
-import { cloneDeep, findIndex, map } from 'lodash';
+import { cloneDeep, findIndex, map, toArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,11 +17,11 @@ import { getEditedPostValue } from 'state/posts/selectors';
 
 class EditorTermSelector extends Component {
 	static propTypes = {
-		siteId: React.PropTypes.number,
-		postId: React.PropTypes.number,
-		postTerms: React.PropTypes.object,
-		postType: React.PropTypes.string,
-		taxonomyName: React.PropTypes.string
+		siteId: PropTypes.number,
+		postId: PropTypes.number,
+		postTerms: PropTypes.object,
+		postType: PropTypes.string,
+		taxonomyName: PropTypes.string
 	};
 
 	constructor( props ) {
@@ -34,7 +34,7 @@ class EditorTermSelector extends Component {
 		const terms = cloneDeep( postTerms ) || {};
 
 		// map call transforms object returned by API into an array
-		const taxonomyTerms = map( terms[ taxonomyName ] ) || [];
+		const taxonomyTerms = toArray( terms[ taxonomyName ] );
 		const existingSelectionIndex = findIndex( taxonomyTerms, { ID: selectedTerm.ID } );
 		if ( existingSelectionIndex !== -1 ) {
 			taxonomyTerms.splice( existingSelectionIndex, 1 );
@@ -56,7 +56,7 @@ class EditorTermSelector extends Component {
 	}
 
 	render() {
-		const { postType, siteId, taxonomyName } = this.props;
+		const { postType, postId, siteId, taxonomyName } = this.props;
 
 		return (
 			<div>
@@ -68,7 +68,7 @@ class EditorTermSelector extends Component {
 					siteId={ siteId }
 					multiple={ true }
 				/>
-				<AddTerm taxonomy={ taxonomyName } postType={ postType } />
+				<AddTerm taxonomy={ taxonomyName } postType={ postType } postId={ postId } />
 			</div>
 		);
 	}

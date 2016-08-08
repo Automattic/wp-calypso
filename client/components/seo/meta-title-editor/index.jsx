@@ -12,6 +12,7 @@ import {
 	isUndefined,
 	map,
 	matches,
+	noop,
 	pick,
 	property,
 	values as valuesOf
@@ -99,7 +100,7 @@ export class MetaTitleEditor extends Component {
 	}
 
 	updateTitleFormat( values ) {
-		const { translate } = this.props;
+		const { onChange, translate } = this.props;
 		const { type } = this.state;
 
 		const tokens = removeBlanks( map( values, tokenize( translate ) ) );
@@ -107,7 +108,7 @@ export class MetaTitleEditor extends Component {
 		this.setState( { titleFormats: {
 			...this.state.titleFormats,
 			[ type ]: tokens
-		} } );
+		} }, () => onChange( this.state.titleFormats ) );
 	}
 
 	render() {
@@ -148,11 +149,13 @@ export class MetaTitleEditor extends Component {
 }
 
 MetaTitleEditor.propTypes = {
-	disabled: PropTypes.bool
+	disabled: PropTypes.bool,
+	onChange: PropTypes.func
 };
 
 MetaTitleEditor.defaultProps = {
 	disabled: false,
+	onChange: noop,
 	translate: identity
 };
 

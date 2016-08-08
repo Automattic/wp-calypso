@@ -1,41 +1,44 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	get = require( 'lodash/get' ),
-	includes = require( 'lodash/includes' ),
-	map = require( 'lodash/map' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { get, includes, map } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var PublicizeMessage = require( './publicize-message' ),
-	PublicizeServices = require( './publicize-services' ),
-	paths = require( 'lib/paths' ),
-	PostMetadata = require( 'lib/post-metadata' ),
-	PopupMonitor = require( 'lib/popup-monitor' ),
-	Button = require( 'components/button' ),
-	siteUtils = require( 'lib/site/utils' ),
-	Gridicon = require( 'components/gridicon' ),
-	stats = require( 'lib/posts/stats' );
+import QueryPostTypes from 'components/data/query-post-types';
+import PublicizeMessage from './publicize-message';
+import PublicizeServices from './publicize-services';
+import * as paths from 'lib/paths';
+import PostMetadata from 'lib/post-metadata';
+import PopupMonitor from 'lib/popup-monitor';
+import Button from 'components/button';
+import siteUtils from 'lib/site/utils';
+import Gridicon from 'components/gridicon';
+import { recordStat, recordEvent } from 'lib/posts/stats';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { isJetpackModuleActive } from 'state/sites/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { postTypeSupports } from 'state/post-types/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
 
-module.exports = React.createClass( {
-	displayName: 'EditorSharingPublicizeOptions',
+const EditorSharingPublicizeOptions = React.createClass( {
 	connectionPopupMonitor: false,
 	jetpackModulePopupMonitor: false,
 
 	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		connections: React.PropTypes.array,
-		fetchConnections: React.PropTypes.func
-	},
-
-	getDefaultProps() {
-		return {
-			fetchConnections: () => {}
-		};
+		site: PropTypes.object,
+		post: PropTypes.object,
+		siteId: PropTypes.number,
+		isPublicizeEnabled: PropTypes.bool,
+		connections: PropTypes.array,
+		requestConnections: PropTypes.func
 	},
 
 	hasConnections: function() {
@@ -70,13 +73,13 @@ module.exports = React.createClass( {
 	},
 
 	onNewConnectionPopupClosed() {
-		this.props.fetchConnections( this.props.site.ID );
+		this.props.requestConnections( this.props.site.ID );
 	},
 
 	newConnection: function() {
 		this.newConnectionPopup();
-		stats.recordStat( 'sharing_create_service' );
-		stats.recordEvent( 'Opened Create New Sharing Service Dialog' );
+		recordStat( 'sharing_create_service' );
+		recordEvent( 'Opened Create New Sharing Service Dialog' );
 	},
 
 	jetpackModulePopup: function() {
@@ -106,7 +109,7 @@ module.exports = React.createClass( {
 		// to connections previously returning a 400 error
 		this.props.site.once( 'change', () => {
 			if ( this.props.site.isModuleActive( 'publicize' ) ) {
-				this.props.fetchConnections( this.props.site.ID );
+				this.props.requestConnections( this.props.site.ID );
 			}
 		} );
 	},
@@ -178,6 +181,10 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		if ( ! this.props.isPublicizeEnabled ) {
+			return null;
+		}
+
 		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
 			return (
 				<div className="editor-sharing__publicize-disabled">
@@ -206,6 +213,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ classes }>
+				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
 				{ this.renderInfoNotice() }
 				{ this.renderServices() }
 				{ this.renderAddNewButton() }
@@ -214,3 +222,23 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const userId = getCurrentUserId( state );
+		const postId = getEditorPostId( state );
+		const postType = getEditedPostValue( state, siteId, postId, 'type' );
+		const isPublicizeEnabled = (
+			false !== isJetpackModuleActive( state, siteId, 'publicize' ) &&
+			postTypeSupports( state, siteId, postType, 'publicize' )
+		);
+
+		return {
+			siteId,
+			isPublicizeEnabled,
+			connections: getSiteUserConnections( state, siteId, userId )
+		};
+	},
+	{ requestConnections }
+)( EditorSharingPublicizeOptions );

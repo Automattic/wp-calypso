@@ -22,7 +22,6 @@ import {
 	SITE_PLANS_TRIAL_CANCEL_FAILED
 } from 'state/action-types';
 import wpcom from 'lib/wp';
-import { insertSitePersonalPlan } from 'lib/plans/personal-plan';
 
 /**
  * Cancels the specified plan trial for the given site.
@@ -123,7 +122,7 @@ export function fetchSitePlans( siteId ) {
  * @returns {Object} the corresponding action object
  */
 export function fetchSitePlansCompleted( siteId, data ) {
-	const plans = insertSitePersonalPlan( omit( data, '_headers' ) );
+	const plans = omit( data, '_headers' );
 
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,

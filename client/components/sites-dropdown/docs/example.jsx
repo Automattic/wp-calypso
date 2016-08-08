@@ -16,7 +16,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/sites-dropdown">SitesDropdown</a>
+					<a href="/devdocs/blocks/sites-dropdown">SitesDropdown</a>
 				</h2>
 				<SitesDropdown />
 			</div>

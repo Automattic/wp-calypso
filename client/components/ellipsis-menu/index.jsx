@@ -17,7 +17,8 @@ class EllipsisMenu extends Component {
 		translate: PropTypes.func,
 		toggleTitle: PropTypes.string,
 		position: PropTypes.string,
-		children: PropTypes.node
+		children: PropTypes.node,
+		disabled: PropTypes.bool,
 	};
 
 	constructor() {
@@ -41,14 +42,17 @@ class EllipsisMenu extends Component {
 	}
 
 	toggleMenu( isMenuVisible ) {
-		this.setState( { isMenuVisible } );
+		if ( ! this.props.disabled ) {
+			this.setState( { isMenuVisible } );
+		}
 	}
 
 	render() {
-		const { toggleTitle, translate, position, children } = this.props;
+		const { toggleTitle, translate, position, children, disabled } = this.props;
 		const { isMenuVisible, popoverContext } = this.state;
 		const classes = classnames( 'ellipsis-menu', {
-			'is-menu-visible': isMenuVisible
+			'is-menu-visible': isMenuVisible,
+			'is-disabled': disabled
 		} );
 
 		return (
@@ -58,6 +62,7 @@ class EllipsisMenu extends Component {
 					onClick={ isMenuVisible ? this.hideMenu : this.showMenu }
 					title={ toggleTitle || translate( 'Toggle menu' ) }
 					borderless
+					disabled={ disabled }
 					className="ellipsis-menu__toggle">
 					<Gridicon
 						icon="ellipsis"

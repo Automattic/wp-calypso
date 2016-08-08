@@ -89,13 +89,13 @@ module.exports = React.createClass( {
 	},
 
 	ref: function() {
-		if ( ! this.props.transaction.pay_part ) {
+		if ( ! this.props.transaction.pay_ref ) {
 			return null;
 		}
 
 		return (
 			<li>
-				<strong>{ titleCase( this.props.transaction.pay_part ) } Ref</strong>
+				<strong>{ this.translate( 'Transaction ID' ) }</strong>
 				<span>{ this.props.transaction.pay_ref }</span>
 			</li>
 		);

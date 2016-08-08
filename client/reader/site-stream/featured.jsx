@@ -11,7 +11,7 @@ import Card from 'components/card';
 import page from 'page';
 import FeedPostStore from 'lib/feed-post-store';
 import FeedPostStoreActions from 'lib/feed-post-store/actions';
-import DiscoverHelper from 'reader/discover/helper';
+import { getSourceData as getDiscoverSourceData } from 'reader/discover/helper';
 import * as stats from 'reader/stats';
 
 export default React.createClass( {
@@ -24,15 +24,15 @@ export default React.createClass( {
 	},
 
 	getStateFromStores( store = this.props.store ) {
-		let posts = store.get().map( postKey => {
-			let post = FeedPostStore.get( postKey );
+		const posts = store.get().map( postKey => {
+			const post = FeedPostStore.get( postKey );
 
 			if ( this.shouldFetch( post ) ) {
 				FeedPostStoreActions.fetchPost( postKey );
 				return { post };
 			}
 
-			let source = this.getSourcePost( post ),
+			const source = this.getSourcePost( post ),
 				url = this.getPostUrl( source || post );
 
 			return {
@@ -72,7 +72,7 @@ export default React.createClass( {
 	},
 
 	getSourcePost( post ) {
-		let data = DiscoverHelper.getSourceData( post );
+		const data = getDiscoverSourceData( post );
 
 		if ( ! data ) {
 			return null;
@@ -86,7 +86,7 @@ export default React.createClass( {
 	},
 
 	handleClick( postData ) {
-		let post = postData.post;
+		const post = postData.post;
 		stats.recordTrackForPost( 'calypso_reader_clicked_featured_post', post );
 		stats.recordAction( 'clicked_featured_post' );
 		stats.recordGaEvent( 'Clicked Featured Post' );
@@ -96,7 +96,7 @@ export default React.createClass( {
 
 	renderPosts() {
 		return this.state.posts.map( postData => {
-			let post = postData.post,
+			const post = postData.post,
 				postState = post._state;
 
 			switch ( postState ) {

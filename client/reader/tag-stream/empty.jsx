@@ -1,38 +1,43 @@
-var React = require( 'react' );
+/**
+ * External dependencies
+ */
+import React from 'react';
 
-var EmptyContent = require( 'components/empty-content' ),
-	stats = require( 'reader/stats' ),
-	discoverHelper = require( 'reader/discover/helper' );
+/**
+ * Internal dependencies
+ */
+import EmptyContent from 'components/empty-content';
+import * as stats from 'reader/stats';
+import { isDiscoverEnabled } from 'reader/discover/helper';
 
-var TagEmptyContent = React.createClass( {
-
+const TagEmptyContent = React.createClass( {
 	propTypes: {
 		tag: React.PropTypes.string
 	},
 
-	shouldComponentUpdate: function() {
+	shouldComponentUpdate() {
 		return false;
 	},
 
-	recordAction: function() {
+	recordAction() {
 		stats.recordAction( 'clicked_following_on_empty' );
 		stats.recordGaEvent( 'Clicked Following on EmptyContent' );
 		stats.recordTrack( 'calypso_reader_following_on_empty_tag_stream_clicked' );
 	},
 
-	recordSecondaryAction: function() {
+	recordSecondaryAction() {
 		stats.recordAction( 'clicked_discover_on_empty' );
 		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
 		stats.recordTrack( 'calypso_reader_discover_on_empty_tag_stream_clicked' );
 	},
 
-	render: function() {
+	render() {
 		const action = ( <a
 			className="empty-content__action button is-primary"
 			onClick={ this.recordAction }
 			href="/">{ this.translate( 'Back to Following' ) }</a> );
 
-		const secondaryAction = discoverHelper.isEnabled()
+		const secondaryAction = isDiscoverEnabled()
 			? ( <a
 			className="empty-content__action button"
 			onClick={ this.recordSecondaryAction }
@@ -40,7 +45,7 @@ var TagEmptyContent = React.createClass( {
 
 		const message = this.translate(
 			'No posts have recently been tagged with {{tagName /}} for your language.',
-			{ components: { tagName: <em>{ this.props.tag }</em> } }
+			{ components: { tagName: <em>{ decodeURIComponent( this.props.tag ) }</em> } }
 		);
 
 		return ( <EmptyContent
@@ -54,4 +59,4 @@ var TagEmptyContent = React.createClass( {
 	}
 } );
 
-module.exports = TagEmptyContent;
+export default TagEmptyContent;

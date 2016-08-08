@@ -1,0 +1,36 @@
+.comment-button {
+	align-items: center;
+	color: lighten( $gray, 10 );
+	display: inline-flex;
+	list-style-type: none;
+	padding: 4px;
+	position: relative;
+
+	&:hover {
+		color: $blue-light;
+		cursor: pointer;
+	}
+
+	.comment-button__label-count {
+		margin-right: 4px;
+	}
+
+	.comment-button__label-status {
+
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+	}
+}
+
+.comment-button__label {
+	font-size: 14px;
+	margin-left: 4px;
+}
+
+.comment-button__icon {
+	fill: lighten( $gray, 10% );
+	&:hover {
+		fill: $blue-light;
+	}
+}

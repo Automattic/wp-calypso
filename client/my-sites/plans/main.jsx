@@ -184,6 +184,7 @@ const Plans = React.createClass( {
 									site={ selectedSite }
 									intervalType={ this.props.intervalType }
 									hideFreePlan={ true }
+									selectedFeature={ this.props.selectedFeature }
 								/>
 
 								: <PlanList

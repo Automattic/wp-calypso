@@ -39,11 +39,12 @@ const ListStream = React.createClass( {
 	},
 
 	render() {
-		var list = this.props.list,
+		const list = this.props.list,
 			shouldShowFollow = ( list && ! list.is_owner ),
 			shouldShowEdit = ! shouldShowFollow,
-			editUrl = null,
-			emptyContent = ( <EmptyContent /> ),
+			emptyContent = ( <EmptyContent /> );
+
+		let	editUrl = null,
 			title = this.translate( 'Loading list' );
 
 		if ( list ) {

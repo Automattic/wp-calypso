@@ -23,6 +23,7 @@ class ThemeMoreButton extends React.Component {
 		this.state = { showPopover: false };
 		this.togglePopover = this.togglePopover.bind( this );
 		this.closePopover = this.closePopover.bind( this );
+		this.onClick = this.onClick.bind( this );
 	}
 
 	togglePopover() {
@@ -37,6 +38,10 @@ class ThemeMoreButton extends React.Component {
 
 	focus( event ) {
 		event.target.focus();
+	}
+
+	onClick( action ) {
+		return this.closePopover.bind( this, action );
 	}
 
 	render() {
@@ -66,7 +71,7 @@ class ThemeMoreButton extends React.Component {
 							return (
 								<a className="theme__more-button-menu-item popover__menu-item"
 									onMouseOver={ this.focus }
-									onClick={ option.action }
+									onClick={ this.onClick( option.action ) }
 									key={ option.label }
 									href={ url }
 									target={ isOutsideCalypso( url ) ? '_blank' : null }>

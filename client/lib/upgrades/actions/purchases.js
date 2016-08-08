@@ -2,14 +2,12 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from '../constants';
-import Dispatcher from 'dispatcher';
 import wp from 'lib/wp';
+import notices from 'notices';
 
 const debug = debugFactory( 'calypso:upgrades:actions:purchases' ),
 	wpcom = wp.undocumented();
@@ -28,7 +26,23 @@ function cancelAndRefundPurchase( purchaseId, data, onComplete ) {
 	wpcom.cancelAndRefundPurchase( purchaseId, data, onComplete );
 }
 
+function submitSurvey( surveyName, siteID, surveyData ) {
+	const survey = wp.marketing().survey( surveyName, siteID );
+	survey.addResponses( surveyData );
+
+	debug( 'Survey responses', survey );
+	survey.submit()
+		.then( res => {
+			debug( 'Survey submit response', res );
+			if ( ! res.success ) {
+				notices.error( res.err );
+			}
+		} )
+		.catch( err => debug( err ) ); // shouldn't get here
+}
+
 export {
 	cancelAndRefundPurchase,
 	cancelPurchase,
+	submitSurvey
 };

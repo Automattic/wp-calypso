@@ -15,14 +15,17 @@ var React = require( 'react' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
 	i18n = require( 'i18n-calypso' ),
-	isEmpty = require( 'lodash/isEmpty' );
+	isEmpty = require( 'lodash/isEmpty' ),
+	includes = require( 'lodash/includes' );
 
 /**
  * Internal dependencies
  */
 // lib/local-storage must be run before lib/user
 var config = require( 'config' ),
-	abtest = require( 'lib/abtest' ).abtest,
+	abtestModule = require( 'lib/abtest' ),
+	abtest = abtestModule.abtest,
+	getSavedVariations = abtestModule.getSavedVariations,
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
@@ -49,13 +52,11 @@ var config = require( 'config' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	isSectionIsomorphic = require( 'state/ui/selectors' ).isSectionIsomorphic,
 	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
-import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { getSavedVariations } from 'lib/abtest';
+import { getSelectedSiteId, getSectionName, isSectionIsomorphic } from 'state/ui/selectors';
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -133,7 +134,7 @@ function setUpContext( reduxStore ) {
 }
 
 function loadDevModulesAndBoot() {
-	if ( config.isEnabled( 'render-visualizer' ) ) {
+	if ( process.env.NODE_ENV === 'development' && config.isEnabled( 'render-visualizer' ) ) {
 		// Use Webpack's code splitting feature to put the render visualizer in a separate fragment.
 		// This way it won't get downloaded unless this feature is enabled.
 		// Since loading this fragment is asynchronous and we need to inject this mixin into all React classes,
@@ -176,7 +177,7 @@ function boot() {
 }
 
 function renderLayout( reduxStore ) {
-	let props = { focus: layoutFocus };
+	const props = { focus: layoutFocus };
 
 	if ( user.get() ) {
 		Object.assign( props, { user, sites, nuxWelcome, translatorInvitation } );
@@ -193,8 +194,8 @@ function renderLayout( reduxStore ) {
 }
 
 function reduxStoreReady( reduxStore ) {
-	let layoutSection, validSections = [],
-		isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
+	const isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
+	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore );
 
@@ -210,8 +211,8 @@ function reduxStoreReady( reduxStore ) {
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 		reduxStore.dispatch( setCurrentUserFlags( user.get().meta.data.flags.active_flags ) );
 
-
-		const participantInPushNotificationsAbTest = config.isEnabled('push-notifications-ab-test') && abtest('browserNotifications') === 'enabled';
+		const participantInPushNotificationsAbTest = config.isEnabled( 'push-notifications-ab-test' ) &&
+			( abtest( 'browserNotifications' ) === 'enabled' || abtest( 'browserNotificationsPreferences' ) === 'enabled' );
 		if ( config.isEnabled( 'push-notifications' ) || participantInPushNotificationsAbTest ) {
 			// If the browser is capable, registers a service worker & exposes the API
 			reduxStore.dispatch( pushNotificationsInit() );
@@ -354,6 +355,13 @@ function reduxStoreReady( reduxStore ) {
 				return;
 			}
 
+			//see server/pages/index for prod redirect
+			if ( '/plans' === context.pathname ) {
+				// pricing page is outside of Calypso, needs a full page load
+				window.location = 'https://wordpress.com/pricing';
+				return;
+			}
+
 			if ( isValidSection ) {
 				next();
 			}
@@ -409,15 +417,19 @@ function reduxStoreReady( reduxStore ) {
 	 * Layouts with differing React mount-points will not reconcile correctly,
 	 * so remove an existing single-tree layout by re-rendering if necessary.
 	 *
-	 * TODO (@seear): React 15's new reconciliation algo may make this unnecessary
+	 * TODO (@seear): Converting all of Calypso to single-tree layout will
+	 * make this unnecessary.
 	 */
 	page( '*', function( context, next ) {
-		const sectionNotIsomorphic = ! isSectionIsomorphic( context.store.getState() );
 		const previousLayoutIsSingleTree = ! isEmpty(
 			document.getElementsByClassName( 'wp-singletree-layout' )
 		);
 
-		if ( sectionNotIsomorphic && previousLayoutIsSingleTree ) {
+		const singleTreeSections = [ 'theme', 'themes' ];
+		const sectionName = getSectionName( context.store.getState() );
+		const isMultiTreeLayout = ! includes( singleTreeSections, sectionName );
+
+		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
 			renderLayout( context.store );
 		}

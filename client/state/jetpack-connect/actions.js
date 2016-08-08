@@ -224,7 +224,13 @@ export default {
 				userData,
 				( error, data ) => {
 					if ( error ) {
-						tracksEvent( dispatch, 'calypso_jpc_create_account_error', { error_code: error.code, error: JSON.stringify( error ) } );
+						tracksEvent( dispatch,
+							'calypso_jpc_create_account_error',
+							{
+								error_code: error.code,
+								error: JSON.stringify( error )
+							}
+						);
 					} else {
 						tracksEvent( dispatch, 'calypso_jpc_create_account_success', {} );
 					}
@@ -326,7 +332,7 @@ export default {
 			} );
 		};
 	},
-	authorizeSSO( siteId, ssoNonce ) {
+	authorizeSSO( siteId, ssoNonce, siteUrl ) {
 		return ( dispatch ) => {
 			debug( 'Attempting to authorize SSO for ' + siteId );
 			dispatch( {
@@ -338,7 +344,8 @@ export default {
 				tracksEvent( dispatch, 'calypso_jpc_authorize_sso_success' );
 				dispatch( {
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-					ssoUrl: data.sso_url
+					ssoUrl: data.sso_url,
+					siteUrl
 				} );
 			} ).catch( ( error ) => {
 				tracksEvent( dispatch, 'calypso_jpc_authorize_sso_error', {

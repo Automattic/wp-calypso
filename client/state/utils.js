@@ -2,6 +2,7 @@
  * External dependencies
  */
 import tv4 from 'tv4';
+import { merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +23,25 @@ export function isValidStateWithSchema( state, schema, checkForCycles = false, b
 		warn( 'state validation failed', state, result.error );
 	}
 	return result.valid;
+}
+
+/**
+ * Given an action object or thunk, returns an updated object or thunk which
+ * will include additional data in the action (as provided) when dispatched.
+ *
+ * @param  {(Function|Object)} action Action object or thunk
+ * @param  {Object}            data   Additional data to include in action
+ * @return {(Function|Object)}        Augmented action object or thunk
+ */
+export function extendAction( action, data ) {
+	if ( 'function' !== typeof action ) {
+		return merge( {}, action, data );
+	}
+
+	return ( dispatch ) => {
+		const newDispatch = ( thunkAction ) => dispatch( merge( {}, thunkAction, data ) );
+		return action( newDispatch );
+	};
 }
 
 /**
@@ -84,6 +104,11 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 
 	return ( state = initialState, action ) => {
 		const { type } = action;
+
+		if ( 'production' !== process.env.NODE_ENV && 'type' in action && ! type ) {
+			throw new TypeError( 'Reducer called with undefined type.' +
+				' Verify that the action type is defined in state/action-types.js' );
+		}
 
 		if ( handlers.hasOwnProperty( type ) ) {
 			return handlers[ type ]( state, action );

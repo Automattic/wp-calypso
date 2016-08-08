@@ -5,13 +5,22 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import { partial } from 'lodash';
+import config from 'config';
+import { connect } from 'react-redux';
+import {
+	overSome,
+	partial
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
+import { isBusiness, isEnterprise } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
+import { getSelectedSite } from 'state/ui/selectors';
+
+const hasBusinessPlan = overSome( isBusiness, isEnterprise );
 
 const possibleDevices = [
 	'computer',
@@ -25,10 +34,12 @@ export const PreviewToolbar = props => {
 		externalUrl,
 		onClose,
 		previewUrl,
+		selectSeoPreview,
 		setDeviceViewport,
 		showClose,
 		showDeviceSwitcher,
 		showExternal,
+		showSeo,
 		translate
 	} = props;
 
@@ -54,18 +65,47 @@ export const PreviewToolbar = props => {
 				</a>
 			}
 			{ showDeviceSwitcher &&
-				possibleDevices.map( device => (
-					<button
-						aria-hidden={ true }
-						key={ device }
-						className={ classNames( 'web-preview__device-button', {
-							'is-active': device === currentDevice,
-						} ) }
-						onClick={ partial( setDeviceViewport, device ) }
-					>
-						<Gridicon icon={ device } />
-					</button>
-				) )
+				<div className="web-preview__device-switcher">
+					{ possibleDevices.map( device => (
+						<button
+							aria-hidden={ true }
+							key={ device }
+							className={ classNames( 'web-preview__device-button', {
+								'is-active': device === currentDevice,
+							} ) }
+							onClick={ partial( setDeviceViewport, device ) }
+						>
+							<Gridicon icon={ device } />
+						</button>
+					) ) }
+				</div>
+			}
+			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
+			<button
+				aria-hidden={ true }
+				key={ 'back-to-preview' }
+				className={ classNames(
+					'web-preview__device-button',
+					'web-preview__back-to-preview-button', {
+					'is-active': currentDevice !== 'seo'
+				} ) }
+				onClick={ partial( setDeviceViewport, 'phone' ) }
+			>
+				<Gridicon icon="phone" />
+			</button>
+			}
+			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
+				<button
+					aria-label={ translate( 'Show SEO and search previews' ) }
+					className={ classNames(
+						'web-preview__seo-button',
+						'web-preview__device-button', {
+						'is-active': 'seo' === currentDevice
+					} ) }
+					onClick={ selectSeoPreview }
+				>
+					<Gridicon icon="share" />
+				</button>
 			}
 			<div className="web-preview__toolbar-tray">
 				{ props.children }
@@ -91,4 +131,12 @@ PreviewToolbar.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-export default localize( PreviewToolbar );
+const mapStateToProps = state => {
+	const site = getSelectedSite( state );
+
+	return {
+		showSeo: site && site.plan && hasBusinessPlan( site.plan )
+	}
+};
+
+export default connect( mapStateToProps )( localize( PreviewToolbar ) );

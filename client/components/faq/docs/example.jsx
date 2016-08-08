@@ -21,7 +21,7 @@ export default React.createClass( {
 				<FAQ>
 					<FAQItem
 						question="Have more questions?"
-						answer="Need help deciding which plan works for you? Our hapiness engineers are available for any questions you may have."
+						answer="Need help deciding which plan works for you? Our happiness engineers are available for any questions you may have."
 					/>
 					<FAQItem
 						question="Can I cancel my subscription?"
@@ -44,7 +44,7 @@ export default React.createClass( {
 					/>
 					<FAQItem
 						question="Have more questions?"
-						answer="Need help deciding which plan works for you? Our hapiness engineers are available for any questions you may have."
+						answer="Need help deciding which plan works for you? Our happiness engineers are available for any questions you may have."
 					/>
 					<FAQItem
 						question="Can I cancel my subscription?"

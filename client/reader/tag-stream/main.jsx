@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import has from 'lodash/has';
+import { has } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -15,8 +15,7 @@ import TagSubscriptions from 'lib/reader-tags/subscriptions';
 import StreamHeader from 'reader/stream-header';
 import HeaderBack from 'reader/header-back';
 import smartSetState from 'lib/react-smart-set-state';
-
-const stats = require( 'reader/stats' );
+import * as stats from 'reader/stats';
 
 const TagStream = React.createClass( {
 
@@ -51,7 +50,7 @@ const TagStream = React.createClass( {
 	},
 
 	updateState( props = this.props ) {
-		var newState = {
+		const newState = {
 			title: this.getTitle( props ),
 			subscribed: this.isSubscribed( props ),
 			canFollow: has( ReaderTags.get( props.tag ), 'ID' )
@@ -60,7 +59,7 @@ const TagStream = React.createClass( {
 	},
 
 	getTitle( props = this.props ) {
-		var tag = ReaderTags.get( props.tag );
+		const tag = ReaderTags.get( props.tag );
 		if ( ! ( tag && tag.ID ) ) {
 			ReaderTagActions.fetchTag( props.tag );
 			return props.tag;
@@ -70,7 +69,7 @@ const TagStream = React.createClass( {
 	},
 
 	isSubscribed( props = this.props ) {
-		var tag = ReaderTags.get( props.tag );
+		const tag = ReaderTags.get( props.tag );
 		if ( ! tag ) {
 			return false;
 		}
@@ -78,7 +77,7 @@ const TagStream = React.createClass( {
 	},
 
 	toggleFollowing( isFollowing ) {
-		var tag = ReaderTags.get( this.props.tag );
+		const tag = ReaderTags.get( this.props.tag );
 		ReaderTagActions[ isFollowing ? 'follow' : 'unfollow' ]( tag );
 		stats.recordAction( isFollowing ? 'followed_topic' : 'unfollowed_topic' );
 		stats.recordGaEvent( isFollowing ? 'Clicked Follow Topic' : 'Clicked Unfollow Topic', tag.slug );
@@ -89,9 +88,10 @@ const TagStream = React.createClass( {
 
 	render() {
 		const emptyContent = ( <EmptyContent tag={ this.props.tag } /> );
+		const title = decodeURIComponent( this.state.title );
 
 		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( this.state.title );
+			this.props.setPageTitle( title );
 		}
 
 		return (
@@ -100,7 +100,7 @@ const TagStream = React.createClass( {
 				<StreamHeader
 					isPlaceholder={ false }
 					icon={ <svg className="gridicon gridicon__tag" height="32" width="32" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M16 7H5c-1.105 0-2 .896-2 2v6c0 1.104.895 2 2 2h11l5-5-5-5z"/></g></svg> }
-					title={ this.state.title }
+					title={ title }
 					showFollow={ this.state.canFollow }
 					following={ this.state.subscribed }
 					onFollowToggle={ this.toggleFollowing } />

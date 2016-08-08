@@ -16,7 +16,6 @@ import { canCurrentUser } from 'state/current-user/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isFinished as isJetpackPluginsFinished } from 'state/plugins/premium/selectors';
-import { abtest } from 'lib/abtest';
 import TrackComponentView from 'lib/analytics/track-component-view';
 
 const SiteNotice = React.createClass( {
@@ -59,28 +58,19 @@ const SiteNotice = React.createClass( {
 			return null;
 		}
 
-		if ( abtest( 'domainCreditsInfoNotice' ) === 'showNotice' ) {
-			const eventName = 'calypso_domain_credit_reminder_impression';
-			const eventProperties = { cta_name: 'current_site_domain_notice' };
-			return (
-				<Notice isCompact status="is-success" icon="info-outline">
-					{ this.translate( 'Free domain available' ) }
-					<NoticeAction
-						onClick={ this.props.clickClaimDomainNotice }
-						href={ `/domains/add/${ this.props.site.slug }` }
-					>
-						{ this.translate( 'Claim' ) }
-						<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
-					</NoticeAction>
-				</Notice>
-			);
-		}
-
-		//otherwise still track what happens when we don't show a notice
-		const eventName = 'calypso_domain_credit_reminder_no_impression';
+		const eventName = 'calypso_domain_credit_reminder_impression';
 		const eventProperties = { cta_name: 'current_site_domain_notice' };
 		return (
-			<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+			<Notice isCompact status="is-success" icon="info-outline">
+				{ this.translate( 'Free domain available' ) }
+				<NoticeAction
+					onClick={ this.props.clickClaimDomainNotice }
+					href={ `/domains/add/${ this.props.site.slug }` }
+				>
+					{ this.translate( 'Claim' ) }
+					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+				</NoticeAction>
+			</Notice>
 		);
 	},
 

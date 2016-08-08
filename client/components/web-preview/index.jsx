@@ -19,6 +19,7 @@ import { isMobile } from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import Spinner from 'components/spinner';
 import RootChild from 'components/root-child';
+import SeoPreviewPane from 'components/seo-preview-pane';
 import { setPreviewShowing } from 'state/ui/actions';
 
 const debug = debugModule( 'calypso:web-preview' );
@@ -35,6 +36,8 @@ export class WebPreview extends Component {
 			device: props.defaultViewportDevice || 'computer',
 			loaded: false
 		};
+
+		this.setIframeInstance = ref => this.iframe = ref;
 
 		this.keyDown = this.keyDown.bind( this );
 		this.setDeviceViewport = this.setDeviceViewport.bind( this );
@@ -185,6 +188,7 @@ export class WebPreview extends Component {
 			'is-computer': this.state.device === 'computer',
 			'is-tablet': this.state.device === 'tablet',
 			'is-phone': this.state.device === 'phone',
+			'is-seo': this.state.device === 'seo',
 			'is-loaded': this.state.loaded,
 		} );
 
@@ -198,9 +202,10 @@ export class WebPreview extends Component {
 							{ ...this.props }
 							showExternal={ ( this.props.previewUrl ? this.props.showExternal : false ) }
 							showDeviceSwitcher={ this.props.showDeviceSwitcher && ! this._isMobile }
+							selectSeoPreview={ this.setDeviceViewport.bind( null, 'seo' ) }
 						/>
 						<div className="web-preview__placeholder">
-							{ ! this.state.loaded &&
+							{ ! this.state.loaded && 'seo' !== this.state.device &&
 								<div>
 									<Spinner />
 									{ this.props.loadingMessage &&
@@ -212,12 +217,16 @@ export class WebPreview extends Component {
 							}
 							{ this.shouldRenderIframe() &&
 								<iframe
-									ref={ r => this.iframe = r }
+									ref={ this.setIframeInstance }
 									className="web-preview__frame"
+									style={ { display: ('seo' === this.state.device ? 'none' : 'inherit') } }
 									src="about:blank"
 									onLoad={ this.setLoaded }
 									title={ this.props.iframeTitle || translate( 'Preview' ) }
 								/>
+							}
+							{ 'seo' === this.state.device &&
+								<SeoPreviewPane />
 							}
 						</div>
 					</div>

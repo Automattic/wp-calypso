@@ -16,6 +16,8 @@ import RootChild from 'components/root-child';
 import { getSectionName } from 'state/ui/selectors';
 import { shouldViewBeVisible } from 'state/ui/first-view/selectors';
 import { hideView } from 'state/ui/first-view/actions';
+import { abtest } from 'lib/abtest';
+import { isEnabled } from 'config';
 
 // component to avoid having a wrapper element for the transition
 // see: https://facebook.github.io/react/docs/animation.html#rendering-a-single-child
@@ -100,7 +102,8 @@ const FirstView = React.createClass( {
 	},
 
 	updateDocumentStylesForVisibleFirstView() {
-		document.documentElement.classList.add( 'no-scroll', 'is-first-view-active' );
+		document.documentElement.classList.add( 'no-scroll' );
+		document.documentElement.classList.add( 'is-first-view-active' );
 		process.nextTick( () => {
 			if ( this.props.isVisible ) {
 				document.documentElement.classList.add( 'is-first-view-visible' );
@@ -109,7 +112,8 @@ const FirstView = React.createClass( {
 	},
 
 	updateDocumentStylesForHiddenFirstView() {
-		document.documentElement.classList.remove( 'no-scroll', 'is-first-view-visible' );
+		document.documentElement.classList.remove( 'no-scroll' );
+		document.documentElement.classList.remove( 'is-first-view-visible' );
 		// wait a bit so that we trigger the CSS transition
 		setTimeout( () => {
 			if ( ! this.props.isVisible ) {
@@ -121,9 +125,11 @@ const FirstView = React.createClass( {
 
 export default connect(
 	( state ) => {
+		const participantInFirstViewAbTest = isEnabled( 'ui/first-view-ab-test' ) && abtest( 'firstView' ) === 'enabled';
+
 		return {
 			sectionName: getSectionName( state ),
-			isVisible: shouldViewBeVisible( state ),
+			isVisible: ( isEnabled( 'ui/first-view' ) || participantInFirstViewAbTest ) && shouldViewBeVisible( state ),
 		};
 	},
 	{

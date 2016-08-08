@@ -11,11 +11,11 @@ import SectionHeader from 'components/section-header';
 import GoogleAppsUserItem from './google-apps-user-item';
 
 const Placeholder = () =>
-	<div className="is-placeholder">
+	<div className="google-apps-users-card is-placeholder">
 		<SectionHeader
 			label={ 'Google Apps Users' } />
-		<CompactCard className="google-apps-users-card">
-			<ul className="google-apps-users-card__user-list">
+		<CompactCard className="google-apps-users-card__user-list">
+			<ul className="google-apps-users-card__user-list-inner">
 				<GoogleAppsUserItem user={ { email: 'mail@example.com', domain: 'example.com' } } />
 			</ul>
 		</CompactCard>

@@ -25,6 +25,7 @@ var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 const sectionCount = sections.length;
 
 webpackConfig = {
+	bail: CALYPSO_ENV !== 'development',
 	cache: true,
 	entry: {},
 	devtool: '#eval',

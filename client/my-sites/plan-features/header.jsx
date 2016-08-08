@@ -21,7 +21,8 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_PERSONAL
+	PLAN_PERSONAL,
+	getPlanClass
 } from 'lib/plans/constants';
 import PlanIcon from 'components/plans/plan-icon';
 
@@ -43,11 +44,7 @@ class PlanFeaturesHeader extends Component {
 			'is-discounted': isDiscounted,
 			'is-placeholder': isPlaceholder
 		} );
-		const headerClasses = classNames( 'plan-features__header', {
-			'is-personal': planType === 'personal-bundle',
-			'is-premium': planType === 'value_bundle',
-			'is-business': planType === 'business-bundle'
-		} );
+		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
 		return (
 			<header className={ headerClasses } onClick={ this.props.onClick } >

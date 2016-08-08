@@ -26,11 +26,11 @@ import {
 	featuresList,
 	plansList,
 	PLAN_FREE,
+	PLAN_JETPACK_FREE, 
 	PLAN_PERSONAL,
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
-import { abtest } from 'lib/abtest';
 
 /**
  * Module vars
@@ -38,6 +38,10 @@ import { abtest } from 'lib/abtest';
 const sitesList = SitesList();
 const debug = debugFactory( 'calypso:plans' );
 const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
+
+export function isFreePlan( plan ) {
+	return plan === PLAN_FREE || plan === PLAN_JETPACK_FREE;
+}
 
 export function getPlan( plan ) {
 	return plansList[ plan ];
@@ -184,7 +188,7 @@ export function filterPlansBySiteAndProps( plans, site, hideFreePlan, intervalTy
 }
 
 export const isPlanFeaturesEnabled = () => {
-	return isEnabled( 'manage/plan-features' ) && abtest( 'planFeatures' ) === 'show';
+	return isEnabled( 'manage/plan-features' );
 };
 
 export function plansLink( url, site, intervalType ) {

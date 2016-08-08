@@ -9,8 +9,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PopoverMenuItem from 'components/popover/menu-item';
+import { mc } from 'lib/analytics';
 import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
 import { getPost } from 'state/posts/selectors';
+
+function bumpStat() {
+	mc.bumpStat( 'calypso_cpt_actions', 'stats' );
+}
 
 function PostActionsEllipsisMenuStats( { translate, siteSlug, postId, status, isStatsActive } ) {
 	if ( ! isStatsActive || 'publish' !== status ) {
@@ -18,7 +23,10 @@ function PostActionsEllipsisMenuStats( { translate, siteSlug, postId, status, is
 	}
 
 	return (
-		<PopoverMenuItem href={ `/stats/post/${ postId }/${ siteSlug }` } icon="stats-alt">
+		<PopoverMenuItem
+			href={ `/stats/post/${ postId }/${ siteSlug }` }
+			onClick={ bumpStat }
+			icon="stats-alt">
 			{ translate( 'Stats' ) }
 		</PopoverMenuItem>
 	);
@@ -27,7 +35,7 @@ function PostActionsEllipsisMenuStats( { translate, siteSlug, postId, status, is
 PostActionsEllipsisMenuStats.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func.isRequired,
-	siteSlug: PropTypes.number,
+	siteSlug: PropTypes.string,
 	postId: PropTypes.number,
 	status: PropTypes.string,
 	isStatsActive: PropTypes.bool

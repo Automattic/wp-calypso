@@ -1,7 +1,7 @@
 NameserversData
 ===============
 
-A component that fetches a domain's nameservers related data and passes it to its children.
+A component that fetches a domain's name servers related data and passes it to its children.
 
 ## Usage
 
@@ -43,6 +43,6 @@ The child component should receive processed props defined during the render:
 As well as:
 
 * `domains` - a list of domains, it's the result of a call to `DomainsStore.getBySite` for the current site
-* `nameservers` - nameservers data, it's the result of a call to `NameserversStore.getByDomainName` for the current domain  
+* `nameservers` - name servers data, it's the result of a call to `NameserversStore.getByDomainName` for the current domain  
 
 It's updated whenever `DomainsStore`, `NameserversStore` or `sites` changes.

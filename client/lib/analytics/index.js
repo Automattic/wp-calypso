@@ -29,7 +29,7 @@ window.ga = window.ga || function() {
 };
 window.ga.l = +new Date();
 
-loadScript( '//stats.wp.com/w.js?52' );
+loadScript( '//stats.wp.com/w.js?53' ); // W_JS_VER
 loadScript( '//www.google-analytics.com/analytics.js' );
 
 function buildQuerystring( group, name ) {

@@ -58,7 +58,8 @@ const FollowButtonContainer = React.createClass( {
 				following={ this.state.following }
 				onFollowToggle={ this.handleFollowToggle }
 				iconSize={ this.props.iconSize }
-				tagName={ this.props.tagName } />
+				tagName={ this.props.tagName }
+				disabled={ this.props.disabled }/>
 		);
 	}
 } );

@@ -30,7 +30,7 @@ const StartCardHeader = ( { site, railcar } ) => {
 
 StartCardHeader.propTypes = {
 	site: React.PropTypes.object.isRequired,
-	railcar: React.PropTypes.string
+	railcar: React.PropTypes.object
 };
 
 export default StartCardHeader;

@@ -11,7 +11,6 @@ import {
 	getTerms,
 	getTermsForQuery,
 	getTermsForQueryIgnoringPage,
-	getTermsHierarchyForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	isRequestingTermsForQuery,
 	isRequestingTermsForQueryIgnoringPage
@@ -20,7 +19,7 @@ import {
 describe( 'selectors', () => {
 	beforeEach( () => {
 		getTermsForQuery.memoizedSelector.cache.clear();
-		getTermsHierarchyForQueryIgnoringPage.memoizedSelector.cache.clear();
+		getTermsForQueryIgnoringPage.memoizedSelector.cache.clear();
 	} );
 
 	describe( 'isRequestingTermsForQuery()', () => {
@@ -402,83 +401,6 @@ describe( 'selectors', () => {
 			}, 2916284, 'category', { search: 'unappetizing' } );
 
 			expect( lastPage ).to.equal( 1 );
-		} );
-	} );
-
-	describe( 'getTermsHierarchyForQueryIgnoringPage()', () => {
-		it( 'should return null if no matching query results exist', () => {
-			const terms = getTermsHierarchyForQueryIgnoringPage( {
-				terms: {
-					queries: {}
-				}
-			}, 2916284, 'category', {} );
-
-			expect( terms ).to.be.null;
-		} );
-
-		it( 'should return an empty array if no matches exist', () => {
-			const terms = getTermsHierarchyForQueryIgnoringPage( {
-				terms: {
-					queries: {
-						2916284: {
-							category: new TermQueryManager( {
-								items: {},
-								queries: {
-									'[["search","unappetizing"]]': {
-										itemKeys: [],
-										found: 0
-									}
-								}
-							} )
-						}
-					}
-				}
-			}, 2916284, 'category', { search: 'unappetizing' } );
-
-			expect( terms ).to.eql( [] );
-		} );
-
-		it( 'should return matching terms in hierarchical structure', () => {
-			const terms = getTermsHierarchyForQueryIgnoringPage( {
-				terms: {
-					queries: {
-						2916284: {
-							category: new TermQueryManager( {
-								items: {
-									111: {
-										ID: 111,
-										name: 'Chicken and a biscuit'
-									},
-									112: {
-										ID: 112,
-										name: 'Ribs',
-										parent: 111
-									}
-								},
-								queries: {
-									'[["search","i"]]': {
-										itemKeys: [ 111, 112 ],
-										found: 2
-									}
-								}
-							} )
-						}
-					}
-				}
-			}, 2916284, 'category', { search: 'i' } );
-
-			expect( terms ).to.eql( [
-				{
-					ID: 111,
-					name: 'Chicken and a biscuit',
-					parent: 0,
-					items: [ {
-						ID: 112,
-						name: 'Ribs',
-						parent: 111
-					} ]
-				}
-			] );
 		} );
 	} );
 

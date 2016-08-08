@@ -1,7 +1,9 @@
 /**
  * External Dependencies
  */
+import React from 'react';
 import i18n from 'i18n-calypso';
+import omit from 'lodash/omit';
 
 /**
  * Internal Dependencies
@@ -12,14 +14,32 @@ import LoggedOutComponent from './logged-out';
 import trackScrollPage from 'lib/track-scroll-page';
 import buildTitle from 'lib/screen-title/utils';
 import { getAnalyticsData } from './helpers';
-import { makeElement } from 'my-sites/theme/controller';
+import DocumentHead from 'components/data/document-head';
+
+/**
+ * Module Constants
+ */
+const BASE_TITLE = i18n.translate( 'Themes', { textOnly: true } );
+
+function makeElement( ThemesComponent, Head, store, props ) {
+	return (
+		<Head
+			title={ props.title }
+			description={ props.description }
+			type={ 'website' }
+			canonicalUrl={ props.canonicalUrl }
+			image={ props.image }
+			tier={ props.tier || 'all' }>
+			<DocumentHead title={ BASE_TITLE } />
+			<ThemesComponent { ...omit( props, [ 'title' ] ) } />
+		</Head>
+	);
+}
 
 function getProps( context ) {
-	const { tier, site_id: siteId } = context.params;
+	const { tier, filter, site_id: siteId } = context.params;
 
-	const title = buildTitle(
-		i18n.translate( 'Themes', { textOnly: true } ),
-		{ siteID: siteId } );
+	const title = buildTitle( BASE_TITLE, { siteID: siteId } );
 
 	const { basePath, analyticsPageTitle } = getAnalyticsData(
 		context.path,
@@ -38,6 +58,7 @@ function getProps( context ) {
 	return {
 		title,
 		tier,
+		filter,
 		analyticsPageTitle,
 		analyticsPath: basePath,
 		search: context.query.s,

@@ -11,16 +11,3 @@
 		vertical-align: middle;
 	}
 }
-
-.remove-purchase__dialog.dialog__content {
-	h1 {
-		height: auto;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-}
-
-.remove-purchase__dialog .remove-purchase__reason-input {
-	margin: 4px 0 0 24px;
-	width: calc( 100% - 24px );
-}

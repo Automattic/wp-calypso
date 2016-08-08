@@ -23,7 +23,6 @@ SASS ?= $(NODE_BIN)/node-sass --include-path 'client'
 RTLCSS ?= $(NODE_BIN)/rtlcss
 AUTOPREFIXER ?= $(NODE_BIN)/postcss -r --use autoprefixer --autoprefixer.browsers "last 2 versions, > 1%, Safari >= 8, iOS >= 8, Firefox ESR, Opera 12.1"
 RECORD_ENV ?= $(BIN)/record-env
-LIST_ASSETS ?= $(BIN)/list-assets
 ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
 COMPONENTS_USAGE_STATS_JS ?= server/devdocs/bin/generate-components-usage-stats.js
 
@@ -172,10 +171,9 @@ clean:
 distclean:
 	@rm -rf node_modules
 
-# create list of translations, saved as `./calypso-strings.php`
+# create list of translations, saved as `./calypso-strings.pot`
 translate: node_modules $(CLIENT_CONFIG_FILE)
-	@CALYPSO_ENV=stage $(BUNDLER)
-	@CALYPSO_ENV=stage $(LIST_ASSETS) | xargs $(I18N_CALYPSO) --format php --output-file ./calypso-strings.php --array-name calypso_i18n_strings
+	$(I18N_CALYPSO) --format pot --output-file ./calypso-strings.pot $(JS_FILES)
 
 # install all git hooks
 githooks: githooks-commit githooks-push

@@ -654,7 +654,7 @@ module.exports = React.createClass( {
 		this.props.layoutFocus.set( 'content' );
 	},
 
-	addNewWordPress: function() {
+	addNewSite: function() {
 		if ( this.props.user.get().visible_site_count > 1 ) {
 			return null;
 		}
@@ -742,7 +742,7 @@ module.exports = React.createClass( {
 				}
 				</SidebarRegion>
 				<SidebarFooter>
-					{ this.addNewWordPress() }
+					{ this.addNewSite() }
 				</SidebarFooter>
 			</Sidebar>
 		);

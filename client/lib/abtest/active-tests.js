@@ -1,4 +1,11 @@
 module.exports = {
+	// `browserNotifications` controls whether or not users see the
+	// nudge notice to enable browser notifications at the top of
+	// some Calypso screens; any users with this enabled will also
+	// have the preference available in /me/notifications;
+	// note: not renaming this test at this point in time so that we don't
+	// mess with any users that were put in the `enabled` variation -- don't
+	// want to take their browser notifications preference away from them!
 	browserNotifications: {
 		datestamp: '20160628',
 		variations: {
@@ -8,24 +15,29 @@ module.exports = {
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
 	},
+	// `browserNotificationsPreferences` controls whether or not users see the
+	// preference to enable browser notifications in /me/notifications;
+	// any users with `browserNotifications` enabled will also see the preference;
+	// this is a temporary test just to allow us to ramp up the load gradually so
+	// that make sure things will be smooth when we go to launching browser
+	// notifications for 100% of users
+	browserNotificationsPreferences: {
+		datestamp: '20160801',
+		variations: {
+			disabled: 60,
+			enabled: 40,
+		},
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
 	coldStartReader: {
-		datestamp: '20160622',
+		datestamp: '20160804',
 		variations: {
 			noEmailColdStart: 20,
 			noChanges: 80
 		},
 		defaultVariation: 'noChanges',
 		allowExistingUsers: false,
-	},
-	domainCreditsInfoNotice: {
-		datestamp: '20160420',
-		variations: {
-			showNotice: 90,
-			original: 10
-		},
-		defaultVariation: 'showNotice',
-		allowExistingUsers: true,
-		allowAnyLocale: true
 	},
 	domainSuggestionVendor: {
 		datestamp: '20160614',
@@ -61,17 +73,8 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	planFeatures: {
-		datestamp: '20160720',
-		variations: {
-			original: 50,
-			show: 50
-		},
-		defaultVariation: 'original',
-		allowExistingUsers: false
-	},
 	signupStore: {
-		datestamp: '20160707',
+		datestamp: '20160727',
 		variations: {
 			designTypeWithoutStore: 80,
 			designTypeWithStore: 20,
@@ -79,17 +82,22 @@ module.exports = {
 		defaultVariation: 'designTypeWithoutStore',
 		allowExistingUsers: false,
 	},
-	translatorInvitation: {
-		datestamp: '20150910',
+	firstView: {
+		datestamp: '20160726',
 		variations: {
-			noNotice: 1,
-			startNow: 1,
-			helpUs: 1,
-			tryItNow: 1,
-			startTranslating: 1,
-			improve: 1
+			disabled: 60,
+			enabled: 40,
 		},
-		defaultVariation: 'noNotice',
-		allowAnyLocale: true
+		defaultVariation: 'disabled',
+		allowExistingUsers: false,
 	},
+	readerSearchSuggestions: {
+		datestamp: '20160804',
+		variations: {
+			staffSuggestions: 50,
+			popularSuggestions: 50
+		},
+		defaultVariation: 'staffSuggestions',
+		allowExistingUsers: true
+	}
 };

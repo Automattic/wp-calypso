@@ -65,7 +65,7 @@ const PushNotificationPrompt = React.createClass( {
 		const noticeText = (
 			<div>
 				<p>
-					<strong>{ this.translate( 'Get notifications on your desktop!' ) }</strong> { this.translate( 'Get notifications for new comments, likes, and more instantly, even when you are not actively using WordPress.com.' ) }
+					<strong>{ this.translate( 'Get notifications on your desktop!' ) }</strong> { this.translate( 'Get instant notifications for new comments and likes, even when you are not actively using WordPress.com.' ) }
 				</p>
 				<p>
 					{ this.translate(

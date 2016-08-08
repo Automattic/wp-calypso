@@ -61,6 +61,10 @@
 	.is-phone & {
 		max-width: 460px;
 	}
+
+	.is-seo & {
+		max-width: 865px;
+	}
 }
 
 .web-preview.is-computer .web-preview__content,
@@ -107,7 +111,11 @@
 .web-preview__external {
 	display: flex;
 	align-items: center;
-	margin-right: 8px;
+}
+
+.web-preview__device-switcher {
+	display: flex;
+	margin-left: 8px;
 }
 
 .web-preview__device-button {
@@ -121,6 +129,18 @@
 
 	@include breakpoint( "<660px" ) {
 		display: none;
+	}
+
+	&.web-preview__seo-button {
+		display: block;
+	}
+}
+
+.web-preview__back-to-preview-button {
+	display: none;
+
+	@include breakpoint( "<660px" ) {
+		display: block;
 	}
 }
 

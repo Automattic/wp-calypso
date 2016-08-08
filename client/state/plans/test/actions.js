@@ -65,7 +65,7 @@ describe( 'actions', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( `/rest/v1.2/plans` )
+				.get( `/rest/v1.4/plans` )
 				.reply( 200, wpcomResponse );
 		} );
 

@@ -7,12 +7,22 @@ import { constant, times } from 'lodash';
 /**
  * Internal dependencies
  */
-import {
-	getGuidedTourState,
-	findEligibleTour,
-} from '../selectors';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'selectors', () => {
+	let getGuidedTourState;
+	let findEligibleTour;
+
+	useMockery( mockery => {
+		mockery.registerSubstitute(
+				'layout/guided-tours/config',
+				'state/ui/guided-tours/test/config' );
+
+		const selectors = require( '../selectors' );
+		getGuidedTourState = selectors.getGuidedTourState;
+		findEligibleTour = selectors.findEligibleTour;
+	} );
+
 	describe( '#getGuidedTourState()', () => {
 		it( 'should return an empty object if no state is present', () => {
 			const tourState = getGuidedTourState( {

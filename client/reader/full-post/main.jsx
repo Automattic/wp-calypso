@@ -19,7 +19,7 @@ var ReactDom = require( 'react-dom' ),
  */
 var abtest = require( 'lib/abtest' ).abtest,
 	config = require( 'config' ),
-	CommentButton = require( 'components/comment-button' ),
+	CommentButton = require( 'blocks/comment-button' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	EmbedContainer = require( 'components/embed-container' ),
@@ -45,8 +45,10 @@ var abtest = require( 'lib/abtest' ).abtest,
 	PostExcerptLink = require( 'reader/post-excerpt-link' ),
 	ShareButton = require( 'reader/share' ),
 	ShareHelper = require( 'reader/share/helper' ),
+	DailyPostHelper = require( 'reader/daily-post/helper' ),
+	DailyPostButton = require( 'reader/daily-post' ),
 	DiscoverHelper = require( 'reader/discover/helper' ),
-	DiscoverVisitLink = require( 'reader/discover/visit-link' ),
+	DiscoverSiteAttribution = require( 'reader/discover/site-attribution' ),
 	readerRoute = require( 'reader/route' ),
 	showReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).showReaderFullPost,
 	smartSetState = require( 'lib/react-smart-set-state' ),
@@ -163,12 +165,11 @@ FullPostView = React.createClass( {
 			shouldShowExcerptOnly = ( post && post.use_excerpt ? post.use_excerpt : false ),
 			siteName = utils.siteNameFromSiteAndPost( site, post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
-			discoverSiteUrl,
-			discoverSiteName;
+			isDiscoverSitePick = DiscoverHelper.isDiscoverSitePick( post ),
+			discoverSiteUrl;
 
 		if ( isDiscoverPost && post.discover_metadata ) {
 			discoverSiteUrl = DiscoverHelper.getSiteUrl( post );
-			discoverSiteName = post.discover_metadata.attribution.blog_name;
 		}
 
 		if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
@@ -221,7 +222,7 @@ FullPostView = React.createClass( {
 
 					{ post.title ? <h1 className="reader__post-title" onClick={ this.handlePermalinkClick }><ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" icon={ false }>{ post.title }</ExternalLink></h1> : null }
 
-					<PostByline post={ post } site={ site } icon={ true }/>
+					<PostByline post={ post } site={ site } icon={ true } isDiscoverPost={ isDiscoverPost }/>
 
 					{ post && post.use_excerpt
 						? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
@@ -231,7 +232,8 @@ FullPostView = React.createClass( {
 					}
 
 					{ shouldShowExcerptOnly && ! isDiscoverPost ? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } /> : null }
-					{ discoverSiteName && discoverSiteUrl ? <DiscoverVisitLink siteName={ discoverSiteName } siteUrl={ discoverSiteUrl } /> : null }
+					{ isDiscoverSitePick ? <DiscoverSiteAttribution attribution={ post.discover_metadata.attribution } siteUrl={ discoverSiteUrl } followUrl={ DiscoverHelper.getSourceFollowUrl( post ) } /> : null }
+					{ DailyPostHelper.isDailyPostChallengeOrPrompt( post ) ? <DailyPostButton post={ post } tagName="span" /> : null }
 					{ relatedPostsEnabled && ! post.is_external && post.site_ID && <RelatedPosts siteId={ post.site_ID } postId={ post.ID } onPostClick={ this.recordRelatedPostClicks } onSiteClick={ this.recordRelatedPostSiteClicks }/> }
 					{ this.props.shouldShowComments ? <PostCommentList ref="commentList" post={ post } initialSize={ 25 } pageSize={ 25 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</article>

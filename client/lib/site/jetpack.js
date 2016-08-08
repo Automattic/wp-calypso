@@ -244,7 +244,7 @@ JetpackSite.prototype.deactivateModule = function( moduleId, callback ) {
 JetpackSite.prototype.toggleModule = function( moduleId, callback ) {
 	const isActive = this.isModuleActive( moduleId ),
 		method = isActive ? 'jetpackModulesDeactivate' : 'jetpackModulesActivate',
-		prevActiveModules = Object.assign( {}, this.modules );
+		prevActiveModules = [ ...this.modules ];
 
 	if ( isActive ) {
 		this.modules = this.modules.filter( module => module !== moduleId );

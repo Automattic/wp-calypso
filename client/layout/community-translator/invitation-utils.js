@@ -5,29 +5,25 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:community-translator-invitation' ),
-	includes = require( 'lodash/includes' ),
-	store = require( 'store' ),
-	once = require( 'lodash/once'),
-	translate = require( 'i18n-calypso' ).translate;
+import Debug from 'debug';
+import includes from 'lodash/includes';
+import store from 'store';
+import once from 'lodash/once';
 
 /**
  * Internal dependencies
  */
-var translator = require( 'lib/translator-jumpstart' ),
-	user = require( 'lib/user' )(),
-	userSettings = require( 'lib/user-settings' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	preferencesStore = require( 'lib/preferences/store' ),
-	preferencesActions = require( 'lib/preferences/actions' ),
-	notices = require( 'notices' ),
-	abModule = require( 'lib/abtest' ),
-	tracks = require( 'lib/analytics' ).tracks;
+import translator from 'lib/translator-jumpstart';
+import userFactory from 'lib/user';
+import userSettings from 'lib/user-settings';
+import emitter from 'lib/mixins/emitter';
+import preferencesStore from 'lib/preferences/store';
+import preferencesActions from 'lib/preferences/actions';
+import notices from 'notices';
+import analytics from 'lib/analytics';
 
-var invitationUtils, userPromise, userSettingsPromise, preferencesPromise,
-	invitePromise,
-	invitationPending = store.get( 'calypsoTranslatorInvitationIsPending' ),
-	inclusionPercent = 10,
+const debug = Debug( 'calypso:community-translator-invitation' ),
+	user = userFactory(),
 	excludedLocales = [
 		'en',
 		'es',
@@ -47,17 +43,11 @@ var invitationUtils, userPromise, userSettingsPromise, preferencesPromise,
 		'ar',
 		'sv'
 	];
-
-// Temporary clean up
-// This shipped without the 'en' check, and users that visited while that was
-// live could have pending invitations.
-// We should reomve this line after, say, two weeks - November 12th 2015
-store.remove( 'calypsoTranslatorInvitationPending' );
+let invitationPending = store.get( 'calypsoTranslatorInvitationIsPending' );
 
 function maybeInvite() {
-	var preferences = preferencesStore.getAll(),
-		locale = user.get().localeSlug,
-		abBucket;
+	const preferences = preferencesStore.getAll(),
+		locale = user.get().localeSlug;
 
 	debug( 'Checking if we should show invitation notice' );
 
@@ -82,42 +72,15 @@ function maybeInvite() {
 		return;
 	}
 
-	if ( inclusionPercent < user.get().ID % 100 ) {
-		debug( `Not inviting, user ${user.get().ID} is not part of test cohort (${inclusionPercent}%)` );
-		return;
-	}
-
-	abBucket = abModule.abtest( 'translatorInvitation' );
-	debug( `user was allocated to abtest: ${abBucket} ` );
-	if ( abBucket === 'noNotice' ) {
-		debug( 'Not inviting, user part of control group' );
-		return;
-	}
-
 	// We had to wait for multiple async to get to this point, and we're above
 	// most of the content, so we'll show the invitation on next load to avoid
 	// an ugly visual jump
 	debug( 'Translator invitation queued up for next load' );
-	tracks.recordEvent( 'calypso_community_translator_invitation_queued', analyticsProperties() );
+	analytics.tracks.recordEvent( 'calypso_community_translator_invitation_queued', analyticsProperties() );
 	store.set( 'calypsoTranslatorInvitationIsPending', true );
 }
 
-function permanentlyDisableInvitation() {
-	debug( 'disabling' );
-	preferencesActions.set( 'translatorInvited', true );
-	invitationPending = false;
-	invitationUtils.emitChange();
-	store.remove( 'calypsoTranslatorInvitationIsPending' );
-}
-
-function analyticsProperties() {
-	return {
-		locale: user.data.localeSlug,
-		abtest_variation: abModule.getABTestVariation( 'translatorInvitation' )
-	};
-}
-
-invitationUtils = {
+const invitationUtils = {
 	isPending: function() {
 		return invitationPending;
 	},
@@ -128,39 +91,15 @@ invitationUtils = {
 		return section !== 'post';
 	},
 
-	// Provide variant-driven overides for ./invitation-component.jsx
-	subComponentVariations: function() {
-		// see client/abtest/active-tests.js and for relevant fields
-		var result;
-		switch ( abModule.getABTestVariation( 'translatorInvitation' ) ) {
-			case 'tryItNow':
-				result = { acceptButtonText: translate( 'Try it now!' ) };
-				break;
-			case 'startTranslating':
-				result = { acceptButtonText: translate( 'Start Translating' ) };
-				break;
-			case 'helpUs':
-				result = { title: translate( 'Help us translate WordPress.com' ) };
-				break;
-			case 'improve':
-				result = { title: translate( 'Translate and improve WordPress.com in your language.' ) };
-				break;
-			case 'startNow': // fallthrough
-			default:
-				result = {};
-		}
-		return result;
-	},
-
 	dismiss: function() {
 		debug( 'dismissed' );
 		permanentlyDisableInvitation();
-		tracks.recordEvent( 'calypso_community_translator_invitation_dismissed', analyticsProperties() );
+		analytics.tracks.recordEvent( 'calypso_community_translator_invitation_dismissed', analyticsProperties() );
 	},
 
 	activate: function() {
 		debug( 'activated' );
-		tracks.recordEvent( 'calypso_community_translator_invitation_accepted', analyticsProperties() );
+		analytics.tracks.recordEvent( 'calypso_community_translator_invitation_accepted', analyticsProperties() );
 		userSettings.saveSettings( function( error, response ) {
 			if ( error || ! response || ! response.enable_translator ) {
 				debug( 'Error saving settings: ' + JSON.stringify( error ), 'response:', response );
@@ -174,26 +113,40 @@ invitationUtils = {
 	},
 	recordDocsEvent: function() {
 		debug( 'docs' );
-		tracks.recordEvent( 'calypso_community_translator_invitation_docsLink', analyticsProperties() );
+		analytics.tracks.recordEvent( 'calypso_community_translator_invitation_docsLink', analyticsProperties() );
 	},
 	recordInvitationDisplayed: once( function() {
 		debug( 'displayed' );
-		tracks.recordEvent( 'calypso_community_translator_invitation_displayed', analyticsProperties() );
+		analytics.tracks.recordEvent( 'calypso_community_translator_invitation_displayed', analyticsProperties() );
 	} )
 };
 
 emitter( invitationUtils );
+
+function permanentlyDisableInvitation() {
+	debug( 'disabling' );
+	preferencesActions.set( 'translatorInvited', true );
+	invitationPending = false;
+	invitationUtils.emitChange();
+	store.remove( 'calypsoTranslatorInvitationIsPending' );
+}
+
+function analyticsProperties() {
+	return {
+		locale: user.data.localeSlug,
+	};
+}
 
 /*
  * Check for and/or kick off the data we need.  Each source might require a
  * call to the REST api, but we can resolve immediately if it's in localStorage
  * and already available.
  */
-userPromise = new Promise( function( resolve ) {
+const userPromise = new Promise( function( resolve ) {
 	user.get() ? resolve() : user.once( 'change', resolve );
 } );
 
-userSettingsPromise = new Promise( function( resolve ) {
+const userSettingsPromise = new Promise( function( resolve ) {
 	if ( userSettings.hasSettings() ) {
 		return resolve();
 	}
@@ -202,7 +155,7 @@ userSettingsPromise = new Promise( function( resolve ) {
 	userSettings.fetchSettings();
 } );
 
-preferencesPromise = new Promise( function( resolve ) {
+const preferencesPromise = new Promise( function( resolve ) {
 	if ( preferencesStore.getAll() ) {
 		return resolve();
 	}
@@ -211,7 +164,7 @@ preferencesPromise = new Promise( function( resolve ) {
 	preferencesActions.fetch();
 } );
 
-invitePromise = Promise.all( [ userPromise, userSettingsPromise, preferencesPromise ] );
+const invitePromise = Promise.all( [ userPromise, userSettingsPromise, preferencesPromise ] );
 invitePromise.then( function() {
 	maybeInvite();
 } );

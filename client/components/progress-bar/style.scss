@@ -19,6 +19,18 @@
 	height: 100%;
 	background-color: lighten( $blue-dark, 10% );
 	border-radius: 4.5px;
+	transition: width 200ms;
+}
+
+.progress-bar.is-pulsing .progress-bar__progress {
+	animation: progress-bar-animation 2000ms infinite linear;
+	background-image: linear-gradient( 45deg, $blue-dark 0%, $blue-wordpress 50%, $blue-dark 100% );
+	background-size: 50%;
+}
+
+@keyframes progress-bar-animation {
+  0%   { background-position: 100% 0; }
+  100% {  }
 }
 
 /* Percentage bar */
@@ -30,3 +42,4 @@
 		border-radius: 0;
 	}
 }
+

@@ -3,8 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
-import mapKeys from 'lodash/mapKeys';
-import snakeCase from 'lodash/snakeCase';
+import { reduce, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -58,9 +57,15 @@ export default React.createClass( {
 	getQuery() {
 		const { type, status, excludeTree, orderBy, order } = this.props;
 		const { search } = this.state;
-		return mapKeys( { type, status, excludeTree, orderBy, order, search }, ( value, key ) => {
-			return snakeCase( key );
-		} );
+
+		return reduce( { type, status, excludeTree, orderBy, order, search }, ( memo, value, key ) => {
+			if ( null === value || undefined === value ) {
+				return memo;
+			}
+
+			memo[ snakeCase( key ) ] = value;
+			return memo;
+		}, {} );
 	},
 
 	render() {

@@ -24,7 +24,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/app-components/domain-tip">Domain Tip</a>
+					<a href="/devdocs/blocks/domain-tip">Domain Tip</a>
 				</h2>
 				<div>
 					<DomainTip siteId={ siteId } event="domain_app_example" />

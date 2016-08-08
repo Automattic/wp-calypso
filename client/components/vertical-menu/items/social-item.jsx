@@ -44,7 +44,9 @@ export const SocialItem = props => {
 			<div className="vertical-menu__items__social-icon">
 				<SocialLogo icon={ icon } size={ 24 } />
 			</div>
-			{ label }
+			<span className="vertical-menu__items__social-label">
+				{ label }
+			</span>
 		</div>
 	);
 };
@@ -53,12 +55,13 @@ SocialItem.propTypes = {
 	isSelected: PropTypes.bool,
 	onClick: PropTypes.func,
 	service: PropTypes.oneOf( Object.keys( services( identity ) ) ).isRequired,
-	translate: PropTypes.func.isRequired
+	translate: PropTypes.func
 };
 
 SocialItem.defaultProps = {
 	isSelected: false,
-	onClick: identity
+	onClick: identity,
+	translate: identity
 };
 
 export default localize( SocialItem );
