@@ -31,7 +31,7 @@ var SegmentedControlItem = React.createClass( {
 
 		var linkClassName = classNames( {
 			'segmented-control__link': true,
-			[`item-index-${this.props.index}`]: this.props.index != null,
+			[ `item-index-${this.props.index}` ]: this.props.index != null,
 		} );
 
 		return (
