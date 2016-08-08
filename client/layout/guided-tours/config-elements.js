@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
 import {
 	chunk,
 	debounce,
+	defer,
 	find,
 	flatMap,
 	fromPairs,
@@ -137,87 +138,27 @@ export class Step extends Component {
 	}, 100 )
 
 	quitIfInvalidRoute( props, context ) {
-		const { step, branching } = this.context;
+		const { step, branching, lastAction } = context;
 		const stepBranching = branching[ step ];
 		const hasContinue = !! stepBranching.continue;
-		const continueStep = stepBranching.continue;
+		const isRouteSet = lastAction.type === 'ROUTE_SET';
 
-		const findContinue = ( children ) => {
-			// TODO(lsinger) DOESN'T WORK USE MIGUEL'S!
-			// traverse children looking for a Continue element here
-			const getContinue = ( child ) => {
-				return typeof child.type === 'function' && child.type.name === 'Continue' ? child : null;
-			};
-			var res = null;
-			for ( const child of React.Children.toArray( children ) ) {
-				if ( res || ( getContinue( child ) ) ) {
-					return child;
-				} else {
-					const grandChildren = React.Children.toArray( child.props.children );
-					res = res || findContinue( grandChildren );
-				}
-			}
-			return res;
-		};
+		console.log( 'lastAction.type', lastAction.type );
+		console.log( 'hasContinue', hasContinue );
 
-		const continueElement = findContinue( this.props.children );
-		console.log( 'continueElement', continueElement );
-		console.log( 'context.lastAction.type', context.lastAction.type );
-		console.log( 'this', this );
-		if ( ! continueElement && context.lastAction.type === 'ROUTE_SET' ) {
-			// we don't have a continue element, and the last action changed the route
-			// are we still in a valid section? if not: quit
-			const hasSectionChanged = () => {
-				return true;
-			};
-			if ( hasSectionChanged() ) {
-				setTimeout( () => {
-					console.log( 'Step.quitIfInvalidRoute quitting' );
-					this.context.quit();
-				}, 0 );
-			}
+		if ( ! hasContinue && isRouteSet &&
+				this.isDifferentSection( lastAction.path ) ) {
+			defer( () => {
+				console.log( 'Step.quitIfInvalidRoute quitting' );
+				this.context.quit();
+			} );
 		}
+	}
 
+	isDifferentSection( path ) {
+		return true;
+	}
 
-		// console.log( 'Step.quitIfInvalidRoute', props, context );
-
-		// console.log( 'findContinue( this.props.children )', findContinue( this.props.children ) );
-
-		// const cont = findContinue( this.props.children );
-		// const contContext = cont ? cont.props.context : null;
-
-		// if ( context.lastAction.type === 'ROUTE_SET' ) {
-		// 	console.log('++++++++++++++++');
-
-		// 	console.log( 'cont', cont );
-		// 	console.log( 'contContext', contContext );
-		// 	if ( cont && contContext ) {
-		// 		console.log( 'context.isValid( contContext )', context.isValid( contContext ) );
-		// 	} else {
-		// 		console.log( 'cont && contContext isnt truthy', contContext );
-		// 	}
-
-		// 	if ( !cont || ( cont && contContext && ! context.isValid( contContext ) ) ) {
-		// 		const slug = this.props.target;
-		// 		console.log( 'ROUTE_SET, slug: ', slug );
-		// 		const quit = this.context.quit;
-		// 		setTimeout( function() {
-		// 			const target = targetForSlug( slug );
-		// 			console.log( 'target: ', target );
-		// 			if ( slug && ! target ) {
-		// 				// problem when: step_n has target and slug, step_n+1 has neither
-		// 				// --> slug here will come from previous step
-		// 				alert( 'slug but no target!' );
-		// 				quit();
-		// 			}
-		// 			// console.log( 'context.isValid( contContext )', context.isValid( contContext ) );
-		// 			// if ( ! context.isValid( contContext ) ) {
-		// 			// 	alert( '! context.isValid( contContext )' );
-		// 			// 	quit();
-		// 			// }
-		// 		}, 0);
-		// 	}
-		// }
 	}
 
 	skipIfInvalidContext( props ) {
@@ -372,14 +313,14 @@ export class Continue extends Component {
 		/*
 		- quit if we have a target but cant find it
 		*/
-		setTimeout( () => {
+		defer( () => {
 			const quit = this.context.quit;
 			const target = targetForSlug( props.target );
 			if ( props.target && ! target ) {
 				console.log( '++++++++ quiting from quitIfInvalidRoute' );
 				quit();
 			}
-		}, 0);
+		} );
 	}
 
 	componentDidUpdate() {
