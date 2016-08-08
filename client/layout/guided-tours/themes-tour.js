@@ -60,12 +60,12 @@ export const ThemesTour = makeTour(
 				Search for a specific theme name or feature here. Try typing something — for example, "business".
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue step="filter" context={ themeSearchResultsFound } hidden/>
+				<Continue step="filter" target=".themes__search-card .search-open__icon" context={ themeSearchResultsFound } hidden/>
 			</p>
 		</Step>
 
 		<Step name="filter"
-			target="themes-tier-dropdown"
+			pointsAt="themes-tier-dropdown"
 			placement="above"
 			arrow="bottom-right"
 		>
@@ -73,7 +73,7 @@ export const ThemesTour = makeTour(
 				Here you can filter between free and premium themes. Try filtering by _free_ themes now.
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue step="choose-theme" context={ themeFreeFilterChosen } hidden/>
+				<Continue step="choose-theme" target="themes-tier-dropdown" context={ themeFreeFilterChosen } hidden/>
 			</p>
 		</Step>
 
