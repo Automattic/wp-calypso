@@ -41,7 +41,7 @@ const DomainSuggestion = React.createClass( {
 	},
 
 	render() {
-		const clickableRow = true;//abtest( 'domainSuggestionClickableRow' ) === 'clickableRow';
+		const clickableRow = abtest( 'domainSuggestionClickableRow' ) === 'clickableRow';
 		const { price, isAdded, extraClasses, children, priceRule } = this.props;
 		let classes = classNames( 'domain-suggestion', 'card', 'is-compact', {
 			'is-added': isAdded,
@@ -72,7 +72,7 @@ const DomainSuggestion = React.createClass( {
 
 DomainSuggestion.Placeholder = React.createClass( {
 	render() {
-		const clickableRow = true;//abtest( 'domainSuggestionClickableRow' ) === 'clickableRow';
+		const clickableRow = abtest( 'domainSuggestionClickableRow' ) === 'clickableRow';
 		const classes = classNames( 'domain-suggestion', 'card', 'is-compact', 'is-placeholder', {
 			'is-clickable': clickableRow,
 		} );
