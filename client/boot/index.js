@@ -29,6 +29,8 @@ var config = require( 'config' ),
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
+	normalize = require( 'lib/route/normalize' ),
+	{ isLegacyRoute } = require( 'lib/route/legacy-routes' ),
 	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
@@ -269,7 +271,15 @@ function reduxStoreReady( reduxStore ) {
 
 	setUpContext( reduxStore );
 
-	page( '*', require( 'lib/route/normalize' ) );
+	page( '*', function( context, next ) {
+		// Don't normalize legacy routes - let them fall through and be unhandled
+		// so that page redirects away from Calypso
+		if ( isLegacyRoute( context.pathname ) ) {
+			return next();
+		}
+
+		return normalize( context, next );
+	} );
 
 	// warn against navigating from changed, unsaved forms
 	page.exit( '*', require( 'lib/mixins/protect-form' ).checkFormHandler );
@@ -279,15 +289,7 @@ function reduxStoreReady( reduxStore ) {
 
 		// Bypass this global handler for legacy routes
 		// to avoid bumping stats and changing focus to the content
-		if ( /.php$/.test( path ) ||
-				/^\/?$/.test( path ) && ! config.isEnabled( 'reader' ) ||
-				/^\/my-stats/.test( path ) ||
-				/^\/notifications/.test( path ) ||
-				/^\/themes/.test( path ) ||
-				/^\/manage/.test( path ) ||
-				/^\/plans/.test( path ) && ! config.isEnabled( 'manage/plans' ) ||
-				/^\/me/.test( path ) && ! /^\/me\/billing/.test( path ) &&
-				! /^\/me\/next/.test( path ) && ! config.isEnabled( 'me/my-profile' ) ) {
+		if ( isLegacyRoute( path ) ) {
 			return next();
 		}
 
