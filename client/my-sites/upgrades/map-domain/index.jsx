@@ -64,11 +64,18 @@ var MapDomain = React.createClass( {
 	},
 
 	goBack: function() {
-		if ( ! this.props.sites ) {
-			return page( this.props.path.replace( '/mapping', '' ) );
+		const selectedSite = this.props.sites && this.props.sites.getSelectedSite();
+		if ( ! selectedSite ) {
+			page( this.props.path.replace( '/mapping', '' ) );
+			return;
 		}
 
-		page( '/domains/add/' + this.props.sites.getSelectedSite().slug );
+		if ( selectedSite.is_vip ) {
+			page( paths.domainManagementList( selectedSite.slug ) );
+			return;
+		}
+
+		page( '/domains/add/' + selectedSite.slug );
 	},
 
 	handleRegisterDomain( suggestion ) {
