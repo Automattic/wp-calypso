@@ -31,7 +31,7 @@ export class ReaderPreview extends PureComponent {
 		const postExcerpt = postContent ? formatExcerpt( postContent  ) : '';
 
 		return (
-			<article className="reader-preview__post">
+			<article className="reader-preview">
 				<div className="reader__post-header">
 					<div className="site has-edit-capabilities">
 						<div className="site__content" title={ siteTitle }>
