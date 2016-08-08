@@ -19,7 +19,7 @@ describe( 'selectors', () => {
 	useMockery( mockery => {
 		mockery.registerSubstitute(
 				'layout/guided-tours/all-tours',
-				'state/ui/guided-tours/test/config' );
+				'state/ui/guided-tours/test/fixtures/config' );
 
 		const selectors = require( '../selectors' );
 		getGuidedTourState = selectors.getGuidedTourState;
