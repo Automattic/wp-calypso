@@ -487,16 +487,25 @@ const PlansSetup = React.createClass( {
 } );
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const site = sites.getSelectedSite();
+
+		// Filter out only the plugins whitelisted (if we're whitelisting)
+		const plugins = filter( getPluginsForSite( state, siteId ), ( plugin ) => {
+			if ( !! ownProps.whitelist ) {
+				return ( ownProps.whitelist === plugin.slug );
+			}
+			return true;
+		} );
+
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
 			isInstalling: isInstalling( state, siteId ),
 			isFinished: isFinished( state, siteId ),
-			plugins: getPluginsForSite( state, siteId ),
+			plugins,
 			activePlugin: getActivePlugin( state, siteId ),
 			nextPlugin: getNextPlugin( state, siteId ),
 			selectedSite: site && site.jetpack ? JetpackSite( site ) : site,
