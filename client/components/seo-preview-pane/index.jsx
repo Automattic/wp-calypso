@@ -161,6 +161,13 @@ export class SeoPreviewPane extends PureComponent {
 
 		const { selectedService } = this.state;
 
+		const services = compact( [
+			post && 'wordpress',
+			'google',
+			'facebook',
+			'twitter'
+		] );
+
 		return (
 			<div className="seo-preview-pane">
 				<div className="seo-preview-pane__sidebar">
@@ -178,13 +185,7 @@ export class SeoPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview }>
-						{ compact( [
-							post && 'wordpress',
-							'google',
-							'facebook',
-							'twitter'
-						] ).map( service => <SocialItem { ...{ key: service, service } } /> )
-						}
+						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
 					</VerticalMenu>
 				</div>
 				<div className="seo-preview-pane__preview-area">
