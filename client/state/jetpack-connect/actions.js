@@ -41,7 +41,7 @@ import addQueryArgs from 'lib/route/add-query-args';
 const _fetching = {};
 const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
 const apiBaseUrl = 'https://jetpack.wordpress.com';
-const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
+const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const remoteActivatePath = '/wp-admin/plugins.php';
 const userModule = userFactory();
@@ -175,7 +175,10 @@ export default {
 				url: url,
 				type: 'remote_auth'
 			} );
-			window.location = addQueryArgs( { jetpack_connect_url: url + remoteAuthPath }, apiBaseUrl );
+			window.location = addQueryArgs( {
+				jetpack_connect_url: url + remoteAuthPath,
+				calypso_env: calypsoEnv
+			}, apiBaseUrl );
 		};
 	},
 	goToPluginInstall( url ) {
@@ -188,7 +191,10 @@ export default {
 				url: url,
 				type: 'plugin_install'
 			} );
-			window.location = addQueryArgs( { jetpack_connect_url: url + remoteInstallPath }, apiBaseUrl );
+			window.location = addQueryArgs( {
+				jetpack_connect_url: url + remoteInstallPath,
+				calypso_env: calypsoEnv
+			}, apiBaseUrl );
 		};
 	},
 	goToPluginActivation( url ) {
@@ -201,7 +207,10 @@ export default {
 				url: url,
 				type: 'plugin_activation'
 			} );
-			window.location = addQueryArgs( { jetpack_connect_url: url + remoteActivatePath }, apiBaseUrl );
+			window.location = addQueryArgs( {
+				jetpack_connect_url: url + remoteActivatePath,
+				calypso_env: calypsoEnv
+			}, apiBaseUrl );
 		};
 	},
 	goBackToWpAdmin( url ) {
