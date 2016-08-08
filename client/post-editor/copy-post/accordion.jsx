@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import classNames from 'classnames';
-import cloneDeep from 'lodash/cloneDeep';
-import isEmpty from 'lodash/isEmpty';
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
+import { cloneDeep, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,34 +15,23 @@ import Gridicon from 'components/gridicon';
 import PostActions from 'lib/posts/actions';
 import PostSelector from 'my-sites/post-selector';
 
-module.exports = React.createClass( {
-	displayName: 'EditorCopyPost',
+class EditorCopyPost extends Component {
 
-	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-	},
+	static propTypes = {
+		site: PropTypes.object.isRequired,
+		post: PropTypes.object.isRequired,
+		translate: PropTypes.func,
+	};
 
-	getInitialState: function() {
-		return {
+	constructor() {
+		super( ...arguments );
+		this.state = {
 			selectedPostID: '',
 			postCopy: {},
 		};
-	},
+	}
 
-	getTitle: function() {
-		return this.translate( 'Copy Post' );
-	},
-
-	getDescription: function() {
-		return this.translate( 'Use an existing post as a template.' );
-	},
-
-	getSubmitText: function() {
-		return this.translate( 'Use selected post as template' );
-	},
-
-	setPostCopy: function( post ) {
+	setPostCopy = post => {
 		const postCopy = {
 			categories: cloneDeep( post.categories ),
 			//content: post.content,
@@ -75,31 +63,31 @@ module.exports = React.createClass( {
 			selectedPostID: post.ID,
 			postCopy: postCopy,
 		} );
-	},
+	}
 
-	updateCurrentPost: function() {
+	updateCurrentPost = () => {
 		if ( ! isEmpty( this.state.postCopy ) ) {
 			PostActions.edit( this.state.postCopy );
 			//PostActions.editRawContent( this.state.postCopy.content );
 		}
-	},
+	}
 
-	render: function() {
-		const classes = classNames( 'editor-drawer__accordion' );
+	render() {
+		const { translate, site } = this.props;
 		return (
 			<Accordion
-				title={ this.getTitle() }
+				title={ translate( 'Copy Post' ) }
 				icon={ <Gridicon icon="aside" /> }
-				className={ classes }
+				className="editor-drawer__accordion"
 			>
 				<AccordionSection>
 					<p className="editor-drawer__description">
-						{ this.getDescription() }
+						{ translate( 'Use an existing post as a template.' ) }
 					</p>
 					<PostSelector
-						siteId={ this.props.site.ID }
+						siteId={ site.ID }
 						showTypeLabels={ true }
-						emptyMessage={ this.translate( 'No posts found' ) }
+						emptyMessage={ translate( 'No posts found' ) }
 						onChange={ this.setPostCopy }
 						selected={ this.state.selectedPostID }
 					/>
@@ -107,10 +95,13 @@ module.exports = React.createClass( {
 						disabled={ ! this.state.selectedPostID }
 						onClick={ this.updateCurrentPost }
 					>
-						{ this.getSubmitText() }
+						{ translate( 'Use selected post as template' ) }
 					</Button>
 				</AccordionSection>
 			</Accordion>
 		);
-	},
-} );
+	}
+
+}
+
+export default localize( EditorCopyPost );
