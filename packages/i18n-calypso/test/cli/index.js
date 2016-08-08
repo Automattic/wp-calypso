@@ -141,6 +141,8 @@ describe( 'index', function() {
 				format: 'POT',
 				extras: [ 'date' ]
 			} );
+
+			// fs.writeFileSync( path.join( __dirname, 'pot.pot' ), output, 'utf8' );
 		} );
 
 		it( 'should have all the default headers', function() {
@@ -219,7 +221,7 @@ describe( 'index', function() {
 
 		it( 'should handle template literals', function() {
 			expect( output ).to.have.string( 'msgid "My hat has six corners."' );
-			expect( output ).to.have.string( 'msgid "My hat\nhas seventeen\ncorners."' );
+			expect( output ).to.have.string( 'msgid "My hat\\nhas seventeen\\ncorners."' );
 		} );
 	} );
 
