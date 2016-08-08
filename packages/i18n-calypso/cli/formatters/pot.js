@@ -25,7 +25,7 @@ function multiline( literal, startAt ) {
 	}
 
 	// Remove line break in trailing backslash syntax.
-	literal = literal.replace( /\\\n/g, '' );
+	literal = literal.replace( /\\\\\n/g, '' );
 	// Convert regular line breaks to \n notation.
 	literal = literal.replace( /\n/g, '\\n' );
 
