@@ -8,14 +8,17 @@ import { constant, times } from 'lodash';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'selectors', () => {
 	let getGuidedTourState;
 	let findEligibleTour;
 
+	useFakeDom();
+
 	useMockery( mockery => {
 		mockery.registerSubstitute(
-				'layout/guided-tours/config',
+				'layout/guided-tours/all-tours',
 				'state/ui/guided-tours/test/config' );
 
 		const selectors = require( '../selectors' );
