@@ -131,7 +131,7 @@ export class SeoPreviewPane extends PureComponent {
 		super( props );
 
 		this.state = {
-			selectedService: 'wordpress'
+			selectedService: props.post ? 'wordpress' : 'google'
 		};
 
 		this.selectPreview = this.selectPreview.bind( this );
