@@ -62,13 +62,11 @@ const ComingSoonMessage = translate => (
 	</div>
 );
 
-
 const ReaderPost = ( site, post ) => {
 	return (
 		<ReaderPreview
 			siteTitle={ site.name }
 			siteSlug={ site.slug }
-			siteUrl={ site.URL }
 			siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
 			postTitle={ post.title }
 			postExcerpt={ formatExcerpt( post.content ) }

@@ -1,23 +1,21 @@
 /** @ssr-ready **/
 
+/**
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import PureComponent from 'react-pure-render/component';
-import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
 import humanDate from 'lib/human-date';
-
-const baseDomain = url =>
-	url
-		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol
-		.replace( /\/.*$/, '' ); // strip everything after the domain
 
 export class ReaderPreview extends PureComponent {
 	render() {
 		const {
-			translate,
 			siteTitle,
 			siteSlug,
-			siteUrl,
 			siteIcon,
 			postTitle,
 			postExcerpt,
@@ -76,7 +74,6 @@ export class ReaderPreview extends PureComponent {
 ReaderPreview.propTypes = {
 	siteTitle: PropTypes.string,
 	siteSlug: PropTypes.string,
-	siteUrl: PropTypes.string,
 	siteIcon: PropTypes.string,
 	postTitle: PropTypes.string,
 	postExcerpt: PropTypes.string,
@@ -86,4 +83,4 @@ ReaderPreview.propTypes = {
 	authorIcon: PropTypes.string
 };
 
-export default localize( ReaderPreview );
+export default ReaderPreview;
