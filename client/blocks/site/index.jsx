@@ -42,8 +42,7 @@ export default React.createClass( {
 			isSelected: false,
 
 			homeLink: false,
-			enableActions: false,
-			disableStarring: true
+			enableActions: false
 		};
 	},
 
@@ -57,14 +56,12 @@ export default React.createClass( {
 		isSelected: React.PropTypes.bool,
 		site: React.PropTypes.object.isRequired,
 		onClick: React.PropTypes.func,
-		enableActions: React.PropTypes.bool,
-		disableStarring: React.PropTypes.bool
+		enableActions: React.PropTypes.bool
 	},
 
 	getInitialState() {
 		return {
 			showActions: false,
-			starTooltip: false,
 			cogTooltip: false
 		};
 	},
@@ -78,57 +75,12 @@ export default React.createClass( {
 		event.preventDefault(); // this doesn't actually do anything...
 	},
 
-	starSite() {
-		const site = this.props.site;
-		sites.toggleStarred( site.ID );
-	},
-
-	enableStarTooltip() {
-		this.setState( { starTooltip: true } );
-	},
-
-	disableStarTooltip() {
-		this.setState( { starTooltip: false } );
-	},
-
 	enableCogTooltip() {
 		this.setState( { cogTooltip: true } );
 	},
 
 	disableCogTooltip() {
 		this.setState( { cogTooltip: false } );
-	},
-
-	renderStar() {
-		const site = this.props.site;
-
-		if ( ! site || this.props.disableStarring ) {
-			return null;
-		}
-
-		const isStarred = sites.isStarred( site );
-
-		return (
-			<button
-				className="site__star"
-				onClick={ this.starSite }
-				onMouseEnter={ this.enableStarTooltip }
-				onMouseLeave={ this.disableStarTooltip }
-				ref="starButton"
-			>
-				{ isStarred
-					? <Gridicon icon="star" />
-					: <Gridicon icon="star-outline" />
-				}
-				<Tooltip
-					context={ this.refs && this.refs.starButton }
-					isVisible={ this.state.starTooltip && ! isStarred }
-					position="bottom"
-				>
-					{ this.translate( 'Star this site' ) }
-				</Tooltip>
-			</button>
-		);
 	},
 
 	renderCog() {
@@ -282,16 +234,10 @@ export default React.createClass( {
 									<Gridicon icon="house" size={ 18 } />
 								</span>
 							}
-							{ ! this.props.disableStarring && sites.isStarred( this.props.site ) &&
-								<span className="site__badge">
-									<Gridicon icon="star" size={ 18 } />
-								</span>
-							}
 						</a>
 					: <div className="site__content">
 							{ this.renderEditIcon() }
 							<div className="site__actions">
-								{ this.renderStar() }
 								{ this.renderCog() }
 							</div>
 						</div>
