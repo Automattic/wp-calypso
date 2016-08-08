@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import layoutFocus from 'lib/layout-focus';
 import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
+import { PLAN_FREE } from 'lib/plans/constants';
 
 export default React.createClass( {
 	displayName: 'Masterbar',
@@ -61,6 +63,12 @@ export default React.createClass( {
 	},
 
 	render() {
+		const { user, sites } = this.props;
+
+		const upgradeLinkEnabled = config.isEnabled( 'masterbar/upgrade-link' ) &&
+			user && user.data.site_count === 1 &&
+			sites && sites.data[ 0 ] && sites.data[ 0 ].plan.product_slug === PLAN_FREE;
+
 		return (
 			<Masterbar>
 				<Stats
@@ -78,7 +86,11 @@ export default React.createClass( {
 				</Stats>
 				<Item
 					tipTarget="reader"
-					className="masterbar__reader"
+					className={
+						classNames( 'masterbar__reader', {
+							'is-upgrade-link': upgradeLinkEnabled
+						} )
+					}
 					url="/"
 					icon="reader"
 					onClick={ this.clickReader }
@@ -88,6 +100,18 @@ export default React.createClass( {
 				>
 					{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
+				{ upgradeLinkEnabled &&
+					<Item
+						tipTarget="upgrade-link"
+						className="masterbar__upgrade-link"
+						url="/plans"
+						onClick={ this.clickReader }
+						tooltip={ this.translate( 'Upgrade to more powerful plans', { textOnly: true } ) }
+						preloadSection={ () => preload( 'plans' ) }
+					>
+						{ this.translate( 'Upgrade', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
+					</Item>
+				}
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				<Publish
 					sites={ this.props.sites }
