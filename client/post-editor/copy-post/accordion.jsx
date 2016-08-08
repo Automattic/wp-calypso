@@ -8,6 +8,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
+import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
 
 module.exports = React.createClass( {
@@ -22,8 +23,8 @@ module.exports = React.createClass( {
 		return this.translate( 'Copy Post' );
 	},
 
-	getSubtitle: function() {
-		return this.translate( 'Use a previous post as a template' );
+	getDescription: function() {
+		return this.translate( 'Use an existing post as a template.' );
 	},
 
 	render: function() {
@@ -31,11 +32,14 @@ module.exports = React.createClass( {
 		return (
 			<Accordion
 				title={ this.getTitle() }
-				subtitle={ this.getSubtitle() }
 				icon={ <Gridicon icon="aside" /> }
 				className={ classes }
 			>
-				TEST
+				<AccordionSection>
+					<p className="editor-drawer__description">
+						{ this.getDescription() }
+					</p>
+				</AccordionSection>
 			</Accordion>
 		);
 	},
