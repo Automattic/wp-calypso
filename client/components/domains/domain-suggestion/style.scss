@@ -1,6 +1,7 @@
 .domain-suggestion {
 	box-sizing: border-box;
 	display: flex;
+	align-items: center;
 
 	@include clear-fix;
 
@@ -59,7 +60,9 @@
 	@include breakpoint( ">660px" ) {
 		.is-placeholder & {
 			margin-right: 50%;
-			min-height: 32px;
+			min-height: 22px;
+			margin-top: 9px;
+			margin-bottom: 9px;
 		}
 
 		.is-placeholder:nth-of-type(2n+1) & {
@@ -87,16 +90,11 @@
 .domain-suggestion__non-button-action {
 	flex: 1 0 auto;
 	min-width: 66px;
-	text-align: right;
+	text-align: center;
 	color: $blue-medium;
-	min-height: 32px;
 
 	> span {
 		vertical-align: top;
-	}
-
-	@include breakpoint( ">660px" ) {
-		margin: 8px 0 0 0;
 	}
 
 	.is-placeholder & {
@@ -106,23 +104,17 @@
 		border-radius: 0;
 		color: transparent;
 		margin-left: 40px;
-		min-height: 0;
-		max-height: 26px;
+		min-height: 26px;
 	}
 }
 
 .domain-suggestion__chevron {
 
 	margin-left: 10px;
+	flex: 1 0 auto;
 
 	> svg {
 		color: $gray;
-	}
-
-	flex: 1 0 auto;
-
-	@include breakpoint( ">660px" ) {
-		margin-top: 8px;
 	}
 
 	.is-placeholder & {
@@ -153,6 +145,7 @@
 		border: none;
 		border-radius: 0;
 		color: transparent;
+		height: 40px;
 
 		.button {
 			opacity: 0;
