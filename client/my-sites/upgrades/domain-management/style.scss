@@ -1002,36 +1002,18 @@ ul.email-forwarding__list {
 	}
 }
 
-.google-apps-users-card.card {
-	padding: 0;
-	@include clear-fix;
-}
-
-.google-apps-users-card__add-user-button {
-	@include breakpoint( '<480px' ) {
-		width: 100%;
-	}
-
-	@include breakpoint( '>480px' ) {
-		float: right;
-	}
-}
-
-.google-apps-users-card__subtext {
-	font-size: 13px;
-	margin: 5px 0;
-	font-style: italic;
-	font-weight: 400;
-	color: $gray;
-}
-
-.google-apps-users-card__notice.notice {
-	font-size: 13px;
-	margin: 10px 0;
-	animation: none;
+.google-apps-users-card {
+	margin-bottom: 10px;
 }
 
 .google-apps-users-card__user-list {
+	&.card {
+		padding: 0;
+		@include clear-fix;
+	}
+}
+
+.google-apps-users-card__user-list-inner {
 	list-style: none;
 	margin: 0;
 
@@ -1047,6 +1029,10 @@ ul.email-forwarding__list {
 		&:last-of-type {
 			border-bottom: 1px solid $gray-light;
 		}
+	}
+
+	.notice {
+		margin: 0;
 	}
 }
 

@@ -16,6 +16,7 @@ import purchasesPaths from 'me/purchases/paths';
 import domainConstants from 'lib/domains/constants';
 import support from 'lib/url/support';
 import paths from 'my-sites/upgrades/paths';
+import { hasPendingGoogleAppsUsers } from 'lib/domains';
 
 const domainTypes = domainConstants.type;
 const debug = _debug( 'calypso:domain-warnings' );
@@ -218,10 +219,7 @@ export default React.createClass( {
 	},
 
 	pendingGappsTosAcceptanceDomains() {
-		const pendingDomains = this.getDomains().filter( domain =>
-				domain.googleAppsSubscription &&
-				domain.googleAppsSubscription.pendingUsers &&
-				domain.googleAppsSubscription.pendingUsers.length !== 0 );
+		const pendingDomains = this.getDomains().filter( hasPendingGoogleAppsUsers );
 		return pendingDomains.length !== 0 && <PendingGappsTosNotice key="pending-gapps-tos-notice" siteSlug={ this.props.selectedSite && this.props.selectedSite.slug } domains={ pendingDomains } section="domain-management" />;
 	},
 
