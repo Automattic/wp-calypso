@@ -187,12 +187,13 @@ module.exports = {
 			const selectOnSitesChange = () => {
 				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
 				if ( sites.select( siteID ) ) {
+					sites.initialized = true;
 					onSelectedSiteAvailable();
 					if ( waitingNotice ) {
 						notices.removeNotice( waitingNotice );
 					}
-					// clear notice
 				} else if ( ( currentUser.visible_site_count !== sites.getVisible().length ) ) {
+					sites.initialized = false;
 					waitingNotice = notices.info( i18n.translate( 'Waiting for site…' ), { showDismiss: false } );
 					sites.once( 'change', selectOnSitesChange );
 					sites.fetch();
