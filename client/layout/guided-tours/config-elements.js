@@ -92,6 +92,9 @@ export class Step extends Component {
 	constructor( props, context ) {
 		super( props, context );
 		this.scrollContainer = query( props.scrollContainer )[ 0 ] || global.window;
+
+		// FIXME(mcsf): works but nasty
+		this.section = this.pathToSection( location.pathname );
 	}
 
 	componentWillMount() {
@@ -156,9 +159,12 @@ export class Step extends Component {
 	}
 
 	isDifferentSection( path ) {
-		return true;
+		return this.section &&
+			this.section !== this.pathToSection( path );
 	}
 
+	pathToSection( path ) {
+		return path.split( '/' ).slice( 0, 2 ).join( '/' );
 	}
 
 	skipIfInvalidContext( props ) {
