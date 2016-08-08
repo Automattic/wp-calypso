@@ -21,7 +21,7 @@ const services = translate => ( {
 	google: { icon: 'google-plus-alt', label: translate( 'Google search' ) },
 	linkedin: { icon: 'linkedin', label: translate( 'LinkedIn share' ) },
 	twitter: { icon: 'twitter', label: translate( 'Twitter card' ) },
-	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com reader' ) }
+	wordpress: { icon: 'wordpress', label: translate( 'WordPress.com Reader' ) }
 } );
 
 export const SocialItem = props => {
