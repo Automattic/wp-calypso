@@ -47,7 +47,13 @@ const getPostImage = ( post ) => {
 	}
 
 	const imgElements = parseHtml( content ).querySelectorAll( 'img' );
-	return get( find( imgElements, ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ), 'src', null );
+	const largeImage = get( find( imgElements, ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ), 'src', null );
+
+	if ( largeImage ) {
+		return `${ largeImage }?s=${ PREVIEW_IMAGE_WIDTH }`;
+	}
+
+	return null;
 };
 
 const ComingSoonMessage = translate => (
