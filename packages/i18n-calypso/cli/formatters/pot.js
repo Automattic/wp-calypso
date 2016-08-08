@@ -24,6 +24,11 @@ function multiline( literal, startAt ) {
 		startAt = - 6;
 	}
 
+	// Remove line break in trailing backslash syntax.
+	literal = literal.replace( /\\\n/g, '' );
+	// Convert regular line breaks to \n notation.
+	literal = literal.replace( /\n/g, '\\n' );
+
 	if ( literal.length <= startAt + MAX_COLUMNS ) {
 		return literal.substr( startAt > 0 ? startAt : 0 );
 	}
@@ -158,6 +163,8 @@ module.exports = function( matches, options ) {
 
 		return matchPotStr;
 	} ).join( '\n' );
+
+	output += "\n# THIS IS THE END OF THE GENERATED FILE.\n";
 
 	return output;
 };
