@@ -127,14 +127,16 @@
 	}
 
 	.facebook-preview__image {
-		height: auto;
 		max-height: 250px;
-		width: 100%;
-		overflow: hidden;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		overflow-y: hidden;
 
 		& img {
 			height: auto;
 			width: 100%;
+			max-width: 527px;
 		}
 	}
 
@@ -184,6 +186,7 @@
 	width: inherit;
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
+	margin: 20px;
 }
 
 .twitter-card-preview__summary {

@@ -17,6 +17,7 @@ import FacebookPreview from 'components/seo/facebook-preview';
 import TwitterPreview from 'components/seo/twitter-preview';
 import SearchPreview from 'components/seo/search-preview';
 import VerticalMenu from 'components/vertical-menu';
+import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
 import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -64,7 +65,7 @@ const ReaderPost = ( site, post ) => {
 			siteUrl={ site.URL }
 			siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
 			postTitle={ post.title }
-			postContent={ post.content }
+			postExcerpt={ formatExcerpt( post.content ) }
 			postImage={ getPostImage( post ) }
 			postDate={ post.date }
 			authorName={ post.author.name }
@@ -78,7 +79,7 @@ const GoogleSite = site => (
 	<SearchPreview
 		title={ site.name }
 		url={ site.URL }
-		snippet={ site.description }
+		snippet={ formatExcerpt( site.description ) }
 	/>
 );
 
@@ -86,7 +87,7 @@ const GooglePost = ( site, post ) => (
 	<SearchPreview
 		title={ post.title }
 		url={ post.URL }
-		snippet={ post.excerpt || post.content }
+		snippet={ formatExcerpt( post.excerpt || post.content ) }
 	/>
 );
 
@@ -95,7 +96,7 @@ const FacebookSite = site => (
 		title={ site.name }
 		url={ site.URL }
 		type="website"
-		description={ site.description }
+		description={ formatExcerpt( site.description ) }
 		image={ largeBlavatar( site ) }
 	/>
 );
@@ -105,7 +106,7 @@ const FacebookPost = ( site, post ) => (
 		title={ post.title }
 		url={ post.URL }
 		type="article"
-		description={ post.excerpt || post.content }
+		description={ formatExcerpt( post.excerpt || post.content ) }
 		image={ getPostImage( post ) }
 	/>
 );
@@ -115,7 +116,7 @@ const TwitterSite = site => (
 		title={ site.name }
 		url={ site.URL }
 		type="summary"
-		description={ site.description }
+		description={ formatExcerpt( site.description ) }
 		image={ largeBlavatar( site ) }
 	/>
 );
@@ -125,7 +126,7 @@ const TwitterPost = ( site, post ) => (
 		title={ post.title }
 		url={ post.URL }
 		type="large_image_summary"
-		description={ post.excerpt || post.content }
+		description={ formatExcerpt( post.excerpt || post.content ) }
 		image={ getPostImage( post ) }
 	/>
 );

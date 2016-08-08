@@ -4,7 +4,6 @@ import React, { PropTypes } from 'react';
 import PureComponent from 'react-pure-render/component';
 import { localize } from 'i18n-calypso';
 
-import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
 import humanDate from 'lib/human-date';
 
 const baseDomain = url =>
@@ -21,14 +20,12 @@ export class ReaderPreview extends PureComponent {
 			siteUrl,
 			siteIcon,
 			postTitle,
-			postContent,
+			postExcerpt,
 			postImage,
 			postDate,
 			authorName,
 			authorIcon
 		} = this.props;
-
-		const postExcerpt = postContent ? formatExcerpt( postContent  ) : '';
 
 		return (
 			<article className="reader-preview">
@@ -82,7 +79,7 @@ ReaderPreview.propTypes = {
 	siteUrl: PropTypes.string,
 	siteIcon: PropTypes.string,
 	postTitle: PropTypes.string,
-	postContent: PropTypes.string,
+	postExcerpt: PropTypes.string,
 	postImage: PropTypes.string,
 	postDate: PropTypes.string,
 	authorName: PropTypes.string,
