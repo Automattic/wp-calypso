@@ -1,5 +1,5 @@
-1.6.1
------
+1.6.1 + 1.6.2
+-------------
 Fix invalid POT output when strings contained a line break, see [#14](https://github.com/Automattic/i18n-calypso/pull/14).
 
 1.6.0
