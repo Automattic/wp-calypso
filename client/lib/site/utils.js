@@ -172,5 +172,18 @@ export default {
 
 	isJetpack( site ) {
 		return site && site.jetpack;
+	},
+
+	/**
+	 * Checks whether a site has a custom mapped URL.
+	 * @param  {Object}   site Site object
+	 * @return {?Boolean}      Whether site has custom domain
+	 */
+	hasCustomDomain( site ) {
+		if ( ! site || ! site.domain || ! site.wpcom_url ) {
+			return null;
+		}
+
+		return site.domain !== site.wpcom_url;
 	}
 };
