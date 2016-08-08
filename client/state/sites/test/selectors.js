@@ -18,6 +18,7 @@ import {
 	isJetpackMinimumVersion,
 	getSiteSlug,
 	getSiteDomain,
+	getSiteTitle,
 	isSitePreviewable,
 	isRequestingSites,
 	isRequestingSite,
@@ -503,6 +504,50 @@ describe( 'selectors', () => {
 			}, 77203199 );
 
 			expect( domain ).to.equal( 'testtwosites2014.wordpress.com' );
+		} );
+	} );
+
+	describe( 'getSiteTitle()', () => {
+		it( 'should return null if the site is not known', () => {
+			const title = getSiteTitle( {
+				sites: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( title ).to.be.null;
+		} );
+
+		it( 'should return the trimmed name of the site', () => {
+			const title = getSiteTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							name: '  Example Site  ',
+							URL: 'https://example.com'
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( title ).to.equal( 'Example Site' );
+		} );
+
+		it( 'should fall back to the domain if the site name is empty', () => {
+			const title = getSiteTitle( {
+				sites: {
+					items: {
+						2916284: {
+							ID: 2916284,
+							name: '',
+							URL: 'https://example.com'
+						}
+					}
+				}
+			}, 2916284 );
+
+			expect( title ).to.equal( 'example.com' );
 		} );
 	} );
 
