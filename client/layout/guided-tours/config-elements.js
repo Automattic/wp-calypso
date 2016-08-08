@@ -34,6 +34,7 @@ import {
 } from './positioning';
 
 const contextTypes = Object.freeze( {
+	branching: PropTypes.object.isRequired,
 	next: PropTypes.func.isRequired,
 	quit: PropTypes.func.isRequired,
 	isValid: PropTypes.func.isRequired,
@@ -51,19 +52,19 @@ export class Tour extends Component {
 	static childContextTypes = contextTypes;
 
 	getChildContext() {
-		const { next, quit, isValid, lastAction, tour, tourVersion, step } = this.tourMeta;
-		return { next, quit, isValid, lastAction, tour, tourVersion, step };
+		const { branching, next, quit, isValid, lastAction, tour, tourVersion, step } = this.tourMeta;
+		return { branching, next, quit, isValid, lastAction, tour, tourVersion, step };
 	}
 
 	constructor( props, context ) {
 		super( props, context );
-		const { next, quit, isValid, lastAction, name, version, stepName } = props;
-		this.tourMeta = { next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
+		const { branching, next, quit, isValid, lastAction, name, version, stepName } = props;
+		this.tourMeta = { branching, next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		const { next, quit, isValid, lastAction, name, version, stepName } = nextProps;
-		this.tourMeta = { next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
+		const { branching, next, quit, isValid, lastAction, name, version, stepName } = nextProps;
+		this.tourMeta = { branching, next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
 	}
 
 	render() {
@@ -136,6 +137,11 @@ export class Step extends Component {
 	}, 100 )
 
 	quitIfInvalidRoute( props, context ) {
+		const { step, branching } = this.context;
+		const stepBranching = branching[ step ];
+		const hasContinue = !! stepBranching.continue;
+		const continueStep = stepBranching.continue;
+
 		const findContinue = ( children ) => {
 			// TODO(lsinger) DOESN'T WORK USE MIGUEL'S!
 			// traverse children looking for a Continue element here
@@ -465,7 +471,10 @@ const tourBranching = tourTree => {
 
 export const makeTour = tree => {
 	const tour = ( { stepName, isValid, lastAction, next, quit } ) =>
-		React.cloneElement( tree, { stepName, isValid, lastAction, next, quit } );
+		React.cloneElement( tree, {
+			stepName, isValid, lastAction, next, quit,
+			branching: tour.branching,
+		} );
 
 	tour.propTypes = {
 		stepName: PropTypes.string.isRequired,
@@ -473,6 +482,7 @@ export const makeTour = tree => {
 		lastAction: PropTypes.object,
 		next: PropTypes.func.isRequired,
 		quit: PropTypes.func.isRequired,
+		branching: PropTypes.object.isRequired,
 	};
 	tour.meta = omit( tree.props, 'children' );
 	tour.branching = tourBranching( tree );
