@@ -21,13 +21,6 @@ export default function() {
 		);
 
 		page(
-			'/plans/:intervalType?/:site',
-			controller.siteSelection,
-			controller.navigation,
-			plansController.plans
-		);
-
-		page(
 			'/plans/compare',
 			controller.siteSelection,
 			controller.navigation,
@@ -78,6 +71,14 @@ export default function() {
 		page(
 			'/plans/features/google-analytics',
 			controller.sites
+		);
+
+		// This route renders the plans page for both WPcom and Jetpack sites.
+		page(
+			'/plans/:intervalType?/:site',
+			controller.siteSelection,
+			controller.navigation,
+			plansController.plans
 		);
 	}
 }
