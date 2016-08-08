@@ -6,8 +6,8 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import dependencyStore from './dependency-store/reducers';
-import optionalDependencies from './optional-dependencies/reducers';
+import dependencyStore from './dependency-store/reducer';
+import optionalDependencies from './optional-dependencies/reducer';
 
 export default combineReducers( {
 	dependencyStore,
