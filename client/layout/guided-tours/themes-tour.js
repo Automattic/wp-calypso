@@ -2,9 +2,14 @@
 
 import React from 'react';
 
-import { getSectionName, isPreviewShowing } from 'state/ui/selectors';
-//import { isNewUser } from 'state/ui/guided-tours/selectors';
-import { isFetchingNextPage, getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
+import {
+	isNewUser,
+	themeSearchResultsFound,
+	themeFreeFilterChosen,
+	inSection,
+	previewIsShowing,
+	previewIsNotShowing,
+} from 'state/ui/guided-tours/contexts';
 import {
 	makeTour,
 	Tour,
@@ -15,29 +20,8 @@ import {
 } from 'layout/guided-tours/config-elements';
 import { translate } from 'i18n-calypso';
 
-// FIXME(mcsf): This is all kinds of wrong, but circular dependencies are
-// breaking `relevantFeatures`. The fix, IMO, is to split selectors into
-// separate files, as described in #6914
-const isNewUser = () => true;
-
-const previewIsNotShowing = state =>
-	! isPreviewShowing( state );
-
 const context = state =>
 	true || isNewUser( state );
-
-const themeSearchResultsFound = state => {
-	const params = getQueryParams( state );
-	return params && params.search && params.search.length && ! isFetchingNextPage( state ) && getThemesList( state ).length > 0;
-};
-
-const themeFreeFilterChosen = state => {
-	const params = getQueryParams( state );
-	return params && params.tier === 'free';
-};
-
-const inSection = ( sectionName ) => state =>
-	getSectionName( state ) === sectionName;
 
 export const ThemesTour = makeTour(
 	<Tour name="themes" version="20160601" path="/design" context={ context }>
@@ -122,7 +106,7 @@ export const ThemesTour = makeTour(
 			target=".web-preview.is-visible [data-tip-target='web-preview__close']"
 			arrow="left-top"
 			placement="beside"
-			context={ isPreviewShowing }
+			context={ previewIsShowing }
 		>
 			<p className="guided-tours__step-text">
 				This is the theme's preview. Take a look around! Then tap to close the preview.

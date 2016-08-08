@@ -1,8 +1,9 @@
 /** @ssr-ready **/
 
 import React from 'react';
+import { translate } from 'i18n-calypso';
+import { overEvery as and } from 'lodash';
 
-import { getSelectedSite, isPreviewShowing } from 'state/ui/selectors';
 import {
 	makeTour,
 	Tour,
@@ -12,29 +13,17 @@ import {
 	Continue,
 	Link,
 } from 'layout/guided-tours/config-elements';
-import { translate } from 'i18n-calypso';
-
+import {
+	isNewUser,
+	selectedSiteIsPreviewable,
+	selectedSiteIsCustomizable,
+	previewIsNotShowing,
+	previewIsShowing,
+} from 'state/ui/guided-tours/contexts';
 import Gridicon from 'components/gridicon';
-
-// FIXME(mcsf): This is all kinds of wrong, but circular dependencies are
-// breaking `relevantFeatures`. The fix, IMO, is to split selectors into
-// separate files, as described in #6914
-export const isNewUser = () => true;
-
-const selectedSiteIsPreviewable = state =>
-	getSelectedSite( state ) && getSelectedSite( state ).is_previewable;
-
-const selectedSiteIsCustomizable = state =>
-	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
-
-const previewIsNotShowing = state =>
-	! isPreviewShowing( state );
 
 const context = state =>
 	true || isNewUser( state );
-
-const and = ( ...args ) => state =>
-	args.every( fn => !! fn( state ) );
 
 export const MainTour = makeTour(
 	<Tour name="main" version="20160601" path="/" context={ context }>
@@ -154,7 +143,7 @@ export const MainTour = makeTour(
 			target="web-preview__close"
 			arrow="left-top"
 			placement="beside"
-			context={ and( selectedSiteIsPreviewable, isPreviewShowing ) }
+			context={ and( selectedSiteIsPreviewable, previewIsShowing ) }
 		>
 			<p className="guided-tours__step-text">
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
