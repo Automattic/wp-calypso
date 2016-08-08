@@ -115,7 +115,7 @@ export class Step extends Component {
 		this.tourVersion = nextContext.tourVersion;
 
 		this.skipIfInvalidContext( nextProps );
-		this.quitIfInvalidRoute( nextProps );
+		this.quitIfInvalidRoute( nextProps, nextContext );
 		this.setStepPosition( nextProps );
 		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
 	}
@@ -145,43 +145,62 @@ export class Step extends Component {
 		this.setStepPosition( this.props );
 	}, 100 )
 
-	quitIfInvalidRoute( props ) {
-		const hasContinue = ( children ) => {
+	quitIfInvalidRoute( props, context ) {
+		const findContinue = ( children ) => {
 			// traverse children looking for a Continue element here
-			const isContinue = ( child ) => {
-				// console.log( '*** testing child: ', child );
-				// console.log(  'typeof child', typeof child );
-				// console.log(  'child.type', child.type );
-				// console.log(  'child.name', child.name );
-				// console.log(  'typeof child.type', typeof child.type );
-				// console.log(  'child.type.name', child.type.name );
-
-				// if ( typeof child === 'object' ) {
-				// 	if ( typeof child.type === 'function' ) {
-
-				// 	}
-				// }
-				return typeof child.type === 'function' && child.type.name === 'Continue';
+			const getContinue = ( child ) => {
+				return typeof child.type === 'function' && child.type.name === 'Continue' ? child : null;
 			};
-			var res = false;
+			var res = null;
 			for ( const child of children ) {
-				if ( res || ( isContinue( child ) ) ) {
-					return true;
+				if ( res || ( getContinue( child ) ) ) {
+					return child;
 				} else if ( child.props && Array.isArray( child.props.children ) ) {
-					res = res || hasContinue( child.props.children );
+					res = res || findContinue( child.props.children );
 				} else if ( child.props && typeof child.props.children === 'object' ) {
-					res = res || isContinue( child.props.children );
+					res = res || getContinue( child.props.children );
 				}
 			}
 			return res;
 		};
 
-		console.log( 'hasContinue( this.props.children )', hasContinue( props.children ) );
+		console.log( 'Step.quitIfInvalidRoute', props, context );
 
-		if ( props.lastAction.type === 'ROUTE_SET' ) {
-			if ( ! hasContinue( props.children ) ) {
-				console.log( '*********** quitting from Step.quitIfInvalidRoute' );
-				this.quit();
+		console.log( 'findContinue( this.props.children )', findContinue( this.props.children ) );
+
+		const cont = findContinue( this.props.children );
+		const contContext = cont ? cont.props.context : null;
+
+		if ( context.lastAction.type === 'ROUTE_SET' ) {
+			console.log('++++++++++++++++');
+
+			console.log( 'cont', cont );
+			console.log( 'contContext', contContext );
+			if ( cont && contContext ) {
+				console.log( 'context.isValid( contContext )', context.isValid( contContext ) );
+			} else {
+				console.log( 'cont && contContext isnt truthy', contContext );
+			}
+
+			if ( !cont || ( cont && contContext && ! context.isValid( contContext ) ) ) {
+				const slug = this.props.target;
+				console.log( 'ROUTE_SET, slug: ', slug );
+				const quit = this.quit;
+				setTimeout( function() {
+					const target = targetForSlug( slug );
+					console.log( 'target: ', target );
+					if ( slug && ! target ) {
+						// problem when: step_n has target and slug, step_n+1 has neither
+						// --> slug here will come from previous step
+						alert( 'slug but no target!' );
+						quit();
+					}
+					// console.log( 'context.isValid( contContext )', context.isValid( contContext ) );
+					// if ( ! context.isValid( contContext ) ) {
+					// 	alert( '! context.isValid( contContext )' );
+					// 	quit();
+					// }
+				}, 0);
 			}
 		}
 	}
@@ -318,8 +337,6 @@ export class Quit extends Component {
 	}
 }
 
-var globalTimer = null;
-
 export class Continue extends Component {
 	static contextTypes = contextTypes;
 
@@ -354,7 +371,6 @@ export class Continue extends Component {
 		this.tour = nextContext.tour;
 		this.tourVersion = nextContext.tourVersion;
 		this.quitIfInvalidRoute( nextProps, nextContext );
-		console.log( '++++++++++++++++++++++ globalTimer:', globalTimer );
 		nextProps.context && nextContext.isValid( nextProps.context ) && this.onContinue();
 	}
 
@@ -363,76 +379,7 @@ export class Continue extends Component {
 	}
 
 	quitIfInvalidRoute( props, context ) {
-		console.log( 'Continue.quitIfInvalidRoute' );
-		if ( globalTimer && context.isValid( props.context ) ) {
-			console.log( 'clearing timeout' );
-			clearTimeout( globalTimer );
-			globalTimer = null;
-		}
-		if ( context.lastAction && props.context && context.lastAction.type === 'ROUTE_SET' ) {
-			// console.log( 'context.lastAction', context.lastAction );
-			// console.log( 'context', context );
-			// console.log( 'props.context', props.context );
-			if ( props.context ) {
-				// console.log( 'this.isValid( props.context )', this.isValid( props.context ) );
-			}
-			if ( ! context.isValid( props.context ) ) {
-				if ( ! globalTimer ) {
-					console.log( 'setting timeout' );
-					const isValid = context.isValid;
-					const quit = this.quit;
-					globalTimer = setTimeout( function() {
-						if ( ! isValid( props.context ) ) {
-							quit();
-						}
-					}, 2000 );
-				} else {
-					console.log( 'there is a timeout already, not doing anything.' );
-				}
-				// console.log( '------------------- globalTimer', globalTimer );
-				// console.log( 'new Date.getTime() - globalTimer', ( new Date().getTime() - globalTimer ) );
-				// if ( ! globalTimer ) {
-				// 	console.log( 'creating a timer' );
-				// 	globalTimer = new Date().getTime();
-				// } else if ( new Date().getTime() - globalTimer > 2000 ) {
-				// 	console.log( 'calling it quits.' );
-				// 	globalTimer = null;
-				// 	this.quit();
-				// }
-				// start a global timer.
-				// maybe in localStorage? state tree?
-				// next time this is called, look at the timer.
-				// if more than, say 2s has passed, reset timer and really quit.
-				// make sure that if isValid before timer runs out, reset timer as well
-
-
-				// console.log( 'looking again ...' );
-				// console.log( 'this.isValid( props.context )', this.isValid( props.context ) );
-
-				// console.log( 'looking once again ...' );
-				// console.log( 'this.isValid( props.context )', this.isValid( props.context ) );
-
-				// const contextIsValid = () => {
-				// 	console.log( '+++++ contextIsValid?' );
-				// 	console.log( 'props.context', props.context );
-				// 	console.log( 'this.isValid( props.context )', this.isValid( props.context ) );
-				// 	return this.isValid( props.context );
-				// };
-
-				// const validConfirmed = () => {
-				// 	console.log( '+++++ validConfirmed!' );
-				// };
-
-				// const validErrored = () => {
-				// 	console.log( '+++++ validErrored!' );
-				// 	this.quit();
-				// };
-
-				// wait( { condition: contextIsValid, consequence: validConfirmed, onError: validErrored } );
-				// console.log( '*********** quitting from Continue.quitIfInvalidRoute' );
-				// this.quit();
-			}
-		}
+		console.log( 'Continue.quitIfInvalidRoute', props, context );
 	}
 
 	componentDidUpdate() {
