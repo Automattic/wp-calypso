@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card/compact';
 import safeImageUrl from 'lib/safe-image-url';
 import resizeImageUrl from 'lib/resize-image-url';
-import AuthorAndSite from './author-and-site';
+import AuthorAndSite from 'components/reader-author-and-site';
 
 export function SmallPostCard( { translate, post, site, onPostClick = noop, onSiteClick = noop } ) {
 	const classes = classnames( 'post-card small', {
