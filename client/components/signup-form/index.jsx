@@ -95,11 +95,9 @@ export default React.createClass( {
 			initialState: this.props.step ? this.props.step.form : undefined
 		} );
 		let initialState = this.formStateController.getInitialState();
-
 		if ( this.props.signupProgressStore ) {
 			initialState = this.autoFillUsername( initialState );
 		}
-
 		this.setState( { form: initialState } );
 	},
 
