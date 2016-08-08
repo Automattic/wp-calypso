@@ -13,6 +13,7 @@ import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import CategoryListData from 'components/data/category-list-data';
+import CopyPostAccordion from 'post-editor/copy-post/accordion';
 import TagListData from 'components/data/tag-list-data';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
@@ -261,6 +262,18 @@ const EditorDrawer = React.createClass( {
 		);
 	},
 
+	renderCopyPost: function() {
+		const { type, post, site } = this.props;
+
+		return (
+			<CopyPostAccordion
+				type={ type }
+				post={ post }
+				site={ site }
+			/>
+		);
+	},
+
 	renderMoreOptions: function() {
 		if (
 			! this.currentPostTypeSupports( 'excerpt' ) &&
@@ -311,6 +324,7 @@ const EditorDrawer = React.createClass( {
 				{ this.renderSharing() }
 				{ this.renderPostFormats() }
 				{ this.renderSeo() }
+				{ this.renderCopyPost() }
 				{ this.renderMoreOptions() }
 			</div>
 		);
