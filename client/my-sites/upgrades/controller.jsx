@@ -2,6 +2,7 @@
  * External Dependencies
  */
 var page = require( 'page' ),
+	qs = require( 'qs' ),
 	i18n = require( 'i18n-calypso' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
@@ -241,6 +242,20 @@ module.exports = {
 
 			if ( ! selectedSite || ! selectedSite.isUpgradeable() ) {
 				return page.redirect( redirectTo );
+			}
+
+			next();
+		};
+	},
+
+	redirectToAddMappingIfVipSite: function() {
+		return function( context, next ) {
+			const selectedSite = sites.getSelectedSite(),
+				domain = context.params.domain ? `/${ context.params.domain }` : '',
+				query = qs.stringify( { initialQuery: context.params.suggestion } );
+
+			if ( selectedSite && selectedSite.is_vip ) {
+				return page.redirect( `/domains/add/mapping${ domain }?${ query }` );
 			}
 
 			next();
