@@ -189,7 +189,7 @@ export class Step extends Component {
 	skipIfInvalidContext( props ) {
 		const { context, isValid } = props;
 		if ( context && ! isValid( context ) ) {
-			this.next( props );
+			this.next( this.tour ); //FIXME: do we need to access the next step name here?
 		}
 	}
 

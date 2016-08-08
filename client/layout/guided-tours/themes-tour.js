@@ -41,12 +41,12 @@ const inSection = ( sectionName ) => state =>
 
 export const ThemesTour = makeTour(
 	<Tour name="themes" version="20160601" path="/design" context={ context }>
-		<Step name="init" placement="right" next="search" className="guided-tours__step-first">
+		<Step name="init" placement="right" className="guided-tours__step-first">
 			<p className="guided-tours__step-text">
 				Hey there! Want me to show you how to find a great theme for your site?
 			</p>
 			<div className="guided-tours__choice-button-row">
-				<Next step="my-sites">{ translate( "Let's go!" ) }</Next>
+				<Next step="search">{ translate( "Let's go!" ) }</Next>
 				<Quit>{ translate( 'No thanks.' ) }</Quit>
 			</div>
 		</Step>
@@ -55,13 +55,12 @@ export const ThemesTour = makeTour(
 			target=".themes__search-card .search-open__icon"
 			placement="below"
 			arrow="top-left"
-			next="filter"
 		>
 			<p className="guided-tours__step-text">
 				Search for a specific theme name or feature here. Try typing something — for example, "business".
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue context={ themeSearchResultsFound } hidden/>
+				<Continue step="filter" context={ themeSearchResultsFound } hidden/>
 			</p>
 		</Step>
 
@@ -69,13 +68,12 @@ export const ThemesTour = makeTour(
 			target="themes-tier-dropdown"
 			placement="above"
 			arrow="bottom-right"
-			next="choose-theme"
 		>
 			<p className="guided-tours__step-text">
 				Here you can filter between free and premium themes. Try filtering by _free_ themes now.
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue context={ themeFreeFilterChosen } hidden/>
+				<Continue step="choose-theme" context={ themeFreeFilterChosen } hidden/>
 			</p>
 		</Step>
 
@@ -83,26 +81,24 @@ export const ThemesTour = makeTour(
 			className="guided-tours__step-action"
 			placement="center"
 			context={ inSection( 'themes' ) }
-			next="tab-bar"
 		>
 			<p className="guided-tours__step-text">
 				Tap on a theme to see more details — such as screenshots, the theme's features, or a preview.
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue context={ inSection( 'theme' ) } />
+				<Continue step="tab-bar" context={ inSection( 'theme' ) } />
 			</p>
 		</Step>
 
 		<Step name="tab-bar"
 			placement="center"
 			context={ inSection( 'themes' ) }
-			next="live-preview"
 		>
 			<p className="guided-tours__step-text">
 				Here you can take a look at more screenshots of the theme, read about its features, or get help on how to use it.
 			</p>
 			<div className="guided-tours__choice-button-row">
-				<Next/>
+				<Next step="live-preview" />
 				<Quit/>
 			</div>
 		</Step>
@@ -113,13 +109,12 @@ export const ThemesTour = makeTour(
 			placement="below"
 			arrow="top-left"
 			context={ inSection( 'theme' ) }
-			next="close-preview"
 		>
 			<p className="guided-tours__step-text">
 				Tap here to see a _live demo_ of the theme.
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue target="theme-sheet-preview" click />
+				<Continue step="close-preview" target="theme-sheet-preview" click />
 			</p>
 		</Step>
 
@@ -128,13 +123,12 @@ export const ThemesTour = makeTour(
 			arrow="left-top"
 			placement="beside"
 			context={ isPreviewShowing }
-			next="back-to-list"
 		>
 			<p className="guided-tours__step-text">
 				This is the theme's preview. Take a look around! Then tap to close the preview.
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue context={ previewIsNotShowing } />
+				<Continue step="back-to-list" context={ previewIsNotShowing } />
 			</p>
 		</Step>
 
@@ -148,7 +142,7 @@ export const ThemesTour = makeTour(
 				You can go back to the themes list here.
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue context={ inSection( 'themes' ) } />
+				<Continue step="finish" context={ inSection( 'themes' ) } />
 			</p>
 		</Step>
 
