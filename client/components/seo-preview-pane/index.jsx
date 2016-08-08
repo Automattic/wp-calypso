@@ -17,6 +17,7 @@ import FacebookPreview from 'components/seo/facebook-preview';
 import TwitterPreview from 'components/seo/twitter-preview';
 import SearchPreview from 'components/seo/search-preview';
 import VerticalMenu from 'components/vertical-menu';
+import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
@@ -25,26 +26,58 @@ import {
 	getSelectedSite
 } from 'state/ui/selectors';
 
+const PREVIEW_IMAGE_WIDTH = 512;
+
+const getPostImage = ( post ) => {
+	if ( ! post ) {
+		return null;
+	}
+
+	// Use the featured image if one was set
+	if ( post.featured_image ) {
+		return post.featured_image;
+	}
+
+	// Otherwise we'll look for a large enough image in the post
+	const content = post.content;
+	if ( ! content ) {
+		return null;
+	}
+
+	const imgElements = parseHtml( content ).querySelectorAll( 'img' );
+	for ( const img in imgElements ) {
+		if ( img.width >= PREVIEW_IMAGE_WIDTH ) {
+			return img.src;
+		}
+	}
+
+	return null;
+};
+
 const ComingSoonMessage = translate => (
 	<div className="seo-preview-pane__message">
 		{ translate( 'Coming Soon!' ) }
 	</div>
 );
 
-const PreviewReader = ( site, post ) => (
-	<ReaderPreview
-		siteTitle={ site.name }
-		siteSlug={ site.slug }
-		siteUrl={ site.URL }
-		siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
-		postTitle={ post.title }
-		postContent={ post.content }
-		postImage={ post.featured_image && post.featured_image + '?s=540' }
-		postDate={ post.date }
-		authorName={ post.author.name }
-		authorIcon={ post.author.avatar_URL }
-	/>
-);
+const PreviewReader = ( site, post ) => {
+	const postImage = getPostImage( post );
+
+	return (
+		<ReaderPreview
+			siteTitle={ site.name }
+			siteSlug={ site.slug }
+			siteUrl={ site.URL }
+			siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
+			postTitle={ post.title }
+			postContent={ post.content }
+			postImage={ postImage }
+			postDate={ post.date }
+			authorName={ post.author.name }
+			authorIcon={ post.author.avatar_URL }
+		/>
+	);
+ };
 
 const PreviewGoogle = site =>
 	<SearchPreview
@@ -59,7 +92,7 @@ const FacebookSite = site => (
 		url={ site.URL }
 		type="website"
 		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }` }
 	/>
 );
 
@@ -69,7 +102,7 @@ const FacebookPost = ( site, post ) => (
 		url={ site.URL }
 		type="article"
 		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }` }
 	/>
 );
 
@@ -79,7 +112,7 @@ const TwitterSite = site => (
 		url={ site.URL }
 		type="summary"
 		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }` }
 	/>
 );
 
@@ -89,7 +122,7 @@ const TwitterPost = ( site, post ) => (
 		url={ site.URL }
 		type="large_image_summary"
 		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }` }
 	/>
 );
 
