@@ -256,19 +256,14 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	// If `?sb` or `?sp` are present on the path set the focus of layout
-	// This can be removed when the legacy version is retired.
-	page( '*', function( context, next ) {
-		if ( [ 'sb', 'sp' ].indexOf( context.querystring ) !== -1 ) {
-			layoutSection = ( context.querystring === 'sb' ) ? 'sidebar' : 'sites';
-			layoutFocus.set( layoutSection );
-			page.redirect( context.pathname );
-		}
-
-		next();
-	} );
+	// This needs to be done before the page.js router is started and can be removed when the legacy version is retired
+	if ( window && [ '?sb', '?sp' ].indexOf( window.location.search ) !== -1 ) {
+		layoutSection = ( window.location.search === '?sb' ) ? 'sidebar' : 'sites';
+		layoutFocus.set( layoutSection );
+		window.history.replaceState( null, document.title, window.location.pathname );
+	}
 
 	setUpContext( reduxStore );
-
 	page( '*', require( 'lib/route/normalize' ) );
 
 	// warn against navigating from changed, unsaved forms
