@@ -7,7 +7,7 @@ import React, { PropTypes } from 'react';
 import PureComponent from 'react-pure-render/component';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import { compact, find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -45,13 +45,7 @@ const getPostImage = ( post ) => {
 	}
 
 	const imgElements = parseHtml( content ).querySelectorAll( 'img' );
-	for ( const img in imgElements ) {
-		if ( img.width >= PREVIEW_IMAGE_WIDTH ) {
-			return img.src;
-		}
-	}
-
-	return null;
+	return get( find( imgElements, ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ), 'src', null );
 };
 
 const ComingSoonMessage = translate => (
@@ -167,10 +161,13 @@ export class SeoPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview }>
-						<SocialItem service="wordpress" />
-						<SocialItem service="google" />
-						<SocialItem service="facebook" />
-						<SocialItem service="twitter" />
+						{ compact( [
+							post && 'wordpress',
+							'google',
+							'facebook',
+							'twitter'
+						] ).map( service => <SocialItem { ...{ key: service, service } } /> )
+						}
 					</VerticalMenu>
 				</div>
 				<div className="seo-preview-pane__preview-area">
