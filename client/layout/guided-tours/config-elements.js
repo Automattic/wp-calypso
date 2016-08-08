@@ -51,19 +51,19 @@ export class Tour extends Component {
 	static childContextTypes = contextTypes;
 
 	getChildContext() {
-		const { next, quit, isValid, lastAction, tour, tourVersion, step } = this.tourMethods;
+		const { next, quit, isValid, lastAction, tour, tourVersion, step } = this.tourMeta;
 		return { next, quit, isValid, lastAction, tour, tourVersion, step };
 	}
 
 	constructor( props, context ) {
 		super( props, context );
 		const { next, quit, isValid, lastAction, name, version, stepName } = props;
-		this.tourMethods = { next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
+		this.tourMeta = { next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		const { next, quit, isValid, lastAction, name, version, stepName } = nextProps;
-		this.tourMethods = { next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
+		this.tourMeta = { next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
 	}
 
 	render() {
@@ -89,13 +89,6 @@ export class Step extends Component {
 
 	constructor( props, context ) {
 		super( props, context );
-		this.next = context.next;
-		this.quit = context.quit;
-		//TODO(ehg): DRY; store in object?
-		this.step = context.step;
-		this.tour = context.tour;
-		this.tourVersion = context.tourVersion;
-
 		this.scrollContainer = query( props.scrollContainer )[ 0 ] || global.window;
 	}
 
@@ -110,10 +103,6 @@ export class Step extends Component {
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
-		this.step = nextContext.step;
-		this.tour = nextContext.tour;
-		this.tourVersion = nextContext.tourVersion;
-
 		this.skipIfInvalidContext( nextProps );
 		this.quitIfInvalidRoute( nextProps, nextContext );
 		this.setStepPosition( nextProps );
@@ -129,15 +118,16 @@ export class Step extends Component {
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 
 		const { isLastStep } = this.props;
+		const { quit, step, tour, tourVersion } = this.context;
 
 		if ( isLastStep ) {
 			tracks.recordEvent( 'calypso_guided_tours_finished', {
-				step: this.step,
-				tour_version: this.tourVersion,
-				tour: this.tour,
+				step,
+				tour,
+				tour_version: tourVersion,
 			} );
 
-			this.quit( { finished: isLastStep } );
+			quit( { finished: isLastStep } );
 		}
 	}
 
@@ -185,7 +175,7 @@ export class Step extends Component {
 			if ( !cont || ( cont && contContext && ! context.isValid( contContext ) ) ) {
 				const slug = this.props.target;
 				console.log( 'ROUTE_SET, slug: ', slug );
-				const quit = this.quit;
+				const quit = this.context.quit;
 				setTimeout( function() {
 					const target = targetForSlug( slug );
 					console.log( 'target: ', target );
@@ -208,7 +198,7 @@ export class Step extends Component {
 	skipIfInvalidContext( props ) {
 		const { context, isValid } = props;
 		if ( context && ! isValid( context ) ) {
-			this.next( this.tour ); //FIXME: do we need to access the next step name here?
+			this.context.next( this.tour ); //FIXME: do we need to access the next step name here?
 		}
 	}
 
@@ -259,27 +249,16 @@ export class Next extends Component {
 
 	constructor( props, context ) {
 		super( props, context );
-		this.next = context.next;
-		//TODO(ehg): DRY; store in object?
-		this.step = context.step;
-		this.tour = context.tour;
-		this.tourVersion = context.tourVersion;
-	}
-
-	componentWillReceiveProps( nextProps, nextContext ) {
-		this.step = nextContext.step;
-		this.tour = nextContext.tour;
-		this.tourVersion = nextContext.tourVersion;
 	}
 
 	onClick = () => {
 		tracks.recordEvent( 'calypso_guided_tours_next', {
-			step: this.step,
-			tour_version: this.tourVersion,
-			tour: this.tour,
+			step: this.context.step,
+			tour_version: this.context.tourVersion,
+			tour: this.context.tour,
 		} );
 
-		this.next( this.tour, this.props.step );
+		this.context.next( this.context.tour, this.props.step );
 	}
 
 	render() {
@@ -301,17 +280,6 @@ export class Quit extends Component {
 
 	constructor( props, context ) {
 		super( props, context );
-		this.quit = context.quit;
-		//TODO(ehg): DRY; store in object?
-		this.step = context.step;
-		this.tour = context.tour;
-		this.tourVersion = context.tourVersion;
-	}
-
-	componentWillReceiveProps( nextProps, nextContext ) {
-		this.step = nextContext.step;
-		this.tour = nextContext.tour;
-		this.tourVersion = nextContext.tourVersion;
 	}
 
 	onClick = () => {
@@ -319,12 +287,12 @@ export class Quit extends Component {
 
 		if ( ! this.props.isLastStep ) {
 			tracks.recordEvent( 'calypso_guided_tours_quit', {
-				step: this.step,
-				tour_version: this.tourVersion,
-				tour: this.tour,
+				step: this.context.step,
+				tour_version: this.context.tourVersion,
+				tour: this.context.tour,
 			} );
 		}
-		this.quit( { finished: isLastStep } );
+		this.context.quit( { finished: isLastStep } );
 	}
 
 	render() {
@@ -347,15 +315,6 @@ export class Continue extends Component {
 
 	constructor( props, context ) {
 		super( props, context );
-		this.lastAction = context.lastAction;
-		this.isValid = context.isValid;
-		this.next = context.next;
-		this.isValid = context.isValid;
-		//TODO(ehg): DRY; store in object?
-		this.step = context.step;
-		this.tour = context.tour;
-		this.tourVersion = context.tourVersion;
-		this.quit = context.quit;
 	}
 
 	componentDidMount() {
@@ -367,9 +326,6 @@ export class Continue extends Component {
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
-		this.step = nextContext.step;
-		this.tour = nextContext.tour;
-		this.tourVersion = nextContext.tourVersion;
 		this.quitIfInvalidRoute( nextProps, nextContext );
 		nextProps.context && nextContext.isValid( nextProps.context ) && this.onContinue();
 	}
@@ -388,12 +344,12 @@ export class Continue extends Component {
 
 	onContinue = () => {
 		tracks.recordEvent( 'calypso_guided_tours_next', {
-			step: this.step,
-			tour_version: this.tourVersion,
-			tour: this.tour,
+			step: this.context.step,
+			tour_version: this.context.tourVersion,
+			tour: this.context.tour,
 		} );
 
-		this.next( this.tour, this.props.step );
+		this.context.next( this.context.tour, this.props.step );
 	}
 
 	addTargetListener() {
