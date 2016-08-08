@@ -8,7 +8,6 @@ import page from 'page';
  */
 import config from 'config';
 import controller from 'my-sites/controller';
-import paths from './paths';
 import plansController from './controller';
 import googleAnalyticsLandingPage from './plan-feature/google-analytics';
 import yourPlan from './current-plan/controller';
@@ -19,6 +18,13 @@ export default function() {
 			'/plans',
 			controller.siteSelection,
 			controller.sites
+		);
+
+		page(
+			'/plans/:intervalType?/:site',
+			controller.siteSelection,
+			controller.navigation,
+			plansController.plans
 		);
 
 		page(
@@ -72,13 +78,6 @@ export default function() {
 		page(
 			'/plans/features/google-analytics',
 			controller.sites
-		);
-
-		page(
-			paths.plansDestination(),
-			controller.siteSelection,
-			controller.navigation,
-			plansController.plans
 		);
 	}
 }

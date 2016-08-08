@@ -3,7 +3,6 @@
  */
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import defer from 'lodash/defer';
 import find from 'lodash/find';
 import page from 'page';
 import React from 'react';
@@ -13,17 +12,14 @@ import React from 'react';
  */
 import { activated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
-import { abtest } from 'lib/abtest';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
-import config from 'config';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
 import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
-import FreeTrialNudge from './free-trial-nudge';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
 import GoogleAppsDetails from './google-apps-details';
@@ -271,11 +267,6 @@ const CheckoutThankYou = React.createClass( {
 							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
 							selectedSite={ selectedSite }
 							selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
-							sitePlans={ sitePlans } />
-
-						<FreeTrialNudge
-							purchases={ purchases }
-							selectedSite={ selectedSite }
 							sitePlans={ sitePlans } />
 					</div>
 				) }

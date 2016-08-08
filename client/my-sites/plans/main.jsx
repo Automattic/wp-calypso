@@ -30,11 +30,10 @@ const Plans = React.createClass( {
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		context: React.PropTypes.object.isRequired,
-		destinationType: React.PropTypes.string,
 		intervalType: React.PropTypes.string,
 		plans: React.PropTypes.array.isRequired,
 		sites: React.PropTypes.object.isRequired,
-		sitePlans: React.PropTypes.object.isRequired,
+		sitePlans: React.PropTypes.object.isRequired
 	},
 
 	showMonthlyPlansLink() {
@@ -85,8 +84,6 @@ const Plans = React.createClass( {
 
 		return (
 			<div>
-				{ this.renderNotice() }
-
 				<Main wideLayout={ true } >
 					<SidebarNavigation />
 
