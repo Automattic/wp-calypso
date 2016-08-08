@@ -188,4 +188,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-module.exports = connect( mapStateToProps, { setNextLayoutFocus } )( MeSidebar );
+export default connect( mapStateToProps, { setNextLayoutFocus } )( MeSidebar );
