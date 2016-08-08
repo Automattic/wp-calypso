@@ -82,7 +82,6 @@
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
-		"signup/theme-demos": false,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view-ab-test": true,

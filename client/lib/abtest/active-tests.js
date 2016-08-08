@@ -67,6 +67,14 @@ module.exports = {
 		defaultVariation: 'designTypeWithoutStore',
 		allowExistingUsers: false,
 	},
+	signupThemePreview: {
+		datestamp: '20160727',
+		variations: {
+			showThemePreview: 20,
+			hideThemePreview: 80,
+		},
+		defaultVariation: 'hideThemePreview',
+	},
 	firstView: {
 		datestamp: '20160726',
 		variations: {

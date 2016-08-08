@@ -90,7 +90,6 @@
 		"server-side-rendering": true,
 		"settings/security/monitor": true,
 		"settings/security/scan": true,
-		"signup/theme-demos": false,
 		"support-user": true,
 		"sync-handler": true,
 		"ui/first-view": true,
