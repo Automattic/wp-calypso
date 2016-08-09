@@ -125,7 +125,7 @@ export default React.createClass( {
 				/>
 				{ this.state.isShowingPopover &&
 					<Notifications
-						checkToggle={ this.checkToggleNotes }
+						clickInterceptor={ this.checkToggleNotes }
 						setIndicator={ this.setNotesIndicator }
 					/>
 				}
