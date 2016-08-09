@@ -1,15 +1,15 @@
 
-.post-card__site-info-title {
+.reader-related-card__site-info-title {
 	color: $gray;
 	float: left;
 	width: 100%;
 }
 
-.has-image .post-card__site-info-title {
+.has-image .reader-related-card__site-info-title {
 	width: calc( 100% - 120px );
 }
 
-.post-card__site-info {
+.reader-related-card__site-info {
 	color: $gray;
 	display: block;
 	font-size: 13px;
@@ -40,14 +40,14 @@
 	}
 }
 
-.post-card__title {
+.reader-related-card__title {
 	float: left;
 	line-height: 1.2;
 	margin-top: 6px;
 	width: 98%;
 }
 
-.post-card__anchor {
+.reader-related-card__anchor {
 	color: $gray-dark;
 	font-size: 15px;
 	font-weight: 600;
@@ -63,7 +63,7 @@
 	}
 }
 
-.post-card__thumbnail {
+.reader-related-card__thumbnail {
 	border-radius: 2px;
 	clear: right;
 	float: right;
@@ -71,12 +71,12 @@
 	max-width: 96px;
 }
 
-.post-card__byline-author-and-site {
+.reader-related-card__byline-author-and-site {
 	color: lighten( $gray, 10% );
 	margin-right: 6px;
 }
 
-.post-card__author-and-site {
+.reader-related-card__author-and-site {
 	color: lighten( $gray, 10% );
 	margin-right: 10px;
 }
@@ -85,8 +85,8 @@
 
 .reader__content {
 
-	.post-card__byline-link,
-	.post-card__byline-link:visited {
+	.reader-related-card__byline-link,
+	.reader-related-card__byline-link:visited {
 		color: lighten( $gray, 10% );
 
 		&:hover {
