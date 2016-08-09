@@ -1,77 +1,5 @@
-.post-card__site-info-title {
-	color: $gray;
-	float: left;
-	width: 100%;
-}
-
-.has-image .post-card__site-info-title {
-	width: calc( 100% - 120px );
-}
-
-.post-card__site-info {
-	color: $gray;
-	display: block;
-	font-size: 13px;
-	margin-right: 120px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	width: 100%;
-
-	a {
-		color: $gray;
-		text-decoration: none;
-
-		&:visited {
-			color: inherit;
-		}
-
-		&:hover {
-			color: $blue-wordpress;
-		}
-	}
-
-	.site-icon {
-		align-self: auto;
-		float: left;
-		display: inline-block;
-		margin-right: 4px;
-	}
-}
-
-.post-card__title {
-	float: left;
-	line-height: 1.2;
-	margin-top: 6px;
-	width: 98%;
-}
-
-.post-card__anchor {
-	color: $gray-dark;
-	font-size: 15px;
-	font-weight: 600;
-	line-height: 1.4;
-	@extend %content-font;
-
-	&:visited {
-		color: $gray-dark;
-	}
-
-	&:hover {
-		color: $blue-wordpress;
-	}
-}
-
-.post-card__thumbnail {
-	border-radius: 2px;
-	clear: right;
-	float: right;
-	max-height: 68px;
-	max-width: 96px;
-}
-
 // Search cards
-.post-card__search.card {
+.reader-search-card.card {
 	position: relative;
 	padding: 20px;
 
@@ -176,11 +104,11 @@
 			z-index: 1;
 		}
 
-		.post-card__search-featured-image {
+		.reader-search-card__featured-image {
 			width: 100%;
 		}
 
-		.post-card__search-title {
+		.reader-search-card__title {
 			display: block;
 			padding: 30px 20px 0 0;
 			position: relative;
@@ -191,7 +119,7 @@
 			color: $white;
 		}
 
-		.post-card__search-title-link {
+		.reader-search-card__title-link {
 			color: $white;
 
 			&:hover {
@@ -199,7 +127,7 @@
 			}
 		}
 
-		.post-card__search-byline {
+		.reader-search-card__byline {
 			position: relative;
 
 			.post-card__byline-link,
@@ -216,11 +144,11 @@
 			color: $white;
 		}
 
-		.post-card__search-social {
+		.reader-search-card__social {
 			position: relative;
 		}
 
-		.post-card__search-excerpt {
+		.reader-search-card__excerpt {
 			display: none;
 		}
 
@@ -233,9 +161,9 @@
 			color: $white;
 		}
 
-		.post-card__search-title-link,
-		.post-card__search-byline,
-		.post-card__search-social {
+		.reader-search-card__title-link,
+		.reader-search-card__byline,
+		.reader-search-card__social {
 			text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 			z-index: 2;
 		}
@@ -253,7 +181,7 @@
 	}
 }
 
-.post-card__search-title {
+.reader-search-card__title {
 	display: inline;
 	@extend %content-font;
 	font-size: 20px;
@@ -266,7 +194,7 @@
 	}
 }
 
-.post-card__search .post-card__search-title-link {
+.reader-search-card .reader-search-card__title-link {
 	color: inherit;
 
 	&:hover {
@@ -278,7 +206,7 @@
 	}
 }
 
-.post-card__search-featured-image {
+.reader-search-card__featured-image {
 	display: block;
 	position: absolute;
 		bottom: 0;
@@ -295,14 +223,14 @@
 	}
 }
 
-.post-card__search-social {
+.reader-search-card__social {
 	display: flex;
 	float: right;
 	margin-bottom: 6px;
 	padding-left: 20px;
 }
 
-.post-card__search-byline {
+.reader-search-card__byline {
 	font-size: 13px;
 	list-style: none;
 	margin: 6px 0;
@@ -313,24 +241,14 @@
 	}
 }
 
-.post-card__byline-author-and-site {
-	color: lighten( $gray, 10% );
-	margin-right: 6px;
-}
-
-.post-card__author-and-site {
-	color: lighten( $gray, 10% );
-	margin-right: 10px;
-}
-
-.post-card__search-excerpt {
+.reader-search-card__excerpt {
 	@extend %content-font;
 	font-size: 14px;
 	margin-top: 6px;
 }
 
 // Custom styles for Follow button
-.post-card__search-byline .follow-button {
+.reader-search-card__byline .follow-button {
 	background: none;
 	border-style: none;
 	font-size: 13px;
@@ -384,20 +302,6 @@
 			.follow-button__label {
 				color: $blue-wordpress;
 			}
-		}
-	}
-}
-
-// Custom colors for Site and Author info
-
-.reader__content {
-
-	.post-card__byline-link,
-	.post-card__byline-link:visited {
-		color: lighten( $gray, 10% );
-
-		&:hover {
-			color: $blue-wordpress;
 		}
 	}
 }
