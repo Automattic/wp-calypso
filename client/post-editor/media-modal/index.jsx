@@ -209,15 +209,15 @@ module.exports = React.createClass( {
 		this.setView( ModalViews.IMAGE_EDITOR );
 	},
 
-	onImageEditorClose: function() {
+	onImageEditorClose: function( event, { hasEditedImage } = { hasEditedImage: false } ) {
 		const item = this.props.mediaLibrarySelectedItems[ this.state.detailSelectedIndex ];
 
-		if ( item ) {
-			this.setView( ModalViews.DETAIL );
+		if ( ! item || hasEditedImage ) {
+			MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+			this.setView( ModalViews.LIST );
 			return;
 		}
-
-		this.setView( ModalViews.LIST );
+		this.setView( ModalViews.DETAIL );
 	},
 
 	onFilterChange: function( filter ) {

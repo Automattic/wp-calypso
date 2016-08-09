@@ -65,7 +65,7 @@ const MediaModalImageEditor = React.createClass( {
 	onDone() {
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 		canvasComponent.toBlob( this.onImageExtracted );
-		this.props.onImageEditorClose();
+		this.props.onImageEditorClose( null, { hasEditedImage: true } );
 	},
 
 	onImageExtracted( blob ) {
