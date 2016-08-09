@@ -49,13 +49,14 @@ const MediaModalImageEditor = React.createClass( {
 			fileName = 'default',
 			mimeType = 'image/png';
 
-		if ( this.props.items && this.props.items[ this.props.selectedIndex ] ) {
-			src = MediaUtils.url( this.props.items[ this.props.selectedIndex ], {
+		const media = this.props.items[ this.props.selectedIndex ];
+
+		if ( this.props.items && media ) {
+			src = MediaUtils.url( media, {
 				photon: this.props.site && ! this.props.site.is_private
 			} );
-
-			fileName = path.basename( src );
-			mimeType = MediaUtils.getMimeType( this.props.items[ this.props.selectedIndex ] );
+			fileName = media.file || path.basename( src );
+			mimeType = MediaUtils.getMimeType( media );
 		}
 
 		this.props.resetImageEditorState();
@@ -63,16 +64,9 @@ const MediaModalImageEditor = React.createClass( {
 	},
 
 	onDone() {
-		//TODO: this exists to handle cross-origin error - at the moment
-		//the error prevents editing of the images that have been already
-		//uploaded. Consider removing this once the cors headers are added to
-		//the image responses
-		try {
-			const canvasComponent = this.refs.editCanvas.getWrappedInstance();
-			canvasComponent.toBlob( this.onImageExtracted );
-		} finally {
-			this.props.onImageEditorClose();
-		}
+		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
+		canvasComponent.toBlob( this.onImageExtracted );
+		this.props.onImageEditorClose();
 	},
 
 	onImageExtracted( blob ) {
@@ -88,7 +82,7 @@ const MediaModalImageEditor = React.createClass( {
 	//TODO: the drop zone currently exists for presentation purposes,
 	//consider implementing the image open functionality fully or removing it
 	onFilesDrop: function( files ) {
-		const file = files[0];
+		const file = files[ 0 ];
 		const mimePrefix = MediaUtils.getMimePrefix( file );
 		const mimeType = MediaUtils.getMimeType( file );
 
