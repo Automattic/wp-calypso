@@ -15,6 +15,7 @@ import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import FeedStoreActions from 'lib/feed-store/actions';
+import RememberedPostsStore from 'lib/remembered-posts';
 import SiteBlockStore from 'lib/reader-site-blocks';
 import SiteBlockActions from 'lib/reader-site-blocks/actions';
 import PostUtils from 'lib/posts/utils';
@@ -63,6 +64,7 @@ const PostOptions = React.createClass( {
 
 		return {
 			isBlocked: SiteBlockStore.getIsBlocked( siteId ),
+			isRemembered: RememberedPostsStore.getIsRemembered( this.props.post ),
 			blockError: SiteBlockStore.getLastErrorBySite( siteId ),
 			feed: this.getFeed(),
 			followUrl: followUrl,
@@ -86,6 +88,12 @@ const PostOptions = React.createClass( {
 		stats.recordTrackForPost( 'calypso_reader_block_site', this.props.post );
 		SiteBlockActions.block( this.props.post.site_ID );
 		this.props.onBlock();
+	},
+
+	rememberPost() {
+	},
+
+	forgetPost() {
 	},
 
 	reportPost() {
@@ -204,6 +212,7 @@ const PostOptions = React.createClass( {
 						{ this.translate( 'Edit Post' ) }
 					</PopoverMenuItem> : null }
 
+					{ this.state.isRemembered ? <PopoverMenuItem onClick={ this.rememberPost }>{ this.translate( 'Remember Post' ) }</PopoverMenuItem> : <PopoverMenuItem onClick={ this.forgetPost }>{ this.translate( 'Forget Post' ) }</PopoverMenuItem> }
 					{ isBlockPossible || isDiscoverPost ? <hr className="post-options__hr" /> : null }
 					{ isBlockPossible ? <PopoverMenuItem onClick={ this.blockSite }>{ this.translate( 'Block Site' ) }</PopoverMenuItem> : null }
 					{ isBlockPossible || isDiscoverPost ? <PopoverMenuItem onClick={ this.reportPost }>{ this.translate( 'Report this Post' ) }</PopoverMenuItem> : null }

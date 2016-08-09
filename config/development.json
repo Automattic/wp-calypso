@@ -113,6 +113,7 @@
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"reader/recommendations/posts": true,
+		"reader/remembered-posts": true,
 		"reader/related-posts": true,
 		"reader/refresh-2016-07": false,
 		"reader/search": true,
