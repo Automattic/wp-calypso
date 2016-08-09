@@ -268,6 +268,7 @@
 	padding: 0;
 	vertical-align: middle;
 }
+
 .tiled-gallery-caption { /* Captions */
 	background: #eee;
 	background: rgba( 255,255,255,0.8 );
@@ -275,13 +276,16 @@
 	font-size: 13px;
 	font-weight: 400;
 	overflow: hidden;
-	padding: 10px 0;
+	padding: 10px 20px;
 	position: absolute;
 		bottom: 0;
-	text-indent: 10px;
 	text-overflow: ellipsis;
 	width: 100%;
-	white-space: nowrap;
+  transition: opacity .25s ease-in-out;
+  opacity: 0;
+}
+.tiled-gallery-item:hover .tiled-gallery-caption {
+  opacity: 1;
 }
 .tiled-gallery .tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
 	font-size: 11px;
