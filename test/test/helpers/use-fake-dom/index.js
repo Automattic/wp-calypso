@@ -1,6 +1,6 @@
 import debug from 'debug';
 
-import reactTestEnvSetup from 'lib/react-test-env-setup';
+import reactTestEnvSetup from 'react-test-env';
 
 const log = debug( 'calypso:test:helpers:setup-dom-env' );
 
@@ -25,8 +25,8 @@ export default function domWrapper( markup, features ) {
 
 domWrapper.withContainer = function withContainer() {
 	domWrapper( '<html><head><title>test</title></head><body><div id="container"></div></body></html>' );
-}
+};
 
 domWrapper.getContainer = function getContainer() {
 	return document.getElementById( 'container' );
-}
+};
