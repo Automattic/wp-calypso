@@ -20,6 +20,7 @@ import {
 import titleActions from 'lib/screen-title/actions';
 import FullPostDialog from './main';
 import ReaderFullPost from 'components/reader-full-post';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 // This holds the last title set on the page. Removing the overlay doesn't trigger a re-render, so we need a way to
@@ -31,9 +32,10 @@ function renderPostNotFound() {
 
 	setPageTitle( sidebarAndPageTitle );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		<FeedError sidebarTitle={ sidebarAndPageTitle } message={ i18n.translate( 'Post Not Found' ) } />,
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
