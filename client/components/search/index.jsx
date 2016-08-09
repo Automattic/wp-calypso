@@ -59,7 +59,8 @@ const Search = React.createClass( {
 		searching: PropTypes.bool,
 		isOpen: PropTypes.bool,
 		dir: PropTypes.string,
-		fitsContainer: PropTypes.bool
+		fitsContainer: PropTypes.bool,
+		hideClose: PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -83,7 +84,8 @@ const Search = React.createClass( {
 			searching: false,
 			isOpen: false,
 			dir: undefined,
-			fitsContainer: false
+			fitsContainer: false,
+			hideClose: false,
 		};
 	},
 
@@ -271,13 +273,21 @@ const Search = React.createClass( {
 			spellCheck: 'false'
 		};
 
-		searchClass = classNames( this.props.additionalClasses, {
+		const searchClass = classNames( this.props.additionalClasses, {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
+			'no-close-button' : this.props.hideClose,
 			rtl: this.props.dir === 'rtl',
 			ltr: this.props.dir === 'ltr',
 			search: true
+		} );
+
+		const inputClass = classNames ( {
+			'search__input': true,
+			'no-close-button': this.props.hideClose,
+			rtl: this.props.dir === 'rtl',
+			ltr: this.props.dir === 'ltr',
 		} );
 
 		return (
@@ -298,7 +308,7 @@ const Search = React.createClass( {
 				<input
 					type="search"
 					id={ 'search-component-' + this.state.instanceId }
-					className={ 'search__input' + ( this.props.dir ? ' ' + this.props.dir : '' ) }
+					className={ inputClass }
 					placeholder={ placeholder }
 					role="search"
 					value={ searchValue }
@@ -313,22 +323,32 @@ const Search = React.createClass( {
 					autoCapitalize="none"
 					dir={ this.props.dir }
 					{ ...autocorrect } />
-				{ ( searchValue || this.state.isOpen ) ? this.closeButton() : null }
+					{ this.closeButton() }
 			</div>
 		);
 	},
 
 	closeButton: function() {
-		return (
-			<span
-				onTouchTap={ this.closeSearch }
-				tabIndex="0"
-				onKeyDown={ this.closeListener }
-				aria-controls={ 'search-component-' + this.state.instanceId }
-				aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
-			<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
-			</span>
-		);
+		const gridIconClass = classNames ( {
+			'search-close__icon': true,
+			rtl: this.props.dir === 'rtl',
+			ltr: this.props.dir === 'ltr',
+		} );
+
+		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
+			return (
+				<span
+					onTouchTap={ this.closeSearch }
+					tabIndex="0"
+					onKeyDown={ this.closeListener }
+					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
+					<Gridicon icon="cross" className={ gridIconClass } />
+				</span>
+			);
+		}
+
+		return null;
 	}
 } );
 
