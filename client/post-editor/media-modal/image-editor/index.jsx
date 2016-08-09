@@ -33,13 +33,15 @@ const MediaModalImageEditor = React.createClass( {
 		fileName: React.PropTypes.string,
 		mimeType: React.PropTypes.string,
 		setImageEditorFileInfo: React.PropTypes.func,
-		onImageEditorClose: React.PropTypes.func
+		onImageEditorClose: React.PropTypes.func,
+		onImageEditorCancel: React.PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
 			selectedIndex: 0,
-			onImageEditorClose: noop
+			onImageEditorClose: noop,
+			onImageEditorCancel: noop
 		};
 	},
 
@@ -65,7 +67,7 @@ const MediaModalImageEditor = React.createClass( {
 	onDone() {
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 		canvasComponent.toBlob( this.onImageExtracted );
-		this.props.onImageEditorClose( null, { hasEditedImage: true } );
+		this.props.onImageEditorClose();
 	},
 
 	onImageExtracted( blob ) {
@@ -109,7 +111,7 @@ const MediaModalImageEditor = React.createClass( {
 						<EditCanvas ref="editCanvas" />
 						<EditToolbar />
 						<EditButtons
-							onCancel={ this.props.onImageEditorClose }
+							onCancel={ this.props.onImageEditorCancel }
 							onDone={ this.onDone } />
 					</div>
 				</figure>

@@ -209,11 +209,14 @@ module.exports = React.createClass( {
 		this.setView( ModalViews.IMAGE_EDITOR );
 	},
 
-	onImageEditorClose: function( event, { hasEditedImage } = { hasEditedImage: false } ) {
-		const item = this.props.mediaLibrarySelectedItems[ this.state.detailSelectedIndex ];
+	onImageEditorClose: function() {
+		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+		this.setView( ModalViews.LIST );
+	},
 
-		if ( ! item || hasEditedImage ) {
-			MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+	onImageEditorCancel: function() {
+		const item = this.props.mediaLibrarySelectedItems[ this.state.detailSelectedIndex ];
+		if ( ! item ) {
 			this.setView( ModalViews.LIST );
 			return;
 		}
@@ -388,7 +391,9 @@ module.exports = React.createClass( {
 						site={ this.props.site }
 						items={ this.props.mediaLibrarySelectedItems }
 						selectedIndex={ this.state.detailSelectedIndex }
-						onImageEditorClose={ this.onImageEditorClose } />
+						onImageEditorClose={ this.onImageEditorClose }
+						onImageEditorCancel={ this.onImageEditorCancel }
+					/>
 				);
 				break;
 		}
