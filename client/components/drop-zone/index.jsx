@@ -63,7 +63,10 @@ export class DropZone extends Component {
 			return;
 		}
 
-		this.setState( this.getInitialState() );
+		this.setState( {
+			isDraggingOverDocument: false,
+			isDraggingOverElement: false
+		} );
 	}
 
 	toggleMutationObserver() {
