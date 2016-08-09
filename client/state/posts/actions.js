@@ -154,7 +154,7 @@ export function requestPosts( query = {} ) {
  * @param  {Object} post   Post attribute updates
  * @return {Object}        Action object
  */
-export function editPost( siteId, postId, post ) {
+export function editPost( siteId, postId = null, post ) {
 	return {
 		type: POST_EDIT,
 		post,
@@ -188,7 +188,7 @@ export function resetPostEdits( siteId, postId ) {
  * @param  {Object}   post   Post attributes
  * @return {Function}        Action thunk
  */
-export function savePost( siteId, postId, post ) {
+export function savePost( siteId, postId = null, post ) {
 	return async ( dispatch ) => {
 		dispatch( {
 			type: POST_SAVE,
