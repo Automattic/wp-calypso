@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SmallPostCard from 'components/post-card/small';
-import SearchPostCard from 'components/post-card/search';
+import SmallPostCard from 'components/reader-related-card';
+import SearchPostCard from 'components/reader-search-card';
 import DisplayTypes from 'state/reader/posts/display-types';
 
 const smallItems = [
