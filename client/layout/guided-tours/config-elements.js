@@ -427,7 +427,7 @@ export const makeTour = tree => {
 	const tour = ( { stepName, isValid, lastAction, next, quit } ) =>
 		React.cloneElement( tree, {
 			stepName, isValid, lastAction, next, quit,
-			branching: tour.branching,
+			branching: tourBranching( tree ),
 		} );
 
 	tour.propTypes = {
@@ -439,7 +439,6 @@ export const makeTour = tree => {
 		branching: PropTypes.object.isRequired,
 	};
 	tour.meta = omit( tree.props, 'children' );
-	tour.branching = tourBranching( tree );
 	return tour;
 };
 
@@ -449,7 +448,6 @@ export const combineTours = tours => {
 		return tour ? tour( props ) : null;
 	};
 	combined.meta = mapValues( tours, property( 'meta' ) );
-	combined.branching = mapValues( tours, property( 'branching' ) );
 
 	// FIXME(mcsf): debuggin'
 	window.tours = tours;
