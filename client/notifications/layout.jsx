@@ -11,14 +11,22 @@ const layoutStyle = {
 
 export class Layout extends Component {
 	render() {
+		const {
+			notes
+		} = this.props;
+
 		return (
 			<div style={ layoutStyle }>
-				Notes
+				{ notes.map( note => <div>{ note.subject[0].text }</div> ) }
 			</div>
 		);
 	}
 }
 
 Layout.displayName = 'NotificationsLayout';
+
+Layout.propTypes = {
+	notes: PropTypes.array
+};
 
 export default Layout;

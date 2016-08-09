@@ -1,3 +1,6 @@
+/**
+ * External dependencies
+ */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import {
@@ -5,6 +8,10 @@ import {
 	invoker
 } from 'ramda';
 
+/**
+ * Internal dependencies
+ */
+import wpcom from 'lib/wp';
 import Layout from './layout';
 
 const inBrowser = (() => (
@@ -32,6 +39,21 @@ const toggleCapturedScroll = doCapture => () => {
 export class NotificationsPanel extends Component {
 	constructor( props ) {
 		super( props );
+
+		this.state = {
+			notes: [],
+			selectedNote: null
+		};
+
+		wpcom
+			.req
+			.get( {
+				path: '/notifications/',
+				apiVersion: '1.1'
+			}, { number: 10 } )
+			.then( ( { notes } ) => {
+				this.setState( { notes } );
+			} );
 
 		this.toggleListeners = this.toggleListeners.bind( this );
 	}
@@ -72,7 +94,7 @@ export class NotificationsPanel extends Component {
 		const {
 			notes,
 			selectedNote
-		} = this.props;
+		} = this.state;
 
 		return (
 			<div
