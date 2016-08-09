@@ -7,31 +7,13 @@ import { Provider as ReduxProvider } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { makeLayoutMiddleware } from './shared.js';
 import LayoutLoggedOut from 'layout/logged-out';
-import { getCurrentUser } from 'state/current-user/selectors';
 
 /**
  * Re-export
  */
 export { setSection } from './shared.js';
-
-export function makeLayoutMiddleware( LayoutComponent ) {
-	return ( context, next ) => {
-		const { store, primary, secondary, tertiary } = context;
-
-		// On server, only render LoggedOutLayout when logged-out.
-		if ( ! context.isServerSide || getCurrentUser( context.store.getState() ) ) {
-			context.layout = (
-				<LayoutComponent store={ store }
-					primary={ primary }
-					secondary={ secondary }
-					tertiary={ tertiary }
-				/>
-			);
-		}
-		next();
-	};
-}
 
 const ReduxWrappedLoggedOutLayout = ( { store, primary, secondary, tertiary } ) => (
 	<ReduxProvider store={ store }>
