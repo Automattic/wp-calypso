@@ -60,7 +60,7 @@ export default class Select extends Component {
 		} );
 		return (
 			<FormSelect
-				className={ shouldShowPlaceholders ? 'exporter__placeholder-select' : '' }
+				className={ shouldShowPlaceholders ? 'export-card__placeholder-select' : '' }
 				disabled={ shouldShowPlaceholders || ! isEnabled }
 				isError={ isEnabled && isError }
 				onChange={ this.setValue }

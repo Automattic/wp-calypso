@@ -3,7 +3,7 @@
  */
 import { localize } from 'i18n-calypso';
 import flowRight from 'lodash/flowRight';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -48,7 +48,7 @@ class ExportCard extends Component {
 
 		const exportButton = (
 			<SpinnerButton
-				className="exporter__export-button"
+				className="export-card__export-button"
 				loading={ this.props.shouldShowProgress }
 				isPrimary={ true }
 				onClick={ exportAll }
@@ -62,10 +62,10 @@ class ExportCard extends Component {
 					actionButtonIcon="cog"
 					header={
 						<div>
-							<h1 className="exporter__title">
+							<h1 className="export-card__title">
 								{ translate( 'Export your content' ) }
 							</h1>
-							<h2 className="exporter__subtitle">
+							<h2 className="export-card__subtitle">
 								{ translate( 'Or select specific content items to export' ) }
 							</h2>
 						</div>

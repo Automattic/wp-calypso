@@ -33,7 +33,7 @@ function mapStateToProps() {
 	return {
 		// This will be replaced with a Redux selector once we've built out
 		// the reducers
-		isGuidedTransferInProgress: true,
+		isGuidedTransferInProgress: false,
 	};
 }
 

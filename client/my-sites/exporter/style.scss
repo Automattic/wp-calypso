@@ -2,7 +2,7 @@
 	padding-bottom: 100px;
 }
 
-.exporter__title {
+.export-card__title {
 	font-size: 21px;
 	font-weight: 300;
 	color: $gray-dark;
@@ -10,47 +10,47 @@
 	clear: left;
 }
 
-.exporter__subtitle {
+.export-card__subtitle {
 	font-size: 14px;
 	color: $gray-dark;
 }
 
-.exporter__spinner-button {
+.export-card__spinner-button {
 	float: right;
 	padding: 8px;
 }
 
-.exporter__export-button {
+.export-card__export-button {
 	float: right;
 }
 
-.exporter__placeholder-select {
+.export-card__placeholder-select {
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
-.exporter__advanced-settings {
+.export-card__advanced-settings {
 	padding-bottom: 50px;
 }
 
-.exporter__advanced-settings-title {
+.export-card__advanced-settings-title {
 	font-size: 21px;
 	font-weight: 300;
 	color: $gray-dark;
 	margin-bottom: 16px;
 }
 
-.exporter__advanced-settings-description {
+.export-card__advanced-settings-description {
 	font-size: 14px;
 }
 
-.exporter__advanced-settings-row {
+.export-card__advanced-settings-row {
 	@include breakpoint( ">960px" ) {
 		display: flex;
 		flex-wrap: wrap;
 	}
 }
 
-.exporter__option-fieldset {
+.export-card__option-fieldset {
 	margin-top: 10px;
 
 	@include breakpoint( ">960px" ) {
@@ -61,18 +61,18 @@
 
 // The following specificity is required to override the form-label selector:
 // .form-label input[type="checkbox"] + span { font-weight: normal }
-.exporter__option-fieldset-legend .exporter__option-fieldset-legend-text {
+.export-card__option-fieldset-legend .export-card__option-fieldset-legend-text {
 	font-weight: bold;
 }
 
-.exporter__option-fieldset-description {
+.export-card__option-fieldset-description {
 	font-size: 14px;
 	color: $gray;
 	padding-left: 24px;
 	padding-right: 24px;
 }
 
-.exporter__option-fieldset-fields {
+.export-card__option-fieldset-fields {
 	padding-left: 24px;
 	padding-right: 24px;
 
@@ -81,80 +81,79 @@
 	}
 }
 
-// START GUIDED TRANSFER
-.exporter__guided-transfer-options {
+.guided-transfer-card__options {
 	display: flex;
 	font-size: 14px;
 }
 
-.exporter__guided-transfer-options-header-title-container {
+.guided-transfer-card__options-header-title-container {
 	flex-grow: 1;
 }
 
-.exporter__guided-transfer-options-header-button-container {
+.guided-transfer-card__options-header-button-container {
 	margin: auto;
 }
 
-.exporter__guided-transfer-title {
+.guided-transfer-card__title {
 	font-size: 21px;
 	font-weight: 300;
 	color: $gray-dark;
 	clear: left;
 }
 
-.exporter__guided-transfer-subtitle {
+.guided-transfer-card__subtitle {
 	color: $gray;
 	font-style: italic;
 	font-size: 14px;
 }
 
-.exporter__guided-transfer-price {
+.guided-transfer-card__price {
 	font-style: normal;
 	font-size: 18px;
 }
 
-.exporter__guided-transfer-details {
+.guided-transfer-card__details {
 	background-color: lighten( $gray-light, 2% );
 	font-size: 14px;
 }
 
-.exporter__guided-transfer-details-container {
+.guided-transfer-card__details-container {
 	display: flex;
 }
 
-.exporter__guided-transfer-details-title {
+.guided-transfer-card__details-title {
 	color: $gray-dark;
 	font-weight: 600;
 	margin-bottom: 12px;
 }
 
-.exporter__guided-transfer-details-text {
+.guided-transfer-card__details-text {
 	flex-basis: 60%;
 	color: $gray;
 }
 
-.exporter__guided-transfer-feature-list {
+.guided-transfer-card__feature-list {
 	color: $alert-green;
 	flex-basis: 40%;
 
-	.exporter__guided-transfer-feature-list-item {
+	.guided-transfer-card__feature-list-item {
 		list-style-type: none;
 		text-indent: -24px;
 		margin-bottom: 8px;
 	}
 
-	.exporter__guided-transfer-feature-icon {
+	.guided-transfer-card__feature-icon {
 		margin-right: 6px;
 		margin-top: -4px;
 		vertical-align: middle;
 	}
 }
 
-.exporter__guided-transfer-feature-text {
+.guided-transfer-card__feature-text {
 	color: $gray;
 }
 
-.exporter__guided-transfer-in-progress {
+.guided-transfer-card__in-progress {
 	padding-top: 32px;
 	padding-bottom: 32px;
 	font-size: 16px;
@@ -166,7 +165,7 @@
 	}
 }
 
-.exporter__guided-transfer-in-progress-icon {
+.guided-transfer-card__in-progress-icon {
 	margin: 16px auto;
 	width: 48px;
 	height: 48px;
@@ -182,9 +181,8 @@
 	}
 }
 
-.exporter__guided-transfer-in-progress-title {
+.guided-transfer-card__in-progress-title {
 	font-size: 24px;
 	font-weight: 300;
 	color: $gray-dark;
 }
-// END GUIDED TRANSFER

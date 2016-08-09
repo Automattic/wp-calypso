@@ -16,9 +16,9 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 
 const Feature = ( { children } ) =>
-	<li className="exporter__guided-transfer-feature-list-item">
-		<Gridicon className="exporter__guided-transfer-feature-icon" size={ 18 } icon="checkmark" />
-		<span className="exporter__guided-transfer-feature-text">
+	<li className="guided-transfer-card__feature-list-item">
+		<Gridicon className="guided-transfer-card__feature-icon" size={ 18 } icon="checkmark" />
+		<span className="guided-transfer-card__feature-text">
 			{ children }
 		</span>
 	</li>;
@@ -38,16 +38,16 @@ class GuidedTransferCard extends Component {
 
 		return <div>
 			<CompactCard>
-				<div className="exporter__guided-transfer-options">
-					<div className="exporter__guided-transfer-options-header-title-container">
-						<h1 className="exporter__guided-transfer-title">
+				<div className="guided-transfer-card__options">
+					<div className="guided-transfer-card__options-header-title-container">
+						<h1 className="guided-transfer-card__title">
 							{ translate( 'Guided Transfer' ) }
 						</h1>
-						<h2 className="exporter__guided-transfer-subtitle">
-							<span className="exporter__guided-transfer-price">$129</span> One-time expense
+						<h2 className="guided-transfer-card__subtitle">
+							<span className="guided-transfer-card__price">$129</span> One-time expense
 						</h2>
 					</div>
-					<div className="exporter__guided-transfer-options-header-button-container">
+					<div className="guided-transfer-card__options-header-button-container">
 						<Button
 							onClick={ this.purchaseGuidedTransfer }
 							isPrimary={ true }>
@@ -56,10 +56,10 @@ class GuidedTransferCard extends Component {
 					</div>
 				</div>
 			</CompactCard>
-			<CompactCard className="exporter__guided-transfer-details">
-				<div className="exporter__guided-transfer-details-container">
-					<div className="exporter__guided-transfer-details-text">
-						<h1 className="exporter__guided-transfer-details-title">
+			<CompactCard className="guided-transfer-card__details">
+				<div className="guided-transfer-card__details-container">
+					<div className="guided-transfer-card__details-text">
+						<h1 className="guided-transfer-card__details-title">
 							{ translate( 'Hassle-free migration with two weeks of support' ) }
 						</h1>
 						{ translate(
@@ -72,7 +72,7 @@ class GuidedTransferCard extends Component {
 							{ translate( 'Learn more.' ) }
 						</a>
 					</div>
-					<ul className="exporter__guided-transfer-feature-list">
+					<ul className="guided-transfer-card__feature-list">
 						<Feature>{ translate( 'Seamless content transfer' ) }</Feature>
 						<Feature>{ translate( 'Install and configure plugins to keep your functionality' ) }</Feature>
 						<Feature>
