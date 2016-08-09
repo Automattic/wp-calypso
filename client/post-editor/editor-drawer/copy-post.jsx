@@ -15,7 +15,7 @@ import Gridicon from 'components/gridicon';
 import PostActions from 'lib/posts/actions';
 import PostSelector from 'my-sites/post-selector';
 
-class EditorCopyPost extends Component {
+class EditorDrawerCopyPost extends Component {
 
 	static propTypes = {
 		site: PropTypes.object.isRequired,
@@ -104,4 +104,4 @@ class EditorCopyPost extends Component {
 
 }
 
-export default localize( EditorCopyPost );
+export default localize( EditorDrawerCopyPost );
