@@ -1,0 +1,22 @@
+.note-range__comment {
+	font-style: italic;
+}
+
+.note-range__post {
+	font-sytyle: italic;
+}
+
+.note-range__site {
+	font-weight: bold;
+}
+
+.note-range__typed {
+	&.type-match {
+		color: $blue-medium;
+		font-weight: bold;
+	}
+}
+
+.note-range__user {
+	font-weight: bold;
+}
