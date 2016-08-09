@@ -12,7 +12,9 @@ import {
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+
 import Layout from './layout';
+import fromApi from './from-api.js';
 
 const inBrowser = (() => (
 	( 'undefined' !== typeof window ) &&
@@ -51,7 +53,13 @@ export class NotificationsPanel extends Component {
 				path: '/notifications/',
 				apiVersion: '1.1'
 			}, { number: 10 } )
-			.then( ( { notes } ) => {
+			.then( response => {
+				const {
+					lastSeenTime,
+					notes
+				} = fromApi( response );
+				console.log( notes[0] );
+
 				this.setState( { notes } );
 			} );
 

@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 
+import parseBlocks from './blocks/block-tree-parser';
+
 const layoutStyle = {
 	height: '100%',
 	width: '100%',
@@ -17,7 +19,7 @@ export class Layout extends Component {
 
 		return (
 			<div style={ layoutStyle }>
-				{ notes.map( note => <div>{ note.subject[0].text }</div> ) }
+				{ notes.map( ( { subject } ) => parseBlocks( subject ) ) }
 			</div>
 		);
 	}
