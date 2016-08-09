@@ -7,7 +7,11 @@ import React, { PropTypes } from 'react';
 import PureComponent from 'react-pure-render/component';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { compact, find, get } from 'lodash';
+import {
+	compact,
+	find,
+	get
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,7 +51,11 @@ const getPostImage = ( post ) => {
 	}
 
 	const imgElements = parseHtml( content ).querySelectorAll( 'img' );
-	const largeImage = get( find( imgElements, ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ), 'src', null );
+	const largeImage = get(
+		find( imgElements, ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ),
+		'src',
+		null
+	);
 
 	return largeImage ? `${ largeImage }?s=${ PREVIEW_IMAGE_WIDTH }` : null;
 };
