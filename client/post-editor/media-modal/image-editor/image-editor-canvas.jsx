@@ -72,7 +72,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	getImage( url ) {
 		const req = new XMLHttpRequest();
 		req.open( 'GET', url, true );
-		req.responseType = "arraybuffer";
+		req.responseType = 'arraybuffer';
 		req.onload = () => {
 			const objectURL = window.URL.createObjectURL( new Blob( [ req.response ], { type: this.props.mimeType } ) );
 			this.initImage( objectURL );
