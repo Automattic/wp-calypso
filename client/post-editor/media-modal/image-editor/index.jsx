@@ -48,9 +48,9 @@ const MediaModalImageEditor = React.createClass( {
 			fileName = 'default',
 			mimeType = 'image/png';
 
-		const media = this.props.items[ this.props.selectedIndex ];
+		const media = this.props.items ? this.props.items[ this.props.selectedIndex ] : null;
 
-		if ( this.props.items && media ) {
+		if ( media ) {
 			src = MediaUtils.url( media, {
 				photon: this.props.site && ! this.props.site.is_private
 			} );
