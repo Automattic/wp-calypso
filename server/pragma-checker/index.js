@@ -16,6 +16,7 @@ var IGNORED_MODULES = [
 	'lib/formatting', // Different modules on client & server
 	'lib/analytics', // nooped on the server until we develop an isomorphic version
 	'lib/route', // nooped on the server until we can extract the isomorphic bits
+	'lib/post-normalizer/rule-create-better-excerpt', // nooped on the server until we develop an isomorphic version
 	'lib/upgrades/actions', // nooped on the server as it still uses the singleton Flux architecture
 	'i18n-calypso', // ignore this until we make it work properly on the server
 	'my-sites/themes/thanks-modal', // stubbed on the server until we develop an isomorphic version
