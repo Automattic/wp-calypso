@@ -20,7 +20,7 @@ export function AuthorAndSite( { translate, post, site, feed, showGravatar = fal
 	const siteName = site && site.title || post.site_name;
 
 	const username = (
-		<span className="post-card__search-byline-author">
+		<span className="reader-card-search__byline-author">
 			<a className="post-card__byline-link" href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onClick, { post, site, feed } ) }>
 				{ showGravatar && <Gravatar user={ post.author } size={ 16 } /> }
 				{ displayName }
