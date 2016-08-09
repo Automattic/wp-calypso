@@ -257,8 +257,7 @@ const Search = React.createClass( {
 	},
 
 	render: function() {
-		let searchClass,
-			searchValue = this.state.keyword,
+		let searchValue = this.state.keyword,
 			placeholder = this.props.placeholder ||
 				i18n.translate( 'Search…', { textOnly: true } );
 
