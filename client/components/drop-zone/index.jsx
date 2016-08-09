@@ -162,10 +162,7 @@ export class DropZone extends Component {
 		// where files dragged directly from the dock are not recognized
 		event.dataTransfer && event.dataTransfer.files.length;
 
-		this.setState( {
-			isDraggingOverDocument: false,
-			isDraggingOverElement: false
-		} );
+		this.resetDragState();
 
 		if ( ! this.props.fullScreen && ! ReactDom.findDOMNode( this.refs.zone ).contains( event.target ) ) {
 			return;
