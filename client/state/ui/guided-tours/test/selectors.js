@@ -162,10 +162,13 @@ describe( 'selectors', () => {
 			expect( tour ).to.equal( undefined );
 		} );
 		it( 'should respect tour contexts', () => {
-			const state = makeState( {
-				actionLog: [ navigateToThemes ],
-				userData: { date: ( new Date() ).toJSON() }, // user was created just now
-			} );
+			const state = {
+				...makeState( {
+					actionLog: [ navigateToThemes ],
+					userData: { date: ( new Date() ).toJSON() }, // user was created just now
+				} ),
+				themesDisabled: true,
+			};
 			const tour = findEligibleTour( state );
 
 			// Even though we navigated to `/themes`, this counts as navigating
