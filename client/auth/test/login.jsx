@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import identity from 'lodash/identity';
+import { identity, noop } from 'lodash';
 import { stub } from 'sinon';
 
 /**
@@ -20,6 +20,7 @@ describe( 'LoginTest', function() {
 		mockery.registerMock( 'lib/oauth-store/actions', {
 			login: loginStub
 		} );
+		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
 	} );
 
 	before( () => {
