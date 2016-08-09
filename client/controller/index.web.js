@@ -11,7 +11,6 @@ import page from 'page';
  */
 import Layout from 'layout';
 import LayoutLoggedOut from 'layout/logged-out';
-import layoutFocus from 'lib/layout-focus';
 import nuxWelcome from 'layout/nux-welcome';
 import translatorInvitation from 'layout/community-translator/invitation-utils';
 import { makeLayoutMiddleware } from './index.node.js';
@@ -37,14 +36,12 @@ export const ReduxWrappedLayout = ( { store, primary, secondary, tertiary } ) =>
 				tertiary={ tertiary }
 				user={ user }
 				sites={ sites }
-				focus={ layoutFocus }
 				nuxWelcome={ nuxWelcome }
 				translatorInvitation={ translatorInvitation }
 			/>
 			: <LayoutLoggedOut primary={ primary }
 				secondary={ secondary }
-				tertiary={ tertiary }
-				focus={ layoutFocus } />
+				tertiary={ tertiary } />
 		}
 	</ReduxProvider>
 );
