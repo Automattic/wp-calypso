@@ -12,13 +12,11 @@ import i18n from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import route from 'lib/route';
-import userFactory from 'lib/user';
 import userSettings from 'lib/user-settings';
 import titleActions from 'lib/screen-title/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
-const ANALYTICS_PAGE_TITLE = 'Me',
-	user = userFactory();
+const ANALYTICS_PAGE_TITLE = 'Me';
 
 export default {
 	sidebar( context, next ) {
@@ -26,7 +24,6 @@ export default {
 
 		renderWithReduxStore(
 			React.createElement( SidebarComponent, {
-				user,
 				context: context
 			} ),
 			document.getElementById( 'secondary' ),

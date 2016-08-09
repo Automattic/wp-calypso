@@ -15,11 +15,11 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 import route from 'lib/route';
 import analytics from 'lib/analytics';
-import layoutFocus from 'lib/layout-focus';
 import SignupComponent from './main';
 import utils from './utils';
 import userModule from 'lib/user';
 import titleActions from 'lib/screen-title/actions';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 const user = userModule();
 
 /**
@@ -84,7 +84,7 @@ export default {
 		analytics.pageView.record( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName );
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		layoutFocus.set( 'content' );
+		context.store.dispatch( setLayoutFocus( 'content' ) );
 
 		titleActions.setTitle( i18n.translate( 'Create an account' ) );
 
