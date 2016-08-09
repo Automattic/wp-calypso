@@ -543,7 +543,7 @@ const RegisterDomainStep = React.createClass( {
 				if ( tldIndex !== -1 ) {
 					message = this.translate(
 						'To use a domain ending with {{strong}}%(tld)s{{/strong}} on your site, ' +
-						'you can register it elsewhere and then add it here. {{a}}Learn more{{/a}}.',
+						'you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
 						{
 							args: { tld: domain.substring( tldIndex ) },
 							components: {
