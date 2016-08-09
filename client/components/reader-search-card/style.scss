@@ -115,11 +115,11 @@
 			z-index: 1;
 		}
 
-		.post-card__byline-author-and-site {
+		.reader-related-card__byline-author-and-site {
 			color: $white;
 		}
 
-		.reader-search-card__title-link {
+		.reader-related-card__title-link {
 			color: $white;
 
 			&:hover {
@@ -130,8 +130,8 @@
 		.reader-search-card__byline {
 			position: relative;
 
-			.post-card__byline-link,
-			.post-card__byline-link:visited {
+			.reader-related-card__byline-link,
+			.reader-related-card__byline-link:visited {
 				color: $white;
 			}
 
@@ -140,7 +140,7 @@
 			}
 		}
 
-		.post-card__author-and-site {
+		.reader-related-card__author-and-site {
 			color: $white;
 		}
 
@@ -164,6 +164,7 @@
 		.reader-search-card__title-link,
 		.reader-search-card__byline,
 		.reader-search-card__social {
+			color: $white;
 			text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
 			z-index: 2;
 		}

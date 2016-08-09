@@ -28,7 +28,7 @@ import UpgradeNudge from 'my-sites/upgrade-nudge/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'my-sites/domain-tip/docs/example';
-import PostCard from 'components/post-card/docs/example';
+import PostCard from 'components/reader-related-card/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
 import PostRelativeTime from 'blocks/post-relative-time/docs/example';
 import PostStatus from 'blocks/post-status/docs/example';
