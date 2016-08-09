@@ -1,6 +1,6 @@
 machine:
   node:
-    version: 5.11.1
+    version: 6.1.0
 test:
   pre:
     - NODE_ENV=test make client/config/index.js:
