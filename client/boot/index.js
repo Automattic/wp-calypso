@@ -39,7 +39,6 @@ var config = require( 'config' ),
 	superProps = require( 'lib/analytics/super-props' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
 	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
-	layoutFocus = require( 'lib/layout-focus' ),
 	nuxWelcome = require( 'layout/nux-welcome' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
@@ -59,6 +58,7 @@ var config = require( 'config' ),
 	Layout;
 
 import { getSelectedSiteId, getSectionName, isSectionIsomorphic } from 'state/ui/selectors';
+import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -179,7 +179,7 @@ function boot() {
 }
 
 function renderLayout( reduxStore ) {
-	const props = { focus: layoutFocus };
+	const props = {};
 
 	if ( user.get() ) {
 		Object.assign( props, { user, sites, nuxWelcome, translatorInvitation } );
@@ -262,8 +262,8 @@ function reduxStoreReady( reduxStore ) {
 	page( '*', function( context, next ) {
 		if ( [ 'sb', 'sp' ].indexOf( context.querystring ) !== -1 ) {
 			layoutSection = ( context.querystring === 'sb' ) ? 'sidebar' : 'sites';
-			layoutFocus.set( layoutSection );
-			page.redirect( context.pathname );
+			reduxStore.dispatch( setNextLayoutFocus( layoutSection ) );
+			page.replace( context.pathname );
 		}
 
 		next();
@@ -295,7 +295,7 @@ function reduxStoreReady( reduxStore ) {
 
 		// Focus UI on the content on page navigation
 		if ( ! config.isEnabled( 'code-splitting' ) ) {
-			layoutFocus.next();
+			context.store.dispatch( activateNextLayoutFocus() );
 		}
 
 		// If `?welcome` is present, and `?tour` isn't, show the welcome message

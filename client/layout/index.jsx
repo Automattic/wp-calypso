@@ -39,6 +39,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
 import DesignPreview from 'my-sites/design-preview';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -51,7 +52,7 @@ if ( config.isEnabled( 'support-user' ) ) {
 Layout = React.createClass( {
 	displayName: 'Layout',
 
-	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
+	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
 
 	_sitesPoller: null,
 
@@ -153,7 +154,7 @@ Layout = React.createClass( {
 			return (
 				<DesignPreview
 					className="layout__preview"
-					showPreview={ this.props.focus.getCurrent() === 'preview' }
+					showPreview={ this.props.currentLayoutFocus === 'preview' }
 					defaultViewportDevice="computer"
 				/>
 			);
@@ -165,7 +166,7 @@ Layout = React.createClass( {
 				'layout',
 				`is-group-${this.props.section.group}`,
 				`is-section-${this.props.section.name}`,
-				`focus-${this.props.focus.getCurrent()}`,
+				`focus-${this.props.currentLayoutFocus}`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar }
 			),
@@ -209,6 +210,7 @@ export default connect(
 			section,
 			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
+			currentLayoutFocus: getCurrentLayoutFocus( state ),
 		};
 	}
 )( Layout );

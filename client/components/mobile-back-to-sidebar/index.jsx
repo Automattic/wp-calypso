@@ -1,22 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
  */
-var layoutFocus = require( 'lib/layout-focus' );
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
-var MobileBackToSidebar = React.createClass( {
+const MobileBackToSidebar = React.createClass( {
 
 	toggleSidebar: function( event ) {
 		event.preventDefault();
-		layoutFocus.set( 'sidebar' );
+		this.props.setLayoutFocus( 'sidebar' );
 	},
 
 	render: function() {
-
 		return (
 			<div className="mobile-back-to-sidebar" onTouchTap={ this.toggleSidebar }>
 				<svg className="gridicon gridicon-back-arrow mobile-back-to-sidebar__icon" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g><path d="M8.886 4L7 5.886 13.114 12 7 18.114 8.886 20l8-8"/></g></svg>
@@ -28,4 +28,4 @@ var MobileBackToSidebar = React.createClass( {
 	}
 } );
 
-module.exports = MobileBackToSidebar;
+export default connect( null, { setLayoutFocus } )( MobileBackToSidebar );

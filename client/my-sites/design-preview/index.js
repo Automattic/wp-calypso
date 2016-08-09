@@ -15,11 +15,11 @@ import { clearPreviewUrl } from 'state/ui/actions';
 import { fetchPreviewMarkup, undoCustomization, clearCustomizations } from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
-import layoutFocus from 'lib/layout-focus';
 import { getSelectedSite, getSelectedSiteId, getPreviewUrl } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -153,13 +153,13 @@ const DesignPreview = React.createClass( {
 				if ( accepted ) {
 					this.props.clearPreviewUrl( this.props.selectedSiteId );
 					this.props.clearCustomizations( this.props.selectedSiteId );
-					layoutFocus.set( 'sidebar' );
+					this.props.setLayoutFocus( 'sidebar' );
 				}
 			} );
 		}
 		this.props.clearPreviewUrl( this.props.selectedSiteId );
 		this.props.clearCustomizations( this.props.selectedSiteId );
-		layoutFocus.set( 'sidebar' );
+		this.props.setLayoutFocus( 'sidebar' );
 	},
 
 	onPreviewClick( event ) {
@@ -234,5 +234,5 @@ function mapStateToProps( state ) {
 
 export default connect(
 	mapStateToProps,
-	{ fetchPreviewMarkup, undoCustomization, clearCustomizations, clearPreviewUrl }
+	{ fetchPreviewMarkup, undoCustomization, clearCustomizations, clearPreviewUrl, setLayoutFocus }
 )( DesignPreview );

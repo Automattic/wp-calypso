@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,18 +13,17 @@ import Stats from './stats';
 import Publish from './publish';
 import Notifications from './notifications';
 import Gravatar from 'components/gravatar';
-import layoutFocus from 'lib/layout-focus';
 import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-export default React.createClass( {
-	displayName: 'Masterbar',
-
+const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
 		user: React.PropTypes.object,
 		sites: React.PropTypes.object,
 		section: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
+		setNextLayoutFocus: React.PropTypes.func.isRequired,
 	},
 
 	getInitialState() {
@@ -34,11 +34,11 @@ export default React.createClass( {
 	},
 
 	clickMySites() {
-		layoutFocus.setNext( 'sidebar' );
+		this.props.setNextLayoutFocus( 'sidebar' );
 	},
 
 	clickReader() {
-		layoutFocus.setNext( 'content' );
+		this.props.setNextLayoutFocus( 'content' );
 	},
 
 	clickNotifications() {
@@ -125,3 +125,6 @@ export default React.createClass( {
 		);
 	}
 } );
+
+// TODO: make this pure when sites can be retrieved from the Redux state
+export default connect( null, { setNextLayoutFocus }, null, { pure: false } )( MasterbarLoggedIn );

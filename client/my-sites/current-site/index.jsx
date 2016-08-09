@@ -1,8 +1,11 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:my-sites:current-site' );
+import React from 'react';
+import debugFactory from 'debug';
+import { connect } from 'react-redux';
+
+const debug = debugFactory( 'calypso:my-sites:current-site' );
 
 /**
  * Internal dependencies
@@ -11,7 +14,6 @@ var AllSites = require( 'my-sites/all-sites' ),
 	analytics = require( 'lib/analytics' ),
 	Button = require( 'components/button' ),
 	Card = require( 'components/card' ),
-	layoutFocus = require( 'lib/layout-focus' ),
 	Site = require( 'blocks/site' ),
 	Gridicon = require( 'components/gridicon' ),
 	UpgradesActions = require( 'lib/upgrades/actions' ),
@@ -19,8 +21,9 @@ var AllSites = require( 'my-sites/all-sites' ),
 	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' );
 
 import SiteNotice from './notice';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
-module.exports = React.createClass( {
+const CurrentSite = React.createClass( {
 	displayName: 'CurrentSite',
 
 	componentDidMount: function() {
@@ -29,7 +32,8 @@ module.exports = React.createClass( {
 
 	propTypes: {
 		sites: React.PropTypes.object.isRequired,
-		siteCount: React.PropTypes.number.isRequired
+		siteCount: React.PropTypes.number.isRequired,
+		setLayoutFocus: React.PropTypes.func.isRequired,
 	},
 
 	componentWillMount() {
@@ -69,7 +73,7 @@ module.exports = React.createClass( {
 	switchSites: function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
-		layoutFocus.set( 'sites' );
+		this.props.setLayoutFocus( 'sites' );
 		if ( this.refs.site ) {
 			this.refs.site.closeActions();
 		}
@@ -164,3 +168,6 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+// TODO: make this pure when sites can be retrieved from the Redux state
+module.exports = connect( null, { setLayoutFocus }, null, { pure: false } )( CurrentSite );

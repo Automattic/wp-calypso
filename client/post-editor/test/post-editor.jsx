@@ -54,7 +54,6 @@ describe( 'PostEditor', function() {
 		mockery.registerMock( 'post-editor/editor-sidebar/header', MOCK_COMPONENT );
 		mockery.registerMock( './editor-preview', MOCK_COMPONENT );
 		mockery.registerMock( 'my-sites/drafts/draft-list', MOCK_COMPONENT );
-		mockery.registerMock( 'lib/layout-focus', { set() {} } );
 		mockery.registerMock( 'lib/preferences/actions', { set() {} } );
 		// TODO: REDUX - add proper tests when whole post-editor is reduxified
 		mockery.registerMock( 'react-redux', {
