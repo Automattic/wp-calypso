@@ -252,14 +252,14 @@ describe( 'actions', () => {
 
 	describe( '#editPost()', () => {
 		it( 'should return an action object for a new post', () => {
-			const action = editPost( 2916284, undefined, {
+			const action = editPost( 2916284, null, {
 				title: 'Hello World'
 			}, 2916284 );
 
 			expect( action ).to.eql( {
 				type: POST_EDIT,
 				siteId: 2916284,
-				postId: undefined,
+				postId: null,
 				post: { title: 'Hello World' }
 			} );
 		} );
@@ -321,12 +321,12 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch save action when thunk triggered for new post', () => {
-			savePost( 2916284, undefined, { title: 'Hello World' } )( spy );
+			savePost( 2916284, null, { title: 'Hello World' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: POST_SAVE,
 				siteId: 2916284,
-				postId: undefined,
+				postId: null,
 				post: {
 					title: 'Hello World'
 				}
@@ -334,11 +334,11 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch post save save success action when request completes for new post', () => {
-			return savePost( 2916284, undefined, { title: 'Hello World' } )( spy ).then( () => {
+			return savePost( 2916284, null, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_SUCCESS,
 					siteId: 2916284,
-					postId: undefined,
+					postId: null,
 					post: { title: 'Hello World' },
 					savedPost: sinon.match( {
 						ID: 13640,
@@ -349,7 +349,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch received post action when request completes for new post', () => {
-			return savePost( 2916284, undefined, { title: 'Hello World' } )( spy ).then( () => {
+			return savePost( 2916284, null, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POSTS_RECEIVE,
 					posts: [
@@ -405,11 +405,11 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch failure action when error occurs while saving new post', () => {
-			return savePost( 77203074, undefined, { title: 'Hello World' } )( spy ).then( () => {
+			return savePost( 77203074, null, { title: 'Hello World' } )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: POST_SAVE_FAILURE,
 					siteId: 77203074,
-					postId: undefined,
+					postId: null,
 					error: sinon.match( { message: 'User cannot edit posts' } )
 				} );
 			} );
