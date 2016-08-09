@@ -119,11 +119,16 @@ export default React.createClass( {
 				className={ classes }
 			>
 				{ this.props.children }
-				<span className="masterbar__notifications-bubble" key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) } />
-				<Notifications
-					visible={ this.state.isShowingPopover }
-					checkToggle={ this.checkToggleNotes }
-					setIndicator={ this.setNotesIndicator } />
+				<span
+					className="masterbar__notifications-bubble"
+					key={ 'notification-indicator-animation-state-' + Math.abs( this.state.animationState ) }
+				/>
+				{ this.state.isShowingPopover &&
+					<Notifications
+						checkToggle={ this.checkToggleNotes }
+						setIndicator={ this.setNotesIndicator }
+					/>
+				}
 			</MasterbarItem>
 		);
 	}
