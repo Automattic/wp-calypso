@@ -28,6 +28,7 @@ import { requestGraduate } from 'state/reader/start/actions';
 import { isRequestingGraduation } from 'state/reader/start/selectors';
 import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
 import { preload } from 'sections-preload';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -40,10 +41,11 @@ function userHasHistory( context ) {
 	return !! context.lastRoute;
 }
 
-function renderFeedError() {
-	ReactDom.render(
+function renderFeedError( context ) {
+	renderWithReduxStore(
 		React.createElement( FeedError ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -168,11 +170,12 @@ module.exports = {
 	sidebar: function( context, next ) {
 		var ReaderSidebarComponent = require( 'reader/sidebar' );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( ReaderSidebarComponent, { path: context.path } )
 			),
-			document.getElementById( 'secondary' )
+			document.getElementById( 'secondary' ),
+			context.store
 		);
 
 		next();
@@ -226,7 +229,7 @@ module.exports = {
 					page.redirect( `/read/feeds/${feedId}` );
 				} )
 				.catch( function() {
-					renderFeedError();
+					renderFeedError( context );
 				} );
 		} else {
 			next();
@@ -247,7 +250,7 @@ module.exports = {
 			feed_id: context.params.feed_id
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( FeedStream, {
 				key: 'feed-' + context.params.feed_id,
 				store: feedStore,
@@ -264,7 +267,8 @@ module.exports = {
 				suppressSiteNameLink: true,
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -282,7 +286,7 @@ module.exports = {
 			blog_id: context.params.blog_id
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( SiteStream, {
 				key: 'site-' + context.params.blog_id,
 				store: feedStore,
@@ -299,7 +303,8 @@ module.exports = {
 				suppressSiteNameLink: true,
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
