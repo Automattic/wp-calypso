@@ -170,8 +170,15 @@ export class Step extends Component {
 	skipIfInvalidContext( props ) {
 		const { context, isValid } = props;
 		if ( context && ! isValid( context ) ) {
-			this.context.next( this.tour ); //FIXME: do we need to access the next step name here?
+			this.context.next( this.tour, this.nextStep() );
 		}
+	}
+
+	nextStep() {
+		const { branching, step } = this.context;
+		const stepBranching = branching[ step ];
+		const firstKey = Object.keys( stepBranching )[ 0 ];
+		return stepBranching[ firstKey ];
 	}
 
 	setStepPosition( props ) {
