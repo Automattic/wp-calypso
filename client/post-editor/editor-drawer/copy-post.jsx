@@ -91,8 +91,9 @@ class EditorDrawerCopyPost extends Component {
 					</p>
 					<PostSelector
 						siteId={ site.ID }
-						showTypeLabels={ true }
 						emptyMessage={ translate( 'No posts found' ) }
+						orderBy="date"
+						order="DESC"
 						onChange={ this.setPostCopy }
 						selected={ this.state.selectedPostID }
 					/>
