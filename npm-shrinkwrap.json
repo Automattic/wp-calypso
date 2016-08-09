@@ -229,9 +229,6 @@
     "babel-plugin-syntax-export-extensions": {
       "version": "6.13.0"
     },
-    "babel-plugin-syntax-flow": {
-      "version": "6.13.0"
-    },
     "babel-plugin-syntax-jsx": {
       "version": "6.8.0"
     },
@@ -310,9 +307,6 @@
     "babel-plugin-transform-export-extensions": {
       "version": "6.8.0"
     },
-    "babel-plugin-transform-flow-strip-types": {
-      "version": "6.8.0"
-    },
     "babel-plugin-transform-object-rest-spread": {
       "version": "6.8.0"
     },
@@ -321,9 +315,6 @@
     },
     "babel-plugin-transform-react-jsx": {
       "version": "6.8.0"
-    },
-    "babel-plugin-transform-react-jsx-source": {
-      "version": "6.9.0"
     },
     "babel-plugin-transform-regenerator": {
       "version": "6.11.4",
@@ -347,9 +338,6 @@
     },
     "babel-preset-es2015": {
       "version": "6.9.0"
-    },
-    "babel-preset-react": {
-      "version": "6.5.0"
     },
     "babel-preset-stage-2": {
       "version": "6.5.0"
@@ -510,7 +498,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000519"
+      "version": "1.0.30000520"
     },
     "caseless": {
       "version": "0.11.0"
@@ -914,7 +902,7 @@
       }
     },
     "doctypes": {
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     "doiuse": {
       "version": "2.4.1",
@@ -1444,7 +1432,7 @@
       "version": "1.2.0"
     },
     "get-caller-file": {
-      "version": "1.0.1"
+      "version": "1.0.2"
     },
     "get-document": {
       "version": "1.0.0"
@@ -3041,7 +3029,7 @@
       "version": "0.1.2"
     },
     "serializerr": {
-      "version": "1.0.2"
+      "version": "1.0.3"
     },
     "serve-index": {
       "version": "1.8.0",
