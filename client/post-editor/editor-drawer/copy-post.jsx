@@ -78,7 +78,7 @@ class EditorDrawerCopyPost extends Component {
 			<Accordion
 				title={ translate( 'Copy Post' ) }
 				icon={ <Gridicon icon="aside" /> }
-				className="editor-drawer__accordion"
+				className="editor-drawer__copy-post"
 			>
 				<AccordionSection>
 					<p className="editor-drawer__description">
