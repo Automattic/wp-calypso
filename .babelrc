@@ -11,6 +11,7 @@
 		"syntax-jsx",
 		"transform-react-jsx",
 		"transform-react-display-name",
-		"lodash"
+		"lodash",
+		"ramda"
 	]
 }

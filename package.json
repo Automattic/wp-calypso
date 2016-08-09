@@ -90,6 +90,7 @@
     "q": "1.0.1",
     "qrcode.react": "0.6.1",
     "qs": "4.0.0",
+    "ramda": "0.22.1",
     "react": "15.4.0",
     "react-addons-create-fragment": "15.4.0",
     "react-addons-css-transition-group": "15.4.0",
@@ -150,6 +151,8 @@
   },
   "devDependencies": {
     "babel-eslint": "6.1.2",
+    "babel-plugin-ramda": "1.1.5",
+    "blanket": "1.1.6",
     "chai": "3.5.0",
     "chai-enzyme": "0.5.2",
     "deep-freeze": "0.0.1",
