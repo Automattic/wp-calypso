@@ -53,7 +53,7 @@
 			padding-top: 10px;
 
 			@include breakpoint( ">480px" ) {
-				@extend %mobile-link-element;
+				@include mobile-link-element;
 				padding: 5px 0 10px;
 				@include clear-fix;
 				-webkit-touch-callout: none;
