@@ -265,19 +265,8 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderCopyPost: function() {
-<<<<<<< HEAD
 		return (
 			<EditorDrawerCopyPost />
-=======
-		const { type, post, site } = this.props;
-
-		return (
-			<CopyPostAccordion
-				type={ type }
-				post={ post }
-				site={ site }
-			/>
->>>>>>> 859a87e... Add the Copy Post accordion to the Editor Drawer
 		);
 	},
 
