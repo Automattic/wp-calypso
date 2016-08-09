@@ -29,7 +29,7 @@ export const ThemesTour = makeTour(
 );
 
 export const TestTour = makeTour(
-	<Tour name="test" version="20160601" path="/" context={ () => true } />
+	<Tour name="test" version="20160601" path="/test" context={ () => true } />
 );
 
 export default combineTours( {
