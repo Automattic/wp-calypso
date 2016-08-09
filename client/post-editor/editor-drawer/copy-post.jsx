@@ -76,13 +76,18 @@ class EditorDrawerCopyPost extends Component {
 		const { translate, site } = this.props;
 		return (
 			<Accordion
-				title={ translate( 'Copy Post' ) }
+				title={ translate( 'Copy a Post' ) }
+				subtitle={ translate( 'Use an existing post as a template.' ) }
 				icon={ <Gridicon icon="aside" /> }
 				className="editor-drawer__copy-post"
 			>
 				<AccordionSection>
 					<p className="editor-drawer__description">
-						{ translate( 'Use an existing post as a template.' ) }
+						{ translate(
+							"Pick a post and we'll copy the title, content, tags and categories. " +
+							'Recent posts are listed below. ' +
+							'Search by title to find older posts.'
+						) }
 					</p>
 					<PostSelector
 						siteId={ site.ID }
@@ -95,7 +100,7 @@ class EditorDrawerCopyPost extends Component {
 						disabled={ ! this.state.selectedPostID }
 						onClick={ this.updateCurrentPost }
 					>
-						{ translate( 'Use selected post as template' ) }
+						{ translate( 'Copy' ) }
 					</Button>
 				</AccordionSection>
 			</Accordion>
