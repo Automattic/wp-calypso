@@ -1,5 +1,6 @@
 .themes__search-card {
 	display: flex;
+	align-items: center;
 	background: white;
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 
@@ -23,6 +24,11 @@
 		margin-right: 4px;
 		flex: 0 0 auto;
 		align-self: center;
+	}
+
+	.segmented-control {
+		flex: 0 0 auto;
+		padding: 11px 14px 11px;
 	}
 
 	.more {

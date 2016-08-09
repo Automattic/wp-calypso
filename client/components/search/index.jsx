@@ -49,6 +49,7 @@ const Search = React.createClass( {
 		delayTimeout: PropTypes.number,
 		onSearch: PropTypes.func.isRequired,
 		onSearchChange: PropTypes.func,
+		onSearchOpen: PropTypes.func,
 		onSearchClose: PropTypes.func,
 		analyticsGroup: PropTypes.string,
 		autoFocus: PropTypes.bool,
@@ -59,7 +60,8 @@ const Search = React.createClass( {
 		searching: PropTypes.bool,
 		isOpen: PropTypes.bool,
 		dir: PropTypes.string,
-		fitsContainer: PropTypes.bool
+		fitsContainer: PropTypes.bool,
+		hideClose: PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -77,13 +79,15 @@ const Search = React.createClass( {
 			autoFocus: false,
 			disabled: false,
 			onSearchChange: noop,
+			onSearchOpen: noop,
 			onSearchClose: noop,
 			onKeyDown: noop,
 			disableAutocorrect: false,
 			searching: false,
 			isOpen: false,
 			dir: undefined,
-			fitsContainer: false
+			fitsContainer: false,
+			hideClose: false
 		};
 	},
 
@@ -252,6 +256,8 @@ const Search = React.createClass( {
 			input.value = '';
 			input.value = setValue;
 		}
+
+		this.props.onSearchOpen( );
 	},
 
 	render: function() {
@@ -275,10 +281,13 @@ const Search = React.createClass( {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
+			'no-close-button' : this.props.hideClose,
 			rtl: this.props.dir === 'rtl',
 			ltr: this.props.dir === 'ltr',
 			search: true
 		} );
+
+		const isCloseButtonVisible = this.props.hideClose ? ' no-close-button ' : '';
 
 		return (
 			<div className={ searchClass } role="search">
@@ -298,7 +307,7 @@ const Search = React.createClass( {
 				<input
 					type="search"
 					id={ 'search-component-' + this.state.instanceId }
-					className={ 'search__input' + ( this.props.dir ? ' ' + this.props.dir : '' ) }
+					className={ 'search__input' + isCloseButtonVisible + ( this.props.dir ? ' ' + this.props.dir : '' ) }
 					placeholder={ placeholder }
 					role="search"
 					value={ searchValue }
@@ -313,22 +322,26 @@ const Search = React.createClass( {
 					autoCapitalize="none"
 					dir={ this.props.dir }
 					{ ...autocorrect } />
-				{ ( searchValue || this.state.isOpen ) ? this.closeButton() : null }
+					{ this.closeButton() }
 			</div>
 		);
 	},
 
 	closeButton: function() {
-		return (
-			<span
-				onTouchTap={ this.closeSearch }
-				tabIndex="0"
-				onKeyDown={ this.closeListener }
-				aria-controls={ 'search-component-' + this.state.instanceId }
-				aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
-			<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
-			</span>
-		);
+		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
+			return (
+				<span
+					onTouchTap={ this.closeSearch }
+					tabIndex="0"
+					onKeyDown={ this.closeListener }
+					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
+					<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
+				</span>
+			);
+		}
+
+		return null;
 	}
 } );
 

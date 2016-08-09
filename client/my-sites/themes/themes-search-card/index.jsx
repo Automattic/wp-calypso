@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import find from 'lodash/find';
+import noop from 'lodash/noop';
 import debounce from 'lodash/debounce';
 
 /**
@@ -10,6 +11,7 @@ import debounce from 'lodash/debounce';
  */
 import Search from 'components/search';
 import ThemesSelectDropdown from './select-dropdown';
+import ThemesSelectButtons from './select-buttons';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
@@ -46,7 +48,10 @@ const ThemesSearchCard = React.createClass( {
 	},
 
 	getInitialState() {
-		return { isMobile: isMobile() };
+		return {
+			isMobile: isMobile(),
+			searchIsOpen: false
+		};
 	},
 
 	getDefaultProps() {
@@ -75,6 +80,7 @@ const ThemesSearchCard = React.createClass( {
 	renderMobile( tiers ) {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
+		const isMagicSearchEnabled = config.isEnabled( 'manage/themes/magic_search' );
 		const selectedTiers = isPremiumThemesEnabled ? tiers : [ tiers.find( tier => tier.value === 'free' ) ];
 
 		return (
@@ -83,14 +89,16 @@ const ThemesSearchCard = React.createClass( {
 					<NavTabs>
 						{ ! isJetpack && this.getTierNavItems( selectedTiers ) }
 
-						{ isPremiumThemesEnabled && <hr className="section-nav__hr" /> }
+						{ isPremiumThemesEnabled && ! isMagicSearchEnabled &&
+							<hr className="section-nav__hr" /> }
 
-						{ isPremiumThemesEnabled && <NavItem
-							path={ getExternalThemesUrl( this.props.site ) }
-							onClick={ this.onMore }
-							isExternalLink={ true }>
-							{ this.translate( 'More' ) + ' ' }
-						</NavItem> }
+						{ isPremiumThemesEnabled && ! isMagicSearchEnabled &&
+							<NavItem
+								path={ getExternalThemesUrl( this.props.site ) }
+								onClick={ this.onMore }
+								isExternalLink={ true }>
+								{ this.translate( 'More' ) + ' ' }
+							</NavItem> }
 					</NavTabs>
 
 					<Search
@@ -108,9 +116,24 @@ const ThemesSearchCard = React.createClass( {
 		);
 	},
 
+	onSearchOpen( ) {
+		this.setState( { searchIsOpen : true } );
+	},
+
+	onSearchClose( event ) {
+		this.setState( { searchIsOpen : false } );
+	},
+
+	onBlur() {
+		if ( this.state.isMobile ) {//searchString === "" ) {
+			this.setState( { searchIsOpen : false } );
+		}
+	},
+
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
+		const isMagicSearchEnabled = config.isEnabled( 'manage/themes/magic_search' );
 
 		const tiers = [
 			{ value: 'all', label: this.translate( 'All' ) },
@@ -118,34 +141,65 @@ const ThemesSearchCard = React.createClass( {
 			{ value: 'premium', label: this.translate( 'Premium' ) },
 		];
 
-		if ( this.state.isMobile ) {
-			return this.renderMobile( tiers );
+		if ( this.state.isMobile && ! isMagicSearchEnabled ) {
+		 	return this.renderMobile( tiers );
 		}
 
-		return (
-			<div className="themes__search-card" data-tip-target="themes-search-card">
-				<Search
-					onSearch={ this.props.onSearch }
-					initialValue={ this.props.search }
-					ref="url-search"
-					placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
-					analyticsGroup="Themes"
-					delaySearch={ true }
-				/>
-
-				{ isPremiumThemesEnabled && ! isJetpack && <ThemesSelectDropdown
-										tier={ this.props.tier }
-										options={ tiers }
-										onSelect={ this.props.select } /> }
-				{ isPremiumThemesEnabled && <a className="button more"
-												href={ getExternalThemesUrl( this.props.site ) }
-												target="_blank"
-												onClick={ this.onMore }>
-
-												{ this.translate( 'More' ) }
-											</a> }
-			</div>
+		const searchField = (
+			<Search
+				onSearch={ this.props.onSearch }
+				initialValue={ this.props.search }
+				ref="url-search"
+				placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
+				analyticsGroup="Themes"
+				delaySearch={ true }
+				onSearchOpen={ isMagicSearchEnabled ? this.onSearchOpen : noop }
+				onSearchClose={ isMagicSearchEnabled ? this.onSearchClose : noop }
+				onBlur={ isMagicSearchEnabled ? this.onBlur : noop }
+				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
+				hideClose={ isMagicSearchEnabled && isMobile() }
+			/>
 		);
+
+		let searchCard;
+
+		if ( isMagicSearchEnabled ) {
+			searchCard = (
+				<div className="themes__search-card" data-tip-target="themes-search-card">
+						{ searchField }
+						{ isPremiumThemesEnabled && ! isJetpack &&
+							<ThemesSelectButtons
+								tier={ this.props.tier }
+								options={ tiers }
+								onSelect={ this.props.select }
+							/>
+						}
+				</div>
+			);
+		} else {
+			searchCard = (
+				<div className="themes__search-card" data-tip-target="themes-search-card">
+					{ searchField }
+					{ isPremiumThemesEnabled && ! isJetpack &&
+						<ThemesSelectDropdown
+							tier={ this.props.tier }
+							options={ tiers }
+							onSelect={ this.props.select }
+						/>
+					}
+					{ isPremiumThemesEnabled &&
+						<a className="button more"
+							href={ getExternalThemesUrl( this.props.site ) }
+							target="_blank"
+							onClick={ this.onMore }>
+							{ this.translate( 'More' ) }
+						</a>
+					}
+				</div>
+			);
+		}
+
+		return searchCard;
 	}
 } );
 
