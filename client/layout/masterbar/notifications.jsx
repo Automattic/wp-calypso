@@ -11,6 +11,9 @@ import classNames from 'classnames';
 import MasterbarItem from './item';
 import Notifications from 'notifications';
 import store from 'store';
+import wpcom from 'lib/wp';
+
+import fromApi from 'notifications/from-api';
 
 export default React.createClass( {
 	displayName: 'MasterbarItemNotifications',
@@ -23,6 +26,21 @@ export default React.createClass( {
 		tooltip: React.PropTypes.string,
 	},
 
+	componentDidMount() {
+		wpcom
+			.req
+			.get( {
+				path: '/notifications/',
+				apiVersion: '1.1'
+			}, { number: 100 } )
+			.then( response => {
+				const { notes } = fromApi( response );
+				console.log( notes[0] );
+
+				this.setState( { notes } );
+			} );
+	},
+
 	getInitialState() {
 		let user = this.props.user.get();
 
@@ -30,6 +48,8 @@ export default React.createClass( {
 			isShowingPopover: false,
 			newNote: user && user.has_unseen_notes,
 			animationState: 0,
+			notes: [],
+			selectedNote: null
 		};
 	},
 
@@ -126,6 +146,8 @@ export default React.createClass( {
 				{ this.state.isShowingPopover &&
 					<Notifications
 						clickInterceptor={ this.checkToggleNotes }
+						notes={ this.state.notes }
+						selectedNote={ this.state.notes }
 						setIndicator={ this.setNotesIndicator }
 					/>
 				}

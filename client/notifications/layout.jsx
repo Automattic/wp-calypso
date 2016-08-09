@@ -5,6 +5,8 @@ import parseBlocks from './blocks/block-tree-parser';
 const layoutStyle = {
 	height: '100%',
 	width: '100%',
+	maxWidth: '410px',
+	overflow: 'scroll',
 	backgroundColor: 'white',
 	color: 'black',
 	borderLeft: '1px solid #e9eff3',

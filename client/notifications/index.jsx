@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import {
 	identity,
 	invoker
@@ -11,10 +10,7 @@ import {
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-
 import Layout from './layout';
-import fromApi from './from-api.js';
 
 const inBrowser = (() => (
 	( 'undefined' !== typeof window ) &&
@@ -26,6 +22,7 @@ const removeListener = invoker( 3, 'removeEventListener' );
 const defaultPreventer = invoker( 0, 'preventDefault' );
 
 const toggleCapturedScroll = doCapture => () => {
+	return;
 	if ( ! inBrowser ) {
 		return;
 	}
@@ -42,27 +39,6 @@ export class NotificationsPanel extends Component {
 	constructor( props ) {
 		super( props );
 
-		this.state = {
-			notes: [],
-			selectedNote: null
-		};
-
-		wpcom
-			.req
-			.get( {
-				path: '/notifications/',
-				apiVersion: '1.1'
-			}, { number: 10 } )
-			.then( response => {
-				const {
-					lastSeenTime,
-					notes
-				} = fromApi( response );
-				console.log( notes[0] );
-
-				this.setState( { notes } );
-			} );
-
 		this.toggleListeners = this.toggleListeners.bind( this );
 	}
 
@@ -76,6 +52,7 @@ export class NotificationsPanel extends Component {
 	}
 
 	toggleListeners( doToggleOn ) {
+		return;
 		const {
 			clickInterceptor
 		} = this.props;
@@ -102,7 +79,7 @@ export class NotificationsPanel extends Component {
 		const {
 			notes,
 			selectedNote
-		} = this.state;
+		} = this.props;
 
 		return (
 			<div
@@ -122,16 +99,8 @@ export class NotificationsPanel extends Component {
 NotificationsPanel.displayName = 'NotificationsPanel';
 
 NotificationsPanel.propTypes = {
-	clickInterceptor: PropTypes.func
+	clickInterceptor: PropTypes.func,
+	notes: PropTypes.array
 };
 
-const mapStateToProps = state => ( {
-	notes: [],
-	selectedNote: null
-} );
-
-const mapDispatchToProps = dispatch => ( {
-
-} );
-
-export default connect( mapStateToProps, mapDispatchToProps )( NotificationsPanel );
+export default NotificationsPanel;
