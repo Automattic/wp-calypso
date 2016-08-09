@@ -59,9 +59,6 @@
     "array-differ": {
       "version": "1.0.0"
     },
-    "array-equal": {
-      "version": "1.0.0"
-    },
     "array-find-index": {
       "version": "1.0.1"
     },
@@ -1946,7 +1943,7 @@
       }
     },
     "jsdom": {
-      "version": "9.2.1",
+      "version": "7.2.2",
       "dependencies": {
         "acorn": {
           "version": "2.7.0"
@@ -2788,6 +2785,9 @@
         }
       }
     },
+    "react-test-env": {
+      "version": "0.1.1"
+    },
     "react-virtualized": {
       "version": "7.9.1",
       "dependencies": {
@@ -3619,7 +3619,7 @@
       "version": "0.2.9"
     },
     "webidl-conversions": {
-      "version": "3.0.1"
+      "version": "2.0.1"
     },
     "webpack": {
       "version": "1.13.1",
@@ -3662,8 +3662,8 @@
     "whatwg-fetch": {
       "version": "1.0.0"
     },
-    "whatwg-url": {
-      "version": "3.0.0"
+    "whatwg-url-compat": {
+      "version": "0.6.5"
     },
     "which": {
       "version": "1.2.10"
