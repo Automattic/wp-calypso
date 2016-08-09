@@ -12,7 +12,6 @@ import path from 'path';
 import EditCanvas from './image-editor-canvas';
 import EditToolbar from './image-editor-toolbar';
 import EditButtons from './image-editor-buttons';
-import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import {
@@ -79,21 +78,6 @@ const MediaModalImageEditor = React.createClass( {
 		} );
 	},
 
-	//TODO: the drop zone currently exists for presentation purposes,
-	//consider implementing the image open functionality fully or removing it
-	onFilesDrop: function( files ) {
-		const file = files[ 0 ];
-		const mimePrefix = MediaUtils.getMimePrefix( file );
-		const mimeType = MediaUtils.getMimeType( file );
-
-		if ( 'image' !== mimePrefix ) {
-			//show an error if the image opening is to be implemented properly
-			return;
-		}
-
-		this.props.setImageEditorFileInfo( URL.createObjectURL( file ), file.name, mimeType );
-	},
-
 	isValidTransfer: function( transfer ) {
 		if ( ! transfer ) {
 			return false;
@@ -117,23 +101,11 @@ const MediaModalImageEditor = React.createClass( {
 		return ! transfer.types || -1 !== Array.prototype.indexOf.call( transfer.types, 'Files' );
 	},
 
-	renderDropZone() {
-		if ( this.props.src ) {
-			return;
-		}
-
-		return ( <DropZone
-			fullScreen={ true }
-			onVerifyValidTransfer={ this.isValidTransfer }
-			onFilesDrop={ this.onFilesDrop } /> );
-	},
-
 	render() {
 		return (
 			<div className="editor-media-modal-image-editor">
 				<figure>
 					<div className="editor-media-modal-image-editor__content editor-media-modal__content" >
-						{ this.renderDropZone() }
 						<EditCanvas ref="editCanvas" />
 						<EditToolbar />
 						<EditButtons
