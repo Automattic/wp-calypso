@@ -23,20 +23,6 @@ const addListener = invoker( 3, 'addEventListener' );
 const removeListener = invoker( 3, 'removeEventListener' );
 const defaultPreventer = invoker( 0, 'preventDefault' );
 
-const toggleCapturedScroll = doCapture => () => {
-	return;
-	if ( ! inBrowser ) {
-		return;
-	}
-
-	const toggle = doCapture
-		? addListener
-		: removeListener;
-
-	[ 'mousewheel', 'touchmove' ]
-		.forEach( event => toggle( event, defaultPreventer, false, document.body ) );
-};
-
 export class NotificationsPanel extends Component {
 	constructor( props ) {
 		super( props );
@@ -50,7 +36,6 @@ export class NotificationsPanel extends Component {
 
 	componentWillUnmount() {
 		this.toggleListeners( false );
-		toggleCapturedScroll( false );
 	}
 
 	toggleListeners( doToggleOn ) {
@@ -89,11 +74,7 @@ export class NotificationsPanel extends Component {
 		const note = find( propEq( 'id', selectedNote ), notes );
 
 		return (
-			<div
-				id="wpnt-notes-panel2"
-				onMouseEnter={ toggleCapturedScroll( true ) }
-				onMouseLeave={ toggleCapturedScroll( false ) }
-			>
+			<div id="wpnt-notes-panel2">
 				<Layout { ...{
 					notes,
 					note,
