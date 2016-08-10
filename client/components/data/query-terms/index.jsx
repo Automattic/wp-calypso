@@ -27,7 +27,7 @@ class QueryTerms extends Component {
 	}
 
 	request( props ) {
-		if ( props.requesting ) {
+		if ( props.requesting || ! props.siteId ) {
 			return;
 		}
 
