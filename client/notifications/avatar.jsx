@@ -45,8 +45,8 @@ export const Avatar = React.createClass( {
 		const { src } = this.props;
 
 		return hasLoaded
-			? <img className="avatar" { ...{ src } } />
-			: <div className="avatar"><MysteryMan /></div>;
+			? <img className="notifications__list-avatar" { ...{ src } } />
+			: <div className="notifications__list-avatar"><MysteryMan /></div>;
 	}
 } );
 

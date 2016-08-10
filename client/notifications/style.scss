@@ -44,6 +44,35 @@
 	}
 }
 
+.notifications__list-placeholder {
+	margin-bottom: 23px;
+
+	& .notifications__list-avatar {
+		@include placeholder;
+		width: 48px;
+		height: 48px;
+	}
+
+	& .notifications__list-subject {
+		@include placeholder;
+		margin-top: -48px;
+		margin-left: 50px;
+		min-height: 18px;
+	}
+
+	& .notifications__list-excerpt {
+		@include placeholder( 35% );
+		margin-left: 50px;
+		margin-top: 4px;
+		min-height: 12px;
+	}
+}
+
+.notifications__list-avatar {
+	width: 48px;
+	height: 48px;
+}
+
 .note-range__comment {
 	font-style: italic;
 }
