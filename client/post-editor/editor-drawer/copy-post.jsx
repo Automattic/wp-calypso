@@ -3,7 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
-import { cloneDeep, isEmpty } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -12,7 +12,6 @@ import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
-import PostActions from 'lib/posts/actions';
 import PostSelector from 'my-sites/post-selector';
 
 class EditorDrawerCopyPost extends Component {
@@ -27,48 +26,18 @@ class EditorDrawerCopyPost extends Component {
 		super( ...arguments );
 		this.state = {
 			selectedPostID: '',
-			postCopy: {},
 		};
 	}
 
-	setPostCopy = post => {
-		const postCopy = {
-			categories: cloneDeep( post.categories ),
-			//content: post.content,
-			excerpt: post.excerpt,
-			tags: cloneDeep( post.tags ),
-			title: post.title,
-		};
-		if ( post.attachment_count ) {
-			postCopy.attachments = cloneDeep( post.attachments );
-			postCopy.attachment_count = post.attachment_count;
-		}
-		if ( post.canonical_image ) {
-			postCopy.canonical_image = cloneDeep( post.canonical_image );
-		}
-		if ( post.featured_image ) {
-			postCopy.featured_image = post.featured_image;
-		}
-		if ( post.format ) {
-			postCopy.format = post.format;
-		}
-		if ( post.metadata ) {
-			postCopy.metadata = cloneDeep( post.metadata );
-		}
-		if ( post.post_thumbnail ) {
-			postCopy.post_thumbnail = cloneDeep( post.post_thumbnail );
-		}
-
+	setPostToCopy = post => {
 		this.setState( {
 			selectedPostID: post.ID,
-			postCopy: postCopy,
 		} );
 	}
 
-	updateCurrentPost = () => {
-		if ( ! isEmpty( this.state.postCopy ) ) {
-			PostActions.edit( this.state.postCopy );
-			//PostActions.editRawContent( this.state.postCopy.content );
+	goToNewDraft = () => {
+		if ( '' !== this.state.selectedPostID ) {
+			page.redirect( `/post/${ this.props.site.slug }/${ this.state.selectedPostID }?copy=true` );
 		}
 	}
 
@@ -94,12 +63,12 @@ class EditorDrawerCopyPost extends Component {
 						emptyMessage={ translate( 'No posts found' ) }
 						orderBy="date"
 						order="DESC"
-						onChange={ this.setPostCopy }
+						onChange={ this.setPostToCopy }
 						selected={ this.state.selectedPostID }
 					/>
 					<Button
 						disabled={ ! this.state.selectedPostID }
-						onClick={ this.updateCurrentPost }
+						onClick={ this.goToNewDraft }
 					>
 						{ translate( 'Copy' ) }
 					</Button>
