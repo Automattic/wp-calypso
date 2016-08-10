@@ -6,7 +6,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Button from 'components/button';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import Gridicon from 'components/gridicon';
 import olarkActions from 'lib/olark-store/actions';
