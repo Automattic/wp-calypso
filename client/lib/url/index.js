@@ -26,6 +26,8 @@ function isHttps( url ) {
 	return url && startsWith( url, 'https://' );
 }
 
+const urlWithoutHttpRegex = /^https?:\/\//;
+
 /**
  * Returns the supplied URL without the initial http(s).
  * @param  {String}  url The URL to remove http(s) from
@@ -36,7 +38,7 @@ function withoutHttp( url ) {
 		return null;
 	}
 
-	return url.replace( /^https?:\/\//, '' );
+	return url.replace( urlWithoutHttpRegex, '' );
 }
 
 export default {
