@@ -31,12 +31,12 @@ import DomainTip from 'my-sites/domain-tip/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
 import PostRelativeTime from 'blocks/post-relative-time/docs/example';
 import PostStatus from 'blocks/post-status/docs/example';
-import ReaderAuthorLink from 'components/reader-author-link/docs/example';
-import ReaderSiteStreamLink from 'components/reader-site-stream-link/docs/example';
-import ReaderFullPostHeader from 'components/reader-full-post/docs/header-example';
+import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
+import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
+import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
-import RelatedPostCard from 'components/reader-related-card/docs/example';
-import SearchPostCard from 'components/reader-search-card/docs/example';
+import RelatedPostCard from 'blocks/reader-related-card/docs/example';
+import SearchPostCard from 'blocks/reader-search-card/docs/example';
 
 export default React.createClass( {
 
