@@ -16,6 +16,7 @@
 	display: inline-block;
 	width: auto;
 	max-width: 100%;
+	min-width: 160px;
 
 	.select-dropdown.is-open & {
 		z-index: z-index( 'root', '.select-dropdown.is-open .select-dropdown__container' );
