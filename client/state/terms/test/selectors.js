@@ -512,5 +512,31 @@ describe( 'selectors', () => {
 				name: 'Chicken and a biscuit'
 			} );
 		} );
+
+		it( 'should return null if term does not exist', () => {
+			const term = getTerm( {
+				terms: {
+					queries: {
+						2916284: {
+							'jetpack-portfolio': new TermQueryManager( {
+								items: {
+									111: {
+										ID: 111,
+										name: 'Chicken and a biscuit'
+									},
+									112: {
+										ID: 112,
+										name: 'Ribs'
+									}
+								},
+								queries: {}
+							} )
+						}
+					}
+				}
+			}, 2916284, 'jetpack-portfolio', 100 );
+
+			expect( term ).to.be.null;
+		} );
 	} );
 } );

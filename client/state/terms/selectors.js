@@ -158,5 +158,11 @@ export function getTerm( state, siteId, taxonomy, termId ) {
 		return null;
 	}
 
-	return manager.getItem( termId );
+	const term = manager.getItem( termId );
+
+	if ( ! term ) {
+		return null;
+	}
+
+	return term;
 }

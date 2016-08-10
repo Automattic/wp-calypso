@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, map, size } from 'lodash';
+import { get, size, toArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,10 +36,6 @@ export class EditorCategoriesTagsAccordion extends Component {
 		tagsHasNextPage: PropTypes.bool,
 		tagsFetchingNextPage: PropTypes.bool
 	};
-
-	isLoading() {
-		return ! this.props.site || ! this.props.post;
-	}
 
 	renderCategories() {
 		const { translate, postType } = this.props;
@@ -77,23 +73,19 @@ export class EditorCategoriesTagsAccordion extends Component {
 
 	getCategoriesSubtitle() {
 		const { translate, postTerms, defaultCategory } = this.props;
-		const categories = get( postTerms, 'category' );
+		const categories = toArray( get( postTerms, 'category' ) );
+		const categoriesCount = size( categories );
 
-		const categoryNames = map( categories, ( category ) => {
-			return unescapeString( category.name );
-		} );
-		const categoryNamesCount = size( categoryNames );
-
-		switch ( categoryNamesCount ) {
+		switch ( categoriesCount ) {
 			case 0:
 				return defaultCategory ? defaultCategory.name : null;
 			case 1:
-				return categoryNames[ 0 ];
+				return unescapeString( categories[ 0 ].name );
 			default:
 				return translate(
 					'%d category',
 					'%d categories',
-					{ args: [ categoryNamesCount ], count: categoryNamesCount }
+					{ args: [ categoriesCount ], count: categoriesCount }
 				);
 		}
 	}
@@ -122,9 +114,9 @@ export class EditorCategoriesTagsAccordion extends Component {
 
 	getSubtitle() {
 		const subtitlePieces = [];
-		const { postType } = this.props;
+		const { postType, site, post } = this.props;
 
-		if ( this.isLoading() ) {
+		if ( ! site || ! post ) {
 			return null;
 		}
 
@@ -158,9 +150,7 @@ export class EditorCategoriesTagsAccordion extends Component {
 		const classes = classNames(
 			'editor-drawer__accordion',
 			'editor-categories-tags__accordion',
-			this.props.className, {
-				'is-loading': this.isLoading()
-			}
+			this.props.className
 		);
 
 		return (
