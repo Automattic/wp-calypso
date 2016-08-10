@@ -28,7 +28,10 @@ describe( 'selectors', () => {
 							type: ROUTE_SET,
 							path: '/devdocs',
 						}
-					]
+					],
+					queryArguments: {
+						current: {},
+					},
 				}
 			} );
 
@@ -43,11 +46,14 @@ describe( 'selectors', () => {
 							type: ROUTE_SET,
 							path: '/stats',
 						}
-					]
+					],
+					queryArguments: {
+						current: {},
+					},
 				}
 			} );
 
-			expect( firstViewConfig ).to.deep.equal( { name: 'stats', paths: [ '/stats' ], enabled: true } );
+			expect( firstViewConfig ).to.deep.equal( { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' } );
 		} );
 	} );
 
@@ -59,6 +65,20 @@ describe( 'selectors', () => {
 			}
 		];
 
+		const currentUser = {
+			id: 73705554
+		};
+
+		const users = {
+			items: {
+				73705554: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' }
+			}
+		};
+
+		const queryArguments = {
+			current: {}
+		};
+
 		const config = {
 			name: 'stats',
 			paths: [ '/stats' ],
@@ -68,6 +88,8 @@ describe( 'selectors', () => {
 		it( 'should return true if the preferences have been fetched, the config has a first view for the current view,' +
 			' and it is not disabled', () => {
 			const viewEnabled = isViewEnabled( {
+				currentUser,
+				users,
 				preferences: {
 					values: {
 						firstViewHistory: [
@@ -82,6 +104,7 @@ describe( 'selectors', () => {
 				},
 				ui: {
 					actionLog: actions,
+					queryArguments,
 				}
 			}, config );
 
@@ -90,6 +113,8 @@ describe( 'selectors', () => {
 
 		it( 'should return true if preferences have been fetched and the history is empty', () => {
 			const viewEnabled = isViewEnabled( {
+				currentUser,
+				users,
 				preferences: {
 					values: {
 						firstViewHistory: []
@@ -98,6 +123,7 @@ describe( 'selectors', () => {
 				},
 				ui: {
 					actionLog: actions,
+					queryArguments,
 				}
 			}, config );
 
@@ -106,6 +132,8 @@ describe( 'selectors', () => {
 
 		it( 'should return false if the view is disabled', () => {
 			const viewEnabled = isViewEnabled( {
+				currentUser,
+				users,
 				preferences: {
 					values: {
 						firstViewHistory: [
@@ -120,6 +148,7 @@ describe( 'selectors', () => {
 				},
 				ui: {
 					actionLog: actions,
+					queryArguments,
 				}
 			}, config );
 
@@ -128,6 +157,8 @@ describe( 'selectors', () => {
 
 		it( 'should return false if the view is disabled in the config', () => {
 			const viewEnabled = isViewEnabled( {
+				currentUser,
+				users,
 				preferences: {
 					values: {
 						firstViewHistory: []
@@ -141,6 +172,7 @@ describe( 'selectors', () => {
 							path: '/devdocs',
 						}
 					],
+					queryArguments,
 				}
 			}, { name: 'devdocs', paths: [ '/devdocs' ], enabled: false } );
 
@@ -149,6 +181,8 @@ describe( 'selectors', () => {
 
 		it( 'should return false if the preferences haven\'t been fetched', () => {
 			const viewEnabled = isViewEnabled( {
+				currentUser,
+				users,
 				preferences: {
 					values: {
 						firstViewHistory: []
@@ -157,6 +191,7 @@ describe( 'selectors', () => {
 				},
 				ui: {
 					actionLog: actions,
+					queryArguments,
 				}
 			}, config );
 
