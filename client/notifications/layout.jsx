@@ -1,21 +1,32 @@
 import React, { Component, PropTypes } from 'react';
 
 import ListViewLayout from './list-view-layout';
+import SingleViewLayout from './single-view-layout';
 
 export class Layout extends Component {
 	render() {
 		const {
-			notes
+			notes,
+			note,
+			selectNote
 		} = this.props;
 
 		return (
 			<div className="notifications__layout">
-				<ListViewLayout { ...{
-					notes,
-					selectNote: () => null,
-					selectedFilter: 'All',
-					updateFilter: () => null
-				} } />
+				{ note &&
+					<SingleViewLayout { ...{
+						note,
+						selectNote
+					} } />
+				}
+				{ ! note &&
+					<ListViewLayout { ...{
+						notes,
+						selectNote,
+						selectedFilter: 'All',
+						updateFilter: () => null
+					} } />
+				}
 			</div>
 		);
 	}

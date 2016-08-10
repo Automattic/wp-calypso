@@ -3,8 +3,10 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
+	find,
 	identity,
-	invoker
+	invoker,
+	propEq
 } from 'ramda';
 
 /**
@@ -78,8 +80,11 @@ export class NotificationsPanel extends Component {
 	render() {
 		const {
 			notes,
+			selectNote,
 			selectedNote
 		} = this.props;
+
+		const note = find( propEq( 'id', selectedNote ), notes );
 
 		return (
 			<div
@@ -89,6 +94,8 @@ export class NotificationsPanel extends Component {
 			>
 				<Layout { ...{
 					notes,
+					note,
+					selectNote,
 					selectedNote
 				} } />
 			</div>
@@ -100,7 +107,9 @@ NotificationsPanel.displayName = 'NotificationsPanel';
 
 NotificationsPanel.propTypes = {
 	clickInterceptor: PropTypes.func,
-	notes: PropTypes.array
+	notes: PropTypes.array,
+	selectedNote: PropTypes.number,
+	selectNote: PropTypes.func
 };
 
 export default NotificationsPanel;

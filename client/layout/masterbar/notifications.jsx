@@ -5,6 +5,10 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import classNames from 'classnames';
 
+import {
+	propEq
+} from 'ramda';
+
 /**
  * Internal dependencies
  */
@@ -51,6 +55,10 @@ export default React.createClass( {
 			notes: [],
 			selectedNote: null
 		};
+	},
+
+	selectNote( selectedNote ) {
+		this.setState( { selectedNote } );
 	},
 
 	checkToggleNotes( event, forceToggle ) {
@@ -147,7 +155,8 @@ export default React.createClass( {
 					<Notifications
 						clickInterceptor={ this.checkToggleNotes }
 						notes={ this.state.notes }
-						selectedNote={ this.state.notes }
+						selectNote={ this.selectNote }
+						selectedNote={ this.state.selectedNote }
 						setIndicator={ this.setNotesIndicator }
 					/>
 				}
