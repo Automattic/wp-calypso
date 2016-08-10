@@ -43,6 +43,7 @@ import { isRequestingSites } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import { withoutHttp } from 'lib/url';
+import LoggedOutFormFooter from 'components/logged-out-form/footer';
 
 /**
  * Constants
@@ -345,6 +346,41 @@ const LoggedInForm = React.createClass( {
 		return this.translate( 'Approve' );
 	},
 
+	onClickDisclaimerLink() {
+		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
+	},
+
+	getDisclaimerText() {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const { blogname } = queryObject;
+
+		const detailsLink = (
+			<a
+				target="_blank"
+				onClick={ this.onClickDisclaimerLink }
+				href="https://jetpack.com/support/what-data-does-jetpack-sync/"
+				className="jetpack-connect__sso-actions-modal-link" />
+		);
+
+		const text = this.translate(
+			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
+			{
+				components: {
+					detailsLink
+				},
+				args: {
+					siteName: decodeEntities( blogname )
+				}
+			}
+		);
+
+		return (
+			<p className="jetpack-connect__tos-link">
+				{ text }
+			</p>
+		);
+	},
+
 	getUserText() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		let text = this.translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
@@ -428,9 +464,13 @@ const LoggedInForm = React.createClass( {
 			);
 		}
 		return (
-			<Button primary disabled={ this.isAuthorizing() } onClick={ this.handleSubmit }>
-				{ this.getButtonText() }
-			</Button>
+			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
+				{ this.getDisclaimerText() }
+				<Button primary disabled={ this.isAuthorizing() } onClick={ this.handleSubmit }>
+					{ this.getButtonText() }
+				</Button>
+			</LoggedOutFormFooter>
+
 		);
 	},
 
