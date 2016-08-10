@@ -411,6 +411,7 @@ const LoggedInForm = React.createClass( {
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 					{ this.translate( 'Create a new account' ) }
 				</LoggedOutFormLinkItem>
+				<LiveChatButton />
 			</LoggedOutFormLinks>
 		);
 	},
@@ -509,9 +510,6 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 				<div className="jetpack-connect__authorize-form">
 					{ this.renderForm() }
 				</div>
-				<LoggedOutFormLinks>
-					<LiveChatButton />
-				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
 	}
