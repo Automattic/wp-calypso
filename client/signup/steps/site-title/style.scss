@@ -1,4 +1,8 @@
 .site-title__section-wrapper {
 	margin: 0 auto 2em;
 	max-width: 500px;
+	background: red;
+	.form-fieldset {
+		padding-right: 100px;
+	}
 }
