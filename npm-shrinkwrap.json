@@ -510,7 +510,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000519"
+      "version": "1.0.30000520"
     },
     "caseless": {
       "version": "0.11.0"
@@ -756,7 +756,7 @@
       "version": "1.0.4"
     },
     "cookiejar": {
-      "version": "2.0.1"
+      "version": "2.1.0"
     },
     "core-js": {
       "version": "2.4.1"
@@ -914,7 +914,7 @@
       }
     },
     "doctypes": {
-      "version": "1.0.0"
+      "version": "1.1.0"
     },
     "doiuse": {
       "version": "2.4.1",
@@ -1411,7 +1411,7 @@
       "version": "1.1.1"
     },
     "formidable": {
-      "version": "1.0.14"
+      "version": "1.0.17"
     },
     "forwarded": {
       "version": "0.1.0"
@@ -1444,7 +1444,7 @@
       "version": "1.2.0"
     },
     "get-caller-file": {
-      "version": "1.0.1"
+      "version": "1.0.2"
     },
     "get-document": {
       "version": "1.0.0"
@@ -3041,7 +3041,7 @@
       "version": "0.1.2"
     },
     "serializerr": {
-      "version": "1.0.2"
+      "version": "1.0.3"
     },
     "serve-index": {
       "version": "1.8.0",
@@ -3343,40 +3343,13 @@
       "version": "0.1.5"
     },
     "superagent": {
-      "version": "1.2.0",
+      "version": "2.1.0",
       "dependencies": {
-        "combined-stream": {
-          "version": "0.0.7"
-        },
         "component-emitter": {
-          "version": "1.1.2"
-        },
-        "delayed-stream": {
-          "version": "0.0.5"
-        },
-        "extend": {
           "version": "1.2.1"
         },
-        "form-data": {
-          "version": "0.2.0"
-        },
-        "isarray": {
-          "version": "0.0.1"
-        },
-        "methods": {
-          "version": "1.0.1"
-        },
-        "mime-db": {
-          "version": "1.12.0"
-        },
-        "mime-types": {
-          "version": "2.0.14"
-        },
         "qs": {
-          "version": "2.3.3"
-        },
-        "readable-stream": {
-          "version": "1.0.27-1"
+          "version": "6.2.1"
         }
       }
     },
@@ -3733,7 +3706,7 @@
       "version": "1.3.0"
     },
     "wpcom": {
-      "version": "5.1.0"
+      "version": "5.2.0"
     },
     "wpcom-oauth": {
       "version": "0.3.3",
@@ -3746,6 +3719,9 @@
         },
         "extend": {
           "version": "1.2.1"
+        },
+        "formidable": {
+          "version": "1.0.14"
         },
         "methods": {
           "version": "0.0.1"
@@ -3767,10 +3743,10 @@
       }
     },
     "wpcom-proxy-request": {
-      "version": "2.0.0"
+      "version": "3.0.0"
     },
     "wpcom-xhr-request": {
-      "version": "0.5.0"
+      "version": "1.0.0"
     },
     "wrap-ansi": {
       "version": "2.0.0"
