@@ -250,7 +250,7 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
-					{ this.translate( 'Install Jetpack Manually' ) }
+					{ this.translate( 'Install Jetpack manually' ) }
 				</LoggedOutFormLinkItem>
 				{ this.isInstall()
 					? null
