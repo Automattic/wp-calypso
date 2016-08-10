@@ -54,7 +54,6 @@ export class NotificationsPanel extends Component {
 	}
 
 	toggleListeners( doToggleOn ) {
-		return;
 		const {
 			clickInterceptor
 		} = this.props;

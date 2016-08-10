@@ -82,6 +82,12 @@ export default React.createClass( {
 	toggleNotesFrame( event ) {
 		if ( event ) {
 			event.preventDefault();
+
+			const notesPanel = document.getElementById( 'wpnt-notes-panel2' );
+			if ( notesPanel && notesPanel.contains( event.target ) ) {
+				event.stopPropagation();
+				return;
+			}
 		}
 
 		this.setState( {
