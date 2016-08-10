@@ -297,7 +297,7 @@ export const featuresList = {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
 		getTitle: () => i18n.translate( 'Custom Domain Name' ),
 		getDescription: () => i18n.translate(
-			'Get a free custom domain name (mywebsite.com) with this plan ' +
+			'Get a free custom domain name (example.com) with this plan ' +
 			'to use for your website.'
 		),
 		plans: allPaidPlans
