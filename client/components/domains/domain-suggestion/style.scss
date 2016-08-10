@@ -93,10 +93,6 @@
 	text-align: center;
 	color: $blue-medium;
 
-	> span {
-		vertical-align: top;
-	}
-
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background-color: lighten( $gray, 30% );
