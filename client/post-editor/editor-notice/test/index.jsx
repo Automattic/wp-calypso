@@ -61,7 +61,7 @@ describe( 'EditorNotice', () => {
 				action="view"
 				site={ {
 					URL: 'https://example.wordpress.com',
-					name: 'Example Site'
+					title: 'Example Site'
 				} } />
 		);
 
@@ -94,7 +94,7 @@ describe( 'EditorNotice', () => {
 				action="view"
 				site={ {
 					URL: 'https://example.wordpress.com',
-					name: 'Example Site'
+					title: 'Example Site'
 				} } />
 		);
 
