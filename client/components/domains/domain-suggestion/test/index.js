@@ -31,9 +31,9 @@ describe( 'Domain Suggestion', function() {
 			const domainSuggestion = shallow( <DomainSuggestion
 				domain="example.com" isAdded={ false }/> );
 			if ( domainSuggestion.props()[ 'data-e2e-domain' ] ) {
-				expect( domainSuggestion.props()[ 'data-e2e-domain' ] ).to.equal( 'example.com' )
+				expect( domainSuggestion.props()[ 'data-e2e-domain' ] ).to.equal( 'example.com' );
 			} else {
-				const domainSuggestionButton = domainSuggestion.find( `.domain-suggestion__select-button` );
+				const domainSuggestionButton = domainSuggestion.find( '.domain-suggestion__select-button' );
 				expect( domainSuggestionButton.length ).to.equal( 1 );
 				expect( domainSuggestionButton.props()[ 'data-e2e-domain' ] ).to.equal( 'example.com' );
 			}
