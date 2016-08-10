@@ -34,11 +34,11 @@ export function onTermsReceive( dispatch, state, action ) {
 	const taxonomyTerms = toArray( postTerms[ taxonomy ] );
 	taxonomyTerms.push( newTerm );
 
-	dispatch( editPost( {
+	dispatch( editPost( siteId, postId, {
 		terms: {
 			[ taxonomy ]: taxonomyTerms
 		}
-	}, siteId, postId ) );
+	} ) );
 }
 
 export default ( { dispatch, getState } ) => ( next ) => ( action ) => {
