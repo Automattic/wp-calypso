@@ -1,1 +1,3 @@
+/** @ssr-ready **/
+
 export default () => () => {};
