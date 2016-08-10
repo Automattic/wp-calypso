@@ -38,7 +38,7 @@ class EditorPageTemplates extends Component {
 
 	selectTemplate( file ) {
 		const { siteId, postId } = this.props;
-		this.props.editPost( { page_template: file }, siteId, postId );
+		this.props.editPost( siteId, postId, { page_template: file } );
 	}
 
 	getSelectedTemplateText() {

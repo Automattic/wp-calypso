@@ -42,11 +42,11 @@ class EditorTermSelector extends Component {
 			taxonomyTerms.push( selectedTerm );
 		}
 
-		this.props.editPost( {
+		this.props.editPost( siteId, postId, {
 			terms: {
 				[ taxonomyName ]: taxonomyTerms
 			}
-		}, siteId, postId );
+		} );
 	}
 
 	getSelectedTermIds() {

@@ -37,7 +37,7 @@ class EditorPageParent extends Component {
 	updatePageParent( item ) {
 		const { siteId, postId } = this.props;
 		const parentId = item && item.ID ? item.ID : null;
-		this.props.editPost( { parent: parentId }, siteId, postId );
+		this.props.editPost( siteId, postId, { parent: parentId } );
 	}
 
 	render() {
