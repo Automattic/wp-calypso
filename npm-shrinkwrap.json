@@ -2560,7 +2560,7 @@
       "dev": true
     },
     "moment": {
-      "version": "2.10.6"
+      "version": "2.11.0"
     },
     "moment-timezone": {
       "version": "0.4.0"

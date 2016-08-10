@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-import parseBlocks from './blocks/block-tree-parser';
+import ListViewLayout from './list-view-layout';
 
 const layoutStyle = {
 	height: '100%',
@@ -21,7 +21,12 @@ export class Layout extends Component {
 
 		return (
 			<div style={ layoutStyle }>
-				{ notes.map( ( { subject } ) => parseBlocks( subject ) ) }
+				<ListViewLayout { ...{
+					notes,
+					selectNote: () => null,
+					selectedFilter: 'All',
+					updateFilter: () => null
+				} } />
 			</div>
 		);
 	}
