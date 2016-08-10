@@ -104,7 +104,7 @@
 		"persist-redux": true,
 		"plans/personal-plan": true,
 		"post-editor-github-link": false,
-		"post-editor/image-editor": false,
+		"post-editor/image-editor": true,
 		"post-editor/insert-menu": true,
 		"post-editor/media-advanced": true,
 		"press-this": true,

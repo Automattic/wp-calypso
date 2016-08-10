@@ -24,7 +24,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	propTypes: {
 		src: React.PropTypes.string,
 		mimeType: React.PropTypes.string,
-		transfrom: React.PropTypes.shape( {
+		transform: React.PropTypes.shape( {
 			degrees: React.PropTypes.number,
 			scaleX: React.PropTypes.number,
 			scaleY: React.PropTypes.number
@@ -57,7 +57,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 
 	componentWillReceiveProps( newProps ) {
 		if ( this.props.src !== newProps.src ) {
-			this.initImage( newProps.src );
+			this.getImage( newProps.src );
 		}
 	},
 
@@ -66,7 +66,18 @@ const MediaModalImageEditorCanvas = React.createClass( {
 			return;
 		}
 
-		this.initImage( this.props.src );
+		this.getImage( this.props.src );
+	},
+
+	getImage( url ) {
+		const req = new XMLHttpRequest();
+		req.open( 'GET', url, true );
+		req.responseType = 'arraybuffer';
+		req.onload = () => {
+			const objectURL = window.URL.createObjectURL( new Blob( [ req.response ], { type: this.props.mimeType } ) );
+			this.initImage( objectURL );
+		};
+		req.send();
 	},
 
 	initImage( src ) {
