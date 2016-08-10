@@ -30,6 +30,9 @@ const facebookDescription = firstValid(
 	hardTruncation( DESCRIPTION_LENGTH )
 );
 
+const authorInfo = author =>
+	author ? ` | ${ author }` : '';
+
 export class FacebookPreview extends PureComponent {
 	render() {
 		const {
@@ -37,7 +40,8 @@ export class FacebookPreview extends PureComponent {
 			type,
 			title,
 			description,
-			image
+			image,
+			author
 		} = this.props;
 
 		return (
@@ -54,7 +58,7 @@ export class FacebookPreview extends PureComponent {
 							{ facebookDescription( description || '' ) }
 						</div>
 						<div className="facebook-preview__url">
-							{ baseDomain( url ) }
+							{ baseDomain( url ) + authorInfo( author ) }
 						</div>
 					</div>
 				</div>
@@ -69,6 +73,7 @@ FacebookPreview.propTypes = {
 	title: PropTypes.string,
 	description: PropTypes.string,
 	image: PropTypes.string,
+	author: PropTypes.string
 };
 
 export default FacebookPreview;

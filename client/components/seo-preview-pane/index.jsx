@@ -118,6 +118,7 @@ const FacebookPost = ( site, post ) => (
 		type="article"
 		description={ formatExcerpt( post.excerpt || post.content ) }
 		image={ getPostImage( post ) }
+		author={ post.author.name }
 	/>
 );
 
