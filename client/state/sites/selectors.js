@@ -18,7 +18,7 @@ import {
  * Internal dependencies
  */
 import config from 'config';
-import { isHttps } from 'lib/url';
+import { isHttps, withoutHttp } from 'lib/url';
 
 /**
  * Internal dependencies
@@ -79,11 +79,11 @@ export const getSite = createSelector(
 export const getSiteCollisions = createSelector(
 	( state ) => {
 		return map( filter( state.sites.items, ( wpcomSite ) => {
-			const wpcomSiteUrlSansProtocol = wpcomSite.URL.replace( /^https?:\/\//, '' );
+			const wpcomSiteUrlSansProtocol = withoutHttp( wpcomSite.URL );
 			return ! wpcomSite.jetpack && some( state.sites.items, ( jetpackSite ) => {
 				return (
 					jetpackSite.jetpack &&
-					wpcomSiteUrlSansProtocol === jetpackSite.URL.replace( /^https?:\/\//, '' )
+					wpcomSiteUrlSansProtocol === withoutHttp( jetpackSite.URL )
 				);
 			} );
 		} ), 'ID' );
@@ -188,10 +188,10 @@ export function getSiteSlug( state, siteId ) {
 	}
 
 	if ( getSiteOption( state, siteId, 'is_redirect' ) || isSiteConflicting( state, siteId ) ) {
-		return getSiteOption( state, siteId, 'unmapped_url' ).replace( /^https?:\/\//, '' );
+		return withoutHttp( getSiteOption( state, siteId, 'unmapped_url' ) );
 	}
 
-	return site.URL.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+	return withoutHttp( site.URL ).replace( /\//g, '::' );
 }
 
 /**
@@ -212,7 +212,7 @@ export function getSiteDomain( state, siteId ) {
 		return null;
 	}
 
-	return site.URL.replace( /^https?:\/\//, '' );
+	return withoutHttp( site.URL );
 }
 
 /**
@@ -338,7 +338,7 @@ export const getSeoTitleFormats = compose(
  * @return {?Object}       Site object
  */
 export function getSiteByUrl( state, url ) {
-	const slug = url.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+	const slug = withoutHttp( url ).replace( /\//g, '::' );
 	const site = find( state.sites.items, ( item, siteId ) => {
 		return getSiteSlug( state, siteId ) === slug;
 	} );

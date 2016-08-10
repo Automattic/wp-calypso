@@ -11,6 +11,8 @@ var ActionRemove = require( 'me/action-remove' ),
 	safeProtocolUrl = require( 'lib/safe-protocol-url' ),
 	eventRecorder = require( 'me/event-recorder' );
 
+import { withoutHttp } from 'lib/url';
+
 module.exports = React.createClass( {
 
 	displayName: 'ProfileLink',
@@ -69,7 +71,7 @@ module.exports = React.createClass( {
 						{ this.props.title }
 					</span>
 					<span className="profile-link__url">
-						{ this.props.url.replace( /^https?:\/\//, '' ) }
+						{ withoutHttp( this.props.url ) }
 					</span>
 				</a>
 
