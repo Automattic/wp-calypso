@@ -40,12 +40,12 @@ const ListViewLayout = React.createClass( {
 			notes,
 			selectNote,
 			selectedFilter,
-			updateFilter
+			selectFilter
 		} = transformProps( this.props );
 
 		return (
 			<div>
-				<FilterBar { ...{ selectedFilter, updateFilter } }>
+				<FilterBar { ...{ selectedFilter, selectFilter } }>
 					<Filter name="All" filter={ always( true ) } />
 					<Filter name="Unread" filter={ propEq( 'read', 0 ) } />
 					<Filter name="Comments" filter={ propEq( 'type', 'comment' ) } />

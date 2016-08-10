@@ -82,6 +82,8 @@ export class NotificationsPanel extends Component {
 			notes,
 			selectNote,
 			selectedNote,
+			selectedFilter,
+			selectFilter,
 			unselectNote,
 		} = this.props;
 
@@ -98,7 +100,9 @@ export class NotificationsPanel extends Component {
 					note,
 					selectNote,
 					selectedNote,
-					unselectNote
+					unselectNote,
+					selectedFilter,
+					selectFilter
 				} } />
 			</div>
 		);

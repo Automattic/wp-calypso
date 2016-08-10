@@ -9,7 +9,9 @@ export class Layout extends Component {
 			notes,
 			note,
 			selectNote,
-			unselectNote
+			unselectNote,
+			selectedFilter,
+			selectFilter
 		} = this.props;
 
 		return (
@@ -24,8 +26,8 @@ export class Layout extends Component {
 					<ListViewLayout { ...{
 						notes,
 						selectNote,
-						selectedFilter: 'All',
-						updateFilter: () => null
+						selectedFilter,
+						selectFilter
 					} } />
 				}
 			</div>

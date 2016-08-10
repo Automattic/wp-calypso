@@ -53,12 +53,17 @@ export default React.createClass( {
 			newNote: user && user.has_unseen_notes,
 			animationState: 0,
 			notes: [],
-			selectedNote: null
+			selectedNote: null,
+			selectedFilter: 'All'
 		};
 	},
 
 	selectNote( selectedNote ) {
 		this.setState( { selectedNote } );
+	},
+
+	selectFilter( selectedFilter ) {
+		this.setState( { selectedFilter } );
 	},
 
 	checkToggleNotes( event, forceToggle ) {
@@ -157,6 +162,8 @@ export default React.createClass( {
 						notes={ this.state.notes }
 						selectNote={ this.selectNote }
 						selectedNote={ this.state.selectedNote }
+						selectedFilter={ this.state.selectedFilter }
+						selectFilter={ this.selectFilter }
 						setIndicator={ this.setNotesIndicator }
 						unselectNote={ () => this.selectNote( null ) }
 					/>

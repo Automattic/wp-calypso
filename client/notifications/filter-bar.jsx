@@ -36,7 +36,7 @@ export const FilterBar = state => React.createClass( {
 	render() {
 		const {
 			selectedFilter,
-			updateFilter
+			selectFilter
 		} = this.props;
 		const { filters } = state;
 
@@ -45,7 +45,7 @@ export const FilterBar = state => React.createClass( {
 				{ filters.map( ( { name }, key ) => (
 					<Filter
 						isSelected={ selectedFilter === name }
-						onClick={ partial( updateFilter, [ name ] ) }
+						onClick={ partial( selectFilter, [ name ] ) }
 						{ ...{ key, name } }
 					/>
 				) ) }
