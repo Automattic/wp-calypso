@@ -23,9 +23,10 @@
 }
 
 .progress-bar.is-pulsing .progress-bar__progress {
-	animation: progress-bar-animation 2000ms infinite linear;
-	background-image: linear-gradient( 45deg, $blue-dark 0%, $blue-wordpress 50%, $blue-dark 100% );
-	background-size: 50%;
+	animation: progress-bar-animation 10000ms infinite linear;;
+
+	background-size: 12.5% 100%;
+	background-image: linear-gradient( -45deg, $blue-wordpress 25%, darken( $blue-wordpress, 5% ) 25%, darken( $blue-wordpress, 5% ) 75%, $blue-wordpress 75%)
 }
 
 @keyframes progress-bar-animation {
@@ -42,4 +43,3 @@
 		border-radius: 0;
 	}
 }
-
