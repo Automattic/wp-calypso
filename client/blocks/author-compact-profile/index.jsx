@@ -7,8 +7,8 @@ import React from 'react';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
-import ReaderAuthorLink from 'components/reader-author-link';
-import ReaderSiteStreamLink from 'components/reader-site-stream-link';
+import ReaderAuthorLink from 'blocks/reader-author-link';
+import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderFollowButton from 'reader/follow-button';
 import { localize } from 'i18n-calypso';
 
