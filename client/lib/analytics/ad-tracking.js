@@ -133,10 +133,12 @@ function retarget() {
 		window.fbq( 'track', 'PageView' );
 
 		// AdWords
-		window.google_trackConversion( {
-			google_conversion_id: GOOGLE_CONVERSION_ID,
-			google_remarketing_only: true
-		} );
+		if ( window.google_trackConversion ) {
+			window.google_trackConversion( {
+				google_conversion_id: GOOGLE_CONVERSION_ID,
+				google_remarketing_only: true
+			} );
+		}
 	}
 }
 
@@ -211,20 +213,22 @@ function recordPurchase( product, orderId ) {
 	}
 
 	// record the purchase w/ Google
-	window.google_trackConversion( {
-		google_conversion_id: GOOGLE_CONVERSION_ID,
-		google_conversion_label: isJetpackPlan
-			? TRACKING_IDS.googleConversionLabelJetpack
-			: TRACKING_IDS.googleConversionLabel,
-		google_conversion_value: product.cost,
-		google_conversion_currency: product.currency,
-		google_custom_params: {
-			product_slug: product.product_slug,
-			user_id: userId,
-			order_id: orderId
-		},
-		google_remarketing_only: false
-	} );
+	if ( window.google_trackConversion ) {
+		window.google_trackConversion( {
+			google_conversion_id: GOOGLE_CONVERSION_ID,
+			google_conversion_label: isJetpackPlan
+				? TRACKING_IDS.googleConversionLabelJetpack
+				: TRACKING_IDS.googleConversionLabel,
+			google_conversion_value: product.cost,
+			google_conversion_currency: product.currency,
+			google_custom_params: {
+				product_slug: product.product_slug,
+				user_id: userId,
+				order_id: orderId
+			},
+			google_remarketing_only: false
+		} );
+	}
 }
 
 /**
