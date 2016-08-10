@@ -76,7 +76,7 @@ export class EditorNotice extends Component {
 				if ( 'page' === type ) {
 					return translate( 'Page published on {{siteLink/}}!', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank">{ site.name }</a>
+							siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 						},
 						comment: 'Editor: Message displayed when a page is published, with a link to the site it was published on.'
 					} );
@@ -84,7 +84,7 @@ export class EditorNotice extends Component {
 
 				return translate( 'Post published on {{siteLink/}}!', {
 					components: {
-						siteLink: <a href={ site.URL } target="_blank">{ site.name }</a>
+						siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 					},
 					comment: 'Editor: Message displayed when a post is published, with a link to the site it was published on.'
 				} );
@@ -101,7 +101,7 @@ export class EditorNotice extends Component {
 				if ( 'page' === type ) {
 					return translate( 'Page privately published on {{siteLink/}}!', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank">{ site.name }</a>
+							siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 						},
 						comment: 'Editor: Message displayed when a page is published privately,' +
 							' with a link to the site it was published on.'
@@ -110,7 +110,7 @@ export class EditorNotice extends Component {
 
 				return translate( 'Post privately published on {{siteLink/}}!', {
 					components: {
-						siteLink: <a href={ site.URL } target="_blank">{ site.name }</a>
+						siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 					},
 					comment: 'Editor: Message displayed when a post is published privately,' +
 						' with a link to the site it was published on.'
@@ -137,7 +137,7 @@ export class EditorNotice extends Component {
 				if ( 'page' === type ) {
 					return translate( 'Page updated on {{siteLink/}}!', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank">{ site.name }</a>
+							siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 						},
 						comment: 'Editor: Message displayed when a page is updated, with a link to the site it was updated on.'
 					} );
@@ -145,7 +145,7 @@ export class EditorNotice extends Component {
 
 				return translate( 'Post updated on {{siteLink/}}!', {
 					components: {
-						siteLink: <a href={ site.URL } target="_blank">{ site.name }</a>
+						siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 					},
 					comment: 'Editor: Message displayed when a post is updated, with a link to the site it was updated on.'
 				} );

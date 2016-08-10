@@ -60,6 +60,7 @@ export const getSite = createSelector(
 			...site,
 			...getComputedAttributes( site ),
 			hasConflict: isSiteConflicting( state, siteId ),
+			title: getSiteTitle( state, siteId ),
 			slug: getSiteSlug( state, siteId ),
 			domain: getSiteDomain( state, siteId ),
 			is_previewable: isSitePreviewable( state, siteId )
@@ -212,6 +213,28 @@ export function getSiteDomain( state, siteId ) {
 	}
 
 	return site.URL.replace( /^https?:\/\//, '' );
+}
+
+/**
+ * Returns a title by which the site can be canonically referenced. Uses the
+ * site's name if available, falling back to its domain. Returns null if the
+ * site is not known.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId Site ID
+ * @return {?String}        Site title
+ */
+export function getSiteTitle( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+
+	if ( site.name ) {
+		return site.name.trim();
+	}
+
+	return getSiteDomain( state, siteId );
 }
 
 /**
