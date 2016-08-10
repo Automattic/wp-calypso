@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, size, toArray } from 'lodash';
+import { get, toArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +15,6 @@ import AccordionSection from 'components/accordion/section';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import Gridicon from 'components/gridicon';
 import TermSelector from 'post-editor/editor-term-selector';
-import QueryTerms from 'components/data/query-terms';
 import Tags from 'post-editor/editor-tags';
 import InfoPopover from 'components/info-popover';
 import unescapeString from 'lodash/unescape';
@@ -33,7 +32,6 @@ export class EditorCategoriesTagsAccordion extends Component {
 		postTerms: PropTypes.object,
 		postType: PropTypes.string,
 		defaultCategory: PropTypes.object,
-		defaultCategoryId: PropTypes.number,
 		// passed down from TagListData
 		tags: PropTypes.array,
 		tagsHasNextPage: PropTypes.bool,
@@ -41,12 +39,10 @@ export class EditorCategoriesTagsAccordion extends Component {
 	};
 
 	renderCategories() {
-		const { translate, postType, defaultCategory, defaultCategoryId, siteId } = this.props;
+		const { translate, postType } = this.props;
 		if ( postType === 'page' ) {
 			return;
 		}
-		// If the default category is not in the state tree, and is not Uncategorized, fetch via QueryTerms
-		const fetchDefaultCategory = defaultCategoryId && defaultCategoryId !== 1 && ( defaultCategory === null );
 
 		return (
 			<AccordionSection>
@@ -56,13 +52,6 @@ export class EditorCategoriesTagsAccordion extends Component {
 						{ translate( 'Use categories to group your posts by topic.' ) }
 					</InfoPopover>
 				</EditorDrawerLabel>
-				{ fetchDefaultCategory &&
-					<QueryTerms
-						siteId={ siteId }
-						taxonomy="category"
-						query={ { ID: defaultCategoryId } }
-					/>
-				}
 				<TermSelector taxonomyName="category" />
 			</AccordionSection>
 		);
@@ -84,7 +73,7 @@ export class EditorCategoriesTagsAccordion extends Component {
 	getCategoriesSubtitle() {
 		const { translate, postTerms, defaultCategory } = this.props;
 		const categories = toArray( get( postTerms, 'category' ) );
-		const categoriesCount = size( categories );
+		const categoriesCount = categories.length;
 
 		switch ( categoriesCount ) {
 			case 0:
@@ -187,7 +176,6 @@ export default connect(
 			defaultCategory: getTerm( state, siteId, 'category', defaultCategoryId ),
 			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
 			postType: getEditedPostValue( state, siteId, postId, 'type' ),
-			defaultCategoryId,
 			siteId,
 			postId
 		};
