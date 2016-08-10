@@ -1,3 +1,49 @@
+.notifications__filter-bar {
+	font-family: $serif;
+	list-style: none;
+	margin-left: 0;
+	padding-left: 0;
+
+	li {
+		float: left;
+		margin-right: 1em;
+		padding: 3px;
+
+		&.isSelected,
+		&:hover {
+			color: $blue-dark;
+		}
+
+		&:last-child {
+			float: none;
+		}
+	}
+}
+
+.notifications__list-group {
+	line-height: 21px;
+	color: $gray;
+	font-family: $sans;
+	text-transform: uppercase;
+	border-top: 1px solid $gray;
+	border-bottom: 1px solid $gray;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	padding: 6px 0;
+	font-weight: 600;
+	font-size: 11px;
+	vertical-align: baseline;
+
+	& svg {
+		fill: $gray;
+		height: 16px;
+		width: 16px;
+		position: relative;
+		top: 4px;
+		margin-right: 4px;
+	}
+}
+
 .note-range__comment {
 	font-style: italic;
 }

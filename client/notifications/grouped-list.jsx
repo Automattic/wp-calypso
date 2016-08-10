@@ -59,7 +59,7 @@ export const GroupHeader = React.createClass( {
 	render() {
 		const { children } = this.props;
 
-		return <div className="list-group">{ children }</div>;
+		return <div className="notifications__list-group">{ children }</div>;
 	}
 } );
 

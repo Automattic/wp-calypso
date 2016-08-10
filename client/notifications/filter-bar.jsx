@@ -41,7 +41,7 @@ export const FilterBar = state => React.createClass( {
 		const { filters } = state;
 
 		return (
-			<ul className="filter-bar">
+			<ul className="notifications__filter-bar">
 				{ filters.map( ( { name }, key ) => (
 					<Filter
 						isSelected={ selectedFilter === name }
