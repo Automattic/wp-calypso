@@ -66,19 +66,6 @@ export default React.createClass( {
 		this.setState( { selectedFilter } );
 	},
 
-	checkToggleNotes( event, forceToggle ) {
-		const target = event ? event.target : false;
-		const notificationNode = this.getNotificationLinkDomNode();
-
-		if ( target && notificationNode.contains( target ) ) {
-			return;
-		}
-
-		if ( this.state.isShowingPopover || forceToggle === true ) {
-			this.toggleNotesFrame( event );
-		}
-	},
-
 	toggleNotesFrame( event ) {
 		if ( event ) {
 			event.preventDefault();
@@ -164,7 +151,6 @@ export default React.createClass( {
 				/>
 				{ this.state.isShowingPopover &&
 					<Notifications
-						clickInterceptor={ this.checkToggleNotes }
 						notes={ this.state.notes }
 						selectNote={ this.selectNote }
 						selectedNote={ this.state.selectedNote }
