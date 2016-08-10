@@ -25,6 +25,7 @@ import { setEditorPostId } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { editPost } from 'state/posts/actions';
+import { startEditingPostCopy } from 'post-editor/editor-copy-post';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -199,5 +200,30 @@ module.exports = {
 
 		page.redirect( redirectWithParams );
 		return false;
-	}
+	},
+
+	copyPost: function( context, next ) {
+		if ( ! context.query.copy ) {
+			// not copyPost, early return
+			return next();
+		}
+
+		const postId = getPostID( context );
+
+		function startEditingOnSiteSelected() {
+			const siteId = getSelectedSiteId( context.store.getState() );
+			if ( siteId ) {
+				startEditingPostCopy( context, siteId, postId ).then( () => {
+					renderEditor( context, 'post' );
+				} );
+			} else {
+				sites.once( 'change', startEditingOnSiteSelected );
+			}
+		}
+
+		startEditingOnSiteSelected();
+
+		return false;
+	},
+
 };
