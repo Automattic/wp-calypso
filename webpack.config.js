@@ -144,6 +144,13 @@ if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.devtool = false;
 }
 
+if ( CALYPSO_ENV === 'production' ) {
+	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin(
+		/^debug$/,
+		path.join( __dirname, 'client', 'lib', 'debug-noop' )
+	) );
+}
+
 webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
 
 module.exports = webpackConfig;
