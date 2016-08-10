@@ -23,7 +23,7 @@ import { getCurrentUserDate } from 'state/current-user/selectors';
 export function getConfigForCurrentView( state ) {
 	const currentRoute = last( filter( getActionLog( state ), { type: ROUTE_SET } ) );
 	const path = currentRoute.path ? currentRoute.path : '';
-	const config = FIRST_VIEW_CONFIG.filter( entry  => some( entry.paths, entryPath => startsWith( path, entryPath ) ) );
+	const config = FIRST_VIEW_CONFIG.filter( entry => some( entry.paths, entryPath => startsWith( path, entryPath ) ) );
 
 	return config.pop() || false;
 }
