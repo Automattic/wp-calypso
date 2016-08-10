@@ -210,14 +210,17 @@ module.exports = React.createClass( {
 	},
 
 	onImageEditorClose: function() {
-		const item = this.props.mediaLibrarySelectedItems[ this.state.detailSelectedIndex ];
+		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+		this.setView( ModalViews.LIST );
+	},
 
-		if ( item ) {
-			this.setView( ModalViews.DETAIL );
+	onImageEditorCancel: function() {
+		const item = this.props.mediaLibrarySelectedItems[ this.state.detailSelectedIndex ];
+		if ( ! item ) {
+			this.setView( ModalViews.LIST );
 			return;
 		}
-
-		this.setView( ModalViews.LIST );
+		this.setView( ModalViews.DETAIL );
 	},
 
 	onFilterChange: function( filter ) {
@@ -388,7 +391,9 @@ module.exports = React.createClass( {
 						site={ this.props.site }
 						items={ this.props.mediaLibrarySelectedItems }
 						selectedIndex={ this.state.detailSelectedIndex }
-						onImageEditorClose={ this.onImageEditorClose } />
+						onImageEditorClose={ this.onImageEditorClose }
+						onImageEditorCancel={ this.onImageEditorCancel }
+					/>
 				);
 				break;
 		}
