@@ -5,6 +5,7 @@
  */
 import filter from 'lodash/filter';
 import last from 'lodash/last';
+import moment from 'moment';
 import some from 'lodash/some';
 import startsWith from 'lodash/startsWith';
 import takeRightWhile from 'lodash/takeRightWhile';
@@ -17,6 +18,7 @@ import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
 import { isSectionLoading } from 'state/ui/selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
+import { getCurrentUserDate } from 'state/current-user/selectors';
 
 export function getConfigForCurrentView( state ) {
 	const currentRoute = last( filter( getActionLog( state ), { type: ROUTE_SET } ) );
@@ -24,6 +26,22 @@ export function getConfigForCurrentView( state ) {
 	const config = FIRST_VIEW_CONFIG.filter( entry  => some( entry.paths, entryPath => startsWith( path, entryPath ) ) );
 
 	return config.pop() || false;
+}
+
+export function isUserEligible( state, config ) {
+	const userStartDate = getCurrentUserDate( state );
+
+	// If no start date is defined, all users are eligible
+	if ( ! config.startDate ) {
+		return true;
+	}
+
+	// If the user doesn't have a start date, we don't want to show the first view
+	if ( ! userStartDate ) {
+		return false;
+	}
+
+	return moment( userStartDate ).isAfter( config.startDate );
 }
 
 export function isViewEnabled( state, config ) {
@@ -37,7 +55,7 @@ export function isViewEnabled( state, config ) {
 	const firstViewHistory = getPreference( state, 'firstViewHistory' ).filter( entry => entry.view === config.name );
 	const latestFirstViewHistory = [ ...firstViewHistory ].pop();
 	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
-	return config.enabled && ! isViewDisabled;
+	return config.enabled && isUserEligible( state, config ) && ! isViewDisabled;
 }
 
 export function wasFirstViewHiddenSinceEnteringCurrentSection( state, config ) {
