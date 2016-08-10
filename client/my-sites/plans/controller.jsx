@@ -83,54 +83,6 @@ export default {
 		);
 	},
 
-	plansCompare( context ) {
-		const PlansCompare = require( 'components/plans/plans-compare' ),
-			Main = require( 'components/main' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			features = require( 'lib/features-list' )(),
-			productsList = require( 'lib/products-list' )(),
-			analyticsPageTitle = 'Plans > Compare',
-			site = sites.getSelectedSite(),
-			basePath = route.sectionify( context.path );
-		let baseAnalyticsPath;
-
-		if ( site && ! site.isUpgradeable() ) {
-			return page.redirect( '/plans/compare' );
-		}
-
-		if ( site ) {
-			baseAnalyticsPath = basePath + '/:site';
-		} else {
-			baseAnalyticsPath = basePath;
-		}
-
-		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
-
-		titleActions.setTitle( i18n.translate( 'Compare Plans', { textOnly: true } ), {
-			siteID: context.params.domain
-		} );
-
-		// Scroll to the top
-		if ( typeof window !== 'undefined' ) {
-			window.scrollTo( 0, 0 );
-		}
-
-		renderWithReduxStore(
-			<Main className="plans has-sidebar">
-				<CheckoutData>
-					<PlansCompare
-						selectedSite={ site }
-						features={ features }
-						selectedFeature={ context.params.feature || context.query.feature }
-						intervalType={ context.params.intervalType }
-						productsList={ productsList } />
-				</CheckoutData>
-			</Main>,
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
-
 	features( context ) {
 		const domain = context.params.domain;
 		const feature = get( context, 'params.feature' );

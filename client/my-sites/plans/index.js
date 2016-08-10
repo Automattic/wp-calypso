@@ -8,7 +8,6 @@ import page from 'page';
  */
 import config from 'config';
 import controller from 'my-sites/controller';
-import paths from './paths';
 import plansController from './controller';
 import googleAnalyticsLandingPage from './plan-feature/google-analytics';
 import yourPlan from './current-plan/controller';
@@ -74,8 +73,9 @@ export default function() {
 			controller.sites
 		);
 
+		// This route renders the plans page for both WPcom and Jetpack sites.
 		page(
-			paths.plansDestination(),
+			'/plans/:intervalType?/:site',
 			controller.siteSelection,
 			controller.navigation,
 			plansController.plans
