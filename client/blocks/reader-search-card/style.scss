@@ -1,0 +1,308 @@
+// Search cards
+.reader-search-card.card {
+	position: relative;
+	padding: 20px;
+
+	&.has-thumbnail {
+		padding-left: 250px;
+
+		@include breakpoint( "660px-960px" ) {
+			padding-left: 135px;
+		}
+
+		@include breakpoint( "<480px" ) {
+			padding-left: 108px;
+		}
+	}
+
+	&.has-primary-follow-button.is-photo {
+
+		&::before{
+			opacity: .65;
+		}
+	}
+
+	// Search in CS
+	&.has-primary-follow-button .follow-button,
+	&.has-primary-follow-button.is-photo .follow-button {
+		background: none;
+		border-color: $blue-wordpress;
+		float: right;
+		position: relative;
+		z-index: 1;
+
+		.gridicon {
+			fill: $blue-wordpress;
+		}
+
+		.follow-button__label {
+			color: $blue-wordpress;
+		}
+
+		&:hover {
+			border-color: $gray-dark;
+
+			.gridicon {
+				fill: $gray-dark;
+			}
+
+			.follow-button__label {
+				color: $gray-dark
+			}
+		}
+
+		&.is-following {
+			border-color: $alert-green;
+
+			.gridicon {
+				fill: $alert-green;
+			}
+
+			.follow-button__label {
+				color: $alert-green;
+			}
+		}
+	}
+
+	&.has-primary-follow-button.is-photo .follow-button {
+		border-color: $white;
+
+		.gridicon {
+			fill: $white;
+		}
+
+		.follow-button__label {
+			color: $white;
+		}
+
+		&:hover {
+			border-color: lighten( $gray, 20% );
+
+			.gridicon {
+				fill: lighten( $gray, 20% );
+			}
+
+			.follow-button__label {
+				color: lighten( $gray, 20% );
+			}
+		}
+	}
+
+	&.is-photo {
+		min-height: 160px;
+		padding: 20px 20px 12px;
+
+		&::before{
+			background: $gray-dark;
+			content: '';
+			height: 100%;
+			opacity: .4;
+			position: absolute;
+				left: 0;
+				top: 0;
+			width: 100%;
+			z-index: 1;
+		}
+
+		.reader-search-card__featured-image {
+			width: 100%;
+		}
+
+		.reader-search-card__title {
+			display: block;
+			padding: 30px 20px 0 0;
+			position: relative;
+			z-index: 1;
+		}
+
+		.reader-related-card__byline-author-and-site {
+			color: $white;
+		}
+
+		.reader-related-card__title-link {
+			color: $white;
+
+			&:hover {
+				opacity: .8;
+			}
+		}
+
+		.reader-search-card__byline {
+			position: relative;
+
+			.reader-related-card__byline-link,
+			.reader-related-card__byline-link:visited {
+				color: $white;
+			}
+
+			.gravatar {
+				border: 1px solid rgba( 255, 255, 255, 0.4 );
+			}
+		}
+
+		.reader-related-card__author-and-site {
+			color: $white;
+		}
+
+		.reader-search-card__social {
+			position: relative;
+		}
+
+		.reader-search-card__excerpt {
+			display: none;
+		}
+
+		.gridicon {
+			fill: $white;
+		}
+
+		.comment-button__label-count,
+		.like-button__label-count {
+			color: $white;
+		}
+
+		.reader-search-card__title-link,
+		.reader-search-card__byline,
+		.reader-search-card__social {
+			color: $white;
+			text-shadow: 0 1px rgba( 0, 0, 0, 0.3 );
+			z-index: 2;
+		}
+
+		.follow-button.is-following {
+
+			.gridicon {
+				fill: $white;
+			}
+
+			.follow-button__label {
+				color: $white;
+			}
+		}
+	}
+}
+
+.reader-search-card__title {
+	display: inline;
+	@extend %content-font;
+	font-size: 20px;
+	line-height: 1.2;
+	font-weight: 700;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 24px;
+		line-height: 28px;
+	}
+}
+
+.reader-search-card .reader-search-card__title-link {
+	color: inherit;
+
+	&:hover {
+		color: darken( $gray, 20% );
+	}
+
+	&:visited {
+		color: $gray;
+	}
+}
+
+.reader-search-card__featured-image {
+	display: block;
+	position: absolute;
+		bottom: 0;
+		left: 0;
+		top: 0;
+	width: 230px;
+
+	@include breakpoint( "660px-960px" ) {
+		width: 115px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		width: 90px;
+	}
+}
+
+.reader-search-card__social {
+	display: flex;
+	float: right;
+	margin-bottom: 6px;
+	padding-left: 20px;
+}
+
+.reader-search-card__byline {
+	font-size: 13px;
+	list-style: none;
+	margin: 6px 0;
+
+	.gravatar {
+		vertical-align: text-bottom;
+		margin: 0 4px 0 0;
+	}
+}
+
+.reader-search-card__excerpt {
+	@extend %content-font;
+	font-size: 14px;
+	margin-top: 6px;
+}
+
+// Custom styles for Follow button
+.reader-search-card__byline .follow-button {
+	background: none;
+	border-style: none;
+	font-size: 13px;
+	margin: 0;
+	padding: 0;
+	position: relative;
+		top: -2px;
+
+	.gridicon {
+		fill: $blue-wordpress;
+	}
+
+	.follow-button__label {
+		color: $blue-wordpress;
+
+		@include breakpoint( "<660px" )
+			display: inline;
+	}
+
+	&:hover {
+
+		.gridicon {
+			fill: lighten( $gray, 10% );
+		}
+
+		.follow-button__label {
+			color: lighten( $gray, 10% );
+		}
+	}
+
+	&:focus {
+		border-radius: 0;
+	}
+
+	&.is-following {
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+
+		&:hover {
+
+			.gridicon {
+				fill: $blue-wordpress;
+			}
+
+			.follow-button__label {
+				color: $blue-wordpress;
+			}
+		}
+	}
+}
