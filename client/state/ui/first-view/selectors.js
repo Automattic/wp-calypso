@@ -16,7 +16,7 @@ import takeRightWhile from 'lodash/takeRightWhile';
 import { FIRST_VIEW_CONFIG } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { isSectionLoading } from 'state/ui/selectors';
+import { isSectionLoading, getCurrentQueryArguments } from 'state/ui/selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 import { getCurrentUserDate } from 'state/current-user/selectors';
 
@@ -44,6 +44,11 @@ export function isUserEligible( state, config ) {
 	return moment( userStartDate ).isAfter( config.startDate );
 }
 
+export function isQueryStringEnabled( state, config ) {
+	const queryArguments = getCurrentQueryArguments( state );
+	return queryArguments.firstView === config.name;
+}
+
 export function isViewEnabled( state, config ) {
 	// in order to avoid using an out-of-date preference for whether a
 	// FV should be enabled or not, wait until we have fetched the
@@ -55,7 +60,13 @@ export function isViewEnabled( state, config ) {
 	const firstViewHistory = getPreference( state, 'firstViewHistory' ).filter( entry => entry.view === config.name );
 	const latestFirstViewHistory = [ ...firstViewHistory ].pop();
 	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
-	return config.enabled && isUserEligible( state, config ) && ! isViewDisabled;
+
+	// If the view is disabled, we want to return false, regardless of state
+	if ( isViewDisabled ) {
+		return false;
+	}
+
+	return isQueryStringEnabled( state, config ) || ( config.enabled && isUserEligible( state, config ) );
 }
 
 export function wasFirstViewHiddenSinceEnteringCurrentSection( state, config ) {
