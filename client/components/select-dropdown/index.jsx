@@ -24,7 +24,7 @@ import Count from 'components/count';
  * Module variables
  */
 const { Component, PropTypes } = React;
-var noop = () => {};
+const noop = () => {};
 
 /**
  * SelectDropdown
@@ -40,7 +40,7 @@ class SelectDropdown extends Component {
 		this.handleOutsideClick = this.handleOutsideClick.bind( this );
 
 		// state
-		let initialState = { isOpen: false };
+		const initialState = { isOpen: false };
 
 		if ( props.options.length ) {
 			initialState.selected = this.getInitialSelectedItem( props );
@@ -103,8 +103,8 @@ class SelectDropdown extends Component {
 	}
 
 	dropdownOptions() {
-		var refIndex = 0;
-		var self = this;
+		let refIndex = 0;
+		const self = this;
 
 		if ( this.props.children ) {
 			// add keys and refs to children
@@ -113,7 +113,7 @@ class SelectDropdown extends Component {
 					return null;
 				}
 
-				let newChild = React.cloneElement( child, {
+				const newChild = React.cloneElement( child, {
 					ref: ( child.type === DropdownItem ) ? 'item-' + refIndex : null,
 					key: 'item-' + index,
 					onClick: function( event ) {
@@ -151,7 +151,7 @@ class SelectDropdown extends Component {
 				);
 			}
 
-			let dropdownItem = (
+			const dropdownItem = (
 				<DropdownItem
 					key={ 'dropdown-item-' + this.state.instanceId + '-' + item.value }
 					ref={ 'item-' + refIndex }
@@ -301,12 +301,13 @@ class SelectDropdown extends Component {
 	}
 
 	navigateItemByTabKey( event ) {
-		var direction;
 		if ( ! this.state.isOpen ) {
 			return;
 		}
+
 		event.preventDefault();
-		direction = ( event.shiftKey ) ? 'previous' : 'next';
+
+		const direction = ( event.shiftKey ) ? 'previous' : 'next';
 		this.focusSibling( direction );
 	}
 
@@ -318,12 +319,12 @@ class SelectDropdown extends Component {
 	}
 
 	focusSibling( direction ) {
-		var increment, items, focusedIndex, newIndex;
-
 		// the initial up-arrow/down-arrow should only open the menu
 		if ( ! this.state.isOpen ) {
 			return;
 		}
+
+		let items, focusedIndex;
 
 		if ( this.props.options.length ) {
 			items = map( filter( this.props.options, item => {
@@ -345,8 +346,8 @@ class SelectDropdown extends Component {
 				} );
 		}
 
-		increment = ( direction === 'previous' ) ? -1 : 1;
-		newIndex = focusedIndex + increment;
+		const increment = ( direction === 'previous' ) ? -1 : 1;
+		const newIndex = focusedIndex + increment;
 
 		if ( newIndex >= items.length || newIndex < 0 ) {
 			return;
@@ -361,7 +362,7 @@ class SelectDropdown extends Component {
 			this.closeDropdown();
 		}
 	}
-};
+}
 
 SelectDropdown.defaultProps = {
 	options: [],
