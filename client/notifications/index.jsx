@@ -81,7 +81,8 @@ export class NotificationsPanel extends Component {
 		const {
 			notes,
 			selectNote,
-			selectedNote
+			selectedNote,
+			unselectNote,
 		} = this.props;
 
 		const note = find( propEq( 'id', selectedNote ), notes );
@@ -96,7 +97,8 @@ export class NotificationsPanel extends Component {
 					notes,
 					note,
 					selectNote,
-					selectedNote
+					selectedNote,
+					unselectNote
 				} } />
 			</div>
 		);

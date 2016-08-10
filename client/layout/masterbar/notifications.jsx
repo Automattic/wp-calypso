@@ -158,6 +158,7 @@ export default React.createClass( {
 						selectNote={ this.selectNote }
 						selectedNote={ this.state.selectedNote }
 						setIndicator={ this.setNotesIndicator }
+						unselectNote={ () => this.selectNote( null ) }
 					/>
 				}
 			</MasterbarItem>

@@ -117,6 +117,47 @@
 	height: 48px;
 }
 
+.notifications__single-view {
+
+}
+
+.notifications__title-bar {
+	height: 39px;
+}
+
+.notifications__back-link {
+	display: block;
+	float: left;
+	font-family: $sans;
+	font-size: 120%;
+	margin-bottom: 12px;
+	color: $blue-medium;
+	fill: $blue-medium;
+
+	&:hover {
+		color: $blue-dark;
+		fill: $blue-dark;
+	}
+}
+
+.notifications__single-title {
+	display: flex;
+	justify-content: center;
+	text-transform: uppercase;
+	color: $gray;
+	font-size: 120%;
+	font-family: $sans;
+}
+
+.notifications__note-view {
+	color: $gray;
+}
+
+.notifications__note-subject:not(.notifications__note-excerpt) {
+	color: $gray-dark;
+	font-weight: bold;
+}
+
 .note-range__comment {
 	font-style: italic;
 }

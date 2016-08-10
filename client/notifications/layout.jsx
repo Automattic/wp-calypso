@@ -8,7 +8,8 @@ export class Layout extends Component {
 		const {
 			notes,
 			note,
-			selectNote
+			selectNote,
+			unselectNote
 		} = this.props;
 
 		return (
@@ -16,7 +17,7 @@ export class Layout extends Component {
 				{ note &&
 					<SingleViewLayout { ...{
 						note,
-						selectNote
+						unselectNote
 					} } />
 				}
 				{ ! note &&

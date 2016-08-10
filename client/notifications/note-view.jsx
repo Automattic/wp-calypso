@@ -18,13 +18,13 @@ const NoteView = React.createClass( {
 		const body = note.body.map( parseBlocks );
 
 		return (
-			<div className="note-view">
-				<div className="header">{ header }</div>
+			<div className="notifications__note-view">
+				<div className="notifications__note-header">{ header }</div>
 				{ headerExcerpt &&
-				<div className="header excerpt">{ headerExcerpt }</div> }
-				<div className="subject">{ subject }</div>
+				<div className="notifications__note-header notifications__note-excerpt">{ headerExcerpt }</div> }
+				<div className="notifications__note-subject">{ subject }</div>
 				{ subjectExcerpt &&
-				<div className="subject excerpt">{ subjectExcerpt }</div> }
+				<div className="notifications__note-subject notifications__note-excerpt">{ subjectExcerpt }</div> }
 				<div>
 					{ body.map( addKey ) }
 				</div>

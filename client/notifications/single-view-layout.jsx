@@ -13,12 +13,12 @@ const SingleViewLayout = React.createClass( {
 		const title = note.title;
 
 		return (
-			<div className="single-view-layout">
-				<div className="title-bar">
-					<a className="back-link" onClick={ unselectNote }>
+			<div className="notifications__single-view">
+				<div className="notifications__title-bar">
+					<a className="notifications__back-link" onClick={ unselectNote }>
 						<Gridicon icon="chevron-left" /> Back
 					</a>
-					<div className="title">{ title }</div>
+					<div className="notifications__single-title">{ title }</div>
 				</div>
 				<NoteView { ...{ note } } />
 			</div>
