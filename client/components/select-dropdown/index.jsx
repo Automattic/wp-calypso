@@ -24,13 +24,38 @@ import Count from 'components/count';
  * Module variables
  */
 const { Component, PropTypes } = React;
-const noop = () => {};
 
 /**
  * SelectDropdown
  */
 
 class SelectDropdown extends Component {
+	static propTypes = {
+		selectedText: PropTypes.string,
+		selectedCount: PropTypes.number,
+		initialSelected: PropTypes.string,
+		className: PropTypes.string,
+		style: PropTypes.object,
+		onSelect: PropTypes.func,
+		onToggle: PropTypes.func,
+		focusSibling: PropTypes.func,
+		tabIndex: PropTypes.number,
+		options: PropTypes.arrayOf(
+			PropTypes.shape( {
+				value: PropTypes.string.isRequired,
+				label: PropTypes.string.isRequired,
+				path: PropTypes.string
+			} )
+		)
+	}
+
+	static defaultProps = {
+		options: [],
+		onSelect: () => {},
+		onToggle: () => {},
+		style: {}
+	}
+
 	constructor( props ) {
 		super( props );
 
@@ -363,32 +388,6 @@ class SelectDropdown extends Component {
 		}
 	}
 }
-
-SelectDropdown.defaultProps = {
-	options: [],
-	onSelect: noop,
-	onToggle: noop,
-	style: {}
-};
-
-SelectDropdown.propTypes = {
-	selectedText: PropTypes.string,
-	selectedCount: PropTypes.number,
-	initialSelected: PropTypes.string,
-	className: PropTypes.string,
-	style: PropTypes.object,
-	onSelect: PropTypes.func,
-	onToggle: PropTypes.func,
-	focusSibling: PropTypes.func,
-	tabIndex: PropTypes.number,
-	options: PropTypes.arrayOf(
-		PropTypes.shape( {
-			value: PropTypes.string.isRequired,
-			label: PropTypes.string.isRequired,
-			path: PropTypes.string
-		} )
-	)
-};
 
 // statics
 SelectDropdown.instances = 0;
