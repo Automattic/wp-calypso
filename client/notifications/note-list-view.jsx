@@ -26,19 +26,19 @@ const NoteListView = React.createClass( {
 		const timestamp = moment( note.timestamp ).fromNow();
 
 		return (
-			<div className="note-list-view" onClick={ selectThisNote }>
+			<div className="notifications__list-view" onClick={ selectThisNote }>
 				<div>
 					<Avatar src={ avatar } />
-					<Gridicon className="icon" { ...{ icon } } />
+					<Gridicon className="notifications__list-icon" { ...{ icon } } />
 				</div>
-				<div className="subject">
+				<div className="notifications__list-subject">
 					{ hasReplied &&
 					<Gridicon icon="reply" size={ 16 } /> }
 					{ subject }
 				</div>
 				{ subjectExcerpt &&
-				<div className="subject excerpt">{ subjectExcerpt }</div> }
-				<div className="timestamp">{ timestamp }</div>
+				<div className="notifications__list-subject notifications__list-excerpt">{ subjectExcerpt }</div> }
+				<div className="notifications__list-timestamp">{ timestamp }</div>
 			</div>
 		);
 	}

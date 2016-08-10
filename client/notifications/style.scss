@@ -1,3 +1,16 @@
+.notifications__layout {
+	padding: 4px 8px;
+	line-height: 21px;
+	height: 100%;
+	width: 100%;
+	max-width: 410px;
+	overflow: scroll;
+	background-color: white;
+	color: black;
+	border-left: 1px solid #e9eff3;
+	box-shadow: -3px 1px 10px -2px rgba(46,68,83,0.075);
+}
+
 .notifications__filter-bar {
 	font-family: $serif;
 	list-style: none;
@@ -68,6 +81,37 @@
 	}
 }
 
+.notifications__list-view {
+	color: $gray;
+	margin-bottom: 12px;
+	clear: left;
+
+	.notifications__list-avatar {
+		height: 48px;
+		width: 48px;
+		float: left;
+		margin-right: 12px;
+		clip-path: circle( 24px at center)
+	}
+
+	.notifications__list-icon {
+		height: 14px;
+		width: 14px;
+		background-color: $gray;
+		border-radius: 12px;
+		fill: $white;
+		border: 2px solid $white;
+		padding: 3px;
+		position: relative;
+		left: -28px;
+		top: 30px;
+	}
+
+	.notifications__list-subject:not(.notifications__list-excerpt) {
+		color: $gray-dark;
+	}
+}
+
 .notifications__list-avatar {
 	width: 48px;
 	height: 48px;
@@ -78,7 +122,7 @@
 }
 
 .note-range__post {
-	font-sytyle: italic;
+	font-style: italic;
 }
 
 .note-range__site {

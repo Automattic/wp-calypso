@@ -2,17 +2,6 @@ import React, { Component, PropTypes } from 'react';
 
 import ListViewLayout from './list-view-layout';
 
-const layoutStyle = {
-	height: '100%',
-	width: '100%',
-	maxWidth: '410px',
-	overflow: 'scroll',
-	backgroundColor: 'white',
-	color: 'black',
-	borderLeft: '1px solid #e9eff3',
-	boxShadow: '-3px 1px 10px -2px rgba(46,68,83,0.075)'
-};
-
 export class Layout extends Component {
 	render() {
 		const {
@@ -20,7 +9,7 @@ export class Layout extends Component {
 		} = this.props;
 
 		return (
-			<div style={ layoutStyle }>
+			<div className="notifications__layout">
 				<ListViewLayout { ...{
 					notes,
 					selectNote: () => null,
