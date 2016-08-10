@@ -4,7 +4,7 @@ import reactTestEnvSetup from 'react-test-env';
 
 const log = debug( 'calypso:test:helpers:setup-dom-env' );
 
-export default function domWrapper( markup, features ) {
+export default function useFakedDom( markup, features ) {
 	before( function setupFakeDom() {
 		log( 'setting up dom env' );
 		reactTestEnvSetup( markup, features );
@@ -23,10 +23,5 @@ export default function domWrapper( markup, features ) {
 	} );
 }
 
-domWrapper.withContainer = function withContainer() {
-	domWrapper( '<html><head><title>test</title></head><body><div id="container"></div></body></html>' );
-};
-
-domWrapper.getContainer = function getContainer() {
-	return document.getElementById( 'container' );
-};
+useFakedDom.withContainer = reactTestEnvSetup.useFakeDom.withContainer;
+useFakedDom.getContainer = reactTestEnvSetup.useFakeDom.getContainer;
