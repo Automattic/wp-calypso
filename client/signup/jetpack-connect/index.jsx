@@ -256,6 +256,7 @@ const JetpackConnectMain = React.createClass( {
 					? null
 					: <LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
 				}
+				<LiveChatButton />
 			</LoggedOutFormLinks>
 		);
 	},
@@ -306,7 +307,6 @@ const JetpackConnectMain = React.createClass( {
 
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
-					<LiveChatButton />
 				</div>
 			</MainWrapper>
 		);
@@ -328,7 +328,6 @@ const JetpackConnectMain = React.createClass( {
 
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
-					<LiveChatButton />
 				</div>
 			</MainWrapper>
 		);
@@ -367,7 +366,9 @@ const JetpackConnectMain = React.createClass( {
 						<div>{ this.renderBackButton() }</div>
 					</div>
 				</div>
-				<LiveChatButton />
+				<LoggedOutFormLinks>
+					<LiveChatButton />
+				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
 	},
@@ -422,7 +423,9 @@ const JetpackConnectMain = React.createClass( {
 						{ this.renderBackButton() }
 					</div>
 				</div>
-				<LiveChatButton />
+				<LoggedOutFormLinks>
+					<LiveChatButton />
+				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
 	},

@@ -422,6 +422,8 @@
 }
 
 .jetpack-connect__live-chat {
-	margin-top: 16px;
-	text-align: center;
+	.gridicon {
+		width: 18px;
+		height: 18px;
+	}
 }
