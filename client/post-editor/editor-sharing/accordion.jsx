@@ -34,7 +34,9 @@ const EditorSharingAccordion = React.createClass( {
 		post: PropTypes.object,
 		isNew: PropTypes.bool,
 		connections: PropTypes.array,
-		isPublicizeEnabled: PropTypes.bool
+		isPublicizeEnabled: PropTypes.bool,
+		isSharingActive: PropTypes.bool,
+		isLikesActive: PropTypes.bool
 	},
 
 	getSubtitle: function() {
@@ -53,7 +55,7 @@ const EditorSharingAccordion = React.createClass( {
 	},
 
 	renderShortUrl: function() {
-		var classes = classNames( 'editor-sharing__shortlink', {
+		const classes = classNames( 'editor-sharing__shortlink', {
 			'is-standalone': this.hideSharing()
 		} );
 
@@ -61,7 +63,7 @@ const EditorSharingAccordion = React.createClass( {
 			return null;
 		}
 
-		return(
+		return (
 			<div className={ classes }>
 				<label
 					className="editor-sharing__shortlink-label"
@@ -82,18 +84,15 @@ const EditorSharingAccordion = React.createClass( {
 	},
 
 	hideSharing: function() {
-		return this.props.site &&
-			this.props.site.jetpack &&
-			! this.props.site.isModuleActive( 'publicize' ) &&
-			! this.props.site.isModuleActive( 'sharedaddy' ) &&
-			! this.props.site.isModuleActive( 'likes' );
+		const { isSharingActive, isLikesActive, isPublicizeEnabled } = this.props;
+		return ! isSharingActive && ! isLikesActive && ! isPublicizeEnabled;
 	},
 
 	render: function() {
-		var hideSharing = this.hideSharing(),
-			classes = classNames( 'editor-sharing__accordion', this.props.className, {
-				'is-loading': ! this.props.post || ! this.props.connections
-			} );
+		const hideSharing = this.hideSharing();
+		const classes = classNames( 'editor-sharing__accordion', this.props.className, {
+			'is-loading': ! this.props.post || ! this.props.connections
+		} );
 
 		// if sharing is hidden, and post is not published (no short URL yet),
 		// then do not render this accordion
@@ -132,10 +131,14 @@ export default connect(
 			true !== getSiteOption( state, siteId, 'publicize_permanently_disabled' ) &&
 			postTypeSupports( state, siteId, postType, 'publicize' )
 		);
+		const isSharingActive = false !== isJetpackModuleActive( state, siteId, 'sharedaddy' );
+		const isLikesActive = false !== isJetpackModuleActive( state, siteId, 'likes' );
 
 		return {
-			isPublicizeEnabled,
-			connections: getSiteUserConnections( state, siteId, userId )
+			connections: getSiteUserConnections( state, siteId, userId ),
+			isSharingActive,
+			isLikesActive,
+			isPublicizeEnabled
 		};
 	},
 	( dispatch ) => {
