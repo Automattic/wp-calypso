@@ -19,10 +19,19 @@ import SignupCart from 'lib/signup/cart';
 import { startFreeTrial } from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
 
+import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+
 function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeSlugWithRepo, themeItem } ) {
+
+	let siteTitle = getSiteTitle( this._reduxState.getState() ).trim();
+
+	if ( '' === siteTitle ) {
+		siteTitle = siteUrl;
+	}
+
 	wpcom.undocumented().sitesNew( {
-		blog_name: siteUrl,
-		blog_title: '',
+		blog_name: siteTitle,
+		blog_title: siteUrl,
 		options: {
 			theme: dependencies.theme || themeSlugWithRepo,
 			vertical: dependencies.surveyQuestion || undefined

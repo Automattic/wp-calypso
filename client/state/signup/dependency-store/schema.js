@@ -4,6 +4,7 @@ export const dependencyStoreSchema = {
 		cartItem: {
 			oneOf: [
 				{ type: 'null' },
+				{ type: 'undefined' },
 				{
 					type: 'object',
 					properties: {
@@ -17,6 +18,7 @@ export const dependencyStoreSchema = {
 		domainItem: {
 			oneOf: [
 				{ type: 'null' },
+				{ type: 'undefined' },
 				{
 					type: 'object',
 					properties: {

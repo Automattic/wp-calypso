@@ -47,6 +47,8 @@ function SignupFlowController( options ) {
 
 	this._assertFlowHasValidDependencies();
 
+	this._reduxState = options.reduxState;
+
 	SignupProgressStore.on( 'change', this._boundProcess );
 
 	if ( options.flowName === store.get( STORAGE_KEY ) ) {
@@ -167,10 +169,12 @@ assign( SignupFlowController.prototype, {
 
 			SignupActions.processSignupStep( step );
 
-			steps[ step.stepName ].apiRequestFunction( function( errors, providedDependencies ) {
+			const apiFunction = steps[ step.stepName ].apiRequestFunction.bind( this );
+
+			apiFunction( ( errors, providedDependencies ) => {
 				this._processingSteps[ step.stepName ] = false;
 				SignupActions.processedSignupStep( step, errors, providedDependencies );
-			}.bind( this ), dependenciesFound, step );
+			}, dependenciesFound, step );
 		}
 	},
 
