@@ -77,7 +77,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderMobileView() {
-		const { isPlaceholder, translate, planProperties, isInSignup, intervalType, site } = this.props;
+		const { isPlaceholder, translate, planProperties, isInSignup, intervalType, site, isInJetpackConnect } = this.props;
 
 		// move any free plan to last place in mobile view
 		let freePlanProperties;
@@ -121,6 +121,7 @@ class PlanFeatures extends Component {
 						isPlaceholder={ isPlaceholder }
 						intervalType={ intervalType }
 						site={ site }
+						isInJetpackConnect={ isInJetpackConnect }
 					/>
 					<p className="plan-features__description">
 						{ planConstantObj.getDescription() }
@@ -161,7 +162,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderPlanHeaders() {
-		const { planProperties, isPlaceholder, intervalType, site } = this.props;
+		const { planProperties, isPlaceholder, intervalType, site, isInJetpackConnect } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -188,6 +189,7 @@ class PlanFeatures extends Component {
 						isPlaceholder={ isPlaceholder }
 						intervalType={ intervalType }
 						site={ site }
+						isInJetpackConnect={ isInJetpackConnect }
 					/>
 				</td>
 			);
@@ -363,6 +365,7 @@ PlanFeatures.propTypes = {
 	planProperties: PropTypes.array,
 	isPlaceholder: PropTypes.bool,
 	isInSignup: PropTypes.bool,
+	isInJetpackConnect: PropTypes.bool,
 	selectedFeature: PropTypes.string,
 	intervalType: PropTypes.string,
 	site: PropTypes.object
@@ -371,6 +374,7 @@ PlanFeatures.propTypes = {
 PlanFeatures.defaultProps = {
 	onUpgradeClick: noop,
 	isInSignup: false,
+	isInJetpackConnect: false,
 	intervalType: 'yearly',
 	site: {}
 };

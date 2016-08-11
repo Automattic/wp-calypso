@@ -87,25 +87,32 @@ class PlanFeaturesHeader extends Component {
 		const {
 			translate,
 			intervalType,
-			site
+			site,
+			isInJetpackConnect
 		} = this.props;
 
 		if ( ! site.jetpack ) {
 			return '';
 		}
 
+		let plansUrl = '';
+		if ( isInJetpackConnect ) {
+			plansUrl = '/jetpack/connect';
+		}
+		plansUrl += '/plans';
+
 		return (
 			<SegmentedControl className="plan-features__interval-type" primary={ true }>
 				<SegmentedControlItem
 					selected={ intervalType === 'monthly' }
-					path={ plansLink( '/plans', site, 'monthly' ) }
+					path={ plansLink( plansUrl, site, 'monthly' ) }
 				>
 					{ translate( 'Monthly' ) }
 				</SegmentedControlItem>
 
 				<SegmentedControlItem
 					selected={ intervalType === 'yearly' }
-					path={ plansLink( '/plans', site, 'yearly' ) }
+					path={ plansLink( plansUrl, site, 'yearly' ) }
 				>
 					{ translate( 'Yearly' ) }
 				</SegmentedControlItem>
@@ -165,7 +172,8 @@ PlanFeaturesHeader.propTypes = {
 	isPlaceholder: PropTypes.bool,
 	translate: PropTypes.func,
 	intervalType: PropTypes.string,
-	site: PropTypes.object
+	site: PropTypes.object,
+	isInJetpackConnect: PropTypes.bool
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -174,7 +182,8 @@ PlanFeaturesHeader.defaultProps = {
 	popular: false,
 	isPlaceholder: false,
 	intervalType: 'yearly',
-	site: {}
+	site: {},
+	isInJetpackConnect: false
 };
 
 export default localize( PlanFeaturesHeader );
