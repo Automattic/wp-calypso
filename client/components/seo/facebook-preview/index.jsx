@@ -12,8 +12,8 @@ import {
 	shortEnough
 } from '../helpers';
 
-const TITLE_LENGTH = 40;
-const DESCRIPTION_LENGTH = 300;
+const TITLE_LENGTH = 80;
+const DESCRIPTION_LENGTH = 270;
 
 const baseDomain = url =>
 	url
