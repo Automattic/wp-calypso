@@ -32,23 +32,6 @@ module.exports = {
 		},
 		defaultVariation: 'namegen'
 	},
-	freeTrialNudgeOnThankYouPage: {
-		datestamp: '20200328',
-		variations: {
-			disabled: 50,
-			enabled: 50
-		},
-		defaultVariation: 'disabled'
-	},
-	freeTrialsInSignup: {
-		datestamp: '20200328',
-		variations: {
-			disabled: 40,
-			enabled: 15,
-			notTested: 45
-		},
-		defaultVariation: 'disabled'
-	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {
