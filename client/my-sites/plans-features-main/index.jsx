@@ -280,7 +280,7 @@ class PlansFeaturesMain extends Component {
 				: this.getFAQ( site );
 
 		return (
-			<div class="plans-features-main">
+			<div className="plans-features-main">
 				{ this.getPlanFeatures() }
 
 				{
