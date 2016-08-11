@@ -397,7 +397,11 @@ const PlansSetup = React.createClass( {
 
 		this.trackConfigFinished( 'calypso_plans_autoconfig_success' );
 
-		const noticeText = this.translate( 'We\'ve installed your plugins, your site is powered up!' );
+		const noticeText = this.translate(
+			'We\'ve set up your plugin, your site is powered up!',
+			'We\'ve set up your plugins, your site is powered up!',
+			{ count: this.props.plugins.length }
+		);
 		return (
 			<Notice status="is-success" text={ noticeText } showDismiss={ false }>
 				<NoticeAction href={ `/plans/my-plan/${site.slug}` }>
