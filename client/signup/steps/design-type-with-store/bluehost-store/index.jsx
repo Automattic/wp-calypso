@@ -24,9 +24,9 @@ export const BluehostStoreStep = props => {
 	} = props;
 
 	let copyText = translate(
-		'We’ve partnered with BlueHost, a top-notch WordPress host, to ' +
-		'help you set up your online store. Get started then install ' +
-		'your favorite eCommerce plugin.'
+		'We’ve partnered with BlueHost, a top-notch WordPress hosting provider, ' +
+		'to start your online store. Create your account and choose your ' +
+		'favorite WordPress eCommerce solution.'
 	);
 
 	let subHeaderText = translate( 'Our partners at BlueHost are here for you'	);
@@ -35,9 +35,9 @@ export const BluehostStoreStep = props => {
 
 	if ( 'Bluehost with WooCommerce' === partnerName ) {
 		copyText = translate(
-			'We’ve partnered with BlueHost, a top-notch WordPress host, to help ' +
-			'you set up your online store. Your site will come with WooCommerce, ' +
-			'the world’s best eCommerce plugin.'
+			'We’ve partnered with BlueHost, a top-notch WordPress hosting provider, ' +
+			'and WooCommerce, the go-to eCommerce solution for WordPress, ' +
+			'to help you get started.'
 		);
 
 		subHeaderText = translate( 'Our partners at BlueHost and WooCommerce are here for you' );

@@ -29,9 +29,9 @@ export const SitegroundStoreStep = ( { onBackClick, translate, partnerClickRecor
 					<SitegroundLogo />
 					<div className="design-type-with-store__text">
 						{ translate(
-							'We’ve partnered with SiteGround, a top-notch WordPress host, to help ' +
-							'you set up your online store. Your site will come with WooCommerce, ' +
-							'the world’s best eCommerce plugin.'
+							'We’ve partnered with SiteGround, a top-notch WordPress hosting provider, ' +
+							'and WooCommerce, the go-to eCommerce solution for WordPress, ' +
+							'to help you get started.'
 						) }
 					</div>
 				</div>
