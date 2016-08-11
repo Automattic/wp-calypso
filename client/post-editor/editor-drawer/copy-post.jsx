@@ -25,19 +25,19 @@ class EditorDrawerCopyPost extends Component {
 	constructor() {
 		super( ...arguments );
 		this.state = {
-			selectedPostID: '',
+			selectedPostId: '',
 		};
 	}
 
 	setPostToCopy = post => {
 		this.setState( {
-			selectedPostID: post.ID,
+			selectedPostId: post.ID,
 		} );
 	}
 
 	goToNewDraft = () => {
-		if ( '' !== this.state.selectedPostID ) {
-			page.redirect( `/post/${ this.props.site.slug }/${ this.state.selectedPostID }?copy=true` );
+		if ( '' !== this.state.selectedPostId ) {
+			page.redirect( `/post/${ this.props.site.slug }/${ this.state.selectedPostId }?copy=true` );
 		}
 	}
 
@@ -64,10 +64,10 @@ class EditorDrawerCopyPost extends Component {
 						orderBy="date"
 						order="DESC"
 						onChange={ this.setPostToCopy }
-						selected={ this.state.selectedPostID }
+						selected={ this.state.selectedPostId }
 					/>
 					<Button
-						disabled={ ! this.state.selectedPostID }
+						disabled={ ! this.state.selectedPostId }
 						onClick={ this.goToNewDraft }
 					>
 						{ translate( 'Copy' ) }
