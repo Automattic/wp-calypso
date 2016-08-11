@@ -26,6 +26,7 @@ import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Gridicon from 'components/gridicon';
 import MainWrapper from './main-wrapper';
+import LiveChatButton from './live-chat-button';
 import {
 	confirmJetpackInstallStatus,
 	dismissUrl,
@@ -249,12 +250,13 @@ const JetpackConnectMain = React.createClass( {
 		return (
 			<LoggedOutFormLinks>
 				<LoggedOutFormLinkItem href="https://jetpack.com/support/installing-jetpack/">
-					{ this.translate( 'Install Jetpack Manually' ) }
+					{ this.translate( 'Install Jetpack manually' ) }
 				</LoggedOutFormLinkItem>
 				{ this.isInstall()
 					? null
 					: <LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
 				}
+				<LiveChatButton />
 			</LoggedOutFormLinks>
 		);
 	},
@@ -364,6 +366,9 @@ const JetpackConnectMain = React.createClass( {
 						<div>{ this.renderBackButton() }</div>
 					</div>
 				</div>
+				<LoggedOutFormLinks>
+					<LiveChatButton />
+				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
 	},
@@ -418,6 +423,9 @@ const JetpackConnectMain = React.createClass( {
 						{ this.renderBackButton() }
 					</div>
 				</div>
+				<LoggedOutFormLinks>
+					<LiveChatButton />
+				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
 	},
