@@ -55,7 +55,7 @@ export const CustomizeThemeFeature = localize( ( { customizeLink, isCustomizeEna
 	);
 } );
 
-export const VideoAudioPosts = localize( ( { paths, selectedSite, translate } ) => {
+export const VideoAudioPostsFeature = localize( ( { paths, selectedSite, translate } ) => {
 	return (
 		<PurchaseDetail
 			icon="image-multiple"

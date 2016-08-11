@@ -21,9 +21,12 @@ function PlanPurchaseFeaturesExample() {
 			<h2>
 				<a href="/devdocs/blocks/plan-purchase-features-example">Plan Purchase Features</a>
 			</h2>
-			<Card>
-				<PlanPurchaseFeatures plan={ PLAN_BUSINESS } />
-			</Card>
+			
+			<h2>Business Plan</h2>
+			<PlanPurchaseFeatures plan={ PLAN_BUSINESS } />
+			
+			<h2>Premium Plan</h2>
+			<PlanPurchaseFeatures plan={ PLAN_PREMIUM } />
 		</div>
 	);
 }
