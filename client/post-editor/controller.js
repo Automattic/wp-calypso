@@ -213,16 +213,14 @@ module.exports = {
 		function startEditingOnSiteSelected() {
 			const siteId = getSelectedSiteId( context.store.getState() );
 			if ( siteId ) {
-				startEditingPostCopy( context, siteId, postId ).then( () => {
-					renderEditor( context, 'post' );
-				} );
+				startEditingPostCopy( context, siteId, postId );
 			} else {
 				sites.once( 'change', startEditingOnSiteSelected );
 			}
 		}
 
 		startEditingOnSiteSelected();
-
+		renderEditor( context, 'post' );
 		return false;
 	},
 
