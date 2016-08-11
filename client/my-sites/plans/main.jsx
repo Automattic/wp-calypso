@@ -3,7 +3,6 @@
  */
 import { connect } from 'react-redux';
 import React from 'react';
-import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -11,16 +10,13 @@ import find from 'lodash/find';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getPlans } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Gridicon from 'components/gridicon';
 import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
-import { plansLink } from 'lib/plans';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { PLAN_MONTHLY_PERIOD } from 'lib/plans/constants';
 
 const Plans = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
