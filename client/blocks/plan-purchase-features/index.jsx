@@ -3,6 +3,7 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -16,6 +17,8 @@ import {
 import {
 	FindNewThemeFeature
 } from './features-list';
+import { getPlansBySite } from 'state/sites/plans/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 class PlanPurchaseFeatures extends Component {
 	static propTypes = {
@@ -25,8 +28,10 @@ class PlanPurchaseFeatures extends Component {
 	};
 
 	getBusinessFeatures() {
+		const { selectedSite } = this.props;
+
 		return [
-			<FindNewThemeFeature selectedSite={ { slug: 'test' } } key="findNewThemeFeature" />
+			<FindNewThemeFeature selectedSite={ selectedSite } key="findNewThemeFeature" />
 		];
 	}
 
@@ -50,4 +55,9 @@ class PlanPurchaseFeatures extends Component {
 	}
 }
 
-export default localize( PlanPurchaseFeatures );
+export default connect( ( state ) => {
+	return {
+		selectedSite: getSelectedSite( state ),
+		sitePlans: getPlansBySite( state, getSelectedSite( state ) )
+	};
+} )( localize( PlanPurchaseFeatures ) );
