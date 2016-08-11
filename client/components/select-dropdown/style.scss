@@ -62,7 +62,7 @@
 
 		.is-compact & {
 			right: 4px;
-			top: 4px;
+			top: 7px;
 		}
 
 		display: block;
@@ -75,13 +75,13 @@
 		padding: 7px;
 		color: darken( $gray, 10% );
 		font-size: 11px;
-		line-height: 1;
 		text-transform: uppercase;
 
 		.count {
 			border-width: 0;
+			padding-top: 2px;
+			padding-bottom: 2px;
 			margin-left: 0;
-			line-height: 1;
 		}
 	}
 
