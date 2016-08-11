@@ -72,10 +72,7 @@ export default React.createClass( {
 			: this.translate( 'Use tags to associate more specific keywords with your posts.' );
 
 		return (
-			<div>
-				<EditorDrawerLabel helpText={ helpText }>
-					{ this.translate( 'Tags' ) }
-				</EditorDrawerLabel>
+			<EditorDrawerLabel helpText={ helpText } labelText={ this.translate( 'Tags' ) }>
 				<TokenField
 					value={ this.getPostTags() }
 					displayTransform={ unescapeString }
@@ -83,7 +80,7 @@ export default React.createClass( {
 					onChange={ this.onTagsChange }
 					maxSuggestions={ TermsConstants.MAX_TAGS_SUGGESTIONS }
 				/>
-			</div>
+			</EditorDrawerLabel>
 		);
 	}
 } );
