@@ -34,6 +34,7 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
 import MainWrapper from './main-wrapper';
+import LiveChatButton from './live-chat-button';
 
 /*
  * Module variables
@@ -377,6 +378,9 @@ const JetpackSSOForm = React.createClass( {
 					action={ this.translate( 'Read Single Sign-On Documentation' ) }
 					actionURL="https://jetpack.com/support/sso/"
 				/>
+				<LoggedOutFormLinks>
+					<LiveChatButton />
+				</LoggedOutFormLinks>
 			</Main>
 		);
 	},
@@ -448,6 +452,9 @@ const JetpackSSOForm = React.createClass( {
 				</div>
 
 				{ this.renderSharedDetailsDialog() }
+				<LoggedOutFormLinks>
+					<LiveChatButton />
+				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
 	}
