@@ -8,6 +8,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
+import GoogleVoucherDetails from 'my-sites/upgrades/checkout-thank-you/google-voucher';
+import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
 export const FindNewThemeFeature = localize( ( { selectedSite, translate } ) => {
 	return (
@@ -119,3 +121,12 @@ export const CustomDomainFeature = localize( ( { selectedSite, translate } ) => 
 		/>
 	);
 } );
+
+export const GoogleVouchersFeature = ( { selectedSite } ) => {
+	return (
+		<div>
+			<QuerySiteVouchers siteId={ selectedSite.ID } />
+			<GoogleVoucherDetails selectedSite={ selectedSite } />
+		</div>
+	);
+};
