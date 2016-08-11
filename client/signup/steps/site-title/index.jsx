@@ -20,6 +20,8 @@ import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 
+import ExampleSiteTitle from './example-site-title';
+
 const SiteTitle = React.createClass( {
 	displayName: 'Site Title',
 
@@ -144,6 +146,7 @@ const SiteTitle = React.createClass( {
 				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
 					{ this.formFields() }
 				</LoggedOutForm>
+				<ExampleSiteTitle/>
 			</div>
 		);
 	},
