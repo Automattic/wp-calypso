@@ -9,11 +9,9 @@ import find from 'lodash/find';
  * Internal dependencies
  */
 import { getPlansBySite } from 'state/sites/plans/selectors';
-import { getCurrentPlan } from 'lib/plans';
 import { getPlans } from 'state/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
-import { isJpphpBundle } from 'lib/products-values';
 import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
@@ -42,51 +40,9 @@ const Plans = React.createClass( {
 		};
 	},
 
-	showMonthlyPlansLink() {
-		const selectedSite = this.props.sites.getSelectedSite();
-		if ( ! selectedSite.jetpack ) {
-			return '';
-		}
-
-		let intervalType = this.props.intervalType,
-			showString = '';
-		const hasMonthlyPlans = find( this.props.sitePlans.data, { interval: PLAN_MONTHLY_PERIOD } );
-
-		if ( hasMonthlyPlans === undefined ) {
-			//No monthly plan found for this site so no need for a monthly plans link
-			return '';
-		}
-
-		if ( 'monthly' === intervalType ) {
-			intervalType = '';
-			showString = this.translate( 'Show Yearly Plans' );
-		} else {
-			intervalType = 'monthly';
-			showString = this.translate( 'Show Monthly Plans' );
-		}
-
-		return (
-			<a
-				href={ plansLink( '/plans', selectedSite, intervalType ) }
-				className="show-monthly-plans-link"
-			>
-				<Gridicon icon="refresh" size={ 18 } />
-				{ showString }
-			</a>
-		);
-	},
-
 	render() {
 		const selectedSite = this.props.sites.getSelectedSite(),
 			siteId = this.props.siteId;
-
-		let	hasJpphpBundle,
-			currentPlan;
-
-		if ( this.props.sitePlans.hasLoadedFromServer ) {
-			currentPlan = getCurrentPlan( this.props.sitePlans.data );
-			hasJpphpBundle = isJpphpBundle( currentPlan );
-		}
 
 		return (
 			<div>
@@ -100,8 +56,6 @@ const Plans = React.createClass( {
 							cart={ this.props.cart }
 							selectedSite={ selectedSite } />
 
-						{ ! hasJpphpBundle && this.showMonthlyPlansLink() }
-
 						<QueryPlans />
 						<QuerySitePlans siteId={ siteId } />
 
@@ -110,7 +64,6 @@ const Plans = React.createClass( {
 							intervalType={ this.props.intervalType }
 							hideFreePlan={ true }
 							selectedFeature={ this.props.selectedFeature }
-							intervalType={ this.props.intervalType }
 						/>
 					</div>
 				</Main>
