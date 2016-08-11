@@ -1298,10 +1298,13 @@
       }
     },
     "fbjs": {
-      "version": "0.5.0",
+      "version": "0.1.0-alpha.7",
       "dependencies": {
         "core-js": {
           "version": "1.2.7"
+        },
+        "whatwg-fetch": {
+          "version": "0.9.0"
         }
       }
     },
@@ -1362,15 +1365,7 @@
       "version": "1.0.2"
     },
     "flux": {
-      "version": "2.1.1",
-      "dependencies": {
-        "core-js": {
-          "version": "1.2.7"
-        },
-        "fbjs": {
-          "version": "0.1.0-alpha.7"
-        }
-      }
+      "version": "2.1.1"
     },
     "for-in": {
       "version": "0.1.5"
@@ -1866,12 +1861,7 @@
       "version": "2.1.0"
     },
     "isomorphic-fetch": {
-      "version": "2.2.1",
-      "dependencies": {
-        "whatwg-fetch": {
-          "version": "1.0.0"
-        }
-      }
+      "version": "2.2.1"
     },
     "isstream": {
       "version": "0.1.2"
@@ -2778,6 +2768,9 @@
         },
         "fbjs": {
           "version": "0.1.0-alpha.10"
+        },
+        "whatwg-fetch": {
+          "version": "0.9.0"
         }
       }
     },
@@ -2789,6 +2782,9 @@
         },
         "fbjs": {
           "version": "0.2.1"
+        },
+        "whatwg-fetch": {
+          "version": "0.9.0"
         }
       }
     },
@@ -3691,7 +3687,7 @@
       "version": "1.11.0"
     },
     "whatwg-fetch": {
-      "version": "0.9.0"
+      "version": "1.0.0"
     },
     "whatwg-url": {
       "version": "3.0.0"

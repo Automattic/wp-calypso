@@ -54,7 +54,6 @@
     "events": "1.0.2",
     "exports-loader": "0.6.2",
     "express": "4.13.3",
-    "fbjs": "0.5.0",
     "filesize": "3.2.1",
     "flux": "2.1.1",
     "he": "0.5.0",
