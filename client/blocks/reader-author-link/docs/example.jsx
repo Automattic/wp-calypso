@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ReaderAuthorLink from 'components/reader-author-link';
+import ReaderAuthorLink from 'blocks/reader-author-link';
 import Card from 'components/card';
 
 export default React.createClass( {

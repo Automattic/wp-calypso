@@ -1,0 +1,96 @@
+
+.reader-related-card__site-info-title {
+	color: $gray;
+	float: left;
+	width: 100%;
+}
+
+.has-image .reader-related-card__site-info-title {
+	width: calc( 100% - 120px );
+}
+
+.reader-related-card__site-info {
+	color: $gray;
+	display: block;
+	font-size: 13px;
+	margin-right: 120px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+
+	a {
+		color: $gray;
+		text-decoration: none;
+
+		&:visited {
+			color: inherit;
+		}
+
+		&:hover {
+			color: $blue-wordpress;
+		}
+	}
+
+	.site-icon {
+		align-self: auto;
+		float: left;
+		display: inline-block;
+		margin-right: 4px;
+	}
+}
+
+.reader-related-card__title {
+	float: left;
+	line-height: 1.2;
+	margin-top: 6px;
+	width: 98%;
+}
+
+.reader-related-card__anchor {
+	color: $gray-dark;
+	font-size: 15px;
+	font-weight: 600;
+	line-height: 1.4;
+	@extend %content-font;
+
+	&:visited {
+		color: $gray-dark;
+	}
+
+	&:hover {
+		color: $blue-wordpress;
+	}
+}
+
+.reader-related-card__thumbnail {
+	border-radius: 2px;
+	clear: right;
+	float: right;
+	max-height: 68px;
+	max-width: 96px;
+}
+
+.reader-related-card__byline-author-and-site {
+	color: lighten( $gray, 10% );
+	margin-right: 6px;
+}
+
+.reader-related-card__author-and-site {
+	color: lighten( $gray, 10% );
+	margin-right: 10px;
+}
+
+// Custom colors for Site and Author info
+
+.reader__content {
+
+	.reader-related-card__byline-link,
+	.reader-related-card__byline-link:visited {
+		color: lighten( $gray, 10% );
+
+		&:hover {
+			color: $blue-wordpress;
+		}
+	}
+}

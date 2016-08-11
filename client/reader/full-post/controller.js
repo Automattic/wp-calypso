@@ -19,7 +19,7 @@ import {
 } from 'reader/controller-helper';
 import titleActions from 'lib/screen-title/actions';
 import FullPostDialog from './main';
-import ReaderFullPost from 'components/reader-full-post';
+import ReaderFullPost from 'blocks/reader-full-post';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
