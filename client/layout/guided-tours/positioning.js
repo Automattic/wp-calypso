@@ -122,9 +122,9 @@ export function getValidatedArrowPosition( { targetSlug, arrow, stepPos } ) {
 	return arrow || 'none';
 }
 
-export function getStepPosition( { placement = 'center', targetSlug } ) {
+export function getStepPosition( { placement = 'center', targetSlug, shouldScrollTo = false } ) {
 	const target = targetForSlug( targetSlug );
-	const scrollDiff = scrollIntoView( target );
+	const scrollDiff = shouldScrollTo ? scrollIntoView( target ) : 0;
 	const rect = target && target.getBoundingClientRect
 		? target.getBoundingClientRect()
 		: global.window.document.body.getBoundingClientRect();
@@ -158,10 +158,6 @@ function validatePlacement( placement, target ) {
 
 function scrollIntoView( target ) {
 	const targetSlug = target && target.dataset && target.dataset.tipTarget;
-
-	if ( targetSlug !== 'themes' ) {
-		return 0;
-	}
 
 	const container = getScrollableSidebar();
 	const { top, bottom } = target.getBoundingClientRect();
