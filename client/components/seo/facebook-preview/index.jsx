@@ -5,6 +5,7 @@
  */
 import React, { PropTypes } from 'react';
 import PureComponent from 'react-pure-render/component';
+import compact from 'lodash/compact'
 
 import {
 	firstValid,
@@ -29,9 +30,6 @@ const facebookDescription = firstValid(
 	shortEnough( DESCRIPTION_LENGTH ),
 	hardTruncation( DESCRIPTION_LENGTH )
 );
-
-const authorInfo = author =>
-	author ? ` | ${ author }` : '';
 
 export class FacebookPreview extends PureComponent {
 	render() {
@@ -58,7 +56,7 @@ export class FacebookPreview extends PureComponent {
 							{ facebookDescription( description || '' ) }
 						</div>
 						<div className="facebook-preview__url">
-							{ baseDomain( url ) + authorInfo( author ) }
+							{ compact( [ baseDomain( url ), author ] ).join( ' | ' ) }
 						</div>
 					</div>
 				</div>
