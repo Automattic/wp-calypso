@@ -40,8 +40,7 @@ class PlanFeaturesHeader extends Component {
 			popular,
 			title,
 			isPlaceholder,
-			translate,
-			intervalType
+			translate
 		} = this.props;
 		const isDiscounted = !! discountPrice;
 		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
