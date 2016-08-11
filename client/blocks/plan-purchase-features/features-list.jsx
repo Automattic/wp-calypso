@@ -98,3 +98,24 @@ export const GoogleAnalyticsStatsFeature = localize( ( { selectedSite, translate
 		/>
 	);
 } );
+
+export const CustomDomainFeature = localize( ( { selectedSite, translate } ) => {
+	return (
+		<PurchaseDetail
+			icon="globe"
+			title={ translate( 'Get your custom domain' ) }
+			description={
+				translate(
+					"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
+					'A free domain is included with your plan.',
+					{
+						args: { siteDomain: selectedSite.slug },
+						components: { em: <em /> }
+					}
+				)
+			}
+			buttonText={ translate( 'Claim your free domain' ) }
+			href={ '/domains/add/' + selectedSite.slug }
+		/>
+	);
+} );
