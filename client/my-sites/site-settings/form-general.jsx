@@ -258,7 +258,7 @@ const FormGeneral = React.createClass( {
 
 				<FormLabel>
 					<FormRadio
-						name="blog_public"Ï
+						name="blog_public"
 						value="0"
 						checked={ 0 === parseInt( this.state.blog_public, 10 ) }
 						onChange={ this.handleRadio }
