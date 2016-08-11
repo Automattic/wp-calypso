@@ -44,8 +44,5 @@ export function startEditingPostCopy( context, siteId, postId ) {
 
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		actions.edit( postCopy.attributes ); // set the other post attributes
-
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.autosave(); // force an autosave to display the attributes
 	} );
 }
