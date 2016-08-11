@@ -10,7 +10,6 @@ import {
 	recordTracksEvent,
 } from 'state/analytics/actions';
 
-import guidedToursConfig from 'layout/guided-tours/config';
 import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 
@@ -26,7 +25,7 @@ export function quitGuidedTour( { tour, stepName, finished, error } ) {
 
 	const trackEvent = recordTracksEvent( `calypso_guided_tours_${ finished ? 'finished' : 'quit' }`, {
 		step: stepName,
-		tour_version: guidedToursConfig.get( tour ).meta.version,
+		//tour_version: guidedToursConfig.get( tour ).meta.version,
 		tour,
 		error,
 	} );
@@ -46,7 +45,7 @@ export function nextGuidedTourStep( { tour, stepName } ) {
 
 	const trackEvent = recordTracksEvent( 'calypso_guided_tours_next_step', {
 		step: stepName,
-		tour_version: guidedToursConfig.get( tour ).meta.version,
+		//tour_version: guidedToursConfig.get( tour ).meta.version,
 		tour,
 	} );
 
