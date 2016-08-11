@@ -39,7 +39,7 @@ const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate 
 					components: { em: <em /> }
 				}
 			) }
-			buttonText={ translate( 'Manage my domain(s)' ) }
+			buttonText={ translate( 'Manage my domains' ) }
 			href={ `/domains/manage/${ selectedSite.slug }` }
 		/>;
 
