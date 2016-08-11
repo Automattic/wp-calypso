@@ -37,7 +37,14 @@ const Plans = React.createClass( {
 		destinationType: React.PropTypes.string,
 		sites: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
-		showJetpackFreePlan: React.PropTypes.bool
+		showJetpackFreePlan: React.PropTypes.bool,
+		intervalType: React.PropTypes.string
+	},
+
+	getDefaultProps() {
+		return {
+			intervalType: 'yearly'
+		};
 	},
 
 	componentDidMount() {
@@ -150,8 +157,9 @@ const Plans = React.createClass( {
 							<PlansFeaturesMain
 								site={ selectedSite }
 								isInSignup={ true }
+								isInJetpackConnect={ true }
 								onUpgradeClick={ this.selectPlan }
-								intervalType="yearly" />
+								intervalType={ this.props.intervalType } />
 						</div>
 					</div>
 				</Main>
