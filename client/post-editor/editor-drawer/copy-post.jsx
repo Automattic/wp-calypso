@@ -46,7 +46,6 @@ class EditorDrawerCopyPost extends Component {
 		return (
 			<Accordion
 				title={ translate( 'Copy a Post' ) }
-				subtitle={ translate( 'Use an existing post as a template.' ) }
 				icon={ <Gridicon icon="aside" /> }
 				className="editor-drawer__copy-post"
 			>
