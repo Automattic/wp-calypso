@@ -268,11 +268,7 @@ const EditorDrawer = React.createClass( {
 		const { type, post, site } = this.props;
 
 		return (
-			<EditorDrawerCopyPost
-				type={ type }
-				post={ post }
-				site={ site }
-			/>
+			<EditorDrawerCopyPost site={ site } />
 		);
 	},
 
