@@ -15,11 +15,11 @@ import {
 	PLAN_BUSINESS
 } from 'lib/plans/constants';
 
-export default function PlanPurchaseFeaturesExample() {
+function PlanPurchaseFeaturesExample() {
 	return (
 		<div className="docs__design-assets-group">
 			<h2>
-				<a href="/devdocs/blocks/post-status">Plan Purchase Features</a>
+				<a href="/devdocs/blocks/plan-purchase-features-example">Plan Purchase Features</a>
 			</h2>
 			<Card>
 				<PlanPurchaseFeatures plan={ PLAN_BUSINESS } />
@@ -27,4 +27,8 @@ export default function PlanPurchaseFeaturesExample() {
 		</div>
 	);
 }
+
+PlanPurchaseFeaturesExample.displayName = 'PlanPurchaseFeaturesExample';
+
+export default PlanPurchaseFeaturesExample;
 

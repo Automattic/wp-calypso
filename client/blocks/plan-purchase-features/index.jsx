@@ -26,11 +26,11 @@ class PlanPurchaseFeatures extends Component {
 
 	getBusinessFeatures() {
 		return [
-			<FindNewThemeFeature key="findNewThemeFeature" />
+			<FindNewThemeFeature selectedSite={ { slug: 'test' } } key="findNewThemeFeature" />
 		];
 	}
 
-	render() {
+	getPlanPurchaseFeatures() {
 		const { plan } = this.props;
 
 		switch ( plan ) {
@@ -39,6 +39,14 @@ class PlanPurchaseFeatures extends Component {
 			default:
 				return null;
 		}
+	}
+
+	render() {
+		return (
+			<div className="plan-purchase-features">
+				{ this.getPlanPurchaseFeatures() }
+			</div>
+		);
 	}
 }
 
