@@ -78,9 +78,9 @@ class PlanFeaturesHeader extends Component {
 					{ ! isPlaceholder ? billingTimeFrame : '' }
 				</p>
 			);
-		} else {
-			return this.getIntervalTypeToggle();
 		}
+
+		return this.getIntervalTypeToggle();
 	}
 
 	getIntervalTypeToggle() {
