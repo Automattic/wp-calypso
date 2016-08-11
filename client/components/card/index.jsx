@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import assign from 'lodash/assign';
+import { assign, omit } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -40,7 +40,7 @@ export default React.createClass( {
 
 		return React.createElement(
 			element,
-			assign( {}, this.props, { className } ),
+			assign( {}, omit( this.props, 'compact' ), { className } ),
 			this.props.href ? linkIndicator : null,
 			this.props.children
 		);
