@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import HeaderCake from 'components/header-cake';
 import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
@@ -70,6 +71,7 @@ export default React.createClass( {
 
 		return (
 			<div className="guided-transfer">
+				<QuerySiteGuidedTransfer siteId={ siteId } />
 				<div className="guided-transfer__header-nav">
 					<HeaderCake
 						onClick={ this.goBack }

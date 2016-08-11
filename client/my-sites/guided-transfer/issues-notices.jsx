@@ -25,7 +25,7 @@ class IssuesNotices extends Component {
 			translate,
 		} = this.props;
 
-		return <div class="guided-transfer__issues-notices">
+		return <div className="guided-transfer__issues-notices">
 			{ premiumThemeIssue && ! premiumThemeIssue.prevents_transfer &&
 				<Notice status="is-warning" showDismiss={ false }>
 					{ translate( `Your site uses a Premium Theme that can't be
