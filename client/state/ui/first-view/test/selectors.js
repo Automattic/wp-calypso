@@ -30,7 +30,7 @@ describe( 'selectors', () => {
 						}
 					],
 					queryArguments: {
-						current: {},
+						initial: {},
 					},
 				}
 			} );
@@ -48,7 +48,7 @@ describe( 'selectors', () => {
 						}
 					],
 					queryArguments: {
-						current: {},
+						initial: {},
 					},
 				}
 			} );
@@ -76,7 +76,7 @@ describe( 'selectors', () => {
 		};
 
 		const queryArguments = {
-			current: {}
+			initial: {}
 		};
 
 		const config = {

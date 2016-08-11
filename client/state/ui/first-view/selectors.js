@@ -16,7 +16,7 @@ import takeRightWhile from 'lodash/takeRightWhile';
 import { FIRST_VIEW_CONFIG } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { isSectionLoading, getCurrentQueryArguments } from 'state/ui/selectors';
+import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 import { getCurrentUserDate } from 'state/current-user/selectors';
 
@@ -45,7 +45,7 @@ export function isUserEligible( state, config ) {
 }
 
 export function isQueryStringEnabled( state, config ) {
-	const queryArguments = getCurrentQueryArguments( state );
+	const queryArguments = getInitialQueryArguments( state );
 	return queryArguments.firstView === config.name;
 }
 
