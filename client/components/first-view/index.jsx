@@ -125,11 +125,9 @@ const FirstView = React.createClass( {
 
 export default connect(
 	( state ) => {
-		const participantInFirstViewAbTest = isEnabled( 'ui/first-view-ab-test' ) && abtest( 'firstView' ) === 'enabled';
-
 		return {
 			sectionName: getSectionName( state ),
-			isVisible: ( isEnabled( 'ui/first-view' ) || participantInFirstViewAbTest ) && shouldViewBeVisible( state ),
+			isVisible: isEnabled( 'ui/first-view' ) && shouldViewBeVisible( state ),
 		};
 	},
 	{
