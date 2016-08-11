@@ -25,7 +25,7 @@ class EditorDrawerCopyPost extends Component {
 	constructor() {
 		super( ...arguments );
 		this.state = {
-			selectedPostId: '',
+			selectedPostId: null,
 		};
 	}
 
