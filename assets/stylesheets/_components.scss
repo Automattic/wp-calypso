@@ -9,20 +9,23 @@
 @import 'layout/style';
 
 @import 'auth/style';
+@import 'blocks/author-compact-profile/style';
+@import 'blocks/comment-button/style';
+@import 'blocks/author-selector/style';
 @import 'blocks/post-item/style';
 @import 'blocks/post-relative-time/style';
 @import 'blocks/post-status/style';
+@import 'blocks/reader-full-post/style';
+@import 'blocks/reader-related-card/style';
+@import 'blocks/reader-search-card/style';
 @import 'components/accordion/style';
 @import 'components/app-promo/style';
-@import 'blocks/author-selector/style';
-@import 'blocks/author-compact-profile/style';
 @import 'components/bulk-select/style';
 @import 'components/button/style';
 @import 'components/button-group/style';
 @import 'components/card/style';
 @import 'components/chart/style';
 @import 'components/clipboard-button-input/style';
-@import 'blocks/comment-button/style';
 @import 'components/count/style';
 @import 'components/date-picker/style';
 @import 'components/dialog/style';
@@ -84,7 +87,6 @@
 @import 'components/plans/plan-price/style';
 @import 'components/plans/premium-popover/style';
 @import 'components/popover/style';
-@import 'components/post-card/style';
 @import 'components/post-excerpt/style';
 @import 'components/post-schedule/style';
 @import 'components/progress-bar/style';
@@ -93,7 +95,6 @@
 @import 'components/purchase-detail/style';
 @import 'components/push-notification/style';
 @import 'components/rating/style';
-@import 'components/reader-full-post/style';
 @import 'components/related-posts/style';
 @import 'components/ribbon/style';
 @import 'components/search/style';

@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ReaderSiteStreamLink from 'components/reader-site-stream-link';
+import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import Card from 'components/card';
 
 export default React.createClass( {

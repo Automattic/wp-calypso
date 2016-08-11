@@ -15,7 +15,7 @@ import EmptyContent from './empty';
 import BlankContent from './blank';
 import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
-import SearchCard from 'components/post-card/search';
+import SearchCard from 'blocks/reader-search-card';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { recordTrackForPost } from 'reader/stats';
