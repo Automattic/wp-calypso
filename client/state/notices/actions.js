@@ -18,20 +18,47 @@ export function removeNotice( noticeId ) {
 	};
 }
 
+/**
+ * Returns an action object used in signalling that a global notice is to be
+ * created.
+ *
+ * @param  {String}   status                    Notice status (e.g. is-success)
+ * @param  {String}   text                      Notice text
+ * @param  {Object}   options                   Notice options
+ * @param  {String}   options.id                Custom notice ID
+ * @param  {Number}   options.duration          Notice duration (milliseconds),
+ *                                              defaulting to shown forever
+ * @param  {Boolean}  options.showDismiss       Enable user to dismiss notice,
+ *                                              defaulting to true
+ * @param  {Boolean}  options.isPersistent      Whether notice should continue
+ *                                              to show after navigating
+ * @param  {Boolean}  options.displayOnNextPage Whether notice should be shown
+ *                                              on the next screen
+ * @param  {Object[]} options.actions           Notice actions
+ * @return {Object}                             Action object
+ */
 export function createNotice( status, text, options = {} ) {
-	const notice = {
-		noticeId: options.id || uniqueId(),
-		duration: options.duration,
-		showDismiss: ( typeof options.showDismiss === 'boolean' ? options.showDismiss : true ),
-		isPersistent: options.isPersistent || false,
-		displayOnNextPage: options.displayOnNextPage || false,
-		status: status,
-		text: text
-	};
+	const {
+		id: noticeId = uniqueId(),
+		duration,
+		showDismiss = true,
+		isPersistent,
+		displayOnNextPage,
+		actions
+	} = options;
 
 	return {
 		type: NOTICE_CREATE,
-		notice: notice
+		notice: {
+			noticeId,
+			duration,
+			showDismiss,
+			isPersistent,
+			displayOnNextPage,
+			actions,
+			status,
+			text
+		}
 	};
 }
 

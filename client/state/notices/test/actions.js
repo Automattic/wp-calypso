@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
-import { removeNotice, successNotice, errorNotice } from '../actions';
+import { removeNotice, successNotice, errorNotice, createNotice } from '../actions';
 
 describe( 'actions', function() {
 	describe( 'removeNotice()', function() {
@@ -53,6 +53,51 @@ describe( 'actions', function() {
 				text,
 				status: 'is-error'
 			} );
+		} );
+	} );
+
+	describe( 'createNotice()', () => {
+		it( 'should return an action object', () => {
+			const action = createNotice( 'is-success', 'Success!', {
+				id: 'example-notice',
+				duration: 4000,
+				showDismiss: false,
+				isPersistent: true,
+				displayOnNextPage: true,
+				actions: [ {
+					text: 'View',
+					href: 'https://example.com'
+				} ]
+			} );
+
+			expect( action ).to.eql( {
+				type: NOTICE_CREATE,
+				notice: {
+					status: 'is-success',
+					text: 'Success!',
+					noticeId: 'example-notice',
+					duration: 4000,
+					showDismiss: false,
+					isPersistent: true,
+					displayOnNextPage: true,
+					actions: [ {
+						text: 'View',
+						href: 'https://example.com'
+					} ]
+				}
+			} );
+		} );
+
+		it( 'should default to an auto-generated ID', () => {
+			const action = createNotice( 'is-success', 'Success!' );
+
+			expect( action.notice.noticeId ).to.not.be.empty;
+		} );
+
+		it( 'should default to showing dismiss', () => {
+			const action = createNotice( 'is-success', 'Success!' );
+
+			expect( action.notice.showDismiss ).to.be.true;
 		} );
 	} );
 } );

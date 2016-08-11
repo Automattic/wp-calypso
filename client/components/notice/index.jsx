@@ -8,7 +8,11 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
+import { isMobile } from 'lib/viewport';
+import NoticeAction from './notice-action';
 
 export default React.createClass( {
 	displayName: 'Notice',
@@ -16,6 +20,7 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
+			actions: [],
 			duration: 0,
 			status: null,
 			showDismiss: true,
@@ -35,7 +40,8 @@ export default React.createClass( {
 			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) )
 		] ),
 		icon: PropTypes.string,
-		className: PropTypes.string
+		className: PropTypes.string,
+		actions: PropTypes.arrayOf( PropTypes.object )
 	},
 
 	componentDidMount() {
@@ -97,27 +103,62 @@ export default React.createClass( {
 		return icon;
 	},
 
+	renderButton() {
+		let { actions } = this.props;
+		if ( ! actions.length ) {
+			return;
+		}
+
+		const { showDismiss, onDismissClick } = this.props;
+		if ( showDismiss ) {
+			actions = actions.concat( {
+				text: this.translate( 'Dismiss' ),
+				onClick: onDismissClick
+			} );
+		}
+
+		if ( actions.length > 1 ) {
+			return (
+				<EllipsisMenu position={ `${ isMobile() ? 'top' : 'bottom' } left` }>
+					{ actions.map( ( action, i ) => (
+						<PopoverMenuItem
+							key={ i }
+							target={ action.external ? '_blank' : null }
+							{ ...action }>
+							{ action.text }
+						</PopoverMenuItem>
+					) ) }
+				</EllipsisMenu>
+			);
+		}
+
+		return actions.map( ( action, i ) => (
+			<NoticeAction key={ i } { ...action }>
+				{ action.text }
+			</NoticeAction>
+		) );
+	},
+
 	render() {
-		let dismiss;
+		const { actions, status, isCompact, showDismiss, onDismissClick } = this.props;
 
 		// The class determines the nature of a notice
 		// and its status.
-		let noticeClass = classnames( 'notice', this.props.status );
-
-		if ( this.props.isCompact ) {
-			noticeClass = classnames( noticeClass, 'is-compact' );
-		}
+		const noticeClass = classnames( 'notice', status, {
+			'is-compact': isCompact,
+			'is-dismissable': showDismiss
+		} );
 
 		// By default, a dismiss button is rendered to
 		// allow the user to hide the notice
-		if ( this.props.showDismiss ) {
-			noticeClass = classnames( noticeClass, 'is-dismissable' );
+		let dismiss;
+		if ( ! actions.length && showDismiss ) {
 			dismiss = (
-				<span tabIndex="0" className="notice__dismiss" onClick={ this.props.onDismissClick } >
+				<span tabIndex="0" className="notice__dismiss" onClick={ onDismissClick } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>
-				);
+			);
 		}
 
 		return (
@@ -126,6 +167,7 @@ export default React.createClass( {
 				<div className="notice__content">
 					{ this.renderChildren() }
 				</div>
+				{ this.renderButton() }
 				{ dismiss }
 			</div>
 		);
