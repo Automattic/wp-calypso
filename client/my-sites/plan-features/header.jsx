@@ -25,6 +25,9 @@ import {
 	getPlanClass
 } from 'lib/plans/constants';
 import PlanIcon from 'components/plans/plan-icon';
+import { plansLink } from 'lib/plans';
+import SegmentedControl from 'components/segmented-control';
+import SegmentedControlItem from 'components/segmented-control/item';
 
 class PlanFeaturesHeader extends Component {
 
@@ -37,7 +40,8 @@ class PlanFeaturesHeader extends Component {
 			popular,
 			title,
 			isPlaceholder,
-			translate
+			translate,
+			intervalType
 		} = this.props;
 		const isDiscounted = !! discountPrice;
 		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
@@ -61,8 +65,39 @@ class PlanFeaturesHeader extends Component {
 					<p className={ timeframeClasses } >
 						{ ! isPlaceholder ? billingTimeFrame : '' }
 					</p>
+					{ this.getIntervalTypeToggle() }
 				</div>
 			</header>
+		);
+	}
+
+	getIntervalTypeToggle() {
+		const {
+			translate,
+			intervalType,
+			site
+		} = this.props;
+
+		if ( ! site.jetpack ) {
+			return '';
+		}
+
+		return (
+			<SegmentedControl className="plan-features__interval-type" primary={ true }>
+				<SegmentedControlItem
+					selected={ intervalType === 'monthly' }
+					path={ plansLink( '/plans', site, 'monthly' ) }
+				>
+					{ translate( 'Monthly' ) }
+				</SegmentedControlItem>
+
+				<SegmentedControlItem
+					selected={ intervalType === 'yearly' }
+					path={ plansLink( '/plans', site, 'yearly' ) }
+				>
+					{ translate( 'Yearly' ) }
+				</SegmentedControlItem>
+			</SegmentedControl>
 		);
 	}
 
@@ -116,14 +151,18 @@ PlanFeaturesHeader.propTypes = {
 	currencyCode: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	isPlaceholder: PropTypes.bool,
-	translate: PropTypes.func
+	translate: PropTypes.func,
+	intervalType: PropTypes.string,
+	site: PropTypes.object
 };
 
 PlanFeaturesHeader.defaultProps = {
 	current: false,
 	onClick: noop,
 	popular: false,
-	isPlaceholder: false
+	isPlaceholder: false,
+	intervalType: 'yearly',
+	site: {}
 };
 
 export default localize( PlanFeaturesHeader );

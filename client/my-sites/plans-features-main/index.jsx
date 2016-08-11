@@ -54,6 +54,8 @@ class PlansFeaturesMain extends Component {
 						selectedFeature={ selectedFeature }
 						onUpgradeClick={ onUpgradeClick }
 						isInSignup={ isInSignup }
+						intervalType={ intervalType }
+						site={ site }
 					/>
 				</div>
 			);
@@ -71,6 +73,8 @@ class PlansFeaturesMain extends Component {
 						selectedFeature={ selectedFeature }
 						onUpgradeClick={ onUpgradeClick }
 						isInSignup={ isInSignup }
+						intervalType={ intervalType }
+						site={ site }
 					/>
 				</div>
 			);
@@ -93,6 +97,8 @@ class PlansFeaturesMain extends Component {
 					onUpgradeClick={ onUpgradeClick }
 					isInSignup={ isInSignup }
 					selectedFeature={ selectedFeature }
+					intervalType={ intervalType }
+					site={ site }
 				/>
 			</div>
 		);
@@ -304,6 +310,7 @@ PlansFeaturesMain.PropTypes = {
 };
 
 PlansFeaturesMain.defaultProps = {
+	intervalType: 'yearly',
 	hideFreePlan: false,
 	site: {},
 	showFAQ: true
