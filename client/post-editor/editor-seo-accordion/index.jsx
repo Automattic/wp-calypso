@@ -26,17 +26,18 @@ function EditorSeoAccordion( { translate, metaDescription = '' } ) {
 					helpText={ translate(
 						'Craft a description of your post for search engine results. ' +
 						'The post content is used by default.'
-					) }>
-					{ translate( 'Meta Description' ) }
+					) }
+					labelText={ translate( 'Meta Description' ) }
+				>
+					<CountedTextarea
+						maxLength="300"
+						acceptableLength={ 159 }
+						placeholder={ translate( 'Write a description…' ) }
+						aria-label={ translate( 'Write a description…' ) }
+						value={ metaDescription }
+						onChange={ onMetaChange }
+					/>
 				</EditorDrawerLabel>
-				<CountedTextarea
-					maxLength="300"
-					acceptableLength={ 159 }
-					placeholder={ translate( 'Write a description…' ) }
-					aria-label={ translate( 'Write a description…' ) }
-					value={ metaDescription }
-					onChange={ onMetaChange }
-				/>
 			</AccordionSection>
 		</Accordion>
 	);

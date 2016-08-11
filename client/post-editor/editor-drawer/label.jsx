@@ -8,12 +8,13 @@ import React, { PropTypes } from 'react';
  */
 import InfoPopover from 'components/info-popover';
 
-export default function EditorDrawerLabel( { children, helpText } ) {
+export default function EditorDrawerLabel( { children, labelText, helpText } ) {
 	return (
 		<label className="editor-drawer__label">
 			<span className="editor-drawer__label-text">
-				{ children }
+				{ labelText }
 				{ helpText && <InfoPopover position="top left">{ helpText }</InfoPopover> }
+				{ children }
 			</span>
 		</label>
 	);
@@ -21,5 +22,6 @@ export default function EditorDrawerLabel( { children, helpText } ) {
 
 EditorDrawerLabel.propTypes = {
 	children: PropTypes.node,
-	helpText: PropTypes.object
+	helpText: PropTypes.string,
+	labelText: PropTypes.string
 };

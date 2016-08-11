@@ -69,10 +69,7 @@ class TermTokenField extends React.Component {
 		const termNames = map( this.props.terms, 'name' );
 
 		return (
-			<div>
-				<EditorDrawerLabel>
-					{ this.props.taxonomyLabel }
-				</EditorDrawerLabel>
+			<EditorDrawerLabel labelText={ this.props.taxonomyLabel }>
 				<QueryTerms
 					siteId={ this.props.siteId }
 					taxonomy={ this.props.taxonomyName }
@@ -85,7 +82,7 @@ class TermTokenField extends React.Component {
 					onChange={ this.boundOnTermsChange }
 					maxSuggestions={ TermsConstants.MAX_TERMS_SUGGESTIONS }
 				/>
-			</div>
+			</EditorDrawerLabel>
 		);
 	}
 }

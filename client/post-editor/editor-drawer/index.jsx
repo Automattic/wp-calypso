@@ -192,19 +192,21 @@ const EditorDrawer = React.createClass( {
 
 		return (
 			<AccordionSection>
-				<EditorDrawerLabel helpText={ this.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }>
-					{ this.translate( 'Excerpt' ) }
+				<EditorDrawerLabel
+					labelText={ this.translate( 'Excerpt' ) }
+					helpText={ this.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
+				>
+					<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
+						<FormTextarea
+							id="excerpt"
+							name="excerpt"
+							onChange={ this.onExcerptChange }
+							value={ excerpt }
+							placeholder={ this.translate( 'Write an excerpt…' ) }
+							aria-label={ this.translate( 'Write an excerpt…' ) }
+						/>
+					</TrackInputChanges>
 				</EditorDrawerLabel>
-				<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
-					<FormTextarea
-						id="excerpt"
-						name="excerpt"
-						onChange={ this.onExcerptChange }
-						value={ excerpt }
-						placeholder={ this.translate( 'Write an excerpt…' ) }
-						aria-label={ this.translate( 'Write an excerpt…' ) }
-					/>
-				</TrackInputChanges>
 			</AccordionSection>
 		);
 	},
@@ -220,7 +222,7 @@ const EditorDrawer = React.createClass( {
 
 		return (
 			<AccordionSection>
-				<EditorDrawerLabel>{ this.translate( 'Location' ) }</EditorDrawerLabel>
+				<EditorDrawerLabel labelText={ this.translate( 'Location' ) } />
 				<Location coordinates={ PostMetadata.geoCoordinates( this.props.post ) } />
 			</AccordionSection>
 		);
