@@ -8,15 +8,10 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { translate } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 import FollowButton from 'reader/follow-button';
 import { getLinkProps } from './helper';
 import * as discoverStats from './stats';
-
-const arrowGridicon = (
-	<svg className="gridicon gridicon-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-		<path d="M20 11H6.414l6.293-6.293-1.414-1.414L2.586 12l8.707 8.707 1.414-1.414L6.414 13H20"/>
-	</svg>
-);
 
 class DiscoverPostAttribution extends React.Component {
 
@@ -62,7 +57,9 @@ class DiscoverPostAttribution extends React.Component {
 
 		return (
 			<div className={ classes }>
-				{ attribution.avatar_url ? <img className="gravatar" src={ encodeURI( attribution.avatar_url ) } alt="Avatar" width="20" height="20" /> : arrowGridicon }
+				{ attribution.avatar_url
+					? <img className="gravatar" src={ encodeURI( attribution.avatar_url ) } alt="Avatar" width="20" height="20" />
+					: <Gridicon icon="arrow-right" /> }
 				<span className="discover-attribution__text">
 					{ translate( 'Originally posted by' ) }&nbsp;
 					<a className="discover-attribution__author" rel="external" target="_blank" onClick={ this.recordAuthorClick } href={ encodeURI( attribution.author_url ) }>
