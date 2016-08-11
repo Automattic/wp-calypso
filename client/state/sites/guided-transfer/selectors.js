@@ -1,4 +1,5 @@
 import { matches } from 'lodash/util';
+import { some } from 'lodash/collection';
 
 export function isRequestingGuidedTransferStatus( state, siteId ) {
 	return state.sites.guidedTransfer.isFetching[ siteId ] === true;
@@ -67,4 +68,26 @@ export function getGuidedTransferIssue( state, siteId, options = {} ) {
 	}
 
 	return issues.find( matches( options ) ) || null;
+}
+
+/**
+ * Returns true as long as there are no issues preventing a transfer
+ * on *all* sites. Does not check site-specific issues. Currently
+ * requires a siteId as the issues list is fetched from a site specific
+ * endpoint.
+ *
+ * @param {any} state   The Redux store state
+ * @param {any} siteId  The site ID to check
+ * @returns {bool} true if the site is confirmed eligible for transfer, false otherwise
+ */
+export function isGuidedTransferAvailableForAllSites( state, siteId ) {
+	const issues = getGuidedTransferIssues( state, siteId );
+	if ( issues === null ) {
+		// No information available
+		return false;
+	}
+
+	return ! issues.some( issue => {
+		issue.reason === 'unavailable' || issue.reason === 'vacation';
+	} );
 }

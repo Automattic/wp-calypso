@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { classNames } from 'classnames';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -11,8 +12,10 @@ import { connect } from 'react-redux';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
+import { isGuidedTransferAvailableForAllSites } from 'state/sites/guided-transfer/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import Popover from 'components/popover';
 
 const Feature = ( { children } ) =>
 	<li className="guided-transfer-card__feature-list-item">
@@ -23,12 +26,28 @@ const Feature = ( { children } ) =>
 	</li>;
 
 class GuidedTransferCard extends Component {
+	constructor() {
+		super();
+		this.state = { isPopupVisible: false };
+	}
+
 	render() {
-		const { translate } = this.props;
+		const {
+			translate,
+			isAvailable,
+		} = this.props;
+
+		const setButtonRef = c => this._purchaseButton = c;
+		const showPopup = () => this.setState( { isPopupVisible: true } );
+		const hidePopup = () => this.setState( { isPopupVisible: false } );
+		const { isPopupVisible } = this.state;
 
 		return <div>
 			<CompactCard>
-				<div className="guided-transfer-card__options">
+				<div className="guided-transfer-card__options"
+					onMouseEnter={ showPopup }
+					onMouseLeave={ hidePopup }
+				>
 					<div className="guided-transfer-card__options-header-title-container">
 						<h1 className="guided-transfer-card__title">
 							{ translate( 'Guided Transfer' ) }
@@ -42,9 +61,32 @@ class GuidedTransferCard extends Component {
 					<div className="guided-transfer-card__options-header-button-container">
 						<Button
 							href={ `/settings/export/guided/${this.props.siteSlug}` }
-							isPrimary={ true }>
-							{ translate( 'Purchase a Guided Transfer' ) }
+							isPrimary={ true }
+							ref={ setButtonRef }
+							disabled={ ! isAvailable }
+						>
+							{ isAvailable
+								? translate( 'Purchase a Guided Transfer' )
+								: translate( 'Guided Transfer unavailable' ) }
 						</Button>
+
+						{ ! isAvailable && isPopupVisible &&
+							<Popover
+								context={ this._purchaseButton }
+								position="bottom"
+								onClose={ hidePopup }
+								isVisible={ isPopupVisible }
+							>
+								<p className="guided-transfer-card__unavailable-notice">
+									{ translate( `Guided Transfer is unavailable at the moment. We'll
+									be back as soon as possible! In the meantime, you can transfer your
+									WordPress.com blog elsewhere by following {{a}}these steps{{/a}}`,
+									{ components: {
+										a: <a href="https://move.wordpress.com/" />
+									} } ) }
+								</p>
+							</Popover>
+						}
 					</div>
 				</div>
 			</CompactCard>
@@ -84,6 +126,7 @@ class GuidedTransferCard extends Component {
 const mapStateToProps = state => ( {
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
+	isAvailable: isGuidedTransferAvailableForAllSites( state, getSelectedSiteId( state ) ),
 } );
 
 export default connect( mapStateToProps )( localize( GuidedTransferCard ) );

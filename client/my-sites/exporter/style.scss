@@ -186,3 +186,12 @@
 	font-weight: 300;
 	color: $gray-dark;
 }
+
+.guided-transfer-card__unavailable-notice {
+	padding: 0;
+	margin: 10px;
+	font-size: 13px;
+	max-width: 300px;
+	font-weight: 200;
+	line-height: 22px;
+}
