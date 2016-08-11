@@ -10,6 +10,7 @@ import debounce from 'lodash/debounce';
  * Internal dependencies
  */
 import Search from 'components/search';
+import Button from 'components/button';
 import ThemesSelectDropdown from './select-dropdown';
 import ThemesSelectButtons from './select-buttons';
 import SectionNav from 'components/section-nav';
@@ -91,51 +92,54 @@ const ThemesSearchCard = React.createClass( {
 		}
 	},
 
-	onSelect( selection ) {
-		if( selection.value === 'more' ) {
-			this.onMore();
-		} else {
-			this.props.select( selection );
-		}
-	},
-
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 
 		const tiers = [
-			{ value: 'all', label: this.translate( 'All' ) },
-			{ value: 'free', label: this.translate( 'Free' ) },
-			{ value: 'premium', label: this.translate( 'Premium' ) },
+			{ value: 'all', label: this.translate( 'Alllll' ) },
+			{ value: 'free', label: this.translate( 'Freeee' ) },
+			{ value: 'premium', label: this.translate( 'Premiumm' ) },
 		];
 
-		if( isPremiumThemesEnabled ) {
-			tiers.push( { value: 'more', label: this.translate( 'More'), path: getExternalThemesUrl( this.props.site ) } );
-		}
+		const searchField = (
+			<Search
+				onSearch={ this.props.onSearch }
+				initialValue={ this.props.search }
+				ref="url-search"
+				placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
+				analyticsGroup="Themes"
+				delaySearch={ true }
+				onSearchOpen={ this.onSearchOpen }
+				onSearchClose={ this.onSearchClose }
+				onBlur={ this.onBlur }
+				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
+				hideClose={ isMobile() }
+			/>
+		);
 
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
-				<Search
-					onSearch={ this.props.onSearch }
-					initialValue={ this.props.search }
-					ref="url-search"
-					placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
-					analyticsGroup="Themes"
-					delaySearch={ true }
-					onSearchOpen={ this.onSearchOpen }
-					onSearchClose={ this.onSearchClose }
-					onBlur={ this.onBlur }
-					fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
-					hideClose={ isMobile() }
-				/>
+				{ searchField }
 				{ isPremiumThemesEnabled && ! isJetpack &&
 					<ThemesSelectButtons
 						tier={ this.props.tier }
 						options={ tiers }
-						onSelect={ this.onSelect }
-					/> }
+						onSelect={ this.props.select }
+					/>
+				}
+				{ isPremiumThemesEnabled &&
+					<Button className="more"
+						href={ getExternalThemesUrl( this.props.site ) }
+						onClick={ this.onMore }
+					>
+						{ this.translate( 'Moreee') }
+					</Button>
+				}
+
 			</div>
 		);
+
 	}
 } );
 

@@ -17,26 +17,15 @@
 		color: lighten( $gray, 10% );
 	}
 
-	.select-dropdown,
-	.more {
-		display: inline-block;
-		height: 43px;
-		margin-right: 4px;
-		flex: 0 0 auto;
-		align-self: center;
-	}
-
 	.segmented-control {
-		flex: 0 0 auto;
+		flex: 0 1 auto;
 		padding: 11px 14px 11px;
 	}
 
 	.more {
+		flex: 0 0 auto;
 		line-height: 18px;
-		padding: 11px 14px 11px;
+		padding: 8px 14px 8px;
 	}
 
-	.select-dropdown .select-dropdown__header {
-		pointer-events: none;
-	}
 }

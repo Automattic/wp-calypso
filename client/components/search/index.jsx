@@ -293,6 +293,7 @@ const Search = React.createClass( {
 			<div className={ searchClass } role="search">
 				<Spinner />
 				<div
+					className="search-div"
 					ref="openIcon"
 					onTouchTap={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
@@ -304,25 +305,28 @@ const Search = React.createClass( {
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
 				<Gridicon icon="search" className={ 'search-open__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) }/>
 				</div>
-				<input
-					type="search"
-					id={ 'search-component-' + this.state.instanceId }
-					className={ 'search__input' + isCloseButtonVisible + ( this.props.dir ? ' ' + this.props.dir : '' ) }
-					placeholder={ placeholder }
-					role="search"
-					value={ searchValue }
-					ref="searchInput"
-					onChange={ this.onChange }
-					onKeyUp={ this.keyUp }
-					onKeyDown={ this.keyDown }
-					onFocus={ this.onFocus }
-					onBlur={ this.onBlur }
-					disabled={ this.props.disabled }
-					aria-hidden={ ! isOpenUnpinnedOrQueried }
-					autoCapitalize="none"
-					dir={ this.props.dir }
-					{ ...autocorrect } />
-					{ this.closeButton() }
+				<div className="search__input-fade">
+					<input
+						type="search"
+						id={ 'search-component-' + this.state.instanceId }
+						className={ 'search__input' + isCloseButtonVisible + ( this.props.dir ? ' ' + this.props.dir : '' ) }
+						placeholder={ placeholder }
+						role="search"
+						value={ searchValue }
+						ref="searchInput"
+						onChange={ this.onChange }
+						onKeyUp={ this.keyUp }
+						onKeyDown={ this.keyDown }
+						onFocus={ this.onFocus }
+						onBlur={ this.onBlur }
+						disabled={ this.props.disabled }
+						aria-hidden={ ! isOpenUnpinnedOrQueried }
+						autoCapitalize="none"
+						dir={ this.props.dir }
+						{ ...autocorrect }
+					/>
+				</div>
+				{ this.closeButton() }
 			</div>
 		);
 	},
