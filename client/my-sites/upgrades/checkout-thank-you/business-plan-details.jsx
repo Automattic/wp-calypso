@@ -17,7 +17,10 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 
 	return (
 		<div>
-			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
+			<CustomDomainPurchaseDetail
+				selectedSite={ selectedSite }
+				hasDomainCredit={ plan && plan.hasDomainCredit }
+			/>
 
 			{ ! selectedFeature &&
 				<PurchaseDetail

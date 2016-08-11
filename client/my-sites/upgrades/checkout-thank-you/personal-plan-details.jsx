@@ -17,7 +17,10 @@ const PersonalPlanDetails = ( { translate, selectedSite, sitePlans } ) => {
 
 	return (
 		<div>
-			{ plan.hasDomainCredit && <CustomDomainPurchaseDetail selectedSite={ selectedSite } /> }
+			<CustomDomainPurchaseDetail
+				selectedSite={ selectedSite }
+				hasDomainCredit={ plan && plan.hasDomainCredit }
+			/>
 
 			<PurchaseDetail
 				icon="speaker"
