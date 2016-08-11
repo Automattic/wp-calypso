@@ -88,6 +88,7 @@ EditorDrawerTaxonomies.propTypes = {
 	translate: PropTypes.func,
 	siteId: PropTypes.number,
 	postType: PropTypes.string,
+	isSupported: PropTypes.bool,
 	terms: PropTypes.oneOfType( [
 		PropTypes.object,
 		PropTypes.array
