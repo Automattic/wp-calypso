@@ -376,6 +376,11 @@ export const PostEditor = React.createClass( {
 			this.setState( this.getInitialState(), function() {
 				this.refs.editor.setEditorContent( '' );
 			} );
+		} else if ( this.state.isNew && this.state.hasContent && ! this.refs.editor.getContent() ) {
+			// is a copy
+			this.setState( this.getInitialState(), function() {
+				this.refs.editor.setEditorContent( this.state.post.content );
+			} );
 		} else {
 			postEditState = this.getPostEditState();
 			post = postEditState.post;
