@@ -9,6 +9,7 @@ import includes from 'lodash/includes';
  */
 import config from 'config';
 import { decodeEntities } from 'lib/formatting';
+import { withoutHttp } from 'lib/url';
 
 /**
  * Module variables
@@ -31,7 +32,7 @@ function getLanguage( slug ) {
 }
 
 function getSiteSlug( url ) {
-	var slug = url.replace( /^https?:\/\//, '' );
+	var slug = withoutHttp( url );
 	return slug.replace( /\//g, '::' );
 }
 
