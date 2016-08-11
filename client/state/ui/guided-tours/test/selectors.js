@@ -8,19 +8,32 @@ import { constant, times } from 'lodash';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'selectors', () => {
+	let relevantFeatures;
 	let getGuidedTourState;
 	let findEligibleTour;
 
+	useFakeDom();
+
 	useMockery( mockery => {
 		mockery.registerSubstitute(
-				'layout/guided-tours/config',
-				'state/ui/guided-tours/test/config' );
+				'layout/guided-tours/all-tours',
+				'state/ui/guided-tours/test/fixtures/config' );
 
 		const selectors = require( '../selectors' );
+		relevantFeatures = selectors.relevantFeatures;
 		getGuidedTourState = selectors.getGuidedTourState;
 		findEligibleTour = selectors.findEligibleTour;
+	} );
+
+	describe( '#relevantFeatures', () => {
+		it( 'should be sorted by path specificity', () => {
+			const keys = relevantFeatures.map( x => x.tour );
+
+			expect( keys ).to.eql( [ 'test', 'themes', 'main' ] );
+		} );
 	} );
 
 	describe( '#getGuidedTourState()', () => {
@@ -149,10 +162,13 @@ describe( 'selectors', () => {
 			expect( tour ).to.equal( undefined );
 		} );
 		it( 'should respect tour contexts', () => {
-			const state = makeState( {
-				actionLog: [ navigateToThemes ],
-				userData: { date: ( new Date() ).toJSON() }, // user was created just now
-			} );
+			const state = {
+				...makeState( {
+					actionLog: [ navigateToThemes ],
+					userData: { date: ( new Date() ).toJSON() }, // user was created just now
+				} ),
+				themesDisabled: true,
+			};
 			const tour = findEligibleTour( state );
 
 			// Even though we navigated to `/themes`, this counts as navigating

@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, difference, find, map, memoize, noop, startsWith, uniq } from 'lodash';
+import { get, difference, find, map, memoize, noop, sortBy, startsWith, uniq } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -12,23 +12,25 @@ import debugFactory from 'debug';
 import { ROUTE_SET } from 'state/action-types';
 import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
 import { getPreference } from 'state/preferences/selectors';
+import AllTours from 'layout/guided-tours/all-tours';
 import createSelector from 'lib/create-selector';
 import guidedToursConfig from 'layout/guided-tours/config';
 
 const getToursConfig = memoize( ( tour ) => guidedToursConfig.get( tour ) );
 const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
-const relevantFeatures = map( guidedToursConfig.getAll(), ( tour, key ) => {
-	return {
-		tour: key,
-		path: tour.meta.path,
-		context: tour.meta.context,
-	};
-} );
 
-const DAY_IN_MILLISECONDS = 1000 * 3600 * 24;
+const sortByPathSpecificity = xs => sortBy( xs,
+	( { path } ) => 0 - path.split( '/' ).filter( Boolean ).length );
+
+export const relevantFeatures = sortByPathSpecificity(
+	map( AllTours.meta, ( tourMeta, key ) => ( {
+		tour: key,
+		path: tourMeta.path,
+		context: tourMeta.context
+	} ) )
+);
 
 /*
  * Returns a collection of tour names. These tours are selected if the user has
@@ -78,16 +80,6 @@ const getTourFromQuery = createSelector(
 	},
 	getInitialQueryArguments
 );
-
-export const isNewUser = state => {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return false;
-	}
-
-	const creation = Date.parse( user.date );
-	return ( Date.now() - creation ) <= DAY_IN_MILLISECONDS;
-};
 
 /*
  * Returns true if `tour` has been seen in the current Calypso session, false
@@ -147,15 +139,7 @@ export const findEligibleTour = createSelector(
 );
 
 const getStepConfig = ( state, tourConfig, stepName ) => {
-	const step = tourConfig[ stepName ] || false;
-	const shouldSkip = !! (
-		step &&
-		( step.showInContext && ! step.showInContext( state ) ) ||
-		( step.continueIf && step.continueIf( state ) )
-	);
-	return shouldSkip
-		? getStepConfig( state, tourConfig, step.next )
-		: step;
+	return tourConfig[ stepName ] || false;
 };
 
 /**
