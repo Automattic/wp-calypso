@@ -38,7 +38,7 @@ class EditorDrawerCopyPost extends Component {
 
 	goToNewDraft = () => {
 		if ( '' !== this.state.selectedPostId ) {
-			page.redirect( `/post/${ this.props.site.slug }/${ this.state.selectedPostId }?copy=true` );
+			page.redirect( `/post/${ this.props.site.slug }?copy=${ this.state.selectedPostId }` );
 		}
 	}
 
