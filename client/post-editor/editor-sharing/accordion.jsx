@@ -36,8 +36,7 @@ const EditorSharingAccordion = React.createClass( {
 		connections: PropTypes.array,
 		isPublicizeEnabled: PropTypes.bool,
 		isSharingActive: PropTypes.bool,
-		isLikesActive: PropTypes.bool,
-		postType: PropTypes.string
+		isLikesActive: PropTypes.bool
 	},
 
 	getSubtitle: function() {
@@ -86,7 +85,7 @@ const EditorSharingAccordion = React.createClass( {
 
 	hideSharing: function() {
 		const { isSharingActive, isLikesActive, isPublicizeEnabled } = this.props;
-		return ( ! isSharingActive && ! isLikesActive ) && ! isPublicizeEnabled;
+		return ! isSharingActive && ! isLikesActive && ! isPublicizeEnabled;
 	},
 
 	render: function() {
@@ -139,8 +138,7 @@ export default connect(
 			connections: getSiteUserConnections( state, siteId, userId ),
 			isSharingActive,
 			isLikesActive,
-			isPublicizeEnabled,
-			postType
+			isPublicizeEnabled
 		};
 	},
 	( dispatch ) => {
