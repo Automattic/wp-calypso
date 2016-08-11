@@ -36,6 +36,12 @@ const Plans = React.createClass( {
 		sitePlans: React.PropTypes.object.isRequired
 	},
 
+	getDefaultProps() {
+		return {
+			intervalType: 'yearly'
+		};
+	},
+
 	showMonthlyPlansLink() {
 		const selectedSite = this.props.sites.getSelectedSite();
 		if ( ! selectedSite.jetpack ) {
@@ -104,6 +110,7 @@ const Plans = React.createClass( {
 							intervalType={ this.props.intervalType }
 							hideFreePlan={ true }
 							selectedFeature={ this.props.selectedFeature }
+							intervalType={ this.props.intervalType }
 						/>
 					</div>
 				</Main>
