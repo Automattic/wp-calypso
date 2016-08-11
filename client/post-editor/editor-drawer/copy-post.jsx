@@ -2,12 +2,14 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
+import { getSelectedSite } from 'state/ui/selectors';
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Button from 'components/button';
@@ -77,4 +79,6 @@ class EditorDrawerCopyPost extends Component {
 
 }
 
-export default localize( EditorDrawerCopyPost );
+export default connect( state => ( {
+	site: getSelectedSite( state )
+} ) )( localize( EditorDrawerCopyPost ) );
