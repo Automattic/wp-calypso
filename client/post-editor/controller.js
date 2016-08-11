@@ -7,9 +7,9 @@ var ReactDom = require( 'react-dom' ),
 	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' ),
 	ReduxProvider = require( 'react-redux' ).Provider,
-	startsWith = require( 'lodash/startsWith' ),
 	qs = require( 'querystring' ),
 	isValidUrl = require( 'valid-url' ).isWebUri;
+import { startsWith, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,7 +25,7 @@ import { setEditorPostId } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import { editPost } from 'state/posts/actions';
-import { startEditingPostCopy } from 'post-editor/editor-copy-post';
+import wpcom from 'lib/wp';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -108,6 +108,32 @@ function getPressThisContent( query ) {
 	return pieces.join( '\n\n' );
 }
 
+function startEditingPostCopy( siteId, postId ) {
+	wpcom.site( siteId ).post( postId ).get().then( post => {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		actions.startEditingNew( siteId, {
+			type: 'post',
+			content: post.content,
+		} );
+
+		const postAttributes = pick(
+			post,
+			'canonical_image',
+			'excerpt',
+			'featured_image',
+			'format',
+			'metadata',
+			'post_thumbnail',
+			'title'
+		);
+		postAttributes.categories = map( post.categories, 'ID' );
+		postAttributes.tags = map( post.tags, 'name' );
+
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		actions.edit( postAttributes );
+	} );
+}
+
 module.exports = {
 
 	post: function( context ) {
@@ -115,8 +141,9 @@ module.exports = {
 		const postID = getPostID( context );
 
 		function startEditing( siteId ) {
-			context.store.dispatch( setEditorPostId( postID ) );
-			context.store.dispatch( editPost( siteId, postID, { type: postType } ) );
+			const isCopy = context.query.copy ? true : false;
+			context.store.dispatch( setEditorPostId( isCopy ? null : postID ) );
+			context.store.dispatch( editPost( siteId, ( isCopy ? null : postID ), { type: postType } ) );
 
 			if ( maybeRedirect( context ) ) {
 				return;
@@ -132,10 +159,13 @@ module.exports = {
 			// We have everything we need to start loading the post for editing,
 			// so kick it off here to minimize time spent waiting for it to load
 			// in the view components
-			if ( postID ) {
+			if ( postID && ! isCopy ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingExisting( siteId, postID );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
+			} else if ( isCopy ) {
+				startEditingPostCopy( siteId, context.query.copy );
+				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			} else {
 				let postOptions = { type: postType };
 
@@ -199,28 +229,6 @@ module.exports = {
 		const redirectWithParams = [ redirectPath, queryString ].join( '?' );
 
 		page.redirect( redirectWithParams );
-		return false;
-	},
-
-	copyPost: function( context, next ) {
-		if ( ! context.query.copy ) {
-			// not copyPost, early return
-			return next();
-		}
-
-		const postId = getPostID( context );
-
-		function startEditingOnSiteSelected() {
-			const siteId = getSelectedSiteId( context.store.getState() );
-			if ( siteId ) {
-				startEditingPostCopy( context, siteId, postId );
-			} else {
-				sites.once( 'change', startEditingOnSiteSelected );
-			}
-		}
-
-		startEditingOnSiteSelected();
-		renderEditor( context, 'post' );
 		return false;
 	},
 
