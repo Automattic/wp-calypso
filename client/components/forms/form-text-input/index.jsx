@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import { omit } from 'lodash';
 
 export default React.createClass( {
 
@@ -23,6 +24,7 @@ export default React.createClass( {
 
 	render() {
 		const { className, selectOnFocus } = this.props;
+		const props = omit( this.props, 'isError', 'isValid', 'selectOnFocus' );
 		const classes = classNames( className, {
 			'form-text-input': true,
 			'is-error': this.props.isError,
@@ -31,7 +33,7 @@ export default React.createClass( {
 
 		return (
 			<input
-				{ ...this.props }
+				{ ...props }
 				ref="textField"
 				className={ classes }
 				onClick={ selectOnFocus ? this.selectOnFocus : null } />
