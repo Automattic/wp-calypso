@@ -33,20 +33,12 @@ class PlanFeaturesHeader extends Component {
 
 	render() {
 		const {
-			billingTimeFrame,
 			current,
-			discountPrice,
 			planType,
 			popular,
 			title,
-			isPlaceholder,
 			translate
 		} = this.props;
-		const isDiscounted = !! discountPrice;
-		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
-			'is-discounted': isDiscounted,
-			'is-placeholder': isPlaceholder
-		} );
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
 		return (
@@ -61,13 +53,34 @@ class PlanFeaturesHeader extends Component {
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
-					<p className={ timeframeClasses } >
-						{ ! isPlaceholder ? billingTimeFrame : '' }
-					</p>
-					{ this.getIntervalTypeToggle() }
+					{ this.getBillingTimeframe() }
 				</div>
 			</header>
 		);
+	}
+
+	getBillingTimeframe() {
+		const {
+			billingTimeFrame,
+			discountPrice,
+			isPlaceholder,
+			site
+		} = this.props;
+		const isDiscounted = !! discountPrice;
+		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
+			'is-discounted': isDiscounted,
+			'is-placeholder': isPlaceholder
+		} );
+
+		if ( ! site.jetpack ) {
+			return (
+				<p className={ timeframeClasses } >
+					{ ! isPlaceholder ? billingTimeFrame : '' }
+				</p>
+			);
+		} else {
+			return this.getIntervalTypeToggle();
+		}
 	}
 
 	getIntervalTypeToggle() {
