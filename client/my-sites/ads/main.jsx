@@ -101,7 +101,7 @@ const AdsMain = React.createClass( {
 								this.props.site.options.wordads ||
 								( this.props.requestingWordAdsApproval && this.props.wordAdsError === null ) ||
 								this.props.isRequestingWordadsStatus ||
-								this.props.isMatureSite
+								this.props.isUnsafe !== false
 							}
 							onClick={ this.props.requestWordAdsApproval }
 						>
@@ -139,7 +139,7 @@ const AdsMain = React.createClass( {
 						showDismiss={ false }
 						text={ this.translate( 'Your site is marked as private. It needs to be public so that visitors can see the ads.' ) }
 					>
-						<NoticeAction href={ 'settings/general/' + this.props.site.slug }>
+						<NoticeAction href={ '/settings/general/' + this.props.site.slug }>
 							{ this.translate( 'Change privacy settings' ) }
 						</NoticeAction>
 					</Notice>
