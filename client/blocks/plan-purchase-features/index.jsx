@@ -13,6 +13,9 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
 } from 'lib/plans/constants';
+import {
+	FindNewThemeFeature
+} from './features-list';
 
 class PlanPurchaseFeatures extends Component {
 	static propTypes = {
@@ -21,8 +24,21 @@ class PlanPurchaseFeatures extends Component {
 			.isRequired
 	};
 
-	render() {
+	getBusinessFeatures() {
+		return [
+			<FindNewThemeFeature key="findNewThemeFeature" />
+		];
+	}
 
+	render() {
+		const { plan } = this.props;
+
+		switch ( plan ) {
+			case PLAN_BUSINESS:
+				return this.getBusinessFeatures();
+			default:
+				return null;
+		}
 	}
 }
 
