@@ -1,4 +1,5 @@
 import { getSiteUrl, getFeedUrl } from 'reader/route';
+import { withoutHttp } from 'lib/url';
 
 module.exports = {
 	formatUrlForDisplay: function( url ) {
@@ -6,7 +7,7 @@ module.exports = {
 			return;
 		}
 
-		return url.replace( /^https?:\/\//, '' ).replace( /\/$/, '' );
+		return withoutHttp( url ).replace( /\/$/, '' );
 	},
 
 	// Use either the site name, feed name or display URL for the feed name

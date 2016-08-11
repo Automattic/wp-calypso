@@ -17,6 +17,7 @@ import {
 
 import { isValidStateWithSchema } from 'state/utils';
 import { readerSitesSchema } from './schema';
+import { withoutHttp } from 'lib/url';
 
 const actionMap = {
 	[ SERIALIZE ]: handleSerialize,
@@ -57,7 +58,7 @@ function adaptSite( attributes ) {
 	attributes = omit( attributes, [ 'meta', '_headers' ] );
 
 	if ( attributes.URL ) {
-		attributes.domain = attributes.URL.replace( /^https?:\/\//, '' );
+		attributes.domain = withoutHttp( attributes.URL );
 		attributes.slug = attributes.domain.replace( /\//g, '::' );
 	}
 	attributes.title = trim( attributes.name ) || attributes.domain;
@@ -65,13 +66,13 @@ function adaptSite( attributes ) {
 	// If a WordPress.com site has a mapped domain create a `wpcom_url`
 	// attribute to allow site selection with either domain.
 	if ( attributes.options && attributes.options.is_mapped_domain && ! attributes.is_jetpack ) {
-		attributes.wpcom_url = attributes.options.unmapped_url.replace( /^https?:\/\//, '' );
+		attributes.wpcom_url = withoutHttp( attributes.options.unmapped_url );
 	}
 
 	// If a site has an `is_redirect` property use the `unmapped_url`
 	// for the slug and domain to match the wordpress.com original site.
 	if ( attributes.options && attributes.options.is_redirect ) {
-		attributes.slug = attributes.options.unmapped_url.replace( /^https?:\/\//, '' );
+		attributes.slug = withoutHttp( attributes.options.unmapped_url );
 		attributes.domain = attributes.slug;
 	}
 	return attributes;

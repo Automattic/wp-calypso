@@ -26,8 +26,28 @@ function isHttps( url ) {
 	return url && startsWith( url, 'https://' );
 }
 
+const urlWithoutHttpRegex = /^https?:\/\//;
+
+/**
+ * Returns the supplied URL without the initial http(s).
+ * @param  {String}  url The URL to remove http(s) from
+ * @return {?String}     URL without the initial http(s)
+ */
+function withoutHttp( url ) {
+	if ( url === '' ) {
+		return '';
+	}
+
+	if ( ! url ) {
+		return null;
+	}
+
+	return url.replace( urlWithoutHttpRegex, '' );
+}
+
 export default {
 	isOutsideCalypso,
 	isExternal,
 	isHttps,
+	withoutHttp
 };
