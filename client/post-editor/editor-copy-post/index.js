@@ -33,25 +33,19 @@ function setPostCopy( post ) {
 }
 
 export function startEditingPostCopy( context, siteId, postId ) {
-	return new Promise( ( resolve, reject ) => {
-		wpcom.site( siteId ).post( postId ).get().then( post => {
-			context.store.dispatch( setEditorPostId( null ) );
-			context.store.dispatch( editPost( { type: 'post' }, siteId, null ) );
+	wpcom.site( siteId ).post( postId ).get().then( post => {
+		context.store.dispatch( setEditorPostId( null ) );
+		context.store.dispatch( editPost( { type: 'post' }, siteId, null ) );
 
-			const postCopy = setPostCopy( post );
+		const postCopy = setPostCopy( post );
 
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			actions.startEditingNew( siteId, postCopy.options ); // set content for TinyMCE
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		actions.startEditingNew( siteId, postCopy.options ); // set content for TinyMCE
 
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			actions.edit( postCopy.attributes ); // set the other post attributes
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		actions.edit( postCopy.attributes ); // set the other post attributes
 
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			actions.autosave(); // force an autosave to display the attributes
-
-			resolve();
-		} ).catch( error => {
-			reject( error );
-		} );
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		actions.autosave(); // force an autosave to display the attributes
 	} );
 }
