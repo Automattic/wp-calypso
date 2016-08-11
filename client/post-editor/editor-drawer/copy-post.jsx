@@ -18,7 +18,6 @@ class EditorDrawerCopyPost extends Component {
 
 	static propTypes = {
 		site: PropTypes.object.isRequired,
-		post: PropTypes.object.isRequired,
 		translate: PropTypes.func,
 	};
 
