@@ -81,7 +81,6 @@
 
 .facebook-preview__content {
 	display: flex;
-	flex-shrink: 0;
 }
 
 .facebook-preview__body {
@@ -97,7 +96,6 @@
 	font-weight: 500;
 	line-height: 22px;
 	max-height: 100px;
-	max-width: 345px;
 	transition: color 0.1s ease-in-out;
 }
 
@@ -106,8 +104,8 @@
 	font-family: helvetica, arial, sans-serif;
 	font-size: 12px;
 	line-height: 16px;
-	max-height: 80px;
-	max-width: 345px;
+	max-height: 50px;
+	overflow-y: hidden;
 }
 
 .facebook-preview__url {
