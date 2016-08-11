@@ -39,6 +39,7 @@ import config from 'config';
 import EditorDrawerFeaturedImage from './featured-image';
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
+import EditorDrawerCopyPost from './copy-post';
 
 /**
  * Constants
@@ -261,6 +262,12 @@ const EditorDrawer = React.createClass( {
 		);
 	},
 
+	renderCopyPost: function() {
+		return (
+			<EditorDrawerCopyPost />
+		);
+	},
+
 	renderMoreOptions: function() {
 		if (
 			! this.currentPostTypeSupports( 'excerpt' ) &&
@@ -311,6 +318,7 @@ const EditorDrawer = React.createClass( {
 				{ this.renderSharing() }
 				{ this.renderPostFormats() }
 				{ this.renderSeo() }
+				{ this.renderCopyPost() }
 				{ this.renderMoreOptions() }
 			</div>
 		);
