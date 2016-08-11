@@ -35,6 +35,7 @@ import {
 	getUpgradePlanSlugFromPath
 } from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
+import { recordViewCheckout } from 'lib/analytics/ad-tracking';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -57,25 +58,21 @@ const Checkout = React.createClass( {
 			return;
 		}
 
-		if ( this.props.cart.hasLoadedFromServer ) {
-			this.trackPageView();
-
-			if ( this.props.product ) {
-				this.addProductToCart();
-			}
+		if ( this.props.cart.hasLoadedFromServer && this.props.product ) {
+			this.addProductToCart();
 		}
 
 		window.scrollTo( 0, 0 );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
-			// if the cart hadn't loaded when this mounted, record the page view when it loads
-			this.trackPageView( nextProps );
+		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer && this.props.product ) {
+			this.addProductToCart();
+		}
 
-			if ( this.props.product ) {
-				this.addProductToCart();
-			}
+		if ( this.props.cart.hasPendingServerUpdates && ! nextProps.cart.hasPendingServerUpdates ) {
+			// We only want to track the page view when the cart has finished loading the products
+			this.trackPageView( nextProps );
 		}
 	},
 
@@ -101,6 +98,8 @@ const Checkout = React.createClass( {
 			saved_cards: props.cards.length,
 			is_renewal: cartItems.hasRenewalItem( props.cart )
 		} );
+
+		recordViewCheckout( props.cart );
 	},
 
 	addProductToCart: function() {
