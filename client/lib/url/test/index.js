@@ -27,6 +27,13 @@ describe( 'withoutHttp', () => {
 		expect( urlWithoutHttps ).to.equal( 'example.com' );
 	} );
 
+	it( 'should return URL without initial http and query string if has any', () => {
+		const urlWithHttpAndQueryString = 'http://example.com?foo=bar#anchor';
+		const urlWithoutHttpAndQueryString = withoutHttp( urlWithHttpAndQueryString );
+
+		expect( urlWithoutHttpAndQueryString ).to.equal( 'example.com?foo=bar#anchor' );
+	} );
+
 	it( "should return provided URL if it doesn't include http(s)", () => {
 		const urlWithoutHttp = 'example.com';
 
