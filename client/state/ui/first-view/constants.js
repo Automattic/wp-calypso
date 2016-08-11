@@ -9,6 +9,7 @@ export const FIRST_VIEW_CONFIG = [
 			'/stats',
 		],
 		enabled: true,
+		startDate: '2016-07-26',
 	},
 	{
 		name: 'pages-prototype',

@@ -10,6 +10,7 @@ import {
 	getCurrentUserId,
 	getCurrentUser,
 	getCurrentUserLocale,
+	getCurrentUserDate,
 	isValidCapability,
 	canCurrentUser,
 	getCurrentUserCurrencyCode
@@ -94,6 +95,53 @@ describe( 'selectors', () => {
 			} );
 
 			expect( locale ).to.equal( 'fr' );
+		} );
+	} );
+
+	describe( 'getCurrentUserDate()', () => {
+		it( 'should return the current user registration date', () => {
+			const currentUserDate = getCurrentUserDate( {
+				users: {
+					items: {
+						73705554: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' }
+					}
+				},
+				currentUser: {
+					id: 73705554
+				}
+			} );
+
+			expect( currentUserDate ).to.equal( '2014-10-18T17:14:52+00:00' );
+		} );
+
+		it( 'should return null if the registration date is missing', () => {
+			const currentUserDate = getCurrentUserDate( {
+				users: {
+					items: {
+						73705554: { ID: 73705554, login: 'testonesite2014' }
+					}
+				},
+				currentUser: {
+					id: 73705554
+				}
+			} );
+
+			expect( currentUserDate ).to.be.null;
+		} );
+
+		it( 'should return null if the user is missing', () => {
+			const currentUserDate = getCurrentUserDate( {
+				users: {
+					items: {
+						12345678: { ID: 12345678, login: 'testuser' }
+					}
+				},
+				currentUser: {
+					id: 73705554
+				}
+			} );
+
+			expect( currentUserDate ).to.be.null;
 		} );
 	} );
 

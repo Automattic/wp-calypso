@@ -5,6 +5,7 @@
  */
 import filter from 'lodash/filter';
 import last from 'lodash/last';
+import moment from 'moment';
 import some from 'lodash/some';
 import startsWith from 'lodash/startsWith';
 import takeRightWhile from 'lodash/takeRightWhile';
@@ -15,15 +16,37 @@ import takeRightWhile from 'lodash/takeRightWhile';
 import { FIRST_VIEW_CONFIG } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { isSectionLoading } from 'state/ui/selectors';
+import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
+import { getCurrentUserDate } from 'state/current-user/selectors';
 
 export function getConfigForCurrentView( state ) {
 	const currentRoute = last( filter( getActionLog( state ), { type: ROUTE_SET } ) );
 	const path = currentRoute.path ? currentRoute.path : '';
-	const config = FIRST_VIEW_CONFIG.filter( entry  => some( entry.paths, entryPath => startsWith( path, entryPath ) ) );
+	const config = FIRST_VIEW_CONFIG.filter( entry => some( entry.paths, entryPath => startsWith( path, entryPath ) ) );
 
 	return config.pop() || false;
+}
+
+export function isUserEligible( state, config ) {
+	const userStartDate = getCurrentUserDate( state );
+
+	// If no start date is defined, all users are eligible
+	if ( ! config.startDate ) {
+		return true;
+	}
+
+	// If the user doesn't have a start date, we don't want to show the first view
+	if ( ! userStartDate ) {
+		return false;
+	}
+
+	return moment( userStartDate ).isAfter( config.startDate );
+}
+
+export function isQueryStringEnabled( state, config ) {
+	const queryArguments = getInitialQueryArguments( state );
+	return queryArguments.firstView === config.name;
 }
 
 export function isViewEnabled( state, config ) {
@@ -37,7 +60,13 @@ export function isViewEnabled( state, config ) {
 	const firstViewHistory = getPreference( state, 'firstViewHistory' ).filter( entry => entry.view === config.name );
 	const latestFirstViewHistory = [ ...firstViewHistory ].pop();
 	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
-	return config.enabled && ! isViewDisabled;
+
+	// If the view is disabled, we want to return false, regardless of state
+	if ( isViewDisabled ) {
+		return false;
+	}
+
+	return isQueryStringEnabled( state, config ) || ( config.enabled && isUserEligible( state, config ) );
 }
 
 export function wasFirstViewHiddenSinceEnteringCurrentSection( state, config ) {
