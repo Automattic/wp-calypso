@@ -34,6 +34,10 @@ const urlWithoutHttpRegex = /^https?:\/\//;
  * @return {?String}     URL without the initial http(s)
  */
 function withoutHttp( url ) {
+	if ( url === '' ) {
+		return '';
+	}
+
 	if ( ! url ) {
 		return null;
 	}

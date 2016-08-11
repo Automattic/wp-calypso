@@ -39,4 +39,10 @@ describe( 'withoutHttp', () => {
 
 		expect( withoutHttp( urlWithoutHttp ) ).to.equal( urlWithoutHttp );
 	} );
+
+	it( 'should return empty string if URL is empty string', () => {
+		const urlEmptyString = '';
+
+		expect( withoutHttp( urlEmptyString ) ).to.equal( '' );
+	} );
 } );
