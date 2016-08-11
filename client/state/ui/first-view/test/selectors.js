@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	isUserEligible,
 	getConfigForCurrentView,
 	isViewEnabled,
 	wasFirstViewHiddenSinceEnteringCurrentSection,
@@ -17,6 +18,75 @@ import {
 	FIRST_VIEW_HIDE,
 	ROUTE_SET
 } from 'state/action-types';
+
+describe( 'isUserEligible()', () => {
+	it( 'makes all users eligible if no start date is defined in the config', () => {
+		const state = {
+			users: {
+				items: {
+					73705554: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' }
+				}
+			},
+			currentUser: {
+				id: 73705554
+			}
+		};
+		const eligible = isUserEligible( state, {} );
+
+		expect( eligible ).to.be.true;
+	} );
+
+	it( 'does not show the first view if the user does not have a start date', () => {
+		const state = {
+			users: {
+				items: {
+					73705554: { ID: 73705554, login: 'testonesite2014' }
+				}
+			},
+			currentUser: {
+				id: 73705554
+			}
+		};
+		const config = { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' };
+		const eligible = isUserEligible( state, config );
+
+		expect( eligible ).to.be.false;
+	} );
+
+	it( 'shows the first view if the user registered after the first view start date', () => {
+		const state = {
+			users: {
+				items: {
+					73705554: { ID: 73705554, login: 'testonesite2014', date: '2016-07-27T17:14:52+00:00' }
+				}
+			},
+			currentUser: {
+				id: 73705554
+			}
+		};
+		const config = { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' };
+		const eligible = isUserEligible( state, config );
+
+		expect( eligible ).to.be.true;
+	} );
+
+	it( 'does not show the first view if the user registered before the first view start date', () => {
+		const state = {
+			users: {
+				items: {
+					73705554: { ID: 73705554, login: 'testonesite2014', date: '2016-07-25T17:14:52+00:00' }
+				}
+			},
+			currentUser: {
+				id: 73705554
+			}
+		};
+		const config = { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' };
+		const eligible = isUserEligible( state, config );
+
+		expect( eligible ).to.be.false;
+	} );
+} );
 
 describe( 'selectors', () => {
 	describe( '#getConfigForCurrentView()', () => {
