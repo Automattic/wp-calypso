@@ -6,6 +6,7 @@ import noop from 'lodash/noop';
 import some from 'lodash/some';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:ad-tracking' );
+import { clone, cloneDeep } from 'lodash';
 
 /**
  * Internal dependencies
@@ -30,6 +31,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	ATLAS_TRACKING_SCRIPT_URL = 'https://ad.atdmt.com/m/a.js',
 	GOOGLE_TRACKING_SCRIPT_URL = 'https://www.googleadservices.com/pagead/conversion_async.js',
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
+	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	GOOGLE_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
 	ONE_BY_AOL_PIXEL_URL = 'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
 	TRACKING_IDS = {
@@ -37,7 +39,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		facebookInit: '823166884443641',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
-		atlasUniveralTagId: '11187200770563'
+		atlasUniveralTagId: '11187200770563',
+		criteo: '31321'
 	};
 
 /**
@@ -49,6 +52,10 @@ if ( ! window.fbq ) {
 
 if ( ! window.uetq ) {
 	window.uetq = []; // Bing global
+}
+
+if ( ! window.criteo_q ) {
+	window.criteo_q = [];
 }
 
 /**
@@ -86,6 +93,9 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( BING_TRACKING_SCRIPT_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( CRITEO_TRACKING_SCRIPT_URL, onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
@@ -142,6 +152,12 @@ function retarget() {
 	}
 }
 
+/**
+ * Records that an item was added to the cart
+ *
+ * @param {Object} cartItem - The item added to the cart
+ * @returns {void}
+ */
 function recordAddToCart( cartItem ) {
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
 		return;
@@ -161,6 +177,19 @@ function recordAddToCart( cartItem ) {
 			free_trial: Boolean( cartItem.free_trial )
 		}
 	);
+
+	recordInCriteo( 'viewItem', {
+		item: cartItem.product_id
+	} );
+}
+
+/**
+ * Records that a user viewed the checkout page
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ */
+function recordViewCheckout( cart ) {
+	recordViewCheckoutInCriteo( cart );
 }
 
 /**
@@ -279,6 +308,114 @@ function recordConversionInOneByAOL() {
 	new Image().src = ONE_BY_AOL_PIXEL_URL;
 }
 
+/**
+ * Records an order in Criteo
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrderInCriteo( cart, orderId ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	recordInCriteo( 'viewBasket', {
+		id: orderId,
+		currency: cart.currency,
+		items: cartToCriteoItems( cart )
+	} );
+}
+
+/**
+ * Records that a user viewed the checkout page
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {void}
+ */
+function recordViewCheckoutInCriteo( cart ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	// Note that unlike `recordOrderInCriteo` above, this doesn't include the order id
+	recordInCriteo( 'viewBasket', {
+		currency: cart.currency,
+		items: cartToCriteoItems( cart )
+	} );
+}
+
+/**
+ * Converts the products in a cart to the format Criteo expects for its `items` property
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {Array} - An array of items to include in the Criteo tracking call
+ */
+function cartToCriteoItems( cart ) {
+	return cart.products.map( product => {
+		return {
+			id: product.product_id,
+			price: product.cost,
+			quantity: product.volume
+		};
+	} );
+}
+
+/**
+ * Records an event in Criteo
+ *
+ * @param {String} eventName - The name of the 'event' property such as 'viewItem' or 'viewBasket'
+ * @param {Object} eventProps - Additional details about the event such as `{ item: '1' }`
+ *
+ * @returns {void}
+ */
+function recordInCriteo( eventName, eventProps ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	if ( ! hasStartedFetchingScripts ) {
+		return loadTrackingScripts( recordInCriteo.bind( null, eventName, eventProps ) );
+	}
+
+	const events = [];
+	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );
+	events.push( { event: 'setSiteType', type: criteoSiteType() } );
+
+	if ( user.get() ) {
+		events.push( { event: 'setEmail', email: [ user.get().email ] } );
+	}
+
+	const conversionEvent = clone( eventProps );
+	conversionEvent.event = eventName;
+	events.push( conversionEvent );
+
+	// The deep clone is necessary because the Criteo script modifies the objects in the
+	// array which causes the console to display different data than is originally added
+	debug( 'Track `' + eventName + '` event in Criteo', cloneDeep( events ) );
+
+	window.criteo_q.push( ...events );
+}
+
+/**
+ * Returns the site type value that Criteo expects
+ *
+ * @note This logic was provided by Criteo and should not be modified
+ *
+ * @returns {String} 't', 'm', or 'd' for tablet, mobile, or desktop
+ */
+function criteoSiteType() {
+	if ( /iPad/.test( navigator.userAgent ) ) {
+		return 't';
+	}
+
+	if ( /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent ) ) {
+		return 'm';
+	}
+
+	return 'd';
+}
+
 module.exports = {
 	retarget: function( context, next ) {
 		const nextFunction = typeof next === 'function' ? next : noop;
@@ -291,7 +428,9 @@ module.exports = {
 	},
 
 	recordAddToCart,
+	recordViewCheckout,
 	recordPurchase,
 	recordOrderInAtlas,
-	recordConversionInOneByAOL
+	recordConversionInOneByAOL,
+	recordOrderInCriteo,
 };
