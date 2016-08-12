@@ -1,6 +1,5 @@
 // External dependencies
 import i18n from 'i18n-calypso';
-import { omit, values } from 'lodash';
 
 // Internal dependencies
 import olark from 'lib/olark';
@@ -18,21 +17,12 @@ import {
 	PURCHASE_REMOVE_COMPLETED,
 	PURCHASE_REMOVE_FAILED
 } from 'state/action-types';
+
 import wp from 'lib/wp';
 const wpcom = wp.undocumented();
 
-const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' ),
-	PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
-
-/**
- * `wpcom` assigns a `_headers` property to the response, even if the response
- * is an array. This function omits the `_headers` property and converts the
- * response to a real array, instead of an object keyed with indices.
- *
- * @param {Object} response - The response to a request from `wpcom`.
- * @return {array} response - The given response converted into an array.
- */
-const getArrayFromResponse = response => values( omit( response, '_headers' ) );
+const PURCHASES_FETCH_ERROR_MESSAGE = i18n.translate( 'There was an error retrieving purchases.' );
+const PURCHASE_REMOVE_ERROR_MESSAGE = i18n.translate( 'There was an error removing the purchase.' );
 
 export const cancelPrivateRegistration = purchaseId => dispatch => {
 	dispatch( {
@@ -85,7 +75,7 @@ export const fetchSitePurchases = siteId => dispatch => {
 		dispatch( {
 			type: PURCHASES_SITE_FETCH_COMPLETED,
 			siteId,
-			purchases: getArrayFromResponse( data )
+			purchases: data
 		} );
 	} ).catch( () => {
 		dispatch( {
@@ -107,7 +97,7 @@ export const fetchUserPurchases = userId => dispatch => {
 	} ).then( data => {
 		dispatch( {
 			type: PURCHASES_USER_FETCH_COMPLETED,
-			purchases: getArrayFromResponse( data ),
+			purchases: data,
 			userId
 		} );
 	} ).catch( () => {

@@ -69,7 +69,7 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_MEDIA_STORAGE_REQUEST,
 				siteId: 2916284
-			} )
+			} );
 		} );
 
 		it( 'should dispatch receive action when request completes', () => {
@@ -77,7 +77,6 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_MEDIA_STORAGE_RECEIVE,
 					mediaStorage: {
-						_headers: { 'content-type': 'application/json' },
 						max_storage_bytes: 3221225472,
 						storage_used_bytes: 323506
 					},

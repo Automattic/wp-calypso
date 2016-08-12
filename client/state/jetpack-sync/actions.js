@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import { pick, omit } from 'lodash';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,7 +36,7 @@ export default {
 					dispatch( {
 						type: JETPACK_SYNC_STATUS_SUCCESS,
 						siteId,
-						data: omit( data, '_headers' )
+						data
 					} );
 				} )
 				.catch( ( error ) => {
@@ -62,7 +62,7 @@ export default {
 					dispatch( {
 						type: JETPACK_SYNC_START_SUCCESS,
 						siteId,
-						data: omit( data, '_headers' )
+						data
 					} );
 				} )
 				.catch( ( error ) => {

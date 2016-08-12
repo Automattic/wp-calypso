@@ -69,12 +69,11 @@ describe( 'actions', () => {
 						sso_nonce: ssoNonce
 					} )
 					.reply( 200, {
-						_headers: {
-							'Content-Type': 'application/json'
-						},
 						success: true,
 						blog_details: blogDetails,
 						shared_details: sharedDetails
+					}, {
+						'Content-Type': 'application/json'
 					} );
 			} );
 
@@ -114,11 +113,10 @@ describe( 'actions', () => {
 						sso_nonce: ssoNonce
 					} )
 					.reply( 400, {
-						_headers: {
-							'Content-Type': 'application/json'
-						},
 						error: 'invalid_input',
 						message: 'sso_nonce is a required parameter for this endpoint'
+					}, {
+						'Content-Type': 'application/json'
 					} );
 			} );
 
@@ -156,10 +154,9 @@ describe( 'actions', () => {
 						sso_nonce: ssoNonce
 					} )
 					.reply( 200, {
-						_headers: {
-							'Content-Type': 'application/json'
-						},
 						sso_url: ssoUrl
+					}, {
+						'Content-Type': 'application/json'
 					} );
 			} );
 
@@ -198,11 +195,10 @@ describe( 'actions', () => {
 						sso_nonce: ssoNonce
 					} )
 					.reply( 400, {
-						_headers: {
-							'Content-Type': 'application/json'
-						},
 						error: 'invalid_input',
 						message: 'sso_nonce is a required parameter for this endpoint'
+					}, {
+						'Content-Type': 'application/json'
 					} );
 			} );
 
