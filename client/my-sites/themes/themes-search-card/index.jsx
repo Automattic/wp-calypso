@@ -112,7 +112,13 @@ const ThemesSearchCard = React.createClass( {
 			return this.renderMobile( tiers );
 		}
 
-		const tokens = this.props.search.split( ' ' );
+		const tokens = this.props.search.split( ' ' ).map( token => {
+			const [ left, right ] = token.split( ':' );
+			if ( ! right ) {
+				return left;
+			}
+			return { key: left, value: right };
+		} );
 		const taxonomies = map( taxonomiesAndTerms, ( term, tax ) => tax );
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
