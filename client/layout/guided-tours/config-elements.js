@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import {
 	chunk,
+	debounce,
 	find,
 	flatMap,
 	fromPairs,
@@ -24,6 +25,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
 import {
+	query,
 	posToCss,
 	getStepPosition,
 	getValidatedArrowPosition,
@@ -107,14 +109,37 @@ export class Step extends Component {
 
 	constructor( props, context ) {
 		super( props, context );
+		this.scrollContainer = query( props.scrollContainer )[ 0 ] || global.window;
 	}
-
 	componentWillMount() {
 		this.skipIfInvalidContext( this.props, this.context );
+		this.setStepPosition( this.props );
+	}
+	componentDidMount() {
+		global.window.addEventListener( 'resize', this.onScrollOrResize );
+		this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
 		this.skipIfInvalidContext( nextProps, nextContext );
+		this.setStepPosition( nextProps );
+		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
+	}
+
+	shouldComponentUpdate( nextProps, nextState ) {
+		return this.props !== nextProps || this.state !== nextState;
+	}
+
+	componentWillUnmount() {
+		global.window.removeEventListener( 'resize', this.onScrollOrResize );
+		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+
+	}
+
+	onScrollOrResize = debounce( () => {
+		this.setStepPosition( this.props );
+	}, 100 )
+
 	}
 
 	skipIfInvalidContext( props, context ) {
@@ -122,6 +147,13 @@ export class Step extends Component {
 		if ( when && ! context.isValid( when ) ) {
 			this.context.next( this.tour, next ); //TODO(ehg): use future branching code get next step
 		}
+	}
+
+	setStepPosition( props ) {
+		const { placement, target } = props;
+		const stepPos = getStepPosition( { placement, targetSlug: target } );
+		const stepCoords = posToCss( stepPos );
+		this.setState( { stepPos, stepCoords } );
 	}
 
 	render() {
@@ -254,6 +286,7 @@ export class Continue extends Component {
 
 		if ( click && ! when && targetNode && targetNode.addEventListener ) {
 			targetNode.addEventListener( 'click', this.onContinue );
+			targetNode.addEventListener( 'touchstart', this.onContinue );
 		}
 	}
 
@@ -263,6 +296,7 @@ export class Continue extends Component {
 
 		if ( click && ! when && targetNode && targetNode.removeEventListener ) {
 			targetNode.removeEventListener( 'click', this.onContinue );
+			targetNode.removeEventListener( 'touchstart', this.onContinue );
 		}
 	}
 
