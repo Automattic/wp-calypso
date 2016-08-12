@@ -115,8 +115,7 @@ const ThemesSearchCard = React.createClass( {
 			return this.renderMobile( tiers );
 		}
 
-		const terms = getSortedFilterTerms( this.props.search );
-		console.log( this.props.search, terms );
+		const terms = this.props.search.split( ' ' );
 
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
