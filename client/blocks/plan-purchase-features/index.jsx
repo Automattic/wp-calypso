@@ -21,11 +21,15 @@ import {
 	CustomizeThemeFeature,
 	VideoAudioPostsFeature,
 	MonetizeSiteFeature,
-	CustomDomainFeature
+	CustomDomainFeature,
+	GoogleAnalyticsStatsFeature
 } from './features-list';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
-import { isPremium } from 'lib/products-values';
+import {
+	isPremium,
+	isBusiness
+} from 'lib/products-values';
 import { isEnabled } from 'config';
 import paths from 'lib/paths';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
@@ -37,11 +41,65 @@ class PlanPurchaseFeatures extends Component {
 			.isRequired
 	};
 
-	getBusinessFeatures() {
+	isCustomizeEnabled() {
+		return isEnabled( 'manage/customize' );
+	}
+
+	getCustomizeLink() {
 		const { selectedSite } = this.props;
 
+		const adminUrl = selectedSite.URL + '/wp-admin/',
+			customizerInAdmin = adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
+
+		return this.isCustomizeEnabled() ? '/customize/' + selectedSite.slug : customizerInAdmin;
+	}
+
+	getBusinessFeatures() {
+		const {
+			selectedSite,
+			sitePlans
+		} = this.props;
+
+		const plan = find( sitePlans.data, isBusiness );
+
 		return [
-			<FindNewThemeFeature selectedSite={ selectedSite } key="findNewThemeFeature" />
+			<CustomDomainFeature
+				selectedSite={ selectedSite }
+				hasDomainCredit={ plan && plan.hasDomainCredit }
+				key="customDomainFeature"
+			/>,
+			<FindNewThemeFeature
+				selectedSite={ selectedSite }
+				key="findNewThemeFeature"
+			/>,
+			<GoogleAnalyticsStatsFeature
+				selectedSite={ selectedSite }
+				key="googleAnalyticsStatsFeature"
+			/>,
+			<AdvertisingRemovedFeature
+				isBusinessPlan
+				key="advertisingRemovedFeature"
+			/>,
+			<GoogleVouchersFeature
+				selectedSite={ selectedSite }
+				key="googleVouchersFeature"
+			/>,
+			<CustomizeThemeFeature
+				customizeLink={ this.getCustomizeLink() }
+				isCustomizeEnabled={ this.isCustomizeEnabled() }
+				key="customizeThemeFeature"
+			/>,
+			<VideoAudioPostsFeature
+				paths={ paths }
+				selectedSite={ selectedSite }
+				key="videoAudioPostsFeature"
+			/>,
+			isWordadsInstantActivationEligible( selectedSite )
+				? <MonetizeSiteFeature
+					selectedSite={ selectedSite }
+					key="monetizeSiteFeature"
+				/>
+				: null
 		];
 	}
 
@@ -51,11 +109,7 @@ class PlanPurchaseFeatures extends Component {
 			sitePlans
 		} = this.props;
 
-		const plan = find( sitePlans.data, isPremium ),
-			adminUrl = selectedSite.URL + '/wp-admin/',
-			customizerInAdmin = adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href ),
-			isCustomizeEnabled = isEnabled( 'manage/customize' ),
-			customizeLink = isCustomizeEnabled ? '/customize/' + selectedSite.slug : customizerInAdmin;
+		const plan = find( sitePlans.data, isPremium );
 
 		return [
 			<CustomDomainFeature
@@ -72,8 +126,8 @@ class PlanPurchaseFeatures extends Component {
 				key="googleVouchersFeature"
 			/>,
 			<CustomizeThemeFeature
-				customizeLink={ customizeLink }
-				isCustomizeEnabled={ isCustomizeEnabled }
+				customizeLink={ this.getCustomizeLink() }
+				isCustomizeEnabled={ this.isCustomizeEnabled() }
 				key="customizeThemeFeature"
 			/>,
 			<VideoAudioPostsFeature
