@@ -1970,7 +1970,7 @@ Undocumented.prototype.unregisterDevice = function( deviceId, fn ) {
  * Requests streamlined approval to WordAds program
  *
  * @param {int}       siteId            The site ID
- * @returns {XMLHttpRequest}          The XHR instance
+ * @returns {Promise}
  */
 Undocumented.prototype.wordAdsApprove = function( siteId ) {
 	debug( '/sites/:site:/wordads/approve' );
@@ -1981,7 +1981,7 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
  * Get WordAds Status of a site.
  *
  * @param {int}       siteId            The site ID
- * @returns {XMLHttpRequest}          The XHR instance
+ * @returns {Promise}
  */
 Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
 	debug( '/sites/:site:/wordads/status' );
