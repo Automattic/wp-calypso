@@ -41,7 +41,7 @@ import Button from 'components/button';
 import { requestSites } from 'state/sites/actions';
 import { isRequestingSites } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
-import LiveChatButton from './live-chat-button';
+import HelpButton from './help-button';
 import { withoutHttp } from 'lib/url';
 
 /**
@@ -141,6 +141,7 @@ const LoggedOutForm = React.createClass( {
 				<LoggedOutFormLinkItem href={ loginUrl }>
 					{ this.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
+				<HelpButton />
 			</LoggedOutFormLinks>
 		);
 	},
@@ -412,7 +413,7 @@ const LoggedInForm = React.createClass( {
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 					{ this.translate( 'Create a new account' ) }
 				</LoggedOutFormLinkItem>
-				<LiveChatButton />
+				<HelpButton />
 			</LoggedOutFormLinks>
 		);
 	},
@@ -477,7 +478,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 					actionURL="/jetpack/connect"
 				/>
 				<LoggedOutFormLinks>
-					<LiveChatButton />
+					<HelpButton />
 				</LoggedOutFormLinks>
 			</Main>
 		);
