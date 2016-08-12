@@ -120,20 +120,21 @@ const SiteTitle = React.createClass( {
 	formFields() {
 		return (
 			<ValidationFieldset>
-				<FormLabel htmlFor="siteTitle">
+				<FormLabel className="signup-site-title__label" htmlFor="siteTitle">
 					{ this.translate( 'Choose a site title' ) }
 				</FormLabel>
 				<FormTextInput
 					autoFocus={ true }
 					autoCapitalize={ 'off' }
-					className="site-title__site-title"
+					className="signup-site-title__input"
 					type="text"
 					name="siteTitle"
+					placeholder="Give your site a title"
 					value={ this.state.form.siteTitle.value }
 					onBlur={ this.handleBlur }
 					onChange={ this.handleChangeEvent }
 				/>
-				<FormButton>Continue</FormButton>
+				<FormButton className="signup-site-title__button">Continue</FormButton>
 			</ValidationFieldset>
 		);
 	},
@@ -161,8 +162,8 @@ const SiteTitle = React.createClass( {
 
 	renderSiteTitleStep() {
 		return (
-			<div className="site-title__section-wrapper">
-				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
+			<div className="signup-site-title__section-wrapper">
+				<LoggedOutForm className="signup-site-title" onSubmit={ this.handleSubmit } noValidate>
 					{ this.formFields() }
 				</LoggedOutForm>
 				<ExampleSiteTitle/>

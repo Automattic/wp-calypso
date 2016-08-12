@@ -1,72 +1,81 @@
-.site-title__section-wrapper {
-	margin: 0 auto 2em;
-	max-width: 500px;
+.signup-site-title {
+	padding: 0;
+	position: relative;
+	border: none;
+	background: none;
+	box-shadow: none;
+	max-width: 600px;
 
-	.form-fieldset {
-		padding-right: 100px;
-		position: relative;
-
-		.form-button {
-			position: absolute;
-			right: 0;
-		}
-
-		.validation-fieldset__validation-message {
+	// Not sure what this is about...
+	.validation-fieldset__validation-message {
 			display: none;
-		}
 	}
 
-	.site-title__example-site-title {
-		box-sizing: border-box;
-		position: relative;
-		padding-top: 16px;
-		padding-right: 348px;
-		max-width: 600px;
-		margin: 30px auto 60px auto;
+	.signup-site-title__label {
+		display: none;
+	}
+
+	.signup-site-title__input {
+		padding: 14px 16px;
+	}
+
+	.signup-site-title__button {
+		position: absolute;
+			top: 7px;
+			right: 8px;
+	}
+}
+
+.example-site-title {
+	box-sizing: border-box;
+	position: relative;
+	padding-top: 16px;
+	padding-right: 348px;
+	max-width: 600px;
+	margin: 30px auto 60px auto;
+
+	p {
+		color: darken( $gray, 20% );
+		text-align: right;
+		margin-bottom: 8px;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+
+	@include breakpoint( "<660px" ) {
+		max-width: 100%;
+		padding: 16px;
+		margin: 0 auto;
 
 		p {
-			color: darken( $gray, 20% );
-			text-align: right;
-			margin-bottom: 8px;
-		}
-
-		a {
-			text-decoration: underline;
-		}
-
-		@include breakpoint( "<660px" ) {
-			max-width: 100%;
-			padding: 16px;
-			margin: 0 auto;
-
-			p {
-				text-align: center;
-			}
+			text-align: center;
 		}
 	}
+}
 
-	.site-title__example-site-title__browser {
-		pointer-events: none;
+.example-site-title__image {
+	pointer-events: none;
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 300px;
+
+	&:before {
+		display: block;
+		content: '';
 		position: absolute;
-		top: 0;
 		right: 0;
-		width: 300px;
+		bottom: 0;
+		left: 0;
+		height: 30px;
+		background: linear-gradient( to bottom, rgba( $gray-light, 0 ) 0%, rgba( $gray-light, 1 ) 100% );
+	}
 
-		&:before {
-			display: block;
-			content: '';
-			position: absolute;
-			right: 0;
-			bottom: 0;
-			left: 0;
-			height: 30px;
-			background: linear-gradient( to bottom, rgba( $gray-light, 0 ) 0%, rgba( $gray-light, 1 ) 100% );
-		}
-
-		@include breakpoint( "<660px" ) {
-			padding-top: 24px;
-			position: relative;
-			margin: 0 auto;
-		}
+	@include breakpoint( "<660px" ) {
+		padding-top: 24px;
+		position: relative;
+		margin: 0 auto;
 	}
 }
