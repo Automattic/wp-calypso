@@ -18,10 +18,12 @@ import TermSelector from 'post-editor/editor-term-selector';
 import Tags from 'post-editor/editor-tags';
 import InfoPopover from 'components/info-popover';
 import unescapeString from 'lodash/unescape';
+import Notice from 'components/notice';
+import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import { getSiteOption } from 'state/sites/selectors';
+import { getSiteOption, isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
 import { getTerm } from 'state/terms/selectors';
 
 export class EditorCategoriesTagsAccordion extends Component {
@@ -32,14 +34,31 @@ export class EditorCategoriesTagsAccordion extends Component {
 		postTerms: PropTypes.object,
 		postType: PropTypes.string,
 		defaultCategory: PropTypes.object,
+		isTermsSupported: PropTypes.bool,
+		siteSlug: PropTypes.string,
 		// passed down from TagListData
 		tags: PropTypes.array,
 		tagsHasNextPage: PropTypes.bool,
 		tagsFetchingNextPage: PropTypes.bool
 	};
 
+	renderJetpackNotice() {
+		const { translate, siteSlug } = this.props;
+		return (
+			<Notice status="is-warning" showDismiss={ false }>
+				{ translate( 'You must update Jetpack to use this feature. {{update}}Update Now{{/update}}', {
+					components: {
+						update: (
+							<a href={ addSiteFragment( '/plugins/jetpack', siteSlug ) } />
+						)
+					}
+				} ) }
+			</Notice>
+		);
+	}
+
 	renderCategories() {
-		const { translate, postType } = this.props;
+		const { translate, postType, isTermsSupported } = this.props;
 		if ( postType === 'page' ) {
 			return;
 		}
@@ -52,7 +71,10 @@ export class EditorCategoriesTagsAccordion extends Component {
 						{ translate( 'Use categories to group your posts by topic.' ) }
 					</InfoPopover>
 				</EditorDrawerLabel>
-				<TermSelector taxonomyName="category" />
+				{ isTermsSupported
+					? <TermSelector taxonomyName="category" />
+					: this.renderJetpackNotice()
+				}
 			</AccordionSection>
 		);
 	}
@@ -171,13 +193,16 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const postId = getEditorPostId( state );
 		const defaultCategoryId = getSiteOption( state, siteId, 'default_category' );
+		const isTermsSupported = false !== isJetpackMinimumVersion( state, siteId, '4.1.0' );
 
 		return {
 			defaultCategory: getTerm( state, siteId, 'category', defaultCategoryId ),
 			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
 			postType: getEditedPostValue( state, siteId, postId, 'type' ),
+			siteSlug: getSiteSlug( state, siteId ),
 			siteId,
-			postId
+			postId,
+			isTermsSupported,
 		};
 	}
 )( localize( EditorCategoriesTagsAccordion ) );
