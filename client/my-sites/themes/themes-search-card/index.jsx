@@ -15,7 +15,7 @@ import NavItem from 'components/section-nav/item';
 import { getExternalThemesUrl, trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
-import { taxonomies as taxonomiesAndTerms } from '../theme-filters';
+import { taxonomies } from '../theme-filters';
 
 const ThemesSearchCard = React.createClass( {
 	propTypes: {
@@ -119,7 +119,6 @@ const ThemesSearchCard = React.createClass( {
 			}
 			return { key: left, value: right };
 		} );
-		const taxonomies = map( taxonomiesAndTerms, ( term, tax ) => tax );
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
 				<TokenField value={ tokens }

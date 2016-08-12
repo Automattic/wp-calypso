@@ -77,13 +77,29 @@ var SuggestionsList = React.createClass( {
 		// TODO does this still apply now that it's a <ul> and not a <div>?
 		return (
 			<ul ref="list" className={ classes } tabIndex="-1">
-				{ this._renderSuggestions() }
+				{ Array.isArray( this.props.suggestions ) ? this._renderSuggestions() : this._renderKeyedSuggestions()  }
 			</ul>
 		);
 	},
 
-	_renderSuggestions: function() {
+	_renderKeyedSuggestions: function() {
+		return map( this.props.suggestions, function( values, key ) {
+			return (
+				<li
+					className={ "token-field__suggestion" }
+					key={ key }>
+					{ this.props.displayTransform( key ) }
+				</li>
+			);
+		}.bind( this )
+	);
+	},
 
+	_renderValuesSuggestionLine: function() {
+
+	},
+
+	_renderSuggestions: function() {
 		return map( this.props.suggestions, function( suggestion, index ) {
 			var match = this._computeSuggestionMatch( suggestion ),
 				classes = classNames( 'token-field__suggestion', {

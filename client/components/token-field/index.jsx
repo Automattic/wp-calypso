@@ -312,7 +312,45 @@ var TokenField = React.createClass( {
 		return preventDefault;
 	},
 
+	_getMatchingKeyedSuggestions: function() {
+		let match = this.props.saveTransform( this.state.incompleteTokenValue );
+		const suggestions = [];
+
+		if ( match.length === 0 ) {
+	//		suggestions = difference( suggestions, this.props.value );
+		} else {
+			match = match.toLocaleLowerCase();
+
+			each( this.props.suggestions, function( values, key ) {
+				const startsWithMatch = [];
+				const containsMatch = [];
+
+				each( values, function( value ) {
+					const index = value.toLocaleLowerCase().indexOf( match );
+
+					if ( this.props.value.indexOf( value ) === -1 ) {
+						if ( index === 0 ) {
+							startsWithMatch.push( value );
+						} else if ( index > 0 ) {
+							containsMatch.push( value );
+						}
+					}
+				}.bind( this ) );
+
+				if ( startsWithMatch.length || containsMatch.length ) {
+					suggestions[ key ] = startsWithMatch.concat( containsMatch );
+				}
+			}.bind( this ) );
+		}
+
+		return suggestions; // take( suggestions, this.props.maxSuggestions );
+	},
+
 	_getMatchingSuggestions: function() {
+		if ( ! Array.isArray( this.props.suggestions ) ) {
+			return this._getMatchingKeyedSuggestions();
+		}
+
 		var suggestions = this.props.suggestions,
 			match = this.props.saveTransform( this.state.incompleteTokenValue ),
 			startsWithMatch = [],
