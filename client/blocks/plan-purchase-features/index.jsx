@@ -12,7 +12,12 @@ import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
-	PLAN_BUSINESS
+	PLAN_BUSINESS,
+	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_PREMIUM,
+	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_BUSINESS_MONTHLY
 } from 'lib/plans/constants';
 import {
 	FindNewThemeFeature,
@@ -22,7 +27,8 @@ import {
 	VideoAudioPostsFeature,
 	MonetizeSiteFeature,
 	CustomDomainFeature,
-	GoogleAnalyticsStatsFeature
+	GoogleAnalyticsStatsFeature,
+	JetpackFeatures
 } from './features-list';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -33,6 +39,9 @@ import {
 import { isEnabled } from 'config';
 import paths from 'lib/paths';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import userFactory from 'lib/user';
+import analytics from 'lib/analytics';
+import utils from 'lib/site/utils';
 
 class PlanPurchaseFeatures extends Component {
 	static propTypes = {
@@ -165,6 +174,21 @@ class PlanPurchaseFeatures extends Component {
 		];
 	}
 
+	getJetpackFeatures() {
+		const {	selectedSite } = this.props;
+
+		return [
+			<JetpackFeatures
+				selectedSite={ selectedSite }
+				user={ userFactory() }
+				analytics={ analytics }
+				utils={ utils }
+				isPluginsSetupEnabled={ isEnabled( 'manage/plugins/setup' ) }
+				key="jetpackFeatures"
+			/>
+		];
+	}
+
 	getPlanPurchaseFeatures() {
 		const { plan } = this.props;
 
@@ -175,6 +199,12 @@ class PlanPurchaseFeatures extends Component {
 				return this.getPremiumFeatures();
 			case PLAN_PERSONAL:
 				return this.getPersonalFeatures();
+			case PLAN_JETPACK_FREE:
+			case PLAN_JETPACK_PREMIUM:
+			case PLAN_JETPACK_BUSINESS:
+			case PLAN_JETPACK_PREMIUM_MONTHLY:
+			case PLAN_JETPACK_BUSINESS_MONTHLY:
+				return this.getJetpackFeatures();
 			default:
 				return null;
 		}
