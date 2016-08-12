@@ -13,13 +13,13 @@ import { ROUTE_SET } from 'state/action-types';
 import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
-import GuidedToursConfig from 'layout/guided-tours/config';
+import AllTours from 'layout/guided-tours/all-tours';
 import createSelector from 'lib/create-selector';
 
 const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
 
-const relevantFeatures = map( GuidedToursConfig.meta, ( tourMeta, key ) => ( {
+const relevantFeatures = map( AllTours.meta, ( tourMeta, key ) => ( {
 	tour: key,
 	path: tourMeta.path,
 	when: tourMeta.when,

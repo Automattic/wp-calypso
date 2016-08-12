@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AllTours from 'layout/guided-tours/config';
+import AllTours from 'layout/guided-tours/all-tours';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
 import scrollTo from 'lib/scroll-to';
