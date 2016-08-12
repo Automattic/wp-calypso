@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -12,13 +13,10 @@ import AllTours from 'layout/guided-tours/config';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
+import { getActionLog } from 'state/ui/action-log/selectors';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 
 class GuidedTours extends Component {
-	constructor() {
-		super();
-	}
-
 	shouldComponentUpdate( nextProps ) {
 		return this.props.tourState !== nextProps.tourState;
 	}
@@ -59,6 +57,7 @@ class GuidedTours extends Component {
 					<AllTours
 							tourName={ tourName }
 							stepName={ stepName }
+							lastAction={ this.props.lastAction }
 							isValid={ this.props.isValid }
 							next={ this.next }
 							quit={ this.quit } />
@@ -71,6 +70,7 @@ class GuidedTours extends Component {
 export default connect( ( state ) => ( {
 	tourState: getGuidedTourState( state ),
 	isValid: ( when ) => !! when( state ),
+	lastAction: last( getActionLog( state ) ),
 } ), {
 	nextGuidedTourStep,
 	quitGuidedTour,
