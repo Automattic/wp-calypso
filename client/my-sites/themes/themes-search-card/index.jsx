@@ -115,11 +115,11 @@ const ThemesSearchCard = React.createClass( {
 			return this.renderMobile( tiers );
 		}
 
-		const terms = this.props.search.split( ' ' );
+		const tokens = this.props.search.split( ' ' );
 
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
-				<TokenField value={ terms } />
+				<TokenField value={ tokens } />
 
 				{ isPremiumThemesEnabled && ! isJetpack && <ThemesSelectDropdown
 										tier={ this.props.tier }
