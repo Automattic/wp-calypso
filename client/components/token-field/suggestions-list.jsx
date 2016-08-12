@@ -67,8 +67,13 @@ var SuggestionsList = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( 'token-field__suggestions-list', {
-			'is-expanded': this.props.isExpanded && this.props.suggestions.length > 0
+		const keyedSuggestions = ! Array.isArray( this.props.suggestions );
+		const suggestionsLength = keyedSuggestions
+			? Object.keys( this.props.suggestions ).length
+			: this.props.suggestions.length;
+
+		const classes = classNames( 'token-field__suggestions-list', {
+			'is-expanded': this.props.isExpanded && suggestionsLength > 0
 		} );
 
 		// We set `tabIndex` here because otherwise Firefox sets focus on this
@@ -77,7 +82,7 @@ var SuggestionsList = React.createClass( {
 		// TODO does this still apply now that it's a <ul> and not a <div>?
 		return (
 			<ul ref="list" className={ classes } tabIndex="-1">
-				{ Array.isArray( this.props.suggestions ) ? this._renderSuggestions() : this._renderKeyedSuggestions()  }
+				{ keyedSuggestions ? this._renderKeyedSuggestions() : this._renderSuggestions() }
 			</ul>
 		);
 	},
@@ -91,8 +96,7 @@ var SuggestionsList = React.createClass( {
 					{ this.props.displayTransform( key ) }
 				</li>
 			);
-		}.bind( this )
-	);
+		}.bind( this ) );
 	},
 
 	_renderValuesSuggestionLine: function() {

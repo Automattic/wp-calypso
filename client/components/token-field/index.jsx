@@ -314,7 +314,7 @@ var TokenField = React.createClass( {
 
 	_getMatchingKeyedSuggestions: function() {
 		let match = this.props.saveTransform( this.state.incompleteTokenValue );
-		const suggestions = [];
+		const suggestions = {};
 
 		if ( match.length === 0 ) {
 	//		suggestions = difference( suggestions, this.props.value );
