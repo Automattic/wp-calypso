@@ -281,11 +281,11 @@
 		bottom: 0;
 	text-overflow: ellipsis;
 	width: 100%;
-  transition: opacity .25s ease-in-out;
-  opacity: 0;
+	transition: opacity .25s ease-in-out;
+	opacity: 0;
 }
 .tiled-gallery-item:hover .tiled-gallery-caption {
-  opacity: 1;
+	opacity: 1;
 }
 .tiled-gallery .tiled-gallery-item-small .tiled-gallery-caption { /* Smaller captions */
 	font-size: 11px;
@@ -375,9 +375,9 @@
 
 	.foldable-card__expand .gridicon {
 		transform: rotate( -90deg );
-	    position: absolute;
-	    	top: 24px;
-     	left: 0;
+		position: absolute;
+			top: 24px;
+			left: 0;
 	}
  }
 
