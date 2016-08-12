@@ -2,22 +2,28 @@
  * @component Search
  */
 .search {
+	display: flex;
+	flex: 1 1 auto;
 	margin-bottom: 24px;
 	width: 60px;
 	height: 51px;
 	position: relative;
+	align-items: center;
 	// places search above filters
 	z-index: z-index( 'root', '.search' );
 
-	@include breakpoint( "<660px" ) {
-		width: 50px;
+	.search-component-icon-div {
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+		background-color: $white;
+		height: 100%;
 	}
 
-	.search-open__icon {
-		position: absolute;
-			top: 50%;
-		margin-top: -12px;
-		width: 60px;
+	.search-open__icon,
+	.search-close__icon {
+		flex: 0 0 auto;
+		width: 50px;
 		z-index: z-index( '.search', '.search .search-open__icon' );
 		color: $blue-wordpress;
 		cursor: pointer;
@@ -25,11 +31,6 @@
 		.accessible-focus &:focus {
 			outline: dotted 1px $blue-wordpress;
 		}
-
-		@include breakpoint( "<660px" ) {
-			width: 50px;
-		}
-
 	}
 
 	.search-open__icon:hover {
@@ -37,10 +38,6 @@
 	}
 
 	.search-close__icon {
-		position: absolute;
-			bottom: 0;
-			top: 50%;
-
 		&:not(.ltr) {
 			right: 0;
 		}
@@ -49,37 +46,9 @@
 			right: 0 #{"/*rtl:ignore*/"};
 		}
 
-		margin-top: -12px;
-		width: 60px;
-		cursor: pointer;
-		z-index: z-index( '.search', '.search .search-close__icon' );
 		color: darken( $gray, 30% );
-		display: none;
 		opacity: 0;
 		transition: opacity .2s ease-in;
-
-		.accessible-focus &:focus {
-			outline: dotted 1px $blue-wordpress;
-		}
-
-		&::before {
-			position: absolute;
-				left: 0;
-				right: 0;
-				top: 50%;
-			margin-top: -8px;
-			font-size: 16px;
-			text-align: center;
-
-			@include breakpoint( "<660px" ) {
-				font-size: 14px;
-				margin-top: -7px;
-			}
-		}
-
-		@include breakpoint( "<660px" ) {
-			width: 50px;
-		}
 	}
 }
 
@@ -87,10 +56,12 @@
 // of the container element
 .search.is-expanded-to-container {
 	margin-bottom: 0;
-	height: auto;
 	position: absolute;
-	bottom: 0;
+	display: flex;
+	height: 100%;
+	width: 50px;
 	top: 0;
+	right: 0;
 
 	&:not(.ltr) {
 		right: 0;
@@ -110,44 +81,38 @@
 		}
 	}
 
+	.search__input-fade {
+		position: relative;
+		flex: 1 1 auto;
+		display: flex;
+	}
+
 	.search__input[type="search"] {
-		height: 100%;
+		flex: 1 1 auto;
+		display: flex;
+		left: 50px;
 	}
 }
 
 .search__input[type="search"] {
+	flex: 1 1 auto;
 	display: none;
-	position: absolute;
 	z-index: z-index( '.search', '.search__input' );
 	top: 0;
-	padding: 0 50px 0 60px;
 	border: none;
 	background: $white;
-	height: 51px;
 	appearance: none;
 	box-sizing: border-box;
+	padding: 0px;
 	-webkit-appearance: none;
-
-	@include breakpoint( "<660px" ) {
-		opacity: 0;
-
-		&:not(.ltr) {
-			right: 0;
-			padding-left: 50px;
-		}
-
-		&.ltr {
-			left: 0 #{"/*rtl:ignore*/"};
-			padding-left: 50px #{"/*rtl:ignore*/"};
-		}
-	}
 
 	&::-webkit-search-cancel-button {
 		-webkit-appearance: none;
 	}
 
 	&:focus {
-		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+		box-shadow: none;
+		border: none;
 	}
 }
 
@@ -188,12 +153,19 @@
 	.search__input {
 		display: block;
 	}
+
+}
+
+.search__input-fade {
+	flex: 1 1 auto;
+	position: inherit;
+	&::before {
+		@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
+	}
 }
 
 .search .spinner {
 	display: none;
-	position: absolute;
-		top: 50%;
 
 	&:not(.ltr) {
 		left: 30px;
@@ -203,18 +175,6 @@
 		left: 30px #{"/*rtl:ignore*/"};
 	}
 
-	transform: translate( -50%, -50% );
-
-	@include breakpoint( "<660px" ) {
-
-		&:not(.ltr) {
-			left: 25px;
-		}
-
-		&.ltr {
-			left: 25px #{"/*rtl:ignore*/"};
-		}
-	}
 }
 
 .search.is-searching .search-open__icon {
@@ -222,12 +182,13 @@
 }
 
 .search.is-searching .spinner {
-	display: block;
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	height: 100%;
 	z-index: z-index( '.search', '.search.is-searching .spinner' );
-}
 
-@include breakpoint( "<660px" ) {
-	.animating.search-opening .search input {
-		opacity: 1;
+	.spinner__image {
+		width: 50px;
 	}
 }
