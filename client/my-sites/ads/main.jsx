@@ -130,7 +130,7 @@ const AdsMain = React.createClass( {
 					<Notice
 						status="is-warning rads__activate-notice"
 						showDismiss={ false }
-						text={ this.translate( 'Your site has been identified as serving mature content. Our advertisers would like to include only family-friendly sites in the programme.' ) }
+						text={ this.translate( 'Your site has been identified as serving mature content. Our advertisers would like to include only family-friendly sites in the program.' ) }
 					>
 						<NoticeAction href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/" external={ true }>
 							{ this.translate( 'Learn more' ) }
@@ -160,7 +160,7 @@ const AdsMain = React.createClass( {
 					<Notice
 						status="is-warning rads__activate-notice"
 						showDismiss={ false }
-						text={ this.translate( 'Your site cannot participate in WordAds programme.' ) }
+						text={ this.translate( 'Your site cannot participate in WordAds program.' ) }
 					>
 					</Notice>
 				}
