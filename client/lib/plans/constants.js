@@ -45,6 +45,7 @@ export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
+export const FEATURE_ADVANCED_SEO = 'advanced-seo'
 
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -148,6 +149,7 @@ export const plansList = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
+			FEATURE_ADVANCED_SEO,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING
 		],
@@ -373,6 +375,20 @@ export const featuresList = {
 			"Keep the focus on your site's brand by removing the WordPress.com footer branding."
 		),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
+		plans: [ PLAN_BUSINESS ]
+	},
+
+	[ FEATURE_ADVANCED_SEO ]: {
+		getSlug: () => FEATURE_ADVANCED_SEO,
+		getTitle: () => i18n.translate( '{{strong}}Advanced{{/strong}} Search Engine Optimization', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescription: () => i18n.translate(
+			'Craft a description of your posts and pages for search engine results, ' +
+			'and get control over how your content is shared over social media.'
+		),
 		plans: [ PLAN_BUSINESS ]
 	},
 
