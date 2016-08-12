@@ -2,20 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import find from 'lodash/find';
-import noop from 'lodash/noop';
 import debounce from 'lodash/debounce';
 
 /**
  * Internal dependencies
  */
 import Search from 'components/search';
-import Button from 'components/button';
-import SegmentedControl from 'components/segmented-control'
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import { getExternalThemesUrl, trackClick } from '../helpers';
+import SegmentedControl from 'components/segmented-control';
+import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
 
@@ -58,36 +52,17 @@ const ThemesMagicSearchCard = React.createClass( {
 		return { tier: 'all' };
 	},
 
-	getSelectedTierFormatted( tiers ) {
-		const tier = find( tiers, { value: this.props.tier } );
-		return tier ? <span>{ tier.label }</span> : null;
+	onSearchOpen() {
+		this.setState( { searchIsOpen: true } );
 	},
 
-	getTierNavItems( tiers ) {
-		return tiers.map( ( { value, label } ) => (
-			<NavItem key={ 'tier-' + value }
-				selected={ value === this.props.tier }
-				onClick={ this.props.select.bind( null, { value } ) }>
-				{ label }
-			</NavItem>
-		) );
-	},
-
-	onMore() {
-		this.trackClick( 'more' );
-	},
-
-	onSearchOpen( ) {
-		this.setState( { searchIsOpen : true } );
-	},
-
-	onSearchClose( event ) {
-		this.setState( { searchIsOpen : false } );
+	onSearchClose() {
+		this.setState( { searchIsOpen: false } );
 	},
 
 	onBlur() {
-		if ( this.state.isMobile ) {//searchString === "" ) {
-			this.setState( { searchIsOpen : false } );
+		if ( this.state.isMobile ) {
+			this.setState( { searchIsOpen: false } );
 		}
 	},
 
@@ -118,7 +93,7 @@ const ThemesMagicSearchCard = React.createClass( {
 		);
 
 		return (
-			<div className="themes__magic-search-card" data-tip-target="themes-search-card">
+			<div className="themes-magic-search-card" data-tip-target="themes-search-card">
 				{ searchField }
 				{ isPremiumThemesEnabled && ! isJetpack &&
 					<SegmentedControl
@@ -129,7 +104,6 @@ const ThemesMagicSearchCard = React.createClass( {
 				}
 			</div>
 		);
-
 	}
 } );
 
