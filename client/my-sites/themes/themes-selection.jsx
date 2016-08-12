@@ -8,12 +8,16 @@ import page from 'page';
  * Internal dependencies
  */
 import { trackClick } from './helpers';
-import ThemesSearchCard from './themes-search-card';
 import ThemesData from 'components/data/themes-list-fetcher';
 import ThemesList from 'components/themes-list';
 import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
+import config from 'config';
+
+const ThemesSearchCard = config.isEnabled( 'manage/themes/magic_search' )
+	? require( './themes-magic-search-card' )
+	: require( './themes-search-card' );
 
 const ThemesSelection = React.createClass( {
 	propTypes: {
