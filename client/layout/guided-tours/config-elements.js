@@ -17,6 +17,7 @@ import {
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
+import { tourBranching } from './config-parsing';
 import {
 	posToCss,
 	getStepPosition,
@@ -25,6 +26,7 @@ import {
 } from './positioning';
 
 const contextTypes = Object.freeze( {
+	branching: PropTypes.object.isRequired,
 	next: PropTypes.func.isRequired,
 	quit: PropTypes.func.isRequired,
 	isValid: PropTypes.func.isRequired,
@@ -44,8 +46,8 @@ export class Tour extends Component {
 	static childContextTypes = contextTypes;
 
 	getChildContext() {
-		const { next, quit, isValid, tour, tourVersion, step } = this.tourMeta;
-		return { next, quit, isValid, tour, tourVersion, step };
+		const { branching, next, quit, isValid, tour, tourVersion, step } = this.tourMeta;
+		return { branching, next, quit, isValid, tour, tourVersion, step };
 	}
 
 	constructor( props, context ) {
@@ -58,8 +60,8 @@ export class Tour extends Component {
 	}
 
 	setTourMeta( props ) {
-		const { next, quit, isValid, name, version, stepName } = props;
-		this.tourMeta = { next, quit, isValid, tour: name, tourVersion: version, step: stepName };
+		const { branching, next, quit, isValid, name, version, stepName } = props;
+		this.tourMeta = { branching, next, quit, isValid, tour: name, tourVersion: version, step: stepName };
 	}
 
 	render() {
@@ -286,6 +288,7 @@ export const makeTour = tree => {
 	const tour = ( { stepName, isValid, next, quit } ) =>
 		React.cloneElement( tree, {
 			stepName, isValid, next, quit,
+			branching: tourBranching( tree ),
 		} );
 
 	tour.propTypes = {
@@ -293,6 +296,7 @@ export const makeTour = tree => {
 		isValid: PropTypes.func.isRequired,
 		next: PropTypes.func.isRequired,
 		quit: PropTypes.func.isRequired,
+		branching: PropTypes.object.isRequired,
 	};
 	tour.meta = omit( tree.props, 'children' );
 	return tour;
