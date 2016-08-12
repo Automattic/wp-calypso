@@ -7,6 +7,11 @@ import React from 'react';
 import i18n from 'i18n-calypso';
 import includes from 'lodash/includes';
 
+/**
+ * Internal dependencies
+ */
+import { isEnabled } from 'config';
+
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
 export const PLAN_PREMIUM = 'value_bundle';
@@ -140,19 +145,26 @@ export const plansList = {
 			'Everything included with Premium, as well as live chat support,' +
 			' unlimited access to premium themes, and Google Analytics.'
 		),
-		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
-			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-			FEATURE_UNLIMITED_PREMIUM_THEMES,
-			FEATURE_ADVANCED_DESIGN,
-			FEATURE_UNLIMITED_STORAGE,
-			FEATURE_NO_ADS,
-			FEATURE_WORDADS_INSTANT,
-			FEATURE_VIDEO_UPLOADS,
-			FEATURE_ADVANCED_SEO,
-			FEATURE_GOOGLE_ANALYTICS,
-			FEATURE_NO_BRANDING
-		],
+		getFeatures: () => {
+			let features = [ // pay attention to ordering, it is used on /plan page
+				FEATURE_CUSTOM_DOMAIN,
+				FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+				FEATURE_UNLIMITED_PREMIUM_THEMES,
+				FEATURE_ADVANCED_DESIGN,
+				FEATURE_UNLIMITED_STORAGE,
+				FEATURE_NO_ADS,
+				FEATURE_WORDADS_INSTANT,
+				FEATURE_VIDEO_UPLOADS,
+				FEATURE_GOOGLE_ANALYTICS,
+				FEATURE_NO_BRANDING
+			];
+
+			if ( isEnabled( 'manage/advanced-seo' ) ) {
+				features.splice( 8, 0, FEATURE_ADVANCED_SEO );
+			}
+
+			return features;
+		},
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 
