@@ -8,7 +8,7 @@ import debounce from 'lodash/debounce';
 /**
  * Internal dependencies
  */
-import Search from 'components/search';
+import TokenField from 'components/token-field';
 import ThemesSelectDropdown from './select-dropdown';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -16,6 +16,7 @@ import NavItem from 'components/section-nav/item';
 import { getExternalThemesUrl, trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
+import { getSortedFilterTerms } from '../theme-filters';
 
 const ThemesSearchCard = React.createClass( {
 	propTypes: {
@@ -76,6 +77,7 @@ const ThemesSearchCard = React.createClass( {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 		const selectedTiers = isPremiumThemesEnabled ? tiers : [ tiers.find( tier => tier.value === 'free' ) ];
+		const terms = getSortedFilterTerms( this.props.search );
 
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
@@ -93,16 +95,7 @@ const ThemesSearchCard = React.createClass( {
 						</NavItem> }
 					</NavTabs>
 
-					<Search
-						pinned
-						fitsContainer
-						onSearch={ this.props.onSearch }
-						initialValue={ this.props.search }
-						ref="url-search"
-						placeholder={ this.translate( 'Search themes…' ) }
-						analyticsGroup="Themes"
-						delaySearch={ true }
-					/>
+					<TokenField value={ terms } />
 				</SectionNav>
 			</div>
 		);
@@ -122,16 +115,12 @@ const ThemesSearchCard = React.createClass( {
 			return this.renderMobile( tiers );
 		}
 
+		const terms = getSortedFilterTerms( this.props.search );
+		console.log( this.props.search, terms );
+
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
-				<Search
-					onSearch={ this.props.onSearch }
-					initialValue={ this.props.search }
-					ref="url-search"
-					placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
-					analyticsGroup="Themes"
-					delaySearch={ true }
-				/>
+				<TokenField value={ terms } />
 
 				{ isPremiumThemesEnabled && ! isJetpack && <ThemesSelectDropdown
 										tier={ this.props.tier }
