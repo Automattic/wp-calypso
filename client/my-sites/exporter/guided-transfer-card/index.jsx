@@ -44,7 +44,9 @@ class GuidedTransferCard extends Component {
 							{ translate( 'Guided Transfer' ) }
 						</h1>
 						<h2 className="guided-transfer-card__subtitle">
-							<span className="guided-transfer-card__price">$129</span> One-time expense
+							<span className="guided-transfer-card__price">$129</span>
+							&nbsp;
+							{ translate( 'One-time expense' ) }
 						</h2>
 					</div>
 					<div className="guided-transfer-card__options-header-button-container">
