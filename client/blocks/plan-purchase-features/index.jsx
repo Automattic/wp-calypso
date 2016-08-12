@@ -29,7 +29,8 @@ import {
 	CustomDomainFeature,
 	GoogleAnalyticsStatsFeature,
 	JetpackFeatures,
-	HapinessSupportFeature
+	HapinessSupportFeature,
+	CurrentPlanHeaderFeature
 } from './features-list';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -67,15 +68,25 @@ class PlanPurchaseFeatures extends Component {
 	getBusinessFeatures() {
 		const {
 			selectedSite,
-			sitePlans
+			sitePlans,
+			translate
 		} = this.props;
 
-		const plan = find( sitePlans.data, isBusiness );
+		const plan = find( sitePlans.data, isBusiness ),
+			hasLoadedFromServer = sitePlans.hasLoadedFromServer;
 
 		return [
 			<HapinessSupportFeature
 				selectedSite={ selectedSite }
 				key="hapinessSupportFeature"
+			/>,
+			<CurrentPlanHeaderFeature
+				selectedSite={ selectedSite }
+				key="currentPlanHeaderFeature"
+				hasLoadedFromServer={ hasLoadedFromServer }
+				title={ translate( 'Your site is on a Business plan' ) }
+				tagLine={ translate( 'Learn more about everything included with Business and take advantage of' +
+					' its professional features.' ) }
 			/>,
 			<CustomDomainFeature
 				selectedSite={ selectedSite }
