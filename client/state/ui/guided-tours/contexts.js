@@ -2,7 +2,10 @@
 
 import config from 'config';
 import { getSectionName, isPreviewShowing, getSelectedSite } from 'state/ui/selectors';
+import { isFetchingNextPage, getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+
+export const not = fn => state => ! fn( state );
 
 export const inSection = sectionName => state =>
 	getSectionName( state ) === sectionName;
@@ -32,3 +35,14 @@ export const selectedSiteIsPreviewable = state =>
 
 export const selectedSiteIsCustomizable = state =>
 	getSelectedSite( state ) && getSelectedSite( state ).is_customizable;
+
+// Themes
+export const themeSearchResultsFound = state => {
+	const params = getQueryParams( state );
+	return params && params.search && params.search.length && ! isFetchingNextPage( state ) && getThemesList( state ).length > 0;
+};
+
+export const themeFilterChosen = filter => state => {
+	const params = getQueryParams( state );
+	return params && params.tier === filter;
+};
