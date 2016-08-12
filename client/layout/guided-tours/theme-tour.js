@@ -1,6 +1,6 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { overEvery as and } from 'lodash';
+import { overEvery as and, negate as not } from 'lodash';
 
 import {
 	makeTour,
@@ -13,7 +13,6 @@ import {
 import {
 	isNewUser,
 	previewIsShowing,
-	previewIsNotShowing,
 	isEnabled,
 	inSection,
 } from 'state/ui/guided-tours/contexts';
@@ -56,7 +55,7 @@ export const ThemeTour = makeTour(
 				{ 'This is the live demo. Take a look around! Then tap here to close.' }
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue when={ previewIsNotShowing } step="pick-activate" />
+				<Continue when={ not( previewIsShowing ) } step="pick-activate" />
 			</p>
 		</Step>
 
