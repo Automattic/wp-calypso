@@ -28,6 +28,7 @@ import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
+import { getSeoTitle } from 'state/sites/selectors';
 import {
 	getSectionName,
 	getSelectedSite
@@ -240,11 +241,18 @@ export class SeoPreviewPane extends PureComponent {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const postId = getEditorPostId( state );
+	const post = getSitePost( state, site.ID, postId );
 	const isEditorShowing = 'post-editor' === getSectionName( state );
 
 	return {
-		site: site,
-		post: isEditorShowing && getSitePost( state, site.ID, postId )
+		site: {
+			...site,
+			name: getSeoTitle( state, 'frontPage', { site } )
+		},
+		post: isEditorShowing && {
+			...post,
+			title: getSeoTitle( state, 'posts', { site, post } )
+		}
 	};
 };
 

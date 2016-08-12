@@ -330,6 +330,42 @@ export const getSeoTitleFormats = compose(
 	getRawSite
 );
 
+export const getSeoTitle = ( state, type, { site, post = {} } ) => {
+	const titleFormats = getSeoTitleFormats( state, site.ID );
+
+	const titleData = {
+		frontPage: {
+			siteName: site.name,
+			tagline: site.description
+		},
+		posts: {
+			siteName: site.name,
+			tagline: site.description,
+			postTitle: post.title
+		}
+	};
+
+	const processPiece = ( piece, data ) =>
+		'string' === piece.type
+			? piece.value
+			: data[ piece.type ];
+
+	const buildTitle = ( format, data ) =>
+		format
+			.reduce( ( title, piece ) => title + processPiece( piece, data ), '' );
+
+	switch ( type ) {
+		case 'frontPage':
+			return buildTitle( titleFormats.frontPage, titleData.frontPage );
+
+		case 'posts':
+			return buildTitle( titleFormats.posts, titleData.posts );
+
+		default:
+			return 'No title';
+	}
+};
+
 /**
  * Returns a site object by its URL.
  *
