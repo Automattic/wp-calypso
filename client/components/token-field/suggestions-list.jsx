@@ -67,7 +67,8 @@ var SuggestionsList = React.createClass( {
 	},
 
 	render: function() {
-		const keyedSuggestions = ! Array.isArray( this.props.suggestions );
+		const { suggestions } = this.props;
+		const keyedSuggestions = ! Array.isArray( suggestions );
 		const suggestionsLength = keyedSuggestions
 			? Object.keys( this.props.suggestions ).length
 			: this.props.suggestions.length;
@@ -82,29 +83,30 @@ var SuggestionsList = React.createClass( {
 		// TODO does this still apply now that it's a <ul> and not a <div>?
 		return (
 			<ul ref="list" className={ classes } tabIndex="-1">
-				{ keyedSuggestions ? this._renderKeyedSuggestions() : this._renderSuggestions() }
+				{ keyedSuggestions
+					? this._renderKeyedSuggestions( suggestions )
+					: this._renderSuggestions( suggestions ) }
 			</ul>
 		);
 	},
 
-	_renderKeyedSuggestions: function() {
+	_renderKeyedSuggestions: function( suggestions ) {
 		return map( this.props.suggestions, function( values, key ) {
 			return (
 				<li
 					className={ "token-field__suggestion" }
 					key={ key }>
 					{ this.props.displayTransform( key ) }
+					<ul>
+						{ this._renderSuggestions( values ) }
+					</ul>
 				</li>
 			);
 		}.bind( this ) );
 	},
 
-	_renderValuesSuggestionLine: function() {
-
-	},
-
-	_renderSuggestions: function() {
-		return map( this.props.suggestions, function( suggestion, index ) {
+	_renderSuggestions: function( suggestions ) {
+		return map( suggestions, function( suggestion, index ) {
 			var match = this._computeSuggestionMatch( suggestion ),
 				classes = classNames( 'token-field__suggestion', {
 					'is-selected': index === this.props.selectedIndex
