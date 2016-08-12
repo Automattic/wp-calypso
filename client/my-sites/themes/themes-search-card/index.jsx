@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import find from 'lodash/find';
-import noop from 'lodash/noop';
 import debounce from 'lodash/debounce';
 
 /**
@@ -142,6 +141,7 @@ const ThemesSearchCard = React.createClass( {
 												href={ getExternalThemesUrl( this.props.site ) }
 												target="_blank"
 												onClick={ this.onMore }>
+
 												{ this.translate( 'More' ) }
 											</a> }
 			</div>
