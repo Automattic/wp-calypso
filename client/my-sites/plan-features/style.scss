@@ -333,6 +333,14 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__interval-type {
 	margin-bottom: 1.4em;
+
+	&.is-placeholder {
+		height: 36px;
+
+		@include breakpoint( "<660px" ) {
+			height: auto;
+		}
+	}
 }
 
 .plan-features__header-banner {

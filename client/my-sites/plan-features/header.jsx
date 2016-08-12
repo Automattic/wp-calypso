@@ -86,6 +86,7 @@ class PlanFeaturesHeader extends Component {
 	getIntervalTypeToggle() {
 		const {
 			translate,
+			rawPrice,
 			intervalType,
 			site,
 			isInJetpackConnect
@@ -93,6 +94,13 @@ class PlanFeaturesHeader extends Component {
 
 		if ( ! site.jetpack ) {
 			return '';
+		}
+
+		if ( ! rawPrice ) {
+			return (
+				<div className="plan-features__interval-type is-placeholder">
+				</div>
+			);
 		}
 
 		let plansUrl = '';
