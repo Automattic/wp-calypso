@@ -171,14 +171,19 @@ const SiteTitle = React.createClass( {
 		);
 	},
 	render() {
+		const headerText = this.translate( 'What is your site title?' );
+		const subHeaderText = this.translate( 'WordPress.com is the best place for your WordPress blog or website.' );
+
 		return (
 			<div>
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					headerText={ this.translate( 'What is your site title?' ) }
-					subHeaderText={ this.translate( 'WordPress.com is the best place for your WordPress blog or website.' ) }
+					headerText={ headerText }
+					fallbackHeaderText={ headerText }
+					subHeaderText={ subHeaderText }
+					fallbackSubHeaderText={ subHeaderText }
 					signupProgressStore={ this.props.signupProgressStore }
 					stepContent={ this.renderSiteTitleStep() }
 					goToNextStep={ this.skipStep }
