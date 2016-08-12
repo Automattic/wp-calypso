@@ -38,6 +38,17 @@ const AdsMain = React.createClass( {
 
 	displayName: 'AdsMain',
 
+	PropTypes: {
+		site: React.PropTypes.object.isRequired,
+		requestingWordAdsApproval: React.PropTypes.bool.isRequired,
+		requestWordAdsApproval: React.PropTypes.func.isRequired,
+		wordAdsError: React.PropTypes.string.isRequired,
+		isRequestingWordadsStatus: React.PropTypes.bool.isRequired,
+		isUnsafe: React.PropTypes.oneOf( [ false, 'mature', 'private', 'spam', 'other' ] ),
+		section: React.PropTypes.string.isRequired,
+		wordAdsSuccess: React.PropTypes.bool.isRequired
+	},
+
 	componentWillMount: function() {
 		debug( 'Mounting AdsMain React component.' );
 	},
