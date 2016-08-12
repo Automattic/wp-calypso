@@ -2,8 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import find from 'lodash/find';
-import debounce from 'lodash/debounce';
+import { debounce, find, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +15,7 @@ import NavItem from 'components/section-nav/item';
 import { getExternalThemesUrl, trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
-import { getSortedFilterTerms } from '../theme-filters';
+import { taxonomies as taxonomiesAndTerms } from '../theme-filters';
 
 const ThemesSearchCard = React.createClass( {
 	propTypes: {
@@ -77,7 +76,6 @@ const ThemesSearchCard = React.createClass( {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
 		const selectedTiers = isPremiumThemesEnabled ? tiers : [ tiers.find( tier => tier.value === 'free' ) ];
-		const terms = getSortedFilterTerms( this.props.search );
 
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
@@ -95,7 +93,6 @@ const ThemesSearchCard = React.createClass( {
 						</NavItem> }
 					</NavTabs>
 
-					<TokenField value={ terms } />
 				</SectionNav>
 			</div>
 		);
@@ -116,10 +113,11 @@ const ThemesSearchCard = React.createClass( {
 		}
 
 		const tokens = this.props.search.split( ' ' );
-
+		const taxonomies = map( taxonomiesAndTerms, ( term, tax ) => tax );
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
-				<TokenField value={ tokens } />
+				<TokenField value={ tokens }
+					suggestions={ taxonomies }/>
 
 				{ isPremiumThemesEnabled && ! isJetpack && <ThemesSelectDropdown
 										tier={ this.props.tier }
