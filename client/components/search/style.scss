@@ -167,8 +167,6 @@
 
 .search .spinner {
 	display: none;
-	position: absolute;
-		top: 50%;
 
 	&:not(.ltr) {
 		left: 30px;
@@ -178,8 +176,6 @@
 		left: 30px #{"/*rtl:ignore*/"};
 	}
 
-	transform: translate( -50%, -50% );
-
 }
 
 .search.is-searching .search-open__icon {
@@ -187,6 +183,13 @@
 }
 
 .search.is-searching .spinner {
-	display: block;
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	height: 100%;
 	z-index: z-index( '.search', '.search.is-searching .spinner' );
+
+	.spinner__image {
+		width: 50px;
+	}
 }

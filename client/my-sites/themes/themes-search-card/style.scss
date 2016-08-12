@@ -5,7 +5,7 @@
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 
 	.search {
-		flex: 1 1 auto;
+		flex: 0 1 auto;
 		margin: 0;
 	}
 
