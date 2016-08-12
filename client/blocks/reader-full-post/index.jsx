@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -13,6 +14,8 @@ import { translate } from 'i18n-calypso';
 import ReaderMain from 'components/reader-main';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
+import EmbedContainer from 'components/embed-container';
+import PostExcerpt from 'components/post-excerpt';
 import { setSection } from 'state/ui/actions';
 import smartSetState from 'lib/react-smart-set-state';
 import PostStore from 'lib/feed-post-store';
@@ -24,12 +27,18 @@ import { fetchPost } from 'lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
 import LikeButton from 'components/like-button';
+import { isDiscoverPost, isDiscoverSitePick, getSourceFollowUrl, getSiteUrl } from 'reader/discover/helper';
+import { isDailyPostChallengeOrPrompt } from 'reader/daily-post/helper';
+import DiscoverSiteAttribution from 'reader/discover/site-attribution';
+import DailyPostButton from 'reader/daily-post';
 import { shouldShowLikes } from 'reader/like-helper';
 import { shouldShowComments } from 'reader/comments/helper';
 import CommentButton from 'blocks/comment-button';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 import Comments from 'reader/comments';
 import scrollTo from 'lib/scroll-to';
+import PostExcerptLink from 'reader/post-excerpt-link';
+import { siteNameFromSiteAndPost } from 'reader/utils';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -64,9 +73,18 @@ export class FullPostView extends React.Component {
 
 	render() {
 		const { post, site } = this.props;
+		const siteName = siteNameFromSiteAndPost( site, post );
+		const classes = { 'reader-full-post': true };
+		if ( post.site_ID ) {
+			classes[ 'blog-' + post.site_ID ] = true;
+		}
+		if ( post.feed_ID ) {
+			classes[ 'feed-' + post.feed_ID ] = true;
+		}
+
 		/*eslint-disable react/no-danger*/
 		return (
-			<ReaderMain className="reader-full-post">
+			<ReaderMain className={ classNames( classes ) }>
 				<div className="reader-full-post__back-container">
 					<Button className="reader-full-post__back" borderless compact onClick={ this.handleBack }>
 						<Gridicon icon="arrow-left" /> { translate( 'Back' ) }
@@ -81,15 +99,55 @@ export class FullPostView extends React.Component {
 							followCount={ site && site.subscribers_count }
 							feedId={ post.feed_ID }
 							siteId={ post.site_ID } />
-							{ shouldShowComments( post ) && <CommentButton key="comment-button" commentCount={ post.discussion.comment_count } onClick={ this.handleCommentClick } tagName="div" /> }
-							{ shouldShowLikes( post ) && <LikeButton siteId={ post.site_ID } postId={ post.ID } fullPost={ true } tagName="div" /> }
+						{ shouldShowComments( post ) &&
+							<CommentButton key="comment-button"
+								commentCount={ post.discussion.comment_count }
+								onClick={ this.handleCommentClick }
+								tagName="div" />
+						}
+						{ shouldShowLikes( post ) &&
+							<LikeButton siteId={ post.site_ID }
+								postId={ post.ID }
+								fullPost={ true }
+								tagName="div" />
+						}
 
 					</div>
 					<div className="reader-full-post__story">
 						<ReaderFullPostHeader post={ post } />
-						<div className="reader__full-post-content" dangerouslySetInnerHTML={ { __html: this.props.post.content } } />
+						{ post.use_excerpt
+							? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
+							: <EmbedContainer>
+									<div
+										className="reader-full-post__story-content reader__full-post-content"
+										dangerouslySetInnerHTML={ { __html: post.content } } />
+								</EmbedContainer>
+						}
+
+						{ post.show_excerpt && ! isDiscoverPost( post )
+							? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
+							: null
+						}
+						{ isDiscoverSitePick( post )
+							? <DiscoverSiteAttribution
+									attribution={ post.discover_metadata.attribution }
+									siteUrl={ getSiteUrl( post ) }
+									followUrl={ getSourceFollowUrl( post ) } />
+							: null
+						}
+						{ isDailyPostChallengeOrPrompt( post )
+							? <DailyPostButton post={ post } tagName="span" />
+							: null
+						}
+					{ shouldShowComments( post )
+						? <Comments ref={ this.bindComments }
+								post={ post }
+								initialSize={ 25 }
+								pageSize={ 25 }
+								onCommentsUpdate={ this.checkForCommentAnchor } />
+						: null
+					}
 					</div>
-					{ shouldShowComments( post ) ? <Comments ref={ this.bindComments } post={ post } initialSize={ 25 } pageSize={ 25 } onCommentsUpdate={ this.checkForCommentAnchor } /> : null }
 				</div>
 			</ReaderMain>
 		);
