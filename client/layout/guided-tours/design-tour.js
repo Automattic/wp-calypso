@@ -1,6 +1,9 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { overEvery as and } from 'lodash';
+import {
+	overEvery as and,
+	negate as not,
+} from 'lodash';
 
 import {
 	makeTour,
@@ -12,7 +15,6 @@ import {
 } from 'layout/guided-tours/config-elements';
 import {
 	isNewUser,
-	not,
 	themeFilterChosen,
 	themeSearchResultsFound,
 	isEnabled,

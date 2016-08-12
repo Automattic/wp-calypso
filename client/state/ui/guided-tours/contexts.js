@@ -5,16 +5,11 @@ import { getSectionName, isPreviewShowing, getSelectedSite } from 'state/ui/sele
 import { isFetchingNextPage, getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-export const not = fn => state => ! fn( state );
-
 export const inSection = sectionName => state =>
 	getSectionName( state ) === sectionName;
 
 export const isEnabled = feature => () =>
 	config.isEnabled( feature );
-
-export const previewIsNotShowing = state =>
-	! isPreviewShowing( state );
 
 export const previewIsShowing = state =>
 	isPreviewShowing( state );
