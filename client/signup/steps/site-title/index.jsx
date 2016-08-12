@@ -29,6 +29,10 @@ const SiteTitle = React.createClass( {
 		store: React.PropTypes.object,
 	},
 
+	propTypes: {
+		goToNextStep: React.PropTypes.func.isRequired,
+	},
+
 	getInitialState() {
 		return {
 			form: {
@@ -78,9 +82,12 @@ const SiteTitle = React.createClass( {
 	},
 
 	save() {
+		this.props.setSiteTitle( this.state.form.siteTitle.value );
+
 		SignupActions.saveSignupStep( {
 			stepName: 'site-title',
-			form: this.state.form
+			form: this.state.form,
+			siteTitle: this.state.form.siteTitle.value
 		} );
 	},
 	handleChangeEvent( event ) {
@@ -88,8 +95,6 @@ const SiteTitle = React.createClass( {
 			name: event.target.name,
 			value: event.target.value
 		} );
-
-		this.props.setSiteTitle( event.target.value );
 	},
 
 	handleFormControllerError( error ) {
@@ -98,6 +103,20 @@ const SiteTitle = React.createClass( {
 		}
 	},
 
+	skipStep() {
+		this.props.setSiteTitle( '' );
+		this.state.form.siteTitle.value = '';
+
+		SignupActions.saveSignupStep( {
+			stepName: 'site-title',
+			form: this.state.form,
+			siteTitle: ''
+		} );
+
+		if ( 'function' === typeof this.props.goToNextStep ) {
+			this.props.goToNextStep();
+		}
+	},
 	formFields() {
 		return (
 			<ValidationFieldset>
@@ -110,7 +129,7 @@ const SiteTitle = React.createClass( {
 					className="site-title__site-title"
 					type="text"
 					name="siteTitle"
-					value={ this.props.siteTitle }
+					value={ this.state.form.siteTitle.value }
 					onBlur={ this.handleBlur }
 					onChange={ this.handleChangeEvent }
 				/>
@@ -160,7 +179,9 @@ const SiteTitle = React.createClass( {
 					headerText={ this.translate( 'What is your site title?' ) }
 					subHeaderText={ this.translate( 'WordPress.com is the best place for your WordPress blog or website.' ) }
 					signupProgressStore={ this.props.signupProgressStore }
-					stepContent={ this.renderSiteTitleStep() }/>
+					stepContent={ this.renderSiteTitleStep() }
+					goToNextStep={ this.skipStep }
+				/>
 			</div>
 		);
 	}

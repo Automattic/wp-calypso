@@ -30,8 +30,8 @@ function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsC
 	}
 
 	wpcom.undocumented().sitesNew( {
-		blog_name: siteTitle,
-		blog_title: siteUrl,
+		blog_name: siteUrl,
+		blog_title: siteTitle,
 		options: {
 			theme: dependencies.theme || themeSlugWithRepo,
 			vertical: dependencies.surveyQuestion || undefined
