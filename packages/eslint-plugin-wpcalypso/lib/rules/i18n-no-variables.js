@@ -98,6 +98,6 @@ var rule = module.exports = function( context ) {
 	};
 };
 
-rule.ERROR_MESSAGE = 'Variables cannot be used as translate strings';
+rule.ERROR_MESSAGE = 'Variables cannot be used in translatable strings';
 
 rule.schema = [];

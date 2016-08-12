@@ -11,13 +11,14 @@
 //------------------------------------------------------------------------------
 
 var rule = require( '../../../lib/rules/i18n-mismatched-placeholders' ),
+	config = { env: { es6: true } },  // support for string templates
 	RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-( new RuleTester() ).run( 'i18n-mismatched-placeholders', rule, {
+( new RuleTester( config ) ).run( 'i18n-mismatched-placeholders', rule, {
 	valid: [
 		{
 			code: 'translate( \'Hello %s\' );'
@@ -42,6 +43,12 @@ var rule = require( '../../../lib/rules/i18n-mismatched-placeholders' ),
 		},
 		{
 			code: 'translate( \'%s%s\', \'%s\', { count: 2 } );',
+			errors: [ {
+				message: rule.ERROR_MESSAGE
+			} ]
+		},
+		{
+			code: 'translate( `%s%s`, `%s`, { count: 2 } );',
 			errors: [ {
 				message: rule.ERROR_MESSAGE
 			} ]

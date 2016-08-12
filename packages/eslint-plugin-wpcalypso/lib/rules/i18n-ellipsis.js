@@ -10,7 +10,8 @@
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getCallee = require( '../util/get-callee' );
+var getCallee = require( '../util/get-callee' ),
+	getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -24,16 +25,13 @@ var rule = module.exports = function( context ) {
 			}
 
 			node.arguments.forEach( function( arg ) {
-				if ( 'Literal' !== arg.type || 'string' !== typeof arg.value ) {
-					return;
-				}
-
-				if ( -1 !== arg.value.indexOf( '...' ) ) {
+				let argumentString = getTextContentFromNode( arg );
+				if ( argumentString && -1 !== argumentString.indexOf( '...' ) ) {
 					context.report( {
 						node: arg,
 						message: rule.ERROR_MESSAGE,
 						fix: function( fixer ) {
-							return fixer.replaceText( arg, arg.raw.replace( /\.\.\./g, '…' ) );
+							return fixer.replaceText( arg, argumentString.replace( /\.\.\./g, '…' ) );
 						}
 					} );
 				}

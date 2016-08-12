@@ -19,7 +19,8 @@ var RX_PLACEHOLDERS = /(?:\x25\x25)|(\x25(?:(?:[1-9]\d*)\$|\((?:[^\)]+)\))?(?:\+
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getCallee = require( '../util/get-callee' );
+var getCallee = require( '../util/get-callee' ),
+	getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 function hasUnqualifiedPlaceholders( string ) {
 	var placeholders = string.match( RX_PLACEHOLDERS ) || [];
@@ -45,7 +46,7 @@ rule = module.exports = function( context ) {
 			}
 
 			// Find unqualified placeholders in singular
-			singular = node.arguments[ 0 ].value;
+			singular = getTextContentFromNode( node.arguments[ 0 ] );
 			if ( 'string' === typeof singular && hasUnqualifiedPlaceholders( singular ) ) {
 				context.report( node.arguments[ 0 ], rule.ERROR_MESSAGE );
 				return;
@@ -57,7 +58,7 @@ rule = module.exports = function( context ) {
 			}
 
 			// Find unqualified placeholders in plural
-			plural = node.arguments[ 1 ].value;
+			plural = getTextContentFromNode( node.arguments[ 1 ] );
 			if ( 'string' === typeof plural && hasUnqualifiedPlaceholders( plural ) ) {
 				context.report( node.arguments[ 1 ], rule.ERROR_MESSAGE );
 			}

@@ -18,7 +18,8 @@ var RX_INTERPOLATED_COMPONENTS = /(\{\{\/?\s*\w+\s*\/?\}\})/g;
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getCallee = require( '../util/get-callee' );
+var getCallee = require( '../util/get-callee' ),
+	getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -32,8 +33,8 @@ var rule = module.exports = function( context ) {
 			}
 
 			node.arguments.forEach( function( arg ) {
-				var value = arg.value;
-				if ( 'Literal' !== arg.type || 'string' !== typeof value ) {
+				var value = getTextContentFromNode( arg );
+				if ( 'string' !== typeof value ) {
 					return;
 				}
 

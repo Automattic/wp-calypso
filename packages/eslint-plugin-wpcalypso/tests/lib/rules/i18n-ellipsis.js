@@ -11,13 +11,14 @@
 //------------------------------------------------------------------------------
 
 var rule = require( '../../../lib/rules/i18n-ellipsis' ),
+	config = { env: { es6: true } },  // support for string templates
 	RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
-( new RuleTester() ).run( 'i18n-ellipsis', rule, {
+( new RuleTester( config ) ).run( 'i18n-ellipsis', rule, {
 	valid: [
 		{
 			code: 'this.translate( \'Hello World…\' );'
@@ -27,6 +28,9 @@ var rule = require( '../../../lib/rules/i18n-ellipsis' ),
 		},
 		{
 			code: 'translate( \'Hello World…\' );'
+		},
+		{
+			code: 'translate( `Hello World…` );'
 		},
 		{
 			code: 'translate( \'Hello World…\', \'Hello Worlds…\' );'
@@ -45,6 +49,12 @@ var rule = require( '../../../lib/rules/i18n-ellipsis' ),
 		},
 		{
 			code: 'i18n.translate( \'Hello World...\' );',
+			errors: [ {
+				message: rule.ERROR_MESSAGE
+			} ]
+		},
+		{
+			code: 'i18n.translate( `Hello World...` );',
 			errors: [ {
 				message: rule.ERROR_MESSAGE
 			} ]

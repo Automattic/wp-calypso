@@ -17,7 +17,8 @@ var RX_PLACEHOLDERS = /(?:\x25\x25)|(\x25(?:(?:[1-9]\d*)\$|\((?:[^\)]+)\))?(?:\+
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getCallee = require( '../util/get-callee' );
+var getCallee = require( '../util/get-callee' ),
+	getTextContentFromNode = require( '../util/get-text-content-from-node' );
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -36,8 +37,8 @@ var rule = module.exports = function( context ) {
 				return;
 			}
 
-			singular = node.arguments[ 0 ].value;
-			plural = node.arguments[ 1 ].value;
+			singular = getTextContentFromNode( node.arguments[ 0 ] );
+			plural = getTextContentFromNode( node.arguments[ 1 ] );
 
 			// Ignore invalid arguments
 			if ( 'string' !== typeof singular || 'string' !== typeof plural ) {

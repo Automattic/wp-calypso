@@ -1,3 +1,7 @@
+#### v1.4.1 (August 12, 2016)
+
+- Add: String template support for all rules 
+
 #### v1.4.0 (July 29, 2016)
 
 - Add: i18n-no-newlines: Warn on newlines in translatable text

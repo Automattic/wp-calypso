@@ -10,8 +10,9 @@
 // Helper Functions
 //------------------------------------------------------------------------------
 
-var getCallee = require( '../util/get-callee' );
-var getI18nStringFromNode = require( '../util/get-i18n-string-from-node' );
+var getCallee = require( '../util/get-callee' ),
+	getTextContentFromNode = require( '../util/get-text-content-from-node' );
+
 //------------------------------------------------------------------------------
 // Rule Definition
 //------------------------------------------------------------------------------
@@ -24,8 +25,8 @@ var rule = module.exports = function( context ) {
 			}
 
 			node.arguments.forEach( function( arg ) {
-				var string = getI18nStringFromNode( arg );
-
+				var string = getTextContentFromNode( arg );
+				console.log( string );
 				if ( ! string ) {
 					return;
 				}

@@ -43,9 +43,6 @@ var rule = require( '../../../lib/rules/i18n-no-variables' ),
 		},
 		{
 			code: 'translate( `Hello World` );'
-		},
-		{
-			code: 'translate( `Multi\nline\nstring\ntemplate` );'
 		}
 	],
 
