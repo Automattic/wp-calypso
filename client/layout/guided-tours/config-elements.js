@@ -22,6 +22,7 @@ import {
 /**
  * Internal dependencies
  */
+import { tracks } from 'lib/analytics';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
@@ -141,6 +142,18 @@ export class Step extends Component {
 		global.window.removeEventListener( 'resize', this.onScrollOrResize );
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 
+		const { isLastStep } = this.props;
+		const { quit, step, tour, tourVersion } = this.context;
+
+		if ( isLastStep ) {
+			tracks.recordEvent( 'calypso_guided_tours_finished', {
+				step,
+				tour,
+				tour_version: tourVersion,
+			} );
+
+			quit( { finished: isLastStep } );
+		}
 	}
 
 	onScrollOrResize = debounce( () => {
@@ -179,6 +192,13 @@ export class Step extends Component {
 		if ( when && ! context.isValid( when ) ) {
 			this.context.next( this.tour, next ); //TODO(ehg): use future branching code get next step
 		}
+	}
+
+	nextStep() {
+		const { branching, step } = this.context;
+		const stepBranching = branching[ step ];
+		const firstKey = Object.keys( stepBranching )[ 0 ];
+		return stepBranching[ firstKey ];
 	}
 
 	setStepPosition( props ) {
@@ -232,6 +252,11 @@ export class Next extends Component {
 	}
 
 	onClick = () => {
+		tracks.recordEvent( 'calypso_guided_tours_next', {
+			step: this.context.step,
+			tour_version: this.context.tourVersion,
+			tour: this.context.tour,
+		} );
 		this.context.next( this.context.tour, this.props.step );
 	}
 
@@ -258,7 +283,16 @@ export class Quit extends Component {
 	}
 
 	onClick = () => {
-		this.context.quit();
+		const { isLastStep } = this.props;
+
+		if ( ! this.props.isLastStep ) {
+			tracks.recordEvent( 'calypso_guided_tours_quit', {
+				step: this.context.step,
+				tour_version: this.context.tourVersion,
+				tour: this.context.tour,
+			} );
+		}
+		this.context.quit( { finished: isLastStep } );
 	}
 
 	render() {
@@ -324,6 +358,12 @@ export class Continue extends Component {
 	}
 
 	onContinue = () => {
+		tracks.recordEvent( 'calypso_guided_tours_next', {
+			step: this.context.step,
+			tour_version: this.context.tourVersion,
+			tour: this.context.tour,
+		} );
+
 		this.context.next( this.context.tour, this.props.step );
 	}
 
