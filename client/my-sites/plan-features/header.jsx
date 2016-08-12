@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -28,6 +29,8 @@ import PlanIcon from 'components/plans/plan-icon';
 import { plansLink } from 'lib/plans';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 
 class PlanFeaturesHeader extends Component {
 
@@ -96,7 +99,7 @@ class PlanFeaturesHeader extends Component {
 			return '';
 		}
 
-		if ( ! rawPrice ) {
+		if ( ! rawPrice || this.isPlanCurrent() ) {
 			return (
 				<div className="plan-features__interval-type is-placeholder">
 				</div>
@@ -126,6 +129,20 @@ class PlanFeaturesHeader extends Component {
 				</SegmentedControlItem>
 			</SegmentedControl>
 		);
+	}
+
+	isPlanCurrent() {
+		const {
+			planType,
+			current,
+			currentSitePlan
+		} = this.props;
+
+		if ( ! currentSitePlan ) {
+			return current;
+		}
+
+		return getPlanClass( planType ) === getPlanClass( currentSitePlan.productSlug );
 	}
 
 	getPlanFeaturesPrices() {
@@ -181,7 +198,8 @@ PlanFeaturesHeader.propTypes = {
 	translate: PropTypes.func,
 	intervalType: PropTypes.string,
 	site: PropTypes.object,
-	isInJetpackConnect: PropTypes.bool
+	isInJetpackConnect: PropTypes.bool,
+	currentSitePlan: PropTypes.object
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -191,7 +209,17 @@ PlanFeaturesHeader.defaultProps = {
 	isPlaceholder: false,
 	intervalType: 'yearly',
 	site: {},
-	isInJetpackConnect: false
+	isInJetpackConnect: false,
+	currentSitePlan: {}
 };
 
-export default localize( PlanFeaturesHeader );
+export default connect( ( state, ownProps ) => {
+	const { isInSignup } = ownProps;
+	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
+
+	return Object.assign( {},
+		ownProps,
+		{ currentSitePlan }
+	);
+} )( localize( PlanFeaturesHeader ) );
