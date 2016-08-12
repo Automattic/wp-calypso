@@ -54,7 +54,7 @@ StatesList.prototype.fetchForCountry = function( countryCode ) {
 				return;
 			}
 
-			statesList = this.parse( data );
+			statesList = data;
 
 			debug( this.key + ' for ' + countryCode + ' fetched from api successfully:', statesList );
 
@@ -127,16 +127,6 @@ StatesList.prototype.initialize = function( data ) {
 	this.data = data;
 
 	this.initialized = true;
-};
-
-/**
- * Parses the specified data retrieved from the server and extracts the list of states.
- *
- * @param {array} data - raw data
- * @return {array} a list of states
- */
-StatesList.prototype.parse = function( data ) {
-	return reject( data, '_headers' );
 };
 
 /**

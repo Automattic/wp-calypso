@@ -1,28 +1,29 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' ),
-	i18n = require( 'i18n-calypso' ),
-	pick = require( 'lodash/pick' ),
-	omit = require( 'lodash/omit' ),
-	flowRight = require( 'lodash/flowRight' ),
-	Dispatcher = require( 'dispatcher' ),
-	upgradesActionTypes = require( 'lib/upgrades/constants' ).action,
-	debug = require( 'debug' )( 'calypso:cart-data:cart-synchronizer' );
+import assign from 'lodash/assign';
+import i18n from 'i18n-calypso';
+import pick from 'lodash/pick';
+import flowRight from 'lodash/flowRight';
+import Dispatcher from 'dispatcher';
+import { action as upgradesActionTypes } from 'lib/upgrades/constants';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var Emitter = require( 'lib/mixins/emitter' );
+import Emitter from 'lib/mixins/emitter';
+
+/**
+ * Internal dependencies
+ */
+const debug = debugFactory( 'calypso:cart-data:cart-synchronizer' );
 
 function preprocessCartFromServer( cart ) {
-	var newCart = assign( {}, cart, {
+	return assign( {}, cart, {
 		client_metadata: createClientMetadata(),
 		products: castProductIDsToNumbers( cart.products )
 	} );
-
-	// Gets rid of headers returned by the API
-	return omit( newCart, '_headers' );
 }
 
 // Add a server response date so we can distinguish between carts with the
@@ -43,11 +44,11 @@ function castProductIDsToNumbers( cartItems ) {
 }
 
 function preprocessCartForServer( cart ) {
-	var newCartItems, newCart;
+	let newCart;
 
 	newCart = pick( cart, 'products', 'coupon', 'is_coupon_applied', 'currency', 'temporary', 'extra' );
 
-	newCartItems = cart.products.map( function( cartItem ) {
+	const newCartItems = cart.products.map( function( cartItem ) {
 		return pick( cartItem, 'product_id', 'meta', 'free_trial', 'volume', 'extra' );
 	} );
 	newCart = assign( {}, newCart, { products: newCartItems } );
@@ -74,14 +75,13 @@ function CartSynchronizer( siteID, wpcom ) {
 Emitter( CartSynchronizer.prototype );
 
 CartSynchronizer.prototype.handleDispatch = function( payload ) {
-	var action = payload.action,
-		step;
+	const { action } = payload;
 
 	if ( action.type !== upgradesActionTypes.TRANSACTION_STEP_SET ) {
 		return;
 	}
 
-	step = action.step;
+	const { step } = action;
 
 	if ( step.first && step.last ) {
 		return;
@@ -180,11 +180,9 @@ CartSynchronizer.prototype._getFromServer = function( callback ) {
 	} );
 };
 
-var requestCounter = 0;
+let requestCounter = 0;
 
 CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
-	var request;
-
 	if ( type === 'poll' && this._paused ) {
 		return;
 	}
@@ -193,11 +191,12 @@ CartSynchronizer.prototype._performRequest = function( type, requestFunction ) {
 		return false;
 	}
 
-	request = {
+	const request = {
 		id: requestCounter++,
 		type: type,
 		state: 'pending'
 	};
+
 	this._activeRequest = request;
 
 	debug( request.id + ': starting ' + request.type );
