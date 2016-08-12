@@ -3,3 +3,10 @@
 	flex-flow: row wrap;
 	justify-content: space-around;
 }
+
+.plan-purchase-features .purchase-detail {
+	background-color: $white;
+	border-radius: 0;
+	flex: 0 48%;
+	align-self: flex-start;
+}
