@@ -27,6 +27,9 @@ function PlanPurchaseFeaturesExample() {
 			
 			<h2>Premium Plan</h2>
 			<PlanPurchaseFeatures plan={ PLAN_PREMIUM } />
+			
+			<h2>Personal Plan</h2>
+			<PlanPurchaseFeatures plan={ PLAN_PERSONAL } />
 		</div>
 	);
 }

@@ -144,6 +144,27 @@ class PlanPurchaseFeatures extends Component {
 		];
 	}
 
+	getPersonalFeatures() {
+		const {
+			selectedSite,
+			sitePlans
+		} = this.props;
+
+		const plan = find( sitePlans.data, isPremium );
+
+		return [
+			<CustomDomainFeature
+				selectedSite={ selectedSite }
+				hasDomainCredit={ plan && plan.hasDomainCredit }
+				key="customDomainFeature"
+			/>,
+			<AdvertisingRemovedFeature
+				isBusinessPlan={ false }
+				key="advertisingRemovedFeature"
+			/>
+		];
+	}
+
 	getPlanPurchaseFeatures() {
 		const { plan } = this.props;
 
@@ -152,6 +173,8 @@ class PlanPurchaseFeatures extends Component {
 				return this.getBusinessFeatures();
 			case PLAN_PREMIUM:
 				return this.getPremiumFeatures();
+			case PLAN_PERSONAL:
+				return this.getPersonalFeatures();
 			default:
 				return null;
 		}
