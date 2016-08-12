@@ -58,15 +58,6 @@ module.exports = {
 		},
 		defaultVariation: 'hideThemePreview',
 	},
-	firstView: {
-		datestamp: '20160726',
-		variations: {
-			disabled: 60,
-			enabled: 40,
-		},
-		defaultVariation: 'disabled',
-		allowExistingUsers: false,
-	},
 	readerSearchSuggestions: {
 		datestamp: '20160804',
 		variations: {
