@@ -11,7 +11,7 @@ import debounce from 'lodash/debounce';
  */
 import Search from 'components/search';
 import Button from 'components/button';
-import ThemesSelectButtons from './select-buttons';
+import SegmentedControl from 'components/segmented-control'
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
@@ -121,8 +121,8 @@ const ThemesMagicSearchCard = React.createClass( {
 			<div className="themes__magic-search-card" data-tip-target="themes-search-card">
 				{ searchField }
 				{ isPremiumThemesEnabled && ! isJetpack &&
-					<ThemesSelectButtons
-						tier={ this.props.tier }
+					<SegmentedControl
+						initialSelected={ this.props.tier }
 						options={ tiers }
 						onSelect={ this.props.select }
 					/>
