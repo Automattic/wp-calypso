@@ -22,6 +22,7 @@ The `value` property is handled in a manner similar to controlled form component
 
 	  ```javascript
 	  {
+			key: '(string) An optional key for the token, displayed next to the value.',
 	    value: '(string) The value of the token.',
 	    status: "(string) One of 'error', 'validating', or 'success'. Applies styles to token."
 	    tooltip: '(string) If not falsey, will add a tooltip to the token.',

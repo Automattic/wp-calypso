@@ -148,12 +148,14 @@ var TokenField = React.createClass( {
 	},
 
 	_renderToken: function( token ) {
+		const key = this._getTokenKey( token );
 		const value = this._getTokenValue( token );
 		const status = token.status ? token.status : undefined;
 
 		return (
 			<Token
 				key={ 'token-' + value }
+				tokenKey={ key }
 				value={ value }
 				status={ status }
 				tooltip={ token.tooltip }
@@ -491,6 +493,14 @@ var TokenField = React.createClass( {
 		return some( this.props.value, ( item ) => {
 			return this._getTokenValue( token ) === this._getTokenValue( item );
 		} );
+	},
+
+	_getTokenKey( token ) {
+		if ( 'object' === typeof token ) {
+			return token.key;
+		}
+
+		return '';
 	},
 
 	_getTokenValue( token ) {
