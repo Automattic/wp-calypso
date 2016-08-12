@@ -293,7 +293,7 @@ const Search = React.createClass( {
 			<div className={ searchClass } role="search">
 				<Spinner />
 				<div
-					className="search-div"
+					className="search-component-icon-div"
 					ref="openIcon"
 					onTouchTap={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
@@ -334,14 +334,15 @@ const Search = React.createClass( {
 	closeButton: function() {
 		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
-				<span
+				<div
+					className='search-component-icon-div'
 					onTouchTap={ this.closeSearch }
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
 					<Gridicon icon="cross" className={ 'search-close__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
-				</span>
+				</div>
 			);
 		}
 
