@@ -137,7 +137,7 @@ MediaActions.add = function( siteId, files ) {
 				URL: fileUrl,
 				guid: fileUrl,
 				file: fileName,
-				title: path.basename( fileName ),
+				title: file.title || path.basename( fileName ),
 				extension: MediaUtils.getFileExtension( file.fileName || fileContents ),
 				mime_type: MediaUtils.getMimeType( file.fileName || fileContents ),
 				// Size is not an API media property, though can be useful for
@@ -172,7 +172,8 @@ MediaActions.add = function( siteId, files ) {
 			//if there's no parent_id, but the file object is wrapping a Blob
 			//(contains fileContents, fileName etc) still wrap it in a new object
 			file = {
-				file: file
+				file: file,
+				title: file.title
 			};
 		}
 
