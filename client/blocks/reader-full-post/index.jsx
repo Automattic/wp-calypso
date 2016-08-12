@@ -81,8 +81,8 @@ export class FullPostView extends React.Component {
 							followCount={ site && site.subscribers_count }
 							feedId={ post.feed_ID }
 							siteId={ post.site_ID } />
-							{ shouldShowLikes( post ) && <LikeButton siteId={ post.site_ID } postId={ post.ID } fullPost={ true } tagName="div" /> }
 							{ shouldShowComments( post ) && <CommentButton key="comment-button" commentCount={ post.discussion.comment_count } onClick={ this.handleCommentClick } tagName="div" /> }
+							{ shouldShowLikes( post ) && <LikeButton siteId={ post.site_ID } postId={ post.ID } fullPost={ true } tagName="div" /> }
 
 					</div>
 					<div className="reader-full-post__story">

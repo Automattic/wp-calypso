@@ -125,17 +125,19 @@
 	@include breakpoint( "<660px" ) {
 		position: fixed;
 			top: 9px;
-			right: 100px;
+			right: 20px;
 		z-index: z-index( '.masterbar', '.reader-profile' );
 	}
 }
 
 .reader-full-post__sidebar .comment-button {
+	margin-right: 18px;
 	@include breakpoint( "<660px" ) {
 		position: fixed;
 			top: 10px;
-			right: 20px;
+			right: 100px;
 		z-index: z-index( '.masterbar', '.reader-profile' );
+		margin-right: 0;
 	}
 	.comment-button__label-status {
 		display: none;
