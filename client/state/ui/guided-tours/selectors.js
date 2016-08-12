@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, difference, find, map, noop, startsWith, uniq } from 'lodash';
+import { get, difference, find, map, noop, sortBy, startsWith, uniq } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -19,11 +19,16 @@ import createSelector from 'lib/create-selector';
 const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
 
-const relevantFeatures = map( AllTours.meta, ( tourMeta, key ) => ( {
-	tour: key,
-	path: tourMeta.path,
-	when: tourMeta.when,
-} ) );
+const sortByPathSpecificity = xs => sortBy( xs,
+	( { path } ) => 0 - path.split( '/' ).filter( Boolean ).length );
+
+export const relevantFeatures = sortByPathSpecificity(
+	map( AllTours.meta, ( tourMeta, key ) => ( {
+		tour: key,
+		path: tourMeta.path,
+		context: tourMeta.context
+	} ) )
+);
 
 /*
  * Returns a collection of tour names. These tours are selected if the user has

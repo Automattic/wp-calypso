@@ -11,6 +11,7 @@ import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'selectors', () => {
+	let relevantFeatures;
 	let getGuidedTourState;
 	let findEligibleTour;
 
@@ -22,8 +23,17 @@ describe( 'selectors', () => {
 				'state/ui/guided-tours/test/fixtures/config' );
 
 		const selectors = require( '../selectors' );
+		relevantFeatures = selectors.relevantFeatures;
 		getGuidedTourState = selectors.getGuidedTourState;
 		findEligibleTour = selectors.findEligibleTour;
+	} );
+
+	describe( '#relevantFeatures', () => {
+		it( 'should be sorted by path specificity', () => {
+			const keys = relevantFeatures.map( x => x.tour );
+
+			expect( keys ).to.eql( [ 'test', 'themes', 'main' ] );
+		} );
 	} );
 
 	describe( '#getGuidedTourState()', () => {
@@ -46,6 +56,7 @@ describe( 'selectors', () => {
 
 			expect( tourState ).to.deep.equal( { shouldShow: false } );
 		} );
+
 	} );
 	describe( '#findEligibleTour()', () => {
 		const makeState = ( {
