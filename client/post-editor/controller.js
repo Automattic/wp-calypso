@@ -25,7 +25,6 @@ import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
 import wpcom from 'lib/wp';
-import { startEditingPostCopy } from 'post-editor/editor-copy-post';
 
 function getPostID( context ) {
 	if ( ! context.params.post || 'new' === context.params.post ) {
@@ -139,6 +138,7 @@ module.exports = {
 	post: function( context ) {
 		const postType = determinePostType( context );
 		const postID = getPostID( context );
+		const copyId = context.query.copy || false;
 
 		function startEditing( siteId ) {
 			const isCopy = context.query.copy ? true : false;
@@ -158,12 +158,12 @@ module.exports = {
 			// We have everything we need to start loading the post for editing,
 			// so kick it off here to minimize time spent waiting for it to load
 			// in the view components
-			if ( postID && ! isCopy ) {
+			if ( postID && ! copyId ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingExisting( siteId, postID );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
-			} else if ( isCopy ) {
-				startEditingPostCopy( siteId, context.query.copy );
+			} else if ( copyId ) {
+				startEditingPostCopy( siteId, copyId );
 				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			} else {
 				let postOptions = { type: postType };
@@ -237,28 +237,6 @@ module.exports = {
 		const redirectWithParams = [ redirectPath, queryString ].join( '?' );
 
 		page.redirect( redirectWithParams );
-		return false;
-	},
-
-	copyPost: function( context, next ) {
-		if ( ! context.query.copy ) {
-			// not copyPost, early return
-			return next();
-		}
-
-		const postId = getPostID( context );
-
-		function startEditingOnSiteSelected() {
-			const siteId = getSelectedSiteId( context.store.getState() );
-			if ( siteId ) {
-				startEditingPostCopy( context, siteId, postId );
-			} else {
-				sites.once( 'change', startEditingOnSiteSelected );
-			}
-		}
-
-		startEditingOnSiteSelected();
-		renderEditor( context, 'post' );
 		return false;
 	},
 
