@@ -41,7 +41,7 @@ const jetpackConnectFirstStep = ( context, type ) => {
 
 	userModule.fetch();
 
-	context.store.dispatch( setSection( 'jetpackConnect', {
+	context.store.dispatch( setSection( { name: 'jetpackConnect' }, {
 		hasSidebar: false
 	} ) );
 
@@ -132,7 +132,7 @@ export default {
 			analyticsPageTitle = 'Jetpack Authorize';
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		context.store.dispatch( setSection( 'jetpackConnect', {
+		context.store.dispatch( setSection( { name: 'jetpack-connect' }, {
 			hasSidebar: false
 		} ) );
 
@@ -156,7 +156,7 @@ export default {
 			analyticsPageTitle = 'Jetpack SSO';
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		context.store.dispatch( setSection( 'jetpackConnect', {
+		context.store.dispatch( setSection( { name: 'jetpackConnect' }, {
 			hasSidebar: false
 		} ) );
 
