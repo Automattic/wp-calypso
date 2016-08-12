@@ -79,8 +79,8 @@ export const DesignTour = makeTour(
 
 		<Step name="customize"
 			target=".current-theme__customize"
-			placement="below"
-			arrow="top-left"
+			placement="beside"
+			arrow="right-middle"
 			when={ and( selectedSiteIsCustomizable, not( inSection( 'customize' ) ) ) }
 		>
 			<p className="guided-tours__step-text">
