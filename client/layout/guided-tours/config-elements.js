@@ -7,10 +7,14 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import {
+	chunk,
 	find,
+	flatMap,
+	fromPairs,
 	mapValues,
 	omit,
 	property,
+	zipObject,
 } from 'lodash';
 
 /**
@@ -27,12 +31,14 @@ import {
 } from './positioning';
 
 const contextTypes = Object.freeze( {
+	branching: PropTypes.object.isRequired,
 	next: PropTypes.func.isRequired,
 	quit: PropTypes.func.isRequired,
 	isValid: PropTypes.func.isRequired,
 	tour: PropTypes.string.isRequired,
 	tourVersion: PropTypes.string.isRequired,
 	step: PropTypes.string.isRequired,
+	lastAction: PropTypes.object,
 } );
 
 export class Tour extends Component {
@@ -46,8 +52,8 @@ export class Tour extends Component {
 	static childContextTypes = contextTypes;
 
 	getChildContext() {
-		const { next, quit, isValid, tour, tourVersion, step } = this.tourMeta;
-		return { next, quit, isValid, tour, tourVersion, step };
+		const { branching, next, quit, isValid, lastAction, tour, tourVersion, step } = this.tourMeta;
+		return { branching, next, quit, isValid, lastAction, tour, tourVersion, step };
 	}
 
 	constructor( props, context ) {
@@ -60,12 +66,12 @@ export class Tour extends Component {
 	}
 
 	setTourMeta( props ) {
-		const { next, quit, isValid, name, version, stepName } = props;
-		this.tourMeta = { next, quit, isValid, tour: name, tourVersion: version, step: stepName };
+		const { branching, next, quit, isValid, lastAction, name, version, stepName } = props;
+		this.tourMeta = { branching, next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
 	}
 
 	render() {
-		const { children, stepName } = this.props;
+		const { children, isValid, lastAction, stepName } = this.props;
 		const nextStep = find( children, stepComponent =>
 			stepComponent.props.name === stepName );
 		const isLastStep = nextStep === children[ children.length - 1 ];
@@ -74,7 +80,7 @@ export class Tour extends Component {
 			return null;
 		}
 
-		return React.cloneElement( nextStep, { isLastStep } );
+		return React.cloneElement( nextStep, { isLastStep, isValid, lastAction } );
 	}
 }
 
@@ -284,17 +290,50 @@ export class Link extends Component {
 }
 
 //FIXME: where do these functions belong?
+const branching = element => {
+	if ( ! element || ! element.props ) {
+		return [];
+	}
+
+	if ( element.props.step ) {
+		return [ element.type.name.toLowerCase(), element.props.step ];
+	}
+
+	return flatMap(
+		React.Children.toArray( element.props.children ),
+		c => branching( c ) || []
+	);
+};
+
+const tourBranching = tourTree => {
+	const steps = React.Children
+		.toArray( tourTree.props.children );
+
+	const stepsBranching = steps
+		.map( branching )
+		.map( xs => chunk( xs, 2 ) )
+		.map( fromPairs );
+
+	return zipObject(
+		steps.map( property( 'props.name' ) ),
+		stepsBranching
+	);
+};
+
 export const makeTour = tree => {
-	const tour = ( { stepName, isValid, next, quit } ) =>
+	const tour = ( { stepName, isValid, lastAction, next, quit } ) =>
 		React.cloneElement( tree, {
-			stepName, isValid, next, quit,
+			stepName, isValid, lastAction, next, quit,
+			branching: tourBranching( tree ),
 		} );
 
 	tour.propTypes = {
 		stepName: PropTypes.string.isRequired,
 		isValid: PropTypes.func.isRequired,
+		lastAction: PropTypes.object,
 		next: PropTypes.func.isRequired,
 		quit: PropTypes.func.isRequired,
+		branching: PropTypes.object.isRequired,
 	};
 	tour.meta = omit( tree.props, 'children' );
 	return tour;
