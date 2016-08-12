@@ -37,21 +37,32 @@ class ExportCard extends Component {
 		}
 	}
 
+	trackExportClick = ( scope = 'all' ) => {
+		analytics.tracks.recordEvent( 'calypso_export_start_button_click', { scope } );
+	}
+
+	exportAll = () => {
+		this.trackExportClick();
+		this.props.startExport();
+	}
+
+	exportSelectedItems = () => {
+		this.trackExportClick( 'selected' );
+		this.props.startExport( { exportAll: false } );
+	}
+
 	render() {
 		const {
 			translate,
-			siteId,
+			fetchStatus,
 		} = this.props;
-		const exportAll = () => this.props.startExport( siteId );
-		const exportSelectedItems = () => this.props.startExport( siteId, { exportAll: false } );
-		const fetchStatus = () => this.props.exportStatusFetch( siteId );
 
 		const exportButton = (
 			<SpinnerButton
 				className="export-card__export-button"
 				loading={ this.props.shouldShowProgress }
 				isPrimary={ true }
-				onClick={ exportAll }
+				onClick={ this.exportAll }
 				text={ translate( 'Export All' ) }
 				loadingText={ translate( 'Exporting…' ) } />
 		);
@@ -77,7 +88,7 @@ class ExportCard extends Component {
 						postType={ this.props.postType }
 						shouldShowProgress={ this.props.shouldShowProgress }
 						onSelectPostType={ this.props.setPostType }
-						onClickExport={ exportSelectedItems }
+						onClickExport={ this.exportSelectedItems }
 					/>
 				</FoldableCard>
 				{ this.props.isExporting && <Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
@@ -86,27 +97,20 @@ class ExportCard extends Component {
 	}
 }
 
-function mapStateToProps( state ) {
-	const siteId = state.ui.selectedSiteId;
+function mapStateToProps( state, { siteId } ) {
 	return {
-		siteId,
 		postType: getSelectedPostType( state ),
 		shouldShowProgress: shouldShowProgress( state, siteId ),
 		isExporting: isExporting( state, siteId ),
 	};
 }
 
-function mapDispatchToProps( dispatch ) {
+function mapDispatchToProps( dispatch, { siteId } ) {
 	return {
 		advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
-		exportStatusFetch: flowRight( dispatch, exportStatusFetch ),
 		setPostType: flowRight( dispatch, setPostType ),
-		startExport: ( siteId, options ) => {
-			analytics.tracks.recordEvent( 'calypso_export_start_button_click', {
-				scope: ( options && options.exportAll === false ) ? 'selected' : 'all'
-			} );
-			dispatch( startExport( siteId, options ) );
-		}
+		fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
+		startExport: options => dispatch( startExport( siteId, options ) ),
 	};
 }
 
