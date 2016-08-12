@@ -20,6 +20,12 @@ var suggestions = [
 	'other', 'do', 'no', 'information', 'time', 'they', 'site', 'he', 'up', 'may', 'what', 'which', 'their'
 ];
 
+var keyedSuggestions = {
+  color: [ 'black', 'blue', 'brown', 'dark', 'gray', 'green', 'light', 'orange' ],
+	feature: [ 'accessibility-ready', 'author-bio', 'blog-excerpts', 'custom-background', 'custom-colors' ],
+	layout: [ 'fixed-layout', 'fluid-layout', 'responsive-layout']
+};
+
 var TokenFields = React.createClass( {
 	displayName: 'TokenFields',
 
@@ -62,9 +68,10 @@ var TokenFields = React.createClass( {
 				</Card>
 
 				<Card>
-					<h3>Keyed TokenField</h3>
+					<h3>Keyed TokenField with Suggestions</h3>
 					<TokenField
 						isBorderless={ this.state.isBorderless }
+						suggestions={ keyedSuggestions }
 						value={ this.state.keyedTokens }
 						onChange={ this._onKeyedTokensChange } />
 				</Card>
