@@ -86,7 +86,7 @@
 		"settings/security/scan": false,
 		"support-user": true,
 		"sync-handler": true,
-		"ui/first-view": false,
+		"ui/first-view": true,
 		"upgrades/checkout": true,
 		"upgrades/credit-cards": true,
 		"upgrades/in-app-purchase": false,
