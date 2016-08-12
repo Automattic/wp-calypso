@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
 import {
 	chunk,
 	debounce,
+	defer,
 	find,
 	flatMap,
 	fromPairs,
@@ -110,11 +111,16 @@ export class Step extends Component {
 	constructor( props, context ) {
 		super( props, context );
 		this.scrollContainer = query( props.scrollContainer )[ 0 ] || global.window;
+
+		// FIXME(mcsf): works but nasty
+		this.section = this.pathToSection( location.pathname );
 	}
+
 	componentWillMount() {
 		this.skipIfInvalidContext( this.props, this.context );
 		this.setStepPosition( this.props );
 	}
+
 	componentDidMount() {
 		global.window.addEventListener( 'resize', this.onScrollOrResize );
 		this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
@@ -122,6 +128,7 @@ export class Step extends Component {
 
 	componentWillReceiveProps( nextProps, nextContext ) {
 		this.skipIfInvalidContext( nextProps, nextContext );
+		this.quitIfInvalidRoute( nextProps, nextContext );
 		this.setStepPosition( nextProps );
 		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
 	}
@@ -140,6 +147,31 @@ export class Step extends Component {
 		this.setStepPosition( this.props );
 	}, 100 )
 
+	quitIfInvalidRoute( props, context ) {
+		const { step, branching, lastAction } = context;
+		const stepBranching = branching[ step ];
+		const hasContinue = !! stepBranching.continue;
+		const isRouteSet = lastAction.type === 'ROUTE_SET';
+
+		console.log( 'lastAction.type', lastAction.type );
+		console.log( 'hasContinue', hasContinue );
+
+		if ( ! hasContinue && isRouteSet &&
+				this.isDifferentSection( lastAction.path ) ) {
+			defer( () => {
+				console.log( 'Step.quitIfInvalidRoute quitting' );
+				this.context.quit();
+			} );
+		}
+	}
+
+	isDifferentSection( path ) {
+		return this.section &&
+			this.section !== this.pathToSection( path );
+	}
+
+	pathToSection( path ) {
+		return path.split( '/' ).slice( 0, 2 ).join( '/' );
 	}
 
 	skipIfInvalidContext( props, context ) {
@@ -258,6 +290,7 @@ export class Continue extends Component {
 
 	componentDidMount() {
 		! this.props.hidden && this.addTargetListener();
+		this.quitIfInvalidRoute( this.props, this.context );
 	}
 
 	componentWillUnmount() {
@@ -272,8 +305,22 @@ export class Continue extends Component {
 		this.removeTargetListener();
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps, prevState ) {
+		this.quitIfInvalidRoute( this.props, this.context );
 		this.addTargetListener();
+	}
+
+	quitIfInvalidRoute( props, context ) {
+		console.log( 'Continue.quitIfInvalidRoute', props, context );
+		defer( () => {
+			const quit = this.context.quit;
+			const target = targetForSlug( props.target );
+			// quit if we have a target but cant find it
+			if ( props.target && ! target ) {
+				console.log( '++++++++ quiting from quitIfInvalidRoute' );
+				quit();
+			}
+		} );
 	}
 
 	onContinue = () => {
