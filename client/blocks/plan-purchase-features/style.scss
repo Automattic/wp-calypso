@@ -1,12 +1,15 @@
 .plan-purchase-features {
 	display: flex;
 	flex-flow: row wrap;
-	justify-content: space-around;
+	justify-content: space-between;
 }
 
-.plan-purchase-features .purchase-detail {
+.plan-purchase-features__item {
+	flex: 0 49%;
+	align-self: flex-start;
+}
+
+.plan-purchase-features__item .purchase-detail {
 	background-color: $white;
 	border-radius: 0;
-	flex: 0 48%;
-	align-self: flex-start;
 }
