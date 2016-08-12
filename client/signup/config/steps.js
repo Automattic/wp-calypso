@@ -77,7 +77,7 @@ module.exports = {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.addDomainItemsToCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		dependencies: [ 'theme' ],
+		dependencies: [ 'theme', 'surveyQuestion' ],
 		delayApiRequestUntilComplete: true
 	},
 
