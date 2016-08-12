@@ -62,7 +62,7 @@ var TokenFields = React.createClass( {
 				</Card>
 
 				<Card>
-					<h3>Keyed TokenField with Suggestions</h3>
+					<h3>Keyed TokenField</h3>
 					<TokenField
 						isBorderless={ this.state.isBorderless }
 						value={ this.state.keyedTokens }
