@@ -14,7 +14,7 @@ import MainComponent from './main';
 export default {
 	unsubscribe( context ) {
 		// We don't need the sidebar here.
-		context.store.dispatch( setSection( 'me', {
+		context.store.dispatch( setSection( { name: 'me' }, {
 			hasSidebar: false
 		} ) );
 

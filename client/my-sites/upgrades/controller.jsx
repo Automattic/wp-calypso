@@ -215,7 +215,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
 
-		context.store.dispatch( setSection( 'checkout-thank-you', { hasSidebar: false } ) );
+		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
 		titleActions.setTitle( i18n.translate( 'Thank You' ) );
 

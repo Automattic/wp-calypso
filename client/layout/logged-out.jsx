@@ -49,7 +49,10 @@ LayoutLoggedOut.propTypes = {
 	primary: React.PropTypes.element,
 	secondary: React.PropTypes.element,
 	tertiary: React.PropTypes.element,
-	section: React.PropTypes.object
+	section: React.PropTypes.oneOfType( [
+		React.PropTypes.bool,
+		React.PropTypes.object,
+	] )
 };
 
 export default connect(
