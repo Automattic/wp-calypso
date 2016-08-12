@@ -32,7 +32,7 @@ import {
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
-import { siteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
+import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
 
 const AdsMain = React.createClass( {
 
@@ -226,7 +226,7 @@ export default connect(
 		requestingWordAdsApproval: isRequestingWordAdsApprovalForSite( state, ownProps.site ),
 		wordAdsError: getWordAdsErrorForSite( state, ownProps.site ),
 		wordAdsSuccess: getWordAdsSuccessForSite( state, ownProps.site ),
-		isUnsafe: siteWordadsUnsafe( state, ownProps.site.ID ),
+		isUnsafe: isSiteWordadsUnsafe( state, ownProps.site.ID ),
 		isRequestingWordadsStatus: isRequestingWordadsStatus( state, ownProps.site.ID )
 	} ),
 	{ requestWordAdsApproval, dismissWordAdsError },

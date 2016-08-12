@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	siteWordadsUnsafe,
+	isSiteWordadsUnsafe,
 	isRequestingWordadsStatus
 } from '../selectors';
 
@@ -29,15 +29,15 @@ describe( 'selectors', () => {
 			}
 		}
 	};
-	describe( '#siteWordadsUnsafe()', () => {
+	describe( '#isSiteWordadsUnsafe()', () => {
 		it( 'should return status value for a given site ID', () => {
-			expect( siteWordadsUnsafe( state, 2916284 ) ).to.eql( 'mature' );
+			expect( isSiteWordadsUnsafe( state, 2916284 ) ).to.eql( 'mature' );
 		} );
 		it( 'should return false when sticker absent', () => {
-			expect( siteWordadsUnsafe( state, 77203074 ) ).to.eql( false );
+			expect( isSiteWordadsUnsafe( state, 77203074 ) ).to.eql( false );
 		} );
 		it( 'should return false when site absent', () => {
-			expect( siteWordadsUnsafe( state, 123 ) ).to.eql( false );
+			expect( isSiteWordadsUnsafe( state, 123 ) ).to.eql( false );
 		} );
 	} );
 

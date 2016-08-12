@@ -4,7 +4,7 @@
 
 import get from 'lodash/get';
 
-export function siteWordadsUnsafe( state, siteId ) {
+export function isSiteWordadsUnsafe( state, siteId ) {
 	return get( state, [ 'wordads', 'status', 'items', siteId, 'unsafe' ], false );
 }
 
