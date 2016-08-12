@@ -33,6 +33,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import QueryWordadsStatus from 'components/data/query-wordads-status';
 import { isSiteWordadsUnsafe, isRequestingWordadsStatus } from 'state/wordads/status/selectors';
+import { wordadsUnsafeValues } from 'state/wordads/status/schema';
 
 const AdsMain = React.createClass( {
 
@@ -44,7 +45,7 @@ const AdsMain = React.createClass( {
 		requestWordAdsApproval: React.PropTypes.func.isRequired,
 		wordAdsError: React.PropTypes.string.isRequired,
 		isRequestingWordadsStatus: React.PropTypes.bool.isRequired,
-		isUnsafe: React.PropTypes.oneOf( [ false, 'mature', 'private', 'spam', 'other' ] ),
+		isUnsafe: React.PropTypes.oneOf( wordadsUnsafeValues ),
 		section: React.PropTypes.string.isRequired,
 		wordAdsSuccess: React.PropTypes.bool.isRequired
 	},
