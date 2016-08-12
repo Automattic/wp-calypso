@@ -49,7 +49,7 @@ const ThemesSelection = React.createClass( {
 	prependFilterKeys() {
 		const { filter } = this.props;
 		if ( filter ) {
-			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
+			return filter.split( ',' ).map( getFilter ).join( ' ' );
 		}
 		return '';
 	},
@@ -103,6 +103,7 @@ const ThemesSelection = React.createClass( {
 
 	render() {
 		const site = this.props.selectedSite;
+		const search = [ this.prependFilterKeys(), this.props.search ].filter( Boolean ).join( ' ' );
 
 		return (
 			<div className="themes__selection">
@@ -110,7 +111,7 @@ const ThemesSelection = React.createClass( {
 					<ThemesSearchCard
 							site={ site }
 							onSearch={ this.doSearch }
-							search={ this.prependFilterKeys() + this.props.search }
+							search={ search }
 							tier={ this.props.tier }
 							select={ this.onTierSelect } />
 				</StickyPanel>
