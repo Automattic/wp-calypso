@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import PurchaseDetail from 'components/purchase-detail';
 import GoogleVoucherDetails from 'my-sites/upgrades/checkout-thank-you/google-voucher';
 import QuerySiteVouchers from 'components/data/query-site-vouchers';
+import HappinessSupport from 'components/happiness-support';
 
 export const FindNewThemeFeature = localize( ( { selectedSite, translate } ) => {
 	return (
@@ -216,3 +217,16 @@ export const JetpackFeatures = localize( ( {
 		</div>
 	);
 } );
+
+export const HapinessSupportFeature = ( { selectedSite } ) => {
+	return (
+		<div className="plan-purchase-features__item">
+			<div className="plan-purchase-features__item-content">
+				<HappinessSupport
+					isJetpack={ !! selectedSite.jetpack }
+					isPlaceholder={ false }
+				/>
+			</div>
+		</div>
+	);
+};

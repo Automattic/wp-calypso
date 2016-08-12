@@ -28,7 +28,8 @@ import {
 	MonetizeSiteFeature,
 	CustomDomainFeature,
 	GoogleAnalyticsStatsFeature,
-	JetpackFeatures
+	JetpackFeatures,
+	HapinessSupportFeature
 } from './features-list';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -72,6 +73,10 @@ class PlanPurchaseFeatures extends Component {
 		const plan = find( sitePlans.data, isBusiness );
 
 		return [
+			<HapinessSupportFeature
+				selectedSite={ selectedSite }
+				key="hapinessSupportFeature"
+			/>,
 			<CustomDomainFeature
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }

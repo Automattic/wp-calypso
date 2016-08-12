@@ -13,3 +13,18 @@
 	background-color: $white;
 	border-radius: 0;
 }
+
+.plan-purchase-features__item-content {
+	background-color: $white;
+	border-top: 1px solid lighten( $gray, 30% );
+
+	@include breakpoint( ">660px" ) {
+		border: 1px solid lighten( $gray, 30% );
+		margin: 16px auto;
+		text-align: left;
+	}
+}
+
+.plan-purchase-features__item .happiness-support {
+	padding: 32px;
+}
