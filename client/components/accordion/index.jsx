@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { noop } from 'lodash';
+import noop from 'lodash/noop';
 import classNames from 'classnames';
 
 module.exports = React.createClass( {
