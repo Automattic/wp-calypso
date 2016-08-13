@@ -50,6 +50,10 @@
 		opacity: 0;
 		transition: opacity .2s ease-in;
 	}
+
+	&.has-focus {
+		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+	}
 }
 
 // Position collapsed search-button to the right
@@ -100,6 +104,7 @@
 	z-index: z-index( '.search', '.search__input' );
 	top: 0;
 	border: none;
+	height: 100%;
 	background: $white;
 	appearance: none;
 	box-sizing: border-box;
@@ -111,7 +116,8 @@
 	}
 
 	&:focus {
-		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+		box-shadow: none;
+		border: none;
 	}
 }
 
@@ -158,6 +164,7 @@
 .search__input-fade {
 	flex: 1 1 auto;
 	position: inherit;
+	height: 51px;
 	&::before {
 		@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
 	}
