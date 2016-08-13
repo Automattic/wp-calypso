@@ -164,7 +164,6 @@
 .search__input-fade {
 	flex: 1 1 auto;
 	position: inherit;
-	height: 51px;
 	&::before {
 		@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
 	}
