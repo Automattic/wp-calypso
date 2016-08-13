@@ -178,6 +178,12 @@ function settings( state = {}, action ) {
 				showingUnblockInstructions: ! state.showingUnblockInstructions
 			} );
 		}
+
+		case PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE: {
+			return Object.assign( {}, state, {
+				enabled: true
+			} );
+		}
 	}
 
 	return state;
