@@ -333,7 +333,7 @@ export const getSeoTitleFormats = compose(
 export const getSeoTitle = ( state, type, { site, post = {} } ) => {
 	const titleFormats = getSeoTitleFormats( state, site.ID );
 
-	const processPiece = ( piece, data ) =>
+	const processPiece = ( piece = {}, data ) =>
 		'string' === piece.type
 			? piece.value
 			: get( data, piece.type, '' );
@@ -357,7 +357,7 @@ export const getSeoTitle = ( state, type, { site, post = {} } ) => {
 			} );
 
 		default:
-			return 'No title';
+			return post.title || site.name;
 	}
 };
 
