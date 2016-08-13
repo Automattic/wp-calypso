@@ -24,13 +24,12 @@ var SegmentedControlItem = React.createClass( {
 	},
 
 	render: function() {
-		var itemClassName = classNames( {
+		const itemClassName = classNames( {
 			'segmented-control__item': true,
 			'is-selected': this.props.selected
 		} );
 
-		var linkClassName = classNames( {
-			'segmented-control__link': true,
+		const linkClassName = classNames( 'segmented-control__link', {
 			[ `item-index-${this.props.index}` ]: this.props.index != null,
 		} );
 
