@@ -1,0 +1,51 @@
+.phone-input__flag-icon {
+	display: block;
+	margin: 0 auto;
+	pointer-events: none;
+	z-index: 1;
+}
+
+.phone-input__flag-container {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	padding: 0;
+	background-color: #eaeaea;
+	border: 1px solid #cacaca;
+	border-radius: 3px 0 0 3px;
+	display: flex;
+	width: 40px;
+	cursor: pointer;
+}
+
+select.phone-input__country-select {
+	line-height: 0;
+	padding: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	background-image: none;
+
+	&:focus {
+		box-shadow: none;
+	}
+}
+
+.phone-input__flag-spinner {
+	z-index: 0;
+	position: absolute;
+	align-self: center;
+	left: 12px;
+	pointer-events: none;
+}
+
+.phone-input {
+	position: relative;
+	width: 100%;
+	input {
+		padding-left: 47px;
+	}
+}

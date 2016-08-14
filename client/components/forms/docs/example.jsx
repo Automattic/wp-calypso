@@ -29,6 +29,7 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	FormTextInputWithAffixes = require( 'components/forms/form-text-input-with-affixes' ),
 	FormToggle = require( 'components/forms/form-toggle' ),
+	PhoneInput = require( 'components/phone-input' ),
 	CompactFormToggle = require( 'components/forms/form-toggle/compact' );
 
 var FormFields = React.createClass( {
