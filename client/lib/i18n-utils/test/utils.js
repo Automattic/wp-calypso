@@ -8,7 +8,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { removeLocaleFromPath, addLocaleToPath, getLanguage, getLocaleFromPath } from 'lib/i18n-utils';
+
+import { removeLocaleFromPath, addLocaleToPath, getLanguage, getLocaleFromPathm, languageFileUrl } from 'lib/i18n-utils';
 
 describe( 'utils', function() {
 	describe( '#addLocaleToPath', function() {
@@ -101,6 +102,12 @@ describe( 'utils', function() {
 
 		it( 'should return a language with a three letter country code', function() {
 			expect( getLanguage( 'ast' ).langSlug ).to.equal( 'ast' );
+		} );
+	} );
+
+	describe( '#languageFileUrl', function() {
+		it( 'should return the url', function() {
+			expect( languageFileUrl( 'ja' ) ).to.equal( 'https://widgets.wp.com/languages/calypso/ja.json' );
 		} );
 	} );
 } );
