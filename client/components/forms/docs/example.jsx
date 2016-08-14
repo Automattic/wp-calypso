@@ -189,7 +189,7 @@ var FormFields = React.createClass( {
 					</FormButtonsBar>
 				</Card>
 
-				<Card>
+				<Card id="form-section">
 					<FormSectionHeading>Form Section Heading</FormSectionHeading>
 
 					<FormFieldset>
@@ -227,6 +227,11 @@ var FormFields = React.createClass( {
 							initialPhoneNumber="8772733049"
 							countriesList={ countriesList }
 							/>
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel>Form Media Phone Input</FormLabel>
+						<PhoneInput selectedCountryCode="us" countriesList={ countriesList } />
 					</FormFieldset>
 
 					<FormFieldset>
