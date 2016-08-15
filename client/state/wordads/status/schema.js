@@ -4,7 +4,6 @@ export const wordadsStatusSchema = {
 	patternProperties: {
 		'^\\d+$': {
 			type: 'object',
-			required: [ 'ID' ],
 			properties: {
 				ID: { type: 'integer' },
 				name: { type: 'string' },
