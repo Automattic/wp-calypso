@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import i18n from 'i18n-calypso';
-import includes from 'lodash/includes';
+import { compact, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -145,26 +145,19 @@ export const plansList = {
 			'Everything included with Premium, as well as live chat support,' +
 			' unlimited access to premium themes, and Google Analytics.'
 		),
-		getFeatures: () => {
-			let features = [ // pay attention to ordering, it is used on /plan page
-				FEATURE_CUSTOM_DOMAIN,
-				FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
-				FEATURE_UNLIMITED_PREMIUM_THEMES,
-				FEATURE_ADVANCED_DESIGN,
-				FEATURE_UNLIMITED_STORAGE,
-				FEATURE_NO_ADS,
-				FEATURE_WORDADS_INSTANT,
-				FEATURE_VIDEO_UPLOADS,
-				FEATURE_GOOGLE_ANALYTICS,
-				FEATURE_NO_BRANDING
-			];
-
-			if ( isEnabled( 'manage/advanced-seo' ) ) {
-				features.splice( 8, 0, FEATURE_ADVANCED_SEO );
-			}
-
-			return features;
-		},
+		getFeatures: () => compact( [ // pay attention to ordering, it is used on /plan page
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
+			FEATURE_ADVANCED_DESIGN,
+			FEATURE_UNLIMITED_STORAGE,
+			FEATURE_NO_ADS,
+			FEATURE_WORDADS_INSTANT,
+			FEATURE_VIDEO_UPLOADS,
+			isEnabled( 'manage/advanced-seo' ) && FEATURE_ADVANCED_SEO,
+			FEATURE_GOOGLE_ANALYTICS,
+			FEATURE_NO_BRANDING
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 
@@ -392,14 +385,13 @@ export const featuresList = {
 
 	[ FEATURE_ADVANCED_SEO ]: {
 		getSlug: () => FEATURE_ADVANCED_SEO,
-		getTitle: () => i18n.translate( '{{strong}}Advanced{{/strong}} Search Engine Optimization', {
+		getTitle: () => i18n.translate( '{{strong}}Advanced{{/strong}} SEO', {
 			components: {
 				strong: <strong />
 			}
 		} ),
 		getDescription: () => i18n.translate(
-			'Craft a description of your posts and pages for search engine results, ' +
-			'and get control over how your content is shared over social media.'
+			'Adds tools to enhance your site\'s content for better results on search engines and social media.'
 		),
 		plans: [ PLAN_BUSINESS ]
 	},
