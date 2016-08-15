@@ -24,15 +24,6 @@ const Feature = ( { children } ) =>
 	</li>;
 
 class GuidedTransferCard extends Component {
-	constructor() {
-		super();
-		this.purchaseGuidedTransfer = this.purchaseGuidedTransfer.bind( this );
-	}
-
-	purchaseGuidedTransfer() {
-		page( `/settings/export/guided/${this.props.siteSlug}` );
-	}
-
 	render() {
 		const { translate } = this.props;
 
@@ -51,7 +42,7 @@ class GuidedTransferCard extends Component {
 					</div>
 					<div className="guided-transfer-card__options-header-button-container">
 						<Button
-							onClick={ this.purchaseGuidedTransfer }
+							href={ `/settings/export/guided/${this.props.siteSlug}` }
 							isPrimary={ true }>
 							{ translate( 'Purchase a Guided Transfer' ) }
 						</Button>
