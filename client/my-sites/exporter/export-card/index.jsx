@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import flowRight from 'lodash/flowRight';
+import { flowRight } from 'lodash';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
