@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
+import { uniq } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -13,13 +14,13 @@ import i18n from 'i18n-calypso';
 import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import { receiveSite } from 'state/sites/actions';
-
 import {
 	setSelectedSiteId,
 	setSection,
 	setAllSitesSelected
 } from 'state/ui/actions';
-
+import { savePreference } from 'state/preferences/actions';
+import { getPreference } from 'state/preferences/selectors';
 import NavigationComponent from 'my-sites/navigation';
 import route from 'lib/route';
 import notices from 'notices';
@@ -169,7 +170,15 @@ module.exports = {
 			siteStatsStickyTabActions.saveFilterAndSlug( false, selectedSite.slug );
 			context.store.dispatch( receiveSite( selectedSite ) );
 			context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
-			sites.setRecentlySelectedSite( selectedSite.ID );
+
+			// Update recent sites preference
+			const recentSites = getPreference( context.store.getState(), 'recentSites' );
+			if ( recentSites && selectedSite.ID !== recentSites[ 0 ] ) {
+				context.store.dispatch( savePreference( 'recentSites', uniq( [
+					selectedSite.ID,
+					...recentSites
+				] ).slice( 0, 3 ) ) );
+			}
 		};
 
 		// If there's a valid site from the url path

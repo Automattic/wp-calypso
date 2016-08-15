@@ -3,12 +3,15 @@
  */
 import React from 'react';
 import ReactDom from 'react-dom';
+import { connect } from 'react-redux';
 import page from 'page';
 import classNames from 'classnames';
+import { filter, size, reduce, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import { getPreference } from 'state/preferences/selectors';
 import AllSites from 'my-sites/all-sites';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
@@ -18,14 +21,11 @@ import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
 import userModule from 'lib/user';
 import config from 'config';
-import PreferencesData from 'components/data/preferences-data';
 
 const user = userModule();
 const noop = () => {};
 
-export default React.createClass( {
-	displayName: 'SiteSelector',
-
+const SiteSelector = React.createClass( {
 	propTypes: {
 		sites: React.PropTypes.object,
 		siteBasePath: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
@@ -149,9 +149,12 @@ export default React.createClass( {
 		if ( this.state.search ) {
 			sites = this.props.sites.search( this.state.search );
 		} else {
-			sites = this.shouldShowGroups()
-				? this.props.sites.getVisibleAndNotRecent()
-				: this.props.sites.getVisible();
+			sites = this.props.sites.getVisible();
+
+			const { recentSites } = this.props;
+			if ( this.shouldShowGroups() && size( recentSites ) ) {
+				sites = filter( sites, ( { ID: siteId } ) => ! includes( recentSites, siteId ) );
+			}
 		}
 
 		if ( this.props.filter ) {
@@ -222,38 +225,48 @@ export default React.createClass( {
 	},
 
 	renderRecentSites() {
-		const sites = this.props.sites.getRecentlySelected();
-
-		if ( ! sites || this.state.search || ! this.shouldShowGroups() ) {
-			return null;
+		if ( this.state.search || ! this.shouldShowGroups() ) {
+			return;
 		}
 
-		const recentSites = sites.map( function( site ) {
-			var siteHref;
-
-			if ( this.props.siteBasePath ) {
-				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
-			}
-
-			const isSelected = this.isSelected( site );
-
-			return (
-				<Site
-					site={ site }
-					href={ siteHref }
-					key={ 'site-' + site.ID }
-					indicator={ this.props.indicator }
-					onSelect={ this.onSiteSelect.bind( this, site.slug ) }
-					isSelected={ isSelected }
-				/>
-			);
-		}, this );
-
-		if ( ! recentSites ) {
-			return null;
+		const { recentSites } = this.props;
+		if ( ! size( recentSites ) ) {
+			return;
 		}
 
-		return <div className="site-selector__recent">{ recentSites }</div>;
+		const sites = this.props.sites.get();
+		if ( ! sites ) {
+			return;
+		}
+
+		return (
+			<div className="site-selector__recent">
+				{ reduce( sites, ( memo, site ) => {
+					const recentIndex = recentSites.indexOf( site.ID );
+					if ( -1 === recentIndex ) {
+						return memo;
+					}
+
+					let siteHref;
+					if ( this.props.siteBasePath ) {
+						siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
+					}
+
+					memo.splice( recentIndex, 0, (
+						<Site
+							site={ site }
+							href={ siteHref }
+							key={ 'site-' + site.ID }
+							indicator={ this.props.indicator }
+							onSelect={ this.onSiteSelect.bind( this, site.slug ) }
+							isSelected={ this.isSelected( site ) }
+						/>
+					) );
+
+					return memo;
+				}, [] ) }
+			</div>
+		);
 	},
 
 	render() {
@@ -263,22 +276,27 @@ export default React.createClass( {
 		} );
 
 		return (
-			<PreferencesData>
-				<div className={ selectorClass }>
-					<Search
-						ref="siteSearch"
-						onSearch={ this.onSearch }
-						autoFocus={ this.props.autoFocus }
-						disabled={ ! this.props.sites.initialized }
-						onSearchClose={ this.props.onClose }
-					/>
-					<div className="site-selector__sites" ref="selector">
-						{ this.renderAllSites() }
-						{ this.renderSites() }
-					</div>
-					{ this.props.showAddNewSite && this.addNewSite() }
+			<div className={ selectorClass }>
+				<Search
+					ref="siteSearch"
+					onSearch={ this.onSearch }
+					autoFocus={ this.props.autoFocus }
+					disabled={ ! this.props.sites.initialized }
+					onSearchClose={ this.props.onClose }
+				/>
+				<div className="site-selector__sites" ref="selector">
+					{ this.renderAllSites() }
+					{ this.renderSites() }
 				</div>
-			</PreferencesData>
+				{ this.props.showAddNewSite && this.addNewSite() }
+			</div>
 		);
 	}
 } );
+
+export default connect(
+	( state ) => ( { recentSites: getPreference( state, 'recentSites' ) } ),
+	null,
+	null,
+	{ pure: false }
+)( SiteSelector );
