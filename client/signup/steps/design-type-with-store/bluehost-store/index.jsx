@@ -62,8 +62,10 @@ export const BluehostStoreStep = props => {
 
 				<div className="design-type-with-store__price-box">
 					<div className="design-type-with-store__vertical-center">
-						<span className="design-type-with-store__price-text"> { translate( 'Starting at' ) } </span>
-						<span className="design-type-with-store__price"> <b>{ price }</b>{ translate( '/mo') } </span>
+						<div className="design-type-with-store__price-left">
+							<span className="design-type-with-store__price-text"> { translate( 'Starting at' ) } </span>
+							<span className="design-type-with-store__price"> <b>{ price }</b>{ translate( '/mo') } </span>
+						</div>
 
 						<Button
 							primary
