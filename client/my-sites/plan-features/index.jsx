@@ -22,13 +22,15 @@ import { getPlanDiscountPrice } from 'state/sites/plans/selectors';
 import {
 	getPlanRawPrice,
 	getPlan,
-	getPlanSlug
+	getPlanSlug,
+	getPlanBySlug
 } from 'state/plans/selectors';
 import {
 	isPopular,
 	isMonthly,
 	getPlanFeaturesObject,
-	getPlanClass
+	getPlanClass,
+	getMonthlyPlanByYearly
 } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/plans';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -104,7 +106,8 @@ class PlanFeatures extends Component {
 				planConstantObj,
 				planName,
 				popular,
-				rawPrice
+				rawPrice,
+				relatedMonthlyPlan
 			} = properties;
 
 			return (
@@ -122,6 +125,7 @@ class PlanFeatures extends Component {
 						intervalType={ intervalType }
 						site={ site }
 						isInJetpackConnect={ isInJetpackConnect }
+						relatedMonthlyPlan={ relatedMonthlyPlan }
 					/>
 					<p className="plan-features__description">
 						{ planConstantObj.getDescription() }
@@ -172,7 +176,8 @@ class PlanFeatures extends Component {
 				planConstantObj,
 				planName,
 				popular,
-				rawPrice
+				rawPrice,
+				relatedMonthlyPlan
 			} = properties;
 			const classes = classNames( 'plan-features__table-item', 'has-border-top' );
 			return (
@@ -190,6 +195,7 @@ class PlanFeatures extends Component {
 						intervalType={ intervalType }
 						site={ site }
 						isInJetpackConnect={ isInJetpackConnect }
+						relatedMonthlyPlan={ relatedMonthlyPlan }
 					/>
 				</td>
 			);
@@ -393,6 +399,7 @@ export default connect(
 			const isLoadingSitePlans = ! isInSignup && ! sitePlans.hasLoadedFromServer;
 			const showMonthly = ! isMonthly( plan );
 			const available = isInSignup ? true : canUpgradeToPlan( plan );
+			const relatedMonthlyPlan = showMonthly ? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) ) : null;
 
 			if ( placeholder || ! planObject || isLoadingSitePlans ) {
 				isPlaceholder = true;
@@ -422,7 +429,8 @@ export default connect(
 				planName: plan,
 				planObject: planObject,
 				popular: isPopular( plan ) && ! isPaid,
-				rawPrice: getPlanRawPrice( state, planProductId, showMonthly )
+				rawPrice: getPlanRawPrice( state, planProductId, ! relatedMonthlyPlan && showMonthly ),
+				relatedMonthlyPlan: relatedMonthlyPlan
 			};
 		} );
 
