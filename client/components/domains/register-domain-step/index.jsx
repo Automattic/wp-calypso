@@ -32,13 +32,11 @@ import analyticsMixin from 'lib/mixins/analytics';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
-import cartItems from 'lib/cart-values/cart-items';
 import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError
 } from 'state/domains/suggestions/selectors';
 import support from 'lib/url/support';
-import * as upgradesActions from '../../../lib/upgrades/actions/cart';
 
 const domains = wpcom.domains();
 
@@ -541,10 +539,20 @@ const RegisterDomainStep = React.createClass( {
 				severity = 'info';
 				break;
 			case 'not_registrable':
-				if ( domain.indexOf( '.' ) ) {
-					message = this.translate( 'Sorry but %(domain)s cannot be registered on WordPress.com.', {
-						args: { domain: domain }
-					} );
+				const tldIndex = domain.lastIndexOf( '.' );
+				if ( tldIndex !== -1 ) {
+					message = this.translate(
+						'To use a domain ending with {{strong}}%(tld)s{{/strong}} on your site, ' +
+						'you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
+						{
+							args: { tld: domain.substring( tldIndex ) },
+							components: {
+								strong: <strong />,
+								a: <a target="_blank" href={ support.MAP_EXISTING_DOMAIN } />
+							}
+						}
+					);
+					severity = 'info';
 				}
 				break;
 			case 'not_available':
@@ -558,7 +566,9 @@ const RegisterDomainStep = React.createClass( {
 			case 'mappable_but_blacklisted_domain':
 				if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 					message = this.translate(
-						'Due to {{a1}}trademark policy{{/a1}}, we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. Please {{a2}}contact support{{/a2}} if you have any questions.',
+						'Due to {{a1}}trademark policy{{/a1}}, ' +
+						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
+						'Please {{a2}}contact support{{/a2}} if you have any questions.',
 						{
 							components: {
 								strong: <strong />,
@@ -581,7 +591,9 @@ const RegisterDomainStep = React.createClass( {
 				break;
 
 			case 'mappable_but_restricted_domain':
-				message = this.translate( 'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.' );
+				message = this.translate(
+					'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.'
+				);
 				break;
 
 			case 'empty_query':
