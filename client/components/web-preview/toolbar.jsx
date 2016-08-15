@@ -16,6 +16,7 @@ import {
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
+import SocialLogo from 'components/social-logo';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -104,7 +105,10 @@ export const PreviewToolbar = props => {
 					} ) }
 					onClick={ selectSeoPreview }
 				>
-					<Gridicon icon="share" />
+					<SocialLogo icon="wordpress" />
+					<SocialLogo icon="google" />
+					<SocialLogo icon="facebook" />
+					<SocialLogo icon="twitter" />
 				</button>
 			}
 			<div className="web-preview__toolbar-tray">
