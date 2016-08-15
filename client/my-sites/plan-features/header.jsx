@@ -95,10 +95,6 @@ class PlanFeaturesHeader extends Component {
 			isInJetpackConnect
 		} = this.props;
 
-		if ( ! site.jetpack ) {
-			return '';
-		}
-
 		if ( ! rawPrice || this.isPlanCurrent() ) {
 			return (
 				<div className="plan-features__interval-type is-placeholder">
