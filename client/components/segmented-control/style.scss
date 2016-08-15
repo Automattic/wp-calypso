@@ -11,7 +11,8 @@
 }
 
 .segmented-control__item {
-	flex: 1 1 auto;
+	display: flex;
+	flex: 0 1 auto;
 	cursor: pointer;
 
 	&:first-of-type {
@@ -37,7 +38,8 @@
 }
 
 .segmented-control__link {
-	display: block;
+	display: flex;
+	flex: 0 1 auto;
 	padding: 8px 12px;
 	border: solid 1px lighten( $gray, 20% );
 	border-right: none;
@@ -70,7 +72,8 @@
 
 
 .segmented-control__text {
-	display: block;
+	display: flex; 
+	flex: 0 1 auto;
 	max-width: 100%;
 	color: inherit;
 	white-space: nowrap;

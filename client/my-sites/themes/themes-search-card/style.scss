@@ -1,10 +1,11 @@
 .themes__search-card {
 	display: flex;
+	align-items: center;
 	background: white;
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 
 	.search {
-		flex: 1 1 auto;
+		flex: 0 1 auto;
 		margin: 0;
 	}
 
@@ -16,13 +17,9 @@
 		color: lighten( $gray, 10% );
 	}
 
-	.select-dropdown,
-	.more {
-		display: inline-block;
-		height: 43px;
-		margin-right: 4px;
-		flex: 0 0 auto;
-		align-self: center;
+	.segmented-control {
+		flex: 0 1 auto;
+		padding: 11px 14px 11px;
 	}
 
 	.select-dropdown {
@@ -30,11 +27,8 @@
 	}
 
 	.more {
-		line-height: 18px;
-		padding: 11px 14px 11px;
+		flex: 0 0 auto;
+		padding: 8px 14px 8px;
 	}
 
-	.select-dropdown .select-dropdown__header {
-		pointer-events: none;
-	}
 }
