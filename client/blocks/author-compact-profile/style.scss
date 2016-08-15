@@ -18,10 +18,15 @@
     	.follow-button__label {
     		color: $blue-medium;
 
+
     		@include breakpoint( "<660px" ) {
     			display: inline-block;
     		}
     	}
+
+			&.is-following .follow-button__label {
+				color: $alert-green;
+			}
 
 		&:hover {
 
@@ -49,9 +54,17 @@
     }
 }
 
-.author-compact-profile .external-link {
+.author-compact-profile .reader-author-link {
 	font-weight: 600;
-	margin-top: 15px;
+	margin-top: 18px;
+}
+
+.author-compact-profile__site-link {
+	margin-top: 4px;
+}
+
+.author-compact-profile__follow {
+	margin: 11px 0;
 }
 
 .author-compact-profile__follow-count {

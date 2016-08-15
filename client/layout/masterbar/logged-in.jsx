@@ -82,7 +82,7 @@ const MasterbarLoggedIn = React.createClass( {
 					url="/"
 					icon="reader"
 					onClick={ this.clickReader }
-					isActive={ this.isActive( 'reader' ) }
+					isActive={ this.isActive( config.isEnabled( 'reader/refresh-2016-07' ) ? 'reader-refresh' : 'reader' ) }
 					tooltip={ this.translate( 'Read the blogs and topics you follow', { textOnly: true } ) }
 					preloadSection={ () => preload( 'reader' ) }
 				>

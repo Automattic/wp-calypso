@@ -5,9 +5,11 @@ const i18n = require( 'i18n-calypso' ),
 	FeedDisplayHelper = require( 'reader/lib/feed-display-helper' );
 
 function siteNameFromSiteAndPost( site, post ) {
-	var siteName;
+	let siteName;
 
-	if ( site && site.get( 'state' ) === SiteState.COMPLETE ) {
+	if ( site && ( site.title || site.domain ) ) {
+		siteName = site.title || site.domain;
+	} else if ( site && site.get && site.get( 'state' ) === SiteState.COMPLETE ) {
 		siteName = site.get( 'title' ) || site.get( 'domain' );
 	} else if ( post ) {
 		if ( post.site_name ) {
