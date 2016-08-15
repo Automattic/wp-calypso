@@ -41,6 +41,10 @@ module.exports = React.createClass( {
 		recordEvent( 'Posts', 'Clicked Edit Post' );
 	},
 
+	copy: function() {
+		recordEvent( 'Posts', 'Clicked Copy Post' );
+	},
+
 	viewStats: function() {
 		recordEvent( 'Posts', 'Clicked View Post Stats' );
 	},
@@ -94,6 +98,14 @@ module.exports = React.createClass( {
 				target: '_blank',
 				onClick: this.view,
 				icon: 'external'
+			} );
+
+			availableControls.push( {
+				text: this.translate( 'Copy' ),
+				className: 'post-controls__copy',
+				href: `/post/${ this.props.site.slug }?copy=${ post.ID }`,
+				onClick: this.copy,
+				icon: 'aside'
 			} );
 
 			statsURL = '/stats/post/' + post.ID + '/' + this.props.site.slug;
