@@ -45,8 +45,8 @@ function minify( files ) {
 		child.once( 'exit', function() {
 			_children.splice( _children.indexOf( child ), 1 );
 			if ( _children.length === 0 ) {
-				console.log( 'Minification of all bundles completed.' );
-				console.log( 'Total build time: ' + ( new Date().getTime() - start ) + 'ms' );
+				// console.log( 'Minification of all bundles completed.' );
+				// console.log( 'Total build time: ' + ( new Date().getTime() - start ) + 'ms' );
 			}
 		} );
 	} );
@@ -59,9 +59,9 @@ webpack( webpackConfig, function( error, stats ) {
 	var files, assets;
 
 	if( error ) {
-		console.error( error.stack || error );
+		// console.error( error.stack || error );
 		if( error.details ) {
-			console.error( error.details );
+			// console.error( error.details );
 		}
 		process.on( 'exit', function() {
 			process.exit( 1 );
@@ -69,7 +69,7 @@ webpack( webpackConfig, function( error, stats ) {
 		return;
 	}
 
-	process.stdout.write( stats.toString( outputOptions ) + "\n");
+	// process.stdout.write( stats.toString( outputOptions ) + "\n");
 
 	assets = utils.getAssets( stats.toJson() );
 

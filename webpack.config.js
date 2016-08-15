@@ -5,7 +5,10 @@
  */
 var webpack = require( 'webpack' ),
 	path = require( 'path' ),
-	config = require( 'config' );
+	config = require( 'config' ),
+	Dashboard = require( 'webpack-dashboard' ),
+	DashboardPlugin = require( 'webpack-dashboard/plugin' ),
+	dashboard = new Dashboard();
 
 /**
  * Internal dependencies
@@ -118,7 +121,10 @@ jsLoader = {
 
 if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.plugins.push( new PragmaCheckPlugin() );
-	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
+	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin({
+		quiet: true
+	}) );
+	webpackConfig.plugins.push( new DashboardPlugin( dashboard.setData ) );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
 		'webpack-dev-server/client?/',
 		'webpack/hot/only-dev-server',
