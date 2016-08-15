@@ -22,7 +22,7 @@ class Tooltip extends Component {
 		}
 
 		const classes = classnames(
-			'popover__container',
+			'popover',
 			'tooltip',
 			`is-${ this.props.position }`,
 			this.props.className

@@ -92,7 +92,7 @@ const PremiumPopover = React.createClass( {
 	},
 	render() {
 		const premiumPlan = find( this.props.plans, ( plan => plan.product_slug === 'value_bundle' ) );
-		const popoverClasses = classNames( this.props.className, 'premium-popover popover__container' );
+		const popoverClasses = classNames( this.props.className, 'premium-popover popover' );
 		const context = this.refs && this.refs[ 'popover-premium-reference' ];
 
 		return (
