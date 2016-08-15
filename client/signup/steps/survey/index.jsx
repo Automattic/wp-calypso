@@ -153,14 +153,13 @@ export default React.createClass( {
 				category_id: value,
 				category_label: label
 			} );
-			SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: this.state.stepOne.value } );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_one', {
 				category_id: value,
 				category_label: label
 			} );
-			SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
 		}
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
 		this.props.goToNextStep();
 	}
 } );
