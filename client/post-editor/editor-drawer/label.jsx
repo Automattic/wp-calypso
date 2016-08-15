@@ -14,8 +14,8 @@ export default function EditorDrawerLabel( { children, labelText, helpText } ) {
 			<span className="editor-drawer__label-text">
 				{ labelText }
 				{ helpText && <InfoPopover position="top left">{ helpText }</InfoPopover> }
-				{ children }
 			</span>
+			{ children }
 		</label>
 	);
 }
