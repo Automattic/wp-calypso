@@ -146,7 +146,8 @@ class PlanFeaturesHeader extends Component {
 			currencyCode,
 			discountPrice,
 			rawPrice,
-			isPlaceholder
+			isPlaceholder,
+			relatedMonthlyPlan
 		} = this.props;
 
 		if ( isPlaceholder ) {
@@ -160,6 +161,16 @@ class PlanFeaturesHeader extends Component {
 				<span className="plan-features__header-price-group">
 					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } original />
 					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ discountPrice } discounted />
+				</span>
+			);
+		}
+
+		if ( relatedMonthlyPlan ) {
+			const originalPrice = relatedMonthlyPlan.raw_price * 12;
+			return (
+				<span className="plan-features__header-price-group">
+					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ originalPrice } original />
+					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } discounted />
 				</span>
 			);
 		}
@@ -195,7 +206,8 @@ PlanFeaturesHeader.propTypes = {
 	intervalType: PropTypes.string,
 	site: PropTypes.object,
 	isInJetpackConnect: PropTypes.bool,
-	currentSitePlan: PropTypes.object
+	currentSitePlan: PropTypes.object,
+	relatedMonthlyPlan: PropTypes.object
 };
 
 PlanFeaturesHeader.defaultProps = {

@@ -602,3 +602,14 @@ export function getPlanClass( plan ) {
 			return '';
 	}
 }
+
+export function getMonthlyPlanByYearly( plan ) {
+	switch ( plan ) {
+		case PLAN_JETPACK_PREMIUM:
+			return PLAN_JETPACK_PREMIUM_MONTHLY;
+		case PLAN_JETPACK_BUSINESS:
+			return PLAN_JETPACK_BUSINESS_MONTHLY;
+		default:
+			return '';
+	}
+}
