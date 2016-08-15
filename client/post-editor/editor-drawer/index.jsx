@@ -32,7 +32,7 @@ import config from 'config';
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
-import EditorDrawerCopyPost from './copy-post';
+import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
 
 /**
  * Constants
@@ -271,7 +271,7 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<EditorDrawerCopyPost />
+			<EditorMoreOptionsCopyPost />
 		);
 	},
 
@@ -295,6 +295,7 @@ const EditorDrawer = React.createClass( {
 				{ this.renderExcerpt() }
 				{ this.renderLocation() }
 				{ this.renderDiscussion() }
+				{ this.renderCopyPost() }
 			</Accordion>
 		);
 	},
@@ -321,7 +322,6 @@ const EditorDrawer = React.createClass( {
 				{ this.renderSharing() }
 				{ this.renderPostFormats() }
 				{ this.renderSeo() }
-				{ this.renderCopyPost() }
 				{ this.renderMoreOptions() }
 			</div>
 		);
