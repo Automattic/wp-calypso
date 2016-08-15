@@ -51,3 +51,44 @@
 	font-size: 18px;
 	font-weight: 300;
 }
+
+.plan-purchase-features__header.is-placeholder {
+	@include breakpoint( "<660px" ) {
+		padding-top: 170px;
+	}
+
+	@include breakpoint( ">660px" ) {
+		padding-left: 190px;
+	}
+
+	.plan-purchase-features__header-icon {
+		display: none;
+	}
+
+	.plan-purchase-features__header-heading,
+	.plan-purchase-features__header-text {
+		@include placeholder( 23% );
+
+		display: block;
+
+		@include breakpoint( "<660px" ) {
+			margin: 0 auto;
+		}
+	}
+
+	.plan-purchase-features__header-heading {
+		width: 50%;
+	}
+
+	.plan-purchase-features__header-text {
+		line-height: 2em;
+		margin-bottom: 8px;
+		margin-top: 15px;
+		width: 90%;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 18px;
+			margin-top: 18px;
+		}
+	}
+}
