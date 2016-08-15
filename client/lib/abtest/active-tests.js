@@ -44,8 +44,8 @@ module.exports = {
 	plansPriceOrder: {
 		datestamp: '20160901',
 		variations: {
-			ascending: 80,
-			descending: 20,
+			ascending: 50,
+			descending: 50,
 		},
 		defaultVariation: 'ascending',
 		allowExistingUsers: false,
