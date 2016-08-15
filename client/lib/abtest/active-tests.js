@@ -41,6 +41,15 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
+	plansPriceOrder: {
+		datestamp: '20160901',
+		variations: {
+			ascending: 80,
+			descending: 20,
+		},
+		defaultVariation: 'ascending',
+		allowExistingUsers: false,
+	},
 	signupStore: {
 		datestamp: '20160727',
 		variations: {
