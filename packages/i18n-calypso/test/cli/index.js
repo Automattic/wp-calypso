@@ -305,6 +305,11 @@ describe( 'index', function() {
 		it( 'should find options with a literal string key', function() {
 			expect( output ).to.have.string( 'context with a literal string key' );
 		} );
+
+		it( 'should handle template literals', function() {
+			expect( output ).to.have.string( 'My hat has six corners.' );
+			expect( output ).to.have.string( '"My hat\nhas seventeen\ncorners."' );
+		} );
 	} );
 
 	describe( 'PHP with an additional textdomain parameter', function() {
