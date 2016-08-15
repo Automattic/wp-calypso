@@ -9,6 +9,9 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 	GUIDED_TRANSFER_STATUS_RECEIVE,
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
@@ -17,6 +20,7 @@ import {
 import {
 	receiveGuidedTransferStatus,
 	requestGuidedTransferStatus,
+	saveHostDetails,
 } from '../actions';
 
 describe( 'actions', () => {
@@ -94,6 +98,58 @@ describe( 'actions', () => {
 			return requestGuidedTransferStatus( sampleSiteId )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
+					siteId: sampleSiteId,
+					error: sinon.match( { message: 'A server error occurred' } )
+				} );
+			} );
+		} );
+	} );
+
+	describe( '#saveHostDetails()', () => {
+		before( () => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( `/wpcom/v2/sites/${sampleSiteId}/transfer` )
+				.times( 3 )
+				.reply( 200, sampleStatus )
+				.post( `/wpcom/v2/sites/${sampleSiteId}/transfer` )
+				.reply( 500, {
+					error: 'server_error',
+					message: 'A server error occurred',
+				} );
+		} );
+
+		it( 'should dispatch save action when thunk triggered', () => {
+			saveHostDetails( sampleSiteId )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE,
+				siteId: sampleSiteId
+			} );
+		} );
+
+		it( 'should dispatch success action when request completes', () => {
+			return saveHostDetails( sampleSiteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+					siteId: sampleSiteId,
+				} );
+			} );
+		} );
+
+		it( 'should dispatch receive action for updated status when request completes', () => {
+			return saveHostDetails( sampleSiteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: GUIDED_TRANSFER_STATUS_RECEIVE,
+					siteId: sampleSiteId,
+					guidedTransferStatus: sampleStatus,
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return saveHostDetails( sampleSiteId )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
 					siteId: sampleSiteId,
 					error: sinon.match( { message: 'A server error occurred' } )
 				} );
