@@ -69,7 +69,7 @@ class EditorMoreOptionsCopyPost extends Component {
 			label: translate( 'Cancel' ),
 		}, {
 			action: 'copy',
-			label: translate( 'Copy' ),
+			label: translate( 'Overwrite' ),
 			isPrimary: true,
 			disabled: ! this.state.selectedPostId,
 			onClick: this.goToNewDraft,
@@ -83,7 +83,7 @@ class EditorMoreOptionsCopyPost extends Component {
 					</InfoPopover>
 				</div>
 				<Button borderless compact={ true } onClick={ this.openDialog }>
-					<Gridicon icon="aside" /> { translate( 'Select a post to copy' ) }
+					<Gridicon icon="clipboard" /> { translate( 'Select a post to copy' ) }
 				</Button>
 				<Dialog
 					autoFocus={ false }
@@ -97,8 +97,6 @@ class EditorMoreOptionsCopyPost extends Component {
 					</FormSectionHeading>
 					<p>
 						{ translate( "Pick a post and we'll copy the title, content, tags and categories. " ) }
-						<br />
-						{ translate( 'Recent posts are listed below. Search by title to find older posts.' ) }
 					</p>
 					<PostSelector
 						siteId={ site.ID }

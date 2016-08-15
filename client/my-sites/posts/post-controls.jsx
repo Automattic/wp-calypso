@@ -177,7 +177,7 @@ module.exports = React.createClass( {
 				className: 'post-controls__copy',
 				href: `/post/${ this.props.site.slug }?copy=${ post.ID }`,
 				onClick: this.copy,
-				icon: 'aside'
+				icon: 'clipboard'
 			} );
 		}
 
