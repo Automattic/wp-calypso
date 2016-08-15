@@ -11,7 +11,7 @@
 	color: $gray-dark;
 }
 
-.popover__container.info-popover__tooltip {
+.popover.info-popover__tooltip {
 	.popover__inner {
 		color: darken( $gray, 20% );
 		font-size: 13px;

@@ -85,7 +85,7 @@ module.exports = React.createClass( {
 	render: function() {
 		let classes = classnames(
 			this.props.className,
-			'popover__container sites-popover',
+			'popover sites-popover',
 			this.props.header && 'has-header'
 		);
 

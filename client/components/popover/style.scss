@@ -2,9 +2,9 @@
  * "popover" theme for `component/tip`.
  */
 
-.popover__container {
+.popover {
 	font-size: 11px;
-	z-index: z-index( 'root', '.popover__container' );
+	z-index: z-index( 'root', '.popover' );
 	position: absolute;
 	top: 0;
 	left: 0 #{"/*rtl:ignore*/"};
@@ -26,7 +26,7 @@
 		line-height: 0;
 		position: absolute;
 		width: 0;
-		z-index: z-index( '.popover__container', '.popover__container .popover__arrow' );
+		z-index: z-index( '.popover', '.popover .popover__arrow' );
 	}
 
 	&.fade {
@@ -131,7 +131,7 @@
 	}
 
 	&.is-dialog-visible {
-		z-index: z-index( 'root', 'popover__container.is-dialog-visible' ); /* Above .dialog */
+		z-index: z-index( 'root', 'popover.is-dialog-visible' ); /* Above .dialog */
 	}
 }
 

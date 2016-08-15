@@ -58,7 +58,7 @@ export default React.createClass( {
 					position={ this.props.position }
 					onClose={ this._onClose }
 					className={ classNames(
-							'popover__container',
+							'popover',
 							'info-popover__tooltip',
 							this.props.className
 						) }
