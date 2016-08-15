@@ -23,14 +23,16 @@ class Exporter extends Component {
 		} = this.props;
 		const showGuidedTransferOptions = config.isEnabled( 'manage/export/guided-transfer' );
 
-		return <div className="exporter">
-			<Notices />
-			{ showGuidedTransferOptions && isGuidedTransferInProgress &&
-				<InProgressCard /> }
-			<ExportCard siteId={ siteId } />
-			{ showGuidedTransferOptions && ! isGuidedTransferInProgress &&
-				<GuidedTransferCard /> }
-		</div>;
+		return (
+			<div className="exporter">
+				<Notices />
+				{ showGuidedTransferOptions && isGuidedTransferInProgress &&
+					<InProgressCard /> }
+				<ExportCard siteId={ siteId } />
+				{ showGuidedTransferOptions && ! isGuidedTransferInProgress &&
+					<GuidedTransferCard /> }
+			</div>
+		);
 	}
 }
 
