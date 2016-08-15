@@ -20,7 +20,14 @@ const PendingGappsTosNotice = React.createClass( {
 	propTypes: {
 		siteSlug: React.PropTypes.string.isRequired,
 		domains: React.PropTypes.array.isRequired,
-		section: React.PropTypes.string.isRequired
+		section: React.PropTypes.string.isRequired,
+		isCompact: React.PropTypes.bool
+	},
+
+	getDefaultProps() {
+		return {
+			isCompact: false
+		}
 	},
 
 	componentDidMount() {
@@ -84,6 +91,7 @@ const PendingGappsTosNotice = React.createClass( {
 
 		return (
 			<Notice
+				isCompact={ this.props.isCompact }
 				status={ `is-${ severity }` }
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain"

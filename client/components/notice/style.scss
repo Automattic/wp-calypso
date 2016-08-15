@@ -51,6 +51,7 @@
 .notice__icon {
 	flex-shrink: 0;
 	padding: 13px 0 13px 16px;
+	flex-shrink: 0;
 
 	@include breakpoint( "<660px" ) {
 		display: none;

@@ -13,6 +13,7 @@ export const itemsSchema = {
 					blogId: { type: 'number' },
 					canSetAsPrimary: { type: 'boolean' },
 					domain: { type: 'string' },
+					pointsToWpcom: { type: 'boolean' },
 					expired: { type: 'boolean' },
 					expiry: { type: [ 'boolean', 'string' ] },
 					expirySoon: { type: 'boolean' },
