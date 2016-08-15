@@ -59,7 +59,7 @@ export function requestGuidedTransferStatus( siteId ) {
 			error,
 		} );
 
-		return wpcom.undocumented().getGuidedTransferStatus( siteId )
+		return wpcom.undocumented().site( siteId ).getGuidedTransferStatus()
 			.then( success )
 			.catch( failure );
 	};
@@ -98,7 +98,7 @@ export function saveHostDetails( siteId, data ) {
 			error,
 		} );
 
-		return wpcom.undocumented().saveGuidedTransferHostDetails( siteId, data )
+		return wpcom.undocumented().site( siteId ).saveGuidedTransferHostDetails( data )
 			.then( success )
 			.catch( failure );
 	};
