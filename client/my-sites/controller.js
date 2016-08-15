@@ -195,7 +195,7 @@ module.exports = {
 					}
 				} else if ( ( currentUser.visible_site_count !== sites.getVisible().length ) ) {
 					sites.initialized = false;
-					waitingNotice = notices.info( i18n.translate( 'Waiting for site…' ), { showDismiss: false } );
+					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
 					sites.once( 'change', selectOnSitesChange );
 					sites.fetch();
 					return;
