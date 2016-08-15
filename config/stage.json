@@ -76,7 +76,6 @@
 		"post-editor/insert-menu": true,
 		"press-this": true,
 		"preview-layout": true,
-		"preview-endpoint": false,
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": true,
