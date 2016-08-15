@@ -59,6 +59,9 @@
     "array-differ": {
       "version": "1.0.0"
     },
+    "array-equal": {
+      "version": "1.0.0"
+    },
     "array-find-index": {
       "version": "1.0.1"
     },
@@ -210,7 +213,7 @@
       "version": "3.2.0",
       "dependencies": {
         "lodash": {
-          "version": "4.14.2"
+          "version": "4.15.0"
         }
       }
     },
@@ -495,7 +498,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000520"
+      "version": "1.0.30000522"
     },
     "caseless": {
       "version": "0.11.0"
@@ -697,7 +700,7 @@
       "version": "0.3.2",
       "dependencies": {
         "graceful-fs": {
-          "version": "3.0.8"
+          "version": "3.0.9"
         },
         "object-assign": {
           "version": "2.1.1"
@@ -794,7 +797,7 @@
       "version": "0.3.1"
     },
     "cssstyle": {
-      "version": "0.2.36"
+      "version": "0.2.37"
     },
     "currently-unhandled": {
       "version": "0.4.1"
@@ -856,7 +859,7 @@
       }
     },
     "del": {
-      "version": "2.2.1",
+      "version": "2.2.2",
       "dependencies": {
         "globby": {
           "version": "5.0.0"
@@ -1033,7 +1036,7 @@
       "version": "2.4.1",
       "dependencies": {
         "lodash": {
-          "version": "4.14.2"
+          "version": "4.15.0"
         }
       }
     },
@@ -1665,7 +1668,7 @@
       "version": "1.1.6"
     },
     "ignore": {
-      "version": "3.1.3"
+      "version": "3.1.5"
     },
     "imagesloaded": {
       "version": "4.1.0"
@@ -1943,7 +1946,7 @@
       }
     },
     "jsdom": {
-      "version": "7.2.2",
+      "version": "9.4.1",
       "dependencies": {
         "acorn": {
           "version": "2.7.0"
@@ -2063,10 +2066,10 @@
       "version": "3.9.1"
     },
     "lodash.assign": {
-      "version": "4.1.0"
+      "version": "4.2.0"
     },
     "lodash.isarguments": {
-      "version": "3.0.9"
+      "version": "3.1.0"
     },
     "lodash.isarray": {
       "version": "3.0.4"
@@ -2075,7 +2078,7 @@
       "version": "3.1.2"
     },
     "lodash.pickby": {
-      "version": "4.5.1"
+      "version": "4.6.0"
     },
     "log-symbols": {
       "version": "1.0.2"
@@ -2722,7 +2725,7 @@
       "version": "3.2.0",
       "dependencies": {
         "lodash": {
-          "version": "4.14.2"
+          "version": "4.15.0"
         }
       }
     },
@@ -2786,7 +2789,12 @@
       }
     },
     "react-test-env": {
-      "version": "0.1.1"
+      "version": "0.2.0",
+      "dependencies": {
+        "lodash.assign": {
+          "version": "4.1.0"
+        }
+      }
     },
     "react-virtualized": {
       "version": "7.9.1",
@@ -3263,7 +3271,7 @@
       "version": "1.0.1"
     },
     "string-width": {
-      "version": "1.0.1"
+      "version": "1.0.2"
     },
     "stringify-object": {
       "version": "2.4.0"
@@ -3362,7 +3370,7 @@
           "version": "1.0.27-1"
         },
         "superagent": {
-          "version": "1.8.3"
+          "version": "1.8.4"
         }
       }
     },
@@ -3619,7 +3627,7 @@
       "version": "0.2.9"
     },
     "webidl-conversions": {
-      "version": "2.0.1"
+      "version": "3.0.1"
     },
     "webpack": {
       "version": "1.13.1",
@@ -3662,8 +3670,8 @@
     "whatwg-fetch": {
       "version": "1.0.0"
     },
-    "whatwg-url-compat": {
-      "version": "0.6.5"
+    "whatwg-url": {
+      "version": "3.0.0"
     },
     "which": {
       "version": "1.2.10"
@@ -3754,7 +3762,7 @@
       "version": "1.0.0",
       "dependencies": {
         "lodash": {
-          "version": "4.14.2"
+          "version": "4.15.0"
         }
       }
     },
