@@ -341,7 +341,7 @@ export default React.createClass( {
 					{ this.translate( 'Edit visibility', { context: 'Editor: Tooltip shown on icon to change the post\'s visibility.' } ) }
 				</Tooltip>
 				<Popover
-					className="popover editor-visibility__popover"
+					className="editor-visibility__popover"
 					isVisible={ this.state.showPopover }
 					onClose={ this.closePopover }
 					position={ 'bottom left' }
