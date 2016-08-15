@@ -88,8 +88,8 @@ export function saveHostDetails( siteId, data ) {
 
 			// The success response is the updated status of the guided transfer
 			dispatch( receiveGuidedTransferStatus(
-				siteId, omit( response, '_headers' ) )
-			);
+				siteId, omit( response, '_headers' )
+			) );
 		};
 
 		const failure = error => dispatch( {
