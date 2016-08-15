@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
  */
 import SpinnerButton from './spinner-button';
 import FoldableCard from 'components/foldable-card';
-import analytics from 'lib/analytics';
 import Interval, { EVERY_SECOND } from 'lib/interval';
 import AdvancedSettings from './advanced-settings';
+import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
 import {
 	advancedSettingsFetch,
 	exportStatusFetch,
@@ -37,20 +37,6 @@ class ExportCard extends Component {
 		}
 	}
 
-	trackExportClick = ( scope = 'all' ) => {
-		analytics.tracks.recordEvent( 'calypso_export_start_button_click', { scope } );
-	}
-
-	exportAll = () => {
-		this.trackExportClick();
-		this.props.startExport();
-	}
-
-	exportSelectedItems = () => {
-		this.trackExportClick( 'selected' );
-		this.props.startExport( { exportAll: false } );
-	}
-
 	render() {
 		const {
 			translate,
@@ -62,7 +48,7 @@ class ExportCard extends Component {
 				className="export-card__export-button"
 				loading={ this.props.shouldShowProgress }
 				isPrimary={ true }
-				onClick={ this.exportAll }
+				onClick={ this.props.exportAll }
 				text={ translate( 'Export All' ) }
 				loadingText={ translate( 'Exporting…' ) } />
 		);
@@ -88,7 +74,7 @@ class ExportCard extends Component {
 						postType={ this.props.postType }
 						shouldShowProgress={ this.props.shouldShowProgress }
 						onSelectPostType={ this.props.setPostType }
-						onClickExport={ this.exportSelectedItems }
+						onClickExport={ this.props.exportSelectedItems }
 					/>
 				</FoldableCard>
 				{ this.props.isExporting && <Interval onTick={ fetchStatus } period={ EVERY_SECOND } /> }
@@ -97,21 +83,24 @@ class ExportCard extends Component {
 	}
 }
 
-function mapStateToProps( state, { siteId } ) {
-	return {
-		postType: getSelectedPostType( state ),
-		shouldShowProgress: shouldShowProgress( state, siteId ),
-		isExporting: isExporting( state, siteId ),
-	};
-}
+const mapStateToProps = ( state, { siteId } ) => ( {
+	postType: getSelectedPostType( state ),
+	shouldShowProgress: shouldShowProgress( state, siteId ),
+	isExporting: isExporting( state, siteId ),
+} );
 
-function mapDispatchToProps( dispatch, { siteId } ) {
-	return {
-		advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
-		setPostType: flowRight( dispatch, setPostType ),
-		fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
-		startExport: options => dispatch( startExport( siteId, options ) ),
-	};
-}
+const trackExportClick = ( scope = 'all' ) => recordTracksEvent( 'calypso_export_start_button_click', { scope } );
+
+const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
+	advancedSettingsFetch: flowRight( dispatch, advancedSettingsFetch ),
+	setPostType: flowRight( dispatch, setPostType ),
+	fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
+
+	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport() ) ),
+	exportSelectedItems: () => dispatch( withAnalytics(
+		trackExportClick( 'selected' ),
+		startExport( { exportAll: false } )
+	) ),
+} );
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( ExportCard ) );
