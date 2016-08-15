@@ -114,7 +114,7 @@
 		"reader/list-management": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
-		"reader/refresh-2016-07": false,
+		"reader/refresh-2016-07": true,
 		"reader/search": true,
 		"reader/start": true,
 		"reader/tags-with-elasticsearch": true,
