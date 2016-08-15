@@ -96,10 +96,10 @@ const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
 	setPostType: flowRight( dispatch, setPostType ),
 	fetchStatus: () => dispatch( exportStatusFetch( siteId ) ),
 
-	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport() ) ),
+	exportAll: () => dispatch( withAnalytics( trackExportClick(), startExport( siteId ) ) ),
 	exportSelectedItems: () => dispatch( withAnalytics(
 		trackExportClick( 'selected' ),
-		startExport( { exportAll: false } )
+		startExport( siteId, { exportAll: false } )
 	) ),
 } );
 
