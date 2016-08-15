@@ -5,7 +5,12 @@
  */
 import React from 'react';
 import i18n from 'i18n-calypso';
-import includes from 'lodash/includes';
+import { compact, includes } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { isEnabled } from 'config';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -45,6 +50,7 @@ export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
+export const FEATURE_ADVANCED_SEO = 'advanced-seo'
 
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -139,7 +145,7 @@ export const plansList = {
 			'Everything included with Premium, as well as live chat support,' +
 			' unlimited access to premium themes, and Google Analytics.'
 		),
-		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
+		getFeatures: () => compact( [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -148,9 +154,10 @@ export const plansList = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
+			isEnabled( 'manage/advanced-seo' ) && FEATURE_ADVANCED_SEO,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING
-		],
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 
@@ -373,6 +380,19 @@ export const featuresList = {
 			"Keep the focus on your site's brand by removing the WordPress.com footer branding."
 		),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
+		plans: [ PLAN_BUSINESS ]
+	},
+
+	[ FEATURE_ADVANCED_SEO ]: {
+		getSlug: () => FEATURE_ADVANCED_SEO,
+		getTitle: () => i18n.translate( '{{strong}}Advanced{{/strong}} SEO', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescription: () => i18n.translate(
+			'Adds tools to enhance your site\'s content for better results on search engines and social media.'
+		),
 		plans: [ PLAN_BUSINESS ]
 	},
 
