@@ -8,10 +8,10 @@
 }
 
 .seo-preview-nudge__plan {
-	width: 98px;
+	width: 100px;
 	height: 100px;
 	display: flex;
-	border: solid 6px $gray-light;
+	border: solid 3px $border-ultra-light-gray;
 	border-radius: 50%;
 	align-self: center;
 	margin: 16px 0;
@@ -20,7 +20,8 @@
 .seo-preview-nudge__plan-icon {
 	width: inherit;
 	height: inherit;
-	background-image: url('/calypso/images/plans/plan-business.svg');
+	margin: 2px;
+	background: url('/calypso/images/plans/plan-business.svg') no-repeat;
 }
 
 .seo-preview-nudge__message{

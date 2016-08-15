@@ -7,6 +7,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { compact, noop } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -40,7 +41,7 @@ const featuresToShow = [
 const AdvancedSEOUpgradeNudge = ( { translate, site, post } ) => {
 	// <div className="seo-preview-nudge__upgrade">
 	// 	<UpgradeNudge
-	// 		title={ translate( 'Advanced Search Engine Optimization' ) }
+	// 		title={ translate( 'Advanced SEO' ) }
 	// 		message={ translate( 'lorem ipsum dolor sit amet' ) }
 	// 		feature="advanced-seo"
 	// 		event="advanced_seo_preview"
@@ -55,7 +56,7 @@ const AdvancedSEOUpgradeNudge = ( { translate, site, post } ) => {
 			</div>
 			<div className="seo-preview-nudge__message">
 				<h2 className="seo-preview-nudge__message-title">{ translate( 'Get Advanced SEO Features' ) }</h2>
-				<h3 className="seo-preview-nudge__message-line">{ translate( 'Supercharge your site with live chat support, unlimited access to premium themes, and Google Analytics.' ) }</h3>
+				<h3 className="seo-preview-nudge__message-line">{ translate( 'Adds tools to enhance your site\'s content for better results on search engines and social media.' ) }</h3>
 			</div>
 			<div className="seo-preview-nudge__preview">
 				<img src="/calypso/images/advanced-seo-nudge.png" />
@@ -67,33 +68,31 @@ const AdvancedSEOUpgradeNudge = ( { translate, site, post } ) => {
 					buttonName={ translate( 'Your Plan' ) }
 					currentPlan={ true } >
 					<PlanCompareCardItem unavailable={ true } >
-						{ translate( 'Advanced Search Engine Optimization' ) }
+						{ translate( 'Advanced SEO' ) }
 					</PlanCompareCardItem>
-					{
-						featuresToShow.map( feature => <PlanCompareCardItem
-								key={ feature }
-								unavailable={ ! planHasFeature( site.plan.product_slug, feature ) }
-							>
-								{ getFeatureTitle( feature ) }
-							</PlanCompareCardItem>
-						)
-					}
+					{ featuresToShow.map( feature => (
+						<PlanCompareCardItem
+							key={ feature }
+							unavailable={ ! planHasFeature( site.plan.product_slug, feature ) } >
+							{ getFeatureTitle( feature ) }
+						</PlanCompareCardItem>
+					) ) }
 				</PlanCompareCard>
 				<PlanCompareCard
 					title={ getPlan( PLAN_BUSINESS ).getTitle() }
 					line={ getPlan( PLAN_BUSINESS ).getPriceTitle() }
 					buttonName={ translate( 'Upgrade' ) }
-					onClick={ noop }
+					onClick={ () => page( '/checkout/' + site.domain + '/business' ) }
 					currentPlan={ false }
 					popularRibbon={ true } >
 					<PlanCompareCardItem highlight={ true } >
-						{ translate( 'Advanced Search Engine Optimization' ) }
+						{ translate( 'Advanced SEO' ) }
 					</PlanCompareCardItem>
-					{
-						featuresToShow.map( feature => <PlanCompareCardItem key={ feature }>
+					{ featuresToShow.map( feature => (
+						<PlanCompareCardItem key={ feature }>
 							{ getFeatureTitle( feature ) }
-						</PlanCompareCardItem> )
-					}
+						</PlanCompareCardItem>
+					) ) }
 				</PlanCompareCard>
 			</FeatureComparison>
 		</div>
