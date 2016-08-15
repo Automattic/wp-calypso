@@ -40,6 +40,8 @@ import userFactory from 'lib/user';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
+import Gridicon from 'components/gridicon';
+import support from 'lib/url/support';
 
 const countriesList = CountriesList.forPayments();
 const user = userFactory();
@@ -286,6 +288,21 @@ const EditCardDetails = React.createClass( {
 							eventFormName="Edit Card Details Form"
 							isFieldInvalid={ this.isFieldInvalid }
 							onFieldChange={ this.onFieldChange } />
+						<div className="card-terms" onClick={ this.recordTermsAndConditionsClick }>
+							<Gridicon icon="info-outline" size={ 18 } />
+							<p>
+								{ this.translate(
+									'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your credit card to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.', {
+										components: {
+											tosLink: <a href="//wordpress.com/tos/" target="_blank"/>,
+											autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL } target="_blank"/>,
+											managePurchasesSupportPage: <a href={ support.MANAGE_PURCHASES }
+																		   target="_blank"/>
+										}
+									}
+								) }
+							</p>
+						</div>
 					</Card>
 
 					<CompactCard className="edit-card-details__footer">
