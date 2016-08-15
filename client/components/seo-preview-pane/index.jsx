@@ -7,24 +7,20 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
-	compact,
-	find,
-	get,
-	identity
+	overSome,
+	noop
 } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import ReaderPreview from 'components/seo/reader-preview';
-import FacebookPreview from 'components/seo/facebook-preview';
-import TwitterPreview from 'components/seo/twitter-preview';
-import SearchPreview from 'components/seo/search-preview';
-import VerticalMenu from 'components/vertical-menu';
-import PostMetadata from 'lib/post-metadata';
-import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
-import { parseHtml } from 'lib/formatting';
-import { SocialItem } from 'components/vertical-menu/items';
+import Sidebar from './sidebar';
+import PreviewArea from './preview-area';
+// import UpgradeNudge from 'my-sites/upgrade-nudge';
+import FeatureComparison from 'my-sites/feature-comparison';
+import PlanCompareCard from 'my-sites/plan-compare-card';
+import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
+import { isBusiness, isEnterprise } from 'lib/products-values';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
 import { getSeoTitle } from 'state/sites/selectors';
@@ -32,139 +28,22 @@ import {
 	getSectionName,
 	getSelectedSite
 } from 'state/ui/selectors';
+import {
+	PLAN_BUSINESS,
+	FEATURE_ADVANCED_DESIGN,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_NO_ADS,
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_UNLIMITED_STORAGE,
+	FEATURE_VIDEO_UPLOADS
+} from 'lib/plans/constants';
+import {
+	getFeatureTitle,
+	planHasFeature,
+	getPlan
+} from 'lib/plans';
 
-const PREVIEW_IMAGE_WIDTH = 512;
-const largeBlavatar = site => `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }`;
-
-const getPostImage = ( post ) => {
-	if ( ! post ) {
-		return null;
-	}
-
-	// Use the featured image if one was set
-	if ( post.featured_image ) {
-		return post.featured_image;
-	}
-
-	// Otherwise we'll look for a large enough image in the post
-	const content = post.content;
-	if ( ! content ) {
-		return null;
-	}
-
-	const imgElements = parseHtml( content ).querySelectorAll( 'img' );
-	const imageUrl = get(
-		find( imgElements, ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ),
-		'src',
-		null
-	);
-
-	return imageUrl
-		? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }`
-		: null;
-};
-
-const getSeoExcerptForPost = ( post ) => {
-	if ( ! post ) {
-		return null;
-	}
-
-	return formatExcerpt( find( [
-		PostMetadata.metaDescription( post ),
-		post.excerpt,
-		post.content
-	], identity ) );
-};
-
-const getSeoExcerptForSite = ( site ) => {
-	if ( ! site ) {
-		return null;
-	}
-
-	return formatExcerpt( find( [
-		get( site, 'options.seo_meta_description' ),
-		site.description
-	], identity ) );
-};
-
-const ComingSoonMessage = translate => (
-	<div className="seo-preview-pane__message">
-		{ translate( 'Coming Soon!' ) }
-	</div>
-);
-
-const ReaderPost = ( site, post ) => {
-	return (
-		<ReaderPreview
-			siteTitle={ site.name }
-			siteSlug={ site.slug }
-			siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
-			postTitle={ post.title }
-			postExcerpt={ formatExcerpt( post.excerpt || post.content ) }
-			postImage={ getPostImage( post ) }
-			postDate={ post.date }
-			authorName={ post.author.name }
-			authorIcon={ post.author.avatar_URL }
-		/>
-	);
- };
-
-const GoogleSite = site => (
-	<SearchPreview
-		title={ site.name }
-		url={ site.URL }
-		snippet={ getSeoExcerptForSite( site ) }
-	/>
-);
-
-const GooglePost = ( site, post ) => (
-	<SearchPreview
-		title={ post.title }
-		url={ post.URL }
-		snippet={ getSeoExcerptForPost( post ) }
-	/>
-);
-
-const FacebookSite = site => (
-	<FacebookPreview
-		title={ site.name }
-		url={ site.URL }
-		type="website"
-		description={ getSeoExcerptForSite( site ) }
-		image={ largeBlavatar( site ) }
-	/>
-);
-
-const FacebookPost = ( site, post ) => (
-	<FacebookPreview
-		title={ post.title }
-		url={ post.URL }
-		type="article"
-		description={ getSeoExcerptForPost( post ) }
-		image={ getPostImage( post ) }
-		author={ post.author.name }
-	/>
-);
-
-const TwitterSite = site => (
-	<TwitterPreview
-		title={ site.name }
-		url={ site.URL }
-		type="summary"
-		description={ getSeoExcerptForSite( site ) }
-		image={ largeBlavatar( site ) }
-	/>
-);
-
-const TwitterPost = ( site, post ) => (
-	<TwitterPreview
-		title={ post.title }
-		url={ post.URL }
-		type="large_image_summary"
-		description={ getSeoExcerptForPost( post ) }
-		image={ getPostImage( post ) }
-	/>
-);
+const hasBusinessPlan = overSome( isBusiness, isEnterprise );
 
 export class SeoPreviewPane extends PureComponent {
 	constructor( props ) {
@@ -182,54 +61,85 @@ export class SeoPreviewPane extends PureComponent {
 	}
 
 	render() {
-		const {
-			post,
-			site,
-			translate
-		} = this.props;
-
+		const { translate, hideNudge, site } = this.props;
 		const { selectedService } = this.state;
 
-		const services = compact( [
-			post && 'wordpress',
-			'google',
-			'facebook',
-			'twitter'
-		] );
+		if ( hideNudge ) {
+			return (
+				<div className="seo-preview-pane">
+					<Sidebar selectPreview={ this.selectPreview } />
+					<PreviewArea { ...{ selectedService } } />
+				</div>
+			);
+		}
+
+		const featuresToShow = [
+			FEATURE_UNLIMITED_STORAGE,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_NO_ADS,
+			FEATURE_ADVANCED_DESIGN,
+			FEATURE_VIDEO_UPLOADS
+		];
+
+		// <div className="seo-preview-nudge__upgrade">
+		// 	<UpgradeNudge
+		// 		title={ translate( 'Advanced Search Engine Optimization' ) }
+		// 		message={ translate( 'lorem ipsum dolor sit amet' ) }
+		// 		feature="advanced-seo"
+		// 		event="advanced_seo_preview"
+		// 		icon="share"
+		// 	/>
+		// </div	>
 
 		return (
-			<div className="seo-preview-pane">
-				<div className="seo-preview-pane__sidebar">
-					<div className="seo-preview-pane__explanation">
-						<h1 className="seo-preview-pane__title">
-							{ translate( 'External previews' ) }
-						</h1>
-						<p className="seo-preview-pane__description">
-							{ translate(
-								"Below you'll find previews that represent how your post will look " +
-								"when it's found or shared across a variety of networks."
-							) }
-						</p>
-					</div>
-					<VerticalMenu onClick={ this.selectPreview }>
-						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
-					</VerticalMenu>
+			<div className="seo-preview-nudge">
+				<div className="seo-preview-nudge__plan">
+					<div className="seo-preview-nudge__plan-icon"></div>
 				</div>
-				<div className="seo-preview-pane__preview-area">
-					<div className="seo-preview-pane__preview">
-						{ post && get( {
-							wordpress: ReaderPost( site, post ),
-							facebook: FacebookPost( site, post ),
-							google: GooglePost( site, post ),
-							twitter: TwitterPost( site, post )
-						}, selectedService, ComingSoonMessage( translate ) ) }
-						{ ! post && get( {
-							facebook: FacebookSite( site ),
-							google: GoogleSite( site ),
-							twitter: TwitterSite( site )
-						}, selectedService, ComingSoonMessage( translate ) ) }
-					</div>
+				<div className="seo-preview-nudge__message">
+					<h2 className="seo-preview-nudge__message-title">{ translate( 'Get Advanced SEO Features' ) }</h2>
+					<h3 className="seo-preview-nudge__message-line">{ translate( 'Supercharge your site with live chat support, unlimited access to premium themes, and Google Analytics.' ) }</h3>
 				</div>
+				<div className="seo-preview-nudge__preview">
+					<img src="/calypso/images/advanced-seo-nudge.png" />
+				</div>
+				<FeatureComparison className="seo-preview-nudge__feature-comparison">
+					<PlanCompareCard
+						title={ getPlan( site.plan.product_slug ).getTitle() }
+						line={ getPlan( site.plan.product_slug ).getPriceTitle() }
+						buttonName={ translate( 'Your Plan' ) }
+						currentPlan={ true } >
+						<PlanCompareCardItem unavailable={ true } >
+							{ translate( 'Advanced Search Engine Optimization' ) }
+						</PlanCompareCardItem>
+						{
+							featuresToShow.map( feature => <PlanCompareCardItem
+									key={ feature }
+									unavailable={ ! planHasFeature( site.plan.product_slug, feature ) }
+								>
+									{ getFeatureTitle( feature ) }
+								</PlanCompareCardItem>
+							)
+						}
+					</PlanCompareCard>
+					<PlanCompareCard
+						title={ getPlan( PLAN_BUSINESS ).getTitle() }
+						line={ getPlan( PLAN_BUSINESS ).getPriceTitle() }
+						buttonName={ translate( 'Upgrade' ) }
+						onClick={ noop }
+						currentPlan={ false }
+						popularRibbon={ true } >
+						<PlanCompareCardItem highlight={ true } >
+							{ translate( 'Advanced Search Engine Optimization' ) }
+						</PlanCompareCardItem>
+						{
+							featuresToShow.map( feature => <PlanCompareCardItem key={ feature }>
+								{ getFeatureTitle( feature ) }
+							</PlanCompareCardItem> )
+						}
+					</PlanCompareCard>
+				</FeatureComparison>
 			</div>
 		);
 	}
@@ -249,7 +159,8 @@ const mapStateToProps = state => {
 		post: isEditorShowing && {
 			...post,
 			title: getSeoTitle( state, 'posts', { site, post } )
-		}
+		},
+		hideNudge: site && site.plan && hasBusinessPlan( site.plan )
 	};
 };
 

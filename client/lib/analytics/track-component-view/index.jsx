@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -21,7 +23,7 @@ export default React.createClass( {
 		return {
 			eventName: null,
 			eventProperties: {}
-		}
+		};
 	},
 
 	componentWillMount() {
@@ -35,4 +37,3 @@ export default React.createClass( {
 	}
 
 } );
-

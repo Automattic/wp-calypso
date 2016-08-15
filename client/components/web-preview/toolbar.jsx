@@ -5,10 +5,9 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import config from 'config';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import {
-	overSome,
 	partial
 } from 'lodash';
 
@@ -16,11 +15,8 @@ import {
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import { isBusiness, isEnterprise } from 'lib/products-values';
-import { localize } from 'i18n-calypso';
 import { getSelectedSite } from 'state/ui/selectors';
-
-const hasBusinessPlan = overSome( isBusiness, isEnterprise );
+import { isEnabled } from 'config';
 
 const possibleDevices = [
 	'computer',
@@ -80,21 +76,21 @@ export const PreviewToolbar = props => {
 					) ) }
 				</div>
 			}
-			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
+			{ isEnabled( 'manage/advanced-seo' ) &&
 			<button
 				aria-hidden={ true }
 				key={ 'back-to-preview' }
 				className={ classNames(
 					'web-preview__device-button',
 					'web-preview__back-to-preview-button', {
-					'is-active': currentDevice !== 'seo'
-				} ) }
+						'is-active': currentDevice !== 'seo'
+					} ) }
 				onClick={ partial( setDeviceViewport, 'phone' ) }
 			>
 				<Gridicon icon="phone" />
 			</button>
 			}
-			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
+			{ isEnabled( 'manage/advanced-seo' ) &&
 				<button
 					aria-label={ translate( 'Show SEO and search previews' ) }
 					className={ classNames(
@@ -135,12 +131,4 @@ PreviewToolbar.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => {
-	const site = getSelectedSite( state );
-
-	return {
-		showSeo: site && site.plan && hasBusinessPlan( site.plan )
-	}
-};
-
-export default connect( mapStateToProps )( localize( PreviewToolbar ) );
+export default connect()( localize( PreviewToolbar ) );
