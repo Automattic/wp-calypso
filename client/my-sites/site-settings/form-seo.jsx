@@ -32,12 +32,13 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SearchPreview from 'components/seo/search-preview';
 import config from 'config';
 import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
+import SearchPreview from 'components/seo/search-preview';
+import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
 
 const serviceIds = {
@@ -275,6 +276,24 @@ export const SeoForm = React.createClass( {
 		}
 	},
 
+	getVerificationError( isPasteError ) {
+		return (
+			<FormInputValidation isError={ true } text={
+				isPasteError
+					? this.translate( 'Verification code should be copied and pasted into this field.' )
+					: this.translate( 'Invalid site verification tag.' )
+			} />
+		);
+	},
+
+	showPreview() {
+		this.setState( { showPreview: true } );
+	},
+
+	hidePreview() {
+		this.setState( { showPreview: false } );
+	},
+
 	render() {
 		const {
 			description: siteDescription,
@@ -291,7 +310,8 @@ export const SeoForm = React.createClass( {
 			seoMetaDescription,
 			showPasteError = false,
 			hasHtmlTagError = false,
-			invalidCodes = []
+			invalidCodes = [],
+			showPreview = false
 		} = this.state;
 
 		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
@@ -304,7 +324,7 @@ export const SeoForm = React.createClass( {
 			? `${ siteTitle } | ${ siteDescription }`
 			: siteTitle;
 		const siteUrl = `https://${ slug }/`;
-		const sitemapUrl = `${ siteUrl }/sitemap.xml`;
+		const sitemapUrl = `${ siteUrl }sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
 		const placeholderTagContent = '1234';
 
@@ -318,6 +338,42 @@ export const SeoForm = React.createClass( {
 			return includes( invalidCodes, service );
 		};
 
+		const submitButton = (
+			<Button
+				compact={ true }
+				onClick={ this.submitSeoForm }
+				primary={ true }
+				type="submit"
+				disabled={ isSaveDisabled }
+			>
+				{ isSubmittingForm
+					? this.translate( 'Saving…' )
+					: this.translate( 'Save Settings' )
+				}
+			</Button>
+		);
+
+		let preview = (
+			<SearchPreview
+				title={ seoTitle }
+				url={ siteUrl }
+				snippet={ seoMetaDescription }
+			/>
+		);
+
+		if ( config.isEnabled('manage/advanced-seo') ) {
+			preview = (
+				<FormSettingExplanation>
+					<Button className="preview-button" onClick={ this.showPreview }>
+						{ this.translate('Show Previews') }
+					</Button>
+					<span className="preview-explanation">
+						{ this.translate('See how this will look on Google, Facebook, and Twitter.') }
+					</span>
+				</FormSettingExplanation>
+			);
+		}
+
 		return (
 			<div>
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
@@ -326,177 +382,173 @@ export const SeoForm = React.createClass( {
 						<NoticeAction href={ generalTabUrl }>{ this.translate( 'View Settings' ) }</NoticeAction>
 					</Notice>
 				}
+
 				<SectionHeader label={ this.translate( 'Search Engine Optimization' ) }>
-					<Button
-						compact={ true }
-						onClick={ this.submitSeoForm }
-						primary={ true }
-						type="submit"
-						disabled={ isSaveDisabled }
-					>
-						{ isSubmittingForm
-							? this.translate( 'Saving…' )
-							: this.translate( 'Save Settings' )
-						}
-					</Button>
 				</SectionHeader>
 				<Card>
-					<p>
-						{ this.translate(
-							'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized for search engines, ' +
-							'so you don\'t have to do anything extra. However, you can tweak these settings if you\'d like more advanced control. ' +
-							'Read more about what you can do to {{a}}optimize your site\'s SEO{{/a}}.',
-							{
-								components: {
-									a: <a href={ 'https://en.blog.wordpress.com/2013/03/22/seo-on-wordpress-com/' } />,
-									b: <strong />
-								}
+					{ this.translate(
+						'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
+						'for search engines, so you don\'t have to do anything extra. However, you can tweak ' +
+						'these settings if you\'d like more advanced control. Read more about what you can do ' +
+						'to {{a}}optimize your site\'s SEO{{/a}}.',
+						{
+							components: {
+								a: <a href={ 'https://en.blog.wordpress.com/2013/03/22/seo-on-wordpress-com/' } />,
+								b: <strong />
 							}
-						) }
-					</p>
-					<form onChange={ this.markChanged } className="seo-form">
-						<FormFieldset>
-							<FormFieldset className="has-divider">
-								{ config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
-									<div>
-										<FormLabel htmlFor="seo_title">{ this.translate( 'Meta Title Format' ) }</FormLabel>
-										<MetaTitleEditor
-											disabled={ isDisabled || this.state.isRefreshingSiteData }
-											onChange={ this.updateTitleFormats }
-											titleFormats={ this.state.seoTitleFormats }
-										/>
-										<FormSettingExplanation>
-											{ this.translate( 'Customize how the title for your content will appear in search engines and social media.' ) }
-										</FormSettingExplanation>
-									</div>
-								}
-
-								<FormLabel htmlFor="seo_meta_description">{ this.translate( 'Front Page Meta Description' ) }</FormLabel>
-								<CountedTextarea
-									name="seo_meta_description"
-									type="text"
-									id="seo_meta_description"
-									value={ seoMetaDescription || '' }
-									disabled={ isDisabled }
-									maxLength="300"
-									acceptableLength={ 159 }
-									onChange={ this.handleMetaChange } />
-								{ hasHtmlTagError &&
-									<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
-								}
-								<FormSettingExplanation>
-									{ this.translate( 'Craft a description of your site in about 160 characters. This description can be used in search engine results for your site\'s Front Page.' ) }
-								</FormSettingExplanation>
-
-								<SearchPreview
-									title={ seoTitle }
-									url={ siteUrl }
-									snippet={ seoMetaDescription }
-								/>
-							</FormFieldset>
-
-							<FormFieldset>
-								<FormLabel htmlFor="verification_code_google">{ this.translate( 'Site Verification Services' ) }</FormLabel>
-									<p>
-										{ this.translate(
-											'Note that {{b}}verifying your site with these services is not necessary{{/b}} in order' +
-											' for your site to be indexed by search engines. To use these advanced search engine tools' +
-											' and verify your site with a service, paste the HTML Tag code below. Read the' +
-											' {{support}}full instructions{{/support}} if you are having trouble. Supported verification services:' +
-											' {{google}}Google Search Console{{/google}}, {{bing}}Bing Webmaster Center{{/bing}},' +
-											' {{pinterest}}Pinterest Site Verification{{/pinterest}}, and {{yandex}}Yandex.Webmaster{{/yandex}}.',
-											{
-												components: {
-													b: <strong />,
-													support: <a href="https://en.support.wordpress.com/webmaster-tools/" />,
-													google: <ExternalLink icon={ true } target="_blank" href="https://www.google.com/webmasters/tools/" />,
-													bing: <ExternalLink icon={ true } target="_blank" href="https://www.bing.com/webmaster/" />,
-													pinterest: <ExternalLink icon={ true } target="_blank" href="https://pinterest.com/website/verify/" />,
-													yandex: <ExternalLink icon={ true } target="_blank" href="https://webmaster.yandex.com/sites/" />
-												}
-											}
-										) }
-									</p>
-								<FormInput
-									prefix={ this.translate( 'Google' ) }
-									name="verification_code_google"
-									type="text"
-									value={ googleCode }
-									id="verification_code_google"
-									spellCheck="false"
-									disabled={ isDisabled }
-									isError={ hasError( 'google' ) }
-									placeholder={ getMetaTag( 'google', placeholderTagContent ) }
-									onChange={ event => this.handleVerificationCodeChange( event, 'googleCode' ) } />
-								{ hasError( 'google' ) && this.getVerificationError( showPasteError ) }
-							</FormFieldset>
-
-							<FormFieldset>
-								<FormInput
-									prefix={ this.translate( 'Bing' ) }
-									name="verification_code_bing"
-									type="text"
-									value={ bingCode }
-									id="verification_code_bing"
-									spellCheck="false"
-									disabled={ isDisabled }
-									isError={ hasError( 'bing' ) }
-									placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
-									onChange={ event => this.handleVerificationCodeChange( event, 'bingCode' ) } />
-								{ hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
-							</FormFieldset>
-
-							<FormFieldset>
-								<FormInput
-									prefix={ this.translate( 'Pinterest' ) }
-									name="verification_code_pinterest"
-									type="text"
-									value={ pinterestCode }
-									id="verification_code_pinterest"
-									spellCheck="false"
-									disabled={ isDisabled }
-									isError={ hasError( 'pinterest' ) }
-									placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
-									onChange={ event => this.handleVerificationCodeChange( event, 'pinterestCode' ) } />
-								{ hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
-							</FormFieldset>
-
-							<FormFieldset>
-								<FormInput
-									prefix={ this.translate( 'Yandex' ) }
-									name="verification_code_yandex"
-									type="text"
-									value={ yandexCode }
-									id="verification_code_yandex"
-									spellCheck="false"
-									disabled={ isDisabled }
-									isError={ hasError( 'yandex' ) }
-									placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
-									onChange={ event => this.handleVerificationCodeChange( event, 'yandexCode' ) } />
-								{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
-							</FormFieldset>
-						</FormFieldset>
-
-						<FormFieldset className="has-divider is-top-only">
-								<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
-								<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
-								<FormSettingExplanation>
-									{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
-								</FormSettingExplanation>
-						</FormFieldset>
-					</form>
+						}
+					) }
 				</Card>
-			</div>
-		);
-	},
 
-	getVerificationError( isPasteError ) {
-		return (
-			<FormInputValidation isError={ true } text={
-				isPasteError
-					? this.translate( 'Verification code should be copied and pasted into this field.' )
-					: this.translate( 'Invalid site verification tag.' )
-			} />
+				<form onChange={ this.markChanged } className="seo-form">
+					{ config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
+						<div>
+							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
+								{ submitButton }
+							</SectionHeader>
+							<Card>
+								<p>
+								{ this.translate(
+									'You can set the structure of page titles for different sections of your site. ' +
+									'Doing this will change the way your site title is displayed in search engine ' +
+									'results, and when shared on social media sites.'
+								) }
+								</p>
+								<MetaTitleEditor onChange={ this.updateTitleFormats } />
+							</Card>
+						</div>
+					}
+
+					<SectionHeader label={ this.translate( 'Website Meta' ) }>
+						{ submitButton }
+					</SectionHeader>
+					<Card>
+						<p>
+							{ this.translate(
+								'Craft a description of your Website up to 160 characters that will be used in ' +
+								'search engine results for your front page, and when your website is shared ' +
+								'on social media sites.'
+							) }
+						</p>
+						<p>
+							<FormLabel htmlFor="seo_meta_description">
+								{ this.translate( 'Front Page Meta Description' ) }
+							</FormLabel>
+							<CountedTextarea
+								name="seo_meta_description"
+								type="text"
+								id="seo_meta_description"
+								value={ seoMetaDescription || '' }
+								disabled={ isDisabled }
+								maxLength="300"
+								acceptableLength={ 159 }
+								onChange={ this.handleMetaChange }
+							/>
+							{ hasHtmlTagError &&
+								<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
+							}
+						</p>
+						{ preview }
+					</Card>
+
+					<SectionHeader label={ this.translate( 'Site Verification Services' ) }>
+						{ submitButton }
+					</SectionHeader>
+					<Card>
+						<p>
+							{ this.translate(
+								'Note that {{b}}verifying your site with these services is not necessary{{/b}} in order' +
+								' for your site to be indexed by search engines. To use these advanced search engine tools' +
+								' and verify your site with a service, paste the HTML Tag code below. Read the' +
+								' {{support}}full instructions{{/support}} if you are having trouble. Supported verification services:' +
+								' {{google}}Google Search Console{{/google}}, {{bing}}Bing Webmaster Center{{/bing}},' +
+								' {{pinterest}}Pinterest Site Verification{{/pinterest}}, and {{yandex}}Yandex.Webmaster{{/yandex}}.',
+								{
+									components: {
+										b: <strong />,
+										support: <a href="https://en.support.wordpress.com/webmaster-tools/" />,
+										google: <ExternalLink icon={ true } target="_blank" href="https://www.google.com/webmasters/tools/" />,
+										bing: <ExternalLink icon={ true } target="_blank" href="https://www.bing.com/webmaster/" />,
+										pinterest: <ExternalLink icon={ true } target="_blank" href="https://pinterest.com/website/verify/" />,
+										yandex: <ExternalLink icon={ true } target="_blank" href="https://webmaster.yandex.com/sites/" />
+									}
+								}
+							) }
+						</p>
+						<FormFieldset>
+							<FormInput
+								prefix={ this.translate( 'Google' ) }
+								name="verification_code_google"
+								type="text"
+								value={ googleCode }
+								id="verification_code_google"
+								spellCheck="false"
+								disabled={ isDisabled }
+								isError={ hasError( 'google' ) }
+								placeholder={ getMetaTag( 'google', placeholderTagContent ) }
+								onChange={ event => this.handleVerificationCodeChange( event, 'googleCode' ) } />
+							{ hasError( 'google' ) && this.getVerificationError( showPasteError ) }
+						</FormFieldset>
+						<FormFieldset>
+							<FormInput
+								prefix={ this.translate( 'Bing' ) }
+								name="verification_code_bing"
+								type="text"
+								value={ bingCode }
+								id="verification_code_bing"
+								spellCheck="false"
+								disabled={ isDisabled }
+								isError={ hasError( 'bing' ) }
+								placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
+								onChange={ event => this.handleVerificationCodeChange( event, 'bingCode' ) } />
+							{ hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
+						</FormFieldset>
+						<FormFieldset>
+							<FormInput
+								prefix={ this.translate( 'Pinterest' ) }
+								name="verification_code_pinterest"
+								type="text"
+								value={ pinterestCode }
+								id="verification_code_pinterest"
+								spellCheck="false"
+								disabled={ isDisabled }
+								isError={ hasError( 'pinterest' ) }
+								placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
+								onChange={ event => this.handleVerificationCodeChange( event, 'pinterestCode' ) } />
+							{ hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
+						</FormFieldset>
+						<FormFieldset>
+							<FormInput
+								prefix={ this.translate( 'Yandex' ) }
+								name="verification_code_yandex"
+								type="text"
+								value={ yandexCode }
+								id="verification_code_yandex"
+								spellCheck="false"
+								disabled={ isDisabled }
+								isError={ hasError( 'yandex' ) }
+								placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
+								onChange={ event => this.handleVerificationCodeChange( event, 'yandexCode' ) } />
+							{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
+						</FormFieldset>
+						<FormFieldset>
+							<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
+							<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
+							<FormSettingExplanation>
+								{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
+							</FormSettingExplanation>
+						</FormFieldset>
+					</Card>
+				</form>
+				<WebPreview
+					showPreview={ showPreview }
+				    onClose={ this.hidePreview }
+				    previewUrl={ siteUrl }
+				    showDeviceSwitcher={ false }
+				    showExternal={ false }
+				    defaultViewportDevice="seo"
+				/>
+			</div>
 		);
 	}
 } );
