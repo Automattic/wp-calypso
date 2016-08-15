@@ -334,6 +334,7 @@ export default React.createClass( {
 			>
 				<Gridicon icon={ icons[ visibility ] || 'visible' } />
 				<Tooltip
+					className="editor-visibility__tooltip"
 					context={ this.refs && this.refs.setVisibility }
 					isVisible={ this.state.tooltip && ! this.state.showPopover }
 					position="bottom left"
