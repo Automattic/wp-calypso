@@ -47,6 +47,34 @@ const DEFAULT_POST = {
 			slug: 'categorized'
 		}
 	},
+	terms: {
+		post_tag: {
+			Tagged: {
+				ID: 17695,
+				name: 'Tagged!',
+				slug: 'tagged'
+			}
+		},
+		category: {
+			'Categorized!': {
+				ID: 5519,
+				name: 'Categorized!',
+				slug: 'categorized'
+			}
+		},
+		genre: {
+			Fiction: {
+				ID: 5102,
+				name: 'Fiction',
+				slug: 'fiction'
+			},
+			'Sci-Fi': {
+				ID: 5102,
+				name: 'Sci-Fi',
+				slug: 'sci-fi'
+			}
+		}
+	},
 	metadata: [
 		{
 			id: '22573',
@@ -295,6 +323,59 @@ describe( 'PostQueryManager', () => {
 			it( 'should search case-insensitive', () => {
 				const isMatch = manager.matches( {
 					category: 'caTegoriZed'
+				}, DEFAULT_POST );
+
+				expect( isMatch ).to.be.true;
+			} );
+		} );
+
+		context( 'query.term', () => {
+			it( 'should return false if post does not include term', () => {
+				const isMatch = manager.matches( {
+					term: {
+						genre: 'non-fiction'
+					}
+				}, DEFAULT_POST );
+
+				expect( isMatch ).to.be.false;
+			} );
+
+			it( 'should return false if one but not both term slug queries match', () => {
+				const isMatch = manager.matches( {
+					term: {
+						genre: 'fiction',
+						category: 'notcategory'
+					}
+				}, DEFAULT_POST );
+
+				expect( isMatch ).to.be.false;
+			} );
+
+			it( 'should return true if post includes term by slug', () => {
+				const isMatch = manager.matches( {
+					term: {
+						genre: 'fiction'
+					}
+				}, DEFAULT_POST );
+
+				expect( isMatch ).to.be.true;
+			} );
+
+			it( 'should return true if post includes one of comma-separated term slugs', () => {
+				const isMatch = manager.matches( {
+					term: {
+						genre: 'fiction,non-fiction'
+					}
+				}, DEFAULT_POST );
+
+				expect( isMatch ).to.be.true;
+			} );
+
+			it( 'should return true if post includes both of comma-separated term slugs', () => {
+				const isMatch = manager.matches( {
+					term: {
+						genre: 'fiction,sci-fi'
+					}
 				}, DEFAULT_POST );
 
 				expect( isMatch ).to.be.true;

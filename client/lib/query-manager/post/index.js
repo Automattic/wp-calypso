@@ -2,10 +2,7 @@
  * External dependencies
  */
 import moment from 'moment';
-import every from 'lodash/every';
-import some from 'lodash/some';
-import includes from 'lodash/includes';
-import get from 'lodash/get';
+import { every, some, includes, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -49,6 +46,12 @@ export default class PostQueryManager extends PaginatedQueryManager {
 					const field = /^modified_/.test( key ) ? 'modified' : 'date';
 					return queryDate.isValid() && moment( post[ field ] )[ comparison ]( queryDate );
 				}
+
+				case 'term':
+					return every( value, ( slugs, taxonomy ) => {
+						slugs = slugs.split( ',' );
+						return some( post.terms[ taxonomy ], ( { slug } ) => includes( slugs, slug ) );
+					} );
 
 				case 'tag':
 				case 'category': {
