@@ -397,7 +397,11 @@ const PlansSetup = React.createClass( {
 
 		this.trackConfigFinished( 'calypso_plans_autoconfig_success' );
 
-		const noticeText = this.translate( 'We\'ve installed your plugins, your site is powered up!' );
+		const noticeText = this.translate(
+			'We\'ve set up your plugin, your site is powered up!',
+			'We\'ve set up your plugins, your site is powered up!',
+			{ count: this.props.plugins.length }
+		);
 		return (
 			<Notice status="is-success" text={ noticeText } showDismiss={ false }>
 				<NoticeAction href={ `/plans/my-plan/${site.slug}` }>
@@ -487,16 +491,25 @@ const PlansSetup = React.createClass( {
 } );
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const site = sites.getSelectedSite();
+
+		// Filter out only the plugins whitelisted (if we're whitelisting)
+		const plugins = filter( getPluginsForSite( state, siteId ), ( plugin ) => {
+			if ( !! ownProps.whitelist ) {
+				return ( ownProps.whitelist === plugin.slug );
+			}
+			return true;
+		} );
+
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
 			isInstalling: isInstalling( state, siteId ),
 			isFinished: isFinished( state, siteId ),
-			plugins: getPluginsForSite( state, siteId ),
+			plugins,
 			activePlugin: getActivePlugin( state, siteId ),
 			nextPlugin: getNextPlugin( state, siteId ),
 			selectedSite: site && site.jetpack ? JetpackSite( site ) : site,
