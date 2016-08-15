@@ -62,7 +62,7 @@ const SiteSettingsFormWriting = React.createClass( {
 	isCustomPostTypesSettingsEnabled() {
 		return (
 			config.isEnabled( 'manage/custom-post-types' ) &&
-			false !== this.props.jetpackVersionSupportsCustomTypes
+			this.props.jetpackVersionSupportsCustomTypes
 		);
 	},
 
@@ -168,7 +168,7 @@ const SiteSettingsFormWriting = React.createClass( {
 						</FormSelect>
 					</FormFieldset>
 
-					{ config.isEnabled( 'manage/custom-post-types' ) && (
+					{ config.isEnabled( 'manage/custom-post-types' ) && this.props.jetpackVersionSupportsCustomTypes && (
 						<CustomPostTypeFieldset
 							requestingSettings={ this.state.fetchingSettings }
 							value={ pick( this.state, 'jetpack_testimonial', 'jetpack_portfolio' ) }
@@ -227,8 +227,8 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
-			jetpackCustomTypesModuleActive: isJetpackModuleActive( state, siteId, 'custom-content-types' ),
-			jetpackVersionSupportsCustomTypes: isJetpackMinimumVersion( state, siteId, '4.2.0' )
+			jetpackCustomTypesModuleActive: false !== isJetpackModuleActive( state, siteId, 'custom-content-types' ),
+			jetpackVersionSupportsCustomTypes: false !== isJetpackMinimumVersion( state, siteId, '4.2.0' )
 		};
 	},
 	{ requestPostTypes },
