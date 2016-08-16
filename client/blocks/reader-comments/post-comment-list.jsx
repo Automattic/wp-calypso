@@ -26,6 +26,7 @@ import {
 } from 'reader/stats';
 import PostComment from './post-comment';
 import PostCommentForm from './form';
+import CommentCount from './comment-count';
 
 class PostCommentList extends React.Component {
 	constructor( props ) {
@@ -186,6 +187,7 @@ class PostCommentList extends React.Component {
 
 		return (
 			<div className="comments">
+				{ totalCommentsCount && <CommentCount count={ totalCommentsCount } /> }
 				<div className={ classNames( 'comments__top-bar', { 'is-no-comments': displayedCommentsCount === 0 } ) }>
 					{ showViewEarlier ? <span className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
 						{

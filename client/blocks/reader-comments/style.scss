@@ -244,7 +244,6 @@
 	padding-top: 4px;
 	font-size: 14px;
 	line-height: 1.8;
-	word-break: break-word;
 
 	p {
 		color: darken( $gray, 30% );
@@ -349,4 +348,11 @@
 		margin-right: 4px;
 		transform: rotate( 180deg );
 	}
+}
+
+.reader-comment-count {
+	margin-top: 10px;
+	font-size: 14px;
+	color: lighten( $gray, 10% );
+	text-transform: uppercase;
 }
