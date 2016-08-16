@@ -7,9 +7,9 @@ var ReactDom = require( 'react-dom' ),
 	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' ),
 	ReduxProvider = require( 'react-redux' ).Provider,
+	startsWith = require( 'lodash/startsWith' ),
 	qs = require( 'querystring' ),
 	isValidUrl = require( 'valid-url' ).isWebUri;
-import { startsWith, map, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -107,32 +107,6 @@ function getPressThisContent( query ) {
 	return pieces.join( '\n\n' );
 }
 
-function startEditingPostCopy( siteId, postId ) {
-	wpcom.site( siteId ).post( postId ).get().then( post => {
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.startEditingNew( siteId, {
-			type: 'post',
-			content: post.content,
-		} );
-
-		const postAttributes = pick(
-			post,
-			'canonical_image',
-			'excerpt',
-			'featured_image',
-			'format',
-			'metadata',
-			'post_thumbnail',
-			'title'
-		);
-		postAttributes.categories = map( post.categories, 'ID' );
-		postAttributes.tags = map( post.tags, 'name' );
-
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( postAttributes );
-	} );
-}
-
 module.exports = {
 
 	post: function( context ) {
@@ -163,7 +137,8 @@ module.exports = {
 				actions.startEditingExisting( siteId, postID );
 				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else if ( postToCopyId ) {
-				startEditingPostCopy( siteId, postToCopyId );
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+				actions.startEditingPostCopy( siteId, postToCopyId );
 				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
 			} else {
 				let postOptions = { type: postType };
