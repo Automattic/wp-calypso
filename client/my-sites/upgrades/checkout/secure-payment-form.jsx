@@ -13,7 +13,6 @@ import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import PayPalPaymentBox from './paypal-payment-box';
 import CreditsPaymentBox from './credits-payment-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
-import PaymentBox from './payment-box.jsx';
 import storeTransactions from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
@@ -201,38 +200,5 @@ const SecurePaymentForm = React.createClass( {
 	}
 } );
 
-SecurePaymentForm.Placeholder = React.createClass( {
-	displayName: 'SecurePaymentForm.Placeholder',
-
-	render() {
-		return (
-			<PaymentBox
-				classSet="selected is-empty"
-				contentClassSet="selected is-empty" >
-				<div className="payment-box-section">
-
-					<div className="placeholder-row placeholder"/>
-					<div className="placeholder-row placeholder"/>
-					<div className="placeholder-col-narrow placeholder-inline-pad">
-						<div className="placeholder" />
-					</div>
-					<div className="placeholder-col-narrow placeholder-inline-pad-only-wide">
-						<div className="placeholder" />
-					</div>
-					<div className="placeholder-col-wide">
-						<div className="placeholder" />
-					</div>
-					<div className="placeholder-row placeholder"/>
-				</div>
-				<div className="payment-box-hr" />
-				<div className="placeholder-button-container">
-					<div className="placeholder-col-narrow">
-						<div className="placeholder placeholder-button"></div>
-					</div>
-				</div>
-			</PaymentBox>
-		);
-	}
-} );
-
 export default SecurePaymentForm;
+
