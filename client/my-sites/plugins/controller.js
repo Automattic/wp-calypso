@@ -135,7 +135,7 @@ function renderPluginsBrowser( context, siteUrl ) {
 	.pageView
 	.record( context.pathname.replace( site.domain, ':site' ), analyticsPageTitle );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( PluginBrowser, {
 			site: site ? site.slug : null,
 			path: context.path,
@@ -143,7 +143,8 @@ function renderPluginsBrowser( context, siteUrl ) {
 			sites,
 			search: searchTerm
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
