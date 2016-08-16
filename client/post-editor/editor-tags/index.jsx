@@ -13,7 +13,7 @@ import TermsConstants from 'lib/terms/constants';
 import PostActions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import { isPage } from 'lib/posts/utils';
-import InfoPopover from 'components/info-popover';
+import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 
 const debug = _debug( 'calypso:post-editor:editor-tags' );
 
@@ -28,7 +28,7 @@ export default React.createClass( {
 	},
 
 	onTagsChange: function( selectedTags ) {
-		var tagStat, tagEventLabel;
+		let tagStat, tagEventLabel;
 
 		debug( 'onTagsChange', selectedTags );
 
@@ -63,20 +63,16 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var tagNames = ( this.props.tags || [] ).map( function( tag ) {
+		const tagNames = ( this.props.tags || [] ).map( function( tag ) {
 			return tag.name;
 		} );
 
+		const helpText = isPage( this.props.post )
+			? this.translate( 'Use tags to associate more specific keywords with your pages.' )
+			: this.translate( 'Use tags to associate more specific keywords with your posts.' );
+
 		return (
-			<label className="editor-drawer__label">
-				<span className="editor-drawer__label-text">
-					{ this.translate( 'Tags' ) }
-					<InfoPopover position="top left">
-						{ isPage( this.props.post )
-							? this.translate( 'Use tags to associate more specific keywords with your pages.' )
-							: this.translate( 'Use tags to associate more specific keywords with your posts.' ) }
-					</InfoPopover>
-				</span>
+			<EditorDrawerLabel helpText={ helpText } labelText={ this.translate( 'Tags' ) }>
 				<TokenField
 					value={ this.getPostTags() }
 					displayTransform={ unescapeString }
@@ -84,7 +80,7 @@ export default React.createClass( {
 					onChange={ this.onTagsChange }
 					maxSuggestions={ TermsConstants.MAX_TAGS_SUGGESTIONS }
 				/>
-			</label>
+			</EditorDrawerLabel>
 		);
 	}
 } );
