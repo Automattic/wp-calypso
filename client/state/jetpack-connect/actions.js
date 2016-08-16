@@ -16,6 +16,7 @@ import {
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_AUTHORIZE,
+	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
@@ -24,6 +25,7 @@ import {
 	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
+	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -221,6 +223,20 @@ export default {
 			window.location = url;
 		};
 	},
+	goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode ) {
+		return ( dispatch ) => {
+			const url = addQueryArgs(
+				{ code: authorizationCode, state: queryObject.state },
+				queryObject.redirect_uri
+			);
+			dispatch( {
+				type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
+				url
+			} );
+			tracksEvent( dispatch, 'calyspo_jpc_xmlrpc_error', { error: queryObject.authorizeError } );
+			window.location = url;
+		};
+	},
 	createAccount( userData ) {
 		return ( dispatch ) => {
 			tracksEvent( dispatch, 'calypso_jpc_create_account', {} );
@@ -265,6 +281,10 @@ export default {
 			wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
 			.then( ( data ) => {
 				debug( 'Jetpack login complete. Trying Jetpack authorize.', data );
+				dispatch( {
+					type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
+					data
+				} );
 				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
 			} )
 			.then( ( data ) => {
