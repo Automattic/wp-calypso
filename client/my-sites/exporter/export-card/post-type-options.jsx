@@ -73,22 +73,22 @@ const PostTypeOptions = React.createClass( {
 		};
 
 		return (
-			<div className="exporter__option-fieldset">
+			<div className="export-card__option-fieldset">
 
-				<Label className="exporter__option-fieldset-legend">
+				<Label className="export-card__option-fieldset-legend">
 					<FormRadio
 						checked={ isEnabled }
 						onChange={ onSelect }/>
-					<span className="exporter__option-fieldset-legend-text">{ legend }</span>
+					<span className="export-card__option-fieldset-legend-text">{ legend }</span>
 				</Label>
 
 				{ description &&
-					<p className="exporter__option-fieldset-description">
+					<p className="export-card__option-fieldset-description">
 						{ description }
 					</p>
 				}
 
-				<div className="exporter__option-fieldset-fields">
+				<div className="export-card__option-fieldset-fields">
 					{ fields.map( fieldName =>
 						<Select key={ fieldName }
 							ref={ setRef( fieldName ) }
