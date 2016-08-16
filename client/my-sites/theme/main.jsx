@@ -227,25 +227,37 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
+	renderThemeForumCard() {
+		return (
+			<Card className="theme__sheet-card-support">
+				<Gridicon icon="comment" size={ 48 } />
+				<div className="theme__sheet-card-support-details">
+					{ i18n.translate( 'Need extra help?' ) }
+					<small>{ i18n.translate( 'Visit the theme support forum' ) }</small>
+				</div>
+				<Button primary={ true } href={ getForumUrl( this.props ) }>Visit forum</Button>
+			</Card>
+		);
+	},
+
+	renderCssSupportCard() {
+		return (
+			<Card className="theme__sheet-card-support">
+				<Gridicon icon="briefcase" size={ 48 } />
+				<div className="theme__sheet-card-support-details">
+					{ i18n.translate( 'Need CSS help? ' ) }
+					<small>{ i18n.translate( 'Visit the CSS customization forum' ) }</small>
+				</div>
+				<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
+			</Card>
+		);
+	},
+
 	renderSupportTab() {
 		return (
 			<div>
-				<Card className="theme__sheet-card-support">
-					<Gridicon icon="comment" size={ 48 } />
-					<div className="theme__sheet-card-support-details">
-						{ i18n.translate( 'Need extra help?' ) }
-						<small>{ i18n.translate( 'Visit the theme support forum' ) }</small>
-					</div>
-					<Button primary={ true } href={ getForumUrl( this.props ) }>Visit forum</Button>
-				</Card>
-				<Card className="theme__sheet-card-support">
-					<Gridicon icon="briefcase" size={ 48 } />
-					<div className="theme__sheet-card-support-details">
-						{ i18n.translate( 'Need CSS help? ' ) }
-						<small>{ i18n.translate( 'Visit the CSS customization forum' ) }</small>
-					</div>
-					<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
-				</Card>
+				{ this.renderThemeForumCard() }
+				{ this.renderCssSupportCard() }
 			</div>
 		);
 	},
