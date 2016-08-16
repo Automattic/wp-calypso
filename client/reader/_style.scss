@@ -208,7 +208,7 @@
 .comment-button__label-status,
 .like-button__label-status {
 
-	@media( min-width: 481px ) and ( max-width: 530px ) {
+	@media( max-width: 530px ) {
 		display: none;
 	}
 
