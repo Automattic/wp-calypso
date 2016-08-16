@@ -16,7 +16,6 @@ import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import Gridicon from 'components/gridicon';
 import TermSelector from 'post-editor/editor-term-selector';
 import Tags from 'post-editor/editor-tags';
-import InfoPopover from 'components/info-popover';
 import unescapeString from 'lodash/unescape';
 import Notice from 'components/notice';
 import { addSiteFragment } from 'lib/route';
@@ -65,12 +64,9 @@ export class EditorCategoriesTagsAccordion extends Component {
 
 		return (
 			<AccordionSection>
-				<EditorDrawerLabel>
-					{ translate( 'Categories' ) }
-					<InfoPopover position="top left">
-						{ translate( 'Use categories to group your posts by topic.' ) }
-					</InfoPopover>
-				</EditorDrawerLabel>
+				<EditorDrawerLabel
+					helpText={ translate( 'Use categories to group your posts by topic.' ) }
+					labelText={ translate( 'Categories' ) } />
 				{ isTermsSupported
 					? <TermSelector taxonomyName="category" />
 					: this.renderJetpackNotice()
