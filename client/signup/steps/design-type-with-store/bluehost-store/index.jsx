@@ -30,8 +30,8 @@ export const BluehostStoreStep = props => {
 	);
 
 	let subHeaderText = translate( 'Our partners at BlueHost are here for you'	);
-	let partnerUrl = 'https://www.bluehost.com/wordpress';
-	let price = '$3.95';
+	let partnerUrl = 'https://www.bluehost.com/track/wp/dotcomsans1?page=/wordpress';
+	let price = '$2.95';
 
 	if ( 'Bluehost with WooCommerce' === partnerName ) {
 		copyText = translate(
@@ -41,7 +41,7 @@ export const BluehostStoreStep = props => {
 		);
 
 		subHeaderText = translate( 'Our partners at BlueHost and WooCommerce are here for you' );
-		partnerUrl = 'https://www.bluehost.com/web-hosting/signup?flow=woocommerce';
+		partnerUrl = 'https://www.bluehost.com/track/wp/dotcomwoo1?page=/wordpress-woocommerce';
 		price = '$12.95';
 	}
 
