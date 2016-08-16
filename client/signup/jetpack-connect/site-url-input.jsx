@@ -92,6 +92,7 @@ export default React.createClass( {
 						icon="globe" />
 					<FormTextInput
 						ref="siteUrl"
+						autoCapitalize="off"
 						autoFocus="autofocus"
 						onChange={ this.onChange }
 						disabled={ this.props.isFetching }
