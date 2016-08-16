@@ -77,7 +77,7 @@ module.exports = {
 		allowExistingUsers: false,
 	},
 	plansWording: {
-		datestamp: '20160727',
+		datestamp: '20160817',
 		variations: {
 			originalWording: 50,
 			targetedWording: 50
