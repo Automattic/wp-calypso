@@ -1,14 +1,9 @@
-$sites-popover-width: 300px;
-
 .sites-popover {
-	width: $sites-popover-width;
-
-	// For some reason this popover doesn't inherit the body's
-	// font-size, so I define it here. -shaun
 	font-size: 15px;
+	width: 300px;
 }
 
-.sites-popover .tip-inner {
+.sites-popover .popover__inner {
 	position: relative;
 	text-align: left;
 	overflow: hidden;

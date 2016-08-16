@@ -1,19 +1,14 @@
 .tooltip.popover {
-	.tip-arrow {
+	.popover__arrow {
 		border-width: 6px;
 	}
 
-	&.tip-bottom .tip-arrow {
-		border-width: 10px;
-	}
-
-	&.tip-bottom-right,
-	&.tip-bottom-left,
-	&.tip-bottom {
-		.tip-arrow {
+	&.is-bottom-right,
+	&.is-bottom-left,
+	&.is-bottom {
+		.popover__arrow {
 			border-bottom-color: darken( $gray, 30% );
-			position: absolute;
-			top: 9px;
+			top: 4px;
 			right: 10px;
 
 			&::before {
@@ -22,32 +17,31 @@
 		}
 
 		&.is-error {
-			.tip-arrow {
+			.popover__arrow {
 				border-bottom-color: $alert-red;
 			}
 		}
 
 		&.is-warning {
-			.tip-arrow {
+			.popover__arrow {
 				border-bottom-color: $alert-yellow;
 			}
 		}
 
 		&.is-success {
-			.tip-arrow {
+			.popover__arrow {
 				border-bottom-color: $alert-green;
 			}
 		}
 	}
 
-	&.tip-top,
-	&.tip-top-left,
-	&.tip-top-right {
-		.tip-arrow {
+	&.is-top,
+	&.is-top-left,
+	&.is-top-right {
+		.popover__arrow {
 			border-top-color: darken( $gray, 30% );
-			position: absolute;
 			bottom: 4px;
-			margin-left: -6px;
+			right: 10px;
 
 			&::before {
 				display: none;
@@ -55,30 +49,36 @@
 		}
 
 		&.is-error {
-			.tip-arrow {
+			.popover__arrow {
 				border-top-color: $alert-red;
 			}
 		}
 
 		&.is-warning {
-			.tip-arrow {
+			.popover__arrow {
 				border-top-color: $alert-yellow;
 			}
 		}
 
 		&.is-success {
-			.tip-arrow {
+			.popover__arrow {
 				border-top-color: $alert-green;
 			}
 		}
 	}
 
-	&.tip-right {
+	&.is-top,
+	&.is-bottom {
+		.popover__arrow {
+			margin-left: -6px;
+		}
+	}
+
+	&.is-left,
+	&.is-right {
 		padding-top: 0;
-		.tip-arrow {
-			border-right-color: darken( $gray, 30% );
-			position: absolute;
-			margin-left: 4px;
+		.popover__arrow {
+			margin-top: -6px;
 
 			&::before {
 				display: none;
@@ -86,25 +86,39 @@
 		}
 
 		&.is-error {
-			.tip-arrow {
+			.popover__arrow {
 				border-right-color: $alert-red;
 			}
 		}
 
 		&.is-warning {
-			.tip-arrow {
+			.popover__arrow {
 				border-right-color: $alert-yellow;
 			}
 		}
 
 		&.is-success {
-			.tip-arrow {
+			.popover__arrow {
 				border-right-color: $alert-green;
 			}
 		}
 	}
 
-	.tip-inner {
+	&.is-left {
+		.popover__arrow {
+			margin-right: 4px;
+			border-left-color: darken( $gray, 30% );
+		}
+	}
+
+	&.is-right {
+		.popover__arrow {
+			margin-left: 4px;
+			border-right-color: darken( $gray, 30% );
+		}
+	}
+
+	.popover__inner {
 		border: 0px;
 		box-shadow: none;
 		border-radius: 2px;
@@ -112,24 +126,23 @@
 		background: darken( $gray, 30% );
 		font-size: 12px;
 		padding: 6px 10px;
-		margin-top: 5px;
 		text-align: left;
 	}
 
 	&.is-error {
-		.tip-inner {
+		.popover__inner {
 			background: $alert-red;
 		}
 	}
 
 	&.is-warning {
-		.tip-inner {
+		.popover__inner {
 			background: $alert-yellow;
 		}
 	}
 
 	&.is-success {
-		.tip-inner {
+		.popover__inner {
 			background: $alert-green;
 		}
 	}

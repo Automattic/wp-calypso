@@ -53,6 +53,10 @@
 	}
 }
 
+.editor-visibility__tooltip .popover__inner {
+	white-space: nowrap;
+}
+
 .popover {
 	&.editor-visibility__popover {
 		/* applying a lower z-index to ensure it is layered behind the masterbar */
