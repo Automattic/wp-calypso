@@ -37,6 +37,7 @@ import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { requestSite } from 'state/sites/actions';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -56,7 +57,6 @@ function getGeneralTabUrl( slug ) {
 function stateForSite( site ) {
 	return {
 		seoMetaDescription: get( site, 'options.seo_meta_description', '' ),
-		seoTitleFormats: getSeoTitleFormatsForSite( site ),
 		googleCode: get( site, 'options.verification_services_codes.google', '' ),
 		bingCode: get( site, 'options.verification_services_codes.bing', '' ),
 		pinterestCode: get( site, 'options.verification_services_codes.pinterest', '' ),
@@ -94,18 +94,43 @@ export const SeoForm = React.createClass( {
 	mixins: [ protectForm.mixin ],
 
 	getInitialState() {
-		return stateForSite( this.props.site );
+		return {
+			...stateForSite( this.props.site ),
+			seoTitleFormats: {},
+			isRefreshingSiteData: false,
+			dirtyFields: []
+		};
+	},
+
+	componentDidMount() {
+		this.refreshCustomTitles();
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		let nextState = stateForSite( nextProps.site );
+		let nextState =  {
+			...stateForSite( nextProps.site ),
+			seoTitleFormats: nextProps.storedTitleFormats
+		};
 
 		// Don't update state for fields the user has edited
-		if ( this.state.dirtyFields ) {
-			nextState = omit( nextState, this.state.dirtyFields );
+		nextState = omit( nextState, this.state.dirtyFields );
+
+		const isRefreshingSiteData = (
+			this.state.isSubmittingForm ||
+			(
+				this.state.isRefreshingSiteData &&
+				isEqual( this.props.storedTitleFormats, nextProps.storedTitleFormats )
+			)
+		);
+
+		if ( isRefreshingSiteData ) {
+			nextState = omit( nextState, [ 'seoTitleFormats' ] );
 		}
 
-		this.setState( nextState );
+		this.setState( {
+			...nextState,
+			isRefreshingSiteData
+		} );
 	},
 
 	handleMetaChange( event ) {
@@ -152,32 +177,26 @@ export const SeoForm = React.createClass( {
 		} );
 	},
 
-	/**
-	 * Tracks updates to the title formats
-	 *
-	 * We need to be careful here and only
-	 * send _changes_ to the API instead of
-	 * sending all of the title formats.
-	 * There is a race condition here after
-	 * sending the changes and before updating
-	 * from the SitesList wherein we could
-	 * accidentally overwrite new changes.
-	 *
-	 * @param {object} seoTitleFormats SEO title formats e.g. { frontPage: '%site_name%' }
-	 */
 	updateTitleFormats( seoTitleFormats ) {
-		const { storedTitleFormats } = this.props;
-
-		const hasChanges = ( format, type ) =>
-			! isEqual( format, storedTitleFormats[ type ] );
+		const { dirtyFields = [] } = this.state;
+		if ( ! includes( dirtyFields, 'seoTitleFormats' ) ) {
+			dirtyFields.push( 'seoTitleFormats' );
+		}
 
 		this.setState( {
-			seoTitleFormats: pickBy( seoTitleFormats, hasChanges )
+			dirtyFields,
+			seoTitleFormats
 		} );
 	},
 
 	submitSeoForm( event ) {
-		const { site, trackSubmission } = this.props;
+		const {
+			site,
+			storedTitleFormats,
+			trackSubmission
+		} = this.props;
+
+		const { dirtyFields } = this.state;
 
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 			event.preventDefault();
@@ -206,10 +225,24 @@ export const SeoForm = React.createClass( {
 			return;
 		}
 
-		this.setState( { isSubmittingForm: true } );
+		this.setState( {
+			isSubmittingForm: true,
+			isRefreshingSiteData: includes( dirtyFields, 'seoTitleFormats' ),
+		} );
+
+		// We need to be careful here and only
+		// send _changes_ to the API instead of
+		// sending all of the title formats.
+		// Otherwise there is a race condition
+		// where we could accidentally overwrite
+		// the settings for types we didn't change.
+		const hasChanges = ( format, type ) =>
+			! isEqual( format, storedTitleFormats[ type ] );
 
 		const updatedOptions = {
-			advanced_seo_title_formats: seoTitleToApi( this.state.seoTitleFormats ),
+			advanced_seo_title_formats: seoTitleToApi(
+				pickBy( this.state.seoTitleFormats, hasChanges )
+			),
 			seo_meta_description: this.state.seoMetaDescription,
 			verification_services_codes: filteredCodes
 		};
@@ -230,10 +263,22 @@ export const SeoForm = React.createClass( {
 				this.setState( { isSubmittingForm: false } );
 
 				site.fetchSettings();
+				this.refreshCustomTitles();
 			}
 		} );
 
 		trackSubmission();
+	},
+
+	refreshCustomTitles() {
+		const {
+			refreshSiteData,
+			selectedSite
+		} = this.props;
+
+		if ( selectedSite && selectedSite.ID ) {
+			refreshSiteData( selectedSite.ID );
+		}
 	},
 
 	render() {
@@ -321,7 +366,11 @@ export const SeoForm = React.createClass( {
 								{ config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
 									<div>
 										<FormLabel htmlFor="seo_title">{ this.translate( 'Meta Title Format' ) }</FormLabel>
-										<MetaTitleEditor onChange={ this.updateTitleFormats } />
+										<MetaTitleEditor
+											disabled={ isDisabled || this.state.isRefreshingSiteData }
+											onChange={ this.updateTitleFormats }
+											titleFormats={ this.state.seoTitleFormats }
+										/>
 										<FormSettingExplanation>
 											{ this.translate( 'Customize how the title for your content will appear in search engines and social media.' ) }
 										</FormSettingExplanation>
@@ -459,10 +508,12 @@ export const SeoForm = React.createClass( {
 } );
 
 const mapStateToProps = state => ( {
+	selectedSite: getSelectedSite( state ),
 	storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) )
 } );
 
 const mapDispatchToProps = {
+	refreshSiteData: siteId => requestSite( siteId ),
 	trackSubmission: () => recordTracksEvent( 'calypso_seo_settings_form_submit', {} )
 };
 
