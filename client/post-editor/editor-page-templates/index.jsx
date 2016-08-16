@@ -76,24 +76,23 @@ class EditorPageTemplates extends Component {
 				{ siteId && <QueryPageTemplates siteId={ siteId } /> }
 				{ size( templates ) > 1 && (
 					<AccordionSection>
-						<EditorDrawerLabel>
-							{ translate( 'Page Template' ) }
+						<EditorDrawerLabel labelText={ translate( 'Page Template' ) }>
+							<SelectDropdown selectedText={ this.getSelectedTemplateText() }>
+								{ map( templates, ( { file, label } ) => (
+									/* eslint-disable react/jsx-no-bind */
+									// jsx-no-bind disabled because while it's possible
+									// to extract this out into a separate component
+									// with its own click handler, that would severely
+									// harm the readability of this component.
+									<DropdownItem
+										key={ file }
+										selected={ file === template }
+										onClick={ () => this.selectTemplate( file ) }>
+										{ label }
+									</DropdownItem>
+								) ) }
+							</SelectDropdown>
 						</EditorDrawerLabel>
-						<SelectDropdown selectedText={ this.getSelectedTemplateText() }>
-							{ map( templates, ( { file, label } ) => (
-								/* eslint-disable react/jsx-no-bind */
-								// jsx-no-bind disabled because while it's possible
-								// to extract this out into a separate component
-								// with its own click handler, that would severely
-								// harm the readability of this component.
-								<DropdownItem
-									key={ file }
-									selected={ file === template }
-									onClick={ () => this.selectTemplate( file ) }>
-									{ label }
-								</DropdownItem>
-							) ) }
-						</SelectDropdown>
 					</AccordionSection>
 				) }
 			</div>
