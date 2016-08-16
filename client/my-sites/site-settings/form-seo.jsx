@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { Set } from 'immutable';
 import {
 	get,
 	includes,
@@ -98,7 +99,7 @@ export const SeoForm = React.createClass( {
 			...stateForSite( this.props.site ),
 			seoTitleFormats: {},
 			isRefreshingSiteData: false,
-			dirtyFields: []
+			dirtyFields: Set()
 		};
 	},
 
@@ -107,18 +108,21 @@ export const SeoForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		let nextState =  {
+		const { dirtyFields } = this.state;
+
+		let nextState = {
 			...stateForSite( nextProps.site ),
 			seoTitleFormats: nextProps.storedTitleFormats
 		};
 
 		// Don't update state for fields the user has edited
-		nextState = omit( nextState, this.state.dirtyFields );
+		nextState = omit( nextState, dirtyFields.toArray() );
 
+		const wasRefreshingSiteData = this.state.isRefreshingSiteData;
 		const isRefreshingSiteData = (
 			this.state.isSubmittingForm ||
 			(
-				this.state.isRefreshingSiteData &&
+				wasRefreshingSiteData &&
 				isEqual( this.props.storedTitleFormats, nextProps.storedTitleFormats )
 			)
 		);
@@ -133,24 +137,22 @@ export const SeoForm = React.createClass( {
 		} );
 	},
 
-	handleMetaChange( event ) {
-		const seoMetaDescription = event.target.value;
+	handleMetaChange( { target: { value: seoMetaDescription } } ) {
+		const { dirtyFields } = this.state;
+
 		// Don't allow html tags in the input field
 		const hasHtmlTagError = anyHtmlTag.test( seoMetaDescription );
-
-		const { dirtyFields = [] } = this.state;
-		if ( ! includes( dirtyFields, 'seoMetaDescription' ) ) {
-			dirtyFields.push( 'seoMetaDescription' );
-		}
 
 		this.setState( Object.assign(
 			{ hasHtmlTagError },
 			! hasHtmlTagError && { seoMetaDescription },
-			{ dirtyFields }
+			{ dirtyFields: dirtyFields.add( 'seoMetaDescription' ) }
 		) );
 	},
 
 	handleVerificationCodeChange( event, serviceCode ) {
+		const { dirtyFields } = this.state;
+
 		if ( ! this.state.hasOwnProperty( serviceCode ) ) {
 			return;
 		}
@@ -164,28 +166,20 @@ export const SeoForm = React.createClass( {
 			return;
 		}
 
-		const { dirtyFields = [] } = this.state;
-		if ( ! includes( dirtyFields, serviceCode ) ) {
-			dirtyFields.push( serviceCode );
-		}
-
 		this.setState( {
 			invalidCodes: [],
 			showPasteError: false,
 			[ serviceCode ]: event.target.value,
-			dirtyFields
+			dirtyFields: dirtyFields.add( serviceCode )
 		} );
 	},
 
 	updateTitleFormats( seoTitleFormats ) {
-		const { dirtyFields = [] } = this.state;
-		if ( ! includes( dirtyFields, 'seoTitleFormats' ) ) {
-			dirtyFields.push( 'seoTitleFormats' );
-		}
+		const { dirtyFields } = this.state;
 
 		this.setState( {
-			dirtyFields,
-			seoTitleFormats
+			seoTitleFormats,
+			dirtyFields: dirtyFields.add( 'seoTitleFormats' ),
 		} );
 	},
 
@@ -227,7 +221,7 @@ export const SeoForm = React.createClass( {
 
 		this.setState( {
 			isSubmittingForm: true,
-			isRefreshingSiteData: includes( dirtyFields, 'seoTitleFormats' ),
+			isRefreshingSiteData: dirtyFields.has( 'seoTitleFormats' ),
 		} );
 
 		// We need to be careful here and only
