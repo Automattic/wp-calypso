@@ -21,4 +21,12 @@ const getFlowType = function( state, site ) {
 	return false;
 };
 
-export default { isCalypsoStartedConnection, getFlowType };
+const hasXmlrpcError = function( state ) {
+	return (
+		state.authorizeError &&
+		state.authorizeError.message &&
+		state.authorizeError.message.indexOf( 'verify_secrets_missing' ) < 0
+	);
+};
+
+export default { isCalypsoStartedConnection, getFlowType, hasXmlrpcError };

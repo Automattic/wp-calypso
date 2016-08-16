@@ -19,8 +19,14 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
-import { createAccount, authorize, goBackToWpAdmin, activateManage } from 'state/jetpack-connect/actions';
-import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
+import {
+	createAccount,
+	authorize,
+	goBackToWpAdmin,
+	activateManage,
+	goToXmlrpcErrorFallbackUrl
+} from 'state/jetpack-connect/actions';
+import { isCalypsoStartedConnection, hasXmlrpcError } from 'state/jetpack-connect/selectors';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -202,7 +208,8 @@ const LoggedInForm = React.createClass( {
 			isActivating,
 			queryObject,
 			isRedirectingToWpAdmin,
-			authorizeSuccess
+			authorizeSuccess,
+			authorizationCode
 		} = props.jetpackConnectAuthorize;
 
 		// SSO specific logic here.
@@ -212,6 +219,8 @@ const LoggedInForm = React.createClass( {
 			}
 		} else if ( siteReceived && ! isActivating ) {
 			this.activateManage();
+		} else if ( props.requestHasXmlrpcError() && ! isRedirectingToWpAdmin ) {
+			this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
 		}
 	},
 
@@ -342,6 +351,10 @@ const LoggedInForm = React.createClass( {
 			return this.translate( 'Return to your site' );
 		}
 
+		if ( this.props.requestHasXmlrpcError() ) {
+			return this.translate( 'Redirecting' );
+		}
+
 		return this.translate( 'Approve' );
 	},
 
@@ -410,7 +423,12 @@ const LoggedInForm = React.createClass( {
 	},
 
 	renderFooterLinks() {
-		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
+		const {
+			queryObject,
+			authorizeSuccess,
+			isAuthorizing,
+			isRedirectingToWpAdmin
+		} = this.props.jetpackConnectAuthorize;
 		const { blogname, redirect_after_auth, _wp_nonce } = queryObject;
 		const loginUrl = config( 'login_url' ) +
 			'?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) +
@@ -424,7 +442,7 @@ const LoggedInForm = React.createClass( {
 			</LoggedOutFormLinkItem>
 		);
 
-		if ( isAuthorizing ) {
+		if ( isAuthorizing || isRedirectingToWpAdmin ) {
 			return null;
 		}
 
@@ -455,7 +473,12 @@ const LoggedInForm = React.createClass( {
 
 	renderStateAction() {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
-		if ( this.props.isFetchingSites() || this.isAuthorizing() || ( authorizeSuccess && ! siteReceived ) ) {
+		if (
+			this.props.isFetchingSites() ||
+			this.isAuthorizing() ||
+			( authorizeSuccess && ! siteReceived ) ||
+			this.props.requestHasXmlrpcError()
+		) {
 			return (
 				<div className="jetpack-connect__logged-in-form-loading">
 					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
@@ -563,6 +586,9 @@ export default connect(
 				state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
 			? getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
 			: null;
+		const requestHasXmlrpcError = () => {
+			return hasXmlrpcError( state.jetpackConnect.jetpackConnectAuthorize );
+		};
 		const isFetchingSites = () => {
 			return isRequestingSites( state );
 		};
@@ -571,7 +597,8 @@ export default connect(
 			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
 			isAlreadyOnSitesList: !! site,
-			isFetchingSites
+			isFetchingSites,
+			requestHasXmlrpcError
 		};
 	},
 	dispatch => bindActionCreators( { requestSites,
@@ -579,5 +606,6 @@ export default connect(
 		authorize,
 		createAccount,
 		activateManage,
-		goBackToWpAdmin }, dispatch )
+		goBackToWpAdmin,
+		goToXmlrpcErrorFallbackUrl }, dispatch )
 )( JetpackConnectAuthorizeForm );

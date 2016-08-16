@@ -99,8 +99,8 @@ export default React.createClass( {
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'authorizeError' ) {
-			noticeValues.text = this.translate( 'Error authorizing your site. Please contact support.' );
-			noticeValues.status = 'is-error';
+			noticeValues.text = this.translate( 'Redirecting back to your site to complete authorization.' );
+			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'notice';
 			return noticeValues;
 		}
