@@ -25,6 +25,7 @@ var analytics = require( 'lib/analytics' ),
 	purchasePaths = require( 'me/purchases/paths' ),
 	QueryStoredCards = require( 'components/data/query-stored-cards' ),
 	SecurePaymentForm = require( './secure-payment-form' ),
+	SecurePaymentFormPlaceholder = require( './secure-payment-form-placeholder' ),
 	supportPaths = require( 'lib/url/support' ),
 	themeItem = require( 'lib/cart-values/cart-items' ).themeItem,
 	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
@@ -214,7 +215,7 @@ const Checkout = React.createClass( {
 			// hasPendingServerUpdates is an important check here as the content we display is dependent on the content of the cart
 
 			return (
-				<SecurePaymentForm.Placeholder />
+				<SecurePaymentFormPlaceholder />
 			);
 		}
 
