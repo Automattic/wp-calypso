@@ -14,6 +14,10 @@
 .step-header__title {
 	font-size: 24px;
 	margin: 0 0 5px 0;
+
+	@include breakpoint( "<480px" ) {
+		padding: 0 20px;
+	}
 }
 
 .step-header__subtitle {
