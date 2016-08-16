@@ -25,7 +25,7 @@ export const systemSchema = {
 			type: 'object',
 			properties: {
 				lastUpdated: stringType,
-				ID: numberType,
+				ID: stringType,
 				settings: {
 					type: 'object',
 					additionalProperties: true

@@ -102,7 +102,7 @@ export function apiReady() {
 			return;
 		}
 
-		dispatch( mustPrompt() );
+		dispatch( checkPermissionsState() );
 		if ( 'disabling' === getStatus( state ) ) {
 			debug( 'Forcibly unregistering device (disabling on apiReady)' );
 			dispatch( unregisterDevice() );
