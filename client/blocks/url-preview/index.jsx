@@ -8,12 +8,11 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { clearPreviewUrl } from 'state/ui/preview/actions';
+import { closePreview } from 'state/ui/preview/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -41,8 +40,7 @@ export default function urlPreview( WebPreview ) {
 		}
 
 		onClosePreview() {
-			this.props.clearPreviewUrl( this.props.selectedSiteId );
-			this.props.setLayoutFocus( 'sidebar' );
+			this.props.closePreview();
 		}
 
 		getPreviewUrl() {
@@ -92,8 +90,7 @@ export default function urlPreview( WebPreview ) {
 		selectedSiteId: PropTypes.number,
 		selectedSiteNonce: PropTypes.string,
 		selectedSiteUrl: PropTypes.string,
-		setLayoutFocus: PropTypes.func.isRequired,
-		clearPreviewUrl: PropTypes.func.isRequired,
+		closePreview: PropTypes.func.isRequired,
 	};
 
 	function mapStateToProps( state ) {
@@ -109,6 +106,6 @@ export default function urlPreview( WebPreview ) {
 
 	return connect(
 		mapStateToProps,
-		{ clearPreviewUrl, setLayoutFocus }
+		{ closePreview }
 	)( UrlPreview );
 }
