@@ -8,14 +8,14 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { fetchPreviewMarkup, undoCustomization, clearCustomizations } from 'state/preview/actions';
+import { fetchPreviewMarkup, undoCustomization } from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { closePreview } from 'state/ui/preview/actions';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -29,7 +29,6 @@ export default function designPreview( WebPreview ) {
 			this.undoCustomization = this.undoCustomization.bind( this );
 			this.onLoad = this.onLoad.bind( this );
 			this.onClosePreview = this.onClosePreview.bind( this );
-			this.cleanAndClosePreview = this.cleanAndClosePreview.bind( this );
 			this.onPreviewClick = this.onPreviewClick.bind( this );
 		}
 
@@ -97,16 +96,11 @@ export default function designPreview( WebPreview ) {
 			if ( this.getCustomizations() && this.props.isUnsaved ) {
 				return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
 					if ( accepted ) {
-						this.cleanAndClosePreview();
+						this.props.closePreview();
 					}
 				} );
 			}
-			this.cleanAndClosePreview();
-		}
-
-		cleanAndClosePreview() {
-			this.props.clearCustomizations( this.props.selectedSiteId );
-			this.props.setLayoutFocus( 'sidebar' );
+			this.props.closePreview();
 		}
 
 		onPreviewClick( event ) {
@@ -129,7 +123,6 @@ export default function designPreview( WebPreview ) {
 					showPreview={ this.props.showPreview }
 					showExternal={ false }
 					showClose={ false }
-					hasSidebar={ true }
 					previewMarkup={ this.props.previewMarkup }
 					onClose={ this.onClosePreview }
 					onLoad={ this.onLoad }
@@ -149,8 +142,7 @@ export default function designPreview( WebPreview ) {
 		selectedSiteId: PropTypes.number,
 		undoCustomization: PropTypes.func.isRequired,
 		fetchPreviewMarkup: PropTypes.func.isRequired,
-		clearCustomizations: PropTypes.func.isRequired,
-		setLayoutFocus: PropTypes.func.isRequired,
+		closePreview: PropTypes.func.isRequired,
 	};
 
 	function mapStateToProps( state ) {
@@ -170,6 +162,6 @@ export default function designPreview( WebPreview ) {
 
 	return connect(
 		mapStateToProps,
-		{ fetchPreviewMarkup, undoCustomization, clearCustomizations, setLayoutFocus }
+		{ fetchPreviewMarkup, undoCustomization, closePreview }
 	)( DesignPreview );
 }
