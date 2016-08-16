@@ -20,7 +20,6 @@ import { decodeEntities } from 'lib/formatting';
 import TermsConstants from 'lib/terms/constants';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import QueryTerms from 'components/data/query-terms';
-import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 
 const debug = _debug( 'calypso:post-editor:editor-terms' );
 
@@ -69,7 +68,7 @@ class TermTokenField extends React.Component {
 		const termNames = map( this.props.terms, 'name' );
 
 		return (
-			<EditorDrawerLabel labelText={ this.props.taxonomyLabel }>
+			<div>
 				<QueryTerms
 					siteId={ this.props.siteId }
 					taxonomy={ this.props.taxonomyName }
@@ -82,7 +81,7 @@ class TermTokenField extends React.Component {
 					onChange={ this.boundOnTermsChange }
 					maxSuggestions={ TermsConstants.MAX_TERMS_SUGGESTIONS }
 				/>
-			</EditorDrawerLabel>
+			</div>
 		);
 	}
 }
