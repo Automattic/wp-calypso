@@ -1,17 +1,17 @@
 .plan-purchase-features {
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-between;
+	column-count: 2;
+	column-gap: 12px;
 }
 
 .plan-purchase-features__item {
-	flex: 0 49%;
-	align-self: flex-start;
+	display: inline-block;
+	margin-top: 12px;
 }
 
 .plan-purchase-features__item .purchase-detail {
 	background-color: $white;
 	border-radius: 0;
+	margin: 0;
 }
 
 .plan-purchase-features__item-content {
@@ -21,7 +21,6 @@
 
 	@include breakpoint( ">660px" ) {
 		border: 1px solid lighten( $gray, 30% );
-		margin: 16px auto;
 		text-align: left;
 	}
 }
