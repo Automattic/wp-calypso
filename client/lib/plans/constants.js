@@ -106,7 +106,7 @@ export const plansList = {
 			' website with a custom domain name, and remove all WordPress.com advertising. ' +
 			'Get access to high quality email and live chat support.', {
 				components: {
-					strong: <strong />
+					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
 		getFeatures: () => [
@@ -134,7 +134,7 @@ export const plansList = {
 			' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
 			' and the ability to monetize your site with ads.', {
 				components: {
-					strong: <strong />
+					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
@@ -165,7 +165,7 @@ export const plansList = {
 			' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
 			' storage, and the ability to remove WordPress.com branding.', {
 				components: {
-					strong: <strong />
+					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
 		getFeatures: () => compact( [ // pay attention to ordering, it is used on /plan page
