@@ -277,7 +277,7 @@ const CreditCardPage = React.createClass( {
 
 					<QueryUserPurchases userId={ user.get().ID } />
 
-					<CreditCardPageLoadingPlaceholder />
+					<CreditCardPageLoadingPlaceholder title={ this.props.title } />
 				</Main>
 			);
 		}
