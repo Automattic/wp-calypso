@@ -14,7 +14,7 @@ import {
 import reducer, {} from '../reducer';
 
 const wpcomSubscription = {
-	ID: 42,
+	ID: '42',
 	lastUpdated: '2016-06-16T14:41:09+02:00',
 	settings: {
 		comments: {
@@ -64,7 +64,7 @@ describe( 'system reducer', () => {
 	} );
 
 	it( 'should refuse to restore particular keys', () => {
-		const wpcomSubscriptionId = { ID: 42 };
+		const wpcomSubscriptionId = { ID: '42' };
 		const previousState = {
 			system: {
 				apiReady: true,
