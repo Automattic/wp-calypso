@@ -33,11 +33,11 @@ const AdvancedSettings = React.createClass( {
 
 	render() {
 		return (
-			<div className="exporter__advanced-settings">
-				<h1 className="exporter__advanced-settings-title">
+			<div className="export-card__advanced-settings">
+				<h1 className="export-card__advanced-settings-title">
 					{ this.translate( 'Select specific content to export' ) }
 				</h1>
-				<p className="exporter__advanced-settings-description">
+				<p className="export-card__advanced-settings-description">
 					{ this.translate(
 						'Use the options below to select a specific content ' +
 						'type to download. You can select Posts, Pages, ' +
@@ -45,7 +45,7 @@ const AdvancedSettings = React.createClass( {
 						'After making your selection you can download your ' +
 						'content in an .xml file.' ) }
 				</p>
-				<div className="exporter__advanced-settings-row">
+				<div className="export-card__advanced-settings-row">
 					<PostTypeOptions postType="post" legend={ this.translate( 'Posts' ) } />
 					<PostTypeOptions postType="page" legend={ this.translate( 'Pages' ) } />
 					<PostTypeOptions postType="feedback"
@@ -54,7 +54,7 @@ const AdvancedSettings = React.createClass( {
 					/>
 				</div>
 				<SpinnerButton
-					className="exporter__export-button"
+					className="export-card__export-button"
 					disabled={ ! this.props.isValid }
 					loading={ this.props.shouldShowProgress }
 					isPrimary={ true }

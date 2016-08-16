@@ -51,7 +51,7 @@ export default React.createClass( {
 				{ loading &&
 					<Spinner
 						size={ size }
-						className="exporter__spinner-button" />
+						className="export-card__spinner-button" />
 				}
 			</div>
 		);
