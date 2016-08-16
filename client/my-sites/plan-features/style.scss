@@ -363,6 +363,11 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features__targeted-description-heading {
+	display: block;
+	color: lighten( $gray-dark, 25% );
+}
+
 .plan-features__item {
 	position: relative;
 	margin: 0 24px;
