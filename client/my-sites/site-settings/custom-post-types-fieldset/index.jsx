@@ -140,13 +140,19 @@ class CustomPostTypesFieldset extends Component {
 							{ this.hasDefaultPostTypeEnabled( 'jetpack-testimonial' ) && (
 								<FormSettingExplanation>{ translate( 'Your theme supports Testimonials' ) }</FormSettingExplanation>
 							) }
-							{ translate( 'The Testimonial custom content type allows you to add, organize, and display your testimonials. If your theme doesn’t support it yet, you can display testimonials using the {{shortcodeLink}}testimonial shortcode{{/shortcodeLink}} ( {{code}}[testimonials]{{/code}} ) or you can {{archiveLink}}view a full archive of your testimonials{{/archiveLink}}.', {
-								components: {
-									shortcodeLink: <a href="https://support.wordpress.com/testimonials-shortcode/" />,
-									code: <code />,
-									archiveLink: <a href={ siteUrl.replace( /\/$/, '' ) + '/testimonial' } />
+							{ translate(
+								'The Testimonial custom content type allows you to add, organize, and display your ' +
+								'testimonials. If your theme doesn’t support it yet, you can display testimonials using ' +
+								'the {{shortcodeLink}}testimonial shortcode{{/shortcodeLink}} ( {{code}}[testimonials]{{/code}} ) ' +
+								'or you can {{archiveLink}}view a full archive of your testimonials{{/archiveLink}}.',
+								{
+									components: {
+										shortcodeLink: <a href="https://support.wordpress.com/testimonials-shortcode/" />,
+										code: <code />,
+										archiveLink: <a href={ siteUrl.replace( /\/$/, '' ) + '/testimonial' } />
+									}
 								}
-							} ) }
+							) }
 						</Card>
 					</div>
 					<div className="site-settings__custom-post-type">
@@ -160,12 +166,19 @@ class CustomPostTypesFieldset extends Component {
 							{ this.hasDefaultPostTypeEnabled( 'jetpack-portfolio' ) && (
 								<FormSettingExplanation>{ translate( 'Your theme supports Portfolio Projects' ) }</FormSettingExplanation>
 							) }
-							{ translate( 'The Portfolio custom content type gives you an easy way to manage and showcase projects on your site. If your theme doesn’t support it yet, you can display the portfolio using the {{shortcodeLink}}portfolio shortcode{{/shortcodeLink}} ( {{code}}[portfolio]{{/code}} ) or with a link to the portfolio in the menu.', {
-								components: {
-									shortcodeLink: <a href="https://support.wordpress.com/portfolios/portfolio-shortcode/" />,
-									code: <code />
+							{ translate(
+								'The Portfolio custom content type gives you an easy way to manage and showcase projects ' +
+								'on your site. If your theme doesn’t support it yet, you can display the portfolio using ' +
+								'the {{shortcodeLink}}portfolio shortcode{{/shortcodeLink}} ( {{code}}[portfolio]{{/code}} ) ' +
+								'or you can {{archiveLink}}view a full archive of your portfolio projects{{/archiveLink}}.',
+								{
+									components: {
+										shortcodeLink: <a href="https://support.wordpress.com/portfolios/portfolio-shortcode/" />,
+										code: <code />,
+										archiveLink: <a href={ siteUrl.replace( /\/$/, '' ) + '/portfolio' } />
+									}
 								}
-							} ) }
+							) }
 						</Card>
 					</div>
 				</ToggleWrapper>
