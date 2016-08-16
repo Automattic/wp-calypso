@@ -28,9 +28,11 @@ import {
 	PLAN_FREE,
 	PLAN_JETPACK_FREE, 
 	PLAN_PERSONAL,
+	allWpcomPlans
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
+import { abtest } from 'lib/abtest';
 
 /**
  * Module vars
@@ -191,6 +193,10 @@ export const isPlanFeaturesEnabled = () => {
 	return isEnabled( 'manage/plan-features' );
 };
 
+export const isPlansWordingEnabled = () => {
+	return abtest( 'plansWording' ) === 'targetedWording';
+};
+
 export function plansLink( url, site, intervalType ) {
 	if ( 'monthly' === intervalType ) {
 		url += '/monthly';
@@ -210,7 +216,13 @@ export function applyTestFiltersToPlansList( planName ) {
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests
 	const removeDisabledFeatures = () => {};
-	const updatePlanDescriptions = () => {};
+
+	const updatePlanDescriptions = () => {
+		if ( isPlansWordingEnabled() && includes( allWpcomPlans, planName ) ) {
+			filteredPlanConstantObj.getDescription = plansList[ planName ].getTargetedDescription;
+		}
+	};
+
 	const updatePlanFeatures = () => {};
 
 	removeDisabledFeatures();

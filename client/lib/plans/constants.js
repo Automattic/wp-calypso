@@ -50,7 +50,7 @@ export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
-export const FEATURE_ADVANCED_SEO = 'advanced-seo'
+export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -83,6 +83,8 @@ export const plansList = {
 			'Get a free blog and be on your way to publishing your first post' +
 			' in less than five minutes.'
 		),
+		getTargetedDescription: () => i18n.translate( 'Get a free website and be on your way to publishing your ' +
+			'first post in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_COMMUNITY_SUPPORT,
@@ -100,6 +102,13 @@ export const plansList = {
 		availableFor: ( plan ) => includes( [ PLAN_FREE ], plan ),
 		getPathSlug: () => 'personal',
 		getDescription: () => i18n.translate( 'Use your own domain and establish your online presence without ads.' ),
+		getTargetedDescription: () => i18n.translate( '{{strong}}Best for Personal Use:{{/strong}} Boost your' +
+			' website with a custom domain name, and remove all WordPress.com advertising. ' +
+			'Get access to high quality email and live chat support.', {
+				components: {
+					strong: <strong className="plan-features__targeted-description-heading" />
+				}
+			} ),
 		getFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -121,6 +130,13 @@ export const plansList = {
 		getDescription: () => i18n.translate( 'Your own domain name, powerful' +
 			' customization options, easy monetization with WordAds, and lots of space for audio and video.'
 		),
+		getTargetedDescription: () => i18n.translate( '{{strong}}Best for Entrepreneurs & Freelancers:{{/strong}}' +
+			' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+			' and the ability to monetize your site with ads.', {
+				components: {
+					strong: <strong className="plan-features__targeted-description-heading" />
+				}
+			} ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -145,6 +161,13 @@ export const plansList = {
 			'Everything included with Premium, as well as live chat support,' +
 			' unlimited access to premium themes, and Google Analytics.'
 		),
+		getTargetedDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
+			' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
+			' storage, and the ability to remove WordPress.com branding.', {
+				components: {
+					strong: <strong className="plan-features__targeted-description-heading" />
+				}
+			} ),
 		getFeatures: () => compact( [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -268,7 +291,14 @@ export const plansList = {
 	}
 };
 
-const allPaidPlans = [
+export const allPaidPlans = [
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS
+];
+
+export const allWpcomPlans = [
+	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
