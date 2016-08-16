@@ -3,11 +3,16 @@
 		margin: 0 0 17px 0;
 	}
 
-	.guided-transfer__account-username-fieldset,
-	.guided-transfer__account-password-fieldset,
-	.guided-transfer__account-email-fieldset, {
+	.host-credentials-page__account-username-fieldset,
+	.host-credentials-page__account-password-fieldset,
+	.host-credentials-page__account-email-fieldset,
+	.host-credentials-page__account-wporg_url-fieldset {
 		display: inline-block;
 		width: 100%;
+	}
+
+	.host-credentials-page__account-wporg_url-fieldset {
+		margin-top: 19px;
 	}
 
 	.guided-transfer__host-button-image {
@@ -23,16 +28,16 @@
 	}
 
 	@include breakpoint( ">960px" ) {
-		.guided-transfer__account-username-fieldset,
-		.guided-transfer__account-password-fieldset,
-		.guided-transfer__account-email-fieldset {
+		.host-credentials-page__account-username-fieldset,
+		.host-credentials-page__account-password-fieldset,
+		.host-credentials-page__account-email-fieldset {
 			width: 50%;
 
 			/* Override the default margin bottom provided for FormFieldset */
 			margin-bottom: 0px;
 		}
 
-		.guided-transfer__account-username-fieldset, {
+		.host-credentials-page__account-username-fieldset, {
 			padding-right: 10px;
 		}
 

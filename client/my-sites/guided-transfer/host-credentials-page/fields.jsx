@@ -21,7 +21,7 @@ import FormButton from 'components/forms/form-button';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 export const Username = localize( props =>
-	<FormFieldset className="guided-transfer__account-username-fieldset">
+	<FormFieldset className="host-credentials-page__account-username-fieldset">
 		<FormLabel htmlFor="username">{ props.translate( '%(host)s account username', {
 			args: {
 				host: props.hostLabel
@@ -36,7 +36,7 @@ export const Username = localize( props =>
 );
 
 export const Password = localize( props =>
-	<FormFieldset className="guided-transfer__account-password-fieldset">
+	<FormFieldset className="host-credentials-page__account-password-fieldset">
 		<FormLabel htmlFor="password">{ props.translate( '%(host)s account password', {
 			args: {
 				host: props.hostLabel
@@ -54,7 +54,7 @@ export const Password = localize( props =>
 );
 
 export const Email = localize( props =>
-	<FormFieldset className="guided-transfer__account-email-fieldset">
+	<FormFieldset className="host-credentials-page__account-email-fieldset">
 		<FormLabel htmlFor="email">
 			{ props.translate( '%(host)s account email address', {
 				args: {
@@ -71,7 +71,7 @@ export const Email = localize( props =>
 );
 
 export const CreateAccountTip = localize( props =>
-	<FormSettingExplanation className="guided-transfer__account-info-tip">
+	<FormSettingExplanation className="host-credentials-page__account-info-tip">
 		{ props.translate(
 			'You don\'t have a %(host)s account yet? ' +
 			'{{host_link}}Create one{{/host_link}} and return here.', {
@@ -84,6 +84,19 @@ export const CreateAccountTip = localize( props =>
 			}
 		) }
 	</FormSettingExplanation>
+);
+
+export const DestinationURL = localize( props =>
+	<FormFieldset className="host-credentials-page__account-wporg_url-fieldset">
+		<FormLabel htmlFor="wporg_url">
+			{ props.translate( "New site's web address" ) }
+		</FormLabel>
+		<FormTextInput
+			id="wporg_url"
+			value={ props.value }
+			onChange={ props.onChange }
+			placeholder={ props.translate( 'new-site.com' ) } />
+	</FormFieldset>
 );
 
 export const SubmitSection = localize( props =>

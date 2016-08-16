@@ -14,7 +14,7 @@ import SectionHeader from 'components/section-header';
 class HostCredentialsPage extends Component {
 	constructor() {
 		super();
-		this.state = { fieldValues: { username: 'test' } };
+		this.state = { fieldValues: {} };
 	}
 
 	setFieldValue = ( fieldName, fieldValue ) => {

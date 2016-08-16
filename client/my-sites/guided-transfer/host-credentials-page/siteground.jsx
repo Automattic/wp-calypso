@@ -8,7 +8,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import CompactCard from 'components/card/compact';
-import { Username, Email, CreateAccountTip, SubmitSection } from './fields';
+import {
+	Username,
+	Email,
+	CreateAccountTip,
+	SubmitSection,
+	DestinationURL,
+} from './fields';
 
 class SiteGround extends Component {
 	render() {
@@ -42,6 +48,10 @@ class SiteGround extends Component {
 					<CreateAccountTip
 						hostLabel={ hostInfo.label }
 						hostUrl={ hostInfo.url } />
+					<DestinationURL
+						value={ fieldValues.wporg_url }
+						onChange={ onFieldChange( 'wporg_url' ) }
+					/>
 				</CompactCard>
 				<SubmitSection submit={ this.props.submit } />
 			</div>
