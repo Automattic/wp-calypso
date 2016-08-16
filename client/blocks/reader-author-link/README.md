@@ -9,11 +9,19 @@ This component does not dictate the content of the link, only the href and click
 The `ReaderAuthorLink` component can be used in much the same way that you would use an `<ExternalLink>` component. The link wraps whatever is placed between the ReaderAuthorLink elements.
 
 ```html
-<ReaderAuthorLink post={ post }>Your link text here</ReaderAuthorLink>
+<ReaderAuthorLink author={ author } siteUrl={ siteUrl}>Your link text here</ReaderAuthorLink>
 ```
 
 ## Props
 
+### `author` (required)
+
+An author object to pull the author info from.
+
+### `siteUrl`
+
+A site URL to use for the link in case author.URL is missing.
+
 ### `post`
 
-A post object to pull the site info from. Should have either a feed_ID or a site_ID.
+A post object, used for stats only. If provided, we fire recordTrackForPost() when the link is clicked.
