@@ -7,12 +7,14 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import CreditCardPaymentBox from './credit-card-payment-box';
 import EmptyContent from 'components/empty-content';
-import FreeTrialConfirmationBox from './free-trial-confirmation-box';
-import PayPalPaymentBox from './paypal-payment-box';
+
 import CreditsPaymentBox from './credits-payment-box';
+import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
+import CreditCardPaymentBox from './credit-card-payment-box';
+import PayPalPaymentBox from './paypal-payment-box';
+
 import storeTransactions from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
@@ -139,6 +141,87 @@ const SecurePaymentForm = React.createClass( {
 		} );
 	},
 
+	renderCreditsPayentBox() {
+		return (
+			<CreditsPaymentBox
+				cart={ this.props.cart }
+				onSubmit={ this.handlePaymentBoxSubmit }
+				transactionStep={ this.props.transaction.step } />
+		);
+	},
+
+	renderFreeTrialConfirmationBox() {
+		return (
+			<FreeTrialConfirmationBox
+				cart={ this.props.cart }
+				onSubmit={ this.handlePaymentBoxSubmit }
+				transactionStep={ this.props.transaction.step } />
+		);
+	},
+
+	renderFreeCartPaymentBox() {
+		return (
+			<FreeCartPaymentBox
+				cart={ this.props.cart }
+				onSubmit={ this.handlePaymentBoxSubmit }
+				products={ this.props.products }
+				selectedSite={ this.props.selectedSite }
+				transactionStep={ this.props.transaction.step } />
+		);
+	},
+
+	renderCreditCardPaymentBox() {
+		return (
+			<CreditCardPaymentBox
+				cards={ this.props.cards }
+				transaction={ this.props.transaction }
+				cart={ this.props.cart }
+				countriesList={ countriesListForPayments }
+				initialCard={ this.getInitialCard() }
+				selectedSite={ this.props.selectedSite }
+				onToggle={ this.selectPaymentBox }
+				onSubmit={ this.handlePaymentBoxSubmit }
+				transactionStep={ this.props.transaction.step } />
+		);
+	},
+
+	renderPayPalPaymentBox() {
+		return (
+			<PayPalPaymentBox
+				cart={ this.props.cart }
+				transaction={ this.props.transaction }
+				countriesList={ countriesListForPayments }
+				selectedSite={ this.props.selectedSite }
+				onToggle={ this.selectPaymentBox }
+				redirectTo={ this.props.redirectTo } />
+		);
+	},
+
+	renderPaymentBox() {
+		const { visiblePaymentBox } = this.state;
+		debug( 'getting %o payment box ...', visiblePaymentBox );
+
+		switch ( visiblePaymentBox ) {
+			case 'credits':
+				return this.renderCreditsPayentBox();
+
+			case 'free-trial':
+				return this.renderFreeTrialConfirmationBox();
+
+			case 'free-cart':
+				return this.renderFreeCartPaymentBox();
+
+			case 'credit-card':
+				return this.renderCreditCardPaymentBox();
+
+			case 'paypal':
+				return this.renderPayPalPaymentBox();
+			default:
+				debug( 'WARN: %o payment unknown', visiblePaymentBox );
+				return null;
+		}
+	},
+
 	render() {
 		if ( this.state.visiblePaymentBox === null ) {
 			return (
@@ -150,51 +233,10 @@ const SecurePaymentForm = React.createClass( {
 					actionURL={ '/plans/' + this.props.selectedSite.slug } />
 			);
 		}
-		debug( 'showing %o payment box ...', this.state.visiblePaymentBox );
 
 		return (
 			<div className="secure-payment-form">
-				<CreditsPaymentBox
-					cart={ this.props.cart }
-					selected={ this.state.visiblePaymentBox === 'credits' }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					transactionStep={ this.props.transaction.step } />
-
-				<FreeTrialConfirmationBox
-					cart={ this.props.cart }
-					selected={ this.state.visiblePaymentBox === 'free-trial' }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					transactionStep={ this.props.transaction.step } />
-
-				<FreeCartPaymentBox
-					cart={ this.props.cart }
-					selected={ this.state.visiblePaymentBox === 'free-cart' }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					products={ this.props.products }
-					selectedSite={ this.props.selectedSite }
-					transactionStep={ this.props.transaction.step } />
-
-				<CreditCardPaymentBox
-					cards={ this.props.cards }
-					transaction={ this.props.transaction }
-					cart={ this.props.cart }
-					countriesList={ countriesListForPayments }
-					initialCard={ this.getInitialCard() }
-					selected={ this.state.visiblePaymentBox === 'credit-card' }
-					selectedSite={ this.props.selectedSite }
-					onToggle={ this.selectPaymentBox }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					transactionStep={ this.props.transaction.step } />
-
-				<PayPalPaymentBox
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					countriesList={ countriesListForPayments }
-					selected={ this.state.visiblePaymentBox === 'paypal' }
-					selectedSite={ this.props.selectedSite }
-					onToggle={ this.selectPaymentBox }
-					redirectTo={ this.props.redirectTo } />
-
+				{ this.renderPaymentBox() }
 			</div>
 		);
 	}
