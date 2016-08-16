@@ -43,7 +43,12 @@ export function getAllPostCounts( state, siteId, postType ) {
  * @return {Number}          Post count
  */
 export function getAllPostCount( state, siteId, postType, status ) {
-	return get( getAllPostCounts( state, siteId, postType ), status, null );
+	const counts = getAllPostCounts( state, siteId, postType );
+	if ( ! counts ) {
+		return null;
+	}
+
+	return counts[ status ] || 0;
 }
 
 /**
@@ -69,7 +74,12 @@ export function getMyPostCounts( state, siteId, postType ) {
  * @return {Number}          Post count
  */
 export function getMyPostCount( state, siteId, postType, status ) {
-	return get( getMyPostCounts( state, siteId, postType ), status, null );
+	const counts = getMyPostCounts( state, siteId, postType );
+	if ( ! counts ) {
+		return null;
+	}
+
+	return counts[ status ] || 0;
 }
 
 /**
