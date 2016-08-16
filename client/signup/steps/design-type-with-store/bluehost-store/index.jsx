@@ -42,7 +42,7 @@ export const BluehostStoreStep = props => {
 
 		subHeaderText = translate( 'Our partners at BlueHost and WooCommerce are here for you' );
 		partnerUrl = 'https://www.bluehost.com/track/wp/dotcomwoo1?page=/wordpress-woocommerce';
-		price = '$12.95';
+		price = '$11.95';
 	}
 
 	return (
