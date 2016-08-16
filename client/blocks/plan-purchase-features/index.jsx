@@ -49,7 +49,8 @@ class PlanPurchaseFeatures extends Component {
 	static propTypes = {
 		plan: PropTypes
 			.oneOf( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ] )
-			.isRequired
+			.isRequired,
+		selectedSite: PropTypes.object
 	};
 
 	isCustomizeEnabled() {
@@ -235,9 +236,15 @@ class PlanPurchaseFeatures extends Component {
 	}
 }
 
-export default connect( ( state ) => {
+export default connect( ( state, ownProps ) => {
+	let selectedSite = getSelectedSite( state );
+
+	if ( ownProps.selectedSite ) {
+		selectedSite = ownProps.selectedSite;
+	}
+
 	return {
-		selectedSite: getSelectedSite( state ),
+		selectedSite,
 		sitePlans: getPlansBySite( state, getSelectedSite( state ) )
 	};
 } )( localize( PlanPurchaseFeatures ) );
