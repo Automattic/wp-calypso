@@ -26,6 +26,7 @@ import {
 } from 'reader/stats';
 import PostComment from './post-comment';
 import PostCommentForm from './form';
+import CommentCount from './comment-count';
 
 class PostCommentList extends React.Component {
 	constructor( props ) {
@@ -184,21 +185,24 @@ class PostCommentList extends React.Component {
 									? this.props.totalCommentsCount
 									: this.getCommentsCount( this.props.commentsTree.get( 'children' ) );
 
-		return <div className="comments">
-			<div className={ classNames( 'comments__top-bar', { 'is-no-comments': displayedCommentsCount === 0 } ) }>
-				{ showViewEarlier ? <span className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
-					{
-						translate( 'View earlier comments (Showing %(shown)d of %(total)d)', {
-							args: {
-								shown: displayedCommentsCount,
-								total: totalCommentsCount
-							}
-						} )
-					}</span> : null }
+		return (
+			<div className="comments">
+				{ totalCommentsCount && <CommentCount count={ totalCommentsCount } /> }
+				<div className={ classNames( 'comments__top-bar', { 'is-no-comments': displayedCommentsCount === 0 } ) }>
+					{ showViewEarlier ? <span className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
+						{
+							translate( 'View earlier comments (Showing %(shown)d of %(total)d)', {
+								args: {
+									shown: displayedCommentsCount,
+									total: totalCommentsCount
+								}
+							} )
+						}</span> : null }
+				</div>
+				{ this.renderCommentsList( displayedComments ) }
+				{ this.renderCommentForm() }
 			</div>
-			{ this.renderCommentsList( displayedComments ) }
-			{ this.renderCommentForm() }
-		</div>;
+		);
 	}
 }
 

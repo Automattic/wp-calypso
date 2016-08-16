@@ -350,3 +350,10 @@
 		transform: rotate( 180deg );
 	}
 }
+
+.reader-comment-count {
+	margin-top: 10px;
+	font-size: 14px;
+	color: lighten( $gray, 10% );
+	text-transform: uppercase;
+}
