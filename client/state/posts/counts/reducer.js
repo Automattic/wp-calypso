@@ -89,13 +89,9 @@ export const counts = ( () => {
 	 * @return {Object}        Updated state
 	 */
 	function transitionPostStateToStatus( state, siteId, postId, status ) {
-		if ( ! state[ siteId ] ) {
-			return state;
-		}
-
 		const postStatusKey = getPostStatusKey( siteId, postId );
 		const postStatus = postStatuses[ postStatusKey ];
-		if ( ! postStatus || ! state[ siteId ][ postStatus.type ] ) {
+		if ( ! postStatus ) {
 			return state;
 		}
 
@@ -107,7 +103,7 @@ export const counts = ( () => {
 		}
 
 		const revisions = subKeys.reduce( ( memo, subKey ) => {
-			const subKeyCounts = state[ siteId ][ postStatus.type ][ subKey ];
+			const subKeyCounts = get( state, [ siteId, postStatus.type, subKey ], {} );
 
 			memo[ subKey ] = {};
 
@@ -130,6 +126,12 @@ export const counts = ( () => {
 			// Otherwise, update object to reflect new status
 			postStatus.status = status;
 		}
+
+		// Ensure that `all` and `mine` keys are always present
+		merge( revisions, {
+			all: {},
+			mine: {}
+		} );
 
 		return merge( {}, state, {
 			[ siteId ]: {
@@ -163,6 +165,11 @@ export const counts = ( () => {
 
 				postStatuses[ postStatusKey ] = pick( post, 'type', 'status' );
 				postStatuses[ postStatusKey ].authorId = get( post.author, 'ID' );
+
+				// If the post wasn't previously known to us, track new status
+				if ( ! postStatus ) {
+					state = transitionPostStateToStatus( state, post.site_ID, post.ID, post.status );
+				}
 			} );
 
 			return state;
