@@ -16,6 +16,23 @@ import viewport from 'lib/viewport';
 const noop = () => {};
 
 class Tooltip extends Component {
+	static propTypes = {
+		autoPosition: PropTypes.bool,
+		className: PropTypes.string,
+		id: PropTypes.string,
+		isVisible: PropTypes.bool,
+		position: PropTypes.string,
+		status: PropTypes.string,
+		showDelay: PropTypes.number,
+		showOnMobile: PropTypes.bool
+	};
+
+	static defaultProps = {
+		showDelay: 100,
+		position: 'top',
+		showOnMobile: false
+	};
+
 	render() {
 		if ( ! this.props.showOnMobile && viewport.isMobile() ) {
 			return null;
@@ -44,22 +61,5 @@ class Tooltip extends Component {
 		);
 	}
 }
-
-Tooltip.propTypes = {
-	autoPosition: PropTypes.bool,
-	className: PropTypes.string,
-	id: PropTypes.string,
-	isVisible: PropTypes.bool,
-	position: PropTypes.string,
-	status: PropTypes.string,
-	showDelay: PropTypes.number,
-	showOnMobile: PropTypes.bool
-};
-
-Tooltip.defaultProps = {
-	showDelay: 100,
-	position: 'top',
-	showOnMobile: false
-};
 
 export default Tooltip;
