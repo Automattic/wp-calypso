@@ -1,8 +1,8 @@
-.edit-card-details__content {
+.credit-card-page__content {
 	margin-bottom: 0;
 }
 
-.edit-card-details__card-terms {
+.credit-card-page__card-terms {
 	color: darken( $gray, 10% );
 	margin: 20px 0 0 0;
 	padding: 0;
@@ -32,7 +32,7 @@
 	}
 }
 
-.edit-card-details__footer {
+.credit-card-page__footer {
 	align-items: center;
 	border-top-color: $gray-light;
 	display: flex;
