@@ -8,43 +8,15 @@ import React from 'react';
  */
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
+import CreditCardFormLoadingPlaceholder from 'components/upgrades/credit-card-form/loading-placeholder';
 import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import FormSelect from 'components/forms/form-select';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
-import titles from 'me/purchases/titles';
 
-const CreditCardPageLoadingPlaceholder = () => {
+const CreditCardPageLoadingPlaceholder = ( { title } ) => {
 	return (
-		<LoadingPlaceholder title={ titles.addCardDetails }>
+		<LoadingPlaceholder title={ title }>
 			<Card className="credit-card-page__content">
-				<div className="credit-card-form">
-					<div className="credit-card-form__field">
-						<FormTextInput />
-					</div>
-
-					<div className="credit-card-form__field">
-						<FormTextInput />
-					</div>
-
-					<div className="credit-card-form__extras">
-						<div className="credit-card-form__field expiration-date">
-							<FormTextInput />
-						</div>
-
-						<div className="credit-card-form__field cvv">
-							<FormTextInput />
-						</div>
-
-						<div className="credit-card-form__field country">
-							<FormSelect />
-						</div>
-
-						<div className="credit-card-form__field postal-code">
-							<FormTextInput />
-						</div>
-					</div>
-				</div>
+				<CreditCardFormLoadingPlaceholder />
 			</Card>
 
 			<CompactCard className="credit-card-page__footer">
