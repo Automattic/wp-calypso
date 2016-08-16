@@ -2,14 +2,9 @@
 	position: relative;
 
 	.payment-box {
-		height: 0;
 		margin-bottom: 0;
-		opacity: 0;
-		overflow: hidden;
-		padding: 0;
 		transform: translateZ(0) scale(.8); // Zoom out effect
 		transition: all .3s ease-in-out;
-		visibility: hidden; // To deal with layering issues
 		width: 100%;
 
 		&:not(.domain-details) {
