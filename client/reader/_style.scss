@@ -204,6 +204,19 @@
 	}
 }
 
+.reader-share__button-label,
+.comment-button__label-status,
+.like-button__label-status {
+
+	@media( min-width: 481px ) and ( max-width: 530px ) {
+		display: none;
+	}
+
+	@media( min-width: 661px ) and ( max-width: 790px ) {
+		display: none;
+	}
+}
+
 .reader__post-embed-count {
 	padding: 4px 6px;
 	border-radius: 4px;
