@@ -124,7 +124,7 @@ var EditorPermalink = React.createClass( {
 					onClose={ this.closePopover }
 					position={ 'bottom right' }
 					context={ this.refs && this.refs.popoverButton }
-					className="popover editor-permalink__popover"
+					className="editor-permalink__popover"
 				>
 					<Slug
 						{ ...pick( this.props, 'slug', 'path', 'isEditable' ) }
