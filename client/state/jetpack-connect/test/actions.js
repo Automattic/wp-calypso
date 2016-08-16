@@ -8,12 +8,14 @@ import nock from 'nock';
  * Internal dependencies
  */
 import {
+	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
+	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
 	JETPACK_CONNECT_SSO_VALIDATION_REQUEST,
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
-	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
+	JETPACK_CONNECT_SSO_VALIDATION_ERROR
 } from 'state/action-types';
 
 import useFakeDom from 'test/helpers/use-fake-dom';
@@ -31,6 +33,34 @@ describe( 'actions', () => {
 
 	beforeEach( function() {
 		actions = require( '../actions' );
+	} );
+
+	describe( '#confirmJetpackInstallStatus()', () => {
+		it( 'should dispatch confirm status action when called', () => {
+			const { confirmJetpackInstallStatus } = actions;
+			const jetpackStatus = true;
+
+			confirmJetpackInstallStatus( jetpackStatus )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
+				status: jetpackStatus
+			} );
+		} );
+	} );
+
+	describe( '#dismissUrl()', () => {
+		it( 'should dispatch dismiss url status action when called', () => {
+			const { dismissUrl } = actions;
+			const url = 'http://example.com';
+
+			dismissUrl( url )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
+				url: url
+			} );
+		} );
 	} );
 
 	describe( '#validateSSONonce()', () => {
