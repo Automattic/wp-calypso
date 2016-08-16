@@ -399,7 +399,7 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should increment status when receiving an unrecognized post when counts known', () => {
+		it( 'should never decrement a status count into negatives', () => {
 			let state = counts( undefined, {
 				type: POST_COUNTS_RECEIVE,
 				siteId: 2916284,
@@ -417,29 +417,18 @@ describe( 'reducer', () => {
 				]
 			} );
 
-			expect( state ).to.eql( {
-				2916284: {
-					post: {
-						all: { publish: 3, draft: 1, trash: 0 },
-						mine: { publish: 2, draft: 0, trash: 0 }
-					}
-				}
-			} );
-		} );
-
-		it( 'should increment status when receiving an unrecognized post when counts unknown', () => {
-			const state = counts( undefined, {
+			state = counts( state, {
 				type: POSTS_RECEIVE,
 				posts: [
-					{ ID: 98, site_ID: 2916284, type: 'post', status: 'draft', author: { ID: 73705554 } }
+					{ ID: 98, site_ID: 2916284, type: 'post', status: 'publish', author: { ID: 73705554 } }
 				]
 			} );
 
 			expect( state ).to.eql( {
 				2916284: {
 					post: {
-						all: { draft: 1 },
-						mine: {}
+						all: { publish: 4, draft: 0, trash: 0 },
+						mine: { publish: 2, draft: 0, trash: 0 }
 					}
 				}
 			} );
