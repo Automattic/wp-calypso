@@ -8,6 +8,8 @@ import {
 	ROUTE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
+	PREVIEW_SHOW_SIDEBAR,
+	PREVIEW_HIDE_SIDEBAR,
 	PREVIEW_URL_SET,
 	PREVIEW_URL_CLEAR,
 } from 'state/action-types';
@@ -81,4 +83,12 @@ export function clearPreviewUrl() {
 	return {
 		type: PREVIEW_URL_CLEAR,
 	};
+}
+
+export function showPreviewSidebar() {
+	return { type: PREVIEW_SHOW_SIDEBAR };
+}
+
+export function hidePreviewSidebar() {
+	return { type: PREVIEW_HIDE_SIDEBAR };
 }

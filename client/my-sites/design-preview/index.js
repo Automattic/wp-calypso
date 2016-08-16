@@ -4,22 +4,26 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
+import includes from 'lodash/includes';
 import debugFactory from 'debug';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
 import WebPreview from 'components/web-preview';
-import { clearPreviewUrl } from 'state/ui/actions';
+import { clearPreviewUrl, hidePreviewSidebar } from 'state/ui/actions';
 import { fetchPreviewMarkup, undoCustomization, clearCustomizations } from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
-import { getSelectedSite, getSelectedSiteId, getPreviewUrl } from 'state/ui/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getSelectedSite, getSelectedSiteId, getPreviewUrl, isPreviewSidebarShowing } from 'state/ui/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import DesignMenu from 'my-sites/design-menu';
+import { getSiteFragment } from 'lib/route/path';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -31,8 +35,6 @@ const DesignPreview = React.createClass( {
 		className: React.PropTypes.string,
 		// True to show the preview; same as WebPreview.
 		showPreview: React.PropTypes.bool,
-		// The viewport device to show initially; same as WebPreview but defaults to 'tablet'.
-		defaultViewportDevice: React.PropTypes.string,
 		// Show close button; same as WebPreview.
 		showClose: React.PropTypes.bool,
 		// Elements to render on the right side of the toolbar; same as WebPreview.
@@ -48,6 +50,7 @@ const DesignPreview = React.createClass( {
 		previewMarkup: React.PropTypes.string,
 		customizations: React.PropTypes.object,
 		isUnsaved: React.PropTypes.bool,
+		showSidebar: React.PropTypes.bool,
 		fetchPreviewMarkup: React.PropTypes.func.isRequired,
 		undoCustomization: React.PropTypes.func.isRequired,
 		clearCustomizations: React.PropTypes.func.isRequired,
@@ -63,8 +66,8 @@ const DesignPreview = React.createClass( {
 	getDefaultProps() {
 		return {
 			showPreview: false,
-			defaultViewportDevice: 'tablet',
 			showClose: true,
+			showSidebar: false,
 			customizations: {},
 			isUnsaved: false,
 			onLoad: noop,
@@ -73,7 +76,7 @@ const DesignPreview = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! config.isEnabled( 'preview-endpoint' ) ) {
+		if ( ! this.props.showSidebar ) {
 			if ( this.props.selectedSiteId && this.props.selectedSiteId !== nextProps.selectedSiteId ) {
 				this.previewCounter = 0;
 			}
@@ -91,7 +94,7 @@ const DesignPreview = React.createClass( {
 	},
 
 	componentDidUpdate( prevProps ) {
-		if ( ! config.isEnabled( 'preview-endpoint' ) ) {
+		if ( ! this.props.showSidebar ) {
 			return;
 		}
 
@@ -112,7 +115,13 @@ const DesignPreview = React.createClass( {
 			debug( 'restoring original markup' );
 			this.loadPreview();
 		}
-		// Apply customizations
+		// Certain customizations cannot be applied by DOM changes, in which case we
+		// can reload the preview.
+		if ( this.shouldReloadPreview( prevProps ) ) {
+			debug( 'reloading preview due to customizations' );
+			this.loadPreview();
+		}
+		// Apply customizations as DOM changes
 		if ( this.props.customizations && this.previewDocument ) {
 			debug( 'updating preview with customizations', this.props.customizations );
 			updatePreviewWithChanges( this.previewDocument, this.props.customizations );
@@ -129,8 +138,16 @@ const DesignPreview = React.createClass( {
 		);
 	},
 
+	shouldReloadPreview( prevProps ) {
+		if ( this.props.customizations.homePage &&
+				JSON.stringify( this.props.customizations.homePage ) !== JSON.stringify( prevProps.customizations.homePage ) ) {
+			return true;
+		}
+		return false;
+	},
+
 	loadPreview() {
-		if ( ! config.isEnabled( 'preview-endpoint' ) || ! this.props.selectedSite ) {
+		if ( ! this.props.showSidebar || ! this.props.selectedSite ) {
 			return;
 		}
 		debug( 'loading preview with customizations', this.props.customizations );
@@ -151,15 +168,24 @@ const DesignPreview = React.createClass( {
 		if ( this.props.customizations && this.props.isUnsaved ) {
 			return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
 				if ( accepted ) {
-					this.props.clearPreviewUrl( this.props.selectedSiteId );
-					this.props.clearCustomizations( this.props.selectedSiteId );
-					this.props.setLayoutFocus( 'sidebar' );
+					this.cleanAndClosePreview();
 				}
 			} );
 		}
+		this.cleanAndClosePreview();
+	},
+
+	cleanAndClosePreview() {
 		this.props.clearPreviewUrl( this.props.selectedSiteId );
 		this.props.clearCustomizations( this.props.selectedSiteId );
+		this.props.hidePreviewSidebar();
 		this.props.setLayoutFocus( 'sidebar' );
+		const siteFragment = getSiteFragment( page.current );
+		const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
+		// If this route has nothing but the preview, redirect to somewhere else
+		if ( isEmptyRoute ) {
+			page.redirect( `/stats/${siteFragment}` );
+		}
 	},
 
 	onPreviewClick( event ) {
@@ -190,28 +216,29 @@ const DesignPreview = React.createClass( {
 	},
 
 	render() {
-		const useEndpoint = config.isEnabled( 'preview-endpoint' );
-
 		if ( ! this.props.selectedSite || ! this.props.selectedSite.is_previewable ) {
 			debug( 'a preview is not available for this site' );
 			return null;
 		}
 
 		return (
-			<WebPreview
-				className={ this.props.className }
-				previewUrl={ useEndpoint ? null : this.getPreviewUrl() }
-				externalUrl={ this.getBasePreviewUrl() }
-				showExternal={ true }
-				showClose={ this.props.showClose }
-				showPreview={ this.props.showPreview }
-				defaultViewportDevice={ this.props.defaultViewportDevice }
-				previewMarkup={ useEndpoint ? this.props.previewMarkup : null }
-				onClose={ this.onClosePreview }
-				onLoad={ useEndpoint ? this.onLoad : noop }
-			>
-				{ this.props.children }
-			</WebPreview>
+			<span>
+				<DesignMenu isVisible={ this.props.showSidebar } />
+				<WebPreview
+					className={ this.props.className }
+					previewUrl={ this.props.showSidebar ? null : this.getPreviewUrl() }
+					externalUrl={ this.getBasePreviewUrl() }
+					showExternal={ true }
+					showClose={ this.props.showClose }
+					showPreview={ this.props.showPreview }
+					hasSidebar={ this.props.showSidebar }
+					previewMarkup={ this.props.showSidebar && this.props.previewMarkup ? this.props.previewMarkup : null }
+					onClose={ this.onClosePreview }
+					onLoad={ this.props.showSidebar && this.props.previewMarkup ? this.onLoad : noop }
+				>
+					{ this.props.children }
+				</WebPreview>
+			</span>
 		);
 	}
 } );
@@ -227,6 +254,7 @@ function mapStateToProps( state ) {
 		selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ),
 		previewUrl: getPreviewUrl( state ),
 		previewMarkup: getPreviewMarkup( state, selectedSiteId ),
+		showSidebar: isPreviewSidebarShowing( state ),
 		customizations: getPreviewCustomizations( state, selectedSiteId ),
 		isUnsaved: isPreviewUnsaved( state, selectedSiteId ),
 	};
@@ -234,5 +262,5 @@ function mapStateToProps( state ) {
 
 export default connect(
 	mapStateToProps,
-	{ fetchPreviewMarkup, undoCustomization, clearCustomizations, clearPreviewUrl, setLayoutFocus }
+	{ fetchPreviewMarkup, undoCustomization, clearCustomizations, clearPreviewUrl, setLayoutFocus, hidePreviewSidebar }
 )( DesignPreview );

@@ -66,7 +66,6 @@
 		"post-editor/author-selector": true,
 		"press-this": false,
 		"preview-layout": true,
-		"preview-endpoint": false,
 		"reader": true,
 		"reader/full-errors": false,
 		"resume-editing": true,
