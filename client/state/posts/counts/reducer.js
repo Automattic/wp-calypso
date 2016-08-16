@@ -108,7 +108,7 @@ export const counts = ( () => {
 			memo[ subKey ] = {};
 
 			// Decrement count from the current status before transitioning
-			memo[ subKey ][ postStatus.status ] = ( subKeyCounts[ postStatus.status ] || 0 ) - 1;
+			memo[ subKey ][ postStatus.status ] = Math.max( ( subKeyCounts[ postStatus.status ] || 0 ) - 1, 0 );
 
 			// So long as we're not trashing an already trashed post or page,
 			// increment the count for the transitioned status
@@ -165,11 +165,6 @@ export const counts = ( () => {
 
 				postStatuses[ postStatusKey ] = pick( post, 'type', 'status' );
 				postStatuses[ postStatusKey ].authorId = get( post.author, 'ID' );
-
-				// If the post wasn't previously known to us, track new status
-				if ( ! postStatus ) {
-					state = transitionPostStateToStatus( state, post.site_ID, post.ID, post.status );
-				}
 			} );
 
 			return state;
