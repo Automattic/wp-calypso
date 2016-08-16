@@ -69,6 +69,8 @@ const EditCardDetails = React.createClass( {
 		};
 	},
 
+	_mounted: false,
+
 	fieldNames: [
 		'name',
 		'number',
@@ -79,6 +81,7 @@ const EditCardDetails = React.createClass( {
 	],
 
 	componentWillMount() {
+		this._mounted = true;
 		this.redirectIfDataIsInvalid();
 
 		recordPageView( 'edit_card_details', this.props );
@@ -95,7 +98,9 @@ const EditCardDetails = React.createClass( {
 			validatorFunction: this.validate
 		} );
 
-		this.setState( { form: this.formStateController.getInitialState() } );
+		this.setState( {
+			form: this.formStateController.getInitialState()
+		} );
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -111,12 +116,20 @@ const EditCardDetails = React.createClass( {
 		}
 	},
 
+	componentWillUnmount() {
+		this._mounted = false;
+	},
+
 	validate( formValues, onComplete ) {
+		if ( ! this._mounted ) {
+			return;
+		}
+
 		onComplete( null, this.getValidationErrors() );
 	},
 
 	setFormState( form ) {
-		if ( ! this.isMounted() ) {
+		if ( ! this._mounted ) {
 			return;
 		}
 
