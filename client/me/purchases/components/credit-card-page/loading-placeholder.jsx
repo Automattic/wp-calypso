@@ -14,10 +14,10 @@ import FormSelect from 'components/forms/form-select';
 import LoadingPlaceholder from 'me/purchases/components/loading-placeholder';
 import titles from 'me/purchases/titles';
 
-const EditCardDetailsLoadingPlaceholder = () => {
+const CreditCardPageLoadingPlaceholder = () => {
 	return (
 		<LoadingPlaceholder title={ titles.addCardDetails }>
-			<Card className="edit-card-details__content">
+			<Card className="credit-card-page__content">
 				<div className="credit-card-form">
 					<div className="credit-card-form__field">
 						<FormTextInput />
@@ -47,11 +47,11 @@ const EditCardDetailsLoadingPlaceholder = () => {
 				</div>
 			</Card>
 
-			<CompactCard className="edit-card-details__footer">
+			<CompactCard className="credit-card-page__footer">
 				<FormButton isPrimary={ false } />
 			</CompactCard>
 		</LoadingPlaceholder>
 	);
 };
 
-export default EditCardDetailsLoadingPlaceholder;
+export default CreditCardPageLoadingPlaceholder;
