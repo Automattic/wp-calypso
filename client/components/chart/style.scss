@@ -403,19 +403,8 @@
 	}
 
 	&.is-streak {
-		margin-top: -5px;
-		height: 35px;
-
-		.popover__arrow::before {
-			left: 85px;
-			top: 30px;
-		}
-
 		.popover__inner {
 			width: 160px;
-			position: relative;
-			top: -10px;
-
 			li {
 				height: 14px;
 
