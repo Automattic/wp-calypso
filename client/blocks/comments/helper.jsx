@@ -1,10 +1,10 @@
 // Internal dependencies
-var DiscoverHelper = require( 'reader/discover/helper' );
+import DiscoverHelper from 'reader/discover/helper';
 
 module.exports = {
 	shouldShowComments: function( post ) {
-		var showComments = false,
-			isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
+		let showComments = false;
+		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 
 		if ( isDiscoverPost ) {
 			if ( DiscoverHelper.isInternalDiscoverPost( post ) && ! DiscoverHelper.isDiscoverSitePick( post ) ) {

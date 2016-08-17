@@ -25,7 +25,7 @@ export default class PostCommentWithError extends React.Component {
 
 	render() {
 		return (
-			<li className="comment is-error">
+			<li className="comments__comment is-error">
 				{ this.renderCommentForm() }
 				{ this.props.repliesList }
 			</li>

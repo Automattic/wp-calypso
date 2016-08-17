@@ -138,16 +138,16 @@ class PostComment extends React.Component {
 		}
 
 		return (
-			<div className="comment__actions">
+			<div className="comments__comment-actions">
 				{ showReplyButton
-					? <button className="comment__actions-reply" onClick={ this.handleReply }>
+					? <button className="comments__comment-actions-reply" onClick={ this.handleReply }>
 						<Gridicon icon="reply" size={ 18 } />
-						<span className="comment__actions-reply-label">{ translate( 'Reply' ) }</span>
+						<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
 					</button>
 					: null }
-				{ showCancelReplyButton ? <button className="comment__actions-cancel-reply" onClick={ this.props.onReplyCancel }>{ translate( 'Cancel reply' ) }</button> : null }
+				{ showCancelReplyButton && <button className="comments__comment-actions-cancel-reply" onClick={ this.props.onReplyCancel }>{ translate( 'Cancel reply' ) }</button> }
 				<CommentLikeButtonContainer
-					className="comment__actions-like"
+					className="comments__comment-actions-like"
 					tagName="button"
 					siteId={ this.props.post.site_ID }
 					postId={ this.props.post.ID }
@@ -182,14 +182,14 @@ class PostComment extends React.Component {
 		}
 
 		return (
-			<li className={ 'comment depth-' + this.props.depth }>
-				<div className="comment__author">
+			<li className={ 'comments__comment depth-' + this.props.depth }>
+				<div className="comments__comment-author">
 					<Gravatar user={ comment.author } />
 
 					{ comment.author.URL
-						? <a href={ comment.author.URL } target="_blank" className="comment__username" onClick={ this.handleAuthorClick }>{ comment.author.name }<Gridicon icon="external" /></a>
-						: <strong className="comment__username">{ comment.author.name }</strong> }
-					<small className="comment__timestamp">
+						? <a href={ comment.author.URL } target="_blank" className="comments__comment-username" onClick={ this.handleAuthorClick }>{ comment.author.name }<Gridicon icon="external" /></a>
+						: <strong className="comments__comment-username">{ comment.author.name }</strong> }
+					<small className="comments__comment-timestamp">
 						<a href={ comment.URL }>
 							<PostTime date={ comment.date } />
 						</a>
@@ -197,7 +197,7 @@ class PostComment extends React.Component {
 				</div>
 
 				{ comment.status && comment.status === 'unapproved'
-					? <p className="comment__moderation">{ translate( 'Your comment is awaiting moderation.' ) }</p>
+					? <p className="comments__comment-moderation">{ translate( 'Your comment is awaiting moderation.' ) }</p>
 					: null }
 
 				<PostCommentContent content={ comment.content } isPlaceholder={ comment.isPlaceholder } />

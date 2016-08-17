@@ -127,7 +127,10 @@ class PostCommentList extends React.Component {
 
 	getCommentsCount( commentIds ) {
 		// we always count prevSum, children sum, and +1 for the current processed comment
-		return commentIds.reduce( ( prevSum, commentId ) => prevSum + this.getCommentsCount( this.props.commentsTree.getIn( [ commentId, 'children' ] ) ) + 1, 0 );
+		return commentIds.reduce(
+			( prevSum, commentId ) => prevSum + this.getCommentsCount( this.props.commentsTree.getIn( [ commentId, 'children' ] ) ) + 1,
+			0
+		);
 	}
 
 	/***
@@ -186,7 +189,7 @@ class PostCommentList extends React.Component {
 									: this.getCommentsCount( this.props.commentsTree.get( 'children' ) );
 
 		return (
-			<div className="comments">
+			<div className="comments__comment-list">
 				{ totalCommentsCount && <CommentCount count={ totalCommentsCount } /> }
 				<div className={ classNames( 'comments__top-bar', { 'is-no-comments': displayedCommentsCount === 0 } ) }>
 					{ showViewEarlier ? <span className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>

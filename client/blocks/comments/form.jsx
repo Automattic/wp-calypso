@@ -160,7 +160,7 @@ class PostCommentForm extends React.Component {
 				break;
 		}
 
-		return <Notice text={ message } className="reader-comments__notice" showDismiss={ false } status="is-error" />;
+		return <Notice text={ message } className="comments__notice" showDismiss={ false } status="is-error" />;
 	}
 
 	render() {
@@ -186,7 +186,8 @@ class PostCommentForm extends React.Component {
 			'expanding-area': true
 		} );
 
-		// how auto expand works for that textarea is covered in this article: http://alistapart.com/article/expanding-text-areas-made-elegant
+		// How auto expand works for the textarea is covered in this article:
+		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
 			<form className="comments__form" ref="commentForm">
 				<fieldset>
@@ -205,7 +206,11 @@ class PostCommentForm extends React.Component {
 								onChange={ this.handleTextChange }
 							/>
 						</div>
-						<button ref="commentButton" className={ buttonClasses } disabled={ this.state.commentText.length === 0 } onClick={ this.handleSubmit }>
+						<button
+							ref="commentButton"
+							className={ buttonClasses }
+							disabled={ this.state.commentText.length === 0 }
+							onClick={ this.handleSubmit }>
 							{ translate( 'Send' ) }
 						</button>
 						{ this.renderError() }
