@@ -1,6 +1,6 @@
-# Reader Comments
+# Comments
 
-A component that displays comments in the Reader
+A component that displays threaded comments.
 
 ## Props
 

@@ -1,8 +1,12 @@
-// External Dependencies
+/***
+ * External dependencies
+ */
 import React from 'react';
 
-// Internal Dependencies
-import PostCommentForm from './form';
+/***
+ * Internal dependencies
+ */
+ import PostCommentForm from './form';
 
 export default class PostCommentWithError extends React.Component {
 	renderCommentForm() {

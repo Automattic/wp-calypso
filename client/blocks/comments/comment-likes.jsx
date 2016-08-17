@@ -1,11 +1,15 @@
-// External dependencies
+/**
+ * External dependencies
+ */
 import React from 'react';
 import pick from 'lodash/pick';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import LikeButton from 'components/like-button/button';
 import {
 	recordAction,

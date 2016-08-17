@@ -1,4 +1,6 @@
-// External dependencies
+/**
+ * External dependencies
+ */
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
@@ -6,7 +8,9 @@ import { bindActionCreators } from 'redux';
 import noop from 'lodash/noop';
 import { translate } from 'i18n-calypso';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import Gravatar from 'components/gravatar';
 import Notice from 'components/notice';
 import {

@@ -1,8 +1,10 @@
-// Internal dependencies
-import DiscoverHelper from 'reader/discover/helper';
+/**
+ * Internal dependencies
+ */
+import * as DiscoverHelper from 'reader/discover/helper';
 
 module.exports = {
-	shouldShowComments: function( post ) {
+	shouldShowComments( post ) {
 		let showComments = false;
 		const isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 

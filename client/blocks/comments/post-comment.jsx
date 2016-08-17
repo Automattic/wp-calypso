@@ -1,10 +1,14 @@
-// External Dependencies
+/***
+ * External dependencies
+ */
 import React from 'react';
 import noop from 'lodash/noop';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 
-// Internal Dependencies
+/***
+ * Internal dependencies
+ */
 import {
 	getCurrentUser
 } from 'state/current-user/selectors';

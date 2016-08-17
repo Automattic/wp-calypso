@@ -1,10 +1,10 @@
 /***
- * External Dependencies
+ * External dependencies
  */
 import React from 'react';
 
 /***
- * Internal Dependencies
+ * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
 import PostTime from 'reader/post-time';
