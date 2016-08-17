@@ -32,7 +32,7 @@ const AuthorCompactProfile = React.createClass( {
 		return (
 			<div className="author-compact-profile">
 				<Gravatar size={ 96 } user={ author } />
-				<ReaderAuthorLink author={ author }>{ author.name }</ReaderAuthorLink>
+				<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>{ author.name }</ReaderAuthorLink>
 				{ siteName && siteUrl
 					? <ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId }>
 						{ siteName }
