@@ -12,6 +12,7 @@ import { filter, size, keyBy, map, includes } from 'lodash';
  * Internal dependencies
  */
 import { getPreference } from 'state/preferences/selectors';
+import observe from 'lib/mixins/data-observe';
 import AllSites from 'my-sites/all-sites';
 import analytics from 'lib/analytics';
 import Button from 'components/button';
@@ -26,6 +27,8 @@ const user = userModule();
 const noop = () => {};
 
 const SiteSelector = React.createClass( {
+	mixins: [ observe( 'sites' ) ],
+
 	propTypes: {
 		sites: React.PropTypes.object,
 		siteBasePath: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
@@ -284,9 +287,8 @@ const SiteSelector = React.createClass( {
 	}
 } );
 
-export default connect(
-	( state ) => ( { recentSites: getPreference( state, 'recentSites' ) } ),
-	null,
-	null,
-	{ pure: false }
-)( SiteSelector );
+export default connect( ( state ) => {
+	return {
+		recentSites: getPreference( state, 'recentSites' )
+	};
+} )( SiteSelector );
