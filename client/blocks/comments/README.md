@@ -1,6 +1,6 @@
 # Comments
 
-A component that displays threaded comments.
+A component that displays threaded comments for a post.
 
 ## Props
 
