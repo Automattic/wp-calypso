@@ -20,7 +20,7 @@ export const SitegroundStoreStep = ( { onBackClick, translate, partnerClickRecor
 	<div className="design-type-with-store__partner-box">
 		<StepHeader
 			headerText={ translate( 'Create a WordPress Store' ) }
-			subHeaderText={ translate( 'Our partners at SiteGround and WooCommerce are here for you' ) }
+			subHeaderText={ translate( 'Our partners at SiteGround and WooCommerce are here for you.' ) }
 		/>
 
 		<div className="design-type-with-store__flex-container">
