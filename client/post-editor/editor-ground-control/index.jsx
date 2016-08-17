@@ -226,9 +226,8 @@ export default React.createClass( {
 		this.setState( { showSchedulePopover: ! this.state.showSchedulePopover } );
 	},
 
-	closeSchedulePopover: function( event ) {
-		// if `event` is defined means that popover has been canceled (ESC key)
-		if ( ! event ) {
+	closeSchedulePopover: function( wasCanceled ) {
+		if ( wasCanceled ) {
 			let date = this.props.savedPost && this.props.savedPost.date
 				? this.moment( this.props.savedPost.date )
 				: null;
