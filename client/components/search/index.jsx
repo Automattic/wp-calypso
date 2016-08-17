@@ -285,21 +285,22 @@ const Search = React.createClass( {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
-			'no-close-button' : this.props.hideClose,
-			'has-focus' : this.state.hasFocus,
+			'no-close-button': this.props.hideClose,
+			'has-focus': this.state.hasFocus,
 			search: true
 		} );
 
-		const gridIconClass = classNames ( 'search-open__icon', this.props.dir );
-		const fadeDivClass = classNames ( 'search__input-fade', this.props.dir );
-
-		const isCloseButtonVisible = this.props.hideClose ? ' no-close-button ' : '';
+		const gridIconClass = classNames( 'search-open__icon', this.props.dir );
+		const fadeDivClass = classNames( 'search__input-fade', this.props.dir );
+		const inputClass = classNames( 'search__input', this.props.dir, {
+			'no-close-button': this.props.hideClose
+		} );
 
 		return (
 			<div className={ searchClass } role="search">
 				<Spinner />
 				<div
-					className="search-component-icon-div"
+					className="search__component-icon-div"
 					ref="openIcon"
 					onTouchTap={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
@@ -315,7 +316,7 @@ const Search = React.createClass( {
 					<input
 						type="search"
 						id={ 'search-component-' + this.state.instanceId }
-						className={ 'search__input' + isCloseButtonVisible + ( this.props.dir ? ' ' + this.props.dir : '' ) }
+						className={ inputClass }
 						placeholder={ placeholder }
 						role="search"
 						value={ searchValue }
@@ -339,12 +340,12 @@ const Search = React.createClass( {
 	},
 
 	closeButton: function() {
-		const gridIconClass = classNames ( 'search-close__icon', this.props.dir );
+		const gridIconClass = classNames( 'search-close__icon', this.props.dir );
 
 		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
 				<div
-					className='search-component-icon-div'
+					className="search__component-icon-div"
 					onTouchTap={ this.closeSearch }
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
