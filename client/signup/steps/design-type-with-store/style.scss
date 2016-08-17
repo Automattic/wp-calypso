@@ -1,5 +1,6 @@
 .design-type-with-store {
 	position: relative;
+	text-align: center;
 }
 
 .design-type-with-store__section-wrapper {
@@ -15,7 +16,7 @@
 	}
 }
 
-.design-type-with-store__pressable-wrapper {
+.design-type-with-store__store-wrapper {
 	position: absolute;
 	width: 100%;
 
@@ -60,4 +61,148 @@
 	&:hover {
 		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20 );
 	}
+}
+
+.design-type-with-store__flex-container {
+	display: inline-flex;
+	flex-flow: row wrap;
+	border-top: 1px solid #c8d7e1;
+	border-left: 1px solid #c8d7e1;
+	margin: 0 auto;
+}
+
+.design-type-with-store__vertical-center {
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.design-type-with-store__copy {
+	flex-grow: 1;
+	border-right: 1px solid #c8d7e1;
+	border-bottom: 1px solid #c8d7e1;
+	padding: 32px;
+	background-color: white;
+	text-align: left;
+	font-size: 15px;
+	font-weight: 400;
+	line-height: 1.4;
+	color: #3d596d;
+	max-width: 402px;
+	box-sizing: border-box;
+	margin: 0 auto;
+	height: 195px;
+}
+
+.design-type-with-store__price-box {
+	border-right: 1px solid #c8d7e1;
+	border-bottom: 1px solid #c8d7e1;
+	border-left: hidden;
+	flex-grow: 1;
+	margin: 0 auto;
+	padding: 32px 24px;
+	background-color: #f3f6f8;
+	box-sizing: border-box;
+	height: 195px;
+}
+
+@include breakpoint( "<480px" ) {
+	.design-type-with-store__copy {
+		text-align: center;
+	}
+}
+
+@include breakpoint( "<660px" ) {
+	.design-type-with-store__copy {
+		max-width: none;
+	}
+
+	.design-type-with-store__bluehost-logo {
+		margin: 0 auto 18px auto;
+	}
+
+	.design-type-with-store__siteground-logo {
+		margin: 0 auto 18px auto;
+	}
+}
+
+@media only screen and (min-width: 480px) and (max-width : 660px) {
+	.design-type-with-store__price-box {
+		position: relative;
+		height: 90px;
+		padding: 0;
+	}
+
+	.design-type-with-store__price-text {
+		text-align: left;
+	}
+
+	.design-type-with-store__price {
+		text-align: left;
+	}
+
+	.design-type-with-store__price-left {
+		position: absolute;
+		left: 32px;
+		top: 22px;
+	}
+
+	.design-type-with-store__button {
+		position: absolute;
+		right: 32px;
+		top: 25px;
+	}
+
+	.design-type-with-store__price-box
+	.design-type-with-store__vertical-center {
+		top: 0;
+	}
+
+}
+
+.design-type-with-store__price-text {
+	display: block;
+	margin: 0 auto 3px auto;
+	line-height: 14px;
+	font-size: 12px;
+	font-weight: 400;
+	color: #668eaa;
+}
+
+.design-type-with-store__price {
+	display: block;
+	margin: 0 auto 21px auto;
+	line-height: 29px;
+	font-size: 24px;
+	color: #4ab866;
+}
+
+.design-type-with-store__price b {
+	font-weight: 700;
+}
+
+.design-type-with-store__button {
+	float: none;
+	margin: 0;
+	width: 120px;
+	height: 40px;
+	white-space: nowrap;
+}
+
+.design-type-with-store__back-button-wrapper {
+	margin: 32px;
+}
+
+.design-type-with-store__bluehost-logo {
+	width: 184px;
+	height: 30px;
+	display: block;
+	margin-bottom: 18px;
+}
+
+.design-type-with-store__siteground-logo {
+	width: 145px;
+	height: 30px;
+	display: block;
+	margin-bottom: 18px;
 }
