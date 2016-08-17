@@ -19,6 +19,13 @@
 	margin: 0;
 }
 
+.plan-purchase-features__item .purchase-detail .button:not( .clipboard-button ) {
+	@include breakpoint( "<660px" ) {
+		width: 100%;
+		text-align: center;
+	}
+}
+
 .plan-purchase-features__item-content {
 	background-color: $white;
 	border-top: 1px solid lighten( $gray, 30% );
