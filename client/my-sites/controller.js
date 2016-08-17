@@ -176,24 +176,37 @@ module.exports = {
 		// set site visibility to just that site on the picker
 		if ( sites.select( siteID ) ) {
 			onSelectedSiteAvailable();
+			next();
 		} else {
 			// if sites has fresh data and siteID is invalid
 			// redirect to allSitesPath
 			if ( sites.fetched || ! sites.fetching ) {
 				return page.redirect( allSitesPath );
 			}
-			// Otherwise, check when sites has loaded
-			sites.once( 'change', function() {
+
+			let waitingNotice;
+			const selectOnSitesChange = () => {
 				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
 				if ( sites.select( siteID ) ) {
+					sites.initialized = true;
 					onSelectedSiteAvailable();
+					if ( waitingNotice ) {
+						notices.removeNotice( waitingNotice );
+					}
+				} else if ( ( currentUser.visible_site_count !== sites.getVisible().length ) ) {
+					sites.initialized = false;
+					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
+					sites.once( 'change', selectOnSitesChange );
+					sites.fetch();
+					return;
 				} else {
 					page.redirect( allSitesPath );
 				}
-			} );
+				next();
+			};
+			// Otherwise, check when sites has loaded
+			sites.once( 'change', selectOnSitesChange );
 		}
-
-		next();
 	},
 
 	awaitSiteLoaded( context, next ) {
