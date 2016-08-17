@@ -38,14 +38,6 @@
 	}
 
 	.search-close__icon {
-		&:not(.ltr) {
-			right: 0;
-		}
-
-		&.ltr {
-			right: 0 #{"/*rtl:ignore*/"};
-		}
-
 		color: darken( $gray, 30% );
 		opacity: 0;
 		transition: opacity .2s ease-in;
@@ -66,24 +58,6 @@
 	width: 50px;
 	top: 0;
 	right: 0;
-
-	&:not(.ltr) {
-		right: 0;
-	}
-
-	&.ltr {
-		right: 0 #{"/*rtl:ignore*/"};
-	}
-
-	.search-open__icon {
-		&:not(.ltr) {
-			right: 0;
-		}
-
-		&.ltr {
-			right: 0 #{"/*rtl:ignore*/"};
-		}
-	}
 
 	.search__input-fade {
 		position: relative;
@@ -123,27 +97,10 @@
 
 // When search input is opened
 .search.is-open {
-
-	&:not(.ltr) {
-		margin-right: 0 !important;
-	}
-
-	&.ltr {
-		margin-right: 0 #{"/*rtl:ignore*/"} !important;
-	}
-
 	width: 100%;
 
 	.search-open__icon {
 		color: darken( $gray, 30% );
-
-		&:not(.ltr) {
-			left: 0;
-		}
-
-		&.ltr {
-			left: 0 #{"/*rtl:ignore*/"};
-		}
 	}
 
 	.search-close__icon {
@@ -171,15 +128,6 @@
 
 .search .spinner {
 	display: none;
-
-	&:not(.ltr) {
-		left: 30px;
-	}
-
-	&.ltr {
-		left: 30px #{"/*rtl:ignore*/"};
-	}
-
 }
 
 .search.is-searching .search-open__icon {
