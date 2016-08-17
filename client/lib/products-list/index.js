@@ -2,7 +2,6 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:ProductsList' ),
-	omit = require( 'lodash/omit' ),
 	store = require( 'store' );
 
 /**

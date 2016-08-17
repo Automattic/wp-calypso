@@ -29,7 +29,9 @@ const MOCK_USER = {
 };
 
 const MOCK_USER_UTILS = {
-	needsVerificationForSite: function ( site ) { return !MOCK_USER.email_verified; }
+	needsVerificationForSite: function( site ) { // eslint-disable-line no-unused-vars
+		return ! MOCK_USER.email_verified;
+	}
 };
 
 describe( 'EditorGroundControl', function() {
@@ -50,7 +52,7 @@ describe( 'EditorGroundControl', function() {
 		mockery.registerMock( 'components/sticky-panel', EmptyComponent );
 		mockery.registerMock( 'components/post-schedule', EmptyComponent );
 		mockery.registerMock( 'lib/user/utils', {
-			needsVerificationForSite: () => !MOCK_USER.email_verified,
+			needsVerificationForSite: () => ! MOCK_USER.email_verified,
 		} );
 		EditorGroundControl = require( '../' );
 

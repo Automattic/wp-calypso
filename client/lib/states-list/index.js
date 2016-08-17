@@ -4,7 +4,6 @@
 var debug = require( 'debug' )( 'calypso:StatesList' ),
 	inherits = require( 'inherits' ),
 	isEmpty = require( 'lodash/isEmpty' ),
-	reject = require( 'lodash/reject' ),
 	store = require( 'store' );
 
 /**
@@ -98,7 +97,7 @@ StatesList.prototype.getByCountry = function( countryCode ) {
 		}
 
 		this.fetchForCountry( countryCode );
-	} else if ( ! (countryCode in this.data) ) {
+	} else if ( ! ( countryCode in this.data ) ) {
 		this.fetchForCountry( countryCode );
 	}
 

@@ -14,9 +14,8 @@ var HeaderCake = require( 'components/header-cake' ),
 	ActionPanelBody = require( 'my-sites/site-settings/action-panel/body' ),
 	ActionPanelFigure = require( 'my-sites/site-settings/action-panel/figure' ),
 	ActionPanelFooter = require( 'my-sites/site-settings/action-panel/footer' ),
-	Button = require ( 'components/button' ),
-	Gridicon = require ( 'components/gridicon' ),
-	support = require('lib/url/support');
+	Button = require( 'components/button' ),
+	support = require( 'lib/url/support' );
 
 module.exports = React.createClass( {
 
@@ -62,11 +61,11 @@ module.exports = React.createClass( {
 						}</p>
 						<p>{
 							this.translate( 'Alternatively, you can delete all content from your site by following {{link}}the steps here{{/link}}.',
-							{
-								components: {
-									link: <a href={ support.EMPTY_SITE } target="_blank" />
+								{
+									components: {
+										link: <a href={ support.EMPTY_SITE } target="_blank" />
+									}
 								}
-							}
 						)
 						}</p>
 					</ActionPanelBody>

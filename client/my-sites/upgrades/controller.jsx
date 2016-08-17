@@ -17,7 +17,6 @@ var analytics = require( 'lib/analytics' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	setSection = require( 'state/ui/actions' ).setSection,
 	productsList = require( 'lib/products-list' )(),
-	abtest = require( 'lib/abtest' ).abtest,
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 module.exports = {

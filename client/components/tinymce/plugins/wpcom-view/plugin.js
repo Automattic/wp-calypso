@@ -271,8 +271,7 @@ function wpview( editor ) {
 	// matching view patterns, and transform the matches into
 	// view wrappers.
 	editor.on( 'BeforeSetContent', function( event ) {
-		var site = sites.getSelectedSite(),
-			node;
+		var node;
 
 		if ( ! event.selection ) {
 			$( '.wpview-wrap .wpview-body' ).each( function( i, viewBody ) {

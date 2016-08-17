@@ -296,7 +296,7 @@ describe( 'TokenField', function() {
 			expect( wrapper.state( 'tokens' ) ).to.deep.equal( [ 'foo', 'bar', 'baz' ] );
 		} );
 
-		function testOnBlur( initialText, selectSuggestion, expectedSuggestion, expectedTokens, clock ) {
+		function testOnBlur( initialText, selectSuggestion, expectedSuggestion, expectedTokens ) {
 			setText( initialText );
 			if ( selectSuggestion ) {
 				sendKeyDown( keyCodes.downArrow ); // 'the'
@@ -323,8 +323,7 @@ describe( 'TokenField', function() {
 				't',                   // initialText
 				false,                 // selectSuggestion
 				null,                  // expectedSuggestion
-				[ 'foo', 'bar', 't' ], // expectedTokens
-				this.clock
+				[ 'foo', 'bar', 't' ] // expectedTokens
 			);
 		} ) );
 
@@ -333,8 +332,7 @@ describe( 'TokenField', function() {
 				't',                    // initialText
 				true,                   // selectSuggestion
 				[ 't', 'o' ],       // expectedSuggestion
-				[ 'foo', 'bar', 'to' ], // expectedTokens
-				this.clock
+				[ 'foo', 'bar', 'to' ] // expectedTokens
 			);
 		} ) );
 

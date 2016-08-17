@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -31,17 +30,17 @@ const DeleteEmailForwardsDialog = React.createClass( {
 
 	render() {
 		const buttons = [
-				{
-					action: 'delete',
-					label: this.translate( 'Deactivate Email Forwards and Remove Records' ),
-					isPrimary: true,
-					onClick: () => this.close( { shouldDeleteEmailForwards: true } )
-				},
-				{
-					action: 'keep',
-					label: this.translate( 'Keep Records and Email Forwards' )
-				}
-			];
+			{
+				action: 'delete',
+				label: this.translate( 'Deactivate Email Forwards and Remove Records' ),
+				isPrimary: true,
+				onClick: () => this.close( { shouldDeleteEmailForwards: true } )
+			},
+			{
+				action: 'keep',
+				label: this.translate( 'Keep Records and Email Forwards' )
+			}
+		];
 
 		return (
 			<Dialog

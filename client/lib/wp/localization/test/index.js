@@ -11,7 +11,7 @@ import sinon from 'sinon';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'index', () => {
-	let getCurrentUserLocaleMock, localization, addLocaleQueryParam,
+	let getCurrentUserLocaleMock, addLocaleQueryParam,
 		injectLocalization, bindState, setLocale, getLocale;
 
 	useMockery();
