@@ -1,10 +1,15 @@
 .plan-purchase-features {
-	column-count: 2;
-	column-gap: 12px;
+	@include breakpoint( ">1040px" ) {
+		column-count: 2;
+		column-gap: 12px;
+	}
 }
 
 .plan-purchase-features__item {
-	display: inline-block;
+	@include breakpoint( ">1040px" ) {
+		display: inline-block;
+	}
+
 	margin-top: 12px;
 }
 
