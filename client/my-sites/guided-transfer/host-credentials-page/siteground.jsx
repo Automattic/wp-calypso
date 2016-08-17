@@ -17,6 +17,13 @@ import {
 } from './fields';
 
 class SiteGround extends Component {
+	static propTypes = {
+		hostInfo: PropTypes.shape( {
+			label: PropTypes.string.isRequired,
+			url: PropTypes.string.isRequired
+		} ).isRequired
+	};
+
 	render() {
 		const {
 			hostInfo,
@@ -58,12 +65,5 @@ class SiteGround extends Component {
 		);
 	}
 }
-
-SiteGround.propTypes = {
-	hostInfo: PropTypes.shape( {
-		label: PropTypes.string.isRequired,
-		url: PropTypes.string.isRequired
-	} ).isRequired
-};
 
 export default localize( SiteGround );

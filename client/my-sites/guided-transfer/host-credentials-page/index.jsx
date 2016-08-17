@@ -12,10 +12,11 @@ import SiteGround from './siteground';
 import SectionHeader from 'components/section-header';
 
 class HostCredentialsPage extends Component {
-	constructor() {
-		super();
-		this.state = { fieldValues: {} };
-	}
+	static propTypes = {
+		hostSlug: PropTypes.string.isRequired,
+	};
+
+	state = { fieldValues: {} };
 
 	setFieldValue = ( fieldName, fieldValue ) => {
 		this.setState( { fieldValues: {
@@ -59,9 +60,5 @@ class HostCredentialsPage extends Component {
 		);
 	}
 }
-
-HostCredentialsPage.PropTypes = {
-	hostSlug: PropTypes.string.isRequired,
-};
 
 export default localize( HostCredentialsPage );
