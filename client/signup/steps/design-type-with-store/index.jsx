@@ -11,8 +11,11 @@ import StepWrapper from 'signup/step-wrapper';
 import SignupActions from 'lib/signup/actions';
 import analytics from 'lib/analytics';
 import Card from 'components/card';
+import { abtest } from 'lib/abtest';
 
 import PressableStoreStep from './pressable-store';
+import BluehostStoreStep from './bluehost-store';
+import SitegroundStoreStep from './siteground-store';
 
 export default React.createClass( {
 	displayName: 'DesignTypeWithStoreStep',
@@ -36,6 +39,48 @@ export default React.createClass( {
 		this._pressableStore = pressableStoreStep;
 	},
 
+	scrollUp() {
+		// Didn't use setInterval in order to fix delayed scroll
+		while ( window.pageYOffset > 0 ) {
+			window.scrollBy( 0, -10 );
+		}
+	},
+
+	handleStoreBackClick() {
+		this.setState( {
+			showStore: false
+		} );
+
+		this.scrollUp();
+	},
+
+	handleChoiceClick( event, type ) {
+		event.preventDefault();
+		event.stopPropagation();
+		this.handleNextStep( type );
+	},
+
+	handleNextStep( designType ) {
+		analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
+
+		if ( designType === 'store' ) {
+			this.scrollUp();
+
+			this.setState( {
+				showStore: true
+			} );
+
+			if ( this._pressableStore ) {
+				this._pressableStore.focus();
+			}
+
+			return;
+		}
+
+		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
+		this.props.goToNextStep();
+	},
+
 	renderChoice( choice ) {
 		return (
 			<Card className="design-type-with-store__choice" key={ choice.type }>
@@ -55,21 +100,48 @@ export default React.createClass( {
 		);
 	},
 
+	renderStoreStep() {
+		switch ( abtest( 'signupStoreBenchmarking' ) ) {
+			case 'bluehost':
+				return <BluehostStoreStep
+							{ ... this.props }
+							onBackClick={ this.handleStoreBackClick }
+						/>;
+			case 'bluehostWithWoo':
+				return <BluehostStoreStep
+							{ ... this.props }
+							onBackClick={ this.handleStoreBackClick }
+							partnerName='Bluehost with WooCommerce'
+						/>;
+			case 'siteground':
+				return <SitegroundStoreStep
+							{ ... this.props }
+							onBackClick={ this.handleStoreBackClick }
+						/>;
+			default:
+				return <PressableStoreStep
+							{ ... this.props }
+							ref={ this.onPressableStoreStepRef }
+							onBackClick={ this.handleStoreBackClick }
+						/>;
+		}
+	},
+
 	render() {
-		let pressableWrapperClassName = classNames( {
-			'design-type-with-store__pressable-wrapper': true,
+		const storeWrapperClassName = classNames( {
+			'design-type-with-store__store-wrapper': true,
 			'is-hidden': ! this.state.showStore,
 		} );
 
-		let sectionWrapperClassName = classNames( {
+		const sectionWrapperClassName = classNames( {
 			'design-type-with-store__section-wrapper': true,
 			'is-hidden': this.state.showStore,
 		} );
 
 		return (
 			<div className="design-type-with-store">
-				<div className={ pressableWrapperClassName } >
-					<PressableStoreStep { ... this.props } ref={ this.onPressableStoreStepRef } onBackClick={ this.handlePressableStoreBackClick }/>
+				<div className={ storeWrapperClassName } >
+					{ this.renderStoreStep() }
 				</div>
 				<div className={ sectionWrapperClassName }>
 					<StepWrapper
@@ -83,51 +155,5 @@ export default React.createClass( {
 				</div>
 			</div>
 		);
-	},
-
-	scrollUp() {
-		this.windowScroller = setInterval( () => {
-			if ( window.pageYOffset > 0 ) {
-				window.scrollBy( 0, -10 );
-			} else {
-				clearInterval( this.windowScroller );
-				this.windowScroller = null;
-			}
-		}, 1 );
-	},
-
-	handlePressableStoreBackClick() {
-		this.setState( {
-			showStore: false
-		} );
-
-		this.scrollUp();
-	},
-
-	handleChoiceClick( event, type ) {
-		event.preventDefault();
-		event.stopPropagation();
-		this.handleNextStep( type );
-	},
-
-	handleNextStep( designType ) {
-		analytics.tracks.recordEvent( 'calypso_triforce_select_design', { category: designType } );
-
-		if ( designType === 'store' ) {
-			this.setState( {
-				showStore: true
-			} );
-
-			this.scrollUp();
-
-			if ( this._pressableStore ) {
-				this._pressableStore.focus();
-			}
-
-			return;
-		}
-
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { designType } );
-		this.props.goToNextStep();
 	}
 } );
