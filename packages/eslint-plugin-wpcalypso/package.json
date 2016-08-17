@@ -13,6 +13,7 @@
   ],
   "author": "Automattic",
   "main": "lib/index.js",
+  "files": [ "lib/" ],
   "scripts": {
   	"tests": "mocha tests --recursive",
   	"lint": "eslint lib/ tests/",
