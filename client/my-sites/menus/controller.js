@@ -19,6 +19,7 @@ var sites = require( 'lib/sites-list' )(),
 	notices = require( 'notices' ),
 	siteMenus = require( 'lib/menu-data' );
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 var controller = {
 
@@ -37,7 +38,7 @@ var controller = {
 		context.store.dispatch( setTitle( i18n.translate( 'Menus', { textOnly: true } ) ) );
 
 		function renderJetpackUpgradeMessage() {
-			ReactDom.render(
+			renderWithReduxStore(
 				React.createElement( MainComponent, null,
 					React.createElement( JetpackManageErrorPage, {
 						template: 'updateJetpack',
@@ -49,7 +50,8 @@ var controller = {
 						secondaryActionTarget: '_blank'
 					} )
 				),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 
