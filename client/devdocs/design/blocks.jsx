@@ -37,6 +37,7 @@ import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 import RelatedPostCard from 'blocks/reader-related-card/docs/example';
 import SearchPostCard from 'blocks/reader-search-card/docs/example';
+import PlanPurchaseFeaturesExample from 'blocks/plan-purchase-features/docs/example';
 
 export default React.createClass( {
 
@@ -95,6 +96,7 @@ export default React.createClass( {
 					<ReaderSiteStreamLink />
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
+					<PlanPurchaseFeaturesExample />
 				</Collection>
 			</div>
 		);
