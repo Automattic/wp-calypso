@@ -1,6 +1,7 @@
 #### v2.0.0 (---)
 
 - Breaking: Required Node version increased to >=0.12.0
+- Fix: `npm test` is now run synchronously so it exits with a non-zero code on failure
 
 #### v1.4.1 (August 12, 2016)
 
