@@ -2,8 +2,7 @@
  * External Dependencies
  */
 import { connect } from 'react-redux';
-import page from 'page';
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 
 /**
  * Internal Dependencies
@@ -13,19 +12,26 @@ import CreditCardPage from 'me/purchases/components/credit-card-page';
 import CreditCardPageLoadingPlaceholder from 'me/purchases/components/credit-card-page/loading-placeholder';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
-import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
+import { isDataLoading, recordPageView } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
-import paths from 'me/purchases/paths';
+import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
 import userFactory from 'lib/user';
 
 const user = userFactory();
 
-class AddCardDetails extends Component {
+class AddCardDetails extends PurchaseCardDetails {
 	static propTypes = {
+		clearPurchases: PropTypes.func.isRequired,
 		hasLoadedSites: PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
+		] ),
+		title: PropTypes.string.isRequired
 	};
 
 	componentWillMount() {
@@ -34,33 +40,10 @@ class AddCardDetails extends Component {
 		recordPageView( 'add_card_details', this.props );
 	}
 
-	redirectIfDataIsInvalid( props = this.props ) {
-		if ( isDataLoading( props ) ) {
-			return true;
-		}
+	componentWillReceiveProps( nextProps ) {
+		this.redirectIfDataIsInvalid( nextProps );
 
-		if ( ! this.isDataValid( props ) ) {
-			page( paths.list() );
-		}
-	}
-
-	isDataValid( props = this.props ) {
-		const purchase = getPurchase( props ),
-			{ selectedSite } = props;
-
-		return purchase && selectedSite;
-	}
-
-	goBack( props ) {
-		goToManagePurchase( props );
-	}
-
-	successCallback( props ) {
-		const { id } = getPurchase( props );
-
-		props.clearPurchases();
-
-		page( paths.managePurchase( props.selectedSite.slug, id ) );
+		recordPageView( 'add_card_details', this.props, nextProps );
 	}
 
 	render() {
@@ -74,9 +57,12 @@ class AddCardDetails extends Component {
 			);
 		}
 
-		return <CreditCardPage { ...this.props }
-			goBack={ () => this.goBack( this.props ) }
-			successCallback={ () => this.successCallback( this.props ) } />;
+		return <CreditCardPage
+			apiParams={ this.getApiParams() }
+			goBack={ this.goBack }
+			recordFormSubmitEvent={ this.recordFormSubmitEvent }
+			successCallback={ this.successCallback }
+			title={ this.props.title } />;
 	}
 }
 

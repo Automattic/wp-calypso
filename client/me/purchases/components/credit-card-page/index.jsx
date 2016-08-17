@@ -1,12 +1,11 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
 import camelCase from 'lodash/camelCase';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
@@ -17,7 +16,6 @@ import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
 import forOwn from 'lodash/forOwn';
 import HeaderCake from 'components/header-cake' ;
-import { getPurchase } from 'me/purchases/utils';
 import kebabCase from 'lodash/kebabCase';
 import Main from 'components/main';
 import mapKeys from 'lodash/mapKeys';
@@ -33,10 +31,12 @@ const wpcom = wpcomFactory.undocumented();
 
 const CreditCardPage = React.createClass( {
 	propTypes: {
-		goBack: React.PropTypes.func.isRequired,
-		initialValues: React.PropTypes.object,
-		successCallback: React.PropTypes.func.isRequired,
-		selectedPurchase: React.PropTypes.object
+		apiParams: PropTypes.object,
+		goBack: PropTypes.func.isRequired,
+		initialValues: PropTypes.object,
+		recordFormSubmitEvent: PropTypes.func.isRequired,
+		successCallback: PropTypes.func.isRequired,
+		title: PropTypes.string.isRequired
 	},
 
 	getInitialState() {
@@ -140,17 +140,14 @@ const CreditCardPage = React.createClass( {
 				return;
 			}
 
-			this.updateCreditCard();
+			this.props.recordFormSubmitEvent();
+
+			this.saveCreditCard();
 		} );
 	},
 
-	updateCreditCard() {
+	saveCreditCard() {
 		const cardDetails = this.getCardDetails();
-
-		analytics.tracks.recordEvent(
-			'calypso_purchases_credit_card_form_submit',
-			{ product_slug: getPurchase( this.props ).productSlug }
-		);
 
 		createPaygateToken( 'card_update', cardDetails, ( paygateError, token ) => {
 			if ( paygateError ) {
@@ -159,7 +156,9 @@ const CreditCardPage = React.createClass( {
 				return;
 			}
 
-			wpcom.updateCreditCard( this.getParamsForApi( token ), ( apiError, response ) => {
+			const apiParams = this.getParamsForApi( cardDetails, token, this.props.apiParams );
+
+			wpcom.updateCreditCard( apiParams, ( apiError, response ) => {
 				if ( apiError ) {
 					this.setState( { formSubmitting: false } );
 					notices.error( apiError.message );
@@ -181,17 +180,15 @@ const CreditCardPage = React.createClass( {
 		} );
 	},
 
-	getParamsForApi( token ) {
-		const cardDetails = this.getCardDetails();
-
+	getParamsForApi( cardDetails, token, extraParams = {} ) {
 		return {
+			...extraParams,
 			country: cardDetails.country,
 			zip: cardDetails[ 'postal-code' ],
 			month: cardDetails[ 'expiration-date' ].split( '/' )[ 0 ],
 			year: cardDetails[ 'expiration-date' ].split( '/' )[ 1 ],
 			name: cardDetails.name,
-			paygateToken: token,
-			purchaseId: getPurchase( this.props ).id
+			paygateToken: token
 		};
 	},
 
