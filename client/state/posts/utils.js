@@ -177,8 +177,8 @@ export function getTermIdsFromEdits( post ) {
 		return post;
 	}
 
-	// Skip "default" taxonomies until legacy token-field and category-selector are removed
-	let taxonomies = omit( post.terms, [ 'post_tag', 'category' ] );
+	// Skip "post_tag" taxonomies until legacy token-field is removed
+	let taxonomies = omit( post.terms, [ 'post_tag' ] );
 
 	// Filter taxonomies that are set as arrays ( i.e. tags )
 	// This can be detected by an array of strings vs an array of objects
