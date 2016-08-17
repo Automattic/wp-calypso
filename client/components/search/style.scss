@@ -11,6 +11,7 @@
 	align-items: center;
 	// places search above filters
 	z-index: z-index( 'root', '.search' );
+	transition: box-shadow 0.15s;
 
 	.search-component-icon-div {
 		flex: 0 0 auto;
@@ -124,6 +125,12 @@
 	&::before {
 		@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
 	}
+
+	&.ltr {
+		&::before {
+			@include long-content-fade( $direction: left, $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
+		}
+	}
 }
 
 .search .spinner {
@@ -144,4 +151,8 @@
 	.spinner__image {
 		width: 50px;
 	}
+}
+
+.animating.search-opening .search input {
+		opacity: 1;
 }
