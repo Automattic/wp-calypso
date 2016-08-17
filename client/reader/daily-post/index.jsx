@@ -171,7 +171,7 @@ class DailyPostButton extends React.Component {
 			onMouseEnter: preloadEditor
 		}, [
 			( <Button ref="dailyPostButton" key="button" compact primary className={ buttonClasses }>
-					<Gridicon icon="create" /><span>{ translate( 'Post about ' ) + title } </span>
+					<Gridicon icon="create" /><span>{ translate( 'Post about %(title)s', { args: { title } } ) } </span>
 				</Button> ),
 			( this.state.showingMenu ? this.renderSitesPopover() : null )
 		] );
