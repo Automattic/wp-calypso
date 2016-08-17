@@ -19,19 +19,17 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS_MONTHLY
 } from 'lib/plans/constants';
-import {
-	FindNewThemeFeature,
-	AdvertisingRemovedFeature,
-	GoogleVouchersFeature,
-	CustomizeThemeFeature,
-	VideoAudioPostsFeature,
-	MonetizeSiteFeature,
-	CustomDomainFeature,
-	GoogleAnalyticsStatsFeature,
-	JetpackFeatures,
-	HapinessSupportFeature,
-	CurrentPlanHeaderFeature
-} from './features-list';
+import FindNewTheme from './find-new-theme';
+import AdvertisingRemoved from './advertising-removed';
+import GoogleVouchers from './google-vouchers';
+import CustomizeTheme from './customize-theme';
+import VideoAudioPosts from './video-audio-posts';
+import MonetizeSite from './monetize-site';
+import CustomDomain from './custom-domain';
+import GoogleAnalyticsStats from './google-analytics-stats';
+import JetpackFeatures from './jetpack-features';
+import HappinessSupport from './happiness-support';
+import CurrentPlanHeader from './current-plan-header';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import {
@@ -77,11 +75,11 @@ class PlanPurchaseFeatures extends Component {
 			hasLoadedFromServer = sitePlans.hasLoadedFromServer;
 
 		return [
-			<HapinessSupportFeature
+			<HappinessSupport
 				selectedSite={ selectedSite }
 				key="hapinessSupportFeature"
 			/>,
-			<CurrentPlanHeaderFeature
+			<CurrentPlanHeader
 				selectedSite={ selectedSite }
 				key="currentPlanHeaderFeature"
 				hasLoadedFromServer={ hasLoadedFromServer }
@@ -89,39 +87,39 @@ class PlanPurchaseFeatures extends Component {
 				tagLine={ translate( 'Learn more about everything included with Business and take advantage of' +
 					' its professional features.' ) }
 			/>,
-			<CustomDomainFeature
+			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
 				key="customDomainFeature"
 			/>,
-			<FindNewThemeFeature
+			<FindNewTheme
 				selectedSite={ selectedSite }
 				key="findNewThemeFeature"
 			/>,
-			<GoogleAnalyticsStatsFeature
+			<GoogleAnalyticsStats
 				selectedSite={ selectedSite }
 				key="googleAnalyticsStatsFeature"
 			/>,
-			<AdvertisingRemovedFeature
+			<AdvertisingRemoved
 				isBusinessPlan
 				key="advertisingRemovedFeature"
 			/>,
-			<GoogleVouchersFeature
+			<GoogleVouchers
 				selectedSite={ selectedSite }
 				key="googleVouchersFeature"
 			/>,
-			<CustomizeThemeFeature
+			<CustomizeTheme
 				customizeLink={ this.getCustomizeLink() }
 				isCustomizeEnabled={ this.isCustomizeEnabled() }
 				key="customizeThemeFeature"
 			/>,
-			<VideoAudioPostsFeature
+			<VideoAudioPosts
 				paths={ paths }
 				selectedSite={ selectedSite }
 				key="videoAudioPostsFeature"
 			/>,
 			isWordadsInstantActivationEligible( selectedSite )
-				? <MonetizeSiteFeature
+				? <MonetizeSite
 					selectedSite={ selectedSite }
 					key="monetizeSiteFeature"
 				/>
@@ -138,31 +136,31 @@ class PlanPurchaseFeatures extends Component {
 		const plan = find( sitePlans.data, isPremium );
 
 		return [
-			<CustomDomainFeature
+			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
 				key="customDomainFeature"
 			/>,
-			<AdvertisingRemovedFeature
+			<AdvertisingRemoved
 				isBusinessPlan={ false }
 				key="advertisingRemovedFeature"
 			/>,
-			<GoogleVouchersFeature
+			<GoogleVouchers
 				selectedSite={ selectedSite }
 				key="googleVouchersFeature"
 			/>,
-			<CustomizeThemeFeature
+			<CustomizeTheme
 				customizeLink={ this.getCustomizeLink() }
 				isCustomizeEnabled={ this.isCustomizeEnabled() }
 				key="customizeThemeFeature"
 			/>,
-			<VideoAudioPostsFeature
+			<VideoAudioPosts
 				paths={ paths }
 				selectedSite={ selectedSite }
 				key="videoAudioPostsFeature"
 			/>,
 			isWordadsInstantActivationEligible( selectedSite )
-				? <MonetizeSiteFeature
+				? <MonetizeSite
 					selectedSite={ selectedSite }
 					key="monetizeSiteFeature"
 				/>
@@ -179,12 +177,12 @@ class PlanPurchaseFeatures extends Component {
 		const plan = find( sitePlans.data, isPremium );
 
 		return [
-			<CustomDomainFeature
+			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
 				key="customDomainFeature"
 			/>,
-			<AdvertisingRemovedFeature
+			<AdvertisingRemoved
 				isBusinessPlan={ false }
 				key="advertisingRemovedFeature"
 			/>
