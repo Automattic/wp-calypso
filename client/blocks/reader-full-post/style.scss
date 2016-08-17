@@ -85,7 +85,7 @@
 }
 
 .reader-full-post .author-compact-profile {
-	z-index: z-index( '.masterbar', '.reader-profile'	);
+	z-index: z-index( '.masterbar', '.reader-profile' );
 	@include breakpoint( "<660px" ) {
 		margin-top: 20px;
 		.gravatar {
@@ -113,6 +113,19 @@
 
 		.author-compact-profile__follow-count {
 			display: none;
+		}
+	}
+}
+
+.reader-full-post .reader-full-post__sidebar {
+	color: lighten( $gray, 10% );
+
+	a.reader-author-link,
+	a.author-compact-profile__site-link {
+		color: $blue-medium;
+
+		&:hover {
+			color: $blue-light;
 		}
 	}
 }
@@ -194,7 +207,7 @@
 	color: $gray;
 
 	&:hover {
-		color: darken( $gray, 20% );
+		color: $blue-light;
 	}
 }
 
@@ -249,6 +262,6 @@
 	color: $gray;
 
 	&:hover {
-		color: darken( $gray, 20% );
+		color: $blue-light;
 	}
 }
