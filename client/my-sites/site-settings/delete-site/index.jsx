@@ -82,7 +82,10 @@ export const DeleteSite = React.createClass( {
 			adminURL = site.options && site.options.admin_url ? site.options.admin_url : '',
 			exportLink = config.isEnabled( 'manage/export' ) ? '/settings/export/' + site.slug : adminURL + 'tools.php?page=export-choices',
 			exportTarget = config.isEnabled( 'manage/export' ) ? undefined : '_blank',
-			deleteDisabled = ( typeof this.state.confirmDomain !== 'string' || this.state.confirmDomain.replace( /\s/g, '' ) !== site.domain );
+			deleteDisabled = (
+				typeof this.state.confirmDomain !== 'string' ||
+				this.state.confirmDomain.toLowerCase().replace( /\s/g, '' ) !== site.domain
+			);
 
 		const deleteButtons = [
 			<Button
@@ -195,7 +198,13 @@ export const DeleteSite = React.createClass( {
 								}
 							} )
 						}</p>
-					<input className="delete-site__confirm-input" type="text" valueLink={ this.linkState( 'confirmDomain' ) }/>
+
+						<input
+							autoCapitalize="off"
+							className="delete-site__confirm-input"
+							type="text"
+							valueLink={ this.linkState( 'confirmDomain' ) }
+							/>
 					</Dialog>
 				</ActionPanel>
 			</div>
