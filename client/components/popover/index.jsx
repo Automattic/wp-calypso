@@ -162,7 +162,7 @@ class Popover extends Component {
 			return null;
 		}
 
-		this.close();
+		this.close( true );
 	}
 
 	// --- cliclout side ---
@@ -357,13 +357,13 @@ class Popover extends Component {
 		this._openDelayTimer = null;
 	}
 
-	close() {
+	close( wasCanceled = false ) {
 		if ( ! this.props.isVisible ) {
 			this.debug( 'popover should be already closed' );
 			return null;
 		}
 
-		this.props.onClose();
+		this.props.onClose( wasCanceled );
 	}
 
 	render() {
