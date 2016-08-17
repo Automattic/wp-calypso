@@ -31,6 +31,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import {
 	signup,
