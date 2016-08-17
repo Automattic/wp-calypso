@@ -201,7 +201,8 @@ export default {
 				<Plans
 					sites={ sites }
 					context={ context }
-					destinationType={ context.params.destinationType } />
+					destinationType={ context.params.destinationType }
+					intervalType={ context.params.intervalType } />
 			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store
