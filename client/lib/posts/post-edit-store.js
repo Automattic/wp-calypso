@@ -5,10 +5,8 @@ var assign = require( 'lodash/assign' ),
 	debug = require( 'debug' )( 'calypso:posts:post-edit-store' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	isEqual = require( 'lodash/isEqual' ),
-	clone = require( 'lodash/clone' ),
 	filter = require( 'lodash/filter' ),
 	without = require( 'lodash/without' ),
-	map = require( 'lodash/map' ),
 	pickBy = require( 'lodash/pickBy' );
 
 /**
@@ -221,9 +219,7 @@ function isContentEmpty( content ) {
 
 function dispatcherCallback( payload ) {
 	var action = payload.action,
-		changed,
-		category,
-		postId;
+		changed;
 
 	switch ( action.type ) {
 
