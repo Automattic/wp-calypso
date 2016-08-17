@@ -23,17 +23,21 @@ export default React.createClass( {
 		compact: React.PropTypes.bool
 	},
 
+	getDefaultProps() {
+		return {
+			tagName: 'div'
+		};
+	},
+
 	render: function() {
 		const className = classnames( 'card', this.props.className, {
 			'is-card-link': !! this.props.href,
 			'is-compact': this.props.compact
 		} );
 
-		let element = this.props.tagName || 'div';
 		let childProps = { ...omit( this.props, [ 'compact', 'tagName' ] ), className };
 		let linkIndicator;
 		if ( this.props.href ) {
-			element = 'a';
 			linkIndicator = <Gridicon
 				className="card__link-indicator"
 				icon={ this.props.target ? 'external' : 'chevron-right' } />;
@@ -42,7 +46,7 @@ export default React.createClass( {
 		}
 
 		return React.createElement(
-			element,
+			this.props.href ? 'a' : this.props.tagName,
 			childProps,
 			this.props.href ? linkIndicator : null,
 			this.props.children
