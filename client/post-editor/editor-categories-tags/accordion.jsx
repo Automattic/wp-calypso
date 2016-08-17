@@ -18,6 +18,7 @@ import TermSelector from 'post-editor/editor-term-selector';
 import Tags from 'post-editor/editor-tags';
 import unescapeString from 'lodash/unescape';
 import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import { addSiteFragment } from 'lib/route';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -44,14 +45,11 @@ export class EditorCategoriesTagsAccordion extends Component {
 	renderJetpackNotice() {
 		const { translate, siteSlug } = this.props;
 		return (
-			<Notice status="is-warning" showDismiss={ false }>
-				{ translate( 'You must update Jetpack to use this feature. {{update}}Update Now{{/update}}', {
-					components: {
-						update: (
-							<a href={ addSiteFragment( '/plugins/jetpack', siteSlug ) } />
-						)
-					}
-				} ) }
+			<Notice status="is-warning" showDismiss={ false } isCompact>
+				{ translate( 'You must update Jetpack to use this feature.' ) }
+				<NoticeAction href={ addSiteFragment( '/plugins/jetpack', siteSlug ) }>
+					{ translate( 'Update Now' ) }
+				</NoticeAction>
 			</Notice>
 		);
 	}
