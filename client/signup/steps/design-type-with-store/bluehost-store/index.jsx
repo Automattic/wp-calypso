@@ -11,7 +11,6 @@ import identity from 'lodash/identity';
 import Gridicon from 'components/gridicon';
 import StepHeader from 'signup/step-header';
 import Button from 'components/button';
-import { abtest } from 'lib/abtest';
 import { localize } from 'i18n-calypso';
 import { recordTracksEvent } from 'state/analytics/actions';
 
