@@ -37,6 +37,7 @@ class Popover extends Component {
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
 		position: PropTypes.string,
+		rootClassName: PropTypes.string,
 		showDelay: PropTypes.number,
 
 		onClose: PropTypes.func.isRequired,
@@ -386,7 +387,7 @@ class Popover extends Component {
 		this.debug( 'rendering ...' );
 
 		return (
-			<RootChild>
+			<RootChild className={ this.props.rootClassName }>
 				<div
 					style={ this.getStylePosition() }
 					className={ classes }
