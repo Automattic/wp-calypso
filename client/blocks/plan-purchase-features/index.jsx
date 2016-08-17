@@ -241,7 +241,7 @@ class PlanPurchaseFeatures extends Component {
 export default connect( ( state, ownProps ) => {
 	let selectedSite = getSelectedSite( state );
 
-	if ( ownProps.selectedSite ) {
+	if ( ownProps.selectedSite && ! selectedSite ) {
 		selectedSite = ownProps.selectedSite;
 	}
 
