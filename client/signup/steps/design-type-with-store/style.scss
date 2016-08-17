@@ -106,10 +106,23 @@
 	height: 195px;
 }
 
+@include breakpoint( "<480px" ) {
+	.design-type-with-store__copy {
+		text-align: center;
+	}
+}
 
 @include breakpoint( "<660px" ) {
 	.design-type-with-store__copy {
 		max-width: none;
+	}
+
+	.design-type-with-store__bluehost-logo {
+		margin: 0 auto 18px auto;
+	}
+
+	.design-type-with-store__siteground-logo {
+		margin: 0 auto 18px auto;
 	}
 }
 
