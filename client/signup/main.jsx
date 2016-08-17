@@ -355,17 +355,21 @@ const Signup = React.createClass( {
 	},
 
 	renderCheckoutWhileWaiting() {
-		const productsList = require( 'lib/products-list' )();
-		const sites = require( 'lib/sites-list' )();
-		//( <SignupProcessingScreen steps={ this.state.progress } user={ this.state.user } loginHandler={ this.state.loginHandler }/> )
-		return(
-			<CheckoutData>
-				<Checkout
-					product={ 'premium' }
-					productsList={ productsList }
-					sites={ sites } />
-			</CheckoutData>
-		);
+		const selectedPlan = 'premium'; //Do logic: capture plan.
+		if ( selectedPlan ) {
+			const productsList = require( 'lib/products-list' )();
+			const sites = require( 'lib/sites-list' )();
+			return(
+				<CheckoutData>
+					<Checkout
+						product={ 'premium' }
+						productsList={ productsList }
+						sites={ sites } />
+				</CheckoutData>
+			);
+		} else {
+			return ( <SignupProcessingScreen steps={ this.state.progress } user={ this.state.user } loginHandler={ this.state.loginHandler }/> );
+		}
 	},
 
 	render() {
