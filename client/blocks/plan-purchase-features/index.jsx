@@ -27,16 +27,24 @@ import VideoAudioPosts from './video-audio-posts';
 import MonetizeSite from './monetize-site';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
-import JetpackFeatures from './jetpack-features';
 import HappinessSupport from './happiness-support';
 import CurrentPlanHeader from './current-plan-header';
+import JetpackAntiSpam from './jetpack-anti-spam';
+import JetpackBackupSecurity from './jetpack-backup-security';
+import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
+import JetpackSurveysPolls from './jetpack-surveys-polls';
+import JetpackWordPressCom from './jetpack-wordpress-com';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import {
-	isPremium,
-	isBusiness
+	isPremium as isWpcomPremium,
+	isBusiness as isWpcomBusiness
 } from 'lib/products-values';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import {
+	isJetpackBusiness,
+	isJetpackPremium
+} from 'lib/products-values';
 
 class PlanPurchaseFeatures extends Component {
 	static propTypes = {
@@ -53,7 +61,7 @@ class PlanPurchaseFeatures extends Component {
 			translate
 		} = this.props;
 
-		const plan = find( sitePlans.data, isBusiness ),
+		const plan = find( sitePlans.data, isWpcomBusiness ),
 			hasLoadedFromServer = sitePlans.hasLoadedFromServer;
 
 		return [
@@ -113,7 +121,7 @@ class PlanPurchaseFeatures extends Component {
 			sitePlans
 		} = this.props;
 
-		const plan = find( sitePlans.data, isPremium );
+		const plan = find( sitePlans.data, isWpcomPremium );
 
 		return [
 			<CustomDomain
@@ -152,7 +160,7 @@ class PlanPurchaseFeatures extends Component {
 			sitePlans
 		} = this.props;
 
-		const plan = find( sitePlans.data, isPremium );
+		const plan = find( sitePlans.data, isWpcomPremium );
 
 		return [
 			<CustomDomain
@@ -170,10 +178,32 @@ class PlanPurchaseFeatures extends Component {
 	getJetpackFeatures() {
 		const {	selectedSite } = this.props;
 
+		const isBusiness = isJetpackBusiness( selectedSite.plan ),
+			isPaid = ( isBusiness || isJetpackPremium( selectedSite.plan ) );
+
 		return [
-			<JetpackFeatures
+			isPaid
+				? <JetpackBackupSecurity
+					key="jetpackBackupSecurity"
+				/>
+				: null,
+			isPaid
+				? <JetpackAntiSpam
+					key="jetpackAntiSpam"
+				/>
+				: null,
+			isBusiness
+				? <JetpackSurveysPolls
+					key="jetpackSurveysPolls"
+				/>
+				: null,
+			<JetpackWordPressCom
 				selectedSite={ selectedSite }
-				key="jetpackFeatures"
+				key="jetpackWordPressCom"
+			/>,
+			<JetpackReturnToDashboard
+				selectedSite={ selectedSite }
+				key="jetpackReturnToDashboard"
 			/>
 		];
 	}
