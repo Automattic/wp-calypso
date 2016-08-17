@@ -36,12 +36,7 @@ import {
 	isPremium,
 	isBusiness
 } from 'lib/products-values';
-import { isEnabled } from 'config';
-import paths from 'lib/paths';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import userFactory from 'lib/user';
-import analytics from 'lib/analytics';
-import utils from 'lib/site/utils';
 
 class PlanPurchaseFeatures extends Component {
 	static propTypes = {
@@ -50,19 +45,6 @@ class PlanPurchaseFeatures extends Component {
 			.isRequired,
 		selectedSite: PropTypes.object
 	};
-
-	isCustomizeEnabled() {
-		return isEnabled( 'manage/customize' );
-	}
-
-	getCustomizeLink() {
-		const { selectedSite } = this.props;
-
-		const adminUrl = selectedSite.URL + '/wp-admin/',
-			customizerInAdmin = adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
-
-		return this.isCustomizeEnabled() ? '/customize/' + selectedSite.slug : customizerInAdmin;
-	}
 
 	getBusinessFeatures() {
 		const {
@@ -109,12 +91,10 @@ class PlanPurchaseFeatures extends Component {
 				key="googleVouchersFeature"
 			/>,
 			<CustomizeTheme
-				customizeLink={ this.getCustomizeLink() }
-				isCustomizeEnabled={ this.isCustomizeEnabled() }
+				selectedSite={ selectedSite }
 				key="customizeThemeFeature"
 			/>,
 			<VideoAudioPosts
-				paths={ paths }
 				selectedSite={ selectedSite }
 				key="videoAudioPostsFeature"
 			/>,
@@ -150,12 +130,10 @@ class PlanPurchaseFeatures extends Component {
 				key="googleVouchersFeature"
 			/>,
 			<CustomizeTheme
-				customizeLink={ this.getCustomizeLink() }
-				isCustomizeEnabled={ this.isCustomizeEnabled() }
+				selectedSite={ selectedSite }
 				key="customizeThemeFeature"
 			/>,
 			<VideoAudioPosts
-				paths={ paths }
 				selectedSite={ selectedSite }
 				key="videoAudioPostsFeature"
 			/>,
@@ -195,10 +173,6 @@ class PlanPurchaseFeatures extends Component {
 		return [
 			<JetpackFeatures
 				selectedSite={ selectedSite }
-				user={ userFactory() }
-				analytics={ analytics }
-				utils={ utils }
-				isPluginsSetupEnabled={ isEnabled( 'manage/plugins/setup' ) }
 				key="jetpackFeatures"
 			/>
 		];

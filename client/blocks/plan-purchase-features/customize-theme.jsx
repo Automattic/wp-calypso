@@ -8,8 +8,20 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
+import { isEnabled } from 'config';
 
-export default localize( ( { customizeLink, isCustomizeEnabled, translate } ) => {
+function isCustomizeEnabled() {
+	return isEnabled( 'manage/customize' );
+}
+
+function getCustomizeLink( selectedSite ) {
+	const adminUrl = selectedSite.URL + '/wp-admin/',
+		customizerInAdmin = adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
+
+	return isCustomizeEnabled() ? '/customize/' + selectedSite.slug : customizerInAdmin;
+}
+
+export default localize( ( { selectedSite, translate } ) => {
 	return (
 		<div className="plan-purchase-features__item">
 			<PurchaseDetail
@@ -22,8 +34,8 @@ export default localize( ( { customizeLink, isCustomizeEnabled, translate } ) =>
 					)
 				}
 				buttonText={ translate( 'Start customizing' ) }
-				href={ customizeLink }
-				target={ isCustomizeEnabled ? undefined : '_blank' }
+				href={ getCustomizeLink( selectedSite ) }
+				target={ isCustomizeEnabled() ? undefined : '_blank' }
 			/>
 		</div>
 	);

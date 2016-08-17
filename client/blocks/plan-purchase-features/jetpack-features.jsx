@@ -8,15 +8,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
+import userFactory from 'lib/user';
+import analytics from 'lib/analytics';
+import utils from 'lib/site/utils';
+import { isEnabled } from 'config';
 
-export default localize( ( {
-	selectedSite,
-	user,
-	analytics,
-	utils,
-	isPluginsSetupEnabled,
-	translate
-} ) => {
+const user = userFactory();
+
+export default localize( ( { selectedSite, translate } ) => {
 	const props = {
 		icon: 'cog',
 		title: translate( 'Set up your VaultPress and Akismet accounts' ),
@@ -27,7 +26,7 @@ export default localize( ( {
 		)
 	};
 
-	if ( isPluginsSetupEnabled ) {
+	if ( isEnabled( 'manage/plugins/setup' ) ) {
 		const trackManualInstall = ( eventName ) => {
 			return () => {
 				analytics.tracks.recordEvent( eventName );
