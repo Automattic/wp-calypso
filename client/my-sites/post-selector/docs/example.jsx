@@ -18,13 +18,13 @@ const PostSelectorExample = React.createClass( {
 	getInitialState() {
 		return {
 			showTypeLabels: true,
-			selectedPostID: '',
+			selectedPostId: '',
 		};
 	},
 
 	setSelected( post ) {
 		this.setState( {
-			selectedPostID: post.ID,
+			selectedPostId: post.ID,
 		} );
 	},
 
@@ -51,7 +51,7 @@ const PostSelectorExample = React.createClass( {
 							orderBy="date"
 							order="DESC"
 							showTypeLabels={ this.state.showTypeLabels }
-							selected={ this.state.selectedPostID }
+							selected={ this.state.selectedPostId }
 							onChange={ this.setSelected } />
 					) }
 				</div>
