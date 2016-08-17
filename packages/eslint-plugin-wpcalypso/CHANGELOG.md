@@ -1,3 +1,7 @@
+#### v2.0.0 (---)
+
+- Breaking: Required Node version increased to >=0.12.0
+
 #### v1.4.1 (August 12, 2016)
 
 - Add: String template support for all rules 
