@@ -77,14 +77,27 @@ const MediaModalImageEditor = React.createClass( {
 	onImageExtracted( blob ) {
 		const mimeType = MediaUtils.getMimeType( this.props.fileName );
 
+		// check if a title is already post-fixed with '(edited copy)'
+		const editedCopyText = this.props.translate(
+			'%(title)s (edited copy)', {
+				args: {
+					title: ''
+				}
+			} );
+		let title = this.props.title;
+		if ( title.indexOf( editedCopyText ) === -1 ) {
+			title = this.props.translate(
+				'%(title)s (edited copy)', {
+					args: {
+						title: this.props.title
+					}
+				} );
+		}
+
 		MediaActions.add( this.props.site.ID, {
 			fileName: this.props.fileName,
 			fileContents: blob,
-			title: this.props.translate( '%(title)s (edited copy)', {
-				args: {
-					title: this.props.title
-				}
-			} ),
+			title: title,
 			mimeType: mimeType
 		} );
 	},
