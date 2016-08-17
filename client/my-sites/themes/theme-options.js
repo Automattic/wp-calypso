@@ -65,7 +65,7 @@ export const tryandcustomize = {
 };
 
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
-// respectively. TODO: Replace with a real action once we're able to use `DesignPreview`.
+// respectively. TODO: Replace with a real action once we're able to use `SitePreview`.
 export const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
