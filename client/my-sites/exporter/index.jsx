@@ -29,7 +29,7 @@ class Exporter extends Component {
 
 		return (
 			<div className="exporter">
-				<QuerySiteGuidedTransfer siteId={ siteId } />
+				{ showGuidedTransferOptions && <QuerySiteGuidedTransfer siteId={ siteId } /> }
 
 				<Notices siteId={ siteId } siteSlug={ siteSlug } />
 				{ showGuidedTransferOptions && isGuidedTransferInProgress &&
