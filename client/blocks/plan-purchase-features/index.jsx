@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
