@@ -41,10 +41,6 @@ import {
 	isBusiness as isWpcomBusiness
 } from 'lib/products-values';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import {
-	isJetpackBusiness,
-	isJetpackPremium
-} from 'lib/products-values';
 
 class PlanPurchaseFeatures extends Component {
 	static propTypes = {
@@ -175,28 +171,10 @@ class PlanPurchaseFeatures extends Component {
 		];
 	}
 
-	getJetpackFeatures() {
+	getJetpackFreeFeatures() {
 		const {	selectedSite } = this.props;
 
-		const isBusiness = isJetpackBusiness( selectedSite.plan ),
-			isPaid = ( isBusiness || isJetpackPremium( selectedSite.plan ) );
-
 		return [
-			isPaid
-				? <JetpackBackupSecurity
-					key="jetpackBackupSecurity"
-				/>
-				: null,
-			isPaid
-				? <JetpackAntiSpam
-					key="jetpackAntiSpam"
-				/>
-				: null,
-			isBusiness
-				? <JetpackSurveysPolls
-					key="jetpackSurveysPolls"
-				/>
-				: null,
 			<JetpackWordPressCom
 				selectedSite={ selectedSite }
 				key="jetpackWordPressCom"
@@ -205,6 +183,33 @@ class PlanPurchaseFeatures extends Component {
 				selectedSite={ selectedSite }
 				key="jetpackReturnToDashboard"
 			/>
+		];
+	}
+
+	getJetpackPremiumFeatures() {
+		return [
+			<JetpackBackupSecurity
+				key="jetpackBackupSecurity"
+			/>,
+			<JetpackAntiSpam
+				key="jetpackAntiSpam"
+			/>,
+			this.getJetpackFreeFeatures()
+		];
+	}
+
+	getJetpackBusinessFeatures() {
+		return [
+			<JetpackBackupSecurity
+				key="jetpackBackupSecurity"
+			/>,
+			<JetpackAntiSpam
+				key="jetpackAntiSpam"
+			/>,
+			<JetpackSurveysPolls
+				key="jetpackSurveysPolls"
+			/>,
+			this.getJetpackFreeFeatures()
 		];
 	}
 
@@ -219,11 +224,13 @@ class PlanPurchaseFeatures extends Component {
 			case PLAN_PERSONAL:
 				return this.getPersonalFeatures();
 			case PLAN_JETPACK_FREE:
+				return this.getJetpackFreeFeatures();
 			case PLAN_JETPACK_PREMIUM:
-			case PLAN_JETPACK_BUSINESS:
 			case PLAN_JETPACK_PREMIUM_MONTHLY:
+				return this.getJetpackPremiumFeatures();
+			case PLAN_JETPACK_BUSINESS:
 			case PLAN_JETPACK_BUSINESS_MONTHLY:
-				return this.getJetpackFeatures();
+				return this.getJetpackBusinessFeatures();
 			default:
 				return null;
 		}
