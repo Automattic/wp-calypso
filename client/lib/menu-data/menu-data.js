@@ -11,7 +11,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import cloneDeepWith from 'lodash/cloneDeepWith';
 import findIndex from 'lodash/findIndex';
 import iteratee from 'lodash/iteratee';
-import isArray from 'lodash/isArray';
 import i18n from 'i18n-calypso';
 
 /**

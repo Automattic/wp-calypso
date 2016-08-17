@@ -2,7 +2,6 @@
  * External dependencies
  */
 import omit from 'lodash/omit';
-import isEqual from 'lodash/isEqual';
 import cloneDeep from 'lodash/cloneDeep';
 import range from 'lodash/range';
 import includes from 'lodash/includes';

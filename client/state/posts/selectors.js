@@ -3,7 +3,6 @@
  */
 import get from 'lodash/get';
 import createSelector from 'lib/create-selector';
-import find from 'lodash/find';
 import includes from 'lodash/includes';
 import some from 'lodash/some';
 import omit from 'lodash/omit';

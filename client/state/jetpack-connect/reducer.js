@@ -4,7 +4,6 @@
 import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 import { combineReducers } from 'redux';
-import urlModule from 'url';
 
 /**
  * Internal dependencies

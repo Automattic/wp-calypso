@@ -9,7 +9,6 @@ import includes from 'lodash/includes';
 import negate from 'lodash/negate';
 import range from 'lodash/range';
 import isEqual from 'lodash/isEqual';
-import map from 'lodash/map';
 
 /**
  * Internal dependencies
@@ -76,7 +75,7 @@ export default React.createClass( {
 		if ( ! isEqual( this.state.selectedPlugins, nextState.selectedPlugins ) ) {
 			return true;
 		}
-		if ( this.shouldComponentUpdateNotices( this.state.notices, nextState.notices) ) {
+		if ( this.shouldComponentUpdateNotices( this.state.notices, nextState.notices ) ) {
 			return true;
 		}
 
@@ -113,7 +112,7 @@ export default React.createClass( {
 
 	setBulkSelectionState( plugins, selectionState ) {
 		let slugsToBeUpdated = {};
-		plugins.forEach( plugin => slugsToBeUpdated[ plugin.slug] = this.hasNoSitesThatCanManage( plugin ) ? false : selectionState );
+		plugins.forEach( plugin => slugsToBeUpdated[ plugin.slug ] = this.hasNoSitesThatCanManage( plugin ) ? false : selectionState );
 
 		this.setState( { selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ) } );
 	},
@@ -373,7 +372,7 @@ export default React.createClass( {
 					<SectionHeader key="plugins-list__section-placeholder" label={ this.props.header } className="plugins-list__section-actions is-placeholder" />
 					<div className={ itemListClasses }>{ this.renderPlaceholders() }</div>
 				</div>
-				)
+				);
 		}
 
 		if ( isEmpty( this.props.plugins ) ) {

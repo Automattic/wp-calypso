@@ -3,12 +3,10 @@
  */
 import { assert } from 'chai';
 import deepFreeze from 'deep-freeze';
-import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-import useMockery from 'test/helpers/use-mockery';
 import { CONTACT_FORM_DEFAULT, CONTACT_FORM_FIELD_TYPES } from '../constants';
 import {
 	EDITOR_CONTACT_FORM_CLEAR,
@@ -21,8 +19,6 @@ import {
 
 describe( 'editor\'s contact form state reducer', () => {
 	let reducer;
-
-	useMockery();
 
 	before( () => {
 		reducer = require( '../reducer' );

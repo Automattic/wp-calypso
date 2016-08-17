@@ -198,7 +198,7 @@ const ManagePurchase = React.createClass( {
 
 	renderCreditCardExpiringNotice() {
 		const purchase = getPurchase( this.props ),
-			{ id, payment: { creditCard } } = purchase;
+			{ payment: { creditCard } } = purchase;
 
 		if ( isExpired( purchase ) || isOneTimePurchase( purchase ) || isIncludedWithPlan( purchase ) || ! getSelectedSite( this.props ) ) {
 			return null;

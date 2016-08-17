@@ -4,7 +4,6 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -88,4 +87,3 @@ const mapStateToProps = state => ( {
 } );
 
 export default connect( mapStateToProps )( localize( GuidedTransferCard ) );
-

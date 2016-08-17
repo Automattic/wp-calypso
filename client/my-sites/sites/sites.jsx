@@ -12,7 +12,6 @@ import Main from 'components/main';
 import observe from 'lib/mixins/data-observe';
 import SiteSelector from 'components/site-selector';
 import { addSiteFragment } from 'lib/route';
-import { preventWidows } from 'lib/formatting';
 
 export default React.createClass( {
 	displayName: 'Sites',

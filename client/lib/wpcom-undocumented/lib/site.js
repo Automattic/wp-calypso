@@ -6,8 +6,7 @@ var debug = require( 'debug' )( 'calypso:wpcom-undocumented:site' );
 /**
  * Internal dependencies.
  */
-var Export = require( './export' ),
-	i18n = require( 'lib/i18n-utils' );
+var Export = require( './export' );
 
 /**
  * Resources array

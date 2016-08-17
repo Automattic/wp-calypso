@@ -17,8 +17,7 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-var abtest = require( 'lib/abtest' ).abtest,
-	config = require( 'config' ),
+var config = require( 'config' ),
 	CommentButton = require( 'blocks/comment-button' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),

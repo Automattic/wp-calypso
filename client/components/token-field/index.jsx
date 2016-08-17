@@ -195,7 +195,7 @@ var TokenField = React.createClass( {
 		}
 	},
 
-	_onBlur: function( event ) {
+	_onBlur: function( event ) { // eslint-disable-line no-unused-vars
 		if ( this._inputHasValidValue() ) {
 			debug( '_onBlur adding current token' );
 			this.setState( { isActive: false }, this._addCurrentToken );

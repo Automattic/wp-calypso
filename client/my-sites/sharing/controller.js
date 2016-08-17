@@ -2,7 +2,6 @@
  * External Dependencies
  */
 var page = require( 'page' ),
-	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	i18n = require( 'i18n-calypso' );
 

@@ -11,7 +11,6 @@ import EmailUnverifiedNotice from './email-unverified-notice.jsx';
 import userUtils from 'lib/user/utils';
 import sitesFactory from 'lib/sites-list';
 import userFactory from 'lib/user';
-import config from 'config';
 
 const sites = sitesFactory();
 const user = userFactory();

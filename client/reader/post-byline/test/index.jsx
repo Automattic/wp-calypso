@@ -5,7 +5,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { assert } from 'chai';
 import { spy } from 'sinon';
-import { each, partial, omit } from 'lodash';
+import { each, omit } from 'lodash';
 
 /**
  * Internal dependencies
