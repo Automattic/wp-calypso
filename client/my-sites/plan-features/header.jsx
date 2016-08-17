@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -25,25 +26,22 @@ import {
 	getPlanClass
 } from 'lib/plans/constants';
 import PlanIcon from 'components/plans/plan-icon';
+import { plansLink } from 'lib/plans';
+import SegmentedControl from 'components/segmented-control';
+import SegmentedControlItem from 'components/segmented-control/item';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 
 class PlanFeaturesHeader extends Component {
 
 	render() {
 		const {
-			billingTimeFrame,
 			current,
-			discountPrice,
 			planType,
 			popular,
 			title,
-			isPlaceholder,
 			translate
 		} = this.props;
-		const isDiscounted = !! discountPrice;
-		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
-			'is-discounted': isDiscounted,
-			'is-placeholder': isPlaceholder
-		} );
 		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
 
 		return (
@@ -58,12 +56,89 @@ class PlanFeaturesHeader extends Component {
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
-					<p className={ timeframeClasses } >
-						{ ! isPlaceholder ? billingTimeFrame : '' }
-					</p>
+					{ this.getBillingTimeframe() }
 				</div>
 			</header>
 		);
+	}
+
+	getBillingTimeframe() {
+		const {
+			billingTimeFrame,
+			discountPrice,
+			isPlaceholder,
+			site
+		} = this.props;
+		const isDiscounted = !! discountPrice;
+		const timeframeClasses = classNames( 'plan-features__header-timeframe', {
+			'is-discounted': isDiscounted,
+			'is-placeholder': isPlaceholder
+		} );
+
+		if ( ! site.jetpack ) {
+			return (
+				<p className={ timeframeClasses } >
+					{ ! isPlaceholder ? billingTimeFrame : '' }
+				</p>
+			);
+		}
+
+		return this.getIntervalTypeToggle();
+	}
+
+	getIntervalTypeToggle() {
+		const {
+			translate,
+			rawPrice,
+			intervalType,
+			site,
+			isInJetpackConnect
+		} = this.props;
+
+		if ( ! rawPrice || this.isPlanCurrent() ) {
+			return (
+				<div className="plan-features__interval-type is-placeholder">
+				</div>
+			);
+		}
+
+		let plansUrl = '';
+		if ( isInJetpackConnect ) {
+			plansUrl = '/jetpack/connect';
+		}
+		plansUrl += '/plans';
+
+		return (
+			<SegmentedControl className="plan-features__interval-type" primary={ true }>
+				<SegmentedControlItem
+					selected={ intervalType === 'monthly' }
+					path={ plansLink( plansUrl, site, 'monthly' ) }
+				>
+					{ translate( 'Monthly' ) }
+				</SegmentedControlItem>
+
+				<SegmentedControlItem
+					selected={ intervalType === 'yearly' }
+					path={ plansLink( plansUrl, site, 'yearly' ) }
+				>
+					{ translate( 'Yearly' ) }
+				</SegmentedControlItem>
+			</SegmentedControl>
+		);
+	}
+
+	isPlanCurrent() {
+		const {
+			planType,
+			current,
+			currentSitePlan
+		} = this.props;
+
+		if ( ! currentSitePlan ) {
+			return current;
+		}
+
+		return getPlanClass( planType ) === getPlanClass( currentSitePlan.productSlug );
 	}
 
 	getPlanFeaturesPrices() {
@@ -71,7 +146,8 @@ class PlanFeaturesHeader extends Component {
 			currencyCode,
 			discountPrice,
 			rawPrice,
-			isPlaceholder
+			isPlaceholder,
+			relatedMonthlyPlan
 		} = this.props;
 
 		if ( isPlaceholder ) {
@@ -85,6 +161,16 @@ class PlanFeaturesHeader extends Component {
 				<span className="plan-features__header-price-group">
 					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } original />
 					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ discountPrice } discounted />
+				</span>
+			);
+		}
+
+		if ( relatedMonthlyPlan ) {
+			const originalPrice = relatedMonthlyPlan.raw_price * 12;
+			return (
+				<span className="plan-features__header-price-group">
+					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ originalPrice } original />
+					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } discounted />
 				</span>
 			);
 		}
@@ -116,14 +202,32 @@ PlanFeaturesHeader.propTypes = {
 	currencyCode: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	isPlaceholder: PropTypes.bool,
-	translate: PropTypes.func
+	translate: PropTypes.func,
+	intervalType: PropTypes.string,
+	site: PropTypes.object,
+	isInJetpackConnect: PropTypes.bool,
+	currentSitePlan: PropTypes.object,
+	relatedMonthlyPlan: PropTypes.object
 };
 
 PlanFeaturesHeader.defaultProps = {
 	current: false,
 	onClick: noop,
 	popular: false,
-	isPlaceholder: false
+	isPlaceholder: false,
+	intervalType: 'yearly',
+	site: {},
+	isInJetpackConnect: false,
+	currentSitePlan: {}
 };
 
-export default localize( PlanFeaturesHeader );
+export default connect( ( state, ownProps ) => {
+	const { isInSignup } = ownProps;
+	const selectedSiteId = isInSignup ? null : getSelectedSiteId( state );
+	const currentSitePlan = getCurrentPlan( state, selectedSiteId );
+
+	return Object.assign( {},
+		ownProps,
+		{ currentSitePlan }
+	);
+} )( localize( PlanFeaturesHeader ) );
