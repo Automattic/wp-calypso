@@ -61,10 +61,6 @@ class PlanPurchaseFeatures extends Component {
 			hasLoadedFromServer = sitePlans.hasLoadedFromServer;
 
 		return [
-			<HappinessSupport
-				selectedSite={ selectedSite }
-				key="hapinessSupportFeature"
-			/>,
 			<CurrentPlanHeader
 				selectedSite={ selectedSite }
 				key="currentPlanHeaderFeature"
@@ -78,14 +74,6 @@ class PlanPurchaseFeatures extends Component {
 				hasDomainCredit={ plan && plan.hasDomainCredit }
 				key="customDomainFeature"
 			/>,
-			<FindNewTheme
-				selectedSite={ selectedSite }
-				key="findNewThemeFeature"
-			/>,
-			<GoogleAnalyticsStats
-				selectedSite={ selectedSite }
-				key="googleAnalyticsStatsFeature"
-			/>,
 			<AdvertisingRemoved
 				isBusinessPlan
 				key="advertisingRemovedFeature"
@@ -94,6 +82,10 @@ class PlanPurchaseFeatures extends Component {
 				selectedSite={ selectedSite }
 				key="googleVouchersFeature"
 			/>,
+			<HappinessSupport
+				selectedSite={ selectedSite }
+				key="hapinessSupportFeature"
+			/>,
 			<CustomizeTheme
 				selectedSite={ selectedSite }
 				key="customizeThemeFeature"
@@ -101,6 +93,14 @@ class PlanPurchaseFeatures extends Component {
 			<VideoAudioPosts
 				selectedSite={ selectedSite }
 				key="videoAudioPostsFeature"
+			/>,
+			<GoogleAnalyticsStats
+				selectedSite={ selectedSite }
+				key="googleAnalyticsStatsFeature"
+			/>,
+			<FindNewTheme
+				selectedSite={ selectedSite }
+				key="findNewThemeFeature"
 			/>,
 			isWordadsInstantActivationEligible( selectedSite )
 				? <MonetizeSite
@@ -114,12 +114,22 @@ class PlanPurchaseFeatures extends Component {
 	getPremiumFeatures() {
 		const {
 			selectedSite,
-			sitePlans
+			sitePlans,
+			translate
 		} = this.props;
 
-		const plan = find( sitePlans.data, isWpcomPremium );
+		const plan = find( sitePlans.data, isWpcomPremium ),
+			hasLoadedFromServer = sitePlans.hasLoadedFromServer;
 
 		return [
+			<CurrentPlanHeader
+				selectedSite={ selectedSite }
+				key="currentPlanHeaderFeature"
+				hasLoadedFromServer={ hasLoadedFromServer }
+				title={ translate( 'Your site is on a Business plan' ) }
+				tagLine={ translate( 'Learn more about everything included with Business and take advantage of' +
+					' its professional features.' ) }
+			/>,
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
@@ -132,6 +142,10 @@ class PlanPurchaseFeatures extends Component {
 			<GoogleVouchers
 				selectedSite={ selectedSite }
 				key="googleVouchersFeature"
+			/>,
+			<HappinessSupport
+				selectedSite={ selectedSite }
+				key="hapinessSupportFeature"
 			/>,
 			<CustomizeTheme
 				selectedSite={ selectedSite }
@@ -153,12 +167,22 @@ class PlanPurchaseFeatures extends Component {
 	getPersonalFeatures() {
 		const {
 			selectedSite,
-			sitePlans
+			sitePlans,
+			translate
 		} = this.props;
 
-		const plan = find( sitePlans.data, isWpcomPremium );
+		const plan = find( sitePlans.data, isWpcomPremium ),
+			hasLoadedFromServer = sitePlans.hasLoadedFromServer;
 
 		return [
+			<CurrentPlanHeader
+				selectedSite={ selectedSite }
+				key="currentPlanHeaderFeature"
+				hasLoadedFromServer={ hasLoadedFromServer }
+				title={ translate( 'Your site is on a Business plan' ) }
+				tagLine={ translate( 'Learn more about everything included with Business and take advantage of' +
+					' its professional features.' ) }
+			/>,
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
@@ -167,6 +191,10 @@ class PlanPurchaseFeatures extends Component {
 			<AdvertisingRemoved
 				isBusinessPlan={ false }
 				key="advertisingRemovedFeature"
+			/>,
+			<HappinessSupport
+				selectedSite={ selectedSite }
+				key="hapinessSupportFeature"
 			/>
 		];
 	}
