@@ -8,6 +8,9 @@ import { omit } from 'lodash/object';
  */
 import wpcom from 'lib/wp';
 import {
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 	GUIDED_TRANSFER_STATUS_RECEIVE,
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
@@ -56,7 +59,46 @@ export function requestGuidedTransferStatus( siteId ) {
 			error,
 		} );
 
-		return wpcom.undocumented().getGuidedTransferStatus( siteId )
+		return wpcom.undocumented().site( siteId ).getGuidedTransferStatus()
+			.then( success )
+			.catch( failure );
+	};
+}
+
+/**
+ * Saves a user's target host details in preparation for
+ * a guided transfer to that host
+ *
+ * @param {number} siteId The id of the source site to transfer
+ * @param {Object} data The form data containing the target host details
+ * @returns {Thunk} Action thunk
+ */
+export function saveHostDetails( siteId, data ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: GUIDED_TRANSFER_HOST_DETAILS_SAVE,
+			siteId,
+		} );
+
+		const success = response => {
+			dispatch( {
+				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+				siteId,
+			} );
+
+			// The success response is the updated status of the guided transfer
+			dispatch( receiveGuidedTransferStatus(
+				siteId, omit( response, '_headers' )
+			) );
+		};
+
+		const failure = error => dispatch( {
+			type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+			siteId,
+			error,
+		} );
+
+		return wpcom.undocumented().site( siteId ).saveGuidedTransferHostDetails( data )
 			.then( success )
 			.catch( failure );
 	};

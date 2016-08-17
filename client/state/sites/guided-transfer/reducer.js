@@ -7,6 +7,9 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import {
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 	GUIDED_TRANSFER_STATUS_RECEIVE,
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
@@ -33,7 +36,20 @@ export const isFetching = createReducer( {}, {
 		( { ...state, [ action.siteId ]: false } ),
 } );
 
+// Tracks whether we're saving host details on a guided transfer for a site
+export const isSaving = createReducer( {}, {
+	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE ]: ( state, action ) =>
+		( { ...state, [ action.siteId ]: true } ),
+
+	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: ( state, action ) =>
+		( { ...state, [ action.siteId ]: false } ),
+
+	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE ]: ( state, action ) =>
+		( { ...state, [ action.siteId ]: false } ),
+} );
+
 export default combineReducers( {
 	isFetching,
+	isSaving,
 	status,
 } );

@@ -10,6 +10,9 @@ import sinon from 'sinon';
  */
 import {
 	DESERIALIZE,
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 	GUIDED_TRANSFER_STATUS_RECEIVE,
 	GUIDED_TRANSFER_STATUS_REQUEST,
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
@@ -19,6 +22,7 @@ import {
 import reducer, {
 	status,
 	isFetching,
+	isSaving,
 } from '../reducer';
 
 describe( 'reducer', () => {
@@ -35,7 +39,8 @@ describe( 'reducer', () => {
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'status',
-			'isFetching'
+			'isFetching',
+			'isSaving',
 		] );
 	} );
 
@@ -142,6 +147,39 @@ describe( 'reducer', () => {
 			}, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
+		} );
+	} );
+
+
+	describe( '#isSaving()', () => {
+		it( 'should default to {}', () => {
+			const state = isSaving( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should be true after a request begins', () => {
+			const state = isSaving( false, {
+				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE,
+				siteId: testSiteId
+			} );
+			expect( state[ testSiteId ] ).to.be.true;
+		} );
+
+		it( 'should be false when a request completes', () => {
+			const state = isSaving( true, {
+				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+				siteId: testSiteId,
+			} );
+			expect( state[ testSiteId ] ).to.be.false;
+		} );
+
+		it( 'should be false when a request fails', () => {
+			const state = isSaving( true, {
+				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+				siteId: testSiteId
+			} );
+			expect( state[ testSiteId ] ).to.be.false;
 		} );
 	} );
 } );
