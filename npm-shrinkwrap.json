@@ -369,7 +369,7 @@
       "version": "6.13.0"
     },
     "babylon": {
-      "version": "6.8.4"
+      "version": "6.9.0"
     },
     "backo2": {
       "version": "1.0.2"
@@ -498,7 +498,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000522"
+      "version": "1.0.30000524"
     },
     "caseless": {
       "version": "0.11.0"
@@ -636,35 +636,17 @@
     "component-bind": {
       "version": "1.0.0"
     },
-    "component-classes": {
-      "version": "1.2.6"
-    },
     "component-closest": {
       "version": "0.1.4"
     },
-    "component-css": {
-      "version": "0.0.8"
-    },
-    "component-delegate": {
-      "version": "0.2.4"
-    },
-    "component-each": {
-      "version": "0.2.6"
-    },
     "component-emitter": {
-      "version": "1.1.3"
+      "version": "1.2.1"
     },
     "component-event": {
       "version": "0.1.4"
     },
-    "component-events": {
-      "version": "1.0.10"
-    },
     "component-file-picker": {
       "version": "0.2.1"
-    },
-    "component-indexof": {
-      "version": "0.0.3"
     },
     "component-inherit": {
       "version": "0.0.3"
@@ -672,20 +654,8 @@
     "component-matches-selector": {
       "version": "0.1.6"
     },
-    "component-props": {
-      "version": "1.1.1"
-    },
     "component-query": {
       "version": "0.0.3"
-    },
-    "component-raf": {
-      "version": "1.2.0"
-    },
-    "component-tip": {
-      "version": "3.0.3"
-    },
-    "component-type": {
-      "version": "1.0.0"
     },
     "component-uid": {
       "version": "0.0.2"
@@ -894,12 +864,7 @@
       "version": "2.0.0"
     },
     "doctrine": {
-      "version": "1.2.2",
-      "dependencies": {
-        "esutils": {
-          "version": "1.1.6"
-        }
-      }
+      "version": "1.2.3"
     },
     "doctypes": {
       "version": "1.1.0"
@@ -937,9 +902,6 @@
     },
     "domhandler": {
       "version": "2.3.0"
-    },
-    "domify": {
-      "version": "1.3.0"
     },
     "domutils": {
       "version": "1.5.1"
@@ -1590,9 +1552,6 @@
         }
       }
     },
-    "html-browserify": {
-      "version": "0.0.4"
-    },
     "html-loader": {
       "version": "0.4.0",
       "dependencies": {
@@ -2122,7 +2081,7 @@
       "version": "0.3.5"
     },
     "masonry-layout": {
-      "version": "4.1.0"
+      "version": "4.1.1"
     },
     "matches-selector": {
       "version": "0.0.1"
@@ -2664,7 +2623,7 @@
       "version": "0.2.1"
     },
     "raf": {
-      "version": "3.2.0"
+      "version": "3.3.0"
     },
     "randomatic": {
       "version": "1.1.5"
@@ -3337,9 +3296,6 @@
     "superagent": {
       "version": "2.1.0",
       "dependencies": {
-        "component-emitter": {
-          "version": "1.2.1"
-        },
         "qs": {
           "version": "6.2.1"
         }
@@ -3350,9 +3306,6 @@
       "dependencies": {
         "async": {
           "version": "1.5.2"
-        },
-        "component-emitter": {
-          "version": "1.2.1"
         },
         "cookiejar": {
           "version": "2.0.6"
@@ -3452,23 +3405,14 @@
     "to-array": {
       "version": "0.1.3"
     },
-    "to-camel-case": {
-      "version": "0.2.1"
-    },
     "to-capital-case": {
       "version": "0.1.1"
     },
     "to-fast-properties": {
       "version": "1.0.2"
     },
-    "to-function": {
-      "version": "2.0.6"
-    },
     "to-no-case": {
       "version": "0.1.1"
-    },
-    "to-space-case": {
-      "version": "0.1.2"
     },
     "to-title-case": {
       "version": "0.1.5"
@@ -3688,9 +3632,6 @@
     "with": {
       "version": "5.1.1"
     },
-    "within-document": {
-      "version": "0.0.1"
-    },
     "wordwrap": {
       "version": "0.0.2"
     },
@@ -3761,6 +3702,9 @@
     "xgettext-js": {
       "version": "1.0.0",
       "dependencies": {
+        "babylon": {
+          "version": "6.8.4"
+        },
         "lodash": {
           "version": "4.15.0"
         }
