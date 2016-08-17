@@ -73,8 +73,8 @@ export const Email = localize( props =>
 export const CreateAccountTip = localize( props =>
 	<FormSettingExplanation className="host-credentials-page__account-info-tip">
 		{ props.translate(
-			'You don\'t have a %(host)s account yet? ' +
-			'{{host_link}}Create one{{/host_link}} and return here.', {
+			`You don't have a %(host)s account yet?
+			{{host_link}}Create one{{/host_link}} and return here.`, {
 				components: {
 					host_link: <a href={ props.hostUrl } />
 				},
