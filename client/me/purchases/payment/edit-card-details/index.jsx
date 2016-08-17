@@ -2,8 +2,7 @@
  * External Dependencies
  */
 import { connect } from 'react-redux';
-import page from 'page';
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 
 /**
  * Internal Dependencies
@@ -14,9 +13,9 @@ import CreditCardPageLoadingPlaceholder from 'me/purchases/components/credit-car
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
-import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
+import { isDataLoading, recordPageView } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
-import paths from 'me/purchases/paths';
+import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
@@ -24,11 +23,19 @@ import userFactory from 'lib/user';
 
 const user = userFactory();
 
-class EditCardDetails extends Component {
+class EditCardDetails extends PurchaseCardDetails {
 	static propTypes = {
+		card: PropTypes.object,
+		clearPurchases: PropTypes.func.isRequired,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedStoredCardsFromServer: PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
+		] ),
+		title: PropTypes.string.isRequired
 	};
 
 	componentWillMount() {
@@ -37,33 +44,10 @@ class EditCardDetails extends Component {
 		recordPageView( 'edit_card_details', this.props );
 	}
 
-	redirectIfDataIsInvalid( props = this.props ) {
-		if ( isDataLoading( props ) ) {
-			return true;
-		}
+	componentWillReceiveProps( nextProps ) {
+		this.redirectIfDataIsInvalid( nextProps );
 
-		if ( ! this.isDataValid( props ) ) {
-			page( paths.list() );
-		}
-	}
-
-	isDataValid( props = this.props ) {
-		const purchase = getPurchase( props ),
-			{ selectedSite } = props;
-
-		return purchase && selectedSite;
-	}
-
-	goBack( props ) {
-		goToManagePurchase( props );
-	}
-
-	successCallback( props ) {
-		const { id } = getPurchase( props );
-
-		props.clearPurchases();
-
-		page( paths.managePurchase( props.selectedSite.slug, id ) );
+		recordPageView( 'edit_card_details', this.props, nextProps );
 	}
 
 	render() {
@@ -79,10 +63,13 @@ class EditCardDetails extends Component {
 			);
 		}
 
-		return <CreditCardPage { ...this.props }
-			goBack={ () => this.goBack( this.props ) }
+		return <CreditCardPage
+			apiParams={ this.getApiParams() }
+			goBack={ this.goBack }
 			initialValues={ this.props.card }
-			successCallback={ () => this.successCallback( this.props ) } />;
+			recordFormSubmitEvent={ this.recordFormSubmitEvent }
+			successCallback={ this.successCallback }
+			title={ this.props.title } />;
 	}
 }
 
