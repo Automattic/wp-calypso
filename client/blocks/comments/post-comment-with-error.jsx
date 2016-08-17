@@ -6,7 +6,7 @@ import React from 'react';
 /***
  * Internal dependencies
  */
- import PostCommentForm from './form';
+import PostCommentForm from './form';
 
 export default class PostCommentWithError extends React.Component {
 	renderCommentForm() {

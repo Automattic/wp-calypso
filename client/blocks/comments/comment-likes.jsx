@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import pick from 'lodash/pick';
+import { pick } from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';

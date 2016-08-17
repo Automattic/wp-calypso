@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 

@@ -5,7 +5,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
