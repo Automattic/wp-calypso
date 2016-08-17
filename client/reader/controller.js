@@ -187,7 +187,7 @@ module.exports = {
 	},
 
 	following: function( context ) {
-		var FollowingComponent = require( 'reader/following/main' ),
+		var StreamComponent = require( 'reader/stream' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Following',
 			followingStore = feedStreamFactory( 'following' ),
@@ -202,7 +202,7 @@ module.exports = {
 
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( FollowingComponent, {
+				React.createElement( StreamComponent, {
 					key: 'following',
 					listName: i18n.translate( 'Followed Sites' ),
 					store: followingStore,
@@ -314,7 +314,7 @@ module.exports = {
 	},
 
 	readA8C: function( context ) {
-		var FollowingComponent = require( 'reader/following/main' ),
+		var StreamComponent = require( 'reader/stream' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C',
 			feedStore = feedStreamFactory( 'a8c' ),
@@ -328,7 +328,7 @@ module.exports = {
 
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( FollowingComponent, {
+				React.createElement( StreamComponent, {
 					key: 'read-a8c',
 					className: 'is-a8c',
 					listName: 'Automattic',
