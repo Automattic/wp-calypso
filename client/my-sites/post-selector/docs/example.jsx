@@ -18,7 +18,7 @@ const PostSelectorExample = React.createClass( {
 	getInitialState() {
 		return {
 			showTypeLabels: true,
-			selectedPostId: '',
+			selectedPostId: null,
 		};
 	},
 
