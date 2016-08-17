@@ -88,14 +88,6 @@ function normalizeApiAttributes( attributes ) {
 		attributes.author = attributes.author.ID;
 	}
 
-	if ( attributes.categories ) {
-		// Force category IDs to strings to work with ctype_digit in some versions of the API.
-		// (ctype_digit returns false for integers between -128 and 255).
-		attributes.categories_by_id = attributes.categories.map( category => category.toString() );
-		delete attributes.category_ids;
-		delete attributes.categories;
-	}
-
 	return attributes;
 }
 

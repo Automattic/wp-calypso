@@ -130,16 +130,6 @@ describe( 'post-edit-store', function() {
 		assert( ! PostEditStore.isNew() );
 	} );
 
-	it( 'sets category_ids array properly', function() {
-		var post;
-
-		dispatchReceivePost();
-		post = PostEditStore.get();
-		assert( post.ID === 777 );
-		assert( Array.isArray( post.category_ids ) );
-		assert( post.category_ids[ 0 ] === 199 );
-	} );
-
 	it( 'sets parent_id properly', function() {
 		var post;
 
@@ -173,21 +163,6 @@ describe( 'post-edit-store', function() {
 
 		post = PostEditStore.get();
 		assert( post.parent_id, 101 );
-	} );
-
-	it( 'sets category_ids on EDIT_POST', function() {
-		var post;
-		dispatchReceivePost();
-		dispatcherCallback( {
-			action: {
-				type: 'EDIT_POST',
-				post: {
-					categories: [ 200, 201 ]
-				}
-			}
-		} );
-		post = PostEditStore.get();
-		assert( post.category_ids[ 0 ] === 200 );
 	} );
 
 	it( 'does not decode post title entities on EDIT_POST', function() {
@@ -826,43 +801,6 @@ describe( 'post-edit-store', function() {
 			} );
 
 			assert( PostEditStore.hasContent() === false );
-		} );
-	} );
-
-	describe( 'TermActions', function() {
-		it( 'should add temporary cateogry on CREATE_TERM', function() {
-			var post;
-			dispatchCreateTerm( true );
-			post = PostEditStore.get();
-			assert( post.category_ids.length === 1 );
-			assert( post.category_ids[ 0 ] === 'temporary-0' );
-		} );
-
-		it( 'should replace temporary id on RECEIVE_ADD_TERM', function() {
-			var post;
-			dispatchCreateTerm( true );
-			dispatchReceiveAddTerm();
-			post = PostEditStore.get();
-
-			assert( post.category_ids.length === 1 );
-			assert( post.category_ids[ 0 ] === 787 );
-		} );
-
-		it( 'should add to existing category_ids on CREATE_TERM if transient postId is null', function() {
-			var post;
-			dispatchReceivePost();
-			dispatchCreateTerm();
-			post = PostEditStore.get();
-			assert( post.category_ids.length === 2 );
-			assert( post.category_ids[ 1 ] === 'temporary-0' );
-		} );
-
-		it( 'should not add to existing category_ids on CREATE_TERM if transient postId does not match', function() {
-			var post;
-			dispatchReceivePost();
-			dispatchCreateTerm( false, 9999 );
-			post = PostEditStore.get();
-			assert( post.category_ids.length === 1 );
 		} );
 	} );
 
