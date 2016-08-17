@@ -25,7 +25,7 @@ var rule = module.exports = function( context ) {
 			}
 
 			node.arguments.forEach( function( arg ) {
-				let argumentString = getTextContentFromNode( arg );
+				var argumentString = getTextContentFromNode( arg );
 				if ( argumentString && -1 !== argumentString.indexOf( '...' ) ) {
 					context.report( {
 						node: arg,

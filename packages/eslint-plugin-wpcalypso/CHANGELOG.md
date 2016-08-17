@@ -2,6 +2,7 @@
 
 - Breaking: Required Node version increased to >=0.12.0
 - Fix: `npm test` is now run synchronously so it exits with a non-zero code on failure
+- Fix: Replace ES2015 variable (`let`) declarations to accommodate older Node versions
 
 #### v1.4.1 (August 12, 2016)
 

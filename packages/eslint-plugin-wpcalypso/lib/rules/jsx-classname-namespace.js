@@ -48,11 +48,11 @@ var rule = module.exports = function( context ) {
 	}
 
 	function isRenderCallExpression( node ) {
+		var calleeName;
 		if ( 'CallExpression' !== node.type ) {
 			return false;
 		}
 
-		let calleeName;
 		if ( 'MemberExpression' === node.callee.type ) {
 			calleeName = node.callee.property.name;
 		} else if ( 'Identifier' === node.callee.type ) {
