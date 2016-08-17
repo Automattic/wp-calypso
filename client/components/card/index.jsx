@@ -20,7 +20,8 @@ export default React.createClass( {
 		href: React.PropTypes.string,
 		tagName: React.PropTypes.string,
 		target: React.PropTypes.string,
-		compact: React.PropTypes.bool
+		compact: React.PropTypes.bool,
+		children: React.PropTypes.node
 	},
 
 	getDefaultProps() {
@@ -49,7 +50,7 @@ export default React.createClass( {
 		return React.createElement(
 			this.props.href ? 'a' : this.props.tagName,
 			assign( omit( this.props, omitProps ), { className } ),
-			this.props.href ? linkIndicator : null,
+			linkIndicator,
 			this.props.children
 		);
 	}
