@@ -50,53 +50,6 @@ describe( 'post-edit-store', function() {
 		} );
 	}
 
-	function dispatchCreateTerm( createNewDraft, postId ) {
-		if ( createNewDraft ) {
-			dispatcherCallback( {
-				action: {
-					type: 'DRAFT_NEW_POST',
-					siteId: 123
-				}
-			} );
-		}
-
-		dispatcherCallback( {
-			action: {
-				type: 'CREATE_TERM',
-				id: 'default',
-				siteId: 123,
-				data: {
-					termType: 'categories',
-					terms: [ {
-						name: 'wookies',
-						ID: 'temporary-0',
-						postId: postId
-					} ]
-				},
-				error: null
-			}
-		} );
-	}
-
-	function dispatchReceiveAddTerm() {
-		dispatcherCallback( {
-			action: {
-				type: 'RECEIVE_ADD_TERM',
-				id: 'default',
-				siteId: 123,
-				data: {
-					termType: 'categories',
-					terms: [ {
-						ID: 787,
-						name: 'wookies',
-						temporaryId: 'temporary-0'
-					} ]
-				},
-				error: null
-			}
-		} );
-	}
-
 	it( 'initializes new draft post properly', function() {
 		var siteId = 1234,
 			post;
