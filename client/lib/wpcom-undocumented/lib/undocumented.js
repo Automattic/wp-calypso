@@ -1970,11 +1970,22 @@ Undocumented.prototype.unregisterDevice = function( deviceId, fn ) {
  * Requests streamlined approval to WordAds program
  *
  * @param {int}       siteId            The site ID
- * @returns {XMLHttpRequest}          The XHR instance
+ * @returns {Promise}
  */
 Undocumented.prototype.wordAdsApprove = function( siteId ) {
 	debug( '/sites/:site:/wordads/approve' );
 	return this.wpcom.req.post( '/sites/' + siteId + '/wordads/approve' );
+};
+
+/**
+ * Get WordAds Status of a site.
+ *
+ * @param {int}       siteId            The site ID
+ * @returns {Promise}
+ */
+Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
+	debug( '/sites/:site:/wordads/status' );
+	return this.wpcom.req.get( '/sites/' + siteId + '/wordads/status', fn );
 };
 
 /**
