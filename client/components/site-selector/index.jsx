@@ -6,7 +6,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import page from 'page';
 import classNames from 'classnames';
-import { filter, size, reduce, includes } from 'lodash';
+import { filter, size, keyBy, map, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -229,22 +229,14 @@ const SiteSelector = React.createClass( {
 			return;
 		}
 
-		const { recentSites } = this.props;
-		if ( ! size( recentSites ) ) {
-			return;
-		}
-
-		const sites = this.props.sites.get();
-		if ( ! sites ) {
-			return;
-		}
+		const sitesById = keyBy( this.props.sites.get(), 'ID' );
 
 		return (
 			<div className="site-selector__recent">
-				{ reduce( sites, ( memo, site ) => {
-					const recentIndex = recentSites.indexOf( site.ID );
-					if ( -1 === recentIndex ) {
-						return memo;
+				{ map( this.props.recentSites, ( siteId ) => {
+					const site = sitesById[ siteId ];
+					if ( ! site ) {
+						return;
 					}
 
 					let siteHref;
@@ -252,7 +244,7 @@ const SiteSelector = React.createClass( {
 						siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
 					}
 
-					memo.splice( recentIndex, 0, (
+					return (
 						<Site
 							site={ site }
 							href={ siteHref }
@@ -261,10 +253,8 @@ const SiteSelector = React.createClass( {
 							onSelect={ this.onSiteSelect.bind( this, site.slug ) }
 							isSelected={ this.isSelected( site ) }
 						/>
-					) );
-
-					return memo;
-				}, [] ) }
+					);
+				} ) }
 			</div>
 		);
 	},
