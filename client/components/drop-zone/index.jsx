@@ -2,7 +2,7 @@
  * External dependencies
  */
 import ReactDom from 'react-dom';
-import React, { Component, PropTypes } from 'react';
+import React, { PropTypes } from 'react';
 import createFragment from 'react-addons-create-fragment';
 import without from 'lodash/without';
 import includes from 'lodash/includes';
@@ -17,37 +17,48 @@ import { localize } from 'i18n-calypso';
  */
 import RootChild from 'components/root-child';
 
-export class DropZone extends Component {
-	constructor( props ) {
-		super( props );
+export const DropZone = React.createClass( {
+	propTypes: {
+		onDrop: PropTypes.func,
+		onVerifyValidTransfer: PropTypes.func,
+		onFilesDrop: PropTypes.func,
+		fullScreen: PropTypes.bool,
+		icon: PropTypes.string,
+		translate: PropTypes.func,
+	},
 
-		this.state = {
+	getInitialState() {
+		return {
 			isDraggingOverDocument: false,
 			isDraggingOverElement: false
 		};
+	},
 
-		// Bind listeners found in componentDidMount(), except for the ones whose
-		// implementation doesn't refer to `this`.
-		this.onDrop = this.onDrop.bind( this );
-		this.toggleDraggingOverDocument = this.toggleDraggingOverDocument.bind( this );
-		this.resetDragState = this.resetDragState.bind( this );
-	}
+	getDefaultProps() {
+		return {
+			onDrop: noop,
+			onVerifyValidTransfer: () => true,
+			onFilesDrop: noop,
+			fullScreen: false,
+			icon: 'cloud-upload',
+			translate: identity,
+		};
+	},
 
 	componentDidMount() {
 		this.dragEnterNodes = [];
-
 		window.addEventListener( 'dragover', this.preventDefault );
 		window.addEventListener( 'drop', this.onDrop );
 		window.addEventListener( 'dragenter', this.toggleDraggingOverDocument );
 		window.addEventListener( 'dragleave', this.toggleDraggingOverDocument );
 		window.addEventListener( 'mouseup', this.resetDragState );
-	}
+	},
 
 	componentDidUpdate( prevProps, prevState ) {
 		if ( prevState.isDraggingOverDocument !== this.state.isDraggingOverDocument ) {
 			this.toggleMutationObserver();
 		}
-	}
+	},
 
 	componentWillUnmount() {
 		window.removeEventListener( 'dragover', this.preventDefault );
@@ -56,7 +67,7 @@ export class DropZone extends Component {
 		window.removeEventListener( 'dragleave', this.toggleDraggingOverDocument );
 		window.removeEventListener( 'mouseup', this.resetDragState );
 		this.disconnectMutationObserver();
-	}
+	},
 
 	resetDragState() {
 		if ( ! ( this.state.isDraggingOverDocument || this.state.isDraggingOverElement ) ) {
@@ -67,7 +78,7 @@ export class DropZone extends Component {
 			isDraggingOverDocument: false,
 			isDraggingOverElement: false
 		} );
-	}
+	},
 
 	toggleMutationObserver() {
 		this.disconnectMutationObserver();
@@ -79,7 +90,7 @@ export class DropZone extends Component {
 				subtree: true
 			} );
 		}
-	}
+	},
 
 	disconnectMutationObserver() {
 		if ( ! this.observer ) {
@@ -88,7 +99,7 @@ export class DropZone extends Component {
 
 		this.observer.disconnect();
 		delete this.observer;
-	}
+	},
 
 	detectNodeRemoval( mutations ) {
 		mutations.forEach( ( mutation ) => {
@@ -98,7 +109,7 @@ export class DropZone extends Component {
 
 			this.dragEnterNodes = without( this.dragEnterNodes, Array.from( mutation.removedNodes ) );
 		} );
-	}
+	},
 
 	toggleDraggingOverDocument( event ) {
 		let isDraggingOverDocument, detail, isValidDrag;
@@ -133,11 +144,11 @@ export class DropZone extends Component {
 			// from tracked nodes since another "real" event will be triggered.
 			this.dragEnterNodes = without( this.dragEnterNodes, window );
 		}
-	}
+	},
 
 	preventDefault( event ) {
 		event.preventDefault();
-	}
+	},
 
 	isWithinZoneBounds( x, y ) {
 		let rect;
@@ -155,7 +166,7 @@ export class DropZone extends Component {
 
 		return x >= rect.left && x <= rect.right &&
 			y >= rect.top && y <= rect.bottom;
-	}
+	},
 
 	onDrop( event ) {
 		// This seemingly useless line has been shown to resolve a Safari issue
@@ -180,7 +191,7 @@ export class DropZone extends Component {
 
 		event.stopPropagation();
 		event.preventDefault();
-	}
+	},
 
 	renderContent() {
 		let content;
@@ -199,7 +210,7 @@ export class DropZone extends Component {
 		}
 
 		return <div className="drop-zone__content">{ content }</div>;
-	}
+	},
 
 	render() {
 		const classes = classNames( 'drop-zone', {
@@ -220,24 +231,6 @@ export class DropZone extends Component {
 		}
 		return element;
 	}
-}
-
-DropZone.propTypes = {
-	onDrop: PropTypes.func,
-	onVerifyValidTransfer: PropTypes.func,
-	onFilesDrop: PropTypes.func,
-	fullScreen: PropTypes.bool,
-	icon: PropTypes.string,
-	translate: PropTypes.func,
-};
-
-DropZone.defaultProps = {
-	onDrop: noop,
-	onVerifyValidTransfer: () => true,
-	onFilesDrop: noop,
-	fullScreen: false,
-	icon: 'cloud-upload',
-	translate: identity,
-};
+} );
 
 export default localize( DropZone );
