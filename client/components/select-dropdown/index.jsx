@@ -235,11 +235,11 @@ class SelectDropdown extends Component {
 					>
 						<span className="select-dropdown__header-text">
 							{ selectedText }
-							{
-								'number' === typeof this.props.selectedCount &&
-								<Count count={ this.props.selectedCount } />
-							}
 						</span>
+						{
+							'number' === typeof this.props.selectedCount &&
+							<Count count={ this.props.selectedCount } />
+						}
 					</div>
 
 					<ul
