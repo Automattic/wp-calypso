@@ -16,7 +16,6 @@ import {
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import SocialLogo from 'components/social-logo';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
 import { getSelectedSite } from 'state/ui/selectors';
