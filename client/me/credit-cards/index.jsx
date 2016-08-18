@@ -1,12 +1,15 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
+import Button from 'components/button';
 import Card from 'components/card';
 import CreditCardDelete from './credit-card-delete';
 import {
@@ -15,6 +18,7 @@ import {
 	isFetchingStoredCards
 } from 'state/stored-cards/selectors';
 import QueryStoredCards from 'components/data/query-stored-cards';
+import { addCreditCard } from 'me/payment-methods/paths';
 import SectionHeader from 'components/section-header';
 
 class CreditCards extends Component {
@@ -22,7 +26,7 @@ class CreditCards extends Component {
 		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
 			return (
 				<div className="credit-cards__no-results">
-					{ this.translate( 'Loading…' ) }
+					{ this.props.translate( 'Loading…' ) }
 				</div>
 			);
 		}
@@ -30,7 +34,7 @@ class CreditCards extends Component {
 		if ( ! this.props.cards.length ) {
 			return (
 				<div className="credit-cards__no-results">
-					{ this.translate( 'You have no saved cards.' ) }
+					{ this.props.translate( 'You have no saved cards.' ) }
 				</div>
 			);
 		}
@@ -44,12 +48,24 @@ class CreditCards extends Component {
 		}, this );
 	}
 
+	goToAddCreditCard() {
+		page( addCreditCard() );
+	}
+
 	render() {
 		return (
 			<div className="credit-cards">
 				<QueryStoredCards />
 
-				<SectionHeader label={ this.translate( 'Manage Your Credit Cards' ) } />
+				<SectionHeader label={ this.props.translate( 'Manage Your Credit Cards' ) }>
+					<Button
+						primary
+						compact
+						className="credit-cards__add"
+						onClick={ this.goToAddCreditCard }>
+						{ this.props.translate( 'Add Credit Card' ) }
+					</Button>
+				</SectionHeader>
 
 				<Card>
 					<div>
@@ -67,4 +83,4 @@ export default connect(
 		hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
 		isFetching: isFetchingStoredCards( state )
 	} )
-)( CreditCards );
+)( localize( CreditCards ) );
