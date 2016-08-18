@@ -11,6 +11,7 @@ import ReaderAuthorLink from 'blocks/reader-author-link';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderFollowButton from 'reader/follow-button';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
@@ -29,14 +30,20 @@ const AuthorCompactProfile = React.createClass( {
 			return null;
 		}
 
+		const hasMatchingAuthorAndSiteNames = siteName.toLowerCase() === author.name.toLowerCase();
+		const classes = classnames( 'author-compact-profile', {
+			'has-author-link': ! hasMatchingAuthorAndSiteNames
+		} );
+
 		return (
-			<div className="author-compact-profile">
+			<div className={ classes }>
 				<Gravatar size={ 96 } user={ author } />
-				<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>{ author.name }</ReaderAuthorLink>
-				{ siteName && siteUrl && siteName.toLowerCase() !== author.name.toLowerCase()
-					? <ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId }>
+				{ ! hasMatchingAuthorAndSiteNames &&
+					<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>{ author.name }</ReaderAuthorLink> }
+				{ siteName &&
+					<ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId }>
 						{ siteName }
-					</ReaderSiteStreamLink> : null }
+					</ReaderSiteStreamLink> }
 
 				<div className="author-compact-profile__follow">
 				{ followCount
@@ -53,7 +60,7 @@ const AuthorCompactProfile = React.createClass( {
 					) }
 					</div> : null }
 
-				<ReaderFollowButton siteUrl={ siteUrl } />
+					<ReaderFollowButton siteUrl={ siteUrl } />
 				</div>
 			</div>
 		);
