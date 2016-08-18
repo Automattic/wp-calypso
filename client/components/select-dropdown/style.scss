@@ -1,22 +1,28 @@
 /**
  * Select Dropdown
  */
+$header-height: 43;
+$option-height: 40;
+$side-margin: 16;
+
+$compact-header-height: 35;
 
 .select-dropdown {
-	height: 43px;
+	height: #{ $header-height }px;
+	overflow: hidden;
+
+	&.is-open {
+		overflow: visible;
+	}
 
 	&.is-compact {
-		height: 28px;
+		height: #{ $compact-header-height }px;
 	}
 }
 
 .select-dropdown__container {
 	position: relative;
-	overflow: hidden;
 	display: inline-block;
-	width: auto;
-	max-width: 100%;
-	min-width: 160px;
 
 	.select-dropdown.is-open & {
 		z-index: z-index( 'root', '.select-dropdown.is-open .select-dropdown__container' );
@@ -40,48 +46,53 @@
 }
 
 .select-dropdown__header {
-	padding: 11px 44px 11px 16px; // 44 = padding (16) + arrow width (20) + arrow margin (8)
+	height: #{ $header-height }px;
+	line-height: #{ $header-height - 3 }px;
+	padding: 0 75px 0 #{ $side-margin }px;
+	box-sizing: border-box;
+
 	border-style: solid;
 	border-color: lighten( $gray, 20% );
 	border-width: 1px 1px 2px;
 	border-radius: 4px;
 	background-color: $white;
+
 	font-size: 14px;
 	font-weight: 600;
-	line-height: 18px;
-	height: 18px;
 	color: $gray-dark;
 	transition: background-color 0.2s ease;
 	cursor: pointer;
 
+	// down-arrow
 	&::after {
 		@include noticon('\f431', 22px);
-		position: absolute;
-			right: 13px;
-			top: 12px;
-
-		.is-compact & {
-			right: 4px;
-			top: 7px;
-		}
 
 		display: block;
-		line-height: 18px;
+		width: 20px;
+		line-height: #{ $header-height - 1 }px;
 		color: rgba( $gray, 0.5 );
+
+		position: absolute;
+			right: 14px;
+			top: 0px;
+
+		.is-compact & {
+			right: 5px;
+			line-height: #{ $compact-header-height }px;
+		}
 	}
 
-
 	.is-compact & {
-		padding: 7px;
+		height: #{$compact-header-height }px;
+		line-height: #{$compact-header-height - 3 }px;
 		color: darken( $gray, 10% );
 		font-size: 11px;
 		text-transform: uppercase;
 
 		.count {
 			border-width: 0;
-			padding-top: 2px;
-			padding-bottom: 2px;
-			margin-left: 0;
+			right: 25px;
+			top: #{ ( $compact-header-height - 18 ) / 2 }px;
 		}
 	}
 
@@ -96,7 +107,9 @@
 	}
 
 	.count {
-		margin-left: 8px;
+		position: absolute;
+		right: 40px;
+		top: #{ ( $header-height - 18 - 2 ) / 2 }px;
 	}
 }
 
@@ -108,14 +121,13 @@
 }
 
 .select-dropdown__options {
-	visibility: hidden;
-	height: 0;
 	box-sizing: border-box;
 	padding: 0;
 	list-style: none;
-	margin: -2px 0 0 0; // account for border overlap with .select-dropdown__header
+	margin: 0;
 	background-color: $white;
 	border: 1px solid lighten( $gray, 20% );
+	border-top: 0;
 	// $blue-wordpress for outer (with focus shadow), $gray for border with header
 	border-radius: 0 0 4px 4px;
 
@@ -125,37 +137,38 @@
 	}
 
 	.select-dropdown.is-open & {
-		visibility: visible;
-		height: auto;
+		margin-top: -1px;
 	}
 }
 
 .select-dropdown__option {
+	height: #{ $option-height }px;
+
 	&:last-child .select-dropdown__item {
 		border-radius: 0 0 4px 4px;
 	}
 }
 
-.select-dropdown__item,
-.select-dropdown__item-text {
-	padding: 11px 44px 11px 16px;
-}
-
 .select-dropdown__item {
 	display: block;
 	position: relative;
+	height: #{ $option-height }px;
+	line-height: #{ $option-height }px;
+	padding: 0 #{ $side-margin + 46 }px 0 #{ $side-margin }px;
+
+	color: $gray-dark;
 	font-size: 14px;
 	font-weight: 400;
-	line-height: 18px;
-	color: $gray-dark;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden;
 	cursor: pointer;
 
+	// hack to set text width in bold weight
 	&::before {
 		content: attr( data-bold-text );
 		font-weight: 700;
+		white-space: nowrap;
 		opacity: 0;
 	}
 
@@ -166,6 +179,11 @@
 	&.is-selected {
 		background-color: $blue-medium;
 		color: $white;
+
+		.count {
+			border-color: $white;
+			color: $white;
+		}
 	}
 
 	&.is-disabled {
@@ -187,25 +205,25 @@
 	}
 }
 
-.select-dropdown__item-text {
-	padding-right: 16px;
-	box-sizing: border-box;
-	position: absolute;
-		top: 0;
-		left: 0;
+.select-dropdown__item-count {
+	&::before {
+		content: attr( data-text );
+		opacity: 0;
+	}
 
-	width: 100%;
+	.count {
+		position: absolute;
+			top: #{ ( $option-height - 18 ) / 2 }px;
+			right: #{ $side-margin }px;
+	}
+}
+
+.select-dropdown__item-text {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	color: inherit;
-	display: flex;
-	flex-flow: row wrap;
-	justify-content: space-between;
-
-	.count {
-		color: inherit;
-		border-color: inherit;
-	}
+	position: absolute;
+		left: #{ $side-margin }px;
 }
 
 .select-dropdown__separator {
@@ -217,12 +235,11 @@
 .select-dropdown__label {
 	display: block;
 	color: lighten( $gray, 10% );
-	margin-top: 5px;
 	line-height: 20px;
 
 	label {
 		font-size: 12px;
 		text-transform: uppercase;
-		padding: 0px 16px 0px 16px;
+		padding: 0px #{ $side-margin }px;
 	}
 }
