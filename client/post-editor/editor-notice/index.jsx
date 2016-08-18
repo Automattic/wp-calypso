@@ -101,7 +101,7 @@ export class EditorNotice extends Component {
 				if ( 'page' === type ) {
 					return translate( 'Page scheduled on {{siteLink/}}!', {
 						components: {
-							siteLink: <a href={ site.URL } target="_blank">{ site.name }</a>
+							siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 						},
 						comment: 'Editor: Message displayed when a page is scheduled, with a link to the site it was scheduled on.'
 					} );
@@ -109,7 +109,7 @@ export class EditorNotice extends Component {
 
 				return translate( 'Post scheduled on {{siteLink/}}!', {
 					components: {
-						siteLink: <a href={ site.URL } target="_blank">{ site.name }</a>
+						siteLink: <a href={ site.URL } target="_blank">{ site.title }</a>
 					},
 					comment: 'Editor: Message displayed when a post is scheduled, with a link to the site it was scheduled on.'
 				} );
