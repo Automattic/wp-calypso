@@ -104,7 +104,7 @@ export const PreviewToolbar = props => {
 					} ) }
 					onClick={ selectSeoPreview }
 				>
-					<Gridicon icon="share" />
+					<Gridicon icon="globe" />
 				</button>
 			}
 			<div className="web-preview__toolbar-tray">
