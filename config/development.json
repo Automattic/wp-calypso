@@ -66,6 +66,7 @@
 		"manage/menus-jetpack": true,
 		"manage/option_sync_non_public_post_stati": true,
 		"manage/pages": true,
+		"manage/payment-methods": false,
 		"manage/people": true,
 		"manage/people/readers": true,
 		"manage/plans": true,

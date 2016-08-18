@@ -1,4 +1,4 @@
 export function addCreditCard() {
-	return '/payments/add-credit-card';
+	return '/payment-methods/add-credit-card';
 }
 
