@@ -26,6 +26,7 @@ import { tracks } from 'lib/analytics';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
+import { tourBranching } from './config-parsing';
 import {
 	query,
 	posToCss,
@@ -298,7 +299,7 @@ export class Quit extends Component {
 				tour_version: this.context.tourVersion,
 				tour: this.context.tour,
 			} );
-		}
+	}
 		this.context.quit( { finished: isLastStep } );
 	}
 

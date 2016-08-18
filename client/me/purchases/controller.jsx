@@ -8,6 +8,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import AddCardDetails from './payment/add-card-details';
 import analytics from 'lib/analytics';
 import CancelPrivateRegistration from './cancel-private-registration';
 import CancelPurchase from './cancel-purchase';
@@ -84,6 +85,25 @@ const setSelectedSite = ( siteSlug, dispatch ) => {
 };
 
 export default {
+	addCardDetails( context ) {
+		setTitle(
+			titles.addCardDetails
+		);
+
+		recordPageView(
+			paths.addCardDetails(),
+			'Add Card Details'
+		);
+
+		setSelectedSite( context.params.site, context.store.dispatch );
+
+		renderPage(
+			context,
+			<AddCardDetails
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+		);
+	},
+
 	cancelPrivateRegistration( context ) {
 		setTitle(
 			titles.cancelPrivateRegistration

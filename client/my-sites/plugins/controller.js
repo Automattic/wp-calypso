@@ -135,7 +135,7 @@ function renderPluginsBrowser( context, siteUrl ) {
 	.pageView
 	.record( context.pathname.replace( site.domain, ':site' ), analyticsPageTitle );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( PluginBrowser, {
 			site: site ? site.slug : null,
 			path: context.path,
@@ -143,7 +143,8 @@ function renderPluginsBrowser( context, siteUrl ) {
 			sites,
 			search: searchTerm
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -156,7 +157,9 @@ function renderProvisionPlugins( context ) {
 	analytics.pageView.record( context.pathname.replace( site.domain, ':site' ), 'Jetpack Plugins Setup' );
 
 	renderWithReduxStore(
-		React.createElement( PlanSetup, {} ),
+		React.createElement( PlanSetup, {
+			whitelist: context.query.only || false
+		} ),
 		document.getElementById( 'primary' ),
 		context.store
 	);

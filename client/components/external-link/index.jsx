@@ -6,7 +6,7 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
-import assign from 'lodash/assign';
+import { assign, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +38,7 @@ export default React.createClass( {
 			'has-icon': !! this.props.icon,
 		} );
 
-		const props = assign( {}, this.props, {
+		const props = assign( {}, omit( this.props, 'icon', 'iconSize' ), {
 			className: classes,
 			rel: 'external'
 		} );

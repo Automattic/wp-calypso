@@ -354,94 +354,7 @@
 // Chart tooltip
 
 .chart__tooltip {
-	z-index: z-index( 'root', '.chart__tooltip' );
-	position: absolute;
-	/* default offset for edge-cases: https://github.com/component/tip/pull/12 */
-	top: 0;
-	left: 0 #{"/*rtl:ignore*/"};
-	right: auto #{"/*rtl:ignore*/"};
-
-	&.tip-bottom-left {
-		.tip-arrow {
-			border-color: $transparent;
-			position: absolute;
-
-			&::before {
-				content: '';
-				border: 4px solid $transparent;
-				border-bottom-color: darken( $gray, 30% );
-				position: absolute;
-					left: 231px  #{"/*rtl:ignore*/"};
-					top: -3px;
-
-				.rtl & {
-					left: -18px  #{"/*rtl:ignore*/"};
-					top: -3px;
-				}
-			}
-		}
-	}
-
-	&.tip-bottom-right,
-	&.tip-bottom {
-		.tip-arrow {
-			border-color: $transparent;
-			position: absolute;
-
-			&::before {
-				content: '';
-				border: 4px solid $transparent;
-				border-bottom-color: darken( $gray, 30% );
-				position: absolute;
-					left: 11px  #{"/*rtl:ignore*/"};
-					top: -3px;
-
-				.rtl & {
-					left: -238px  #{"/*rtl:ignore*/"};
-					top: -3px;
-				}
-			}
-		}
-	}
-
-	&.tip-top {
-		.tip-arrow {
-			border-color: $transparent;
-			position: absolute;
-
-			&::before {
-				content: '';
-				border: 4px solid $transparent;
-				border-top-color: darken( $gray, 30% );
-				position: absolute;
-					left: 118px #{"/*rtl:ignore*"};
-					bottom: -40px;
-			}
-		}
-	}
-
-	&.tip-bottom {
-		.tip-arrow {
-			&::before {
-				left: 86px  #{"/*rtl:ignore*/"};
-				top: -4px;
-
-				.rtl & {
-					left: -93px  #{"/*rtl:ignore*/"};
-				}
-			}
-		}
-	}
-
-	.tip-inner {
-		border: 0;
-		box-shadow: none;
-		border-radius: 2px;
-		color: $white;
-		background: darken( $gray, 30% );
-		font-size: 11px;
-		padding: 6px 10px;
-		margin-top: 4px;
+	.popover__inner {
 		width: 230px;
 		text-align: left;
 
@@ -490,19 +403,8 @@
 	}
 
 	&.is-streak {
-		margin-top: -5px;
-		height: 35px;
-
-		.tip-arrow::before {
-			left: 85px;
-			top: 30px;
-		}
-
-		.tip-inner {
+		.popover__inner {
 			width: 160px;
-			position: relative;
-			top: -10px;
-
 			li {
 				height: 14px;
 

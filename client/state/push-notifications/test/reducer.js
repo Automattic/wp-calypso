@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -13,32 +14,29 @@ import {
 import reducer, {} from '../reducer';
 
 const wpcomSubscription = {
-	ID: 42,
+	ID: '42',
 	lastUpdated: '2016-06-16T14:41:09+02:00',
 	settings: {
 		comments: {
 			desc: 'Comments',
 			long_desc: '"Someone comments one of my posts"',
-			value: '1' }
+			value: '1'
+		}
 	}
 };
 
 describe( 'system reducer', () => {
-
 	it( 'should persist keys', () => {
-		const state = reducer( {
-			system: {
-				wpcomSubscription: wpcomSubscription,
-			}
-		}, { type: SERIALIZE } );
+		const previousState = { system: { wpcomSubscription: wpcomSubscription } };
+		deepFreeze( previousState );
+		const action = { type: SERIALIZE };
+		const newState = reducer( previousState, action );
 
-		expect( state.system ).to.eql( {
-			wpcomSubscription,
-		} );
+		expect( newState.system ).to.eql( { wpcomSubscription } );
 	} );
 
 	it( 'should refuse to persist particular keys', () => {
-		const state = reducer( {
+		const previousState = {
 			system: {
 				apiReady: true,
 				authorized: true,
@@ -46,55 +44,60 @@ describe( 'system reducer', () => {
 				blocked: false,
 				wpcomSubscription: wpcomSubscription,
 			}
-		}, { type: SERIALIZE } );
+		};
+		deepFreeze( previousState );
+		const action = { type: SERIALIZE };
+		const newState = reducer( previousState, action );
 
-		expect( state.system ).to.eql( {
-			wpcomSubscription,
-		} );
+		expect( newState.system ).to.eql( { wpcomSubscription } );
 	} );
 
 	it( 'should restore keys', () => {
-		const state = reducer( {
-			system: {
-				wpcomSubscription: wpcomSubscription,
-			}
-		}, { type: DESERIALIZE } );
+		const previousState = { system: { wpcomSubscription: wpcomSubscription } };
+		deepFreeze( previousState );
+		const action = { type: DESERIALIZE };
+		const newState = reducer( previousState, action );
 
-		expect( state.system ).to.eql( {
+		expect( newState.system ).to.eql( {
 			wpcomSubscription,
 		} );
 	} );
 
 	it( 'should refuse to restore particular keys', () => {
-		const wpcomSubscription = { ID: 42 };
-		const state = reducer( {
+		const wpcomSubscriptionId = { ID: '42' };
+		const previousState = {
 			system: {
 				apiReady: true,
 				authorized: true,
 				authorizationLoaded: true,
 				blocked: false,
-				wpcomSubscription: wpcomSubscription,
+				wpcomSubscription: wpcomSubscriptionId,
 			}
-		}, { type: DESERIALIZE } );
+		};
+		deepFreeze( previousState );
+		const action = { type: DESERIALIZE };
+		const newState = reducer( previousState, action );
 
-		expect( state.system ).to.eql( {
-			wpcomSubscription,
+		expect( newState.system ).to.eql( {
+			wpcomSubscription: wpcomSubscriptionId,
 		} );
 	} );
 } );
 
 describe( 'settings reducer', () => {
-
 	it( 'should persist keys', () => {
-		const state = reducer( {
+		const previousState = {
 			settings: {
 				enabled: false,
 				dismissedNotice: true,
 				dismissedNoticeAt: 1466067124796,
 			}
-		}, { type: SERIALIZE } );
+		};
+		deepFreeze( previousState );
+		const action = { type: SERIALIZE };
+		const newState = reducer( previousState, action );
 
-		expect( state.settings ).to.eql( {
+		expect( newState.settings ).to.eql( {
 			dismissedNotice: true,
 			dismissedNoticeAt: 1466067124796,
 			enabled: false,
@@ -102,28 +105,33 @@ describe( 'settings reducer', () => {
 	} );
 
 	it( 'should refuse to persist particular keys', () => {
-		const state = reducer( {
+		const previousState = {
 			settings: {
 				enabled: true,
 				showingUnblockInstructions: true,
 			}
-		}, { type: SERIALIZE } );
+		};
+		deepFreeze( previousState );
+		const action = { type: SERIALIZE };
+		const newState = reducer( previousState, action );
 
-		expect( state.settings ).to.eql( {
+		expect( newState.settings ).to.eql( {
 			enabled: true,
 		} );
 	} );
 
 	it( 'should restore keys', () => {
-		const state = reducer( {
+		const previousState = {
 			settings: {
 				enabled: false,
 				dismissedNotice: true,
 				dismissedNoticeAt: 1466067124796,
 			}
-		}, { type: DESERIALIZE } );
+		};
+		deepFreeze( previousState );
+		const newState = reducer( previousState, { type: DESERIALIZE } );
 
-		expect( state.settings ).to.eql( {
+		expect( newState.settings ).to.eql( {
 			dismissedNotice: true,
 			dismissedNoticeAt: 1466067124796,
 			enabled: false,
@@ -131,14 +139,17 @@ describe( 'settings reducer', () => {
 	} );
 
 	it( 'should refuse to restore particular keys', () => {
-		const state = reducer( {
+		const previousState = {
 			settings: {
 				enabled: true,
 				showingUnblockInstructions: true,
 			}
-		}, { type: DESERIALIZE } );
+		};
+		deepFreeze( previousState );
+		const action = { type: DESERIALIZE };
+		const newState = reducer( previousState, action );
 
-		expect( state.settings ).to.eql( {
+		expect( newState.settings ).to.eql( {
 			enabled: true,
 		} );
 	} );

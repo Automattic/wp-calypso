@@ -3,14 +3,13 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	noop = require( 'lodash/noop' ),
 	debug = require( 'debug' )( 'calypso:module-chart:bar' );
 
 /**
  * Internal dependencies
  */
-var Popover = require( 'components/popover' ),
-	Tooltip = require( 'components/chart/tooltip' );
+var	Tooltip = require( 'components/tooltip' ),
+	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartBar',
@@ -88,13 +87,59 @@ module.exports = React.createClass( {
 		this.setState( { showPopover: false } );
 	},
 
+	renderTooltip() {
+		if (
+			! this.props.data.tooltipData ||
+			! this.props.data.tooltipData.length ||
+			this.props.isTouch
+		) {
+			return null;
+		}
+
+		const { tooltipData } = this.props.data;
+
+		const listItemElements = tooltipData.map( function( options, i ) {
+			var wrapperClasses = [ 'module-content-list-item' ],
+				gridiconSpan;
+
+			if ( options.icon ) {
+				gridiconSpan = ( <Gridicon icon={ options.icon } size={ 18 } /> );
+			}
+
+			wrapperClasses.push( options.className );
+
+			return (
+				<li key={ i } className={ wrapperClasses.join( ' ' ) } >
+					<span className='wrapper'>
+						<span className='value'>{ options.value }</span>
+						<span className='label'>{ gridiconSpan }{ options.label }</span>
+					</span>
+				</li>
+			);
+		} );
+
+		return (
+			<Tooltip
+				className="chart__tooltip"
+				id="popover__chart-bar"
+				showDelay={ 200 }
+				context={ this.refs && this.refs.valueBar }
+				isVisible={ this.state.showPopover }
+				position={ this.props.tooltipPosition }
+			>
+				<ul>
+					{ listItemElements }
+				</ul>
+			</Tooltip>
+		);
+	},
+
 	render: function() {
 		debug( 'Rendering bar', this.state );
 
 		var barStyle,
 			barClass,
-			count = this.props.count || 1,
-			tooltip;
+			count = this.props.count || 1;
 
 		barClass = { chart__bar: true };
 
@@ -106,27 +151,17 @@ module.exports = React.createClass( {
 			width: ( ( 1 / count ) * 100 ) + '%'
 		};
 
-		if ( this.props.data.tooltipData && this.props.data.tooltipData.length && ! this.props.isTouch ) {
-			tooltip = <Popover context={ this.refs && this.refs.valueBar }
-							isVisible={ this.state.showPopover }
-							position={ this.props.tooltipPosition }
-							onClose={ noop }
-							className="chart__tooltip">
-							<Tooltip data={ this.props.data.tooltipData } />
-						</Popover>;
-		}
-
 		return (
-			<div onClick={ this.clickHandler } 
+			<div onClick={ this.clickHandler }
 				 onMouseEnter={ this.mouseEnter }
 				 onMouseLeave={ this.mouseLeave }
-				 className={ classNames( barClass ) } 
+				 className={ classNames( barClass ) }
 				 style={ barStyle }>
 				{ this.buildSections() }
 				<div className="chart__bar-marker is-hundred"></div>
 				<div className="chart__bar-marker is-fifty"></div>
 				<div className="chart__bar-marker is-zero"></div>
-				{ tooltip }
+				{ this.renderTooltip() }
 			</div>
 		);
 	}

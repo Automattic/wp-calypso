@@ -228,9 +228,7 @@ export default React.createClass( {
 			return null;
 		}
 
-		const recentSites = sites.filter( function( site ) {
-			return ! this.props.sites.isStarred( site );
-		}, this ).map( function( site ) {
+		const recentSites = sites.map( function( site ) {
 			var siteHref;
 
 			if ( this.props.siteBasePath ) {
@@ -258,39 +256,6 @@ export default React.createClass( {
 		return <div className="site-selector__recent">{ recentSites }</div>;
 	},
 
-	renderStarredSites() {
-		const sites = this.props.sites.getStarred();
-
-		if ( ! sites || this.state.search || ! this.shouldShowGroups() || ! this.props.sites.starred.length ) {
-			return null;
-		}
-
-		const starredSites = sites.map( function( site ) {
-			var siteHref;
-
-			if ( this.props.siteBasePath ) {
-				siteHref = this.getSiteBasePath( site ) + '/' + site.slug;
-			}
-
-			return (
-				<Site
-					site={ site }
-					href={ siteHref }
-					key={ 'site-' + site.ID }
-					indicator={ this.props.indicator }
-					onSelect={ this.onSiteSelect.bind( this, site.slug ) }
-					isSelected={ this.isSelected( site ) }
-				/>
-			);
-		}, this );
-
-		return (
-			<div className="site-selector__starred">
-				{ starredSites }
-			</div>
-		);
-	},
-
 	render() {
 		const selectorClass = classNames( 'site-selector', 'sites-list', {
 			'is-large': user.get().site_count > 6,
@@ -309,7 +274,6 @@ export default React.createClass( {
 					/>
 					<div className="site-selector__sites" ref="selector">
 						{ this.renderAllSites() }
-						{ this.renderStarredSites() }
 						{ this.renderSites() }
 					</div>
 					{ this.props.showAddNewSite && this.addNewSite() }

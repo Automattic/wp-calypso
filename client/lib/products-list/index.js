@@ -2,7 +2,6 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:ProductsList' ),
-	omit = require( 'lodash/omit' ),
 	store = require( 'store' );
 
 /**
@@ -74,7 +73,7 @@ ProductsList.prototype.fetch = function() {
 			return;
 		}
 
-		productsList = this.parse( data );
+		productsList = data;
 
 		debug( 'ProductsList fetched from api:', productsList );
 
@@ -98,16 +97,6 @@ ProductsList.prototype.fetch = function() {
 ProductsList.prototype.initialize = function( productsList ) {
 	this.data = productsList;
 	this.initialized = true;
-};
-
-/**
- * Parses data retrieved from the API and extracts the list of products.
- *
- * @param {object} data - raw data
- * @return {object} a list of products
- **/
-ProductsList.prototype.parse = function( data ) {
-	return omit( data, '_headers' );
 };
 
 /**

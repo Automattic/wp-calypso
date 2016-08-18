@@ -28,14 +28,16 @@ import UpgradeNudge from 'my-sites/upgrade-nudge/docs/example';
 import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
 import FeatureComparison from 'my-sites/feature-comparison/docs/example';
 import DomainTip from 'my-sites/domain-tip/docs/example';
-import PostCard from 'components/post-card/docs/example';
 import PostItem from 'blocks/post-item/docs/example';
 import PostRelativeTime from 'blocks/post-relative-time/docs/example';
 import PostStatus from 'blocks/post-status/docs/example';
-import ReaderAuthorLink from 'components/reader-author-link/docs/example';
-import ReaderSiteStreamLink from 'components/reader-site-stream-link/docs/example';
-import ReaderFullPostHeader from 'components/reader-full-post/docs/header-example';
+import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
+import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
+import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
+import RelatedPostCard from 'blocks/reader-related-card/docs/example';
+import SearchPostCard from 'blocks/reader-search-card/docs/example';
+import PlanPurchaseFeaturesExample from 'blocks/plan-purchase-features/docs/example';
 
 export default React.createClass( {
 
@@ -85,7 +87,8 @@ export default React.createClass( {
 					<PlanCompareCard />
 					<FeatureComparison />
 					<DomainTip />
-					<PostCard />
+					<RelatedPostCard />
+					<SearchPostCard />
 					<PostItem />
 					<PostRelativeTime />
 					<PostStatus />
@@ -93,6 +96,7 @@ export default React.createClass( {
 					<ReaderSiteStreamLink />
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
+					<PlanPurchaseFeaturesExample />
 				</Collection>
 			</div>
 		);

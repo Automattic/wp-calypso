@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Chai, { expect } from 'chai'
+import { expect } from 'chai';
 import Immutable from 'immutable';
 
 /**
@@ -49,7 +49,7 @@ describe( 'utils', () => {
 			expect( Immutable.Map.isMap( parent ) ).to.equal( true );
 			expect( Immutable.List.isList( parent.get( 'children' ) ) ).to.equal( true );
 			expect( firstChildOfParentId ).to.be.a.number;
-			expect( actualFirstChildOfParent.getIn( ['data', 'ID'] ) ).to.equal( 9 );
+			expect( actualFirstChildOfParent.getIn( [ 'data', 'ID' ] ) ).to.equal( 9 );
 
 			expect( commentsTreeForPost.getIn( [ 9, 'children' ] ).size ).to.equal( 2 );
 			expect( commentsTreeForPost.getIn( [ 9, 'children', 0 ] ) ).to.equal( 11 );
@@ -70,7 +70,7 @@ describe( 'utils', () => {
 				{ ID: 8, parent: false, text: 'eight', date: '2016-01-28T10:17:18-08:00' },
 				{ ID: 7, parent: false, text: 'seven', date: '2016-01-28T10:08:18-08:00' },
 				{ ID: 6, parent: false, text: 'six', date: '2016-01-28T10:07:18-08:00' }
-				] )
+			] )
 			);
 
 			// traverse the comments tree recursively and validate all the dates are in correct order

@@ -7,8 +7,8 @@ import React from 'react';
  * Internal dependencies
  */
 import Gravatar from 'components/gravatar';
-import ReaderAuthorLink from 'components/reader-author-link';
-import ReaderSiteStreamLink from 'components/reader-site-stream-link';
+import ReaderAuthorLink from 'blocks/reader-author-link';
+import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderFollowButton from 'reader/follow-button';
 import { localize } from 'i18n-calypso';
 
@@ -32,7 +32,7 @@ const AuthorCompactProfile = React.createClass( {
 		return (
 			<div className="author-compact-profile">
 				<Gravatar size={ 96 } user={ author } />
-				<ReaderAuthorLink author={ author }>{ author.name }</ReaderAuthorLink>
+				<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>{ author.name }</ReaderAuthorLink>
 				{ siteName && siteUrl
 					? <ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId }>
 						{ siteName }

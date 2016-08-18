@@ -125,7 +125,6 @@ $z-layers: (
 		'.dialog__backdrop': 100200,
 		'.wplink__dialog.dialog.card': 100200,
 		'.web-preview': 100200,
-		'.category-selector__add-category-info': 100201,
 		'popover.is-dialog-visible': 100300,
 		'body .webui-popover': 100300,
 		'.fullscreen-fader': 200000,
@@ -142,7 +141,9 @@ $z-layers: (
 		'.environment-badge .bug-report': 1000
 	),
 	'.masterbar': (
-		'.masterbar__notifications-bubble': 99999
+		'.masterbar__notifications-bubble': 99999,
+		'.reader-back': 99999,
+		'.reader-profile': 100000
 	),
 	'.detail-page__backdrop': (
 		'.detail-page__action-buttons': 200
@@ -150,7 +151,7 @@ $z-layers: (
 	'.popover': (
 		'.input-chrono__container .gridicons-calendar': 0,
 		'input.input-chrono': 1,
-		'.popover .tip-arrow': 1,
+		'.popover .popover__arrow': 1,
 		'.post-schedule__header': 1
 	),
 	'.search': (

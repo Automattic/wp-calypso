@@ -18,13 +18,17 @@
     	.follow-button__label {
     		color: $blue-medium;
 
+
     		@include breakpoint( "<660px" ) {
     			display: inline-block;
     		}
     	}
 
-		&:hover {
+		&.is-following .follow-button__label {
+			color: $alert-green;
+		}
 
+		&:hover {
 			.gridicon__follow {
 				fill: lighten( $gray, 10% );
 			}
@@ -33,6 +37,19 @@
 				color: lighten( $gray, 10% );
 			}
 		}
+
+        // No hover if already following
+        &.is-following {
+            &:hover {
+                .gridicon__follow {
+                    fill: $alert-green;
+                }
+
+                .follow-button__label {
+                    color: $alert-green;
+                }
+            }
+        }
     }
 }
 
@@ -49,9 +66,17 @@
     }
 }
 
-.author-compact-profile .external-link {
+.author-compact-profile .reader-author-link {
 	font-weight: 600;
-	margin-top: 15px;
+	margin-top: 18px;
+}
+
+.author-compact-profile__site-link {
+	margin-top: 4px;
+}
+
+.author-compact-profile__follow {
+	margin: 11px 0;
 }
 
 .author-compact-profile__follow-count {

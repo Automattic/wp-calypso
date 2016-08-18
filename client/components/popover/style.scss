@@ -2,46 +2,39 @@
  * "popover" theme for `component/tip`.
  */
 
-// not sure if we need this
-.tip-hide {
-	opacity: 0;
-}
-
 .popover {
 	font-size: 11px;
-	padding: 10px;
 	z-index: z-index( 'root', '.popover' );
 	position: absolute;
-	/* default offset for edge-cases: https://github.com/component/tip/pull/12 */
 	top: 0;
 	left: 0 #{"/*rtl:ignore*/"};
 	right: auto #{"/*rtl:ignore*/"};
 
-	// class coming from `component/tip`
-	.tip-inner {
+	.popover__inner {
 		background-color: $white;
 		border: 1px solid lighten( $gray, 20% );
 		border-radius: 4px;
 		box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),
 			0 0 56px rgba( 0, 0, 0, 0.075 );
 		text-align: center;
+		position: relative;
 	}
 
-	// class coming from `component/tip`
-	.tip-arrow {
+	.popover__arrow {
 		border: 10px dashed lighten( $gray, 20% );
 		height: 0;
 		line-height: 0;
 		position: absolute;
 		width: 0;
-		z-index: z-index( '.popover', '.popover .tip-arrow' );
+		z-index: z-index( '.popover', '.popover .popover__arrow' );
 	}
 
 	&.fade {
 		transition: opacity 100ms;
 	}
 
-	@mixin tip-arrow( $side ) {
+
+	@mixin popover__arrow( $side ) {
 		$cross-side: "";
 		$opposite-side: "";
 		$cross-opposite-side: "";
@@ -63,9 +56,9 @@
 			$cross-opposite-side: "bottom";
 		}
 
-		&.tip-#{$side} .tip-arrow,
-		&.tip-#{$side}-#{$cross-side} .tip-arrow,
-		&.tip-#{$side}-#{$cross-opposite-side} .tip-arrow {
+		&.is-#{$side} .popover__arrow,
+		&.is-#{$side}-#{$cross-side} .popover__arrow,
+		&.is-#{$side}-#{$cross-opposite-side} .popover__arrow {
 			@mixin shared-between-base-and-before {
 				#{$cross-side}: 50% #{"/*rtl:ignore*/"};
 				margin-#{$cross-side}: -10px#{"/*rtl:ignore*/"};
@@ -88,40 +81,53 @@
 		}
 	}
 
-	@include tip-arrow( "top" );
-	@include tip-arrow( "bottom" );
-	@include tip-arrow( "left" );
-	@include tip-arrow( "right" );
+	@include popover__arrow( "top" );
+	@include popover__arrow( "bottom" );
+	@include popover__arrow( "left" );
+	@include popover__arrow( "right" );
 
-	&.tip-top-left,
-	&.tip-bottom-left,
-	&.tip-top-right,
-	&.tip-bottom-right {
+	&.is-top-left,
+	&.is-bottom-left,
+	&.is-top-right,
+	&.is-bottom-right {
 		padding-right: 0;
 		padding-left: 0;
 	}
 
-	&.tip-top-left .tip-arrow,
-	&.tip-bottom-left .tip-arrow {
+	&.is-top-left .popover__arrow,
+	&.is-bottom-left .popover__arrow {
 		left: auto #{"/*rtl:ignore*/"};
 		right: 5px #{"/*rtl:ignore*/"};
 	}
 
-	&.tip-top-right .tip-arrow,
-	&.tip-bottom-right .tip-arrow {
+	&.is-top-right .popover__arrow,
+	&.is-bottom-right .popover__arrow {
 		left: 15px #{"/*rtl:ignore*/"};
 	}
 
-	&.tip-top-left .tip-inner,
-	&.tip-bottom-left .tip-inner {
-		position: relative;
-		left: 10px #{"/*rtl:ignore*/"};
+	// inner
+	&.is-top .popover__inner,
+	&.is-top-left .popover__inner, 
+	&.is-top-right .popover__inner {
+		top: -10px #{"/*rtl:ignore*/"};
 	}
 
-	&.tip-top-right .tip-inner,
-	&.tip-bottom-right .tip-inner {
-		position: relative;
+	&.is-left .popover__inner,
+	&.is-top-right .popover__inner,
+	&.is-bottom-right .popover__inner {
 		left: -10px #{"/*rtl:ignore*/"};
+	}
+
+	&.is-bottom .popover__inner,
+	&.is-bottom-left .popover__inner, 
+	&.is-bottom-right .popover__inner {
+		top: 10px #{"/*rtl:ignore*/"};
+	}
+
+	&.is-right .popover__inner,
+	&.is-top-left .popover__inner,
+	&.is-bottom-left .popover__inner {
+		left: 10px #{"/*rtl:ignore*/"};
 	}
 
 	&.is-dialog-visible {

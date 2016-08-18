@@ -29,7 +29,7 @@ export default React.createClass( {
 		} );
 
 		return (
-			<p { ...omit( this.props, 'className' ) }
+			<p { ...omit( this.props, 'className', 'noValidate', 'isIndented' ) }
 				className={ classes } >
 				{ this.props.children }
 			</p>

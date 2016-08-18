@@ -24,7 +24,7 @@ const ReaderFollowButton = React.createClass( {
 		stats[ isFollowing ? 'recordFollow' : 'recordUnfollow' ]( this.props.siteUrl, this.props.railcar );
 
 		if ( this.props.onFollowToggle ) {
-			this.props.onFollowToggle();
+			this.props.onFollowToggle( isFollowing );
 		}
 	},
 

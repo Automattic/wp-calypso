@@ -8,8 +8,6 @@ import {
 	PLANS_REQUEST_FAILURE
 } from 'state/action-types';
 
-import { getValidDataFromResponse } from '../actions';
-
 // WP REST-API error response
 export const ERROR_MESSAGE_RESPONSE = 'There was a problem fetching plans. Please try again later or contact support.';
 
@@ -59,7 +57,9 @@ export const PLAN_1003 = {
 	product_slug: 'value_bundle',
 	tagline: 'Supercharge your site',
 	shortdesc: 'Your own domain name, powerful customization options, and lots of space for audio and video.',
-	description: 'Get all of these great features to super-charge your blog. Includes a domain name of your choice or domain mapping for an existing domain, VideoPress, Custom Design, 10GB Space Upgrade, and No Ads.',
+	description: 'Get all of these great features to super-charge your blog. ' +
+		'Includes a domain name of your choice or domain mapping for an existing domain, ' +
+		'VideoPress, Custom Design, 10GB Space Upgrade, and No Ads.',
 	icon: 'https://s0.wordpress.com/i/store/plan-premium.png',
 	icon_active: 'https://s0.wordpress.com/i/store/plan-premium-active.png',
 	capability: 'manage_options',
@@ -113,7 +113,16 @@ export const PLAN_1008 = {
 	product_slug: 'business-bundle',
 	tagline: 'Take it to the next level',
 	shortdesc: 'Everything included with Premium, as well as live chat support, and unlimited access to our premium themes.',
-	description: 'All you need to build a great website:<ul><li>Chat live with a WordPress.com specialist, Monday to Friday between 7am and 7pm Eastern time.</li><li>Try any premium theme and change as often as you like, no extra charge.</li><li>Upload all the video and audio files you want with unlimited storage.</li></ul>Including all the features of WordPress.com Premium:<ul><li>A domain of your choice to replace your site’s default address</li><li>Custom Design to customize your site’s appearance and choose unique fonts and colors</li><li>VideoPress to embed beautiful HD video straight from your dashboard or from your mobile device</li><li>Hides all ads on your site</li></ul>',
+	description: 'All you need to build a great website:' +
+		'<ul><li>Chat live with a WordPress.com specialist, ' +
+		'Monday to Friday between 7am and 7pm Eastern time.</li>' +
+		'<li>Try any premium theme and change as often as you like, no extra charge.</li>' +
+		'<li>Upload all the video and audio files you want with unlimited storage.</li></ul>' +
+		'Including all the features of WordPress.com Premium:' +
+		'<ul><li>A domain of your choice to replace your site’s default address</li>' +
+		'<li>Custom Design to customize your site’s appearance and choose unique fonts and colors</li>' +
+		'<li>VideoPress to embed beautiful HD video straight from your dashboard or from ' +
+		'your mobile device</li><li>Hides all ads on your site</li></ul>',
 	icon: 'https://s0.wordpress.com/i/store/plan-business.png',
 	icon_active: 'https://s0.wordpress.com/i/store/plan-business-active.png',
 	capability: 'manage_options',
@@ -317,12 +326,7 @@ export const WPCOM_RESPONSE = [
 	PLAN_1, PLAN_1003, PLAN_1008, PLAN_1009, PLAN_2000, PLAN_2001, PLAN_2002
 ];
 
-WPCOM_RESPONSE._headers = {
-	'Content-Type': 'application/json',
-	Date: new Date().toGMTString()
-};
-
-export const PLANS = getValidDataFromResponse( WPCOM_RESPONSE );
+export const PLANS = WPCOM_RESPONSE;
 
 // actions
 export const ACTION_PLANS_RECEIVE = {

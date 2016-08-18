@@ -89,6 +89,7 @@ export default React.createClass( {
 						>
 							<Gridicon icon="external" />
 							<Tooltip
+								className="editor-action-bar__view-post-tooltip"
 								context={ this.refs && this.refs.viewLink }
 								isVisible={ this.state.viewLinkTooltip }
 								position="bottom left"

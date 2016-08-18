@@ -12,7 +12,6 @@ import {
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_USER_FETCH,
 	PURCHASES_USER_FETCH_COMPLETED,
-	PURCHASE_REMOVE,
 	PURCHASE_REMOVE_COMPLETED,
 } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';

@@ -6,8 +6,7 @@ var debug = require( 'debug' )( 'calypso:wpcom-undocumented:site' );
 /**
  * Internal dependencies.
  */
-var Export = require( './export' ),
-	i18n = require( 'lib/i18n-utils' );
+var Export = require( './export' );
 
 /**
  * Resources array
@@ -221,6 +220,33 @@ UndocumentedSite.prototype.newExport = function( fn ) {
  */
 UndocumentedSite.prototype.mediaStorage = function( callback ) {
 	return this.wpcom.req.get( '/sites/' + this._id + '/media-storage', callback );
+};
+
+/**
+ * Requests the status of a guided transfer
+ *
+ * @returns {Promise} Resolves to the response containing the transfer status
+ */
+UndocumentedSite.prototype.getGuidedTransferStatus = function() {
+	debug( '/sites/:site:/transfer' );
+	return this.wpcom.req.get( '/sites/' + this._id + '/transfer', {
+		apiNamespace: 'wpcom/v2'
+	} );
+};
+
+/**
+ * Requests the status of a guided transfer
+ *
+ * @param {int} siteId  The site ID
+ * @returns {Promise} Resolves to the response containing the transfer status
+ */
+UndocumentedSite.prototype.saveGuidedTransferHostDetails = function( hostDetails ) {
+	debug( '/sites/:site:/transfer' );
+	return this.wpcom.req.post( {
+		path: '/sites/' + this._id + '/transfer',
+		body: hostDetails,
+		apiNamespace: 'wpcom/v2',
+	} );
 };
 
 /**

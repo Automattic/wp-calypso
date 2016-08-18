@@ -45,11 +45,11 @@ export default React.createClass( {
 	renderButtonLabel() {
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
-				return( this.translate( 'Connect Now' ) );
+				return this.translate( 'Connect Now' );
 			}
 			return this.translate( 'Start Installation' );
 		}
-		return( this.translate( 'Connecting…' ) );
+		return this.translate( 'Connecting…' );
 	},
 
 	handleKeyPress( event ) {
@@ -92,6 +92,7 @@ export default React.createClass( {
 						icon="globe" />
 					<FormTextInput
 						ref="siteUrl"
+						autoCapitalize="off"
 						autoFocus="autofocus"
 						onChange={ this.onChange }
 						disabled={ this.props.isFetching }

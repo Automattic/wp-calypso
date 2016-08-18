@@ -4,7 +4,6 @@
 var debug = require( 'debug' )( 'calypso:StatesList' ),
 	inherits = require( 'inherits' ),
 	isEmpty = require( 'lodash/isEmpty' ),
-	reject = require( 'lodash/reject' ),
 	store = require( 'store' );
 
 /**
@@ -54,7 +53,7 @@ StatesList.prototype.fetchForCountry = function( countryCode ) {
 				return;
 			}
 
-			statesList = this.parse( data );
+			statesList = data;
 
 			debug( this.key + ' for ' + countryCode + ' fetched from api successfully:', statesList );
 
@@ -98,7 +97,7 @@ StatesList.prototype.getByCountry = function( countryCode ) {
 		}
 
 		this.fetchForCountry( countryCode );
-	} else if ( ! (countryCode in this.data) ) {
+	} else if ( ! ( countryCode in this.data ) ) {
 		this.fetchForCountry( countryCode );
 	}
 
@@ -127,16 +126,6 @@ StatesList.prototype.initialize = function( data ) {
 	this.data = data;
 
 	this.initialized = true;
-};
-
-/**
- * Parses the specified data retrieved from the server and extracts the list of states.
- *
- * @param {array} data - raw data
- * @return {array} a list of states
- */
-StatesList.prototype.parse = function( data ) {
-	return reject( data, '_headers' );
 };
 
 /**

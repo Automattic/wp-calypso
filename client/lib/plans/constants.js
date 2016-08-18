@@ -5,7 +5,12 @@
  */
 import React from 'react';
 import i18n from 'i18n-calypso';
-import includes from 'lodash/includes';
+import { compact, includes } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { isEnabled } from 'config';
 
 // plans constants
 export const PLAN_BUSINESS = 'business-bundle';
@@ -45,6 +50,7 @@ export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
+export const FEATURE_ADVANCED_SEO = 'advanced-seo';
 
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -77,6 +83,8 @@ export const plansList = {
 			'Get a free blog and be on your way to publishing your first post' +
 			' in less than five minutes.'
 		),
+		getTargetedDescription: () => i18n.translate( 'Get a free website and be on your way to publishing your ' +
+			'first post in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_COMMUNITY_SUPPORT,
@@ -94,6 +102,13 @@ export const plansList = {
 		availableFor: ( plan ) => includes( [ PLAN_FREE ], plan ),
 		getPathSlug: () => 'personal',
 		getDescription: () => i18n.translate( 'Use your own domain and establish your online presence without ads.' ),
+		getTargetedDescription: () => i18n.translate( '{{strong}}Best for Personal Use:{{/strong}} Boost your' +
+			' website with a custom domain name, and remove all WordPress.com advertising. ' +
+			'Get access to high quality email and live chat support.', {
+				components: {
+					strong: <strong className="plan-features__targeted-description-heading" />
+				}
+			} ),
 		getFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -115,6 +130,13 @@ export const plansList = {
 		getDescription: () => i18n.translate( 'Your own domain name, powerful' +
 			' customization options, easy monetization with WordAds, and lots of space for audio and video.'
 		),
+		getTargetedDescription: () => i18n.translate( '{{strong}}Best for Entrepreneurs & Freelancers:{{/strong}}' +
+			' Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
+			' and the ability to monetize your site with ads.', {
+				components: {
+					strong: <strong className="plan-features__targeted-description-heading" />
+				}
+			} ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
@@ -139,7 +161,14 @@ export const plansList = {
 			'Everything included with Premium, as well as live chat support,' +
 			' unlimited access to premium themes, and Google Analytics.'
 		),
-		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
+		getTargetedDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
+			' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
+			' storage, and the ability to remove WordPress.com branding.', {
+				components: {
+					strong: <strong className="plan-features__targeted-description-heading" />
+				}
+			} ),
+		getFeatures: () => compact( [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
@@ -148,9 +177,10 @@ export const plansList = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
+			isEnabled( 'manage/advanced-seo' ) && FEATURE_ADVANCED_SEO,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING
-		],
+		] ),
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 
@@ -261,7 +291,14 @@ export const plansList = {
 	}
 };
 
-const allPaidPlans = [
+export const allPaidPlans = [
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS
+];
+
+export const allWpcomPlans = [
+	PLAN_FREE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
@@ -373,6 +410,19 @@ export const featuresList = {
 			"Keep the focus on your site's brand by removing the WordPress.com footer branding."
 		),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
+		plans: [ PLAN_BUSINESS ]
+	},
+
+	[ FEATURE_ADVANCED_SEO ]: {
+		getSlug: () => FEATURE_ADVANCED_SEO,
+		getTitle: () => i18n.translate( '{{strong}}Advanced{{/strong}} SEO', {
+			components: {
+				strong: <strong />
+			}
+		} ),
+		getDescription: () => i18n.translate(
+			'Adds tools to enhance your site\'s content for better results on search engines and social media.'
+		),
 		plans: [ PLAN_BUSINESS ]
 	},
 
@@ -598,6 +648,17 @@ export function getPlanClass( plan ) {
 		case PLAN_JETPACK_BUSINESS:
 		case PLAN_JETPACK_BUSINESS_MONTHLY:
 			return 'is-business-plan';
+		default:
+			return '';
+	}
+}
+
+export function getMonthlyPlanByYearly( plan ) {
+	switch ( plan ) {
+		case PLAN_JETPACK_PREMIUM:
+			return PLAN_JETPACK_PREMIUM_MONTHLY;
+		case PLAN_JETPACK_BUSINESS:
+			return PLAN_JETPACK_BUSINESS_MONTHLY;
 		default:
 			return '';
 	}

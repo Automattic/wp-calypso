@@ -37,6 +37,8 @@ function createDomainObjects( dataTransferObject ) {
 			privateDomain: domain.private_domain,
 			registrationDate: domain.registration_date,
 			registrationMoment: domain.registration_date && i18n.moment( domain.registration_date, 'MMMM D, YYYY', 'en' ).locale( false ),
+			hasZone: domain.has_zone,
+			pointsToWpcom: domain.points_to_wpcom,
 			type: getDomainType( domain )
 		};
 	} );

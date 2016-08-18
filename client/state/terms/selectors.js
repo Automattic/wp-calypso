@@ -142,3 +142,27 @@ export function getTerms( state, siteId, taxonomy ) {
 
 	return manager.getItems();
 }
+
+/**
+ * Returns a term for a site taxonomy.
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {String}  taxonomy Taxonomy slug
+ * @param  {Number}  termId   Term ID
+ * @return {?Object}         Term
+ */
+export function getTerm( state, siteId, taxonomy, termId ) {
+	const manager = get( state.terms.queries, [ siteId, taxonomy ] );
+	if ( ! manager ) {
+		return null;
+	}
+
+	const term = manager.getItem( termId );
+
+	if ( ! term ) {
+		return null;
+	}
+
+	return term;
+}

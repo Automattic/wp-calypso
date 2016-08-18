@@ -5,6 +5,7 @@
  */
 import React, { PropTypes } from 'react';
 import PureComponent from 'react-pure-render/component';
+import compact from 'lodash/compact'
 
 import {
 	firstValid,
@@ -12,8 +13,8 @@ import {
 	shortEnough
 } from '../helpers';
 
-const TITLE_LENGTH = 40;
-const DESCRIPTION_LENGTH = 300;
+const TITLE_LENGTH = 80;
+const DESCRIPTION_LENGTH = 270;
 
 const baseDomain = url =>
 	url
@@ -37,7 +38,8 @@ export class FacebookPreview extends PureComponent {
 			type,
 			title,
 			description,
-			image
+			image,
+			author
 		} = this.props;
 
 		return (
@@ -54,7 +56,7 @@ export class FacebookPreview extends PureComponent {
 							{ facebookDescription( description || '' ) }
 						</div>
 						<div className="facebook-preview__url">
-							{ baseDomain( url ) }
+							{ compact( [ baseDomain( url ), author ] ).join( ' | ' ) }
 						</div>
 					</div>
 				</div>
@@ -69,6 +71,7 @@ FacebookPreview.propTypes = {
 	title: PropTypes.string,
 	description: PropTypes.string,
 	image: PropTypes.string,
+	author: PropTypes.string
 };
 
 export default FacebookPreview;

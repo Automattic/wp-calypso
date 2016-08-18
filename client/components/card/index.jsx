@@ -4,7 +4,7 @@
  * External dependencies
  */
 import React from 'react';
-import assign from 'lodash/assign';
+import { assign, omit } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -20,7 +20,14 @@ export default React.createClass( {
 		href: React.PropTypes.string,
 		tagName: React.PropTypes.string,
 		target: React.PropTypes.string,
-		compact: React.PropTypes.bool
+		compact: React.PropTypes.bool,
+		children: React.PropTypes.node
+	},
+
+	getDefaultProps() {
+		return {
+			tagName: 'div'
+		};
 	},
 
 	render: function() {
@@ -29,19 +36,21 @@ export default React.createClass( {
 			'is-compact': this.props.compact
 		} );
 
-		let element = this.props.tagName || 'div';
+		const omitProps = [ 'compact', 'tagName' ];
+
 		let linkIndicator;
 		if ( this.props.href ) {
-			element = 'a';
 			linkIndicator = <Gridicon
 				className="card__link-indicator"
 				icon={ this.props.target ? 'external' : 'chevron-right' } />;
+		} else {
+			omitProps.push( 'href', 'target' );
 		}
 
 		return React.createElement(
-			element,
-			assign( {}, this.props, { className } ),
-			this.props.href ? linkIndicator : null,
+			this.props.href ? 'a' : this.props.tagName,
+			assign( omit( this.props, omitProps ), { className } ),
+			linkIndicator,
 			this.props.children
 		);
 	}

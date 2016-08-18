@@ -26,7 +26,7 @@ import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Gridicon from 'components/gridicon';
 import MainWrapper from './main-wrapper';
-import LiveChatButton from './live-chat-button';
+import HelpButton from './help-button';
 import {
 	confirmJetpackInstallStatus,
 	dismissUrl,
@@ -93,7 +93,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	getCurrentUrl() {
-		let url = this.refs.siteUrlInputRef.state.value;
+		let url = this.refs.siteUrlInputRef.state.value.toLowerCase();
 		if ( url && url.substr( 0, 4 ) !== 'http' ) {
 			url = 'http://' + url;
 		}
@@ -256,7 +256,7 @@ const JetpackConnectMain = React.createClass( {
 					? null
 					: <LoggedOutFormLinkItem href="/start">{ this.translate( 'Start a new site on WordPress.com' ) }</LoggedOutFormLinkItem>
 				}
-				<LiveChatButton />
+				<HelpButton />
 			</LoggedOutFormLinks>
 		);
 	},
@@ -367,7 +367,7 @@ const JetpackConnectMain = React.createClass( {
 					</div>
 				</div>
 				<LoggedOutFormLinks>
-					<LiveChatButton />
+					<HelpButton />
 				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
@@ -424,7 +424,7 @@ const JetpackConnectMain = React.createClass( {
 					</div>
 				</div>
 				<LoggedOutFormLinks>
-					<LiveChatButton />
+					<HelpButton />
 				</LoggedOutFormLinks>
 			</MainWrapper>
 		);

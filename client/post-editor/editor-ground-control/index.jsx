@@ -226,9 +226,8 @@ export default React.createClass( {
 		this.setState( { showSchedulePopover: ! this.state.showSchedulePopover } );
 	},
 
-	closeSchedulePopover: function( event ) {
-		// if `event` is defined means that popover has been canceled (ESC key)
-		if ( ! event ) {
+	closeSchedulePopover: function( wasCanceled ) {
+		if ( wasCanceled ) {
 			let date = this.props.savedPost && this.props.savedPost.date
 				? this.moment( this.props.savedPost.date )
 				: null;
@@ -265,7 +264,9 @@ export default React.createClass( {
 				isVisible={ this.state.showSchedulePopover }
 				onClose={ this.closeSchedulePopover }
 				position={ 'bottom left' }
-				context={ this.refs && this.refs.schedulePost }>
+				context={ this.refs && this.refs.schedulePost }
+				id="editor-post-schedule"
+			>
 				<span className="editor-ground-control__schedule-post">
 					{ postUtils.isPage( this.props.post )
 						? postScheduler

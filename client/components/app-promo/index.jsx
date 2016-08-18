@@ -32,6 +32,11 @@ export default React.createClass( {
 			show_promo = false;
 		}
 
+		const chromeRE = /\bCrOS\b/;
+		if ( chromeRE.test( navigator.userAgent ) ) {
+			show_promo = false;
+		}
+
 		var promo_options = [
 			{ promo_code: 'a0001', message: 'WordPress.com your way  — desktop app now available for Mac, Windows, and Linux.' },
 			{ promo_code: 'a0002', message: 'Get WordPress.com app for your desktop.' },

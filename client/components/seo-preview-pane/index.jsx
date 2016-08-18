@@ -3,14 +3,15 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import PureComponent from 'react-pure-render/component';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
 	compact,
 	find,
-	get
+	get,
+	identity
 } from 'lodash';
 
 /**
@@ -21,11 +22,13 @@ import FacebookPreview from 'components/seo/facebook-preview';
 import TwitterPreview from 'components/seo/twitter-preview';
 import SearchPreview from 'components/seo/search-preview';
 import VerticalMenu from 'components/vertical-menu';
+import PostMetadata from 'lib/post-metadata';
 import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
 import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
+import { getSeoTitle } from 'state/sites/selectors';
 import {
 	getSectionName,
 	getSelectedSite
@@ -62,6 +65,29 @@ const getPostImage = ( post ) => {
 		: null;
 };
 
+const getSeoExcerptForPost = ( post ) => {
+	if ( ! post ) {
+		return null;
+	}
+
+	return formatExcerpt( find( [
+		PostMetadata.metaDescription( post ),
+		post.excerpt,
+		post.content
+	], identity ) );
+};
+
+const getSeoExcerptForSite = ( site ) => {
+	if ( ! site ) {
+		return null;
+	}
+
+	return formatExcerpt( find( [
+		get( site, 'options.seo_meta_description' ),
+		site.description
+	], identity ) );
+};
+
 const ComingSoonMessage = translate => (
 	<div className="seo-preview-pane__message">
 		{ translate( 'Coming Soon!' ) }
@@ -75,7 +101,7 @@ const ReaderPost = ( site, post ) => {
 			siteSlug={ site.slug }
 			siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
 			postTitle={ post.title }
-			postExcerpt={ formatExcerpt( post.content ) }
+			postExcerpt={ formatExcerpt( post.excerpt || post.content ) }
 			postImage={ getPostImage( post ) }
 			postDate={ post.date }
 			authorName={ post.author.name }
@@ -85,11 +111,10 @@ const ReaderPost = ( site, post ) => {
  };
 
 const GoogleSite = site => (
-
 	<SearchPreview
 		title={ site.name }
 		url={ site.URL }
-		snippet={ formatExcerpt( site.description ) }
+		snippet={ getSeoExcerptForSite( site ) }
 	/>
 );
 
@@ -97,7 +122,7 @@ const GooglePost = ( site, post ) => (
 	<SearchPreview
 		title={ post.title }
 		url={ post.URL }
-		snippet={ formatExcerpt( post.excerpt || post.content ) }
+		snippet={ getSeoExcerptForPost( post ) }
 	/>
 );
 
@@ -106,7 +131,7 @@ const FacebookSite = site => (
 		title={ site.name }
 		url={ site.URL }
 		type="website"
-		description={ formatExcerpt( site.description ) }
+		description={ getSeoExcerptForSite( site ) }
 		image={ largeBlavatar( site ) }
 	/>
 );
@@ -116,8 +141,9 @@ const FacebookPost = ( site, post ) => (
 		title={ post.title }
 		url={ post.URL }
 		type="article"
-		description={ formatExcerpt( post.excerpt || post.content ) }
+		description={ getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
+		author={ post.author.name }
 	/>
 );
 
@@ -126,7 +152,7 @@ const TwitterSite = site => (
 		title={ site.name }
 		url={ site.URL }
 		type="summary"
-		description={ formatExcerpt( site.description ) }
+		description={ getSeoExcerptForSite( site ) }
 		image={ largeBlavatar( site ) }
 	/>
 );
@@ -136,7 +162,7 @@ const TwitterPost = ( site, post ) => (
 		title={ post.title }
 		url={ post.URL }
 		type="large_image_summary"
-		description={ formatExcerpt( post.excerpt || post.content ) }
+		description={ getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
 	/>
 );
@@ -181,10 +207,8 @@ export class SeoPreviewPane extends PureComponent {
 						</h1>
 						<p className="seo-preview-pane__description">
 							{ translate(
-								`Below you'll find previews that ` +
-								`represent how your post will look ` +
-								`when it's found or shared across a ` +
-								`variety of networks.`
+								"Below you'll find previews that represent how your post will look " +
+								"when it's found or shared across a variety of networks."
 							) }
 						</p>
 					</div>
@@ -215,11 +239,18 @@ export class SeoPreviewPane extends PureComponent {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const postId = getEditorPostId( state );
+	const post = getSitePost( state, site.ID, postId );
 	const isEditorShowing = 'post-editor' === getSectionName( state );
 
 	return {
-		site: site,
-		post: isEditorShowing && getSitePost( state, site.ID, postId )
+		site: {
+			...site,
+			name: getSeoTitle( state, 'frontPage', { site } )
+		},
+		post: isEditorShowing && {
+			...post,
+			title: getSeoTitle( state, 'posts', { site, post } )
+		}
 	};
 };
 

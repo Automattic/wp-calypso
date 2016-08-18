@@ -91,6 +91,7 @@ export default React.createClass( {
 			>
 				<Gridicon icon="trash" />
 				<Tooltip
+					className="editor-delete-post__tooltip"
 					context={ this.refs && this.refs.deletePostTooltip }
 					isVisible={ this.state.tooltip }
 					position="bottom left"
