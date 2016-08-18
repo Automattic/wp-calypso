@@ -236,7 +236,7 @@ const ThemeSheet = React.createClass( {
 					{ i18n.translate( 'Need extra help?' ) }
 					<small>{ i18n.translate( 'Get in touch with our support team' ) }</small>
 				</div>
-				<Button primary={ isPrimary } href={ getForumUrl( this.props ) }>Contact us</Button>
+				<Button primary={ isPrimary } href={ '/help/contact/' }>Contact us</Button>
 			</Card>
 		);
 	},
