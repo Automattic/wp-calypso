@@ -452,7 +452,6 @@ module.exports = React.createClass( {
 			fetchNextPage={ this.fetchNextPage }
 			getItemRef= { this.getPostRef }
 			renderItem={ this.renderPost }
-			selectedIndex={ this.props.store.getSelectedIndex() }
 			renderLoadingPlaceholders={ this.renderLoadingPlaceholders } /> );
 			showingStream = true;
 		}
