@@ -105,10 +105,7 @@ export const PreviewToolbar = props => {
 					} ) }
 					onClick={ selectSeoPreview }
 				>
-					<SocialLogo icon="wordpress" />
-					<SocialLogo icon="google" />
-					<SocialLogo icon="facebook" />
-					<SocialLogo icon="twitter" />
+					<Gridicon icon="globe" />
 				</button>
 			}
 			<div className="web-preview__toolbar-tray">
