@@ -265,14 +265,11 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderCopyPost: function() {
-		// TODO: replace with currentPostTypeSupports( 'copy' );
 		if ( 'post' !== this.props.type ) {
 			return;
 		}
 
-		return (
-			<EditorMoreOptionsCopyPost />
-		);
+		return <EditorMoreOptionsCopyPost />;
 	},
 
 	renderMoreOptions: function() {
