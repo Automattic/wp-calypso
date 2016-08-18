@@ -3,7 +3,7 @@
  */
 var debug = require( 'debug' )( 'calypso:posts' ),
 	store = require( 'store' );
-import { assign, clone, defer, fromPairs, map, pick } from 'lodash';
+import { assign, clone, defer, fromPairs } from 'lodash';
 
 /**
  * Internal dependencies
@@ -144,42 +144,6 @@ PostActions = {
 				error: error,
 				post: data
 			} );
-		} );
-	},
-
-	/**
-	 * Copy an existing post into a new draft and start keeping track of edits to it
-	 *
-	 * @param {Number} siteId Site ID to copy post from
-	 * @param {Number} postId Post ID to copy
-	 */
-	startEditingPostCopy( siteId, postId ) {
-		if ( ! siteId ) {
-			return;
-		}
-
-		wpcom.site( siteId ).post( postId ).get().then( post => {
-			this.startEditingNew( siteId, {
-				type: 'post',
-				content: post.content,
-			} );
-
-			const postAttributes = pick(
-				post,
-				'canonical_image',
-				'excerpt',
-				'featured_image',
-				'format',
-				'metadata',
-				'post_thumbnail',
-				'title'
-			);
-			postAttributes.categories = map( post.categories, 'ID' );
-			postAttributes.tags = map( post.tags, 'name' );
-
-			this.edit( postAttributes );
-		} ).catch( () => {
-			this.startEditingNew( siteId, { type: 'post' } );
 		} );
 	},
 
