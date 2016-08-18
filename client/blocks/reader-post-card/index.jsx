@@ -14,23 +14,26 @@ import FollowButton from 'reader/follow-button';
 import LikeButton from 'reader/like-button';
 import CommentButton from 'blocks/comment-button';
 import DisplayTypes from 'state/reader/posts/display-types';
+var Gridicon = require( 'components/gridicon' );
 
 function FeaturedImage( { image, href } ) {
 	return (
-		<a className="post-card__refresh-featured-image" href={ href } style={ {
-			backgroundImage: 'url(' + image.uri + ')',
-			backgroundSize: 'cover',
-			backgroundRepeat: 'no-repeat',
-			backgroundPosition: '50% 50%'
-		} } ></a> );
+		<div className="reader-post-card__featured-image">
+			<a href={ href }>
+			<img src="https://placekitten.com/600/400" />
+			</a>
+		</div> );
 }
 
-function SearchByline( { post, site, feed } ) {
+function PostByline( { post, site, feed } ) {
 	return (
-		<div className="post-card__refresh-byline ignore-click">
-			<span className="post-card__refresh-byline-item">
+		<div className="reader-post-card__meta ignore-click">
+			<span className="reader-post-card__meta-author-and-site">
 				<AuthorAndSite post={ post } site={ site } feed={ feed } showGravatar={ true } />
-				<FollowButton siteUrl={ post.site_URL } railcar={ post.railcar } />
+			</span>
+			<span className="reader-post-card__meta-timestamp-and-tag">
+				<span className="reader-post-card__meta-timestamp">1 hour ago</span>
+				<span className="reader-post-card__meta-tag">Pets</span>
 			</span>
 		</div>
 	);
@@ -43,26 +46,33 @@ export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentCl
 		length: isPhotoOnly ? 50 : 140,
 		separator: /,? +/
 	} );
-	const classes = classnames( 'post-card__refresh', {
+	const classes = classnames( 'reader-post-card', {
 		'has-thumbnail': !! featuredImage,
 		'is-photo': isPhotoOnly
 	} );
 
 	return (
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
-		{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
-			<div className="post-card__refresh-social ignore-click">
-				<CommentButton
+			<PostByline post={ post } site={ site } feed={ feed } />
+			<div className="reader-post-card__post">
+				{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
+				<div className="reader-post-card__post-details">
+					<h1 className="reader-post-card__title">
+						<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
+					</h1>
+					<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
+				</div>
+			</div>
+			<ul className="reader-post-card__social ignore-click">
+				<li className="reader-post-card__visit"><Gridicon icon="external" /></li>
+				<li><Gridicon icon="share" /></li>
+				<li><CommentButton
 					commentCount={ post.discussion.comment_count }
 					tagName="span" showLabel={ false }
-					onClick={ onCommentClick }/>
-				<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } />
-			</div>
-			<h1 className="post-card__refresh-title">
-				<a className="post-card__refresh-title-link" href={ post.URL }>{ title }</a>
-			</h1>
-			<SearchByline post={ post } site={ site } feed={ feed } />
-			<div className="post-card__refresh-excerpt">{ post.short_excerpt }</div>
+					onClick={ onCommentClick }/></li>
+				<li><LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } /></li>
+				<li><Gridicon icon="ellipsis" /></li>
+			</ul>
 		</Card>
 	);
 }
