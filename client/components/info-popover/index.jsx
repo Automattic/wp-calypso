@@ -33,6 +33,12 @@ export default React.createClass( {
 		};
 	},
 
+	componentWillReceiveProps( props ) {
+		if ( this.props.open !== props.open && props.open !== this.state.showPopover ) {
+			this.setState( { showPopover: props.open } );
+		}
+	},
+
 	getInitialState() {
 		return {
 			showPopover: false
@@ -53,7 +59,7 @@ export default React.createClass( {
 				<Gridicon icon="info-outline" size={ 18 } />
 				<Popover
 					id={ this.props.id }
-					isVisible={ this.state.showPopover || this.props.open }
+					isVisible={ this.state.showPopover }
 					context={ this.refs && this.refs.infoPopover }
 					ignoreContext={ this.props.ignoreContext }
 					position={ this.props.position }

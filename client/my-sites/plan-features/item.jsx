@@ -18,7 +18,9 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			showPopover: false
+			showPopover: false,
+			mouseOverTimeout: null,
+			mouseOver: false
 		};
 	},
 
@@ -38,10 +40,18 @@ export default React.createClass( {
 		const { description, children, className } = this.props;
 		const classes = classNames( 'plan-features__item', className );
 		let popoverBindings = {};
-		if( abtest( 'plansDescriptions' ) === 'auto' ) {
+		if ( abtest( 'plansDescriptions' ) === 'auto' ) {
 			popoverBindings = {
-				onMouseOver: () => this.setState( { showPopover: true } ),
-				onMouseOut: () => this.setState( { showPopover: false } )
+				onMouseOver: () => {
+					this.setState( { mouseOver: true, mouseOverTimeout: setTimeout( () => this.setState( {
+						showPopover: this.state.mouseOver,
+						mouseOverTimeout: null
+					} ), 150 ) } );
+				},
+				onMouseOut: () => {
+					clearTimeout( this.state.mouseOverTimeout );
+					this.setState( { showPopover: false, mouseOverTimeout: null, mouseOver: false } );
+				}
 			};
 		}
 
