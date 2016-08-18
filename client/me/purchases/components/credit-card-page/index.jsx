@@ -150,6 +150,10 @@ const CreditCardPage = React.createClass( {
 		const cardDetails = this.getCardDetails();
 
 		createPaygateToken( 'card_update', cardDetails, ( paygateError, token ) => {
+			if ( ! this._mounted ) {
+				return;
+			}
+
 			if ( paygateError ) {
 				this.setState( { formSubmitting: false } );
 				notices.error( paygateError.message );
@@ -160,13 +164,17 @@ const CreditCardPage = React.createClass( {
 
 			wpcom.updateCreditCard( apiParams, ( apiError, response ) => {
 				if ( apiError ) {
-					this.setState( { formSubmitting: false } );
+					if ( this._mounted ) {
+						this.setState( { formSubmitting: false } );
+					}
 					notices.error( apiError.message );
 					return;
 				}
 
 				if ( response.error ) {
-					this.setState( { formSubmitting: false } );
+					if ( this._mounted ) {
+						this.setState( { formSubmitting: false } );
+					}
 					notices.error( response.error );
 					return;
 				}
