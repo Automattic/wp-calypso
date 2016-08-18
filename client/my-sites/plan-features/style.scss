@@ -411,10 +411,17 @@ $plan-features-sidebar-width: 272px;
 	height: 18px;
 	margin-top: -9px;
 	color: lighten( $gray, 20% );
+	cursor: pointer;
 
-	.info-popover {
-		display: block;
-		height: 19px;
+	&:hover,
+	&:focus {
+		color: $gray-dark;
+	}
+}
+
+.popover__plan-features {
+	.popover__inner {
+		width: 200px;
 	}
 }
 
