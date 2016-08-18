@@ -23,11 +23,11 @@ function cancelPrivateRegistration( siteName, purchaseId ) {
 }
 
 function addCardDetails( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/payment/edit';
+	return managePurchase( siteName, purchaseId ) + '/payment/add';
 }
 
 function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
-	return addCardDetails( siteName, purchaseId ) + `/${ cardId }`;
+	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
 }
 
 export default {

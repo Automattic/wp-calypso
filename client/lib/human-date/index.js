@@ -14,7 +14,6 @@ module.exports = function humanDate( dateOrMoment ) {
 	}
 
 	if ( millisAgo < MILLIS_IN_MINUTE ) {
-		let seconds = Math.ceil( millisAgo / 1000 );
 		return i18n.translate( 'just now' );
 	}
 

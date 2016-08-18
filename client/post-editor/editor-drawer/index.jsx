@@ -12,7 +12,6 @@ import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
-import CategoryListData from 'components/data/category-list-data';
 import TagListData from 'components/data/tag-list-data';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
@@ -125,11 +124,9 @@ const EditorDrawer = React.createClass( {
 
 			if ( site ) {
 				categories = (
-					<CategoryListData siteId={ site.ID }>
-						<TagListData siteId={ site.ID }>
-							{ categories }
-						</TagListData>
-					</CategoryListData>
+					<TagListData siteId={ site.ID }>
+						{ categories }
+					</TagListData>
 				);
 			}
 		}

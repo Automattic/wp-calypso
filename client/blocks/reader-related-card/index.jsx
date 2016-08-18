@@ -15,22 +15,13 @@ import safeImageUrl from 'lib/safe-image-url';
 import resizeImageUrl from 'lib/resize-image-url';
 import AuthorAndSite from 'blocks/reader-author-and-site';
 
-export function SmallPostCard( { translate, post, site, onPostClick = noop, onSiteClick = noop } ) {
+/* eslint-disable no-unused-vars */
+export function SmallPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
+// onSiteClick is not being used
+/* eslint-enable no-unused-vars */
 	const classes = classnames( 'reader-related-card', {
 		'has-image': post.canonical_image
 	} );
-	const displayName = post.author.name;
-	const siteName = site && site.title || post.site_name;
-
-	const username = (
-		<span className="reader-related-card__author">
-			<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>{ displayName }</a>
-		</span>
-	);
-
-	const sitename = ( <span className="reader-related-card__site-title">
-		<a href={ `/read/blogs/${post.site_ID}` } onClick={ partial( onSiteClick, site, post ) }>{ siteName }</a>
-	</span> );
 
 	const thumbnailUrl = post.canonical_image && resizeImageUrl( safeImageUrl( post.canonical_image.uri ), { resize: '96,72' } );
 

@@ -24,12 +24,11 @@
     		}
     	}
 
-			&.is-following .follow-button__label {
-				color: $alert-green;
-			}
+		&.is-following .follow-button__label {
+			color: $alert-green;
+		}
 
 		&:hover {
-
 			.gridicon__follow {
 				fill: lighten( $gray, 10% );
 			}
@@ -38,6 +37,19 @@
 				color: lighten( $gray, 10% );
 			}
 		}
+
+        // No hover if already following
+        &.is-following {
+            &:hover {
+                .gridicon__follow {
+                    fill: $alert-green;
+                }
+
+                .follow-button__label {
+                    color: $alert-green;
+                }
+            }
+        }
     }
 }
 

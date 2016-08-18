@@ -14,7 +14,6 @@ var React = require( 'react' ),
  */
 var notices = require( 'notices' ),
 	page = require( 'page' ),
-	config = require( 'config' ),
 	CustomizerLoadingPanel = require( 'my-sites/customize/loading-panel' ),
 	EmptyContent = require( 'components/empty-content' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
@@ -156,7 +155,7 @@ var Customize = React.createClass( {
 		query.calypso = true;
 		query.calypsoOrigin = protocol + '//' + host;
 		if ( site.options && site.options.frame_nonce ) {
-			query['frame-nonce'] = site.options.frame_nonce;
+			query[ 'frame-nonce' ] = site.options.frame_nonce;
 		}
 
 		// autofocus panels
@@ -195,7 +194,7 @@ var Customize = React.createClass( {
 			return;
 		}
 		// Ensure we have a string that's JSON.parse-able
-		if ( typeof event.data !== 'string' || event.data[0] !== '{' ) {
+		if ( typeof event.data !== 'string' || event.data[ 0 ] !== '{' ) {
 			debug( 'ignoring message received from iframe with bad data', event.data );
 			return;
 		}
@@ -229,11 +228,11 @@ var Customize = React.createClass( {
 					this.setState( { iframeLoaded: true } );
 					break;
 				case 'activated':
-					themeSlug = message.theme.stylesheet.split( '/' )[1];
+					themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
 					Actions.activated( themeSlug, site, this.props.themeActivated );
 					break;
 				case 'purchased':
-					themeSlug = message.theme.stylesheet.split( '/' )[1];
+					themeSlug = message.theme.stylesheet.split( '/' )[ 1 ];
 					Actions.purchase( themeSlug, site );
 					break;
 			}
@@ -256,7 +255,7 @@ var Customize = React.createClass( {
 	},
 
 	render: function() {
-		var iframeUrl ;
+		var iframeUrl;
 
 		if ( this.state.timeoutError ) {
 			this.cancelWaitingTimer();

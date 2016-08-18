@@ -93,7 +93,7 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	getCurrentUrl() {
-		let url = this.refs.siteUrlInputRef.state.value;
+		let url = this.refs.siteUrlInputRef.state.value.toLowerCase();
 		if ( url && url.substr( 0, 4 ) !== 'http' ) {
 			url = 'http://' + url;
 		}

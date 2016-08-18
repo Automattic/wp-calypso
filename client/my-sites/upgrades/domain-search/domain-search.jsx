@@ -23,7 +23,6 @@ var observe = require( 'lib/mixins/data-observe' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	cartItems = require( 'lib/cart-values/cart-items' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
-	{ abtest } = require( 'lib/abtest' ),
 	shouldFetchSitePlans = require( 'lib/plans' ).shouldFetchSitePlans;
 
 var DomainSearch = React.createClass( {
@@ -112,7 +111,6 @@ var DomainSearch = React.createClass( {
 	removeDomain( suggestion ) {
 		this.recordEvent( 'removeDomainButtonClick', suggestion.domain_name );
 		upgradesActions.removeDomainFromCart( suggestion );
-
 	},
 
 	render: function() {

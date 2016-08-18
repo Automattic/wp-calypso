@@ -331,6 +331,18 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+.plan-features__interval-type {
+	margin-bottom: 1.4em;
+
+	&.is-placeholder {
+		height: 36px;
+
+		@include breakpoint( "<660px" ) {
+			height: auto;
+		}
+	}
+}
+
 .plan-features__header-banner {
 	box-sizing: border-box;
 	position: absolute;
@@ -361,6 +373,11 @@ $plan-features-sidebar-width: 272px;
 	@include breakpoint( "<660px" ) {
 		padding: 20px 20px 0 20px;
 	}
+}
+
+.plan-features__targeted-description-heading {
+	display: block;
+	color: lighten( $gray-dark, 25% );
 }
 
 .plan-features__item {

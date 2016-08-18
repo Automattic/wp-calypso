@@ -1,4 +1,4 @@
-/** 
+/**
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
@@ -47,8 +47,7 @@ function observeDomChanges( MutationObserver ) {
 	} );
 
 	// this is fired for matching mutations (childList and class attr changes)
-	var observer = new MutationObserver(function(mutations, observer) {
-		
+	var observer = new MutationObserver( function( mutations ) {
 		// record all the nodes that match our placeholder classes in the "activePlaceholders" array
 		mutations.forEach( recordPlaceholders );
 
@@ -56,8 +55,8 @@ function observeDomChanges( MutationObserver ) {
 		// check each node for:
 		// a. whether it's still in the DOM at all, and if so:
 		// b. whether it still has a placeholder class
-		var removed = remove( activePlaceholders, function( node ) {
-			return !OBSERVE_ROOT.contains( node ) || !isPlaceholder( node );
+		remove( activePlaceholders, function( node ) {
+			return ! OBSERVE_ROOT.contains( node ) || ! isPlaceholder( node );
 		} );
 
 		checkForVisiblePlaceholders( 'mutation' );
@@ -77,10 +76,10 @@ function observeDomChanges( MutationObserver ) {
 // has navigated
 function checkForVisiblePlaceholders( trigger ) {
 	// determine how many placeholders are active in the viewport
-	const visibleCount = activePlaceholders.reduce( 
-		function( count, node ) { 
-			return count + ( isElementVisibleInViewport( node ) ? 1 : 0 ); 
-		}, 0 
+	const visibleCount = activePlaceholders.reduce(
+		function( count, node ) {
+			return count + ( isElementVisibleInViewport( node ) ? 1 : 0 );
+		}, 0
 	);
 
 	// record event and reset timer if all placeholders are loaded OR user has just navigated
@@ -106,12 +105,12 @@ function checkForVisiblePlaceholders( trigger ) {
 
 function isPlaceholder( node ) {
 	var className = node.className;
-	return className && className.indexOf 
-		&& PLACEHOLDER_CLASSES.some( function( clazz ) { 
-			return (className.indexOf( clazz ) >= 0); 
+	return className && className.indexOf
+		&& PLACEHOLDER_CLASSES.some( function( clazz ) {
+			return (className.indexOf( clazz ) >= 0);
 		} )
 		&& !EXCLUDE_PLACEHOLDER_CLASSES.some( function( clazz ) {
-			return (className.indexOf( clazz ) >= 0); 
+			return (className.indexOf( clazz ) >= 0);
 		} );
 }
 
@@ -135,7 +134,7 @@ function isElementVisibleInViewport( node ) {
 	);
 }
 
-function recordPlaceholders( mutation ) { 
+function recordPlaceholders( mutation ) {
 	var nodes = [];
 
 	if ( mutation.attributeName === 'class' ) { // mutation.type === 'attributes' is redundant

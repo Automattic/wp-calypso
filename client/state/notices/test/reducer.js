@@ -10,7 +10,6 @@ import deepFreeze from 'deep-freeze';
 import {
 	NOTICE_CREATE,
 	NOTICE_REMOVE,
-	POST_SAVE_SUCCESS,
 	ROUTE_SET
 } from 'state/action-types';
 import { items } from '../reducer';

@@ -1970,7 +1970,7 @@ Undocumented.prototype.unregisterDevice = function( deviceId, fn ) {
  * Requests streamlined approval to WordAds program
  *
  * @param {int}       siteId            The site ID
- * @returns {XMLHttpRequest}          The XHR instance
+ * @returns {Promise}
  */
 Undocumented.prototype.wordAdsApprove = function( siteId ) {
 	debug( '/sites/:site:/wordads/approve' );
@@ -1978,16 +1978,14 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
 };
 
 /**
- * Requests the status of a guided transfer
+ * Get WordAds Status of a site.
  *
- * @param {int} siteId  The site ID
- * @returns {Promise} Resolves to the response containing the transfer status
+ * @param {int}       siteId            The site ID
+ * @returns {Promise}
  */
-Undocumented.prototype.getGuidedTransferStatus = function( siteId ) {
-	debug( '/sites/:site:/transfer' );
-	return this.wpcom.req.get( '/sites/' + siteId + '/transfer', {
-		apiNamespace: 'wpcom/v2'
-	} );
+Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
+	debug( '/sites/:site:/wordads/status' );
+	return this.wpcom.req.get( '/sites/' + siteId + '/wordads/status', fn );
 };
 
 /**

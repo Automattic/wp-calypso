@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import noop from 'lodash/noop';
+import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 
 /**
@@ -11,23 +10,28 @@ import classnames from 'classnames';
 import Popover from 'components/popover';
 import viewport from 'lib/viewport';
 
-export default React.createClass( {
+/**
+ * Module variables
+ */
+const noop = () => {};
 
-	displayName: 'Tooltip',
+class Tooltip extends Component {
+	static propTypes = {
+		autoPosition: PropTypes.bool,
+		className: PropTypes.string,
+		id: PropTypes.string,
+		isVisible: PropTypes.bool,
+		position: PropTypes.string,
+		status: PropTypes.string,
+		showDelay: PropTypes.number,
+		showOnMobile: PropTypes.bool
+	};
 
-	getDefaultProps() {
-		return {
-			position: 'top',
-			showOnMobile: false
-		};
-	},
-
-	propTypes: {
-		isVisible: React.PropTypes.bool,
-		position: React.PropTypes.string,
-		status: React.PropTypes.string,
-		showOnMobile: React.PropTypes.bool
-	},
+	static defaultProps = {
+		showDelay: 100,
+		position: 'top',
+		showOnMobile: false
+	};
 
 	render() {
 		if ( ! this.props.showOnMobile && viewport.isMobile() ) {
@@ -37,19 +41,25 @@ export default React.createClass( {
 		const classes = classnames(
 			'popover',
 			'tooltip',
-			`is-${ this.props.status }`
+			`is-${ this.props.position }`,
+			this.props.className
 		);
 
 		return (
 			<Popover
+				autoPosition= { this.props.autoPosition }
 				className={ classes }
-				isVisible={ this.props.isVisible }
 				context={ this.props.context }
+				id={ this.props.id }
+				isVisible={ this.props.isVisible }
 				onClose={ noop }
 				position={ this.props.position }
+				showDelay={ this.props.showDelay }
 			>
 				{ this.props.children }
 			</Popover>
 		);
 	}
-} );
+}
+
+export default Tooltip;

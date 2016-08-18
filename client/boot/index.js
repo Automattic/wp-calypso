@@ -1,5 +1,8 @@
 // Initialize localStorage polyfill before any dependencies are loaded
 require( 'lib/local-storage' )();
+if ( process.env.NODE_ENV === 'development' ) {
+	require( 'lib/wrap-es6-functions' )();
+}
 
 /**
  * External dependencies
@@ -25,7 +28,6 @@ var React = require( 'react' ),
 // lib/local-storage must be run before lib/user
 var config = require( 'config' ),
 	abtestModule = require( 'lib/abtest' ),
-	abtest = abtestModule.abtest,
 	getSavedVariations = abtestModule.getSavedVariations,
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	analytics = require( 'lib/analytics' ),

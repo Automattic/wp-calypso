@@ -6,7 +6,7 @@ import ReactDom from 'react-dom';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { find } from 'lodash';
+import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -220,7 +220,7 @@ export default connect(
 	( state, ownProps ) => {
 		const { taxonomy, postType } = ownProps;
 		const siteId = getSelectedSiteId( state );
-		const { labels } = getPostTypeTaxonomy( state, siteId, postType, taxonomy ) || {};
+		const labels = get( getPostTypeTaxonomy( state, siteId, postType, taxonomy ), 'labels', {} );
 
 		return {
 			terms: getTerms( state, siteId, taxonomy ),

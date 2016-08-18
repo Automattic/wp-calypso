@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	TestUtils = require( 'react-addons-test-utils' );
+import { expect } from 'chai';
+import ReactDom from 'react-dom';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
 
 /**
  * Internal dependencies
  */
-var Accordion = require( '../' );
+const Accordion = require( '../' );
 
 describe( 'index', function() {
 	require( 'react-tap-event-plugin' )();
@@ -20,7 +20,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should render as expected with a title and content', function() {
-		var tree = TestUtils.renderIntoDocument( <Accordion title="Section">Content</Accordion> ),
+		const tree = TestUtils.renderIntoDocument( <Accordion title="Section">Content</Accordion> ),
 			node = ReactDom.findDOMNode( tree );
 
 		expect( node.className ).to.equal( 'accordion' );
@@ -33,7 +33,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should accept an icon prop to be rendered as a noticon', function() {
-		var tree = TestUtils.renderIntoDocument( <Accordion title="Section" icon="time">Content</Accordion> ),
+		const tree = TestUtils.renderIntoDocument( <Accordion title="Section" icon="time">Content</Accordion> ),
 			node = ReactDom.findDOMNode( tree );
 
 		expect( node.querySelector( '.accordion__header.has-icon:not( .has-subtitle )' ) ).to.be.an.instanceof( window.Element );
@@ -41,7 +41,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should accept a subtitle prop to be rendered aside the title', function() {
-		var tree = TestUtils.renderIntoDocument( <Accordion title="Section" subtitle="Subtitle">Content</Accordion> ),
+		const tree = TestUtils.renderIntoDocument( <Accordion title="Section" subtitle="Subtitle">Content</Accordion> ),
 			node = ReactDom.findDOMNode( tree );
 
 		expect( node.querySelector( '.accordion__header.has-subtitle:not( .has-icon )' ) ).to.be.an.instanceof( window.Element );
@@ -49,7 +49,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should toggle when clicked', function() {
-		var tree = TestUtils.renderIntoDocument( <Accordion title="Section">Content</Accordion> );
+		const tree = TestUtils.renderIntoDocument( <Accordion title="Section">Content</Accordion> );
 
 		TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
 
@@ -57,7 +57,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should accept an onToggle function handler to be invoked when toggled', function( done ) {
-		var tree = TestUtils.renderIntoDocument( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
+		const tree = TestUtils.renderIntoDocument( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
 
 		TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
 
@@ -72,7 +72,9 @@ describe( 'index', function() {
 	} );
 
 	it( 'should always use the initialExpanded prop, if specified', function( done ) {
-		var tree = TestUtils.renderIntoDocument( <Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>Content</Accordion> );
+		const tree = TestUtils.renderIntoDocument(
+			<Accordion initialExpanded={ true } title="Section" onToggle={ finishTest }>Content</Accordion>
+		);
 
 		TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
 

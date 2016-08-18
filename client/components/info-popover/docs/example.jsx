@@ -41,7 +41,10 @@ var InfoPopoverExample = React.createClass( {
 
 				<br />
 
-				<InfoPopover position={ this.state.popoverPosition }>
+				<InfoPopover
+					id="popover__info-popover-example"
+					position={ this.state.popoverPosition }
+				>
 					Some informational text.
 				</InfoPopover>
 

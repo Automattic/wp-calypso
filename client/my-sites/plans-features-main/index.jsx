@@ -37,6 +37,7 @@ class PlansFeaturesMain extends Component {
 			onUpgradeClick,
 			hideFreePlan,
 			isInSignup,
+			isInJetpackConnect,
 			selectedFeature
 		} = this.props;
 
@@ -54,6 +55,9 @@ class PlansFeaturesMain extends Component {
 						selectedFeature={ selectedFeature }
 						onUpgradeClick={ onUpgradeClick }
 						isInSignup={ isInSignup }
+						isInJetpackConnect={ isInJetpackConnect }
+						intervalType={ intervalType }
+						site={ site }
 					/>
 				</div>
 			);
@@ -71,6 +75,9 @@ class PlansFeaturesMain extends Component {
 						selectedFeature={ selectedFeature }
 						onUpgradeClick={ onUpgradeClick }
 						isInSignup={ isInSignup }
+						isInJetpackConnect={ isInJetpackConnect }
+						intervalType={ intervalType }
+						site={ site }
 					/>
 				</div>
 			);
@@ -92,7 +99,10 @@ class PlansFeaturesMain extends Component {
 					plans={ plans }
 					onUpgradeClick={ onUpgradeClick }
 					isInSignup={ isInSignup }
+					isInJetpackConnect={ isInJetpackConnect }
 					selectedFeature={ selectedFeature }
+					intervalType={ intervalType }
+					site={ site }
 				/>
 			</div>
 		);
@@ -296,6 +306,7 @@ class PlansFeaturesMain extends Component {
 PlansFeaturesMain.PropTypes = {
 	site: PropTypes.object,
 	isInSignup: PropTypes.bool,
+	isInJetpackConnect: PropTypes.bool,
 	intervalType: PropTypes.string,
 	onUpgradeClick: PropTypes.func,
 	hideFreePlan: PropTypes.bool,
@@ -304,6 +315,8 @@ PlansFeaturesMain.PropTypes = {
 };
 
 PlansFeaturesMain.defaultProps = {
+	isInJetpackConnect: false,
+	intervalType: 'yearly',
 	hideFreePlan: false,
 	site: {},
 	showFAQ: true

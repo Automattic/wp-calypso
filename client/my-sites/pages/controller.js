@@ -1,8 +1,7 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
+var React = require( 'react' ),
 	i18n = require( 'i18n-calypso' );
 
 /**

@@ -50,6 +50,17 @@ module.exports = {
 		defaultVariation: 'designTypeWithoutStore',
 		allowExistingUsers: false,
 	},
+	signupStoreBenchmarking: {
+		datestamp: '20160817',
+		variations: {
+			pressable: 94,
+			bluehost: 2,
+			bluehostWithWoo: 2,
+			siteground: 2
+		},
+		defaultVariation: 'pressable',
+		allowExistingUsers: false,
+	},
 	signupThemePreview: {
 		datestamp: '20160727',
 		variations: {
@@ -76,4 +87,12 @@ module.exports = {
 		defaultVariation: 'showPopover',
 		allowExistingUsers: false,
 	},
+	plansWording: {
+		datestamp: '20160817',
+		variations: {
+			originalWording: 50,
+			targetedWording: 50
+		},
+		defaultVariation: 'originalWording'
+	}
 };

@@ -85,6 +85,7 @@
 @import 'components/payment-logo/style';
 @import 'components/plans/plan-icon/style';
 @import 'components/plans/plan-price/style';
+@import 'blocks/plan-purchase-features/style';
 @import 'components/plans/premium-popover/style';
 @import 'components/popover/style';
 @import 'components/post-excerpt/style';
@@ -203,7 +204,6 @@
 @import 'my-sites/ads/style';
 @import 'my-sites/all-sites/style';
 @import 'my-sites/all-sites-icon/style';
-@import 'my-sites/category-selector/style';
 @import 'my-sites/current-site/style';
 @import 'my-sites/customize/style';
 @import 'my-sites/domain-tip/style';
@@ -322,7 +322,6 @@
 @import 'post-editor/edit-post-status/style';
 @import 'post-editor/editor-action-bar/style';
 @import 'post-editor/editor-author/style';
-@import 'post-editor/editor-categories/style';
 @import 'post-editor/editor-delete-post/style';
 @import 'post-editor/editor-discussion/style';
 @import 'post-editor/editor-drawer/style';
