@@ -11,6 +11,7 @@ import React, { Component } from 'react';
  */
 import Button from 'components/button';
 import Card from 'components/card';
+import config from 'config';
 import CreditCardDelete from './credit-card-delete';
 import {
 	getStoredCards,
@@ -52,19 +53,29 @@ class CreditCards extends Component {
 		page( addCreditCard() );
 	}
 
+	renderAddCreditCardButton() {
+		if ( ! config.isEnabled( 'manage/payment-methods' ) ) {
+			return null;
+		}
+
+		return (
+			<Button
+				primary
+				compact
+				className="credit-cards__add"
+				onClick={ this.goToAddCreditCard }>
+				{ this.props.translate( 'Add Credit Card' ) }
+			</Button>
+		);
+	}
+
 	render() {
 		return (
 			<div className="credit-cards">
 				<QueryStoredCards />
 
 				<SectionHeader label={ this.props.translate( 'Manage Your Credit Cards' ) }>
-					<Button
-						primary
-						compact
-						className="credit-cards__add"
-						onClick={ this.goToAddCreditCard }>
-						{ this.props.translate( 'Add Credit Card' ) }
-					</Button>
+					{ this.renderAddCreditCardButton() }
 				</SectionHeader>
 
 				<Card>

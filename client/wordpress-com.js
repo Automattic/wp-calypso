@@ -206,6 +206,16 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 	} );
 }
 
+if ( config.isEnabled( 'manage/payment-methods' ) ) {
+	sections.push( {
+		name: 'payment-methods',
+		paths: [ '/payment-methods/add-credit-card' ],
+		module: 'me/payment-methods',
+		group: 'me',
+		secondary: true
+	} );
+}
+
 if ( config.isEnabled( 'reader' ) ) {
 	const readerGroup = config.isEnabled( 'reader/refresh-2016-07' ) ? 'reader-refresh' : 'reader';
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
