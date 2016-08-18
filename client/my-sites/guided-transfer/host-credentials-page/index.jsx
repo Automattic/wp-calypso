@@ -3,13 +3,22 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 
 /**
  * Internal dependencies
  */
 import Bluehost from './bluehost';
 import SiteGround from './siteground';
+
 import SectionHeader from 'components/section-header';
+import {
+	saveHostDetails,
+} from 'state/sites/guided-transfer/actions';
+import {
+	isGuidedTransferSavingHostDetails,
+} from 'state/sites/guided-transfer/selectors';
 
 class HostCredentialsPage extends Component {
 	static propTypes = {
@@ -30,7 +39,7 @@ class HostCredentialsPage extends Component {
 	}
 
 	submit = () => {
-		// Future PR: This function will trigger the Redux API call
+		this.props.submit( this.state.fieldValues );
 	}
 
 	getHostForm() {
@@ -61,4 +70,14 @@ class HostCredentialsPage extends Component {
 	}
 }
 
-export default localize( HostCredentialsPage );
+const mapStateToProps = ( state, { siteId } ) => ( {
+	isSaving: isGuidedTransferSavingHostDetails( state, siteId ),
+} );
+
+const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
+	submit: data => dispatch( saveHostDetails( siteId, data ) ),
+} );
+
+export default localize(
+	connect( mapStateToProps, mapDispatchToProps )( HostCredentialsPage )
+);

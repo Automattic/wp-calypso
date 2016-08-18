@@ -8,9 +8,10 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	getGuidedTransferIssue,
 	isGuidedTransferAvailableForAllSites,
 	isRequestingGuidedTransferStatus,
-	getGuidedTransferIssue,
+	isGuidedTransferSavingHostDetails,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -105,7 +106,6 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-
 	describe( '#isGuidedTransferAvailableForAllSites()', () => {
 		it( 'should return false when unavailable', () => {
 			const state = deepFreeze( {
@@ -147,6 +147,48 @@ describe( 'selectors', () => {
 				} } }
 			} );
 			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.true;
+
+	describe( '#isGuidedTransferSavingHostDetails()', () => {
+		it( 'should return false for default state {}', () => {
+			const state = deepFreeze( {
+				sites: {
+					guidedTransfer: {
+						isSaving: {},
+					}
+				}
+			} );
+
+			expect( isGuidedTransferSavingHostDetails( state, testSiteId ) ).to.be.false;
+		} );
+
+		it( 'should return true when a request is underway', () => {
+			const state = deepFreeze( {
+				sites: {
+					guidedTransfer: {
+						isSaving: {
+							1: false,
+							[ testSiteId ]: true,
+						},
+					}
+				}
+			} );
+
+			expect( isGuidedTransferSavingHostDetails( state, testSiteId ) ).to.be.true;
+		} );
+
+		it( 'should return false when a isFetching is false', () => {
+			const state = deepFreeze( {
+				sites: {
+					guidedTransfer: {
+						isSaving: {
+							1: true,
+							[ testSiteId ]: false,
+						},
+					}
+				}
+			} );
+
+			expect( isGuidedTransferSavingHostDetails( state, testSiteId ) ).to.be.false;
 		} );
 	} );
 } );
