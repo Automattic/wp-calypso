@@ -1,33 +1,25 @@
 /**
  * External Dependencies
  */
-import page from 'page';
-import React from 'react';
+import React, { PropTypes } from 'react';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
 import camelCase from 'lodash/camelCase';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardForm from 'components/upgrades/credit-card-form';
 import CountriesList from 'lib/countries-list';
-import CreditCardPageLoadingPlaceholder from './loading-placeholder';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
 import forOwn from 'lodash/forOwn';
 import HeaderCake from 'components/header-cake' ;
-import { getPurchase, goToManagePurchase, isDataLoading, recordPageView } from 'me/purchases/utils';
 import kebabCase from 'lodash/kebabCase';
 import Main from 'components/main';
 import mapKeys from 'lodash/mapKeys';
 import notices from 'notices';
-import paths from 'me/purchases/paths';
-import QueryStoredCards from 'components/data/query-stored-cards';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import userFactory from 'lib/user';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
 import wpcomFactory from 'lib/wp';
@@ -35,21 +27,16 @@ import Gridicon from 'components/gridicon';
 import support from 'lib/url/support';
 
 const countriesList = CountriesList.forPayments();
-const user = userFactory();
 const wpcom = wpcomFactory.undocumented();
 
 const CreditCardPage = React.createClass( {
 	propTypes: {
-		card: React.PropTypes.object,
-		clearPurchases: React.PropTypes.func.isRequired,
-		hasLoadedSites: React.PropTypes.bool.isRequired,
-		hasLoadedStoredCardsFromServer: React.PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: React.PropTypes.bool.isRequired,
-		selectedPurchase: React.PropTypes.object,
-		selectedSite: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ),
+		apiParams: PropTypes.object,
+		goBack: PropTypes.func.isRequired,
+		initialValues: PropTypes.object,
+		recordFormSubmitEvent: PropTypes.func.isRequired,
+		successCallback: PropTypes.func.isRequired,
+		title: PropTypes.string.isRequired
 	},
 
 	getInitialState() {
@@ -73,14 +60,11 @@ const CreditCardPage = React.createClass( {
 
 	componentWillMount() {
 		this._mounted = true;
-		this.redirectIfDataIsInvalid();
-
-		recordPageView( 'edit_card_details', this.props );
 
 		const fields = formState.createNullFieldValues( this.fieldNames );
 
-		if ( this.props.card ) {
-			fields.name = this.props.card.name;
+		if ( this.props.initialValues ) {
+			fields.name = this.props.initialValues.name;
 		}
 
 		this.formStateController = formState.Controller( {
@@ -92,19 +76,6 @@ const CreditCardPage = React.createClass( {
 		this.setState( {
 			form: this.formStateController.getInitialState()
 		} );
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		this.redirectIfDataIsInvalid( nextProps );
-
-		recordPageView( 'edit_card_details', this.props, nextProps );
-
-		if ( ! this.props.hasLoadedStoredCardsFromServer && nextProps.hasLoadedStoredCardsFromServer && nextProps.card ) {
-			this.formStateController.handleFieldChange( {
-				name: 'name',
-				value: nextProps.card.name
-			} );
-		}
 	},
 
 	componentWillUnmount() {
@@ -169,34 +140,41 @@ const CreditCardPage = React.createClass( {
 				return;
 			}
 
-			this.updateCreditCard();
+			this.props.recordFormSubmitEvent();
+
+			this.saveCreditCard();
 		} );
 	},
 
-	updateCreditCard() {
+	saveCreditCard() {
 		const cardDetails = this.getCardDetails();
 
-		analytics.tracks.recordEvent(
-			'calypso_purchases_credit_card_form_submit',
-			{ product_slug: getPurchase( this.props ).productSlug }
-		);
-
 		createPaygateToken( 'card_update', cardDetails, ( paygateError, token ) => {
+			if ( ! this._mounted ) {
+				return;
+			}
+
 			if ( paygateError ) {
 				this.setState( { formSubmitting: false } );
 				notices.error( paygateError.message );
 				return;
 			}
 
-			wpcom.updateCreditCard( this.getParamsForApi( token ), ( apiError, response ) => {
+			const apiParams = this.getParamsForApi( cardDetails, token, this.props.apiParams );
+
+			wpcom.updateCreditCard( apiParams, ( apiError, response ) => {
 				if ( apiError ) {
-					this.setState( { formSubmitting: false } );
+					if ( this._mounted ) {
+						this.setState( { formSubmitting: false } );
+					}
 					notices.error( apiError.message );
 					return;
 				}
 
 				if ( response.error ) {
-					this.setState( { formSubmitting: false } );
+					if ( this._mounted ) {
+						this.setState( { formSubmitting: false } );
+					}
 					notices.error( response.error );
 					return;
 				}
@@ -205,44 +183,21 @@ const CreditCardPage = React.createClass( {
 					persistent: true
 				} );
 
-				const { id } = getPurchase( this.props );
-
-				this.props.clearPurchases();
-
-				page( paths.managePurchase( this.props.selectedSite.slug, id ) );
+				this.props.successCallback();
 			} );
 		} );
 	},
 
-	getParamsForApi( token ) {
-		const cardDetails = this.getCardDetails();
-
+	getParamsForApi( cardDetails, token, extraParams = {} ) {
 		return {
+			...extraParams,
 			country: cardDetails.country,
 			zip: cardDetails[ 'postal-code' ],
 			month: cardDetails[ 'expiration-date' ].split( '/' )[ 0 ],
 			year: cardDetails[ 'expiration-date' ].split( '/' )[ 1 ],
 			name: cardDetails.name,
-			paygateToken: token,
-			purchaseId: getPurchase( this.props ).id
+			paygateToken: token
 		};
-	},
-
-	redirectIfDataIsInvalid( props = this.props ) {
-		if ( ! this.isDataValid( props ) ) {
-			page( paths.list() );
-		}
-	},
-
-	isDataValid( props = this.props ) {
-		if ( isDataLoading( props ) ) {
-			return true;
-		}
-
-		const purchase = getPurchase( props ),
-			{ selectedSite } = props;
-
-		return purchase && selectedSite;
 	},
 
 	isFieldInvalid( name ) {
@@ -265,26 +220,10 @@ const CreditCardPage = React.createClass( {
 		} );
 	},
 
-	goToManagePurchase() {
-		goToManagePurchase( this.props );
-	},
-
 	render() {
-		if ( isDataLoading( this.props ) || ! this.props.hasLoadedStoredCardsFromServer ) {
-			return (
-				<Main className="credit-card-page">
-					<QueryStoredCards />
-
-					<QueryUserPurchases userId={ user.get().ID } />
-
-					<CreditCardPageLoadingPlaceholder title={ this.props.title } />
-				</Main>
-			);
-		}
-
 		return (
 			<Main className="credit-card-page">
-				<HeaderCake onClick={ this.goToManagePurchase }>{ this.props.title }</HeaderCake>
+				<HeaderCake onClick={ this.props.goBack }>{ this.props.title }</HeaderCake>
 
 				<form onSubmit={ this.onSubmit }>
 					<Card className="credit-card-page__content">
