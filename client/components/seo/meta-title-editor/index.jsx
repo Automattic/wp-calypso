@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import {
 	difference,
 	findKey,
@@ -23,8 +22,6 @@ import {
  */
 import SegmentedControl from 'components/segmented-control';
 import TokenField from 'components/token-field';
-import { getSeoTitleFormats } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 
 import { removeBlanks } from './mappings';
@@ -73,10 +70,7 @@ export class MetaTitleEditor extends Component {
 	constructor( props ) {
 		super( props );
 
-		const { titleFormats } = props;
-
 		this.state = {
-			titleFormats,
 			type: 'frontPage'
 		};
 
@@ -84,36 +78,25 @@ export class MetaTitleEditor extends Component {
 		this.updateTitleFormat = this.updateTitleFormat.bind( this );
 	}
 
-	componentWillUpdate( nextProps ) {
-		const { siteId: prevSiteId } = this.props;
-		const { siteId: nextSiteId, titleFormats } = nextProps;
-
-		if ( nextSiteId !== prevSiteId ) {
-			// Clear all local changes when switching
-			// sites to get the new site's data
-			this.setState( { titleFormats } );
-		}
-	}
-
 	switchType( { value: type } ) {
 		this.setState( { type } );
 	}
 
 	updateTitleFormat( values ) {
-		const { onChange, translate } = this.props;
+		const { onChange, translate, titleFormats } = this.props;
 		const { type } = this.state;
 
 		const tokens = removeBlanks( map( values, tokenize( translate ) ) );
 
-		this.setState( { titleFormats: {
-			...this.state.titleFormats,
+		onChange( {
+			...titleFormats,
 			[ type ]: tokens
-		} }, () => onChange( this.state.titleFormats ) );
+		} );
 	}
 
 	render() {
-		const { disabled, translate } = this.props;
-		const { type, titleFormats } = this.state;
+		const { disabled, translate, titleFormats } = this.props;
+		const { type } = this.state;
 
 		const validTokens = getValidTokens( translate );
 
@@ -150,7 +133,8 @@ export class MetaTitleEditor extends Component {
 
 MetaTitleEditor.propTypes = {
 	disabled: PropTypes.bool,
-	onChange: PropTypes.func
+	onChange: PropTypes.func,
+	titleFormats: PropTypes.object.isRequired
 };
 
 MetaTitleEditor.defaultProps = {
@@ -159,9 +143,4 @@ MetaTitleEditor.defaultProps = {
 	translate: identity
 };
 
-const mapStateToProps = state => ( {
-	siteId: getSelectedSiteId( state ),
-	titleFormats: getSeoTitleFormats( state, getSelectedSiteId( state ) )
-} );
-
-export default connect( mapStateToProps )( localize( MetaTitleEditor ) );
+export default localize( MetaTitleEditor );
