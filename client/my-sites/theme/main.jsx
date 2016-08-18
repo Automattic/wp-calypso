@@ -466,7 +466,18 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const backPath = getBackPath( state );
-		return { selectedSite, siteSlug, backPath };
+
+		// TODO:
+		// Connect these two to the real state value
+		const hasLoadedUserPurchasesFromServer = true;
+		const isCurrentUserPaid = true;
+		return {
+			selectedSite,
+			siteSlug,
+			backPath,
+			hasLoadedUserPurchasesFromServer,
+			isCurrentUserPaid,
+		};
 	},
 	bindDefaultOptionToDispatch,
 	mergeProps
