@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 // Internal dependencies
-import { getPurchases, getByPurchaseId, isFetchingUserPurchases, isFetchingSitePurchases, getIncludedDomainPurchase, getSitePurchases } from '../selectors';
+import { getPurchases, getByPurchaseId, isFetchingUserPurchases, isFetchingSitePurchases, getIncludedDomainPurchase, getSitePurchases, isUserPaid, getUserPurchases } from '../selectors';
 import purchasesAssembler from 'lib/purchases/assembler';
 
 describe( 'selectors', () => {
@@ -203,6 +203,74 @@ describe( 'selectors', () => {
 			const subscriptionPurchase = getPurchases( state ).find( purchase => purchase.productSlug === 'value_bundle' );
 
 			expect( getIncludedDomainPurchase( state, subscriptionPurchase ).meta ).to.equal( 'dev.live' );
+		} );
+	} );
+
+	describe( 'isUserPaid', () => {
+		const targetUserId = 123;
+		const examplePurchases = Object.freeze( [
+			{ ID: 1, product_name: 'domain registration', blog_id: 1337, user_id: targetUserId, },
+			{ ID: 2, product_name: 'premium plan', blog_id: 1337, user_id: targetUserId, },
+		] );
+
+		it( 'should return false because there is no purchases', () => {
+			const state = {
+				purchases: {
+					data: [],
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true,
+				}
+			};
+
+			expect( isUserPaid( state, targetUserId ) ).to.be.false;
+		} );
+
+		it( 'should return true because there are purchases from the target user', () => {
+			const state = {
+				purchases: {
+					data: examplePurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true,
+				}
+			};
+
+			expect( isUserPaid( state, targetUserId ) ).to.be.true;
+		} );
+
+		it( 'should return false because there are no purchases from this user', () => {
+			const state = {
+				purchases: {
+					data: examplePurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: true,
+				}
+			};
+
+			expect( isUserPaid( state, 65535 ) ).to.be.false;
+		} );
+
+		it( 'should return false because the data is not ready.', () => {
+			const state = {
+				purchases: {
+					data: examplePurchases,
+					error: null,
+					isFetchingSitePurchases: false,
+					isFetchingUserPurchases: false,
+					hasLoadedSitePurchasesFromServer: false,
+					hasLoadedUserPurchasesFromServer: false,
+				}
+			};
+
+			expect( isUserPaid( state, targetUserId ) ).to.be.false;
 		} );
 	} );
 } );
