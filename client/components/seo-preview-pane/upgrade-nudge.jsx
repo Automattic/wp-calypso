@@ -3,10 +3,9 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { compact, noop } from 'lodash';
 import page from 'page';
 
 /**
@@ -15,9 +14,6 @@ import page from 'page';
 import FeatureComparison from 'my-sites/feature-comparison';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
-import { getEditorPostId } from 'state/ui/editor/selectors';
-import { getSitePost } from 'state/posts/selectors';
-import { getSectionName, getSelectedSite } from 'state/ui/selectors';
 import { getFeatureTitle, planHasFeature, getPlan } from 'lib/plans';
 import {
 	PLAN_BUSINESS,
@@ -38,7 +34,7 @@ const featuresToShow = [
 	FEATURE_VIDEO_UPLOADS
 ];
 
-const AdvancedSEOUpgradeNudge = ( { translate, site, post } ) => {
+const AdvancedSEOUpgradeNudge = ( { translate, site } ) => {
 	// <div className="seo-preview-nudge__upgrade">
 	// 	<UpgradeNudge
 	// 		title={ translate( 'Advanced SEO' ) }
@@ -99,15 +95,4 @@ const AdvancedSEOUpgradeNudge = ( { translate, site, post } ) => {
 	);
 }
 
-const mapStateToProps = state => {
-	const site = getSelectedSite( state );
-	const postId = getEditorPostId( state );
-	const isEditorShowing = 'post-editor' === getSectionName( state );
-
-	return {
-		site,
-		post: isEditorShowing && getSitePost( state, site.ID, postId )
-	};
-};
-
-export default connect( mapStateToProps )( localize( AdvancedSEOUpgradeNudge ) );
+export default connect()( localize( AdvancedSEOUpgradeNudge ) );

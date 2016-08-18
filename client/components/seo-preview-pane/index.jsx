@@ -204,7 +204,7 @@ export class SeoPreviewPane extends PureComponent {
 
 		if ( showNudge ) {
 			return (
-				<UpgradeNudge />
+				<UpgradeNudge { ...{ site } } />
 			);
 		}
 
