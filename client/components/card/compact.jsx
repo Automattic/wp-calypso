@@ -12,7 +12,7 @@ import classnames from 'classnames';
  */
 import Card from 'components/card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'CompactCard',
 
 	render: function() {
