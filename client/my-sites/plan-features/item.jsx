@@ -2,38 +2,45 @@
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import InfoPopover from 'components/info-popover';
 
-export default function PlanFeaturesItem( { description, children, className } ) {
-	const renderTipinfo = () => {
-		if ( ! description ) {
-			return null;
-		}
-
-		return (
-			<div className="plan-features__item-tip-info">
-				<InfoPopover
-					position="right"
-				>
-					{ description }
-				</InfoPopover>
-			</div>
-		);
+export default function PlanFeaturesItem( {
+	children,
+	description,
+	onMouseEnter,
+	onMouseLeave,
+	onTouchStart,
+} ) {
+	const handleOnTouchStart = ( event ) => {
+		onTouchStart( event.currentTarget, description );
 	};
 
-	const classes = classNames( 'plan-features__item', className );
+	const handleOnMouseEvent = ( event ) => {
+		onMouseEnter( event.currentTarget, description );
+	};
+
+	const handleOnMouseLeave = ( event ) => {
+		onMouseLeave( event.currentTarget, description );
+	};
 
 	return (
-		<div className={ classes }>
-			<Gridicon className="plan-features__item-checkmark" size={ 18 } icon="checkmark" />
+		<div className="plan-features__item">
+			<Gridicon
+				className="plan-features__item-checkmark"
+				size={ 18 } icon="checkmark" />
 			{ children }
-			{ renderTipinfo() }
+			<span
+				onMouseEnter={ handleOnMouseEvent }
+				onMouseLeave={ handleOnMouseLeave }
+				onTouchStart={ handleOnTouchStart }
+				className="plan-features__item-tip-info"
+			>
+				<Gridicon icon="info-outline" size={ 18 } />
+			</span>
 		</div>
 	);
 }

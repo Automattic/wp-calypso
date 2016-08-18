@@ -13,6 +13,7 @@ import { localize } from 'i18n-calypso';
  */
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
+import Popover from 'components/popover';
 import PlanFeaturesActions from './actions';
 import { isCurrentPlanPaid, isCurrentSitePlan } from 'state/sites/selectors';
 import { getPlansBySiteId } from 'state/sites/plans/selectors';
@@ -46,6 +47,24 @@ import { recordTracksEvent } from 'state/analytics/actions';
 
 class PlanFeatures extends Component {
 
+	static getFeaturePopoverHiddenState() {
+		return {
+			showPopover: false,
+			popoverReference: null,
+			popoverDescription: ''
+		};
+	}
+
+	constructor() {
+		super();
+
+		this.state = PlanFeatures.getFeaturePopoverHiddenState();
+
+		this.closeFeaturePopover = this.closeFeaturePopover.bind( this );
+		this.showFeaturePopover = this.showFeaturePopover.bind( this );
+		this.swapFeaturePopover = this.swapFeaturePopover.bind( this );
+	}
+
 	render() {
 		const { planProperties } = this.props;
 
@@ -74,6 +93,8 @@ class PlanFeatures extends Component {
 						</tr>
 					</tbody>
 				</table>
+
+				{ this.renderFeaturePopover() }
 			</div>
 		);
 	}
@@ -153,15 +174,7 @@ class PlanFeatures extends Component {
 
 	renderMobileFeatures( features ) {
 		return map( features, ( currentFeature, index ) => {
-			return (
-				<PlanFeaturesItem key={ index } description={
-					currentFeature.getDescription
-						? currentFeature.getDescription()
-						: null
-				}>
-					{ currentFeature.getTitle() }
-				</PlanFeaturesItem>
-			);
+			return this.renderFeatureItem( currentFeature, index );
 		} );
 	}
 
@@ -288,6 +301,62 @@ class PlanFeatures extends Component {
 		} );
 	}
 
+	renderFeaturePopover() {
+		return (
+			<Popover
+				showDelay={ 100 }
+				id="popover__plan-features"
+				isVisible={ this.state.showPopover }
+				context={ this.state.popoverReference }
+				position="right"
+				onClose={ this.closeFeaturePopover }
+				className={ classNames(
+						'info-popover__tooltip',
+						'popover__plan-features'
+					) }
+				>
+					{ this.state.popoverDescription }
+			</Popover>
+		);
+	}
+
+	renderFeatureItem( feature, index ) {
+		return (
+			<PlanFeaturesItem
+				key={ index }
+				description={ feature.getDescription
+					? feature.getDescription()
+					: null
+				}
+				onMouseEnter={ this.showFeaturePopover }
+				onMouseLeave={ this.closeFeaturePopover }
+				onTouchStart={ this.swapFeaturePopover }
+			>
+				{ feature.getTitle() }
+			</PlanFeaturesItem>
+		);
+	}
+
+	showFeaturePopover( el, popoverDescription ) {
+		this.setState( {
+			showPopover: true,
+			popoverDescription,
+			popoverReference: el
+		} );
+	}
+
+	closeFeaturePopover() {
+		this.setState( PlanFeatures.getFeaturePopoverHiddenState() );
+	}
+
+	swapFeaturePopover( el, popoverDescription ) {
+		if ( this.state.showPopover ) {
+			this.closeFeaturePopover();
+		} else {
+			this.showFeaturePopover( el, popoverDescription );
+		}
+	}
+
 	renderPlanFeatureColumns( rowIndex ) {
 		const {
 			planProperties,
@@ -313,13 +382,7 @@ class PlanFeatures extends Component {
 			return (
 				currentFeature
 					? <td key={ `${ planName }-${ key }` } className={ classes }>
-						<PlanFeaturesItem description={
-											currentFeature.getDescription
-												? currentFeature.getDescription()
-												: null
-										}>
-							{ currentFeature.getTitle() }
-						</PlanFeaturesItem>
+						{ this.renderFeatureItem( currentFeature ) }
 					</td>
 					: <td key={ `${ planName }-none` } className="plan-features__table-item"></td>
 			);
@@ -443,3 +506,4 @@ export default connect(
 		recordTracksEvent
 	}
 )( localize( PlanFeatures ) );
+
