@@ -44,12 +44,16 @@ import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 import RelatedPostCard from 'blocks/reader-related-card/docs/example';
 import RelatedPostCardv2 from 'blocks/reader-related-card-v2/docs/example';
 import SearchPostCard from 'blocks/reader-search-card/docs/example';
+<<<<<<< b9451ff79b48bcd64361d5db989469caf98ee417
 import PlanPrice from 'my-sites/plan-price/docs/example';
 import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
 import DismissibleCard from 'blocks/dismissible-card/docs/example';
 import PostEditButton from 'blocks/post-edit-button/docs/example';
 import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge/docs/example';
+import RefreshPostCard from 'blocks/reader-post-card/docs/example';
+import PlanPurchaseFeaturesExample from 'blocks/plan-purchase-features/docs/example';
+import RefreshPostCard from 'blocks/reader-post-card/docs/example';
 
 export default React.createClass( {
 
@@ -120,6 +124,8 @@ export default React.createClass( {
 					<DismissibleCard />
 					<ReaderAvatar />
 					<DomainToPlanNudge />
+					<RefreshPostCard />
+					<PlanPurchaseFeaturesExample />
 				</Collection>
 			</Main>
 		);
