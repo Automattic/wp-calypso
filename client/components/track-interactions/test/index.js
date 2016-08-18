@@ -73,11 +73,7 @@ describe( 'TrackInteractions', () => {
 		it( 'dispatches relevant properties from the component', () => {
 			TestUtils.Simulate.click( node );
 			const dispatched = store.dispatch.getCall( 0 ).args[ 0 ];
-			expect( Object.keys( dispatched ).sort() ).to.eql( [
-				'component',
-				'eventType',
-				'type',
-			] );
+			expect( dispatched ).to.have.all.keys( 'type', 'eventType', 'component' );
 		} );
 	} );
 
@@ -116,12 +112,7 @@ describe( 'TrackInteractions', () => {
 		it( 'dispatches relevant properties from the component', () => {
 			TestUtils.Simulate.click( node );
 			const dispatched = store.dispatch.getCall( 0 ).args[ 0 ];
-			expect( Object.keys( dispatched ).sort() ).to.eql( [
-				'component',
-				'eventType',
-				'fooId',
-				'type',
-			] );
+			expect( dispatched ).to.have.all.keys( 'type', 'eventType', 'component', 'fooId' );
 			expect( dispatched.fooId ).to.equal( 42 );
 		} );
 	} );
@@ -161,12 +152,7 @@ describe( 'TrackInteractions', () => {
 		it( 'dispatches relevant properties from the component', () => {
 			TestUtils.Simulate.click( node );
 			const dispatched = store.dispatch.getCall( 0 ).args[ 0 ];
-			expect( Object.keys( dispatched ).sort() ).to.eql( [
-				'component',
-				'eventType',
-				'foo.id',
-				'type',
-			] );
+			expect( dispatched ).to.have.all.keys( 'type', 'eventType', 'component', 'foo.id' );
 			expect( dispatched[ 'foo.id' ] ).to.equal( 42 );
 		} );
 	} );
