@@ -62,7 +62,11 @@ const JetpackSSOForm = React.createClass( {
 		if ( nextProps.ssoUrl && ! this.props.ssoUrl ) {
 			// After receiving the SSO URL, which will log the user in on remote site,
 			// we redirect user to remote site to be logged in.
-			const redirect = nextProps.ssoUrl;
+			//
+			// Note: We add `calypso_env` so that when we are redirected back to Calypso,
+			// we land in the same development environment.
+			const configEnv = config( 'env_id' ) || process.env.NODE_ENV;
+			const redirect = addQueryArgs( { calypso_env: configEnv }, nextProps.ssoUrl );
 			debug( 'Redirecting to: ' + redirect );
 			window.location.href = redirect;
 		}
