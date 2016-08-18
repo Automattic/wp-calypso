@@ -30,6 +30,7 @@ class Bluehost extends Component {
 			translate,
 			fieldValues,
 			onFieldChange,
+			isSubmitting,
 		} = this.props;
 
 		return (
@@ -45,11 +46,13 @@ class Bluehost extends Component {
 							value={ fieldValues.username }
 							onChange={ onFieldChange( 'username' ) }
 							hostLabel={ hostInfo.label }
+							disabled={ isSubmitting }
 						/>
 						<Password
 							value={ fieldValues.password }
 							onChange={ onFieldChange( 'password' ) }
 							hostLabel={ hostInfo.label }
+							disabled={ isSubmitting }
 						/>
 					</div>
 					<CreateAccountTip
@@ -59,9 +62,13 @@ class Bluehost extends Component {
 					<WPOrgURL
 						value={ fieldValues.wporg_url }
 						onChange={ onFieldChange( 'wporg_url' ) }
+						disabled={ isSubmitting }
 					/>
 				</CompactCard>
-				<SubmitSection submit={ this.props.submit } />
+				<SubmitSection
+					submit={ this.props.submit }
+					isSubmitting={ isSubmitting }
+				/>
 			</div>
 		);
 	}

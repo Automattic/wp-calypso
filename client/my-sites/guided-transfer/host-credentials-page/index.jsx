@@ -45,9 +45,12 @@ class HostCredentialsPage extends Component {
 	getHostForm() {
 		const props = {
 			onFieldChange: this.onFieldChange,
+
 			fieldValues: this.state.fieldValues,
-			submit: this.submit,
 			hostInfo: this.props.hostInfo,
+
+			submit: this.submit,
+			isSubmitting: this.props.isSubmitting,
 		};
 
 		switch ( this.props.hostSlug ) {
@@ -71,7 +74,7 @@ class HostCredentialsPage extends Component {
 }
 
 const mapStateToProps = ( state, { siteId } ) => ( {
-	isSaving: isGuidedTransferSavingHostDetails( state, siteId ),
+	isSubmitting: isGuidedTransferSavingHostDetails( state, siteId ),
 } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
