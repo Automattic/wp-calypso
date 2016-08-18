@@ -50,6 +50,9 @@ import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import { withoutHttp } from 'lib/url';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import ExternalLink from 'components/external-link';
+import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
 
 /**
  * Constants
@@ -208,8 +211,7 @@ const LoggedInForm = React.createClass( {
 			isActivating,
 			queryObject,
 			isRedirectingToWpAdmin,
-			authorizeSuccess,
-			authorizationCode
+			authorizeSuccess
 		} = props.jetpackConnectAuthorize;
 
 		// SSO specific logic here.
@@ -219,8 +221,6 @@ const LoggedInForm = React.createClass( {
 			}
 		} else if ( siteReceived && ! isActivating ) {
 			this.activateManage();
-		} else if ( props.requestHasXmlrpcError() && ! isRedirectingToWpAdmin ) {
-			this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
 		}
 	},
 
@@ -293,6 +293,43 @@ const LoggedInForm = React.createClass( {
 		return ( ! this.props.isAlreadyOnSitesList && ( isAuthorizing || isActivating ) );
 	},
 
+	handleResolve() {
+		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
+		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
+	},
+
+	renderErrorDetails() {
+		const { authorizeError } = this.props.jetpackConnectAuthorize;
+		return (
+			<div className="jetpack-connect__error-notice">
+				<p>
+					{ this.translate( 'You may be able to resolve this by completing the connection on your site. ' ) }
+					<ExternalLink
+						icon={ true }
+						onClick={ this.handleResolve }
+						className="jetpack-connect__resolve-button"
+						target="_blank"
+					>
+						{ this.translate( 'Resolve' ) }
+					</ExternalLink>
+				</p>
+				<p>
+					{ this.translate( 'If that does not work, {{link}}contact support{{/link}}',
+						{
+							components: {
+								link: <ExternalLink icon={ true } href="https://jetpack.com/contact-support" target="_blank" />
+							}
+						}
+					) }
+				</p>
+				<FormLabel>{ this.translate( 'Error Details' ) }</FormLabel>
+				<FormSettingExplanation>
+					{ authorizeError.message }
+				</FormSettingExplanation>
+			</div>
+		);
+	},
+
 	renderNotices() {
 		const { authorizeError, queryObject } = this.props.jetpackConnectAuthorize;
 		if ( queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
@@ -308,7 +345,12 @@ const LoggedInForm = React.createClass( {
 		if ( authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
 		}
-		return <JetpackConnectNotices noticeType="authorizeError" />;
+		return (
+			<div>
+				<JetpackConnectNotices noticeType="authorizeError" />
+				{ this.renderErrorDetails() }
+			</div>
+		);
 	},
 
 	getButtonText() {
@@ -349,10 +391,6 @@ const LoggedInForm = React.createClass( {
 
 		if ( this.props.isAlreadyOnSitesList ) {
 			return this.translate( 'Return to your site' );
-		}
-
-		if ( this.props.requestHasXmlrpcError() ) {
-			return this.translate( 'Redirecting' );
 		}
 
 		return this.translate( 'Approve' );
@@ -473,11 +511,13 @@ const LoggedInForm = React.createClass( {
 
 	renderStateAction() {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
+		if ( this.props.requestHasXmlrpcError() ) {
+			return null;
+		}
 		if (
 			this.props.isFetchingSites() ||
 			this.isAuthorizing() ||
-			( authorizeSuccess && ! siteReceived ) ||
-			this.props.requestHasXmlrpcError()
+			( authorizeSuccess && ! siteReceived )
 		) {
 			return (
 				<div className="jetpack-connect__logged-in-form-loading">
