@@ -114,7 +114,9 @@ export class Step extends Component {
 		this.scrollContainer = query( props.scrollContainer )[ 0 ] || global.window;
 
 		// FIXME(mcsf): works but nasty
+		console.log( 'setting this.section', this.section );
 		this.section = this.pathToSection( location.pathname );
+		console.log( 'done setting this.section', this.section );
 	}
 
 	componentWillMount() {
@@ -139,6 +141,7 @@ export class Step extends Component {
 	}
 
 	componentWillUnmount() {
+		console.log( 'Step.componentWillUnmount' );
 		global.window.removeEventListener( 'resize', this.onScrollOrResize );
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 
@@ -169,6 +172,7 @@ export class Step extends Component {
 		console.log( 'lastAction.type', lastAction.type );
 		console.log( 'hasContinue', hasContinue );
 
+		// quit if route was changed to a different section (and we don't have a Continue element)
 		if ( ! hasContinue && isRouteSet &&
 				this.isDifferentSection( lastAction.path ) ) {
 			defer( () => {
@@ -179,6 +183,9 @@ export class Step extends Component {
 	}
 
 	isDifferentSection( path ) {
+		console.log( 'isDifferentSection', path );
+		console.log( 'this.pathToSection( path )', this.pathToSection( path ) );
+		console.log( 'this.section', this.section );
 		return this.section &&
 			this.section !== this.pathToSection( path );
 	}

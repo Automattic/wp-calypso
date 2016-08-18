@@ -40,7 +40,7 @@ export const TestTour = makeTour(
 );
 
 export default combineTours( {
+	test: TestTour,
 	main: MainTour,
 	themes: ThemesTour,
-	test: TestTour,
 } );
