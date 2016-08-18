@@ -228,15 +228,28 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
-	renderThemeForumCard() {
+	renderContactUsCard( isPrimary = false ) {
+		return (
+			<Card className="theme__sheet-card-support">
+				<Gridicon icon="help-outline" size={ 48 } />
+				<div className="theme__sheet-card-support-details">
+					{ i18n.translate( 'Need extra help?' ) }
+					<small>{ i18n.translate( 'Get in touch with our support team' ) }</small>
+				</div>
+				<Button primary={ isPrimary } href={ getForumUrl( this.props ) }>Contact us</Button>
+			</Card>
+		);
+	},
+
+	renderThemeForumCard( isPrimary = false ) {
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="comment" size={ 48 } />
 				<div className="theme__sheet-card-support-details">
-					{ i18n.translate( 'Need extra help?' ) }
-					<small>{ i18n.translate( 'Visit the theme support forum' ) }</small>
+					{ i18n.translate( 'Have a question about this theme?' ) }
+					<small>{ i18n.translate( 'Get in touch with the theme author' ) }</small>
 				</div>
-				<Button primary={ true } href={ getForumUrl( this.props ) }>Visit forum</Button>
+				<Button primary={ isPrimary } href={ getForumUrl( this.props ) }>Visit forum</Button>
 			</Card>
 		);
 	},
@@ -255,12 +268,27 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderSupportTab() {
-		return (
-			<div>
-				{ this.renderThemeForumCard() }
-				{ this.renderCssSupportCard() }
-			</div>
-		);
+		const {
+			hasLoadedUserPurchasesFromServer,
+			isCurrentUserPaid,
+		} = this.props;
+
+		if ( hasLoadedUserPurchasesFromServer && isCurrentUserPaid ) {
+			return (
+				<div>
+					{ this.renderContactUsCard( true ) }
+					{ this.renderThemeForumCard() }
+					{ this.renderCssSupportCard() }
+				</div>
+			);
+		} else {
+			return (
+				<div>
+					{ this.renderThemeForumCard( true ) }
+					{ this.renderCssSupportCard() }
+				</div>
+			);
+		}
 	},
 
 	renderFeaturesCard() {
