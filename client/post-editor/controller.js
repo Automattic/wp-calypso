@@ -24,6 +24,7 @@ import PostEditor from './post-editor';
 import { startEditingPost, stopEditingPost } from 'state/ui/editor/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
+import { editPost } from 'state/posts/actions';
 import wpcom from 'lib/wp';
 
 function getPostID( context ) {
@@ -132,14 +133,14 @@ module.exports = {
 			// We have everything we need to start loading the post for editing,
 			// so kick it off here to minimize time spent waiting for it to load
 			// in the view components
-			if ( postID && ! postToCopyId ) {
-				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-				actions.startEditingExisting( siteId, postID );
-				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
-			} else if ( postToCopyId ) {
+			if ( postToCopyId ) {
 				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				actions.startEditingPostCopy( siteId, postToCopyId );
 				analytics.pageView.record( '/' + postType, gaTitle + ' > New' );
+			} else if ( postID ) {
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+				actions.startEditingExisting( siteId, postID );
+				analytics.pageView.record( '/' + postType + '/:blogid/:postid', gaTitle + ' > Edit' );
 			} else {
 				let postOptions = { type: postType };
 
