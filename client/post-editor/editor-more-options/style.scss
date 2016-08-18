@@ -12,20 +12,20 @@
 }
 
 // Copy Post Dialog
-.copy-post__select-post-dialog .dialog__content {
+.editor-more-options__copy-post-select-dialog .dialog__content {
 	min-width: 40vw;
 }
 
-.copy-post__select-post-dialog .post-selector {
+.editor-more-options__copy-post-select-dialog .post-selector {
 	margin-bottom: 16px;
 }
 
 @include breakpoint( "<660px" ) {
-	.copy-post__select-post-dialog {
+	.editor-more-options__copy-post-select-dialog {
 		width: 90%;
 	}
 
-	.copy-post__select-post-dialog .dialog__content {
+	.editor-more-options__copy-post-select-dialog .dialog__content {
 		min-width: none;
 	}
 }

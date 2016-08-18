@@ -9,19 +9,21 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import AccordionSection from 'components/accordion/section';
 import Button from 'components/button';
 import Dialog from 'components/dialog';
+import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import Gridicon from 'components/gridicon';
-import InfoPopover from 'components/info-popover';
 import PostSelector from 'my-sites/post-selector';
 
 class EditorMoreOptionsCopyPost extends Component {
 
 	static propTypes = {
-		site: PropTypes.object.isRequired,
+		siteId: PropTypes.number.isRequired,
+		siteSlug: PropTypes.string.isRequired,
 		translate: PropTypes.func,
 	};
 
@@ -57,13 +59,13 @@ class EditorMoreOptionsCopyPost extends Component {
 
 	goToNewDraft = () => {
 		if ( '' !== this.state.selectedPostId ) {
-			page.redirect( `/post/${ this.props.site.slug }?copy=${ this.state.selectedPostId }` );
+			page.redirect( `/post/${ this.props.siteSlug }?copy=${ this.state.selectedPostId }` );
 			this.closeDialog();
 		}
 	}
 
 	render() {
-		const { translate, site } = this.props;
+		const { translate, siteId } = this.props;
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' ),
@@ -76,21 +78,20 @@ class EditorMoreOptionsCopyPost extends Component {
 		} ];
 		return (
 			<AccordionSection className="editor-more-options__copy-post">
-				<div className="editor-drawer__label-text">
-					{ translate( 'Copy Post' ) }
-					<InfoPopover position="top left">
-						{ translate( "Pick a post and we'll copy the title, content, tags and categories. " ) }
-					</InfoPopover>
-				</div>
-				<Button borderless compact={ true } onClick={ this.openDialog }>
-					<Gridicon icon="clipboard" /> { translate( 'Select a post to copy' ) }
-				</Button>
+				<EditorDrawerLabel
+					labelText={ translate( 'Copy Post' ) }
+					helpText={ translate( "Pick a post and we'll copy the title, content, tags and categories. " ) }
+				>
+					<Button borderless compact onClick={ this.openDialog }>
+						<Gridicon icon="clipboard" /> { translate( 'Select a post to copy' ) }
+					</Button>
+				</EditorDrawerLabel>
 				<Dialog
 					autoFocus={ false }
 					isVisible={ this.state.showDialog }
 					buttons={ buttons }
 					onClose={ this.closeDialog }
-					additionalClassNames="copy-post__select-post-dialog"
+					additionalClassNames="editor-more-options__copy-post-select-dialog"
 				>
 					<FormSectionHeading>
 						{ translate( 'Select a post to copy' ) }
@@ -99,7 +100,7 @@ class EditorMoreOptionsCopyPost extends Component {
 						{ translate( "Pick a post and we'll copy the title, content, tags and categories. " ) }
 					</p>
 					<PostSelector
-						siteId={ site.ID }
+						siteId={ siteId }
 						emptyMessage={ translate( 'No posts found' ) }
 						orderBy="date"
 						order="DESC"
@@ -114,5 +115,6 @@ class EditorMoreOptionsCopyPost extends Component {
 }
 
 export default connect( state => ( {
-	site: getSelectedSite( state )
+	siteId: getSelectedSiteId( state ),
+	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 } ) )( localize( EditorMoreOptionsCopyPost ) );
