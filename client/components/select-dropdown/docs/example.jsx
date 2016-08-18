@@ -29,7 +29,7 @@ const SelectDropdownDemo = React.createClass( {
 		return {
 			options: [
 				{ value: 'status-options', label: 'Statuses', isLabel: true },
-				{ value: 'published', label: 'Published' },
+				{ value: 'published', label: 'Published', count: 12 },
 				{ value: 'scheduled', label: 'Scheduled' },
 				{ value: 'drafts', label: 'Drafts' },
 				null,
@@ -48,10 +48,10 @@ const SelectDropdownDemo = React.createClass( {
 			: 'Compact Buttons';
 
 		return (
-			<div className="design-assets__group" style={ { height: 500 } }>
+			<div className="docs__group docs__group__select-dropdown">
 				<h2>
 					<a href="/devdocs/design/select-dropdown">Select Dropdown</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleButtonsText }</a>
+					<a className="docs__toggle button" onClick={ this.toggleButtons }>{ toggleButtonsText }</a>
 				</h2>
 
 				<h3>Items passed as options prop</h3>
@@ -87,8 +87,9 @@ const SelectDropdownDemo = React.createClass( {
 					</DropdownItem>
 
 					<DropdownItem
+						count={ 3343 }
 						selected={ this.state.childSelected === 'Drafts' }
-						onClick={ this.selectItem.bind( this, 'Drafts', null ) }
+						onClick={ this.selectItem.bind( this, 'Drafts', 3343 ) }
 					>
 						Drafts
 					</DropdownItem>
@@ -103,6 +104,25 @@ const SelectDropdownDemo = React.createClass( {
 						Trashed
 					</DropdownItem>
 				</SelectDropdown>
+
+				<h3 style={ { marginTop: 20 } }>max-width: 220px;</h3>
+
+				<SelectDropdown
+					className="select-dropdown-example__fixed-width"
+					compact={ this.state.compactButtons }
+					onSelect={ this.onDropdownSelect }
+					selectedText="Published publish publish publish"
+					selectedCount={ 454 }
+				>
+
+					<DropdownLabel><strong>Statuses</strong></DropdownLabel>
+					<DropdownItem count={ 10 } selected={ true } >Published publish publish publish</DropdownItem>
+					<DropdownItem count={ 4 } > Scheduled scheduled</DropdownItem>
+					<DropdownItem>Drafts</DropdownItem>
+					<DropdownSeparator />
+					<DropdownItem count={ 3 }>Trashed</DropdownItem>
+				</SelectDropdown>
+
 			</div>
 		);
 	},

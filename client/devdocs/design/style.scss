@@ -31,22 +31,6 @@
 		line-height: 24px;
 	}
 
-	// dropdowns
-	.select-dropdown__header {
-		height: 20px;
-		line-height: 20px;
-		font-size: 12px;
-		padding: 5px 10px;
-
-		&::after {
-			top: 7px;
-		}
-	}
-	.select-dropdown__item {
-		font-size: 12px;
-		line-height: 12px;
-	}
-
 	// editable-property input
 	input.editable-property {
 		line-height: 30px;
@@ -69,4 +53,23 @@
 	border-radius: 3px;
 	text-align: center;
 	cursor: default;
+}
+
+.design-assets__group.design-assets__group__select-dropdown {
+	height: 600px;
+	.select-dropdown-example__fixed-width {
+		.select-dropdown__item {
+			.select-dropdown__item-text {
+				position: initial;
+			}
+
+			&::before {
+				display: none;
+			}
+		}
+
+		.select-dropdown__container {
+			max-width: 220px;
+		}
+	}
 }
