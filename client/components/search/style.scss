@@ -21,11 +21,11 @@
 		height: 100%;
 	}
 
-	.search-open__icon,
+	.search__open-icon,
 	.search__close-icon {
 		flex: 0 0 auto;
 		width: 50px;
-		z-index: z-index( '.search', '.search .search-open__icon' );
+		z-index: z-index( '.search', '.search .search__open-icon' );
 		color: $blue-wordpress;
 		cursor: pointer;
 
@@ -34,7 +34,7 @@
 		}
 	}
 
-	.search-open__icon:hover {
+	.search__open-icon:hover {
 		color: darken( $gray, 30% );
 	}
 
@@ -100,7 +100,7 @@
 .search.is-open {
 	width: 100%;
 
-	.search-open__icon {
+	.search__open-icon {
 		color: darken( $gray, 30% );
 	}
 
@@ -138,7 +138,7 @@
 	display: none;
 }
 
-.search.is-searching .search-open__icon {
+.search.is-searching .search__open-icon {
 	display: none;
 }
 

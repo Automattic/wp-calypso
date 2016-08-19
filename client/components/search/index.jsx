@@ -289,7 +289,6 @@ const Search = React.createClass( {
 			search: true
 		} );
 
-		const gridIconClass = classNames( 'search-open__icon', this.props.dir );
 		const fadeDivClass = classNames( 'search__input-fade', this.props.dir );
 		const inputClass = classNames( 'search__input', this.props.dir );
 
@@ -307,7 +306,7 @@ const Search = React.createClass( {
 					}
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
-					<Gridicon icon="search" className={ gridIconClass }/>
+					<Gridicon icon="search" className="search__open-icon"/>
 				</div>
 				<div className={ fadeDivClass }>
 					<input
