@@ -25,7 +25,12 @@ const hasXmlrpcError = function( state ) {
 	return (
 		state.authorizeError &&
 		state.authorizeError.message &&
-		state.authorizeError.message.indexOf( 'verify_secrets_missing' ) < 0
+		state.authorizationCode &&
+		(
+			state.authorizeError.message.indexOf( 'transport error' ) > -1 ||
+			state.authorizeError.message.indexOf( 'server error' ) > -1 ||
+			state.authorizeError.message.indexOf( 'parse error' ) > -1
+		)
 	);
 };
 
