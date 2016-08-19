@@ -4,6 +4,14 @@ export const DEFAULT_PREFERENCES = {
 		schema: { 'enum': [ null, 'html', 'tinymce' ] },
 		'default': null
 	},
+	recentSites: {
+		schema: {
+			type: [ 'null', 'array' ],
+			items: {
+				type: 'number'
+			}
+		}
+	},
 	firstViewHistory: {
 		schema: {
 			type: 'array',

@@ -1,8 +1,7 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react'),
+var React = require( 'react'),
 	i18n = require( 'i18n-calypso' );
 
 /**
@@ -11,6 +10,7 @@ var ReactDom = require( 'react-dom' ),
 var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	titleActions = require( 'lib/screen-title/actions' );
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 module.exports = {
 
@@ -20,13 +20,14 @@ module.exports = {
 
 		titleActions.setTitle( i18n.translate( 'Drafts', { textOnly: true } ), { siteID: siteID } );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( Drafts, {
 				siteID: siteID,
 				sites: sites,
 				trackScrollPage: function() {}
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 
