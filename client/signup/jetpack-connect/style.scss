@@ -86,8 +86,8 @@
 	}
 }
 
-.jetpack-connect-logged-in-form {
-	.jetpack-connect-logged-in-form__user-text {
+.jetpack-connect__logged-in-form {
+	.jetpack-connect__logged-in-form-user-text {
 		text-align: center;
 	}
 
@@ -322,7 +322,7 @@
 	width: 100%;
 }
 
-.jetpack-connect-logged-in-form__loading {
+.jetpack-connect__logged-in-form-loading {
 	text-align: center;
 
 	span {
