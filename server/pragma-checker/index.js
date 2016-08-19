@@ -23,7 +23,6 @@ var IGNORED_MODULES = [
 	'my-sites/themes/themes-site-selector-modal', // stubbed on the server until we develop an isomorphic version
 	'state/ui/editor/selectors', // stubbed on the server until all the dependencies are @ssr-ready
 	'state/posts/selectors', // stubbed on the server until all the dependencies are @ssr-ready
-	'layout/guided-tours/config', // should never run on the server
 ];
 
 function PragmaCheckPlugin( options ) {
