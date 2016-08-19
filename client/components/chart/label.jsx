@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:module-chart:label' );
+import React from 'react';
+const debug = require( 'debug' )( 'calypso:module-chart:label' );
 
 /**
  * Internal dependencies
  */
-var user = require( 'lib/user' )();
+const user = require( 'lib/user' )();
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartLabel',
@@ -21,8 +21,8 @@ module.exports = React.createClass( {
 	render: function() {
 		debug( 'Rendering label' );
 
-		var labelStyle,
-			dir = user.isRTL() ? 'right' : 'left';
+		const dir = user.isRTL() ? 'right' : 'left';
+		let labelStyle;
 
 		labelStyle = {
 			width: this.props.width + 'px'
