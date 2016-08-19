@@ -337,8 +337,6 @@ const Search = React.createClass( {
 	},
 
 	closeButton: function() {
-		const gridIconClass = classNames( 'search-close__icon', this.props.dir );
-
 		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
 				<div
@@ -348,7 +346,7 @@ const Search = React.createClass( {
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
-					<Gridicon icon="cross" className={ gridIconClass } />
+					<Gridicon icon="cross" className="search__close-icon"/>
 				</div>
 			);
 		}

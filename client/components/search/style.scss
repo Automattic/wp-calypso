@@ -22,7 +22,7 @@
 	}
 
 	.search-open__icon,
-	.search-close__icon {
+	.search__close-icon {
 		flex: 0 0 auto;
 		width: 50px;
 		z-index: z-index( '.search', '.search .search-open__icon' );
@@ -38,7 +38,7 @@
 		color: darken( $gray, 30% );
 	}
 
-	.search-close__icon {
+	.search__close-icon {
 		color: darken( $gray, 30% );
 		opacity: 0;
 		transition: opacity .2s ease-in;
@@ -104,12 +104,12 @@
 		color: darken( $gray, 30% );
 	}
 
-	.search-close__icon {
+	.search__close-icon {
 		display: inline-block;
 	}
 
 	.search__input,
-	.search-close__icon{
+	.search__close-icon {
 		opacity: 1;
 	}
 
