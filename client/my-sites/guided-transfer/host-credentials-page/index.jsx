@@ -4,7 +4,6 @@
 import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
 
 /**
  * Internal dependencies
@@ -13,6 +12,9 @@ import Bluehost from './bluehost';
 import SiteGround from './siteground';
 
 import SectionHeader from 'components/section-header';
+import { cartItems } from 'lib/cart-values';
+import upgradesActions from 'lib/upgrades/actions';
+import page from 'page';
 import {
 	saveHostDetails,
 } from 'state/sites/guided-transfer/actions';
@@ -38,8 +40,18 @@ class HostCredentialsPage extends Component {
 		this.setFieldValue( fieldName, e.target.value );
 	}
 
+	redirectToCart = () => {
+		upgradesActions.addItem( cartItems.guidedTransferItem() );
+		page.redirect( `/checkout/${ this.props.siteSlug }` );
+	}
+
 	submit = () => {
-		this.props.submit( this.state.fieldValues );
+		this.props.submit( this.state.fieldValues )
+			.then( didSubmit => {
+				if ( didSubmit === true ) {
+					this.redirectToCart();
+				}
+			} );
 	}
 
 	getHostForm() {

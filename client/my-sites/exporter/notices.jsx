@@ -8,6 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import CompletePurchaseNotice from './guided-transfer-card/complete-purchase-notice';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import support from 'lib/url/support';
@@ -62,26 +63,8 @@ class Notices extends Component {
 	}
 
 	guidedTransferNotice() {
-		const {
-			translate,
-			siteSlug
-		} = this.props;
-
 		if ( this.props.isGuidedTransferAwaitingPurchase ) {
-			return (
-				<Notice
-					status="is-warning"
-					showDismiss={ false }
-					text={ translate(
-						"It looks like you've started a Guided Transfer. " +
-						"We just need your payment to confirm the transfer and " +
-						"then we'll get started!" ) }
-				>
-					<NoticeAction href={ `/settings/export/guided/${ siteSlug }` }>
-						{ translate( 'Continue' ) }
-					</NoticeAction>
-				</Notice>
-			);
+			return <CompletePurchaseNotice siteSlug={ this.props.siteSlug } />;
 		}
 
 		return null;

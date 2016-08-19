@@ -90,13 +90,19 @@ export function saveHostDetails( siteId, data ) {
 			dispatch( receiveGuidedTransferStatus(
 				siteId, omit( response, '_headers' )
 			) );
+
+			return response.host_details_entered === true;
 		};
 
-		const failure = error => dispatch( {
-			type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
-			siteId,
-			error,
-		} );
+		const failure = error => {
+			dispatch( {
+				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+				siteId,
+				error,
+			} );
+
+			return false;
+		};
 
 		return wpcom.undocumented().site( siteId ).saveGuidedTransferHostDetails( data )
 			.then( success )
