@@ -85,13 +85,14 @@ export default React.createClass( {
 		const hasError = this.props.isError && ( 'notExists' !== this.props.isError );
 		return (
 			<div>
-				<FormLabel>{ this.translate( 'Site Address' ) }</FormLabel>
+				<FormLabel htmlFor="siteUrl">{ this.translate( 'Site Address' ) }</FormLabel>
 				<div className="site-address-container">
 					<Gridicon
 						size={ 24 }
 						icon="globe" />
 					<FormTextInput
 						ref="siteUrl"
+						id="siteUrl"
 						autoCapitalize="off"
 						autoFocus="autofocus"
 						onChange={ this.onChange }
