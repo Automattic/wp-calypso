@@ -48,9 +48,8 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 /**
  * Constants
  */
-const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
 const PLANS_PAGE = '/jetpack/connect/plans/';
-const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
+const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
 const SiteCard = React.createClass( {
