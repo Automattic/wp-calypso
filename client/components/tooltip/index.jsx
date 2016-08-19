@@ -22,6 +22,7 @@ class Tooltip extends Component {
 		id: PropTypes.string,
 		isVisible: PropTypes.bool,
 		position: PropTypes.string,
+		rootClassName: PropTypes.string,
 		status: PropTypes.string,
 		showDelay: PropTypes.number,
 		showOnMobile: PropTypes.bool
@@ -49,6 +50,7 @@ class Tooltip extends Component {
 			<Popover
 				autoPosition= { this.props.autoPosition }
 				className={ classes }
+				rootClassName={ this.props.rootClassName }
 				context={ this.props.context }
 				id={ this.props.id }
 				isVisible={ this.props.isVisible }
