@@ -11,6 +11,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+import FeatureExample from 'components/feature-example';
 import FeatureComparison from 'my-sites/feature-comparison';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
@@ -35,18 +37,17 @@ const featuresToShow = [
 ];
 
 const AdvancedSEOUpgradeNudge = ( { translate, site } ) => {
-	// <div className="seo-preview-nudge__upgrade">
-	// 	<UpgradeNudge
-	// 		title={ translate( 'Advanced SEO' ) }
-	// 		message={ translate( 'lorem ipsum dolor sit amet' ) }
-	// 		feature="advanced-seo"
-	// 		event="advanced_seo_preview"
-	// 		icon="share"
-	// 	/>
-	// </div	>
-
 	return (
 		<div className="seo-preview-nudge">
+			<div className="seo-preview-nudge__upgrade">
+				<UpgradeNudge
+					title={ translate( 'Get Advanced SEO Features' ) }
+					message={ translate( 'Adds tools to enhance your site\'s content for better results on search engines and social media.' ) }
+					feature="advanced-seo"
+					event="advanced_seo_preview"
+					icon="share"
+				/>
+			</div>
 			<div className="seo-preview-nudge__plan">
 				<div className="seo-preview-nudge__plan-icon"></div>
 			</div>
@@ -54,9 +55,9 @@ const AdvancedSEOUpgradeNudge = ( { translate, site } ) => {
 				<h2 className="seo-preview-nudge__message-title">{ translate( 'Get Advanced SEO Features' ) }</h2>
 				<h3 className="seo-preview-nudge__message-line">{ translate( 'Adds tools to enhance your site\'s content for better results on search engines and social media.' ) }</h3>
 			</div>
-			<div className="seo-preview-nudge__preview">
+			<FeatureExample>
 				<img src="/calypso/images/advanced-seo-nudge.png" />
-			</div>
+			</FeatureExample>
 			<FeatureComparison className="seo-preview-nudge__feature-comparison">
 				<PlanCompareCard
 					title={ getPlan( site.plan.product_slug ).getTitle() }
