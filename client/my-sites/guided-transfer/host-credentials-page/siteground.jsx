@@ -54,7 +54,8 @@ class SiteGround extends Component {
 					</div>
 					<CreateAccountTip
 						hostLabel={ hostInfo.label }
-						hostUrl={ hostInfo.url } />
+						hostUrl={ hostInfo.url }
+					/>
 					<DestinationURL
 						value={ fieldValues.wporg_url }
 						onChange={ onFieldChange( 'wporg_url' ) }
