@@ -1,71 +1,76 @@
 .seo-preview-nudge {
 	display: flex;
 	flex-direction: column;
+
+	.seo-preview-nudge__upgrade {
+		padding:0 16px;
+	}
+
+	.seo-preview-nudge__plan {
+		width: 100px;
+		height: 100px;
+		display: flex;
+		border: solid 3px $border-ultra-light-gray;
+		border-radius: 50%;
+		align-self: center;
+		margin: 20px 0;
+	}
+
+	.seo-preview-nudge__plan-icon {
+		width: inherit;
+		height: inherit;
+		margin: 2px;
+		background: url('/calypso/images/plans/plan-business.svg') no-repeat;
+	}
+
+	.seo-preview-nudge__title {
+		text-align: center;
+		color: $gray-dark;
+		font-size: 24px;
+		font-weight: 300;
+		margin-bottom: 20px;
+
+		@include breakpoint( "<660px" ) {
+			font-size: 16px;
+		}
+	}
 }
 
-.seo-preview-nudge__upgrade {
-	padding:0 16px;
-}
-
-.seo-preview-nudge__plan {
-	width: 100px;
-	height: 100px;
+.seo-preview-nudge__features {
 	display: flex;
-	border: solid 3px $border-ultra-light-gray;
-	border-radius: 50%;
-	align-self: center;
-	margin: 16px 0;
-}
+	padding: 0 20px;
 
-.seo-preview-nudge__plan-icon {
-	width: inherit;
-	height: inherit;
-	margin: 2px;
-	background: url('/calypso/images/plans/plan-business.svg') no-repeat;
-}
-
-.seo-preview-nudge__message{
-	text-align: center;
-}
-
-.seo-preview-nudge__message-title {
-	color: $gray-dark;
-	font-size: 24px;
-	font-weight: 300;
-
-	@include breakpoint( "<660px" ) {
-		font-size: 16px;
+	.feature-example {
+		width: 50%;
+		margin: 0 10px 0 16px;
 	}
 }
 
-.seo-preview-nudge__message-line {
-	color: $gray;
-	font-size: 16px;
-	font-weight: 300;
-	margin-bottom: 16px;
-
-	@include breakpoint( "<660px" ) {
-		font-size: 11px;
-	}
+.seo-form-nudge__features-details {
+	width: 50%;
 }
 
-.seo-preview-nudge__preview {
-	width: 600px;
-	height: 344px;
-	align-self: center;
-	margin-bottom: 16px;
-	position: relative;
-
-	&:after {
-    content: '';
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		background: linear-gradient(to bottom right,rgba(255, 255, 255, 0) 0%,rgba(255, 255, 255, 1) 100%);
-		opacity: .6;
-  }
+.seo-form-nudge__features-title {
+	margin-bottom: 10px;
 }
+
+.seo-form-nudge__features-list {
+	list-style: none;
+	margin: 0;
+}
+
+.seo-form-nudge__features-list-item {
+	display: flex;
+	margin-bottom: 15px;
+}
+
+.seo-form-nudge__features-list-item-checkmark {
+	color: $blue-wordpress;
+	flex: 0 0 auto;
+	margin-right: 5px;
+}
+
+
 
 .seo-preview-nudge__feature-comparison {
 	margin: 0;

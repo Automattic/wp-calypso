@@ -6,7 +6,6 @@
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import {
 	partial
 } from 'lodash';
@@ -15,7 +14,6 @@ import {
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import { getSelectedSite } from 'state/ui/selectors';
 import { isEnabled } from 'config';
 
 const possibleDevices = [
@@ -35,7 +33,6 @@ export const PreviewToolbar = props => {
 		showClose,
 		showDeviceSwitcher,
 		showExternal,
-		showSeo,
 		translate
 	} = props;
 
@@ -131,4 +128,4 @@ PreviewToolbar.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-export default connect()( localize( PreviewToolbar ) );
+export default localize( PreviewToolbar );
