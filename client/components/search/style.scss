@@ -69,7 +69,6 @@
 	.search__input[type="search"] {
 		flex: 1 1 auto;
 		display: flex;
-		left: 50px;
 	}
 }
 
@@ -119,8 +118,8 @@
 
 	.search__input-fade {
 		flex: 1 1 auto;
-		position: inherit;
 		height: 100%;
+		position: relative;
 		&::before {
 			@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
 		}
