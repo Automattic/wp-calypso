@@ -85,7 +85,7 @@ export default React.createClass( {
 			<div className="app-promo">
 				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss } >
 					<Gridicon icon="cross" size={ 24 } />
-					<span className="app-promo__screen-reader-text screen-reader-text">
+					<span className="app-promo__screen-reader-text">
 						{ this.translate( 'Dismiss' ) }
 					</span>
 				</span>
@@ -93,7 +93,8 @@ export default React.createClass( {
 					onClick={ this.recordClickEvent }
 					className="app-promo__link"
 					title="Try the desktop app!"
-					href={ promo_link } target="_blank"
+					href={ promo_link }
+					target="_blank"
 				>
 					<img
 						className="app-promo__icon"
