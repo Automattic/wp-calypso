@@ -26,6 +26,10 @@ export default React.createClass( {
 
 		const classes = classNames( 'stats-module__placeholder', 'is-void', className );
 
-		return ( <Spinner className={ classes } /> );
+		return (
+			<div className={ classes }>
+				<Spinner />
+			</div>
+		);
 	}
 } );
