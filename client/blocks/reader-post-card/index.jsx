@@ -16,14 +16,16 @@ import CommentButton from 'blocks/comment-button';
 import DisplayTypes from 'state/reader/posts/display-types';
 import Gravatar from 'components/gravatar';
 import Gridicon from 'components/gridicon';
+import ExternalLink from 'components/external-link';
 
 function FeaturedImage( { image, href } ) {
 	return (
-		<div className="reader-post-card__featured-image">
-			<a href={ href }>
-			<img src="https://placekitten.com/600/400" />
-			</a>
-		</div> );
+		<a className="reader-post-card__featured-image" href={ href } style={ {
+			backgroundImage: 'url(' + image.uri + ')',
+			backgroundSize: 'cover',
+			backgroundRepeat: 'no-repeat',
+			backgroundPosition: '50% 50%'
+		} } ></a> );
 }
 
 function PostByline( { post, site, feed } ) {
@@ -65,14 +67,25 @@ export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentCl
 					</h1>
 					<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
 					<ul className="reader-post-card__social ignore-click">
-						<li className="reader-post-card__visit"><Gridicon icon="external" /></li>
-						<li><Gridicon icon="share" /></li>
-						<li><CommentButton
+						<li className="reader-post-card__visit">
+							<ExternalLink icon={ true }>Visit</ExternalLink>
+						</li>
+						<li className="reader-post-card__share">
+							<Gridicon icon="share" />
+							<span className="reader-share__button-label">Share</span>
+						</li>
+						<li className="reader-post-card__comments">
+							<CommentButton
 							commentCount={ post.discussion.comment_count }
 							tagName="span" showLabel={ false }
-							onClick={ onCommentClick }/></li>
-						<li><LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } /></li>
-						<li><Gridicon icon="ellipsis" /></li>
+							onClick={ onCommentClick } />
+						</li>
+						<li className="reader-post-card__likes">
+							<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } />
+						</li>
+						<li className="reader-post-card__post-options">
+							<Gridicon icon="ellipsis" />
+						</li>
 					</ul>
 				</div>
 			</div>
