@@ -40,26 +40,6 @@ export function selectedSiteId( state = null, action ) {
 	return state;
 }
 
-/**
- * Tracks the four most recently selected site IDs.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function recentlySelectedSiteIds( state = [], action ) {
-	switch ( action.type ) {
-		case SELECTED_SITE_SET:
-			state = [ action.siteId, ...state ];
-			if ( state.length === 3 ) {
-				state.pop();
-			}
-			return state;
-	}
-
-	return state;
-}
-
 //TODO: do we really want to mix strings and booleans?
 export function section( state = false, action ) {
 	switch ( action.type ) {
@@ -109,7 +89,6 @@ const reducer = combineReducers( {
 	currentPreviewUrl,
 	queryArguments,
 	selectedSiteId,
-	recentlySelectedSiteIds,
 	guidedTour,
 	editor,
 	reader,
