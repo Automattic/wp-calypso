@@ -43,7 +43,7 @@ module.exports = React.createClass( {
 				<h2 className="profile-gravatar__user-display-name">{ this.props.user.display_name }</h2>
 
 				<div className="profile-gravatar__user-secondary-info">
-					<a href={ profileURL }>@{ this.props.user.username }</a>
+					<a href={ profileURL } target="_blank">@{ this.props.user.username }</a>
 				</div>
 			</div>
 		);
