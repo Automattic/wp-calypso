@@ -124,10 +124,6 @@ describe( 'selectors', () => {
 		it( 'should find `themes` when applicable', () => {
 			const state = makeState( { actionLog: [ navigateToThemes ] } );
 			const tour = findEligibleTour( state );
-			console.log( '+++++++++++++++++++++++++++++++++++++' );
-			console.log( 'state', state );
-			console.log( 'findEligibleTour( state )', findEligibleTour( state ) );
-			console.log( '+++++++++++++++++++++++++++++++++++++' );
 
 			expect( tour ).to.equal( 'themes' );
 		} );

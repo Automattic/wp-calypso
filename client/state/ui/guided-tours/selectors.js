@@ -26,7 +26,7 @@ export const relevantFeatures = sortByPathSpecificity(
 	map( AllTours.meta, ( tourMeta, key ) => ( {
 		tour: key,
 		path: tourMeta.path,
-		context: tourMeta.context
+		when: tourMeta.when,
 	} ) )
 );
 
