@@ -43,7 +43,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( 0 );
 		} );
 
-		it( 'should properly set a new uread count', () => {
+		it( 'should properly set a new unread count', () => {
 			const newState = unreadCount( undefined, { type: DOCUMENT_HEAD_UNREAD_COUNT_SET, count: 123 } );
 
 			expect( newState ).to.equal( 123 );

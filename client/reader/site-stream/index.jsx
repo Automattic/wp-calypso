@@ -2,7 +2,8 @@ var React = require( 'react' ),
 	page = require( 'page' ),
 	includes = require( 'lodash/includes' );
 
-var FeedHeader = require( 'reader/feed-header' ),
+var DocumentHead = require( 'components/data/document-head' ),
+	FeedHeader = require( 'reader/feed-header' ),
 	FeedFeatured = require( './featured' ),
 	EmptyContent = require( './empty' ),
 	Stream = require( 'reader/stream' ),
@@ -59,9 +60,9 @@ const SiteStream = React.createClass( {
 		checkForRedirect( site );
 
 		let state = {
-			feed: feed,
-			site: site,
-			title: this.getTitle( site )
+			feed,
+			site,
+			title: props.title || this.getTitle( site )
 		};
 
 		return state;
@@ -127,10 +128,6 @@ const SiteStream = React.createClass( {
 			title = this.translate( 'Loading Site' );
 		}
 
-		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( title );
-		}
-
 		if ( site && site.get( 'state' ) === SiteState.ERROR ) {
 			return <FeedError sidebarTitle={ title } />;
 		}
@@ -143,6 +140,7 @@ const SiteStream = React.createClass( {
 
 		return (
 			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false }>
+				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader site={ this.state.site } feed={ this.state.feed }/>
 				{ featuredContent }

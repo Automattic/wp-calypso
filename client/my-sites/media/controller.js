@@ -10,8 +10,8 @@ var ReactDom = require( 'react-dom' ),
  */
 var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
-	analytics = require( 'lib/analytics' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	analytics = require( 'lib/analytics' );
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 module.exports = {
 
@@ -28,9 +28,8 @@ module.exports = {
 		analytics.pageView.record( baseAnalyticsPath, 'Media' );
 
 		// Page Title
-		titleActions.setTitle( i18n.translate( 'Media', { textOnly: true } ), {
-			siteID: route.getSiteFragment( context.path )
-		} );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Media', { textOnly: true } ) ) );
 
 		// Render
 		ReactDom.render(

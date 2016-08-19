@@ -30,9 +30,4 @@ providing a React-minded interface for setting document title.
   have been discussions about extending `Main` from `components/main` to
   take the props shown in the example above, rendering `Head` obsolete.
 
-- Whether we keep `Head` or iterate on `Main`, if these components
-  prove themselves fit for `/design`'s isomorphic concerns, we could
-  start to phase out `lib/screen-title`'s `TitleStore` and actions in
-  favor of a Helmet-based approach.
-
 [helmet]: https://github.com/nfl/react-helmet

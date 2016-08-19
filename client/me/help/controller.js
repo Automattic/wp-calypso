@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import route from 'lib/route';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import config from 'config';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
@@ -20,7 +20,7 @@ module.exports = {
 		var Help = require( './main' ),
 			basePath = route.sectionify( context.path );
 
-		titleActions.setTitle( i18n.translate( 'Help', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, 'Help' );
 

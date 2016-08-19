@@ -18,7 +18,7 @@ import titlecase from 'to-title-case';
 import UsersStore from 'lib/users/store';
 import UsersActions from 'lib/users/actions';
 import PeopleLogStore from 'lib/people/log-store';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InvitePeople from './invite-people';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -65,7 +65,7 @@ function redirectToTeam( context ) {
 }
 
 function renderPeopleList( filter, context ) {
-	titleActions.setTitle( i18n.translate( 'People', { textOnly: true } ), { siteID: route.getSiteFragment( context.path ) } );
+	context.store.dispatch( setTitle( i18n.translate( 'People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 	renderWithReduxStore(
 		React.createElement( PeopleList, {
@@ -95,7 +95,7 @@ function renderInvitePeople( context ) {
 		analytics.tracks.recordEvent( 'calypso_invite_people_controller_redirect_to_team' );
 	}
 
-	titleActions.setTitle( i18n.translate( 'Invite People', { textOnly: true } ), { siteID: route.getSiteFragment( context.path ) } );
+	context.store.dispatch( setTitle( i18n.translate( 'Invite People', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 	renderWithReduxStore(
 		React.createElement( InvitePeople, {
@@ -119,7 +119,7 @@ function renderSingleTeamMember( context ) {
 	site = sites.getSelectedSite();
 	siteId = site && site.ID ? site.ID : 0;
 
-	titleActions.setTitle( i18n.translate( 'View Team Member', { textOnly: true } ), { siteID: route.getSiteFragment( context.path ) } );
+	context.store.dispatch( setTitle( i18n.translate( 'View Team Member', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 	if ( siteId && 0 !== siteId ) {
 		user = UsersStore.getUserByLogin( siteId, userLogin );

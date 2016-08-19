@@ -8,8 +8,8 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import trackScrollPage from 'lib/track-scroll-page';
-import titleActions from 'lib/screen-title/actions';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, setPageTitle, userHasHistory } from 'reader/controller-helper';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, userHasHistory } from 'reader/controller-helper';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -38,7 +38,8 @@ export default {
 		);
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		titleActions.setTitle( i18n.translate( 'Recommended Sites For You ‹ Reader' ) );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Recommended Sites For You ‹ Reader' ) ) );
 	},
 
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
@@ -66,7 +67,6 @@ export default {
 			React.createElement( RecommendedPostsStream, {
 				key: 'recommendations_posts',
 				store: RecommendedPostsStore,
-				setPageTitle: setPageTitle,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,

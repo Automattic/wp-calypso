@@ -22,7 +22,7 @@ export default {
 			mcKey = 'following_edit',
 			search = context.query.s;
 
-		setPageTitle( i18n.translate( 'Manage Followed Sites' ) );
+		setPageTitle( context, i18n.translate( 'Manage Followed Sites' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
