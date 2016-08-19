@@ -59,23 +59,21 @@ module.exports = React.createClass( {
 	},
 
 	resize: function() {
-		if ( this.isMounted() ) {
-			const node = this.refs.chart;
-			let	width = node.clientWidth - 82,
-				maxBars;
+		const node = this.refs.chart;
+		let	width = node.clientWidth - 82,
+			maxBars;
 
-			if ( touchDetect.hasTouch() ) {
-				width = ( width <= 0 ) ? 350 : width; // mobile safari bug with zero width
-				maxBars = Math.floor( width / this.props.minTouchBarWidth );
-			} else {
-				maxBars = Math.floor( width / this.props.minBarWidth );
-			}
-
-			this.setState( {
-				maxBars: maxBars,
-				width: width
-			} );
+		if ( touchDetect.hasTouch() ) {
+			width = ( width <= 0 ) ? 350 : width; // mobile safari bug with zero width
+			maxBars = Math.floor( width / this.props.minTouchBarWidth );
+		} else {
+			maxBars = Math.floor( width / this.props.minBarWidth );
 		}
+
+		this.setState( {
+			maxBars: maxBars,
+			width: width
+		} );
 	},
 
 	getYAxisMax: function( values ) {
