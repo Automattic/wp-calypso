@@ -204,12 +204,26 @@
 	}
 }
 
+// Custom breakpoints that drop action labels text
+// to prevent Likes text from breaking onto a new line
+.reader-share__button-label,
+.comment-button__label-status,
+.like-button__label-status {
+
+	@media( max-width: 530px ) {
+		display: none;
+	}
+
+	@media( min-width: 661px ) and ( max-width: 790px ) {
+		display: none;
+	}
+}
+
 .reader__post-embed-count {
 	padding: 4px 6px;
 	border-radius: 4px;
 	background: $gray-light;
 }
-
 
 /* Tiled Gallery Default Styles
  * Mostly copied from Atlas -Shaun
