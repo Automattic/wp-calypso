@@ -100,7 +100,7 @@
 		}
 	}
 
-	.search-open__icon {
+	.search__open-icon {
 		background-color: transparent;
 		border-left: none;
 		color: $gray;
@@ -123,7 +123,7 @@
 	}
 
 	&.is-open {
-		.search-close__icon {
+		.search__close-icon {
 			color: $gray;
 
 			&:not(.ltr) {
