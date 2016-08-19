@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import find from 'lodash/find';
 import page from 'page';
 import React from 'react';
+import { overSome, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -179,6 +180,33 @@ const CheckoutThankYou = React.createClass( {
 				</Card>
 			</Main>
 		);
+	},
+
+	getPlanSlug() {
+		const purchase = get( getPurchases( this.props ), '[0]', null );
+
+		if ( ! purchase ) {
+			return null;
+		}
+
+		const isValidPurchaseFn = overSome( [
+			isJetpackPlan,
+			isPersonal,
+			isPremium,
+			isBusiness,
+			isDomainRegistration,
+			isGoogleApps,
+			isDomainMapping,
+			isSiteRedirect,
+			isChargeback,
+			isGuidedTransfer
+		] );
+
+		if ( isValidPurchaseFn( purchase ) ) {
+			return purchase.productSlug;
+		}
+
+		return null;
 	},
 
 	/**
