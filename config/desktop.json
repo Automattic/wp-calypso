@@ -70,7 +70,7 @@
 		"reader": true,
 		"reader/full-errors": false,
 		"resume-editing": true,
-		"rubberband-scroll-disable": true,
+		"rubberband-scroll-disable": false,
 		"settings/security/monitor": true,
 		"ui/first-view": false,
 		"upgrades/checkout": true,
