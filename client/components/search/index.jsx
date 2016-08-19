@@ -285,16 +285,13 @@ const Search = React.createClass( {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
-			'no-close-button': this.props.hideClose,
 			'has-focus': this.state.hasFocus,
 			search: true
 		} );
 
 		const gridIconClass = classNames( 'search-open__icon', this.props.dir );
 		const fadeDivClass = classNames( 'search__input-fade', this.props.dir );
-		const inputClass = classNames( 'search__input', this.props.dir, {
-			'no-close-button': this.props.hideClose
-		} );
+		const inputClass = classNames( 'search__input', this.props.dir );
 
 		return (
 			<div className={ searchClass } role="search">
