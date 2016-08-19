@@ -220,7 +220,8 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				src: '',
 				fileName: 'default',
-				mimeType: 'image/png'
+				mimeType: 'image/png',
+				title: 'default'
 			} );
 		} );
 
@@ -229,13 +230,15 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_SET_FILE_INFO,
 				src: 'testSrc',
 				fileName: 'testFileName',
-				mimeType: 'image/jpg'
+				mimeType: 'image/jpg',
+				title: 'My Title'
 			} );
 
 			expect( state ).to.eql( {
 				src: 'testSrc',
 				fileName: 'testFileName',
-				mimeType: 'image/jpg'
+				mimeType: 'image/jpg',
+				title: 'My Title'
 			} );
 		} );
 	} );

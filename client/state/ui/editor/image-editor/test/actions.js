@@ -60,13 +60,14 @@ describe( 'actions', () => {
 
 	describe( '#setImageEditorFileInfo()', () => {
 		it( 'should return an action object', () => {
-			const action = setImageEditorFileInfo( 'testSrc', 'testFileName', 'image/jpg' );
+			const action = setImageEditorFileInfo( 'testSrc', 'testFileName', 'image/jpg', 'My Title' );
 
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_SET_FILE_INFO,
 				src: 'testSrc',
 				fileName: 'testFileName',
-				mimeType: 'image/jpg'
+				mimeType: 'image/jpg',
+				title: 'My Title'
 			} );
 		} );
 	} );

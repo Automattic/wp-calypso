@@ -26,7 +26,8 @@ export const defaultTransform = {
 export const defaultFileInfo = {
 	src: '',
 	fileName: 'default',
-	mimeType: 'image/png'
+	mimeType: 'image/png',
+	title: 'default'
 };
 
 export const defaultCropBounds = {
@@ -59,7 +60,8 @@ export function hasChanges( state = false, action ) {
 export function fileInfo( state = defaultFileInfo, action ) {
 	switch ( action.type ) {
 		case IMAGE_EDITOR_SET_FILE_INFO:
-			return Object.assign( {}, state, { src: action.src, fileName: action.fileName, mimeType: action.mimeType } );
+			const { src, fileName, mimeType, title } = action;
+			return { ...state, src, fileName, mimeType, title };
 	}
 
 	return state;
