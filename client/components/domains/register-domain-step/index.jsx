@@ -30,7 +30,6 @@ import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import analyticsMixin from 'lib/mixins/analytics';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { abtest } from 'lib/abtest';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
 import {
 	getDomainsSuggestions,
@@ -45,7 +44,7 @@ const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
 const analytics = analyticsMixin( 'registerDomain' ),
-	searchVendor = abtest( 'domainSuggestionVendor' );
+	searchVendor = 'domainsbot';
 
 let searchQueue = [],
 	searchStackTimer = null,
@@ -345,7 +344,7 @@ const RegisterDomainStep = React.createClass( {
 							query: domain,
 							quantity: SUGGESTION_QUANTITY,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
-							vendor: abtest( 'domainSuggestionVendor' )
+							vendor: searchVendor
 						},
 						timestamp = Date.now();
 
