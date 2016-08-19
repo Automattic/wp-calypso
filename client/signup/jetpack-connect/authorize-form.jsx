@@ -457,7 +457,7 @@ const LoggedInForm = React.createClass( {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
 		if ( this.props.isFetchingSites() || this.isAuthorizing() || ( authorizeSuccess && ! siteReceived ) ) {
 			return (
-				<div className="jetpack-connect-logged-in-form__loading">
+				<div className="jetpack-connect__logged-in-form-loading">
 					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
 				</div>
 			);
@@ -476,11 +476,11 @@ const LoggedInForm = React.createClass( {
 	render() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		return (
-			<div className="jetpack-connect-logged-in-form">
+			<div className="jetpack-connect__logged-in-form">
 				{ this.renderFormHeader( authorizeSuccess ) }
 				<Card>
 					<Gravatar user={ this.props.user } size={ 64 } />
-					<p className="jetpack-connect-logged-in-form__user-text">{ this.getUserText() }</p>
+					<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
 					{ this.renderNotices() }
 					{ this.renderStateAction() }
 				</Card>
