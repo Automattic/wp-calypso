@@ -35,6 +35,7 @@ const MediaModalImageEditor = React.createClass( {
 		mimeType: React.PropTypes.string,
 		setImageEditorFileInfo: React.PropTypes.func,
 		title: React.PropTypes.string,
+		translate: React.PropTypes.func,
 		onImageEditorClose: React.PropTypes.func,
 		onImageEditorCancel: React.PropTypes.func
 	},
