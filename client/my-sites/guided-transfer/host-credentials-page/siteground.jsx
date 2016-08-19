@@ -13,7 +13,7 @@ import {
 	Email,
 	CreateAccountTip,
 	SubmitSection,
-	DestinationURL,
+	WPOrgURL,
 } from './fields';
 
 class SiteGround extends Component {
@@ -56,7 +56,7 @@ class SiteGround extends Component {
 						hostLabel={ hostInfo.label }
 						hostUrl={ hostInfo.url }
 					/>
-					<DestinationURL
+					<WPOrgURL
 						value={ fieldValues.wporg_url }
 						onChange={ onFieldChange( 'wporg_url' ) }
 					/>

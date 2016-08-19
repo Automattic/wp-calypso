@@ -86,7 +86,7 @@ export const CreateAccountTip = localize( props =>
 	</FormSettingExplanation>
 );
 
-export const DestinationURL = localize( props =>
+export const WPOrgURL = localize( props =>
 	<FormFieldset className="host-credentials-page__account-wporg_url-fieldset">
 		<FormLabel htmlFor="wporg_url">
 			{ props.translate( "New site's web address" ) }

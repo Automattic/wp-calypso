@@ -13,7 +13,7 @@ import {
 	Password,
 	CreateAccountTip,
 	SubmitSection,
-	DestinationURL,
+	WPOrgURL,
 } from './fields';
 
 class Bluehost extends Component {
@@ -56,7 +56,7 @@ class Bluehost extends Component {
 						hostLabel={ hostInfo.label }
 						hostUrl={ hostInfo.url }
 					/>
-					<DestinationURL
+					<WPOrgURL
 						value={ fieldValues.wporg_url }
 						onChange={ onFieldChange( 'wporg_url' ) }
 					/>
