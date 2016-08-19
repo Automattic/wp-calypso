@@ -19,6 +19,7 @@ export default React.createClass( {
 		id: React.PropTypes.string,
 		position: React.PropTypes.string,
 		className: React.PropTypes.string,
+		rootClassName: React.PropTypes.string,
 		gaEventCategory: React.PropTypes.string,
 		popoverName: React.PropTypes.string,
 		ignoreContext: React.PropTypes.shape( {
@@ -62,6 +63,7 @@ export default React.createClass( {
 							'info-popover__tooltip',
 							this.props.className
 						) }
+					rootClassName={ this.props.rootClassName }
 					>
 						{ this.props.children }
 				</Popover>
