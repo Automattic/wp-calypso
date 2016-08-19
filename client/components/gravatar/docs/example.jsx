@@ -18,7 +18,7 @@ const GravatarExample = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/components/gravatar">Gravatar</a>
+					<a href="/devdocs/design/gravatar">Gravatar</a>
 				</h2>
 				<Gravatar user={ this.props.currentUser } size={ 96 } />
 			</div>
