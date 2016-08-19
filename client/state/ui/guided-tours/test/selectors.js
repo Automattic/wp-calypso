@@ -121,16 +121,24 @@ describe( 'selectors', () => {
 
 			expect( tour ).to.equal( undefined );
 		} );
-		it( 'should find `themes` when applicable', () => {
-			const state = makeState( { actionLog: [ navigateToThemes ] } );
+		it( 'should find `main` if user is new and tour not previously seen', () => {
+			const state = {
+				...makeState( {
+					actionLog: [ navigateToThemes ],
+					userData: { date: ( new Date() ).toJSON() }, // user was created just now
+				} ),
+				themesDisabled: true,
+			};
+
 			const tour = findEligibleTour( state );
 
-			expect( tour ).to.equal( 'themes' );
+			expect( tour ).to.equal( 'main' );
 		} );
-		it( 'should not find `themes` if previously seen', () => {
+		it( 'should not find any tour if user is new but all tours previously seen', () => {
 			const state = makeState( {
 				actionLog: [ navigateToThemes ],
-				toursHistory: [ themesTourSeen ],
+				userData: { date: ( new Date() ).toJSON() }, // user was created just now
+				toursHistory: [ mainTourSeen, themesTourSeen ],
 			} );
 
 			const tour = findEligibleTour( state );
@@ -163,16 +171,20 @@ describe( 'selectors', () => {
 			expect( tour ).to.equal( undefined );
 		} );
 		it( 'should respect tour "when" conditions', () => {
-			const state = makeState( {
-				actionLog: [ navigateToThemes ],
-				userData: { date: ( new Date() ).toJSON() }, // user was created just now
-			} );
+			const state = {
+				...makeState( {
+					actionLog: [ navigateToThemes ],
+					userData: { date: ( new Date() ).toJSON() }, // user was created just now
+				} ),
+				themesDisabled: true,
+			};
 			const tour = findEligibleTour( state );
 
 			// Even though we navigated to `/themes`, this counts as navigating
-			// to `/`, and `state` satisfies `main`'s "when" condition that the user
-			// should be a new user. In our config, `main` is declared before
-			// `themes`, so the selector should prefer the former.
+			// to `/` (starts with `/`), and `state` satisfies `main`'s "when"
+			// condition that the user should be a new user. As long as there
+			// is not other tour with a more specific path (`themes` is disabled
+			// here), we choose `main`.
 			expect( tour ).to.equal( 'main' );
 		} );
 		it( 'shouldn\'t show a requested tour twice', () => {
@@ -191,7 +203,7 @@ describe( 'selectors', () => {
 			expect( tour ).to.equal( undefined );
 		} );
 		describe( 'picking a tour based on the most recent actions', () => {
-			it( 'should pick `themes`', () => {
+			it( 'should pick `test`', () => {
 				const state = makeState( {
 					actionLog: [ navigateToThemes, navigateToTest ]
 				} );
@@ -199,7 +211,7 @@ describe( 'selectors', () => {
 
 				expect( tour ).to.equal( 'test' );
 			} );
-			it( 'should pick `test`', () => {
+			it( 'should pick `themes`', () => {
 				const state = makeState( {
 					actionLog: [ navigateToTest, navigateToThemes ]
 				} );
