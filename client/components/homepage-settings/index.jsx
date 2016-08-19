@@ -88,15 +88,15 @@ const HomepageSettings = React.createClass( {
 		if ( ! this.state.pageOnFrontId ) {
 			// Placeholder while a default home page is created
 			return (
-				<Card compact className="home-page-settings__post-selector">
-					<div className="home-page-settings__post-selector__header">{ this.translate( 'Your home page:' ) }</div>
+				<Card compact className="homepage-settings__post-selector">
+					<div className="homepage-settings__post-selector__header">{ this.translate( 'Your home page:' ) }</div>
 					<span>{ this.translate( 'Home' ) }</span>
 				</Card>
 			);
 		}
 		return (
-			<Card compact className="home-page-settings__post-selector">
-				<div className="home-page-settings__post-selector__header">{ this.translate( 'Your home page:' ) }</div>
+			<Card compact className="homepage-settings__post-selector">
+				<div className="homepage-settings__post-selector__header">{ this.translate( 'Your home page:' ) }</div>
 				<PostSelector
 					siteId={ this.props.site.ID }
 					type="page"
