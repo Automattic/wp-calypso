@@ -71,6 +71,7 @@
 		text-align: left;
 	}
 	text-align: center;
+	margin-top: 4px;
 }
 
 .reader-full-post__story {
@@ -166,7 +167,7 @@
 	font-size: 26px;
 	font-weight: 700;
 	line-height: 34px;
-	margin: 60px 0 8px;
+	margin: 56px 0 8px;
 	max-width: 750px;
 
 	@include breakpoint( ">960px" ) {
@@ -264,4 +265,8 @@
 	&:hover {
 		color: $blue-light;
 	}
+}
+
+.reader-full-post__story-content img:first-child {
+	margin-top: 0;
 }
