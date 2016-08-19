@@ -13,7 +13,7 @@ var sites = require( 'lib/sites-list' )(),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
 	AdsUtils = require( 'lib/ads/utils' ),
-	titleActions = require( 'lib/screen-title/actions' ),
+	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
 	utils = require( 'lib/site/utils' );
 import { renderWithReduxStore } from 'lib/react-helpers';
 
@@ -49,7 +49,7 @@ module.exports = {
 			layoutTitle = _getLayoutTitle( context ),
 			site = sites.getSelectedSite();
 
-		titleActions.setTitle( layoutTitle, { siteID: context.params.site_id } );
+		context.store.dispatch( setTitle( layoutTitle ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( ! utils.userCan( 'manage_options', site ) ) {
 			page.redirect( '/stats' + pathSuffix );

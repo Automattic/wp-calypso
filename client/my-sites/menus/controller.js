@@ -17,8 +17,8 @@ var sites = require( 'lib/sites-list' )(),
 	itemTypes = require( 'my-sites/menus/menu-item-types' ),
 	MenusComponent = require( 'my-sites/menus/main' ),
 	notices = require( 'notices' ),
-	siteMenus = require( 'lib/menu-data' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	siteMenus = require( 'lib/menu-data' );
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 var controller = {
 
@@ -33,7 +33,8 @@ var controller = {
 			return;
 		}
 
-		titleActions.setTitle( i18n.translate( 'Menus', { textOnly: true } ), { siteID: context.params.site_id } );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Menus', { textOnly: true } ) ) );
 
 		function renderJetpackUpgradeMessage() {
 			ReactDom.render(

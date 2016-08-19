@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import userSettings from 'lib/user-settings';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import devicesFactory from 'lib/devices';
 import sitesFactory from 'lib/sites-list';
@@ -25,7 +25,7 @@ export default {
 		const NotificationsComponent = require( 'me/notification-settings/main' ),
 			basePath = context.path;
 
-		titleActions.setTitle( i18n.translate( 'Notifications', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications' );
 
@@ -46,7 +46,7 @@ export default {
 		const CommentSettingsComponent = require( 'me/notification-settings/comment-settings' ),
 			basePath = context.path;
 
-		titleActions.setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Comments on other sites', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 
@@ -67,7 +67,7 @@ export default {
 		const WPcomSettingsComponent = require( 'me/notification-settings/wpcom-settings' ),
 			basePath = context.path;
 
-		titleActions.setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Updates from WordPress.com', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Updates from WordPress.com' );
 
@@ -88,7 +88,7 @@ export default {
 		const NotificationSubscriptions = require( 'me/notification-settings/reader-subscriptions' ),
 			basePath = context.path;
 
-		titleActions.setTitle( i18n.translate( 'Notifications', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Notifications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.ga.recordPageView( basePath, ANALYTICS_PAGE_TITLE + ' > Notifications > Comments on other sites' );
 

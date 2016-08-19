@@ -51,7 +51,8 @@ var config = require( 'config' ),
 	readerRoute = require( 'reader/route' ),
 	showReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).showReaderFullPost,
 	smartSetState = require( 'lib/react-smart-set-state' ),
-	scrollTo = require( 'lib/scroll-to' );
+	scrollTo = require( 'lib/scroll-to' ),
+	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
 import PostExcerpt from 'components/post-excerpt';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
@@ -522,8 +523,9 @@ FullPostContainer = React.createClass( {
 		var passedProps = omit( this.props, [ 'postId', 'feedId' ] ),
 			post = this.state.post;
 
-		if ( this.props.setPageTitle && this.props.isVisible ) { // only set the title if we're visible
-			this.props.setPageTitle( this.state.title );
+		if ( this.props.setTitle && this.props.isVisible ) { // only set the title if we're visible
+			// FIXME: Converted from the Flux setTitle action. If possible, please use <DocumentHead> instead.
+			this.props.setTitle( this.translate( '%s ‹ Reader', { args: this.state.title } ) );
 		}
 
 		return (
@@ -543,6 +545,7 @@ export default connect(
 		isVisible: state.ui.reader.fullpost.isVisible
 	} ),
 	( dispatch ) => bindActionCreators( {
-		showReaderFullPost
+		showReaderFullPost,
+		setTitle
 	}, dispatch )
 )( FullPostContainer );

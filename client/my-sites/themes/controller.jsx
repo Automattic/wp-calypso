@@ -12,14 +12,8 @@ import SingleSiteComponent from './single-site';
 import MultiSiteComponent from './multi-site';
 import LoggedOutComponent from './logged-out';
 import trackScrollPage from 'lib/track-scroll-page';
-import buildTitle from 'lib/screen-title/utils';
 import { getAnalyticsData } from './helpers';
 import DocumentHead from 'components/data/document-head';
-
-/**
- * Module Constants
- */
-const BASE_TITLE = i18n.translate( 'Themes', { textOnly: true } );
 
 function makeElement( ThemesComponent, Head, store, props ) {
 	return (
@@ -30,7 +24,7 @@ function makeElement( ThemesComponent, Head, store, props ) {
 			canonicalUrl={ props.canonicalUrl }
 			image={ props.image }
 			tier={ props.tier || 'all' }>
-			<DocumentHead title={ BASE_TITLE } />
+			<DocumentHead title={ props.title } />
 			<ThemesComponent { ...omit( props, [ 'title' ] ) } />
 		</Head>
 	);
@@ -38,8 +32,6 @@ function makeElement( ThemesComponent, Head, store, props ) {
 
 function getProps( context ) {
 	const { tier, filter, site_id: siteId } = context.params;
-
-	const title = buildTitle( BASE_TITLE, { siteID: siteId } );
 
 	const { basePath, analyticsPageTitle } = getAnalyticsData(
 		context.path,
@@ -56,7 +48,7 @@ function getProps( context ) {
 	};
 
 	return {
-		title,
+		title: i18n.translate( 'Themes', { textOnly: true } ),
 		tier,
 		filter,
 		analyticsPageTitle,

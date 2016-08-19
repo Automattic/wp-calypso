@@ -8,7 +8,7 @@ import React from 'react';
  */
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from 'reader/controller-helper';
+import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
@@ -29,7 +29,6 @@ export default {
 			React.createElement( LikedPostsStream, {
 				key: 'liked',
 				store: likedPostsStore,
-				setPageTitle: setPageTitle,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,

@@ -12,12 +12,12 @@ import { defer } from 'lodash';
  * Internal Dependencies
  */
 import FeedError from 'reader/feed-error';
-import TitleStore from 'lib/screen-title/store';
 import {
 	setPageTitle,
 	trackPageLoad
 } from 'reader/controller-helper';
-import titleActions from 'lib/screen-title/actions';
+import { getTitle } from 'state/document-head/selectors';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import FullPostDialog from './main';
 import ReaderFullPost from 'blocks/reader-full-post';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -30,7 +30,7 @@ let __lastTitle = null;
 function renderPostNotFound() {
 	const sidebarAndPageTitle = i18n.translate( 'Post not found' );
 
-	setPageTitle( sidebarAndPageTitle );
+	setPageTitle( context, sidebarAndPageTitle );
 
 	renderWithReduxStore(
 		<FeedError sidebarTitle={ sidebarAndPageTitle } message={ i18n.translate( 'Post Not Found' ) } />,
@@ -45,7 +45,7 @@ function removeFullPostDialog() {
 
 export function resetTitle( context, next ) {
 	if ( __lastTitle ) {
-		titleActions.setTitle( __lastTitle );
+		context.store.dispatch( setTitle( __lastTitle ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		__lastTitle = null;
 	}
 	next();
@@ -57,7 +57,7 @@ export function blogPost( context ) {
 		basePath = '/read/blogs/:blog_id/posts/:post_id',
 		fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
 
-	__lastTitle = TitleStore.getState().title;
+	__lastTitle = getTitle( context.store.getState() );
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
@@ -69,7 +69,6 @@ export function blogPost( context ) {
 				blogId: blogId,
 				postId: postId,
 				context: context,
-				setPageTitle: setPageTitle,
 				onClose: function() {
 					page.back( context.lastRoute || '/' );
 				},
@@ -87,7 +86,7 @@ export function blogPostNew( context ) {
 		basePath = '/read/blogs/:blog_id/posts/:post_id',
 		fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
 
-	__lastTitle = TitleStore.getState().title;
+	__lastTitle = getTitle( context.store.getState() );
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
@@ -97,7 +96,6 @@ export function blogPostNew( context ) {
 				blogId: blogId,
 				postId: postId,
 				context: context,
-				setPageTitle: setPageTitle,
 				onClose: function() {
 					page.back( context.lastRoute || '/' );
 				},
@@ -120,7 +118,7 @@ export function feedPost( context ) {
 		basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
 		fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
 
-	__lastTitle = TitleStore.getState().title;
+	__lastTitle = getTitle( context.store.getState() );
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
@@ -132,7 +130,6 @@ export function feedPost( context ) {
 			React.createElement( FullPostDialog, {
 				feedId: feedId,
 				postId: postId,
-				setPageTitle: setPageTitle,
 				onClose: function() {
 					page.back( context.lastRoute || '/' );
 				},
@@ -150,7 +147,7 @@ export function feedPostNew( context ) {
 		basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
 		fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
 
-	__lastTitle = TitleStore.getState().title;
+	__lastTitle = getTitle( context.store.getState() );
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
@@ -163,7 +160,6 @@ export function feedPostNew( context ) {
 			<ReaderFullPost
 				feedId={ feedId }
 				postId={ postId }
-				setPageTitle={ setPageTitle }
 				onClose={ closer }
 				onPostNotFound={ renderPostNotFound } />
 		</ReduxProvider> ),
