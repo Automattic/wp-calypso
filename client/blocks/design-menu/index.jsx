@@ -23,7 +23,7 @@ import designTool from './design-tool-data';
 import DesignToolList from './design-tool-list';
 import SiteTitleControl from 'components/site-title';
 import HeaderImageControl from 'components/header-image';
-import HomepageSettings from 'components/home-page-settings';
+import HomepageSettings from 'components/homepage-settings';
 import SiteLogoControl from 'components/site-logo';
 import DesignMenuPanel from './design-menu-panel';
 import DesignMenuHeader from './design-menu-header';
