@@ -382,7 +382,10 @@ export const SeoForm = React.createClass( {
 			<div>
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
 				{ isSitePrivate &&
-					<Notice status="is-warning" showDismiss={ false } text={ translate( 'SEO settings are disabled because the site visibility is not set to Public.' ) }>
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ translate( 'SEO settings are disabled because the site visibility is not set to Public.' ) }>
 						<NoticeAction href={ generalTabUrl }>{ translate( 'View Settings' ) }</NoticeAction>
 					</Notice>
 				}
@@ -429,19 +432,26 @@ export const SeoForm = React.createClass( {
 								<div className="seo-form-nudge__title-plan">
 									<div className="seo-form-nudge__title-plan-icon"></div>
 								</div>
-								<p className="seo-form-nudge__title-message">{ translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }</p>
+								<p className="seo-form-nudge__title-message">
+									{ translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
+								</p>
 							</div>
-							<p className="seo-form-nudge__subtitle">{ translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }</p>
+							<p className="seo-form-nudge__subtitle">
+								{ translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
+							</p>
 							<ul className="seo-form-nudge__features">
 								<li className="seo-form-nudge__feature-item">
 									<Gridicon className="seo-form-nudge__feature-item-checkmark" icon="checkmark" />
-									{ translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ) }</li>
+									{ translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ) }
+								</li>
 								<li className="seo-form-nudge__feature-item">
 									<Gridicon className="seo-form-nudge__feature-item-checkmark" icon="checkmark" />
-									{ translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ) }</li>
+									{ translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ) }
+								</li>
 								<li className="seo-form-nudge__feature-item">
 									<Gridicon className="seo-form-nudge__feature-item-checkmark" icon="checkmark" />
-									{ translate( 'Modify front page meta data in order to customize how your site appears to search engines.' ) }</li>
+									{ translate( 'Modify front page meta data in order to customize how your site appears to search engines.' ) }
+								</li>
 							</ul>
 						</div>
 					</Card>
@@ -591,7 +601,13 @@ export const SeoForm = React.createClass( {
 						</FormFieldset>
 						<FormFieldset>
 							<FormLabel htmlFor="seo_sitemap">{ translate( 'XML Sitemap' ) }</FormLabel>
-							<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
+							<ExternalLink
+								className="seo-sitemap"
+								icon={ true }
+								href={ sitemapUrl }
+								target="_blank">
+								{ sitemapUrl }
+							</ExternalLink>
 							<FormSettingExplanation>
 								{ translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
 							</FormSettingExplanation>
