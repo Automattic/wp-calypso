@@ -79,20 +79,6 @@ describe( 'reducer', () => {
 				baz: 'qux'
 			} );
 		} );
-
-		it( 'should persist only those values defined in the schema', () => {
-			const original = deepFreeze( {
-				baz: 'qux',
-				mediaModalGalleryInstructionsDismissed: true
-			} );
-			const state = localValues( original, {
-				type: SERIALIZE
-			} );
-
-			expect( state ).to.eql( {
-				mediaModalGalleryInstructionsDismissed: true
-			} );
-		} );
 	} );
 
 	describe( 'remoteValues()', () => {

@@ -1,20 +1,14 @@
 /** @ssr-ready **/
 
-export const localValuesSchema = {
-	type: 'object',
-	properties: {
-		mediaModalGalleryInstructionsDismissed: {
-			type: 'boolean'
-		}
-	}
-};
-
 export const remoteValuesSchema = {
 	type: [ 'null', 'object' ],
 	properties: {
 		'editor-mode': {
 			type: [ 'string', 'null' ],
 			'enum': [ null, 'html', 'tinymce' ]
+		},
+		mediaModalGalleryInstructionsDismissed: {
+			type: 'boolean'
 		},
 		firstViewHistory: {
 			type: 'array',
