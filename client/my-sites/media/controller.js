@@ -1,7 +1,8 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react'),
 	i18n = require( 'i18n-calypso' );
 
 /**
@@ -11,7 +12,6 @@ var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),
 	titleActions = require( 'lib/screen-title/actions' );
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 module.exports = {
 
@@ -33,14 +33,13 @@ module.exports = {
 		} );
 
 		// Render
-		renderWithReduxStore(
+		ReactDom.render(
 			React.createElement( MediaComponent, {
 				sites: sites,
 				filter: filter,
 				search: search
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			document.getElementById( 'primary' )
 		);
 	}
 
