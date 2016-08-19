@@ -30,3 +30,14 @@ export function getPreference( state, key ) {
 }
 
 export const preferencesLastFetchedTimestamp = state => ( state.preferences.lastFetchedTimestamp );
+
+/**
+ * Returns true if preferences have been received from the remote source, or
+ * false otherwise.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Boolean}       Whether preferences have been received
+ */
+export function hasReceivedRemotePreferences( state ) {
+	return !! state.preferences.remoteValues;
+}

@@ -6,10 +6,10 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { fetchingPreferences, getPreference } from '../selectors';
+import { fetchingPreferences, getPreference, hasReceivedRemotePreferences } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#fetchingPreferences()', () => {
+	describe( 'fetchingPreferences()', () => {
 		it( 'should return preferences fetching status', () => {
 			const state = {	preferences: { fetching: true } };
 			expect( fetchingPreferences( state ) ).to.equal( true );
@@ -65,6 +65,28 @@ describe( 'selectors', () => {
 			}, 'foo' );
 
 			expect( preference ).to.equal( 'qux' );
+		} );
+	} );
+
+	describe( 'hasReceivedRemotePreferences()', () => {
+		it( 'should return false if preferences have not yet been received', () => {
+			const hasReceived = hasReceivedRemotePreferences( {
+				preferences: {
+					remoteValues: null
+				}
+			} );
+
+			expect( hasReceived ).to.be.false;
+		} );
+
+		it( 'should return false if preferences have been received', () => {
+			const hasReceived = hasReceivedRemotePreferences( {
+				preferences: {
+					remoteValues: {}
+				}
+			} );
+
+			expect( hasReceived ).to.be.true;
 		} );
 	} );
 } );
