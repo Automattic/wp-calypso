@@ -127,9 +127,27 @@ function choosePrimary( prefered, room ) {
 
 function chooseSecondary( primary, prefered, el, target, w, h ) {
 	// top, top left, top right in order of preference
+	const isVertical = primary === 'top' || primary === 'bottom';
+
 	const order = prefered
-		? [ primary + ' ' + prefered, primary, primary + ' ' + opposite[ prefered ] ]
-		: [ primary, primary + ' ' + adjacent[ primary ], primary + ' ' + opposite[ adjacent[ primary ] ] ];
+		? [
+			isVertical
+				? `${ primary } ${ prefered }`
+				: `${ prefered } ${ primary }`,
+			primary,
+			isVertical
+				? `${ primary } ${ opposite[ prefered ] }`
+				: `${ opposite[ prefered ] } ${ primary }`
+		]
+		: [
+			primary,
+			isVertical
+				? `${ primary } ${ adjacent[ primary ] }`
+				: `${ adjacent[ primary ] } ${ primary }`,
+			isVertical
+				? `${ primary } ${ opposite[ adjacent[ primary ] ] }`
+				: `${ opposite[ adjacent[ primary ] ] } ${ primary }`
+		];
 
 	let bestPos;
 	let best = 0;
@@ -145,6 +163,7 @@ function chooseSecondary( primary, prefered, el, target, w, h ) {
 				? offBottom - viewport.top
 				: viewport.bottom - off.top, h
 		);
+
 		const xVisible = Math.min(
 			off.left < viewport.left
 				? offRight - viewport.left

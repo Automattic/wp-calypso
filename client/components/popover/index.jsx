@@ -71,7 +71,7 @@ class Popover extends Component {
 			show: props.isVisible,
 			left: -99999,
 			top: -99999,
-			positionClass: `is-${ this.getPositionClass( props.position ) }`
+			positionClass: this.getPositionClass( props.position )
 		};
 	}
 
