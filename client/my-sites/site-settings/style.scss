@@ -126,6 +126,22 @@
 			background: $alert-yellow;
 		}
 	}
+
+	.seo-form .section-header {
+		margin-top: 32px;
+	}
+
+	.seo-form .preview-button {
+		display: block;
+		float: left;
+		margin-right: 24px;
+	}
+
+	.seo-form .preview-explanation {
+		display: block;
+		float: left;
+		line-height: 40px;
+	}
 }
 
 .site-settings__footer-credit-container {
