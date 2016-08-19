@@ -34,9 +34,9 @@ const searchItems = [
 			},
 			date: '1976-09-15T10:12:00Z',
 
-			site: 'catsandfurballs.wordpress.com',
+			site: 'cats.wordpress.com',
 
-			short_excerpt: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house.'
+			short_excerpt: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
 		}
 	}
 ];
