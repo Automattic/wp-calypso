@@ -163,6 +163,7 @@ MediaActions.add = function( siteId, files ) {
 
 		// Assign parent ID if currently editing post
 		const post = PostEditStore.get();
+		const title = file.title;
 		if ( post && post.ID ) {
 			file = {
 				parent_id: post.ID,
@@ -172,9 +173,12 @@ MediaActions.add = function( siteId, files ) {
 			//if there's no parent_id, but the file object is wrapping a Blob
 			//(contains fileContents, fileName etc) still wrap it in a new object
 			file = {
-				file: file,
-				title: file.title
+				file: file
 			};
+		}
+
+		if ( title ) {
+			file.title = title;
 		}
 
 		debug( 'Uploading media to %d from %o', siteId, file );
