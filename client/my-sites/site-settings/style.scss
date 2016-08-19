@@ -144,6 +144,84 @@
 	}
 }
 
+.seo-form-nudge {
+	display: flex;
+	flex-direction: column-reverse;
+
+	@include breakpoint( ">960px" ) {
+		flex-direction: row;
+	}
+
+	.seo-form-nudge__description {
+		margin-bottom: 20px;
+
+		@include breakpoint( ">960px" ) {
+			margin-bottom: 0;
+			width: 50%;
+		}
+	}
+
+	.seo-form-nudge__business-plan-card {
+		.plan-compare-card {
+			width: 100%;
+		}
+
+		@include breakpoint( ">960px" ) {
+			width: 50%;
+
+			.plan-compare-card {
+				width: 90%;
+			}
+		}
+	}
+
+	.seo-form-nudge__title {
+		color: $blue-wordpress;
+		display: flex;
+		margin-bottom: 10px;
+	}
+
+	.seo-form-nudge__title-plan {
+		width: 56px;
+		height: 56px;
+		border: solid 2px $border-ultra-light-gray;
+		border-radius: 50%;
+		align-self: center;
+	}
+
+	.seo-form-nudge__title-plan-icon {
+		width: 54px;
+		height: 54px;
+		margin: 2px;
+		background: url('/calypso/images/plans/plan-business.svg') no-repeat;
+	}
+
+	.seo-form-nudge__title-message {
+		font-size: 22px;
+		margin: 0 0 0 10px;
+	}
+
+	.seo-form-nudge__subtitle {
+		margin-bottom: 10px;
+	}
+
+	.seo-form-nudge__features {
+		list-style: none;
+		margin: 0;
+	}
+
+	.seo-form-nudge__feature-item {
+		display: flex;
+		margin-bottom: 10px;
+	}
+
+	.seo-form-nudge__feature-item-checkmark {
+		color: $blue-wordpress;
+		flex: 0 0 auto;
+		margin-right: 5px;
+	}
+}
+
 .site-settings__footer-credit-container {
 	margin-bottom: 16px;
 }
@@ -329,4 +407,3 @@
 .site-settings__jetpack-prompt-text {
 	flex: 4;
 }
-

@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import { Set } from 'immutable';
 import {
 	get,
@@ -10,6 +11,7 @@ import {
 	isEqual,
 	isString,
 	omit,
+	overSome,
 	pickBy
 } from 'lodash';
 
@@ -31,15 +33,37 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
+import Gridicon from 'components/gridicon';
+import PlanCompareCard from 'my-sites/plan-compare-card';
+import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import config from 'config';
+import { isEnabled } from 'config';
 import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
-import SearchPreview from 'components/seo/search-preview';
 import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
+import { isBusiness, isEnterprise } from 'lib/products-values';
+import { getFeatureTitle, getPlan } from 'lib/plans';
+import {
+	PLAN_BUSINESS,
+	FEATURE_ADVANCED_DESIGN,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_NO_ADS,
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_UNLIMITED_STORAGE,
+	FEATURE_VIDEO_UPLOADS
+} from 'lib/plans/constants';
+
+const featuresToShow = [
+	FEATURE_UNLIMITED_STORAGE,
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_NO_ADS,
+	FEATURE_ADVANCED_DESIGN,
+	FEATURE_VIDEO_UPLOADS
+];
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -51,6 +75,8 @@ const serviceIds = {
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
+
+const hasBusinessPlan = overSome( isBusiness, isEnterprise );
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
@@ -188,7 +214,8 @@ export const SeoForm = React.createClass( {
 		const {
 			site,
 			storedTitleFormats,
-			trackSubmission
+			trackSubmission,
+			translate
 		} = this.props;
 
 		const { dirtyFields } = this.state;
@@ -216,7 +243,7 @@ export const SeoForm = React.createClass( {
 
 		this.setState( { invalidCodes } );
 		if ( invalidCodes.length > 0 ) {
-			notices.error( this.translate( 'Invalid site verification tag entered.' ) );
+			notices.error( translate( 'Invalid site verification tag entered.' ) );
 			return;
 		}
 
@@ -246,14 +273,14 @@ export const SeoForm = React.createClass( {
 			if ( error ) {
 				switch ( error.error ) {
 					case 'invalid_ip':
-						notices.error( this.translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
+						notices.error( translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
 						break;
 					default:
-						notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+						notices.error( translate( 'There was a problem saving your changes. Please, try again.' ) );
 				}
 				this.setState( { isSubmittingForm: false } );
 			} else {
-				notices.success( this.translate( 'Settings saved!' ) );
+				notices.success( translate( 'Settings saved!' ) );
 				this.markSaved();
 				this.setState( { isSubmittingForm: false } );
 
@@ -267,21 +294,23 @@ export const SeoForm = React.createClass( {
 
 	refreshCustomTitles() {
 		const {
-			refreshSiteData,
-			selectedSite
+			site,
+			refreshSiteData
 		} = this.props;
 
-		if ( selectedSite && selectedSite.ID ) {
-			refreshSiteData( selectedSite.ID );
+		if ( site && site.ID ) {
+			refreshSiteData( site.ID );
 		}
 	},
 
 	getVerificationError( isPasteError ) {
+		const { translate } = this.props;
+
 		return (
 			<FormInputValidation isError={ true } text={
 				isPasteError
-					? this.translate( 'Verification code should be copied and pasted into this field.' )
-					: this.translate( 'Invalid site verification tag.' )
+					? translate( 'Verification code should be copied and pasted into this field.' )
+					: translate( 'Invalid site verification tag.' )
 			} />
 		);
 	},
@@ -295,14 +324,13 @@ export const SeoForm = React.createClass( {
 	},
 
 	render() {
+		const { translate, site, upgradeToBusiness, showAdvancedSeo } = this.props;
 		const {
-			description: siteDescription,
 			slug = '',
 			settings: {
 				blog_public = 1
-			} = {},
-			title: siteTitle
-		} = this.props.site;
+			} = {}
+		} = site;
 
 		const {
 			isSubmittingForm,
@@ -320,9 +348,6 @@ export const SeoForm = React.createClass( {
 		const isDisabled = isSitePrivate || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
-		const seoTitle = siteDescription.length
-			? `${ siteTitle } | ${ siteDescription }`
-			: siteTitle;
 		const siteUrl = `https://${ slug }/`;
 		const sitemapUrl = `${ siteUrl }sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
@@ -347,46 +372,25 @@ export const SeoForm = React.createClass( {
 				disabled={ isSaveDisabled }
 			>
 				{ isSubmittingForm
-					? this.translate( 'Saving…' )
-					: this.translate( 'Save Settings' )
+					? translate( 'Saving…' )
+					: translate( 'Save Settings' )
 				}
 			</Button>
 		);
-
-		let preview = (
-			<SearchPreview
-				title={ seoTitle }
-				url={ siteUrl }
-				snippet={ seoMetaDescription }
-			/>
-		);
-
-		if ( config.isEnabled('manage/advanced-seo') ) {
-			preview = (
-				<FormSettingExplanation>
-					<Button className="preview-button" onClick={ this.showPreview }>
-						{ this.translate('Show Previews') }
-					</Button>
-					<span className="preview-explanation">
-						{ this.translate('See how this will look on Google, Facebook, and Twitter.') }
-					</span>
-				</FormSettingExplanation>
-			);
-		}
 
 		return (
 			<div>
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
 				{ isSitePrivate &&
-					<Notice status="is-warning" showDismiss={ false } text={ this.translate( 'SEO settings are disabled because the site visibility is not set to Public.' ) }>
-						<NoticeAction href={ generalTabUrl }>{ this.translate( 'View Settings' ) }</NoticeAction>
+					<Notice status="is-warning" showDismiss={ false } text={ translate( 'SEO settings are disabled because the site visibility is not set to Public.' ) }>
+						<NoticeAction href={ generalTabUrl }>{ translate( 'View Settings' ) }</NoticeAction>
 					</Notice>
 				}
 
-				<SectionHeader label={ this.translate( 'Search Engine Optimization' ) }>
+				<SectionHeader label={ translate( 'Search Engine Optimization' ) }>
 				</SectionHeader>
 				<Card>
-					{ this.translate(
+					{ translate(
 						'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
 						'for search engines, so you don\'t have to do anything extra. However, you can tweak ' +
 						'these settings if you\'d like more advanced control. Read more about what you can do ' +
@@ -400,15 +404,58 @@ export const SeoForm = React.createClass( {
 					) }
 				</Card>
 
+				{ ! showAdvancedSeo &&
+					<Card className="seo-form-nudge">
+						<div className="seo-form-nudge__business-plan-card">
+							<PlanCompareCard
+								title={ getPlan( PLAN_BUSINESS ).getTitle() }
+								line={ getPlan( PLAN_BUSINESS ).getPriceTitle() }
+								buttonName={ translate( 'Upgrade' ) }
+								onClick={ upgradeToBusiness }
+								currentPlan={ false }
+								popularRibbon={ true } >
+								<PlanCompareCardItem highlight={ true } >
+									{ translate( 'Advanced SEO' ) }
+								</PlanCompareCardItem>
+								{ featuresToShow.map( feature => (
+									<PlanCompareCardItem key={ feature }>
+										{ getFeatureTitle( feature ) }
+									</PlanCompareCardItem>
+								) ) }
+							</PlanCompareCard>
+						</div>
+						<div className="seo-form-nudge__description">
+							<div className="seo-form-nudge__title">
+								<div className="seo-form-nudge__title-plan">
+									<div className="seo-form-nudge__title-plan-icon"></div>
+								</div>
+								<p className="seo-form-nudge__title-message">{ translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }</p>
+							</div>
+							<p className="seo-form-nudge__subtitle">{ translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }</p>
+							<ul className="seo-form-nudge__features">
+								<li className="seo-form-nudge__feature-item">
+									<Gridicon className="seo-form-nudge__feature-item-checkmark" icon="checkmark" />
+									{ translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ) }</li>
+								<li className="seo-form-nudge__feature-item">
+									<Gridicon className="seo-form-nudge__feature-item-checkmark" icon="checkmark" />
+									{ translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ) }</li>
+								<li className="seo-form-nudge__feature-item">
+									<Gridicon className="seo-form-nudge__feature-item-checkmark" icon="checkmark" />
+									{ translate( 'Modify front page meta data in order to customize how your site appears to search engines.' ) }</li>
+							</ul>
+						</div>
+					</Card>
+				}
+
 				<form onChange={ this.markChanged } className="seo-form">
-					{ config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
+					{ showAdvancedSeo && isEnabled( 'manage/advanced-seo/custom-title' ) &&
 						<div>
-							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
+							<SectionHeader label={ translate( 'Page Title Structure' ) }>
 								{ submitButton }
 							</SectionHeader>
 							<Card>
 								<p>
-								{ this.translate(
+								{ translate(
 									'You can set the structure of page titles for different sections of your site. ' +
 									'Doing this will change the way your site title is displayed in search engine ' +
 									'results, and when shared on social media sites.'
@@ -419,44 +466,55 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					<SectionHeader label={ this.translate( 'Website Meta' ) }>
-						{ submitButton }
-					</SectionHeader>
-					<Card>
-						<p>
-							{ this.translate(
-								'Craft a description of your Website up to 160 characters that will be used in ' +
-								'search engine results for your front page, and when your website is shared ' +
-								'on social media sites.'
-							) }
-						</p>
-						<p>
-							<FormLabel htmlFor="seo_meta_description">
-								{ this.translate( 'Front Page Meta Description' ) }
-							</FormLabel>
-							<CountedTextarea
-								name="seo_meta_description"
-								type="text"
-								id="seo_meta_description"
-								value={ seoMetaDescription || '' }
-								disabled={ isDisabled }
-								maxLength="300"
-								acceptableLength={ 159 }
-								onChange={ this.handleMetaChange }
-							/>
-							{ hasHtmlTagError &&
-								<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
-							}
-						</p>
-						{ preview }
-					</Card>
+					{ showAdvancedSeo &&
+						<div>
+							<SectionHeader label={ translate( 'Website Meta' ) }>
+								{ submitButton }
+							</SectionHeader>
+							<Card>
+								<p>
+									{ translate(
+										'Craft a description of your Website up to 160 characters that will be used in ' +
+										'search engine results for your front page, and when your website is shared ' +
+										'on social media sites.'
+									) }
+								</p>
+								<p>
+									<FormLabel htmlFor="seo_meta_description">
+										{ translate( 'Front Page Meta Description' ) }
+									</FormLabel>
+									<CountedTextarea
+										name="seo_meta_description"
+										type="text"
+										id="seo_meta_description"
+										value={ seoMetaDescription || '' }
+										disabled={ isDisabled }
+										maxLength="300"
+										acceptableLength={ 159 }
+										onChange={ this.handleMetaChange }
+									/>
+									{ hasHtmlTagError &&
+										<FormInputValidation isError={ true } text={ translate( 'HTML tags are not allowed.' ) } />
+									}
+								</p>
+								<FormSettingExplanation>
+									<Button className="preview-button" onClick={ this.showPreview }>
+										{ translate( 'Show Previews' ) }
+									</Button>
+									<span className="preview-explanation">
+										{ translate( 'See how this will look on Google, Facebook, and Twitter.' ) }
+									</span>
+								</FormSettingExplanation>
+							</Card>
+						</div>
+					}
 
-					<SectionHeader label={ this.translate( 'Site Verification Services' ) }>
+					<SectionHeader label={ translate( 'Site Verification Services' ) }>
 						{ submitButton }
 					</SectionHeader>
 					<Card>
 						<p>
-							{ this.translate(
+							{ translate(
 								'Note that {{b}}verifying your site with these services is not necessary{{/b}} in order' +
 								' for your site to be indexed by search engines. To use these advanced search engine tools' +
 								' and verify your site with a service, paste the HTML Tag code below. Read the' +
@@ -477,7 +535,7 @@ export const SeoForm = React.createClass( {
 						</p>
 						<FormFieldset>
 							<FormInput
-								prefix={ this.translate( 'Google' ) }
+								prefix={ translate( 'Google' ) }
 								name="verification_code_google"
 								type="text"
 								value={ googleCode }
@@ -491,7 +549,7 @@ export const SeoForm = React.createClass( {
 						</FormFieldset>
 						<FormFieldset>
 							<FormInput
-								prefix={ this.translate( 'Bing' ) }
+								prefix={ translate( 'Bing' ) }
 								name="verification_code_bing"
 								type="text"
 								value={ bingCode }
@@ -505,7 +563,7 @@ export const SeoForm = React.createClass( {
 						</FormFieldset>
 						<FormFieldset>
 							<FormInput
-								prefix={ this.translate( 'Pinterest' ) }
+								prefix={ translate( 'Pinterest' ) }
 								name="verification_code_pinterest"
 								type="text"
 								value={ pinterestCode }
@@ -519,7 +577,7 @@ export const SeoForm = React.createClass( {
 						</FormFieldset>
 						<FormFieldset>
 							<FormInput
-								prefix={ this.translate( 'Yandex' ) }
+								prefix={ translate( 'Yandex' ) }
 								name="verification_code_yandex"
 								type="text"
 								value={ yandexCode }
@@ -532,31 +590,36 @@ export const SeoForm = React.createClass( {
 							{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
-							<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
+							<FormLabel htmlFor="seo_sitemap">{ translate( 'XML Sitemap' ) }</FormLabel>
 							<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
 							<FormSettingExplanation>
-								{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
+								{ translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
 							</FormSettingExplanation>
 						</FormFieldset>
 					</Card>
 				</form>
 				<WebPreview
 					showPreview={ showPreview }
-				    onClose={ this.hidePreview }
-				    previewUrl={ siteUrl }
-				    showDeviceSwitcher={ false }
-				    showExternal={ false }
-				    defaultViewportDevice="seo"
+					onClose={ this.hidePreview }
+					previewUrl={ siteUrl }
+					showDeviceSwitcher={ false }
+					showExternal={ false }
+					defaultViewportDevice="seo"
 				/>
 			</div>
 		);
 	}
 } );
 
-const mapStateToProps = state => ( {
-	selectedSite: getSelectedSite( state ),
-	storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) )
-} );
+const mapStateToProps = ( state, ownProps ) => {
+	const { site = getSelectedSite( state ) } = ownProps;
+
+	return {
+		site,
+		storedTitleFormats: getSeoTitleFormatsForSite( site ),
+		showAdvancedSeo: site && site.plan && hasBusinessPlan( site.plan ) && isEnabled( 'manage/advanced-seo' )
+	};
+};
 
 const mapDispatchToProps = {
 	refreshSiteData: siteId => requestSite( siteId ),
@@ -568,4 +631,4 @@ export default connect(
 	mapDispatchToProps,
 	undefined,
 	{ pure: false } // defaults to true, but this component has internal state
-)( SeoForm );
+)( localize( SeoForm ) );
