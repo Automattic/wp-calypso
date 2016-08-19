@@ -14,7 +14,8 @@ import FollowButton from 'reader/follow-button';
 import LikeButton from 'reader/like-button';
 import CommentButton from 'blocks/comment-button';
 import DisplayTypes from 'state/reader/posts/display-types';
-var Gridicon = require( 'components/gridicon' );
+import Gravatar from 'components/gravatar';
+import Gridicon from 'components/gridicon';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -28,13 +29,15 @@ function FeaturedImage( { image, href } ) {
 function PostByline( { post, site, feed } ) {
 	return (
 		<div className="reader-post-card__meta ignore-click">
-			<span className="reader-post-card__meta-author-and-site">
-				<AuthorAndSite post={ post } site={ site } feed={ feed } showGravatar={ true } />
-			</span>
-			<span className="reader-post-card__meta-timestamp-and-tag">
-				<span className="reader-post-card__meta-timestamp">1 hour ago</span>
-				<span className="reader-post-card__meta-tag">Pets</span>
-			</span>
+			<Gravatar user={ post.author } />
+			<div className="reader-post-card__meta-details">
+				<a className="reader-post-card__author reader-post-card__link">Sue Smith</a>
+				<a className="reader-post-card__link">catsandfurballs.wordpress.com</a>
+				<div className="reader-post-card__timestamp-and-tag">
+					<span className="reader-post-card__timestamp">1 hour ago</span>
+					<span className="reader-post-card__tag"><Gridicon icon="tag" />Pets</span>
+				</div>
+			</div>
 		</div>
 	);
 }
@@ -61,18 +64,18 @@ export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentCl
 						<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
 					</h1>
 					<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
+					<ul className="reader-post-card__social ignore-click">
+						<li className="reader-post-card__visit"><Gridicon icon="external" /></li>
+						<li><Gridicon icon="share" /></li>
+						<li><CommentButton
+							commentCount={ post.discussion.comment_count }
+							tagName="span" showLabel={ false }
+							onClick={ onCommentClick }/></li>
+						<li><LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } /></li>
+						<li><Gridicon icon="ellipsis" /></li>
+					</ul>
 				</div>
 			</div>
-			<ul className="reader-post-card__social ignore-click">
-				<li className="reader-post-card__visit"><Gridicon icon="external" /></li>
-				<li><Gridicon icon="share" /></li>
-				<li><CommentButton
-					commentCount={ post.discussion.comment_count }
-					tagName="span" showLabel={ false }
-					onClick={ onCommentClick }/></li>
-				<li><LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } /></li>
-				<li><Gridicon icon="ellipsis" /></li>
-			</ul>
 		</Card>
 	);
 }
