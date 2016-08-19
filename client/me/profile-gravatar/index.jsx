@@ -1,14 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:sidebar-gravatar' );
+import React from 'react';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
-var Gravatar = require( 'components/gravatar' ),
-	eventRecorder = require( 'me/event-recorder' );
+import Gravatar from 'components/gravatar';
+import eventRecorder from 'me/event-recorder';
+import config from 'config';
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:me:sidebar-gravatar' );
 
 module.exports = React.createClass( {
 
@@ -21,15 +27,24 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var profileURL = '//gravatar.com/' + this.props.user.username;
+		const profileURL = '//gravatar.com/' + this.props.user.username;
+		let updateProps = {
+			href: '/me/gravatar',
+			className: 'profile-gravatar__edit',
+			onClick: this.recordClickEvent( 'Gravatar Update Profile Photo in Sidebar' )
+		};
+
+		// Legacy support
+		if ( ! config.isEnabled( 'me/gravatar' ) ) {
+			updateProps = Object.assign( updateProps, {
+				href: 'https://secure.gravatar.com/site/wpcom?wpcc-no-close',
+				target: '_blank'
+			} );
+		}
 
 		return (
 			<div className="profile-gravatar">
-				<a
-					href="https://secure.gravatar.com/site/wpcom?wpcc-no-close"
-					target="_blank"
-					className="profile-gravatar__edit"
-					onClick={ this.recordClickEvent( 'Gravatar Update Profile Photo in Sidebar' ) } >
+				<a { ... updateProps } >
 
 					<Gravatar user={ this.props.user } size={ 150 } imgSize={ 400 } />
 

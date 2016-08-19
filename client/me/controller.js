@@ -99,6 +99,17 @@ export default {
 		);
 	},
 
+	gravatar( context ) {
+		const GravatarUpload = require( './gravatar-upload' );
+		renderWithReduxStore(
+			React.createElement( GravatarUpload, {
+				context
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
 	// Users that are redirected to `/me/next?welcome` after signup should visit
 	// `/me/next/welcome` instead.
 	nextStepsWelcomeRedirect( context, next ) {

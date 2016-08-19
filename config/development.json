@@ -88,6 +88,7 @@
 		"me/account": true,
 		"me/billing-history": true,
 		"me/find-friends": false,
+		"me/gravatar": true,
 		"me/my-profile": true,
 		"me/next-steps": true,
 		"me/notifications": true,
