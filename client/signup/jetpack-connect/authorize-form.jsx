@@ -301,7 +301,18 @@ const LoggedInForm = React.createClass( {
 	renderErrorDetails() {
 		const { authorizeError } = this.props.jetpackConnectAuthorize;
 		return (
-			<div className="jetpack-connect__error-notice">
+			<div>
+				<FormLabel>{ this.translate( 'Error Details' ) }</FormLabel>
+				<FormSettingExplanation>
+					{ authorizeError.message }
+				</FormSettingExplanation>
+			</div>
+		);
+	},
+
+	renderXmlrpcFeedback() {
+		return (
+			<div className="jetpack-connect__xmlrpc-feedback">
 				<p>
 					{ this.translate( 'You may be able to resolve this by completing the connection on your site. ' ) }
 					<ExternalLink
@@ -322,10 +333,7 @@ const LoggedInForm = React.createClass( {
 						}
 					) }
 				</p>
-				<FormLabel>{ this.translate( 'Error Details' ) }</FormLabel>
-				<FormSettingExplanation>
-					{ authorizeError.message }
-				</FormSettingExplanation>
+				{ this.renderErrorDetails() }
 			</div>
 		);
 	},
@@ -345,9 +353,17 @@ const LoggedInForm = React.createClass( {
 		if ( authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
 		}
+		if ( this.props.requestHasXmlrpcError() ) {
+			return (
+				<div>
+					<JetpackConnectNotices noticeType="xmlrpcError" />
+					{ this.renderXmlrpcFeedback() }
+				</div>
+			);
+		}
 		return (
 			<div>
-				<JetpackConnectNotices noticeType="authorizeError" />
+				<JetpackConnectNotices noticeType="defaultAuthorizeError" />
 				{ this.renderErrorDetails() }
 			</div>
 		);

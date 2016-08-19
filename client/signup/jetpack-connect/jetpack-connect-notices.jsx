@@ -98,8 +98,16 @@ export default React.createClass( {
 			noticeValues.icon = 'notice';
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'authorizeError' ) {
+		if ( this.props.noticeType === 'xmlrpcError' ) {
 			noticeValues.text = this.translate( 'Error communicating with your site.' );
+			noticeValues.status = 'is-error';
+			noticeValues.icon = 'notice';
+			return noticeValues;
+		}
+		if ( this.props.noticeType === 'defaultAuthorizeError' ) {
+			noticeValues.text = this.translate( 'Error authorizing your site. Please {{link}}contact support{{/link}}.', {
+				components: { link: <a href="https://jetpack.com/contact-support" target="_blank" /> }
+			} );
 			noticeValues.status = 'is-error';
 			noticeValues.icon = 'notice';
 			return noticeValues;
