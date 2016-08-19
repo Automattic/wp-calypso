@@ -155,7 +155,7 @@ const SiteSelector = React.createClass( {
 			sites = this.props.sites.getVisible();
 
 			const { recentSites } = this.props;
-			if ( this.shouldShowGroups() && size( recentSites ) ) {
+			if ( this.shouldShowGroups() && size( recentSites ) && user.get().visible_site_count >= 12 ) {
 				sites = filter( sites, ( { ID: siteId } ) => ! includes( recentSites, siteId ) );
 			}
 		}
