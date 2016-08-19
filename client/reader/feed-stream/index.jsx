@@ -2,6 +2,7 @@ var React = require( 'react' ),
 	url = require( 'url' );
 
 var EmptyContent = require( './empty' ),
+	DocumentHead = require( 'components/data/document-head' ),
 	Stream = require( 'reader/stream' ),
 	FeedHeader = require( 'reader/feed-header' ),
 	FeedStore = require( 'lib/feed-store' ),
@@ -135,16 +136,13 @@ var FeedStream = React.createClass( {
 		var feed = FeedStore.get( this.props.feedId ),
 			emptyContent = ( <EmptyContent /> );
 
-		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( this.state.title );
-		}
-
 		if ( feed && feed.state === FeedStoreState.ERROR ) {
 			return <FeedError sidebarTitle={ this.state.title } />;
 		}
 
 		return (
 			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showPostHeader={ false }>
+				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: this.state.title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader feed={ feed } site={ this.state.site } />
 			</Stream>

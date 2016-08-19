@@ -10,6 +10,7 @@ import closest from 'component-closest';
  * Internal Dependencies
  */
 import CompactCard from 'components/card/compact';
+import DocumentHead from 'components/data/document-head';
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import BlankContent from './blank';
@@ -170,10 +171,6 @@ const FeedStream = React.createClass( {
 			showEmptyContent = false;
 		}
 
-		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( this.state.title || this.translate( 'Search' ) );
-		}
-
 		const store = this.props.store || emptyStore;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
@@ -190,6 +187,7 @@ const FeedStream = React.createClass( {
 				cardFactory={ this.cardFactory }
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
+				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: this.state.title || this.translate( 'Search' ) } ) } />
 				<CompactCard className="search-stream__input-card">
 					<SearchInput
 						initialValue={ this.props.query }

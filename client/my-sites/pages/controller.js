@@ -12,7 +12,7 @@ var sites = require( 'lib/sites-list' )(),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
 import { renderWithReduxStore } from 'lib/react-helpers';
 
@@ -28,7 +28,7 @@ var controller = {
 			baseAnalyticsPath;
 
 		status = ( ! status || status === siteID ) ? '' : status;
-		titleActions.setTitle( i18n.translate( 'Pages', { textOnly: true } ), { siteID: siteID } );
+		context.store.dispatch( setTitle( i18n.translate( 'Pages', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( siteID ) {
 			baseAnalyticsPath = basePath + '/:site';

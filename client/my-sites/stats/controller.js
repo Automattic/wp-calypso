@@ -14,7 +14,7 @@ import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { savePreference } from 'state/preferences/actions';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -131,7 +131,8 @@ module.exports = {
 		let momentSiteZone = i18n.moment();
 		const StatsComponent = Insights;
 
-		titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ) );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
 		let activeFilter = filters().filter( function( filter ) {
 			return 'stats-insights' === filter.id;
@@ -207,7 +208,8 @@ module.exports = {
 
 		window.scrollTo( 0, 0 );
 
-		titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ) );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
 		let activeFilter = filters().filter( function( filter ) {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
@@ -275,7 +277,8 @@ module.exports = {
 		let chartQuantity = 10;
 		let siteComponent;
 
-		titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ) );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
 		let currentSite = sites.getSite( siteId );
 		if ( ! currentSite ) {
@@ -301,7 +304,8 @@ module.exports = {
 			}
 
 			if ( currentSite && currentSite.domain ) {
-				titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ), { siteID: currentSite.domain } );
+				// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+				context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 			}
 
 			if ( currentSite && 'object' === typeof currentSite.options && 'undefined' !== typeof currentSite.options.gmt_offset ) {

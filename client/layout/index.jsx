@@ -40,6 +40,7 @@ import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
 import DesignPreview from 'my-sites/design-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import DocumentHead from 'components/data/document-head';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -197,6 +198,7 @@ Layout = React.createClass( {
 
 		return (
 			<div className={ sectionClass }>
+				<DocumentHead />
 				<QueryPreferences />
 				{ config.isEnabled( 'guided-tours' ) ? <GuidedTours /> : null }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }

@@ -16,7 +16,7 @@ import route from 'lib/route';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
 import sitesFactory from 'lib/sites-list';
 import StartOver from './start-over';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import titlecase from 'to-title-case';
 import utils from 'lib/site/utils';
 
@@ -64,9 +64,8 @@ module.exports = {
 		let site = sites.getSelectedSite();
 		const { section } = context.params;
 
-		titleActions.setTitle( i18n.translate( 'Site Settings', { textOnly: true } ),
-			{ siteID: route.getSiteFragment( context.path ) }
-		);
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Site Settings', { textOnly: true } ) ) );
 
 		// if site loaded, but user cannot manage site, redirect
 		if ( site && ! utils.userCan( 'manage_options', site ) ) {
