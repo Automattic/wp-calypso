@@ -204,6 +204,8 @@
 	}
 }
 
+// Custom breakpoints that drops action labels text
+// to prevent Likes text from breaking onto a new line
 .reader-share__button-label,
 .comment-button__label-status,
 .like-button__label-status {
@@ -222,7 +224,6 @@
 	border-radius: 4px;
 	background: $gray-light;
 }
-
 
 /* Tiled Gallery Default Styles
  * Mostly copied from Atlas -Shaun
