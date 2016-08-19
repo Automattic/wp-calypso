@@ -13,7 +13,7 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import route from 'lib/route';
 import userSettings from 'lib/user-settings';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
@@ -37,7 +37,7 @@ export default {
 		const ProfileComponent = require( 'me/profile' ),
 			basePath = context.path;
 
-		titleActions.setTitle( i18n.translate( 'My Profile', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'My Profile', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > My Profile' );
 
@@ -57,7 +57,7 @@ export default {
 		const AppsComponent = require( 'me/get-apps' ),
 			basePath = context.path;
 
-		titleActions.setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Get Apps' );
 
@@ -79,7 +79,7 @@ export default {
 			trophiesData = require( 'lib/trophies-data' ),
 			isWelcome = 'welcome' === context.params.welcome;
 
-		titleActions.setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( isWelcome ) {
 			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );

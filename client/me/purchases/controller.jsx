@@ -26,7 +26,7 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 import { setAllSitesSelected, setSelectedSiteId } from 'state/ui/actions';
 import sitesFactory from 'lib/sites-list';
 import supportPaths from 'lib/url/support';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
 
@@ -52,10 +52,11 @@ function renderPage( context, component ) {
 	);
 }
 
-function setTitle( ...title ) {
-	titleActions.setTitle(
+// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+function setTitle( context, ...title ) {
+	context.store.dispatch( setDocumentHeadTitle(
 		concatTitle( titles.purchases, ...title )
-	);
+	) );
 }
 
 /**
@@ -87,6 +88,7 @@ const setSelectedSite = ( siteSlug, dispatch ) => {
 export default {
 	addCardDetails( context ) {
 		setTitle(
+			context,
 			titles.addCardDetails
 		);
 
@@ -106,6 +108,7 @@ export default {
 
 	cancelPrivateRegistration( context ) {
 		setTitle(
+			context,
 			titles.cancelPrivateRegistration
 		);
 
@@ -126,6 +129,7 @@ export default {
 
 	cancelPurchase( context ) {
 		setTitle(
+			context,
 			titles.cancelPurchase
 		);
 
@@ -146,6 +150,7 @@ export default {
 
 	confirmCancelDomain( context ) {
 		setTitle(
+			context,
 			titles.confirmCancelDomain
 		);
 
@@ -166,6 +171,7 @@ export default {
 
 	editCardDetails( context ) {
 		setTitle(
+			context,
 			titles.editCardDetails
 		);
 
@@ -185,7 +191,7 @@ export default {
 	},
 
 	list( context ) {
-		setTitle();
+		setTitle( context );
 
 		recordPageView(
 			paths.list()
@@ -227,6 +233,7 @@ export default {
 
 	managePurchase( context ) {
 		setTitle(
+			context,
 			titles.managePurchase
 		);
 
@@ -251,7 +258,7 @@ export default {
 			return next();
 		}
 
-		setTitle();
+		setTitle( context );
 
 		recordPageView(
 			context.path,

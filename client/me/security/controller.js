@@ -11,7 +11,7 @@ import i18n from 'i18n-calypso';
 import analytics from 'lib/analytics';
 import notices from 'notices';
 import userSettings from 'lib/user-settings';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
@@ -22,7 +22,7 @@ export default {
 		const basePath = context.path;
 		const accountPasswordData = require( 'lib/account-password-data' );
 
-		titleActions.setTitle( i18n.translate( 'Password', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Password', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( context.query && context.query.updated === 'password' ) {
 			notices.success( i18n.translate( 'Your password was saved successfully.' ), { displayOnNextPage: true } );
@@ -50,7 +50,7 @@ export default {
 			basePath = context.path,
 			appPasswordsData = require( 'lib/application-passwords-data' );
 
-		titleActions.setTitle( i18n.translate( 'Two-Step Authentication', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Two-Step Authentication', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Two-Step Authentication' );
 
@@ -72,7 +72,7 @@ export default {
 			basePath = context.path,
 			connectedAppsData = require( 'lib/connected-applications-data' );
 
-		titleActions.setTitle( i18n.translate( 'Connected Applications', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Connected Applications', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Connected Applications' );
 
@@ -93,7 +93,7 @@ export default {
 		const CheckupComponent = require( 'me/security-checkup' ),
 			basePath = context.path;
 
-		titleActions.setTitle( i18n.translate( 'Security Checkup', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Security Checkup', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Security Checkup' );
 

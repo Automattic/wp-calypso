@@ -8,7 +8,6 @@ import React from 'react';
  */
 import config from 'config';
 import route from 'lib/route';
-import titleActions from 'lib/screen-title/actions';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { recordTrack } from 'reader/stats';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
@@ -25,8 +24,6 @@ export default {
 			feedStore = feedStreamFactory( 'site:' + blogId ),
 			mcKey = 'discover';
 
-		titleActions.setTitle( 'Discover' );
-
 		ensureStoreLoading( feedStore, context );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
@@ -37,6 +34,7 @@ export default {
 				key: 'site-' + blogId,
 				store: feedStore,
 				siteId: blogId,
+				title: 'Discover',
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,

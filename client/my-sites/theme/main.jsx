@@ -350,8 +350,7 @@ const ThemeSheet = React.createClass( {
 		const { name: themeName, description } = this.props;
 		const title = i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
-		} ); // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
-
+		} );
 		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
 
 		return (

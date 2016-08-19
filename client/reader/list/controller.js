@@ -38,7 +38,6 @@ export default {
 					postStore: listStore,
 					owner: encodeURIComponent( context.params.user ),
 					slug: encodeURIComponent( context.params.list ),
-					setPageTitle: setPageTitle,
 					trackScrollPage: trackScrollPage.bind(
 						null,
 						basePath,
@@ -59,7 +58,7 @@ export default {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List > Sites',
 			mcKey = 'list_sites';
 
-		setPageTitle( i18n.translate( 'Manage List' ) );
+		setPageTitle( context, i18n.translate( 'Manage List' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
@@ -89,7 +88,7 @@ export default {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List > Tags',
 			mcKey = 'list_tags';
 
-		setPageTitle( i18n.translate( 'Manage List' ) );
+		setPageTitle( context, i18n.translate( 'Manage List' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
@@ -119,7 +118,7 @@ export default {
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Manage List > Description',
 			mcKey = 'list_edit';
 
-		setPageTitle( i18n.translate( 'Manage List Description' ) );
+		setPageTitle( context, i18n.translate( 'Manage List Description' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 

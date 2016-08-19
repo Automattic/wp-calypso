@@ -26,7 +26,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 const sites = sitesFactory();
 
@@ -189,9 +189,8 @@ export default {
 			return;
 		}
 
-		titleActions.setTitle( i18n.translate( 'Plans', { textOnly: true } ),
-			{ siteID: route.getSiteFragment( context.path ) }
-		);
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
 
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );

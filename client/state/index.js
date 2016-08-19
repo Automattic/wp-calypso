@@ -89,7 +89,6 @@ const middleware = [ thunkMiddleware, noticesMiddleware, postsEditMiddleware ];
 if ( typeof window === 'object' ) {
 	// Browser-specific middlewares
 	middleware.push(
-		require( './document-head/middleware' ),
 		require( './analytics/middleware.js' ).analyticsMiddleware
 	);
 }

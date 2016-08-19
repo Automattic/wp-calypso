@@ -3,7 +3,7 @@ DocumentHead
 
 _This is a work in progress: only `title` and `unreadCount` are functional in the current state._
 
-`<DocumentHead />` is a React component used in assigning a title, description, unread count, link or meta to the global application state.
+`<DocumentHead />` is a React component used in assigning a title, description, unread count, link or meta to the global application state. It also sets `document.title` on the client, based on those parameters.
 
 ## Usage
 
