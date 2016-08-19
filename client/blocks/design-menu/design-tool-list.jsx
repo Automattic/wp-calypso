@@ -39,7 +39,15 @@ const DesignToolList = React.createClass( {
 				<SidebarHeading>{ this.translate( 'Site Identity' ) }</SidebarHeading>
 				<SidebarMenu>
 					<ul>
+						{ this.renderControl( { icon: 'image', label: this.translate( 'Logo' ), value: 'siteLogo' } ) }
 						{ this.renderControl( { icon: 'heading', label: this.translate( 'Title and Tagline' ), value: 'siteTitle' } ) }
+					</ul>
+				</SidebarMenu>
+				<SidebarHeading>{ this.translate( 'Site Layout' ) }</SidebarHeading>
+				<SidebarMenu>
+					<ul>
+						{ this.renderControl( { icon: 'house', label: this.translate( 'Homepage Settings' ), value: 'homepage' } ) }
+						{ this.renderControl( { icon: 'image', label: this.translate( 'Header Image' ), value: 'headerImage' } ) }
 					</ul>
 				</SidebarMenu>
 			</div>
