@@ -297,7 +297,7 @@ const Search = React.createClass( {
 			<div className={ searchClass } role="search">
 				<Spinner />
 				<div
-					className="search__component-icon-div"
+					className="search__icon-navigation"
 					ref="openIcon"
 					onTouchTap={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
@@ -342,7 +342,7 @@ const Search = React.createClass( {
 		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
 				<div
-					className="search__component-icon-div"
+					className="search__icon-navigation"
 					onTouchTap={ this.closeSearch }
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
