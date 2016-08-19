@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { pick, omit } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,18 +13,16 @@ import {
 	PREFERENCES_FETCH,
 	PREFERENCES_FETCH_SUCCESS,
 	PREFERENCES_FETCH_FAILURE,
-	PREFERENCES_SAVE_SUCCESS,
-	SERIALIZE
+	PREFERENCES_SAVE_SUCCESS
 } from 'state/action-types';
-import { localValuesSchema, remoteValuesSchema } from './schema';
+import { remoteValuesSchema } from './schema';
 import { createReducer } from 'state/utils';
 
 /**
  * Returns the updated local values state after an action has been dispatched.
- * The local values state reflects preferences which may or may not persist
- * between sessions based on existence of a property schema), but is not saved
- * to the remote endpoint. If a local value is set and then later saved to the
- * remote, it will be removed from state.
+ * The local values state reflects preferences which are not saved to the
+ * remote endpoint. If a local value is set and then later saved to the remote,
+ * it will be removed from state.
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action payload
@@ -36,11 +34,8 @@ export const localValues = createReducer( {}, {
 	},
 	[ PREFERENCES_SAVE_SUCCESS ]: ( state, { key } ) => {
 		return omit( state, key );
-	},
-	[ SERIALIZE ]: ( state ) => {
-		return pick( state, Object.keys( localValuesSchema.properties ) );
 	}
-}, localValuesSchema );
+} );
 
 /**
  * Returns the updated remote values state after an action has been dispatched.
