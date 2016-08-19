@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import omit from 'lodash/omit';
+import ReactDom from 'react-dom';
 import React from 'react';
 import { setSection } from 'state/ui/actions';
 
@@ -9,7 +10,6 @@ import { setSection } from 'state/ui/actions';
  * Internal Dependencies
  */
 import MainComponent from './main';
-import { renderWithReduxStore } from 'lib/react-helpers';
 
 export default {
 	unsubscribe( context ) {
@@ -18,15 +18,14 @@ export default {
 			hasSidebar: false
 		} ) );
 
-		renderWithReduxStore(
+		ReactDom.render(
 			React.createElement( MainComponent, {
 				email: context.query.email,
 				category: context.query.category,
 				hmac: context.query.hmac,
 				context: omit( context.query, [ 'email', 'category', 'hmac' ] )
 			} ),
-			document.getElementById( 'primary' ),
-			context.store
+			document.getElementById( 'primary' )
 		);
 	}
 };
