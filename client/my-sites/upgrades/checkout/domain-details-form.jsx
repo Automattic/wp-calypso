@@ -187,7 +187,7 @@ export default React.createClass( {
 		return (
 			<div>
 				<Input
-					autofocus
+					autoFocus
 					label={ this.translate( 'First Name', { textOnly } ) }
 					{ ...fieldProps( 'first-name' ) }/>
 
