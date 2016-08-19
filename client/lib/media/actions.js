@@ -137,7 +137,7 @@ MediaActions.add = function( siteId, files ) {
 				URL: fileUrl,
 				guid: fileUrl,
 				file: fileName,
-				title: path.basename( fileName ),
+				title: file.title || path.basename( fileName ),
 				extension: MediaUtils.getFileExtension( file.fileName || fileContents ),
 				mime_type: MediaUtils.getMimeType( file.fileName || fileContents ),
 				// Size is not an API media property, though can be useful for
@@ -163,6 +163,7 @@ MediaActions.add = function( siteId, files ) {
 
 		// Assign parent ID if currently editing post
 		const post = PostEditStore.get();
+		const title = file.title;
 		if ( post && post.ID ) {
 			file = {
 				parent_id: post.ID,
@@ -174,6 +175,10 @@ MediaActions.add = function( siteId, files ) {
 			file = {
 				file: file
 			};
+		}
+
+		if ( title ) {
+			file.title = title;
 		}
 
 		debug( 'Uploading media to %d from %o', siteId, file );

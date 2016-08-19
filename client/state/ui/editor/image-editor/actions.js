@@ -36,12 +36,13 @@ export function setImageEditorAspectRatio( ratio ) {
 	};
 }
 
-export function setImageEditorFileInfo( src, fileName, mimeType ) {
+export function setImageEditorFileInfo( src, fileName, mimeType, title ) {
 	return {
 		type: IMAGE_EDITOR_SET_FILE_INFO,
 		src,
 		fileName,
-		mimeType
+		mimeType,
+		title
 	};
 }
 

@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import path from 'path';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -33,6 +34,8 @@ const MediaModalImageEditor = React.createClass( {
 		fileName: React.PropTypes.string,
 		mimeType: React.PropTypes.string,
 		setImageEditorFileInfo: React.PropTypes.func,
+		title: React.PropTypes.string,
+		translate: React.PropTypes.func,
 		onImageEditorClose: React.PropTypes.func,
 		onImageEditorCancel: React.PropTypes.func
 	},
@@ -48,7 +51,8 @@ const MediaModalImageEditor = React.createClass( {
 	componentDidMount() {
 		let src,
 			fileName = 'default',
-			mimeType = 'image/png';
+			mimeType = 'image/png',
+			title = 'default';
 
 		const media = this.props.items ? this.props.items[ this.props.selectedIndex ] : null;
 
@@ -58,10 +62,11 @@ const MediaModalImageEditor = React.createClass( {
 			} );
 			fileName = media.file || path.basename( src );
 			mimeType = MediaUtils.getMimeType( media );
+			title = media.title;
 		}
 
 		this.props.resetImageEditorState();
-		this.props.setImageEditorFileInfo( src, fileName, mimeType );
+		this.props.setImageEditorFileInfo( src, fileName, mimeType, title );
 	},
 
 	onDone() {
@@ -73,9 +78,27 @@ const MediaModalImageEditor = React.createClass( {
 	onImageExtracted( blob ) {
 		const mimeType = MediaUtils.getMimeType( this.props.fileName );
 
+		// check if a title is already post-fixed with '(edited copy)'
+		const editedCopyText = this.props.translate(
+			'%(title)s (edited copy)', {
+				args: {
+					title: ''
+				}
+			} );
+		let title = this.props.title;
+		if ( title.indexOf( editedCopyText ) === -1 ) {
+			title = this.props.translate(
+				'%(title)s (edited copy)', {
+					args: {
+						title: this.props.title
+					}
+				} );
+		}
+
 		MediaActions.add( this.props.site.ID, {
 			fileName: this.props.fileName,
 			fileContents: blob,
+			title: title,
 			mimeType: mimeType
 		} );
 	},
@@ -123,4 +146,4 @@ const MediaModalImageEditor = React.createClass( {
 export default connect(
 	( state ) => ( getImageEditorFileInfo( state ) ),
 	{ resetImageEditorState, setImageEditorFileInfo }
-)( MediaModalImageEditor );
+)( localize( MediaModalImageEditor ) );
