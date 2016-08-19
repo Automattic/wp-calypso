@@ -29,7 +29,7 @@ class HostCredentialsPage extends Component {
 		this.setFieldValue( fieldName, e.target.value );
 	}
 
-	submit = data => {
+	submit = () => {
 		// Future PR: This function will trigger the Redux API call
 	}
 
