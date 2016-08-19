@@ -14,24 +14,6 @@ import {
 import reducer, { selectedSiteId } from '../reducer';
 
 describe( 'reducer', () => {
-	it( 'should include expected keys in return value', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'section',
-			'isLoading',
-			'layoutFocus',
-			'hasSidebar',
-			'isPreviewShowing',
-			'currentPreviewUrl',
-			'queryArguments',
-			'selectedSiteId',
-			'guidedTour',
-			'editor',
-			'reader',
-			'olark',
-			'actionLog'
-		] );
-	} );
-
 	it( 'should refuse to persist any state', () => {
 		const state = reducer( {
 			selectedSiteId: 2916284

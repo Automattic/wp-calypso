@@ -3,6 +3,7 @@
  */
 import page from 'page';
 import React from 'react';
+import ReactDom from 'react-dom';
 import i18n from 'i18n-calypso';
 
 /**
@@ -34,7 +35,7 @@ export default {
 		if ( site && site.jetpack && ! isEnabled( 'manage/jetpack-plans' ) ) {
 			analytics.pageView.record( basePath + '/jetpack/:site', analyticsPageTitle + ' > Jetpack Plans Not Available' );
 
-			renderWithReduxStore(
+			ReactDom.render(
 				React.createElement( MainComponent, null,
 					React.createElement( EmptyContentComponent, {
 						title: i18n.translate( 'Plans are not available for Jetpack sites yet.' ),
@@ -44,8 +45,7 @@ export default {
 						illustration: '/calypso/images/drake/drake-nomenus.svg'
 					} )
 				),
-				document.getElementById( 'primary' ),
-				context.store
+				document.getElementById( 'primary' )
 			);
 			return;
 		}

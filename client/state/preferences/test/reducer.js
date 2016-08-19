@@ -34,11 +34,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should use DEFAULT_PREFERENCES from constants as a default', () => {
-			const expected = mapValues( DEFAULT_PREFERENCES, ( value ) => {
-				return 'default' in value ? value.default : null;
-			} );
-
-			expect( reducer( undefined, {} ).values ).to.deep.equal( expected );
+			expect( reducer( undefined, {} ).values ).to.deep.equal( mapValues( DEFAULT_PREFERENCES, value => value.default ) );
 		} );
 	} );
 

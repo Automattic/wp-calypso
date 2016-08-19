@@ -170,8 +170,4 @@
 
 .site-selector__recent {
 	border-bottom: 1px solid lighten( $gray, 30% );
-
-	&:empty {
-		border-bottom-width: 0;
-	}
 }
