@@ -39,7 +39,7 @@ var PopoverMenu = React.createClass( {
 				position={ this.props.position }
 				onClose={ this._onClose }
 				onShow={ this._onShow }
-				className={ this.props.className }>
+				className={ this.props.className }
 				rootClassName={ this.props.rootClassName }>
 				<div ref="menu" role="menu" className="popover__menu" onKeyDown={ this._onKeyDown } tabIndex="-1">
 					{ children }
