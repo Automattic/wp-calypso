@@ -2,11 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import {
 	compact,
 	flowRight as compose,
-	find,
 	get,
 	has,
 	head,
 	invert,
+	map,
 	mapValues,
 	matchesProperty,
 	reduce,
@@ -53,7 +53,13 @@ const Token = props => {
 	);
 };
 
-const toCalypso = rawContent => {
+/**
+ * Converts from ContentState to native Calypso format list
+ *
+ * @param {ContentState} rawContent Content of editor
+ * @returns {Array} title format
+ */
+const fromEditor = rawContent => {
 	const text = get( rawContent, 'blocks[0].text', '' );
 	const ranges = get( rawContent, 'blocks[0].entityRanges', [] );
 	const entities = get( rawContent, 'entityMap' );
@@ -71,6 +77,7 @@ const toCalypso = rawContent => {
 		], next.offset + next.length, remainingText ];
 	}, [ [], 0, text ] );
 
+	// add final remaining text not captured by any entity ranges
 	return compact( [
 		...o,
 		i < t.length && { type: 'string', value: t.slice( i ) }
@@ -103,10 +110,10 @@ const isTextPiece = matchesProperty( 'type', 'string' );
  */
 const buildEntityMapping = compose(
 	head, // return only the mapping and discard the lastKey
-	format => reduce( format, ( [ map, lastKey ], { type } ) => (
-		or( isTextPiece( { type } ), has( map, type ) ) // skip strings and existing tokens
-			? [ map, lastKey ]
-			: [ { ...map, [ type ]: lastKey }, lastKey + 1 ]
+	format => reduce( format, ( [ entityMap, lastKey ], { type } ) => (
+		or( isTextPiece( { type } ), has( entityMap, type ) ) // skip strings and existing tokens
+			? [ entityMap, lastKey ]
+			: [ { ...entityMap, [ type ]: lastKey }, lastKey + 1 ]
 	), [ {}, 0 ] )
 );
 
@@ -116,33 +123,66 @@ const emptyBlockMap = {
 	type: 'unstyled'
 };
 
-const getTokenTitle = ( type, tokens ) => get(
-	find( tokens, matchesProperty( 'tokenName', type ) ),
-	'title',
-	''
-);
+const tokenTitle = ( type, tokens ) => get( tokens, type, '' );
 
-const addPieceToBlock = ( block, offset, { type, value }, tokens, entityGuide ) => ( {
-	...block,
-	entityRanges: compact( [
-		...block.entityRanges,
-		value ? null : {
-			key: entityGuide[ type ],
-			length: getTokenTitle( type, tokens ).length,
-			offset,
-		},
-	] ),
-	text: block.text + ( value ? value : getTokenTitle( type, tokens ) ),
+/**
+ * Creates a new entity reference for a blockMap
+ *
+ * @param {Number} offset offset of entity into block text
+ * @param {String} type token name for entity reference
+ * @param {object} tokens mapping between token names and translated titles
+ * @param {object} entityGuide mapping between token names and entity key
+ * @returns {object} entityRange for use in blockMap in ContentState
+ */
+const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
+	key: entityGuide[ type ],
+	length: tokenTitle( type, tokens ).length,
+	offset
 } );
 
+/**
+ * Converts native format object to block map
+ *
+ * E.g.
+ *     From: [
+ *         { type: 'siteName' },
+ *         { type: 'string', value: ' | ' },
+ *         { type: 'tagline' }
+ *     ]
+ *     To: {
+ *         text: 'siteName | tagline',
+ *         entityRanges: [
+ *             { key: 0, offset: 0, length: 8 },
+ *             { key: 1, offset: 11, length: 7 }
+ *         ]
+ *     }
+ *
+ * @param {Array} format native Calypso title format object
+ * @param {object} tokens mapping between token names and translated titles
+ * @param {object} entityGuide mapping between token names and entity key
+ * @returns {object} blockMap for use in ContentState
+ */
 const buildBlockMap = compose(
 	head,
 	( format, tokens, entityGuide ) => reduce( format, ( [ block, lastIndex ], piece ) => [
-		addPieceToBlock( block, lastIndex, piece, tokens, entityGuide ),
-		lastIndex + ( piece.value ? piece.value.length : getTokenTitle( piece.type, tokens ).length )
+		{
+			...block,
+			entityRanges: isTextPiece( piece )
+				? block.entityRanges
+				: [ ...block.entityRanges, newEntityAt( lastIndex, piece.type, tokens, entityGuide ) ],
+			text: block.text + ( isTextPiece( piece ) ? piece.value : tokenTitle( piece.type, tokens ) ),
+		},
+		lastIndex + ( piece.value ? piece.value.length : tokenTitle( piece.type, tokens ).length )
 	], [ emptyBlockMap, 0 ] )
 );
 
+/**
+ * Converts Calypso-native title format into RawDraftContentState for Editor
+ *
+ * @param {Array} format pieces used to build title format
+ * @param {object} tokens mapping between token names and translated titles
+ * @returns {RawDraftContentState} content for editor
+ */
 const toEditor = ( format, tokens ) => {
 	const entityGuide = buildEntityMapping( format );
 	const blocks = [ buildBlockMap( format, tokens, entityGuide ) ];
@@ -217,7 +257,7 @@ export class TitleFormatEditor extends Component {
 			{ editorState },
 			() => {
 				editorState.lastChangeType === 'add-token' && this.focusEditor();
-				onChange( toCalypso( convertToRaw( currentContent ) ) );
+				onChange( fromEditor( convertToRaw( currentContent ) ) );
 			}
 		);
 	}
@@ -267,11 +307,11 @@ export class TitleFormatEditor extends Component {
 		return (
 			<div style={ editorStyle }>
 				<div style={ { marginBottom: '10px' } }>
-					{ tokens.map( ( { title, tokenName } ) => (
+					{ map( tokens, ( title, name ) => (
 						<span
-							key={ tokenName }
+							key={ name }
 							style={ buttonStyle }
-							onClick={ this.addToken( title, tokenName ) }
+							onClick={ this.addToken( title, name ) }
 						>
 							{ title }
 						</span>
@@ -290,10 +330,7 @@ export class TitleFormatEditor extends Component {
 TitleFormatEditor.displayName = 'TitleFormatEditor';
 
 TitleFormatEditor.propTypes = {
-	tokens: PropTypes.arrayOf( PropTypes.shape( {
-		title: PropTypes.string.isRequired,
-		tokenName: PropTypes.string.isRequired
-	} ) ).isRequired
+	tokens: PropTypes.object.isRequired
 };
 
 export default TitleFormatEditor;

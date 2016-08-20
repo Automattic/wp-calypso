@@ -72,10 +72,10 @@ export class MetaTitleEditor extends Component {
 
 		const tokens =
 			get( tokenMap, type, [] )
-				.map( name => ( {
-					title: get( getValidTokens( translate ), name, '' ),
-					tokenName: name,
-				} ) );
+				.reduce( ( allTokens, name ) => ( {
+					...allTokens,
+					[ name ]: get( getValidTokens( translate ), name, '' )
+				} ), {} );
 
 		return (
 			<div className="meta-title-editor">
