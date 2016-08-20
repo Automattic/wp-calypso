@@ -9,9 +9,6 @@
 	border: none;
 	z-index: z-index( 'root', '.site-selector' );
 
-	&.is-large .search  {
-		display: block;
-	}
 }
 
 // Styles for Site elements within the Selector
@@ -69,77 +66,8 @@
 }
 
 .site-selector .search {
-	display: none;
-	margin-bottom: 0;
-	width: auto;
-	height: auto;
-	padding: 8px;
-	border-bottom: 1px solid lighten( $gray, 30% );
-
-	.search__input[type="search"] {
-		position: relative;
-		height: auto;
-		padding-top: 6px;
-		padding-bottom: 6px;
-		padding-left: 32px;
-		font-size: 13px;
-		border: 1px solid lighten( $gray, 20% );
-		-webkit-appearance: none;
-
-		&:hover {
-			border: 1px solid lighten( $gray, 10% );
-			background-color: $white;
-		}
-
-		&::-webkit-input-placeholder {
-			color: $gray;
-		}
-
-		&::-moz-placeholder {
-			color: $gray;
-		}
-	}
-
-	.search__open-icon {
-		background-color: transparent;
-		border-left: none;
-		color: $gray;
-		padding: 0;
-		width: auto;
-		position: absolute;
-			top: 50%;
-
-		&:not(.ltr) {
-			left: 18px;
-		}
-
-		&.ltr {
-			left: 18px #{"/*rtl:ignore*/"};
-		}
-
-		margin-top: -9px;
-		width: 18px;
-		height: 18px;
-	}
-
-	&.is-open {
-		.search__close-icon {
-			color: $gray;
-
-			&:not(.ltr) {
-				right: 16px;
-			}
-
-			&.ltr {
-				right: 16px #{"/*rtl:ignore*/"};
-			}
-
-			margin-top: -9px;
-			width: 18px;
-			height: 18px;
-		}
-	}
-}
+ 	margin: 8px;
+ }
 
 // The actual list of sites
 .site-selector__sites {
