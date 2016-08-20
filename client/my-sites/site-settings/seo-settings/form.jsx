@@ -107,7 +107,7 @@ export const SeoForm = React.createClass( {
 		return {
 			...stateForSite( this.props.site ),
 			seoTitleFormats: this.props.storedTitleFormats,
-			isRefreshingSiteData: true,
+			isRefreshingSiteData: false,
 			dirtyFields: Set()
 		};
 	},
