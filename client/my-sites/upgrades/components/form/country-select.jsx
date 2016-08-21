@@ -48,12 +48,12 @@ export default React.createClass( {
 				{ key: 'divider1', label: '', disabled: 'disabled' }
 			] );
 
-			options = options.concat( countriesList.map( country => {
+			options = options.concat( countriesList.map( ( country, index ) => {
 				if ( isEmpty( country.code ) ) {
 					return { key: 'divider2', label: '', disabled: 'disabled' };
 				}
 
-				return { key: country.code, label: country.name, value: country.code };
+				return { key: `country-select-${ index }-${ country.code }`, label: country.name, value: country.code };
 			} ) );
 		}
 
