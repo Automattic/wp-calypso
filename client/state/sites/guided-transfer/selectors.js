@@ -1,5 +1,4 @@
 import { matches } from 'lodash/util';
-import { some } from 'lodash/collection';
 
 export function isRequestingGuidedTransferStatus( state, siteId ) {
 	return state.sites.guidedTransfer.isFetching[ siteId ] === true;

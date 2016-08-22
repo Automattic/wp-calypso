@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
  */
 import { getGuidedTransferIssue } from 'state/sites/guided-transfer/selectors';
 import Card from 'components/card';
-import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 
 class TransferUnavailableCard extends Component {
