@@ -76,8 +76,6 @@ const communityTranslatorJumpstart = {
 	},
 
 	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
-		var props;
-
 		if ( ! this.isEnabled() || ! this.isActivated() ) {
 			return displayedTranslationFromPage;
 		}
@@ -86,7 +84,15 @@ const communityTranslatorJumpstart = {
 			optionsFromPage = {};
 		}
 
-		props = { className: 'translatable' };
+		if ( 'string' !== typeof originalFromPage ) {
+			debug( 'unknown original format' );
+			return displayedTranslationFromPage;
+		}
+
+		const props = {
+			className: 'translatable',
+			'data-singular': originalFromPage
+		};
 
 		if ( 'string' === typeof originalFromPage ) {
 			props[ 'data-singular' ] = originalFromPage;
@@ -109,9 +115,7 @@ const communityTranslatorJumpstart = {
 		const dataElement = Object.assign( {}, React.DOM.data( props, displayedTranslationFromPage ) );
 
 		// now we can override the toString function which would otherwise return [object Object]
-		dataElement.toString = function() {
-			return displayedTranslationFromPage;
-		};
+		dataElement.toString = () => displayedTranslationFromPage;
 
 		// freeze the object again to certify the same behavior as the original ReactElement object
 		Object.freeze( dataElement );
