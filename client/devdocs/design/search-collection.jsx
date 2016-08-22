@@ -21,10 +21,16 @@ const Hider = React.createClass( {
 	},
 
 	render() {
+		if ( this.props.hide ) {
+			return null;
+		}
+
 		return (
 			<div
-				className={ config.isEnabled( 'devdocs/usage-counts' ) ? 'design-assets__group' : null }
-				style={ this.props.hide ? { display: 'none' } : {} }
+				className={ config.isEnabled( 'devdocs/usage-counts' )
+					? 'design-assets__group'
+					: null
+				}
 			>
 				{ this.props.children }
 			</div>
