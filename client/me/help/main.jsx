@@ -15,6 +15,8 @@ const Main = require( 'components/main' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	HelpSearch = require( './help-search' ),
 	CompactCard = require( 'components/card/compact' ),
+	Card = require( 'components/card' ),
+	Gridicon = require( 'components/gridicon' ),
 	Button = require( 'components/button' ),
 	SectionHeader = require( 'components/section-header' ),
 	HelpResult = require( './help-results/item' ),
@@ -95,7 +97,7 @@ const Help = React.createClass( {
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.translate( 'Get in touch' ) }</h2>
 						<p className="help__support-link-content">
-							{ this.translate( 'Can\'t find the answer? Drop us a line and we\'ll lend a hand.' ) }
+							{ this.translate( `Can't find the answer? Drop us a line and we'll lend a hand.` ) }
 						</p>
 					</div>
 					<Button className="help__support-link-button" primary>{ this.translate( 'Contact Us' ) }</Button>
@@ -104,12 +106,35 @@ const Help = React.createClass( {
 		);
 	},
 
+	getCoursesTeaser: function() {
+		return (
+			<div className="help__course-teaser">
+				<Card href="/help/courses">
+					<Gridicon className="help__course-teaser-icon" icon="help" size={ 36 } />
+					<div>
+						<span className="help__course-teaser-title">
+							{ this.translate( 'Courses' ) }
+						</span>
+						<span className="help__course-teaser-description">
+							{ this.translate( 'Learn how to make the most of your site with these courses and webinars' ) }
+						</span>
+					</div>
+				</Card>
+			</div>
+		);
+	},
+
 	render: function() {
+		const {
+			isEmailVerified,
+			showCoursesTeaser
+		} = this.props;
 		return (
 			<Main className="help">
 				<MeSidebarNavigation />
 				<HelpSearch />
-				{ ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
+				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
+				{ showCoursesTeaser && this.getCoursesTeaser() }
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
 				<HappinessEngineers />
@@ -119,9 +144,13 @@ const Help = React.createClass( {
 } );
 
 module.exports = reactRedux.connect(
-	( state ) => {
+	( state, ownProps ) => {
+		const isEmailVerified = currentUser.isCurrentUserEmailVerified( state );
+		const showCoursesTeaser = ownProps.isCoursesEnabled;
+
 		return {
-			isEmailVerified: currentUser.isCurrentUserEmailVerified( state ),
+			showCoursesTeaser,
+			isEmailVerified,
 		};
 	}
 )( Help );
