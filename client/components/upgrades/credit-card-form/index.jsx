@@ -58,7 +58,7 @@ const CreditCardForm = React.createClass( {
 			<div className="credit-card-form">
 				{ this.field( 'name', Input, {
 					labelClass: 'credit-card-form__label',
-					autofocus: true,
+					autoFocus: true,
 					label: this.translate( 'Name on Card', {
 						context: 'Card holder name label on credit card form'
 					} )
