@@ -28,3 +28,4 @@ render: function() {
 * `title`: a string for the title attribute (optional).
 * `compact`: If true, displays as a compact progress bar (optional).
 * `className`: You can add classes to either (optional).
+* `isPulsing`: If true, will add a barber pole animation to the value part of the bar (optional).
