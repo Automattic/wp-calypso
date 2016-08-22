@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -16,6 +16,7 @@ import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import formatCurrency from 'lib/format-currency';
+import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
 import {
@@ -37,7 +38,9 @@ const featuresToShow = [
 	FEATURE_VIDEO_UPLOADS
 ];
 
-const SeoSettingsNudge = ( { translate, plan, upgradeToBusiness = noop } ) => {
+const SeoSettingsNudge = ( { translate, plan = {}, upgradeToBusiness = noop } ) => {
+	const price = formatCurrency( plan.raw_price / 12, plan.currency_code );
+
 	return (
 		<Card className="settings-upgrade-nudge">
 			<QueryPlans />
@@ -45,7 +48,7 @@ const SeoSettingsNudge = ( { translate, plan, upgradeToBusiness = noop } ) => {
 			<div className="settings-upgrade-nudge__business-plan-card">
 				<PlanCompareCard
 					title={ plan.product_name_short }
-					line={ formatCurrency( plan.cost, plan.currency_code ) }
+					line={ translate( '%(price)s per month, billed yearly', { args: { price } } ) }
 					buttonName={ translate( 'Upgrade' ) }
 					onClick={ upgradeToBusiness }
 					currentPlan={ false }
@@ -75,20 +78,26 @@ const SeoSettingsNudge = ( { translate, plan, upgradeToBusiness = noop } ) => {
 				<ul className="settings-upgrade-nudge__features">
 					<li className="settings-upgrade-nudge__feature-item">
 						<Gridicon className="settings-upgrade-nudge__feature-item-checkmark" icon="checkmark" />
-						{ translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ) }
+						{ preventWidows( translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ) ) }
 					</li>
 					<li className="settings-upgrade-nudge__feature-item">
 						<Gridicon className="settings-upgrade-nudge__feature-item-checkmark" icon="checkmark" />
-						{ translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ) }
+						{ preventWidows( translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ) ) }
 					</li>
 					<li className="settings-upgrade-nudge__feature-item">
 						<Gridicon className="settings-upgrade-nudge__feature-item-checkmark" icon="checkmark" />
-						{ translate( 'Modify front page meta data in order to customize how your site appears to search engines.' ) }
+						{ preventWidows( translate( 'Modify front page meta data in order to customize how your site appears to search engines.' ) ) }
 					</li>
 				</ul>
 			</div>
 		</Card>
 	);
+};
+
+SeoSettingsNudge.propTypes = {
+	translate: PropTypes.func,
+	upgradeToBusiness: PropTypes.func,
+	plan: PropTypes.object
 };
 
 const mapStateToProps = state => ( {

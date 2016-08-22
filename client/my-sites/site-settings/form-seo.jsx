@@ -300,7 +300,7 @@ export const SeoForm = React.createClass( {
 	},
 
 	render() {
-		const { showAdvancedSeo, upgradeToBusiness } = this.props;
+		const { showAdvancedSeo, showUpgradeNudge, upgradeToBusiness } = this.props;
 		const {
 			description: siteDescription,
 			slug = '',
@@ -406,7 +406,7 @@ export const SeoForm = React.createClass( {
 					) }
 				</Card>
 
-				{ ! showAdvancedSeo && <SeoSettingsUpgradeNudge { ...{ upgradeToBusiness } } /> }
+				{ showUpgradeNudge && <SeoSettingsUpgradeNudge { ...{ upgradeToBusiness } } /> }
 
 				<form onChange={ this.markChanged } className="seo-form">
 					{ showAdvancedSeo && config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
@@ -567,11 +567,13 @@ export const SeoForm = React.createClass( {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
+	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
 
 	return {
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
-		showAdvancedSeo: site && site.plan && hasBusinessPlan( site.plan ) && config.isEnabled( 'manage/advanced-seo' )
+		showAdvancedSeo: isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' ),
+		showUpgradeNudge: ! isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' )
 	};
 };
 
