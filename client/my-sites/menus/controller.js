@@ -1,24 +1,25 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react'),
-	i18n = require( 'i18n-calypso' ),
-	ReactRedux = require( 'react-redux' );
+import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	analytics = require( 'lib/analytics' ),
-	MainComponent = require( 'components/main' ),
-	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' ),
-	itemTypes = require( 'my-sites/menus/menu-item-types' ),
-	MenusComponent = require( 'my-sites/menus/main' ),
-	notices = require( 'notices' ),
-	siteMenus = require( 'lib/menu-data' );
+import sitesFactory from 'lib/sites-list';
+import route from 'lib/route';
+import analytics from 'lib/analytics';
+import MainComponent from 'components/main';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import itemTypes from 'my-sites/menus/menu-item-types';
+import MenusComponent from 'my-sites/menus/main';
+import notices from 'notices';
+import siteMenus from 'lib/menu-data';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
+
+const sites = sitesFactory();
 
 var controller = {
 
@@ -37,7 +38,7 @@ var controller = {
 		context.store.dispatch( setTitle( i18n.translate( 'Menus', { textOnly: true } ) ) );
 
 		function renderJetpackUpgradeMessage() {
-			ReactDom.render(
+			renderWithReduxStore(
 				React.createElement( MainComponent, null,
 					React.createElement( JetpackManageErrorPage, {
 						template: 'updateJetpack',
@@ -49,7 +50,8 @@ var controller = {
 						secondaryActionTarget: '_blank'
 					} )
 				),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 
@@ -66,16 +68,15 @@ var controller = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		ReactDom.render(
-			React.createElement( ReactRedux.Provider, { store: context.store },
-				React.createElement( MenusComponent, {
-					siteMenus: siteMenus,
-					itemTypes: itemTypes,
-					key: siteMenus.siteID,
-					site: site
-				} )
-			),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			React.createElement( MenusComponent, {
+				siteMenus: siteMenus,
+				itemTypes: itemTypes,
+				key: siteMenus.siteID,
+				site: site
+			} ),
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 
