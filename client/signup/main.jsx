@@ -42,6 +42,11 @@ import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
 
+
+import Checkout from 'my-sites/upgrades/checkout/checkout';
+import CheckoutData from 'components/data/checkout';
+import CartData from 'components/data/cart';
+
 /**
  * Constants
  */
@@ -328,7 +333,7 @@ const Signup = React.createClass( {
 				{ this.localeSuggestions() }
 				{
 					this.state.loadingScreenStartTime ?
-					<SignupProcessingScreen steps={ this.state.progress } user={ this.state.user } loginHandler={ this.state.loginHandler }/> :
+					this.renderCheckoutWhileWaiting() :
 					<CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
@@ -347,6 +352,24 @@ const Signup = React.createClass( {
 				}
 			</div>
 		);
+	},
+
+	renderCheckoutWhileWaiting() {
+		const selectedPlan = 'premium'; //Do logic: capture plan.
+		if ( selectedPlan ) {
+			const productsList = require( 'lib/products-list' )();
+			const sites = require( 'lib/sites-list' )();
+			return(
+				<CheckoutData>
+					<Checkout
+						product={ 'premium' }
+						productsList={ productsList }
+						sites={ sites } />
+				</CheckoutData>
+			);
+		} else {
+			return ( <SignupProcessingScreen steps={ this.state.progress } user={ this.state.user } loginHandler={ this.state.loginHandler }/> );
+		}
 	},
 
 	render() {
