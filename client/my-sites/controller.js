@@ -4,7 +4,6 @@
 import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
 
 /**
@@ -29,6 +28,7 @@ import siteStatsStickyTabActions from 'lib/site-stats-sticky-tab/actions';
 import utils from 'lib/site/utils';
 import trackScrollPage from 'lib/track-scroll-page';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Module vars
@@ -51,13 +51,11 @@ function createNavigation( context ) {
 	}
 
 	return (
-		<ReduxProvider store={ context.store }>
-			<NavigationComponent path={ context.path }
-				allSitesPath={ basePath }
-				siteBasePath={ basePath }
-				user={ user }
-				sites={ sites } />
-		</ReduxProvider>
+		<NavigationComponent path={ context.path }
+			allSitesPath={ basePath }
+			siteBasePath={ basePath }
+			user={ user }
+			sites={ sites } />
 	);
 }
 
@@ -74,9 +72,10 @@ function renderEmptySites( context ) {
 
 	removeSidebar( context );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( NoSitesMessage ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -88,7 +87,7 @@ function renderNoVisibleSites( context ) {
 
 	removeSidebar( context );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( EmptyContentComponent, {
 			title: i18n.translate( 'You have %(hidden)d hidden WordPress site.', 'You have %(hidden)d hidden WordPress sites.', {
 				count: hiddenSites,
@@ -104,7 +103,8 @@ function renderNoVisibleSites( context ) {
 			secondaryAction: i18n.translate( 'Create New Site' ),
 			secondaryActionURL: `${ signup_url }?ref=calypso-nosites`
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -265,9 +265,10 @@ module.exports = {
 
 	navigation: function( context, next ) {
 		// Render the My Sites navigation in #secondary
-		ReactDom.render(
+		renderWithReduxStore(
 			createNavigation( context ),
-			document.getElementById( 'secondary' )
+			document.getElementById( 'secondary' ),
+			context.store
 		);
 		next();
 	},
@@ -279,14 +280,14 @@ module.exports = {
 		const selectedSite = sites.getSelectedSite();
 
 		if ( selectedSite && selectedSite.jetpack ) {
-			ReactDom.render( (
+			renderWithReduxStore( (
 				<Main>
 					<JetpackManageErrorPage
 						template="noDomainsOnJetpack"
 						site={ sites.getSelectedSite() }
 					/>
 				</Main>
-			), document.getElementById( 'primary' ) );
+			), document.getElementById( 'primary' ), context.store );
 
 			analytics.pageView.record( basePath, '> No Domains On Jetpack' );
 		} else {
@@ -314,7 +315,7 @@ module.exports = {
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( SitesComponent, {
 				sites,
 				path: context.path,
@@ -328,7 +329,8 @@ module.exports = {
 					'Sites'
 				)
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

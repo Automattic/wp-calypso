@@ -143,7 +143,7 @@ module.exports = {
 
 		analytics.pageView.record( '/domains/add/:site/google-apps', 'Domain Search > Domain Registration > Google Apps' );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			(
 				<Main>
 					<CartData>
@@ -156,7 +156,8 @@ module.exports = {
 					</CartData>
 				</Main>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 

@@ -1,17 +1,19 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react'),
-	i18n = require( 'i18n-calypso' );
+import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	analytics = require( 'lib/analytics' );
+import sitesFactory from 'lib/sites-list';
+import route from 'lib/route';
+import analytics from 'lib/analytics';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
+
+const sites = sitesFactory();
 
 module.exports = {
 
@@ -32,13 +34,14 @@ module.exports = {
 		context.store.dispatch( setTitle( i18n.translate( 'Media', { textOnly: true } ) ) );
 
 		// Render
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( MediaComponent, {
 				sites: sites,
 				filter: filter,
 				search: search
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 
