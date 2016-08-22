@@ -13,22 +13,6 @@ import {
 import Token from './token';
 import { fromEditor, toEditor } from './parser';
 
-const buttonStyle = {
-	padding: '3px',
-	margin: '3px',
-	marginRight: '5px',
-	backgroundColor: '#ebebeb',
-	borderRadius: '3px',
-	fontWeight: 'bold'
-};
-
-const editorStyle = {
-	margin: '12px',
-	padding: '8px',
-	border: '1px solid black',
-	borderRadius: '3px'
-};
-
 export class TitleFormatEditor extends Component {
 	constructor( props ) {
 		super( props );
@@ -112,24 +96,27 @@ export class TitleFormatEditor extends Component {
 		const { tokens, type } = this.props;
 
 		return (
-			<div style={ editorStyle }>
-				<div style={ { marginBottom: '10px' } }>
-					{ type.label }
+			<div className="title-format-editor">
+				<div className="title-format-editor__header">
+					<span className="title-format-editor__title">{ type.label }</span>
 					{ map( tokens, ( title, name ) => (
 						<span
 							key={ name }
-							style={ buttonStyle }
+							className="title-format-editor__button"
 							onClick={ this.addToken( title, name ) }
 						>
 							{ title }
 						</span>
 					) ) }
 				</div>
-				<Editor
-					editorState={ editorState }
-					onChange={ this.updateEditor }
-					ref={ this.storeEditorReference }
-				/>
+				<div className="title-format-editor__editor-wrapper">
+					<Editor
+						editorState={ editorState }
+						onChange={ this.updateEditor }
+						ref={ this.storeEditorReference }
+					/>
+				</div>
+				<div className="title-format-editor__preview">Preview: What's up with that?</div>
 			</div>
 		);
 	}

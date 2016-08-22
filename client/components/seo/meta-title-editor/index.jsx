@@ -27,7 +27,7 @@ const getValidTokens = translate => ( {
 	tagline: translate( 'Tagline' ),
 	postTitle: translate( 'Post Title' ),
 	pageTitle: translate( 'Page Title' ),
-	groupTitle: translate( 'Category/Tag Title' ),
+	groupTitle: translate( 'Tag or Category Name' ),
 	date: translate( 'Date' )
 } );
 

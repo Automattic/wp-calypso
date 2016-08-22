@@ -1,0 +1,52 @@
+.title-format-editor {
+	margin-bottom: 20px;
+}
+
+.title-format-editor__header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.title-format-editor__title {
+	font-weight: bold;
+	flex: 1;
+	align-self: center;
+}
+
+.title-format-editor__button {
+	border-radius: 3px;
+	background-color: lighten( $gray, 30% );
+	color: darken( $gray, 30% );
+	padding: 4px 8px;
+	margin-left: auto;
+	font-size: 12px;
+	font-weight: bold;
+	margin-left: 8px;
+}
+
+.title-format-editor__editor-wrapper {
+	border: 1px solid $gray;
+	padding: 12px;
+}
+
+.title-format-editor__token {
+	display: inline-flex;
+	align-items: center;
+	padding: 4px 6px;
+	background-color: darken( $gray, 20% );
+	color: $white;
+	border-radius: 3px;
+	cursor: default;
+}
+
+.title-format-editor__token-close {
+	margin-left: 10px;
+}
+
+.title-format-editor__preview {
+	color: $gray;
+	font-style: italic;
+	margin-top: 5px;
+	font-size: 13px;
+}
