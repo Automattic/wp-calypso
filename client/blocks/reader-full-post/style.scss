@@ -191,12 +191,10 @@
 }
 
 .reader-full-post__header-meta {
+	display: flex;
+	flex-direction: row;
 	font-size: 15px;
 	max-width: 750px;
-}
-
-.reader-full-post__header-date {
-	display: inline-flex;
 }
 
 .reader-full-post__header-date-link {
@@ -214,6 +212,7 @@
 
 .reader-full-post__header-tags {
 	display: inline-flex;
+	flex: 1;
 	width: calc(100% - 120px);
 
 	.gridicon {
