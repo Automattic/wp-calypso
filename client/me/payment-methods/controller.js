@@ -8,7 +8,7 @@ import React from 'react';
  */
 import AddCreditCard from 'me/payment-methods/add-credit-card';
 import * as paths from './paths';
-import { recordPageView, renderPage, setTitle } from 'lib/react-helpers';
+import { recordPageView, renderPage } from 'lib/react-helpers';
 
 export function addCreditCard( context ) {
 	recordPageView(
