@@ -18,7 +18,7 @@ const FreeTrialConfirmationBox = React.createClass( {
 	content() {
 		return (
 			<form onSubmit={ this.props.onSubmit }>
-				<div className="payment-box-section">
+				<div className="checkout__payment-box-section">
 					<h6>
 					{
 						this.translate( 'Get started with %(productName)s', { args: { productName: this.getProductName() } } )
@@ -33,7 +33,7 @@ const FreeTrialConfirmationBox = React.createClass( {
 				</div>
 
 				<TermsOfService />
-				<div className="payment-box-actions">
+				<div className="checkout__payment-box-actions">
 					<PayButton
 						cart={ this.props.cart }
 						transactionStep={ this.props.transactionStep } />

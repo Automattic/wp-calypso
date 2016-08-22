@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var PayButton = require( './pay-button' ),
-	CreditCardSelector = require( './credit-card-selector' ),
-	TermsOfService = require( './terms-of-service' ),
-	PaymentBox = require( './payment-box' ),
-	analytics = require( 'lib/analytics' ),
-	cartValues = require( 'lib/cart-values' );
+import PayButton from './pay-button';
+import CreditCardSelector from './credit-card-selector';
+import TermsOfService from './terms-of-service';
+import PaymentBox from './payment-box';
+import analytics from 'lib/analytics';
+import cartValues from 'lib/cart-values';
 
-var CreditCardPaymentBox = React.createClass( {
-	getInitialState: function() {
+const CreditCardPaymentBox = React.createClass( {
+	getInitialState() {
 		return { previousCart: null };
 	},
 
-	handleToggle: function( event ) {
+	handleToggle( event ) {
 		event.preventDefault();
 
 		analytics.ga.recordEvent( 'Upgrades', 'Clicked Or Use Paypal Link' );
@@ -27,36 +27,41 @@ var CreditCardPaymentBox = React.createClass( {
 		this.props.onToggle( 'paypal' );
 	},
 
-	content: function() {
-		var cart = this.props.cart;
+	content() {
+		const { cart, cards, countriesList, initialCard, transaction } = this.props;
 
 		return (
 			<form onSubmit={ this.props.onSubmit }>
 				<CreditCardSelector
-					cards={ this.props.cards }
-					countriesList={ this.props.countriesList }
-					initialCard={ this.props.initialCard }
-					transaction={ this.props.transaction } />
+					cards={ cards }
+					countriesList={ countriesList }
+					initialCard={ initialCard }
+					transaction={ transaction } />
 
 				<TermsOfService
 					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( cart ) } />
 
-				<div className="payment-box-actions">
+				<div className="checkout__payment-box-actions">
 					<PayButton
 						cart={ this.props.cart }
 						transactionStep={ this.props.transactionStep } />
 
-					{ cartValues.isPayPalExpressEnabled( cart )
-						? <a className="credit-card-payment-box__switch-link" href="" onClick={ this.handleToggle }>{ this.translate( 'or use PayPal' ) }</a>
-						: null
+					{ cartValues.isPayPalExpressEnabled( cart ) &&
+						<a
+							className="checkout__credit-card-payment-box__switch-link"
+							href=""
+							onClick={ this.handleToggle }
+						>
+							{ this.translate( 'or use PayPal' ) }
+						</a>
 					}
 				</div>
 			</form>
 		);
 	},
 
-	render: function() {
-		var classSet = classNames( {
+	render() {
+		const classSet = classNames( {
 			'credit-card-payment-box': true,
 			selected: this.props.selected === true
 		} );
@@ -72,4 +77,4 @@ var CreditCardPaymentBox = React.createClass( {
 
 } );
 
-module.exports = CreditCardPaymentBox;
+export default CreditCardPaymentBox;

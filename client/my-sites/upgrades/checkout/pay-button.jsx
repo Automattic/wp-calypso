@@ -1,21 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var cartValues = require( 'lib/cart-values' ),
-	cartItems = cartValues.cartItems,
-	hasFreeTrial = cartItems.hasFreeTrial,
-	isPaidForFullyInCredits = cartValues.isPaidForFullyInCredits,
-	SubscriptionText = require( './subscription-text' ),
-	transactionStepTypes = require( 'lib/store-transactions/step-types' );
+import cartValues from 'lib/cart-values';
+import SubscriptionText from './subscription-text';
+import * as transactionStepTypes from 'lib/store-transactions/step-types';
 
-var PayButton = React.createClass( {
-	buttonState: function() {
-		var state;
+/**
+ * Module variables
+ */
+const { cartItems, isPaidForFullyInCredits } = cartValues;
+const { hasFreeTrial } = cartItems;
+
+const PayButton = React.createClass( {
+	buttonState() {
+		let state;
 
 		switch ( this.props.transactionStep.name ) {
 			case transactionStepTypes.BEFORE_SUBMIT:
@@ -54,8 +57,8 @@ var PayButton = React.createClass( {
 		return state;
 	},
 
-	beforeSubmitText: function() {
-		var cart = this.props.cart;
+	beforeSubmitText() {
+		const { cart } = this.props;
 
 		if ( this.props.beforeSubmitText ) {
 			return this.props.beforeSubmitText;
@@ -99,26 +102,26 @@ var PayButton = React.createClass( {
 		return this.translate( 'Pay now', { context: 'Pay button on /checkout' } );
 	},
 
-	beforeSubmit: function() {
+	beforeSubmit() {
 		return {
 			disabled: false,
 			text: this.beforeSubmitText()
 		};
 	},
 
-	sending: function() {
+	sending() {
 		return {
 			disabled: true,
 			text: this.translate( 'Sending your purchase', { context: 'Loading state on /checkout' } )
 		};
 	},
 
-	completing: function() {
-		var text;
+	completing() {
+		let text;
 		if ( hasFreeTrial( this.props.cart ) ) {
-			text = this.translate( 'Starting your free trial…', { context: 'Loading state on /checkout' } )
+			text = this.translate( 'Starting your free trial…', { context: 'Loading state on /checkout' } );
 		} else {
-			text = this.translate( 'Completing your purchase', { context: 'Loading state on /checkout' } )
+			text = this.translate( 'Completing your purchase', { context: 'Loading state on /checkout' } );
 		}
 		return {
 			disabled: true,
@@ -126,19 +129,23 @@ var PayButton = React.createClass( {
 		};
 	},
 
-	completed: function() {
+	completed() {
 		return {
 			disabled: true,
 			text: this.translate( 'Purchase complete', { context: 'Loading state on /checkout' } )
 		};
 	},
 
-	render: function() {
-		var buttonState = this.buttonState();
+	render() {
+		const buttonState = this.buttonState();
 
 		return (
-			<span className="pay-button">
-				<button type="submit" className="button is-primary button-pay pay-button__button" disabled={ buttonState.disabled }>
+			<span className="checkout__pay-button">
+				<button
+					type="submit"
+					className="button is-primary checkout__button-pay checkout__pay-button__button"
+					disabled={ buttonState.disabled }
+				>
 					{ buttonState.text }
 				</button>
 				<SubscriptionText cart={ this.props.cart } />
@@ -147,4 +154,4 @@ var PayButton = React.createClass( {
 	}
 } );
 
-module.exports = PayButton;
+export default PayButton;

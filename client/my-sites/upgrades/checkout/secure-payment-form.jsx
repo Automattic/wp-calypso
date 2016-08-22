@@ -202,7 +202,7 @@ SecurePaymentForm.Placeholder = React.createClass( {
 			<PaymentBox
 				classSet="selected is-empty"
 				contentClassSet="selected is-empty" >
-				<div className="payment-box-section">
+				<div className="checkout__payment-box-section">
 
 					<div className="placeholder-row placeholder"/>
 					<div className="placeholder-row placeholder"/>
