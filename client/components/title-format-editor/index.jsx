@@ -8,8 +8,6 @@ import {
 	EditorState,
 	Entity,
 	Modifier,
-	convertFromRaw,
-	convertToRaw,
 } from 'draft-js';
 
 import Token from './token';
@@ -37,7 +35,7 @@ export class TitleFormatEditor extends Component {
 
 		this.state = {
 			editorState: EditorState.createWithContent(
-				convertFromRaw( toEditor( props.titleFormats, props.tokens ) ),
+				toEditor( props.titleFormats, props.tokens ),
 				new CompositeDecorator( [ {
 					strategy: this.renderTokens,
 					component: Token
@@ -70,7 +68,7 @@ export class TitleFormatEditor extends Component {
 		// would revert to the previous title type's format
 		this.setState( {
 			editorState: EditorState.createWithContent(
-				convertFromRaw( toEditor( props.titleFormats, props.tokens ) ),
+				toEditor( props.titleFormats, props.tokens ),
 				new CompositeDecorator( [ {
 					strategy: this.renderTokens,
 					component: Token
@@ -83,7 +81,8 @@ export class TitleFormatEditor extends Component {
 		const { onChange } = this.props;
 		const currentContent = editorState.getCurrentContent();
 
-		if ( convertToRaw( currentContent ).blocks.length > 1 ) {
+		// limit to one line
+		if ( currentContent.getBlockMap().size > 1 ) {
 			return;
 		}
 
@@ -91,7 +90,7 @@ export class TitleFormatEditor extends Component {
 			{ editorState },
 			() => {
 				editorState.lastChangeType === 'add-token' && this.focusEditor();
-				onChange( fromEditor( convertToRaw( currentContent ) ) );
+				onChange( fromEditor( currentContent ) );
 			}
 		);
 	}
