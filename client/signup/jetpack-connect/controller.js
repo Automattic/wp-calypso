@@ -189,6 +189,11 @@ export default {
 			return;
 		}
 
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+		context.store.dispatch( setSection( { name: 'jetpackConnect' }, {
+			hasSidebar: false
+		} ) );
+
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
 
