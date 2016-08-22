@@ -1,6 +1,6 @@
 /** @ssr-ready **/
 
-export const fetchingPreferences = state => ( !! state.preferences.fetching );
+export const fetchingPreferences = state => ( !! state.currentUser.settings.requesting );
 
 export const getPreference = ( state, key ) => state.preferences.values[ key ];
 

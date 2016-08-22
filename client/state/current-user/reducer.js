@@ -17,6 +17,7 @@ import {
 } from 'state/action-types';
 import { createReducer } from 'state/utils';
 import { idSchema, capabilitiesSchema, currencyCodeSchema, flagsSchema } from './schema';
+import settings from './settings/reducer';
 
 /**
  * Tracks the current user ID.
@@ -86,5 +87,6 @@ export default combineReducers( {
 	id,
 	currencyCode,
 	capabilities,
-	flags
+	flags,
+	settings
 } );
