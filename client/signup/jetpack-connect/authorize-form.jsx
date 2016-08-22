@@ -50,9 +50,10 @@ import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import { withoutHttp } from 'lib/url';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import ExternalLink from 'components/external-link';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 /**
  * Constants
@@ -301,7 +302,7 @@ const LoggedInForm = React.createClass( {
 	renderErrorDetails() {
 		const { authorizeError } = this.props.jetpackConnectAuthorize;
 		return (
-			<div>
+			<div className="jetpack-connect__error-details">
 				<FormLabel>{ this.translate( 'Error Details' ) }</FormLabel>
 				<FormSettingExplanation>
 					{ authorizeError.message }
@@ -311,24 +312,21 @@ const LoggedInForm = React.createClass( {
 	},
 
 	renderXmlrpcFeedback() {
+		const xmlrpcErrorText = this.translate( 'We had trouble connecting.' );
 		return (
-			<div className="jetpack-connect__xmlrpc-feedback">
-				<p>
-					{ this.translate( 'You may be able to resolve this by completing the connection on your site. ' ) }
-					<ExternalLink
-						icon={ true }
-						onClick={ this.handleResolve }
-						className="jetpack-connect__resolve-button"
-						target="_blank"
-					>
-						{ this.translate( 'Resolve' ) }
-					</ExternalLink>
-				</p>
+			<div>
+				<div className="jetpack-connect__notices-container">
+					<Notice icon="notice" status="is-error" text={ xmlrpcErrorText } showDismiss={ false }>
+						<NoticeAction onClick={ this.handleResolve }>
+							{ this.translate( 'Try again' ) }
+						</NoticeAction>
+					</Notice>
+				</div>
 				<p>
 					{ this.translate( 'If that does not work, {{link}}contact support{{/link}}',
 						{
 							components: {
-								link: <ExternalLink icon={ true } href="https://jetpack.com/contact-support" target="_blank" />
+								link: <a href="https://jetpack.com/contact-support" target="_blank" />
 							}
 						}
 					) }
@@ -354,12 +352,7 @@ const LoggedInForm = React.createClass( {
 			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
 		}
 		if ( this.props.requestHasXmlrpcError() ) {
-			return (
-				<div>
-					<JetpackConnectNotices noticeType="xmlrpcError" />
-					{ this.renderXmlrpcFeedback() }
-				</div>
-			);
+			return this.renderXmlrpcFeedback();
 		}
 		return (
 			<div>
@@ -527,9 +520,6 @@ const LoggedInForm = React.createClass( {
 
 	renderStateAction() {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
-		if ( this.props.requestHasXmlrpcError() ) {
-			return null;
-		}
 		if (
 			this.props.isFetchingSites() ||
 			this.isAuthorizing() ||
@@ -544,7 +534,11 @@ const LoggedInForm = React.createClass( {
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
 				{ this.getDisclaimerText() }
-				<Button primary disabled={ this.isAuthorizing() } onClick={ this.handleSubmit }>
+				<Button
+					primary
+					disabled={ this.isAuthorizing() || this.props.requestHasXmlrpcError() }
+					onClick={ this.handleSubmit }
+				>
 					{ this.getButtonText() }
 				</Button>
 			</LoggedOutFormFooter>
