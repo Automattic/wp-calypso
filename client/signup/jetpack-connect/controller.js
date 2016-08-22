@@ -36,14 +36,18 @@ const sites = sitesFactory();
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
 const userModule = userFactory();
 
-const jetpackConnectFirstStep = ( context, type ) => {
+const removeSidebar = ( context ) => {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-
-	userModule.fetch();
 
 	context.store.dispatch( setSection( { name: 'jetpackConnect' }, {
 		hasSidebar: false
 	} ) );
+};
+
+const jetpackConnectFirstStep = ( context, type ) => {
+	removeSidebar( context );
+
+	userModule.fetch();
 
 	renderWithReduxStore(
 		React.createElement( JetpackConnect, {
@@ -131,10 +135,7 @@ export default {
 		const analyticsBasePath = 'jetpack/connect/authorize',
 			analyticsPageTitle = 'Jetpack Authorize';
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		context.store.dispatch( setSection( { name: 'jetpack-connect' }, {
-			hasSidebar: false
-		} ) );
+		removeSidebar( context );
 
 		userModule.fetch();
 
@@ -155,10 +156,7 @@ export default {
 		const analyticsBasePath = '/jetpack/sso',
 			analyticsPageTitle = 'Jetpack SSO';
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		context.store.dispatch( setSection( { name: 'jetpackConnect' }, {
-			hasSidebar: false
-		} ) );
+		removeSidebar( context );
 
 		userModule.fetch();
 
@@ -189,10 +187,7 @@ export default {
 			return;
 		}
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		context.store.dispatch( setSection( { name: 'jetpackConnect' }, {
-			hasSidebar: false
-		} ) );
+		removeSidebar( context );
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
