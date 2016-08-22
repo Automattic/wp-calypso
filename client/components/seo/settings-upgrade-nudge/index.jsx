@@ -4,18 +4,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Card from 'components/card';
 import QueryPlans from 'components/data/query-plans';
+import Gridicon from 'components/gridicon';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import formatCurrency from 'lib/format-currency';
 import { getFeatureTitle } from 'lib/plans';
-import Gridicon from 'components/gridicon';
 import { getPlanBySlug } from 'state/plans/selectors';
 import {
 	PLAN_BUSINESS,
@@ -36,7 +37,7 @@ const featuresToShow = [
 	FEATURE_VIDEO_UPLOADS
 ];
 
-const SeoSettingsNudge = ( { translate, plan, upgradeToBusiness } ) => {
+const SeoSettingsNudge = ( { translate, plan, upgradeToBusiness = noop } ) => {
 	return (
 		<Card className="settings-upgrade-nudge">
 			<QueryPlans />
