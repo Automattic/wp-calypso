@@ -1,32 +1,33 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:forms:select-opt-groups' );
+import React, { Component } from 'react';
+import { omit } from 'lodash';
+const debug = require( 'debug' )( 'calypso:forms:select-opt-groups' );
 
-var SelectOptGroups = React.createClass( {
+export default class SelectOptGroups extends Component {
 
-	displayName: 'SelectOptGroups',
-
-	componentWillMount: function() {
+	componentWillMount() {
 		debug( 'Mounting SelectOptGroups React component.' );
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
-			<select {...this.props} >
-			{ this.props.optGroups.map( function( optGroup ) {
-				return (
-					<optgroup label={ optGroup.label } key={ 'optgroup-' + optGroup.label } >
-					{ optGroup.options.map( function( option ) {
-						return <option value={ option.value } key={ 'option-' + optGroup.label + option.label } >{ option.label }</option>;
-					})}
+			<select { ...omit( this.props, 'optGroups' ) }>
+				{ this.props.optGroups.map( optGroup =>
+					<optgroup label={ optGroup.label } key={ `optgroup-${optGroup.label}` } >
+						{ optGroup.options.map( option =>
+							<option
+								value={ option.value }
+								key={ `option-${optGroup.label}${option.label}` }
+							>
+								{ option.label }
+							</option>
+						) }
 					</optgroup>
-				);
-			} ) }
+				) }
 			</select>
 		);
 	}
-});
 
-module.exports = SelectOptGroups;
+}
