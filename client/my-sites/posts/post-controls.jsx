@@ -53,18 +53,18 @@ class PostControls extends PureComponent {
 	}
 
 	buildControls( controls ) {
-		return controls.map( ( item, i ) => {
+		return controls.map( ( control, i ) => {
 			return (
 				<li key={ `controls-${this.props.post.ID}-${i}` }>
 					<a
-						href={ item.href }
-						className={ `post-controls__${item.className}` }
-						onClick={ item.onClick }
-						target={ item.target ? item.target : null }
+						href={ control.href }
+						className={ `post-controls__${control.className}` }
+						onClick={ control.onClick }
+						target={ control.target ? control.target : null }
 					>
-						<Gridicon icon={ item.icon } size={ 18 } />
+						<Gridicon icon={ control.icon } size={ 18 } />
 						<span>
-							{ item.text }
+							{ control.text }
 						</span>
 					</a>
 				</li>
@@ -73,8 +73,7 @@ class PostControls extends PureComponent {
 	}
 
 	setControls() {
-		const post = this.props.post;
-		const translate = this.props.translate;
+		const { post, translate } = this.props;
 		const controls = {
 			main: [],
 			more: [],
