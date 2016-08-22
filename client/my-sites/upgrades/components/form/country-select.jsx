@@ -44,7 +44,7 @@ export default React.createClass( {
 			options.push( { key: 'loading', label: this.translate( 'Loading…' ), disabled: 'disabled' } );
 		} else {
 			options = options.concat( [
-				{ key: 'select-country', label: this.translate( 'Select Country' ) },
+				{ key: 'select-country', label: this.translate( 'Select Country' ), value: '' },
 				{ key: 'divider1', label: '', disabled: 'disabled' }
 			] );
 
