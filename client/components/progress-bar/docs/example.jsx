@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var ProgressBar = require( 'components/progress-bar' );
+import ProgressBar from 'components/progress-bar';
 
 module.exports = React.createClass( {
 
@@ -18,7 +18,7 @@ module.exports = React.createClass( {
 	getInitialState() {
 		return {
 			compact: false
-		}
+		};
 	},
 
 	toggleCompact() {
