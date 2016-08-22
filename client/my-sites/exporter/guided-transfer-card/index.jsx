@@ -34,7 +34,7 @@ const PurchaseButton = localize( ( { siteSlug, translate } ) =>
 const UnavailableInfo = localize( ( { translate } ) =>
 	<div className="guided-transfer-card__unavailable-notice">
 		<span>{ translate( 'Guided Transfer unavailable' ) }</span>
-		<InfoPopover position="left">
+		<InfoPopover className="guided-transfer-card__unavailable-info-icon" position="left">
 			{ translate( `Guided Transfer is unavailable at the moment. We'll
 				be back as soon as possible! In the meantime, you can transfer your
 				WordPress.com blog elsewhere by following {{a}}these steps{{/a}}`,
