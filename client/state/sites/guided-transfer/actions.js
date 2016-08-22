@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { omit } from 'lodash/object';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -16,6 +17,10 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
+import {
+	errorNotice,
+	successNotice,
+} from 'state/notices/actions';
 
 /**
  * Receives the status of a guided transfer for a particular site
@@ -91,6 +96,8 @@ export function saveHostDetails( siteId, data ) {
 				siteId, omit( response, '_headers' )
 			) );
 
+			dispatch( successNotice( translate( 'Thanks for confirming those details!' ) ) );
+
 			return response.host_details_entered === true;
 		};
 
@@ -100,6 +107,13 @@ export function saveHostDetails( siteId, data ) {
 				siteId,
 				error,
 			} );
+
+			if ( error.message ) {
+				dispatch( errorNotice( error.message ) );
+			} else {
+				dispatch( errorNotice( translate( `Whoops, there was an error saving your details. Please 
+					try again or send us a message and we'll help you get started.` ) ) );
+			}
 
 			return false;
 		};
