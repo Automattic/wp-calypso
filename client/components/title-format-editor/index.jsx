@@ -51,34 +51,8 @@ export class TitleFormatEditor extends Component {
 		this.renderTokens = this.renderTokens.bind( this );
 	}
 
-	componentWillReceiveProps( props ) {
-		const { type: oldType } = this.props;
-		const { type: newType } = props;
-
-		// Only swap out the local changes if we
-		// are switching title types, as within the
-		// same type we are still editing, not
-		// flipping to another
-		if ( oldType === newType ) {
-			return;
-		}
-
-		// Create a new EditorState entirely, because we
-		// don't want to allow things like "undo" which
-		// would revert to the previous title type's format
-		this.setState( {
-			editorState: EditorState.createWithContent(
-				toEditor( props.titleFormats, props.tokens ),
-				new CompositeDecorator( [ {
-					strategy: this.renderTokens,
-					component: Token
-				} ] )
-			)
-		} );
-	}
-
 	updateEditor( editorState ) {
-		const { onChange } = this.props;
+		const { onChange, type } = this.props;
 		const currentContent = editorState.getCurrentContent();
 
 		// limit to one line
@@ -90,7 +64,7 @@ export class TitleFormatEditor extends Component {
 			{ editorState },
 			() => {
 				editorState.lastChangeType === 'add-token' && this.focusEditor();
-				onChange( fromEditor( currentContent ) );
+				onChange( type.value, fromEditor( currentContent ) );
 			}
 		);
 	}
@@ -135,11 +109,12 @@ export class TitleFormatEditor extends Component {
 
 	render() {
 		const { editorState } = this.state;
-		const { tokens } = this.props;
+		const { tokens, type } = this.props;
 
 		return (
 			<div style={ editorStyle }>
 				<div style={ { marginBottom: '10px' } }>
+					{ type.label }
 					{ map( tokens, ( title, name ) => (
 						<span
 							key={ name }
@@ -163,7 +138,9 @@ export class TitleFormatEditor extends Component {
 TitleFormatEditor.displayName = 'TitleFormatEditor';
 
 TitleFormatEditor.propTypes = {
-	tokens: PropTypes.object.isRequired
+	type: PropTypes.object.isRequired,
+	tokens: PropTypes.object.isRequired,
+	onChange: PropTypes.func.isRequired
 };
 
 export default TitleFormatEditor;

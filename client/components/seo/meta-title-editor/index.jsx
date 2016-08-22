@@ -11,7 +11,6 @@ import {
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
 import TitleFormatEditor from 'components/title-format-editor';
 import { localize } from 'i18n-calypso';
 
@@ -40,25 +39,22 @@ const tokenMap = {
 	archives: [ 'siteName', 'tagline', 'date' ]
 };
 
+const getTokensForType = ( type, translate ) => {
+	return get( tokenMap, type, [] )
+				.reduce( ( allTokens, name ) => ( {
+					...allTokens,
+					[ name ]: get( getValidTokens( translate ), name, '' )
+				} ), {} );
+};
+
 export class MetaTitleEditor extends Component {
 	constructor( props ) {
 		super( props );
-
-		this.state = {
-			type: 'frontPage'
-		};
-
-		this.switchType = this.switchType.bind( this );
 		this.updateTitleFormat = this.updateTitleFormat.bind( this );
 	}
 
-	switchType( { value: type } ) {
-		this.setState( { type } );
-	}
-
-	updateTitleFormat( values ) {
+	updateTitleFormat( type, values ) {
 		const { onChange, titleFormats } = this.props;
-		const { type } = this.state;
 
 		onChange( {
 			...titleFormats,
@@ -68,29 +64,19 @@ export class MetaTitleEditor extends Component {
 
 	render() {
 		const { disabled, titleFormats, translate } = this.props;
-		const { type } = this.state;
-
-		const tokens =
-			get( tokenMap, type, [] )
-				.reduce( ( allTokens, name ) => ( {
-					...allTokens,
-					[ name ]: get( getValidTokens( translate ), name, '' )
-				} ), {} );
 
 		return (
 			<div className="meta-title-editor">
-				<SegmentedControl
-					initialSelected={ type }
-					options={ titleTypes( translate ) }
-					onSelect={ this.switchType }
-				/>
-				<TitleFormatEditor
-					disabled={ disabled }
-					onChange={ this.updateTitleFormat }
-					type={ disabled ? '' : type }
-					titleFormats={ get( titleFormats, type, [] ) }
-					tokens={ tokens }
-				/>
+				{ titleTypes( translate ).map( type =>
+					<TitleFormatEditor
+						key={ type.value }
+						disabled={ disabled }
+						onChange={ this.updateTitleFormat }
+						type={ disabled ? '' : type }
+						titleFormats={ get( titleFormats, type.value, [] ) }
+						tokens={ getTokensForType( type.value, translate ) }
+					/>
+				) }
 			</div>
 		);
 	}
