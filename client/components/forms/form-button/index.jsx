@@ -2,8 +2,8 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { isEmpty, omit } from 'lodash';
-import React from 'react';
+import { omit } from 'lodash';
+import React, { Children } from 'react';
 
 /**
  * Internal dependencies
@@ -37,7 +37,7 @@ export default React.createClass( {
 				{ ...omit( props, 'isSubmitting' ) }
 				primary={ isPrimary }
 				className={ buttonClasses }>
-				{ isEmpty( children ) ? this.getDefaultButtonAction() : children }
+				{ Children.count( children ) ? children : this.getDefaultButtonAction() }
 			</Button>
 		);
 	}
