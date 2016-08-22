@@ -15,7 +15,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 		const { store, primary, secondary, tertiary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
-		if ( ! context.isServerSide || getCurrentUser( context.store.getState() ) ) {
+		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
 			context.layout = (
 				<LayoutComponent store={ store }
 					primary={ primary }
