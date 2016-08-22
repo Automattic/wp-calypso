@@ -170,7 +170,7 @@ const Signup = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
 
 		this.signupFlowController.reset();
-
+		this.handleLogin( dependencies, destination );
 		this.setState( {
 			loginHandler: this.handleLogin.bind( this, dependencies, destination )
 		} );
