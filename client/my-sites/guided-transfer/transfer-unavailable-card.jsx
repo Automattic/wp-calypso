@@ -10,7 +10,19 @@ import { connect } from 'react-redux';
  */
 import { getGuidedTransferIssue } from 'state/sites/guided-transfer/selectors';
 import Card from 'components/card';
+import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
+
+const Issue = props =>
+	<li className="guided-transfer__issue">
+		<div className="guided-transfer__issue-title">
+			<Gridicon icon="cross" size="18" className="guided-transfer__issue-icon" />
+			{ props.title }
+		</div>
+		<div className="guided-transfer__issue-description">
+			{ props.children }
+		</div>
+	</li>;
 
 class TransferUnavailableCard extends Component {
 	content() {
@@ -28,18 +40,22 @@ class TransferUnavailableCard extends Component {
 						that can't be transferred.` ) }
 				</Notice>
 				<ul>
-					{ premiumThemeIssue && <li>
-						{ translate( `Your site uses a Premium Theme that can't be
-								transferred. Please {{a}}choose a free theme{{/a}}
+					{ premiumThemeIssue &&
+						<Issue title={ translate( 'Your site uses a Premium Theme' ) }>
+							{ translate( `Premium Themes can't be
+								transferred to an external site. Please {{a}}choose a free theme{{/a}}
 								to continue.`,
 								{ components: { a: <a href={ `/design/free/${ siteSlug }` } /> } } ) }
-					</li> }
-					{ customFontIssue && <li>
-						{ translate( `Your site uses a custom font that can't be
-								transferred. Please switch your custom fonts back to your theme's
-								default fonts if you would like to proceed.`,
-								{ components: { a: <a href={ `/design/free/${ siteSlug }` } /> } } ) }
-					</li> }
+						</Issue>
+					}
+					{ customFontIssue &&
+						<Issue title={ translate( 'Your site uses a custom font' ) }>
+							{ translate( `Custom fonts can't be
+								transferred to an external site. Please {{a}}switch back to your theme's
+								default fonts{{/a}} if you would like to proceed.`,
+								{ components: { a: <a href={ `/customize/fonts/${ siteSlug }` } /> } } ) }
+						</Issue>
+					}
 				</ul>
 			</div>;
 		}

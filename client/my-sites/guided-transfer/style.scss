@@ -57,5 +57,22 @@
 	display: flex;
 }
 
-.guided-transfer__transfer-unavailable-icon {
+.guided-transfer__issue {
+	list-style-type: none;
+	margin-top: 15px;
+}
+
+.guided-transfer__issue-title {
+	margin-left: -24px;
+	font-weight: 500;
+}
+
+.guided-transfer__issue-icon {
+	margin-right: 6px;
+	color: red;
+	vertical-align: text-bottom;
+}
+
+.guided-transfer__issue-description {
+	font-weight: 300;
 }
