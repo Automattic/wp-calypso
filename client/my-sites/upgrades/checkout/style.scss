@@ -325,7 +325,6 @@
 			max-height: 500px;
 			margin-bottom: 0;
 			padding-top: 15px;
-			padding-bottom: 15px;
 		}
 
 		.new-card-toggle {
@@ -338,6 +337,7 @@
 		.new-card-header {
 			color: $blue-medium;
 			font-weight: 400;
+			margin-bottom: 15px;
 		}
 
 		.all-fields-required {
