@@ -23,6 +23,7 @@ import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 import MetaTitleEditor from 'components/seo/meta-title-editor';
+import SeoSettingsUpgradeNudge from 'components/seo/settings-upgrade-nudge';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
@@ -33,37 +34,14 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
-import Gridicon from 'components/gridicon';
-import PlanCompareCard from 'my-sites/plan-compare-card';
-import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { isEnabled } from 'config';
 import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
 import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
 import { isBusiness, isEnterprise } from 'lib/products-values';
-import { getFeatureTitle, getPlan } from 'lib/plans';
-import {
-	PLAN_BUSINESS,
-	FEATURE_ADVANCED_DESIGN,
-	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_NO_ADS,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	FEATURE_UNLIMITED_STORAGE,
-	FEATURE_VIDEO_UPLOADS
-} from 'lib/plans/constants';
-
-const featuresToShow = [
-	FEATURE_UNLIMITED_STORAGE,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_NO_ADS,
-	FEATURE_ADVANCED_DESIGN,
-	FEATURE_VIDEO_UPLOADS
-];
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -390,8 +368,7 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
-				<SectionHeader label={ translate( 'Search Engine Optimization' ) }>
-				</SectionHeader>
+				<SectionHeader label={ translate( 'Search Engine Optimization' ) } />
 				<Card>
 					{ translate(
 						'{{b}}WordPress.com has great SEO{{/b}} out of the box. All of our themes are optimized ' +
@@ -407,55 +384,7 @@ export const SeoForm = React.createClass( {
 					) }
 				</Card>
 
-				{ ! showAdvancedSeo &&
-					<Card className="seo-form-nudge">
-						<div className="seo-form-nudge__business-plan-card">
-							<PlanCompareCard
-								title={ getPlan( PLAN_BUSINESS ).getTitle() }
-								line={ getPlan( PLAN_BUSINESS ).getPriceTitle() }
-								buttonName={ translate( 'Upgrade' ) }
-								onClick={ upgradeToBusiness }
-								currentPlan={ false }
-								popularRibbon={ true } >
-								<PlanCompareCardItem highlight={ true } >
-									{ translate( 'Advanced SEO' ) }
-								</PlanCompareCardItem>
-								{ featuresToShow.map( feature => (
-									<PlanCompareCardItem key={ feature }>
-										{ getFeatureTitle( feature ) }
-									</PlanCompareCardItem>
-								) ) }
-							</PlanCompareCard>
-						</div>
-						<div className="seo-form-nudge__description">
-							<div className="seo-form-nudge__title">
-								<div className="seo-form-nudge__title-plan">
-									<div className="seo-form-nudge__title-plan-icon"></div>
-								</div>
-								<p className="seo-form-nudge__title-message">
-									{ translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
-								</p>
-							</div>
-							<p className="seo-form-nudge__subtitle">
-								{ translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
-							</p>
-							<ul className="seo-form-nudge__features">
-								<li className="seo-form-nudge__feature-item">
-									<Gridicon className="seo-form-nudge__feature-item-checkmark" icon="checkmark" />
-									{ translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ) }
-								</li>
-								<li className="seo-form-nudge__feature-item">
-									<Gridicon className="seo-form-nudge__feature-item-checkmark" icon="checkmark" />
-									{ translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ) }
-								</li>
-								<li className="seo-form-nudge__feature-item">
-									<Gridicon className="seo-form-nudge__feature-item-checkmark" icon="checkmark" />
-									{ translate( 'Modify front page meta data in order to customize how your site appears to search engines.' ) }
-								</li>
-							</ul>
-						</div>
-					</Card>
-				}
+				{ ! showAdvancedSeo && <SeoSettingsUpgradeNudge { ...{ upgradeToBusiness } } /> }
 
 				<form onChange={ this.markChanged } className="seo-form">
 					{ showAdvancedSeo && isEnabled( 'manage/advanced-seo/custom-title' ) &&
@@ -628,10 +557,9 @@ export const SeoForm = React.createClass( {
 } );
 
 const mapStateToProps = ( state, ownProps ) => {
-	const { site = getSelectedSite( state ) } = ownProps;
+	const { site } = ownProps;
 
 	return {
-		site,
 		storedTitleFormats: getSeoTitleFormatsForSite( site ),
 		showAdvancedSeo: site && site.plan && hasBusinessPlan( site.plan ) && isEnabled( 'manage/advanced-seo' )
 	};
