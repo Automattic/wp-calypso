@@ -1,6 +1,5 @@
 /** @ssr-ready **/
-import React, { PropTypes } from 'react';
-import PureComponent from 'react-pure-render/component';
+import React, { PropTypes, PureComponent } from 'react';
 
 const baseDomain = url =>
 	url
