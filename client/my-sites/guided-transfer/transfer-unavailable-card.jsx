@@ -16,7 +16,7 @@ import Notice from 'components/notice';
 const Issue = props =>
 	<li className="guided-transfer__issue">
 		<div className="guided-transfer__issue-title">
-			<Gridicon icon="cross" size="18" className="guided-transfer__issue-icon" />
+			<Gridicon icon="cross" size={ 18 } className="guided-transfer__issue-icon" />
 			{ props.title }
 		</div>
 		<div className="guided-transfer__issue-description">

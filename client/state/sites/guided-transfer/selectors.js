@@ -1,4 +1,8 @@
-import { matches } from 'lodash/util';
+import {
+	find,
+	matches,
+	some,
+} from 'lodash';
 
 export function isRequestingGuidedTransferStatus( state, siteId ) {
 	return state.sites.guidedTransfer.isFetching[ siteId ] === true;
@@ -56,7 +60,7 @@ export function isEligibleForGuidedTransfer( state, siteId ) {
 		return false;
 	}
 
-	return ! issues.some( issue => issue.prevents_transfer );
+	return ! some( issues, issue => issue.prevents_transfer );
 }
 
 export function getGuidedTransferIssue( state, siteId, options = {} ) {
@@ -66,7 +70,7 @@ export function getGuidedTransferIssue( state, siteId, options = {} ) {
 		return false;
 	}
 
-	return issues.find( matches( options ) ) || null;
+	return find( issues, matches( options ) ) || null;
 }
 
 /**
@@ -86,7 +90,7 @@ export function isGuidedTransferAvailableForAllSites( state, siteId ) {
 		return false;
 	}
 
-	return ! issues.some( issue => {
+	return ! some( issues, issue => {
 		return issue.reason === 'unavailable' || issue.reason === 'vacation';
 	} );
 }
