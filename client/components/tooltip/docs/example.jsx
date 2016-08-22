@@ -2,39 +2,40 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PureComponent } from 'react';
 
 /**
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
 
-const TooltipInstance = React.createClass( {
-	mixins: [ PureRenderMixin ],
+class TooltipInstance extends PureComponent {
+	static displayName = 'Tooltip';
 
-	componentWillMount() {
+	constructor( props ) {
+		super( props );
+
+		this.open = this.open.bind( this );
+		this.close = this.close.bind( this );
 		this.changePosition = this.changePosition.bind( this );
-	},
 
-	getInitialState: function() {
-		return {
+		this.state = {
 			position: 'bottom right',
 			show: false,
 		};
-	},
+	}
 
 	open() {
 		this.setState( { show: true } );
-	},
+	}
 
 	close() {
 		this.setState( { show: false } );
-	},
+	}
 
 	changePosition( event ) {
 		this.setState( { position: event.target.value } );
-	},
+	}
 
 	render() {
 		const size = 30;
@@ -42,7 +43,7 @@ const TooltipInstance = React.createClass( {
 		return (
 			<div className="docs__design-assets-group">
 				<h2>
-					<a href="/devdocs/design/tooltip-instance">Tooltip</a>
+					<a href="/devdocs/design/tooltip">Tooltip</a>
 				</h2>
 
 				<label>Position
@@ -101,6 +102,6 @@ const TooltipInstance = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default TooltipInstance;
