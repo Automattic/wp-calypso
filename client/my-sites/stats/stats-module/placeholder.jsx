@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PureComponent, PropTypes } from 'react';
 import classNames from 'classnames';
 
 /**
@@ -9,13 +9,11 @@ import classNames from 'classnames';
  */
 import Spinner from 'components/spinner';
 
-export default React.createClass( {
-	displayName: 'StatsModulePlaceholder',
-
-	propTypes: {
+export default class StatsModulePlaceholder extends PureComponent {
+	static propTypes = {
 		className: PropTypes.string,
 		isLoading: PropTypes.bool
-	},
+	};
 
 	render() {
 		const { className, isLoading } = this.props;
@@ -26,6 +24,10 @@ export default React.createClass( {
 
 		const classes = classNames( 'stats-module__placeholder', 'is-void', className );
 
-		return ( <Spinner className={ classes } /> );
+		return (
+			<div className={ classes }>
+				<Spinner />
+			</div>
+		);
 	}
-} );
+}
