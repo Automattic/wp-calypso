@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	isGuidedTransferAvailableForAllSites,
 	isRequestingGuidedTransferStatus,
 	getGuidedTransferIssue,
 } from '../selectors';
@@ -101,6 +102,51 @@ describe( 'selectors', () => {
 			expect( getGuidedTransferIssue( state, testSiteId, { prevents_transfer: false } ) ).to.eql(
 				{ reason: 'something-not-blocking', prevents_transfer: false }
 			);
+		} );
+	} );
+
+
+	describe( '#isGuidedTransferAvailableForAllSites()', () => {
+		it( 'should return false when unavailable', () => {
+			const state = deepFreeze( {
+				sites: { guidedTransfer: { status: {
+					[ testSiteId ]: { issues: [
+						{ reason: 'unavailable', prevents_transfer: true },
+					] }
+				} } }
+			} );
+			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.false;
+		} );
+
+		it( 'should return false when on vacation', () => {
+			const state = deepFreeze( {
+				sites: { guidedTransfer: { status: {
+					[ testSiteId ]: { issues: [
+						{ reason: 'vacation', prevents_transfer: true },
+					] }
+				} } }
+			} );
+			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.false;
+		} );
+
+		it( 'should return true when no issues', () => {
+			const state = deepFreeze( {
+				sites: { guidedTransfer: { status: {
+					[ testSiteId ]: { issues: [ ] }
+				} } }
+			} );
+			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.true;
+		} );
+
+		it( 'should return true when theres only a site specific issue', () => {
+			const state = deepFreeze( {
+				sites: { guidedTransfer: { status: {
+					[ testSiteId ]: { issues: [
+						{ reason: 'premium-theme', prevents_transfer: true },
+					] }
+				} } }
+			} );
+			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.true;
 		} );
 	} );
 } );

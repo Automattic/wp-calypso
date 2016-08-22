@@ -87,6 +87,6 @@ export function isGuidedTransferAvailableForAllSites( state, siteId ) {
 	}
 
 	return ! issues.some( issue => {
-		issue.reason === 'unavailable' || issue.reason === 'vacation';
+		return issue.reason === 'unavailable' || issue.reason === 'vacation';
 	} );
 }

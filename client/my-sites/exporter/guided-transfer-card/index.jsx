@@ -15,7 +15,7 @@ import Button from 'components/forms/form-button';
 import { isGuidedTransferAvailableForAllSites } from 'state/sites/guided-transfer/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import Popover from 'components/popover';
+import InfoPopover from 'components/info-popover';
 
 const Feature = ( { children } ) =>
 	<li className="guided-transfer-card__feature-list-item">
@@ -25,12 +25,27 @@ const Feature = ( { children } ) =>
 		</span>
 	</li>;
 
-class GuidedTransferCard extends Component {
-	constructor() {
-		super();
-		this.state = { isPopupVisible: false };
-	}
+const PurchaseButton = localize( ( { siteSlug, translate } ) =>
+	<Button href={ `/settings/export/guided/${ siteSlug }` } isPrimary={ true } >
+		{ translate( 'Purchase a Guided Transfer' ) }
+	</Button>
+);
 
+const UnavailableInfo = localize( ( { translate } ) =>
+	<div className="guided-transfer-card__unavailable-notice">
+		<span>{ translate( 'Guided Transfer unavailable' ) }</span>
+		<InfoPopover position="left">
+			{ translate( `Guided Transfer is unavailable at the moment. We'll
+				be back as soon as possible! In the meantime, you can transfer your
+				WordPress.com blog elsewhere by following {{a}}these steps{{/a}}`,
+				{ components: {
+					a: <a href="https://move.wordpress.com/" />
+				} } ) }
+		</InfoPopover>
+	</div>
+);
+
+class GuidedTransferCard extends Component {
 	render() {
 		const {
 			translate,
@@ -38,18 +53,10 @@ class GuidedTransferCard extends Component {
 			siteId,
 		} = this.props;
 
-		const setButtonRef = c => this._purchaseButton = c;
-		const showPopup = () => this.setState( { isPopupVisible: true } );
-		const hidePopup = () => this.setState( { isPopupVisible: false } );
-		const { isPopupVisible } = this.state;
-
 		return <div>
 			<CompactCard>
 				<QuerySiteGuidedTransfer siteId={ siteId } />
-				<div className="guided-transfer-card__options"
-					onMouseEnter={ showPopup }
-					onMouseLeave={ hidePopup }
-				>
+				<div className="guided-transfer-card__options">
 					<div className="guided-transfer-card__options-header-title-container">
 						<h1 className="guided-transfer-card__title">
 							{ translate( 'Guided Transfer' ) }
@@ -61,33 +68,9 @@ class GuidedTransferCard extends Component {
 						</h2>
 					</div>
 					<div className="guided-transfer-card__options-header-button-container">
-						<Button
-							href={ `/settings/export/guided/${this.props.siteSlug}` }
-							isPrimary={ true }
-							ref={ setButtonRef }
-							disabled={ ! isAvailable }
-						>
-							{ isAvailable
-								? translate( 'Purchase a Guided Transfer' )
-								: translate( 'Guided Transfer unavailable' ) }
-						</Button>
-
-						{ ! isAvailable && isPopupVisible &&
-							<Popover
-								context={ this._purchaseButton }
-								position="bottom"
-								onClose={ hidePopup }
-								isVisible={ isPopupVisible }
-							>
-								<p className="guided-transfer-card__unavailable-notice">
-									{ translate( `Guided Transfer is unavailable at the moment. We'll
-									be back as soon as possible! In the meantime, you can transfer your
-									WordPress.com blog elsewhere by following {{a}}these steps{{/a}}`,
-									{ components: {
-										a: <a href="https://move.wordpress.com/" />
-									} } ) }
-								</p>
-							</Popover>
+						{ isAvailable
+							? <PurchaseButton siteSlug={ this.props.siteSlug } />
+							: <UnavailableInfo />
 						}
 					</div>
 				</div>
