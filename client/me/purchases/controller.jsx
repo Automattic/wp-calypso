@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import { partial } from 'lodash';
 import page from 'page';
 import React from 'react';
 import i18n from 'i18n-calypso';
@@ -9,7 +10,6 @@ import i18n from 'i18n-calypso';
  * Internal Dependencies
  */
 import AddCardDetails from './payment/add-card-details';
-import analytics from 'lib/analytics';
 import CancelPrivateRegistration from './cancel-private-registration';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
@@ -22,7 +22,7 @@ import paths from './paths';
 import PurchasesHeader from './list/header';
 import PurchasesList from './list';
 import { receiveSite } from 'state/sites/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { concatTitle, recordPageView, renderPage } from 'lib/react-helpers';
 import { setAllSitesSelected, setSelectedSiteId } from 'state/ui/actions';
 import sitesFactory from 'lib/sites-list';
 import supportPaths from 'lib/url/support';
@@ -30,27 +30,9 @@ import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
 
+const recordPurchasesPageView = partial( recordPageView, partial.placeholder, 'Purchases' );
 const sites = sitesFactory();
 const user = userFactory();
-
-function concatTitle( ...parts ) {
-	return parts.join( ' › ' );
-}
-
-function recordPageView( path, ...title ) {
-	analytics.pageView.record(
-		path,
-		concatTitle( 'Purchases', ...title )
-	);
-}
-
-function renderPage( context, component ) {
-	renderWithReduxStore(
-		component,
-		document.getElementById( 'primary' ),
-		context.store
-	);
-}
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 function setTitle( context, ...title ) {
@@ -92,7 +74,7 @@ export default {
 			titles.addCardDetails
 		);
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.addCardDetails(),
 			'Add Card Details'
 		);
@@ -112,7 +94,7 @@ export default {
 			titles.cancelPrivateRegistration
 		);
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.cancelPrivateRegistration(),
 			'Cancel Private Registration'
 		);
@@ -133,7 +115,7 @@ export default {
 			titles.cancelPurchase
 		);
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.cancelPurchase(),
 			'Cancel Purchase'
 		);
@@ -154,7 +136,7 @@ export default {
 			titles.confirmCancelDomain
 		);
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.confirmCancelDomain(),
 			'Confirm Cancel Domain'
 		);
@@ -175,7 +157,7 @@ export default {
 			titles.editCardDetails
 		);
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.editCardDetails(),
 			'Edit Card Details'
 		);
@@ -193,7 +175,7 @@ export default {
 	list( context ) {
 		setTitle( context );
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.list()
 		);
 
@@ -237,7 +219,7 @@ export default {
 			titles.managePurchase
 		);
 
-		analytics.pageView.record(
+		recordPurchasesPageView(
 			paths.managePurchase(),
 			'Manage Purchase'
 		);
@@ -260,7 +242,7 @@ export default {
 
 		setTitle( context );
 
-		recordPageView(
+		recordPurchasesPageView(
 			context.path,
 			'No Sites'
 		);

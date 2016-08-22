@@ -1,26 +1,33 @@
 /**
  * External dependencies
  */
-var connect = require( 'react-redux' ).connect,
-	React = require( 'react' );
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import page from 'page';
+import React, { Component } from 'react';
 
 /**
  * Internal dependencies
  */
-var CreditCardDelete = require( './credit-card-delete' ),
-	Card = require( 'components/card' ),
-	getStoredCards = require( 'state/stored-cards/selectors' ).getStoredCards,
-	hasLoadedStoredCardsFromServer = require( 'state/stored-cards/selectors' ).hasLoadedStoredCardsFromServer,
-	isFetchingStoredCards = require( 'state/stored-cards/selectors' ).isFetchingStoredCards,
-	QueryStoredCards = require( 'components/data/query-stored-cards' ),
-	SectionHeader = require( 'components/section-header' );
+import Button from 'components/button';
+import Card from 'components/card';
+import config from 'config';
+import CreditCardDelete from './credit-card-delete';
+import {
+	getStoredCards,
+	hasLoadedStoredCardsFromServer,
+	isFetchingStoredCards
+} from 'state/stored-cards/selectors';
+import QueryStoredCards from 'components/data/query-stored-cards';
+import { addCreditCard } from 'me/payment-methods/paths';
+import SectionHeader from 'components/section-header';
 
-var CreditCards = React.createClass( {
-	renderCards: function() {
+class CreditCards extends Component {
+	renderCards() {
 		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
 			return (
 				<div className="credit-cards__no-results">
-					{ this.translate( 'Loading…' ) }
+					{ this.props.translate( 'Loading…' ) }
 				</div>
 			);
 		}
@@ -28,41 +35,63 @@ var CreditCards = React.createClass( {
 		if ( ! this.props.cards.length ) {
 			return (
 				<div className="credit-cards__no-results">
-					{ this.translate( 'You have no saved cards.' ) }
+					{ this.props.translate( 'You have no saved cards.' ) }
 				</div>
 			);
 		}
 
 		return this.props.cards.map( function( card ) {
 			return (
-				<div className="credit-cards_single-card" key={ card.stored_details_id }>
+				<div className="credit-cards__single-card" key={ card.stored_details_id }>
 					<CreditCardDelete card={ card } />
 				</div>
 			);
 		}, this );
-	},
+	}
 
-	render: function() {
+	goToAddCreditCard() {
+		page( addCreditCard() );
+	}
+
+	renderAddCreditCardButton() {
+		if ( ! config.isEnabled( 'manage/payment-methods' ) ) {
+			return null;
+		}
+
 		return (
-			<div>
+			<Button
+				primary
+				compact
+				className="credit-cards__add"
+				onClick={ this.goToAddCreditCard }>
+				{ this.props.translate( 'Add Credit Card' ) }
+			</Button>
+		);
+	}
+
+	render() {
+		return (
+			<div className="credit-cards">
 				<QueryStoredCards />
 
-				<SectionHeader label={ this.translate( 'Manage Your Credit Cards' ) } />
+				<SectionHeader label={ this.props.translate( 'Manage Your Credit Cards' ) }>
+					{ this.renderAddCreditCardButton() }
+				</SectionHeader>
 
 				<Card>
-					<div className="credit-cards">
+					<div>
 						{ this.renderCards() }
 					</div>
 				</Card>
 			</div>
 		);
 	}
-} );
+}
 
-module.exports = connect(
+export default connect(
 	state => ( {
 		cards: getStoredCards( state ),
 		hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
 		isFetching: isFetchingStoredCards( state )
 	} )
-)( CreditCards );
+)( localize( CreditCards ) );
