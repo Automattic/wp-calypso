@@ -21,9 +21,9 @@ export default React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	getInitialState() {
-		var date = new Date(),
-			tz = 'America/Los_Angeles',
-			tomorrow = ( new Date() ).setDate( date.getDate() + 1 );
+		let date = new Date();
+		const tz = 'America/Los_Angeles';
+		const tomorrow = ( new Date() ).setDate( date.getDate() + 1 );
 
 		date.setDate( date.getDate() + 3 );
 		date.setMilliseconds( 0 );
@@ -44,6 +44,12 @@ export default React.createClass( {
 					id: 2,
 					title: 'Tomorrow is tomorrow',
 					date: tomorrow
+				},
+				{
+					id: 3,
+					title: 'WordCamp Lima 2016!',
+					date: new Date( '2016-07-16T09:00:00' ),
+					type: 'wordcamp-event'
 				}
 			],
 			gmtOffset: 1,
