@@ -80,3 +80,25 @@ export function getFormattedTitle( state ) {
 
 	return title + 'WordPress.com';
 }
+
+/**
+ * Returns an array of document meta objects as set by the DocumentHead
+ * component or addDocumentHeadMeta action.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Object[]}       Array of meta objects
+ */
+export function getMeta( state ) {
+	return state.documentHead.meta;
+}
+
+/**
+ * Returns an array of document link objects as set by the DocumentHead
+ * component or addDocumentHeadLink action.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Object[]}       Array of link objects
+ */
+export function getLink( state ) {
+	return state.documentHead.link;
+}

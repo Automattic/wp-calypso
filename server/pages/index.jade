@@ -21,11 +21,11 @@ html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width'
 		meta(name='apple-mobile-web-app-capable', content='yes')
 		meta(name='referrer', content='origin')
 
-		if helmetMeta
-			!= helmetMeta
+		each meta in metas
+			meta(name=meta.name, property=meta.property, content=meta.content)
 
-		if helmetLink
-			!= helmetLink
+		each link in links
+			link(rel=link.rel, href=link.href)
 
 		link(rel='shortcut icon', type='image/vnd.microsoft.icon', href=faviconURL, sizes='16x16 32x32')
 		link(rel='shortcut icon', type='image/x-icon', href=faviconURL, sizes='16x16 32x32')

@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import { getFormattedTitle } from 'client/state/document-head/selectors';
+import { getFormattedTitle, getMeta, getLink } from 'client/state/document-head/selectors';
 
 const debug = debugFactory( 'calypso:server-render' );
 const markupCache = new Lru( { max: 3000 } );
@@ -78,6 +78,8 @@ export function serverRender( req, res ) {
 		if ( context.store ) {
 			context.initialReduxState = pick( context.store.getState(), 'documentHead', 'ui', 'themes' );
 			context.title = getFormattedTitle( context.store.getState() );
+			context.metas = getMeta( context.store.getState() );
+			context.links = getLink( context.store.getState() );
 		}
 	}
 
