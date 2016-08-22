@@ -76,13 +76,13 @@ export const savePreference = ( key, value ) => dispatch => {
 		value
 	} );
 
-	const settings = {
+	const payload = JSON.stringify( {
 		[ USER_SETTING_KEY ]: {
 			[ key ]: value
 		}
-	};
+	} );
 
-	return wpcom.me().settings().update( settings ).then( ( data ) => {
+	return wpcom.me().settings().update( payload ).then( ( data ) => {
 		dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
 		dispatch( {
 			type: PREFERENCES_SAVE_SUCCESS,
