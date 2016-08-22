@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureComponent from 'react-pure-render/component';
+import React, { PureComponent, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 
@@ -28,10 +27,6 @@ class PostControls extends PureComponent {
 		translate: PropTypes.func,
 	};
 
-	constructor() {
-		super( ...arguments );
-	}
-
 	view() {
 		ga.recordEvent( 'Posts', 'Clicked View Post' );
 	}
@@ -55,10 +50,10 @@ class PostControls extends PureComponent {
 	buildControls( controls ) {
 		return controls.map( ( control, i ) => {
 			return (
-				<li key={ `controls-${this.props.post.ID}-${i}` }>
+				<li key={ `controls-${ this.props.post.ID }-${ i }` }>
 					<a
 						href={ control.href }
-						className={ `post-controls__${control.className}` }
+						className={ `post-controls__${ control.className }` }
 						onClick={ control.onClick }
 						target={ control.target ? control.target : null }
 					>
@@ -105,9 +100,9 @@ class PostControls extends PureComponent {
 
 			let statsUrl;
 			if ( config.isEnabled( 'manage/stats' ) ) {
-				statsUrl = `/stats/post/${post.ID}/${this.props.site.slug}`;
+				statsUrl = `/stats/post/${ post.ID }/${ this.props.site.slug }`;
 			} else {
-				statsUrl = `//wordpress.com/my-stats/?view=post&post=${post.ID}&blog=${post.site_ID}`;
+				statsUrl = `//wordpress.com/my-stats/?view=post&post=${ post.ID }&blog=${ post.site_ID }`;
 			}
 			controls.main.push( {
 				text: translate( 'Stats' ),
