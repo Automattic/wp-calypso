@@ -70,7 +70,14 @@ export default React.createClass( {
 		return (
 			<div className={ classes }>
 				<FormTextarea
-					{ ...omit( this.props, 'className', 'acceptableLength', 'showRemainingCharacters', 'children' ) }
+					{ ...omit(
+						this.props,
+						'className',
+						'acceptableLength',
+						'showRemainingCharacters',
+						'children',
+						'countPlaceholderLength'
+					) }
 					className="counted-textarea__input" />
 				{ this.renderCountPanel() }
 			</div>
