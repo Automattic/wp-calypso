@@ -14,7 +14,8 @@ function formatDate( date ) {
 
 function getSearchableStrings( transaction ) {
 	var rootStrings = values( omit( transaction, 'items' ) ),
-		itemStrings = flatten( transaction.items.map( values ) );
+		transactionItems = transaction.items || [],
+		itemStrings = flatten( transactionItems.map( values ) );
 
 	return rootStrings.concat( itemStrings );
 }
