@@ -86,7 +86,7 @@ export default React.createClass( {
 		return (
 			<div>
 				<FormLabel htmlFor="siteUrl">{ this.translate( 'Site Address' ) }</FormLabel>
-				<div className="site-address-container">
+				<div className="jetpack-connect__site-address-container">
 					<Gridicon
 						size={ 24 }
 						icon="globe" />

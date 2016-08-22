@@ -41,7 +41,7 @@ export default React.createClass( {
 						<div className="jetpack-connect__browser-chrome-dot"></div>
 						<div className="jetpack-connect__browser-chrome-dot"></div>
 					</div>
-					<div className="site-address-container">
+					<div className="jetpack-connect__site-address-container">
 						<Gridicon
 							size={ 24 }
 							icon="globe" />
