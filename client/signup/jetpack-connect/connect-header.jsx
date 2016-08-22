@@ -14,13 +14,13 @@ export default React.createClass( {
 		return {
 			showLogo: true,
 			label: ''
-		}
+		};
 	},
 
 	renderJetpackLogo() {
 		return (
 			<img
-				className="jetpack-logo"
+				className="jetpack-connect__jetpack-logo"
 				src="/calypso/images/jetpack/jetpack-logo.svg"
 				width={ 18 }
 				height={ 18 } />

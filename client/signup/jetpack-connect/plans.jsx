@@ -153,7 +153,7 @@ const Plans = React.createClass( {
 							step={ 1 }
 							steps={ 3 } />
 
-						<div id="plans" className="plans has-sidebar">
+						<div id="plans">
 							<PlansFeaturesMain
 								site={ selectedSite }
 								isInSignup={ true }
