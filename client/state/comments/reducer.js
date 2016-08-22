@@ -11,6 +11,7 @@ import {
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
 	COMMENTS_ERROR,
+	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_LIKE,
 	COMMENTS_LIKE_UPDATE,
@@ -165,6 +166,10 @@ export function totalCommentsCount( state = Immutable.Map(), action ) {
 	switch ( action.type ) {
 		case COMMENTS_COUNT_RECEIVE:
 			return updateSpecificState( state, action, action.totalCommentsCount );
+		case COMMENTS_COUNT_INCREMENT:
+			return updateSpecificState( state, action, function( currentTotal ) {
+				return currentTotal + action.incrementBy;
+			} );
 		case SERIALIZE:
 			return {};
 		case DESERIALIZE:

@@ -18,6 +18,7 @@ import {
 	COMMENTS_LIKE_UPDATE,
 	COMMENTS_UNLIKE,
 	COMMENTS_ERROR,
+	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_COUNT_RECEIVE,
 	COMMENTS_RECEIVE,
 	COMMENTS_REMOVE,
@@ -241,7 +242,7 @@ describe( 'reducer', () => {
 	} ); // end of requests
 
 	describe( '#totalCommentsCount()', () => {
-		it( 'should update post comments count', () => {
+		it( 'should set post comments count', () => {
 			const newState = totalCommentsCount( undefined, {
 				type: COMMENTS_COUNT_RECEIVE,
 				totalCommentsCount: 123,
@@ -252,6 +253,29 @@ describe( 'reducer', () => {
 			const specificRes = getPostTotalCommentsCount( { comments: { totalCommentsCount: newState } }, 1, 1 );
 
 			expect( specificRes ).to.eql( 123 );
+		} );
+
+		it( 'should increment post comments count', () => {
+			const originalCommentsTotal = 10,
+				incrementBy = 1;
+
+			const originalState = totalCommentsCount( undefined, {
+				type: COMMENTS_COUNT_RECEIVE,
+				totalCommentsCount: originalCommentsTotal,
+				siteId: 1,
+				postId: 1
+			} );
+
+			const newState = totalCommentsCount( originalState, {
+				type: COMMENTS_COUNT_INCREMENT,
+				incrementBy,
+				siteId: 1,
+				postId: 1
+			} );
+
+			const result = getPostTotalCommentsCount( { comments: { totalCommentsCount: newState } }, 1, 1 );
+
+			expect( result ).to.equal( originalCommentsTotal + incrementBy );
 		} );
 	} ); // end of totalCommentsCount
 

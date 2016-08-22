@@ -5,6 +5,7 @@ import wpcom from 'lib/wp';
 import {
 	COMMENTS_RECEIVE,
 	COMMENTS_COUNT_RECEIVE,
+	COMMENTS_COUNT_INCREMENT,
 	COMMENTS_REQUEST,
 	COMMENTS_REQUEST_SUCCESS,
 	COMMENTS_REQUEST_FAILURE,
@@ -219,6 +220,13 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 				postId,
 				comments: [ comment ],
 				skipSort
+			} );
+
+			dispatch( {
+				type: COMMENTS_COUNT_INCREMENT,
+				siteId,
+				postId,
+				incrementBy: 1
 			} );
 
 			return comment;
