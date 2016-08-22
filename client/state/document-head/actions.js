@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * Internal dependencies
  */

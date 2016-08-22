@@ -2,7 +2,6 @@
  * External dependencies
  */
 import ReactDomServer from 'react-dom/server';
-import Helmet from 'react-helmet';
 import superagent from 'superagent';
 import Lru from 'lru-cache';
 import pick from 'lodash/pick';
@@ -12,6 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
+import { getFormattedTitle } from 'client/state/document-head/selectors';
 
 const debug = debugFactory( 'calypso:server-render' );
 const markupCache = new Lru( { max: 3000 } );
@@ -44,14 +44,6 @@ export function render( element, key = JSON.stringify( element ) ) {
 			const renderedLayout = ReactDomServer.renderToString( element );
 			context = { renderedLayout };
 
-			if ( Helmet.peek() ) {
-				const helmetData = Helmet.rewind();
-				Object.assign( context, {
-					helmetTitle: helmetData.title,
-					helmetMeta: helmetData.meta,
-					helmetLink: helmetData.link,
-				} );
-			}
 			markupCache.set( key, context );
 		}
 		const rtsTimeMs = Date.now() - startTime;
@@ -78,13 +70,15 @@ export function serverRender( req, res ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
 
-	if ( config.isEnabled( 'server-side-rendering' ) &&
-		context.store &&
-		context.layout &&
-		! context.user ) {
-		context.initialReduxState = pick( context.store.getState(), 'ui', 'themes' );
-		const key = context.renderCacheKey || JSON.stringify( context.layout );
-		Object.assign( context, render( context.layout, key ) );
+	if ( config.isEnabled( 'server-side-rendering' ) && ! context.user ) {
+		if ( context.layout ) {
+			const key = context.renderCacheKey || JSON.stringify( context.layout );
+			Object.assign( context, render( context.layout, key ) );
+		}
+		if ( context.store ) {
+			context.initialReduxState = pick( context.store.getState(), 'documentHead', 'ui', 'themes' );
+			context.title = getFormattedTitle( context.store.getState() );
+		}
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {

@@ -11,10 +11,8 @@ doctype html
 
 html(lang=lang, dir=isRTL ? 'rtl' : 'ltr', class=isFluidWidth ? 'is-fluid-width' : '')
 	head
-		if helmetTitle
-			!= helmetTitle
-		else
-			title WordPress.com
+		title
+			!= title
 		meta(charset='utf-8')
 		meta(http-equiv='X-UA-Compatible' content='IE=Edge')
 		meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
