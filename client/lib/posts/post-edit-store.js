@@ -288,6 +288,14 @@ function dispatcherCallback( payload ) {
 			}
 			PostEditStore.emit( 'change' );
 			break;
+
+		case 'SET_POST_LOADING_ERROR':
+			_isLoading = false;
+			if ( action.error ) {
+				setLoadingError( action.error );
+			}
+			PostEditStore.emit( 'change' );
+			break;
 	}
 }
 
