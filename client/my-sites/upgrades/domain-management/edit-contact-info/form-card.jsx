@@ -105,7 +105,7 @@ const EditContactInfoFormCard = React.createClass( {
 					<div className="edit-contact-info-form-card__form-content">
 						{ this.getField( FormInput, {
 							name: 'first-name',
-							autofocus: true,
+							autoFocus: true,
 							label: this.translate( 'First Name', {
 								context: 'Domain Edit Contact Info form.',
 								textOnly: true
