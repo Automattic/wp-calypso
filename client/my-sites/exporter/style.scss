@@ -186,3 +186,20 @@
 	font-weight: 300;
 	color: $gray-dark;
 }
+
+.guided-transfer-card__unavailable-notice {
+	background-color: $gray-dark;
+	border-radius: 3px;
+	color: $gray-light;
+	padding: 5px 12px;
+}
+
+.guided-transfer-card__unavailable-info-icon {
+	vertical-align: middle;
+	padding-left: 5px;
+}
+
+.guided-transfer-card__unavailable-info-icon.info-popover .gridicon:hover,
+.guided-transfer-card__unavailable-info-icon.info-popover.is_active .gridicon {
+	color: $gray-light;
+}
