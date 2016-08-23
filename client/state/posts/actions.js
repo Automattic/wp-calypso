@@ -3,7 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import { extendAction } from 'state/utils';
-import { normalizePostForAPI } from './utils';
+import { normalizePostForApi } from './utils';
 import { addTerm } from 'state/terms/actions';
 import {
 	POST_DELETE,
@@ -194,7 +194,7 @@ export function savePost( siteId, postId = null, post ) {
 		} );
 
 		let postHandle = wpcom.site( siteId ).post( postId );
-		const normalizedPost = normalizePostForAPI( post );
+		const normalizedPost = normalizePostForApi( post );
 		postHandle = postHandle[ postId ? 'update' : 'add' ].bind( postHandle );
 		return postHandle( { apiVersion: '1.2' }, normalizedPost ).then( ( savedPost ) => {
 			dispatch( {
