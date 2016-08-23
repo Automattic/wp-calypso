@@ -29,7 +29,7 @@ export const Username = localize( props =>
 		} ) }</FormLabel>
 		<FormTextInput
 			id="username"
-			value={ props.value }
+			value={ props.value || '' }
 			onChange={ props.onChange }
 			placeholder={ props.translate( 'Username' ) } />
 	</FormFieldset>
@@ -47,7 +47,7 @@ export const Password = localize( props =>
 			autoCapitalize="off"
 			autoComplete="off"
 			autoCorrect="off"
-			value={ props.value }
+			value={ props.value || '' }
 			onChange={ props.onChange }
 			placeholder={ props.translate( 'Password' ) } />
 	</FormFieldset>
@@ -64,7 +64,7 @@ export const Email = localize( props =>
 		</FormLabel>
 		<FormTextInput
 			id="email"
-			value={ props.value }
+			value={ props.value || '' }
 			onChange={ props.onChange }
 			placeholder={ props.translate( 'Email address' ) } />
 	</FormFieldset>
@@ -93,7 +93,7 @@ export const WPOrgURL = localize( props =>
 		</FormLabel>
 		<FormTextInput
 			id="wporg_url"
-			value={ props.value }
+			value={ props.value || '' }
 			onChange={ props.onChange }
 			placeholder={ props.translate( 'new-site.com' ) } />
 	</FormFieldset>
