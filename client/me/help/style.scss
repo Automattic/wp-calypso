@@ -46,3 +46,38 @@
 	font-size: 14px;
 	color: $gray-dark;
 }
+
+.help__course-teaser .card {
+	border-left: 3px solid $blue-wordpress;
+	display: flex;
+	margin: 16px 0;
+	padding: 12px 12px;
+
+	.button {
+		margin-left: auto;
+	}
+
+	&.is-no-margin {
+		margin: 0;
+	}
+}
+
+.help__course-teaser-icon {
+	color: $blue-wordpress;
+	border-radius: 50%;
+	margin-right: 16px;
+	background-color: $white;
+	align-self: center;
+}
+
+.help__course-teaser-title {
+	color: $gray-dark;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.help__course-teaser-description {
+	color: $gray;
+	font-size: 12px;
+	display: block;
+}
