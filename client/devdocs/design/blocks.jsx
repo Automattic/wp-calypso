@@ -39,7 +39,6 @@ import RelatedPostCard from 'blocks/reader-related-card/docs/example';
 import SearchPostCard from 'blocks/reader-search-card/docs/example';
 import RefreshPostCard from 'blocks/reader-post-card/docs/example';
 import PlanPurchaseFeaturesExample from 'blocks/plan-purchase-features/docs/example';
-import RefreshPostCard from 'blocks/reader-post-card/docs/example';
 
 export default React.createClass( {
 
