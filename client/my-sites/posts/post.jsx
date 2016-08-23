@@ -16,10 +16,11 @@ import PostHeader from './post-header';
 import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
 import PostTotalViews from 'my-sites/posts/post-total-views';
-import PostTotalComments from 'my-sites/posts/post-total-comments';
+import CommentButton from 'blocks/comment-button';
 import utils from 'lib/posts/utils';
 import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
+import { shouldShowComments } from 'reader/comments/helper';
 
 import Comments from 'reader/comments';
 
@@ -231,18 +232,18 @@ module.exports = React.createClass( {
 		const postId = this.props.post.ID;
 		const site = this.getSite();
 		const isJetpack = site.jetpack;
-		const showComments = ! isJetpack || site.isModuleActive( 'comments' );
 		let showLikes = ! isJetpack || site.isModuleActive( 'likes' );
 		const showStats = site.capabilities && site.capabilities.view_stats && ( ! isJetpack || site.isModuleActive( 'stats' ) );
 		const metaItems = [];
 		let likeCountDisplay, likeTitle, likeMeta, footerMetaItems;
 
-		if ( showComments ) {
+		if ( shouldShowComments( post ) ) {
 			metaItems.push( (
-				<PostTotalComments
-					originalCount={ post.discussion.comment_count }
-					clickHandler={ this.toggleComments }
-					commentsOpen={ post.discussion.comments_open }
+				<CommentButton
+					tagName='span'
+					commentCount={ post.discussion.comment_count }
+					onClick={ this.toggleComments }
+					showLabel={ false }
 					postId = { post.ID }
 					siteId = { post.site_ID }
 				/>

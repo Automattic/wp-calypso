@@ -2,20 +2,26 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import noop from 'lodash/noop';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
+import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
 const CommentButton = React.createClass( {
 
 	propTypes: {
 		onClick: React.PropTypes.func,
 		tagName: React.PropTypes.string,
+		size: React.PropTypes.number,
 		commentCount: React.PropTypes.number,
-		showLabel: React.PropTypes.bool
+		showLabel: React.PropTypes.bool,
+		postId: React.PropTypes.number.isRequired,
+		siteId: React.PropTypes.number.isRequired
 	},
 
 	getDefaultProps() {
@@ -39,7 +45,7 @@ const CommentButton = React.createClass( {
 	render() {
 		let label;
 		const containerTag = this.props.tagName,
-			commentCount = this.props.commentCount;
+			commentCount = ( this.props.syncedCount === undefined ? this.props.commentCount : this.props.syncedCount );
 
 		if ( commentCount === 0 ) {
 			label = this.translate( 'Comment' );
@@ -59,7 +65,10 @@ const CommentButton = React.createClass( {
 
 		return React.createElement(
 			containerTag, {
-				className: 'comment-button',
+				className: classNames( {
+					'comment-button': true,
+					'is-empty': commentCount === 0
+				} ),
 				onTouchTap: this.onTap,
 				onClick: this.onClick
 			},
@@ -68,4 +77,11 @@ const CommentButton = React.createClass( {
 	}
 } );
 
-export default CommentButton;
+export default connect( ( state, ownProps ) => {
+	const { siteId, postId } = ownProps,
+		syncedCount = getPostTotalCommentsCount( state, siteId, postId );
+
+	return { syncedCount };
+} )( CommentButton );
+
+export { CommentButton as PureCommentButton };

@@ -195,9 +195,27 @@
 				}
 			}
 			span {
-				display: inline-block;
+				// display: inline-block;
 				margin: (1 / 14) * 1em 0 0 (3 / 14) * 1em;
 			}
+		}
+		.comment-button {
+			color: $gray;
+			&:hover {
+				color: $blue-medium;
+				.comment-button__icon {
+					fill: $blue-medium;
+				}
+			}
+			&.is-empty {
+				color: lighten( $gray, 20% );
+				.comment-button__icon {
+					fill: lighten( $gray, 20% );
+				}
+			}
+		}
+		.comment-button__icon {
+			fill: $gray;
 		}
 	}
 
