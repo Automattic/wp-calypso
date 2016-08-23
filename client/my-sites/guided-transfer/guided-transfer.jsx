@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import AccountInfo from './account-info';
+import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
 
 const guidedTransferHosts = {
@@ -76,7 +76,7 @@ export default React.createClass( {
 
 				<div className="guided-transfer__content">
 					{ hostInfo
-						? <AccountInfo hostInfo={ hostInfo } />
+						? <HostCredentialsPage hostSlug={ this.props.hostSlug } hostInfo={ hostInfo } />
 						: <HostSelect hosts={ hosts } />
 					}
 				</div>
