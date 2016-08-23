@@ -4,8 +4,8 @@ export const remoteValuesSchema = {
 	type: [ 'null', 'object' ],
 	properties: {
 		'editor-mode': {
-			type: [ 'string', 'null' ],
-			'enum': [ null, 'html', 'tinymce' ]
+			type: 'string',
+			'enum': [ 'html', 'tinymce' ]
 		},
 		mediaModalGalleryInstructionsDismissed: {
 			type: 'boolean'
