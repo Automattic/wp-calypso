@@ -1,20 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	debug = require( 'debug' )( 'calypso:help-search' ),
 	reactRedux = require( 'react-redux' );
 /**
  * Internal dependencies
  */
-var Main = require( 'components/main' ),
+const Main = require( 'components/main' ),
 	analytics = require( 'lib/analytics' ),
 	currentUser = require( 'state/current-user/selectors' ),
 	HappinessEngineers = require( 'me/help/help-happiness-engineers' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	HelpSearch = require( './help-search' ),
 	CompactCard = require( 'components/card/compact' ),
+	Card = require( 'components/card' ),
+	Gridicon = require( 'components/gridicon' ),
 	Button = require( 'components/button' ),
 	SectionHeader = require( 'components/section-header' ),
 	HelpResult = require( './help-results/item' ),
@@ -30,7 +32,10 @@ const Help = React.createClass( {
 			{
 				link: 'https://en.support.wordpress.com/com-vs-org/',
 				title: this.translate( 'Can\'t add your theme or plugin?' ),
-				description: this.translate( 'Learn about the differences between a fully hosted WordPress.com site and a self-hosted WordPress.org site. Themes and plugins can be uploaded to self-hosted sites only.' )
+				description: this.translate(
+					'Learn about the differences between a fully hosted WordPress.com site and a ' +
+					'self-hosted WordPress.org site. Themes and plugins can be uploaded to self-hosted sites only.'
+				)
 			},
 			{
 				link: 'https://en.support.wordpress.com/all-about-domains/',
@@ -40,7 +45,9 @@ const Help = React.createClass( {
 			{
 				link: 'https://en.support.wordpress.com/start/',
 				title: this.translate( 'Get Started' ),
-				description: this.translate( 'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.' )
+				description: this.translate(
+					'No matter what kind of site you want to build, our five-step checklists will get you set up and ready to publish.'
+				)
 			},
 			{
 				link: 'https://en.support.wordpress.com/settings/privacy-settings/',
@@ -73,19 +80,25 @@ const Help = React.createClass( {
 				<CompactCard className="help__support-link" href="https://support.wordpress.com/" target="__blank">
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.translate( 'All support articles' ) }</h2>
-						<p className="help__support-link-content">{ this.translate( 'Looking to learn more about a feature? Our docs have all the details.' ) }</p>
+						<p className="help__support-link-content">
+							{ this.translate( 'Looking to learn more about a feature? Our docs have all the details.' ) }
+						</p>
 					</div>
 				</CompactCard>
 				<CompactCard className="help__support-link" href="https://dailypost.wordpress.com/" target="__blank">
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.translate( 'The Daily Post' ) }</h2>
-						<p className="help__support-link-content">{ this.translate( 'Get daily tips for your blog and connect with others to share your journey.' ) }</p>
+						<p className="help__support-link-content">
+							{ this.translate( 'Get daily tips for your blog and connect with others to share your journey.' ) }
+						</p>
 					</div>
 				</CompactCard>
 				<CompactCard className="help__support-link help__support-link-contact" href="/help/contact/">
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.translate( 'Get in touch' ) }</h2>
-						<p className="help__support-link-content">{ this.translate( 'Can\'t find the answer? Drop us a line and we\'ll lend a hand.' ) }</p>
+						<p className="help__support-link-content">
+							{ this.translate( `Can't find the answer? Drop us a line and we'll lend a hand.` ) }
+						</p>
 					</div>
 					<Button className="help__support-link-button" primary>{ this.translate( 'Contact Us' ) }</Button>
 				</CompactCard>
@@ -93,12 +106,35 @@ const Help = React.createClass( {
 		);
 	},
 
+	getCoursesTeaser: function() {
+		return (
+			<div className="help__course-teaser">
+				<Card href="/help/courses">
+					<Gridicon className="help__course-teaser-icon" icon="help" size={ 36 } />
+					<div>
+						<span className="help__course-teaser-title">
+							{ this.translate( 'Courses' ) }
+						</span>
+						<span className="help__course-teaser-description">
+							{ this.translate( 'Learn how to make the most of your site with these courses and webinars' ) }
+						</span>
+					</div>
+				</Card>
+			</div>
+		);
+	},
+
 	render: function() {
+		const {
+			isEmailVerified,
+			showCoursesTeaser
+		} = this.props;
 		return (
 			<Main className="help">
 				<MeSidebarNavigation />
 				<HelpSearch />
-				{ ! this.props.isEmailVerified && <HelpUnverifiedWarning /> }
+				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
+				{ showCoursesTeaser && this.getCoursesTeaser() }
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
 				<HappinessEngineers />
@@ -108,9 +144,13 @@ const Help = React.createClass( {
 } );
 
 module.exports = reactRedux.connect(
-	( state ) => {
+	( state, ownProps ) => {
+		const isEmailVerified = currentUser.isCurrentUserEmailVerified( state );
+		const showCoursesTeaser = ownProps.isCoursesEnabled;
+
 		return {
-			isEmailVerified: currentUser.isCurrentUserEmailVerified( state ),
+			showCoursesTeaser,
+			isEmailVerified,
 		};
 	}
 )( Help );
