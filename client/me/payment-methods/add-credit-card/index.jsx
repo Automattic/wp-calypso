@@ -3,11 +3,12 @@
  */
 import { connect } from 'react-redux';
 import page from 'page';
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
+import { addStoredCard } from 'state/stored-cards/actions';
 import analytics from 'lib/analytics';
 import { concatTitle } from 'lib/react-helpers';
 import CreditCardPage from 'me/purchases/components/credit-card-page';
@@ -18,6 +19,7 @@ import * as titles from 'me/payment-methods/titles';
 
 class AddCreditCard extends Component {
 	static propTypes = {
+		addStoredCard: PropTypes.func.isRequired
 	};
 
 	goToBillingHistory() {
@@ -37,6 +39,7 @@ class AddCreditCard extends Component {
 
 				<CreditCardPage
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
+					saveStoredCard={ this.props.addStoredCard }
 					successCallback={ this.goToBillingHistory } />
 			</Main>
 		);
@@ -44,8 +47,7 @@ class AddCreditCard extends Component {
 }
 
 const mapDispatchToProps = {
+	addStoredCard
 };
 
-export default connect( {}, mapDispatchToProps )( AddCreditCard );
-
-export default AddCreditCard;
+export default connect( null, mapDispatchToProps )( AddCreditCard );
