@@ -73,3 +73,12 @@ If `true`, then the menu icon will be displayed in light gray and will not be cl
 </table>
 
 Function callback to be invoked when visibility of the menu changes, passing a boolean argument indicating whether the menu is visible.
+
+### `className`
+
+<table>
+	<tr><td>Type</td><td><code>String</code></td></tr>
+	<tr><td>Required</td><td>No</td></tr>
+</table>
+
+Additional class name to be applied to the rendered component.
