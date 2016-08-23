@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, includes, isEqual, omit, some } from 'lodash';
+import { has, get, includes, isEqual, omit, some } from 'lodash';
 import createSelector from 'lib/create-selector';
 import moment from 'moment-timezone';
 
@@ -378,7 +378,7 @@ export const isPostPublished = createSelector(
 		return includes( [ 'publish', 'private' ], post.status ) ||
 			( post.status === 'future' && moment( post.date ).isBefore( moment() ) );
 	},
-	( state ) => state.posts.items
+	( state ) => state.posts.queries
 );
 
 /**
@@ -390,15 +390,14 @@ export const isPostPublished = createSelector(
  * @return {String}             Slug value
  */
 export function getEditedPostSlug( state, siteId, postId ) {
-	const post = getSitePost( state, siteId, postId );
-	const postEdits = getPostEdits( state, siteId, postId ) || {};
-	const suggestedSlug = get( post, [ 'other_URLs', 'suggested_slug' ] );
-	const postSlug = get( post, 'slug' );
-
 	// if local edits exists, return them regardless of post status
-	if ( postEdits.hasOwnProperty( 'slug' ) ) {
+	const postEdits = getPostEdits( state, siteId, postId );
+	if ( has( postEdits, 'slug' ) ) {
 		return postEdits.slug;
 	}
+
+	const post = getSitePost( state, siteId, postId );
+	const postSlug = get( post, 'slug' );
 
 	// when post is published, return the slug
 	if ( isPostPublished( state, siteId, postId ) ) {
@@ -406,6 +405,7 @@ export function getEditedPostSlug( state, siteId, postId ) {
 	}
 
 	// only return suggested_slug if slug has not been edited
+	const suggestedSlug = get( post, [ 'other_URLs', 'suggested_slug' ] );
 	if ( suggestedSlug && ! postSlug ) {
 		return suggestedSlug;
 	}

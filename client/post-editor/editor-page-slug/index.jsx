@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 
 /**
  * Internal Dependencies
@@ -9,7 +9,7 @@ import React, { PropTypes, Component } from 'react';
 import EditorSlug from 'post-editor/editor-slug';
 import Gridicon from 'components/gridicon';
 
-export default class PostEditorPageSlug extends Component {
+export default class PostEditorPageSlug extends PureComponent {
 	static propTypes = {
 		path: PropTypes.string
 	};
