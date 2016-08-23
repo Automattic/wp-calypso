@@ -12,6 +12,7 @@ import { getGuidedTransferIssue } from 'state/sites/guided-transfer/selectors';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
+import { CALYPSO_CONTACT } from 'lib/url/support';
 
 const Issue = props =>
 	<li className="guided-transfer__issue">
@@ -63,7 +64,9 @@ class TransferUnavailableCard extends Component {
 		// Fallback for unknown issue - user should never see this
 		return <div>
 			<p>{ translate( `Howdy! It looks like there's something stopping us from being able
-			to transfer your site. Please contact support and we'll sort it out!` ) }</p>
+				to transfer your site. Please {{a}}contact support{{/a}} and we'll sort it out!`,
+				{ components: { a: <a href={ CALYPSO_CONTACT } /> } }
+			) }</p>
 		</div>;
 	}
 
