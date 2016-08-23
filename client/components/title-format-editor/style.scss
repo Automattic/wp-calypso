@@ -4,14 +4,15 @@
 
 .title-format-editor__header {
 	display: flex;
-	align-items: center;
-	margin-bottom: 8px;
+	align-items: baseline;
+	justify-content: flex-end;
+	margin-bottom: 6px;
 }
 
 .title-format-editor__title {
 	font-weight: bold;
 	flex: 1;
-	align-self: center;
+	margin-right: auto;
 }
 
 .title-format-editor__button {
@@ -19,10 +20,9 @@
 	background-color: lighten( $gray, 30% );
 	color: darken( $gray, 30% );
 	padding: 4px 8px;
-	margin-left: auto;
+	margin-left: 10px;
 	font-size: 12px;
 	font-weight: bold;
-	margin-left: 8px;
 }
 
 .title-format-editor__editor-wrapper {
@@ -42,6 +42,8 @@
 
 .title-format-editor__token-close {
 	margin-left: 10px;
+	color: lighten( $gray, 10% );
+	font-size: 10px;
 }
 
 .title-format-editor__preview {
