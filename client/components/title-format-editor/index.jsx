@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import {
-	map
+	map,
+	max,
+	min,
 } from 'lodash';
 import {
 	CompositeDecorator,
@@ -8,31 +10,35 @@ import {
 	EditorState,
 	Entity,
 	Modifier,
+	SelectionState,
 } from 'draft-js';
 
 import Token from './token';
 import { fromEditor, toEditor } from './parser';
 
+const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
+
 export class TitleFormatEditor extends Component {
 	constructor( props ) {
 		super( props );
-
-		this.state = {
-			editorState: EditorState.createWithContent(
-				toEditor( props.titleFormats, props.tokens ),
-				new CompositeDecorator( [ {
-					strategy: this.renderTokens,
-					component: Token
-				} ] )
-			)
-		};
 
 		this.storeEditorReference = r => ( this.editor = r );
 		this.focusEditor = () => this.editor.focus();
 
 		this.updateEditor = this.updateEditor.bind( this );
 		this.addToken = this.addToken.bind( this );
+		this.removeToken = this.removeToken.bind( this );
 		this.renderTokens = this.renderTokens.bind( this );
+
+		this.state = {
+			editorState: EditorState.createWithContent(
+				toEditor( props.titleFormats, props.tokens ),
+				new CompositeDecorator( [ {
+					strategy: this.renderTokens,
+					component: Chip( this.removeToken )
+				} ] )
+			)
+		};
 	}
 
 	updateEditor( editorState ) {
@@ -73,6 +79,42 @@ export class TitleFormatEditor extends Component {
 				contentState,
 				'add-token'
 			) );
+		};
+	}
+
+	removeToken( entityKey ) {
+		return () => {
+			const { editorState } = this.state;
+			const currentContent = editorState.getCurrentContent();
+			const currentSelection = editorState.getSelection();
+
+			const block = currentContent.getBlockForKey( currentSelection.focusKey );
+
+			// get characters in entity
+			const indices = block
+				.getCharacterList()
+				.reduce( ( ids, value, key ) => {
+					return entityKey === value.entity
+						? [ ...ids, key ]
+						: ids;
+				}, [] );
+
+			const range = SelectionState
+				.createEmpty( block.key )
+				.set( 'anchorOffset', min( indices ) )
+				.set( 'focusOffset', max( indices ) );
+
+			this.updateEditor(
+				EditorState.push(
+					editorState,
+					Modifier.removeRange(
+						currentContent,
+						range,
+						'forward'
+					),
+					'remove-range'
+				)
+			);
 		};
 	}
 
