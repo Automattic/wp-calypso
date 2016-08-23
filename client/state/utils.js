@@ -70,6 +70,8 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 					return state;
 				}
 
+				warn( 'state validation failed - check schema used for:', customHandlers );
+
 				return initialState;
 			}
 		};
