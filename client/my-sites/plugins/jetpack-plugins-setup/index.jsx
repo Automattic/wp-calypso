@@ -503,6 +503,11 @@ export default connect(
 			return true;
 		} );
 
+		let nextPlugin = getNextPlugin( state, siteId );
+		if ( !! ownProps.whitelist && plugins.length ) {
+			nextPlugin = ( ( 'wait' === plugins[ 0 ].status ) && ( plugins[ 0 ].error === null ) ) ? plugins[ 0 ] : false;
+		}
+
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
@@ -511,7 +516,7 @@ export default connect(
 			isFinished: isFinished( state, siteId ),
 			plugins,
 			activePlugin: getActivePlugin( state, siteId ),
-			nextPlugin: getNextPlugin( state, siteId ),
+			nextPlugin,
 			selectedSite: site && site.jetpack ? JetpackSite( site ) : site,
 			siteId
 		};
