@@ -9,9 +9,12 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import HeaderCake from 'components/header-cake';
 import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
+import IssuesNotices from './issues-notices';
+import TransferUnavailableCard from './transfer-unavailable-card';
 
 const guidedTransferHosts = {
 	bluehost: {
@@ -31,6 +34,7 @@ export default React.createClass( {
 
 	propTypes: {
 		hostSlug: PropTypes.string,
+		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired
 	},
 
@@ -63,8 +67,11 @@ export default React.createClass( {
 			};
 		} );
 
+		const { siteId, siteSlug } = this.props;
+
 		return (
 			<div className="guided-transfer">
+				<QuerySiteGuidedTransfer siteId={ siteId } />
 				<div className="guided-transfer__header-nav">
 					<HeaderCake
 						onClick={ this.goBack }
@@ -74,12 +81,17 @@ export default React.createClass( {
 					</HeaderCake>
 				</div>
 
-				<div className="guided-transfer__content">
-					{ hostInfo
-						? <HostCredentialsPage hostSlug={ this.props.hostSlug } hostInfo={ hostInfo } />
-						: <HostSelect hosts={ hosts } />
-					}
-				</div>
+				<IssuesNotices siteId={ siteId } siteSlug={ siteSlug } />
+
+				{ this.props.isEligibleForGuidedTransfer
+					? <div className="guided-transfer__content">
+						{ hostInfo
+							? <HostCredentialsPage hostSlug={ this.props.hostSlug } hostInfo={ hostInfo } />
+							: <HostSelect hosts={ hosts } />
+						}
+					</div>
+					: <TransferUnavailableCard siteId={ siteId } siteSlug={ siteSlug } />
+				}
 			</div>
 		);
 	}
