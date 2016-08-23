@@ -197,6 +197,10 @@
 	max-width: 750px;
 }
 
+.reader-full-post__header-date {
+	line-height: 1.4;
+}
+
 .reader-full-post__header-date-link {
 	margin-right: 25px;
 }
@@ -220,6 +224,10 @@
 		margin-right: 5px;
 		position: relative;
 			top: 4px;
+
+		@include breakpoint( "<480px" ) {
+			top: 2px;
+		}
 	}
 }
 
