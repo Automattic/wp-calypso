@@ -12,6 +12,8 @@ import analytics from 'lib/analytics';
 import { concatTitle } from 'lib/react-helpers';
 import CreditCardPage from 'me/purchases/components/credit-card-page';
 import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'components/header-cake' ;
+import Main from 'components/main';
 import * as titles from 'me/payment-methods/titles';
 
 class AddCreditCard extends Component {
@@ -28,14 +30,15 @@ class AddCreditCard extends Component {
 
 	render() {
 		return (
-			<div>
+			<Main>
 				<DocumentHead title={ concatTitle( titles.paymentMethods, titles.addCreditCard ) } />
+
+				<HeaderCake onClick={ this.goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
+
 				<CreditCardPage
-					goBack={ this.goToBillingHistory }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
-					successCallback={ this.goToBillingHistory }
-					title={ titles.addCreditCard } />
-			</div>
+					successCallback={ this.goToBillingHistory } />
+			</Main>
 		);
 	}
 }

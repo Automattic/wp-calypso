@@ -13,8 +13,10 @@ import CreditCardPageLoadingPlaceholder from 'me/purchases/components/credit-car
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
+import HeaderCake from 'components/header-cake' ;
 import { isDataLoading, recordPageView } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
+import Main from 'components/main';
 import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import QueryUserPurchases from 'components/data/query-user-purchases';
@@ -34,8 +36,7 @@ class EditCardDetails extends PurchaseCardDetails {
 		selectedSite: PropTypes.oneOfType( [
 			PropTypes.object,
 			PropTypes.bool
-		] ),
-		title: PropTypes.string.isRequired
+		] )
 	};
 
 	componentWillMount() {
@@ -58,18 +59,22 @@ class EditCardDetails extends PurchaseCardDetails {
 
 					<QueryUserPurchases userId={ user.get().ID } />
 
-					<CreditCardPageLoadingPlaceholder title={ this.props.title } />
+					<CreditCardPageLoadingPlaceholder title={ titles.editCardDetails } />
 				</div>
 			);
 		}
 
-		return <CreditCardPage
-			apiParams={ this.getApiParams() }
-			goBack={ this.goBack }
-			initialValues={ this.props.card }
-			recordFormSubmitEvent={ this.recordFormSubmitEvent }
-			successCallback={ this.successCallback }
-			title={ this.props.title } />;
+		return (
+			<Main>
+				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.editCardDetails }</HeaderCake>
+
+				<CreditCardPage
+					apiParams={ this.getApiParams() }
+					initialValues={ this.props.card }
+					recordFormSubmitEvent={ this.recordFormSubmitEvent }
+					successCallback={ this.successCallback } />
+			</Main>
+		);
 	}
 }
 
@@ -80,8 +85,7 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => {
 		hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, purchaseId ),
-		selectedSite: getSelectedSiteSelector( state ),
-		title: titles.editCardDetails
+		selectedSite: getSelectedSiteSelector( state )
 	};
 };
 

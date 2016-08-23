@@ -15,9 +15,7 @@ import CountriesList from 'lib/countries-list';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
 import forOwn from 'lodash/forOwn';
-import HeaderCake from 'components/header-cake' ;
 import kebabCase from 'lodash/kebabCase';
-import Main from 'components/main';
 import mapKeys from 'lodash/mapKeys';
 import notices from 'notices';
 import { validateCardDetails } from 'lib/credit-card-details';
@@ -32,11 +30,9 @@ const wpcom = wpcomFactory.undocumented();
 const CreditCardPage = React.createClass( {
 	propTypes: {
 		apiParams: PropTypes.object,
-		goBack: PropTypes.func.isRequired,
 		initialValues: PropTypes.object,
 		recordFormSubmitEvent: PropTypes.func.isRequired,
-		successCallback: PropTypes.func.isRequired,
-		title: PropTypes.string.isRequired
+		successCallback: PropTypes.func.isRequired
 	},
 
 	getInitialState() {
@@ -224,50 +220,46 @@ const CreditCardPage = React.createClass( {
 
 	render() {
 		return (
-			<Main className="credit-card-page">
-				<HeaderCake onClick={ this.props.goBack }>{ this.props.title }</HeaderCake>
-
-				<form onSubmit={ this.onSubmit }>
-					<Card className="credit-card-page__content">
-						<CreditCardForm
-							card={ this.getCardDetails() }
-							countriesList={ countriesList }
-							eventFormName="Edit Card Details Form"
-							isFieldInvalid={ this.isFieldInvalid }
-							onFieldChange={ this.onFieldChange } />
-						<div className="credit-card-page__card-terms" onClick={ this.recordTermsAndConditionsClick }>
-							<Gridicon icon="info-outline" size={ 18 } />
-							<p>
-								{ this.translate(
-									'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize ' +
-									'your credit card to be charged on a recurring basis until you cancel, which you can do at any time. ' +
-									'You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} ' +
-									'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
-									{
-										components: {
-											tosLink: <a href="//wordpress.com/tos/" target="_blank"/>,
-											autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL } target="_blank"/>,
-											managePurchasesSupportPage: <a href={ support.MANAGE_PURCHASES } target="_blank"/>
-										}
+			<form onSubmit={ this.onSubmit }>
+				<Card className="credit-card-page__content">
+					<CreditCardForm
+						card={ this.getCardDetails() }
+						countriesList={ countriesList }
+						eventFormName="Edit Card Details Form"
+						isFieldInvalid={ this.isFieldInvalid }
+						onFieldChange={ this.onFieldChange } />
+					<div className="credit-card-page__card-terms" onClick={ this.recordTermsAndConditionsClick }>
+						<Gridicon icon="info-outline" size={ 18 } />
+						<p>
+							{ this.translate(
+								'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize ' +
+								'your credit card to be charged on a recurring basis until you cancel, which you can do at any time. ' +
+								'You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} ' +
+								'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
+								{
+									components: {
+										tosLink: <a href="//wordpress.com/tos/" target="_blank"/>,
+										autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL } target="_blank"/>,
+										managePurchasesSupportPage: <a href={ support.MANAGE_PURCHASES } target="_blank"/>
 									}
-								) }
-							</p>
-						</div>
-					</Card>
+								}
+							) }
+						</p>
+					</div>
+				</Card>
 
-					<CompactCard className="credit-card-page__footer">
-						<em>{ this.translate( 'All fields required' ) }</em>
+				<CompactCard className="credit-card-page__footer">
+					<em>{ this.translate( 'All fields required' ) }</em>
 
-						<FormButton
-							disabled={ this.state.formSubmitting }
-							type="submit">
-							{ this.state.formSubmitting
-								? this.translate( 'Saving Card…', { context: 'Button label', comment: 'Credit card' } )
-								: this.translate( 'Save Card', { context: 'Button label', comment: 'Credit card' } ) }
-						</FormButton>
-					</CompactCard>
-				</form>
-			</Main>
+					<FormButton
+						disabled={ this.state.formSubmitting }
+						type="submit">
+						{ this.state.formSubmitting
+							? this.translate( 'Saving Card…', { context: 'Button label', comment: 'Credit card' } )
+							: this.translate( 'Save Card', { context: 'Button label', comment: 'Credit card' } ) }
+					</FormButton>
+				</CompactCard>
+			</form>
 		);
 	}
 } );
