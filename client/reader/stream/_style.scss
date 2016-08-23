@@ -1,5 +1,9 @@
 // Reader-specific tweaks to components
 
+.layout__content {
+	background: $white;
+}
+
 .following {
 
 	@include breakpoint( "<660px" ) {
