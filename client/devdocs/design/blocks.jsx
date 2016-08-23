@@ -100,7 +100,6 @@ export default React.createClass( {
 					<AuthorCompactProfile />
 					<RefreshPostCard />
 					<PlanPurchaseFeaturesExample />
-					<RefreshPostCard />
 				</Collection>
 			</div>
 		);

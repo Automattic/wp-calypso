@@ -40,7 +40,7 @@ class ReaderPostCardAdapter extends React.Component {
 	}
 }
 
-function refreshCardFactory( post ) {
+function refreshCardFactory( /* post */ ) {
 	// should look at the post and determine class to return.
 	// blocked posts should show a block card, x-posts an x-post card
 	return ReaderPostCardAdapter;
