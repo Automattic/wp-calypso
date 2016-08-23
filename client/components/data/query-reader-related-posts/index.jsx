@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,20 +11,26 @@ import { bindActionCreators } from 'redux';
  */
 import { shouldFetchRelated } from 'state/reader/related-posts/selectors';
 import { requestRelatedPosts } from 'state/reader/related-posts/actions';
+import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
 
 class QueryReaderRelatedPosts extends Component {
 	componentWillMount() {
 		if ( this.props.shouldFetch ) {
-			this.props.requestRelatedPosts( this.props.siteId, this.props.postId );
+			this.props.requestRelatedPosts( this.props.siteId, this.props.postId, this.props.scope );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.shouldFetch || ( this.props.siteId === nextProps.siteId && ( this.props.postId === nextProps.postId ) ) ) {
+		if (
+			! nextProps.shouldFetch ||
+			( this.props.siteId === nextProps.siteId &&
+				this.props.postId === nextProps.postId &&
+				this.props.scope === nextProps.scope
+			) ) {
 			return;
 		}
 
-		nextProps.requestRelatedPosts( nextProps.siteId, nextProps.postId );
+		nextProps.requestRelatedPosts( nextProps.siteId, nextProps.postId, nextProps.scope );
 	}
 
 	render() {
@@ -34,19 +41,21 @@ class QueryReaderRelatedPosts extends Component {
 QueryReaderRelatedPosts.propTypes = {
 	siteId: PropTypes.number,
 	postId: PropTypes.number,
+	scope: PropTypes.oneOf( [ SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER ] ),
 	shouldFetch: PropTypes.bool,
 	requestRelatedPosts: PropTypes.func
 };
 
 QueryReaderRelatedPosts.defaultProps = {
+	scope: SCOPE_ALL,
 	requestRelatedPosts: () => {}
 };
 
 export default connect(
 	( state, ownProps ) => {
-		const { siteId, postId } = ownProps;
+		const { siteId, postId, scope } = ownProps;
 		return {
-			shouldFetch: shouldFetchRelated( state, siteId, postId )
+			shouldFetch: shouldFetchRelated( state, siteId, postId, scope )
 		};
 	},
 	( dispatch ) => {
@@ -55,3 +64,11 @@ export default connect(
 		}, dispatch );
 	}
 )( QueryReaderRelatedPosts );
+
+export function QueryReaderRelatedPostsSameSite( props ) {
+	return <QueryReaderRelatedPosts scope={ SCOPE_SAME } { ...props } />;
+}
+
+export function QueryReaderRelatedPostsOtherSites( props ) {
+	return <QueryReaderRelatedPosts scope={ SCOPE_OTHER } { ...props } />;
+}

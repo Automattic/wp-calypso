@@ -27,7 +27,7 @@ describe( 'selectors', () => {
 				reader: {
 					relatedPosts: {
 						queuedRequests: {
-							'1-1': true
+							'1-1-all': true
 						}
 					}
 				}
@@ -41,7 +41,7 @@ describe( 'selectors', () => {
 				reader: {
 					relatedPosts: {
 						items: {
-							'1-1': [ 1, 2 ]
+							'1-1-all': [ 1, 2 ]
 						}
 					}
 				}
@@ -53,7 +53,7 @@ describe( 'selectors', () => {
 				reader: {
 					relatedPosts: {
 						items: {
-							'1-2': [ 1, 2 ]
+							'1-2-all': [ 1, 2 ]
 						}
 					}
 				}
