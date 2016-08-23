@@ -44,6 +44,7 @@ import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import SpinnerLine from 'components/spinner-line';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { abtest } from 'lib/abtest';
 
 class PlanFeatures extends Component {
 
@@ -321,18 +322,32 @@ class PlanFeatures extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
+		const title = feature.getTitle();
+		const description = feature.getDescription
+			? feature.getDescription()
+			: null;
+
+		if ( abtest( 'plansDescriptions' ) === 'auto' ) {
+			return (
+				<PlanFeaturesItem
+					key={ index }
+					description={ description }
+					onMouseEnter={ this.showFeaturePopover }
+					onMouseLeave={ this.closeFeaturePopover }
+					onTouchStart={ this.swapFeaturePopover }
+				>
+					{ title }
+				</PlanFeaturesItem>
+			);
+		}
+
 		return (
 			<PlanFeaturesItem
 				key={ index }
-				description={ feature.getDescription
-					? feature.getDescription()
-					: null
-				}
-				onMouseEnter={ this.showFeaturePopover }
-				onMouseLeave={ this.closeFeaturePopover }
-				onTouchStart={ this.swapFeaturePopover }
+				description={ description }
+				onClick={ this.swapFeaturePopover }
 			>
-				{ feature.getTitle() }
+				{ title }
 			</PlanFeaturesItem>
 		);
 	}
