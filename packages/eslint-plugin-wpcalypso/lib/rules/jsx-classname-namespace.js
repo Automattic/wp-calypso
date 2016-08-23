@@ -16,7 +16,7 @@ var path = require( 'path' );
 // Constants
 //------------------------------------------------------------------------------
 
-var REGEXP_INDEX_PATH = /\/index\.jsx?$/;
+var REGEXP_INDEX_PATH = /(\\|\/)index\.jsx?$/;
 
 //------------------------------------------------------------------------------
 // Rule Definition
