@@ -4,6 +4,7 @@
 - Fix: `npm test` is now run synchronously so it exits with a non-zero code on failure
 - Fix: Replace ES2015 variable (`let`) declarations to accommodate older Node versions
 - Fix: Remove unintended debugging statement from i18n-no-newlines rule
+- Fix: jsx-classname-namespace will now correctly identify index components in Windows environments ([#18](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/18))
 - General: Add `files` to `package.json` to omit files relevant only for development
 
 #### v1.4.1 (August 12, 2016)
