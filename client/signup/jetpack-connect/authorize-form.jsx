@@ -325,7 +325,12 @@ const LoggedInForm = React.createClass( {
 				<p>
 					{ this.translate(
 						'WordPress.com was unable to reach your site and approve the connection. ' +
-						'Try again by clicking the button above; if that doesn\'t work you may need to contact support.'
+						'Try again by clicking the button above; ' +
+						'if that doesn\'t work you may need to {{link}}contact support{{/link}}.', {
+							components: {
+								link: <a href="https://jetpack.com/contact-support" target="_blank" />
+							}
+						}
 					) }
 				</p>
 				{ this.renderErrorDetails() }
