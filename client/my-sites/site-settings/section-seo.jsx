@@ -12,8 +12,9 @@ export default React.createClass( {
 	displayName: 'SiteSettingsSeo',
 
 	render() {
+		const { site, upgradeToBusiness } = this.props;
 		return (
-			<SeoForm site={ this.props.site } />
+			<SeoForm { ...{ site, upgradeToBusiness } } />
 		);
 	}
 } );

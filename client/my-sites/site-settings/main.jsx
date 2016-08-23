@@ -93,7 +93,7 @@ export class SiteSettingsComponent extends Component {
 
 	getSection() {
 		const { site } = this.state;
-		const { section, hostSlug } = this.props;
+		const { section, hostSlug, upgradeToBusiness } = this.props;
 
 		switch ( section ) {
 			case 'general':
@@ -109,7 +109,7 @@ export class SiteSettingsComponent extends Component {
 			case 'analytics':
 				return <AnalyticsSettings site={ site } />;
 			case 'seo':
-				return <SeoSettings site={ site } />;
+				return <SeoSettings { ...{ site, upgradeToBusiness } } />;
 			case 'import':
 				return <ImportSettings site={ site } />;
 			case 'export':
