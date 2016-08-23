@@ -321,18 +321,18 @@ class PlanFeatures extends Component {
 	}
 
 	renderFeatureItem( feature, index ) {
+		const title = feature.getTitle();
+		const description = feature.getDescription
+			? feature.getDescription()
+			: null;
+
 		return (
 			<PlanFeaturesItem
 				key={ index }
-				description={ feature.getDescription
-					? feature.getDescription()
-					: null
-				}
-				onMouseEnter={ this.showFeaturePopover }
-				onMouseLeave={ this.closeFeaturePopover }
-				onTouchStart={ this.swapFeaturePopover }
+				description={ description }
+				onClick={ this.swapFeaturePopover }
 			>
-				{ feature.getTitle() }
+				{ title }
 			</PlanFeaturesItem>
 		);
 	}
