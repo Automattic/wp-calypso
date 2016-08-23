@@ -191,12 +191,14 @@
 }
 
 .reader-full-post__header-meta {
+	display: flex;
+	flex-direction: row;
 	font-size: 15px;
 	max-width: 750px;
 }
 
 .reader-full-post__header-date {
-	display: inline-flex;
+	line-height: 1.4;
 }
 
 .reader-full-post__header-date-link {
@@ -214,6 +216,7 @@
 
 .reader-full-post__header-tags {
 	display: inline-flex;
+	flex: 1;
 	width: calc(100% - 120px);
 
 	.gridicon {
@@ -221,6 +224,10 @@
 		margin-right: 5px;
 		position: relative;
 			top: 4px;
+
+		@include breakpoint( "<480px" ) {
+			top: 2px;
+		}
 	}
 }
 
