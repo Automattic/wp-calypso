@@ -399,6 +399,41 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should never decrement a status count into negatives', () => {
+			let state = counts( undefined, {
+				type: POST_COUNTS_RECEIVE,
+				siteId: 2916284,
+				postType: 'post',
+				counts: {
+					all: { publish: 3, draft: 0, trash: 0 },
+					mine: { publish: 2, draft: 0, trash: 0 }
+				}
+			} );
+
+			state = counts( state, {
+				type: POSTS_RECEIVE,
+				posts: [
+					{ ID: 98, site_ID: 2916284, type: 'post', status: 'draft', author: { ID: 73705554 } }
+				]
+			} );
+
+			state = counts( state, {
+				type: POSTS_RECEIVE,
+				posts: [
+					{ ID: 98, site_ID: 2916284, type: 'post', status: 'publish', author: { ID: 73705554 } }
+				]
+			} );
+
+			expect( state ).to.eql( {
+				2916284: {
+					post: {
+						all: { publish: 4, draft: 0, trash: 0 },
+						mine: { publish: 2, draft: 0, trash: 0 }
+					}
+				}
+			} );
+		} );
+
 		it( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
