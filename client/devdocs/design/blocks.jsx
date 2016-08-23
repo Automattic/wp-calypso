@@ -53,7 +53,6 @@ import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import DomainToPlanNudge from 'blocks/domain-to-plan-nudge/docs/example';
 import RefreshPostCard from 'blocks/reader-post-card/docs/example';
 import PlanPurchaseFeaturesExample from 'blocks/plan-purchase-features/docs/example';
-import RefreshPostCard from 'blocks/reader-post-card/docs/example';
 
 export default React.createClass( {
 
