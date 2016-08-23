@@ -21,16 +21,19 @@ const getFlowType = function( state, site ) {
 	return false;
 };
 
+/**
+ * XMLRPC errors can be identified by the presence of an error message, the presence of an authorization code
+ * and if the error message contains the string 'error'
+ *
+ * @param state
+ * @returns {Boolean}
+ */
 const hasXmlrpcError = function( state ) {
 	return (
 		state.authorizeError &&
 		state.authorizeError.message &&
 		state.authorizationCode &&
-		(
-			state.authorizeError.message.indexOf( 'transport error' ) > -1 ||
-			state.authorizeError.message.indexOf( 'server error' ) > -1 ||
-			state.authorizeError.message.indexOf( 'parse error' ) > -1
-		)
+		state.authorizeError.message.indexOf( 'error' ) > -1
 	);
 };
 
