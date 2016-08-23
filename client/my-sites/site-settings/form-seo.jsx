@@ -389,6 +389,8 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
+				{ showUpgradeNudge && <SeoSettingsUpgradeNudge { ...{ upgradeToBusiness } } /> }
+
 				<SectionHeader label={ this.translate( 'Search Engine Optimization' ) }>
 				</SectionHeader>
 				<Card>
@@ -405,8 +407,6 @@ export const SeoForm = React.createClass( {
 						}
 					) }
 				</Card>
-
-				{ showUpgradeNudge && <SeoSettingsUpgradeNudge { ...{ upgradeToBusiness } } /> }
 
 				<form onChange={ this.markChanged } className="seo-form">
 					{ showAdvancedSeo && config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
