@@ -8,23 +8,33 @@ import React from 'react';
  */
 import Gridicon from 'components/gridicon';
 
+/**
+ * Module variables
+ */
+const noop = () => {};
+
 export default function PlanFeaturesItem( {
 	children,
 	description,
-	onMouseEnter,
-	onMouseLeave,
-	onTouchStart,
+	onClick = noop,
+	onMouseEnter = noop,
+	onMouseLeave = noop,
+	onTouchStart = noop,
 } ) {
-	const handleOnTouchStart = ( event ) => {
-		onTouchStart( event.currentTarget, description );
+	const handleOnClick = ( { currentTarget } ) => {
+		onClick( currentTarget, description );
 	};
 
-	const handleOnMouseEvent = ( event ) => {
-		onMouseEnter( event.currentTarget, description );
+	const handleOnTouchStart = ( { currentTarget } ) => {
+		onTouchStart( currentTarget, description );
 	};
 
-	const handleOnMouseLeave = ( event ) => {
-		onMouseLeave( event.currentTarget, description );
+	const handleOnMouseEvent = ( { currentTarget } ) => {
+		onMouseEnter( currentTarget, description );
+	};
+
+	const handleOnMouseLeave = ( { currentTarget } ) => {
+		onMouseLeave( currentTarget, description );
 	};
 
 	return (
@@ -37,6 +47,7 @@ export default function PlanFeaturesItem( {
 				onMouseEnter={ handleOnMouseEvent }
 				onMouseLeave={ handleOnMouseLeave }
 				onTouchStart={ handleOnTouchStart }
+				onClick={ handleOnClick }
 				className="plan-features__item-tip-info"
 			>
 				<Gridicon icon="info-outline" size={ 18 } />
