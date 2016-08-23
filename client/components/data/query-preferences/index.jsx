@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { fetchingPreferences } from 'state/preferences/selectors';
+import { isFetchingPreferences } from 'state/preferences/selectors';
 import { fetchPreferences } from 'state/preferences/actions';
 
 class QueryPreferences extends Component {
@@ -34,6 +34,6 @@ QueryPreferences.defaultProps = {
 };
 
 export default connect(
-	( state ) => ( { fetchingPreferences: fetchingPreferences( state ) } ),
+	( state ) => ( { fetchingPreferences: isFetchingPreferences( state ) } ),
 	{ fetchPreferences }
 )( QueryPreferences );
