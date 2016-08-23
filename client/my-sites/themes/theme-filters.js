@@ -271,3 +271,7 @@ export function getSortedFilterTerms( input ) {
 export function stripFilters( input ) {
 	return input.replace( FILTER_REGEX_GLOBAL, '' ).trim();
 }
+
+export function getSubjects() {
+	return taxonomies.subject;
+}

@@ -29,6 +29,7 @@ const ThemesListFetcher = React.createClass( {
 		search: React.PropTypes.string,
 		tier: React.PropTypes.string,
 		filter: React.PropTypes.string,
+		vertical: React.PropTypes.string,
 		onRealScroll: React.PropTypes.func,
 		onLastPage: React.PropTypes.func,
 		// Connected props
