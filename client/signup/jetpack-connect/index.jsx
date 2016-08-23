@@ -312,27 +312,6 @@ const JetpackConnectMain = React.createClass( {
 		);
 	},
 
-	renderSiteEntryInstall() {
-		const status = this.getStatus();
-		return (
-			<MainWrapper>
-				{ this.renderLocaleSuggestions() }
-				<div className="jetpack-connect__site-url-entry-container">
-					<QuerySites/>
-					<ConnectHeader
-						showLogo={ false }
-						headerText={ this.getTexts().headerTitle }
-						subHeaderText={ this.getTexts().headerSubtitle }
-						step={ 1 }
-						steps={ 3 } />
-
-					{ this.renderSiteInput( status ) }
-					{ this.renderFooter() }
-				</div>
-			</MainWrapper>
-		);
-	},
-
 	renderInstallInstructions() {
 		return (
 			<MainWrapper isWide>
@@ -437,9 +416,6 @@ const JetpackConnectMain = React.createClass( {
 		}
 		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
 			return this.renderActivateInstructions();
-		}
-		if ( this.isInstall() ) {
-			return this.renderSiteEntryInstall();
 		}
 		return this.renderSiteEntry();
 	}
