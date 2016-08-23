@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +23,6 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			className: '',
 			focusOnHover: true
 		};
 	},
@@ -37,7 +37,7 @@ export default React.createClass( {
 				role="menuitem"
 				onMouseOver={ onMouseOver }
 				tabIndex="-1"
-				{ ...this.props }
+				{ ...omit( this.props, 'icon', 'focusOnHover' ) }
 				className={ classnames( 'popover__menu-item', className ) }>
 				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
 				{ children }
