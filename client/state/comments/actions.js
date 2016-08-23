@@ -222,12 +222,14 @@ export function writeComment( commentText, siteId, postId, parentCommentId ) {
 				skipSort
 			} );
 
-			dispatch( {
-				type: COMMENTS_COUNT_INCREMENT,
-				siteId,
-				postId,
-				incrementBy: 1
-			} );
+			if( comment.status === 'approved' ) {
+				dispatch( {
+					type: COMMENTS_COUNT_INCREMENT,
+					siteId,
+					postId,
+					incrementBy: 1
+				} );
+			}
 
 			return comment;
 		} )
