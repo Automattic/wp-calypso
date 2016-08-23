@@ -4,7 +4,6 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -38,7 +37,7 @@ const featuresToShow = [
 	FEATURE_VIDEO_UPLOADS
 ];
 
-const SeoSettingsNudge = ( { translate, plan = {}, upgradeToBusiness = noop } ) => {
+const SeoSettingsNudge = ( { translate, plan = {}, upgradeToBusiness } ) => {
 	const price = formatCurrency( plan.raw_price / 12, plan.currency_code );
 
 	return (
@@ -95,8 +94,8 @@ const SeoSettingsNudge = ( { translate, plan = {}, upgradeToBusiness = noop } ) 
 };
 
 SeoSettingsNudge.propTypes = {
-	translate: PropTypes.func,
-	upgradeToBusiness: PropTypes.func,
+	translate: PropTypes.func.isRequired,
+	upgradeToBusiness: PropTypes.func.isRequired,
 	plan: PropTypes.object
 };
 
