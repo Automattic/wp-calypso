@@ -38,7 +38,7 @@ describe( 'selectors', () => {
 					},
 				},
 				preferences: {
-					values: {
+					remoteValues: {
 						'guided-tours-history': [],
 					},
 				},
@@ -61,7 +61,7 @@ describe( 'selectors', () => {
 				},
 			},
 			preferences: {
-				values: {
+				remoteValues: {
 					'guided-tours-history': toursHistory,
 				},
 			},
