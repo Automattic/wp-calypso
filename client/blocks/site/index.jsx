@@ -127,14 +127,6 @@ export default React.createClass( {
 		);
 	},
 
-	getHref() {
-		if ( this.state.showMoreActions || ! this.props.site ) {
-			return null;
-		}
-
-		return this.props.homeLink ? this.props.site.URL : this.props.href;
-	},
-
 	closeActions() {
 		this.setState( { showMoreActions: false } );
 	},
