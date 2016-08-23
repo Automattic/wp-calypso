@@ -104,17 +104,24 @@ export class TitleFormatEditor extends Component {
 				.set( 'anchorOffset', min( indices ) )
 				.set( 'focusOffset', max( indices ) );
 
-			this.updateEditor(
-				EditorState.push(
-					editorState,
-					Modifier.removeRange(
-						currentContent,
-						range,
-						'forward'
-					),
-					'remove-range'
-				)
+			const withoutToken = EditorState.push(
+				editorState,
+				Modifier.removeRange(
+					currentContent,
+					range,
+					'forward'
+				),
+				'remove-range'
 			);
+
+			const selectionBeforeToken = EditorState.forceSelection(
+				withoutToken,
+				range
+					.set( 'anchorOffset', min( indices ) )
+					.set( 'focusOffset', min( indices ) )
+			);
+
+			this.updateEditor( selectionBeforeToken );
 		};
 	}
 
