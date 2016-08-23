@@ -18,7 +18,7 @@ var ReactDom = require( 'react-dom' ),
  * Internal Dependencies
  */
 var config = require( 'config' ),
-	CommentButton = require( 'blocks/comment-button' ),
+	CommentButton = require( 'blocks/comment-button' ).default,
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	EmbedContainer = require( 'components/embed-container' ),
@@ -346,7 +346,7 @@ FullPostDialog = React.createClass( {
 			}
 
 			if ( shouldShowComments ) {
-				buttons.push( <CommentButton key="comment-button" commentCount={ this.props.commentCount } onClick={ this.handleCommentButtonClick } tagName="div" /> );
+				buttons.push( <CommentButton key="comment-button" commentCount={ this.props.commentCount } onClick={ this.handleCommentButtonClick } tagName="div" postId={ post.ID } siteId={ post.site_ID } /> );
 			}
 
 			if ( shouldShowShare ) {
