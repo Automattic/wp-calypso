@@ -51,6 +51,14 @@
             }
         }
     }
+
+    // If there's an author link, present site stream link in normal font weight
+    &.has-author-link {
+        .author-compact-profile__site-link {
+            font-weight: inherit;
+            margin-top: 4px;
+        }
+    }
 }
 
 .author-compact-profile .external-link,
@@ -66,13 +74,10 @@
     }
 }
 
-.author-compact-profile .reader-author-link {
+.author-compact-profile .reader-author-link,
+.author-compact-profile__site-link {
 	font-weight: 600;
 	margin-top: 18px;
-}
-
-.author-compact-profile__site-link {
-	margin-top: 4px;
 }
 
 .author-compact-profile__follow {
