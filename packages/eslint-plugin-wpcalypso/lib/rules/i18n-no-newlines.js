@@ -26,7 +26,7 @@ var rule = module.exports = function( context ) {
 
 			node.arguments.forEach( function( arg ) {
 				var string = getTextContentFromNode( arg );
-				console.log( string );
+
 				if ( ! string ) {
 					return;
 				}
