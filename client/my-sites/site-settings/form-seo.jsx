@@ -10,6 +10,7 @@ import {
 	isEqual,
 	isString,
 	omit,
+	overSome,
 	pickBy
 } from 'lodash';
 
@@ -31,6 +32,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
+import SeoSettingsUpgradeNudge from 'components/seo/settings-upgrade-nudge';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
 import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
@@ -40,6 +42,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import SearchPreview from 'components/seo/search-preview';
 import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
+import { isBusiness, isEnterprise } from 'lib/products-values';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -51,6 +54,8 @@ const serviceIds = {
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
+
+const hasBusinessPlan = overSome( isBusiness, isEnterprise );
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
@@ -295,6 +300,7 @@ export const SeoForm = React.createClass( {
 	},
 
 	render() {
+		const { showAdvancedSeo, showUpgradeNudge, upgradeToBusiness } = this.props;
 		const {
 			description: siteDescription,
 			slug = '',
@@ -383,6 +389,8 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
+				{ showUpgradeNudge && <SeoSettingsUpgradeNudge { ...{ upgradeToBusiness } } /> }
+
 				<SectionHeader label={ this.translate( 'Search Engine Optimization' ) }>
 				</SectionHeader>
 				<Card>
@@ -401,7 +409,7 @@ export const SeoForm = React.createClass( {
 				</Card>
 
 				<form onChange={ this.markChanged } className="seo-form">
-					{ config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
+					{ showAdvancedSeo && config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
 						<div>
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
 								{ submitButton }
@@ -419,37 +427,41 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					<SectionHeader label={ this.translate( 'Website Meta' ) }>
-						{ submitButton }
-					</SectionHeader>
-					<Card>
-						<p>
-							{ this.translate(
-								'Craft a description of your Website up to 160 characters that will be used in ' +
-								'search engine results for your front page, and when your website is shared ' +
-								'on social media sites.'
-							) }
-						</p>
-						<p>
-							<FormLabel htmlFor="seo_meta_description">
-								{ this.translate( 'Front Page Meta Description' ) }
-							</FormLabel>
-							<CountedTextarea
-								name="seo_meta_description"
-								type="text"
-								id="seo_meta_description"
-								value={ seoMetaDescription || '' }
-								disabled={ isDisabled }
-								maxLength="300"
-								acceptableLength={ 159 }
-								onChange={ this.handleMetaChange }
-							/>
-							{ hasHtmlTagError &&
-								<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
-							}
-						</p>
-						{ preview }
-					</Card>
+					{ showAdvancedSeo &&
+						<div>
+							<SectionHeader label={ this.translate( 'Website Meta' ) }>
+								{ submitButton }
+							</SectionHeader>
+							<Card>
+								<p>
+									{ this.translate(
+										'Craft a description of your Website up to 160 characters that will be used in ' +
+										'search engine results for your front page, and when your website is shared ' +
+										'on social media sites.'
+									) }
+								</p>
+								<p>
+									<FormLabel htmlFor="seo_meta_description">
+										{ this.translate( 'Front Page Meta Description' ) }
+									</FormLabel>
+									<CountedTextarea
+										name="seo_meta_description"
+										type="text"
+										id="seo_meta_description"
+										value={ seoMetaDescription || '' }
+										disabled={ isDisabled }
+										maxLength="300"
+										acceptableLength={ 159 }
+										onChange={ this.handleMetaChange }
+									/>
+									{ hasHtmlTagError &&
+										<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
+									}
+								</p>
+								{ preview }
+							</Card>
+						</div>
+					}
 
 					<SectionHeader label={ this.translate( 'Site Verification Services' ) }>
 						{ submitButton }
@@ -553,10 +565,17 @@ export const SeoForm = React.createClass( {
 	}
 } );
 
-const mapStateToProps = state => ( {
-	selectedSite: getSelectedSite( state ),
-	storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) )
-} );
+const mapStateToProps = ( state, ownProps ) => {
+	const { site } = ownProps;
+	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
+
+	return {
+		selectedSite: getSelectedSite( state ),
+		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
+		showAdvancedSeo: isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' ),
+		showUpgradeNudge: ! isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' )
+	};
+};
 
 const mapDispatchToProps = {
 	refreshSiteData: siteId => requestSite( siteId ),
