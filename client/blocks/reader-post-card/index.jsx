@@ -9,8 +9,6 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import Card from 'components/card';
-import AuthorAndSite from 'blocks/reader-author-and-site';
-import FollowButton from 'reader/follow-button';
 import LikeButton from 'reader/like-button';
 import CommentButton from 'blocks/comment-button';
 import DisplayTypes from 'state/reader/posts/display-types';
@@ -28,7 +26,7 @@ function FeaturedImage( { image, href } ) {
 		} } ></a> );
 }
 
-function PostByline( { post, site, feed } ) {
+function PostByline( { post } ) {
 	return (
 		<div className="reader-post-card__meta ignore-click">
 			<Gravatar user={ post.author } />
