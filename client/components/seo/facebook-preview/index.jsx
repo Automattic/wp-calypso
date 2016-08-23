@@ -3,9 +3,8 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureComponent from 'react-pure-render/component';
-import compact from 'lodash/compact'
+import React, { PropTypes, PureComponent } from 'react';
+import compact from 'lodash/compact';
 
 import {
 	firstValid,
