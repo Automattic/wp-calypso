@@ -1,20 +1,21 @@
 .current-plan__header {
-	@include breakpoint( ">1040px" ) {
-		column-count: 2;
-		column-gap: 12px;
-	}
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
 }
 
 .current-plan__header-item {
-	page-break-inside: avoid; // For Firefox
-	overflow: hidden; // For Firefox and IE
-	break-inside: avoid-column; // For IE
-	-webkit-column-break-inside: avoid; // For others
+	display: flex;
+	width: 100%;
+	margin-bottom: 12px;
 
-	&:not( :first-child ) {
-		@include breakpoint( "<1040px" ) {
-			padding-top: 12px;
-		}
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	@include breakpoint( ">1040px" ) {
+		width: calc( 50% - 6px );
+		margin-bottom: 0;
 	}
 }
 
@@ -26,22 +27,6 @@
 	@include breakpoint( ">660px" ) {
 		border: 1px solid lighten( $gray, 30% );
 		text-align: left;
-	}
-
-	@media ( min-width: 1041px ) and ( max-width: 1095px ) {
-		height: 330px;
-	}
-
-	@media ( min-width: 1096px ) and ( max-width: 1123px ) {
-		height: 300px;
-	}
-
-	@media ( min-width: 1124px ) and ( max-width: 1217px ) {
-		height: 250px;
-	}
-
-	@media ( min-width: 1218px ) {
-		height: 210px;
 	}
 
 }
