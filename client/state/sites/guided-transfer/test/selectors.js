@@ -147,6 +147,8 @@ describe( 'selectors', () => {
 				} } }
 			} );
 			expect( isGuidedTransferAvailableForAllSites( state, testSiteId ) ).to.be.true;
+		} );
+	} );
 
 	describe( '#isGuidedTransferSavingHostDetails()', () => {
 		it( 'should return false for default state {}', () => {
