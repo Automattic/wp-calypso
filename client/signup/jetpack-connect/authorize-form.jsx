@@ -322,15 +322,6 @@ const LoggedInForm = React.createClass( {
 						</NoticeAction>
 					</Notice>
 				</div>
-				<p>
-					{ this.translate( 'If that does not work, {{link}}contact support{{/link}}',
-						{
-							components: {
-								link: <a href="https://jetpack.com/contact-support" target="_blank" />
-							}
-						}
-					) }
-				</p>
 				{ this.renderErrorDetails() }
 			</div>
 		);
