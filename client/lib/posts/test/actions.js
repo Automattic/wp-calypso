@@ -210,7 +210,13 @@ describe( 'actions', function() {
 				author: {
 					ID: 3
 				},
-				title: 'OMG Unicorns'
+				title: 'OMG Unicorns',
+				terms: {
+					category: [ {
+						ID: 7,
+						name: 'ribs'
+					} ]
+				}
 			};
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( changedAttributes );
 

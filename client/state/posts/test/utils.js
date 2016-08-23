@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	normalizePostForDisplay,
 	normalizePostForState,
+	normalizePostForAPI,
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
@@ -19,6 +20,31 @@ import {
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( 'normalizePostForAPI()', () => {
+		it( 'should return null if post is falsey', () => {
+			const normalizedPost = normalizePostForAPI();
+			expect( normalizedPost ).to.be.null;
+		} );
+
+		it( 'should return a normalized post object', () => {
+			const post = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Ribs &amp; Chicken',
+				terms: {}
+			};
+
+			const normalizedPost = normalizePostForAPI( post );
+			expect( normalizedPost ).to.eql( {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Ribs &amp; Chicken'
+			} );
+		} );
+	} );
+
 	describe( 'normalizePostForDisplay()', () => {
 		it( 'should return null if post is falsey', () => {
 			const normalizedPost = normalizePostForDisplay();
