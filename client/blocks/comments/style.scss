@@ -205,7 +205,8 @@
 }
 
 .comments__comment-username {
-	font-size: 16px;
+	font-size: 15px;
+	color: $blue-medium;
 
 	.gridicon {
 		height: 16px;
@@ -220,11 +221,14 @@
 	}
 }
 
+.comments__comment-timestamp {
+	margin-top: -6px;
+}
+
 .comments__comment-timestamp a {
 	font-weight: normal;
 	font-size: 13px;
-	color: lighten( $gray, 10% );
-	margin-left: 8px;
+	color: lighten( $gray, 20% );
 	text-decoration: none;
 
 	&:hover {

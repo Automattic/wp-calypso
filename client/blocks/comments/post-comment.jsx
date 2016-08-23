@@ -193,11 +193,11 @@ class PostComment extends React.Component {
 					{ comment.author.URL
 						? <a href={ comment.author.URL } target="_blank" className="comments__comment-username" onClick={ this.handleAuthorClick }>{ comment.author.name }</a>
 						: <strong className="comments__comment-username">{ comment.author.name }</strong> }
-					<small className="comments__comment-timestamp">
+					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
 							<PostTime date={ comment.date } />
 						</a>
-					</small>
+					</div>
 				</div>
 
 				{ comment.status && comment.status === 'unapproved'
