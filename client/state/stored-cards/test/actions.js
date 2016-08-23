@@ -5,10 +5,12 @@ import sinon from 'sinon';
 
 // Internal dependencies
 import {
+	addStoredCard,
 	deleteStoredCard,
 	fetchStoredCards
 } from '../actions';
 import {
+	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
@@ -16,6 +18,8 @@ import {
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED
 } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
+import wp from 'lib/wp';
 
 describe( 'actions', () => {
 	useNock();
@@ -30,6 +34,31 @@ describe( 'actions', () => {
 		code: 'unauthorized',
 		message: 'you are unauthorized'
 	};
+
+	describe( '#addStoredCard', () => {
+		const paygateToken = 'pg_1234',
+			item = { stored_details_id: 123 };
+		let sandbox;
+
+		useSandbox( newSandbox => sandbox = newSandbox );
+
+		it( 'should dispatch complete action when API returns card item', () => {
+			sandbox.stub( wp, 'undocumented', () => ( {
+				me: () => ( {
+					storedCardAdd: ( token, callback ) => callback( null, item )
+				} )
+			} ) );
+
+			const result = addStoredCard( paygateToken )( spy );
+
+			return result.then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: STORED_CARDS_ADD_COMPLETED,
+					item
+				} );
+			} );
+		} );
+	} );
 
 	describe( '#fetchStoredCards', () => {
 		const cards = [
