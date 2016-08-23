@@ -191,7 +191,7 @@ class PostComment extends React.Component {
 					<Gravatar user={ comment.author } />
 
 					{ comment.author.URL
-						? <a href={ comment.author.URL } target="_blank" className="comments__comment-username" onClick={ this.handleAuthorClick }>{ comment.author.name }<Gridicon icon="external" /></a>
+						? <a href={ comment.author.URL } target="_blank" className="comments__comment-username" onClick={ this.handleAuthorClick }>{ comment.author.name }</a>
 						: <strong className="comments__comment-username">{ comment.author.name }</strong> }
 					<small className="comments__comment-timestamp">
 						<a href={ comment.URL }>
