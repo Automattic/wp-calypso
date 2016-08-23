@@ -10,7 +10,7 @@ import { get, find, has } from 'lodash';
  */
 import { DEFAULT_PREFERENCE_VALUES } from './constants';
 
-export const fetchingPreferences = state => ( !! state.preferences.fetching );
+export const isFetchingPreferences = state => ( !! state.preferences.fetching );
 
 /**
  * Returns the preference value associated with the specified key. Attempts to

@@ -6,13 +6,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { fetchingPreferences, getPreference, hasReceivedRemotePreferences } from '../selectors';
+import { isFetchingPreferences, getPreference, hasReceivedRemotePreferences } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( 'fetchingPreferences()', () => {
+	describe( 'isFetchingPreferences()', () => {
 		it( 'should return preferences fetching status', () => {
 			const state = {	preferences: { fetching: true } };
-			expect( fetchingPreferences( state ) ).to.equal( true );
+			expect( isFetchingPreferences( state ) ).to.equal( true );
 		} );
 	} );
 
