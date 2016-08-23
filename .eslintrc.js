@@ -76,6 +76,7 @@ module.exports = {
 		'valid-jsdoc': [ 1, { requireReturn: false } ],
 		'wpcalypso/i18n-ellipsis': 1,
 		'wpcalypso/i18n-no-variables': 1,
+		'wpcalypso/i18n-no-newlines': 1,
 		'wpcalypso/i18n-no-placeholders-only': 1,
 		'wpcalypso/i18n-mismatched-placeholders': 1,
 		'wpcalypso/i18n-named-placeholders': 1,
