@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import PureComponent from 'react-pure-render/component';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import {
