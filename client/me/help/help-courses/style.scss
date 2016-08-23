@@ -1,0 +1,12 @@
+.help-courses__course-list{
+	&.is-placeholder {
+		@include placeholder( 23% );
+		height: 300px;
+	}
+}
+
+.help-courses__course{
+	&.is-placeholder {
+		@include placeholder( 23% );
+	}
+}
