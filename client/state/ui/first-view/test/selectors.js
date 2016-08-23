@@ -161,7 +161,7 @@ describe( 'selectors', () => {
 				currentUser,
 				users,
 				preferences: {
-					values: {
+					remoteValues: {
 						firstViewHistory: [
 							{
 								view: 'stats',
@@ -186,7 +186,7 @@ describe( 'selectors', () => {
 				currentUser,
 				users,
 				preferences: {
-					values: {
+					remoteValues: {
 						firstViewHistory: []
 					},
 					lastFetchedTimestamp: 123456,
@@ -205,7 +205,7 @@ describe( 'selectors', () => {
 				currentUser,
 				users,
 				preferences: {
-					values: {
+					remoteValues: {
 						firstViewHistory: [
 							{
 								view: 'stats',
@@ -230,7 +230,7 @@ describe( 'selectors', () => {
 				currentUser,
 				users,
 				preferences: {
-					values: {
+					remoteValues: {
 						firstViewHistory: []
 					},
 					lastFetchedTimestamp: 123456,
@@ -254,7 +254,7 @@ describe( 'selectors', () => {
 				currentUser,
 				users,
 				preferences: {
-					values: {
+					remoteValues: {
 						firstViewHistory: []
 					},
 					lastFetchedTimestamp: false,

@@ -19,7 +19,7 @@ describe( 'actions', () => {
 	const spy = sinon.spy();
 	const getState = () => ( {
 		preferences: {
-			values: {
+			remoteValues: {
 				firstViewHistory: []
 			}
 		},
