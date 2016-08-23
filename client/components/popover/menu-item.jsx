@@ -14,7 +14,6 @@ export default React.createClass( {
 
 	propTypes: {
 		href: PropTypes.string,
-		isVisible: PropTypes.bool,
 		className: PropTypes.string,
 		icon: PropTypes.string,
 		focusOnHover: PropTypes.bool,
@@ -23,7 +22,6 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			isVisible: false,
 			className: '',
 			focusOnHover: true
 		};
