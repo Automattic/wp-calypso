@@ -26,12 +26,15 @@ class PostEditorSlug extends Component {
 		className: PropTypes.string,
 		isEditable: PropTypes.bool,
 		instanceName: PropTypes.string,
-		translate: PropTypes.func
+		translate: PropTypes.func,
+		siteId: PropTypes.number,
+		postId: PropTypes.number
 	};
 
 	static defaultProps = {
 		onEscEnter: () => {},
-		isEditable: true
+		isEditable: true,
+		slug: ''
 	};
 
 	constructor() {
@@ -119,7 +122,7 @@ class PostEditorSlug extends Component {
 					<TrackInputChanges onNewValue={ this.recordChangeStats }>
 						<FormTextInput
 							ref="slugField"
-							value={ slug || '' }
+							value={ slug }
 							onChange={ this.onSlugChange }
 							onKeyDown={ this.onSlugKeyDown }
 							onBlur={ this.onBlur }
