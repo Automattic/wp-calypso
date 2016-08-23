@@ -11,10 +11,11 @@ import noop from 'lodash/noop';
 import SiteIcon from 'components/site-icon';
 import Gridicon from 'components/gridicon';
 import SiteIndicator from 'my-sites/site-indicator';
+import EllipsisMenu from 'components/ellipsis-menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 import { getCustomizeUrl } from 'my-sites/themes/helpers';
 import { userCan } from 'lib/site/utils';
-import Tooltip from 'components/tooltip';
-import ExternalLink from 'components/external-link';
+import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
 
 export default React.createClass( {
@@ -56,13 +57,6 @@ export default React.createClass( {
 		enableActions: React.PropTypes.bool
 	},
 
-	getInitialState() {
-		return {
-			showActions: false,
-			cogTooltip: false
-		};
-	},
-
 	onSelect( event ) {
 		if ( this.props.homeLink ) {
 			return;
@@ -72,70 +66,21 @@ export default React.createClass( {
 		event.preventDefault(); // this doesn't actually do anything...
 	},
 
-	enableCogTooltip() {
-		this.setState( { cogTooltip: true } );
-	},
+	getEditIconUrl() {
+		const { site } = this.props;
 
-	disableCogTooltip() {
-		this.setState( { cogTooltip: false } );
-	},
-
-	renderCog() {
-		const site = this.props.site;
-
-		if ( ! site ) {
-			return null;
+		if ( site.jetpack ) {
+			return getCustomizeUrl( null, site ) + '&autofocus[section]=title_tagline';
+		} else if ( site.options ) {
+			return site.options.admin_url + 'options-general.php';
 		}
-
-		return (
-			<a
-				className="site__cog"
-				href={ `/settings/general/${ site.slug }` }
-				onClick={ this.onSettingsClick }
-				onMouseEnter={ this.enableCogTooltip }
-				onMouseLeave={ this.disableCogTooltip }
-				ref="cogButton"
-			>
-				<Gridicon icon="cog" />
-				<Tooltip
-					context={ this.refs && this.refs.cogButton }
-					isVisible={ this.state.cogTooltip }
-					position="bottom"
-				>
-					{ this.translate( 'Site settings' ) }
-				</Tooltip>
-			</a>
-		);
-	},
-
-	renderEditIcon() {
-		if ( ! userCan( 'manage_options', this.props.site ) ) {
-			return <SiteIcon site={ this.props.site } />;
-		}
-
-		let url = getCustomizeUrl( null, this.props.site ) + '&autofocus[section]=title_tagline';
-
-		if ( ! this.props.site.jetpack && this.props.site.options ) {
-			url = this.props.site.options.admin_url + 'options-general.php';
-		}
-
-		return (
-			<ExternalLink icon={ true } href={ url } target="_blank" className="site__edit-icon" onClick={ this.onEditIconClick }>
-				<SiteIcon site={ this.props.site } />
-				<span className="site__edit-icon-text">{ this.translate( 'Edit Icon' ) }</span>
-			</ExternalLink>
-		);
-	},
-
-	closeActions() {
-		this.setState( { showMoreActions: false } );
 	},
 
 	toggleActions() {
-		if ( ! this.state.showMoreActions ) {
+		if ( ! this.hasTrackedActionToggle ) {
+			this.hasTrackedActionToggle = true;
 			analytics.mc.bumpStat( 'calypso_site_card', 'toggle_button' );
 		}
-		this.setState( { showMoreActions: ! this.state.showMoreActions } );
 	},
 
 	onEditIconClick( event ) {
@@ -170,79 +115,83 @@ export default React.createClass( {
 			'is-primary': site.primary,
 			'is-private': site.is_private,
 			'is-redirect': site.options && site.options.is_redirect,
-			'is-selected': this.props.isSelected,
-			'is-toggled': this.state.showMoreActions,
-			'has-edit-capabilities': userCan( 'manage_options', site )
+			'is-selected': this.props.isSelected
 		} );
 
 		return (
 			<div className={ siteClass }>
-				{ ! this.state.showMoreActions
-					? <a className="site__content"
-							href={ this.props.homeLink ? site.URL : this.props.href }
-							data-tip-target={ this.props.tipTarget }
-							target={ this.props.externalLink && ! this.state.showMoreActions && '_blank' }
-							title={ this.props.homeLink
-								? this.translate( 'View "%(title)s"', { args: { title: site.title } } )
-								: site.title
-							}
-							onTouchTap={ this.onSelect }
-							onClick={ this.props.onClick }
-							onMouseEnter={ this.props.onMouseEnter }
-							onMouseLeave={ this.props.onMouseLeave }
-							aria-label={ this.props.homeLink && site.is_previewable
-								? this.translate( 'Open site %(domain)s in a preview', {
-									args: { domain: site.domain }
-								} )
-								: this.translate( 'Open site %(domain)s in new tab', {
-									args: { domain: site.domain }
-								} )
-							}
-						>
-							<SiteIcon site={ site } />
-							<div className="site__info">
-								<div className="site__title">
-									{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-									{ this.props.site.is_private &&
-										<span className="site__badge">
-											<Gridicon icon="lock" size={ 14 } />
-										</span>
-									}
-									{ site.options && site.options.is_redirect &&
-										<span className="site__badge">
-											<Gridicon icon="block" size={ 14 } />
-										</span>
-									}
-									{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-									{ site.title }
-								</div>
-								<div className="site__domain">{ site.domain }</div>
-							</div>
-							{ this.props.homeLink &&
-								<span className="site__home">
-									<Gridicon icon="house" size={ 18 } />
+				<a
+					className="site__content"
+					href={ this.props.homeLink ? site.URL : this.props.href }
+					data-tip-target={ this.props.tipTarget }
+					target={ this.props.externalLink ? '_blank' : null }
+					title={ this.props.homeLink
+						? this.translate( 'View "%(title)s"', { args: { title: site.title } } )
+						: site.title
+					}
+					onTouchTap={ this.onSelect }
+					onClick={ this.props.onClick }
+					onMouseEnter={ this.props.onMouseEnter }
+					onMouseLeave={ this.props.onMouseLeave }
+					aria-label={ this.props.homeLink && site.is_previewable
+						? this.translate( 'Open site %(domain)s in a preview', {
+							args: { domain: site.domain }
+						} )
+						: this.translate( 'Open site %(domain)s in new tab', {
+							args: { domain: site.domain }
+						} )
+					}>
+					<SiteIcon site={ site } />
+					<div className="site__info">
+						<div className="site__title">
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							{ this.props.site.is_private &&
+								<span className="site__badge">
+									<Gridicon icon="lock" size={ 14 } />
 								</span>
 							}
-						</a>
-					: <div className="site__content">
-							{ this.renderEditIcon() }
-							<div className="site__actions">
-								{ this.renderCog() }
-							</div>
+							{ site.options && site.options.is_redirect &&
+								<span className="site__badge">
+									<Gridicon icon="block" size={ 14 } />
+								</span>
+							}
+							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+							{ site.title }
 						</div>
-				}
+						<div className="site__domain">{ site.domain }</div>
+					</div>
+					{ this.props.homeLink &&
+						<span className="site__home">
+							<Gridicon icon="house" size={ 18 } />
+						</span>
+					}
+				</a>
 				{ this.props.indicator
 					? <SiteIndicator site={ site } onSelect={ this.props.onSelect } />
 					: null
 				}
-				{ this.props.enableActions &&
-					<button
-						className="site__toggle-more-options"
-						onClick={ this.toggleActions }
-					>
-						<Gridicon icon="ellipsis" size={ 24 } />
-					</button>
-				}
+				{ this.props.enableActions && userCan( 'manage_options', this.props.site ) && (
+					<EllipsisMenu
+						onToggle={ this.toggleActions }
+						position={ `bottom ${ isMobile() ? 'left' : 'right' }` }
+						className="site__toggle-more-options">
+						<PopoverMenuItem
+							href={ `/settings/general/${ site.slug }` }
+							onClick={ this.onSettingsClick }>
+							{ this.translate( 'Site settings' ) }
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							href={ this.getEditIconUrl() }
+							target="_blank"
+							onClick={ this.onEditIconClick }>
+							{ this.translate( 'Edit Icon' ) }
+							<Gridicon
+								icon="external"
+								size={ 18 }
+								className="site__edit-icon-external" />
+						</PopoverMenuItem>
+					</EllipsisMenu>
+				) }
 			</div>
 		);
 	}
