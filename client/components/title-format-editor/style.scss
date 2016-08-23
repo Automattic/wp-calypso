@@ -23,21 +23,36 @@
 	margin-left: 10px;
 	font-size: 12px;
 	font-weight: bold;
+	cursor: pointer;
+
+	&:before {
+		content: '+';
+		margin-right: 4px;
+		font-weight: 600;
+	}
+
+	&:hover {
+		background-color: lighten( $gray, 20% );
+	}
 }
 
 .title-format-editor__editor-wrapper {
 	border: 1px solid $gray;
-	padding: 12px;
+	padding: 6px 12px;
 }
 
 .title-format-editor__token {
 	display: inline-flex;
 	align-items: center;
-	padding: 4px 6px;
+	padding: 2px 6px;
 	background-color: darken( $gray, 20% );
 	color: $white;
 	border-radius: 3px;
-	cursor: default;
+	cursor: pointer;
+
+	&:hover {
+		background-color: darken( $gray, 10% );
+	}
 }
 
 .title-format-editor__token-close {
