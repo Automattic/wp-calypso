@@ -17,6 +17,7 @@ export default React.createClass( {
 
 	propTypes: {
 		id: React.PropTypes.string,
+		open: React.PropTypes.bool,
 		position: React.PropTypes.string,
 		className: React.PropTypes.string,
 		rootClassName: React.PropTypes.string,
@@ -31,6 +32,12 @@ export default React.createClass( {
 		return {
 			position: 'bottom'
 		};
+	},
+
+	componentWillReceiveProps( props ) {
+		if ( this.props.open !== props.open && props.open !== this.state.showPopover ) {
+			this.setState( { showPopover: props.open } );
+		}
 	},
 
 	getInitialState() {

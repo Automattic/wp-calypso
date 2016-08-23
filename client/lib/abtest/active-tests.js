@@ -41,6 +41,15 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
+	plansDescriptions: {
+		datestamp: '20160901',
+		variations: {
+			auto: 50,
+			click: 50,
+		},
+		defaultVariation: 'click',
+		allowExistingUsers: false,
+	},
 	signupStore: {
 		datestamp: '20160727',
 		variations: {
