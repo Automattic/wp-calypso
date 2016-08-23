@@ -15,10 +15,22 @@ export default function( router ) {
 
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		if ( isLoggedIn ) {
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, multiSite, makeNavigation, makeLayout );
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/:site_id`, siteSelection, singleSite, makeNavigation, makeLayout );
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, siteSelection, multiSite, makeNavigation, makeLayout );
-			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter/:site_id`, siteSelection, singleSite, makeNavigation, makeLayout );
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?`,
+				multiSite, makeNavigation, makeLayout
+			);
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?/:site_id`,
+				siteSelection, singleSite, makeNavigation, makeLayout
+			);
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+				siteSelection, multiSite, makeNavigation, makeLayout
+			);
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter/:site_id`,
+				siteSelection, singleSite, makeNavigation, makeLayout
+			);
 		} else {
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, loggedOut, makeLayout );
 			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`, loggedOut, makeLayout );
