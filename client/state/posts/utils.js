@@ -208,3 +208,17 @@ export function getTermIdsFromEdits( post ) {
 		} )
 	};
 }
+
+/**
+ * Returns a normalized post object for sending to the API
+ *
+ * @param  {Object} post Raw post object
+ * @return {Object}      Normalized post object
+ */
+export function normalizePostForAPI( post ) {
+	if ( ! post ) {
+		return null;
+	}
+
+	return omit( post, 'terms' );
+}

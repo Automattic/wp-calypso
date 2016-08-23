@@ -21,6 +21,7 @@ var wpcom = require( 'lib/wp' ),
 	versionCompare = require( 'lib/version-compare' ),
 	Dispatcher = require( 'dispatcher' ),
 	stats = require( './stats' );
+import { omit } from 'lodash';
 
 var PostActions;
 
@@ -83,6 +84,7 @@ function handleMetadataOperation( key, value, operation ) {
  */
 function normalizeApiAttributes( attributes ) {
 	attributes = clone( attributes );
+	attributes = omit( attributes, 'terms' );
 
 	if ( attributes.author ) {
 		attributes.author = attributes.author.ID;
