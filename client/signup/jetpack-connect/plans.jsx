@@ -149,7 +149,7 @@ const Plans = React.createClass( {
 						<ConnectHeader
 							showLogo={ false }
 							headerText={ this.translate( 'Your site is now connected!' ) }
-							subHeaderText={ this.translate( 'Now pick a plan that\'s right for you' ) }
+							subHeaderText={ this.translate( 'Now pick a plan that\'s right for you.' ) }
 							step={ 1 }
 							steps={ 3 } />
 
