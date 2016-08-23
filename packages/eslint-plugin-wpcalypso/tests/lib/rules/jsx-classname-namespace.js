@@ -154,12 +154,6 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 			filename: '/tmp/foo/index.js'
 		},
 		{
-			code: 'export default class FooWindows { render() { return <FooWindows className="foo" />; } }',
-			env: { es6: true },
-			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
-			filename: 'C:\\tmp\\foo\\index.js'
-		},
-		{
 			code: 'import localize from "./localize"; class Foo { render() { return <Foo className="foo" />; } } export default localize( Foo );',
 			env: { es6: true },
 			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
