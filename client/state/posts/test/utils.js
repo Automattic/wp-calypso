@@ -10,7 +10,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	normalizePostForDisplay,
 	normalizePostForState,
-	normalizePostForAPI,
+	normalizePostForApi,
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
@@ -20,9 +20,9 @@ import {
 } from '../utils';
 
 describe( 'utils', () => {
-	describe( 'normalizePostForAPI()', () => {
+	describe( 'normalizePostForApi()', () => {
 		it( 'should return null if post is falsey', () => {
-			const normalizedPost = normalizePostForAPI();
+			const normalizedPost = normalizePostForApi();
 			expect( normalizedPost ).to.be.null;
 		} );
 
@@ -35,7 +35,7 @@ describe( 'utils', () => {
 				terms: {}
 			};
 
-			const normalizedPost = normalizePostForAPI( post );
+			const normalizedPost = normalizePostForApi( post );
 			expect( normalizedPost ).to.eql( {
 				ID: 841,
 				site_ID: 2916284,

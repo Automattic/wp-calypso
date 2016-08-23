@@ -215,7 +215,7 @@ export function getTermIdsFromEdits( post ) {
  * @param  {Object} post Raw post object
  * @return {Object}      Normalized post object
  */
-export function normalizePostForAPI( post ) {
+export function normalizePostForApi( post ) {
 	if ( ! post ) {
 		return null;
 	}
