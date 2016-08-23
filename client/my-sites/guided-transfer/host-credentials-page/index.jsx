@@ -46,7 +46,12 @@ class HostCredentialsPage extends Component {
 	}
 
 	submit = () => {
-		this.props.submit( this.state.fieldValues )
+		const payload = {
+			...this.state.fieldValues,
+			host_slug: this.props.hostSlug
+		};
+
+		this.props.submit( payload )
 			.then( didSubmit => {
 				if ( didSubmit === true ) {
 					this.redirectToCart();
