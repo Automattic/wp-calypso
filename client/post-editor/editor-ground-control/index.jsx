@@ -335,10 +335,6 @@ export default React.createClass( {
 	onPrimaryButtonClick: function() {
 		this.trackPrimaryButton();
 
-		if ( postUtils.isFutureDated( this.props.post ) ) {
-			return this.props.onSave( 'future' );
-		}
-
 		if ( postUtils.isPublished( this.props.savedPost ) &&
 			! postUtils.isBackDatedPublished( this.props.savedPost )
 		) {

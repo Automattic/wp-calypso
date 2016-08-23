@@ -612,6 +612,7 @@ const PostEditor = React.createClass( {
 
 	onSaveDraftSuccess: function() {
 		const { post } = this.state;
+
 		if ( utils.isPublished( post ) ) {
 			this.onSaveSuccess( 'updated', 'view', post.URL );
 		} else {
@@ -628,6 +629,8 @@ const PostEditor = React.createClass( {
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {
 			edits.status = 'private';
+		} else if ( utils.isFutureDated( this.state.post ) ) {
+			edits.status = 'future';
 		}
 
 		// Update content on demand to avoid unnecessary lag and because it is expensive
@@ -654,10 +657,18 @@ const PostEditor = React.createClass( {
 	},
 
 	onPublishSuccess: function() {
-		const { savedPost, post } = this.state;
-		const message = utils.isPrivate( savedPost ) ? 'publishedPrivately' : 'published';
+		const { savedPost } = this.state;
 
-		this.onSaveSuccess( message, 'view', post.URL );
+		let message;
+		if ( utils.isPrivate( savedPost ) ) {
+			message = 'publishedPrivately';
+		} else if ( utils.isFutureDated( savedPost ) ) {
+			message = 'scheduled';
+		} else {
+			message = 'published';
+		}
+
+		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
 		this.toggleSidebar();
 	},
 
