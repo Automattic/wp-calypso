@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { filter } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import {
@@ -45,7 +50,7 @@ export function hideView( { enabled } ) {
 
 function persistToPreferences( { getState, view, disabled } ) {
 	return savePreference( 'firstViewHistory', [
-		...getPreference( getState(), 'firstViewHistory' ).filter( item => item.view !== view ), {
+		...filter( getPreference( getState(), 'firstViewHistory' ), item => item.view !== view ), {
 			view,
 			timestamp: Date.now(),
 			disabled,
