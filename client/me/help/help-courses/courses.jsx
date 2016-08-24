@@ -9,7 +9,6 @@ import React, { Component } from 'react';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import CourseList, { CourseListPlaceholder } from './course-list';
-import Course, { CoursePlaceholder } from './course';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 
 class Courses extends Component {
@@ -17,20 +16,19 @@ class Courses extends Component {
 		const {
 			translate,
 			userId,
-			isBusinessPlanUser,
+			showRecentCourseRecordings,
+			courses,
 			isLoading
 		} = this.props;
 
 		return (
 			<Main className="help-courses">
-				<HeaderCake backHref="/help" isCompact={ false }>{ translate( 'Courses' ) }</HeaderCake>
+				<HeaderCake backHref="/help" isCompact={ false } className="help-courses__header-cake">
+					{ translate( 'Courses' ) }
+				</HeaderCake>
 				{ isLoading
 					? <CourseListPlaceholder />
-					: <CourseList /> }
-
-				{ isLoading
-					? <CoursePlaceholder />
-					: isBusinessPlanUser && <Course /> }
+					: <CourseList courses={ courses } showRecentCourseRecordings={ showRecentCourseRecordings } /> }
 
 				<QueryUserPurchases userId={ userId } />
 			</Main>
