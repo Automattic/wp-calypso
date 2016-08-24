@@ -48,7 +48,7 @@ module.exports = React.createClass( {
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
 		className: React.PropTypes.string,
-		showEmptyContent: React.PropTypes.bool,
+		showDefaultEmptyContentIfMissing: React.PropTypes.bool,
 		showPrimaryFollowButtonOnCards: React.PropTypes.bool,
 		showMobileBackToSidebar: React.PropTypes.bool
 	},
@@ -60,7 +60,7 @@ module.exports = React.createClass( {
 			showFollowInHeader: false,
 			onShowUpdates: noop,
 			className: '',
-			showEmptyContent: true,
+			showDefaultEmptyContentIfMissing: true,
 			showPrimaryFollowButtonOnCards: false,
 			showMobileBackToSidebar: true
 		};
@@ -439,7 +439,10 @@ module.exports = React.createClass( {
 			body, showingStream;
 
 		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
-			body = this.props.showEmptyContent ? ( this.props.emptyContent || ( <EmptyContent /> ) ) : null;
+			body = this.props.emptyContent;
+			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
+				body = ( <EmptyContent /> );
+			}
 			showingStream = false;
 		} else {
 			body = ( <InfiniteList
