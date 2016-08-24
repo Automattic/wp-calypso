@@ -10,3 +10,69 @@
 		@include placeholder( 23% );
 	}
 }
+
+.help-courses__header-cake .header-cake__title,
+.help-courses__course-label {
+	color: $gray;
+}
+
+.help-courses__course-title {
+	@extend %content-font;
+	color: $gray-dark;
+	font-weight: 700;
+	font-size: 21px;
+	line-height: 1.3;
+
+	margin-bottom: 8px;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 24px;
+		line-height: 1.416;
+	}
+}
+
+.help-courses__course-description {
+	@extend %content-font;
+	font-size: 15px;
+	line-height: 22px;
+	margin-bottom: 0px;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 16px;
+		line-height: 1.618;
+	}
+}
+
+.help-courses__course-schedule-item {
+	color: $gray;
+	display: flex;
+	align-items: center;
+}
+
+.help-courses__course-schedule-item-date {
+	font-size: 13px;
+	display: inline-block;
+	margin: 0px 10px 0px 0px;
+	white-space: normal;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 15px;
+	}
+}
+
+.help-courses__course-schedule-item-icon {
+	align-self: center;
+	margin-right: 5px;
+	margin-bottom: -3px;
+}
+
+.help-courses__course-schedule-item-buttons {
+	margin-left: auto;
+}
+
+.help-courses__course-recording {
+	margin-top: 16px;
+}
+
