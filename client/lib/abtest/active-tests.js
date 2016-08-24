@@ -81,6 +81,14 @@ module.exports = {
 		},
 		defaultVariation: 'hideThemePreview',
 	},
+	checkoutThanksPageAfterSignup: {
+		datestamp: '20160828',
+		variations: {
+			singleCTA: 50,
+			allFeatures: 50
+		},
+		defaultVariation: 'allFeatures'
+	},
 	readerSearchSuggestions: {
 		datestamp: '20160804',
 		variations: {
