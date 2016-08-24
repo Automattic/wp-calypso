@@ -29,7 +29,7 @@
     "eslint": "^2.13.1",
     "eslint-config-wpcalypso": "^0.2.0",
     "eslint-plugin-wpcalypso": "file:.",
-    "mocha": "2.3.4"
+    "mocha": "^3.0.2"
   },
   "engines": {
     "node": ">=0.12.0"
