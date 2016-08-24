@@ -15,6 +15,7 @@ export default localize( ( props ) => {
 	const {
 		date,
 		registrationUrl,
+		isBusinessPlanUser,
 		translate
 	} = props;
 
@@ -32,11 +33,16 @@ export default localize( ( props ) => {
 				}
 			</p>
 			<div className="help-courses__course-schedule-item-buttons">
-				<Button className="help-courses__course-schedule-item-register-button"
-					target="_blank"
-					href={ registrationUrl }>
-					{ translate( 'Register' ) }
-				</Button>
+				{ isBusinessPlanUser
+					? ( <Button className="help-courses__course-schedule-item-register-button"
+						target="_blank"
+						href={ registrationUrl }>
+						{ translate( 'Register' ) }
+					</Button> )
+					: ( <div className="help-courses__course-schedule-item-businessplan-button">
+						{ translate( 'Only on Business Plan' ) }
+					</div> )
+				}
 			</div>
 		</Card>
 	);

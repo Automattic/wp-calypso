@@ -9,6 +9,14 @@
 	&.is-placeholder {
 		@include placeholder( 23% );
 	}
+
+	.help__help-teaser-button-icon {
+		color: $alert-yellow !important;
+	}
+
+	.help__help-teaser-button .card {
+		border-color: $alert-yellow !important;
+	}
 }
 
 .help-courses__header-cake .header-cake__title,
@@ -70,6 +78,16 @@
 
 .help-courses__course-schedule-item-buttons {
 	margin-left: auto;
+}
+
+.help-courses__course-schedule-item-businessplan-button {
+	background-color: $gray-dark;
+	border-radius: 3px;
+	color: $gray-light;
+	padding: 5px 12px;
+	cursor: default;
+	font-size: 14px;
+	white-space: nowrap;
 }
 
 .help-courses__course-recording {
