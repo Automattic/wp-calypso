@@ -41,6 +41,7 @@ import utils from './utils';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
+import { abtest } from 'lib/abtest';
 
 /**
  * Constants
@@ -105,7 +106,7 @@ const Signup = React.createClass( {
 					: undefined;
 				const filteredDestination = utils.getDestination( destination, dependencies, this.props.flowName );
 				let loadingScreenDelay;
-				if ( dependencies.cartItem ) {
+				if ( dependencies.cartItem && abtest( 'signupCheckoutRedirect' ) === 'auto' ) {
 					loadingScreenDelay = MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_PREMIUM;
 				} else {
 					loadingScreenDelay = MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_FREE;
@@ -177,7 +178,7 @@ const Signup = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
 
 		this.signupFlowController.reset();
-		if ( dependencies.cartItem ) {
+		if ( dependencies.cartItem && abtest( 'signupCheckoutRedirect' ) === 'auto' ) {
 			this.handleLogin( dependencies, destination );
 		} else {
 			this.setState( {
