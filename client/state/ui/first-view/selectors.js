@@ -57,7 +57,7 @@ export function isViewEnabled( state, config ) {
 		return false;
 	}
 
-	const firstViewHistory = getPreference( state, 'firstViewHistory' ).filter( entry => entry.view === config.name );
+	const firstViewHistory = filter( getPreference( state, 'firstViewHistory' ), entry => entry.view === config.name );
 	const latestFirstViewHistory = [ ...firstViewHistory ].pop();
 	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
 
