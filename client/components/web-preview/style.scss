@@ -21,7 +21,9 @@
 	}
 
 	&.is-with-sidebar {
-		left: 273px;
+		@include breakpoint( ">660px" ) {
+			left: 273px;
+		}
 	}
 }
 
