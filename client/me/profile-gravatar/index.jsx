@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import _debug from 'debug';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -10,7 +10,7 @@ import _debug from 'debug';
 import Gravatar from 'components/gravatar';
 import eventRecorder from 'me/event-recorder';
 
-const debug = _debug( 'calypso:me:sidebar-gravatar' );
+const debug = debugFactory( 'calypso:me:sidebar-gravatar' );
 
 export default React.createClass( {
 	displayName: 'ProfileGravatar',
