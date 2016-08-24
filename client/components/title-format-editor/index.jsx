@@ -191,14 +191,14 @@ TitleFormatEditor.propTypes = {
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
 	const type = get( ownProps, 'type.value', '' );
+	const { translate } = ownProps;
 
 	// Add example content for post/page title, tag name and archive dates
-	// TODO: translate() not working here?
 	const content = {
 		site,
-		post: { title: 'Example Title' },
-		tag: 'Example Tag',
-		date: 'August 2013'
+		post: { title: translate( 'Example Title' ) },
+		tag: translate( 'Example Tag' ),
+		date: translate( 'August 2016' )
 	};
 
 	return ( {
@@ -206,4 +206,4 @@ const mapStateToProps = ( state, ownProps ) => {
 	} );
 };
 
-export default connect( mapStateToProps )( localize( TitleFormatEditor ) );
+export default localize( connect( mapStateToProps )( TitleFormatEditor ) );
