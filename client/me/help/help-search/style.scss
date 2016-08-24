@@ -1,5 +1,11 @@
 .help-search {
 	margin-bottom: 16px;
+
+	&.is-placeholder {
+		@include placeholder();
+		height: 50px;
+		margin-bottom: 15px;
+	}
 }
 
 .help-search .no-results {
