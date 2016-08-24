@@ -26,13 +26,13 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.1.0",
-    "eslint": "^2.13.1",
-    "eslint-config-wpcalypso": "^0.2.0",
+    "eslint": "^3.3.1",
+    "eslint-config-wpcalypso": "^0.3.0",
     "eslint-plugin-wpcalypso": "file:.",
     "mocha": "^3.0.2"
   },
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=4"
   },
   "license": "GPL-2.0+"
 }

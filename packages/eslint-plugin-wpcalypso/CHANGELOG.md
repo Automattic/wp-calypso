@@ -1,6 +1,6 @@
 #### v2.0.0 (August 24, 2016)
 
-- Breaking: Required Node version increased to >=0.12.0
+- Breaking: Required Node version increased from >=0.10.x to >=4.x ([see ESLint 3.0.0 migration guide](http://eslint.org/docs/user-guide/migrating-to-3.0.0))
 - Fix: `jsx-classname-namespace` can accurately validate elements assigned to variables within render ([#21](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/21))
 - Fix: `npm test` is now run synchronously so it exits with a non-zero code on failure
 - Fix: Replace ES2015 variable (`let`) declarations to accommodate older Node versions
@@ -8,6 +8,7 @@
 - Fix: jsx-classname-namespace will now correctly identify index components in Windows environments ([#18](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/18))
 - General: Add `files` to `package.json` to omit files relevant only for development
 - General: Use shared configuration for linting (yo dawg, i herd you like ESLint rules...) ([#22](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/22))
+- General: Updated ESLint from 2.x to 3.x
 
 #### v1.4.1 (August 12, 2016)
 
