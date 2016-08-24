@@ -106,7 +106,8 @@ const PostEditor = React.createClass( {
 	componentWillMount: function() {
 		PostEditStore.on( 'change', this.onEditedPostChange );
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
-		this.debouncedAutosave = debounce( throttle( this.autosave, 20000 ), 3000 );
+		this.throttledAutosave = throttle( this.autosave, 20000 );
+		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 
@@ -146,6 +147,7 @@ const PostEditor = React.createClass( {
 		actions.stopEditing();
 
 		this.debouncedAutosave.cancel();
+		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
