@@ -22,7 +22,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const profileURL = '//gravatar.com/' + this.props.user.username;
+		const profileURL = `//gravatar.com/${ this.props.user.username }`;
 
 		return (
 			<div className="profile-gravatar">
