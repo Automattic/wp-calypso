@@ -71,7 +71,6 @@
 		"post-editor/author-selector": true,
 		"press-this": true,
 		"preview-layout": true,
-		"preview-endpoint": false,
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
