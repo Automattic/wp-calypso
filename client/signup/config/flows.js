@@ -11,7 +11,6 @@ import i18n from 'i18n-calypso';
  */
 import { abtest } from 'lib/abtest';
 import config from 'config';
-import { isOutsideCalypso } from 'lib/url';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 
