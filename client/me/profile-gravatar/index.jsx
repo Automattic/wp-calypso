@@ -1,27 +1,28 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:sidebar-gravatar' );
+import React from 'react';
+import _debug from 'debug';
 
 /**
  * Internal dependencies
  */
-var Gravatar = require( 'components/gravatar' ),
-	eventRecorder = require( 'me/event-recorder' );
+import Gravatar from 'components/gravatar';
+import eventRecorder from 'me/event-recorder';
 
-module.exports = React.createClass( {
+const debug = _debug( 'calypso:me:sidebar-gravatar' );
 
+export default React.createClass( {
 	displayName: 'ProfileGravatar',
 
 	mixins: [ eventRecorder ],
 
-	componentDidMount: function() {
+	componentDidMount() {
 		debug( 'The ProfileGravatar component is mounted.' );
 	},
 
-	render: function() {
-		var profileURL = '//gravatar.com/' + this.props.user.username;
+	render() {
+		const profileURL = '//gravatar.com/' + this.props.user.username;
 
 		return (
 			<div className="profile-gravatar">
