@@ -23,4 +23,8 @@
 	color: $gray;
 	margin-top: 0;
 	text-align:left;
+
+	@include breakpoint( "<660px" ) {
+		padding-left: 16px;
+	}
 }
