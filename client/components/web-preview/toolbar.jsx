@@ -100,11 +100,15 @@ export const PreviewToolbar = props => {
 					className={ classNames(
 						'web-preview__seo-button',
 						'web-preview__device-button', {
-						'is-active': 'seo' === currentDevice
+						'is-active': 'seo' === currentDevice,
+						'is-showing-device-switcher': showDeviceSwitcher
 					} ) }
 					onClick={ selectSeoPreview }
 				>
 					<Gridicon icon="globe" />
+					<span className="web-preview__seo-label">
+						{ translate( 'SEO' ) }
+					</span>
 				</button>
 			}
 			<div className="web-preview__toolbar-tray">
