@@ -6,6 +6,7 @@
 - Fix: Remove unintended debugging statement from i18n-no-newlines rule
 - Fix: jsx-classname-namespace will now correctly identify index components in Windows environments ([#18](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/18))
 - General: Add `files` to `package.json` to omit files relevant only for development
+- General: Use shared configuration for linting (yo dawg, i herd you like ESLint rules...) ([#22](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/22))
 
 #### v1.4.1 (August 12, 2016)
 

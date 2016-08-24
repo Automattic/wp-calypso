@@ -50,7 +50,7 @@ describe( '#getStringFromNode', function() {
 
 	it( 'should return false for variable assignments', function() {
 		var variableDeclarationNode = parseCode( "var aVariable = 'a string to assign';" );
-		var variableDeclarator = variableDeclarationNode.declarations[0];
+		var variableDeclarator = variableDeclarationNode.declarations[ 0 ];
 
 		assert.strictEqual( false, getTextContentFromNode( variableDeclarationNode ) );
 		assert.strictEqual( false, getTextContentFromNode( variableDeclarator ) );

@@ -13,19 +13,23 @@
   ],
   "author": "Automattic",
   "main": "lib/index.js",
-  "files": [ "lib/" ],
+  "files": [
+    "lib/"
+  ],
   "scripts": {
-  	"tests": "mocha tests --recursive",
-  	"lint": "eslint lib/ tests/",
+    "tests": "mocha tests --recursive",
+    "lint": "eslint lib/ tests/",
     "test": "npm run tests && npm run lint"
   },
   "dependencies": {
     "requireindex": "^1.1.0"
   },
   "devDependencies": {
-    "mocha": "2.3.4",
     "babel-eslint": "^6.1.0",
-    "eslint": "^2.13.1"
+    "eslint": "^2.13.1",
+    "eslint-config-wpcalypso": "^0.2.0",
+    "eslint-plugin-wpcalypso": "file:.",
+    "mocha": "2.3.4"
   },
   "engines": {
     "node": ">=0.12.0"

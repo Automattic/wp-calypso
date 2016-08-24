@@ -78,6 +78,14 @@ var rule = module.exports = function( context ) {
 		return false;
 	}
 
+	function isFunctionType( node ) {
+		return -1 !== [
+			'FunctionExpression',
+			'FunctionDeclaration',
+			'ArrowFunctionExpression'
+		].indexOf( node.type );
+	}
+
 	function isRootRenderedElement( node, filename ) {
 		var parent = node.parent.parent,
 			functionExpression, functionName, isRoot;
@@ -105,7 +113,7 @@ var rule = module.exports = function( context ) {
 				isRoot = false;
 			}
 
-			if ( -1 !== [ 'FunctionExpression', 'FunctionDeclaration', 'ArrowFunctionExpression' ].indexOf( parent.type ) ) {
+			if ( isFunctionType( parent ) ) {
 				functionExpression = parent;
 
 				// If inside function expression, check that the name of the
