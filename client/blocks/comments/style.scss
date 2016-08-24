@@ -121,8 +121,8 @@
 	margin: 0;
 
 	&.is-root {
-		margin-top: 32px;
-	}
+		margin-top: 0 !important; // the !important can go when the old reader/comments is retired
+ 	}
 
 	&.is-children {
 		margin-left: -2px;
@@ -147,6 +147,7 @@
 
 	&.depth-0, &.depth-1, &.depth-2 {
 		padding-left: 48px;
+		margin-top: 12px;
 
 		> .comments__comment-author .gravatar {
 			left: 8px;
@@ -320,8 +321,8 @@
 	}
 }
 
-.comments__top-bar {
-	margin: 24px 48px 24px 0;
+.comments__info-bar {
+	margin: 12px 24px 0 0;
 	overflow: auto;
 
 	&.is-no-comments {
@@ -334,7 +335,7 @@
 	cursor: pointer;
 	display: inline-block;
 	font-size: 14px;
-	margin-bottom: 10px;
+	margin-bottom: 0 !important; // the !important can go when the old reader/comments is retired
 }
 
 .comments__view-replies-btn {
@@ -352,4 +353,10 @@
 		margin-right: 4px;
 		transform: rotate( 180deg );
 	}
+}
+
+.comments__comment-count {
+	color: lighten( $gray, 10% );
+	size: 13px;
+	text-transform: uppercase;
 }

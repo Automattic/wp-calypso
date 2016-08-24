@@ -26,6 +26,7 @@ import {
 } from 'reader/stats';
 import PostComment from './post-comment';
 import PostCommentForm from './form';
+import CommentCount from './comment-count';
 
 class PostCommentList extends React.Component {
 	constructor( props ) {
@@ -189,7 +190,8 @@ class PostCommentList extends React.Component {
 
 		return (
 			<div className="comments__comment-list">
-				<div className={ classNames( 'comments__top-bar', { 'is-no-comments': displayedCommentsCount === 0 } ) }>
+				{ ( this.props.showCommentCount || showViewEarlier ) && <div className={ classNames( 'comments__info-bar', { 'is-no-comments': displayedCommentsCount === 0 } ) }>
+					{ this.props.showCommentCount && <CommentCount count={ totalCommentsCount } /> }
 					{ showViewEarlier ? <span className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
 						{
 							translate( 'View earlier comments (Showing %(shown)d of %(total)d)', {
@@ -199,7 +201,7 @@ class PostCommentList extends React.Component {
 								}
 							} )
 						}</span> : null }
-				</div>
+				</div> }
 				{ this.renderCommentsList( displayedComments ) }
 				{ this.renderCommentForm() }
 			</div>
@@ -215,6 +217,7 @@ PostCommentList.propTypes = {
 	onCommentsUpdate: React.PropTypes.func.isRequired,
 	pageSize: React.PropTypes.number,
 	initialSize: React.PropTypes.number,
+	showCommentCount: React.PropTypes.bool,
 
 	// connect()ed props:
 	commentsTree: React.PropTypes.object, //TODO: Find a lib that provides immutable shape
@@ -226,7 +229,8 @@ PostCommentList.propTypes = {
 PostCommentList.defaultProps = {
 	pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
 	initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
-	haveMoreCommentsToFetch: false
+	haveMoreCommentsToFetch: false,
+	showCommentCount: true
 };
 
 export default connect(
