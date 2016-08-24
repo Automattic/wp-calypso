@@ -11,11 +11,12 @@ import debugFactory from 'debug';
  */
 import config from 'config';
 import WebPreview from 'components/web-preview';
-import { clearPreviewUrl } from 'state/ui/actions';
+import { clearPreviewUrl } from 'state/ui/preview/actions';
 import { fetchPreviewMarkup, undoCustomization, clearCustomizations } from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
-import { getSelectedSite, getSelectedSiteId, getPreviewUrl } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
