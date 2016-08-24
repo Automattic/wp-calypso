@@ -330,7 +330,7 @@ export const getSeoTitleFormats = compose(
 	getRawSite
 );
 
-export const getSeoTitle = ( state, type, { site, post = {} } ) => {
+export const getSeoTitle = ( state, type, { site, post = {}, tag = '', date = '' } ) => {
 	const titleFormats = getSeoTitleFormats( state, site.ID );
 
 	const processPiece = ( piece = {}, data ) =>
@@ -355,6 +355,27 @@ export const getSeoTitle = ( state, type, { site, post = {} } ) => {
 				tagline: site.description,
 				postTitle: post.title
 			} ) || post.title;
+
+		case 'pages':
+			return buildTitle( 'pages', {
+				siteName: site.name,
+				tagline: site.description,
+				pageTitle: post.title
+			} );
+
+		case 'groups':
+			return buildTitle( 'groups', {
+				siteName: site.name,
+				tagline: site.description,
+				groupTitle: tag
+			} );
+
+		case 'archives':
+			return buildTitle( 'archives', {
+				siteName: site.name,
+				tagline: site.description,
+				date: date
+			} );
 
 		default:
 			return post.title || site.name;

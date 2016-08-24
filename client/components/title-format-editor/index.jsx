@@ -1,8 +1,10 @@
 import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import {
+	get,
 	map,
 	max,
-	min,
+	min
 } from 'lodash';
 import {
 	CompositeDecorator,
@@ -15,6 +17,9 @@ import {
 
 import Token from './token';
 import { fromEditor, toEditor } from './parser';
+import { getSeoTitle } from 'state/sites/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+import { localize } from 'i18n-calypso';
 
 const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
 
@@ -142,7 +147,11 @@ export class TitleFormatEditor extends Component {
 
 	render() {
 		const { editorState } = this.state;
-		const { tokens, type } = this.props;
+		const { translate, tokens, type, previewText } = this.props;
+
+		const formattedPreview = previewText
+			? `${ translate( 'Preview' ) }: ${ previewText }`
+			: '';
 
 		return (
 			<div className="title-format-editor">
@@ -165,7 +174,7 @@ export class TitleFormatEditor extends Component {
 						ref={ this.storeEditorReference }
 					/>
 				</div>
-				<div className="title-format-editor__preview">Preview: What's up with that?</div>
+				<div className="title-format-editor__preview">{ formattedPreview }</div>
 			</div>
 		);
 	}
@@ -179,4 +188,22 @@ TitleFormatEditor.propTypes = {
 	onChange: PropTypes.func.isRequired
 };
 
-export default TitleFormatEditor;
+const mapStateToProps = ( state, ownProps ) => {
+	const site = getSelectedSite( state );
+	const type = get( ownProps, 'type.value', '' );
+
+	// Add example content for post/page title, tag name and archive dates
+	// TODO: translate() not working here?
+	const content = {
+		site,
+		post: { title: 'Example Title' },
+		tag: 'Example Tag',
+		date: 'August 2013'
+	};
+
+	return ( {
+		previewText: getSeoTitle( state, type, content )
+	} );
+};
+
+export default connect( mapStateToProps )( localize( TitleFormatEditor ) );
