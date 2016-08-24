@@ -16,7 +16,7 @@ class Courses extends Component {
 		const {
 			translate,
 			userId,
-			showRecentCourseRecordings,
+			isBusinessPlanUser,
 			courses,
 			isLoading
 		} = this.props;
@@ -28,7 +28,7 @@ class Courses extends Component {
 				</HeaderCake>
 				{ isLoading
 					? <CourseListPlaceholder />
-					: <CourseList courses={ courses } showRecentCourseRecordings={ showRecentCourseRecordings } /> }
+					: <CourseList courses={ courses } isBusinessPlanUser={ isBusinessPlanUser } /> }
 
 				<QueryUserPurchases userId={ userId } />
 			</Main>

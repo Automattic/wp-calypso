@@ -9,15 +9,24 @@ import { localize } from 'i18n-calypso';
  */
 import Card from 'components/card';
 import CourseScheduleItem from './course-schedule-item';
+import HelpTeaserButton from '../help-teaser-button';
+import sitesList from 'lib/sites-list';
+
+/**
+ * Module variables
+ */
+const sites = sitesList();
 
 export default localize( ( props ) => {
 	const {
 		title,
 		description,
 		schedule,
-		showRecentCourseRecordings,
+		isBusinessPlanUser,
 		translate
 	} = props;
+
+	const { slug } = sites.getPrimary();
 
 	return (
 		<div className="help-courses__course">
@@ -25,10 +34,15 @@ export default localize( ( props ) => {
 			<Card compact>
 				<h1 className="help-courses__course-title">{ title }</h1>
 				<p className="help-courses__course-description">{ description }</p>
+				{ ! isBusinessPlanUser &&
+					<HelpTeaserButton
+						href={ `/plans/${ slug }` }
+						title={ translate( 'Join this course with Business Plan' ) }
+						description={ translate( 'Upgrade to access webinars and courses to learn how to make the most of your site' ) }/> }
 			</Card>
-			{ schedule.map( ( item, key ) => <CourseScheduleItem { ...item } key={ key } /> ) }
+			{ schedule.map( ( item, key ) => <CourseScheduleItem { ...item } key={ key } isBusinessPlanUser={ isBusinessPlanUser } /> ) }
 			{
-				showRecentCourseRecordings &&
+				isBusinessPlanUser &&
 				<Card className="help-courses__course-recording">
 					Show most recent recording here
 				</Card>
