@@ -99,18 +99,6 @@ export function isPreviewShowing( state ) {
 	return get( state.ui, 'isPreviewShowing', false );
 }
 
-/**
- * Returns the URL if DesignPreview currently has one.
- *
- * @param  {Object}  state Global state tree
- * @return {?String}  The url or null
- *
- * @see client/components/design-preview
- */
-export function getPreviewUrl( state ) {
-	return state.ui.currentPreviewUrl;
-}
-
 export function getInitialQueryArguments( state ) {
 	return state.ui.queryArguments.initial;
 }
