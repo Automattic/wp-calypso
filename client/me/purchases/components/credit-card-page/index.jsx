@@ -245,12 +245,13 @@ const CreditCardPage = React.createClass( {
 						eventFormName="Edit Card Details Form"
 						isFieldInvalid={ this.isFieldInvalid }
 						onFieldChange={ this.onFieldChange } />
-					<div className="credit-card-page__card-terms" onClick={ this.recordTermsAndConditionsClick }>
+					<div className="credit-card-page__card-terms">
 						<Gridicon icon="info-outline" size={ 18 } />
 						<p>
 							{ this.translate(
-								'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize ' +
-								'your credit card to be charged on a recurring basis until you cancel, which you can do at any time. ' +
+								'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if ' +
+								'you use it to pay for a subscription or plan, you authorize your credit card to be charged ' +
+								'on a recurring basis until you cancel, which you can do at any time. ' +
 								'You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} ' +
 								'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
 								{
