@@ -216,7 +216,7 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderPluginsPlaceholders() {
-		const placeholderCount = 3;
+		const placeholderCount = !! this.props.whitelist ? 1 : 3;
 		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
 	},
 
@@ -494,24 +494,17 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const site = sites.getSelectedSite();
-
-		// Filter out only the plugins whitelisted (if we're whitelisting)
-		const plugins = filter( getPluginsForSite( state, siteId ), ( plugin ) => {
-			if ( !! ownProps.whitelist ) {
-				return ( ownProps.whitelist === plugin.slug );
-			}
-			return true;
-		} );
+		const whitelist = ownProps.whitelist || false;
 
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
-			isInstalling: isInstalling( state, siteId ),
-			isFinished: isFinished( state, siteId ),
-			plugins,
-			activePlugin: getActivePlugin( state, siteId ),
-			nextPlugin: getNextPlugin( state, siteId ),
+			isInstalling: isInstalling( state, siteId, whitelist ),
+			isFinished: isFinished( state, siteId, whitelist ),
+			plugins: getPluginsForSite( state, siteId, whitelist ),
+			activePlugin: getActivePlugin( state, siteId, whitelist ),
+			nextPlugin: getNextPlugin( state, siteId, whitelist ),
 			selectedSite: site && site.jetpack ? JetpackSite( site ) : site,
 			siteId
 		};
