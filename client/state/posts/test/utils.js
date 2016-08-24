@@ -32,7 +32,10 @@ describe( 'utils', () => {
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
 				title: 'Ribs &amp; Chicken',
-				terms: {}
+				terms: {
+					category: [ { ID: 777, name: 'recipes' } ],
+					post_tag: [ 'super', 'yummy', 'stuff' ]
+				}
 			};
 
 			const normalizedPost = normalizePostForApi( post );
@@ -40,7 +43,10 @@ describe( 'utils', () => {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Ribs &amp; Chicken'
+				title: 'Ribs &amp; Chicken',
+				terms: {
+					post_tag: [ 'super', 'yummy', 'stuff' ]
+				}
 			} );
 		} );
 	} );

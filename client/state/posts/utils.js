@@ -13,7 +13,9 @@ import {
 	reduce,
 	toArray,
 	cloneDeep,
-	cloneDeepWith
+	cloneDeepWith,
+	pickBy,
+	isString
 } from 'lodash';
 
 /**
@@ -220,5 +222,10 @@ export function normalizePostForApi( post ) {
 		return null;
 	}
 
-	return omit( post, 'terms' );
+	return {
+		...post,
+		terms: pickBy( post.terms, ( terms ) => {
+			return terms.length && isString( terms[ 0 ] );
+		} )
+	};
 }
