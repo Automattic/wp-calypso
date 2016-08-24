@@ -19,8 +19,14 @@ import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
-import { createAccount, authorize, goBackToWpAdmin, activateManage } from 'state/jetpack-connect/actions';
-import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
+import {
+	createAccount,
+	authorize,
+	goBackToWpAdmin,
+	activateManage,
+	goToXmlrpcErrorFallbackUrl
+} from 'state/jetpack-connect/actions';
+import { isCalypsoStartedConnection, hasXmlrpcError } from 'state/jetpack-connect/selectors';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -44,6 +50,10 @@ import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
 import { withoutHttp } from 'lib/url';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 /**
  * Constants
@@ -284,6 +294,50 @@ const LoggedInForm = React.createClass( {
 		return ( ! this.props.isAlreadyOnSitesList && ( isAuthorizing || isActivating ) );
 	},
 
+	handleResolve() {
+		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
+		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
+	},
+
+	renderErrorDetails() {
+		const { authorizeError } = this.props.jetpackConnectAuthorize;
+		return (
+			<div className="jetpack-connect__error-details">
+				<FormLabel>{ this.translate( 'Error Details' ) }</FormLabel>
+				<FormSettingExplanation>
+					{ authorizeError.message }
+				</FormSettingExplanation>
+			</div>
+		);
+	},
+
+	renderXmlrpcFeedback() {
+		const xmlrpcErrorText = this.translate( 'We had trouble connecting.' );
+		return (
+			<div>
+				<div className="jetpack-connect__notices-container">
+					<Notice icon="notice" status="is-error" text={ xmlrpcErrorText } showDismiss={ false }>
+						<NoticeAction onClick={ this.handleResolve }>
+							{ this.translate( 'Try again' ) }
+						</NoticeAction>
+					</Notice>
+				</div>
+				<p>
+					{ this.translate(
+						'WordPress.com was unable to reach your site and approve the connection. ' +
+						'Try again by clicking the button above; ' +
+						'if that doesn\'t work you may need to {{link}}contact support{{/link}}.', {
+							components: {
+								link: <a href="https://jetpack.com/contact-support" target="_blank" />
+							}
+						}
+					) }
+				</p>
+				{ this.renderErrorDetails() }
+			</div>
+		);
+	},
+
 	renderNotices() {
 		const { authorizeError, queryObject } = this.props.jetpackConnectAuthorize;
 		if ( queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
@@ -299,7 +353,15 @@ const LoggedInForm = React.createClass( {
 		if ( authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
 		}
-		return <JetpackConnectNotices noticeType="authorizeError" />;
+		if ( this.props.requestHasXmlrpcError() ) {
+			return this.renderXmlrpcFeedback();
+		}
+		return (
+			<div>
+				<JetpackConnectNotices noticeType="defaultAuthorizeError" />
+				{ this.renderErrorDetails() }
+			</div>
+		);
 	},
 
 	getButtonText() {
@@ -410,7 +472,12 @@ const LoggedInForm = React.createClass( {
 	},
 
 	renderFooterLinks() {
-		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
+		const {
+			queryObject,
+			authorizeSuccess,
+			isAuthorizing,
+			isRedirectingToWpAdmin
+		} = this.props.jetpackConnectAuthorize;
 		const { blogname, redirect_after_auth, _wp_nonce } = queryObject;
 		const loginUrl = config( 'login_url' ) +
 			'?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) +
@@ -424,7 +491,7 @@ const LoggedInForm = React.createClass( {
 			</LoggedOutFormLinkItem>
 		);
 
-		if ( isAuthorizing ) {
+		if ( isAuthorizing || isRedirectingToWpAdmin ) {
 			return null;
 		}
 
@@ -455,7 +522,11 @@ const LoggedInForm = React.createClass( {
 
 	renderStateAction() {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
-		if ( this.props.isFetchingSites() || this.isAuthorizing() || ( authorizeSuccess && ! siteReceived ) ) {
+		if (
+			this.props.isFetchingSites() ||
+			this.isAuthorizing() ||
+			( authorizeSuccess && ! siteReceived )
+		) {
 			return (
 				<div className="jetpack-connect__logged-in-form-loading">
 					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
@@ -465,7 +536,11 @@ const LoggedInForm = React.createClass( {
 		return (
 			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
 				{ this.getDisclaimerText() }
-				<Button primary disabled={ this.isAuthorizing() } onClick={ this.handleSubmit }>
+				<Button
+					primary
+					disabled={ this.isAuthorizing() || this.props.requestHasXmlrpcError() }
+					onClick={ this.handleSubmit }
+				>
 					{ this.getButtonText() }
 				</Button>
 			</LoggedOutFormFooter>
@@ -563,6 +638,9 @@ export default connect(
 				state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
 			? getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
 			: null;
+		const requestHasXmlrpcError = () => {
+			return hasXmlrpcError( state.jetpackConnect.jetpackConnectAuthorize );
+		};
 		const isFetchingSites = () => {
 			return isRequestingSites( state );
 		};
@@ -571,7 +649,8 @@ export default connect(
 			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
 			isAlreadyOnSitesList: !! site,
-			isFetchingSites
+			isFetchingSites,
+			requestHasXmlrpcError
 		};
 	},
 	dispatch => bindActionCreators( { requestSites,
@@ -579,5 +658,6 @@ export default connect(
 		authorize,
 		createAccount,
 		activateManage,
-		goBackToWpAdmin }, dispatch )
+		goBackToWpAdmin,
+		goToXmlrpcErrorFallbackUrl }, dispatch )
 )( JetpackConnectAuthorizeForm );

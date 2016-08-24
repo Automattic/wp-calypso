@@ -23,6 +23,7 @@ export const jetpackConnectAuthorizeSchema = {
 			required: [ 'queryObject' ],
 			properties: {
 				activateManageSecret: { type: 'string' },
+				authorizationCode: { type: 'string ' },
 				authorizeError: { type: 'boolean' },
 				authorizeSuccess: { type: 'boolean' },
 				autoAuthorize: { type: 'boolean' },
