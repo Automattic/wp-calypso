@@ -34,16 +34,29 @@ export class TitleFormatEditor extends Component {
 		this.addToken = this.addToken.bind( this );
 		this.removeToken = this.removeToken.bind( this );
 		this.renderTokens = this.renderTokens.bind( this );
+		this.editorStateFrom = this.editorStateFrom.bind( this );
 
 		this.state = {
-			editorState: EditorState.createWithContent(
-				toEditor( props.titleFormats, props.tokens ),
-				new CompositeDecorator( [ {
-					strategy: this.renderTokens,
-					component: Chip( this.removeToken )
-				} ] )
-			)
+			editorState: this.editorStateFrom( props ),
 		};
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.disabled && ! nextProps.disabled ) {
+			this.setState( {
+				editorState: this.editorStateFrom( nextProps )
+			} );
+		}
+	}
+
+	editorStateFrom( props ) {
+		return EditorState.createWithContent(
+			toEditor( props.titleFormats, props.tokens ),
+			new CompositeDecorator( [ {
+				strategy: this.renderTokens,
+				component: Chip( this.removeToken )
+			} ] )
+		);
 	}
 
 	updateEditor( editorState ) {

@@ -107,8 +107,9 @@ export const SeoForm = React.createClass( {
 		return {
 			...stateForSite( this.props.site ),
 			seoTitleFormats: this.props.storedTitleFormats,
-			isRefreshingSiteData: false,
-			dirtyFields: Set()
+			dirtyFields: Set(),
+			isRefreshingSiteData: true,
+			invalidatedSiteObject: this.props.selectedSite,
 		};
 	},
 
@@ -124,21 +125,25 @@ export const SeoForm = React.createClass( {
 			seoTitleFormats: nextProps.storedTitleFormats,
 		};
 
-		// Don't update state for fields the user has edited
-		nextState = omit( nextState, dirtyFields.toArray() );
-
-		const wasRefreshingSiteData = this.state.isRefreshingSiteData;
 		const isRefreshingSiteData = (
-			this.state.isSubmittingForm ||
-			(
-				wasRefreshingSiteData &&
-				isEqual( this.props.storedTitleFormats, nextProps.storedTitleFormats )
-			)
+			this.state.isRefreshingSiteData &&
+			( this.state.invalidatedSiteObject === nextProps.selectedSite )
 		);
+
+		if ( this.state.isRefreshingSiteData && ! isRefreshingSiteData ) {
+			nextState = {
+				...nextState,
+				seoTitleFormats: nextProps.storedTitleFormats,
+				dirtyFields: dirtyFields.delete( 'seoTitleFormats' ),
+			};
+		}
 
 		if ( isRefreshingSiteData ) {
 			nextState = omit( nextState, [ 'seoTitleFormats' ] );
 		}
+
+		// Don't update state for fields the user has edited
+		nextState = omit( nextState, dirtyFields.toArray() );
 
 		this.setState( {
 			...nextState,
@@ -280,7 +285,10 @@ export const SeoForm = React.createClass( {
 		} = this.props;
 
 		if ( selectedSite && selectedSite.ID ) {
-			refreshSiteData( selectedSite.ID );
+			this.setState( {
+				isRefreshingSiteData: true,
+				invalidatedSiteObject: selectedSite,
+			}, () => refreshSiteData( selectedSite.ID ) );
 		}
 	},
 
