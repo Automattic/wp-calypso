@@ -61,7 +61,9 @@ const CreditCardPage = React.createClass( {
 	componentWillMount() {
 		this._mounted = true;
 
-		const fields = formState.createNullFieldValues( this.fieldNames );
+		const fields = this.fieldNames.reduce( ( result, fieldName ) => {
+			return { ...result, [ fieldName ]: undefined };
+		}, {} );
 
 		if ( this.props.initialValues ) {
 			fields.name = this.props.initialValues.name;
