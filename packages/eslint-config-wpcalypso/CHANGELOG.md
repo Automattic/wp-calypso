@@ -1,3 +1,10 @@
+v0.3.0 (2016-08-24)
+===================
+
+- Added: [`template-curly-spacing`](http://eslint.org/docs/rules/template-curly-spacing) now enforces spaces within template strings
+- General: ESLint peer dependency bumped from ^2.13.1 to ^3.3.1
+- General: `eslint-plugin-wpcalypso` dependency bumped from ^1.3.2 to ^2.0.0
+
 v0.2.0 (2016-07-06)
 ===================
 
