@@ -41,13 +41,15 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	plansPriceOrder: {
+	plansDescriptions: {
 		datestamp: '20160901',
 		variations: {
-			ascending: 50,
-			descending: 50,
+			ascendingPriceSubtleDescription: 25,
+			ascendingPriceEagerDescription: 25,
+			descendingPriceSubtleDescription: 25,
+			descendingPriceEagerDescription: 25
 		},
-		defaultVariation: 'ascending',
+		defaultVariation: 'ascendingPriceSubtleDescription',
 		allowExistingUsers: false,
 	},
 	signupStore: {

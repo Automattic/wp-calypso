@@ -85,7 +85,7 @@ class PlansFeaturesMain extends Component {
 		}
 
 		let plans;
-		if ( abtest( 'plansPriceOrder' ) === 'descending' ) {
+		if ( abtest( 'plansDescriptions' ) === 'descendingPriceSubtleDescription' || abtest( 'plansDescriptions' ) === 'descendingPriceEagerDescription' ) {
 			plans = filter(
 				[
 					PLAN_BUSINESS,
