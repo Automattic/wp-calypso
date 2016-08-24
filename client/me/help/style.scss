@@ -1,3 +1,11 @@
+.help__support-links {
+	&.is-placeholder {
+		@include placeholder();
+		height: 250px;
+		margin-bottom: 15px;
+	}
+}
+
 .help__support-link {
 	display: flex;
 }
@@ -45,6 +53,14 @@
 	margin-bottom: 0;
 	font-size: 14px;
 	color: $gray-dark;
+}
+
+.help__help-teaser-button {
+	&.is-placeholder {
+		@include placeholder();
+		height: 64px;
+		margin-bottom: 15px;
+	}
 }
 
 .help__help-teaser-button .card {

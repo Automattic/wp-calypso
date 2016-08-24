@@ -1,25 +1,41 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	debug = require( 'debug' )( 'calypso:help-search' ),
-	reactRedux = require( 'react-redux' );
+import { find } from 'lodash';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import debugModule from 'debug';
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
-const Main = require( 'components/main' ),
-	analytics = require( 'lib/analytics' ),
-	currentUser = require( 'state/current-user/selectors' ),
-	HappinessEngineers = require( 'me/help/help-happiness-engineers' ),
-	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	HelpSearch = require( './help-search' ),
-	CompactCard = require( 'components/card/compact' ),
-	Button = require( 'components/button' ),
-	SectionHeader = require( 'components/section-header' ),
-	HelpResult = require( './help-results/item' ),
-	HelpTeaserButton = require( './help-teaser-button' ),
-	HelpUnverifiedWarning = require( './help-unverified-warning' );
+import Main from 'components/main';
+import analytics from 'lib/analytics';
+import {
+	getCurrentUserId,
+	isCurrentUserEmailVerified
+} from 'state/current-user/selectors';
+import HappinessEngineers from 'me/help/help-happiness-engineers';
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import HelpSearch from './help-search';
+import HelpTeaserButton from './help-teaser-button';
+import CompactCard from 'components/card/compact';
+import Button from 'components/button';
+import SectionHeader from 'components/section-header';
+import HelpResult from './help-results/item';
+import HelpUnverifiedWarning from './help-unverified-warning';
+import {
+	getUserPurchases,
+	isFetchingUserPurchases
+} from 'state/purchases/selectors';
+import { PLAN_BUSINESS } from 'lib/plans/constants';
+import QueryUserPurchases from 'components/data/query-user-purchases';
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:help-search' );
 
 const Help = React.createClass( {
 	displayName: 'Help',
@@ -106,6 +122,10 @@ const Help = React.createClass( {
 	},
 
 	getCoursesTeaser: function() {
+		if ( ! this.props.showCoursesTeaser ) {
+			return null;
+		}
+
 		return (
 			<HelpTeaserButton
 				href="/help/courses"
@@ -114,32 +134,60 @@ const Help = React.createClass( {
 		);
 	},
 
+	getPlaceholders() {
+		return (
+			<Main className="help">
+				<MeSidebarNavigation />
+				<div className="help-search is-placeholder"/>
+				<div className="help__help-teaser-button is-placeholder"/>
+				<div className="help-results is-placeholder"/>
+				<div className="help__support-links is-placeholder"/>
+			</Main>
+		);
+	},
+
 	render: function() {
 		const {
 			isEmailVerified,
-			showCoursesTeaser
+			userId,
+			isLoading
 		} = this.props;
+
+		if ( isLoading ) {
+			return this.getPlaceholders();
+		}
+
 		return (
 			<Main className="help">
 				<MeSidebarNavigation />
 				<HelpSearch />
 				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
-				{ showCoursesTeaser && this.getCoursesTeaser() }
+				{ this.getCoursesTeaser() }
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
 				<HappinessEngineers />
+				<QueryUserPurchases userId={ userId } />
 			</Main>
 		);
 	}
 } );
 
-module.exports = reactRedux.connect(
+export default connect(
 	( state, ownProps ) => {
-		const isEmailVerified = currentUser.isCurrentUserEmailVerified( state );
-		const showCoursesTeaser = ownProps.isCoursesEnabled;
+		const isEmailVerified = isCurrentUserEmailVerified( state );
+		const userId = getCurrentUserId( state );
+		const purchases = getUserPurchases( state, userId );
+		const isLoading = isFetchingUserPurchases( state );
+		const showCoursesTeaser = (
+			ownProps.isCoursesEnabled &&
+			purchases &&
+			!! find( purchases, purchase => purchase.productSlug === PLAN_BUSINESS )
+		);
 
 		return {
+			userId,
 			showCoursesTeaser,
+			isLoading,
 			isEmailVerified,
 		};
 	}
