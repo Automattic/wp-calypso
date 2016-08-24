@@ -1,4 +1,4 @@
-#### v2.0.0 (---)
+#### v2.0.0 (August 24, 2016)
 
 - Breaking: Required Node version increased to >=0.12.0
 - Fix: `jsx-classname-namespace` can accurately validate elements assigned to variables within render ([#21](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/21))
