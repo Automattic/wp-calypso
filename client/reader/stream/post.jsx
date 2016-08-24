@@ -343,11 +343,6 @@ const Post = React.createClass( {
 				'has-featured-image': hasFeaturedImage,
 				'hide-xpost': this.props.xPostedTo
 			}, this.additionalClasses ),
-			primaryTag = post.primary_tag,
-			tagClasses = {
-				'reader__post-tag': true,
-				'is-long': ( primaryTag && primaryTag.name.length > 25 )
-			},
 			shouldShowExcerptOnly = !! post.use_excerpt,
 			shouldUseFullExcerpt = ! shouldShowExcerptOnly && ( post.display_type & DISPLAY_TYPES.ONE_LINER ),
 			siteName = utils.siteNameFromSiteAndPost( this.state.site, post ),
@@ -391,8 +386,6 @@ const Post = React.createClass( {
 		} );
 
 		articleClasses = classnames( articleClasses );
-
-		tagClasses = classnames( tagClasses );
 
 		if ( isDiscoverPost ) {
 			discoverSiteUrl = DiscoverHelper.getSiteUrl( post );
