@@ -20,12 +20,12 @@ const guidedTransferHosts = {
 	bluehost: {
 		label: i18n.translate( 'Bluehost' ),
 		logo: '/calypso/images/guided-transfer/bluehost-logo.png',
-		url: '#bluehost',
+		url: 'https://bluehost.com/track/wpgt?page=/web-hosting/signup',
 	},
 	siteground: {
 		logo: '/calypso/images/guided-transfer/siteground-logo.png',
 		label: i18n.translate( 'SiteGround' ),
-		url: '#siteground'
+		url: 'https://www.siteground.com/wordpress-hosting.htm?afcode=134c903505c0a2296bd25772edebf669'
 	}
 };
 
