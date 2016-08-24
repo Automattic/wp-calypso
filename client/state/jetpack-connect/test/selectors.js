@@ -6,7 +6,31 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isCalypsoStartedConnection, getFlowType } from '../selectors';
+import { isCalypsoStartedConnection, getFlowType, hasXmlrpcError } from '../selectors';
+
+const stateHasXmlrpcError = {
+	authorizeError: {
+		message: 'transport error - HTTP status code was not 200 (502)'
+	},
+	authorizationCode: 'xxxx'
+};
+
+const stateHasNoError = {
+	authorizeError: false
+};
+
+const stateHasNoAuthorizationCode = {
+	authorizeError: {
+		message: 'Could not verify your request.'
+	}
+};
+
+const stateHasOtherError = {
+	authorizeError: {
+		message: 'Jetpack: [already_connected] User already connected.'
+	},
+	authorizationCode: 'xxxx'
+};
 
 describe( 'selectors', () => {
 	describe( '#isCalypsoStartedConnection()', () => {
@@ -62,5 +86,29 @@ describe( 'selectors', () => {
 			expect( getFlowType( state.jetpackConnectSessions, { slug: 'sitetest' } ) ).to.be.false;
 		} );
 	} );
+	describe( '#hasXmlrpcError', () => {
+		it( 'should be undefined when there is an empty state', () => {
+			const hasError = hasXmlrpcError( {} );
+			expect( hasError ).to.be.undefined;
+		} );
+		it( 'should be false when there is no error', () => {
+			const hasError = hasXmlrpcError( stateHasNoError );
+			expect( hasError ).to.be.false;
+		} );
+		it( 'should be undefined when there is no authorization code', () => {
+			// An authorization code is received during the jetpack.login portion of the connection
+			// XMLRPC errors happen only during jetpack.authorize which only happens after jetpack.login is succesful
+			const hasError = hasXmlrpcError( stateHasNoAuthorizationCode );
+			expect( hasError ).to.be.undefined;
+		} );
+		it( 'should be false if a non-xmlrpc error is found', () => {
+			// eg a user is already connected, or they've taken too long and their secret expired
+			const hasError = hasXmlrpcError( stateHasOtherError );
+			expect( hasError ).to.be.false;
+		} );
+		it( 'should be true if all the conditions are met', () => {
+			const hasError = hasXmlrpcError( stateHasXmlrpcError );
+			expect( hasError ).to.be.true;
+		} );
+	} );
 } );
-
