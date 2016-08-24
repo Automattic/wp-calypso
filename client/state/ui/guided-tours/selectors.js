@@ -53,10 +53,7 @@ const getToursFromFeaturesReached = createSelector(
  * recently and in the past.
  */
 const getToursSeen = createSelector(
-	state => uniq(
-		getToursHistory( state )
-			.map( ( { tourName } ) => tourName )
-	),
+	state => uniq( map( getToursHistory( state ), 'tourName' ) ),
 	getToursHistory
 );
 
