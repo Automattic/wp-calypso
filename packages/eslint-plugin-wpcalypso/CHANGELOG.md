@@ -1,6 +1,7 @@
 #### v2.0.0 (---)
 
 - Breaking: Required Node version increased to >=0.12.0
+- Fix: `jsx-classname-namespace` can accurately validate elements assigned to variables within render ([#21](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/21))
 - Fix: `npm test` is now run synchronously so it exits with a non-zero code on failure
 - Fix: Replace ES2015 variable (`let`) declarations to accommodate older Node versions
 - Fix: Remove unintended debugging statement from i18n-no-newlines rule

@@ -86,13 +86,62 @@ var rule = module.exports = function( context ) {
 		].indexOf( node.type );
 	}
 
+	function getFunctionReturnValue( node ) {
+		var i, bodyNode;
+
+		// An arrow function expression is one whose return statement is
+		// implicit. It does not have a body block.
+		//
+		// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+		if ( 'ArrowFunctionExpression' === node.type && node.expression ) {
+			return node.body;
+		}
+
+		for ( i = 0; i < node.body.body.length; i++ ) {
+			bodyNode = node.body.body[ i ];
+			if ( 'ReturnStatement' === bodyNode.type ) {
+				return bodyNode.argument;
+			}
+		}
+	}
+
+	function isSameIdentifier( nodeA, nodeB ) {
+		if ( ! nodeA || ! nodeB ) {
+			return false;
+		}
+
+		if ( 'Identifier' !== nodeA.type || 'Identifier' !== nodeB.type ) {
+			return false;
+		}
+
+		return nodeA.name === nodeB.name;
+	}
+
 	function isRootRenderedElement( node, filename ) {
-		var parent = node.parent.parent,
+		var element, isElementReturnArg, elementAssignedIdentifier, parent,
 			functionExpression, functionName, isRoot;
 
 		if ( ! REGEXP_INDEX_PATH.test( filename ) ) {
 			return false;
 		}
+
+		element = node.parent.parent;
+
+		switch ( element.parent.type ) {
+			case 'ArrowFunctionExpression':
+				isElementReturnArg = element.parent.expression;
+				break;
+
+			case 'ReturnStatement':
+				isElementReturnArg = true;
+				break;
+
+			case 'VariableDeclarator':
+				elementAssignedIdentifier = element.parent.id;
+				break;
+		}
+
+		parent = element;
 
 		do {
 			parent = parent.parent;
@@ -138,6 +187,13 @@ var rule = module.exports = function( context ) {
 								isModuleExportNode( parent.parent.parent ) ) {
 							isRoot = true;
 						}
+				}
+
+				// If we suspect the element is the root, confirm that it's the
+				// return value of the function
+				if ( isRoot && ! isElementReturnArg &&
+						! isSameIdentifier( elementAssignedIdentifier, getFunctionReturnValue( parent ) ) ) {
+					isRoot = false;
 				}
 			}
 
