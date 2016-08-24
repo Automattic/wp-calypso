@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -190,7 +189,7 @@ class PostCommentList extends React.Component {
 
 		return (
 			<div className="comments__comment-list">
-				{ ( this.props.showCommentCount || showViewEarlier ) && <div className={ classNames( 'comments__info-bar', { 'is-no-comments': displayedCommentsCount === 0 } ) }>
+				{ ( this.props.showCommentCount || showViewEarlier ) && <div className="comments__info-bar">
 					{ this.props.showCommentCount && <CommentCount count={ totalCommentsCount } /> }
 					{ showViewEarlier ? <span className="comments__view-earlier" onClick={ this.viewEarlierCommentsHandler }>
 						{

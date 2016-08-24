@@ -358,5 +358,8 @@
 .comments__comment-count {
 	color: lighten( $gray, 10% );
 	size: 13px;
+}
+
+.comments__comment-count-phrase {
 	text-transform: uppercase;
 }
