@@ -110,15 +110,18 @@ const ThemesSelection = React.createClass( {
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
 	},
 
+	addVerticalToFilters() {
+		const { vertical, filter } = this.props;
+		const result = [];
+
+		filter && result.push( filter );
+		vertical && result.push( vertical );
+
+		return result.join( ',' );
+	},
+
 	render() {
-		const { selectedSite: site, vertical } = this.props;
-		let filter = this.props.filter || '';
-		if ( filter && vertical ) {
-			filter += ',';
-		}
-		if ( vertical ) {
-			filter += vertical;
-		}
+		const site = this.props.selectedSite;
 
 		return (
 			<div className="themes__selection">
@@ -135,7 +138,7 @@ const ThemesSelection = React.createClass( {
 						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
 						search={ this.props.search }
 						tier={ this.props.tier }
-						filter={ filter }
+						filter={ this.addVerticalToFilters() }
 						onRealScroll={ this.trackScrollPage }
 						onLastPage={ this.trackLastPage } >
 					<ThemesList getButtonOptions={ this.props.getOptions }
