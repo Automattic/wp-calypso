@@ -15,7 +15,8 @@ import {
 	cloneDeep,
 	cloneDeepWith,
 	pickBy,
-	isString
+	isString,
+	every
 } from 'lodash';
 
 /**
@@ -229,7 +230,7 @@ export function normalizeTermsForApi( post ) {
 	return {
 		...post,
 		terms: pickBy( post.terms, ( terms ) => {
-			return terms.length && isString( terms[ 0 ] );
+			return terms.length && every( terms, isString );
 		} )
 	};
 }
