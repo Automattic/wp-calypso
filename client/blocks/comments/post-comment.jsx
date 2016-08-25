@@ -197,13 +197,13 @@ class PostComment extends React.Component {
 			<li className={ 'comments__comment depth-' + this.props.depth }>
 				<div className="comments__comment-author">
 					{ authorUrl
-						? <a href={ authorUrl } target="_blank" onClick={ this.handleAuthorClick }>
+						? <a href={ authorUrl } onClick={ this.handleAuthorClick }>
 							<Gravatar user={ comment.author } />
 						</a>
 						: <Gravatar user={ comment.author } /> }
 
 					{ authorUrl
-						? <a href={ authorUrl } target="_blank" className="comments__comment-username" onClick={ this.handleAuthorClick }>{ comment.author.name }</a>
+						? <a href={ authorUrl } className="comments__comment-username" onClick={ this.handleAuthorClick }>{ comment.author.name }</a>
 						: <strong className="comments__comment-username">{ comment.author.name }</strong> }
 					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
