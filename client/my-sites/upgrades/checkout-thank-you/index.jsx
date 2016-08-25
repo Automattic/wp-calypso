@@ -55,6 +55,7 @@ import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
 import upgradesPaths from 'my-sites/upgrades/paths';
+import { abtest } from 'lib/abtest';
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
@@ -185,7 +186,7 @@ const CheckoutThankYou = React.createClass( {
 		const createdAt = moment( this.props.selectedSite.options.created_at );
 		// TODO(marekhrabe): set time to a reasonable amount
 		const isRecent = createdAt.isAfter( moment().subtract( 10, 'hour' ) );
-		const isInAbTest = true;
+		const isInAbTest = abtest( 'paidNuxStreamlined' ) === 'streamlined';
 
 		if ( isInAbTest && isRecent && wasOnlyDotcomPlanPurchased ) {
 			return (
