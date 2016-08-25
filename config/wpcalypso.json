@@ -27,6 +27,7 @@
 		"guided-tours/main": false,
 		"guided-tours/themes": true,
 		"help": true,
+		"help/courses": true,
 		"jetpack/connect": true,
 		"jetpack/sso": true,
 		"jetpack/sync-panel": true,
