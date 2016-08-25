@@ -5,6 +5,8 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
+import page from 'page';
+
 
 /**
  * Internal dependencies
@@ -19,7 +21,7 @@ import formatCurrency from 'lib/format-currency';
 import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PERSONAL, getPlanObject, getPlanClass, plansList } from 'lib/plans/constants';
+import { PLAN_PERSONAL, getPlanClass, plansList } from 'lib/plans/constants';
 import analytics from 'lib/analytics';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -31,13 +33,14 @@ const ExpandedUpgradeNudge = ( {
 	planConstants = {},
 	planClass,
 	features,
-	upgrade = () => {},
+	upgrade,
 	benefits,
 	title,
 	subtitle,
 	highlightedFeature,
 	eventName = 'calypso_upgrade_nudge_impression',
-	event=''
+	event='',
+	children
 } ) => {
 	//Display only if upgrade path available
 	if (
@@ -73,13 +76,17 @@ const ExpandedUpgradeNudge = ( {
 					buttonName={ translate( 'Upgrade' ) }
 					onClick={ () => {
 						analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', eventProperties );
-						upgrade();
+						if( upgrade ) {
+							upgrade();
+						} else if ( currentPlan.getPathSlug ) {
+							page( '/checkout/' + currentPlan.getPathSlug() );
+						}
 					} }
 					currentPlan={ false }
 					popularRibbon={ true } >
-					<PlanCompareCardItem highlight={ true } >
+					{ highlightedFeature && <PlanCompareCardItem highlight={ true } >
 						{ getFeatureTitle( highlightedFeature ) }
-					</PlanCompareCardItem>
+					</PlanCompareCardItem> }
 					{ features.map( feature => (
 						<PlanCompareCardItem key={ feature }>
 							{ getFeatureTitle( feature ) }
@@ -88,23 +95,24 @@ const ExpandedUpgradeNudge = ( {
 				</PlanCompareCard>
 			</div>
 			<div className="upgrade-nudge-expanded__description">
-				<div className="upgrade-nudge-expanded__title">
+				{ title && <div className="upgrade-nudge-expanded__title">
 					<div className="upgrade-nudge-expanded__title-plan">
 						<div className={ classNames( "upgrade-nudge-expanded__title-plan-icon", planClass ) }></div>
 					</div>
 					<p className="upgrade-nudge-expanded__title-message">
 						{ title }
 					</p>
-				</div>
-				<p className="upgrade-nudge-expanded__subtitle">
+				</div> }
+				{ subtitle && <p className="upgrade-nudge-expanded__subtitle">
 					{ subtitle }
-				</p>
-				<ul className="upgrade-nudge-expanded__features">
-					{ benefits.map( ( benefitTitle, index ) =>  <li key={ index } className="upgrade-nudge-expanded__feature-item">
+				</p> }
+				{ benefits && <ul className="upgrade-nudge-expanded__features">
+					{ benefits.map( ( benefitTitle, index ) => <li key={ index } className="upgrade-nudge-expanded__feature-item">
 						<Gridicon className="upgrade-nudge-expanded__feature-item-checkmark" icon="checkmark" />
 						{ preventWidows( benefitTitle ) }
 					</li> ) }
-				</ul>
+				</ul> }
+				{ children }
 			</div>
 		</Card>
 	);
@@ -112,8 +120,18 @@ const ExpandedUpgradeNudge = ( {
 
 ExpandedUpgradeNudge.propTypes = {
 	translate: PropTypes.func.isRequired,
-	upgrade: PropTypes.func.isRequired,
-	plan: PropTypes.object
+	plan: PropTypes.object,
+	currentPlan: PropTypes.object,
+	planConstants: PropTypes.object,
+	planClass: PropTypes.string,
+	features: PropTypes.array,
+	upgrade: PropTypes.func,
+	benefits: PropTypes.array,
+	title: PropTypes.string,
+	subtitle: PropTypes.string,
+	highlightedFeature: PropTypes.string,
+	eventName: PropTypes.string,
+	event: PropTypes.string
 };
 
 const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
