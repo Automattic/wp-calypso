@@ -43,6 +43,9 @@ import SearchPreview from 'components/seo/search-preview';
 import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
 import { isBusiness, isEnterprise } from 'lib/products-values';
+import {
+	PLAN_BUSINESS, FEATURE_ADVANCED_SEO
+} from 'lib/plans/constants';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -389,7 +392,20 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
-				{ showUpgradeNudge && <SeoSettingsUpgradeNudge { ...{ upgradeToBusiness } } /> }
+				{ showUpgradeNudge &&
+					<SeoSettingsUpgradeNudge
+						plan={ PLAN_BUSINESS }
+						upgrade={ upgradeToBusiness }
+						title={ this.translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
+						subtitle={ this.translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
+						highlightedFeature={ FEATURE_ADVANCED_SEO }
+						benefits={ [
+							this.translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ),
+							this.translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ),
+							this.translate( 'Modify front page meta data in order to customize how your site appears to search engines.' )
+						] }
+					/>
+				}
 
 				<SectionHeader label={ this.translate( 'Search Engine Optimization' ) }>
 				</SectionHeader>

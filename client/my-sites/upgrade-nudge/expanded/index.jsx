@@ -18,27 +18,17 @@ import formatCurrency from 'lib/format-currency';
 import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
-import {
-	PLAN_BUSINESS,
-	FEATURE_ADVANCED_DESIGN,
-	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_NO_ADS,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	FEATURE_UNLIMITED_STORAGE,
-	FEATURE_VIDEO_UPLOADS
-} from 'lib/plans/constants';
+import { PLAN_PERSONAL, getPlanObject } from 'lib/plans/constants';
 
-const featuresToShow = [
-	FEATURE_UNLIMITED_STORAGE,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
-	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_NO_ADS,
-	FEATURE_ADVANCED_DESIGN,
-	FEATURE_VIDEO_UPLOADS
-];
-
-const SeoSettingsNudge = ( { translate, plan = {}, upgradeToBusiness } ) => {
+const SeoSettingsNudge = ( { translate, plan = {}, planConstants = {}, features, upgrade = () => {}, benefits, title, subtitle, highlightedFeature } ) => {
 	const price = formatCurrency( plan.raw_price / 12, plan.currency_code );
+	if ( ! features ) {
+		if ( planConstants.promotedFeatures ) {
+			features = planConstants.promotedFeatures.filter( feature => feature !== highlightedFeature ).slice( 0, 6 );
+		} else {
+			features = [];
+		}
+	}
 
 	return (
 		<Card className="settings-upgrade-nudge">
@@ -49,13 +39,13 @@ const SeoSettingsNudge = ( { translate, plan = {}, upgradeToBusiness } ) => {
 					title={ plan.product_name_short }
 					line={ translate( '%(price)s per month, billed yearly', { args: { price } } ) }
 					buttonName={ translate( 'Upgrade' ) }
-					onClick={ upgradeToBusiness }
+					onClick={ upgrade }
 					currentPlan={ false }
 					popularRibbon={ true } >
 					<PlanCompareCardItem highlight={ true } >
-						{ translate( 'Advanced SEO' ) }
+						{ getFeatureTitle( highlightedFeature ) }
 					</PlanCompareCardItem>
-					{ featuresToShow.map( feature => (
+					{ features.map( feature => (
 						<PlanCompareCardItem key={ feature }>
 							{ getFeatureTitle( feature ) }
 						</PlanCompareCardItem>
@@ -68,25 +58,17 @@ const SeoSettingsNudge = ( { translate, plan = {}, upgradeToBusiness } ) => {
 						<div className="settings-upgrade-nudge__title-plan-icon"></div>
 					</div>
 					<p className="settings-upgrade-nudge__title-message">
-						{ translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
+						{ title }
 					</p>
 				</div>
 				<p className="settings-upgrade-nudge__subtitle">
-					{ translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
+					{ subtitle }
 				</p>
 				<ul className="settings-upgrade-nudge__features">
-					<li className="settings-upgrade-nudge__feature-item">
+					{ benefits.map( ( benefitTitle, index ) =>  <li key={ index } className="settings-upgrade-nudge__feature-item">
 						<Gridicon className="settings-upgrade-nudge__feature-item-checkmark" icon="checkmark" />
-						{ preventWidows( translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ) ) }
-					</li>
-					<li className="settings-upgrade-nudge__feature-item">
-						<Gridicon className="settings-upgrade-nudge__feature-item-checkmark" icon="checkmark" />
-						{ preventWidows( translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ) ) }
-					</li>
-					<li className="settings-upgrade-nudge__feature-item">
-						<Gridicon className="settings-upgrade-nudge__feature-item-checkmark" icon="checkmark" />
-						{ preventWidows( translate( 'Modify front page meta data in order to customize how your site appears to search engines.' ) ) }
-					</li>
+						{ preventWidows( benefitTitle ) }
+					</li> ) }
 				</ul>
 			</div>
 		</Card>
@@ -95,12 +77,13 @@ const SeoSettingsNudge = ( { translate, plan = {}, upgradeToBusiness } ) => {
 
 SeoSettingsNudge.propTypes = {
 	translate: PropTypes.func.isRequired,
-	upgradeToBusiness: PropTypes.func.isRequired,
+	upgrade: PropTypes.func.isRequired,
 	plan: PropTypes.object
 };
 
-const mapStateToProps = state => ( {
-	plan: getPlanBySlug( state, PLAN_BUSINESS )
+const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
+	plan: getPlanBySlug( state, plan ),
+	planConstants: getPlanObject( plan )
 } );
 
 export default connect( mapStateToProps )( localize( SeoSettingsNudge ) );
