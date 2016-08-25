@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	includes = require( 'lodash/includes' ),
 	map = require( 'lodash/map' ),
@@ -9,10 +9,11 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
+const wpcom = require( 'lib/wp' ),
 	config = require( 'config' ),
 	analytics = require( 'lib/analytics' ),
 	formState = require( 'lib/form-state' ),
+	userUtils = require( 'lib/user/utils' ),
 	SignupActions = require( 'lib/signup/actions' ),
 	ValidationFieldset = require( 'signup/validation-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
@@ -25,12 +26,12 @@ var wpcom = require( 'lib/wp' ),
 /**
  * Constants
  */
-var VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
+const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 
 /**
  * Module variables
  */
-var siteUrlsSearched = [],
+let siteUrlsSearched = [],
 	timesValidationFailed = 0;
 
 module.exports = React.createClass( {
@@ -44,7 +45,7 @@ module.exports = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		var initialState;
+		let initialState;
 
 		if ( this.props.step && this.props.step.form ) {
 			initialState = this.props.step.form;
@@ -82,7 +83,7 @@ module.exports = React.createClass( {
 	},
 
 	sanitize: function( fields, onComplete ) {
-		var sanitizedSubdomain = this.sanitizeSubdomain( fields.site );
+		const sanitizedSubdomain = this.sanitizeSubdomain( fields.site );
 		if ( fields.site !== sanitizedSubdomain ) {
 			onComplete( { site: sanitizedSubdomain } );
 		}
@@ -94,8 +95,8 @@ module.exports = React.createClass( {
 			blog_title: fields.site,
 			validate: true
 		}, function( error, response ) {
-			var messages = {},
-				errorObject = {};
+			let messages = {};
+			const errorObject = {};
 
 			debug( error, response );
 
@@ -133,7 +134,7 @@ module.exports = React.createClass( {
 		this.setState( { submitting: true } );
 
 		this.formStateController.handleSubmit( function( hasErrors ) {
-			var site = formState.getFieldValue( this.state.form, 'site' );
+			const site = formState.getFieldValue( this.state.form, 'site' );
 
 			this.setState( { submitting: false } );
 
@@ -186,8 +187,8 @@ module.exports = React.createClass( {
 	},
 
 	getErrorMessagesWithLogin: function( fieldName ) {
-		var link = config( 'login_url' ) + '?redirect_to=' + window.location.href,
-			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
+		let link = config( 'login_url' ) + '?redirect_to=' + window.location.href;
+		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {
 			return;
@@ -195,25 +196,26 @@ module.exports = React.createClass( {
 
 		return map( messages, function( message, error_code ) {
 			if ( error_code === 'blog_name_reserved' ) {
-				return (
-					<span>
-						<p>
-							{ message }&nbsp;
-							{ this.translate( 'Is this your username? {{a}}Log in now to claim this site address{{/a}}.', {
-								components: {
-									a: <a href={ link } />
-								}
-							} ) }
-						</p>
-					</span>
-				);
+				const returnValue = [ <span><p>{ message }</p></span> ];
+
+				if ( ! userUtils.isLoggedIn() ) {
+					returnValue.push(
+						this.translate( 'Is this your username? {{a}}Log in now to claim this site address{{/a}}.', {
+							components: {
+								a: <a href={ link } />
+							}
+						} )
+					);
+				}
+
+				return returnValue;
 			}
 			return message;
 		}.bind( this ) );
 	},
 
 	formFields: function() {
-		var fieldDisabled = this.state.submitting;
+		let fieldDisabled = this.state.submitting;
 
 		return <ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
 			<FormLabel htmlFor="site">
@@ -222,16 +224,16 @@ module.exports = React.createClass( {
 			<FormTextInput
 				autoFocus={ true }
 				autoCapitalize={ 'off' }
-				className='site-signup-step__site-url'
+				className={ 'site-signup-step__site-url' }
 				disabled={ fieldDisabled }
-				type='text'
-				name='site'
+				type={ 'text' }
+				name={ 'site' }
 				value={ formState.getFieldValue( this.state.form, 'site' ) }
 				isError={ formState.isFieldInvalid( this.state.form, 'site' ) }
 				isValid={ formState.isFieldValid( this.state.form, 'site' ) }
 				onBlur={ this.handleBlur }
 				onChange={ this.handleChangeEvent } />
-			<span className='site-signup-step__wordpress-domain-suffix'>.wordpress.com</span>
+			<span className={ 'site-signup-step__wordpress-domain-suffix' }>.wordpress.com</span>
 		</ValidationFieldset>;
 	},
 
