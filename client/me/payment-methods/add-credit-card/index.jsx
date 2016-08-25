@@ -2,38 +2,52 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
-import React, { Component } from 'react';
+import page from 'page';
+import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
  */
+import { addStoredCard } from 'state/stored-cards/actions';
+import analytics from 'lib/analytics';
 import { concatTitle } from 'lib/react-helpers';
 import CreditCardPage from 'me/purchases/components/credit-card-page';
 import DocumentHead from 'components/data/document-head';
+import HeaderCake from 'components/header-cake' ;
+import Main from 'components/main';
 import * as titles from 'me/payment-methods/titles';
 
 class AddCreditCard extends Component {
 	static propTypes = {
+		addStoredCard: PropTypes.func.isRequired
 	};
+
+	goToBillingHistory() {
+		page( '/me/billing' );
+	}
+
+	recordFormSubmitEvent() {
+		analytics.tracks.recordEvent( 'calypso_add_credit_card_form_submit' );
+	}
 
 	render() {
 		return (
-			<div>
+			<Main>
 				<DocumentHead title={ concatTitle( titles.paymentMethods, titles.addCreditCard ) } />
+
+				<HeaderCake onClick={ this.goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
+
 				<CreditCardPage
-					goBack={ noop }
-					recordFormSubmitEvent={ noop }
-					successCallback={ noop }
-					title={ titles.addCreditCard } />
-			</div>
+					recordFormSubmitEvent={ this.recordFormSubmitEvent }
+					saveStoredCard={ this.props.addStoredCard }
+					successCallback={ this.goToBillingHistory } />
+			</Main>
 		);
 	}
 }
 
 const mapDispatchToProps = {
+	addStoredCard
 };
 
-export default connect( {}, mapDispatchToProps )( AddCreditCard );
-
-export default AddCreditCard;
+export default connect( null, mapDispatchToProps )( AddCreditCard );

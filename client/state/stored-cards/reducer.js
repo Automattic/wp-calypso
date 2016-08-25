@@ -9,6 +9,7 @@ import { combineReducers } from 'redux';
 import {
 	SERIALIZE,
 	DESERIALIZE,
+	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_FETCH,
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED,
@@ -27,6 +28,9 @@ import {
  */
 export const items = ( state = [], action ) => {
 	switch ( action.type ) {
+		case STORED_CARDS_ADD_COMPLETED:
+			return [ ...state, action.item ];
+
 		case STORED_CARDS_FETCH_COMPLETED:
 			return action.list;
 

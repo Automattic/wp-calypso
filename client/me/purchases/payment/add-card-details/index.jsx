@@ -12,8 +12,10 @@ import CreditCardPage from 'me/purchases/components/credit-card-page';
 import CreditCardPageLoadingPlaceholder from 'me/purchases/components/credit-card-page/loading-placeholder';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import HeaderCake from 'components/header-cake' ;
 import { isDataLoading, recordPageView } from 'me/purchases/utils';
 import { isRequestingSites } from 'state/sites/selectors';
+import Main from 'components/main';
 import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import titles from 'me/purchases/titles';
@@ -30,8 +32,7 @@ class AddCardDetails extends PurchaseCardDetails {
 		selectedSite: PropTypes.oneOfType( [
 			PropTypes.object,
 			PropTypes.bool
-		] ),
-		title: PropTypes.string.isRequired
+		] )
 	};
 
 	componentWillMount() {
@@ -52,17 +53,21 @@ class AddCardDetails extends PurchaseCardDetails {
 				<div>
 					<QueryUserPurchases userId={ user.get().ID } />
 
-					<CreditCardPageLoadingPlaceholder title={ this.props.title } />
+					<CreditCardPageLoadingPlaceholder title={ titles.addCardDetails } />
 				</div>
 			);
 		}
 
-		return <CreditCardPage
-			apiParams={ this.getApiParams() }
-			goBack={ this.goBack }
-			recordFormSubmitEvent={ this.recordFormSubmitEvent }
-			successCallback={ this.successCallback }
-			title={ this.props.title } />;
+		return (
+			<Main>
+				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.addCardDetails }</HeaderCake>
+
+				<CreditCardPage
+					apiParams={ this.getApiParams() }
+					recordFormSubmitEvent={ this.recordFormSubmitEvent }
+					successCallback={ this.successCallback } />
+			</Main>
+		);
 	}
 }
 
@@ -71,8 +76,7 @@ const mapStateToProps = ( state, { purchaseId } ) => {
 		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		selectedPurchase: getByPurchaseId( state, purchaseId ),
-		selectedSite: getSelectedSiteSelector( state ),
-		title: titles.addCardDetails
+		selectedSite: getSelectedSiteSelector( state )
 	};
 };
 

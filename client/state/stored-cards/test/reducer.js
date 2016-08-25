@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_FETCH,
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED,
@@ -61,6 +62,24 @@ describe( 'items', () => {
 			isFetching: false,
 			isDeleting: false,
 			hasLoadedFromServer: false
+		} );
+	} );
+
+	it( 'should add a stored card to the list if the stored card add request succeeded', () => {
+		const state = reducer( deepFreeze( {
+			items: [ STORED_CARDS_FROM_API[ 0 ] ],
+			isFetching: false,
+			hasLoadedFromServer: true
+		} ), {
+			type: STORED_CARDS_ADD_COMPLETED,
+			item: STORED_CARDS_FROM_API[ 1 ]
+		} );
+
+		expect( state ).to.be.eql( {
+			items: STORED_CARDS_FROM_API,
+			isFetching: false,
+			isDeleting: false,
+			hasLoadedFromServer: true
 		} );
 	} );
 
