@@ -220,3 +220,13 @@
 		max-width: 634px;
 	}
 }
+
+.checkout-thank-you__verification-notice {
+  max-width: 500px;
+  text-align: left;
+  margin: 0 auto;
+
+	strong {
+		white-space: nowrap;
+	}
+}

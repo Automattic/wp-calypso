@@ -1,0 +1,150 @@
+.plan-thank-you-card {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  background-color: #328246;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 56px auto 24px;
+  color: $white;
+  font-family: $sans;
+
+  @media ( max-width: 500px ) {
+    margin-top: 0;
+  }
+}
+
+.plan-thank-you-card__header {
+  background-color: #4AB866;
+  padding: 75px 0 30px;
+  position: relative;
+  z-index: 1;
+}
+
+.plan-thank-you-card__body {
+  padding: 40px;
+}
+
+.plan-thank-you-card__heading {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.plan-thank-you-card__description {
+  font-size: 15px;
+  font-weight: 400;
+  width: 280px;
+  max-width: 100%;
+  margin: 0 auto 30px;
+  line-height: 20px;
+}
+
+.plan-thank-you-card__button {
+  display: inline-block;
+  border-radius: 4px;
+  background-color: $white;
+  color: #194324;
+  font-size: 14px;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 60px;
+  box-shadow: 0px 1px 0px 1px rgba(0, 0, 0, .3);
+
+  @media ( max-width: 320px) {
+    padding: 0;
+    width: 100%;
+    text-align: center;
+  }
+}
+
+.plan-thank-you-card__button:hover {
+  box-shadow: 0px 1px 0px 1px rgba(0, 0, 0, .5);
+  color: #194324;
+}
+
+.plan-thank-you-card__plan-name {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.plan-thank-you-card__background-icons {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  color: #72D58B;
+
+  svg {
+    position: absolute;
+
+    @media ( max-width: 430px ) {
+      path {
+        transform: scale(.7);
+      }
+    }
+  }
+
+  svg:nth-child(1) {
+    top: 18px;
+    left: 14.8%;
+    transform: rotate(14deg);
+  }
+  svg:nth-child(2) {
+    top: 118px;
+    left: 67.4%;
+    transform: rotate(42deg);
+  }
+  svg:nth-child(3) {
+    top: 108px;
+    left: 86.2%;
+    transform: rotate(-19deg);
+  }
+  svg:nth-child(4) {
+    top: 190px;
+    left: 8.4%;
+    transform: rotate(-223deg);
+  }
+  svg:nth-child(5) {
+    top: 233px;
+    left: 70.6%;
+    transform: rotate(-66deg);
+  }
+  svg:nth-child(6) {
+    top: 83px;
+    left: 4.2%;
+    transform: rotate(40deg);
+  }
+  svg:nth-child(7) {
+    top: 213px;
+    left: 23.8%;
+    transform: rotate(30deg);
+  }
+  svg:nth-child(8) {
+    top: 30px;
+    left: 37.8%;
+    transform: rotate(114deg);
+  }
+  svg:nth-child(9) {
+    top: 26px;
+    left: 78.4%;
+    transform: rotate(-11deg);
+  }
+  svg:nth-child(10) {
+    top: 101px;
+    left: 21%;
+    transform: rotate(-9deg);
+  }
+  svg:nth-child(11) {
+    top: 21px;
+    left: 62%;
+    transform: rotate(-33deg);
+  }
+  svg:nth-child(12) {
+    top: 161px;
+    left: 77.6%;
+    transform: rotate(-43deg);
+  }
+}

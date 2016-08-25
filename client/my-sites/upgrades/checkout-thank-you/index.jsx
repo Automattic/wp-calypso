@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import find from 'lodash/find';
 import page from 'page';
 import React from 'react';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -22,10 +23,12 @@ import { fetchReceipt } from 'state/receipts/actions';
 import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
+import { getCurrentUser } from 'state/current-user/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'components/happiness-support';
 import HeaderCake from 'components/header-cake';
+import PlanThankYouCard from 'blocks/plan-thank-you-card';
 import {
 	isChargeback,
 	isDomainMapping,
@@ -50,6 +53,7 @@ import BusinessPlanDetails from './business-plan-details';
 import PurchaseDetail from 'components/purchase-detail';
 import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
+import Notice from 'components/notice';
 import upgradesPaths from 'my-sites/upgrades/paths';
 
 function getPurchases( props ) {
@@ -107,6 +111,21 @@ const CheckoutThankYou = React.createClass( {
 		return getPurchases( props ).some( purchase => isPlan( purchase ) || isDomainProduct( purchase ) );
 	},
 
+	renderConfirmationNotice: function() {
+		if ( ! this.props.user || ! this.props.user.email || this.props.email_verified ) {
+			return;
+		}
+
+		return (
+			<Notice className="checkout-thank-you__verification-notice" showDismiss={ false }>
+				{ this.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. Please use this time to confirm your email address.', {
+					args: { email: this.props.user.email },
+					components: { strong: <strong />
+				} } ) }
+			</Notice>
+		);
+	},
+
 	isDataLoaded() {
 		if ( this.isGenericReceipt() ) {
 			return true;
@@ -155,10 +174,26 @@ const CheckoutThankYou = React.createClass( {
 		} );
 
 		let purchases = null,
-			wasJetpackPlanPurchased = false;
+			wasJetpackPlanPurchased = false,
+			wasOnlyDotcomPlanPurchased = false;
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
+			wasOnlyDotcomPlanPurchased = purchases.every( isPlan );
+		}
+
+		const createdAt = moment( this.props.selectedSite.options.created_at );
+		// TODO(marekhrabe): set time to a reasonable amount
+		const isRecent = createdAt.isAfter( moment().subtract( 10, 'hour' ) );
+		const isInAbTest = true;
+
+		if ( isInAbTest && isRecent && wasOnlyDotcomPlanPurchased ) {
+			return (
+				<Main className={ classes }>
+					<PlanThankYouCard selectedSite={ this.props.selectedSite } />
+					{ this.renderConfirmationNotice() }
+				</Main>
+			);
 		}
 
 		return (
@@ -279,7 +314,8 @@ export default connect(
 	( state, props ) => {
 		return {
 			receipt: getReceiptById( state, props.receiptId ),
-			sitePlans: getPlansBySite( state, props.selectedSite )
+			sitePlans: getPlansBySite( state, props.selectedSite ),
+			user: getCurrentUser( state )
 		};
 	},
 	( dispatch ) => {
