@@ -3,21 +3,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
+import QueryPlans from 'components/data/query-plans';
 import Gridicon from 'components/gridicon';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
 import FeatureExample from 'components/feature-example';
 import FeatureComparison from 'my-sites/feature-comparison';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
 import { preventWidows } from 'lib/formatting';
-import { getFeatureTitle, planHasFeature, getPlan } from 'lib/plans';
+import formatCurrency from 'lib/format-currency';
+import { getFeatureTitle, planHasFeature } from 'lib/plans';
+import { isFreePlan } from 'lib/products-values';
+import { getPlanBySlug } from 'state/plans/selectors';
 import {
 	PLAN_BUSINESS,
 	FEATURE_ADVANCED_DESIGN,
@@ -37,50 +41,51 @@ const featuresToShow = [
 	FEATURE_VIDEO_UPLOADS
 ];
 
-const AdvancedSEOUpgradeNudge = ( { translate, site } ) => {
+const SeoPreviewNudge = ( { translate, site, plan = {}, businessPlan = {} } ) => {
+	const planPrice = isFreePlan( plan )
+		? translate( 'Free for life' )
+		: translate( '%(price)s per month, billed yearly', {
+			args: {
+				price: formatCurrency( plan.raw_price / 12, plan.currency_code )
+			}
+		} );
+	const businessPlanPrice = formatCurrency( businessPlan.raw_price / 12, businessPlan.currency_code );
+
 	return (
-		<div className="seo-preview-nudge">
-			<div className="seo-preview-nudge__upgrade">
-				<UpgradeNudge
-					title={ translate( 'Get Advanced SEO Features' ) }
-					message={ translate( 'Adds tools to enhance your site\'s content for better results on search engines and social media.' ) }
-					feature="advanced-seo"
-					event="advanced_seo_preview"
-					icon="share"
-				/>
+		<div className="preview-upgrade-nudge">
+			<QueryPlans />
+			<div className="preview-upgrade-nudge__plan">
+				<div className="preview-upgrade-nudge__plan-icon"></div>
 			</div>
-			<div className="seo-preview-nudge__plan">
-				<div className="seo-preview-nudge__plan-icon"></div>
-			</div>
-			<h2 className="seo-preview-nudge__title">{ translate( 'Advanced SEO Features' ) }</h2>
-			<div className="seo-preview-nudge__features">
+			<h2 className="preview-upgrade-nudge__title">{ translate( 'Advanced SEO Features' ) }</h2>
+			<div className="preview-upgrade-nudge__features">
 				<FeatureExample>
 					<img src="/calypso/images/advanced-seo-nudge.png" />
 				</FeatureExample>
-				<div className="seo-form-nudge__features-details">
-					<p className="seo-form-nudge__features-title">
+				<div className="preview-upgrade-nudge__features-details">
+					<p className="preview-upgrade-nudge__features-title">
 						{ translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
 					</p>
-					<ul className="seo-form-nudge__features-list">
-						<li className="seo-form-nudge__features-list-item">
-							<Gridicon className="seo-form-nudge__features-list-item-checkmark" icon="checkmark" />
+					<ul className="preview-upgrade-nudge__features-list">
+						<li className="preview-upgrade-nudge__features-list-item">
+							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
 							{ preventWidows( translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ) ) }
 						</li>
-						<li className="seo-form-nudge__features-list-item">
-							<Gridicon className="seo-form-nudge__features-list-item-checkmark" icon="checkmark" />
+						<li className="preview-upgrade-nudge__features-list-item">
+							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
 							{ preventWidows( translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ) ) }
 						</li>
-						<li className="seo-form-nudge__features-list-item">
-							<Gridicon className="seo-form-nudge__features-list-item-checkmark" icon="checkmark" />
+						<li className="preview-upgrade-nudge__features-list-item">
+							<Gridicon className="preview-upgrade-nudge__features-list-item-checkmark" icon="checkmark" />
 							{ preventWidows( translate( 'Modify front page meta data in order to customize how your site appears to search engines.' ) ) }
 						</li>
 					</ul>
 				</div>
 			</div>
-			<FeatureComparison className="seo-preview-nudge__feature-comparison">
+			<FeatureComparison className="preview-upgrade-nudge__feature-comparison">
 				<PlanCompareCard
-					title={ getPlan( site.plan.product_slug ).getTitle() }
-					line={ getPlan( site.plan.product_slug ).getPriceTitle() }
+					title={ plan.product_name_short }
+					line={ planPrice }
 					buttonName={ translate( 'Your Plan' ) }
 					currentPlan={ true } >
 					<PlanCompareCardItem unavailable={ true } >
@@ -95,8 +100,8 @@ const AdvancedSEOUpgradeNudge = ( { translate, site } ) => {
 					) ) }
 				</PlanCompareCard>
 				<PlanCompareCard
-					title={ getPlan( PLAN_BUSINESS ).getTitle() }
-					line={ getPlan( PLAN_BUSINESS ).getPriceTitle() }
+					title={ businessPlan.product_name_short }
+					line={ translate( '%(price)s per month, billed yearly', { args: { price: businessPlanPrice } } ) }
 					buttonName={ translate( 'Upgrade' ) }
 					onClick={ () => page( '/checkout/' + site.domain + '/business' ) }
 					currentPlan={ false }
@@ -113,6 +118,22 @@ const AdvancedSEOUpgradeNudge = ( { translate, site } ) => {
 			</FeatureComparison>
 		</div>
 	);
-}
+};
 
-export default localize( AdvancedSEOUpgradeNudge );
+SeoPreviewNudge.propTypes = {
+	translate: PropTypes.func.isRequired,
+	site: PropTypes.object,
+	plan: PropTypes.object,
+	businessPlan: PropTypes.object
+};
+
+const mapStateToProps = ( state, ownProps ) => {
+	const { site } = ownProps;
+
+	return {
+		plan: getPlanBySlug( state, site.plan.product_slug ),
+		businessPlan: getPlanBySlug( state, PLAN_BUSINESS )
+	};
+};
+
+export default connect( mapStateToProps )( localize( SeoPreviewNudge ) );

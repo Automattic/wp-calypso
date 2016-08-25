@@ -17,7 +17,7 @@ import {
 /**
  * Internal dependencies
  */
-import UpgradeNudge from './upgrade-nudge'
+import SeoPreviewUpgradeNudge from 'components/seo/preview-upgrade-nudge';
 import ReaderPreview from 'components/seo/reader-preview';
 import FacebookPreview from 'components/seo/facebook-preview';
 import TwitterPreview from 'components/seo/twitter-preview';
@@ -204,7 +204,7 @@ export class SeoPreviewPane extends PureComponent {
 
 		if ( showNudge ) {
 			return (
-				<UpgradeNudge { ...{ site } } />
+				<SeoPreviewUpgradeNudge { ...{ site } } />
 			);
 		}
 
