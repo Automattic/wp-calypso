@@ -27,7 +27,7 @@ import support from 'lib/url/support';
 const countriesList = CountriesList.forPayments();
 const wpcom = wpcomFactory.undocumented();
 
-const CreditCardPage = React.createClass( {
+const CreditCardForm = React.createClass( {
 	propTypes: {
 		apiParams: PropTypes.object,
 		initialValues: PropTypes.object,
@@ -238,14 +238,14 @@ const CreditCardPage = React.createClass( {
 	render() {
 		return (
 			<form onSubmit={ this.onSubmit }>
-				<Card className="credit-card-page__content">
+				<Card className="credit-card-form__content">
 					<CreditCardFormFields
 						card={ this.getCardDetails() }
 						countriesList={ countriesList }
 						eventFormName="Edit Card Details Form"
 						isFieldInvalid={ this.isFieldInvalid }
 						onFieldChange={ this.onFieldChange } />
-					<div className="credit-card-page__card-terms">
+					<div className="credit-card-form__card-terms">
 						<Gridicon icon="info-outline" size={ 18 } />
 						<p>
 							{ this.translate(
@@ -267,7 +267,7 @@ const CreditCardPage = React.createClass( {
 					</div>
 				</Card>
 
-				<CompactCard className="credit-card-page__footer">
+				<CompactCard className="credit-card-form__footer">
 					<em>{ this.translate( 'All fields required' ) }</em>
 
 					<FormButton
@@ -283,4 +283,4 @@ const CreditCardPage = React.createClass( {
 	}
 } );
 
-export default CreditCardPage;
+export default CreditCardForm;
