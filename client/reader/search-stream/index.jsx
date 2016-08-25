@@ -165,12 +165,6 @@ const FeedStream = React.createClass( {
 			? <EmptyContent query={ this.props.query } />
 			: blankContent;
 
-		// Override showing of EmptyContent in Reader stream
-		let showEmptyContent = true;
-		if ( this.props.showBlankContent === false || this.props.query ) {
-			showEmptyContent = false;
-		}
-
 		const store = this.props.store || emptyStore;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
@@ -182,7 +176,7 @@ const FeedStream = React.createClass( {
 			<Stream { ...this.props } store={ store }
 				listName={ this.translate( 'Search' ) }
 				emptyContent={ emptyContent }
-				showEmptyContent={ showEmptyContent }
+				showDefaultEmptyContentIfMissing={ this.props.showBlankContent }
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory }
 				className="search-stream" >
