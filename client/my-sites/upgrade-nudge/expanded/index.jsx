@@ -31,10 +31,10 @@ const SeoSettingsNudge = ( { translate, plan = {}, planConstants = {}, features,
 	}
 
 	return (
-		<Card className="settings-upgrade-nudge">
+		<Card className="upgrade-nudge-expanded">
 			<QueryPlans />
 			<TrackComponentView eventName="calypso_seo_settings_upgrade_nudge_impression" />
-			<div className="settings-upgrade-nudge__business-plan-card">
+			<div className="upgrade-nudge-expanded__business-plan-card">
 				<PlanCompareCard
 					title={ plan.product_name_short }
 					line={ translate( '%(price)s per month, billed yearly', { args: { price } } ) }
@@ -52,21 +52,21 @@ const SeoSettingsNudge = ( { translate, plan = {}, planConstants = {}, features,
 					) ) }
 				</PlanCompareCard>
 			</div>
-			<div className="settings-upgrade-nudge__description">
-				<div className="settings-upgrade-nudge__title">
-					<div className="settings-upgrade-nudge__title-plan">
-						<div className="settings-upgrade-nudge__title-plan-icon"></div>
+			<div className="upgrade-nudge-expanded__description">
+				<div className="upgrade-nudge-expanded__title">
+					<div className="upgrade-nudge-expanded__title-plan">
+						<div className="upgrade-nudge-expanded__title-plan-icon"></div>
 					</div>
-					<p className="settings-upgrade-nudge__title-message">
+					<p className="upgrade-nudge-expanded__title-message">
 						{ title }
 					</p>
 				</div>
-				<p className="settings-upgrade-nudge__subtitle">
+				<p className="upgrade-nudge-expanded__subtitle">
 					{ subtitle }
 				</p>
-				<ul className="settings-upgrade-nudge__features">
-					{ benefits.map( ( benefitTitle, index ) =>  <li key={ index } className="settings-upgrade-nudge__feature-item">
-						<Gridicon className="settings-upgrade-nudge__feature-item-checkmark" icon="checkmark" />
+				<ul className="upgrade-nudge-expanded__features">
+					{ benefits.map( ( benefitTitle, index ) =>  <li key={ index } className="upgrade-nudge-expanded__feature-item">
+						<Gridicon className="upgrade-nudge-expanded__feature-item-checkmark" icon="checkmark" />
 						{ preventWidows( benefitTitle ) }
 					</li> ) }
 				</ul>
