@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 import Card from 'components/card';
 import CourseScheduleItem from './course-schedule-item';
 import HelpTeaserButton from '../help-teaser-button';
+import CourseVideos from './course-videos';
 import sitesList from 'lib/sites-list';
 
 /**
@@ -23,6 +24,7 @@ export default localize( ( props ) => {
 		description,
 		schedule,
 		isBusinessPlanUser,
+		videos,
 		translate
 	} = props;
 
@@ -41,12 +43,7 @@ export default localize( ( props ) => {
 						description={ translate( 'Upgrade to access webinars and courses to learn how to make the most of your site' ) }/> }
 			</Card>
 			{ schedule.map( ( item, key ) => <CourseScheduleItem { ...item } key={ key } isBusinessPlanUser={ isBusinessPlanUser } /> ) }
-			{
-				isBusinessPlanUser &&
-				<Card className="help-courses__course-recording">
-					Show most recent recording here
-				</Card>
-			}
+			{ isBusinessPlanUser && <CourseVideos videos={ videos } /> }
 		</div>
 	);
 } );
