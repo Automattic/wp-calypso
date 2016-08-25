@@ -10,6 +10,8 @@ import nock from 'nock';
 import {
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
+	JETPACK_CONNECT_REDIRECT,
+	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -20,6 +22,7 @@ import {
 
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
+import path from 'lib/route/path';
 
 describe( 'actions', () => {
 	let actions, sandbox, spy;
@@ -29,6 +32,7 @@ describe( 'actions', () => {
 	useSandbox( newSandbox => {
 		sandbox = newSandbox;
 		spy = sandbox.spy();
+		sandbox.stub( path, 'externalRedirect' );
 	} );
 
 	beforeEach( function() {
@@ -59,6 +63,61 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
 				url: url
+			} );
+		} );
+	} );
+
+	describe( '#goToRemoteAuth()', () => {
+		it( 'should dispatch redirect action when called', () => {
+			const { goToRemoteAuth } = actions;
+			const url = 'http://example.com';
+
+			goToRemoteAuth( url )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: JETPACK_CONNECT_REDIRECT,
+				url: url
+			} );
+		} );
+	} );
+
+	describe( '#goToPluginInstall()', () => {
+		it( 'should dispatch redirect action when called', () => {
+			const { goToPluginInstall } = actions;
+			const url = 'http://example.com';
+
+			goToPluginInstall( url )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: JETPACK_CONNECT_REDIRECT,
+				url: url
+			} );
+		} );
+	} );
+
+	describe( '#goToPluginActivation()', () => {
+		it( 'should dispatch redirect action when called', () => {
+			const { goToPluginActivation } = actions;
+			const url = 'http://example.com';
+
+			goToPluginActivation( url )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: JETPACK_CONNECT_REDIRECT,
+				url: url
+			} );
+		} );
+	} );
+
+	describe( '#goBackToWpAdmin()', () => {
+		it( 'should dispatch redirect action when called', () => {
+			const { goBackToWpAdmin } = actions;
+			const url = 'http://example.com';
+
+			goBackToWpAdmin( url )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 			} );
 		} );
 	} );
