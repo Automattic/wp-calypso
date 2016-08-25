@@ -20,9 +20,29 @@ import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { PLAN_PERSONAL, getPlanObject, getPlanClass } from 'lib/plans/constants';
+import analytics from 'lib/analytics';
 
-const ExpandedUpgradeNudge = ( { translate, plan = {}, planConstants = {}, planClass, features, upgrade = () => {}, benefits, title, subtitle, highlightedFeature } ) => {
+const ExpandedUpgradeNudge = ( {
+	translate,
+	plan = {},
+	planConstants = {},
+	planClass,
+	features,
+	upgrade = () => {},
+	benefits,
+	title,
+	subtitle,
+	highlightedFeature,
+	eventName = 'calypso_upgrade_nudge_impression',
+	event=''
+} ) => {
 	const price = formatCurrency( plan.raw_price / 12, plan.currency_code );
+	const eventProperties = {
+		cta_size: 'expanded',
+		cta_name: event,
+		cta_feature: highlightedFeature
+	};
+
 	if ( ! features ) {
 		if ( planConstants.promotedFeatures ) {
 			features = planConstants.promotedFeatures.filter( feature => feature !== highlightedFeature ).slice( 0, 6 );
@@ -34,13 +54,16 @@ const ExpandedUpgradeNudge = ( { translate, plan = {}, planConstants = {}, planC
 	return (
 		<Card className="upgrade-nudge-expanded">
 			<QueryPlans />
-			<TrackComponentView eventName="calypso_seo_settings_upgrade_nudge_impression" />
+			<TrackComponentView { ...( { eventName, eventProperties } ) } />
 			<div className="upgrade-nudge-expanded__business-plan-card">
 				<PlanCompareCard
 					title={ plan.product_name_short }
 					line={ translate( '%(price)s per month, billed yearly', { args: { price } } ) }
 					buttonName={ translate( 'Upgrade' ) }
-					onClick={ upgrade }
+					onClick={ () => {
+						analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', eventProperties );
+						upgrade();
+					} }
 					currentPlan={ false }
 					popularRibbon={ true } >
 					<PlanCompareCardItem highlight={ true } >
