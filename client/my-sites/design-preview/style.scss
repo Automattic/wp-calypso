@@ -1,0 +1,12 @@
+.design-preview__mobile-show-sidebar {
+	width: 75px;
+	display: flex;
+	align-items: center;
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
+}
+
+.design-preview__mobile-show-sidebar-label {
+	margin-left: 6px;
+}
