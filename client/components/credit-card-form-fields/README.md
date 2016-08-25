@@ -1,8 +1,8 @@
-CreditCardForm
+CreditCardFormFields
 ==============
 
 
-`CreditCardForm` is a React component that is used to display a credit card form with the following input fields:
+`CreditCardFormFields` is a React component that is used to display a credit card form body with the following input fields:
 
 * Credit card number
 * Credit card expiration date
@@ -17,12 +17,12 @@ Some of these fields use [masking](https://en.wikipedia.org/wiki/Input_mask), i.
 
 ```jsx
 import React from 'react';
-import CreditCardForm from 'components/upgrades/credit-card-form';
+import CreditCardFormFields from 'components/credit-card-form-fields';
 
 React.createClass( {
 	render: function() {
 		return (
-			<CreditCardForm
+			<CreditCardFormFields
 				card={ this.props.card }
 				countriesList={ this.props.countriesList }
 				eventFormName="Credit Card Form"
