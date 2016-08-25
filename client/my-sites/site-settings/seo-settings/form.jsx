@@ -588,7 +588,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' ),
-		showUpgradeNudge: ! isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' )
+		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' )
 	};
 };
 

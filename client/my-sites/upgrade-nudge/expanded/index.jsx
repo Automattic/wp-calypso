@@ -19,12 +19,15 @@ import formatCurrency from 'lib/format-currency';
 import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PERSONAL, getPlanObject, getPlanClass } from 'lib/plans/constants';
+import { PLAN_PERSONAL, getPlanObject, getPlanClass, plansList } from 'lib/plans/constants';
 import analytics from 'lib/analytics';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 const ExpandedUpgradeNudge = ( {
 	translate,
 	plan = {},
+	currentPlan = {},
 	planConstants = {},
 	planClass,
 	features,
@@ -36,6 +39,14 @@ const ExpandedUpgradeNudge = ( {
 	eventName = 'calypso_upgrade_nudge_impression',
 	event=''
 } ) => {
+	//Display only if upgrade path available
+	if (
+		! currentPlan ||
+		( planConstants.availableFor && ! planConstants.availableFor( currentPlan.productSlug ) )
+	) {
+		return null;
+	}
+
 	const price = formatCurrency( plan.raw_price / 12, plan.currency_code );
 	const eventProperties = {
 		cta_size: 'expanded',
@@ -44,8 +55,8 @@ const ExpandedUpgradeNudge = ( {
 	};
 
 	if ( ! features ) {
-		if ( planConstants.promotedFeatures ) {
-			features = planConstants.promotedFeatures.filter( feature => feature !== highlightedFeature ).slice( 0, 6 );
+		if ( planConstants.getPromotedFeatures ) {
+			features = planConstants.getPromotedFeatures().filter( feature => feature !== highlightedFeature ).slice( 0, 6 );
 		} else {
 			features = [];
 		}
@@ -107,7 +118,8 @@ ExpandedUpgradeNudge.propTypes = {
 
 const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	plan: getPlanBySlug( state, plan ),
-	planConstants: getPlanObject( plan ),
+	currentPlan: getCurrentPlan( state, getSelectedSiteId( state ) ),
+	planConstants: plansList[ plan ],
 	planClass: getPlanClass( plan )
 } );
 
