@@ -11,7 +11,7 @@ import QuerySiteVouchers from 'components/data/query-site-vouchers';
 
 export default ( { selectedSite } ) => {
 	return (
-		<div className="plan-purchase-features__item">
+		<div className="product-purchase-features-list__item">
 			<QuerySiteVouchers siteId={ selectedSite.ID } />
 			<GoogleVoucherDetails selectedSite={ selectedSite } />
 		</div>

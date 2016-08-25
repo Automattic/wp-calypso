@@ -10,7 +10,7 @@ import config from 'config';
 import controller from 'my-sites/controller';
 import plansController from './controller';
 import googleAnalyticsLandingPage from './plan-feature/google-analytics';
-import yourPlan from './current-plan/controller';
+import currentPlanController from './current-plan/controller';
 
 export default function() {
 	if ( config.isEnabled( 'manage/plans' ) ) {
@@ -49,10 +49,18 @@ export default function() {
 		);
 
 		page(
+			'/plans/my-plan',
+			controller.siteSelection,
+			controller.sites,
+			controller.navigation,
+			currentPlanController.currentPlan
+		);
+
+		page(
 			'/plans/my-plan/:site',
 			controller.siteSelection,
 			controller.navigation,
-			yourPlan
+			currentPlanController.currentPlan
 		);
 
 		page(

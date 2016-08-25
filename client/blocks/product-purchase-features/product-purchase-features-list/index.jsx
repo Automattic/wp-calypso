@@ -2,8 +2,6 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
-import { connect } from 'react-redux';
 import { find } from 'lodash';
 
 /**
@@ -28,48 +26,40 @@ import VideoAudioPosts from './video-audio-posts';
 import MonetizeSite from './monetize-site';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
-import HappinessSupport from './happiness-support';
-import CurrentPlanHeader from './current-plan-header';
 import JetpackAntiSpam from './jetpack-anti-spam';
 import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackSurveysPolls from './jetpack-surveys-polls';
 import JetpackWordPressCom from './jetpack-wordpress-com';
-import { getPlansBySite } from 'state/sites/plans/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 import {
 	isPremium as isWpcomPremium,
 	isBusiness as isWpcomBusiness
 } from 'lib/products-values';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 
-class PlanPurchaseFeatures extends Component {
+export default class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes
 			.oneOf( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ] )
 			.isRequired,
-		selectedSite: PropTypes.object
+		selectedSite: PropTypes.object,
+		sitePlans: PropTypes.object,
+		isPlaceholder: PropTypes.bool
+	};
+
+	static defaultProps = {
+		isPlaceholder: false
 	};
 
 	getBusinessFeatures() {
 		const {
 			selectedSite,
 			sitePlans,
-			translate
 		} = this.props;
 
-		const plan = find( sitePlans.data, isWpcomBusiness ),
-			hasLoadedFromServer = sitePlans.hasLoadedFromServer;
+		const plan = find( sitePlans.data, isWpcomBusiness );
 
 		return [
-			<CurrentPlanHeader
-				selectedSite={ selectedSite }
-				key="currentPlanHeaderFeature"
-				hasLoadedFromServer={ hasLoadedFromServer }
-				title={ translate( 'Your site is on a Business plan' ) }
-				tagLine={ translate( 'Learn more about everything included with Business and take advantage of' +
-					' its professional features.' ) }
-			/>,
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
@@ -82,10 +72,6 @@ class PlanPurchaseFeatures extends Component {
 			<GoogleVouchers
 				selectedSite={ selectedSite }
 				key="googleVouchersFeature"
-			/>,
-			<HappinessSupport
-				selectedSite={ selectedSite }
-				key="hapinessSupportFeature"
 			/>,
 			<CustomizeTheme
 				selectedSite={ selectedSite }
@@ -116,21 +102,11 @@ class PlanPurchaseFeatures extends Component {
 		const {
 			selectedSite,
 			sitePlans,
-			translate
 		} = this.props;
 
-		const plan = find( sitePlans.data, isWpcomPremium ),
-			hasLoadedFromServer = sitePlans.hasLoadedFromServer;
+		const plan = find( sitePlans.data, isWpcomPremium );
 
 		return [
-			<CurrentPlanHeader
-				selectedSite={ selectedSite }
-				key="currentPlanHeaderFeature"
-				hasLoadedFromServer={ hasLoadedFromServer }
-				title={ translate( 'Your site is on a Business plan' ) }
-				tagLine={ translate( 'Learn more about everything included with Business and take advantage of' +
-					' its professional features.' ) }
-			/>,
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
@@ -143,10 +119,6 @@ class PlanPurchaseFeatures extends Component {
 			<GoogleVouchers
 				selectedSite={ selectedSite }
 				key="googleVouchersFeature"
-			/>,
-			<HappinessSupport
-				selectedSite={ selectedSite }
-				key="hapinessSupportFeature"
 			/>,
 			<CustomizeTheme
 				selectedSite={ selectedSite }
@@ -169,21 +141,11 @@ class PlanPurchaseFeatures extends Component {
 		const {
 			selectedSite,
 			sitePlans,
-			translate
 		} = this.props;
 
-		const plan = find( sitePlans.data, isWpcomPremium ),
-			hasLoadedFromServer = sitePlans.hasLoadedFromServer;
+		const plan = find( sitePlans.data, isWpcomPremium );
 
 		return [
-			<CurrentPlanHeader
-				selectedSite={ selectedSite }
-				key="currentPlanHeaderFeature"
-				hasLoadedFromServer={ hasLoadedFromServer }
-				title={ translate( 'Your site is on a Business plan' ) }
-				tagLine={ translate( 'Learn more about everything included with Business and take advantage of' +
-					' its professional features.' ) }
-			/>,
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
@@ -192,10 +154,6 @@ class PlanPurchaseFeatures extends Component {
 			<AdvertisingRemoved
 				isBusinessPlan={ false }
 				key="advertisingRemovedFeature"
-			/>,
-			<HappinessSupport
-				selectedSite={ selectedSite }
-				key="hapinessSupportFeature"
 			/>
 		];
 	}
@@ -216,6 +174,8 @@ class PlanPurchaseFeatures extends Component {
 	}
 
 	getJetpackPremiumFeatures() {
+		const {	selectedSite } = this.props;
+
 		return [
 			<JetpackBackupSecurity
 				key="jetpackBackupSecurity"
@@ -223,11 +183,20 @@ class PlanPurchaseFeatures extends Component {
 			<JetpackAntiSpam
 				key="jetpackAntiSpam"
 			/>,
-			this.getJetpackFreeFeatures()
+			<JetpackWordPressCom
+				selectedSite={ selectedSite }
+				key="jetpackWordPressCom"
+			/>,
+			<JetpackReturnToDashboard
+				selectedSite={ selectedSite }
+				key="jetpackReturnToDashboard"
+			/>
 		];
 	}
 
 	getJetpackBusinessFeatures() {
+		const {	selectedSite } = this.props;
+
 		return [
 			<JetpackBackupSecurity
 				key="jetpackBackupSecurity"
@@ -238,12 +207,23 @@ class PlanPurchaseFeatures extends Component {
 			<JetpackSurveysPolls
 				key="jetpackSurveysPolls"
 			/>,
-			this.getJetpackFreeFeatures()
+			<JetpackWordPressCom
+				selectedSite={ selectedSite }
+				key="jetpackWordPressCom"
+			/>,
+			<JetpackReturnToDashboard
+				selectedSite={ selectedSite }
+				key="jetpackReturnToDashboard"
+			/>
 		];
 	}
 
-	getPlanPurchaseFeatures() {
-		const { plan } = this.props;
+	getFeatures() {
+		const { plan, isPlaceholder } = this.props;
+
+		if ( isPlaceholder ) {
+			return null;
+		}
 
 		switch ( plan ) {
 			case PLAN_BUSINESS:
@@ -267,22 +247,9 @@ class PlanPurchaseFeatures extends Component {
 
 	render() {
 		return (
-			<div className="plan-purchase-features">
-				{ this.getPlanPurchaseFeatures() }
+			<div className="product-purchase-features-list">
+				{ this.getFeatures() }
 			</div>
 		);
 	}
 }
-
-export default connect( ( state, ownProps ) => {
-	let selectedSite = getSelectedSite( state );
-
-	if ( ownProps.selectedSite && ! selectedSite ) {
-		selectedSite = ownProps.selectedSite;
-	}
-
-	return {
-		selectedSite,
-		sitePlans: getPlansBySite( state, getSelectedSite( state ) )
-	};
-} )( localize( PlanPurchaseFeatures ) );

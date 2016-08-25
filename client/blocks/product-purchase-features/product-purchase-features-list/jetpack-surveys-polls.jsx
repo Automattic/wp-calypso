@@ -11,7 +11,7 @@ import PurchaseDetail from 'components/purchase-detail';
 
 export default localize( ( { translate } ) => {
 	return (
-		<div className="plan-purchase-features__item">
+		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon="list-checkmark"
 				title={ translate( 'Surveys & Polls' ) }
