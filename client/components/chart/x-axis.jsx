@@ -3,7 +3,9 @@
  */
 import React from 'react';
 import { throttle } from 'lodash';
-const debug = require( 'debug' )( 'calypso:module-chart:x-axis' );
+import debugModule from 'debug';
+
+const debug = debugModule( 'calypso:module-chart:x-axis' );
 
 /**
  * Internal dependencies

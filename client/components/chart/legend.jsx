@@ -4,7 +4,9 @@
 import React from 'react';
 import { find } from 'lodash';
 const PureRenderMixin = require( 'react-pure-render/mixin' );
-const debug = require( 'debug' )( 'calypso:module-chart:legend' );
+import debugModule from 'debug';
+
+const debug = debugModule( 'calypso:module-chart:legend' );
 
 /**
  * Internal dependencies
@@ -61,15 +63,8 @@ const Legend = React.createClass( {
 
 		const legendItems = this.props.availableCharts.map( function( legendItem, index ) {
 			const colorClass = legendColors[ index ],
-				checked = ( -1 !== this.props.activeCharts.indexOf( legendItem ) );
-
-<<<<<<< 3e62c004563c7407e4e39f2f39d684ba75b48e14
-			tab = find( this.props.tabs, { attr: legendItem } );
-=======
-			const tab = this.props.tabs.filter( function( propTab ) {
-				return propTab.attr === legendItem;
-			} ).shift();
->>>>>>> Fix ESLint warnings
+				checked = ( -1 !== this.props.activeCharts.indexOf( legendItem ) ),
+				tab = find( this.props.tabs, { attr: legendItem } );
 
 			return <LegendItem
 				key={ index }

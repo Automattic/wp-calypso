@@ -8,7 +8,9 @@ import React from 'react';
  */
 import Bar from './bar';
 import XAxis from './x-axis';
-const user = require( 'lib/user' )();
+import userModule from 'lib/user';
+
+const user = userModule();
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartBarContainer',

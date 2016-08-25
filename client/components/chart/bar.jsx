@@ -3,13 +3,15 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-const debug = require( 'debug' )( 'calypso:module-chart:bar' );
+import debugModule from 'debug';
+
+const debug = debugModule( 'calypso:module-chart:bar' );
 
 /**
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
-import Gridicon from 'components/Gridicon';
+import Gridicon from 'components/gridicon';
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartBar',
