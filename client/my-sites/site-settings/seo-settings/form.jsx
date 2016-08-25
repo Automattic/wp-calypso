@@ -32,7 +32,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
-import SeoSettingsUpgradeNudge from 'components/seo/settings-upgrade-nudge';
+import SeoSettingsUpgradeNudge from 'my-sites/upgrade-nudge/expanded';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
 import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
