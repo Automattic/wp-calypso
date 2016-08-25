@@ -47,7 +47,11 @@
 		width: 54px;
 		height: 54px;
 		margin: 1px;
-		background: url('/calypso/images/plans/plan-business.svg') no-repeat;
+		background: no-repeat;
+
+		&.is-business-plan {
+			background: url('/calypso/images/plans/plan-business.svg')
+		}
 	}
 
 	.upgrade-nudge-expanded__title-message {

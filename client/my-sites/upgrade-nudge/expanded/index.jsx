@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -18,9 +19,9 @@ import formatCurrency from 'lib/format-currency';
 import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PERSONAL, getPlanObject } from 'lib/plans/constants';
+import { PLAN_PERSONAL, getPlanObject, getPlanClass } from 'lib/plans/constants';
 
-const ExpandedUpgradeNudge = ( { translate, plan = {}, planConstants = {}, features, upgrade = () => {}, benefits, title, subtitle, highlightedFeature } ) => {
+const ExpandedUpgradeNudge = ( { translate, plan = {}, planConstants = {}, planClass, features, upgrade = () => {}, benefits, title, subtitle, highlightedFeature } ) => {
 	const price = formatCurrency( plan.raw_price / 12, plan.currency_code );
 	if ( ! features ) {
 		if ( planConstants.promotedFeatures ) {
@@ -55,7 +56,7 @@ const ExpandedUpgradeNudge = ( { translate, plan = {}, planConstants = {}, featu
 			<div className="upgrade-nudge-expanded__description">
 				<div className="upgrade-nudge-expanded__title">
 					<div className="upgrade-nudge-expanded__title-plan">
-						<div className="upgrade-nudge-expanded__title-plan-icon"></div>
+						<div className={ classNames( "upgrade-nudge-expanded__title-plan-icon", planClass ) }></div>
 					</div>
 					<p className="upgrade-nudge-expanded__title-message">
 						{ title }
@@ -83,7 +84,8 @@ ExpandedUpgradeNudge.propTypes = {
 
 const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	plan: getPlanBySlug( state, plan ),
-	planConstants: getPlanObject( plan )
+	planConstants: getPlanObject( plan ),
+	planClass: getPlanClass( plan )
 } );
 
 export default connect( mapStateToProps )( localize( ExpandedUpgradeNudge ) );
