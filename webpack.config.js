@@ -88,7 +88,9 @@ webpackConfig = {
 			}
 		} ),
 		new webpack.optimize.OccurenceOrderPlugin( true ),
-		new webpack.IgnorePlugin( /^props$/ )
+		new webpack.IgnorePlugin( /^props$/ ),
+		// https://github.com/epoberezkin/ajv/issues/117
+		new webpack.IgnorePlugin( /regenerator|nodent|js\-beautify/, /ajv/ )
 	],
 	externals: [ 'electron' ]
 };
