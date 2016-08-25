@@ -165,6 +165,14 @@ KeyBindings.prototype.get = function() {
 					keys: [ descriptionCtrlKey, 'enter' ],
 					text: i18n.translate( 'Reply to post' )
 				}
+			},
+			{
+				eventName: 'close-full-post',
+				keys: [ 'esc' ],
+				description: {
+					keys: [ 'esc' ],
+					text: i18n.translate( 'Close full post' )
+				}
 			}
 		],
 

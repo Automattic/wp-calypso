@@ -39,6 +39,7 @@ import Comments from 'blocks/comments';
 import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
+import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -48,11 +49,19 @@ export class FullPostView extends React.Component {
 		} );
 	}
 
+	componentDidMount() {
+		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
+	}
+
+	componentWillUnmount() {
+		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
+	}
+
 	handleBack() {
 		this.props.onClose && this.props.onClose();
 	}
 
-	handleCommentClick( ) {
+	handleCommentClick() {
 		recordAction( 'click_comments' );
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_full_post_comments_button_clicked', this.props.post );
