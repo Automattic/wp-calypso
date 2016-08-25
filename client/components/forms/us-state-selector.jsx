@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var SelectOptGroups = require( 'components/forms/select-opt-groups' );
+import { SelectOptGroups } from 'components/forms/select-opt-groups';
 
 var USStateSelector = React.createClass( {
 
