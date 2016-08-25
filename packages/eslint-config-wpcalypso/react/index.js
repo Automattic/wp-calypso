@@ -22,6 +22,7 @@ module.exports = {
 		'react/no-did-update-set-state': 2,
 		'react/no-is-mounted': 2,
 		'react/jsx-no-bind': 2,
-		'react/jsx-curly-spacing': [ 2, 'always' ]
+		'react/jsx-curly-spacing': [ 2, 'always' ],
+		'react/jsx-no-target-blank': 2
 	}
 };
