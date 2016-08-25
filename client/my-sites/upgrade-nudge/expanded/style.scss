@@ -1,4 +1,4 @@
-.upgrade_nudge-expanded {
+.upgrade-nudge-expanded {
 	display: flex;
 	flex-direction: column-reverse;
 
@@ -6,7 +6,7 @@
 		flex-direction: row;
 	}
 
-	.upgrade_nudge-expanded__description {
+	.upgrade-nudge-expanded__description {
 		margin-bottom: 20px;
 
 		@include breakpoint( ">960px" ) {
@@ -15,7 +15,7 @@
 		}
 	}
 
-	.upgrade_nudge-expanded__business-plan-card {
+	.upgrade-nudge-expanded__business-plan-card {
 		.plan-compare-card {
 			width: 100%;
 		}
@@ -29,13 +29,13 @@
 		}
 	}
 
-	.upgrade_nudge-expanded__title {
+	.upgrade-nudge-expanded__title {
 		color: $blue-wordpress;
 		display: flex;
 		margin-bottom: 10px;
 	}
 
-	.upgrade_nudge-expanded__title-plan {
+	.upgrade-nudge-expanded__title-plan {
 		width: 56px;
 		height: 56px;
 		border: solid 2px $border-ultra-light-gray;
@@ -43,33 +43,33 @@
 		align-self: center;
 	}
 
-	.upgrade_nudge-expanded__title-plan-icon {
+	.upgrade-nudge-expanded__title-plan-icon {
 		width: 54px;
 		height: 54px;
 		margin: 1px;
 		background: url('/calypso/images/plans/plan-business.svg') no-repeat;
 	}
 
-	.upgrade_nudge-expanded__title-message {
+	.upgrade-nudge-expanded__title-message {
 		font-size: 22px;
 		margin: 0 0 0 10px;
 	}
 
-	.upgrade_nudge-expanded__subtitle {
+	.upgrade-nudge-expanded__subtitle {
 		margin-bottom: 10px;
 	}
 
-	.upgrade_nudge-expanded__features {
+	.upgrade-nudge-expanded__features {
 		list-style: none;
 		margin: 0;
 	}
 
-	.upgrade_nudge-expanded__feature-item {
+	.upgrade-nudge-expanded__feature-item {
 		display: flex;
 		margin-bottom: 10px;
 	}
 
-	.upgrade_nudge-expanded__feature-item-checkmark {
+	.upgrade-nudge-expanded__feature-item-checkmark {
 		color: $blue-wordpress;
 		flex: 0 0 auto;
 		margin-right: 5px;
