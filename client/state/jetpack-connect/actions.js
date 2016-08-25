@@ -36,6 +36,7 @@ import {
 import userFactory from 'lib/user';
 import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
+import { externalRedirect } from 'lib/route/path';
 
 /**
  *  Local variables;
@@ -177,10 +178,12 @@ export default {
 				url: url,
 				type: 'remote_auth'
 			} );
-			window.location = addQueryArgs( {
-				jetpack_connect_url: url + remoteAuthPath,
-				calypso_env: calypsoEnv
-			}, apiBaseUrl );
+			externalRedirect(
+				addQueryArgs( {
+					jetpack_connect_url: url + remoteAuthPath,
+					calypso_env: calypsoEnv
+				}, apiBaseUrl )
+			);
 		};
 	},
 	goToPluginInstall( url ) {
@@ -193,10 +196,12 @@ export default {
 				url: url,
 				type: 'plugin_install'
 			} );
-			window.location = addQueryArgs( {
-				jetpack_connect_url: url + remoteInstallPath,
-				calypso_env: calypsoEnv
-			}, apiBaseUrl );
+			externalRedirect(
+				addQueryArgs( {
+					jetpack_connect_url: url + remoteInstallPath,
+					calypso_env: calypsoEnv
+				}, apiBaseUrl )
+			);
 		};
 	},
 	goToPluginActivation( url ) {
@@ -209,10 +214,12 @@ export default {
 				url: url,
 				type: 'plugin_activation'
 			} );
-			window.location = addQueryArgs( {
-				jetpack_connect_url: url + remoteActivatePath,
-				calypso_env: calypsoEnv
-			}, apiBaseUrl );
+			externalRedirect(
+				addQueryArgs( {
+					jetpack_connect_url: url + remoteActivatePath,
+					calypso_env: calypsoEnv
+				}, apiBaseUrl )
+			);
 		};
 	},
 	goBackToWpAdmin( url ) {
@@ -220,7 +227,7 @@ export default {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN
 			} );
-			window.location = url;
+			externalRedirect( url );
 		};
 	},
 	goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode ) {
@@ -234,7 +241,7 @@ export default {
 				url
 			} );
 			tracksEvent( dispatch, 'calyspo_jpc_xmlrpc_error', { error: queryObject.authorizeError } );
-			window.location = url;
+			externalRedirect( url );
 		};
 	},
 	createAccount( userData ) {
