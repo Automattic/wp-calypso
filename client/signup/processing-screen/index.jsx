@@ -1,4 +1,3 @@
-
 /**
  * External dependencies
  */
@@ -7,11 +6,20 @@ var React = require( 'react' ),
 	Gridicon = require( 'components/gridicon' ),
 	Notice = require( 'components/notice' );
 
+/**
+ * Internal dependencies
+ */
+import { abtest } from 'lib/abtest';
+
 module.exports = React.createClass( {
 	displayName: 'SignupProcessingScreen',
 
 	renderConfirmationNotice: function() {
 		if ( this.props.user && this.props.user.email_verified ) {
+			return;
+		}
+
+		if ( this.props.hasCartItems && abtest( 'paidNuxStreamlined' ) === 'streamlined' ) {
 			return;
 		}
 

@@ -94,5 +94,13 @@ module.exports = {
 			targetedWording: 50
 		},
 		defaultVariation: 'originalWording'
-	}
+	},
+	paidNuxStreamlined: {
+		datestamp: '20160825',
+		variations: {
+			original: 100,
+			streamlined: 0,
+		},
+		defaultVariation: 'original',
+	},
 };

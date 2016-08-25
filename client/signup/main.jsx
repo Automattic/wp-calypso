@@ -64,7 +64,8 @@ const Signup = React.createClass( {
 			loadingScreenStartTime: undefined,
 			resumingStep: undefined,
 			user: user.get(),
-			loginHandler: null
+			loginHandler: null,
+			hasCartItems: false,
 		};
 	},
 
@@ -132,16 +133,30 @@ const Signup = React.createClass( {
 			);
 		}
 
+		this.checkForCartItems( this.props.signupDependencies );
+
 		this.recordStep();
 	},
 
-	componentWillReceiveProps( { stepName } ) {
+	componentWillReceiveProps( { signupDependencies, stepName } ) {
 		if ( this.props.stepName !== stepName ) {
 			this.recordStep( stepName );
 		}
 
 		if ( stepName === this.state.resumingStep ) {
 			this.setState( { resumingStep: undefined } );
+		}
+
+		this.checkForCartItems( signupDependencies );
+	},
+
+	checkForCartItems( signupDependencies ) {
+		const dependenciesContainCartItem = ( dependencies ) => {
+			return dependencies && ( dependencies.cartItem || dependencies.domainItem || dependencies.themeItem );
+		};
+
+		if ( dependenciesContainCartItem( signupDependencies ) ) {
+			this.setState( { hasCartItems: true } );
 		}
 	},
 
@@ -327,9 +342,13 @@ const Signup = React.createClass( {
 			<div className="signup__step" key={ stepKey }>
 				{ this.localeSuggestions() }
 				{
-					this.state.loadingScreenStartTime ?
-					<SignupProcessingScreen steps={ this.state.progress } user={ this.state.user } loginHandler={ this.state.loginHandler }/> :
-					<CurrentComponent
+					this.state.loadingScreenStartTime
+					? <SignupProcessingScreen
+						hasCartItems={ this.state.hasCartItems }
+						steps={ this.state.progress }
+						user={ this.state.user }
+						loginHandler={ this.state.loginHandler }/>
+					: <CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
 						steps={ flow.steps }
