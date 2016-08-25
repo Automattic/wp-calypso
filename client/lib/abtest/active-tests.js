@@ -71,6 +71,14 @@ module.exports = {
 		defaultVariation: 'hideThemeUpload',
 		allowExistingUsers: false,
 	},
+	signupVerticals: {
+		datestamp: '20160825',
+		variations: {
+			verticalsV1: 80,
+			verticalsV2: 20,
+		},
+		defaultVariation: 'verticalsV1'
+	},
 	readerSearchSuggestions: {
 		datestamp: '20160804',
 		variations: {
