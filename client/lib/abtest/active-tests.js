@@ -71,13 +71,13 @@ module.exports = {
 		defaultVariation: 'hideThemeUpload',
 		allowExistingUsers: false,
 	},
-	signupVerticals: {
+	signupSurveyStep: {
 		datestamp: '20160825',
 		variations: {
-			verticalsV1: 80,
-			verticalsV2: 20,
+			surveyStepV1: 80,
+			surveyStepV2: 20,
 		},
-		defaultVariation: 'verticalsV1'
+		defaultVariation: 'surveyStepV1'
 	},
 	readerSearchSuggestions: {
 		datestamp: '20160804',
