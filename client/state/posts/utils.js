@@ -40,6 +40,10 @@ const normalizeEditedFlow = flow( [
 	getTermIdsFromEdits
 ] );
 
+const normalizeApiFlow = flow( [
+	normalizeTermsForApi
+] );
+
 const normalizeDisplayFlow = flow( [
 	firstPassCanonicalImage,
 	decodeEntities,
@@ -212,6 +216,25 @@ export function getTermIdsFromEdits( post ) {
 }
 
 /**
+ * Returns a normalized post terms object for sending to the API
+ *
+ * @param  {Object} post Raw post object
+ * @return {Object}      Normalized post object
+ */
+export function normalizeTermsForApi( post ) {
+	if ( ! post || ! post.terms ) {
+		return post;
+	}
+
+	return {
+		...post,
+		terms: pickBy( post.terms, ( terms ) => {
+			return terms.length && isString( terms[ 0 ] );
+		} )
+	};
+}
+
+/**
  * Returns a normalized post object for sending to the API
  *
  * @param  {Object} post Raw post object
@@ -222,10 +245,5 @@ export function normalizePostForApi( post ) {
 		return null;
 	}
 
-	return {
-		...post,
-		terms: pickBy( post.terms, ( terms ) => {
-			return terms.length && isString( terms[ 0 ] );
-		} )
-	};
+	return normalizeApiFlow( post );
 }

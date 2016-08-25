@@ -235,7 +235,8 @@ describe( 'actions', function() {
 					ID: 777,
 					site_ID: 123,
 					author: 3,
-					title: 'OMG Unicorns'
+					title: 'OMG Unicorns',
+					terms: {}
 				};
 
 				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;

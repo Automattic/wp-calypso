@@ -21,7 +21,7 @@ var wpcom = require( 'lib/wp' ),
 	versionCompare = require( 'lib/version-compare' ),
 	Dispatcher = require( 'dispatcher' ),
 	stats = require( './stats' );
-import { normalizePostForApi } from 'state/posts/utils';
+import { normalizeTermsForApi } from 'state/posts/utils';
 
 var PostActions;
 
@@ -84,7 +84,7 @@ function handleMetadataOperation( key, value, operation ) {
  */
 function normalizeApiAttributes( attributes ) {
 	attributes = clone( attributes );
-	attributes = normalizePostForApi( attributes );
+	attributes = normalizeTermsForApi( attributes );
 
 	if ( attributes.author ) {
 		attributes.author = attributes.author.ID;
