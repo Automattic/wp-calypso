@@ -207,18 +207,14 @@
 
 .comments__comment-username {
 	font-size: 15px;
+	color: darken( $gray, 30% );
+}
+
+a.comments__comment-username {
 	color: $blue-medium;
 
-	.gridicon {
-		height: 16px;
-		fill: lighten( $gray, 10% );
-		margin-left: 2px;
-		position: relative;
-			top: 2px;
-	}
-
-	&:hover .gridicon {
-		fill: $link-highlight;
+	&:hover {
+		color: $blue-light;
 	}
 }
 
@@ -336,6 +332,10 @@
 	display: inline-block;
 	font-size: 14px;
 	margin-bottom: 0 !important; // the !important can go when the old reader/comments is retired
+
+	&:hover {
+		color: $blue-light;
+	}
 }
 
 .comments__view-replies-btn {
@@ -357,7 +357,7 @@
 
 .comments__comment-count {
 	color: lighten( $gray, 10% );
-	size: 13px;
+	font-size: 14px;
 }
 
 .comments__comment-count-phrase {
