@@ -108,7 +108,7 @@ class GoogleVoucherDetails extends Component {
 
 	renderInitialStep() {
 		return (
-			<div>
+			<div className="google-voucher__initial-step">
 				<PurchaseButton
 					onClick={ this.onGenerateCode }
 					text={ this.props.translate( 'Generate Code' ) } />

@@ -23,7 +23,7 @@ function getCustomizeLink( selectedSite ) {
 
 export default localize( ( { selectedSite, translate } ) => {
 	return (
-		<div className="plan-purchase-features__item">
+		<div className="product-purchase-features-list__item">
 			<PurchaseDetail
 				icon="customize"
 				title={ translate( 'Customize your theme' ) }
