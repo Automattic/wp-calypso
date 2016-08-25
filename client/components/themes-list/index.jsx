@@ -5,6 +5,8 @@ import React from 'react';
 import times from 'lodash/times';
 import isEqual from 'lodash/isEqual';
 import { localize } from 'i18n-calypso';
+import identity from 'lodash/identity';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,6 +15,10 @@ import Theme from 'components/theme';
 import EmptyContent from 'components/empty-content';
 import InfiniteScroll from 'lib/mixins/infinite-scroll';
 import { PER_PAGE } from 'state/themes/themes-list/constants';
+import Card from 'components/card';
+import Button from 'components/button';
+import Gridicon from 'components/gridicon';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 /**
  * Component
@@ -31,7 +37,9 @@ export const ThemesList = React.createClass( {
 		onMoreButtonClick: React.PropTypes.func,
 		getActionLabel: React.PropTypes.func,
 		// i18n function provided by localize()
-		translate: React.PropTypes.func
+		translate: React.PropTypes.func,
+		showThemeUpload: React.PropTypes.bool,
+		themeUploadClickRecorder: React.PropTypes.func
 	},
 
 	fetchNextPage( options ) {
@@ -42,6 +50,8 @@ export const ThemesList = React.createClass( {
 		return {
 			loading: false,
 			themes: [],
+			showThemeUpload: false,
+			themeUploadClickRecorder: identity,
 			fetchNextPage() {},
 			optionsGenerator() {
 				return [];
@@ -91,6 +101,25 @@ export const ThemesList = React.createClass( {
 				/>;
 	},
 
+	renderThemeUploadBox() {
+		this.props.themes.pop();
+		return (
+			<Card className="theme themes-list__upload-container">
+				<Gridicon className="themes-list__upload-icon" icon="cloud-upload" size={ 100 } />
+				<div className="themes-list__upload-text">
+					{ this.props.translate( 'I already have a theme I\'d like to use for my website.' ) }
+				</div>
+				<Button
+					primary
+					onClick={ this.props.themeUploadClickRecorder }
+				    className="themes-list__upload-button"
+				>
+					{ this.props.translate( 'Upload Theme' ) }
+				</Button>
+			</Card>
+		);
+	},
+
 	render() {
 		if ( ! this.props.loading && this.props.themes.length === 0 ) {
 			return this.renderEmpty();
@@ -98,6 +127,7 @@ export const ThemesList = React.createClass( {
 
 		return (
 			<div className="themes-list">
+				{ this.props.showThemeUpload && this.renderThemeUploadBox() }
 				{ this.props.themes.map( this.renderTheme ) }
 				{ this.props.loading && this.renderLoadingPlaceholders() }
 				{ this.renderTrailingItems() }
@@ -106,4 +136,9 @@ export const ThemesList = React.createClass( {
 	}
 } );
 
-export default localize( ThemesList );
+const mapDispatchToProps = dispatch => ( {
+	themeUploadClickRecorder: () =>
+		dispatch( recordTracksEvent( 'calypso_signup_theme_upload_click' ) )
+} );
+
+export default connect( null, mapDispatchToProps )( localize( ThemesList ) );

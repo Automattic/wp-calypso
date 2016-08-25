@@ -82,6 +82,15 @@ module.exports = {
 		defaultVariation: 'pressable',
 		allowExistingUsers: false,
 	},
+	signupThemeUpload: {
+		datestamp: '20160825',
+		variations: {
+			showThemeUpload: 10,
+			hideThemeUpload: 90,
+		},
+		defaultVariation: 'hideThemeUpload',
+		allowExistingUsers: false,
+	},
 	readerSearchSuggestions: {
 		datestamp: '20160804',
 		variations: {
