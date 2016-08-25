@@ -40,10 +40,16 @@ function getCourses() {
 					registrationUrl: 'http://wordpress.com'
 				},
 			],
-			recent: [
+			videos: [
 				{
-					date: i18n.moment( new Date( 'Mon, 01 Aug 2016 17:30:00 +0000' ) ),
-					video: 'http://wordpress.com/some-video.mp4'
+					date: i18n.moment( new Date( 'Thu, 25 Aug 2016 01:00:00 +0000' ) ),
+					title: i18n.translate( 'How to Make a Business Site on WordPress.com' ),
+					description: i18n.translate(
+						'Bacon ipsum dolor amet sirloin bresaola leberkas, strip steak hamburger short ribs beef pork. ' +
+						'Tenderloin salami sausage tongue capicola. Hamburger tenderloin prosciutto venison pork loin, ' +
+						'bresaola tri-tip shank.'
+					),
+					youtubeId: 'f44-4TgnWTs'
 				}
 			]
 		}

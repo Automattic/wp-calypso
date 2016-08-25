@@ -19,11 +19,13 @@
 	}
 }
 
+.help-courses__course-videos-label,
 .help-courses__header-cake .header-cake__title,
 .help-courses__course-label {
 	color: $gray;
 }
 
+.help-courses__course-video-title,
 .help-courses__course-title {
 	@extend %content-font;
 	color: $gray-dark;
@@ -41,6 +43,7 @@
 	}
 }
 
+.help-courses__course-video-description,
 .help-courses__course-description {
 	@extend %content-font;
 	font-size: 15px;
@@ -70,6 +73,7 @@
 	}
 }
 
+.help-courses__course-video-date-icon,
 .help-courses__course-schedule-item-icon {
 	align-self: center;
 	margin-right: 5px;
@@ -90,7 +94,32 @@
 	white-space: nowrap;
 }
 
-.help-courses__course-recording {
+.help-courses__course-videos {
 	margin-top: 16px;
 }
 
+.help-courses__course-video-date {
+	color: $gray;
+	font-size: 13px;
+}
+
+.help-courses__course-video-embed {
+	/*Maintain a 16:9 aspect ratio*/
+	position: relative;
+	&:before {
+		display: block;
+		content: "";
+		width: 100%;
+		padding-top: ( 9 / 16 ) * 100%;
+		background-color: #000;
+	}
+}
+
+.help-courses__course-video-embed-iframe {
+	border: none;
+	display: block;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+}
