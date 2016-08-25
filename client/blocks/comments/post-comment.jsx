@@ -20,7 +20,7 @@ import {
 	recordGaEvent,
 	recordTrack
 } from 'reader/stats';
-
+import { getStreamUrl } from 'reader/route';
 import CommentLikeButtonContainer from './comment-likes';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
@@ -53,14 +53,14 @@ class PostComment extends React.Component {
 		this.setState( { showReplies: true } ); // show the comments when replying
 	}
 
-	handleAuthorClick() {
+	handleAuthorClick( event ) {
 		recordAction( 'comment_author_click' );
 		recordGaEvent( 'Clicked Author Name' );
 		recordTrack( 'calypso_reader_comment_author_click', {
 			blog_id: this.props.post.site_ID,
 			post_id: this.props.post.ID,
-			comment_id: this.props.comment.ID,
-			author_url: this.props.comment.author.URL
+			comment_id: this.props.commentId,
+			author_url: event.target.href
 		} );
 	}
 
@@ -185,19 +185,31 @@ class PostComment extends React.Component {
 			return <PostTrackback { ...this.props } />;
 		}
 
+		// Author URL
+		let authorUrl;
+		if ( comment.author.site_ID ) {
+			authorUrl = getStreamUrl( null, comment.author.site_ID );
+		} else if ( comment.author.URL ) {
+			authorUrl = comment.author.URL;
+		}
+
 		return (
 			<li className={ 'comments__comment depth-' + this.props.depth }>
 				<div className="comments__comment-author">
-					<Gravatar user={ comment.author } />
+					{ authorUrl
+						? <a href={ authorUrl } onClick={ this.handleAuthorClick }>
+							<Gravatar user={ comment.author } />
+						</a>
+						: <Gravatar user={ comment.author } /> }
 
-					{ comment.author.URL
-						? <a href={ comment.author.URL } target="_blank" className="comments__comment-username" onClick={ this.handleAuthorClick }>{ comment.author.name }<Gridicon icon="external" /></a>
+					{ authorUrl
+						? <a href={ authorUrl } className="comments__comment-username" onClick={ this.handleAuthorClick }>{ comment.author.name }</a>
 						: <strong className="comments__comment-username">{ comment.author.name }</strong> }
-					<small className="comments__comment-timestamp">
+					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
 							<PostTime date={ comment.date } />
 						</a>
-					</small>
+					</div>
 				</div>
 
 				{ comment.status && comment.status === 'unapproved'
