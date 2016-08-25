@@ -281,7 +281,7 @@ var MenuEditableItem = React.createClass( {
 		body = this.translate( 'You can manage this item as usual, but you cannot edit it here. {{br/}} Check the {{wpAdminLink}}WP Admin{{/wpAdminLink}} and see if you can edit it from there.', {
 			components: {
 				br: <br />,
-				wpAdminLink: <a href={ MenuUtils.getNavMenusUrl() } target="_blank" />
+				wpAdminLink: <a href={ MenuUtils.getNavMenusUrl() } target="_blank" rel="noopener noreferrer" />
 			}
 		} );
 

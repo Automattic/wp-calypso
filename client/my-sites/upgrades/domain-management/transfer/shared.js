@@ -36,7 +36,7 @@ export const displayResponseError = ( responseError ) => {
 					args: errorMessages[ responseError.error ],
 					components: {
 						strong: <strong />,
-						a: <a href={ support.CALYPSO_CONTACT } target="_blank"/>
+						a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer"/>
 					}
 				}
 			)
@@ -49,7 +49,7 @@ export const displayResponseError = ( responseError ) => {
 				'to have trouble.',
 				{
 					components: {
-						a: <a href={ support.CALYPSO_CONTACT } target="_blank"/>
+						a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer"/>
 					}
 				}
 			)

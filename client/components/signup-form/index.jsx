@@ -385,7 +385,8 @@ export default React.createClass( {
 							a: <a
 								href={ this.getTermsOfServiceUrl() }
 								onClick={ this.handleOnClickTos }
-								target="_blank" />
+								target="_blank"
+								rel="noopener noreferrer" />
 						}
 					}
 				)

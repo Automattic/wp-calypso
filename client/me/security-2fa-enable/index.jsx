@@ -292,6 +292,7 @@ module.exports = React.createClass( {
 									authyLink: <a
 										href="https://www.authy.com/users/"
 										target="_blank"
+										rel="noopener noreferrer"
 										onClick={ function() {
 											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download Authy App Link' );
 										} }
@@ -299,6 +300,7 @@ module.exports = React.createClass( {
 									googleAuthenticatorLink: <a
 										href="https://support.google.com/accounts/answer/1066447?hl=en"
 										target="_blank"
+										rel="noopener noreferrer"
 										onClick={ function() {
 											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download Google Authenticator Link' );
 										} }

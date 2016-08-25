@@ -220,7 +220,7 @@ FullPostView = React.createClass( {
 							</div>
 						: null }
 
-					{ post.title ? <h1 className="reader__post-title" onClick={ this.handlePermalinkClick }><ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" icon={ false }>{ post.title }</ExternalLink></h1> : null }
+					{ post.title ? <h1 className="reader__post-title" onClick={ this.handlePermalinkClick }><ExternalLink className="reader__post-title-link" href={ post.URL } target="_blank" rel="noopener noreferrer" icon={ false }>{ post.title }</ExternalLink></h1> : null }
 
 					<PostByline post={ post } site={ site } icon={ true } isDiscoverPost={ isDiscoverPost }/>
 

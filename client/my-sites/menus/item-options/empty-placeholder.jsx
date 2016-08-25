@@ -26,7 +26,7 @@ var EmptyPlaceholder = React.createClass( {
 					context: 'Menus: item search/listing results',
 					comment: 'This is used when no categories match the given search, or if there are no categories at all.',
 					components: {
-						a: <a className='create-link' href={ this.props.createLink } target="_blank" />
+						a: <a className='create-link' href={ this.props.createLink } target="_blank" rel="noopener noreferrer" />
 					}
 				} );
 			case 'post_tag':
@@ -34,7 +34,7 @@ var EmptyPlaceholder = React.createClass( {
 					context: 'Menus: item search/listing results',
 					comment: 'This is used when no tags match the given search, or if there are no tags at all.',
 					components: {
-						a: <a className='create-link' href={ this.props.createLink } target="_blank" />
+						a: <a className='create-link' href={ this.props.createLink } target="_blank" rel="noopener noreferrer" />
 					}
 				} );
 			case 'post':
@@ -42,7 +42,7 @@ var EmptyPlaceholder = React.createClass( {
 					context: 'Menus: item search/listing results',
 					comment: 'This is used when no posts match the given search, or if there are no posts at all.',
 					components: {
-						a: <a className='create-link' href={ this.props.createLink } target="_blank" />
+						a: <a className='create-link' href={ this.props.createLink } target="_blank" rel="noopener noreferrer" />
 					}
 				} );
 			case 'page':
@@ -50,7 +50,7 @@ var EmptyPlaceholder = React.createClass( {
 					context: 'Menus: item search/listing results',
 					comment: 'This is used when no pages match the given search, or if there are no pages at all.',
 					components: {
-						a: <a className='create-link' href={ this.props.createLink } target="_blank" />
+						a: <a className='create-link' href={ this.props.createLink } target="_blank" rel="noopener noreferrer" />
 					}
 				} );
 			default:
@@ -58,7 +58,7 @@ var EmptyPlaceholder = React.createClass( {
 					context: 'Menus: item search/listing results',
 					comment: 'This is used when no results are found for the given search, or if there are no results of the given item type at all.',
 					components: {
-						a: <a className='create-link' href={ this.props.createLink } target="_blank" />
+						a: <a className='create-link' href={ this.props.createLink } target="_blank" rel="noopener noreferrer" />
 					}
 				} );
 		}

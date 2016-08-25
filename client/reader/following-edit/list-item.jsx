@@ -105,7 +105,7 @@ const SubscriptionListItem = React.createClass( {
 				<Title>
 					<a href={ FeedDisplayHelper.getFeedStreamUrl( siteData, feedData, displayUrl ) }>{ feedTitle }</a>
 				</Title>
-				<Description><ExternalLink icon={ true } href={ siteUrl } target="_blank" iconSize={ 12 }>{ displayUrl }</ExternalLink></Description>
+				<Description><ExternalLink icon={ true } href={ siteUrl } target="_blank" rel="noopener noreferrer" iconSize={ 12 }>{ displayUrl }</ExternalLink></Description>
 				<Actions>
 					<ReaderFollowButton following={ isFollowing } onFollowToggle={ this.handleFollowToggle } isButtonOnly={ true } siteUrl={ subscription.get( 'URL' ) } />
 				</Actions>

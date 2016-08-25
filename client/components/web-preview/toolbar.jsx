@@ -60,6 +60,7 @@ export const PreviewToolbar = props => {
 					className="web-preview__external"
 					href={ externalUrl || previewUrl }
 					target="_blank"
+					rel="noopener noreferrer"
 				>
 					<Gridicon icon="external" />
 				</a>

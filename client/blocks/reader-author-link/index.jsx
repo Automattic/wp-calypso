@@ -29,7 +29,7 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children } ) => {
 	}
 
 	return (
-		<ExternalLink className="reader-author-link" href={ linkUrl } target="_blank" onClick={ recordAuthorClick }>
+		<ExternalLink className="reader-author-link" href={ linkUrl } target="_blank" rel="noopener noreferrer" onClick={ recordAuthorClick }>
 			{ children }
 		</ExternalLink>
 	);

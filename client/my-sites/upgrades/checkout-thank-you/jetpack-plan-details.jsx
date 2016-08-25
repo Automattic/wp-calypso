@@ -64,6 +64,7 @@ const JetpackPlanDetails = ( { selectedSite } ) => {
 				{ components: {
 					a: <a
 						target="_blank"
+						rel="noopener noreferrer"
 						href="https://en.support.wordpress.com/setting-up-premium-services/"
 						onClick={ trackManualInstall( 'calypso_plans_autoconfig_click_opt_out' ) } />
 				} }

@@ -99,7 +99,7 @@ const Locked = React.createClass( {
 								: this.translate( 'To transfer your domain, we must unlock it.' )
 							} <a
 									href={ support.TRANSFER_DOMAIN_REGISTRATION }
-									target="_blank">{ this.translate( 'Learn More.' ) }</a>
+									target="_blank" rel="noopener noreferrer">{ this.translate( 'Learn More.' ) }</a>
 						</p>
 						<p className="transfer__small-text">
 							<a href="" onClick={ this.handleGiveMeTheCodeClick }>{ this.translate( 'I just want the transfer code for now.' ) }</a>

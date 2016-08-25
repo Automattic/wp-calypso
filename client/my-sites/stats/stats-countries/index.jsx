@@ -115,7 +115,7 @@ export default React.createClass( {
 								<div className="module-content-text module-content-text-info">
 									<p>{ this.translate( 'Explore the list to see which countries and regions generate the most traffic to your site.' ) }</p>
 									<ul className="documentation">
-										<li><a href="http://en.support.wordpress.com/stats/#views-by-country" target="_blank"><Gridicon icon="info-outline" /> { this.translate( 'About Countries' ) }</a></li>
+										<li><a href="http://en.support.wordpress.com/stats/#views-by-country" target="_blank" rel="noopener noreferrer"><Gridicon icon="info-outline" /> { this.translate( 'About Countries' ) }</a></li>
 									</ul>
 								</div>
 								{ ( noData && ! hasError )

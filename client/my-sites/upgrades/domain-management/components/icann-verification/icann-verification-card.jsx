@@ -46,6 +46,7 @@ let IcannVerificationCard = React.createClass( {
 							components: {
 								learnMoreLink: <a href={ support.EMAIL_VALIDATION_AND_VERIFICATION }
 									target="_blank"
+									rel="noopener noreferrer"
 								/>
 							}
 						}

@@ -29,6 +29,7 @@ const googleTermsAndConditions = () => {
 					<a
 						href="http://www.google.com/adwords/coupons/terms.html"
 						target="_blank"
+						rel="noopener noreferrer"
 					>
 						http://www.google.com/adwords/coupons/terms.html
 					</a>.

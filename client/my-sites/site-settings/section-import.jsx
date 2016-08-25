@@ -105,7 +105,8 @@ export default React.createClass( {
 					line={ this.translate( `Visit your site's wp-admin for all your import and export needs.` ) }
 					action={ this.translate( 'Import into %(title)s', { args: { title } } ) }
 					actionURL={ adminUrl + 'import.php' }
-					actionTarget="_blank"
+					actiontarget="_blank"
+					rel="noopener noreferrer"
 				/>
 			);
 		}
@@ -128,7 +129,7 @@ export default React.createClass( {
 						this.getImports( MEDIUM ).map( ( importerStatus, key ) =>
 							<MediumImporter { ...{ key, site, importerStatus } } /> ) }
 
-					<CompactCard href={ adminUrl + 'import.php' } target="_blank">
+					<CompactCard href={ adminUrl + 'import.php' } target="_blank" rel="noopener noreferrer">
 						{ this.translate( 'Other importers' ) }
 					</CompactCard>
 				</EmailVerificationGate>

@@ -14,7 +14,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<LoggedOutFormLinkItem className="jetpack-connect__help-button" href="https://jetpack.com/contact-support" target="_blank">
+			<LoggedOutFormLinkItem className="jetpack-connect__help-button" href="https://jetpack.com/contact-support" target="_blank" rel="noopener noreferrer">
 				<Gridicon icon="help-outline" /> { this.translate( 'Get help connecting your site' ) }
 			</LoggedOutFormLinkItem>
 		);

@@ -277,7 +277,7 @@ export class Link extends Component {
 	render() {
 		return (
 			<div className="guided-tours__external-link">
-				<ExternalLink target="_blank" icon={ true } href={ this.props.href }>{ this.props.children }</ExternalLink>
+				<ExternalLink target="_blank" rel="noopener noreferrer" icon={ true } href={ this.props.href }>{ this.props.children }</ExternalLink>
 			</div>
 		);
 	}

@@ -64,6 +64,7 @@ const NameserversToggle = React.createClass( {
 							a: (
 								<a href={ support.CHANGE_NAME_SERVERS }
 									target="_blank"
+									rel="noopener noreferrer"
 									onClick={ this.handleLearnMoreClick } />
 							)
 						}

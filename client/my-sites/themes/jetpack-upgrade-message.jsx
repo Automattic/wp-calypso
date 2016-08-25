@@ -25,7 +25,8 @@ export default React.createClass( {
 					version="3.7"
 					secondaryAction={ this.translate( 'Open Site Theme Browser' ) }
 					secondaryActionURL={ this.props.site.options.admin_url + 'themes.php' }
-					secondaryActionTarget="_blank"
+					secondaryActiontarget="_blank"
+					rel="noopener noreferrer"
 				/>
 			</Main>
 		);

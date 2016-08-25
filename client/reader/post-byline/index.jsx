@@ -72,7 +72,7 @@ class PostByline extends React.Component {
 		}
 
 		return (
-			<ExternalLink href={ post.author.URL } target="_blank" onClick={ this.recordAuthorClick }>
+			<ExternalLink href={ post.author.URL } target="_blank" rel="noopener noreferrer" onClick={ this.recordAuthorClick }>
 				{ gravatar }
 				{ authorName }
 			</ExternalLink>
@@ -100,7 +100,8 @@ class PostByline extends React.Component {
 					<a className="reader-post-byline__date-link"
 						onClick={ this.recordDateClick }
 						href={ post.URL }
-						target="_blank"><PostTime date={ post.date } />{ icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
+						target="_blank"
+						rel="noopener noreferrer"><PostTime date={ post.date } />{ icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
 				</li> : null }
 			{ primaryTag ?
 				<li className="reader-post-byline__tag">

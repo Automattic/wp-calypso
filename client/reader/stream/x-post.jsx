@@ -142,7 +142,7 @@ var CrossPost = React.createClass( {
 					user={ post.author } />
 				<div className="reader__x-post">
 					{ post.title
-						? <h4 className="reader__post-title"><a className="reader__post-title-link" onClick={ this.handleTitleClick } href={ post.URL } target="_blank">{ xpostTitle }</a></h4>
+						? <h4 className="reader__post-title"><a className="reader__post-title-link" onClick={ this.handleTitleClick } href={ post.URL } target="_blank" rel="noopener noreferrer">{ xpostTitle }</a></h4>
 						: null }
 					{ this.getDescription( post.author.first_name ) }
 				</div>

@@ -20,7 +20,8 @@ export default class SiteSettingsExport extends Component {
 					line={ i18n.translate( `Visit your site's wp-admin for all your import and export needs.` ) }
 					action={ i18n.translate( 'Export %(siteTitle)s', { args: { siteTitle: this.props.site.title } } ) }
 					actionURL={ this.props.site.options.admin_url + 'export.php' }
-					actionTarget="_blank"
+					actiontarget="_blank"
+					rel="noopener noreferrer"
 				/>
 			);
 		}

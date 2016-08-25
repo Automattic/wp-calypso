@@ -154,7 +154,7 @@ module.exports = React.createClass( {
 		return ( <div className="page__popover-more-info">{
 			this.translate( 'Currently set as {{link}}Front Page{{/link}}', {
 				components: {
-					link: <a target="_blank" href={ this.props.site.options.admin_url + 'options-reading.php' } />
+					link: <a target="_blank" rel="noopener noreferrer" href={ this.props.site.options.admin_url + 'options-reading.php' } />
 				}
 			} )
 		}</div> );

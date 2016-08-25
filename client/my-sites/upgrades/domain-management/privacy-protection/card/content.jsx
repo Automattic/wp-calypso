@@ -27,7 +27,8 @@ const Content = React.createClass( {
 					<p>
 						{ this.translate( 'With Privacy Protection, we show our partner\'s contact information instead of your own.' ) }
 						<a href={ support.PUBLIC_VS_PRIVATE }
-							target="_blank">{ this.translate( 'Learn more.' ) }</a>
+							target="_blank"
+							rel="noopener noreferrer">{ this.translate( 'Learn more.' ) }</a>
 					</p>
 				</div>
 				<div className="privacy-protection-card__features">

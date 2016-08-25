@@ -26,7 +26,7 @@ var PostPermalink = React.createClass( {
 
 		return (
 			<li className="post-permalink" onClick={ this.recordClick }>
-				<ExternalLink href={ this.props.postUrl } rel="external" target="_blank" icon={ true } iconSize={ 16 }>
+				<ExternalLink href={ this.props.postUrl } target="_blank" rel="external noopener noreferrer" icon={ true } iconSize={ 16 }>
 					{ this.translate( 'Visit', { comment: 'Visit the post on the original site' } ) }
 				</ExternalLink>
 			</li>

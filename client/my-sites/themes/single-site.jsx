@@ -53,7 +53,8 @@ const JetpackThemeReferrerPage = localize(
 				line={ translate( 'Use your site theme browser to manage themes.' ) }
 				action={ translate( 'Open Site Theme Browser' ) }
 				actionURL={ site.options.admin_url + 'themes.php' }
-				actionTarget="_blank"
+				actiontarget="_blank"
+				rel="noopener noreferrer"
 				illustration="/calypso/images/drake/drake-jetpack.svg" />
 		</Main>
 	)

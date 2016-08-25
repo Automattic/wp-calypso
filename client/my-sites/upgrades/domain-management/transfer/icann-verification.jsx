@@ -57,7 +57,8 @@ const IcannVerification = React.createClass( {
 								components: {
 									learnMoreLink: <a
 										href={ support.TRANSFER_DOMAIN_REGISTRATION }
-										target="_blank"/>
+										target="_blank"
+										rel="noopener noreferrer"/>
 								}
 							}
 						) }

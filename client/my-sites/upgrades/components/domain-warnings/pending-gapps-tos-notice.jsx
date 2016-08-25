@@ -11,7 +11,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import support from 'lib/url/support';
 
-const learnMoreLink = <a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" />,
+const learnMoreLink = <a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />,
 	strong = <strong />;
 
 const PendingGappsTosNotice = React.createClass( {
@@ -137,7 +137,8 @@ const PendingGappsTosNotice = React.createClass( {
 							<a
 								href={ this.getGappsLoginUrl( users[0], domainName ) }
 								onClick={ this.generateLogInClickHandler( { domainName, user: users[0], severity, isMultipleDomains: true } ) }
-								target="_blank">
+								target="_blank"
+								rel="noopener noreferrer">
 									{ this.translate( 'Log in' ) }
 							</a>
 						</li>;

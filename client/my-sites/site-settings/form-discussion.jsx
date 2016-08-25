@@ -230,7 +230,7 @@ module.exports = React.createClass( {
 							onClick={ this.recordEvent.bind( this, 'Clicked Markdown for Comments Checkbox' ) } />
 						<span>{ this.translate( 'Enable Markdown for comments. {{a}}Learn more about markdown{{/a}}.', {
 								components: {
-									a: <a href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank" />
+									a: <a href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank" rel="noopener noreferrer" />
 								}
 							} ) }</span>
 					</FormLabel>
@@ -385,7 +385,7 @@ module.exports = React.createClass( {
 					this.translate( 'When a comment contains any of these words in its content, name, URL, e-mail, or IP, it will be held in the {{link}}moderation queue{{/link}}. One word or IP per line. It will match inside words, so "press" will match "WordPress".',
 						{
 							components: {
-								link: <a href={ this.state.admin_url + 'edit-comments.php?comment_status=moderated' } target="_blank" />
+								link: <a href={ this.state.admin_url + 'edit-comments.php?comment_status=moderated' } target="_blank" rel="noopener noreferrer" />
 							}
 						}
 					)

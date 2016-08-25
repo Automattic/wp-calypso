@@ -120,7 +120,7 @@ export default React.createClass( {
 		}
 
 		return (
-			<ExternalLink icon={ true } href={ url } target="_blank" className="site__edit-icon" onClick={ this.onEditIconClick }>
+			<ExternalLink icon={ true } href={ url } target="_blank" rel="noopener noreferrer" className="site__edit-icon" onClick={ this.onEditIconClick }>
 				<SiteIcon site={ this.props.site } />
 				<span className="site__edit-icon-text">{ this.translate( 'Edit Icon' ) }</span>
 			</ExternalLink>
