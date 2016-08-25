@@ -119,7 +119,7 @@ const CheckoutThankYou = React.createClass( {
 
 		return (
 			<Notice className="checkout-thank-you__verification-notice" showDismiss={ false }>
-				{ this.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. Please use this time to confirm your email address.', {
+				{ this.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. Please check your email to confirm your address.', {
 					args: { email: this.props.user.email },
 					components: { strong: <strong />
 				} } ) }
