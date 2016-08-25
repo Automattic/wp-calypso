@@ -17,6 +17,7 @@ import FeatureExample from 'components/feature-example';
 import FeatureComparison from 'my-sites/feature-comparison';
 import PlanCompareCard from 'my-sites/plan-compare-card';
 import PlanCompareCardItem from 'my-sites/plan-compare-card/item';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import { preventWidows } from 'lib/formatting';
 import formatCurrency from 'lib/format-currency';
 import { getFeatureTitle, planHasFeature } from 'lib/plans';
@@ -24,24 +25,33 @@ import { isFreePlan } from 'lib/products-values';
 import { getPlanBySlug } from 'state/plans/selectors';
 import {
 	PLAN_BUSINESS,
-	FEATURE_ADVANCED_DESIGN,
+	FEATURE_ADVANCED_SEO,
 	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_NO_ADS,
+	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_ADVANCED_DESIGN,
 	FEATURE_UNLIMITED_STORAGE,
-	FEATURE_VIDEO_UPLOADS
+	FEATURE_NO_ADS,
+	FEATURE_WORDADS_INSTANT,
+	FEATURE_VIDEO_UPLOADS,
+	FEATURE_GOOGLE_ANALYTICS,
+	FEATURE_NO_BRANDING
 } from 'lib/plans/constants';
 
-const featuresToShow = [
-	FEATURE_UNLIMITED_STORAGE,
-	FEATURE_UNLIMITED_PREMIUM_THEMES,
+const businessPlanFeatures = [
 	FEATURE_CUSTOM_DOMAIN,
-	FEATURE_NO_ADS,
+	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	FEATURE_ADVANCED_DESIGN,
-	FEATURE_VIDEO_UPLOADS
+	FEATURE_UNLIMITED_STORAGE,
+	FEATURE_NO_ADS,
+	FEATURE_WORDADS_INSTANT,
+	FEATURE_VIDEO_UPLOADS,
+	FEATURE_GOOGLE_ANALYTICS,
+	FEATURE_NO_BRANDING
 ];
 
-const SeoPreviewNudge = ( { translate, site, plan = {}, businessPlan = {} } ) => {
+const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {} } ) => {
 	const planPrice = isFreePlan( plan )
 		? translate( 'Free for life' )
 		: translate( '%(price)s per month, billed yearly', {
@@ -50,10 +60,12 @@ const SeoPreviewNudge = ( { translate, site, plan = {}, businessPlan = {} } ) =>
 			}
 		} );
 	const businessPlanPrice = formatCurrency( businessPlan.raw_price / 12, businessPlan.currency_code );
+	const featuresToShow = businessPlanFeatures.filter( feature => ! planHasFeature( plan.product_slug, feature ) );
 
 	return (
 		<div className="preview-upgrade-nudge">
 			<QueryPlans />
+			<TrackComponentView eventName="calypso_seo_preview_upgrade_nudge_impression" />
 			<div className="preview-upgrade-nudge__plan">
 				<div className="preview-upgrade-nudge__plan-icon"></div>
 			</div>
@@ -89,12 +101,12 @@ const SeoPreviewNudge = ( { translate, site, plan = {}, businessPlan = {} } ) =>
 					buttonName={ translate( 'Your Plan' ) }
 					currentPlan={ true } >
 					<PlanCompareCardItem unavailable={ true } >
-						{ translate( 'Advanced SEO' ) }
+						{ getFeatureTitle( FEATURE_ADVANCED_SEO ) }
 					</PlanCompareCardItem>
 					{ featuresToShow.map( feature => (
 						<PlanCompareCardItem
 							key={ feature }
-							unavailable={ ! planHasFeature( site.plan.product_slug, feature ) } >
+							unavailable={ ! planHasFeature( plan.product_slug, feature ) } >
 							{ getFeatureTitle( feature ) }
 						</PlanCompareCardItem>
 					) ) }
@@ -103,11 +115,11 @@ const SeoPreviewNudge = ( { translate, site, plan = {}, businessPlan = {} } ) =>
 					title={ businessPlan.product_name_short }
 					line={ translate( '%(price)s per month, billed yearly', { args: { price: businessPlanPrice } } ) }
 					buttonName={ translate( 'Upgrade' ) }
-					onClick={ () => page( '/checkout/' + site.domain + '/business' ) }
+					onClick={ () => page( '/checkout/' + domain + '/business' ) }
 					currentPlan={ false }
 					popularRibbon={ true } >
 					<PlanCompareCardItem highlight={ true } >
-						{ translate( 'Advanced SEO' ) }
+						{ getFeatureTitle( FEATURE_ADVANCED_SEO ) }
 					</PlanCompareCardItem>
 					{ featuresToShow.map( feature => (
 						<PlanCompareCardItem key={ feature }>
@@ -122,7 +134,7 @@ const SeoPreviewNudge = ( { translate, site, plan = {}, businessPlan = {} } ) =>
 
 SeoPreviewNudge.propTypes = {
 	translate: PropTypes.func.isRequired,
-	site: PropTypes.object,
+	domain: PropTypes.string.isRequired,
 	plan: PropTypes.object,
 	businessPlan: PropTypes.object
 };
@@ -131,6 +143,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
 
 	return {
+		domain: site.domain,
 		plan: getPlanBySlug( state, site.plan.product_slug ),
 		businessPlan: getPlanBySlug( state, PLAN_BUSINESS )
 	};
