@@ -47,7 +47,7 @@
 	color: $gray-dark;
 }
 
-.help__course-teaser .card {
+.help__help-teaser-button .card {
 	border-left: 3px solid $blue-wordpress;
 	display: flex;
 	margin: 16px 0;
@@ -62,7 +62,11 @@
 	}
 }
 
-.help__course-teaser-icon {
+.help__help-teaser-text {
+	padding-right: 10px;
+}
+
+.help__help-teaser-button-icon {
 	color: $blue-wordpress;
 	border-radius: 50%;
 	margin-right: 16px;
@@ -70,13 +74,13 @@
 	align-self: center;
 }
 
-.help__course-teaser-title {
+.help__help-teaser-button-title {
 	color: $gray-dark;
 	font-size: 14px;
 	font-weight: 500;
 }
 
-.help__course-teaser-description {
+.help__help-teaser-button-description {
 	color: $gray;
 	font-size: 12px;
 	display: block;

@@ -12,12 +12,12 @@ import Card from 'components/card';
 
 class CourseList extends Component {
 	render() {
-		const { courses, showRecentCourseRecordings } = this.props;
+		const { courses, isBusinessPlanUser } = this.props;
 
 		return (
 			<div className="help-courses__course-list">
 				{ courses.map( ( course, key ) => {
-					return <Course { ...course } key={ key } showRecentCourseRecordings={ showRecentCourseRecordings }/>;
+					return <Course { ...course } key={ key } isBusinessPlanUser={ isBusinessPlanUser }/>;
 				} ) }
 			</div>
 		);
