@@ -25,6 +25,7 @@ import { PLAN_PERSONAL, getPlanClass, plansList } from 'lib/plans/constants';
 import analytics from 'lib/analytics';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 
 const ExpandedUpgradeNudge = ( {
 	translate,
@@ -40,7 +41,8 @@ const ExpandedUpgradeNudge = ( {
 	highlightedFeature,
 	eventName = 'calypso_upgrade_nudge_impression',
 	event='',
-	children
+	children,
+	siteSlug
 } ) => {
 	//Display only if upgrade path available
 	if (
@@ -78,8 +80,8 @@ const ExpandedUpgradeNudge = ( {
 						analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', eventProperties );
 						if( upgrade ) {
 							upgrade();
-						} else if ( currentPlan.getPathSlug ) {
-							page( '/checkout/' + currentPlan.getPathSlug() );
+						} else if ( planConstants.getPathSlug && siteSlug ) {
+							page( `/checkout/${ siteSlug }/${ planConstants.getPathSlug() }` );
 						}
 					} }
 					currentPlan={ false }
@@ -131,14 +133,16 @@ ExpandedUpgradeNudge.propTypes = {
 	subtitle: PropTypes.string,
 	highlightedFeature: PropTypes.string,
 	eventName: PropTypes.string,
-	event: PropTypes.string
+	event: PropTypes.string,
+	siteSlug: PropTypes.string
 };
 
 const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	plan: getPlanBySlug( state, plan ),
 	currentPlan: getCurrentPlan( state, getSelectedSiteId( state ) ),
 	planConstants: plansList[ plan ],
-	planClass: getPlanClass( plan )
+	planClass: getPlanClass( plan ),
+	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
 } );
 
 export default connect( mapStateToProps )( localize( ExpandedUpgradeNudge ) );
