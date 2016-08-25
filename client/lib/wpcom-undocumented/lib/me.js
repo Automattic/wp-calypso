@@ -170,6 +170,23 @@ UndocumentedMe.prototype.changeUsername = function( username, action, callback )
 	return this.wpcom.req.post( args, callback );
 };
 
+/**
+ * Get a list of the user's stored cards
+ *
+ * @param {object} [paygateToken] Payment key
+ * @param {Function} [callback] The callback function
+ * @api public
+ */
+UndocumentedMe.prototype.storedCardAdd = function( paygateToken, callback ) {
+	debug( '/me/stored-cards' );
+
+	this.wpcom.req.post( {
+		path: '/me/stored-cards'
+	}, {
+		payment_key: paygateToken
+	}, callback );
+};
+
 UndocumentedMe.prototype.storedCardDelete = function( card, callback ) {
 	var args = {
 		path: '/me/stored-cards/' + card.stored_details_id + '/delete',

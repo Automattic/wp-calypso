@@ -3,6 +3,7 @@ import i18n from 'i18n-calypso';
 
 // Internal dependencies
 import {
+	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
@@ -11,7 +12,19 @@ import {
 	STORED_CARDS_FETCH_FAILED
 } from 'state/action-types';
 import wp from 'lib/wp';
-const wpcom = wp.undocumented();
+
+export const addStoredCard = paygateToken => dispatch => {
+	return new Promise( ( resolve, reject ) => {
+		wp.undocumented().me().storedCardAdd( paygateToken, ( error, data ) => {
+			error ? reject( error ) : resolve( data );
+		} );
+	} ).then( item => {
+		dispatch( {
+			type: STORED_CARDS_ADD_COMPLETED,
+			item
+		} );
+	} );
+};
 
 export const fetchStoredCards = () => dispatch => {
 	dispatch( {
@@ -19,7 +32,7 @@ export const fetchStoredCards = () => dispatch => {
 	} );
 
 	return new Promise( ( resolve, reject ) => {
-		wpcom.getStoredCards( ( error, data ) => {
+		wp.undocumented().getStoredCards( ( error, data ) => {
 			error ? reject( error ) : resolve( data );
 		} );
 	} ).then( data => {
@@ -41,7 +54,7 @@ export const deleteStoredCard = card => dispatch => {
 	} );
 
 	return new Promise( ( resolve, reject ) => {
-		wpcom.me().storedCardDelete( card, ( error, data ) => {
+		wp.undocumented().me().storedCardDelete( card, ( error, data ) => {
 			error ? reject( error ) : resolve( data );
 		} );
 	} ).then( () => {

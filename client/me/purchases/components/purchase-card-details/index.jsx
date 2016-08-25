@@ -14,7 +14,7 @@ import paths from 'me/purchases/paths';
 class PurchaseCardDetails extends Component {
 	constructor( props ) {
 		super( props );
-		this.goBack = this.goBack.bind( this );
+		this.goToManagePurchase = this.goToManagePurchase.bind( this );
 		this.recordFormSubmitEvent = this.recordFormSubmitEvent.bind( this );
 		this.successCallback = this.successCallback.bind( this );
 	}
@@ -42,7 +42,7 @@ class PurchaseCardDetails extends Component {
 		};
 	}
 
-	goBack() {
+	goToManagePurchase() {
 		goToManagePurchase( this.props );
 	}
 
