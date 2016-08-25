@@ -4,6 +4,8 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
+import page from 'page';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -16,6 +18,8 @@ import { getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
 import { closePreview } from 'state/ui/preview/actions';
+import DesignMenu from 'blocks/design-menu';
+import { getSiteFragment } from 'lib/route/path';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -24,11 +28,13 @@ export default function designPreview( WebPreview ) {
 		constructor( props ) {
 			super( props );
 			this.getCustomizations = this.getCustomizations.bind( this );
+			this.shouldReloadPreview = this.shouldReloadPreview.bind( this );
 			this.haveCustomizationsBeenRemoved = this.haveCustomizationsBeenRemoved.bind( this );
 			this.loadPreview = this.loadPreview.bind( this );
 			this.undoCustomization = this.undoCustomization.bind( this );
 			this.onLoad = this.onLoad.bind( this );
 			this.onClosePreview = this.onClosePreview.bind( this );
+			this.cleanAndClosePreview = this.cleanAndClosePreview.bind( this );
 			this.onPreviewClick = this.onPreviewClick.bind( this );
 		}
 
@@ -54,11 +60,24 @@ export default function designPreview( WebPreview ) {
 				debug( 'restoring original markup' );
 				this.loadPreview();
 			}
-			// Apply customizations
+			// Certain customizations cannot be applied by DOM changes, in which case we
+			// can reload the preview.
+			if ( this.shouldReloadPreview( prevProps ) ) {
+				debug( 'reloading preview due to customizations' );
+				this.loadPreview();
+			}
+			// Apply customizations as DOM changes
 			if ( this.getCustomizations() && this.previewDocument ) {
 				debug( 'updating preview with customizations', this.getCustomizations() );
 				updatePreviewWithChanges( this.previewDocument, this.getCustomizations() );
 			}
+		}
+
+		shouldReloadPreview( prevProps ) {
+			const customizations = this.getCustomizations();
+			const prevCustomizations = prevProps.customizations || {};
+			return ( JSON.stringify( customizations.homePage ) !==
+				JSON.stringify( prevCustomizations.homePage ) );
 		}
 
 		getCustomizations() {
@@ -96,11 +115,21 @@ export default function designPreview( WebPreview ) {
 			if ( this.getCustomizations() && this.props.isUnsaved ) {
 				return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
 					if ( accepted ) {
-						this.props.closePreview();
+						this.cleanAndClosePreview();
 					}
 				} );
 			}
+			this.cleanAndClosePreview();
+		}
+
+		cleanAndClosePreview() {
 			this.props.closePreview();
+			const siteFragment = getSiteFragment( page.current );
+			const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
+			// If this route has nothing but the preview, redirect to somewhere else
+			if ( isEmptyRoute ) {
+				page.redirect( `/stats/${siteFragment}` );
+			}
 		}
 
 		onPreviewClick( event ) {
@@ -118,15 +147,19 @@ export default function designPreview( WebPreview ) {
 			}
 
 			return (
-				<WebPreview
-					className={ this.props.className }
-					showPreview={ this.props.showPreview }
-					showExternal={ false }
-					showClose={ false }
-					previewMarkup={ this.props.previewMarkup }
-					onClose={ this.onClosePreview }
-					onLoad={ this.onLoad }
+				<div>
+					<DesignMenu isVisible={ this.props.showPreview } />
+					<WebPreview
+						className={ this.props.className }
+						showPreview={ this.props.showPreview }
+						showExternal={ false }
+						showClose={ false }
+						hasSidebar={ true }
+						previewMarkup={ this.props.previewMarkup }
+						onClose={ this.onClosePreview }
+						onLoad={ this.onLoad }
 					/>
+				</div>
 			);
 		}
 	}
