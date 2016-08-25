@@ -12,6 +12,7 @@ import {
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
+	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -118,6 +119,26 @@ describe( 'actions', () => {
 
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN,
+			} );
+		} );
+	} );
+
+	describe( '#goToXmlrpcErrorFallbackUrl()', () => {
+		it( 'should dispatch redirect with xmlrpc error action when called', () => {
+			const { goToXmlrpcErrorFallbackUrl } = actions;
+			const queryObject = {
+				state: '12345678',
+				redirect_uri: 'https://example.com/',
+				authorizeError: {}
+			};
+			const authorizationCode = 'abcdefgh';
+			const url = queryObject.redirect_uri + '?code=' + authorizationCode + '&state=' + queryObject.state;
+
+			goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
+				url
 			} );
 		} );
 	} );
