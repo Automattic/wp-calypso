@@ -51,7 +51,7 @@
 	cursor: pointer;
 
 	&:hover {
-		background-color: darken( $gray, 10% );
+		background-color: $alert-red;
 	}
 }
 
