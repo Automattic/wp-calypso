@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import debugFactory from 'debug';
+import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get, forEach } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,84 +16,78 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isCurrentSitePlan } from 'state/sites/selectors';
 import { plansList, PLAN_FREE, PLAN_PERSONAL } from 'lib/plans/constants';
-import storeTransactions from 'lib/store-transactions';
-import upgradesActions from 'lib/upgrades/actions';
+import { storedCardPayment } from 'lib/store-transactions';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import QueryStoredCards from 'components/data/query-stored-cards';
-import TransactionStepsMixin from 'my-sites/upgrades/checkout/transaction-steps-mixin';
-import { fillInAllCartItemAttributes } from 'lib/cart-values';
-import { add, remove, getItemForPlan } from 'lib/cart-values/cart-items';
+import { emptyCart } from 'lib/cart-values';
+import { add } from 'lib/cart-values/cart-items';
 import { submitTransaction } from 'lib/upgrades/actions/checkout';
 
-//use the redux store instead:
-import productsListFactory from 'lib/products-list';
-const productsList = productsListFactory();
+const debug = debugFactory( 'calypso:domain-to-plan-nudge' );
 
-const DomainToPlanNudge = React.createClass( {
+class DomainToPlanNudge extends Component {
 
-	//verify if we need this mixin
-	mixins: [ TransactionStepsMixin ],
+	constructor() {
+		super( ...arguments );
+		this.oneClickUpgrade = this.oneClickUpgrade.bind( this );
+		this.handleTransactionComplete = this.handleTransactionComplete.bind( this );
+	}
 
-	propTypes: {
-		cart: PropTypes.object,       //from CheckoutData
+	static propTypes = {
 		hasFreePlan: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
-		translate: PropTypes.func,
-		transaction: PropTypes.object //from CheckoutData
-	},
-
-	componentWillMount: function() {
-		upgradesActions.resetTransaction();
-	},
+		translate: PropTypes.func
+	};
 
 	isVisible() {
 		const { site, hasFreePlan } = this.props;
 		return site &&			//site exists
 			site.wpcom_url &&   //has a mapped domain
 			hasFreePlan;        //has a free wpcom plan
-	},
+	}
+
+	handleTransactionComplete( error ) {
+		//TODO: match expected analytics calls
+		debug( 'transaction complete', error );
+	}
 
 	oneClickUpgrade() {
-		//we might not need checkout data, since we use a fresh transaction
-		//check free-trials.js for example
-		const { storedCard, cart } = this.props;
-		const newPayment = storeTransactions.storedCardPayment( storedCard );
+		const { siteId, storedCard } = this.props;
+		const newPayment = storedCardPayment( storedCard );
 		const transaction = {
 			payment: newPayment
 		};
 
-		//clear cart (maybe use a temp cart instead via emptyCart ?)
-		let newCart = cart;
-		forEach( cart.products, ( item ) => {
-			newCart = remove( item )( newCart );
-		} );
+		// set this to temporary so we don't clear the existing user cart on the server
+		let cart = emptyCart( siteId, { temporary: true } );
 
-		const personalCartItem = getItemForPlan( { product_slug: PLAN_PERSONAL } );
-		newCart = add( personalCartItem )( newCart );
+		const personalCartItem = {
+			free_trial: false,
+			is_domain_registration: false,
+			product_id: plansList[ PLAN_PERSONAL ].getProductId(),
+			product_slug: PLAN_PERSONAL
+		};
+		cart = add( personalCartItem )( cart );
 
-		newCart = fillInAllCartItemAttributes( newCart, productsList.get() );
+		debug( 'purchasing with', cart, transaction );
 
-		console.log( 'purchasing with', newCart, transaction );
-
-		//fix analytics error
-		submitTransaction( { cart, transaction }, ( error ) => {
-			console.log( 'transaction done for', cart, transaction, error );
-		} );
-	},
+		submitTransaction( { cart, transaction }, this.handleTransactionComplete );
+	}
 
 	render() {
 		if ( ! this.isVisible() ) {
 			return null;
 		}
 
-		const { siteId, translate } = this.props;
+		const { siteId, translate, storedCard } = this.props;
 		return (
 			<Card>
 				<QueryStoredCards />
 				<h3>{ translate( 'Upgrade to a Personal Plan and Save!' ) }</h3>
 				<Button
-					onClick={ this.oneClickUpgrade }>
+					onClick={ this.oneClickUpgrade }
+					disabled={ ! storedCard } >
 					{ translate( 'One Click Checkout' ) }
 				</Button>
 				<Button href={ `/checkout/${ siteId }/personal` }>
@@ -101,7 +96,7 @@ const DomainToPlanNudge = React.createClass( {
 			</Card>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state, props ) => {
