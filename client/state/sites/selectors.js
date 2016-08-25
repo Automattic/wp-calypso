@@ -8,6 +8,7 @@ import {
 	find,
 	flowRight as compose,
 	get,
+	has,
 	map,
 	partialRight,
 	some,
@@ -330,9 +331,7 @@ export const getSeoTitleFormats = compose(
 	getRawSite
 );
 
-export const getSeoTitle = ( state, type, { site, post = {}, tag = '', date = '' } ) => {
-	const titleFormats = getSeoTitleFormats( state, site.ID );
-
+export const buildSeoTitle = ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) => {
 	const processPiece = ( piece = {}, data ) =>
 		'string' === piece.type
 			? piece.value
@@ -380,6 +379,16 @@ export const getSeoTitle = ( state, type, { site, post = {}, tag = '', date = ''
 		default:
 			return post.title || site.name;
 	}
+};
+
+export const getSeoTitle = ( state, type, data ) => {
+	if ( ! has( data, 'site.ID' ) ) {
+		return '';
+	}
+
+	const titleFormats = getSeoTitleFormats( state, data.site.ID );
+
+	return buildSeoTitle( titleFormats, type, data );
 };
 
 /**

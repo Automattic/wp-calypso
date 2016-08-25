@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import {
-	get,
 	map,
 	max,
 	min
@@ -17,7 +16,7 @@ import {
 
 import Token from './token';
 import { fromEditor, toEditor } from './parser';
-import { getSeoTitle } from 'state/sites/selectors';
+import { buildSeoTitle } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 
@@ -160,7 +159,16 @@ export class TitleFormatEditor extends Component {
 
 	render() {
 		const { editorState } = this.state;
-		const { translate, tokens, type, previewText } = this.props;
+		const {
+			titleData,
+			translate,
+			tokens,
+			type
+		} = this.props;
+
+		const previewText = type.value
+			? buildSeoTitle( { [ type.value ]: fromEditor( editorState.getCurrentContent() ) }, type.value, titleData )
+			: '';
 
 		const formattedPreview = previewText
 			? `${ translate( 'Preview' ) }: ${ previewText }`
@@ -203,19 +211,16 @@ TitleFormatEditor.propTypes = {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );
-	const type = get( ownProps, 'type.value', '' );
 	const { translate } = ownProps;
 
 	// Add example content for post/page title, tag name and archive dates
-	const content = {
-		site,
-		post: { title: translate( 'Example Title' ) },
-		tag: translate( 'Example Tag' ),
-		date: translate( 'August 2016' )
-	};
-
 	return ( {
-		previewText: getSeoTitle( state, type, content )
+		titleData: {
+			site,
+			post: { title: translate( 'Example Title' ) },
+			tag: translate( 'Example Tag' ),
+			date: translate( 'August 2016' )
+		}
 	} );
 };
 
