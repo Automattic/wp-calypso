@@ -36,8 +36,8 @@ module.exports = React.createClass( {
 		return getThemes( this.props.surveyQuestion, this.props.designType );
 	},
 
-	getScreenshotUrl( slug ) {
-		return 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + slug + '/screenshot.png?w=660';
+	getScreenshotUrl( theme ) {
+		return `https://i1.wp.com/s0.wp.com/wp-content/themes/${ theme.repo }/${ theme.slug }/screenshot.png?w=660`;
 	},
 
 	render() {
@@ -45,12 +45,10 @@ module.exports = React.createClass( {
 			? this.translate( 'Preview' ) : this.translate( 'Pick' );
 		const getActionLabel = () => actionLabel;
 		const themes = this.getComputedThemes().map( theme => {
-			return {
+			return Object.assign( theme, {
 				id: theme.slug,
-				name: theme.name,
-				demo_uri: theme.demo_uri,
-				screenshot: this.getScreenshotUrl( theme.slug ),
-			};
+				screenshot: this.getScreenshotUrl( theme )
+			} );
 		} );
 		return (
 			<ThemesList

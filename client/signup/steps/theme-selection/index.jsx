@@ -38,16 +38,19 @@ module.exports = React.createClass( {
 	},
 
 	pickTheme( theme ) {
-		const themeSlug = theme.id;
+		const repoSlug = `${ theme.repo }/${ theme.slug }`;
 
-		analytics.tracks.recordEvent( 'calypso_signup_theme_select', { theme: themeSlug, headstart: true } );
+		analytics.tracks.recordEvent( 'calypso_signup_theme_select', {
+			theme: repoSlug,
+			headstart: true
+		} );
 
 		SignupActions.submitSignupStep( {
 			stepName: this.props.stepName,
 			processingMessage: this.translate( 'Adding your theme' ),
-			themeSlug
+			repoSlug
 		}, null, {
-			theme: 'pub/' + themeSlug
+			theme: repoSlug
 		} );
 
 		this.props.goToNextStep();
