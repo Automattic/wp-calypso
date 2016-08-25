@@ -8,6 +8,10 @@ import {
 	PREVIEW_TYPE_RESET,
 } from 'state/action-types';
 
+import { clearCustomizations } from 'state/preview/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+
 export function setPreviewUrl( url ) {
 	return {
 		type: PREVIEW_URL_SET,
@@ -31,5 +35,15 @@ export function setPreviewType( previewType ) {
 export function resetPreviewType() {
 	return {
 		type: PREVIEW_TYPE_RESET,
+	};
+}
+
+export function closePreview() {
+	return ( dispatch, getState ) => {
+		const selectedSiteId = getSelectedSiteId( getState() );
+		dispatch( clearCustomizations( selectedSiteId ) );
+		dispatch( clearPreviewUrl( selectedSiteId ) );
+		dispatch( resetPreviewType() );
+		dispatch( setLayoutFocus( 'sidebar' ) );
 	};
 }
