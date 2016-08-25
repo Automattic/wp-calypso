@@ -401,7 +401,7 @@ export default {
 				type: JETPACK_CONNECT_ACTIVATE_MANAGE,
 				blogId: blogId
 			} );
-			wpcom.undocumented().activateManage( blogId, state, secret )
+			return wpcom.undocumented().activateManage( blogId, state, secret )
 			.then( ( data ) => {
 				tracksEvent( dispatch, 'calypso_jpc_activate_manage_success' );
 				debug( 'Manage activated!', data );
@@ -417,7 +417,7 @@ export default {
 				dispatch( {
 					type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 					data: null,
-					error: error
+					error: pick( error, [ 'error', 'status', 'message' ] )
 				} );
 			} );
 		};
