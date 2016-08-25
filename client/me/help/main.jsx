@@ -15,11 +15,10 @@ const Main = require( 'components/main' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	HelpSearch = require( './help-search' ),
 	CompactCard = require( 'components/card/compact' ),
-	Card = require( 'components/card' ),
-	Gridicon = require( 'components/gridicon' ),
 	Button = require( 'components/button' ),
 	SectionHeader = require( 'components/section-header' ),
 	HelpResult = require( './help-results/item' ),
+	HelpTeaserButton = require( './help-teaser-button' ),
 	HelpUnverifiedWarning = require( './help-unverified-warning' );
 
 const Help = React.createClass( {
@@ -108,19 +107,10 @@ const Help = React.createClass( {
 
 	getCoursesTeaser: function() {
 		return (
-			<div className="help__course-teaser">
-				<Card href="/help/courses">
-					<Gridicon className="help__course-teaser-icon" icon="help" size={ 36 } />
-					<div>
-						<span className="help__course-teaser-title">
-							{ this.translate( 'Courses' ) }
-						</span>
-						<span className="help__course-teaser-description">
-							{ this.translate( 'Learn how to make the most of your site with these courses and webinars' ) }
-						</span>
-					</div>
-				</Card>
-			</div>
+			<HelpTeaserButton
+				href="/help/courses"
+				title={ this.translate( 'Courses' ) }
+				description={ this.translate( 'Learn how to make the most of your site with these courses and webinars' ) }/>
 		);
 	},
 
