@@ -20,7 +20,7 @@ import { getFeatureTitle } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { PLAN_PERSONAL, getPlanObject } from 'lib/plans/constants';
 
-const SeoSettingsNudge = ( { translate, plan = {}, planConstants = {}, features, upgrade = () => {}, benefits, title, subtitle, highlightedFeature } ) => {
+const ExpandedUpgradeNudge = ( { translate, plan = {}, planConstants = {}, features, upgrade = () => {}, benefits, title, subtitle, highlightedFeature } ) => {
 	const price = formatCurrency( plan.raw_price / 12, plan.currency_code );
 	if ( ! features ) {
 		if ( planConstants.promotedFeatures ) {
@@ -75,7 +75,7 @@ const SeoSettingsNudge = ( { translate, plan = {}, planConstants = {}, features,
 	);
 };
 
-SeoSettingsNudge.propTypes = {
+ExpandedUpgradeNudge.propTypes = {
 	translate: PropTypes.func.isRequired,
 	upgrade: PropTypes.func.isRequired,
 	plan: PropTypes.object
@@ -86,4 +86,4 @@ const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	planConstants: getPlanObject( plan )
 } );
 
-export default connect( mapStateToProps )( localize( SeoSettingsNudge ) );
+export default connect( mapStateToProps )( localize( ExpandedUpgradeNudge ) );
