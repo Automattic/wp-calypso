@@ -3,7 +3,9 @@
 /**
  * External dependencies/
  */
-var fs = require( 'fs' ),
+var flatten = require( 'lodash.flatten' ),
+	fs = require( 'fs' ),
+	glob = require( 'glob' ),
 	path = require( 'path' ),
 	program = require( 'commander' );
 
@@ -54,9 +56,9 @@ if ( outputFile ) {
 }
 
 // files relative to terminal location
-inputPaths = inputFiles.map( function( fileName ) {
-	return path.resolve( process.env.PWD, fileName );
-} );
+inputPaths = flatten( inputFiles.map( function( fileName ) {
+	return glob.sync( fileName, { cwd: process.env.PWD } );
+} ) );
 
 console.log( 'Reading inputFiles:\n\t- ' + inputPaths.join( '\n\t- ' ) );
 
