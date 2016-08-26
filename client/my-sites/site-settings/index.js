@@ -13,7 +13,7 @@ var config = require( 'config' ),
 module.exports = function() {
 	page( '/settings', controller.siteSelection, settingsController.redirectToGeneral );
 	page( '/settings/general/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
-	page( '/settings/wiriting/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
+	page( '/settings/writing/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
 	page( '/settings/discussion/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
 	page( '/settings/analytics/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
 

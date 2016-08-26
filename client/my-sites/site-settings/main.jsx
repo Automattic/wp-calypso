@@ -9,10 +9,6 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
 import notices from 'notices';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
@@ -25,6 +21,7 @@ import ImportSettings from './section-import';
 import ExportSettings from './section-export';
 import GuidedTransfer from 'my-sites/guided-transfer';
 import SiteSecurity from './section-security';
+import SiteSettingsNavigation from './navigation';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 
 /**
@@ -57,24 +54,6 @@ export class SiteSettingsComponent extends Component {
 		if ( nextProps.purchasesError ) {
 			notices.error( nextProps.purchasesError );
 		}
-	}
-
-	getImportPath() {
-		const { site } = this.state,
-			path = '/settings/import';
-
-		if ( site.jetpack ) {
-			return `${ site.options.admin_url }import.php`;
-		}
-
-		return [ path, site.slug ].join( '/' );
-	}
-
-	getExportPath() {
-		const { site } = this.state;
-		return site.jetpack
-			? `${ site.options.admin_url }export.php`
-			: `/settings/export/${ site.slug }`;
 	}
 
 	getStrings() {
@@ -116,98 +95,15 @@ export class SiteSettingsComponent extends Component {
 		}
 	}
 
-	renderSectioNav() {
-		const { site } = this.state;
-		const { section } = this.props;
-
-		const strings = this.getStrings();
-		const selectedText = strings[ section ];
-
-		if ( ! site ) {
-			return ( <SectionNav /> );
-		}
-
-		if ( section === 'guidedTransfer' ) {
-			// Dont show the navigation for guided transfer since it includes its own back navigation
-			return null;
-		}
-
-		return (
-			<SectionNav selectedText={ selectedText } >
-				<NavTabs>
-					<NavItem
-						path={ `/settings/general/${ site.slug }` }
-						selected={ section === 'general' } >
-							{ strings.general }
-					</NavItem>
-
-					<NavItem
-						path={ `/settings/writing/${ site.slug }` }
-						selected={ section === 'writing' } >
-							{ strings.writing }
-					</NavItem>
-
-					<NavItem
-						path={ `/settings/discussion/${ site.slug }` }
-						selected={ section === 'discussion' } >
-							{ strings.discussion }
-					</NavItem>
-
-					{
-						! site.jetpack && config.isEnabled( 'manage/plans' ) &&
-							<NavItem
-								path={ `/settings/analytics/${ site.slug }` }
-								selected={ section === 'analytics' } >
-									{ strings.analytics }
-							</NavItem>
-					}
-
-					{ ! site.jetpack && config.isEnabled( 'manage/seo' ) &&
-						<NavItem
-							path={ `/settings/seo/${ site.slug }` }
-							selected={ section === 'seo' } >
-								{ strings.seo }
-						</NavItem>
-					}
-
-					{
-						config.isEnabled( 'manage/security' ) && site.jetpack &&
-							<NavItem path={ `/settings/security/${ site.slug }` }
-							selected={ section === 'security' } >
-								{ strings.security }
-						</NavItem>
-					}
-
-					<NavItem
-						path={ this.getImportPath() }
-						selected={ section === 'import' }
-						isExternalLink={ !! site.jetpack } >
-							{ strings.import }
-					</NavItem>
-
-					{
-						config.isEnabled( 'manage/export' ) &&
-							<NavItem
-								path={ this.getExportPath() }
-								selected={ section === 'export' }
-								isExternalLink={ !! site.jetpack } >
-									{ strings.export }
-							</NavItem>
-					}
-				</NavTabs>
-			</SectionNav>
-		);
-	}
-
 	render() {
 		const { site } = this.state;
+		const { section } = this.props;
 
 		return (
 			<section className="site-settings">
 				<div className="main main-column" role="main">
 					<SidebarNavigation />
-
-					{ this.renderSectioNav( site ) }
+					<SiteSettingsNavigation site={ site } section={ section } />
 					{ site && <QuerySitePurchases siteId={ site.ID } /> }
 					{ site && this.getSection() }
 				</div>
