@@ -6,8 +6,6 @@ import io from 'socket.io-client';
 /**
  * Internal dependencies
  */
-import { cssBuildFailed, cssBuilding } from 'state/application/actions';
-
 import i18n from 'i18n-calypso';
 
 // https://developer.mozilla.org/en/docs/Web/HTML/Element/link
@@ -24,19 +22,19 @@ let standardAttributes = [
 
 /**
  * Replaces the old hash parameter with the current timestamp if `name` is `href`.
- * @return {Object} 
+ * @return {Object}
  */
 function bustHashForHrefs( { name, oldValue } ) {
 	// http://some.site.com/and/a/path?with=a&query -> http://some.site.com/and/a/path?v=13508135781
 	const value = 'href' === name
-	    ? `${ oldValue.split( '?' ).shift() }?v=${ new Date().getTime() }`
-	    : oldValue;
+		? `${ oldValue.split( '?' ).shift() }?v=${ new Date().getTime() }`
+		: oldValue;
 
 	return { name, value };
 };
 
 /**
- * @return {Boolean} 
+ * @return {Boolean}
  */
 function isChanged( href, changedFiles ) {
 	// "/calypso/style-debug.css?v=5a1db7fee7" -> "style-debug.css"
@@ -48,7 +46,7 @@ function isChanged( href, changedFiles ) {
 /**
  * Initialize client CSS hot-reload handler
  */
-export default function( reduxStore ) {
+export default function() {
 	const namespace = location.protocol + '//' + location.host + '/css-hot-reload';
 	const socket = io.connect( namespace );
 
@@ -73,10 +71,10 @@ export default function( reduxStore ) {
 				} );
 				break;
 			case 'building':
-				reduxStore.dispatch( cssBuilding( i18n.translate( 'Building CSS…' ) ) );
-				break
+				console.log( i18n.translate( 'Building CSS…' ) );
+				break;
 			case 'build-failed':
-				reduxStore.dispatch( cssBuildFailed( i18n.translate( 'CSS build failed.' ) ) );
+				console.log( i18n.translate( 'CSS build failed.' ) );
 				break;
 		}
 	} );
