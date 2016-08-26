@@ -14,6 +14,7 @@ import {
 	getSitePosts,
 	getSitePost,
 	getSitePostsForQuery,
+	isPostPublished,
 	isRequestingSitePostsForQuery,
 	getSitePostsFoundForQuery,
 	getSitePostsLastPageForQuery,
@@ -23,6 +24,7 @@ import {
 	getEditedPost,
 	getPostEdits,
 	getEditedPostValue,
+	getEditedPostSlug,
 	isEditedPostDirty,
 	getPostPreviewUrl
 } from '../selectors';
@@ -37,6 +39,7 @@ describe( 'selectors', () => {
 		getNormalizedPost.memoizedSelector.cache.clear();
 		getSitePostsForQuery.memoizedSelector.cache.clear();
 		getSitePostsForQueryIgnoringPage.memoizedSelector.cache.clear();
+		isPostPublished.memoizedSelector.cache.clear();
 	} );
 
 	describe( '#getPost()', () => {
@@ -1376,6 +1379,314 @@ describe( 'selectors', () => {
 			}, 2916284, 841 );
 
 			expect( previewUrl ).to.equal( 'https://example.com/post-url?other_arg=1&preview=true' );
+		} );
+	} );
+
+	describe( 'isPostPublished()', () => {
+		it( 'should return null if the post is not known', () => {
+			const isPublished = isPostPublished( {
+				posts: {
+					queries: {}
+				}
+			}, 2916284, 841 );
+
+			expect( isPublished ).to.be.null;
+		} );
+
+		it( 'should return true if the post status is publish', () => {
+			const isPublished = isPostPublished( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'publish'
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isPublished ).to.be.true;
+		} );
+
+		it( 'should return true if the post status is private', () => {
+			const isPublished = isPostPublished( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'private'
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isPublished ).to.be.true;
+		} );
+
+		it( 'should return false if the post status is draft', () => {
+			const isPublished = isPostPublished( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'draft'
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isPublished ).to.be.false;
+		} );
+
+		it( 'should return false if the post status is future and date is in future', () => {
+			const tenMinutes = 1000 * 60;
+			const postDate = Date.now() + tenMinutes;
+			const isPublished = isPostPublished( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'future',
+									date: postDate
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isPublished ).to.be.false;
+		} );
+
+		it( 'should return true if the post status is future and date is in past', () => {
+			const tenMinutes = 1000 * 60;
+			const postDate = Date.now() - tenMinutes;
+			const isPublished = isPostPublished( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'future',
+									date: postDate
+								}
+							}
+						} )
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( isPublished ).to.be.true;
+		} );
+	} );
+
+	describe( 'getEditedPostSlug()', () => {
+		it( 'should return undefined if the post is not known', () => {
+			const slug = getEditedPostSlug( {
+				posts: {
+					queries: {}
+				}
+			}, 2916284, 841 );
+
+			expect( slug ).to.be.undefined;
+		} );
+
+		it( 'should return post.slug if post is published', () => {
+			const slug = getEditedPostSlug( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'publish',
+									slug: 'chewbacca'
+								}
+							}
+						} )
+					},
+					edits: {
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( slug ).to.eql( 'chewbacca' );
+		} );
+
+		it( 'should return edited slug if post is not published', () => {
+			const slug = getEditedPostSlug( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'draft',
+									slug: 'chewbacca',
+									other_URLs: {
+										suggested_slug: 'chewbacca'
+									}
+								}
+							}
+						} )
+					},
+					edits: {
+						2916284: {
+							841: {
+								slug: 'jedi'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( slug ).to.eql( 'jedi' );
+		} );
+
+		it( 'should return suggested-slug if post is not published', () => {
+			const slug = getEditedPostSlug( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'draft',
+									other_URLs: {
+										suggested_slug: 'chewbacca'
+									}
+								}
+							}
+						} )
+					},
+					edits: {
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( slug ).to.eql( 'chewbacca' );
+		} );
+
+		it( 'should return slug if post is not published and slug is set', () => {
+			const slug = getEditedPostSlug( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'draft',
+									other_URLs: {
+										suggested_slug: 'chewbacca'
+									},
+									slug: 'jedi'
+								}
+							}
+						} )
+					},
+					edits: {
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( slug ).to.eql( 'jedi' );
+		} );
+
+		it( 'should return edited slug if post is published', () => {
+			const slug = getEditedPostSlug( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'private',
+									other_URLs: {
+										suggested_slug: 'chewbacca'
+									},
+									slug: 'jedi'
+								}
+							}
+						} )
+					},
+					edits: {
+						2916284: {
+							841: {
+								slug: 'ewok'
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( slug ).to.eql( 'ewok' );
+		} );
+
+		it( 'should return an empty edited slug if post is published', () => {
+			const slug = getEditedPostSlug( {
+				posts: {
+					queries: {
+						2916284: new PostQueryManager( {
+							items: {
+								841: {
+									ID: 841,
+									site_ID: 2916284,
+									global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+									status: 'private',
+									other_URLs: {
+										suggested_slug: 'chewbacca'
+									},
+									slug: 'jedi'
+								}
+							}
+						} )
+					},
+					edits: {
+						2916284: {
+							841: {
+								slug: ''
+							}
+						}
+					}
+				}
+			}, 2916284, 841 );
+
+			expect( slug ).to.eql( '' );
 		} );
 	} );
 } );

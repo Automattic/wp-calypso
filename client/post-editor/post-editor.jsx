@@ -219,7 +219,6 @@ const PostEditor = React.createClass( {
 									tabIndex={ 1 } />
 								{ this.state.post && isPage && site
 									? <EditorPageSlug
-										slug={ this.state.post.slug }
 										path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
 											? utils.getPagePath( this.state.post )
 											: siteURL
