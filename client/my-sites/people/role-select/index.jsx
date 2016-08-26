@@ -76,7 +76,7 @@ export default React.createClass( {
 			let siteRoles = RolesStore.getRoles( siteId );
 
 			if ( this.props.includeFollower ) {
-				siteRoles = Object.assign( {}, this.getWPCOMFollowerRole(), siteRoles )
+				siteRoles = Object.assign( {}, this.getWPCOMFollowerRole(), siteRoles );
 			}
 
 			this.setState( {
@@ -117,7 +117,7 @@ export default React.createClass( {
 						context: 'Text that is displayed in a label of a form.'
 					} ) }
 				</FormLabel>
-				<FormSelect { ...omit( this.props, [ 'site', 'key' ] ) }>
+				<FormSelect { ...omit( this.props, [ 'site', 'key', 'siteId' ] ) }>
 					{
 						map( this.state.roles, ( roleObject, key ) => {
 							return (
