@@ -300,7 +300,6 @@ export const SeoForm = React.createClass( {
 	},
 
 	render() {
-		console.log(true);
 		const { showAdvancedSeo, showUpgradeNudge, upgradeToBusiness } = this.props;
 		const {
 			description: siteDescription,

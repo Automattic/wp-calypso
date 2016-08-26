@@ -13,6 +13,7 @@ import config from 'config';
 import DeleteSite from './delete-site';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
+import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
 import sitesFactory from 'lib/sites-list';
 import StartOver from './start-over';
@@ -62,7 +63,7 @@ module.exports = {
 		const basePath = route.sectionify( context.path );
 		const fiveMinutes = 5 * 60 * 1000;
 		let site = sites.getSelectedSite();
-		const { section } = context.params;
+		const section = sectionify( context.path ).split( '/' )[ 2 ];
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Site Settings', { textOnly: true } ) ) );
