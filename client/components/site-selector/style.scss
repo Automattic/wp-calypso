@@ -69,6 +69,18 @@
  	margin: 8px;
 	width: auto;
 	height: 33px;
+
+	.search__input[type="search"] {
+		font-size: 13px;
+	}
+
+	.search__open-icon,
+	.search__close-icon {
+		color: $gray;
+		width: 32px;
+		height: 18px;
+	}
+
  }
 
 // The actual list of sites
