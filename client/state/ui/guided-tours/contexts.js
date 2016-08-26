@@ -2,7 +2,18 @@
 
 import config from 'config';
 import { getSectionName, isPreviewShowing, getSelectedSite } from 'state/ui/selectors';
+import { isFetchingNextPage, getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
+
+export const themeSearchResultsFound = state => {
+	const params = getQueryParams( state );
+	return params && params.search && params.search.length && ! isFetchingNextPage( state ) && getThemesList( state ).length > 0;
+};
+
+export const themeFreeFilterChosen = state => {
+	const params = getQueryParams( state );
+	return params && params.tier === 'free';
+};
 
 export const inSection = sectionName => state =>
 	getSectionName( state ) === sectionName;

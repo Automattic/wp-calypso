@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 import React from 'react';
 import { translate } from 'i18n-calypso';
 import { overEvery as and } from 'lodash';
@@ -203,7 +205,7 @@ export const MainTour = makeTour(
 			<div className="guided-tours__single-button-row">
 				<Quit primary>{ translate( "We're all done!" ) }</Quit>
 			</div>
-			<Link href="https://lean.wordpress.com">
+			<Link href="https://learn.wordpress.com">
 				{ translate( 'Learn more about WordPress.com' ) }
 			</Link>
 		</Step>
