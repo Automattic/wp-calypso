@@ -13,7 +13,9 @@ function oauth() {
 	return {
 		client_id: config( 'desktop_oauth_client_id' ),
 		client_secret: config( 'desktop_oauth_client_secret' ),
+		client_name: config( 'desktop_oauth_client_name' ),
 		wpcom_supports_2fa: true,
+		wpcom_supports_2fa_push_verification: true,
 		grant_type: 'password'
 	}
 }
@@ -32,6 +34,12 @@ function proxyOAuth( request, response ) {
 	if ( request.body.auth_code ) {
 		// Pass along the one-time password
 		data.wpcom_otp = request.body.auth_code;
+	}
+
+	if ( request.body.push_token ) {
+		// Pass along the push verification info
+		data.wpcom_push_token = request.body.push_token;
+		data.wpcom_user_id = request.body.user_id;
 	}
 
 	req.post( config( 'desktop_oauth_token_endpoint' ) )

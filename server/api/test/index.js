@@ -117,4 +117,24 @@ describe( 'api', function() {
 			.send( { username: 'validuser', password: 'validpassword' } )
 			.expect( 408, response, done );
 	} );
+
+	maybeIt( 'should return a 400 push verification request if the server supports it', function( done ) {
+		const response = {
+				error: 'needs_2fa',
+				error_description: 'We just sent a push notification to your WordPress mobile app. Swipe or tap to open and verify your login.',
+				error_info: {
+					type: 'push-verification-sent',
+					user_id: 1234,
+					push_token: 'abcd'
+				}
+			},
+			end = sandbox.stub( request.Request.prototype, 'end' );
+
+		end.callsArgWithAsync( 0, { status: 400 }, { body: response } );
+
+		localRequest
+			.post( '/oauth' )
+			.send( { username: 'validuser', password: 'validpassword' } )
+			.expect( 400, response, done );
+	} );
 } );
