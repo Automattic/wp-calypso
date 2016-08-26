@@ -8,7 +8,11 @@ const SearchCard = require( 'components/search-card' ),
 	FollowingEditSubscribeFormResult = require( './subscribe-form-result' ),
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' );
 
-const minSearchLength = 8; // includes protocol
+import ListItem from 'reader/list-item';
+
+var minSearchLength = 8; // includes protocol
+
+const config = require( 'config' );
 
 var FollowingEditSubscribeForm = React.createClass( {
 
@@ -66,8 +70,34 @@ var FollowingEditSubscribeForm = React.createClass( {
 			return;
 		}
 
-		this.verifySearchString( searchString );
-		this.props.onSearch( searchString );
+		if ( ! config.isEnabled( 'reader/follow-feed-search' ) ) {
+			this.verifySearchString( searchString );
+			this.props.onSearch( searchString );
+		} else {
+			minSearchLength = 3;
+
+			if ( searchString.length > minSearchLength ) {
+				// should also have a type-search delay
+				this.setState( {
+					searchString: searchString,
+					isWellFormedFeedUrl: true
+				} );
+
+				var params = { q: searchString };
+				wpcom.undocumented().discoverFeed( params, this.searchCallback );
+			} else {
+				// need to reset the search box when no text or search is canceled (X)
+				this.setState( {
+					searchString: searchString,
+					isWellFormedFeedUrl: searchString.length > minSearchLength
+				} );
+			}
+		}
+	},
+
+	searchCallback: function( error, data ) {
+		const newState = { newFeeds: data.feeds };
+		this.setState( newState );
 	},
 
 	handleSearchClose: function() {
@@ -129,11 +159,23 @@ var FollowingEditSubscribeForm = React.createClass( {
 		}
 
 		if ( showSearchResult ) {
-			searchResult = ( <FollowingEditSubscribeFormResult
-				isValid={ isWellFormedFeedUrl }
-				url={ searchString }
-				onFollowToggle={ handleFollowToggle } />
-			);
+			if ( ! config.isEnabled( 'reader/follow-feed-search' ) ) {
+				searchResult = ( <FollowingEditSubscribeFormResult
+					isValid={ isWellFormedFeedUrl }
+					url={ searchString }
+					onFollowToggle={ handleFollowToggle } />
+				);
+			} else if ( this.state.newFeeds ) {
+				console.log( this.state.newFeeds );
+				searchResult = this.state.newFeeds.map( function( item ) {
+				 		return ( <div className="subscription-list-item__header-content"
+											key={ 'subscription-list-feed-item-' + item.feed_ID }>
+											<ListItem className='is-search-result'>
+												{ item.title + ' ' + item.URL }
+										 	</ListItem>
+										 </div> );
+				} );
+			}
 		}
 
 		return (
