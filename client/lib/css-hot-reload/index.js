@@ -57,7 +57,7 @@ export default function() {
 				const elems = [].slice.call( document.head.getElementsByTagName( 'link' ) );
 				elems.forEach( function( oldLink ) {
 					if ( ( 'href' in oldLink ) && isChanged( oldLink.href, data.changedFiles ) ) {
-						console.log( 'Reloading CSS: ', oldLink );
+						console.log( i18n.translate( 'Reloading CSS: ' ), oldLink );
 						// Remove old .css and insert new one in the same spot
 						const newLink = document.createElement( 'link' );
 						// Copy <link> standard attributes
