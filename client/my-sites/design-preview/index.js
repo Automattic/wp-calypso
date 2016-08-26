@@ -20,6 +20,7 @@ import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'st
 import { closePreview } from 'state/ui/preview/actions';
 import DesignMenu from 'blocks/design-menu';
 import { getSiteFragment } from 'lib/route/path';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -181,6 +182,7 @@ export default function designPreview( WebPreview ) {
 	function mapStateToProps( state ) {
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteId = getSelectedSiteId( state );
+		const currentLayoutFocus = getCurrentLayoutFocus( state );
 
 		return {
 			selectedSite,
@@ -190,6 +192,7 @@ export default function designPreview( WebPreview ) {
 			previewMarkup: getPreviewMarkup( state, selectedSiteId ),
 			customizations: getPreviewCustomizations( state, selectedSiteId ),
 			isUnsaved: isPreviewUnsaved( state, selectedSiteId ),
+			showPreview: currentLayoutFocus === 'preview' || currentLayoutFocus === 'preview-sidebar',
 		};
 	}
 
