@@ -68,4 +68,8 @@
 	.preview-upgrade-nudge__feature-comparison {
 		margin: 0;
 	}
+
+	.feature-example__gradient {
+		background: linear-gradient( to bottom, rgba(243, 246, 248, 0), rgba( 243, 246, 248, 1) );
+	}
 }
