@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import validator from 'is-my-json-valid';
+import tv4 from 'tv4';
 import { merge } from 'lodash';
 
 /**
@@ -13,13 +13,16 @@ import {
 } from './action-types';
 import warn from 'lib/warn';
 
-export function isValidStateWithSchema( state, schema ) {
-	const validate = validator( schema );
-	const valid = validate( state );
-	if ( ! valid ) {
-		warn( 'state validation failed for state:', state, 'with reason:', validate.errors );
+/**
+ * Module variables
+ */
+
+export function isValidStateWithSchema( state, schema, checkForCycles = false, banUnknownProperties = false ) {
+	const result = tv4.validateResult( state, schema, checkForCycles, banUnknownProperties );
+	if ( ! result.valid ) {
+		warn( 'state validation failed', state, result.error );
 	}
-	return valid;
+	return result.valid;
 }
 
 /**
