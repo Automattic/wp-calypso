@@ -8,6 +8,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
 import notices from 'notices';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
@@ -53,14 +54,12 @@ export class SeoSettings extends Component {
 		const { upgradeToBusiness } = this.props;
 
 		return (
-			<section className="site-settings">
-				<div className="main main-column" role="main">
-					<SidebarNavigation />
-					<SiteSettingsNavigation site={ site } section="seo" />
-					{ site && <QuerySitePurchases siteId={ site.ID } /> }
-					<SeoForm { ...{ site, upgradeToBusiness } } />
-				</div>
-			</section>
+			<Main>
+				<SidebarNavigation />
+				<SiteSettingsNavigation site={ site } section="seo" />
+				{ site && <QuerySitePurchases siteId={ site.ID } /> }
+				<SeoForm { ...{ site, upgradeToBusiness } } />
+			</Main>
 		);
 	}
 
