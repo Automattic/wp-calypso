@@ -1,3 +1,9 @@
+.reader-related-card-v2__container {
+	display: flex;
+	padding: 0;
+}
 
-.reader-related-card-v2 {
+.reader-related-card-v2.card {
+	box-shadow: none;
+	flex: 1;
 }

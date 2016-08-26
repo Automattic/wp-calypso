@@ -27,11 +27,11 @@ export function SmallPostCard( { post, site, onPostClick = noop, onSiteClick = n
 
 	return (
 		<Card className={ classes }>
-			<div className="reader-related-card-v2__site-info-title">
+			<div className="reader-related-card-v2__site-info">
 				<h1 className="reader-related-card-v2__title">
-					<a className="reader-related-card-v2__anchor" href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }>{ post.title }</a>
+					<a className="reader-related-card-v2__link" href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }>{ post.title }</a>
 				</h1>
-				<div className="reader-related-card-v2__site-info">
+				<div className="reader-related-card-v2__meta">
 					<AuthorAndSite post={ post } site={ site } />
 				</div>
 			</div>

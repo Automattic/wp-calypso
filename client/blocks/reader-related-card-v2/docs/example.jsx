@@ -63,7 +63,7 @@ const RelatedPostCards = React.createClass( {
 				<h2>
 					<a href="/devdocs/blocks/post-card">Refresh Related Cards</a>
 				</h2>
-				<div>
+				<div className="reader-related-card-v2__container">
 					{ smallItems.map( item => <RelatedPostCardv2 key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
 				</div>
 			</div>
