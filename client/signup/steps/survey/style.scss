@@ -81,3 +81,58 @@
 		color: $gray;
 	}
 }
+
+.survey__verticals-list {
+	text-align: center;
+}
+
+.survey__vertical {
+	margin: 8px;
+	border-bottom-width: 1px;
+
+	&:hover {
+		.survey__vertical-label {
+			color: $blue-medium;
+		}
+		.survey__vertical-chevron {
+			color: $blue-medium;
+			animation: survey__vertical-chevron-wiggle 1.5s ease infinite;
+		}
+	}
+
+	&:active {
+		border-top-width: 1px;
+		background: lighten( $gray, 30% );
+	}
+}
+
+.survey__vertical-label {
+	margin: 10px;
+	font-weight: 400;
+	color: darken( $gray, 30% )
+}
+
+.survey__vertical-chevron {
+	color: lighten( $gray, 20% );
+}
+
+@keyframes survey__vertical-chevron-wiggle {
+	0% {
+		transform: none;
+	}
+	60% {
+		transform: none;
+	}
+	70% {
+		transform: translate(5px, 0);
+	}
+	80% {
+		transform: none;
+	}
+	90% {
+		transform: translate(5px, 0);
+	}
+	100% {
+		transform: none;
+	}
+}
