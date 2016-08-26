@@ -14,7 +14,7 @@ const NativeCustomizer = React.createClass( {
 	},
 
 	componentWillMount() {
-		this.props.setLayoutFocus( 'preview' );
+		this.props.setLayoutFocus( 'preview-sidebar' );
 	},
 
 	componentWillUnmount() {
