@@ -58,9 +58,17 @@
 	background-color: #fff;
 }
 
+.design-menu__preview.button,
 .design-menu__save.button {
 	text-align: center;
 	font-size: 14px;
+	margin-bottom: 10px;
+}
+
+.design-menu__preview.button {
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
 }
 
 .design-tool-list ul {

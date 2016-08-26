@@ -23,6 +23,7 @@ import SiteTitleControl from 'components/site-title';
 import DesignMenuPanel from './design-menu-panel';
 import DesignMenuHeader from './design-menu-header';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 const WrappedSiteTitleControl = designTool( SiteTitleControl );
 
@@ -131,13 +132,9 @@ const DesignMenu = React.createClass( {
 			'is-layout-preview-sidebar': this.props.currentLayoutFocus === 'preview-sidebar'
 		} );
 		if ( ! this.props.selectedSite ) {
-			return (
-				<RootChild>
-					<div className={ classNames }>
-					</div>
-				</RootChild>
-			);
+			return <RootChild><div className={ classNames }/></RootChild>;
 		}
+		const onShowPreview = () => this.props.setLayoutFocus( 'preview' );
 		return (
 			<RootChild>
 				<div className={ classNames }>
@@ -146,6 +143,7 @@ const DesignMenu = React.createClass( {
 						isUnsaved={ this.props.isUnsaved }
 						onBack={ this.onBack }
 						onSave={ this.onSave }
+						onPreview={ onShowPreview }
 					/>
 					{ this.renderActiveDesignTool() }
 				</div>
@@ -167,5 +165,5 @@ function mapStateToProps( state ) {
 
 export default connect(
 	mapStateToProps,
-	{ clearCustomizations, fetchPreviewMarkup, saveCustomizations, setActiveDesignTool }
+	{ clearCustomizations, fetchPreviewMarkup, saveCustomizations, setActiveDesignTool, setLayoutFocus }
 )( DesignMenu );

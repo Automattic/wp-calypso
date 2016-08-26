@@ -12,7 +12,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
-const DesignMenuHeader = ( { isUnsaved, onBack, onSave, site, translate } ) => {
+const DesignMenuHeader = ( { isUnsaved, onBack, onPreview, onSave, site, translate } ) => {
 	return (
 		<span className="design-menu__header">
 			<Button compact borderless onClick={ onBack }>
@@ -26,6 +26,10 @@ const DesignMenuHeader = ( { isUnsaved, onBack, onSave, site, translate } ) => {
 					className="design-menu__save"
 					onClick={ onSave }
 				>{ isUnsaved ? translate( 'Publish Changes' ) : translate( 'Saved' ) }</Button>
+				<Button compact
+					className="design-menu__preview"
+					onClick={ onPreview }
+				>{ translate( 'Preview changes' ) }</Button>
 			</Card>
 		</span>
 	);
