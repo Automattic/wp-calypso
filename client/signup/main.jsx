@@ -41,11 +41,13 @@ import utils from './utils';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
+import { abtest } from 'lib/abtest';
 
 /**
  * Constants
  */
-const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 8000;
+const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_FREE = 8000;
+const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_PREMIUM = 3000;
 
 const Signup = React.createClass( {
 	displayName: 'Signup',
@@ -103,11 +105,17 @@ const Signup = React.createClass( {
 					? Date.now() - this.state.loadingScreenStartTime
 					: undefined;
 				const filteredDestination = utils.getDestination( destination, dependencies, this.props.flowName );
+				let loadingScreenDelay;
+				if ( dependencies.cartItem && abtest( 'signupCheckoutRedirect' ) === 'auto' ) {
+					loadingScreenDelay = MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_PREMIUM;
+				} else {
+					loadingScreenDelay = MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_FREE;
+				}
 
-				if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
+				if ( timeSinceLoading && timeSinceLoading < loadingScreenDelay ) {
 					return delay(
 						this.handleFlowComplete.bind( this, dependencies, filteredDestination ),
-						MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
+						loadingScreenDelay - timeSinceLoading
 					);
 				}
 				return this.handleFlowComplete( dependencies, filteredDestination );
@@ -170,10 +178,13 @@ const Signup = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
 
 		this.signupFlowController.reset();
-
-		this.setState( {
-			loginHandler: this.handleLogin.bind( this, dependencies, destination )
-		} );
+		if ( dependencies.cartItem && abtest( 'signupCheckoutRedirect' ) === 'auto' ) {
+			this.handleLogin( dependencies, destination );
+		} else {
+			this.setState( {
+				loginHandler: this.handleLogin.bind( this, dependencies, destination )
+			} );
+		}
 	},
 
 	handleLogin( dependencies, destination ) {
