@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Main from 'components/main';
 import notices from 'notices';
 import QuerySitePurchases from 'components/data/query-site-purchases';
 import { getSitePurchases, hasLoadedSitePurchasesFromServer, getPurchasesError } from 'state/purchases/selectors';
@@ -100,14 +101,12 @@ export class SiteSettingsComponent extends Component {
 		const { section } = this.props;
 
 		return (
-			<section className="site-settings">
-				<div className="main main-column" role="main">
+			<Main className="site-settings">
 					<SidebarNavigation />
 					<SiteSettingsNavigation site={ site } section={ section } />
 					{ site && <QuerySitePurchases siteId={ site.ID } /> }
 					{ site && this.getSection() }
-				</div>
-			</section>
+			</Main>
 		);
 	}
 
