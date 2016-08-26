@@ -1,22 +1,24 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:infinite-list' ),
-	omit = require( 'lodash/omit' ),
-	ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	page = require( 'page' );
+import debugFactory from 'debug';
+import omit from 'lodash/omit';
+import page from 'page';
+import React from 'react';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-var ScrollHelper = require( './scroll-helper' ),
-	InfiniteListPositionsStore = require( 'lib/infinite-list/positions-store' ),
-	InfiniteListScrollStore = require( 'lib/infinite-list/scroll-store' ),
-	InfiniteListActions = require( 'lib/infinite-list/actions' ),
-	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
-	scrollTo = require( 'lib/scroll-to' ),
-	smartSetState = require( 'lib/react-smart-set-state' );
+import detectHistoryNavigation from 'lib/detect-history-navigation';
+import InfiniteListActions from 'lib/infinite-list/actions';
+import InfiniteListPositionsStore from 'lib/infinite-list/positions-store';
+import InfiniteListScrollStore from 'lib/infinite-list/scroll-store';
+import ScrollHelper from './scroll-helper';
+import scrollTo from 'lib/scroll-to';
+import smartSetState from 'lib/react-smart-set-state';
+
+const debug = debugFactory( 'calypso:infinite-list' );
 
 module.exports = React.createClass( {
 	displayName: 'InfiniteList',
@@ -32,7 +34,6 @@ module.exports = React.createClass( {
 		lastPage: React.PropTypes.bool.isRequired,
 		guessedItemHeight: React.PropTypes.number.isRequired,
 		itemsPerRow: React.PropTypes.number,
-
 		fetchNextPage: React.PropTypes.func.isRequired,
 		getItemRef: React.PropTypes.func.isRequired,
 		renderItem: React.PropTypes.func.isRequired,
@@ -40,11 +41,11 @@ module.exports = React.createClass( {
 		renderTrailingItems: React.PropTypes.func,
 		context: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
-			React.PropTypes.bool,
-		] ),
+			React.PropTypes.bool
+		] )
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			itemsPerRow: 1,
 			renderTrailingItems: () => {}
@@ -53,9 +54,9 @@ module.exports = React.createClass( {
 
 	smartSetState: smartSetState,
 
-	componentWillMount: function() {
-		var url = page.current,
-			newState, scrollPosition;
+	componentWillMount() {
+		const url = page.current;
+		let newState, scrollPosition;
 
 		if ( detectHistoryNavigation.loadedViaHistory() ) {
 			newState = InfiniteListPositionsStore.get( url );
@@ -92,7 +93,7 @@ module.exports = React.createClass( {
 		this.setState( newState );
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		if ( this._contextLoaded() ) {
 			this._setContainerY( this.state.scrollTop );
 		}
@@ -110,7 +111,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	componentWillReceiveProps: function( newProps ) {
+	componentWillReceiveProps( newProps ) {
 		this.scrollHelper.props = newProps;
 
 		// New item may have arrived, should we change the rendered range?
@@ -130,7 +131,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	componentDidUpdate: function( prevProps ) {
+	componentDidUpdate( prevProps ) {
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
@@ -160,7 +161,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	reset: function() {
+	reset() {
 		this.cancelAnimationFrame();
 
 		this.scrollHelper = new ScrollHelper( this.boundsForRef );
@@ -181,13 +182,13 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		this._scrollContainer.removeEventListener( 'scroll', this.onScroll );
 		this._scrollContainer.removeEventListener( 'scroll', this._resetScroll );
 		this.cancelAnimationFrame();
 	},
 
-	cancelAnimationFrame: function() {
+	cancelAnimationFrame() {
 		if ( this.scrollRAFHandle ) {
 			window.cancelAnimationFrame( this.scrollRAFHandle );
 			this.scrollRAFHandle = null;
@@ -195,7 +196,7 @@ module.exports = React.createClass( {
 		this.lastScrollTop = -1;
 	},
 
-	onScroll: function() {
+	onScroll() {
 		if ( this.isScrolling ) {
 			return;
 		}
@@ -204,12 +205,12 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getCurrentContextHeight: function() {
-		var context = this.props.context || window.document.documentElement;
+	getCurrentContextHeight() {
+		const context = this.props.context || window.document.documentElement;
 		return context.clientHeight;
 	},
 
-	getCurrentScrollTop: function() {
+	getCurrentScrollTop() {
 		if ( this.props.context ) {
 			debug( 'getting scrollTop from context' );
 			return this.props.context.scrollTop;
@@ -217,7 +218,7 @@ module.exports = React.createClass( {
 		return window.pageYOffset;
 	},
 
-	scrollChecks: function() {
+	scrollChecks() {
 		// isMounted is necessary to prevent running this before it is mounted,
 		// which could be triggered by data-observe mixin.
 		if ( ! this.isMounted() || this.getCurrentScrollTop() === this.lastScrollTop ) {
@@ -229,7 +230,7 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	scrollToTop: function() {
+	scrollToTop() {
 		this.cancelAnimationFrame();
 		this.isScrolling = true;
 		if ( this.props.context && this.props.context !== window ) {
@@ -251,9 +252,9 @@ module.exports = React.createClass( {
 		}
 	},
 
-	updateScroll: function( options ) {
-		var url = page.current,
-			newState;
+	updateScroll( options ) {
+		const url = page.current;
+		let newState;
 
 		if ( ! this._contextLoaded() ) {
 			return;
@@ -289,7 +290,7 @@ module.exports = React.createClass( {
 		this.scrollRAFHandle = window.requestAnimationFrame( this.scrollChecks );
 	},
 
-	boundsForRef: function( ref ) {
+	boundsForRef( ref ) {
 		if ( ref in this.refs ) {
 			return ReactDom.findDOMNode( this.refs[ ref ] ).getBoundingClientRect();
 		}
@@ -299,21 +300,20 @@ module.exports = React.createClass( {
 	/**
 	 * Returns a list of visible item indexes. This includes any items that are
 	 * partially visible in the viewport.
-	 * @param options.offsetTop - in pixels, 0 if unspecified
-	 * @param options.offsetBottom - in pixels, 0 if unspecified
-	 * @returns {Array}
+	 * @param {Object} options - offset properties
+	 * @param {Integer} options.offsetTop - in pixels, 0 if unspecified
+	 * @param {Integer} options.offsetBottom - in pixels, 0 if unspecified
+	 * @returns {Array} This list of indexes
 	 */
-	getVisibleItemIndexes: function( options ) {
-		var container = ReactDom.findDOMNode( this ),
+	getVisibleItemIndexes( options ) {
+		const container = ReactDom.findDOMNode( this ),
 			visibleItemIndexes = [],
 			firstIndex = this.state.firstRenderedIndex,
 			lastIndex = this.state.lastRenderedIndex,
-			offsetTop = options && options.offsetTop ? options.offsetTop : 0,
-			offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0,
-			windowHeight,
-			rect,
-			children,
-			i;
+			offsetTop = options && options.offsetTop ? options.offsetTop : 0;
+		let windowHeight, rect, children, i,
+			offsetBottom = options && options.offsetBottom ? options.offsetBottom : 0;
+
 		offsetBottom = offsetBottom || 0;
 		if ( lastIndex > -1 ) {
 			// stored item heights are not reliable at all in scroll helper,
@@ -336,16 +336,20 @@ module.exports = React.createClass( {
 		return visibleItemIndexes;
 	},
 
-	render: function() {
-		var lastRenderedIndex = this.state.lastRenderedIndex,
-			itemsToRender = [],
-			propsToTransfer = omit( this.props, Object.keys( this.constructor.propTypes ) ),
-			spacerClassName = 'infinite-list__spacer',
-			i;
+	render() {
+		const propsToTransfer = omit( this.props, Object.keys( this.constructor.propTypes ) ),
+			spacerClassName = 'infinite-list__spacer';
+		let i,
+			lastRenderedIndex = this.state.lastRenderedIndex,
+			itemsToRender = [];
 
 		if ( lastRenderedIndex === -1 || lastRenderedIndex > this.props.items.length - 1 ) {
 			debug( 'resetting lastRenderedIndex, currently at %s, %d items', lastRenderedIndex, this.props.items.length );
-			lastRenderedIndex = Math.min( this.state.firstRenderedIndex + this.scrollHelper.initialLastRenderedIndex(), this.props.items.length - 1 );
+			lastRenderedIndex = Math.min(
+				this.state.firstRenderedIndex +
+				this.scrollHelper.initialLastRenderedIndex(),
+				this.props.items.length - 1
+			);
 			debug( 'reset lastRenderedIndex to %s', lastRenderedIndex );
 		}
 
@@ -360,7 +364,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div {...propsToTransfer}>
+			<div { ...propsToTransfer }>
 				<div ref="topPlaceholder"
 					className={ spacerClassName }
 					style={ { height: this.state.topPlaceholderHeight } } />
@@ -373,7 +377,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	_setContainerY: function( position ) {
+	_setContainerY( position ) {
 		if ( this.props.context && this.props.context !== window ) {
 			this.props.context.scrollTop = position;
 			return;
@@ -386,15 +390,15 @@ module.exports = React.createClass( {
 	 * want to override the scroll position that would otherwise get applied from
 	 * HTML5 history.
 	 */
-	_overrideHistoryScroll: function() {
+	_overrideHistoryScroll() {
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
 		this._scrollContainer.addEventListener( 'scroll', this._resetScroll );
 	},
 
-	_resetScroll: function( event ) {
-		var position = this.state.scrollTop;
+	_resetScroll( event ) {
+		const position = this.state.scrollTop;
 		if ( ! this._contextLoaded() ) {
 			return;
 		}
@@ -408,7 +412,7 @@ module.exports = React.createClass( {
 	 * Determine whether context is available or still being rendered.
 	 * @return {bool} whether context is available
 	 */
-	_contextLoaded: function() {
+	_contextLoaded() {
 		return this.props.context || this.props.context === false || ! ( 'context' in this.props );
 	}
 
