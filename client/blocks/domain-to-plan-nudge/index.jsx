@@ -22,6 +22,9 @@ import QueryStoredCards from 'components/data/query-stored-cards';
 import { emptyCart } from 'lib/cart-values';
 import { add } from 'lib/cart-values/cart-items';
 import { submitTransaction } from 'lib/upgrades/actions/checkout';
+import PlanPrice from 'my-sites/plan-price';
+import PlanIcon from 'components/plans/plan-icon';
+import Gridicon from 'components/gridicon';
 
 const debug = debugFactory( 'calypso:domain-to-plan-nudge' );
 
@@ -80,19 +83,88 @@ class DomainToPlanNudge extends Component {
 			return null;
 		}
 
-		const { siteId, translate, storedCard } = this.props;
+		const { translate, storedCard } = this.props;
+
 		return (
-			<Card>
+			<Card className="domain-to-plan-nudge">
 				<QueryStoredCards />
-				<h3>{ translate( 'Upgrade to a Personal Plan and Save!' ) }</h3>
-				<Button
-					onClick={ this.oneClickUpgrade }
-					disabled={ ! storedCard } >
-					{ translate( 'One Click Checkout' ) }
-				</Button>
-				<Button href={ `/checkout/${ siteId }/personal` }>
-					{ translate( 'Change CC' ) }
-				</Button>
+
+				<div className="domain-to-plan-nudge__header">
+					<div className="domain-to-plan-nudge__header-icon">
+						<PlanIcon plan="personal-bundle" />
+					</div>
+					<div className="domain-to-plan-nudge__header-copy">
+						<h3 className="domain-to-plan-nudge__header-title">
+							{ translate( 'Upgrade to a Personal Plan and Save!' ) }
+						</h3>
+						<ul className="domain-to-plan-nudge__header-features">
+							<li>
+								<div className="domain-to-plan-nudge__header-features-item">
+									<Gridicon
+										className="domain-to-plan-nudge__header-features-item-checkmark"
+										icon="checkmark"
+										size="22"
+									/>
+									{ translate( 'Remove all WordPress.com advertising from your website' ) }
+								</div>
+							</li>
+							<li>
+								<div className="domain-to-plan-nudge__header-features-item">
+									<Gridicon
+										className="domain-to-plan-nudge__header-features-item-checkmark"
+										icon="checkmark"
+										size="22"
+									/>
+									{ translate( 'Get high quality live chat and priority email support' ) }
+								</div>
+							</li>
+							<li>
+								<div className="domain-to-plan-nudge__header-features-item">
+									<Gridicon
+										className="domain-to-plan-nudge__header-features-item-checkmark"
+										icon="checkmark"
+										size="22"
+									/>
+									{ translate( 'Upload up to 3GB of photos and videos' ) }
+								</div>
+							</li>
+							<li>
+								<div className="domain-to-plan-nudge__header-features-item">
+									<Gridicon
+										className="domain-to-plan-nudge__header-features-item-checkmark"
+										icon="checkmark"
+										size="22"
+									/>
+									{ translate( 'Bundled with your domain for the best value!' ) }
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div className="domain-to-plan-nudge__actions-group">
+					<div className="domain-to-plan-nudge__plan-price-group">
+						<div className="domain-to-plan-nudge__discount-percentage">
+							Save 25%
+						</div>
+						<PlanPrice rawPrice="35.88" original />
+						<PlanPrice rawPrice="29.88" discounted />
+						<div className="domain-to-plan-nudge__plan-price-timeframe">
+							{ translate( 'for one year subscription' ) }
+						</div>
+					</div>
+					<div className="domain-to-plan-nudge__upgrade-group">
+						<Button
+							onClick={ this.oneClickUpgrade }
+							disabled={ ! storedCard }
+							primary
+						>
+							{ translate( 'Upgrade Now for xx.xx' ) }
+						</Button>
+						<div className="domain-to-plan-nudge__credit-card-info">
+							{ translate( 'Using credit card ****%s', { args: storedCard.card } ) }
+						</div>
+					</div>
+				</div>
 			</Card>
 		);
 	}
