@@ -179,9 +179,13 @@
 
 	.gravatar {
 		position: absolute;
-			top: 1px;
+			top: 14px;
 			left: -41px;
 		border-radius: 48px;
+
+		@include breakpoint( "<480px" ) {
+			top: 12px;
+		}
 	}
 }
 
@@ -219,7 +223,11 @@ a.comments__comment-username {
 }
 
 .comments__comment-timestamp {
-	margin-top: -6px;
+	margin-top: -8px;
+
+	@include breakpoint( "<480px" ) {
+		margin-top: -4px;
+	}
 }
 
 .comments__comment-timestamp a {
