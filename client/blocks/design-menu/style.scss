@@ -27,25 +27,30 @@
 }
 
 .design-menu {
-	transform: translateX( -500px );
+	transform: translateX( 0 );
 	transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
 	background: lighten( $gray, 30% );
 	position: fixed;
 		top: 0;
 		bottom: 0;
-		left: 0;
+		left: -100vw;
 	width: 100%;
 	overflow: hidden;
 	overflow-y: auto;
 	opacity: 1;
-	z-index: 181;
+	z-index: z-index( 'root', '.design-menu.is-visible' );
 	border-right: 1px solid lighten( $gray, 25% );
 
 	@include breakpoint( ">660px" ) {
 		width: 272px;
 	}
 	&.is-visible {
-		transform: translateX( 0 );
+		&.is-layout-preview-sidebar {
+			transform: translateX( 100vw );
+		}
+		@include breakpoint( ">660px" ) {
+			transform: translateX( 100vw );
+		}
 	}
 }
 
