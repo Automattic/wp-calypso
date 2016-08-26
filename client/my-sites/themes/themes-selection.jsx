@@ -20,7 +20,7 @@ import {
 } from './theme-filters.js';
 import config from 'config';
 
-const ThemesSearchCard = config.isEnabled( 'manage/themes/magic_search' )
+const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
 	? require( './themes-magic-search-card' )
 	: require( './themes-search-card' );
 
