@@ -166,7 +166,7 @@ module.exports = React.createClass( {
 			} );
 
 		return (
-			<div { ...omit( this.props, 'className' ) } className={ classes }>
+			<div { ...omit( this.props, 'className', 'user' ) } className={ classes }>
 				<div className="people-profile__gravatar">
 					<Gravatar user={ user } size={ 72 } />
 				</div>

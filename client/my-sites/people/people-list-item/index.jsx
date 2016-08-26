@@ -48,7 +48,7 @@ export default React.createClass( {
 		const canLinkToProfile = this.canLinkToProfile();
 		return (
 			<CompactCard
-				{ ...omit( this.props, 'className' ) }
+				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove' ) }
 				className={ classNames( 'people-list-item', this.props.className ) }
 				tagName="a"
 				href={ canLinkToProfile && '/people/edit/' + this.props.user.login + '/' + this.props.site.slug }
