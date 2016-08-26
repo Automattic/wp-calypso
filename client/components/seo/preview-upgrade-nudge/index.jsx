@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /**
  * External dependencies
  */
@@ -119,7 +117,7 @@ const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {} } ) 
 					onClick={ () => {
 						recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
 							cta_size: 'expanded',
-							cta_name: 'calypso_seo_preview_upgrade_nudge_impression',
+							cta_name: 'calypso_seo_preview_upgrade_nudge',
 							cta_feature: FEATURE_ADVANCED_SEO
 						} );
 						page( '/checkout/' + domain + '/business' );

@@ -1,11 +1,7 @@
-/** @ssr-ready **/
-
 /**
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import noop from 'lodash/noop';
 
@@ -16,12 +12,14 @@ import Button from 'components/button';
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import analytics from 'lib/analytics';
+import sitesList from 'lib/sites-list';
 import { getValidFeatureKeys, hasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { getSelectedSite } from 'state/ui/selectors';
 
-const UpgradeNudge = React.createClass( {
+const sites = sitesList();
+
+export default React.createClass( {
 
 	displayName: 'UpgradeNudge',
 
@@ -85,19 +83,9 @@ const UpgradeNudge = React.createClass( {
 	},
 
 	render() {
-		const {
-			translate,
-			site,
-			compact,
-			icon,
-			className,
-			event,
-			feature,
-			title,
-			message
-		} = this.props;
+		const classes = classNames( this.props.className, 'upgrade-nudge' );
 
-		const classes = classNames( className, 'upgrade-nudge' );
+		const site = sites.getSelectedSite();
 		let href = this.props.href;
 
 		if ( ! this.shouldDisplay( site ) ) {
@@ -105,23 +93,23 @@ const UpgradeNudge = React.createClass( {
 		}
 
 		if ( ! this.props.href && site ) {
-			if ( feature ) {
-				href = `/plans/${ site.slug }?feature=${ feature }`;
+			if ( this.props.feature ) {
+				href = `/plans/${ site.slug }?feature=${ this.props.feature }`;
 			} else {
 				href = `/plans/${ site.slug }`;
 			}
 		}
 
-		if ( compact ) {
+		if ( this.props.compact ) {
 			return (
 				<Button className={ classes } onClick={ this.handleClick } href={ href }>
-					<Gridicon className="upgrade-nudge__icon" icon={ icon } />
+					<Gridicon className="upgrade-nudge__icon" icon={ this.props.icon } />
 					<div className="upgrade-nudge__info">
 						<span className="upgrade-nudge__title">
-							{ title || translate( 'Upgrade to Premium' ) }
+							{ this.props.title || this.translate( 'Upgrade to Premium' ) }
 						</span>
 						<span className="upgrade-nudge__message" >
-							{ message }
+							{ this.props.message }
 						</span>
 					</div>
 				</Button>
@@ -130,30 +118,22 @@ const UpgradeNudge = React.createClass( {
 
 		return (
 			<Card compact className={ classes } onClick={ this.handleClick } href={ href }>
-				<Gridicon className="upgrade-nudge__icon" icon={ icon } size={ 18 } />
+				<Gridicon className="upgrade-nudge__icon" icon={ this.props.icon } size={ 18 } />
 				<div className="upgrade-nudge__info">
 					<span className="upgrade-nudge__title">
-						{ title || translate( 'Upgrade to Premium' ) }
+						{ this.props.title || this.translate( 'Upgrade to Premium' ) }
 					</span>
 					<span className="upgrade-nudge__message" >
-						{ message }
+						{ this.props.message }
 					</span>
 				</div>
-				{ ( event || feature ) &&
+				{ ( this.props.event || this.props.feature ) &&
 					<TrackComponentView eventName={ 'calypso_upgrade_nudge_impression' } eventProperties={ {
-						cta_name: event,
-						cta_feature: feature
+						cta_name: this.props.event,
+						cta_feature: this.props.feature
 					} } />
 				}
 			</Card>
 		);
 	}
 } );
-
-const mapStateToProps = state => {
-	return {
-		site: getSelectedSite( state )
-	};
-}
-
-export default connect( mapStateToProps )( localize( UpgradeNudge ) );

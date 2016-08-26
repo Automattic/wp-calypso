@@ -1,5 +1,3 @@
-/** @ssr-ready **/
-
 /**
  * External dependencies
  */
@@ -28,7 +26,7 @@ import {
 	featuresList,
 	plansList,
 	PLAN_FREE,
-	PLAN_JETPACK_FREE,
+	PLAN_JETPACK_FREE, 
 	PLAN_PERSONAL,
 	allWpcomPlans
 } from 'lib/plans/constants';
