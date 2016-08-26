@@ -1,0 +1,37 @@
+.themes-magic-search-card {
+	display: flex;
+	align-items: center;
+	background: white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+
+	.search {
+		flex: 0 1 auto;
+		margin: 0;
+	}
+
+	.section-nav {
+		margin: 0;
+	}
+
+	.search .search-open__icon {
+		color: lighten( $gray, 10% );
+	}
+
+	.segmented-control {
+		flex: 0 0 auto;
+		min-width: 0;
+		padding: 11px 14px 11px;
+
+		.segmented-control__item,
+		.segmented-control__link,
+		.segmented-control__text {
+			min-width: inherit;
+		}
+	}
+
+	.more {
+		flex: 0 1 auto;
+		padding: 8px 14px 8px;
+	}
+
+}
