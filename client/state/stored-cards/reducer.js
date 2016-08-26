@@ -17,6 +17,8 @@ import {
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED
 } from 'state/action-types';
+import { createReducer } from 'state/utils';
+import { storedCardsSchema } from './schema';
 
 /**
  * `Reducer` function which handles request/response actions
@@ -26,25 +28,14 @@ import {
  * @param  {Object} action storeCard action
  * @return {Array}         Updated state
  */
-export const items = ( state = [], action ) => {
-	switch ( action.type ) {
-		case STORED_CARDS_ADD_COMPLETED:
-			return [ ...state, action.item ];
+export const items = createReducer( [], {
+	[ STORED_CARDS_ADD_COMPLETED ]: ( state, action ) => [ ...state, action.item ],
 
-		case STORED_CARDS_FETCH_COMPLETED:
-			return action.list;
+	[ STORED_CARDS_FETCH_COMPLETED ]: ( state, action ) => action.list,
 
-		case STORED_CARDS_DELETE_COMPLETED:
-			return state.filter( item => item.stored_details_id !== action.card.stored_details_id );
-
-		// return initial state when serializing/deserializing
-		case SERIALIZE:
-		case DESERIALIZE:
-			return [];
-	}
-
-	return state;
-};
+	[ STORED_CARDS_DELETE_COMPLETED ]: ( state, action ) =>
+		state.filter( item => item.stored_details_id !== action.card.stored_details_id )
+}, storedCardsSchema );
 
 /**
  * Returns whether the list of stored cards has been loaded from the server in reaction to the specified action.
