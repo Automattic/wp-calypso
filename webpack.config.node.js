@@ -102,7 +102,7 @@ module.exports = {
 	externals: getExternals()
 };
 
-if ( process.env.CALYPSO_ENV === 'development' ) {
+if ( process.env.CALYPSO_ENV === 'development' || process.env.CALYPSO_ENV === 'test' ) {
 	module.exports.plugins.push( new PragmaCheckPlugin );
 }
 

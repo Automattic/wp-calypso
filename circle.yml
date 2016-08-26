@@ -5,6 +5,8 @@ test:
   pre:
     - NODE_ENV=test make client/config/index.js:
         parallel: true
+    - NODE_ENV=test make build-server:
+        parallel: true
   override:
     - bin/run-lint :
         parallel: true
