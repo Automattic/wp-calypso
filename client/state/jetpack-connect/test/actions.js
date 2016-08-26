@@ -13,6 +13,10 @@ import {
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
+	JETPACK_CONNECT_AUTHORIZE,
+	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -141,6 +145,166 @@ describe( 'actions', () => {
 			expect( spy ).to.have.been.calledWith( {
 				type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 				url
+			} );
+		} );
+	} );
+
+	describe( '#authorize()', () => {
+		const queryObject = {
+			_wp_nonce: 'nonce',
+			client_id: '12345678',
+			redirect_uri: 'https://example.com/',
+			scope: 'auth',
+			secret: '1234abcd',
+			state: 'abcd1234'
+		};
+		const code = 'abcdefghi1234';
+		const activateManageSecret = 'klmnop1234';
+		const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
+
+		describe( 'success', () => {
+			before( () => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.1/jetpack-blogs/' + client_id + '/jetpack-login' )
+					.query( {
+						_wp_nonce,
+						redirect_uri,
+						scope,
+						state
+					} )
+					.reply( 200, {
+						code
+					}, {
+						'Content-Type': 'application/json'
+					} );
+
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.post( '/rest/v1.1/jetpack-blogs/' + client_id + '/authorize', {
+						code,
+						state,
+						redirect_uri,
+						secret
+					} )
+					.reply( 200, {
+						result: 'connected',
+						activate_manage: activateManageSecret,
+						plans_url: '/plans/example.com'
+					}, {
+						'Content-Type': 'application/json'
+					} );
+
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.1/me/sites' )
+					.query( {
+						site_visibility: 'all'
+					} )
+					.reply( 200, {
+						sites: [ client_id ]
+					}, {
+						'Content-Type': 'application/json'
+					} );
+			} );
+
+			after( () => {
+				nock.cleanAll();
+			} );
+
+			it( 'should dispatch authorize request action when thunk triggered', () => {
+				const { authorize } = actions;
+
+				authorize( queryObject )( spy );
+
+				expect( spy ).to.have.been.calledWith( {
+					type: JETPACK_CONNECT_AUTHORIZE,
+					queryObject
+				} );
+			} );
+
+			it( 'should dispatch login complete action when request completes', () => {
+				const { authorize } = actions;
+
+				return authorize( queryObject )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
+						data: {
+							code: 'abcdefghi1234'
+						}
+					} );
+				} );
+			} );
+
+			it( 'should dispatch authorize receive action when request completes', () => {
+				const { authorize } = actions;
+
+				return authorize( queryObject )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+						siteId: client_id,
+						data: {
+							result: 'connected',
+							activate_manage: activateManageSecret,
+							plans_url: '/plans/example.com'
+						},
+						error: null
+					} );
+				} );
+			} );
+
+			it( 'should dispatch authorize receive site list action when request completes', () => {
+				const { authorize } = actions;
+
+				return authorize( queryObject )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
+						data: {
+							sites: [ client_id ]
+						}
+					} );
+				} );
+			} );
+		} );
+
+		describe( 'failure', () => {
+			before( () => {
+				nock( 'https://public-api.wordpress.com:443' )
+					.persist()
+					.get( '/rest/v1.1/jetpack-blogs/' + client_id + '/jetpack-login' )
+					.query( {
+						_wp_nonce,
+						redirect_uri,
+						scope,
+						state
+					} )
+					.reply( 400, {
+						error: 'not_verified',
+						message: 'Could not verify your request.'
+					}, {
+						'Content-Type': 'application/json'
+					} );
+			} );
+
+			after( () => {
+				nock.cleanAll();
+			} );
+
+			it( 'should dispatch authorize receive action when request completes', () => {
+				const { authorize } = actions;
+
+				return authorize( queryObject )( spy ).then( () => {
+					expect( spy ).to.have.been.calledWith( {
+						type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
+						siteId: client_id,
+						data: null,
+						error: {
+							error: 'not_verified',
+							message: 'Could not verify your request.',
+							status: 400
+						}
+					} );
+				} );
 			} );
 		} );
 	} );

@@ -285,7 +285,7 @@ export default {
 				type: JETPACK_CONNECT_AUTHORIZE,
 				queryObject: queryObject
 			} );
-			wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
+			return wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
 			.then( ( data ) => {
 				debug( 'Jetpack login complete. Trying Jetpack authorize.', data );
 				dispatch( {
@@ -336,7 +336,7 @@ export default {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 					siteId: client_id,
 					data: null,
-					error: error
+					error: pick( error, [ 'error', 'status', 'message' ] )
 				} );
 			} );
 		};
