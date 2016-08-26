@@ -14,10 +14,9 @@ The `DesignPreview` component can render raw markup to a preview and then apply 
 
 The `customizations` object and the `previewMarkup` used by the preview are stored in the Redux state tree under the `preview` key for a given site. The state also keeps track of the "saved" status of the customizations and a history of all customization changes (enabling an "undo" feature).
 
-# Global Preview
+You shouldn't need to use this manually, as it is included in the always-available `SitePreview`, which can be activated using a Redux action like this:
 
-The designPreview-wrapped WebPreview is intended to be a singleton; only one should ever be rendered.
-
-Activating the global preview is done using the Redux action `setLayoutFocus( 'preview' )`.
-
-You can change the URL which is loaded in the preview frame by using the Redux action `setPreviewUrl()`. Otherwise, the front page of the current site is shown.
+```javascript
+setPreviewType( 'design-preview' );
+setLayoutFocus( 'preview' );
+```

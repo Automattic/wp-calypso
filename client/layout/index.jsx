@@ -38,12 +38,9 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
-import urlPreview from 'blocks/url-preview';
-import WebPreview from 'components/web-preview';
+import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
-
-const UrlPreview = urlPreview( WebPreview );
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -175,7 +172,7 @@ Layout = React.createClass( {
 	renderPreview() {
 		if ( config.isEnabled( 'preview-layout' ) && this.props.section.group === 'sites' ) {
 			return (
-				<UrlPreview showPreview={ this.props.currentLayoutFocus === 'preview' } />
+				<SitePreview />
 			);
 		}
 	},
