@@ -72,14 +72,27 @@ validators.validCreditCardNumber = creditCardValidator( 'validCardNumber' );
 validators.validCvvNumber = creditCardValidator( 'validCvc' );
 
 validators.validExpirationDate = creditCardValidator(
+	'notExpired',
 	'validExpirationMonth',
-	'validExpirationYear'
+	'validExpirationYear',
 );
+
+validators.required = {
+	isValid: function( value ) {
+		return ! isEmpty( value );
+	},
+
+	error: function( description ) {
+		return i18n.translate( 'Missing required %(description)s field', {
+			args: { description: description }
+		} );
+	}
+};
 
 function validateCreditCard( cardDetails ) {
 	var expirationDate = cardDetails[ 'expiration-date' ] || '/',
 		expirationMonth = parseInt( expirationDate.split( '/' )[0], 10 ),
-		expirationYear = parseInt( expirationDate.split( '/' )[1], 10 );
+		expirationYear = 2000 + parseInt( expirationDate.split( '/' )[1], 10 );
 
 	return creditcards.validate( {
 		number: cardDetails.number,
@@ -102,6 +115,10 @@ function creditCardValidator( /* validationProperties... */ ) {
 			validationResult = validateCreditCard( cardDetails );
 
 			return validationProperties.every( function( property ) {
+				if ( property === 'notExpired' ) {
+					return ! validationResult[ 'expired' ]
+				}
+
 				return validationResult[ property ];
 			} );
 		},
