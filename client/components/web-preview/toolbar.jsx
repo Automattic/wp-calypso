@@ -5,16 +5,22 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import {
+	overSome,
 	partial
 } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import { isEnabled } from 'config';
+import Gridicon from 'components/gridicon';
+import { isBusiness, isEnterprise } from 'lib/products-values';
+import { localize } from 'i18n-calypso';
+import { getSelectedSite } from 'state/ui/selectors';
+
+const hasBusinessPlan = overSome( isBusiness, isEnterprise );
 
 const possibleDevices = [
 	'computer',
@@ -33,6 +39,7 @@ export const PreviewToolbar = props => {
 		showClose,
 		showDeviceSwitcher,
 		showExternal,
+		showSeo,
 		translate
 	} = props;
 
@@ -73,21 +80,28 @@ export const PreviewToolbar = props => {
 					) ) }
 				</div>
 			}
-			{ isEnabled( 'manage/advanced-seo' ) &&
+			{ ( ( showSeo && isEnabled( 'manage/advanced-seo' ) ) ||
+				( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) ) )
+
+
+				&&
 			<button
 				aria-hidden={ true }
 				key={ 'back-to-preview' }
 				className={ classNames(
 					'web-preview__device-button',
 					'web-preview__back-to-preview-button', {
-						'is-active': currentDevice !== 'seo'
-					} ) }
+					'is-active': currentDevice !== 'seo'
+				} ) }
 				onClick={ partial( setDeviceViewport, 'phone' ) }
 			>
 				<Gridicon icon="phone" />
 			</button>
 			}
-			{ isEnabled( 'manage/advanced-seo' ) &&
+			{ ( ( showSeo && isEnabled( 'manage/advanced-seo' ) ) ||
+				( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) ) )
+
+				&&
 				<button
 					aria-label={ translate( 'Show SEO and search previews' ) }
 					className={ classNames(
@@ -128,4 +142,12 @@ PreviewToolbar.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-export default localize( PreviewToolbar );
+const mapStateToProps = state => {
+	const site = getSelectedSite( state );
+
+	return {
+		showSeo: site && site.plan && hasBusinessPlan( site.plan )
+	}
+};
+
+export default connect( mapStateToProps )( localize( PreviewToolbar ) );
