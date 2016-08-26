@@ -80,11 +80,7 @@ export const PreviewToolbar = props => {
 					) ) }
 				</div>
 			}
-			{ ( ( showSeo && isEnabled( 'manage/advanced-seo' ) ) ||
-				( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) ) )
-
-
-				&&
+			{ showSeo &&
 			<button
 				aria-hidden={ true }
 				key={ 'back-to-preview' }
@@ -98,10 +94,7 @@ export const PreviewToolbar = props => {
 				<Gridicon icon="phone" />
 			</button>
 			}
-			{ ( ( showSeo && isEnabled( 'manage/advanced-seo' ) ) ||
-				( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) ) )
-
-				&&
+			{ showSeo &&
 				<button
 					aria-label={ translate( 'Show SEO and search previews' ) }
 					className={ classNames(
@@ -144,10 +137,10 @@ PreviewToolbar.propTypes = {
 
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
+	const showSeo = ( site && site.plan && hasBusinessPlan( site.plan ) && isEnabled( 'manage/advanced-seo' ) ) ||
+		( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) );
 
-	return {
-		showSeo: site && site.plan && hasBusinessPlan( site.plan )
-	}
+	return { showSeo };
 };
 
 export default connect( mapStateToProps )( localize( PreviewToolbar ) );
