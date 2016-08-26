@@ -8,7 +8,7 @@
 
 	// Not sure what this is about...
 	.validation-fieldset__validation-message {
-			display: none;
+		display: none;
 	}
 
 	.signup-site-title__label {
@@ -29,9 +29,10 @@
 .example-site-title {
 	box-sizing: border-box;
 	position: relative;
-	padding-top: 16px;
+	padding-top: 42px;
 	padding-right: 348px;
 	max-width: 600px;
+	min-height: 120px;
 	margin: 30px auto 60px auto;
 
 	p {
@@ -46,11 +47,12 @@
 
 	@include breakpoint( "<660px" ) {
 		max-width: 100%;
-		padding: 16px;
+		padding: 32px 32px 0;
 		margin: 0 auto;
 
 		p {
 			text-align: center;
+			margin-bottom: 16px;
 		}
 	}
 }
@@ -74,7 +76,6 @@
 	}
 
 	@include breakpoint( "<660px" ) {
-		padding-top: 24px;
 		position: relative;
 		margin: 0 auto;
 	}
