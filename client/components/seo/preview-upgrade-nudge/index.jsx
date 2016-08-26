@@ -22,6 +22,7 @@ import { preventWidows } from 'lib/formatting';
 import formatCurrency from 'lib/format-currency';
 import { getFeatureTitle, planHasFeature } from 'lib/plans';
 import { isFreePlan } from 'lib/products-values';
+import { recordTracksEvent } from 'state/analytics/actions';
 import { getPlanBySlug } from 'state/plans/selectors';
 import {
 	PLAN_BUSINESS,
@@ -115,7 +116,14 @@ const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {} } ) 
 					title={ businessPlan.product_name_short }
 					line={ translate( '%(price)s per month, billed yearly', { args: { price: businessPlanPrice } } ) }
 					buttonName={ translate( 'Upgrade' ) }
-					onClick={ () => page( '/checkout/' + domain + '/business' ) }
+					onClick={ () => {
+						recordTracksEvent( 'calypso_upgrade_nudge_cta_click', {
+							cta_size: 'expanded',
+							cta_name: 'calypso_seo_preview_upgrade_nudge_impression',
+							cta_feature: FEATURE_ADVANCED_SEO
+						} );
+						page( '/checkout/' + domain + '/business' );
+					} }
 					currentPlan={ false }
 					popularRibbon={ true } >
 					<PlanCompareCardItem highlight={ true } >
