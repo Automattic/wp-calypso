@@ -14,6 +14,8 @@ import RootChild from 'components/root-child';
 import { clearCustomizations, fetchPreviewMarkup, saveCustomizations } from 'state/preview/actions';
 import { isPreviewUnsaved, getPreviewCustomizations } from 'state/preview/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { getActiveDesignTool } from 'state/ui/preview/selectors';
+import { setActiveDesignTool } from 'state/ui/preview/actions';
 import accept from 'lib/accept';
 import designTool from './design-tool-data';
 import DesignToolList from './design-tool-list';
@@ -31,9 +33,11 @@ const DesignMenu = React.createClass( {
 		isUnsaved: React.PropTypes.bool,
 		customizations: React.PropTypes.object,
 		selectedSite: React.PropTypes.object,
+		activeDesignToolId: React.PropTypes.string,
 		clearCustomizations: React.PropTypes.func.isRequired,
 		fetchPreviewMarkup: React.PropTypes.func.isRequired,
 		saveCustomizations: React.PropTypes.func.isRequired,
+		setActiveDesignTool: React.PropTypes.func.isRequired,
 	},
 
 	getDefaultProps() {
@@ -41,12 +45,6 @@ const DesignMenu = React.createClass( {
 			isVisible: false,
 			isUnsaved: false,
 			customizations: {},
-		};
-	},
-
-	getInitialState() {
-		return {
-			activeDesignToolId: null,
 		};
 	},
 
@@ -59,12 +57,8 @@ const DesignMenu = React.createClass( {
 		this.props.fetchPreviewMarkup( this.props.selectedSite.ID, '' );
 	},
 
-	activateDesignTool( activeDesignToolId ) {
-		this.setState( { activeDesignToolId } );
-	},
-
 	activateDefaultDesignTool() {
-		this.setState( { activeDesignToolId: null } );
+		this.props.setActiveDesignTool( null );
 	},
 
 	onSave() {
@@ -72,7 +66,7 @@ const DesignMenu = React.createClass( {
 	},
 
 	onBack() {
-		if ( this.state.activeDesignToolId ) {
+		if ( this.props.activeDesignToolId ) {
 			return this.activateDefaultDesignTool();
 		}
 		this.maybeCloseDesignMenu();
@@ -103,7 +97,7 @@ const DesignMenu = React.createClass( {
 	},
 
 	renderActiveDesignTool() {
-		switch ( this.state.activeDesignToolId ) {
+		switch ( this.props.activeDesignToolId ) {
 			case 'siteTitle':
 				return (
 					<DesignMenuPanel label={ this.translate( 'Title and Tagline' ) }>
@@ -111,7 +105,7 @@ const DesignMenu = React.createClass( {
 					</DesignMenuPanel>
 				);
 			default:
-				return <DesignToolList onChange={ this.activateDesignTool } />;
+				return <DesignToolList onChange={ this.props.setActiveDesignTool } />;
 		}
 	},
 
@@ -161,10 +155,11 @@ function mapStateToProps( state ) {
 		selectedSite: getSelectedSite( state ),
 		customizations: getPreviewCustomizations( state, siteId ),
 		isUnsaved: isPreviewUnsaved( state, siteId ),
+		activeDesignToolId: getActiveDesignTool( state ),
 	};
 }
 
 export default connect(
 	mapStateToProps,
-	{ clearCustomizations, fetchPreviewMarkup, saveCustomizations }
+	{ clearCustomizations, fetchPreviewMarkup, saveCustomizations, setActiveDesignTool }
 )( DesignMenu );
