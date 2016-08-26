@@ -19,6 +19,7 @@ var IGNORED_MODULES = [
 	'lib/post-normalizer/rule-create-better-excerpt', // nooped on the server until we develop an isomorphic version
 	'lib/upgrades/actions', // nooped on the server as it still uses the singleton Flux architecture
 	'i18n-calypso', // ignore this until we make it work properly on the server
+	'components/seo/preview-upgrade-nudge', // nooped until all the dependencies are @ssr-ready
 	'my-sites/themes/thanks-modal', // stubbed on the server until we develop an isomorphic version
 	'my-sites/themes/themes-site-selector-modal', // stubbed on the server until we develop an isomorphic version
 	'state/ui/editor/selectors', // stubbed on the server until all the dependencies are @ssr-ready

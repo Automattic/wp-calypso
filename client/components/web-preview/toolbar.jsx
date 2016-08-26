@@ -5,7 +5,6 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import config from 'config';
 import { connect } from 'react-redux';
 import {
 	overSome,
@@ -15,6 +14,7 @@ import {
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Gridicon from 'components/gridicon';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
@@ -80,7 +80,7 @@ export const PreviewToolbar = props => {
 					) ) }
 				</div>
 			}
-			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
+			{ showSeo &&
 			<button
 				aria-hidden={ true }
 				key={ 'back-to-preview' }
@@ -94,7 +94,7 @@ export const PreviewToolbar = props => {
 				<Gridicon icon="phone" />
 			</button>
 			}
-			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
+			{ showSeo &&
 				<button
 					aria-label={ translate( 'Show SEO and search previews' ) }
 					className={ classNames(
@@ -137,10 +137,10 @@ PreviewToolbar.propTypes = {
 
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
+	const showSeo = ( site && site.plan && hasBusinessPlan( site.plan ) && isEnabled( 'manage/advanced-seo' ) ) ||
+		( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) );
 
-	return {
-		showSeo: site && site.plan && hasBusinessPlan( site.plan )
-	}
+	return { showSeo };
 };
 
 export default connect( mapStateToProps )( localize( PreviewToolbar ) );

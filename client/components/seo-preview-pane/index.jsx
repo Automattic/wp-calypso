@@ -10,12 +10,14 @@ import {
 	compact,
 	find,
 	get,
-	identity
+	identity,
+	overSome
 } from 'lodash';
 
 /**
  * Internal dependencies
  */
+import SeoPreviewUpgradeNudge from 'components/seo/preview-upgrade-nudge';
 import ReaderPreview from 'components/seo/reader-preview';
 import FacebookPreview from 'components/seo/facebook-preview';
 import TwitterPreview from 'components/seo/twitter-preview';
@@ -23,6 +25,7 @@ import SearchPreview from 'components/seo/search-preview';
 import VerticalMenu from 'components/vertical-menu';
 import PostMetadata from 'lib/post-metadata';
 import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
+import { isBusiness, isEnterprise } from 'lib/products-values';
 import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getEditorPostId } from 'state/ui/editor/selectors';
@@ -35,6 +38,7 @@ import {
 
 const PREVIEW_IMAGE_WIDTH = 512;
 const largeBlavatar = site => `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }`;
+const hasBusinessPlan = overSome( isBusiness, isEnterprise );
 
 const getPostImage = ( post ) => {
 	if ( ! post ) {
@@ -185,7 +189,8 @@ export class SeoPreviewPane extends PureComponent {
 		const {
 			post,
 			site,
-			translate
+			translate,
+			showNudge
 		} = this.props;
 
 		const { selectedService } = this.state;
@@ -197,6 +202,12 @@ export class SeoPreviewPane extends PureComponent {
 			'twitter'
 		] );
 
+		if ( showNudge ) {
+			return (
+				<SeoPreviewUpgradeNudge { ...{ site } } />
+			);
+		}
+
 		return (
 			<div className="seo-preview-pane">
 				<div className="seo-preview-pane__sidebar">
@@ -206,8 +217,10 @@ export class SeoPreviewPane extends PureComponent {
 						</h1>
 						<p className="seo-preview-pane__description">
 							{ translate(
-								"Below you'll find previews that represent how your post will look " +
-								"when it's found or shared across a variety of networks."
+								`Below you'll find previews that ` +
+								`represent how your post will look ` +
+								`when it's found or shared across a ` +
+								`variety of networks.`
 							) }
 						</p>
 					</div>
@@ -249,7 +262,8 @@ const mapStateToProps = state => {
 		post: isEditorShowing && {
 			...post,
 			title: getSeoTitle( state, 'posts', { site, post } )
-		}
+		},
+		showNudge: site && site.plan && ! hasBusinessPlan( site.plan )
 	};
 };
 
