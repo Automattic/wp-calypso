@@ -56,7 +56,7 @@ export default React.createClass( {
 	getWPCOMFollowerRole( siteId ) {
 		siteId = siteId ? siteId : this.props.siteId;
 
-		let site = sites.getSite( siteId ),
+		const site = sites.getSite( siteId ),
 			displayName = site.is_private
 			? this.translate( 'Viewer', { context: 'Role that is displayed in a select' } )
 			: this.translate( 'Follower', { context: 'Role that is displayed in a select' } );
