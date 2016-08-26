@@ -156,7 +156,7 @@ describe( 'actions', () => {
 			redirect_uri: 'https://example.com/',
 			scope: 'auth',
 			secret: '1234abcd',
-			state: 'abcd1234'
+			state: 12345678
 		};
 		const code = 'abcdefghi1234';
 		const activateManageSecret = 'klmnop1234';
