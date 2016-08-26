@@ -2,7 +2,7 @@
  * External dependencies
  */
 import validator from 'is-my-json-valid';
-import { merge, memoize } from 'lodash';
+import { merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,13 +13,8 @@ import {
 } from './action-types';
 import warn from 'lib/warn';
 
-/**
- * Module variables
- */
-const memoizedValidator = memoize( validator );
-
 export function isValidStateWithSchema( state, schema ) {
-	const validate = memoizedValidator( schema );
+	const validate = validator( schema );
 	const valid = validate( state );
 	if ( ! valid ) {
 		warn( 'state validation failed for state:', state, 'with reason:', validate.errors );
