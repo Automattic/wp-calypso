@@ -42,7 +42,7 @@ module.exports = {
 		defaultVariation: 'singlePurchaseFlow'
 	},
 	plansDescriptions: {
-		datestamp: '20160901',
+		datestamp: '20160826',
 		variations: {
 			ascendingPriceSubtleDescription: 25,
 			ascendingPriceEagerDescription: 25,
