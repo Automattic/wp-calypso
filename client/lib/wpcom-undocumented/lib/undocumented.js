@@ -1677,6 +1677,19 @@ Undocumented.prototype.googleAppsFilterBySiteId = function( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/google-apps' }, fn );
 };
 
+Undocumented.prototype.googleAppsProvisioning = function( domainName, fn ) {
+	debug( '/domains/:domainName/google-apps/get-registration' );
+	return this.wpcom.req.get( { path: '/domains/' + domainName + '/google-apps/get-registration' }, fn );
+};
+
+Undocumented.prototype.updateGoogleAppsProvisioning = function( domainName, data, fn ) {
+	debug( '/domains/:domainName/google-apps/set-registration' );
+	this.wpcom.req.post( {
+		path: `/domains/${ domainName }/google-apps/set-registration`,
+		body: data
+	}, fn );
+};
+
 Undocumented.prototype.deleteWPCOMFollower = function( siteId, followerId, fn ) {
 	debug( '/site/:site_id/follower/:follower_id/delete' );
 	this.wpcom.req.post( { path: '/sites/%s/follower/%d/delete' }, fn );

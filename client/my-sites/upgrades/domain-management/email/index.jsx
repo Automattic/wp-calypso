@@ -11,6 +11,7 @@ import Main from 'components/main';
 import Header from 'my-sites/upgrades/domain-management/components/header';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import AddGoogleAppsCard from './add-google-apps-card';
+import GoogleAppsProvisionCard from './google-apps-provision-card';
 import GoogleAppsUsersCard from './google-apps-users-card';
 import Placeholder from './placeholder';
 import VerticalNav from 'components/vertical-nav';
@@ -37,6 +38,8 @@ const Email = React.createClass( {
 		] ).isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
 		user: React.PropTypes.object.isRequired,
+		googleAppsProvisionData: React.PropTypes.object.isRequired,
+		googleAppsProvisionDataLoaded: React.PropTypes.bool.isRequired,
 		googleAppsUsers: React.PropTypes.array.isRequired,
 		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
 	},
@@ -74,13 +77,15 @@ const Email = React.createClass( {
 	},
 
 	content() {
-		if ( ! ( this.props.domains.hasLoadedFromServer && this.props.googleAppsUsersLoaded ) ) {
+		if ( ! ( this.props.domains.hasLoadedFromServer && this.props.googleAppsUsersLoaded && this.props.googleAppsProvisionDataLoaded ) ) {
 			return <Placeholder />;
 		}
 
 		const domainList = this.props.selectedDomainName
 			? [ getSelectedDomain( this.props ) ]
 			: this.props.domains.list;
+
+		return this.googleAppsProvisionCard();
 
 		if ( domainList.some( hasGoogleApps ) ) {
 			return this.googleAppsUsersCard();
@@ -129,6 +134,12 @@ const Email = React.createClass( {
 		return (
 			<EmptyContent { ...emptyContentProps } />
 		);
+	},
+
+	googleAppsProvisionCard() {
+		return <GoogleAppsProvisionCard
+			domain={ this.props.selectedDomainName }
+			googleAppsProvisionData={ this.props.googleAppsProvisionData } />;
 	},
 
 	googleAppsUsersCard() {

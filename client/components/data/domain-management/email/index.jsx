@@ -22,6 +22,8 @@ import {
 	getBySite,
 	isLoaded
 } from 'state/google-apps-users/selectors';
+import { fetchGoogleAppsProvisionData } from 'state/google-apps-provisioning/actions';
+import { getProvisionDataByDomain, provisionDataIsLoaded } from 'state/google-apps-provisioning/selectors';
 import { shouldFetchSitePlans } from 'lib/plans';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
@@ -43,6 +45,8 @@ function getStateFromStores( props ) {
 		selectedSite: props.selectedSite,
 		sitePlans: props.sitePlans,
 		user: user.get(),
+		googleAppsProvisionData: props.googleAppsProvisionData,
+		googleAppsProvisionDataLoaded: props.googleAppsProvisionDataLoaded,
 		googleAppsUsers: props.googleAppsUsers,
 		googleAppsUsersLoaded: props.googleAppsUsersLoaded
 	};
@@ -58,6 +62,8 @@ const EmailData = React.createClass( {
 		selectedDomainName: React.PropTypes.string,
 		sitePlans: React.PropTypes.object.isRequired,
 		sites: React.PropTypes.object.isRequired,
+		googleAppsProvisionData: React.PropTypes.object.isRequired,
+		googleAppsProvisionDataLoaded: React.PropTypes.bool.isRequired,
 		googleAppsUsers: React.PropTypes.array.isRequired,
 		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
 	},
@@ -66,6 +72,7 @@ const EmailData = React.createClass( {
 
 	componentWillMount() {
 		this.loadDomainsAndSitePlans();
+		this.props.fetchGoogleAppsProvisionData();
 		this.props.fetchGoogleAppsUsers();
 	},
 
@@ -88,6 +95,8 @@ const EmailData = React.createClass( {
 		return (
 			<StoreConnection
 				domains={ this.props.domains }
+				googleAppsProvisionData={ this.props.googleAppsProvisionData }
+				googleAppsProvisionDataLoaded={ this.props.googleAppsProvisionDataLoaded }
 				googleAppsUsers={ this.props.googleAppsUsers }
 				googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
 				component={ this.props.component }
@@ -104,23 +113,28 @@ const EmailData = React.createClass( {
 
 export default connect(
 	( state, { selectedDomainName, sites } ) => {
+		const googleAppsProvisionData = getProvisionDataByDomain( state );
 		const googleAppsUsers = selectedDomainName
 			? getByDomain( state, selectedDomainName )
 			: getBySite( state, sites.getSelectedSite().ID );
 
 		return {
+			googleAppsProvisionData,
+			googleAppsProvisionDataLoaded: provisionDataIsLoaded( state ),
 			googleAppsUsers,
 			googleAppsUsersLoaded: isLoaded( state ),
 			sitePlans: getPlansBySite( state, sites.getSelectedSite() )
 		}
 	},
 	( dispatch, { selectedDomainName, sites } ) => {
+		const googleAppsProvisionFetcher = () => fetchGoogleAppsProvisionData( selectedDomainName );
 		const googleAppsUsersFetcher = selectedDomainName
 			? () => fetchByDomain( selectedDomainName )
 			: () => fetchBySiteId( sites.getSelectedSite().ID );
 
 		return {
 			fetchGoogleAppsUsers: () => dispatch( googleAppsUsersFetcher() ),
+			fetchGoogleAppsProvisionData: () => dispatch( googleAppsProvisionFetcher() ),
 			fetchSitePlans: ( sitePlans, site ) => {
 				if ( shouldFetchSitePlans( sitePlans, site ) ) {
 					dispatch( fetchSitePlans( site.ID ) );
