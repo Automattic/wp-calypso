@@ -10,6 +10,8 @@ import includes from 'lodash/includes';
 /**
  * Internal dependencies
  */
+import { localize } from 'i18n-calypso';
+import Gridicon from 'components/gridicon';
 import { fetchPreviewMarkup, undoCustomization } from 'state/preview/actions';
 import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
@@ -21,6 +23,7 @@ import { closePreview } from 'state/ui/preview/actions';
 import DesignMenu from 'blocks/design-menu';
 import { getSiteFragment } from 'lib/route/path';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -114,7 +117,9 @@ export default function designPreview( WebPreview ) {
 
 		onClosePreview() {
 			if ( this.getCustomizations() && this.props.isUnsaved ) {
-				return accept( this.translate( 'You have unsaved changes. Are you sure you want to close the preview?' ), accepted => {
+				const unsavedMessage =
+					this.props.translate( 'You have unsaved changes. Are you sure you want to close the preview?' );
+				return accept( unsavedMessage, accepted => {
 					if ( accepted ) {
 						this.cleanAndClosePreview();
 					}
@@ -146,6 +151,7 @@ export default function designPreview( WebPreview ) {
 				debug( 'a preview is not available for this site' );
 				return null;
 			}
+			const showSidebar = () => this.props.setLayoutFocus( 'preview-sidebar' );
 
 			return (
 				<div>
@@ -159,7 +165,17 @@ export default function designPreview( WebPreview ) {
 						previewMarkup={ this.props.previewMarkup }
 						onClose={ this.onClosePreview }
 						onLoad={ this.onLoad }
-					/>
+					>
+						<button
+							className="design-preview__mobile-show-sidebar"
+							onClick={ showSidebar }
+						>
+							<Gridicon icon="arrow-left" />
+							<span className="design-preview__mobile-show-sidebar-label">
+								{ this.props.translate( 'EDIT' ) }
+							</span>
+						</button>
+					</WebPreview>
 				</div>
 			);
 		}
@@ -177,6 +193,8 @@ export default function designPreview( WebPreview ) {
 		undoCustomization: PropTypes.func.isRequired,
 		fetchPreviewMarkup: PropTypes.func.isRequired,
 		closePreview: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
 	};
 
 	function mapStateToProps( state ) {
@@ -198,6 +216,6 @@ export default function designPreview( WebPreview ) {
 
 	return connect(
 		mapStateToProps,
-		{ fetchPreviewMarkup, undoCustomization, closePreview }
-	)( DesignPreview );
+		{ fetchPreviewMarkup, undoCustomization, closePreview, setLayoutFocus }
+	)( localize( DesignPreview ) );
 }
