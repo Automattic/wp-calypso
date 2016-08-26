@@ -111,13 +111,13 @@ export default React.createClass( {
 	render() {
 		const roleKeys = Object.keys( this.state.roles );
 		return (
-			<FormFieldset key={ this.props.key } disabled={ ! roleKeys.length }>
+			<FormFieldset key={ this.props.siteId } disabled={ ! roleKeys.length }>
 				<FormLabel htmlFor={ this.props.id }>
 					{ this.translate( 'Role', {
 						context: 'Text that is displayed in a label of a form.'
 					} ) }
 				</FormLabel>
-				<FormSelect { ...omit( this.props, [ 'site', 'key', 'siteId' ] ) }>
+				<FormSelect { ...omit( this.props, [ 'site', 'key', 'siteId', 'includeFollower', 'explanation' ] ) }>
 					{
 						map( this.state.roles, ( roleObject, key ) => {
 							return (
