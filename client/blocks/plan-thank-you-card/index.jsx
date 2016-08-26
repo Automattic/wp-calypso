@@ -10,6 +10,7 @@ import { connect } from 'react-redux';
  */
 import { getSelectedSite } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
+import { getCurrentPlan } from 'state/sites/plans/selectors';
 
 class PlanThankYouCard extends Component {
 	static propTypes = {
@@ -23,7 +24,12 @@ class PlanThankYouCard extends Component {
 			<div className="plan-thank-you-card">
 				<div className="plan-thank-you-card__header">
 					<Gridicon className="plan-thank-you-card__main-icon" icon="checkmark-circle" size={ 140 } />
-					<div className="plan-thank-you-card__plan-name">{ this.props.selectedSite.plan.product_name_short }</div>
+					<div className="plan-thank-you-card__plan-name">
+						{ this.props.translate( '%(planName)s Plan', {
+							args: { planName: this.props.selectedSite.plan.product_name_short }
+						} ) }
+					</div>
+					<div className="plan-thank-you-card__plan-price">{ this.props.plan.formattedPrice }</div>
 					<div className="plan-thank-you-card__background-icons">
 						<Gridicon icon="heart" size={ 52 } />
 						<Gridicon icon="heart" size={ 20 } />
@@ -66,6 +72,7 @@ export default connect( ( state, ownProps ) => {
 	}
 
 	return {
-		selectedSite
+		selectedSite,
+		plan: getCurrentPlan( state, selectedSite.ID )
 	};
 } )( localize( PlanThankYouCard ) );

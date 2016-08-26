@@ -8,6 +8,7 @@
   margin: 56px auto 24px;
   color: $white;
   font-family: $sans;
+  text-align: center;
 
   @media ( max-width: 500px ) {
     margin-top: 0;
@@ -66,6 +67,12 @@
 .plan-thank-you-card__plan-name {
   font-size: 18px;
   font-weight: 500;
+}
+
+.plan-thank-you-card__plan-price {
+  font-size: 15px;
+  font-weight: 500;
+  color: #DAF0E0;
 }
 
 .plan-thank-you-card__background-icons {
