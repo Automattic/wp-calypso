@@ -34,13 +34,16 @@
 		top: 0;
 		bottom: 0;
 		left: 0;
-	width: 272px;
+	width: 100%;
 	overflow: hidden;
 	overflow-y: auto;
 	opacity: 1;
 	z-index: 181;
 	border-right: 1px solid lighten( $gray, 25% );
 
+	@include breakpoint( ">660px" ) {
+		width: 272px;
+	}
 	&.is-visible {
 		transform: translateX( 0 );
 	}
