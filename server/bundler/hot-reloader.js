@@ -61,7 +61,7 @@ hotReloader = {
 		
 		// CSS hot reloading logic
 
-		io.of( '/css-hot-reload' ).on( 'connection', function(socket) {
+		io.of( '/css-hot-reload' ).on( 'connection', function() {
 		  debug( '/css-hot-reload new connection' );
 		} );
 
