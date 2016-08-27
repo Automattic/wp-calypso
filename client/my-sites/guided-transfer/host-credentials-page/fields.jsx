@@ -18,7 +18,7 @@ import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SpinnerButton from 'components/button/spinner-button';
+import SpinnerButton from 'components/spinner-button';
 
 export const Username = localize( props =>
 	<FormFieldset className="host-credentials-page__account-username-fieldset">
@@ -76,8 +76,8 @@ export const Email = localize( props =>
 export const CreateAccountTip = localize( props =>
 	<FormSettingExplanation className="host-credentials-page__account-info-tip">
 		{ props.translate(
-			`You don't have a %(host)s account yet?
-			{{host_link}}Create one{{/host_link}} and return here.`, {
+			"You don't have a %(host)s account yet?" +
+			'{{host_link}}Create one{{/host_link}} and return here.', {
 				components: {
 					host_link: <a href={ props.hostUrl } target="_blank" rel="noopener noreferrer" />
 				},

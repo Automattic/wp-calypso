@@ -37,6 +37,7 @@ import DropZones from 'components/drop-zone/docs/example';
 import FormFields from 'components/forms/docs/example';
 import SectionNav from 'components/section-nav/docs/example';
 import Spinner from 'components/spinner/docs/example';
+import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import Rating from 'components/rating/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
@@ -141,6 +142,7 @@ let DesignAssets = React.createClass( {
 					<SelectDropdown searchKeywords="menu" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" />
+					<SpinnerButton />
 					<SpinnerLine searchKeywords="loading" />
 					<Timezone />
 					<TokenFields />

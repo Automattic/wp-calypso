@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SpinnerButton from 'components/button/spinner-button';
+import SpinnerButton from 'components/spinner-button';
 import FoldableCard from 'components/foldable-card';
 import Interval, { EVERY_SECOND } from 'lib/interval';
 import AdvancedSettings from './advanced-settings';
