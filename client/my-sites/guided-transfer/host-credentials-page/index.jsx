@@ -22,6 +22,9 @@ import {
 	isGuidedTransferSavingHostDetails,
 	isGuidedTransferAwaitingPurchase,
 } from 'state/sites/guided-transfer/selectors';
+import {
+	getSiteSlug,
+} from 'state/sites/selectors';
 
 class HostCredentialsPage extends Component {
 	static propTypes = {
@@ -95,6 +98,7 @@ class HostCredentialsPage extends Component {
 const mapStateToProps = ( state, { siteId } ) => ( {
 	isSubmitting: isGuidedTransferSavingHostDetails( state, siteId ),
 	isAwaitingPurchase: isGuidedTransferAwaitingPurchase( state, siteId ),
+	siteSlug: getSiteSlug( state, siteId ),
 } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
