@@ -13,7 +13,7 @@ const smallItems = [
 	{
 		post: {
 			ID: 1,
-			title: 'What cats are best for coastal Maine?',
+			title: 'What cats are best for coastal Maine? Do they like to chase around laser pointers?',
 			site_ID: 1234,
 			site_name: 'All the catsss',
 			global_ID: 1,
@@ -24,15 +24,8 @@ const smallItems = [
 				uri: 'http://lorempixel.com/256/256/cats/',
 				height: 256,
 				width: 256
-			}
-		},
-		site: {
-			ID: 1234,
-			title: 'All the cats',
-			URL: 'http://www.allthecats.com',
-			icon: {
-				img: 'http://lorempixel.com/64/64/cats/'
-			}
+			},
+			short_excerpt: 'Gumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.'
 		}
 	},
 	{
@@ -49,7 +42,8 @@ const smallItems = [
 				uri: 'http://lorempixel.com/1024/256/sports/',
 				height: 256,
 				width: 1024
-			}
+			},
+			short_excerpt: 'Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko.'
 		}
 	},
 ];
@@ -64,7 +58,10 @@ const RelatedPostCards = React.createClass( {
 					<a href="/devdocs/blocks/post-card">Refresh Related Cards</a>
 				</h2>
 				<div className="reader-related-card-v2__container">
-					{ smallItems.map( item => <RelatedPostCardv2 key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
+					<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">Cats and Cats</a></h1>
+					<div className="reader-related-card-v2__posts">
+						{ smallItems.map( item => <RelatedPostCardv2 key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
+					</div>
 				</div>
 			</div>
 		);

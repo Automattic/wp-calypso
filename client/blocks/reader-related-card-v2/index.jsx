@@ -11,35 +11,34 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import Card from 'components/card/compact';
-import safeImageUrl from 'lib/safe-image-url';
-import resizeImageUrl from 'lib/resize-image-url';
-import AuthorAndSite from 'blocks/reader-author-and-site';
+
+function FeaturedImage( { image, href } ) {
+	return (
+		<a className="reader-related-card-v2__featured-image" href={ href } style={ {
+			backgroundImage: 'url(' + image.uri + ')',
+			backgroundSize: 'cover',
+			backgroundRepeat: 'no-repeat',
+			backgroundPosition: '50% 50%'
+		} } ></a> );
+}
 
 /* eslint-disable no-unused-vars */
 export function SmallPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
 // onSiteClick is not being used
 /* eslint-enable no-unused-vars */
+	const featuredImage = post.canonical_image;
 	const classes = classnames( 'reader-related-card-v2', {
 		'has-image': post.canonical_image
 	} );
 
-	const thumbnailUrl = post.canonical_image && resizeImageUrl( safeImageUrl( post.canonical_image.uri ), { resize: '96,72' } );
-
 	return (
 		<Card className={ classes }>
+			{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
 			<div className="reader-related-card-v2__site-info">
 				<h1 className="reader-related-card-v2__title">
 					<a className="reader-related-card-v2__link" href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }>{ post.title }</a>
 				</h1>
-				<div className="reader-related-card-v2__meta">
-					<AuthorAndSite post={ post } site={ site } />
-				</div>
-			</div>
-			<div>
-			{ post.canonical_image && (
-					<a href={ `/read/blogs/${post.site_ID}/posts/${post.ID}` } onClick={ partial( onPostClick, post ) }>
-						<img className="reader-related-card-v2__thumbnail" src={ thumbnailUrl } />
-					</a> ) }
+				<div className="reader-related-card-v2__excerpt">{ post.short_excerpt }</div>
 			</div>
 		</Card>
 	);
