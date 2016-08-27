@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 import config from 'config';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
 import { isGuidedTransferInProgress } from 'state/sites/guided-transfer/selectors';
 
 import Notices from './notices';
@@ -22,7 +21,6 @@ class Exporter extends Component {
 	render() {
 		const {
 			siteId,
-			siteSlug,
 			isGuidedTransferInProgress,
 		} = this.props;
 		const showGuidedTransferOptions = config.isEnabled( 'manage/export/guided-transfer' );
@@ -31,7 +29,7 @@ class Exporter extends Component {
 			<div className="exporter">
 				{ showGuidedTransferOptions && <QuerySiteGuidedTransfer siteId={ siteId } /> }
 
-				<Notices siteId={ siteId } siteSlug={ siteSlug } />
+				<Notices />
 				{ showGuidedTransferOptions && isGuidedTransferInProgress &&
 					<InProgressCard /> }
 				<ExportCard siteId={ siteId } />
@@ -44,7 +42,6 @@ class Exporter extends Component {
 
 const mapStateToProps = state => ( {
 	siteId: getSelectedSiteId( state ),
-	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 
 	// This will be replaced with a Redux selector once we've built out
 	// the reducers

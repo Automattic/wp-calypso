@@ -64,7 +64,7 @@ class Notices extends Component {
 
 	guidedTransferNotice() {
 		if ( this.props.isGuidedTransferAwaitingPurchase ) {
-			return <CompletePurchaseNotice siteSlug={ this.props.siteSlug } />;
+			return <CompletePurchaseNotice />;
 		}
 
 		return null;
@@ -80,11 +80,11 @@ class Notices extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => ( {
+const mapStateToProps = ( state ) => ( {
 	exportDidComplete: getExportingState( state, getSelectedSiteId( state ) ) === States.COMPLETE,
 	exportDidFail: getExportingState( state, getSelectedSiteId( state ) ) === States.FAILED,
 	exportDownloadURL: state.siteSettings.exporter.downloadURL,
-	isGuidedTransferAwaitingPurchase: isGuidedTransferAwaitingPurchase( state, siteId ),
+	isGuidedTransferAwaitingPurchase: isGuidedTransferAwaitingPurchase( state, getSelectedSiteId( state ) ),
 } );
 
 export default connect( mapStateToProps )( localize( Notices ) );
