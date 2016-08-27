@@ -111,8 +111,8 @@ export function saveHostDetails( siteId, data ) {
 			if ( error.message ) {
 				dispatch( errorNotice( error.message ) );
 			} else {
-				dispatch( errorNotice( translate( `Whoops, there was an error saving your details. Please 
-					try again or send us a message and we'll help you get started.` ) ) );
+				dispatch( errorNotice( translate( 'Whoops, there was an error saving your details. Please ' +
+					"try again or send us a message and we'll help you get started." ) ) );
 			}
 
 			return false;
