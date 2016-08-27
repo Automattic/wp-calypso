@@ -20,6 +20,7 @@ import {
 } from 'state/sites/guided-transfer/actions';
 import {
 	isGuidedTransferSavingHostDetails,
+	isGuidedTransferAwaitingPurchase,
 } from 'state/sites/guided-transfer/selectors';
 
 class HostCredentialsPage extends Component {
@@ -45,18 +46,19 @@ class HostCredentialsPage extends Component {
 		page.redirect( `/checkout/${ this.props.siteSlug }` );
 	}
 
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.isAwaitingPurchase === true ) {
+			this.redirectToCart();
+		}
+	}
+
 	submit = () => {
 		const payload = {
 			...this.state.fieldValues,
 			host_slug: this.props.hostSlug
 		};
 
-		this.props.submit( payload )
-			.then( didSubmit => {
-				if ( didSubmit === true ) {
-					this.redirectToCart();
-				}
-			} );
+		this.props.submit( payload );
 	}
 
 	getHostForm() {
@@ -92,6 +94,7 @@ class HostCredentialsPage extends Component {
 
 const mapStateToProps = ( state, { siteId } ) => ( {
 	isSubmitting: isGuidedTransferSavingHostDetails( state, siteId ),
+	isAwaitingPurchase: isGuidedTransferAwaitingPurchase( state, siteId ),
 } );
 
 const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
