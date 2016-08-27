@@ -4,14 +4,16 @@
 import React from 'react';
 import debugModule from 'debug';
 
-const debug = debugModule( 'calypso:module-chart:label' );
-
 /**
  * Internal dependencies
  */
  import userModule from 'lib/user';
 
- const user = userModule();
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:module-chart:label' );
+const user = userModule();
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartLabel',

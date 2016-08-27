@@ -5,12 +5,15 @@ import React from 'react';
 import { throttle } from 'lodash';
 import debugModule from 'debug';
 
-const debug = debugModule( 'calypso:module-chart:x-axis' );
-
 /**
  * Internal dependencies
  */
 import Label from './label';
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:module-chart:x-axis' );
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartXAxis',

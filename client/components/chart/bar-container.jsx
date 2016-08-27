@@ -10,6 +10,9 @@ import Bar from './bar';
 import XAxis from './x-axis';
 import userModule from 'lib/user';
 
+/**
+ * Module variables
+ */
 const user = userModule();
 
 module.exports = React.createClass( {

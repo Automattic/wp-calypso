@@ -5,14 +5,17 @@ import React from 'react';
 import { some, noop, throttle } from 'lodash';
 import debugModule from 'debug';
 
-const debug = debugModule( 'calypso:chart' );
-
 /**
  * Internal dependencies
  */
 import BarContainer from './bar-container';
 import observe from 'lib/mixins/data-observe';
 import touchDetect from 'lib/touch-detect';
+
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:chart' );
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChart',
