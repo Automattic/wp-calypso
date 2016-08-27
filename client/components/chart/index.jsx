@@ -65,7 +65,7 @@ module.exports = React.createClass( {
 
 	resize: function() {
 		const node = this.refs.chart;
-		let	width = node.clientWidth - 82,
+		let width = node.clientWidth - 82,
 			maxBars;
 
 		if ( touchDetect.hasTouch() ) {

@@ -34,33 +34,29 @@ module.exports = React.createClass( {
 	},
 
 	buildSections: function() {
-		const value = this.props.data.value,
-			max = this.props.max,
-			percentage = max ? Math.ceil( ( value / max ) * 10000 ) / 100 : 0,
+		const { active, data, max } = this.props;
+		const { nestedValue, value } = data;
+
+		const percentage = max ? Math.ceil( ( value / max ) * 10000 ) / 100 : 0,
 			remain = 100 - percentage,
 			remainFloor = Math.max( 1, Math.floor( remain ) ),
 			sections = [],
-			nestedValue = this.props.data.nestedValue,
 			spacerClassOptions = {
 				'chart__bar-section': true,
 				'is-spacer': true,
-				'is-ghost': ( 100 === remain ) && ! this.props.active
+				'is-ghost': ( 100 === remain ) && ! active
+			},
+			remainStyle = {
+				height: remainFloor + '%'
+			},
+			valueStyle = {
+				top: remainFloor + '%'
 			};
-		let remainStyle,
-			valueStyle,
-			nestedBar,
+		let nestedBar,
 			nestedPercentage,
 			nestedStyle;
 
-		remainStyle = {
-			height: remainFloor + '%'
-		};
-
 		sections.push( <div key="spacer" className={ classNames( spacerClassOptions ) } style={ remainStyle } /> );
-
-		valueStyle = {
-			top: remainFloor + '%'
-		};
 
 		if ( nestedValue ) {
 			nestedPercentage = value ? Math.ceil( ( nestedValue / value ) * 10000 ) / 100 : 0;
@@ -143,15 +139,13 @@ module.exports = React.createClass( {
 
 		const barClass = { chart__bar: true };
 		const count = this.props.count || 1;
-		let barStyle;
+		const barStyle = {
+			width: ( ( 1 / count ) * 100 ) + '%'
+		};
 
 		if ( this.props.className ) {
 			barClass[ this.props.className ] = true;
 		}
-
-		barStyle = {
-			width: ( ( 1 / count ) * 100 ) + '%'
-		};
 
 		return (
 			<div onClick={ this.clickHandler }
