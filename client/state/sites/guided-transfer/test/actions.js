@@ -40,6 +40,11 @@ describe( 'actions', () => {
 		upgrade_purchased: true,
 		host_details_entered: false,
 	};
+	const sampleStatusSaved = {
+		issues: [],
+		upgrade_purchased: false,
+		host_details_entered: true,
+	};
 
 	describe( '#receiveProductsList()', () => {
 		it( 'should return an action object', () => {
@@ -109,7 +114,9 @@ describe( 'actions', () => {
 		before( () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/wpcom/v2/sites/${sampleSiteId}/transfer` )
-				.times( 3 )
+				.times( 2 )
+				.reply( 200, sampleStatusSaved )
+				.post( `/wpcom/v2/sites/${sampleSiteId}/transfer` )
 				.reply( 200, sampleStatus )
 				.post( `/wpcom/v2/sites/${sampleSiteId}/transfer` )
 				.reply( 500, {
