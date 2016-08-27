@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { omit } from 'lodash/object';
-import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,10 +16,6 @@ import {
 	GUIDED_TRANSFER_STATUS_REQUEST_FAILURE,
 	GUIDED_TRANSFER_STATUS_REQUEST_SUCCESS,
 } from 'state/action-types';
-import {
-	errorNotice,
-	successNotice,
-} from 'state/notices/actions';
 
 /**
  * Receives the status of a guided transfer for a particular site
@@ -70,6 +65,14 @@ export function requestGuidedTransferStatus( siteId ) {
 	};
 }
 
+export function saveHostDetailsFailure( siteId, error = {} ) {
+	return {
+		type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+		siteId,
+		error,
+	};
+}
+
 /**
  * Saves a user's target host details in preparation for
  * a guided transfer to that host
@@ -85,37 +88,27 @@ export function saveHostDetails( siteId, data ) {
 			siteId,
 		} );
 
-		const success = response => {
-			dispatch( {
-				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
-				siteId,
-			} );
+		const failure = error => {
+			dispatch( saveHostDetailsFailure( siteId, error ) );
+			return false;
+		};
 
+		const success = response => {
 			// The success response is the updated status of the guided transfer
 			dispatch( receiveGuidedTransferStatus(
 				siteId, omit( response, '_headers' )
 			) );
 
-			dispatch( successNotice( translate( 'Thanks for confirming those details!' ) ) );
+			if ( response.host_details_entered === true ) {
+				dispatch( {
+					type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+					siteId,
+				} );
 
-			return response.host_details_entered === true;
-		};
-
-		const failure = error => {
-			dispatch( {
-				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
-				siteId,
-				error,
-			} );
-
-			if ( error.message ) {
-				dispatch( errorNotice( error.message ) );
-			} else {
-				dispatch( errorNotice( translate( 'Whoops, there was an error saving your details. Please ' +
-					"try again or send us a message and we'll help you get started." ) ) );
+				return true;
 			}
 
-			return false;
+			return failure();
 		};
 
 		return wpcom.undocumented().site( siteId ).saveGuidedTransferHostDetails( data )
