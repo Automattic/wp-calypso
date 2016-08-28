@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -27,98 +27,102 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 
-const ExpandedUpgradeNudge = ( {
-	translate,
-	plan = {},
-	currentPlan = {},
-	planConstants = {},
-	planClass,
-	features,
-	upgrade,
-	benefits,
-	title,
-	subtitle,
-	highlightedFeature,
-	eventName = 'calypso_upgrade_nudge_impression',
-	event='',
-	children,
-	siteSlug
-} ) => {
-	//Display only if upgrade path available
-	if (
-		! currentPlan ||
-		( planConstants.availableFor && ! planConstants.availableFor( currentPlan.productSlug ) )
-	) {
-		return null;
-	}
+class ExpandedUpgradeNudge extends Component {
+	render() {
+		const {
+			translate,
+			plan = {},
+			currentPlan = {},
+			planConstants = {},
+			planClass,
+			upgrade,
+			benefits,
+			title,
+			subtitle,
+			highlightedFeature,
+			eventName = 'calypso_upgrade_nudge_impression',
+			event='',
+			children,
+			siteSlug
+		} = this.props;
+		let { features } = this.props;
 
-	const price = formatCurrency( plan.raw_price / 12, plan.currency_code );
-	const eventProperties = {
-		cta_size: 'expanded',
-		cta_name: event,
-		cta_feature: highlightedFeature
-	};
-
-	if ( ! features ) {
-		if ( planConstants.getPromotedFeatures ) {
-			features = planConstants.getPromotedFeatures().filter( feature => feature !== highlightedFeature ).slice( 0, 6 );
-		} else {
-			features = [];
+		//Display only if upgrade path available
+		if (
+			! currentPlan ||
+			( planConstants.availableFor && ! planConstants.availableFor( currentPlan.productSlug ) )
+		) {
+			return null;
 		}
-	}
 
-	return (
-		<Card className="upgrade-nudge-expanded">
-			<QueryPlans />
-			<TrackComponentView { ...( { eventName, eventProperties } ) } />
-			<div className="upgrade-nudge-expanded__business-plan-card">
-				<PlanCompareCard
-					title={ plan.product_name_short }
-					line={ translate( '%(price)s per month, billed yearly', { args: { price } } ) }
-					buttonName={ translate( 'Upgrade' ) }
-					onClick={ () => {
-						analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', eventProperties );
-						if( upgrade ) {
-							upgrade();
-						} else if ( planConstants.getPathSlug && siteSlug ) {
-							page( `/checkout/${ siteSlug }/${ planConstants.getPathSlug() }` );
-						}
-					} }
-					currentPlan={ false }
-					popularRibbon={ true } >
-					{ highlightedFeature && <PlanCompareCardItem highlight={ true } >
-						{ getFeatureTitle( highlightedFeature ) }
-					</PlanCompareCardItem> }
-					{ features.map( feature => (
-						<PlanCompareCardItem key={ feature }>
-							{ getFeatureTitle( feature ) }
-						</PlanCompareCardItem>
-					) ) }
-				</PlanCompareCard>
-			</div>
-			<div className="upgrade-nudge-expanded__description">
-				{ title && <div className="upgrade-nudge-expanded__title">
-					<div className="upgrade-nudge-expanded__title-plan">
-						<div className={ classNames( "upgrade-nudge-expanded__title-plan-icon", planClass ) }></div>
-					</div>
-					<p className="upgrade-nudge-expanded__title-message">
-						{ title }
-					</p>
-				</div> }
-				{ subtitle && <p className="upgrade-nudge-expanded__subtitle">
-					{ subtitle }
-				</p> }
-				{ benefits && <ul className="upgrade-nudge-expanded__features">
-					{ benefits.map( ( benefitTitle, index ) => <li key={ index } className="upgrade-nudge-expanded__feature-item">
-						<Gridicon className="upgrade-nudge-expanded__feature-item-checkmark" icon="checkmark" />
-						{ preventWidows( benefitTitle ) }
-					</li> ) }
-				</ul> }
-				{ children }
-			</div>
-		</Card>
-	);
-};
+		const price = formatCurrency( plan.raw_price / 12, plan.currency_code );
+		const eventProperties = {
+			cta_size: 'expanded',
+			cta_name: event,
+			cta_feature: highlightedFeature
+		};
+
+		if ( ! features ) {
+			if ( planConstants.getPromotedFeatures ) {
+				features = planConstants.getPromotedFeatures().filter( feature => feature !== highlightedFeature ).slice( 0, 6 );
+			} else {
+				features = [];
+			}
+		}
+
+		return (
+			<Card className="upgrade-nudge-expanded">
+				<QueryPlans />
+				<TrackComponentView { ...( { eventName, eventProperties } ) } />
+				<div className="upgrade-nudge-expanded__business-plan-card">
+					<PlanCompareCard
+						title={ plan.product_name_short }
+						line={ translate( '%(price)s per month, billed yearly', { args: { price } } ) }
+						buttonName={ translate( 'Upgrade' ) }
+						onClick={ () => {
+							analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', eventProperties );
+							if( upgrade ) {
+								upgrade();
+							} else if ( planConstants.getPathSlug && siteSlug ) {
+								page( `/checkout/${ siteSlug }/${ planConstants.getPathSlug() }` );
+							}
+						} }
+						currentPlan={ false }
+						popularRibbon={ true } >
+						{ highlightedFeature && <PlanCompareCardItem highlight={ true } >
+							{ getFeatureTitle( highlightedFeature ) }
+						</PlanCompareCardItem> }
+						{ features.map( feature => (
+							<PlanCompareCardItem key={ feature }>
+								{ getFeatureTitle( feature ) }
+							</PlanCompareCardItem>
+						) ) }
+					</PlanCompareCard>
+				</div>
+				<div className="upgrade-nudge-expanded__description">
+					{ title && <div className="upgrade-nudge-expanded__title">
+						<div className="upgrade-nudge-expanded__title-plan">
+							<div className={ classNames( "upgrade-nudge-expanded__title-plan-icon", planClass ) }></div>
+						</div>
+						<p className="upgrade-nudge-expanded__title-message">
+							{ title }
+						</p>
+					</div> }
+					{ subtitle && <p className="upgrade-nudge-expanded__subtitle">
+						{ subtitle }
+					</p> }
+					{ benefits && <ul className="upgrade-nudge-expanded__features">
+						{ benefits.map( ( benefitTitle, index ) => <li key={ index } className="upgrade-nudge-expanded__feature-item">
+							<Gridicon className="upgrade-nudge-expanded__feature-item-checkmark" icon="checkmark" />
+							{ preventWidows( benefitTitle ) }
+						</li> ) }
+					</ul> }
+					{ children }
+				</div>
+			</Card>
+		);
+	}
+}
 
 ExpandedUpgradeNudge.propTypes = {
 	translate: PropTypes.func.isRequired,
