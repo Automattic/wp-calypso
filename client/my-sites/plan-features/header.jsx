@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import Ribbon from 'components/ribbon';
-import PlanFeaturesPrice from './price';
+import PlanFeaturesPrice from 'my-sites/plan-price';
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM,
