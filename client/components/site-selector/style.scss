@@ -9,6 +9,14 @@
 	border: none;
 	z-index: z-index( 'root', '.site-selector' );
 
+	&.is-large .search  {
+		display: flex;
+	}
+
+	&.is-large .site-selector__sites {
+		border-top: 1px solid lighten( $gray, 20% );
+	}
+
 }
 
 // Styles for Site elements within the Selector
@@ -70,6 +78,7 @@
 	width: auto;
 	height: 33px;
 	border: 1px solid lighten( $gray, 20% );
+	display: none;
 
 	.search__input[type="search"] {
 		font-size: 13px;
@@ -88,7 +97,6 @@
 .site-selector__sites {
 	max-height: calc( 100% - 89px );
 	overflow-y: auto;
-	border-top: 1px solid lighten( $gray, 20% );
 }
 
 .site-selector__no-results {
