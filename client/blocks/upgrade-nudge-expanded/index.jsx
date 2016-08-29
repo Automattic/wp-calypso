@@ -64,7 +64,10 @@ class ExpandedUpgradeNudge extends Component {
 		return (
 			<Card className="upgrade-nudge-expanded">
 				<QueryPlans />
-				<TrackComponentView { ...( { eventName: this.props.eventName, eventProperties: this.eventProperties } ) } />
+				<TrackComponentView
+					eventName={ this.props.eventName }
+					eventProperties={ this.eventProperties }
+				/>
 				<div className="upgrade-nudge-expanded__plan-card">
 					<PlanCompareCard
 						title={ this.props.plan.product_name_short }
@@ -117,7 +120,7 @@ ExpandedUpgradeNudge.defaultProps = {
 
 ExpandedUpgradeNudge.propTypes = {
 	translate: PropTypes.func.isRequired,
-	plan: PropTypes.object,
+	plan: PropTypes.object.isRequired,
 	currentPlan: PropTypes.object,
 	planConstants: PropTypes.object,
 	planClass: PropTypes.string,
