@@ -30,6 +30,21 @@ import { getSiteSlug } from 'state/sites/selectors';
 class ExpandedUpgradeNudge extends Component {
 	constructor( props ) {
 		super( props );
+		this.upgrade = this.upgrade.bind( this );
+		this.eventProperties = {
+			cta_size: 'expanded',
+			cta_name: props.event,
+			cta_feature: props.highlightedFeature
+		};
+	}
+
+	upgrade() {
+		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', this.eventProperties );
+		if ( this.props.upgrade ) {
+			this.props.upgrade();
+		} else if ( this.props.planConstants.getPathSlug && this.props.siteSlug ) {
+			page( `/checkout/${ this.props.siteSlug }/${ this.props.planConstants.getPathSlug() }` );
+		}
 	}
 
 	render() {
@@ -42,11 +57,6 @@ class ExpandedUpgradeNudge extends Component {
 		}
 
 		const price = formatCurrency( this.props.plan.raw_price / 12, this.props.plan.currency_code );
-		const eventProperties = {
-			cta_size: 'expanded',
-			cta_name: event,
-			cta_feature: this.props.highlightedFeature
-		};
 		let features = this.props.features;
 		if ( ! features ) {
 			if ( this.props.planConstants.getPromotedFeatures ) {
@@ -59,20 +69,13 @@ class ExpandedUpgradeNudge extends Component {
 		return (
 			<Card className="upgrade-nudge-expanded">
 				<QueryPlans />
-				<TrackComponentView { ...( { eventName: this.props.eventName, eventProperties } ) } />
+				<TrackComponentView { ...( { eventName: this.props.eventName, eventProperties: this.eventProperties } ) } />
 				<div className="upgrade-nudge-expanded__business-plan-card">
 					<PlanCompareCard
 						title={ this.props.plan.product_name_short }
 						line={ this.props.translate( '%(price)s per month, billed yearly', { args: { price } } ) }
 						buttonName={ this.props.translate( 'Upgrade' ) }
-						onClick={ () => {
-							analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', eventProperties );
-							if( this.props.upgrade ) {
-								this.props.upgrade();
-							} else if ( this.props.planConstants.getPathSlug && this.props.siteSlug ) {
-								page( `/checkout/${ this.props.siteSlug }/${ this.props.planConstants.getPathSlug() }` );
-							}
-						} }
+						onClick={ this.upgrade }
 						currentPlan={ false }
 						popularRibbon={ true } >
 						{ this.props.highlightedFeature && <PlanCompareCardItem highlight={ true } >
