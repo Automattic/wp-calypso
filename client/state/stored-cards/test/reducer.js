@@ -14,9 +14,11 @@ import {
 	STORED_CARDS_FETCH_FAILED,
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
-	STORED_CARDS_DELETE_FAILED
+	STORED_CARDS_DELETE_FAILED,
+	SERIALIZE,
+	DESERIALIZE
 } from 'state/action-types';
-import reducer from '../reducer';
+import reducer, { items } from '../reducer';
 import { STORED_CARDS_FROM_API } from './fixture';
 
 describe( 'items', () => {
@@ -136,6 +138,36 @@ describe( 'items', () => {
 			isFetching: false,
 			isDeleting: false,
 			hasLoadedFromServer: true
+		} );
+	} );
+
+	describe( 'persistence', () => {
+		it( 'should persist state', () => {
+			const originalState = deepFreeze( STORED_CARDS_FROM_API );
+
+			const state = items( originalState, { type: SERIALIZE } );
+
+			expect( state ).to.eql( originalState );
+		} );
+
+		it( 'should load valid persisted state', () => {
+			const originalState = deepFreeze( STORED_CARDS_FROM_API );
+
+			const state = items( originalState, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( originalState );
+		} );
+
+		it( 'should load default state when schema does not match', () => {
+			const originalState = deepFreeze( [ {
+				card_type: 'amex',
+				payment_partner: 'moneypress',
+				email: 1234
+			} ] );
+
+			const state = items( originalState, { type: DESERIALIZE } );
+
+			expect( state ).to.eql( [] );
 		} );
 	} );
 } );
