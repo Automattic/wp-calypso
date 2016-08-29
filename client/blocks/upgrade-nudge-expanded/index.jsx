@@ -60,7 +60,9 @@ class ExpandedUpgradeNudge extends Component {
 		let features = this.props.features;
 		if ( ! features ) {
 			if ( this.props.planConstants.getPromotedFeatures ) {
-				features = this.props.planConstants.getPromotedFeatures().filter( feature => feature !== this.props.highlightedFeature ).slice( 0, 6 );
+				features = this.props.planConstants.getPromotedFeatures().filter(
+					feature => feature !== this.props.highlightedFeature
+				).slice( 0, 6 );
 			} else {
 				features = [];
 			}
