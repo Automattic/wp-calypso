@@ -246,6 +246,38 @@ const JetpackConnectMain = React.createClass( {
 		return this.props.type === 'install' || this.props.type === 'pro' || this.props.type === 'premium';
 	},
 
+	getInstallInstructionsData() {
+		return {
+			headerTitle: this.translate( 'Ready for installation' ),
+			headerSubtitle: this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ),
+			steps: [
+				{
+					title: this.translate( '1. Install Jetpack' ),
+					text: ( this.isInstall()
+						? this.translate( 'You will be redirected to your site\'s dashboard to install ' +
+							'Jetpack. Click the blue "Install Now" button.' )
+						: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s ' +
+							'dashboard to install Jetpack. Click the blue install button.' )
+					),
+					action: this.renderAlreadyHaveJetpackButton(),
+					example: <JetpackExampleInstall url={ this.state.currentUrl } />
+				},
+				{
+					title: this.translate( '2. Activate Jetpack' ),
+					text: this.translate( 'Then you\'ll click the blue "Activate" link to activate Jetpack.' ),
+					example: <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ true }  />
+				},
+				{
+					title: this.translate( '3. Connect Jetpack' ),
+					text: this.translate( 'Finally, click the green "Connect to WordPress.com" button to finish the process.' ),
+					example: <JetpackExampleConnect url={ this.state.currentUrl } />
+				}
+			],
+			buttonOnClick: this.installJetpack,
+			buttonText: this.translate( 'Install Jetpack' )
+		};
+	},
+
 	renderFooter() {
 		return (
 			<LoggedOutFormLinks>
@@ -313,34 +345,25 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	renderInstallInstructions() {
+		const installData = this.getInstallInstructionsData();
 		return (
 			<MainWrapper isWide>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
 					<ConnectHeader
 						showLogo={ false }
-						headerText={ this.translate( 'Ready for installation' ) }
-						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ) }
+						headerText={ installData.headerTitle }
+						subHeaderText={ installData.headerSubtitle }
 						step={ 1 }
-						steps={ 3 } />
+						steps={ installData.steps.length } />
 					<div className="jetpack-connect__install-steps">
-						<JetpackInstallStep title={ this.translate( '1. Install Jetpack' ) }
-							text={ this.isInstall()
-									? this.translate( 'You will be redirected to your site\'s dashboard to install ' +
-										'Jetpack. Click the blue "Install Now" button.' )
-									: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s ' +
-										'dashboard to install Jetpack. Click the blue install button.' )
-								}
-							action={ this.renderAlreadyHaveJetpackButton() }
-							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
-						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
-							text={ this.translate( 'Then you\'ll click the blue "Activate" link to activate Jetpack.' ) }
-							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ true } /> } />
-						<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
-							text={ this.translate( 'Finally, click the green "Connect to WordPress.com" button to finish the process.' ) }
-							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
+						{
+							installData.steps.map( ( step ) =>
+								<JetpackInstallStep { ...step } />
+							)
+						}
 					</div>
-					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
+					<Button onClick={ installData.buttonOnClick } primary>{ installData.buttonText }</Button>
 					<div className="jetpack-connect__navigation">
 						<div>{ this.renderBackButton() }</div>
 					</div>
