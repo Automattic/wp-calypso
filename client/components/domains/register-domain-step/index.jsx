@@ -265,6 +265,7 @@ const RegisterDomainStep = React.createClass( {
 					delaySearch={ true }
 					delayTimeout={ 1000 }
 					dir="ltr"
+					maxLength={ 60 }
 				/>
 			</div>
 		);
@@ -312,7 +313,8 @@ const RegisterDomainStep = React.createClass( {
 						this.showValidationErrorMessage( domain, error );
 						return callback();
 					}
-					if ( ! domain.match( /.{3,}\..{2,}/ ) ) {
+
+					if ( ! domain.match( /^[A-Za-z][A-Za-z0-9\.-]{2,}\.[A-Za-z]{2,}$/ ) ) {
 						return callback();
 					}
 					const timestamp = Date.now();
@@ -492,7 +494,7 @@ const RegisterDomainStep = React.createClass( {
 			mapDomainUrl = this.props.mapDomainUrl;
 		} else {
 			const query = qs.stringify( { initialQuery: this.state.lastQuery.trim() } );
-			mapDomainUrl = `${this.props.basePath}/mapping`;
+			mapDomainUrl = `${ this.props.basePath }/mapping`;
 			if ( this.props.selectedSite ) {
 				mapDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
 			}
@@ -528,10 +530,11 @@ const RegisterDomainStep = React.createClass( {
 						components: {
 							a: <a
 								target="_blank"
+								rel="noopener noreferrer"
 								href={ `https://dotblog.wordpress.com/
 									?email=${ this.props.currentUser && encodeURIComponent( this.props.currentUser.email ) || '' }
 									&domain=${ domain }`
-									}/>
+									} />
 						}
 					}
 				);
@@ -547,7 +550,7 @@ const RegisterDomainStep = React.createClass( {
 							args: { tld: domain.substring( tldIndex ) },
 							components: {
 								strong: <strong />,
-								a: <a target="_blank" href={ support.MAP_EXISTING_DOMAIN } />
+								a: <a target="_blank" rel="noopener noreferrer" href={ support.MAP_EXISTING_DOMAIN } />
 							}
 						}
 					);
@@ -571,8 +574,8 @@ const RegisterDomainStep = React.createClass( {
 						{
 							components: {
 								strong: <strong />,
-								a1: <a target="_blank" href="http://wordpressfoundation.org/trademark-policy/"/>,
-								a2: <a href={ support.CALYPSO_CONTACT }/>
+								a1: <a target="_blank" rel="noopener noreferrer" href="http://wordpressfoundation.org/trademark-policy/" />,
+								a2: <a href={ support.CALYPSO_CONTACT } />
 							}
 						}
 					);

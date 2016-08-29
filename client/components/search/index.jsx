@@ -59,7 +59,8 @@ const Search = React.createClass( {
 		searching: PropTypes.bool,
 		isOpen: PropTypes.bool,
 		dir: PropTypes.string,
-		fitsContainer: PropTypes.bool
+		fitsContainer: PropTypes.bool,
+		maxLength: PropTypes.number
 	},
 
 	getInitialState: function() {
@@ -255,30 +256,25 @@ const Search = React.createClass( {
 	},
 
 	render: function() {
-		let searchClass,
-			searchValue = this.state.keyword,
-			placeholder = this.props.placeholder ||
-				i18n.translate( 'Search…', { textOnly: true } );
-
-		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
-		const isOpenUnpinnedOrQueried = this.state.isOpen ||
+		const enableOpenIcon = this.props.pinned && ! this.state.isOpen,
+			isOpenUnpinnedOrQueried = this.state.isOpen ||
 				! this.props.pinned ||
-				this.props.initialValue;
-
-		const autocorrect = this.props.disableAutocorrect && {
-			autoComplete: 'off',
-			autoCorrect: 'off',
-			spellCheck: 'false'
-		};
-
-		searchClass = classNames( this.props.additionalClasses, {
-			'is-expanded-to-container': this.props.fitsContainer,
-			'is-open': isOpenUnpinnedOrQueried,
-			'is-searching': this.props.searching,
-			rtl: this.props.dir === 'rtl',
-			ltr: this.props.dir === 'ltr',
-			search: true
-		} );
+				this.props.initialValue,
+			autocorrect = this.props.disableAutocorrect && {
+				autoComplete: 'off',
+				autoCorrect: 'off',
+				spellCheck: 'false'
+			},
+			searchValue = this.state.keyword,
+			placeholder = this.props.placeholder || i18n.translate( 'Search…', { textOnly: true } ),
+			searchClass = classNames( this.props.additionalClasses, {
+				'is-expanded-to-container': this.props.fitsContainer,
+				'is-open': isOpenUnpinnedOrQueried,
+				'is-searching': this.props.searching,
+				rtl: this.props.dir === 'rtl',
+				ltr: this.props.dir === 'ltr',
+				search: true
+			} );
 
 		return (
 			<div className={ searchClass } role="search">
@@ -293,7 +289,7 @@ const Search = React.createClass( {
 					}
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
-				<Gridicon icon="search" className={ 'search-open__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) }/>
+				<Gridicon icon="search" className={ 'search-open__icon' + ( this.props.dir ? ' ' + this.props.dir : '' ) } />
 				</div>
 				<input
 					type="search"
@@ -312,7 +308,9 @@ const Search = React.createClass( {
 					aria-hidden={ ! isOpenUnpinnedOrQueried }
 					autoCapitalize="none"
 					dir={ this.props.dir }
-					{ ...autocorrect } />
+					maxLength={ this.props.maxLength }
+					{ ...autocorrect }
+				/>
 				{ ( searchValue || this.state.isOpen ) ? this.closeButton() : null }
 			</div>
 		);
