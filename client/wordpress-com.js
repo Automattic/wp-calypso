@@ -116,6 +116,13 @@ sections = [
 		group: 'sites'
 	},
 	{
+		name: 'settings-seo',
+		paths: [ '/settings/seo' ],
+		module: 'my-sites/site-settings/seo-settings',
+		secondary: true,
+		group: 'sites'
+	},
+	{
 		name: 'sharing',
 		paths: [ '/sharing' ],
 		module: 'my-sites/sharing',
