@@ -17,10 +17,10 @@ export default React.createClass( {
 
 	render() {
 		return (
-            <span className="my-plan-price-with-flexbox">
-                <PlanPrice rawPrice={ 99 } original />
-                <PlanPrice rawPrice={ 30 } discounted />
-            </span>
+			<span className="my-plan-price-with-flexbox">
+				<PlanPrice rawPrice={ 99 } original />
+				<PlanPrice rawPrice={ 30 } discounted />
+			</span>
 		);
 	}
 } );
