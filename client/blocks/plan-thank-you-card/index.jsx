@@ -11,11 +11,18 @@ import { connect } from 'react-redux';
 import { getSelectedSite } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { fetchSitePlans } from 'state/sites/plans/actions';
 
 class PlanThankYouCard extends Component {
 	static propTypes = {
 		selectedSite: PropTypes.object
 	};
+
+	componentDidMount() {
+		if ( ! this.props.plan ) {
+			this.props.fetchSitePlans( this.props.selectedSite );
+		}
+	}
 
 	render() {
 		// Non standard gridicon sizes are used here because we use them as background pattern with various sizes and rotation
@@ -29,7 +36,11 @@ class PlanThankYouCard extends Component {
 							args: { planName: this.props.selectedSite.plan.product_name_short }
 						} ) }
 					</div>
-					<div className="plan-thank-you-card__plan-price">{ this.props.plan.formattedPrice }</div>
+					{ ( ! this.props.plan ) ? (
+						<div className="plan-thank-you-card__plan-price is-placeholder"></div>
+					) : (
+						<div className="plan-thank-you-card__plan-price">{ this.props.plan.formattedPrice }</div>
+					) }
 					<div className="plan-thank-you-card__background-icons">
 						<Gridicon icon="heart" size={ 52 } />
 						<Gridicon icon="heart" size={ 20 } />
@@ -64,15 +75,24 @@ class PlanThankYouCard extends Component {
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	let selectedSite = getSelectedSite( state );
+export default connect(
+	( state, ownProps ) => {
+		let selectedSite = getSelectedSite( state );
 
-	if ( ownProps.selectedSite && ! selectedSite ) {
-		selectedSite = ownProps.selectedSite;
+		if ( ownProps.selectedSite && ! selectedSite ) {
+			selectedSite = ownProps.selectedSite;
+		}
+
+		return {
+			selectedSite,
+			plan: getCurrentPlan( state, selectedSite.ID )
+		};
+	},
+	( dispatch ) => {
+		return {
+			fetchSitePlans( site ) {
+				dispatch( fetchSitePlans( site.ID ) );
+			},
+		};
 	}
-
-	return {
-		selectedSite,
-		plan: getCurrentPlan( state, selectedSite.ID )
-	};
-} )( localize( PlanThankYouCard ) );
+)( localize( PlanThankYouCard ) );
