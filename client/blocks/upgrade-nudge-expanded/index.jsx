@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import page from 'page';
-
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -22,10 +22,10 @@ import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { PLAN_PERSONAL, getPlanClass, plansList } from 'lib/plans/constants';
-import analytics from 'lib/analytics';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 class ExpandedUpgradeNudge extends Component {
 	constructor( props ) {
@@ -39,7 +39,7 @@ class ExpandedUpgradeNudge extends Component {
 	}
 
 	upgrade() {
-		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', this.eventProperties );
+		this.props.recordTracksEvent( 'calypso_upgrade_nudge_cta_click', this.eventProperties );
 		if ( this.props.upgrade ) {
 			this.props.upgrade();
 		} else if ( this.props.planConstants.getPathSlug && this.props.siteSlug ) {
@@ -136,7 +136,8 @@ ExpandedUpgradeNudge.propTypes = {
 	highlightedFeature: PropTypes.string,
 	eventName: PropTypes.string,
 	event: PropTypes.string,
-	siteSlug: PropTypes.string
+	siteSlug: PropTypes.string,
+	recordTracksEvent: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
@@ -147,4 +148,6 @@ const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
 } );
 
-export default connect( mapStateToProps )( localize( ExpandedUpgradeNudge ) );
+const mapDispatchToProps = ( dispatch ) => bindActionCreators( { recordTracksEvent }, dispatch );
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( ExpandedUpgradeNudge ) );
