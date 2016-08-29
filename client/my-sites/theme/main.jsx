@@ -244,12 +244,16 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderThemeForumCard( isPrimary = false ) {
+		const description = isPremium( this.props ) ?
+			i18n.translate( 'Get in touch with the theme author' ) :
+			i18n.translate( 'Get help from volunteers and staff' );
+
 		return (
 			<Card className="theme__sheet-card-support">
 				<Gridicon icon="comment" size={ 48 } />
 				<div className="theme__sheet-card-support-details">
 					{ i18n.translate( 'Have a question about this theme?' ) }
-					<small>{ i18n.translate( 'Get in touch with the theme author' ) }</small>
+					<small>{ description }</small>
 				</div>
 				<Button primary={ isPrimary } href={ getForumUrl( this.props ) }>Visit forum</Button>
 			</Card>
@@ -262,7 +266,7 @@ const ThemeSheet = React.createClass( {
 				<Gridicon icon="briefcase" size={ 48 } />
 				<div className="theme__sheet-card-support-details">
 					{ i18n.translate( 'Need CSS help? ' ) }
-					<small>{ i18n.translate( 'Visit the CSS customization forum' ) }</small>
+					<small>{ i18n.translate( 'Get help from the experts in our CSS forum' ) }</small>
 				</div>
 				<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
 			</Card>
