@@ -210,7 +210,13 @@ describe( 'actions', function() {
 				author: {
 					ID: 3
 				},
-				title: 'OMG Unicorns'
+				title: 'OMG Unicorns',
+				terms: {
+					category: [ {
+						ID: 7,
+						name: 'ribs'
+					} ]
+				}
 			};
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( changedAttributes );
 
@@ -229,7 +235,8 @@ describe( 'actions', function() {
 					ID: 777,
 					site_ID: 123,
 					author: 3,
-					title: 'OMG Unicorns'
+					title: 'OMG Unicorns',
+					terms: {}
 				};
 
 				expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
