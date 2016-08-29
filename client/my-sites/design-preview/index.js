@@ -47,47 +47,35 @@ export default function designPreview( WebPreview ) {
 		}
 
 		componentDidUpdate( prevProps ) {
+			if ( this.shouldReloadPreview( prevProps ) ) {
+				this.loadPreview();
+			}
+		}
+
+		shouldReloadPreview( prevProps ) {
 			// If there is no markup or the site has changed, fetch it
 			if ( ! this.props.previewMarkup || this.props.selectedSiteId !== prevProps.selectedSiteId ) {
-				this.loadPreview();
+				return true;
 			}
 			// Refresh the preview when it is being shown (since this component is
 			// always present but not always visible, this is similar to loading the
 			// preview when mounting).
 			if ( this.props.showPreview && ! prevProps.showPreview ) {
-				this.loadPreview();
+				return true;
 			}
 			// If the customizations have been removed, restore the original markup
 			if ( this.haveCustomizationsBeenRemoved( prevProps ) ) {
 				// Force the initial markup to be restored because the DOM may have been
 				// changed, and simply not applying customizations will not restore it.
 				debug( 'restoring original markup' );
-				this.loadPreview();
+				return true;
 			}
-			// Certain customizations cannot be applied by DOM changes, in which case we
-			// can reload the preview.
-			if ( this.shouldReloadPreview( prevProps ) ) {
-				debug( 'reloading preview due to customizations' );
-				this.loadPreview();
-			}
-			// Apply customizations as DOM changes
-			if ( this.props.customizations && this.previewDocument ) {
-				debug( 'updating preview with customizations', this.props.customizations );
-			}
-		}
-
-		shouldReloadPreview( prevProps ) {
-			const customizations = this.props.customizations;
-			const prevCustomizations = prevProps.customizations || {};
-			return ( JSON.stringify( customizations.homePage ) !==
-				JSON.stringify( prevCustomizations.homePage ) );
+			return false;
 		}
 
 		haveCustomizationsBeenRemoved( prevProps ) {
-			return ( this.props.previewMarkup &&
-				this.props.customizations &&
+			return (
 				this.props.previewMarkup === prevProps.previewMarkup &&
-				prevProps.customizations &&
 				Object.keys( this.props.customizations ).length === 0 &&
 				Object.keys( prevProps.customizations ).length > 0
 			);
