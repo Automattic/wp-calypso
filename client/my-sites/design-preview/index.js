@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import page from 'page';
 import includes from 'lodash/includes';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -19,7 +20,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
-import { closePreview } from 'state/ui/preview/actions';
+import { closePreview, setPreviewUrl } from 'state/ui/preview/actions';
 import DesignMenu from 'blocks/design-menu';
 import { getSiteFragment } from 'lib/route/path';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -49,6 +50,10 @@ export default function designPreview( WebPreview ) {
 			// If there is no markup or the site has changed, fetch it
 			if ( ! this.props.previewMarkup || this.props.selectedSiteId !== prevProps.selectedSiteId ) {
 				this.loadPreview();
+			}
+			// If the URL has changed, fetch it
+			if ( this.props.previewUrl !== prevProps.previewUrl ) {
+				return true;
 			}
 			// Refresh the preview when it is being shown (since this component is
 			// always present but not always visible, this is similar to loading the
@@ -98,7 +103,9 @@ export default function designPreview( WebPreview ) {
 				return;
 			}
 			debug( 'loading preview with customizations', this.props.customizations );
-			this.props.fetchPreviewMarkup( this.props.selectedSiteId, this.props.previewUrl, this.props.customizations );
+			// No leading slash allowed in pathname but we need a trailing slash
+			const path = this.props.previewUrl ? url.parse( this.props.previewUrl ).pathname.replace( /^\//, '' ) + '/' : null;
+			this.props.fetchPreviewMarkup( this.props.selectedSiteId, path, this.props.customizations );
 		}
 
 		undoCustomization() {
@@ -139,6 +146,7 @@ export default function designPreview( WebPreview ) {
 				return;
 			}
 			event.preventDefault();
+			this.props.setPreviewUrl( event.target.href );
 		}
 
 		render() {
@@ -215,6 +223,6 @@ export default function designPreview( WebPreview ) {
 
 	return connect(
 		mapStateToProps,
-		{ fetchPreviewMarkup, undoCustomization, closePreview, setLayoutFocus }
+		{ fetchPreviewMarkup, undoCustomization, closePreview, setLayoutFocus, setPreviewUrl }
 	)( localize( DesignPreview ) );
 }
