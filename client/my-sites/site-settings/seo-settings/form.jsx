@@ -401,7 +401,7 @@ export const SeoForm = React.createClass( {
 						highlightedFeature={ FEATURE_ADVANCED_SEO }
 						eventName={ "calypso_seo_settings_upgrade_nudge_impression" }
 						benefits={ [
-							this.translate( 'Preview your site\'s posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader.' ),
+							this.translate( "Preview your site's posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader." ),
 							this.translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ),
 							this.translate( 'Modify front page meta data in order to customize how your site appears to search engines.' )
 						] }

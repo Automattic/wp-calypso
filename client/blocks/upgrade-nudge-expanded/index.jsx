@@ -93,7 +93,7 @@ class ExpandedUpgradeNudge extends Component {
 				<div className="upgrade-nudge-expanded__description">
 					{ this.props.title && <div className="upgrade-nudge-expanded__title">
 						<div className="upgrade-nudge-expanded__title-plan">
-							<div className={ classNames( "upgrade-nudge-expanded__title-plan-icon", this.props.planClass ) }></div>
+							<div className={ classNames( 'upgrade-nudge-expanded__title-plan-icon', this.props.planClass ) }></div>
 						</div>
 						<p className="upgrade-nudge-expanded__title-message">
 							{ this.props.title }
