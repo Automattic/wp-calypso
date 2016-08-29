@@ -18,7 +18,7 @@ import {
 } from 'state/site-settings/exporter/actions';
 import { localize } from 'i18n-calypso';
 
-export default class Select extends Component {
+class Select extends Component {
 	constructor( props ) {
 		super( props );
 		this.setValue = this.setValue.bind( this );
