@@ -367,11 +367,6 @@ const JetpackConnectMain = React.createClass( {
 		);
 	},
 
-	renderInstallInstructions() {
-		const installData = this.getInstallInstructionsData();
-		return this.renderInstructions( installData );
-	},
-
 	renderAlreadyHaveJetpackButton() {
 		return (
 			<a className="jetpack-connect__already-installed-jetpack-button" href="#" onClick={ this.confirmJetpackInstalled }>
@@ -395,11 +390,6 @@ const JetpackConnectMain = React.createClass( {
 				{ this.translate( 'Back' ) }
 			</Button>
 		);
-	},
-
-	renderActivateInstructions() {
-		const activateData = this.getActivateInstructionsData();
-		return this.renderInstructions( activateData );
 	},
 
 	renderInstructions( instructionsData ) {
@@ -435,10 +425,10 @@ const JetpackConnectMain = React.createClass( {
 	render() {
 		const status = this.getStatus();
 		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
-			return this.renderInstallInstructions();
+			return this.renderInstructions( this.getInstallInstructionsData() );
 		}
 		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
-			return this.renderActivateInstructions();
+			return this.renderInstructions( this.getActivateInstructionsData() );
 		}
 		return this.renderSiteEntry();
 	}
