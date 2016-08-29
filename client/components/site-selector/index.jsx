@@ -21,10 +21,8 @@ import Gridicon from 'components/gridicon';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
-import userModule from 'lib/user';
 import config from 'config';
 
-const user = userModule();
 const noop = () => {};
 
 const SiteSelector = React.createClass( {
@@ -267,11 +265,11 @@ const SiteSelector = React.createClass( {
 
 	render() {
 		const selectorClass = classNames( 'site-selector', 'sites-list', {
-			'is-large': user.get().site_count > 6,
-			'is-single': user.get().visible_site_count === 1
+			'is-large': this.props.siteCount > 6,
+			'is-single': this.props.visibleSiteCount === 1
 		} );
 
-		const hiddenSitesCount = user.get().site_count - user.get().visible_site_count;
+		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
 		return (
 			<div className={ selectorClass }>
@@ -316,8 +314,11 @@ const SiteSelector = React.createClass( {
 } );
 
 export default connect( ( state ) => {
+	const visibleSiteCount = get( getCurrentUser( state ), 'visible_site_count', 0 );
 	return {
 		showRecentSites: get( getCurrentUser( state ), 'visible_site_count', 0 ) > 11,
-		recentSites: getPreference( state, 'recentSites' )
+		recentSites: getPreference( state, 'recentSites' ),
+		siteCount: get( getCurrentUser( state ), 'site_count', 0 ),
+		visibleSiteCount: visibleSiteCount,
 	};
 } )( SiteSelector );
