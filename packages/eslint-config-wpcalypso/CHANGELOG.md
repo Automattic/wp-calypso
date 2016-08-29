@@ -1,3 +1,7 @@
+#### v0.5.0 (2016-08-29)
+
+- Added: [`react/jsx-space-before-closing`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-space-before-closing.md) enforces a space before closing brackets in self-closing JSX elements (this only applies to the React superset of rules)
+
 #### v0.4.0 (2016-08-25)
 
 - Added: [`react/jsx-no-target-blank`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-no-target-blank.md) prevents unsafe `target="_blank"` usage
