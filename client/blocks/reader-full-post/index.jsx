@@ -124,7 +124,7 @@ export class FullPostView extends React.Component {
 								</EmbedContainer>
 						}
 
-						{ post.show_excerpt && ! isDiscoverPost( post )
+						{ post.use_excerpt && ! isDiscoverPost( post )
 							? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
 							: null
 						}
