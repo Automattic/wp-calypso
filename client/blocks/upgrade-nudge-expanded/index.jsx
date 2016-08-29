@@ -57,16 +57,9 @@ class ExpandedUpgradeNudge extends Component {
 		}
 
 		const price = formatCurrency( this.props.plan.raw_price / 12, this.props.plan.currency_code );
-		let features = this.props.features;
-		if ( ! features ) {
-			if ( this.props.planConstants.getPromotedFeatures ) {
-				features = this.props.planConstants.getPromotedFeatures().filter(
-					feature => feature !== this.props.highlightedFeature
-				).slice( 0, 6 );
-			} else {
-				features = [];
-			}
-		}
+		const features = this.props.planConstants.getPromotedFeatures().filter(
+			feature => feature !== this.props.highlightedFeature
+		).slice( 0, 6 );
 
 		return (
 			<Card className="upgrade-nudge-expanded">
@@ -128,7 +121,6 @@ ExpandedUpgradeNudge.propTypes = {
 	currentPlan: PropTypes.object,
 	planConstants: PropTypes.object,
 	planClass: PropTypes.string,
-	features: PropTypes.array,
 	upgrade: PropTypes.func,
 	benefits: PropTypes.array,
 	title: PropTypes.string,
