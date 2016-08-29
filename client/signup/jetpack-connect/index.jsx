@@ -39,6 +39,7 @@ import {
  * Constants
  */
 const MINIMUM_JETPACK_VERSION = '3.9.6';
+const NEW_INSTRUCTIONS_JETPACK_VERSION = '4.2.0';
 
 const JetpackConnectMain = React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
@@ -247,6 +248,41 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	getInstallInstructionsData() {
+		const jetpackVersion = this.checkProperty( 'jetpackVersion' );
+		if ( ! jetpackVersion || versionCompare( jetpackVersion, NEW_INSTRUCTIONS_JETPACK_VERSION, '>=' ) ) {
+			// Installation data and steps for Jetpack >= 4.2
+			return {
+				headerTitle: this.translate( 'Ready for installation' ),
+				headerSubtitle: this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ),
+				steps: [
+					{
+						title: this.translate( '1. Install Jetpack' ),
+						text: ( this.isInstall()
+							? this.translate( 'You will be redirected to your site\'s dashboard to install ' +
+								'Jetpack. Click the blue "Install Now" button.' )
+							: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s ' +
+								'dashboard to install Jetpack. Click the blue install button.' )
+						),
+						action: this.renderAlreadyHaveJetpackButton(),
+						example: <JetpackExampleInstall url={ this.state.currentUrl } />
+					},
+					{
+						title: this.translate( '2. Activate Jetpack' ),
+						text: this.translate( 'Then you\'ll click the blue "Activate" link to activate Jetpack.' ),
+						example: <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ true } />
+					},
+					{
+						title: this.translate( '3. Connect Jetpack' ),
+						text: this.translate( 'Finally, click the green "Connect to WordPress.com" button to finish the process.' ),
+						example: <JetpackExampleConnect url={ this.state.currentUrl } />
+					}
+				],
+				buttonOnClick: this.installJetpack,
+				buttonText: this.translate( 'Install Jetpack' )
+			};
+		}
+
+		// Installation data and steps for Jetpack < 4.2
 		return {
 			headerTitle: this.translate( 'Ready for installation' ),
 			headerSubtitle: this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ),
@@ -279,6 +315,32 @@ const JetpackConnectMain = React.createClass( {
 	},
 
 	getActivateInstructionsData() {
+		const jetpackVersion = this.checkProperty( 'jetpackVersion' );
+		if ( ! jetpackVersion || versionCompare( jetpackVersion, NEW_INSTRUCTIONS_JETPACK_VERSION, '>=' ) ) {
+			// Activation data and steps for Jetpack >= 4.2
+			return {
+				headerTitle: this.translate( 'Ready for activation' ),
+				headerSubtitle: this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ),
+				steps: [
+					{
+						title: this.translate( '1. Activate Jetpack' ),
+						text: this.translate( 'You will be redirected to your site\'s dashboard to activate Jetpack. ' +
+							'Click the blue "Activate" link.' ),
+						action: this.renderNotJetpackButton(),
+						example: <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ false } />
+					},
+					{
+						title: this.translate( '2. Connect Jetpack' ),
+						text: this.translate( 'Then click the green "Connect to WordPress.com" button to finish the process.' ),
+						example: <JetpackExampleConnect url={ this.state.currentUrl } />
+					}
+				],
+				buttonOnClick: this.activateJetpack,
+				buttonText: this.translate( 'Activate Jetpack' )
+			};
+		}
+
+		// Activation data and steps for Jetpack < 4.2
 		return {
 			headerTitle: this.translate( 'Ready for activation' ),
 			headerSubtitle: this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ),
