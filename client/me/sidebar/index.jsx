@@ -17,9 +17,9 @@ const Sidebar = require( 'layout/sidebar' ),
 	config = require( 'config' ),
 	ProfileGravatar = require( 'me/profile-gravatar' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	FormButton = require( 'components/forms/form-button' ),
 	userUtilities = require( 'lib/user/utils' );
 
+import Button from 'components/button';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 
@@ -83,14 +83,14 @@ const MeSidebar = React.createClass( {
 			<Sidebar>
 				<ProfileGravatar user={ this.props.currentUser } />
 				<div className="me-sidebar__signout">
-					<FormButton
+					<Button
+						compact
 						className="me-sidebar__signout-button"
-						isPrimary={ false }
 						onClick={ this.onSignOut }
 						title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
 					>
 						{ this.translate( 'Sign Out' ) }
-					</FormButton>
+					</Button>
 				</div>
 				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Profile' ) }</SidebarHeading>
