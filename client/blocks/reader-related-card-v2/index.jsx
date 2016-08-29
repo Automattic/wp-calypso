@@ -27,9 +27,7 @@ export function SmallPostCard( { post, site, onPostClick = noop, onSiteClick = n
 // onSiteClick is not being used
 /* eslint-enable no-unused-vars */
 	const featuredImage = post.canonical_image;
-	const classes = classnames( 'reader-related-card-v2', {
-		'has-image': post.canonical_image
-	} );
+	const classes = classnames( 'reader-related-card-v2' );
 
 	return (
 		<Card className={ classes }>
