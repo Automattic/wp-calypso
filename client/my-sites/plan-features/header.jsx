@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import Ribbon from 'components/ribbon';
-import PlanFeaturesPrice from 'my-sites/plan-price';
+import PlanPrice from 'my-sites/plan-price';
 import {
 	PLAN_FREE,
 	PLAN_PREMIUM,
@@ -159,8 +159,8 @@ class PlanFeaturesHeader extends Component {
 		if ( discountPrice ) {
 			return (
 				<span className="plan-features__header-price-group">
-					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } original />
-					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ discountPrice } discounted />
+					<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } original />
+					<PlanPrice currencyCode={ currencyCode } rawPrice={ discountPrice } discounted />
 				</span>
 			);
 		}
@@ -169,14 +169,14 @@ class PlanFeaturesHeader extends Component {
 			const originalPrice = relatedMonthlyPlan.raw_price * 12;
 			return (
 				<span className="plan-features__header-price-group">
-					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ originalPrice } original />
-					<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } discounted />
+					<PlanPrice currencyCode={ currencyCode } rawPrice={ originalPrice } original />
+					<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } discounted />
 				</span>
 			);
 		}
 
 		return (
-			<PlanFeaturesPrice currencyCode={ currencyCode } rawPrice={ rawPrice } />
+			<PlanPrice currencyCode={ currencyCode } rawPrice={ rawPrice } />
 		);
 	}
 }
