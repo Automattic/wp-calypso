@@ -27,7 +27,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 
-class ExpandedUpgradeNudge extends Component {
+class UpgradeNudgeExpanded extends Component {
 	constructor( props ) {
 		super( props );
 		this.upgrade = this.upgrade.bind( this );
@@ -111,14 +111,14 @@ class ExpandedUpgradeNudge extends Component {
 	}
 }
 
-ExpandedUpgradeNudge.defaultProps = {
+UpgradeNudgeExpanded.defaultProps = {
 	plan: {},
 	currentPlan: {},
 	planConstants: {},
 	eventName: 'calypso_upgrade_nudge_impression'
 };
 
-ExpandedUpgradeNudge.propTypes = {
+UpgradeNudgeExpanded.propTypes = {
 	translate: PropTypes.func.isRequired,
 	plan: PropTypes.object.isRequired,
 	currentPlan: PropTypes.object,
@@ -145,4 +145,4 @@ const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 
 const mapDispatchToProps = ( dispatch ) => bindActionCreators( { recordTracksEvent }, dispatch );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( ExpandedUpgradeNudge ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( UpgradeNudgeExpanded ) );
