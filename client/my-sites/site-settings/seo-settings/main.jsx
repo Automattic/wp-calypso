@@ -58,7 +58,7 @@ export class SeoSettings extends Component {
 				<SidebarNavigation />
 				<SiteSettingsNavigation site={ site } section="seo" />
 				{ site && <QuerySitePurchases siteId={ site.ID } /> }
-				<SeoForm { ...{ site, upgradeToBusiness } } />
+				{ site && <SeoForm { ...{ site, upgradeToBusiness } } /> }
 			</Main>
 		);
 	}
