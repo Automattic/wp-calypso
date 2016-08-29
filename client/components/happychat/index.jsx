@@ -26,6 +26,7 @@ import {
 	timeline,
 	composer
 } from './helpers';
+import { translate } from 'i18n-calypso';
 
 const isChatOpen = all(
 	isAvailable,
@@ -49,10 +50,9 @@ const availabilityTitle = when(
  * Renders the title text of the chat sidebar when happychat is connecting.
  * @param {Object} params - parameters for the component
  * @param {function} params.onCloseChat - function called when close button is pressed
- * @param {function} params.translate - i18n string translator
  * @returns {Object} react component for title bar
  */
-const connectingTitle = ( { onCloseChat, translate } ) => {
+const connectingTitle = ( { onCloseChat } ) => {
 	return (
 		<div className="happychat__active-toolbar">
 		<span>{ translate( 'Starting chat' ) }</span>
@@ -68,10 +68,9 @@ const connectingTitle = ( { onCloseChat, translate } ) => {
  * @private
  * @param {Object} params - parameters for the component
  * @param {function} params.onCloseChat - function called when close button is pressed
- * @param {function} params.translate - i18n string translator
  * @returns {Object} react component for title bar
  */
-const connectedTitle = ( { onCloseChat, translate } ) => (
+const connectedTitle = ( { onCloseChat } ) => (
 	<div className="happychat__active-toolbar">
 	<h4>{ translate( 'Support Chat' ) }</h4>
 		<div onClick={ onCloseChat }>
