@@ -3733,6 +3733,17 @@
           "version": "3.0.0"
         }
       }
+    },
+    "webpack-dashboard": {
+      "version": "0.0.1",
+      "dependencies": {
+        "blessed": {
+          "version": "0.1.81"
+        },
+        "filesize": {
+          "version": "3.3.0"
+        }
+      }
     }
   }
 }

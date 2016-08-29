@@ -52,7 +52,7 @@ const tagToToken = s =>
 
 const tokenToTag = n =>
 	'string' !== n.type
-		? `%${ snakeCase( n.type ) }%` // siteName -> %site_name%
+		? `%_${ snakeCase( n.type ) }%` // siteName -> %_site_name%
 		: n.value;                     // arbitrary text passes through
 
 export const rawToNative = r => removeBlanks( map( split( r, tagPattern ), tagToToken ) );

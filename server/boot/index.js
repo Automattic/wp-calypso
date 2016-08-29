@@ -35,13 +35,13 @@ function setup() {
 		bundler( app );
 
 		// setup logger
-		app.use( morgan( 'dev' ) );
+		// app.use( morgan( 'dev' ) );
 	} else {
 		assets = require( 'bundler/assets' );
 		assets( app );
 
 		// setup logger
-		app.use( morgan( 'combined' ) );
+		// app.use( morgan( 'combined' ) );
 	}
 
 	// attach the static file server to serve the `public` dir
