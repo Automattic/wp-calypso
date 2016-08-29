@@ -130,7 +130,7 @@ export default function designPreview( WebPreview ) {
 				makeElement( {
 					id: 'siteTitle',
 					selector: '.site-title a',
-					onClick: element => this.props.setActiveDesignTool( element.id )
+					onClick: () => this.props.setActiveDesignTool( 'siteTitle' )
 				} ),
 			];
 			elements
