@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var creditcards = require( 'creditcards' ),
-	compact = require( 'lodash/compact' ),
-	isArray = require( 'lodash/isArray' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	toArray = require( 'lodash/toArray' ),
-	inRange = require( 'lodash/inRange' ),
-	capitalize = require( 'lodash/capitalize' ),
-	i18n = require( 'i18n-calypso' );
+import creditcards from 'creditcards';
+import {
+	capitalize,
+	compact,
+	inRange,
+	isArray,
+	isEmpty
+} from 'lodash';
+import i18n from 'i18n-calypso';
 
 function creditCardFieldRules() {
 	return {
@@ -53,7 +54,7 @@ function creditCardFieldRules() {
 	};
 }
 
-var validators = {};
+const validators = {};
 
 validators.required = {
 	isValid: function( value ) {
@@ -72,14 +73,15 @@ validators.validCreditCardNumber = creditCardValidator( 'validCardNumber' );
 validators.validCvvNumber = creditCardValidator( 'validCvc' );
 
 validators.validExpirationDate = creditCardValidator(
+	'notExpired',
 	'validExpirationMonth',
-	'validExpirationYear'
+	'validExpirationYear',
 );
 
 function validateCreditCard( cardDetails ) {
-	var expirationDate = cardDetails[ 'expiration-date' ] || '/',
-		expirationMonth = parseInt( expirationDate.split( '/' )[0], 10 ),
-		expirationYear = parseInt( expirationDate.split( '/' )[1], 10 );
+	const expirationDate = cardDetails[ 'expiration-date' ] || '/',
+		expirationMonth = parseInt( expirationDate.split( '/' )[ 0 ], 10 ),
+		expirationYear = 2000 + parseInt( expirationDate.split( '/' )[ 1 ], 10 );
 
 	return creditcards.validate( {
 		number: cardDetails.number,
@@ -89,19 +91,20 @@ function validateCreditCard( cardDetails ) {
 	} );
 }
 
-function creditCardValidator( /* validationProperties... */ ) {
-	var validationProperties = toArray( arguments );
-
+function creditCardValidator( ...validationProperties ) {
 	return {
 		isValid: function( value, cardDetails ) {
-			var validationResult;
 			if ( ! value ) {
 				return false;
 			}
 
-			validationResult = validateCreditCard( cardDetails );
+			const validationResult = validateCreditCard( cardDetails );
 
 			return validationProperties.every( function( property ) {
+				if ( property === 'notExpired' ) {
+					return ! validationResult.expired;
+				}
+
 				return validationResult[ property ];
 			} );
 		},
@@ -114,24 +117,21 @@ function creditCardValidator( /* validationProperties... */ ) {
 	};
 }
 
-
 function validateCardDetails( cardDetails ) {
-	var rules = creditCardFieldRules(),
+	const rules = creditCardFieldRules(),
 		errors = Object.keys( rules ).reduce( function( allErrors, fieldName ) {
-		var field = rules[ fieldName ],
-			newErrors = getErrors( field, cardDetails[ fieldName ], cardDetails );
+			const field = rules[ fieldName ],
+				newErrors = getErrors( field, cardDetails[ fieldName ], cardDetails );
 
-		if ( newErrors.length ) {
-			allErrors[ fieldName ] = newErrors;
-		}
+			if ( newErrors.length ) {
+				allErrors[ fieldName ] = newErrors;
+			}
 
-		return allErrors;
-	}, {} );
+			return allErrors;
+		}, {} );
 
 	return { errors: errors };
 }
-
-
 
 /**
  * Retrieves the type of credit card from the specified number.
@@ -165,7 +165,7 @@ function getCreditCardType( number ) {
 
 function getErrors( field, value, cardDetails ) {
 	return compact( field.rules.map( function( rule ) {
-		var validator = getValidator( rule );
+		const validator = getValidator( rule );
 
 		if ( ! validator.isValid( value, cardDetails ) ) {
 			return validator.error( field.description );
@@ -176,9 +176,9 @@ function getErrors( field, value, cardDetails ) {
 function getValidator( rule ) {
 	if ( isArray( rule ) ) {
 		return validators[ rule[ 0 ] ].apply( null, rule.slice( 1 ) );
-	} else {
-		return validators[ rule ];
 	}
+
+	return validators[ rule ];
 }
 
 module.exports = {
