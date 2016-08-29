@@ -48,11 +48,11 @@ export default React.createClass( {
 				'expiredDomains',
 				'expiringDomains',
 				'unverifiedDomains',
-				'pendingGappsToAcceptanceDomains',
+				'pendingGappsTosAcceptanceDomains',
 				'wrongNSMappedDomains',
 				'newDomains'
 			]
-		}
+		};
 	},
 
 	renewLink( count ) {
