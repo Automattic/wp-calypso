@@ -29,6 +29,12 @@ export default function designTool( Component ) {
 			requestSitePosts: React.PropTypes.func.isRequired,
 		},
 
+		getDefaultProps() {
+			return {
+				customizations: {},
+			};
+		},
+
 		getUpdatedCustomizationsForKey( id, customizations ) {
 			const updatedCustomizations = { [ id ]: Object.assign( {}, this.getCustomizationsForKey( id ), customizations ) };
 			return Object.assign( {}, this.props.customizations, updatedCustomizations );
@@ -57,7 +63,7 @@ export default function designTool( Component ) {
 		},
 
 		getCustomizationsForKey( key ) {
-			if ( ! this.props.customizations || ! this.props.customizations[ key ] ) {
+			if ( ! this.props.customizations[ key ] ) {
 				return {};
 			}
 			return this.props.customizations[ key ];
