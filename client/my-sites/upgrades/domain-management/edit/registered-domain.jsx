@@ -102,8 +102,7 @@ const RegisteredDomain = React.createClass( {
 				'expiringDomains',
 				'newDomainsWithPrimary',
 				'newDomains',
-				'pendingGappsTosAcceptanceDomains',
-				'wrongNSMappedDomains'
+				'pendingGappsTosAcceptanceDomains'
 			] }/>;
 	},
 
