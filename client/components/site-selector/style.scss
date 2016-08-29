@@ -187,3 +187,7 @@
 		text-decoration: underline;
 	}
 }
+
+.site-selector__no-results + .site-selector__hidden-sites-message {
+	display: none;
+}
