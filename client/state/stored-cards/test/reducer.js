@@ -20,8 +20,13 @@ import {
 } from 'state/action-types';
 import reducer, { items } from '../reducer';
 import { STORED_CARDS_FROM_API } from './fixture';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'items', () => {
+	useSandbox( ( sandbox ) => {
+		sandbox.stub( console, 'warn' );
+	} );
+
 	it( 'should return an object with the initial state', () => {
 		expect( reducer( undefined, { type: 'UNRELATED' } ) ).to.be.eql( {
 			items: [],
