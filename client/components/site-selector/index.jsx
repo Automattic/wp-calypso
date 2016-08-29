@@ -306,6 +306,8 @@ const SiteSelector = React.createClass( {
 								href="https://wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
 								className="site-selector__manage-hidden-sites"
 								title={ this.translate( 'Manage your hidden sites' ) }
+								target="_blank"
+								rel="noopener noreferrer"
 							>
 								<Gridicon icon="cog" size={ 24 } />
 							</a>
