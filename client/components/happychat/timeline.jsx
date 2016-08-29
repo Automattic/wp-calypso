@@ -26,6 +26,11 @@ const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 
 const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
+
+/*
+ * Given a message and array of links contained within that message, returns the message
+ * with clickable links inside of it.
+ */
 const messageWithLinks = ( { message, key, links } ) => {
 	const children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
 		if ( last < startIndex ) {
@@ -42,9 +47,17 @@ const messageWithLinks = ( { message, key, links } ) => {
 	return <p key={ key }>{ children.parts }</p>;
 };
 
+/*
+ * If a message event has a message with links in it, return a component with clickable links.
+ * Otherwise just return a single paragraph with the text.
+ */
 const messageText = when( linksNotEmpty, messageWithLinks, messageParagraph );
 const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt={ meta.nick } src={ meta.image } /> );
 
+/*
+ * Group messages based on user so when any user sends multiple messages they will be grouped
+ * within the same message bubble until it reaches a message from a different user.
+ */
 const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 	const [ initial, ... rest ] = item;
 	const [ message, meta ] = initial;

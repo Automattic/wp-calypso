@@ -1,7 +1,12 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-
+/**
+ * Internal dependencies
+ */
 import GridIcon from 'components/gridicon';
 import {
 	first,
@@ -40,10 +45,17 @@ const availabilityTitle = when(
 	() => <div>Live Support Unavailable</div>
 );
 
-const connectingTitle = ( { onCloseChat } ) => {
+/**
+ * Renders the title text of the chat sidebar when happychat is connecting.
+ * @param {Object} params - parameters for the component
+ * @param {function} params.onCloseChat - function called when close button is pressed
+ * @param {function} params.translate - i18n string translator
+ * @returns {Object} react component for title bar
+ */
+const connectingTitle = ( { onCloseChat, translate } ) => {
 	return (
 		<div className="happychat__active-toolbar">
-			<span>Starting chat</span>
+		<span>{ translate( 'Starting chat' ) }</span>
 			<div onClick={ onCloseChat }>
 				<GridIcon icon="cross" />
 			</div>
@@ -51,15 +63,26 @@ const connectingTitle = ( { onCloseChat } ) => {
 	);
 };
 
-const connectedTitle = ( { onCloseChat } ) => (
+/**
+ * Returns the title bar for Happychat when it is connected
+ * @private
+ * @param {Object} params - parameters for the component
+ * @param {function} params.onCloseChat - function called when close button is pressed
+ * @param {function} params.translate - i18n string translator
+ * @returns {Object} react component for title bar
+ */
+const connectedTitle = ( { onCloseChat, translate } ) => (
 	<div className="happychat__active-toolbar">
-		<h4>Support Chat</h4>
+	<h4>{ translate( 'Support Chat' ) }</h4>
 		<div onClick={ onCloseChat }>
 			<GridIcon icon="cross" />
 		</div>
 	</div>
 );
 
+/**
+ * Funciton for rendering correct titlebar based on happychat client state
+ */
 const title = first(
 	when( isConnected, connectedTitle ),
 	when( isConnecting, connectingTitle ),

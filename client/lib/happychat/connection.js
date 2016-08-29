@@ -1,8 +1,14 @@
+/*
+ * External dependencies
+ */
 import IO from 'socket.io-client';
 import { EventEmitter } from 'events';
 import config from 'config';
 import { v4 as uuid } from 'uuid';
 
+/*
+ * Happychat client connectionf or Socket.IO
+ */
 const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
 const emitMessage = ( connection ) => ( { id, text, timestamp, user, meta } ) => {

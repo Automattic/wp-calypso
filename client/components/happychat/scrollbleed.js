@@ -1,5 +1,10 @@
-const debug = require( 'debug' )( 'calypso:happychat:scrollbleed' );
-
+/*
+ * A mixin that prevents scrolling events triggered by the mousewheel from moving scrollable containers
+ * not directly under the mouse.
+ *
+ * By default when scrolling a scrollable HTML element, once the boundary is reached the scrolling events
+ * will continue up the DOM tree and ultimately end up scrolling the page.
+ */
 export default {
 	componentWillUnmount() {
 		this.scrollbleedUnlock();
@@ -10,7 +15,6 @@ export default {
 	},
 
 	_scrollbleed_handleScroll( e ) {
-		debug( 'scrollbleed handling', this._scrollbleed_node );
 		let delta = null;
 		if ( ! this._scrollbleed_node ) {
 			return;
@@ -41,21 +45,19 @@ export default {
 		this._scrollbleed_node.scrollTop -= delta;
 	},
 
-	scrollbleedLock( e ) {
+	scrollbleedLock() {
 		if ( window.addEventListener ) { // older FF
 			window.addEventListener( 'DOMMouseScroll', this._scrollbleed_handleScroll, false );
 		}
 		window.onwheel = this._scrollbleed_handleScroll;
 		window.onmousewheel = document.onmousewheel = this._scrollbleed_handleScroll;
-		debug( 'scrollbleed lock enabled', e );
 	},
 
-	scrollbleedUnlock( e ) {
+	scrollbleedUnlock() {
 		if ( window.removeEventListener ) { // older FF
 			window.removeEventListener( 'DOMMouseScroll', this._scrollbleed_handleScroll, false );
 		}
 		window.onwheel = null;
 		window.onmousewheel = document.onmousewheel = null;
-		debug( 'scrollbleed lock disabled', e );
 	}
 };

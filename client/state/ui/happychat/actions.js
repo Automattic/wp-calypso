@@ -1,7 +1,9 @@
+/**
+ * Internal dependencies
+ */
 import {
 	HAPPYCHAT_OPEN
 } from 'state/action-types';
-
 import { setChatClosing } from 'state/happychat/actions';
 
 const setChatOpen = isOpen => ( { type: HAPPYCHAT_OPEN, isOpen } );

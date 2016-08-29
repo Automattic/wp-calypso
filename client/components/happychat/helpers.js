@@ -24,14 +24,23 @@ const renderLoading = () => (
 	</div>
 );
 
+/*
+ * Functions for determinining the state of happychat
+ */
 export const isAvailable = propExists( 'available' );
 export const isConnecting = propEquals( 'connectionStatus', 'connecting' );
 export const isConnected = propEquals( 'connectionStatus', 'connected' );
 
+/*
+ * Renders the timeline once the happychat client has connected
+ */
 export const timeline = when(
 	isConnecting,
 	renderLoading,
 	( { onScrollContainer } ) => <Timeline onScrollContainer={ onScrollContainer } />
 );
 
+/**
+Renders the message composer once happychat client is connected
+ */
 export const composer = when( isConnected, () => <Composer /> );

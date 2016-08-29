@@ -1,12 +1,20 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import viewport from 'lib/viewport';
 import { findDOMNode } from 'react-dom';
-
+/**
+ * Internal dependencies
+ */
 import { connectChat } from 'state/happychat/actions';
 import { timeline, composer } from './helpers';
 
-export const HappychatPage = React.createClass( {
+/**
+ * React component for rendering a happychat client as a full page
+ */
+const HappychatPage = React.createClass( {
 	componentDidMount() {
 		this.props.openChat();
 	},

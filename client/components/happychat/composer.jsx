@@ -1,7 +1,12 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
-
+/**
+ * Internal dependencies
+ */
 import {
 	updateChatMessage,
 	sendChatMessage
@@ -16,7 +21,9 @@ import {
 } from './functional';
 import scrollbleed from './scrollbleed';
 
+// helper function for detecting when a DOM event keycode is pressed
 const returnPressed = propEquals( 'which', 13 );
+// helper function that calls prevents default on the DOM event
 const preventDefault = call( 'preventDefault' );
 
 /*
