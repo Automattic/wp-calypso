@@ -65,7 +65,7 @@ describe( 'index', () => {
 
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'If you are unable to access your site at %(domainName)s' );
+			expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'If you are unable to access your site at {{strong}}%(domainName)s{{/strong}}' );
 		} );
 	} );
 
@@ -83,7 +83,7 @@ describe( 'index', () => {
 
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up %(domainName)s for you' );
+			expect( ReactDom.findDOMNode( component ).textContent ).to.contain( 'We are setting up {{strong}}%(domainName)s{{/strong}} for you' );
 		} );
 
 		it( 'should render the multi version of the component if more than two domains match the same rule', () => {

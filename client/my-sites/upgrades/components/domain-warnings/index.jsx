@@ -45,10 +45,13 @@ export default React.createClass( {
 		return {
 			isCompact: false,
 			ruleWhiteList: [
-				'expiredDomains',
-				'expiringDomains',
-				'unverifiedDomains',
+				'expiredDomainsCanManage',
+				'expiringDomainsCanManage',
+				'unverifiedDomainsCanManage',
 				'pendingGappsTosAcceptanceDomains',
+				'expiredDomainsCannotManage',
+				'expiringDomainsCannotManage',
+				'unverifiedDomainsCannotManage',
 				'wrongNSMappedDomains',
 				'newDomains'
 			]
@@ -74,10 +77,13 @@ export default React.createClass( {
 
 	getPipe() {
 		const allRules = [
-				this.expiredDomains,
-				this.expiringDomains,
-				this.unverifiedDomains,
+				this.expiredDomainsCanManage,
+				this.expiringDomainsCanManage,
+				this.unverifiedDomainsCanManage,
+				this.unverifiedDomainsCannotManage,
 				this.pendingGappsTosAcceptanceDomains,
+				this.expiredDomainsCannotManage,
+				this.expiringDomainsCannotManage,
 				this.wrongNSMappedDomains,
 				this.newDomains
 			],
@@ -87,7 +93,7 @@ export default React.createClass( {
 	},
 
 	getDomains() {
-		return ( this.props.domains || [ this.props.domain ] ).filter( domain => domain.currentUserCanManage );
+		return ( this.props.domains || [ this.props.domain ] );
 	},
 
 	wrongNSMappedDomains() {
@@ -112,13 +118,15 @@ export default React.createClass( {
 		if ( wrongMappedDomains.length === 1 ) {
 			const domain = wrongMappedDomains[ 0 ];
 			if ( isSubdomain( domain.name ) ) {
-				text = this.translate( '%(domainName)s\'s CNAME records should be configured.', {
+				text = this.translate( '{{strong}}%(domainName)s\'s{{/strong}} CNAME records should be configured.', {
+					components: { strong: <strong /> },
 					args: { domainName: domain.name },
 					context: 'Notice for mapped subdomain that has CNAME records need to set up'
 				} );
 				learnMoreUrl = support.MAP_SUBDOMAIN;
 			} else {
-				text = this.translate( '%(domainName)s\'s name server records should be configured.', {
+				text = this.translate( '{{strong}}%(domainName)s\'s{{/strong}} name server records should be configured.', {
+					components: { strong: <strong /> },
 					args: { domainName: domain.name },
 					context: 'Notice for mapped domain notice with NS records pointing to somewhere else'
 				} );
@@ -140,10 +148,10 @@ export default React.createClass( {
 		}
 		const noticeProps = {
 			isCompact: this.props.isCompact,
-			status: "is-warning",
-			className: "domain-warnings__notice",
+			status: 'is-warning',
+			className: 'domain-warnings__notice',
 			showDismiss: false,
-			key: "wrong-ns-mapped-domain"
+			key: 'wrong-ns-mapped-domain'
 		};
 		let children;
 		if ( this.props.isCompact ) {
@@ -155,15 +163,19 @@ export default React.createClass( {
 		return <Notice { ...noticeProps }>{ children }</Notice>;
 	},
 
-	expiredDomains() {
-		debug( 'Rendering expiredDomain' );
-		const expiredDomains = this.getDomains().filter( domain => domain.expired && domain.type === domainTypes.REGISTERED );
+	expiredDomainsCanManage() {
+		debug( 'Rendering expiredDomainsCanManage' );
 		let text, renewLink;
+		const expiredDomains = this.getDomains().filter( domain => domain.expired && domain.type === domainTypes.REGISTERED && domain.currentUserCanManage );
+
 		if ( expiredDomains.length === 0 ) {
 			return null;
-		} else if ( expiredDomains.length === 1 ) {
-			text = this.translate( '%(domainName)s expired %(timeSince)s.', {
-				args: { timeSince: expiredDomains[0].expirationMoment.fromNow(), domainName: expiredDomains[0].name },
+		}
+
+		if ( expiredDomains.length === 1 ) {
+			text = this.translate( '{{strong}}%(domainName)s{{/strong}} expired %(timeSince)s.', {
+				components: { strong: <strong /> },
+				args: { timeSince: expiredDomains[ 0 ].expirationMoment.fromNow(), domainName: expiredDomains[ 0 ].name },
 				context: 'Expired domain notice',
 				comment: '%(timeSince)s is something like "a year ago"'
 			} );
@@ -173,24 +185,68 @@ export default React.createClass( {
 			} );
 		}
 		renewLink = this.renewLink( expiredDomains.length );
-		return <Notice
-			isCompact={ this.props.isCompact }
-			status="is-error"
-			showDismiss={ false }
-			key="expired-domains"
-			text={ text }>{ renewLink }</Notice>;
+
+		return (
+			<Notice
+				isCompact={ this.props.isCompact }
+				status="is-error"
+				showDismiss={ false }
+				key="expired-domains-can-manage"
+				text={ text }>
+				{ renewLink }
+			</Notice>
+		);
 	},
 
-	expiringDomains() {
-		debug( 'Rendering expiringDomain' );
-		const expiringDomains = this.getDomains().filter( domain => domain.expirySoon && domain.type === domainTypes.REGISTERED );
+	expiredDomainsCannotManage() {
+		let text;
+		const expiredDomains = this.getDomains().filter( domain => domain.expired && domain.type === domainTypes.REGISTERED && ! domain.currentUserCanManage );
+
+		if ( expiredDomains.length === 0 ) {
+			return null;
+		}
+
+		if ( expiredDomains.length === 1 ) {
+			text = this.translate( 'The domain {{strong}}%(domainName)s{{/strong}} expired %(timeSince)s. It can be renewed by the user {{strong}}%(owner)s{{/strong}}.', {
+				components: { strong: <strong /> },
+				args: {
+					timeSince: expiredDomains[ 0 ].expirationMoment.fromNow(),
+					domainName: expiredDomains[ 0 ].name,
+					owner: expiredDomains[ 0 ].owner
+				},
+				context: 'Expired domain notice',
+				comment: '%(timeSince)s is something like "a year ago"'
+			} );
+		} else {
+			text = this.translate( 'Some domains on this site expired recently. They can be renewed by their owners.', {
+				context: 'Expired domain notice'
+			} );
+		}
+
+		return (
+			<Notice
+				isCompact={ this.props.isCompact }
+				showDismiss={ false }
+				key="expired-domains-cannot-manage"
+				text={ text } />
+		);
+	},
+
+	expiringDomainsCanManage() {
 		let text, renewLink;
+		const expiringDomains = this.getDomains().filter( domain => domain.expirySoon && domain.type === domainTypes.REGISTERED && domain.currentUserCanManage );
 
 		if ( expiringDomains.length === 0 ) {
 			return null;
-		} else if ( expiringDomains.length === 1 ) {
-			text = this.translate( '%(domainName)s is expiring %(timeUntil)s.', {
-				args: { timeUntil: expiringDomains[0].expirationMoment.fromNow(), domainName: expiringDomains[0].name },
+		}
+
+		if ( expiringDomains.length === 1 ) {
+			text = this.translate( '{{strong}}%(domainName)s{{/strong}} is expiring %(timeUntil)s.', {
+				components: { strong: <strong /> },
+				args: {
+					timeUntil: expiringDomains[ 0 ].expirationMoment.fromNow(),
+					domainName: expiringDomains[ 0 ].name
+				},
 				context: 'Expiring soon domain notice',
 				comment: '%(timeUntil)s is something like "in a week"'
 			} );
@@ -200,12 +256,51 @@ export default React.createClass( {
 			} );
 		}
 		renewLink = this.renewLink( expiringDomains.length );
-		return <Notice
-			isCompact={ this.props.isCompact }
-			status="is-error"
-			showDismiss={ false }
-			key="expiring-domains"
-			text={ text }>{ renewLink }</Notice>;
+
+		return (
+			<Notice
+				isCompact={ this.props.isCompact }
+				status="is-error"
+				showDismiss={ false }
+				key="expiring-domains-can-manage"
+				text={ text }>
+				{ renewLink }
+			</Notice>
+		);
+	},
+
+	expiringDomainsCannotManage() {
+		let text;
+		const expiringDomains = this.getDomains().filter( domain => domain.expirySoon && domain.type === domainTypes.REGISTERED && ! domain.currentUserCanManage );
+
+		if ( expiringDomains.length === 0 ) {
+			return null;
+		}
+
+		if ( expiringDomains.length === 1 ) {
+			text = this.translate( 'The domain {{strong}}%(domainName)s{{/strong}} will expire %(timeUntil)s. It can be renewed by the user {{strong}}%(owner)s{{/strong}}.', {
+				components: { strong: <strong /> },
+				args: {
+					timeUntil: expiringDomains[ 0 ].expirationMoment.fromNow(),
+					domainName: expiringDomains[ 0 ].name,
+					owner: expiringDomains[ 0 ].owner
+				},
+				context: 'Expiring soon domain notice',
+				comment: '%(timeUntil)s is something like "in a week"'
+			} );
+		} else {
+			text = this.translate( 'Some domains on this site are about to expire. They can be renewed by their owners.', {
+				context: 'Expiring domain notice'
+			} );
+		}
+
+		return (
+			<Notice
+				isCompact={ this.props.isCompact }
+				showDismiss={ false }
+				key="expiring-domains-cannot-manage"
+				text={ text } />
+		);
 	},
 
 	newDomains() {
@@ -238,101 +333,180 @@ export default React.createClass( {
 					'{{allAboutDomainsLink}}Learn more{{/allAboutDomainsLink}}.', { components: { allAboutDomainsLink } } );
 			}
 		} else {
-			const domain = newDomains[0];
+			const domain = newDomains[ 0 ];
 			if ( hasNewPrimaryDomain ) {
-				text = this.translate( '{{pNode}}We are setting up %(domainName)s for you. It should start working immediately, ' +
+				text = this.translate( '{{pNode}}We are setting up {{strong}}%(domainName)s{{/strong}} for you. It should start working immediately, ' +
 					'but may be unreliable during the first 72 hours.{{/pNode}}' +
-					'{{pNode}}If you are unable to access your site at %(domainName)s, try setting the primary domain to a domain you' +
+					'{{pNode}}If you are unable to access your site at {{strong}}%(domainName)s{{/strong}}, try setting the primary domain to a domain you' +
 					' know is working. {{domainsLink}}Learn more{{/domainsLink}} about setting the primary domain, or ' +
-					'{{tryNowLink}}try %(domainName)s now.{{/tryNowLink}}{{/pNode}}',
+					'{{tryNowLink}}try {{strong}}%(domainName)s{{/strong}} now.{{/tryNowLink}}{{/pNode}}',
 					{
 						args: { domainName: domain.name },
 						components: {
 							domainsLink,
 							pNode,
-							tryNowLink: <a href={ `http://${domain.name}` } target="_blank"/>
+							tryNowLink: <a href={ `http://${domain.name}` } target="_blank"/>,
+							strong: <strong />
 						}
 					}
 				);
 			} else {
-				text = this.translate( 'We are setting up %(domainName)s for you. It should start working immediately, ' +
+				text = this.translate( 'We are setting up {{strong}}%(domainName)s{{/strong}} for you. It should start working immediately, ' +
 					'but may be unreliable during the first 72 hours. ' +
 					'{{allAboutDomainsLink}}Learn more{{/allAboutDomainsLink}} about your new domain, or {{tryNowLink}} try it now{{/tryNowLink}}.',
 					{
 						args: { domainName: domain.name },
 						components: {
 							allAboutDomainsLink,
-							tryNowLink: <a href={ `http://${domain.name}` } target="_blank"/>
+							tryNowLink: <a href={ `http://${domain.name}` } target="_blank"/>,
+							strong: <strong />
 						}
 					}
 				);
 			}
 		}
 
-		return <Notice
-			isCompact={ this.props.isCompact }
-			status="is-warning"
-			showDismiss={ false }
-			key="new-domains">{ text }</Notice>;
-	},
-
-	unverifiedDomainNotice( domain ) {
-		const fullMessage = this.translate( 'Urgent! Your domain %(domain)s may be lost forever because your email address is not verified.', { args: { domain } } ),
-			compactMessage = this.translate( '%(domain)s may be suspended.', { args: { domain } } );
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
-				status="is-error"
+				status="is-warning"
 				showDismiss={ false }
-				className="domain-warnings__notice"
-				key="unverified-domains"
-				text={ this.props.isCompact ? compactMessage : fullMessage }>
-				<NoticeAction href={ paths.domainManagementEdit( this.props.selectedSite.slug, domain ) }>
-					{ this.translate( 'Fix' ) }
-				</NoticeAction>
+				key="new-domains">{ text }
 			</Notice>
 		);
 	},
 
-	unverifiedDomainsNotice( domains ) {
+	unverifiedDomainsCanManage() {
+		const domains = this.getDomains().filter( domain => domain.isPendingIcannVerification && domain.currentUserCanManage );
+
+		if ( domains.length === 0 ) {
+			return null;
+		}
+
+		if ( domains.length === 1 ) {
+			const domain = domains[ 0 ].name,
+				fullMessage = this.translate(
+					'Your domain {{strong}}%(domain)s{{/strong}} may be suspended because your email address is not verified.',
+					{
+						components: { strong: <strong /> },
+						args: { domain }
+					} ),
+				compactMessage = this.translate(
+					'Issues with {{strong}}%(domain)s{{/strong}}.',
+					{
+						components: { strong: <strong /> },
+						args: { domain }
+					} );
+
+			return (
+				<Notice
+					isCompact={ this.props.isCompact }
+					status="is-error"
+					showDismiss={ false }
+					className="domain-warnings__notice"
+					key="unverified-domains-can-manage"
+					text={ this.props.isCompact ? compactMessage : fullMessage }>
+					<NoticeAction href={ paths.domainManagementEdit( this.props.selectedSite.slug, domain ) }>
+						{ this.translate( 'Fix' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
 		const fullContent = (
 				<span>
-					{ this.translate( 'Urgent! Some of your domains may be lost forever because your email address is not verified.' ) }
+					{ this.translate( 'Some of your domains may be suspended because your email address is not verified:' ) }
 					<ul>
 						{ domains.map( ( { name } ) =>
-							<li key={ name }>{ name } <a href={ paths.domainManagementEdit( this.props.selectedSite.slug, name ) }>{ this.translate( 'Fix now' ) }</a></li>
+							<li key={ name }>{ name } <a href={ paths.domainManagementEdit( this.props.selectedSite.slug, name ) }>{ this.translate( 'Fix' ) }</a></li>
 						) }
 					</ul>
 				</span>
 			),
-			compactNoticeText = this.translate( 'Your domains may be suspended.' ),
+			compactNoticeText = this.translate( 'Issues with your domains.' ),
 			compactContent = (
 				<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
 					{ this.translate( 'Fix' ) }
 				</NoticeAction>
 			);
+
 		return (
 			<Notice
 				isCompact={ this.props.isCompact }
 				status="is-error"
 				showDismiss={ false }
 				className="domain-warnings__notice"
-				key="unverified-domains"
-				text={ this.props.isCompact && compactNoticeText } >
-				{ this.props.isCompact ? compactContent: fullContent }
+				key="unverified-domains-can-manage"
+				text={ this.props.isCompact && compactNoticeText }>
+				{ this.props.isCompact ? compactContent : fullContent }
 			</Notice>
 		);
 	},
 
-	unverifiedDomains() {
-		const domains = this.getDomains().filter( domain => domain.isPendingIcannVerification );
+	unverifiedDomainsCannotManage() {
+		const domains = this.getDomains().filter( domain => domain.isPendingIcannVerification && ! domain.currentUserCanManage );
+
+		if ( domains.length === 0 ) {
+			return null;
+		}
+
+		const compactContent = (
+			<NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>
+				{ this.translate( 'More' ) }
+			</NoticeAction>
+		);
 
 		if ( domains.length === 1 ) {
-			return this.unverifiedDomainNotice( domains[0].name );
-		} else if ( domains.length ) {
-			return this.unverifiedDomainsNotice( domains );
+			const fullMessage = this.translate(
+				'The domain {{strong}}%(domain)s{{/strong}} may be suspended because the owner ({{strong}}%(owner)s{{/strong}}) has not verified their contact information.',
+				{
+					components: { strong: <strong /> },
+					args: {
+						domain: domains[ 0 ].name,
+						owner: domains[ 0 ].owner
+					}
+				}
+				),
+				compactMessage = this.translate(
+					'Issues with {{strong}}%(domain)s{{/strong}}.',
+					{
+						components: { strong: <strong /> },
+						args: { domain: domains[ 0 ].name }
+					} );
+			return (
+				<Notice
+					isCompact={ this.props.isCompact }
+					showDismiss={ false }
+					className="domain-warnings__notice"
+					key="unverified-domains-cannot-manage"
+					text={ this.props.isCompact ? compactMessage : fullMessage }>
+					{ this.props.isCompact && compactContent }
+				</Notice>
+			);
 		}
-		return null;
+
+		const fullContent = (
+				<span>
+					{ this.translate( 'Some domains on this site are about to be suspended because their owner has not verified their contact information.' ) }
+					<ul>{
+						domains.map( ( domain ) => {
+							return <li key={ domain.name }>{ domain.name }</li>;
+						} )
+					}</ul>
+				</span>
+			),
+			compactNoticeText = this.translate( 'Issues with domains on this site.' );
+
+		return (
+			<Notice
+				isCompact={ this.props.isCompact }
+				showDismiss={ false }
+				className="domain-warnings__notice"
+				key="unverified-domains-cannot-manage"
+				text={ this.props.isCompact && compactNoticeText }>
+				{ this.props.isCompact ? compactContent : fullContent }
+			</Notice>
+		);
 	},
 
 	pendingGappsTosAcceptanceDomains() {
@@ -350,10 +524,10 @@ export default React.createClass( {
 			debug( 'You need provide either "domains" or "domain" property to this component.' );
 		}
 	},
+
 	render: function() {
 		debug( 'Domains:', this.getDomains() );
 		const notices = this.getPipe().map( renderer => renderer() ).filter( notice => notice );
 		return notices.length ? <div className="site__notices">{ notices }</div> : null;
 	}
-
 } );
