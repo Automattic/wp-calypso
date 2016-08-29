@@ -298,7 +298,7 @@ const JetpackConnectMain = React.createClass( {
 			],
 			buttonOnClick: this.activateJetpack,
 			buttonText: this.translate( 'Activate Jetpack' )
-		}
+		};
 	},
 
 	renderFooter() {
@@ -369,33 +369,7 @@ const JetpackConnectMain = React.createClass( {
 
 	renderInstallInstructions() {
 		const installData = this.getInstallInstructionsData();
-		return (
-			<MainWrapper isWide>
-				{ this.renderLocaleSuggestions() }
-				<div className="jetpack-connect__install">
-					<ConnectHeader
-						showLogo={ false }
-						headerText={ installData.headerTitle }
-						subHeaderText={ installData.headerSubtitle }
-						step={ 1 }
-						steps={ installData.steps.length } />
-					<div className="jetpack-connect__install-steps">
-						{
-							installData.steps.map( ( step ) =>
-								<JetpackInstallStep { ...step } />
-							)
-						}
-					</div>
-					<Button onClick={ installData.buttonOnClick } primary>{ installData.buttonText }</Button>
-					<div className="jetpack-connect__navigation">
-						<div>{ this.renderBackButton() }</div>
-					</div>
-				</div>
-				<LoggedOutFormLinks>
-					<HelpButton />
-				</LoggedOutFormLinks>
-			</MainWrapper>
-		);
+		return this.renderInstructions( installData );
 	},
 
 	renderAlreadyHaveJetpackButton() {
@@ -425,23 +399,28 @@ const JetpackConnectMain = React.createClass( {
 
 	renderActivateInstructions() {
 		const activateData = this.getActivateInstructionsData();
+		return this.renderInstructions( activateData );
+	},
+
+	renderInstructions( instructionsData ) {
 		return (
 			<MainWrapper isWide>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
-					<ConnectHeader showLogo={ false }
-						headerText={ activateData.headerTitle }
-						subHeaderText={ activateData.headerSubtitle }
+					<ConnectHeader
+						showLogo={ false }
+						headerText={ instructionsData.headerTitle }
+						subHeaderText={ instructionsData.headerSubtitle }
 						step={ 1 }
-						steps={ activateData.steps.length } />
+						steps={ instructionsData.steps.length } />
 					<div className="jetpack-connect__install-steps">
 						{
-							activateData.steps.map( ( step ) =>
+							instructionsData.steps.map( ( step ) =>
 								<JetpackInstallStep { ...step } />
 							)
 						}
 					</div>
-					<Button onClick={ activateData.buttonOnClick } primary>{ activateData.buttonText }</Button>
+					<Button onClick={ instructionsData.buttonOnClick } primary>{ instructionsData.buttonText }</Button>
 					<div className="jetpack-connect__navigation">
 						{ this.renderBackButton() }
 					</div>
