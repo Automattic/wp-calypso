@@ -2,8 +2,8 @@
 	position: relative;
 	width: 100%;
 	max-width: 500px;
-	background-color: #328246;
-	border-radius: 6px;
+	background-color: darken( $alert-green, 10 );
+	border-radius: 8px 8px 6px 6px;
 	overflow: hidden;
 	margin: 56px auto 24px;
 	color: $white;
@@ -16,10 +16,12 @@
 }
 
 .plan-thank-you-card__header {
-	background-color: #4AB866;
+	background-color: $alert-green;
 	padding: 75px 0 30px;
 	position: relative;
 	z-index: 1;
+	line-height: 1.2;
+	border-radius: 6px 6px 0 0;
 }
 
 .plan-thank-you-card__body {
@@ -45,12 +47,17 @@
 	display: inline-block;
 	border-radius: 4px;
 	background-color: $white;
-	color: #194324;
+	color: darken( $alert-green, 30 );
 	font-size: 14px;
 	height: 40px;
 	line-height: 40px;
 	padding: 0 60px;
-	box-shadow: 0px 1px 0px 1px rgba(0, 0, 0, .3);
+	border-style: solid;
+	border-color: darken( $alert-green, 20 );
+	border-width: 1px 1px 2px;
+	
+	//box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3),
+	//			0 2px 0 0 rgba(0, 0, 0, 0.3);
 
 	@media ( max-width: 320px) {
 		padding: 0;
@@ -60,8 +67,22 @@
 }
 
 .plan-thank-you-card__button:hover {
-	box-shadow: 0px 1px 0px 1px rgba(0, 0, 0, .5);
-	color: #194324;
+	//box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4),
+	//			0 2px 0 0 rgba(0, 0, 0, 0.4);
+	border-color: darken( $alert-green, 30 );
+	color: darken( $alert-green, 10 );
+}
+
+.plan-thank-you-card__button:focus {
+	color: darken( $alert-green, 10 );
+	outline: 1px dotted $white;	
+}
+
+.plan-thank-you-card__button:active {
+	//box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2),
+	//			0 -2px 0 0 rgba(0, 0, 0, 0.2);
+	border-width: 2px 1px 1px;
+	color: darken( $alert-green, 30 );
 }
 
 .plan-thank-you-card__plan-name {
@@ -84,6 +105,21 @@
 	}
 }
 
+@keyframes floating {
+	0% {
+		opacity: 0;
+		transform: translateY( 0 ) translateX( 0 ) rotate( 0 );
+	}
+	70% {
+		opacity: 1;
+		transform: translateY( 5px ) translateX( 5px ) rotate( -20deg );
+	}
+	100% {
+		opacity: 0;
+		transform: translateY( 0 ) translateX( 0 ) rotate( 0 );
+	}
+}
+
 .plan-thank-you-card__background-icons {
 	position: absolute;
 	top: 0;
@@ -91,10 +127,12 @@
 	width: 100%;
 	height: 100%;
 	z-index: -1;
-	color: #72D58B;
+	color: rgba( $white, 0.4 );
 
 	svg {
 		position: absolute;
+		opacity: 0;
+		animation: floating 10s infinite ease-in-out;
 
 		@media ( max-width: 430px ) {
 			path {
@@ -107,60 +145,72 @@
 		top: 18px;
 		left: 14.8%;
 		transform: rotate(14deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(2) {
 		top: 118px;
 		left: 67.4%;
 		transform: rotate(42deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(3) {
 		top: 108px;
 		left: 86.2%;
 		transform: rotate(-19deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(4) {
 		top: 190px;
 		left: 8.4%;
 		transform: rotate(-223deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(5) {
 		top: 233px;
 		left: 70.6%;
 		transform: rotate(-66deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(6) {
 		top: 83px;
 		left: 4.2%;
 		transform: rotate(40deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(7) {
 		top: 213px;
 		left: 23.8%;
 		transform: rotate(30deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(8) {
 		top: 30px;
 		left: 37.8%;
 		transform: rotate(114deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(9) {
 		top: 26px;
 		left: 78.4%;
 		transform: rotate(-11deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(10) {
 		top: 101px;
 		left: 21%;
 		transform: rotate(-9deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(11) {
 		top: 21px;
 		left: 62%;
 		transform: rotate(-33deg);
+		animation-delay: random(10) + s;
 	}
 	svg:nth-child(12) {
 		top: 161px;
 		left: 77.6%;
 		transform: rotate(-43deg);
+		animation-delay: random(10) + s;
 	}
 }

@@ -42,13 +42,13 @@ class PlanThankYouCard extends Component {
 						<div className="plan-thank-you-card__plan-price">{ this.props.plan.formattedPrice }</div>
 					) }
 					<div className="plan-thank-you-card__background-icons">
-						<Gridicon icon="heart" size={ 52 } />
-						<Gridicon icon="heart" size={ 20 } />
+						<Gridicon icon="audio" size={ 52 } />
+						<Gridicon icon="audio" size={ 20 } />
 						<Gridicon icon="heart" size={ 52 } />
 						<Gridicon icon="heart" size={ 41 } />
-						<Gridicon icon="heart" size={ 26 } />
+						<Gridicon icon="star" size={ 26 } />
 						<Gridicon icon="status" size={ 52 } />
-						<Gridicon icon="status" size={ 38 } />
+						<Gridicon icon="audio" size={ 38 } />
 						<Gridicon icon="status" size={ 28 } />
 						<Gridicon icon="status" size={ 65 } />
 						<Gridicon icon="star" size={ 57 } />
