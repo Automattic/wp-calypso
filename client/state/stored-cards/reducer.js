@@ -29,12 +29,12 @@ import { storedCardsSchema } from './schema';
  * @return {Array}         Updated state
  */
 export const items = createReducer( [], {
-	[ STORED_CARDS_ADD_COMPLETED ]: ( state, action ) => [ ...state, action.item ],
+	[ STORED_CARDS_ADD_COMPLETED ]: ( state, { item } ) => [ ...state, item ],
 
-	[ STORED_CARDS_FETCH_COMPLETED ]: ( state, action ) => action.list,
+	[ STORED_CARDS_FETCH_COMPLETED ]: ( state, { list } ) => list,
 
-	[ STORED_CARDS_DELETE_COMPLETED ]: ( state, action ) =>
-		state.filter( item => item.stored_details_id !== action.card.stored_details_id )
+	[ STORED_CARDS_DELETE_COMPLETED ]: ( state, { card } ) =>
+		state.filter( item => item.stored_details_id !== card.stored_details_id )
 }, storedCardsSchema );
 
 /**
