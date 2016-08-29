@@ -176,19 +176,14 @@
 	}
 }
 
-.site-selector__hidden-sites {
-	display: flex;
-	justify-content: space-between;
-	padding: 16px 16px 24px;
-	align-items: center;
-}
-
 .site-selector__hidden-sites-message {
 	color: $gray;
 	display: block;
 	font-size: 12px;
-}
+	padding: 16px 16px 24px;
 
-.site-selector__manage-hidden-sites .gridicon {
-	fill: $gray;
+	.site-selector__manage-hidden-sites {
+		color: $gray;
+		text-decoration: underline;
+	}
 }
