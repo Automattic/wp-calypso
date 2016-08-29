@@ -61,9 +61,6 @@
 	height: 150px;
 	line-height: 150px;
 	border-radius: 50%;
-	border-color: lighten( $gray, 20% );
-	border-style: solid;
-	border-width: 2px;
 	margin:0 auto;
 	outline: none;
 	transition: all 0.3s ease-in-out;
@@ -102,7 +99,8 @@
 	text-align: center;
 
 	a {
-		font-size: 16px;
+		color: darken( $gray, 20% );
+		font-size: 14px;
 	}
 }
 
@@ -111,8 +109,23 @@
 	font-family: $serif;
 	font-weight: 700;
 	line-height: 32px;
-	margin: 8px 0 0;
+	margin: 16px 0 0;
 	text-align: center;
 	word-break: break-word;
 	word-wrap: break-word;
+}
+
+.profile-gravatar__edit {
+	animation: animate-appear 600ms cubic-bezier( .1, .82, .25, 1 );
+	transform-origin: center center;
+}
+
+@keyframes animate-appear {
+	0%,
+	20% {
+		transform: scale( 0, 0 );
+	},
+	100% {
+		transform: scale( 1, 1 );
+	}
 }
