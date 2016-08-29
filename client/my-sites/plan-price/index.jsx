@@ -49,7 +49,7 @@ export default class PlanPrice extends Component {
 PlanPrice.propTypes = {
 	rawPrice: PropTypes.number,
 	original: PropTypes.bool,
-	discount: PropTypes.bool,
+	discounted: PropTypes.bool,
 	currencyCode: PropTypes.string,
 	className: PropTypes.string
 };
