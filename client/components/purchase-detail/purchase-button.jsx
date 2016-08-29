@@ -14,6 +14,7 @@ const PurchaseButton = ( {
 	disabled,
 	onClick = () => {},
 	target,
+	rel,
 	text,
 	primary = true
 } ) => {
@@ -24,6 +25,7 @@ const PurchaseButton = ( {
 			href={ href }
 			onClick={ onClick }
 			target={ target }
+			rel={ rel }
 			primary={ primary }
 		>
 			{ text }
@@ -37,6 +39,7 @@ PurchaseButton.propTypes = {
 	disabled: PropTypes.bool,
 	onClick: PropTypes.func,
 	target: PropTypes.string,
+	rel: PropTypes.string,
 	text: PropTypes.string,
 	primary: PropTypes.bool
 };

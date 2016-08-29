@@ -14,7 +14,9 @@ export default class Button extends PureComponent {
 		scary: PropTypes.bool,
 		type: PropTypes.string,
 		href: PropTypes.string,
-		borderless: PropTypes.bool
+		borderless: PropTypes.bool,
+		target: PropTypes.string,
+		rel: PropTypes.string
 	};
 
 	static defaultProps = {
