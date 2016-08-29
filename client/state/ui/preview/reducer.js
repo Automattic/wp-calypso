@@ -38,7 +38,7 @@ export function currentPreviewType( state = defaultPreviewType, action ) {
 export function activeDesignTool( state = null, action ) {
 	switch ( action.type ) {
 		case PREVIEW_TOOL_SET:
-			return action.id;
+			return action.id || null;
 	}
 	return state;
 }
