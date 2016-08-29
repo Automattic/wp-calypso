@@ -28,6 +28,8 @@ import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { isUserPaid, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
@@ -402,6 +404,7 @@ const ThemeSheet = React.createClass( {
 				type={ 'website' }
 				canonicalUrl={ canonicalUrl }
 				image={ this.props.screenshot }>
+				<QueryUserPurchases userId={ this.props.currentUserId } />
 				<Main className="theme__sheet">
 					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
 						{ this.renderBar() }
@@ -494,16 +497,15 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const backPath = getBackPath( state );
+		const currentUserId = getCurrentUserId( state );
+		const isCurrentUserPaid = isUserPaid( state, currentUserId );
 
-		// TODO:
-		// Connect these two to the real state value
-		const hasLoadedUserPurchasesFromServer = true;
-		const isCurrentUserPaid = true;
 		return {
 			selectedSite,
 			siteSlug,
 			backPath,
-			hasLoadedUserPurchasesFromServer,
+			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+			currentUserId,
 			isCurrentUserPaid,
 		};
 	},
