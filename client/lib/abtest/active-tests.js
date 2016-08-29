@@ -24,14 +24,6 @@ module.exports = {
 		defaultVariation: 'noChanges',
 		allowExistingUsers: false,
 	},
-	domainSuggestionVendor: {
-		datestamp: '20160614',
-		variations: {
-			namegen: 50,
-			domainsbot: 50
-		},
-		defaultVariation: 'namegen'
-	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {
