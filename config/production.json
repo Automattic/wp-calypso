@@ -19,6 +19,7 @@
 		"community-translator": true,
 		"desktop-promo": true,
 		"guided-tours": true,
+		"happychat": false,
 		"help": true,
 		"jetpack/connect": true,
 		"jetpack/sso": true,
