@@ -54,7 +54,7 @@ export class SeoSettings extends Component {
 		const { upgradeToBusiness } = this.props;
 
 		return (
-			<Main>
+			<Main className="site-settings">
 				<SidebarNavigation />
 				<SiteSettingsNavigation site={ site } section="seo" />
 				{ site && <QuerySitePurchases siteId={ site.ID } /> }
