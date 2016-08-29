@@ -19,7 +19,7 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteOption } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
-import { closePreview } from 'state/ui/preview/actions';
+import { closePreview, setActiveDesignTool } from 'state/ui/preview/actions';
 import DesignMenu from 'blocks/design-menu';
 import { getSiteFragment } from 'lib/route/path';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
@@ -40,6 +40,7 @@ export default function designPreview( WebPreview ) {
 			this.onClosePreview = this.onClosePreview.bind( this );
 			this.cleanAndClosePreview = this.cleanAndClosePreview.bind( this );
 			this.onPreviewClick = this.onPreviewClick.bind( this );
+			this.addIcons = this.addIcons.bind( this );
 		}
 
 		componentDidMount() {
@@ -113,6 +114,30 @@ export default function designPreview( WebPreview ) {
 		onLoad( previewDocument ) {
 			this.previewDocument = previewDocument;
 			previewDocument.body.onclick = this.onPreviewClick;
+			this.addIcons( previewDocument );
+		}
+
+		addIcons( previewDocument ) {
+			const makeElement = config => config;
+			const findElement = element => Object.assign( {}, element, { target: previewDocument.querySelector( element.selector ) } );
+			const logElement = element => {
+				debug( 'Adding icon to element', element );
+				return element;
+			};
+			const removeNotFound = element => !! element.target;
+			const addIcon = element => element.target.addEventListener( 'click', element.onClick );
+			const elements = [
+				makeElement( {
+					id: 'siteTitle',
+					selector: '.site-title a',
+					onClick: element => this.props.setActiveDesignTool( element.id )
+				} ),
+			];
+			elements
+				.map( findElement )
+				.map( logElement )
+				.filter( removeNotFound )
+				.map( addIcon );
 		}
 
 		onClosePreview() {
@@ -195,6 +220,7 @@ export default function designPreview( WebPreview ) {
 		closePreview: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
 		setLayoutFocus: PropTypes.func.isRequired,
+		setActiveDesignTool: PropTypes.func.isRequired,
 	};
 
 	function mapStateToProps( state ) {
@@ -216,6 +242,6 @@ export default function designPreview( WebPreview ) {
 
 	return connect(
 		mapStateToProps,
-		{ fetchPreviewMarkup, undoCustomization, closePreview, setLayoutFocus }
+		{ fetchPreviewMarkup, undoCustomization, closePreview, setLayoutFocus, setActiveDesignTool }
 	)( localize( DesignPreview ) );
 }
