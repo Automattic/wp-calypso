@@ -72,7 +72,7 @@ class ExpandedUpgradeNudge extends Component {
 			<Card className="upgrade-nudge-expanded">
 				<QueryPlans />
 				<TrackComponentView { ...( { eventName: this.props.eventName, eventProperties: this.eventProperties } ) } />
-				<div className="upgrade-nudge-expanded__business-plan-card">
+				<div className="upgrade-nudge-expanded__plan-card">
 					<PlanCompareCard
 						title={ this.props.plan.product_name_short }
 						line={ this.props.translate( '%(price)s per month, billed yearly', { args: { price } } ) }
