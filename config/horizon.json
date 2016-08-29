@@ -40,6 +40,7 @@
 		"manage/menus": true,
 		"manage/menus-jetpack": true,
 		"manage/pages": true,
+		"manage/payment-methods": true,
 		"manage/people": true,
 		"manage/people/readers": true,
 		"manage/plans": true,
