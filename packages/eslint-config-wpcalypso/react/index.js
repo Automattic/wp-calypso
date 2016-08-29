@@ -12,17 +12,17 @@ module.exports = {
 		'wpcalypso'
 	],
 	rules: {
+		'react/jsx-curly-spacing': [ 2, 'always' ],
+		'react/jsx-no-bind': 2,
+		'react/jsx-no-duplicate-props': 2,
+		'react/jsx-no-target-blank': 2,
+		'react/jsx-no-undef': 2,
 		'react/jsx-uses-react': 2,
 		'react/jsx-uses-vars': 2,
-		'react/jsx-no-undef': 2,
-		'react/jsx-no-duplicate-props': 2,
-		'react/react-in-jsx-scope': 2,
 		'react/no-danger': 2,
 		'react/no-did-mount-set-state': 2,
 		'react/no-did-update-set-state': 2,
 		'react/no-is-mounted': 2,
-		'react/jsx-no-bind': 2,
-		'react/jsx-curly-spacing': [ 2, 'always' ],
-		'react/jsx-no-target-blank': 2
+		'react/react-in-jsx-scope': 2
 	}
 };
