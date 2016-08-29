@@ -4,6 +4,7 @@
 import find from 'lodash/find';
 import get from 'lodash/get';
 import debugFactory from 'debug';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -99,4 +100,10 @@ export function hasDomainCredit( state, siteId ) {
 export function isRequestingSitePlans( state, siteId ) {
 	const plans = getPlansBySiteId( state, siteId );
 	return plans.isRequesting;
+}
+
+export function isCurrentPlanExpiring( state, siteId ) {
+	const currentPlan = getCurrentPlan( state, siteId );
+	const expiration = get( currentPlan, 'userFacingExpiryMoment', null );
+	return expiration < moment().add( 30, 'days' );
 }
