@@ -9,6 +9,7 @@ import noop from 'lodash/noop';
 /**
  * Internal dependencies
  */
+import Animate from 'components/animate';
 import Gridicon from 'components/gridicon';
 import ProgressIndicator from 'components/progress-indicator';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
@@ -279,11 +280,13 @@ export default React.createClass( {
 		return (
 			<div className={ indicatorClass }>
 				{ ! this.state.expand &&
-					<button className="site-indicator__button" onClick={ this.toggleExpand }>
-						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						<Gridicon icon={ this.getIcon() } size={ 16 } />
-						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
-					</button>
+					<Animate type="appear">
+						<button className="site-indicator__button" onClick={ this.toggleExpand }>
+							{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+							<Gridicon icon={ this.getIcon() } size={ 16 } />
+							{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
+						</button>
+					</Animate>
 				}
 				{ this.state.expand
 					? <div className="site-indicator__message">
@@ -291,7 +294,9 @@ export default React.createClass( {
 							{ this.getText() }
 						</div>
 						<button className="site-indicator__button" onClick={ this.toggleExpand }>
-							<Gridicon icon="cross" size={ 18 } />
+							<Animate type="appear">
+								<Gridicon icon="cross" size={ 18 } />
+							</Animate>
 						</button>
 					</div>
 					: null }
