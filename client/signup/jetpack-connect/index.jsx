@@ -467,8 +467,8 @@ const JetpackConnectMain = React.createClass( {
 						steps={ instructionsData.steps.length } />
 					<div className="jetpack-connect__install-steps">
 						{
-							instructionsData.steps.map( ( step ) =>
-								<JetpackInstallStep { ...step } />
+							instructionsData.steps.map( ( step, key ) =>
+								<JetpackInstallStep key={ 'instructions-step-' + key } { ...step } />
 							)
 						}
 					</div>
