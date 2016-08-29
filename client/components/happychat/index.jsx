@@ -107,9 +107,9 @@ const Happychat = React.createClass( {
 		} = this.props;
 
 		return (
-			<div className="happychat__container">
+			<div className="happychat">
 				<div
-					className={ classnames( 'happychat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
+					className={ classnames( 'happychat__container', { open: isChatOpen( { connectionStatus, available } ) } ) }>
 					<div className="happychat__title">
 						{ title( {
 							available,

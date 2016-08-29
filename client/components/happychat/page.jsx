@@ -31,7 +31,7 @@ const HappychatPage = React.createClass( {
 	render() {
 		const { connectionStatus } = this.props;
 		return (
-			<div className="happychat__container">
+			<div className="happychat">
 				{ timeline( { connectionStatus } ) }
 				{ composer( { connectionStatus } ) }
 			</div>

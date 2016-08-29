@@ -53,7 +53,7 @@
  */
 
 
-.happychat {
+.happychat__container {
 	overflow: hidden;
 	position: fixed;
 	bottom: 0;
@@ -121,7 +121,7 @@
 }
 
 // experiment: style scrollbars
-.happychat__container {
+.happychat {
 
 	::-webkit-scrollbar {
 		width: 12px;
@@ -334,7 +334,7 @@
 
 @include breakpoint( ">1040px" ) {
 
-	.happychat.open {
+	.happychat__container.open {
 		position: fixed;
 		height: calc( 100% - 47px );
 		bottom: 0;
@@ -382,7 +382,7 @@
 			width: 280px;
 		}
 	
-		.happychat.open .happychat__title {
+		.happychat__container.open .happychat__title {
 			height: 32px;
 			line-height: 32px;
 			border-radius: 0;
@@ -425,7 +425,7 @@
  * even though we'll be hiding that for the time being.
  */
 
-.is-section-chat .happychat__container {
+.is-section-chat .happychat {
 	position: fixed;
 	overflow: auto;
 	-webkit-overflow-scrolling: touch;
@@ -449,7 +449,7 @@
 
 @include breakpoint( "<960px" ) {
 
-	.is-section-chat .happychat__container {
+	.is-section-chat .happychat {
 		left: 229px;
 	}
 
@@ -457,7 +457,7 @@
 
 @include breakpoint( "<660px" ) {
 
-	.is-section-chat .happychat__container {
+	.is-section-chat .happychat {
 		left: 0;
 	}
 
