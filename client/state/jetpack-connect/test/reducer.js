@@ -17,6 +17,10 @@ import {
 	JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	JETPACK_CONNECT_SSO_VALIDATION_ERROR,
 	JETPACK_CONNECT_CHECK_URL,
+	JETPACK_CONNECT_CHECK_URL_RECEIVE,
+	JETPACK_CONNECT_DISMISS_URL_STATUS,
+	JETPACK_CONNECT_REDIRECT,
+	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -25,7 +29,8 @@ import reducer, {
 	jetpackConnectAuthorize,
 	jetpackSSO,
 	jetpackSSOSessions,
-	jetpackConnectSessions
+	jetpackConnectSessions,
+	jetpackConnectSite
 } from '../reducer';
 
 const successfulSSOValidation = {
@@ -147,6 +152,145 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.be.eql( { 'https://website.com:3000/test-one': { timestamp: 1 } } );
+		} );
+	} );
+
+	describe( '#jetpackConnectSite()', () => {
+		it( 'should default to an empty object', () => {
+			const state = jetpackConnectSite( undefined, {} );
+
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should add the url and mark it as currently fetching', () => {
+			const state = jetpackConnectSite( undefined, {
+				type: JETPACK_CONNECT_CHECK_URL,
+				url: 'https://website.com'
+			} );
+
+			expect( state ).to.have.property( 'url' )
+				.to.eql( 'https://website.com' );
+			expect( state ).to.have.property( 'isFetching' )
+				.to.be.true;
+			expect( state ).to.have.property( 'isFetched' )
+				.to.be.false;
+			expect( state ).to.have.property( 'isDismissed' )
+				.to.be.false;
+			expect( state ).to.have.property( 'installConfirmedByUser' )
+				.to.be.null;
+			expect( state ).to.have.property( 'data' )
+				.to.eql( {} );
+		} );
+
+		it( 'should mark the url as fetched if it is the current one', () => {
+			const data = {
+				exists: true,
+				isWordPress: true,
+				hasJetpack: true,
+				isJetpackActive: true,
+				isWordPressDotCom: false
+			};
+			const state = jetpackConnectSite( { url: 'https://website.com' }, {
+				type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
+				url: 'https://website.com',
+				data: data
+			} );
+
+			expect( state ).to.have.property( 'isFetching' )
+				.to.be.false;
+			expect( state ).to.have.property( 'isFetched' )
+				.to.be.true;
+			expect( state ).to.have.property( 'data' )
+				.to.eql( data );
+		} );
+
+		it( 'should not mark the url as fetched if it is not the current one', () => {
+			const data = {
+				exists: true,
+				isWordPress: true,
+				hasJetpack: true,
+				isJetpackActive: true,
+				isWordPressDotCom: false
+			};
+			const state = jetpackConnectSite( { url: 'https://anotherwebsite.com' }, {
+				type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
+				url: 'https://website.com',
+				data: data
+			} );
+
+			expect( state ).to.eql( { url: 'https://anotherwebsite.com' } );
+		} );
+
+		it( 'should mark the url as dismissed if it is the current one', () => {
+			const state = jetpackConnectSite( { url: 'https://website.com' }, {
+				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
+				url: 'https://website.com'
+			} );
+
+			expect( state ).to.have.property( 'installConfirmedByUser' )
+				.to.be.null;
+			expect( state ).to.have.property( 'isDismissed' )
+				.to.be.true;
+		} );
+
+		it( 'should not mark the url as dismissed if it is not the current one', () => {
+			const state = jetpackConnectSite( { url: 'https://anotherwebsite.com' }, {
+				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
+				url: 'https://website.com'
+			} );
+
+			expect( state ).to.eql( { url: 'https://anotherwebsite.com' } );
+		} );
+
+		it( 'should schedule a redirect to the url if it is the current one', () => {
+			const state = jetpackConnectSite( { url: 'https://website.com' }, {
+				type: JETPACK_CONNECT_REDIRECT,
+				url: 'https://website.com'
+			} );
+
+			expect( state ).to.have.property( 'isRedirecting' )
+				.to.be.true;
+		} );
+
+		it( 'should not schedule a redirect to the url if it is not the current one', () => {
+			const state = jetpackConnectSite( { url: 'https://anotherwebsite.com' }, {
+				type: JETPACK_CONNECT_REDIRECT,
+				url: 'https://website.com'
+			} );
+
+			expect( state ).to.eql( { url: 'https://anotherwebsite.com' } );
+		} );
+
+		it( 'should set the jetpack confirmed status to the new one', () => {
+			const state = jetpackConnectSite( { url: 'https://website.com' }, {
+				type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
+				status: true
+			} );
+
+			expect( state ).to.have.property( 'installConfirmedByUser' )
+				.to.be.true;
+		} );
+
+		it( 'should not persist state', () => {
+			const originalState = deepFreeze( {
+				url: 'https://website.com'
+			} );
+			const state = jetpackConnectSite( originalState, {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const originalState = deepFreeze( {
+				url: 'https://website.com'
+			} );
+			const state = jetpackConnectSite( originalState, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
 		} );
 	} );
 
