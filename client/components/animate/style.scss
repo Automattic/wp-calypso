@@ -1,5 +1,5 @@
 .animate__appear {
-	animation: animate__appear 600ms cubic-bezier( .1, .82, .25, 1 );
+	animation: animate__appear 600ms cubic-bezier( 0.1, 0.82, 0.25, 1 );
 	transform-origin: center center;
 }
 
@@ -14,7 +14,7 @@
 }
 
 .animate__fade-in {
-	animation: fade-in-scale 0.5s cubic-bezier( .1, .82, .25, 1 );
+	animation: fade-in-scale 0.5s ease-out;
 	animation-fill-mode: forwards;
 }
 
