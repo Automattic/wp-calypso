@@ -34,7 +34,7 @@ class StatsActionLink extends PureComponent {
 				<a href={ href }
 					onClick={ this.onClick }
 					target="_blank"
-					rel="noopener"
+					rel="noopener noreferrer"
 					className="module-content-list-item-action-wrapper"
 					title={ translate( 'View content in a new window', {
 						textOnly: true, context: 'Stats action tooltip: View content in a new window'
