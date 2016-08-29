@@ -286,21 +286,30 @@ const SiteSelector = React.createClass( {
 					{ this.renderAllSites() }
 					{ this.renderSites() }
 					{ hiddenSitesCount > 0 &&
-						<span className="site-selector__hidden-sites-message">
-							{ this.translate(
-								'%(hiddenSitesCount)d more hidden site.{{br/}} Use search to access it.',
-								'%(hiddenSitesCount)d more hidden sites.{{br/}} Use search to access them.',
-								{
-									count: hiddenSitesCount,
-									args: {
-										hiddenSitesCount: hiddenSitesCount
-									},
-									components: {
-										br: <br />
+						<div className="site-selector__hidden-sites">
+							<span className="site-selector__hidden-sites-message">
+								{ this.translate(
+									'%(hiddenSitesCount)d more hidden site.{{br/}}Use search to access it.',
+									'%(hiddenSitesCount)d more hidden sites.{{br/}}Use search to access them.',
+									{
+										count: hiddenSitesCount,
+										args: {
+											hiddenSitesCount: hiddenSitesCount
+										},
+										components: {
+											br: <br />
+										}
 									}
-								}
-							) }
-						</span>
+								) }
+							</span>
+							<a
+								href="https://wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
+								className="site-selector__manage-hidden-sites"
+								title={ this.translate( 'Manage your hidden sites' ) }
+							>
+								<Gridicon icon="cog" size={ 24 } />
+							</a>
+						</div>
 					}
 				</div>
 				{ this.props.showAddNewSite && this.addNewSite() }
