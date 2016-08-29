@@ -6,7 +6,7 @@ export const storedCardsSchema = {
 			added: { type: 'string' },
 			email: { type: 'string' },
 			expiry: { type: 'string' },
-			card: { type: 'string' },
+			card: { type: 'integer' },
 			card_type: { type: 'string' },
 			last_service: { type: 'string' },
 			last_used: { type: 'string' },
@@ -14,9 +14,9 @@ export const storedCardsSchema = {
 			mp_ref: { type: 'string' },
 			name: { type: 'string' },
 			payment_partner: { type: 'string' },
-			remember: { type: 'string' },
-			stored_details_id: { type: 'string' },
-			user_id: { type: 'string' }
+			remember: { type: 'integer' },
+			stored_details_id: { type: 'integer' },
+			user_id: { type: 'integer' }
 		}
 	},
 	additionalProperties: false
