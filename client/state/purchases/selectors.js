@@ -1,3 +1,11 @@
+/**
+ * External dependencies
+ */
+import { find } from 'lodash';
+
+/**
+ * Internal Dependencies
+ */
 import createSelector from 'lib/create-selector';
 import purchasesAssembler from 'lib/purchases/assembler';
 import { isSubscription } from 'lib/purchases';
@@ -65,7 +73,7 @@ export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 
 	const { includedDomain } = subscriptionPurchase;
 	const sitePurchases = getSitePurchases( state, subscriptionPurchase.siteId );
-	const domainPurchase = sitePurchases.find( purchase => ( isDomainMapping( purchase ) ||
+	const domainPurchase = find( sitePurchases, purchase => ( isDomainMapping( purchase ) ||
 															isDomainRegistration( purchase ) ) &&
 															includedDomain === purchase.meta );
 
