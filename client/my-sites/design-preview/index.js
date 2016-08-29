@@ -15,7 +15,6 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import { fetchPreviewMarkup, undoCustomization } from 'state/preview/actions';
 import accept from 'lib/accept';
-import { updatePreviewWithChanges } from 'lib/design-preview';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteOption } from 'state/sites/selectors';
@@ -25,6 +24,7 @@ import DesignMenu from 'blocks/design-menu';
 import { getSiteFragment } from 'lib/route/path';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import SiteTitleCustomization from 'components/site-title-customization';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -73,7 +73,6 @@ export default function designPreview( WebPreview ) {
 			// Apply customizations as DOM changes
 			if ( this.props.customizations && this.previewDocument ) {
 				debug( 'updating preview with customizations', this.props.customizations );
-				updatePreviewWithChanges( this.previewDocument, this.props.customizations );
 			}
 		}
 
@@ -148,6 +147,11 @@ export default function designPreview( WebPreview ) {
 				return null;
 			}
 			const showSidebar = () => this.props.setLayoutFocus( 'preview-sidebar' );
+			const applyCustomizations = () => {
+				return (
+					<SiteTitleCustomization dom={ this.previewDocument } customization={ this.props.customizations.siteTitle } />
+				);
+			};
 
 			return (
 				<div>
@@ -172,6 +176,7 @@ export default function designPreview( WebPreview ) {
 							</span>
 						</button>
 					</WebPreview>
+					{ applyCustomizations() }
 				</div>
 			);
 		}
