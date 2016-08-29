@@ -33,7 +33,8 @@ const CreditCardPage = React.createClass( {
 		initialValues: PropTypes.object,
 		recordFormSubmitEvent: PropTypes.func.isRequired,
 		saveStoredCard: PropTypes.func,
-		successCallback: PropTypes.func.isRequired
+		successCallback: PropTypes.func.isRequired,
+		actionType: PropTypes.string.isRequired
 	},
 
 	getInitialState() {
@@ -148,7 +149,7 @@ const CreditCardPage = React.createClass( {
 	saveCreditCard() {
 		const cardDetails = this.getCardDetails();
 
-		createPaygateToken( 'card_update', cardDetails, ( paygateError, paygateToken ) => {
+		createPaygateToken( this.props.actionType, cardDetails, ( paygateError, paygateToken ) => {
 			if ( ! this._mounted ) {
 				return;
 			}

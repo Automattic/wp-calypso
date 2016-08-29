@@ -65,7 +65,8 @@ class AddCardDetails extends PurchaseCardDetails {
 				<CreditCardPage
 					apiParams={ this.getApiParams() }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
-					successCallback={ this.successCallback } />
+					successCallback={ this.successCallback }
+					actionType='card_add' />
 			</Main>
 		);
 	}
