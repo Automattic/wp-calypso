@@ -212,7 +212,6 @@ export default React.createClass( {
 	render: function() {
 		var data = this.buildChartData(),
 			activeTab = this.getActiveTab(),
-			dataKeys = [ this.props.chartTab ],
 			visitsList = this.props.visitsList,
 			availableCharts = [],
 			activeTabLoading = this.props.activeTabVisitsList.isLoading() && this.props.visitsList.isLoading(),
@@ -231,7 +230,6 @@ export default React.createClass( {
 		}
 
 		if ( activeTab.legendOptions ) {
-			dataKeys = dataKeys.concat( this.state.activeLegendCharts );
 			availableCharts = activeTab.legendOptions;
 		}
 

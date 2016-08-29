@@ -123,7 +123,6 @@ module.exports = {
 		const StatsList = require( 'lib/stats/stats-list' );
 		const FollowList = require( 'lib/follow-list' );
 		let siteId = context.params.site_id;
-		const filters = getSiteFilters.bind( null, siteId );
 		const basePath = route.sectionify( context.path );
 		const followList = new FollowList();
 		let summaryDate;
@@ -133,11 +132,6 @@ module.exports = {
 
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
-
-		let activeFilter = filters().filter( function( filter ) {
-			return 'stats-insights' === filter.id;
-		} );
-		activeFilter = activeFilter.shift();
 
 		let site = sites.getSite( siteId );
 		if ( ! site ) {
