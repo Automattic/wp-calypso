@@ -128,10 +128,16 @@ const Help = React.createClass( {
 
 		return (
 			<HelpTeaserButton
+				onClick={ this.trackCoursesButtonClick }
 				href="/help/courses"
 				title={ this.translate( 'Courses' ) }
-				description={ this.translate( 'Learn how to make the most of your site with these courses and webinars' ) }/>
+				description={ this.translate( 'Learn how to make the most of your site with these courses and webinars' ) } />
 		);
+	},
+
+	trackCoursesButtonClick() {
+		const { isBusinessPlanUser } = this.props;
+		analytics.tracks.recordEvent( 'calypso_help_courses_click', { isBusinessPlanUser } );
 	},
 
 	getPlaceholders() {
@@ -178,14 +184,12 @@ export default connect(
 		const userId = getCurrentUserId( state );
 		const purchases = getUserPurchases( state, userId );
 		const isLoading = isFetchingUserPurchases( state );
-		const showCoursesTeaser = (
-			ownProps.isCoursesEnabled &&
-			purchases &&
-			!! find( purchases, purchase => purchase.productSlug === PLAN_BUSINESS )
-		);
+		const isBusinessPlanUser = purchases && !! find( purchases, purchase => purchase.productSlug === PLAN_BUSINESS );
+		const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
 
 		return {
 			userId,
+			isBusinessPlanUser,
 			showCoursesTeaser,
 			isLoading,
 			isEmailVerified,
