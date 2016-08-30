@@ -213,8 +213,8 @@ export default function designPreview( WebPreview ) {
 			const getOffset = ( el ) => {
 				el = el.getBoundingClientRect();
 				return {
-					left: el.left + window.scrollX,
-					top: el.top + window.scrollY
+					left: el.left + previewDocument.defaultView.scrollX,
+					top: el.top + previewDocument.defaultView.scrollY
 				};
 			};
 			const positionIcon = element => {
@@ -248,10 +248,14 @@ export default function designPreview( WebPreview ) {
 				.map( addClickHandler );
 			const repositionIcons = () => {
 				elementsWithIcons
+					.map( findElement )
+					.filter( removeNotFound )
 					.map( positionIcon );
 			};
 			setTimeout( repositionIcons, 2000 );
-			window.repositionIcons = repositionIcons;
+			previewDocument.addEventListener( 'scroll', repositionIcons, false );
+			previewDocument.addEventListener( 'resize', repositionIcons, false );
+			window.repositionIcons = repositionIcons; // FIXME: just for testing
 		}
 
 		onClosePreview() {
