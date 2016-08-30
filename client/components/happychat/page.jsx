@@ -9,6 +9,7 @@ import { findDOMNode } from 'react-dom';
  * Internal dependencies
  */
 import { connectChat } from 'state/happychat/actions';
+import { getHappychatConnectionStatus } from 'state/happychat/selectors';
 import { timeline, composer } from './helpers';
 
 /**
@@ -39,8 +40,12 @@ const HappychatPage = React.createClass( {
 	}
 } );
 
-const mapState = ( { happychat: { status: connectionStatus } } ) => ( { connectionStatus } );
+const mapState = state => ( {
+	connectionStatus: getHappychatConnectionStatus( state )
+} );
+
 const mapDispatch = dispatch => ( {
 	openChat: () => dispatch( connectChat() )
 } );
+
 export default connect( mapState, mapDispatch )( HappychatPage );

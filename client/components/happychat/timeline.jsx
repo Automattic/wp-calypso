@@ -21,6 +21,12 @@ import autoscroll from './autoscroll';
 import AgentW from 'components/happychat/agent-w';
 import scrollbleed from './scrollbleed';
 import { translate } from 'i18n-calypso';
+import { getCurrentUser } from 'state/current-user/selectors';
+import {
+	getHappychatIsAvailable,
+	getHappychatConnectionStatus,
+	getHappychatTimeline
+} from 'state/happychat/selectors';
 
 const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 
@@ -157,14 +163,13 @@ export const Timeline = React.createClass( {
 	}
 } );
 
-const mapProps = ( { happychat, currentUser } ) => {
-	const { timeline, available, status: connectionStatus } = happychat;
-	const { id: current_user_id } = currentUser;
+const mapProps = state => {
+	const current_user = getCurrentUser( state );
 	return {
-		available,
-		connectionStatus,
-		timeline,
-		isCurrentUser: ( [ , { user_id } ] ) => user_id === current_user_id
+		available: getHappychatIsAvailable( state ),
+		connectionStatus: getHappychatConnectionStatus( state ),
+		timeline: getHappychatTimeline( state ),
+		isCurrentUser: ( { user_id } ) => user_id === current_user.ID
 	};
 };
 

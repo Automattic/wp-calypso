@@ -16,6 +16,10 @@ import {
 } from './functional';
 import { connectChat } from 'state/happychat/actions';
 import {
+	getHappychatConnectionStatus,
+	getHappychatIsAvailable
+} from 'state/happychat/selectors';
+import {
 	openChat,
 	closeChat,
 } from 'state/ui/happychat/actions';
@@ -127,10 +131,10 @@ const Happychat = React.createClass( {
 	}
 } );
 
-const mapState = ( { happychat: { available, status: connectionStatus } } ) => {
+const mapState = state => {
 	return {
-		available,
-		connectionStatus
+		available: getHappychatIsAvailable( state ),
+		connectionStatus: getHappychatConnectionStatus( state )
 	};
 };
 
