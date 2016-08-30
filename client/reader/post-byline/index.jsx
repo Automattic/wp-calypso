@@ -72,7 +72,7 @@ class PostByline extends React.Component {
 		}
 
 		return (
-			<ExternalLink href={ post.author.URL } target="_blank" rel="noopener noreferrer" onClick={ this.recordAuthorClick }>
+			<ExternalLink href={ post.author.URL } target="_blank" onClick={ this.recordAuthorClick }>
 				{ gravatar }
 				{ authorName }
 			</ExternalLink>

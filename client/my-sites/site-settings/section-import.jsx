@@ -105,8 +105,7 @@ export default React.createClass( {
 					line={ this.translate( `Visit your site's wp-admin for all your import and export needs.` ) }
 					action={ this.translate( 'Import into %(title)s', { args: { title } } ) }
 					actionURL={ adminUrl + 'import.php' }
-					actiontarget="_blank"
-					rel="noopener noreferrer"
+					actionTarget="_blank"
 				/>
 			);
 		}

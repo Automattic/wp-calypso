@@ -21,7 +21,6 @@ export default class SiteSettingsExport extends Component {
 					action={ i18n.translate( 'Export %(siteTitle)s', { args: { siteTitle: this.props.site.title } } ) }
 					actionURL={ this.props.site.options.admin_url + 'export.php' }
 					actionTarget="_blank"
-					rel="noopener noreferrer"
 				/>
 			);
 		}

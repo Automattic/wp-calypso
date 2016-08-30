@@ -65,8 +65,7 @@ export default React.createClass( {
 					section="themes"
 					secondaryAction={ this.translate( 'Open Site Theme Browser' ) }
 					secondaryActionURL={ this.props.site.options.admin_url + 'themes.php' }
-					secondaryActiontarget="_blank"
-					rel="noopener noreferrer"
+					secondaryActionTarget="_blank"
 					actionCallback={ this.clickOnActivate }
 					featureExample={ this.renderMockThemes() } />
 			</Main>

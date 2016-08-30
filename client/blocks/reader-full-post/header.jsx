@@ -27,7 +27,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 		<div className="reader-full-post__header">
 			{ post.title
 				? <h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
-					<ExternalLink className="reader-full-post__header-title-link" href={ post.URL } target="_blank" rel="noopener noreferrer" icon={ false }>
+					<ExternalLink className="reader-full-post__header-title-link" href={ post.URL } target="_blank" icon={ false }>
 						{ post.title }
 					</ExternalLink>
 				</h1>

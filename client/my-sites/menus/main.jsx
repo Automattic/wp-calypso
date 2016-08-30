@@ -226,7 +226,6 @@ var Menus = React.createClass( {
 					secondaryAction={ this.translate( 'Open Classic Menu Editor' ) }
 					secondaryActionURL={ site.options.admin_url + 'nav-menus.php' }
 					secondaryActionTarget="_blank"
-					rel="noopener noreferrer"
 					featureExample={ featureExample }
 				/>
 			</Main>
