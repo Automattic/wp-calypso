@@ -58,4 +58,4 @@ const status = ( state = 'disconnected', action ) => {
 	return state;
 };
 
-export default combineReducers( { timeline, available, message, status } );
+export default combineReducers( { timeline, message, status } );
