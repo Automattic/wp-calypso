@@ -134,7 +134,7 @@ const SiteTitle = React.createClass( {
 					onBlur={ this.handleBlur }
 					onChange={ this.handleChangeEvent }
 				/>
-				<FormButton className="signup-site-title__button">Continue</FormButton>
+				<FormButton className="signup-site-title__button">{ this.translate( 'Continue' )}</FormButton>
 			</ValidationFieldset>
 		);
 	},
