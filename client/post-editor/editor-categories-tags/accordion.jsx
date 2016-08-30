@@ -45,8 +45,11 @@ export class EditorCategoriesTagsAccordion extends Component {
 	renderJetpackNotice() {
 		const { translate, siteSlug } = this.props;
 		return (
-			<Notice status="is-warning" showDismiss={ false } isCompact>
-				{ translate( 'You must update Jetpack to use this feature.' ) }
+			<Notice
+				status="is-warning"
+				showDismiss={ false }
+				text={ translate( 'You must update Jetpack to use this feature.' ) }
+				className="editor-categories-tags__upgrade-notice" >
 				<NoticeAction href={ addSiteFragment( '/plugins/jetpack', siteSlug ) }>
 					{ translate( 'Update Now' ) }
 				</NoticeAction>
