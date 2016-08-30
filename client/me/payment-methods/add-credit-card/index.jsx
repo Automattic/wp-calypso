@@ -40,7 +40,8 @@ class AddCreditCard extends Component {
 				<CreditCardForm
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
 					saveStoredCard={ this.props.addStoredCard }
-					successCallback={ this.goToBillingHistory } />
+					successCallback={ this.goToBillingHistory }
+					actionType="card_add" />
 			</Main>
 		);
 	}

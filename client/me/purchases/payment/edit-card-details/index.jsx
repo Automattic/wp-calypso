@@ -72,7 +72,8 @@ class EditCardDetails extends PurchaseCardDetails {
 					apiParams={ this.getApiParams() }
 					initialValues={ this.props.card }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
-					successCallback={ this.successCallback } />
+					successCallback={ this.successCallback }
+					actionType="card_update" />
 			</Main>
 		);
 	}
