@@ -3,11 +3,6 @@
  */
 import io from 'socket.io-client';
 
-/**
- * Internal dependencies
- */
-import i18n from 'i18n-calypso';
-
 // https://developer.mozilla.org/en/docs/Web/HTML/Element/link
 const standardAttributes = [
 	'crossorigin',
@@ -57,7 +52,7 @@ export default function() {
 				const elems = [].slice.call( document.head.getElementsByTagName( 'link' ) );
 				elems.forEach( function( oldLink ) {
 					if ( ( 'href' in oldLink ) && isChanged( oldLink.href, data.changedFiles ) ) {
-						console.log( i18n.translate( 'Reloading CSS: ' ), oldLink );
+						console.log( 'Reloading CSS: ', oldLink );
 						// Remove old .css and insert new one in the same spot
 						const newLink = document.createElement( 'link' );
 						// Copy <link> standard attributes
@@ -71,10 +66,10 @@ export default function() {
 				} );
 				break;
 			case 'building':
-				console.log( i18n.translate( 'Building CSS…' ) );
+				console.log( 'Building CSS…' );
 				break;
 			case 'build-failed':
-				console.log( i18n.translate( 'CSS build failed.' ) );
+				console.error( 'CSS build failed.\n', data.error );
 				break;
 		}
 	} );

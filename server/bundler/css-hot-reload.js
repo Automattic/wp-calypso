@@ -55,6 +55,8 @@ function setup( io ) {
 
 	function onstderr( stderr ) {
 		process.stderr.write( stderr );
+		// Note:
+		// Because we use make --jobs the error message is usually duplicated.
 		errors += stderr;
 	}
 
