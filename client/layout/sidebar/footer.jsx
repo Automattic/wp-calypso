@@ -4,6 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -39,7 +40,7 @@ const mapDispatchToProps = ( dispatch ) => {
 		onOpenChat() {
 			if ( viewport.isMobile() ) {
 				// For mobile clients, happychat will always use the page compoent instead of the sidebar
-				window.location = '/me/chat';
+				page( '/me/chat' );
 				return;
 			}
 			dispatch( openChat() );
