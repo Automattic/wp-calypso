@@ -4,16 +4,14 @@
  * External dependencies
  */
 var webpack = require( 'webpack' ),
-	path = require( 'path' ),
-	config = require( 'config' );
+	path = require( 'path' );
 
 /**
  * Internal dependencies
  */
 var config = require( './server/config' ),
 	sections = require( './client/sections' ),
-	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
-	PragmaCheckPlugin = require( 'server/pragma-checker' );
+	ChunkFileNamePlugin = require( './server/bundler/plugin' );
 
 /**
  * Internal variables
@@ -117,7 +115,6 @@ jsLoader = {
 };
 
 if ( CALYPSO_ENV === 'development' ) {
-	webpackConfig.plugins.push( new PragmaCheckPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
 		'webpack-dev-server/client?/',
