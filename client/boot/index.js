@@ -103,8 +103,10 @@ function setUpContext( reduxStore ) {
 		// set `context.query`
 		const querystringStart = context.canonicalPath.indexOf( '?' );
 		if ( querystringStart !== -1 ) {
-			context.query = qs.parse( context.canonicalPath.substring( querystringStart + 1 ) );
+			context.queryRaw = context.canonicalPath.substring( querystringStart + 1 );
+			context.query = qs.parse( context.queryRaw );
 		} else {
+			context.queryRaw = null;
 			context.query = {};
 		}
 		context.prevPath = parsed.path === context.path ? false : parsed.path;
