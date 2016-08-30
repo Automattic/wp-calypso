@@ -209,11 +209,26 @@ export default function designPreview( WebPreview ) {
 				previewDocument.body.appendChild( element.icon );
 				return element;
 			};
+			// http://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
+			const getOffset = ( el ) => {
+				el = el.getBoundingClientRect();
+				return {
+					left: el.left + window.scrollX,
+					top: el.top + window.scrollY
+				};
+			};
 			const positionIcon = element => {
-				element.icon.style.left = '300px';
+				const left = getOffset( element.target ).left;
+				const top = getOffset( element.target ).top;
+				debug( 'positioning icon for', element, 'at', left, top );
+				element.icon.style.left = `${left}px`;
+				element.icon.style.top = `${top}px`;
 				return element;
 			};
-			const addClickHandler = element => element.icon.addEventListener( 'click', element.onClick );
+			const addClickHandler = element => {
+				element.icon.addEventListener( 'click', element.onClick );
+				return element;
+			};
 			const elements = [
 				makeElement( {
 					id: 'siteTitle',
@@ -224,13 +239,19 @@ export default function designPreview( WebPreview ) {
 			const iconStyle = previewDocument.createElement( 'style' );
 			iconStyle.innerHTML = iconCss;
 			previewDocument.head.appendChild( iconStyle );
-			elements
+			const elementsWithIcons = elements
 				.map( findElement )
 				.map( logElement )
 				.filter( removeNotFound )
 				.map( addIcon )
 				.map( positionIcon )
 				.map( addClickHandler );
+			const repositionIcons = () => {
+				elementsWithIcons
+					.map( positionIcon );
+			};
+			setTimeout( repositionIcons, 2000 );
+			window.repositionIcons = repositionIcons;
 		}
 
 		onClosePreview() {
