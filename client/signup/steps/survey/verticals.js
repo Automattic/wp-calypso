@@ -113,7 +113,7 @@ function shuffleVerticals( elements ) {
 		newVerticals.push( general );
 	}
 	return newVerticals;
-};
+}
 
 export default {
 	get() {
@@ -123,4 +123,4 @@ export default {
 			default: throw new Error( 'Unknown variation' );
 		}
 	}
-}
+};
