@@ -5,7 +5,7 @@ test:
   pre:
     - NODE_ENV=test make client/config/index.js:
         parallel: true
-    - case $CIRCLE_NODE_INDEX 0) NODE_ENV=test make build-server ;; esac:
+    - case $CIRCLE_NODE_INDEX in 0) NODE_ENV=test make build-server ;; esac:
         parallel: true
   override:
     - bin/run-lint :
