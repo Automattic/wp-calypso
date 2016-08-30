@@ -1799,10 +1799,10 @@ Undocumented.prototype.getOlarkConfiguration = function( client, fn ) {
 	}, fn );
 };
 
-Undocumented.prototype.submitSupportForumsTopic = function( subject, message, client, fn ) {
+Undocumented.prototype.submitSupportForumsTopic = function( subject, message, locale, client, fn ) {
 	this.wpcom.req.post( {
 		path: '/help/forums/support/topics/new',
-		body: { subject, message, client }
+		body: { subject, message, locale, client }
 	}, fn );
 };
 
