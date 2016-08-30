@@ -34,6 +34,14 @@ import {
 	recordOrderInCriteo,
 	recordConversionInOneByAOL
 } from 'lib/analytics/ad-tracking';
+import { getPlanRawPrice } from 'state/plans/selectors';
+import {
+	getPlanDiscountedRawPrice,
+	getPlanRawDiscount,
+	getPlansBySiteId
+} from 'state/sites/plans/selectors';
+import QuerySitePlans from 'components/data/query-site-plans';
+import formatCurrency from 'lib/format-currency';
 
 const debug = debugFactory( 'calypso:domain-to-plan-nudge' );
 
@@ -57,18 +65,33 @@ class DomainToPlanNudge extends Component {
 	};
 
 	isVisible() {
-		const { site, hasFreePlan } = this.props;
-		return site &&			//site exists
-			site.wpcom_url &&   //has a mapped domain
-			hasFreePlan;        //has a free wpcom plan
+		const {
+			site,
+			hasFreePlan,
+			sitePlans,
+			storedCard,
+			rawPrice
+		} = this.props;
+
+		return sitePlans.hasLoadedFromServer &&
+			storedCard &&
+			rawPrice &&
+			site &&           //site exists
+			site.wpcom_url && //has a mapped domain
+			hasFreePlan;      //has a free wpcom plan
 	}
 
 	getCartItem() {
+		const {
+			productSlug,
+			productId
+		} = this.props;
+
 		return {
+			productId,
+			productSlug,
 			free_trial: false,
-			is_domain_registration: false,
-			product_id: plansList[ PLAN_PERSONAL ].getProductId(),
-			product_slug: PLAN_PERSONAL
+			is_domain_registration: false
 		};
 	}
 
@@ -151,15 +174,27 @@ class DomainToPlanNudge extends Component {
 		}
 
 		const { isSubmitting } = this.state;
-		const { translate, storedCard } = this.props;
+
+		const {
+			translate,
+			storedCard,
+			rawPrice,
+			discountedRawPrice,
+			rawDiscount,
+			siteId,
+			userCurrency,
+			productSlug
+		} = this.props;
 
 		return (
 			<Card className="domain-to-plan-nudge">
 				<QueryStoredCards />
 
+				{ siteId && <QuerySitePlans siteId={ siteId } /> }
+
 				<div className="domain-to-plan-nudge__header">
 					<div className="domain-to-plan-nudge__header-icon">
-						<PlanIcon plan="personal-bundle" />
+						<PlanIcon plan={ productSlug } />
 					</div>
 					<div className="domain-to-plan-nudge__header-copy">
 						<h3 className="domain-to-plan-nudge__header-title">
@@ -171,7 +206,7 @@ class DomainToPlanNudge extends Component {
 									<Gridicon
 										className="domain-to-plan-nudge__header-features-item-checkmark"
 										icon="checkmark"
-										size="22"
+										size={ 24 }
 									/>
 									{ translate( 'Remove all WordPress.com advertising from your website' ) }
 								</div>
@@ -181,7 +216,7 @@ class DomainToPlanNudge extends Component {
 									<Gridicon
 										className="domain-to-plan-nudge__header-features-item-checkmark"
 										icon="checkmark"
-										size="22"
+										size={ 24 }
 									/>
 									{ translate( 'Get high quality live chat and priority email support' ) }
 								</div>
@@ -191,7 +226,7 @@ class DomainToPlanNudge extends Component {
 									<Gridicon
 										className="domain-to-plan-nudge__header-features-item-checkmark"
 										icon="checkmark"
-										size="22"
+										size={ 24 }
 									/>
 									{ translate( 'Upload up to 3GB of photos and videos' ) }
 								</div>
@@ -201,7 +236,7 @@ class DomainToPlanNudge extends Component {
 									<Gridicon
 										className="domain-to-plan-nudge__header-features-item-checkmark"
 										icon="checkmark"
-										size="22"
+										size={ 24 }
 									/>
 									{ translate( 'Bundled with your domain for the best value!' ) }
 								</div>
@@ -211,11 +246,21 @@ class DomainToPlanNudge extends Component {
 				</div>
 				<div className="domain-to-plan-nudge__actions-group">
 					<div className="domain-to-plan-nudge__plan-price-group">
-						<div className="domain-to-plan-nudge__discount-percentage">
-							Save 25%
+						<div className="domain-to-plan-nudge__discount-value">
+							{ formatCurrency( rawDiscount, userCurrency ) }
 						</div>
-						<PlanPrice rawPrice="35.88" original />
-						<PlanPrice rawPrice="29.88" discounted />
+
+						<PlanPrice
+							rawPrice={ rawPrice }
+							currencyCode={ userCurrency }
+							original
+						/>
+						<PlanPrice
+							rawPrice={ discountedRawPrice }
+							currencyCode={ userCurrency }
+							discounted
+						/>
+
 						<div className="domain-to-plan-nudge__plan-price-timeframe">
 							{ translate( 'for one year subscription' ) }
 						</div>
@@ -226,8 +271,11 @@ class DomainToPlanNudge extends Component {
 							disabled={ ! storedCard || isSubmitting }
 							primary
 						>
-							{
-								isSubmitting ? translate( 'Completing your purchase' ) : translate( 'Upgrade Now for xx.xx' )
+							{ isSubmitting
+								? translate( 'Completing your purchase' )
+								: translate( 'Upgrade Now for %s', {
+									args: formatCurrency( discountedRawPrice, userCurrency )
+								} )
 							}
 						</Button>
 						<div className="domain-to-plan-nudge__credit-card-info">
@@ -242,8 +290,14 @@ class DomainToPlanNudge extends Component {
 
 export default connect(
 	( state, props ) => {
-		const siteId = props.siteId || getSelectedSiteId( state );
+		const siteId = props.siteId || getSelectedSiteId( state ),
+			productSlug = PLAN_PERSONAL,
+			productId = plansList[ PLAN_PERSONAL ].getProductId();
+
 		return {
+			siteId,
+			productSlug,
+			productId,
 			hasFreePlan: isCurrentSitePlan(
 				state,
 				siteId,
@@ -251,8 +305,11 @@ export default connect(
 			),
 			storedCard: get( getStoredCards( state ), '0' ),
 			site: getSite( state, siteId ),
-			siteId,
-			userCurrency: getCurrentUserCurrencyCode( state ) //populated by either plans endpoint
+			userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
+			rawPrice: getPlanRawPrice( state, productId ),
+			discountedRawPrice: getPlanDiscountedRawPrice( state, siteId, productSlug ),
+			rawDiscount: getPlanRawDiscount( state, siteId, productSlug ),
+			sitePlans: getPlansBySiteId( state, siteId )
 		};
 	},
 	{
