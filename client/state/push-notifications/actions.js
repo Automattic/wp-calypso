@@ -30,10 +30,12 @@ import {
 	isEnabled,
 } from './selectors';
 import {
+	isOpera,
 	isPushNotificationsDenied,
 	isPushNotificationsSupported,
 	isUnsupportedChromeVersion,
-	getChromeVersion
+	getChromeVersion,
+	getOperaVersion,
 } from './utils';
 import {
 	isServiceWorkerSupported,
@@ -64,6 +66,18 @@ export function init() {
 			const chromeVersion = getChromeVersion();
 			dispatch( bumpStat( 'calypso_push_notif_unsup_chrome',
 				( chromeVersion > 39 && chromeVersion < 50 ) ? chromeVersion : 'other' )
+			);
+			dispatch( apiNotReady() );
+			return;
+		}
+
+		// Opera claims to support PNs, but doesn't
+		// http://forums.opera.com/discussion/1868659/opera-push-notifications/p1
+		if ( isOpera() ) {
+			debug( 'Push Notifications are not supported in Opera' );
+			const operaVersion = getOperaVersion();
+			dispatch( bumpStat( 'calypso_push_notif_unsup_opera',
+				( operaVersion > 15 && operaVersion < 100 ) ? operaVersion : 'other' )
 			);
 			dispatch( apiNotReady() );
 			return;
