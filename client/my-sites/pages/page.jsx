@@ -255,17 +255,11 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var page = this.props.page,
-			published = this.moment( page.modified ).fromNow(),
 			title = page.title || this.translate( '(no title)' ),
 			site = this.props.site || {},
 			isFrontPage = helpers.isFrontPage( page, site ),
 			canEdit = utils.userCan( 'edit_post', this.props.page ),
 			depthIndicator;
-
-		// Replace published date with `Draft` if the page is a draft
-		if ( page.status === 'draft' ) {
-			published = ( <span>{ published } <em>{ this.translate( 'Draft', { context: 'page status' } ) }</em></span> );
-		}
 
 		if ( page.parent ) {
 			depthIndicator = '— ';

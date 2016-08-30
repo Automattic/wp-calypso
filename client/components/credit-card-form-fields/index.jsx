@@ -12,7 +12,7 @@ import CreditCardNumberInput from 'components/upgrades/credit-card-number-input'
 import Input from 'my-sites/upgrades/components/form/input';
 import { maskField, unmaskField } from 'lib/credit-card-details';
 
-const CreditCardForm = React.createClass( {
+const CreditCardFormFields = React.createClass( {
 	propTypes: {
 		card: React.PropTypes.object.isRequired,
 		countriesList: React.PropTypes.object.isRequired,
@@ -23,7 +23,7 @@ const CreditCardForm = React.createClass( {
 
 	field: function( fieldName, componentClass, props ) {
 		return React.createElement( componentClass, assign( {}, props, {
-			additionalClasses: 'credit-card-form__field',
+			additionalClasses: 'credit-card-form-fields__field',
 			eventFormName: this.props.eventFormName,
 			isError: this.props.isFieldInvalid( fieldName ),
 			name: fieldName,
@@ -38,7 +38,7 @@ const CreditCardForm = React.createClass( {
 	},
 
 	handleFieldChange: function( event ) {
-		const { name: fieldName, value: nextValue} = event.target;
+		const { name: fieldName, value: nextValue } = event.target;
 
 		const previousValue = this.getFieldValue( fieldName );
 
@@ -55,9 +55,9 @@ const CreditCardForm = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="credit-card-form">
+			<div className="credit-card-form-fields">
 				{ this.field( 'name', Input, {
-					labelClass: 'credit-card-form__label',
+					labelClass: 'credit-card-form-fields__label',
 					autoFocus: true,
 					label: this.translate( 'Name on Card', {
 						context: 'Card holder name label on credit card form'
@@ -66,16 +66,16 @@ const CreditCardForm = React.createClass( {
 
 				{ this.field( 'number', CreditCardNumberInput, {
 					inputMode: 'numeric',
-					labelClass: 'credit-card-form__label',
+					labelClass: 'credit-card-form-fields__label',
 					label: this.translate( 'Card Number', {
 						context: 'Card number label on credit card form'
 					} )
 				} ) }
 
-				<div className="credit-card-form__extras">
+				<div className="credit-card-form-fields__extras">
 					{ this.field( 'expiration-date', Input, {
 						inputMode: 'numeric',
-						labelClass: 'credit-card-form__label',
+						labelClass: 'credit-card-form-fields__label',
 						label: this.translate( 'MM/YY', {
 							context: 'Expiry label on credit card form'
 						} )
@@ -83,7 +83,7 @@ const CreditCardForm = React.createClass( {
 
 					{ this.field( 'cvv', Input, {
 						inputMode: 'numeric',
-						labelClass: 'credit-card-form__label',
+						labelClass: 'credit-card-form-fields__label',
 						label: this.translate( 'CVV', {
 							context: '3 digit security number on credit card form'
 						} )
@@ -95,7 +95,7 @@ const CreditCardForm = React.createClass( {
 					} ) }
 
 					{ this.field( 'postal-code', Input, {
-						labelClass: 'credit-card-form__label',
+						labelClass: 'credit-card-form-fields__label',
 						label: this.translate( 'Postal Code', {
 							context: 'Postal code on credit card form'
 						} )
@@ -106,4 +106,4 @@ const CreditCardForm = React.createClass( {
 	}
 } );
 
-export default CreditCardForm;
+export default CreditCardFormFields;

@@ -181,6 +181,14 @@ export const plansList = {
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING
 		] ),
+		getPromotedFeatures: () => [
+			FEATURE_UNLIMITED_STORAGE,
+			FEATURE_UNLIMITED_PREMIUM_THEMES,
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_NO_ADS,
+			FEATURE_ADVANCED_DESIGN,
+			FEATURE_VIDEO_UPLOADS
+		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
 

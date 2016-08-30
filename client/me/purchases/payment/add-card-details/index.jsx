@@ -8,8 +8,8 @@ import React, { PropTypes } from 'react';
  * Internal Dependencies
  */
 import { clearPurchases } from 'state/purchases/actions';
-import CreditCardPage from 'me/purchases/components/credit-card-page';
-import CreditCardPageLoadingPlaceholder from 'me/purchases/components/credit-card-page/loading-placeholder';
+import CreditCardForm from 'blocks/credit-card-form';
+import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
 import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
 import HeaderCake from 'components/header-cake' ;
@@ -53,7 +53,7 @@ class AddCardDetails extends PurchaseCardDetails {
 				<div>
 					<QueryUserPurchases userId={ user.get().ID } />
 
-					<CreditCardPageLoadingPlaceholder title={ titles.addCardDetails } />
+					<CreditCardFormLoadingPlaceholder title={ titles.addCardDetails } />
 				</div>
 			);
 		}
@@ -62,7 +62,7 @@ class AddCardDetails extends PurchaseCardDetails {
 			<Main>
 				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.addCardDetails }</HeaderCake>
 
-				<CreditCardPage
+				<CreditCardForm
 					apiParams={ this.getApiParams() }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
 					successCallback={ this.successCallback }

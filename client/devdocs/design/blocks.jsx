@@ -9,6 +9,7 @@ import trim from 'lodash/trim';
 /**
  * Internal dependencies
  */
+import CreditCardForm from 'blocks/credit-card-form/docs/example';
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
 import AuthorSelector from 'blocks/author-selector/docs/example';
@@ -37,6 +38,7 @@ import ReaderFullPostHeader from 'blocks/reader-full-post/docs/header-example';
 import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
 import RelatedPostCard from 'blocks/reader-related-card/docs/example';
 import SearchPostCard from 'blocks/reader-search-card/docs/example';
+import PlanPrice from 'my-sites/plan-price/docs/example';
 
 export default React.createClass( {
 
@@ -72,6 +74,7 @@ export default React.createClass( {
 				<Collection component={ this.props.component } filter={ this.state.filter }>
 					<AuthorSelector />
 					<CommentButtons />
+					<CreditCardForm />
 					<FollowButton />
 					<HappinessSupport />
 					<LikeButtons />
@@ -95,6 +98,7 @@ export default React.createClass( {
 					<ReaderSiteStreamLink />
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
+					<PlanPrice />
 				</Collection>
 			</div>
 		);
