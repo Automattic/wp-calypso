@@ -45,9 +45,10 @@ function getCourses() {
 					date: i18n.moment( new Date( 'Thu, 25 Aug 2016 01:00:00 +0000' ) ),
 					title: i18n.translate( 'How to Make a Business Site on WordPress.com' ),
 					description: i18n.translate(
-						'Bacon ipsum dolor amet sirloin bresaola leberkas, strip steak hamburger short ribs beef pork. ' +
-						'Tenderloin salami sausage tongue capicola. Hamburger tenderloin prosciutto venison pork loin, ' +
-						'bresaola tri-tip shank.'
+						'A 60-minute overview course with two of our Happiness Engineers. In this live group session, ' +
+						'we will provide an overview of WordPress.com, discuss features of the WordPress.com Business ' +
+						'plan, provide a basic setup overview to help you get started with your site, and show you ' +
+						'where to find additional resources and help in the future.'
 					),
 					youtubeId: 'f44-4TgnWTs'
 				}
