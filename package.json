@@ -144,9 +144,7 @@
     "test-server:watch": "nodemon -e js,jsx --exec npm run test-server",
     "test-test:watch": "nodemon -e js,jsx --exec npm run test-test",
     "lint": "bin/run-lint",
-    "css-lint": "stylelint 'client/**/*.scss' --syntax scss",
-    "heroku-prebuild": "./scripts/preinstall",
-    "heroku-postbuild": "./scripts/postinstall"
+    "css-lint": "stylelint 'client/**/*.scss' --syntax scss"
   },
   "devDependencies": {
     "babel-eslint": "6.1.2",
