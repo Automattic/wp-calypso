@@ -83,7 +83,7 @@ const verticalsV2 = [
 	{ value: 'a8c.3', label: translate( 'Professional Services' ) },
 	{ value: 'a8c.6', label: translate( 'Family / Parenting' ) },
 	{ value: 'a8c.19', label: translate( 'Technology' ) },
-	{ value: 'a8c.24', label: translate( 'Personal / Random thoughts' ) },
+	{ value: 'a8c.24', label: translate( 'Personal / Random Thoughts' ) },
 	{ value: 'a8c.1', label: translate( 'Art' ) },
 	{ value: 'a8c.5', label: translate( 'Education' ) },
 	{ value: 'a8c.18', label: translate( 'Fashion / Beauty' ) },
