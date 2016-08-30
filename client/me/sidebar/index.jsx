@@ -161,13 +161,15 @@ const MeSidebar = React.createClass( {
 							onNavigate={ this.onNavigate }
 							preloadSectionName="help"
 						/>
-						<SidebarItem
-							selected= { selected === 'happychat' }
-							link="/me/chat"
-							icon="comment"
-							label= { this.translate( 'Support Chat' ) }
-							onNavigate={ this.onNavigate }
-						/>
+						{ config.isEnabled( 'happychat' )
+							? <SidebarItem
+								selected= { selected === 'happychat' }
+								link="/me/chat"
+								icon="comment"
+								label= { this.translate( 'Support Chat' ) }
+								onNavigate={ this.onNavigate } />
+							: null
+						}
 					</ul>
 				</SidebarMenu>
 			</Sidebar>
