@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
+import { get } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -81,7 +82,7 @@ export class FullPostView extends React.Component {
 	}
 
 	render() {
-		const { post, site } = this.props;
+		const { post, site, feed } = this.props;
 		const siteName = siteNameFromSiteAndPost( site, post );
 		const classes = { 'reader-full-post': true };
 		if ( post.site_ID ) {
@@ -107,7 +108,9 @@ export class FullPostView extends React.Component {
 							siteUrl= { post.site_URL }
 							followCount={ site && site.subscribers_count }
 							feedId={ post.feed_ID }
-							siteId={ post.site_ID } />
+							siteId={ post.site_ID }
+							siteIcon={ get( site, 'icon.img' ) || get( feed, 'image' ) }
+						/>
 						{ shouldShowComments( post ) &&
 							<CommentButton key="comment-button"
 								commentCount={ post.discussion.comment_count }

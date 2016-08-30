@@ -52,6 +52,11 @@
 		}
 	}
 
+	.author-compact-profile__icon {
+		max-width: 96px;
+		max-height: 96px;
+	}
+
 	// If there's an author link, present site stream link in normal font weight
 	&.has-author-link {
 		.author-compact-profile__site-link {
