@@ -98,11 +98,13 @@ const RegisteredDomain = React.createClass( {
 			domain={ this.props.domain }
 			selectedSite={ this.props.selectedSite }
 			ruleWhiteList={ [
-				'expiredDomains',
-				'expiringDomains',
+				'expiredDomainsCanManage',
+				'expiringDomainsCanManage',
 				'newDomainsWithPrimary',
 				'newDomains',
-				'pendingGappsTosAcceptanceDomains'
+				'pendingGappsTosAcceptanceDomains',
+				'expiredDomainsCannotManage',
+				'expiringDomainsCannotManage'
 			] }/>;
 	},
 
@@ -201,7 +203,7 @@ const RegisteredDomain = React.createClass( {
 							onClick={ this.handlePaymentSettingsClick }/>
 					</Card>
 
-					{ domain.isPendingIcannVerification && <IcannVerificationCard selectedDomainName={ domain.name } selectedSite={ this.props.selectedSite } /> }
+					{ domain.isPendingIcannVerification && domain.currentUserCanManage && <IcannVerificationCard selectedDomainName={ domain.name } selectedSite={ this.props.selectedSite } /> }
 				</div>
 
 				{ this.getVerticalNav() }

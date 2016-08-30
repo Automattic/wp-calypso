@@ -10,7 +10,7 @@ const debug = debugFactory( 'calypso:my-sites:current-site' );
 /**
  * Internal dependencies
  */
-var AllSites = require( 'my-sites/all-sites' ),
+const AllSites = require( 'my-sites/all-sites' ),
 	analytics = require( 'lib/analytics' ),
 	Button = require( 'components/button' ),
 	Card = require( 'components/card' ),
@@ -90,14 +90,23 @@ const CurrentSite = React.createClass( {
 	},
 
 	getDomainWarnings: function() {
-		let domainStore = this.state.domainsStore.getBySite( this.getSelectedSite().ID ),
+		const domainStore = this.state.domainsStore.getBySite( this.getSelectedSite().ID ),
 			domains = domainStore && domainStore.list || [];
+
 		return (
 			<DomainWarnings
 				isCompact
 				selectedSite={ this.getSelectedSite() }
 				domains={ domains }
-				ruleWhiteList={ [ 'unverifiedDomains', 'expiredDomains', 'expiringDomains', 'wrongNSMappedDomains' ] } />
+				ruleWhiteList={ [
+					'unverifiedDomainsCanManage',
+					'unverifiedDomainsCannotManage',
+					'expiredDomainsCanManage',
+					'expiringDomainsCanManage',
+					'expiredDomainsCannotManage',
+					'expiringDomainsCannotManage',
+					'wrongNSMappedDomains'
+				] } />
 		);
 	},
 

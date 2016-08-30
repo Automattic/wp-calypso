@@ -11,7 +11,7 @@ import React, { Component, PropTypes } from 'react';
 import { addStoredCard } from 'state/stored-cards/actions';
 import analytics from 'lib/analytics';
 import { concatTitle } from 'lib/react-helpers';
-import CreditCardPage from 'me/purchases/components/credit-card-page';
+import CreditCardForm from 'blocks/credit-card-form';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake' ;
 import Main from 'components/main';
@@ -37,7 +37,7 @@ class AddCreditCard extends Component {
 
 				<HeaderCake onClick={ this.goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
 
-				<CreditCardPage
+				<CreditCardForm
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
 					saveStoredCard={ this.props.addStoredCard }
 					successCallback={ this.goToBillingHistory }
