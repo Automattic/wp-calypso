@@ -22,6 +22,7 @@ import olark from './olark/reducer';
 import actionLog from './action-log/reducer';
 import layoutFocus from './layout-focus/reducer';
 import preview from './preview/reducer';
+import happychat from './happychat/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -83,6 +84,7 @@ const reducer = combineReducers( {
 	olark,
 	preview,
 	actionLog,
+	happychat
 } );
 
 export default function( state, action ) {
