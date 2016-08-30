@@ -64,7 +64,7 @@ const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 	const [ message, meta ] = initial;
 	const userAvatar = messageAvatar( { meta } );
 	return (
-		<div className={ classnames( 'happychat__timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id || index }>
+		<div className={ classnames( 'happychat__timeline-message', { 'user-message': isCurrentUser } ) } key={ meta.id || index }>
 			<div className="happychat__message-text">
 				{ messageText( {
 					message,
