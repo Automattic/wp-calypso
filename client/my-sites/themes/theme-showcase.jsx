@@ -45,7 +45,7 @@ const optionShape = PropTypes.shape( {
 
 const ThemeShowcase = React.createClass( {
 	propTypes: {
-		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ).isRequired,
+		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
 		defaultOption: optionShape,
