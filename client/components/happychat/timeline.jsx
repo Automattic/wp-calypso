@@ -66,23 +66,18 @@ const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt
  * within the same message bubble until it reaches a message from a different user.
  */
 const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
-	const [ initial, ... rest ] = item;
-	const [ message, meta ] = initial;
-	const userAvatar = messageAvatar( { meta } );
+	const [ event, ... rest ] = item;
+	const userAvatar = messageAvatar( { meta: event } );
 	return (
-		<div className={ classnames( 'happychat__timeline-message', { 'user-message': isCurrentUser } ) } key={ meta.id || index }>
+		<div className={ classnames( 'happychat__timeline-message', { 'user-message': isCurrentUser } ) } key={ event.id || index }>
 			<div className="happychat__message-text">
 				{ messageText( {
-					message,
-					nick: meta.nick,
-					key: meta.id,
-					links: meta.links
+					message: event.message,
+					nick: event.nick,
+					key: event.id,
+					links: event.links
 				} ) }
-				{ rest.map( ( [ remaining, remaining_meta ] ) => messageText( {
-					message: remaining,
-					key: remaining_meta.id,
-					links: remaining_meta.links
-				} ) ) }
+				{ rest.map( ( { message, id: key, links } ) => messageText( { message, key, links } ) ) }
 			</div>
 			<div className="happychat__message-meta">
 				<div className="happychat__message-avatar">
@@ -93,7 +88,7 @@ const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 	);
 };
 
-const itemTypeIs = ( type ) => ( { item } ) => item[ 0 ][ 1 ].type === type;
+const itemTypeIs = type => ( { item: [ firstItem ] } ) => firstItem.type === type;
 
 /*
  * Renders a chat bubble with multiple messages grouped by user.
@@ -103,20 +98,20 @@ const renderGroupedTimelineItem = first(
 	( { item } ) => debug( 'no handler for message type', item[ 0 ][ 1 ].type, item )
 );
 
-const groupMessages = ( messages ) => {
-	const grouped = messages.reduce( ( { user_id, type, group, groups }, [ message, meta ] ) => {
-		const message_user_id = meta.user_id;
-		const message_type = meta.type;
+const groupMessages = messages => {
+	const grouped = messages.reduce( ( { user_id, type, group, groups }, message ) => {
+		const message_user_id = message.user_id;
+		const message_type = message.type;
 		if ( user_id !== message_user_id || message_type !== type ) {
 			return {
 				user_id: message_user_id,
 				type: message_type,
-				group: [ [ message, meta ] ],
+				group: [ message ],
 				groups: group ? groups.concat( [ group ] ) : groups
 			};
 		}
 		// it's the same user so group it together
-		return { user_id, group: group.concat( [ [ message, meta ] ] ), groups, type };
+		return { user_id, group: group.concat( [ message ] ), groups, type };
 	}, { groups: [] } );
 
 	return grouped.groups.concat( [ grouped.group ] );
@@ -135,7 +130,7 @@ const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer, scrollble
 		ref={ onScrollContainer }
 		onMouseEnter={ scrollbleedLock }
 		onMouseLeave={ scrollbleedUnlock }>
-		{ groupMessages( timeline ).map( ( item ) => renderGroupedTimelineItem( {
+		{ groupMessages( timeline ).map( item => renderGroupedTimelineItem( {
 			item,
 			isCurrentUser: isCurrentUser( item[ 0 ] )
 		} ) ) }

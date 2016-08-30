@@ -11,23 +11,19 @@ import {
 	HAPPYCHAT_CLOSING,
 } from 'state/action-types';
 
-const available = ( state = true ) => state;
-
-const timeline_event = ( state = [], action ) => {
+const timeline_event = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = action.event;
-			return [
-				event.message,
-				Object.assign( {}, {
-					id: event.id,
-					nick: event.user.nick,
-					image: event.user.picture,
-					user_id: event.user.id,
-					type: event.type,
-					links: get( event, 'meta.links' )
-				} )
-			];
+			return Object.assign( {}, {
+				id: event.id,
+				message: event.message,
+				nick: event.user.nick,
+				image: event.user.picture,
+				user_id: event.user.id,
+				type: event.type,
+				links: get( event, 'meta.links' )
+			} );
 	}
 	return state;
 };
@@ -36,7 +32,7 @@ const timeline = ( state = [], action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = timeline_event( {}, action );
-			const existing = find( state, ( [ , { id } ] ) => event[ 1 ].id === id );
+			const existing = find( state, ( { id } ) => event.id === id );
 			return existing ? state : concat( state, [ event ] );
 	}
 	return state;
