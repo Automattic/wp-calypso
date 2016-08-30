@@ -22,6 +22,7 @@
 		"help": true,
 		"jetpack/connect": true,
 		"jetpack/sso": true,
+		"jetpack/sync-panel": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
 		"manage/ads": true,
