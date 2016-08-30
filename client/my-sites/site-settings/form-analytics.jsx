@@ -198,26 +198,27 @@ export default React.createClass( {
 			return;
 		}
 
-		const { upgradeToBusiness } = this.props;
-
 		debug( 'Google analitics is not enabled. adding nudge ...' );
 
 		return (
 			<GoogleAnalyticsUpgradeNudge
 				plan={ PLAN_BUSINESS }
-				upgrade={ upgradeToBusiness }
 				title={ this.translate( 'Upgrade to a Business Plan and Enable Google Analytics' ) }
 				subtitle={ this.translate( 'By upgrading to a Business Plan you\'ll enable Google Analytics Tracking on your site.' ) }
 				highlightedFeature={ FEATURE_GOOGLE_ANALYTICS }
 				eventName={ "calypso_google_analytics_upgrade_nudge_impression" }
 				benefits={ [
-					this.translate( 'Analyze visitor traffic and paint a complete picture of your audience and their needs.' ),
+					this.translate(
+						'Analyze visitor traffic and paint a complete picture of your audience and their needs.'
+					),
 					this.translate(
 						'Track the routes people take to reach you and the devices they use to get there with ' +
-						'reporting tools like Traffic Sources.' ),
+						'reporting tools like Traffic Sources.'
+					),
 					this.translate(
 						'Learn what people are looking for and what they like with In-Page Analytics. ' +
-						'Then tailor your marketing and site content for maximum impact.')
+						'Then tailor your marketing and site content for maximum impact.'
+					)
 				] }
 			/>
 		);
