@@ -55,7 +55,7 @@ const RelatedPostCards = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/blocks/post-card">Refresh Related Cards</a>
+					<a href="/devdocs/blocks/post-card">Refresh More in Site</a>
 				</h2>
 				<div className="reader-related-card-v2__container">
 					<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">Cats and Cats</a></h1>

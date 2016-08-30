@@ -2,10 +2,15 @@
 	padding: 0!important; // Removes set padding for content column, remove later
 }
 
+.reader-related-card-v2__link-block {
+	cursor: pointer;
+	display: block;
+}
+
 .reader-related-card-v2__heading {
 	color: lighten( $gray, 10% );
 	font-size: 14px;
-	margin: 20px 0;
+	margin: 14px 0;
 	text-transform: uppercase;
 }
 
@@ -29,6 +34,7 @@
 		flex-direction: column;
 	}
 
+	// Cards are stacked in this view, hence the need for a custom breakpoint
 	@media (min-width: 661px) and (max-width: 730px) {
 		flex-direction: column;
 	}
@@ -97,6 +103,7 @@
 
 .reader-related-card-v2__title,
 .reader-related-card-v2__excerpt {
+	color: $gray-dark;
 	font-family: $serif;
 }
 
@@ -107,16 +114,11 @@
 	margin-bottom: 10px;
 }
 
-.reader-related-card-v2__title .reader-related-card-v2__link,
-.reader-related-card-v2__title .reader-related-card-v2__link:visited {
-	color: $gray-dark;
-}
-
 .reader-related-card-v2__excerpt {
     font-size: 14px;
 
     &::after {
-    	@include long-content-fade( $size: 50% );
+    	@include long-content-fade( $size: 20% );
     	height: 22px;
     	top: inherit;
     }
