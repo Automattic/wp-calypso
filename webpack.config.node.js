@@ -8,6 +8,11 @@ var webpack = require( 'webpack' ),
 	fs = require( 'fs' );
 
 /**
+ * Internal dependencies
+ */
+var	PragmaCheckPlugin = require( 'server/pragma-checker' );
+
+/**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
  *
@@ -20,24 +25,24 @@ function getExternals() {
 	// with modules that are incompatible with webpack bundling.
 	fs.readdirSync( 'node_modules' )
 		.filter( function( module ) {
-			return ['.bin'].indexOf( module ) === -1;
+			return [ '.bin' ].indexOf( module ) === -1;
 		} )
 		.forEach( function( module ) {
-			externals[module] = 'commonjs ' + module;
+			externals[ module ] = 'commonjs ' + module;
 		} );
 
 	// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
-	externals['webpack.config'] = 'commonjs webpack.config';
+	externals[ 'webpack.config' ] = 'commonjs webpack.config';
 	// Exclude hot-reloader, as webpack will try and resolve this in production builds,
 	// and error.
 	// TODO: use WebpackDefinePlugin for CALYPSO_ENV, so we can make conditional requires work
-	externals['bundler/hot-reloader'] = 'commonjs bundler/hot-reloader';
+	externals[ 'bundler/hot-reloader' ] = 'commonjs bundler/hot-reloader';
 	// Exclude the devdocs search-index, as it's huge.
-	externals['devdocs/search-index'] = 'commonjs devdocs/search-index';
+	externals[ 'devdocs/search-index' ] = 'commonjs devdocs/search-index';
 	// Exclude the devdocs components usage stats data
-	externals['devdocs/components-usage-stats.json'] = 'commonjs devdocs/components-usage-stats.json';
+	externals[ 'devdocs/components-usage-stats.json' ] = 'commonjs devdocs/components-usage-stats.json';
 	// Exclude server/bundler/assets, since the files it requires don't exist until the bundler has run
-	externals['bundler/assets'] = 'commonjs bundler/assets';
+	externals[ 'bundler/assets' ] = 'commonjs bundler/assets';
 
 	return externals;
 }
@@ -96,3 +101,8 @@ module.exports = {
 	],
 	externals: getExternals()
 };
+
+if ( process.env.CALYPSO_ENV === 'development' || process.env.CALYPSO_ENV === 'test' ) {
+	module.exports.plugins.push( new PragmaCheckPlugin );
+}
+
