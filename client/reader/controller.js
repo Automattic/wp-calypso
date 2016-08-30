@@ -59,10 +59,11 @@ module.exports = {
 	prettyRedirects: function( context, next ) {
 		// Do we have a 'pretty' site or feed URL?
 		let redirect;
+		const queryString = context.queryRaw && `?${context.queryRaw}`;
 		if ( context.params.blog_id ) {
-			redirect = getPrettySiteUrl( context.params.blog_id );
+			redirect = getPrettySiteUrl( context.params.blog_id ) + queryString;
 		} else if ( context.params.feed_id ) {
-			redirect = getPrettyFeedUrl( context.params.feed_id );
+			redirect = getPrettyFeedUrl( context.params.feed_id ) + queryString;
 		}
 
 		if ( redirect ) {
@@ -264,7 +265,8 @@ module.exports = {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				suppressSiteNameLink: true,
-				showBack: userHasHistory( context )
+				showBack: userHasHistory( context ),
+				recommendationId: context.query.recommendationId
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
@@ -299,7 +301,8 @@ module.exports = {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				suppressSiteNameLink: true,
-				showBack: userHasHistory( context )
+				showBack: userHasHistory( context ),
+				recommendationId: context.query.recommendationId
 			} ),
 			document.getElementById( 'primary' ),
 			context.store

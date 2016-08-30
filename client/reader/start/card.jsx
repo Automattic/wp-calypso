@@ -67,8 +67,8 @@ const StartCard = React.createClass( {
 
 		return (
 			<Card className={ cardClasses } onClick={ this.onCardInteraction }>
-				<StartCardHeader site={ site } onFollowToggle={ this.onFollowToggle } railcar={ railcar } />
-				{ hasPost && <StartPostPreview post={ post } /> }
+				<StartCardHeader site={ site } onFollowToggle={ this.onFollowToggle } railcar={ railcar } recommendationId={ this.props.recommendationId } />
+				{ hasPost && <StartPostPreview post={ post } recommendationId={ this.props.recommendationId } /> }
 			</Card>
 		);
 	}

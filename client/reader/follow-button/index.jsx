@@ -11,13 +11,16 @@ import FollowButtonContainer from 'components/follow-button';
 import FollowButton from 'components/follow-button/button';
 import * as stats from 'reader/stats';
 
+var debug = require( 'debug' )( 'calypso:reader:follow-button' );
+
 const ReaderFollowButton = React.createClass( {
 
 	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		onFollowToggle: React.PropTypes.func,
-		railcar: React.PropTypes.object
+		railcar: React.PropTypes.object,
+		recommendationId: React.PropTypes.number
 	},
 
 	recordFollowToggle( isFollowing ) {
@@ -29,6 +32,7 @@ const ReaderFollowButton = React.createClass( {
 	},
 
 	render() {
+		debug( 'recommendationId is ' + this.props.recommendationId );
 		if ( this.props.isButtonOnly ) {
 			return (
 				<FollowButton { ...this.props } onFollowToggle={ this.recordFollowToggle } />

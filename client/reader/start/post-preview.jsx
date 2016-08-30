@@ -13,10 +13,11 @@ import resizeImageUrl from 'lib/resize-image-url';
 const StartPostPreview = React.createClass( {
 	getFullPostUrl() {
 		const post = this.props.post;
+		const queryString = `?recommendationId=${this.props.recommendationId}`;
 		if ( post.feed_ID && post.feed_item_ID ) {
-			return '/read/feeds/' + post.feed_ID + '/posts/' + post.feed_item_ID;
+			return `/read/feeds/${post.feed_ID}/posts/${post.feed_item_ID}${queryString}`;
 		}
-		return '/read/blogs/' + post.site_ID + '/posts/' + post.ID;
+		return `/read/blogs/${post.site_ID}/posts/${post.ID}${queryString}`;
 	},
 
 	showFullPost( event ) {
@@ -68,7 +69,8 @@ const StartPostPreview = React.createClass( {
 } );
 
 StartPostPreview.propTypes = {
-	post: React.PropTypes.object.isRequired
+	post: React.PropTypes.object.isRequired,
+	recommendationId: React.PropTypes.number
 };
 
 export default StartPostPreview;

@@ -73,7 +73,8 @@ export function blogPost( context ) {
 					page.back( context.lastRoute || '/' );
 				},
 				onClosed: removeFullPostDialog,
-				onPostNotFound: renderPostNotFound
+				onPostNotFound: renderPostNotFound,
+				recommendationId: context.query.recommendationId
 			} )
 		),
 		document.getElementById( 'tertiary' )
@@ -100,7 +101,8 @@ export function blogPostNew( context ) {
 					page.back( context.lastRoute || '/' );
 				},
 				onClosed: removeFullPostDialog,
-				onPostNotFound: renderPostNotFound
+				onPostNotFound: renderPostNotFound,
+				recommendationId: context.query.recommendationId
 			} )
 		),
 		document.getElementById( 'primary' )
@@ -134,7 +136,8 @@ export function feedPost( context ) {
 					page.back( context.lastRoute || '/' );
 				},
 				onClosed: removeFullPostDialog,
-				onPostNotFound: renderPostNotFound
+				onPostNotFound: renderPostNotFound,
+				recommendationId: context.query.recommendationId
 			} )
 		),
 		document.getElementById( 'tertiary' )

@@ -142,7 +142,7 @@ const SiteStream = React.createClass( {
 			<Stream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false }>
 				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
 				{ this.props.showBack && <HeaderBack /> }
-				<FeedHeader site={ this.state.site } feed={ this.state.feed }/>
+				<FeedHeader site={ this.state.site } feed={ this.state.feed } recommendationId={ this.props.recommendationId } />
 				{ featuredContent }
 			</Stream>
 
