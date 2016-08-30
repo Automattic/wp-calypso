@@ -20,9 +20,6 @@ const fixLegacyEvent = event => {
 };
 
 export const getHappychatTimeline = createSelector(
-	state => {
-		debug( 'convert timeline', state.happychat.timeline );
-		return map( state.happychat.timeline, fixLegacyEvent );
-	},
+	state => map( state.happychat.timeline, fixLegacyEvent ),
 	state => map( map( state.happychat.timeline, fixLegacyEvent ), ( { id } ) => id )
 );
