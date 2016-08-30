@@ -7,7 +7,7 @@ import {
 const open = ( state = false, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_OPEN:
-			return action.isOpen !== undefined ? action.isOpen : state;
+			return !! action.isOpen;
 	}
 	return state;
 };
