@@ -313,6 +313,30 @@ describe( 'reducer', () => {
 			expect( state[ 'website.com' ] ).to.have.property( 'timestamp' )
 				.to.be.at.least( nowTime );
 		} );
+
+		it( 'should persist state', () => {
+			const originalState = deepFreeze( {
+				ssoUrl: 'https://website.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://website.com'
+			} );
+			const state = jetpackSSOSessions( originalState, {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.be.eql( originalState );
+		} );
+
+		it( 'should load valid persisted state', () => {
+			const originalState = deepFreeze( {
+				ssoUrl: 'https://website.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://website.com'
+			} );
+			const state = jetpackSSOSessions( originalState, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( originalState );
+		} );
 	} );
 
 	describe( '#jetpackConnectAuthorize()', () => {
