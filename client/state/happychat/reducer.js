@@ -31,9 +31,8 @@ const timeline_event = ( state = [], action ) => {
 					links: get( event, 'meta.links' )
 				} )
 			];
-		default:
-			return state;
 	}
+	return state;
 };
 
 const timeline = ( state = [], action ) => {
@@ -43,27 +42,24 @@ const timeline = ( state = [], action ) => {
 			const existing = find( state, ( [ , { id } ] ) => event[ 1 ].id === id );
 			debug( 'received event', existing, event );
 			return existing ? state : concat( state, [ event ] );
-		default:
-			return state;
 	}
+	return state;
 };
 
 const message = ( state = '', action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_SET_MESSAGE:
 			return action.message;
-		default:
-			return state;
 	}
+	return state;
 };
 
 const autoscroll = ( state = true, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_SET_AUTOSCROLL:
 			return action.auto;
-		default:
-			return state;
 	}
+	return state;
 };
 
 const status = ( state = 'disconnected', action ) => {
@@ -74,9 +70,8 @@ const status = ( state = 'disconnected', action ) => {
 			return 'connected';
 		case HAPPYCHAT_CLOSING:
 			return 'closing';
-		default:
-			return state;
 	}
+	return state;
 };
 
 export default combineReducers( { timeline, available, message, autoscroll, status } );
