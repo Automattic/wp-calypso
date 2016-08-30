@@ -10,7 +10,7 @@ import camelCase from 'lodash/camelCase';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import { createPaygateToken } from 'lib/store-transactions';
-import CreditCardForm from 'components/upgrades/credit-card-form';
+import CreditCardFormFields from 'components/credit-card-form-fields';
 import CountriesList from 'lib/countries-list';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
@@ -27,7 +27,7 @@ import support from 'lib/url/support';
 const countriesList = CountriesList.forPayments();
 const wpcom = wpcomFactory.undocumented();
 
-const CreditCardPage = React.createClass( {
+const CreditCardForm = React.createClass( {
 	propTypes: {
 		apiParams: PropTypes.object,
 		initialValues: PropTypes.object,
@@ -115,7 +115,7 @@ const CreditCardPage = React.createClass( {
 	},
 
 	onFieldChange( rawDetails ) {
-		// Maps params from CreditCardForm component to work with formState.
+		// Maps params from CreditCardFormFields component to work with formState.
 		forOwn( rawDetails, ( value, name ) => {
 			this.formStateController.handleFieldChange( {
 				name,
@@ -229,7 +229,7 @@ const CreditCardPage = React.createClass( {
 	},
 
 	getCardDetails() {
-		// Maps keys from formState to work with CreditCardForm component and credit card validator.
+		// Maps keys from formState to work with CreditCardFormFields component and credit card validator.
 		return mapKeys( formState.getAllFieldValues( this.state.form ), ( value, key ) => {
 			return kebabCase( key );
 		} );
@@ -238,14 +238,14 @@ const CreditCardPage = React.createClass( {
 	render() {
 		return (
 			<form onSubmit={ this.onSubmit }>
-				<Card className="credit-card-page__content">
-					<CreditCardForm
+				<Card className="credit-card-form__content">
+					<CreditCardFormFields
 						card={ this.getCardDetails() }
 						countriesList={ countriesList }
 						eventFormName="Edit Card Details Form"
 						isFieldInvalid={ this.isFieldInvalid }
 						onFieldChange={ this.onFieldChange } />
-					<div className="credit-card-page__card-terms">
+					<div className="credit-card-form__card-terms">
 						<Gridicon icon="info-outline" size={ 18 } />
 						<p>
 							{ this.translate(
@@ -267,7 +267,7 @@ const CreditCardPage = React.createClass( {
 					</div>
 				</Card>
 
-				<CompactCard className="credit-card-page__footer">
+				<CompactCard className="credit-card-form__footer">
 					<em>{ this.translate( 'All fields required' ) }</em>
 
 					<FormButton
@@ -283,4 +283,4 @@ const CreditCardPage = React.createClass( {
 	}
 } );
 
-export default CreditCardPage;
+export default CreditCardForm;
