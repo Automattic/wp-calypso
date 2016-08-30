@@ -27,6 +27,13 @@ import PlanPrice from 'my-sites/plan-price';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'components/gridicon';
 import { errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
+import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import {
+	recordPurchase,
+	recordOrderInAtlas,
+	recordOrderInCriteo,
+	recordConversionInOneByAOL
+} from 'lib/analytics/ad-tracking';
 
 const debug = debugFactory( 'calypso:domain-to-plan-nudge' );
 
@@ -56,10 +63,20 @@ class DomainToPlanNudge extends Component {
 			hasFreePlan;        //has a free wpcom plan
 	}
 
+	getCartItem() {
+		return {
+			free_trial: false,
+			is_domain_registration: false,
+			product_id: plansList[ PLAN_PERSONAL ].getProductId(),
+			product_slug: PLAN_PERSONAL
+		};
+	}
+
 	handleTransactionComplete( error, data ) {
-		const { siteId, translate } = this.props;
-		//TODO: match expected analytics calls
-		debug( 'transaction complete', error );
+		const { siteId, translate, userCurrency } = this.props;
+
+		debug( 'transaction complete', error, data );
+		// see transaction-steps-mixin for matching checkout analytics
 		if ( error ) {
 			if ( this.state.noticeId ) {
 				this.props.removeNotice( this.state.noticeId );
@@ -71,9 +88,34 @@ class DomainToPlanNudge extends Component {
 				isSubmitting: false,
 				noticeId: get( noticeAction, 'notice.noticeId' )
 			} );
+			this.props.recordTracksEvent(
+				'calypso_checkout_payment_error',
+				{ reason: error.message }
+			);
 			return;
 		}
-		page( `/checkout/thank-you/${ siteId }/${ data.receipt_id }` );
+		const receiptId = data.receipt_id;
+
+		// ad tracking
+		const product = { ...this.getCartItem(), currency: userCurrency, cost: 35.88, volume: 1 }; //TODO: pass through price
+		const cart = { products: [ product ], total_cost: 35.88, currency: userCurrency };
+		recordPurchase( product, receiptId );
+		recordOrderInAtlas( cart, receiptId );
+		recordOrderInCriteo( cart, receiptId );
+		recordConversionInOneByAOL();
+
+		// tracks
+		this.props.recordTracksEvent( 'calypso_checkout_payment_success', {
+			coupon_code: '',
+			currency: userCurrency,
+			payment_method: storedCardPayment().paymentMethod,
+			total_cost: 35.88 //TODO: pass through discounted plan price here
+		} );
+
+		this.props.recordTracksEvent( 'calypso_checkout_product_purchase', this.getCartItem() );
+
+		// redirect to thank you
+		page( `/checkout/thank-you/${ siteId }/${ receiptId }` );
 	}
 
 	oneClickUpgrade() {
@@ -86,12 +128,7 @@ class DomainToPlanNudge extends Component {
 		// set this to temporary so we don't clear the existing user cart on the server
 		let cart = emptyCart( siteId, { temporary: true } );
 
-		const personalCartItem = {
-			free_trial: false,
-			is_domain_registration: false,
-			product_id: plansList[ PLAN_PERSONAL ].getProductId(),
-			product_slug: PLAN_PERSONAL
-		};
+		const personalCartItem = this.getCartItem();
 		cart = add( personalCartItem )( cart );
 
 		debug( 'purchasing with', cart, transaction );
@@ -194,7 +231,7 @@ class DomainToPlanNudge extends Component {
 							}
 						</Button>
 						<div className="domain-to-plan-nudge__credit-card-info">
-							{ translate( 'Using credit card ****%s', { args: storedCard.card } ) }
+							{ translate( 'Using credit card ****%s', { args: storedCard ? storedCard.card : 'xxxx' } ) }
 						</div>
 					</div>
 				</div>
@@ -214,7 +251,8 @@ export default connect(
 			),
 			storedCard: get( getStoredCards( state ), '0' ),
 			site: getSite( state, siteId ),
-			siteId
+			siteId,
+			userCurrency: getCurrentUserCurrencyCode( state ) //populated by either plans endpoint
 		};
 	},
 	{
