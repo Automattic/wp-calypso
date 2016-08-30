@@ -43,9 +43,6 @@ import {
 	recordTracksEvent,
 	bumpStat
 } from 'state/analytics/actions';
-import {
-	isSupportUserSession,
-} from 'lib/user/support-user-interop';
 
 const debug = debugFactory( 'calypso:push-notifications' );
 const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15;
@@ -55,6 +52,10 @@ const serviceWorkerOptions = {
 
 export function init() {
 	return dispatch => {
+		// require `lib/user/support-user-interop` here so that unit tests don't
+		// fail because of lack of `window` global when importing this module
+		// from test (before a chance to mock things is possible)
+		const isSupportUserSession = require( 'lib/user/support-user-interop' ).isSupportUserSession;
 		if ( isSupportUserSession() ) {
 			debug( 'Push Notifications are not supported when SU is active' );
 			dispatch( apiNotReady() );
