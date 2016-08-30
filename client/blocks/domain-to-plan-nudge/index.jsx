@@ -26,6 +26,7 @@ import { submitTransaction } from 'lib/upgrades/actions/checkout';
 import PlanPrice from 'my-sites/plan-price';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'components/gridicon';
+import { errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 
 const debug = debugFactory( 'calypso:domain-to-plan-nudge' );
 
@@ -35,7 +36,10 @@ class DomainToPlanNudge extends Component {
 		super( ...arguments );
 		this.oneClickUpgrade = this.oneClickUpgrade.bind( this );
 		this.handleTransactionComplete = this.handleTransactionComplete.bind( this );
-		this.state = { isSubmitting: false };
+		this.state = {
+			isSubmitting: false,
+			noticeId: null
+		};
 	}
 
 	static propTypes = {
@@ -53,18 +57,27 @@ class DomainToPlanNudge extends Component {
 	}
 
 	handleTransactionComplete( error, data ) {
-		const { siteId } = this.props;
+		const { siteId, translate } = this.props;
 		//TODO: match expected analytics calls
 		debug( 'transaction complete', error );
 		if ( error ) {
-			//TODO: show error notice
-			this.setState( { isSubmitting: false } );
+			if ( this.state.noticeId ) {
+				this.props.removeNotice( this.state.noticeId );
+			}
+			const noticeAction = this.props.errorNotice(
+				translate( 'There was a problem completing the purchase. Please try again.' )
+			);
+			this.setState( {
+				isSubmitting: false,
+				noticeId: get( noticeAction, 'notice.noticeId' )
+			} );
+			return;
 		}
 		page( `/checkout/thank-you/${ siteId }/${ data.receipt_id }` );
 	}
 
 	oneClickUpgrade() {
-		const { siteId, storedCard } = this.props;
+		const { siteId, storedCard, translate } = this.props;
 		const newPayment = storedCardPayment( storedCard );
 		const transaction = {
 			payment: newPayment
@@ -83,7 +96,15 @@ class DomainToPlanNudge extends Component {
 
 		debug( 'purchasing with', cart, transaction );
 
-		this.setState( { isSubmitting: true } );
+		if ( this.state.noticeId ) {
+			this.props.removeNotice( this.state.noticeId );
+		}
+		const noticeAction = this.props.infoNotice( translate( 'Submitting payment' ) );
+		this.setState( {
+			isSubmitting: true,
+			noticeId: get( noticeAction, 'notice.noticeId' )
+		} );
+
 		submitTransaction( { cart, transaction }, this.handleTransactionComplete );
 	}
 
@@ -197,6 +218,9 @@ export default connect(
 		};
 	},
 	{
-		recordTracksEvent
+		infoNotice,
+		errorNotice,
+		recordTracksEvent,
+		removeNotice
 	}
 )( localize( DomainToPlanNudge ) );
