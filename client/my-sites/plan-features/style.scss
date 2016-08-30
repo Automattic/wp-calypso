@@ -215,7 +215,6 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-
 .plan-features__header-checkmark {
 	position: absolute;
 	top: -3px;
@@ -243,76 +242,9 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.plan-features__price {
-	margin: 0;
-	font-size: 28px;
-	line-height: 1.5;
-	color: $gray-dark;
-
-	&.is-placeholder {
-		@include placeholder( 23% );
-		width: 60px;
-		margin: 10px 0;
-		height: 21px;
-	}
-
-	@include breakpoint( "<960px" ) {
-		font-size: 24px;
-	}
-}
-
-.plan-features__price.is-original {
-	color: $gray;
-}
-
-.plan-features__price.is-discounted {
-	color: $alert-green;
-}
-
-.plan-features__price.is-discounted,
-.plan-features__price.is-original {
-	position: relative;
-	align-items: stretch;
-	margin-right: 8px;
-}
-
-.plan-features__price.is-original:before {
-	position: absolute;
-	content: "";
-	left: 0;
-	top: 50%;
-	right: 0;
-	border-top: 2px solid $orange-fire;
-	transform: rotate( -16deg );
-	opacity: .9;
-}
-
-.plan-features__price-currency-symbol,
-.plan-features__price-fraction {
-	vertical-align: super;
-	font-size: 12px;
-}
-
 .plan-features__header-price-group {
 	display: flex;
 	flex-flow: row wrap;
-}
-
-.plan-features__price.is-discounted .plan-features__price-currency-symbol {
-	color: $alert-green;
-}
-
-.plan-features__price-currency-symbol {
-	color: $gray;
-}
-
-.plan-features__price-integer {
-	margin: 0 1px;
-	font-weight: 400;
-}
-
-.plan-features__price-fraction {
-	font-weight: 500;
 }
 
 .plan-features__header-timeframe {
