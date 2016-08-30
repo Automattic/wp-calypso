@@ -296,7 +296,7 @@ describe( 'reducer', () => {
 
 	describe( '#jetpackSSOSessions()', () => {
 		it( 'should default to an empty object', () => {
-			const state = jetpackConnectAuthorize( undefined, {} );
+			const state = jetpackSSOSessions( undefined, {} );
 			expect( state ).to.eql( {} );
 		} );
 
