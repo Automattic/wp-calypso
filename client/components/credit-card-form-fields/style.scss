@@ -1,11 +1,11 @@
-.credit-card-form__extras {
+.credit-card-form-fields__extras {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: space-between;
 	margin-left: -15px;
 
-	.credit-card-form__field,
-	.credit-card-form__label {
+	.credit-card-form-fields__field,
+	.credit-card-form-fields__label {
 		margin-left: 15px;
 	}
 
@@ -33,7 +33,7 @@
 	}
 }
 
-.credit-card-form__field {
+.credit-card-form-fields__field {
 	margin-bottom: 15px;
 	position: relative;
 
@@ -47,7 +47,7 @@
 	}
 }
 
-.credit-card-form__label {
+.credit-card-form-fields__label {
 	label {
 		color: darken( $gray, 10% );
 		display: none;

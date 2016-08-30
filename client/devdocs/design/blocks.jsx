@@ -9,6 +9,7 @@ import trim from 'lodash/trim';
 /**
  * Internal dependencies
  */
+import CreditCardForm from 'blocks/credit-card-form/docs/example';
 import HeaderCake from 'components/header-cake';
 import SearchCard from 'components/search-card';
 import AuthorSelector from 'blocks/author-selector/docs/example';
@@ -73,6 +74,7 @@ export default React.createClass( {
 				<Collection component={ this.props.component } filter={ this.state.filter }>
 					<AuthorSelector />
 					<CommentButtons />
+					<CreditCardForm />
 					<FollowButton />
 					<HappinessSupport />
 					<LikeButtons />

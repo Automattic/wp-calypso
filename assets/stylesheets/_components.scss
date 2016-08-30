@@ -28,6 +28,7 @@
 @import 'components/chart/style';
 @import 'components/clipboard-button-input/style';
 @import 'components/count/style';
+@import 'components/credit-card-form-fields/style';
 @import 'components/date-picker/style';
 @import 'components/dialog/style';
 @import 'components/docs-example/style';
@@ -130,7 +131,6 @@
 @import 'components/seo-preview-pane/style';
 @import 'components/signup-form/style';
 @import 'components/tooltip/style';
-@import 'components/upgrades/credit-card-form/style';
 @import 'components/upgrades/credit-card-number-input/style';
 @import 'components/user/style';
 @import 'components/version/style';
@@ -138,6 +138,7 @@
 @import 'components/vertical-nav/item/style';
 @import 'components/vertical-menu/style';
 @import 'components/web-preview/style';
+@import 'blocks/credit-card-form/style';
 @import 'devdocs/style';
 @import 'layout/guided-tours/style';
 @import 'layout/community-translator/style';
@@ -184,7 +185,6 @@
 @import 'me/profile-links/style';
 @import 'me/purchases/cancel-private-registration/style';
 @import 'me/purchases/cancel-purchase/style';
-@import 'me/purchases/components/credit-card-page/style';
 @import 'me/purchases/components/loading-placeholder/style';
 @import 'me/purchases/confirm-cancel-domain/style';
 @import 'me/purchases/list/item/style';
