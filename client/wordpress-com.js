@@ -67,6 +67,13 @@ sections = [
 		secondary: true
 	},
 	{
+		name: 'chat',
+		paths: [ '/me/chat' ],
+		module: 'me/chat',
+		group: 'me',
+		secondary: true
+	},
+	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'my-sites/media',
