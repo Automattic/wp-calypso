@@ -784,5 +784,29 @@ describe( 'reducer', () => {
 
 			expect( state ).to.have.property( 'ssoUrl', action.ssoUrl );
 		} );
+
+		it( 'should not persist state', () => {
+			const originalState = deepFreeze( {
+				ssoUrl: 'http://website.com',
+				siteUrl: 'http://website.com'
+			} );
+			const state = jetpackSSO( originalState, {
+				type: SERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
+		} );
+
+		it( 'should not load persisted state', () => {
+			const originalState = deepFreeze( {
+				ssoUrl: 'http://website.com',
+				siteUrl: 'http://website.com'
+			} );
+			const state = jetpackSSO( originalState, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
+		} );
 	} );
 } );
