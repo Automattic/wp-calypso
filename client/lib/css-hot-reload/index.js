@@ -9,7 +9,7 @@ import io from 'socket.io-client';
 import i18n from 'i18n-calypso';
 
 // https://developer.mozilla.org/en/docs/Web/HTML/Element/link
-let standardAttributes = [
+const standardAttributes = [
 	'crossorigin',
 	'href',
 	'hreflang',
