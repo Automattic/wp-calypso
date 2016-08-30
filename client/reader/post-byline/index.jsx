@@ -71,12 +71,14 @@ class PostByline extends React.Component {
 			);
 		}
 
+		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<ExternalLink href={ post.author.URL } target="_blank" onClick={ this.recordAuthorClick }>
 				{ gravatar }
 				{ authorName }
 			</ExternalLink>
 		);
+		/* eslint-enable react/jsx-no-target-blank */
 	}
 
 	render() {

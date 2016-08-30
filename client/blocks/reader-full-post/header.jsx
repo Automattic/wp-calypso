@@ -23,6 +23,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 		recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
 	};
 
+	/* eslint-disable react/jsx-no-target-blank */
 	return (
 		<div className="reader-full-post__header">
 			{ post.title
@@ -52,6 +53,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 			</div>
 		</div>
 	);
+	/* eslint-enable react/jsx-no-target-blank */
 };
 
 ReaderFullPostHeader.propTypes = {

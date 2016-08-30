@@ -24,6 +24,7 @@ var PostPermalink = React.createClass( {
 			return null;
 		}
 
+		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<li className="post-permalink" onClick={ this.recordClick }>
 				<ExternalLink href={ this.props.postUrl } target="_blank" icon={ true } iconSize={ 16 }>
@@ -31,6 +32,7 @@ var PostPermalink = React.createClass( {
 				</ExternalLink>
 			</li>
 		);
+		/* eslint-enable react/jsx-no-target-blank */
 	}
 } );
 

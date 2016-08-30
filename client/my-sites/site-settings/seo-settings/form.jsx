@@ -383,6 +383,7 @@ export const SeoForm = React.createClass( {
 			);
 		}
 
+		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
 				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
@@ -577,6 +578,7 @@ export const SeoForm = React.createClass( {
 				/>
 			</div>
 		);
+		/* eslint-enable react/jsx-no-target-blank */
 	}
 } );
 

@@ -196,7 +196,7 @@ FullPostView = React.createClass( {
 
 		articleClasses = articleClasses.join( ' ' );
 
-		/*eslint-disable react/no-danger*/
+		/*eslint-disable react/no-danger,react/jsx-no-target-blank*/
 		return (
 			<div>
 				<article className={ articleClasses } id="modal-full-post" ref="article">
@@ -239,7 +239,7 @@ FullPostView = React.createClass( {
 				</article>
 			</div>
 		);
-		/*eslint-enable react/no-danger*/
+		/*eslint-enable react/no-danger,react/jsx-no-target-blank*/
 	},
 
 	recordRelatedPostClicks: function( post ) {
