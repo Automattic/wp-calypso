@@ -55,11 +55,21 @@ const RelatedPostCards = React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/blocks/post-card">Refresh More in Site</a>
+					<a href="/devdocs/blocks/post-card">More in Site</a>
 				</h2>
 				<div className="reader-related-card-v2__container">
 					<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">Cats and Cats</a></h1>
-					<div className="reader-related-card-v2__posts">
+					<div className="reader-related-card-v2__posts is-site-post">
+						{ smallItems.map( item => <RelatedPostCardv2 key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
+					</div>
+				</div>
+
+				<h2>
+					<a href="/devdocs/blocks/post-card">More in WordPress.com</a>
+				</h2>
+				<div className="reader-related-card-v2__container">
+					<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">WordPress.com</a></h1>
+					<div className="reader-related-card-v2__posts is-global-post">
 						{ smallItems.map( item => <RelatedPostCardv2 key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
 					</div>
 				</div>

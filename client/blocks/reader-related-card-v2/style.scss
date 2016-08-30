@@ -4,7 +4,16 @@
 
 .reader-related-card-v2__link-block {
 	cursor: pointer;
-	display: block;
+	display: flex;
+	flex-direction: column;
+
+	@include breakpoint( "<480px" ) {
+		flex-direction: row;
+	}
+
+	@media (min-width: 661px) and (max-width: 730px) {
+		flex-direction: row;
+	}
 }
 
 .reader-related-card-v2__heading {
@@ -14,8 +23,8 @@
 	text-transform: uppercase;
 }
 
-.reader-related-card-v2__heading .reader-related-card-v2__link,
-.reader-related-card-v2__heading .reader-related-card-v2__link:visited {
+.reader-related-card-v2__link,
+.reader-related-card-v2__link:visited {
 	color: $blue-medium;
 
 	&:hover {
@@ -38,6 +47,42 @@
 	@media (min-width: 661px) and (max-width: 730px) {
 		flex-direction: column;
 	}
+
+	&.is-site-post {
+
+		.reader-related-card-v2__meta {
+			display: none;
+		}
+	}
+
+	&.is-global-post {
+
+		.reader-related-card-v2__meta {
+
+			@include breakpoint( "<480px" ) {
+				position: absolute;
+					left: 105px;
+				width: calc(100% - 110px);
+			}
+
+			@media (min-width: 661px) and (max-width: 730px) {
+				position: absolute;
+					left: 105px;
+				width: calc(100% - 110px);
+			}
+		}
+
+		.reader-related-card-v2__site-info {
+
+			@include breakpoint( "<480px" ) {
+				margin-top: 50px;
+			}
+
+			@media (min-width: 661px) and (max-width: 730px) {
+				margin-top: 50px;
+			}
+		}
+	}
 }
 
 .reader-related-card-v2.card.is-compact {
@@ -59,14 +104,71 @@
 
 	@include breakpoint( "<480px" ) {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		margin-bottom: 20px;
 	}
 
 	@media (min-width: 661px) and (max-width: 730px) {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		margin-bottom: 20px;
+	}
+}
+
+.reader-related-card-v2__meta {
+	display: flex;
+	margin-bottom: 13px;
+}
+
+.reader-related-card-v2__meta .gravatar {
+	height: 32px;
+	margin-right: 8px;
+	vertical-align: middle;
+	width: 32px;
+}
+
+.reader-related-card-v2__byline {
+	display: flex;
+	flex: 3;
+	flex-direction: column;
+	font-size: 14px;
+}
+
+.reader-related-card-v2__byline-author {
+	margin-top: -5px;
+}
+
+.reader-related-card-v2__byline-site {
+	margin-top: -4px;
+}
+
+.reader-related-card-v2__meta .follow-button {
+	background: transparent;
+	border: 0;
+	padding: 0;
+	margin-bottom: 20px;
+
+	&:focus {
+		border-radius: 0;
+	}
+
+	.gridicon__follow {
+		fill: $blue-medium;
+	}
+
+	.follow-button__label {
+		color: $blue-medium;
+
+		@include breakpoint( "<960px" ) {
+			display: none;
+		}
+	}
+
+	&.is-following {
+
+		.follow-button__label {
+			color: $alert-green;
+		}
 	}
 }
 
@@ -82,8 +184,8 @@
     }
 
     @media (min-width: 661px) and (max-width: 730px) {
-    	flex: 1;
     	height: auto;
+    	flex: 1;
     	margin: 0 15px 0 0;
     }
 }

@@ -10,6 +10,8 @@ import { localize } from 'i18n-calypso';
  * Internal Dependencies
  */
 import Card from 'components/card/compact';
+import Gravatar from 'components/gravatar';
+import FollowButton from 'components/follow-button/button';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -21,6 +23,19 @@ function FeaturedImage( { image, href } ) {
 		} } ></div> );
 }
 
+function AuthorAndSiteFollow( { post } ) {
+	return (
+		<div className="reader-related-card-v2__meta">
+			<Gravatar user={ post.author } />
+			<div className="reader-related-card-v2__byline">
+				<span className="reader-related-card-v2__byline-author"><a href="#" className="reader-related-card-v2__link">Steve Stevenson</a></span>
+				<span className="reader-related-card-v2__byline-site"><a href="#" className="reader-related-card-v2__link">steve.wordpress.com</a></span>
+			</div>
+			<FollowButton following={ false } />
+		</div>
+	);
+}
+
 /* eslint-disable no-unused-vars */
 export function SmallPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
 // onSiteClick is not being used
@@ -30,6 +45,7 @@ export function SmallPostCard( { post, site, onPostClick = noop, onSiteClick = n
 
 	return (
 		<Card className={ classes }>
+			<AuthorAndSiteFollow post={ post } site={ site } />
 			<a href={ post.URL } className="reader-related-card-v2__link-block">
 			{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
 			<div className="reader-related-card-v2__site-info">
