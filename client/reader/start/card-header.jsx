@@ -6,7 +6,7 @@ import { numberFormat } from 'i18n-calypso';
 import SiteIcon from 'components/site-icon';
 import FollowButton from 'reader/follow-button';
 
-const StartCardHeader = ( { site, onFollowToggle, railcar, recommendationId } ) => {
+const StartCardHeader = ( { site, railcar, recommendationId } ) => {
 	const subscribersCount = numberFormat( site.subscribers_count );
 	const siteStreamUrl = `/read/blogs/${site.ID}?recommendationId=${recommendationId}`;
 	return (
@@ -23,7 +23,7 @@ const StartCardHeader = ( { site, onFollowToggle, railcar, recommendationId } ) 
 				</div>
 			</div>
 			<div className="reader-start-card__follow">
-				<FollowButton siteUrl={ site.URL } onFollowToggle={ onFollowToggle } railcar={ railcar } />
+				<FollowButton siteUrl={ site.URL } recommendationId={ recommendationId } railcar={ railcar } />
 			</div>
 		</header>
 	);
@@ -32,7 +32,6 @@ const StartCardHeader = ( { site, onFollowToggle, railcar, recommendationId } ) 
 StartCardHeader.propTypes = {
 	site: React.PropTypes.object.isRequired,
 	railcar: React.PropTypes.object,
-	onFollowToggle: React.PropTypes.func.isRequired,
 	recommendationId: React.PropTypes.number
 };
 

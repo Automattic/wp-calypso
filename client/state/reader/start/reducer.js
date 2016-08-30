@@ -147,10 +147,10 @@ export function hasGraduated( state = null, action ) {
 export function recommendationsFollowed( state = [], action ) {
 	switch ( action.type ) {
 		case READER_START_RECOMMENDATION_FOLLOW:
-			return union( state, [ action.recommendationId ] );
+			return union( state, [ +action.recommendationId ] );
 
 		case READER_START_RECOMMENDATION_UNFOLLOW:
-			return without( state, action.recommendationId );
+			return without( state, +action.recommendationId );
 
 		case SERIALIZE:
 		case DESERIALIZE:

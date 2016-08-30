@@ -61,13 +61,13 @@ module.exports = {
 		let redirect;
 		const queryString = context.queryRaw && `?${context.queryRaw}`;
 		if ( context.params.blog_id ) {
-			redirect = getPrettySiteUrl( context.params.blog_id ) + queryString;
+			redirect = getPrettySiteUrl( context.params.blog_id );
 		} else if ( context.params.feed_id ) {
-			redirect = getPrettyFeedUrl( context.params.feed_id ) + queryString;
+			redirect = getPrettyFeedUrl( context.params.feed_id );
 		}
 
 		if ( redirect ) {
-			return page.redirect( redirect );
+			return page.redirect( redirect + queryString );
 		}
 
 		next();
