@@ -210,7 +210,7 @@ FullPostView = React.createClass( {
 							onClick={ this.handleSiteClick } />
 
 						<div className="full-post__follow">
-							{ feed && feed.feed_URL && <FollowButton siteUrl={ feed && feed.feed_URL } /> }
+							{ feed && feed.feed_URL && <FollowButton siteUrl={ feed && feed.feed_URL } recommendationId={ this.props.recommendationId } /> }
 						</div>
 					</div>
 

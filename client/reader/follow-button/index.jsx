@@ -60,7 +60,7 @@ const ReaderFollowButton = React.createClass( {
 } );
 
 export default connect(
-	( state ) => {}, // eslint-disable-line no-unused-vars
+	( state ) => ( {} ), // eslint-disable-line no-unused-vars
 	( dispatch ) => bindActionCreators( {
 		recordRecommendationFollow,
 		recordRecommendationUnfollow

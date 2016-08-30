@@ -107,7 +107,8 @@ export class FullPostView extends React.Component {
 							siteUrl= { post.site_URL }
 							followCount={ site && site.subscribers_count }
 							feedId={ post.feed_ID }
-							siteId={ post.site_ID } />
+							siteId={ post.site_ID }
+							recommendationId={ this.props.recommendationId } />
 						{ shouldShowComments( post ) &&
 							<CommentButton key="comment-button"
 								commentCount={ post.discussion.comment_count }
