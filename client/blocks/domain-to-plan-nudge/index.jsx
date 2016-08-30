@@ -6,6 +6,7 @@ import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { get } from 'lodash';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -34,6 +35,7 @@ class DomainToPlanNudge extends Component {
 		super( ...arguments );
 		this.oneClickUpgrade = this.oneClickUpgrade.bind( this );
 		this.handleTransactionComplete = this.handleTransactionComplete.bind( this );
+		this.state = { isSubmitting: false };
 	}
 
 	static propTypes = {
@@ -50,9 +52,15 @@ class DomainToPlanNudge extends Component {
 			hasFreePlan;        //has a free wpcom plan
 	}
 
-	handleTransactionComplete( error ) {
+	handleTransactionComplete( error, data ) {
+		const { siteId } = this.props;
 		//TODO: match expected analytics calls
 		debug( 'transaction complete', error );
+		if ( error ) {
+			//TODO: show error notice
+			this.setState( { isSubmitting: false } );
+		}
+		page( `/checkout/thank-you/${ siteId }/${ data.receipt_id }` );
 	}
 
 	oneClickUpgrade() {
@@ -75,6 +83,7 @@ class DomainToPlanNudge extends Component {
 
 		debug( 'purchasing with', cart, transaction );
 
+		this.setState( { isSubmitting: true } );
 		submitTransaction( { cart, transaction }, this.handleTransactionComplete );
 	}
 
@@ -83,6 +92,7 @@ class DomainToPlanNudge extends Component {
 			return null;
 		}
 
+		const { isSubmitting } = this.state;
 		const { translate, storedCard } = this.props;
 
 		return (
@@ -155,10 +165,12 @@ class DomainToPlanNudge extends Component {
 					<div className="domain-to-plan-nudge__upgrade-group">
 						<Button
 							onClick={ this.oneClickUpgrade }
-							disabled={ ! storedCard }
+							disabled={ ! storedCard || isSubmitting }
 							primary
 						>
-							{ translate( 'Upgrade Now for xx.xx' ) }
+							{
+								isSubmitting ? translate( 'Completing your purchase' ) : translate( 'Upgrade Now for xx.xx' )
+							}
 						</Button>
 						<div className="domain-to-plan-nudge__credit-card-info">
 							{ translate( 'Using credit card ****%s', { args: storedCard.card } ) }
