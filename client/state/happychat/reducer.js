@@ -11,8 +11,6 @@ import {
 	HAPPYCHAT_CLOSING,
 } from 'state/action-types';
 
-const debug = require( 'debug' )( 'calypso:happychat:reducer' );
-
 const available = ( state = true ) => state;
 
 const timeline_event = ( state = [], action ) => {
@@ -39,7 +37,6 @@ const timeline = ( state = [], action ) => {
 		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = timeline_event( {}, action );
 			const existing = find( state, ( [ , { id } ] ) => event[ 1 ].id === id );
-			debug( 'received event', existing, event );
 			return existing ? state : concat( state, [ event ] );
 	}
 	return state;
