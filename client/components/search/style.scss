@@ -124,9 +124,9 @@
 			@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
 		}
 
-		&.ltr {
+		&.ltr { /*rtl:ignore*/
 			&::before {
-				@include long-content-fade( $direction: left, $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
+				@include long-content-fade( $direction: right, $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
 			}
 		}
 	}

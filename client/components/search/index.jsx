@@ -293,7 +293,7 @@ const Search = React.createClass( {
 		const inputClass = classNames( 'search__input', this.props.dir );
 
 		return (
-			<div className={ searchClass } role="search">
+			<div dir={this.props.dir || null} className={ searchClass } role="search">
 				<Spinner />
 				<div
 					className="search__icon-navigation"
