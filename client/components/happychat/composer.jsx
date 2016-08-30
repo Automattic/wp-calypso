@@ -20,6 +20,7 @@ import {
 	prop
 } from './functional';
 import scrollbleed from './scrollbleed';
+import { translate } from 'i18n-calypso';
 
 // helper function for detecting when a DOM event keycode is pressed
 const returnPressed = propEquals( 'which', 13 );
@@ -47,7 +48,7 @@ export const Composer = React.createClass( {
 						ref={ this.setScrollbleedTarget }
 						onFocus={ onFocus }
 						type="text"
-						placeholder="Ask a question..."
+						placeholder={ translate( 'Ask a question...' ) }
 						onChange={ onChange }
 						onKeyDown={ onKeyDown }
 						value={ message } />

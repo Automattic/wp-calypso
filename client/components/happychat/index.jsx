@@ -41,9 +41,9 @@ const availabilityTitle = when(
 	isAvailable,
 	( { onOpenChat } ) => {
 		const onClick = () => onOpenChat();
-		return <div onClick={ onClick }>Support Chat</div>;
+		return <div onClick={ onClick }>{ translate( 'Support Chat' ) }</div>;
 	},
-	() => <div>Live Support Unavailable</div>
+	() => <div>{ translate( 'Live Support Unavailable' ) }</div>
 );
 
 /**

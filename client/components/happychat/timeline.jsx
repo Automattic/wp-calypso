@@ -20,6 +20,7 @@ import {
 import autoscroll from './autoscroll';
 import AgentW from 'components/happychat/agent-w';
 import scrollbleed from './scrollbleed';
+import { translate } from 'i18n-calypso';
 
 const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 
@@ -117,7 +118,7 @@ const groupMessages = ( messages ) => {
 
 const welcomeMessage = () => (
 	<div className="happychat__welcome">
-		This is the beginning of your chat history with WordPress.com support. A chat history will be stored here.
+		{ translate( 'This is the beginning of your chat history with WordPress.com support. A chat history will be stored here.' ) }
 	</div>
 );
 
