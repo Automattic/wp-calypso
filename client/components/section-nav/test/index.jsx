@@ -29,7 +29,6 @@ describe( 'section-nav', function() {
 		ReactDom = require( 'react-dom' );
 		React = require( 'react' );
 		TestUtils = require( 'react-addons-test-utils' );
-		require( 'react-tap-event-plugin' )();
 
 		const EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
 

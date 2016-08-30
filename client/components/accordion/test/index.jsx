@@ -6,7 +6,6 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import TestUtils from 'react-addons-test-utils';
 import { shallow, mount } from 'enzyme';
-import createReactTapEventPlugin from 'react-tap-event-plugin';
 
 /**
  * Internal dependencies
@@ -16,11 +15,6 @@ import Gridicon from 'components/gridicon';
 import Accordion from '../';
 
 describe( 'Accordion', function() {
-	before( () => {
-		// Unfortunately, there is no corresponding teardown for this plugin
-		createReactTapEventPlugin();
-	} );
-
 	it( 'should render as expected with a title and content', function() {
 		const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
 
