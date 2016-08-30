@@ -43,6 +43,9 @@ import {
 	recordTracksEvent,
 	bumpStat
 } from 'state/analytics/actions';
+import {
+	isSupportUserSession,
+} from 'lib/user/support-user-interop';
 
 const debug = debugFactory( 'calypso:push-notifications' );
 const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15;
@@ -52,6 +55,12 @@ const serviceWorkerOptions = {
 
 export function init() {
 	return dispatch => {
+		if ( isSupportUserSession() ) {
+			debug( 'Push Notifications are not supported when SU is active' );
+			dispatch( apiNotReady() );
+			return;
+		}
+
 		// Only continue if the service worker supports notifications
 		if ( ! isPushNotificationsSupported() ) {
 			debug( 'Push Notifications are not supported' );
