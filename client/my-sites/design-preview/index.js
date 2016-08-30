@@ -118,6 +118,83 @@ export default function designPreview( WebPreview ) {
 		}
 
 		addIcons( previewDocument ) {
+			const iconCss = `
+.cdm-icon {
+	fill: #fff;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 30px;
+	height: 30px;
+	font-size: 18px;
+	z-index: 5;
+	background: #0087BE;
+	border-radius: 50%;
+	border: 2px solid #fff;
+	box-shadow: 0 2px 1px rgba(46,68,83,0.15);
+	text-align: center;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	animation-name: bounce-appear;
+	animation-delay: 0.8s;
+	animation-duration: 1s;
+	animation-fill-mode: both;
+	animation-duration: .75s;
+}
+
+.cdm-icon:hover {
+	background: #00aadc;
+	transition: background .15s ease-in-out;
+}
+
+.cdm-icon--hidden {
+	display: none;
+}
+
+.cdm-icon svg {
+	width: 18px;
+	height: 18px;
+}
+
+.cdm-icon--text {
+	margin-left: -2em;
+}
+
+.cdm-icon--header-image {
+	margin: 10px;
+}
+
+@keyframes bounce-appear {
+	from, 20%, 40%, 60%, 80%, to {
+		animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+	}
+	0% {
+		opacity: 0;
+		transform: scale3d(.3, .3, .3);
+	}
+	20% {
+		transform: scale3d(1.1, 1.1, 1.1);
+	}
+	40% {
+		transform: scale3d(.9, .9, .9);
+	}
+	60% {
+		opacity: 1;
+		transform: scale3d(1.03, 1.03, 1.03);
+	}
+	80% {
+		transform: scale3d(.97, .97, .97);
+	}
+	to {
+		opacity: 1;
+		transform: scale3d(1, 1, 1);
+	}
+}
+			`;
+			const editIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="0" fill="none" width="24" height="24"/><g><path d="M13 6l5 5-9.507 9.507c-.686-.686-.69-1.794-.012-2.485l-.002-.003c-.69.676-1.8.673-2.485-.013-.677-.677-.686-1.762-.036-2.455l-.008-.008c-.694.65-1.78.64-2.456-.036L13 6zm7.586-.414l-2.172-2.172c-.78-.78-2.047-.78-2.828 0L14 5l5 5 1.586-1.586c.78-.78.78-2.047 0-2.828zM3 18v3h3c0-1.657-1.343-3-3-3z"/></g></svg>'; // eslint-disable-line max-len
 			const makeElement = config => config;
 			const findElement = element => Object.assign( {}, element, { target: previewDocument.querySelector( element.selector ) } );
 			const logElement = element => {
@@ -125,7 +202,18 @@ export default function designPreview( WebPreview ) {
 				return element;
 			};
 			const removeNotFound = element => !! element.target;
-			const addIcon = element => element.target.addEventListener( 'click', element.onClick );
+			const addIcon = element => {
+				element.icon = previewDocument.createElement( 'div' );
+				element.icon.className = 'cdm-icon cdm-icon--text';
+				element.icon.innerHTML = editIcon;
+				previewDocument.body.appendChild( element.icon );
+				return element;
+			};
+			const positionIcon = element => {
+				element.icon.style.left = '300px';
+				return element;
+			};
+			const addClickHandler = element => element.icon.addEventListener( 'click', element.onClick );
 			const elements = [
 				makeElement( {
 					id: 'siteTitle',
@@ -133,11 +221,16 @@ export default function designPreview( WebPreview ) {
 					onClick: () => this.props.setActiveDesignTool( 'siteTitle' )
 				} ),
 			];
+			const iconStyle = previewDocument.createElement( 'style' );
+			iconStyle.innerHTML = iconCss;
+			previewDocument.head.appendChild( iconStyle );
 			elements
 				.map( findElement )
 				.map( logElement )
 				.filter( removeNotFound )
-				.map( addIcon );
+				.map( addIcon )
+				.map( positionIcon )
+				.map( addClickHandler );
 		}
 
 		onClosePreview() {
