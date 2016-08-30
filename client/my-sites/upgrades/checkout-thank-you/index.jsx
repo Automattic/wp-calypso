@@ -183,12 +183,22 @@ const CheckoutThankYou = React.createClass( {
 			wasOnlyDotcomPlanPurchased = purchases.every( isPlan );
 		}
 
-		const createdAt = moment( this.props.selectedSite.options.created_at );
-		// TODO(marekhrabe): set time to a reasonable amount
-		const isRecent = createdAt.isAfter( moment().subtract( 10, 'hour' ) );
+		const userCreatedMoment = moment( this.props.user.date );
+		const isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
 		const isInAbTest = abtest( 'paidNuxStreamlined' ) === 'streamlined';
 
-		if ( isInAbTest && isRecent && wasOnlyDotcomPlanPurchased ) {
+		// placeholder
+		if ( ! this.isDataLoaded() && ! this.isGenericReceipt() ) {
+			// disabled because we use global loader icon
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
+			return (
+				<div className="wpcom-site__logo noticon noticon-wordpress"></div>
+			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
+		}
+
+		// streamlined paid NUX thanks page
+		if ( isInAbTest && isNewUser && wasOnlyDotcomPlanPurchased ) {
 			return (
 				<Main className={ classes }>
 					<PlanThankYouCard selectedSite={ this.props.selectedSite } />
@@ -197,6 +207,7 @@ const CheckoutThankYou = React.createClass( {
 			);
 		}
 
+		// standard thanks page
 		return (
 			<Main className={ classes }>
 				<HeaderCake
