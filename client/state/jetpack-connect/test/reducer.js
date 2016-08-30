@@ -389,7 +389,7 @@ describe( 'reducer', () => {
 				.to.eql( data.activate_manage );
 		} );
 
-		it( 'should set authorizeSuccess to false when an error occured during authorization', () => {
+		it( 'should set authorizeSuccess to false when an error occurred during authorization', () => {
 			const error = 'You need to stay logged in to your WordPress blog while you authorize Jetpack.';
 			const state = jetpackConnectAuthorize( undefined, {
 				type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
@@ -559,7 +559,7 @@ describe( 'reducer', () => {
 				.to.be.true;
 		} );
 
-		it( 'should receive userData and bearer_token on successful account creation', () => {
+		it( 'should receive userData and bearerToken on successful account creation', () => {
 			const userData = {
 				ID: 123,
 				email: 'example@example.com'
@@ -613,7 +613,7 @@ describe( 'reducer', () => {
 				.to.be.true;
 		} );
 
-		it( 'should set isRedirectingToWpAdmin to true when a redirect to wp admin is triggered', () => {
+		it( 'should set isRedirectingToWpAdmin to true when a redirect to wp-admin is triggered', () => {
 			const state = jetpackConnectAuthorize( undefined, {
 				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN
 			} );
