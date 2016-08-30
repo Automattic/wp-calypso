@@ -15,7 +15,6 @@ import {
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_CLOSING,
 	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_SET_AUTOSCROLL,
 } from 'state/action-types';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
@@ -87,5 +86,3 @@ export const sendChatMessage = message => dispatch => {
 	dispatch( clearChatMessage() );
 	connection.send( message );
 };
-
-export const setLiveChatAutoScroll = auto => ( { type: HAPPYCHAT_SET_AUTOSCROLL, auto } );

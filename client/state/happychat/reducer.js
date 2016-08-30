@@ -6,7 +6,6 @@ import concat from 'lodash/concat';
 import {
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
-	HAPPYCHAT_SET_AUTOSCROLL,
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_CLOSING,
@@ -54,14 +53,6 @@ const message = ( state = '', action ) => {
 	return state;
 };
 
-const autoscroll = ( state = true, action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_SET_AUTOSCROLL:
-			return action.auto;
-	}
-	return state;
-};
-
 const status = ( state = 'disconnected', action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_CONNECTING:
@@ -74,4 +65,4 @@ const status = ( state = 'disconnected', action ) => {
 	return state;
 };
 
-export default combineReducers( { timeline, available, message, autoscroll, status } );
+export default combineReducers( { timeline, available, message, status } );
