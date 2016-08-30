@@ -11,13 +11,11 @@ import GridIcon from 'components/gridicon';
 import {
 	first,
 	any,
-	all,
 	when
 } from './functional';
 import { connectChat } from 'state/happychat/actions';
 import {
-	getHappychatConnectionStatus,
-	getHappychatIsAvailable
+	getHappychatConnectionStatus
 } from 'state/happychat/selectors';
 import {
 	openChat,
@@ -26,29 +24,12 @@ import {
 import {
 	isConnected,
 	isConnecting,
-	isAvailable,
 	timeline,
 	composer
 } from './helpers';
 import { translate } from 'i18n-calypso';
 
-const isChatOpen = all(
-	isAvailable,
-	any( isConnected, isConnecting )
-);
-
-/*
- * Renders chat title message to display when chat is not active.
- * Allows for different messages depending on whether live chats are available.
- */
-const availabilityTitle = when(
-	isAvailable,
-	( { onOpenChat } ) => {
-		const onClick = () => onOpenChat();
-		return <div onClick={ onClick }>{ translate( 'Support Chat' ) }</div>;
-	},
-	() => <div>{ translate( 'Live Support Unavailable' ) }</div>
-);
+const isChatOpen = any( isConnected, isConnecting );
 
 /**
  * Renders the title text of the chat sidebar when happychat is connecting.
@@ -89,7 +70,10 @@ const connectedTitle = ( { onCloseChat } ) => (
 const title = first(
 	when( isConnected, connectedTitle ),
 	when( isConnecting, connectingTitle ),
-	availabilityTitle
+	( { onOpenChat } ) => {
+		const onClick = () => onOpenChat();
+		return <div onClick={ onClick }>{ translate( 'Support Chat' ) }</div>;
+	}
 );
 
 /*
@@ -103,7 +87,6 @@ const Happychat = React.createClass( {
 
 	render() {
 		const {
-			available,
 			connectionStatus,
 			user,
 			onCloseChat,
@@ -113,10 +96,9 @@ const Happychat = React.createClass( {
 		return (
 			<div className="happychat">
 				<div
-					className={ classnames( 'happychat__container', { open: isChatOpen( { connectionStatus, available } ) } ) }>
+					className={ classnames( 'happychat__container', { open: isChatOpen( { connectionStatus } ) } ) }>
 					<div className="happychat__title">
 						{ title( {
-							available,
 							connectionStatus,
 							user,
 							onCloseChat,
@@ -133,7 +115,6 @@ const Happychat = React.createClass( {
 
 const mapState = state => {
 	return {
-		available: getHappychatIsAvailable( state ),
 		connectionStatus: getHappychatConnectionStatus( state )
 	};
 };

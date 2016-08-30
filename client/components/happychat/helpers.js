@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import {
-	propExists,
 	propEquals,
 	when
 } from './functional';
@@ -27,7 +26,6 @@ const renderLoading = () => (
 /*
  * Functions for determinining the state of happychat
  */
-export const isAvailable = propExists( 'available' );
 export const isConnecting = propEquals( 'connectionStatus', 'connecting' );
 export const isConnected = propEquals( 'connectionStatus', 'connected' );
 

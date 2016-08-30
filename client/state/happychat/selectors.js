@@ -10,13 +10,6 @@ import assign from 'lodash/assign';
  */
 import createSelector from 'lib/create-selector';
 
-const debug = require( 'debug' )( 'calypso:happychat:selectors' );
-
-// TODO: get rid of tthis
-export const getHappychatIsAvailable = createSelector(
-	() => true
-);
-
 export const getHappychatConnectionStatus = createSelector(
 	state => state.happychat.status,
 	state => state.happychat.status
