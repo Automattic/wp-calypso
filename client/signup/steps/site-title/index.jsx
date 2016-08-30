@@ -20,7 +20,7 @@ import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 
-import ExampleSiteTitle from './example-site-title';
+import SiteTitleExample from 'components/site-title-example';
 
 const SiteTitle = React.createClass( {
 	displayName: 'Site Title',
@@ -134,7 +134,7 @@ const SiteTitle = React.createClass( {
 					onBlur={ this.handleBlur }
 					onChange={ this.handleChangeEvent }
 				/>
-				<FormButton className="signup-site-title__button">{ this.translate( 'Continue' )}</FormButton>
+				<FormButton className="signup-site-title__button">{ this.translate( 'Continue' ) }</FormButton>
 			</ValidationFieldset>
 		);
 	},
@@ -166,7 +166,7 @@ const SiteTitle = React.createClass( {
 				<LoggedOutForm className="signup-site-title" onSubmit={ this.handleSubmit } noValidate>
 					{ this.formFields() }
 				</LoggedOutForm>
-				<ExampleSiteTitle/>
+				<SiteTitleExample/>
 			</div>
 		);
 	},
