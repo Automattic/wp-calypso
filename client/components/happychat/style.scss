@@ -121,7 +121,7 @@
 }
 
 // experiment: style scrollbars
-.happychat {
+.happychat, .happychat_page {
 
 	::-webkit-scrollbar {
 		width: 12px;
@@ -425,18 +425,20 @@
  * even though we'll be hiding that for the time being.
  */
 
-.is-section-chat .happychat {
-	position: fixed;
-	overflow: auto;
-	-webkit-overflow-scrolling: touch;
-	display: flex;
-	flex-direction: column;
-	box-sizing: border-box;
-	top: 0;
-	margin-top: 47px;
-	left: 272px;
-	right: 0;
-	bottom: 0;
+.is-section-chat {
+	.happychat, .happychat__page {
+		position: fixed;
+		overflow: auto;
+		-webkit-overflow-scrolling: touch;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		top: 0;
+		margin-top: 47px;
+		left: 272px;
+		right: 0;
+		bottom: 0;
+	}
 }
 
 @include breakpoint( ">1040px" ) {
@@ -449,16 +451,20 @@
 
 @include breakpoint( "<960px" ) {
 
-	.is-section-chat .happychat {
-		left: 229px;
+	.is-section-chat {
+		.happychat, .happychat__page {
+			left: 229px;
+		}
 	}
 
 }
 
 @include breakpoint( "<660px" ) {
 
-	.is-section-chat .happychat {
-		left: 0;
+	.is-section-chat {
+		.happychat, .happychat__page {
+				left: 0;
+		}
 	}
 
 }

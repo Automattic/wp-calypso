@@ -32,7 +32,7 @@ const HappychatPage = React.createClass( {
 	render() {
 		const { connectionStatus } = this.props;
 		return (
-			<div className="happychat">
+			<div className="happychat__page">
 				{ timeline( { connectionStatus } ) }
 				{ composer( { connectionStatus } ) }
 			</div>
