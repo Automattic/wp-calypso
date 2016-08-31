@@ -72,7 +72,7 @@ export class MetaTitleEditor extends Component {
 						key={ type.value }
 						disabled={ disabled }
 						onChange={ this.updateTitleFormat }
-						type={ disabled ? '' : type }
+						type={ disabled ? { label: '' } : type }
 						titleFormats={ get( titleFormats, type.value, [] ) }
 						tokens={ getTokensForType( type.value, translate ) }
 					/>
