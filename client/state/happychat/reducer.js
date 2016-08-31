@@ -24,11 +24,11 @@ const timeline_event = ( state = {}, action ) => {
 			const event = action.event;
 			return Object.assign( {}, {
 				id: event.id,
-				message: event.message,
-				nick: event.user.nick,
-				image: event.user.picture,
+				message: event.text,
+				name: event.user.name,
+				image: event.user.avatarURL,
 				user_id: event.user.id,
-				type: event.type,
+				type: get( event, 'type', 'message' ),
 				links: get( event, 'meta.links' )
 			} );
 	}
