@@ -14,6 +14,8 @@ import {
 	isFetchingUserPurchases,
 	hasLoadedUserPurchasesFromServer
 } from 'state/purchases/selectors';
+import { receiveHelpCourses } from 'state/help/courses/actions';
+import { getHelpCourses } from 'state/help/courses/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { PLAN_BUSINESS } from 'lib/plans/constants';
 
@@ -58,14 +60,21 @@ function getCourses() {
 	];
 }
 
+function mapDispatchToProps( dispatch ) {
+	// This function only adds a way of dispatching courses because we don't have another mechanism yet.
+	// Once the courses make it into the API this function should go away in preference for
+	// something linke <QueryHelpCourses />
+	return {
+		fetchCourses: () => dispatch( receiveHelpCourses( getCourses() ) )
+	};
+}
+
 function mapStateToProps( state ) {
 	const userId = getCurrentUserId( state );
 	const purchases = getUserPurchases( state, userId );
 	const isBusinessPlanUser = purchases && !! find( purchases, purchase => purchase.productSlug === PLAN_BUSINESS );
-	const isLoading = isFetchingUserPurchases( state ) || ! hasLoadedUserPurchasesFromServer( state );
-	const courses = getCourses();
-
-	//TODO: Add tracks pings
+	const courses = getHelpCourses( state );
+	const isLoading = isFetchingUserPurchases( state ) || ! courses || ! hasLoadedUserPurchasesFromServer( state );
 
 	return {
 		isLoading,
@@ -75,4 +84,4 @@ function mapStateToProps( state ) {
 	};
 }
 
-export default connect( mapStateToProps )( localize( Courses ) );
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Courses ) );
