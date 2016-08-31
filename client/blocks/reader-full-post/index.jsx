@@ -236,7 +236,8 @@ export class FullPostFluxContainer extends React.Component {
 					onClose={ this.props.onClose }
 					post={ this.state.post }
 					site={ this.state.site && this.state.site.toJS() }
-					feed={ this.state.feed && this.state.feed.toJS() } />
+					feed={ this.state.feed && this.state.feed.toJS() }
+					recommendationId={ this.props.recommendationId } />
 			: null;
 	}
 }

@@ -374,7 +374,8 @@ FullPostDialog = React.createClass( {
 					post={ this.props.post }
 					site={ this.props.site }
 					feed={ this.props.feed }
-					shouldShowComments={ shouldShowComments } />
+					shouldShowComments={ shouldShowComments }
+					recommendationId={ this.props.recommendationId } />
 			</Dialog>
 		);
 	}
