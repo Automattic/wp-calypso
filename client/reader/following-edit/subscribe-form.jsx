@@ -1,7 +1,8 @@
 // External dependencies
 const React = require( 'react' ),
 	url = require( 'url' ),
-	noop = require( 'lodash/noop' );
+	noop = require( 'lodash/noop' ),
+	wpcom = require( 'lib/wp' );
 
 // Internal dependencies
 const SearchCard = require( 'components/search-card' ),
