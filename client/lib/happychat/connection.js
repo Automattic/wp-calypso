@@ -39,6 +39,14 @@ class Connection extends EventEmitter {
 		);
 	}
 
+	notTyping() {
+		this.openSocket
+		.then(
+			socket => socket.emit( 'typing', false ),
+			e => debug( 'failed to send typing', e )
+		);
+	}
+
 	send( message ) {
 		this.openSocket.then(
 			socket => socket.emit( 'message', { text: message, id: uuid() } ),
