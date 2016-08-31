@@ -12,7 +12,6 @@ export default {
 	componentWillMount() {
 		this._autoscroll_enabled = true;
 		window.addEventListener( 'resize', this.scrollToBottom );
-		this.scrollToBottom();
 	},
 
 	componentDidMount() {
