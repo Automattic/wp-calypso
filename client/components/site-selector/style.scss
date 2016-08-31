@@ -175,3 +175,19 @@
 		border-bottom-width: 0;
 	}
 }
+
+.site-selector__hidden-sites-message {
+	color: $gray;
+	display: block;
+	font-size: 12px;
+	padding: 16px 16px 24px;
+
+	.site-selector__manage-hidden-sites {
+		color: $gray;
+		text-decoration: underline;
+	}
+}
+
+.site-selector__no-results + .site-selector__hidden-sites-message {
+	display: none;
+}

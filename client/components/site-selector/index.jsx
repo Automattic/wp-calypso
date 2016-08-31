@@ -21,10 +21,8 @@ import Gridicon from 'components/gridicon';
 import Site from 'blocks/site';
 import SitePlaceholder from 'blocks/site/placeholder';
 import Search from 'components/search';
-import userModule from 'lib/user';
 import config from 'config';
 
-const user = userModule();
 const noop = () => {};
 
 const SiteSelector = React.createClass( {
@@ -218,7 +216,7 @@ const SiteSelector = React.createClass( {
 			// There is currently no "all sites" version of the insights page
 			allSitesPath = allSitesPath.replace( /^\/stats\/insights\/?$/, '/stats/day' );
 
-			return(
+			return (
 				<AllSites
 					key="selector-all-sites"
 					sites={ this.props.sites.get() }
@@ -267,9 +265,11 @@ const SiteSelector = React.createClass( {
 
 	render() {
 		const selectorClass = classNames( 'site-selector', 'sites-list', {
-			'is-large': user.get().site_count > 6,
-			'is-single': user.get().visible_site_count === 1
+			'is-large': this.props.siteCount > 6,
+			'is-single': this.props.visibleSiteCount === 1
 		} );
+
+		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
 		return (
 			<div className={ selectorClass }>
@@ -283,6 +283,29 @@ const SiteSelector = React.createClass( {
 				<div className="site-selector__sites" ref="selector">
 					{ this.renderAllSites() }
 					{ this.renderSites() }
+					{ hiddenSitesCount > 0 &&
+						<span className="site-selector__hidden-sites-message">
+							{ this.translate(
+								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
+								'%(hiddenSitesCount)d more hidden sites. {{a}}Change{{/a}}.{{br/}}Use search to access them.',
+								{
+									count: hiddenSitesCount,
+									args: {
+										hiddenSitesCount: hiddenSitesCount
+									},
+									components: {
+										br: <br />,
+										a: <a
+											href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
+											className="site-selector__manage-hidden-sites"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									}
+								}
+							) }
+						</span>
+					}
 				</div>
 				{ this.props.showAddNewSite && this.addNewSite() }
 			</div>
@@ -291,8 +314,12 @@ const SiteSelector = React.createClass( {
 } );
 
 export default connect( ( state ) => {
+	const user = getCurrentUser( state );
+	const visibleSiteCount = get( user, 'visible_site_count', 0 );
 	return {
-		showRecentSites: get( getCurrentUser( state ), 'visible_site_count', 0 ) > 11,
-		recentSites: getPreference( state, 'recentSites' )
+		showRecentSites: get( user, 'visible_site_count', 0 ) > 11,
+		recentSites: getPreference( state, 'recentSites' ),
+		siteCount: get( user, 'site_count', 0 ),
+		visibleSiteCount: visibleSiteCount,
 	};
 } )( SiteSelector );
