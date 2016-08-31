@@ -29,7 +29,7 @@ import Gridicon from 'components/gridicon';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
-import { isUserPaid, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { isUserPaid } from 'state/purchases/selectors';
 import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
@@ -274,12 +274,7 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderSupportTab() {
-		const {
-			hasLoadedUserPurchasesFromServer,
-			isCurrentUserPaid,
-		} = this.props;
-
-		if ( hasLoadedUserPurchasesFromServer && isCurrentUserPaid ) {
+		if ( this.props.isCurrentUserPaid ) {
 			return (
 				<div>
 					{ this.renderContactUsCard( true ) }
@@ -508,7 +503,6 @@ export default connect(
 			selectedSite,
 			siteSlug,
 			backPath,
-			hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 			currentUserId,
 			isCurrentUserPaid,
 		};
