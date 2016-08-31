@@ -41,10 +41,15 @@ export default function designPreview( WebPreview ) {
 			this.cleanAndClosePreview = this.cleanAndClosePreview.bind( this );
 			this.onPreviewClick = this.onPreviewClick.bind( this );
 			this.addIcons = this.addIcons.bind( this );
+			this.removeIcons = this.removeIcons.bind( this );
 		}
 
 		componentDidMount() {
 			this.loadPreview();
+		}
+
+		componentWillUnmount() {
+			this.previewDocument && this.removeIcons( this.previewDocument );
 		}
 
 		componentDidUpdate( prevProps ) {
@@ -103,6 +108,7 @@ export default function designPreview( WebPreview ) {
 			if ( ! this.props.selectedSite ) {
 				return;
 			}
+			this.previewDocument && this.removeIcons( this.previewDocument );
 			debug( 'loading preview with customizations', this.getCustomizations() );
 			this.props.fetchPreviewMarkup( this.props.selectedSiteId, this.props.previewUrl, this.getCustomizations() );
 		}
@@ -243,6 +249,7 @@ export default function designPreview( WebPreview ) {
 			iconStyle.innerHTML = iconCss;
 			previewDocument.head.appendChild( iconStyle );
 			const repositionIcons = () => {
+				debug( 'repositioning icons' );
 				elements = elements
 					.map( findElement )
 					.map( logElement )
@@ -251,10 +258,31 @@ export default function designPreview( WebPreview ) {
 					.map( positionIcon )
 					.map( addClickHandler );
 			};
+			this.repositionIcons = repositionIcons;
 			repositionIcons();
 			setTimeout( repositionIcons, 2000 );
-			previewDocument.addEventListener( 'scroll', repositionIcons, false );
-			previewDocument.addEventListener( 'resize', repositionIcons, false );
+			previewDocument.addEventListener( 'scroll', this.repositionIcons, false );
+			previewDocument.addEventListener( 'resize', this.repositionIcons, false );
+			if ( MutationObserver ) {
+				this.mutationObserver = new MutationObserver( repositionIcons );
+				this.mutationObserver.observe( previewDocument.body, {
+					subtree: true,
+					attributes: true,
+					childList: true,
+					characterData: true
+				} );
+			}
+		}
+
+		removeIcons( previewDocument ) {
+			if ( this.mutationObserver ) {
+				this.mutationObserver.disconnect();
+				this.mutationObserver = null;
+			}
+			if ( this.repositionIcons ) {
+				previewDocument.removeEventListener( 'scroll', this.repositionIcons, false );
+				previewDocument.removeEventListener( 'resize', this.repositionIcons, false );
+			}
 		}
 
 		onClosePreview() {
