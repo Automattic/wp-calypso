@@ -47,6 +47,7 @@
 		"jetpack_core_inline_update": true,
 		"jetpack/sync-panel": true,
 		"keyboard-shortcuts": true,
+		"happychat": true,
 		"mailing-lists/unsubscribe": true,
 		"manage/add-people": true,
 		"manage/ads": true,

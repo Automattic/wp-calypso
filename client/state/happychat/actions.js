@@ -43,7 +43,12 @@ const connection = buildConnection();
 
 const setChatConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
 const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
-const setChatMessage = message => ( { type: HAPPYCHAT_SET_MESSAGE, message } );
+const setChatMessage = message => {
+	if ( isEmpty( message ) ) {
+		connection.notTyping();
+	}
+	return { type: HAPPYCHAT_SET_MESSAGE, message };
+};
 
 const clearChatMessage = () => setChatMessage( '' );
 
