@@ -152,7 +152,7 @@ export default React.createClass( {
 		return (
 			<p className="profile-links__no-links">
 				{
-					this.translate( `You have no sites in your profile links. You may add sites if you'd like.` )
+					this.translate( 'You have no sites in your profile links. You may add sites if you\'d like.' )
 				}
 			</p>
 		);
@@ -220,7 +220,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		return(
+		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Profile Links' ) }>
 					<AddProfileLinksButtons
@@ -230,7 +230,8 @@ export default React.createClass( {
 						showPopoverMenu={ this.state.showPopoverMenu }
 						onShowAddWordPress={ this.showAddWordPress }
 						onShowPopoverMenu={ this.showPopoverMenu }
-						onClosePopoverMenu={ this.closePopoverMenu }/>
+						onClosePopoverMenu={ this.closePopoverMenu }
+					/>
 				</SectionHeader>
 				<Card>
 					{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }
