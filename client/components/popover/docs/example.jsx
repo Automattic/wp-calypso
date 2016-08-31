@@ -296,7 +296,7 @@ const Popovers = React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
+			<div className="docs__design-assets__group">
 				<h2>
 					<a href="/devdocs/design/popovers">Popovers</a>
 				</h2>
