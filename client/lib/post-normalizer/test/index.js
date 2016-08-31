@@ -217,6 +217,12 @@ describe( 'index', function() {
 					uri: 'http://example.com/media.jpg',
 					type: 'image'
 				},
+				post_thumbnail: {
+					URL: 'http://example.com/thumb.jpg',
+					height: 1000,
+					width: 1000,
+					mime_type: ''
+				},
 				attachments: {
 					1234: {
 						mime_type: 'image/png',
@@ -231,6 +237,7 @@ describe( 'index', function() {
 			normalizer( post, [ normalizer.safeImageProperties( 200 ) ], function( err, normalized ) {
 				assert.strictEqual( normalized.author.avatar_URL, 'http://example.com/me.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_image, 'http://foo.bar/-SAFE?w=200&quality=80&strip=info' );
+				assert.strictEqual( normalized.post_thumbnail.URL, 'http://example.com/thumb.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.attachments[ '1234' ].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.attachments[ '3456' ].URL, 'http://example.com/media.jpg' );
@@ -638,6 +645,23 @@ describe( 'index', function() {
 				},
 				[ normalizer.pickCanonicalImage ], function( err, normalized ) {
 					assert.strictEqual( normalized.canonical_image.uri, 'http://example.com/featured.jpg' );
+					done( err );
+				}
+			);
+		} );
+
+		it( 'will pick post_thumbnail over featured_image if present and images missing', function( done ) {
+			normalizer(
+				{
+					featured_image: 'http://example.com/featured.jpg',
+					post_thumbnail: { URL: 'http://example.com/thumb.jpg', width: 1000, height: 1000, mime_type: '' },
+					featured_media: {
+						type: 'image',
+						uri: 'http://example.com/media.jpg'
+					}
+				},
+				[ normalizer.pickCanonicalImage ], function( err, normalized ) {
+					assert.strictEqual( normalized.canonical_image.uri, 'http://example.com/thumb.jpg' );
 					done( err );
 				}
 			);

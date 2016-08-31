@@ -38,6 +38,12 @@ export default function pickCanonicalImage( post ) {
 				height: canonicalImage.naturalHeight
 			};
 		}
+	} else if ( post.post_thumbnail ) {
+		canonicalImage = {
+			uri: post.post_thumbnail.URL,
+			width: post.post_thumbnail.width,
+			height: post.post_thumbnail.height
+		};
 	} else if ( post.featured_image ) {
 		canonicalImage = {
 			uri: post.featured_image,
