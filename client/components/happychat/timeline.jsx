@@ -72,7 +72,7 @@ const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 			<div className="happychat__message-text">
 				{ messageText( {
 					message: event.message,
-					nick: event.nick,
+					name: event.name,
 					key: event.id,
 					links: event.links
 				} ) }
