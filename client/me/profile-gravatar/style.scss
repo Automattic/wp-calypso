@@ -114,18 +114,3 @@
 	word-break: break-word;
 	word-wrap: break-word;
 }
-
-.profile-gravatar__edit {
-	animation: animate-appear 600ms cubic-bezier( .1, .82, .25, 1 );
-	transform-origin: center center;
-}
-
-@keyframes animate-appear {
-	0%,
-	20% {
-		transform: scale( 0, 0 );
-	},
-	100% {
-		transform: scale( 1, 1 );
-	}
-}
