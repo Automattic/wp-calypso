@@ -76,3 +76,9 @@ a.settings-action-panel__body-text-link {
 .settings-action-panel__support-button .gridicon {
 	margin-left: 8px;
 }
+
+.settings-action-panel__support-button {
+	&.is-external {
+		margin-right: 8px;
+	}
+}
