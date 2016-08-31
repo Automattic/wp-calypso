@@ -6,13 +6,10 @@
 	flex-shrink: 0;	// these are required for the flexed sidebar to not implode in Safari
 }
 
-.me-sidebar__signout-button.form-button {
-	display: block;
-	float: none;
-	margin: 0 auto;
-	max-width: 100%;
-	padding: 8px 24px;
-	min-height: 40px;
+.me-sidebar__signout {
+	display: flex;
+	justify-content: center;
+	margin: 0 0 16px;
 }
 
 .sidebar .profile-gravatar {
