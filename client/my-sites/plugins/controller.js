@@ -264,6 +264,12 @@ const controller = {
 
 	setupPlugins( context ) {
 		renderProvisionPlugins( context );
+	},
+
+	resetHistory( context, next ) {
+		lastPluginsListVisited = null;
+		lastPluginsQuerystring = null;
+		next();
 	}
 };
 
