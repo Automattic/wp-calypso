@@ -52,7 +52,7 @@ export default React.createClass( {
 	},
 
 	onAddableSubmit( event ) {
-		let links = [];
+		const links = [];
 		let siteID, site, inputName;
 
 		event.preventDefault();
