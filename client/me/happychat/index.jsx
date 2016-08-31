@@ -9,11 +9,11 @@ import page from 'page';
 */
 import { renderWithReduxStore } from 'lib/react-helpers';
 import controller from 'me/controller';
-import LiveChat from 'components/happychat/page';
+import Happychat from './main';
 
 const renderChat = ( context, next ) => {
 	renderWithReduxStore(
-		<LiveChat />,
+		<Happychat />,
 		document.getElementById( 'primary' ),
 		context.store
 	);
