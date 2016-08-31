@@ -15,7 +15,10 @@ var os = require( 'os' ),
  */
 function setup( io ) {
 
-	const SCSS_PATHS = [ './assets/stylesheets/', './client/' ];
+	const SCSS_PATHS = [
+		path.join( '.', 'assets', 'stylesheets' ),
+		path.join( '.', 'client' ),
+	];
 	const ROOT_DIR = path.resolve( __dirname, '..', '..' );
 	const PUBLIC_DIR = path.join( ROOT_DIR, 'public' );
 
