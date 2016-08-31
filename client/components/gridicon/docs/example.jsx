@@ -66,6 +66,7 @@ module.exports = React.createClass( {
 				<Gridicon icon="cog" size={ 48 } onClick={ this.handleClick.bind( this, 'cog' ) } />
 				<Gridicon icon="comment" size={ 48 } onClick={ this.handleClick.bind( this, 'comment' ) } />
 				<Gridicon icon="computer" size={ 48 } onClick={ this.handleClick.bind( this, 'computer' ) } />
+				<Gridicon icon="conversation" size={ 48 } onClick={ this.handleClick.bind( this, 'conversation' ) } />
 				<Gridicon icon="coupon" size={ 48 } onClick={ this.handleClick.bind( this, 'coupon' ) } />
 				<Gridicon icon="create" size={ 48 } onClick={ this.handleClick.bind( this, 'create' ) } />
 				<Gridicon icon="credit-card" size={ 48 } onClick={ this.handleClick.bind( this, 'credit-card' ) } />
