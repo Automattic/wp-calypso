@@ -54,6 +54,16 @@ const serviceWorkerOptions = {
 
 export function init() {
 	return dispatch => {
+		// require `lib/user/support-user-interop` here so that unit tests don't
+		// fail because of lack of `window` global when importing this module
+		// from test (before a chance to mock things is possible)
+		const isSupportUserSession = require( 'lib/user/support-user-interop' ).isSupportUserSession;
+		if ( isSupportUserSession() ) {
+			debug( 'Push Notifications are not supported when SU is active' );
+			dispatch( apiNotReady() );
+			return;
+		}
+
 		// Only continue if the service worker supports notifications
 		if ( ! isPushNotificationsSupported() ) {
 			debug( 'Push Notifications are not supported' );
