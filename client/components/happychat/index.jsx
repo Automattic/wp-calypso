@@ -96,7 +96,7 @@ const Happychat = React.createClass( {
 		return (
 			<div className="happychat">
 				<div
-					className={ classnames( 'happychat__container', { open: isChatOpen( { connectionStatus } ) } ) }>
+					className={ classnames( 'happychat__container', { 'is-open': isChatOpen( { connectionStatus } ) } ) }>
 					<div className="happychat__title">
 						{ title( {
 							connectionStatus,
