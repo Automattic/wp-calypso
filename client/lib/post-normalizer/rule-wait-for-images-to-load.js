@@ -22,7 +22,7 @@ function convertImageToObject( image ) {
 }
 
 function imageForURL( imageUrl ) {
-	var img = new Image();
+	const img = new Image();
 	img.src = imageUrl;
 	return img;
 }
@@ -53,7 +53,9 @@ export default function waitForImagesToLoad( post ) {
 
 		let imagesToCheck = [];
 
-		if ( post.featured_image ) {
+		if ( post.post_thumbnail ) {
+			imagesToCheck.push( post.post_thumbnail.URL );
+		} else if ( post.featured_image ) {
 			imagesToCheck.push( post.featured_image );
 		}
 

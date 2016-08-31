@@ -12,13 +12,21 @@ import startsWith from 'lodash/startsWith';
 import { imageSizeFromAttachments } from './utils';
 
 export default function firstPassCanonicalImage( post ) {
-	if ( post.featured_image ) {
+	if ( post.post_thumbnail ) {
+		const { URL: url, width, height } = post.post_thumbnail;
+		post.canonical_image = {
+			uri: url,
+			width,
+			height,
+			type: 'image'
+		};
+	} else if ( post.featured_image ) {
 		post.canonical_image = assign( {
 			uri: post.featured_image,
 			type: 'image'
 		}, imageSizeFromAttachments( post.featured_image ) );
 	} else {
-		let candidate = head( filter( post.attachments, function( attachment ) {
+		const candidate = head( filter( post.attachments, function( attachment ) {
 			return startsWith( attachment.mime_type, 'image/' );
 		} ) );
 
