@@ -4,6 +4,8 @@ import find from 'lodash/find';
 import concat from 'lodash/concat';
 
 import {
+	SERIALIZE,
+	DESERIALIZE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_CONNECTING,
@@ -24,11 +26,11 @@ const timeline_event = ( state = {}, action ) => {
 			const event = action.event;
 			return Object.assign( {}, {
 				id: event.id,
-				message: event.message,
-				nick: event.user.nick,
-				image: event.user.picture,
+				message: event.text,
+				name: event.user.name,
+				image: event.user.avatarURL,
 				user_id: event.user.id,
-				type: event.type,
+				type: get( event, 'type', 'message' ),
 				links: get( event, 'meta.links' )
 			} );
 	}
@@ -45,6 +47,10 @@ const timeline_event = ( state = {}, action ) => {
  */
 const timeline = ( state = [], action ) => {
 	switch ( action.type ) {
+		case SERIALIZE:
+			return undefined;
+		case DESERIALIZE:
+			return state;
 		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = timeline_event( {}, action );
 			const existing = find( state, ( { id } ) => event.id === id );
@@ -79,6 +85,10 @@ const message = ( state = '', action ) => {
  */
 const status = ( state = 'disconnected', action ) => {
 	switch ( action.type ) {
+		case SERIALIZE:
+			return undefined;
+		case DESERIALIZE:
+			return state;
 		case HAPPYCHAT_CONNECTING:
 			return 'connecting';
 		case HAPPYCHAT_CONNECTED:
