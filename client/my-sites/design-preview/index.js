@@ -198,7 +198,7 @@ export default function designPreview( WebPreview ) {
 			const makeElement = config => config;
 			const findElement = element => Object.assign( {}, element, { target: previewDocument.querySelector( element.selector ) } );
 			const logElement = element => {
-				debug( 'Adding icon to element', element );
+				debug( 'Attempting to add tool icon to element', element );
 				return element;
 			};
 			const removeNotFound = element => !! element.target;
@@ -208,6 +208,9 @@ export default function designPreview( WebPreview ) {
 				element.icon.innerHTML = editIcon;
 				previewDocument.body.appendChild( element.icon );
 				return element;
+			};
+			const maybeAddIcon = element => {
+				return element.icon ? element : addIcon( element );
 			};
 			const getOffset = ( el ) => {
 				el = el.getBoundingClientRect();
@@ -228,7 +231,7 @@ export default function designPreview( WebPreview ) {
 				element.icon.addEventListener( 'click', element.onClick );
 				return element;
 			};
-			const elements = [
+			let elements = [
 				makeElement( {
 					id: 'siteTitle',
 					selector: '.site-title a',
@@ -238,19 +241,16 @@ export default function designPreview( WebPreview ) {
 			const iconStyle = previewDocument.createElement( 'style' );
 			iconStyle.innerHTML = iconCss;
 			previewDocument.head.appendChild( iconStyle );
-			const elementsWithIcons = elements
-				.map( findElement )
-				.map( logElement )
-				.filter( removeNotFound )
-				.map( addIcon )
-				.map( positionIcon )
-				.map( addClickHandler );
 			const repositionIcons = () => {
-				elementsWithIcons
+				elements = elements
 					.map( findElement )
+					.map( logElement )
 					.filter( removeNotFound )
-					.map( positionIcon );
+					.map( maybeAddIcon )
+					.map( positionIcon )
+					.map( addClickHandler );
 			};
+			repositionIcons();
 			setTimeout( repositionIcons, 2000 );
 			previewDocument.addEventListener( 'scroll', repositionIcons, false );
 			previewDocument.addEventListener( 'resize', repositionIcons, false );
