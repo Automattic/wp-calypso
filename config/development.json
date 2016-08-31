@@ -120,7 +120,7 @@
 		"reader/search": true,
 		"reader/start": true,
 		"reader/tags-with-elasticsearch": true,
-		"reader/follow-feed-search": false,
+		"reader/follow-feed-search": true,
 		"resume-editing": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
