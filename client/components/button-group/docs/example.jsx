@@ -29,13 +29,10 @@ var Buttons = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/button-group">Button Group</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>
-						{ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
-					</a>
-				</h2>
+			<div>
+				<a className="design-assets__toggle button" onClick={ this.toggleButtons }>
+					{ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
+				</a>
 				<Card>
 					<div>
 						<ButtonGroup className="example">

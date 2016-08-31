@@ -45,13 +45,10 @@ var SegmentedControlDemo = React.createClass( {
 		var controlDemoStyles = { maxWidth: 386 };
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/segmented-control">Segmented Control</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleCompact }>
+			<div>
+				<a className="design-assets__toggle button" onClick={ this.toggleCompact }>
 						{ this.state.compact ? 'Normal' : 'Compact' }
 					</a>
-				</h2>
 
 				<h3>Items passed as options prop</h3>
 				<SegmentedControl

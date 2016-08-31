@@ -7,11 +7,9 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
+import TooltipComponent from 'components/tooltip';
 
-class TooltipInstance extends PureComponent {
-	static displayName = 'Tooltip';
-
+class Tooltip extends PureComponent {
 	constructor( props ) {
 		super( props );
 
@@ -41,11 +39,7 @@ class TooltipInstance extends PureComponent {
 		const size = 30;
 
 		return (
-			<div className="docs__design-assets-group">
-				<h2>
-					<a href="/devdocs/design/tooltip">Tooltip</a>
-				</h2>
-
+			<div>
 				<label>Position
 					<select
 						value={ this.state.position }
@@ -87,7 +81,7 @@ class TooltipInstance extends PureComponent {
 						T
 					</span>
 
-					<Tooltip
+					<TooltipComponent
 						id="tooltip__example"
 						isVisible={ this.state.show }
 						onClose={ this.close }
@@ -97,11 +91,11 @@ class TooltipInstance extends PureComponent {
 						<div style={ { padding: '10px' } }>
 							Simple Tooltip Instance
 						</div>
-					</Tooltip>
+					</TooltipComponent>
 				</div>
 			</div>
 		);
 	}
 }
 
-export default TooltipInstance;
+export default Tooltip;

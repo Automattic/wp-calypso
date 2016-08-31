@@ -10,17 +10,9 @@ import { get } from 'lodash';
  */
 import PlanThankYouCard from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getSitePosts } from 'state/posts/selectors';
 
 function PlanThankYouCardExample( { primarySiteId } ) {
-	return (
-		<div className="design-assets__group">
-			<h2>
-				<a href="/devdocs/blocks/plan-thank-you-card">Plan Thank You Card</a>
-			</h2>
-			<PlanThankYouCard siteId={ primarySiteId } />
-		</div>
-	);
+	return <PlanThankYouCard siteId={ primarySiteId } />;
 }
 
 const ConnectedPlanThankYouCard = connect( ( state ) => {

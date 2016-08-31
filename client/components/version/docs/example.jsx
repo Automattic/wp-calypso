@@ -17,10 +17,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/version">Version</a>
-				</h2>
+			<div>
 				<Version icon="my-sites" version={ 4.4 } />
 				<Version icon="plugins" version={ 3.8 } />
 			</div>

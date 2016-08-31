@@ -14,10 +14,7 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/upgrade-nudge">Upgrade Nudges</a>
-				</h2>
+			<div>
 				<div>
 					<UpgradeNudge
 						feature="custom-domain"

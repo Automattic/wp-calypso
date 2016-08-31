@@ -45,10 +45,7 @@ const LikeButtons = React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/like-button">Like button</a>
-				</h2>
+			<div>
 				<Card compact>
 					<SimpleLikeButtonContainer tagName="button" likeCount={ 0 } />
 				</Card>

@@ -296,10 +296,7 @@ const Popovers = React.createClass( {
 
 	render() {
 		return (
-			<div className="docs__design-assets-group">
-				<h2>
-					<a href="/devdocs/design/popovers">Popovers</a>
-				</h2>
+			<div>
 				<label>Position
 					<select
 						value={ this.state.popoverPosition }

@@ -17,14 +17,9 @@ export default React.createClass( {
 		const feedId = 40474296;
 		const siteId = null;
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/reader-site-stream-link">Reader Site Stream Link</a>
-				</h2>
-				<Card>
-					<ReaderSiteStreamLink feedId={ feedId } siteId={ siteId }>futonbleu</ReaderSiteStreamLink>
-				</Card>
-			</div>
+			<Card>
+				<ReaderSiteStreamLink feedId={ feedId } siteId={ siteId }>futonbleu</ReaderSiteStreamLink>
+			</Card>
 		);
 	}
 } );

@@ -23,12 +23,7 @@ var Notices = React.createClass( {
 		var toggleNoticesText = this.state.compactNotices ? 'Normal Notices' : 'Compact Notices';
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/notices">Notices</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleNotices }>{ toggleNoticesText }</a>
-				</h2>
-
+			<div>
 				<div>
 					<Notice
 						showDismiss={ false }

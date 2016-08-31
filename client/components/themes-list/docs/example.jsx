@@ -55,17 +55,12 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/themes-list-example">Themes List</a>
-				</h2>
-				<ThemesList
-					themes={ demoThemes }
-					getButtonOptions={ this.getButtonOptions }
-					getActionLabel={ this.getActionLabel }
-					onScreenshotClick={ this.themeScreenshotClick }
-				/>
-			</div>
+			<ThemesList
+				themes={ demoThemes }
+				getButtonOptions={ this.getButtonOptions }
+				getActionLabel={ this.getActionLabel }
+				onScreenshotClick={ this.themeScreenshotClick }
+			/>
 		);
 	}
 } );

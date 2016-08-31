@@ -22,11 +22,8 @@ var Cards = React.createClass( {
 		var toggleCardsText = this.state.compactCards ? 'Normal Cards' : 'Compact Cards';
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/cards">Card</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleCards }>{ toggleCardsText }</a>
-				</h2>
+			<div>
+				<a className="design-assets__toggle button" onClick={ this.toggleCards }>{ toggleCardsText }</a>
 				{ this.renderCards() }
 			</div>
 		);
