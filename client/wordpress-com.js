@@ -67,13 +67,6 @@ sections = [
 		secondary: true
 	},
 	{
-		name: 'chat',
-		paths: [ '/me/chat' ],
-		module: 'me/chat',
-		group: 'me',
-		secondary: true
-	},
-	{
 		name: 'media',
 		paths: [ '/media' ],
 		module: 'my-sites/media',
@@ -378,6 +371,16 @@ if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 		module: 'my-sites/types',
 		secondary: true,
 		group: 'sites'
+	} );
+}
+
+if ( config.isEnabled( 'happychat' ) ) {
+	sections.push( {
+		name: 'chat',
+		paths: [ '/me/chat' ],
+		module: 'me/chat',
+		group: 'me',
+		secondary: true
 	} );
 }
 
