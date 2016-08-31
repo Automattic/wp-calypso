@@ -22,14 +22,8 @@ class Connection extends EventEmitter {
 					.once( 'connect', () => resolve( socket ) )
 					.on( 'init', ( ... args ) => debug( 'initialized', ... args ) )
 					.on( 'identify', () => socket.emit( 'token', token ) )
-					.on( 'token', ( handler ) => handler( { signer_user_id: user_id, jwt: token } ) )
-					.on( 'message', ( { id, text, timestamp, user, meta } ) => {
-						this.emit( 'event', { id, type: 'message', timestamp, message: text, meta, user: {
-							nick: user.displayName,
-							picture: user.avatarURL,
-							id: user.id
-						} } );
-					} );
+					.on( 'token', handler => handler( { signer_user_id: user_id, jwt: token } ) )
+					.on( 'message', message => this.emit( 'message', message ) );
 			} );
 		} else {
 			debug( 'socket already initiaized' );
