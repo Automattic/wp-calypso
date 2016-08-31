@@ -94,7 +94,7 @@ const itemTypeIs = type => ( { item: [ firstItem ] } ) => firstItem.type === typ
  */
 const renderGroupedTimelineItem = first(
 	when( itemTypeIs( 'message' ), renderGroupedMessages ),
-	( { item } ) => debug( 'no handler for message type', item[ 0 ][ 1 ].type, item )
+	( { item: [ firstItem ] } ) => debug( 'no handler for message type', firstItem.type, firstItem.id )
 );
 
 const groupMessages = messages => {
