@@ -8,8 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	isRequestingRecommendations,
-	getRecommendations,
-	getRecommendationFollowCount
+	getRecommendations
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -76,32 +75,6 @@ describe( 'selectors', () => {
 					site_ID: 2
 				}
 			} );
-		} );
-	} );
-
-	describe( '#getRecommendationFollowCount()', () => {
-		it( 'should return zero if nothing has been followed', () => {
-			const count = getRecommendationFollowCount( {
-				reader: {
-					start: {
-						recommendationsFollowed: []
-					}
-				}
-			} );
-
-			expect( count ).to.eq( 0 );
-		} );
-
-		it( 'should return the count if recommendations have been followed', () => {
-			const count = getRecommendationFollowCount( {
-				reader: {
-					start: {
-						recommendationsFollowed: [ 123, 456, 789 ]
-					}
-				}
-			} );
-
-			expect( count ).to.eq( 3 );
 		} );
 	} );
 } );
