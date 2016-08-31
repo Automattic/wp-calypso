@@ -1,0 +1,14 @@
+.editor-categories-tags__upgrade-notice {
+	.notice__icon {
+		display: none;
+	}
+
+	.notice__content {
+		flex-direction: column;
+	}
+
+	.notice__action {
+		margin: 0;
+		justify-content: flex-end;
+	}
+}

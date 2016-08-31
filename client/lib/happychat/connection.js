@@ -22,14 +22,8 @@ class Connection extends EventEmitter {
 					.once( 'connect', () => resolve( socket ) )
 					.on( 'init', ( ... args ) => debug( 'initialized', ... args ) )
 					.on( 'identify', () => socket.emit( 'token', token ) )
-					.on( 'token', ( handler ) => handler( { signer_user_id: user_id, jwt: token } ) )
-					.on( 'message', ( { id, text, timestamp, user, meta } ) => {
-						this.emit( 'event', { id, type: 'message', timestamp, message: text, meta, user: {
-							nick: user.displayName,
-							picture: user.avatarURL,
-							id: user.id
-						} } );
-					} );
+					.on( 'token', handler => handler( { signer_user_id: user_id, jwt: token } ) )
+					.on( 'message', message => this.emit( 'message', message ) );
 			} );
 		} else {
 			debug( 'socket already initiaized' );
@@ -39,17 +33,25 @@ class Connection extends EventEmitter {
 
 	typing( message ) {
 		this.openSocket
-		.then( ( socket ) => socket.emit( 'typing', { message } ) )
-		.catch( debug );
+		.then(
+			socket => socket.emit( 'typing', { message } ),
+			e => debug( 'failed to send typing', e )
+		);
+	}
+
+	notTyping() {
+		this.openSocket
+		.then(
+			socket => socket.emit( 'typing', false ),
+			e => debug( 'failed to send typing', e )
+		);
 	}
 
 	send( message ) {
-		this.openSocket
-		.then( ( socket ) => new Promise( ( resolve ) => {
-			const id = uuid();
-			socket.emit( 'action', { message, type: 'message', id }, resolve );
-			socket.emit( 'message', { text: message, id }, resolve );
-		} ) );
+		this.openSocket.then(
+			socket => socket.emit( 'message', { text: message, id: uuid() } ),
+			e => debug( 'failed to send message', e )
+		);
 	}
 
 }
