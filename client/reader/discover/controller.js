@@ -44,8 +44,7 @@ export default {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				suppressSiteNameLink: true,
-				showBack: false,
-				recommendationId: context.query.recommendationId
+				showBack: false
 			} ),
 			document.getElementById( 'primary' ),
 			context.store

@@ -10,9 +10,7 @@ import classnames from 'classnames';
 import Card from 'components/card';
 import StartPostPreview from './post-preview';
 import StartCardHeader from './card-header';
-import {
-	recordRecommendationInteraction
-} from 'state/reader/start/actions';
+import { recordRecommendationInteraction } from 'state/reader/start/actions';
 import { getRecommendationById } from 'state/reader/start/selectors';
 import { getPostBySiteAndId } from 'state/reader/posts/selectors';
 import { getSite } from 'state/reader/sites/selectors';
@@ -57,8 +55,8 @@ const StartCard = React.createClass( {
 
 		return (
 			<Card className={ cardClasses } onClick={ this.onCardInteraction }>
-				<StartCardHeader site={ site } railcar={ railcar } recommendationId={ this.props.recommendationId } />
-				{ hasPost && <StartPostPreview post={ post } recommendationId={ this.props.recommendationId } /> }
+				<StartCardHeader site={ site } railcar={ railcar } />
+				{ hasPost && <StartPostPreview post={ post } /> }
 			</Card>
 		);
 	}

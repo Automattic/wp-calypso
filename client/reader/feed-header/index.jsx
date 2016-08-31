@@ -81,7 +81,7 @@ var FeedHeader = React.createClass( {
 					{ this.state.siteish ? <Site site={ this.state.siteish } href={ this.state.siteish.URL } indicator={ false } /> : null }
 
 					{ this.props.feed && this.props.feed.state === feedState.COMPLETE ? <div className="feed-header__follow">
-						<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } recommendationId={ this.props.recommendationId } />
+						<ReaderFollowButton siteUrl={ this.props.feed.feed_URL } iconSize={ 24 } />
 					</div> : null }
 				</Card>
 

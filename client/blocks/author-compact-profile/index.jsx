@@ -20,12 +20,11 @@ const AuthorCompactProfile = React.createClass( {
 		siteUrl: React.PropTypes.string,
 		followCount: React.PropTypes.number,
 		feedId: React.PropTypes.number,
-		siteId: React.PropTypes.number,
-		recommendationId: React.PropTypes.number
+		siteId: React.PropTypes.number
 	},
 
 	render() {
-		const { author, siteName, siteUrl, followCount, feedId, siteId, recommendationId } = this.props;
+		const { author, siteName, siteUrl, followCount, feedId, siteId } = this.props;
 
 		if ( ! author ) {
 			return null;
@@ -61,7 +60,7 @@ const AuthorCompactProfile = React.createClass( {
 					) }
 					</div> : null }
 
-					<ReaderFollowButton siteUrl={ siteUrl } recommendationId={ recommendationId } />
+					<ReaderFollowButton siteUrl={ siteUrl } />
 				</div>
 			</div>
 		);

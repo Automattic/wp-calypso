@@ -107,8 +107,7 @@ export class FullPostView extends React.Component {
 							siteUrl= { post.site_URL }
 							followCount={ site && site.subscribers_count }
 							feedId={ post.feed_ID }
-							siteId={ post.site_ID }
-							recommendationId={ this.props.recommendationId } />
+							siteId={ post.site_ID } />
 						{ shouldShowComments( post ) &&
 							<CommentButton key="comment-button"
 								commentCount={ post.discussion.comment_count }
@@ -236,8 +235,7 @@ export class FullPostFluxContainer extends React.Component {
 					onClose={ this.props.onClose }
 					post={ this.state.post }
 					site={ this.state.site && this.state.site.toJS() }
-					feed={ this.state.feed && this.state.feed.toJS() }
-					recommendationId={ this.props.recommendationId } />
+					feed={ this.state.feed && this.state.feed.toJS() } />
 			: null;
 	}
 }

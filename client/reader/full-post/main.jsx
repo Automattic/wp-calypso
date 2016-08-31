@@ -210,7 +210,7 @@ FullPostView = React.createClass( {
 							onClick={ this.handleSiteClick } />
 
 						<div className="full-post__follow">
-							{ feed && feed.feed_URL && <FollowButton siteUrl={ feed && feed.feed_URL } recommendationId={ this.props.recommendationId } /> }
+							{ feed && feed.feed_URL && <FollowButton siteUrl={ feed && feed.feed_URL } /> }
 						</div>
 					</div>
 
@@ -374,8 +374,7 @@ FullPostDialog = React.createClass( {
 					post={ this.props.post }
 					site={ this.props.site }
 					feed={ this.props.feed }
-					shouldShowComments={ shouldShowComments }
-					recommendationId={ this.props.recommendationId } />
+					shouldShowComments={ shouldShowComments } />
 			</Dialog>
 		);
 	}
