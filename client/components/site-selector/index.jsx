@@ -216,7 +216,7 @@ const SiteSelector = React.createClass( {
 			// There is currently no "all sites" version of the insights page
 			allSitesPath = allSitesPath.replace( /^\/stats\/insights\/?$/, '/stats/day' );
 
-			return(
+			return (
 				<AllSites
 					key="selector-all-sites"
 					sites={ this.props.sites.get() }
@@ -296,11 +296,11 @@ const SiteSelector = React.createClass( {
 									components: {
 										br: <br />,
 										a: <a
-												href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
-												className="site-selector__manage-hidden-sites"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
+											href="https://dashboard.wordpress.com/wp-admin/index.php?page=my-blogs&show=hidden"
+											className="site-selector__manage-hidden-sites"
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
 									}
 								}
 							) }
@@ -314,11 +314,12 @@ const SiteSelector = React.createClass( {
 } );
 
 export default connect( ( state ) => {
-	const visibleSiteCount = get( getCurrentUser( state ), 'visible_site_count', 0 );
+	const user = getCurrentUser( state );
+	const visibleSiteCount = get( user, 'visible_site_count', 0 );
 	return {
-		showRecentSites: get( getCurrentUser( state ), 'visible_site_count', 0 ) > 11,
+		showRecentSites: get( user, 'visible_site_count', 0 ) > 11,
 		recentSites: getPreference( state, 'recentSites' ),
-		siteCount: get( getCurrentUser( state ), 'site_count', 0 ),
+		siteCount: get( user, 'site_count', 0 ),
 		visibleSiteCount: visibleSiteCount,
 	};
 } )( SiteSelector );
