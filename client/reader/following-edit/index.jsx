@@ -36,7 +36,7 @@ import SectionHeader from 'components/section-header';
 import Button from 'components/button';
 import ListItem from 'reader/list-item';
 const stats = require( 'reader/stats' );
-
+const wpcom = require( 'lib/wp' );
 const config = require( 'config' );
 
 const initialLoadFeedCount = 20;
