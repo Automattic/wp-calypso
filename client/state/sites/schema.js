@@ -44,7 +44,7 @@ export const sitesSchema = {
 				},
 				plan: {
 					type: 'object',
-					required: [ 'product_id', 'product_slug', 'expired' ],
+					required: [ 'product_id', 'product_slug' ],
 					properties: {
 						product_id: { type: 'number' },
 						product_slug: { type: 'string' },
