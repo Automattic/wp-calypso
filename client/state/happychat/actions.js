@@ -69,7 +69,9 @@ export const connectChat = () => ( dispatch, getState ) => {
 	.then(
 		() => {
 			dispatch( setChatConnected() );
-			connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) );
+			connection.on( 'message', ( event ) => {
+				dispatch( receiveChatEvent( event ) );
+			} );
 		},
 		e => debug( 'failed to start happychat session', e, e.stack )
 	);
