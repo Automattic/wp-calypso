@@ -48,7 +48,7 @@ const timeline_event = ( state = {}, action ) => {
 const timeline = ( state = [], action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
-			return undefined;
+			return [];
 		case DESERIALIZE:
 			return state;
 		case HAPPYCHAT_RECEIVE_EVENT:
@@ -86,7 +86,7 @@ const message = ( state = '', action ) => {
 const status = ( state = 'disconnected', action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
-			return undefined;
+			return 'disconnected';
 		case DESERIALIZE:
 			return state;
 		case HAPPYCHAT_CONNECTING:
