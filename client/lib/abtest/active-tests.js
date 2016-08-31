@@ -73,14 +73,6 @@ module.exports = {
 		defaultVariation: 'pressable',
 		allowExistingUsers: false,
 	},
-	signupThemePreview: {
-		datestamp: '20160727',
-		variations: {
-			showThemePreview: 20,
-			hideThemePreview: 80,
-		},
-		defaultVariation: 'hideThemePreview',
-	},
 	readerSearchSuggestions: {
 		datestamp: '20160804',
 		variations: {
