@@ -209,7 +209,6 @@ export default function designPreview( WebPreview ) {
 				previewDocument.body.appendChild( element.icon );
 				return element;
 			};
-			// http://stackoverflow.com/questions/442404/retrieve-the-position-x-y-of-an-html-element
 			const getOffset = ( el ) => {
 				el = el.getBoundingClientRect();
 				return {
@@ -233,7 +232,7 @@ export default function designPreview( WebPreview ) {
 				makeElement( {
 					id: 'siteTitle',
 					selector: '.site-title a',
-					onClick: () => this.props.setActiveDesignTool( 'siteTitle' )
+					onClick: () => this.props.setLayoutFocus( 'preview-sidebar' ) && this.props.setActiveDesignTool( 'siteTitle' ),
 				} ),
 			];
 			const iconStyle = previewDocument.createElement( 'style' );
@@ -255,7 +254,6 @@ export default function designPreview( WebPreview ) {
 			setTimeout( repositionIcons, 2000 );
 			previewDocument.addEventListener( 'scroll', repositionIcons, false );
 			previewDocument.addEventListener( 'resize', repositionIcons, false );
-			window.repositionIcons = repositionIcons; // FIXME: just for testing
 		}
 
 		onClosePreview() {
