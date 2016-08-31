@@ -244,9 +244,9 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderThemeForumCard( isPrimary = false ) {
-		const description = isPremium( this.props ) ?
-			i18n.translate( 'Get in touch with the theme author' ) :
-			i18n.translate( 'Get help from volunteers and staff' );
+		const description = isPremium( this.props )
+			? i18n.translate( 'Get in touch with the theme author' )
+			: i18n.translate( 'Get help from volunteers and staff' );
 
 		return (
 			<Card className="theme__sheet-card-support">
@@ -282,14 +282,14 @@ const ThemeSheet = React.createClass( {
 					{ this.renderCssSupportCard() }
 				</div>
 			);
-		} else {
-			return (
-				<div>
-					{ this.renderThemeForumCard( true ) }
-					{ this.renderCssSupportCard() }
-				</div>
-			);
 		}
+
+		return (
+			<div>
+				{ this.renderThemeForumCard( true ) }
+				{ this.renderCssSupportCard() }
+			</div>
+		);
 	},
 
 	renderFeaturesCard() {
@@ -348,7 +348,8 @@ const ThemeSheet = React.createClass( {
 					title={ emptyContentTitle }
 					line={ emptyContentMessage }
 					action={ i18n.translate( 'View the showcase' ) }
-					actionURL="/design"/>
+					actionURL="/design"
+				/>
 			</Main>
 		);
 	},
@@ -405,12 +406,12 @@ const ThemeSheet = React.createClass( {
 				image={ this.props.screenshot }>
 				<QueryUserPurchases userId={ this.props.currentUserId } />
 				<Main className="theme__sheet">
-					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
+					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 						{ this.renderBar() }
-						{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
+						{ siteID && <QueryCurrentTheme siteId={ siteID } /> }
 					<ThanksModal
 						site={ this.props.selectedSite }
-						source={ 'details' }/>
+						source={ 'details' } />
 					{ this.state.showPreview && this.renderPreview() }
 					<HeaderCake className="theme__sheet-action-bar"
 								backHref={ this.props.backPath }
