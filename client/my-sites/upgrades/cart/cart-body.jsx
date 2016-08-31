@@ -1,50 +1,56 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var CartItems = require( './cart-items' ),
-	CartCoupon = require( './cart-coupon' ),
-	CartTotal = require( './cart-total' );
+import CartItems from './cart-items';
+import CartCoupon from './cart-coupon';
+import CartTotal from './cart-total';
 
-var CartBody = React.createClass( {
-	propTypes: {
-		collapse: React.PropTypes.bool
-	},
-	getDefaultProps: function() {
-		return {
-			collapse: false,
-			showCoupon: false
-		};
-	},
+class CartBody extends Component {
+	static propTypes = {
+		collapse: PropTypes.bool
+	};
 
-	render: function() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
-			return <div className="cart-body">{ this.translate( 'Loading…', { context: 'Upgrades: Loading cart' } ) }</div>;
-		}
+	static defaultProps = {
+		collapse: false,
+		showCoupon: false
+	};
 
-		return (
-			<div className="cart-body">
-				<CartItems
-					collapse={ this.props.collapse }
-					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite } />
-				<CartTotal cart={ this.props.cart } />
-				{ this.optionalCoupon() }
-			</div>
-		);
-	},
-
-	optionalCoupon: function() {
+	optionalCoupon() {
 		if ( ! this.props.showCoupon ) {
 			return;
 		}
 
 		return <CartCoupon cart={ this.props.cart } />;
 	}
-} );
 
-module.exports = CartBody;
+	render() {
+		const { translate, cart } = this.props;
+
+		if ( ! cart.hasLoadedFromServer ) {
+			return <div className="cart-body">
+				{ translate( 'Loading…', { context: 'Upgrades: Loading cart' } ) }
+			</div>;
+		}
+
+		const { collapse, selectedSite } = this.props;
+
+		return (
+			<div className="cart-body">
+				<CartItems
+					collapse={ collapse }
+					cart={ cart }
+					selectedSite={ selectedSite } />
+				<CartTotal cart={ cart } />
+				{ this.optionalCoupon() }
+			</div>
+		);
+	}
+}
+
+export default localize( CartBody );

@@ -10,3 +10,8 @@
 export function getUser( state, userId ) {
 	return state.users.items[ userId ];
 }
+
+export function isNewUser( state, userId ) {
+	const user = getUser( state, userId );
+	console.log( 'user: %o', user );
+}
