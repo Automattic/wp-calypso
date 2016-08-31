@@ -11,7 +11,8 @@ import Masonry from 'react-masonry-component';
  * Internal dependencies
  */
 import Main from 'components/main';
-import { getRecommendationIds, getRecommendationFollowCount } from 'state/reader/start/selectors';
+import { getRecommendationIds } from 'state/reader/start/selectors';
+import { getFollowCount } from 'state/reader/follows/selectors';
 import QueryReaderStartRecommendations from 'components/data/query-reader-start-recommendations';
 import StartCard from './card';
 import CardPlaceholder from './card-placeholder';
@@ -52,7 +53,7 @@ const Start = React.createClass( {
 	},
 
 	render() {
-		const followCount = this.props.recommendationFollowCount;
+		const followCount = this.props.followCount;
 		const canExit = ( followCount > 0 );
 		const hasRecommendations = this.props.recommendationIds.length > 0;
 		const hasSearchQuery = !! this.props.query;
@@ -126,7 +127,7 @@ export default connect(
 	( state ) => {
 		return {
 			recommendationIds: getRecommendationIds( state ),
-			recommendationFollowCount: getRecommendationFollowCount( state )
+			followCount: getFollowCount( state )
 		};
 	}
 )( localize( Start ) );
