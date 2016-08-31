@@ -20,6 +20,7 @@ const PlanFeaturesActions = ( {
 	freePlan = false,
 	onUpgradeClick = noop,
 	isPlaceholder = false,
+	manageHref = '',
 	isInSignup,
 	translate
 } ) => {
@@ -59,6 +60,9 @@ const PlanFeaturesActions = ( {
 	return (
 		<div className="plan-features__actions">
 			<div className="plan-features__actions-buttons">
+				{ ! isInSignup && current && manageHref.length > 0 &&
+					<Button className="plan-features__actions-button" href={ manageHref }>{ translate( 'Manage Plan' ) }</Button>
+				}
 				{ upgradeButton }
 			</div>
 		</div>
@@ -72,7 +76,8 @@ PlanFeaturesActions.propTypes = {
 	available: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	freePlan: PropTypes.bool,
-	isPlaceholder: PropTypes.bool
+	isPlaceholder: PropTypes.bool,
+	manageHref: PropTypes.string
 };
 
 export default localize( PlanFeaturesActions );
