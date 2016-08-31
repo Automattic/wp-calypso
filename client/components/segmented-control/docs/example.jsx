@@ -46,7 +46,11 @@ var SegmentedControlDemo = React.createClass( {
 
 		return (
 			<div>
+<<<<<<< HEAD
 				<a className="docs__design-toggle button" onClick={ this.toggleCompact }>
+=======
+				<a className="design-assets__toggle button" onClick={ this.toggleCompact }>
+>>>>>>> e5f142f... update Devdocs:components docs examples
 						{ this.state.compact ? 'Normal' : 'Compact' }
 					</a>
 

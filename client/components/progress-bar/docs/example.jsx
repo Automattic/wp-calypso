@@ -30,7 +30,11 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
+<<<<<<< HEAD
 				<a className="docs__design-toggle button" onClick={ this.toggleCompact }>{ toggleText }</a>
+=======
+				<a className="design-assets__toggle button" onClick={ this.toggleCompact }>{ toggleText }</a>
+>>>>>>> e5f142f... update Devdocs:components docs examples
 
 				<ProgressBar value={ 0 } title="0% complete" compact={ this.state.compact } />
 				<ProgressBar value={ 55 } total={ 100 } compact={ this.state.compact } />
