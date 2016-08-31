@@ -28,21 +28,21 @@ export default React.createClass( {
 	},
 
 	handleCheckedChanged( event ) {
-		var updates = {};
+		const updates = {};
 		updates[ event.target.name ] = event.target.checked;
 		this.setState( updates );
 	},
 
 	onSelect( inputName, event ) {
-		var updates = {};
+		const updates = {};
 		event.preventDefault();
 		updates[ inputName ] = ! this.state[ inputName ];
 		this.setState( updates );
 	},
 
 	getCheckedCount() {
-		var inputName;
-		var checkedCount = 0;
+		let checkedCount = 0;
+		let inputName;
 		for ( inputName in this.state ) {
 			if ( this.state[ inputName ] ) {
 				checkedCount++;
@@ -52,12 +52,13 @@ export default React.createClass( {
 	},
 
 	onAddableSubmit( event ) {
-		var links = [];
-		var inputName, siteID, site;
+		let links = [];
+		let siteID, site, inputName;
+
 		event.preventDefault();
 
 		for ( inputName in this.state ) {
-			if ( 'site-' === inputName.substr( 0, 5 ) && this.state[inputName] ) {
+			if ( 'site-' === inputName.substr( 0, 5 ) && this.state[ inputName ] ) {
 				siteID = parseInt( inputName.substr( 5 ), 10 ); // strip leading "site-" from inputName to get siteID
 				site = sites.getSite( siteID );
 				links.push( {
@@ -134,17 +135,19 @@ export default React.createClass( {
 	renderAddableSites() {
 		return (
 			sites.getPublic().map( ( site ) => {
-				let inputName, checkedState;
+				const inputName = 'site-' + site.ID;
+				const checkedState = this.state[ inputName ];
 
 				if ( this.props.userProfileLinks.isSiteInProfileLinks( site ) ) {
 					return null;
 				}
 
-				inputName = 'site-' + site.ID;
-				checkedState = this.state[ inputName ];
-
 				return (
-					<li key={ site.ID } className="profile-links-add-wordpress__item" onClick={ this.recordCheckboxEvent( 'Add WordPress Site' ) }>
+					<li
+						key={ site.ID }
+						className="profile-links-add-wordpress__item"
+						onClick={ this.recordCheckboxEvent( 'Add WordPress Site' ) }
+					>
 						<input
 							className="profile-links-add-wordpress__checkbox"
 							type="checkbox"
@@ -205,7 +208,7 @@ export default React.createClass( {
 													href="#"
 													className="profile-links-add-wordpress__jetpack-link"
 													onClick={ this.recordClickEvent( 'Jetpack Link in Profile Links', this.onJetpackMe ) }
-												 />
+												/>
 								}
 							}
 						)
