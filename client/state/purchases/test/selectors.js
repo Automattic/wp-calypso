@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 // Internal dependencies
-import { getPurchases, getByPurchaseId, isFetchingUserPurchases, isFetchingSitePurchases, getIncludedDomainPurchase, getSitePurchases, isUserPaid, getUserPurchases } from '../selectors';
+import { getPurchases, getByPurchaseId, isFetchingUserPurchases, isFetchingSitePurchases, getIncludedDomainPurchase, getSitePurchases, isUserPaid } from '../selectors';
 import purchasesAssembler from 'lib/purchases/assembler';
 
 describe( 'selectors', () => {
