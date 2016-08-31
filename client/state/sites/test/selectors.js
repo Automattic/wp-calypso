@@ -19,6 +19,7 @@ import {
 	getSiteSlug,
 	getSiteDomain,
 	getSiteTitle,
+	getSiteThemeShowcasePath,
 	isSitePreviewable,
 	isRequestingSites,
 	isRequestingSite,
@@ -966,6 +967,84 @@ describe( 'selectors', () => {
 			}, 77203074, 1003 );
 
 			expect( isPaid ).to.equal( null );
+		} );
+	} );
+
+	describe( 'getSiteThemeShowcasePath()', () => {
+		it( 'it should return null if site is not tracked', () => {
+			const showcasePath = getSiteThemeShowcasePath( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( showcasePath ).to.be.null;
+		} );
+
+		it( 'it should return null if site is jetpack', () => {
+			const showcasePath = getSiteThemeShowcasePath( {
+				sites: {
+					items: {
+						77203074: { ID: 77203074, URL: 'https://example.net', jetpack: true }
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( showcasePath ).to.be.null;
+		} );
+
+		it( 'it should return null if theme_slug is not pub or premium', () => {
+			const showcasePath = getSiteThemeShowcasePath( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://example.net',
+							options: {
+								theme_slug: 'a8c/ribs'
+							}
+						}
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( showcasePath ).to.be.null;
+		} );
+
+		it( 'it should return the theme showcase path on non-premium themes', () => {
+			const showcasePath = getSiteThemeShowcasePath( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							options: {
+								theme_slug: 'pub/motif'
+							}
+						}
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( showcasePath ).to.eql( '/theme/motif/testonesite2014.wordpress.com' );
+		} );
+
+		it( 'it should return the theme setup path on premium themes', () => {
+			const showcasePath = getSiteThemeShowcasePath( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							options: {
+								theme_slug: 'premium/journalistic'
+							}
+						}
+					}
+				}
+			}, 77203074, 1003 );
+
+			expect( showcasePath ).to.eql( '/theme/journalistic/setup/testonesite2014.wordpress.com' );
 		} );
 	} );
 } );
