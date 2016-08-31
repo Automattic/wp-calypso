@@ -32,6 +32,7 @@ export default class Button extends PureComponent {
 			omitProps.push( 'type' );
 		} else {
 			tag = 'button';
+			omitProps.push( 'target', 'rel' );
 		}
 
 		return createElement( tag, {
