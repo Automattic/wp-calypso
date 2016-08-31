@@ -313,22 +313,22 @@ describe( 'actions', () => {
 		const siteId = '123456';
 		const ssoNonce = '123456789';
 		const blogDetails = {
-			domain: 'website.com',
+			domain: 'example.wordpress.com',
 			title: 'My BBQ Site',
 			icon: {
 				img: '',
 				ico: '',
 			},
-			URL: 'https://website.com',
+			URL: 'https://example.wordpress.com',
 			is_vip: false,
-			admin_url: 'https://website.com/wp-admin'
+			admin_url: 'https://example.wordpress.com/wp-admin'
 		};
 
 		const sharedDetails = {
 			ID: 0,
 			login: 'bbquser',
-			email: 'ieatbbq@website.com',
-			url: 'https://website.com',
+			email: 'ieatbbq@example.wordpress.com',
+			url: 'https://example.wordpress.com',
 			first_name: 'Lou',
 			last_name: 'Bucket',
 			display_name: 'bestbbqtester',
@@ -420,7 +420,7 @@ describe( 'actions', () => {
 	describe( '#authorizeSSO()', () => {
 		const siteId = '123456';
 		const ssoNonce = '123456789';
-		const ssoUrl = 'http://website.com';
+		const ssoUrl = 'http://example.wordpress.com';
 
 		describe( 'success', () => {
 			before( () => {
