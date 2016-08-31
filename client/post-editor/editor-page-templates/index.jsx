@@ -19,6 +19,7 @@ import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPageTemplates } from 'state/page-templates/selectors';
 import { editPost } from 'state/posts/actions';
+import EditorThemeHelp from 'post-editor/editor-theme-help';
 
 class EditorPageTemplates extends Component {
 	static propTypes = {
@@ -77,6 +78,7 @@ class EditorPageTemplates extends Component {
 				{ size( templates ) > 1 && (
 					<AccordionSection>
 						<EditorDrawerLabel labelText={ translate( 'Page Template' ) }>
+							<EditorThemeHelp className="editor-page-templates__help-link" />
 							<SelectDropdown selectedText={ this.getSelectedTemplateText() }>
 								{ map( templates, ( { file, label } ) => (
 									/* eslint-disable react/jsx-no-bind */
