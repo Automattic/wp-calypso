@@ -10,9 +10,7 @@ import analytics from 'lib/analytics';
 import SignupActions from 'lib/signup/actions';
 import SignupThemesList from './signup-themes-list';
 import StepWrapper from 'signup/step-wrapper';
-import ThemePreview from 'my-sites/themes/theme-preview';
 import Button from 'components/button';
-import { abtest } from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'ThemeSelection',
@@ -22,13 +20,6 @@ module.exports = React.createClass( {
 		stepName: React.PropTypes.string.isRequired,
 		goToNextStep: React.PropTypes.func.isRequired,
 		signupDependencies: React.PropTypes.object.isRequired,
-	},
-
-	getInitialState() {
-		return {
-			previewTheme: {},
-			isPreviewVisible: false,
-		};
 	},
 
 	getDefaultProps() {
@@ -56,30 +47,8 @@ module.exports = React.createClass( {
 		this.props.goToNextStep();
 	},
 
-	showPreview( theme ) {
-		this.setState( {
-			previewTheme: theme,
-			isPreviewVisible: true,
-		} );
-	},
-
-	handleThemePreviewButtonClick() {
-		this.pickTheme( this.state.previewTheme );
-	},
-
-	handleThemePreviewCloseClick() {
-		this.setState( {
-			previewTheme: {},
-			isPreviewVisible: false,
-		} );
-	},
-
 	handleScreenshotClick( theme ) {
-		if ( abtest( 'signupThemePreview' ) === 'showThemePreview' ) {
-			this.showPreview( theme );
-		} else {
-			this.pickTheme( theme );
-		}
+		this.pickTheme( theme );
 	},
 
 	renderThemesList() {
@@ -96,28 +65,6 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderThemePreview() {
-		return (
-			<ThemePreview
-				showPreview={ this.state.isPreviewVisible }
-				showExternal={ false }
-				theme={ this.state.previewTheme }
-				primaryButtonLabel={ this.translate( 'Pick this Theme' ) }
-				onClose={ this.handleThemePreviewCloseClick }
-				onPrimaryButtonClick={ this.handleThemePreviewButtonClick }>
-			</ThemePreview>
-		);
-	},
-
-	renderStepContent() {
-		return (
-			<div>
-				{ this.renderThemesList() }
-				{ this.renderThemePreview() }
-			</div>
-		);
-	},
-
 	render() {
 		const defaultDependencies = this.props.useHeadstart ? { theme: 'pub/twentysixteen' } : undefined;
 		return (
@@ -125,7 +72,7 @@ module.exports = React.createClass( {
 				fallbackHeaderText={ this.translate( 'Choose a theme.' ) }
 				fallbackSubHeaderText={ this.translate( 'No need to overthink it. You can always switch to a different theme later.' ) }
 				subHeaderText={ this.translate( 'Choose a theme. You can always switch to a different theme later.' ) }
-				stepContent={ this.renderStepContent() }
+				stepContent={ this.renderThemesList() }
 				defaultDependencies={ defaultDependencies }
 				headerButton={ this.renderJetpackButton() }
 				{ ...this.props } />
