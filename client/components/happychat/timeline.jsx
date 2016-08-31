@@ -68,7 +68,7 @@ const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 	const [ event, ... rest ] = item;
 	const userAvatar = messageAvatar( event );
 	return (
-		<div className={ classnames( 'happychat__timeline-message', { 'user-message': isCurrentUser } ) } key={ event.id || index }>
+		<div className={ classnames( 'happychat__timeline-message', { 'is-user-message': isCurrentUser } ) } key={ event.id || index }>
 			<div className="happychat__message-text">
 				{ messageText( {
 					message: event.message,
