@@ -82,6 +82,7 @@ export function requestRecommendations( originSiteId, originPostId, limit ) {
 		}
 
 		const query = {
+			apiVersion: '1.3',
 			meta: 'site,post',
 			origin_site_ID: originSiteId,
 			origin_post_ID: originPostId,

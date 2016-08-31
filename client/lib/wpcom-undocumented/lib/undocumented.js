@@ -1172,7 +1172,7 @@ Undocumented.prototype.fetchSiteRecommendations = function( query, fn ) {
 };
 
 Undocumented.prototype.readRecommendationsStart = function( query, fn ) {
-	return this.wpcom.req.get( '/read/recommendations/start', query, fn );
+	return this.wpcom.req.get( '/read/recommendations/posts', query, fn );
 };
 
 Undocumented.prototype.graduateNewReader = function( fn ) {
