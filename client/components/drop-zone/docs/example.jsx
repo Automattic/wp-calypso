@@ -62,13 +62,6 @@ export default React.createClass( {
 	},
 
 	render() {
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/dropzones">DropZone</a>
-				</h2>
-				{ this.renderContainer() }
-			</div>
-		);
+		return this.renderContainer();
 	}
 } );

@@ -41,10 +41,7 @@ export default React.createClass( {
 		const primarySite = sites.initialized && sites.getPrimary();
 		const siteId = primarySite ? primarySite.ID : 0;
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/plan-storage">Plan Storage</a>
-				</h2>
+			<div>
 				<div style={ { marginBottom: 16 } }>
 					<PlanStorage siteId={ siteId } />
 				</div>

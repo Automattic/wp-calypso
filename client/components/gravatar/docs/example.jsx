@@ -12,12 +12,7 @@ import { getCurrentUser } from 'state/current-user/selectors';
 
 function GravatarExample( { currentUser } ) {
 	return (
-		<div className="design-assets__group">
-			<h2>
-				<a href="/devdocs/design/gravatar">Gravatar</a>
-			</h2>
-			<Gravatar user={ currentUser } size={ 96 } />
-		</div>
+		<Gravatar user={ currentUser } size={ 96 } />
 	);
 }
 

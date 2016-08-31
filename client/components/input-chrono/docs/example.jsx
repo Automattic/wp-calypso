@@ -44,18 +44,11 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/input-chrono">InputChrono</a>
-				</h2>
-
-				<Card style={ { width: '300px', margin: 0 } }>
-					<InputChrono
-						value={ this.state.date.calendar() }
-						onSet={ this.onSet }/>
-				</Card>
-
-			</div>
+			<Card style={ { width: '300px', margin: 0 } }>
+				<InputChrono
+					value={ this.state.date.calendar() }
+					onSet={ this.onSet }/>
+			</Card>
 		);
 	}
 } );

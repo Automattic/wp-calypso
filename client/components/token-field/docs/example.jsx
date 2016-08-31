@@ -36,11 +36,7 @@ var TokenFields = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/token-fields">Token Field</a>
-				</h2>
-
+			<div>
 				<p>
 					The <code>TokenField</code> is a field similar to the tags and categories
 					fields in the interim editor chrome, or the "to" field in Mail on OS X.

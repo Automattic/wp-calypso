@@ -21,10 +21,7 @@ module.exports = React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/headers">Header Cake</a>
-				</h2>
+			<div>
 				<HeaderCake onClick={ noop }>
 					Subsection Header aka Header Cake
 				</HeaderCake>

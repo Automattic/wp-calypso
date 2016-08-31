@@ -84,16 +84,10 @@ const SearchCards = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/post-card">Search Cards</a>
-				</h2>
-
-				<div>
-					{ searchItems.map( item => <SearchPostCard key={ item.post.site_ID } post={ item.post } site={ item.site } /> ) }
-					<h4>With primary follow button</h4>
-					{ searchItems.map( item => <SearchPostCard key={ item.post.site_ID } post={ item.post } site={ item.site } showPrimaryFollowButton={ true } /> ) }
-				</div>
+			<div>
+				{ searchItems.map( item => <SearchPostCard key={ item.post.site_ID } post={ item.post } site={ item.site } /> ) }
+				<h4>With primary follow button</h4>
+				{ searchItems.map( item => <SearchPostCard key={ item.post.site_ID } post={ item.post } site={ item.site } showPrimaryFollowButton={ true } /> ) }
 			</div>
 		);
 	}
