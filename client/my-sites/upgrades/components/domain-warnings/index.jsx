@@ -24,8 +24,8 @@ import { hasPendingGoogleAppsUsers } from 'lib/domains';
 const domainTypes = domainConstants.type;
 const debug = _debug( 'calypso:domain-warnings' );
 
-const allAboutDomainsLink = <a href={ support.ALL_ABOUT_DOMAINS } target="_blank"/>,
-	domainsLink = <a href={ support.DOMAINS } target="_blank" />,
+const allAboutDomainsLink = <a href={ support.ALL_ABOUT_DOMAINS } target="_blank" rel="noopener noreferrer" />,
+	domainsLink = <a href={ support.DOMAINS } target="_blank" rel="noopener noreferrer" />,
 	pNode = <p />;
 
 export default React.createClass( {
@@ -85,7 +85,8 @@ export default React.createClass( {
 				this.expiredDomainsCannotManage,
 				this.expiringDomainsCannotManage,
 				this.wrongNSMappedDomains,
-				this.newDomains
+				this.newDomains,
+				this.pendingTransfer
 			],
 			validRules = this.props.ruleWhiteList.map( ruleName => this[ ruleName ] );
 
@@ -158,15 +159,16 @@ export default React.createClass( {
 			noticeProps.text = this.translate( 'DNS configuration required' );
 			children = <NoticeAction href={ paths.domainManagementList( this.props.selectedSite.slug ) }>{ this.translate( 'Fix' ) }</NoticeAction>;
 		} else {
-			children = <span>{ text } <a href={ learnMoreUrl } target="_blank">{ this.translate( 'Learn more' ) }</a>{ offendingList }</span>;
+			children = <span>{ text } <a href={ learnMoreUrl } target="_blank" rel="noopener noreferrer">{ this.translate( 'Learn more' ) }</a>{ offendingList }</span>;
 		}
 		return <Notice { ...noticeProps }>{ children }</Notice>;
 	},
 
 	expiredDomainsCanManage() {
 		debug( 'Rendering expiredDomainsCanManage' );
-		let text, renewLink;
-		const expiredDomains = this.getDomains().filter( domain => domain.expired && domain.type === domainTypes.REGISTERED && domain.currentUserCanManage );
+		let text;
+		const expiredDomains = this.getDomains().filter( domain => domain.expired && domain.type === domainTypes.REGISTERED && domain.currentUserCanManage ),
+			renewLink = this.renewLink( expiredDomains.length );
 
 		if ( expiredDomains.length === 0 ) {
 			return null;
@@ -184,7 +186,6 @@ export default React.createClass( {
 				context: 'Expired domain notice'
 			} );
 		}
-		renewLink = this.renewLink( expiredDomains.length );
 
 		return (
 			<Notice
@@ -233,8 +234,9 @@ export default React.createClass( {
 	},
 
 	expiringDomainsCanManage() {
-		let text, renewLink;
-		const expiringDomains = this.getDomains().filter( domain => domain.expirySoon && domain.type === domainTypes.REGISTERED && domain.currentUserCanManage );
+		let text;
+		const expiringDomains = this.getDomains().filter( domain => domain.expirySoon && domain.type === domainTypes.REGISTERED && domain.currentUserCanManage ),
+			renewLink = this.renewLink( expiringDomains.length );
 
 		if ( expiringDomains.length === 0 ) {
 			return null;
@@ -255,7 +257,6 @@ export default React.createClass( {
 				context: 'Expiring domain notice'
 			} );
 		}
-		renewLink = this.renewLink( expiringDomains.length );
 
 		return (
 			<Notice
@@ -345,7 +346,7 @@ export default React.createClass( {
 						components: {
 							domainsLink,
 							pNode,
-							tryNowLink: <a href={ `http://${domain.name}` } target="_blank"/>,
+							tryNowLink: <a href={ `http://${ domain.name }` } target="_blank" rel="noopener noreferrer" />,
 							strong: <strong />
 						}
 					}
@@ -358,7 +359,7 @@ export default React.createClass( {
 						args: { domainName: domain.name },
 						components: {
 							allAboutDomainsLink,
-							tryNowLink: <a href={ `http://${domain.name}` } target="_blank"/>,
+							tryNowLink: <a href={ `http://${ domain.name }` } target="_blank" rel="noopener noreferrer" />,
 							strong: <strong />
 						}
 					}
@@ -517,6 +518,40 @@ export default React.createClass( {
 				siteSlug={ this.props.selectedSite && this.props.selectedSite.slug }
 				domains={ pendingDomains }
 				section="domain-management" />;
+	},
+
+	pendingTransfer() {
+		const domains = this.getDomains().filter( domain => domain.pendingTransfer );
+
+		if ( domains.length !== 1 ) {
+			return null;
+		}
+
+		const domain = domains[ 0 ];
+
+		const compactNotice = this.translate( '{{strong}}%(domain)s{{/strong}} is pending transfer.', {
+				components: { strong: <strong /> },
+				args: { domain: domain.name }
+			} ),
+			fullNotice = this.translate(
+				'{{strong}}%(domain)s{{/strong}} is pending transfer. ' +
+				'You must wait for the transfer to finish, and then update the settings at the new registrar.',
+				{
+					components: { strong: <strong /> },
+					args: { domain: domain.name }
+				} );
+
+		return (
+			<Notice
+				isCompact={ this.props.isCompact }
+				status="is-warning"
+				showDismiss={ false }
+				className="domain-warnings__notice"
+				key="unverified-domains"
+				text={ this.props.isCompact && compactNotice }>
+				{ ! this.props.isCompact && fullNotice }
+			</Notice>
+		);
 	},
 
 	componentWillMount: function() {
