@@ -172,7 +172,12 @@ const CreditCardForm = React.createClass( {
 						this.setState( { formSubmitting: false } );
 					}
 
-					notices.error( message );
+					if ( typeof message === 'object' ) {
+						notices.error( <ValidationErrorList messages={ message } /> );
+					} else {
+						notices.error( message )
+					}
+
 				} );
 			} else {
 				const apiParams = this.getParamsForApi( cardDetails, paygateToken, this.props.apiParams );
