@@ -94,13 +94,6 @@ const communityTranslatorJumpstart = {
 			'data-singular': originalFromPage
 		};
 
-		if ( 'string' === typeof originalFromPage ) {
-			props[ 'data-singular' ] = originalFromPage;
-		} else {
-			debug( 'unknown original format' );
-			return displayedTranslationFromPage;
-		}
-
 		// Has Context
 		if ( 'string' === typeof optionsFromPage.context ) {
 			props[ 'data-context' ] = optionsFromPage.context;
