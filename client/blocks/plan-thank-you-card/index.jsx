@@ -12,6 +12,8 @@ import { getSelectedSite } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
+import { getPlanBySlug, getPlans } from 'state/plans/selectors';
+import { requestPlans } from 'state/plans/actions';
 
 class PlanThankYouCard extends Component {
 	static propTypes = {
@@ -21,6 +23,10 @@ class PlanThankYouCard extends Component {
 	componentDidMount() {
 		if ( ! this.props.plan ) {
 			this.props.fetchSitePlans( this.props.selectedSite );
+		}
+
+		if ( ! this.props.plansFetched ) {
+			this.props.requestPlans();
 		}
 	}
 
@@ -32,10 +38,17 @@ class PlanThankYouCard extends Component {
 				<div className="plan-thank-you-card__header">
 					<Gridicon className="plan-thank-you-card__main-icon" icon="checkmark-circle" size={ 140 } />
 					<div className="plan-thank-you-card__plan-name">
-						{ this.props.translate( '%(planName)s Plan', {
-							args: { planName: this.props.selectedSite.plan.product_name_short }
-						} ) }
+
 					</div>
+					{ ( ! this.props.planDetails ) ? (
+						<div className="plan-thank-you-card__plan-name is-placeholder"></div>
+					) : (
+						<div className="plan-thank-you-card__plan-name">
+							{ this.props.translate( '%(planName)s Plan', {
+								args: { planName: this.props.planDetails.product_name_short }
+							} ) }
+						</div>
+					) }
 					{ ( ! this.props.plan ) ? (
 						<div className="plan-thank-you-card__plan-price is-placeholder"></div>
 					) : (
@@ -83,9 +96,18 @@ export default connect(
 			selectedSite = ownProps.selectedSite;
 		}
 
+		const plan = getCurrentPlan( state, selectedSite.ID );
+
+		let planDetails = null;
+		if ( plan ) {
+			planDetails = getPlanBySlug( state, plan.productSlug );
+		}
+
 		return {
 			selectedSite,
-			plan: getCurrentPlan( state, selectedSite.ID )
+			plan,
+			planDetails,
+			plansFetched: getPlans( state ).length !== 0
 		};
 	},
 	( dispatch ) => {
@@ -93,6 +115,9 @@ export default connect(
 			fetchSitePlans( site ) {
 				dispatch( fetchSitePlans( site.ID ) );
 			},
+			requestPlans() {
+				dispatch( requestPlans() );
+			}
 		};
 	}
 )( localize( PlanThankYouCard ) );

@@ -55,7 +55,7 @@
 	border-style: solid;
 	border-color: darken( $alert-green, 20 );
 	border-width: 1px 1px 2px;
-	
+
 	//box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3),
 	//			0 2px 0 0 rgba(0, 0, 0, 0.3);
 
@@ -75,7 +75,7 @@
 
 .plan-thank-you-card__button:focus {
 	color: darken( $alert-green, 10 );
-	outline: 1px dotted $white;	
+	outline: 1px dotted $white;
 }
 
 .plan-thank-you-card__button:active {
@@ -88,6 +88,16 @@
 .plan-thank-you-card__plan-name {
 	font-size: 18px;
 	font-weight: 500;
+	margin-bottom: 10px;
+
+	&.is-placeholder {
+		@include placeholder();
+
+		background-color: #DAF0E0;
+		margin-left: auto;
+		margin-right: auto;
+		width: 35%;
+	}
 }
 
 .plan-thank-you-card__plan-price {
