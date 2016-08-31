@@ -347,14 +347,14 @@ export const getSeoTitle = ( state, type, { site, post = {} } ) => {
 			return buildTitle( 'frontPage', {
 				siteName: site.name,
 				tagline: site.description
-			} );
+			} ) || site.name;
 
 		case 'posts':
 			return buildTitle( 'posts', {
 				siteName: site.name,
 				tagline: site.description,
 				postTitle: post.title
-			} );
+			} ) || post.title;
 
 		default:
 			return post.title || site.name;

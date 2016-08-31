@@ -123,7 +123,7 @@ const GoogleSite = site => (
 
 const GooglePost = ( site, post ) => (
 	<SearchPreview
-		title={ post.title }
+		title={ post.seoTitle }
 		url={ post.URL }
 		snippet={ getSeoExcerptForPost( post ) }
 	/>
@@ -141,7 +141,7 @@ const FacebookSite = site => (
 
 const FacebookPost = ( site, post ) => (
 	<FacebookPreview
-		title={ post.title }
+		title={ post.seoTitle }
 		url={ post.URL }
 		type="article"
 		description={ getSeoExcerptForPost( post ) }
@@ -162,7 +162,7 @@ const TwitterSite = site => (
 
 const TwitterPost = ( site, post ) => (
 	<TwitterPreview
-		title={ post.title }
+		title={ post.seoTitle }
 		url={ post.URL }
 		type="large_image_summary"
 		description={ getSeoExcerptForPost( post ) }
@@ -261,7 +261,7 @@ const mapStateToProps = state => {
 		},
 		post: isEditorShowing && {
 			...post,
-			title: getSeoTitle( state, 'posts', { site, post } )
+			seoTitle: getSeoTitle( state, 'posts', { site, post } )
 		},
 		showNudge: site && site.plan && ! hasBusinessPlan( site.plan )
 	};
