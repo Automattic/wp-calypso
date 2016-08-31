@@ -33,17 +33,17 @@ class Connection extends EventEmitter {
 
 	typing( message ) {
 		this.openSocket
-		.then( ( socket ) => socket.emit( 'typing', { message } ) )
-		.catch( debug );
+		.then(
+			socket => socket.emit( 'typing', { message } ),
+			e => debug( 'failed to send typing', e )
+		);
 	}
 
 	send( message ) {
-		this.openSocket
-		.then( ( socket ) => new Promise( ( resolve ) => {
-			const id = uuid();
-			socket.emit( 'action', { message, type: 'message', id }, resolve );
-			socket.emit( 'message', { text: message, id }, resolve );
-		} ) );
+		this.openSocket.then(
+			socket => socket.emit( 'message', { text: message, id: uuid() } ),
+			e => debug( 'failed to send message', e )
+		);
 	}
 
 }
