@@ -234,7 +234,7 @@
 		border-left: 6px solid transparent;
 	}
 
-	.user-message & {
+	.is-user-message & {
 		background: $white;
 		color: $gray-dark;
 		border-radius: 8px 8px 0 8px;
@@ -258,7 +258,7 @@
 	align-self: flex-end;
 	margin: 0 8px 0 0;
 
-	.user-message & {
+	.is-user-message & {
 		align-self: flex-end;
 		margin: 0 0 0 8px;
 	}
@@ -284,7 +284,7 @@
 	padding: 0 8px;
 	margin: 6px 0;
 
-	&.user-message {
+	&.is-user-message {
 		flex-direction: row;
 		margin-left: auto;
 	}

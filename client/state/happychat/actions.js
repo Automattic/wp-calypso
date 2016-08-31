@@ -43,7 +43,12 @@ const connection = buildConnection();
 
 const setChatConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
 const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
-const setChatMessage = message => ( { type: HAPPYCHAT_SET_MESSAGE, message } );
+const setChatMessage = message => {
+	if ( isEmpty( message ) ) {
+		connection.notTyping();
+	}
+	return { type: HAPPYCHAT_SET_MESSAGE, message };
+};
 
 const clearChatMessage = () => setChatMessage( '' );
 
@@ -69,7 +74,9 @@ export const connectChat = () => ( dispatch, getState ) => {
 	.then(
 		() => {
 			dispatch( setChatConnected() );
-			connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) );
+			connection.on( 'message', ( event ) => {
+				dispatch( receiveChatEvent( event ) );
+			} );
 		},
 		e => debug( 'failed to start happychat session', e, e.stack )
 	);

@@ -28,7 +28,8 @@ describe( 'reducer', () => {
 			'reader',
 			'olark',
 			'preview',
-			'actionLog'
+			'actionLog',
+			'happychat'
 		] );
 	} );
 

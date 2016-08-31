@@ -58,7 +58,7 @@ const messageWithLinks = ( { message, key, links } ) => {
  * Otherwise just return a single paragraph with the text.
  */
 const messageText = when( linksNotEmpty, messageWithLinks, messageParagraph );
-const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt={ meta.nick } src={ meta.image } /> );
+const messageAvatar = when( propExists( 'image' ), ( { image, name } ) => <img alt={ name } src={ image } /> );
 
 /*
  * Group messages based on user so when any user sends multiple messages they will be grouped
@@ -66,13 +66,13 @@ const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt
  */
 const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 	const [ event, ... rest ] = item;
-	const userAvatar = messageAvatar( { meta: event } );
+	const userAvatar = messageAvatar( event );
 	return (
-		<div className={ classnames( 'happychat__timeline-message', { 'user-message': isCurrentUser } ) } key={ event.id || index }>
+		<div className={ classnames( 'happychat__timeline-message', { 'is-user-message': isCurrentUser } ) } key={ event.id || index }>
 			<div className="happychat__message-text">
 				{ messageText( {
 					message: event.message,
-					nick: event.nick,
+					name: event.name,
 					key: event.id,
 					links: event.links
 				} ) }
@@ -94,7 +94,7 @@ const itemTypeIs = type => ( { item: [ firstItem ] } ) => firstItem.type === typ
  */
 const renderGroupedTimelineItem = first(
 	when( itemTypeIs( 'message' ), renderGroupedMessages ),
-	( { item } ) => debug( 'no handler for message type', item[ 0 ][ 1 ].type, item )
+	( { item: [ firstItem ] } ) => debug( 'no handler for message type', firstItem.type, firstItem )
 );
 
 const groupMessages = messages => {
