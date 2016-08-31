@@ -17,10 +17,10 @@ The included reducers add the following keys to the global state tree, under `ui
 
 ###`open`
 
-Wether the happychat docked client is displayed
+Whether the happychat docked client is displayed
 
 ## Selectors
 
-###`isHappychatOpen( state: Object)`
+###`isHappychatOpen( state: Object )`
 
 Wether or not the happychat docked UI should be displayed.
