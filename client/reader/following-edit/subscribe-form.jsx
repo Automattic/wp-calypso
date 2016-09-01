@@ -170,7 +170,7 @@ var FollowingEditSubscribeForm = React.createClass( {
 				console.log( this.state.newFeeds );
 				searchResult = this.state.newFeeds.map( function( item ) {
 				 		return ( <div className="subscription-list-item__header-content"
-											key={ 'subscription-list-feed-item-' + item.feed_ID }>
+											key={ 'subscription-list-feed-item-' + item.URL }>
 											<ListItem className='is-search-result'>
 												{ item.title + ' ' + item.URL }
 										 	</ListItem>
