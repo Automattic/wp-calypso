@@ -89,6 +89,27 @@ export function getPlanDiscountedRawPrice( state, siteId, productSlug, isMonthly
 	return isMonthly ? parseFloat( ( discountPrice / 12 ).toFixed( 2 ) ) : discountPrice;
 }
 
+/**
+ * Returns a plan raw discount. It's the value which was subtracted from the plan's original raw price.
+ * Use getPlanDiscountedRawPrice if you need a plan's raw price after applying the discount.
+ * @param  {Object}  state         global state
+ * @param  {Number}  siteId       the site id
+ * @param  {String}  productSlug   the plan product slug
+ * @param  {Boolean} isMonthly     if true, returns monthly price
+ * @return {Number}  plan raw discount
+ */
+export function getPlanRawDiscount( state, siteId, productSlug, isMonthly = false ) {
+	const plan = getSitePlan( state, siteId, productSlug );
+
+	if ( get( plan, 'rawDiscount', -1 ) <= 0 ) {
+		return null;
+	}
+
+	return isMonthly
+		? parseFloat( ( plan.rawDiscount / 12 ).toFixed( 2 ) )
+		: plan.rawDiscount;
+}
+
 export function hasDomainCredit( state, siteId ) {
 	if ( ! siteId ) {
 		return initialSiteState;
