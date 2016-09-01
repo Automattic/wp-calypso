@@ -161,7 +161,7 @@ FullPostView = React.createClass( {
 			hasFeaturedImage = post &&
 				post.canonical_image &&
 				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ),
-			articleClasses = [ 'reader__full-post' ],
+			articleClasses = [ 'reader__full-post', 'is-group-reader' ],
 			shouldShowExcerptOnly = ( post && post.use_excerpt ? post.use_excerpt : false ),
 			siteName = utils.siteNameFromSiteAndPost( site, post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
