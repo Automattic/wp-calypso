@@ -220,14 +220,6 @@ export default {
 		};
 	},
 
-	toggleAutoUpdates: function( site, plugin ) {
-		if ( ! plugin.autoupdate ) {
-			this.enableAutoupdate( site, plugin );
-		} else {
-			this.disableAutoupdate( site, plugin );
-		}
-	},
-
 	install: function( site, plugin ) {
 		return ( dispatch ) => {
 			const pluginId = getPluginId( site, plugin );
