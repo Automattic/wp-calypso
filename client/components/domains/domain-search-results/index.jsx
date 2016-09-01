@@ -56,7 +56,6 @@ var DomainSearchResults = React.createClass( {
 			// should use real notice component or custom class
 			availabilityElement = (
 				<Notice
-					className="domain-search-results__domain-availability-copy"
 					status="is-success"
 					showDismiss={ false }>
 					{
@@ -115,7 +114,6 @@ var DomainSearchResults = React.createClass( {
 			if ( this.props.offerMappingOption ) {
 				availabilityElement = (
 					<Notice
-						className="domain-search-results__domain-availability-copy"
 						status="is-warning"
 						showDismiss={ false }>
 						{ domainUnavailableMessage } { mappingOffer }
