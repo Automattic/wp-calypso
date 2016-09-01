@@ -40,7 +40,18 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
 		atlasUniveralTagId: '11187200770563',
-		criteo: '31321'
+		criteo: '31321',
+		quantcast: 'p-3Ma3jHaQMB_bS'
+	},
+
+	// For converting other currencies into USD for tracking purposes
+	EXCHANGE_RATES = {
+		USD: 1,
+		EUR: 1,
+		JPY: 125,
+		AUD: 1.35,
+		CAD: 1.35,
+		GBP: 0.75
 	};
 
 /**
@@ -56,6 +67,11 @@ if ( ! window.uetq ) {
 
 if ( ! window.criteo_q ) {
 	window.criteo_q = [];
+}
+
+// Quantcast Asynchronous Tag
+if ( ! window._qevents ) {
+	window._qevents = [];
 }
 
 /**
@@ -96,6 +112,9 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( CRITEO_TRACKING_SCRIPT_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( quantcastAsynchronousTagURL(), onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
@@ -216,11 +235,11 @@ function recordPurchase( product, orderId ) {
 		debug( 'Recording purchase', product );
 	}
 
-	// record the user id as a custom parameter
 	const currentUser = user.get(),
-		userId = currentUser ? currentUser.ID : 0;
+		userId = currentUser ? currentUser.ID : 0,
+		costUSD = costToUSD( product.cost, product.currency );
 
-	// record the purchase w/ Facebook
+	// Facebook
 	window.fbq(
 		'track',
 		'Purchase',
@@ -233,15 +252,15 @@ function recordPurchase( product, orderId ) {
 		}
 	);
 
-	// record the purchase w/ Bing if it is made with USD - Bing doesn't handle multiple currencies
-	if ( 'USD' === product.currency ) {
+	// Bing
+	if ( isSupportedCurrency( product.currency ) ) {
 		window.uetq.push( {
 			ec: 'purchase',
-			gv: product.cost
+			gv: costUSD
 		} );
 	}
 
-	// record the purchase w/ Google
+	// Google
 	if ( window.google_trackConversion ) {
 		window.google_trackConversion( {
 			google_conversion_id: GOOGLE_CONVERSION_ID,
@@ -256,6 +275,18 @@ function recordPurchase( product, orderId ) {
 				order_id: orderId
 			},
 			google_remarketing_only: false
+		} );
+	}
+
+	// Quantcast
+	// Note that all properties have to be strings or they won't get tracked
+	if ( isSupportedCurrency( product.currency ) ) {
+		window._qevents.push( {
+			qacct: TRACKING_IDS.quantcast,
+			labels: '_fp.event.Purchase Confirmation,_fp.pcat.' + product.product_slug,
+			orderid: orderId.toString(),
+			revenue: costUSD.toString(),
+			event: 'refresh'
 		} );
 	}
 }
@@ -416,6 +447,46 @@ function criteoSiteType() {
 	return 'd';
 }
 
+/**
+ * Returns the URL for Quantcast's Purchase Confirmation Tag
+ *
+ * @see https://www.quantcast.com/help/guides/using-the-quantcast-asynchronous-tag/
+ *
+ * @returns {String} The URL
+ */
+function quantcastAsynchronousTagURL() {
+	const protocolAndSubdomain = document.location.protocol === 'https:' ? 'https://secure' : 'http://edge';
+
+	return protocolAndSubdomain + '.quantserve.com/quant.js';
+}
+
+/**
+ * Converts a cost into USD
+ *
+ * @note Don't rely on this for precise conversions, it's meant to be an estimate for ad tracking purposes
+ *
+ * @param {Number} cost - The cost of the cart or product
+ * @param {String} currency - The currency such as `USD`, `JPY`, etc
+ * @returns {Number} Or null if the currency is not supported
+ */
+function costToUSD( cost, currency ) {
+	if ( ! isSupportedCurrency( currency ) ) {
+		return null;
+	}
+
+	return cost / EXCHANGE_RATES[ currency ];
+}
+
+/**
+ * Returns whether a currency is supported
+ *
+ * @param {String} currency - `USD`, `JPY`, etc
+ * @returns {Boolean} Whether there's an exchange rate for the currency
+ */
+function isSupportedCurrency( currency ) {
+	return Object.keys( EXCHANGE_RATES ).indexOf( currency ) !== -1;
+}
+
 module.exports = {
 	retarget: function( context, next ) {
 		const nextFunction = typeof next === 'function' ? next : noop;
@@ -432,5 +503,5 @@ module.exports = {
 	recordPurchase,
 	recordOrderInAtlas,
 	recordConversionInOneByAOL,
-	recordOrderInCriteo,
+	recordOrderInCriteo
 };
