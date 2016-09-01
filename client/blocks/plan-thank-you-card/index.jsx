@@ -31,29 +31,30 @@ class PlanThankYouCard extends Component {
 	}
 
 	render() {
+		const {
+			plan,
+			planDetails,
+			selectedSite,
+			translate
+		} = this.props;
 		// Non standard gridicon sizes are used here because we use them as background pattern with various sizes and rotation
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="plan-thank-you-card">
 				<div className="plan-thank-you-card__header">
 					<Gridicon className="plan-thank-you-card__main-icon" icon="checkmark-circle" size={ 140 } />
-					<div className="plan-thank-you-card__plan-name">
-
-					</div>
-					{ ( ! this.props.planDetails ) ? (
-						<div className="plan-thank-you-card__plan-name is-placeholder"></div>
-					) : (
-						<div className="plan-thank-you-card__plan-name">
-							{ this.props.translate( '%(planName)s Plan', {
-								args: { planName: this.props.planDetails.product_name_short }
-							} ) }
-						</div>
-					) }
-					{ ( ! this.props.plan ) ? (
-						<div className="plan-thank-you-card__plan-price is-placeholder"></div>
-					) : (
-						<div className="plan-thank-you-card__plan-price">{ this.props.plan.formattedPrice }</div>
-					) }
+					{ ! planDetails
+						? <div className="plan-thank-you-card__plan-name is-placeholder"></div>
+						: <div className="plan-thank-you-card__plan-name">
+								{ translate( '%(planName)s Plan', {
+									args: { planName: planDetails.product_name_short }
+								} ) }
+							</div>
+					}
+					{ ! plan
+						? <div className="plan-thank-you-card__plan-price is-placeholder"></div>
+						: <div className="plan-thank-you-card__plan-price">{ plan.formattedPrice }</div>
+					}
 					<div className="plan-thank-you-card__background-icons">
 						<Gridicon icon="audio" size={ 52 } />
 						<Gridicon icon="audio" size={ 20 } />
@@ -71,15 +72,15 @@ class PlanThankYouCard extends Component {
 				</div>
 				<div className="plan-thank-you-card__body">
 					<div className="plan-thank-you-card__heading">
-						{ this.props.translate( 'Thank you for your purchase!' ) }
+						{ translate( 'Thank you for your purchase!' ) }
 					</div>
 					<div className="plan-thank-you-card__description">
-						{ this.props.translate( 'Now that we’ve taken care of the plan, its time to see your new site.' ) }
+						{ translate( 'Now that we’ve taken care of the plan, its time to see your new site.' ) }
 					</div>
 					<a
 						className="plan-thank-you-card__button"
-						href={ this.props.selectedSite.URL }>
-						{ this.props.translate( 'Visit your site' ) }
+						href={ selectedSite.URL }>
+						{ translate( 'Visit your site' ) }
 					</a>
 				</div>
 			</div>
