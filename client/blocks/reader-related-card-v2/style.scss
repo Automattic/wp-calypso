@@ -1,11 +1,3 @@
-.design-assets {
-	padding: 0!important; // Removes set padding for content column, remove later
-}
-
-.layout__content {
-	background: $white!important; // remove later
-}
-
 .reader-related-card-v2__link-block {
 	cursor: pointer;
 	display: flex;
@@ -92,7 +84,7 @@
 				margin-top: -4px;
 				position: absolute;
 					right: 0;
-				width: calc( 100% - 29%);
+				width: calc( 100% - 29% );
 			}
 
 			@include breakpoint( "<480px" ) {
