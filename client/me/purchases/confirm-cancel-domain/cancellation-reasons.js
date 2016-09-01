@@ -25,7 +25,7 @@ export default [
 			'Canceling a domain name causes the domain to become unavailable for a brief period. ' +
 			'Afterward, anyone can repurchase. If you wish to use the domain with another service, ' +
 			'you’ll want to {{a}}update your name servers{{/a}} instead.', {
-				components: { a: <a href={ support.UPDATE_NAMESERVERS } target="_blank" /> }
+				components: { a: <a href={ support.UPDATE_NAMESERVERS } target="_blank" rel="noopener noreferrer" /> }
 			}
 		)
 	},
@@ -37,7 +37,7 @@ export default [
 			'or any contact information change. This is a rule set by the Internet Corporation for ' +
 			'Assigned Names and Numbers (ICANN) and standard across all registrars. ' +
 			'You will need to {{a}}update your name servers{{/a}} instead.', {
-				components: { a: <a href={ support.UPDATE_NAMESERVERS } target="_blank" /> }
+				components: { a: <a href={ support.UPDATE_NAMESERVERS } target="_blank" rel="noopener noreferrer" /> }
 			}
 		)
 	},

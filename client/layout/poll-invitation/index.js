@@ -105,7 +105,7 @@ export default React.createClass( {
 							<Button	onClick={ this.trackRejectAndDismiss }>
 								{ 'Não, obrigado' /* no translate(), pt-br only */ }
 							</Button>
-							<Button	primary	href={ surveyUrl } target="_blank"
+							<Button	primary	href={ surveyUrl } target="_blank" rel="noopener noreferrer"
 								onClick={ this.trackAcceptAndDismiss }>
 								{ 'Responder a pesquisa' /* no translate(), pt-br only */ }
 							</Button>

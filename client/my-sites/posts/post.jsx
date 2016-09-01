@@ -296,6 +296,7 @@ module.exports = React.createClass( {
 							'is-empty': ! likeCountDisplay
 						} ) }
 						target="_blank"
+						rel="noopener noreferrer"
 						title={ likeTitle }
 						onClick={ this.analyticsEvents.likeIconClick }
 					>

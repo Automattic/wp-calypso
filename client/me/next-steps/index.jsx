@@ -103,11 +103,13 @@ module.exports = React.createClass( {
 								bloggingUniversityLink: <a
 									href="https://bloggingu.wordpress.com/"
 									target="_blank"
+									rel="noopener noreferrer"
 									onClick={ this.bloggingUniversityLinkRecordEvent }
 								/>,
 								docsLink: <a
 									href="http://en.support.wordpress.com/"
 									target="_blank"
+									rel="noopener noreferrer"
 									onClick={ this.docsLinkRecordEvent }
 								/>
 							}

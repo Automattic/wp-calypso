@@ -95,6 +95,7 @@ export default React.createClass( {
 					title="Try the desktop app!"
 					href={ promo_link }
 					target="_blank"
+					rel="noopener noreferrer"
 				>
 					<img
 						className="app-promo__icon"

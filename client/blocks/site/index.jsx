@@ -119,12 +119,14 @@ export default React.createClass( {
 			url = this.props.site.options.admin_url + 'options-general.php';
 		}
 
+		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<ExternalLink icon={ true } href={ url } target="_blank" className="site__edit-icon" onClick={ this.onEditIconClick }>
 				<SiteIcon site={ this.props.site } />
 				<span className="site__edit-icon-text">{ this.translate( 'Edit Icon' ) }</span>
 			</ExternalLink>
 		);
+		/* eslint-enable react/jsx-no-target-blank */
 	},
 
 	getHref() {

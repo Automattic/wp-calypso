@@ -159,6 +159,7 @@ export default React.createClass( {
 							icon={ true }
 							href="https://support.google.com/analytics/answer/1032385?hl=en"
 							target="_blank"
+							rel="noopener noreferrer"
 						>
 							{ this.translate( 'Where can I find my Tracking ID?' ) }
 						</ExternalLink>

@@ -23,7 +23,8 @@ export default React.createClass( {
 		return (
 			<a className="plugin-settings-link"
 				href={ this.props.linkUrl }
-				target="_blank">
+				target="_blank"
+				rel="noopener noreferrer">
 				{ this.translate( 'Setup' ) }
 				<Gridicon size={ 18 } icon="external" />
 			</a>

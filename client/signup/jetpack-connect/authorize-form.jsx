@@ -328,7 +328,7 @@ const LoggedInForm = React.createClass( {
 						'Try again by clicking the button above; ' +
 						'if that doesn\'t work you may need to {{link}}contact support{{/link}}.', {
 							components: {
-								link: <a href="https://jetpack.com/contact-support" target="_blank" />
+								link: <a href="https://jetpack.com/contact-support" target="_blank" rel="noopener noreferrer" />
 							}
 						}
 					) }
@@ -418,6 +418,7 @@ const LoggedInForm = React.createClass( {
 		const detailsLink = (
 			<a
 				target="_blank"
+				rel="noopener noreferrer"
 				onClick={ this.onClickDisclaimerLink }
 				href="https://jetpack.com/support/what-data-does-jetpack-sync/"
 				className="jetpack-connect__sso-actions-modal-link" />

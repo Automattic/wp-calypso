@@ -93,6 +93,7 @@ const AddGoogleAppsCard = React.createClass( {
 											a: (
 												<a href={ googleAppsSupportUrl }
 													target="_blank"
+													rel="noopener noreferrer"
 													onClick={ this.handleLearnMoreClick } />
 											)
 										}
@@ -143,6 +144,7 @@ const AddGoogleAppsCard = React.createClass( {
 											a: (
 												<a href={ googleAppsSupportUrl }
 													target="_blank"
+													rel="noopener noreferrer"
 													onClick={ this.handleAndMoreClick } />
 											)
 										}

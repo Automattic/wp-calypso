@@ -38,7 +38,7 @@ const ContactsPrivacyCard = React.createClass( {
 							'{{a}}Learn more.{{/a}}',
 							{
 								components: {
-									a: <a href={ support.PUBLIC_VS_PRIVATE } target="_blank" />
+									a: <a href={ support.PUBLIC_VS_PRIVATE } target="_blank" rel="noopener noreferrer" />
 								}
 							}
 						) }

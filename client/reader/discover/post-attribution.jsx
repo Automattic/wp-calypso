@@ -62,7 +62,7 @@ class DiscoverPostAttribution extends React.Component {
 					: <Gridicon icon="arrow-right" /> }
 				<span className="discover-attribution__text">
 					{ translate( 'Originally posted by' ) }&nbsp;
-					<a className="discover-attribution__author" rel="external" target="_blank" onClick={ this.recordAuthorClick } href={ encodeURI( attribution.author_url ) }>
+					<a className="discover-attribution__author" target="_blank" rel="external noopener noreferrer" onClick={ this.recordAuthorClick } href={ encodeURI( attribution.author_url ) }>
 						{ attribution.author_name }
 					</a>&nbsp;
 					{ translate( 'on' ) }&nbsp;

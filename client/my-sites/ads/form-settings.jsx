@@ -239,7 +239,7 @@ const AdsFormSettings = React.createClass( {
 						disabled={ this.state.isLoading } />
 					<span>
 						{ this.translate( 'Show optimized ads. ' ) }
-						<a target="_blank" href="https://wordads.co/optimized-ads/">
+						<a target="_blank" rel="noopener noreferrer" href="https://wordads.co/optimized-ads/">
 							{ this.translate( 'Learn More' ) }
 						</a>
 					</span>
@@ -370,7 +370,7 @@ const AdsFormSettings = React.createClass( {
 						checkedLink={ this.linkState( 'tos' ) }
 						disabled={ this.state.isLoading || 'signed' === this.state.tos } />
 					<span>{ this.translate( 'I have read and agree to the {{a}}WordAds Terms of Service{{/a}}.', {
-						components: { a: <a href="https://wordpress.com/tos-wordads/" target="_blank" /> }
+						components: { a: <a href="https://wordpress.com/tos-wordads/" target="_blank" rel="noopener noreferrer" /> }
 					} ) }</span>
 				</FormLabel>
 			</FormFieldset>

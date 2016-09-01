@@ -189,7 +189,7 @@ const SiteSettingsFormWriting = React.createClass( {
 									onClick={ this.recordEvent.bind( this, 'Clicked Markdown for Posts Checkbox' ) } />
 								<span>{ this.translate( 'Use markdown for posts and pages. {{a}}Learn more about markdown{{/a}}.', {
 										components: {
-											a: <a href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank" />
+											a: <a href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank" rel="noopener noreferrer" />
 										}
 									} ) }</span>
 							</FormLabel>

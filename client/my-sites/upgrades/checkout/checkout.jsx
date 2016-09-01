@@ -175,7 +175,7 @@ const Checkout = React.createClass( {
 						productName: renewalItem.product_name
 					},
 					components: {
-						a: <a href={ supportPaths.AUTO_RENEWAL } target="_blank" />
+						a: <a href={ supportPaths.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
 					}
 				} ),
 				{ persistent: true }

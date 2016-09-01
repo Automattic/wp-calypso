@@ -44,7 +44,7 @@ module.exports = React.createClass( {
 		var numberOfRatings = ( this.props.ratings && this.props.ratings[ ratingTier ] ) ? this.props.ratings[ ratingTier ] : 0;
 		return (
 			<div className="plugin-ratings__rating-tier" key={ 'plugins-ratings__tier-' + ratingTier }>
-				<a className="plugin-ratings__rating-container" target="_blank"
+				<a className="plugin-ratings__rating-container" target="_blank" rel="noopener noreferrer"
 					onClick={ analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', this.props.slug ) }
 					href={ REVIEW_URL + this.props.slug }>
 					<span className="plugin-ratings__rating-tier-text"> { this.translate( '%(ratingTier)s stars', { args: { ratingTier: ratingTier } } ) } </span>

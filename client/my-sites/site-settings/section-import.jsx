@@ -128,7 +128,7 @@ export default React.createClass( {
 						this.getImports( MEDIUM ).map( ( importerStatus, key ) =>
 							<MediumImporter { ...{ key, site, importerStatus } } /> ) }
 
-					<CompactCard href={ adminUrl + 'import.php' } target="_blank">
+					<CompactCard href={ adminUrl + 'import.php' } target="_blank" rel="noopener noreferrer">
 						{ this.translate( 'Other importers' ) }
 					</CompactCard>
 				</EmailVerificationGate>
