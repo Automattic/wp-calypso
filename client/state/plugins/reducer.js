@@ -8,8 +8,10 @@ import { combineReducers } from 'redux';
  */
 import wporg from './wporg/reducer';
 import premium from './premium/reducer';
+import installed from './installed/reducer';
 
 export default combineReducers( {
 	wporg,
-	premium
+	premium,
+	installed
 } );
