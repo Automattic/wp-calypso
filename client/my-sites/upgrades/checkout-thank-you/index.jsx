@@ -185,7 +185,7 @@ const CheckoutThankYou = React.createClass( {
 
 		const userCreatedMoment = moment( this.props.user.date );
 		const isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
-		const isInAbTest = abtest( 'paidNuxStreamlined' ) === 'streamlined';
+		const isPaidNuxStreamlinedAbTest = abtest( 'paidNuxStreamlined' ) === 'streamlined';
 
 		// placeholder
 		if ( ! this.isDataLoaded() && ! this.isGenericReceipt() ) {
@@ -198,7 +198,7 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		// streamlined paid NUX thanks page
-		if ( isInAbTest && isNewUser && wasOnlyDotcomPlanPurchased ) {
+		if ( isPaidNuxStreamlinedAbTest && isNewUser && wasOnlyDotcomPlanPurchased ) {
 			return (
 				<Main className={ classes }>
 					<PlanThankYouCard selectedSite={ this.props.selectedSite } />
