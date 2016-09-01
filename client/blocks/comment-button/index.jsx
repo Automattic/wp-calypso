@@ -12,7 +12,7 @@ import classNames from 'classnames';
 import Gridicon from 'components/gridicon';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
-const CommentButton = React.createClass( {
+export const CommentButton = React.createClass( {
 
 	propTypes: {
 		onClick: React.PropTypes.func,
@@ -84,5 +84,3 @@ export default connect( ( state, ownProps ) => {
 	}
 	return { count };
 } )( CommentButton );
-
-export { CommentButton as PureCommentButton };
