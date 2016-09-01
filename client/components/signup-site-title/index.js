@@ -11,7 +11,6 @@ import LoggedOutForm from 'components/logged-out-form';
 
 import formState from 'lib/form-state';
 import ValidationFieldset from 'signup/validation-fieldset';
-import FormLabel from 'components/forms/form-label';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 
@@ -72,9 +71,6 @@ const SignupSiteTitle = React.createClass( {
 	formFields() {
 		return (
 			<ValidationFieldset>
-				<FormLabel className="signup-site-title__label" htmlFor="siteTitle">
-					{ this.translate( 'Choose a site title' ) }
-				</FormLabel>
 				<FormTextInput
 					autoFocus={ true }
 					autoCapitalize={ 'off' }
