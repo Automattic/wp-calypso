@@ -44,7 +44,7 @@ class DiscoverPostAttribution extends React.Component {
 	}
 
 	recordFollowToggle( isFollowing ) {
-		discoverStats.recordFollowingToggle( isFollowing, this.props.siteUrl );
+		discoverStats.recordFollowToggle( isFollowing, this.props.siteUrl );
 	}
 
 	render() {

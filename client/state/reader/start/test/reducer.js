@@ -53,7 +53,7 @@ describe( 'reducer', () => {
 				type: READER_START_RECOMMENDATIONS_RECEIVE,
 				recommendations: [ newRecommendation ]
 			} );
-			expect( state[2] ).to.eql( newRecommendation );
+			expect( state[ 2 ] ).to.eql( newRecommendation );
 		} );
 	} );
 } );
