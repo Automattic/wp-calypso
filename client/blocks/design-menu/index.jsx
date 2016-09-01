@@ -78,11 +78,20 @@ const DesignMenu = React.createClass( {
 				initialValue: site.name,
 			},
 		};
+		const siteTaglineConfig = {
+			id: 'blogdescription',
+			input: {
+				type: 'text',
+				label: this.props.translate( 'Tagline' ),
+				initialValue: site.description,
+			},
+		};
 		const siteTitlePanel = {
 			id: 'siteTitle',
 			title: this.props.translate( 'Title and Tagline' ),
 			controls: [
 				siteTitleConfig,
+				siteTaglineConfig,
 			],
 		};
 		return [
