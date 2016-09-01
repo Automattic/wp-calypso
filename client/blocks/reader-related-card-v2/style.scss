@@ -169,6 +169,21 @@
 	margin-top: -4px;
 }
 
+.reader-related-card-v2__byline-author,
+.reader-related-card-v2__byline-site {
+	color: $blue-medium;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    max-height: 20px;
+    overflow: hidden;
+	position: relative;
+
+	&::after {
+		@include long-content-fade( $size: 20% );
+	}
+}
+
 .reader-related-card-v2__meta .follow-button {
 	background: transparent;
 	border: 0;
