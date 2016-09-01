@@ -20,7 +20,6 @@ import CommentButton from 'blocks/comment-button';
 import utils from 'lib/posts/utils';
 import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
-import { shouldShowComments } from 'reader/comments/helper';
 
 import Comments from 'reader/comments';
 
@@ -232,12 +231,13 @@ module.exports = React.createClass( {
 		const postId = this.props.post.ID;
 		const site = this.getSite();
 		const isJetpack = site.jetpack;
+		const showComments = ! isJetpack || site.isModuleActive( 'comments' );
 		let showLikes = ! isJetpack || site.isModuleActive( 'likes' );
 		const showStats = site.capabilities && site.capabilities.view_stats && ( ! isJetpack || site.isModuleActive( 'stats' ) );
 		const metaItems = [];
 		let likeCountDisplay, likeTitle, likeMeta, footerMetaItems;
 
-		if ( shouldShowComments( post ) ) {
+		if ( showComments ) {
 			metaItems.push( (
 				<CommentButton
 					tagName='span'
