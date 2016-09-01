@@ -38,7 +38,8 @@
 	line-height: 20px;
 }
 
-.plan-thank-you-card__button {
+.plan-thank-you-card__button,
+.plan-thank-you-card__button:visited {
 	display: inline-block;
 	border-radius: 4px;
 	background-color: $white;
