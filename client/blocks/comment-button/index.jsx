@@ -44,8 +44,7 @@ const CommentButton = React.createClass( {
 
 	render() {
 		let label;
-		const containerTag = this.props.tagName,
-			count = this.props.count;
+		const { count, showLabel, size, tagName: containerTag } = this.props;
 
 		if ( count === 0 ) {
 			label = this.translate( 'Comment' );
@@ -60,7 +59,7 @@ const CommentButton = React.createClass( {
 
 		const labelElement = ( <span className="comment-button__label">
 			{ count > 0 ? <span className="comment-button__label-count">{ count }</span> : null }
-			{ this.props.showLabel && <span className="comment-button__label-status">{ label }</span> }
+			{ showLabel && <span className="comment-button__label-status">{ label }</span> }
 		</span> );
 
 		return React.createElement(
@@ -72,7 +71,7 @@ const CommentButton = React.createClass( {
 				onTouchTap: this.onTap,
 				onClick: this.onClick
 			},
-			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />, labelElement
+			<Gridicon icon="comment" size={ size } className="comment-button__icon" />, labelElement
 		);
 	}
 } );
