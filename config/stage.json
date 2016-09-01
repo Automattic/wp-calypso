@@ -23,6 +23,7 @@
 		"guided-tours": true,
 		"happychat": true,
 		"help": true,
+		"help/courses": true,
 		"jetpack/connect": true,
 		"jetpack/sso": true,
 		"jetpack/sync-panel": true,

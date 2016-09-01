@@ -20,6 +20,7 @@
 		"desktop-promo": false,
 		"fluid-width": true,
 		"help": true,
+		"help/courses": true,
 		"guided-tours": true,
 		"jetpack/connect": true,
 		"mailing-lists/unsubscribe": true,
