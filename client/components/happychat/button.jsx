@@ -14,11 +14,10 @@ import { openChat } from 'state/ui/happychat/actions';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
-const HappychatButton = ( { translate, onOpenChat } ) => (
+const HappychatButton = ( { translate, onOpenChat } ) =>
 	<Button compact borderless onClick={ onOpenChat }>
 		<Gridicon icon="comment" /> { translate( 'Support Chat' ) }
-	</Button>
-);
+	</Button>;
 
 const mapStateToProps = () => ( {} );
 
