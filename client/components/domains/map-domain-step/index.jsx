@@ -202,25 +202,25 @@ var MapDomainStep = React.createClass( {
 				severity = 'info';
 				break;
 			case 'not_mappable':
-				message = this.translate( 'Sorry but %(domain)s has not been registered yet therefore cannot be mapped.', {
+				message = this.translate( 'Sorry, %(domain)s has not been registered yet therefore cannot be mapped.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'invalid_domain':
-				message = this.translate( 'Sorry but %(domain)s does not appear to be a valid domain name.', {
+				message = this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'mapped_domain':
-				message = this.translate( 'Sorry but %(domain)s is already mapped to a WordPress.com blog.', {
+				message = this.translate( 'Sorry, %(domain)s is already mapped to a WordPress.com blog.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'restricted_domain':
-				message = this.translate( 'Sorry but WordPress.com domains cannot be mapped to a WordPress.com blog.' );
+				message = this.translate( 'Sorry, WordPress.com domains cannot be mapped to a WordPress.com blog.' );
 				break;
 
 			case 'blacklisted_domain':
@@ -236,20 +236,20 @@ var MapDomainStep = React.createClass( {
 						}
 					);
 				} else {
-					message = this.translate( 'Sorry but %(domain)s cannot be mapped to a WordPress.com blog.', {
+					message = this.translate( 'Sorry, %(domain)s cannot be mapped to a WordPress.com blog.', {
 						args: { domain: domain }
 					} );
 				}
 				break;
 
 			case 'forbidden_domain':
-				message = this.translate( 'Sorry but you do not have the correct permissions to map %(domain)s.', {
+				message = this.translate( 'Sorry, you do not have the correct permissions to map %(domain)s.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'invalid_tld':
-				message = this.translate( 'Sorry but %(domain)s does not end with a valid domain extension.', {
+				message = this.translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
 					args: { domain: domain }
 				} );
 				break;
