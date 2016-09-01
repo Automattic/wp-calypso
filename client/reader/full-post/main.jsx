@@ -12,8 +12,7 @@ var ReactDom = require( 'react-dom' ),
 	twemoji = require( 'twemoji' ),
 	page = require( 'page' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
-	connect = require( 'react-redux' ).connect,
-	config = require( 'config' );
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal Dependencies
@@ -162,7 +161,7 @@ FullPostView = React.createClass( {
 			hasFeaturedImage = post &&
 				post.canonical_image &&
 				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ),
-			articleClasses = [ 'reader__full-post' ],
+			articleClasses = [ 'reader__full-post', 'is-group-reader' ],
 			shouldShowExcerptOnly = ( post && post.use_excerpt ? post.use_excerpt : false ),
 			siteName = utils.siteNameFromSiteAndPost( site, post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
@@ -193,12 +192,6 @@ FullPostView = React.createClass( {
 
 		if ( hasFeaturedImage ) {
 			articleClasses.push( 'has-featured-image' );
-		}
-
-		if ( config.isEnabled( 'reader/refresh-2016-07' ) ) {
-			articleClasses.push( 'is-group-reader-refresh' );
-		} else {
-			articleClasses.push( 'is-group-reader' );
 		}
 
 		articleClasses = articleClasses.join( ' ' );
