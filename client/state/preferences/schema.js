@@ -35,9 +35,7 @@ export const remoteValuesSchema = {
 				additionalProperties: false,
 			}
 		},
-	},
-	recentSites: {
-		schema: {
+		recentSites: {
 			type: 'array',
 			items: {
 				type: 'number'
