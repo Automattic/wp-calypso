@@ -112,7 +112,6 @@ var MapDomainStep = React.createClass( {
 		return (
 			<div className="domain-search-results__domain-availability is-mapping-suggestion">
 				<Notice
-					className="domain-search-results__domain-availability-copy"
 					status="is-success"
 					showDismiss={ false }>
 					{
