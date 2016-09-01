@@ -50,7 +50,7 @@ class HostCredentialsPage extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( nextProps.isAwaitingPurchase === true ) {
+		if ( nextProps.isAwaitingPurchase ) {
 			this.redirectToCart();
 		}
 	}

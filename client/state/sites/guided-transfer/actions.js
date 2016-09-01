@@ -99,7 +99,7 @@ export function saveHostDetails( siteId, data ) {
 				siteId, omit( response, '_headers' )
 			) );
 
-			if ( response.host_details_entered === true ) {
+			if ( response.host_details_entered ) {
 				dispatch( {
 					type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 					siteId,
