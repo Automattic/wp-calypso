@@ -6,7 +6,9 @@ import { connect } from 'react-redux';
 import page from 'page';
 import classnames from 'classnames';
 import get from 'lodash/get';
+import find from 'lodash/find';
 import includes from 'lodash/includes';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -19,16 +21,18 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getActiveDesignTool } from 'state/ui/preview/selectors';
 import { setActiveDesignTool, closePreview } from 'state/ui/preview/actions';
 import accept from 'lib/accept';
-import designTool from './design-tool-data';
+import designToolData from './design-tool-data';
 import DesignToolList from './design-tool-list';
-import SiteTitleControl from 'components/site-title';
 import DesignMenuPanel from './design-menu-panel';
 import DesignMenuHeader from './design-menu-header';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSiteFragment } from 'lib/route/path';
+import DesignTool from './design-tool';
 
-const WrappedSiteTitleControl = designTool( SiteTitleControl );
+const WrappedDesignTool = designToolData( DesignTool );
+
+const debug = debugFactory( 'calypso:design-menu' );
 
 const DesignMenu = React.createClass( {
 
@@ -62,6 +66,28 @@ const DesignMenu = React.createClass( {
 		this.props.clearCustomizations( this.props.selectedSite.ID );
 		// Fetch the preview
 		this.props.fetchPreviewMarkup( this.props.selectedSite.ID, '' );
+	},
+
+	getDesignToolConfig() {
+		const site = this.props.selectedSite;
+		const siteTitleConfig = {
+			id: 'blogname',
+			input: {
+				type: 'text',
+				label: this.props.translate( 'Site Title' ),
+				initialValue: site.name,
+			},
+		};
+		const siteTitlePanel = {
+			id: 'siteTitle',
+			title: this.props.translate( 'Title and Tagline' ),
+			controls: [
+				siteTitleConfig,
+			],
+		};
+		return [
+			siteTitlePanel,
+		];
 	},
 
 	activateDefaultDesignTool() {
@@ -106,16 +132,18 @@ const DesignMenu = React.createClass( {
 	},
 
 	renderActiveDesignTool() {
-		switch ( this.props.activeDesignToolId ) {
-			case 'siteTitle':
-				return (
-					<DesignMenuPanel label={ this.props.translate( 'Title and Tagline' ) }>
-						<WrappedSiteTitleControl previewDataKey="siteTitle" />
-					</DesignMenuPanel>
-				);
-			default:
-				return <DesignToolList onChange={ this.props.setActiveDesignTool } />;
+		const config = this.getDesignToolConfig();
+		debug( `rendering activeDesignToolId ${this.props.activeDesignToolId}` );
+		const panel = find( config, panelConfig => panelConfig.id === this.props.activeDesignToolId );
+		if ( panel ) {
+			debug( `the active design tool ${this.props.activeDesignToolId} has this config`, panel );
+			return (
+				<DesignMenuPanel label={ panel.title }>
+					<WrappedDesignTool controls={ panel.controls } previewDataKey={ panel.id } />
+				</DesignMenuPanel>
+			);
 		}
+		return <DesignToolList onChange={ this.props.setActiveDesignTool } />;
 	},
 
 	getSiteCardSite() {
