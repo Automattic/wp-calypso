@@ -276,7 +276,7 @@ const JetpackConnectMain = React.createClass( {
 				},
 				{
 					title: this.translate( '3. Connect Jetpack' ),
-					text: this.translate( 'Finally, click the green "Connect to WordPress.com" button to finish the process.' ),
+					text: this.translate( 'Finally, click the "Connect to WordPress.com" button to finish the process.' ),
 					example: jetpackConnectExample
 				}
 			],
@@ -303,7 +303,7 @@ const JetpackConnectMain = React.createClass( {
 				},
 				{
 					title: this.translate( '2. Connect Jetpack' ),
-					text: this.translate( 'Then click the green "Connect to WordPress.com" button to finish the process.' ),
+					text: this.translate( 'Then click the "Connect to WordPress.com" button to finish the process.' ),
 					example: jetpackConnectExample
 				}
 			],
