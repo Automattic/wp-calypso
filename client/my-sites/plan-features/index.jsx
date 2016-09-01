@@ -245,7 +245,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderTopButtons() {
-		const { planProperties, isPlaceholder, isInSignup } = this.props;
+		const { planProperties, isPlaceholder, isInSignup, site } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -273,6 +273,7 @@ class PlanFeatures extends Component {
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
+						manageHref={ `/plans/my-plan/${ site.slug }` }
 					/>
 				</td>
 			);

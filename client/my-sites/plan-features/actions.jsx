@@ -36,7 +36,7 @@ const PlanFeaturesActions = ( {
 
 	if ( current && ! isInSignup ) {
 		upgradeButton = (
-			<Button className={ classes } href={ manageHref }>
+			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				<Gridicon size={ 18 } icon="checkmark" />
 				{ translate( 'Your plan' ) }
 			</Button>
