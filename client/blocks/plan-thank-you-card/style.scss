@@ -81,7 +81,7 @@
 	&.is-placeholder {
 		@include placeholder();
 
-		background-color: #DAF0E0;
+		background-color: lighten( $alert-green, 40 );
 		margin-left: auto;
 		margin-right: auto;
 		width: 35%;
@@ -91,12 +91,12 @@
 .plan-thank-you-card__plan-price {
 	font-size: 15px;
 	font-weight: 500;
-	color: #DAF0E0;
+	color: lighten( $alert-green, 40 );
 
 	&.is-placeholder {
 		@include placeholder();
 
-		background-color: #DAF0E0;
+		background-color: lighten( $alert-green, 40 );
 		margin-left: auto;
 		margin-right: auto;
 		width: 10%;
