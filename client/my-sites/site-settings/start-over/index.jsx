@@ -63,7 +63,7 @@ module.exports = React.createClass( {
 							this.translate( 'Alternatively, you can delete all content from your site by following {{link}}the steps here{{/link}}.',
 								{
 									components: {
-										link: <a href={ support.EMPTY_SITE } target="_blank" />
+										link: <a href={ support.EMPTY_SITE } target="_blank" rel="noopener noreferrer" />
 									}
 								}
 						)

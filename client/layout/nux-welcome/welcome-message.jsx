@@ -67,11 +67,13 @@ module.exports = React.createClass( {
 								startLink: <a
 									href="https://en.support.wordpress.com/start/"
 									target="_blank"
+									rel="noopener noreferrer"
 									onClick={ this.analyticsEvents.startLink }
 								/>,
 								docsLink: <a
 									href="http://en.support.wordpress.com/"
 									target="_blank"
+									rel="noopener noreferrer"
 									onClick={ this.analyticsEvents.docsLink }
 								/>
 							}

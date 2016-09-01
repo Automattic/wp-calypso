@@ -42,7 +42,7 @@ const PostExcerptLink = React.createClass( {
 			return null;
 		}
 
-		const siteName = ( <a onClick={ this.recordClick } href={ this.props.postUrl } rel="external" target="_blank">
+		const siteName = ( <a onClick={ this.recordClick } href={ this.props.postUrl } target="_blank" rel="external noopener noreferrer">
 				<span className="post-excerpt-only-site-name">{ this.props.siteName || '(untitled)' }</span>
 			</a> );
 		const classes = classNames( {

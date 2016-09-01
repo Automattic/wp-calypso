@@ -19,7 +19,7 @@ const EditContactInfoPrivacyEnabledCard = React.createClass( {
 						'If you need to make a change to your domain\'s contact info, please {{a}}contact support{{/a}}.',
 						{
 							components: {
-								a: <a href={ support.CALYPSO_CONTACT } target="_blank" />
+								a: <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
 							}
 						}
 					) }

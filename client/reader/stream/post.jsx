@@ -412,7 +412,7 @@ const Post = React.createClass( {
 
 				{ featuredImage }
 
-				{ post.title ? <h1 className="reader__post-title"><a className="reader__post-title-link" href={ post.URL } target="_blank">{ post.title }</a></h1> : null }
+				{ post.title ? <h1 className="reader__post-title"><a className="reader__post-title-link" href={ post.URL } target="_blank" rel="noopener noreferrer">{ post.title }</a></h1> : null }
 
 				<PostByline post={ post } site={ this.props.site } isDiscoverPost={ isDiscoverPost } />
 

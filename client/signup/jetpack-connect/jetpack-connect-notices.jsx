@@ -100,7 +100,7 @@ export default React.createClass( {
 		}
 		if ( this.props.noticeType === 'defaultAuthorizeError' ) {
 			noticeValues.text = this.translate( 'Error authorizing your site. Please {{link}}contact support{{/link}}.', {
-				components: { link: <a href="https://jetpack.com/contact-support" target="_blank" /> }
+				components: { link: <a href="https://jetpack.com/contact-support" target="_blank" rel="noopener noreferrer" /> }
 			} );
 			noticeValues.status = 'is-error';
 			noticeValues.icon = 'notice';

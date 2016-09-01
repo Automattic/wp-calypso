@@ -21,7 +21,7 @@ module.exports = React.createClass( {
 		var message = this.translate(
 			'By checking out, you agree to our {{link}}fascinating terms and conditions{{/link}}.', {
 			components: {
-				link: <a href="//wordpress.com/tos/" target="_blank" />
+				link: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />
 			}
 		} );
 
@@ -30,9 +30,9 @@ module.exports = React.createClass( {
 			message =  this.translate(
 				'By checking out, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and authorize your payment method to be charged on a recurring basis until you cancel, which you can do at any time. You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.', {
 				components: {
-					tosLink: <a href="//wordpress.com/tos/" target="_blank" />,
-					autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL } target="_blank" />,
-					managePurchasesSupportPage: <a href={ support.MANAGE_PURCHASES } target="_blank" />
+					tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+					autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
+					managePurchasesSupportPage: <a href={ support.MANAGE_PURCHASES } target="_blank" rel="noopener noreferrer" />
 				}
 			} );
 		}

@@ -19,6 +19,7 @@ var EmailForwardingDetails = React.createClass( {
 				{ ' ' }
 				<a href={ support.EMAIL_FORWARDING }
 						target="_blank"
+						rel="noopener noreferrer"
 						onClick={ this.handleLearnMoreClick }>
 					{ this.translate( 'Learn more.' ) }
 				</a>

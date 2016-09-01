@@ -514,7 +514,7 @@ export const MySitesSidebar = React.createClass( {
 
 		return (
 			<li className="wp-admin">
-				<a onClick={ this.trackWpadminClick } href={ site.options.admin_url } target="_blank">
+				<a onClick={ this.trackWpadminClick } href={ site.options.admin_url } target="_blank" rel="noopener noreferrer">
 					<Gridicon icon="my-sites" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'WP Admin' ) }</span>
 					<span className="noticon noticon-external" />

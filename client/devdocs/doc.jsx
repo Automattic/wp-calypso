@@ -93,7 +93,7 @@ module.exports = React.createClass( {
 			<div className="devdocs devdocs__doc">
 				<CompactCard className="devdocs__doc-header">
 					Path: <code>{ this.props.path }</code>
-					<a href={ editURL } target="_blank">Improve this document on GitHub &rarr;</a>
+					<a href={ editURL } target="_blank" rel="noopener noreferrer">Improve this document on GitHub &rarr;</a>
 				</CompactCard>
 				<div
 					className="devdocs__doc-content"

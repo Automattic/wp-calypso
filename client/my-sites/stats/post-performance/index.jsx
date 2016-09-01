@@ -114,7 +114,7 @@ const StatsPostPerformance = React.createClass( {
 												timeLapsed: postTime.fromNow( true )
 											},
 											components: {
-												href: <a href={ post.URL } target="_blank" />,
+												href: <a href={ post.URL } target="_blank" rel="noopener noreferrer" />,
 												postTitle: <Emojify>{ postTitle }</Emojify>
 											},
 											context: 'Stats: Sentence showing how much time has passed since the last post, and how the stats are'

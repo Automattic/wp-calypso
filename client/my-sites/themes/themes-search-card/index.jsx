@@ -140,6 +140,7 @@ const ThemesSearchCard = React.createClass( {
 				{ isPremiumThemesEnabled && <a className="button more"
 												href={ getExternalThemesUrl( this.props.site ) }
 												target="_blank"
+												rel="noopener noreferrer"
 												onClick={ this.onMore }>
 
 												{ this.translate( 'More' ) }

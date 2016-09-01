@@ -34,7 +34,7 @@ const Unlocked = React.createClass( {
 			siteId: this.props.selectedSite.ID
 		}, ( error ) => {
 			if ( error ) {
-				const contactLink = <a href={ support.CALYPSO_CONTACT } target="_blank"/>;
+				const contactLink = <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer"/>;
 				let errorMessage;
 
 				switch ( error.error ) {
@@ -127,7 +127,8 @@ const Unlocked = React.createClass( {
 									'shortly to help you complete the process.' )
 							} <a
 							href={ support.TRANSFER_DOMAIN_REGISTRATION }
-							target="_blank">{ this.translate( 'Learn More.' ) }</a>
+							target="_blank"
+							rel="noopener noreferrer">{ this.translate( 'Learn More.' ) }</a>
 						</p>
 					</div>
 				</Card>

@@ -73,7 +73,8 @@ export default React.createClass( {
 								className="jetpack-connect__tos-link-text"
 								href={ this.getTermsOfServiceUrl() }
 								onClick={ this.props.handleOnClickTos }
-								target="_blank" />
+								target="_blank"
+								rel="noopener noreferrer" />
 						}
 					}
 				)

@@ -54,7 +54,7 @@ const DeleteEmailForwardsDialog = React.createClass( {
 					'Removing this record will delete your current {{a}}Email Forwards{{/a}}.',
 					{
 						components: {
-							a: <a target="_blank" href={ this.getEmailForwardingPath() } />
+							a: <a target="_blank" rel="noopener noreferrer" href={ this.getEmailForwardingPath() } />
 						}
 					}
 				) }

@@ -70,6 +70,7 @@ export const BluehostStoreStep = props => {
 							primary
 							className="design-type-with-store__button"
 							target="_blank"
+							rel="noopener noreferrer"
 							href={ partnerUrl }
 							onClick={ partnerClickRecorder( partnerName ) }
 						>

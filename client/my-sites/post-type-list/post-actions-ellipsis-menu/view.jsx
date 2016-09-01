@@ -56,7 +56,8 @@ class PostActionsEllipsisMenuView extends Component {
 				href={ previewUrl }
 				onClick={ this.previewPost }
 				icon="visible"
-				target="_blank">
+				target="_blank"
+				rel="noopener noreferrer">
 				{ includes( [ 'publish', 'private' ], status )
 					? translate( 'View', { context: 'verb' } )
 					: translate( 'Preview', { context: 'verb' } ) }

@@ -38,6 +38,7 @@ export default React.createClass( {
 			<a className="editor-revisions"
 				href={ revisionsLink }
 				target="_blank"
+				rel="noopener noreferrer"
 				aria-label={ this.translate( 'Open list of revisions' ) }
 			>
 				<Gridicon icon="history" size={ 18 } />

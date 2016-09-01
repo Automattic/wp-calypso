@@ -128,6 +128,7 @@ const Account = React.createClass( {
 								components: {
 									a: <a
 											target="_blank"
+											rel="noopener noreferrer"
 											href="https://en.support.wordpress.com/community-translator/"
 											onClick={ this.recordClickEvent( 'Community Translator Learn More Link' ) }
 									/>
@@ -160,6 +161,7 @@ const Account = React.createClass( {
 				components: {
 					a: <a
 							target="_blank"
+							rel="noopener noreferrer"
 							href={ url }
 					/>,
 					language: <span>{ languageName }</span>

@@ -28,11 +28,13 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children } ) => {
 		return children;
 	}
 
+	/* eslint-disable react/jsx-no-target-blank */
 	return (
 		<ExternalLink className="reader-author-link" href={ linkUrl } target="_blank" onClick={ recordAuthorClick }>
 			{ children }
 		</ExternalLink>
 	);
+	/* eslint-enable react/jsx-no-target-blank */
 };
 
 ReaderAuthorLink.propTypes = {

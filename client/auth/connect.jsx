@@ -38,7 +38,7 @@ const Connect = React.createClass( {
 						<Button href={ this.props.authUrl }>{ this.translate( 'Authorize App' ) }</Button>
 					</div>
 				}
-				<a className="auth__help" target="_blank" title={ this.translate( 'Visit the Calypso GitHub repository for help' ) } href="https://github.com/Automattic/wp-calypso">
+				<a className="auth__help" target="_blank" rel="noopener noreferrer" title={ this.translate( 'Visit the Calypso GitHub repository for help' ) } href="https://github.com/Automattic/wp-calypso">
 					<Gridicon icon="help" />
 				</a>
 				<div className="auth__links">

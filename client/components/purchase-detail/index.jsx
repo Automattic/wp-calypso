@@ -25,6 +25,7 @@ const PurchaseDetail = ( {
 	onClick,
 	requiredText,
 	target,
+	rel,
 	title
 } ) => {
 	const classes = classNames( 'purchase-detail', {
@@ -40,6 +41,7 @@ const PurchaseDetail = ( {
 				href={ href }
 				onClick={ onClick }
 				target={ target }
+				rel={ rel }
 				text={ buttonText } />
 		);
 	}
@@ -91,6 +93,7 @@ PurchaseDetail.propTypes = {
 	onClick: PropTypes.func,
 	requiredText: PropTypes.string,
 	target: PropTypes.string,
+	rel: PropTypes.string,
 	title: PropTypes.string
 };
 

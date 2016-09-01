@@ -263,10 +263,11 @@ const CreditCardForm = React.createClass( {
 								'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
 								{
 									components: {
-										tosLink: <a href="//wordpress.com/tos/" target="_blank" />,
-										autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL } target="_blank" />,
+										tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+										autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
 										managePurchasesSupportPage: <a href={ support.MANAGE_PURCHASES }
-											target="_blank" />
+											target="_blank"
+											rel="noopener noreferrer" />
 									}
 								}
 							) }

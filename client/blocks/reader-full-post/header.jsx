@@ -23,6 +23,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 		recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
 	};
 
+	/* eslint-disable react/jsx-no-target-blank */
 	return (
 		<div className="reader-full-post__header">
 			{ post.title
@@ -38,7 +39,8 @@ const ReaderFullPostHeader = ( { post } ) => {
 						<a className="reader-full-post__header-date-link"
 							onClick={ recordDateClick }
 							href={ post.URL }
-							target="_blank">
+							target="_blank"
+							rel="noopener noreferrer">
 							<PostTime date={ post.date } />
 						</a>
 					</span> : null }
@@ -51,6 +53,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 			</div>
 		</div>
 	);
+	/* eslint-enable react/jsx-no-target-blank */
 };
 
 ReaderFullPostHeader.propTypes = {

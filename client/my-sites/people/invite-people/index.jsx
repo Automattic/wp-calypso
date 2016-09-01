@@ -286,7 +286,7 @@ const InvitePeople = React.createClass( {
 
 	renderRoleExplanation() {
 		return (
-			<a target="_blank" href="http://en.support.wordpress.com/user-roles/" onClick={ this.onClickRoleExplanation }>
+			<a target="_blank" rel="noopener noreferrer" href="http://en.support.wordpress.com/user-roles/" onClick={ this.onClickRoleExplanation }>
 				{ this.translate( 'Learn more about roles' ) }
 			</a>
 		);

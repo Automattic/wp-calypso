@@ -76,7 +76,7 @@ export const CreateAccountTip = localize( props =>
 			`You don't have a %(host)s account yet?
 			{{host_link}}Create one{{/host_link}} and return here.`, {
 				components: {
-					host_link: <a href={ props.hostUrl } target="_blank" />
+					host_link: <a href={ props.hostUrl } target="_blank" rel="noopener noreferrer" />
 				},
 				args: {
 					host: props.hostLabel

@@ -62,7 +62,7 @@ const HappinessSupport = React.createClass( {
 		}
 
 		return (
-			<Button href={ url } target="_blank">
+			<Button href={ url } target="_blank" rel="noopener noreferrer">
 				{ this.translate( 'Search our support site' ) }
 			</Button>
 		);

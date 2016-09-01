@@ -27,6 +27,7 @@ const GoogleAppsDetails = () => {
 			buttonText={ i18n.translate( 'Learn more about Google Apps' ) }
 			href={ supportUrls.GOOGLE_APPS_LEARNING_CENTER }
 			target="_blank"
+			rel="noopener noreferrer"
 			requiredText={ i18n.translate( 'Almost done! One step remaining…' ) }
 			isRequired />
 	);

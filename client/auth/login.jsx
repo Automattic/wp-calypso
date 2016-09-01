@@ -27,7 +27,7 @@ const LostPassword = React.createClass( {
 	render: function() {
 		return (
 			<p className="auth__lost-password">
-				<a href="https://wordpress.com/wp-login.php?action=lostpassword" target="_blank">
+				<a href="https://wordpress.com/wp-login.php?action=lostpassword" target="_blank" rel="noopener noreferrer">
 					{ this.translate( 'Lost your password?' ) }
 				</a>
 			</p>
@@ -174,7 +174,7 @@ module.exports = React.createClass( {
 					{ errorMessage && <Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } /> }
 					{ requires2fa && <AuthCodeButton username={ this.state.login } password={ this.state.password } /> }
 				</form>
-				<a className="auth__help" target="_blank" title={ this.translate( 'Visit the WordPress.com support site for help' ) } href="https://en.support.wordpress.com/">
+				<a className="auth__help" target="_blank" rel="noopener noreferrer" title={ this.translate( 'Visit the WordPress.com support site for help' ) } href="https://en.support.wordpress.com/">
 					<Gridicon icon="help" />
 				</a>
 				<div className="auth__links">

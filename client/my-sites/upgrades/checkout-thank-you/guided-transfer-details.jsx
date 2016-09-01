@@ -22,6 +22,7 @@ const GuidedTransferDetails = ( { translate } ) =>
 		buttonText={ translate( 'Learn more about Guided Transfers' ) }
 		href={ supportUrls.GUIDED_TRANSFER }
 		target="_blank"
+		rel="noopener noreferrer"
 	/>;
 
 export default localize( GuidedTransferDetails );

@@ -86,7 +86,7 @@ module.exports = React.createClass( {
 						'We are unable to connect to your server using these credentials. Please make sure they are correct, and {{a}}contact us{{/a}} if you are still having trouble.',
 						{
 							components: {
-								a: <a href="http://jetpack.me/contact-support/" target="_blank" />
+								a: <a href="http://jetpack.me/contact-support/" target="_blank" rel="noopener noreferrer" />
 							}
 						}
 					)
@@ -122,7 +122,7 @@ module.exports = React.createClass( {
 			<p>
 				{ this.translate(
 					'There was a problem getting your SSH information from our server. Please refresh the page. If the problem persists, {{a}}please contact support{{/a}}.',
-					{ components: { a: <a href="http://jetpack.me/contact-support/" target="_blank" /> } }
+					{ components: { a: <a href="http://jetpack.me/contact-support/" target="_blank" rel="noopener noreferrer" /> } }
 				) }
 			</p>
 		);
