@@ -56,9 +56,6 @@
 	border-color: darken( $alert-green, 20 );
 	border-width: 1px 1px 2px;
 
-	//box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3),
-	//			0 2px 0 0 rgba(0, 0, 0, 0.3);
-
 	@media ( max-width: 320px) {
 		padding: 0;
 		width: 100%;
@@ -67,8 +64,6 @@
 }
 
 .plan-thank-you-card__button:hover {
-	//box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4),
-	//			0 2px 0 0 rgba(0, 0, 0, 0.4);
 	border-color: darken( $alert-green, 30 );
 	color: darken( $alert-green, 10 );
 }
@@ -79,8 +74,6 @@
 }
 
 .plan-thank-you-card__button:active {
-	//box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2),
-	//			0 -2px 0 0 rgba(0, 0, 0, 0.2);
 	border-width: 2px 1px 1px;
 	color: darken( $alert-green, 30 );
 }
