@@ -172,11 +172,11 @@
 .reader-related-card-v2__byline-author,
 .reader-related-card-v2__byline-site {
 	color: $blue-medium;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    max-height: 20px;
-    overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	max-height: 20px;
+	overflow: hidden;
 	position: relative;
 
 	&::after {
