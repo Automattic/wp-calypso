@@ -231,13 +231,15 @@ module.exports = React.createClass( {
 		const postId = this.props.post.ID;
 		const site = this.getSite();
 		const isJetpack = site.jetpack;
-		const showComments = ! isJetpack || site.isModuleActive( 'comments' );
+		const isCommentsCapable = ! isJetpack || site.isModuleActive( 'comments' );
+		const areCommentsOpen = post.discussion.comment_status === 'open';
+		const commentCount = post.discussion.comment_count;
 		let showLikes = ! isJetpack || site.isModuleActive( 'likes' );
 		const showStats = site.capabilities && site.capabilities.view_stats && ( ! isJetpack || site.isModuleActive( 'stats' ) );
 		const metaItems = [];
 		let likeCountDisplay, likeTitle, likeMeta, footerMetaItems;
 
-		if ( showComments ) {
+		if ( isCommentsCapable && ( areCommentsOpen || commentCount > 0 ) ) {
 			metaItems.push( (
 				<CommentButton
 					tagName='span'
