@@ -54,7 +54,7 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 		{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
 			{ ! showPrimaryFollowButton && <div className="reader-search-card__social ignore-click">
 				<CommentButton
-					commentCount={ post.discussion.comment_count }
+					count={ post.discussion.comment_count }
 					tagName="span"
 					showLabel={ false }
 					onClick={ onCommentClick }

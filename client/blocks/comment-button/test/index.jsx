@@ -57,25 +57,15 @@ describe( 'CommentButton', function() {
 	} );
 
 	it( 'shows the number of comments if there are more than 0', function() {
-		props.commentCount = 2;
+		props.count = 2;
 		const wrapper = shallow( <PureCommentButton { ...props } /> );
 		const commentCount = wrapper.find( '.comment-button__label-count' );
 		expect( commentCount.length ).to.equal( 1 );
 		expect( commentCount.text() ).to.equal( '2' );
 	} );
 
-	it( 'shows the synced comment count if defined', function() {
-		props.commentCount = 2;
-		props.syncedCount = 5;
-		const wrapper = shallow( <PureCommentButton { ...props } /> );
-		const commentCount = wrapper.find( '.comment-button__label-count' );
-		expect( commentCount.length ).to.equal( 1 );
-		expect( commentCount.text() ).to.equal( '5' );
-	} );
-
 	it( 'shows the comment label by default', function() {
-		props.commentCount = 0;
-		props.syncedCount = undefined;
+		props.count = 0;
 		const wrapper = shallow( <PureCommentButton { ...props } /> );
 		const commentLabel = wrapper.find( '.comment-button__label-status' );
 		expect( commentLabel.length ).to.equal( 1 );

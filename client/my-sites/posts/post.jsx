@@ -241,7 +241,7 @@ module.exports = React.createClass( {
 			metaItems.push( (
 				<CommentButton
 					tagName='span'
-					commentCount={ post.discussion.comment_count }
+					count={ post.discussion.comment_count }
 					onClick={ this.toggleComments }
 					showLabel={ false }
 					postId = { post.ID }

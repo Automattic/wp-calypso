@@ -19,16 +19,16 @@ export default React.createClass( {
 					<a href="/devdocs/blocks/comment-button">Comment Buttons</a>
 				</h2>
 				<Card compact>
-					<PureCommentButton postId={ 1 } siteId={ 1 } commentCount={ 0 } />
+					<PureCommentButton postId={ 1 } siteId={ 1 } count={ 0 } />
 				</Card>
 				<Card compact>
-					<PureCommentButton postId={ 1 } siteId={ 1 } commentCount={ 42 } />
+					<PureCommentButton postId={ 1 } siteId={ 1 } count={ 42 } />
 				</Card>
 				<Card compact>
 					<PureCommentButton
 						postId={ 1 }
 						siteId={ 1 }
-						commentCount={ 42 }
+						count={ 42 }
 						showLabel={ false } />
 				</Card>
 			</div>

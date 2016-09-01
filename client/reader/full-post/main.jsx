@@ -346,7 +346,7 @@ FullPostDialog = React.createClass( {
 			}
 
 			if ( shouldShowComments ) {
-				buttons.push( <CommentButton key="comment-button" commentCount={ this.props.commentCount } onClick={ this.handleCommentButtonClick } tagName="div" postId={ post.ID } siteId={ post.site_ID } /> );
+				buttons.push( <CommentButton key="comment-button" count={ this.props.commentCount } onClick={ this.handleCommentButtonClick } tagName="div" postId={ post.ID } siteId={ post.site_ID } /> );
 			}
 
 			if ( shouldShowShare ) {

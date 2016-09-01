@@ -101,7 +101,7 @@ export class FullPostView extends React.Component {
 							siteId={ post.site_ID } />
 						{ shouldShowComments( post ) &&
 							<CommentButton key="comment-button"
-								commentCount={ post.discussion.comment_count }
+								count={ post.discussion.comment_count }
 								onClick={ this.handleCommentClick }
 								tagName="div"
 								postId={ post.ID }

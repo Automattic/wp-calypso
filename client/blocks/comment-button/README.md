@@ -10,14 +10,14 @@ import CommentButton from 'blocks/comment-button';
 
 render() {
 	return (
-		<CommentButton postId={ 1 } siteId={ 1 } commentCount={ 123 } />
+		<CommentButton postId={ 1 } siteId={ 1 } count={ 123 } />
 	);
 }
 ```
 
 #### Props
 
-* `commentCount`: Number indicating the number of comments to be displayed next to the button.
+* `count`: Number indicating the number of comments to be displayed next to the button.
 * `onClick`: Function to be executed when the user clicks the button.
 * `tagName`: String with the HTML tag we are going to use to render the component. Defaults to 'li'.
 * `size`: Number with the size of the comments icon to be displayed. Defaults to 24.

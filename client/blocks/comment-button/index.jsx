@@ -18,7 +18,7 @@ const CommentButton = React.createClass( {
 		onClick: React.PropTypes.func,
 		tagName: React.PropTypes.string,
 		size: React.PropTypes.number,
-		commentCount: React.PropTypes.number,
+		count: React.PropTypes.number,
 		showLabel: React.PropTypes.bool,
 		postId: React.PropTypes.number.isRequired,
 		siteId: React.PropTypes.number.isRequired
@@ -29,7 +29,7 @@ const CommentButton = React.createClass( {
 			onClick: noop,
 			tagName: 'li',
 			size: 24,
-			commentCount: 0,
+			count: 0,
 			showLabel: true
 		};
 	},
@@ -45,21 +45,21 @@ const CommentButton = React.createClass( {
 	render() {
 		let label;
 		const containerTag = this.props.tagName,
-			commentCount = ( this.props.syncedCount === undefined ? this.props.commentCount : this.props.syncedCount );
+			count = this.props.count;
 
-		if ( commentCount === 0 ) {
+		if ( count === 0 ) {
 			label = this.translate( 'Comment' );
 		} else {
 			label = this.translate(
 				'Comment',
 				'Comments', {
-					count: commentCount,
+					count: count,
 				}
 			);
 		}
 
 		const labelElement = ( <span className="comment-button__label">
-			{ commentCount > 0 ? <span className="comment-button__label-count">{ commentCount }</span> : null }
+			{ count > 0 ? <span className="comment-button__label-count">{ count }</span> : null }
 			{ this.props.showLabel && <span className="comment-button__label-status">{ label }</span> }
 		</span> );
 
@@ -67,7 +67,7 @@ const CommentButton = React.createClass( {
 			containerTag, {
 				className: classNames( {
 					'comment-button': true,
-					'is-empty': commentCount === 0
+					'is-empty': count === 0
 				} ),
 				onTouchTap: this.onTap,
 				onClick: this.onClick
@@ -79,9 +79,11 @@ const CommentButton = React.createClass( {
 
 export default connect( ( state, ownProps ) => {
 	const { siteId, postId } = ownProps,
-		syncedCount = getPostTotalCommentsCount( state, siteId, postId );
-
-	return { syncedCount };
+		count = getPostTotalCommentsCount( state, siteId, postId );
+	if(count === undefined) {
+		return {};
+	}
+	return { count };
 } )( CommentButton );
 
 export { CommentButton as PureCommentButton };
