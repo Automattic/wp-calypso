@@ -376,9 +376,9 @@ if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 
 if ( config.isEnabled( 'happychat' ) ) {
 	sections.push( {
-		name: 'chat',
+		name: 'happychat',
 		paths: [ '/me/chat' ],
-		module: 'me/chat',
+		module: 'me/happychat',
 		group: 'me',
 		secondary: true
 	} );
