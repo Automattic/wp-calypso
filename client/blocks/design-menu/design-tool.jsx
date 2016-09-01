@@ -58,7 +58,7 @@ class DesignTool extends React.Component {
 			label={ control.input.label }
 			id={ control.id }
 			onChange={ this.props.onChange }
-			value={ this.props.values[ control.id ] || control.input.initialValue }
+			value={ this.props.values[ control.id ] }
 		/>;
 	}
 
