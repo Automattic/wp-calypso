@@ -13,7 +13,7 @@ export default class SpinnerButtonExample extends Component {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/blocks/domain-tip">Spinner Button</a>
+					<a href="/devdocs/design/spinner-button">Spinner Button</a>
 				</h2>
 				<div>
 					<SpinnerButton text="Default Text" />
@@ -25,3 +25,5 @@ export default class SpinnerButtonExample extends Component {
 		);
 	}
 }
+
+SpinnerButtonExample.displayName = 'SpinnerButton';

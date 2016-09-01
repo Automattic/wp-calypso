@@ -9,8 +9,7 @@ SpinnerButton
 import SpinnerButton from 'components/spinner-button';
 
 export default function MyComponent() {
-	return (<SpinnerButton
-	/>;
+	return <SpinnerButton />;
 }
 ```
 

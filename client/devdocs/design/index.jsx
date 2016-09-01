@@ -119,7 +119,7 @@ let DesignAssets = React.createClass( {
 					<FeatureGate />
 					<FilePickers />
 					<FoldableCard />
-					<FormFields searchKeywords="input textbox textarea radio"/>
+					<FormFields searchKeywords="input textbox textarea radio" />
 					<Gauge />
 					<GlobalNotices />
 					<Gravatar />
@@ -142,7 +142,7 @@ let DesignAssets = React.createClass( {
 					<SelectDropdown searchKeywords="menu" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" />
-					<SpinnerButton />
+					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
 					<Timezone />
 					<TokenFields />
