@@ -18,8 +18,9 @@ module.exports = {
 	coldStartReader: {
 		datestamp: '20160804',
 		variations: {
-			noEmailColdStart: 20,
-			noChanges: 80
+			noEmailColdStartv3: 25,
+			noEmailColdStartv4: 25,
+			noChanges: 50
 		},
 		defaultVariation: 'noChanges',
 		allowExistingUsers: false,

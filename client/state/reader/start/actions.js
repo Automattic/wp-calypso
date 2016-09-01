@@ -6,6 +6,7 @@ import map from 'lodash/map';
 import omit from 'lodash/omit';
 import property from 'lodash/property';
 import debugModule from 'debug';
+import { abtest } from 'lib/abtest';
 
 /**
  * Internal dependencies
@@ -81,8 +82,9 @@ export function requestRecommendations( originSiteId, originPostId, limit ) {
 			limit = 20;
 		}
 
-		const query = {
-			apiVersion: '1.3',
+		var getRecommendations;
+
+		var query = {
 			meta: 'site,post',
 			origin_site_ID: originSiteId,
 			origin_post_ID: originPostId,
@@ -92,7 +94,17 @@ export function requestRecommendations( originSiteId, originPostId, limit ) {
 		debug( 'Requesting recommendations for site ' + originSiteId +
 				' and post ' + originPostId );
 
-		return wpcom.undocumented().readRecommendationsStart( query )
+		// Participates in the ColdStart v4 (endpoint: readRecommendedPosts)
+		if ( abtest( 'coldStartReader' ) === 'noEmailColdStartv4' ) {
+			query.apiVersion = '1.3';
+			getRecommendations = wpcom.undocumented().readRecommendedPosts( query );
+		}
+		// Defaults to ColdStart v3 (endpoint: readRecommendationsStart)
+		else {
+			getRecommendations = wpcom.undocumented().readRecommendationsStart( query );
+		}
+
+		return getRecommendations
 			.then( ( data ) => {
 				// Collect sites and posts from meta, and receive them separately
 				const sites = map( data.recommendations, property( 'meta.data.site' ) );

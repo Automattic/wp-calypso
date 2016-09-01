@@ -62,8 +62,7 @@ export default React.createClass( {
 
 		if ( config.isEnabled( 'reader/start' ) ) {
 			// User is participating in Reader Cold Start
-			if ( abtest( 'coldStartReader' ) === 'noEmailColdStart' ) {
-				userData.follow_default_blogs = false;
+			if ( abtest( 'coldStartReader' ) === 'noEmailColdStartv3' ) {
 				userData.subscription_delivery_email_default = 'never';
 				userData.is_new_reader = true;
 			}
