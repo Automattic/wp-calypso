@@ -19,7 +19,7 @@ import { isCurrentPlanPaid, isCurrentSitePlan } from 'state/sites/selectors';
 import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlanDiscountPrice } from 'state/sites/plans/selectors';
+import { getPlanDiscountedRawPrice } from 'state/sites/plans/selectors';
 import {
 	getPlanRawPrice,
 	getPlan,
@@ -472,7 +472,7 @@ export default connect(
 				available: available,
 				currencyCode: getCurrentUserCurrencyCode( state ),
 				current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-				discountPrice: getPlanDiscountPrice( state, selectedSiteId, plan, showMonthly ),
+				discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, showMonthly ),
 				features: getPlanFeaturesObject( planConstantObj.getFeatures() ),
 				onUpgradeClick: onUpgradeClick
 					? () => {

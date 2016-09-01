@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getSitePlan,
-	getPlanDiscountPrice,
+	getPlanDiscountedRawPrice,
 	getPlansBySite,
 	getPlansBySiteId,
 	hasDomainCredit,
@@ -141,7 +141,7 @@ describe( 'selectors', () => {
 			expect( plan ).to.eql( null );
 		} );
 	} );
-	describe( '#getPlanDiscountPrice()', () => {
+	describe( '#getPlanDiscountedRawPrice()', () => {
 		it( 'should return a discount price', () => {
 			const plans = {
 				data: [ {
@@ -168,7 +168,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanDiscountPrice( state, 77203074, 'bronze' );
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze' );
 			expect( discountPrice ).to.equal( 99 );
 		} );
 		it( 'should return a monthly discount price', () => {
@@ -197,7 +197,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanDiscountPrice( state, 77203074, 'bronze', true );
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze', true );
 			expect( discountPrice ).to.equal( 8.25 );
 		} );
 		it( 'should return null, if no discount is available', () => {
@@ -226,7 +226,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanDiscountPrice( state, 77203074, 'silver', true );
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'silver', true );
 			expect( discountPrice ).to.equal( null );
 		} );
 	} );
