@@ -107,4 +107,12 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 	},
+	verticalScreenshots: {
+		datestamp: '20160902',
+		variations: {
+			showVerticalScreenshots: 50,
+			hideVerticalScreenshots: 50,
+		},
+		defaultVariation: 'hideVerticalScreenshots',
+	}
 };
