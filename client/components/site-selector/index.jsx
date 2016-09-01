@@ -264,12 +264,11 @@ const SiteSelector = React.createClass( {
 	},
 
 	render() {
+		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 		const selectorClass = classNames( 'site-selector', 'sites-list', {
-			'is-large': this.props.siteCount > 6,
+			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0,
 			'is-single': this.props.visibleSiteCount === 1
 		} );
-
-		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 
 		return (
 			<div className={ selectorClass }>
