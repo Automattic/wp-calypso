@@ -10,7 +10,7 @@ import { findDOMNode } from 'react-dom';
  */
 import { connectChat } from 'state/happychat/actions';
 import { getHappychatConnectionStatus } from 'state/happychat/selectors';
-import { timeline, composer } from './helpers';
+import { timeline, composer } from 'components/happychat/helpers';
 
 /**
  * React component for rendering a happychat client as a full page
