@@ -12,7 +12,8 @@ var ReactDom = require( 'react-dom' ),
 	twemoji = require( 'twemoji' ),
 	page = require( 'page' ),
 	bindActionCreators = require( 'redux' ).bindActionCreators,
-	connect = require( 'react-redux' ).connect;
+	connect = require( 'react-redux' ).connect,
+	config = require( 'config' );
 
 /**
  * Internal Dependencies
@@ -192,6 +193,12 @@ FullPostView = React.createClass( {
 
 		if ( hasFeaturedImage ) {
 			articleClasses.push( 'has-featured-image' );
+		}
+
+		if ( config.isEnabled( 'reader/refresh-2016-07' ) ) {
+			articleClasses.push( 'is-group-reader-refresh' );
+		} else {
+			articleClasses.push( 'is-group-reader' );
 		}
 
 		articleClasses = articleClasses.join( ' ' );
