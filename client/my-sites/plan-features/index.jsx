@@ -390,7 +390,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderBottomButtons() {
-		const { planProperties, isPlaceholder, isInSignup } = this.props;
+		const { planProperties, isPlaceholder, isInSignup, site } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -416,6 +416,7 @@ class PlanFeatures extends Component {
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
+						manageHref={ `/plans/my-sites/${ site.slug }` }
 					/>
 				</td>
 			);
