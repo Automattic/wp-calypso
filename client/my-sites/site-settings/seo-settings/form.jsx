@@ -303,7 +303,7 @@ export const SeoForm = React.createClass( {
 	},
 
 	render() {
-		const { showAdvancedSeo, showUpgradeNudge, upgradeToBusiness } = this.props;
+		const { showAdvancedSeo, showWebsiteMeta, showUpgradeNudge, upgradeToBusiness } = this.props;
 		const {
 			description: siteDescription,
 			slug = '',
@@ -445,39 +445,37 @@ export const SeoForm = React.createClass( {
 						</div>
 					}
 
-					<div>
-						<SectionHeader label={ this.translate( 'Website Meta' ) }>
-							{ submitButton }
-						</SectionHeader>
-						<Card>
-							<p>
-								{ this.translate(
-									'Craft a description of your Website up to 160 characters that will be used in ' +
-									'search engine results for your front page, and when your website is shared ' +
-									'on social media sites.'
-								) }
-							</p>
-							<p>
-								<FormLabel htmlFor="seo_meta_description">
-									{ this.translate( 'Front Page Meta Description' ) }
-								</FormLabel>
-								<CountedTextarea
-									name="seo_meta_description"
-									type="text"
-									id="seo_meta_description"
-									value={ seoMetaDescription || '' }
-									disabled={ isDisabled }
-									maxLength="300"
-									acceptableLength={ 159 }
-									onChange={ this.handleMetaChange }
-								/>
-								{ hasHtmlTagError &&
-									<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
-								}
-							</p>
-							{ preview }
-						</Card>
-					</div>
+					{ ( showAdvancedSeo || showWebsiteMeta ) &&
+						<div>
+							<SectionHeader label={ this.translate('Website Meta') }>
+								{ submitButton }
+							</SectionHeader>
+							<Card>
+								<p>
+									{ this.translate('Craft a description of your Website up to 160 characters that will be used in ' + 'search engine results for your front page, and when your website is shared ' + 'on social media sites.') }
+								</p>
+								<p>
+									<FormLabel htmlFor="seo_meta_description">
+										{ this.translate('Front Page Meta Description') }
+									</FormLabel>
+									<CountedTextarea
+										name="seo_meta_description"
+										type="text"
+										id="seo_meta_description"
+										value={ seoMetaDescription || '' }
+										disabled={ isDisabled }
+										maxLength="300"
+										acceptableLength={ 159 }
+										onChange={ this.handleMetaChange }
+									/>
+									{ hasHtmlTagError && <FormInputValidation isError={ true }
+									                                          text={ this.translate('HTML tags are not allowed.') }/>
+									}
+								</p>
+								{ preview }
+							</Card>
+						</div>
+					}
 
 					<SectionHeader label={ this.translate( 'Site Verification Services' ) }>
 						{ submitButton }
@@ -590,6 +588,7 @@ const mapStateToProps = ( state, ownProps ) => {
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' ),
+		showWebsiteMeta: !! get( site, 'options.seo_meta_description', '' ),
 		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' )
 	};
 };
