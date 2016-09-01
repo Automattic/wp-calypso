@@ -79,7 +79,6 @@ export default class ProductPurchaseFeaturesList extends Component {
 				key="customizeThemeFeature"
 			/>,
 			<LiveCourses
-				isBusinessPlan
 				key="attendLiveCourses"
 			/>,
 			<VideoAudioPosts

@@ -157,8 +157,8 @@ export const plansList = {
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
 		getDescription: () => i18n.translate(
-			'Everything included with Premium, as well as live chat support, live courses,' +
-			' unlimited access to premium themes, and Google Analytics.'
+			'Everything included with Premium, as well as live chat support, live courses, ' +
+			'unlimited access to premium themes, and Google Analytics.'
 		),
 		getTargetedDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
 			' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
@@ -422,9 +422,8 @@ export const featuresList = {
 		getSlug: () => FEATURE_LIVE_COURSES,
 		getTitle: () => i18n.translate( 'Attend live courses' ),
 		getDescription: () => i18n.translate(
-			"Attend live courses led by Happiness Engineers to get the most out of your site."
+			'Attend live courses led by Happiness Engineers to get the most out of your site.'
 		),
-		getStoreSlug: () => 'live_courses',
 		plans: [ PLAN_BUSINESS ]
 	},
 
