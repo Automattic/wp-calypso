@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import LoggedOutForm from 'components/logged-out-form';
 
 import formState from 'lib/form-state';
-import ValidationFieldset from 'signup/validation-fieldset';
+import FormFieldset from 'components/forms/form-fieldset';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 
@@ -70,7 +70,7 @@ const SignupSiteTitle = React.createClass( {
 
 	formFields() {
 		return (
-			<ValidationFieldset>
+			<FormFieldset>
 				<FormTextInput
 					autoFocus={ true }
 					autoCapitalize={ 'off' }
@@ -82,7 +82,7 @@ const SignupSiteTitle = React.createClass( {
 					onChange={ this.handleChangeEvent }
 				/>
 				<FormButton className="signup-site-title__button">{ this.translate( 'Continue' ) }</FormButton>
-			</ValidationFieldset>
+			</FormFieldset>
 		);
 	},
 

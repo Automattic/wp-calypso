@@ -5,19 +5,14 @@
 	background: none;
 	box-shadow: none;
 	max-width: 600px;
+}
 
-	// Not sure what this is about...
-	.validation-fieldset__validation-message {
-		display: none;
-	}
+.signup-site-title__input[type="text"] {
+	padding: 14px 16px;
+}
 
-	.signup-site-title__input {
-		padding: 14px 16px;
-	}
-
-	.signup-site-title__button {
-		position: absolute;
-		top: 7px;
-		right: 8px;
-	}
+.signup-site-title__button {
+	position: absolute;
+	top: 7px;
+	right: 8px;
 }
