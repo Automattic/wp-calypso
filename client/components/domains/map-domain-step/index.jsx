@@ -111,14 +111,17 @@ var MapDomainStep = React.createClass( {
 
 		return (
 			<div className="domain-search-results__domain-availability is-mapping-suggestion">
-				<div className="domain-search-results__domain-availability-copy notice is-success">
+				<Notice
+					className="domain-search-results__domain-availability-copy"
+					status="is-success"
+					showDismiss={ false }>
 					{
 						this.translate(
 							'%(domain)s is available!',
 							{ args: { domain: suggestion.domain_name } }
 						)
 					}
-				</div>
+				</Notice>
 				<DomainRegistrationSuggestion
 					suggestion={ suggestion }
 					selectedSite={ this.props.selectedSite }
