@@ -51,12 +51,6 @@
 	border-style: solid;
 	border-color: darken( $alert-green, 20 );
 	border-width: 1px 1px 2px;
-
-	@media ( max-width: 320px) {
-		padding: 0;
-		width: 100%;
-		text-align: center;
-	}
 }
 
 .plan-thank-you-card__button:hover {
