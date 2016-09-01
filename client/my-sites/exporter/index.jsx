@@ -21,7 +21,7 @@ class Exporter extends Component {
 	render() {
 		const {
 			siteId,
-			isGuidedTransferInProgress,
+			isTransferInProgress,
 		} = this.props;
 		const showGuidedTransferOptions = config.isEnabled( 'manage/export/guided-transfer' );
 
@@ -30,10 +30,10 @@ class Exporter extends Component {
 				{ showGuidedTransferOptions && <QuerySiteGuidedTransfer siteId={ siteId } /> }
 
 				<Notices />
-				{ showGuidedTransferOptions && isGuidedTransferInProgress &&
+				{ showGuidedTransferOptions && isTransferInProgress &&
 					<InProgressCard /> }
 				<ExportCard siteId={ siteId } />
-				{ showGuidedTransferOptions && ! isGuidedTransferInProgress &&
+				{ showGuidedTransferOptions && ! isTransferInProgress &&
 					<GuidedTransferCard /> }
 			</div>
 		);
@@ -42,10 +42,7 @@ class Exporter extends Component {
 
 const mapStateToProps = state => ( {
 	siteId: getSelectedSiteId( state ),
-
-	// This will be replaced with a Redux selector once we've built out
-	// the reducers
-	isGuidedTransferInProgress: isGuidedTransferInProgress( state, getSelectedSiteId( state ) ),
+	isTransferInProgress: isGuidedTransferInProgress( state, getSelectedSiteId( state ) ),
 } );
 
 export default connect( mapStateToProps )( Exporter );
