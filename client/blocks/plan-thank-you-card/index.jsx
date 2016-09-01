@@ -8,46 +8,38 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSite } from 'state/ui/selectors';
 import Gridicon from 'components/gridicon';
+import { getSite } from 'state/sites/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { fetchSitePlans } from 'state/sites/plans/actions';
-import { getPlanBySlug, getPlans } from 'state/plans/selectors';
-import { requestPlans } from 'state/plans/actions';
+import QuerySites from 'components/data/query-sites';
+import QuerySitePlans from 'components/data/query-site-plans';
+import { plansList } from 'lib/plans/constants';
 
 class PlanThankYouCard extends Component {
 	static propTypes = {
-		selectedSite: PropTypes.object
+		siteId: PropTypes.number.isRequired
 	};
-
-	componentDidMount() {
-		if ( ! this.props.plan ) {
-			this.props.fetchSitePlans( this.props.selectedSite );
-		}
-
-		if ( ! this.props.plansFetched ) {
-			this.props.requestPlans();
-		}
-	}
 
 	render() {
 		const {
 			plan,
-			planDetails,
-			selectedSite,
-			translate
+			site,
+			translate,
+			siteId
 		} = this.props;
 		// Non standard gridicon sizes are used here because we use them as background pattern with various sizes and rotation
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="plan-thank-you-card">
+				<QuerySites siteId={ siteId } />
+				<QuerySitePlans siteId={ siteId } />
 				<div className="plan-thank-you-card__header">
 					<Gridicon className="plan-thank-you-card__main-icon" icon="checkmark-circle" size={ 140 } />
-					{ ! planDetails
+					{ ! site
 						? <div className="plan-thank-you-card__plan-name is-placeholder"></div>
 						: <div className="plan-thank-you-card__plan-name">
 								{ translate( '%(planName)s Plan', {
-									args: { planName: planDetails.product_name_short }
+									args: { planName: plansList[ site.plan.product_slug ].getTitle() }
 								} ) }
 							</div>
 					}
@@ -79,7 +71,7 @@ class PlanThankYouCard extends Component {
 					</div>
 					<a
 						className="plan-thank-you-card__button"
-						href={ selectedSite.URL }>
+						href={ site.URL }>
 						{ translate( 'Visit your site' ) }
 					</a>
 				</div>
@@ -89,36 +81,12 @@ class PlanThankYouCard extends Component {
 	}
 }
 
-export default connect(
-	( state, ownProps ) => {
-		let selectedSite = getSelectedSite( state );
+export default connect( ( state, ownProps ) => {
+	const site = getSite( state, ownProps.siteId );
+	const plan = getCurrentPlan( state, ownProps.siteId );
 
-		if ( ownProps.selectedSite && ! selectedSite ) {
-			selectedSite = ownProps.selectedSite;
-		}
-
-		const plan = getCurrentPlan( state, selectedSite.ID );
-
-		let planDetails = null;
-		if ( plan ) {
-			planDetails = getPlanBySlug( state, plan.productSlug );
-		}
-
-		return {
-			selectedSite,
-			plan,
-			planDetails,
-			plansFetched: getPlans( state ).length !== 0
-		};
-	},
-	( dispatch ) => {
-		return {
-			fetchSitePlans( site ) {
-				dispatch( fetchSitePlans( site.ID ) );
-			},
-			requestPlans() {
-				dispatch( requestPlans() );
-			}
-		};
-	}
-)( localize( PlanThankYouCard ) );
+	return {
+		site,
+		plan,
+	};
+} )( localize( PlanThankYouCard ) );

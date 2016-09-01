@@ -2,27 +2,35 @@
 * External dependencies
 */
 import React from 'react';
+import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import sitesList from 'lib/sites-list';
-import PlanThankYouCard from 'blocks/plan-thank-you-card';
+import PlanThankYouCard from '../';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSitePosts } from 'state/posts/selectors';
 
-const sites = sitesList();
+function PlanThankYouCardExample( { primarySiteId, globalId } ) {
+	return (
+		<div className="design-assets__group">
+			<h2>
+				<a href="/devdocs/blocks/plan-thank-you-card">Plan Thank You Card</a>
+			</h2>
+			<PlanThankYouCard siteId={ primarySiteId } />
+		</div>
+	);
+}
 
-const PlanThankYouCardExample = React.createClass( {
-	displayName: 'PlanThankYouCard',
-	render() {
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/plan-thank-you-card">Plan Thank You Card</a>
-				</h2>
-				<PlanThankYouCard selectedSite={ sites.getPrimary() } />
-			</div>
-		);
-	}
-} );
+const ConnectedPlanThankYouCard = connect( ( state ) => {
+	const primarySiteId = get( getCurrentUser( state ), 'primary_blog' );
 
-module.exports = PlanThankYouCardExample;
+	return {
+		primarySiteId,
+	};
+} )( PlanThankYouCardExample );
+
+ConnectedPlanThankYouCard.displayName = 'PlanThankYouCard';
+
+export default ConnectedPlanThankYouCard;

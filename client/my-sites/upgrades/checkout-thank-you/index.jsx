@@ -201,7 +201,7 @@ const CheckoutThankYou = React.createClass( {
 		if ( isPaidNuxStreamlinedAbTest && isNewUser && wasOnlyDotcomPlanPurchased ) {
 			return (
 				<Main className={ classes }>
-					<PlanThankYouCard selectedSite={ this.props.selectedSite } />
+					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
 					{ this.renderConfirmationNotice() }
 				</Main>
 			);
