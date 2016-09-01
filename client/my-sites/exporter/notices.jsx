@@ -34,8 +34,8 @@ class Notices extends Component {
 				<Notice
 					status="is-success"
 					showDismiss={ false }
-					text={ translate( `Your export was successful!
-						A download link has also been sent to your email.` ) }
+					text={ translate( 'Your export was successful! ' +
+						'A download link has also been sent to your email.' ) }
 				>
 					<NoticeAction href={ exportDownloadURL }>
 						{ translate( 'Download' ) }
@@ -48,9 +48,9 @@ class Notices extends Component {
 				<Notice
 					status="is-error"
 					showDismiss={ false }
-					text={ translate( `There was a problem preparing your
-						export file. Please check your connection and try
-						again, or contact support.` ) }
+					text={ translate( 'There was a problem preparing your ' +
+						'export file. Please check your connection and try ' +
+						'again, or contact support.' ) }
 				>
 					<NoticeAction href={ support.CALYPSO_CONTACT }>
 						{ translate( 'Get Help' ) }
@@ -62,19 +62,11 @@ class Notices extends Component {
 		return null;
 	}
 
-	guidedTransferNotice() {
-		if ( this.props.isGuidedTransferAwaitingPurchase ) {
-			return <CompletePurchaseNotice />;
-		}
-
-		return null;
-	}
-
 	render() {
 		return (
 			<div>
 				{ this.exportNotice() }
-				{ this.guidedTransferNotice() }
+				{ this.props.isGuidedTransferAwaitingPurchase && <CompletePurchaseNotice /> }
 			</div>
 		);
 	}
