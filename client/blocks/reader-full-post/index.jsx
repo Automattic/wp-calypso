@@ -105,7 +105,7 @@ export class FullPostView extends React.Component {
 								onClick={ this.handleCommentClick }
 								tagName="div"
 								postId={ post.ID }
-								siteID={ post.site_ID }/>
+								siteId={ post.site_ID }/>
 						}
 						{ shouldShowLikes( post ) &&
 							<LikeButton siteId={ post.site_ID }
