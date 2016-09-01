@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -48,33 +49,21 @@ export default function designTool( Component ) {
 			};
 		},
 
-		getDefaultPropsForKey( id ) {
-			const site = this.props.selectedSite;
-			switch ( id ) {
-				case 'siteTitle':
-					return { blogname: site.name, blogdescription: site.description };
-			}
-		},
-
 		getDefaultChildProps() {
-			const events = { onChange: this.buildOnChangeFor( this.props.previewDataKey ) };
-			const defaults = this.getDefaultPropsForKey( this.props.previewDataKey );
-			return Object.assign( {}, defaults, events );
+			return { onChange: this.buildOnChangeFor( this.props.previewDataKey ) };
 		},
 
 		getCustomizationsForKey( key ) {
-			if ( ! this.props.customizations[ key ] ) {
-				return {};
-			}
-			return this.props.customizations[ key ];
+			return this.props.customizations[ key ] || {};
 		},
 
 		getChildProps() {
-			return Object.assign( {}, this.getDefaultChildProps(), this.getCustomizationsForKey( this.props.previewDataKey ) );
+			return Object.assign( {}, this.getDefaultChildProps(), { values: this.getCustomizationsForKey( this.props.previewDataKey ) } );
 		},
 
 		render() {
-			const props = this.getChildProps();
+			const myProps = omit( this.props, [ 'previewDataKey' ] );
+			const props = Object.assign( {}, myProps, this.getChildProps() );
 			return <Component { ...props } />;
 		}
 	} );
