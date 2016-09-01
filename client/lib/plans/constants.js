@@ -57,8 +57,6 @@ export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
 export const FEATURE_SITE_STATS = 'site-stats';
 export const FEATURE_TRAFFIC_TOOLS = 'traffic-tools';
 export const FEATURE_MANAGE = 'jetpack-manage';
-export const FEATURE_SINGLE_SITE_SUPPORT = 'single-site-support';
-export const FEATURE_MULTI_SITE_SUPPORT = 'multi-site-support';
 export const FEATURE_SPAM_AKISMET_PLUS = 'spam-akismet-plus';
 export const FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY = 'offsite-backup-vaultpress-daily';
 export const FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME = 'offsite-backup-vaultpress-realtime';
@@ -217,7 +215,6 @@ export const plansList = {
 			' With daily backups, malware scanning, and spam defense.'
 		),
 		getFeatures: () => [
-			FEATURE_SINGLE_SITE_SUPPORT,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -238,7 +235,6 @@ export const plansList = {
 			'Advanced security features to keep your site safe and sound.' +
 			' With daily backups, malware scanning, and spam defense.'		),
 		getFeatures: () => [
-			FEATURE_SINGLE_SITE_SUPPORT,
 			FEATURE_MALWARE_SCANNING_DAILY,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 			FEATURE_BACKUP_ARCHIVE_30,
@@ -259,7 +255,6 @@ export const plansList = {
 			'More powerful security tools, including malware removal and realtime content backup, for the ultimate peace of mind.'
 		),
 		getFeatures: () => [
-			FEATURE_MULTI_SITE_SUPPORT,
 			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
@@ -283,7 +278,6 @@ export const plansList = {
 			'More powerful security tools, including malware removal and realtime content backup, for the ultimate peace of mind.'
 		),
 		getFeatures: () => [
-			FEATURE_MULTI_SITE_SUPPORT,
 			FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND,
 			FEATURE_OFFSITE_BACKUP_VAULTPRESS_REALTIME,
 			FEATURE_BACKUP_ARCHIVE_UNLIMITED,
@@ -527,16 +521,6 @@ export const featuresList = {
 		getSlug: () => FEATURE_MANAGE,
 		getTitle: () => i18n.translate( 'Centralized Dashboard' ),
 		getDescription: () => i18n.translate( 'Manage all of your WordPress sites from one location.' )
-	},
-	[ FEATURE_SINGLE_SITE_SUPPORT ]: {
-		getSlug: () => FEATURE_SINGLE_SITE_SUPPORT,
-		getTitle: () => i18n.translate( 'Supports 1 Site' ),
-		getDescription: () => i18n.translate( 'For use on 1 WordPress site.' )
-	},
-	[ FEATURE_MULTI_SITE_SUPPORT ]: {
-		getSlug: () => FEATURE_MULTI_SITE_SUPPORT,
-		getTitle: () => i18n.translate( 'Supports 1-3 Sites' ),
-		getDescription: () => i18n.translate( 'For use on up to 3 WordPress sites.' )
 	},
 	[ FEATURE_SPAM_AKISMET_PLUS ]: {
 		getSlug: () => FEATURE_SPAM_AKISMET_PLUS,
