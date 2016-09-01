@@ -33,6 +33,9 @@ export default React.createClass( {
 					<div className="jetpack-connect__example-content-wp-admin-sidebar"></div>
 					<div className="jetpack-connect__example-content-wp-admin-main">
 						<div className="jetpack-connect__example-content-wp-admin-connect-banner">
+							<div className="jetpack-connect__example-content-wp-admin-plugin-name" aria-hidden="true">
+								{ this.translate( 'Your Jetpack is almost ready!', { context: 'Jetpack Connect activate plugin instructions, connection banner headline' } ) }
+							</div>
 							<div className="jetpack-connect__example-content-wp-admin-connect-button" aria-hidden="true">
 								{ this.translate( 'Connect to WordPress.com',
 									{

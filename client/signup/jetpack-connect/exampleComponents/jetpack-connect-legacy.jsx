@@ -28,7 +28,7 @@ export default React.createClass( {
 							placeholder={ this.props.url } />
 					</div>
 				</div>
-				<div className="jetpack-connect__example-content jetpack-connect__example-connect-jetpack">
+				<div className="jetpack-connect__example-content jetpack-connect__example-connect-jetpack-legacy">
 					<div className="jetpack-connect__example-content-wp-admin-masterbar"></div>
 					<div className="jetpack-connect__example-content-wp-admin-sidebar"></div>
 					<div className="jetpack-connect__example-content-wp-admin-main">
