@@ -2,12 +2,18 @@
 	padding: 0!important; // Removes set padding for content column, remove later
 }
 
+.layout__content {
+	background: $white!important; // remove later
+}
+
 .reader-related-card-v2__link-block {
 	cursor: pointer;
 	display: flex;
 	flex-direction: column;
+	position: relative;
+	z-index: z-index( '.reader-related-card-v2__featured-image', '.reader-related-card-v2__site-info' );
 
-	@include breakpoint( "<480px" ) {
+	@media (max-width: 535px) {
 		flex-direction: row;
 	}
 
@@ -19,13 +25,19 @@
 .reader-related-card-v2__heading {
 	color: lighten( $gray, 10% );
 	font-size: 14px;
-	margin: 14px 0;
+	margin-bottom: 10px;
 	text-transform: uppercase;
+
+	@include breakpoint( "<660px" ) {
+		margin-bottom: 0;
+		padding: 0 20px;
+	}
 }
 
 .reader-related-card-v2__link,
 .reader-related-card-v2__link:visited {
 	color: $blue-medium;
+	font-family: $sans;
 
 	&:hover {
 		color: $blue-light;
@@ -39,12 +51,13 @@
 		flex-direction: row;
 	}
 
-	@include breakpoint( "<480px" ) {
+	// Cards are stacked in this view, hence the need for custom breakpoints
+
+	@media ( max-width: 535px ) {
 		flex-direction: column;
 	}
 
-	// Cards are stacked in this view, hence the need for a custom breakpoint
-	@media (min-width: 661px) and (max-width: 730px) {
+	@media ( min-width: 661px ) and ( max-width: 730px ) {
 		flex-direction: column;
 	}
 
@@ -57,28 +70,46 @@
 
 	&.is-global-post {
 
-		.reader-related-card-v2__meta {
+		.reader-related-card-v2.card {
 
-			@include breakpoint( "<480px" ) {
+			@include breakpoint( "<660px" ) {
+				padding: 9px 20px 20px 20px;
+			}
+		}
+
+		.reader-related-card-v2__meta {
+			display: flex;
+			margin-bottom: 13px;
+
+			@media ( min-width: 661px ) and ( max-width: 730px ) {
+				margin-top: -4px;
 				position: absolute;
-					left: 105px;
-				width: calc(100% - 110px);
+					right: 0;
+				width: calc( 100% - 28% );
 			}
 
-			@media (min-width: 661px) and (max-width: 730px) {
+			@media ( min-width: 481px ) and ( max-width: 535px )  {
+				margin-top: -4px;
 				position: absolute;
-					left: 105px;
-				width: calc(100% - 110px);
+					right: 0;
+				width: calc( 100% - 29%);
+			}
+
+			@include breakpoint( "<480px" ) {
+				margin-top: -4px;
+				position: absolute;
+					right: 0;
+				width: calc( 100% - 30% );
 			}
 		}
 
 		.reader-related-card-v2__site-info {
 
-			@include breakpoint( "<480px" ) {
+			@media ( max-width: 535px ) {
 				margin-top: 50px;
 			}
 
-			@media (min-width: 661px) and (max-width: 730px) {
+			@media ( min-width: 661px ) and ( max-width: 730px ) {
 				margin-top: 50px;
 			}
 		}
@@ -90,6 +121,10 @@
 	flex: 1;
 	padding: 0;
 
+	@include breakpoint( "<660px" ) {
+		padding: 14px 20px 20px 20px;
+	}
+
 	&:last-child {
 		padding-left: 30px;
 
@@ -97,8 +132,12 @@
 			padding-left: 0;
 		}
 
-		@media (min-width: 661px) and (max-width: 730px) {
+		@media ( min-width: 661px ) and ( max-width: 730px ) {
 			padding-left: 0;
+		}
+
+		@include breakpoint( "<660px" ) {
+			padding-left: 20px;
 		}
 	}
 
@@ -108,21 +147,16 @@
 		margin-bottom: 20px;
 	}
 
-	@media (min-width: 661px) and (max-width: 730px) {
+	@media ( min-width: 661px ) and ( max-width: 730px ) {
 		display: flex;
 		flex-direction: column;
 		margin-bottom: 20px;
 	}
 }
 
-.reader-related-card-v2__meta {
-	display: flex;
-	margin-bottom: 11px;
-}
-
 .reader-related-card-v2__meta .gravatar {
 	height: 32px;
-	margin-right: 8px;
+	margin: 5px 8px 0 0;
 	vertical-align: middle;
 	width: 32px;
 }
@@ -132,6 +166,7 @@
 	flex: 3;
 	flex-direction: column;
 	font-size: 14px;
+	margin-top: 5px;
 }
 
 .reader-related-card-v2__byline-author {
@@ -164,11 +199,21 @@
 		}
 	}
 
+	.gridicon {
+		@include breakpoint( "<960px" ) {
+			padding-right: 0;
+		}
+	}
+
 	&.is-following {
 
 		.follow-button__label {
 			color: $alert-green;
 		}
+	}
+
+	@media ( max-width: 535px ) {
+		margin-right: 10px;
 	}
 }
 
@@ -177,13 +222,13 @@
 	height: 80px;
     margin-bottom: 19px;
 
-    @include breakpoint( "<480px" ) {
+    @media ( max-width: 535px ) {
     	flex: 1;
     	height: auto;
     	margin: 0 15px 0 0;
     }
 
-    @media (min-width: 661px) and (max-width: 730px) {
+    @media ( min-width: 661px ) and ( max-width: 730px ) {
     	height: auto;
     	flex: 1;
     	margin: 0 15px 0 0;
@@ -194,11 +239,11 @@
     max-height: 100px;
     overflow: hidden;
 
-	@include breakpoint( "<480px" ) {
+	@media (max-width: 535px) {
     	flex: 3;
     }
 
-	@media (min-width: 661px) and (max-width: 730px) {
+	@media ( min-width: 661px ) and ( max-width: 730px ) {
     	flex: 3;
     }
 }
