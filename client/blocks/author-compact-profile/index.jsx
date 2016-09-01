@@ -12,6 +12,8 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderFollowButton from 'reader/follow-button';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
+import safeImageUrl from 'lib/safe-image-url';
+import resizeImageUrl from 'lib/resize-image-url';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
@@ -24,7 +26,7 @@ const AuthorCompactProfile = React.createClass( {
 	},
 
 	render() {
-		const { author, siteName, siteUrl, followCount, feedId, siteId } = this.props;
+		const { author, siteName, siteUrl, siteIcon, followCount, feedId, siteId } = this.props;
 
 		if ( ! author ) {
 			return null;
@@ -37,7 +39,10 @@ const AuthorCompactProfile = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				<Gravatar size={ 96 } user={ author } />
+				{ siteIcon
+					? <img src={ resizeImageUrl( safeImageUrl( siteIcon ), { w: 96, h: 96 } ) } className="author-compact-profile__icon" />
+					: <Gravatar size={ 96 } user={ author } />
+				}
 				{ ! hasMatchingAuthorAndSiteNames &&
 					<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>{ author.name }</ReaderAuthorLink> }
 				{ siteName &&

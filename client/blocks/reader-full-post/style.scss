@@ -89,7 +89,7 @@
 	z-index: z-index( '.masterbar', '.reader-profile' );
 	@include breakpoint( "<660px" ) {
 		margin-top: 20px;
-		.gravatar {
+		.gravatar, .author-compact-profile__icon {
 			display: inline-block;
 			vertical-align: bottom;
 			height: 24px;
