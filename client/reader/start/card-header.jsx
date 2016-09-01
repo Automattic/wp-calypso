@@ -8,17 +8,18 @@ import FollowButton from 'reader/follow-button';
 
 const StartCardHeader = ( { site, railcar } ) => {
 	const subscribersCount = numberFormat( site.subscribers_count );
+	const siteStreamUrl = `/read/blogs/${site.ID}`;
 	return (
 		<header className="reader-start-card__header">
-			<a href={ `/read/blogs/${site.ID}` }>
+			<a href={ siteStreamUrl }>
 				<SiteIcon site={ site } size={ 30 } />
 			</a>
 			<div className="reader-start-card__site-info">
-				<a href={ `/read/blogs/${site.ID}` }>
+				<a href={ siteStreamUrl }>
 					<h1 className="reader-start-card__site-title">{ site.title }</h1>
 				</a>
 				<div className="reader-start-card__follower-count">
-					<a href={ `/read/blogs/${site.ID}` }>{ subscribersCount } followers</a>
+					<a href={ siteStreamUrl }>{ subscribersCount } followers</a>
 				</div>
 			</div>
 			<div className="reader-start-card__follow">

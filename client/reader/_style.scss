@@ -2,7 +2,8 @@
  	padding-top: 0;
 }
 
-.is-group-reader-refresh .reader__content {
+.is-group-reader-refresh .reader__content,
+.is-group-reader-refresh .reader-start {
 	margin-top: 10px;
 
 	@include breakpoint( ">480px" ) {

@@ -12,10 +12,9 @@ import Masonry from 'react-masonry-component';
  */
 import Main from 'components/main';
 import { getRecommendationIds } from 'state/reader/start/selectors';
+import { getFollowCount } from 'state/reader/follows/selectors';
 import QueryReaderStartRecommendations from 'components/data/query-reader-start-recommendations';
 import StartCard from './card';
-import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
-import smartSetState from 'lib/react-smart-set-state';
 import CardPlaceholder from './card-placeholder';
 import { recordTrack } from 'reader/stats';
 import StartSearch from './search';
@@ -25,35 +24,12 @@ const tracksSource = 'recommended_cold_start';
 
 const Start = React.createClass( {
 
-	smartSetState: smartSetState,
-
-	getInitialState() {
-		return this.getStateFromStores();
-	},
-
-	// Add change listeners to stores
-	componentDidMount() {
-		FeedSubscriptionStore.on( 'change', this.handleChange );
-	},
-
-	// Remove change listeners from stores
 	componentWillUnmount() {
-		FeedSubscriptionStore.off( 'change', this.handleChange );
 		this.masonry = null;
 	},
 
 	bindMasonry( component ) {
 		this.masonry = component && component.masonry;
-	},
-
-	getStateFromStores() {
-		return {
-			totalSubscriptions: FeedSubscriptionStore.getTotalSubscriptions()
-		};
-	},
-
-	handleChange() {
-		this.smartSetState( this.getStateFromStores() );
 	},
 
 	componentDidUpdate() {
@@ -77,35 +53,32 @@ const Start = React.createClass( {
 	},
 
 	render() {
-		const totalSubscriptions = this.state.totalSubscriptions;
-
-		// Reduce the total subscription count by one for display (exclude the user's own site)
-		const totalSubscriptionsDisplay = totalSubscriptions > 0 ? totalSubscriptions - 1 : 0;
-		const canGraduate = ( this.state.totalSubscriptions > 1 );
+		const followCount = this.props.followCount;
+		const canExit = ( followCount > 0 );
 		const hasRecommendations = this.props.recommendationIds.length > 0;
 		const hasSearchQuery = !! this.props.query;
 
 		return (
 			<Main className="reader-start">
 				{ /* Have not followed a site yet */ }
-				{ ! canGraduate && hasRecommendations &&
+				{ ! canExit && hasRecommendations &&
 					<div className="reader-start__bar is-follow">
 						<span className="reader-start__bar-text">{ this.translate( 'Follow some sites to begin.' ) }</span>
 					</div>
 				}
 
 				{ /* Following at least one or more sites */ }
-				{ canGraduate && hasRecommendations &&
+				{ canExit && hasRecommendations &&
 					<div className="reader-start__bar is-following">
 						<span className="reader-start__bar-text">
 							{
 								this.translate(
-									'You\'re following %(totalSubscriptionsDisplay)d site.',
-									'You\'re following %(totalSubscriptionsDisplay)d sites.',
+									'You\'re following %(followCount)d new site.',
+									'You\'re following %(followCount)d new sites.',
 									{
-										count: totalSubscriptionsDisplay,
+										count: followCount,
 										args: {
-											totalSubscriptionsDisplay: totalSubscriptionsDisplay
+											followCount: followCount
 										}
 									}
 								)
@@ -153,7 +126,8 @@ const Start = React.createClass( {
 export default connect(
 	( state ) => {
 		return {
-			recommendationIds: getRecommendationIds( state )
+			recommendationIds: getRecommendationIds( state ),
+			followCount: getFollowCount( state )
 		};
 	}
 )( localize( Start ) );
