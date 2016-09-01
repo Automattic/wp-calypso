@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
  */
 import Bluehost from './bluehost';
 import SiteGround from './siteground';
-
 import SectionHeader from 'components/section-header';
 import { cartItems } from 'lib/cart-values';
 import upgradesActions from 'lib/upgrades/actions';
