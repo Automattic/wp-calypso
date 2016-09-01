@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -79,6 +81,16 @@ export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 
 	return domainPurchase;
 };
+
+/**
+ * Returns a list of Purchases associated with a User from the state using its userId
+ * @param  {Object}  state       global state
+ * @param  {Number}  userId      the user id
+ * @return {Boolean} if the user currently has any purchases.
+ */
+export const isUserPaid = ( state, userId ) => (
+	state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases( state, userId ).length
+);
 
 export const isFetchingUserPurchases = state => state.purchases.isFetchingUserPurchases;
 export const isFetchingSitePurchases = state => state.purchases.isFetchingSitePurchases;

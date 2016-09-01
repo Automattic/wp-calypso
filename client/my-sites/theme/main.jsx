@@ -28,9 +28,12 @@ import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { isUserPaid } from 'state/purchases/selectors';
 import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import {
 	signup,
@@ -227,25 +230,64 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
+	renderContactUsCard( isPrimary = false ) {
+		return (
+			<Card className="theme__sheet-card-support">
+				<Gridicon icon="help-outline" size={ 48 } />
+				<div className="theme__sheet-card-support-details">
+					{ i18n.translate( 'Need extra help?' ) }
+					<small>{ i18n.translate( 'Get in touch with our support team' ) }</small>
+				</div>
+				<Button primary={ isPrimary } href={ '/help/contact/' }>Contact us</Button>
+			</Card>
+		);
+	},
+
+	renderThemeForumCard( isPrimary = false ) {
+		const description = isPremium( this.props )
+			? i18n.translate( 'Get in touch with the theme author' )
+			: i18n.translate( 'Get help from volunteers and staff' );
+
+		return (
+			<Card className="theme__sheet-card-support">
+				<Gridicon icon="comment" size={ 48 } />
+				<div className="theme__sheet-card-support-details">
+					{ i18n.translate( 'Have a question about this theme?' ) }
+					<small>{ description }</small>
+				</div>
+				<Button primary={ isPrimary } href={ getForumUrl( this.props ) }>Visit forum</Button>
+			</Card>
+		);
+	},
+
+	renderCssSupportCard() {
+		return (
+			<Card className="theme__sheet-card-support">
+				<Gridicon icon="briefcase" size={ 48 } />
+				<div className="theme__sheet-card-support-details">
+					{ i18n.translate( 'Need CSS help? ' ) }
+					<small>{ i18n.translate( 'Get help from the experts in our CSS forum' ) }</small>
+				</div>
+				<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
+			</Card>
+		);
+	},
+
 	renderSupportTab() {
+		if ( this.props.isCurrentUserPaid ) {
+			return (
+				<div>
+					{ this.renderContactUsCard( true ) }
+					{ this.renderThemeForumCard() }
+					{ this.renderCssSupportCard() }
+				</div>
+			);
+		}
+
 		return (
 			<div>
-				<Card className="theme__sheet-card-support">
-					<Gridicon icon="comment" size={ 48 } />
-					<div className="theme__sheet-card-support-details">
-						{ i18n.translate( 'Need extra help?' ) }
-						<small>{ i18n.translate( 'Visit the theme support forum' ) }</small>
-					</div>
-					<Button primary={ true } href={ getForumUrl( this.props ) }>Visit forum</Button>
-				</Card>
-				<Card className="theme__sheet-card-support">
-					<Gridicon icon="briefcase" size={ 48 } />
-					<div className="theme__sheet-card-support-details">
-						{ i18n.translate( 'Need CSS help? ' ) }
-						<small>{ i18n.translate( 'Visit the CSS customization forum' ) }</small>
-					</div>
-					<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
-				</Card>
+				{ this.renderThemeForumCard( true ) }
+				{ this.renderCssSupportCard() }
 			</div>
 		);
 	},
@@ -306,7 +348,8 @@ const ThemeSheet = React.createClass( {
 					title={ emptyContentTitle }
 					line={ emptyContentMessage }
 					action={ i18n.translate( 'View the showcase' ) }
-					actionURL="/design"/>
+					actionURL="/design"
+				/>
 			</Main>
 		);
 	},
@@ -361,13 +404,14 @@ const ThemeSheet = React.createClass( {
 				type={ 'website' }
 				canonicalUrl={ canonicalUrl }
 				image={ this.props.screenshot }>
+				<QueryUserPurchases userId={ this.props.currentUserId } />
 				<Main className="theme__sheet">
-					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
+					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 						{ this.renderBar() }
-						{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
+						{ siteID && <QueryCurrentTheme siteId={ siteID } /> }
 					<ThanksModal
 						site={ this.props.selectedSite }
-						source={ 'details' }/>
+						source={ 'details' } />
 					{ this.state.showPreview && this.renderPreview() }
 					<HeaderCake className="theme__sheet-action-bar"
 								backHref={ this.props.backPath }
@@ -453,7 +497,16 @@ export default connect(
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const backPath = getBackPath( state );
-		return { selectedSite, siteSlug, backPath };
+		const currentUserId = getCurrentUserId( state );
+		const isCurrentUserPaid = isUserPaid( state, currentUserId );
+
+		return {
+			selectedSite,
+			siteSlug,
+			backPath,
+			currentUserId,
+			isCurrentUserPaid,
+		};
 	},
 	bindDefaultOptionToDispatch,
 	mergeProps
