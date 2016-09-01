@@ -45,8 +45,7 @@ import * as oauthToken from 'lib/oauth-token';
 /**
  * Constants
  */
-const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_FREE = 8000;
-const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_PREMIUM = 3000;
+const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 3000;
 
 const Signup = React.createClass( {
 	displayName: 'Signup',
@@ -104,17 +103,11 @@ const Signup = React.createClass( {
 					? Date.now() - this.state.loadingScreenStartTime
 					: undefined;
 				const filteredDestination = utils.getDestination( destination, dependencies, this.props.flowName );
-				let loadingScreenDelay;
-				if ( dependencies.cartItem ) {
-					loadingScreenDelay = MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_PREMIUM;
-				} else {
-					loadingScreenDelay = MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_FREE;
-				}
 
-				if ( timeSinceLoading && timeSinceLoading < loadingScreenDelay ) {
+				if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
 					return delay(
 						this.handleFlowComplete.bind( this, dependencies, filteredDestination ),
-						loadingScreenDelay - timeSinceLoading
+						MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
 					);
 				}
 				return this.handleFlowComplete( dependencies, filteredDestination );
