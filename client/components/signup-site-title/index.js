@@ -81,7 +81,7 @@ const SignupSiteTitle = React.createClass( {
 					className="signup-site-title__input"
 					type="text"
 					name="siteTitle"
-					placeholder="Give your site a title"
+					placeholder={ this.translate( 'Give your site a title' ) }
 					value={ this.state.form.siteTitle.value }
 					onChange={ this.handleChangeEvent }
 				/>
