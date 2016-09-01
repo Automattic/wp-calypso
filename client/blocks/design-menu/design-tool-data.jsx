@@ -37,20 +37,24 @@ export default function designTool( Component ) {
 		},
 
 		getUpdatedCustomizationsForKey( id, customizations ) {
-			const updatedCustomizations = { [ id ]: Object.assign( {}, this.getCustomizationsForKey( id ), customizations ) };
+			const updatedCustomizations = { [ id ]:
+				Object.assign( {}, this.getDefaultCustomizations(), this.getCustomizationsForKey( id ), customizations )
+			};
 			return Object.assign( {}, this.props.customizations, updatedCustomizations );
 		},
 
-		buildOnChangeFor( id ) {
+		buildOnChange() {
 			return customizations => {
-				const newCustomizations = this.getUpdatedCustomizationsForKey( id, customizations );
-				debug( `changed customizations for "${id}" to`, newCustomizations );
+				const newCustomizations = this.getUpdatedCustomizationsForKey( this.props.previewDataKey, customizations );
+				debug( `changed customizations for "${this.props.previewDataKey}" to`, newCustomizations );
 				return this.props.updateCustomizations( this.props.selectedSiteId, newCustomizations );
 			};
 		},
 
-		getDefaultChildProps() {
-			return { onChange: this.buildOnChangeFor( this.props.previewDataKey ) };
+		getDefaultCustomizations() {
+			return this.props.controls.reduce( ( customizations, control ) => {
+				return Object.assign( {}, customizations, { [ control.id ]: control.input.initialValue } );
+			}, {} );
 		},
 
 		getCustomizationsForKey( key ) {
@@ -58,11 +62,12 @@ export default function designTool( Component ) {
 		},
 
 		getChildProps() {
-			return Object.assign( {}, this.getDefaultChildProps(), { values: this.getCustomizationsForKey( this.props.previewDataKey ) } );
+			const values = Object.assign( {}, this.getDefaultCustomizations(), this.getCustomizationsForKey( this.props.previewDataKey ) );
+			return { values, onChange: this.buildOnChange() };
 		},
 
 		render() {
-			const myProps = omit( this.props, [ 'previewDataKey' ] );
+			const myProps = omit( this.props, [ 'previewDataKey', 'customizations', 'selectedSiteId', 'selectedSite', 'allPages' ] );
 			const props = Object.assign( {}, myProps, this.getChildProps() );
 			return <Component { ...props } />;
 		}
