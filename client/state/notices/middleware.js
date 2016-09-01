@@ -78,10 +78,6 @@ export function onPostSaveSuccess( dispatch, action ) {
 	}
 }
 
-export function onGuidedTransferHostDetailsSaveSuccess( dispatch ) {
-	dispatch( successNotice( translate( 'Thanks for confirming those details!' ) ) );
-}
-
 export function onGuidedTransferHostDetailsSaveFailure( dispatch, { error } ) {
 	if ( error && error.message ) {
 		dispatch( errorNotice( error.message ) );
@@ -103,7 +99,7 @@ export const handlers = {
 	[ POST_RESTORE_FAILURE ]: onPostRestoreFailure,
 	[ POST_RESTORE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully restored' ) ),
 	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
-	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: onGuidedTransferHostDetailsSaveSuccess,
+	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE ]: onGuidedTransferHostDetailsSaveFailure,
 };
 
