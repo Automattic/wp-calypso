@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import find from 'lodash/find';
 import page from 'page';
@@ -170,10 +169,6 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( 'checkout-thank-you', {
-			'is-placeholder': ! this.isDataLoaded()
-		} );
-
 		let purchases = null,
 			wasJetpackPlanPurchased = false,
 			wasOnlyDotcomPlanPurchased = false;
@@ -187,8 +182,8 @@ const CheckoutThankYou = React.createClass( {
 		const isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
 		const isPaidNuxStreamlinedAbTest = abtest( 'paidNuxStreamlined' ) === 'streamlined';
 
-		// placeholder
-		if ( ! this.isDataLoaded() && ! this.isGenericReceipt() ) {
+		// this placeholder is using just wp logo here because two possible states do not share a common layout
+		if ( ! purchases && ! this.isGenericReceipt() ) {
 			// disabled because we use global loader icon
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
@@ -200,7 +195,7 @@ const CheckoutThankYou = React.createClass( {
 		// streamlined paid NUX thanks page
 		if ( isPaidNuxStreamlinedAbTest && isNewUser && wasOnlyDotcomPlanPurchased ) {
 			return (
-				<Main className={ classes }>
+				<Main className="checkout-thank-you">
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
 					{ this.renderConfirmationNotice() }
 				</Main>
@@ -209,7 +204,7 @@ const CheckoutThankYou = React.createClass( {
 
 		// standard thanks page
 		return (
-			<Main className={ classes }>
+			<Main className="checkout-thank-you">
 				<HeaderCake
 					onClick={ this.goBack }
 					isCompact
@@ -220,9 +215,7 @@ const CheckoutThankYou = React.createClass( {
 				</Card>
 
 				<Card className="checkout-thank-you__footer">
-					<HappinessSupport
-						isJetpack={ wasJetpackPlanPurchased }
-						isPlaceholder={ ! this.isDataLoaded() && ! this.isGenericReceipt() } />
+					<HappinessSupport isJetpack={ wasJetpackPlanPurchased } />
 				</Card>
 			</Main>
 		);
