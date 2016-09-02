@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
-import config from 'config';
+//import config from 'config';
 import twemoji from 'twemoji';
 
 /**
@@ -46,7 +46,7 @@ import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 export class FullPostView extends React.Component {
 	constructor( props ) {
 		super( props );
-		[ 'handleBack', 'handleCommentClick', 'bindComments' ].forEach( fn => {
+		[ 'handleBack', 'handleCommentClick', 'bindComments', 'parseEmoji' ].forEach( fn => {
 			this[ fn ] = this[ fn ].bind( this );
 		} );
 	}
@@ -56,9 +56,12 @@ export class FullPostView extends React.Component {
 		this.parseEmoji();
 	}
 
+	componentDidUpdate() {
+		this.parseEmoji();
+	}
+
 	componentWillUnmount() {
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
-		this.parseEmoji();
 	}
 
 	handleBack() {
@@ -86,7 +89,7 @@ export class FullPostView extends React.Component {
 
 	parseEmoji() {
 		twemoji.parse( ReactDom.findDOMNode( this.refs.article ), {
-			base: config( 'twemoji_cdn_url' )
+			//base: config( 'twemoji_cdn_url' )
 		} );
 	}
 
