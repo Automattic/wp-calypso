@@ -101,13 +101,15 @@ export class FullPostView extends React.Component {
 				</div>
 				<div className="reader-full-post__content">
 					<div className="reader-full-post__sidebar">
-						<AuthorCompactProfile
+						{ post.author &&
+							<AuthorCompactProfile
 							author={ post.author }
 							siteName={ post.site_name }
 							siteUrl= { post.site_URL }
 							followCount={ site && site.subscribers_count }
-							feedId={ post.feed_ID }
-							siteId={ post.site_ID } />
+							feedId={ +post.feed_ID }
+							siteId={ +post.site_ID } />
+						}
 						{ shouldShowComments( post ) &&
 							<CommentButton key="comment-button"
 								commentCount={ post.discussion.comment_count }
