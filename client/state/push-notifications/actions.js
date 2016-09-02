@@ -96,8 +96,6 @@ export function init() {
 		if ( isPushNotificationsDenied() ) {
 			debug( 'Push Notifications have been denied' );
 			dispatch( block() );
-			dispatch( apiReady() );
-			return;
 		}
 
 		dispatch( fetchAndLoadServiceWorker() );
