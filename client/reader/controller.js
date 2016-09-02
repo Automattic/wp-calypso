@@ -12,7 +12,7 @@ import defer from 'lodash/defer';
 /**
  * Internal Dependencies
  */
-import abtest from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
@@ -135,6 +135,13 @@ module.exports = {
 		const FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' );
 		const user = getCurrentUser( context.store.getState() );
 		const numberofTries = 3;
+		let graduationThreshold;
+
+		if ( abtest( 'coldStartReader' ) === 'noEmailColdStartWithAutofollows' ) {
+			graduationThreshold = config( 'reader_cold_start_graduation_threshold_with_autofollows' );
+		} else {
+			graduationThreshold = config( 'reader_cold_start_graduation_threshold' );
+		}
 
 		if ( ! user ) {
 			next();
@@ -149,7 +156,7 @@ module.exports = {
 		function checkSubCount( tries ) {
 			if ( FeedSubscriptionStore.getCurrentPage() > 0 || FeedSubscriptionStore.isLastPage() ) {
 				// we have total subs now, make the decision
-				if ( FeedSubscriptionStore.getTotalSubscriptions() < config( 'reader_cold_start_graduation_threshold' ) ) {
+				if ( FeedSubscriptionStore.getTotalSubscriptions() < graduationThreshold ) {
 					defer( page.redirect.bind( page, '/recommendations/start' ) );
 				} else {
 					if ( ! isRequestingGraduation( context.store.getState() ) ) {
