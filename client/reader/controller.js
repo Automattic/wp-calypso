@@ -12,7 +12,7 @@ import defer from 'lodash/defer';
 /**
  * Internal Dependencies
  */
-import abtest from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
