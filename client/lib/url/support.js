@@ -13,6 +13,7 @@ export default {
 	COMMUNITY_TRANSLATOR: `${root}/community-translator`,
 	COMPLETING_GOOGLE_APPS_SIGNUP: `${root}/adding-google-apps-to-your-site/#completing-sign-up`,
 	CALYPSO_CONTACT: '/help/contact',
+	CALYPSO_COURSES: '/help/courses',
 	CUSTOM_DNS: `${root}/domains/custom-dns`,
 	DOMAIN_HELPER_PREFIX: `${root}/domain-helper/?host=`,
 	DOMAINS: `${root}/domains`,

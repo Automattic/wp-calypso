@@ -24,6 +24,7 @@ import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
 import VideoAudioPosts from './video-audio-posts';
 import MonetizeSite from './monetize-site';
+import LiveCourses from './live-courses';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import JetpackAntiSpam from './jetpack-anti-spam';
@@ -76,6 +77,9 @@ export default class ProductPurchaseFeaturesList extends Component {
 			<CustomizeTheme
 				selectedSite={ selectedSite }
 				key="customizeThemeFeature"
+			/>,
+			<LiveCourses
+				key="attendLiveCourses"
 			/>,
 			<VideoAudioPosts
 				selectedSite={ selectedSite }
