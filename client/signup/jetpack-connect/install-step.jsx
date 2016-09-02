@@ -12,7 +12,6 @@ import versionCompare from 'lib/version-compare';
 import JetpackExampleInstall from './exampleComponents/jetpack-install';
 import JetpackExampleActivate from './exampleComponents/jetpack-activate';
 import JetpackExampleConnect from './exampleComponents/jetpack-connect';
-import JetpackExampleConnectLegacy from './exampleComponents/jetpack-connect-legacy';
 
 const NEW_INSTRUCTIONS_JETPACK_VERSION = '4.2.0';
 
@@ -46,12 +45,11 @@ export default React.createClass( {
 	},
 
 	getStep( stepName ) {
-		const jetpackConnectExample = (
-			! this.props.jetpackVersion ||
-			versionCompare( this.props.jetpackVersion, NEW_INSTRUCTIONS_JETPACK_VERSION, '>=' )
-		)
-			? <JetpackExampleConnect url={ this.props.currentUrl } />
-			: <JetpackExampleConnectLegacy url={ this.props.currentUrl } />;
+		const isLegacyVersion = (
+			this.props.jetpackVersion &&
+			versionCompare( this.props.jetpackVersion, NEW_INSTRUCTIONS_JETPACK_VERSION, '<' )
+		);
+		const jetpackConnectExample = <JetpackExampleConnect url={ this.props.currentUrl } isLegacy={ isLegacyVersion } />;
 		const steps = {
 			installJetpack: {
 				title: this.translate( '1. Install Jetpack' ),
