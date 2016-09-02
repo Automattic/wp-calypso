@@ -1,18 +1,21 @@
 /**
  * External Dependencies
  */
-import filter from 'lodash/filter';
-import find from 'lodash/find';
-import flow from 'lodash/flow';
-import forEach from 'lodash/forEach';
-import map from 'lodash/map';
-import pick from 'lodash/pick';
-import pull from 'lodash/pull';
-import uniq from 'lodash/uniq';
+import {
+	filter,
+	find,
+	flow,
+	forEach,
+	map,
+	pick,
+	pull,
+	uniq
+} from 'lodash';
 
 /**
  * Internal Dependencies
  */
+import { thumbIsLikelyImage } from './utils';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
@@ -53,7 +56,7 @@ export default function waitForImagesToLoad( post ) {
 
 		let imagesToCheck = [];
 
-		if ( post.post_thumbnail ) {
+		if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
 			imagesToCheck.push( post.post_thumbnail.URL );
 		} else if ( post.featured_image ) {
 			imagesToCheck.push( post.featured_image );

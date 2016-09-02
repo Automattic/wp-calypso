@@ -189,7 +189,7 @@ const Post = React.createClass( {
 		//   - there is an available embed
 		//
 		useFeaturedEmbed = featuredEmbed &&
-			( ! featuredImage || ( featuredImage !== post.featured_image ) );
+			( ! featuredImage || ( featuredImage !== post.featured_image && featuredImage !== get( post, 'post_thumbnail.URL' ) ) );
 		if ( useFeaturedEmbed ) {
 			this.featuredSizingStrategy = EmbedHelper.getEmbedSizingFunction( featuredEmbed );
 		} else if ( featuredImage && post.canonical_image.width >= maxWidth ) {

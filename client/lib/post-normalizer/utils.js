@@ -1,8 +1,7 @@
 /**
  * External Dependencies
  */
-import find from 'lodash/find';
-import forEach from 'lodash/forEach';
+import { find, forEach, some, endsWith } from 'lodash';
 import url from 'url';
 
 /**
@@ -36,14 +35,13 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		return imageURL;
 	}
 
-	let parsedURL = url.parse( imageURL, true, true ), // true, true means allow protocol-less hosts and parse the querystring
-		isGravatar, sizeParam;
+	const parsedURL = url.parse( imageURL, true, true ); // true, true means allow protocol-less hosts and parse the querystring
 
 	if ( ! parsedURL.host ) {
 		return imageURL;
 	}
 
-	isGravatar = parsedURL.host.indexOf( 'gravatar.com' ) !== -1;
+	const isGravatar = parsedURL.host.indexOf( 'gravatar.com' ) !== -1;
 
 	delete parsedURL.search;
 	// strip other sizing params
@@ -51,7 +49,7 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		delete parsedURL.query[ param ];
 	} );
 
-	sizeParam = isGravatar ? 's' : 'w';
+	const sizeParam = isGravatar ? 's' : 'w';
 	parsedURL.query[ sizeParam ] = width * IMAGE_SCALE_FACTOR;
 
 	if ( ! isGravatar ) {
@@ -86,4 +84,25 @@ export function domForHtml( html ) {
 		dom.innerHTML = html;
 	}
 	return dom;
+}
+
+/**
+ * Determine if a post thumbnail is likely an image
+ * @param  {object} thumb the thumbnail object from a post
+ * @return {boolean}       whether or not we think this is an image
+ */
+export function thumbIsLikelyImage( thumb ) {
+	if ( ! thumb ) {
+		return false;
+	}
+	// this doesn't work because jetpack 4.2 lies
+	// normally I wouldn't leave commented code in, but it's the best way to explain what not to do
+	//if ( startsWith( thumb.mime_type, 'image/' ) ) {
+	//	return true;
+	// }
+
+	const { pathname } = url.parse( thumb.URL, true, true );
+	return some( [ '.jpg', '.jpeg', '.png', '.gif' ], function( ext ) {
+		return endsWith( pathname, ext );
+	} );
 }
