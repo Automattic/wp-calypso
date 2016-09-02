@@ -14,6 +14,7 @@ import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { plansList } from 'lib/plans/constants';
+import formatCurrency from 'lib/format-currency';
 
 class PlanThankYouCard extends Component {
 	static propTypes = {
@@ -45,7 +46,7 @@ class PlanThankYouCard extends Component {
 					}
 					{ ! plan
 						? <div className="plan-thank-you-card__plan-price is-placeholder"></div>
-						: <div className="plan-thank-you-card__plan-price">{ plan.formattedPrice }</div>
+						: <div className="plan-thank-you-card__plan-price">{ formatCurrency( plan.rawPrice, plan.currencyCode ) }</div>
 					}
 					<div className="plan-thank-you-card__background-icons">
 						<Gridicon icon="audio" size={ 52 } />
