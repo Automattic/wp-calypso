@@ -7,6 +7,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
+import config from 'config';
+import twemoji from 'twemoji';
 
 /**
  * Internal Dependencies
@@ -51,10 +53,12 @@ export class FullPostView extends React.Component {
 
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
+		this.parseEmoji();
 	}
 
 	componentWillUnmount() {
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
+		this.parseEmoji();
 	}
 
 	handleBack() {
@@ -78,6 +82,12 @@ export class FullPostView extends React.Component {
 
 	checkForCommentAnchor() {
 
+	}
+
+	parseEmoji() {
+		twemoji.parse( ReactDom.findDOMNode( this.refs.article ), {
+			base: config( 'twemoji_cdn_url' )
+		} );
 	}
 
 	render() {
@@ -122,7 +132,7 @@ export class FullPostView extends React.Component {
 						}
 
 					</div>
-					<div className="reader-full-post__story">
+					<article className="reader-full-post__story" ref="article">
 						<ReaderFullPostHeader post={ post } />
 						{ post.use_excerpt
 							? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
@@ -156,7 +166,7 @@ export class FullPostView extends React.Component {
 								onCommentsUpdate={ this.checkForCommentAnchor } />
 						: null
 					}
-					</div>
+					</article>
 				</div>
 			</ReaderMain>
 		);
