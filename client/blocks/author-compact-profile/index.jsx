@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
+import ReaderAvatar from 'blocks/reader-avatar';
 import ReaderAuthorLink from 'blocks/reader-author-link';
 import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderFollowButton from 'reader/follow-button';
@@ -40,7 +40,7 @@ const AuthorCompactProfile = React.createClass( {
 		return (
 			<div className={ classes }>
 				<a href={ streamUrl }>
-					<Gravatar size={ 96 } user={ author } />
+					<ReaderAvatar showGravatar={ true } />
 				</a>
 				{ ! hasMatchingAuthorAndSiteNames &&
 					<ReaderAuthorLink author={ author } siteUrl={ streamUrl }>{ author.name }</ReaderAuthorLink> }
