@@ -609,13 +609,13 @@ const RegisterDomainStep = React.createClass( {
 				break;
 
 			case 'invalid_query':
-				message = this.translate( 'Sorry but %(domain)s does not appear to be a valid domain name.', {
+				message = this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'server_error':
-				message = this.translate( 'Sorry but there was a problem processing your request. Please try again in a few minutes.' );
+				message = this.translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
 				break;
 
 			case 'mappable_but_recently_mapped':
