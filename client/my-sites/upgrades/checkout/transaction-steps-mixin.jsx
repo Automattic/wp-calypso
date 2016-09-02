@@ -105,6 +105,12 @@ var TransactionStepsMixin = {
 
 					cartValue.products.forEach( function( cartItem ) {
 						analytics.tracks.recordEvent( 'calypso_checkout_product_purchase', cartItem );
+						analytics.ga.recordEvent(
+							'Checkout',
+							'calypso_checkout_product_purchase',
+							`${ cartItem.product_slug } cost: ${ cartItem.cost } curr: ${ cartItem.currency }` +
+								` per: ${ cartItem.bill_period }`
+						);
 					} );
 
 					this._recordDomainRegistrationAnalytics( {
