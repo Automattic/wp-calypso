@@ -21,8 +21,7 @@ import userModule from 'lib/user';
  */
 const user = userModule();
 let hasStartedFetchingScripts = false,
-	hasFinishedFetchingScripts = false,
-	retargetingInitialized = false;
+	hasFinishedFetchingScripts = false;
 
 /**
  * Constants
@@ -144,6 +143,11 @@ function loadTrackingScripts( callback ) {
 	} );
 }
 
+/**
+ * Fire tracking events for the purposes of retargeting on all Calypso pages
+ *
+ * @returns {void}
+ */
 function retarget() {
 	if ( ! hasStartedFetchingScripts ) {
 		return loadTrackingScripts( retarget );
@@ -151,24 +155,29 @@ function retarget() {
 
 	// The reason we check whether the scripts have finished is to avoid a situation
 	// where retarget is called once (which starts the load process) then immediately
-	// again (in which case they've started to be fetched, but haven't finished) which
-	// would cause an undefined function error for `google_trackConversion` below.
-	if ( hasFinishedFetchingScripts && ! retargetingInitialized ) {
-		debug( 'Retargeting initialized' );
-
-		retargetingInitialized = true;
-
-		// Facebook
-		window.fbq( 'track', 'PageView' );
-
-		// AdWords
-		if ( window.google_trackConversion ) {
-			window.google_trackConversion( {
-				google_conversion_id: GOOGLE_CONVERSION_ID,
-				google_remarketing_only: true
-			} );
-		}
+	// again (in which case they've started to be fetched, but haven't finished).
+	if ( ! hasFinishedFetchingScripts ) {
+		return;
 	}
+
+	debug( 'Retargeting' );
+
+	// Facebook
+	window.fbq( 'track', 'PageView' );
+
+	// AdWords
+	if ( window.google_trackConversion ) {
+		window.google_trackConversion( {
+			google_conversion_id: GOOGLE_CONVERSION_ID,
+			google_remarketing_only: true
+		} );
+	}
+
+	// Quantcast
+	window._qevents.push( {
+		qacct: TRACKING_IDS.quantcast,
+		event: 'refresh'
+	} );
 }
 
 /**
