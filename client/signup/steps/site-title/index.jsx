@@ -47,7 +47,7 @@ const SiteTitleStep = React.createClass( {
 				<SignupSiteTitle
 					onSubmit={ this.submitSiteTitleStep }
 				/>
-				<SiteTitleExample/>
+				<SiteTitleExample />
 			</div>
 		);
 	},
