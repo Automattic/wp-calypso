@@ -8,6 +8,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import DomainProductPrice from 'components/domains/domain-product-price';
+import Gridicon from 'components/gridicon';
+import { abtest } from 'lib/abtest';
 
 const DomainSuggestion = React.createClass( {
 
@@ -34,23 +36,35 @@ const DomainSuggestion = React.createClass( {
 		);
 	},
 
+	renderNonButton() {
+		return this.props.buttonContent;
+	},
+
 	render() {
+		const clickableRow = abtest( 'domainSuggestionClickableRow' ) === 'clickableRow';
 		const { price, isAdded, extraClasses, children, priceRule } = this.props;
 		let classes = classNames( 'domain-suggestion', 'card', 'is-compact', {
-			'is-added': isAdded
+			'is-added': isAdded,
+			'is-clickable': clickableRow,
 		}, extraClasses );
 
 		return (
-			<div className={ classes }>
+			<div
+				className={ classes }
+				onClick={ clickableRow ? this.props.onButtonClick : undefined }
+				aria-role={ clickableRow ? 'button' : undefined }
+				data-e2e-domain={ clickableRow ? this.props.domain : undefined }>
 				<div className="domain-suggestion__content">
 					{ children }
 					<DomainProductPrice
 						rule={ priceRule }
 						price={ price }/>
 				</div>
-				<div className="domain-suggestion__action">
-					{ this.renderButton() }
+				<div className={ clickableRow ? 'domain-suggestion__non-button-action' : 'domain-suggestion__action' }>
+					{ clickableRow ? this.renderNonButton() : this.renderButton() }
 				</div>
+				{ clickableRow &&
+					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" /> }
 			</div>
 		);
 	}
@@ -58,12 +72,18 @@ const DomainSuggestion = React.createClass( {
 
 DomainSuggestion.Placeholder = React.createClass( {
 	render() {
+		const clickableRow = abtest( 'domainSuggestionClickableRow' ) === 'clickableRow';
+		const classes = classNames( 'domain-suggestion', 'card', 'is-compact', 'is-placeholder', {
+			'is-clickable': clickableRow,
+		} );
 		return (
-			<div className="domain-suggestion card is-compact is-placeholder">
+			<div className={ classes }>
 				<div className="domain-suggestion__content">
 					<h3 />
 				</div>
-				<div className="domain-suggestion__action" />
+				<div className={ clickableRow ? 'domain-suggestion__non-button-action' : 'domain-suggestion__action' } />
+				{ clickableRow &&
+					<Gridicon className="domain-suggestion__chevron" icon="chevron-right" /> }
 			</div>
 		);
 	}

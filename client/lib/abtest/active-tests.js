@@ -24,6 +24,14 @@ module.exports = {
 		defaultVariation: 'noChanges',
 		allowExistingUsers: false,
 	},
+	domainSuggestionClickableRow: {
+		datestamp: '20160802',
+		variations: {
+			clickableRow: 20,
+			clickableButton: 80
+		},
+		defaultVariation: 'clickableButton'
+	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {
