@@ -27,5 +27,6 @@ module.exports = function() {
 		} );
 
 		page( '/plugins/:plugin/:business_plugin?/:site_id?', controller.siteSelection, controller.navigation, pluginsController.validateFilters.bind( null, null ), pluginsController.plugin );
+		page.exit( '/plugins*', pluginsController.resetHistory );
 	}
 };

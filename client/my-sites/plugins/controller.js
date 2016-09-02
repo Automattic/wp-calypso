@@ -51,12 +51,19 @@ function renderSinglePlugin( context, siteUrl ) {
 	// Scroll to the top
 	window.scrollTo( 0, 0 );
 
+	let prevPath;
+	if ( lastPluginsListVisited ) {
+		prevPath = lastPluginsListVisited;
+	} else if ( context.prevPath ) {
+		prevPath = route.sectionify( context.prevPath );
+	}
+
 	// Render single plugin component
 	renderWithReduxStore(
 		React.createElement( PluginComponent, {
 			path: context.path,
-			prevPath: lastPluginsListVisited || context.prevPath,
 			prevQuerystring: lastPluginsQuerystring,
+			prevPath,
 			sites,
 			pluginSlug,
 			siteUrl,
@@ -257,6 +264,12 @@ const controller = {
 
 	setupPlugins( context ) {
 		renderProvisionPlugins( context );
+	},
+
+	resetHistory( context, next ) {
+		lastPluginsListVisited = null;
+		lastPluginsQuerystring = null;
+		next();
 	}
 };
 
