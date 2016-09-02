@@ -74,7 +74,7 @@ const Signup = React.createClass( {
 	},
 
 	loadProgressFromStore() {
-		var newProgress = SignupProgressStore.get(),
+		const newProgress = SignupProgressStore.get(),
 			invalidSteps = some( newProgress, matchesProperty( 'status', 'invalid' ) ),
 			waitingForServer = ! invalidSteps && this.isEveryStepSubmitted(),
 			startLoadingScreen = waitingForServer && ! this.state.loadingScreenStartTime;
@@ -251,7 +251,7 @@ const Signup = React.createClass( {
 	},
 
 	loginRedirectTo( path ) {
-		var redirectTo;
+		let redirectTo;
 
 		if ( startsWith( path, 'https://' ) || startsWith( path, 'http://' ) ) {
 			return path;
@@ -340,7 +340,7 @@ const Signup = React.createClass( {
 	},
 
 	goToFirstInvalidStep() {
-		var firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
+		const firstInvalidStep = find( SignupProgressStore.get(), { status: 'invalid' } );
 
 		if ( firstInvalidStep ) {
 			analytics.tracks.recordEvent( 'calypso_signup_goto_invalid_step', {
@@ -369,18 +369,18 @@ const Signup = React.createClass( {
 	},
 
 	localeSuggestions() {
-		return 0 === this.positionInFlow() && ! user.get() ?
-			<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } /> :
-			null;
+		return 0 === this.positionInFlow() && ! user.get()
+			? <LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
+			: null;
 	},
 
 	loginForm() {
-		return this.state.bearerToken ?
-			<WpcomLoginForm
+		return this.state.bearerToken
+			? <WpcomLoginForm
 				authorization={ 'Bearer ' + this.state.bearerToken }
 				log={ this.state.username }
-				redirectTo={ this.state.redirectTo } /> :
-			null;
+				redirectTo={ this.state.redirectTo } />
+			: null;
 	},
 
 	pageTitle() {
@@ -389,7 +389,7 @@ const Signup = React.createClass( {
 	},
 
 	currentStep() {
-		let currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
+		const currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
 			propsFromConfig = assign( {}, this.props, steps[ this.props.stepName ].props ),
 			stepKey = this.state.loadingScreenStartTime ? 'processing' : this.props.stepName,
@@ -442,12 +442,12 @@ const Signup = React.createClass( {
 		return (
 			<span>
 				<DocumentHead title={ this.pageTitle() } />
-				{
-					this.state.loadingScreenStartTime ?
-					null :
-					<FlowProgressIndicator
+				{ this.state.loadingScreenStartTime
+					? null
+					: <FlowProgressIndicator
 						positionInFlow={ this.positionInFlow() }
-						flowName={ this.props.flowName } />
+						flowName={ this.props.flowName }
+					/>
 				}
 				<ReactCSSTransitionGroup
 					className="signup__steps"
