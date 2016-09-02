@@ -90,7 +90,6 @@ export function saveHostDetails( siteId, data ) {
 
 		const failure = error => {
 			dispatch( saveHostDetailsFailure( siteId, error ) );
-			return false;
 		};
 
 		const success = response => {
@@ -104,8 +103,6 @@ export function saveHostDetails( siteId, data ) {
 					type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 					siteId,
 				} );
-
-				return true;
 			}
 
 			return failure();
