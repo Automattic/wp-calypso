@@ -17,7 +17,7 @@ function DismissableCardExample( { clearPreference } ) {
 	return (
 		<div className="docs__design-assets-group">
 			<h2>
-				<a href="/devdocs/blocks/dissmissable-card">Dismissable Card</a>
+				<a href="/devdocs/blocks/dismissable-card">Dismissable Card</a>
 			</h2>
 			<DismissableCard
 				preferenceName="example-local"
