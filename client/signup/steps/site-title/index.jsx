@@ -52,8 +52,8 @@ const SiteTitleStep = React.createClass( {
 		);
 	},
 	render() {
-		const headerText = this.translate( 'What is your site title?' );
-		const subHeaderText = this.translate( 'WordPress.com is the best place for your WordPress blog or website.' );
+		const headerText = this.translate( 'Give your new site a name.' );
+		const subHeaderText = this.translate( 'Enter a Site Title that will be displayed for visitors. You can always change this later.' );
 
 		return (
 			<div>
