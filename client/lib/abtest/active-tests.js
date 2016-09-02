@@ -16,10 +16,11 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	coldStartReader: {
-		datestamp: '20160804',
+		datestamp: '20160901',
 		variations: {
-			noEmailColdStart: 20,
-			noChanges: 80
+			noEmailColdStart: 33,
+			noEmailColdStartWithAutofollows: 33,
+			noChanges: 34
 		},
 		defaultVariation: 'noChanges',
 		allowExistingUsers: false,
