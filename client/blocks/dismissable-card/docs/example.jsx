@@ -11,13 +11,11 @@ import { partial } from 'lodash';
  */
 import Button from 'components/button';
 import DismissableCard from '../';
-import QueryPreferences from 'components/data/query-preferences';
 import { savePreference } from 'state/preferences/actions';
 
 function DismissableCardExample( { clearPreference } ) {
 	return (
 		<div className="docs__design-assets-group">
-			<QueryPreferences />
 			<h2>
 				<a href="/devdocs/blocks/dissmissable-card">Dismissable Card</a>
 			</h2>

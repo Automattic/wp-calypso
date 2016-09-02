@@ -11,6 +11,7 @@ import { noop, flow } from 'lodash';
  */
 import Card from 'components/card';
 import Gridicon from 'components/gridicon';
+import QueryPreferences from 'components/data/query-preferences';
 import { savePreference, setPreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 
@@ -40,6 +41,7 @@ class DismissableCard extends Component {
 
 		return (
 			<Card className={ className }>
+				<QueryPreferences />
 				<Gridicon
 					icon="cross"
 					className="dismissable-card__close-icon"

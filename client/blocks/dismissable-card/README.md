@@ -7,12 +7,10 @@ via user preference.
 
 ```js
 import DismissableCard from 'blocks/dismissable-card';
-import QueryPreferences from 'components/data/query-preferences';
 
 render: function() {
   return (
     <div className="your-stuff">
-      <QueryPreferences />
       <DismissableCard preferenceName="my-unique-preference-name">
         <span>Your stuff in a Card</span>
       </DismissableCard>
