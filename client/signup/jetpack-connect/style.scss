@@ -241,27 +241,6 @@
 	line-height: 1.5;
 }
 
-.jetpack-connect__example-connect-jetpack-legacy {
-
-	.jetpack-connect__example-content-wp-admin-connect-banner {
-		margin: 10px;
-		padding: 12px 10px 16px 10px;
-		text-align: right;
-		background-color: #81A844;
-	}
-
-	.jetpack-connect__example-content-wp-admin-connect-button {
-		display: inline-block;
-		font-size: 12px;
-		line-height: 1;
-		padding: 11px 10px;
-		color: $white;
-		background-color: #518D2A;
-		border-radius: 4px;
-		box-shadow: 0 2px 3px 0 rgba( 0, 0, 0, .2 ), 0 4px 0 0 #3E6C20;
-	}
-}
-
 .jetpack-connect__example-connect-jetpack {
 
 	.jetpack-connect__example-content-wp-admin-plugin-name {
@@ -285,6 +264,27 @@
 		background-color: #008EC2; // wp-admin button blue
 		border: 1px solid #006799;
 		border-radius: 3px;
+	}
+}
+
+.jetpack-connect__example-connect-jetpack.is-legacy {
+
+	.jetpack-connect__example-content-wp-admin-connect-banner {
+		margin: 10px;
+		padding: 12px 10px 16px 10px;
+		text-align: right;
+		background-color: #81A844;
+	}
+
+	.jetpack-connect__example-content-wp-admin-connect-button {
+		display: inline-block;
+		font-size: 12px;
+		line-height: 1;
+		padding: 11px 10px;
+		color: $white;
+		background-color: #518D2A;
+		border-radius: 4px;
+		box-shadow: 0 2px 3px 0 rgba( 0, 0, 0, .2 ), 0 4px 0 0 #3E6C20;
 	}
 }
 

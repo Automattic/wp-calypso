@@ -1,4 +1,8 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -9,7 +13,22 @@ import Gridicon from 'components/gridicon';
 export default React.createClass( {
 	displayName: 'JetpackConnectExampleConnect',
 
+	propTypes: {
+		isLegacy: React.PropTypes.bool,
+		url: React.PropTypes.string
+	},
+
+	getDefaultProps() {
+		return {
+			isLegacy: false,
+			url: ''
+		};
+	},
+
 	render() {
+		const contentClassName = classNames( 'jetpack-connect__example-content', 'jetpack-connect__example-connect-jetpack', {
+			'is-legacy': this.props.isLegacy
+		} );
 		return (
 			<div className="jetpack-connect__example">
 				<div className="jetpack-connect__browser-chrome jetpack-connect__site-url-input-container">
@@ -28,14 +47,23 @@ export default React.createClass( {
 							placeholder={ this.props.url } />
 					</div>
 				</div>
-				<div className="jetpack-connect__example-content jetpack-connect__example-connect-jetpack">
+				<div className={ contentClassName }>
 					<div className="jetpack-connect__example-content-wp-admin-masterbar"></div>
 					<div className="jetpack-connect__example-content-wp-admin-sidebar"></div>
 					<div className="jetpack-connect__example-content-wp-admin-main">
 						<div className="jetpack-connect__example-content-wp-admin-connect-banner">
-							<div className="jetpack-connect__example-content-wp-admin-plugin-name" aria-hidden="true">
-								{ this.translate( 'Your Jetpack is almost ready!', { context: 'Jetpack Connect activate plugin instructions, connection banner headline' } ) }
-							</div>
+							{ ! this.props.isLegacy
+								? (
+									<div className="jetpack-connect__example-content-wp-admin-plugin-name" aria-hidden="true">
+										{ this.translate( 'Your Jetpack is almost ready!',
+											{
+												context: 'Jetpack Connect activate plugin instructions, connection banner headline'
+											}
+										) }
+									</div>
+								)
+								: null
+							}
 							<div className="jetpack-connect__example-content-wp-admin-connect-button" aria-hidden="true">
 								{ this.translate( 'Connect to WordPress.com',
 									{
