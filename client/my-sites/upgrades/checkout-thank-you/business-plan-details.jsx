@@ -8,9 +8,15 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import analytics from 'lib/analytics';
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import { isBusiness } from 'lib/products-values';
 import PurchaseDetail from 'components/purchase-detail';
+import support from 'lib/url/support';
+
+function trackCoursesButtonClick() {
+	analytics.tracks.recordEvent( 'calypso_checkout_thank_you_courses_click' );
+}
 
 const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => {
 	const plan = find( sitePlans.data, isBusiness );
@@ -21,6 +27,16 @@ const BusinessPlanDetails = ( { selectedSite, sitePlans, selectedFeature } ) => 
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
 			/>
+
+			<PurchaseDetail
+				icon="help"
+				title={ i18n.translate( 'Attend a live course' ) }
+				description={ i18n.translate( 'Register for one of our live courses led by Happiness Engineers ' +
+					'to get the most out of your site.'
+				) }
+				buttonText={ i18n.translate( 'Register for a course' ) }
+				href={ support.CALYPSO_COURSES }
+				onClick={ trackCoursesButtonClick } />
 
 			{ ! selectedFeature &&
 				<PurchaseDetail

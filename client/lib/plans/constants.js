@@ -51,6 +51,7 @@ export const FEATURE_VIDEO_UPLOADS = 'video-upload';
 export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
 export const FEATURE_ADVANCED_SEO = 'advanced-seo';
+export const FEATURE_LIVE_COURSES = 'live-courses';
 
 // jetpack features constants
 export const FEATURE_STANDARD_SECURITY_TOOLS = 'standard-security-tools';
@@ -156,8 +157,8 @@ export const plansList = {
 		availableFor: ( plan ) => includes( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM ], plan ),
 		getPathSlug: () => 'business',
 		getDescription: () => i18n.translate(
-			'Everything included with Premium, as well as live chat support,' +
-			' unlimited access to premium themes, and Google Analytics.'
+			'Everything included with Premium, as well as live chat support, live courses, ' +
+			'unlimited access to premium themes, and Google Analytics.'
 		),
 		getTargetedDescription: () => i18n.translate( '{{strong}}Best for Small Business:{{/strong}} Power your' +
 			' business website with unlimited premium and business theme templates, Google Analytics support, unlimited' +
@@ -168,6 +169,7 @@ export const plansList = {
 			} ),
 		getFeatures: () => compact( [ // pay attention to ordering, it is used on /plan page
 			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_LIVE_COURSES,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
@@ -185,7 +187,8 @@ export const plansList = {
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_NO_ADS,
 			FEATURE_ADVANCED_DESIGN,
-			FEATURE_VIDEO_UPLOADS
+			FEATURE_VIDEO_UPLOADS,
+			FEATURE_LIVE_COURSES
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -412,6 +415,15 @@ export const featuresList = {
 			"Keep the focus on your site's brand by removing the WordPress.com footer branding."
 		),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
+		plans: [ PLAN_BUSINESS ]
+	},
+
+	[ FEATURE_LIVE_COURSES ]: {
+		getSlug: () => FEATURE_LIVE_COURSES,
+		getTitle: () => i18n.translate( 'Attend live courses' ),
+		getDescription: () => i18n.translate(
+			'Attend live courses led by Happiness Engineers to get the most out of your site.'
+		),
 		plans: [ PLAN_BUSINESS ]
 	},
 
