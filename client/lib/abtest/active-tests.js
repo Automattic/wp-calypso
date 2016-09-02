@@ -100,7 +100,7 @@ module.exports = {
 		defaultVariation: 'originalWording'
 	},
 	paidNuxStreamlined: {
-		datestamp: '20160825',
+		datestamp: '20160912',
 		variations: {
 			original: 100,
 			streamlined: 0,
