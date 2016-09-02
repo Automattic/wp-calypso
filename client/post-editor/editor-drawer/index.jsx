@@ -12,7 +12,6 @@ import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
-import TagListData from 'components/data/tag-list-data';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
 import PostFormatsData from 'components/data/post-formats-data';
@@ -121,14 +120,6 @@ const EditorDrawer = React.createClass( {
 					site={ site }
 					post={ post } />
 			);
-
-			if ( site ) {
-				categories = (
-					<TagListData siteId={ site.ID }>
-						{ categories }
-					</TagListData>
-				);
-			}
 		}
 
 		// Custom Taxonomies
