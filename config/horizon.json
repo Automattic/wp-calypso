@@ -23,6 +23,7 @@
 		"guided-tours": true,
 		"happychat": false,
 		"help": true,
+		"help/courses": true,
 		"jetpack/connect": true,
 		"jetpack_core_inline_update": true,
 		"keyboard-shortcuts": true,
