@@ -10,7 +10,6 @@ import { truncate } from 'lodash';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import {
-	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 	POST_DELETE_FAILURE,
 	POST_DELETE_SUCCESS,
@@ -78,17 +77,6 @@ export function onPostSaveSuccess( dispatch, action ) {
 	}
 }
 
-export function onGuidedTransferHostDetailsSaveFailure( dispatch, { error } ) {
-	if ( error && error.message ) {
-		dispatch( errorNotice( error.message ) );
-	} else {
-		dispatch( errorNotice( translate( 'Whoops, there was an error saving your details. Please ' +
-			"try again or send us a message and we'll help you get started." ) ) );
-	}
-
-	return false;
-}
-
 /**
  * Handler action type mapping
  */
@@ -100,7 +88,6 @@ export const handlers = {
 	[ POST_RESTORE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully restored' ) ),
 	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
-	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE ]: onGuidedTransferHostDetailsSaveFailure,
 };
 
 /**

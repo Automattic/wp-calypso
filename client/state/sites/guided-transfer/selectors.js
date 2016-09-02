@@ -4,6 +4,10 @@ import {
 	some,
 } from 'lodash';
 
+export function getGuidedTransferError( state, siteId ) {
+	return state.sites.guidedTransfer.error[ siteId ];
+}
+
 export function isRequestingGuidedTransferStatus( state, siteId ) {
 	return state.sites.guidedTransfer.isFetching[ siteId ] === true;
 }
