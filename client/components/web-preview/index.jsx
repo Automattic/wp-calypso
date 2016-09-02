@@ -148,11 +148,13 @@ export class WebPreview extends Component {
 		}
 
 		debug( 'setIframeUrl', iframeUrl );
-		this.iframe.contentWindow.location.replace( iframeUrl );
-		this.setState( {
-			loaded: false,
-			iframeUrl: iframeUrl,
-		} );
+		try {
+			this.iframe.contentWindow.location.replace( iframeUrl );
+			this.setState( {
+				loaded: false,
+				iframeUrl: iframeUrl,
+			} );
+		} catch ( e ) {}
 	}
 
 	shouldRenderIframe() {
