@@ -136,7 +136,7 @@ export const plansList = {
 					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
-		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
+		getFeatures: () => [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_FREE_THEMES,
@@ -167,9 +167,8 @@ export const plansList = {
 					strong: <strong className="plan-features__targeted-description-heading" />
 				}
 			} ),
-		getFeatures: () => compact( [ // pay attention to ordering, it is used on /plan page
+		getFeatures: () => compact( [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
-			FEATURE_LIVE_COURSES,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
@@ -177,6 +176,7 @@ export const plansList = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS,
+			FEATURE_LIVE_COURSES,
 			isEnabled( 'manage/advanced-seo' ) && FEATURE_ADVANCED_SEO,
 			FEATURE_GOOGLE_ANALYTICS,
 			FEATURE_NO_BRANDING
