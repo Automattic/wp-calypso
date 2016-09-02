@@ -38,7 +38,6 @@ import {
 	getOperaVersion,
 } from './utils';
 import {
-	isServiceWorkerSupported,
 	registerServerWorker,
 } from 'lib/service-worker';
 import {
@@ -134,10 +133,6 @@ export function apiReady() {
 
 export function fetchAndLoadServiceWorker() {
 	return dispatch => {
-		if ( ! isServiceWorkerSupported() ) {
-			debug( 'Service workers are not supported' );
-			return;
-		}
 		debug( 'Registering service worker' );
 
 		registerServerWorker( serviceWorkerOptions )
