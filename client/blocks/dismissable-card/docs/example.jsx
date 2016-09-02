@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,12 +37,8 @@ function DismissableCardExample( { clearPreference } ) {
 }
 
 const ConnectedDismissableCardExample = connect( 
-	( state ) => { return {}; },
-	( dispatch ) => bindActionCreators( {
-		clearPreference: () => {
-			return savePreference( 'dismissable-card-example', null );
-		}
-	}, dispatch )
+	null,
+	{ clearPreference: partial( savePreference, 'dismissable-card-example', null ) }
 )( DismissableCardExample );
 
 ConnectedDismissableCardExample.displayName = 'DismissableCard';
