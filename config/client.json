@@ -31,5 +31,6 @@
   "sync-handler-defaults",
   "project",
   "reader_cold_start_graduation_threshold",
+  "reader_cold_start_graduation_threshold_with_autofollows",
   "happychat_url"
 ]
