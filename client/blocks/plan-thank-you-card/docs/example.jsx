@@ -12,7 +12,7 @@ import PlanThankYouCard from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSitePosts } from 'state/posts/selectors';
 
-function PlanThankYouCardExample( { primarySiteId, globalId } ) {
+function PlanThankYouCardExample( { primarySiteId } ) {
 	return (
 		<div className="design-assets__group">
 			<h2>
