@@ -201,7 +201,10 @@ const Signup = React.createClass( {
 	handleFlowComplete( dependencies, destination ) {
 		debug( 'The flow is completed. Logging you in...' );
 
-		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
+		const {	flowName } = this.props;
+
+		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: flowName } );
+		analytics.ga.recordEvent( 'Signup', 'calypso_signup_complete', `Flow: ${ flowName }` );
 
 		this.signupFlowController.reset();
 		if ( dependencies.cartItem || dependencies.domainItem ) {
