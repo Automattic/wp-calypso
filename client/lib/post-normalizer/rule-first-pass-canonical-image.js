@@ -1,18 +1,15 @@
 /**
  * External Dependencies
  */
-import assign from 'lodash/assign';
-import filter from 'lodash/filter';
-import head from 'lodash/head';
-import startsWith from 'lodash/startsWith';
+import { assign, filter, head, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { imageSizeFromAttachments } from './utils';
+import { imageSizeFromAttachments, thumbIsLikelyImage } from './utils';
 
 export default function firstPassCanonicalImage( post ) {
-	if ( post.post_thumbnail ) {
+	if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
 		const { URL: url, width, height } = post.post_thumbnail;
 		post.canonical_image = {
 			uri: url,
