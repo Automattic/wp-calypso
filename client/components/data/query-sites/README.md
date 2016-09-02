@@ -9,7 +9,7 @@ Render the component, optionally passing a site ID. The component does not accep
 
 ```jsx
 function AllSites() {
-	return <QuerySites />;
+	return <QuerySites allSites />;
 }
 
 function SingleSite() {
@@ -26,4 +26,13 @@ function SingleSite() {
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-An optional prop specifying a single site to be requested. If omitted, all sites for the current user will be requested.
+An optional prop specifying a single site to be requested.
+
+### `allSites`
+
+<table>
+	<tr><th>Type</th><td>Boolean</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>
+
+An optional prop specifying all sites to be requested. If true, all sites for the current user will be requested.
