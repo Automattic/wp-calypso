@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import noop from 'lodash/noop';
 import { localize } from 'i18n-calypso';
@@ -9,9 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import { getPost } from 'state/reader/posts/selectors';
+import { getSite } from 'state/reader/sites/selectors';
 import Card from 'components/card/compact';
 import Gravatar from 'components/gravatar';
-import FollowButton from 'components/follow-button/button';
+import FollowButton from 'reader/follow-button';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -23,15 +26,19 @@ function FeaturedImage( { image, href } ) {
 		} } ></div> );
 }
 
-function AuthorAndSiteFollow( { post } ) {
+function AuthorAndSiteFollow( { post, site } ) {
 	return (
 		<div className="reader-related-card-v2__meta">
 			<Gravatar user={ post.author } />
 			<div className="reader-related-card-v2__byline">
-				<span className="reader-related-card-v2__byline-author"><a href="#" className="reader-related-card-v2__link">Steve Stevenson</a></span>
-				<span className="reader-related-card-v2__byline-site"><a href="#" className="reader-related-card-v2__link">steve.wordpress.com</a></span>
+				<span className="reader-related-card-v2__byline-author">
+					<a href="#" className="reader-related-card-v2__link">{ post.author.name }</a>
+				</span>
+				<span className="reader-related-card-v2__byline-site">
+					<a href="#" className="reader-related-card-v2__link">{ site.title }</a>
+				</span>
 			</div>
-			<FollowButton following={ false } />
+			<FollowButton siteUrl={ post.site_URL } />
 		</div>
 	);
 }
@@ -57,4 +64,16 @@ export function SmallPostCard( { post, site, onPostClick = noop, onSiteClick = n
 	);
 }
 
-export default localize( SmallPostCard );
+export const LocalizedRelatedPostCard = localize( SmallPostCard );
+
+export default connect(
+	( state, ownProps ) => {
+		const { post } = ownProps;
+		const actualPost = getPost( state, post );
+		const site = actualPost && getSite( state, actualPost.site_ID );
+		return {
+			post: actualPost,
+			site
+		};
+	}
+)( LocalizedRelatedPostCard );

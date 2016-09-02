@@ -40,6 +40,7 @@ import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -84,6 +85,7 @@ export class FullPostView extends React.Component {
 		const { post, site } = this.props;
 		const siteName = siteNameFromSiteAndPost( site, post );
 		const classes = { 'reader-full-post': true };
+		const showRelatedPosts = ! post.is_external && post.site_ID;
 		if ( post.site_ID ) {
 			classes[ 'blog-' + post.site_ID ] = true;
 		}
@@ -148,14 +150,18 @@ export class FullPostView extends React.Component {
 							? <DailyPostButton post={ post } tagName="span" />
 							: null
 						}
-					{ shouldShowComments( post )
-						? <Comments ref={ this.bindComments }
-								post={ post }
-								initialSize={ 25 }
-								pageSize={ 25 }
-								onCommentsUpdate={ this.checkForCommentAnchor } />
-						: null
-					}
+						{ showRelatedPosts && <RelatedPostsFromSameSite siteId={ post.site_ID } postId={ post.ID } title={ translate( 'More from %s', { args: [ siteName ] } ) } /> }
+
+						{ shouldShowComments( post )
+							? <Comments ref={ this.bindComments }
+									post={ post }
+									initialSize={ 25 }
+									pageSize={ 25 }
+									onCommentsUpdate={ this.checkForCommentAnchor } />
+							: null
+						}
+
+						{ showRelatedPosts && <RelatedPostsFromOtherSites siteId={ post.site_ID } postId={ post.ID } title={ translate( 'More from WordPress.com' ) } /> }
 					</div>
 				</div>
 			</ReaderMain>
