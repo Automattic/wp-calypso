@@ -417,7 +417,7 @@ class PlanFeatures extends Component {
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
 						isInSignup={ isInSignup }
-						manageHref={ `/plans/my-sites/${ site.slug }` }
+						manageHref={ `/plans/my-plan/${ site.slug }` }
 					/>
 				</td>
 			);
