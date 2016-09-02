@@ -22,7 +22,7 @@ import { PLAN_PREMIUM } from 'lib/plans/constants';
 function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeSlugWithRepo, themeItem } ) {
 	wpcom.undocumented().sitesNew( {
 		blog_name: siteUrl,
-		blog_title: siteUrl,
+		blog_title: '',
 		options: {
 			theme: dependencies.theme || themeSlugWithRepo,
 			vertical: dependencies.surveyQuestion || undefined
@@ -186,7 +186,7 @@ module.exports = {
 	createSite( callback, { theme }, { site } ) {
 		var data = {
 			blog_name: site,
-			blog_title: site,
+			blog_title: '',
 			options: { theme },
 			validate: false
 		};
