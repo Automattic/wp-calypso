@@ -17,9 +17,6 @@ import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
 import { getSiteByUrl } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
-import JetpackExampleInstall from './exampleComponents/jetpack-install';
-import JetpackExampleActivate from './exampleComponents/jetpack-activate';
-import JetpackExampleConnect from './exampleComponents/jetpack-connect';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
 import LocaleSuggestions from 'signup/locale-suggestions';
@@ -67,16 +64,6 @@ const JetpackConnectMain = React.createClass( {
 
 	dismissUrl() {
 		this.props.dismissUrl( this.state.currentUrl );
-	},
-
-	confirmJetpackInstalled( event ) {
-		event.preventDefault();
-		this.props.confirmJetpackInstallStatus( true );
-	},
-
-	confirmJetpackNotInstalled( event ) {
-		event.preventDefault();
-		this.props.confirmJetpackInstallStatus( false );
 	},
 
 	isCurrentUrlFetched() {
@@ -246,6 +233,24 @@ const JetpackConnectMain = React.createClass( {
 		return this.props.type === 'install' || this.props.type === 'pro' || this.props.type === 'premium';
 	},
 
+	getInstructionsData( status ) {
+		return {
+			headerTitle: ( 'notJetpack' === status )
+				? this.translate( 'Ready for installation' )
+				: this.translate( 'Ready for activation' ),
+			headerSubtitle: this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ),
+			steps: ( 'notJetpack' === status )
+				? [ 'installJetpack', 'activateJetpackAfterInstall', 'connectJetpackAfterInstall' ]
+				: [ 'activateJetpack', 'connectJetpack' ],
+			buttonOnClick: ( 'notJetpack' === status )
+				? this.installJetpack
+				: this.activateJetpack,
+			buttonText: ( 'notJetpack' === status )
+				? this.translate( 'Install Jetpack' )
+				: this.translate( 'Activate Jetpack' )
+		};
+	},
+
 	renderFooter() {
 		return (
 			<LoggedOutFormLinks>
@@ -297,66 +302,19 @@ const JetpackConnectMain = React.createClass( {
 			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
-					<QuerySites/>
+					<QuerySites />
 					<ConnectHeader
 						showLogo={ false }
 						headerText={ this.getTexts().headerTitle }
 						subHeaderText={ this.getTexts().headerSubtitle }
 						step={ 1 }
-						steps={ 3 } />
+						steps={ 3 }
+					/>
 
 					{ this.renderSiteInput( status ) }
 					{ this.renderFooter() }
 				</div>
 			</MainWrapper>
-		);
-	},
-
-	renderInstallInstructions() {
-		return (
-			<MainWrapper isWide>
-				{ this.renderLocaleSuggestions() }
-				<div className="jetpack-connect__install">
-					<ConnectHeader
-						showLogo={ false }
-						headerText={ this.translate( 'Ready for installation' ) }
-						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ) }
-						step={ 1 }
-						steps={ 3 } />
-					<div className="jetpack-connect__install-steps">
-						<JetpackInstallStep title={ this.translate( '1. Install Jetpack' ) }
-							text={ this.isInstall()
-									? this.translate( 'You will be redirected to your site\'s dashboard to install ' +
-										'Jetpack. Click the blue "Install Now" button.' )
-									: this.translate( 'You will be redirected to the Jetpack plugin page on your site\'s ' +
-										'dashboard to install Jetpack. Click the blue install button.' )
-								}
-							action={ this.renderAlreadyHaveJetpackButton() }
-							example={ <JetpackExampleInstall url={ this.state.currentUrl } /> } />
-						<JetpackInstallStep title={ this.translate( '2. Activate Jetpack' ) }
-							text={ this.translate( 'Then you\'ll click the blue "Activate" link to activate Jetpack.' ) }
-							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ true } /> } />
-						<JetpackInstallStep title={ this.translate( '3. Connect Jetpack' ) }
-							text={ this.translate( 'Finally, click the green "Connect to WordPress.com" button to finish the process.' ) }
-							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
-					</div>
-					<Button onClick={ this.installJetpack } primary>{ this.translate( 'Install Jetpack' ) }</Button>
-					<div className="jetpack-connect__navigation">
-						<div>{ this.renderBackButton() }</div>
-					</div>
-				</div>
-				<LoggedOutFormLinks>
-					<HelpButton />
-				</LoggedOutFormLinks>
-			</MainWrapper>
-		);
-	},
-
-	renderAlreadyHaveJetpackButton() {
-		return (
-			<a className="jetpack-connect__already-installed-jetpack-button" href="#" onClick={ this.confirmJetpackInstalled }>
-				{ this.translate( 'Already have jetpack installed?' ) }
-			</a>
 		);
 	},
 
@@ -377,27 +335,38 @@ const JetpackConnectMain = React.createClass( {
 		);
 	},
 
-	renderActivateInstructions() {
+	renderInstructions( instructionsData ) {
+		const jetpackVersion = this.checkProperty( 'jetpackVersion' ),
+			isInstall = this.isInstall(),
+			{ currentUrl } = this.state;
 		return (
 			<MainWrapper isWide>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
-					<ConnectHeader showLogo={ false }
-						headerText={ this.translate( 'Ready for activation' ) }
-						subHeaderText={ this.translate( 'We\'ll need to send you to your site dashboard for a few manual steps.' ) }
+					<ConnectHeader
+						showLogo={ false }
+						headerText={ instructionsData.headerTitle }
+						subHeaderText={ instructionsData.headerSubtitle }
 						step={ 1 }
-						steps={ 3 } />
+						steps={ instructionsData.steps.length }
+					/>
 					<div className="jetpack-connect__install-steps">
-						<JetpackInstallStep title={ this.translate( '1. Activate Jetpack' ) }
-							text={ this.translate( 'You will be redirected to your site\'s dashboard to activate ' +
-								'Jetpack. Click the blue "Activate" link.' ) }
-							action={ this.renderNotJetpackButton() }
-							example={ <JetpackExampleActivate url={ this.state.currentUrl } isInstall={ false } /> } />
-						<JetpackInstallStep title={ this.translate( '2. Connect Jetpack' ) }
-							text={ this.translate( 'Then click the green "Connect to WordPress.com" button to finish the process.' ) }
-							example={ <JetpackExampleConnect url={ this.state.currentUrl } /> } />
+						{
+							instructionsData.steps.map( ( stepName, key ) => {
+								return (
+									<JetpackInstallStep
+										key={ 'instructions-step-' + key }
+										stepName={ stepName }
+										jetpackVersion={ jetpackVersion }
+										isInstall={ isInstall }
+										currentUrl={ currentUrl }
+										confirmJetpackInstallStatus={ this.props.confirmJetpackInstallStatus }
+									/>
+								);
+							} )
+						}
 					</div>
-					<Button onClick={ this.activateJetpack } primary>{ this.translate( 'Activate Jetpack' ) }</Button>
+					<Button onClick={ instructionsData.buttonOnClick } primary>{ instructionsData.buttonText }</Button>
 					<div className="jetpack-connect__navigation">
 						{ this.renderBackButton() }
 					</div>
@@ -411,11 +380,11 @@ const JetpackConnectMain = React.createClass( {
 
 	render() {
 		const status = this.getStatus();
-		if ( status === 'notJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
-			return this.renderInstallInstructions();
-		}
-		if ( status === 'notActiveJetpack' && ! this.props.jetpackConnectSite.isDismissed ) {
-			return this.renderActivateInstructions();
+		if (
+			[ 'notJetpack', 'notActiveJetpack' ].includes( status ) &&
+			! this.props.jetpackConnectSite.isDismissed
+		) {
+			return this.renderInstructions( this.getInstructionsData( status ) );
 		}
 		return this.renderSiteEntry();
 	}
@@ -436,8 +405,8 @@ export default connect(
 		};
 	},
 	dispatch => bindActionCreators( {
-		recordTracksEvent,
 		confirmJetpackInstallStatus,
+		recordTracksEvent,
 		checkUrl,
 		dismissUrl,
 		goToRemoteAuth,
