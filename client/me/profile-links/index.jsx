@@ -1,42 +1,42 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	times = require( 'lodash/times' );
+import React from 'react';
+import times from 'lodash/times';
 
 /**
  * Internal dependencies
  */
-var ProfileLink = require( 'me/profile-link' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	AddProfileLinksButtons = require( 'me/profile-links/add-buttons' ),
-	SectionHeader = require( 'components/section-header' ),
-	Card = require( 'components/card' ),
-	Notice = require( 'components/notice' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	ProfileLinksAddWordPress = require( 'me/profile-links-add-wordpress' ),
-	ProfileLinksAddOther = require( 'me/profile-links-add-other' );
+import ProfileLink from 'me/profile-link';
+import observe from 'lib/mixins/data-observe';
+import AddProfileLinksButtons from 'me/profile-links/add-buttons';
+import SectionHeader from 'components/section-header';
+import Card from 'components/card';
+import Notice from 'components/notice';
+import eventRecorder from 'me/event-recorder';
+import ProfileLinksAddWordPress from 'me/profile-links-add-wordpress';
+import ProfileLinksAddOther from 'me/profile-links-add-other';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'ProfileLinks',
 
 	mixins: [ observe( 'userProfileLinks' ), eventRecorder ],
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.props.userProfileLinks.getProfileLinks();
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
 		}
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
 		}
 	},
 
-	handleVisibilityChange: function() {
+	handleVisibilityChange() {
 		// if we're visible now, fetch the links again in case they
 		// changed (added/removed) something while the component this tab
 		// is on was hidden
@@ -45,7 +45,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			userProfileLinks: {
 				initialized: false
@@ -53,7 +53,7 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			showingForm: false,
 			lastError: false,
@@ -61,77 +61,94 @@ module.exports = React.createClass( {
 		};
 	},
 
-	showAddWordPress: function() {
-		this.setState( { showingForm: 'wordpress', showPopoverMenu: false } );
+	showAddWordPress() {
+		this.setState( {
+			showingForm: 'wordpress',
+			showPopoverMenu: false
+		} );
 	},
 
-	showAddOther: function() {
-		this.setState( { showingForm: 'other', showPopoverMenu: false } );
+	showAddOther() {
+		this.setState( {
+			showingForm: 'other',
+			showPopoverMenu: false
+		} );
 	},
 
-	showPopoverMenu: function() {
+	showPopoverMenu() {
 		this.setState( {
 			showPopoverMenu: ! this.state.showPopoverMenu
 		} );
 	},
 
-	closePopoverMenu: function() {
-		this.setState( { showPopoverMenu: false } );
+	closePopoverMenu() {
+		this.setState( {
+			showPopoverMenu: false
+		} );
 	},
 
-	hideForms: function() {
-		this.setState( { showingForm: false } );
+	hideForms() {
+		this.setState( {
+			showingForm: false
+		} );
 	},
 
-	onRemoveLinkResponse: function( error ) {
+	onRemoveLinkResponse( error ) {
 		if ( error ) {
-			this.setState( { lastError: error } );
+			this.setState( {
+				lastError: error
+			} );
 		} else {
-			this.setState( { lastError: false } );
+			this.setState( {
+				lastError: false
+			} );
 		}
 	},
 
-	clearLastError: function() {
-		this.setState( { lastError: false } );
+	clearLastError() {
+		this.setState( {
+			lastError: false
+		} );
 	},
 
-	onRemoveLink: function( profileLink ) {
+	onRemoveLink( profileLink ) {
 		this.props.userProfileLinks.deleteProfileLinkBySlug( profileLink.link_slug, this.onRemoveLinkResponse );
 	},
 
-	possiblyRenderError: function() {
+	possiblyRenderError() {
 		if ( ! this.state.lastError ) {
 			return null;
 		}
 
 		return (
-				<Notice className="profile-links__error"
-					status="is-error"
-					onDismissClick={ this.clearLastError }>
-					{ this.translate( 'An error occurred while attempting to remove the link. Please try again later.' ) }
-				</Notice>
+			<Notice className="profile-links__error"
+				status="is-error"
+				onDismissClick={ this.clearLastError }>
+				{ this.translate( 'An error occurred while attempting to remove the link. Please try again later.' ) }
+			</Notice>
 		);
 	},
 
-	renderProfileLinksList: function() {
+	renderProfileLinksList() {
 		return (
 			<ul className="profile-links__list">
-				{ this.props.userProfileLinks.getProfileLinks().map( function( profileLink ) {
-					return (
-						<ProfileLink
-							key={ profileLink.link_slug }
-							title={ profileLink.title }
-							url={ profileLink.value }
-							slug={ profileLink.link_slug }
-							onRemoveLink={ this.onRemoveLink.bind( this, profileLink ) } />
-					);
-				}, this )
-			}
+				{
+					this.props.userProfileLinks.getProfileLinks().map( ( profileLink ) =>
+						(
+							<ProfileLink
+								key={ profileLink.link_slug }
+								title={ profileLink.title }
+								url={ profileLink.value }
+								slug={ profileLink.link_slug }
+								onRemoveLink={ this.onRemoveLink.bind( this, profileLink ) } />
+						)
+					)
+				}
 			</ul>
 		);
 	},
 
-	renderNoProfileLinks: function() {
+	renderNoProfileLinks() {
 		return (
 			<p className="profile-links__no-links">
 				{
@@ -141,11 +158,11 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderPlaceholders: function() {
+	renderPlaceholders() {
 		return (
 			<ul className="profile-links__list">
-				{ times( 2, function( index ) {
-					return (
+				{ times( 2, ( index ) =>
+					(
 						<ProfileLink
 							title="Loading Profile Links"
 							url="http://wordpress.com"
@@ -153,16 +170,16 @@ module.exports = React.createClass( {
 							isPlaceholder
 							key={ index }
 						/>
-					);
-				} ) }
+					)
+				) }
 			</ul>
 		);
 	},
 
 	renderProfileLinks() {
-		let links,
-			initialized = this.props.userProfileLinks.initialized,
+		const initialized = this.props.userProfileLinks.initialized,
 			countLinks = this.props.userProfileLinks.getProfileLinks().length;
+		let links;
 
 		if ( ! initialized ) {
 			links = this.renderPlaceholders();
@@ -202,8 +219,8 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
-		return(
+	render() {
+		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Profile Links' ) }>
 					<AddProfileLinksButtons
@@ -213,7 +230,8 @@ module.exports = React.createClass( {
 						showPopoverMenu={ this.state.showPopoverMenu }
 						onShowAddWordPress={ this.showAddWordPress }
 						onShowPopoverMenu={ this.showPopoverMenu }
-						onClosePopoverMenu={ this.closePopoverMenu }/>
+						onClosePopoverMenu={ this.closePopoverMenu }
+					/>
 				</SectionHeader>
 				<Card>
 					{ !! this.state.showingForm ? this.renderForm() : this.renderProfileLinks() }
