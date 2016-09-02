@@ -20,7 +20,7 @@ function PostItemExample( { primarySiteId, globalId } ) {
 			<h2>
 				<a href="/devdocs/blocks/post-item">Post Item</a>
 			</h2>
-			{ primarySiteId && <QuerySites siteId={ primarySiteId } /> }
+			<QuerySites siteId={ primarySiteId } />
 			{ primarySiteId && (
 				<QueryPosts
 					siteId={ primarySiteId }
