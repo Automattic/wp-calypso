@@ -53,7 +53,7 @@ const SearchCardAdapter = React.createClass( {
 		}
 
 		// declarative ignore
-		if ( closest( event.target, '.ignore-click, [rel=external]', true, rootNode ) ) {
+		if ( closest( event.target, '.ignore-click, [rel~=external]', true, rootNode ) ) {
 			return;
 		}
 
