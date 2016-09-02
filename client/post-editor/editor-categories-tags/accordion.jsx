@@ -15,7 +15,7 @@ import AccordionSection from 'components/accordion/section';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import Gridicon from 'components/gridicon';
 import TermSelector from 'post-editor/editor-term-selector';
-import Tags from 'post-editor/editor-tags';
+import TermTokenField from 'post-editor/term-token-field';
 import unescapeString from 'lodash/unescape';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -36,10 +36,6 @@ export class EditorCategoriesTagsAccordion extends Component {
 		defaultCategory: PropTypes.object,
 		isTermsSupported: PropTypes.bool,
 		siteSlug: PropTypes.string,
-		// passed down from TagListData
-		tags: PropTypes.array,
-		tagsHasNextPage: PropTypes.bool,
-		tagsFetchingNextPage: PropTypes.bool
 	};
 
 	renderJetpackNotice() {
@@ -77,14 +73,20 @@ export class EditorCategoriesTagsAccordion extends Component {
 	}
 
 	renderTags() {
+		const { isTermsSupported, postType, translate } = this.props;
+		const helpText = postType === 'page'
+			? translate( 'Use tags to associate more specific keywords with your pages.' )
+			: translate( 'Use tags to associate more specific keywords with your posts.' );
+
 		return (
 			<AccordionSection>
-				<Tags
-					post={ this.props.post }
-					tags={ this.props.tags }
-					tagsHasNextPage={ this.props.tagsHasNextPage }
-					tagsFetchingNextPage={ this.props.tagsFetchingNextPage }
-				/>
+				<EditorDrawerLabel helpText={ helpText } labelText={ translate( 'Tags' ) }>
+					{ isTermsSupported
+						? <TermTokenField taxonomyName="post_tag" />
+						: this.renderJetpackNotice()
+					}
+				</EditorDrawerLabel>
+
 			</AccordionSection>
 		);
 	}
@@ -113,23 +115,23 @@ export class EditorCategoriesTagsAccordion extends Component {
 	}
 
 	getTagsSubtitle() {
-		const { translate } = this.props;
-		let tags = this.props.post.tags || [];
-		tags = Array.isArray( tags ) ? tags : Object.keys( tags );
-		tags = tags.map( unescapeString );
+		const { translate, postTerms } = this.props;
+		const tags = toArray( get( postTerms, 'post_tag' ) );
+		const tagsLength = tags.length;
 
-		switch ( tags.length ) {
+		switch ( tagsLength ) {
 			case 0:
 				return null; // No tags subtitle
 			case 1:
-				return '#' + tags[ 0 ];
 			case 2:
-				return '#' + tags[ 0 ] + ', #' + tags[ 1 ];
+				return tags.map( ( tag ) => {
+					return '#' + unescapeString( tag.name || tag );
+				} ).join( ', ' );
 			default:
 				return translate(
 					'%d tag',
 					'%d tags',
-					{ args: [ tags.length ], count: tags.length }
+					{ args: [ tagsLength ], count: tagsLength }
 				);
 		}
 	}
