@@ -274,6 +274,7 @@
 		padding: 12px 10px 16px 10px;
 		text-align: right;
 		background-color: #81A844;
+		border-left: 0;
 	}
 
 	.jetpack-connect__example-content-wp-admin-connect-button {
@@ -283,6 +284,7 @@
 		padding: 11px 10px;
 		color: $white;
 		background-color: #518D2A;
+		border-color: #518D2A;
 		border-radius: 4px;
 		box-shadow: 0 2px 3px 0 rgba( 0, 0, 0, .2 ), 0 4px 0 0 #3E6C20;
 	}
