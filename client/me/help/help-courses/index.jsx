@@ -43,7 +43,7 @@ function getCourses() {
 			],
 			videos: [
 				{
-					date: i18n.moment( new Date( 'Thu, 25 Aug 2016 01:00:00 +0000' ) ),
+					date: i18n.moment( new Date( 'Fri, 2 Sep 2016 01:00:00 +0000' ) ),
 					title: i18n.translate( 'How to Make a Business Site on WordPress.com' ),
 					description: i18n.translate(
 						'A 60-minute overview course with two of our Happiness Engineers. In this live group session, ' +
@@ -51,7 +51,7 @@ function getCourses() {
 						'plan, provide a basic setup overview to help you get started with your site, and show you ' +
 						'where to find additional resources and help in the future.'
 					),
-					youtubeId: 'f44-4TgnWTs'
+					youtubeId: 'S2h_mV0OAcU'
 				}
 			]
 		}

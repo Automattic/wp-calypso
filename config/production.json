@@ -21,6 +21,7 @@
 		"guided-tours": true,
 		"happychat": false,
 		"help": true,
+		"help/courses": true,
 		"jetpack/connect": true,
 		"jetpack/sso": true,
 		"jetpack/sync-panel": true,
