@@ -16,6 +16,7 @@ import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
+import help from './help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import happychat from './happychat/reducer';
@@ -57,6 +58,7 @@ export const reducer = combineReducers( {
 	domains,
 	googleAppsUsers,
 	happychat,
+	help,
 	jetpackConnect,
 	jetpackSync,
 	notices,
