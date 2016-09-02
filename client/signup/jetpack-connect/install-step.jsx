@@ -31,7 +31,7 @@ export default React.createClass( {
 	renderAlreadyHaveJetpackButton() {
 		return (
 			<a className="jetpack-connect__already-installed-jetpack-button" href="#" onClick={ this.confirmJetpackInstalled }>
-				{ preventWidows( this.translate( 'Already have jetpack installed?' ) ) }
+				{ preventWidows( this.translate( 'Already have Jetpack installed?' ) ) }
 			</a>
 		);
 	},
@@ -39,7 +39,7 @@ export default React.createClass( {
 	renderNotJetpackButton() {
 		return (
 			<a className="jetpack-connect__no-jetpack-button" href="#" onClick={ this.confirmJetpackNotInstalled }>
-				{ preventWidows( this.translate( 'Don\'t have jetpack installed?' ) ) }
+				{ preventWidows( this.translate( 'Don\'t have Jetpack installed?' ) ) }
 			</a>
 		);
 	},
@@ -75,7 +75,7 @@ export default React.createClass( {
 			},
 			activateJetpack: {
 				title: this.translate( '1. Activate Jetpack' ),
-				text: this.translate( 'You will be redirected to your site\'s dashboard to activate Jetpack.' +
+				text: this.translate( 'You will be redirected to your site\'s dashboard to activate Jetpack. ' +
 					'Click the blue "Activate" link. ' ),
 				action: this.renderNotJetpackButton(),
 				example: <JetpackExampleActivate url={ this.props.currentUrl } isInstall={ false } />
