@@ -1,4 +1,4 @@
-.example-site-title {
+.site-title-example {
 	box-sizing: border-box;
 	position: relative;
 	padding-top: 42px;
@@ -12,20 +12,20 @@
 		padding: 32px 32px 0;
 		margin: 0 auto;
 
-		.example-site-title__description {
+		.site-title-example__description {
 			text-align: center;
 			margin-bottom: 16px;
 		}
 	}
 }
 
-.example-site-title__description {
+.site-title-example__description {
 	color: darken( $gray, 20% );
 	text-align: right;
 	margin-bottom: 8px;
 }
 
-.example-site-title__image {
+.site-title-example__image {
 	pointer-events: none;
 	position: absolute;
 	top: 0;
