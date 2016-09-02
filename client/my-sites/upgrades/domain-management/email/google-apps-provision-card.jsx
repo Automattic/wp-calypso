@@ -96,13 +96,21 @@ const GoogleAppsProvisionCard = React.createClass( {
 		this.setState( { error: false, submitting: true } );
 	},
 
-	renderError() {
+	renderNotice() {
 		if ( this.state.error ) {
 			return (
 				<Notice
 					status="is-error"
 					showDismiss={ false }
 					text={ this.state.error } />
+			);
+		} else {
+			return (
+				<Notice
+					status="is-info"
+					showDismiss={ false }
+					text={ this.translate( 'There was a problem activating your Google Apps account.  ' +
+						'Please correct the information below.' ) } />
 			);
 		}
 	},
@@ -118,7 +126,7 @@ const GoogleAppsProvisionCard = React.createClass( {
 	renderForm() {
 		return (
 			<div className="card">
-				{ this.renderError() }
+				{ this.renderNotice() }
 				<form className="provision-gapps-data__form">
 					<div className="google-apps-provision__form-fieldsets">
 						<FormFieldset>

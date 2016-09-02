@@ -85,8 +85,6 @@ const Email = React.createClass( {
 			? [ getSelectedDomain( this.props ) ]
 			: this.props.domains.list;
 
-		return this.googleAppsProvisionCard();
-
 		if ( domainList.some( hasGoogleApps ) ) {
 			return this.googleAppsUsersCard();
 		} else if ( hasGoogleAppsSupportedDomain( domainList ) ) {
@@ -143,7 +141,17 @@ const Email = React.createClass( {
 	},
 
 	googleAppsUsersCard() {
+		if ( this.provisionProblem() ) {
+			return this.googleAppsProvisionCard();
+		}
 		return <GoogleAppsUsersCard { ...this.props } />;
+	},
+
+	provisionProblem() {
+		if ( typeof( this.props.googleAppsProvisionData.items.provisioned ) === 'undefined' ) {
+			return false;
+		}
+		return ! this.props.googleAppsProvisionData.items.provisioned;
 	},
 
 	addGoogleAppsCard() {

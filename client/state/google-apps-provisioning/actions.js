@@ -46,6 +46,7 @@ export function fetchGoogleAppsProvisionData( domain ) {
  * @param {String} data.organization                Name of the organization
  * @param {Number} data.zip                         Zip code for the account
  * @param {String} data.country                     Country for the account
+ * @param {boolean} data.is_provisioned             Is the account already provisioned
  * @returns {Function}                              Action thunk
  */
 export function updateGoogleAppsProvisionData( domain, data ) {
