@@ -1,50 +1,48 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var CartItems = require( './cart-items' ),
-	CartCoupon = require( './cart-coupon' ),
-	CartTotal = require( './cart-total' );
+import CartItems from './cart-items';
+import CartCoupon from './cart-coupon';
+import CartTotal from './cart-total';
 
-var CartBody = React.createClass( {
-	propTypes: {
-		collapse: React.PropTypes.bool
-	},
-	getDefaultProps: function() {
-		return {
-			collapse: false,
-			showCoupon: false
-		};
-	},
-
-	render: function() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
-			return <div className="cart-body">{ this.translate( 'Loading…', { context: 'Upgrades: Loading cart' } ) }</div>;
-		}
-
-		return (
-			<div className="cart-body">
-				<CartItems
-					collapse={ this.props.collapse }
-					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite } />
-				<CartTotal cart={ this.props.cart } />
-				{ this.optionalCoupon() }
-			</div>
-		);
-	},
-
-	optionalCoupon: function() {
-		if ( ! this.props.showCoupon ) {
-			return;
-		}
-
-		return <CartCoupon cart={ this.props.cart } />;
+const CartBody = ( {
+	cart,
+	collapse,
+	selectedSite,
+	showCoupon,
+	translate
+} ) => {
+	if ( ! cart.hasLoadedFromServer ) {
+		return <div className="cart-body">
+			{ translate( 'Loading…', { context: 'Upgrades: Loading cart' } ) }
+		</div>;
 	}
-} );
 
-module.exports = CartBody;
+	return (
+		<div className="cart-body">
+			<CartItems
+				collapse={ collapse }
+				cart={ cart }
+				selectedSite={ selectedSite } />
+			<CartTotal cart={ cart } />
+			{ showCoupon && <CartCoupon cart={ cart } /> }
+		</div>
+	);
+};
+
+CartBody.propTypes = {
+	collapse: PropTypes.bool
+};
+
+CartBody.defaultProps = {
+	collapse: false,
+	showCoupon: false
+};
+
+export default localize( CartBody );
