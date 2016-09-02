@@ -2,16 +2,21 @@
 	box-sizing: border-box;
 	position: relative;
 	padding-top: 42px;
-	padding-right: 348px;
 	max-width: 600px;
 	min-height: 120px;
 	margin: 30px auto 60px auto;
+
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: center;
+	justify-content: space-around;
 
 	@include breakpoint( "<660px" ) {
 		max-width: 100%;
 		padding: 32px 32px 0;
 		margin: 0 auto;
-
+		flex-wrap: wrap;
 		.site-title-example__description {
 			text-align: center;
 			margin-bottom: 16px;
@@ -23,17 +28,18 @@
 	color: darken( $gray, 20% );
 	text-align: right;
 	margin-bottom: 8px;
+	display: inline-block;
+	flex: 1 1 100%;
+	width: 270px;
 }
 
 .site-title-example__image {
 	pointer-events: none;
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 300px;
+	display: inline-block;
+	width: 270px;
+	flex: 1 1 100%;
 
 	&:before {
-		display: block;
 		content: '';
 		position: absolute;
 		right: 0;
