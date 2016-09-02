@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,15 +14,8 @@ const CartBody = ( {
 	cart,
 	collapse,
 	selectedSite,
-	showCoupon,
-	translate
+	showCoupon
 } ) => {
-	if ( ! cart.hasLoadedFromServer ) {
-		return <div className="cart-body">
-			{ translate( 'Loading…', { context: 'Upgrades: Loading cart' } ) }
-		</div>;
-	}
-
 	return (
 		<div className="cart-body">
 			<CartItems
@@ -45,4 +37,4 @@ CartBody.defaultProps = {
 	showCoupon: false
 };
 
-export default localize( CartBody );
+export default CartBody;

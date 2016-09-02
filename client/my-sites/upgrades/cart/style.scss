@@ -62,7 +62,7 @@
 			display: block;
 			font-size: 13px;
 		}
-		 
+
 		.product-monthly-price {
 			color: $gray;
 			display: block;
@@ -82,6 +82,13 @@
 			position: absolute;
 			right: 0;
 			top: 0;
+		}
+	}
+
+	.cart-item__loading-placeholder {
+		.remove-item {
+			@include placeholder(23%);
+			width: 25px;
 		}
 	}
 
@@ -334,4 +341,23 @@ div.popover-cart__popover {
 
 .secondary-cart {
 	background: $white;
+}
+
+.cart-item__loading-placeholder {
+	span {
+		@include placeholder(23%);
+		margin-bottom: 1px;
+	}
+
+	.product-name {
+		width: 55%;
+	}
+
+	.product-domain {
+		width: 40%;
+	}
+
+	.product-price {
+		width: 20%;
+	}
 }
