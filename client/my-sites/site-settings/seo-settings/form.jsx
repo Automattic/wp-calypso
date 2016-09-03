@@ -106,10 +106,22 @@ export const SeoForm = React.createClass( {
 	getInitialState() {
 		return {
 			...stateForSite( this.props.site ),
-			seoTitleFormats: {},
-			isRefreshingSiteData: false,
-			dirtyFields: Set()
+			seoTitleFormats: this.props.storedTitleFormats,
+			// dirtyFields is used to prevent prop updates
+			// from overwriting local stateful edits that
+			// are in progress and haven't yet been saved
+			// to the server
+			dirtyFields: Set(),
+			isRefreshingSiteData: true,
+			invalidatedSiteObject: this.props.selectedSite,
 		};
+	},
+
+	componentWillMount() {
+		this.changeGoogleCode = this.handleVerificationCodeChange( 'googleCode' );
+		this.changeBingCode = this.handleVerificationCodeChange( 'bingCode' );
+		this.changePinterestCode = this.handleVerificationCodeChange( 'pinterestCode' );
+		this.changeYandexCode = this.handleVerificationCodeChange( 'yandexCode' );
 	},
 
 	componentDidMount() {
@@ -121,28 +133,32 @@ export const SeoForm = React.createClass( {
 
 		let nextState = {
 			...stateForSite( nextProps.site ),
-			seoTitleFormats: nextProps.storedTitleFormats
+			seoTitleFormats: nextProps.storedTitleFormats,
 		};
 
-		// Don't update state for fields the user has edited
-		nextState = omit( nextState, dirtyFields.toArray() );
-
-		const wasRefreshingSiteData = this.state.isRefreshingSiteData;
 		const isRefreshingSiteData = (
-			this.state.isSubmittingForm ||
-			(
-				wasRefreshingSiteData &&
-				isEqual( this.props.storedTitleFormats, nextProps.storedTitleFormats )
-			)
+			this.state.isRefreshingSiteData &&
+			( this.state.invalidatedSiteObject === nextProps.selectedSite )
 		);
+
+		if ( this.state.isRefreshingSiteData && ! isRefreshingSiteData ) {
+			nextState = {
+				...nextState,
+				seoTitleFormats: nextProps.storedTitleFormats,
+				dirtyFields: dirtyFields.delete( 'seoTitleFormats' ),
+			};
+		}
 
 		if ( isRefreshingSiteData ) {
 			nextState = omit( nextState, [ 'seoTitleFormats' ] );
 		}
 
+		// Don't update state for fields the user has edited
+		nextState = omit( nextState, dirtyFields.toArray() );
+
 		this.setState( {
 			...nextState,
-			isRefreshingSiteData
+			isRefreshingSiteData,
 		} );
 	},
 
@@ -159,28 +175,30 @@ export const SeoForm = React.createClass( {
 		) );
 	},
 
-	handleVerificationCodeChange( event, serviceCode ) {
-		const { dirtyFields } = this.state;
+	handleVerificationCodeChange( serviceCode ) {
+		return event => {
+			const { dirtyFields } = this.state;
 
-		if ( ! this.state.hasOwnProperty( serviceCode ) ) {
-			return;
-		}
+			if ( ! this.state.hasOwnProperty( serviceCode ) ) {
+				return;
+			}
 
-		// Show an error if the user types into the field
-		if ( event.target.value.length === 1 ) {
+			// Show an error if the user types into the field
+			if ( event.target.value.length === 1 ) {
+				this.setState( {
+					showPasteError: true,
+					invalidCodes: [ serviceCode.replace( 'Code', '' ) ]
+				} );
+				return;
+			}
+
 			this.setState( {
-				showPasteError: true,
-				invalidCodes: [ serviceCode.replace( 'Code', '' ) ]
+				invalidCodes: [],
+				showPasteError: false,
+				[ serviceCode ]: event.target.value,
+				dirtyFields: dirtyFields.add( serviceCode )
 			} );
-			return;
-		}
-
-		this.setState( {
-			invalidCodes: [],
-			showPasteError: false,
-			[ serviceCode ]: event.target.value,
-			dirtyFields: dirtyFields.add( serviceCode )
-		} );
+		};
 	},
 
 	updateTitleFormats( seoTitleFormats ) {
@@ -280,7 +298,10 @@ export const SeoForm = React.createClass( {
 		} = this.props;
 
 		if ( selectedSite && selectedSite.ID ) {
-			refreshSiteData( selectedSite.ID );
+			this.setState( {
+				isRefreshingSiteData: true,
+				invalidatedSiteObject: selectedSite,
+			}, () => refreshSiteData( selectedSite.ID ) );
 		}
 	},
 
@@ -316,6 +337,7 @@ export const SeoForm = React.createClass( {
 		const {
 			isSubmittingForm,
 			isFetchingSettings,
+			isRefreshingSiteData,
 			seoMetaDescription,
 			showPasteError = false,
 			hasHtmlTagError = false,
@@ -370,14 +392,20 @@ export const SeoForm = React.createClass( {
 			/>
 		);
 
-		if ( config.isEnabled('manage/advanced-seo') ) {
+		if ( config.isEnabled( 'manage/advanced-seo' ) ) {
 			preview = (
 				<FormSettingExplanation>
-					<Button className="preview-button" onClick={ this.showPreview }>
-						{ this.translate('Show Previews') }
+					<Button
+						className="preview-button"
+						onClick={ this.showPreview }
+					>
+						{ this.translate( 'Show Previews' ) }
 					</Button>
 					<span className="preview-explanation">
-						{ this.translate('See how this will look on Google, Facebook, and Twitter.') }
+						{ this.translate(
+							'See how this will look on ' +
+							'Google, Facebook, and Twitter.'
+						) }
 					</span>
 				</FormSettingExplanation>
 			);
@@ -386,10 +414,22 @@ export const SeoForm = React.createClass( {
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
-				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
+				<PageViewTracker
+					path="/settings/seo/:site"
+					title="Site Settings > SEO"
+				/>
 				{ isSitePrivate &&
-					<Notice status="is-warning" showDismiss={ false } text={ this.translate( 'SEO settings are disabled because the site visibility is not set to Public.' ) }>
-						<NoticeAction href={ generalTabUrl }>{ this.translate( 'View Settings' ) }</NoticeAction>
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ this.translate(
+							'SEO settings are disabled because the ' +
+							'site visibility is not set to Public.'
+						) }
+					>
+						<NoticeAction href={ generalTabUrl }>
+							{ this.translate( 'View Settings' ) }
+						</NoticeAction>
 					</Notice>
 				}
 
@@ -440,7 +480,11 @@ export const SeoForm = React.createClass( {
 									'results, and when shared on social media sites.'
 								) }
 								</p>
-								<MetaTitleEditor onChange={ this.updateTitleFormats } />
+								<MetaTitleEditor
+									disabled={ isRefreshingSiteData || isDisabled }
+									onChange={ this.updateTitleFormats }
+									titleFormats={ this.state.seoTitleFormats }
+								/>
 							</Card>
 						</div>
 					}
@@ -495,10 +539,34 @@ export const SeoForm = React.createClass( {
 									components: {
 										b: <strong />,
 										support: <a href="https://en.support.wordpress.com/webmaster-tools/" />,
-										google: <ExternalLink icon={ true } target="_blank" href="https://www.google.com/webmasters/tools/" />,
-										bing: <ExternalLink icon={ true } target="_blank" href="https://www.bing.com/webmaster/" />,
-										pinterest: <ExternalLink icon={ true } target="_blank" href="https://pinterest.com/website/verify/" />,
-										yandex: <ExternalLink icon={ true } target="_blank" href="https://webmaster.yandex.com/sites/" />
+										google: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://www.google.com/webmasters/tools/"
+											/>
+										),
+										bing: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://www.bing.com/webmaster/"
+											/>
+										),
+										pinterest: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://pinterest.com/website/verify/"
+											/>
+										),
+										yandex: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://webmaster.yandex.com/sites/"
+											/>
+										),
 									}
 								}
 							) }
@@ -514,7 +582,7 @@ export const SeoForm = React.createClass( {
 								disabled={ isDisabled }
 								isError={ hasError( 'google' ) }
 								placeholder={ getMetaTag( 'google', placeholderTagContent ) }
-								onChange={ event => this.handleVerificationCodeChange( event, 'googleCode' ) } />
+								onChange={ this.changeGoogleCode } />
 							{ hasError( 'google' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
@@ -528,7 +596,7 @@ export const SeoForm = React.createClass( {
 								disabled={ isDisabled }
 								isError={ hasError( 'bing' ) }
 								placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
-								onChange={ event => this.handleVerificationCodeChange( event, 'bingCode' ) } />
+								onChange={ this.changeBingCode } />
 							{ hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
@@ -542,7 +610,7 @@ export const SeoForm = React.createClass( {
 								disabled={ isDisabled }
 								isError={ hasError( 'pinterest' ) }
 								placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
-								onChange={ event => this.handleVerificationCodeChange( event, 'pinterestCode' ) } />
+								onChange={ this.changePinterestCode } />
 							{ hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
@@ -556,12 +624,19 @@ export const SeoForm = React.createClass( {
 								disabled={ isDisabled }
 								isError={ hasError( 'yandex' ) }
 								placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
-								onChange={ event => this.handleVerificationCodeChange( event, 'yandexCode' ) } />
+								onChange={ this.changeYandexCode } />
 							{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
 							<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
-							<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
+							<ExternalLink
+								className="seo-sitemap"
+								icon={ true }
+								href={ sitemapUrl }
+								target="_blank"
+							>
+								{ sitemapUrl }
+							</ExternalLink>
 							<FormSettingExplanation>
 								{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
 							</FormSettingExplanation>
@@ -570,11 +645,11 @@ export const SeoForm = React.createClass( {
 				</form>
 				<WebPreview
 					showPreview={ showPreview }
-				    onClose={ this.hidePreview }
-				    previewUrl={ siteUrl }
-				    showDeviceSwitcher={ false }
-				    showExternal={ false }
-				    defaultViewportDevice="seo"
+					onClose={ this.hidePreview }
+					previewUrl={ siteUrl }
+					showDeviceSwitcher={ false }
+					showExternal={ false }
+					defaultViewportDevice="seo"
 				/>
 			</div>
 		);
@@ -596,7 +671,7 @@ const mapStateToProps = ( state, ownProps ) => {
 
 const mapDispatchToProps = {
 	refreshSiteData: siteId => requestSite( siteId ),
-	trackSubmission: () => recordTracksEvent( 'calypso_seo_settings_form_submit', {} )
+	trackSubmission: () => recordTracksEvent( 'calypso_seo_settings_form_submit', {} ),
 };
 
 export default connect(

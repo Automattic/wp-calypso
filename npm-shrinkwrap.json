@@ -3723,6 +3723,52 @@
     },
     "yeast": {
       "version": "0.1.2"
+    },
+    "draft-js": {
+      "version": "0.8.1",
+      "dependencies": {
+        "fbjs": {
+          "version": "0.8.4",
+          "dependencies": {
+            "core-js": {
+              "version": "1.2.7"
+            },
+            "isomorphic-fetch": {
+              "version": "2.2.1",
+              "dependencies": {
+                "node-fetch": {
+                  "version": "1.6.0",
+                  "dependencies": {
+                    "encoding": {
+                      "version": "0.1.12"
+                    },
+                    "is-stream": {
+                      "version": "1.1.0"
+                    }
+                  }
+                },
+                "whatwg-fetch": {
+                  "version": "1.0.0"
+                }
+              }
+            },
+            "promise": {
+              "version": "7.1.1",
+              "dependencies": {
+                "asap": {
+                  "version": "2.0.4"
+                }
+              }
+            },
+            "ua-parser-js": {
+              "version": "0.7.10"
+            }
+          }
+        },
+        "immutable": {
+          "version": "3.7.6"
+        }
+      }
     }
   }
 }
