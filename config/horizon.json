@@ -30,6 +30,7 @@
 		"manage/add-people": true,
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
+		"manage/advanced-seo/custom-title": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
 		"manage/drafts": true,
