@@ -2,14 +2,16 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
 
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 import store from 'store';
 import userUtils from 'lib/user/utils';
 import viewport from 'lib/viewport';
+import { translate } from 'i18n-calypso';
 
-export default React.createClass( {
+const AppPromo = React.createClass( {
 
 	displayName: 'AppPromo',
 
@@ -32,10 +34,13 @@ export default React.createClass( {
 			show_promo = false;
 		}
 
-		const chromeRE = /\bCrOS\b/;
-		if ( chromeRE.test( navigator.userAgent ) ) {
-			show_promo = false;
-		}
+		// const chromeRE = /\bCrOS\b/;
+		// if ( chromeRE.test( navigator.userAgent ) ) {
+		// 	show_promo = false;
+    // }
+
+    // TODO: Remove this before submitting PR
+    show_promo = true;
 
 		const promo_options = [
 			{ promo_code: 'a0001', message: 'WordPress.com your way  — desktop app now available for Mac, Windows, and Linux.' },
@@ -54,7 +59,7 @@ export default React.createClass( {
 	componentDidMount: function() {
 		// record promo view event
 		if ( this.state.show_promo ) {
-			analytics.tracks.recordEvent( 'calypso_desktop_promo_view', {
+			this.props.recordTracksEvent( 'calypso_desktop_promo_view', {
 				promo_location: this.props.location,
 				promo_code: this.state.promo_item.promo_code,
 			} );
@@ -62,7 +67,7 @@ export default React.createClass( {
 	},
 
 	recordClickEvent: function() {
-		analytics.tracks.recordEvent( 'calypso_desktop_promo_click', {
+		this.props.recordTracksEvent( 'calypso_desktop_promo_click', {
 			promo_location: this.props.location,
 			promo_code: this.state.promo_item.promo_code
 		} );
@@ -86,7 +91,7 @@ export default React.createClass( {
 				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="app-promo__screen-reader-text">
-						{ this.translate( 'Dismiss' ) }
+						{ translate( 'Dismiss' ) }
 					</span>
 				</span>
 				<a
@@ -110,3 +115,13 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapDispatchToProps = ( dispatch ) => {
+  return {
+    recordTracksEvent: (event, properties) => {
+      dispatch( recordTracksEvent( event, properties ) );
+    }
+  };
+}
+
+export default connect( null, mapDispatchToProps )( AppPromo );
