@@ -167,7 +167,6 @@ var FollowingEditSubscribeForm = React.createClass( {
 					onFollowToggle={ handleFollowToggle } />
 				);
 			} else if ( this.state.newFeeds ) {
-				console.log( this.state.newFeeds );
 				searchResult = this.state.newFeeds.map( function( item ) {
 				 		return ( <div className="subscription-list-item__header-content"
 											key={ 'subscription-list-feed-item-' + item.URL }>
