@@ -11,6 +11,8 @@ import {
 // on a solid solution for general IE polyfills
 //
 // They were borrowed and modified from MDN
+//
+// @TODO Remove these when we have a real Calypso polyfill solution
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/endsWith
 if ( ! String.prototype.endsWith ) {
@@ -103,6 +105,12 @@ import { localize } from 'i18n-calypso';
 const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
 
 export class TitleFormatEditor extends Component {
+	static propTypes = {
+		type: PropTypes.object.isRequired,
+		tokens: PropTypes.object.isRequired,
+		onChange: PropTypes.func.isRequired
+	};
+
 	constructor( props ) {
 		super( props );
 
@@ -280,14 +288,6 @@ export class TitleFormatEditor extends Component {
 		);
 	}
 }
-
-TitleFormatEditor.displayName = 'TitleFormatEditor';
-
-TitleFormatEditor.propTypes = {
-	type: PropTypes.object.isRequired,
-	tokens: PropTypes.object.isRequired,
-	onChange: PropTypes.func.isRequired
-};
 
 const mapStateToProps = ( state, ownProps ) => {
 	const site = getSelectedSite( state );

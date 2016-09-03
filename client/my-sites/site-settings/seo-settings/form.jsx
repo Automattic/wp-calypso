@@ -107,6 +107,10 @@ export const SeoForm = React.createClass( {
 		return {
 			...stateForSite( this.props.site ),
 			seoTitleFormats: this.props.storedTitleFormats,
+			// dirtyFields is used to prevent prop updates
+			// from overwriting local stateful edits that
+			// are in progress and haven't yet been saved
+			// to the server
 			dirtyFields: Set(),
 			isRefreshingSiteData: true,
 			invalidatedSiteObject: this.props.selectedSite,
