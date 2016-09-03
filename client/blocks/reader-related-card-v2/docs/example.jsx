@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import RelatedPostCardv2 from 'blocks/reader-related-card-v2';
+import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import DisplayTypes from 'state/reader/posts/display-types';
 
 const smallItems = [
@@ -26,6 +26,9 @@ const smallItems = [
 				width: 256
 			},
 			short_excerpt: 'Gumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.'
+		},
+		site: {
+			title: 'All the catsss'
 		}
 	},
 	{
@@ -44,6 +47,9 @@ const smallItems = [
 				width: 1024
 			},
 			short_excerpt: 'Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko.'
+		},
+		site: {
+			title: '99 Problems'
 		}
 	},
 ];
@@ -60,7 +66,7 @@ const RelatedPostCards = React.createClass( {
 				<div className="reader-related-card-v2__container">
 					<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">Cats and Cats</a></h1>
 					<div className="reader-related-card-v2__posts is-site-post">
-						{ smallItems.map( item => <RelatedPostCardv2 key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
+						{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
 					</div>
 				</div>
 
@@ -70,7 +76,7 @@ const RelatedPostCards = React.createClass( {
 				<div className="reader-related-card-v2__container">
 					<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">WordPress.com</a></h1>
 					<div className="reader-related-card-v2__posts is-global-post">
-						{ smallItems.map( item => <RelatedPostCardv2 key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
+						{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
 					</div>
 				</div>
 			</div>

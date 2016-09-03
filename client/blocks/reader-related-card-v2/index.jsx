@@ -44,7 +44,7 @@ function AuthorAndSiteFollow( { post, site } ) {
 }
 
 /* eslint-disable no-unused-vars */
-export function SmallPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
+export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
 // onSiteClick is not being used
 /* eslint-enable no-unused-vars */
 	const featuredImage = post.canonical_image;
@@ -64,7 +64,7 @@ export function SmallPostCard( { post, site, onPostClick = noop, onSiteClick = n
 	);
 }
 
-export const LocalizedRelatedPostCard = localize( SmallPostCard );
+export const LocalizedRelatedPostCard = localize( RelatedPostCard );
 
 export default connect(
 	( state, ownProps ) => {
