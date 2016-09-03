@@ -47,7 +47,7 @@ import { isBusiness, isEnterprise } from 'lib/products-values';
 import {
 	PLAN_BUSINESS, FEATURE_ADVANCED_SEO
 } from 'lib/plans/constants';
-import abtest from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 
 const serviceIds = {
 	google: 'google-site-verification',
