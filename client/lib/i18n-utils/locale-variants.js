@@ -44,5 +44,4 @@ const localeVariants = {
 	}
 };
 
-userSettings.on( 'change', localeVariants.init.bind( localeVariants ) );
 export default localeVariants;
