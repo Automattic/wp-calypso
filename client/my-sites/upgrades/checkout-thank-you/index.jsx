@@ -22,7 +22,7 @@ import { fetchReceipt } from 'state/receipts/actions';
 import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'components/happiness-support';
@@ -179,7 +179,7 @@ const CheckoutThankYou = React.createClass( {
 			wasOnlyDotcomPlanPurchased = purchases.every( isPlan );
 		}
 
-		const userCreatedMoment = moment( this.props.user.date );
+		const userCreatedMoment = moment( this.props.userDate );
 		const isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
 		const isPaidNuxStreamlinedAbTest = abtest( 'paidNuxStreamlined' ) === 'streamlined';
 
@@ -321,7 +321,8 @@ export default connect(
 		return {
 			receipt: getReceiptById( state, props.receiptId ),
 			sitePlans: getPlansBySite( state, props.selectedSite ),
-			user: getCurrentUser( state )
+			user: getCurrentUser( state ),
+			userDate: getCurrentUserDate( state ),
 		};
 	},
 	( dispatch ) => {
