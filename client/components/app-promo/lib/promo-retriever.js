@@ -25,10 +25,6 @@ export const getRandomPromo = ( ) => {
 	return promo_options[ Math.floor( Math.random() * promo_options.length ) ];
 };
 
-export const getPromo = ( code ) => {
-	promo_options.find( ( item ) => item.promo_code === code );
-};
-
 export const getPromoLink = ( location, promoCode ) => {
 	let promoType = 'desktop';
 	if ( promoCode === 'a0006' ) {

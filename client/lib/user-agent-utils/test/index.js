@@ -11,7 +11,6 @@ import * as userAgentUtils from '../';
 describe( '#isChromeOS', ( ) => {
 
 	it( 'should return true if the user agent matches CrOS', ( ) => {
-    console.log("userAgentUtils:" + userAgentUtils);
 		expect( userAgentUtils.isChromeOS( 'CrOS' ) ).to.be.true;
 	} );
 
