@@ -2,7 +2,7 @@
 
 // Maps between different title format formats
 //
-// raw is a string like: '%site_name% | %tagline%'
+// raw is a string like: '%_site_name% | %_tagline%'
 //                        \_________/   \_______/
 //                             |            |
 //                             \------------\- tags
@@ -42,17 +42,17 @@ import {
 export const removeBlanks = values => reject( values, matchesProperty( 'value', '' ) );
 
 // %site_name%, %tagline%, etc…
-const tagPattern = /(%[a-zA-Z_]+%)/;
+const tagPattern = /(%_[a-zA-Z_]+%)/;
 const isTag = s => tagPattern.test( s );
 
 const tagToToken = s =>
 	isTag( s )
-		? { type: camelCase( s.slice( 1, -1 ) ) } // %site_name% -> type: siteName
+		? { type: camelCase( s.slice( 2, -1 ) ) } // %_site_name% -> type: siteName
 		: { type: 'string', value: s };           // arbitrary text passes through
 
 const tokenToTag = n =>
 	'string' !== n.type
-		? `%${ snakeCase( n.type ) }%` // siteName -> %site_name%
+		? `%_${ snakeCase( n.type ) }%` // siteName -> %site_name%
 		: n.value;                     // arbitrary text passes through
 
 export const rawToNative = r => removeBlanks( map( split( r, tagPattern ), tagToToken ) );
