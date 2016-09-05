@@ -19,25 +19,25 @@ const AppPromo = React.createClass( {
 	displayName: 'AppPromo',
 
 	propTypes: {
-		location: React.PropTypes.string.isRequired 
+		location: React.PropTypes.string.isRequired
 	},
 
 	getInitialState: function() {
 		let show_promo = true;
 
-		if ( store.get( 'desktop_promo_dismissed' ) ) {
+		if ( this.props.isDesktopPromoDisabled ) {
 			show_promo = false;
 		}
 
-		if ( userUtils.getLocaleSlug() !== 'en' ) {
+		if ( ! this.props.isLocaleEnglish ) {
 			show_promo = false;
 		}
 
-		if ( viewport.isMobile() ) {
+		if ( this.props.isViewportMobile ) {
 			show_promo = false;
 		}
 
-		if ( isChromeOS() ) {
+		if ( this.props.isChromeOS ) {
 			show_promo = false;
 		}
 
@@ -112,6 +112,13 @@ AppPromo.defaultProps = {
 	recordTracksEvent: noop,
 };
 
+const mapStateToProps = () => ( {
+	isDesktopPromoDisabled: store.get( 'desktop_promo_disabled' ),
+	isLocaleEnglish: userUtils.getLocaleSlug() === 'en',
+	isViewportMobile: viewport.isMobile(),
+	isChromeOS: isChromeOS()
+} );
+
 const mapDispatchToProps = ( dispatch ) => {
 	return {
 		recordTracksEvent: ( event, properties ) => {
@@ -121,4 +128,4 @@ const mapDispatchToProps = ( dispatch ) => {
 };
 
 export { AppPromo };
-export default connect( null, mapDispatchToProps )( localize( AppPromo ) ) ;
+export default connect( mapStateToProps, mapDispatchToProps )( localize( AppPromo ) ) ;
