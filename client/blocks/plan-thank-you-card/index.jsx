@@ -72,12 +72,12 @@ class PlanThankYouCard extends Component {
 						{ translate( 'Thank you for your purchase!' ) }
 					</div>
 					<div className="plan-thank-you-card__description">
-						{ translate( 'Now that we’ve taken care of the plan, its time to see your new site.' ) }
+						{ translate( "Now that we've taken care of the plan, it's time to see your new site." ) }
 					</div>
 					<a
 						className="plan-thank-you-card__button"
 						href={ siteURL }>
-						{ translate( 'Visit your site' ) }
+						{ translate( 'Visit Your Site' ) }
 					</a>
 				</div>
 			</div>
