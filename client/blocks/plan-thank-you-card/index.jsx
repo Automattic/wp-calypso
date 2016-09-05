@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import { getSite } from 'state/sites/selectors';
+import { getRawSite } from 'state/sites/selectors';
 import { getCurrentPlan } from 'state/sites/plans/selectors';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -24,29 +24,33 @@ class PlanThankYouCard extends Component {
 	render() {
 		const {
 			plan,
-			site,
 			translate,
-			siteId
+			siteId,
+			siteURL,
 		} = this.props;
 		// Non standard gridicon sizes are used here because we use them as background pattern with various sizes and rotation
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="plan-thank-you-card">
-				<QuerySites siteId={ siteId } />
+				{ siteId && <QuerySites siteId={ siteId } /> }
 				<QuerySitePlans siteId={ siteId } />
 				<div className="plan-thank-you-card__header">
 					<Gridicon className="plan-thank-you-card__main-icon" icon="checkmark-circle" size={ 140 } />
-					{ ! site
-						? <div className="plan-thank-you-card__plan-name is-placeholder"></div>
-						: <div className="plan-thank-you-card__plan-name">
-								{ translate( '%(planName)s Plan', {
-									args: { planName: plansList[ site.plan.product_slug ].getTitle() }
-								} ) }
-							</div>
-					}
 					{ ! plan
-						? <div className="plan-thank-you-card__plan-price is-placeholder"></div>
-						: <div className="plan-thank-you-card__plan-price">{ formatCurrency( plan.rawPrice, plan.currencyCode ) }</div>
+						? <div>
+								<div className="plan-thank-you-card__plan-name is-placeholder"></div>
+								<div className="plan-thank-you-card__plan-price is-placeholder"></div>
+							</div>
+						: <div>
+								<div className="plan-thank-you-card__plan-name">
+								{ translate( '%(planName)s Plan', {
+									args: { planName: plansList[ plan.productSlug ].getTitle() }
+								} ) }
+								</div>
+								<div className="plan-thank-you-card__plan-price">
+									{ formatCurrency( plan.rawPrice, plan.currencyCode ) }
+								</div>
+							</div>
 					}
 					<div className="plan-thank-you-card__background-icons">
 						<Gridicon icon="audio" size={ 52 } />
@@ -72,7 +76,7 @@ class PlanThankYouCard extends Component {
 					</div>
 					<a
 						className="plan-thank-you-card__button"
-						href={ site.URL }>
+						href={ siteURL }>
 						{ translate( 'Visit your site' ) }
 					</a>
 				</div>
@@ -83,11 +87,11 @@ class PlanThankYouCard extends Component {
 }
 
 export default connect( ( state, ownProps ) => {
-	const site = getSite( state, ownProps.siteId );
+	const site = getRawSite( state, ownProps.siteId );
 	const plan = getCurrentPlan( state, ownProps.siteId );
 
 	return {
-		site,
 		plan,
+		siteURL: site.URL
 	};
 } )( localize( PlanThankYouCard ) );
