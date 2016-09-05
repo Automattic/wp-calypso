@@ -28,6 +28,7 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
+			shouldShowOther: false,
 			verticalList: verticals.get()
 		};
 	},
@@ -41,10 +42,18 @@ export default React.createClass( {
 		);
 	},
 
+	renderOther() {
+		return 'Other';
+	},
+
 	renderOptionList() {
 		return (
 			<div className="survey__verticals-list">
 				{ this.state.verticalList.map( this.renderVertical ) }
+				<Button className="survey__vertical" onClick={ this.handleOther }>
+					<span className="survey__vertical-label">{ this.translate( 'Other' ) }</span>
+					<Gridicon className="survey__vertical-chevron" icon="chevron-right" />
+				</Button>
 			</div>
 		);
 	},
@@ -60,8 +69,14 @@ export default React.createClass( {
 					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
 					subHeaderText={ this.translate( 'WordPress.com is the best place for your WordPress blog or website.' ) }
 					signupProgressStore={ this.props.signupProgressStore }
-					stepContent={ this.renderOptionList() } />
+					stepContent={ this.state.shouldShowOther ? this.renderOther() : this.renderOptionList() } />
 		);
+	},
+
+	handleOther() {
+		this.setState( {
+			shouldShowOther: true
+		} );
 	},
 
 	handleNextStep( vertical ) {
