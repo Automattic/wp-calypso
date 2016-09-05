@@ -61,7 +61,7 @@ const Search = React.createClass( {
 		isOpen: PropTypes.bool,
 		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
-		maxLength: PropTypes.number
+		maxLength: PropTypes.number,
 		hideClose: PropTypes.bool
 	},
 
