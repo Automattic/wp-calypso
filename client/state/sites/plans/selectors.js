@@ -71,13 +71,21 @@ export const getSitePlan = createSelector(
 
 /**
  * Returns a plan discounted price
+ *
  * @param  {Object}  state         global state
- * @param  {Number}  siteId       the site id
+ * @param  {Number}  siteId        the site id
  * @param  {String}  productSlug   the plan product slug
  * @param  {Boolean} isMonthly     if true, returns monthly price
- * @return {Number}  plan discounted raw price
+ * @return {Number}                plan discounted raw price
  */
-export function getPlanDiscountedRawPrice( state, siteId, productSlug, isMonthly = false ) {
+export function getPlanDiscountedRawPrice(
+	state,
+	siteId,
+	productSlug,
+	{
+		isMonthly = false
+	} = {}
+) {
 	const plan = getSitePlan( state, siteId, productSlug );
 
 	if ( get( plan, 'rawPrice', -1 ) < 0 || get( plan, 'rawDiscount', -1 ) <= 0 ) {
@@ -92,13 +100,21 @@ export function getPlanDiscountedRawPrice( state, siteId, productSlug, isMonthly
 /**
  * Returns a plan raw discount. It's the value which was subtracted from the plan's original raw price.
  * Use getPlanDiscountedRawPrice if you need a plan's raw price after applying the discount.
- * @param  {Object}  state         global state
+ *
+ * @param  {Object}  state        global state
  * @param  {Number}  siteId       the site id
- * @param  {String}  productSlug   the plan product slug
- * @param  {Boolean} isMonthly     if true, returns monthly price
- * @return {Number}  plan raw discount
+ * @param  {String}  productSlug  the plan product slug
+ * @param  {Boolean} isMonthly    if true, returns monthly price
+ * @return {Number}               plan raw discount
  */
-export function getPlanRawDiscount( state, siteId, productSlug, isMonthly = false ) {
+export function getPlanRawDiscount(
+	state,
+	siteId,
+	productSlug,
+	{
+		isMonthly = false
+	} = {}
+) {
 	const plan = getSitePlan( state, siteId, productSlug );
 
 	if ( get( plan, 'rawDiscount', -1 ) <= 0 ) {

@@ -198,7 +198,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze', true );
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze', { isMonthly: true } );
 			expect( discountPrice ).to.equal( 8.25 );
 		} );
 		it( 'should return null, if no discount is available', () => {
@@ -227,7 +227,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'silver', true );
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'silver', { isMonthly: true } );
 			expect( discountPrice ).to.equal( null );
 		} );
 	} );
@@ -294,7 +294,7 @@ describe( 'selectors', () => {
 				}
 			};
 
-			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'bronze', true );
+			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'bronze', { isMonthly: true } );
 
 			expect( planRawDiscount ).to.equal( 8.33 );
 		} );
@@ -327,7 +327,7 @@ describe( 'selectors', () => {
 				}
 			};
 
-			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'silver', true );
+			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'silver', { isMonthly: true } );
 
 			expect( planRawDiscount ).to.equal( null );
 		} );

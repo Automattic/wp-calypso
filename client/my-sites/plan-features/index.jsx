@@ -472,7 +472,7 @@ export default connect(
 				available: available,
 				currencyCode: getCurrentUserCurrencyCode( state ),
 				current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-				discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, showMonthly ),
+				discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, { isMonthly: showMonthly } ),
 				features: getPlanFeaturesObject( planConstantObj.getFeatures() ),
 				onUpgradeClick: onUpgradeClick
 					? () => {
