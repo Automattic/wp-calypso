@@ -20,6 +20,7 @@ describe( 'AppPromo', ( ) => {
 	let desktopPromoDismissed = false;
 	let localeSlug = 'en';
 	let isMobile = false;
+	let isChromeOS = false;
 
 	const storeMock = {
 		get: ( val ) => {
@@ -34,6 +35,7 @@ describe( 'AppPromo', ( ) => {
 
 	const userUtilsMock = { getLocaleSlug: ( ) => localeSlug };
 	const viewportMock = { isMobile: ( ) => isMobile };
+	const userAgentUtilsMock = { isChromeOS: ( ) => isChromeOS };
 
 	const appStoreComponent = ( ) => {
 		return (
@@ -46,6 +48,7 @@ describe( 'AppPromo', ( ) => {
 	before( ( ) => {
 		mockery.registerMock( 'store', storeMock );
 		mockery.registerMock( 'lib/user/utils', userUtilsMock );
+		mockery.registerMock( 'lib/user-agent-utils', userAgentUtilsMock );
 		mockery.registerMock( 'lib/viewport', viewportMock );
 
 		AppPromo = require( '../' );
@@ -55,6 +58,7 @@ describe( 'AppPromo', ( ) => {
 		desktopPromoDismissed = false;
 		localeSlug = 'en';
 		isMobile = false;
+		isChromeOS = false;
 	} );
 
 	it( 'should render nothing when the promo has already been dismissed', ( ) => {
@@ -76,7 +80,9 @@ describe( 'AppPromo', ( ) => {
 	} );
 
 	it( 'should render nothing when being viewed on ChromeOS', ( ) => {
-
+		isChromeOS = true;
+		const wrapper = mount( appStoreComponent() );
+		expect( wrapper.find( '.app-promo' ) ).to.have.lengthOf( 0 );
 	} );
 
 	context( 'when the user hasn\'t dismissed the promo, aren\'t on mobile or chrome os', ( ) => {

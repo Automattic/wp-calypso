@@ -8,6 +8,7 @@ import Gridicon from 'components/gridicon';
 import { recordTracksEvent } from 'state/analytics/actions';
 import store from 'store';
 import userUtils from 'lib/user/utils';
+import { isChromeOS } from 'lib/user-agent-utils';
 import viewport from 'lib/viewport';
 import { translate } from 'i18n-calypso';
 
@@ -34,10 +35,9 @@ const AppPromo = React.createClass( {
 			show_promo = false;
 		}
 
-		// const chromeRE = /\bCrOS\b/;
-		// if ( chromeRE.test( navigator.userAgent ) ) {
-		// 	show_promo = false;
-    // }
+		if ( isChromeOS() ) {
+			show_promo = false;
+    }
 
 		const promo_options = [
 			{ promo_code: 'a0001', message: 'WordPress.com your way  — desktop app now available for Mac, Windows, and Linux.' },
