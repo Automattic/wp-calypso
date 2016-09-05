@@ -44,6 +44,7 @@ import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import SpinnerLine from 'components/spinner-line';
 import FoldableCard from 'components/foldable-card';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 
 class PlanFeatures extends Component {
 
@@ -424,6 +425,7 @@ class PlanFeatures extends Component {
 
 	componentWillMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
+		retargetViewPlans();
 	}
 }
 
