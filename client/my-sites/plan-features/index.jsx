@@ -31,7 +31,10 @@ import {
 	isMonthly,
 	getPlanFeaturesObject,
 	getPlanClass,
-	getMonthlyPlanByYearly
+	getMonthlyPlanByYearly,
+	plansList,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS
 } from 'lib/plans/constants';
 import { isFreePlan } from 'lib/plans';
 import { getSiteSlug } from 'state/sites/selectors';
@@ -128,7 +131,8 @@ class PlanFeatures extends Component {
 				planName,
 				popular,
 				rawPrice,
-				relatedMonthlyPlan
+				relatedMonthlyPlan,
+				primaryUpgrade
 			} = properties;
 
 			return (
@@ -154,7 +158,7 @@ class PlanFeatures extends Component {
 					<PlanFeaturesActions
 						className={ getPlanClass( planName ) }
 						current={ current }
-						popular={ popular }
+						primaryUpgrade={ primaryUpgrade }
 						available = { available }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
@@ -253,7 +257,7 @@ class PlanFeatures extends Component {
 				current,
 				onUpgradeClick,
 				planName,
-				popular
+				primaryUpgrade
 			} = properties;
 
 			const classes = classNames(
@@ -268,7 +272,7 @@ class PlanFeatures extends Component {
 						className={ getPlanClass( planName ) }
 						current={ current }
 						available = { available }
-						popular={ popular }
+						primaryUpgrade={ primaryUpgrade }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
@@ -398,7 +402,7 @@ class PlanFeatures extends Component {
 				current,
 				onUpgradeClick,
 				planName,
-				popular
+				primaryUpgrade
 			} = properties;
 			const classes = classNames(
 				'plan-features__table-item',
@@ -411,7 +415,7 @@ class PlanFeatures extends Component {
 						className={ getPlanClass( planName ) }
 						current={ current }
 						available = { available }
-						popular={ popular }
+						primaryUpgrade={ primaryUpgrade }
 						onUpgradeClick={ onUpgradeClick }
 						freePlan={ isFreePlan( planName ) }
 						isPlaceholder={ isPlaceholder }
@@ -463,6 +467,8 @@ export default connect(
 			const showMonthly = ! isMonthly( plan );
 			const available = isInSignup ? true : canUpgradeToPlan( plan );
 			const relatedMonthlyPlan = showMonthly ? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) ) : null;
+			const isCurrentlyPremium = isCurrentSitePlan( state, selectedSiteId, plansList[ PLAN_PREMIUM ].getProductId() );
+			const popular = isPopular( plan ) && ! isPaid;
 
 			if ( placeholder || ! planObject || isLoadingSitePlans ) {
 				isPlaceholder = true;
@@ -491,7 +497,8 @@ export default connect(
 				planConstantObj,
 				planName: plan,
 				planObject: planObject,
-				popular: isPopular( plan ) && ! isPaid,
+				popular: popular,
+				primaryUpgrade: ( isCurrentlyPremium && plan === PLAN_BUSINESS ) || popular,
 				rawPrice: getPlanRawPrice( state, planProductId, ! relatedMonthlyPlan && showMonthly ),
 				relatedMonthlyPlan: relatedMonthlyPlan
 			};

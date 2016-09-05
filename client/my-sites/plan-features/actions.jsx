@@ -16,7 +16,7 @@ const PlanFeaturesActions = ( {
 	className,
 	available = true,
 	current = false,
-	popular = false,
+	primaryUpgrade = false,
 	freePlan = false,
 	onUpgradeClick = noop,
 	isPlaceholder = false,
@@ -28,7 +28,7 @@ const PlanFeaturesActions = ( {
 		'plan-features__actions-button',
 		{
 			'is-current': current,
-			'is-primary': popular && ! isPlaceholder
+			'is-primary': primaryUpgrade && ! isPlaceholder
 		},
 		className
 	);
@@ -67,7 +67,7 @@ const PlanFeaturesActions = ( {
 
 PlanFeaturesActions.propTypes = {
 	className: PropTypes.string,
-	popular: PropTypes.bool,
+	primaryUpgrade: PropTypes.bool,
 	current: PropTypes.bool,
 	available: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
