@@ -39,7 +39,8 @@ export const ThemesList = React.createClass( {
 		// i18n function provided by localize()
 		translate: React.PropTypes.func,
 		showThemeUpload: React.PropTypes.bool,
-		themeUploadClickRecorder: React.PropTypes.func
+		themeUploadClickRecorder: React.PropTypes.func,
+		onThemeUpload: React.PropTypes.func
 	},
 
 	fetchNextPage( options ) {
@@ -52,6 +53,7 @@ export const ThemesList = React.createClass( {
 			themes: [],
 			showThemeUpload: false,
 			themeUploadClickRecorder: identity,
+			onThemeUpload: identity,
 			fetchNextPage() {},
 			optionsGenerator() {
 				return [];
@@ -101,6 +103,11 @@ export const ThemesList = React.createClass( {
 				/>;
 	},
 
+	handleUploadThemeClick() {
+		this.props.themeUploadClickRecorder(); // tracking
+		this.props.onThemeUpload();            // redirect
+	},
+
 	renderThemeUploadBox() {
 		this.props.themes.pop();
 		return (
@@ -111,7 +118,7 @@ export const ThemesList = React.createClass( {
 				</div>
 				<Button
 					primary
-					onClick={ this.props.themeUploadClickRecorder }
+					onClick={ this.handleUploadThemeClick }
 				    className="themes-list__upload-button"
 				>
 					{ this.props.translate( 'Upload Theme' ) }
