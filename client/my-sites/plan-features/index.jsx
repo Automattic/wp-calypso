@@ -15,7 +15,7 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import Popover from 'components/popover';
 import PlanFeaturesActions from './actions';
-import { isCurrentPlanPaid, isCurrentSitePlan } from 'state/sites/selectors';
+import { isCurrentPlanPaid, isCurrentSitePlan, getSitePlan } from 'state/sites/selectors';
 import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
@@ -32,7 +32,7 @@ import {
 	getPlanFeaturesObject,
 	getPlanClass,
 	getMonthlyPlanByYearly,
-	plansList,
+	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
 } from 'lib/plans/constants';
@@ -467,8 +467,8 @@ export default connect(
 			const showMonthly = ! isMonthly( plan );
 			const available = isInSignup ? true : canUpgradeToPlan( plan );
 			const relatedMonthlyPlan = showMonthly ? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) ) : null;
-			const isCurrentlyPremium = isCurrentSitePlan( state, selectedSiteId, plansList[ PLAN_PREMIUM ].getProductId() );
 			const popular = isPopular( plan ) && ! isPaid;
+			const currentPlan = getSitePlan( state, selectedSiteId ) && getSitePlan( state, selectedSiteId ).product_slug;
 
 			if ( placeholder || ! planObject || isLoadingSitePlans ) {
 				isPlaceholder = true;
@@ -498,7 +498,7 @@ export default connect(
 				planName: plan,
 				planObject: planObject,
 				popular: popular,
-				primaryUpgrade: ( isCurrentlyPremium && plan === PLAN_BUSINESS ) || popular,
+				primaryUpgrade: ( ( currentPlan === PLAN_PERSONAL && plan === PLAN_PREMIUM ) || ( currentPlan === PLAN_PREMIUM && plan === PLAN_BUSINESS ) || popular ),
 				rawPrice: getPlanRawPrice( state, planProductId, ! relatedMonthlyPlan && showMonthly ),
 				relatedMonthlyPlan: relatedMonthlyPlan
 			};
