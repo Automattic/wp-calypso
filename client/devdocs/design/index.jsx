@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
-import { slugToCamelCase } from './docs-example/util';
+import { slugToCamelCase } from 'devdocs/docs-example/util';
 import trim from 'lodash/trim';
 
 /**

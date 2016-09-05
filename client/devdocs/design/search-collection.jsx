@@ -6,11 +6,11 @@ import React from 'react';
 /**
 * Internal dependencies
 */
-import DocsExampleWrapper from './docs-example/wrapper';
+import DocsExampleWrapper from 'devdocs/docs-example/wrapper';
 import {
 	camelCaseToSlug,
 	getComponentName,
-} from './docs-example/util';
+} from 'devdocs/docs-example/util';
 
 const shouldShowInstance = ( example, filter, component ) => {
 	const name = getComponentName( example );

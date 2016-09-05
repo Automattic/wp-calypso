@@ -10,7 +10,7 @@ var React = require( 'react' ),
 import Button from 'components/button';
 import Card from 'components/card';
 import config from 'config';
-import DocsExample from 'components/docs-example';
+import DocsExample from 'devdocs/docs-example';
 import Gridicon from 'components/gridicon';
 
 var Buttons = React.createClass( {
@@ -32,22 +32,12 @@ var Buttons = React.createClass( {
 	},
 
 	renderDocsExample: function( toggleText ) {
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/buttons">Button</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleText }</a>
-				</h2>
-				{ this.renderButtons() }
-			</div>
-		);
+		return this.renderButtons();
 	},
 
 	renderDocsExampleWithUsageStats: function( toggleText ) {
 		return (
 			<DocsExample
-				title="Button"
-				url="/devdocs/design/buttons"
 				componentUsageStats={ this.props.componentUsageStats }
 				toggleHandler={ this.toggleButtons }
 				toggleText={ toggleText }
