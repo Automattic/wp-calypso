@@ -1,7 +1,9 @@
+import { sample } from 'lodash';
+
 const promo_options = [
 	{
 		promo_code: 'a0001',
-		message: 'WordPress.com your way  — desktop app now available for Mac, Windows, and Linux.'
+		message: 'WordPress.com your way — desktop app now available for Mac, Windows, and Linux.'
 	},
 	{
 		promo_code: 'a0002',
@@ -22,7 +24,7 @@ const promo_options = [
 ];
 
 export const getRandomPromo = ( ) => {
-	return promo_options[ Math.floor( Math.random() * promo_options.length ) ];
+	return sample( promo_options );
 };
 
 export const getPromoLink = ( location, promoCode ) => {
