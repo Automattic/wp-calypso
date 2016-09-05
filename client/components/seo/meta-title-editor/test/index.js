@@ -27,7 +27,7 @@ describe( 'SEO', () => {
 						{ type: 'string', value: ' | ' },
 						{ type: 'postTitle' }
 					] )
-				).to.equal( '%site_name% | %post_title%' ) );
+				).to.equal( '%_site_name% | %_post_title%' ) );
 			} );
 
 			describe( '#rawToNative', () => {
@@ -40,7 +40,7 @@ describe( 'SEO', () => {
 				).to.eql( [ { type: 'string', value: 'just a string' } ] ) );
 
 				it( 'should handle placeholders', () => expect(
-					rawToNative( '%site_name% | %post_title%' )
+					rawToNative( '%_site_name% | %_post_title%' )
 				).to.eql( [
 					{ type: 'siteName' },
 					{ type: 'string', value: ' | ' },
