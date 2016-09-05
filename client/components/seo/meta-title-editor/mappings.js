@@ -38,7 +38,6 @@ import {
 	camelCase,
 	flowRight as compose,
 	get,
-	identity,
 	initial,
 	last,
 	map,
@@ -48,6 +47,7 @@ import {
 	rearg,
 	reduce,
 	snakeCase,
+	unary,
 } from 'lodash';
 
 const mergeStringPieces = ( a, b ) => ( {
@@ -63,12 +63,11 @@ const mergeStringPieces = ( a, b ) => ( {
  * @param {Array} r List of raw format pieces
  * @returns {Array} List of native format pieces
  */
-export const rawToNative = compose(
+export const rawToNative = unary(
 	partialRight( map, p => Object.assign( {},
 		{ type: 'string' === p.type ? 'string' : camelCase( p.value ) },
 		'string' === p.type && { value: p.value },
 	) ),
-	identity, // @TODO figure out why this breaks without identity here (https://github.com/lodash/lodash/issues/2632)
 );
 
 /**
@@ -79,7 +78,7 @@ export const rawToNative = compose(
  * @param {Array} n List of native format pieces
  * @returns {Array} List of raw format pieces
  */
-export const nativeToRaw = compose(
+export const nativeToRaw = unary( compose(
 	// combine adjacent strings
 	partialRight( reduce, ( format, piece ) => {
 		const lastPiece = last( format );
@@ -94,8 +93,7 @@ export const nativeToRaw = compose(
 		type: p.type === 'string' ? 'string' : 'token',
 		value: get( p, 'value', snakeCase( p.type ) )
 	} ) ),
-	identity, // @TODO figure out why this breaks without identity here (https://github.com/lodash/lodash/issues/2632)
-);
+) );
 
 // Not only are the format strings themselves stored differently
 // than on the server, but the API expects a different structure
