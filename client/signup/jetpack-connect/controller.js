@@ -28,7 +28,6 @@ import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import plansFactory from 'lib/plans-list';
-import titleActions from 'lib/screen-title/actions';
 
 const sites = sitesFactory();
 const plans = plansFactory();
@@ -190,10 +189,6 @@ export default {
 		if ( ! site || ! site.jetpack || ! config.isEnabled( 'jetpack/connect' ) ) {
 			return;
 		}
-
-		titleActions.setTitle( i18n.translate( 'Plans', { textOnly: true } ),
-			{ siteID: route.getSiteFragment( context.path ) }
-		);
 
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
