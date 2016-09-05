@@ -266,8 +266,8 @@ const Search = React.createClass( {
 	},
 
 	render: function() {
-		let searchValue = this.state.keyword,
-			placeholder = this.props.placeholder ||
+		const searchValue = this.state.keyword;
+		const placeholder = this.props.placeholder ||
 				i18n.translate( 'Search…', { textOnly: true } );
 
 		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
@@ -293,7 +293,7 @@ const Search = React.createClass( {
 		const inputClass = classNames( 'search__input', this.props.dir );
 
 		return (
-			<div dir={this.props.dir || null} className={ searchClass } role="search">
+			<div dir={ this.props.dir || null } className={ searchClass } role="search">
 				<Spinner />
 				<div
 					className="search__icon-navigation"
@@ -306,7 +306,7 @@ const Search = React.createClass( {
 					}
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
-					<Gridicon icon="search" className="search__open-icon"/>
+					<Gridicon icon="search" className="search__open-icon" />
 				</div>
 				<div className={ fadeDivClass }>
 					<input
@@ -345,7 +345,7 @@ const Search = React.createClass( {
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.state.instanceId }
 					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
-					<Gridicon icon="cross" className="search__close-icon"/>
+					<Gridicon icon="cross" className="search__close-icon" />
 				</div>
 			);
 		}
