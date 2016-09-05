@@ -318,3 +318,14 @@
 		}
 	}
 }
+
+.reader-full-post__action-links {
+	list-style-type: none;
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+}
+
+.reader-full-post__action-links-item {
+	display: inline;
+}
