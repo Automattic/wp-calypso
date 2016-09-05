@@ -16,12 +16,24 @@ describe( 'AppPromo', ( ) => {
 	useFakeDom();
 	useMockery();
 
+	const desktopPromoKey = 'desktop_promo_dismissed';
+	let desktopPromoDismissed = false;
+	let localeSlug = 'en';
+	let isMobile = false;
+
 	const storeMock = {
-		get: spy(),
+		get: ( val ) => {
+			if ( val === desktopPromoKey ) {
+				return desktopPromoDismissed;
+			}
+
+			return undefined;
+		},
 		set: spy()
 	};
 
-	const userUtilsMock = { getLocaleSlug: ( ) => 'en' };
+	const userUtilsMock = { getLocaleSlug: ( ) => localeSlug };
+	const viewportMock = { isMobile: ( ) => isMobile };
 
 	const appStoreComponent = ( ) => {
 		return (
@@ -34,13 +46,47 @@ describe( 'AppPromo', ( ) => {
 	before( ( ) => {
 		mockery.registerMock( 'store', storeMock );
 		mockery.registerMock( 'lib/user/utils', userUtilsMock );
+		mockery.registerMock( 'lib/viewport', viewportMock );
 
 		AppPromo = require( '../' );
 	} );
 
-	it( 'should do something', ( ) => {
-		const wrapper = mount( appStoreComponent() );
+	beforeEach( ( ) => {
+		desktopPromoDismissed = false;
+		localeSlug = 'en';
+		isMobile = false;
+	} );
 
-		expect( wrapper.find( '.app-promo' ) ).to.have.lengthOf( 1 );
+	it( 'should render nothing when the promo has already been dismissed', ( ) => {
+		desktopPromoDismissed = true;
+		const wrapper = mount( appStoreComponent() );
+		expect( wrapper.find( '.app-promo' ) ).to.have.lengthOf( 0 );
+	} );
+
+	it( 'should render nothing when the locale is not english', ( ) => {
+		localeSlug = 'fr';
+		const wrapper = mount( appStoreComponent() );
+		expect( wrapper.find( '.app-promo' ) ).to.have.lengthOf( 0 );
+	} );
+
+	it( 'should render nothing when the viewport indicates mobile', ( ) => {
+		isMobile = true;
+		const wrapper = mount( appStoreComponent() );
+		expect( wrapper.find( '.app-promo' ) ).to.have.lengthOf( 0 );
+	} );
+
+	it( 'should render nothing when being viewed on ChromeOS', ( ) => {
+
+	} );
+
+	context( 'when the user hasn\'t dismissed the promo, aren\'t on mobile or chrome os', ( ) => {
+		it( 'should render the primary components', ( ) => {
+			const wrapper = mount( appStoreComponent() );
+
+			expect( wrapper.find( '.app-promo' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( '.app-promo__dismiss' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( '.app-promo__screen-reader-text' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( '.app-promo__icon' ) ).to.have.lengthOf( 1 );
+		} );
 	} );
 } );
