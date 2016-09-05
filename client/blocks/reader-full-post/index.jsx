@@ -42,6 +42,7 @@ import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import ReaderFullPostActionLinks from './action-links';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -163,6 +164,9 @@ export class FullPostView extends React.Component {
 							? <DailyPostButton post={ post } tagName="span" />
 							: null
 						}
+
+					<ReaderFullPostActionLinks post={ post } />
+
 					{ shouldShowComments( post )
 						? <Comments ref={ this.bindComments }
 								post={ post }
