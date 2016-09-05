@@ -328,4 +328,12 @@
 
 .reader-full-post__action-links-item {
 	display: inline;
+
+	.reader-share__button-label {
+		font-size: 14px;
+	}
+
+	.reader-share .gridicon {
+		top: 8px;
+	}
 }
