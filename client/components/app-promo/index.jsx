@@ -35,8 +35,8 @@ const AppPromo = React.createClass( {
 			show_promo = false;
 		}
 
-		if ( isChromeOS() ) {
-			show_promo = false;
+    if ( isChromeOS() ) {
+      show_promo = false;
     }
 
 		const promo_options = [
