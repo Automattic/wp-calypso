@@ -36,6 +36,15 @@ describe( 'AppPromo', ( ) => {
 	const userUtilsMock = { getLocaleSlug: ( ) => localeSlug };
 	const viewportMock = { isMobile: ( ) => isMobile };
 	const userAgentUtilsMock = { isChromeOS: ( ) => isChromeOS };
+	const appPromoDetails = {
+		promo_code: 'a0001',
+		message: 'WordPress.com your way  — desktop app now available for Mac, Windows, and Linux.'
+	};
+	const appPromoLink = 'http://www.wordpress.com';
+	const promoRetrieverMock = {
+		getRandomPromo: ( ) => appPromoDetails,
+		getPromoLink: ( ) => appPromoLink
+	};
 
 	const appStoreComponent = ( ) => {
 		return (
@@ -50,6 +59,7 @@ describe( 'AppPromo', ( ) => {
 		mockery.registerMock( 'lib/user/utils', userUtilsMock );
 		mockery.registerMock( 'lib/user-agent-utils', userAgentUtilsMock );
 		mockery.registerMock( 'lib/viewport', viewportMock );
+		mockery.registerMock( './lib/promo-retriever', promoRetrieverMock );
 
 		AppPromo = require( '../' );
 	} );
@@ -93,6 +103,20 @@ describe( 'AppPromo', ( ) => {
 			expect( wrapper.find( '.app-promo__dismiss' ) ).to.have.lengthOf( 1 );
 			expect( wrapper.find( '.app-promo__screen-reader-text' ) ).to.have.lengthOf( 1 );
 			expect( wrapper.find( '.app-promo__icon' ) ).to.have.lengthOf( 1 );
+		} );
+
+		it( 'should render the promo text', ( ) => {
+			const wrapper = mount( appStoreComponent() );
+
+			expect( wrapper.text() ).to.contain( appPromoDetails.message );
+		} );
+
+		it( 'should render the promo link', ( ) => {
+			const wrapper = mount( appStoreComponent() );
+
+			let promoLink = wrapper.find( '.app-promo__link' );
+			expect( promoLink ).to.have.lengthOf( 1 );
+			expect( promoLink.props().href ).to.equal( appPromoLink );
 		} );
 	} );
 } );
