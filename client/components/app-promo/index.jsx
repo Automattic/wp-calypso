@@ -10,8 +10,9 @@ import store from 'store';
 import userUtils from 'lib/user/utils';
 import { isChromeOS } from 'lib/user-agent-utils';
 import viewport from 'lib/viewport';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import { getRandomPromo, getPromoLink } from './lib/promo-retriever';
+import { noop, identity } from 'lodash';
 
 const AppPromo = React.createClass( {
 
@@ -81,7 +82,7 @@ const AppPromo = React.createClass( {
 				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="app-promo__screen-reader-text">
-						{ translate( 'Dismiss' ) }
+						{ this.props.translate( 'Dismiss' ) }
 					</span>
 				</span>
 				<a
@@ -106,6 +107,11 @@ const AppPromo = React.createClass( {
 	}
 } );
 
+AppPromo.defaultProps = {
+	translate: identity,
+	recordTracksEvent: noop,
+};
+
 const mapDispatchToProps = ( dispatch ) => {
 	return {
 		recordTracksEvent: ( event, properties ) => {
@@ -114,4 +120,5 @@ const mapDispatchToProps = ( dispatch ) => {
 	};
 };
 
-export default connect( null, mapDispatchToProps )( AppPromo );
+export { AppPromo };
+export default connect( null, mapDispatchToProps )( localize( AppPromo ) ) ;

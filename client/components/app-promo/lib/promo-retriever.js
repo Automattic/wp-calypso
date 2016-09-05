@@ -28,10 +28,9 @@ export const getRandomPromo = ( ) => {
 };
 
 export const getPromoLink = ( location, promoCode ) => {
-	let promoType = 'desktop';
-	if ( promoCode === 'a0006' ) {
-		promoType = 'mobile';
-	}
+	const promoType = 'a0006' === promoCode
+		? 'desktop'
+		: 'mobile';
 
 	return `https://apps.wordpress.com/${ promoType }/?ref=promo_${ location }_${ promoCode }`;
 };
