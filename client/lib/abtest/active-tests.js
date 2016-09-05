@@ -100,14 +100,6 @@ module.exports = {
 		defaultVariation: 'showPopover',
 		allowExistingUsers: false,
 	},
-	plansWording: {
-		datestamp: '20160817',
-		variations: {
-			originalWording: 50,
-			targetedWording: 50
-		},
-		defaultVariation: 'originalWording'
-	},
 	paidNuxStreamlined: {
 		datestamp: '20160912',
 		variations: {
