@@ -16,3 +16,7 @@
 .post-status__text {
 	line-height: 1;
 }
+
+.post-status.is-pending {
+	color: $alert-yellow;
+}
