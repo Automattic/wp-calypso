@@ -8,7 +8,8 @@ import { expect } from 'chai';
  */
 import {
 	getSitePlan,
-	getPlanDiscountPrice,
+	getPlanDiscountedRawPrice,
+	getPlanRawDiscount,
 	getPlansBySite,
 	getPlansBySiteId,
 	hasDomainCredit,
@@ -141,7 +142,7 @@ describe( 'selectors', () => {
 			expect( plan ).to.eql( null );
 		} );
 	} );
-	describe( '#getPlanDiscountPrice()', () => {
+	describe( '#getPlanDiscountedRawPrice()', () => {
 		it( 'should return a discount price', () => {
 			const plans = {
 				data: [ {
@@ -168,7 +169,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanDiscountPrice( state, 77203074, 'bronze' );
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze' );
 			expect( discountPrice ).to.equal( 99 );
 		} );
 		it( 'should return a monthly discount price', () => {
@@ -197,7 +198,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanDiscountPrice( state, 77203074, 'bronze', true );
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'bronze', { isMonthly: true } );
 			expect( discountPrice ).to.equal( 8.25 );
 		} );
 		it( 'should return null, if no discount is available', () => {
@@ -226,10 +227,112 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanDiscountPrice( state, 77203074, 'silver', true );
+			const discountPrice = getPlanDiscountedRawPrice( state, 77203074, 'silver', { isMonthly: true } );
 			expect( discountPrice ).to.equal( null );
 		} );
 	} );
+
+	describe( '#getPlanRawDiscount()', () => {
+		it( 'should return a raw discount', () => {
+			const plans = {
+				data: [ {
+					currentPlan: false,
+					productSlug: 'gold',
+					rawPrice: 299,
+					rawDiscount: 0
+				}, {
+					currentPlan: false,
+					productSlug: 'silver',
+					rawPrice: 199,
+					rawDiscount: 0
+				}, {
+					currentPlan: true,
+					productSlug: 'bronze',
+					rawPrice: 99,
+					rawDiscount: 100
+				} ]
+			};
+
+			const state = {
+				sites: {
+					plans: {
+						77203074: plans
+					}
+				}
+			};
+
+			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'bronze' );
+
+			expect( planRawDiscount ).to.equal( 100 );
+		} );
+
+		it( 'should return a monthly raw discount', () => {
+			const plans = {
+				data: [ {
+					currentPlan: false,
+					productSlug: 'gold',
+					rawPrice: 299,
+					rawDiscount: 0
+				}, {
+					currentPlan: false,
+					productSlug: 'silver',
+					rawPrice: 199,
+					rawDiscount: 0
+				}, {
+					currentPlan: true,
+					productSlug: 'bronze',
+					rawPrice: 99,
+					rawDiscount: 100
+				} ]
+			};
+
+			const state = {
+				sites: {
+					plans: {
+						77203074: plans
+					}
+				}
+			};
+
+			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'bronze', { isMonthly: true } );
+
+			expect( planRawDiscount ).to.equal( 8.33 );
+		} );
+
+		it( 'should return null, if no raw discount is available', () => {
+			const plans = {
+				data: [ {
+					currentPlan: false,
+					productSlug: 'gold',
+					rawPrice: 299,
+					rawDiscount: 0
+				}, {
+					currentPlan: false,
+					productSlug: 'silver',
+					rawPrice: 199,
+					rawDiscount: 0
+				}, {
+					currentPlan: true,
+					productSlug: 'bronze',
+					rawPrice: 99,
+					rawDiscount: 100
+				} ]
+			};
+
+			const state = {
+				sites: {
+					plans: {
+						77203074: plans
+					}
+				}
+			};
+
+			const planRawDiscount = getPlanRawDiscount( state, 77203074, 'silver', { isMonthly: true } );
+
+			expect( planRawDiscount ).to.equal( null );
+		} );
+	} );
+
 	describe( '#hasDomainCredit()', () => {
 		it( 'should return true if plan has domain credit', () => {
 			const state = {
