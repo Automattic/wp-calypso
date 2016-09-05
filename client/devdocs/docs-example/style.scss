@@ -12,7 +12,7 @@
 	margin: 0 !important;
 }
 
-.docs-example__header + .docs-example__main {
+.docs-example__main {
 	margin-top: 16px;
 }
 
@@ -60,56 +60,6 @@
 		&.docs-example__wrapper__header-title {
 			line-height: 50px;
 			height: 50px;
-		}
-	}
-
-	.docs-example__wrapper__header-link {
-		float: right;
-		line-height: 24px;
-		height: 25px;
-		margin-top: 12.5px;
-		color: $gray;
-
-		&:hover {
-			color: $gray-dark;
-		}
-
-		&.is-active {
-			color: $orange-fire;
-		}
-	}
-}
-
-.docs-example__wrapper__rotated {
-	transform: rotate( 180deg );
-}
-
-.design__instance-links {
-	font-size: 14px;
-	margin-bottom: 10px;
-
-	.design__instance-link {
-		display: inline-block;
-	}
-}
-
-.docs-example__wrapper__inspector {
-	ul {
-		margin: 20px;
-		list-style: none;
-
-		li {
-			max-width: 300px;
-			border-radius: 3px;
-		    color: darken( $gray, 20% );
-			border: 1px solid lighten( $gray, 30% );
-			background-color: $white;
-			margin-bottom: 1px;
-
-			.docs-example__inspector__name {
-				font-size: 12px;
-			    padding: 1px 5px;
-			}
 		}
 	}
 }
