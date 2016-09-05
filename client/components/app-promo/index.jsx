@@ -11,6 +11,7 @@ import userUtils from 'lib/user/utils';
 import { isChromeOS } from 'lib/user-agent-utils';
 import viewport from 'lib/viewport';
 import { translate } from 'i18n-calypso';
+import { getRandomPromo } from './lib/promo-retriever';
 
 const AppPromo = React.createClass( {
 
@@ -39,16 +40,8 @@ const AppPromo = React.createClass( {
       show_promo = false;
     }
 
-		const promo_options = [
-			{ promo_code: 'a0001', message: 'WordPress.com your way  — desktop app now available for Mac, Windows, and Linux.' },
-			{ promo_code: 'a0002', message: 'Get WordPress.com app for your desktop.' },
-			{ promo_code: 'a0003', message: 'WordPress.com app now available for desktop.' },
-			{ promo_code: 'a0005', message: 'WordPress.com at your fingertips — download app for desktop.' }
-		];
-
-		const item = promo_options[ Math.floor( Math.random() * promo_options.length ) ];
 		return {
-			promo_item: item,
+			promo_item: getRandomPromo(),
 			show_promo: show_promo
 		};
 	},
