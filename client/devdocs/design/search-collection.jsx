@@ -2,115 +2,83 @@
 * External dependencies
 */
 import React from 'react';
-import { invoke } from 'lodash';
 
 /**
 * Internal dependencies
 */
-import config from 'config';
+import DocsExampleWrapper from './docs-example/wrapper';
+import {
+	camelCaseToSlug,
+	getComponentName,
+} from './docs-example/util';
 
-const Hider = React.createClass( {
-	displayName: 'Hider',
+const shouldShowInstance = ( example, filter, component ) => {
+	const name = getComponentName( example );
 
-	propTypes: {
-		hide: React.PropTypes.bool,
-	},
+	// let's show only one instance
+	if ( component ) {
+		const slug = camelCaseToSlug( name );
+		return component === slug;
+	}
 
-	shouldComponentUpdate( nextProps ) {
-		return this.props.hide !== nextProps.hide;
-	},
+	let searchPattern = name;
 
-	render() {
-		if ( this.props.hide ) {
+	if ( example.props.searchKeywords ) {
+		searchPattern += ' ' + example.props.searchKeywords;
+	}
+
+	return ( ! filter || searchPattern.toLowerCase().indexOf( filter ) > -1 );
+};
+
+const Collection = ( { children, filter, section = 'design', component } ) => {
+	let showCounter = 0;
+	const summary = [];
+
+	const examples = React.Children.map( children, ( example ) => {
+		if ( ! shouldShowInstance( example, filter, component ) ) {
 			return null;
 		}
 
+		const exampleName = getComponentName( example );
+		const exampleLink = `./${ section }/${ camelCaseToSlug( exampleName ) }`;
+
+		showCounter++;
+
+		if ( filter ) {
+			summary.push(
+				<span
+					key={ `instance-link-${ showCounter }` }
+					className="design__instance-link"
+				>
+					<a href={ exampleLink }>
+						{ exampleName }
+					</a>
+					,&nbsp;
+				</span>
+			);
+		}
+
 		return (
-			<div
-				className={ config.isEnabled( 'devdocs/usage-counts' )
-					? 'design-assets__group'
-					: null
-				}
+			<DocsExampleWrapper
+				name={ exampleName }
+				unique={ !! component }
+				url={ exampleLink }
 			>
-				{ this.props.children }
-			</div>
+				{ example }
+			</DocsExampleWrapper>
 		);
-	}
-} );
+	} );
 
-const FilterSummary = React.createClass( {
-	render() {
-		let names;
+	return (
+		<div className="design__collection">
+			{ showCounter > 1 && filter &&
+				<div className="design__instance-links">
+					<span>Showing </span>{ summary }...
+				</div>
+			}
+			{ examples }
+		</div>
+	);
+};
 
-		if ( this.props.items.length === 0 ) {
-			return ( <p>No matches found</p> );
-		} else if ( this.props.items.length === this.props.total || this.props.items.length === 1 ) {
-			return null;
-		}
-
-		names = this.props.items.map( function( item ) {
-			return item.props.children.type.displayName;
-		} );
-
-		return (
-			<p>Showing: { names.join( ', ' ) }</p>
-		);
-	}
-} );
-
-export default React.createClass( {
-	displayName: 'Collection',
-
-	shouldWeHide: function( example ) {
-		let filter, searchString;
-
-		filter = this.props.filter || '';
-		searchString = example.type.displayName;
-
-		if ( this.props.component ) {
-			const exampleName = invoke( example, 'type.displayName.toLowerCase' );
-			const componentName = invoke( this, 'props.component.replace', /-([a-z])/g, '$1' );
-
-			return exampleName !== componentName;
-		}
-
-		if ( example.props.searchKeywords ) {
-			searchString += ' ' + example.props.searchKeywords;
-		}
-
-		return ! ( ! filter || searchString.toLowerCase().indexOf( filter ) > -1 );
-	},
-
-	visibleExamples: function( examples ) {
-		return examples.filter( ( child ) => {
-			return !child.props.hide;
-		} );
-	},
-
-	render: function() {
-		let summary, examples;
-
-		examples = React.Children.map( this.props.children, ( example ) => {
-			return (
-				<Hider hide={ this.shouldWeHide( example ) } key={ 'example-' + example.type.displayName }>
-					{ example }
-				</Hider>
-			);
-		} );
-
-		if ( ! this.props.component ) {
-			summary = (
-				<FilterSummary
-					items={ this.visibleExamples( examples ) }
-					total={ this.props.children.length } />
-			);
-		}
-
-		return (
-			<div className="collection">
-				{ summary }
-				{ examples }
-			</div>
-		);
-	}
-} );
+export default Collection;

@@ -5,7 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
-import toTitleCase from 'to-title-case';
+import { slugToCamelCase } from './docs-example/util';
 import trim from 'lodash/trim';
 
 /**
@@ -86,22 +86,27 @@ let DesignAssets = React.createClass( {
 	},
 
 	render() {
-		const { componentsUsageStats = {} } = this.props;
+		const { componentsUsageStats = {}, component } = this.props;
+		const { filter } = this.state;
+
 		return (
-			<div className="design-assets" role="main">
-				{
-					this.props.component
+			<div className="design" role="main">
+				{ component
 					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ toTitleCase( this.props.component ) }
+						{ slugToCamelCase( component ) }
 					</HeaderCake>
+
 					: <SearchCard
 						onSearch={ this.onSearch }
-						initialValue={ this.state.filter }
+						initialValue={ filter }
 						placeholder="Search components…"
-						analyticsGroup="Docs">
-					</SearchCard>
+						analyticsGroup="Docs" />
 				}
-				<Collection component={ this.props.component } filter={ this.state.filter }>
+
+				<Collection
+					component={ component }
+					filter={ filter }
+				>
 					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
 					<BulkSelect />
 					<ButtonGroups />
