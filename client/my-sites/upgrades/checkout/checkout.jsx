@@ -71,8 +71,9 @@ const Checkout = React.createClass( {
 			this.addProductToCart();
 		}
 
-		if ( this.props.cart.hasPendingServerUpdates && ! nextProps.cart.hasPendingServerUpdates ) {
-			// We only want to track the page view when the cart has finished loading the products
+		// Note that `hasPendingServerUpdates` will go from `null` to `false` on NUX checkout
+		// and from `true` to `false` on post-NUX checkout
+		if ( this.props.cart.hasPendingServerUpdates !== false && nextProps.cart.hasPendingServerUpdates === false ) {
 			this.trackPageView( nextProps );
 		}
 	},
