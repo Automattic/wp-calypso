@@ -6,7 +6,7 @@
 	"port": 3000,
 	"i18n_default_locale_slug": "en",
 	"wpcom_user_bootstrap": false,
-	"rtl": false,
+	"rtl": true,
 	"jetpack_min_version": "3.3",
 	"siftscience_key": "e00e878351",
 	"wpcom_signup_id": "39911",
