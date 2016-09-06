@@ -12,6 +12,7 @@ import {
 	map,
 	partialRight,
 	some,
+	split,
 	includes,
 } from 'lodash';
 
@@ -409,6 +410,32 @@ export function getSiteByUrl( state, url ) {
 	}
 
 	return site;
+}
+
+/**
+ * Returns a site's theme showcase path.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId SiteId
+ * @return {?String}        Theme showcase path
+ */
+export function getSiteThemeShowcasePath( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	if ( ! site || site.jetpack ) {
+		return null;
+	}
+
+	const [ type, slug ] = split( getSiteOption( state, siteId, 'theme_slug' ), '/', 2 );
+
+	// to accomodate a8c and other theme types
+	if ( ! includes( [ 'pub', 'premium' ], type ) ) {
+		return null;
+	}
+
+	const siteSlug = getSiteSlug( state, siteId );
+	return type === 'premium'
+		? `/theme/${ slug }/setup/${ siteSlug }`
+		: `/theme/${ slug }/${ siteSlug }`;
 }
 
 /**
