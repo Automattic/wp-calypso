@@ -7,8 +7,13 @@
 	position: relative;
 
 	&:hover {
-		color: $blue-light;
-		cursor: pointer;
+		.post-edit-button__label {
+			color: $blue-light;
+			cursor: pointer;
+		}
+		.post-edit-button__icon {
+			fill: $blue-light;
+		}
 	}
 
 	&:visited {
@@ -29,7 +34,4 @@
 	fill: lighten( $gray, 10% );
 	position: relative;
 		top: 1px;
-	&:hover {
-		fill: $blue-light;
-	}
 }
