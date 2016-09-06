@@ -159,8 +159,8 @@ $z-layers: (
 	'.search': (
 		'.search__input': 10,
 		'.search.is-searching .spinner': 20,
-		'.search .search-open__icon': 20,
-		'.search .search-close__icon': 20
+		'.search .search__open-icon': 20,
+		'.search .search__close-icon': 20
 	),
 	'.profile-gravatar__edit-label-wrap': (
 		'.profile-gravatar__edit-label-wrap:after': 0,
@@ -185,7 +185,8 @@ $z-layers: (
 	),
 	'.following-edit': ( //aka 'main'
 		'.following-edit__subscribe-form .gridicons-add-outline': 23,
-		'.following-edit__subscribe-form .card.is-search-result': 35
+		'.following-edit__subscribe-form .card.is-search-result': 35,
+		'.following-edit__subscribe-form .search': 36
 	),
 
 	// The following may be inserted into different areas.
