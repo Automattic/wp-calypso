@@ -21,7 +21,10 @@ export default localize( ( props ) => {
 	} = props;
 
 	const trackRegistrationClick = () => {
-		analytics.tracks.recordEvent( 'calypso_help_course_registration_click', { registrationUrl, isBusinessPlanUser } );
+		analytics.tracks.recordEvent( 'calypso_help_course_registration_click', {
+			registration_url: registrationUrl,
+			is_business_plan_user: isBusinessPlanUser
+		} );
 	};
 
 	return (
