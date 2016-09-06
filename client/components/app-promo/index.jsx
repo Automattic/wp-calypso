@@ -51,7 +51,7 @@ const AppPromo = React.createClass( {
 			return null;
 		}
 
-		const promo_link = getPromoLink( this.props.location, this.state.promo_item.promo_code );
+		const promoLink = getPromoLink( this.props.location, this.state.promo_item.promo_code );
 		return (
 			<div className="app-promo">
 				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss } >
@@ -64,7 +64,7 @@ const AppPromo = React.createClass( {
 					onClick={ this.recordClickEvent }
 					className="app-promo__link"
 					title="Try the desktop app!"
-					href={ promo_link }
+					href={ promoLink }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
