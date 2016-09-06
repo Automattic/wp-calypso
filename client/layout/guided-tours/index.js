@@ -12,7 +12,6 @@ import AllTours from 'layout/guided-tours/config';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
-import { getScrollableSidebar } from './positioning';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 
 class GuidedTours extends Component {
