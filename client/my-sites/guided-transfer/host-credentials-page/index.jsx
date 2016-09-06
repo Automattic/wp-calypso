@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import Bluehost from './bluehost';
+import ErrorNotice from './error-notice';
 import SiteGround from './siteground';
 import SectionHeader from 'components/section-header';
 import { cartItems } from 'lib/cart-values';
@@ -87,6 +88,7 @@ class HostCredentialsPage extends Component {
 	render() {
 		return (
 			<div>
+				<ErrorNotice />
 				<SectionHeader label={ this.props.translate( 'Account Info' ) } />
 				{ this.getHostForm() }
 			</div>

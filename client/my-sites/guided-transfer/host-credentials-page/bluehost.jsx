@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ErrorNotice from './error-notice';
 import CompactCard from 'components/card/compact';
 import {
 	Username,
@@ -37,7 +36,6 @@ class Bluehost extends Component {
 		return (
 			<div>
 				<CompactCard>
-					<ErrorNotice />
 					<p>
 						{ translate(
 							'Please enter your credentials. They will be stored securely so that one ' +
