@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -17,16 +16,13 @@ import {
 	fetchByDomain,
 	fetchBySiteId
 } from '../actions';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
 
 	beforeEach( () => {
 		spy.reset();
-	} );
-
-	after( () => {
-		nock.cleanAll();
 	} );
 
 	describe( '#fetchByDomain', () => {
@@ -55,7 +51,7 @@ describe( 'actions', () => {
 				}
 			};
 
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/domains/${noUpgradeDomain}/google-apps` )

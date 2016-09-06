@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -17,16 +16,13 @@ import {
 	receiveProductsList,
 	requestProductsList,
 } from '../actions';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
 
 	beforeEach( () => {
 		spy.reset();
-	} );
-
-	after( () => {
-		nock.cleanAll();
 	} );
 
 	const guided_transfer = {
@@ -52,7 +48,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestProductsList()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/products' )
 				.twice().reply( 200, { guided_transfer } )
