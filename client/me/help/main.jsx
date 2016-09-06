@@ -137,7 +137,9 @@ const Help = React.createClass( {
 
 	trackCoursesButtonClick() {
 		const { isBusinessPlanUser } = this.props;
-		analytics.tracks.recordEvent( 'calypso_help_courses_click', { isBusinessPlanUser } );
+		analytics.tracks.recordEvent( 'calypso_help_courses_click', {
+			is_business_plan_user: isBusinessPlanUser
+		} );
 	},
 
 	getPlaceholders() {
