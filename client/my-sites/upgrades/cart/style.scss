@@ -88,6 +88,7 @@
 	.cart-item__loading-placeholder {
 		.remove-item {
 			@include placeholder(23%);
+			border-radius: 0;
 			width: 25px;
 		}
 	}
