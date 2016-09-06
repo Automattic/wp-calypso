@@ -167,7 +167,7 @@ var TokenField = React.createClass( {
 	},
 
 	_renderInput: function() {
-		const { maxLength, value } = this.props;
+		const { autoCapitalize, maxLength, value } = this.props;
 
 		let props = {
 			ref: 'input',
@@ -180,6 +180,12 @@ var TokenField = React.createClass( {
 		if ( ! ( maxLength && value.length >= maxLength ) ) {
 			Object.assign( props, {
 				onChange: this._onInputChange
+			} );
+		}
+
+		if ( autoCapitalize ) {
+			Object.assign( props, {
+				autoCapitalize: autoCapitalize
 			} );
 		}
 

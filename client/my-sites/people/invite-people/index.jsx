@@ -320,6 +320,7 @@ const InvitePeople = React.createClass( {
 								<TokenField
 									isBorderless
 									tokenizeOnSpace
+									autoCapitalize="none"
 									maxLength={ 10 }
 									value={ this.getTokensWithStatus() }
 									onChange={ this.onTokensChange }

@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	omit = require( 'lodash/omit' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 var TokenInput = React.createClass( {
@@ -24,14 +25,14 @@ var TokenInput = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
+		const props = omit( this.props, 'onChange' );
+
 		return (
 			<input
 				ref="input"
 				type="text"
-				disabled={ this.props.disabled }
-				value={ this.props.value }
+				{ ...props }
 				size={ this.props.value.length + 1 }
-				onBlur={ this.props.onBlur }
 				onChange={ this._onChange }
 				className="token-field__input"
 			/>
