@@ -57,7 +57,7 @@ const DesignMenu = React.createClass( {
 			isVisible: false,
 			isUnsaved: false,
 			customizations: {},
-			designtools: [],
+			designTools: [],
 		};
 	},
 
