@@ -162,7 +162,9 @@ const Search = React.createClass( {
 	},
 
 	focus: function() {
-		ReactDom.findDOMNode( this.refs.searchInput ).focus();
+		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
+		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
+		setTimeout( () => this.refs.searchInput && ReactDom.findDOMNode( this.refs.searchInput ).focus(), 0 );
 	},
 
 	blur: function() {
