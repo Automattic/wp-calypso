@@ -110,7 +110,7 @@ const DomainsStep = React.createClass( {
 	},
 
 	goToNextStep( isPurchasingItem ) {
-		if ( abtest( 'domainsWithPlansOnly' ) === 'plansOnly' || ! isPurchasingItem ) {
+		if ( ! isPurchasingItem ) {
 			this.props.goToNextStep();
 			return;
 		}
