@@ -146,5 +146,6 @@
 	],
 	"project": "wordpress-com",
 	"reader_cold_start_graduation_threshold": 2,
-	"reader_cold_start_graduation_threshold_with_autofollows": 6
+	"reader_cold_start_graduation_threshold_with_autofollows": 6,
+	"twemoji_cdn_url": "//s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/"
 }
