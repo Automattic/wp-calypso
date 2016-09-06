@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import page from 'page';
 import includes from 'lodash/includes';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -198,7 +199,7 @@ export default function designPreview( WebPreview ) {
 		designTools: [],
 	};
 
-	function mapStateToProps( state, props ) {
+	function mapStateToProps( state ) {
 		const selectedSite = getSelectedSite( state );
 		const selectedSiteId = getSelectedSiteId( state );
 		const currentLayoutFocus = getCurrentLayoutFocus( state );
@@ -208,7 +209,7 @@ export default function designPreview( WebPreview ) {
 			id: 'blogname',
 			input: {
 				type: 'text',
-				label: props.translate( 'Site Title' ),
+				label: i18n.translate( 'Site Title' ),
 				initialValue: site.name,
 			},
 		};
@@ -216,13 +217,13 @@ export default function designPreview( WebPreview ) {
 			id: 'blogdescription',
 			input: {
 				type: 'text',
-				label: props.translate( 'Tagline' ),
+				label: i18n.translate( 'Tagline' ),
 				initialValue: site.description,
 			},
 		};
 		const siteTitlePanel = {
 			id: 'siteTitle',
-			title: props.translate( 'Title and Tagline' ),
+			title: i18n.translate( 'Title and Tagline' ),
 			controls: [
 				siteTitleConfig,
 				siteTaglineConfig,
