@@ -16,7 +16,6 @@
 	}
 
 	.comment-button__label-status {
-
 		@include breakpoint( "<480px" ) {
 			display: none;
 		}

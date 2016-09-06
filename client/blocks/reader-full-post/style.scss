@@ -324,6 +324,7 @@
 	display: flex;
 	flex-direction: row;
 	justify-content: flex-end;
+	margin-top: 10px;
 }
 
 .reader-full-post__action-links-item {
@@ -335,6 +336,10 @@
 	}
 
 	.reader-share .gridicon {
-		top: 8px;
+		top: 7px;
+
+		@include breakpoint( "<480px" ) {
+			top: 5px;
+		}
 	}
 }

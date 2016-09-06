@@ -19,6 +19,10 @@
 .post-edit-button__label {
 	font-size: 14px;
 	margin-left: 4px;
+
+	@include breakpoint( "<480px" ) {
+		display: none;
+	}
 }
 
 .post-edit-button__icon {
