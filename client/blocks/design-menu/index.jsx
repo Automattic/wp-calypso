@@ -113,16 +113,17 @@ const DesignMenu = React.createClass( {
 
 	renderActiveDesignTool() {
 		debug( `rendering activeDesignToolId ${ this.props.activeDesignToolId }` );
-		const panel = find( this.props.designTools, panelConfig => panelConfig.id === this.props.activeDesignToolId );
+		const allTools = this.props.designTools.reduce( ( all, section ) => all.concat( section.items ), [] );
+		const panel = find( allTools, panelConfig => panelConfig.id === this.props.activeDesignToolId );
 		if ( panel ) {
 			debug( `the active design tool ${ this.props.activeDesignToolId } has this config`, panel );
 			return (
-				<DesignMenuPanel label={ panel.title }>
+				<DesignMenuPanel label={ panel.label }>
 					<WrappedDesignTool controls={ panel.controls } previewDataKey={ panel.id } />
 				</DesignMenuPanel>
 			);
 		}
-		return <DesignToolList onChange={ this.props.setActiveDesignTool } />;
+		return <DesignToolList onChange={ this.props.setActiveDesignTool } designTools={ this.props.designTools } />;
 	},
 
 	getSiteCardSite() {
