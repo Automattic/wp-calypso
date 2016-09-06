@@ -14,13 +14,20 @@ import { shouldShowComments } from 'blocks/comments/helper';
 import { shouldShowLikes } from 'reader/like-helper';
 import { shouldShowShare } from 'reader/share/helper';
 import { userCan } from 'lib/posts/utils';
+import * as stats from 'reader/stats';
 
 const ReaderFullPostActionLinks = ( { post, site, onCommentClick } ) => {
+	const onEditClick = () => {
+		stats.recordAction( 'edit_post' );
+		stats.recordGaEvent( 'Clicked Edit Post', 'full_post' );
+		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', post );
+	};
+
 	return (
 		<ul className="reader-full-post__action-links">
 			{ site && userCan( 'edit_post', post ) &&
 				<li className="reader-full-post__action-links-item">
-					<PostEditButton post={ post } site={ site } />
+					<PostEditButton post={ post } site={ site } onClick={ onEditClick } />
 				</li>
 			}
 			{ shouldShowShare( post ) &&
