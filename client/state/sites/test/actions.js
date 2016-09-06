@@ -3,11 +3,11 @@
  */
 import { match } from 'sinon';
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
 	SITE_RECEIVE,
 	SITE_REQUEST,
@@ -61,7 +61,7 @@ describe( 'actions', () => {
 	} );
 	describe( '#requestSites()', () => {
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/sites?site_visibility=all' )
@@ -72,9 +72,7 @@ describe( 'actions', () => {
 						]
 					} );
 			} );
-			after( () => {
-				nock.cleanAll();
-			} );
+
 			it( 'should dispatch request action when thunk triggered', () => {
 				requestSites()( spy );
 				expect( spy ).to.have.been.calledWith( {
@@ -101,7 +99,7 @@ describe( 'actions', () => {
 			} );
 		} );
 		describe( 'failure', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/sites?site_visibility=all' )
@@ -110,9 +108,7 @@ describe( 'actions', () => {
 						message: 'An active access token must be used to access sites.'
 					} );
 			} );
-			after( () => {
-				nock.cleanAll();
-			} );
+
 			it( 'should dispatch fail action when request fails', () => {
 				return requestSites()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -125,7 +121,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestSite()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284' )

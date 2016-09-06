@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -15,6 +14,7 @@ import {
 	JETPACK_SYNC_STATUS_SUCCESS,
 	JETPACK_SYNC_STATUS_ERROR,
 } from 'state/action-types';
+import useNock from 'test/helpers/use-nock';
 
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -63,15 +63,11 @@ describe( 'actions', () => {
 		const reply = Object.assign( {}, data );
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/sites/' + siteId + '/sync/status' )
 					.reply( 200, reply );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch request action when thunk triggered', () => {
@@ -98,7 +94,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/sites/' + siteId + '/sync/status' )
@@ -108,10 +104,6 @@ describe( 'actions', () => {
 					}, {
 						'Content-Type': 'application/json'
 					} );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {
@@ -140,15 +132,11 @@ describe( 'actions', () => {
 		const reply = Object.assign( {}, data );
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/sites/' + siteId + '/sync' )
 					.reply( 200, reply );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch request action when thunk triggered', () => {
@@ -175,7 +163,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/sites/' + siteId + '/sync' )
@@ -185,10 +173,6 @@ describe( 'actions', () => {
 					}, {
 						'Content-Type': 'application/json'
 					} );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {

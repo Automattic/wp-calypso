@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -43,16 +42,13 @@ import {
 	restorePost,
 	addTermForPost
 } from '../actions';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
 
 	beforeEach( () => {
 		spy.reset();
-	} );
-
-	after( () => {
-		nock.cleanAll();
 	} );
 
 	describe( '#receivePost()', () => {
@@ -80,7 +76,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSitePosts()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts' )
@@ -168,7 +164,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPosts()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/posts' )
@@ -195,7 +191,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSitePost()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/posts/413' )
@@ -291,7 +287,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'savePost()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.2/sites/2916284/posts/new', {
@@ -443,7 +439,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'deletePost()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/posts/13640/delete' )
@@ -491,7 +487,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'restorePost()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/posts/13640/restore' )
@@ -548,7 +544,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'addTermForPost()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/taxonomies/jetpack-portfolio/terms/new' )

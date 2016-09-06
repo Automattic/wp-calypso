@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE,
 	GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
@@ -28,10 +28,6 @@ describe( 'actions', () => {
 
 	beforeEach( () => {
 		spy.reset();
-	} );
-
-	after( () => {
-		nock.cleanAll();
 	} );
 
 	const sampleSiteId = 100658273;
@@ -63,8 +59,9 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestGuidedTransferStatus()', () => {
-		beforeEach( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
 				.get( `/wpcom/v2/sites/${ sampleSiteId }/transfer` )
 				.reply( 200, sampleStatus )
 				.get( `/wpcom/v2/sites/${ sampleSiteIdFail }/transfer` )
@@ -114,8 +111,9 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#saveHostDetails()', () => {
-		beforeEach( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
 				.post( `/wpcom/v2/sites/${ sampleSiteId }/transfer` )
 				.reply( 200, sampleStatus )
 				.post( `/wpcom/v2/sites/${ sampleSiteIdSave }/transfer` )

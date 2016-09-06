@@ -3,11 +3,11 @@
  */
 import sinon from 'sinon';
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
 	TERM_REMOVE,
 	TERMS_RECEIVE,
@@ -40,12 +40,8 @@ describe( 'actions', () => {
 		spy.reset();
 	} );
 
-	after( () => {
-		nock.cleanAll();
-	} );
-
 	describe( 'addTerm()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/new` )
@@ -176,7 +172,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteTerms()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms` )
