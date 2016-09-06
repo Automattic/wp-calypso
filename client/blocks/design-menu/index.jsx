@@ -38,6 +38,7 @@ const DesignMenu = React.createClass( {
 
 	propTypes: {
 		isVisible: React.PropTypes.bool,
+		designTools: React.PropTypes.array,
 		// These are provided by the connect method
 		isUnsaved: React.PropTypes.bool,
 		customizations: React.PropTypes.object,
@@ -56,6 +57,7 @@ const DesignMenu = React.createClass( {
 			isVisible: false,
 			isUnsaved: false,
 			customizations: {},
+			designtools: [],
 		};
 	},
 
@@ -66,37 +68,6 @@ const DesignMenu = React.createClass( {
 		this.props.clearCustomizations( this.props.selectedSite.ID );
 		// Fetch the preview
 		this.props.fetchPreviewMarkup( this.props.selectedSite.ID, '' );
-	},
-
-	getDesignToolConfig() {
-		const site = this.props.selectedSite;
-		const siteTitleConfig = {
-			id: 'blogname',
-			input: {
-				type: 'text',
-				label: this.props.translate( 'Site Title' ),
-				initialValue: site.name,
-			},
-		};
-		const siteTaglineConfig = {
-			id: 'blogdescription',
-			input: {
-				type: 'text',
-				label: this.props.translate( 'Tagline' ),
-				initialValue: site.description,
-			},
-		};
-		const siteTitlePanel = {
-			id: 'siteTitle',
-			title: this.props.translate( 'Title and Tagline' ),
-			controls: [
-				siteTitleConfig,
-				siteTaglineConfig,
-			],
-		};
-		return [
-			siteTitlePanel,
-		];
 	},
 
 	activateDefaultDesignTool() {
@@ -136,16 +107,15 @@ const DesignMenu = React.createClass( {
 		const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
 		// If this route has nothing but the preview, redirect to somewhere else
 		if ( isEmptyRoute ) {
-			page.redirect( `/stats/${siteFragment}` );
+			page.redirect( `/stats/${ siteFragment }` );
 		}
 	},
 
 	renderActiveDesignTool() {
-		const config = this.getDesignToolConfig();
-		debug( `rendering activeDesignToolId ${this.props.activeDesignToolId}` );
-		const panel = find( config, panelConfig => panelConfig.id === this.props.activeDesignToolId );
+		debug( `rendering activeDesignToolId ${ this.props.activeDesignToolId }` );
+		const panel = find( this.props.designTools, panelConfig => panelConfig.id === this.props.activeDesignToolId );
 		if ( panel ) {
-			debug( `the active design tool ${this.props.activeDesignToolId} has this config`, panel );
+			debug( `the active design tool ${ this.props.activeDesignToolId } has this config`, panel );
 			return (
 				<DesignMenuPanel label={ panel.title }>
 					<WrappedDesignTool controls={ panel.controls } previewDataKey={ panel.id } />
@@ -175,7 +145,7 @@ const DesignMenu = React.createClass( {
 			'is-layout-preview-sidebar': this.props.currentLayoutFocus === 'preview-sidebar'
 		} );
 		if ( ! this.props.selectedSite ) {
-			return <RootChild><div className={ classNames }/></RootChild>;
+			return <RootChild><div className={ classNames } /></RootChild>;
 		}
 		const onShowPreview = () => this.props.setLayoutFocus( 'preview' );
 		return (
