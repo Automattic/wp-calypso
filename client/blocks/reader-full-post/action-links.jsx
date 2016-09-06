@@ -15,7 +15,7 @@ import { shouldShowLikes } from 'reader/like-helper';
 import { shouldShowShare } from 'reader/share/helper';
 import { userCan } from 'lib/posts/utils';
 
-const ReaderFullPostActionLinks = ( { post, site, handleCommentButtonClick } ) => {
+const ReaderFullPostActionLinks = ( { post, site, onCommentClick } ) => {
 	return (
 		<ul className="reader-full-post__action-links">
 			{ site && userCan( 'edit_post', post ) &&
@@ -33,7 +33,7 @@ const ReaderFullPostActionLinks = ( { post, site, handleCommentButtonClick } ) =
 					<CommentButton
 						key="comment-button"
 						commentCount={ post.discussion.comment_count }
-						onClick={ handleCommentButtonClick }
+						onClick={ onCommentClick }
 						tagName="div" />
 				</li>
 			}
@@ -55,7 +55,7 @@ const ReaderFullPostActionLinks = ( { post, site, handleCommentButtonClick } ) =
 ReaderFullPostActionLinks.propTypes = {
 	post: React.PropTypes.object.isRequired,
 	site: React.PropTypes.object,
-	handleCommentButtonClick: React.PropTypes.func
+	onCommentClick: React.PropTypes.func
 };
 
 export default ReaderFullPostActionLinks;
