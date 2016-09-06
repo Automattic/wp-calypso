@@ -33,6 +33,7 @@
 		"manage/ads": true,
 		"manage/ads/jetpack": true,
 		"manage/advanced-seo": true,
+		"manage/advanced-seo/custom-title": true,
 		"manage/custom-post-types": true,
 		"manage/customize": true,
 		"manage/edit-user": true,
