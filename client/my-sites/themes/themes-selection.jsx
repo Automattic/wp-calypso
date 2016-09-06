@@ -45,15 +45,39 @@ const ThemesSelection = React.createClass( {
 	},
 
 	doSearch( searchBoxContent ) {
-		const filter = getSortedFilterTerms( searchBoxContent );
+		this.updateSearchAndFilters( searchBoxContent, this.props.filter );
+	},
+
+	updateSearchAndFilters( searchBoxContent, existingFilters ) {
+		const filter = [];
+		const filtersFromSearchBox = getSortedFilterTerms( searchBoxContent );
+
+		existingFilters && filter.push( existingFilters );
+		filtersFromSearchBox && filter.push( filtersFromSearchBox );
+
 		const searchString = stripFilters( searchBoxContent );
-		this.updateUrl( this.props.tier || 'all', filter, searchString );
+		this.updateUrl( this.props.tier || 'all', filter.join( ',' ), searchString );
+	},
+
+	// 'break into' right-most filter on backspace in empty search box
+	onKeyDown( event ) {
+		if ( event.key === 'Backspace' && event.target.value === '' ) {
+			const activeFilters = this.prependFilterKeys();
+			if ( activeFilters ) {
+				const rightMostFilter = activeFilters.split( ' ' ).pop();
+
+				const remainingFilters = this.props.filter.split( ',' );
+				remainingFilters.pop();
+
+				this.updateSearchAndFilters( rightMostFilter.substring( 0, rightMostFilter.length - 1 ), remainingFilters.join( ',' ) );
+			}
+		}
 	},
 
 	prependFilterKeys() {
 		const { filter } = this.props;
 		if ( filter ) {
-			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
+			return filter.split( ',' ).map( getFilter ).join( ' ' );
 		}
 		return '';
 	},
@@ -114,9 +138,11 @@ const ThemesSelection = React.createClass( {
 					<ThemesSearchCard
 							site={ site }
 							onSearch={ this.doSearch }
-							search={ this.prependFilterKeys() + this.props.search }
+							search={ this.props.search }
 							tier={ this.props.tier }
-							select={ this.onTierSelect } />
+							select={ this.onTierSelect }
+							activeFilters={ this.prependFilterKeys() }
+							onKeyDown = { this.onKeyDown } />
 				</StickyPanel>
 				<ThemesData
 						site={ site }

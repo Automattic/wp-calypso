@@ -22,7 +22,8 @@ const ThemesMagicSearchCard = React.createClass( {
 			React.PropTypes.bool
 		] ).isRequired,
 		onSearch: React.PropTypes.func.isRequired,
-		search: React.PropTypes.string
+		search: React.PropTypes.string,
+		activeFilters: React.PropTypes.string,
 	},
 
 	trackClick: trackClick.bind( null, 'search bar' ),
@@ -89,11 +90,13 @@ const ThemesMagicSearchCard = React.createClass( {
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
 				hideClose={ isMobile() }
+				onKeyDown = { this.props.onKeyDown }
 			/>
 		);
 
 		return (
 			<div className="themes-magic-search-card" data-tip-target="themes-search-card">
+				<div className="themes-magic-search-card__filters">{ this.props.activeFilters }</div>
 				{ searchField }
 				{ isPremiumThemesEnabled && ! isJetpack &&
 					<SegmentedControl
