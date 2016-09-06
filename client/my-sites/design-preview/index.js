@@ -24,7 +24,7 @@ import DesignMenu from 'blocks/design-menu';
 import { getSiteFragment } from 'lib/route/path';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import SiteTitleCustomization from 'components/site-title-customization';
+import DesignPreviewCustomization from 'components/design-preview-customization';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -135,9 +135,22 @@ export default function designPreview( WebPreview ) {
 				return null;
 			}
 			const showSidebar = () => this.props.setLayoutFocus( 'preview-sidebar' );
-			const applyCustomizations = () => {
+			const applyCustomization = tool => {
 				return (
-					<SiteTitleCustomization dom={ this.previewDocument } customization={ this.props.customizations.siteTitle } />
+					<DesignPreviewCustomization
+						key={ tool.id }
+						dom={ this.previewDocument }
+						customization={ this.props.customizations[ tool.id ] }
+						toolId={ tool.id }
+					/>
+				);
+			};
+			const applyCustomizations = () => {
+				const allTools = this.props.designTools.reduce( ( all, section ) => all.concat( section.items ), [] );
+				return (
+					<div>
+						{ allTools.map( applyCustomization ) }
+					</div>
 				);
 			};
 
