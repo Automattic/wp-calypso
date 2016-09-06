@@ -5,7 +5,7 @@ import {
 	recordAction,
 	recordGaEvent,
 	recordTrack
- } from 'reader/stats';
+} from 'reader/stats';
 
 export function recordAuthorClick( author ) {
 	recordGaEvent( 'Clicked Discover Card Attribution Author' );
