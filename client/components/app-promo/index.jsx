@@ -7,9 +7,6 @@ import Gridicon from 'components/gridicon';
 
 import { recordTracksEvent } from 'state/analytics/actions';
 import store from 'store';
-import userUtils from 'lib/user/utils';
-import { isChromeOS } from 'lib/user-agent-utils';
-import viewport from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 import { getRandomPromo, getPromoLink } from './lib/promo-retriever';
 import { noop, identity } from 'lodash';
@@ -23,38 +20,18 @@ const AppPromo = React.createClass( {
 	},
 
 	getInitialState: function() {
-		let show_promo = true;
-
-		if ( this.props.isDesktopPromoDisabled ) {
-			show_promo = false;
-		}
-
-		if ( ! this.props.isLocaleEnglish ) {
-			show_promo = false;
-		}
-
-		if ( this.props.isViewportMobile ) {
-			show_promo = false;
-		}
-
-		if ( this.props.isChromeOS ) {
-			show_promo = false;
-		}
-
 		return {
 			promo_item: getRandomPromo(),
-			show_promo: show_promo
+			show_promo: true
 		};
 	},
 
 	componentDidMount: function() {
 		// record promo view event
-		if ( this.state.show_promo ) {
-			this.props.recordTracksEvent( 'calypso_desktop_promo_view', {
-				promo_location: this.props.location,
-				promo_code: this.state.promo_item.promo_code,
-			} );
-		}
+		this.props.recordTracksEvent( 'calypso_desktop_promo_view', {
+			promo_location: this.props.location,
+			promo_code: this.state.promo_item.promo_code,
+		} );
 	},
 
 	recordClickEvent: function() {
@@ -66,9 +43,7 @@ const AppPromo = React.createClass( {
 
 	dismiss: function() {
 		this.setState( { show_promo: false } );
-
-		// store as dismissed
-		store.set( 'desktop_promo_dismissed', true );
+		store.set( 'desktop_promo_disabled', true );
 	},
 
 	render: function() {
@@ -112,13 +87,6 @@ AppPromo.defaultProps = {
 	recordTracksEvent: noop,
 };
 
-const mapStateToProps = () => ( {
-	isDesktopPromoDisabled: store.get( 'desktop_promo_disabled' ),
-	isLocaleEnglish: userUtils.getLocaleSlug() === 'en',
-	isViewportMobile: viewport.isMobile(),
-	isChromeOS: isChromeOS()
-} );
-
 const mapDispatchToProps = ( dispatch ) => {
 	return {
 		recordTracksEvent: ( event, properties ) => {
@@ -128,4 +96,4 @@ const mapDispatchToProps = ( dispatch ) => {
 };
 
 export { AppPromo };
-export default connect( mapStateToProps, mapDispatchToProps )( localize( AppPromo ) ) ;
+export default connect( null, mapDispatchToProps )( localize( AppPromo ) ) ;
