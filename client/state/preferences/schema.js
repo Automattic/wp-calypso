@@ -2,6 +2,11 @@
 
 export const remoteValuesSchema = {
 	type: [ 'null', 'object' ],
+	patternProperties: {
+		'^dismissable-card-.+$': {
+			type: 'boolean'
+		}
+	},
 	properties: {
 		'editor-mode': {
 			type: 'string',

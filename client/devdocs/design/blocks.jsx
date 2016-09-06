@@ -40,6 +40,7 @@ import RelatedPostCard from 'blocks/reader-related-card/docs/example';
 import SearchPostCard from 'blocks/reader-search-card/docs/example';
 import PlanPrice from 'my-sites/plan-price/docs/example';
 import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
+import DismissableCard from 'blocks/dismissable-card/docs/example';
 
 export default React.createClass( {
 
@@ -101,6 +102,7 @@ export default React.createClass( {
 					<AuthorCompactProfile />
 					<PlanPrice />
 					<PlanThankYouCard />
+					<DismissableCard />
 				</Collection>
 			</div>
 		);
