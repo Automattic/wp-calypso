@@ -223,18 +223,25 @@ export default function designPreview( WebPreview ) {
 		};
 		const siteTitlePanel = {
 			id: 'siteTitle',
-			title: i18n.translate( 'Title and Tagline' ),
+			icon: 'heading',
+			label: i18n.translate( 'Title and Tagline' ),
 			controls: [
 				siteTitleConfig,
 				siteTaglineConfig,
 			],
+		};
+		const siteIdentity = {
+			title: i18n.translate( 'Site Identity' ),
+			items: [
+				siteTitlePanel,
+			]
 		};
 
 		return {
 			selectedSite,
 			selectedSiteId,
 			selectedSiteUrl: getSiteOption( state, selectedSiteId, 'unmapped_url' ),
-			designTools: [ siteTitlePanel ],
+			designTools: [ siteIdentity ],
 			previewUrl: getPreviewUrl( state ),
 			previewMarkup: getPreviewMarkup( state, selectedSiteId ),
 			customizations: getPreviewCustomizations( state, selectedSiteId ),
