@@ -21,7 +21,6 @@ export const AppPromo = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			promo_item: getRandomPromo(),
 			show_promo: true
 		};
 	},
@@ -30,20 +29,20 @@ export const AppPromo = React.createClass( {
 		// record promo view event
 		this.props.recordTracksEvent( 'calypso_desktop_promo_view', {
 			promo_location: this.props.location,
-			promo_code: this.state.promo_item.promo_code,
+			promo_code: this.props.promoItem.promoCode,
 		} );
 	},
 
 	recordClickEvent: function() {
 		this.props.recordTracksEvent( 'calypso_desktop_promo_click', {
 			promo_location: this.props.location,
-			promo_code: this.state.promo_item.promo_code
+			promo_code: this.props.promoItem.promoCode
 		} );
 	},
 
 	dismiss: function() {
 		this.setState( { show_promo: false } );
-		store.set( 'desktop_promo_disabled', true );
+		this.props.saveDismissal();
 	},
 
 	render: function() {
@@ -51,20 +50,22 @@ export const AppPromo = React.createClass( {
 			return null;
 		}
 
-		const promoLink = getPromoLink( this.props.location, this.state.promo_item.promo_code );
+		const { location, translate, getPromoLink } = this.props;
+		const { promoItem: { promoCode, message } } = this.props;
+
 		return (
 			<div className="app-promo">
 				<span tabIndex="0" className="app-promo__dismiss" onClick={ this.dismiss } >
 					<Gridicon icon="cross" size={ 24 } />
 					<span className="app-promo__screen-reader-text">
-						{ this.props.translate( 'Dismiss' ) }
+						{ translate( 'Dismiss' ) }
 					</span>
 				</span>
 				<a
 					onClick={ this.recordClickEvent }
 					className="app-promo__link"
 					title="Try the desktop app!"
-					href={ promoLink }
+					href={ getPromoLink( location, promoCode ) }
 					target="_blank"
 					rel="noopener noreferrer"
 				>
@@ -75,7 +76,7 @@ export const AppPromo = React.createClass( {
 						height="32"
 						alt="WordPress Desktop Icon"
 					/>
-					{ this.state.promo_item.message }
+					{ message }
 				</a>
 			</div>
 		);
@@ -83,8 +84,15 @@ export const AppPromo = React.createClass( {
 } );
 
 AppPromo.defaultProps = {
+	promoItem: getRandomPromo(),
+	getPromoLink: ( location, promoCode ) => {
+		return getPromoLink( location, promoCode );
+	},
 	translate: identity,
 	recordTracksEvent: noop,
+	saveDismissal: ( ) => {
+		store.set( 'desktop_promo_disabled', true );
+	}
 };
 
 const mapDispatchToProps = ( dispatch ) => {

@@ -1,32 +1,26 @@
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import mockery from 'mockery';
 
 import useFakeDom from 'test/helpers/use-fake-dom';
-import useMockery from 'test/helpers/use-mockery';
 
 describe( 'AppPromo', ( ) => {
 	useFakeDom();
-	useMockery();
 
 	const appPromoDetails = {
-		promo_code: 'a0001',
+		promoCode: 'a0001',
 		message: 'WordPress.com your way  — desktop app now available for Mac, Windows, and Linux.'
 	};
 	const appPromoLink = 'http://www.wordpress.com';
-	const promoRetrieverMock = {
-		getRandomPromo: ( ) => appPromoDetails,
-		getPromoLink: ( ) => appPromoLink
-	};
 
 	let AppPromo;
 	let AppPromoComponent;
 	const defaultPropsToRender = {
 		location: 'reader',
+		promoItem: appPromoDetails,
+		getPromoLink: () => appPromoLink
 	};
 	before( ( ) => {
-		mockery.registerMock( './lib/promo-retriever', promoRetrieverMock );
 		AppPromo = require( '..' ).AppPromo;
 		AppPromoComponent = ( <AppPromo { ...defaultPropsToRender } /> );
 	} );

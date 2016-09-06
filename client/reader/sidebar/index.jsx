@@ -265,12 +265,12 @@ const shouldRenderAppPromo = ( options = { } ) => {
 	} = options;
 
 	return every( [
-				 ! isDesktopPromoDisabled,
-				 isUserLocaleEnglish,
-				 ! isViewportMobile,
-				 ! isChromeOS,
-				 isDesktopPromoConfiguredToRun,
-				 ! isUserDesktopAppUser
+		! isDesktopPromoDisabled,
+		isUserLocaleEnglish,
+		! isViewportMobile,
+		! isChromeOS,
+		isDesktopPromoConfiguredToRun,
+		! isUserDesktopAppUser
 	] );
 };
 
