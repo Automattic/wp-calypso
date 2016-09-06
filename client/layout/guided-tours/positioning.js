@@ -157,8 +157,6 @@ function validatePlacement( placement, target ) {
 }
 
 function scrollIntoView( target ) {
-	const targetSlug = target && target.dataset && target.dataset.tipTarget;
-
 	const container = getScrollableSidebar();
 	const { top, bottom } = target.getBoundingClientRect();
 	const clientHeight = viewport.isMobile() ? document.documentElement.clientHeight : container.clientHeight;
