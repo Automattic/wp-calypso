@@ -10,6 +10,7 @@ import { truncate } from 'lodash';
 import { successNotice, errorNotice } from 'state/notices/actions';
 import { getSitePost } from 'state/posts/selectors';
 import {
+	GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
 	POST_DELETE_FAILURE,
 	POST_DELETE_SUCCESS,
 	POST_RESTORE_FAILURE,
@@ -85,7 +86,8 @@ export const handlers = {
 	[ POST_DELETE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully deleted' ) ),
 	[ POST_RESTORE_FAILURE ]: onPostRestoreFailure,
 	[ POST_RESTORE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully restored' ) ),
-	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess
+	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
+	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 };
 
 /**

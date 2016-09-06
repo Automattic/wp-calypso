@@ -65,6 +65,14 @@ export function requestGuidedTransferStatus( siteId ) {
 	};
 }
 
+export function saveHostDetailsFailure( siteId, error = {} ) {
+	return {
+		type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
+		siteId,
+		error,
+	};
+}
+
 /**
  * Saves a user's target host details in preparation for
  * a guided transfer to that host
@@ -80,23 +88,25 @@ export function saveHostDetails( siteId, data ) {
 			siteId,
 		} );
 
-		const success = response => {
-			dispatch( {
-				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
-				siteId,
-			} );
+		const failure = error => {
+			dispatch( saveHostDetailsFailure( siteId, error ) );
+		};
 
+		const success = response => {
 			// The success response is the updated status of the guided transfer
 			dispatch( receiveGuidedTransferStatus(
 				siteId, omit( response, '_headers' )
 			) );
-		};
 
-		const failure = error => dispatch( {
-			type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE,
-			siteId,
-			error,
-		} );
+			if ( ! response.host_details_entered ) {
+				return failure();
+			}
+
+			dispatch( {
+				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+				siteId,
+			} );
+		};
 
 		return wpcom.undocumented().site( siteId ).saveGuidedTransferHostDetails( data )
 			.then( success )

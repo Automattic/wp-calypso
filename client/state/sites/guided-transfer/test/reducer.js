@@ -38,6 +38,7 @@ describe( 'reducer', () => {
 
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
+			'error',
 			'status',
 			'isFetching',
 			'isSaving',
@@ -149,7 +150,6 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {} );
 		} );
 	} );
-
 
 	describe( '#isSaving()', () => {
 		it( 'should default to {}', () => {
