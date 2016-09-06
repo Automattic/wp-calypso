@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import { getRandomPromo, getPromoLink } from './lib/promo-retriever';
 import { noop, identity } from 'lodash';
 
-const AppPromo = React.createClass( {
+export const AppPromo = React.createClass( {
 
 	displayName: 'AppPromo',
 
@@ -95,5 +95,4 @@ const mapDispatchToProps = ( dispatch ) => {
 	};
 };
 
-export { AppPromo };
 export default connect( null, mapDispatchToProps )( localize( AppPromo ) ) ;
