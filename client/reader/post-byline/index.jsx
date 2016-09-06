@@ -16,7 +16,7 @@ import {
 	recordGaEvent,
 	recordTrackForPost,
 	recordPermalinkClick
- } from 'reader/stats';
+} from 'reader/stats';
 
 class PostByline extends React.Component {
 
