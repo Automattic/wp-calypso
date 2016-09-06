@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import debounce from 'lodash/debounce';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -61,9 +62,7 @@ const ThemesMagicSearchCard = React.createClass( {
 	},
 
 	onBlur() {
-		if ( this.state.isMobile ) {
-			this.setState( { searchIsOpen: false } );
-		}
+		this.setState( { searchIsOpen: false } );
 	},
 
 	render() {
@@ -88,12 +87,17 @@ const ThemesMagicSearchCard = React.createClass( {
 				onSearchClose={ this.onSearchClose }
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
+				highlightOnFocus={ false }
 				hideClose={ isMobile() }
 			/>
 		);
 
+		const themesSearchClass = classNames( 'themes-magic-search-card', {
+			'has-highlight': this.state.searchIsOpen
+		} );
+
 		return (
-			<div className="themes-magic-search-card" data-tip-target="themes-search-card">
+			<div className={ themesSearchClass } data-tip-target="themes-search-card">
 				{ searchField }
 				{ isPremiumThemesEnabled && ! isJetpack &&
 					<SegmentedControl

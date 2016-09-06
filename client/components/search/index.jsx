@@ -62,6 +62,7 @@ const Search = React.createClass( {
 		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
 		maxLength: PropTypes.number,
+		highlightOnFocus: PropTypes.bool,
 		hideClose: PropTypes.bool
 	},
 
@@ -89,6 +90,7 @@ const Search = React.createClass( {
 			isOpen: false,
 			dir: undefined,
 			fitsContainer: false,
+			highlightOnFocus: true,
 			hideClose: false
 		};
 	},
@@ -285,7 +287,7 @@ const Search = React.createClass( {
 			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
-			'has-focus': this.state.hasFocus,
+			'has-focus': this.state.hasFocus && this.props.highlightOnFocus,
 			search: true
 		} );
 
