@@ -30,6 +30,7 @@ class SiteGround extends Component {
 			translate,
 			fieldValues,
 			onFieldChange,
+			isSubmitting,
 		} = this.props;
 
 		return (
@@ -45,11 +46,13 @@ class SiteGround extends Component {
 							value={ fieldValues.username }
 							onChange={ onFieldChange( 'username' ) }
 							hostLabel={ hostInfo.label }
+							disabled={ isSubmitting }
 						/>
 						<Email
 							value={ fieldValues.email }
 							onChange={ onFieldChange( 'email' ) }
 							hostLabel={ hostInfo.label }
+							disabled={ isSubmitting }
 						/>
 					</div>
 					<CreateAccountTip
@@ -59,9 +62,13 @@ class SiteGround extends Component {
 					<WPOrgURL
 						value={ fieldValues.wporg_url }
 						onChange={ onFieldChange( 'wporg_url' ) }
+						disabled={ isSubmitting }
 					/>
 				</CompactCard>
-				<SubmitSection submit={ this.props.submit } />
+				<SubmitSection
+					submit={ this.props.submit }
+					isSubmitting={ isSubmitting }
+				/>
 			</div>
 		);
 	}

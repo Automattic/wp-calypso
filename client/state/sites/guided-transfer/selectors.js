@@ -4,6 +4,10 @@ import {
 	some,
 } from 'lodash';
 
+export function getGuidedTransferError( state, siteId ) {
+	return state.sites.guidedTransfer.error[ siteId ];
+}
+
 export function isRequestingGuidedTransferStatus( state, siteId ) {
 	return state.sites.guidedTransfer.isFetching[ siteId ] === true;
 }
@@ -93,4 +97,9 @@ export function isGuidedTransferAvailableForAllSites( state, siteId ) {
 	return ! some( issues, issue => {
 		return issue.reason === 'unavailable' || issue.reason === 'vacation';
 	} );
+}
+
+export function isGuidedTransferSavingHostDetails( state, siteId ) {
+	const status = state.sites.guidedTransfer.isSaving[ siteId ];
+	return !! status;
 }

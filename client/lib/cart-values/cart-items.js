@@ -464,6 +464,12 @@ function customDesignItem() {
 	};
 }
 
+function guidedTransferItem() {
+	return {
+		product_slug: 'guided_transfer',
+	};
+}
+
 function noAdsItem() {
 	return {
 		product_slug: 'no-adverts/no-adverts.php'
@@ -796,6 +802,7 @@ module.exports = {
 	getSiteRedirects,
 	googleApps,
 	googleAppsExtraLicenses,
+	guidedTransferItem,
 	isNextDomainFree,
 	isDomainBeingUsedForPlan,
 	hasDomainCredit,
