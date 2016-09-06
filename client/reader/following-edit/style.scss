@@ -129,16 +129,11 @@
 
 	.search {
 		margin-bottom: 0;
+		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .search' );
 	}
 
 	.search__input[type="search"] {
 		height: 50px;
-		border: 1px solid transparent;
-
-		&:focus {
-			border-color: $blue-wordpress;
-			box-shadow: 0 0 0 2px $blue-light;
-		}
 	}
 
 	.card.is-search-result {
