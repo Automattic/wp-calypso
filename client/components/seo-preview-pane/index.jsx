@@ -111,7 +111,7 @@ const ReaderPost = ( site, post ) => {
 			authorIcon={ post.author.avatar_URL }
 		/>
 	);
- };
+};
 
 const GoogleSite = site => (
 	<SearchPreview

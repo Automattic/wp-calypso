@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
- import React from 'react';
- import classNames from 'classnames';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
- import { translate } from 'i18n-calypso';
- import FollowButton from 'reader/follow-button';
- import { getLinkProps } from './helper';
- import * as discoverStats from './stats';
+import { translate } from 'i18n-calypso';
+import FollowButton from 'reader/follow-button';
+import { getLinkProps } from './helper';
+import * as discoverStats from './stats';
 
 // var DiscoverSiteAttribution = React.createClass( {
 class DiscoverSiteAttribution extends React.Component {
