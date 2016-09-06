@@ -23,9 +23,7 @@ const promo_options = [
 	}
 ];
 
-export const getRandomPromo = ( ) => {
-	return sample( promo_options );
-};
+export const getRandomPromo = ( ) => sample ( promo_options );
 
 export const getPromoLink = ( location, promoCode ) => {
 	const promoType = 'a0006' === promoCode
