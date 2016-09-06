@@ -1,0 +1,31 @@
+.edit-button {
+	align-items: center;
+	color: lighten( $gray, 10 );
+	display: inline-flex;
+	list-style-type: none;
+	padding: 4px;
+	position: relative;
+
+	&:hover {
+		color: $blue-light;
+		cursor: pointer;
+	}
+
+	&:visited {
+		color: lighten( $gray, 10 );
+	}
+}
+
+.edit-button__label {
+	font-size: 14px;
+	margin-left: 4px;
+}
+
+.edit-button__icon {
+	fill: lighten( $gray, 10% );
+	position: relative;
+		top: 1px;
+	&:hover {
+		fill: $blue-light;
+	}
+}

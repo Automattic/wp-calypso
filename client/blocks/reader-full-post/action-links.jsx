@@ -9,13 +9,20 @@ import React from 'react';
 import CommentButton from 'blocks/comment-button';
 import LikeButton from 'reader/like-button';
 import ShareButton from 'reader/share';
+import EditButton from 'components/edit-button';
 import { shouldShowComments } from 'blocks/comments/helper';
 import { shouldShowLikes } from 'reader/like-helper';
 import { shouldShowShare } from 'reader/share/helper';
+import { userCan } from 'lib/posts/utils';
 
-const ReaderFullPostActionLinks = ( { post, handleCommentButtonClick } ) => {
+const ReaderFullPostActionLinks = ( { post, site, handleCommentButtonClick } ) => {
 	return (
 		<ul className="reader-full-post__action-links">
+			{ site && userCan( 'edit_post', post ) &&
+				<li className="reader-full-post__action-links-item">
+					<EditButton post={ post } site={ site } />
+				</li>
+			}
 			{ shouldShowShare( post ) &&
 				<li className="reader-full-post__action-links-item">
 					<ShareButton post={ post } position="bottom" tagName="div" />
@@ -47,6 +54,7 @@ const ReaderFullPostActionLinks = ( { post, handleCommentButtonClick } ) => {
 
 ReaderFullPostActionLinks.propTypes = {
 	post: React.PropTypes.object.isRequired,
+	site: React.PropTypes.object,
 	handleCommentButtonClick: React.PropTypes.func
 };
 

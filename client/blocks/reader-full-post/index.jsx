@@ -165,7 +165,7 @@ export class FullPostView extends React.Component {
 							: null
 						}
 
-					<ReaderFullPostActionLinks post={ post } onCommentClick={ this.handleCommentClick } />
+					<ReaderFullPostActionLinks post={ post } site={ site } onCommentClick={ this.handleCommentClick } />
 
 					{ shouldShowComments( post )
 						? <Comments ref={ this.bindComments }
