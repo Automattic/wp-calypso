@@ -432,13 +432,10 @@ export function getSiteThemeShowcasePath( state, siteId ) {
 		return null;
 	}
 
-	const pathParts = [ '', 'theme', slug ];
-
-	if ( type === 'premium' ) {
-		pathParts.push( 'setup' );
-	}
-	pathParts.push( getSiteSlug( state, siteId ) );
-	return pathParts.join( '/' );
+	const siteSlug = getSiteSlug( state, siteId );
+	return type === 'premium'
+		? `/theme/${ slug }/setup/${ siteSlug }`
+		: `/theme/${ slug }/${ siteSlug }`;
 }
 
 /**
