@@ -11,8 +11,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Card from 'components/card';
 import Button from 'components/button';
+import DismissibleCard from 'blocks/dismissible-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isCurrentSitePlan } from 'state/sites/selectors';
@@ -176,20 +176,23 @@ class DomainToPlanNudge extends Component {
 		const { isSubmitting } = this.state;
 
 		const {
-			translate,
-			storedCard,
-			rawPrice,
 			discountedRawPrice,
+			productSlug,
 			rawDiscount,
+			rawPrice,
 			siteId,
-			userCurrency,
-			productSlug
+			storedCard,
+			translate,
+			userCurrency
 		} = this.props;
 
 		return (
-			<Card className="domain-to-plan-nudge">
+			<DismissibleCard
+				className="domain-to-plan-nudge"
+				preferenceName="domain-to-plan-nudge"
+				temporary
+			>
 				<QueryStoredCards />
-
 				{ siteId && <QuerySitePlans siteId={ siteId } /> }
 
 				<div className="domain-to-plan-nudge__header">
@@ -228,7 +231,7 @@ class DomainToPlanNudge extends Component {
 										icon="checkmark"
 										size={ 24 }
 									/>
-									{ translate( 'Upload up to 3GB of photos and videos' ) }
+									{ translate( 'Upload up to 3GB of photos and documents' ) }
 								</div>
 							</li>
 							<li>
@@ -283,7 +286,7 @@ class DomainToPlanNudge extends Component {
 						</div>
 					</div>
 				</div>
-			</Card>
+			</DismissibleCard>
 		);
 	}
 }
