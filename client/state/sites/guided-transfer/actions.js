@@ -98,14 +98,14 @@ export function saveHostDetails( siteId, data ) {
 				siteId, omit( response, '_headers' )
 			) );
 
-			if ( response.host_details_entered ) {
-				dispatch( {
-					type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
-					siteId,
-				} );
+			if ( ! response.host_details_entered ) {
+				return failure();
 			}
 
-			return failure();
+			dispatch( {
+				type: GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS,
+				siteId,
+			} );
 		};
 
 		return wpcom.undocumented().site( siteId ).saveGuidedTransferHostDetails( data )
