@@ -64,6 +64,7 @@ export class FullPostView extends React.Component {
 		].forEach( fn => {
 			this[ fn ] = this[ fn ].bind( this );
 		} );
+		this.hasScrolledToCommentAnchor = false;
 	}
 
 	componentDidMount() {
@@ -75,6 +76,7 @@ export class FullPostView extends React.Component {
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.attemptToSendPageView();
+		this.checkForCommentAnchor();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -88,6 +90,14 @@ export class FullPostView extends React.Component {
 			this.hasLoaded = false;
 			this.attemptToSendPageView();
 		}
+
+		this.checkForCommentAnchor();
+	}
+
+	componentWillReceiveProps( newProps ) {
+		if ( newProps.shouldShowComments ) {
+			this.checkForCommentAnchor();
+		}
 	}
 
 	componentWillUnmount() {
@@ -97,6 +107,10 @@ export class FullPostView extends React.Component {
 
 	handleBack() {
 		this.props.onClose && this.props.onClose();
+	}
+
+	bindComments( node ) {
+		this.comments = node;
 	}
 
 	handleCommentClick() {
@@ -124,10 +138,31 @@ export class FullPostView extends React.Component {
 
 	bindComments( node ) {
 		this.comments = node;
+		this.scrollToComments();
 	}
 
+	// Does the URL contain the anchor #comments? If so, scroll to comments if we're not already there.
 	checkForCommentAnchor() {
+		const hash = window.location.hash.substr( 1 );
+		if ( this.comments && hash.indexOf( 'comments' ) > -1 && ! this.hasScrolledToCommentAnchor ) {
+			this.scrollToComments();
+		}
+	}
 
+	// Scroll to the top of the comments section.
+	scrollToComments() {
+		if ( ! this.comments ) {
+			return;
+		}
+		const commentsNode = ReactDom.findDOMNode( this.comments );
+		if ( commentsNode ) {
+			scrollTo( {
+				x: 0,
+				y: commentsNode.offsetTop - 48,
+				duration: 300
+			} );
+			this.hasScrolledToCommentAnchor = true;
+		}
 	}
 
 	parseEmoji() {
