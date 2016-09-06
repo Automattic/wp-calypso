@@ -8,21 +8,22 @@ import PureRenderMixin from 'react-pure-render/mixin';
  * Internal dependencies
  */
 import Card from 'components/card';
-import EditButton from 'components/edit-button';
+import PostEditButton from 'blocks/post-edit-button';
 
 export default React.createClass( {
-	displayName: 'Edit Button',
+	displayName: 'PostEditButton',
 
 	mixins: [ PureRenderMixin ],
 
 	render() {
-		const post = { ID: 123 };
+		const post = { ID: 123, type: 'post' };
+		const site = { slug: 'example.com' };
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/design/edit-button">EditButton</a>
+					<a href="/devdocs/design/edit-button">Post Edit Button</a>
 				</h2>
-				<EditButton post={ post } />
+				<PostEditButton post={ post } site={ site } />
 			</div>
 		);
 	}

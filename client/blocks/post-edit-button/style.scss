@@ -1,4 +1,4 @@
-.edit-button {
+.post-edit-button {
 	align-items: center;
 	color: lighten( $gray, 10 );
 	display: inline-flex;
@@ -16,12 +16,12 @@
 	}
 }
 
-.edit-button__label {
+.post-edit-button__label {
 	font-size: 14px;
 	margin-left: 4px;
 }
 
-.edit-button__icon {
+.post-edit-button__icon {
 	fill: lighten( $gray, 10% );
 	position: relative;
 		top: 1px;
