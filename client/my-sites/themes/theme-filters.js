@@ -263,11 +263,18 @@ export function getSortedFilterTerms( input ) {
 }
 
 /**
- * Strips any "taxonomy:term" filter strings from the input.
+ * Strips any valid "taxonomy:term" filter strings from the input.
  *
  * @param {string} input - the string to parse
- * @return {string} input string minus any filters
+ * @return {string} input string minus any valid filters
  */
 export function stripFilters( input ) {
-	return input.replace( FILTER_REGEX_GLOBAL, '' ).trim();
+	let result = input;
+	const matches = input.match( FILTER_REGEX_GLOBAL );
+	if ( matches ) {
+		matches.filter( filterIsValid ).forEach( ( filter ) => {
+			result = result.replace( filter, '' );
+		} );
+	}
+	return result.trim();
 }
