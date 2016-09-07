@@ -1,5 +1,10 @@
+.image-selector {
+	min-height: 170px;
+}
+
 .image-selector__preview {
 	position: relative;
+	min-height: 170px;
 }
 
 .image-selector__preview.is-transient::after {
