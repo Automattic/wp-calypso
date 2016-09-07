@@ -23,7 +23,12 @@ const SiteTitleStep = React.createClass( {
 	},
 
 	propTypes: {
-		goToNextStep: React.PropTypes.func,
+		flowName: React.PropTypes.string,
+		goToNextStep: React.PropTypes.func.isRequired,
+		positionInFlow: React.PropTypes.number,
+		setSiteTitle: React.PropTypes.func.isRequired,
+		signupProgressStore: React.PropTypes.object,
+		stepName: React.PropTypes.string,
 	},
 
 	submitSiteTitleStep( siteTitle ) {
