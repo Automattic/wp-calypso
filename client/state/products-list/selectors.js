@@ -10,7 +10,7 @@ export function isProductsListFetching( state ) {
  * @return {string} The display price formatted in the user's currency, eg "A$29.00"
  */
 export function getProductDisplayCost( state, productSlug ) {
-	const product = state.productsList.items && state.productsList.items[ productSlug ];
+	const product = state.productsList.items[ productSlug ];
 	if ( ! product ) {
 		return null;
 	}
