@@ -10,35 +10,35 @@ import { partial } from 'lodash';
  * Internal dependencies
  */
 import Button from 'components/button';
-import DismissableCard from '../';
+import DismissibleCard from '../';
 import { savePreference } from 'state/preferences/actions';
 
-function DismissableCardExample( { clearPreference } ) {
+function DismissibleCardExample( { clearPreference } ) {
 	return (
 		<div className="docs__design-assets-group">
 			<h2>
-				<a href="/devdocs/blocks/dismissable-card">Dismissable Card</a>
+				<a href="/devdocs/blocks/dismissible-card">Dismissible Card</a>
 			</h2>
-			<DismissableCard
+			<DismissibleCard
 				preferenceName="example-local"
 				temporary>
 				<span>I will be dismissed for a page load</span>
-			</DismissableCard>
-			<DismissableCard
+			</DismissibleCard>
+			<DismissibleCard
 				preferenceName="example"
 			>
 				<span>I can be dismissed forever!</span>
-			</DismissableCard>
+			</DismissibleCard>
 			<Button onClick={ clearPreference }>Reset Dismiss Preference</Button>
 		</div>
 	);
 }
 
-const ConnectedDismissableCardExample = connect( 
+const ConnectedDismissibleCardExample = connect(
 	null,
-	{ clearPreference: partial( savePreference, 'dismissable-card-example', null ) }
-)( DismissableCardExample );
+	{ clearPreference: partial( savePreference, 'dismissible-card-example', null ) }
+)( DismissibleCardExample );
 
-ConnectedDismissableCardExample.displayName = 'DismissableCard';
+ConnectedDismissibleCardExample.displayName = 'DismissibleCard';
 
-export default ConnectedDismissableCardExample;
+export default ConnectedDismissibleCardExample;
