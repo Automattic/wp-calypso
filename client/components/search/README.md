@@ -11,6 +11,10 @@ Callback to fire to obtain search results. By default this gets called `onChange
 ### onSearchChange (optional)
 This is only necessary if `delaySearch` is being used to delay a fetch callback, but you want to respond immediately to the updated value (e.g., show that the user is currently searching). Passes in a string matching the value of the field or `false` when the search field is closed.
 
+### onSearchClose (optional)
+Callback to fire when search input is closed. Useful for styling of elements and used
+to detect that the user wants to finish searching without expecting results.
+
 ### analyticsGroup
 We track usage of the search component, so we need to know where search is being used. E.g., "Posts" for the search instance in the Posts page.
 

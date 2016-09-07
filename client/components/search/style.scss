@@ -11,7 +11,7 @@
 	align-items: center;
 	// places search above filters
 	z-index: z-index( 'root', '.search' );
-	transition: box-shadow 0.15s;
+	transition: all 0.15s ease-in-out;
 
 	.search__icon-navigation {
 		flex: 0 0 auto;
