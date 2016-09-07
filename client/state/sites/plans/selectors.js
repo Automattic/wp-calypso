@@ -70,7 +70,29 @@ export const getSitePlan = createSelector(
 );
 
 /**
- * Returns a plan discounted price
+ * Returns true if a plan is discounted
+ *
+ * @param  {Object}   state         global state
+ * @param  {Number}   siteId        the site id
+ * @param  {String}   productSlug   the plan product slug
+ * @return {?Boolean}              true if a plan has a discount
+ */
+export function isPlanDiscounted(
+	state,
+	siteId,
+	productSlug
+) {
+	const plan = getSitePlan( state, siteId, productSlug );
+
+	if ( ! plan ) {
+		return null;
+	}
+
+	return ( get( plan, 'rawDiscount', -1 ) > 0 );
+}
+
+/**
+ * Returns a plan price, including any applied discounts
  *
  * @param  {Object}  state         global state
  * @param  {Number}  siteId        the site id
@@ -82,19 +104,43 @@ export function getPlanDiscountedRawPrice(
 	state,
 	siteId,
 	productSlug,
-	{
-		isMonthly = false
-	} = {}
+	{ isMonthly = false } = {}
 ) {
 	const plan = getSitePlan( state, siteId, productSlug );
 
-	if ( get( plan, 'rawPrice', -1 ) < 0 || get( plan, 'rawDiscount', -1 ) <= 0 ) {
+	if ( get( plan, 'rawPrice', -1 ) < 0 || ! isPlanDiscounted( state, siteId, productSlug ) ) {
 		return null;
 	}
 
 	const discountPrice = plan.rawPrice;
 
 	return isMonthly ? parseFloat( ( discountPrice / 12 ).toFixed( 2 ) ) : discountPrice;
+}
+
+/**
+ * Returns a plan price before discount
+ *
+ * @param  {Object}  state         global state
+ * @param  {Number}  siteId        the site id
+ * @param  {String}  productSlug   the plan product slug
+ * @param  {Boolean} isMonthly     if true, returns monthly price
+ * @return {Number}                plan raw price
+ */
+export function getPlanRawPrice(
+	state,
+	siteId,
+	productSlug,
+	{ isMonthly = false } = {}
+) {
+	const plan = getSitePlan( state, siteId, productSlug );
+
+	if ( get( plan, 'rawPrice', -1 ) < 0 ) {
+		return null;
+	}
+
+	const price = plan.rawPrice + get( plan, 'rawDiscount', 0 );
+
+	return isMonthly ? parseFloat( ( price / 12 ).toFixed( 2 ) ) : price;
 }
 
 /**
@@ -111,13 +157,11 @@ export function getPlanRawDiscount(
 	state,
 	siteId,
 	productSlug,
-	{
-		isMonthly = false
-	} = {}
+	{ isMonthly = false } = {}
 ) {
 	const plan = getSitePlan( state, siteId, productSlug );
 
-	if ( get( plan, 'rawDiscount', -1 ) <= 0 ) {
+	if ( ! isPlanDiscounted( state, siteId, productSlug ) ) {
 		return null;
 	}
 
