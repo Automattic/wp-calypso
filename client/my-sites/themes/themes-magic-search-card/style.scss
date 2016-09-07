@@ -9,12 +9,28 @@
 		margin: 0;
 	}
 
-	.section-nav {
-		margin: 0;
-	}
-
 	.search .search-open__icon {
 		color: lighten( $gray, 10% );
+	}
+
+	div#searchOpen{
+		order: 0;
+	}
+
+	div#searchChildren{
+		order: 1;
+	}
+
+	div#searchInput{
+		order: 2;
+	}
+
+	div#searchClose {
+		order: 3;
+	}
+
+	.section-nav {
+		margin: 0;
 	}
 
 	.segmented-control {
