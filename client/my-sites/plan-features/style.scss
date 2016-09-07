@@ -379,11 +379,6 @@ $plan-features-sidebar-width: 272px;
 	margin-top: 8px;
 
 	&.is-current {
-		border-bottom-width: 1px;
-		border-color: lighten( $gray, 27% );
-		background: transparent;
-		font-weight: 400;
-		color: $gray;
 
 		.gridicon {
 			fill: $alert-green;
