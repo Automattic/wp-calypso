@@ -181,6 +181,24 @@ describe( 'Installed plugin selectors', function() {
 		} );
 	} );
 
+	describe( 'getPluginOnSite', function() {
+		it( 'Should get `false` if the requested site is not in the current state', function() {
+			expect( selectors.getPluginOnSite( state, { ID: 'no.site' }, 'akismet/akismet' ) ).to.be.false;
+		} );
+
+		it( 'Should get `false` if the requested plugin on this site is not in the current state', function() {
+			expect( selectors.getPluginOnSite( state, { ID: 'site.one' }, 'jetpack/jetpack' ) ).to.be.false;
+		} );
+
+		it( 'Should get the plugin if the it exists on the requested site', function() {
+			const siteOneObj = { ID: 'site.one' };
+			const plugin = selectors.getPluginOnSite( state, siteOneObj, 'akismet/akismet' );
+			const siteOneWithPlugin = Object.assign( {}, siteOneObj, { plugin: akismet } );
+			const akismetWithSite = Object.assign( {}, akismet, { sites: [ siteOneWithPlugin ] } );
+			expect( plugin ).to.eql( akismetWithSite );
+		} );
+	} );
+
 	describe( 'getLogsForPlugin', function() {
 		it( 'Should get `false` if the requested site is not in the current state', function() {
 			expect( selectors.getLogsForPlugin( state, 'no.site', 'akismet/akismet' ) ).to.be.false;

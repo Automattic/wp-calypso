@@ -2,6 +2,7 @@ import filter from 'lodash/filter';
 import forEach from 'lodash/forEach';
 import values from 'lodash/values';
 import sortBy from 'lodash/sortBy';
+import find from 'lodash/find';
 
 const _filters = {
 	none: function() {
@@ -75,6 +76,11 @@ const getPluginsWithUpdates = function( state, sites ) {
 	return filter( pluginList, _filters.updates );
 };
 
+const getPluginOnSite = function( state, site, pluginId ) {
+	const pluginList = getPlugins( state, [ site ] );
+	return find( pluginList, { id: pluginId } ) || false;
+};
+
 const getLogsForPlugin = function( state, siteId, pluginId ) {
 	if ( typeof state.plugins.installed.logs[ siteId ] === 'undefined' ) {
 		return false;
@@ -96,6 +102,7 @@ export default {
 	hasRequested,
 	getPlugins,
 	getPluginsWithUpdates,
+	getPluginOnSite,
 	getLogsForPlugin,
 	isPluginDoingAction
 };
