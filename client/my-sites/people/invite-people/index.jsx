@@ -321,6 +321,7 @@ const InvitePeople = React.createClass( {
 									isBorderless
 									tokenizeOnSpace
 									autoCapitalize="none"
+									autoComplete="off"
 									maxLength={ 10 }
 									value={ this.getTokensWithStatus() }
 									onChange={ this.onTokensChange }

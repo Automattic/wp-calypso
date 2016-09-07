@@ -167,7 +167,7 @@ var TokenField = React.createClass( {
 	},
 
 	_renderInput: function() {
-		const { autoCapitalize, maxLength, value } = this.props;
+		const { autoCapitalize, autoComplete, maxLength, value } = this.props;
 
 		let props = {
 			ref: 'input',
@@ -176,6 +176,7 @@ var TokenField = React.createClass( {
 			value: this.state.incompleteTokenValue,
 			onBlur: this._onBlur,
 			autoCapitalize,
+			autoComplete,
 		};
 
 		if ( ! ( maxLength && value.length >= maxLength ) ) {
