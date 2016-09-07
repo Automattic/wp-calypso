@@ -684,7 +684,8 @@ export default connect(
 				state.jetpackConnect.jetpackConnectSelectedPlans,
 				state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
 			),
-			plansFirst: false, // Test disabled by now. Enable it replacing 'false' with: abtest( 'jetpackConnectPlansFirst' ) === 'showPlansBeforeAuth',
+			// Test disabled by now. Enable it replacing 'false' with: abtest( 'jetpackConnectPlansFirst' ) === 'showPlansBeforeAuth',
+			plansFirst: false,
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
 			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
