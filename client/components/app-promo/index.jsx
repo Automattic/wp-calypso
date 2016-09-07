@@ -26,7 +26,6 @@ export const AppPromo = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		// record promo view event
 		this.props.recordTracksEvent( 'calypso_desktop_promo_view', {
 			promo_location: this.props.location,
 			promo_code: this.props.promoItem.promoCode,
@@ -43,6 +42,10 @@ export const AppPromo = React.createClass( {
 	dismiss: function() {
 		this.setState( { show_promo: false } );
 		this.props.saveDismissal();
+		this.props.recordTracksEvent( 'calypso_desktop_promo_dismiss', {
+			promo_location: this.props.location,
+			promo_code: this.props.promoItem.promoCode,
+		} );
 	},
 
 	render: function() {
