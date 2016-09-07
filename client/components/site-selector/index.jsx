@@ -282,7 +282,7 @@ const SiteSelector = React.createClass( {
 				<div className="site-selector__sites" ref="selector">
 					{ this.renderAllSites() }
 					{ this.renderSites() }
-					{ hiddenSitesCount > 0 &&
+					{ hiddenSitesCount > 0 && ! this.state.search &&
 						<span className="site-selector__hidden-sites-message">
 							{ this.translate(
 								'%(hiddenSitesCount)d more hidden site. {{a}}Change{{/a}}.{{br/}}Use search to access it.',
