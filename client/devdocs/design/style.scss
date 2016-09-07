@@ -1,3 +1,69 @@
+.design {
+	@include breakpoint( "<660px" ) {
+		padding: 0 6px;
+	}
+}
+
+.design__group > h2,
+.docs__design-group > h2,
+.design__group > h2 a:first-child,
+.docs__design-group > h2 a:first-child {
+	color: $gray-dark;
+	font-family: $serif;
+	font-size: 38px;
+	font-weight: bold;
+	margin: 40px 0 15px;
+}
+
+.design h3, .design h4 {
+	font-weight: bold;
+	margin-bottom: 8px;
+}
+
+.docs__design-toggle,
+.design__toggle {
+	float: right;
+	top: -68px;
+	position: relative;
+}
+
+.design__group,
+.docs__design-group {
+	color: $gray-dark;
+}
+
+.design__group .docs-example,
+.docs__design-group .docs-example {
+	margin-top: 40px;
+}
+
+.design__group > .gridicon:hover,
+.design__group > .social-logo:hover,
+.docs__design-group > .gridicon:hover,
+.docs__design-group > .social-logo:hover {
+	fill: $gray;
+	cursor: pointer;
+}
+
+// ==========================================================================
+// Button component styles
+// ==========================================================================
+
+.docs__design-button-row,
+.design__button-row {
+	&:first-child {
+		margin-top: -16px;
+	}
+	.button {
+		margin-top: 16px !important;
+		margin-right: 16px !important;
+	}
+}
+
+.docs__design-button-row .button-group .button {
+	margin-right: 0 !important;
+}
+
 .card__component-instance {
 	background-color: $gray-light;
 	margin: 0;
@@ -55,7 +121,7 @@
 	cursor: default;
 }
 
-.design-assets__group.design-assets__group__select-dropdown {
+.docs-example__wrapper {
 	height: 600px;
 
 	.select-dropdown-example__fixed-width {
