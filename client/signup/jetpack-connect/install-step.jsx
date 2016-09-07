@@ -9,9 +9,9 @@ import React from 'react';
 import Card from 'components/card';
 import { preventWidows } from 'lib/formatting';
 import versionCompare from 'lib/version-compare';
-import JetpackExampleInstall from './exampleComponents/jetpack-install';
-import JetpackExampleActivate from './exampleComponents/jetpack-activate';
-import JetpackExampleConnect from './exampleComponents/jetpack-connect';
+import JetpackExampleInstall from './example-components/jetpack-install';
+import JetpackExampleActivate from './example-components/jetpack-activate';
+import JetpackExampleConnect from './example-components/jetpack-connect';
 
 const NEW_INSTRUCTIONS_JETPACK_VERSION = '4.2.0';
 
