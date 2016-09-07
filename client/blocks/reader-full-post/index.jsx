@@ -205,7 +205,7 @@ export class FullPostView extends React.Component {
 						{ showRelatedPosts &&
 							<RelatedPostsFromSameSite siteId={ post.site_ID } postId={ post.ID }
 								title={ translate( 'More in %s', { args: [ siteName ] } ) }
-								className="reader-full-post__related-same" />
+								className="is-same-site" />
 						}
 
 						{ shouldShowComments( post )
@@ -220,7 +220,7 @@ export class FullPostView extends React.Component {
 						{ showRelatedPosts &&
 							<RelatedPostsFromOtherSites siteId={ post.site_ID } postId={ post.ID }
 								title={ translate( 'More from WordPress.com' ) }
-								className="reader-full-post__related-other" />
+								className="is-other-site" />
 						}
 					</article>
 				</div>
