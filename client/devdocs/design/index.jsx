@@ -49,6 +49,7 @@ import SpinnerLine from 'components/spinner-line/docs/example';
 import Rating from 'components/rating/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
+import ImagePreloader from 'components/image-preloader/docs/example';
 import Ribbon from 'components/ribbon/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
@@ -135,6 +136,7 @@ let DesignAssets = React.createClass( {
 					<Gravatar />
 					<Gridicons />
 					<Headers />
+					<ImagePreloader />
 					<InfoPopover />
 					<Tooltip />
 					<InputChrono />
