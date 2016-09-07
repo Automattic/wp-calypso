@@ -96,6 +96,7 @@ export class FullPostView extends React.Component {
 
 	componentWillReceiveProps( newProps ) {
 		if ( newProps.shouldShowComments ) {
+			this.hasScrolledToCommentAnchor = false;
 			this.checkForCommentAnchor();
 		}
 	}
@@ -144,25 +145,24 @@ export class FullPostView extends React.Component {
 	// Does the URL contain the anchor #comments? If so, scroll to comments if we're not already there.
 	checkForCommentAnchor() {
 		const hash = window.location.hash.substr( 1 );
-		if ( this.comments && hash.indexOf( 'comments' ) > -1 && ! this.hasScrolledToCommentAnchor ) {
+		if ( hash.indexOf( 'comments' ) > -1 && ! this.hasScrolledToCommentAnchor ) {
 			this.scrollToComments();
 		}
 	}
 
 	// Scroll to the top of the comments section.
 	scrollToComments() {
-		if ( ! this.comments ) {
-			return;
-		}
-		const commentsNode = ReactDom.findDOMNode( this.comments );
-		if ( commentsNode ) {
-			scrollTo( {
-				x: 0,
-				y: commentsNode.offsetTop - 48,
-				duration: 300
-			} );
-			this.hasScrolledToCommentAnchor = true;
-		}
+		setTimeout( () => {
+			const commentsNode = ReactDom.findDOMNode( this.refs.commentList );
+			if ( commentsNode && commentsNode.offsetTop ) {
+				scrollTo( {
+					x: 0,
+					y: commentsNode.offsetTop - 48,
+					duration: 300
+				} );
+				this.hasScrolledToCommentAnchor = true;
+			}
+		}, 0 );
 	}
 
 	parseEmoji() {
