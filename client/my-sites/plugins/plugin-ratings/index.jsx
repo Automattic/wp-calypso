@@ -1,18 +1,14 @@
 /**
- * External depe;ndencies
+ * External dependencies
  */
 import React from 'react';
+
 /**
  * Internal dependencies
  */
 import ProgressBar from 'components/progress-bar';
 import Rating from 'components/rating';
 import analytics from 'lib/analytics';
-
-/**
- * Constants
- */
-const REVIEW_URL = 'https://wordpress.org/support/view/plugin-reviews/';
 
 module.exports = React.createClass( {
 	displayName: 'PluginRatings',
@@ -31,6 +27,10 @@ module.exports = React.createClass( {
 		return { barWidth: 88 };
 	},
 
+	buildReviewUrl: function( ratingTier ) {
+		return `https://wordpress.org/support/plugin/${ this.props.slug }/reviews/?filter=${ ratingTier }`;
+	},
+
 	renderPlaceholder: function() {
 		return (
 		<div className="plugin-ratings is-placeholder">
@@ -46,7 +46,7 @@ module.exports = React.createClass( {
 			<div className="plugin-ratings__rating-tier" key={ 'plugins-ratings__tier-' + ratingTier }>
 				<a className="plugin-ratings__rating-container" target="_blank" rel="noopener noreferrer"
 					onClick={ analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', this.props.slug ) }
-					href={ REVIEW_URL + this.props.slug }>
+					href={ this.buildReviewUrl( ratingTier ) }>
 					<span className="plugin-ratings__rating-tier-text"> { this.translate( '%(ratingTier)s stars', { args: { ratingTier: ratingTier } } ) } </span>
 					<span className="plugin_ratings__bar">
 						<ProgressBar value={ numberOfRatings }
