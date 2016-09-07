@@ -122,6 +122,7 @@ export class TitleFormatEditor extends Component {
 		this.removeToken = this.removeToken.bind( this );
 		this.renderTokens = this.renderTokens.bind( this );
 		this.editorStateFrom = this.editorStateFrom.bind( this );
+		this.skipOverTokens = this.skipOverTokens.bind( this );
 
 		this.state = {
 			editorState: this.editorStateFrom( props ),
@@ -146,14 +147,73 @@ export class TitleFormatEditor extends Component {
 		);
 	}
 
-	updateEditor( editorState ) {
+	/**
+	 * Returns a new editorState that forces
+	 * selection to hop over tokens, preventing
+	 * navigating the cursor into a token
+	 *
+	 * @param {EditorState} editorState
+	 * @returns {EditorState}
+	 */
+	skipOverTokens( editorState ) {
+		const content = editorState.getCurrentContent();
+		const selection = editorState.getSelection();
+
+		// if we did not move the cursor
+		// don't do anything
+		const before = this.state.editorState.getSelection();
+		const offset = selection.getFocusOffset();
+
+		if (
+			( before.getFocusKey() === selection.getFocusKey() ) &&
+			( before.getFocusOffset() === offset )
+		) {
+			console.log( 'did not move' );
+			return editorState;
+		}
+
+		const block = content.getBlockForKey( selection.getFocusKey() );
+		const direction = Math.sign( offset - before.getFocusOffset() );
+		console.log( 'moved ', direction );
+
+		const entityKey = block.getEntityAt( offset );
+
+		// if we are at the edges of the block
+		// don't do anything
+		if ( 0 === offset || block.getLength() === offset ) {
+			console.log( 'at edge' );
+			return editorState;
+		}
+
+		// if we are not now in a token
+		// don't do anything
+		if ( ! entityKey ) {
+			console.log( 'not in a token' );
+			return editorState;
+		}
+
+		// we moved, so try to continue
+		// moving until we're at the
+		// beginning or out of a token
+		console.log( 'recursing' );
+		return this.skipOverTokens( EditorState.forceSelection(
+			editorState,
+			selection
+				.set( 'anchorOffset', offset + direction )
+				.set( 'focusOffset', offset + direction )
+		) );
+	}
+
+	updateEditor( rawEditorState ) {
 		const { onChange, type } = this.props;
-		const currentContent = editorState.getCurrentContent();
+		const currentContent = rawEditorState.getCurrentContent();
 
 		// limit to one line
 		if ( currentContent.getBlockMap().size > 1 ) {
 			return;
 		}
+
+		const editorState = this.skipOverTokens( rawEditorState );
 
 		this.setState(
 			{ editorState },
