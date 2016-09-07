@@ -58,7 +58,7 @@ export function requesting( state = {}, action ) {
 export function items( state = {}, action ) {
 	switch ( action.type ) {
 		case POST_TYPES_TAXONOMIES_RECEIVE:
-			return merge( {}, state, {
+			return Object.assign( {}, state, {
 				[ action.siteId ]: {
 					[ action.postType ]: keyBy( action.taxonomies, 'name' )
 				}
