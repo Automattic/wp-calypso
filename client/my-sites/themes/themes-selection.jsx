@@ -17,6 +17,7 @@ import {
 	getFilter,
 	getSortedFilterTerms,
 	stripFilters,
+	FILTER_REGEX_GLOBAL,
 } from './theme-filters.js';
 import config from 'config';
 
@@ -48,6 +49,11 @@ const ThemesSelection = React.createClass( {
 		const filter = getSortedFilterTerms( searchBoxContent );
 		const searchString = stripFilters( searchBoxContent );
 		this.updateUrl( this.props.tier || 'all', filter, searchString );
+	},
+
+	styleSearchContent( searchBoxContent ) {
+		const result = searchBoxContent.replace( FILTER_REGEX_GLOBAL, '<span class="themes__selection-filter">$&</span>' );
+		return { __html: result };
 	},
 
 	prependFilterKeys() {
@@ -116,7 +122,8 @@ const ThemesSelection = React.createClass( {
 							onSearch={ this.doSearch }
 							search={ this.prependFilterKeys() + this.props.search }
 							tier={ this.props.tier }
-							select={ this.onTierSelect } />
+							select={ this.onTierSelect }
+							transformContent={ this.styleSearchContent } />
 				</StickyPanel>
 				<ThemesData
 						site={ site }

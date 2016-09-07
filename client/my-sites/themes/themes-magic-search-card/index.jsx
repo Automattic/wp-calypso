@@ -89,6 +89,7 @@ const ThemesMagicSearchCard = React.createClass( {
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
 				hideClose={ isMobile() }
+				transformContent={ this.props.transformContent }
 			/>
 		);
 

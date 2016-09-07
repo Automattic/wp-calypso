@@ -62,7 +62,8 @@ const Search = React.createClass( {
 		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
 		maxLength: PropTypes.number,
-		hideClose: PropTypes.bool
+		hideClose: PropTypes.bool,
+		transformContent: PropTypes.func,
 	},
 
 	getInitialState: function() {
@@ -292,6 +293,9 @@ const Search = React.createClass( {
 		const fadeDivClass = classNames( 'search__input-fade', this.props.dir );
 		const inputClass = classNames( 'search__input', this.props.dir );
 
+		const transform = this.props.transformContent;
+		const htmlContent = transform ? transform( searchValue ) : { __html: searchValue };
+
 		return (
 			<div dir={ this.props.dir || null } className={ searchClass } role="search">
 				<Spinner />
@@ -309,7 +313,9 @@ const Search = React.createClass( {
 					<Gridicon icon="search" className="search__open-icon" />
 				</div>
 				<div className={ fadeDivClass }>
-					<div contentEditable="true"
+					<div
+						dangerouslySetInnerHTML={ htmlContent } // eslint-disable-line react/no-danger
+						contentEditable="true"
 						type="search"
 						id={ 'search-component-' + this.state.instanceId }
 						className={ inputClass }
@@ -327,7 +333,6 @@ const Search = React.createClass( {
 						dir={ this.props.dir }
 						maxLength={ this.props.maxLength }
 						{ ...autocorrect } >
-					{ searchValue }
 					</div>
 				</div>
 				{ this.closeButton() }
