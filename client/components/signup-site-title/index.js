@@ -15,7 +15,6 @@ import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 
 const SignupSiteTitle = React.createClass( {
 	displayName: 'Signup Site Title',
@@ -28,16 +27,6 @@ const SignupSiteTitle = React.createClass( {
 		onSubmit: React.PropTypes.func.isRequired,
 	},
 
-	getInitialState() {
-		return {
-			form: {
-				siteTitle: {
-					value: this.props.siteTitle
-				}
-			}
-		};
-	},
-
 	componentWillMount() {
 		this.formStateController = new formState.Controller( {
 			fieldNames: [ 'siteTitle' ],
@@ -45,10 +34,14 @@ const SignupSiteTitle = React.createClass( {
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError,
 			hideFieldErrorsOnChange: true,
-			initialState: this.state.form
+			initialState: {
+				siteTitle: {
+					value: this.props.siteTitle
+				}
+			}
 		} );
 
-		this.setState( { form: this.formStateController.getInitialState() } );
+		this.setFormState( this.formStateController.getInitialState() );
 	},
 
 	setFormState( state ) {
@@ -105,6 +98,5 @@ const SignupSiteTitle = React.createClass( {
 export default connect(
 	state => ( {
 		siteTitle: getSiteTitle( state ),
-	} ),
-	{ setSiteTitle: setSiteTitle }
+	} )
 )( SignupSiteTitle );

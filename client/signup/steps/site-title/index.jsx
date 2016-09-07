@@ -27,6 +27,8 @@ const SiteTitleStep = React.createClass( {
 	},
 
 	submitSiteTitleStep( siteTitle ) {
+		this.props.setSiteTitle( siteTitle );
+
 		SignupActions.submitSignupStep( {
 			processingMessage: this.translate( 'Setting up your site' ),
 			stepName: this.props.stepName,
@@ -37,7 +39,6 @@ const SiteTitleStep = React.createClass( {
 	},
 
 	skipStep() {
-		this.props.setSiteTitle( '' );
 		this.submitSiteTitleStep( '' );
 	},
 
