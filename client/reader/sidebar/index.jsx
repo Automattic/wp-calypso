@@ -42,7 +42,7 @@ import * as userAgentUtils from 'lib/user-agent-utils';
 import viewport from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
-const ReaderSidebar = React.createClass( {
+export const ReaderSidebar = React.createClass( {
 
 	mixins: [
 		observe( 'userSettings' ),
@@ -254,7 +254,7 @@ ReaderSidebar.defaultProps = {
 	translate: identity
 };
 
-const shouldRenderAppPromo = ( options = { } ) => {
+export const shouldRenderAppPromo = ( options = { } ) => {
 	const {
 		isDesktopPromoDisabled = store.get( 'desktop_promo_disabled' ),
 		isViewportMobile = viewport.isMobile(),
@@ -274,7 +274,6 @@ const shouldRenderAppPromo = ( options = { } ) => {
 	] );
 };
 
-export { ReaderSidebar, shouldRenderAppPromo };
 export default connect(
 	( state ) => {
 		return {
