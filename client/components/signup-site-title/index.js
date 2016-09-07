@@ -63,7 +63,7 @@ const SignupSiteTitle = React.createClass( {
 			<FormFieldset>
 				<FormTextInput
 					autoFocus={ true }
-					autoCapitalize={ 'off' }
+					autoCapitalize="off"
 					className="signup-site-title__input"
 					type="text"
 					name="siteTitle"
