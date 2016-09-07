@@ -36,6 +36,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	ONE_BY_AOL_LEADBACK_PIXEL_URL = 'https://secure.leadback.advertising.com/adcedge/lb?site=695501&srvc=1&betr=60802=1827432[8760]',
 	ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL = 'https://secure.leadback.advertising.com/adcedge/lb' +
 		'?site=695501&betr=sslbet_1472760417=[+]ssprlb_1472760417[720]|sslbet_1472760452=[+]ssprlb_1472760452[8760]',
+	PANDORA_CONVERSION_PIXEL_URL = 'https://data.adxcel-ec2.com/pixel/' +
+		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -239,19 +241,47 @@ function recordViewCheckout( cart ) {
 }
 
 /**
+ * Tracks a purchase conversion
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrder( cart, orderId ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	// Purchase tracking happens in one of three ways:
+
+	// 1. Fire a tracking event for each product purchased
+	cart.products.forEach( product => {
+		recordProduct( product, orderId );
+	} );
+
+	// 2. Fire one tracking event that includes details about each product purchased
+	recordOrderInAtlas( cart, orderId );
+	recordOrderInCriteo( cart, orderId );
+
+	// 3. Fire a single tracking event without any details about what was purchased
+	new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
+	new Image().src = PANDORA_CONVERSION_PIXEL_URL;
+}
+
+/**
  * Recorders an individual product purchase conversion
  *
  * @param {Object} product - the product
  * @param {Number} orderId - the order id
  * @returns {void}
  */
-function recordPurchase( product, orderId ) {
+function recordProduct( product, orderId ) {
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
 		return;
 	}
 
 	if ( ! hasStartedFetchingScripts ) {
-		return loadTrackingScripts( recordPurchase.bind( null, product, orderId ) );
+		return loadTrackingScripts( recordProduct.bind( null, product, orderId ) );
 	}
 
 	const isJetpackPlan = productsValues.isJetpackPlan( product );
@@ -351,19 +381,6 @@ function recordOrderInAtlas( cart, orderId ) {
 		';cache=' + Math.random() + '?' + urlParams;
 
 	loadScript.loadScript( urlWithParams );
-}
-
-/**
- * Tracks the purchase conversion with One by AOL
- *
- * @note One by AOL does not record any specifics about the purchase
- */
-function recordConversionInOneByAOL() {
-	if ( ! config.isEnabled( 'ad-tracking' ) ) {
-		return;
-	}
-
-	new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
 }
 
 /**
@@ -541,8 +558,5 @@ module.exports = {
 	retargetViewPlans,
 	recordAddToCart,
 	recordViewCheckout,
-	recordPurchase,
-	recordOrderInAtlas,
-	recordConversionInOneByAOL,
-	recordOrderInCriteo
+	recordOrder
 };
