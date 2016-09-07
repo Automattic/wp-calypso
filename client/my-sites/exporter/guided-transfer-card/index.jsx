@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
  */
 import CompactCard from 'components/card/compact';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
-import QueryProductsList from 'components/data/query-products-list';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import { isGuidedTransferAvailableForAllSites } from 'state/sites/guided-transfer/selectors';
@@ -37,9 +36,9 @@ const UnavailableInfo = localize( ( { translate } ) =>
 	<div className="guided-transfer-card__unavailable-notice">
 		<span>{ translate( 'Guided Transfer unavailable' ) }</span>
 		<InfoPopover className="guided-transfer-card__unavailable-info-icon" position="left">
-			{ translate( `Guided Transfer is unavailable at the moment. We'll
-				be back as soon as possible! In the meantime, you can transfer your
-				WordPress.com blog elsewhere by following {{a}}these steps{{/a}}`,
+			{ translate( "Guided Transfer is unavailable at the moment. We'll " +
+				'be back as soon as possible! In the meantime, you can transfer your ' +
+				'WordPress.com blog elsewhere by following {{a}}these steps{{/a}}',
 				{ components: {
 					a: <a href="https://move.wordpress.com/" />
 				} } ) }
@@ -59,7 +58,6 @@ class GuidedTransferCard extends Component {
 		return <div>
 			<CompactCard>
 				<QuerySiteGuidedTransfer siteId={ siteId } />
-				<QueryProductsList />
 				<div className="guided-transfer-card__options">
 					<div className="guided-transfer-card__options-header-title-container">
 						<h1 className="guided-transfer-card__title">
@@ -92,7 +90,7 @@ class GuidedTransferCard extends Component {
 							'site{{/strong}} to a self-hosted WordPress.org installation with ' +
 							'one of our hosting partners.', { components: { strong: <strong /> } }
 						) }
-						<br/>
+						<br />
 						<a href="https://en.support.wordpress.com/guided-transfer/" >
 							{ translate( 'Learn more.' ) }
 						</a>
