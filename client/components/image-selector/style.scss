@@ -10,7 +10,7 @@
 		bottom: 0;
 		left: 0;
 	background-color: rgba( $white, 0.75 );
-	z-index: z-index( 'root', '.editor-featured-image__preview.is-transient::after' );
+	z-index: z-index( 'root', '.image-selector__preview' );
 }
 
 .image-selector__preview .spinner {
