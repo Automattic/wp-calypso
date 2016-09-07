@@ -63,17 +63,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	componentWillReceiveProps( newProps ) {
-		if ( this.props.src !== newProps.src ) {
-			this.getImage( newProps.src );
-		}
-	},
-
-	componentDidMount() {
-		if ( ! this.props.src ) {
-			return;
-		}
-
-		this.getImage( this.props.src );
+		this.getImage( newProps.src );
 	},
 
 	getImage( url ) {
@@ -83,10 +73,6 @@ const MediaModalImageEditorCanvas = React.createClass( {
 		req.onload = () => {
 			const objectURL = window.URL.createObjectURL( new Blob( [ req.response ], { type: this.props.mimeType } ) );
 			this.initImage( objectURL );
-
-			this.setState( {
-				imageLoaded: true
-			} );
 		};
 		req.send();
 	},
@@ -105,6 +91,10 @@ const MediaModalImageEditorCanvas = React.createClass( {
 
 		this.drawImage();
 		this.updateCanvasPosition();
+
+		this.setState( {
+			imageLoaded: true
+		} );
 	},
 
 	componentDidUpdate() {
@@ -188,10 +178,6 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	renderCrop() {
-		if ( ! this.props.src ) {
-			return;
-		}
-
 		return ( <Crop /> );
 	},
 
