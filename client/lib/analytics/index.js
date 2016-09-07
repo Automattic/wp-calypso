@@ -277,17 +277,13 @@ var analytics = {
 
 		recordEvent: function( category, action, label, value ) {
 			analytics.ga.initialize();
-
-			var debugText = 'Recording Event ~ [Category: ' + category + '] [Action: ' + action + ']';
-
+			let debugText = `Recording Event ~ [Category: ${ category }] [Action: ${ action }]`;
 			if ( 'undefined' !== typeof label ) {
-				debugText += ' [Option Label: ' + label + ']';
+				debugText += ` [Option Label: ${ label }]`;
 			}
-
 			if ( 'undefined' !== typeof value ) {
-				debugText += ' [Option Value: ' + value + ']';
+				debugText += ` [Option Value: ${ value }]`;
 			}
-
 			debug( debugText );
 
 			if ( config( 'google_analytics_enabled' ) ) {
