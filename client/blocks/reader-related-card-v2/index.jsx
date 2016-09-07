@@ -15,6 +15,7 @@ import { getSite } from 'state/reader/sites/selectors';
 import Card from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
+import { getPostUrl } from 'reader/route';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -49,16 +50,17 @@ export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick =
 /* eslint-enable no-unused-vars */
 	const featuredImage = post.canonical_image;
 	const classes = classnames( 'reader-related-card-v2' );
+	const postLink = getPostUrl( post );
 
 	return (
 		<Card className={ classes }>
 			<AuthorAndSiteFollow post={ post } site={ site } />
-			<a href={ post.URL } className="reader-related-card-v2__link-block">
-			{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
-			<div className="reader-related-card-v2__site-info">
-				<h1 className="reader-related-card-v2__title">{ post.title }</h1>
-				<div className="reader-related-card-v2__excerpt">{ featuredImage ? post.short_excerpt : post.excerpt }</div>
-			</div>
+			<a href={ postLink } className="reader-related-card-v2__link-block">
+				{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
+				<div className="reader-related-card-v2__site-info">
+					<h1 className="reader-related-card-v2__title">{ post.title }</h1>
+					<div className="reader-related-card-v2__excerpt">{ featuredImage ? post.short_excerpt : post.excerpt }</div>
+				</div>
 			</a>
 		</Card>
 	);
