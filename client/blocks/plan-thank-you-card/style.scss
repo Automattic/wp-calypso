@@ -53,6 +53,15 @@
 	border-width: 1px 1px 2px;
 }
 
+.plan-thank-you-card__button.is-placeholder,
+.plan-thank-you-card__button.is-placeholder:visited {
+	@include placeholder();
+	pointer-events: none;
+	background-color: lighten( $alert-green, 40 );
+	border-color: transparent;
+	border-radius: 0;
+}
+
 .plan-thank-you-card__button:hover {
 	border-color: darken( $alert-green, 30 );
 	color: darken( $alert-green, 10 );

@@ -10,7 +10,6 @@ import { get } from 'lodash';
  */
 import PlanThankYouCard from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { getSitePosts } from 'state/posts/selectors';
 
 function PlanThankYouCardExample( { primarySiteId } ) {
 	return (
@@ -24,7 +23,7 @@ function PlanThankYouCardExample( { primarySiteId } ) {
 }
 
 const ConnectedPlanThankYouCard = connect( ( state ) => {
-	const primarySiteId = get( getCurrentUser( state ), 'primary_blog' );
+	const primarySiteId = get( getCurrentUser( state ), 'primary_blog', null );
 
 	return {
 		primarySiteId,
