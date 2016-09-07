@@ -38,6 +38,7 @@
 	display: inline-block;
 	width: 270px;
 	flex: 1 1 100%;
+	text-align: right;
 
 	&:before {
 		content: '';
@@ -52,5 +53,6 @@
 	@include breakpoint( "<660px" ) {
 		position: relative;
 		margin: 0 auto;
+		text-align: center;
 	}
 }
