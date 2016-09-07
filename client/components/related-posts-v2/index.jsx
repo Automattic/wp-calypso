@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
+import classnames from 'classnames';
 
 /**
  * Internal Dependencies
@@ -13,7 +14,7 @@ import { SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
 import RelatedPost from 'blocks/reader-related-card-v2';
 import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
 
-function RelatedPosts( { siteId, postId, posts, title, scope, onPostClick = noop, onSiteClick = noop } ) {
+function RelatedPosts( { siteId, postId, posts, title, scope, className = '', onPostClick = noop, onSiteClick = noop } ) {
 	if ( ! posts ) {
 		return <QueryReaderRelatedPosts siteId={ siteId } postId={ postId } scope={ scope } />;
 	}
@@ -21,7 +22,7 @@ function RelatedPosts( { siteId, postId, posts, title, scope, onPostClick = noop
 		return null;
 	}
 	return (
-		<div className="reader-related-card-v2__blocks">
+		<div className={ classnames( 'reader-related-card-v2__blocks', className ) }>
 			<h1 className="reader-related-card-v2__heading">{ title }</h1>
 			<ul className="reader-related-card-v2__list">
 				{ posts.map( post_id => {
