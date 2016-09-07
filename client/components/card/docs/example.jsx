@@ -23,11 +23,7 @@ var Cards = React.createClass( {
 
 		return (
 			<div>
-<<<<<<< HEAD
 				<a className="docs__design-toggle button" onClick={ this.toggleCards }>{ toggleCardsText }</a>
-=======
-				<a className="design-assets__toggle button" onClick={ this.toggleCards }>{ toggleCardsText }</a>
->>>>>>> e5f142f... update Devdocs:components docs examples
 				{ this.renderCards() }
 			</div>
 		);

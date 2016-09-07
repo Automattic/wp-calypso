@@ -30,11 +30,7 @@ var Buttons = React.createClass( {
 	render: function() {
 		return (
 			<div>
-<<<<<<< HEAD
 				<a className="docs__design-toggle button" onClick={ this.toggleButtons }>
-=======
-				<a className="design-assets__toggle button" onClick={ this.toggleButtons }>
->>>>>>> e5f142f... update Devdocs:components docs examples
 					{ this.state.compact ? 'Normal Buttons' : 'Compact Buttons' }
 				</a>
 				<Card>
