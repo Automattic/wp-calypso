@@ -19,10 +19,6 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 const SignupSiteTitle = React.createClass( {
 	displayName: 'Signup Site Title',
 
-	contextTypes: {
-		store: React.PropTypes.object,
-	},
-
 	propTypes: {
 		onSubmit: React.PropTypes.func.isRequired,
 		siteTitle: React.PropTypes.string.isRequired,

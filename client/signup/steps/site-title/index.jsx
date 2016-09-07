@@ -18,16 +18,12 @@ import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 const SiteTitleStep = React.createClass( {
 	displayName: 'Site Title',
 
-	contextTypes: {
-		store: React.PropTypes.object,
-	},
-
 	propTypes: {
 		flowName: React.PropTypes.string,
 		goToNextStep: React.PropTypes.func.isRequired,
 		positionInFlow: React.PropTypes.number,
 		setSiteTitle: React.PropTypes.func.isRequired,
-		signupProgressStore: React.PropTypes.object,
+		signupProgressStore: React.PropTypes.array,
 		stepName: React.PropTypes.string,
 	},
 
