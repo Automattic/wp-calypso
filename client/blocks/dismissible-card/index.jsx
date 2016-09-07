@@ -15,9 +15,9 @@ import QueryPreferences from 'components/data/query-preferences';
 import { savePreference, setPreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 
-const PREFERENCE_PREFIX = 'dismissable-card-';
+const PREFERENCE_PREFIX = 'dismissible-card-';
 
-class DismissableCard extends Component {
+class DismissibleCard extends Component {
 
 	static propTypes = {
 		className: PropTypes.string,
@@ -44,7 +44,7 @@ class DismissableCard extends Component {
 				<QueryPreferences />
 				<Gridicon
 					icon="cross"
-					className="dismissable-card__close-icon"
+					className="dismissible-card__close-icon"
 					onClick={ flow( onClick, dismissCard ) }
 				/>
 				{ this.props.children }
@@ -69,5 +69,5 @@ export default connect(
 			return savePreference( preference, true );
 		}
 	}, dispatch )
-)( DismissableCard );
+)( DismissibleCard );
 
