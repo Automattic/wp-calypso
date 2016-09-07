@@ -68,18 +68,21 @@
 	color: $gray;
 	white-space: nowrap;
 }
+.domain-to-plan-nudge__credit-card-info-link,
+.domain-to-plan-nudge__credit-card-info-link:visited {
+	color: $gray;
+}
 
 .domain-to-plan-nudge__discount-value {
 	font-size: 12px;
 	text-transform: uppercase;
 	border-radius: 3px 0 0 3px;
 	background-color: #4ab866;
-	width: 68px;
 	height: 18px;
 	color: $white;
 	letter-spacing: 1px;
 	padding: 3px 0 3px 12px;
-	text-align: right;
+	text-align: left;
 	position: relative;
 	margin-right: 24px;
 

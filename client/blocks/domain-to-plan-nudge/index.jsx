@@ -28,12 +28,7 @@ import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'components/gridicon';
 import { errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import {
-	recordPurchase,
-	recordOrderInAtlas,
-	recordOrderInCriteo,
-	recordConversionInOneByAOL
-} from 'lib/analytics/ad-tracking';
+import { recordOrder } from 'lib/analytics/ad-tracking';
 import { getPlanRawPrice } from 'state/plans/selectors';
 import {
 	getPlanDiscountedRawPrice,
@@ -88,15 +83,17 @@ class DomainToPlanNudge extends Component {
 		} = this.props;
 
 		return {
-			productId,
-			productSlug,
+			product_id: productId,
+			product_slug: productSlug,
 			free_trial: false,
 			is_domain_registration: false
 		};
 	}
 
 	handleTransactionComplete( error, data ) {
-		const { siteId, translate, userCurrency } = this.props;
+		const { siteId, translate, userCurrency, rawPrice, discountedRawPrice } = this.props;
+
+		const price = discountedRawPrice || rawPrice;
 
 		debug( 'transaction complete', error, data );
 		// see transaction-steps-mixin for matching checkout analytics
@@ -117,22 +114,20 @@ class DomainToPlanNudge extends Component {
 			);
 			return;
 		}
+
 		const receiptId = data.receipt_id;
 
 		// ad tracking
-		const product = { ...this.getCartItem(), currency: userCurrency, cost: 35.88, volume: 1 }; //TODO: pass through price
-		const cart = { products: [ product ], total_cost: 35.88, currency: userCurrency };
-		recordPurchase( product, receiptId );
-		recordOrderInAtlas( cart, receiptId );
-		recordOrderInCriteo( cart, receiptId );
-		recordConversionInOneByAOL();
+		const product = { ...this.getCartItem(), currency: userCurrency, cost: price, volume: 1 };
+		const cart = { products: [ product ], total_cost: price, currency: userCurrency };
+		recordOrder( cart, receiptId );
 
 		// tracks
 		this.props.recordTracksEvent( 'calypso_checkout_payment_success', {
 			coupon_code: '',
 			currency: userCurrency,
 			payment_method: storedCardPayment().paymentMethod,
-			total_cost: 35.88 //TODO: pass through discounted plan price here
+			total_cost: price
 		} );
 
 		this.props.recordTracksEvent( 'calypso_checkout_product_purchase', this.getCartItem() );
@@ -249,17 +244,23 @@ class DomainToPlanNudge extends Component {
 				</div>
 				<div className="domain-to-plan-nudge__actions-group">
 					<div className="domain-to-plan-nudge__plan-price-group">
-						<div className="domain-to-plan-nudge__discount-value">
-							{ formatCurrency( rawDiscount, userCurrency ) }
+						<div
+							className="domain-to-plan-nudge__discount-value">
+							{
+								translate( 'SAVE %(discount)s', {
+									args: {
+										discount: formatCurrency( rawDiscount, userCurrency )
+									}
+								} )
+							}
 						</div>
-
 						<PlanPrice
 							rawPrice={ rawPrice }
 							currencyCode={ userCurrency }
 							original
 						/>
 						<PlanPrice
-							rawPrice={ discountedRawPrice }
+							rawPrice={ discountedRawPrice || rawPrice }
 							currencyCode={ userCurrency }
 							discounted
 						/>
@@ -277,12 +278,20 @@ class DomainToPlanNudge extends Component {
 							{ isSubmitting
 								? translate( 'Completing your purchase' )
 								: translate( 'Upgrade Now for %s', {
-									args: formatCurrency( discountedRawPrice, userCurrency )
+									args: formatCurrency( discountedRawPrice || rawPrice, userCurrency )
 								} )
 							}
 						</Button>
 						<div className="domain-to-plan-nudge__credit-card-info">
-							{ translate( 'Using credit card ****%s', { args: storedCard ? storedCard.card : 'xxxx' } ) }
+							<a
+								className="domain-to-plan-nudge__credit-card-info-link"
+								href={ `/checkout/${ siteId }/personal` }>
+								{
+									translate( 'Using credit card ****%s', {
+										args: storedCard ? storedCard.card : 'xxxx'
+									} )
+								}
+							</a>
 						</div>
 					</div>
 				</div>

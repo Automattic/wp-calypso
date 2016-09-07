@@ -23,7 +23,6 @@ import LatestPostSummary from '../post-performance';
 import DomainTip from 'my-sites/domain-tip';
 import Main from 'components/main';
 import StatsFirstView from '../stats-first-view';
-import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 
 export default React.createClass( {
 	displayName: 'StatsInsights',
@@ -78,7 +77,6 @@ export default React.createClass( {
 			<Main>
 				<StatsFirstView />
 				<SidebarNavigation />
-				<DomainToPlanNudge />
 				<StatsNavigation section="insights" site={ site } />
 				<div id="my-stats-content">
 					<PostingActivity />
