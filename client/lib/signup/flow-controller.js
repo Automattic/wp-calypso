@@ -47,7 +47,7 @@ function SignupFlowController( options ) {
 
 	this._assertFlowHasValidDependencies();
 
-	this._reduxState = options.reduxState;
+	this._reduxStore = options.reduxStore;
 
 	SignupProgressStore.on( 'change', this._boundProcess );
 

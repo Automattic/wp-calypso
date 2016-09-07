@@ -23,7 +23,7 @@ import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 
 function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeSlugWithRepo, themeItem } ) {
 
-	let siteTitle = getSiteTitle( this._reduxState.getState() ).trim();
+	let siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
 
 	if ( '' === siteTitle ) {
 		siteTitle = siteUrl;
