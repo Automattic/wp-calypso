@@ -12,6 +12,7 @@ import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderFollowButton from 'reader/follow-button';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
+import { getStreamUrl } from 'reader/route';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
@@ -34,12 +35,15 @@ const AuthorCompactProfile = React.createClass( {
 		const classes = classnames( 'author-compact-profile', {
 			'has-author-link': ! hasMatchingAuthorAndSiteNames
 		} );
+		const streamUrl = getStreamUrl( feedId, siteId );
 
 		return (
 			<div className={ classes }>
-				<Gravatar size={ 96 } user={ author } />
+				<a href={ streamUrl }>
+					<Gravatar size={ 96 } user={ author } />
+				</a>
 				{ ! hasMatchingAuthorAndSiteNames &&
-					<ReaderAuthorLink author={ author } siteUrl={ siteUrl }>{ author.name }</ReaderAuthorLink> }
+					<ReaderAuthorLink author={ author } siteUrl={ streamUrl }>{ author.name }</ReaderAuthorLink> }
 				{ siteName &&
 					<ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId }>
 						{ siteName }
