@@ -10,11 +10,13 @@ import { connect } from 'react-redux';
  */
 import CompactCard from 'components/card/compact';
 import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
+import QueryProductsList from 'components/data/query-products-list';
 import Gridicon from 'components/gridicon';
 import Button from 'components/forms/form-button';
 import { isGuidedTransferAvailableForAllSites } from 'state/sites/guided-transfer/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
+import { getProductDisplayCost } from 'state/products-list/selectors';
 import InfoPopover from 'components/info-popover';
 
 const Feature = ( { children } ) =>
@@ -51,18 +53,22 @@ class GuidedTransferCard extends Component {
 			translate,
 			isAvailable,
 			siteId,
+			cost,
 		} = this.props;
 
 		return <div>
 			<CompactCard>
 				<QuerySiteGuidedTransfer siteId={ siteId } />
+				<QueryProductsList />
 				<div className="guided-transfer-card__options">
 					<div className="guided-transfer-card__options-header-title-container">
 						<h1 className="guided-transfer-card__title">
 							{ translate( 'Guided Transfer' ) }
 						</h1>
 						<h2 className="guided-transfer-card__subtitle">
-							<span className="guided-transfer-card__price">$129</span>
+							<span className="guided-transfer-card__price">
+								{ cost }
+							</span>
 							&nbsp;
 							{ translate( 'One-time expense' ) }
 						</h2>
@@ -109,6 +115,7 @@ class GuidedTransferCard extends Component {
 }
 
 const mapStateToProps = state => ( {
+	cost: getProductDisplayCost( state, 'guided_transfer' ),
 	siteId: getSelectedSiteId( state ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
 	isAvailable: isGuidedTransferAvailableForAllSites( state, getSelectedSiteId( state ) ),
