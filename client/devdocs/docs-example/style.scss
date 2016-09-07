@@ -26,11 +26,11 @@
 	padding-bottom: 16px;
 }
 
-.docs-example__stats__item {
+.docs-example__stats-item {
 	margin: 0;
 }
 
-.docs-example__stats__item + .docs-example__stats__item {
+.docs-example__stats-item + .docs-example__stats-item {
 	margin-top: 1.5em;
 }
 
@@ -38,12 +38,12 @@
 	color: $gray-dark;
 	padding: 10px;
 
-	&.docs-example__wrapper__unique {
+	&.docs-example__wrapper.is-unique {
 		border: 0
 	}
 }
 
-.docs-example__wrapper__header	{
+.docs-example__wrapper-header	{
 	margin: 0;
 	line-height: 50px;
 	height: 50px;
@@ -57,7 +57,7 @@
 		font-size: 34px;
 		font-weight: bold;
 
-		&.docs-example__wrapper__header-title {
+		&.docs-example__wrapper-header-title {
 			line-height: 50px;
 			height: 50px;
 		}

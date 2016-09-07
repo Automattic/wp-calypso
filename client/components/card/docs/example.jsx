@@ -23,7 +23,7 @@ var Cards = React.createClass( {
 
 		return (
 			<div>
-				<a className="design-assets__toggle button" onClick={ this.toggleCards }>{ toggleCardsText }</a>
+				<a className="docs__design-toggle button" onClick={ this.toggleCards }>{ toggleCardsText }</a>
 				{ this.renderCards() }
 			</div>
 		);
