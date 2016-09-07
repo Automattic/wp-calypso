@@ -125,7 +125,7 @@ module.exports = {
 		defaultVariation: 'hideVerticalScreenshots',
 	},
 	jetpackConnectPlansFirst: {
-		datestamp: '20160715',
+		datestamp: '20160912',
 		variations: {
 			showPlansBeforeAuth: 50,
 			showPlansAfterAuth: 50

@@ -56,7 +56,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Plans from './plans';
 import CheckoutData from 'components/data/checkout';
-import { abtest } from 'lib/abtest';
+// import { abtest } from 'lib/abtest';
 
 /**
  * Constants
@@ -684,7 +684,7 @@ export default connect(
 				state.jetpackConnect.jetpackConnectSelectedPlans,
 				state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
 			),
-			plansFirst: abtest( 'jetpackConnectPlansFirst' ) === 'showPlansBeforeAuth',
+			plansFirst: false, // Test disabled by now. Enable it replacing 'false' with: abtest( 'jetpackConnectPlansFirst' ) === 'showPlansBeforeAuth',
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
 			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
 			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
