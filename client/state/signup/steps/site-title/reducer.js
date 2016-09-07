@@ -10,7 +10,7 @@ import { siteTitleSchema } from './schema';
 
 export default createReducer( '',
 	{
-		[ SIGNUP_STEPS_SITE_TITLE ]: ( state = {}, action ) => {
+		[ SIGNUP_STEPS_SITE_TITLE ]: ( state = '', action ) => {
 			return action.siteTitle;
 		},
 	},
