@@ -158,7 +158,7 @@ export class TitleFormatEditor extends Component {
 		this.setState(
 			{ editorState },
 			() => {
-				editorState.lastChangeType === 'add-token' && this.focusEditor();
+				editorState.getLastChangeType() === 'add-token' && this.focusEditor();
 				onChange( type.value, fromEditor( currentContent ) );
 			}
 		);
