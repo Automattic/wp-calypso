@@ -49,17 +49,21 @@ export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick =
 // onSiteClick is not being used
 /* eslint-enable no-unused-vars */
 	const featuredImage = post.canonical_image;
-	const classes = classnames( 'reader-related-card-v2' );
 	const postLink = getPostUrl( post );
+	const classes = classnames( 'reader-related-card-v2', {
+		'has-thumbnail': !! featuredImage
+	} );
 
 	return (
 		<Card className={ classes }>
 			<AuthorAndSiteFollow post={ post } site={ site } />
-			<a href={ postLink } className="reader-related-card-v2__link-block">
+			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block">
 				{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
 				<div className="reader-related-card-v2__site-info">
 					<h1 className="reader-related-card-v2__title">{ post.title }</h1>
-					<div className="reader-related-card-v2__excerpt">{ featuredImage ? post.short_excerpt : post.excerpt }</div>
+					<div className="reader-related-card-v2__excerpt post-excerpt">
+						{ featuredImage ? post.short_excerpt : post.excerpt }
+					</div>
 				</div>
 			</a>
 		</Card>
