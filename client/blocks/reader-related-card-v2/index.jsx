@@ -57,7 +57,7 @@ export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick =
 			{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
 			<div className="reader-related-card-v2__site-info">
 				<h1 className="reader-related-card-v2__title">{ post.title }</h1>
-				<div className="reader-related-card-v2__excerpt">{ post.short_excerpt }</div>
+				<div className="reader-related-card-v2__excerpt">{ featuredImage ? post.short_excerpt : post.excerpt }</div>
 			</div>
 			</a>
 		</Card>
