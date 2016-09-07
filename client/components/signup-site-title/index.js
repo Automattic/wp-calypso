@@ -25,6 +25,7 @@ const SignupSiteTitle = React.createClass( {
 
 	propTypes: {
 		onSubmit: React.PropTypes.func.isRequired,
+		siteTitle: React.PropTypes.string.isRequired,
 	},
 
 	componentWillMount() {
