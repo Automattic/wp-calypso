@@ -12,6 +12,9 @@
 	.search {
 		flex: 0 1 auto;
 		margin: 0;
+		&.has-focus {
+			box-shadow: none;
+		}
 	}
 
 	.section-nav {

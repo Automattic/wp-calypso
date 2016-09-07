@@ -54,9 +54,6 @@ Currently supports forcing a LTR field in a RTL language, but not the other way 
 
 Supported values are `'ltr'` and `undefined` (the default, which uses the current global writing direction of the app).
 
-### disableHighlight (optional) ( default false )
-Whether to disable `<Search>` highlight on focus. This is useful for styling in scenarios where `<Search>` focus highlight would break page design.
-
 ## Methods
 
 ### getCurrentSearchValue()
