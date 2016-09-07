@@ -423,8 +423,9 @@ module.exports = React.createClass( {
 					<p>
 						<FormInput
 							valueLink={ this.linkState( 'publicKeyString' ) }
-							selectOnFocus="true"
-							readOnly="readonly" />
+							selectOnFocus
+							readOnly
+						/>
 					</p>
 				</div>
 			</Dialog>
