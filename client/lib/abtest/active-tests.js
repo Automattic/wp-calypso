@@ -53,15 +53,6 @@ module.exports = {
 		defaultVariation: 'ascendingPriceSubtleDescription',
 		allowExistingUsers: false,
 	},
-	signupCheckoutRedirect: {
-		datestamp: '20160826',
-		variations: {
-			auto: 50,
-			manual: 50,
-		},
-		defaultVariation: 'manual',
-		allowExistingUsers: false,
-	},
 	signupStore: {
 		datestamp: '20160727',
 		variations: {
