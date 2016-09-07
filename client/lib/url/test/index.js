@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { withoutHttp } from '../';
+import { isExternal, withoutHttp } from '../';
 
 describe( 'withoutHttp', () => {
 	it( 'should return null if URL is not provided', () => {
@@ -44,5 +44,33 @@ describe( 'withoutHttp', () => {
 		const urlEmptyString = '';
 
 		expect( withoutHttp( urlEmptyString ) ).to.equal( '' );
+	} );
+} );
+
+describe( 'isExternal', () => {
+	it( 'should return false for url without hostname', () => {
+		const source = '/relative';
+
+		const actual = isExternal( source );
+
+		expect( actual ).to.be.false;
+	} );
+
+	describe( 'without global.window', () => {
+		it( 'should return true when not matching config hostname', () => {
+			const source = 'https://not.localhost/me';
+
+			const actual = isExternal( source );
+
+			expect( actual ).to.be.true;
+		} );
+
+		it( 'should return false when matching config hostname', () => {
+			const source = 'https://calypso.localhost/me';
+
+			const actual = isExternal( source );
+
+			expect( actual ).to.be.false;
+		} );
 	} );
 } );
