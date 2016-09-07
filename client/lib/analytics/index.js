@@ -285,9 +285,17 @@ var analytics = {
 				debugText += ` [Option Value: ${ value }]`;
 			}
 			debug( debugText );
+			this.recordEventObject( {
+				eventCategory: category,
+				eventAction: action,
+				eventLabel: label,
+				eventValue: value,
+			} );
+		},
 
+		recordEventObject: function( eventObj ) {
 			if ( config( 'google_analytics_enabled' ) ) {
-				window.ga( 'send', 'event', category, action, label, value );
+				window.ga( 'send', 'event', eventObj );
 			}
 		},
 
