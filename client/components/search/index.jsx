@@ -170,7 +170,7 @@ const Search = React.createClass( {
 	},
 
 	getCurrentSearchValue: function() {
-		return ReactDom.findDOMNode( this.refs.searchInput ).value;
+		return ReactDom.findDOMNode( this.refs.searchInput ).innerText;
 	},
 
 	clear: function() {
@@ -309,15 +309,14 @@ const Search = React.createClass( {
 					<Gridicon icon="search" className="search__open-icon" />
 				</div>
 				<div className={ fadeDivClass }>
-					<input
+					<div contentEditable="true"
 						type="search"
 						id={ 'search-component-' + this.state.instanceId }
 						className={ inputClass }
 						placeholder={ placeholder }
 						role="search"
-						value={ searchValue }
 						ref="searchInput"
-						onChange={ this.onChange }
+						onInput={ this.onChange }
 						onKeyUp={ this.keyUp }
 						onKeyDown={ this.keyDown }
 						onFocus={ this.onFocus }
@@ -327,8 +326,9 @@ const Search = React.createClass( {
 						autoCapitalize="none"
 						dir={ this.props.dir }
 						maxLength={ this.props.maxLength }
-						{ ...autocorrect }
-					/>
+						{ ...autocorrect } >
+					{ searchValue }
+					</div>
 				</div>
 				{ this.closeButton() }
 			</div>
