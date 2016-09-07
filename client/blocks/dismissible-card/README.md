@@ -1,4 +1,4 @@
-Dismissable Card
+Dismissible Card
 =========
 This is a card component that can be dismissed for a single page load or be hidden
 via user preference.
@@ -6,14 +6,14 @@ via user preference.
 #### How to use:
 
 ```js
-import DismissableCard from 'blocks/dismissable-card';
+import DismissibleCard from 'blocks/dismissible-card';
 
 render: function() {
   return (
     <div className="your-stuff">
-      <DismissableCard preferenceName="my-unique-preference-name">
+      <DismissibleCard preferenceName="my-unique-preference-name">
         <span>Your stuff in a Card</span>
-      </DismissableCard>
+      </DismissibleCard>
     </div>
   );
 }
@@ -52,7 +52,7 @@ This function will fire when a user clicks on the cross icon
 </table>
 
 The user preference name that we store a boolean against. 
-Note that we prefix this value with 'dismissable-card-' to avoid namespace collisions.
+Note that we prefix this value with 'dismissible-card-' to avoid namespace collisions.
 
 ### `temporary`
 
