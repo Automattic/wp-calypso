@@ -1,6 +1,6 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -12,7 +12,14 @@ import trim from 'lodash/trim';
  * Internal dependencies
  */
 import config from 'config';
+import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import SearchCard from 'components/search-card';
+
+/**
+ * Docs examples
+ */
 import SearchDemo from 'components/search/docs/example';
 import Notices from 'components/notice/docs/example';
 import GlobalNotices from 'components/global-notices/docs/example';
@@ -46,7 +53,6 @@ import Ribbon from 'components/ribbon/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
-import HeaderCake from 'components/header-cake';
 import InfoPopover from 'components/info-popover/docs/example';
 import Tooltip from 'components/tooltip/docs/example';
 import FoldableCard from 'components/foldable-card/docs/example';
@@ -59,7 +65,6 @@ import ExternalLink from 'components/external-link/docs/example';
 import FeatureGate from 'components/feature-example/docs/example';
 import FilePickers from 'components/file-picker/docs/example';
 import Collection from 'devdocs/design/search-collection';
-import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import FAQ from 'components/faq/docs/example';
 import VerticalMenu from 'components/vertical-menu/docs/example';
 
@@ -90,7 +95,7 @@ let DesignAssets = React.createClass( {
 		const { filter } = this.state;
 
 		return (
-			<div className="design" role="main">
+			<Main className="design">
 				{ component
 					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
 						{ slugToCamelCase( component ) }
@@ -154,7 +159,7 @@ let DesignAssets = React.createClass( {
 					<VerticalMenu />
 					<Version />
 				</Collection>
-			</div>
+			</Main>
 		);
 	}
 } );
