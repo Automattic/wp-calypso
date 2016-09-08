@@ -302,7 +302,7 @@ const JetpackConnectMain = React.createClass( {
 			<MainWrapper>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
-					<QuerySites />
+					<QuerySites allSites />
 					<ConnectHeader
 						showLogo={ false }
 						headerText={ this.getTexts().headerTitle }
