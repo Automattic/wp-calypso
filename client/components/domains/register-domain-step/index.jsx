@@ -442,7 +442,7 @@ const RegisterDomainStep = React.createClass( {
 			isSearchedDomain = function( suggestion ) {
 				return suggestion.domain_name === lastDomainSearched;
 			},
-			availableDomain = find( this.state.searchResults, isSearchedDomain );
+			availableDomain = this.state.lastDomainError ? undefined : find( this.state.searchResults, isSearchedDomain );
 		let suggestions = reject( this.state.searchResults, isSearchedDomain ),
 			onAddMapping;
 
