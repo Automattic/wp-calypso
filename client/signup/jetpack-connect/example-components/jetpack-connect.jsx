@@ -26,35 +26,35 @@ export default React.createClass( {
 	},
 
 	render() {
-		const contentClassName = classNames( 'jetpack-connect__example-content', 'jetpack-connect__example-connect-jetpack', {
+		const contentClassName = classNames( 'example-components__content', 'example-components__connect-jetpack', {
 			'is-legacy': this.props.isLegacy
 		} );
 		return (
-			<div className="jetpack-connect__example">
-				<div className="jetpack-connect__browser-chrome jetpack-connect__site-url-input-container">
-					<div className="jetpack-connect__browser-chrome-dots">
-						<div className="jetpack-connect__browser-chrome-dot"></div>
-						<div className="jetpack-connect__browser-chrome-dot"></div>
-						<div className="jetpack-connect__browser-chrome-dot"></div>
+			<div className="example-components__main">
+				<div className="example-components__browser-chrome example-components__site-url-input-container">
+					<div className="example-components__browser-chrome-dots">
+						<div className="example-components__browser-chrome-dot"></div>
+						<div className="example-components__browser-chrome-dot"></div>
+						<div className="example-components__browser-chrome-dot"></div>
 					</div>
-					<div className="jetpack-connect__site-address-container">
+					<div className="example-components__site-address-container">
 						<Gridicon
 							size={ 24 }
 							icon="globe" />
 						<FormTextInput
-							className="jetpack-connect__browser-chrome-url"
+							className="example-components__browser-chrome-url"
 							disabled="true"
 							placeholder={ this.props.url } />
 					</div>
 				</div>
 				<div className={ contentClassName }>
-					<div className="jetpack-connect__example-content-wp-admin-masterbar"></div>
-					<div className="jetpack-connect__example-content-wp-admin-sidebar"></div>
-					<div className="jetpack-connect__example-content-wp-admin-main">
-						<div className="jetpack-connect__example-content-wp-admin-connect-banner">
+					<div className="example-components__content-wp-admin-masterbar"></div>
+					<div className="example-components__content-wp-admin-sidebar"></div>
+					<div className="example-components__content-wp-admin-main">
+						<div className="example-components__content-wp-admin-connect-banner">
 							{ ! this.props.isLegacy
 								? (
-									<div className="jetpack-connect__example-content-wp-admin-plugin-name" aria-hidden="true">
+									<div className="example-components__content-wp-admin-plugin-name" aria-hidden="true">
 										{ this.translate( 'Your Jetpack is almost ready!',
 											{
 												context: 'Jetpack Connect activate plugin instructions, connection banner headline'
@@ -64,7 +64,7 @@ export default React.createClass( {
 								)
 								: null
 							}
-							<div className="jetpack-connect__example-content-wp-admin-connect-button" aria-hidden="true">
+							<div className="example-components__content-wp-admin-connect-button" aria-hidden="true">
 								{ this.translate( 'Connect to WordPress.com',
 									{
 										context: 'Jetpack Connect post-plugin-activation step, Connect to WordPress.com button'
