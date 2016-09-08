@@ -242,7 +242,7 @@ export default React.createClass( {
 						</div>
 				}
 				{ this.props.indicator
-					? <SiteIndicator site={ site } onSelect={ this.props.onSelect } />
+					? <SiteIndicator site={ site } />
 					: null
 				}
 				{ this.props.enableActions &&
