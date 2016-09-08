@@ -17,11 +17,16 @@ import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { editPost } from 'state/posts/actions';
 import TokenField from 'components/token-field';
 import { decodeEntities } from 'lib/formatting';
-import TermsConstants from 'lib/terms/constants';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import QueryTerms from 'components/data/query-terms';
 
 const debug = _debug( 'calypso:post-editor:editor-terms' );
+const DEFAULT_NON_HIERARCHICAL_QUERY = {
+	number: 1000,
+	order_by: 'count',
+	order: 'DESC'
+};
+const MAX_TERMS_SUGGESTIONS = 20;
 
 class TermTokenField extends React.Component {
 	componentWillMount() {
@@ -72,14 +77,14 @@ class TermTokenField extends React.Component {
 				<QueryTerms
 					siteId={ this.props.siteId }
 					taxonomy={ this.props.taxonomyName }
-					query={ TermsConstants.defaultNonHierarchicalQuery }
+					query={ DEFAULT_NON_HIERARCHICAL_QUERY }
 				/>
 				<TokenField
 					value={ this.getPostTerms() }
 					displayTransform={ decodeEntities }
 					suggestions={ termNames }
 					onChange={ this.boundOnTermsChange }
-					maxSuggestions={ TermsConstants.MAX_TERMS_SUGGESTIONS }
+					maxSuggestions={ MAX_TERMS_SUGGESTIONS }
 				/>
 			</div>
 		);
