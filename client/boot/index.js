@@ -326,7 +326,7 @@ function reduxStoreReady( reduxStore ) {
 	if ( ! user.get() ) {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function( context, next ) {
-			var isValidSection = some( validSections, function( validPath ) {
+			const isValidSection = some( validSections, function( validPath ) {
 				return startsWith( context.path, validPath );
 			} );
 
@@ -341,8 +341,13 @@ function reduxStoreReady( reduxStore ) {
 
 			//see server/pages/index for prod redirect
 			if ( '/plans' === context.pathname ) {
-				// pricing page is outside of Calypso, needs a full page load
-				window.location = 'https://wordpress.com/pricing';
+				const queryFor = context.query && context.query.for;
+				if ( queryFor && 'jetpack' === queryFor ) {
+					window.location = 'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans';
+				} else {
+					// pricing page is outside of Calypso, needs a full page load
+					window.location = 'https://wordpress.com/pricing';
+				}
 				return;
 			}
 
