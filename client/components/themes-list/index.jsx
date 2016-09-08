@@ -40,7 +40,6 @@ export const ThemesList = React.createClass( {
 		translate: React.PropTypes.func,
 		showThemeUpload: React.PropTypes.bool,
 		themeUploadClickRecorder: React.PropTypes.func,
-		themeUploadShowRecorder: React.PropTypes.func,
 		onThemeUpload: React.PropTypes.func
 	},
 
@@ -54,7 +53,6 @@ export const ThemesList = React.createClass( {
 			themes: [],
 			showThemeUpload: false,
 			themeUploadClickRecorder: identity,
-			themeUploadShowRecorder: identity,
 			onThemeUpload: identity,
 			fetchNextPage() {},
 			optionsGenerator() {
@@ -111,7 +109,6 @@ export const ThemesList = React.createClass( {
 	},
 
 	renderThemeUploadBox() {
-		this.props.themeUploadShowRecorder();
 		this.props.themes.pop();
 		return (
 			<Card className="theme themes-list__upload-container">
@@ -148,9 +145,7 @@ export const ThemesList = React.createClass( {
 
 const mapDispatchToProps = dispatch => ( {
 	themeUploadClickRecorder: () =>
-		dispatch( recordTracksEvent( 'calypso_signup_theme_upload_click' ) ),
-	themeUploadShowRecorder: () =>
-		dispatch( recordTracksEvent( 'calypso_signup_theme_upload_show' ) )
+		dispatch( recordTracksEvent( 'calypso_signup_theme_upload_click' ) )
 } );
 
 export default connect( null, mapDispatchToProps )( localize( ThemesList ) );
