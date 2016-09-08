@@ -15,7 +15,7 @@ import { getSite } from 'state/reader/sites/selectors';
 import Card from 'components/card/compact';
 import Gravatar from 'components/gravatar';
 import FollowButton from 'reader/follow-button';
-import { getPostUrl } from 'reader/route';
+import { getPostUrl, getStreamUrl } from 'reader/route';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -28,15 +28,18 @@ function FeaturedImage( { image, href } ) {
 }
 
 function AuthorAndSiteFollow( { post, site } ) {
+	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
 	return (
 		<div className="reader-related-card-v2__meta">
-			<Gravatar user={ post.author } />
+			<a href={ siteUrl }>
+				<Gravatar user={ post.author } />
+			</a>
 			<div className="reader-related-card-v2__byline">
 				<span className="reader-related-card-v2__byline-author">
-					<a href="#" className="reader-related-card-v2__link">{ post.author.name }</a>
+					<a href={ siteUrl } className="reader-related-card-v2__link">{ post.author.name }</a>
 				</span>
 				<span className="reader-related-card-v2__byline-site">
-					<a href="#" className="reader-related-card-v2__link">{ site.title }</a>
+					<a href={ siteUrl } className="reader-related-card-v2__link">{ site.title }</a>
 				</span>
 			</div>
 			<FollowButton siteUrl={ post.site_URL } />
