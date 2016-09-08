@@ -19,7 +19,6 @@ var React = require( 'react' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
 	i18n = require( 'i18n-calypso' ),
-	isEmpty = require( 'lodash/isEmpty' ),
 	includes = require( 'lodash/includes' );
 
 /**
@@ -406,9 +405,9 @@ function reduxStoreReady( reduxStore ) {
 	 * make this unnecessary.
 	 */
 	page( '*', function( context, next ) {
-		const previousLayoutIsSingleTree = ! isEmpty(
-			document.getElementsByClassName( 'wp-singletree-layout' )
-		);
+		const previousLayoutIsSingleTree = document.getElementsByClassName(
+			'wp-singletree-layout'
+		).length;
 
 		const singleTreeSections = [ 'theme', 'themes' ];
 		const sectionName = getSectionName( context.store.getState() );
