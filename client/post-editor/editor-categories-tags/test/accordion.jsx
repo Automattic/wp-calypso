@@ -13,37 +13,31 @@ import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'EditorCategoriesTagsAccordion', function() {
-	let mount, common, tagStore, i18n, accordion, EditorCategoriesTagsAccordion;
+	let mount, i18n, accordion, EditorCategoriesTagsAccordion;
 
 	useMockery();
 	useFakeDom();
 
 	before( () => {
 		mockery.registerMock( 'post-editor/editor-term-selector', EmptyComponent );
-		mockery.registerMock( 'post-editor/editor-tags', EmptyComponent );
 		mockery.registerMock( 'components/info-popover', EmptyComponent );
 		mockery.registerMock( 'react-virtualized/VirtualScroll', EmptyComponent );
 
 		mount = require( 'enzyme' ).mount;
-		common = require( 'lib/terms/test/common' );
-		tagStore = require( 'lib/terms/tag-store' );
 		i18n = require( 'i18n-calypso' );
 
 		// require needs to be here in order for mocking of VirtualScroll to work
 		EditorCategoriesTagsAccordion = require ( 'post-editor/editor-categories-tags/accordion' ).EditorCategoriesTagsAccordion;
-
-		common.dispatchReceiveTagTerms();
 	} );
 
 	function render( postTerms = {} ) {
 		accordion = mount(
 			<EditorCategoriesTagsAccordion
-				site={ { ID: common.TEST_SITE_ID } }
+				site={ { ID: 777 } }
 				post={ {} }
 				postTerms={ postTerms }
 				postType="post"
-				translate={ i18n.translate }
-				tags={ tagStore.all( common.TEST_SITE_ID ) } />
+				translate={ i18n.translate } />
 		);
 	}
 
