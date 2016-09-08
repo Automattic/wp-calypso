@@ -4,11 +4,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'components/gridicon';
+import { sample } from 'lodash';
 
 import { recordTracksEvent } from 'state/analytics/actions';
 import store from 'store';
 import { localize } from 'i18n-calypso';
-import { getRandomPromo, getPromoLink } from './lib/promo-retriever';
 import { noop, identity } from 'lodash';
 
 export const AppPromo = React.createClass( {
@@ -84,7 +84,45 @@ export const AppPromo = React.createClass( {
 			</div>
 		);
 	}
+
+
 } );
+
+const promoOptions = [
+	{
+		promoCode: 'a0001',
+		message: 'WordPress.com your way — desktop app now available for Mac, Windows, and Linux.',
+		type: 'desktop',
+	},
+	{
+		promoCode: 'a0002',
+		message: 'Get WordPress.com app for your desktop.',
+		type: 'desktop'
+	},
+	{
+		promoCode: 'a0003',
+		message: 'WordPress.com app now available for desktop.',
+		type: 'desktop'
+	},
+	{
+		promoCode: 'a0005',
+		message: 'WordPress.com at your fingertips — download app for desktop.',
+		type: 'desktop'
+	},
+	{
+		promoCode: 'a0006',
+		message: 'WordPress.com in the palm of your hands — download app for mobile.',
+		type: 'mobile'
+	}
+];
+
+const getRandomPromo = () => sample( promoOptions );
+
+export const getPromoLink = ( location, promoDetails ) => {
+	const { type, promoCode } = promoDetails;
+
+	return `https://apps.wordpress.com/${ type }/?ref=promo_${ location }_${ promoCode }`;
+};
 
 AppPromo.defaultProps = {
 	promoItem: getRandomPromo(),
