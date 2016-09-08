@@ -1,6 +1,7 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
+import { getDomainType } from 'lib/domains/utils';
 
 export const createSiteDomainObject = domain => {
 	return {
@@ -30,6 +31,6 @@ export const createSiteDomainObject = domain => {
 		pendingRegistrationTime: String( domain.pending_registration_time ),
 		pointsToWpcom: Boolean( domain.points_to_wpcom ),
 		registrationDate: String( domain.registration_date ),
-		type: String( domain.type )
+		type: getDomainType( domain )
 	};
 };

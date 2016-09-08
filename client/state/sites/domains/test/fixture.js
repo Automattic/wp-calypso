@@ -43,7 +43,7 @@ export const DOMAIN_PRIMARY = {
 	isPrimary: true,
 	isPrivate: false,
 	registrationDate: 'March 9, 2016',
-	type: 'mapping',
+	type: 'MAPPED',
 	isWPCOMDomain: false
 };
 
@@ -75,7 +75,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	isPrimary: false,
 	isPrivate: false,
 	registrationDate: '',
-	type: 'wpcom',
+	type: 'WPCOM',
 	isWPCOMDomain: true
 };
 
