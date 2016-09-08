@@ -88,14 +88,10 @@ export const AppPromo = React.createClass( {
 
 AppPromo.defaultProps = {
 	promoItem: getRandomPromo(),
-	getPromoLink: ( location, promoCode ) => {
-		return getPromoLink( location, promoCode );
-	},
+	getPromoLink,
 	translate: identity,
 	recordTracksEvent: noop,
-	saveDismissal: ( ) => {
-		store.set( 'desktop_promo_disabled', true );
-	}
+	saveDismissal: ( ) => store.set( 'desktop_promo_disabled', true )
 };
 
 const mapDispatchToProps = ( dispatch ) => {
