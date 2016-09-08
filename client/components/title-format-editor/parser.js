@@ -171,7 +171,7 @@ const emptyBlockMap = {
  * @param {object} tokens available tokens, e.g. { siteName: 'Site Name', tagline: 'Tagline' }
  * @returns {string} translated chip name
  */
-const tokenTitle = ( type, tokens ) => get( tokens, type, '' );
+const tokenTitle = ( type, tokens ) => ` ${ get( tokens, type, '' ).trim() } `;
 
 /**
  * Creates a new entity reference for a blockMap
