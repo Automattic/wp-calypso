@@ -38,7 +38,7 @@ You may also need to add the module to the SSR pragma `IGNORED_MODULES` [list](h
 
 When you're satisfied that your component or library will render on the server, mark it and its dependencies as SSR-ready by inserting `/** @ssr-ready **/` at the top of the file. This will signal to the `PragmaChecker` webpack plugin that your file's dependencies should be checked. It also communicates to other developers that your code is going to be rendered on the server, so should be modified with care.
 
-If you know that your code will never be called on the server, instead of adding `/** @ssr-ready **/`, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/master/webpack.config.node.js).
+If you know that your code will never be called on the server, instead of adding `/** @ssr-ready **/`, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/master/webpack.config.node.js), and make the same change in the Desktop [config](https://github.com/Automattic/wp-desktop/blob/master/webpack.shared.js).
 
 ### I want to server-side render my components!
 
