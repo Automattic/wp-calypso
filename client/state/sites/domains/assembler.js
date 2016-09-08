@@ -12,7 +12,7 @@ export const createSiteDomainObject = domain => {
 		currentUserCanManage: Boolean( domain.current_user_can_manage ),
 		domain: String( domain.domain ),
 		expired: Boolean( domain.expired ),
-		expiry: String( domain.expiry ),
+		expiry: ! domain.expiry ? false : String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
 		googleAppsSubscription: Object( domain.google_apps_subscription ),
 		hasPrivateRegistration: Boolean( domain.has_private_registration ),

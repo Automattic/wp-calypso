@@ -1,5 +1,5 @@
 /**
- * Action types constantes
+ * Internal dependencies
  */
 import {
 	SITE_DOMAINS_RECEIVE,
@@ -7,6 +7,7 @@ import {
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE
 } from 'state/action-types';
+import { createSiteDomainObject } from 'state/sites/domains/assembler';
 
 // first testing-site ID
 export const SITE_ID_FIRST = 2916284;
@@ -64,11 +65,12 @@ export const DOMAIN_NOT_PRIMARY = {
 	},
 	hasPrivateRegistration: false,
 	hasRegistration: false,
-	hasZone: true,
+	hasZone: false,
 	isPendingIcannVerification: false,
 	manualTransferRequired: false,
 	newRegistration: false,
 	name: 'retronevergiveup.wordpress.me',
+	owner: typeof undefined,
 	partnerDomain: false,
 	pendingRegistration: false,
 	pendingRegistrationTime: '',
@@ -79,41 +81,8 @@ export const DOMAIN_NOT_PRIMARY = {
 	isWPCOMDomain: true
 };
 
-// first testing-site domains
-export const SITE_FIRST_DOMAINS = [
-	DOMAIN_PRIMARY
-];
-
-// second testing-site domains
-export const SITE_SECOND_DOMAINS = [
-	DOMAIN_NOT_PRIMARY
-];
-
 // WP REST-API error response
 export const ERROR_MESSAGE_RESPONSE = 'There was a problem fetching site domains. Please try again later or contact support.';
-
-// actions
-export const ACTION_SITE_DOMAIN_RECEIVE = {
-	type: SITE_DOMAINS_RECEIVE,
-	siteId: SITE_ID_FIRST,
-	domains: SITE_FIRST_DOMAINS
-};
-
-export const ACTION_SITE_DOMAIN_REQUEST = {
-	type: SITE_DOMAINS_REQUEST,
-	siteId: SITE_ID_FIRST
-};
-
-export const ACTION_SITE_DOMAIN_REQUEST_SUCCESS = {
-	type: SITE_DOMAINS_REQUEST_SUCCESS,
-	siteId: SITE_ID_FIRST
-};
-
-export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
-	type: SITE_DOMAINS_REQUEST_FAILURE,
-	siteId: SITE_ID_FIRST,
-	error: ERROR_MESSAGE_RESPONSE
-};
 
 export const REST_API_SITE_DOMAIN_FIRST = {
 	auto_renewal_date: 'February 7, 2017',
@@ -189,6 +158,39 @@ export const REST_API_RESPONSE = {
 export const REST_API_ERROR_RESPONSE = {
 	error: 'authorization_required',
 	message: 'User or Token does not have access to specified site.'
+};
+
+// first testing-site domains
+export const SITE_FIRST_DOMAINS = [
+	createSiteDomainObject( REST_API_SITE_DOMAIN_FIRST )
+];
+
+// second testing-site domains
+export const SITE_SECOND_DOMAINS = [
+	createSiteDomainObject( REST_API_SITE_DOMAIN_SECOND )
+];
+
+// actions
+export const ACTION_SITE_DOMAIN_RECEIVE = {
+	type: SITE_DOMAINS_RECEIVE,
+	siteId: SITE_ID_FIRST,
+	domains: SITE_FIRST_DOMAINS
+};
+
+export const ACTION_SITE_DOMAIN_REQUEST = {
+	type: SITE_DOMAINS_REQUEST,
+	siteId: SITE_ID_FIRST
+};
+
+export const ACTION_SITE_DOMAIN_REQUEST_SUCCESS = {
+	type: SITE_DOMAINS_REQUEST_SUCCESS,
+	siteId: SITE_ID_FIRST
+};
+
+export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
+	type: SITE_DOMAINS_REQUEST_FAILURE,
+	siteId: SITE_ID_FIRST,
+	error: ERROR_MESSAGE_RESPONSE
 };
 
 /**

@@ -20,7 +20,8 @@ import {
 import {
 	SITE_ID_FIRST as firstSiteId,
 	SITE_ID_SECOND as secondSiteId,
-	SITE_FIRST_DOMAINS as firstSiteDomains,
+	DOMAIN_PRIMARY,
+	DOMAIN_NOT_PRIMARY,
 	getStateInstance
 } from './fixture';
 
@@ -28,8 +29,14 @@ describe( 'selectors', () => {
 	describe( '#getDomainsBySite()', () => {
 		it( 'should return domains by site', () => {
 			const state = getStateInstance();
-			const domains = getDomainsBySite( state, { ID: firstSiteId } );
-			expect( domains ).to.eql( firstSiteDomains );
+
+			const firstDomains = getDomainsBySite( state, { ID: firstSiteId } );
+
+			expect( firstDomains ).to.eql( [ DOMAIN_PRIMARY ] );
+
+			const secondDomains = getDomainsBySite( state, { ID: secondSiteId } );
+
+			expect( secondDomains ).to.eql( [ DOMAIN_NOT_PRIMARY ] );
 		} );
 	} );
 
@@ -37,7 +44,7 @@ describe( 'selectors', () => {
 		it( 'should return domains by site id', () => {
 			const state = getStateInstance();
 			const domains = getDomainsBySiteId( state, firstSiteId );
-			expect( domains ).to.eql( firstSiteDomains );
+			expect( domains ).to.eql( [ DOMAIN_PRIMARY ] );
 		} );
 	} );
 
