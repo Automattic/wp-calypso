@@ -38,7 +38,6 @@ import userSettings from 'lib/user-settings';
 import AppPromo from 'components/app-promo';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import userUtils from 'lib/user/utils';
-import * as userAgentUtils from 'lib/user-agent-utils';
 import viewport from 'lib/viewport';
 import { localize } from 'i18n-calypso';
 
@@ -259,16 +258,16 @@ export const shouldRenderAppPromo = ( options = { } ) => {
 		isDesktopPromoDisabled = store.get( 'desktop_promo_disabled' ),
 		isViewportMobile = viewport.isMobile(),
 		isUserLocaleEnglish = 'en' === userUtils.getLocaleSlug(),
-		isChromeOS = userAgentUtils.isChromeOS(),
 		isDesktopPromoConfiguredToRun = config.isEnabled( 'desktop-promo' ),
-		isUserDesktopAppUser = userSettings.getSetting( 'is_desktop_app_user' )
+		isUserDesktopAppUser = userSettings.getSetting( 'is_desktop_app_user' ),
+		isUserOnChromeOS = /\bCrOS\b/.test( navigator.userAgent )
 	} = options;
 
 	return every( [
 		! isDesktopPromoDisabled,
 		isUserLocaleEnglish,
 		! isViewportMobile,
-		! isChromeOS,
+		! isUserOnChromeOS,
 		isDesktopPromoConfiguredToRun,
 		! isUserDesktopAppUser
 	] );

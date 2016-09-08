@@ -15,7 +15,7 @@ describe( 'ReaderSidebar', ( ) => {
 		isDesktopPromoDisabled: false,
 		isUserLocaleEnglish: true,
 		isViewportMobile: false,
-		isChromeOS: false,
+		isUserOnChromeOS: false,
 		isDesktopPromoConfiguredToRun: true,
 		isUserDesktopAppUser: false
 	};
@@ -61,7 +61,7 @@ describe( 'ReaderSidebar', ( ) => {
 			} );
 
 			it( 'should not render if it\'s ChromeOS', ( ) => {
-				expect( shouldRenderAppPromo( { ...shouldRenderAppPromoDefaultProps, isChromeOS: true } ) ).to.be.false;
+				expect( shouldRenderAppPromo( { ...shouldRenderAppPromoDefaultProps, isUserOnChromeOS: true } ) ).to.be.false;
 			} );
 
 			it( 'should not render if desktop promo isn\'t configured to run', ( ) => {
