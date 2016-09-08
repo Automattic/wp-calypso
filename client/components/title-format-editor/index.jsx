@@ -1,9 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import {
+	head,
 	map,
 	max,
-	min
+	min,
 } from 'lodash';
 
 // The following polyfills exist for the draft-js editor, since
@@ -122,6 +123,7 @@ export class TitleFormatEditor extends Component {
 		this.removeToken = this.removeToken.bind( this );
 		this.renderTokens = this.renderTokens.bind( this );
 		this.editorStateFrom = this.editorStateFrom.bind( this );
+		this.skipOverTokens = this.skipOverTokens.bind( this );
 
 		this.state = {
 			editorState: this.editorStateFrom( props ),
@@ -146,14 +148,80 @@ export class TitleFormatEditor extends Component {
 		);
 	}
 
-	updateEditor( editorState ) {
+	/**
+	 * Returns a new editorState that forces
+	 * selection to hop over tokens, preventing
+	 * navigating the cursor into a token
+	 *
+	 * @param {EditorState} editorState new state of editor after changes
+	 * @returns {EditorState} maybe filtered state for editor
+	 */
+	skipOverTokens( editorState ) {
+		const content = editorState.getCurrentContent();
+		const selection = editorState.getSelection();
+
+		// okay if we did not move the cursor
+		const before = this.state.editorState.getSelection();
+		const offset = selection.getFocusOffset();
+
+		if (
+			( before.getFocusKey() === selection.getFocusKey() ) &&
+			( before.getFocusOffset() === offset )
+		) {
+			return editorState;
+		}
+
+		const block = content.getBlockForKey( selection.getFocusKey() );
+		const direction = Math.sign( offset - before.getFocusOffset() );
+		const entityKey = block.getEntityAt( offset );
+
+		// okay if we are at the edges of the block
+		if ( 0 === offset || block.getLength() === offset ) {
+			return editorState;
+		}
+
+		// okay if we aren't in a token
+		if ( ! entityKey ) {
+			return editorState;
+		}
+
+		// get characters in entity
+		const indices = block
+			.getCharacterList()
+			.reduce( ( ids, value, key ) => {
+				return entityKey === value.entity
+					? [ ...ids, key ]
+					: ids;
+			}, [] );
+
+		// okay if cursor is at the spot
+		// right before the token
+		if ( offset === head( indices ) ) {
+			return editorState;
+		}
+
+		const outside = direction > 0
+			? Math.min( max( indices ) + 1, block.getLength() )
+			: Math.max( min( indices ), 0 );
+
+		return EditorState.forceSelection(
+			editorState,
+			selection
+				.set( 'anchorOffset', outside )
+				.set( 'focusOffset', outside )
+		);
+	}
+
+	updateEditor( rawEditorState ) {
 		const { onChange, type } = this.props;
-		const currentContent = editorState.getCurrentContent();
+		const currentContent = rawEditorState.getCurrentContent();
 
 		// limit to one line
 		if ( currentContent.getBlockMap().size > 1 ) {
 			return;
 		}
+
+		const editorState = this.skipOverTokens( rawEditorState );
 
 		this.setState(
 			{ editorState },
@@ -174,7 +242,7 @@ export class TitleFormatEditor extends Component {
 			const contentState = Modifier.replaceText(
 				editorState.getCurrentContent(),
 				currentSelection,
-				title,
+				` ${ title } `,
 				null,
 				tokenEntity
 			);
