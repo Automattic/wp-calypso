@@ -405,9 +405,9 @@ function reduxStoreReady( reduxStore ) {
 	 * make this unnecessary.
 	 */
 	page( '*', function( context, next ) {
-		const previousLayoutIsSingleTree = document.getElementsByClassName(
-			'wp-singletree-layout'
-		).length;
+		const previousLayoutIsSingleTree = !! (
+			document.getElementsByClassName( 'wp-singletree-layout' ).length
+		);
 
 		const singleTreeSections = [ 'theme', 'themes' ];
 		const sectionName = getSectionName( context.store.getState() );
