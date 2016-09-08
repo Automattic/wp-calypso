@@ -126,14 +126,18 @@ export class TitleFormatEditor extends Component {
 		this.skipOverTokens = this.skipOverTokens.bind( this );
 
 		this.state = {
-			editorState: this.editorStateFrom( props ),
+			editorState: EditorState.moveFocusToEnd(
+				this.editorStateFrom( props )
+			)
 		};
 	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.disabled && ! nextProps.disabled ) {
 			this.setState( {
-				editorState: this.editorStateFrom( nextProps )
+				editorState: EditorState.moveFocusToEnd(
+					this.editorStateFrom( nextProps )
+				)
 			} );
 		}
 	}
