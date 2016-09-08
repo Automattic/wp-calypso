@@ -414,7 +414,7 @@ const JetpackSSOForm = React.createClass( {
 									{
 										args: user.display_name,
 										components: {
-											strong: <strong className="jetpack-connect__sso-display-name"/>
+											strong: <strong className="jetpack-connect__sso-display-name" />
 										}
 									}
 								) }
