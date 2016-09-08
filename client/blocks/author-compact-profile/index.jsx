@@ -21,11 +21,13 @@ const AuthorCompactProfile = React.createClass( {
 		siteUrl: React.PropTypes.string,
 		followCount: React.PropTypes.number,
 		feedId: React.PropTypes.number,
-		siteId: React.PropTypes.number
+		siteId: React.PropTypes.number,
+		siteIcon: React.PropTypes.string,
+		feedIcon: React.PropTypes.string
 	},
 
 	render() {
-		const { author, siteName, siteUrl, followCount, feedId, siteId } = this.props;
+		const { author, siteIcon, feedIcon, siteName, siteUrl, followCount, feedId, siteId } = this.props;
 
 		if ( ! author ) {
 			return null;
@@ -40,7 +42,7 @@ const AuthorCompactProfile = React.createClass( {
 		return (
 			<div className={ classes }>
 				<a href={ streamUrl }>
-					<ReaderAvatar showGravatar={ true } />
+					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
 				</a>
 				{ ! hasMatchingAuthorAndSiteNames &&
 					<ReaderAuthorLink author={ author } siteUrl={ streamUrl }>{ author.name }</ReaderAuthorLink> }
