@@ -8,8 +8,8 @@ export const createSiteDomainObject = domain => {
 		autoRenewing: Boolean( domain.auto_renewing ),
 		blogId: Number( domain.blog_id ),
 		canSetAsPrimary: Boolean( domain.can_set_as_primary ),
+		currentUserCanManage: Boolean( domain.current_user_can_manage ),
 		domain: String( domain.domain ),
-		pointsToWpcom: Boolean( domain.points_to_wpcom ),
 		expired: Boolean( domain.expired ),
 		expiry: String( domain.expiry ),
 		expirySoon: Boolean( domain.expiry_soon ),
@@ -18,15 +18,18 @@ export const createSiteDomainObject = domain => {
 		hasRegistration: Boolean( domain.has_registration ),
 		hasZone: Boolean( domain.has_zone ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
+		isPrimary: Boolean( domain.primary_domain ),
+		isPrivate: Boolean( domain.private_domain ),
+		isWPCOMDomain: Boolean( domain.wpcom_domain ),
 		manualTransferRequired: Boolean( domain.manual_transfer_required ),
 		newRegistration: Boolean( domain.new_registration ),
+		name: String( domain.domain ),
+		owner: String( domain.owner ),
 		partnerDomain: Boolean( domain.partner_domain ),
 		pendingRegistration: Boolean( domain.pending_registration ),
 		pendingRegistrationTime: String( domain.pending_registration_time ),
-		isPrimary: Boolean( domain.primary_domain ),
-		isPrivate: Boolean( domain.private_domain ),
+		pointsToWpcom: Boolean( domain.points_to_wpcom ),
 		registrationDate: String( domain.registration_date ),
-		type: String( domain.type ),
-		isWPCOMDomain: Boolean( domain.wpcom_domain )
+		type: String( domain.type )
 	};
 };
