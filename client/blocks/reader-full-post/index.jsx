@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import config from 'config';
 import twemoji from 'twemoji';
+import { get } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -43,6 +44,8 @@ import PostExcerptLink from 'reader/post-excerpt-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import ReaderFullPostActionLinks from './action-links';
+import { state as SiteState } from 'lib/reader-site-store/constants';
+import PostStoreActions from 'lib/feed-post-store/actions';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -55,10 +58,24 @@ export class FullPostView extends React.Component {
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
 		this.parseEmoji();
+
+		// Send page view
+		this.hasSentPageView = false;
+		this.hasLoaded = false;
+		this.attemptToSendPageView();
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate( prevProps ) {
 		this.parseEmoji();
+
+		// Send page view if applicable
+		if ( get( prevProps, 'post.ID' ) !== get( this.props, 'post.ID' ) ||
+			get( prevProps, 'feed.ID' ) !== get( this.props, 'feed.ID' ) ||
+			get( prevProps, 'site.ID' ) !== get( this.props, 'site.ID' ) ) {
+			this.hasSentPageView = false;
+			this.hasLoaded = false;
+			this.attemptToSendPageView();
+		}
 	}
 
 	componentWillUnmount() {
@@ -92,6 +109,22 @@ export class FullPostView extends React.Component {
 		twemoji.parse( this.refs.article, {
 			base: config( 'twemoji_cdn_url' )
 		} );
+	}
+
+	attemptToSendPageView() {
+		const { post, site } = this.props;
+
+		if ( post && post._state !== 'pending' &&
+			site && site.state === SiteState.COMPLETE &&
+			! this.hasSentPageView ) {
+			PostStoreActions.markSeen( post );
+			this.hasSentPageView = true;
+		}
+
+		if ( ! this.hasLoaded && post && post._state !== 'pending' ) {
+			recordTrackForPost( 'calypso_reader_article_opened', post );
+			this.hasLoaded = true;
+		}
 	}
 
 	render() {
