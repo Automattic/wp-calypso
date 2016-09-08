@@ -87,7 +87,7 @@ export default React.createClass( {
 					<p className="pressable-theme__copy">{ this.translate( 'We\'ve partnered with Pressable, a top-notch WordPress hosting provider, to make setting up your WordPress site with your own theme a snap.' ) }</p>
 
 					<LoggedOutFormFooter>
-						<FormLabel className="pressable-theme__form-label" for="email">{ this.translate( 'Start by entering your email address:' ) }</FormLabel>
+						<FormLabel className="pressable-theme__form-label" htmlFor="email">{ this.translate( 'Start by entering your email address:' ) }</FormLabel>
 						<div className="pressable-theme__form-fields">
 							<FormTextInput ref={ this.onEmailInputRef } isError={ this.state.error } isValid={ this.state.isValid } onChange={ this.onEmailChange } className="pressable-theme__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
 							<FormButton className="pressable-theme__form-submit">{ this.translate( 'Get started on Pressable' ) } <Gridicon icon="external" size={ 12 } /></FormButton>
