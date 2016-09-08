@@ -4,8 +4,7 @@
 import debugModule from 'debug';
 import React from 'react';
 import i18n from 'i18n-calypso';
-
-const debug = debugModule( 'calypso:community-translator' );
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +15,8 @@ import User from 'lib/user';
 import userSettings from 'lib/user-settings';
 import { isMobile } from 'lib/viewport';
 import analytics from 'lib/analytics';
+
+const debug = debugModule( 'calypso:community-translator' );
 
 const user = new User(),
 	communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
@@ -165,7 +166,7 @@ const communityTranslatorJumpstart = {
 			translationDataFromPage.pluralForms;
 		translationDataFromPage.currentUserId = user.data.ID;
 
-		const currentLocale = languages.find( lang => lang.langSlug === localeCode );
+		const currentLocale = find( languages, lang => lang.langSlug === localeCode );
 		if ( currentLocale ) {
 			translationDataFromPage.languageName = currentLocale.name.replace( /^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/, '' );
 		}
