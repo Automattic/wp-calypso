@@ -82,6 +82,13 @@ module.exports = React.createClass( {
 		);
 	},
 
+	scrollUp() {
+		// Didn't use setInterval in order to fix delayed scroll
+		while ( window.pageYOffset > 0 ) {
+			window.scrollBy( 0, -10 );
+		}
+	},
+
 	handleStoreBackClick() {
 		this.setState( {
 			showPressable: false
