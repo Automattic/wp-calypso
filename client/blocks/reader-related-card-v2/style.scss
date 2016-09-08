@@ -11,7 +11,7 @@ $breakpoint-small: "( max-width: 535px )";
 	&.is-same-site {
 
 		.reader-related-card-v2__meta {
-			display: none;
+			display: none !important;
 		}
 
 		.reader-related-card-v2__featured-image {
