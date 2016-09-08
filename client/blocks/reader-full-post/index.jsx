@@ -247,7 +247,7 @@ export class FullPostFluxContainer extends React.Component {
 				fetchFeed( post.feed_ID );
 			}
 		}
-		if ( post && post.site_ID ) {
+		if ( post && post.site_ID && ! post.is_external ) {
 			site = SiteStore.get( post.site_ID );
 			if ( ! site ) {
 				fetchSite( post.site_ID );
