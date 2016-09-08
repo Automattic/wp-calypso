@@ -35,7 +35,7 @@ import QueryReaderLists from 'components/data/query-reader-lists';
 import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
-import AppPromo from 'components/app-promo';
+import AppPromo from 'blocks/app-promo';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import userUtils from 'lib/user/utils';
 import viewport from 'lib/viewport';
@@ -238,7 +238,7 @@ export const ReaderSidebar = React.createClass( {
 			</SidebarRegion>
 
 			{ this.props.shouldRenderAppPromo &&
-				<div className="reader-sidebar__AppPromo">
+				<div className="sidebar__app-promo">
 					<AppPromo location="reader" locale={ userUtils.getLocaleSlug() } />
 				</div>
 			}

@@ -1,7 +1,13 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 
+/**
+ * Internal dependencies
+ */
 import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'AppPromo', ( ) => {
@@ -15,7 +21,7 @@ describe( 'AppPromo', ( ) => {
 
 	let AppPromo;
 	let AppPromoComponent;
-	let getPromoLink
+	let getPromoLink;
 	const defaultPropsToRender = {
 		location: 'reader',
 		promoItem: appPromoDetails,
@@ -33,10 +39,10 @@ describe( 'AppPromo', ( ) => {
 		it( 'should render the primary components', ( ) => {
 			const wrapper = shallow( AppPromoComponent );
 
-			expect( wrapper.find( '.app-promo' ) ).to.have.lengthOf( 1 );
-			expect( wrapper.find( '.app-promo__dismiss' ) ).to.have.lengthOf( 1 );
-			expect( wrapper.find( '.app-promo__screen-reader-text' ) ).to.have.lengthOf( 1 );
-			expect( wrapper.find( '.app-promo__icon' ) ).to.have.lengthOf( 1 );
+			expect( wrapper ).to.have.descendants( '.app-promo' );
+			expect( wrapper ).to.have.descendants( '.app-promo__dismiss' );
+			expect( wrapper ).to.have.descendants( '.app-promo__screen-reader-text' );
+			expect( wrapper ).to.have.descendants( '.app-promo__icon' );
 		} );
 
 		it( 'should render the promo text', ( ) => {
@@ -50,9 +56,9 @@ describe( 'AppPromo', ( ) => {
 
 			const promoLink = wrapper.find( '.app-promo__link' );
 			expect( promoLink ).to.have.lengthOf( 1 );
-			expect( promoLink.props().href ).to.equal( appPromoLink );
+			expect( promoLink ).to.have.prop( 'href' ).equal( appPromoLink );
 		} );
-	});
+	} );
 
 	context( 'getPromoLink', ( ) => {
 		const mobilePromo = {
