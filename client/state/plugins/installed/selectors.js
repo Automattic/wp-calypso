@@ -3,6 +3,16 @@ import forEach from 'lodash/forEach';
 import values from 'lodash/values';
 import sortBy from 'lodash/sortBy';
 import find from 'lodash/find';
+import uniq from 'lodash/uniq';
+import compact from 'lodash/compact';
+import omit from 'lodash/omit';
+import every from 'lodash/every';
+
+import JetpackSite from 'lib/site/jetpack';
+import Site from 'lib/site';
+import sitesFactory from 'lib/sites-list';
+
+const sitesList = sitesFactory();
 
 const _filters = {
 	none: function() {
@@ -65,7 +75,7 @@ const getPlugins = function( state, sites, pluginFilter = false ) {
 	if ( !! pluginFilter && _filters[ pluginFilter ] ) {
 		pluginList = filter( pluginList, _filters[ pluginFilter ] );
 	}
-	return values( sortBy( pluginList, item => item.slug.toLocaleLowerCase() ) );
+	return values( sortBy( pluginList, item => item.slug.toLowerCase() ) );
 };
 
 const getPluginsWithUpdates = function( state, sites ) {
@@ -76,9 +86,49 @@ const getPluginsWithUpdates = function( state, sites ) {
 	return filter( pluginList, _filters.updates );
 };
 
-const getPluginOnSite = function( state, site, pluginId ) {
+const getPluginOnSite = function( state, site, pluginSlug ) {
 	const pluginList = getPlugins( state, [ site ] );
-	return find( pluginList, { id: pluginId } ) || false;
+	return find( pluginList, { slug: pluginSlug } ) || false;
+};
+
+const getSitesWithPlugin = function( state, sites, pluginSlug ) {
+	const pluginList = getPlugins( state, sites );
+	const plugin = find( pluginList, { slug: pluginSlug } );
+	if ( 'undefined' === typeof plugin ) {
+		return [];
+	}
+
+	const pluginSites = uniq( compact(
+		plugin.sites.map( function( site ) {
+			// we create a copy of the site to avoid any possible modification down the line affecting the main list
+			const pluginSite = site.jetpack
+				? new JetpackSite( sitesList.getSite( site.ID ) )
+				: new Site( sitesList.getSite( site.ID ) );
+			pluginSite.plugin = omit( plugin, 'site' );
+			if ( site.visible ) {
+				return pluginSite;
+			}
+		} )
+	) );
+
+	return sortBy( pluginSites, item => item.title.toLowerCase() );
+};
+
+const getSitesWithoutPlugin = function( state, sites, pluginSlug ) {
+	const installedOnSites = getSitesWithPlugin( state, sites, pluginSlug ) || [];
+	return filter( sites, function( site ) {
+		if ( ! site.visible ) {
+			return false;
+		}
+
+		if ( site.jetpack && site.isSecondaryNetworkSite() ) {
+			return false;
+		}
+
+		return every( installedOnSites, function( installedOnSite ) {
+			return installedOnSite.slug !== site.slug;
+		} );
+	} );
 };
 
 const getLogsForPlugin = function( state, siteId, pluginId ) {
@@ -103,6 +153,8 @@ export default {
 	getPlugins,
 	getPluginsWithUpdates,
 	getPluginOnSite,
+	getSitesWithPlugin,
+	getSitesWithoutPlugin,
 	getLogsForPlugin,
 	isPluginDoingAction
 };
