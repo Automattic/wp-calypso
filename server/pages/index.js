@@ -318,7 +318,12 @@ module.exports = function() {
 
 		app.get( '/plans', function( req, res, next ) {
 			if ( ! req.cookies.wordpress_logged_in ) {
-				res.redirect( 'https://wordpress.com/pricing' );
+				const queryFor = req.query && req.query.for;
+				if ( queryFor && 'jetpack' === queryFor ) {
+					res.redirect( 'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans' );
+				} else {
+					res.redirect( 'https://wordpress.com/pricing' );
+				}
 			} else {
 				next();
 			}
