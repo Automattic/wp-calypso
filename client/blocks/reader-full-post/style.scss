@@ -97,6 +97,7 @@
 	@include breakpoint( "<660px" ) {
 		flex-direction: row;
 		margin-top: 20px;
+		margin-bottom: 20px;
 
 		.reader-avatar {
 			flex: 1;
@@ -104,12 +105,16 @@
 			.site-icon {
 				height: 32px!important;
 				width: 32px!important;
+				line-height: 32px!important;
+				font-size: 32px!important;
 
 				.gridicon {
 
 					@include breakpoint( "<660px" ) {
 						height: 32px!important;
 						width: 32px!important;
+						line-height: 32px!important;
+						font-size: 32px!important;
 					}
 				}
 			}
