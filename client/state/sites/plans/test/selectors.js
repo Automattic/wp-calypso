@@ -8,14 +8,14 @@ import { expect } from 'chai';
  */
 import {
 	getSitePlan,
-	getPlanRawPrice,
+	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 	getPlanRawDiscount,
 	getPlansBySite,
 	getPlansBySiteId,
 	hasDomainCredit,
 	isRequestingSitePlans,
-	isPlanDiscounted
+	isSitePlanDiscounted
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -171,8 +171,8 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanRawPrice( state, 77203074, 'bronze' );
-			expect( discountPrice ).to.equal( 199 );
+			const rawPrice = getSitePlanRawPrice( state, 77203074, 'bronze' );
+			expect( rawPrice ).to.equal( 199 );
 		} );
 		it( 'should return a monthly price', () => {
 			const plans = {
@@ -200,8 +200,8 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanRawPrice( state, 77203074, 'bronze', { isMonthly: true } );
-			expect( discountPrice ).to.equal( 16.58 );
+			const rawPrice = getSitePlanRawPrice( state, 77203074, 'bronze', { isMonthly: true } );
+			expect( rawPrice ).to.equal( 16.58 );
 		} );
 		it( 'should return raw price, if no discount is available', () => {
 			const plans = {
@@ -229,8 +229,8 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = getPlanRawPrice( state, 77203074, 'silver', { isMonthly: false } );
-			expect( discountPrice ).to.equal( 199 );
+			const rawPrice = getSitePlanRawPrice( state, 77203074, 'silver', { isMonthly: false } );
+			expect( rawPrice ).to.equal( 199 );
 		} );
 	} );
 	describe( '#getPlanDiscountedRawPrice()', () => {
@@ -498,7 +498,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = isPlanDiscounted( state, 77203074, 'silver' );
+			const discountPrice = isSitePlanDiscounted( state, 77203074, 'silver' );
 			expect( discountPrice ).to.equal( false );
 		} );
 		it( 'should return true, if discount is available', () => {
@@ -527,8 +527,8 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = isPlanDiscounted( state, 77203074, 'bronze' );
-			expect( discountPrice ).to.equal( true );
+			const isDiscounted = isSitePlanDiscounted( state, 77203074, 'bronze' );
+			expect( isDiscounted ).to.equal( true );
 		} );
 		it( 'should return null, if plan is unknown', () => {
 			const plans = {
@@ -556,8 +556,8 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			const discountPrice = isPlanDiscounted( state, 77203074, 'diamond' );
-			expect( discountPrice ).to.equal( null );
+			const isDiscounted = isSitePlanDiscounted( state, 77203074, 'diamond' );
+			expect( isDiscounted ).to.equal( null );
 		} );
 	} );
 } );
