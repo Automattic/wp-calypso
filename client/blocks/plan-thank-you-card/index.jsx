@@ -32,7 +32,7 @@ class PlanThankYouCard extends Component {
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="plan-thank-you-card">
-				{ siteId && <QuerySites siteId={ siteId } /> }
+				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				<div className="plan-thank-you-card__header">
 					<Gridicon className="plan-thank-you-card__main-icon" icon="checkmark-circle" size={ 140 } />
