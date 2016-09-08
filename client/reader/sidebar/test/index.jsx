@@ -2,7 +2,6 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 import { stub } from 'sinon';
-import mockery from 'mockery';
 
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
@@ -25,10 +24,12 @@ describe( 'ReaderSidebar', ( ) => {
 	};
 
 	useFakeDom();
-	useMockery();
+
+	useMockery( ( mockery ) => {
+		mockery.registerMock( 'component-closest', stub() );
+	} );
 
 	before( ( ) => {
-		mockery.registerMock( 'component-closest', stub() );
 		shouldRenderAppPromo = require( '..' ).shouldRenderAppPromo;
 		ReaderSidebar = require( '..' ).ReaderSidebar;
 	} );

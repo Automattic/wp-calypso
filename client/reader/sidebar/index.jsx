@@ -260,14 +260,14 @@ export const shouldRenderAppPromo = ( options = { } ) => {
 		isUserLocaleEnglish = 'en' === userUtils.getLocaleSlug(),
 		isDesktopPromoConfiguredToRun = config.isEnabled( 'desktop-promo' ),
 		isUserDesktopAppUser = userSettings.getSetting( 'is_desktop_app_user' ),
-		isUserOnChromeOS = /\bCrOS\b/.test( navigator.userAgent )
+		isUserOnChromeOs = /\bCrOS\b/.test( navigator.userAgent )
 	} = options;
 
 	return every( [
 		! isDesktopPromoDisabled,
 		isUserLocaleEnglish,
 		! isViewportMobile,
-		! isUserOnChromeOS,
+		! isUserOnChromeOs,
 		isDesktopPromoConfiguredToRun,
 		! isUserDesktopAppUser
 	] );
