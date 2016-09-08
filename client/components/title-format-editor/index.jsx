@@ -216,7 +216,7 @@ export class TitleFormatEditor extends Component {
 		);
 	}
 
-	updateEditor( rawEditorState ) {
+	updateEditor( rawEditorState, { doFocus = false } = {} ) {
 		const { onChange, type } = this.props;
 		const currentContent = rawEditorState.getCurrentContent();
 
@@ -230,7 +230,7 @@ export class TitleFormatEditor extends Component {
 		this.setState(
 			{ editorState },
 			() => {
-				editorState.getLastChangeType() === 'add-token' && this.focusEditor();
+				doFocus && this.focusEditor();
 				onChange( type.value, fromEditor( currentContent ) );
 			}
 		);
@@ -255,7 +255,7 @@ export class TitleFormatEditor extends Component {
 				editorState,
 				contentState,
 				'add-token'
-			) );
+			), { doFocus: true } );
 		};
 	}
 
