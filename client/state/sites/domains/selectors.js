@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { moment } from 'i18n-calypso';
+
+/**
  * Return site domains getting from state object and
  * the given siteId
  *
@@ -41,3 +46,31 @@ export const isRequestingSiteDomains = ( state, siteId ) => {
 	const { requesting } = state.sites.domains;
 	return requesting[ siteId ] || false;
 };
+
+/**
+ * Returns decorated site domains with objects we don't want to store in Redux state tree.
+ *
+ * @param  {Object}         state global state
+ * @param  {Number}  siteId the site id
+ * @return {Object|null}    decorated site domains
+ */
+export function getDecoratedSiteDomains( state, siteId ) {
+	const domains = getDomainsBySiteId( state, siteId );
+
+	if ( ! domains ) {
+		return null;
+	}
+
+	return domains.map( domain => {
+		const decoratedDomain = { ...domain };
+
+		// Add registration moment from registrationDate
+		decoratedDomain.registrationMoment = domain.registrationDate &&
+			moment( domain.registrationDate, 'MMMM D, YYYY', 'en' ).locale( false );
+
+		// Add expiration moment from expiry
+		decoratedDomain.expirationMoment = domain.expiry && moment( domain.expiry );
+
+		return decoratedDomain;
+	} );
+}

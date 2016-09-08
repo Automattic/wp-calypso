@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { moment } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -9,7 +10,8 @@ import { expect } from 'chai';
 import {
 	getDomainsBySite,
 	getDomainsBySiteId,
-	isRequestingSiteDomains
+	isRequestingSiteDomains,
+	getDecoratedSiteDomains
 } from '../selectors';
 
 /**
@@ -46,6 +48,32 @@ describe( 'selectors', () => {
 			expect( isRequestingSiteDomains( state, firstSiteId ) ).to.equal( false );
 			expect( isRequestingSiteDomains( state, secondSiteId ) ).to.equal( true );
 			expect( isRequestingSiteDomains( state, 'unknown' ) ).to.equal( false );
+		} );
+	} );
+
+	describe( '#decorateSiteDomains()', () => {
+		it( 'should return decorated site domains with registrationMoment', () => {
+			const state = getStateInstance(),
+				domains = getDomainsBySiteId( state, firstSiteId );
+
+			const decoratedDomains = getDecoratedSiteDomains( state, firstSiteId );
+
+			const domainRegistrationMoment = moment(
+				domains[ 0 ].registrationDate, 'MMMM D, YYYY', 'en'
+			).locale( false );
+
+			expect( decoratedDomains[ 0 ].registrationMoment.date() ).to.equal( domainRegistrationMoment.date() );
+		} );
+
+		it( 'should return decorated site domains with expirationMoment', () => {
+			const state = getStateInstance(),
+				domains = getDomainsBySiteId( state, firstSiteId );
+
+			const decoratedDomains = getDecoratedSiteDomains( state, firstSiteId );
+
+			const domainExpirationMoment = moment( domains[ 0 ].expiry );
+
+			expect( decoratedDomains[ 0 ].registrationMoment.date() ).to.equal( domainExpirationMoment.date() );
 		} );
 	} );
 } );
