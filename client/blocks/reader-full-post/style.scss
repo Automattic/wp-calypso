@@ -158,6 +158,15 @@
 	}
 }
 
+// For posts without a title
+.reader-full-post__header.is-missing-title {
+	margin-top: 60px;
+
+	.reader-full-post__header-meta {
+		margin-bottom: 20px;
+	}
+}
+
 .reader-full-post__header-title {
 	clear: none;
 	color: $gray-dark;
