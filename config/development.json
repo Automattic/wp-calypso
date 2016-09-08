@@ -111,7 +111,7 @@
 		"post-editor-github-link": false,
 		"post-editor/image-editor": true,
 		"post-editor/insert-menu": true,
-		"post-editor/media-advanced": true,
+		"post-editor/media-advanced": false,
 		"press-this": true,
 		"push-notifications": true,
 		"reader": true,
