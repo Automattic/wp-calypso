@@ -47,6 +47,7 @@ import ReaderFullPostActionLinks from './action-links';
 import { state as SiteState } from 'lib/reader-site-store/constants';
 import PostStoreActions from 'lib/feed-post-store/actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
+import { getStreamUrlFromPost } from 'reader/route';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -204,7 +205,13 @@ export class FullPostView extends React.Component {
 
 						{ showRelatedPosts &&
 							<RelatedPostsFromSameSite siteId={ post.site_ID } postId={ post.ID }
-								title={ translate( 'More in %s', { args: [ siteName ] } ) }
+								title={
+									translate( 'More in {{ siteLink /}}', {
+										components: {
+											siteLink: ( <a href={ getStreamUrlFromPost( post ) }>{ siteName }</a> )
+										}
+									} )
+								}
 								className="is-same-site" />
 						}
 
