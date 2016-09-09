@@ -116,6 +116,24 @@
 	color: lighten( $gray, 20% );
 }
 
+.survey__other {
+	margin: 0 auto 2em;
+	position: relative;
+	max-width: 500px;
+}
+
+.survey__other-button {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+}
+
+.survey__other-copy {
+	text-align: center;
+	color: lighten( $gray, 20% );
+	padding-top: 0.5em;
+}
+
 @keyframes survey__vertical-chevron-wiggle {
 	0% {
 		transform: none;

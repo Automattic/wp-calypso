@@ -12,6 +12,7 @@ import analytics from 'lib/analytics';
 import verticals from './verticals';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
+import TextInput from 'components/forms/form-text-input';
 
 export default React.createClass( {
 	displayName: 'SurveyStepV2',
@@ -35,7 +36,13 @@ export default React.createClass( {
 
 	renderVertical( vertical ) {
 		return (
-			<Button className="survey__vertical" onClick={ this.handleNextStep }>
+			<Button
+				className="survey__vertical"
+				key={ vertical.value }
+				data-value={ vertical.value }
+				data-label={ vertical.label }
+				onClick={ this.handleNextStep }
+			>
 				<span className="survey__vertical-label">{ vertical.label }</span>
 				<Gridicon className="survey__vertical-chevron" icon="chevron-right" />
 			</Button>
@@ -43,7 +50,19 @@ export default React.createClass( {
 	},
 
 	renderOther() {
-		return 'Other';
+		return (
+			<div className="survey__other">
+				<TextInput className="survey__other-text-input" placeholder={ this.translate( 'Please describe what your site is about' ) } />
+				<Button className="survey__other-button" primary compact
+					data-value="a8c.24"
+					data-label="Uncategorized"
+					onClick={ this.handleNextStep }
+				>
+					{ this.translate( 'Continue' ) }
+				</Button>
+				<p className="survey__other-copy">{ this.translate( 'e.g. ’yoga’, ‘classic cars’' ) }</p>
+			</div>
+		);
 	},
 
 	renderOptionList() {
@@ -79,17 +98,17 @@ export default React.createClass( {
 		} );
 	},
 
-	handleNextStep( vertical ) {
-		const { value, label } = vertical;
+	handleNextStep( e ) {
+		const { value, label } = e.target.dataset;
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
 		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
-			category_label: label
+			category_label: label,
 		} );
 		SignupActions.submitSignupStep(
 			{ stepName: this.props.stepName },
 			[],
-			{ surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value }
+			{ surveySiteType: this.props.surveySiteType, surveyQuestion: value }
 		);
 		this.props.goToNextStep();
 	}
