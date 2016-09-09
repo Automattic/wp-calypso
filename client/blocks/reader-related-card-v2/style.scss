@@ -1,7 +1,7 @@
 // Custom breakpoints needed to match original design
 
-$breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
-$breakpoint-small: "( max-width: 535px )";
+$reader-related-card-v2-breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
+$reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__link-block {
 	cursor: pointer;
@@ -9,11 +9,11 @@ $breakpoint-small: "( max-width: 535px )";
 	flex-direction: column;
 	position: relative;
 
-	@media #{$breakpoint-small} {
+	@media #{$reader-related-card-v2-breakpoint-small} {
 		flex-direction: row;
 	}
 
-	@media #{$breakpoint-medium} {
+	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-direction: row;
 	}
 }
@@ -47,7 +47,7 @@ $breakpoint-small: "( max-width: 535px )";
 	margin: 0;
 	padding: 0;
 
-	@media #{$breakpoint-medium} {
+	@media #{$reader-related-card-v2-breakpoint-medium} {
 		flex-direction: column;
 	}
 
@@ -55,7 +55,7 @@ $breakpoint-small: "( max-width: 535px )";
 		flex-direction: row;
 	}
 
-	@media #{$breakpoint-small} {
+	@media #{$reader-related-card-v2-breakpoint-small} {
 		flex-direction: column;
 	}
 }
@@ -84,11 +84,11 @@ $breakpoint-small: "( max-width: 535px )";
 	&:first-child,
 	&:last-child {
 
-		@media #{$breakpoint-medium} {
+		@media #{$reader-related-card-v2-breakpoint-medium} {
 			margin: 0 0 20px 0;
 		}
 
-		@media #{$breakpoint-small} {
+		@media #{$reader-related-card-v2-breakpoint-small} {
 			margin: 0 0 20px 0;
 		}
 
@@ -112,7 +112,7 @@ $breakpoint-small: "( max-width: 535px )";
 		flex-direction: column;
 	}
 
-	@media #{$breakpoint-medium} {
+	@media #{$reader-related-card-v2-breakpoint-medium} {
 		display: flex;
 		flex-direction: column;
 	}
@@ -130,11 +130,11 @@ $breakpoint-small: "( max-width: 535px )";
 		max-height: none;
 		overflow: hidden;
 
-		@media #{$breakpoint-medium} {
+		@media #{$reader-related-card-v2-breakpoint-medium} {
 			display: flex;
 		}
 
-		@media #{$breakpoint-small} {
+		@media #{$reader-related-card-v2-breakpoint-small} {
 			display: flex;
 		}
 
@@ -151,14 +151,14 @@ $breakpoint-small: "( max-width: 535px )";
 
 		.reader-related-card-v2__meta {
 
-			@media #{$breakpoint-medium} {
+			@media #{$reader-related-card-v2-breakpoint-medium} {
 				margin-top: -4px;
 				position: absolute;
 				right: 0;
 				width: calc( 100% - 28% );
 			}
 
-			@media #{$breakpoint-small}  {
+			@media #{$reader-related-card-v2-breakpoint-small}  {
 				margin-top: -4px;
 				position: absolute;
 				right: 0;
@@ -175,11 +175,11 @@ $breakpoint-small: "( max-width: 535px )";
 
 		.reader-related-card-v2__site-info {
 
-			@media #{$breakpoint-small} {
+			@media #{$reader-related-card-v2-breakpoint-small} {
 				flex: 3;
 			}
 
-			@media #{$breakpoint-medium} {
+			@media #{$reader-related-card-v2-breakpoint-medium} {
 				flex: 3;
 			}
 		}
@@ -216,11 +216,11 @@ $breakpoint-small: "( max-width: 535px )";
 				max-height: 240px;
 			}
 
-			@media #{$breakpoint-medium} {
+			@media #{$reader-related-card-v2-breakpoint-medium} {
 				max-height: 120px;
 			}
 
-			@media #{$breakpoint-small} {
+			@media #{$reader-related-card-v2-breakpoint-small} {
 				max-height: 120px;
 			}
 		}
@@ -232,11 +232,11 @@ $breakpoint-small: "( max-width: 535px )";
 
 			.reader-related-card-v2__site-info {
 
-				@media #{$breakpoint-small} {
+				@media #{$reader-related-card-v2-breakpoint-small} {
 					margin-top: 50px;
 				}
 
-				@media #{$breakpoint-medium} {
+				@media #{$reader-related-card-v2-breakpoint-medium} {
 					margin-top: 50px;
 				}
 			}
@@ -252,11 +252,11 @@ $breakpoint-small: "( max-width: 535px )";
 
 		.reader-related-card-v2__post {
 
-			@media #{$breakpoint-medium} {
+			@media #{$reader-related-card-v2-breakpoint-medium} {
 				max-height: 150px;
 			}
 
-			@media #{$breakpoint-small} {
+			@media #{$reader-related-card-v2-breakpoint-small} {
 				max-height: 150px;
 			}
 		}
@@ -267,11 +267,11 @@ $breakpoint-small: "( max-width: 535px )";
 
 		.reader-related-card-v2__featured-image {
 
-			@media #{$breakpoint-medium} {
+			@media #{$reader-related-card-v2-breakpoint-medium} {
 				margin: 0 15px 0 0;
 			}
 
-			@media #{$breakpoint-small} {
+			@media #{$reader-related-card-v2-breakpoint-small} {
 				margin: 0 15px 0 0;
 			}
 		}
@@ -368,13 +368,13 @@ $breakpoint-small: "( max-width: 535px )";
 	display: block;
 	height: 80px;
 
-    @media #{$breakpoint-small} {
+    @media #{$reader-related-card-v2-breakpoint-small} {
     	flex: 1;
     	height: auto;
     	margin: 0 15px 0 0;
     }
 
-    @media #{$breakpoint-medium} {
+    @media #{$reader-related-card-v2-breakpoint-medium} {
     	height: auto;
     	flex: 1;
     	margin: 0 15px 0 0;
@@ -393,11 +393,11 @@ $breakpoint-small: "( max-width: 535px )";
 	line-height: 1.4;
 	margin-bottom: 10px;
 
-	@media #{$breakpoint-medium} {
+	@media #{$reader-related-card-v2-breakpoint-medium} {
 		font-size: 16px;
 	}
 
-	@media #{$breakpoint-small} {
+	@media #{$reader-related-card-v2-breakpoint-small} {
 		font-size: 16px;
 	}
 }
@@ -420,11 +420,11 @@ $breakpoint-small: "( max-width: 535px )";
 		-webkit-box-orient: vertical;
 		max-height: none;
 
-		@media #{$breakpoint-medium} {
+		@media #{$reader-related-card-v2-breakpoint-medium} {
 			font-size: 14px;
 		}
 
-		@media #{$breakpoint-small} {
+		@media #{$reader-related-card-v2-breakpoint-small} {
 			font-size: 14px;
 		}
     }
