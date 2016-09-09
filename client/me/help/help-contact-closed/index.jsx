@@ -41,8 +41,7 @@ export default localize( ( props ) => {
 			</p>
 			<HelpContactClosedDetail icon="help">
 				{ translate(
-					'The {{link}}forums{{/link}} remain open and staffed during this time, ' +
-					'and you can post a support request using the form below.', {
+					'The {{link}}forums{{/link}} remain open and staffed during this time.', {
 						components: {
 							link: <a href="https://forums.wordpress.com/" target="_blank" rel="noopener noreferrer" />
 						}
