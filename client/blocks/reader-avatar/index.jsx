@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { startsWith } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,21 +37,32 @@ const ReaderAvatar = React.createClass( {
 			};
 		}
 
-		const hasBothIcons = !! ( siteIcon && author.has_avatar );
+		const hasSiteIcon = !! siteIcon;
+		let hasAvatar = !! author.has_avatar;
+
+		if ( hasSiteIcon && hasAvatar ) {
+			// do these both reference the same image? disregard querystring params.
+			const [ withoutQuery, ] = siteIcon.split( '?' );
+			if ( startsWith( author.avatar_URL, withoutQuery ) ) {
+				hasAvatar = false;
+			}
+		}
+
+		const hasBothIcons = hasSiteIcon && hasAvatar;
 
 		const classes = classnames(
 			'reader-avatar',
 			{
 				'has-site-and-author-icon': hasBothIcons,
-				'has-site-icon': !! siteIcon,
-				'has-gravatar': !! author.has_avatar
+				'has-site-icon': hasSiteIcon,
+				'has-gravatar': hasAvatar
 			}
 		);
 
 		return (
 			<div className={ classes }>
-				{ fakeSite && <SiteIcon size={ 96 } site={ fakeSite } /> }
-				{ author.has_avatar && <Gravatar user={ author } size={ hasBothIcons ? 32 : 96 } /> }
+				{ hasSiteIcon && <SiteIcon size={ 96 } site={ fakeSite } /> }
+				{ hasAvatar && <Gravatar user={ author } size={ hasBothIcons ? 32 : 96 } /> }
 			</div>
 		);
 	}
