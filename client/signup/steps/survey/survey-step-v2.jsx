@@ -30,7 +30,8 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			shouldShowOther: false,
-			verticalList: verticals.get()
+			otherWriteIn: '',
+			verticalList: verticals.get(),
 		};
 	},
 
@@ -52,9 +53,12 @@ export default React.createClass( {
 	renderOther() {
 		return (
 			<div className="survey__other">
-				<TextInput className="survey__other-text-input"
-					placeholder={ this.translate( 'Please describe what your site is about' ) } />
+				<TextInput className="survey__other-write-in"
+					placeholder={ this.translate( 'Please describe what your site is about' ) }
+					onChange={ this.handleOtherWriteIn }
+					ref={ ( input ) => input && input.focus() } />
 				<Button className="survey__other-button" primary compact
+					disabled={ this.state.otherWriteIn.length === 0 }
 					data-value="a8c.24"
 					data-label="Uncategorized"
 					onClick={ this.handleNextStep }
@@ -93,6 +97,12 @@ export default React.createClass( {
 		);
 	},
 
+	handleOtherWriteIn( e ) {
+		this.setState( {
+			otherWriteIn: e.target.value
+		} );
+	},
+
 	handleOther() {
 		this.setState( {
 			shouldShowOther: true
@@ -105,6 +115,7 @@ export default React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
 			category_label: label,
+			category_write_in: ( this.state.otherWriteIn.length !== 0 ? this.state.otherWriteIn : undefined ),
 		} );
 		SignupActions.submitSignupStep(
 			{ stepName: this.props.stepName },
