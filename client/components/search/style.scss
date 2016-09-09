@@ -18,6 +18,7 @@
 		display: flex;
 		align-items: center;
 		background-color: $white;
+		border-radius: inherit;
 		height: 100%;
 	}
 
@@ -78,6 +79,7 @@
 	z-index: z-index( '.search', '.search__input' );
 	top: 0;
 	border: none;
+	border-radius: inherit;
 	height: 100%;
 	background: $white;
 	appearance: none;
@@ -120,13 +122,16 @@
 		flex: 1 1 auto;
 		height: 100%;
 		position: relative;
+		border-radius: inherit;
 		&::before {
 			@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
+			border-radius: inherit;
 		}
 
 		&.ltr { /*rtl:ignore*/
 			&::before {
 				@include long-content-fade( $direction: right, $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
+				border-radius: inherit;
 			}
 		}
 	}
