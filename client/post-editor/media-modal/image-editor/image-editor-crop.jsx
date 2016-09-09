@@ -37,7 +37,11 @@ const MediaModalImageEditorCrop = React.createClass( {
 			heightRatio: React.PropTypes.number,
 		} ),
 		aspectRatio: React.PropTypes.string,
-		imageEditorCrop: React.PropTypes.func
+		imageEditorCrop: React.PropTypes.func,
+		minCropSize: React.PropTypes.shape( {
+			width: React.PropTypes.number,
+			height: React.PropTypes.number
+		} )
 	},
 
 	getDefaultProps() {
@@ -49,7 +53,11 @@ const MediaModalImageEditorCrop = React.createClass( {
 				bottomBound: 100,
 				rightBound: 100,
 			},
-			imageEditorCrop: noop
+			imageEditorCrop: noop,
+			minCropSize: {
+				width: 50,
+				height: 50
+			}
 		};
 	},
 
@@ -151,30 +159,86 @@ const MediaModalImageEditorCrop = React.createClass( {
 	},
 
 	onTopLeftDrag( x, y ) {
+		const { right, bottom } = this.state;
+		const { minCropSize } = this.props;
+
+		let top = y,
+			left = x;
+
+		if ( right - left <= minCropSize.width	) {
+			left = right - minCropSize.width;
+		}
+
+		if ( bottom - top <= minCropSize.height ) {
+			top = bottom - minCropSize.height;
+		}
+
 		this.updateCrop( {
-			top: y,
-			left: x
+			top,
+			left
 		} );
 	},
 
 	onTopRightDrag( x, y ) {
+		const { left, bottom } = this.state;
+		const { minCropSize } = this.props;
+
+		let top = y,
+			right = x;
+
+		if ( right - left <= minCropSize.width	) {
+			right = left + minCropSize.width;
+		}
+
+		if ( bottom - top <= minCropSize.height ) {
+			top = bottom - minCropSize.height;
+		}
+
 		this.updateCrop( {
-			top: y,
-			right: x
+			top,
+			right
 		} );
 	},
 
 	onBottomRightDrag( x, y ) {
+		const { left, top } = this.state;
+		const { minCropSize } = this.props;
+
+		let bottom = y,
+			right = x;
+
+		if ( right - left <= minCropSize.width	) {
+			right = left + minCropSize.width;
+		}
+
+		if ( bottom - top <= minCropSize.height ) {
+			bottom = top + minCropSize.height;
+		}
+
 		this.updateCrop( {
-			bottom: y,
-			right: x
+			bottom,
+			right
 		} );
 	},
 
 	onBottomLeftDrag( x, y ) {
+		const { right, top } = this.state;
+		const { minCropSize } = this.props;
+
+		let bottom = y,
+			left = x;
+
+		if ( right - left <= minCropSize.width	) {
+			left = right - minCropSize.width;
+		}
+
+		if ( bottom - top <= minCropSize.height ) {
+			bottom = top + minCropSize.height;
+		}
+
 		this.updateCrop( {
-			bottom: y,
-			left: x
+			bottom,
+			left
 		} );
 	},
 
