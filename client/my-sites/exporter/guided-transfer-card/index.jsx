@@ -65,11 +65,11 @@ class GuidedTransferCard extends Component {
 							{ translate( 'Guided Transfer' ) }
 						</h1>
 						<h2 className="guided-transfer-card__subtitle">
-							<span className="guided-transfer-card__price">
-								{ cost }
-							</span>
-							&nbsp;
-							{ translate( 'One-time expense' ) }
+							{ translate( '{{cost/}} One-time expense', {
+								components: {
+									cost: <span className="guided-transfer-card__price">{ cost }</span>
+								}
+							} ) }
 						</h2>
 					</div>
 					<div className="guided-transfer-card__options-header-button-container">
