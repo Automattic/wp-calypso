@@ -102,8 +102,8 @@ module.exports = {
 	paidNuxStreamlined: {
 		datestamp: '20160912',
 		variations: {
-			original: 100,
-			streamlined: 0,
+			original: 50,
+			streamlined: 50,
 		},
 		defaultVariation: 'original',
 	},
