@@ -128,7 +128,7 @@ export class FullPostView extends React.Component {
 	}
 
 	render() {
-		const { post, site } = this.props;
+		const { post, site, feed } = this.props;
 		const siteName = siteNameFromSiteAndPost( site, post );
 		const classes = { 'reader-full-post': true };
 		if ( post.site_ID ) {
@@ -150,12 +150,14 @@ export class FullPostView extends React.Component {
 					<div className="reader-full-post__sidebar">
 						{ post.author &&
 							<AuthorCompactProfile
-							author={ post.author }
-							siteName={ post.site_name }
-							siteUrl= { post.site_URL }
-							followCount={ site && site.subscribers_count }
-							feedId={ +post.feed_ID }
-							siteId={ +post.site_ID } />
+								author={ post.author }
+								siteIcon={ get( site, 'icon.img' ) }
+								feedIcon={ get( feed, 'image' ) }
+								siteName={ post.site_name }
+								siteUrl= { post.site_URL }
+								followCount={ site && site.subscribers_count }
+								feedId={ +post.feed_ID }
+								siteId={ +post.site_ID } />
 						}
 						{ shouldShowComments( post ) &&
 							<CommentButton key="comment-button"

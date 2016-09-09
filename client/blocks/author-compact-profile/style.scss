@@ -1,8 +1,10 @@
 .author-compact-profile {
 	font-size: 14px;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
 
-	.gravatar {
-		display: flex;
+	.gravatar, .site-icon {
 		margin: auto;
 	}
 
