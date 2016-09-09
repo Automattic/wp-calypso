@@ -21,15 +21,16 @@ import { key } from './utils';
 export const items = createReducer( {}, {
 	[ READER_RELATED_POSTS_RECEIVE ]: ( state, action ) => {
 		state = assign( {}, state, {
-			[ key( action.payload.siteId, action.payload.postId ) ]: map( action.payload.posts, 'global_ID' )
+			[ key( action.payload.siteId, action.payload.postId, action.payload.scope ) ]: map( action.payload.posts, 'global_ID' )
 		} );
 		return state;
 	}
 } );
 
 function setRequestFlag( val, state, action ) {
+	const { siteId, postId, scope } = action.payload;
 	return assign( {}, state, {
-		[ key( action.payload.siteId, action.payload.postId ) ]: val
+		[ key( siteId, postId, scope ) ]: val
 	} );
 }
 

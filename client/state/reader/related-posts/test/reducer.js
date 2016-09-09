@@ -28,13 +28,13 @@ describe( 'items', () => {
 				]
 			}
 		} ) ).to.deep.equal( {
-			'1-1': [ 2, 3, 4 ]
+			'1-1-all': [ 2, 3, 4 ]
 		} );
 	} );
 
 	it( 'should overwrite existing posts', () => {
 		expect( items( {
-			'1-1': [ 2, 3, 4 ]
+			'1-1-all': [ 2, 3, 4 ]
 		}, {
 			type: READER_RELATED_POSTS_RECEIVE,
 			payload: {
@@ -47,7 +47,7 @@ describe( 'items', () => {
 				]
 			}
 		} ) ).to.deep.equal( {
-			'1-1': [ 3, 4, 9 ]
+			'1-1-all': [ 3, 4, 9 ]
 		} );
 	} );
 } );
@@ -61,13 +61,13 @@ describe( 'queuedRequests', () => {
 				postId: 1
 			}
 		} ) ).to.deep.equal( {
-			'1-1': true
+			'1-1-all': true
 		} );
 	} );
 
 	it( 'request success should unset the flag', () => {
 		expect( queuedRequests( {
-			'1-1': true
+			'1-1-all': true
 		}, {
 			type: READER_RELATED_POSTS_REQUEST_SUCCESS,
 			payload: {
@@ -75,7 +75,7 @@ describe( 'queuedRequests', () => {
 				postId: 1
 			}
 		} ) ).to.deep.equal( {
-			'1-1': false
+			'1-1-all': false
 		} );
 	} );
 
@@ -87,7 +87,7 @@ describe( 'queuedRequests', () => {
 				postId: 1
 			}
 		} ) ).to.deep.equal( {
-			'1-1': false
+			'1-1-all': false
 		} );
 	} );
 } );

@@ -55,7 +55,8 @@ describe( 'actions', () => {
 				type: READER_RELATED_POSTS_REQUEST,
 				payload: {
 					siteId: 1,
-					postId: 1
+					postId: 1,
+					scope: 'all'
 				}
 			} );
 		} );
@@ -67,6 +68,7 @@ describe( 'actions', () => {
 					payload: {
 						siteId: 1,
 						postId: 1,
+						scope: 'all',
 						posts: {
 							ID: 1,
 							global_ID: 1,
@@ -83,7 +85,8 @@ describe( 'actions', () => {
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
 					payload: {
 						siteId: 1,
-						postId: 1
+						postId: 1,
+						scope: 'all'
 					}
 				} );
 			} );
@@ -109,7 +112,8 @@ describe( 'actions', () => {
 				type: READER_RELATED_POSTS_REQUEST,
 				payload: {
 					siteId: 1,
-					postId: 1
+					postId: 1,
+					scope: 'all'
 				}
 			} );
 		} );
@@ -122,6 +126,7 @@ describe( 'actions', () => {
 						payload: {
 							siteId: 1,
 							postId: 1,
+							scope: 'all',
 							error: sinon.match.instanceOf( Error )
 						},
 						error: true
