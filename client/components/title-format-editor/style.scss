@@ -1,5 +1,10 @@
 .title-format-editor {
 	margin-bottom: 20px;
+
+	.public-DraftStyleDefault-block.public-DraftStyleDefault-ltr {
+		overflow: scroll;
+		white-space: nowrap;
+	}
 }
 
 .title-format-editor__header {
