@@ -58,7 +58,7 @@ export const DOMAIN_NOT_PRIMARY = {
 	domain: 'retronevergiveup.wordpress.me',
 	pointsToWpcom: true,
 	expired: false,
-	expiry: false,
+	expiry: null,
 	expirySoon: false,
 	googleAppsSubscription: {
 		status: 'no_subscription'
