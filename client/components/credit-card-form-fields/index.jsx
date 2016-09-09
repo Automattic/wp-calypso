@@ -29,7 +29,8 @@ const CreditCardFormFields = React.createClass( {
 			name: fieldName,
 			onBlur: this.handleFieldChange,
 			onChange: this.handleFieldChange,
-			value: this.getFieldValue( fieldName )
+			value: this.getFieldValue( fieldName ),
+			autoComplete: 'off'
 		} ) );
 	},
 
