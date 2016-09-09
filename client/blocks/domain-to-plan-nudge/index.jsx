@@ -21,7 +21,7 @@ import { storedCardPayment } from 'lib/store-transactions';
 import { getStoredCards } from 'state/stored-cards/selectors';
 import QueryStoredCards from 'components/data/query-stored-cards';
 import { emptyCart } from 'lib/cart-values';
-import { add } from 'lib/cart-values/cart-items';
+import { add as addCartItem } from 'lib/cart-values/cart-items';
 import { submitTransaction } from 'lib/upgrades/actions/checkout';
 import PlanPrice from 'my-sites/plan-price';
 import PlanIcon from 'components/plans/plan-icon';
@@ -159,7 +159,7 @@ class DomainToPlanNudge extends Component {
 		let cart = emptyCart( siteId, { temporary: true } );
 
 		const personalCartItem = this.getCartItem();
-		cart = add( personalCartItem )( cart );
+		cart = addCartItem( personalCartItem )( cart );
 
 		debug( 'purchasing with', cart, transaction );
 
