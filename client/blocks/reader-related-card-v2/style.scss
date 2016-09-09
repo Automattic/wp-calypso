@@ -61,7 +61,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .reader-related-card-v2__list-item {
-    flex-basis: 0;
+	flex-basis: 0;
 	flex-grow: 1;
 	list-style-type: none;
 
@@ -368,17 +368,17 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	display: block;
 	height: 80px;
 
-    @media #{$reader-related-card-v2-breakpoint-small} {
-    	flex: 1;
-    	height: auto;
-    	margin: 0 15px 0 0;
-    }
+	@media #{$reader-related-card-v2-breakpoint-small} {
+		flex: 1;
+		height: auto;
+		margin: 0 15px 0 0;
+	}
 
-    @media #{$reader-related-card-v2-breakpoint-medium} {
-    	height: auto;
-    	flex: 1;
-    	margin: 0 15px 0 0;
-    }
+	@media #{$reader-related-card-v2-breakpoint-medium} {
+		height: auto;
+		flex: 1;
+		margin: 0 15px 0 0;
+	}
 }
 
 .reader-related-card-v2__title,
@@ -403,16 +403,16 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .reader-related-card-v2__excerpt {
-    line-height: 1.6;
+	line-height: 1.6;
 
-    &::after {
-    	@include long-content-fade( $size: 20% );
-    	height: 22px;
-    	top: inherit;
-    }
+	&::after {
+	@include long-content-fade( $size: 20% );
+		height: 22px;
+		top: inherit;
+	}
 
-    &.post-excerpt {
-    	font-size: 16px;
+	&.post-excerpt {
+		font-size: 16px;
 		overflow : hidden;
 		text-overflow: ellipsis;
 		display: -webkit-box;
@@ -427,5 +427,5 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		@media #{$reader-related-card-v2-breakpoint-small} {
 			font-size: 14px;
 		}
-    }
+	}
 }
