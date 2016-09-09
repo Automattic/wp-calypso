@@ -17,7 +17,7 @@ import accept from 'lib/accept';
 import { updatePreviewWithChanges } from 'lib/design-preview';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
-import { getSiteOption } from 'state/sites/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
 import { getPreviewMarkup, getPreviewCustomizations, isPreviewUnsaved } from 'state/preview/selectors';
 import { closePreview } from 'state/ui/preview/actions';
 import DesignMenu from 'blocks/design-menu';
@@ -204,7 +204,7 @@ export default function designPreview( WebPreview ) {
 		return {
 			selectedSite,
 			selectedSiteId,
-			selectedSiteUrl: getSiteOption( state, selectedSiteId, 'unmapped_url' ),
+			selectedSiteUrl: 'https://' + getSiteSlug( state, selectedSiteId ),
 			previewUrl: getPreviewUrl( state ),
 			previewMarkup: getPreviewMarkup( state, selectedSiteId ),
 			customizations: getPreviewCustomizations( state, selectedSiteId ),
