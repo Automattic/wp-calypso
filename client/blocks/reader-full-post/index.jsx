@@ -48,6 +48,7 @@ import { state as SiteState } from 'lib/reader-site-store/constants';
 import PostStoreActions from 'lib/feed-post-store/actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
 import { getStreamUrlFromPost } from 'reader/route';
+import { CANONICAL_IN_CONTENT } from 'state/reader/posts/display-types';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -178,6 +179,12 @@ export class FullPostView extends React.Component {
 					</div>
 					<article className="reader-full-post__story" ref="article">
 						<ReaderFullPostHeader post={ post } />
+
+						{ post.featured_image && ( ! ( post.display_type & CANONICAL_IN_CONTENT ) ) &&
+							<div className="reader-full-post__featured-image">
+									<img src={ post.featured_image } />
+							</div>
+						}
 						{ post.use_excerpt
 							? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 							: <EmbedContainer>
