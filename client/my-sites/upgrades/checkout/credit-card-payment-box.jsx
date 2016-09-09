@@ -30,7 +30,7 @@ var CreditCardPaymentBox = React.createClass( {
 		var cart = this.props.cart;
 
 		return (
-			<form onSubmit={ this.props.onSubmit }>
+			<form autoComplete="off" onSubmit={ this.props.onSubmit }>
 				<CreditCardSelector
 					cards={ this.props.cards }
 					countriesList={ this.props.countriesList }
