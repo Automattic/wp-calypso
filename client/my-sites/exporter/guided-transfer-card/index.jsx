@@ -17,6 +17,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getProductDisplayCost } from 'state/products-list/selectors';
 import InfoPopover from 'components/info-popover';
+import SUPPORT_URLS from 'lib/url/support';
 
 const Feature = ( { children } ) =>
 	<li className="guided-transfer-card__feature-list-item">
@@ -91,7 +92,7 @@ class GuidedTransferCard extends Component {
 							'one of our hosting partners.', { components: { strong: <strong /> } }
 						) }
 						<br />
-						<a href="https://en.support.wordpress.com/guided-transfer/" >
+						<a href={ SUPPORT_URLS.GUIDED_TRANSFER } >
 							{ translate( 'Learn more.' ) }
 						</a>
 					</div>
@@ -101,7 +102,7 @@ class GuidedTransferCard extends Component {
 						<Feature>
 							{ translate( 'Switch your domain over {{link}}and more!{{/link}}', {
 								components: {
-									link: <a href="https://en.support.wordpress.com/guided-transfer/" />
+									link: <a href={ SUPPORT_URLS.GUIDED_TRANSFER } />
 								}
 							} ) }
 						</Feature>
