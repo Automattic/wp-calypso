@@ -53,10 +53,22 @@ class DomainToPlanNudge extends Component {
 	}
 
 	static propTypes = {
+		discountedRawPrice: PropTypes.number,
+		errorNotice: PropTypes.func,
 		hasFreePlan: PropTypes.bool,
+		infoNotice: PropTypes.func,
+		productId: PropTypes.number,
+		productSlug: PropTypes.string,
+		rawDiscount: PropTypes.number,
+		rawPrice: PropTypes.number,
+		recordTracksEvent: PropTypes.func,
+		removeNotice: PropTypes.func,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
-		translate: PropTypes.func
+		sitePlans: PropTypes.array,
+		storedCard: PropTypes.object,
+		translate: PropTypes.func,
+		userCurrency: PropTypes.string
 	};
 
 	isSiteEligible() {
@@ -307,21 +319,21 @@ export default connect(
 			productId = plansList[ PLAN_PERSONAL ].getProductId();
 
 		return {
-			siteId,
-			productSlug,
-			productId,
+			discountedRawPrice: getPlanDiscountedRawPrice( state, siteId, productSlug ),
 			hasFreePlan: isCurrentSitePlan(
 				state,
 				siteId,
 				plansList[ PLAN_FREE ].getProductId()
 			),
-			storedCard: get( getStoredCards( state ), '0' ),
-			site: getSite( state, siteId ),
-			userCurrency: getCurrentUserCurrencyCode( state ), //populated by either plans endpoint
-			rawPrice: getPlanRawPrice( state, productId ),
-			discountedRawPrice: getPlanDiscountedRawPrice( state, siteId, productSlug ),
+			productId,
+			productSlug,
 			rawDiscount: getPlanRawDiscount( state, siteId, productSlug ),
-			sitePlans: getPlansBySiteId( state, siteId )
+			rawPrice: getPlanRawPrice( state, productId ),
+			site: getSite( state, siteId ),
+			siteId,
+			sitePlans: getPlansBySiteId( state, siteId ),
+			storedCard: get( getStoredCards( state ), '0' ),
+			userCurrency: getCurrentUserCurrencyCode( state ) //populated by either plans endpoint
 		};
 	},
 	{
