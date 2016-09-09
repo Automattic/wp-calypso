@@ -28,7 +28,8 @@ export default React.createClass( {
 	},
 
 	buildReviewUrl( ratingTier ) {
-		return `https://wordpress.org/support/plugin/${ this.props.slug }/reviews/?filter=${ ratingTier }`;
+		const { slug } = this.props;
+		return `https://wordpress.org/support/plugin/${ slug }/reviews/?filter=${ ratingTier }`;
 	},
 
 	renderPlaceholder() {
@@ -43,23 +44,25 @@ export default React.createClass( {
 	},
 
 	renderRatingTier( ratingTier ) {
-		const numberOfRatings = ( this.props.ratings && this.props.ratings[ ratingTier ] ) ? this.props.ratings[ ratingTier ] : 0;
+		const { ratings, slug, numRatings } = this.props;
+		const numberOfRatings = ( ratings && ratings[ ratingTier ] ) ? ratings[ ratingTier ] : 0;
+
 		return (
 			<div className="plugin-ratings__rating-tier" key={ `plugins-ratings__tier-${ ratingTier }` }>
 				<a className="plugin-ratings__rating-container" target="_blank" rel="noopener noreferrer"
-					onClick={ analytics.ga.recordEvent( 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', this.props.slug ) }
+					onClick={ analytics.ga.recordEvent( 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', slug ) }
 					href={ this.buildReviewUrl( ratingTier ) }
 				>
 					<span className="plugin-ratings__rating-tier-text">
 						{
 							this.translate( '%(ratingTier)s stars', {
-								args: { ratingTier: ratingTier }
+								args: { ratingTier }
 							} )
 						}
 					</span>
 					<span className="plugin_ratings__bar">
 						<ProgressBar value={ numberOfRatings }
-							total={ this.props.numRatings }
+							total={ numRatings }
 							title={ this.translate( '%(numberOfRatings)s ratings', { args: { numberOfRatings } } ) }
 						/>
 					</span>
@@ -90,11 +93,13 @@ export default React.createClass( {
 	},
 
 	render() {
-		if ( this.props.placeholder ) {
+		const { placeholder, ratings, rating, numRatings } = this.props;
+
+		if ( placeholder ) {
 			return this.renderPlaceholder();
 		}
 
-		if ( ! this.props.ratings ) {
+		if ( ! ratings ) {
 			return null;
 		}
 
@@ -102,12 +107,12 @@ export default React.createClass( {
 		return (
 			<div className="plugin-ratings">
 				<div className="plugin-ratings__rating-stars">
-					<Rating rating={ this.props.rating } />
+					<Rating rating={ rating } />
 				</div>
 				<div className="plugin-ratings__rating-text">
 					{ this.translate( 'Based on %(ratingsNumber)s rating', 'Based on %(ratingsNumber)s ratings', {
-						count: this.props.numRatings,
-						args: { ratingsNumber: this.props.numRatings }
+						count: numRatings,
+						args: { ratingsNumber: numRatings }
 					} ) }
 				</div>
 				{ tierViews }
