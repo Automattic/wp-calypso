@@ -62,7 +62,8 @@ const Search = React.createClass( {
 		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
 		fitsContainer: PropTypes.bool,
 		maxLength: PropTypes.number,
-		hideClose: PropTypes.bool
+		hideClose: PropTypes.bool,
+		styleContent: PropTypes.func,
 	},
 
 	getInitialState: function() {
@@ -89,7 +90,8 @@ const Search = React.createClass( {
 			isOpen: false,
 			dir: undefined,
 			fitsContainer: false,
-			hideClose: false
+			hideClose: false,
+			styleContent: noop,
 		};
 	},
 
@@ -331,6 +333,7 @@ const Search = React.createClass( {
 						maxLength={ this.props.maxLength }
 						{ ...autocorrect }
 					/>
+					<div className="search__styled-content">{ this.props.styleContent( searchValue ) }</div>
 				</div>
 				{ this.closeButton() }
 			</div>
