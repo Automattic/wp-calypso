@@ -46,7 +46,7 @@
 	z-index: z-index( '.dialog__backdrop', '.editor-media-modal-image-editor__canvas' );
 
 	&.is-placeholder {
-		@include placeholder();
+		@include placeholder-dark();
 	}
 }
 
