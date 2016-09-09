@@ -393,7 +393,7 @@ function recordOrderInCriteo( cart, orderId ) {
 		return;
 	}
 
-	recordInCriteo( 'viewBasket', {
+	recordInCriteo( 'trackTransaction', {
 		id: orderId,
 		currency: cart.currency,
 		item: cartToCriteoItems( cart )
