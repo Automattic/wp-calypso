@@ -84,6 +84,7 @@
 		"reader": true,
 		"reader/related-posts": true,
 		"reader/search": true,
+		"reader/refresh-2016-07": true,
 		"resume-editing": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
