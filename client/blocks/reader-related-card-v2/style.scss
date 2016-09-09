@@ -404,6 +404,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__excerpt {
     line-height: 1.6;
+	word-break: break-word;
 
     &::after {
     	@include long-content-fade( $size: 20% );
