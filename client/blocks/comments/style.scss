@@ -327,7 +327,7 @@ a.comments__comment-username {
 }
 
 .comments__info-bar {
-	margin-right: 24px;
+	margin: 0 24px -24px 0;
 	overflow: auto;
 
 	&.is-no-comments {

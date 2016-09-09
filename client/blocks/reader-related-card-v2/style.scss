@@ -3,69 +3,11 @@
 $breakpoint-medium: "( min-width: 661px ) and ( max-width: 730px )";
 $breakpoint-small: "( max-width: 535px )";
 
-.reader-related-card-v2__blocks {
-	border-top: 1px solid lighten( $gray, 20% );
-	margin-top: 12px;
-	padding-top: 11px;
-
-	&.is-same-site {
-
-		.reader-related-card-v2__meta {
-			display: none !important;
-		}
-
-		.reader-related-card-v2__featured-image {
-			margin: 0 0 19px;
-		}
-	}
-
-	&.is-other-site {
-
-		.has-thumbnail {
-
-			.reader-related-card-v2__site-info {
-
-				@media #{$breakpoint-small} {
-					margin-top: 50px;
-				}
-
-				@media #{$breakpoint-medium} {
-					margin-top: 50px;
-				}
-			}
-		}
-
-		.reader-related-card-v2 {
-			margin-top: -5px;
-		}
-
-		.reader-related-card-v2__featured-image {
-			margin: 4px 0 19px;
-		}
-	}
-
-	&.is-same-site,
-	&.is-other-site {
-
-		.reader-related-card-v2__featured-image {
-
-			@media #{$breakpoint-medium} {
-				margin: 0 15px 0 0;
-			}
-
-			@media #{$breakpoint-small} {
-				margin: 0 15px 0 0;
-			}
-		}
-	}
-}
-
 .reader-related-card-v2__link-block {
 	cursor: pointer;
 	display: flex;
 	flex-direction: column;
 	position: relative;
-	/*z-index: z-index( '.reader-related-card-v2__featured-image', '.reader-related-card-v2__site-info' );*/
 
 	@media #{$breakpoint-small} {
 		flex-direction: row;
@@ -154,6 +96,10 @@ $breakpoint-small: "( max-width: 535px )";
 			margin: 0 0 20px 0;
 		}
 	}
+
+	&:only-child {
+		margin: 0;
+	}
 }
 
 .reader-related-card-v2.card.is-compact {
@@ -227,30 +173,6 @@ $breakpoint-small: "( max-width: 535px )";
 			}
 		}
 
-		.reader-related-card-v2__post {
-			max-height: 200px;
-
-			@include breakpoint( "<960px" ) {
-				max-height: 245px;
-			}
-
-			@media #{$breakpoint-medium} {
-				max-height: 170px;
-			}
-
-			@media #{$breakpoint-small} {
-				max-height: 170px;
-			}
-
-			&::after {
-				@include long-content-fade( $size: 20% );
-				bottom: 0;
-				height: 22px;
-				top: inherit;
-				visibility: visible;
-			}
-		}
-
 		.reader-related-card-v2__site-info {
 
 			@media #{$breakpoint-small} {
@@ -268,6 +190,101 @@ $breakpoint-small: "( max-width: 535px )";
 
 		.reader-related-card-v2__excerpt {
 			font-size: 14px;
+		}
+	}
+}
+
+.reader-related-card-v2__blocks {
+	border-top: 1px solid lighten( $gray, 20% );
+	margin-top: 12px;
+	padding-top: 11px;
+
+	&.is-same-site {
+
+		.reader-related-card-v2__meta {
+			display: none !important;
+		}
+
+		.reader-related-card-v2__featured-image {
+			margin: 0 0 19px;
+		}
+
+		.reader-related-card-v2__post {
+			max-height: 200px;
+
+			@include breakpoint( "<960px" ) {
+				max-height: 240px;
+			}
+
+			@media #{$breakpoint-medium} {
+				max-height: 120px;
+			}
+
+			@media #{$breakpoint-small} {
+				max-height: 120px;
+			}
+		}
+	}
+
+	&.is-other-site {
+
+		.has-thumbnail {
+
+			.reader-related-card-v2__site-info {
+
+				@media #{$breakpoint-small} {
+					margin-top: 50px;
+				}
+
+				@media #{$breakpoint-medium} {
+					margin-top: 50px;
+				}
+			}
+		}
+
+		.reader-related-card-v2 {
+			margin-top: -5px;
+		}
+
+		.reader-related-card-v2__featured-image {
+			margin: 4px 0 19px;
+		}
+
+		.reader-related-card-v2__post {
+
+			@media #{$breakpoint-medium} {
+				max-height: 150px;
+			}
+
+			@media #{$breakpoint-small} {
+				max-height: 150px;
+			}
+		}
+	}
+
+	&.is-same-site,
+	&.is-other-site {
+
+		.reader-related-card-v2__featured-image {
+
+			@media #{$breakpoint-medium} {
+				margin: 0 15px 0 0;
+			}
+
+			@media #{$breakpoint-small} {
+				margin: 0 15px 0 0;
+			}
+		}
+
+		.reader-related-card-v2__post {
+
+			&::after {
+				@include long-content-fade( $size: 30% );
+				bottom: 0;
+				height: 22px;
+				top: inherit;
+				visibility: visible;
+			}
 		}
 	}
 }
@@ -304,18 +321,8 @@ $breakpoint-small: "( max-width: 535px )";
 	overflow: hidden;
 	position: relative;
 
-	@media ( min-width: 961px ) and ( max-width: 1000px ) {
-
-		&::after {
-			@include long-content-fade( $size: 20% );
-		}
-	}
-
-	@include breakpoint( "<960px" ) {
-
-		&::after {
-			@include long-content-fade( $size: 20% );
-		}
+	&::after {
+		@include long-content-fade( $size: 15% );
 	}
 }
 

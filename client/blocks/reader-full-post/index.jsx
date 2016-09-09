@@ -208,7 +208,7 @@ export class FullPostView extends React.Component {
 								title={
 									translate( 'More in {{ siteLink /}}', {
 										components: {
-											siteLink: ( <a href={ getStreamUrlFromPost( post ) }>{ siteName }</a> )
+											siteLink: ( <a href={ getStreamUrlFromPost( post ) } className="reader-related-card-v2__link">{ siteName }</a> )
 										}
 									} )
 								}
