@@ -29,6 +29,7 @@ function FeaturedImage( { image, href } ) {
 
 function AuthorAndSiteFollow( { post, site } ) {
 	const siteUrl = getStreamUrl( post.feed_ID, post.site_ID );
+	const authorAndSiteAreDifferent = site.title.toLowerCase() !== post.author.name.toLowerCase();
 	return (
 		<div className="reader-related-card-v2__meta">
 			<a href={ siteUrl }>
@@ -38,9 +39,11 @@ function AuthorAndSiteFollow( { post, site } ) {
 				<span className="reader-related-card-v2__byline-author">
 					<a href={ siteUrl } className="reader-related-card-v2__link">{ post.author.name }</a>
 				</span>
+				{ authorAndSiteAreDifferent &&
 				<span className="reader-related-card-v2__byline-site">
 					<a href={ siteUrl } className="reader-related-card-v2__link">{ site.title }</a>
 				</span>
+				}
 			</div>
 			<FollowButton siteUrl={ post.site_URL } />
 		</div>
