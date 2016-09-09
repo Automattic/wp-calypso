@@ -3,7 +3,8 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	noop = require( 'lodash/noop' );
+	noop = require( 'lodash/noop' ),
+	debug = require( 'debug' )( 'calypso:post-editor:media:detail-item' );
 
 /**
  * Internal dependencies
@@ -44,13 +45,20 @@ module.exports = React.createClass( {
 	},
 
 	renderEditButton: function() {
+		const { item, onEdit, site } = this.props;
+
+		// Do not render edit button for private sites
+		if ( site.is_private ) {
+			return debug( 'Do not show `Edit button` for private sites' );
+		}
+
 		if ( ! config.isEnabled( 'post-editor/image-editor' ) ||
-			! userCan( 'upload_files', this.props.site ) ||
-			! this.props.item ) {
+			! userCan( 'upload_files', site ) ||
+			! item ) {
 			return;
 		}
 
-		const mimePrefix = MediaUtils.getMimePrefix( this.props.item );
+		const mimePrefix = MediaUtils.getMimePrefix( item );
 
 		if ( 'image' !== mimePrefix ) {
 			return;
@@ -59,7 +67,7 @@ module.exports = React.createClass( {
 		return (
 			<Button
 				className="is-desktop editor-media-modal-detail__edit"
-				onClick={ this.props.onEdit }>
+				onClick={ onEdit }>
 				<Gridicon icon="pencil" size={ 36 } /> { this.translate( 'Edit Image' ) }
 			</Button>
 		);
