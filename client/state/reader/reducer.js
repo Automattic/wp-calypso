@@ -6,6 +6,7 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
+import tags from './tags/reducer';
 import lists from './lists/reducer';
 import feeds from './feeds/reducer';
 import follows from './follows/reducer';
@@ -15,6 +16,7 @@ import posts from './posts/reducer';
 import relatedPosts from './related-posts/reducer';
 
 export default combineReducers( {
+	tags,
 	feeds,
 	follows,
 	lists,
