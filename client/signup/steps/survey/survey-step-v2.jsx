@@ -52,7 +52,8 @@ export default React.createClass( {
 	renderOther() {
 		return (
 			<div className="survey__other">
-				<TextInput className="survey__other-text-input" placeholder={ this.translate( 'Please describe what your site is about' ) } />
+				<TextInput className="survey__other-text-input"
+					placeholder={ this.translate( 'Please describe what your site is about' ) } />
 				<Button className="survey__other-button" primary compact
 					data-value="a8c.24"
 					data-label="Uncategorized"
