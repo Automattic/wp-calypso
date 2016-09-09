@@ -50,9 +50,9 @@ export const isRequestingSiteDomains = ( state, siteId ) => {
 /**
  * Returns decorated site domains with objects we don't want to store in Redux state tree.
  *
- * @param  {Object}         state global state
+ * @param  {Object}  state  global state
  * @param  {Number}  siteId the site id
- * @return {Object|null}    decorated site domains
+ * @return {?Object}        decorated site domains
  */
 export function getDecoratedSiteDomains( state, siteId ) {
 	const domains = getDomainsBySiteId( state, siteId );
