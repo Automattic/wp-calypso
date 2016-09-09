@@ -127,7 +127,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	.reader-related-card-v2__post {
 		display: block;
-		max-height: none;
 		overflow: hidden;
 
 		@media #{$reader-related-card-v2-breakpoint-medium} {
@@ -251,6 +250,11 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 		}
 
 		.reader-related-card-v2__post {
+			max-height: 200px;
+
+			@include breakpoint( "<960px" ) {
+				max-height: 245px;
+			}
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
 				max-height: 150px;
