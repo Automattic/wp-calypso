@@ -59,7 +59,7 @@ class DomainToPlanNudge extends Component {
 		translate: PropTypes.func
 	};
 
-	isVisible() {
+	isSiteEligible() {
 		const {
 			site,
 			hasFreePlan,
@@ -164,7 +164,7 @@ class DomainToPlanNudge extends Component {
 	}
 
 	render() {
-		if ( ! this.isVisible() ) {
+		if ( ! this.isSiteEligible() ) {
 			return null;
 		}
 
