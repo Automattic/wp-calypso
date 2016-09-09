@@ -1,14 +1,11 @@
 import {
 	compact,
 	flowRight as compose,
+	fromPairs,
 	get,
-	has,
-	head,
-	invert,
-	mapValues,
+	map,
 	matchesProperty,
 	reduce,
-	some,
 } from 'lodash';
 import {
 	convertFromRaw,
@@ -23,10 +20,10 @@ import {
  *
  * Custom block titles consist of a list of zero
  * or more "pieces," each of which is either a
- * predefined "chip" or a sequence of arbitrary
+ * predefined "token" or a sequence of arbitrary
  * text.
  *
- * "Chips" are placeholders for dynamic content
+ * "Tokens" are placeholders for dynamic content
  * replaced at runtime, such as a site's name or
  * a post's title.
  *
@@ -70,20 +67,12 @@ import {
  * The challenge then is to provide an effective
  * mapping between these formats. Notice that in
  * the editor we are showing the translations of
- * the chip names since that is what it will
+ * the token names since that is what it will
  * render to the browser. However, the native name
  * is stored as metadata for the range of characters
- * that represent the chip.
+ * that represent the token.
  *
  */
-
-/**
- * Returns whether or not at least one arg is truthy
- *
- * @param {bool} args pieces to 'or' together
- * @returns {bool} result of 'or'ing all the args
- */
-const or = ( ...args ) => some( args );
 
 /**
  * Converts from ContentState to native Calypso format list
@@ -123,41 +112,6 @@ export const fromEditor = content => {
 
 const isTextPiece = matchesProperty( 'type', 'string' );
 
-/**
- * Creates a dictionary for building an entityMap from a given title format
- *
- * There should only be a single entity for each given type of token
- * available in the editor, and only one for each in the given title
- * formats. Therefore, we need to build this dictionary, or mapping,
- * in order to use later when actually creating the entityMap
- *
- * Basically, this finds the set of unique chip tokens in the list
- * and assigns each one an index that increases monotonically.
- *
- * E.g.
- *     From: [
- *         { type: 'string', value: 'Visit ' },
- *         { type: 'siteName' },
- *         { type: 'string', value: ' | ' },
- *         { type: 'tagline' }
- *     ]
- *     To:   { siteName: 0, tagline: 1 }
- *
- * @param {object} format native title format object
- * @returns {object} mapping from token name to presumptive entity id
- */
-const buildEntityMapping = compose(
-	head, // return only the mapping and discard the lastKey
-	format => reduce( format, ( [ entityMap, lastKey ], { type } ) => (
-		or(
-			isTextPiece( { type } ), // text pieces don't get entities
-			has( entityMap, type ) // repeat-tokens don't need new entities
-		)
-			? [ entityMap, lastKey ] // no changes
-			: [ { ...entityMap, [ type ]: lastKey }, lastKey + 1 ] // create the new entity
-	), [ {}, 0 ] )
-);
-
 const emptyBlockMap = {
 	text: '',
 	entityRanges: [],
@@ -179,11 +133,11 @@ const tokenTitle = ( type, tokens ) => ` ${ get( tokens, type, '' ).trim() } `;
  * @param {Number} offset start of entity inside of block text
  * @param {String} type token name for entity reference
  * @param {object} tokens mapping between token names and translated titles
- * @param {object} entityGuide mapping between token names and entity key
+ * @param {object} entityGuide mapping between tokens and entity keys
  * @returns {object} entityRange for use in blockMap in ContentState
  */
 const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
-	key: entityGuide[ type ],
+	key: entityGuide.length,
 	length: tokenTitle( type, tokens ).length,
 	offset
 } );
@@ -207,12 +161,11 @@ const newEntityAt = ( offset, type, tokens, entityGuide ) => ( {
  *
  * @param {Array} format native Calypso title format object
  * @param {object} tokens mapping between token names and translated titles
- * @param {object} entityGuide mapping between token names and entity key
+ * @param {object} entityGuide mapping between tokens and entity keys
  * @returns {object} blockMap for use in ContentState
  */
 const buildBlockMap = compose(
-	head, // return only the block map and discard the lastIndex
-	( format, tokens, entityGuide ) => reduce( format, ( [ block, lastIndex ], piece ) => [
+	( format, tokens ) => reduce( format, ( [ block, lastIndex, entityGuide ], piece ) => [
 		{
 			...block,
 			entityRanges: isTextPiece( piece )
@@ -220,8 +173,11 @@ const buildBlockMap = compose(
 				: [ ...block.entityRanges, newEntityAt( lastIndex, piece.type, tokens, entityGuide ) ],
 			text: block.text + ( isTextPiece( piece ) ? piece.value : tokenTitle( piece.type, tokens ) ),
 		},
-		lastIndex + ( piece.value ? piece.value.length : tokenTitle( piece.type, tokens ).length )
-	], [ emptyBlockMap, 0 ] )
+		lastIndex + ( piece.value ? piece.value.length : tokenTitle( piece.type, tokens ).length ),
+		isTextPiece( piece )
+			? entityGuide
+			: [ ...entityGuide, piece.type ]
+	], [ emptyBlockMap, 0, [] ] )
 );
 
 /**
@@ -232,15 +188,17 @@ const buildBlockMap = compose(
  * @returns {ContentState} content for editor
  */
 export const toEditor = ( format, tokens ) => {
-	const entityGuide = buildEntityMapping( format );
-	const blocks = [ buildBlockMap( format, tokens, entityGuide ) ];
+	const [ blocks, /* lastIndex */, entityGuide ] = buildBlockMap( format, tokens );
 
 	return convertFromRaw( {
-		blocks,
-		entityMap: mapValues( invert( entityGuide ), name => ( {
-			type: 'TOKEN',
-			mutability: 'IMMUTABLE',
-			data: { name }
-		} ) )
+		blocks: [ blocks ],
+		entityMap: fromPairs( map( entityGuide, ( name, key ) => ( [
+			key, // entity key is position in list
+			{
+				type: 'TOKEN',
+				mutability: 'IMMUTABLE',
+				data: { name }
+			}
+		] ) ) )
 	} );
 };
