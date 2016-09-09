@@ -38,7 +38,7 @@ const ReaderAvatar = React.createClass( {
 		}
 
 		const hasSiteIcon = !! siteIcon;
-		let hasAvatar = !! author.has_avatar;
+		let hasAvatar = !! ( author && author.has_avatar );
 
 		if ( hasSiteIcon && hasAvatar ) {
 			// do these both reference the same image? disregard querystring params.
