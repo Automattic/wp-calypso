@@ -62,15 +62,18 @@ export function getDecoratedSiteDomains( state, siteId ) {
 	}
 
 	return domains.map( domain => {
-		const decoratedDomain = { ...domain };
+		return {
+			...domain,
 
-		// Add registration moment from registrationDate
-		decoratedDomain.registrationMoment = domain.registrationDate &&
-			moment( domain.registrationDate, 'MMMM D, YYYY', 'en' ).locale( false );
+			// Add registration moment from registrationDate
+			registrationMoment: domain.registrationDate
+				? moment( domain.registrationDate, 'MMMM D, YYYY', 'en' ).locale( false )
+				: null,
 
-		// Add expiration moment from expiry
-		decoratedDomain.expirationMoment = domain.expiry && moment( domain.expiry );
-
-		return decoratedDomain;
+			// Add expiration moment from expiry
+			expirationMoment: domain.expiry
+				? moment( domain.expiry )
+				: null
+		};
 	} );
 }
