@@ -29,6 +29,7 @@ import { isRequestingGraduation } from 'state/reader/start/selectors';
 import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
 import { preload } from 'sections-preload';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import ReaderSidebarComponent from 'reader/sidebar';
 
 const analyticsPageTitle = 'Reader';
 
@@ -175,7 +176,6 @@ module.exports = {
 	},
 
 	sidebar: function( context, next ) {
-		var ReaderSidebarComponent = require( 'reader/sidebar' );
 
 		renderWithReduxStore(
 			React.createElement( ReduxProvider, { store: context.store },
