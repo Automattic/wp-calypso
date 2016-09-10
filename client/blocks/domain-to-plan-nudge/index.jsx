@@ -29,8 +29,8 @@ import Gridicon from 'components/gridicon';
 import { errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
 import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
 import { recordOrder } from 'lib/analytics/ad-tracking';
-import { getPlanRawPrice } from 'state/plans/selectors';
 import {
+	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
 	getPlanRawDiscount,
 	getPlansBySiteId
@@ -65,7 +65,7 @@ class DomainToPlanNudge extends Component {
 		removeNotice: PropTypes.func,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
-		sitePlans: PropTypes.array,
+		sitePlans: PropTypes.object,
 		storedCard: PropTypes.object,
 		translate: PropTypes.func,
 		userCurrency: PropTypes.string
@@ -175,11 +175,7 @@ class DomainToPlanNudge extends Component {
 		submitTransaction( { cart, transaction }, this.handleTransactionComplete );
 	}
 
-	render() {
-		if ( ! this.isSiteEligible() ) {
-			return null;
-		}
-
+	renderCard() {
 		const { isSubmitting } = this.state;
 
 		const {
@@ -195,13 +191,10 @@ class DomainToPlanNudge extends Component {
 
 		return (
 			<DismissibleCard
-				className="domain-to-plan-nudge"
+				className="domain-to-plan-nudge__card"
 				preferenceName="domain-to-plan-nudge"
 				temporary
 			>
-				<QueryStoredCards />
-				{ siteId && <QuerySitePlans siteId={ siteId } /> }
-
 				<div className="domain-to-plan-nudge__header">
 					<div className="domain-to-plan-nudge__header-icon">
 						<PlanIcon plan={ productSlug } />
@@ -310,6 +303,18 @@ class DomainToPlanNudge extends Component {
 			</DismissibleCard>
 		);
 	}
+
+	render() {
+		const { siteId } = this.props;
+
+		return (
+			<div className="domain-to-plan-nudge">
+				<QueryStoredCards />
+				<QuerySitePlans siteId={ siteId } />
+				{ this.isSiteEligible() && this.renderCard() }
+			</div>
+		);
+	}
 }
 
 export default connect(
@@ -327,8 +332,8 @@ export default connect(
 			),
 			productId,
 			productSlug,
-			rawDiscount: getPlanRawDiscount( state, siteId, productSlug ),
-			rawPrice: getPlanRawPrice( state, productId ),
+			rawDiscount: getPlanRawDiscount( state, siteId, productSlug ) || 0,
+			rawPrice: getSitePlanRawPrice( state, siteId, productSlug ),
 			site: getSite( state, siteId ),
 			siteId,
 			sitePlans: getPlansBySiteId( state, siteId ),
