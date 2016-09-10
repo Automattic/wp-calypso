@@ -291,8 +291,8 @@ export class FullPostFluxContainer extends React.Component {
 		};
 	}
 
-	updateState() {
-		this.smartSetState( this.getStateFromStores() );
+	updateState( newState = this.getStateFromStores() ) {
+		this.smartSetState( newState );
 	}
 
 	componentWillMount() {
