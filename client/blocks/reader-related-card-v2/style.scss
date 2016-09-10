@@ -198,6 +198,18 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	margin-top: 12px;
 	padding-top: 11px;
 
+	.reader-related-card-v2__post {
+		max-height: 120px;
+
+		&::after {
+			@include long-content-fade( $size: 30% );
+			bottom: 0;
+			height: 22px;
+			top: inherit;
+			visibility: visible;
+		}
+	}
+
 	&.is-same-site {
 
 		.reader-related-card-v2__meta {
@@ -271,7 +283,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	&.is-same-site,
 	&.is-other-site {
-
 		.reader-related-card-v2__featured-image {
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
@@ -280,18 +291,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
 				margin: 0 15px 0 0;
-			}
-		}
-
-		.reader-related-card-v2__post {
-			max-height: 120px;
-
-			&::after {
-				@include long-content-fade( $size: 30% );
-				bottom: 0;
-				height: 22px;
-				top: inherit;
-				visibility: visible;
 			}
 		}
 	}
