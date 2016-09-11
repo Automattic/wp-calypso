@@ -16,6 +16,7 @@ import PostHeader from './post-header';
 import PostImage from '../post/post-image';
 import PostExcerpt from 'components/post-excerpt';
 import PostTotalViews from 'my-sites/posts/post-total-views';
+import CommentButton from 'blocks/comment-button';
 import utils from 'lib/posts/utils';
 import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
@@ -230,46 +231,25 @@ module.exports = React.createClass( {
 		const postId = this.props.post.ID;
 		const site = this.getSite();
 		const isJetpack = site.jetpack;
-		let showComments = ! isJetpack || site.isModuleActive( 'comments' );
+		const isCommentsCapable = ! isJetpack || site.isModuleActive( 'comments' );
+		const areCommentsOpen = post.discussion.comment_status === 'open';
+		const commentCount = post.discussion.comment_count;
 		let showLikes = ! isJetpack || site.isModuleActive( 'likes' );
 		const showStats = site.capabilities && site.capabilities.view_stats && ( ! isJetpack || site.isModuleActive( 'stats' ) );
 		const metaItems = [];
-		let commentCountDisplay, commentTitle, commentMeta,
-			likeCountDisplay, likeTitle, likeMeta, footerMetaItems;
+		let likeCountDisplay, likeTitle, likeMeta, footerMetaItems;
 
-		if ( showComments ) {
-			if ( post.discussion && post.discussion.comment_count > 0 ) {
-				commentTitle = this.translate( '%(count)s Comment', '%(count)s Comments', {
-					count: post.discussion.comment_count,
-					args: {
-						count: post.discussion.comment_count
-					}
-				} );
-				commentCountDisplay = this.numberFormat( post.discussion.comment_count );
-			} else if ( post.discussion.comments_open ) {
-				commentTitle = this.translate( 'Comments' );
-			} else {
-				// No comments recorded & they're disabled, don't show the icon
-				showComments = false;
-			}
-			if ( showComments ) {
-				commentMeta = (
-					<a
-						className={
-							classNames( {
-								post__comments: true,
-								'is-empty': ! commentCountDisplay
-							} )
-						}
-						title={ commentTitle }
-						onClick={ this.toggleComments }
-					>
-					<Gridicon icon="comment" size={ 24 } />
-
-					<span>{ commentCountDisplay }</span></a>
-				);
-				metaItems.push( commentMeta );
-			}
+		if ( isCommentsCapable && ( areCommentsOpen || commentCount > 0 ) ) {
+			metaItems.push( (
+				<CommentButton
+					tagName='span'
+					count={ post.discussion.comment_count }
+					onClick={ this.toggleComments }
+					showLabel={ false }
+					postId = { post.ID }
+					siteId = { post.site_ID }
+				/>
+			) );
 		}
 
 		if ( showLikes ) {

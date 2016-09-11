@@ -2,20 +2,26 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import noop from 'lodash/noop';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
+import { getPostTotalCommentsCount } from 'state/comments/selectors';
 
-const CommentButton = React.createClass( {
+export const CommentButton = React.createClass( {
 
 	propTypes: {
 		onClick: React.PropTypes.func,
 		tagName: React.PropTypes.string,
-		commentCount: React.PropTypes.number,
-		showLabel: React.PropTypes.bool
+		size: React.PropTypes.number,
+		count: React.PropTypes.number,
+		showLabel: React.PropTypes.bool,
+		postId: React.PropTypes.number.isRequired,
+		siteId: React.PropTypes.number.isRequired
 	},
 
 	getDefaultProps() {
@@ -23,7 +29,7 @@ const CommentButton = React.createClass( {
 			onClick: noop,
 			tagName: 'li',
 			size: 24,
-			commentCount: 0,
+			count: 0,
 			showLabel: true
 		};
 	},
@@ -38,34 +44,43 @@ const CommentButton = React.createClass( {
 
 	render() {
 		let label;
-		const containerTag = this.props.tagName,
-			commentCount = this.props.commentCount;
+		const { count, showLabel, size, tagName: containerTag } = this.props;
 
-		if ( commentCount === 0 ) {
+		if ( count === 0 ) {
 			label = this.translate( 'Comment' );
 		} else {
 			label = this.translate(
 				'Comment',
 				'Comments', {
-					count: commentCount,
+					count: count,
 				}
 			);
 		}
 
 		const labelElement = ( <span className="comment-button__label">
-			{ commentCount > 0 ? <span className="comment-button__label-count">{ commentCount }</span> : null }
-			{ this.props.showLabel && <span className="comment-button__label-status">{ label }</span> }
+			{ count > 0 ? <span className="comment-button__label-count">{ count }</span> : null }
+			{ showLabel && <span className="comment-button__label-status">{ label }</span> }
 		</span> );
 
 		return React.createElement(
 			containerTag, {
-				className: 'comment-button',
+				className: classNames( {
+					'comment-button': true,
+					'is-empty': count === 0
+				} ),
 				onTouchTap: this.onTap,
 				onClick: this.onClick
 			},
-			<Gridicon icon="comment" size={ this.props.size } className="comment-button__icon" />, labelElement
+			<Gridicon icon="comment" size={ size } className="comment-button__icon" />, labelElement
 		);
 	}
 } );
 
-export default CommentButton;
+export default connect( ( state, ownProps ) => {
+	const { siteId, postId } = ownProps,
+		count = getPostTotalCommentsCount( state, siteId, postId );
+	if(count === undefined) {
+		return {};
+	}
+	return { count };
+} )( CommentButton );

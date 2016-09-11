@@ -54,9 +54,12 @@ export function SearchPostCard( { post, site, feed, onClick = noop, onCommentCli
 		{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
 			{ ! showPrimaryFollowButton && <div className="reader-search-card__social ignore-click">
 				<CommentButton
-					commentCount={ post.discussion.comment_count }
-					tagName="span" showLabel={ false }
-					onClick={ onCommentClick }/>
+					count={ post.discussion.comment_count }
+					tagName="span"
+					showLabel={ false }
+					onClick={ onCommentClick }
+					postId={ post.ID }
+					siteId={ post.site_ID } />
 				<LikeButton siteId={ post.site_ID } postId={ post.ID } tagName="span" showZeroCount={ false } showLabel={ false } />
 			</div> }
 			{ showPrimaryFollowButton && <div className="reader-search-card__follow-primary ignore-click">

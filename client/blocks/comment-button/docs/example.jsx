@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CommentButton from 'blocks/comment-button';
+import { CommentButton } from 'blocks/comment-button';
 import Card from 'components/card';
 
 export default React.createClass( {
@@ -19,10 +19,17 @@ export default React.createClass( {
 					<a href="/devdocs/blocks/comment-button">Comment Buttons</a>
 				</h2>
 				<Card compact>
-					<CommentButton commentCount={ 0 } />
+					<CommentButton postId={ 1 } siteId={ 1 } count={ 0 } />
 				</Card>
 				<Card compact>
-					<CommentButton commentCount={ 42 } />
+					<CommentButton postId={ 1 } siteId={ 1 } count={ 42 } />
+				</Card>
+				<Card compact>
+					<CommentButton
+						postId={ 1 }
+						siteId={ 1 }
+						count={ 42 }
+						showLabel={ false } />
 				</Card>
 			</div>
 		);
