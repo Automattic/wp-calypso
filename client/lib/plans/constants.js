@@ -363,7 +363,7 @@ export const featuresList = {
 			'using a fast, unbranded, customizable player with rich stats.'
 		),
 		getStoreSlug: () => 'videopress',
-		plans: allPaidPlans
+		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_AUDIO_UPLOADS ]: {
@@ -373,7 +373,7 @@ export const featuresList = {
 			'The easiest way to upload audio files that use any major audio file format. '
 		),
 		getStoreSlug: () => 'videopress',
-		plans: allPaidPlans
+		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ]
 	},
 
 	[ FEATURE_BASIC_DESIGN ]: {
