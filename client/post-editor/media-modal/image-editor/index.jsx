@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Notice from 'components/notice';
 import EditCanvas from './image-editor-canvas';
 import EditToolbar from './image-editor-toolbar';
 import EditButtons from './image-editor-buttons';
@@ -45,6 +46,12 @@ const MediaModalImageEditor = React.createClass( {
 			selectedIndex: 0,
 			onImageEditorClose: noop,
 			onImageEditorCancel: noop
+		};
+	},
+
+	getInitialState() {
+		return {
+			canvasError: null
 		};
 	},
 
@@ -126,12 +133,32 @@ const MediaModalImageEditor = React.createClass( {
 		return ! transfer.types || -1 !== Array.prototype.indexOf.call( transfer.types, 'Files' );
 	},
 
+	onLoadCanvasError() {
+		this.setState( { canvasError: this.translate( 'We are unable to edit this image.' ) } );
+	},
+
+	renderError() {
+		return (
+			<Notice
+				status="is-error"
+				showDismiss={ true }
+				text={ this.state.canvasError }
+				isCompact={ false }
+				onDismissClick={ this.props.onImageEditorCancel } 	/>
+		);
+	},
+
 	render() {
 		return (
-			<div className="editor-media-modal-image-editor">
+			<div className="image-editor">
+				{ this.state.canvasError && this.renderError() }
+
 				<figure>
 					<div className="editor-media-modal-image-editor__content editor-media-modal__content" >
-						<EditCanvas ref="editCanvas" />
+						<EditCanvas
+							ref="editCanvas"
+							onLoadError={ this.onLoadCanvasError }
+							/>
 						<EditToolbar />
 						<EditButtons
 							onCancel={ this.props.onImageEditorCancel }
