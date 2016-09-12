@@ -51,6 +51,7 @@ const Search = React.createClass( {
 		onSearchChange: PropTypes.func,
 		onSearchOpen: PropTypes.func,
 		onSearchClose: PropTypes.func,
+		onChange: PropTypes.func,
 		analyticsGroup: PropTypes.string,
 		autoFocus: PropTypes.bool,
 		disabled: PropTypes.bool,
@@ -187,10 +188,11 @@ const Search = React.createClass( {
 		this.setState( { hasFocus: false } );
 	},
 
-	onChange: function() {
+	onChange: function( event ) {
 		this.setState( {
-			keyword: this.getCurrentSearchValue()
+			keyword: event.target.value
 		} );
+		this.props.onChange( event.target.value );
 	},
 
 	openSearch: function( event ) {
@@ -248,7 +250,7 @@ const Search = React.createClass( {
 		if ( event.key === 'Escape' && event.target.value === '' ) {
 			this.closeSearch( event );
 		}
-		this.props.onKeyDown( event );
+		this.props.onKeyDown( event, this.getCurrentSearchValue() );
 	},
 
 	// Puts the cursor at end of the text when starting
@@ -312,7 +314,7 @@ const Search = React.createClass( {
 				</div>
 				<div className={ fadeDivClass }>
 					<input
-						type="search"
+						type="text"
 						id={ 'search-component-' + this.state.instanceId }
 						className={ inputClass }
 						placeholder={ placeholder }
@@ -331,6 +333,7 @@ const Search = React.createClass( {
 						maxLength={ this.props.maxLength }
 						{ ...autocorrect }
 					/>
+					{ this.props.children }
 				</div>
 				{ this.closeButton() }
 			</div>

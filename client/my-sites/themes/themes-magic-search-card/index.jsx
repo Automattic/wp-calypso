@@ -42,10 +42,16 @@ const ThemesMagicSearchCard = React.createClass( {
 		window.removeEventListener( 'resize', this.onResize );
 	},
 
+	componentDidUpdate() {
+		this.matchScroll( );
+	},
+
 	getInitialState() {
 		return {
 			isMobile: isMobile(),
-			searchIsOpen: false
+			searchIsOpen: false,
+			input: this.props.search,
+			tokens: this.generateTokens( this.props.search )
 		};
 	},
 
@@ -59,10 +65,55 @@ const ThemesMagicSearchCard = React.createClass( {
 
 	onSearchClose() {
 		this.setState( { searchIsOpen: false } );
+		this.setState( { input: "" } );
 	},
 
 	onBlur() {
 		this.setState( { searchIsOpen: false } );
+	},
+
+	matchScroll: function( ) {
+		if ( this.refs.tokens === undefined ) {
+			return;
+		}
+
+		const searchInput = this.refs["url-search"].refs.searchInput;
+		const tokens = this.refs.tokens;
+
+		// tokens.scrollLeft = values[0].target.scrollLeft;
+		tokens.scrollLeft = searchInput.scrollLeft;
+		searchInput.scrollLeft = tokens.scrollLeft;
+		console.log( "input: " + searchInput.scrollLeft + " tokens: " + tokens.scrollLeft);
+	},
+
+	generateTokens( txt ) {
+		const inputLength = Math.round( txt.length / 2 );
+		return (
+			<div className="search__tokens" ref="tokens">
+				<span className="token_A" >
+					{ txt.substring( 0, inputLength ) }
+				</span>
+				<span className="token_B" >
+					{ txt.substring( inputLength ) }
+				</span>
+			</div>
+		);
+	},
+
+	onKeyDown() {
+		//`this.matchScroll( target.scrollLeft );
+	},
+
+	onChange( value ) {
+		this.setState( { input: value } );
+	},
+
+	onSearch( val ) {
+		//hijactking props.onSearch temporary to see how search performance impacts
+		//this.setState( {input: val });
+		this.matchScroll();
+		this.props.onSearch( val );
+		//display performance
 	},
 
 	render() {
@@ -82,13 +133,17 @@ const ThemesMagicSearchCard = React.createClass( {
 				ref="url-search"
 				placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
 				analyticsGroup="Themes"
-				delaySearch={ true }
+				delaySearch={ false }
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
 				onBlur={ this.onBlur }
+				onKeyDown={ this.onKeyDown }
+				onChange={ this.onChange }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
 				hideClose={ isMobile() }
-			/>
+			>
+				{ this.generateTokens( this.state.input ) }
+			</Search>
 		);
 
 		const themesSearchClass = classNames( 'themes-magic-search-card', {
