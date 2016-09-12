@@ -83,15 +83,17 @@ export default React.createClass( {
 	},
 
 	render() {
-		const blogHeaderText = this.translate( 'Create your blog today!' );
-		const siteHeaderText = this.translate( 'Create your site today!' );
+		const blogHeaderText = this.translate( 'Let\'s create your new WordPress.com blog!' );
+		const siteHeaderText = this.translate( 'Let\'s create your new WordPress.com site!' );
+		const blogSubHeaderText = this.translate( 'To get started, tell us what your blog is about.' );
+		const siteSubHeaderText = this.translate( 'To get started, tell us what your site is about.' );
 		return (
 			<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
-					subHeaderText={ this.translate( 'WordPress.com is the best place for your WordPress blog or website.' ) }
+					subHeaderText={ this.props.surveySiteType === 'blog' ? blogSubHeaderText : siteSubHeaderText }
 					signupProgressStore={ this.props.signupProgressStore }
 					stepContent={ this.state.shouldShowOther ? this.renderOther() : this.renderOptionList() } />
 		);
