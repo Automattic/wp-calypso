@@ -235,7 +235,7 @@ export class FullPostView extends React.Component {
 
 						{ showRelatedPosts &&
 							<RelatedPostsFromOtherSites siteId={ post.site_ID } postId={ post.ID }
-								title={ translate( 'More from WordPress.com' ) }
+								title={ translate( 'More on WordPress.com' ) }
 								className="is-other-site" />
 						}
 					</article>
