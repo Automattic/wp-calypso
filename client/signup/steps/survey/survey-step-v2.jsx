@@ -86,7 +86,7 @@ export default React.createClass( {
 		const blogHeaderText = this.translate( 'Let\'s create your new WordPress.com blog!' );
 		const siteHeaderText = this.translate( 'Let\'s create your new WordPress.com site!' );
 		const blogSubHeaderText = this.translate( 'To get started, tell us what your blog is about.' );
-		const siteSubHeaderText = this.translate( 'To get started, tell us what your site is about.' );
+		const siteSubHeaderText = this.translate( 'To get started, tell us what your blog or website is about.' );
 		return (
 			<StepWrapper
 					flowName={ this.props.flowName }
