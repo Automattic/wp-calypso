@@ -21,10 +21,13 @@
 .themes-list__upload-container {
 	padding: 32px;
 	text-align: center;
+	background: none;
+	box-shadow: none;
+	border: 2px dotted #a8bece;
 }
 
 .themes-list__upload-icon {
-	color: #dae3eb;
+	color: #a8bece;
 }
 
 .themes-list__upload-button {
