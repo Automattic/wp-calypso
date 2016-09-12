@@ -39,22 +39,32 @@ const CommentButton = React.createClass( {
 	render() {
 		let label;
 		const containerTag = this.props.tagName,
-			commentCount = this.props.commentCount;
+			commentCount = this.props.commentCount,
+			commentCountComponent = <span className="comment-button__label-count">
+				{ commentCount }
+			</span>;
 
 		if ( commentCount === 0 ) {
-			label = this.translate( 'Comment' );
+			label = <span className="comment-button__label-status">
+				{ this.translate( 'Comment', { context: 'verb' } ) }
+			</span>;
 		} else {
 			label = this.translate(
-				'Comment',
-				'Comments', {
+				'{{count/}}{{span}}Comment{{/span}}',
+				'{{count/}}{{span}}Comments{{/span}}', {
+					components: {
+						count: commentCountComponent,
+						span: <span className="comment-button__label-status" />
+					},
 					count: commentCount,
 				}
 			);
 		}
 
+		// If the label is to be shown, output the label from above,
+		// otherwise just show the count if it's > 0.
 		const labelElement = ( <span className="comment-button__label">
-			{ commentCount > 0 ? <span className="comment-button__label-count">{ commentCount }</span> : null }
-			{ this.props.showLabel && <span className="comment-button__label-status">{ label }</span> }
+			{ this.props.showLabel ? label : commentCount > 0 && commentCountComponent }
 		</span> );
 
 		return React.createElement(
