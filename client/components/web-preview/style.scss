@@ -138,8 +138,6 @@
 	}
 
 	&.web-preview__seo-button {
-		display: flex;
-		align-items: center;
 		padding: 0 14px;
 
 		&.is-showing-device-switcher {
@@ -151,6 +149,7 @@
 
 .web-preview__seo-label {
 	margin-left: 6px;
+	vertical-align: middle;
 }
 
 .web-preview__back-to-preview-button {
