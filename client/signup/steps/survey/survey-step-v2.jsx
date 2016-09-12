@@ -118,6 +118,7 @@ export default React.createClass( {
 			category_id: value,
 			category_label: label,
 			category_write_in: ( this.state.otherWriteIn.length !== 0 ? this.state.otherWriteIn : undefined ),
+			survey_version: '2',
 		} );
 		SignupActions.submitSignupStep(
 			{ stepName: this.props.stepName },

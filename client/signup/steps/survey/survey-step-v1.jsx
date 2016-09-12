@@ -146,7 +146,8 @@ export default React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
 		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
-			category_label: label
+			category_label: label,
+			survey_version: '1',
 		} );
 		if ( this.state.stepOne ) {
 			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_two', {
