@@ -48,6 +48,7 @@ export const FEATURE_GOOGLE_ANALYTICS = 'google-analytics';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
+export const FEATURE_AUDIO_UPLOADS = 'audio-upload';
 export const FEATURE_WORDADS_INSTANT = 'wordads-instant';
 export const FEATURE_NO_BRANDING = 'no-wp-branding';
 export const FEATURE_ADVANCED_SEO = 'advanced-seo';
@@ -145,6 +146,12 @@ export const plansList = {
 			FEATURE_NO_ADS,
 			FEATURE_WORDADS_INSTANT,
 			FEATURE_VIDEO_UPLOADS
+		],
+		getPromotedFeatures: () => [
+			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_NO_ADS,
+			FEATURE_ADVANCED_DESIGN,
+			FEATURE_13GB_STORAGE
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -366,6 +373,16 @@ export const featuresList = {
 		getDescription: () => i18n.translate(
 			'The easiest way to upload videos to your website and display them ' +
 			'using a fast, unbranded, customizable player with rich stats.'
+		),
+		getStoreSlug: () => 'videopress',
+		plans: allPaidPlans
+	},
+
+	[ FEATURE_AUDIO_UPLOADS ]: {
+		getSlug: () => FEATURE_AUDIO_UPLOADS,
+		getTitle: () => i18n.translate( 'Audio Upload Support' ),
+		getDescription: () => i18n.translate(
+			'The easiest way to upload audio files that use any major audio file format. '
 		),
 		getStoreSlug: () => 'videopress',
 		plans: allPaidPlans

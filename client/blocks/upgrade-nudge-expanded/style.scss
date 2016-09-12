@@ -44,13 +44,21 @@
 	}
 
 	.upgrade-nudge-expanded__title-plan-icon {
-		width: 54px;
-		height: 54px;
+		width: 55px;
+		height: 55px;
 		margin: 1px;
-		background: no-repeat;
+		background-repeat: no-repeat;
 
 		&.is-business-plan {
-			background: url('/calypso/images/plans/plan-business.svg')
+			background-image: url('/calypso/images/plans/plan-business.svg');
+		}
+
+		&.is-premium-plan {
+			background-image: url( '/calypso/images/plans/plan-premium.svg' );
+		}
+
+		&.is-personal-plan {
+			background-image: url('/calypso/images/plans/plan-personal.svg');
 		}
 	}
 
