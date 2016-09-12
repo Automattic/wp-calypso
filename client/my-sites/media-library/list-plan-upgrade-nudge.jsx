@@ -11,30 +11,25 @@ import { localize } from 'i18n-calypso';
 import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
 import { PLAN_PREMIUM, FEATURE_VIDEO_UPLOADS, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
 
-export const MediaLibraryUpgradeNudge = ( { translate, filter } ) => {
-	let title = translate( 'Upgrade to a Premium Plan and Enable VideoPress' );
-	let subtitle = translate( `By upgrading to a Premium Plan you'll enable VideoPress support on your site.` );
-	let highlightedFeature = FEATURE_VIDEO_UPLOADS;
-	let benefits = [
-		translate(
-			'Upload videos to your site with an interface designed specifically for WordPress.',
-			{ comment: 'Perk for upgrading to premium plan' }
-		),
-		translate(
-			'Present videos using a lightweight and responsive player that is ad-free and unbranded.',
-			{ comment: 'Perk for upgrading to premium plan' }
-		),
-		translate(
-			'See where your videos have been shared as well as stats for individual and overall video plays.',
-			{ comment: 'Perk for upgrading to premium plan' }
-		)
-	];
+function getTitle( filter, translate ) {
+	if ( filter === 'audio' ) {
+		return translate( 'Upgrade to the Premium Plan and Enable Audio Uploads' );
+	}
 
-	if ( 'audio' === filter ) {
-		title = translate( 'Upgrade to the Premium Plan and Enable Audio Uploads' );
-		subtitle = translate( `By upgrading to the Premium plan you'll enable audio upload support on your site.` );
-		highlightedFeature = FEATURE_AUDIO_UPLOADS;
-		benefits = [
+	return translate( 'Upgrade to a Premium Plan and Enable VideoPress' );
+}
+
+function getSubtitle( filter, translate ) {
+	if ( filter === 'audio' ) {
+		return translate( 'By upgrading to the Premium plan you\'ll enable audio upload support on your site.' );
+	}
+
+	return translate( 'By upgrading to a Premium Plan you\'ll enable VideoPress support on your site.' );
+}
+
+function getBenefits( filter, translate ) {
+	if ( filter === 'audio' ) {
+		return [
 			translate(
 				'Add support for podcasting to your site, including a built-in audio player.',
 				{ comment: 'Perk for upgrading to premium plan' }
@@ -50,19 +45,34 @@ export const MediaLibraryUpgradeNudge = ( { translate, filter } ) => {
 		];
 	}
 
-	return (
-		<div className="media-library__videopress-nudge-container">
-			<UpgradeNudgeExpanded
-				plan={ PLAN_PREMIUM }
-				title={ title }
-				subtitle={ subtitle }
-				highlightedFeature={ highlightedFeature }
-				eventName="calypso_media_uploads_upgrade_nudge_impression"
-				benefits={ benefits }
-			/>
-		</div>
-	);
-};
+	return [
+		translate(
+			'Upload videos to your site with an interface designed specifically for WordPress.',
+			{ comment: 'Perk for upgrading to premium plan' }
+		),
+		translate(
+			'Present videos using a lightweight and responsive player that is ad-free and unbranded.',
+			{ comment: 'Perk for upgrading to premium plan' }
+		),
+		translate(
+			'See where your videos have been shared as well as stats for individual and overall video plays.',
+			{ comment: 'Perk for upgrading to premium plan' }
+		)
+	];
+}
+
+export const MediaLibraryUpgradeNudge = ( { translate, filter } ) => (
+	<div className="media-library__videopress-nudge-container">
+		<UpgradeNudgeExpanded
+			plan={ PLAN_PREMIUM }
+			title={ getTitle( filter, translate ) }
+			subtitle={ getSubtitle( filter, translate ) }
+			highlightedFeature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
+			eventName="calypso_media_uploads_upgrade_nudge_impression"
+			benefits={ getBenefits( filter, translate ) }
+		/>
+	</div>
+);
 
 MediaLibraryUpgradeNudge.propTypes = {
 	translate: PropTypes.func,
