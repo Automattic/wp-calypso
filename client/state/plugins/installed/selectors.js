@@ -8,12 +8,6 @@ import compact from 'lodash/compact';
 import omit from 'lodash/omit';
 import every from 'lodash/every';
 
-import JetpackSite from 'lib/site/jetpack';
-import Site from 'lib/site';
-import sitesFactory from 'lib/sites-list';
-
-const sitesList = sitesFactory();
-
 const _filters = {
 	none: function() {
 		return false;
@@ -101,10 +95,7 @@ const getSitesWithPlugin = function( state, sites, pluginSlug ) {
 	const pluginSites = uniq( compact(
 		plugin.sites.map( function( site ) {
 			// we create a copy of the site to avoid any possible modification down the line affecting the main list
-			const pluginSite = site.jetpack
-				? new JetpackSite( sitesList.getSite( site.ID ) )
-				: new Site( sitesList.getSite( site.ID ) );
-			pluginSite.plugin = omit( plugin, 'site' );
+			const pluginSite = Object.assign( {}, site, { plugin: omit( plugin, 'sites' ) } );
 			if ( site.visible ) {
 				return pluginSite;
 			}
