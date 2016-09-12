@@ -3,11 +3,11 @@
  */
 import React, { PropTypes } from 'react';
 import { identity } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
 import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
 import { PLAN_PREMIUM, FEATURE_VIDEO_UPLOADS, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
 
