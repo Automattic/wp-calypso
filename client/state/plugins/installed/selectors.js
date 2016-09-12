@@ -108,7 +108,7 @@ const getSitesWithPlugin = function( state, sites, pluginSlug ) {
 const getSitesWithoutPlugin = function( state, sites, pluginSlug ) {
 	const installedOnSites = getSitesWithPlugin( state, sites, pluginSlug ) || [];
 	return filter( sites, function( site ) {
-		if ( ! site.visible ) {
+		if ( ! site.visible || ! site.jetpack ) {
 			return false;
 		}
 
