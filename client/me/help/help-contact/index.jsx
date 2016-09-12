@@ -16,6 +16,7 @@ import olarkActions from 'lib/olark-store/actions';
 import olarkEvents from 'lib/olark-events';
 import olarkApi from 'lib/olark-api';
 import HelpContactForm from 'me/help/help-contact-form';
+import HelpContactClosed from 'me/help/help-contact-closed';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
@@ -374,6 +375,10 @@ const HelpContact = React.createClass( {
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
+		}
+
+		if ( olark.isSupportClosed ) {
+			return <HelpContactClosed />;
 		}
 
 		if ( ! ( olark.isOlarkReady && sitesInitialized ) && ! this.props.olarkTimedOut ) {

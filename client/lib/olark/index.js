@@ -191,6 +191,7 @@ const olark = {
 		olarkApi.configure( 'system.mask_credit_cards', true );
 
 		olarkActions.setUserEligibility( isUserEligible );
+		olarkActions.setClosed( wpcomOlarkConfig.isClosed );
 
 		if ( wpcomOlarkConfig.locale ) {
 			olarkActions.setLocale( wpcomOlarkConfig.locale );
