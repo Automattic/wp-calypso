@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -38,6 +39,12 @@ const MediaModalImageEditorCanvas = React.createClass( {
 		setImageEditorCropBounds: React.PropTypes.func
 	},
 
+	getInitialState() {
+		return {
+			imageLoaded: false
+		};
+	},
+
 	getDefaultProps() {
 		return {
 			transform: {
@@ -56,17 +63,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	componentWillReceiveProps( newProps ) {
-		if ( this.props.src !== newProps.src ) {
-			this.getImage( newProps.src );
-		}
-	},
-
-	componentDidMount() {
-		if ( ! this.props.src ) {
-			return;
-		}
-
-		this.getImage( this.props.src );
+		this.getImage( newProps.src );
 	},
 
 	getImage( url ) {
@@ -94,6 +91,10 @@ const MediaModalImageEditorCanvas = React.createClass( {
 
 		this.drawImage();
 		this.updateCanvasPosition();
+
+		this.setState( {
+			imageLoaded: true
+		} );
 	},
 
 	componentDidUpdate() {
@@ -177,10 +178,6 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	renderCrop() {
-		if ( ! this.props.src ) {
-			return;
-		}
-
 		return ( <Crop /> );
 	},
 
@@ -194,14 +191,20 @@ const MediaModalImageEditorCanvas = React.createClass( {
 			maxHeight: ( 85 / this.props.crop.heightRatio ) + '%'
 		};
 
+		const { imageLoaded } = this.state;
+
+		const canvasClasses = classNames( 'editor-media-modal-image-editor__canvas', {
+			'is-placeholder': ! imageLoaded
+		} );
+
 		return (
 			<div className="editor-media-modal-image-editor__canvas-container">
-				{ this.renderCrop() }
+				{ imageLoaded && this.renderCrop() }
 				<canvas
 					ref="canvas"
 					style={ canvasStyle }
 					onMouseDown={ this.preventDrag }
-					className="editor-media-modal-image-editor__canvas" />
+					className={ canvasClasses } />
 			</div>
 		);
 	}
