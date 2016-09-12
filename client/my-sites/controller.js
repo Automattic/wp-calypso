@@ -109,6 +109,29 @@ function renderNoVisibleSites( context ) {
 	);
 }
 
+function redirectToPrimary( context, next ) {
+	const siteID = route.getSiteFragment( context.path );
+	const handleRedirect = () => {
+		let redirectPath = `${ context.pathname }/${ sites.getPrimary().slug }`;
+
+		redirectPath = context.querystring
+			? `${ redirectPath }?${ context.querystring }`
+			: redirectPath;
+
+		page.redirect( redirectPath );
+	};
+
+	if ( siteID ) {
+		next();
+	} else {
+		if ( sites.initialized ) {
+			handleRedirect();
+			return;
+		}
+		sites.once( 'change', handleRedirect );
+	}
+}
+
 module.exports = {
 	/*
 	 * Set up site selection based on last URL param and/or handle no-sites error cases
@@ -120,16 +143,6 @@ module.exports = {
 		const currentUser = user.get();
 		const hasOneSite = currentUser.visible_site_count === 1;
 		const allSitesPath = route.sectionify( context.path );
-
-		const redirectToPrimary = () => {
-			let redirectPath = `${ context.pathname }/${ sites.getPrimary().slug }`;
-
-			redirectPath = context.querystring
-				? `${ redirectPath }?${ context.querystring }`
-				: redirectPath;
-
-			page.redirect( redirectPath );
-		};
 
 		if ( currentUser && currentUser.site_count === 0 ) {
 			renderEmptySites( context );
@@ -151,11 +164,7 @@ module.exports = {
 		// If the user has only one site, redirect to the single site
 		// context instead of rendering the all-site views.
 		if ( hasOneSite && ! siteID ) {
-			if ( sites.initialized ) {
-				redirectToPrimary();
-				return;
-			}
-			sites.once( 'change', redirectToPrimary );
+			redirectToPrimary( context, next );
 		}
 
 		// If the path fragment does not resemble a site, set all sites to visible
@@ -344,5 +353,6 @@ module.exports = {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	}
+	},
+	redirectToPrimary
 };

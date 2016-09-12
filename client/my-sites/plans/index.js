@@ -16,8 +16,8 @@ export default function() {
 	if ( config.isEnabled( 'manage/plans' ) ) {
 		page(
 			'/plans',
-			controller.siteSelection,
-			controller.sites
+			controller.navigation,
+			controller.redirectToPrimary
 		);
 
 		page(
