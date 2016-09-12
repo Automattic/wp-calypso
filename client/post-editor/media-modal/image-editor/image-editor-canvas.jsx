@@ -36,7 +36,8 @@ const MediaModalImageEditorCanvas = React.createClass( {
 			widthRatio: React.PropTypes.number,
 			heightRatio: React.PropTypes.number,
 		} ),
-		setImageEditorCropBounds: React.PropTypes.func
+		setImageEditorCropBounds: React.PropTypes.func,
+		onLoadError: React.PropTypes.func
 	},
 
 	getInitialState() {
@@ -58,7 +59,8 @@ const MediaModalImageEditorCanvas = React.createClass( {
 				cropWidthRatio: 1,
 				cropHeightRatio: 1,
 			},
-			setImageEditorCropBounds: noop
+			setImageEditorCropBounds: noop,
+			onLoadError: noop,
 		};
 	},
 
@@ -67,13 +69,17 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	getImage( url ) {
+		const { onLoadError, mimeType } = this.props;
+
 		const req = new XMLHttpRequest();
 		req.open( 'GET', url, true );
 		req.responseType = 'arraybuffer';
 		req.onload = () => {
-			const objectURL = window.URL.createObjectURL( new Blob( [ req.response ], { type: this.props.mimeType } ) );
+			const objectURL = window.URL.createObjectURL( new Blob( [ req.response ], { type: mimeType } ) );
 			this.initImage( objectURL );
 		};
+
+		req.onerror = error => onLoadError( error );
 		req.send();
 	},
 
