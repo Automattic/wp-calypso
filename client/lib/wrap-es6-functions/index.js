@@ -1,18 +1,28 @@
-import partial from 'lodash/partial';
-import isFunction from 'lodash/isFunction';
+/**
+ * External dependencies
+ */
+import { partial, isFunction } from 'lodash';
 
 function wrapFnWithWarning( fn, name ) {
-	const consoleFn = ( console.error || console.log ).bind( console );
 	return function() {
-		const err = new Error( `${ name } is not supported on all browsers. You must use a replacement method from lodash.` );
-		consoleFn( err );
+		/* eslint-disable no-console */
+		if ( typeof console !== 'undefined' && console.log ) {
+			console.log(
+				`%c${ name } is not supported on all browsers. ` + 'We currently ' +
+				'do not polyfill prototype methods due to bundle size concerns. ' +
+				'You must use a replacement method from lodash. ' +
+				'See: https://github.com/Automattic/wp-calypso/pull/6117',
+				'background: yellow; font-size: x-large'
+			);
+		}
+		/* eslint-enable no-console */
 		return fn.apply( this, arguments );
-	}
+	};
 }
 
 function wrapObjectFn( obj, objectName, key ) {
 	if ( isFunction( obj[ key ] ) ) {
-		Object.defineProperty( obj, key, { value: wrapFnWithWarning( obj[ key ], `${ objectName }${ key}` ) } );
+		Object.defineProperty( obj, key, { value: wrapFnWithWarning( obj[ key ], `${ objectName }${ key }` ) } );
 	}
 }
 
@@ -24,5 +34,4 @@ export default function() {
 		.map( partial( wrapObjectFn, String.prototype, 'String#' ) );
 
 	[ 'flags' ].map( partial( wrapObjectFn, RegExp.prototype, 'RegExp#' ) );
-
 }

@@ -35,7 +35,7 @@ describe( 'wrapping', () => {
 
 	useSandbox( newSandbox => sandbox = newSandbox );
 	before( () => {
-		consoleSpy = sandbox.stub( console, 'error' );
+		consoleSpy = sandbox.stub( console, 'log' );
 		installSpies( arrayProps, Array.prototype );
 		installSpies( stringProps, String.prototype );
 		installSpies( regExpProps, RegExp.prototype );
