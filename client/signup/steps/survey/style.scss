@@ -126,6 +126,9 @@
 	position: absolute;
 	top: 6px;
 	right: 6px;
+	&.is-compact {
+		text-transform: none;
+	}
 }
 
 .survey__other-copy {
