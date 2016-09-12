@@ -99,8 +99,6 @@ class CurrentPlan extends Component {
 					/>
 					<ProductPurchaseFeaturesList
 						plan={ currentPlanSlug }
-						selectedSite={ selectedSite }
-						sitePlans={ sitePlans }
 						isPlaceholder={ isLoading }
 					/>
 				</ProductPurchaseFeatures>
