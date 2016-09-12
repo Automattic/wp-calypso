@@ -47,7 +47,6 @@ const apiBaseUrl = 'https://jetpack.wordpress.com';
 const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const remoteActivatePath = '/wp-admin/plugins.php';
-const userModule = userFactory();
 const tracksEvent = ( dispatch, eventName, props ) => {
 	setTimeout( () => {
 		dispatch( recordTracksEvent( eventName, props ) );
@@ -308,7 +307,7 @@ export default {
 					error: null
 				} );
 				// Update the user now that we are fully connected.
-				userModule.fetch();
+				userFactory().fetch();
 				return wpcom.me().sites( { site_visibility: 'all' } );
 			} )
 			.then( ( data ) => {
