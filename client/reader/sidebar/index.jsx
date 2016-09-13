@@ -254,12 +254,19 @@ ReaderSidebar.defaultProps = {
 };
 
 export const shouldRenderAppPromo = ( options = { } ) => {
+	// Until the user settings have loaded we'll indicate the user is is a
+	// desktop app user because until the user settings have loaded
+	// userSettings.getSetting( 'is_desktop_app_user' ) will return false which
+	// makes the app think the user isn't a desktop app user for a few seconds
+	// resulting in the AppPromo potentially flashing in then out as soon as
+	// the user settings does properly indicate that the user is one.
+	const haveUserSettingsLoaded = userSettings.getSetting( ' is_desktop_app_user' ) === null;
 	const {
 		isDesktopPromoDisabled = store.get( 'desktop_promo_disabled' ),
 		isViewportMobile = viewport.isMobile(),
 		isUserLocaleEnglish = 'en' === userUtils.getLocaleSlug(),
 		isDesktopPromoConfiguredToRun = config.isEnabled( 'desktop-promo' ),
-		isUserDesktopAppUser = userSettings.getSetting( 'is_desktop_app_user' ),
+		isUserDesktopAppUser = haveUserSettingsLoaded || userSettings.getSetting( 'is_desktop_app_user' ),
 		isUserOnChromeOs = /\bCrOS\b/.test( navigator.userAgent )
 	} = options;
 
