@@ -11,7 +11,6 @@ This document aims to provide a list of things to check and test whenever you ar
 * Your code should work well with an empty initial state
   * Start a new session in private browsing mode, or run `localStorage.clear(); indexedDB.deleteDatabase( 'calypso' );` in your browser's developer tools console, then refresh the page
   * To disable state persistence, start Calypso with `DISABLE_FEATURES=persist-redux make run`
-* Run `localStorage.clear()`! Your code needs to handle an empty slate, plus incoming data.
 * How are you communicating 'loading' and 'empty' states? See how we approach [reactivity](reactivity.md).
 
 It's also important to keep the general WP.com commit checklist at hand (modified for Calypso):
