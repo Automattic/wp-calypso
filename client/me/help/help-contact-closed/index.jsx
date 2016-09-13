@@ -36,7 +36,7 @@ export default localize( ( props ) => {
 				{ translate(
 					'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together ' +
 					'to work on improving our services, building new features, and learning how to better serve you, our users. ' +
-					'But never fear! if you need help in the meantime:'
+					'But never fear! If you need help in the meantime:'
 				) }
 			</p>
 			<HelpContactClosedDetail icon="help">
@@ -61,13 +61,11 @@ export default localize( ( props ) => {
 			<HelpContactClosedDetail icon="book">
 				{ translate(
 					'If you are new to WordPress.com we have a step-by-step {{guide_link}}guide{{/guide_link}} to all things WordPress. ' +
-					'Our helpful {{forums_link}}forums{{/forums_link}} remain open and you can find more details in our ' +
-					'{{support_doc_link}}support documentation{{/support_doc_link}}. There we have ' +
+					'You can find more details in our {{support_doc_link}}support documentation{{/support_doc_link}}. There we have ' +
 					'guides on {{get_started_link}}getting started{{/get_started_link}}, {{first_post_link}}writing your first ' +
 					'post{{/first_post_link}}, and {{find_readers_link}}finding your readers{{/find_readers_link}}.', {
 						components: {
 							guide_link: <a href="https://learn.wordpress.com/" target="_blank" rel="noopener noreferrer" />,
-							forums_link: <a href="https://forums.wordpress.com/" target="_blank" rel="noopener noreferrer" />,
 							support_doc_link: <a href={ supportUrls.SUPPORT_ROOT } target="_blank" rel="noopener noreferrer" />,
 							get_started_link: <a href={ supportUrls.START } target="_blank" rel="noopener noreferrer" />,
 							first_post_link: <a href={ supportUrls.CREATE } target="_blank" rel="noopener noreferrer" />,
