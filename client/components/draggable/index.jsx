@@ -57,35 +57,79 @@ export default React.createClass( {
 		this.removeListeners();
 	},
 
-	onMouseDown( event ) {
-		event.preventDefault();
-
-		document.addEventListener( 'mousemove', this.onMouseMove );
-		document.addEventListener( 'mouseup', this.onMouseUp );
-
+	draggingStarted( event ) {
 		this.dragging = true;
+
+		let coords = event;
+
+		if ( this.isTouchEvent( event ) ) {
+			coords = event.touches[ 0 ];
+		}
+
 		this.relativePos = {
-			x: event.pageX - this.state.x,
-			y: event.pageY - this.state.y
+			x: coords.pageX - this.state.x,
+			y: coords.pageY - this.state.y
 		};
 
 		cancelAnimationFrame( this.frameRequestId );
 		this.frameRequestId = requestAnimationFrame( this.update );
 	},
 
-	onMouseMove( event ) {
-		let x = event.pageX - this.relativePos.x,
-			y = event.pageY - this.relativePos.y;
+	isTouchEvent( event ) {
+		return (
+			( ! event.pageX || ! event.pageY ) &&
+			( event.targetTouches && event.targetTouches.length )
+		);
+	},
+
+	dragging( event ) {
+		let coords = event;
+
+		console.log('on dragging');
+
+		if ( this.isTouchEvent( event ) ) {
+			coords = event.touches[ 0 ];
+		}
+
+		const x = coords.pageX - this.relativePos.x,
+			y = coords.pageY - this.relativePos.y;
 
 		this.mousePos = { x, y };
 	},
 
-	onMouseUp() {
+	draggingEnded( ) {
 		this.dragging = false;
 		this.mousePos = null;
+
+		console.log('on dragging end');
+
 		cancelAnimationFrame( this.frameRequestId );
+
 		this.removeListeners();
+
 		this.props.onStop();
+	},
+
+	onTouchStart( event ) {
+		event.preventDefault();
+
+		console.log('on touch start');
+
+		document.addEventListener( 'touchmove', this.dragging );
+		document.addEventListener( 'touchend', this.draggingEnded );
+
+		this.draggingStarted( event );
+	},
+
+	onMouseDown( event ) {
+		event.preventDefault();
+
+		console.log('on mouse down');
+
+		document.addEventListener( 'mousemove', this.dragging );
+		document.addEventListener( 'mouseup', this.draggingEnded );
+
+		this.draggingStarted( event );
 	},
 
 	update() {
@@ -115,8 +159,11 @@ export default React.createClass( {
 	},
 
 	removeListeners() {
-		document.removeEventListener( 'mousemove', this.onMouseMove );
-		document.removeEventListener( 'mouseup', this.onMouseUp );
+		document.removeEventListener( 'mousemove', this.dragging );
+		document.removeEventListener( 'mouseup', this.draggingEnded );
+
+		document.removeEventListener( 'touchmove', this.dragging );
+		document.removeEventListener( 'touchend', this.draggingEnded );
 	},
 
 	render() {
@@ -134,7 +181,9 @@ export default React.createClass( {
 			<div
 				{ ...elementProps }
 				style={ style }
-				onMouseDown={ this.onMouseDown }>
+				onMouseDown={ this.onMouseDown }
+				onTouchStart={ this.onTouchStart }
+			>
 			</div>
 		);
 	}
