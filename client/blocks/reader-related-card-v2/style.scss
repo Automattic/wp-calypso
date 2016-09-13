@@ -64,6 +64,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
     flex-basis: 0;
 	flex-grow: 1;
 	list-style-type: none;
+	margin-top: -3px;
 
 	&:first-child {
 		margin-right: 15px;
@@ -312,7 +313,9 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 }
 
 .reader-related-card-v2__byline {
+	display: flex;
 	flex: 1;
+	flex-direction: column;
 	font-size: 14px;
 	margin-top: 5px;
 }
