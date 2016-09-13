@@ -21,6 +21,9 @@ var EditorMediaModalDetailFields = require( './detail-fields' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	config = require( 'config' );
 
+import { isDesktop } from 'lib/viewport';
+import { hasTouch } from 'lib/touch-detect';
+
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailItem',
 
@@ -44,6 +47,10 @@ module.exports = React.createClass( {
 		};
 	},
 
+	isMobileTouchDevice() {
+		return ! isDesktop() || hasTouch();
+	},
+
 	renderEditButton: function() {
 		const { item, onEdit, site } = this.props;
 
@@ -52,9 +59,12 @@ module.exports = React.createClass( {
 			return debug( 'Do not show `Edit button` for private sites' );
 		}
 
-		if ( ! config.isEnabled( 'post-editor/image-editor' ) ||
+		if (
+			! config.isEnabled( 'post-editor/image-editor' ) ||
 			! userCan( 'upload_files', site ) ||
-			! item ) {
+			this.isMobileTouchDevice() ||
+			! item
+		) {
 			return;
 		}
 
