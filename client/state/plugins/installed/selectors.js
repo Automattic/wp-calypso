@@ -88,7 +88,7 @@ const getPluginOnSite = function( state, site, pluginSlug ) {
 const getSitesWithPlugin = function( state, sites, pluginSlug ) {
 	const pluginList = getPlugins( state, sites );
 	const plugin = find( pluginList, { slug: pluginSlug } );
-	if ( 'undefined' === typeof plugin ) {
+	if ( ! plugin ) {
 		return [];
 	}
 
