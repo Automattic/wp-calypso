@@ -37,6 +37,7 @@ import {
 } from 'state/sites/plans/selectors';
 import QuerySitePlans from 'components/data/query-site-plans';
 import formatCurrency from 'lib/format-currency';
+import { canCurrentUser } from 'state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:domain-to-plan-nudge' );
 
@@ -73,16 +74,18 @@ class DomainToPlanNudge extends Component {
 
 	isSiteEligible() {
 		const {
-			site,
+			canManage,
 			hasFreePlan,
+			rawPrice,
+			site,
 			sitePlans,
-			storedCard,
-			rawPrice
+			storedCard
 		} = this.props;
 
 		return sitePlans.hasLoadedFromServer &&
-			storedCard &&
-			rawPrice &&
+			storedCard &&     //has a payment option
+			canManage &&      //can manage site
+			rawPrice &&       //plans info has loaded
 			site &&           //site exists
 			site.wpcom_url && //has a mapped domain
 			hasFreePlan;      //has a free wpcom plan
@@ -324,6 +327,7 @@ export default connect(
 			productId = plansList[ PLAN_PERSONAL ].getProductId();
 
 		return {
+			canManage: canCurrentUser( state, siteId, 'manage_options' ),
 			discountedRawPrice: getPlanDiscountedRawPrice( state, siteId, productSlug ),
 			hasFreePlan: isCurrentSitePlan(
 				state,
