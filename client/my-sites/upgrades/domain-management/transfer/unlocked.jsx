@@ -19,7 +19,7 @@ const Unlocked = React.createClass( {
 	getInitialState() {
 		return {
 			submitting: false
-		}
+		};
 	},
 
 	handleCancelTransferClick() {
@@ -34,7 +34,7 @@ const Unlocked = React.createClass( {
 			siteId: this.props.selectedSite.ID
 		}, ( error ) => {
 			if ( error ) {
-				const contactLink = <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer"/>;
+				const contactLink = <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />;
 				let errorMessage;
 
 				switch ( error.error ) {
@@ -62,14 +62,13 @@ const Unlocked = React.createClass( {
 						break;
 				}
 				notices.error( errorMessage );
+			} else if ( hasPrivacyProtection ) {
+				notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
+					'Privacy Protection has been enabled.' ) );
 			} else {
-				if ( hasPrivacyProtection ) {
-					notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
-						'Privacy Protection has been enabled.' ) );
-				} else {
-					notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked back.' ) );
-				}
+				notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked back.' ) );
 			}
+
 			if ( this.isMounted() ) {
 				// component might be unmounted since it's state changed to locked
 				this.setState( { submitting: false } );
@@ -112,7 +111,8 @@ const Unlocked = React.createClass( {
 				<Card className="transfer-card">
 					<div>
 						<p>{ hasPrivacyProtection && ! privateDomain
-								? this.translate( 'Your domain is unlocked and Privacy Protection has been disabled to prepare for transfer.' )
+								? this.translate( 'Your domain is unlocked and Privacy Protection has been disabled' +
+									'to prepare for transfer.' )
 								: this.translate( 'Your domain is unlocked to prepare for transfer.' ) }
 						</p>
 
