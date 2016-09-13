@@ -8,6 +8,9 @@ This document aims to provide a list of things to check and test whenever you ar
 * Test scenarios where your feature intentionally doesn't work (e.g. not supported on Jetpack)
 * Explicitly test with a Jetpack-powered site. Calypso features should all work with Jetpack sites unless they are strictly WordPress.com-only.
 * Test different user privileges (admin, editor, author). How does your code behave?
+* Your code should work well with an empty initial state
+  * Start a new session in private browsing mode, or run `localStorage.clear(); indexedDB.deleteDatabase( 'calypso' );` in your browser's developer tools console, then refresh the page
+  * To disable state persistence, start Calypso with `DISABLE_FEATURES=persist-redux make run`
 * Run `localStorage.clear()`! Your code needs to handle an empty slate, plus incoming data.
 * How are you communicating 'loading' and 'empty' states? See how we approach [reactivity](reactivity.md).
 
