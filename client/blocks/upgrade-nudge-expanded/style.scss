@@ -49,18 +49,6 @@
 		height: 55px;
 		margin: 1px;
 		background-repeat: no-repeat;
-
-		&.is-business-plan {
-			background-image: url('/calypso/images/plans/plan-business.svg');
-		}
-
-		&.is-premium-plan {
-			background-image: url( '/calypso/images/plans/plan-premium.svg' );
-		}
-
-		&.is-personal-plan {
-			background-image: url('/calypso/images/plans/plan-personal.svg');
-		}
 	}
 
 	.upgrade-nudge-expanded__title-message {
