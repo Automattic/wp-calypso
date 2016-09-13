@@ -36,7 +36,7 @@ export default localize( ( props ) => {
 				{ translate(
 					'Why? Once a year, the WordPress.com Happiness Engineers and the rest of the WordPress.com family get together ' +
 					'to work on improving our services, building new features, and learning how to better serve you, our users. ' +
-					'But never fear! if you need help in the meantime:'
+					'But never fear! If you need help in the meantime:'
 				) }
 			</p>
 			<HelpContactClosedDetail icon="help">
@@ -50,7 +50,7 @@ export default localize( ( props ) => {
 			</HelpContactClosedDetail>
 			<HelpContactClosedDetail icon="credit-card">
 				{ translate(
-					'If you require a refund, you can request one directly from your {{link}}Manage Purchases{{/link}} ' +
+					'If you require a refund, you can still request one directly from your {{link}}Purchases{{/link}} ' +
 					'screen.', {
 						components: {
 							link: <a href="/purchases" />
@@ -74,7 +74,6 @@ export default localize( ( props ) => {
 					}
 				) }
 			</HelpContactClosedDetail>
-
 		</div>
 	);
 } );
