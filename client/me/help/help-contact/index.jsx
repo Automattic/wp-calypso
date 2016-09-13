@@ -416,7 +416,7 @@ const HelpContact = React.createClass( {
 			},
 			showKayakoVariation && {
 				onSubmit: this.submitKayakoTicket,
-				buttonLabel: isSubmitting ? this.translate( 'Submitting support ticket' ) : this.translate( 'Submit support ticket' )
+				buttonLabel: isSubmitting ? this.translate( 'Sending email' ) : this.translate( 'Email us' )
 			},
 			showForumsVariation && {
 				onSubmit: this.submitSupportForumsTopic,
