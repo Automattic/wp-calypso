@@ -22,7 +22,7 @@ import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
 import { PLAN_PERSONAL, getPlanClass, plansList } from 'lib/plans/constants';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { getSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -51,7 +51,7 @@ class UpgradeNudgeExpanded extends Component {
 		//Display only if upgrade path available
 		if (
 			! this.props.currentPlan ||
-			( this.props.planConstants.availableFor && ! this.props.planConstants.availableFor( this.props.currentPlan.productSlug ) )
+			( this.props.planConstants.availableFor && ! this.props.planConstants.availableFor( this.props.currentPlan.product_slug ) )
 		) {
 			return null;
 		}
@@ -137,7 +137,7 @@ UpgradeNudgeExpanded.propTypes = {
 
 const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	plan: getPlanBySlug( state, plan ),
-	currentPlan: getCurrentPlan( state, getSelectedSiteId( state ) ),
+	currentPlan: getSitePlan( state, getSelectedSiteId( state ) ),
 	planConstants: plansList[ plan ],
 	planClass: getPlanClass( plan ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
