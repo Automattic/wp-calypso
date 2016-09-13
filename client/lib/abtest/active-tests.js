@@ -34,7 +34,7 @@ module.exports = {
 		defaultVariation: 'clickableButton'
 	},
 	expandedNudge: {
-		datestamp: '20160904',
+		datestamp: '20160913',
 		variations: {
 			expanded: 50,
 			regular: 50,
