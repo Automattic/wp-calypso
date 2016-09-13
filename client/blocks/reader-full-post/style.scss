@@ -229,7 +229,7 @@
 	font-size: 26px;
 	font-weight: 700;
 	line-height: 34px;
-	margin: 56px 0 8px;
+	margin: 56px 0 0;
 	max-width: 750px;
 
 	@include breakpoint( ">960px" ) {
@@ -260,7 +260,11 @@
 }
 
 .reader-full-post__header-date {
-	line-height: 1.4;
+	line-height: 1.6;
+
+	@include breakpoint( "<480px" ) {
+		line-height: 1.4;
+	}
 }
 
 .reader-full-post__header-date-link {
@@ -334,6 +338,14 @@
 	&:hover {
 		color: $blue-light;
 	}
+}
+
+.reader-full-post__header {
+	margin-bottom: 23px;
+}
+
+.reader-full-post__featured-image {
+	margin-top: 27px;
 }
 
 .reader-full-post__story-content img:first-child {
