@@ -6,7 +6,7 @@ var debug = require( 'debug' )( 'i18n-calypso' ),
 	moment = require( 'moment-timezone' ),
 	EventEmitter = require( 'events' ).EventEmitter,
 	interpolateComponents = require( 'interpolate-components' ).default,
-	LRU = require( 'lru-cache' ),
+	LRU = require( 'lru' ),
 	assign = require( 'lodash.assign' );
 
 /**
@@ -211,7 +211,7 @@ I18N.prototype.setLocale = function( localeData ) {
 		this.state.numberFormatSettings.thousands_sep = ',';
 	}
 
-	this.state.translations.reset();
+	this.state.translations.clear();
 	this.stateObserver.emit( 'change' );
 };
 
@@ -238,7 +238,7 @@ I18N.prototype.addTranslations = function( localeData ) {
 		}
 	}
 
-	this.state.translations.reset();
+	this.state.translations.clear();
 	this.stateObserver.emit( 'change' );
 };
 
@@ -321,7 +321,7 @@ I18N.prototype.translate = function() {
  */
 I18N.prototype.reRenderTranslations = function() {
 	debug( 'Re-rendering all translations due to external request' );
-	this.state.translations.reset();
+	this.state.translations.clear();
 	this.stateObserver.emit( 'change' );
 };
 
