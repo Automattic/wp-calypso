@@ -94,14 +94,14 @@ const Unlocked = React.createClass( {
 	},
 
 	render() {
-		const { privateDomain, hasPrivacyProtection, manualTransferRequired } = getSelectedDomain( this.props );
+		const { privateDomain, hasPrivacyProtection, manualTransferRequired, pendingTransfer } = getSelectedDomain( this.props );
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Transfer Domain' ) } className="transfer__section-header">
-						<Button
+					{ pendingTransfer && <Button
 							onClick={ this.handleCancelTransferClick }
 							disabled={ this.state.submitting }
-							compact>{ this.translate( 'Cancel Transfer' ) }</Button>
+							compact>{ this.translate( 'Cancel Transfer' ) }</Button> }
 					{ ! manualTransferRequired && <Button
 							onClick={ this.handleResendConfirmationCodeClick }
 							disabled={ this.state.submitting }
