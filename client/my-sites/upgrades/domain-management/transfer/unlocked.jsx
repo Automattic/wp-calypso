@@ -23,13 +23,13 @@ const Unlocked = React.createClass( {
 	},
 
 	handleCancelTransferClick() {
-		const { privateDomain, hasPrivacyProtection } = getSelectedDomain( this.props );
+		const { privateDomain, hasPrivacyProtection, pendingTransfer } = getSelectedDomain( this.props );
 
 		this.setState( { submitting: true } );
 
 		enableDomainLocking( {
 			domainName: this.props.selectedDomainName,
-			declineTransfer: true,
+			declineTransfer: pendingTransfer,
 			enablePrivacy: hasPrivacyProtection && ! privateDomain,
 			siteId: this.props.selectedSite.ID
 		}, ( error ) => {
@@ -94,13 +94,22 @@ const Unlocked = React.createClass( {
 
 	render() {
 		const { privateDomain, hasPrivacyProtection, manualTransferRequired, pendingTransfer } = getSelectedDomain( this.props );
+		let domainStateMessage = this.translate( 'Your domain is unlocked to prepare for transfer.' );
+
+		if ( pendingTransfer ) {
+			domainStateMessage = this.translate( 'Your domain is pending transfer.' );
+		} else if ( hasPrivacyProtection && ! privateDomain ) {
+			domainStateMessage = this.translate( 'Your domain is unlocked and Privacy Protection has been disabled' +
+				' to prepare for transfer.' );
+		}
+
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Transfer Domain' ) } className="transfer__section-header">
-					{ pendingTransfer && <Button
+					<Button
 							onClick={ this.handleCancelTransferClick }
 							disabled={ this.state.submitting }
-							compact>{ this.translate( 'Cancel Transfer' ) }</Button> }
+							compact>{ this.translate( 'Cancel Transfer' ) }</Button>
 					{ ! manualTransferRequired && <Button
 							onClick={ this.handleResendConfirmationCodeClick }
 							disabled={ this.state.submitting }
@@ -110,12 +119,7 @@ const Unlocked = React.createClass( {
 
 				<Card className="transfer-card">
 					<div>
-						<p>{ hasPrivacyProtection && ! privateDomain
-								? this.translate( 'Your domain is unlocked and Privacy Protection has been disabled' +
-									'to prepare for transfer.' )
-								: this.translate( 'Your domain is unlocked to prepare for transfer.' ) }
-						</p>
-
+						<p>{ domainStateMessage }</p>
 						<p>
 							{
 								! manualTransferRequired
