@@ -338,9 +338,10 @@ a.comments__comment-username {
 .comments__view-earlier {
 	color: $gray;
 	cursor: pointer;
-	display: inline-block;
+	display: block !important; // to overwrite inline-block rule
 	font-size: 14px;
-	margin-bottom: 0 !important; // the !important can go when the old reader/comments is retired
+	line-height: 1;
+	margin-bottom: 15px !important; // to overwrite 10px value
 
 	&:hover {
 		color: $blue-light;
@@ -368,6 +369,8 @@ a.comments__comment-username {
 	color: lighten( $gray, 10% );
 	font-size: 14px;
 	font-weight: 600;
+	line-height: 1;
+	margin: 8px 0 17px;
 }
 
 .comments__comment-count-phrase {
