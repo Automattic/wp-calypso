@@ -24,12 +24,12 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	font-weight: 600;
 	margin-bottom: 20px;
 	display: -webkit-box;
-    max-height: 22px;
-    overflow: hidden;
-    position: relative;
+	max-height: 22px;
+	overflow: hidden;
+	position: relative;
 	text-transform: uppercase;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
 
     &::after{
     	@include long-content-fade( $size: 10% );
