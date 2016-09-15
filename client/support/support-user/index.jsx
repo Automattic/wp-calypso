@@ -57,22 +57,18 @@ const SupportUser = React.createClass( {
 	}
 } );
 
-const mapStateToProps = ( state ) => {
-	return {
-		isEnabledForUser: currentUserHasFlag( state, 'calypso_support_user' ),
-		isSupportUser: state.support.isSupportUser,
-		isTransitioning: state.support.isTransitioning,
-		showDialog: state.support.showDialog,
-		errorMessage: state.support.errorMessage,
-	};
-};
+const mapStateToProps = state => ( {
+	isEnabledForUser: currentUserHasFlag( state, 'calypso_support_user' ),
+	isSupportUser: state.support.isSupportUser,
+	isTransitioning: state.support.isTransitioning,
+	showDialog: state.support.showDialog,
+	errorMessage: state.support.errorMessage,
+} );
 
-const mapDispatchToProps = ( dispatch ) => {
-	return {
-		supportUserTokenFetch: fetchToken,
-		supportUserRestore: rebootNormally,
-		supportUserToggleDialog: flowRight( dispatch, supportUserToggleDialog ),
-	};
-}
+const mapDispatchToProps = dispatch => ( {
+	supportUserTokenFetch: fetchToken,
+	supportUserRestore: rebootNormally,
+	supportUserToggleDialog: flowRight( dispatch, supportUserToggleDialog ),
+} );
 
 export default connect( mapStateToProps, mapDispatchToProps )( SupportUser );
