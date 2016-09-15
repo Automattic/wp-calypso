@@ -40,6 +40,7 @@ import afterTheDeadlinePlugin from './plugins/after-the-deadline/plugin';
 import wptextpatternPlugin from './plugins/wptextpattern/plugin';
 import toolbarPinPlugin from './plugins/toolbar-pin/plugin';
 import insertMenuPlugin from './plugins/insert-menu/plugin';
+import mentionsPlugin from './plugins/mentions/plugin';
 
 [
 	wpcomPlugin,
@@ -60,7 +61,8 @@ import insertMenuPlugin from './plugins/insert-menu/plugin';
 	contactFormPlugin,
 	afterTheDeadlinePlugin,
 	wptextpatternPlugin,
-	toolbarPinPlugin
+	toolbarPinPlugin,
+	mentionsPlugin
 ].forEach( ( initializePlugin ) => initializePlugin() );
 
 /**
@@ -125,6 +127,7 @@ const PLUGINS = [
 	'wpcom/toolbarpin',
 	'wpcom/contactform',
 	'wpcom/sourcecode',
+	'wpcom/mentions',
 ];
 
 if ( config.isEnabled( 'post-editor/insert-menu' ) ) {
