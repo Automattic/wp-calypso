@@ -42,7 +42,6 @@
 			min-height: 33px;
 			margin: 0;
 			padding: 5px 60px 5px 5px;
-			resize: vertical;
 			font-size: 14px;
 			font-family: $serif;
 			line-height: 21px;
@@ -56,6 +55,7 @@
 				top: 0;
 				left: 0;
 			height: 100%;
+			resize: none;
 		}
 
 		pre {
