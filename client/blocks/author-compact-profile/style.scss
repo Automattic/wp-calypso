@@ -4,6 +4,10 @@
 	flex-direction: column;
 	width: 100%;
 
+	.reader-avatar {
+		margin-bottom: 18px;
+	}
+
 	.gravatar, .site-icon {
 		margin: auto;
 	}
@@ -79,7 +83,6 @@
 .author-compact-profile .reader-author-link,
 .author-compact-profile__site-link {
 	font-weight: 600;
-	margin-top: 18px;
 }
 
 .author-compact-profile__follow {

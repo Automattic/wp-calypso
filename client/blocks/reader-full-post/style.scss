@@ -94,6 +94,10 @@
 	flex-direction: column;
 	z-index: z-index( '.masterbar', '.reader-profile' );
 
+	.reader-author-link {
+		margin-top: -4px; // Aligns baseline of author name with baseline of title if no avatar
+	}
+
 	@include breakpoint( "<660px" ) {
 		flex-direction: row;
 		margin-top: 20px;
@@ -145,16 +149,24 @@
 		.reader-author-link {
 			font-weight: 700;
 			display: inline;
+			margin: 0 10px 0 0;
 		}
 
 		.reader-author-link,
 		.author-compact-profile__site-link {
-			margin: 0 0 0 10px;
 			padding-top: 5px;
+
+			@include breakpoint( "<660px" ) {
+				margin-bottom: 35px;
+			}
 		}
 
 		.author-compact-profile__site-link {
 			display: inline;
+
+			@include breakpoint( "<660px" ) {
+				margin-top: 0;
+			}
 		}
 
 		.author-compact-profile__follow .follow-button {
