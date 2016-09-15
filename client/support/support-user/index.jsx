@@ -11,6 +11,7 @@ import flowRight from 'lodash/flowRight';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
 import { fetchToken, rebootNormally } from 'lib/user/support-user-interop';
+import { currentUserHasFlag } from 'state/current-user/selectors';
 
 import { supportUserToggleDialog } from 'state/support/actions';
 
@@ -26,6 +27,10 @@ const SupportUser = React.createClass( {
 	},
 
 	onKeyboardShortcut: function( e ) {
+		if ( ! this.props.isEnabledForUser ) {
+			return false;
+		}
+
 		// Because the username field is auto-focused, this prevents
 		// the shortcut key being entered into the field
 		e.preventDefault();
@@ -54,12 +59,13 @@ const SupportUser = React.createClass( {
 
 const mapStateToProps = ( state ) => {
 	return {
+		isEnabledForUser: currentUserHasFlag( state, 'calypso_support_user' ),
 		isSupportUser: state.support.isSupportUser,
 		isTransitioning: state.support.isTransitioning,
 		showDialog: state.support.showDialog,
 		errorMessage: state.support.errorMessage,
 	};
-}
+};
 
 const mapDispatchToProps = ( dispatch ) => {
 	return {
