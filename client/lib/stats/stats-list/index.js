@@ -15,8 +15,8 @@ var wpcom = require( 'lib/wp' ),
 var responseHandler,
 	buildExportArray,
 	trackExtraStats = false,
-	documentedEndpoints = [ 'statsVideo', 'statsPublicize', 'statsStreak', 'statsFollowers', 'statsCommentFollowers', 'statsTopAuthors', 'statsTags', 'statsComments', 'statsPostViews', 'statsVideoPlays','stats', 'statsVisits', 'statsReferrers', 'statsTopPosts', 'statsClicks', 'statsCountryViews', 'statsSearchTerms' ],
-	undocumentedEndpoints = [ 'statsEvents', 'statsInsights' ];
+	documentedEndpoints = [ 'statsVideo', 'statsPublicize', 'statsStreak', 'statsFollowers', 'statsCommentFollowers', 'statsTopAuthors', 'statsTags', 'statsComments', 'statsPostViews', 'statsVideoPlays', 'stats', 'statsVisits', 'statsReferrers', 'statsTopPosts', 'statsClicks', 'statsCountryViews', 'statsSearchTerms' ],
+	undocumentedEndpoints = [ 'statsEvents', 'statsInsights', 'statsPodcastListens' ];
 
 responseHandler = function() {
 	return function( error, data ) {
@@ -190,7 +190,6 @@ StatsList.prototype.fetch = function() {
 	}
 
 	this.startedAt = Date.now();
-
 	wpcomSite[ this.statType ].call( wpcomSite, options, responseHandler( this.options ).bind( this ) );
 };
 
