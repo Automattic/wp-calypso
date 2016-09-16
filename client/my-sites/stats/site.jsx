@@ -206,8 +206,8 @@ module.exports = React.createClass( {
 								beforeNavigate={ this.updateScrollPosition } />
 							{ videoList }
 							<StatsModule
-								path={ 'podcastdownloads' }
-								moduleStrings={ moduleStrings.podcastdownloads }
+								path={ 'podcastlistens' }
+								moduleStrings={ moduleStrings.podcastlistens }
 								site={ site }
 								dataList={ this.props.podcastListensList }
 								period={ this.props.period }
