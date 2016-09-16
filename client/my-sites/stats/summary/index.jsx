@@ -150,6 +150,19 @@ module.exports = React.createClass( {
 					summary={ true } />;
 				break;
 
+			// case 'podcastplays':
+			// 	title = this.translate( 'Podcasts' );
+			// 	summaryView = <StatsModule
+			// 		key="videoplays-summary"
+			// 		path={ 'videoplays' }
+			// 		moduleStrings={ StatsStrings.videoplays }
+			// 		site={ site }
+			// 		dataList={ this.props.summaryList }
+			// 		period={ this.props.period }
+			// 		followList={ this.props.followList }
+			// 		summary={ true } />;
+			// 	break;
+
 			case 'videodetails':
 				title = this.translate( 'Video' );
 

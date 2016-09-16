@@ -205,6 +205,14 @@ module.exports = React.createClass( {
 								date={ queryDate }
 								beforeNavigate={ this.updateScrollPosition } />
 							{ videoList }
+							<StatsModule
+								path={ 'podcastdownloads' }
+								moduleStrings={ moduleStrings.podcastdownloads }
+								site={ site }
+								dataList={ this.props.videoPlaysList }
+								period={ this.props.period }
+								date={ queryDate }
+								beforeNavigate={ this.updateScrollPosition } />
 						</div>
 					</div>
 					{ nonPeriodicModules }
