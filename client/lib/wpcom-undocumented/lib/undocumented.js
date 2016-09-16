@@ -1988,6 +1988,14 @@ Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
 	return this.wpcom.req.get( '/sites/' + siteId + '/wordads/status', fn );
 };
 
+Undocumented.prototype.getLabeledUserImages = function( siteId, search, fn ) {
+	debug( '/sites/:site:/media/uic' );
+	return this.wpcom.req.get( '/sites/' + siteId + '/media/uic', {
+		apiVersion: '1.2',
+		search
+	}, fn );
+};
+
 /**
  * Expose `Undocumented` module
  */
