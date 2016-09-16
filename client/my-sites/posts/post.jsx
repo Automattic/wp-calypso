@@ -19,6 +19,7 @@ import PostTotalViews from 'my-sites/posts/post-total-views';
 import utils from 'lib/posts/utils';
 import updatePostStatus from 'lib/mixins/update-post-status';
 import analytics from 'lib/analytics';
+import config from 'config';
 
 import Comments from 'reader/comments';
 
@@ -312,6 +313,20 @@ module.exports = React.createClass( {
 			metaItems.push( (
 				<PostTotalViews post={ post } clickHandler={ this.analyticsEvents.viewStats } />
 			) );
+		}
+
+		if ( config.isEnabled( 'republicize' ) && post && ( post.status === 'publish' || post.status === 'future') ) {
+			metaItems.push(
+				<a
+					className={ classNames( {
+						'post__comments': true,
+					} ) }
+					title={ this.translate( 'Share' ) }
+					onClick={ ()=>{} }
+				>
+				<Gridicon icon="speaker" size={ 24 } />
+				</a>
+			);
 		}
 
 		if ( metaItems.length ) {
