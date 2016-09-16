@@ -590,7 +590,7 @@ StatsParser.prototype.statsPodcastListens = function( payload ) {
 			return {
 				label: item.title,
 				page: detailPage,
-				value: item.plays,
+				value: item.listens,
 				actions: [ {
 					type: 'link',
 					data: item.url
@@ -598,12 +598,12 @@ StatsParser.prototype.statsPodcastListens = function( payload ) {
 			};
 		}, this );
 
-		if ( payload.days[ startDate ].other_plays ) {
+		if ( payload.days[ startDate ].other_listens ) {
 			response.summaryPage = this.options ? '/stats/' + this.options.period + '/podcastlistens/' + this.options.domain + '?startDate=' + startDate : null;
 		}
 
-		if ( payload.days[ startDate ].total_plays ) {
-			response.total = payload.days[ startDate ].total_plays;
+		if ( payload.days[ startDate ].total_listens ) {
+			response.total = payload.days[ startDate ].total_listens;
 		}
 	}
 
