@@ -294,55 +294,59 @@ function recordProduct( product, orderId ) {
 		userId = currentUser ? currentUser.ID : 0,
 		costUSD = costToUSD( product.cost, product.currency );
 
-	// Facebook
-	window.fbq(
-		'track',
-		'Purchase',
-		{
-			currency: product.currency,
-			product_slug: product.product_slug,
-			value: product.cost,
-			user_id: userId,
-			order_id: orderId
-		}
-	);
-
-	// Bing
-	if ( isSupportedCurrency( product.currency ) ) {
-		window.uetq.push( {
-			ec: 'purchase',
-			gv: costUSD
-		} );
-	}
-
-	// Google
-	if ( window.google_trackConversion ) {
-		window.google_trackConversion( {
-			google_conversion_id: GOOGLE_CONVERSION_ID,
-			google_conversion_label: isJetpackPlan
-				? TRACKING_IDS.googleConversionLabelJetpack
-				: TRACKING_IDS.googleConversionLabel,
-			google_conversion_value: product.cost,
-			google_conversion_currency: product.currency,
-			google_custom_params: {
+	try {
+		// Facebook
+		window.fbq(
+			'track',
+			'Purchase',
+			{
+				currency: product.currency,
 				product_slug: product.product_slug,
+				value: product.cost,
 				user_id: userId,
 				order_id: orderId
-			},
-			google_remarketing_only: false
-		} );
-	}
+			}
+		);
 
-	// Quantcast
-	// Note that all properties have to be strings or they won't get tracked
-	if ( isSupportedCurrency( product.currency ) ) {
-		window._qevents.push( {
-			qacct: TRACKING_IDS.quantcast,
-			labels: '_fp.event.Purchase Confirmation,_fp.pcat.' + product.product_slug,
-			orderid: orderId.toString(),
-			revenue: costUSD.toString(),
-			event: 'refresh'
-		} );
+		// Bing
+		if ( isSupportedCurrency( product.currency ) ) {
+			window.uetq.push( {
+				ec: 'purchase',
+				gv: costUSD
+			} );
+		}
+
+		// Google
+		if ( window.google_trackConversion ) {
+			window.google_trackConversion( {
+				google_conversion_id: GOOGLE_CONVERSION_ID,
+				google_conversion_label: isJetpackPlan
+					? TRACKING_IDS.googleConversionLabelJetpack
+					: TRACKING_IDS.googleConversionLabel,
+				google_conversion_value: product.cost,
+				google_conversion_currency: product.currency,
+				google_custom_params: {
+					product_slug: product.product_slug,
+					user_id: userId,
+					order_id: orderId
+				},
+				google_remarketing_only: false
+			} );
+		}
+
+		// Quantcast
+		// Note that all properties have to be strings or they won't get tracked
+		if ( isSupportedCurrency( product.currency ) ) {
+			window._qevents.push( {
+				qacct: TRACKING_IDS.quantcast,
+				labels: '_fp.event.Purchase Confirmation,_fp.pcat.' + product.product_slug,
+				orderid: orderId.toString(),
+				revenue: costUSD.toString(),
+				event: 'refresh'
+			} );
+		}
+	} catch ( err ) {
+		debug( 'Unable to save purchase tracking data', err );
 	}
 }
 
@@ -522,14 +526,14 @@ function quantcastAsynchronousTagURL() {
  *
  * @param {Number} cost - The cost of the cart or product
  * @param {String} currency - The currency such as `USD`, `JPY`, etc
- * @returns {Number} Or null if the currency is not supported
+ * @returns {String} Or null if the currency is not supported
  */
 function costToUSD( cost, currency ) {
 	if ( ! isSupportedCurrency( currency ) ) {
 		return null;
 	}
 
-	return cost / EXCHANGE_RATES[ currency ];
+	return ( cost / EXCHANGE_RATES[ currency ] ).toFixed( 3 );
 }
 
 /**
