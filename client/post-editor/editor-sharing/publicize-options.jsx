@@ -184,10 +184,10 @@ const EditorSharingPublicizeOptions = React.createClass( {
 	renderRepublicize() {
 		return(
 			<button
-				className="button is-primary"
+				className="button editor-sharing__publicize-share-button"
 				onClick={ () => { console.log( 'Pressed republicize' ) } }
 			>
-				{ "Republicize!" }
+				{ "Share" }
 			</button>
 		);
 	},
@@ -230,7 +230,12 @@ const EditorSharingPublicizeOptions = React.createClass( {
 				{ this.renderServices() }
 				{ this.renderAddNewButton() }
 				{ this.renderMessage() }
-				{ config.isEnabled( 'republicize' ) && this.renderRepublicize() }
+				{
+					config.isEnabled( 'republicize' ) &&
+					this.props.post &&
+					( this.props.post.status === 'publish' || this.props.post.status === 'future') &&
+					this.renderRepublicize()
+				}
 			</div>
 		);
 	}
