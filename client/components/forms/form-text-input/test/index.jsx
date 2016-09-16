@@ -14,7 +14,7 @@ describe( '<FormTextInput />', () => {
 		it( 'should have is-error class', () => {
 			const wrapper = shallow( <FormTextInput isError /> );
 
-			assert.equal( wrapper.node.props.className , 'form-text-input is-error' );
+			assert.equal( wrapper.node.props.className, 'form-text-input is-error' );
 		} );
 
 		it( 'should have is-valid class', () => {
@@ -32,12 +32,3 @@ describe( '<FormTextInput />', () => {
 		} );
 	} );
 } );
-
-
-
-
-// it( 'toggles isActive state on mouse down', () => {
-// 	const wrapper = shallow( <Button /> );
-// 	wrapper.find( 'button' ).simulate( 'mouseDown' );
-// 	expect( wrapper ).to.have.state( 'isActive' ).be.true;
-// } );
