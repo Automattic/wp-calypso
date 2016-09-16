@@ -27,6 +27,7 @@ import { postTypeSupports } from 'state/post-types/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
+import config from 'config';
 
 const EditorSharingPublicizeOptions = React.createClass( {
 	connectionPopupMonitor: false,
@@ -180,6 +181,17 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		);
 	},
 
+	renderRepublicize() {
+		return(
+			<button
+				className="button is-primary"
+				onClick={ () => { console.log( 'Pressed republicize' ) } }
+			>
+				{ "Republicize!" }
+			</button>
+		);
+	},
+
 	render: function() {
 		if ( ! this.props.isPublicizeEnabled ) {
 			return null;
@@ -218,6 +230,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 				{ this.renderServices() }
 				{ this.renderAddNewButton() }
 				{ this.renderMessage() }
+				{ config.isEnabled( 'republicize' ) && this.renderRepublicize() }
 			</div>
 		);
 	}
