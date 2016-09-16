@@ -1,8 +1,21 @@
 /**
+ * External dependencies
+ */
+const fs = require( 'fs' );
+const path = require( 'path' );
+
+/**
  * Internal dependencies
  */
 const config = require( 'config' ),
 	sections = require( config( 'project' ) );
+
+const plugins = fs.readdirSync( path.join( __dirname, 'plugins' ) );
+
+const pluginSections = sections.concat( plugins.map( plugin => {
+	const pkg = JSON.parse( fs.readFileSync( path.join( __dirname, 'plugins', plugin, 'package.json' ) ) );
+	return pkg.section;
+} ) );
 
 if ( config.isEnabled( 'devdocs' ) ) {
 	sections.push( {
@@ -22,4 +35,4 @@ if ( config.isEnabled( 'devdocs' ) ) {
 	} );
 }
 
-module.exports = sections;
+module.exports = sections.concat( pluginSections );
