@@ -195,7 +195,7 @@ PluginsStore = {
 			return;
 		}
 		plugins = sortBy( plugins, function( plugin ) {
-			return plugin.slug;
+			return plugin.name;
 		} );
 		if ( ! plugins ) {
 			return [];

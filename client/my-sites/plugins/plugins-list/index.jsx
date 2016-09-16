@@ -6,7 +6,7 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import { find, get, includes, isEmpty, isEqual, negate, range, reduce } from 'lodash';
+import { find, get, includes, isEmpty, isEqual, negate, range, reduce, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -222,6 +222,10 @@ export const PluginsList = React.createClass( {
 			.map( p => p.sites ) // list of plugins -> list of list of sites
 			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
 			.forEach( site => action( site, site.plugin ) );
+	},
+
+	pluginHasUpdate( plugin ) {
+		return plugin.sites.some( site => site.plugin && site.plugin.update && site.canUpdateFiles );
 	},
 
 	updateAllPlugins() {
@@ -461,8 +465,9 @@ export const PluginsList = React.createClass( {
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) }
 					haveUpdatesSelected= { this.props.plugins.some( this.filterSelection.updates.bind( this ) ) } />
-				<div className={ itemListClasses }>{ this.props.plugins.map( this.renderPlugin ) }</div>
-
+				<div className={ itemListClasses }>
+					{ this.orderPluginsByUpdates( this.props.plugins ).map( this.renderPlugin ) }
+				</div>
 			</div>
 		);
 	},
@@ -481,7 +486,14 @@ export const PluginsList = React.createClass( {
 		};
 	},
 
-	renderPlugin( plugin ) {
+	orderPluginsByUpdates( plugins ) {
+		return sortBy( plugins, plugin => {
+			// Bring the plugins requiring updates to the front of the array
+			return this.pluginHasUpdate( plugin ) ? 0 : 1;
+		} );
+	},
+
+	renderPlugin( plugin, index ) {
 		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
 		const allowedPluginActions = this.getAllowedPluginActions( plugin );
 		const isSelectable = this.state.bulkManagementActive && ( allowedPluginActions.autoupdate || allowedPluginActions.activation );
@@ -497,9 +509,11 @@ export const PluginsList = React.createClass( {
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ isSelectable }
 				onClick={ selectThisPlugin }
+				hasUpdate = { this.pluginHasUpdate }
 				selectedSite={ this.props.selectedSite }
 				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() }
 				allowedActions = { allowedPluginActions }
+				isCompact={ index !== this.props.pluginUpdateCount - 1 }
 				isAutoManaged = { ! allowedPluginActions.autoupdate } />
 		);
 	},
