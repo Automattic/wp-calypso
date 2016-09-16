@@ -31,10 +31,6 @@ function getCourses() {
 			),
 			schedule: [
 				{
-					date: i18n.moment( new Date( 'Mon, 12 Sep 2016 21:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/08c4eff0906b1da4d746f627e8486654'
-				},
-				{
 					date: i18n.moment( new Date( 'Fri, 23 Sep 2016 18:00:00 +0000' ) ),
 					registrationUrl: 'https://zoom.us/webinar/register/732df6652d490ab0dc2040ba88984b7b'
 				},
