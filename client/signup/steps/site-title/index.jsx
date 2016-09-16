@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -19,12 +19,12 @@ const SiteTitleStep = React.createClass( {
 	displayName: 'Site Title',
 
 	propTypes: {
-		flowName: React.PropTypes.string,
-		goToNextStep: React.PropTypes.func.isRequired,
-		positionInFlow: React.PropTypes.number,
-		setSiteTitle: React.PropTypes.func.isRequired,
-		signupProgressStore: React.PropTypes.array,
-		stepName: React.PropTypes.string,
+		flowName: PropTypes.string,
+		goToNextStep: PropTypes.func.isRequired,
+		positionInFlow: PropTypes.number,
+		setSiteTitle: PropTypes.func.isRequired,
+		signupProgressStore: PropTypes.array,
+		stepName: PropTypes.string,
 	},
 
 	submitSiteTitleStep( siteTitle ) {
@@ -78,5 +78,5 @@ const SiteTitleStep = React.createClass( {
 
 export default connect(
 	null,
-	{ setSiteTitle: setSiteTitle }
+	{ setSiteTitle }
 )( SiteTitleStep );

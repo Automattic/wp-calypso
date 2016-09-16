@@ -1,33 +1,30 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import LoggedOutForm from 'components/logged-out-form';
-
 import formState from 'lib/form-state';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
-
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 
 const SignupSiteTitle = React.createClass( {
-	displayName: 'Signup Site Title',
-
 	propTypes: {
-		onSubmit: React.PropTypes.func.isRequired,
-		siteTitle: React.PropTypes.string.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		siteTitle: PropTypes.string.isRequired,
 	},
 
 	componentWillMount() {
 		this.formStateController = new formState.Controller( {
 			fieldNames: [ 'siteTitle' ],
-			validatorFunction: () => {},
+			validatorFunction: noop,
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError,
 			hideFieldErrorsOnChange: true,
