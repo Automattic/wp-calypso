@@ -13,10 +13,25 @@ import {
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
+	PUBLICIZE_SHARE,
+	PUBLICIZE_SHARE_SUCCESS,
+	PUBLICIZE_SHARE_FAILURE
 } from 'state/action-types';
 import { connectionsSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
+import { createReducer } from 'state/utils';
+
+
+const getStateWithSharePostFething = ( state, fetching, siteId, postId ) => Object.assign( {}, state, {
+	[ siteId ]: Object.assign( {}, state[ siteId ], { [ postId ]: fetching } )
+} );
+const requestingSharePost = createReducer( {}, {
+	[ PUBLICIZE_SHARE ]: ( state, action ) => getStateWithSharePostFething( state, true, action.siteId, action.postId ),
+	[ PUBLICIZE_SHARE_SUCCESS ]: ( state, action ) => getStateWithSharePostFething( state, false, action.siteId, action.postId ),
+	[ PUBLICIZE_SHARE_FAILURE ]: ( state, action ) => getStateWithSharePostFething( state, false, action.siteId, action.postId )
+} );
+
 
 /**
  * Track the current status for fetching connections. Maps site ID to the
@@ -75,5 +90,6 @@ export function connections( state = {}, action ) {
 
 export default combineReducers( {
 	fetchingConnections,
-	connections
+	connections,
+	requestingSharePost
 } );

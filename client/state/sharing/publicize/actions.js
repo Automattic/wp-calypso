@@ -7,7 +7,7 @@ import {
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 	PUBLICIZE_SHARE,
-	// PUBLICIZE_SHARE_SUCCESS,
+	PUBLICIZE_SHARE_SUCCESS,
 	// PUBLICIZE_SHARE_FAILURE
 } from 'state/action-types';
 
@@ -22,17 +22,21 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 			message
 		} );
 
-		// return new Promise( ( resolve ) => {
-		// 	wpcom.undocumented().siteConnections( siteId, postId, skippedConnections, message, ( error, data ) => {
-		// 		if ( error ) {
-		// 			dispatch( { type: PUBLICIZE_SHARE_FAILURE } );
-		// 		} else {
-		// 			dispatch( { type: PUBLICIZE_SHARE_SUCCESS } );
-		// 		}
+		return new Promise( ( resolve ) => {
+			// wpcom.undocumented().siteConnections( siteId, postId, skippedConnections, message, ( error, data ) => {
+			// 	if ( error ) {
+			// 		dispatch( { type: PUBLICIZE_SHARE_FAILURE } );
+			// 	} else {
+			// 		dispatch( { type: PUBLICIZE_SHARE_SUCCESS } );
+			// 	}
 
-		// 		resolve();
-		// 	} );
-		// } );
+			// 	resolve();
+			// } );
+			setTimeout( () => {
+				dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
+				resolve();
+			}, 2000 );
+		} );
 	};
 }
 
