@@ -155,7 +155,7 @@ const HelpContact = React.createClass( {
 				confirmation: {
 					title: this.translate( 'We\'re on it!' ),
 					message: this.translate(
-						'Thank your for your message! We\'re currently away on our ' +
+						'Thank you for your message! We\'re currently away on our ' +
 						'annual company meetup where we are working to improve WordPress ' +
 						'for you. We will be answering your questions but responses ' +
 						'may be slower than normal.'
