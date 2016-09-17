@@ -22,6 +22,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 
 import Comments from 'reader/comments';
+import PostShare from './post-share';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Posts', eventAction );
@@ -46,7 +47,8 @@ module.exports = React.createClass( {
 	getInitialState() {
 		return {
 			showMoreOptions: false,
-			showComments: false
+			showComments: false,
+			showShare: false
 		};
 	},
 
@@ -322,7 +324,7 @@ module.exports = React.createClass( {
 						'post__comments': true,
 					} ) }
 					title={ this.translate( 'Share' ) }
-					onClick={ ()=>{} }
+					onClick={ () => this.setState( { showShare: ! this.state.showShare } ) }
 				>
 				<Gridicon icon="speaker" size={ 24 } />
 				</a>
@@ -412,6 +414,7 @@ module.exports = React.createClass( {
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
 				{ this.state.showComments && <Comments post={ this.props.post } onCommentsUpdate={ () => {} } /> }
+				{ this.state.showShare && <PostShare post={ this.props.post } site={ site } /> }
 			</Card>
 		);
 	}

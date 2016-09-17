@@ -373,6 +373,18 @@
 	animation: appear .3s ease-in-out;
 }
 
+.post .posts__post-share {
+	margin: 0;
+	padding: 0 24px 24px;
+	animation: appear .3s ease-in-out;
+	border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+}
+
+.posts__post-share-title {
+	margin: 24px 0 24px 0;
+	font-weight: bold;
+}
+
 .post-controls {
 	box-sizing: border-box;
 	background-color: $white;
