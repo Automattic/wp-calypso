@@ -585,7 +585,7 @@ StatsParser.prototype.statsPodcastListens = function( payload ) {
 		startDate = periodRange.startOf.format( 'YYYY-MM-DD' );
 
 	if ( payload && payload.date && payload.days && payload.days[ startDate ] ) {
-		response.data = payload.days[ startDate ].plays.map( function( item ) {
+		response.data = payload.days[ startDate ].listens.map( function( item ) {
 			var detailPage = '/stats/' + this.options.period + '/podcastlistens/' + this.options.domain + '?post=' + item.post_id;
 			return {
 				label: item.title,
