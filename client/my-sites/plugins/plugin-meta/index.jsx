@@ -153,15 +153,18 @@ export default React.createClass( {
 		const newVersions = this.getAvailableNewVersions();
 		if ( newVersions.length > 0 ) {
 			if ( this.props.selectedSite ) {
+				const textVersion = this.translate( 'Version' );
+				const textIsAvailable = this.translate( 'is available' );
+			
 				return (
 					<Notice
 						status="is-warning"
 						className="plugin-meta__version-notice"
 						showDismiss={ false }
 						icon="sync"
-						text={ i18n.translate( 'A new version is available.' ) }>
+						text={ `${ textVersion } ${ newVersions[ 0 ].newVersion } ${ textIsAvailable }` }>
 						<NoticeAction onClick={ this.handlePluginUpdatesSingleSite }>
-							{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersions[ 0 ].newVersion } } ) }
+							{ this.translate( 'Update' ) }
 						</NoticeAction>
 					</Notice>
 				);
