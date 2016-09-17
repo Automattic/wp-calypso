@@ -2,13 +2,24 @@
  * External dependencies
  */
 import React from 'react';
+import { concat } from 'lodash';
 
-// import SidebarItem from 'layout/sidebar/item';
-import SitesSidebarMenu from 'my-sites/sidebar/menu';
+/**
+ * Internal dependencies
+ */
+import SidebarItem from 'layout/sidebar/item';
 
-export default class PostCommentContent extends React.Component {
-	render() {
-		const children = Array.from( this.props.extraChildren ).concat( <p>Hellow World</p> );
-		return <SitesSidebarMenu { ...this.props } extraChidren={ children } />;
-	}
+export default function HelloWorldDecorator( Base ) {
+	return class extends React.Component {
+		render() {
+			const children = concat( this.props.extraChildren,
+				<SidebarItem
+					key="hello-world"
+					icon="status"
+					label="Hello, World!"
+					link="/hello-world" />
+			);
+			return <Base { ...this.props } extraChildren={ children } />;
+		}
+	};
 }

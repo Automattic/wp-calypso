@@ -17,12 +17,14 @@ class SitesSidebarMenu extends React.Component {
 			<SidebarMenu>
 				<ul>
 					<SidebarItem
+						key="stats"
 						label={ translate( 'Stats' ) }
 						link=""
 						onNavigate={ null }
 						icon="stats"
 					/>
 					<SidebarItem
+						key="plan"
 						label={ translate( 'Plan' ) }
 						link=""
 						onNavigate={ null }

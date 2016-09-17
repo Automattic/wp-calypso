@@ -3,12 +3,7 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import SidebarItem from 'layout/sidebar/item';
+import { forEach } from 'lodash';
 
 const debug = debugFactory( 'calypso:plugins' );
 
@@ -16,43 +11,14 @@ const notify = debug;
 const error = console.error.bind( console );
 const decorated = {};
 
-// TODO: replace fixture w/ data from 'external-plugins'
-const modules = [
-	{
-		_pluginName: 'Hello, Dolly',
-		SitesSidebarMenu( Base, { React, notify } ) { // eslint-disable-line no-shadow
-			notify( 'decorating SitesSidebarMenu' );
-			return class extends React.Component {
-				render() {
-					const props = {
-						...this.props,
-						extraChildren: (
-							<SidebarItem
-								icon="status"
-								label="Hello, World!"
-								link="/hello-world" />
-						),
-					};
-
-					return <Base { ...props } />;
-				}
-			};
-		},
-	},
-].map( module => {
-	const decorators = omit( module, '_pluginName' );
-	Object.keys( decorators ).forEach( key => {
-		decorators[ key ]._pluginName = module._pluginName;
-	} );
-	return decorators;
-} );
+import { decorators } from 'external-plugins';
 
 function getDecorated( parent, name ) {
 	if ( ! decorated[ name ] ) {
 		let class_ = parent;
 
-		modules.forEach( ( module ) => {
-			const fn = module[ name ];
+		forEach( decorators(), ( decorator ) => {
+			const fn = decorator[ name ];
 
 			if ( fn ) {
 				let class__;
