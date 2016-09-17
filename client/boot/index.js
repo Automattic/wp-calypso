@@ -374,6 +374,7 @@ function reduxStoreReady( reduxStore ) {
 	page( '*', function( context, next ) {
 		context.store.dispatch( setRouteAction(
 					context.pathname,
+					context.params,
 					context.query ) );
 		next();
 	} );
