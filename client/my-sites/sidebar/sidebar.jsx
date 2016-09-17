@@ -33,6 +33,11 @@ import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 
+// import { decorate } from 'plugins/helpers';
+import SitesSidebarMenu from './menu';
+
+// const SitesSidebarMenu_ = decorate( SitesSidebarMenu );
+
 export const MySitesSidebar = React.createClass( {
 	propTypes: {
 		setNextLayoutFocus: React.PropTypes.func.isRequired,
@@ -694,13 +699,7 @@ export const MySitesSidebar = React.createClass( {
 					siteCount={ this.props.currentUser.visible_site_count }
 					onClick={ this.onPreviewSite }
 				/>
-				<SidebarMenu>
-					<ul>
-						{ this.stats() }
-						{ this.plan() }
-					</ul>
-				</SidebarMenu>
-
+				<SitesSidebarMenu />
 				{ vip
 					? <SidebarMenu>
 						<SidebarHeading>VIP</SidebarHeading>
