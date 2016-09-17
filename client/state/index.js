@@ -86,8 +86,6 @@ const reducers = {
 	wordads,
 };
 
-console.log( externalPlugins.reducers() );
-
 /**
  * Module variables
  */
