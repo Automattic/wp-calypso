@@ -8,9 +8,17 @@ import {
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 	PUBLICIZE_SHARE,
 	PUBLICIZE_SHARE_SUCCESS,
-	PUBLICIZE_SHARE_FAILURE
+	PUBLICIZE_SHARE_FAILURE,
+	PUBLICIZE_SHARE_DISMISS
 } from 'state/action-types';
 
+export function dismissShareConfirmation( siteId, postId ) {
+	return {
+		type: PUBLICIZE_SHARE_DISMISS,
+		siteId,
+		postId,
+	}
+}
 
 export function sharePost( siteId, postId, skippedConnections, message ) {
 	return ( dispatch ) => {

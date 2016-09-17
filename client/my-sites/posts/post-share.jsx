@@ -17,13 +17,13 @@ import { postTypeSupports } from 'state/post-types/selectors';
 import { isJetpackModuleActive } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { fetchConnections as requestConnections, sharePost } from 'state/sharing/publicize/actions';
-
+import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
+import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
 import serviceConnections from 'my-sites/sharing/connections/service-connections';
 import FormCheckbox from 'components/forms/form-checkbox';
 import PostMetadata from 'lib/post-metadata';
 import PublicizeMessage from 'post-editor/editor-sharing/publicize-message'
-
+import Notice from 'components/notice';
 
 const PostSharing = React.createClass( {
 	propTypes: {
@@ -99,6 +99,9 @@ const PostSharing = React.createClass( {
 				acceptableLength={ acceptableLength } />
 		);
 	},
+	dismiss: function() {
+		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
+	},
 	render: function() {
 		if ( ! this.props.isPublicizeEnabled ) {
 			return null;
@@ -117,19 +120,24 @@ const PostSharing = React.createClass( {
 		} );
 
 		return (
-			<div className={ classes }>
-				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
-				<h3 className="posts__post-share-title">
-					{ this.translate( 'Share the post and spread the word!' ) }
-				</h3>
-				{ this.renderServices() }
-				{ this.renderMessage() }
-				<Button
-					onClick={ () => this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message ) }
-					disabled={ ( ( this.props.connections.length || 0 ) - this.state.skipped.length  < 1 ) }
-				>
-					{ this.translate( 'Share post again' ) }
-				</Button>
+			<div className="posts__post-share-wrapper">
+				{ this.props.requesting && <Notice status="is-warning" showDismiss={ false }>{ this.translate( 'Hang tight, socializing your media...' ) }</Notice> }
+				{ this.props.success && <Notice status="is-success" onDismissClick={ this.dismiss }>{ this.translate( 'It went out! Your social media is on fire!' ) }</Notice> }
+				{ this.props.failure && <Notice status="is-error" onDismissClick={ this.dismiss }>{ this.translate( 'Something went wrong. Please dont be mad.' ) }</Notice> }
+				<div className={ classes }>
+					{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
+					<h3 className="posts__post-share-title">
+						{ this.translate( 'Share the post and spread the word!' ) }
+					</h3>
+					{ this.renderServices() }
+					{ this.renderMessage() }
+					<Button
+						onClick={ () => this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message ) }
+						disabled={ this.props.requesting || ( ( this.props.connections.length || 0 ) - this.state.skipped.length  < 1 ) }
+					>
+						{ this.translate( 'Share post again' ) }
+					</Button>
+				</div>
 			</div>
 		);
 	}
@@ -148,8 +156,11 @@ export default connect(
 		return {
 			siteId,
 			isPublicizeEnabled,
-			connections: getSiteUserConnections( state, siteId, userId )
+			connections: getSiteUserConnections( state, siteId, userId ),
+			requesting: isRequestingSharePost( state, siteId, props.post.ID ),
+			failed: sharePostFailure( state, siteId, props.post.ID ),
+			success: sharePostSuccessMessage( state, siteId, props.post.ID )
 		};
 	},
-	{ requestConnections, sharePost }
+	{ requestConnections, sharePost, dismissShareConfirmation }
 )( PostSharing );

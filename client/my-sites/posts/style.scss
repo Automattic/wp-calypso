@@ -23,6 +23,9 @@
 		@include breakpoint( "<660px" ) {
 			font-size: 13px;
 		}
+		.posts__post-share-wrapper .notice {
+			margin-bottom: 0
+		}
 	}
 
 	.post__body {

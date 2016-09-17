@@ -16,7 +16,8 @@ import {
 	DESERIALIZE,
 	PUBLICIZE_SHARE,
 	PUBLICIZE_SHARE_SUCCESS,
-	PUBLICIZE_SHARE_FAILURE
+	PUBLICIZE_SHARE_FAILURE,
+	PUBLICIZE_SHARE_DISMISS
 } from 'state/action-types';
 import { connectionsSchema } from './schema';
 import { isValidStateWithSchema } from 'state/utils';
@@ -29,7 +30,8 @@ const getStateWithSharePostFething = ( state, fetching, siteId, postId ) => Obje
 const sharePostStatus = createReducer( {}, {
 	[ PUBLICIZE_SHARE ]: ( state, action ) => getStateWithSharePostFething( state, { requesting: true }, action.siteId, action.postId ),
 	[ PUBLICIZE_SHARE_SUCCESS ]: ( state, action ) => getStateWithSharePostFething( state, { requesting: false, success: true }, action.siteId, action.postId ),
-	[ PUBLICIZE_SHARE_FAILURE ]: ( state, action ) => getStateWithSharePostFething( state, { requesting: false, success: false, error: action.error }, action.siteId, action.postId )
+	[ PUBLICIZE_SHARE_FAILURE ]: ( state, action ) => getStateWithSharePostFething( state, { requesting: false, success: false, error: action.error }, action.siteId, action.postId ),
+	[ PUBLICIZE_SHARE_DISMISS ]: ( state, action ) => getStateWithSharePostFething( state, undefined, action.siteId, action.postId ),
 } );
 
 
