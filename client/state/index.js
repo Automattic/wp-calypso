@@ -3,6 +3,7 @@
  */
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -91,10 +92,18 @@ export const reducer = combineReducers( {
 const middleware = [ thunkMiddleware, noticesMiddleware, postsEditMiddleware ];
 
 if ( typeof window === 'object' ) {
+
+	var dataLayerMiddleware;
+	if ( config.isEnabled( 'offline-dev' ) ) {
+		dataLayerMiddleware = require( './data-layer/offline-dev-middleware' ).middleware;
+	} else {
+		dataLayerMiddleware = require( './data-layer/wp-api-middleware' ).middleware;
+	}
+
 	// Browser-specific middlewares
 	[
 		require( './analytics/middleware.js' ).analyticsMiddleware,
-		require( './data-layer/wp-api-middleware' ).middleware,
+		dataLayerMiddleware,
 	].forEach( m => middleware.push( m ) );
 }
 
