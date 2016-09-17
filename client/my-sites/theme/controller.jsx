@@ -10,7 +10,6 @@ import startsWith from 'lodash/startsWith';
  */
 import ThemeSheetComponent from './main';
 import ThemeDetailsComponent from 'components/data/theme-details';
-import { getCurrentUser } from 'state/current-user/selectors';
 import {
 	receiveThemeDetails,
 	receiveThemeDetailsFailure,
@@ -57,19 +56,18 @@ export function fetchThemeDetailsData( context, next ) {
 
 export function details( context, next ) {
 	const { slug } = context.params;
-	const user = getCurrentUser( context.store.getState() );
 
 	if ( startsWith( context.prevPath, '/design' ) ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 
-	const ConnectedComponent = ( { themeSlug, isLoggedIn } ) => (
+	const ConnectedComponent = ( { themeSlug } ) => (
 		<ThemeDetailsComponent id={ themeSlug } >
-			<ThemeSheetComponent isLoggedIn={ isLoggedIn } />
+			<ThemeSheetComponent />
 		</ThemeDetailsComponent>
 	);
 
-	context.primary = ConnectedComponent( { themeSlug: slug, isLoggedIn: !! user } );
+	context.primary = ConnectedComponent( { themeSlug: slug } );
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
 }

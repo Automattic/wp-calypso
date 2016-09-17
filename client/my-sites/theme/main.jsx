@@ -509,6 +509,7 @@ export default connect(
 			currentUserId,
 			isCurrentUserPaid,
 			section,
+			isLoggedIn: !! currentUserId,
 		};
 	},
 	bindDefaultOptionToDispatch,
