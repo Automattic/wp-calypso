@@ -1,0 +1,29 @@
+.search-tokens {
+
+	font-size: 16px;
+
+	.sear-tokens__input[type="text"] {
+		font: inherit;
+		border: 0;
+	}
+
+	.search-tokens__tokens {
+		position: absolute;
+		left: 0px;
+		top: 0px;
+		height: 100%;
+		width: 100%;
+		font: inherit;
+		padding: 7px 14px 7px 14px;
+		box-sizing: border-box;
+	}
+
+	.search-tokens__token {
+		font: inherit;
+	}
+
+	.search-tokens__white-space {
+		font: inherit;
+	}
+
+}

@@ -250,7 +250,7 @@ const Search = React.createClass( {
 		if ( event.key === 'Escape' && event.target.value === '' ) {
 			this.closeSearch( event );
 		}
-		this.props.onKeyDown( event, this.getCurrentSearchValue() );
+		this.props.onKeyDown( event );
 	},
 
 	// Puts the cursor at end of the text when starting
@@ -270,7 +270,7 @@ const Search = React.createClass( {
 	},
 
 	render: function() {
-		const searchValue = this.state.keyword;
+		//const searchValue = this.state.keyword;
 		const placeholder = this.props.placeholder ||
 				i18n.translate( 'Search…', { textOnly: true } );
 
@@ -319,7 +319,6 @@ const Search = React.createClass( {
 						className={ inputClass }
 						placeholder={ placeholder }
 						role="search"
-						value={ searchValue }
 						ref="searchInput"
 						onChange={ this.onChange }
 						onKeyUp={ this.keyUp }

@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Search from 'components/search';
+import Search from 'components/search-tokens';
 import SegmentedControl from 'components/segmented-control';
 import { trackClick } from '../helpers';
 import config from 'config';
@@ -51,7 +51,6 @@ const ThemesMagicSearchCard = React.createClass( {
 			isMobile: isMobile(),
 			searchIsOpen: false,
 			input: this.props.search,
-			tokens: this.generateTokens( this.props.search )
 		};
 	},
 
@@ -86,34 +85,8 @@ const ThemesMagicSearchCard = React.createClass( {
 		console.log( "input: " + searchInput.scrollLeft + " tokens: " + tokens.scrollLeft);
 	},
 
-	generateTokens( txt ) {
-		const inputLength = Math.round( txt.length / 2 );
-		return (
-			<div className="search__tokens" ref="tokens">
-				<span className="token_A" >
-					{ txt.substring( 0, inputLength ) }
-				</span>
-				<span className="token_B" >
-					{ txt.substring( inputLength ) }
-				</span>
-			</div>
-		);
-	},
-
-	onKeyDown() {
-		//`this.matchScroll( target.scrollLeft );
-	},
-
 	onChange( value ) {
 		this.setState( { input: value } );
-	},
-
-	onSearch( val ) {
-		//hijactking props.onSearch temporary to see how search performance impacts
-		//this.setState( {input: val });
-		this.matchScroll();
-		this.props.onSearch( val );
-		//display performance
 	},
 
 	render() {
@@ -141,8 +114,7 @@ const ThemesMagicSearchCard = React.createClass( {
 				onChange={ this.onChange }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
 				hideClose={ isMobile() }
-			>
-				{ this.generateTokens( this.state.input ) }
+				>
 			</Search>
 		);
 

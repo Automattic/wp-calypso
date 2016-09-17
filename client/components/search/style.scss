@@ -46,7 +46,7 @@
 
 	.search__tokens {
 		position: absolute;
-		display: block;
+		display: flex;
 		width: 100%;
 		overflow: hidden;
 		pointer-events: none;
@@ -54,7 +54,7 @@
 		top: 0px;
 		letter-spacing: normal;
 		height: inherit;
-		align-items: stretch;
+		align-items: center;
 		white-space: pre;
 		box-sizing: border-box;
 		z-index: z-index( '.search', '.search__input' ) + 1;
@@ -140,7 +140,6 @@
 		flex: 1 1 auto;
 		height: 100%;
 		position: relative;
-		margin: 0 8px 8px 0;
 		&::before {
 			@include long-content-fade( $size: 32px, $color: $white, $z-index: z-index( '.search', '.search__input' ) + 1 );
 		}

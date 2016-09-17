@@ -16,6 +16,10 @@
 			box-shadow: none;
 		}
 
+	.search__input {
+		color: transparent;
+	}
+
 		.search__input-fade {
 			align-self: stretch;
 			box-sizing: border-box;
@@ -60,7 +64,6 @@
 
 	.token_A {
 		background: rgba(0, 100, 0, 0.2);
-		top: 0px;
 		left: 0px;
 		pointer-events: none;
 		font-size: 16px;
@@ -70,7 +73,6 @@
 
 	.token_B {
 		background: rgba(100, 0, 0, 0.2);
-		top: 0px;
 		left: 0px;
 		pointer-events: none;
 		font-size: 16px;
