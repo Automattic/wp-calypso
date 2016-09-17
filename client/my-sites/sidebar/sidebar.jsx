@@ -699,7 +699,10 @@ export const MySitesSidebar = React.createClass( {
 					siteCount={ this.props.currentUser.visible_site_count }
 					onClick={ this.onPreviewSite }
 				/>
-				<SitesSidebarMenu_ />
+				<SitesSidebarMenu_
+					onNavigate={ this.onNavigate }
+					siteSuffix={ this.siteSuffix() }
+				/>
 				{ vip
 					? <SidebarMenu>
 						<SidebarHeading>VIP</SidebarHeading>
