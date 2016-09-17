@@ -26,7 +26,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { postTypeSupports } from 'state/post-types/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
+import { fetchConnections as requestConnections, sharePost } from 'state/sharing/publicize/actions';
 import config from 'config';
 
 const EditorSharingPublicizeOptions = React.createClass( {
@@ -183,12 +183,17 @@ const EditorSharingPublicizeOptions = React.createClass( {
 
 	renderRepublicize() {
 		return(
-			<button
+			<Button
 				className="button editor-sharing__publicize-share-button"
-				onClick={ () => { console.log( 'Pressed republicize' ) } }
+				disabled={ this.props.connections.length - PostMetadata.publicizeSkipped( this.props.post ).length < 1 }
+				onClick={ () => {
+					const skipped = PostMetadata.publicizeSkipped( this.props.post );
+					const message = PostMetadata.publicizeMessage( this.props.post );
+					this.props.sharePost( this.props.siteId, this.props.post.ID, skipped, message );
+				} }
 			>
-				{ "Share" }
-			</button>
+				{ this.translate( 'Share' ) }
+			</Button>
 		);
 	},
 
@@ -222,6 +227,8 @@ const EditorSharingPublicizeOptions = React.createClass( {
 			'has-connections': this.hasConnections(),
 			'has-add-option': siteUtils.userCan( 'publish_posts', this.props.site )
 		} );
+
+		console.log( 'PUB', this.props.connections );
 
 		return (
 			<div className={ classes }>
@@ -258,5 +265,5 @@ export default connect(
 			connections: getSiteUserConnections( state, siteId, userId )
 		};
 	},
-	{ requestConnections }
+	{ requestConnections, sharePost }
 )( EditorSharingPublicizeOptions );
