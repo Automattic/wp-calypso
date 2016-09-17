@@ -15,14 +15,20 @@ export function fetchShortcode( siteId, shortcode ) {
 			shortcode
 		} );
 
-		return wpcom.undocumented().site( siteId ).shortcodes( {
-			shortcode: shortcode
-		}, ( error, data ) => {
+		return wpcom.undocumented().site( siteId ).shortcodes( { shortcode } ).then( ( data ) => {
 			dispatch( {
 				type: SHORTCODE_RECEIVE,
 				siteId,
 				shortcode,
 				data,
+				error: null
+			} );
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: SHORTCODE_RECEIVE,
+				siteId,
+				shortcode,
+				data: null,
 				error
 			} );
 		} );
