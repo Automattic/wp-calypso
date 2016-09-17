@@ -12,6 +12,7 @@ import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
 import { localize } from 'i18n-calypso';
 import { addSiteFragment } from 'lib/route/path';
+import { decorate } from 'plugins/helpers';
 
 class SitesSidebarMenu extends React.Component {
 	renderStats() {
@@ -64,4 +65,4 @@ export default connect(
 			selectedSite
 		};
 	}
-)( localize( SitesSidebarMenu ) );
+)( localize( decorate( SitesSidebarMenu, 'SitesSidebarMenu' ) ) );
