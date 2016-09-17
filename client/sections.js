@@ -10,7 +10,8 @@ const path = require( 'path' );
 const config = require( 'config' ),
 	sections = require( config( 'project' ) );
 
-const plugins = fs.readdirSync( path.join( __dirname, 'plugins' ) );
+const plugins = fs.readdirSync( path.join( __dirname, 'plugins' ) )
+	.filter( node => fs.statSync( path.join( __dirname, 'plugins', node ) ).isDirectory() );
 
 const pluginSections = sections.concat( plugins.map( plugin => {
 	const pkg = JSON.parse( fs.readFileSync( path.join( __dirname, 'plugins', plugin, 'package.json' ) ) );
