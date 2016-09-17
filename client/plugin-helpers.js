@@ -3,9 +3,11 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
-import { noop } from 'lodash';
 
 const debug = debugFactory( 'calypso:plugins' );
+
+const notify = debug;
+const decorated = {};
 
 // TODO: replace fixture w/ data from 'external-plugins'
 const modules = [
@@ -16,12 +18,6 @@ const modules = [
 		},
 	},
 ];
-
-/**
- * FIXME
- */
-const notify = debug;
-const decorated = noop;
 
 function getDecorated( parent, name ) {
 	if ( ! decorated[ name ] ) {
@@ -60,7 +56,8 @@ function getDecorated( parent, name ) {
 // for each component, we return a higher-order component
 // that wraps with the higher-order components
 // exposed by plugins
-export function decorate( Component, name ) {
+export function decorate( Component ) {
+	const name = Component.displayName || Component.name;
 	return class extends React.Component {
 		render() {
 			const Sub = getDecorated( Component, name );
