@@ -92,9 +92,10 @@ const middleware = [ thunkMiddleware, noticesMiddleware, postsEditMiddleware ];
 
 if ( typeof window === 'object' ) {
 	// Browser-specific middlewares
-	middleware.push(
-		require( './analytics/middleware.js' ).analyticsMiddleware
-	);
+	[
+		require( './analytics/middleware.js' ).analyticsMiddleware,
+		require( './data-layer/wp-api-middleware' ).middleware,
+	].forEach( m => middleware.push( m ) );
 }
 
 let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
