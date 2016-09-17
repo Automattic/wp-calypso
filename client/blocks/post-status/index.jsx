@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import { getNormalizedPost } from 'state/posts/selectors';
 
-function PostStatus( { translate, post } ) {
+export function PostStatus( { translate, post } ) {
 	if ( ! post ) {
 		return null;
 	}
@@ -55,6 +55,8 @@ function PostStatus( { translate, post } ) {
 		</span>
 	);
 }
+
+PostStatus.displayName = 'PostStatus';
 
 PostStatus.propTypes = {
 	globalId: PropTypes.string,
