@@ -20,7 +20,8 @@ export default React.createClass( {
 	propTypes: {
 		post: PropTypes.object,
 		connection: PropTypes.object,
-		onRefresh: PropTypes.func
+		onRefresh: PropTypes.func,
+		onChange: PropTypes.func
 	},
 
 	getDefaultProps() {
@@ -50,16 +51,20 @@ export default React.createClass( {
 			return;
 		}
 
-		if ( event.target.checked ) {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			PostActions.deleteMetadata( '_wpas_skip_' + connection.keyring_connection_ID );
-			PostStats.recordStat( 'sharing_enabled_' + connection.service );
-			PostStats.recordEvent( 'Publicize Service', connection.service, 'enabled' );
+		if ( this.props.onChange ) {
+			this.props.onChange( connection , event.target.checked );
 		} else {
-			// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-			PostActions.updateMetadata( '_wpas_skip_' + connection.keyring_connection_ID, 1 );
-			PostStats.recordStat( 'sharing_disabled_' + connection.service );
-			PostStats.recordEvent( 'Publicize Service', connection.service, 'disabled' );
+			if ( event.target.checked ) {
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+				PostActions.deleteMetadata( '_wpas_skip_' + connection.keyring_connection_ID );
+				PostStats.recordStat( 'sharing_enabled_' + connection.service );
+				PostStats.recordEvent( 'Publicize Service', connection.service, 'enabled' );
+			} else {
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+				PostActions.updateMetadata( '_wpas_skip_' + connection.keyring_connection_ID, 1 );
+				PostStats.recordStat( 'sharing_disabled_' + connection.service );
+				PostStats.recordEvent( 'Publicize Service', connection.service, 'disabled' );
+			}
 		}
 	},
 

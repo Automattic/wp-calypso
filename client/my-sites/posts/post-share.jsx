@@ -43,6 +43,7 @@ const PostSharing = React.createClass( {
 				siteId={ this.props.site.ID }
 				connections={ this.props.connections }
 				newConnectionPopup={ ()=>{} }
+				onChange={ ( connection, enabled ) => console.log( 'CONN', connection, enabled ) }
 			/>
 		);
 	},
