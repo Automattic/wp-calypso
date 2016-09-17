@@ -33,10 +33,10 @@ import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 
-// import { decorate } from 'plugins/helpers';
+import { decorate } from 'plugins/helpers';
 import SitesSidebarMenu from './menu';
 
-// const SitesSidebarMenu_ = decorate( SitesSidebarMenu );
+const SitesSidebarMenu_ = decorate( SitesSidebarMenu );
 
 export const MySitesSidebar = React.createClass( {
 	propTypes: {
@@ -699,7 +699,7 @@ export const MySitesSidebar = React.createClass( {
 					siteCount={ this.props.currentUser.visible_site_count }
 					onClick={ this.onPreviewSite }
 				/>
-				<SitesSidebarMenu />
+				<SitesSidebarMenu_ />
 				{ vip
 					? <SidebarMenu>
 						<SidebarHeading>VIP</SidebarHeading>
