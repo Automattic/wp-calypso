@@ -21,6 +21,7 @@ export default class SitesSidebarMenu extends React.Component {
 						onNavigate={ null }
 						icon="clipboard"
 					/>
+					{ this.props.extraChildren }
 				</ul>
 			</SidebarMenu>
 		);
