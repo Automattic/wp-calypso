@@ -317,7 +317,7 @@ module.exports = React.createClass( {
 			) );
 		}
 
-		if ( config.isEnabled( 'republicize' ) && post && ( post.status === 'publish' || post.status === 'future') ) {
+		if ( config.isEnabled( 'republicize' ) && post && ( post.status === 'publish' ) ) {
 			metaItems.push(
 				<a
 					className={ classNames( {

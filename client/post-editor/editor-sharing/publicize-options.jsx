@@ -245,7 +245,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 				{
 					config.isEnabled( 'republicize' ) &&
 					this.props.post &&
-					( this.props.post.status === 'publish' || this.props.post.status === 'future') &&
+					( this.props.post.status === 'publish' ) &&
 					this.renderRepublicize()
 				}
 			</div>
