@@ -16,4 +16,5 @@ const renderStuff = ( context ) => {
 
 export default function() {
 	page( '/hello-world', siteSelection, navigation, renderStuff );
+	page( '/hello-world/:siteId', siteSelection, navigation, renderStuff );
 }
