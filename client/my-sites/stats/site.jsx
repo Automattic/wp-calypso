@@ -20,6 +20,7 @@ import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
 import StatsFirstView from './stats-first-view';
+import config from 'config';
 
 const debug = debugFactory( 'calypso:stats:site' );
 
@@ -115,6 +116,7 @@ module.exports = React.createClass( {
 		const moduleStrings = statsStrings();
 		let nonPeriodicModules;
 		let videoList;
+		let podcastList;
 
 		debug( 'Rendering site stats component', this.props );
 
@@ -129,6 +131,15 @@ module.exports = React.createClass( {
 					period={ this.props.period }
 					date={ queryDate }
 					beforeNavigate={ this.updateScrollPosition } />;
+
+				podcastList = config.isEnabled( 'manage/stats/podcasts' ) ? <StatsModule
+					path={ 'podcastlistens' }
+					moduleStrings={ moduleStrings.podcastlistens }
+					site={ site }
+					dataList={ this.props.podcastListensList }
+					period={ this.props.period }
+					date={ queryDate }
+					beforeNavigate={ this.updateScrollPosition } /> : null;
 			}
 		}
 
@@ -205,14 +216,7 @@ module.exports = React.createClass( {
 								date={ queryDate }
 								beforeNavigate={ this.updateScrollPosition } />
 							{ videoList }
-							<StatsModule
-								path={ 'podcastlistens' }
-								moduleStrings={ moduleStrings.podcastlistens }
-								site={ site }
-								dataList={ this.props.podcastListensList }
-								period={ this.props.period }
-								date={ queryDate }
-								beforeNavigate={ this.updateScrollPosition } />
+							{ podcastList }
 						</div>
 					</div>
 					{ nonPeriodicModules }
