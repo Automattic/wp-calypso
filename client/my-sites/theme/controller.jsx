@@ -63,13 +63,13 @@ export function details( context, next ) {
 		context.store.dispatch( setBackPath( context.prevPath ) );
 	}
 
-	const ConnectedComponent = ( { themeSlug, contentSection, isLoggedIn } ) => (
+	const ConnectedComponent = ( { themeSlug, isLoggedIn } ) => (
 		<ThemeDetailsComponent id={ themeSlug } >
-			<ThemeSheetComponent section={ contentSection } isLoggedIn={ isLoggedIn } />
+			<ThemeSheetComponent isLoggedIn={ isLoggedIn } />
 		</ThemeDetailsComponent>
 	);
 
-	context.primary = ConnectedComponent( { themeSlug: slug, contentSection: context.params.section, isLoggedIn: !! user } );
+	context.primary = ConnectedComponent( { themeSlug: slug, isLoggedIn: !! user } );
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
 	next();
 }
