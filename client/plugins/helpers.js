@@ -5,6 +5,11 @@ import React from 'react';
 import debugFactory from 'debug';
 import { omit } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
+import SidebarItem from 'layout/sidebar/item';
+
 const debug = debugFactory( 'calypso:plugins' );
 
 const notify = debug;
@@ -19,8 +24,17 @@ const modules = [
 			notify( 'decorating SitesSidebarMenu' );
 			return class extends React.Component {
 				render() {
-					notify( 'omgomg, rendering a decorated SitesSidebarMenu!' );
-					return <Base { ...this.props } />;
+					const props = {
+						...this.props,
+						extraChildren: (
+							<SidebarItem
+								icon="status"
+								label="Hello, World!"
+								link="/hello-world" />
+						),
+					};
+
+					return <Base { ...props } />;
 				}
 			};
 		},
