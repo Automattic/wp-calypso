@@ -3,29 +3,42 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
+import { omit } from 'lodash';
 
 const debug = debugFactory( 'calypso:plugins' );
 
 const notify = debug;
+const error = console.error.bind( console );
 const decorated = {};
 
 // TODO: replace fixture w/ data from 'external-plugins'
 const modules = [
 	{
+		_pluginName: 'Hello, Dolly',
 		SitesSidebarMenu( Base, { React, notify } ) { // eslint-disable-line no-shadow
-			notify( 'omgomg, rendering a decorated SitesSidebarMenu!' );
-			return <Base { ...this.props } />;
+			notify( 'decorating SitesSidebarMenu' );
+			return class extends React.Component {
+				render() {
+					notify( 'omgomg, rendering a decorated SitesSidebarMenu!' );
+					return <Base { ...this.props } />;
+				}
+			};
 		},
 	},
-];
+].map( module => {
+	const decorators = omit( module, '_pluginName' );
+	Object.keys( decorators ).forEach( key => {
+		decorators[ key ]._pluginName = module._pluginName;
+	} );
+	return decorators;
+} );
 
 function getDecorated( parent, name ) {
 	if ( ! decorated[ name ] ) {
 		let class_ = parent;
 
-		modules.forEach( ( mod ) => {
-			const method = 'decorate' + name;
-			const fn = mod[ method ];
+		modules.forEach( ( module ) => {
+			const fn = module[ name ];
 
 			if ( fn ) {
 				let class__;
@@ -33,13 +46,13 @@ function getDecorated( parent, name ) {
 				try {
 					class__ = fn( class_, { React, notify } );
 				} catch ( err ) {
-					console.error( err.stack );
-					notify( 'Plugin error', `${ fn._pluginName }: Error occurred in \`${ method }\`. Check Developer Tools for details` );
+					error( err.stack );
+					notify( 'Plugin error', `${ fn._pluginName }: Error occurred in \`${ name }\`. Check Developer Tools for details` );
 					return;
 				}
 
 				if ( ! class__ || 'function' !== typeof class__.prototype.render ) {
-					notify( 'Plugin error', `${ fn._pluginName }: Invalid return value of \`${ method }\`. No \`render\` method found. Please return a \`React.Component\`.` );
+					notify( 'Plugin error', `${ fn._pluginName }: Invalid return value of \`${ name }\`. No \`render\` method found. Please return a \`React.Component\`.` );
 					return;
 				}
 
