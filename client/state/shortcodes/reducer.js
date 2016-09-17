@@ -14,9 +14,13 @@ const siteShortcode = ( state = {}, { type, error, data } ) => {
 		case SHORTCODE_FETCH:
 			return { ...state, ...{ status: LOAD_STATUS.LOADING } };
 		case SHORTCODE_RECEIVE:
+			if ( error ) {
+				return { ...state, ...{ status: LOAD_STATUS.ERROR } };
+			}
+
 			const { scripts, styles } = data;
 			const body = data.result;
-			const status = error ? LOAD_STATUS.ERROR : LOAD_STATUS.LOADED;
+			const status = LOAD_STATUS.LOADED;
 
 			return { ...state, ...{ body, scripts, styles, status } };
 	}
