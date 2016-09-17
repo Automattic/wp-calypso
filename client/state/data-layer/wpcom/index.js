@@ -1,4 +1,4 @@
-import fetchSitePlans from './fetch-site-plans';
+import fetchSitePlans from './site-plans-fetch';
 
 export const handlers = [
 	fetchSitePlans,
