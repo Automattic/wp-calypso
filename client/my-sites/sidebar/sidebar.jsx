@@ -36,7 +36,7 @@ import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/action
 import { decorate } from 'plugins/helpers';
 import SitesSidebarMenu from './menu';
 
-const SitesSidebarMenu_ = decorate( SitesSidebarMenu );
+const SitesSidebarMenu_ = decorate( SitesSidebarMenu, 'SitesSidebarMenu' );
 
 export const MySitesSidebar = React.createClass( {
 	propTypes: {

@@ -69,13 +69,14 @@ function getDecorated( parent, name ) {
 // for each component, we return a higher-order component
 // that wraps with the higher-order components
 // exposed by plugins
-export function decorate( Component ) {
-	const name = Component.displayName || Component.name;
-	return class extends React.Component {
+export function decorate( Component, name ) {
+	class Decorated extends React.Component {
 		render() {
 			const Sub = getDecorated( Component, name );
 			return <Sub { ...this.props } />;
 		}
-	};
+	}
+	Decorated.displayName = `Decorated${ name }`;
+	return Decorated;
 }
 

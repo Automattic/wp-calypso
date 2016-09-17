@@ -1,29 +1,38 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
 import SidebarItem from 'layout/sidebar/item';
 import SidebarMenu from 'layout/sidebar/menu';
+import { localize } from 'i18n-calypso';
 
-export default class SitesSidebarMenu extends React.Component {
-
+class SitesSidebarMenu extends React.Component {
 	render() {
+		const { extraChildren, translate } = this.props;
 		return (
 			<SidebarMenu>
 				<ul>
 					<SidebarItem
-						label={ this.translate( 'Stats' ) }
+						label={ translate( 'Stats' ) }
 						link=""
 						onNavigate={ null }
 						icon="stats"
 					/>
 					<SidebarItem
-						label={ this.translate( 'Plan' ) }
+						label={ translate( 'Plan' ) }
 						link=""
 						onNavigate={ null }
 						icon="clipboard"
 					/>
-					{ this.props.extraChildren }
+					{ extraChildren }
 				</ul>
 			</SidebarMenu>
 		);
 	}
 }
+
+export default localize( SitesSidebarMenu );
