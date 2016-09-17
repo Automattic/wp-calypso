@@ -17,10 +17,14 @@ function getDecorators( plugins = {} ) {
 		const decoratorsPath = path.join( 'client', 'plugins', plugin, 'decorators' );
 		if ( existsSync( decoratorsPath ) ) {
 			const decorators = readdirSync( decoratorsPath );
-			return decorators.map( decorator => {
+			const decoratorObjects = decorators.map( decorator => {
 				const decoratorName = upperFirst( camelCase( decorator.split( '.' )[ 0 ] ) );
-				return `'${ decoratorName }': require( 'plugins/${ plugin }/decorators/${ decorator }' ) \n`;
+				return `\t'${ decoratorName }': require( 'plugins/${ plugin }/decorators/${ decorator }' )\n`;
 			} );
+
+			return `'${ plugin }': {
+				${ decoratorObjects }
+				}`;
 		}
 	} );
 }
