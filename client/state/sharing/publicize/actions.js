@@ -32,8 +32,7 @@ export function sharePost( siteId, postId, skippedConnections, message ) {
 
 		return new Promise( ( resolve ) => {
 			wpcom.undocumented().publicizePost( siteId, postId, message, skippedConnections, ( error, data ) => {
-				console.log( 'dat', data );
-				if ( error ) {
+				if ( error || ! data.success ) {
 					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error } );
 				} else {
 					dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
