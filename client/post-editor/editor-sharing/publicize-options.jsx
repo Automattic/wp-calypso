@@ -228,8 +228,6 @@ const EditorSharingPublicizeOptions = React.createClass( {
 			'has-add-option': siteUtils.userCan( 'publish_posts', this.props.site )
 		} );
 
-		console.log( 'PUB', this.props.connections );
-
 		return (
 			<div className={ classes }>
 				{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
