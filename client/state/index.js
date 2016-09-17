@@ -36,6 +36,7 @@ import purchases from './purchases/reducer';
 import reader from './reader/reducer';
 import receipts from './receipts/reducer';
 import sharing from './sharing/reducer';
+import shortcodes from './shortcodes/reducer';
 import signup from './signup/reducer';
 import sites from './sites/reducer';
 import siteSettings from './site-settings/reducer';
@@ -80,6 +81,7 @@ export const reducer = combineReducers( {
 	reader,
 	receipts,
 	sharing,
+	shortcodes,
 	signup,
 	sites,
 	siteSettings,
