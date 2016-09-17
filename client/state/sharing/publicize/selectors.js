@@ -2,6 +2,7 @@
  * External dependencies
  */
 import filter from 'lodash/filter';
+import get from 'lodash/get';
 
 /**
  * Returns an array of known connections for the given site ID.
@@ -52,4 +53,17 @@ export function hasFetchedConnections( state, siteId ) {
 export function isFetchingConnections( state, siteId ) {
 	const { fetchingConnections } = state.sharing.publicize;
 	return hasFetchedConnections( state, siteId ) && fetchingConnections[ siteId ];
+}
+
+
+export function isRequestingSharePost( state, siteId, postId ) {
+	return get( state.sharing.publicize.sharePostStatus, [ siteId , postId, 'requesting' ], false );
+}
+
+export function sharePostSuccessMessage( state, siteId, postId ) {
+	return get( state.sharing.publicize.sharePostStatus, [ siteId , postId, 'success' ], false );
+}
+
+export function sharePostFailure( state, siteId, postId ) {
+	return ( get( state.sharing.publicize.sharePostStatus, [ siteId , postId, 'error' ], false ) === true );
 }

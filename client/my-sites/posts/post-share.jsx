@@ -24,6 +24,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import PostMetadata from 'lib/post-metadata';
 import PublicizeMessage from 'post-editor/editor-sharing/publicize-message'
 
+
 const PostSharing = React.createClass( {
 	propTypes: {
 		site: PropTypes.object,

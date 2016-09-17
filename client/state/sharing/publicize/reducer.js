@@ -26,10 +26,10 @@ import { createReducer } from 'state/utils';
 const getStateWithSharePostFething = ( state, fetching, siteId, postId ) => Object.assign( {}, state, {
 	[ siteId ]: Object.assign( {}, state[ siteId ], { [ postId ]: fetching } )
 } );
-const requestingSharePost = createReducer( {}, {
-	[ PUBLICIZE_SHARE ]: ( state, action ) => getStateWithSharePostFething( state, true, action.siteId, action.postId ),
-	[ PUBLICIZE_SHARE_SUCCESS ]: ( state, action ) => getStateWithSharePostFething( state, false, action.siteId, action.postId ),
-	[ PUBLICIZE_SHARE_FAILURE ]: ( state, action ) => getStateWithSharePostFething( state, false, action.siteId, action.postId )
+const sharePostStatus = createReducer( {}, {
+	[ PUBLICIZE_SHARE ]: ( state, action ) => getStateWithSharePostFething( state, { requesting: true }, action.siteId, action.postId ),
+	[ PUBLICIZE_SHARE_SUCCESS ]: ( state, action ) => getStateWithSharePostFething( state, { requesting: false, success: true }, action.siteId, action.postId ),
+	[ PUBLICIZE_SHARE_FAILURE ]: ( state, action ) => getStateWithSharePostFething( state, { requesting: false, success: false, error: action.error }, action.siteId, action.postId )
 } );
 
 
@@ -91,5 +91,5 @@ export function connections( state = {}, action ) {
 export default combineReducers( {
 	fetchingConnections,
 	connections,
-	requestingSharePost
+	sharePostStatus
 } );
