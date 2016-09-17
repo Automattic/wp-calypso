@@ -14,7 +14,7 @@ class HelloWorld extends React.Component {
 	render() {
 		return (
 			<div>
-				<h1>{ `Hello, World ${ this.props.name }!` }</h1>
+				<h1 style={ { fontSize: '2em' } }>{ `Hello, World ${ this.props.name }!` }</h1>
 				<Button onClick={ this.setRandomEmoji }>WUT</Button>
 			</div>
 		);
