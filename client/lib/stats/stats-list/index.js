@@ -190,6 +190,7 @@ StatsList.prototype.fetch = function() {
 	}
 
 	this.startedAt = Date.now();
+
 	wpcomSite[ this.statType ].call( wpcomSite, options, responseHandler( this.options ).bind( this ) );
 };
 
