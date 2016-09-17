@@ -26,6 +26,22 @@ import PluginSettingsLink from 'my-sites/plugins/plugin-settings-link';
 import PluginInformation from 'my-sites/plugins/plugin-information';
 import { userCan } from 'lib/site/utils';
 
+export function getAvailableNewVersions( props ) {
+	return props.sites.map( site => {
+		if ( ! site.canUpdateFiles ) {
+			return null;
+		}
+		if ( site.plugin && site.plugin.update ) {
+			if ( 'error' !== site.plugin.update && site.plugin.update.new_version ) {
+				return {
+					title: site.title,
+					newVersion: site.plugin.update.new_version
+				};
+			}
+		}
+	} ).filter( newVersions => newVersions );
+}
+
 export default React.createClass( {
 	OUT_OF_DATE_YEARS: 2,
 
@@ -133,7 +149,7 @@ export default React.createClass( {
 	},
 
 	getVersionWarning() {
-		const newVersions = this.getAvailableNewVersions();
+		const newVersions = getAvailableNewVersions( this.props );
 		if ( this.isOutOfDate() && newVersions.length === 0 ) {
 			return <Notice
 				className="plugin-meta__version-notice"
@@ -150,12 +166,12 @@ export default React.createClass( {
 	},
 
 	getUpdateWarning() {
-		const newVersions = this.getAvailableNewVersions();
+		const newVersions = getAvailableNewVersions( this.props );
 		if ( newVersions.length > 0 ) {
 			if ( this.props.selectedSite ) {
 				const textVersion = this.translate( 'Version' );
 				const textIsAvailable = this.translate( 'is available' );
-			
+
 				return (
 					<Notice
 						status="is-warning"
@@ -218,21 +234,21 @@ export default React.createClass( {
 		}
 	},
 
-	getAvailableNewVersions() {
-		return this.props.sites.map( site => {
-			if ( ! site.canUpdateFiles ) {
-				return null;
-			}
-			if ( site.plugin && site.plugin.update ) {
-				if ( 'error' !== site.plugin.update && site.plugin.update.new_version ) {
-					return {
-						title: site.title,
-						newVersion: site.plugin.update.new_version
-					};
-				}
-			}
-		} ).filter( newVersions => newVersions );
-	},
+	// getAvailableNewVersions() {
+	// 	return this.props.sites.map( site => {
+	// 		if ( ! site.canUpdateFiles ) {
+	// 			return null;
+	// 		}
+	// 		if ( site.plugin && site.plugin.update ) {
+	// 			if ( 'error' !== site.plugin.update && site.plugin.update.new_version ) {
+	// 				return {
+	// 					title: site.title,
+	// 					newVersion: site.plugin.update.new_version
+	// 				};
+	// 			}
+	// 		}
+	// 	} ).filter( newVersions => newVersions );
+	// },
 
 	handlePluginUpdatesSingleSite( event ) {
 		event.preventDefault();
@@ -293,7 +309,7 @@ export default React.createClass( {
 						site={ this.props.selectedSite }
 						pluginVersion={ plugin && plugin.version }
 						siteVersion={ this.props.selectedSite && this.props.selectedSite.options.software_version }
-						hasUpdate={ this.getAvailableNewVersions().length > 0 } /> }
+						hasUpdate={ getAvailableNewVersions( this.props ).length > 0 } /> }
 
 				</Card>
 				{ this.getVersionWarning() }

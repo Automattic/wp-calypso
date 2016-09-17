@@ -20,6 +20,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import PluginNotices from 'lib/plugins/notices';
 import analytics from 'lib/analytics';
+import { getAvailableNewVersions } from 'my-sites/plugins/plugin-meta';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i;
@@ -77,7 +78,7 @@ module.exports = React.createClass( {
 	},
 
 	doing() {
-		const progress = this.props.progress ? this.props.progress : [],
+		const progress = this.props.progress || [],
 			log = progress[ 0 ],
 			uniqLogs = uniqBy( progress, function( uniqLog ) {
 				return uniqLog.site.ID;
@@ -128,7 +129,7 @@ module.exports = React.createClass( {
 	},
 
 	renderUpdateFlag() {
-		const newVersions = this.getAvailableNewVersions();
+		const newVersions = getAvailableNewVersions( this.props );
 		const recentlyUpdated = this.props.sites.some( function( site ) {
 			return site.plugin &&
 				site.plugin.update &&
@@ -147,7 +148,7 @@ module.exports = React.createClass( {
 
 		const textVersion = this.translate( 'Version' );
 		const textIsAvailable = this.translate( 'is available' );
-		
+
 		return (
 			<Notice isCompact
 				icon="sync"
@@ -161,7 +162,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	// @todo - This is duplicated from plugin-info/index.jsx. Can we get rid of the duplication?
+	// @todo - This is duplicated from plugin-meta/index.jsx. Can we get rid of the duplication?
 	handlePluginUpdatesSingleSite( event ) {
 		event.preventDefault();
 		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
@@ -172,23 +173,6 @@ module.exports = React.createClass( {
 			plugin: this.props.sites[ 0 ].plugin.slug,
 			selected_site: this.props.sites[ 0 ].ID
 		} );
-	},
-
-	// @todo - This is duplicated from plugin-info/index.jsx. Can we get rid of the duplication?
-	getAvailableNewVersions() {
-		return this.props.sites.map( site => {
-			if ( ! site.canUpdateFiles ) {
-				return null;
-			}
-			if ( site.plugin && site.plugin.update ) {
-				if ( 'error' !== site.plugin.update && site.plugin.update.new_version ) {
-					return {
-						title: site.title,
-						newVersion: site.plugin.update.new_version
-					};
-				}
-			}
-		} ).filter( newVersions => newVersions );
 	},
 
 	pluginMeta( pluginData ) {
