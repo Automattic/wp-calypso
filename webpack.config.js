@@ -42,6 +42,11 @@ webpackConfig = {
 				loader: path.join( __dirname, 'server', 'bundler', 'loader' )
 			},
 			{
+				test: /external-plugins.js$/,
+				exclude: 'node_modules',
+				loader: path.join( __dirname, 'server', 'bundler', 'plugins-loader' )
+			},
+			{
 				test: /\.json$/,
 				loader: 'json-loader'
 			},

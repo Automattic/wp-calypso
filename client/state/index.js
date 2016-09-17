@@ -7,6 +7,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 /**
  * Internal dependencies
  */
+import externalPlugins from 'external-plugins';
 import noticesMiddleware from './notices/middleware';
 import postsEditMiddleware from './posts/middleware';
 import application from './application/reducer';
@@ -46,10 +47,7 @@ import ui from './ui/reducer';
 import users from './users/reducer';
 import wordads from './wordads/reducer';
 
-/**
- * Module variables
- */
-export const reducer = combineReducers( {
+const reducers = {
 	application,
 	comments,
 	componentsUsageStats,
@@ -85,8 +83,15 @@ export const reducer = combineReducers( {
 	themes,
 	ui,
 	users,
-	wordads
-} );
+	wordads,
+};
+
+console.log( externalPlugins.reducers() );
+
+/**
+ * Module variables
+ */
+export const reducer = combineReducers( Object.assign( reducers, externalPlugins.reducers() ) );
 
 const middleware = [ thunkMiddleware, noticesMiddleware, postsEditMiddleware ];
 
