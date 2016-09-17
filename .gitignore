@@ -13,6 +13,7 @@ node_modules
 !*.swf
 .eslintcache
 test-results*.xml
+/stats.json
 
 # script used during docker build that is specific to the environment
 env-config.sh
