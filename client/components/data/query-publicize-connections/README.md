@@ -9,7 +9,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QueryPublicizeConnections from 'components/data/query-publicize-connetions';
+import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import MyConnectionsListItem from './list-item';
 
 export default function MyConnectionsList( { connections } ) {

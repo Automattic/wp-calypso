@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import {
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
@@ -13,28 +12,12 @@ import {
  * site ID.
  *
  * @param  {Number}   siteId Site ID
- * @return {Function}        Action thunk
+ * @return {Object}          Action object
  */
-export function fetchConnections( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: PUBLICIZE_CONNECTIONS_REQUEST,
-			siteId
-		} );
-
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().siteConnections( siteId, ( error, data ) => {
-				if ( error ) {
-					dispatch( failConnectionsRequest( siteId, error ) );
-				} else {
-					dispatch( receiveConnections( siteId, data ) );
-				}
-
-				resolve();
-			} );
-		} );
-	};
-}
+export const fetchConnections = ( siteId ) =>  ( {
+	type: PUBLICIZE_CONNECTIONS_REQUEST,
+	siteId
+} );
 
 /**
  * Returns an action object to be used in signalling that a network request for
