@@ -1,0 +1,5 @@
+export const LOAD_STATUS = {
+	LOADING: 'LOADING',
+	ERROR: 'ERROR',
+	LOADED: 'LOADED'
+};
