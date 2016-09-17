@@ -125,7 +125,7 @@ const PostSharing = React.createClass( {
 				{ this.renderMessage() }
 				<Button
 					onClick={ () => this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message ) }
-					disabled={ ( ( this.props.connections.length || 0 ) > this.state.skipped.length ) }
+					disabled={ ( ( this.props.connections.length || 0 ) - this.state.skipped.length  < 1 ) }
 				>
 					{ this.translate( 'Share post again' ) }
 				</Button>
