@@ -19,7 +19,7 @@ function getDecorators( plugins = {} ) {
 			const decorators = readdirSync( decoratorsPath );
 			return decorators.map( decorator => {
 				const decoratorName = upperFirst( camelCase( decorator.split( '.' )[ 0 ] ) );
-				return `'${ decoratorName }': require( '${ decoratorsPath }/${ decorator }' ) \n`;
+				return `'${ decoratorName }': require( 'plugins/${ plugin }/decorators/${ decorator }' ) \n`;
 			} );
 		}
 	} );
