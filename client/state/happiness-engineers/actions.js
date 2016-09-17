@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcomundocumented from 'lib/wpcom-undocumented';
+import wpcom from 'lib/wp';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
 	HAPPINESS_ENGINEERS_RECEIVE,
@@ -19,7 +19,7 @@ import {
 export function receiveHappinessEngineers( happinessEngineers ) {
 	return {
 		type: HAPPINESS_ENGINEERS_RECEIVE,
-		happinessEngineers
+		happinessEngineers: happinessEngineers
 	};
 }
 
@@ -34,7 +34,7 @@ export function fetchHappinessEngineers() {
 			type: HAPPINESS_ENGINEERS_FETCH
 		} );
 
-		return wpcomundocumented.getHappinessEngineers().then( ( { happinessEngineers } ) => {
+		return wpcom.undocumented().getHappinessEngineers().then( ( happinessEngineers ) => {
 			dispatch( receiveHappinessEngineers( happinessEngineers ) );
 			dispatch( {
 				type: HAPPINESS_ENGINEERS_FETCH_SUCCESS

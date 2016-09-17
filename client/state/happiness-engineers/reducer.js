@@ -25,15 +25,9 @@ import {
  * @return {Object}        Updated state
  */
 export const requesting = createReducer( false, {
-	[ HAPPINESS_ENGINEERS_FETCH ]: () => {
-		return true;
-	},
-	[ HAPPINESS_ENGINEERS_FETCH_FAILURE ]: () => {
-		return false;
-	},
-	[ HAPPINESS_ENGINEERS_FETCH_SUCCESS ]: () => {
-		return false;
-	}
+	[ HAPPINESS_ENGINEERS_FETCH ]: () => true,
+	[ HAPPINESS_ENGINEERS_FETCH_FAILURE ]: () => false,
+	[ HAPPINESS_ENGINEERS_FETCH_SUCCESS ]: () => false
 } );
 
 /**

@@ -29,34 +29,34 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'requesting()', () => {
-		it( 'should default to an empty object', () => {
-			const state = requesting( undefined, {} );
+		it( 'should default to false', () => {
+			const isRequesting = requesting( undefined, {} );
 
-			expect( state ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return true if request is in progress', () => {
-			const state = requesting( undefined, {
+			const isRequesting = requesting( undefined, {
 				type: HAPPINESS_ENGINEERS_FETCH
 			} );
 
-			expect( state ).to.be.true;
+			expect( isRequesting ).to.be.true;
 		} );
 
 		it( 'should return false if request was successful', () => {
-			const state = requesting( undefined, {
+			const isRequesting = requesting( undefined, {
 				type: HAPPINESS_ENGINEERS_FETCH_SUCCESS
 			} );
 
-			expect( state ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 
 		it( 'should return false if request failed', () => {
-			const state = requesting( undefined, {
+			const isRequesting = requesting( undefined, {
 				type: HAPPINESS_ENGINEERS_FETCH_FAILURE
 			} );
 
-			expect( state ).to.be.false;
+			expect( isRequesting ).to.be.false;
 		} );
 	} );
 
