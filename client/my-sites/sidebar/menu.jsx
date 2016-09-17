@@ -25,10 +25,12 @@ class SitesSidebarMenu extends React.Component {
 			return null;
 		}
 
+		const slug = selectedSite && selectedSite.slug;
+
 		return <SidebarItem
 					key="stats"
 					label={ translate( 'Stats' ) }
-					link={ addSiteFragment( '/stats/insights', selectedSite.slug ) }
+					link={ addSiteFragment( '/stats/insights', slug ) }
 					onNavigate={ onNavigate }
 					icon="stats-alt"
 				/>;
