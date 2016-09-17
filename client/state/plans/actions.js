@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
 import {
 	PLANS_RECEIVE,
 	PLANS_REQUEST,
@@ -58,24 +57,6 @@ export const plansRequestFailureAction = error => {
  *
  * @return {Promise} Promise
  */
-export const requestPlans = () => {
-	return dispatch => {
-		dispatch( plansRequestAction() );
-
-		return wpcom
-			.withLocale()
-			.plans()
-			.list( { apiVersion: '1.4' } )
-			.then( data => {
-				dispatch( plansRequestSuccessAction() );
-				dispatch( plansReceiveAction( data ) );
-			} )
-			.catch( ( error ) => {
-				const message = error instanceof Error
-					? error.message
-					: error;
-
-				dispatch( plansRequestFailureAction( message ) );
-			} );
-	};
-};
+export const requestPlans = () => ( {
+	type: PLANS_REQUEST
+} );

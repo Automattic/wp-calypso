@@ -7,7 +7,7 @@ import {
 	SITE_PLANS_FETCH_FAILED,
 } from 'state/action-types';
 
-export const fetchSitePlans = ( { dispatch } ) => ( { siteId } ) => {
+export const fetchSitePlans = ( { dispatch } ) => ( { siteId } ) => (
 	wpcom
 		.undocumented()
 		.getSitePlans( siteId, ( error, data ) => {
@@ -23,7 +23,7 @@ export const fetchSitePlans = ( { dispatch } ) => ( { siteId } ) => {
 					'Please try again later or contact support.'
 				)
 			} );
-		} );
-};
+		} )
+);
 
 export default [ SITE_PLANS_FETCH, fetchSitePlans ];
