@@ -5,11 +5,13 @@ const camelCase = require( 'lodash' ).camelCase;
 const upperFirst = require( 'lodash' ).upperFirst;
 
 function getReducers( plugins = {} ) {
-	return plugins.map( ( plugin ) => {
-		if ( existsSync( path.join( 'client', 'plugins', plugin, 'state', 'reducer.js' ) ) ) {
-			return `'${ plugin }': require( 'plugins/${ plugin }/state/reducer' )\n`;
-		}
-	} );
+	return plugins
+		.map( ( plugin ) => {
+			if ( existsSync( path.join( 'client', 'plugins', plugin, 'state', 'reducer.js' ) ) ) {
+				return `'${ plugin }': require( 'plugins/${ plugin }/state/reducer' )\n`;
+			}
+		} )
+		.filter( reducer => !! reducer );
 }
 
 function getDecorators( plugins = {} ) {

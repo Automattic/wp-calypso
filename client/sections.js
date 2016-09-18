@@ -35,5 +35,5 @@ if ( config.isEnabled( 'devdocs' ) ) {
 		enableLoggedOut: true
 	} );
 }
-
-module.exports = sections.concat( pluginSections );
+console.log( pluginSections.filter( section => !! section ) );
+module.exports = sections.concat( pluginSections.filter( section => !! section ) );
