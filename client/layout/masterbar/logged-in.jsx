@@ -63,7 +63,7 @@ const MasterbarLoggedIn = React.createClass( {
 
 	render() {
 		return (
-			<Masterbar extraChildren={ this.props.extraChildren } >
+			<Masterbar>
 				<Stats
 					tipTarget="my-sites"
 					icon={ this.wordpressIcon() }
