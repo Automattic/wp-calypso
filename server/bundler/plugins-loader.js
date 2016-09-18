@@ -6,12 +6,8 @@ const upperFirst = require( 'lodash' ).upperFirst;
 
 function getReducers( plugins = {} ) {
 	return plugins
-		.map( ( plugin ) => {
-			if ( existsSync( path.join( 'client', 'plugins', plugin, 'state', 'reducer.js' ) ) ) {
-				return `'${ plugin }': require( 'plugins/${ plugin }/state/reducer' )\n`;
-			}
-		} )
-		.filter( reducer => !! reducer );
+		.filter( ( plugin ) => existsSync( path.join( 'client', 'plugins', plugin, 'state', 'reducer.js' ) ) )
+		.map( ( plugin ) => `'${ plugin }': require( 'plugins/${ plugin }/state/reducer' )\n` );
 }
 
 function getDecorators( plugins = {} ) {
@@ -28,7 +24,7 @@ function getDecorators( plugins = {} ) {
 				${ decoratorObjects }
 				}`;
 		}
-	} );
+	} ).filter( Boolean );
 }
 
 function getPluginsModule( plugins ) {
