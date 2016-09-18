@@ -17,6 +17,7 @@ import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { decorate } from 'plugins/helpers';
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
@@ -62,7 +63,7 @@ const MasterbarLoggedIn = React.createClass( {
 
 	render() {
 		return (
-			<Masterbar>
+			<Masterbar extraChildren={ this.props.extraChildren } >
 				<Stats
 					tipTarget="my-sites"
 					icon={ this.wordpressIcon() }
@@ -88,6 +89,7 @@ const MasterbarLoggedIn = React.createClass( {
 				>
 					{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
+				{ this.props.extraChildren }
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				<Publish
 					sites={ this.props.sites }
@@ -127,4 +129,4 @@ const MasterbarLoggedIn = React.createClass( {
 } );
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( null, { setNextLayoutFocus }, null, { pure: false } )( MasterbarLoggedIn );
+export default connect( null, { setNextLayoutFocus }, null, { pure: false } )( decorate( MasterbarLoggedIn, 'MasterbarLoggedIn' ) );
