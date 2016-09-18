@@ -10,7 +10,7 @@ const path = '/wpcom/me/calypso-remote-dispatcher';
 export const subscribe = dispatch => {
 	wpcom.pinghub.connect( path, ( error, event ) => {
 		if ( error ) {
-			return console.log( error );
+			return;
 		}
 
 		let data;
