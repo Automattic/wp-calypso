@@ -53,9 +53,9 @@ export const plansRequestFailureAction = error => {
 };
 
 /**
- * Fetch WordPress.com plans
+ * Action creator to request WordPress.com plans: REQUEST
  *
- * @return {Promise} Promise
+ * @return {Object} action object
  */
 export const requestPlans = () => ( {
 	type: PLANS_REQUEST
