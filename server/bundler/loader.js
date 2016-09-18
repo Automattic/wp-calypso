@@ -135,14 +135,11 @@ function requireTemplate( section ) {
 		return acc.concat( [
 			'page( ' + pathRegex + ', function( context, next ) {',
 			'	controller.setSection( ' + JSON.stringify( section ) + ' )( context );',
+			'	require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );',
 			'	next();',
 			'} );\n'
 		] );
 	}, [] );
-
-	result.push(
-		'require( ' + JSON.stringify( section.module ) + ' )( controller.clientRouter );\n\n'
-	);
 
 	return result.join( '\n' );
 }
