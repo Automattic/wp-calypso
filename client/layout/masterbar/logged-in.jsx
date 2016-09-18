@@ -19,6 +19,8 @@ import ResumeEditing from 'my-sites/resume-editing';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { decorate } from 'plugins/helpers';
 
+const preloadStats = preload.bind( null, 'stats' );
+
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
 		user: React.PropTypes.object,
@@ -70,7 +72,7 @@ const MasterbarLoggedIn = React.createClass( {
 					onClick={ this.clickMySites }
 					isActive={ this.isActive( 'sites' ) }
 					tooltip={ this.translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }
-					preloadSection={ () => preload( 'stats' ) }
+					preloadSection={ preloadStats }
 				>
 					{ this.props.user.get().visible_site_count > 1
 						? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
