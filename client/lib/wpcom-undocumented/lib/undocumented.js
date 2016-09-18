@@ -406,7 +406,7 @@ Undocumented.prototype.getDomainContactInformation = function( fn ) {
 Undocumented.prototype.getDomainRegistrationSupportedStates = function( countryCode, fn ) {
 	debug( '/domains/supported-states/ query' );
 
-	this._sendRequestWithLocale( {
+	return this._sendRequestWithLocale( {
 		path: '/domains/supported-states/' + countryCode,
 		method: 'get'
 	}, fn );
