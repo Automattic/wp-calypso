@@ -1,3 +1,4 @@
+import page from 'page';
 import {
 	get,
 	has,
@@ -5,10 +6,10 @@ import {
 
 import wpcom from 'lib/wp';
 
-const path = '/wpcom/me/calypso-remote-dispatcher';
+const pinghubPath = '/wpcom/me/calypso-remote-dispatcher';
 
 export const subscribe = dispatch => {
-	wpcom.pinghub.connect( path, ( error, event ) => {
+	wpcom.pinghub.connect( pinghubPath, ( error, event ) => {
 		if ( error ) {
 			return;
 		}
@@ -21,6 +22,12 @@ export const subscribe = dispatch => {
 		}
 
 		if ( has( data, 'type' ) ) {
+			const { type, path } = data;
+
+			if ( 'ROUTE_SET' === type && path ) {
+				page( path );
+			}
+
 			dispatch( data );
 		}
 	} );
