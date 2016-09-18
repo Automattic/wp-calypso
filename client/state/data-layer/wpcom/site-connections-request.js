@@ -11,9 +11,9 @@ export const requestPublicizeConnections = ( { dispatch } ) => ( { siteId } ) =>
 		.siteConnections( siteId, ( error, data ) => {
 			if ( ! error ) {
 				return dispatch( receiveConnections( siteId, data ) );
-				
+
 			}
-			
+
 			dispatch( failConnectionsRequest( siteId, error ) );
 		} )
 );
