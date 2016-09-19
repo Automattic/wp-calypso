@@ -16,7 +16,7 @@ var responseHandler,
 	buildExportArray,
 	trackExtraStats = false,
 	documentedEndpoints = [ 'statsVideo', 'statsPublicize', 'statsStreak', 'statsFollowers', 'statsCommentFollowers', 'statsTopAuthors', 'statsTags', 'statsComments', 'statsPostViews', 'statsVideoPlays', 'stats', 'statsVisits', 'statsReferrers', 'statsTopPosts', 'statsClicks', 'statsCountryViews', 'statsSearchTerms' ],
-	undocumentedEndpoints = [ 'statsEvents', 'statsInsights', 'statsPodcastListens' ];
+	undocumentedEndpoints = [ 'statsEvents', 'statsInsights', 'statsPodcastDownloads' ];
 
 responseHandler = function() {
 	return function( error, data ) {

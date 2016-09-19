@@ -150,12 +150,12 @@ module.exports = React.createClass( {
 					summary={ true } />;
 				break;
 
-			case 'podcastlistens':
+			case 'podcastdownloads':
 				title = this.translate( 'Podcasts' );
 				summaryView = <StatsModule
-					key="podcastlistens-summary"
-					path={ 'podcastlistens' }
-					moduleStrings={ StatsStrings.podcastlistens }
+					key="podcastldownloads-summary"
+					path={ 'podcastldownloads' }
+					moduleStrings={ StatsStrings.podcastldownloads }
 					site={ site }
 					dataList={ this.props.summaryList }
 					period={ this.props.period }
