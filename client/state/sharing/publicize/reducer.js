@@ -24,14 +24,14 @@ import { isValidStateWithSchema } from 'state/utils';
 import { createReducer } from 'state/utils';
 
 
-const getStateWithSharePostFething = ( state, fetching, siteId, postId ) => Object.assign( {}, state, {
+const getStateWithSharePostFetching = ( state, fetching, siteId, postId ) => Object.assign( {}, state, {
 	[ siteId ]: Object.assign( {}, state[ siteId ], { [ postId ]: fetching } )
 } );
 const sharePostStatus = createReducer( {}, {
-	[ PUBLICIZE_SHARE ]: ( state, action ) => getStateWithSharePostFething( state, { requesting: true }, action.siteId, action.postId ),
-	[ PUBLICIZE_SHARE_SUCCESS ]: ( state, action ) => getStateWithSharePostFething( state, { requesting: false, success: true }, action.siteId, action.postId ),
-	[ PUBLICIZE_SHARE_FAILURE ]: ( state, action ) => getStateWithSharePostFething( state, { requesting: false, success: false, error: action.error }, action.siteId, action.postId ),
-	[ PUBLICIZE_SHARE_DISMISS ]: ( state, action ) => getStateWithSharePostFething( state, undefined, action.siteId, action.postId ),
+	[ PUBLICIZE_SHARE ]: ( state, action ) => getStateWithSharePostFetching( state, { requesting: true }, action.siteId, action.postId ),
+	[ PUBLICIZE_SHARE_SUCCESS ]: ( state, action ) => getStateWithSharePostFetching( state, { requesting: false, success: true }, action.siteId, action.postId ),
+	[ PUBLICIZE_SHARE_FAILURE ]: ( state, action ) => getStateWithSharePostFetching( state, { requesting: false, success: false, error: action.error }, action.siteId, action.postId ),
+	[ PUBLICIZE_SHARE_DISMISS ]: ( state, action ) => getStateWithSharePostFetching( state, undefined, action.siteId, action.postId ),
 } );
 
 
