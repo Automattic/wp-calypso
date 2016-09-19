@@ -579,18 +579,18 @@ StatsParser.prototype.statsVideoPlays = function( payload ) {
 	return response;
 };
 
-StatsParser.prototype.statsPodcastListens = function( payload ) {
+StatsParser.prototype.statsPodcastDownloads = function( payload ) {
 	var response = { data: [] },
 		periodRange = rangeOfPeriod( this.options.period, this.options.date ),
 		startDate = periodRange.startOf.format( 'YYYY-MM-DD' );
 
 	if ( payload && payload.date && payload.days && payload.days[ startDate ] ) {
-		response.data = payload.days[ startDate ].listens.map( function( item ) {
-			var detailPage = '/stats/' + this.options.period + '/podcastlistens/' + this.options.domain + '?post=' + item.post_id;
+		response.data = payload.days[ startDate ].downloads.map( function( item ) {
+			var detailPage = '/stats/' + this.options.period + '/podcastdownloads/' + this.options.domain + '?post=' + item.post_id;
 			return {
 				label: item.title,
 				page: detailPage,
-				value: item.listens,
+				value: item.downloads,
 				actions: [ {
 					type: 'link',
 					data: item.url
@@ -598,12 +598,12 @@ StatsParser.prototype.statsPodcastListens = function( payload ) {
 			};
 		}, this );
 
-		if ( payload.days[ startDate ].other_listens ) {
-			response.summaryPage = this.options ? '/stats/' + this.options.period + '/podcastlistens/' + this.options.domain + '?startDate=' + startDate : null;
+		if ( payload.days[ startDate ].other_downloads ) {
+			response.summaryPage = this.options ? '/stats/' + this.options.period + '/podcastdownloads/' + this.options.domain + '?startDate=' + startDate : null;
 		}
 
-		if ( payload.days[ startDate ].total_listens ) {
-			response.total = payload.days[ startDate ].total_listens;
+		if ( payload.days[ startDate ].total_downloads ) {
+			response.total = payload.days[ startDate ].total_downloads;
 		}
 	}
 

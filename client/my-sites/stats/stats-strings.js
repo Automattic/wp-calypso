@@ -45,7 +45,7 @@ module.exports = function() {
 		empty: i18n.translate( 'No videos played', { context: 'Stats: Info box label when the Videos module is empty' } )
 	};
 
-	statsStrings.podcastlistens = {
+	statsStrings.podcastdownloads = {
 		title: i18n.translate( 'Podcasts', { context: 'Stats: title of module' } ),
 		item: i18n.translate( 'Episodes', { context: 'Stats: module row header for podcast.' } ),
 		value: i18n.translate( 'Downloads', { context: 'Stats: module row header for number of downloads per podcast episode.' } ),

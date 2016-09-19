@@ -134,10 +134,10 @@ module.exports = React.createClass( {
 			}
 			if ( config.isEnabled( 'manage/stats/podcasts' ) && site.options.podcasting_archive ) {
 				podcastList = <StatsModule
-					path={ 'podcastlistens' }
-					moduleStrings={ moduleStrings.podcastlistens }
+					path={ 'podcastdownloads' }
+					moduleStrings={ moduleStrings.podcastdownloads }
 					site={ site }
-					dataList={ this.props.podcastListensList }
+					dataList={ this.props.podcastDownloadsList }
 					period={ this.props.period }
 					date={ queryDate }
 					beforeNavigate={ this.updateScrollPosition } />;
