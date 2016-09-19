@@ -68,9 +68,7 @@
 	flex-grow: 1;
 
 	@include breakpoint( '>480px' ) {
-		.has-site & {
-			max-width: calc(100% - 150px);
-		}
+		max-width: calc(100% - 150px);
 
 		.has-button & {
 			max-width: 100%;
@@ -116,6 +114,8 @@
 		margin: 0;
 		padding: 0;
 		text-align: right;
+		justify-content: flex-end;
+		align-self: center;
 
 		.plugin-action {
 			margin-top: 16px;
@@ -141,4 +141,8 @@
 	@include breakpoint ( ">480px" ) {
 		margin-top: -15px;
 	}
+}
+
+.plugin-meta__actions .plugin-item__count {
+	padding: 0;
 }
