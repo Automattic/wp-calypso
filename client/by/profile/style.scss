@@ -1,4 +1,33 @@
+// These pages should span the full width of the page; no sidebar needed!
+.is-group-by .layout__content {
+	padding: 0;
+}
+
 .profile__header {
-	background-color: green;
-	padding: 50px;
+	background: $gray-dark url(/calypso/images/me/pattern-dark.png) 0 0 no-repeat;
+	padding: 32px;
+	text-align: center;
+}
+
+.profile__gravatar {
+	border: 4px solid $white;
+	border-radius: 50%;
+	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.6 );
+	margin-bottom: 16px;
+	width: 150px;
+}
+
+.profile__header h1 {
+	color: $white;
+	font-family: $serif;
+	font-size: 3rem;
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.6 );
+}
+
+.profile__header h2 {
+	color: $white;
+	font-family: $serif;
+	font-size: 1.6rem;
+	font-style: italic;
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.6 );
 }
