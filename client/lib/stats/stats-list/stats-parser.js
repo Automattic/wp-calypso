@@ -579,37 +579,6 @@ StatsParser.prototype.statsVideoPlays = function( payload ) {
 	return response;
 };
 
-StatsParser.prototype.statsPodcastListens = function( payload ) {
-	var response = { data: [] },
-		periodRange = rangeOfPeriod( this.options.period, this.options.date ),
-		startDate = periodRange.startOf.format( 'YYYY-MM-DD' );
-
-	if ( payload && payload.date && payload.days && payload.days[ startDate ] ) {
-		response.data = payload.days[ startDate ].listens.map( function( item ) {
-			var detailPage = '/stats/' + this.options.period + '/podcastlistens/' + this.options.domain + '?post=' + item.post_id;
-			return {
-				label: item.title,
-				page: detailPage,
-				value: item.listens,
-				actions: [ {
-					type: 'link',
-					data: item.url
-				} ]
-			};
-		}, this );
-
-		if ( payload.days[ startDate ].other_listens ) {
-			response.summaryPage = this.options ? '/stats/' + this.options.period + '/podcastlistens/' + this.options.domain + '?startDate=' + startDate : null;
-		}
-
-		if ( payload.days[ startDate ].total_listens ) {
-			response.total = payload.days[ startDate ].total_listens;
-		}
-	}
-
-	return response;
-};
-
 StatsParser.prototype.statsComments = function( payload ) {
 	var response = {
 			data: {
