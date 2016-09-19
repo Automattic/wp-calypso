@@ -13,7 +13,9 @@ const ProfileHeader = ( { username } ) => (
 		</div>
 
 		<div className="profile__about-me">
-			<p>Hi! I'm Marigold the goat. I like eating and pooping. Sometimes I poop when I eat. Don't impose your human standards on me! I'm a goat and I DGAF!</p>
+			<p>Hi! I'm Marigold the goat. I like eating and pooping.
+			Sometimes I poop when I eat. Don't impose your human standards on me!
+			I'm a goat and I DGAF!</p>
 		</div>
 	</div>
 );
