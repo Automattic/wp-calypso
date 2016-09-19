@@ -129,15 +129,11 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		const barClass = { chart__bar: true };
+		const barClass = classNames( 'chart__bar', this.props.className );
 		const count = this.props.count || 1;
 		const barStyle = {
 			width: ( ( 1 / count ) * 100 ) + '%'
 		};
-
-		if ( this.props.className ) {
-			barClass[ this.props.className ] = true;
-		}
 
 		return (
 			<div onClick={ this.clickHandler }
