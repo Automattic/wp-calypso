@@ -118,12 +118,15 @@ export function createReduxStore( initialState = {} ) {
 	) {
 		createStoreWithMiddleware = compose( createStoreWithMiddleware, window.devToolsExtension() );
 	}
-	const store = createStoreWithMiddleware( createStore )( reducer, initialState );
 
 	if ( typeof window === 'object' ) {
-		require( 'state/data-layer/pinghub-remote-actions' )
-			.subscribe( store.dispatch );
+		createStoreWithMiddleware = compose(
+			require( 'state/data-layer/pinghub-remote-actions' ).remoteActionEnhancer,
+			createStoreWithMiddleware,
+		);
 	}
+
+	const store = createStoreWithMiddleware( createStore )( reducer, initialState );
 
 	return store;
 }

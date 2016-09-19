@@ -8,7 +8,7 @@ import wpcom from 'lib/wp';
 
 const pinghubPath = '/wpcom/me/calypso-remote-dispatcher';
 
-export const subscribe = dispatch => {
+const subscribe = dispatch => {
 	wpcom.pinghub.connect( pinghubPath, ( error, event ) => {
 		if ( error ) {
 			return;
@@ -33,4 +33,13 @@ export const subscribe = dispatch => {
 	} );
 };
 
-export default subscribe;
+export const remoteActionEnhancer = next => ( ...args ) => {
+	const store = next( ...args );
+
+	wpcom.pinghub.disconnect( pinghubPath );
+	subscribe( store.dispatch );
+
+	return store;
+};
+
+export default remoteActionEnhancer;
