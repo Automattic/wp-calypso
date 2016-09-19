@@ -158,19 +158,6 @@ module.exports = React.createClass( {
 		);
 	},
 
-	// @todo - This is duplicated from plugin-meta/index.jsx. Can we get rid of the duplication?
-	handlePluginUpdatesSingleSite( event ) {
-		event.preventDefault();
-		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
-
-		analytics.ga.recordEvent( 'Plugins', 'Clicked Update Selected Site Plugin', 'Plugin Name', this.props.pluginSlug );
-		analytics.tracks.recordEvent( 'calypso_plugins_actions_update_plugin', {
-			site: this.props.sites[ 0 ].ID,
-			plugin: this.props.sites[ 0 ].plugin.slug,
-			selected_site: this.props.sites[ 0 ].ID
-		} );
-	},
-
 	pluginMeta( pluginData ) {
 		if ( this.props.progress.length ) {
 			const message = this.doing();
