@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
+import config from 'config';
 import { connect } from 'react-redux';
 
 const debug = debugFactory( 'calypso:my-sites:current-site' );
@@ -14,13 +15,14 @@ const AllSites = require( 'my-sites/all-sites' ),
 	analytics = require( 'lib/analytics' ),
 	Button = require( 'components/button' ),
 	Card = require( 'components/card' ),
-	Site = require( 'blocks/site' ),
 	Gridicon = require( 'components/gridicon' ),
 	UpgradesActions = require( 'lib/upgrades/actions' ),
 	DomainsStore = require( 'lib/domains/store' ),
 	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' );
 
+import Site from 'blocks/site';
 import SiteNotice from './notice';
+
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 const CurrentSite = React.createClass( {
@@ -169,11 +171,14 @@ const CurrentSite = React.createClass( {
 						onClick={ this.previewSite }
 						onSelect={ this.previewSite }
 						tipTarget="site-card-preview"
+						indicator={ ! config.isEnabled( 'gm2016/jetpack-plugin-updates-trashpickup' ) }
 						ref="site" />
 					: <AllSites sites={ this.props.sites.get() } />
 				}
+
 				{ this.getSiteNotices( site ) }
-				<SiteNotice site={ site } />
+
+				{ this.props.sites.selected && <SiteNotice site={ site } /> }
 			</Card>
 		);
 	}

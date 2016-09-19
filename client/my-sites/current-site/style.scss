@@ -94,3 +94,23 @@
 		margin-left: auto;
 	}
 }
+
+.site__notices.has-many-updates {
+	cursor: pointer;
+}
+
+.current-site__jetpack-notifications-popover {
+	hr {
+		color: $gray-light;
+	}
+
+	.popover__inner {
+		max-width: 200px;
+	    padding: 5px;
+	    text-align: left;
+	}
+}
+
+.current-site__jetpack-notifications-block {
+	padding: 5px;
+}
