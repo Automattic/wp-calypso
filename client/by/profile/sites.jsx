@@ -4,23 +4,37 @@
 import { connect } from 'react-redux';
 import React, { PropTypes } from 'react';
 
-const ProfileSites = ( { sites } ) => (
-	<div className="profile__sites">
-		{ sites.map( ( { id } ) => (
-			<div key={ `site-${ id }` }>
-				<h3>Site { id }</h3>
-			</div>
-		) ) }
-	</div>
-);
+/**
+ * Internal dependencies
+ */
+import { getSites, isRequestingSites } from 'state/sites/selectors';
+import SiteIcon from 'components/site-icon';
 
-ProfileSites.propTypes = {
-	sites: PropTypes.array.isRequired,
-	username: PropTypes.string.isRequired
+const ProfileSites = ( { loading, sites } ) => {
+	if ( loading ) {
+		return <div>Loading</div>;
+	}
+
+	return (
+		<div className="profile__sites">
+			{ sites.map( site => (
+				<div key={ `site-${ site.ID }` }>
+					<h3>{ site.title }</h3>
+					<p>{ site.description }</p>
+					<SiteIcon site={ site } />
+				</div>
+			) ) }
+		</div>
+	);
 };
 
-const mapStateToProps = () => ( {
-	sites: [ { id: 1 }, { id: 2 }, { id: 3 } ]
+ProfileSites.propTypes = {
+	sites: PropTypes.array.isRequired
+};
+
+const mapStateToProps = state => ( {
+	loading: isRequestingSites( state ),
+	sites: getSites( state )
 } );
 
 export default connect( mapStateToProps )( ProfileSites );

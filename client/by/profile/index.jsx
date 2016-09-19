@@ -8,9 +8,12 @@ import React, { PropTypes } from 'react';
  */
 import ProfileHeader from './header';
 import ProfileSites from './sites';
+import QuerySites from 'components/data/query-sites';
 
 const Profile = ( { username } ) => (
 	<div className="profile">
+		<QuerySites allSites />
+
 		<ProfileHeader
 			username={ username } />
 		<ProfileSites
