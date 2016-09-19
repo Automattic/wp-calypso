@@ -241,10 +241,9 @@ export default React.createClass( {
 							</div>
 						</div>
 				}
-				{ this.props.indicator
-					? <SiteIndicator site={ site } />
-					: null
-				}
+
+				{ this.props.indicator && <SiteIndicator site={ site } /> }
+
 				{ this.props.enableActions &&
 					<button
 						className="site__toggle-more-options"
