@@ -13,7 +13,6 @@ module.exports = React.createClass( {
 	displayName: 'EditorSharingPublicizeServices',
 
 	propTypes: {
-		onChange: React.PropTypes.func,
 		post: React.PropTypes.object,
 		siteId: React.PropTypes.number.isRequired,
 		connections: React.PropTypes.array.isRequired,
@@ -45,7 +44,6 @@ module.exports = React.createClass( {
 					key={ connection.ID }
 					post={ this.props.post }
 					connection={ connection }
-					onChange={ this.props.onChange }
 					onRefresh={ this.props.newConnectionPopup } />
 			);
 		}, this );
