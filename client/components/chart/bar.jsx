@@ -3,18 +3,12 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
 import Tooltip from 'components/tooltip';
 import Gridicon from 'components/gridicon';
-
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:module-chart:bar' );
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartBar',
@@ -135,8 +129,6 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering bar', this.state );
-
 		const barClass = { chart__bar: true };
 		const count = this.props.count || 1;
 		const barStyle = {

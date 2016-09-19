@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -12,7 +11,6 @@ import debugModule from 'debug';
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:module-chart:label' );
 const user = userModule();
 
 module.exports = React.createClass( {
@@ -25,8 +23,6 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering label' );
-
 		const dir = user.isRTL() ? 'right' : 'left';
 		let labelStyle;
 

@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { some, noop, throttle } from 'lodash';
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -11,11 +10,6 @@ import debugModule from 'debug';
 import BarContainer from './bar-container';
 import observe from 'lib/mixins/data-observe';
 import touchDetect from 'lib/touch-detect';
-
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:chart' );
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChart',
@@ -116,8 +110,6 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering chart with props: ', this.props );
-
 		const values = this.getValues(),
 			yAxisMax = this.getYAxisMax( values ),
 			data = this.getData();

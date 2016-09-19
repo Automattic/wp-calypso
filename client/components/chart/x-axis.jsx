@@ -3,17 +3,11 @@
  */
 import React from 'react';
 import { throttle } from 'lodash';
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
 import Label from './label';
-
-/**
- * Module variables
- */
-const debug = debugModule( 'calypso:module-chart:x-axis' );
 
 module.exports = React.createClass( {
 	displayName: 'ModuleChartXAxis',
@@ -77,8 +71,6 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering chart x-axis', this.props.data );
-
 		const data = this.props.data;
 
 		const labels = data.map( function( item, index ) {

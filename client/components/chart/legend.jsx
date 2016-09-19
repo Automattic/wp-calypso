@@ -3,12 +3,10 @@
  */
 import React from 'react';
 import { find } from 'lodash';
-import debugModule from 'debug';
 
 /**
  * Module variables
  */
-const debug = debugModule( 'calypso:module-chart:legend' );
 // TODO: remove and extend from PureComponent after porting the component to ES6
 const PureRenderMixin = require( 'react-pure-render/mixin' );
 
@@ -57,7 +55,6 @@ const Legend = React.createClass( {
 	},
 
 	render: function() {
-		debug( 'Rendering legend', this.props );
 		const legendColors = [ 'chart__legend-color is-dark-blue' ],
 			activeTab = this.props.activeTab;
 
