@@ -234,22 +234,6 @@ export default React.createClass( {
 		}
 	},
 
-	// getAvailableNewVersions() {
-	// 	return this.props.sites.map( site => {
-	// 		if ( ! site.canUpdateFiles ) {
-	// 			return null;
-	// 		}
-	// 		if ( site.plugin && site.plugin.update ) {
-	// 			if ( 'error' !== site.plugin.update && site.plugin.update.new_version ) {
-	// 				return {
-	// 					title: site.title,
-	// 					newVersion: site.plugin.update.new_version
-	// 				};
-	// 			}
-	// 		}
-	// 	} ).filter( newVersions => newVersions );
-	// },
-
 	handlePluginUpdatesSingleSite( event ) {
 		event.preventDefault();
 		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
