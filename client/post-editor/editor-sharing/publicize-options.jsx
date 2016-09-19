@@ -183,16 +183,18 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		);
 	},
 
+	republicizePost() {
+		const skipped = PostMetadata.publicizeSkipped( this.props.post );
+		const message = PostMetadata.publicizeMessage( this.props.post );
+		this.props.sharePost( this.props.siteId, this.props.post.ID, skipped, message );
+	},
+
 	renderRepublicize() {
-		return(
+		return (
 			<Button
 				className="button editor-sharing__publicize-share-button"
 				disabled={ ( this.props.connections.length - PostMetadata.publicizeSkipped( this.props.post ).length < 1 ) || this.props.requesting }
-				onClick={ () => {
-					const skipped = PostMetadata.publicizeSkipped( this.props.post );
-					const message = PostMetadata.publicizeMessage( this.props.post );
-					this.props.sharePost( this.props.siteId, this.props.post.ID, skipped, message );
-				} }
+				onClick={ this.republicizePost }
 			>
 				{ this.translate( 'Share' ) }
 			</Button>
