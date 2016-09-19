@@ -15,6 +15,7 @@ import pickBy from 'lodash/pickBy';
 /**
  * Internal dependencies
  */
+import QueryThemeDetails from 'components/data/query-theme-details';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
@@ -50,6 +51,7 @@ import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Head from 'layout/head';
 import { decodeEntities } from 'lib/formatting';
+import { getThemeDetails } from 'state/themes/theme-details/selectors';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -397,13 +399,13 @@ const ThemeSheet = React.createClass( {
 		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
 
 		return (
-
 			<Head
 				title= { themeName && decodeEntities( title ) + ' — WordPress.com' }
 				description={ description && decodeEntities( description ) }
 				type={ 'website' }
 				canonicalUrl={ canonicalUrl }
 				image={ this.props.screenshot }>
+				<QueryThemeDetails id={ this.props.id } />
 				<QueryUserPurchases userId={ this.props.currentUserId } />
 				<Main className="theme__sheet">
 					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
@@ -493,19 +495,23 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 };
 
 export default connect(
-	( state ) => {
+	( state, props ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
+		const themeDetails = getThemeDetails( state, props.id );
 
 		return {
+			...themeDetails,
+			id: props.id,
 			selectedSite,
 			siteSlug,
 			backPath,
 			currentUserId,
 			isCurrentUserPaid,
+			isLoggedIn: !! currentUserId,
 		};
 	},
 	bindDefaultOptionToDispatch,
