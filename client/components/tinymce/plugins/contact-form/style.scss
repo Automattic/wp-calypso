@@ -78,3 +78,22 @@
 		color: $orange-fire;
 	}
 }
+
+.editor-contact-form-modal-field__edit-wrapper {
+	height: 100%;
+}
+
+.editor-contact-form-modal-field__edit-wrapper-button {
+	width: 100%;
+	margin-top: 15px;
+	margin-bottom: 20px;
+}
+
+.editor-contact-form-modal-field__edit-wrapper.foldable-card__expand .editor-contact-form-modal-field__edit {
+	width: 100%;
+	padding-bottom: 6px;
+
+	&.is-expanded {
+		transform: rotate(0);
+	}
+}
