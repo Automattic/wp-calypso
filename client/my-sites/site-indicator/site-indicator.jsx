@@ -73,6 +73,11 @@ export default React.createClass( {
 	},
 
 	updatesAvailable() {
+		// let's disable this notification under `gm2016/jetpack-nice-features` flag
+		if ( config.isEnabled( 'gm2016/jetpack-nice-features' ) ) {
+			return null;
+		}
+
 		if ( config.isEnabled( 'jetpack_core_inline_update' ) && this.props.site.update.wordpress && this.props.site.update.wp_update_version ) {
 			return (
 				<span>
