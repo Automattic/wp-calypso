@@ -27,8 +27,10 @@ import config from 'config';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import plansFactory from 'lib/plans-list';
 
 const sites = sitesFactory();
+const plans = plansFactory();
 
 /**
  * Module variables
@@ -145,7 +147,8 @@ export default {
 			React.createElement( jetpackConnectAuthorizeForm, {
 				path: context.path,
 				locale: context.params.locale,
-				userModule: userModule
+				userModule: userModule,
+				plans: plans
 			} ),
 			document.getElementById( 'primary' ),
 			context.store
@@ -175,6 +178,35 @@ export default {
 		);
 	},
 
+	plansPreSelection( context ) {
+		const Plans = require( './plans' ),
+			CheckoutData = require( 'components/data/checkout' ),
+			site = sites.getSelectedSite(),
+			analyticsPageTitle = 'Plans',
+			basePath = route.sectionify( context.path ),
+			analyticsBasePath = basePath + '/:site';
+
+		if ( ! site || ! site.jetpack || ! config.isEnabled( 'jetpack/connect' ) ) {
+			return;
+		}
+
+		analytics.tracks.recordEvent( 'calypso_plans_view' );
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+		renderWithReduxStore(
+			<CheckoutData>
+				<Plans
+					sites={ sites }
+					plans={ plans }
+					context={ context }
+					showFirst={ true }
+					destinationType={ context.params.destinationType } />
+			</CheckoutData>,
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
 	plansLanding( context ) {
 		const Plans = require( './plans' ),
 			CheckoutData = require( 'components/data/checkout' ),
@@ -199,6 +231,7 @@ export default {
 			<CheckoutData>
 				<Plans
 					sites={ sites }
+					plans={ plans }
 					context={ context }
 					destinationType={ context.params.destinationType }
 					intervalType={ context.params.intervalType } />

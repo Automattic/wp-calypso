@@ -26,6 +26,7 @@ import {
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
+	JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -289,10 +290,23 @@ export function jetpackSSOSessions( state = {}, action ) {
 	return state;
 }
 
+export function jetpackConnectSelectedPlans( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE:
+			const siteSlug = action.site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+			return Object.assign( {}, state, { [ siteSlug ]: action.plan } );
+		case SERIALIZE:
+		case DESERIALIZE:
+			return state;
+	}
+	return state;
+}
+
 export default combineReducers( {
 	jetpackConnectSite,
 	jetpackSSOSessions,
 	jetpackSSO,
 	jetpackConnectAuthorize,
 	jetpackConnectSessions,
+	jetpackConnectSelectedPlans,
 } );

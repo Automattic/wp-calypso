@@ -14,9 +14,11 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 };
 
 const getFlowType = function( state, site ) {
-	const siteSlug = site.slug.replace( /.*?:\/\//g, '' );
-	if ( state && state[ siteSlug ] ) {
-		return state[ siteSlug ].flowType;
+	if ( site ) {
+		const siteSlug = site.slug.replace( /.*?:\/\//g, '' );
+		if ( state && state[ siteSlug ] ) {
+			return state[ siteSlug ].flowType;
+		}
 	}
 	return false;
 };
@@ -37,4 +39,14 @@ const hasXmlrpcError = function( state ) {
 	);
 };
 
-export default { isCalypsoStartedConnection, getFlowType, hasXmlrpcError };
+const getJetpackPlanSelected = function( state, site ) {
+	if ( site ) {
+		const siteSlug = site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+		if ( state && state[ siteSlug ] ) {
+			return state[ siteSlug ];
+		}
+	}
+	return false;
+};
+
+export default { isCalypsoStartedConnection, getFlowType, getJetpackPlanSelected, hasXmlrpcError };
