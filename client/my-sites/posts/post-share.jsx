@@ -24,6 +24,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import PostMetadata from 'lib/post-metadata';
 import PublicizeMessage from 'post-editor/editor-sharing/publicize-message'
 import Notice from 'components/notice';
+import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 
 const PostSharing = React.createClass( {
 	propTypes: {
@@ -138,6 +139,7 @@ const PostSharing = React.createClass( {
 						{ this.translate( 'Share post' ) }
 					</Button>
 				</div>
+				{ this.props.site && <QueryPublicizeConnections siteId={ this.props.site.ID } /> }
 			</div>
 		);
 	}
