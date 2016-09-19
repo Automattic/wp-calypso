@@ -7,7 +7,7 @@ import React, { PropTypes } from 'react';
 const ProfileSites = ( { sites } ) => (
 	<div className="profile__sites">
 		{ sites.map( ( { id } ) => (
-			<div key={ `site-${ id }` }>
+			<div className="profile__site-card card" key={ `site-${ id }` }>
 				<h3>Site { id }</h3>
 			</div>
 		) ) }

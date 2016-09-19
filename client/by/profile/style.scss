@@ -14,13 +14,19 @@
 	border-radius: 50%;
 	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.6 );
 	margin-bottom: 16px;
-	width: 150px;
+	width: 100px;
+
+	@include breakpoint( ">480px" ) {
+		width: 150px;
+	}
 }
 
 .profile__header h1 {
 	color: $white;
 	font-family: $serif;
-	font-size: 3rem;
+	font-size: 2.8rem;
+	line-height: 1.2;
+	margin-bottom: 8px;
 	text-shadow: 0 1px rgba( 0, 0, 0, 0.6 );
 }
 
@@ -35,6 +41,7 @@
 .profile__about-me {
 	font-family: $serif;
 	line-height: 1.6;
-	margin: 32px auto;
+	margin: 0 auto;
 	max-width: 600px;
+	padding: 32px 16px;
 }
