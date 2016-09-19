@@ -132,7 +132,7 @@ const PostSharing = React.createClass( {
 			<div className="posts__post-share-wrapper">
 				{ this.props.requesting && <Notice status="is-warning" showDismiss={ false }>{ this.translate( 'Hang tight, socializing your media...' ) }</Notice> }
 				{ this.props.success && <Notice status="is-success" onDismissClick={ this.dismiss }>{ this.translate( 'It went out! Your social media is on fire!' ) }</Notice> }
-				{ this.props.failure && <Notice status="is-error" onDismissClick={ this.dismiss }>{ this.translate( 'Something went wrong. Please dont be mad.' ) }</Notice> }
+				{ this.props.failure && <Notice status="is-error" onDismissClick={ this.dismiss }>{ this.translate( `Something went wrong. Please don't be mad.` ) }</Notice> }
 				<div className={ classes }>
 					{ this.props.siteId && <QueryPostTypes siteId={ this.props.siteId } /> }
 					<h3 className="posts__post-share-title">
