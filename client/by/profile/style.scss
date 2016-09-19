@@ -3,7 +3,7 @@
 	padding: 0;
 }
 
-.profile__header {
+.profile__banner {
 	background: $gray-dark url(/calypso/images/me/pattern-dark.png) 0 0 no-repeat;
 	padding: 32px;
 	text-align: center;
@@ -30,4 +30,11 @@
 	font-size: 1.6rem;
 	font-style: italic;
 	text-shadow: 0 1px rgba( 0, 0, 0, 0.6 );
+}
+
+.profile__about-me {
+	font-family: $serif;
+	line-height: 1.6;
+	margin: 32px auto;
+	max-width: 600px;
 }
