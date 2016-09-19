@@ -1,3 +1,21 @@
+$color-facebook: #39579a;
+$color-twitter: #55ACEE;
+$color-gplus: #df4a32;
+$color-tumblr: #35465c;
+$color-linkedin: #0976b4;
+$color-path: #df3b2f;
+$color-instagram: #517fa4;
+$color-eventbrite: #ff8000;
+$color-stumbleupon: #eb4924;
+$color-reddit: #5f99cf;
+$color-pinterest: #cc2127;
+$color-pocket: #ee4256;
+$color-email: #f8f8f8;
+$color-print: #f8f8f8;
+$color-skype: #00AFF0;
+$color-telegram: #0088cc;
+$color-whatsapp: #43d854;
+
 .posts.main {
 	display: block;
 	max-width: 720px;
@@ -15,6 +33,57 @@
 }
 
 .posts__list {
+
+	.posts__post-share-services {
+		flex-direction: row;
+		justify-content: space-around;
+		display: flex;
+		flex-wrap: true;
+		border-bottom: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+	}
+	.posts__post-share-service {
+		cursor: pointer;
+		padding: 4px;
+		display: flex;
+		flex: 1;
+		border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+		color: lighten( $gray, 20% );
+		&.is-active {
+			color: black;
+
+			.social-logo.twitter{
+				color: $color-twitter;
+			}
+
+			.social-logo.facebook{
+				color: $color-facebook;
+			}
+
+			.social-logo.google_plus {
+				color: $color-gplus;
+			}
+
+			.social-logo.linkedin {
+				color: $color-linkedin;
+			}
+
+			.social-logo.tumblr {
+				color: $color-tumblr;
+			}
+
+			.social-logo.path {
+				color: $color-path;
+			}
+
+			.social-logo.eventbrite {
+				color: $color-eventbrite;
+			}
+		}
+	}
+	.posts__post-share-service-account-name {
+		line-height: 24px;
+		padding-left: 4px;
+	}
 
 	.post {
 		position: relative;

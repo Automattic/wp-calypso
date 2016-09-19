@@ -20,11 +20,11 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
 import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
 import serviceConnections from 'my-sites/sharing/connections/service-connections';
-import FormCheckbox from 'components/forms/form-checkbox';
 import PostMetadata from 'lib/post-metadata';
-import PublicizeMessage from 'post-editor/editor-sharing/publicize-message'
+import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
+import SocialLogo from 'components/social-logo';
 
 const PostSharing = React.createClass( {
 	propTypes: {
@@ -69,12 +69,20 @@ const PostSharing = React.createClass( {
 				this.props.connections
 			);
 			return connections.map(
-				connection => <li key={ connection.keyring_connection_ID }>
-					<FormCheckbox
-						checked={ ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 ) }
-						onChange={ () => this.toggleConnection( connection.keyring_connection_ID ) } />
-					<span>{ connection && connection.external_display }</span>
-				</li>,
+				connection => <div
+					key={ connection.keyring_connection_ID }
+					onClick={ () => this.toggleConnection( connection.keyring_connection_ID ) }
+					className={ classNames( {
+						'posts__post-share-service': true,
+						[ connection.name ]: true,
+						'is-active': ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 )
+					} ) }
+				>
+					<SocialLogo icon={ service.name }/>
+					<div className="posts__post-share-service-account-name">
+						<span>{ connection && connection.external_display }</span>
+					</div>
+				</div>,
 				this
 			);
 		}, this );
@@ -130,7 +138,9 @@ const PostSharing = React.createClass( {
 					<h3 className="posts__post-share-title">
 						{ this.translate( 'Share the post and spread the word!' ) }
 					</h3>
-					{ this.renderServices() }
+					<div className="posts__post-share-services">
+						{ this.renderServices() }
+					</div>
 					{ this.renderMessage() }
 					<Button
 						onClick={ () => this.props.sharePost( this.props.siteId, this.props.post.ID, this.state.skipped, this.state.message ) }
