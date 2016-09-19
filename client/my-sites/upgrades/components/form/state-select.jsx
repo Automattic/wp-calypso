@@ -4,8 +4,10 @@
 const React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	isEmpty = require( 'lodash/isEmpty' ),
-	ReactDom = require( 'react-dom' ),
-	observe = require( 'lib/mixins/data-observe' );
+	ReactDom = require( 'react-dom' );
+
+import { connect } from 'react-redux';
+
 
 /**
  * Internal dependencies
@@ -17,10 +19,11 @@ const analytics = require( 'lib/analytics' ),
 	scrollIntoViewport = require( 'lib/scroll-into-viewport' ),
 	Input = require( './input' );
 
-module.exports = React.createClass( {
-	displayName: 'StateSelect',
+import { getCountryStatesList } from 'state/country-states/selectors';
+import QueryCountryStatesList from 'components/data/query-country-states-list';
+const StatesSelect = React.createClass({
 
-	mixins: [ observe( 'statesList' ) ],
+	displayName: 'StateSelect',
 
 	recordStateSelectClick: function() {
 		if ( this.props.eventFormName ) {
@@ -40,12 +43,16 @@ module.exports = React.createClass( {
 
 	render: function() {
 		const classes = classNames( this.props.additionalClasses, 'state' ),
-			statesList = this.props.statesList.getByCountry( this.props.countryCode );
+			statesList = this.props.statesList;
 		let options = [];
+
 
 		if ( isEmpty( statesList ) ) {
 			return (
-				<Input ref="state" { ...this.props } />
+				<div>
+					<QueryCountryStatesList countryCode={ this.props.countryCode } />
+					<Input ref="state" { ...this.props } />
+				</div>
 			);
 		}
 
@@ -60,6 +67,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ classes }>
+				<QueryCountryStatesList countryCode={ this.props.countryCode } />
 				<div>
 					<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
 					<FormSelect
@@ -79,4 +87,11 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+});
+
+export default connect( ( state, props ) => {
+	const statesList = getCountryStatesList( state, props.countryCode );
+	return {
+		statesList
+	};
+})( StatesSelect );
