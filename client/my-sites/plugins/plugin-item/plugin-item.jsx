@@ -17,7 +17,6 @@ import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import Count from 'components/count';
 import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
 import PluginNotices from 'lib/plugins/notices';
 import analytics from 'lib/analytics';
 import { getAvailableNewVersions } from 'my-sites/plugins/plugin-meta';
@@ -155,9 +154,6 @@ module.exports = React.createClass( {
 				status="is-warning"
 				inline={ true }
 				text={ `${ textVersion } ${ newVersions[ 0 ].newVersion } ${ textIsAvailable }` }>
-				<NoticeAction onClick={ this.handlePluginUpdatesSingleSite }>
-					{ this.translate( 'Update' ) }
-				</NoticeAction>
 			</Notice>
 		);
 	},
