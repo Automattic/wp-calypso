@@ -3,6 +3,9 @@
 	padding: 0;
 }
 
+
+// Profile header
+// This contains the user's bio information
 .profile__banner {
 	background: $gray-dark url(/calypso/images/me/pattern-dark.png) 0 0 no-repeat;
 	padding: 32px;
@@ -44,4 +47,19 @@
 	margin: 0 auto;
 	max-width: 600px;
 	padding: 32px 16px;
+}
+
+// Sites
+// This contains the sites the user owns or has contributed to.
+@include breakpoint( ">480px" ) {
+	.profile__sites {
+		display: flex;
+		padding: 0 8px;
+	}
+
+	.profile__site-card {
+		padding: 8px;
+		margin: 8px;
+		width: 33%;
+	}
 }
