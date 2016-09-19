@@ -402,6 +402,8 @@ module.exports = {
 				siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const videoPlaysList = new StatsList( {
 				siteID: siteId, statType: 'statsVideoPlays', period: activeFilter.period, date: endDate, domain: siteDomain } );
+			const podcastListensList = new StatsList( {
+				siteID: siteId, statType: 'statsPodcastListens', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const searchTermsList = new StatsList( {
 				siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: siteDomain } );
@@ -432,6 +434,7 @@ module.exports = {
 					authorsList: authorsList,
 					countriesList: countriesList,
 					videoPlaysList: videoPlaysList,
+					podcastListensList: podcastListensList,
 					siteId: siteId,
 					period: period,
 					chartPeriod: chartPeriod,
@@ -476,7 +479,7 @@ module.exports = {
 		let summaryList;
 		let visitsList;
 		const followList = new FollowList();
-		const validModules = [ 'posts', 'referrers', 'clicks', 'countryviews', 'authors', 'videoplays', 'videodetails', 'searchterms' ];
+		const validModules = [ 'posts', 'referrers', 'clicks', 'countryviews', 'authors', 'videoplays', 'videodetails', 'podcastlistens', 'searchterms' ];
 		let momentSiteZone = i18n.moment();
 		const basePath = route.sectionify( context.path );
 
@@ -567,6 +570,10 @@ module.exports = {
 						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
 					break;
 
+				case 'podcastlistens':
+					summaryList = new StatsList( { statType: 'statsPodcastListens', siteID: siteId,
+						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
+					break;
 			}
 
 			analytics.pageView.record(

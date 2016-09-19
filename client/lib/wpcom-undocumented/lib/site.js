@@ -16,6 +16,7 @@ var Export = require( './export' );
 var resources = [
 	[ 'statsEvents', 'posts/' ],
 	[ 'statsInsights', 'stats/insights', '1.1' ],
+	[ 'statsPodcastListens', 'stats/podcast-listens', '1.1' ],
 	[ 'sshCredentialsNew', 'ssh-credentials/new', '1.1', 'post' ],
 	[ 'sshCredentialsMine', 'ssh-credentials/mine', '1.1' ],
 	[ 'sshCredentialsMineDelete', 'ssh-credentials/mine/delete', '1.1', 'post' ],
