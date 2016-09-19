@@ -50,11 +50,6 @@ module.exports = React.createClass( {
 		}
 
 		const node = this.refs.axis;
-		const width = node.clientWidth;
-		const dataCount = props.data.length || 1;
-		const spacing = width / dataCount;
-		const labelWidth = props.labelWidth;
-		const divisor = Math.ceil( labelWidth / spacing );
 
 		/**
 		 * Overflow needs to be hidden to calculate the desired width,
@@ -62,7 +57,13 @@ module.exports = React.createClass( {
 		 */
 
 		node.style.overflow = 'hidden';
+		const width = node.clientWidth;
 		node.style.overflow = 'visible';
+
+		const dataCount = props.data.length || 1;
+		const spacing = width / dataCount;
+		const labelWidth = props.labelWidth;
+		const divisor = Math.ceil( labelWidth / spacing );
 
 		this.setState( {
 			divisor: divisor,
