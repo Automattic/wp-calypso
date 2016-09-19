@@ -9,27 +9,23 @@ import classNames from 'classnames';
  */
 import Main from 'components/main';
 
-export default React.createClass( {
-	displayName: 'JetpackConnectMainWrapper',
+const JetpackConnectMainWrapper = ( { isWide, className, children } ) => {
+	const wrapperClassName = classNames( 'jetpack-connect__main', {
+		'is-wide': isWide
+	} );
+	return (
+		<Main className={ classNames( className, wrapperClassName ) }>
+			{ children }
+		</Main>
+	);
+};
 
-	propTypes: {
-		isWide: React.PropTypes.bool
-	},
+JetpackConnectMainWrapper.propTypes = {
+	isWide: React.PropTypes.bool
+};
 
-	getDefaultProps() {
-		return {
-			isWide: false
-		};
-	},
+JetpackConnectMainWrapper.defaultProps = {
+	isWide: false
+};
 
-	render() {
-		const wrapperClassName = classNames( 'jetpack-connect__main', {
-			'is-wide': this.props.isWide
-		} );
-		return (
-			<Main className={ classNames( this.props.className, wrapperClassName ) }>
-				{ this.props.children }
-			</Main>
-		);
-	}
-} );
+export default JetpackConnectMainWrapper;
