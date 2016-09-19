@@ -405,7 +405,7 @@ const ThemeSheet = React.createClass( {
 				type={ 'website' }
 				canonicalUrl={ canonicalUrl }
 				image={ this.props.screenshot }>
-				<QueryThemeDetails id={ this.props.id } />
+				<QueryThemeDetails id={ this.props.id } siteId={ siteID } />
 				<QueryUserPurchases userId={ this.props.currentUserId } />
 				<Main className="theme__sheet">
 					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />

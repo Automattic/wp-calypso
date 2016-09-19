@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { fetchThemeDetails } from 'state/themes/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Fetches details for a theme specified by its ID
@@ -35,7 +34,7 @@ const QueryThemeDetails = React.createClass( {
 	refresh( props ) {
 		// todo (seear): Don't fetch if site matches existing data
 		if ( props.id ) {
-			this.props.fetchThemeDetails( props.id, props.selectedSiteId );
+			this.props.fetchThemeDetails( props.id, props.siteId );
 		}
 	},
 
@@ -45,8 +44,6 @@ const QueryThemeDetails = React.createClass( {
 } );
 
 export default connect(
-	state => ( {
-		selectedSiteId: getSelectedSiteId( state )
-	} ),
+	null,
 	{ fetchThemeDetails }
 )( QueryThemeDetails );
