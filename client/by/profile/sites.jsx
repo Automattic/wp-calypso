@@ -9,19 +9,31 @@ import React, { PropTypes } from 'react';
  */
 import { getSites, isRequestingSites } from 'state/sites/selectors';
 import SiteIcon from 'components/site-icon';
+import FollowButtonContainer from 'components/follow-button';
 
 const ProfileSites = ( { loading, sites } ) => {
 	if ( loading ) {
-		return <div>Loading</div>;
+		return <div className="profile__loading">Loading</div>;
 	}
 
 	return (
 		<div className="profile__sites">
 			{ sites.map( site => (
 				<div className="profile__site-card card" key={ `site-${ site.ID }` }>
-					<h3>{ site.title }</h3>
-					<p>{ site.description }</p>
+					<header className="profile__site-card-header">
+						<div className="profile__site-title">
+							<span className="profile__site-type">I created</span>
+							<h3><a href=" { site.URL } ">{ site.title }</a></h3>
+						</div>
+
+						<div className="profile__site-actions">
+							<a href="#" className="profile__remove-element">x</a>
+							<FollowButtonContainer siteUrl="{ site.URL }" />
+						</div>
+					</header>
+					<div className="profile__site-header"></div>
 					<SiteIcon site={ site } />
+					<p>{ site.description }</p>
 				</div>
 			) ) }
 		</div>

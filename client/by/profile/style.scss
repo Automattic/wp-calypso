@@ -3,6 +3,9 @@
 	padding: 0;
 }
 
+.profile__loading {
+	text-align: center;
+}
 
 // Profile header
 // This contains the user's bio information
@@ -65,4 +68,70 @@
 		width: calc(33% - 16px);
 		word-wrap: break-word;
 	}
+}
+
+.profile__site-title {
+	float: left;
+	width: 70%;
+}
+
+.profile__site-actions {
+	float: right;
+	width: 30%;
+	text-align: right;
+}
+
+.profile__remove-element {
+	display: block;
+	color: $gray-light;
+}
+
+.profile__sites .follow-button {
+	background: none;
+	border: 0;
+	padding: 0;
+
+	.gridicon {
+		fill: $blue-wordpress;
+	}
+
+	.follow-button__label {
+		color: $blue-wordpress;
+	}
+
+	&:hover {
+		border-color: $gray-dark;
+
+		.gridicon {
+			fill: $gray-dark;
+		}
+
+		.follow-button__label {
+			color: $gray-dark
+		}
+	}
+
+	&.is-following {
+		border-color: $alert-green;
+
+		.gridicon {
+			fill: $alert-green;
+		}
+
+		.follow-button__label {
+			color: $alert-green;
+		}
+	}
+}
+
+.profile__site-header {
+	background: $blue-dark;
+	clear: both;
+	height: 64px;
+	margin-left: -8px;
+	width: calc(100% + 16px);
+}
+
+.profile__sites .site-icon {
+	margin: -16px auto 8px auto
 }

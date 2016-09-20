@@ -19,7 +19,7 @@ const ProfileHeader = ( { moment, translate, user } ) => (
 				user={ user } />
 			<h1 className="profile__display-name">{ user.display_name }</h1>
 			<p className="profile__member-since">{ translate( 'joined' ) }
-				{ moment( user.date ).fromNow( true ) } { translate( 'ago' ) }</p>
+				&nbsp;{ moment( user.date ).fromNow( true ) } { translate( 'ago' ) }</p>
 		</div>
 
 		<div className="profile__about-me">
