@@ -149,7 +149,7 @@ server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 server/devdocs/components-usage-stats.json: $(COMPONENTS_USAGE_STATS_FILES) $(COMPONENTS_USAGE_STATS_JS)
 	@$(COMPONENTS_USAGE_STATS_JS) $(COMPONENTS_USAGE_STATS_FILES)
 
-build-dll:
+build-dll: node_modules
 	@mkdir -p build
 	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack-dll.config.js
 
