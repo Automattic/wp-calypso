@@ -44,7 +44,7 @@ const PostSharing = React.createClass( {
 	},
 
 	hasConnections: function() {
-		return this.props.connections && this.props.connections.length;
+		return !! ( this.props.connections && this.props.connections.length );
 	},
 
 	toggleConnection: function ( id ) {
