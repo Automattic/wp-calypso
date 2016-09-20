@@ -49,17 +49,25 @@ import PostStoreActions from 'lib/feed-post-store/actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
 import { getStreamUrlFromPost } from 'reader/route';
 import { CANONICAL_IN_CONTENT } from 'state/reader/posts/display-types';
+import { likePost, unlikePost } from 'lib/like-store/actions';
+import LikeStore from 'lib/like-store/like-store';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
 		super( props );
-		[ 'handleBack', 'handleCommentClick', 'bindComments' ].forEach( fn => {
+		[
+			'handleBack',
+			'handleCommentClick',
+			'handleLike',
+			'bindComments'
+		].forEach( fn => {
 			this[ fn ] = this[ fn ].bind( this );
 		} );
 	}
 
 	componentDidMount() {
 		KeyboardShortcuts.on( 'close-full-post', this.handleBack );
+		KeyboardShortcuts.on( 'like-selection', this.handleLike );
 		this.parseEmoji();
 
 		// Send page view
@@ -83,6 +91,7 @@ export class FullPostView extends React.Component {
 
 	componentWillUnmount() {
 		KeyboardShortcuts.off( 'close-full-post', this.handleBack );
+		KeyboardShortcuts.off( 'like-selection', this.handleLike );
 	}
 
 	handleBack() {
@@ -98,6 +107,18 @@ export class FullPostView extends React.Component {
 			y: ReactDom.findDOMNode( this.comments ).offsetTop - 48,
 			duration: 300
 		} );
+	}
+
+	handleLike() {
+		recordAction( 'click_like' );
+		recordGaEvent( 'Clicked Like Post Button' );
+		recordTrackForPost( 'calypso_reader_full_post_like_button_clicked', this.props.post );
+		const { site_ID: siteId, ID: postId } = this.props.post;
+		if ( LikeStore.isPostLikedByCurrentUser( siteId, postId ) ) {
+			unlikePost( siteId, postId );
+		} else {
+			likePost( siteId, postId );
+		}
 	}
 
 	bindComments( node ) {
