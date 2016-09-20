@@ -132,6 +132,12 @@ const SiteNotice = React.createClass( {
 	renderWPComUpdate() {
 		const { updates } = this.props;
 
+		// just for testing purpose
+		if ( config.isEnabled( 'gm2016/jetpack-plugin-updates-trashpickup' ) ) {
+			updates.wordpress = 1;
+			updates.wp_update_version = '5.0.0';
+		}
+
 		if ( ! (
 			config.isEnabled( 'jetpack_core_inline_update' ) &&
 			updates.wordpress &&
