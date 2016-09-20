@@ -11,6 +11,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
+import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { userCan } from 'lib/site/utils';
@@ -141,16 +142,20 @@ const SiteNotice = React.createClass( {
 
 		return (
 			<div className="current-site__jetpack-notifications-block">
-				{
-					this.translate( 'A newer version of WordPress is available. {{link}}Update to %(version)s{{/link}}.', {
-						components: {
-							link: <a className="button is-link" onClick={ this.handleUpdate } />
-						},
-						args: {
-							version: updates.wp_update_version
+				<Gridicon icon="my-sites" size={ 18 } />
+				<div className="current-site__jetpack-notifications-text">
+					{	this.translate( 'A newer version of WordPress is available.' ) }
+					<a className="current-site__jetpack-notifications-link" onClick={ this.handleUpdate }>
+						{ this.translate( 'Update to %(version)s',
+							{ args:
+								{
+									version: updates.wp_update_version
+								}
+							} )
 						}
-					} )
-				}
+						<Gridicon icon="external" size={ 14 } />
+					</a>
+				</div>
 			</div>
 		);
 	},
@@ -164,23 +169,28 @@ const SiteNotice = React.createClass( {
 
 		return (
 			<div className="current-site__jetpack-notifications-block">
-				{
-					this.translate(
-						'There is %(total)d plugin {{link}}update available{{/link}}.',
-						'There are %(total)d plugin {{link}}updates available{{/link}}.',
-						{
-							components: {
-								link: <a
-									onClick={ this.hideJetpackNotificatonsPopover }
-									href={ '/plugins/updates/' + this.props.site.slug } />
-							},
-							count: updates.plugins,
-							args: {
-								total: updates.plugins
+				<Gridicon icon="plugins" size={ 18 } />
+				<div className="current-site__jetpack-notifications-text">
+					{
+						this.translate(
+							'There is %(total)d plugin update available.',
+							'There are %(total)d plugin updates available.',
+							{
+								count: updates.plugins,
+								args: {
+									total: updates.plugins
+								}
 							}
-						}
-					)
-				}
+						)
+					}
+					<a
+						className="current-site__jetpack-notifications-link"
+						onClick={ this.hideJetpackNotificatonsPopover }
+						href={ '/plugins/updates/' + this.props.site.slug }>
+						{ this.translate( 'View' ) }
+						<Gridicon icon="external" size={ 14 } />
+					</a>
+				</div>
 			</div>
 		);
 	},
@@ -194,24 +204,32 @@ const SiteNotice = React.createClass( {
 
 		return (
 			<div className="current-site__jetpack-notifications-block">
-				{
-					this.translate(
-						'There is %(total)d theme {{link}}update available{{/link}}.',
-						'There are %(total)d theme {{link}}updates available{{/link}}.',
-						{
-							components: {
-								link: <a
-									onClick={ this.hideJetpackNotificatonsPopover }
-									target="_blanck"
-									href={ site.options.admin_url + 'update-core.php#update-themes-table' } />
-							},
-							count: updates.themes,
-							args: {
-								total: updates.themes
+				<Gridicon icon="themes" size={ 18 } />
+				<div className="current-site__jetpack-notifications-text">
+					{
+						this.translate(
+							'There is %(total)d theme update available. {{link}}View{{/link}}',
+							'There are %(total)d theme updates available. {{link}}View{{/link}}',
+							{
+								components: {
+									link:
+										<a
+											className="current-site__jetpack-notifications-link"
+											onClick={ this.hideJetpackNotificatonsPopover }
+											target="_blanck"
+											href={ site.options.admin_url + 'update-core.php#update-themes-table' }
+										>
+											<Gridicon icon="external" size={ 14 } />
+										</a>
+								},
+								count: updates.themes,
+								args: {
+									total: updates.themes
+								}
 							}
-						}
-					)
-				}
+						)
+					}
+				</div>
 			</div>
 		);
 	},
