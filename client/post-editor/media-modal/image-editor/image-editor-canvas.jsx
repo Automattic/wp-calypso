@@ -72,7 +72,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 		const { onLoadError, mimeType } = this.props;
 
 		const req = new XMLHttpRequest();
-		req.open( 'GET', url, true );
+		req.open( 'GET', url + '?', true ); // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
 		req.responseType = 'arraybuffer';
 		req.onload = () => {
 			const objectURL = window.URL.createObjectURL( new Blob( [ req.response ], { type: mimeType } ) );
