@@ -149,11 +149,15 @@ server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 server/devdocs/components-usage-stats.json: $(COMPONENTS_USAGE_STATS_FILES) $(COMPONENTS_USAGE_STATS_JS)
 	@$(COMPONENTS_USAGE_STATS_JS) $(COMPONENTS_USAGE_STATS_FILES)
 
+build-dll:
+	@mkdir -p build
+	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack-dll.config.js
+
 build-server: install
 	@mkdir -p build
 	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.js
 
-build: install build-$(CALYPSO_ENV)
+build: install build-dll build-$(CALYPSO_ENV)
 
 build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
 
