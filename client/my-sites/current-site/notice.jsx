@@ -151,37 +151,40 @@ const SiteNotice = React.createClass( {
 		let title;
 
 		if ( sectionsToUpdate.length > 1 ) {
-			title = this.translate(
-				'There is an update available.',
-				'There are updates available.',
-				{ count: updates.total }
-			);
+			title = <Notice
+				isCompact
+				status="is-warning"
+				icon="info-outline"
+				onClick={ this.toggleJetpackNotificatonsPopover }
+			>
+				{
+					this.translate(
+						'There is an update available.',
+						'There are updates available.',
+						{ count: updates.total }
+					)
+				}
+			</Notice>;
 		} else if ( sectionsToUpdate.length === 1 ) {
 			switch ( sectionsToUpdate[ 0 ] ) {
 				case 'plugins':
-					title = renderPluginsTemplate( this.props );
+					title = renderPluginsTemplate( this.props, true );
 					break;
 
 				case 'themes':
-					title = renderThemesTemplate( this.props );
+					title = renderThemesTemplate( this.props, true );
 					break;
 
 				case 'wordpress':
-					title = renderWPComTemplate( this.props );
+					title = renderWPComTemplate( this.props, true );
 					break;
 			}
 		}
 
 		return (
 			<div ref="popoverJetpackNotifications">
-				<Notice
-					isCompact
-					status="is-warning"
-					icon="info-outline"
-					onClick={ this.toggleJetpackNotificatonsPopover }
-				>
-					{ title }
-				</Notice>
+				{ title }
+
 
 				{ sectionsToUpdate.length > 1 &&
 					<JetpackUpdatesPopover
@@ -190,7 +193,7 @@ const SiteNotice = React.createClass( {
 						id="popover__jetpack-notifications"
 						isVisible={ showJetpackPopover }
 						onClose={ this.hideJetpackNotificatonsPopover }
-						position="bottom"
+						position="right"
 						context={ this.refs && this.refs.popoverJetpackNotifications }
 					/>
 				}

@@ -7,6 +7,8 @@ import config from 'config';
 /**
  * Internal dependencies
  */
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 import Gridicon from 'components/gridicon';
 
 const handleWPCOMUpdate = ( event ) => {
@@ -52,9 +54,43 @@ export const renderWPComTemplate = ( { translate, updates } ) => {
 	);
 };
 
-export const renderPluginsTemplate = ( { onClose, site, translate, updates } ) => {
+export const renderPluginsTemplate = (
+	{ onClose, site, translate, updates }
+	, simpleMode = false
+) => {
 	if ( ! site.canUpdateFiles || ! updates.plugins ) {
 		return null;
+	}
+
+	if ( simpleMode ) {
+		return (
+			<Notice
+				isCompact
+				status="is-warning"
+				icon="plugins"
+			>
+				{
+					translate(
+						'There is %(total)d plugin update available.',
+						'There are %(total)d plugin updates available.',
+						{
+							count: updates.plugins,
+							args: {
+								total: updates.plugins
+							}
+						}
+					)
+				}
+
+				<NoticeAction
+					className="jetpack-updates-popover__link"
+					onClick={ onClose }
+					href={ '/plugins/updates/' + site.slug }
+				>
+					{ translate( 'Update' ) }
+				</NoticeAction>
+			</Notice>
+		);
 	}
 
 	return (
