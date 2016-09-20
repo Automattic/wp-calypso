@@ -4,8 +4,8 @@
 import React from 'react';
 import { omit } from 'lodash';
 
-export const SelectOptGroups = props =>
-	<select { ...omit( props, 'optGroups' ) }>
+const SelectOptGroups = props =>
+	<select { ...omit( props, [ 'optGroups', 'moment', 'numberFormat', 'translate' ] ) }>
 		{ props.optGroups.map( optGroup =>
 			<optgroup label={ optGroup.label } key={ `optgroup-${ optGroup.label }` } >
 				{ optGroup.options.map( option =>
@@ -19,3 +19,5 @@ export const SelectOptGroups = props =>
 			</optgroup>
 		) }
 	</select>;
+
+export default SelectOptGroups;

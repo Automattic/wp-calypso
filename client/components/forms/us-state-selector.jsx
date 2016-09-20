@@ -1,102 +1,90 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:forms:state-selector' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { SelectOptGroups } from 'components/forms/select-opt-groups';
+import SelectOptGroups from 'components/forms/select-opt-groups';
 
-var USStateSelector = React.createClass( {
+const USStateSelector = props => {
+	const { translate } = props;
+	const states = [
+		{ value: 'AL', label: translate( 'Alabama' ) },
+		{ value: 'AK', label: translate( 'Alaska' ) },
+		{ value: 'AZ', label: translate( 'Arizona' ) },
+		{ value: 'AR', label: translate( 'Arkansas' ) },
+		{ value: 'CA', label: translate( 'California' ) },
+		{ value: 'CO', label: translate( 'Colorado' ) },
+		{ value: 'CT', label: translate( 'Connecticut' ) },
+		{ value: 'DE', label: translate( 'Delaware' ) },
+		{ value: 'DC', label: translate( 'District of Columbia' ) },
+		{ value: 'FL', label: translate( 'Florida' ) },
+		{ value: 'GA', label: translate( 'Georgia' ) },
+		{ value: 'HI', label: translate( 'Hawaii' ) },
+		{ value: 'ID', label: translate( 'Idaho' ) },
+		{ value: 'IL', label: translate( 'Illinois' ) },
+		{ value: 'IN', label: translate( 'Indiana' ) },
+		{ value: 'IA', label: translate( 'Iowa' ) },
+		{ value: 'KS', label: translate( 'Kansas' ) },
+		{ value: 'KY', label: translate( 'Kentucky' ) },
+		{ value: 'LA', label: translate( 'Louisiana' ) },
+		{ value: 'ME', label: translate( 'Maine' ) },
+		{ value: 'MD', label: translate( 'Maryland' ) },
+		{ value: 'MA', label: translate( 'Massachusetts' ) },
+		{ value: 'MI', label: translate( 'Michigan' ) },
+		{ value: 'MN', label: translate( 'Minnesota' ) },
+		{ value: 'MS', label: translate( 'Mississippi' ) },
+		{ value: 'MO', label: translate( 'Missouri' ) },
+		{ value: 'MT', label: translate( 'Montana' ) },
+		{ value: 'NE', label: translate( 'Nebraska' ) },
+		{ value: 'NV', label: translate( 'Nevada' ) },
+		{ value: 'NH', label: translate( 'New Hampshire' ) },
+		{ value: 'NJ', label: translate( 'New Jersey' ) },
+		{ value: 'NM', label: translate( 'New Mexico' ) },
+		{ value: 'NY', label: translate( 'New York' ) },
+		{ value: 'NC', label: translate( 'North Carolina' ) },
+		{ value: 'ND', label: translate( 'North Dakota' ) },
+		{ value: 'OH', label: translate( 'Ohio' ) },
+		{ value: 'OK', label: translate( 'Oklahoma' ) },
+		{ value: 'OR', label: translate( 'Oregon' ) },
+		{ value: 'PA', label: translate( 'Pennsylvania' ) },
+		{ value: 'RI', label: translate( 'Rhode Island' ) },
+		{ value: 'SC', label: translate( 'South Carolina' ) },
+		{ value: 'SD', label: translate( 'South Dakota' ) },
+		{ value: 'TN', label: translate( 'Tennessee' ) },
+		{ value: 'TX', label: translate( 'Texas' ) },
+		{ value: 'UT', label: translate( 'Utah' ) },
+		{ value: 'VT', label: translate( 'Vermont' ) },
+		{ value: 'VA', label: translate( 'Virginia' ) },
+		{ value: 'WA', label: translate( 'Washington' ) },
+		{ value: 'WV', label: translate( 'West Virginia' ) },
+		{ value: 'WI', label: translate( 'Wisconsin' ) },
+		{ value: 'WY', label: translate( 'Wyoming' ) },
+	];
 
-	displayName: 'USStateSelector',
+	const territories = [
+		{ value: 'AA', label: translate( 'Armed Forces Americas' ) },
+		{ value: 'AE', label: translate( 'Armed Forces Europe, Middle East, & Canada' ) },
+		{ value: 'AP', label: translate( 'Armed Forces Pacific' ) },
+		{ value: 'AS', label: translate( 'American Samoa' ) },
+		{ value: 'FM', label: translate( 'Federated States of Micronesia' ) },
+		{ value: 'GU', label: translate( 'Guam' ) },
+		{ value: 'MH', label: translate( 'Marshall Islands' ) },
+		{ value: 'MP', label: translate( 'Northern Mariana Islands' ) },
+		{ value: 'PW', label: translate( 'Palau' ) },
+		{ value: 'PR', label: translate( 'Puerto Rico' ) },
+		{ value: 'VI', label: translate( 'Virgin Islands' ) },
+	];
 
-	componentWillMount: function() {
-		debug( 'Mounting USStateSelector React component.' );
-	},
+	const stateGroup = [
+		{ label: translate( 'States' ), options: states },
+		{ label: translate( 'Territories' ), options: territories },
+	];
 
-	render: function() {
-		var states, territories, stateGroup;
+	return <SelectOptGroups optGroups={ stateGroup } { ...props } />;
+};
 
-		states = [
-			{ value: 'AL', label: this.translate( 'Alabama' ) },
-			{ value: 'AK', label: this.translate( 'Alaska' ) },
-			{ value: 'AZ', label: this.translate( 'Arizona' ) },
-			{ value: 'AR', label: this.translate( 'Arkansas' ) },
-			{ value: 'CA', label: this.translate( 'California' ) },
-			{ value: 'CO', label: this.translate( 'Colorado' ) },
-			{ value: 'CT', label: this.translate( 'Connecticut' ) },
-			{ value: 'DE', label: this.translate( 'Delaware' ) },
-			{ value: 'DC', label: this.translate( 'District of Columbia' ) },
-			{ value: 'FL', label: this.translate( 'Florida' ) },
-			{ value: 'GA', label: this.translate( 'Georgia' ) },
-			{ value: 'HI', label: this.translate( 'Hawaii' ) },
-			{ value: 'ID', label: this.translate( 'Idaho' ) },
-			{ value: 'IL', label: this.translate( 'Illinois' ) },
-			{ value: 'IN', label: this.translate( 'Indiana' ) },
-			{ value: 'IA', label: this.translate( 'Iowa' ) },
-			{ value: 'KS', label: this.translate( 'Kansas' ) },
-			{ value: 'KY', label: this.translate( 'Kentucky' ) },
-			{ value: 'LA', label: this.translate( 'Louisiana' ) },
-			{ value: 'ME', label: this.translate( 'Maine' ) },
-			{ value: 'MD', label: this.translate( 'Maryland' ) },
-			{ value: 'MA', label: this.translate( 'Massachusetts' ) },
-			{ value: 'MI', label: this.translate( 'Michigan' ) },
-			{ value: 'MN', label: this.translate( 'Minnesota' ) },
-			{ value: 'MS', label: this.translate( 'Mississippi' ) },
-			{ value: 'MO', label: this.translate( 'Missouri' ) },
-			{ value: 'MT', label: this.translate( 'Montana' ) },
-			{ value: 'NE', label: this.translate( 'Nebraska' ) },
-			{ value: 'NV', label: this.translate( 'Nevada' ) },
-			{ value: 'NH', label: this.translate( 'New Hampshire' ) },
-			{ value: 'NJ', label: this.translate( 'New Jersey' ) },
-			{ value: 'NM', label: this.translate( 'New Mexico' ) },
-			{ value: 'NY', label: this.translate( 'New York' ) },
-			{ value: 'NC', label: this.translate( 'North Carolina' ) },
-			{ value: 'ND', label: this.translate( 'North Dakota' ) },
-			{ value: 'OH', label: this.translate( 'Ohio' ) },
-			{ value: 'OK', label: this.translate( 'Oklahoma' ) },
-			{ value: 'OR', label: this.translate( 'Oregon' ) },
-			{ value: 'PA', label: this.translate( 'Pennsylvania' ) },
-			{ value: 'RI', label: this.translate( 'Rhode Island' ) },
-			{ value: 'SC', label: this.translate( 'South Carolina' ) },
-			{ value: 'SD', label: this.translate( 'South Dakota' ) },
-			{ value: 'TN', label: this.translate( 'Tennessee' ) },
-			{ value: 'TX', label: this.translate( 'Texas' ) },
-			{ value: 'UT', label: this.translate( 'Utah' ) },
-			{ value: 'VT', label: this.translate( 'Vermont' ) },
-			{ value: 'VA', label: this.translate( 'Virginia' ) },
-			{ value: 'WA', label: this.translate( 'Washington' ) },
-			{ value: 'WV', label: this.translate( 'West Virginia' ) },
-			{ value: 'WI', label: this.translate( 'Wisconsin' ) },
-			{ value: 'WY', label: this.translate( 'Wyoming' ) }
-		];
-
-		territories = [
-			{ value: 'AA', label: this.translate( 'Armed Forces Americas' ) },
-			{ value: 'AE', label: this.translate( 'Armed Forces Europe, Middle East, & Canada' ) },
-			{ value: 'AP', label: this.translate( 'Armed Forces Pacific' ) },
-			{ value: 'AS', label: this.translate( 'American Samoa' ) },
-			{ value: 'FM', label: this.translate( 'Federated States of Micronesia' ) },
-			{ value: 'GU', label: this.translate( 'Guam' ) },
-			{ value: 'MH', label: this.translate( 'Marshall Islands' ) },
-			{ value: 'MP', label: this.translate( 'Northern Mariana Islands' ) },
-			{ value: 'PW', label: this.translate( 'Palau' ) },
-			{ value: 'PR', label: this.translate( 'Puerto Rico' ) },
-			{ value: 'VI', label: this.translate( 'Virgin Islands' ) }
-		];
-
-		stateGroup = [
-			{ label: this.translate( 'States' ), options: states },
-			{ label: this.translate( 'Territories' ), options: territories }
-		];
-
-		return (
-			<SelectOptGroups optGroups={ stateGroup } {...this.props} />
-		);
-	}
-});
-
-module.exports = USStateSelector;
+export default localize( USStateSelector );

@@ -1,56 +1,41 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:forms:language-selector' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
+import { omit } from 'lodash';
+
 /**
  * Internal dependencies
  */
-import { SelectOptGroups } from 'components/forms/select-opt-groups';
+import SelectOptGroups from 'components/forms/select-opt-groups';
 
-function coerceToOptions( data, valueKey ) {
-	valueKey = 'undefined' === typeof valueKey ? 'value' : valueKey;
-
-	return data.map( function( language ){
-		return { value: language[ valueKey ], label: language.name };
-	} );
+function coerceToOptions( data, valueKey = 'value' ) {
+	return data.map( language => ( {
+		value: language[ valueKey ],
+		label: language.name,
+	} ) );
 }
 
-var LanguageSelector = React.createClass( {
+const LanguageSelector = props => {
+	const { languages, valueKey, translate } = props;
+	const allLanguages = coerceToOptions( languages, valueKey );
+	let popularLanguages = languages.filter( language => language.popular );
+	popularLanguages.sort( ( a, b ) => a.popular - b.popular );
+	popularLanguages = coerceToOptions( popularLanguages, valueKey );
 
-	displayName: 'LanguageSelector',
-
-	componentWillMount: function() {
-		debug( 'Mounting LanguageSelector React component.' );
-	},
-
-	languageOptGroups: function() {
-		var allLanguages, popularLanguages;
-
-		allLanguages = coerceToOptions( this.props.languages, this.props.valueKey );
-
-		popularLanguages = this.props.languages.filter( function( language ) { return language.popular; } );
-		popularLanguages.sort( function( a, b ) { return a.popular - b.popular; } );
-		popularLanguages = coerceToOptions( popularLanguages, this.props.valueKey );
-
-		return [
+	const languageOptGroups = [
 		{
-			label: this.translate( 'Popular languages', { textOnly: true } ),
+			label: translate( 'Popular languages', { textOnly: true } ),
 			options: popularLanguages
 		},
 		{
-			label: this.translate( 'All languages', { textOnly: true } ),
+			label: translate( 'All languages', { textOnly: true } ),
 			options: allLanguages
-		}
-		];
+		},
+	];
 
-	},
+	return <SelectOptGroups optGroups={ languageOptGroups } { ...omit( props, 'languages' ) } />;
+};
 
-	render: function() {
-		return (
-			<SelectOptGroups optGroups={ this.languageOptGroups() } {...this.props} />
-		);
-	}
-});
-
-module.exports = LanguageSelector;
+export default localize( LanguageSelector );
