@@ -9,9 +9,8 @@ import React from 'react';
  */
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getPlans } from 'state/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
-import observe from 'lib/mixins/data-observe';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
@@ -19,14 +18,13 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 
 const Plans = React.createClass( {
-	mixins: [ observe( 'sites' ) ],
-
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		context: React.PropTypes.object.isRequired,
 		intervalType: React.PropTypes.string,
 		plans: React.PropTypes.array.isRequired,
-		sites: React.PropTypes.object.isRequired,
+		selectedSite: React.PropTypes.object.isRequired,
+		selectedSiteId: React.PropTypes.number.isRequired,
 		sitePlans: React.PropTypes.object.isRequired
 	},
 
@@ -37,9 +35,6 @@ const Plans = React.createClass( {
 	},
 
 	render() {
-		const selectedSite = this.props.sites.getSelectedSite(),
-			siteId = this.props.siteId;
-
 		return (
 			<div>
 				<Main wideLayout={ true } >
@@ -50,30 +45,29 @@ const Plans = React.createClass( {
 							sitePlans={ this.props.sitePlans }
 							path={ this.props.context.path }
 							cart={ this.props.cart }
-							selectedSite={ selectedSite } />
+							selectedSite={ this.props.site } />
 
 						<QueryPlans />
-						<QuerySitePlans siteId={ siteId } />
+						<QuerySitePlans siteId={ this.props.siteId } />
 
 						<PlansFeaturesMain
-							site={ selectedSite }
+							site={ this.props.selectedSite }
 							intervalType={ this.props.intervalType }
 							hideFreePlan={ true }
 							selectedFeature={ this.props.selectedFeature }
 						/>
 					</div>
-				</Main>
+				</Main> 
 			</div>
 		);
 	}
 } );
 
 export default connect(
-	( state, props ) => {
-		return {
-			plans: getPlans( state ),
-			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ),
-			siteId: getSelectedSiteId( state )
-		};
-	}
+	( state ) => ( {
+		plans: getPlans( state ),
+		sitePlans: getPlansBySite( state, getSelectedSiteId( state ) ),
+		selectedSite: getSelectedSite( state ),
+		selectedSiteId: getSelectedSiteId( state )
+	} )
 )( Plans );
