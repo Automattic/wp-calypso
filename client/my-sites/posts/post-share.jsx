@@ -19,7 +19,6 @@ import { getCurrentUserId } from 'state/current-user/selectors';
 import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
 import { isRequestingSharePost, sharePostFailure, sharePostSuccessMessage } from 'state/sharing/publicize/selectors';
-import serviceConnections from 'my-sites/sharing/connections/service-connections';
 import PostMetadata from 'lib/post-metadata';
 import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
@@ -62,30 +61,23 @@ const PostSharing = React.createClass( {
 		if ( ! this.props.site || ! this.hasConnections() ) {
 			return;
 		}
-		const services = serviceConnections.getServicesFromConnections( this.props.connections );
-		return services.map( function( service ) {
-			const connections = serviceConnections.getConnectionsAvailableToCurrentUser(
-				service.name,
-				this.props.connections
-			);
-			return connections.map(
-				connection => <div
-					key={ connection.keyring_connection_ID }
-					onClick={ () => this.toggleConnection( connection.keyring_connection_ID ) }
-					className={ classNames( {
-						'posts__post-share-service': true,
-						[ connection.name ]: true,
-						'is-active': ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 )
-					} ) }
-				>
-					<SocialLogo icon={ service.name }/>
-					<div className="posts__post-share-service-account-name">
-						<span>{ connection && connection.external_display }</span>
-					</div>
-				</div>,
-				this
-			);
-		}, this );
+		return this.props.connections.map(
+			connection => <div
+				key={ connection.keyring_connection_ID }
+				onClick={ () => this.toggleConnection( connection.keyring_connection_ID ) }
+				className={ classNames( {
+					'posts__post-share-service': true,
+					[ connection.service ]: true,
+					'is-active': ( this.state.skipped.indexOf( connection.keyring_connection_ID ) === -1 )
+				} ) }
+			>
+				<SocialLogo icon={ connection.service }/>
+				<div className="posts__post-share-service-account-name">
+					<span>{ connection && connection.external_display }</span>
+				</div>
+			</div>,
+			this
+		);
 	},
 	renderMessage: function() {
 		const skipped = this.state.skipped;
