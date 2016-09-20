@@ -146,9 +146,9 @@ const SiteNotice = React.createClass( {
 				<div className="current-site__jetpack-notifications-text">
 					{	this.translate( 'A newer version of WordPress is available.' ) }
 					<a className="current-site__jetpack-notifications-link" onClick={ this.handleUpdate }>
-						{ this.translate( 'Update to %(version)s',
-							{ args:
-								{
+						{
+							this.translate( 'Update to %(version)s', {
+								args: {
 									version: updates.wp_update_version
 								}
 							} )
