@@ -14,18 +14,24 @@
 @import 'blocks/author-selector/style';
 @import 'blocks/comment-button/style';
 @import 'blocks/comments/style';
+@import 'blocks/credit-card-form/style';
+@import 'blocks/design-menu/style';
 @import 'blocks/dismissible-card/style';
 @import 'blocks/domain-to-plan-nudge/style';
+@import 'blocks/jetpack-updates-popover/style';
 @import 'blocks/plan-thank-you-card/style';
 @import 'blocks/post-edit-button/style';
 @import 'blocks/post-item/style';
 @import 'blocks/post-relative-time/style';
 @import 'blocks/post-status/style';
+@import 'blocks/product-purchase-features/product-purchase-features-list/style';
 @import 'blocks/reader-avatar/style';
 @import 'blocks/reader-full-post/style';
 @import 'blocks/reader-related-card/style';
 @import 'blocks/reader-related-card-v2/style';
 @import 'blocks/reader-search-card/style';
+@import 'blocks/site/style';
+@import 'blocks/upgrade-nudge-expanded/style';
 @import 'components/accordion/style';
 @import 'components/animate/style';
 @import 'components/bulk-select/style';
@@ -94,7 +100,6 @@
 @import 'components/payment-logo/style';
 @import 'components/plans/plan-icon/style';
 @import 'components/plans/plan-price/style';
-@import 'blocks/product-purchase-features/product-purchase-features-list/style';
 @import 'components/plans/premium-popover/style';
 @import 'components/popover/style';
 @import 'components/post-excerpt/style';
@@ -115,7 +120,6 @@
 @import 'components/segmented-control/style';
 @import 'components/select-dropdown/style';
 @import 'components/seo/style';
-@import 'blocks/upgrade-nudge-expanded/style';
 @import 'components/seo/preview-upgrade-nudge/style';
 @import 'components/signup-form/style';
 @import 'components/site-icon/style';
@@ -147,7 +151,6 @@
 @import 'components/vertical-nav/item/style';
 @import 'components/vertical-menu/style';
 @import 'components/web-preview/style';
-@import 'blocks/credit-card-form/style';
 @import 'devdocs/style';
 @import 'layout/guided-tours/style';
 @import 'components/happychat/style';
@@ -297,7 +300,6 @@
 @import 'my-sites/site-settings/delete-site-warning-dialog/style';
 @import 'my-sites/site-settings/jetpack-sync-panel/style';
 @import 'my-sites/importer/style';
-@import 'blocks/site/style';
 @import 'my-sites/sites/style';
 @import 'my-sites/stats/style';
 @import 'my-sites/stats/all-time/style';
@@ -415,6 +417,5 @@
 @import 'signup/steps/site/style';
 @import 'signup/validation-fieldset/style';
 @import 'support/support-user/style';
-@import 'blocks/design-menu/style';
 @import 'my-sites/design-preview/style';
 @import 'vip/vip-logs/style';
