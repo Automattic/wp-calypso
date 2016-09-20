@@ -3,14 +3,14 @@
 /**
  * External dependencies
  */
-var webpack = require( 'webpack' ),
+const webpack = require( 'webpack' ),
 	path = require( 'path' ),
-	DashboardPlugin = require('webpack-dashboard/plugin');
+	DashboardPlugin = require( 'webpack-dashboard/plugin' );
 
 /**
  * Internal dependencies
  */
-var config = require( './server/config' ),
+const config = require( './server/config' ),
 	sections = require( './client/sections' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
 	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
@@ -18,13 +18,12 @@ var config = require( './server/config' ),
 /**
  * Internal variables
  */
-var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
-	jsLoader,
-	webpackConfig;
+const CALYPSO_ENV = process.env.CALYPSO_ENV || 'development';
 
+const bundleEnv = config( 'env' );
 const sectionCount = sections.length;
 
-webpackConfig = {
+const webpackConfig = {
 	bail: CALYPSO_ENV !== 'development',
 	cache: true,
 	entry: {},
@@ -84,11 +83,15 @@ webpackConfig = {
 	plugins: [
 		new webpack.DefinePlugin( {
 			'process.env': {
-				NODE_ENV: JSON.stringify( config( 'env' ) )
+				NODE_ENV: JSON.stringify( bundleEnv )
 			}
 		} ),
 		new webpack.optimize.OccurenceOrderPlugin( true ),
-		new webpack.IgnorePlugin( /^props$/ )
+		new webpack.IgnorePlugin( /^props$/ ),
+		new webpack.DllReferencePlugin( {
+			context: path.join( __dirname, 'client' ),
+			manifest: require( './build/dll/vendor.' + bundleEnv + '-manifest.json' )
+		} )
 	],
 	externals: [ 'electron' ]
 };
@@ -96,8 +99,6 @@ webpackConfig = {
 if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.output.filename = '[name].js';
 } else {
-	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom', 'jed', 'debug' ];
-	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
 		children: true,
 		minChunks: Math.floor( sectionCount * 0.25 ),
@@ -110,7 +111,7 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.externals.push( 'jquery' );
 }
 
-jsLoader = {
+const jsLoader = {
 	test: /\.jsx?$/,
 	exclude: /node_modules/,
 	loaders: [ 'babel-loader?cacheDirectory' ]

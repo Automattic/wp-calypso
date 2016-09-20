@@ -2,39 +2,57 @@ const path = require( 'path' );
 const webpack = require( 'webpack' );
 const config = require( './server/config' );
 
-const isProduction = process.env.NODE_ENV === 'production';
-const bundleEnv = isProduction ? 'production' : 'development';
+const bundleEnv = config( 'env' );
 
 const webpackConfig = {
 	entry: {
 		vendor: [ path.join( __dirname, 'client', 'vendor-dll.js' ) ]
 	},
 	output: {
-		path: path.join( __dirname, 'build', 'dll' ),
-		filename: 'dll.[name].[hash].' + bundleEnv + '.js',
-		library: '[name]'
+		path: path.join( __dirname, 'public' ),
+		publicPath: '/calypso/',
+		filename: '[name].' + bundleEnv + '.js',
+		library: '[name]',
+		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
 	},
 	plugins: [
 		new webpack.DllPlugin( {
-			path: path.join( __dirname, 'build', 'dll', '[name].[hash].' + bundleEnv + '-manifest.json' ),
+			path: path.join( __dirname, 'build', 'dll', '[name].' + bundleEnv + '-manifest.json' ),
 			name: '[name]',
 			context: path.resolve( __dirname, 'client' )
 		} ),
 		new webpack.DefinePlugin( {
 			'process.env': {
-				NODE_ENV: JSON.stringify( config( 'env' ) )
+				NODE_ENV: JSON.stringify( bundleEnv )
 			}
 		} ),
 		new webpack.optimize.OccurenceOrderPlugin()
 	],
+	module: {
+		loaders: [
+			{
+				test: /\.json$/,
+				loader: 'json-loader'
+			},
+			{
+				test: /\.html$/,
+				loader: 'html-loader'
+			}
+		]
+	},
+	node: {
+		console: false,
+		process: true,
+		global: true,
+		Buffer: true,
+		__filename: 'mock',
+		__dirname: 'mock',
+		fs: 'empty'
+	},
 	resolve: {
 		root: path.resolve( __dirname, 'client' ),
 		modulesDirectories: [ 'node_modules' ]
 	}
 };
-
-if ( isProduction ) {
-	config.plugins.push( new webpack.optimize.UglifyJsPlugin() );
-}
 
 module.exports = webpackConfig;
