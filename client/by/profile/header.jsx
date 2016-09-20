@@ -10,8 +10,9 @@ import React, { PropTypes } from 'react';
  */
 import Gravatar from 'components/gravatar';
 import userFactory from 'lib/user';
+import userSettings from 'lib/user-settings';
 
-const ProfileHeader = ( { moment, translate, user } ) => (
+const ProfileHeader = ( { description, moment, translate, user } ) => (
 	<div className="profile__header">
 		<div className="profile__banner">
 			<Gravatar
@@ -23,20 +24,20 @@ const ProfileHeader = ( { moment, translate, user } ) => (
 		</div>
 
 		<div className="profile__about-me">
-			<p>Hi! I'm Marigold the goat. I like eating and pooping.
-				Sometimes I poop when I eat. Don't impose your human standards on me!
-				I'm a goat and I DGAF!</p>
+			<p>{ description }</p>
 		</div>
 	</div>
 );
 
 ProfileHeader.propTypes = {
+	description: PropTypes.string,
 	moment: PropTypes.func.isRequired,
 	translate: PropTypes.func.isRequired,
 	user: PropTypes.object.isRequired
 };
 
 const mapStateToProps = () => ( {
+	description: userSettings.getSetting( 'description' ),
 	user: userFactory().get()
 } );
 

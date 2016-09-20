@@ -80,7 +80,7 @@ export const getSites = state => {
 
 	return Object.keys( sites ).map( siteId => {
 		return getSite( state, siteId );
-	} );
+	} ).slice( 0, 12 );
 };
 
 /**
