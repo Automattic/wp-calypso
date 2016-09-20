@@ -23,12 +23,12 @@ const ProfileSites = ( { loading, sites } ) => {
 					<header className="profile__site-card-header">
 						<div className="profile__site-title">
 							<span className="profile__site-type">I created</span>
-							<h3><a href=" { site.URL } ">{ site.title }</a></h3>
+							<h3><a href=" { site.Url } ">{ site.title }</a></h3>
 						</div>
 
 						<div className="profile__site-actions">
 							<a href="#" className="profile__remove-element">x</a>
-							<FollowButtonContainer siteUrl="{ site.URL }" />
+							<FollowButtonContainer siteUrl="{ site.Url }" />
 						</div>
 					</header>
 					<div className="profile__site-header"></div>

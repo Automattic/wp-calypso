@@ -58,14 +58,14 @@
 	.profile__sites {
 		display: flex;
 		flex-wrap: wrap;
-		padding: 0 8px;
+		padding: 0 16px;
 	}
 
 	.profile__site-card {
-		padding: 8px;
-		margin: 8px;
+		padding: 8px 16px;
+		margin: 24px;
 		width: 30%;
-		width: calc(33% - 16px);
+		width: calc(33% - 48px);
 		word-wrap: break-word;
 	}
 }
@@ -73,17 +73,24 @@
 .profile__site-title {
 	float: left;
 	width: 70%;
+	padding-bottom: 8px;
 }
 
 .profile__site-actions {
 	float: right;
 	width: 30%;
 	text-align: right;
+	padding-bottom: 8px;
 }
 
 .profile__remove-element {
 	display: block;
 	color: $gray-light;
+}
+
+.profile__site-type,
+.profile__remove-element {
+	display: none;
 }
 
 .profile__sites .follow-button {
@@ -128,8 +135,8 @@
 	background: $blue-dark;
 	clear: both;
 	height: 64px;
-	margin-left: -8px;
-	width: calc(100% + 16px);
+	margin-left: -16px;
+	width: calc(100% + 32px);
 }
 
 .profile__sites .site-icon {
