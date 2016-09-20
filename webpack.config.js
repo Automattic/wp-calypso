@@ -3,27 +3,26 @@
 /**
  * External dependencies
  */
-var webpack = require( 'webpack' ),
+const webpack = require( 'webpack' ),
 	path = require( 'path' );
 
 /**
  * Internal dependencies
  */
-var config = require( './server/config' ),
+const config = require( './server/config' ),
 	sections = require( './client/sections' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
-	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 
 /**
  * Internal variables
  */
-var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
-	jsLoader,
-	webpackConfig;
+const CALYPSO_ENV = process.env.CALYPSO_ENV || 'development';
 
+const bundleEnv = config( 'env' );
 const sectionCount = sections.length;
 
-webpackConfig = {
+const webpackConfig = {
 	bail: CALYPSO_ENV !== 'development',
 	cache: true,
 	entry: {},
@@ -31,8 +30,8 @@ webpackConfig = {
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
-		filename: '[name].[hash].js',
-		chunkFilename: '[name].[chunkhash].js',
+		filename: '[name].[chunkhash].js', // prefer the chunkhash, which depends on the chunk, not the entire build
+		chunkFilename: '[name].[chunkhash].js', // ditto
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
 	},
 	module: {
@@ -83,7 +82,7 @@ webpackConfig = {
 	plugins: [
 		new webpack.DefinePlugin( {
 			'process.env': {
-				NODE_ENV: JSON.stringify( config( 'env' ) )
+				NODE_ENV: JSON.stringify( bundleEnv )
 			}
 		} ),
 		new webpack.optimize.OccurenceOrderPlugin( true ),
@@ -93,23 +92,58 @@ webpackConfig = {
 };
 
 if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
+	// no chunks or dll here, just one big file for the desktop app
 	webpackConfig.output.filename = '[name].js';
 } else {
-	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom', 'jed', 'debug' ];
-	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
+	webpackConfig.plugins.push(
+		new webpack.DllReferencePlugin( {
+			context: path.join( __dirname, 'client' ),
+			manifest: require( './build/dll/vendor.' + bundleEnv + '-manifest.json' )
+		} )
+	);
+
+	// slight black magic here. 'manifest' is a secret webpack module that includes the webpack loader and
+	// the mapping from module id to path.
+	//
+	// We extract it to prevent build-$env chunk from changing when the contents of a child chunk change.
+	//
+	// See https://github.com/webpack/webpack/issues/1315 for some backgroud. Guidance here taken from
+	// https://github.com/webpack/webpack/issues/1315#issuecomment-158530525.
+	//
+	// Our hashes will still change when modules are added or removed, but many of our deploys don't
+	// involve module structure changes, so this should at least help in many cases.
+	webpackConfig.plugins.push(
+		new webpack.optimize.CommonsChunkPlugin( {
+			name: 'manifest',
+			// have to use [hash] here instead of [chunkhash] because this is an entry chunk
+			filename: 'manifest.[hash].js'
+		} )
+	);
+
+	// this walks all of the chunks and finds modules that exist in at least a quarter of them.
+	// It moves those modules into a new "common" chunk, since most of the app will need to load them.
+	//
+	// Ideally we'd push these things either up into the build-env chunk, or into vendor, but there's no
+	// great way to do that yet.
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
 		children: true,
 		minChunks: Math.floor( sectionCount * 0.25 ),
 		async: true,
-		filename: 'commons.[hash].js'
+		// no 'name' property on purpose, as that's what tells the plugin to walk all of the chunks looking
+		// for common modules
+		filename: 'commons.[chunkhash].js'
 	} ) );
+
+	// Somewhat badly named, this is our custom chunk loader that knows about sections
+	// and our loading notification infrastructure
 	webpackConfig.plugins.push( new ChunkFileNamePlugin() );
+
 	// jquery is only needed in the build for the desktop app
 	// see electron bug: https://github.com/atom/electron/issues/254
 	webpackConfig.externals.push( 'jquery' );
 }
 
-jsLoader = {
+const jsLoader = {
 	test: /\.jsx?$/,
 	exclude: /node_modules/,
 	loaders: [ 'babel-loader?cacheDirectory' ]

@@ -149,6 +149,10 @@ server/devdocs/search-index.js: $(MD_FILES) $(ALL_DEVDOCS_JS)
 server/devdocs/components-usage-stats.json: $(COMPONENTS_USAGE_STATS_FILES) $(COMPONENTS_USAGE_STATS_JS)
 	@$(COMPONENTS_USAGE_STATS_JS) $(COMPONENTS_USAGE_STATS_FILES)
 
+build-dll: .env node_modules
+	@mkdir -p build
+	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack-dll.config.js
+
 build-server: install
 	@mkdir -p build
 	@CALYPSO_ENV=$(CALYPSO_ENV) $(NODE_BIN)/webpack --display-error-details --config webpack.config.node.js
@@ -157,12 +161,15 @@ build: install build-$(CALYPSO_ENV)
 
 build-css: public/style.css public/style-rtl.css public/style-debug.css public/editor.css
 
-build-development: server/devdocs/components-usage-stats.json build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-development: server/devdocs/components-usage-stats.json build-server build-dll $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 
-build-wpcalypso: server/devdocs/components-usage-stats.json build-server $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
+build-wpcalypso: server/devdocs/components-usage-stats.json build-server build-dll $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js build-css
 	@$(BUNDLER)
 
-build-desktop build-desktop-mac-app-store build-horizon build-stage build-production: build-server $(CLIENT_CONFIG_FILE) build-css
+build-horizon build-stage build-production: build-server build-dll $(CLIENT_CONFIG_FILE) build-css
+	@$(BUNDLER)
+
+build-desktop build-desktop-mac-app-store: build-server $(CLIENT_CONFIG_FILE) build-css
 	@$(BUNDLER)
 
 # the `clean` rule deletes all the files created from `make build`, but not
@@ -202,7 +209,6 @@ shrinkwrap: node-version
 # rule that can be used as a prerequisite for other rules to force them to always run
 FORCE:
 
-.PHONY: build build-development build-server
-.PHONY: clean distclean
+.PHONY: build build-development build-server build-dll build-desktop build-desktop-mac-app-store build-horizon build-stage build-production build-wpcalypso
 .PHONY: run install test clean distclean translate route node-version
 .PHONY: githooks githooks-commit githooks-push
