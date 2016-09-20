@@ -91,19 +91,15 @@ export const reducer = combineReducers( {
 
 const middleware = [ thunkMiddleware, noticesMiddleware, postsEditMiddleware ];
 
+if ( config.isEnabled( 'offline-dev' ) ) {
+	middleware.push( require( './data-layer/offline-dev-middleware' ).middleware );
+}
+
 if ( typeof window === 'object' ) {
-
-	var dataLayerMiddleware;
-	if ( config.isEnabled( 'offline-dev' ) ) {
-		dataLayerMiddleware = require( './data-layer/offline-dev-middleware' ).middleware;
-	} else {
-		dataLayerMiddleware = require( './data-layer/wp-api-middleware' ).middleware;
-	}
-
 	// Browser-specific middlewares
 	[
 		require( './analytics/middleware.js' ).analyticsMiddleware,
-		dataLayerMiddleware,
+		require( './data-layer/wp-api-middleware' ).middleware,
 	].forEach( m => middleware.push( m ) );
 }
 
