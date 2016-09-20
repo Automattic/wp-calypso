@@ -125,6 +125,7 @@
 		"reader/start": true,
 		"reader/tags-with-elasticsearch": true,
 		"resume-editing": true,
+		"republicize": true,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

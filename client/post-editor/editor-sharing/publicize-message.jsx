@@ -20,7 +20,8 @@ export default React.createClass( {
 		message: React.PropTypes.string,
 		preview: React.PropTypes.string,
 		acceptableLength: React.PropTypes.number,
-		requireCount: React.PropTypes.bool
+		requireCount: React.PropTypes.bool,
+		onChange: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
@@ -33,7 +34,11 @@ export default React.createClass( {
 
 	onChange: function( event ) {
 		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.updateMetadata( '_wpas_mess', event.target.value );
+		if ( this.props.onChange ) {
+			this.props.onChange( event.target.value );
+		} else {
+			PostActions.updateMetadata( '_wpas_mess', event.target.value );
+		}
 	},
 
 	recordStats: function() {

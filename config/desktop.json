@@ -71,6 +71,7 @@
 		"reader": true,
 		"reader/full-errors": false,
 		"resume-editing": true,
+		"republicize": false,
 		"rubberband-scroll-disable": true,
 		"settings/security/monitor": true,
 		"ui/first-view": false,
