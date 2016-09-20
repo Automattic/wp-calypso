@@ -6,6 +6,10 @@
 		-webkit-perspective: none;
 		perspective: none;
 	}
+
+	&.main {
+		margin: 30px auto;
+	}
 }
 
 .reader__card.card {
