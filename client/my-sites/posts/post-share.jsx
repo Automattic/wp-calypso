@@ -38,7 +38,7 @@ const PostSharing = React.createClass( {
 	getInitialState() {
 		return {
 			skipped: PostMetadata.publicizeSkipped( this.props.post ) || [],
-			message: PostMetadata.publicizeMessage( this.props.post )
+			message: PostMetadata.publicizeMessage( this.props.post ) || this.props.post.title
 		}
 	},
 
