@@ -171,7 +171,7 @@ export default React.createClass( {
 						<Button compact primary onClick={ this.props.updateAllPlugins } >
 							{
 								this.translate(
-									'Update Plugin',
+									'Update %(numUpdates)d Plugin',
 									'Update %(numUpdates)d Plugins',
 									{
 										context: 'button label',
