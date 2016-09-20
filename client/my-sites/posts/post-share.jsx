@@ -142,7 +142,7 @@ const PostSharing = React.createClass( {
 						{ this.translate( 'Share post' ) }
 					</Button>
 					<UpgradeNudge
-						title={ this.translate( 'Upgrade to Business plan for advanced social media' ) }
+						title={ this.translate( 'Upgrade to the Business plan for advanced social media' ) }
 						message={ this.translate( 'Scheduling, assisted auto-posting and other features available in Business.' ) }
 						href={ '/plans/' + this.props.site.slug }
 						shouldDisplay={ () => true }
