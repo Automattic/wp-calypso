@@ -129,6 +129,10 @@ const SiteNotice = React.createClass( {
 		this.setState( { showJetpackPopover: false } );
 	},
 
+	handleWPCOMUpdate( ev ) {
+		ev.preventDefault();
+	},
+
 	renderWPComUpdate() {
 		const { updates } = this.props;
 
@@ -150,8 +154,8 @@ const SiteNotice = React.createClass( {
 			<div className="current-site__jetpack-notifications-block">
 				<Gridicon icon="my-sites" size={ 18 } />
 				<div className="current-site__jetpack-notifications-text">
-					{	this.translate( 'A newer version of WordPress is available.' ) }
-					<a className="current-site__jetpack-notifications-link" onClick={ this.handleUpdate }>
+					{ this.translate( 'A newer version of WordPress is available.' ) }
+					<a className="current-site__jetpack-notifications-link" href="#" onClick={ this.handleWPCOMUpdate }>
 						{
 							this.translate( 'Update to %(version)s', {
 								args: {
