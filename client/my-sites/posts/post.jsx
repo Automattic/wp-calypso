@@ -414,7 +414,7 @@ module.exports = React.createClass( {
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
 				{ this.state.showComments && <Comments post={ this.props.post } onCommentsUpdate={ () => {} } /> }
-				{ this.state.showShare && <PostShare post={ this.props.post } site={ site } /> }
+				{ this.state.showShare && config.isEnabled( 'republicize' ) && <PostShare post={ this.props.post } site={ site } /> }
 			</Card>
 		);
 	}
