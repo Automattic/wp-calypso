@@ -132,8 +132,8 @@ const SiteNotice = React.createClass( {
 		const { updates } = this.props;
 
 		if ( ! (
-			config.isEnabled( 'jetpack_core_inline_update' ) ||
-			updates.wordpress ||
+			config.isEnabled( 'jetpack_core_inline_update' ) &&
+			updates.wordpress &&
 			updates.wp_update_version
 		) ) {
 			return null;
@@ -257,14 +257,15 @@ const SiteNotice = React.createClass( {
 		}
 
 		return (
-			<Notice
-				ref="popoverJetpackNotifications"
-				isCompact
-				status="is-warning"
-				icon="info-outline"
-				onClick={ this.toggleJetpackNotificatonsPopover }
-			>
-				{ title }
+			<div ref="popoverJetpackNotifications">
+				<Notice
+					isCompact
+					status="is-warning"
+					icon="info-outline"
+					onClick={ this.toggleJetpackNotificatonsPopover }
+				>
+					{ title }
+				</Notice>
 
 				{ sectionsToUpdate.length > 1 &&
 					<Popover
@@ -272,7 +273,7 @@ const SiteNotice = React.createClass( {
 						id="popover__jetpack-notifications"
 						isVisible={ showJetpackPopover }
 						onClose={ this.hideJetpackNotificatonsPopover }
-						position="right"
+						position="bottom"
 						context={ this.refs && this.refs.popoverJetpackNotifications }
 					>
 						{ this.renderWPComUpdate() }
@@ -280,7 +281,7 @@ const SiteNotice = React.createClass( {
 						{ this.renderThemesUpdate() }
 					</Popover>
 				}
-			</Notice>
+			</div>
 		);
 	},
 
@@ -291,10 +292,12 @@ const SiteNotice = React.createClass( {
 		}
 
 		return (
-			<div className={ classNames(
-				'site__notices',
-				{ 'has-many-updates': sectionsToUpdate.length > 1 }
-			) }>
+			<div
+				className={ classNames(
+					'site__notices',
+					{ 'has-many-updates': sectionsToUpdate.length > 1 }
+				) }
+			>
 
 				<QuerySitePlans siteId={ site.ID } />
 				<QuerySiteUpdates siteId={ site.ID } />
