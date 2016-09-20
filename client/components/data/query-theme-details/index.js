@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { isRequestingThemeDetails } from 'state/themes/theme-details/selectors';
 import { fetchThemeDetails } from 'state/themes/actions';
 
 /**
@@ -29,7 +30,7 @@ class QueryThemeDetails extends Component {
 
 	refresh( props ) {
 		// todo (seear): Don't fetch if site matches existing data
-		if ( props.id ) {
+		if ( props.id && ! props.requestingThemeDetails ) {
 			this.props.fetchThemeDetails( props.id, props.siteId );
 		}
 	}
@@ -42,10 +43,13 @@ class QueryThemeDetails extends Component {
 QueryThemeDetails.propTypes = {
 	id: PropTypes.string.isRequired,
 	// connected props
+	requestingThemeDetails: PropTypes.bool,
 	fetchThemeDetails: PropTypes.func,
 };
 
 export default connect(
-	null,
+	( state, { id } ) => (
+		{ requestingThemeDetails: isRequestingThemeDetails( state, id ) }
+	),
 	{ fetchThemeDetails }
 )( QueryThemeDetails );
