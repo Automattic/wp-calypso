@@ -99,6 +99,12 @@
 	cursor: pointer;
 }
 
+@include breakpoint( "<660px" ) {
+	.current-site__jetpack-notifications-popover {
+		display: none;
+	}
+}
+
 .current-site__jetpack-notifications-popover {
 	hr {
 		color: $gray-light;
