@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
@@ -402,8 +403,6 @@ module.exports = {
 				siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const videoPlaysList = new StatsList( {
 				siteID: siteId, statType: 'statsVideoPlays', period: activeFilter.period, date: endDate, domain: siteDomain } );
-			const podcastDownloadsList = new StatsList( {
-				siteID: siteId, statType: 'statsPodcastListens', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const searchTermsList = new StatsList( {
 				siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, domain: siteDomain } );
 			const tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: siteDomain } );
@@ -416,37 +415,47 @@ module.exports = {
 				siteID: siteId, statType: 'statsCommentFollowers', domain: siteDomain, max: 7 } );
 
 			siteComponent = SiteStatsComponent;
+			const siteComponentChildren = {
+				date,
+				charts,
+				chartDate,
+				chartTab,
+				context,
+				sites,
+				activeTabVisitsList,
+				visitsList,
+				postsPagesList,
+				referrersList,
+				clicksList,
+				authorsList,
+				countriesList,
+				videoPlaysList,
+				siteId,
+				period,
+				chartPeriod,
+				tagsList,
+				commentsList,
+				wpcomFollowersList,
+				emailFollowersList,
+				commentFollowersList,
+				followList,
+				searchTermsList,
+				slug: siteDomain,
+				path: context.pathname,
+			};
+
+			if ( config.isEnabled( 'manage/stats/podcasts' ) ) {
+				siteComponentChildren.podcastDownloadsList = new StatsList( {
+					siteID: siteId,
+					statType: 'statsPodcastDownloads',
+					period: activeFilter.period,
+					date: endDate,
+					domain: siteDomain
+				} );
+			}
 
 			renderWithReduxStore(
-				React.createElement( siteComponent, {
-					date: date,
-					charts: charts,
-					chartDate: chartDate,
-					chartTab: chartTab,
-					path: context.pathname,
-					context: context,
-					sites: sites,
-					activeTabVisitsList: activeTabVisitsList,
-					visitsList: visitsList,
-					postsPagesList: postsPagesList,
-					referrersList: referrersList,
-					clicksList: clicksList,
-					authorsList: authorsList,
-					countriesList: countriesList,
-					videoPlaysList: videoPlaysList,
-					podcastDownloadsList: podcastDownloadsList,
-					siteId: siteId,
-					period: period,
-					chartPeriod: chartPeriod,
-					tagsList: tagsList,
-					commentsList: commentsList,
-					wpcomFollowersList: wpcomFollowersList,
-					emailFollowersList: emailFollowersList,
-					commentFollowersList: commentFollowersList,
-					followList: followList,
-					searchTermsList: searchTermsList,
-					slug: siteDomain
-				} ),
+				React.createElement( siteComponent, siteComponentChildren ),
 				document.getElementById( 'primary' ),
 				context.store
 			);
