@@ -7,15 +7,14 @@
 // Profile header
 // This contains the user's bio information
 .profile__banner {
-	background: $gray-dark url(/calypso/images/me/pattern-dark.png) 0 0 no-repeat;
+	background: $gray-dark url(/calypso/images/me/pattern-dark.png) 0 0 repeat;
 	padding: 32px;
 	text-align: center;
 }
 
 // TODO: should we keep that since we are using Gravatar component?
-.profile__gravatar {
+.profile__header .gravatar {
 	border: 4px solid $white;
-	border-radius: 50%;
 	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.6 );
 	margin-bottom: 16px;
 	width: 100px;
@@ -25,7 +24,7 @@
 	}
 }
 
-.profile__header h1 {
+.profile__display-name {
 	color: $white;
 	font-family: $serif;
 	font-size: 2.8rem;
@@ -34,7 +33,7 @@
 	text-shadow: 0 1px rgba( 0, 0, 0, 0.6 );
 }
 
-.profile__header h2 {
+.profile__member-since {
 	color: $white;
 	font-family: $serif;
 	font-size: 1.6rem;
@@ -55,12 +54,15 @@
 @include breakpoint( ">480px" ) {
 	.profile__sites {
 		display: flex;
+		flex-wrap: wrap;
 		padding: 0 8px;
 	}
 
 	.profile__site-card {
 		padding: 8px;
 		margin: 8px;
-		width: 33%;
+		width: 30%;
+		width: calc(33% - 16px);
+		word-wrap: break-word;
 	}
 }

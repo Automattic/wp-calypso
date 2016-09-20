@@ -15,10 +15,11 @@ const ProfileHeader = ( { moment, translate, user } ) => (
 	<div className="profile__header">
 		<div className="profile__banner">
 			<Gravatar
-				size={ 96 }
+				size={ 300 }
 				user={ user } />
-			<h1>{ user.display_name }</h1>
-			<p>@{ user.username }, { translate( 'member since' ) } { moment( user.date ).fromNow( true ) }</p>
+			<h1 className="profile__display-name">{ user.display_name }</h1>
+			<p className="profile__member-since">{ translate( 'joined' ) }
+				{ moment( user.date ).fromNow( true ) } { translate( 'ago' ) }</p>
 		</div>
 
 		<div className="profile__about-me">
