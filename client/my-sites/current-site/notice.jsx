@@ -11,18 +11,15 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { userCan } from 'lib/site/utils';
-import QuerySiteUpdates from 'components/data/query-site-updates';
 import paths from 'my-sites/upgrades/paths';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
 
 import { isJetpackSite } from 'state/sites/selectors';
 import {
 	getUpdatesBySiteId,
-	hasWordPressUpdate,
 	hasUpdates as siteHasUpdate,
 	getSectionsToUpdate,
 } from 'state/sites/updates/selectors';
@@ -32,7 +29,13 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isFinished as isJetpackPluginsFinished } from 'state/plugins/premium/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import Popover from 'components/popover';
+
+import JetpackUpdatesPopover from 'blocks/jetpack-updates-popover';
+import {
+	renderPluginsUpdate,
+	renderThemesUpdate,
+	renderWPComUpdate,
+} from 'blocks/jetpack-updates-popover/update-templates';
 
 const debug = debugFactory( 'calypso:current-site:notice' );
 
@@ -40,7 +43,6 @@ const SiteNotice = React.createClass( {
 	propTypes: {
 		site: PropTypes.object,
 		isJetpack: PropTypes.bool,
-		hasWPUpdate: PropTypes.bool,
 		hasUpdates: PropTypes.bool,
 		updates: PropTypes.object
 	},
@@ -129,123 +131,8 @@ const SiteNotice = React.createClass( {
 		this.setState( { showJetpackPopover: false } );
 	},
 
-	handleWPCOMUpdate( ev ) {
-		ev.preventDefault();
-	},
-
-	renderWPComUpdate() {
-		const { updates } = this.props;
-
-		// just for testing purpose
-		if ( config.isEnabled( 'gm2016/jetpack-plugin-updates-trashpickup' ) ) {
-			updates.wordpress = 1;
-			updates.wp_update_version = '5.0.0';
-		}
-
-		if ( ! (
-			config.isEnabled( 'jetpack_core_inline_update' ) &&
-			updates.wordpress &&
-			updates.wp_update_version
-		) ) {
-			return null;
-		}
-
-		return (
-			<div className="current-site__jetpack-notifications-block">
-				<Gridicon icon="my-sites" size={ 18 } />
-				<div className="current-site__jetpack-notifications-text">
-					{ this.translate( 'A newer version of WordPress is available.' ) }
-					<a className="current-site__jetpack-notifications-link" href="#" onClick={ this.handleWPCOMUpdate }>
-						{
-							this.translate( 'Update to %(version)s', {
-								args: {
-									version: updates.wp_update_version
-								}
-							} )
-						}
-						<Gridicon icon="external" size={ 14 } />
-					</a>
-				</div>
-			</div>
-		);
-	},
-
-	renderPluginsUpdate() {
-		const { updates } = this.props;
-
-		if ( ! this.props.site.canUpdateFiles || ! updates.plugins ) {
-			return null;
-		}
-
-		return (
-			<div className="current-site__jetpack-notifications-block">
-				<Gridicon icon="plugins" size={ 18 } />
-				<div className="current-site__jetpack-notifications-text">
-					{
-						this.translate(
-							'There is %(total)d plugin update available.',
-							'There are %(total)d plugin updates available.',
-							{
-								count: updates.plugins,
-								args: {
-									total: updates.plugins
-								}
-							}
-						)
-					}
-					<a
-						className="current-site__jetpack-notifications-link"
-						onClick={ this.hideJetpackNotificatonsPopover }
-						href={ '/plugins/updates/' + this.props.site.slug }>
-						{ this.translate( 'View' ) }
-						<Gridicon icon="external" size={ 14 } />
-					</a>
-				</div>
-			</div>
-		);
-	},
-
-	renderThemesUpdate() {
-		const { updates, site } = this.props;
-
-		if ( ! updates.themes ) {
-			return null;
-		}
-
-		return (
-			<div className="current-site__jetpack-notifications-block">
-				<Gridicon icon="themes" size={ 18 } />
-				<div className="current-site__jetpack-notifications-text">
-					{
-						this.translate(
-							'There is %(total)d theme update available. {{link}}View{{/link}}',
-							'There are %(total)d theme updates available. {{link}}View{{/link}}',
-							{
-								components: {
-									link:
-										<a
-											className="current-site__jetpack-notifications-link"
-											onClick={ this.hideJetpackNotificatonsPopover }
-											target="_blanck"
-											href={ site.options.admin_url + 'update-core.php#update-themes-table' }
-										>
-											<Gridicon icon="external" size={ 14 } />
-										</a>
-								},
-								count: updates.themes,
-								args: {
-									total: updates.themes
-								}
-							}
-						)
-					}
-				</div>
-			</div>
-		);
-	},
-
 	renderJetpackNotifications() {
-		const { site, isJetpack, hasUpdates, sectionsToUpdate } = this.props;
+		const { isJetpack, hasUpdates, sectionsToUpdate, site, updates } = this.props;
 		const { showJetpackPopover } = this.state;
 
 		if ( ! isJetpack ) {
@@ -266,20 +153,20 @@ const SiteNotice = React.createClass( {
 			title = this.translate(
 				'There is an update available.',
 				'There are updates available.',
-				{ count: site.updates.total }
+				{ count: updates.total }
 			);
 		} else if ( sectionsToUpdate.length === 1 ) {
 			switch ( sectionsToUpdate[ 0 ] ) {
 				case 'plugins':
-					title = this.renderPluginsUpdate();
+					title = renderPluginsUpdate( this.props );
 					break;
 
 				case 'themes':
-					title = this.renderThemesUpdate();
+					title = renderThemesUpdate( this.props );
 					break;
 
 				case 'wordpress':
-					title = this.renderWPComUpdate();
+					title = renderWPComUpdate( this.props );
 					break;
 			}
 		}
@@ -296,18 +183,15 @@ const SiteNotice = React.createClass( {
 				</Notice>
 
 				{ sectionsToUpdate.length > 1 &&
-					<Popover
-						className="current-site__jetpack-notifications-popover"
+					<JetpackUpdatesPopover
+						site={ site }
+						className="current-site__jetpack-updates-popover"
 						id="popover__jetpack-notifications"
 						isVisible={ showJetpackPopover }
 						onClose={ this.hideJetpackNotificatonsPopover }
 						position="bottom"
 						context={ this.refs && this.refs.popoverJetpackNotifications }
-					>
-						{ this.renderWPComUpdate() }
-						{ this.renderPluginsUpdate() }
-						{ this.renderThemesUpdate() }
-					</Popover>
+					/>
 				}
 			</div>
 		);
@@ -328,7 +212,6 @@ const SiteNotice = React.createClass( {
 			>
 
 				<QuerySitePlans siteId={ site.ID } />
-				<QuerySiteUpdates siteId={ site.ID } />
 
 				{ this.getSiteRedirectNotice( site ) }
 				{ this.domainCreditNotice() }
@@ -348,7 +231,6 @@ export default connect( ( state, ownProps ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		hasDomainCredit: hasDomainCredit( state, siteId ),
 		hasUpdates: siteHasUpdate( state, siteId ),
-		hasWPUpdate: hasWordPressUpdate( state, siteId ),
 		canManageOptions: canCurrentUser( state, siteId, 'manage_options' ),
 		pausedJetpackPluginsSetup: ! isJetpackPluginsFinished( state, siteId ),
 		updates: getUpdatesBySiteId( state, siteId ),
