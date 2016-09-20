@@ -145,15 +145,12 @@ module.exports = React.createClass( {
 			);
 		}
 
-		const textVersion = this.translate( 'Version' );
-		const textIsAvailable = this.translate( 'is available' );
-
 		return (
 			<Notice isCompact
 				icon="sync"
 				status="is-warning"
 				inline={ true }
-				text={ `${ textVersion } ${ newVersions[ 0 ].newVersion } ${ textIsAvailable }` }>
+				text={ this.translate( 'Version %(newVersion)s is available', { args: { newVersion: newVersions[ 0 ].newVersion } } ) }>
 			</Notice>
 		);
 	},
