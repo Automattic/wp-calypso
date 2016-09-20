@@ -90,6 +90,7 @@
 		"reader/search": true,
 		"reader/refresh-2016-07": true,
 		"resume-editing": true,
+		"republicize": false,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

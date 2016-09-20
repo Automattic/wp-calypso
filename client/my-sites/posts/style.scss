@@ -16,12 +16,67 @@
 
 .posts__list {
 
+	.posts__post-share-services {
+		flex-direction: row;
+		justify-content: space-around;
+		display: flex;
+		flex-wrap: wrap;
+		border-bottom: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+	}
+	.posts__post-share-service {
+		cursor: pointer;
+		padding: 4px;
+		display: flex;
+		justify-content: center;
+		flex: 1;
+		border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+		color: lighten( $gray, 20% );
+		&.is-active {
+			color: black;
+
+			.social-logo.twitter{
+				color: $color-twitter;
+			}
+
+			.social-logo.facebook{
+				color: $color-facebook;
+			}
+
+			.social-logo.google_plus {
+				color: $color-gplus;
+			}
+
+			.social-logo.linkedin {
+				color: $color-linkedin;
+			}
+
+			.social-logo.tumblr {
+				color: $color-tumblr;
+			}
+
+			.social-logo.path {
+				color: $color-path;
+			}
+
+			.social-logo.eventbrite {
+				color: $color-eventbrite;
+			}
+		}
+	}
+	.posts__post-share-service-account-name {
+		line-height: 24px;
+		padding-left: 4px;
+	}
+
 	.post {
 		position: relative;
 		padding: 0;
 		margin-bottom: (24 / 15) * 1em;
 		@include breakpoint( "<660px" ) {
 			font-size: 13px;
+		}
+		.posts__post-share-wrapper .notice {
+			margin-bottom: 0;
 		}
 	}
 
@@ -371,6 +426,18 @@
 	margin: 0;
 	padding: 0 24px 24px;
 	animation: appear .3s ease-in-out;
+}
+
+.post .posts__post-share {
+	margin: 0;
+	padding: 0 24px 24px;
+	animation: appear .3s ease-in-out;
+	border-top: solid 1px transparentize( lighten( $gray, 20% ), .5 );
+}
+
+.posts__post-share-title {
+	margin: 24px 0 24px 0;
+	font-weight: bold;
 }
 
 .post-controls {

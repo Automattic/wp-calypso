@@ -800,6 +800,31 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
 };
 
 /**
+ * Share an arbitrary post using publicize connection
+ *
+ * @param {int}       siteId            The site ID
+ * @param {int}       postId            The post ID
+ * @param {String}    message           Message for social media
+ * @param {Array(int)}skipped           CKeyring connection ids to skip publicizing
+ * 
+ * @returns {Promise}
+ */
+Undocumented.prototype.publicizePost = function( siteId, postId, message, skippedConnections, fn ) {
+	const body = { skipped_connections: [] };
+
+	if ( message ) {
+		body.message = message;
+	}
+
+	if ( skippedConnections && skippedConnections.length > 0 ) {
+		body.skipped_connections = skippedConnections;
+	}
+
+	this.wpcom.req.post( { path: `/sites/${ siteId }/post/${ postId }/publicize`, body, apiVersion: '1.1' }, fn );
+};
+
+
+/**
  * Updates a single publicize connection
  *
  * @param {int|string} siteId An optional site ID or domain
