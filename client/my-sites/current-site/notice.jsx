@@ -7,6 +7,7 @@ import config from 'config';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -32,9 +33,9 @@ import TrackComponentView from 'lib/analytics/track-component-view';
 
 import JetpackUpdatesPopover from 'blocks/jetpack-updates-popover';
 import {
-	renderPluginsUpdate,
-	renderThemesUpdate,
-	renderWPComUpdate,
+	renderPluginsTemplate,
+	renderThemesTemplate,
+	renderWPComTemplate,
 } from 'blocks/jetpack-updates-popover/update-templates';
 
 const debug = debugFactory( 'calypso:current-site:notice' );
@@ -158,15 +159,15 @@ const SiteNotice = React.createClass( {
 		} else if ( sectionsToUpdate.length === 1 ) {
 			switch ( sectionsToUpdate[ 0 ] ) {
 				case 'plugins':
-					title = renderPluginsUpdate( this.props );
+					title = renderPluginsTemplate( this.props );
 					break;
 
 				case 'themes':
-					title = renderThemesUpdate( this.props );
+					title = renderThemesTemplate( this.props );
 					break;
 
 				case 'wordpress':
-					title = renderWPComUpdate( this.props );
+					title = renderWPComTemplate( this.props );
 					break;
 			}
 		}
@@ -244,4 +245,4 @@ export default connect( ( state, ownProps ) => {
 			}
 		) )
 	};
-} )( SiteNotice );
+} )( localize( SiteNotice ) );
