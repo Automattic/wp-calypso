@@ -1,40 +1,40 @@
+/**
+ * External Dependencies
+ */
 import React, { PropTypes } from 'react';
 
+/**
+ * Internal dependencies
+ */
 import StepHeader from '../step-header';
 
-export default React.createClass( {
-	displayName: 'JetpackConnectHeader',
+const JetpackConnectHeader = ( props ) => {
+	return (
+		<div className="jetpack-connect__header-container">
+			{ props.showLogo
+				? (
+					<img
+						className="jetpack-connect__jetpack-logo"
+						src="/calypso/images/jetpack/jetpack-logo.svg"
+						width={ 18 }
+						height={ 18 }
+					/>
+				)
+				: null
+			}
+			<StepHeader { ...props } />
+		</div>
+	);
+};
 
-	propTypes: {
-		showLogo: PropTypes.bool,
-		label: PropTypes.string
-	},
+JetpackConnectHeader.propTypes = {
+	showLogo: PropTypes.bool,
+	label: PropTypes.string
+};
 
-	getDefaultProps() {
-		return {
-			showLogo: true,
-			label: ''
-		};
-	},
+JetpackConnectHeader.defaultProps = {
+	showLogo: true,
+	label: ''
+};
 
-	renderJetpackLogo() {
-		return (
-			<img
-				className="jetpack-connect__jetpack-logo"
-				src="/calypso/images/jetpack/jetpack-logo.svg"
-				width={ 18 }
-				height={ 18 } />
-		);
-	},
-
-	render() {
-		return (
-			<div className="jetpack-connect__header-container">
-				{ this.props.showLogo
-					? this.renderJetpackLogo()
-					: null }
-				<StepHeader { ...this.props } />
-			</div>
-		);
-	}
-} );
+export default JetpackConnectHeader;
