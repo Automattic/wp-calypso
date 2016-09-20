@@ -14,7 +14,7 @@ export const hasUpdates = ( state, siteId ) => {
 
 export const hasWordPressUpdate = ( state, siteId ) => {
 	const { wordpress, wp_update_version } = getUpdatesBySiteId( state, siteId );
-	return !! wordpress && wp_update_version;
+	return !! ( wordpress && wp_update_version );
 };
 
 export const getSectionsToUpdate = ( state, siteId ) => {
