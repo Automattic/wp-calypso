@@ -13,12 +13,19 @@ import userFactory from 'lib/user';
 
 const ProfileHeader = ( { moment, translate, user } ) => (
 	<div className="profile__header">
-		<Gravatar
-			imgSize="96"
-			size="96"
-			user={ user } />
-		<h1>{ user.display_name }</h1>
-		<p>{ translate( 'Since' ) } { moment( user.date ).fromNow( true ) }</p>
+		<div className="profile__banner">
+			<Gravatar
+				size={ 96 }
+				user={ user } />
+			<h1>{ user.display_name }</h1>
+			<p>@{ user.username }, { translate( 'member since' ) } { moment( user.date ).fromNow( true ) }</p>
+		</div>
+
+		<div className="profile__about-me">
+			<p>Hi! I'm Marigold the goat. I like eating and pooping.
+				Sometimes I poop when I eat. Don't impose your human standards on me!
+				I'm a goat and I DGAF!</p>
+		</div>
 	</div>
 );
 

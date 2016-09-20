@@ -18,7 +18,7 @@ const ProfileSites = ( { loading, sites } ) => {
 	return (
 		<div className="profile__sites">
 			{ sites.map( site => (
-				<div key={ `site-${ site.ID }` }>
+				<div className="profile__site-card card" key={ `site-${ site.ID }` }>
 					<h3>{ site.title }</h3>
 					<p>{ site.description }</p>
 					<SiteIcon site={ site } />

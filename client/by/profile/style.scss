@@ -1,4 +1,66 @@
-.profile__header {
-	background-color: green;
-	padding: 50px;
+// These pages should span the full width of the page; no sidebar needed!
+.is-group-by .layout__content {
+	padding: 0;
+}
+
+
+// Profile header
+// This contains the user's bio information
+.profile__banner {
+	background: $gray-dark url(/calypso/images/me/pattern-dark.png) 0 0 no-repeat;
+	padding: 32px;
+	text-align: center;
+}
+
+// TODO: should we keep that since we are using Gravatar component?
+.profile__gravatar {
+	border: 4px solid $white;
+	border-radius: 50%;
+	box-shadow: 0 0 0 1px rgba( 0, 0, 0, 0.6 );
+	margin-bottom: 16px;
+	width: 100px;
+
+	@include breakpoint( ">480px" ) {
+		width: 150px;
+	}
+}
+
+.profile__header h1 {
+	color: $white;
+	font-family: $serif;
+	font-size: 2.8rem;
+	line-height: 1.2;
+	margin-bottom: 8px;
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.6 );
+}
+
+.profile__header h2 {
+	color: $white;
+	font-family: $serif;
+	font-size: 1.6rem;
+	font-style: italic;
+	text-shadow: 0 1px rgba( 0, 0, 0, 0.6 );
+}
+
+.profile__about-me {
+	font-family: $serif;
+	line-height: 1.6;
+	margin: 0 auto;
+	max-width: 600px;
+	padding: 32px 16px;
+}
+
+// Sites
+// This contains the sites the user owns or has contributed to.
+@include breakpoint( ">480px" ) {
+	.profile__sites {
+		display: flex;
+		padding: 0 8px;
+	}
+
+	.profile__site-card {
+		padding: 8px;
+		margin: 8px;
+		width: 33%;
+	}
 }
