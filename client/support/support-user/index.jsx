@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import flowRight from 'lodash/flowRight';
 
 /**
  * Internal dependencies
@@ -27,19 +26,19 @@ const SupportUser = React.createClass( {
 	},
 
 	onKeyboardShortcut: function( e ) {
+		if ( this.props.isSupportUser ) {
+			rebootNormally();
+		}
+
 		if ( ! this.props.isEnabledForUser ) {
-			return false;
+			return;
 		}
 
 		// Because the username field is auto-focused, this prevents
 		// the shortcut key being entered into the field
 		e.preventDefault();
 
-		if ( this.props.isSupportUser ) {
-			this.props.supportUserRestore();
-		} else {
-			this.props.supportUserToggleDialog();
-		}
+		this.props.supportUserToggleDialog();
 	},
 
 	render: function() {
@@ -51,7 +50,7 @@ const SupportUser = React.createClass( {
 				errorMessage={ this.props.errorMessage }
 
 				onCloseDialog={ this.props.supportUserToggleDialog }
-				onChangeUser={ this.props.supportUserTokenFetch }
+				onChangeUser={ fetchToken }
 			/>
 		);
 	}
@@ -65,10 +64,8 @@ const mapStateToProps = state => ( {
 	errorMessage: state.support.errorMessage,
 } );
 
-const mapDispatchToProps = dispatch => ( {
-	supportUserTokenFetch: fetchToken,
-	supportUserRestore: rebootNormally,
-	supportUserToggleDialog: flowRight( dispatch, supportUserToggleDialog ),
-} );
+const mapDispatchToProps = {
+	supportUserToggleDialog,
+};
 
 export default connect( mapStateToProps, mapDispatchToProps )( SupportUser );
