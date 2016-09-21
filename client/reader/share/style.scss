@@ -1,12 +1,11 @@
-.reader-share {
-	display: inline-block;
-	padding: 4px 4px 4px 32px;
-	color: lighten( $gray, 10 );
-	position: relative;
+.reader-share_button {
+	align-items: center;
 	box-sizing: border-box;
+	color: lighten( $gray, 10 );
+	display: inline-flex;
+	padding: 4px;
+	position: relative;
 	transition: color 0.15s linear;
-	cursor: pointer;
-	min-height: 32px;
 
 	&:hover, &:focus, &:active {
 		cursor: pointer;
@@ -15,13 +14,6 @@
 
 	.gridicon {
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-		position: absolute;
-			top: 3px;
-			left: 3px;
-
-		@include breakpoint( "<480px" ) {
-			left: 6px;
-		}
 	}
 
 	.is-active {
@@ -34,6 +26,7 @@
 }
 
 .reader-share__button-label {
+	margin-left: 6px;
 
 	@include breakpoint( "<480px" ) {
 		display: none;
