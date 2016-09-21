@@ -317,7 +317,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	flex: 1;
 	flex-direction: column;
 	font-size: 14px;
-	margin-top: 5px;
+	margin-top: 3px;
 }
 
 .reader-related-card-v2__byline-author {
@@ -349,7 +349,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	border: 0;
 	border-radius: 0;
 	margin-bottom: 12px;
-	margin-left: auto;
+	margin-top: -3px;
 	padding: 0;
 
 	.gridicon__follow {
