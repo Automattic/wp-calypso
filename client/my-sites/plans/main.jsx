@@ -9,6 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import DocumentHead from 'components/data/document-head';
 import EmptyContentComponent from 'components/empty-content';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getPlans } from 'state/plans/selectors';
@@ -18,7 +19,6 @@ import Main from 'components/main';
 import MainComponent from 'components/main';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import route from 'lib/route';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
@@ -52,9 +52,6 @@ const Plans = React.createClass( {
 			analyticsPageTitle = 'Plans',
 			basePath = route.sectionify( context.path ),
 			analyticsBasePath = ( selectedSite ) ? basePath + '/:site' : basePath;
-
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
 
 		if ( this.shouldDisplayJetpackPlansDisabled() ) {
 			analytics.pageView.record( basePath + '/jetpack/:site', analyticsPageTitle + ' > Jetpack Plans Not Available' );
@@ -92,6 +89,7 @@ const Plans = React.createClass( {
 
 		return (
 			<div>
+				<DocumentHead title={ i18n.translate( 'Plans', { textOnly: true } ) } />
 				<Main wideLayout={ true } >
 					<SidebarNavigation />
 
