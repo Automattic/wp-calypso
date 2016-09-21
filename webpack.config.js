@@ -100,7 +100,7 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
 		children: true,
-		minChunks: Math.floor( sectionCount * 0.25 ),
+		minChunks: 6,
 		async: true,
 		filename: 'commons.[hash].js'
 	} ) );
