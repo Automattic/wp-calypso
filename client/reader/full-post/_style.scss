@@ -235,7 +235,11 @@
 
 		&.alignright,
 		&.alignleft {
-			max-width: 50%;
+			max-width: 100%;
+
+			@include breakpoint( ">660px" ) {
+				max-width: 50%;
+			}
 
 			img.alignright,
 			img.alignleft {
