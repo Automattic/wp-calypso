@@ -225,6 +225,28 @@
 		position: relative;
 		max-width: 100%;
 
+		&.alignright {
+			float: right;
+		}
+
+		&.alignleft {
+			float: left;
+		}
+
+		&.alignright,
+		&.alignleft {
+			max-width: 100%;
+
+			@include breakpoint( ">660px" ) {
+				max-width: 50%;
+			}
+
+			img.alignright,
+			img.alignleft {
+				float: none;
+			}
+		}
+
 		img {
 			display: block;
 			margin: 0 auto;
