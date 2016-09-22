@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import map from 'lodash/map';
+import { map, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +13,13 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 describe( 'StatsParser', () => {
 	let statsParser, data;
 
-	useMockery();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+	} );
 	useFakeDom();
 
 	before( () => {
