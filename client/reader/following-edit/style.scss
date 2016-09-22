@@ -90,10 +90,13 @@
 	}
 
 	select {
+		box-sizing: content-box;
 		font-size: 12px;
+		height: 12px;
+		line-height: 12px;
 		color: $gray;
-		padding-top: 2px;
-		padding-bottom: 2px;
+		padding-top: 7px;    // matches .button.is-compact
+		padding-bottom: 7px; // matches .button.is-compact
 		padding-left: 10px;
 		margin: 0;
 
