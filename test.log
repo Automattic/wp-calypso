@@ -103,7 +103,7 @@
           Discover Card: range 622126-622925
             ✓ should return null for 622125
             ✓ should return `discover` for 622126
-            ✓ should return `discover` for 622348 (a random number between 622126 and 622925)
+            ✓ should return `discover` for 622434 (a random number between 622126 and 622925)
             ✓ should return `discover` for 622925
             ✓ should return null for 622926
       validation
@@ -2379,6 +2379,6 @@ Create undefined plugin
           ✓ g
 
 
-  1651 passing (10s)
+  1651 passing (9s)
   4 pending
 
