@@ -55,7 +55,7 @@ const THREE_POST_PAYLOAD_LOCAL = {
 	}, {
 		global_ID: 780
 	} ]
-}
+};
 const OMIT_INITIAL_POST_PAYLOAD_SERVER = {
 	__sync: {
 		requestKey: 'UNIQUE_KEY',
@@ -181,7 +181,6 @@ describe( 'post-list-store', () => {
 				type: 'page',
 				order: 'ASC'
 			} );
-			console.log( defaultPostListStore, anotherPostListStore );
 			assert.equal( defaultPostListStore.getID(), anotherPostListStore.getID() );
 		} );
 	} );
