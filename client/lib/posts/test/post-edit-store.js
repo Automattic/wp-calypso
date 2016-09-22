@@ -2,8 +2,7 @@
  * External dependencies
  */
 import assert from 'assert';
-import assign from 'lodash/assign';
-import isEqual from 'lodash/isEqual';
+import { assign, isEqual, noop } from 'lodash';
 import { spy } from 'sinon';
 
 /**
@@ -17,8 +16,13 @@ describe( 'post-edit-store', function() {
 
 	useFakeDom();
 
-	// makes sure we always load fresh instance of Dispatcher
-	useMockery();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+	} );
 
 	before( () => {
 		Dispatcher = require( 'dispatcher' );

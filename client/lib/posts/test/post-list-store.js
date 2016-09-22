@@ -2,8 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import isPlainObject from 'lodash/isPlainObject';
-import isArray from 'lodash/isArray';
+import { isPlainObject, isArray, noop } from 'lodash';
 import mockery from 'mockery';
 
 /**
@@ -107,6 +106,11 @@ describe( 'post-list-store', () => {
 	useMockery();
 
 	before( () => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
 		mockery.registerAllowable( 'lib/posts/post-list-store-factory' );
 		mockery.registerAllowable( 'lib/posts/post-list-cache-store' );
 		mockery.registerAllowable( 'lib/posts/post-list-store' );

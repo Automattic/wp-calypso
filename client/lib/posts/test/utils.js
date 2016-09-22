@@ -2,16 +2,26 @@
  * External dependencies
  */
 import assert from 'assert';
+import { noop } from 'lodash';
 
 /**
 * Internal dependencies
 */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'utils', function() {
 	let postUtils;
 
 	useFakeDom();
+
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+	} );
 
 	before( () => {
 		postUtils = require( '../utils' );

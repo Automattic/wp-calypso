@@ -5,20 +5,36 @@ var chai = require( 'chai' ),
 	defer = require( 'lodash/defer' ),
 	expect = chai.expect,
 	sinon = require( 'sinon' );
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	useFakeDom = require( 'test/helpers/use-fake-dom' ),
-	wpcom = require( 'lib/wp' );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'actions', function() {
-	let PostActions, PostEditStore, sandbox;
+	let Dispatcher, PostActions, PostEditStore, sandbox;
 
 	useFakeDom();
 
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} ),
+			site: () => ( {
+				post: () => ( {
+					add: ( query, attributes, callback ) => {
+						callback( null, attributes );
+					}
+				} )
+			} )
+		} );
+	} );
+
 	before( () => {
+		Dispatcher = require( 'dispatcher' );
 		PostEditStore = require( '../post-edit-store' );
 		PostActions = require( '../actions' );
 
@@ -219,16 +235,6 @@ describe( 'actions', function() {
 				}
 			};
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( changedAttributes );
-
-			sandbox.stub( wpcom, 'site' ).returns( {
-				post: function() {
-					return {
-						add: function( query, attributes, callback ) {
-							callback( null, attributes );
-						}
-					};
-				}
-			} );
 
 			PostActions.saveEdited( null, ( error, data ) => {
 				const normalizedAttributes = {
