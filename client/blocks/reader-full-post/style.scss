@@ -94,6 +94,20 @@
 	flex-direction: column;
 	z-index: z-index( '.masterbar', '.reader-profile' );
 
+	@include breakpoint( "<660px" ) {
+		margin-bottom: 35px;
+		overflow: hidden;
+		text-overflow: clip;
+		padding-right: 10px;
+		position: relative;
+		white-space: nowrap;
+
+		&::after {
+			@include long-content-fade( $size: 15% );
+			height: 40px;
+		}
+	}
+
 	.reader-author-link {
 		margin-top: 0;
 
@@ -113,7 +127,7 @@
 			&.has-site-and-author-icon,
 			&.has-site-icon,
 			&.has-gravatar {
-				margin: 0 10px 40px 0;
+				margin: 0 10px 5px 0;
 			}
 
 			&.has-gravatar {
@@ -126,7 +140,7 @@
 			}
 
 			&.has-site-and-author-icon.has-site-icon.has-gravatar {
-				margin-bottom: 20px;
+				margin-bottom: -15px;
 
 				.gravatar {
 					height: 24px!important;
@@ -160,6 +174,12 @@
 		.reader-author-link {
 			font-weight: 700;
 			display: inline;
+			margin-right: 5px;
+
+			&::after {
+				content: ',';
+				font-weight: normal;
+			}
 		}
 
 		.author-compact-profile__site-link {
@@ -173,20 +193,6 @@
 		.reader-author-link,
 		.author-compact-profile__site-link {
 			padding-top: 5px;
-
-			@include breakpoint( "<660px" ) {
-				margin-bottom: 35px;
-				overflow: hidden;
-				text-overflow: clip;
-				padding-right: 10px;
-				position: relative;
-				white-space: nowrap;
-
-				&::after {
-					@include long-content-fade( $size: 15% );
-					height: 40px;
-				}
-			}
 		}
 
 		.author-compact-profile__follow .follow-button {
