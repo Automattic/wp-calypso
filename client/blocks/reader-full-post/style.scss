@@ -121,6 +121,7 @@
 				.gravatar {
 					height: 32px!important;
 					width: 32px!important;
+					max-width: none;
 				}
 			}
 
@@ -159,10 +160,6 @@
 		.reader-author-link {
 			font-weight: 700;
 			display: inline;
-
-			@include breakpoint( "<660px" ) {
-				margin-right: 10px;
-			}
 		}
 
 		.author-compact-profile__site-link {
@@ -179,6 +176,16 @@
 
 			@include breakpoint( "<660px" ) {
 				margin-bottom: 35px;
+				overflow: hidden;
+				text-overflow: clip;
+				padding-right: 10px;
+				position: relative;
+				white-space: nowrap;
+
+				&::after {
+					@include long-content-fade( $size: 15% );
+					height: 40px;
+				}
 			}
 		}
 
