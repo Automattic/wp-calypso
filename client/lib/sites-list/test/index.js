@@ -3,8 +3,7 @@
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
-import cloneDeep from 'lodash/cloneDeep';
-import forEach from 'lodash/forEach';
+import { cloneDeep, forEach, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +15,13 @@ describe( 'SitesList', () => {
 	let SitesList, Site, data;
 	let sitesList, originalData, initializedSites;
 
-	useMockery();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+	} );
 	useFakeDom();
 
 	before( () => {
