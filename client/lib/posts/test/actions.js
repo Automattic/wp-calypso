@@ -1,11 +1,9 @@
 /**
  * External dependencies
  */
-var chai = require( 'chai' ),
-	defer = require( 'lodash/defer' ),
-	expect = chai.expect,
-	sinon = require( 'sinon' );
-import { noop } from 'lodash';
+import { defer, noop } from 'lodash';
+import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -187,7 +185,7 @@ describe( 'actions', function() {
 
 	describe( '#saveEdited()', function() {
 		it( 'should not send a request if the post has no content', function( done ) {
-			var spy = sandbox.spy();
+			const spy = sandbox.spy();
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( false );
 
 			PostActions.saveEdited( null, spy );
@@ -202,7 +200,7 @@ describe( 'actions', function() {
 		} );
 
 		it( 'should not send a request if there are no changed attributes', function( done ) {
-			var spy = sandbox.spy();
+			const spy = sandbox.spy();
 			sandbox.stub( PostEditStore, 'hasContent' ).returns( true );
 			sandbox.stub( PostEditStore, 'getChangedAttributes' ).returns( {} );
 
