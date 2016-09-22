@@ -4,6 +4,7 @@
 import React from 'react';
 import mockery from 'mockery';
 import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,6 +56,14 @@ describe( 'PostEditor', function() {
 		mockery.registerMock( './editor-preview', MOCK_COMPONENT );
 		mockery.registerMock( 'my-sites/drafts/draft-list', MOCK_COMPONENT );
 		mockery.registerMock( 'lib/preferences/actions', { set() {} } );
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} ),
+			undocumented: () => ( {
+
+			} )
+		} );
 		// TODO: REDUX - add proper tests when whole post-editor is reduxified
 		mockery.registerMock( 'react-redux', {
 			connect: () => ( component ) => component
