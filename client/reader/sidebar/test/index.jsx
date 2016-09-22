@@ -1,8 +1,15 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { expect } from 'chai';
+import { noop } from 'lodash';
 import { shallow } from 'enzyme';
 import { stub } from 'sinon';
 
+/**
+ * Internal dependencies
+ */
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 
@@ -27,6 +34,16 @@ describe( 'ReaderSidebar', ( ) => {
 
 	useMockery( ( mockery ) => {
 		mockery.registerMock( 'component-closest', stub() );
+		mockery.registerMock( 'lib/wp', {
+			batch: () => ( {
+				add: noop,
+				run: noop
+			} ),
+			me: () => ( {
+				get: noop
+			} ),
+			undocumented: noop
+		} );
 	} );
 
 	before( ( ) => {

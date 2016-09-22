@@ -60,9 +60,7 @@ describe( 'PostEditor', function() {
 			me: () => ( {
 				get: noop
 			} ),
-			undocumented: () => ( {
-
-			} )
+			undocumented: noop
 		} );
 		// TODO: REDUX - add proper tests when whole post-editor is reduxified
 		mockery.registerMock( 'react-redux', {
