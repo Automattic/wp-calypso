@@ -44,7 +44,7 @@ describe( 'SitesList', () => {
 
 		it( 'should create Site objects', () => {
 			forEach( initializedSites, site => {
-				assert.instanceOf( site, Site )
+				assert.instanceOf( site, Site );
 			} );
 		} );
 
@@ -94,7 +94,7 @@ describe( 'SitesList', () => {
 
 	describe( 'change propagation', () => {
 		it( 'should trigger change when site is updated', () => {
-			const siteId = originalData[0].ID;
+			const siteId = originalData[ 0 ].ID;
 			const changeCallback = sinon.spy();
 
 			sitesList.initialize( cloneDeep( data.original ) );
