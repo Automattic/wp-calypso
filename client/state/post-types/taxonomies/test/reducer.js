@@ -217,6 +217,30 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should replace state with latest payload', () => {
+			const state = items( undefined, {
+				type: POST_TYPES_TAXONOMIES_RECEIVE,
+				siteId: 2916284,
+				postType: 'page',
+				taxonomies: [
+					{ name: 'post_tag', label: 'Tags' }
+				]
+			} );
+
+			const updatedState = items( state, {
+				type: POST_TYPES_TAXONOMIES_RECEIVE,
+				siteId: 2916284,
+				postType: 'page',
+				taxonomies: []
+			} );
+
+			expect( updatedState ).to.eql( {
+				2916284: {
+					page: {}
+				}
+			} );
+		} );
+
 		it( 'should persist state', () => {
 			const original = deepFreeze( {
 				2916284: {
