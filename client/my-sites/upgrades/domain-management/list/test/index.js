@@ -3,6 +3,7 @@
  */
 import deepFreeze from 'deep-freeze';
 import assert from 'assert';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,6 +29,19 @@ describe( 'index', function() {
 		require( 'test/helpers/mocks/data-poller' )( mockery );
 		mockery.registerMock( 'components/section-nav', EmptyComponent );
 		mockery.registerMock( 'components/sidebar-navigation', EmptyComponent );
+		mockery.registerMock( 'lib/analytics/ad-tracking', noop );
+		mockery.registerMock( 'lib/analytics/track-component-view', EmptyComponent );
+		mockery.registerMock( 'lib/mixins/analytics', () => ( {
+			recordEvent: noop
+		} ) );
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} ),
+			undocumented: () => ( {
+				getProducts: noop
+			} )
+		} );
 	} );
 
 	before( () => {
