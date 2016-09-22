@@ -1,0 +1,2384 @@
+
+> wp-calypso@0.17.0 test-client /Users/gziolo/PhpstormProjects/wp-calypso
+> NODE_ENV=test NODE_PATH=test:client TEST_ROOT=client test/runner.js "client/lib/"
+
+
+
+  lib
+    abtest
+      abtest
+        stored value
+          ✓ should return stored value and skip store.set for existing users
+          ✓ should return stored value and skip store.set for any user, including new, non-English users
+          ✓ should return stored value and skip store.set for a logged-out user
+        no stored value
+          existing users
+            ✓ should return default and skip store.set when allowExistingUsers is false
+            ✓ should call store.set when allowExistingUsers is true
+          new users
+            ✓ should call store.set for new users with English settings
+            ✓ should return default and skip store.set for new users with non-English settings
+          logged-out users
+            ✓ should call store.set for logged-out users with English locale
+            ✓ show return default and skip store.set for non-English navigator.language
+            ✓ should return default and skip store.set for non-English navigator.languages primary preference
+            ✓ should return default and skip store.set for non-English IE10 userLanguage setting
+    accept
+      #accept()
+        ✓ should render a dialog to the document body
+        ✓ should trigger the callback with an accepted prompt
+        ✓ should trigger the callback with a denied prompt
+        ✓ should clean up after itself once the prompt is closed
+    ads
+      Ads Stores; EarningsStore, SettingsStore, TosStore
+        ✓ Stores should be an object
+        ✓ Stores should have method getById
+        ✓ Stores should have method emitChange
+        Fetch
+          ✓ The store should return an object
+          ✓ The object should not be null after RECEIVE
+    analytics
+      page-view-tracker
+        PageViewTracker
+          ✓ should immediately fire off event when given no delay
+          ✓ should wait for the delay before firing off the event
+          ✓ should pass the appropriate event information
+      Analytics
+        mc
+          ✓ bumpStat with group and stat
+          ✓ bumpStat with value object
+          ✓ bumpStatWithPageView with group and stat
+          ✓ bumpStatWithPageView with value object
+    auth-code-request-store
+      index
+        ✓ is in initial state
+        ✓ is in progress when requesting code
+        ✓ is complete when server responds with needs_2fa
+        ✓ is an error when server responds without needs_2fa
+        ✓ is an error when server api request fails
+    cart-values
+      index
+        cart change functions
+          flow( changeFunctions... )
+            ✓ should combine multiple cart operations into a single step
+          cartItems.add( cartItem )
+            ✓ should add the cartItem to the products array
+          cartItems.remove( cartItem )
+            ✓ should remove the cartItem from the products array
+        cartItems.hasProduct( cart, productSlug )
+          ✓ should return a boolean that says whether the product is in the cart items
+        cartItems.hasOnlyProductsOf( cart, productSlug )
+          ✓ should return a boolean that says whether only products of productSlug are in the cart items
+        emptyCart( siteID )
+          returns a cart that
+            ✓ should have the provided blog_id
+            ✓ should have no products
+    cart
+      store
+        cart-synchronizer
+          ✓ should make local changes visible immediately
+          *before* the first fetch from the server
+            ✓ should *not* allow the value to be read
+            ✓ should enqueue local changes and POST them after fetching
+          *after* the first fetch from the server
+            ✓ should allow the value to be read
+    create-selector
+      index
+        ✓ should expose its memoized function
+        ✓ should create a function which returns the expected value when called
+        ✓ should cache the result of a selector function
+        ✓ should warn against complex arguments in development mode
+        ✓ should return the expected value of differing arguments
+        ✓ should bust the cache when watched state changes
+        ✓ should accept an array of dependent state values
+        ✓ should accept an array of dependent selectors
+        ✓ should default to watching entire state, returning cached result if no changes
+        ✓ should default to watching entire state, busting if state has changed
+        ✓ should accept an optional custom cache key generating function
+        ✓ should call dependant state getter with arguments
+        ✓ should handle an array of selectors instead of a dependant state getter
+    credit-card-details
+      index
+        Validation
+          Discover Card: range 622126-622925
+            ✓ should return null for 622125
+            ✓ should return `discover` for 622126
+            ✓ should return `discover` for 622348 (a random number between 622126 and 622925)
+            ✓ should return `discover` for 622925
+            ✓ should return null for 622926
+      validation
+        #validateCardDetails
+          ✓ should return no errors when card is valid
+          ✓ should return error when card has expiration date in the past
+    deep-pick
+      lib/deep-pick
+        ✓ works like lodash for non-nested properties
+        ✓ also supports nested properties
+    deterministic-stringify
+      index
+        ✓ should handle boolean
+        ✓ should handle number
+        ✓ should handle null
+        ✓ should handle undefined
+        ✓ should sort arrays
+        ✓ should handle nested objects
+        ✓ should handle boolean as object values
+        ✓ should alphabetize object attributes
+        ✓ should allow nesting and sort nested arrays
+        ✓ should produce deterministic strings regardless of attribute or array order
+    domains
+      dns
+        index
+          #validateAllFields
+            ✓ should return no errors for a valid A record
+        reducer
+          ✓ should return the same state when no matching record passed in the delete action
+          ✓ should return state without record passed in the delete action
+          ✓ should return state without record (having no id) passed in the delete action
+      email-forwarding
+        reducer
+          ✓ should return the same state when no matching record passed in the delete complete action
+          ✓ should return state without record passed in the delete completed action
+        store
+          ✓ should be an object
+          ✓ should have initial state equal an empty object
+          ✓ should return initial domain state for the domain that has no data
+          ✓ should return an object with disabled needsUpdate and enabled isFetching flag when fetching domain data triggered
+          ✓ should return an object with enabled needsUpdate and disabled isFetching flag when fetching domain data failed
+          ✓ should return a list with email forwards when fetching domain data completed
+          ✓ should return an empty email forwards list when deleting mailbox completed
+          ✓ should return an email forwards list with temporary mailbox when adding mailbox completed
+      nameservers
+        store
+          ✓ should be an object
+          ✓ should have initial state equal an empty object
+          ✓ should return default domain state when fetching state for domain that has no data
+          ✓ should return an object with enabled isFetching flag when fetching domain data triggered
+          ✓ should return an object with disabled isFetching flag when fetching domain data failed
+          ✓ should return a list with name servers when fetching domain data completed
+          ✓ should return an updated list with name servers when name servers update completed
+      assembler
+        ✓ should produce empty array when null data transfer object passed
+        ✓ should produce array with domains even when there is no primary domain
+        ✓ should produce array with registered domain first when registered domain is set as primary domain
+      whois
+        assembler
+          ✓ should return object with default contact info when there is no registrant entry in data transfer object
+          ✓ should return object with default contact info when there is any registrant entry in data transfer object
+          ✓ should return object with all contact info when there is full registrant entry in data transfer object
+        store
+          ✓ should be an object
+          ✓ should have initial state equal an empty object
+          ✓ should return initial domain state for the domain that has no data
+          ✓ should return an object with disabled needsUpdate and enabled isFetching flag when fetching domain data triggered
+          ✓ should return an object with enabled needsUpdate and disabled isFetching flag when fetching domain data failed
+          ✓ should return contact data when fetching domain data completed
+          ✓ should return latest whois data when domain data received twice
+          ✓ should contain whois data for given domain equal to received from server action
+          ✓ should return enabled needsUpdate flag when domain WHOIS update completed
+    email-followers
+      Email Followers Store
+        ✓ Store should be an object
+        Fetch Email Followers
+          ✓ Should update the store on RECEIVE_EMAIL_FOLLOWERS
+          ✓ The store should return an array of objects when fetching email followers
+          ✓ Fetching more email followers should update the array in the store
+          ✓ Pagination data should update when we fetch more email followers
+        Remove follower
+          ✓ Should remove a single follower.
+          ✓ Should restore a single follower on removal error.
+    embed-frame-markup
+      #generateEmbedFrameMarkup()
+        ✓ should return an empty string if no arguments passed
+        ✓ should generate markup with the body contents
+        ✓ should generate markup with styles
+        ✓ should generate markup with scripts
+    feed-post-store
+      feed-post-store
+        ✓ should have a dispatch token
+        ✓ should save a post from a feed page
+        ✓ should save a post from a blog page
+        ✓ should ignore a post from a page without the right ID
+        ✓ should ignore a post from a page with an error
+        ✓ should normalize a received post
+        ✓ should index a post by the site_ID and ID if it is internal
+        ✓ should accept a post without a feed ID
+    feed-store
+      index
+        ✓ should have a dispatch token
+        ✓ should not contain an unknown feed ID
+        ✓ should prevent double fetches
+        ✓ should accept a good response
+        ✓ should accept an error
+    feed-stream-store
+      FeedPostList
+        ✓ should require an id, a fetcher, a keyMaker
+        A valid instance
+          ✓ should receive a page
+          updates
+            ✓ should receive updates
+            ✓ should treat each set of updates as definitive
+        Selected index
+          ✓ should initially have nothing selected
+          ✓ should select the next item
+          ✓ should select the next valid post
+          ✓ should be able to select a gap
+          ✓ should select the prev item
+          ✓ should select the prev valid post
+        Filter followed x-posts
+          ✓ rolls up x-posts and matching x-comments
+          ✓ when following origin site, filters followed x-posts, but leaves comment notices
+          ✓ updates sites x-posted to
+          ✓ filters xposts with no metadata
+          ✓ filters xposts with missing xpost metadata
+    follow-list
+      index
+        FollowList
+          add
+            ✓ should add a site
+            ✓ should create an instance of FollowListSite
+            ✓ should not add a duplicate site_id
+        FollowListSite
+          instantiation
+            ✓ should set the attributes
+          follow
+            ✓ should call the follow endpoint and execute the callback
+            ✓ should not call the follow endpoint or execute the callback if already following
+          unfollow
+            ✓ should call the unfollow endpoint and execute the callback
+            ✓ should not call the unfollow endpoint or execute the callback if already following
+    followers
+      WPCOM Followers Store
+        ✓ Store should be an object
+        Fetch Followers
+          ✓ Should update the store on RECEIVE_FOLLOWERS
+          ✓ The store should return an array of objects when fetching followers
+          ✓ Fetching more followers should update the array in the store
+          ✓ Pagination data should update when we fetch more followers
+        Remove follower
+          ✓ Should remove a single follower.
+          ✓ Should restore a single follower on removal error.
+    form-state
+      index
+        #Controller
+          ✓ enables the fields on the first event
+          #getInitialState
+            ✓ returns disabled fields
+          #handleFieldChange
+            ✓ updates the field value
+            ✓ validates the new value
+            when there are multiple changes at once
+              ✓ only shows errors for the latest values
+    format-currency
+      formatCurrency
+        ✓ formats a number to localized currency
+        ✓ adds a localized thousands separator
+        ✓ handles zero
+        ✓ handles negative values
+        ✓ unknown currency codes return null
+        supported currencies
+          ✓ USD
+          ✓ AUD
+          ✓ CAD
+          ✓ EUR
+          ✓ GBP
+          ✓ JPY
+        getCurrencyDefaults()
+          ✓ returns currency defaults
+        getCurrencyObject()
+          ✓ handles zero
+          ✓ handles negative values
+          supported currencies
+            ✓ USD
+            ✓ AUD
+            ✓ CAD
+            ✓ EUR
+            ✓ GBP
+            ✓ JPY
+    formatting
+      formatting
+        #capitalPDangit()
+          ✓ should error when input is not a string
+          ✓ should not modify wordpress
+          ✓ should return WordPress with a capital P when passed Wordpress
+          ✓ should replace all instances of Wordpress
+        #parseHtml()
+          ✓ should equal to null when input is not a string
+          ✓ should return a DOM element if you pass in DOM element
+          ✓ should return a document fragment if we pass in a string
+          ✓ should return a document fragment if we pass in a HTML string
+          ✓ should parseHtml and return document fragment that can be queried
+        #decodeEntities()
+          node
+            ✓ should decode entities
+            ✓ should not alter already-decoded entities
+          browser
+            ✓ should decode entities
+            ✓ should not alter already-decoded entities
+        #preventWidows()
+          ✓ should not modify input if type is not string
+          ✓ should return empty string when input is all whitespace
+          ✓ should return input when only one word
+          ✓ should trim whitespace
+          ✓ should add non-breaking space between words to keep
+    geocoding
+      geocoding
+        #geocode()
+          ✓ should return a promise
+          ✓ should call to the Google Maps API
+    happiness-engineers
+      Happiness engineers actions
+        ✓ Actions should be an object
+        ✓ Actions should have method fetch
+      Happiness engineers Store
+        ✓ Store should be an object
+        ✓ Store should have method getHappinessEngineers
+        Get Happiness Engineers
+          ✓ Should return empty array when there are no happiness engineers
+          ✓ Should return an array of happiness engineers when there are happiness engineers
+    help-search
+      Help search Store
+        Get Help Links
+          ✓ Should return empty array when there are no help links
+          ✓ Should return an array of help link when there are help links
+    highlight
+      highlight
+        unit test
+          ✓ should return html as is if there's no term
+          ✓ should wrap the term with <mark> when no custom wrapper node is defined
+          ✓ should wrap the term with the custom wrapper node when provided
+          ✓ should wrap case-insensitively, within a single word, with multiple matches, over multiple lines
+          ✓ should be able to handle html elements with children and text nodes
+        edge cases
+          unicode
+            ✓ should wrap when the text and query contains unicode chars
+          html
+            ✓ should not match parts of html tags
+            ✓ should prevent html tag injection
+            ✓ should prevent html attribute injection
+    i18n-utils
+      utils
+        #removeLocaleFromPath
+          ✓ should remove the :lang part of the URL
+          ✓ should not remove the :flow part of the URL
+          ✓ should not remove the :step part of the URL
+          ✓ should not remove keys from an invite
+        #getLocaleFromPath
+          ✓ should return undefined when no locale at end of path
+          ✓ should return locale string when at end of path
+        #getLanguage
+          ✓ should return a language
+          ✓ should return a language with a country code
+          ✓ should fall back to the language code when a country code is not available
+          ✓ should return undefined when no arguments are given
+          ✓ should return undefined when the locale is invalid
+          ✓ should return undefined when we lookup random words
+          ✓ should return a language with a three letter country code
+    importer
+      Importer store
+        API integration
+          ✓ should hydrate if the API returns a blank body
+          ✓ should hydrate if the API returns a defunct importer
+    interval
+      Interval
+        Rendering and children
+          ✓ Should render an empty span with no children
+          ✓ Should render children
+          ✓ Should pass props to children
+        Running actions
+          ✓ Should add the given action
+          ✓ Runs onTick() immediately
+          ✓ Runs onTick() on the intervals
+          ✓ Changes the callback on prop changes
+          ✓ Adds the action when mounted
+          ✓ Removes the action when unMounted
+      Interval Runner
+        Adding actions
+          ✓ Should return the appropriate id
+          ✓ Should increment the next id after adding an action
+          ✓ Should add an action to the proper slot
+          ✓ Should add two actions of the same interval to the same slot
+        Removing actions
+          ✓ Should remove an action by id
+          ✓ Should not decrement the next id after removing an action
+        Running actions
+          ✓ Should run all actions for a given period when called
+          ✓ Should only execute actions for the given period
+          ✓ Should only execute actions that remain after removal
+    invites
+      reducers
+        Invites Create Validation Store
+          Validating invite creation
+            ✓ Validation is not empty
+      stores
+        List Invites Store
+          Listing invites
+            ✓ List of invites should be an object
+            ✓ Fetching more invites should add to the object
+    keyboard-shortcuts
+      KeyboardShortcuts
+        ✓ should emit events to subscribers
+      KeyBindings
+        ✓ should have get function
+        ✓ should return an object with strings for keys and arrays for values
+        ✓ should emit an event when the language changes
+    like-store
+      index
+        ✓ should have a dispatch token
+        ✓ should return the full list of likes for a post
+        ✓ should return a count of likes for a post
+        ✓ should tell me if the current user has liked a post
+        ✓ should ignore a response without a post ID
+        ✓ should ignore a response with an error
+        ✓ should add a new like and unlike for the current user
+        ✓ should pick up feed post items
+        ✓ should ignore external feed post items
+        ✓ should ignore error feed post items
+        ✓ should ignore feed post items with no count
+    local-list
+      LocalList
+        options
+          ✓ should set the localStoreKey
+          ✓ should set the limit
+        functions
+          ✓ should have set function
+          ✓ should have find function
+          ✓ should have getData function
+          ✓ should have clear function
+        getData
+          ✓ should return an empty array
+        clear
+          ✓ should empty the localStorage
+        set
+          ✓ should store local data for a given key
+          ✓ should only store one record for a given key
+          ✓ should store multiple records for different keys
+          ✓ should store the newest record for a given key
+          record
+            ✓ should set a key attribute
+            ✓ should set a createdAt attribute
+            ✓ should set the data
+        limitLocal
+          ✓ should default to only allow 10 records to be stored
+          ✓ should allow default limit to be overidden
+        find
+          ✓ should return false if record not found
+          ✓ should return the correct record
+    local-storage
+      localStorage
+        when window.localStorage does not exist
+          ✓ should create a window.localStorage instance
+          ✓ should correctly store and retrieve data
+        when window.localStorage is not working correctly
+          ✓ should overwrite broken or missing methods
+          ✓ should correctly store and retrieve data
+    localforage
+      localforage-bypass
+        keys
+          ✓ should list all keys
+          ✓ should be empty when initialized
+        length
+          ✓ should be zero when initialized
+          ✓ should match number of items
+          ✓ should increment after setItem
+          ✓ should not increment after setItem where key already exists
+        clear
+          ✓ should remove all keys
+        getItem
+          ✓ should get an item that exists
+          ✓ should return undefined for an item that doesn't exist
+        setItem
+          ✓ should set an item
+          ✓ should overwrite an item
+        removeItem
+          ✓ should remove an item
+          ✓ should silently fail to remove item that doesn't exist
+    media-serialization
+      MediaSerialization
+        #deserialize()
+          ✓ should parse a caption shortcode string containing an image
+          ✓ should parse an image string
+          ✓ should parse an image HTMLElement
+          ✓ should detect transient images
+          ✓ should favor natural dimensions over inferred
+          ✓ should favor attribute dimensions over natural
+          ✓ should parse a REST API media object
+          ✓ should gracefully handle an unknown format
+    media
+      MediaActions
+        #setQuery()
+          ✓ should dispatch the SET_MEDIA_QUERY action
+        #fetch()
+          ✓ should call to the WordPress.com REST API
+          ✓ should not allow simultaneous request for the same item
+          ✓ should allow simultaneous request for different items
+        #fetchNextPage()
+          ✓ should call to the WordPress.com REST API
+        #add()
+          ✓ should accept a single upload
+          ✓ should accept an array of uploads
+          ✓ should accept a file URL
+          ✓ should accept a FileList of uploads
+          ✓ should accept a Blob object wrapper and pass it as "file" parameter
+          ✓ should call to the WordPress.com REST API
+          ✓ should immediately receive a transient object
+          ✓ should attach file upload to a post if one is being edited
+          ✓ should attach URL upload to a post if one is being edited
+          ✓ should upload in series
+        #edit()
+          ✓ should immediately edit the existing item
+        #update()
+          ✓ should accept a single item
+          ✓ should accept an array of items
+          ✓ should immediately update the existing item
+          ✓ should call to the WordPress.com REST API
+        #delete()
+          ✓ should accept a single item
+          ✓ should accept an array of items
+          ✓ should call to the WordPress.com REST API
+          ✓ should immediately remove the item
+        #clearValidationErrors()
+          ✓ should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId
+          ✓ should dispatch the `CLEAR_MEDIA_VALIDATION_ERRORS` action with the specified siteId and itemId
+      MediaLibrarySelectedStore
+        #get()
+          ✓ should return a single value
+          ✓ should return undefined for an item that does not exist
+        #getAll()
+          ✓ should return all selected media
+          ✓ should return an empty array for a site with no selected items
+        .dispatchToken
+          ✓ should expose its dispatcher ID
+          ✓ should emit a change event when library items have been set
+          ✓ should emit a change event when receiving updates
+          ✓ should replace an item when its ID has changed
+          ✓ should remove an item when REMOVE_MEDIA_ITEM is dispatched
+      MediaListStore
+        #get()
+          ✓ should return a single value
+          ✓ should return undefined for an item that does not exist
+        #getAll()
+          ✓ should return all received media
+          ✓ should sort media by date, with newest first
+          ✓ should secondary sort media by ID, with larger first
+          ✓ should return undefined for a fetching site
+          ✓ should return an empty array for a site with no media
+        #getNextPageQuery()
+          ✓ should include default parameters if no query provided
+          ✓ should include page_handle if the previous response included next_page meta
+          ✓ should preserve the query from the previous request
+          ✓ should reset the page handle when the query changes
+        #hasNextPage()
+          ✓ should return true if the previous response included next_page meta
+          ✓ should return true if the site is unknown
+          ✓ should return false if the previous response did not include next_page meta
+        #isFetchingNextPage()
+          ✓ should return false no request has been made
+          ✓ should return true if site media is being fetched
+          ✓ should return false if site media was received
+          ✓ should return false when the query was changed
+        #isItemMatchingQuery
+          ✓ should return true if no query exists for site
+          ✓ should return false if a search query is specified, but the item doesn't match
+          ✓ should return true if a search query is specified, and the item matches
+          ✓ should return true if a search query is specified, and the item matches case insensitive
+          ✓ should return false if a search query and mime_type are specified, and the item matches on title, but not mime_type
+          ✓ should return false if a mime_type is specified, but the item doesn't match
+          ✓ should return true if a mime_type is specified, and the item matches
+        .dispatchToken
+          ✓ should expose its dispatcher ID
+          ✓ should destroy existing media when a query changes
+          ✓ should not destroy existing media if query change relates to pagination
+          ✓ should emit a change event when receiving updates
+          ✓ should ignore received items where the query does not match
+          ✓ should remove an item when REMOVE_MEDIA_ITEM is dispatched
+          ✓ should re-add an item when REMOVE_MEDIA_ITEM errors and includes data
+          ✓ should replace an item when RECEIVE_MEDIA_ITEM includes ID
+      MediaStore
+        #get()
+          ✓ should return a single value
+          ✓ should return undefined for an item that does not exist
+          ✓ should resolve a pointer to another image item
+        #getAll()
+          ✓ should return all received media
+          ✓ should return undefined for an unknown site
+        .dispatchToken
+          ✓ should expose its dispatcher ID
+          ✓ should emit a change event when receiving updates
+          ✓ should remove an item when REMOVE_MEDIA_ITEM is dispatched
+          ✓ should re-add an item when REMOVE_MEDIA_ITEM errors and includes data
+          ✓ should replace an item when RECEIVE_MEDIA_ITEM includes ID
+          ✓ should create an item stub when FETCH_MEDIA_ITEM called
+      MediaUtils
+        #url()
+          ✓ should simply return the URL if media is transient
+          ✓ should accept a media object without options, returning the URL
+          ✓ should accept a photon option to use the photon service
+          ✓ should generate the correct width-constrained photon URL
+          ✓ should generate the correct width-constrained URL
+          ✓ should attempt to find and return a desired thumbnail size
+          ✓ should gracefully handle empty media objects
+        #getFileExtension()
+          ✓ should return undefined for a falsey media value
+          ✓ should detect extension from file name
+          ✓ should handle reserved url characters in filename
+          ✓ should detect extension from HTML5 File object
+          ✓ should detect extension from HTML5 File object with reserved url chars
+          ✓ should detect extension from object file property
+          ✓ should detect extension from already computed extension property
+          ✓ should detect extension from object URL property
+          ✓ should detect extension from object guid property
+          ✓ should detect extension from URL string with query parameters
+        #getMimePrefix()
+          ✓ should return undefined if a mime type can't be determined
+          ✓ should return the mime prefix if a mime type can be determined
+        #getMimeType()
+          ✓ should return undefined for a falsey media value
+          ✓ should return undefined if detected extension doesn't exist in mime_types
+          ✓ should return an object mime type
+          ✓ should detect mime type from string extension
+          ✓ should detect mime type with reserved url characters in filename
+          ✓ should ignore invalid filenames
+          ✓ should detect mime type from HTML5 File object
+          ✓ should detect mime type from object file property
+          ✓ should detect mime type from object URL property
+          ✓ should ignore query string parameters
+          ✓ should ignore query string parameters in URL strings
+          ✓ should detect mime type from object guid property
+          ✓ should detect mime type regardless of extension case
+        #filterItemsByMimePrefix()
+          ✓ should return an array filtered to the matching mime prefix
+          ✓ should gracefully omit items where a mime type could not be determined
+        #sortItemsByDate()
+          ✓ should return a new array array, sorted descending by date
+          ✓ should return the item with the the greater ID if the dates are not set
+          ✓ should return the item with the the greater ID if the dates are equal
+          ✓ should parse dates in string format
+          ✓ should not mutate the original array
+        #isSiteAllowedFileTypesToBeTrusted()
+          ✓ should return false for versions of Jetpack where option is not synced
+          ✓ should return true for versions of Jetpack where option is synced
+        #getAllowedFileTypesForSite()
+          ✓ should return an empty array for a falsey site
+          ✓ should return an array of supported file type extensions
+        #isSupportedFileTypeForSite()
+          ✓ should return false for a falsey item
+          ✓ should return false for a falsey site
+          ✓ should return false if the site doesn't support the item's extension
+          ✓ should return true for versions of Jetpack where option is not synced
+          ✓ should return false for versions of Jetpack where option is synced and extension is not supported
+          ✓ should return true if the site supports the item's extension
+          ✓ should return true despite even if different case
+        #isExceedingSiteMaxUploadSize()
+          ✓ should return null if the provided `bytes` are not numeric
+          ✓ should return null if the site `options` are `undefined`
+          ✓ should return null if the site `max_upload_size` is `false`
+          ✓ should return false if the provided `bytes` are less than or equal to `max_upload_size`
+          ✓ should return true if the provided `bytes` are greater than `max_upload_size`
+        #isVideoPressItem()
+          ✓ should return false if passed a falsey item
+          ✓ should return false if no `videopress_guid` property exists
+          ✓ should return false if the `videopress_guid` property is not a valid guid
+          ✓ should return true if the `videopress_guid` property is a valid guid
+        #playtime()
+          ✓ should return undefined if not passed number
+          ✓ should handle specifying seconds as float value
+          ✓ should handle zero seconds
+          ✓ should handle single-digit seconds
+          ✓ should handle double-digit seconds
+          ✓ should handle single-digit minutes
+          ✓ should handle double-digit minutes
+          ✓ should handle single-digit hours
+          ✓ should handle double-digit hours
+          ✓ should continue to increment hours for long lengths
+        #getThumbnailSizeDimensions()
+          ✓ should return the site dimensions if exists
+          ✓ should return default values if site doesn't exist
+          ✓ should return undefined values for unknown size
+        #generateGalleryShortcode()
+          ✓ should generate a gallery shortcode
+          ✓ should accept an optional set of parameters
+          ✓ should omit size and columns attributes if not used
+        #canUserDeleteItem()
+          ✓ should return false if the user ID matches the item author but user cannot delete posts
+          ✓ should return true if the user ID matches the item author and user can delete posts
+          ✓ should return false if the user ID does not match the item author and user cannot delete others posts
+          ✓ should return true if the user ID does not match the item author but user can delete others posts
+      MediaValidationStore
+        #validateItem()
+          ✓ should have no effect for a valid file
+          ✓ should set an error array for an invalid file
+          ✓ should set an error array for a file exceeding acceptable size
+          ✓ should accumulate multiple validation errors
+        #clearValidationErrors()
+          ✓ should remove validation errors for a single item on a given site
+          ✓ should remove all validation errors on a site if no item is specified
+        #clearValidationErrorsByType
+          ✓ should remove errors for all items containing that error type on a given site
+        #getAllErrors()
+          ✓ should return an empty object when no errors exist
+          ✓ should return an object of errors
+        #getErrors()
+          ✓ should return an empty array when no errors exist
+          ✓ should return an array of errors
+        .dispatchToken
+          ✓ should expose its dispatcher ID
+          ✓ should emit a change event when receiving an item with an error
+          ✓ should emit a change event when clearing validation errors
+          ✓ should detect a 404 error from received item
+          ✓ should detect a not enough space error from received item
+          ✓ should detect an exceeds plan storage limit error from received item
+          ✓ should detect general server error from received item
+          ✓ should set errors into the action object explicitly
+          ✓ should preserve existing errors when detecting a new one
+    menu-data
+      MenuData
+        home page item injection
+          generateHomePageMenuItem
+            ✓ should return the correct type
+            ✓ should contain the title as suffix if there is one
+            ✓ should append / to end of the URL if the site doesn't have one
+            ✓ should not append / to end of the URL if there's already one
+          interceptSaveForHomepageLink
+            ✓ should convert the home item to link
+          interceptLoadForHomepageLink
+            ✓ should convert the home link to page item
+            ✓ should match home link ending without /
+            ✓ should match home link ending with /
+        singleton
+          ✓ should return the same valid MenuData instance everytime
+        fetch
+          ✓ should fire "change" event
+          ✓ should decode HTML entities
+        isValidMenu
+          ✓ should return truthy value when supplied menu exists
+          ✓ should return falsy value when supplied menu does not exist
+        getMenu
+          ✓ should return the menu currently assigned to the supplied location, if any
+        updateMenuItem
+          ✓ should update an item name in the internal structure
+          ✓ should raise a change event
+        moveItemsToParent
+          ✓ should move one item to a different parent
+        moveItem
+          ✓ should move an item and insert it before a target
+          ✓ should move an item and insert it after a target
+          ✓ should move an item to a different parent
+          ✓ should move subtree of an item
+          ✓ should insert child item as last child
+          ✓ should be able to move an item into its own descendent subtree
+        parseMenu
+          ✓ should call interceptLoadForHomepageLink
+        addItem
+          when inserting before an item
+            ✓ should add the item
+            ✓ should raise a change event
+          when inserting after an item
+            ✓ should add the item
+            ✓ should raise a change event
+          when inserting as a child item
+            ✓ should add the item
+            ✓ should raise a change event
+        deleteItem
+          when the item has no children
+            ✓ should delete the item
+            ✓ should raise a change event
+          when the item has children, and is a top level item
+            ✓ should delete the item
+            ✓ should move the child items to the root level
+            ✓ should raise a change event
+          when the item has children, and is NOT a top level item
+            ✓ should delete the item
+            ✓ should move the child items to the parent of the deleted parent
+            ✓ should raise a change event
+        addMenu
+          ✓ should add a new menu
+        addNewMenu
+          ✓ should return an incremented new menu name
+          ✓ should use suffix "1" for first menu
+        deleteMenu
+          ✓ should remove the menu from the list
+          ✓ should raise a change event
+        allocateClientIDs
+          ✓ should populate all item.id fields in a menu with new values
+          ✓ should store original id in server_id field
+          ✓ should leave the menu's own ID untouched
+        restoreServerIDs
+          ✓ should populate item.id fields with original values
+          ✓ should leave the menu's own ID untouched
+    mixins
+      data-observe
+        observe()
+          ✓ should return proper mixin with no arguments
+          ✓ should return proper mixin with one argument
+          ✓ should return proper mixin with more than one argument
+          componentDidMount()
+            ✓ should call .on() on the props with the names as arguments
+            ✓ should not call .on() if the props are missing
+          componentWillUnmount
+            ✓ should call .off() on the props with the names as arguments
+            ✓ should not call .off() on the props if the props are missing
+          componentWillReceiveProps
+            ✓ should not do anything if props did not change
+            ✓ should re-bind the event handlers if the props reference changed
+            ✓ should only unbind the event if the prop goes missing, but not bind it
+            ✓ should only bind the event if the prop appears, but not unbind it
+      dirty-linked-state
+        Dirty Linked State Mixin
+          ✓ initially has default state
+          ✓ adds a modified field to dirtyFields
+          ✓ when a field is modified multiple times, the dirty field is only added once
+          ✓ can have multiple dirty fields
+      pageable
+        Pageable
+          when mixed in with a collection
+            ✓ expects the data property to be set
+            ✓ expects the perPage property to be set
+            ✓ should mix in its own properties
+            fetchNextPage
+              ✓ should call the collection's fetch() method
+              ✓ sets fetchingNextPage to true
+              ✓ passes an options object to fetch()
+              ✓ passes a callback to fetch()
+              ✓ increments the page
+            handleResponse() on page 1
+              ✓ sets fetchingNextPage to false
+              ✓ leaves the page number alone
+            handleResponse() on page 2
+              ✓ sets fetchingNextPage to false
+              ✓ leaves the page number alone
+            handleResponse() on page 3 (empty)
+              ✓ sets fetchingNextPage to false
+              ✓ sets lastPage to true
+            handleResponse() with one page only
+              ✓ sets lastPage to true
+      searchable
+        index
+          searchNodes as array
+            ✓ should find node
+            ✓ should not find a node
+          searchNodes as string
+            ✓ should find node
+            ✓ should not find a node
+          searchNodes as object
+            ✓ should find node
+            ✓ should not find a node
+      url-search
+        build-url
+          ✓ should accept a path without existing query parameters
+          ✓ should return only the path, even if a full URL is passed
+          ✓ should preserve existing query parameters
+          ✓ should override the previous search term
+          ✓ should remove the previous search term if not searching
+          ✓ should replace encoded spaces with `+`
+    network-connection
+      index
+        ✓ has to be enabled when config flag is enabled
+        ✓ has initial state connected
+        Events
+          ✓ has to persist connected state when connected event sent
+          ✓ has to change state to disconnected when disconnected event sent
+          ✓ has to change state to connected only once when connected event sent twice
+          ✓ has to change state to disconnected and then back to connected when disconnected and then connected events sent
+    notification-settings-store
+      index
+        ✓ should have a dispatch token
+        get blog settings
+          ✓ should return an array of blog settings
+        get other site settings
+          ✓ should return an object for comments on other blogs
+        get email from WordPress settings
+          ✓ should return an object for WP email settings
+        when toggle blog settings
+          ✓ should toggle a blog setting by stream and blog id
+          ✓ should toggle a device setting for a blog by device id and blog id
+        when toggle other blogs settings
+          ✓ should toggle a a setting by stream
+          ✓ should toggle a device setting by device id
+        when toggle other blogs settings
+          ✓ should toggle a a setting by stream
+    oauth-store
+      oAuthStore
+        ✓ is in progress when attempting login
+        ✓ is no longer in progress when login fails
+        ✓ requires OTP for a 2FA account
+        ✓ requires OTP for a 2FA account when OTP is wrong
+        ✓ sets OAuth token when login is correct
+    olark-events
+      Olark events
+        ✓ should trigger on api.chat.onReady
+        ✓ should trigger on nested api.chat.onReady
+    olark-store
+      index
+        ✓ Olark store data should be an object
+        ✓ Olark store data should have expected properties
+    paths
+      index
+        #newPost()
+          ✓ should return the Calypso root post path no site
+          ✓ should return a Calypso site-prefixed post path if site exists
+        #newPage()
+          ✓ should return the Calypso root page path no site
+          ✓ should return a Calypso site-prefixed page path if site exists
+        #publicizeConnections()
+          ✓ should return the root sharing path if no site specified
+          ✓ should return a Calypso site-suffixed sharing path if site specified
+    people
+      Viewers Store
+        Shape of store
+          ✓ Store should be an object
+          ✓ Store should have method emitChange
+          ✓ Store should have method hasUnauthorizedError
+          ✓ Store should have method getErrors
+        hasUnauthorizedError
+          ✓ Should return false when there are no errors
+          ✓ Should return true when there is an unauthorized error
+        Logging and retrieving errors
+          ✓ getErrors should return an empty array when there are no errors
+          ✓ An error should increase the number of errors in the store
+        inProgress and completed actions
+          ✓ getInProgress should return an empty array on init
+          ✓ getCompleted should return an empty array on init
+          ✓ An action should increase the number of inProgress in the store
+          ✓ An error should decrease the number of inProgress in the store
+          ✓ A completed action should decrease the number of inProgress in the store
+    phone-validation
+      Phone Validation Library
+        ✓ should fail an empty number
+        ✓ should fail a short number
+        ✓ should fail a number containing letters
+        ✓ should fail a number containing special characters
+        ✓ should fail an invalid number
+        ✓ should pass a valid number
+        ✓ should pass a valid 8-digit argentine no-leading-9 number
+        ✓ should pass a valid 10-digit argentine no-leading-9 number
+        ✓ should pass a valid 8-digit croatian number
+        ✓ should pass a valid 8-digit danish number
+        ✓ should pass a valid 7-digit jamaican number
+    plans-list
+      PlansList
+        initialize
+          ✓ should populate the list of plans
+          ✓ should set attributes properly
+    plugins
+      WPcom Data Actions
+        ✓ Actions should be an object
+        ✓ Actions should have method installPlugin
+Create 91234567890 site
+Create undefined plugin
+Create 91234567890 site
+Create undefined plugin
+        ✓ when installing a plugin, it should send a install request to .com
+Create 91234567890 site
+Create undefined plugin
+Create 91234567890 site
+Create undefined plugin
+        ✓ when installing a plugin, it should send an activate request to .com
+        ✓ when installing a plugin, it should not send a request to .com when the site doesn't allow us to update its files
+        ✓ when installing a plugin, it should return a rejected promise if the site files can't be updated
+        ✓ when installing a plugin, it should return a rejected promise if user can't manage the site
+        ✓ Actions should have method removePlugin
+Create undefined site
+Create undefined wpcom plugin
+        ✓ when removing a plugin, it should send a remove request to .com
+Create undefined site
+Create undefined plugin
+        ✓ when removing a plugin, it should send an deactivate request to .com
+        ✓ when removing a plugin, it should not send a request to .com when the site doesn't allow us to update its files
+      Plugins Log Store
+        ✓ logs an update error
+        ✓ removing an error notice deletes an error
+      Plugins Store
+        ✓ Store should be an object
+        ✓ Store should have method emitChange
+        Fetch Plugins
+          ✓ Should update the store on RECEIVE_PLUGINS
+          ✓ Should return an empty array if RECEIVE_PLUGINS errors
+          ✓ Should not set value of the site if NOT_ALLOWED_TO_RECEIVE_PLUGINS errors
+          ✓ Should not be set as "fetching" after NOT_ALLOWED_TO_RECEIVE_PLUGINS is triggered
+          getPlugin method
+            ✓ Store should have method getPlugin
+            ✓ should return an object
+            ✓ should accept sites as an array of objects or object
+            ✓ should return an object with attribute sites array
+          getPlugins method
+            ✓ Store should have method getPlugins
+            ✓ should return an array of objects
+            ✓ should return an object with attribute sites array
+            ✓ should return the same object as getPlugin
+            ✓ should return active Plugins
+            ✓ should return inactive Plugins
+            ✓ should return needs update Plugins
+            ✓ should return all Plugin
+            ✓ should return none Plugin
+          getSitePlugin method
+            ✓ Store should have method getSitePlugin
+            ✓ Should have return a plugin object for a site
+            ✓ Should have return undefined for a site if the plugin doesn't exist
+          getSitePlugins method
+            ✓ Store should have method getSitePlugins
+            ✓ Should have return Array of Objects
+            ✓ Should have return undefined if site doesn't exist
+          getSites method
+            ✓ Store should have method getSites
+            ✓ Should return Array of Objects
+            ✓ Should return Array of Objects that has the pluginSlug as a attribute
+        Fetch Plugins Again
+          ✓ should contain the list of latest plugins
+        Fetch Plugins MultiSite
+          ✓ should contain the list of latest plugins
+        Remove Plugin
+          ✓ it should remove the plugin from the sites list
+          ✓ it should bring the plugin back if there is an error while removing the plugin
+        Update Plugin
+          Updating Plugin
+            ✓ doesn't remove update when lauched
+          Successfully Plugin Update
+            ✓ should set lastUpdated
+            ✓ should update the plugin data
+          Remove Plugin Update Info
+            ✓ should remove lastUpdated
+          Failed Plugin Update
+            ✓ should set update to an object
+        Activate Plugin
+          Activaiting Plugin
+            ✓ Should set active = true if plugin is being activated
+          Succesfully Activated Plugin
+            ✓ Should set active = true
+          Error while Activating Plugin
+            ✓ Should set active = false
+          Error while Activating Plugin with activation_error
+            ✓ Should set active = true if plugin is being activated with error plugin already active
+          Error while Activating Broken Plugin
+            ✓ Should set active = false
+        Deactivate Plugin
+          Deactivating Plugin
+            ✓ Should set active = false if plugin is being activated
+          Succesfully Deactivated Plugin
+            ✓ Should set active = false
+          Error while Deactivating Plugin
+            ✓ Should set active = true
+          Error while Deactivating Plugin with deactivation_error
+            ✓ Should set active = false if plugin is being deactivated with error plugin already deactived
+        Enable AutoUpdates for Plugin
+          ✓ Should set autoupdate = true if autoupdates are being enabled
+          ✓ Should set autoupdate = true after autoupdates enabling was successfully
+          ✓ Should set autoupdate = false after autoupdates enabling errored 
+        Disable AutoUpdated for Plugins
+          ✓ Should set autoupdate = false if autoupdates are being disabled
+          ✓ Should set autoupdate = false after autoupdates disabling was successfully
+          ✓ Should set autoupdate = true after autoupdates disabling errored 
+      Plugins Utils
+        normalizePluginData
+          ✓ should have a method normalizePluginData
+          ✓ normalizePluginData should normalise the plugin data
+          ✓ should add the author name to the plugins object
+          ✓ should add the author url to the plugins object
+          ✓ should get the best possible icon if available
+        whiteListPluginData
+          ✓ should have a method whiteListPluginData
+          ✓ should stip out unknown keys
+          ✓ should keep known keys
+        extractAuthorName
+          ✓ should extract the author from the .org api response
+          ✓ should support names with special chars
+        extractScreenshots
+          ✓ should extract the screenshot data from the .org api response
+          ✓ should extract the screenshot data from the .org api response with removed items
+          ✓ should extract the screenshot data from the .org api response but if no screenshots urls then return null
+          ✓ should return null if screenshots is empty string
+          ✓ should return null if we pass null instead of JSON”
+        normalizeCompatibilityList
+          ✓ should trunc the hotfix number if 0
+          ✓ should not trunc the minor number if 0
+          ✓ should provide an ordered compatibility list
+        filterNotices
+          ✓ should return a list of notices that match the site
+          ✓ should return a list of notices that match a plugin
+          ✓ should return a list of notices that match the site and plugin
+      wporg-data
+        WPorg Data Actions
+          ✓ Actions should be an object
+          ✓ Actions should have method fetchPluginsList
+          ✓ Actions should have method fetchNextCategoryPage
+          ✓ when fetching a plugin list, it shouldn't do the wporg request if there's a previous one still not finished for the same category
+          ✓ when fetching for the next page, the next page number should be calculated automatically
+          ✓ when fetching for the next page, it should do a request if the next page is not over the number of total pages
+          ✓ when fetching for the next page, it should not do any request if the next page is over the number of total pages
+        WPORG Plugins Lists Store
+          ✓ Store should be an object
+          ✓ Store should have method emitChange
+          ✓ Store should have method getShortList
+          ✓ Store should have method getFullList
+          ✓ should return if a list is fetching or not when requested
+          ✓ Store should have method getSearchList
+          ✓ should return the content of a list when requested
+          short lists
+            ✓ should be empty if the list has not been fetched yet
+            ✓ should return a list of plugins if the list has been fetched already
+            ✓ should not read from localStorage if the category isn't in the to-be-cached list
+            ✓ should not store on localStorage if the category isn't in the to-be-cached list
+            ✓ should try to read from localStorage if the category is in the to-be-cached list
+            ✓ should not be stored on localStorage if the category isn't in the to-be-cached list
+            ✓ should not fetch from wporg if the category list is already in storage and is not yet after its TTL
+            ✓ should fetch from wporg if the category list is not already in storage
+            ✓ should always fetch from wporg if the category list is non on the to-be-cached list
+            ✓ should fetch from wporg if the category list is already in storage but it's already after its TTL
+          Full lists
+            ✓ should be empty if the list has not been fetched yet
+            ✓ should be populated after the processing a list fetched event
+            ✓ should fetch for the list when the fullList is requested
+            ✓ should mark a list as `not being fetched`  when the fetch ends
+            ✓ should mark a list as `being fetched`  when the fetch begin
+            ✓ should append the content of the response to the list when the requested page is not the first
+            ✓ should not mark a list as `not being fetched` when the fetch of a different list ends
+            ✓ should overwrite the list with the content of the request when the requested page is the first
+          Search lists
+            ✓ should be empty if the search list has not been fetched yet
+            ✓ should be populated after the processing a search list fetched event
+            ✓ should fetch for the search list when the search is requested
+            ✓ should mark a search list as `not being fetched`  when the fetch ends
+            ✓ should mark a search list as `being fetched` when the fetch begin
+            ✓ should append the content of the response to the search list when the requested page is not the first
+            ✓ should not mark a search list as `not being fetched` when the fetch of a different list ends
+            ✓ should overwrite the search list with the content of the request when the requested page is the first
+            ✓ should not repeat a search if the search term is the same
+            ✓ should repeat a search if the search term is the different
+    popup-monitor
+      PopupMonitor
+        #getScreenCenterSpecs()
+          ✓ should generate a popup specification string given the desired width and height
+    post-formats
+      actions
+        #fetch()
+          ✓ should trigger a request to the REST API
+      store
+        #get()
+          ✓ should return undefined for a site where data does not exist
+          ✓ should return an array of post format objects for a site where data has been received
+        .dispatchToken
+          ✓ should emit a change event when receiving updates
+    post-metadata
+      index
+        #publicizeMessage()
+          ✓ should return undefined if passed a falsey value
+          ✓ should return undefined if metadata not assigned to post
+          ✓ should return undefined if metadata contains no message
+          ✓ should return the message if metadata contains message
+        #publicizeDone()
+          ✓ should return undefined if passed a falsey value
+          ✓ should return an empty array if metadata not assigned to post
+          ✓ should return an empty array if metadata contains no done services
+          ✓ should return an array of numeric IDs of done services in the metadata
+          ✓ should only return IDs of services where metadata value is equal to "1"
+        #publicizeSkipped()
+          ✓ should return undefined if passed a falsey value
+          ✓ should return an empty array if metadata not assigned to post
+          ✓ should return an empty array if metadata contains no skipped services
+          ✓ should return an array of numeric IDs of skipped services in the metadata
+          ✓ should only return IDs of services where metadata value is equal to "1"
+        #geoLabel()
+          ✓ should return undefined if passed a falsey value
+          ✓ should return undefined if metadata not assigned to post
+          ✓ should return undefined if metadata contains no geolocation address
+          ✓ should return the address if metadata contains geolocation address
+        #geoCoordinates()
+          ✓ should return undefined if passed a falsey value
+          ✓ should return undefined if metadata not assigned to post
+          ✓ should return undefined if metadata contains no geolocation coordinate
+          ✓ should return undefined if metadata contains only one of latitude or longitude
+          ✓ should return an array of float values if metadata contains coordinate
+    post-normalizer
+      index
+        ✓ should export a function
+        ✓ should return null if passed null
+        ✓ should return a copy of what it was passed
+        ✓ should leave an empty object alone
+        ✓ should support async transforms
+        ✓ should pass along an error if a transform yields one
+        ✓ should pass along an error if an async transform yields one
+        ✓ can decode entities
+        ✓ can prevent widows
+        ✓ can prevent widows in empty strings
+        ✓ can remove html tags
+        makeSiteIDSafeForAPI
+          ✓ can make siteIDs into strings
+          ✓ can normalized the site_id for the api by replacing :: with /
+        safeImageProperties
+          ✓ can make image properties safe
+          ✓ will ignore featured_media that is not of type "image"
+        pickPrimaryTag
+          ✓ can pick the primary tag by taking the tag with the highest post_count as the primary
+          ✓ can pick the primary tag by taking the first tag as primary if there is a tie
+        content.disableAutoPlayOnMediaShortcodes
+          ✓ should strip autoplay attributes from video
+          ✓ should strip autoplay attributes from audio
+        the content normalizer (withContentDOM)
+          ✓ should not call nested transforms if content is blank
+          ✓ should provide a __contentDOM property to transforms and remove it after
+        content.removeStyles 
+          ✓ can strip style attributes and style elements
+          ✓ leaves galleries intact
+        content.safeContentImages
+          ✓ can route all images through wp-safe-image if no size specified
+          ✓ updates images with relative sources to use the post domain
+          ✓ handles relative images with dot segments
+          ✓ can route all images through photon if a size is specified
+          ✓ can remove images that cannot be made safe
+          ✓ removes event handlers from content images
+          ✓ fixes up srcsets
+          ✓ removes invalid srcsets
+        content.wordCountAndReadingTime
+          ✓ is undefined for empty content
+          ✓ has zero words, no time, with only punctuation
+          ✓ can deal with html in the content
+          ✓ can deal with urls
+          ✓ reading time matches the expected breakpoints
+        waitForImagesToLoad
+          - should fire when all images have loaded or errored
+          - should dedupe the images to check
+        canonical image picker
+          ✓ can pick the canonical image from images
+          ✓ will pick featured_image if present and images missing
+          ✓ will pick post_thumbnail over featured_image if present and images missing
+        keepValidImages
+          ✓ should filter post.images based on size
+        content.makeEmbedsSecure
+          ✓ makes iframes safe, rewriting to ssl and sandboxing
+          ✓ removes iframes with an empty src
+          ✓ removes objects from external posts
+          ✓ removes embeds from external posts
+        content.contentEmbeds
+          ✓ detects whitelisted iframes and alters the sandbox
+          ✓ detects trusted iframes and removes the sandbox
+          ✓ detects youtube embed
+          ✓ detects vimeo embed
+          ✓ detects special instagram embed
+          ✓ detects special twitter embed
+          - detects special facebook post embed
+          ✓ detects special facebook embed
+          ✓ empty content does not set the array
+          ✓ content with no embeds does not set the array
+          ✓ ignores embeds from non-whitelisted providers
+          ✓ links to embedded Polldaddy polls
+        The fancy excerpt creator
+          ✓ strips empty elements and leading and trailing brs
+          ✓ limits the excerpt to 3 elements
+          ✓ limits the excerpt to 3 elements after trimming
+          ✓ only trims top-level breaks
+          ✓ removes style tags
+    posts
+      actions
+        #updateMetadata()
+          ✓ should dispatch a post edit with a new metadata value
+          ✓ accepts an object of key value pairs
+          ✓ should include metadata already existing on the post object
+          ✓ should include metadata edits made previously
+          ✓ should not duplicate existing metadata edits
+        #deleteMetadata()
+          ✓ should dispatch a post edit with a deleted metadata
+          ✓ should accept an array of metadata keys to delete
+        #saveEdited()
+          ✓ should not send a request if the post has no content
+          ✓ should not send a request if there are no changed attributes
+          ✓ should normalize attributes and call the API
+      post-edit-store
+        ✓ initializes new draft post properly
+        ✓ initialize existing post
+        ✓ sets parent_id properly
+        ✓ decodes entities on received post title
+        ✓ updates parent_id after a set
+        ✓ does not decode post title entities on EDIT_POST
+        ✓ decodes post title entities on RECEIVE_POST_BEING_EDITED
+        ✓ reset on stop editing
+        ✓ updates attributes on edit
+        ✓ preserves attributes when update is in-flight
+        ✓ excludes metadata without an operation on edit
+        ✓ reset post after saving an edit
+        ✓ resets raw content when receiving an updated post
+        ✓ resets raw content on RESET_POST_RAW_CONTENT
+        #setRawContent
+          ✓ should not emit a change event if content hasn't changed
+        #getChangedAttributes()
+          ✓ includes status for a new post
+          ✓ includes all attributes on a new post
+        #isDirty()
+          ✓ returns false for a new post
+          ✓ returns false if the edited post is unchanged
+          ✓ returns true if raw content changes over time
+        #isSaveBlocked()
+          ✓ returns false for new post
+          ✓ returns true if blocked and no key provided
+          ✓ returns false if blocked but not by provided key
+          ✓ returns true if blocked by provided key
+        #hasContent()
+          ✓ returns false for new post
+          ✓ returns true if title is set
+          ✓ returns false if title is whitespace
+          ✓ returns true if excerpt is set
+          ✓ returns false if content includes bogus line break
+          ✓ returns false if content includes non-breaking space
+          ✓ returns false if content includes empty paragraph
+          ✓ returns true if content is set
+          ✓ returns true if raw content is set
+          ✓ returns false if post content exists, but raw content is empty
+        rawContent
+          ✓ should not trigger changes if isDirty() and hadContent() don't change
+      post-list-store
+        postListStoreId
+          ✓ should set the default postListStoreId
+        dispatcher
+          ✓ should have a dispatch token
+        #get
+          ✓ should return an object
+          ✓ should return the correct default values
+        #getId
+          ✓ should the return list ID
+          - should globally increment ids across all stores
+        #getSiteID
+          ✓ should the return site ID
+        #getAll
+          ✓ should return an array of posts
+        #getTree
+          ✓ should return a tree-ified array of posts
+        #getPage
+          ✓ should return the page number
+        #isLastPage
+          ✓ should return isLastPage boolean
+        #isFetchingNextPage
+          ✓ should return isFetchingNextPage boolean
+        #getNextPageParams
+          ✓ should return an object of params
+        #getRemovedPosts
+          ✓ should remove ommitted posts from overlapping post-list response
+        #getUpdatesParams
+          ✓ should return an object of params
+        #hasRecentError
+          ✓ should return false if there are no errors
+          ✓ should return true if recent payload had error
+        RECEIVE_POSTS_PAGE
+          ✓ should add post ids for matching postListStore
+          ✓ should add additional post ids for matching postListStore
+          ✓ should remove posts omitted in a follow-up post-list page
+          ✓ should remove posts omitted in a follow-up server response
+          ✓ should add only unique post.global_IDs postListStore
+          ✓ should not update if cached store id does not match
+          ✓ should not add post ids if postListStore does not match
+          ✓ should set isLastPage true if no next page handle returned
+        QUERY_POSTS
+          ✓ should not change cached list if query does not change
+          ✓ should change the active query and id when query options change
+          ✓ should set site_visibility if no siteID is present
+          ✓ should set query options passed in
+          ✓ should remove null query options passed in
+          ✓ should not set query options on a different postListStore instance
+      utils
+        #getEditURL
+          ✓ should return correct path type=post is supplied
+          ✓ should return correct path type=page is supplied
+          ✓ should return correct path when custom post type is supplied
+        #getVisibility
+          ✓ should return undefined when no post is supplied
+          ✓ should return public when password and private are not set
+          ✓ should return private when post#status is private
+          ✓ should return password when post#password is set
+        #isPrivate
+          ✓ should return undefined when no post is supplied
+          ✓ should return true when post.status is private
+          ✓ should return false when post.status is not private
+        #isPublished
+          ✓ should return undefined when no post is supplied
+          ✓ should return true when post.status is private
+          ✓ should return true when post.status is publish
+          ✓ should return false when post.status is not publish or private
+        #isPending
+          ✓ should return undefined when no post is supplied
+          ✓ should return true when post.status is pending
+          ✓ should return false when post.status is not pending
+        #isBackDatedPublished
+          ✓ should return false when no post is supplied
+          ✓ should return false when status !== future
+          ✓ should return false when status === future and date is in future
+          ✓ should return true when status === future and date is in the past
+        #removeSlug
+          ✓ should return undefined when no path is supplied
+          ✓ should strip slug on post URL
+          ✓ should strip slug on page URL
+        #getPermalinkBasePath
+          ✓ should return undefined when no post is supplied
+          ✓ should return post.URL when post is published
+          ✓ should use permalink_URL when not published and present
+        #getPagePath
+          ✓ should return undefined when no post is supplied
+          ✓ should return post.URL without slug when page is published
+          ✓ should use permalink_URL when not published and present
+        #getFeaturedImageId()
+          ✓ should return undefined when no post is specified
+          ✓ should return a non-URL featured_image property
+          ✓ should return a `null` featured_image property
+          ✓ should fall back to post thumbnail object ID if exists, if featured_image is URL
+          ✓ should return undefined if featured_image is URL and post thumbnail object doesn't exist
+    preferences
+      PreferencesActions
+        #fetch()
+          ✓ should retrieve from localStorage and trigger a request to the REST API
+          ✓ should not persist to localStorage from remote request if error occurs
+          ✓ should not dispatch an empty local store
+        #set()
+          ✓ should save to localStorage and trigger a request to the REST API
+          ✓ should add to, not replace, existing values
+          ✓ should assume a null value is to be removed
+          ✓ should only dispatch a receive after all pending updates have finished
+        #remove()
+          ✓ should remove from localStorage and trigger a request to the REST API
+      PreferencesStore
+        #getAll()
+          ✓ should return undefined if preferences have never been received
+          ✓ should return an empty object if preferences were received but empty
+          ✓ should return all received preferences
+          ✓ should merge multiple received preferences
+        #get()
+          ✓ should return a single value
+          ✓ should return undefined for a key which was never defined
+          ✓ should return undefined for a key which was removed
+        .dispatchToken
+          ✓ should emit a change event when receiving updates
+    purchases
+      assembler
+        ✓ should be a function
+        ✓ should return an empty array when data transfer object is undefined
+        ✓ should return an empty array when data transfer object is null
+        ✓ should convert the payment credit card data to the right data structure
+      index
+        #isRemovable
+          ✓ should not be removable when domain registration purchase is not expired
+          ✓ should not be removable when domain mapping purchase is not expired
+          ✓ should not be removable when site redirect purchase is not expired
+          ✓ should be removable when domain registration purchase is expired
+          ✓ should be removable when domain mapping purchase is expired
+          ✓ should be removable when site redirect purchase is expired
+        #isCancelable
+          ✓ should not be cancelable when the purchase is included in a plan
+          ✓ should not be cancelable when the purchase is expired
+          ✓ should be cancelable when the purchase is refundable
+          ✓ should be cancelable when the purchase can have auto-renew disabled
+    query-manager
+      paginated
+        PaginatedQueryManager
+          .hasQueryPaginationKeys()
+            ✓ should return false if not passed a query
+            ✓ should return false if query has no pagination keys
+            ✓ should return true if query has pagination keys
+          #getItems()
+            ✓ should return all items when no query provided
+            ✓ should return null if query is unknown
+            ✓ should return a page subset of query items
+            ✓ should return page subset for non-sequentially received query
+          #getItemsIgnoringPage()
+            ✓ should return null if not passed a query
+            ✓ should return null if query is unknown
+            ✓ should return all pages of query items
+            ✓ should exclude undefined items by default
+            ✓ should include undefined items when opting to includeFiller argument
+          #getNumberOfPages()
+            ✓ should return null if the query is unknown
+            ✓ should return null if the query is known, but found was not provided
+            ✓ should return the number of pages assuming the default query number per page
+            ✓ should return the number of pages with an explicit number per page
+          #receive()
+            ✓ should return the same instance if no changes
+            ✓ should update a single changed item
+            ✓ should append paginated items, tracked as query sans pagination keys
+            ✓ should preserve existing pages when receiving items queried with different number
+            ✓ should include filler undefined entries for yet-to-be-received items
+            ✓ should strip excess undefined entries beyond found count
+            ✓ should replace the existing page subset of a received query
+            ✓ should de-dupe if receiving a page includes existing item key
+            ✓ should adjust for the difference in found after an item is removed
+            ✓ should adjust for the difference in found after an item is added
+            ✓ should use the constructors DEFAULT_QUERY.number if query object does not specify it
+            ✓ should correct the found count if received item count does not match query number
+        PaginatedQueryKey
+          .stringify()
+            ✓ should return a JSON string of the object
+            ✓ should omit pagination query parameters
+          .parse()
+            ✓ should return an object of the JSON string
+            ✓ should omit pagination query parameters
+      post
+        PostQueryManager
+          #matches()
+            query.search
+              ✓ should return false for a non-matching search
+              ✓ should return true for a matching title search
+              ✓ should return true for a falsey title search
+              ✓ should return true for a matching content search
+              ✓ should search case-insensitive
+              ✓ should separately test title and content fields
+            query.after
+              ✓ should return false if query is not ISO 8601
+              ✓ should return false if post is not after date
+              ✓ should return true if post is after date
+            query.before
+              ✓ should return false if query is not ISO 8601
+              ✓ should return false if post is not before date
+              ✓ should return true if post is before date
+            query.modified_after
+              ✓ should return false if query is not ISO 8601
+              ✓ should return false if post is not modified after date
+              ✓ should return true if post is modified after date
+            query.modified_before
+              ✓ should return false if query is not ISO 8601
+              ✓ should return false if post is not modified before date
+              ✓ should return true if post is modified before date
+            query.tag
+              ✓ should return false if post does not include tag
+              ✓ should return false on a partial match
+              ✓ should return true if post includes tag by name
+              ✓ should return true if post includes tag by slug
+              ✓ should search case-insensitive
+            query.category
+              ✓ should return false if post does not include category
+              ✓ should return false on a partial match
+              ✓ should return true if post includes category by name
+              ✓ should return true if post includes category by slug
+              ✓ should search case-insensitive
+            query.term
+              ✓ should return false if post does not include term
+              ✓ should return false if one but not both term slug queries match
+              ✓ should return true if post includes term by slug
+              ✓ should return true if post includes one of comma-separated term slugs
+              ✓ should return true if post includes both of comma-separated term slugs
+            query.type
+              ✓ should return true if type is any
+              ✓ should return false if type does not match
+              ✓ should return true if type matches
+            query.parent_id
+              ✓ should return false if parent does not match
+              ✓ should return true if numeric parent matches
+              ✓ should return true if object parent matches
+            query.exclude
+              ✓ should return false if ID matches single exclude
+              ✓ should return false if ID matches array of excludes
+              ✓ should return true if ID does not match single exclude
+              ✓ should return true if ID does not match array of excludes
+            query.sticky
+              ✓ should return true if "include" and sticky
+              ✓ should return true if "include" and not sticky
+              ✓ should return true if "require" and sticky
+              ✓ should return false if "require" and not sticky
+              ✓ should return false if "exclude" and sticky
+              ✓ should return true if "exclude" and not sticky
+            query.author
+              ✓ should return false if author does not match by nested object
+              ✓ should return true if author matches by nested object
+              ✓ should return false if author does not match by scalar value
+              ✓ should return true if author matches by scalar value
+            query.status
+              ✓ should return false if status is "any"
+              ✓ should return false if status does not match
+              ✓ should return true if status matches
+              ✓ should return false if none of comma-separated values match
+              ✓ should return true if one of comma-separated values match
+              ✓ should gracefully handle non-string search values
+          #sort()
+            query.order
+              ✓ should sort descending by default
+              ✓ should reverse order when specified as ascending
+            query.order_by
+              date
+                ✓ should order by date
+              modified
+                ✓ should order by modified
+              title
+                ✓ should sort by title
+              comment_count
+                ✓ should sort by comment count
+              ID
+                ✓ should sort by ID
+        PostQueryKey
+          .stringify()
+            ✓ should return a JSON string of the object
+            ✓ should omit default post query parameters
+            ✓ should omit null query values
+            ✓ should omit undefined query values
+          .parse()
+            ✓ should return an object of the JSON string
+            ✓ should omit default post query parameters
+            ✓ should omit null query values
+      term
+        TermQueryManager
+          #matches()
+            query.search
+              ✓ should return false for a non-matching search
+              ✓ should return true for an empty search
+              ✓ should return true for a matching name search
+              ✓ should return true for a matching slug search
+              ✓ should search case-insensitive
+          #sort()
+            query.order
+              ✓ should sort ascending by default
+              ✓ should reverse order when specified as descending
+            query.order_by
+              name
+                ✓ should sort by name
+              count
+                ✓ should sort by post count
+        TermQueryKey
+          .stringify()
+            ✓ should return a JSON string of the object
+            ✓ should omit default post query parameters
+            ✓ should omit null query values
+            ✓ should omit undefined query values
+          .parse()
+            ✓ should return an object of the JSON string
+            ✓ should omit default post query parameters
+            ✓ should omit null query values
+      QueryManager
+        #constructor()
+          ✓ should accept initial data
+          ✓ should allow customization of item key
+        #mergeItem()
+          ✓ should return the revised item by default
+          ✓ should return a merged item when patching
+          ✓ should not mutate the original copy
+          ✓ should return undefined if revised item includes delete key and patching
+        #matches()
+          ✓ should return false if item is not truthy
+          ✓ should return true if item is truthy
+        #sort()
+          ✓ should return 0 for equal items
+          ✓ should return a number less than zero if the first argument is larger
+          ✓ should return a number greater than zero if the first argument is smaller
+        #getItem()
+          ✓ should return a single item
+        #getItems()
+          ✓ should return all items when no query provided
+          ✓ should return items specific to query
+          ✓ should return null if query is unknown
+        #getFound()
+          ✓ should return null if the query is unknown
+          ✓ should return null if the query is known, but found was not provided
+          ✓ should return the found count associated with a query
+        #removeItem()
+          ✓ should remove an item by its item key
+          ✓ should return the same instance if no items removed
+        #removeItems()
+          ✓ should remove an array of items by their item keys
+          ✓ should return the same instance if no items removed
+        #receive()
+          ✓ should receive an item
+          ✓ should receive an array of items
+          ✓ should return a new instance on changes
+          ✓ should return a new instance when receiving a different query result
+          ✓ should return a new instance when receiving only items
+          ✓ should return the same instance if no items received
+          ✓ should return the same instance if no changes
+          ✓ should return the same instance only order changes, but not associated with query
+          ✓ should return a new instance when receiving an existing query changes its results
+          ✓ should return a new instance when receiving an existing query changes its order
+          ✓ should return the same instance when receiving an existing query with no changes
+          ✓ should return the same instance when receiving an existing query with no changes and merging
+          ✓ should omit an item that returns undefined from #mergeItem()
+          ✓ should do nothing if #mergeItem() returns undefined but the item didn't exist
+          ✓ should replace a received item when key already exists
+          ✓ should patch a received patch item when key already exists
+          ✓ should track a query set
+          ✓ should replace the query set when a query updates
+          ✓ should merge received items into query set if mergeQuery option specified
+          ✓ should de-dupe received items into query set when merging
+          ✓ should remove a tracked query item when it no longer matches
+          ✓ should be order sensitive to tracked query items
+          ✓ should remove a tracked query item when it is omitted from items
+          ✓ should track an item that previous did not match
+          ✓ should sort items appended to query set
+          ✓ should accept an optional total found count
+          ✓ should return a new instance when associating found with a query
+          ✓ should return the same instance when found has not changed
+          ✓ should return a new instance when changing found for a query
+          ✓ should not replace the previous found count if omitted in next received query
+          ✓ should increment found count if adding a matched item
+          ✓ should decrement found count if removing an unmatched item
+          ✓ should not change found count if merging items into existing query
+        .QueryKey
+          ✓ should include a .stringify() method
+          ✓ should include a .parse() method
+      QueryKey
+        .stringify()
+          ✓ should return a JSON string of the object
+          ✓ should return the same string for two objects with different property creation order
+        .parse()
+          ✓ should return an object of the JSON string
+    react-pass-to-children
+      index
+        ✓ should accept a single child and pass along props
+        ✓ should accept multiple children and wrap them in a div
+        ✓ should accept multiple children and pass along props to each
+        ✓ should accept multiple children, including nulls
+        ✓ should preserve props passed to the children
+        ✓ should preserve props passed to the instance itself
+    reader-comment-email-subscriptions
+      store
+        ✓ should have a dispatch token
+        ✓ should create a new subscription
+        ✓ should unsubscribe from an existing subscription
+        ✓ should not store a subscribe if there is an API error
+        ✓ should pick up email subscriptions from feed subscription data
+        ✓ should remove subscriptions when a feed is unfollowed
+    reader-feed-subscriptions
+      store
+        ✓ should have a dispatch token
+        ✓ should follow a new feed
+        ✓ should unfollow an existing feed
+        ✓ should add subscription details when a follow is confirmed
+        ✓ should not store a follow if there is an API error
+        ✓ should find a feed regardless of protocol used
+        ✓ should receive a list of subscriptions
+        ✓ should not add duplicate subscriptions
+        ✓ should update an existing subscription in the store on re-follow
+        ✓ should update the total subscription count during follow and unfollow
+        ✓ should pick up a subscription from a feed result
+        ✓ should sort existing subscriptions into the correct place when accepting them
+    reader-lists-items
+      store
+        ✓ picks up items from a successful response
+        ✓ returns the current page for the specified list
+    reader-lists-tags
+      store
+        ✓ picks up tags from a successful response
+        ✓ returns the current page for the specified list
+    reader-post-email-subscriptions
+      store
+        ✓ should have a dispatch token
+        ✓ should create a new subscription
+        ✓ should unsubscribe from an existing subscription
+        ✓ should add subscription details when a subscribe is confirmed
+        ✓ should not store a subscribe if there is an API error
+        ✓ should update the delivery frequency of an existing subscription
+        ✓ should revert the delivery frequency of an existing subscription when there is an API error
+        ✓ should pick up email subscriptions from feed subscription data
+        ✓ should remove subscriptions when a feed is unfollowed
+    reader-site-blocks
+      store
+        ✓ should have a dispatch token
+        ✓ should not store a block if there is an API error
+    reader-site-store
+      store
+        ✓ should have a dispatch token
+        ✓ should not contain an unknown Site ID
+        ✓ should accept a good response
+        ✓ should pass through the pending state and prevent double fetches
+        ✓ should accept an error
+        ✓ should set has_featured with meta link
+    reader-teams
+      store
+        ✓ should have a dispatch token
+        ✓ should not store received teams if there is an error
+        ✓ should store received teams
+        recent errors
+          ✓ should know if a recent error has occurred
+    recommended-sites-store
+      actions
+        ✓ mock took
+        ✓ fetching more invokes the right things
+        ✓ fetching more errors invoke the error action
+        ✓ fetching more with existing items excludes the existing items
+        ✓ meta sites are dispatch appropriately
+      store
+        ✓ picks up recs from a successful response
+        ✓ sets last page flag if no blogs are returned
+        ✓ sets last page flag if maximum recommendations are reached
+    resize-image-url
+      index
+        ✓ should strip the w and h query params
+        ✓ should delete the resize & fit query params
+        ✓ should append optional resize arguments
+        ✓ should not attempt to resize non-HTTP protocols
+    route
+      route
+        #addQueryArgs()
+          ✓ should error when args is not an object
+          ✓ should error when url is not a string
+          ✓ should return same URL with ending slash if passed empty object for args
+          ✓ should add query args when URL has no args
+          ✓ should persist existing query args and add new args
+          ✓ should add an empty string for a query arg with an empty string
+          ✓ should not include a query arg with a null value
+          ✓ should not include a query arg with an undefined value
+        getSiteFragment
+          for the root path
+            ✓ should return false
+          for editor paths
+            ✓ should return false when there is no site yet
+            ✓ should return the site when editing an existing post
+            ✓ should return the site when editing a new post
+            ✓ should return the site when editing an existing page
+            ✓ should return the site when editing a new page
+            ✓ should return the site when editing a an existing custom post type
+            ✓ should return the site when editing a new custom post type
+            ✓ should not return a non-safe numeric site
+          for listing paths
+            ✓ should return false when there is no site yet
+            ✓ should return the site when viewing posts
+            ✓ should return the site when viewing posts with a filter
+            ✓ should return the site when viewing pages
+            ✓ should return the site when viewing pages with a filter
+            ✓ should not return a non-safe numeric site
+          for stats paths
+            ✓ should return false when there is no site yet
+            ✓ should return the site when viewing the default stats page
+            ✓ should not return a non-safe numeric site
+        addSiteFragment
+          for editor paths
+            ✓ should add a site when editing a new post
+            ✓ should add a site when editing a new page
+            ✓ should add a site when editing a new custom post type
+            ✓ should replace the site when editing a new post
+            ✓ should replace the site when editing a new page
+            ✓ should replace the site when editing a new custom post type
+            ✓ should replace the site when editing an existing post
+            ✓ should replace the site when editing an existing page
+          for listing paths
+            ✓ should append the site when viewing posts
+            ✓ should append the site when viewing posts with a filter
+            ✓ should append the site when viewing pages
+            ✓ should append the site when viewing pages with a filter
+          for stats paths
+            ✓ should append the site when viewing stats without a filter
+            ✓ should append the site when viewing the default stats page
+        sectionify
+          for the root path
+            ✓ should return the same path
+          for editor paths
+            ✓ should return the same path when there is no site yet
+            ✓ should remove the site when editing an existing post
+            ✓ should remove the site when editing a new post
+            ✓ should remove the site when editing an existing page
+            ✓ should remove the site when editing a new page
+            ✓ should remove the site when editing an existing custom post type
+            ✓ should remove the site when editing a new custom post type
+          for listing paths
+            ✓ should return the same path when there is no site yet
+            ✓ should remove the site when viewing posts
+            ✓ should remove the site when viewing posts with a filter
+            ✓ should remove the site when viewing pages
+            ✓ should remove the site when viewing pages with a filter
+          for stats paths
+            ✓ should return the same path when there is no site yet
+            ✓ should remove the site when viewing the default stats page
+      legacy-routes
+        #isLegacyRoute()
+          ✓ should return true for /themes/sometheme
+          ✓ should return true for /notifications
+          ✓ should return false for /settings/general
+          ✓ should return true for / when reader is disabled
+          ✓ should return false for / when reader is enabled
+          ✓ should return true for any path ending in .php
+          ✓ should return true for /plans when `manage/plans` feature flag disabled
+          ✓ should return false for /plans when `manage/plans` feature flag enabled
+          when `me/my-profile` feature flag is enabled
+            ✓ should return false for /me
+            ✓ should return false for /me/billing
+            ✓ should return false for /me/next
+          when `me/my-profile` feature flag is disabled
+            ✓ should return true for /me
+            ✓ should return false for /me/billing
+            ✓ should return false for /me/next
+    safe-image-url
+      index
+        ✓ should ignore a relative url
+        ✓ should make a non-wpcom http url safe
+        ✓ should make a non-wpcom https url safe
+        ✓ should make wp-com like subdomain url safe
+        ✓ should make domain ending by wp-com url safe
+        ✓ should make a non-wpcom protocol relative url safe
+        ✓ should promote an http wpcom url to https
+        ✓ should leave https wpcom url alone
+        ✓ should promote an http gravatar url to https
+        ✓ should leave https gravatar url alone
+        ✓ should return null for urls with querystrings
+    safe-protocol-url
+      index
+        ✓ should ignore a relative url
+        ✓ should return null for empty url
+        ✓ should not change url if http protocol
+        ✓ should not change url https protocol
+        ✓ should not strip query args
+        ✓ should not strip query hash
+        ✓ should make url with javascript protocol safe
+    scroll-to
+      scroll-to
+        ✓ window position x
+        ✓ window position y
+    security-checkup
+      AccountRecoveryStore
+        getEmail()
+          ✓ should call the WP.com REST API on first request
+          ✓ should only call the WP.com REST API only once
+          ✓ should return remote data
+        getPhone()
+          ✓ should call the WP.com REST API on first request
+          ✓ should only call the WP.com REST API only once
+          ✓ should return remote data
+        .dispatchToken
+          ✓ should expose dispatch ID
+          ✓ should update email on UPDATE_ACCOUNT_RECOVERY_EMAIL
+          ✓ should update and set notice on RECEIVE_UPDATED_ACCOUNT_RECOVERY_EMAIL
+          ✓ should delete on DELETE_ACCOUNT_RECOVERY_EMAIL
+          ✓ should delete and update notice on RECEIVE_DELETED_ACCOUNT_RECOVERY_EMAIL
+          ✓ should dismiss notice on DISMISS_ACCOUNT_RECOVERY_EMAIL_NOTICE
+      SecurityCheckupActions
+        dismissPhoneNotice()
+          ✓ should dispatch a ViewAction
+        dismissEmailNotice()
+          ✓ should dispatch a ViewAction
+        updateEmail()
+          ✓ should dispatch a ViewAction
+          ✓ should call the WP.com REST API
+          ✓ should dispatch a ServerAction
+        deleteEmail()
+          ✓ should dispatch a ViewAction
+          ✓ should call the WP.com REST API
+          ✓ should dispatch a ServerAction
+        updatePhone()
+          ✓ should dispatch a ViewAction
+          ✓ should call the WP.com REST API
+          ✓ should dispatch a ServerAction
+        deletePhone()
+          ✓ should dispatch a ViewAction
+          ✓ should call the WP.com REST API
+          ✓ should dispatch a ServerAction
+    shortcode
+      index
+        #parseAttributes()
+          ✓ should parse a string of named attributes
+          ✓ should parse a string of numeric attributes
+          ✓ should parse a string of mixed attributes
+        #normalizeAttributes()
+          ✓ should normalize a string of named attributes
+          ✓ should normalize a string of numeric attributes
+          ✓ should normalize a string of mixed attributes
+          ✓ should normalize an array as numeric attributes
+          ✓ should explicitly return an object of already split attributes
+          ✓ should normalize an object as the named attributes
+        #stringify()
+          ✓ should generate a closed shortcode when only the tag is specified
+          ✓ should accept an object of named attributes
+          ✓ should accept an array of numeric attributes
+          ✓ should accept an object of mixed attributes
+          ✓ should omit the closing tag for single type
+          ✓ should self-close for self-closing type
+          ✓ should include content between the opening and closing tags
+        #parse()
+          ✓ should interpret a closed shortcode
+          ✓ should interpret a shortcode with named attributes
+          ✓ should interpret a shortcode with numeric attributes
+          ✓ should interpret a shortcode with mixed attributes
+          ✓ should interpret a single type shortcode
+          ✓ should interpret a self-closing shortcode
+          ✓ should interpret a shortcode with content
+    signup
+      dependency-store
+        ✓ should return an empty object at first
+        ✓ should not store dependencies if none are included in an action
+        ✓ should store dependencies if they are provided in either signup action
+      flow-controller
+        controlling a simple flow
+          ✓ should run the onComplete callback with the flow destination when the flow is completed
+        controlling a flow w/ an asynchronous step
+          ✓ should call apiRequestFunction on steps with that property
+          ✓ should not call apiRequestFunction multiple times
+        controlling a flow w/ dependencies
+          ✓ should call the apiRequestFunction callback with its dependencies
+          ✓ should throw an error when the flow is completed without all dependencies provided
+        controlling a flow w/ a delayed step
+          ✓ should submit steps with the delayApiRequestUntilComplete once the flow is complete
+          ✓ should not submit delayed steps if some steps are in-progress
+      progress-store
+        ✓ should return an empty at first
+        ✓ should store a new step
+        ✓ should not store the same step twice
+        ✓ should not be possible to mutate
+        ✓ should store multiple steps in order
+        ✓ should mark submitted steps without an API request method as completed
+        ✓ should mark submitted steps with an API request method as pending
+        ✓ should mark only new saved steps as in-progress
+        ✓ should set the status of a signup step
+        timestamps
+          ✓ should be updated at each step
+    site-roles
+      Viewers Store
+        Shape of store
+          ✓ Store should be an object
+          ✓ Store should have method getRoles
+        Get Roles
+          ✓ Should return empty object when there are no roles
+          ✓ Should return an object of role objects when there are roles
+    site
+      Calypso Site
+        setting attributes
+          ✓ attribute changed
+          ✓ change event fires on attribute change
+          ✓ change doesn't fire when setting attribute to same value
+          ✓ change doesn't fire when attribute is set to an object with identical data
+          ✓ change doesn't fire when attribute is set to an array with identical data
+      Site Utils
+        canUpdateFiles
+          ✓ Should have a method canUpdateFiles.
+          ✓ Should return false when no site object is passed in.
+          ✓ Should return false when passed an empty object.
+          ✓ Should return false when passed an object without options.
+          ✓ Should return false when passed an site object that has something value in the file_mod_option.
+          ✓ Should return false when passed a multi site when unmapped_url and main_network_site are not equal.
+          ✓ Should return true when passed a site a single site even though the unmapped_url is not the same as main_network_site.
+          ✓ Should return true when passed a site that has different protocolls for unmapped_url and main_network_site.
+          ✓ Should return false when passed a site  that has compares ftp to http protocolls for unmapped_url and main_network_site.
+          ✓ Should return true when passed a site that has all the right settings permissions to be able to update files.
+        isMainNetworkSite
+          ✓ Should have a method isMainNetworkSite.
+          ✓ Should return false when no site object is passed in.
+          ✓ Should return false when passed an empty object.
+          ✓ Should return false when passed an object without options.
+          ✓ Should return false when passed a multi site when unmapped_url and main_network_site are not equal.
+          ✓ Should return true when passed a site a single site even though the unmapped_url is not the same as main_network_site.
+          ✓ Should return false when passed a site that a part of a multi network.
+          ✓ Should return true when passed a site that has different protocolls for unmapped_url and main_network_site.
+          ✓ Should return false when passed a site that has compares ftp to http protocolls for unmapped_url and main_network_site.
+          ✓ Does not explode when unmapped_url is not defined
+    sites-list
+      SitesList
+        initialization
+          ✓ should create the correct number of sites
+          ✓ should create Site objects
+          ✓ should set attributes properly
+          ✓ should add change handlers
+        updating
+          ✓ updating should not create new Site instances
+          ✓ should update attributes properly
+        change propagation
+          ✓ should trigger change when site is updated
+      Sites Log Store
+        ✓ should initialize with no Errors
+        ✓ logs an update error
+        ✓ removing an error notice deletes an error
+    stats
+      stats-list
+        StatList
+          required options
+            ✓ should require a siteID
+            ✓ should require a statType
+            ✓ should only allow valid statTypes
+          attributes
+            ✓ should create a response object
+            ✓ should create an options object
+            ✓ should not have siteID in options object
+            ✓ should not have statType in options object
+            ✓ should set siteID
+            ✓ should set statType
+            ✓ should set localStoreKey
+            ✓ should default performRetry to true
+            ✓ should set isDocumentedEndpoint correct
+          fetch
+            ✓ should have a fetch function
+            ✓ should set loading to false
+            ✓ should not perform retry on success
+            ✓ should be empty
+            ✓ should emit change
+            ✓ should not error on success
+            ✓ should error on failure
+            ✓ should retry on failure
+            ✓ should emit change on failure
+          object data sets
+            ✓ should set loading false
+        StatsParser
+          stat types
+            ✓ should have a statsClicks function
+            ✓ should have a statsTags function
+          statsClicks
+            ✓ should parse a clicks response properly
+          statsTags
+            ✓ should parse tags response properly
+          statsCountryViews
+            ✓ should parse countryViews payload properly
+    store
+      index
+        ✓ should be a function
+        ✓ should create an object instance
+        ✓ should create new object instance each time
+        ✓ should have empty object as a default state
+        ✓ should have passed state object as a state
+        ✓ should call reducer when action is triggered
+        ✓ should not trigger change event when reducer does not change state
+        ✓ should trigger change event when reducer changes state
+        ✓ should trigger change event only for actions specified in reducer
+    support
+      support-user
+        localstorage-bypass
+          ✓ should add a key, read it, then remove it
+          length
+            ✓ returns the number of keys in dummy storage
+          clear
+            ✓ clears all keys
+          key
+            ✓ returns a specific key
+            ✓ returns null for a key that doesn't exist
+          setItem
+            ✓ sets an item in memory store
+            ✓ calls the original setItem function for an allowed key
+            ✓ overrides an existing value
+          getItem
+            ✓ gets an item in memory store
+            ✓ calls the original getItem function for an allowed key
+            ✓ returns null for a key that doesn't exist
+          removeItem
+            ✓ removes an item in memory store
+            ✓ calls the original removeItem function for an allowed key
+            ✓ has no effect when a key doesn't already exist
+    terms
+      actions
+        #addCategory
+          ✓ should call handleViewAction with proper data
+          ✓ should allow a parent to be passed in
+        #setCategoryQuery
+          ✓ should call handleViewAction
+        #fetchNextCategoryPage
+          ✓ should make a get via wpcom and dispatch an event
+        #setSelectedCategories
+          ✓ should call handleViewAction
+        #fetchNextTagPage
+          ✓ should make a get via wpcom and dispatch an event
+      category-store
+        #found
+          ✓ should set found
+          ✓ should return null when no site data exists
+        #isFetchingPage
+          ✓ should set isFetchingPage
+          ✓ should be false when not fetching
+        #hasNextPage
+          ✓ should return false when no additional page exists
+          ✓ should return true when another page exists
+          ✓ should not have another page when last response had no data
+        #get
+          ✓ should get the correct category
+        #getAllNames
+          ✓ should return an empty array by default
+          ✓ should return all category names
+        #getChildren
+          ✓ should return an empty array by default
+          ✓ should return the correct child categories
+          ✓ should return top level categories when no category id supplied
+        #all
+          ✓ should treeify categories
+          ✓ should alphabetize categories by name
+          ✓ should return the correct number of categories
+          ✓ should add temporary categories
+          ✓ should remove temporary category when old ID present
+        #getQueryParams
+          ✓ should return the correct default query params
+          ✓ should have correct query params after RECEIVE_TERMS
+          ✓ should respect query params set via action
+          ✓ should preserve query options across pages
+          ✓ should not allow page to be set as a query option
+          ✓ should not clear in memory store for same query set
+          ✓ should clear in memory store for different query set
+        adding category
+          ✓ should add a new category
+          ✓ should increment found
+          ✓ should add a new category regardless of categoryStoreId
+        dispatcher
+          ✓ should have a dispatch token
+          ✓ should ignore tag payloads
+      store
+        ✓ Should remove a term if a temporary ID is present
+        ✓ #all()
+        ✓ #get()
+        ✓ #get() undefined
+        dispatchToken
+          ✓ should have a dispatch token
+          ✓ should emit change event
+      tag-store
+        #isFetchingPage
+          ✓ should set isFetchingPage
+          ✓ should be false when not fetching
+        #hasNextPage
+          ✓ should return false when no additional page exists
+          ✓ should return true when another page exists
+          ✓ should not have another page when last response had no data
+        #get
+          ✓ should get the correct tag
+        #all
+          ✓ should return the correct number of tags
+        dispatcher
+          ✓ should have a dispatch token
+          ✓ should ignore category payloads
+    text-utils
+      index
+        #wordCount
+          ✓ should return 0 for blank content
+          ✓ should strip HTML tags and count words for a simple sentence
+          ✓ should not count dashes
+          ✓ should not count asterisks or other non-word characters
+          ✓ should not count numbers
+          ✓ should not count HTML entities
+          ✓ should count hyphenated words as one word
+          ✓ should count words between blocks as two words
+    tree-convert
+      TreeConvert
+        treeify
+          ✓ should turn a flat parent/child structure into a tree
+          ✓ should order sibling items by their "order" property
+          ✓ should remove the "order" property from items, since order will be implicit
+          ✓ should handle bad parent data, falling back to parent 0
+        untreeify
+          ✓ should turn a tree into a parent child list
+          ✓ should add the "order" property to items
+          ✓ should not modify the original object
+    url
+      withoutHttp
+        ✓ should return null if URL is not provided
+        ✓ should return URL without initial http
+        ✓ should return URL without initial https
+        ✓ should return URL without initial http and query string if has any
+        ✓ should return provided URL if it doesn't include http(s)
+        ✓ should return empty string if URL is empty string
+    user-settings
+      User Settings
+        ✓ should consider overridden settings as saved
+    user
+      UserUtils
+        without logout url
+          ✓ uses userData.logout_URL when available
+        with logout url
+          ✓ works when |subdomain| is not present
+          ✓ replaces |subdomain| when present and have domain
+          ✓ replaces |subdomain| when present but no domain
+    users
+      Users Store
+        ✓ Store should be an object
+        ✓ Store should have method emitChange
+        Getting user by login
+          ✓ Store should have method getUserByLogin
+          ✓ Should return undefined when user not in store
+          ✓ Should return a user object when the user exists
+        Fetch Users
+          ✓ Should update the store on RECEIVE_USERS
+          ✓ The users store should return an array of objects when fetching users
+          ✓ A user object from the store should contain an array of roles
+          ✓ Re-fetching a list of users when a users was deleted from the site should result in a smaller array
+          ✓ Fetching more users should add to the array of objects
+        Pagination
+          ✓ has the correct total users
+          ✓ has the correct offset
+          ✓ fetches the correct number of users
+          after fetching more users
+            ✓ has the correct offset
+            ✓ fetches the correct number of users
+        Polling updated users
+          ✓ getUpdatedParams returns correct params
+          ✓ Polling updates expected users
+        Update a user
+          ✓ Should update a specific user with new attributes
+          ✓ Error should restore the updated user
+        Delete a user
+          ✓ Should delete a specific user
+          ✓ Error should restore the deleted user
+          ✓ There should be no undefined objects in user array after deleting a user
+        Get single user
+          ✓ Fetching a single user should add to the store
+    viewers
+      Viewers Store
+        Shape of store
+          ✓ Store should be an object
+          ✓ Store should have method emitChange
+          ✓ Store should have method getViewers
+          ✓ Store should have method getPaginationData
+        Get Viewers
+          ✓ Should return false when viewers haven't been fetched
+          ✓ Should return an array of objects when there are viewers
+        Fetch Viewers
+          ✓ Fetching zero users should not affect store size
+          ✓ Fetching more viewers should increase the store size
+        Pagination
+          ✓ has the correct total viewers
+          ✓ has the correct number of viewers fetched
+          ✓ has the correct page
+          after fetching more viewers
+            ✓ has the correct updated number of viewers fetched
+            ✓ advances to the next page
+        Removing a viewer
+          ✓ Should remove a single viewer.
+          ✓ Should restore a single viewer on removal error.
+    wp
+      localization
+        index
+          #addLocaleQueryParam()
+            ✓ should not modify params if locale unknown
+            ✓ should not modify params if locale is default
+            ✓ should include the locale query parameter for a non-default locale
+          #injectLocalization()
+            ✓ should return a modified object
+            ✓ should override the default request method
+            ✓ should not modify params if `withLocale` not used
+            ✓ should modify params if `withLocale` is used
+            ✓ should not modify the request after `withLocale` is used
+          #bindState()
+            ✓ should set initial locale from state
+            ✓ should subscribe to the store, setting locale on change
+      sync-handler
+        cache-index
+          #getAll
+            ✓ should return undefined for empty localforage
+            ✓ should return index from localforage and nothing else
+          #addItem
+            ✓ should add item to empty index
+            ✓ should store a pageSeriesKey when passed as third parameter
+          #removeItem
+            ✓ should remove item from a populated index
+          #pruneStaleRecords
+            ✓ should prune old records
+          #clearAll
+            ✓ should clear all sync records and nothing else
+          #clearPageSeries
+            ✓ should clear records with matching pageSeriesKey and leave other records intact
+          #clearRecordsByParamFilter
+            ✓ should clear records with reqParams that matches filter and leave other records intact
+        sync-handler
+          ✓ should call callback with local response
+          ✓ should call callback with request response
+          ✓ should call callback twice with local and request responses
+          ✓ should store cacheIndex records with matching pageSeriesKey for paginated responses
+          ✓ should call clearPageSeries when getting a response with an updated page_handle
+          generateKey
+            ✓ should return the same key for identical request
+            ✓ should return unique keys for different requests
+            ✓ should return the same key if parameters are in different order
+          hasPaginationChanged
+            ✓ should return false if requestResponse has no page handle
+            ✓ should return false for call with identical response
+            ✓ should return true if page handle is different
+            ✓ should return false with empty local response
+          syncOptOut
+            ✓ should call callback with network response even when local response exists
+    wrap-es6-functions
+      wrapping
+        Array
+          ✓ keys
+          ✓ entries
+          ✓ values
+          ✓ findIndex
+          ✓ find
+          ✓ fill
+        String
+          ✓ codePointAt
+          ✓ repeat
+          ✓ startsWith
+          ✓ endsWith
+          ✓ includes
+          ✓ normalize
+        RegExp
+          ✓ g
+
+
+  1651 passing (10s)
+  4 pending
+

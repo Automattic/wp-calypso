@@ -26,6 +26,7 @@ describe( 'Plugins Store', () => {
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/sites-list', mockedSitesList );
+		mockery.registerMock( 'lib/analytics', {} );
 	} );
 
 	useFakeDom();
