@@ -53,6 +53,7 @@ describe( 'MediaLibraryList item selection', function() {
 
 		mockery.registerMock( 'components/infinite-list', EmptyComponent );
 		mockery.registerMock( './list-item', EmptyComponent );
+		mockery.registerMock( './list-plan-upgrade-nudge', EmptyComponent );
 		MediaList = require( '../list' );
 	} );
 
