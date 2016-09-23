@@ -39,6 +39,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
 	TRACKING_IDS = {
 		bingInit: '4074038',
+		bingInitJetpack: '5425013',
 		facebookInit: '823166884443641',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
@@ -66,6 +67,7 @@ if ( ! window.fbq ) {
 
 if ( ! window.uetq ) {
 	window.uetq = []; // Bing global
+	window.uetqJetpack = [];
 }
 
 if ( ! window.criteo_q ) {
@@ -130,10 +132,17 @@ function loadTrackingScripts( callback ) {
 				q: window.uetq
 			};
 
+			const bingConfigForJetpack = {
+				ti: TRACKING_IDS.bingInitJetpack,
+				q: window.uetqJetpack
+			};
+
 			if ( typeof UET !== 'undefined' ) {
 				// bing's script creates the UET global for us
 				window.uetq = new UET( bingConfig ); // eslint-disable-line
 				window.uetq.push( 'pageLoad' );
+				window.uetqJetpack = new UET( bingConfigForJetpack ); // eslint-disable-line
+				window.uetqJetpack.push( 'pageLoad' );
 			}
 
 			hasFinishedFetchingScripts = true;
@@ -310,10 +319,17 @@ function recordProduct( product, orderId ) {
 
 		// Bing
 		if ( isSupportedCurrency( product.currency ) ) {
-			window.uetq.push( {
-				ec: 'purchase',
-				gv: costUSD
-			} );
+			if ( isJetpackPlan ) {
+				window.uetqJetpack.push( {
+					ec: 'purchase',
+					gv: costUSD
+				} );
+			} else {
+				window.uetq.push( {
+					ec: 'purchase',
+					gv: costUSD
+				} );
+			}
 		}
 
 		// Google
