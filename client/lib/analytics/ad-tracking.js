@@ -35,6 +35,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	ONE_BY_AOL_PIXEL_URL = 'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
 	TRACKING_IDS = {
 		bingInit: '4074038',
+		bingInitJetpack: '5425013',
 		facebookInit: '823166884443641',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
@@ -62,6 +63,7 @@ if ( ! window.fbq ) {
 
 if ( ! window.uetq ) {
 	window.uetq = []; // Bing global
+	window.uetqJetpack = [];
 }
 
 if ( ! window.criteo_q ) {
@@ -126,10 +128,17 @@ function loadTrackingScripts( callback ) {
 				q: window.uetq
 			};
 
+			const bingConfigForJetpack = {
+				ti: TRACKING_IDS.bingInitJetpack,
+				q: window.uetqJetpack
+			};
+
 			if ( typeof UET !== 'undefined' ) {
 				// bing's script creates the UET global for us
 				window.uetq = new UET( bingConfig ); // eslint-disable-line
 				window.uetq.push( 'pageLoad' );
+				window.uetqJetpack = new UET( bingConfigForJetpack ); // eslint-disable-line
+				window.uetqJetpack.push( 'pageLoad' );
 			}
 
 			hasFinishedFetchingScripts = true;
@@ -229,7 +238,7 @@ function recordViewCheckout( cart ) {
  */
 function recordPurchase( product, orderId ) {
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
-		return;
+		//return;
 	}
 
 	if ( ! hasStartedFetchingScripts ) {
@@ -263,10 +272,17 @@ function recordPurchase( product, orderId ) {
 
 	// Bing
 	if ( isSupportedCurrency( product.currency ) ) {
-		window.uetq.push( {
-			ec: 'purchase',
-			gv: costUSD
-		} );
+		if ( isJetpackPlan ) {
+			window.uetqJetpack.push( {
+				ec: 'purchase',
+				gv: costUSD
+			} );
+		} else {
+			window.uetq.push( {
+				ec: 'purchase',
+				gv: costUSD
+			} );
+		}
 	}
 
 	// Google
