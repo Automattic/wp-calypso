@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import LikeButton from 'components/like-button/button';
+import LikeButton from 'blocks/like-button/button';
 import {
 	recordAction,
 	recordGaEvent,
