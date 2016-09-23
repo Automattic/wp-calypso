@@ -20,6 +20,9 @@ var MediaActions = require( 'lib/media/actions' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	user = require( 'lib/user' )();
 
+import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
+import { abtest } from 'lib/abtest';
+
 module.exports = React.createClass( {
 	displayName: 'MediaLibraryList',
 
@@ -198,9 +201,11 @@ module.exports = React.createClass( {
 		var onFetchNextPage;
 
 		if ( this.props.filterRequiresUpgrade ) {
-			return (
-				<ListPlanPromo site={ this.props.site } filter={ this.props.filter } />
-			);
+			if( abtest( 'expandedNudge' ) === 'expanded' ) {
+				return <ListPlanUpgradeNudge filter={ this.props.filter } />;
+			}
+
+			return <ListPlanPromo site={ this.props.site } filter={ this.props.filter } />;
 		}
 
 		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {

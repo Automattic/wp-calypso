@@ -45,13 +45,10 @@
 	}
 
 	.upgrade-nudge-expanded__title-plan-icon {
-		width: 54px;
+		width: 55px;
 		height: 55px;
 		margin: 1px;
-
-		&.is-business-plan {
-			background: url('/calypso/images/plans/plan-business.svg') no-repeat;
-		}
+		background-repeat: no-repeat;
 	}
 
 	.upgrade-nudge-expanded__title-message {

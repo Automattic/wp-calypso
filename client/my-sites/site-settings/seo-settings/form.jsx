@@ -33,6 +33,7 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
 import SeoSettingsUpgradeNudge from 'blocks/upgrade-nudge-expanded';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
 import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
@@ -46,6 +47,7 @@ import { isBusiness, isEnterprise } from 'lib/products-values';
 import {
 	PLAN_BUSINESS, FEATURE_ADVANCED_SEO
 } from 'lib/plans/constants';
+import { abtest } from 'lib/abtest';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -433,7 +435,7 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
-				{ showUpgradeNudge &&
+				{ showUpgradeNudge && abtest( 'expandedNudge' ) === 'expanded' &&
 					<SeoSettingsUpgradeNudge
 						plan={ PLAN_BUSINESS }
 						upgrade={ upgradeToBusiness }
@@ -446,6 +448,15 @@ export const SeoForm = React.createClass( {
 							this.translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ),
 							this.translate( 'Modify front page meta data in order to customize how your site appears to search engines.' )
 						] }
+					/>
+				}
+
+				{ showUpgradeNudge && abtest( 'expandedNudge' ) === 'regular' &&
+					<UpgradeNudge
+						feature={ FEATURE_ADVANCED_SEO }
+						title={ this.translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
+						message={ this.translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
+						event={ "calypso_seo_settings_upgrade_nudge_impression" }
 					/>
 				}
 

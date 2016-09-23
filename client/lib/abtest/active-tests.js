@@ -33,6 +33,15 @@ module.exports = {
 		},
 		defaultVariation: 'clickableButton'
 	},
+	expandedNudge: {
+		datestamp: '20160922',
+		variations: {
+			expanded: 50,
+			regular: 50,
+		},
+		defaultVariation: 'regular',
+		allowExistingUsers: true,
+	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
 		variations: {
