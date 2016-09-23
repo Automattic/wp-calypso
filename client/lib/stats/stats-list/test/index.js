@@ -82,10 +82,6 @@ describe( 'StatList', () => {
 			assert.equal( statList.statType, 'statsClicks', 'should set the statType' );
 		} );
 
-		it( 'should set localStoreKey', () => {
-			assert.equal( statList.localStoreKey, statList.statType + statList.siteID, 'should set the localStoreKey' );
-		} );
-
 		it( 'should default performRetry to true', () => {
 			assert.isTrue( statList.performRetry, 'should performRetry' );
 		} );
