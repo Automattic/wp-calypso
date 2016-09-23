@@ -19,6 +19,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { abtest } from 'lib/abtest';
 import wpcom from 'lib/wp';
 import Notice from 'components/notice';
 import { getFixedDomainSearch, canRegister } from 'lib/domains';
@@ -44,7 +45,8 @@ const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
 const analytics = analyticsMixin( 'registerDomain' ),
-	searchVendor = 'domainsbot';
+	searchVendor = 'domainsbot',
+	searchDelay = parseInt( abtest( 'domainSearchDelay' ) );
 
 let searchQueue = [],
 	searchStackTimer = null,
@@ -263,7 +265,7 @@ const RegisterDomainStep = React.createClass( {
 					placeholder={ this.translate( 'Enter a domain or keyword', { textOnly: true } ) }
 					autoFocus={ true }
 					delaySearch={ true }
-					delayTimeout={ 1000 }
+					delayTimeout={ searchDelay }
 					dir="ltr"
 					maxLength={ 60 }
 				/>

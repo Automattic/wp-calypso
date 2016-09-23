@@ -115,5 +115,14 @@ module.exports = {
 			hideVerticalScreenshots: 50,
 		},
 		defaultVariation: 'hideVerticalScreenshots',
+	},
+	domainSearchDelay: {
+		datestamp: '20160907',
+		variations: {
+			// variations are time in milliseconds, we then use parseInt to get a number value
+			1000: 90,
+			5000: 10,
+		},
+		defaultVariation: '1000',
 	}
 };
