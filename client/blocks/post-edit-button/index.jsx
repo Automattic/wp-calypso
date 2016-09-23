@@ -13,10 +13,10 @@ import { getEditURL } from 'lib/posts/utils';
 const PostEditButton = ( { post, site, size, onClick, translate } ) => {
 	const editUrl = getEditURL( post, site );
 	return (
-		<a className="post-edit-button" href={ editUrl } onClick={ onClick }>
+		<span className="post-edit-button" href={ editUrl } onClick={ onClick }>
 			<Gridicon icon="pencil" size={ size } className="post-edit-button__icon" />
 			<span className="post-edit-button__label">{ translate( 'Edit' ) }</span>
-		</a>
+		</span>
 	);
 };
 
