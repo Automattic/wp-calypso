@@ -20,7 +20,8 @@ export default React.createClass( {
 			status: null,
 			showDismiss: true,
 			className: '',
-			onDismissClick: noop
+			onDismissClick: noop,
+			onClick: noop,
 		};
 	},
 
@@ -35,7 +36,8 @@ export default React.createClass( {
 			PropTypes.arrayOf( PropTypes.oneOfType( [ PropTypes.string, PropTypes.node ] ) )
 		] ),
 		icon: PropTypes.string,
-		className: PropTypes.string
+		className: PropTypes.string,
+		onClick: PropTypes.func,
 	},
 
 	componentDidMount() {
@@ -121,7 +123,10 @@ export default React.createClass( {
 		}
 
 		return (
-			<div className={ classnames( this.props.className, noticeClass ) }>
+			<div
+				className={ classnames( this.props.className, noticeClass ) }
+				onClick={ this.props.onClick }
+			>
 				<Gridicon className="notice__icon" icon={ this.props.icon || this.getIcon() } size={ 24 } />
 				<div className="notice__content">
 					{ this.renderChildren() }
