@@ -23,6 +23,7 @@ import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginNotices from 'lib/plugins/notices';
 import SectionHeader from 'components/section-header';
+import { abtest } from 'lib/abtest';
 
 function checkPropsChange( nextProps, propArr ) {
 	var i, prop;
@@ -374,7 +375,10 @@ export default React.createClass( {
 		if ( this.props.isPlaceholder ) {
 			return (
 				<div className="plugins-list">
-					<SectionHeader key="plugins-list__section-placeholder" label={ this.props.header } className="plugins-list__section-actions is-placeholder" />
+					<SectionHeader
+						key="plugins-list__section-placeholder"
+						label={ this.props.header }
+						className="plugins-list__section-actions is-placeholder" />
 					<div className={ itemListClasses }>{ this.renderPlaceholders() }</div>
 				</div>
 				);
@@ -383,6 +387,10 @@ export default React.createClass( {
 		if ( isEmpty( this.props.plugins ) ) {
 			return null;
 		}
+
+		const sortedPlugins = abtest( 'pluginUpdatesAtTop' ) === 'updatesAtTop'
+			? this.orderPluginsByUpdates( this.props.plugins )
+			: this.props.plugins;
 
 		return (
 			<div className="plugins-list" >
@@ -406,7 +414,7 @@ export default React.createClass( {
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) }
 					haveUpdatesSelected= { this.props.plugins.some( this.filterSelection.updates.bind( this ) ) } />
 				<div className={ itemListClasses }>
-					{ this.orderPluginsByUpdates( this.props.plugins ).map( this.renderPlugin ) }
+					{ sortedPlugins.map( this.renderPlugin ) }
 				</div>
 				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
 			</div>
@@ -422,6 +430,10 @@ export default React.createClass( {
 
 	renderPlugin( plugin, idx ) {
 		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
+
+		const isCompact = abtest( 'pluginUpdatesAtTop' ) === 'updatesAtTop'
+			? idx !== this.props.pluginUpdateCount - 1
+			: true;
 		return (
 			<PluginItem
 				key={ plugin.slug }
@@ -433,7 +445,7 @@ export default React.createClass( {
 				notices={ this.state.notices }
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ this.state.bulkManagementActive }
-				isCompact={ idx !== this.props.pluginUpdateCount - 1 }
+				isCompact={ isCompact }
 				onClick={ selectThisPlugin }
 				selectedSite={ this.props.selectedSite }
 				hasUpdate = { this.pluginHasUpdate }

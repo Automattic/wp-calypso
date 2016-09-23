@@ -106,5 +106,13 @@ module.exports = {
 			hideVerticalScreenshots: 50,
 		},
 		defaultVariation: 'hideVerticalScreenshots',
+	},
+	pluginUpdatesAtTop: {
+		datestamp: '20160924',
+		variations: {
+			updatesAtTop: 50,
+			regularSorted: 50,
+		},
+		defaultVariation: 'regularSorted',
 	}
 };
