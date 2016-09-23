@@ -1,6 +1,7 @@
 import React from 'react';
-import chai, { assert, expect } from 'chai';
+import chai, { expect } from 'chai';
 import { shallow } from 'enzyme';
+import { spy } from 'sinon';
 import chaienzyme from 'chai-enzyme';
 import FormTextInput from 'components/forms/form-text-input';
 
@@ -9,9 +10,9 @@ chai.use( chaienzyme() );
 describe( '<FormTextInput />', () => {
 	describe( 'rendering', () => {
 		it( 'should add the provided class names', () => {
-			const wrapper = shallow( <FormTextInput className="foobar" isError isValid /> );
+			const wrapper = shallow( <FormTextInput className="test" isError isValid /> );
 
-			expect( wrapper ).to.have.className( 'foobar' );
+			expect( wrapper ).to.have.className( 'test' );
 			expect( wrapper ).to.have.className( 'is-error' );
 			expect( wrapper ).to.have.className( 'is-valid' );
 		} );
@@ -19,9 +20,39 @@ describe( '<FormTextInput />', () => {
 		it( 'should not pass props down to the form fields', () => {
 			const wrapper = shallow( <FormTextInput isValid isError selectOnFocus /> );
 
-			assert.isFalse( wrapper.node.props.hasOwnProperty( 'isValid' ) );
-			assert.isFalse( wrapper.node.props.hasOwnProperty( 'isError' ) );
-			assert.isFalse( wrapper.node.props.hasOwnProperty( 'selectOnFocus' ) );
+			expect( wrapper ).to.not.have.prop( 'isValid' );
+			expect( wrapper ).to.not.have.prop( 'isError' );
+			expect( wrapper ).to.not.have.prop( 'selectOnFocus' );
 		} );
+
+		it( 'should call select if selectOnFocus is true', () => {
+			const wrapper = shallow( <FormTextInput selectOnFocus={ true } /> );
+			const event = {
+				target: {
+					select: () => {}
+				}
+			};
+
+			spy( event.target, 'select' );
+			wrapper.simulate( 'click', event );
+
+			expect( event.target.select ).to.have.been.calledOnce;
+		} );
+
+		it( 'should not call select if selectOnFocus is false', () => {
+			const wrapper = shallow( <FormTextInput selectOnFocus={ false } /> );
+			const event = {
+				target: {
+					select: () => {}
+				}
+			};
+
+			spy( event.target, 'select' );
+			wrapper.simulate( 'click', event );
+
+			expect( event.target.select ).to.not.have.been.called;
+		} );
+
 	} );
+
 } );
