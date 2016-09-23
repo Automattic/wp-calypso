@@ -1,23 +1,25 @@
 .post-edit-button {
 	align-items: center;
-	color: lighten( $gray, 10 );
+	box-sizing: border-box;
+	color: lighten( $gray, 10% );
+	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;
 	padding: 4px;
 	position: relative;
+	transition: color 0.15s linear;
 
-	&:hover {
-		.post-edit-button__label {
-			color: $blue-light;
-			cursor: pointer;
-		}
-		.post-edit-button__icon {
-			fill: $blue-light;
-		}
+	&:hover,
+	&:focus,
+	&:active {
+		color: $blue-light;
 	}
 
-	&:visited {
-		color: lighten( $gray, 10 );
+	.post-edit-button__label {
+
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
 	}
 }
 
