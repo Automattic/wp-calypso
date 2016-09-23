@@ -39,8 +39,7 @@ class Popover extends Component {
 		position: PropTypes.string,
 		rootClassName: PropTypes.string,
 		showDelay: PropTypes.number,
-
-		onClose: PropTypes.func.isRequired,
+		onClose: PropTypes.func,
 		onShow: PropTypes.func,
 	};
 
@@ -51,7 +50,7 @@ class Popover extends Component {
 		isVisible: false,
 		position: 'top',
 		showDelay: 0,
-
+		onClose: noop,
 		onShow: noop,
 	}
 
