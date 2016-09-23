@@ -15,7 +15,7 @@ import SearchCard from 'components/search-card';
 import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
 import FollowButton from 'components/follow-button/docs/example';
-import LikeButtons from 'components/like-button/docs/example';
+import LikeButtons from 'blocks/like-button/docs/example';
 import PostSchedule from 'components/post-schedule/docs/example';
 import PostSelector from 'my-sites/post-selector/docs/example';
 import Sites from 'lib/sites-list/docs/example';
