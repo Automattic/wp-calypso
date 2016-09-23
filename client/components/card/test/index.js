@@ -2,10 +2,10 @@
  * External dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
-import TestUtils from 'react-addons-test-utils';
-import { assert, expect } from 'chai';
+import { expect } from 'chai';
 import { shallow } from 'enzyme';
+
+//enzyme  - simulate
 
 /**
  * Internal dependencies
@@ -14,35 +14,55 @@ const Card = require( '../' );
 const CompactCard = require( '../compact' );
 
 describe( 'Card', function() {
-	require( 'test/helpers/use-fake-dom' )();
-
-	// it should have a class of card
-	it( 'should have card class', function() {
+	// it should have a class of `card`
+	it( 'should have `card` class', function() {
 		const card = shallow( <Card /> );
-		assert.equal( 1, card.find( '.card' ).length );
+		expect( card.is( '.card' ) ).to.equal( true );
+	} );
+
+	// it should accept a custom class of `test__ace`
+	it( 'should have custom class of `test__ace`', function() {
+		const card = shallow( <Card className="test__ace" /> );
+		expect( card.is( '.card' ) ).to.equal( true );
 	} );
 
 	// check that content within a card renders correctly
-	it( 'should accept content containing a title and paragraph', function() {
-		const tree = TestUtils.renderIntoDocument( <Card>This is a card</Card> ),
-			node = ReactDom.findDOMNode( tree );
-
-		expect( ReactDom.findDOMNode( tree.refs.content ).textContent ).to.equal( 'This is a card' );
+	it( 'should render children', function() {
+		const card = shallow( <Card>This is a card</Card> );
+		expect( card.contains( 'This is a card' ) ).to.equal( true );
 	} );
 
-	// check for a prop of compact set to true
-
-
-
-
+	// check it will accept a href
+	it( 'should be linkable', function() {
+		const card = shallow( <Card href="/test">This is a linked card</Card> );
+		expect( card.find( 'a[href="/test"]' ) ).to.have.length( 1 );
+		expect( card.props().href ).to.equal( '/test' );
+		expect( card.is( '.is-card-link' ) ).to.equal( true );
+	} );
 } );
 
 describe( 'CompactCard', function() {
-
-	// it should have a class of is-compact
-	it( 'should have card and is-compact class', function() {
+	// it should have a class of `is-compact`
+	it( 'should have `is-compact` class', function() {
 		const compactCard = shallow( <CompactCard /> );
-		assert.equal( 1, compactCard.find( '.is-compact' ).length );
+		expect( compactCard.find( '.is-compact' ) ).to.have.length( 1 );
 	} );
 
+	// it should accept a custom class of `test__ace`
+	it( 'should have custom class of `test__ace`', function() {
+		const compactCard = shallow( <CompactCard className="test__ace" /> );
+		expect( compactCard.is( '.test__ace' ) ).to.equal( true );
+	} );
+
+	// check that content within a card renders correctly
+	it( 'should render children', function() {
+		const compactCard = shallow( <CompactCard>This is a compact card</CompactCard> );
+		expect( compactCard.contains( 'This is a compact card' ) ).to.equal( true );
+	} );
+
+	// test for card component
+	it( 'should use the card component', function() {
+		const compactCard = shallow( <CompactCard /> );
+		expect( compactCard.find( 'Card' ) ).to.have.length( 1 );
+	} );
 } );
