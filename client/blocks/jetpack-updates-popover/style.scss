@@ -1,0 +1,58 @@
+
+@include breakpoint( "<660px" ) {
+	.jetpack-updates-popover {
+		display: none;
+	}
+}
+
+.popover.jetpack-updates-popover {
+	hr {
+		color: $gray-light;
+	}
+
+	.popover__inner {
+		max-width: 200px;
+	    padding: 5px;
+	    text-align: left;
+	}
+}
+
+.jetpack-updates-popover__block {
+	display: flex;
+	margin-top: 8px;
+	margin-bottom: 16px;
+
+	&:last-child {
+		margin-bottom: 8px;
+	}
+}
+
+.jetpack-updates-popover__block > .gridicon {
+	display: inline-block;
+	flex-shrink: 0;
+	color: $gray;
+	margin-right: 4px;
+}
+
+.jetpack-updates-popover__text {
+	display: inline-block;
+}
+
+.jetpack-updates-popover__link {
+	font-size: 11px;
+	font-weight: 600;
+	margin-left: 4px;
+	text-decoration: underline;
+	text-transform: uppercase;
+
+	&:hover,
+	&:active,
+	&:focus {
+		text-decoration: none;
+	}
+}
+
+.jetpack-updates-popover__link .gridicon {
+	margin-left: 4px;
+	vertical-align: top;
+}
