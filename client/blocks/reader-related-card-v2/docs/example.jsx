@@ -55,13 +55,13 @@ const smallItems = [
 ];
 
 const RelatedPostCards = React.createClass( {
-	displayName: 'RelatedPostCardv2',
+	displayName: 'ReaderRelatedCardV2',
 
 	render: function() {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/blocks/post-card">More in Site</a>
+					<a href="/devdocs/blocks/reader-related-card-v2">More in Site</a>
 				</h2>
 				<div className="reader-related-card-v2__container">
 					<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">Cats and Cats</a></h1>
@@ -71,7 +71,7 @@ const RelatedPostCards = React.createClass( {
 				</div>
 
 				<h2>
-					<a href="/devdocs/blocks/post-card">More in WordPress.com</a>
+					<a href="/devdocs/blocks/reader-related-card-v2">More in WordPress.com</a>
 				</h2>
 				<div className="reader-related-card-v2__container">
 					<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">WordPress.com</a></h1>

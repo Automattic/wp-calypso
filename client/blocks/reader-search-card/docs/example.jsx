@@ -80,13 +80,13 @@ const searchItems = [
 ];
 
 const SearchCards = React.createClass( {
-	displayName: 'SearchCard',
+	displayName: 'ReaderSearchCard',
 
 	render: function() {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/blocks/post-card">Search Cards</a>
+					<a href="/devdocs/blocks/reader-search-card">Search Cards</a>
 				</h2>
 
 				<div>

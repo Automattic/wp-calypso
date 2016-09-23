@@ -84,13 +84,13 @@ const smallItems = [
 ];
 
 const RelatedPostCards = React.createClass( {
-	displayName: 'RelatedPostCard',
+	displayName: 'ReaderRelatedCard',
 
 	render: function() {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/blocks/post-card">Related Post Cards</a>
+					<a href="/devdocs/blocks/reader-related-card">Related Post Cards</a>
 				</h2>
 				<div>
 					{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }

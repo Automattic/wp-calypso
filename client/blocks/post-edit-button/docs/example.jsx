@@ -21,7 +21,7 @@ export default React.createClass( {
 		return (
 			<div className="design-assets__group">
 				<h2>
-					<a href="/devdocs/design/edit-button">Post Edit Button</a>
+					<a href="/devdocs/blocks/post-edit-button">Post Edit Button</a>
 				</h2>
 				<PostEditButton post={ post } site={ site } />
 			</div>
