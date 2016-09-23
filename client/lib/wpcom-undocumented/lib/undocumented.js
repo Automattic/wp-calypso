@@ -117,7 +117,7 @@ Undocumented.prototype.updateWordPressCore = function( siteId, fn ) {
  */
 Undocumented.prototype.getAvailableUpdates = function( siteId, fn ) {
 	debug( '/sites/:site_id:/updates query' );
-	this.wpcom.req.get( { path: '/sites/' + siteId + '/updates' }, fn );
+	return this.wpcom.req.get( { path: '/sites/' + siteId + '/updates' }, fn );
 };
 
 /**
