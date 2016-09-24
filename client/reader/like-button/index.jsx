@@ -2,7 +2,7 @@ const React = require( 'react' );
 
 const postStore = require( 'lib/feed-post-store' );
 
-const LikeButtonContainer = require( 'components/like-button' ),
+const LikeButtonContainer = require( 'blocks/like-button' ),
 	stats = require( 'reader/stats' );
 
 const ReaderLikeButton = React.createClass( {
