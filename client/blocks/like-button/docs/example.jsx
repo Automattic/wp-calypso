@@ -7,7 +7,7 @@ import PureRenderMixin from 'react-pure-render/mixin';
 /**
  * Internal dependencies
  */
-import LikeButton from 'components/like-button/button';
+import LikeButton from 'blocks/like-button/button';
 import Card from 'components/card/compact';
 
 const SimpleLikeButtonContainer = React.createClass( {

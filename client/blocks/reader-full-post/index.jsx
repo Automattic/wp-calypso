@@ -29,7 +29,7 @@ import { fetch as fetchSite } from 'lib/reader-site-store/actions';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
-import LikeButton from 'components/like-button';
+import LikeButton from 'blocks/like-button';
 import { isDiscoverPost, isDiscoverSitePick, getSourceFollowUrl, getSiteUrl } from 'reader/discover/helper';
 import { isDailyPostChallengeOrPrompt } from 'reader/daily-post/helper';
 import DiscoverSiteAttribution from 'reader/discover/site-attribution';
