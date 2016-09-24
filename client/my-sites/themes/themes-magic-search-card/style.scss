@@ -61,22 +61,4 @@
 		flex: 0 1 auto;
 		padding: 8px 14px 8px;
 	}
-
-	.token_A {
-		background: rgba(0, 100, 0, 0.2);
-		left: 0px;
-		pointer-events: none;
-		font-size: 16px;
-		position: static;
-		box-sizing: border-box;
-	}
-
-	.token_B {
-		background: rgba(100, 0, 0, 0.2);
-		left: 0px;
-		pointer-events: none;
-		font-size: 16px;
-		position: static;
-		box-sizing: border-box;
-	}
 }

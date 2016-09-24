@@ -1,29 +1,33 @@
 .search-tokens {
-
+	position: relative;
+	display: flex;
+	align-items: center;
 	font-size: 16px;
 
-	.sear-tokens__input[type="text"] {
+	.search-tokens__input[type="text"] {
 		font: inherit;
-		border: 0;
+		border: 0px;
+		padding: 0px;
 	}
 
 	.search-tokens__tokens {
 		position: absolute;
-		left: 0px;
-		top: 0px;
-		height: 100%;
-		width: 100%;
+		pointer-events: none;
+		flex: 1 1 auto;
+		overflow: hidden;
 		font: inherit;
-		padding: 7px 14px 7px 14px;
-		box-sizing: border-box;
+		width: 100%;
+		left: 0px;
 	}
 
 	.search-tokens__token {
 		font: inherit;
+		pointer-events: none;
 	}
 
 	.search-tokens__white-space {
 		font: inherit;
+		pointer-events: none;
 	}
 
 }
