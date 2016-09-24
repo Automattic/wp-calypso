@@ -27,13 +27,9 @@ const SearchTokens = React.createClass( {
 				{
 					tokens.map( token => {
 						if ( token.trim() === '' ) {
-							return (
-								<span className="search-tokens__white-space">
-									{ token }
-								</span>
-							);
+							return <span className="search-tokens__white-space">{ token }</span>;
 						} else {
-							return <span className="search-tokens__token"> { token } </span>;
+							return <span className="search-tokens__token">{ token }</span>;
 						}
 					} )
 				}

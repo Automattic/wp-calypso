@@ -13,6 +13,7 @@
 	.search-tokens__tokens {
 		position: absolute;
 		pointer-events: none;
+		white-space: nowrap;
 		flex: 1 1 auto;
 		overflow: hidden;
 		font: inherit;
@@ -28,6 +29,7 @@
 	.search-tokens__white-space {
 		font: inherit;
 		pointer-events: none;
+		white-space: pre;
 	}
 
 }
