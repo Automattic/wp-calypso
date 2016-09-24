@@ -7,6 +7,7 @@ import map from 'lodash/map';
 import camelCase from 'lodash/camelCase';
 import kebabCase from 'lodash/kebabCase';
 import head from 'lodash/head';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrade
 import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
 import { cartItems } from 'lib/cart-values';
-import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
+import { requestForDomainRegistrations as requestCountriesForDomainRegistrations } from 'state/countries/actions';
 import { forDomainRegistrations as statesListForDomainRegistrations } from 'lib/states-list';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
@@ -24,10 +25,9 @@ import FormButton from 'components/forms/form-button';
 
 // Cannot convert to ES6 import
 const wpcom = require( 'lib/wp' ).undocumented(),
-	countriesList = countriesListForDomainRegistrations(),
 	statesList = statesListForDomainRegistrations();
 
-export default React.createClass( {
+const DomainDetailsForm = React.createClass( {
 	displayName: 'DomainDetailsForm',
 
 	fieldNames: [
@@ -68,6 +68,7 @@ export default React.createClass( {
 
 	componentDidMount() {
 		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
+		this.props.requestCountriesForDomainRegistrations();
 	},
 
 	sanitize( fieldValues, onComplete ) {
@@ -166,7 +167,6 @@ export default React.createClass( {
 		return (
 			<PrivacyProtection
 				cart={ this.props.cart }
-				countriesList={ countriesList }
 				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
 				fields={ this.state.form }
 				isChecked={ this.allDomainRegistrationsHavePrivacy() }
@@ -221,7 +221,7 @@ export default React.createClass( {
 
 				<CountrySelect
 					label={ this.translate( 'Country', { textOnly } ) }
-					countriesList={ countriesList }
+					countriesList={ this.props.countries }
 					{ ...fieldProps( 'country-code' ) }/>
 
 				{ this.needsFax() && <Input label={ this.translate( 'Fax', { textOnly } ) } { ...fieldProps( 'fax' ) }/> }
@@ -353,3 +353,16 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		return {
+			countries: state.countriesForDomainRegistrations.countries
+		};
+	},
+	( dispatch ) => {
+		return {
+			requestCountriesForDomainRegistrations: () => dispatch( requestCountriesForDomainRegistrations() )
+		};
+	}
+)( DomainDetailsForm );

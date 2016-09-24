@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -11,7 +12,7 @@ import Card from 'components/card';
 import CompactCard from 'components/card/compact';
 import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardFormFields from 'components/credit-card-form-fields';
-import CountriesList from 'lib/countries-list';
+import { requestForPayments as requestCountriesForPayments } from 'state/countries/actions';
 import FormButton from 'components/forms/form-button';
 import formState from 'lib/form-state';
 import forOwn from 'lodash/forOwn';
@@ -25,7 +26,6 @@ import wpcomFactory from 'lib/wp';
 import Gridicon from 'components/gridicon';
 import support from 'lib/url/support';
 
-const countriesList = CountriesList.forPayments();
 const wpcom = wpcomFactory.undocumented();
 
 const CreditCardForm = React.createClass( {
@@ -77,6 +77,10 @@ const CreditCardForm = React.createClass( {
 		this.setState( {
 			form: this.formStateController.getInitialState()
 		} );
+	},
+
+	componentDidMount() {
+		this.props.requestCountriesForPayments();
 	},
 
 	componentWillUnmount() {
@@ -247,8 +251,8 @@ const CreditCardForm = React.createClass( {
 			<form onSubmit={ this.onSubmit }>
 				<Card className="credit-card-form__content">
 					<CreditCardFormFields
+						countriesList={ this.props.countries }
 						card={ this.getCardDetails() }
-						countriesList={ countriesList }
 						eventFormName="Edit Card Details Form"
 						isFieldInvalid={ this.isFieldInvalid }
 						onFieldChange={ this.onFieldChange } />
@@ -291,4 +295,14 @@ const CreditCardForm = React.createClass( {
 	}
 } );
 
-export default CreditCardForm;
+export default connect(
+	( state ) => {
+		return {
+			countries: state.countriesForPayments.countries
+		};
+	}, ( dispatch ) => {
+		return {
+			requestCountriesForPayments: () => dispatch( requestCountriesForPayments() )
+		};
+	}
+)( CreditCardForm );
