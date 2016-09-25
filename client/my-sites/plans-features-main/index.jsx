@@ -23,7 +23,6 @@ import {
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import { isEnabled } from 'config';
-import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
 
@@ -84,31 +83,15 @@ class PlansFeaturesMain extends Component {
 			);
 		}
 
-		let plans;
-		if (
-			abtest( 'plansDescriptions' ) === 'descendingPriceSubtleDescription' ||
-			abtest( 'plansDescriptions' ) === 'descendingPriceEagerDescription'
-		) {
-			plans = filter(
-				[
-					PLAN_BUSINESS,
-					PLAN_PREMIUM,
-					isPersonalPlanEnabled ? PLAN_PERSONAL : null,
-					hideFreePlan ? null : PLAN_FREE,
-				],
-				value => !! value
-			);
-		} else {
-			plans = filter(
-				[
-					hideFreePlan ? null : PLAN_FREE,
-					isPersonalPlanEnabled ? PLAN_PERSONAL : null,
-					PLAN_PREMIUM,
-					PLAN_BUSINESS
-				],
-				value => !! value
-			);
-		}
+		const plans = filter(
+			[
+				hideFreePlan ? null : PLAN_FREE,
+				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS
+			],
+			value => !! value
+		);
 
 		return (
 			<div className="plans-features-main__group">
