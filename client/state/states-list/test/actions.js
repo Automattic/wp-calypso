@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -17,17 +16,12 @@ import {
 	receiveStatesList,
 	requestStatesList,
 } from '../actions';
+import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
-
-	beforeEach( () => {
-		spy.reset();
-	} );
-
-	after( () => {
-		nock.cleanAll();
-	} );
+	let spy;
+	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 
 	describe( '#receiveStatesList()', () => {
 		it( 'should return an action object', () => {
@@ -48,7 +42,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestStatesList()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/domains/supported-states/US' )
 				.twice().reply( 200, [

@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -19,6 +18,7 @@ import reducer, {
 	statesList,
 	isFetching,
 } from '../reducer';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 const originalStatesList = [
 	{ code: 'AL', name: 'Alabama' },
@@ -34,13 +34,7 @@ const originalStatesList = [
 ];
 
 describe( 'reducer', () => {
-	before( () => {
-		sinon.stub( console, 'warn' );
-	} );
-
-	after( () => {
-		console.warn.restore(); // eslint-disable-line no-console
-	} );
+	useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
 
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
