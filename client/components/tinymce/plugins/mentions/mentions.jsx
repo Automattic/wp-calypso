@@ -27,12 +27,10 @@ export default React.createClass( {
 			self.handleSuggestionsKeyUp( event, editor.getBody(), editor.getContent( { format: 'text' } ) );
 		}
 
-		editor.on( 'blur', this.handleSuggestionBlur );
 		editor.on( 'keydown', this.handleSuggestionsKeyDown );
 		editor.on( 'keyup', onEditorKeyUp );
 
 		editor.on( 'remove', () => {
-			editor.off( 'blur', this.handleSuggestionBlur );
 			editor.off( 'keydown', this.handleSuggestionsKeyDown );
 			editor.off( 'keyup', onEditorKeyUp );
 		} );
@@ -40,8 +38,8 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div>
-				{this.renderSuggestions()}
+			<div ref="mention">
+				{ this.renderSuggestions() }
 			</div>
 		);
 	}

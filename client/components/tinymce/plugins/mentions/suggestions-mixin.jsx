@@ -7,6 +7,8 @@ import React from 'react';
  * Internal dependencies
  */
 import Suggestion from './suggestion';
+import PopoverMenu from 'components/popover/menu';
+import PopoverMenuItem from 'components/popover/menu-item';
 
 const stopEvent = function( event ) {
 	if ( this.state.suggestionsVisible ) {
@@ -19,14 +21,6 @@ const SuggestionsMixin = {
 	componentWillMount: function() {
 		this.suggestions = [];
 		this.suggestionsAbove = false;
-	},
-
-	componentDidMount: function() {
-		this.isMounted = true;
-	},
-
-	componentWillUnmount: function() {
-		this.isMounted = false;
 	},
 
 	fetchSuggestions: function() {
@@ -107,14 +101,6 @@ const SuggestionsMixin = {
 		}
 	},
 
-	handleSuggestionBlur: function() {
-		if ( ! this.suggestionsCancelBlur && this.isMounted ) {
-			this.setState( {
-				suggestionsVisible: false
-			} );
-		}
-	},
-
 	ensureSelectedSuggestionVisibility: function() {
 		const getOffsetTop = function( element ) {
 			let offset = element.offsetTop;
@@ -139,6 +125,12 @@ const SuggestionsMixin = {
 		if ( scrollTarget !== null ) {
 			window.scrollTo( 0, scrollTarget );
 		}
+	},
+
+	onClose: function() {
+		this.setState( {
+			suggestionsVisible: false
+		} );
 	},
 
 	renderSuggestions: function() {
@@ -173,29 +165,26 @@ const SuggestionsMixin = {
 		this.suggestions = suggestions.slice( 0, 10 );
 
 		if ( this.suggestions.length > 0 ) {
-			const selectedSuggestionId = this.state.selectedSuggestionId || this.suggestions[0].ID;
-			const items = this.suggestions.map( function( suggestion ) {
-				return <Suggestion
-					ref={ 'suggestion-node-' + suggestion.ID }
-					key={ 'user-suggestion-' + suggestion.ID }
-					onMouseEnter={
-						function(suggestion) { this.setState( { selectedSuggestionId: suggestion.ID } ); }.bind( this, suggestion )
-					}
-					avatarUrl={ suggestion.image_URL }
-					username={ suggestion.user_login }
-					fullName={ suggestion.display_name }
-					selected={ suggestion.ID === selectedSuggestionId }
-					suggestionsQuery={ this.state.suggestionsQuery } />
-			}.bind( this ) );
-
 			return (
-				<div ref="suggestionList" className="suggestions"
-					onMouseEnter={function(){ this.suggestionsCancelBlur = true; }.bind( this )}
-					onMouseLeave={function(){ this.suggestionsCancelBlur = false; }.bind( this )}>
-					<ul>
-						{items}
-					</ul>
-				</div>
+				<PopoverMenu
+					className="suggestions"
+					context={ this.refs && this.refs.mention }
+					isVisible={ this.state.suggestionsVisible }
+					onClose={ this.onClose }>
+						{ this.suggestions.map( ( suggestion ) => {
+							return (
+								<PopoverMenuItem
+									key={ 'user-suggestion-' + suggestion.ID }>
+									<Suggestion
+										ref={ 'suggestion-node-' + suggestion.ID }
+										avatarUrl={ suggestion.image_URL }
+										username={ suggestion.user_login }
+										fullName={ suggestion.display_name }
+										suggestionsQuery={ this.state.suggestionsQuery } />
+								</PopoverMenuItem>
+							);
+						} ) }
+				</PopoverMenu>
 			);
 		}
 

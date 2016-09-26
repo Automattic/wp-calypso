@@ -1,126 +1,69 @@
-$base-background-color: $white;
-$list-background:       $white;
-$border-color:          lighten( $gray, 20% );
-$light-border-color:    lighten( $gray, 30% );
-$text-color:            $gray-dark;
-$name-color:            $gray;
-$selected-color:        $blue-medium;
 $img-size:              24px;
 $img-border-radius:     50%;
-$border-radius:         3px;
-$box-shadow:            0px 5px 6px rgba( lighten( $gray, 20% ), 0.5 );
 
 .suggestions {
-    position: relative;
-    left: 50%;
-    transform: translate(-50%, 0);
-    margin-top: 5px;
-    color: $text-color;
-    background: $base-background-color;
-    border: 1px solid $border-color;
-    border-radius: $border-radius;
-    box-shadow: $box-shadow;
-    z-index: 20010;
-    font-family: $sans;
-    width: 90%;
+	width: 40%;
 
-    ul {
-        list-style: none;
-        padding: 0;
-        margin: auto;
-        background: $list-background;
+	img {
+		border-radius: $img-border-radius;
+		width: $img-size;
+		height: $img-size;
+		float: left;
+		margin: 0 10px 0 0;
+	}
 
-        li {
-            display: block;
-            box-sizing: content-box;
-            padding: 8px 10px;
-            margin: 0;
-            border-bottom: 1px solid $light-border-color;
-            cursor: pointer;
-            line-height: $img-size;
-            font-size: 14px;
-            height: $img-size;
-            overflow: hidden;
-        }
-    }
+	strong {
+		font-weight: 400;
+		background: rgba( $blue-light, 0.25 );
+	}
 
-    img {
-      border-radius: $img-border-radius;
-      width: $img-size;
-      height: $img-size;
-      float: left;
-      margin: 0 10px 0 0;
-    }
+	.username {
+		float: left;
+		display: inline-block;
+		font-weight: 400;
+		padding: 10px 0;
+		margin: -10px 0 0 0;
+	}
 
-    strong {
-      font-weight: 400;
-      background: rgba( $blue-light, 0.25 );
-    }
-
-    .username {
-      float: left;
-      display: inline-block;
-      font-weight: 400;
-      padding: 10px 0;
-      margin: -10px 0 0 0;
-    }
-
-    small {
-        font-size: 11px;
-        font-weight: 400;
-        float: right;
-        color: $name-color;
-        display: inline-block;
-    }
-
-    // Currently-selected item (arrows or via search)
-    .cur {
-        background: $selected-color;
-        color: $white;
-
-        strong,
-        .username strong {
-          color: $white;
-          background: rgba( $blue-light, 0.45 );
-        }
-
-        small {
-          color: $white;
-        }
-    }
+	small {
+		font-size: 11px;
+		font-weight: 400;
+		float: right;
+		display: inline-block;
+	}
 }
 
 .rtl {
-  .suggestions {
-    li {
-      direction: ltr; // required to get the '@' on the correct side
-    }
+	.suggestions {
+		.suggestion {
+			direction: ltr; // required to get the '@' on the correct side
+		}
 
-    img {
-      float: right;
-      margin: 0 0 0 10px;
-    }
+		img {
+			float: right;
+			margin: 0 0 0 10px;
+		}
 
-    .username {
-      float: left;
-    }
+		.username {
+			float: left;
+		}
 
-    &.right {
-      img {
-        float: left;
-        margin: 0 10px 0 0;
-      }
+		&.right {
+			img {
+				float: left;
+				margin: 0 10px 0 0;
+			}
 
-      .username {
-        float: right;
-      }
-    }
-  }
+			.username {
+				float: right;
+			}
+		}
+	}
 }
 
 @media (max-width: 400px) {
-  .suggestions {
-    width: 100%;
-    height: 100%;
-  }
+	.suggestions {
+		width: 100%;
+		height: 100%;
+	}
 }

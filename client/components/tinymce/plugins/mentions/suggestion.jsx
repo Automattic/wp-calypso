@@ -45,13 +45,11 @@ module.exports = React.createClass( {
 		const fullName = highlight( this.props.fullName, this.props.suggestionsQuery, 'fullname' );
 
 		return (
-			<li
-				className={ this.props.selected ? 'cur' : '' }
-				onMouseEnter={ this.props.onMouseEnter }>
-					<img src={ this.props.avatarUrl } />
-					<span className="username">{ username }</span>
-					<small>{ fullName }</small>
-			</li>
+			<div className="suggestion">
+				<img src={ this.props.avatarUrl } />
+				<span className="username">{ username }</span>
+				<small>{ fullName }</small>
+			</div>
 		);
 	}
 } );
