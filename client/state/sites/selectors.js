@@ -353,14 +353,14 @@ export const buildSeoTitle = ( titleFormats, type, { site, post = {}, tag = '', 
 			return buildTitle( 'posts', {
 				siteName: site.name,
 				tagline: site.description,
-				postTitle: post.title
-			} ) || post.title;
+				postTitle: get( post, 'title', '' )
+			} ) || get( post, 'title', '' );
 
 		case 'pages':
 			return buildTitle( 'pages', {
 				siteName: site.name,
 				tagline: site.description,
-				pageTitle: post.title
+				pageTitle: get( post, 'title', '' )
 			} );
 
 		case 'groups':
