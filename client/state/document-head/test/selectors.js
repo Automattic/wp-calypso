@@ -10,7 +10,9 @@ import {
 	getTitle,
 	getUnreadCount,
 	getCappedUnreadCount,
-	getFormattedTitle
+	getFormattedTitle,
+	getMeta,
+	getLink
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -224,6 +226,40 @@ describe( 'selectors', () => {
 
 				expect( formattedTitle ).to.equal( 'Themes ‹ WordPress.com Example Blog — WordPress.com' );
 			} );
+		} );
+	} );
+
+	describe( '#getMeta()', () => {
+		it( 'should return the currently set metas', () => {
+			const meta = getMeta( {
+				documentHead: {
+					meta: [
+						{ property: 'og:site_name', content: 'WordPress.com' },
+						{ property: 'og:type', content: 'website' }
+					]
+				}
+			} );
+
+			expect( meta ).to.eql( [
+				{ property: 'og:site_name', content: 'WordPress.com' },
+				{ property: 'og:type', content: 'website' }
+			] );
+		} );
+	} );
+
+	describe( '#getLink()', () => {
+		it( 'should return the currently set links', () => {
+			const link = getLink( {
+				documentHead: {
+					link: [
+						{ rel: 'canonical', href: 'https://wordpress.com' }
+					]
+				}
+			} );
+
+			expect( link ).to.eql( [
+				{ rel: 'canonical', href: 'https://wordpress.com' }
+			] );
 		} );
 	} );
 } );
