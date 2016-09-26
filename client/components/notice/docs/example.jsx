@@ -24,6 +24,7 @@ var Notices = React.createClass( {
 
 		return (
 			<div>
+				<a className="docs__design-toggle button" onClick={ this.toggleNotices }>{ toggleNoticesText }</a>
 				<div>
 					<Notice
 						showDismiss={ false }

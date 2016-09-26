@@ -32,7 +32,12 @@ var Buttons = React.createClass( {
 	},
 
 	renderDocsExample: function( toggleText ) {
-		return this.renderButtons();
+		return (
+			<div>
+				<a className="docs__design-toggle button" onClick={ this.toggleButtons }>{ toggleText }</a>
+				{ this.renderButtons( toggleText ) }
+			</div>
+		);
 	},
 
 	renderDocsExampleWithUsageStats: function( toggleText ) {
