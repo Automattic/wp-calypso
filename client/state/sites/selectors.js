@@ -308,6 +308,7 @@ export function getSiteOption( state, siteId, optionName ) {
 	if ( ! site || ! site.options ) {
 		return null;
 	}
+
 	return site.options[ optionName ];
 }
 
@@ -618,9 +619,42 @@ export function canJetpackSiteManage( state, siteId ) {
 	return true;
 }
 
-// TODO: remove this once #8197 is merged
-export function canJetpackSiteUpdateFiles() {
-	return null;
+export function canJetpackSiteUpdateFiles( state, siteId ) {
+	if ( ! siteId ) {
+		return null;
+	}
+
+	if ( ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
+	if ( ! siteHasMinimumJetpackVersion( state, siteId ) ) {
+		return false;
+	}
+
+	const isMultiNetwork = getSiteOption( state, siteId, 'is_multi_network' );
+
+	if ( isMultiNetwork ) {
+		return false;
+	}
+
+	if ( ! isMainNetworkSite( state, siteId ) ) {
+		return false;
+	}
+
+	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
+
+	if (
+		fileModDisabled &&
+		(
+			-1 < fileModDisabled.indexOf( 'disallow_file_mods' ) ||
+			-1 < fileModDisabled.indexOf( 'has_no_file_system_write_access' )
+		)
+	) {
+		return false;
+	}
+
+	return true;
 }
 
 /**
@@ -643,6 +677,38 @@ export function canJetpackSiteAutoUpdateFiles( state, siteId ) {
 	}
 
 	return true;
+}
+
+export function isMainNetworkSite( state, siteId ) {
+	const site = getRawSite( state, siteId );
+
+	if ( ! site ) {
+		return null;
+	}
+
+	const isMultiNetwork = getSiteOption( state, siteId, 'is_multi_network' );
+
+	if ( isMultiNetwork ) {
+		return false;
+	}
+
+	if ( site.is_multisite === false ) {
+		return true;
+	}
+
+	if ( site.is_multisite ) {
+		const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
+		const mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
+
+		if ( ! unmappedUrl || ! mainNetworkSite ) {
+			return false;
+		}
+
+		// Compare unmapped_url with the main_network_site to see if is the main network site.
+		return withoutHttp( unmappedUrl ) === withoutHttp( mainNetworkSite );
+	}
+
+	return false;
 }
 
 /**
@@ -796,4 +862,27 @@ export function getJetpackSiteFileModDisableReasons( state, siteId, action = 'mo
 		}
 		return null;
 	} ).filter( reason => reason );
+}
+
+/**
+ * Return true is the given Jetpack site has a version equal
+ * or greater than the minimum Jetpack version to operate.
+ *
+ * @param  {Object} state - whole state tree
+ * @param  {Number} siteId - site id
+ * @return {Boolean} true is the site has minimum jetpack version
+ */
+export function siteHasMinimumJetpackVersion( state, siteId ) {
+	if ( ! siteId ) {
+		return null;
+	}
+
+	if ( ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+	const jetpackMinVersion = config( 'jetpack_min_version' );
+
+	return versionCompare( siteJetpackVersion, jetpackMinVersion ) >= 0;
 }

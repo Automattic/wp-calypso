@@ -1396,8 +1396,11 @@ describe( 'selectors', () => {
 						77203074: {
 							ID: siteId,
 							URL: 'https://jetpacksite.me',
+							is_multisite: false,
+							jetpack: true,
 							options: {
-								file_mod_disabled: []
+								file_mod_disabled: [],
+								jetpack_version: '3.4'
 							}
 						}
 					}
@@ -1416,8 +1419,11 @@ describe( 'selectors', () => {
 						77203074: {
 							ID: siteId,
 							URL: 'https://jetpacksite.me',
+							is_multisite: false,
+							jetpack: true,
 							options: {
-								file_mod_disabled: [ 'automatic_updater_disabled' ]
+								file_mod_disabled: [ 'automatic_updater_disabled' ],
+								jetpack_version: '3.4'
 							}
 						}
 					}
@@ -1425,7 +1431,7 @@ describe( 'selectors', () => {
 			};
 
 			const canAutoUpdateFiles = canJetpackSiteAutoUpdateFiles( state, siteId );
-			expect( canAutoUpdateFiles ).to.equal( true );
+			expect( canAutoUpdateFiles ).to.equal( false );
 		} );
 	} );
 
