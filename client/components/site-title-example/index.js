@@ -4,7 +4,7 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
 
-export default ()=> {
+export default () => {
 	return (
 		<div className="site-title-example">
 			<p className="site-title-example__description">
