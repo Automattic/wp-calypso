@@ -1,3 +1,7 @@
+#### v?.?.? (---)
+
+- Fix: `jsx-classname-namespace` will not allow underscores except as separator after namespace
+
 #### v2.0.0 (August 24, 2016)
 
 - Breaking: Required Node version increased from >=0.10.x to >=4.x ([see ESLint 3.0.0 migration guide](http://eslint.org/docs/user-guide/migrating-to-3.0.0))

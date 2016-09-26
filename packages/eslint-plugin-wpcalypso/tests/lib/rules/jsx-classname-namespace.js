@@ -198,6 +198,11 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 			code: 'export default function() { return <div className="foo__child" />; }',
 			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
 			filename: '/tmp/foo/foo-child.js'
+		},
+		{
+			code: 'export default function() { return <div className="foo__child-example2" />; }',
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/foo-child.js'
 		}
 	],
 
@@ -436,6 +441,15 @@ EXPECTED_FOO_PREFIX_ERROR = formatMessage( rule.ERROR_MESSAGE, { expected: 'foo_
 		},
 		{
 			code: 'export default function() { return <Foo className="foo"><div className="foo__" /></Foo>; }',
+			env: { es6: true },
+			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
+			filename: '/tmp/foo/index.js',
+			errors: [ {
+				message: EXPECTED_FOO_PREFIX_ERROR
+			} ]
+		},
+		{
+			code: 'export default function() { return <Foo className="foo"><div className="foo__child__example" /></Foo>; }',
 			env: { es6: true },
 			parserOptions: { ecmaFeatures: { jsx: true }, sourceType: 'module' },
 			filename: '/tmp/foo/index.js',

@@ -235,8 +235,8 @@ var rule = module.exports = function( context ) {
 
 	return {
 		JSXAttribute: function( node ) {
-			var rawClassName, filename, isRoot, classNames, namespace, prefix,
-				isError, expected;
+			var rawClassName, filename, isRoot, classNames, namespace,
+				prefixPattern, isError, expected;
 
 			if ( 'className' !== node.name.name ) {
 				return;
@@ -262,7 +262,7 @@ var rule = module.exports = function( context ) {
 
 			classNames = rawClassName.value.split( ' ' );
 			namespace = path.basename( path.dirname( filename ) );
-			prefix = namespace + '__';
+			prefixPattern = new RegExp( `^${ namespace }__[a-z0-9-]+$` );
 
 			isError = ! classNames.some( function( className ) {
 				if ( isRoot ) {
@@ -271,10 +271,7 @@ var rule = module.exports = function( context ) {
 
 				// Non-root node should have class name starting with but not
 				// equal to namespace prefix
-				return (
-					0 === className.indexOf( prefix ) &&
-					className !== prefix
-				);
+				return prefixPattern.test( className );
 			} );
 
 			if ( ! isError ) {
