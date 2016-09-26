@@ -35,7 +35,7 @@ Get plugins installed on a list of sites (can also be just one site, but it shou
 
 ### `getPluginsWithUpdates( state: Object, sites: Array )`
 
-### `getLogsForPlugin( state: Object, siteId: Number|String, pluginId: String )`
+### `getStatusForPlugin( state: Object, siteId: Number|String, pluginId: String )`
 
 Get the most recent status for a plugin action (including "inProgress" for currently-running actions).
 
@@ -84,7 +84,7 @@ state.plugins.installed = {
 		'exampleSiteIdTwo': [ … ],
 		…
 	},
-	logs: {
+	status: {
 		'exampleSiteIdTwo': {
 			'akismet/akismet': {
 				status: 'error',

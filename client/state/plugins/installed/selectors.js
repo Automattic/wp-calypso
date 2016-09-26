@@ -122,20 +122,20 @@ const getSitesWithoutPlugin = function( state, sites, pluginSlug ) {
 	} );
 };
 
-const getLogsForPlugin = function( state, siteId, pluginId ) {
-	if ( typeof state.plugins.installed.logs[ siteId ] === 'undefined' ) {
+const getStatusForPlugin = function( state, siteId, pluginId ) {
+	if ( typeof state.plugins.installed.status[ siteId ] === 'undefined' ) {
 		return false;
 	}
-	if ( typeof state.plugins.installed.logs[ siteId ][ pluginId ] === 'undefined' ) {
+	if ( typeof state.plugins.installed.status[ siteId ][ pluginId ] === 'undefined' ) {
 		return false;
 	}
-	const log = state.plugins.installed.logs[ siteId ][ pluginId ];
-	return Object.assign( {}, log, { siteId: siteId, pluginId: pluginId } );
+	const status = state.plugins.installed.status[ siteId ][ pluginId ];
+	return Object.assign( {}, status, { siteId: siteId, pluginId: pluginId } );
 };
 
 const isPluginDoingAction = function( state, siteId, pluginId ) {
-	const log = getLogsForPlugin( state, siteId, pluginId );
-	return ( !! log ) && ( 'inProgress' === log.status );
+	const status = getStatusForPlugin( state, siteId, pluginId );
+	return ( !! status ) && ( 'inProgress' === status.status );
 };
 
 export default {
@@ -146,6 +146,6 @@ export default {
 	getPluginOnSite,
 	getSitesWithPlugin,
 	getSitesWithoutPlugin,
-	getLogsForPlugin,
+	getStatusForPlugin,
 	isPluginDoingAction
 };

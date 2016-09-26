@@ -8,7 +8,7 @@ import findIndex from 'lodash/findIndex';
 /**
  * Internal dependencies
  */
-import logs from './logs/reducer';
+import status from './status/reducer';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -142,5 +142,5 @@ export default combineReducers( {
 	isRequesting,
 	hasRequested,
 	plugins,
-	logs
+	status
 } );
