@@ -2,15 +2,22 @@ export const statesListSchema = {
 	type: 'object',
 	additionalProperties: false,
 	patternProperties: {
-		'.+': {
+		'^[A-Z]{2}$': {
 			type: 'array',
-			required: [
-				'code',
-				'name',
-			],
-			properties: {
-				code: { type: 'string' },
-				name: { type: 'string' },
+			items: {
+				type: 'object',
+				properties: {
+					code: {
+						type: 'string'
+					},
+					name: {
+						type: 'string'
+					}
+				},
+				required: [
+					'code',
+					'name'
+				]
 			}
 		}
 	}
