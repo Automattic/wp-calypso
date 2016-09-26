@@ -26,8 +26,33 @@ import {
 	getSiteByUrl,
 	getSitePlan,
 	isCurrentSitePlan,
-	isCurrentPlanPaid
+	isCurrentPlanPaid,
+	siteHasMinimumJetpackVersion,
+	isMainNetworkSite
 } from '../selectors';
+
+/**
+ * Simple util function to increase/decrease a version with `x.x.x` format
+ * @param  {String} version - version reference
+ * @param  {Number} operator - increase/decrease given version
+ * @return {String} new version string
+ */
+function changeVersion( version, operator = 1 ) {
+	const splitVersion = version.split( '.' );
+
+	if ( operator >= 1 ) {
+		splitVersion[ splitVersion.length - 1 ]++;
+		return splitVersion.join( '.' );
+	}
+
+	if ( splitVersion[ splitVersion.length - 1 ] === '0' ) {
+		splitVersion[ splitVersion.length - 2 ]--;
+	} else {
+		splitVersion[ splitVersion.length - 1 ]--;
+	}
+
+	return splitVersion.join( '.' );
+}
 
 describe( 'selectors', () => {
 	beforeEach( () => {
@@ -1045,6 +1070,107 @@ describe( 'selectors', () => {
 			}, 77203074, 1003 );
 
 			expect( showcasePath ).to.eql( '/theme/journalistic/setup/testonesite2014.wordpress.com' );
+		} );
+	} );
+
+	describe( '#siteHasMinimumJetpackVersion()', () => {
+		it( 'it should return null for a non-existing site', () => {
+			const state = {
+				sites: {
+					items: {}
+				}
+			};
+			let siteId;
+
+			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
+			expect( hasMinimumVersion ).to.equal( null );
+		} );
+
+		it( 'it should return null for a non jetpack site', () => {
+			const siteId = 77203074;
+
+			const state = {
+				sites: {
+					items: {
+						77203074: {
+							ID: siteId,
+							jetpack: false,
+						}
+					}
+				}
+			};
+
+			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
+			expect( hasMinimumVersion ).to.equal( null );
+		} );
+
+		it( 'it should return true if jetpack version is greater that minimum version', () => {
+			const jetpackMinVersion = config( 'jetpack_min_version' );
+			const greaterVersion = changeVersion( jetpackMinVersion );
+			const siteId = 77203074;
+
+			const state = {
+				sites: {
+					items: {
+						77203074: {
+							ID: siteId,
+							jetpack: true,
+							options: {
+								jetpack_version: greaterVersion
+							}
+						}
+					}
+				}
+			};
+
+			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
+			expect( hasMinimumVersion ).to.equal( true );
+		} );
+
+		it( 'it should return true if jetpack version is equal to minimum version', () => {
+			const jetpackMinVersion = config( 'jetpack_min_version' );
+			const greaterVersion = jetpackMinVersion;
+			const siteId = 77203074;
+
+			const state = {
+				sites: {
+					items: {
+						77203074: {
+							ID: siteId,
+							jetpack: true,
+							options: {
+								jetpack_version: greaterVersion
+							}
+						}
+					}
+				}
+			};
+
+			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
+			expect( hasMinimumVersion ).to.equal( true );
+		} );
+
+		it( 'it should return false if jetpack version is smaller than minimum version', () => {
+			const jetpackMinVersion = config( 'jetpack_min_version' );
+			const smallerVersion = changeVersion( jetpackMinVersion, -1 );
+			const siteId = 77203074;
+
+			const state = {
+				sites: {
+					items: {
+						77203074: {
+							ID: siteId,
+							jetpack: true,
+							options: {
+								jetpack_version: smallerVersion
+							}
+						}
+					}
+				}
+			};
+
+			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
+			expect( hasMinimumVersion ).to.equal( false );
 		} );
 	} );
 } );
