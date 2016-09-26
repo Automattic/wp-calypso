@@ -4,37 +4,43 @@
  */
 
 import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-import Dispatcher from 'dispatcher';
-import undocumentedMe from 'lib/wpcom-undocumented/lib/me';
-
 describe( 'SecurityCheckupActions', () => {
-	let sandbox, actions, SecurityCheckupActions, testConstants, analytics;
+	let Dispatcher, sandbox, actions, SecurityCheckupActions, testConstants, undocumentedMe;
 
 	useSandbox( sandy => {
 		sandbox = sandy;
 	} );
 
 	useFakeDom();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/analytics', {
+			tracks: {
+				recordEvent: noop
+			}
+		} );
+	} );
 
 	before( () => {
+		Dispatcher = require( 'dispatcher' );
+		undocumentedMe = require( 'lib/wpcom-undocumented/lib/me' );
 		actions = require( '../constants' ).actions;
 		SecurityCheckupActions = require( '../actions' );
 		testConstants = require( './fixtures/constants' );
-		analytics = require( 'lib/analytics' );
 	} );
 
 	beforeEach( () => {
 		sandbox.stub( Dispatcher, 'handleServerAction' );
 		sandbox.stub( Dispatcher, 'handleViewAction' );
-		sandbox.stub( analytics.tracks, 'recordEvent' );
 	} );
 
 	afterEach( () => {

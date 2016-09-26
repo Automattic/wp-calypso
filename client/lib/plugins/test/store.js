@@ -26,6 +26,7 @@ describe( 'Plugins Store', () => {
 
 	useMockery( mockery => {
 		mockery.registerMock( 'lib/sites-list', mockedSitesList );
+		mockery.registerMock( 'lib/analytics', {} );
 	} );
 
 	useFakeDom();
@@ -181,9 +182,8 @@ describe( 'Plugins Store', () => {
 		} );
 
 		it( 'Should return an empty array if RECEIVE_PLUGINS errors', () => {
-			let UpdatedStore;
 			Dispatcher.handleServerAction( actions.fetchedError );
-			UpdatedStore = PluginsStore.getPlugins( {
+			const UpdatedStore = PluginsStore.getPlugins( {
 				ID: 123,
 				jetpack: false,
 				plan: { product_slug: 'free_plan' }
@@ -192,9 +192,8 @@ describe( 'Plugins Store', () => {
 		} );
 
 		it( 'Should not set value of the site if NOT_ALLOWED_TO_RECEIVE_PLUGINS errors', () => {
-			let UpdatedStore;
 			Dispatcher.handleServerAction( actions.fetchedNotAllowed );
-			UpdatedStore = PluginsStore.getPlugins( { ID: 123 } );
+			const UpdatedStore = PluginsStore.getPlugins( { ID: 123 } );
 			assert.isDefined( UpdatedStore );
 			assert.lengthOf( UpdatedStore, 0 );
 		} );
@@ -253,16 +252,14 @@ describe( 'Plugins Store', () => {
 		} );
 
 		it( 'it should remove the plugin from the sites list', () => {
-			let PluginsAfterRemoval;
 			Dispatcher.handleServerAction( actions.removedPlugin );
-			PluginsAfterRemoval = PluginsStore.getPlugins( [ site ] );
+			const PluginsAfterRemoval = PluginsStore.getPlugins( [ site ] );
 			assert.equal( Plugins.length, PluginsAfterRemoval.length + 1 );
 		} );
 
 		it( 'it should bring the plugin back if there is an error while removing the plugin', () => {
-			let PluginsAfterRemoval;
 			Dispatcher.handleViewAction( actions.removedPluginError );
-			PluginsAfterRemoval = PluginsStore.getPlugins( [ site ] );
+			const PluginsAfterRemoval = PluginsStore.getPlugins( [ site ] );
 			assert.equal( Plugins.length, PluginsAfterRemoval.length );
 		} );
 	} );
