@@ -94,18 +94,27 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should be true after a request begins', () => {
-			const state = isFetching( false, { type: STATES_LIST_REQUEST } );
-			expect( state ).to.eql( true );
+			const state = isFetching( false, {
+				type: STATES_LIST_REQUEST,
+				countryCode: 'US',
+			} );
+			expect( state.US ).to.eql( true );
 		} );
 
 		it( 'should be false when a request completes', () => {
-			const state = isFetching( true, { type: STATES_LIST_RECEIVE } );
-			expect( state ).to.eql( false );
+			const state = isFetching( true, {
+				type: STATES_LIST_RECEIVE,
+				countryCode: 'CA',
+			} );
+			expect( state.CA ).to.eql( false );
 		} );
 
 		it( 'should be false when a request fails', () => {
-			const state = isFetching( true, { type: STATES_LIST_REQUEST_FAILURE } );
-			expect( state ).to.eql( false );
+			const state = isFetching( true, {
+				type: STATES_LIST_REQUEST_FAILURE,
+				countryCode: 'DE',
+			} );
+			expect( state.DE ).to.eql( false );
 		} );
 
 		it( 'should never persist state', () => {
