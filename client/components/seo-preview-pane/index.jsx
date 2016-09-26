@@ -103,12 +103,15 @@ const ReaderPost = ( site, post ) => {
 			siteTitle={ site.name }
 			siteSlug={ site.slug }
 			siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
-			postTitle={ post.title }
-			postExcerpt={ formatExcerpt( post.excerpt || post.content ) }
+			postTitle={ get( post, 'title', '' ) }
+			postExcerpt={ formatExcerpt(
+				get( post, 'excerpt', false ) ||
+				get( post, 'content', false )
+			) }
 			postImage={ getPostImage( post ) }
-			postDate={ post.date }
-			authorName={ post.author.name }
-			authorIcon={ post.author.avatar_URL }
+			postDate={ get( post, 'date', (new Date()).toISOString() ) }
+			authorName={ get( post, 'author.name', '' ) }
+			authorIcon={ get( post, 'author.avatar_URL', '' ) }
 		/>
 	);
 };
@@ -123,8 +126,8 @@ const GoogleSite = site => (
 
 const GooglePost = ( site, post ) => (
 	<SearchPreview
-		title={ post.seoTitle }
-		url={ post.URL }
+		title={ get( post, 'seoTitle', '' ) }
+		url={ get( post, 'URL', '' ) }
 		snippet={ getSeoExcerptForPost( post ) }
 	/>
 );
@@ -141,12 +144,12 @@ const FacebookSite = site => (
 
 const FacebookPost = ( site, post ) => (
 	<FacebookPreview
-		title={ post.seoTitle }
-		url={ post.URL }
+		title={ get( post, 'seoTitle', '' ) }
+		url={ get( post, 'URL', '' ) }
 		type="article"
 		description={ getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
-		author={ post.author.name }
+		author={ get( post, 'author.name', '' ) }
 	/>
 );
 
@@ -162,8 +165,8 @@ const TwitterSite = site => (
 
 const TwitterPost = ( site, post ) => (
 	<TwitterPreview
-		title={ post.seoTitle }
-		url={ post.URL }
+		title={ get( post, 'seoTitle', '' ) }
+		url={ get( post, 'URL', '' ) }
 		type="large_image_summary"
 		description={ getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
