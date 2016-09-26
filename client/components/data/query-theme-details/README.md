@@ -3,7 +3,7 @@ QueryThemeDetails
 
 A component to decouple the fetching of a theme's details from any rendering.
 
-Use this component anywhere where you need the currently active theme for a site.
+Use this component anywhere where you need full details for a particular theme.
 It fetches data when necessary, and renders nothing.
 
 ## Usage
