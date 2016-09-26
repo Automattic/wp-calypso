@@ -10,7 +10,7 @@ import CommentButton from 'blocks/comment-button';
 import Card from 'components/card';
 
 export default React.createClass( {
-	displayName: 'CommentButtonExample',
+	displayName: 'CommentButton',
 
 	render() {
 		return(
