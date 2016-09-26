@@ -92,19 +92,23 @@ export class EditorCategoriesTagsAccordion extends Component {
 	getCategoriesSubtitle() {
 		const { translate, postTerms, defaultCategory } = this.props;
 		const categories = toArray( get( postTerms, 'category' ) );
-		const categoriesCount = categories.length;
 
-		switch ( categoriesCount ) {
-			case 0:
-				return defaultCategory ? defaultCategory.name : null;
-			case 1:
-				return unescapeString( categories[ 0 ].name );
-			default:
-				return translate(
-					'%d category',
-					'%d categories',
-					{ args: [ categoriesCount ], count: categoriesCount }
-				);
+		if ( categories.length > 1 ) {
+			return translate( '%d category', '%d categories', {
+				args: [ categories.length ],
+				count: categories.length
+			} );
+		}
+
+		let category;
+		if ( categories.length > 0 ) {
+			category = categories[ 0 ];
+		} else {
+			category = defaultCategory;
+		}
+
+		if ( category ) {
+			return unescapeString( category.name );
 		}
 	}
 
