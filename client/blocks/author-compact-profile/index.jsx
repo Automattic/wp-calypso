@@ -13,6 +13,7 @@ import ReaderFollowButton from 'reader/follow-button';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import { getStreamUrl } from 'reader/route';
+import { numberFormat } from 'i18n-calypso';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
@@ -55,12 +56,12 @@ const AuthorCompactProfile = React.createClass( {
 				{ followCount
 					? <div className="author-compact-profile__follow-count">
 					{ this.props.translate(
-						'%(followCount)d follower',
-						'%(followCount)d followers',
+						'%(followCount)s follower',
+						'%(followCount)s followers',
 						{
 							count: followCount,
 							args: {
-								followCount: followCount
+								followCount: numberFormat( followCount )
 							}
 						}
 					) }
