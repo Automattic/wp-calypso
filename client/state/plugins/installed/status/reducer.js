@@ -28,9 +28,9 @@ import {
 } from 'state/action-types';
 
 /*
- * Tracks all known installed plugin objects indexed by site ID.
+ * Tracks the current status of plugins on sites, indexed by (site, plugin).
  */
-export default function logs( state = {}, action ) {
+export default function status( state = {}, action ) {
 	const { siteId } = action;
 	switch ( action.type ) {
 		case PLUGIN_ACTIVATE_REQUEST:
@@ -56,10 +56,10 @@ export default function logs( state = {}, action ) {
 		case PLUGIN_REMOVE_REQUEST_FAILURE:
 			if ( state.hasOwnProperty( siteId ) ) {
 				return Object.assign( {}, state, {
-					[ siteId ]: logsForSite( state[ siteId ], action )
+					[ siteId ]: statusForSite( state[ siteId ], action )
 				} );
 			}
-			return Object.assign( {}, state, { [ siteId ]: logsForSite( {}, action ) } );
+			return Object.assign( {}, state, { [ siteId ]: statusForSite( {}, action ) } );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
@@ -68,7 +68,7 @@ export default function logs( state = {}, action ) {
 	}
 }
 
-function logsForSite( state = {}, action ) {
+function statusForSite( state = {}, action ) {
 	const { pluginId } = action;
 	switch ( action.type ) {
 		case PLUGIN_ACTIVATE_REQUEST:
@@ -94,16 +94,16 @@ function logsForSite( state = {}, action ) {
 		case PLUGIN_REMOVE_REQUEST_FAILURE:
 			if ( typeof state[ pluginId ] !== 'undefined' ) {
 				return Object.assign( {}, state, {
-					[ pluginId ]: logsForSitePlugin( state[ pluginId ], action )
+					[ pluginId ]: statusForSitePlugin( state[ pluginId ], action )
 				} );
 			}
-			return Object.assign( {}, state, { [ pluginId ]: logsForSitePlugin( {}, action ) } );
+			return Object.assign( {}, state, { [ pluginId ]: statusForSitePlugin( {}, action ) } );
 		default:
 			return state;
 	}
 }
 
-function logsForSitePlugin( state = {}, action ) {
+function statusForSitePlugin( state = {}, action ) {
 	switch ( action.type ) {
 		case PLUGIN_ACTIVATE_REQUEST:
 		case PLUGIN_DEACTIVATE_REQUEST:

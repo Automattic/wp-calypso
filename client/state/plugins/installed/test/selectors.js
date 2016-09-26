@@ -40,7 +40,7 @@ const state = deepFreeze( {
 				'site.one': [ akismet, helloDolly ],
 				'site.two': [ jetpack, helloDolly ],
 			},
-			logs: {
+			status: {
 				'site.one': {
 					'akismet/akismet': {
 						status: 'inProgress',
@@ -93,7 +93,7 @@ describe( 'Installed plugin selectors', function() {
 	} );
 
 	it( 'should contain getLogsForPlugin method', function() {
-		expect( selectors.getLogsForPlugin ).to.be.a( 'function' );
+		expect( selectors.getStatusForPlugin ).to.be.a( 'function' );
 	} );
 
 	it( 'should contain isPluginDoingAction method', function() {
@@ -254,17 +254,17 @@ describe( 'Installed plugin selectors', function() {
 		} );
 	} );
 
-	describe( 'getLogsForPlugin', function() {
+	describe( 'getStatusForPlugin', function() {
 		it( 'Should get `false` if the requested site is not in the current state', function() {
-			expect( selectors.getLogsForPlugin( state, 'no.site', 'akismet/akismet' ) ).to.be.false;
+			expect( selectors.getStatusForPlugin( state, 'no.site', 'akismet/akismet' ) ).to.be.false;
 		} );
 
 		it( 'Should get `false` if the requested plugin on this site is not in the current state', function() {
-			expect( selectors.getLogsForPlugin( state, 'site.one', 'hello-dolly/hello' ) ).to.be.false;
+			expect( selectors.getStatusForPlugin( state, 'site.one', 'hello-dolly/hello' ) ).to.be.false;
 		} );
 
 		it( 'Should get the log if the requested site & plugin have logs', function() {
-			expect( selectors.getLogsForPlugin( state, 'site.one', 'akismet/akismet' ) ).to.eql( {
+			expect( selectors.getStatusForPlugin( state, 'site.one', 'akismet/akismet' ) ).to.eql( {
 				status: 'inProgress',
 				siteId: 'site.one',
 				pluginId: 'akismet/akismet',

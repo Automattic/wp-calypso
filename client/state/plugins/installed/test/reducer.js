@@ -28,7 +28,7 @@ import {
 	ACTIVATE_PLUGIN
 } from '../constants';
 import { isRequesting, hasRequested, plugins } from '../reducer';
-import logs from '../logs/reducer';
+import status from '../status/reducer';
 import { akismet, jetpack } from './plugins';
 
 describe( 'reducer:', () => {
@@ -170,10 +170,10 @@ describe( 'reducer:', () => {
 		} );
 	} );
 
-	describe( 'logs', () => {
-		it( 'should set a progress log entry when an action begins', () => {
+	describe( 'status', () => {
+		it( 'should set a progress status entry when an action begins', () => {
 			const originalState = deepFreeze( {} );
-			const state = logs( originalState, {
+			const state = status( originalState, {
 				type: PLUGIN_ACTIVATE_REQUEST,
 				action: ACTIVATE_PLUGIN,
 				siteId: 'one.site',
@@ -189,7 +189,7 @@ describe( 'reducer:', () => {
 			} );
 		} );
 
-		it( 'should set a successful log entry for a successful action', () => {
+		it( 'should set a successful status entry for a successful action', () => {
 			const originalState = deepFreeze( {
 				'one.site': {
 					[ akismet.id ]: {
@@ -198,7 +198,7 @@ describe( 'reducer:', () => {
 					}
 				}
 			} );
-			const state = logs( originalState, {
+			const state = status( originalState, {
 				type: PLUGIN_ACTIVATE_REQUEST_SUCCESS,
 				action: ACTIVATE_PLUGIN,
 				siteId: 'one.site',
@@ -215,11 +215,11 @@ describe( 'reducer:', () => {
 			} );
 		} );
 
-		it( 'should set a error log entry for a failed action', () => {
+		it( 'should set a error status entry for a failed action', () => {
 			const originalState = deepFreeze( {} );
 			const testError = new Error( 'Plugin file does not exist.' );
 			testError.name = 'activation_error';
-			const state = logs( originalState, {
+			const state = status( originalState, {
 				type: PLUGIN_ACTIVATE_REQUEST_FAILURE,
 				action: ACTIVATE_PLUGIN,
 				siteId: 'one.site',
