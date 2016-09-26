@@ -29,7 +29,6 @@ class QueryThemeDetails extends Component {
 	}
 
 	refresh( props ) {
-		// todo (seear): Don't fetch if site matches existing data
 		if ( props.id && ! props.requestingThemeDetails ) {
 			this.props.fetchThemeDetails( props.id, props.siteId );
 		}
