@@ -8,11 +8,12 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	COUNTRY_STATES_RECEIVE,
+	COUNTRY_STATES_REQUEST,
+	COUNTRY_STATES_REQUEST_FAILURE,
+	COUNTRY_STATES_REQUEST_SUCCESS,
 	DESERIALIZE,
 	SERIALIZE,
-	STATES_LIST_RECEIVE,
-	STATES_LIST_REQUEST,
-	STATES_LIST_REQUEST_FAILURE,
 } from 'state/action-types';
 import reducer, {
 	items,
@@ -20,7 +21,7 @@ import reducer, {
 } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
 
-const originalStatesList = [
+const originalCountryStates = [
 	{ code: 'AL', name: 'Alabama' },
 	{ code: 'AK', name: 'Alaska' },
 	{ code: 'AS', name: 'American Samoa' },
@@ -52,23 +53,23 @@ describe( 'reducer', () => {
 
 		it( 'should store the states list received', () => {
 			const state = items( {}, {
-				type: STATES_LIST_RECEIVE,
-				countryCode: 'US',
-				statesList: originalStatesList
+				type: COUNTRY_STATES_RECEIVE,
+				countryCode: 'us',
+				countryStates: originalCountryStates
 			} );
 
-			expect( state.US ).to.eql( originalStatesList );
+			expect( state.us ).to.eql( originalCountryStates );
 		} );
 
 		describe( 'persistence', () => {
 			it( 'persists state', () => {
-				const original = deepFreeze( { US: originalStatesList } ),
+				const original = deepFreeze( { us: originalCountryStates } ),
 					state = items( original, { type: SERIALIZE } );
 				expect( state ).to.eql( original );
 			} );
 
 			it( 'loads valid persisted state', () => {
-				const original = deepFreeze( { US: originalStatesList } ),
+				const original = deepFreeze( { us: originalCountryStates } ),
 					state = items( original, { type: DESERIALIZE } );
 
 				expect( state ).to.eql( original );
@@ -95,26 +96,26 @@ describe( 'reducer', () => {
 
 		it( 'should be true after a request begins', () => {
 			const state = isFetching( false, {
-				type: STATES_LIST_REQUEST,
-				countryCode: 'US',
+				type: COUNTRY_STATES_REQUEST,
+				countryCode: 'us',
 			} );
-			expect( state.US ).to.eql( true );
+			expect( state.us ).to.eql( true );
 		} );
 
 		it( 'should be false when a request completes', () => {
 			const state = isFetching( true, {
-				type: STATES_LIST_RECEIVE,
-				countryCode: 'CA',
+				type: COUNTRY_STATES_REQUEST_SUCCESS,
+				countryCode: 'ca',
 			} );
-			expect( state.CA ).to.eql( false );
+			expect( state.ca ).to.eql( false );
 		} );
 
 		it( 'should be false when a request fails', () => {
 			const state = isFetching( true, {
-				type: STATES_LIST_REQUEST_FAILURE,
-				countryCode: 'DE',
+				type: COUNTRY_STATES_REQUEST_FAILURE,
+				countryCode: 'de',
 			} );
-			expect( state.DE ).to.eql( false );
+			expect( state.de ).to.eql( false );
 		} );
 
 		it( 'should never persist state', () => {

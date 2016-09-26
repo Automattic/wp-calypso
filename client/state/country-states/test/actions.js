@@ -8,13 +8,14 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	STATES_LIST_RECEIVE,
-	STATES_LIST_REQUEST,
-	STATES_LIST_REQUEST_FAILURE,
+	COUNTRY_STATES_RECEIVE,
+	COUNTRY_STATES_REQUEST,
+	COUNTRY_STATES_REQUEST_FAILURE,
+	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'state/action-types';
 import {
-	receiveStatesList,
-	requestStatesList,
+	receiveCountryStates,
+	requestCountryStates,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -23,17 +24,17 @@ describe( 'actions', () => {
 	let spy;
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 
-	describe( '#receiveStatesList()', () => {
+	describe( '#receiveCountryStates()', () => {
 		it( 'should return an action object', () => {
-			const action = receiveStatesList( [
+			const action = receiveCountryStates( [
 				{ code: 'AK', name: 'Alaska' },
 				{ code: 'AS', name: 'American Samoa' }
 			], 'US' );
 
 			expect( action ).to.eql( {
-				type: STATES_LIST_RECEIVE,
-				countryCode: 'US',
-				statesList: [
+				type: COUNTRY_STATES_RECEIVE,
+				countryCode: 'us',
+				countryStates: [
 					{ code: 'AK', name: 'Alaska' },
 					{ code: 'AS', name: 'American Samoa' }
 				]
@@ -41,16 +42,16 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#requestStatesList()', () => {
+	describe( '#requestCountryStates()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
-				.get( '/rest/v1.1/domains/supported-states/US' )
+				.get( '/rest/v1.1/domains/supported-states/us' )
 				.reply( 200, [
 					{ code: 'AK', name: 'Alaska' },
 					{ code: 'AS', name: 'American Samoa' }
 				] )
-				.get( '/rest/v1.1/domains/supported-states/CA' )
+				.get( '/rest/v1.1/domains/supported-states/ca' )
 				.reply( 500, {
 					error: 'server_error',
 					message: 'A server error occurred',
@@ -58,20 +59,20 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {
-			requestStatesList( 'US' )( spy );
+			requestCountryStates( 'us' )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
-				type: STATES_LIST_REQUEST,
-				countryCode: 'US'
+				type: COUNTRY_STATES_REQUEST,
+				countryCode: 'us'
 			} );
 		} );
 
-		it( 'should dispatch product list receive action when request completes', () => {
-			return requestStatesList( 'US' )( spy ).then( () => {
+		it( 'should dispatch country states receive action when request completes', () => {
+			return requestCountryStates( 'us' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: STATES_LIST_RECEIVE,
-					countryCode: 'US',
-					statesList: [
+					type: COUNTRY_STATES_RECEIVE,
+					countryCode: 'us',
+					countryStates: [
 						{ code: 'AK', name: 'Alaska' },
 						{ code: 'AS', name: 'American Samoa' }
 					]
@@ -79,10 +80,20 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		it( 'should dispatch fail action when request fails', () => {
-			return requestStatesList( 'CA' )( spy ).then( () => {
+		it( 'should dispatch country states request success action when request completes', () => {
+			return requestCountryStates( 'us' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
-					type: STATES_LIST_REQUEST_FAILURE,
+					type: COUNTRY_STATES_REQUEST_SUCCESS,
+					countryCode: 'us'
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return requestCountryStates( 'ca' )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: COUNTRY_STATES_REQUEST_FAILURE,
+					countryCode: 'ca',
 					error: sinon.match( { message: 'A server error occurred' } )
 				} );
 			} );

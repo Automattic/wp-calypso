@@ -1,8 +1,8 @@
-export const statesListSchema = {
+export const itemSchema = {
 	type: 'object',
 	additionalProperties: false,
 	patternProperties: {
-		'^[A-Z]{2}$': {
+		'^[a-z]{2}$': {
 			type: 'array',
 			items: {
 				type: 'object',
