@@ -93,9 +93,36 @@ describe( 'utils', () => {
 					category: {
 						meta: {
 							ID: 171,
-							name: 'Meta',
+							name: 'meta',
 							meta: {}
 						}
+					},
+					post_tag: {
+						meta: {
+							ID: 171,
+							name: 'meta',
+							meta: {}
+						}
+					}
+				},
+				categories: {
+					meta: {
+						ID: 171,
+						name: 'meta',
+						meta: {}
+					}
+				},
+				tags: {
+					meta: {
+						ID: 171,
+						name: 'meta',
+						meta: {}
+					}
+				},
+				attachments: {
+					14209: {
+						ID: 14209,
+						meta: {}
 					}
 				}
 			} );
@@ -108,8 +135,31 @@ describe( 'utils', () => {
 					category: {
 						meta: {
 							ID: 171,
-							name: 'Meta'
+							name: 'meta'
 						}
+					},
+					post_tag: {
+						meta: {
+							ID: 171,
+							name: 'meta'
+						}
+					}
+				},
+				categories: {
+					meta: {
+						ID: 171,
+						name: 'meta'
+					}
+				},
+				tags: {
+					meta: {
+						ID: 171,
+						name: 'meta'
+					}
+				},
+				attachments: {
+					14209: {
+						ID: 14209
 					}
 				}
 			} );
