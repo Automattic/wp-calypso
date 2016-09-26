@@ -1,13 +1,10 @@
-$img-size:              24px;
-$img-border-radius:     50%;
-
 .suggestions {
 	width: 40%;
 
 	img {
-		border-radius: $img-border-radius;
-		width: $img-size;
-		height: $img-size;
+		border-radius: 50%;
+		width: 24px;
+		height: 24px;
 		float: left;
 		margin: 0 10px 0 0;
 	}
