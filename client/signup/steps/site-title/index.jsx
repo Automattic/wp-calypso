@@ -18,8 +18,6 @@ import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 import { translate } from 'i18n-calypso';
 
 const SiteTitleStep = React.createClass( {
-	displayName: 'Site Title',
-
 	propTypes: {
 		flowName: PropTypes.string,
 		goToNextStep: PropTypes.func.isRequired,
