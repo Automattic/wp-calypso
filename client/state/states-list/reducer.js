@@ -20,7 +20,7 @@ export const items = createReducer( {}, {
 }, statesListSchema );
 
 // Tracks states list fetching state
-export const isFetching = createReducer( false, {
+export const isFetching = createReducer( {}, {
 	[ STATES_LIST_REQUEST ]: ( state, { countryCode } ) => ( { ...state, [ countryCode ]: true } ),
 	[ STATES_LIST_RECEIVE ]: ( state, { countryCode } ) => ( { ...state, [ countryCode ]: false } ),
 	[ STATES_LIST_REQUEST_FAILURE ]: ( state, { countryCode } ) => ( { ...state, [ countryCode ]: false } )

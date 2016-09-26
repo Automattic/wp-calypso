@@ -87,10 +87,10 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#isFetching()', () => {
-		it( 'should default to false', () => {
+		it( 'should default to empty object', () => {
 			const state = isFetching( undefined, {} );
 
-			expect( state ).to.eql( false );
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should be true after a request begins', () => {
@@ -120,13 +120,13 @@ describe( 'reducer', () => {
 		it( 'should never persist state', () => {
 			const state = isFetching( true, { type: SERIALIZE } );
 
-			expect( state ).to.eql( false );
+			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should never load persisted state', () => {
 			const state = isFetching( true, { type: DESERIALIZE } );
 
-			expect( state ).to.eql( false );
+			expect( state ).to.eql( {} );
 		} );
 	} );
 } );
