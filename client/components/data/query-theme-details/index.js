@@ -41,6 +41,7 @@ class QueryThemeDetails extends Component {
 
 QueryThemeDetails.propTypes = {
 	id: PropTypes.string.isRequired,
+	siteId: PropTypes.number,
 	// connected props
 	requestingThemeDetails: PropTypes.bool,
 	fetchThemeDetails: PropTypes.func,
