@@ -71,8 +71,8 @@ const ThemeSheet = React.createClass( {
 		stylesheet: React.PropTypes.string,
 		active: React.PropTypes.bool,
 		purchased: React.PropTypes.bool,
-		isLoggedIn: React.PropTypes.bool,
 		// Connected props
+		isLoggedIn: React.PropTypes.bool,
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
