@@ -13,11 +13,11 @@ import {
 	reduce,
 	toArray,
 	cloneDeep,
-	cloneDeepWith,
 	pickBy,
 	isString,
 	every
 } from 'lodash';
+import { dissocPath } from 'lodash/fp';
 
 /**
  * Internal dependencies
@@ -166,11 +166,15 @@ export function normalizePostForEditing( post ) {
  * @return {Object}      Normalized post object
  */
 export function normalizePostForState( post ) {
-	return cloneDeepWith( post, ( value, key ) => {
-		if ( 'meta' === key ) {
-			return null;
-		}
-	} );
+	return reduce( [
+		[],
+		...reduce( post.terms, ( memo, terms, taxonomy ) => (
+			memo.concat( map( terms, ( term, slug ) => [ 'terms', taxonomy, slug ] ) )
+		), [] ),
+		...map( post.categories, ( category, slug ) => [ 'category', slug ] ),
+		...map( post.tags, ( tag, slug ) => [ 'tags', slug ] ),
+		...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] )
+	], ( memo, path ) => dissocPath( path.concat( 'meta' ), memo ), post );
 }
 
 /**
