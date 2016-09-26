@@ -219,6 +219,8 @@ function reduxStoreReady( reduxStore ) {
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
 			const Logger = require( 'lib/catch-js-errors' );
 			const errorLogger = new Logger();
+			//Save errorLogger to a singleton for use in arbitrary logging.
+			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
 			//Save data to JS error logger
 			errorLogger.saveDiagnosticData( {
 				user_id: user.get().ID,
