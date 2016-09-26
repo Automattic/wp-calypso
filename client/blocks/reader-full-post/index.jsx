@@ -51,6 +51,7 @@ import { getStreamUrlFromPost } from 'reader/route';
 import { CANONICAL_IN_CONTENT } from 'state/reader/posts/display-types';
 import { likePost, unlikePost } from 'lib/like-store/actions';
 import LikeStore from 'lib/like-store/like-store';
+import FeaturedImage from 'blocks/reader-full-post/featured-image';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -202,9 +203,7 @@ export class FullPostView extends React.Component {
 						<ReaderFullPostHeader post={ post } />
 
 						{ post.featured_image && ( ! ( post.display_type & CANONICAL_IN_CONTENT ) ) &&
-							<div className="reader-full-post__featured-image">
-									<img src={ post.featured_image } />
-							</div>
+							<FeaturedImage src={ post.featured_image } />
 						}
 						{ post.use_excerpt
 							? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
