@@ -44,12 +44,13 @@ describe( 'actions', () => {
 	describe( '#requestStatesList()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
 				.get( '/rest/v1.1/domains/supported-states/US' )
-				.twice().reply( 200, [
+				.reply( 200, [
 					{ code: 'AK', name: 'Alaska' },
 					{ code: 'AS', name: 'American Samoa' }
 				] )
-				.get( '/rest/v1.1/domains/supported-states/US' )
+				.get( '/rest/v1.1/domains/supported-states/CA' )
 				.reply( 500, {
 					error: 'server_error',
 					message: 'A server error occurred',
@@ -79,7 +80,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			return requestStatesList( 'US' )( spy ).then( () => {
+			return requestStatesList( 'CA' )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: STATES_LIST_REQUEST_FAILURE,
 					error: sinon.match( { message: 'A server error occurred' } )
