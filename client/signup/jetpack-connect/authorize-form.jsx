@@ -221,7 +221,7 @@ const LoggedInForm = React.createClass( {
 				this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 			}
 		} else if ( siteReceived && ! isActivating ) {
-			this.activateManage();
+			this.activateManageAndRedirect();
 		}
 	},
 
@@ -248,10 +248,15 @@ const LoggedInForm = React.createClass( {
 		);
 	},
 
-	activateManage() {
+	activateManageAndRedirect() {
 		const { queryObject, activateManageSecret } = this.props.jetpackConnectAuthorize;
+		debug( 'Activating Manage module and calculating redirection', queryObject );
 		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
-		page.redirect( this.getRedirectionTarget() );
+		if ( 'jpo' === queryObject.from || this.props.isSSO ) {
+			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		} else {
+			page.redirect( this.getRedirectionTarget() );
+		}
 	},
 
 	handleSubmit() {
@@ -267,7 +272,7 @@ const LoggedInForm = React.createClass( {
 			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
 		if ( activateManageSecret && ! manageActivated ) {
-			return this.activateManage();
+			return this.activateManageAndRedirect();
 		}
 		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			window.location.href = queryObject.site + authUrl;
