@@ -35,13 +35,15 @@ export default class FeaturedAsset extends React.Component {
 
 		return (
 			<div
-				className="reader-full-post__featured-image"
-				onClick={ this.props.onClick } >
-				<img className="reader__post-featured-image-image"
-					ref="featuredImage"
-					src={ this.state.featuredImage }
-					style={ this.props.featuredSize }
-				/>
+				className="reader-full-post__featured-image" >
+				{ this.state.featuredImage
+				? <img className="reader__post-featured-image-image"
+						ref="featuredImage"
+						src={ this.state.featuredImage }
+						style={ this.props.featuredSize }
+					/>
+				: null
+				}
 			</div>
 		);
 	}
