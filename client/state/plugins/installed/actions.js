@@ -155,7 +155,6 @@ export default {
 			};
 
 			if ( ! site.canUpdateFiles ) {
-				// @todo i18n? do user see this ever?
 				const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
 				errorCallback( cantUpdateError );
 				return getRejectedPromise( cantUpdateError );
@@ -168,7 +167,6 @@ export default {
 	enableAutoupdate: function( site, plugin ) {
 		return ( dispatch ) => {
 			if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-				// @todo i18n? do user see this ever?
 				return getRejectedPromise( 'Error: We can\'t update files on this site.' );
 			}
 
@@ -274,7 +272,6 @@ export default {
 			};
 
 			if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
-				// @todo i18n? do user see this ever?
 				const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
 				return errorCallback( cantUpdateError );
 			}
@@ -332,7 +329,6 @@ export default {
 			};
 
 			if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
-				// @todo i18n? do user see this ever?
 				const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
 				return errorCallback( cantUpdateError );
 			}
