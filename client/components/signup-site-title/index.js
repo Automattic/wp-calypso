@@ -28,7 +28,6 @@ const SignupSiteTitle = React.createClass( {
 			fieldNames: [ 'siteTitle' ],
 			validatorFunction: noop,
 			onNewState: this.setFormState,
-			onError: this.handleFormControllerError,
 			hideFieldErrorsOnChange: true,
 			initialState: {
 				siteTitle: {
@@ -49,12 +48,6 @@ const SignupSiteTitle = React.createClass( {
 			name: event.target.name,
 			value: event.target.value
 		} );
-	},
-
-	handleFormControllerError( error ) {
-		if ( error ) {
-			throw error;
-		}
 	},
 
 	formFields() {
