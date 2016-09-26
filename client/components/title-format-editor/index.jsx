@@ -5,6 +5,7 @@ import {
 	map,
 	max,
 	min,
+	noop,
 } from 'lodash';
 
 // The following polyfills exist for the draft-js editor, since
@@ -44,7 +45,6 @@ if ( ! String.prototype.startsWith ) {
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill
 if ( ! Array.prototype.fill ) {
 	Array.prototype.fill = function( value ) {
-
 		// Steps 1-2.
 		if ( this === null ) {
 			throw new TypeError( 'this is null or not defined' );
@@ -112,9 +112,16 @@ const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
 
 export class TitleFormatEditor extends Component {
 	static propTypes = {
+		disabled: PropTypes.bool,
+		placeholder: PropTypes.string,
 		type: PropTypes.object.isRequired,
 		tokens: PropTypes.object.isRequired,
-		onChange: PropTypes.func.isRequired
+		onChange: PropTypes.func.isRequired,
+	};
+
+	static defaultProps = {
+		disabled: false,
+		placeholder: '',
 	};
 
 	constructor( props ) {
@@ -148,11 +155,13 @@ export class TitleFormatEditor extends Component {
 	}
 
 	editorStateFrom( props ) {
+		const { disabled } = props;
+
 		return EditorState.createWithContent(
 			toEditor( props.titleFormats, props.tokens ),
 			new CompositeDecorator( [ {
 				strategy: this.renderTokens,
-				component: Chip( this.removeToken )
+				component: Chip( disabled ? noop : this.removeToken )
 			} ] )
 		);
 	}
@@ -325,6 +334,8 @@ export class TitleFormatEditor extends Component {
 	render() {
 		const { editorState } = this.state;
 		const {
+			disabled,
+			placeholder,
 			titleData,
 			translate,
 			tokens,
@@ -347,7 +358,7 @@ export class TitleFormatEditor extends Component {
 						<span
 							key={ name }
 							className="title-format-editor__button"
-							onClick={ this.addToken( title, name ) }
+							onClick={ disabled ? noop : this.addToken( title, name ) }
 						>
 							{ title }
 						</span>
@@ -356,7 +367,8 @@ export class TitleFormatEditor extends Component {
 				<div className="title-format-editor__editor-wrapper">
 					<Editor
 						editorState={ editorState }
-						onChange={ this.updateEditor }
+						onChange={ disabled ? noop : this.updateEditor }
+						placeholder={ placeholder }
 						ref={ this.storeEditorReference }
 					/>
 				</div>
