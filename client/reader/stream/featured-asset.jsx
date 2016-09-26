@@ -17,7 +17,7 @@ export default class FeaturedAsset extends React.Component {
 			const img = new Image();
 			img.onload = () => this.setState( { featuredImage: this.props.featuredImage } );
 
-			// use featured embed if featured image is not available
+			// try using featured embed if featured image is not available
 			img.onerror = () => this.setState( { useFeaturedEmbed: this.props.featuredEmbed } );
 			img.src = this.props.featuredImage;
 		}
