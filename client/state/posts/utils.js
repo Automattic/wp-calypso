@@ -171,7 +171,7 @@ export function normalizePostForState( post ) {
 		...reduce( post.terms, ( memo, terms, taxonomy ) => (
 			memo.concat( map( terms, ( term, slug ) => [ 'terms', taxonomy, slug ] ) )
 		), [] ),
-		...map( post.categories, ( category, slug ) => [ 'category', slug ] ),
+		...map( post.categories, ( category, slug ) => [ 'categories', slug ] ),
 		...map( post.tags, ( tag, slug ) => [ 'tags', slug ] ),
 		...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] )
 	], ( memo, path ) => dissocPath( path.concat( 'meta' ), memo ), post );
