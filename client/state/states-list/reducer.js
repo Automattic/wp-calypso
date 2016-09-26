@@ -15,7 +15,7 @@ import { statesListSchema } from './schema';
 import { createReducer } from 'state/utils';
 
 // Stores the complete list of states, indexed by locale key
-export const statesList = createReducer( {}, {
+export const items = createReducer( {}, {
 	[ STATES_LIST_RECEIVE ]: ( state, action ) => ( { ...state, [ action.countryCode ]: action.statesList } ),
 }, statesListSchema );
 
@@ -27,6 +27,6 @@ export const isFetching = createReducer( false, {
 } );
 
 export default combineReducers( {
-	statesList,
 	isFetching,
+	items,
 } );

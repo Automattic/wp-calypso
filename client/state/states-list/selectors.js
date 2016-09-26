@@ -1,5 +1,5 @@
 export function getStatesList( state, countryCode ) {
-	return state.statesList.statesList[ countryCode ];
+	return state.statesList.items[ countryCode ];
 }
 
 export function isStatesListFetching( state, countryCode ) {

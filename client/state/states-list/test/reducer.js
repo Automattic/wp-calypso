@@ -15,7 +15,7 @@ import {
 	STATES_LIST_REQUEST_FAILURE,
 } from 'state/action-types';
 import reducer, {
-	statesList,
+	items,
 	isFetching,
 } from '../reducer';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -38,20 +38,20 @@ describe( 'reducer', () => {
 
 	it( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
-			'statesList',
+			'items',
 			'isFetching'
 		] );
 	} );
 
 	describe( '#statesList()', () => {
 		it( 'should default to empty object', () => {
-			const state = statesList( undefined, {} );
+			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
 		} );
 
 		it( 'should store the states list received', () => {
-			const state = statesList( {}, {
+			const state = items( {}, {
 				type: STATES_LIST_RECEIVE,
 				countryCode: 'US',
 				statesList: originalStatesList
@@ -63,13 +63,13 @@ describe( 'reducer', () => {
 		describe( 'persistence', () => {
 			it( 'persists state', () => {
 				const original = deepFreeze( { US: originalStatesList } ),
-					state = statesList( original, { type: SERIALIZE } );
+					state = items( original, { type: SERIALIZE } );
 				expect( state ).to.eql( original );
 			} );
 
 			it( 'loads valid persisted state', () => {
 				const original = deepFreeze( { US: originalStatesList } ),
-					state = statesList( original, { type: DESERIALIZE } );
+					state = items( original, { type: DESERIALIZE } );
 
 				expect( state ).to.eql( original );
 			} );
@@ -80,7 +80,7 @@ describe( 'reducer', () => {
 					AK: 'Alaska',
 					AS: 'American Samoa'
 				} );
-				const state = statesList( original, { type: DESERIALIZE } );
+				const state = items( original, { type: DESERIALIZE } );
 				expect( state ).to.eql( {} );
 			} );
 		} );
