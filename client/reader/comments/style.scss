@@ -34,12 +34,11 @@
 	// The inner working of these styles is covered here: http://alistapart.com/article/expanding-text-areas-made-elegant
 	.expanding-area {
 		position: relative;
-		$initial-focused-height: 70px;
 
 		pre,
 		textarea {
 			max-height: 400px;
-			min-height: 33px;
+			min-height: 80px;
 			margin: 0;
 			padding: 5px 60px 5px 5px;
 			font-size: 14px;
@@ -63,10 +62,6 @@
 			box-sizing: border-box;
 			display: block;
 			visibility: hidden;
-		}
-
-		&.focused {
-			min-height: $initial-focused-height;
 		}
 	}
 
