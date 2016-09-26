@@ -3,8 +3,7 @@
  */
 import { assert } from 'chai';
 import sinon from 'sinon';
-import cloneDeep from 'lodash/cloneDeep';
-import forEach from 'lodash/forEach';
+import { cloneDeep, forEach, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +15,13 @@ describe( 'SitesList', () => {
 	let SitesList, Site, data;
 	let sitesList, originalData, initializedSites;
 
-	useMockery();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+	} );
 	useFakeDom();
 
 	before( () => {
@@ -39,7 +44,7 @@ describe( 'SitesList', () => {
 
 		it( 'should create Site objects', () => {
 			forEach( initializedSites, site => {
-				assert.instanceOf( site, Site )
+				assert.instanceOf( site, Site );
 			} );
 		} );
 
@@ -89,7 +94,7 @@ describe( 'SitesList', () => {
 
 	describe( 'change propagation', () => {
 		it( 'should trigger change when site is updated', () => {
-			const siteId = originalData[0].ID;
+			const siteId = originalData[ 0 ].ID;
 			const changeCallback = sinon.spy();
 
 			sitesList.initialize( cloneDeep( data.original ) );

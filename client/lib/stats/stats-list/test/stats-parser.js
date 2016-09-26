@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import map from 'lodash/map';
+import { map, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +13,13 @@ import useFakeDom from 'test/helpers/use-fake-dom';
 describe( 'StatsParser', () => {
 	let statsParser, data;
 
-	useMockery();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+	} );
 	useFakeDom();
 
 	before( () => {
@@ -58,7 +64,7 @@ describe( 'StatsParser', () => {
 			assert.isArray( item.label, 'Label should be array' );
 			assert.deepEqual( map( item.label, 'label' ), [ 'supertag', 'supertag-transition' ] );
 			assert.deepEqual( map( item.label, 'labelIcon' ), [ 'tag', 'tag' ] );
-			assert.isNull( item.label[0].link );
+			assert.isNull( item.label[ 0 ].link );
 			assert.equal( item.value, 480 );
 		} );
 	} );
