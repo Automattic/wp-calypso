@@ -15,6 +15,8 @@ import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 
+import { translate } from 'i18n-calypso';
+
 const SignupSiteTitle = React.createClass( {
 	propTypes: {
 		onSubmit: PropTypes.func.isRequired,
@@ -64,11 +66,11 @@ const SignupSiteTitle = React.createClass( {
 					className="signup-site-title__input"
 					type="text"
 					name="siteTitle"
-					placeholder={ this.translate( 'Give your site a title' ) }
+					placeholder={ translate( 'Give your site a title' ) }
 					value={ this.state.form.siteTitle.value }
 					onChange={ this.handleChangeEvent }
 				/>
-				<FormButton className="signup-site-title__button">{ this.translate( 'Continue' ) }</FormButton>
+				<FormButton className="signup-site-title__button">{ translate( 'Continue' ) }</FormButton>
 			</FormFieldset>
 		);
 	},

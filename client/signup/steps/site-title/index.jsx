@@ -15,6 +15,8 @@ import SiteTitleExample from 'components/site-title-example';
 
 import { setSiteTitle } from 'state/signup/steps/site-title/actions';
 
+import { translate } from 'i18n-calypso';
+
 const SiteTitleStep = React.createClass( {
 	displayName: 'Site Title',
 
@@ -31,7 +33,7 @@ const SiteTitleStep = React.createClass( {
 		this.props.setSiteTitle( siteTitle );
 
 		SignupActions.submitSignupStep( {
-			processingMessage: this.translate( 'Setting up your site' ),
+			processingMessage: translate( 'Setting up your site' ),
 			stepName: this.props.stepName,
 			siteTitle
 		}, [], { siteTitle } );
@@ -54,8 +56,8 @@ const SiteTitleStep = React.createClass( {
 		);
 	},
 	render() {
-		const headerText = this.translate( 'Give your new site a name.' );
-		const subHeaderText = this.translate( 'Enter a Site Title that will be displayed for visitors. You can always change this later.' );
+		const headerText = translate( 'Give your new site a name.' );
+		const subHeaderText = translate( 'Enter a Site Title that will be displayed for visitors. You can always change this later.' );
 
 		return (
 			<div>
