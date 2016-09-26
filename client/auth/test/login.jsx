@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import identity from 'lodash/identity';
+import { identity, noop } from 'lodash';
 import { stub } from 'sinon';
 
 /**
@@ -20,6 +20,7 @@ describe( 'LoginTest', function() {
 		mockery.registerMock( 'lib/oauth-store/actions', {
 			login: loginStub
 		} );
+		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop } } );
 	} );
 
 	before( () => {
@@ -40,7 +41,7 @@ describe( 'LoginTest', function() {
 	} );
 
 	it( 'cannot submit until login details entered', function( done ) {
-		var submit = TestUtils.findRenderedDOMComponentWithTag( page, 'button' );
+		const submit = TestUtils.findRenderedDOMComponentWithTag( page, 'button' );
 
 		page.setState( { login: 'test', password: 'test', inProgress: false }, function() {
 			expect( submit.disabled ).to.be.false;
@@ -64,7 +65,7 @@ describe( 'LoginTest', function() {
 	} );
 
 	it( 'submits login form', function( done ) {
-		var submit = TestUtils.findRenderedDOMComponentWithTag( page, 'form' );
+		const submit = TestUtils.findRenderedDOMComponentWithTag( page, 'form' );
 
 		page.setState( { login: 'user', password: 'pass', auth_code: 'otp' }, function() {
 			TestUtils.Simulate.submit( submit );

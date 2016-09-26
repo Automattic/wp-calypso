@@ -80,7 +80,7 @@ describe( 'selectors', () => {
 
 			const domainExpirationMoment = moment( domains[ 0 ].expiry );
 
-			expect( decoratedDomains[ 0 ].registrationMoment.date() ).to.equal( domainExpirationMoment.date() );
+			expect( decoratedDomains[ 0 ].expirationMoment.date() ).to.equal( domainExpirationMoment.date() );
 		} );
 	} );
 } );
