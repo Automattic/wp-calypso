@@ -21,16 +21,16 @@ import reducer, {
 } from '../reducer';
 
 const originalStatesList = [
-	{ code: "AL", name: "Alabama" },
-	{ code: "AK", name: "Alaska" },
-	{ code: "AS", name: "American Samoa" },
-	{ code: "AZ", name: "Arizona" },
-	{ code: "AR", name: "Arkansas" },
-	{ code: "AA", name: "Armed Forces America" },
-	{ code: "AE", name: "Armed Forces Other Areas" },
-	{ code: "AP", name: "Armed Forces Pacific" },
-	{ code: "CA", name: "California" },
-	{ code: "CO", name: "Colorado" }
+	{ code: 'AL', name: 'Alabama' },
+	{ code: 'AK', name: 'Alaska' },
+	{ code: 'AS', name: 'American Samoa' },
+	{ code: 'AZ', name: 'Arizona' },
+	{ code: 'AR', name: 'Arkansas' },
+	{ code: 'AA', name: 'Armed Forces America' },
+	{ code: 'AE', name: 'Armed Forces Other Areas' },
+	{ code: 'AP', name: 'Armed Forces Pacific' },
+	{ code: 'CA', name: 'California' },
+	{ code: 'CO', name: 'Colorado' }
 ];
 
 describe( 'reducer', () => {
@@ -39,7 +39,7 @@ describe( 'reducer', () => {
 	} );
 
 	after( () => {
-		console.warn.restore();
+		console.warn.restore(); // eslint-disable-line no-console
 	} );
 
 	it( 'should include expected keys in return value', () => {
@@ -63,7 +63,7 @@ describe( 'reducer', () => {
 				statesList: originalStatesList
 			} );
 
-			expect( state[ 'US' ] ).to.eql( originalStatesList );
+			expect( state.US ).to.eql( originalStatesList );
 		} );
 
 		describe( 'persistence', () => {
