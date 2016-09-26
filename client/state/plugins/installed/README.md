@@ -23,8 +23,6 @@ A module for managing installed plugins on connected sites.
 
 ### `toggleAutoUpdates( site: Object, plugin: Object )`
 
-### `removeNotice( site: Object, plugin: Object )`
-
 ## Selectors
 
 ### `isRequesting( state: Object, siteId: Number|String )`

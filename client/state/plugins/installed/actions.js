@@ -32,8 +32,7 @@ import {
 	PLUGIN_INSTALL_REQUEST_FAILURE,
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
-	PLUGIN_REMOVE_REQUEST_FAILURE,
-	PLUGIN_NOTICE_REMOVE
+	PLUGIN_REMOVE_REQUEST_FAILURE
 } from 'state/action-types';
 import {
 	ACTIVATE_PLUGIN,
@@ -371,16 +370,5 @@ export default {
 				return wpcom.site( site.ID ).wpcomPluginsList().then( receivePluginsDispatchSuccess ).catch( receivePluginsDispatchFail );
 			} );
 		};
-	},
-
-	removeNotice: function( site, plugin ) {
-		return ( dispatch ) => {
-			const pluginId = getPluginId( site, plugin );
-			dispatch( {
-				type: PLUGIN_NOTICE_REMOVE,
-				siteId: site.ID,
-				pluginId
-			} );
-		};
-	},
+	}
 };

@@ -22,8 +22,7 @@ import {
 	PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS,
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
-	PLUGIN_REMOVE_REQUEST_SUCCESS,
-	PLUGIN_NOTICE_REMOVE
+	PLUGIN_REMOVE_REQUEST_SUCCESS
 } from 'state/action-types';
 import {
 	ACTIVATE_PLUGIN
@@ -236,23 +235,6 @@ describe( 'reducer:', () => {
 					}
 				}
 			} );
-		} );
-
-		it( 'should remove the log entry for a given site/plugin', () => {
-			const originalState = deepFreeze( {
-				'one.site': {
-					[ akismet.id ]: {
-						status: 'completed',
-						action: ACTIVATE_PLUGIN
-					}
-				}
-			} );
-			const state = logs( originalState, {
-				type: PLUGIN_NOTICE_REMOVE,
-				siteId: 'one.site',
-				pluginId: akismet.id
-			} );
-			expect( state ).to.eql( { 'one.site': {} } );
 		} );
 	} );
 } );
