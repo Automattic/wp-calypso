@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import omit from 'lodash/omit';
-
-/**
  * Internal dependencies
  */
 import {
@@ -28,7 +23,6 @@ import {
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
-	PLUGIN_NOTICE_REMOVE,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -37,7 +31,7 @@ import {
  * Tracks all known installed plugin objects indexed by site ID.
  */
 export default function logs( state = {}, action ) {
-	const { siteId, pluginId } = action;
+	const { siteId } = action;
 	switch ( action.type ) {
 		case PLUGIN_ACTIVATE_REQUEST:
 		case PLUGIN_DEACTIVATE_REQUEST:
@@ -62,15 +56,10 @@ export default function logs( state = {}, action ) {
 		case PLUGIN_REMOVE_REQUEST_FAILURE:
 			if ( state.hasOwnProperty( siteId ) ) {
 				return Object.assign( {}, state, {
-					[ action.siteId ]: logsForSite( state[ siteId ], action )
+					[ siteId ]: logsForSite( state[ siteId ], action )
 				} );
 			}
 			return Object.assign( {}, state, { [ siteId ]: logsForSite( {}, action ) } );
-		case PLUGIN_NOTICE_REMOVE:
-			if ( state.hasOwnProperty( siteId ) && state[ siteId ].hasOwnProperty( pluginId ) ) {
-				return Object.assign( {}, state, { [ siteId ]: omit( state[ siteId ], pluginId ) } );
-			}
-			return state;
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};

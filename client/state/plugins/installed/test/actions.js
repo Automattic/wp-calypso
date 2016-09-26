@@ -33,8 +33,7 @@ import {
 	PLUGIN_INSTALL_REQUEST_FAILURE,
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
-	PLUGIN_REMOVE_REQUEST_FAILURE,
-	PLUGIN_NOTICE_REMOVE
+	PLUGIN_REMOVE_REQUEST_FAILURE
 } from 'state/action-types';
 import {
 	INSTALL_PLUGIN,
@@ -53,8 +52,7 @@ import {
 	enableAutoupdate as enableAutoupdatePlugin,
 	disableAutoupdate as disableAutoupdatePlugin,
 	install as installPlugin,
-	remove as removePlugin,
-	removeNotice
+	remove as removePlugin
 } from '../actions';
 import { akismet, helloDolly, jetpack, jetpackUpdated } from './plugins';
 
@@ -550,18 +548,6 @@ describe( 'actions', () => {
 					pluginId: 'fake/fake',
 					error: sinon.match( { message: 'Plugin file does not exist.' } )
 				} );
-			} );
-		} );
-	} );
-
-	describe( '#removeNotice()', () => {
-		it( 'should dispatch notice remove action when triggered', () => {
-			removeNotice( { ID: 2916284, jetpack: true }, { slug: 'akismet', id: 'akismet/akismet' } )( spy );
-
-			expect( spy ).to.have.been.calledWith( {
-				type: PLUGIN_NOTICE_REMOVE,
-				siteId: 2916284,
-				pluginId: 'akismet/akismet'
 			} );
 		} );
 	} );
