@@ -20,7 +20,7 @@ import { setActiveTheme } from '../themes/reducer';
 export default ( state = Map(), action ) => {
 	switch ( action.type ) {
 		case THEME_DETAILS_REQUEST:
-			return state.set( action.themeId, Map( { isRequesting: true } ) );
+			return state.setIn( [ action.themeId, 'isRequesting' ], true );
 		case THEME_DETAILS_RECEIVE:
 			return state
 				.set( action.themeId, Map( {
