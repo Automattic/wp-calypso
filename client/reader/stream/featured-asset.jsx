@@ -12,7 +12,7 @@ export default class FeaturedAsset extends React.Component {
 		};
 	}
 
-	componentDidMount() {
+	_loadImage() {
 		if ( this.props.featuredImage ) {
 			const img = new Image();
 			img.onload = () => this.setState( { featuredImage: this.props.featuredImage } );
@@ -21,6 +21,21 @@ export default class FeaturedAsset extends React.Component {
 			img.onerror = () => this.setState( { useFeaturedEmbed: this.props.featuredEmbed } );
 			img.src = this.props.featuredImage;
 		}
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		this.setState( {
+			featuredImage: '',
+			useFeaturedEmbed: nextProps.useFeaturedEmbed
+		} );
+	}
+
+	componentDidMount() {
+		this._loadImage();
+	}
+
+	componentDidUpdate() {
+		this._loadImage();
 	}
 
 	render() {
