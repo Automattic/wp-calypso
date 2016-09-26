@@ -101,32 +101,6 @@ const SuggestionsMixin = {
 		}
 	},
 
-	ensureSelectedSuggestionVisibility: function() {
-		const getOffsetTop = function( element ) {
-			let offset = element.offsetTop;
-
-			if( element.offsetParent ) {
-				offset += getOffsetTop( element.offsetParent );
-			}
-
-			return offset;
-		};
-
-		const suggestionElement = this.refs[ 'suggestion-node-' + this.state.selectedSuggestionId ],
-			offsetTop = getOffsetTop( suggestionElement );
-		let scrollTarget = null;
-
-		if( offsetTop - window.pageYOffset <= 0 ) {
-			scrollTarget = offsetTop;
-		} else if ( window.pageYOffset + window.innerHeight <= offsetTop ) {
-			scrollTarget = offsetTop + suggestionElement.offsetHeight;
-		}
-
-		if ( scrollTarget !== null ) {
-			window.scrollTo( 0, scrollTarget );
-		}
-	},
-
 	onClose: function() {
 		this.setState( {
 			suggestionsVisible: false
