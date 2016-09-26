@@ -97,6 +97,8 @@ export default React.createClass( {
 					subtree: true
 				} );
 
+				window.addEventListener( 'load', sendResize, true );
+
 				// Hack: Remove viewport unit styles, as these are relative
 				// the iframe root and interfere with our mechanism for
 				// determining the unconstrained page bounds.
