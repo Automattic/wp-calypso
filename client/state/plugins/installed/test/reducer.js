@@ -81,7 +81,6 @@ describe( 'reducer:', () => {
 
 		it( 'should load an empty set if there is an error', () => {
 			const originalState = deepFreeze( { 'one.site': [] } );
-			// @todo What does this error really look like?
 			const testError = new Error( 'Could not fetch plugins for Site One.' );
 			testError.name = 'RequestError';
 			const state = plugins( originalState, {
