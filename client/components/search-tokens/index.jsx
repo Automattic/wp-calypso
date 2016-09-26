@@ -15,6 +15,7 @@ const SearchTokens = React.createClass( {
 	getInitialState() {
 		return {
 			input: "",
+			screenRatio: 1
 		};
 	},
 
@@ -24,11 +25,27 @@ const SearchTokens = React.createClass( {
 	  window.requestAnimationFrame(function() {
 			console.log( 'init_tokens: ' + _this.refs.tokens.scrollLeft );
 			console.log( 'init_input: ' + _this.refs.inputField.scrollLeft );
-			_this.refs.tokens.scrollLeft = _this.refs.inputField.scrollLeft;
-			_this.refs.inputField.scrollLeft = _this.refs.tokens.scrollLeft;
+			_this.refs.tokens.scrollLeft = _this.refs.inputField.scrollLeft * _this.state.screenRatio;
 			console.log( 'after_tokens: ' + _this.refs.tokens.scrollLeft );
 			console.log( 'after_input: ' + _this.refs.inputField.scrollLeft );
 		} );
+	},
+
+	setScreenRatio: function( ) {
+		//For a IE fallback, both desktop and mobile, use:
+		//window.devicePixelRatio = window.devicePixelRatio || window.screen.deviceXDPI / window.screen.logicalXDPI;
+		//This may require npm detect-browser
+		this.setState( { screenRatio: window.devicePixelRatio } );
+	},
+
+	componentDidMount: function() {
+		this.setScreenRatio();
+		const _this = this;
+
+		// catch zoom-in/zoom-out event
+		window.addEventListener('resize', function() {
+  		_this.setScreenRatio();
+		});
 	},
 
 	componentDidUpdate: function() {
