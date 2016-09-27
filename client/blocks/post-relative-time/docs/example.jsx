@@ -16,23 +16,18 @@ import { getSitePosts } from 'state/posts/selectors';
 
 function PostRelativeTimeExample( { primarySiteId, primarySiteUrl, globalId } ) {
 	return (
-		<div className="docs__design-assets-group">
-			<h2>
-				<a href="/devdocs/blocks/post-relative-time">Post Relative Time</a>
-			</h2>
-			<Card>
-				{ primarySiteUrl && (
-					<p><small>Example uses result from primary site <strong>{ primarySiteUrl }</strong></small></p>
-				) }
-				{ primarySiteId && (
-					<QueryPosts
-						siteId={ primarySiteId }
-						query={ { number: 1, type: 'any' } } />
-				) }
-				{ ! globalId && <em>No matching post found</em> }
-				{ globalId && <PostRelativeTime globalId={ globalId } /> }
-			</Card>
-		</div>
+		<Card>
+			{ primarySiteUrl && (
+				<p><small>Example uses result from primary site <strong>{ primarySiteUrl }</strong></small></p>
+			) }
+			{ primarySiteId && (
+				<QueryPosts
+					siteId={ primarySiteId }
+					query={ { number: 1, type: 'any' } } />
+			) }
+			{ ! globalId && <em>No matching post found</em> }
+			{ globalId && <PostRelativeTime globalId={ globalId } /> }
+		</Card>
 	);
 }
 

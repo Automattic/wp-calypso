@@ -32,10 +32,7 @@ const PostSelectorExample = React.createClass( {
 		const primary = this.props.sites.getPrimary();
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/post-selector">Post Selector</a>
-				</h2>
+			<div>
 				<div style={ { width: 300 } }>
 					<FormLabel>
 						<input

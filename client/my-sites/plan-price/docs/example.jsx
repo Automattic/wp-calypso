@@ -10,11 +10,7 @@ import PlanPrice from '../';
 
 function PlanPriceExample() {
 	return (
-		<div className="docs__design-assets-group">
-			<h2>
-				<a href="/devdocs/blocks/plan-price">Plan Price</a>
-			</h2>
-
+		<div>
 			<h3>Plan with standard price</h3>
 			<PlanPrice rawPrice={ 99 } />
 

@@ -1,17 +1,23 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React from 'react';
 import page from 'page';
-import toTitleCase from 'to-title-case';
 import { trim } from 'lodash';
+import { slugToCamelCase } from 'devdocs/docs-example/util';
 
 /**
  * Internal dependencies
  */
-import CreditCardForm from 'blocks/credit-card-form/docs/example';
+import Collection from 'devdocs/design/search-collection';
 import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import SearchCard from 'components/search-card';
+
+/**
+ * Docs examples
+ */
+import CreditCardForm from 'blocks/credit-card-form/docs/example';
 import AuthorSelector from 'blocks/author-selector/docs/example';
 import CommentButtons from 'blocks/comment-button/docs/example';
 import FollowButton from 'components/follow-button/docs/example';
@@ -21,7 +27,6 @@ import PostSelector from 'my-sites/post-selector/docs/example';
 import Sites from 'lib/sites-list/docs/example';
 import SitesDropdown from 'components/sites-dropdown/docs/example';
 import Theme from 'components/theme/docs/example';
-import Collection from 'devdocs/design/search-collection';
 import HappinessSupport from 'components/happiness-support/docs/example';
 import ThemesListExample from 'components/themes-list/docs/example';
 import PlanStorage from 'my-sites/plan-storage/docs/example';
@@ -64,11 +69,11 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets" role="main">
+			<Main className="design">
 				{
 					this.props.component
 					? <HeaderCake onClick={ this.backToComponents } backText="All Blocks">
-						{ toTitleCase( this.props.component ) }
+						{ slugToCamelCase( this.props.component ) }
 					</HeaderCake>
 					: <SearchCard
 						onSearch={ this.onSearch }
@@ -77,7 +82,11 @@ export default React.createClass( {
 						analyticsGroup="Docs">
 					</SearchCard>
 				}
-				<Collection component={ this.props.component } filter={ this.state.filter }>
+				<Collection
+					component={ this.props.component }
+					filter={ this.state.filter }
+					section="blocks"
+				>
 					<AuthorSelector />
 					<CommentButtons />
 					<CreditCardForm />
@@ -112,7 +121,7 @@ export default React.createClass( {
 					<ReaderAvatar />
 					<DomainToPlanNudge />
 				</Collection>
-			</div>
+			</Main>
 		);
 	}
 } );

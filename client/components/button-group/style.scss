@@ -1,5 +1,4 @@
 .button-group {
-
 	.button {
 		border-left-width: 0;
 		border-radius: 0;
@@ -40,10 +39,5 @@
 
 	.section-header & .button {
 		margin-right: 0;
-	}
-
-	&.example {
-		margin-bottom: 16px;
-		display: inline-block;
 	}
 }

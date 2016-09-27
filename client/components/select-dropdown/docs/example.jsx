@@ -48,11 +48,13 @@ const SelectDropdownDemo = React.createClass( {
 			: 'Compact Buttons';
 
 		return (
-			<div className="docs__group docs__group__select-dropdown">
-				<h2>
-					<a href="/devdocs/design/select-dropdown">Select Dropdown</a>
-					<a className="docs__toggle button" onClick={ this.toggleButtons }>{ toggleButtonsText }</a>
-				</h2>
+			<div className="docs__select-dropdown-container">
+				<a
+					className="docs__design-toggle button"
+					onClick={ this.toggleButtons }
+				>
+					{ toggleButtonsText }
+				</a>
 
 				<h3>Items passed as options prop</h3>
 				<SelectDropdown

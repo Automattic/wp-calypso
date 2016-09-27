@@ -16,10 +16,7 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/clipboard-button-input">Clipboard Button Input</a>
-				</h2>
+			<div>
 				<ClipboardButtonInput value="https://example.wordpress.com/" />
 			</div>
 		);

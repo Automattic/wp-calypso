@@ -14,11 +14,7 @@ import { SocialItem } from '../items';
 const announceIt = console.log.bind( console );
 
 export const VerticalMenuExample = () => (
-	<div className="design-assets__group">
-		<h2>
-			<a href="/devdocs/design/vertical-menu">Vertical Menu</a>
-		</h2>
-
+	<div>
 		<h3>Social Items</h3>
 		<VerticalMenu onClick={ announceIt }>
 			<SocialItem service="google" />

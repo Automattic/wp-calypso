@@ -16,30 +16,25 @@ import { getSitePostsForQuery } from 'state/posts/selectors';
 
 function PostStatusExample( { queries, primarySiteId, primarySiteUrl, globalIdByQueryLabel } ) {
 	return (
-		<div className="docs__design-assets-group">
-			<h2>
-				<a href="/devdocs/blocks/post-status">Post Status</a>
-			</h2>
-			<Card>
-				{ primarySiteUrl && (
-					<p><small>Examples use results from primary site <strong>{ primarySiteUrl }</strong></small></p>
-				) }
-				{ map( queries, ( query, label ) => {
-					return (
-						<p key={ label }>
-							<h3>{ label }</h3>
-							{ primarySiteId && (
-								<QueryPosts
-									siteId={ primarySiteId }
-									query={ query } />
-							) }
-							{ ! globalIdByQueryLabel[ label ] && <em>No matching post found</em> }
-							<PostStatus globalId={ globalIdByQueryLabel[ label ] } />
-						</p>
-					);
-				} ) }
-			</Card>
-		</div>
+		<Card>
+			{ primarySiteUrl && (
+				<p><small>Examples use results from primary site <strong>{ primarySiteUrl }</strong></small></p>
+			) }
+			{ map( queries, ( query, label ) => {
+				return (
+					<p key={ label }>
+						<h3>{ label }</h3>
+						{ primarySiteId && (
+							<QueryPosts
+								siteId={ primarySiteId }
+								query={ query } />
+						) }
+						{ ! globalIdByQueryLabel[ label ] && <em>No matching post found</em> }
+						<PostStatus globalId={ globalIdByQueryLabel[ label ] } />
+					</p>
+				);
+			} ) }
+		</Card>
 	);
 }
 

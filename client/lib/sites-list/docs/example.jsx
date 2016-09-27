@@ -15,10 +15,7 @@ import Card from 'components/card';
 var Sites = React.createClass( {
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/sites">Site and All Sites</a>
-				</h2>
+			<div>
 				<Card style={ { padding: 0 } }>
 					<Site site={ sites.getPrimary() } />
 				</Card>
