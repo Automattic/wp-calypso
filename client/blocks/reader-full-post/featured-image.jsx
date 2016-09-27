@@ -4,15 +4,18 @@
 import React from 'react';
 
 export default class FeaturedImage extends React.Component {
-	constructor() {
+	constructor( props ) {
 		super();
-		this.state = { src: '' };
+		this.state = { src: props.src };
+		this.handleImageError = () => {
+			this.setState( { src: '' } );
+		};
 	}
 
-	componentDidMount() {
-		const img = new Image();
-		img.onload = () => this.setState( { src: this.props.src } );
-		img.src = this.props.src;
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.src !== this.props.src ) {
+			this.setState( { src: nextProps.src } );
+		}
 	}
 
 	render() {
@@ -22,7 +25,7 @@ export default class FeaturedImage extends React.Component {
 
 		return (
 			<div className="reader-full-post__featured-image">
-				<img src={ this.state.src } />
+				<img src={ this.state.src } onError={ this.handleImageError } />
 			</div>
 		);
 	}
