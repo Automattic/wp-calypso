@@ -28,6 +28,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
+import SiteIconSetting from './site-icon-setting';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
@@ -149,6 +150,7 @@ const FormGeneral = React.createClass( {
 						{ this.translate( 'In a few words, explain what this site is about.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
+				<SiteIconSetting />
 			</div>
 		);
 	},

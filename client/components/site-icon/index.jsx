@@ -2,12 +2,14 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import url from 'url';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
+import { getSite } from 'state/sites/selectors';
 import Gridicon from 'components/gridicon';
 
 const SiteIcon = React.createClass( {
@@ -22,6 +24,7 @@ const SiteIcon = React.createClass( {
 
 	propTypes: {
 		imgSize: React.PropTypes.number,
+		siteId: React.PropTypes.number,
 		site: React.PropTypes.object,
 		size: React.PropTypes.number
 	},
@@ -72,4 +75,6 @@ const SiteIcon = React.createClass( {
 	}
 } );
 
-export default SiteIcon;
+export default connect( ( state, { siteId } ) => (
+	siteId ? { site: getSite( state, siteId ) } : {}
+) )( SiteIcon );
