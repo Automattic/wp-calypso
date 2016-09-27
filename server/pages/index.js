@@ -1,4 +1,4 @@
-var express = require( 'express' ),
+let express = require( 'express' ),
 	fs = require( 'fs' ),
 	crypto = require( 'crypto' ),
 	qs = require( 'qs' ),
@@ -6,19 +6,19 @@ var express = require( 'express' ),
 	cookieParser = require( 'cookie-parser' ),
 	debug = require( 'debug' )( 'calypso:pages' );
 
-var config = require( 'config' ),
+let config = require( 'config' ),
 	sanitize = require( 'sanitize' ),
 	utils = require( 'bundler/utils' ),
 	sectionsModule = require( '../../client/sections' ),
 	serverRouter = require( 'isomorphic-routing' ).serverRouter,
 	serverRender = require( 'render' ).serverRender;
 
-var HASH_LENGTH = 10,
+let HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
 	SERVER_BASE_PATH = '/public',
 	CALYPSO_ENV = process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
 
-var staticFiles = [
+const staticFiles = [
 	{ path: 'style.css' },
 	{ path: 'editor.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
@@ -26,7 +26,7 @@ var staticFiles = [
 	{ path: 'style-rtl.css' }
 ];
 
-var sections = sectionsModule.get();
+let sections = sectionsModule.get();
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -34,7 +34,7 @@ var sections = sectionsModule.get();
  * @returns {String} A shortened md5 hash of the contents of the file file or a timestamp in the case of failure.
  **/
 function hashFile( path ) {
-	var data, hash,
+	let data, hash,
 		md5 = crypto.createHash( 'md5' );
 
 	try {
@@ -56,7 +56,7 @@ function hashFile( path ) {
  * @returns {Object} Map of asset names to urls
  **/
 function generateStaticUrls( request ) {
-	var urls = {}, assets;
+	let urls = {}, assets;
 
 	function getUrl( filename, hash ) {
 		return URL_BASE_PATH + '/' + filename + '?' + qs.stringify( {
@@ -81,7 +81,7 @@ function generateStaticUrls( request ) {
 		}
 		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
-			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
+			urls[ name + '-min' ] = asset.url.replace( '.js', '.optimize.min.js' );
 		}
 	} );
 
@@ -105,7 +105,7 @@ function getCurrentCommitShortChecksum() {
 }
 
 function getDefaultContext( request ) {
-	var context = Object.assign( {}, request.context, {
+	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
@@ -171,7 +171,7 @@ function setUpLoggedOutRoute( req, res, next ) {
 }
 
 function setUpLoggedInRoute( req, res, next ) {
-	var redirectUrl, protocol, start, context;
+	let redirectUrl, protocol, start, context;
 
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN'
@@ -199,7 +199,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		debug( 'Issuing API call to fetch user object' );
 		user( req.get( 'Cookie' ), function( error, data ) {
-			var end, searchParam, errorMessage;
+			let end, searchParam, errorMessage;
 
 			if ( error ) {
 				if ( error.error === 'authorization_required' ) {
@@ -275,7 +275,7 @@ function render404( request, response ) {
 }
 
 module.exports = function() {
-	var app = express();
+	const app = express();
 
 	app.set( 'views', __dirname );
 
@@ -292,7 +292,7 @@ module.exports = function() {
 
 	// redirects to handle old newdash formats
 	app.use( '/sites/:site/:section', function( req, res, next ) {
-		var redirectUrl;
+		let redirectUrl;
 		sections = [ 'posts', 'pages', 'sharing', 'upgrade', 'checkout', 'change-theme' ];
 
 		if ( -1 === sections.indexOf( req.params.section ) ) {
