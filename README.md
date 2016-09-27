@@ -26,6 +26,8 @@ If Calypso sparks your interest, don’t hesitate to send a pull request, send a
 
 Calypso welcomes – and indeed has been built by – contributors from all walks of life, with different backgrounds, and with a wide range of experience. We're committed to doing our part to make both Calypso and the wider WordPress community welcoming to everyone.
 
+You can contribute in many ways. You can help reporting, testing, and detailing bugs, and also test new features we release in our "beta" program for testing on [Horizon](https://horizonfeedback.wordpress.com/).
+
 To clarify these expectations, Calypso has adopted the code of conduct defined by the Contributor Covenant. It can be read in full [here](CODE-OF-CONDUCT.md).
 
 ## Security
