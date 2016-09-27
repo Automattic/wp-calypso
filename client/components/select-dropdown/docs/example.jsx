@@ -48,7 +48,7 @@ const SelectDropdownDemo = React.createClass( {
 			: 'Compact Buttons';
 
 		return (
-			<div>
+			<div className="docs__select-dropdown-container">
 				<a
 					className="docs__design-toggle button"
 					onClick={ this.toggleButtons }
