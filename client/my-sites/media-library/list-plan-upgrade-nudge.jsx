@@ -70,7 +70,7 @@ export const MediaLibraryUpgradeNudge = ( { translate, filter, site } ) => (
 			title={ getTitle( filter, translate ) }
 			subtitle={ getSubtitle( filter, translate ) }
 			highlightedFeature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
-			event="calypso_media_uploads_upgrade_nudge_impression"
+			event="calypso_media_uploads_upgrade_nudge"
 			benefits={ getBenefits( filter, translate ) }
 			testedRegularNudge={
 				<ListPlanPromo
@@ -82,7 +82,7 @@ export const MediaLibraryUpgradeNudge = ( { translate, filter, site } ) => (
 						title={ getTitle( filter, translate ) }
 						message={ getSubtitle( filter, translate ) }
 						feature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
-						event="calypso_media_uploads_upgrade_nudge_impression"
+						event="calypso_media_uploads_upgrade_nudge"
 					/>
 				</ListPlanPromo>
 			}
