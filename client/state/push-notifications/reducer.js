@@ -3,7 +3,6 @@
  */
 import { combineReducers } from 'redux';
 import debugFactory from 'debug';
-import moment from 'moment';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 
@@ -100,8 +99,7 @@ function system( state = {}, action ) {
 		}
 
 		case PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE: {
-			let lastUpdated;
-			const { data, headers } = action;
+			const { data } = action;
 
 			debug( 'Received WPCOM device registration results', data );
 
@@ -109,20 +107,8 @@ function system( state = {}, action ) {
 				return state;
 			}
 
-			if ( headers && headers.Date ) {
-				lastUpdated = new Date( headers.Date );
-
-				if ( lastUpdated.getTime() ) {
-					// Calling moment with non-ISO date strings is deprecated
-					// see: https://github.com/moment/moment/issues/1407
-					lastUpdated = lastUpdated.toISOString();
-				}
-			}
-
 			return Object.assign( {}, state, {
-				wpcomSubscription: Object.assign( {}, pick( data, [ 'ID', 'settings' ] ), {
-					lastUpdated: moment( lastUpdated ).format()
-				} )
+				wpcomSubscription: Object.assign( {}, pick( data, [ 'ID', 'settings' ] ) )
 			} );
 		}
 	}

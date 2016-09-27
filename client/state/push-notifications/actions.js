@@ -2,7 +2,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import moment from 'moment';
 import wpcom from 'lib/wp';
 
 /**
@@ -24,7 +23,6 @@ import {
 import {
 	isApiReady,
 	getDeviceId,
-	getLastUpdated,
 	getStatus,
 	isBlocked,
 	isEnabled,
@@ -46,7 +44,6 @@ import {
 } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:push-notifications' );
-const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15;
 const serviceWorkerOptions = {
 	path: '/service-worker.js',
 };
@@ -223,24 +220,10 @@ export function fetchPushManagerSubscription() {
 }
 
 export function sendSubscriptionToWPCOM( pushSubscription ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		if ( ! pushSubscription ) {
 			debug( 'No subscription to send to WPCOM' );
 			return;
-		}
-		const state = getState();
-		const lastUpdated = getLastUpdated( state );
-		debug( 'Subscription last updated: ' + lastUpdated );
-
-		let age;
-
-		if ( lastUpdated ) {
-			age = moment().diff( moment( lastUpdated ), 'days' );
-			if ( age < DAYS_BEFORE_FORCING_REGISTRATION_REFRESH ) {
-				debug( 'Subscription did not need updating.', age );
-				return;
-			}
-			debug( 'Subscription needed updating.', age );
 		}
 
 		debug( 'Sending subscription to WPCOM', pushSubscription );
