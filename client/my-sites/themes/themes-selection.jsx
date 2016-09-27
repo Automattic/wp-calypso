@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import page from 'page';
+import compact from 'lodash/compact';
 
 /**
  * Internal dependencies
@@ -98,7 +99,7 @@ const ThemesSelection = React.createClass( {
 		const tierSection = tier === 'all' ? '' : `/${ tier }`;
 		const filterSection = filter ? `/filter/${ filter }` : '';
 
-		const url = `/design${ verticalSection }${ tierSection }${ filterSection }${siteIdSection}`;
+		const url = `/design${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
 		page( buildUrl( url, searchString ) );
 	},
 
@@ -112,12 +113,7 @@ const ThemesSelection = React.createClass( {
 
 	addVerticalToFilters() {
 		const { vertical, filter } = this.props;
-		const result = [];
-
-		filter && result.push( filter );
-		vertical && result.push( vertical );
-
-		return result.join( ',' );
+		return compact( [ filter, vertical ] ).join( ',' );
 	},
 
 	render() {
