@@ -76,6 +76,15 @@
 	border-radius: 50%;
 	border: 2px solid $white;
 	background: darken($gray, 52%);
+
+	&:before {
+		border-radius: 100%;
+		content: ' ';
+		display: block;
+		height: 24px;
+		margin: -8px auto auto -8px;
+		width: 24px;
+	}
 }
 
 .editor-media-modal-image-editor__crop-handle-nesw {
