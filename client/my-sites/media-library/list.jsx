@@ -199,7 +199,7 @@ module.exports = React.createClass( {
 		var onFetchNextPage;
 
 		if ( this.props.filterRequiresUpgrade ) {
-			return <ListPlanUpgradeNudge filter={ this.props.filter } />;
+			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;
 		}
 
 		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {
