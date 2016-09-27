@@ -1,13 +1,14 @@
 .reader-share_button {
 	align-items: center;
 	box-sizing: border-box;
-	color: lighten( $gray, 10 );
+	color: lighten( $gray, 10% );
 	display: inline-flex;
 	padding: 4px;
 	position: relative;
-	transition: color 0.15s linear;
 
-	&:hover, &:focus, &:active {
+	&:hover,
+	&:focus,
+	&:active {
 		cursor: pointer;
 		color: $blue-light;
 	}
