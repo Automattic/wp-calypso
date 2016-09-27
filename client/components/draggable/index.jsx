@@ -41,14 +41,13 @@ export default class Draggable extends Component {
 			y: this.props.y
 		};
 
-		this.onTouchStart = this.onTouchStart.bind( this );
-		this.onMouseDown = this.onMouseDown.bind( this );
+		this.onTouchStartHandler = this.onTouchStartHandler.bind( this );
+		this.onMouseDownHandler = this.onMouseDownHandler.bind( this );
 
-		this.draggingStarted = this.draggingStarted.bind( this );
-		this.dragging = this.dragging.bind( this );
-		this.draggingEnded = this.draggingEnded.bind( this );
+		this.draggingHandler = this.draggingHandler.bind( this );
+		this.draggingEndedHandler = this.draggingEndedHandler.bind( this );
+
 		this.update = this.update.bind( this );
-		this.removeListeners = this.removeListeners.bind( this );
 	}
 
 	componentWillReceiveProps( newProps ) {
@@ -64,7 +63,7 @@ export default class Draggable extends Component {
 		this.removeListeners();
 	}
 
-	draggingStarted( event ) {
+	draggingStartedHandler( event ) {
 		this.dragging = true;
 
 		let coords = event;
@@ -89,10 +88,8 @@ export default class Draggable extends Component {
 		);
 	}
 
-	dragging( event ) {
+	draggingHandler( event ) {
 		let coords = event;
-
-		console.log('on dragging');
 
 		if ( this.isTouchEvent( event ) ) {
 			coords = event.touches[ 0 ];
@@ -104,11 +101,9 @@ export default class Draggable extends Component {
 		this.mousePos = { x, y };
 	}
 
-	draggingEnded( ) {
+	draggingEndedHandler( ) {
 		this.dragging = false;
 		this.mousePos = null;
-
-		console.log('on dragging end');
 
 		cancelAnimationFrame( this.frameRequestId );
 
@@ -117,26 +112,22 @@ export default class Draggable extends Component {
 		this.props.onStop();
 	}
 
-	onTouchStart( event ) {
+	onTouchStartHandler( event ) {
 		event.preventDefault();
 
-		console.log('on touch start');
+		document.addEventListener( 'touchmove', this.draggingHandler );
+		document.addEventListener( 'touchend', this.draggingEndedHandler );
 
-		document.addEventListener( 'touchmove', this.dragging );
-		document.addEventListener( 'touchend', this.draggingEnded );
-
-		this.draggingStarted( event );
+		this.draggingStartedHandler( event );
 	}
 
-	onMouseDown( event ) {
+	onMouseDownHandler( event ) {
 		event.preventDefault();
 
-		console.log('on mouse down');
+		document.addEventListener( 'mousemove', this.draggingHandler );
+		document.addEventListener( 'mouseup', this.draggingEndedHandler );
 
-		document.addEventListener( 'mousemove', this.dragging );
-		document.addEventListener( 'mouseup', this.draggingEnded );
-
-		this.draggingStarted( event );
+		this.draggingStartedHandler( event );
 	}
 
 	update() {
@@ -166,11 +157,11 @@ export default class Draggable extends Component {
 	}
 
 	removeListeners() {
-		document.removeEventListener( 'mousemove', this.dragging );
-		document.removeEventListener( 'mouseup', this.draggingEnded );
+		document.removeEventListener( 'mousemove', this.draggingHandler );
+		document.removeEventListener( 'mouseup', this.draggingEndedHandler );
 
-		document.removeEventListener( 'touchmove', this.dragging );
-		document.removeEventListener( 'touchend', this.draggingEnded );
+		document.removeEventListener( 'touchmove', this.draggingHandler );
+		document.removeEventListener( 'touchend', this.draggingEndedHandler );
 	}
 
 	render() {
@@ -188,8 +179,8 @@ export default class Draggable extends Component {
 			<div
 				{ ...elementProps }
 				style={ style }
-				onMouseDown={ this.onMouseDown }
-				onTouchStart={ this.onTouchStart }
+				onMouseDown={ this.onMouseDownHandler }
+				onTouchStart={ this.onTouchStartHandler }
 			>
 			</div>
 		);
