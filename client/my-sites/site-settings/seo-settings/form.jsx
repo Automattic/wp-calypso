@@ -130,7 +130,20 @@ export const SeoForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
+		const { selectedSite: prevSite } = this.props;
+		const { selectedSite: nextSite } = nextProps;
 		const { dirtyFields } = this.state;
+
+		// if we are changing sites, everything goes
+		if ( prevSite.ID !== nextSite.ID ) {
+			return this.setState( {
+				...stateForSite( nextSite ),
+				seoTitleFormats: nextProps.storedTitleFormats,
+				invalidatedSiteObject: nextSite,
+				isRefreshingSiteData: true,
+				dirtyFields: Set(),
+			}, this.refreshCustomTitles );
+		}
 
 		let nextState = {
 			...stateForSite( nextProps.site ),

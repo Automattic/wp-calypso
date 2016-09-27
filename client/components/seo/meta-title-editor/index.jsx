@@ -41,13 +41,25 @@ const tokenMap = {
 
 const getTokensForType = ( type, translate ) => {
 	return get( tokenMap, type, [] )
-				.reduce( ( allTokens, name ) => ( {
-					...allTokens,
-					[ name ]: get( getValidTokens( translate ), name, '' )
-				} ), {} );
+		.reduce( ( allTokens, name ) => ( {
+			...allTokens,
+			[ name ]: get( getValidTokens( translate ), name, '' )
+		} ), {} );
 };
 
 export class MetaTitleEditor extends Component {
+	static propTypes = {
+		disabled: PropTypes.bool,
+		onChange: PropTypes.func,
+		titleFormats: PropTypes.object.isRequired,
+	};
+
+	static defaultProps = {
+		disabled: false,
+		onChange: noop,
+		translate: identity
+	};
+
 	constructor( props ) {
 		super( props );
 		this.updateTitleFormat = this.updateTitleFormat.bind( this );
@@ -63,7 +75,12 @@ export class MetaTitleEditor extends Component {
 	}
 
 	render() {
-		const { disabled, titleFormats, translate } = this.props;
+		const {
+			disabled,
+			site,
+			titleFormats,
+			translate,
+		} = this.props;
 
 		return (
 			<div className="meta-title-editor">
@@ -72,6 +89,7 @@ export class MetaTitleEditor extends Component {
 						key={ type.value }
 						disabled={ disabled }
 						onChange={ this.updateTitleFormat }
+						placeholder={ site && site.title }
 						type={ type }
 						titleFormats={ get( titleFormats, type.value, [] ) }
 						tokens={ getTokensForType( type.value, translate ) }
@@ -81,17 +99,5 @@ export class MetaTitleEditor extends Component {
 		);
 	}
 }
-
-MetaTitleEditor.propTypes = {
-	disabled: PropTypes.bool,
-	onChange: PropTypes.func,
-	titleFormats: PropTypes.object.isRequired,
-};
-
-MetaTitleEditor.defaultProps = {
-	disabled: false,
-	onChange: noop,
-	translate: identity
-};
 
 export default localize( MetaTitleEditor );
