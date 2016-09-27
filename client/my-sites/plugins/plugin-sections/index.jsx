@@ -139,7 +139,6 @@ module.exports = React.createClass( {
 		return (
 			<div className="plugin-sections__read-more">
 				{
-					//
 					// We remove the link but leave the plugin-sections__read-more container
 					// in order to minimize jump on small sections.
 					this.state.readMore ? null : button
