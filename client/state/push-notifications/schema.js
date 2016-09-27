@@ -24,7 +24,6 @@ export const systemSchema = {
 		wpcomSubscription: {
 			type: 'object',
 			properties: {
-				lastUpdated: stringType,
 				ID: stringType,
 				settings: {
 					type: 'object',
