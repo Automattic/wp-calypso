@@ -80,8 +80,8 @@ export default React.createClass( {
 			const syncIcon = this.props.hasUpdate ? <Gridicon icon="sync" size={ 18 } /> : null;
 
 			return <div className="plugin-information__last-updated">
-				{ this.translate( 'Released %(dateFromNow)s', { args: { dateFromNow } } ) }
 				{ syncIcon }
+				{ this.translate( 'Released %(dateFromNow)s', { args: { dateFromNow } } ) }
 			</div>;
 		}
 	},

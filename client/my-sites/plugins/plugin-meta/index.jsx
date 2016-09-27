@@ -11,6 +11,7 @@ import some from 'lodash/some';
  */
 import analytics from 'lib/analytics';
 import Card from 'components/card';
+import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
@@ -51,7 +52,21 @@ export default React.createClass( {
 
 	renderActions() {
 		if ( ! this.props.selectedSite ) {
-			return;
+			return (
+				<div className="plugin-meta__actions">
+					<div className="plugin-item__count">
+						{
+							this.translate( 'Sites {{count/}}',
+								{
+									components: {
+										count: <Count count={ this.props.sites.length } />
+									}
+								}
+							)
+						}
+					</div>
+				</div>
+			);
 		}
 
 		if ( this.props.isPlaceholder ) {
