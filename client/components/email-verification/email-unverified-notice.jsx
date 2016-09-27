@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import page from 'page';
 
 /**
  * Internal dependencies
@@ -26,7 +25,6 @@ export default class EmailUnverifiedNotice extends React.Component {
 		this.updateVerificationState = this.updateVerificationState.bind( this );
 		this.handleDismiss = this.handleDismiss.bind( this );
 		this.handleSendVerificationEmail = this.handleSendVerificationEmail.bind( this );
-		this.handleChangeEmail = this.handleChangeEmail.bind( this );
 
 		this.state = {
 			needsVerification: userUtils.needsVerificationForSite( sites.getSelectedSite() ),
@@ -66,11 +64,6 @@ export default class EmailUnverifiedNotice extends React.Component {
 
 	handleDismiss() {
 		this.setState( { error: null, emailSent: false } );
-	}
-
-	handleChangeEmail( e ) {
-		e.preventDefault();
-		page( '/me/account' );
 	}
 
 	handleSendVerificationEmail( e ) {
@@ -178,8 +171,8 @@ export default class EmailUnverifiedNotice extends React.Component {
 								'{{requestButton}}Re-send your confirmation email{{/requestButton}} ' +
 								'or {{changeButton}}change the email address on your account{{/changeButton}}.', {
 									components: {
-										requestButton: <a href="#" tabIndex="0" onClick={ this.handleSendVerificationEmail } />,
-										changeButton: <a href="#" tabIndex="0" onClick={ this.handleChangeEmail } />
+										requestButton: <a href="#" onClick={ this.handleSendVerificationEmail } />,
+										changeButton: <a href="/me/account" />
 									}
 								}
 							)
