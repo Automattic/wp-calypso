@@ -9,7 +9,9 @@
 	display: inline-flex;
 	padding: 4px;
 	position: relative;
-	transition: color 0.15s linear;
+	box-sizing: border-box;
+	cursor: pointer;
+	min-height: 32px;
 
 	&:hover, &:focus, &:active {
 		cursor: pointer;
