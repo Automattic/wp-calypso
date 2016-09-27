@@ -156,40 +156,33 @@ export default class EmailUnverifiedNotice extends React.Component {
 			: (
 				<div>
 					<p>
-						<strong>{
-							i18n.getLocaleSlug() === 'en'
-							? i18n.translate( 'To continue, please confirm your email address' )
-							: i18n.translate( 'Please confirm your email address' )
-						}</strong>
+						<strong>
+							{ i18n.translate( 'Please confirm your email address' ) }
+						</strong>
 					</p>
 					<p>
-						{ i18n.getLocaleSlug() === 'en'
-							? i18n.translate(
-								'Click the link in the email we sent to %(email)s.',
-								{ args: { email: user.get().email } } )
-							: i18n.translate(
+						{
+							i18n.translate(
 								'To post and keep using WordPress.com you need to confirm your email address. ' +
-								'Please click the link in the email we sent at %(email)s.',
-								{ args: { email: user.get().email } } )
+								'Please click the link in the email we sent at %(email)s.', {
+									args: {
+										email: user.get().email
+									}
+								}
+							)
 						}
 					</p>
 					<p>
 						{
-							i18n.getLocaleSlug() === 'en'
-							? i18n.translate(
-								'Didn\'t get it? {{requestButton}}Resend Confirmation Email{{/requestButton}} ' +
-								'or {{changeButton}}Change Account Email Address{{/changeButton}}', {
-									components: {
-										requestButton: <a href="#" tabIndex="0" onClick={ this.handleSendVerificationEmail } />,
-										changeButton: <a href="#" tabIndex="0" onClick={ this.handleChangeEmail } />
-									} } )
-							: i18n.translate(
+							i18n.translate(
 								'{{requestButton}}Re-send your confirmation email{{/requestButton}} ' +
 								'or {{changeButton}}change the email address on your account{{/changeButton}}.', {
 									components: {
 										requestButton: <a href="#" tabIndex="0" onClick={ this.handleSendVerificationEmail } />,
 										changeButton: <a href="#" tabIndex="0" onClick={ this.handleChangeEmail } />
-									} } )
+									}
+								}
+							)
 						}
 					</p>
 				</div>
