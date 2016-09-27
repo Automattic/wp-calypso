@@ -51,8 +51,7 @@ const
 	FeedPostStore = require( 'lib/feed-post-store' ),
 	FeedPostStoreActions = require( 'lib/feed-post-store/actions' ),
 	Gridicon = require( 'components/gridicon' ),
-	smartSetState = require( 'lib/react-smart-set-state' ),
-	FeaturedAsset = require( 'reader/stream/featured-asset' );
+	smartSetState = require( 'lib/react-smart-set-state' );
 
 const Post = React.createClass( {
 
@@ -205,8 +204,25 @@ const Post = React.createClass( {
 
 			featuredSize = this.getFeaturedSize( maxWidth );
 		}
-		const props = { featuredImage, featuredSize, featuredEmbed, useFeaturedEmbed };
-    return <FeaturedAsset {...props} />
+
+		return useFeaturedEmbed
+			? <div
+					ref="featuredEmbed"
+					className="reader__post-featured-video"
+					key="featuredVideo"
+					dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } />  //eslint-disable-line react/no-danger
+			: <div
+					className="reader__post-featured-image"
+					onClick={ this.handlePermalinkClick }>
+				{ featuredSize
+					? <img className="reader__post-featured-image-image"
+							ref="featuredImage"
+							src={ featuredImage }
+							style={ featuredSize }
+						/>
+					: <img className="reader__post-featured-image-image" src={ featuredImage } />
+				}
+			</div>;
 	},
 
 	updateFeatureSize: function() {
