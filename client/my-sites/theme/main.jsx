@@ -10,7 +10,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import titlecase from 'to-title-case';
-import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
@@ -42,7 +41,7 @@ import {
 	activate,
 	customize,
 	tryandcustomize,
-	bindOptionToDispatch,
+	bindOptionsToDispatch,
 	bindOptionsToSite
 } from 'my-sites/themes/theme-options';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
@@ -458,39 +457,33 @@ const WrappedThemeSheet = ( props ) => {
 	);
 };
 
-const bindDefaultOptionToDispatch = ( dispatch, ownProps ) => {
-	const { active: isActive, price, isLoggedIn } = ownProps;
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const { selectedSite: site, active: isActive, price, isLoggedIn } = stateProps;
 
 	let defaultOption;
 
 	if ( ! isLoggedIn ) {
-		defaultOption = signup;
+		defaultOption = dispatchProps.signup;
 	} else if ( isActive ) {
-		defaultOption = customize;
+		defaultOption = dispatchProps.customize;
 	} else if ( price ) {
-		defaultOption = purchase;
+		defaultOption = dispatchProps.purchase;
 		defaultOption.label = i18n.translate( 'Pick this design' );
 	} else {
-		defaultOption = activate;
+		defaultOption = dispatchProps.activate;
 		defaultOption.label = i18n.translate( 'Activate this design' );
 	}
 
-	return {
-		defaultOption: bindOptionToDispatch( defaultOption, 'showcase-sheet' )( dispatch ),
-		secondaryOption: bindOptionToDispatch( tryandcustomize, 'showcase-sheet' )( dispatch ),
+	const dispatchOptions = {
+		defaultOption,
+		secondaryOption: dispatchProps.tryandcustomize
 	};
-};
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { selectedSite: site } = stateProps;
-	const filteredOptions = pickBy( dispatchProps, option =>
-		option.hideForSite ? option.hideForSite( stateProps ) : true
-	);
 	return Object.assign(
 		{},
 		ownProps,
 		stateProps,
-		site ? bindOptionsToSite( filteredOptions, site ) : dispatchProps
+		site ? bindOptionsToSite( dispatchOptions, site ) : dispatchOptions,
 	);
 };
 
@@ -514,6 +507,12 @@ export default connect(
 			isLoggedIn: !! currentUserId,
 		};
 	},
-	bindDefaultOptionToDispatch,
+	bindOptionsToDispatch( {
+		signup,
+		customize,
+		tryandcustomize,
+		purchase,
+		activate,
+	}, 'showcase-sheet' ),
 	mergeProps
 )( WrappedThemeSheet );
