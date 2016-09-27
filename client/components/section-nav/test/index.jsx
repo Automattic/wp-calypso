@@ -11,7 +11,7 @@ import sinon from 'sinon';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 
-let	ReactDom, React, TestUtils, SectionNav;
+let ReactDom, React, TestUtils, SectionNav;
 
 function createComponent( component, props, children ) {
 	const shallowRenderer = TestUtils.createRenderer();

@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { identity, noop } from 'lodash';
 import React from 'react';
 import { shallow } from 'enzyme';
 import mockery from 'mockery';
@@ -46,12 +47,19 @@ describe( 'EditorMediaModal', function() {
 		mockery.registerMock( 'my-sites/media-library', EMPTY_COMPONENT );
 		mockery.registerMock( './detail', EMPTY_COMPONENT );
 		mockery.registerMock( './gallery', EMPTY_COMPONENT );
+		mockery.registerMock( './markup', { get: identity } );
 		mockery.registerMock( './secondary-actions', EMPTY_COMPONENT );
 		mockery.registerMock( 'components/dialog', EMPTY_COMPONENT );
 		mockery.registerMock( 'components/popover', EMPTY_COMPONENT );
 		mockery.registerMock( 'lib/accept', accept );
+		mockery.registerMock( 'lib/analytics', { mc: { bumpStat: noop } } );
 		mockery.registerMock( 'component-closest', {} );
 		mockery.registerMock( 'lib/media/actions', { delete: deleteMedia } );
+		mockery.registerMock( 'lib/posts/actions', { blockSave: noop } );
+		mockery.registerMock( 'lib/posts/stats', {
+			recordEvent: noop,
+			recordState: noop
+		} );
 
 		EditorMediaModal = require( '../' );
 		EditorMediaModal.prototype.translate = i18n.translate;

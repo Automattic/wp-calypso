@@ -3,11 +3,13 @@
  */
 import ReactDomServer from 'react-dom/server';
 import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'markup', function() {
@@ -15,6 +17,13 @@ describe( 'markup', function() {
 
 	useFakeDom();
 	useSandbox( ( newSandbox ) => sandbox = newSandbox );
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+	} );
 
 	before( () => {
 		markup = require( '../markup' );
