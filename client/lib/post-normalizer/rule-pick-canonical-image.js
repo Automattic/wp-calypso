@@ -30,7 +30,9 @@ function candidateForCanonicalImage( image ) {
 
 export default function pickCanonicalImage( post ) {
 	let canonicalImage;
-	post.canonical_image = null;
+	if ( post.canonical_image ) {
+		post.canonical_image = null;
+	}
 	if ( post.images ) {
 		canonicalImage = filter( post.images, candidateForCanonicalImage )[ 0 ];
 		if ( canonicalImage ) {
