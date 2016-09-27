@@ -14,6 +14,7 @@ import {
 	getPlansBySite,
 	getPlansBySiteId,
 	hasDomainCredit,
+	isCurrentUserCurrentPlanOwner,
 	isRequestingSitePlans,
 	isSitePlanDiscounted
 } from '../selectors';
@@ -558,6 +559,29 @@ describe( 'selectors', () => {
 			};
 			const isDiscounted = isSitePlanDiscounted( state, 77203074, 'diamond' );
 			expect( isDiscounted ).to.equal( null );
+		} );
+	} );
+
+	describe( '#isCurrentUserCurrentPlanOwner()', () => {
+		const state = {
+			sites: {
+				plans: {
+					2916284: {
+						data: [ { currentPlan: false }, { currentPlan: false }, { currentPlan: true } ]
+					},
+					77203074: {
+						data: [ { currentPlan: false }, { currentPlan: true, userIsOwner: true }, { currentPlan: false } ]
+					}
+				}
+			}
+		};
+
+		it( 'should return false if user is not a plan owner', () => {
+			expect( isCurrentUserCurrentPlanOwner( state, 2916284 ) ).to.be.false;
+		} );
+
+		it( 'should return true if user is a plan owner', () => {
+			expect( isCurrentUserCurrentPlanOwner( state, 77203074 ) ).to.be.true;
 		} );
 	} );
 } );

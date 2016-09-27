@@ -15,6 +15,12 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
+
+.plan-features__notice {
+	border-spacing: 16px 0;
+	margin-top: -16px;
+}
+
 .plan-features__mobile {
 	color: $gray;
 	margin: 0 16px;
