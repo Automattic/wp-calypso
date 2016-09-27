@@ -18,7 +18,7 @@ import {
 export function title( state = '', action ) {
 	switch ( action.type ) {
 		case DOCUMENT_HEAD_TITLE_SET:
-			return action.title || state;
+			return action.title;
 	}
 
 	return state;
@@ -27,7 +27,7 @@ export function title( state = '', action ) {
 export function unreadCount( state = 0, action ) {
 	switch ( action.type ) {
 		case DOCUMENT_HEAD_UNREAD_COUNT_SET:
-			return action.count || state;
+			return action.count;
 	}
 
 	return state;

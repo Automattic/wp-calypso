@@ -26,11 +26,11 @@ class DocumentHead extends Component {
 			unreadCount
 		} = this.props;
 
-		if ( 'title' in this.props ) {
+		if ( this.props.title ) {
 			this.props.setTitle( title );
 		}
 
-		if ( 'unreadCount' in this.props ) {
+		if ( this.props.unreadCount ) {
 			this.props.setUnreadCount( unreadCount );
 		}
 
@@ -49,11 +49,11 @@ class DocumentHead extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.title !== nextProps.title ) {
+		if ( nextProps.title && this.props.title !== nextProps.title ) {
 			this.props.setTitle( nextProps.title );
 		}
 
-		if ( this.props.unreadCount !== nextProps.unreadCount ) {
+		if ( nextProps.unreadCount && this.props.unreadCount !== nextProps.unreadCount ) {
 			this.props.setUnreadCount( nextProps.unreadCount );
 		}
 
