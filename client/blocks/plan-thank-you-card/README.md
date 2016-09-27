@@ -1,6 +1,6 @@
 # Plan Thank You Card
 
-This is a component that shows thank you card after purchasing a plan for a site. It requires the site object to be present and if site plans are not available in Redux state, it fetches them.
+This is a component that shows thank you card after purchasing a plan for a site. It requires siteId as the only prop and it fetches the rest of data to redux state.
 
 ## Props
 
