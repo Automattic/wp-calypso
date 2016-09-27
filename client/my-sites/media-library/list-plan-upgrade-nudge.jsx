@@ -10,6 +10,8 @@ import { localize } from 'i18n-calypso';
  */
 import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
 import { PLAN_PREMIUM, FEATURE_VIDEO_UPLOADS, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
+import ListPlanPromo from './list-plan-promo';
 
 function getTitle( filter, translate ) {
 	if ( filter === 'audio' ) {
@@ -61,20 +63,35 @@ function getBenefits( filter, translate ) {
 	];
 }
 
-export const MediaLibraryUpgradeNudge = ( { translate, filter } ) => (
+export const MediaLibraryUpgradeNudge = ( { translate, filter, site } ) => (
 	<div className="media-library__videopress-nudge-container">
 		<UpgradeNudgeExpanded
 			plan={ PLAN_PREMIUM }
 			title={ getTitle( filter, translate ) }
 			subtitle={ getSubtitle( filter, translate ) }
 			highlightedFeature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
-			eventName="calypso_media_uploads_upgrade_nudge_impression"
+			event="calypso_media_uploads_upgrade_nudge"
 			benefits={ getBenefits( filter, translate ) }
+			testedRegularNudge={
+				<ListPlanPromo
+					site={ site }
+					filter={ filter }
+				>
+					<UpgradeNudge
+						className="media-library__videopress-nudge-regular"
+						title={ getTitle( filter, translate ) }
+						message={ getSubtitle( filter, translate ) }
+						feature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
+						event="calypso_media_uploads_upgrade_nudge"
+					/>
+				</ListPlanPromo>
+			}
 		/>
 	</div>
 );
 
 MediaLibraryUpgradeNudge.propTypes = {
+	site: PropTypes.object,
 	translate: PropTypes.func,
 	filter: React.PropTypes.string
 };
