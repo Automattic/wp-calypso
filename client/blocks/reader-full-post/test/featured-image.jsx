@@ -1,34 +1,21 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { assert } from 'chai';
-import { mount } from 'enzyme';
+import { shallow } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-import useFakeDom from 'test/helpers/use-fake-dom';
-
+import FeaturedImage from '../featured-image';
 
 describe( 'FeaturedImage', () => {
-	let React, FeaturedImage, imageStub;
 
-	useFakeDom();
-
-	before( () => {
-		React = require('react');
-		FeaturedImage = require( '../featured-image' );
-		imageStub = {};
-		global.Image = () => imageStub;
-	} );
-
-	after( () => {
-		global.Image = null;
-	} );
-
-	it( 'renders null if the image does not exist', () => {
-		 const nonExistantImage = 'http://sketchy-feed.com/missing-image-2.jpg';
-		 const wrapper = mount( <FeaturedImage src={ nonExistantImage } /> );
-		 assert.isNull( wrapper.html() );
+	it( 'sets the source to an empty string if the image fails to load', () => {
+		const nonExistantImage = 'http://sketchy-feed.com/missing-image-2.jpg';
+		const wrapper = shallow( <FeaturedImage src={ nonExistantImage } /> );
+		wrapper.instance().handleImageError();
+		assert.equal( '', wrapper.state( 'src' ) );
 	} );
 } );
