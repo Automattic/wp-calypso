@@ -209,7 +209,13 @@ class PlansFeaturesMain extends Component {
 						' domains purchased through WordPress.com or your own existing domain that you can map' +
 						' to your WordPress.com site. {{a}}Find out more about domains.{{/a}}',
 						{
-							components: { a: <a href="https://en.support.wordpress.com/all-about-domains/" target="_blank" rel="noopener noreferrer" /> }
+							components: {
+								a: <a
+									href="https://en.support.wordpress.com/all-about-domains/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
 						}
 					) }
 				/>
@@ -256,7 +262,13 @@ class PlansFeaturesMain extends Component {
 						' add Google apps for work. You can also set up email forwarding for any custom domain' +
 						' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
 						{
-							components: { a: <a href="https://en.support.wordpress.com/add-email/" target="_blank" rel="noopener noreferrer" /> }
+							components: {
+								a: <a
+									href="https://en.support.wordpress.com/add-email/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
 						}
 					) }
 				/>
@@ -269,8 +281,23 @@ class PlansFeaturesMain extends Component {
 						' more precise control of your site’s' +
 						' design. {{a}}Find out more about custom design{{/a}}.',
 						{
-							components: { a: <a href="https://en.support.wordpress.com/custom-design/" target="_blank" rel="noopener noreferrer" /> }
+							components: {
+								a: <a
+									href="https://en.support.wordpress.com/custom-design/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
 						}
+					) }
+				/>
+
+				<FAQItem
+					question={ translate( 'Will upgrading affect my content?' ) }
+					answer={ translate(
+						'Plans add extra features to your site, but they do not affect the content of your site' +
+						" or your site's followers. You will never lose content by upgrading or downgrading" +
+						" your site's plan."
 					) }
 				/>
 
