@@ -8,6 +8,8 @@
 
 .editor-media-modal-image-editor__toolbar {
 	flex: 1;
+	display: flex;
+	justify-content: center;
 	position: relative;
 	bottom: 0;
 	width: 100%;
