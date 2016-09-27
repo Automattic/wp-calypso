@@ -31,7 +31,7 @@ function makeElement( ThemesComponent, Head, store, props ) {
 }
 
 function getProps( context ) {
-	const { tier, filter, site_id: siteId } = context.params;
+	const { tier, filter, vertical, site_id: siteId } = context.params;
 
 	const { basePath, analyticsPageTitle } = getAnalyticsData(
 		context.path,
@@ -51,6 +51,7 @@ function getProps( context ) {
 		title: i18n.translate( 'Themes', { textOnly: true } ),
 		tier,
 		filter,
+		vertical,
 		analyticsPageTitle,
 		analyticsPath: basePath,
 		search: context.query.s,
