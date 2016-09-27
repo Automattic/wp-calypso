@@ -105,7 +105,7 @@ export default class EmailUnverifiedNotice extends React.Component {
 	}
 
 	renderEmailSendSuccess() {
-		let noticeText = i18n.translate(
+		const noticeText = i18n.translate(
 			'We sent another confirmation email to %(email)s.',
 			{ args: { email: user.get().email } }
 		);
@@ -120,7 +120,7 @@ export default class EmailUnverifiedNotice extends React.Component {
 	}
 
 	renderEmailSendError() {
-		let noticeText = [
+		const noticeText = [
 			<strong>{ i18n.translate( 'The email could not be sent.' ) }</strong>,
 			' ',
 			this.state.error.message,
