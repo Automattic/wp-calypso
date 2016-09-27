@@ -97,8 +97,13 @@ const {
 	SelectionState,
 } = require( 'draft-js' );
 
+// Parser also requires draft-js. Lets load it after the polyfills are created too.
+const {
+	fromEditor,
+	toEditor,
+} = require( './parser' );
+
 import Token from './token';
-import { fromEditor, toEditor } from './parser';
 import { buildSeoTitle } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
