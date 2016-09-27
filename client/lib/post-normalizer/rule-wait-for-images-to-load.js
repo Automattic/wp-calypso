@@ -45,6 +45,13 @@ const promiseForURL = flow( imageForURL, promiseForImage );
 export default function waitForImagesToLoad( post ) {
 	return new Promise( ( resolve ) => {
 		function acceptLoadedImages( images ) {
+			if ( post.featured_image ) {
+				if ( ! find( images, { src: post.featured_image } ) ) {
+					// featured image didn't load, nix it
+					post.featured_image = null;
+				}
+			}
+
 			post.images = map( images, convertImageToObject );
 
 			post.content_images = filter( map( post.content_images, function( image ) {
