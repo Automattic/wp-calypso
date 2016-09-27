@@ -63,21 +63,21 @@ module.exports = {
 		allowExistingUsers: false,
 	},
 	signupStore: {
-		datestamp: '20160727',
+		datestamp: '20160927',
 		variations: {
-			designTypeWithoutStore: 80,
-			designTypeWithStore: 20,
+			designTypeWithoutStore: 0,
+			designTypeWithStore: 100,
 		},
-		defaultVariation: 'designTypeWithoutStore',
+		defaultVariation: 'designTypeWithStore',
 		allowExistingUsers: false,
 	},
 	signupStoreBenchmarking: {
-		datestamp: '20160817',
+		datestamp: '20160927',
 		variations: {
-			pressable: 94,
-			bluehost: 2,
-			bluehostWithWoo: 2,
-			siteground: 2
+			pressable: 97,
+			bluehost: 1,
+			bluehostWithWoo: 1,
+			siteground: 1
 		},
 		defaultVariation: 'pressable',
 		allowExistingUsers: false,
