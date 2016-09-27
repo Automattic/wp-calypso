@@ -38,6 +38,10 @@ const MediaUtils = {
 	 * @return {string}         URL to the media
 	 */
 	url: function( media, options ) {
+		if ( ! media ) {
+			return;
+		}
+
 		if ( media.transient ) {
 			return media.URL;
 		}
