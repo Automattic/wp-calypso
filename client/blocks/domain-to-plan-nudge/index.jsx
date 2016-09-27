@@ -180,7 +180,8 @@ class DomainToPlanNudge extends Component {
 						>
 							{
 								translate( 'Upgrade Now for %s', {
-									args: formatCurrency( discountedRawPrice || rawPrice, userCurrency )
+									args: formatCurrency( discountedRawPrice || rawPrice, userCurrency ),
+									comment: '%s will be replaced by a formatted price, i.e $9.9'
 								} )
 							}
 						</Button>
