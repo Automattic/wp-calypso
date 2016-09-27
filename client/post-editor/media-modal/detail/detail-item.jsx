@@ -160,11 +160,11 @@ module.exports = React.createClass( {
 				<div className="editor-media-modal-detail__content editor-media-modal__content">
 					<div className="editor-media-modal-detail__preview-wrapper">
 						{ this.renderItem() }
+						{ this.renderEditButton() }
 						{ this.renderPreviousItemButton() }
 						{ this.renderNextItemButton() }
 					</div>
 					<div className="editor-media-modal-detail__sidebar">
-						{ this.renderEditButton() }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo
 							item={ this.props.item } />

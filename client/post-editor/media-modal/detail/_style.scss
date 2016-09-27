@@ -101,9 +101,10 @@
 }
 
 .editor-media-modal-detail__edit {
-	width: 100%;
-	margin-bottom: 16px;
 	font-weight: bold;
+	position: absolute;
+	top: 8px;
+	right: 8px;
 }
 
 .editor-media-modal-detail__sidebar {
