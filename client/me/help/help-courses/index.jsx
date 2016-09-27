@@ -31,16 +31,20 @@ function getCourses() {
 			),
 			schedule: [
 				{
-					date: i18n.moment( new Date( 'Fri, 23 Sep 2016 18:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/732df6652d490ab0dc2040ba88984b7b'
+					date: i18n.moment( new Date( 'Tues, 4 Oct 2016 16:00:00 +0000' ) ),
+					registrationUrl: 'https://zoom.us/webinar/register/0f18c67948202a1f7510d14dfea9e911'
 				},
 				{
-					date: i18n.moment( new Date( 'Tue, 27 Sep 2016 17:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/c14f7c38c388111466858a512be5123a'
+					date: i18n.moment( new Date( 'Thur, 6 Oct 2016 20:00:00 +0000' ) ),
+					registrationUrl: 'https://zoom.us/webinar/register/2389ab7d02e4772d8c34be5db4a05ad8'
 				},
 				{
-					date: i18n.moment( new Date( 'Thur, 29 Sep 2016 20:00:00 +0000' ) ),
-					registrationUrl: 'https://zoom.us/webinar/register/e70a34c1ca8c13dac5b9141539e44ee6'
+					date: i18n.moment( new Date( 'Tues, 11 Oct 2016 16:00:00 +0000' ) ),
+					registrationUrl: 'https://zoom.us/webinar/register/c9f211b28c427b6066858a512be5123a'
+				},
+				{
+					date: i18n.moment( new Date( 'Thur, 13 Oct 2016 20:00:00 +0000' ) ),
+					registrationUrl: 'https://zoom.us/webinar/register/8aa25fd3a2bda6a28c34be5db4a05ad8'
 				},
 			],
 			videos: [
