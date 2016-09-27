@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  */
 import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
 import { PLAN_PREMIUM, FEATURE_VIDEO_UPLOADS, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 function getTitle( filter, translate ) {
 	if ( filter === 'audio' ) {
@@ -70,6 +71,14 @@ export const MediaLibraryUpgradeNudge = ( { translate, filter } ) => (
 			highlightedFeature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
 			eventName="calypso_media_uploads_upgrade_nudge_impression"
 			benefits={ getBenefits( filter, translate ) }
+			testedRegularNudge={
+				<UpgradeNudge
+					title={ getTitle( filter, translate ) }
+					message={ getSubtitle( filter, translate ) }
+					feature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
+					event="calypso_media_uploads_upgrade_nudge_impression"
+				/>
+			}
 		/>
 	</div>
 );
