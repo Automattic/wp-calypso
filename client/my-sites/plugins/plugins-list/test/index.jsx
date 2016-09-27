@@ -2,6 +2,7 @@
  * External dependencies
 */
 import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /*
  * Internal dependencies
@@ -24,6 +25,7 @@ describe( 'PluginsList', () => {
 		mockery.registerMock( 'my-sites/plugins/plugin-item/plugin-item', emptyComponent );
 		mockery.registerMock( 'my-sites/plugins/plugin-list-header', emptyComponent );
 
+		mockery.registerMock( 'lib/analytics', { ga: { recordEvent: noop }} );
 		mockery.registerMock( 'lib/sites-list', () => siteListMock );
 	} );
 
