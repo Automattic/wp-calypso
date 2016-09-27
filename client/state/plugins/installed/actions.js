@@ -71,14 +71,6 @@ const getPluginHandler = ( site, pluginId ) => {
 	return pluginHandler;
 };
 
-const getSolvedPromise = ( dataToPass ) => {
-	return new Promise( resolve => resolve( dataToPass ) );
-};
-
-const getRejectedPromise = ( errorToPass ) => {
-	return new Promise( ( resolve, reject ) => reject( errorToPass ) );
-};
-
 export default {
 	activate: function( site, plugin ) {
 		return ( dispatch ) => {
@@ -135,7 +127,7 @@ export default {
 	update: function( site, plugin ) {
 		return ( dispatch ) => {
 			if ( ! plugin.update ) {
-				return getRejectedPromise( 'Error: Plugin already up-to-date.' );
+				return Promise.reject( 'Error: Plugin already up-to-date.' );
 			}
 
 			const pluginId = getPluginId( site, plugin );
@@ -157,7 +149,7 @@ export default {
 			if ( ! site.canUpdateFiles ) {
 				const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
 				errorCallback( cantUpdateError );
-				return getRejectedPromise( cantUpdateError );
+				return Promise.reject( cantUpdateError );
 			}
 
 			return getPluginHandler( site, pluginId ).updateVersion().then( successCallback ).catch( errorCallback );
@@ -167,7 +159,7 @@ export default {
 	enableAutoupdate: function( site, plugin ) {
 		return ( dispatch ) => {
 			if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-				return getRejectedPromise( 'Error: We can\'t update files on this site.' );
+				return Promise.reject( 'Error: We can\'t update files on this site.' );
 			}
 
 			const pluginId = getPluginId( site, plugin );
@@ -268,7 +260,7 @@ export default {
 						.catch( errorCallback );
 				}
 				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_INSTALL_REQUEST_FAILURE, error } ) );
-				return getRejectedPromise( error );
+				return Promise.reject( error );
 			};
 
 			if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
@@ -305,14 +297,14 @@ export default {
 				if ( pluginData.active ) {
 					return getPluginHandler( site, pluginData.id ).deactivate();
 				}
-				return getSolvedPromise( pluginData );
+				return Promise.resolve( pluginData );
 			};
 
 			const disableAutoupdate = function( pluginData ) {
 				if ( pluginData.autoupdate ) {
 					return getPluginHandler( site, pluginData.id ).disableAutoupdate();
 				}
-				return getSolvedPromise( pluginData );
+				return Promise.resolve( pluginData );
 			};
 
 			const remove = function( pluginData ) {
@@ -325,7 +317,7 @@ export default {
 
 			const errorCallback = ( error ) => {
 				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST_FAILURE, error } ) );
-				return getRejectedPromise( error );
+				return Promise.reject( error );
 			};
 
 			if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
