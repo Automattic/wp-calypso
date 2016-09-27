@@ -33,7 +33,8 @@ module.exports = React.createClass( {
 			slug: 'no-slug',
 			canUpdateFiles: true,
 			name: 'Not a real site'
-		}
+		};
+
 		let n = 0;
 		return plugins.map( plugin => {
 			return <PluginItem
@@ -47,14 +48,9 @@ module.exports = React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2><a href="/devdocs/design/feature-example">Feature Example</a></h2>
-				<div>
-					<FeatureExample>
-						{ this.getContent() }
-					</FeatureExample>
-				</div>
-			</div>
+			<FeatureExample>
+				{ this.getContent() }
+			</FeatureExample>
 		);
 	}
 } );

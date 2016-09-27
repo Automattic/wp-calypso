@@ -50,14 +50,9 @@ module.exports = React.createClass( {
 		};
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/app-components/reader-full-post-header">Reader Full Post Header</a>
-				</h2>
-				<Card>
-					<ReaderFullPostHeader post={ post } />
-				</Card>
-			</div>
+			<Card>
+				<ReaderFullPostHeader post={ post } />
+			</Card>
 		);
 	}
 } );

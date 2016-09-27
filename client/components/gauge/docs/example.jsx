@@ -16,12 +16,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/gauge">Gauge</a>
-				</h2>
-				<Gauge percentage={ 27 } metric={ 'test' } />
-			</div>
+			<Gauge percentage={ 27 } metric={ 'test' } />
 		);
 	}
 } );

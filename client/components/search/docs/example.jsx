@@ -22,10 +22,7 @@ var SearchDemo = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/search">Search</a>
-				</h2>
+			<div>
 				<Search
 					onSearch={ noop }
 					placeholder="Placeholder text..."

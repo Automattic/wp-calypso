@@ -17,11 +17,7 @@ var Cards = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/section-header">Section Header</a>
-				</h2>
-
+			<div>
 				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 }>
 					<Button compact primary>
 						{ this.translate( 'Primary Action' ) }
@@ -39,7 +35,7 @@ var Cards = React.createClass( {
 					</Button>
 				</SectionHeader>
 
-				<h2>Clickable SectionHeader</h2>
+				<h3>Clickable SectionHeader</h3>
 
 				<SectionHeader label={ this.translate( 'Team' ) } count={ 10 } href="/devdocs/design/section-header">
 				</SectionHeader>

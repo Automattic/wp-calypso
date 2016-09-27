@@ -21,15 +21,7 @@ export default React.createClass( {
 	render() {
 		const primarySite = sites.initialized && sites.getPrimary();
 		const siteId = primarySite ? primarySite.ID : 0;
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/domain-tip">Domain Tip</a>
-				</h2>
-				<div>
-					<DomainTip siteId={ siteId } event="domain_app_example" />
-				</div>
-			</div>
-		);
+
+		return <DomainTip siteId={ siteId } event="domain_app_example" />;
 	}
 } );

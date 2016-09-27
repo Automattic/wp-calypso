@@ -16,11 +16,9 @@ import { getSitePosts } from 'state/posts/selectors';
 
 function PostItemExample( { primarySiteId, globalId } ) {
 	return (
-		<div className="docs__design-assets-group">
-			<h2>
-				<a href="/devdocs/blocks/post-item">Post Item</a>
-			</h2>
-			<QuerySites siteId={ primarySiteId } />
+		<div>
+			{ primarySiteId && <QuerySites siteId={ primarySiteId } /> }
+
 			{ primarySiteId && (
 				<QueryPosts
 					siteId={ primarySiteId }
