@@ -12,7 +12,7 @@ module.exports = {
 			if ( DiscoverHelper.isInternalDiscoverPost( post ) && ! DiscoverHelper.isDiscoverSitePick( post ) ) {
 				showComments = true;
 			}
-		} else if ( ! post.is_jetpack && post.discussion && ( post.discussion.comments_open || post.discussion.comment_count > 0 ) ) {
+		} else if ( post.discussion && ( post.discussion.comments_open || post.discussion.comment_count > 0 ) ) {
 			showComments = true;
 		}
 

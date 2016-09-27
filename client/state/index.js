@@ -3,6 +3,7 @@
  */
 import thunkMiddleware from 'redux-thunk';
 import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
+import config from 'config';
 
 /**
  * Internal dependencies
@@ -90,11 +91,16 @@ export const reducer = combineReducers( {
 
 const middleware = [ thunkMiddleware, noticesMiddleware, postsEditMiddleware ];
 
+if ( config.isEnabled( 'offline-dev' ) ) {
+	middleware.push( require( './data-layer/offline-dev-middleware' ).middleware );
+}
+
 if ( typeof window === 'object' ) {
 	// Browser-specific middlewares
-	middleware.push(
-		require( './analytics/middleware.js' ).analyticsMiddleware
-	);
+	[
+		require( './analytics/middleware.js' ).analyticsMiddleware,
+		require( './data-layer/wp-api-middleware' ).middleware,
+	].forEach( m => middleware.push( m ) );
 }
 
 let createStoreWithMiddleware = applyMiddleware.apply( null, middleware );
@@ -108,5 +114,15 @@ export function createReduxStore( initialState = {} ) {
 	) {
 		createStoreWithMiddleware = compose( createStoreWithMiddleware, window.devToolsExtension() );
 	}
-	return createStoreWithMiddleware( createStore )( reducer, initialState );
+
+	if ( typeof window === 'object' ) {
+		createStoreWithMiddleware = compose(
+			require( 'state/data-layer/pinghub-remote-actions' ).remoteActionEnhancer,
+			createStoreWithMiddleware,
+		);
+	}
+
+	const store = createStoreWithMiddleware( createStore )( reducer, initialState );
+
+	return store;
 }

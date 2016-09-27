@@ -14,7 +14,6 @@ import { createSitePlanObject } from './assembler';
 import {
 	SITE_PLANS_FETCH,
 	SITE_PLANS_FETCH_COMPLETED,
-	SITE_PLANS_FETCH_FAILED,
 	SITE_PLANS_REMOVE,
 	SITE_PLANS_TRIAL_CANCEL,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
@@ -85,36 +84,10 @@ export function clearSitePlans( siteId ) {
  * @param {Number} siteId identifier of the site
  * @returns {Function} a promise that will resolve once fetching is completed
  */
-export function fetchSitePlans( siteId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: SITE_PLANS_FETCH,
-			siteId
-		} );
-
-		return new Promise( ( resolve ) => {
-			wpcom.undocumented().getSitePlans( siteId, ( error, data ) => {
-				if ( error ) {
-					debug( 'Fetching site plans failed: ', error );
-
-					const errorMessage = error.message || i18n.translate(
-						'There was a problem fetching site plans. Please try again later or contact support.'
-					);
-
-					dispatch( {
-						type: SITE_PLANS_FETCH_FAILED,
-						siteId,
-						error: errorMessage
-					} );
-				} else {
-					dispatch( fetchSitePlansCompleted( siteId, data ) );
-				}
-
-				resolve();
-			} );
-		} );
-	};
-}
+export const fetchSitePlans = siteId => ( {
+	type: SITE_PLANS_FETCH,
+	siteId
+} );
 
 /**
  * Returns an action object to be used in signalling that an object containing

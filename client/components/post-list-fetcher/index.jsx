@@ -2,6 +2,13 @@
  * External dependencies
  */
 var React = require( 'react' );
+import { connect } from 'react-redux';
+import {
+	property,
+	reverse,
+	sortBy,
+	unionBy,
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,6 +18,8 @@ var postListStoreFactory = require( 'lib/posts/post-list-store-factory' ),
 	Dispatcher = require( 'dispatcher' ),
 	actions = require( 'lib/posts/actions' ),
 	pollers = require( 'lib/data-poller' );
+import { getSitePosts } from 'state/posts/selectors';
+import { getSiteByUrl } from 'state/sites/selectors';
 
 var PostListFetcher;
 
@@ -141,6 +150,8 @@ PostListFetcher = React.createClass( {
 	componentWillReceiveProps: function( nextProps ) {
 		var listenerChange;
 
+		this.updateFromRedux( nextProps.reduxPosts );
+
 		if ( shouldQueryPosts( this.props, nextProps ) ) {
 			queryPosts( nextProps );
 		}
@@ -155,6 +166,19 @@ PostListFetcher = React.createClass( {
 		this.setState( getPostsState( this.props.postListStoreId ) );
 	},
 
+	updateFromRedux( nextPosts ) {
+		const { posts } = this.state;
+
+		const mergedPosts = reverse( sortBy(
+			unionBy( nextPosts, posts, property( 'ID' ) ),
+			property( 'ID' ),
+		) );
+
+		this.setState( {
+			posts: mergedPosts,
+		} );
+	},
+
 	render: function() {
 		// Clone the child element along and pass along state (containing data from the stores)
 		return React.cloneElement( this.props.children, this.state );
@@ -162,4 +186,12 @@ PostListFetcher = React.createClass( {
 
 } );
 
-module.exports = PostListFetcher;
+const mapStateToProps = ( state, { siteID } ) => {
+	const site = getSiteByUrl( state, siteID );
+
+	return {
+		reduxPosts: getSitePosts( state, site.ID )
+	};
+};
+
+module.exports = connect( mapStateToProps )( PostListFetcher );
