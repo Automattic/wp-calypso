@@ -76,10 +76,12 @@ export function serverRender( req, res ) {
 			Object.assign( context, render( context.layout, key ) );
 		}
 		if ( context.store ) {
+			const title = getFormattedTitle( context.store.getState() );
+			const metas = getMeta( context.store.getState() );
+			const links = getLink( context.store.getState() );
+			context.head = { title, metas, links };
+
 			context.initialReduxState = pick( context.store.getState(), 'documentHead', 'ui', 'themes' );
-			context.title = getFormattedTitle( context.store.getState() );
-			context.metas = getMeta( context.store.getState() );
-			context.links = getLink( context.store.getState() );
 		}
 	}
 
