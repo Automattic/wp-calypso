@@ -27,7 +27,11 @@ A module for managing installed plugins on connected sites.
 
 ### `isRequesting( state: Object, siteId: Number|String )`
 
+### `isRequestingForSites( state: Object, sites: Array )`
+
 ### `hasRequested( state: Object, siteId: Number|String )`
+
+### `hasRequestedForSites( state: Object, sites: Array )`
 
 ### `getPlugins( state: Object, sites: Array, pluginFilter: Object )`
 
