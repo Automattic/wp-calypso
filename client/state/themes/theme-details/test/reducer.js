@@ -84,8 +84,7 @@ describe( 'reducer', () => {
 				} ]
 			},
 			active: false,
-			purchased: false,
-			isRequesting: false,
+			purchased: false
 		} );
 	} );
 
