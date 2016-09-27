@@ -78,5 +78,5 @@ FeaturedAsset.propTypes = {
 	featuredEmbed: React.PropTypes.object,
 	featuredImage: React.PropTypes.string,
 	featuredSize: React.PropTypes.object,
-	onClick: React.PropTypes.func,
+	useFeaturedEmbed: React.PropTypes.bool,
 };
