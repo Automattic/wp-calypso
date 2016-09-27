@@ -25,6 +25,7 @@ import {
 	recordGaEvent,
 	recordTrackForPost
 } from 'reader/stats';
+import { isCommentableDiscoverPost } from 'blocks/comments/helper';
 
 class PostCommentForm extends React.Component {
 	constructor( props ) {
@@ -171,7 +172,7 @@ class PostCommentForm extends React.Component {
 		const post = this.props.post;
 
 		// Don't display the form if comments are closed
-		if ( post && post.discussion && post.discussion.comments_open === false ) {
+		if ( post && post.discussion && post.discussion.comments_open === false && ! isCommentableDiscoverPost( post ) ) {
 			// If we already have some comments, show a 'comments closed message'
 			if ( post.discussion.comment_count && post.discussion.comment_count > 0 ) {
 				return <p className="comments__form-closed">{ translate( 'Comments are closed.' ) }</p>;
@@ -197,8 +198,8 @@ class PostCommentForm extends React.Component {
 				<fieldset>
 					<Gravatar user={ this.props.currentUser } />
 					<label>
-						<div className={ expandingAreaClasses } >
-							<pre><span>{ this.state.commentText }</span><br/></pre>
+						<div className={ expandingAreaClasses }>
+							<pre><span>{ this.state.commentText }</span><br /></pre>
 							<textarea
 								value={ this.state.commentText }
 								placeholder={ translate( 'Enter your comment here…' ) }
