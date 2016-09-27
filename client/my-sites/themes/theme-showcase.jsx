@@ -132,6 +132,7 @@ const ThemeShowcase = React.createClass( {
 					trackScrollPage={ this.props.trackScrollPage }
 					tier={ this.props.tier }
 					filter={ this.props.filter }
+					vertical={ this.props.vertical }
 					queryParams={ this.props.queryParams }
 					themesList={ this.props.themesList } />
 			</Main>
