@@ -68,8 +68,16 @@ describe( 'Installed plugin selectors', function() {
 		expect( selectors.isRequesting ).to.be.a( 'function' );
 	} );
 
+	it( 'should contain isRequestingForSites method', function() {
+		expect( selectors.isRequestingForSites ).to.be.a( 'function' );
+	} );
+
 	it( 'should contain hasRequested method', function() {
 		expect( selectors.hasRequested ).to.be.a( 'function' );
+	} );
+
+	it( 'should contain hasRequestedForSites method', function() {
+		expect( selectors.hasRequestedForSites ).to.be.a( 'function' );
 	} );
 
 	it( 'should contain getPlugins method', function() {
@@ -101,30 +109,59 @@ describe( 'Installed plugin selectors', function() {
 	} );
 
 	describe( 'isRequesting', function() {
-		it( 'Should get `true` if the requested site is not in the current state', function() {
+		// from selectors.js: we assume we are still launching the fetch action, so it's true
+		it( 'Should get `true` if this site is not in the current state', function() {
 			expect( selectors.isRequesting( state, 'no.site' ) ).to.be.true;
 		} );
 
-		it( 'Should get `false` if the requested site is not being fetched', function() {
+		it( 'Should get `false` if this site is not being fetched', function() {
 			expect( selectors.isRequesting( state, 'site.one' ) ).to.be.false;
 		} );
 
-		it( 'Should get `true` if the requested site is being fetched', function() {
+		it( 'Should get `true` if this site is being fetched', function() {
 			expect( selectors.isRequesting( state, 'site.three' ) ).to.be.true;
 		} );
 	} );
 
+	describe( 'isRequestingForSites', function() {
+		it( 'Should get `false` if no sites are being fetched', function() {
+			expect( selectors.isRequestingForSites( state, [ 'site.one', 'site.two' ] ) ).to.be.false;
+		} );
+
+		it( 'Should get `true` if any site is being fetched', function() {
+			expect( selectors.isRequestingForSites( state, [ 'site.one', 'site.three' ] ) ).to.be.true;
+		} );
+
+		it( 'Should get `true` if any site is being fetched, even if one is not in the current state', function() {
+			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.three' ] ) ).to.be.true;
+		} );
+
+		it( 'Should get `true` if this site is not in the current state', function() {
+			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.two' ] ) ).to.be.true;
+		} );
+	} );
+
 	describe( 'hasRequested', function() {
-		it( 'Should get `false` if the requested site is not in the current state', function() {
+		it( 'Should get `false` if this site is not in the current state', function() {
 			expect( selectors.hasRequested( state, 'no.site' ) ).to.be.false;
 		} );
 
-		it( 'Should get `true` if the requested site is has already been fetched', function() {
+		it( 'Should get `true` if this site is has already been fetched', function() {
 			expect( selectors.hasRequested( state, 'site.one' ) ).to.be.true;
 		} );
 
-		it( 'Should get `true` if the requested site is being fetched', function() {
+		it( 'Should get `true` if this site is being fetched', function() {
 			expect( selectors.hasRequested( state, 'site.three' ) ).to.be.true;
+		} );
+	} );
+
+	describe( 'hasRequestedForSites', function() {
+		it( 'Should get `false` if a site is not in the current state', function() {
+			expect( selectors.hasRequestedForSites( state, [ 'no.site', 'site.two' ] ) ).to.be.false;
+		} );
+
+		it( 'Should get `true` if all sites have been requested', function() {
+			expect( selectors.hasRequestedForSites( state, [ 'site.one', 'site.three' ] ) ).to.be.true;
 		} );
 	} );
 

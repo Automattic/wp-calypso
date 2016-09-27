@@ -7,6 +7,7 @@ import uniq from 'lodash/uniq';
 import compact from 'lodash/compact';
 import omit from 'lodash/omit';
 import every from 'lodash/every';
+import some from 'lodash/some';
 
 const _filters = {
 	none: function() {
@@ -44,11 +45,21 @@ const isRequesting = function( state, siteId ) {
 	return state.plugins.installed.isRequesting[ siteId ];
 };
 
+const isRequestingForSites = function( state, sites ) {
+	// As long as any sites have isRequesting true, we consider this group requesting
+	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
+};
+
 const hasRequested = function( state, siteId ) {
 	if ( typeof state.plugins.installed.hasRequested[ siteId ] === 'undefined' ) {
 		return false;
 	}
 	return state.plugins.installed.hasRequested[ siteId ];
+};
+
+const hasRequestedForSites = function( state, sites ) {
+	// All sites are requested when they all return hasRequested true
+	return every( sites, ( siteId ) => hasRequested( state, siteId ) );
 };
 
 const getPlugins = function( state, sites, pluginFilter = false ) {
@@ -140,7 +151,9 @@ const isPluginDoingAction = function( state, siteId, pluginId ) {
 
 export default {
 	isRequesting,
+	isRequestingForSites,
 	hasRequested,
+	hasRequestedForSites,
 	getPlugins,
 	getPluginsWithUpdates,
 	getPluginOnSite,
