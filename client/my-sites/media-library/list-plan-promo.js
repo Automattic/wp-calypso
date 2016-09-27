@@ -75,7 +75,7 @@ module.exports = React.createClass( {
 			<EmptyContent
 				title={ this.getTitle() }
 				line={ this.getSummary() }
-				action={ action }
+				action={ this.props.children || action }
 				illustration={ '' } />
 		);
 	}
