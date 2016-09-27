@@ -19,6 +19,7 @@ import Count from 'components/count';
 import Notice from 'components/notice';
 import PluginNotices from 'lib/plugins/notices';
 import analytics from 'lib/analytics';
+import { getAvailableNewVersions } from 'my-sites/plugins/plugin-meta';
 
 function checkPropsChange( nextProps, propArr ) {
 	let i;
@@ -76,7 +77,7 @@ module.exports = React.createClass( {
 	},
 
 	doing() {
-		const progress = this.props.progress ? this.props.progress : [],
+		const progress = this.props.progress || [],
 			log = progress[ 0 ],
 			uniqLogs = uniqBy( progress, function( uniqLog ) {
 				return uniqLog.site.ID;
@@ -127,6 +128,7 @@ module.exports = React.createClass( {
 	},
 
 	renderUpdateFlag() {
+		const newVersions = getAvailableNewVersions( this.props );
 		const recentlyUpdated = this.props.sites.some( function( site ) {
 			return site.plugin &&
 				site.plugin.update &&
@@ -142,12 +144,14 @@ module.exports = React.createClass( {
 					text={ this.translate( 'Updated' ) } />
 			);
 		}
+
 		return (
 			<Notice isCompact
 				icon="sync"
 				status="is-warning"
 				inline={ true }
-				text={ this.translate( 'A newer version is available' ) } />
+				text={ this.translate( 'Version %(newVersion)s is available', { args: { newVersion: newVersions[ 0 ].newVersion } } ) }>
+			</Notice>
 		);
 	},
 
