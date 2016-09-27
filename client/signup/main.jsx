@@ -98,6 +98,7 @@ const Signup = React.createClass( {
 
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
+			reduxStore: this.context.store,
 			onComplete: function( dependencies, destination ) {
 				const timeSinceLoading = this.state.loadingScreenStartTime
 					? Date.now() - this.state.loadingScreenStartTime

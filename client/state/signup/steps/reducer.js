@@ -6,10 +6,8 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import dependencyStore from './dependency-store/reducer';
-import steps from './steps/reducer';
+import siteTitle from './site-title/reducer';
 
 export default combineReducers( {
-	dependencyStore,
-	steps,
+	siteTitle,
 } );
