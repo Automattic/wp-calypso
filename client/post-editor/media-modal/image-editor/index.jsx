@@ -16,6 +16,7 @@ import EditToolbar from './image-editor-toolbar';
 import EditButtons from './image-editor-buttons';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
+import closeOnEsc from 'lib/mixins/close-on-esc';
 import {
 	resetImageEditorState,
 	setImageEditorFileInfo
@@ -25,6 +26,8 @@ import {
 } from 'state/ui/editor/image-editor/selectors';
 
 const MediaModalImageEditor = React.createClass( {
+	mixins: [ closeOnEsc( '_close' ) ],
+
 	displayName: 'MediaModalImageEditor',
 
 	propTypes: {
@@ -167,6 +170,12 @@ const MediaModalImageEditor = React.createClass( {
 				</figure>
 			</div>
 		);
+	},
+
+	_close: function() {
+		if ( this.props.onImageEditorCancel ) {
+			this.props.onImageEditorCancel();
+		}
 	}
 } );
 
