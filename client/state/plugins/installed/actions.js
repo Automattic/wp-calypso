@@ -71,292 +71,290 @@ const getPluginHandler = ( site, pluginId ) => {
 	return pluginHandler;
 };
 
-export default {
-	activate: function( site, plugin ) {
-		return ( dispatch ) => {
-			const pluginId = getPluginId( site, plugin );
-			const defaultAction = {
-				action: ACTIVATE_PLUGIN,
-				siteId: site.ID,
-				pluginId,
-			};
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_ACTIVATE_REQUEST } ) );
-
-			const successCallback = ( data ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data } ) );
-			};
-
-			const errorCallback = ( error ) => {
-				// This error means it's already active.
-				if ( error && error.error === 'activation_error' ) {
-					successCallback( plugin );
-				}
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_ACTIVATE_REQUEST_FAILURE, error } ) );
-			};
-
-			return getPluginHandler( site, pluginId ).activate().then( successCallback ).catch( errorCallback );
+export function activate( site, plugin ) {
+	return ( dispatch ) => {
+		const pluginId = getPluginId( site, plugin );
+		const defaultAction = {
+			action: ACTIVATE_PLUGIN,
+			siteId: site.ID,
+			pluginId,
 		};
-	},
+		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_ACTIVATE_REQUEST } ) );
 
-	deactivate: function( site, plugin ) {
-		return ( dispatch ) => {
-			const pluginId = getPluginId( site, plugin );
-			const defaultAction = {
-				action: DEACTIVATE_PLUGIN,
-				siteId: site.ID,
-				pluginId,
-			};
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_DEACTIVATE_REQUEST } ) );
-
-			const successCallback = ( data ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS, data } ) );
-			};
-
-			const errorCallback = ( error ) => {
-				// This error means it's already inactive.
-				if ( error && error.error === 'deactivation_error' ) {
-					successCallback( plugin );
-				}
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_DEACTIVATE_REQUEST_FAILURE, error } ) );
-			};
-
-			return getPluginHandler( site, pluginId ).deactivate().then( successCallback ).catch( errorCallback );
+		const successCallback = ( data ) => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data } ) );
 		};
-	},
 
-	update: function( site, plugin ) {
-		return ( dispatch ) => {
-			if ( ! plugin.update ) {
-				return Promise.reject( 'Error: Plugin already up-to-date.' );
+		const errorCallback = ( error ) => {
+			// This error means it's already active.
+			if ( error && error.error === 'activation_error' ) {
+				successCallback( plugin );
 			}
-
-			const pluginId = getPluginId( site, plugin );
-			const defaultAction = {
-				action: UPDATE_PLUGIN,
-				siteId: site.ID,
-				pluginId,
-			};
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_UPDATE_REQUEST } ) );
-
-			const successCallback = ( data ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } ) );
-			};
-
-			const errorCallback = ( error ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_UPDATE_REQUEST_FAILURE, error } ) );
-			};
-
-			if ( ! site.canUpdateFiles ) {
-				const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
-				errorCallback( cantUpdateError );
-				return Promise.reject( cantUpdateError );
-			}
-
-			return getPluginHandler( site, pluginId ).updateVersion().then( successCallback ).catch( errorCallback );
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_ACTIVATE_REQUEST_FAILURE, error } ) );
 		};
-	},
 
-	enableAutoupdate: function( site, plugin ) {
-		return ( dispatch ) => {
-			if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-				return Promise.reject( 'Error: We can\'t update files on this site.' );
-			}
+		return getPluginHandler( site, pluginId ).activate().then( successCallback ).catch( errorCallback );
+	};
+}
 
-			const pluginId = getPluginId( site, plugin );
-			const defaultAction = {
-				action: ENABLE_AUTOUPDATE_PLUGIN,
-				siteId: site.ID,
-				pluginId,
-			};
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST } ) );
-
-			const successCallback = ( data ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } ) );
-				this.update( site, plugin );
-			};
-
-			const errorCallback = ( error ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE, error } ) );
-			};
-
-			return getPluginHandler( site, pluginId ).enableAutoupdate().then( successCallback ).catch( errorCallback );
+export function deactivate( site, plugin ) {
+	return ( dispatch ) => {
+		const pluginId = getPluginId( site, plugin );
+		const defaultAction = {
+			action: DEACTIVATE_PLUGIN,
+			siteId: site.ID,
+			pluginId,
 		};
-	},
+		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_DEACTIVATE_REQUEST } ) );
 
-	disableAutoupdate: function( site, plugin ) {
-		return ( dispatch ) => {
-			if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-				return;
-			}
-
-			const pluginId = getPluginId( site, plugin );
-			const defaultAction = {
-				action: DISABLE_AUTOUPDATE_PLUGIN,
-				siteId: site.ID,
-				pluginId,
-			};
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST } ) );
-
-			const successCallback = ( data ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS, data } ) );
-			};
-
-			const errorCallback = ( error ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE, error } ) );
-			};
-
-			return getPluginHandler( site, pluginId ).disableAutoupdate().then( successCallback ).catch( errorCallback );
+		const successCallback = ( data ) => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS, data } ) );
 		};
-	},
 
-	install: function( site, plugin ) {
-		return ( dispatch ) => {
-			const pluginId = getPluginId( site, plugin );
-			const defaultAction = {
-				action: INSTALL_PLUGIN,
-				siteId: site.ID,
-				pluginId,
-			};
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_INSTALL_REQUEST } ) );
+		const errorCallback = ( error ) => {
+			// This error means it's already inactive.
+			if ( error && error.error === 'deactivation_error' ) {
+				successCallback( plugin );
+			}
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_DEACTIVATE_REQUEST_FAILURE, error } ) );
+		};
 
-			const install = function( pluginData ) {
-				return getPluginHandler( site, pluginData.id ).install();
-			};
+		return getPluginHandler( site, pluginId ).deactivate().then( successCallback ).catch( errorCallback );
+	};
+}
 
-			const activate = function( pluginData ) {
-				return getPluginHandler( site, pluginData.id ).activate();
-			};
+export function update( site, plugin ) {
+	return ( dispatch ) => {
+		if ( ! plugin.update ) {
+			return Promise.reject( 'Error: Plugin already up-to-date.' );
+		}
 
-			const update = function( pluginData ) {
-				return getPluginHandler( site, pluginData.id ).updateVersion();
-			};
+		const pluginId = getPluginId( site, plugin );
+		const defaultAction = {
+			action: UPDATE_PLUGIN,
+			siteId: site.ID,
+			pluginId,
+		};
+		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_UPDATE_REQUEST } ) );
 
-			const autoupdates = function( pluginData ) {
-				return getPluginHandler( site, pluginData.id ).enableAutoupdate();
-			};
+		const successCallback = ( data ) => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } ) );
+		};
 
-			const successCallback = ( data ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } ) );
-			};
+		const errorCallback = ( error ) => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_UPDATE_REQUEST_FAILURE, error } ) );
+		};
 
-			const errorCallback = ( error ) => {
-				if ( error.name === 'PluginAlreadyInstalledError' ) {
-					if ( site.isMainNetworkSite() ) {
-						return update( plugin )
-							.then( autoupdates )
-							.then( successCallback )
-							.catch( errorCallback );
-					}
-					return update( plugin )
-						.then( activate )
-						.then( autoupdates )
+		if ( ! site.canUpdateFiles ) {
+			const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
+			errorCallback( cantUpdateError );
+			return Promise.reject( cantUpdateError );
+		}
+
+		return getPluginHandler( site, pluginId ).updateVersion().then( successCallback ).catch( errorCallback );
+	};
+}
+
+export function enableAutoupdate( site, plugin ) {
+	return ( dispatch ) => {
+		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
+			return Promise.reject( 'Error: We can\'t update files on this site.' );
+		}
+
+		const pluginId = getPluginId( site, plugin );
+		const defaultAction = {
+			action: ENABLE_AUTOUPDATE_PLUGIN,
+			siteId: site.ID,
+			pluginId,
+		};
+		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST } ) );
+
+		const successCallback = ( data ) => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } ) );
+			this.update( site, plugin );
+		};
+
+		const errorCallback = ( error ) => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE, error } ) );
+		};
+
+		return getPluginHandler( site, pluginId ).enableAutoupdate().then( successCallback ).catch( errorCallback );
+	};
+}
+
+export function disableAutoupdate( site, plugin ) {
+	return ( dispatch ) => {
+		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
+			return;
+		}
+
+		const pluginId = getPluginId( site, plugin );
+		const defaultAction = {
+			action: DISABLE_AUTOUPDATE_PLUGIN,
+			siteId: site.ID,
+			pluginId,
+		};
+		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST } ) );
+
+		const successCallback = ( data ) => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS, data } ) );
+		};
+
+		const errorCallback = ( error ) => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE, error } ) );
+		};
+
+		return getPluginHandler( site, pluginId ).disableAutoupdate().then( successCallback ).catch( errorCallback );
+	};
+}
+
+export function install( site, plugin ) {
+	return ( dispatch ) => {
+		const pluginId = getPluginId( site, plugin );
+		const defaultAction = {
+			action: INSTALL_PLUGIN,
+			siteId: site.ID,
+			pluginId,
+		};
+		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_INSTALL_REQUEST } ) );
+
+		const doInstall = function( pluginData ) {
+			return getPluginHandler( site, pluginData.id ).install();
+		};
+
+		const doActivate = function( pluginData ) {
+			return getPluginHandler( site, pluginData.id ).activate();
+		};
+
+		const doUpdate = function( pluginData ) {
+			return getPluginHandler( site, pluginData.id ).updateVersion();
+		};
+
+		const doAutoupdates = function( pluginData ) {
+			return getPluginHandler( site, pluginData.id ).enableAutoupdate();
+		};
+
+		const successCallback = ( data ) => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } ) );
+		};
+
+		const errorCallback = ( error ) => {
+			if ( error.name === 'PluginAlreadyInstalledError' ) {
+				if ( site.isMainNetworkSite() ) {
+					return doUpdate( plugin )
+						.then( doAutoupdates )
 						.then( successCallback )
 						.catch( errorCallback );
 				}
-				if ( error.name === 'ActivationErrorError' ) {
-					return update( plugin )
-						.then( autoupdates )
-						.then( successCallback )
-						.catch( errorCallback );
-				}
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_INSTALL_REQUEST_FAILURE, error } ) );
-				return Promise.reject( error );
-			};
-
-			if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
-				const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
-				return errorCallback( cantUpdateError );
-			}
-
-			if ( site.isMainNetworkSite() ) {
-				return install( plugin )
-					.then( autoupdates )
+				return doUpdate( plugin )
+					.then( doActivate )
+					.then( doAutoupdates )
 					.then( successCallback )
 					.catch( errorCallback );
 			}
+			if ( error.name === 'ActivationErrorError' ) {
+				return doUpdate( plugin )
+					.then( doAutoupdates )
+					.then( successCallback )
+					.catch( errorCallback );
+			}
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_INSTALL_REQUEST_FAILURE, error } ) );
+			return Promise.reject( error );
+		};
 
-			return install( plugin )
-				.then( activate )
-				.then( autoupdates )
+		if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
+			const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
+			return errorCallback( cantUpdateError );
+		}
+
+		if ( site.isMainNetworkSite() ) {
+			return doInstall( plugin )
+				.then( doAutoupdates )
 				.then( successCallback )
 				.catch( errorCallback );
+		}
+
+		return doInstall( plugin )
+			.then( doActivate )
+			.then( doAutoupdates )
+			.then( successCallback )
+			.catch( errorCallback );
+	};
+}
+
+export function remove( site, plugin ) {
+	return ( dispatch ) => {
+		const pluginId = getPluginId( site, plugin );
+		const defaultAction = {
+			action: REMOVE_PLUGIN,
+			siteId: site.ID,
+			pluginId,
 		};
-	},
+		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST } ) );
 
-	remove: function( site, plugin ) {
-		return ( dispatch ) => {
-			const pluginId = getPluginId( site, plugin );
+		const doDeactivate = function( pluginData ) {
+			if ( pluginData.active ) {
+				return getPluginHandler( site, pluginData.id ).deactivate();
+			}
+			return Promise.resolve( pluginData );
+		};
+
+		const doDisableAutoupdate = function( pluginData ) {
+			if ( pluginData.autoupdate ) {
+				return getPluginHandler( site, pluginData.id ).disableAutoupdate();
+			}
+			return Promise.resolve( pluginData );
+		};
+
+		const doRemove = function( pluginData ) {
+			return getPluginHandler( site, pluginData.id ).delete();
+		};
+
+		const successCallback = () => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST_SUCCESS } ) );
+		};
+
+		const errorCallback = ( error ) => {
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST_FAILURE, error } ) );
+			return Promise.reject( error );
+		};
+
+		if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
+			const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
+			return errorCallback( cantUpdateError );
+		}
+
+		return doDeactivate( plugin )
+			.then( doDisableAutoupdate )
+			.then( doRemove )
+			.then( successCallback )
+			.catch( errorCallback );
+	};
+}
+
+export function fetch( sites ) {
+	return ( dispatch ) => {
+		return sites.map( ( site ) => {
 			const defaultAction = {
-				action: REMOVE_PLUGIN,
 				siteId: site.ID,
-				pluginId,
 			};
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST } ) );
+			dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_REQUEST } ) );
 
-			const deactivate = function( pluginData ) {
-				if ( pluginData.active ) {
-					return getPluginHandler( site, pluginData.id ).deactivate();
-				}
-				return Promise.resolve( pluginData );
+			const receivePluginsDispatchSuccess = ( data ) => {
+				dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_RECEIVE } ) );
+				dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_REQUEST_SUCCESS, data: data.plugins } ) );
 			};
 
-			const disableAutoupdate = function( pluginData ) {
-				if ( pluginData.autoupdate ) {
-					return getPluginHandler( site, pluginData.id ).disableAutoupdate();
-				}
-				return Promise.resolve( pluginData );
+			const receivePluginsDispatchFail = ( error ) => {
+				dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_RECEIVE } ) );
+				dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_REQUEST_FAILURE, error } ) );
 			};
 
-			const remove = function( pluginData ) {
-				return getPluginHandler( site, pluginData.id ).delete();
-			};
-
-			const successCallback = () => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST_SUCCESS } ) );
-			};
-
-			const errorCallback = ( error ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST_FAILURE, error } ) );
-				return Promise.reject( error );
-			};
-
-			if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
-				const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
-				return errorCallback( cantUpdateError );
+			if ( site.jetpack ) {
+				return wpcom.site( site.ID ).pluginsList().then( receivePluginsDispatchSuccess ).catch( receivePluginsDispatchFail );
 			}
 
-			return deactivate( plugin )
-				.then( disableAutoupdate )
-				.then( remove )
-				.then( successCallback )
-				.catch( errorCallback );
-		};
-	},
-
-	fetch: function( sites ) {
-		return ( dispatch ) => {
-			return sites.map( ( site ) => {
-				const defaultAction = {
-					siteId: site.ID,
-				};
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_REQUEST } ) );
-
-				const receivePluginsDispatchSuccess = ( data ) => {
-					dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_RECEIVE } ) );
-					dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_REQUEST_SUCCESS, data: data.plugins } ) );
-				};
-
-				const receivePluginsDispatchFail = ( error ) => {
-					dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_RECEIVE } ) );
-					dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_REQUEST_FAILURE, error } ) );
-				};
-
-				if ( site.jetpack ) {
-					return wpcom.site( site.ID ).pluginsList().then( receivePluginsDispatchSuccess ).catch( receivePluginsDispatchFail );
-				}
-
-				return wpcom.site( site.ID ).wpcomPluginsList().then( receivePluginsDispatchSuccess ).catch( receivePluginsDispatchFail );
-			} );
-		};
-	}
-};
+			return wpcom.site( site.ID ).wpcomPluginsList().then( receivePluginsDispatchSuccess ).catch( receivePluginsDispatchFail );
+		} );
+	};
+}
