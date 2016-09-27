@@ -148,7 +148,7 @@ const MediaModalImageEditorToolbar = React.createClass( {
 					ref={ button.ref }
 					className={ 'editor-media-modal-image-editor__toolbar-button' }
 					onClick={ button.onClick } >
-					<Gridicon icon={ button.icon } size={ 36 } />
+					<Gridicon icon={ button.icon } />
 					<span>{ button.text }</span>
 				</button>
 			) );
