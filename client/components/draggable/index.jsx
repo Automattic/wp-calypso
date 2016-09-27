@@ -1,48 +1,55 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 import omit from 'lodash/omit';
 
-export default React.createClass( {
-	displayName: 'Draggable',
-
-	propTypes: {
-		onDrag: React.PropTypes.func,
-		onStop: React.PropTypes.func,
-		width: React.PropTypes.number,
-		height: React.PropTypes.number,
-		x: React.PropTypes.number,
-		y: React.PropTypes.number,
-		controlled: React.PropTypes.bool,
-		bounds: React.PropTypes.shape( {
-			top: React.PropTypes.number,
-			left: React.PropTypes.number,
-			bottom: React.PropTypes.number,
-			right: React.PropTypes.number
+export default class Draggable extends Component {
+	static propTypes = {
+		onDrag: PropTypes.func,
+		onStop: PropTypes.func,
+		width: PropTypes.number,
+		height: PropTypes.number,
+		x: PropTypes.number,
+		y: PropTypes.number,
+		controlled: PropTypes.bool,
+		bounds: PropTypes.shape( {
+			top: PropTypes.number,
+			left: PropTypes.number,
+			bottom: PropTypes.number,
+			right: PropTypes.number
 		} )
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onDrag: noop,
-			onStop: noop,
-			width: 0,
-			height: 0,
-			x: 0,
-			y: 0,
-			controlled: false,
-			bounds: null
-		};
-	},
+	static defaultProps = {
+		onDrag: noop,
+		onStop: noop,
+		width: 0,
+		height: 0,
+		x: 0,
+		y: 0,
+		controlled: false,
+		bounds: null
+	};
 
-	getInitialState() {
-		return {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
 			x: this.props.x,
 			y: this.props.y
 		};
-	},
+
+		this.onTouchStart = this.onTouchStart.bind( this );
+		this.onMouseDown = this.onMouseDown.bind( this );
+
+		this.draggingStarted = this.draggingStarted.bind( this );
+		this.dragging = this.dragging.bind( this );
+		this.draggingEnded = this.draggingEnded.bind( this );
+		this.update = this.update.bind( this );
+		this.removeListeners = this.removeListeners.bind( this );
+	}
 
 	componentWillReceiveProps( newProps ) {
 		if ( this.state.x !== newProps.x || this.state.y !== newProps.y ) {
@@ -51,11 +58,11 @@ export default React.createClass( {
 				y: newProps.y
 			} );
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		this.removeListeners();
-	},
+	}
 
 	draggingStarted( event ) {
 		this.dragging = true;
@@ -73,14 +80,14 @@ export default React.createClass( {
 
 		cancelAnimationFrame( this.frameRequestId );
 		this.frameRequestId = requestAnimationFrame( this.update );
-	},
+	}
 
 	isTouchEvent( event ) {
 		return (
 			( ! event.pageX || ! event.pageY ) &&
 			( event.targetTouches && event.targetTouches.length )
 		);
-	},
+	}
 
 	dragging( event ) {
 		let coords = event;
@@ -95,7 +102,7 @@ export default React.createClass( {
 			y = coords.pageY - this.relativePos.y;
 
 		this.mousePos = { x, y };
-	},
+	}
 
 	draggingEnded( ) {
 		this.dragging = false;
@@ -108,7 +115,7 @@ export default React.createClass( {
 		this.removeListeners();
 
 		this.props.onStop();
-	},
+	}
 
 	onTouchStart( event ) {
 		event.preventDefault();
@@ -119,7 +126,7 @@ export default React.createClass( {
 		document.addEventListener( 'touchend', this.draggingEnded );
 
 		this.draggingStarted( event );
-	},
+	}
 
 	onMouseDown( event ) {
 		event.preventDefault();
@@ -130,7 +137,7 @@ export default React.createClass( {
 		document.addEventListener( 'mouseup', this.draggingEnded );
 
 		this.draggingStarted( event );
-	},
+	}
 
 	update() {
 		if ( ! this.mousePos ) {
@@ -156,7 +163,7 @@ export default React.createClass( {
 		}
 
 		this.setState( { x, y } );
-	},
+	}
 
 	removeListeners() {
 		document.removeEventListener( 'mousemove', this.dragging );
@@ -164,7 +171,7 @@ export default React.createClass( {
 
 		document.removeEventListener( 'touchmove', this.dragging );
 		document.removeEventListener( 'touchend', this.draggingEnded );
-	},
+	}
 
 	render() {
 		const elementProps = omit( this.props, Object.keys( this.constructor.propTypes ) ),
@@ -187,4 +194,4 @@ export default React.createClass( {
 			</div>
 		);
 	}
-} );
+}
