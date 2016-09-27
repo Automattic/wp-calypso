@@ -315,7 +315,7 @@ module.exports = React.createClass( {
 			return;
 		}
 		return (
-			<PeopleNotices siteId={ this.props.siteId } user={ this.state.user }/>
+			<PeopleNotices user={ this.state.user } />
 		);
 	},
 

@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import i18n from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,6 +11,7 @@ import i18n from 'i18n-calypso';
 import PeopleLog from 'lib/people/log-store';
 import PeopleActions from 'lib/people/actions';
 import Notice from 'components/notice';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const isSameSite = ( siteId, log ) => siteId && log.siteId && log.siteId === siteId;
 
@@ -33,7 +35,11 @@ const filterBy = ( siteId, userId, log ) => {
 	return false;
 };
 
-export default React.createClass( {
+const isMultisite = ( site ) => {
+	return site && site.is_multisite;
+};
+
+const PeopleNotices = React.createClass( {
 
 	displayName: 'PeopleNotices',
 
@@ -50,8 +56,9 @@ export default React.createClass( {
 	},
 
 	getState() {
-		const siteId = this.props.siteId,
+		const siteId = this.props.site.ID,
 			userId = this.props.user && this.props.user.ID;
+
 		return {
 			errors: PeopleLog.getErrors( filterBy.bind( this, siteId, userId ) ),
 			inProgress: PeopleLog.getInProgress( filterBy.bind( this, siteId, userId ) ),
@@ -74,6 +81,15 @@ export default React.createClass( {
 					}
 				);
 			case 'DELETE_SITE_USER':
+				if ( isMultisite( this.props.site ) ) {
+					return i18n.translate(
+						'Removing @%(user)s', {
+							args: translateArg( log ),
+							context: 'In progress message while a site is performing actions on users.'
+						}
+					);
+				}
+
 				return i18n.translate(
 					'Deleting @%(user)s', {
 						args: translateArg( log ),
@@ -95,6 +111,14 @@ export default React.createClass( {
 					}
 				);
 			case 'RECEIVE_DELETE_SITE_USER_FAILURE':
+				if ( isMultisite( this.props.site ) ) {
+					return i18n.translate(
+						'There was an error removing @%(user)s', {
+							args: translateArg( log ),
+							context: 'Error message after A site has failed to perform actions on a user.'
+						}
+					);
+				}
 				return i18n.translate(
 					'There was an error deleting @%(user)s', {
 						args: translateArg( log ),
@@ -123,6 +147,14 @@ export default React.createClass( {
 					}
 				);
 			case 'RECEIVE_DELETE_SITE_USER_SUCCESS':
+				if ( isMultisite( this.props.site ) ) {
+					return i18n.translate(
+						'Successfully removed @%(user)s', {
+							args: translateArg( log ),
+							context: 'Success message after a user has been modified.'
+						}
+					);
+				}
 				return i18n.translate(
 					'Successfully deleted @%(user)s', {
 						args: translateArg( log ),
@@ -183,3 +215,12 @@ export default React.createClass( {
 		return notice;
 	},
 } );
+
+export default connect(
+	state => {
+		return {
+			site: getSelectedSite( state )
+		};
+	}
+)( PeopleNotices );
+
