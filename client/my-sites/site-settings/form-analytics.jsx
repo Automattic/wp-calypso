@@ -208,7 +208,7 @@ export default React.createClass( {
 				title={ this.translate( 'Upgrade to a Business Plan and Enable Google Analytics' ) }
 				subtitle={ this.translate( 'By upgrading to a Business Plan you\'ll enable Google Analytics Tracking on your site.' ) }
 				highlightedFeature={ FEATURE_GOOGLE_ANALYTICS }
-				eventName={ "calypso_google_analytics_upgrade_nudge_impression" }
+				event={ "google_analytics_settings" }
 				benefits={ [
 					this.translate(
 						'Analyze visitor traffic and paint a complete picture of your audience and their needs.'
