@@ -20,7 +20,6 @@ import {
 	THEME_CLEAR_ACTIVATED,
 	THEME_DETAILS_RECEIVE,
 	THEME_DETAILS_RECEIVE_FAILURE,
-	THEME_DETAILS_REQUEST,
 	THEME_PURCHASE,
 	THEME_RECEIVE_CURRENT,
 	THEME_REQUEST_CURRENT,
@@ -106,11 +105,6 @@ export function fetchCurrentTheme( siteId ) {
 
 export function fetchThemeDetails( id, site ) {
 	return dispatch => {
-		dispatch( {
-			type: THEME_DETAILS_REQUEST,
-			themeId: id
-		} );
-
 		wpcom.undocumented().themeDetails( id, site )
 			.then( themeDetails => {
 				debug( 'Received theme details', themeDetails );
