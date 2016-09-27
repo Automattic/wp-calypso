@@ -9,9 +9,14 @@ import { random } from 'random-unicode-emoji';
  * Internal dependencies
  */
 import Button from 'components/button';
+import SingleDocComponent from 'devdocs/doc';
 import { setName } from 'plugins/hello-world/state/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 
+const noLateralPadding = {
+	paddingLeft: 0,
+	paddingRight: 0,
+};
 
 class HelloWorld extends React.Component {
 	setRandomEmoji = () => {
@@ -27,6 +32,9 @@ class HelloWorld extends React.Component {
 					{ `Hello, ${ display_name }! ${ emoji }` }
 				</h1>
 				<Button onClick={ this.setRandomEmoji }>WUT</Button>
+				<SingleDocComponent
+					path="client/plugins"
+					style={ noLateralPadding } />
 			</div>
 		);
 	}

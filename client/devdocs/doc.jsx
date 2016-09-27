@@ -15,7 +15,8 @@ module.exports = React.createClass( {
 	propTypes: {
 		path: React.PropTypes.string.isRequired,
 		term: React.PropTypes.string,
-		sectionId: React.PropTypes.string
+		sectionId: React.PropTypes.string,
+		style: React.PropTypes.object
 	},
 	timeoutID: null,
 
@@ -90,7 +91,7 @@ module.exports = React.createClass( {
 			'?message=Documentation: <title>&description=What did you change and why&target_branch=update/docs-your-title';
 
 		return (
-			<div className="devdocs devdocs__doc">
+			<div style={ this.props.style } className="devdocs devdocs__doc">
 				<CompactCard className="devdocs__doc-header">
 					Path: <code>{ this.props.path }</code>
 					<a href={ editURL } target="_blank" rel="noopener noreferrer">Improve this document on GitHub &rarr;</a>
