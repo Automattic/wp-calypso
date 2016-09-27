@@ -98,7 +98,7 @@ export default class EmailUnverifiedNotice extends React.Component {
 			<Notice
 				icon="mail"
 				showDismiss={ false }
-				text={ i18n.translate( 'Sending...' ) }>
+				text={ i18n.translate( 'Sending…' ) }>
 				<NoticeAction><Spinner /></NoticeAction>
 			</Notice>
 		);
