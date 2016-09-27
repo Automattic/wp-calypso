@@ -5,7 +5,3 @@ export function getThemeDetails( state, id ) {
 	theme = theme ? theme.toJS() : {};
 	return theme;
 }
-
-export function isRequestingThemeDetails( state, id ) {
-	return !! getThemeDetails( state, id ).isRequesting;
-}
