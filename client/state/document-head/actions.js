@@ -39,20 +39,6 @@ export function setDocumentHeadUnreadCount( count ) {
 }
 
 /**
- * Returns an action object used in signalling that the document head
- * description meta should be assigned to the specified value.
- *
- * @param  {String} description Document description
- * @return {Object}             Action object
- */
-export function setDocumentHeadDescription( description ) {
-	return addDocumentHeadMeta( {
-		name: 'description',
-		content: description
-	} );
-}
-
-/**
  * Returns an action object used in signalling that the specified link object
  * should be included in the set of document head links.
  *
