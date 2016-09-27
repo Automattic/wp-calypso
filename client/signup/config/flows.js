@@ -93,6 +93,13 @@ const flows = {
 		lastModified: '2016-05-23'
 	},
 
+	'sitetitle': {
+		steps: [ 'survey', 'site-title', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		destination: getSiteDestination,
+		description: 'The current best performing flow in AB tests',
+		lastModified: '2016-05-23'
+	},
+
 	website: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,

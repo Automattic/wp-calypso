@@ -2,8 +2,9 @@ export const dependencyStoreSchema = {
 	type: 'object',
 	properties: {
 		cartItem: {
-			oneOf: [
+			OneOfType: [
 				{ type: 'null' },
+				{ type: 'optional' },
 				{
 					type: 'object',
 					properties: {
@@ -15,8 +16,9 @@ export const dependencyStoreSchema = {
 		},
 		designType: 'string',
 		domainItem: {
-			oneOf: [
+			OneOfType: [
 				{ type: 'null' },
+				{ type: 'optional' },
 				{
 					type: 'object',
 					properties: {
