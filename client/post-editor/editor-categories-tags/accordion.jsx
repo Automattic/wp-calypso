@@ -28,8 +28,6 @@ import { getTerm } from 'state/terms/selectors';
 
 export class EditorCategoriesTagsAccordion extends Component {
 	static propTypes = {
-		site: PropTypes.object,
-		post: PropTypes.object,
 		translate: PropTypes.func,
 		postTerms: PropTypes.object,
 		postType: PropTypes.string,
@@ -138,9 +136,9 @@ export class EditorCategoriesTagsAccordion extends Component {
 
 	getSubtitle() {
 		const subtitlePieces = [];
-		const { postType, site, post } = this.props;
+		const { postType, siteId } = this.props;
 
-		if ( ! site || ! post ) {
+		if ( ! siteId ) {
 			return null;
 		}
 

@@ -105,7 +105,7 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderTaxonomies: function() {
-		const { type, post, site, canJetpackUseTaxonomies } = this.props;
+		const { type, canJetpackUseTaxonomies } = this.props;
 
 		// Compatibility: Allow Tags for pages when supported prior to launch
 		// of custom post types feature (#6934). [TODO]: Remove after launch.
@@ -116,9 +116,7 @@ const EditorDrawer = React.createClass( {
 		let categories;
 		if ( 'post' === type || typeSupportsTags ) {
 			categories = (
-				<CategoriesTagsAccordion
-					site={ site }
-					post={ post } />
+				<CategoriesTagsAccordion />
 			);
 		}
 

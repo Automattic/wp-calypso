@@ -33,8 +33,7 @@ describe( 'EditorCategoriesTagsAccordion', function() {
 	function render( postTerms = {} ) {
 		accordion = mount(
 			<EditorCategoriesTagsAccordion
-				site={ { ID: 777 } }
-				post={ {} }
+				siteId={ 777 }
 				postTerms={ postTerms }
 				postType="post"
 				translate={ i18n.translate } />
