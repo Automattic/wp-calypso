@@ -64,7 +64,6 @@ export default class FeaturedAsset extends React.Component {
 				? <img className="reader__post-featured-image-image"
 						ref="featuredImage"
 						src={ this.props.featuredImage }
-						style={ this.props.featuredSize }
 						onError={ this.handleImageError }
 					/>
 				: null
