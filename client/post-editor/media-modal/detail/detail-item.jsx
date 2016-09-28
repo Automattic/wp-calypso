@@ -22,9 +22,6 @@ var EditorMediaModalDetailFields = require( './detail-fields' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	config = require( 'config' );
 
-import { isDesktop } from 'lib/viewport';
-import { hasTouch } from 'lib/touch-detect';
-
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailItem',
 
@@ -48,11 +45,6 @@ module.exports = React.createClass( {
 		};
 	},
 
-	isMobileTouchDevice() {
-		return false;
-		return ! isDesktop() || hasTouch();
-	},
-
 	renderEditButton: function( className ) {
 		const { item, onEdit, site } = this.props;
 
@@ -65,7 +57,6 @@ module.exports = React.createClass( {
 			! config.isEnabled( 'post-editor/image-editor' ) ||
 			! userCan( 'upload_files', site ) ||
 			isJetpack( site ) ||
-			this.isMobileTouchDevice() ||
 			! item
 		) {
 			return;
