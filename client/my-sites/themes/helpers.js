@@ -34,6 +34,10 @@ export function getPreviewUrl( theme, site ) {
 	return `${theme.demo_uri}?demo=true&iframe=true&theme_preview=true`;
 }
 
+export function getPurchaseUrl( theme, site ) {
+	return `/checkout/${ site.slug }/theme:${ theme.id }`;
+}
+
 export function getCustomizeUrl( theme, site ) {
 	if ( ! site ) {
 		return '/customize/';

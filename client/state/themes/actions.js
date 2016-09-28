@@ -3,9 +3,7 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import conforms from 'lodash/conforms';
-import defer from 'lodash/defer';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:themes:actions' ); //eslint-disable-line no-unused-vars
 import property from 'lodash/property';
@@ -21,7 +19,6 @@ import {
 	THEME_DETAILS_RECEIVE,
 	THEME_DETAILS_RECEIVE_FAILURE,
 	THEME_DETAILS_REQUEST,
-	THEME_PURCHASE,
 	THEME_RECEIVE_CURRENT,
 	THEME_REQUEST_CURRENT,
 	THEME_REQUEST_CURRENT_FAILURE,
@@ -247,25 +244,6 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 export function clearActivated() {
 	return {
 		type: THEME_CLEAR_ACTIVATED
-	};
-}
-
-export function purchase( theme, site, source = 'unknown' ) {
-	const CartActions = require( 'lib/upgrades/actions' );
-	const themeItem = require( 'lib/cart-values/cart-items' ).themeItem;
-
-	return dispatch => {
-		CartActions.addItem( themeItem( theme.id, source ) );
-
-		defer( () => {
-			page( '/checkout/' + site.slug );
-
-			dispatch( {
-				type: THEME_PURCHASE,
-				id: theme.id,
-				site: site
-			} );
-		} );
 	};
 }
 
