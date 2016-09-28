@@ -31,7 +31,7 @@ export function getDocumentHeadTitle( state ) {
  * @param  {Object}  state  Global state tree
  * @return {?String}        Unread count (string because it can be e.g. '40+')
  */
-export function getUnreadCount( state ) {
+export function getDocumentHeadUnreadCount( state ) {
 	return state.documentHead.unreadCount;
 }
 
@@ -43,8 +43,8 @@ export function getUnreadCount( state ) {
  * @param  {Object}  state  Global state tree
  * @return {String}         Unread count (string because it can be e.g. '40+')
  */
-export function getCappedUnreadCount( state ) {
-	const unreadCount = getUnreadCount( state );
+export function getDocumentHeadCappedUnreadCount( state ) {
+	const unreadCount = getDocumentHeadUnreadCount( state );
 	if ( ! unreadCount ) {
 		return '';
 	}
@@ -64,7 +64,7 @@ export function getCappedUnreadCount( state ) {
 export function getFormattedTitle( state ) {
 	let title = '';
 
-	const unreadCount = getCappedUnreadCount( state );
+	const unreadCount = getDocumentHeadCappedUnreadCount( state );
 	if ( unreadCount ) {
 		title += `(${ unreadCount }) `;
 	}

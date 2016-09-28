@@ -8,8 +8,8 @@ import { expect } from 'chai';
  */
 import {
 	getDocumentHeadTitle,
-	getUnreadCount,
-	getCappedUnreadCount,
+	getDocumentHeadUnreadCount,
+	getDocumentHeadCappedUnreadCount,
 	getFormattedTitle,
 	getDocumentHeadMeta,
 	getDocumentHeadLink
@@ -28,9 +28,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getUnreadCount()', () => {
+	describe( '#getDocumentHeadUnreadCount()', () => {
 		it( 'should return the unread posts counter', () => {
-			const unreadCount = getUnreadCount( {
+			const unreadCount = getDocumentHeadUnreadCount( {
 				documentHead: {
 					unreadCount: 3
 				}
@@ -40,9 +40,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getCappedUnreadCount()', () => {
+	describe( '#getDocumentHeadCappedUnreadCount()', () => {
 		it( 'should return the capped unread posts counter', () => {
-			const unreadCount = getCappedUnreadCount( {
+			const unreadCount = getDocumentHeadCappedUnreadCount( {
 				documentHead: {
 					unreadCount: 45
 				}
