@@ -3,6 +3,7 @@
 	display: flex;
 	align-items: center;
 	font-size: 16px;
+	flex: 1 1 auto;
 
 	.search-tokens__input[type="text"] {
 		font: inherit;
