@@ -115,19 +115,11 @@ export class FullPostView extends React.Component {
 		this.props.onClose && this.props.onClose();
 	}
 
-	bindComments( node ) {
-		this.comments = node;
-	}
-
 	handleCommentClick() {
 		recordAction( 'click_comments' );
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_full_post_comments_button_clicked', this.props.post );
-		scrollTo( {
-			x: 0,
-			y: ReactDom.findDOMNode( this.comments ).offsetTop - 48,
-			duration: 300
-		} );
+		this.scrollToComments();
 	}
 
 	handleLike() {
@@ -153,14 +145,16 @@ export class FullPostView extends React.Component {
 	// Scroll to the top of the comments section.
 	scrollToComments() {
 		//setTimeout( () => {
-			const commentsNode = this.refs.commentsList;
+			const commentsNode = ReactDom.findDOMNode( this.refs.commentsList );
 			if ( commentsNode && commentsNode.offsetTop ) {
 				scrollTo( {
 					x: 0,
 					y: commentsNode.offsetTop - 48,
 					duration: 300
 				} );
-				this.hasScrolledToCommentAnchor = true;
+				if ( this.hasCommentAnchor ) {
+					this.hasScrolledToCommentAnchor = true;
+				}
 			}
 		//}, 0 );
 	}
@@ -293,7 +287,8 @@ export class FullPostView extends React.Component {
 							? <Comments ref="commentsList"
 									post={ post }
 									initialSize={ 25 }
-									pageSize={ 25 } />
+									pageSize={ 25 }
+									onCommentsUpdate={ this.checkForCommentAnchor } />
 							: null
 						}
 
