@@ -14,7 +14,8 @@ const ReactDom = require( 'react-dom' ),
 	startsWith = require( 'lodash/startsWith' ),
 	twemoji = require( 'twemoji' ),
 	get = require( 'lodash/get' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	pick = require( 'lodash/pick' );
 
 /**
  * Internal Dependencies
@@ -169,7 +170,7 @@ const Post = React.createClass( {
 	},
 
 	featuredImageComponent: function( post ) {
-		var featuredImage = ( post.canonical_image && post.canonical_image.uri ),
+		var featuredImage = ( post.canonical_image && pick( post.canonical_image, [ 'uri', 'width', 'height' ] ) ),
 			featuredEmbed = head( filter( post.content_embeds, ( embed ) => {
 				return ! startsWith( embed.type, 'special-' );
 			} ) ),
@@ -180,7 +181,7 @@ const Post = React.createClass( {
 			// don't feature embeds for excerpts
 			featuredEmbed = null;
 		}
-
+		console.log( featuredImage );
 		if ( ! ( featuredImage || featuredEmbed ) ) {
 			return null;
 		}
@@ -207,7 +208,6 @@ const Post = React.createClass( {
 		}
 		const featuredAssetProps = {
 			featuredImage,
-			featuredSize,
 			featuredEmbed,
 			useFeaturedEmbed
 		};

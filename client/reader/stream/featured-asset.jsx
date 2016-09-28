@@ -2,6 +2,15 @@
 * External dependencies
 */
 import React from 'react';
+import ReactDom from 'react-dom';
+import { assign, constant, throttle } from 'lodash';
+
+/**
+* Internal dependencies
+**/
+import EmbedHelper from 'reader/embed-helper';
+
+const maxWidth = () => Math.min( 720, window.innerWidth );
 
 export default class FeaturedAsset extends React.Component {
 	constructor( props ) {
@@ -10,9 +19,19 @@ export default class FeaturedAsset extends React.Component {
 			suppressFeaturedImage: false,
 			useFeaturedEmbed: props.useFeaturedEmbed
 		};
-		[ 'handleImageError' ].forEach( method => {
+
+		[ 'handleImageError',
+			'updateFeatureSize',
+			'getFeaturedSize',
+			'getMaxFeaturedWidthSize',
+			'setEmbedSizingStrategy',
+			'handleResize'
+		].forEach( method => {
 			this[ method ] = this[ method ].bind( this );
 		} );
+
+		this.setEmbedSizingStrategy( props.featuredEmbed );
+		this.setImageSizingStrategy( props.featuredImage );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -22,6 +41,11 @@ export default class FeaturedAsset extends React.Component {
 				suppressFeaturedImage: false,
 				useFeaturedEmbed: nextProps.useFeaturedEmbed
 			} );
+			this.setImageSizingStrategy( nextProps.featuredImage );
+		}
+
+		if( nextProps.featuredEmbed !== this.props.featuredEmbed ) {
+			this.setEmbedSizingStrategy( nextProps.featuredEmbed );
 		}
 	}
 
@@ -31,6 +55,61 @@ export default class FeaturedAsset extends React.Component {
 
 	componentWillUnmount() {
 		this._unmounted = true;
+		window.removeEventListener( 'resize', this._handleResize );
+	}
+
+	componentDidMount() {
+		this.updateFeatureSize();
+		this._handleResize = throttle( this.handleResize, 100 );
+		window.addEventListener( 'resize', this._handleResize );
+	}
+
+	handleResize() {
+		this.updateFeatureSize();
+	}
+
+	getMaxFeaturedWidthSize() {
+		return ReactDom.findDOMNode( this ).parentNode.offsetWidth;
+	}
+
+	getFeaturedSize( available ) {
+		return this.props.sizingStrategy( available || this.getMaxFeaturedWidthSize() );
+	}
+
+	setEmbedSizingStrategy( featuredEmbed ) {
+		let sizingFunction = constant( {} );
+		if ( featuredEmbed ) {
+			const embedSize = EmbedHelper.getEmbedSizingFunction( featuredEmbed );
+			sizingFunction = ( available = this.getMaxFeaturedWidthSize() ) => embedSize( available );
+		}
+		this.getEmbedSize = sizingFunction;
+	}
+
+	setImageSizingStrategy( featuredImage ) {
+		let sizingFunction = constant( {} );
+		if ( featuredImage && featuredImage.width >= maxWidth() ) {
+			sizingFunction = ( available = this.getMaxFeaturedWidthSize() ) => {
+				const aspectRatio = featuredImage.width / featuredImage.height,
+					height = `${Math.floor( available / aspectRatio )}px`,
+					width = `${ available}px`;
+				console.log( 'aspectRatio' );
+				return { width, height };
+			}
+		}
+		this.getImageSize = sizingFunction;
+	}
+
+	updateFeatureSize() {
+
+		if ( this.refs.featuredImage ) {
+			const img = ReactDom.findDOMNode( this.refs.featuredImage );
+			assign( img.style, this.getImageSize() );
+		}
+
+		if ( this.refs.featuredEmbed ) {
+			const iframe = ReactDom.findDOMNode( this.refs.featuredEmbed ).querySelector( 'iframe' );
+			assign( iframe.style, this.getEmbedSize() );
+		}
 	}
 
 	handleImageError() {
@@ -58,13 +137,12 @@ export default class FeaturedAsset extends React.Component {
 
 		return (
 			<div
-				className="reader-full-post__featured-image" >
+				className="reader__post-featured-image" >
 				{
 				! this.state.suppressFeaturedImage
 				? <img className="reader__post-featured-image-image"
 						ref="featuredImage"
-						src={ this.props.featuredImage }
-						style={ this.props.featuredSize }
+						src={ this.props.featuredImage.uri }
 						onError={ this.handleImageError }
 					/>
 				: null
@@ -76,7 +154,6 @@ export default class FeaturedAsset extends React.Component {
 
 FeaturedAsset.propTypes = {
 	featuredEmbed: React.PropTypes.object,
-	featuredImage: React.PropTypes.string,
-	featuredSize: React.PropTypes.object,
+	featuredImage: React.PropTypes.object,
 	useFeaturedEmbed: React.PropTypes.bool,
 };
