@@ -67,11 +67,11 @@ const EditUserForm = React.createClass( {
 
 	getChangedSettings: function() {
 		const originalUser = this.getStateObject( this.props.user );
-		const changedKeys = filter( this.getAllowedSettingsToChange(), function( setting ) {
+		const changedKeys = filter( this.getAllowedSettingsToChange(), ( setting ) => {
 			return 'undefined' !== typeof originalUser[ setting ] &&
 				'undefined' !== typeof this.state[ setting ] &&
 				originalUser[ setting ] !== this.state[ setting ];
-		}.bind( this ) );
+		} );
 
 		return pick( this.state, changedKeys );
 	},
@@ -268,11 +268,11 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		const removeUserSuccessful = PeopleLog.getCompleted( function( log ) {
+		const removeUserSuccessful = PeopleLog.getCompleted( ( log ) => {
 			return 'RECEIVE_DELETE_SITE_USER_SUCCESS' === log.action &&
 				this.props.siteId === log.siteId &&
 				this.props.userLogin === log.user.login;
-		}.bind( this ) );
+		} );
 
 		if ( removeUserSuccessful.length ) {
 			this.markSaved();
