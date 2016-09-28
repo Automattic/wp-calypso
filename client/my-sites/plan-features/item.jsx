@@ -7,7 +7,6 @@ import React from 'react';
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import { abtest } from 'lib/abtest';
 
 export default function PlanFeaturesItem( {
 	children,
@@ -28,25 +27,15 @@ export default function PlanFeaturesItem( {
 		onMouseLeave( event.currentTarget, description );
 	};
 
-	const mouseEvents = {
-		onMouseEnter: handleOnMouseEvent,
-		onMouseLeave: handleOnMouseLeave
-	};
-	const hoverOnRow = (
-		abtest( 'plansDescriptions' ) === 'ascendingPriceEagerDescription' ||
-		abtest( 'plansDescriptions' ) === 'descendingPriceEagerDescription'
-	);
-
 	return (
-		<div className="plan-features__item"
-			{ ...( hoverOnRow && mouseEvents ) }
-		>
+		<div className="plan-features__item">
 			<Gridicon
 				className="plan-features__item-checkmark"
 				size={ 18 } icon="checkmark" />
 			{ children }
 			<span
-				{ ...( ! hoverOnRow && mouseEvents ) }
+				onMouseEnter={ handleOnMouseEvent }
+				onMouseLeave={ handleOnMouseLeave }
 				onTouchStart={ handleOnTouchStart }
 				className="plan-features__item-tip-info"
 			>
