@@ -53,7 +53,7 @@ module.exports = React.createClass( {
 		return ! isDesktop() || hasTouch();
 	},
 
-	renderEditButton: function() {
+	renderEditButton: function( className ) {
 		const { item, onEdit, site } = this.props;
 
 		// Do not render edit button for private sites
@@ -79,7 +79,7 @@ module.exports = React.createClass( {
 
 		return (
 			<Button
-				className="is-desktop editor-media-modal-detail__edit"
+				className={ classNames( 'editor-media-modal-detail__edit', className ) }
 				onClick={ onEdit }>
 				<Gridicon icon="pencil" size={ 36 } /> { this.translate( 'Edit Image' ) }
 			</Button>
@@ -163,11 +163,12 @@ module.exports = React.createClass( {
 				<div className="editor-media-modal-detail__content editor-media-modal__content">
 					<div className="editor-media-modal-detail__preview-wrapper">
 						{ this.renderItem() }
-						{ this.renderEditButton() }
+						{ this.renderEditButton( 'is-desktop' ) }
 						{ this.renderPreviousItemButton() }
 						{ this.renderNextItemButton() }
 					</div>
 					<div className="editor-media-modal-detail__sidebar">
+						{ this.renderEditButton( 'is-mobile' ) }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo
 							item={ this.props.item } />
