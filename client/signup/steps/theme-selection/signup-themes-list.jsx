@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import noop from 'lodash/noop';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -29,7 +30,7 @@ module.exports = React.createClass( {
 			designType: null,
 			handleScreenshotClick: noop,
 			handleThemeUpload: noop,
-			showThemeUpload: 'showThemeUpload' === abtest( 'signupThemeUpload' )
+			showThemeUpload: 'showThemeUpload' === abtest( 'signupThemeUpload' ) && i18n.getLocaleSlug() === 'en'
 		};
 	},
 

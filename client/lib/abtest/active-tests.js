@@ -83,7 +83,7 @@ module.exports = {
 		allowExistingUsers: false,
 	},
 	signupThemeUpload: {
-		datestamp: '20160825',
+		datestamp: '20160928',
 		variations: {
 			showThemeUpload: 10,
 			hideThemeUpload: 90,
