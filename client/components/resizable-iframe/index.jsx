@@ -4,6 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import debugFactory from 'debug';
+import { omit } from 'lodash';
 
 /**
  * Globals
@@ -70,7 +71,7 @@ export default React.createClass( {
 			return;
 		}
 
-		let script = document.createElement( 'script' );
+		const script = document.createElement( 'script' );
 		script.innerHTML = `
 			( function() {
 				var observer;
@@ -165,10 +166,11 @@ export default React.createClass( {
 	},
 
 	render: function() {
+		const omitProps = [ 'siteId', 'shortcode', 'filterRenderResult', 'styles', 'onResize' ];
 		return (
 			<iframe
 				ref="iframe"
-				{ ...this.props }
+				{ ...omit( this.props, omitProps ) }
 				onLoad={ this.onLoad }
 				width={ this.props.width || this.state.width }
 				height={ this.props.height || this.state.height } />
