@@ -64,6 +64,19 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should return same state reference if no change in value', () => {
+			const original = deepFreeze( {
+				foo: 'bar'
+			} );
+			const state = localValues( original, {
+				type: PREFERENCES_SET,
+				key: 'foo',
+				value: 'bar'
+			} );
+
+			expect( state ).to.equal( original );
+		} );
+
 		it( 'should remove a preference key on a successful preference save', () => {
 			const original = deepFreeze( {
 				foo: 'bar',

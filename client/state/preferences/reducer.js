@@ -30,6 +30,10 @@ import { createReducer } from 'state/utils';
  */
 export const localValues = createReducer( {}, {
 	[ PREFERENCES_SET ]: ( state, { key, value } ) => {
+		if ( state[ key ] === value ) {
+			return state;
+		}
+
 		return { ...state, [ key ]: value };
 	},
 	[ PREFERENCES_SAVE_SUCCESS ]: ( state, { key } ) => {
