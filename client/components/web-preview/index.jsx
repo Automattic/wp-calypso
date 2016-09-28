@@ -138,7 +138,7 @@ export class WebPreview extends Component {
 			return;
 		}
 
-		if ( ! this.iframe ) {
+		if ( ! this.iframe || ! this.state.iframeUrl ) {
 			return;
 		}
 
@@ -160,7 +160,11 @@ export class WebPreview extends Component {
 	shouldRenderIframe() {
 		// Don't preload iframe on mobile devices as bandwidth is typically more limited and
 		// the preview causes weird issues
-		return ! this._isMobile || this.props.showPreview;
+		if ( this._isMobile && ! this.props.showPreview ) {
+			return false;
+		}
+
+		return this.props.showPreview;
 	}
 
 	setDeviceViewport( device = 'computer' ) {
@@ -218,16 +222,14 @@ export class WebPreview extends Component {
 									}
 								</div>
 							}
-							{ this.shouldRenderIframe() &&
-								<iframe
-									ref={ this.setIframeInstance }
-									className="web-preview__frame"
-									style={ { display: ('seo' === this.state.device ? 'none' : 'inherit') } }
-									src="about:blank"
-									onLoad={ this.setLoaded }
-									title={ this.props.iframeTitle || translate( 'Preview' ) }
-								/>
-							}
+							<iframe
+								ref={ this.setIframeInstance }
+								className="web-preview__frame"
+								style={ { display: ('seo' === this.state.device ? 'none' : 'inherit') } }
+								src="about:blank"
+								onLoad={ this.setLoaded }
+								title={ this.props.iframeTitle || translate( 'Preview' ) }
+							/>
 							{ 'seo' === this.state.device &&
 								<SeoPreviewPane />
 							}
