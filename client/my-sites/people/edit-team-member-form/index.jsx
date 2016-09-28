@@ -210,7 +210,7 @@ const EditUserForm = React.createClass( {
 
 		return (
 			<form
-				className="edit-team-member-form"
+				className="edit-team-member-form__form" // eslint-disable-line
 				disabled={ this.props.disabled }
 				onSubmit={ this.updateUser }
 				onChange={ this.props.markChanged }
