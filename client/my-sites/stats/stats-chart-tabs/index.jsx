@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +23,7 @@ export default React.createClass( {
 
 	getInitialState: function() {
 		var activeTab = this.getActiveTab(),
-			activeCharts = activeTab.legendOptions.slice() || [];
+			activeCharts = activeTab.legendOptions ? activeTab.legendOptions.slice() : [];
 
 		return {
 			activeLegendCharts: activeCharts,
@@ -157,11 +158,8 @@ export default React.createClass( {
 	},
 
 	getActiveTab: function( nextProps ) {
-		var props = nextProps || this.props;
-
-		return props.charts.filter( function( chart ) {
-			return chart.attr === props.chartTab;
-		}, this ).shift();
+		const props = nextProps || this.props;
+		return find( props.charts, { attr: props.chartTab } ) || props.charts[ 0 ];
 	},
 
 	buildChartData: function() {
