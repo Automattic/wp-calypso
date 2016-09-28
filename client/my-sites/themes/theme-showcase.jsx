@@ -92,7 +92,7 @@ const ThemeShowcase = React.createClass( {
 
 		return (
 			<Main className="themes">
-				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
+				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
 				{ this.props.children }
 				{ this.state.showPreview &&
 					<ThemePreview showPreview={ this.state.showPreview }
