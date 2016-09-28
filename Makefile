@@ -84,7 +84,7 @@ install: node_modules
 
 # Simply running `make run` will spawn the Node.js server instance.
 run: welcome githooks install build
-	@$(NODE) build/bundle-$(CALYPSO_ENV).js
+	@$(NODE_BIN)/webpack-dashboard -- $(NODE) build/bundle-$(CALYPSO_ENV).js
 
 # a helper rule to ensure that a specific module is installed,
 # without relying on a generic `npm install` command
