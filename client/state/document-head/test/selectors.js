@@ -11,8 +11,8 @@ import {
 	getUnreadCount,
 	getCappedUnreadCount,
 	getFormattedTitle,
-	getMeta,
-	getLink
+	getDocumentHeadMeta,
+	getDocumentHeadLink
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -229,9 +229,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getMeta()', () => {
+	describe( '#getDocumentHeadMeta()', () => {
 		it( 'should return the currently set metas', () => {
-			const meta = getMeta( {
+			const meta = getDocumentHeadMeta( {
 				documentHead: {
 					meta: [
 						{ property: 'og:site_name', content: 'WordPress.com' },
@@ -247,9 +247,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getLink()', () => {
+	describe( '#getDocumentHeadLink()', () => {
 		it( 'should return the currently set links', () => {
-			const link = getLink( {
+			const link = getDocumentHeadLink( {
 				documentHead: {
 					link: [
 						{ rel: 'canonical', href: 'https://wordpress.com' }

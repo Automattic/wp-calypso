@@ -88,7 +88,7 @@ export function getFormattedTitle( state ) {
  * @param  {Object}  state  Global state tree
  * @return {Object[]}       Array of meta objects
  */
-export function getMeta( state ) {
+export function getDocumentHeadMeta( state ) {
 	return state.documentHead.meta;
 }
 
@@ -99,6 +99,6 @@ export function getMeta( state ) {
  * @param  {Object}  state  Global state tree
  * @return {Object[]}       Array of link objects
  */
-export function getLink( state ) {
+export function getDocumentHeadLink( state ) {
 	return state.documentHead.link;
 }
