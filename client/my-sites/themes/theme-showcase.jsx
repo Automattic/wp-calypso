@@ -121,7 +121,7 @@ const ThemeShowcase = React.createClass( {
 		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
-				<DocumentHead title={ themesMeta[ tier ].title } metas={ metas } />
+				<DocumentHead title={ themesMeta[ tier ].title } meta={ metas } />
 				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
 				{ this.props.children }
 				{ this.state.showPreview &&
