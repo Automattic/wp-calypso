@@ -59,8 +59,7 @@ export class FullPostView extends React.Component {
 		[
 			'handleBack',
 			'handleCommentClick',
-			'handleLike',
-			'bindComments'
+			'handleLike'
 		].forEach( fn => {
 			this[ fn ] = this[ fn ].bind( this );
 		} );
@@ -76,7 +75,13 @@ export class FullPostView extends React.Component {
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.attemptToSendPageView();
+
 		this.checkForCommentAnchor();
+
+		// If we have a comment anchor, scroll to comments
+		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
+			this.scrollToComments();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -137,23 +142,18 @@ export class FullPostView extends React.Component {
 		}
 	}
 
-	bindComments( node ) {
-		this.comments = node;
-		this.scrollToComments();
-	}
-
 	// Does the URL contain the anchor #comments? If so, scroll to comments if we're not already there.
 	checkForCommentAnchor() {
 		const hash = window.location.hash.substr( 1 );
-		if ( hash.indexOf( 'comments' ) > -1 && ! this.hasScrolledToCommentAnchor ) {
-			this.scrollToComments();
+		if ( hash.indexOf( 'comments' ) > -1 ) {
+			this.hasCommentAnchor = true;
 		}
 	}
 
 	// Scroll to the top of the comments section.
 	scrollToComments() {
-		setTimeout( () => {
-			const commentsNode = ReactDom.findDOMNode( this.refs.commentList );
+		//setTimeout( () => {
+			const commentsNode = this.refs.commentsList;
 			if ( commentsNode && commentsNode.offsetTop ) {
 				scrollTo( {
 					x: 0,
@@ -162,7 +162,7 @@ export class FullPostView extends React.Component {
 				} );
 				this.hasScrolledToCommentAnchor = true;
 			}
-		}, 0 );
+		//}, 0 );
 	}
 
 	parseEmoji() {
@@ -290,11 +290,10 @@ export class FullPostView extends React.Component {
 						}
 
 						{ shouldShowComments( post )
-							? <Comments ref={ this.bindComments }
+							? <Comments ref="commentsList"
 									post={ post }
 									initialSize={ 25 }
-									pageSize={ 25 }
-									onCommentsUpdate={ this.checkForCommentAnchor } />
+									pageSize={ 25 } />
 							: null
 						}
 
