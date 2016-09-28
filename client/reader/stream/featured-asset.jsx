@@ -58,7 +58,7 @@ export default class FeaturedAsset extends React.Component {
 
 		return (
 			<div
-				className="reader-full-post__featured-image" >
+				className="reader__post-featured-image" >
 				{
 				! this.state.suppressFeaturedImage
 				? <img className="reader__post-featured-image-image"
