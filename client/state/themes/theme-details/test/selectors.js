@@ -7,7 +7,7 @@ import { Map } from 'immutable';
 /**
  * Internal dependencies
  */
-import { getThemeDetails } from '../selectors';
+import { getThemeDetails, isRequestingThemeDetails } from '../selectors';
 
 describe( 'selectors', () => {
 	describe( '#getThemeDetails()', () => {
@@ -39,6 +39,40 @@ describe( 'selectors', () => {
 
 			const twentysixteen = getThemeDetails( themes, 'twentysixteen' );
 			expect( twentysixteen.price ).to.equal( 'free' );
+		} );
+	} );
+
+	describe( '#isRequestingThemeDetails()', () => {
+		const themes = {
+			themes: {
+				themeDetails: Map( {
+					twentyfifteen: Map(),
+					twentysixteen: Map( {
+						name: 'Twenty Sixteen',
+						author: 'Automattic',
+						price: 'free',
+						isRequesting: false
+					} ),
+					mood: Map( {
+						isRequesting: true
+					} ),
+				} )
+			}
+		};
+
+		it( 'should return false for an emtpy theme details object', () => {
+			const isRequesting = isRequestingThemeDetails( themes, 'twentyfixteen' );
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return false after receiving theme object', () => {
+			const isRequesting = isRequestingThemeDetails( themes, 'twentysixteen' );
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true while requesting', () => {
+			const isRequesting = isRequestingThemeDetails( themes, 'mood' );
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 } );

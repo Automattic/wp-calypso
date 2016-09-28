@@ -10,11 +10,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import titlecase from 'to-title-case';
-import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
  */
+import QueryThemeDetails from 'components/data/query-theme-details';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
@@ -41,7 +41,7 @@ import {
 	activate,
 	customize,
 	tryandcustomize,
-	bindOptionToDispatch,
+	bindOptionsToDispatch,
 	bindOptionsToSite
 } from 'my-sites/themes/theme-options';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
@@ -50,6 +50,7 @@ import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Head from 'layout/head';
 import { decodeEntities } from 'lib/formatting';
+import { getThemeDetails } from 'state/themes/theme-details/selectors';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -69,8 +70,8 @@ const ThemeSheet = React.createClass( {
 		stylesheet: React.PropTypes.string,
 		active: React.PropTypes.bool,
 		purchased: React.PropTypes.bool,
-		isLoggedIn: React.PropTypes.bool,
 		// Connected props
+		isLoggedIn: React.PropTypes.bool,
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
@@ -397,13 +398,13 @@ const ThemeSheet = React.createClass( {
 		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
 
 		return (
-
 			<Head
 				title= { themeName && decodeEntities( title ) + ' — WordPress.com' }
 				description={ description && decodeEntities( description ) }
 				type={ 'website' }
 				canonicalUrl={ canonicalUrl }
 				image={ this.props.screenshot }>
+				<QueryThemeDetails id={ this.props.id } siteId={ siteID } />
 				<QueryUserPurchases userId={ this.props.currentUserId } />
 				<Main className="theme__sheet">
 					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
@@ -456,58 +457,62 @@ const WrappedThemeSheet = ( props ) => {
 	);
 };
 
-const bindDefaultOptionToDispatch = ( dispatch, ownProps ) => {
-	const { active: isActive, price, isLoggedIn } = ownProps;
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const { selectedSite: site, active: isActive, price, isLoggedIn } = stateProps;
 
 	let defaultOption;
 
 	if ( ! isLoggedIn ) {
-		defaultOption = signup;
+		defaultOption = dispatchProps.signup;
 	} else if ( isActive ) {
-		defaultOption = customize;
+		defaultOption = dispatchProps.customize;
 	} else if ( price ) {
-		defaultOption = purchase;
+		defaultOption = dispatchProps.purchase;
 		defaultOption.label = i18n.translate( 'Pick this design' );
 	} else {
-		defaultOption = activate;
+		defaultOption = dispatchProps.activate;
 		defaultOption.label = i18n.translate( 'Activate this design' );
 	}
 
-	return {
-		defaultOption: bindOptionToDispatch( defaultOption, 'showcase-sheet' )( dispatch ),
-		secondaryOption: bindOptionToDispatch( tryandcustomize, 'showcase-sheet' )( dispatch ),
+	const dispatchOptions = {
+		defaultOption,
+		secondaryOption: dispatchProps.tryandcustomize
 	};
-};
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { selectedSite: site } = stateProps;
-	const filteredOptions = pickBy( dispatchProps, option =>
-		option.hideForSite ? option.hideForSite( stateProps ) : true
-	);
 	return Object.assign(
 		{},
 		ownProps,
 		stateProps,
-		site ? bindOptionsToSite( filteredOptions, site ) : dispatchProps
+		site ? bindOptionsToSite( dispatchOptions, site ) : dispatchOptions,
 	);
 };
 
 export default connect(
-	( state ) => {
+	( state, props ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
+		const themeDetails = getThemeDetails( state, props.id );
 
 		return {
+			...themeDetails,
+			id: props.id,
 			selectedSite,
 			siteSlug,
 			backPath,
 			currentUserId,
 			isCurrentUserPaid,
+			isLoggedIn: !! currentUserId,
 		};
 	},
-	bindDefaultOptionToDispatch,
+	bindOptionsToDispatch( {
+		signup,
+		customize,
+		tryandcustomize,
+		purchase,
+		activate,
+	}, 'showcase-sheet' ),
 	mergeProps
 )( WrappedThemeSheet );
