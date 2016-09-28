@@ -15,6 +15,26 @@
 		&.has-focus {
 			box-shadow: none;
 		}
+
+	.search__input {
+		color: transparent;
+	}
+
+		.search__input-fade {
+			align-self: stretch;
+			box-sizing: border-box;
+			width: 100%;
+			overflow: visible;
+		}
+
+		&.is-open {
+			.search__input {
+				display: inline-block;
+				left: 0px;
+				overflow: hidden;
+			}
+		}
+
 	}
 
 	.section-nav {
@@ -41,5 +61,4 @@
 		flex: 0 1 auto;
 		padding: 8px 14px 8px;
 	}
-
 }

@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Search from 'components/search';
+import Search from 'components/search-tokens';
 import SegmentedControl from 'components/segmented-control';
 import { trackClick } from '../helpers';
 import config from 'config';
@@ -42,10 +42,15 @@ const ThemesMagicSearchCard = React.createClass( {
 		window.removeEventListener( 'resize', this.onResize );
 	},
 
+	componentDidUpdate() {
+		this.matchScroll( );
+	},
+
 	getInitialState() {
 		return {
 			isMobile: isMobile(),
-			searchIsOpen: false
+			searchIsOpen: false,
+			input: this.props.search,
 		};
 	},
 
@@ -59,10 +64,29 @@ const ThemesMagicSearchCard = React.createClass( {
 
 	onSearchClose() {
 		this.setState( { searchIsOpen: false } );
+		this.setState( { input: "" } );
 	},
 
 	onBlur() {
 		this.setState( { searchIsOpen: false } );
+	},
+
+	matchScroll: function( ) {
+		if ( this.refs.tokens === undefined ) {
+			return;
+		}
+
+		const searchInput = this.refs["url-search"].refs.searchInput;
+		const tokens = this.refs.tokens;
+
+		// tokens.scrollLeft = values[0].target.scrollLeft;
+		tokens.scrollLeft = searchInput.scrollLeft;
+		searchInput.scrollLeft = tokens.scrollLeft;
+		console.log( "input: " + searchInput.scrollLeft + " tokens: " + tokens.scrollLeft);
+	},
+
+	onChange( value ) {
+		this.setState( { input: value } );
 	},
 
 	render() {
@@ -82,13 +106,16 @@ const ThemesMagicSearchCard = React.createClass( {
 				ref="url-search"
 				placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
 				analyticsGroup="Themes"
-				delaySearch={ true }
+				delaySearch={ false }
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
 				onBlur={ this.onBlur }
+				onKeyDown={ this.onKeyDown }
+				onChange={ this.onChange }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
 				hideClose={ isMobile() }
-			/>
+				>
+			</Search>
 		);
 
 		const themesSearchClass = classNames( 'themes-magic-search-card', {
