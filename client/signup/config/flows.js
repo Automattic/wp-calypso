@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 import config from 'config';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
@@ -238,11 +238,41 @@ const Flows = {
 			flow = filterDesignTypeInFlow( flow );
 		}
 
-		return flow;
+		return Flows.getABTestFilteredFlow( flowName, flow );
 	},
 
 	getFlows() {
 		return flows;
+	},
+
+	/**
+	 * Return a flow that is modified according to the ABTest rules.
+	 *
+	 * Useful when testing new steps in the signup flows.
+	 *
+	 * Example usage: Inject or remove a step in the flow if a user is part of an ABTest.
+	 *
+	 * @param {String} flowName The current flow name
+	 * @param {Object} flow The flow object
+	 */
+	getABTestFilteredFlow( flowName, flow ){
+		const updatedFlow = Object.assign( {}, flow );
+
+		/**
+		 * Filter according to running ABTests
+		 */
+
+		// Only do this on the main flow
+		if ( 'main' === flowName ) {
+			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
+
+				// insert `site-title` step in the flow, after `survey`
+				const indexOfSurvey = updatedFlow.steps.indexOf( 'survey' );
+				updatedFlow.steps.splice( indexOfSurvey + 1, 0, 'site-title' );
+			}
+		}
+
+		return updatedFlow;
 	}
 };
 
