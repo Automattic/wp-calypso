@@ -75,14 +75,18 @@ export function serverRender( req, res ) {
 			const key = context.renderCacheKey || JSON.stringify( context.layout );
 			Object.assign( context, render( context.layout, key ) );
 		}
+
+		let title, metas, links;
+
 		if ( context.store ) {
-			const title = getFormattedTitle( context.store.getState() );
-			const metas = getMeta( context.store.getState() );
-			const links = getLink( context.store.getState() );
-			context.head = { title, metas, links };
+			title = getFormattedTitle( context.store.getState() );
+			metas = getMeta( context.store.getState() );
+			links = getLink( context.store.getState() );
 
 			context.initialReduxState = pick( context.store.getState(), 'documentHead', 'ui', 'themes' );
 		}
+
+		context.head = { title, metas, links };
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {
