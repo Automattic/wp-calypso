@@ -51,17 +51,6 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	plansDescriptions: {
-		datestamp: '20160826',
-		variations: {
-			ascendingPriceSubtleDescription: 25,
-			ascendingPriceEagerDescription: 25,
-			descendingPriceSubtleDescription: 25,
-			descendingPriceEagerDescription: 25
-		},
-		defaultVariation: 'ascendingPriceSubtleDescription',
-		allowExistingUsers: false,
-	},
 	signupStore: {
 		datestamp: '20160927',
 		variations: {
