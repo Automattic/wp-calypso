@@ -22,7 +22,6 @@ export default class FeaturedAsset extends React.Component {
 
 		[ 'handleImageError',
 			'updateFeatureSize',
-			'getFeaturedSize',
 			'getMaxFeaturedWidthSize',
 			'setEmbedSizingStrategy',
 			'handleResize'
@@ -70,10 +69,6 @@ export default class FeaturedAsset extends React.Component {
 
 	getMaxFeaturedWidthSize() {
 		return ReactDom.findDOMNode( this ).parentNode.offsetWidth;
-	}
-
-	getFeaturedSize( available ) {
-		return this.props.sizingStrategy( available || this.getMaxFeaturedWidthSize() );
 	}
 
 	setEmbedSizingStrategy( featuredEmbed ) {
