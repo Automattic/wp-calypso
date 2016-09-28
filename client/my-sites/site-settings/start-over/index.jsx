@@ -15,6 +15,7 @@ var HeaderCake = require( 'components/header-cake' ),
 	ActionPanelFigure = require( 'my-sites/site-settings/action-panel/figure' ),
 	ActionPanelFooter = require( 'my-sites/site-settings/action-panel/footer' ),
 	Button = require( 'components/button' ),
+	Gridicon = require( 'components/gridicon' ),
 	support = require( 'lib/url/support' );
 
 module.exports = React.createClass( {
@@ -39,7 +40,8 @@ module.exports = React.createClass( {
 	render: function() {
 		var strings = {
 			startOver: this.translate( 'Start Over' ),
-			contactSupport: this.translate( 'Contact Support' )
+			contactSupport: this.translate( 'Contact Support' ),
+			emptySite: this.translate( 'Follow the Steps' )
 		};
 
 		return (
@@ -60,16 +62,16 @@ module.exports = React.createClass( {
 								'creation. Just contact us to have your current content cleared out.' )
 						}</p>
 						<p>{
-							this.translate( 'Alternatively, you can delete all content from your site by following {{link}}the steps here{{/link}}.',
-								{
-									components: {
-										link: <a href={ support.EMPTY_SITE } target="_blank" rel="noopener noreferrer" />
-									}
-								}
-						)
+							this.translate( 'Alternatively, you can delete all content from your site by following the steps here.' )
 						}</p>
 					</ActionPanelBody>
 					<ActionPanelFooter>
+						<Button
+							className="settings-action-panel__support-button is-external"
+							href={ support.EMPTY_SITE }>
+							{ strings.emptySite }
+							<Gridicon icon="external" size={ 48 } />
+						</Button>
 						<Button
 							className="settings-action-panel__support-button"
 							href="/help/contact">
