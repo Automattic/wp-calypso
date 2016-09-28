@@ -157,7 +157,7 @@ The following state tree demonstrates how users, sites, and posts may be interre
 First, if you haven't already, you should consider reading the following blog posts, as they help to explain the reasoning behind splitting data and visual concerns:
 
 - [_Container Components_](https://medium.com/@learnreact/container-components-c0e67432e005#.zd590uacw)
-- [_Smart and Dumb Components_](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0#.cwn6alkqw)
+- [_Presentational and Container Components_](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0#.cwn6alkqw)
 
 With that in mind, we typically have a few concerns when building a component that has data needs:
 
