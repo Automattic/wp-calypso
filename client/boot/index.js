@@ -362,17 +362,6 @@ function reduxStoreReady( reduxStore ) {
 		} );
 	}
 
-	page( '*', function( context, next ) {
-		// Reset the selected site before each route is executed. This needs to
-		// occur after the sections routes execute to avoid a brief flash where
-		// sites are reset but the next section is waiting to be loaded.
-		if ( ! route.getSiteFragment( context.path ) && sites.getSelectedSite() ) {
-			sites.resetSelectedSite();
-		}
-
-		next();
-	} );
-
 	require( 'my-sites' )();
 
 	// clear notices
