@@ -67,13 +67,13 @@
 		display: flex;
 	}
 
-	.search__input[type="search"] {
+	.search__input[type="text"] {
 		flex: 1 1 auto;
 		display: flex;
 	}
 }
 
-.search__input[type="search"] {
+.search__input[type="text"] {
 	flex: 1 1 auto;
 	display: none;
 	z-index: z-index( '.search', '.search__input' );

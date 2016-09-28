@@ -325,7 +325,7 @@ const Search = React.createClass( {
 				</div>
 				<div className={ fadeDivClass }>
 					<input
-						type="search"
+						type="text"
 						id={ 'search-component-' + this.state.instanceId }
 						className={ inputClass }
 						placeholder={ placeholder }
