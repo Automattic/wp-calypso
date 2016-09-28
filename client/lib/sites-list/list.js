@@ -340,21 +340,6 @@ SitesList.prototype.getLastSelectedSite = function() {
 };
 
 /**
- * Resets the selected site
- *
- * @api public
- */
-SitesList.prototype.resetSelectedSite = function() {
-	if ( ! this.selected ) {
-		return;
-	}
-
-	this.lastSelected = this.selected;
-	this.selected = null;
-	this.emit( 'change' );
-};
-
-/**
  * Set selected site
  *
  * @param {number} Site ID
