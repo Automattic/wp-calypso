@@ -8,6 +8,8 @@ var ReactDom = require( 'react-dom' ),
 	filter = require( 'lodash/filter' ),
 	findIndex = require( 'lodash/findIndex' );
 
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -20,8 +22,9 @@ var MediaActions = require( 'lib/media/actions' ),
 	user = require( 'lib/user' )();
 
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
+import { getPreference } from 'state/preferences/selectors';
 
-module.exports = React.createClass( {
+export const MediaLibraryList = React.createClass( {
 	displayName: 'MediaLibraryList',
 
 	propTypes: {
@@ -233,3 +236,7 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => ( {
+	mediaScale: getPreference( state, 'mediaScale' )
+} ), null, null, { pure: false } )( MediaLibraryList );
