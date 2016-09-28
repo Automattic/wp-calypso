@@ -8,6 +8,7 @@ import debounce from 'lodash/debounce';
 import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import url from 'url';
+import assign from 'lodash/assign';
 
 /**
  * Internal dependencies
@@ -15,12 +16,24 @@ import url from 'url';
 import DocsComponent from './main';
 import SingleDocComponent from './doc';
 import DesignAssetsComponent from './design';
+import Playground from './playground/';
 import Blocks from './design/blocks';
 import Typography from './design/typography';
 import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
+import { loadScript } from 'lib/load-script';
+
+function loadCSS( cssUrl ) {
+	const link = assign( document.createElement( 'link' ), {
+		rel: 'stylesheet',
+		type: 'text/css',
+		href: cssUrl
+	} );
+
+	document.head.appendChild( link );
+}
 
 const devdocs = {
 
@@ -101,7 +114,23 @@ const devdocs = {
 			document.getElementById( 'primary' )
 		);
 	},
+	// UI components
+	playground: function( context ) {
+		// load code mirror code
+		loadScript( '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/codemirror.min.js' );
+		loadScript( '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/mode/javascript/javascript.min.js' );
+		loadCSS( '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/codemirror.min.css' );
+		loadCSS( '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/theme/material.min.css' );
 
+		ReactDom.render(
+			React.createElement( ReduxProvider, { store: context.store },
+				React.createElement( Playground, {
+					component: context.params.component
+				} )
+			),
+			document.getElementById( 'primary' )
+		);
+	},
 	// App Blocks
 	blocks: function( context ) {
 		ReactDom.render(
