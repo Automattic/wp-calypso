@@ -125,6 +125,7 @@ const Search = React.createClass( {
 	},
 
 	componentDidUpdate: function( prevProps, prevState ) {
+		this.scrollOverlay();
 		// Focus if the search box was opened or the autoFocus prop has changed
 		if (
 			( this.state.isOpen && ! prevState.isOpen ) ||
@@ -151,8 +152,6 @@ const Search = React.createClass( {
 			this.props.onSearch( this.state.keyword );
 		}
 		this.props.onSearchChange( this.state.keyword );
-
-		this.scrollOverlay()
 	},
 
 	componentDidMount: function() {
@@ -167,6 +166,7 @@ const Search = React.createClass( {
 
 	scrollOverlay: function() {
 		const _this = this;
+
 		window.requestAnimationFrame(function() {
 			console.log( 'init_tokens: ' + _this.refs.overlay.scrollLeft );
 			console.log( 'init_input: ' + _this.refs.searchInput.scrollLeft );
@@ -257,9 +257,11 @@ const Search = React.createClass( {
 		if ( event.key === 'Escape' ) {
 			this.closeSearch( event );
 		}
+		this.scrollOverlay();
 	},
 
 	keyDown: function( event ) {
+		this.scrollOverlay();
 		if ( event.key === 'Escape' && event.target.value === '' ) {
 			this.closeSearch( event );
 		}
@@ -327,7 +329,7 @@ const Search = React.createClass( {
 				</div>
 				<div className={ fadeDivClass }>
 					<input
-						type="search"
+						type="text"
 						id={ 'search-component-' + this.state.instanceId }
 						className={ inputClass }
 						placeholder={ placeholder }
@@ -346,7 +348,7 @@ const Search = React.createClass( {
 						maxLength={ this.props.maxLength }
 						{ ...autocorrect }
 					/>
-					<div className="search_text-overlay" ref="overlay">
+					<div className="search__text-overlay" ref="overlay">
 						{ this.props.overlayStyling( this.state.keyword ) }
 					</div>
 				</div>
