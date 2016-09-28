@@ -182,6 +182,7 @@
     "socket.io": "1.4.5",
     "stylelint": "^6.5.1",
     "supertest": "^1.1.0",
+    "webpack-dashboard": "0.2.0",
     "webpack-dev-server": "1.11.0"
   }
 }
