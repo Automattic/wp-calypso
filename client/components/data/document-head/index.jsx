@@ -11,7 +11,7 @@ import isEqual from 'lodash/isEqual';
 /**
  * Internal dependencies.
  */
-import { getFormattedTitle } from 'state/document-head/selectors';
+import { getDocumentHeadFormattedTitle } from 'state/document-head/selectors';
 import {
 	setDocumentHeadTitle as setTitle,
 	addDocumentHeadLink as addLink,
@@ -92,7 +92,7 @@ DocumentHead.propTypes = {
 
 export default connect(
 	state => ( {
-		formattedTitle: getFormattedTitle( state )
+		formattedTitle: getDocumentHeadFormattedTitle( state )
 	} ),
 	{
 		setTitle,

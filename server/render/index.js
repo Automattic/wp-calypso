@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import { getFormattedTitle, getDocumentHeadMeta, getDocumentHeadLink } from 'client/state/document-head/selectors';
+import { getDocumentHeadFormattedTitle, getDocumentHeadMeta, getDocumentHeadLink } from 'client/state/document-head/selectors';
 
 const debug = debugFactory( 'calypso:server-render' );
 const markupCache = new Lru( { max: 3000 } );
@@ -79,7 +79,7 @@ export function serverRender( req, res ) {
 		let title, metas, links;
 
 		if ( context.store ) {
-			title = getFormattedTitle( context.store.getState() );
+			title = getDocumentHeadFormattedTitle( context.store.getState() );
 			metas = getDocumentHeadMeta( context.store.getState() );
 			links = getDocumentHeadLink( context.store.getState() );
 

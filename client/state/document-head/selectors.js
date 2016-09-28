@@ -61,7 +61,7 @@ export function getDocumentHeadCappedUnreadCount( state ) {
  * @param  {Object}  state  Global state tree
  * @return {String}         Formatted title
  */
-export function getFormattedTitle( state ) {
+export function getDocumentHeadFormattedTitle( state ) {
 	let title = '';
 
 	const unreadCount = getDocumentHeadCappedUnreadCount( state );

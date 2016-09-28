@@ -10,7 +10,7 @@ import {
 	getDocumentHeadTitle,
 	getDocumentHeadUnreadCount,
 	getDocumentHeadCappedUnreadCount,
-	getFormattedTitle,
+	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
 	getDocumentHeadLink
 } from '../selectors';
@@ -52,10 +52,10 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getFormattedTitle()', () => {
+	describe( '#getDocumentHeadFormattedTitle()', () => {
 		describe( 'for site-agnostic section', () => {
 			it( 'should return only "WordPress.com" if no title is set', () => {
-				const formattedTitle = getFormattedTitle( {
+				const formattedTitle = getDocumentHeadFormattedTitle( {
 					documentHead: {},
 					sites: {
 						items: {
@@ -78,7 +78,7 @@ describe( 'selectors', () => {
 			} );
 
 			it( 'should return formatted title made up of section but not site name', () => {
-				const formattedTitle = getFormattedTitle( {
+				const formattedTitle = getDocumentHeadFormattedTitle( {
 					documentHead: {
 						title: 'Reader',
 					},
@@ -103,7 +103,7 @@ describe( 'selectors', () => {
 			} );
 
 			it( 'should return formatted title made up of section and unread count but not site name', () => {
-				const formattedTitle = getFormattedTitle( {
+				const formattedTitle = getDocumentHeadFormattedTitle( {
 					documentHead: {
 						title: 'Reader',
 						unreadCount: '12'
@@ -131,7 +131,7 @@ describe( 'selectors', () => {
 
 		describe( 'for site-specific section', () => {
 			it( 'should return only "WordPress.com", if no title is set and no site is selected', () => {
-				const formattedTitle = getFormattedTitle( {
+				const formattedTitle = getDocumentHeadFormattedTitle( {
 					documentHead: {},
 					sites: {
 						items: {
@@ -154,7 +154,7 @@ describe( 'selectors', () => {
 			} );
 
 			it( 'should return formatted title made up of section only, for no selected site', () => {
-				const formattedTitle = getFormattedTitle( {
+				const formattedTitle = getDocumentHeadFormattedTitle( {
 					documentHead: {
 						title: 'Themes',
 					},
@@ -179,7 +179,7 @@ describe( 'selectors', () => {
 			} );
 
 			it( 'should return formatted title made up of site only, for unset title', () => {
-				const formattedTitle = getFormattedTitle( {
+				const formattedTitle = getDocumentHeadFormattedTitle( {
 					documentHead: {
 					},
 					sites: {
@@ -203,7 +203,7 @@ describe( 'selectors', () => {
 			} );
 
 			it( 'should return formatted title made up of section and site name', () => {
-				const formattedTitle = getFormattedTitle( {
+				const formattedTitle = getDocumentHeadFormattedTitle( {
 					documentHead: {
 						title: 'Themes',
 					},
