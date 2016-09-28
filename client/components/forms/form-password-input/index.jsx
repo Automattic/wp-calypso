@@ -50,7 +50,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="form-password-input">
-				<FormTextInput { ...omit( this.props, 'hideToggle' ) }
+				<FormTextInput { ...omit( this.props, 'hideToggle', 'submitting' ) }
 					autoComplete="off"
 					ref="textField"
 					type={ this.hidden() ? 'password' : 'text' } />
