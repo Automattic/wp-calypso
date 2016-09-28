@@ -97,6 +97,15 @@
 	}
 }
 
+.search__styled-content {
+	font-size: 16px;
+	position: absolute;
+	top: 0px;
+	height: 51px;
+	line-height: 51px;
+	color: transparent;
+}
+
 // When search input is opened
 .search.is-open {
 	width: 100%;

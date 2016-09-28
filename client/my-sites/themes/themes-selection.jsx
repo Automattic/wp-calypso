@@ -53,6 +53,12 @@ const ThemesSelection = React.createClass( {
 		this.updateUrl( this.props.tier || 'all', filter, searchString );
 	},
 
+	styleSearchContent( searchBoxContent ) {
+		return (
+			<span>{ searchBoxContent }</span>
+		);
+	},
+
 	prependFilterKeys() {
 		const { filter } = this.props;
 		if ( filter ) {
@@ -127,7 +133,8 @@ const ThemesSelection = React.createClass( {
 							onSearch={ this.doSearch }
 							search={ this.prependFilterKeys() + this.props.search }
 							tier={ this.props.tier }
-							select={ this.onTierSelect } />
+							select={ this.onTierSelect }
+							styleContent={ this.styleSearchContent } />
 				</StickyPanel>
 				<ThemesData
 						site={ site }
