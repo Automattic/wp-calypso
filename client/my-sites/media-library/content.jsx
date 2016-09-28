@@ -9,8 +9,6 @@ import head from 'lodash/head';
 import values from 'lodash/values';
 import mapValues from 'lodash/mapValues';
 import groupBy from 'lodash/groupBy';
-import debounce from 'lodash/debounce';
-import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -23,20 +21,13 @@ import MediaListData from 'components/data/media-list-data';
 import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import MediaActions from 'lib/media/actions';
 import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
-import PreferencesActions from 'lib/preferences/actions';
-import { isMobile } from 'lib/viewport';
 import { getSiteSlug } from 'state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryList from './list';
-/**
- * Module variables
- */
-const debug = debugFactory( 'calypso:media-library:content' );
 
 const MediaLibraryContent = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
-		preferences: React.PropTypes.object,
 		mediaValidationErrors: React.PropTypes.object,
 		filter: React.PropTypes.string,
 		filterRequiresUpgrade: React.PropTypes.bool,
@@ -44,70 +35,16 @@ const MediaLibraryContent = React.createClass( {
 		containerWidth: React.PropTypes.number,
 		single: React.PropTypes.bool,
 		scrollable: React.PropTypes.bool,
-		mediaScaleChoices: React.PropTypes.arrayOf( React.PropTypes.number ),
-		initialMediaScale: React.PropTypes.number,
 		onAddMedia: React.PropTypes.func,
 		onMediaScaleChange: React.PropTypes.func,
 		onEditItem: React.PropTypes.func
 	},
 
-	getInitialState: function() {
-		return {};
-	},
-
 	getDefaultProps: function() {
-		// To ensure some horizontal padding between items in the same row,
-		// each of these values is slightly less than the corresponding
-		// number of items per row.
-		var scaleChoices = [
-			1 / 12 - 0.006,
-			1 / 8 - 0.01,
-			1 / 6 - 0.01,
-			1 / 4 - 0.01,
-			1 / 3 - 0.01
-		].map( function( scale ) {
-			return Math.round( 1000 * scale ) / 1000;
-		} );
-
 		return {
-			preferences: Object.freeze( {} ),
 			mediaValidationErrors: Object.freeze( {} ),
-			onAddMedia: noop,
-			onMediaScaleChange: noop,
-			mediaScaleChoices: scaleChoices,
-			initialMediaScale: scaleChoices[2]
+			onAddMedia: noop
 		};
-	},
-
-	getMediaScale: function() {
-		var scale = this.props.initialMediaScale;
-
-		if ( this.props.preferences && this.props.preferences.mediaScale ) {
-			scale = this.props.preferences.mediaScale;
-		}
-
-		if ( this.state.mediaScale ) {
-			scale = this.state.mediaScale;
-		}
-
-		if ( isMobile() && 1 !== scale ) {
-			scale = MediaLibraryHeader.SCALE_TOUCH_GRID;
-		}
-
-		return scale;
-	},
-
-	setMediaScalePreference: debounce( function( value ) {
-		PreferencesActions.set( 'mediaScale', value );
-	}, 1000 ),
-
-	onMediaScaleChange: function( scale ) {
-		debug( 'onMediaScaleChange scale=%f', scale );
-		this.setMediaScalePreference( scale );
-		this.setState( {
-			mediaScale: scale
-		} );
-		this.props.onMediaScaleChange( scale );
 	},
 
 	renderErrors: function() {
@@ -225,7 +162,7 @@ const MediaLibraryContent = React.createClass( {
 
 	renderMediaList: function() {
 		if ( ! this.props.site ) {
-			return <MediaLibraryList key="list-loading" mediaScale={ this.getMediaScale() } />;
+			return <MediaLibraryList key="list-loading" />;
 		}
 
 		return (
@@ -238,7 +175,6 @@ const MediaLibraryContent = React.createClass( {
 						filterRequiresUpgrade={ this.props.filterRequiresUpgrade }
 						search={ this.props.search }
 						containerWidth={ this.props.containerWidth }
-						mediaScale={ this.getMediaScale() }
 						photon={ ! this.props.site.is_private }
 						single={ this.props.single }
 						scrollable={ this.props.scrollable }
@@ -255,9 +191,7 @@ const MediaLibraryContent = React.createClass( {
 					<MediaLibraryHeader
 						site={ this.props.site }
 						filter={ this.props.filter }
-						mediaScale={ this.getMediaScale() }
-						mediaScaleChoices={ this.props.mediaScaleChoices }
-						onMediaScaleChange={ this.onMediaScaleChange }
+						onMediaScaleChange={ this.props.onMediaScaleChange }
 						onAddMedia={ this.props.onAddMedia }
 						onAddAndEditImage={ this.props.onAddAndEditImage } />
 				}
