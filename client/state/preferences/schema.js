@@ -48,6 +48,11 @@ export const remoteValuesSchema = {
 			items: {
 				type: 'number'
 			}
+		},
+		mediaScale: {
+			type: 'number',
+			minimum: 0,
+			maximum: 1
 		}
 	}
 };
