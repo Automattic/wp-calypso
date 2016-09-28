@@ -17,6 +17,7 @@ import { createReducer } from 'state/utils';
 import editor from './editor/reducer';
 import guidedTour from './guided-tours/reducer';
 import queryArguments from './query-arguments/reducer';
+import route from './route/reducer';
 import reader from './reader/reducer';
 import olark from './olark/reducer';
 import actionLog from './action-log/reducer';
@@ -84,7 +85,8 @@ const reducer = combineReducers( {
 	olark,
 	preview,
 	actionLog,
-	happychat
+	happychat,
+	route
 } );
 
 export default function( state, action ) {

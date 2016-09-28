@@ -50,6 +50,7 @@ import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import Head from 'layout/head';
 import { decodeEntities } from 'lib/formatting';
+import { getParam } from 'state/ui/route/selectors';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -499,6 +500,7 @@ export default connect(
 		const backPath = getBackPath( state );
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
+		const section = getParam( state, 'section' );
 
 		return {
 			selectedSite,
@@ -506,6 +508,8 @@ export default connect(
 			backPath,
 			currentUserId,
 			isCurrentUserPaid,
+			section,
+			isLoggedIn: !! currentUserId,
 		};
 	},
 	bindDefaultOptionToDispatch,

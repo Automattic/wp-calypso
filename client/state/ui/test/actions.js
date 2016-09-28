@@ -28,6 +28,7 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: ROUTE_SET,
 				path: '/foo',
+				params: {},
 				query: {}
 			} );
 		} );
