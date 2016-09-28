@@ -14,6 +14,10 @@ import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
 
+import {
+	filterIsValid,
+} from '../theme-filters.js';
+
 const ThemesMagicSearchCard = React.createClass( {
 	propTypes: {
 		tier: React.PropTypes.string,
@@ -67,12 +71,18 @@ const ThemesMagicSearchCard = React.createClass( {
 
 	searchTokens( input ) {
 		const tokens = input.split(/(\s+)/);
+		let cls;
 		return (
 			tokens.map( ( token, i ) => {
-				const cls = token.trim() === ''
-				? "search-tokens__white-space"
-				: "search-tokens__token";
-					return <span className={ cls } key={ i }>{ token }</span>; // use shortid for key
+				if( token.trim() === '' ) {
+					cls = "search-tokens__white-space";
+				} else if ( filterIsValid( token ) ) {
+					cls = "search-tokens__token";
+				} else {
+					cls = "search-tokens__text";
+				}
+
+				return <span className={ cls } key={ i }>{ token }</span>; // use shortid for key
 			} )
 		);
 	},

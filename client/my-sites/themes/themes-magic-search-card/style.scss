@@ -47,8 +47,14 @@
 .search-tokens__token {
 	font: inherit;
 	pointer-events: none;
+	color: rgba(0, 0, 0, 0.2);
+	background-color: rgba(0, 0, 255, 0.2);
+}
+
+.search-tokens__text{
+	font: inherit;
+	pointer-events: none;
 	color: rgba(1, 0, 0, 0.2);
-	background-color: blue;
 }
 
 .search-tokens__white-space {
