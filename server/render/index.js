@@ -76,7 +76,7 @@ export function serverRender( req, res ) {
 			Object.assign( context, render( context.layout, key ) );
 		}
 
-		let title, metas, links;
+		let title, metas = [], links = [];
 
 		if ( context.store ) {
 			title = getDocumentHeadFormattedTitle( context.store.getState() );
