@@ -21,7 +21,7 @@ const UNREAD_COUNT_CAP = 40;
  * @param  {Object}  state  Global state tree
  * @return {?String}        Document title
  */
-export function getTitle( state ) {
+export function getDocumentHeadTitle( state ) {
 	return state.documentHead.title;
 }
 
@@ -70,7 +70,7 @@ export function getFormattedTitle( state ) {
 	}
 
 	title += compact( [
-		getTitle( state ),
+		getDocumentHeadTitle( state ),
 		isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) )
 	] ).join( ' ‹ ' );
 

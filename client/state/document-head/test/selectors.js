@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getTitle,
+	getDocumentHeadTitle,
 	getUnreadCount,
 	getCappedUnreadCount,
 	getFormattedTitle,
@@ -16,9 +16,9 @@ import {
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#getTitle()', () => {
+	describe( '#getDocumentHeadTitle()', () => {
 		it( 'should return the currently set title', () => {
-			const title = getTitle( {
+			const title = getDocumentHeadTitle( {
 				documentHead: {
 					title: 'My Section Title'
 				}
