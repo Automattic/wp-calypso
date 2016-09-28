@@ -97,6 +97,11 @@ export class FullPostView extends React.Component {
 		}
 
 		this.checkForCommentAnchor();
+
+		// If we have a comment anchor, scroll to comments
+		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
+			this.scrollToComments();
+		}
 	}
 
 	componentWillReceiveProps( newProps ) {
@@ -144,7 +149,7 @@ export class FullPostView extends React.Component {
 
 	// Scroll to the top of the comments section.
 	scrollToComments() {
-		//setTimeout( () => {
+		setTimeout( () => {
 			const commentsNode = ReactDom.findDOMNode( this.refs.commentsList );
 			if ( commentsNode && commentsNode.offsetTop ) {
 				scrollTo( {
@@ -156,7 +161,7 @@ export class FullPostView extends React.Component {
 					this.hasScrolledToCommentAnchor = true;
 				}
 			}
-		//}, 0 );
+		}, 0 );
 	}
 
 	parseEmoji() {
