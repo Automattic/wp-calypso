@@ -181,7 +181,6 @@ const Post = React.createClass( {
 			// don't feature embeds for excerpts
 			featuredEmbed = null;
 		}
-		console.log( featuredImage );
 		if ( ! ( featuredImage || featuredEmbed ) ) {
 			return null;
 		}

@@ -44,7 +44,7 @@ export default class FeaturedAsset extends React.Component {
 			this.setImageSizingStrategy( nextProps.featuredImage );
 		}
 
-		if( nextProps.featuredEmbed !== this.props.featuredEmbed ) {
+		if ( nextProps.featuredEmbed !== this.props.featuredEmbed ) {
 			this.setEmbedSizingStrategy( nextProps.featuredEmbed );
 		}
 	}
@@ -90,17 +90,15 @@ export default class FeaturedAsset extends React.Component {
 		if ( featuredImage && featuredImage.width >= maxWidth() ) {
 			sizingFunction = ( available = this.getMaxFeaturedWidthSize() ) => {
 				const aspectRatio = featuredImage.width / featuredImage.height,
-					height = `${Math.floor( available / aspectRatio )}px`,
-					width = `${ available}px`;
-				console.log( 'aspectRatio' );
+					height = `${ Math.floor( available / aspectRatio ) }px`,
+					width = `${ available }px`;
 				return { width, height };
-			}
+			};
 		}
 		this.getImageSize = sizingFunction;
 	}
 
 	updateFeatureSize() {
-
 		if ( this.refs.featuredImage ) {
 			const img = ReactDom.findDOMNode( this.refs.featuredImage );
 			assign( img.style, this.getImageSize() );
