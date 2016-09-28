@@ -3,10 +3,13 @@
  */
 var connect = require( 'react-redux' ).connect,
 	forEach = require( 'lodash/forEach' ),
+	find = require( 'lodash/find' ),
+	i18n = require( 'i18n-calypso' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	isEqual = require( 'lodash/isEqual' ),
 	page = require( 'page' ),
-	React = require( 'react' );
+	React = require( 'react' ),
+	reduce = require( 'lodash/reduce' );
 
 /**
  * Internal dependencies
@@ -162,25 +165,50 @@ const Checkout = React.createClass( {
 	},
 
 	getCheckoutCompleteRedirectPath: function() {
-		var renewalItem,
+		var product,
+			purchasedProducts,
+			renewalItem,
+			receipt = this.props.transaction.step.data,
 			receiptId = ':receiptId';
 
 		this.props.clearPurchases();
 
 		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
 			renewalItem = cartItems.getRenewalItems( this.props.cart )[ 0 ];
+			// group all purchases into an array
+			purchasedProducts = reduce( receipt && receipt.purchases || {}, function( result, value ) {
+				return result.concat( value );
+			}, [] );
+			// and take the first product which matches the product id of the renewalItem
+			product = find( purchasedProducts, function( item ) {
+				return item.product_id === renewalItem.product_id;
+			} );
 
-			notices.success(
-				this.translate( '%(productName)s has been renewed and will now auto renew in the future. {{a}}Learn more{{/a}}', {
-					args: {
-						productName: renewalItem.product_name
-					},
-					components: {
-						a: <a href={ supportPaths.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
-					}
-				} ),
-				{ persistent: true }
-			);
+			if ( product && product.will_auto_renew ) {
+				notices.success(
+					this.translate( '%(productName)s has been renewed and will now auto renew in the future. {{a}}Learn more{{/a}}', {
+						args: {
+							productName: renewalItem.product_name
+						},
+						components: {
+							a: <a href={ supportPaths.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
+						}
+					} ),
+					{ persistent: true }
+				);
+			} else if ( product ) {
+				notices.success(
+					this.translate( 'Success! You renewed %(productName)s for %(duration)s, until %(date)s. We sent your receipt to %(email)s.', {
+						args: {
+							productName: renewalItem.product_name,
+							duration: i18n.moment.duration( renewalItem.bill_period, 'days' ).humanize(),
+							date: i18n.moment( product.expiry ).format( 'MMM DD, YYYY' ),
+							email: product.user_email
+						}
+					} ),
+					{ persistent: true }
+				);
+			}
 
 			return purchasePaths.managePurchase( renewalItem.extra.purchaseDomain, renewalItem.extra.purchaseId );
 		} else if ( cartItems.hasFreeTrial( this.props.cart ) ) {
@@ -189,8 +217,8 @@ const Checkout = React.createClass( {
 			return `/plans/${ this.props.sites.getSelectedSite().slug }/thank-you`;
 		}
 
-		if ( this.props.transaction.step.data && this.props.transaction.step.data.receipt_id ) {
-			receiptId = this.props.transaction.step.data.receipt_id;
+		if ( receipt && receipt.receipt_id ) {
+			receiptId = receipt.receipt_id;
 
 			this.props.fetchReceiptCompleted( receiptId, {
 				receiptId: receiptId,
