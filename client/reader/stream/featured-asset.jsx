@@ -110,7 +110,7 @@ export default class FeaturedAsset extends React.Component {
 		// Does error fire and then the new load start? Does the error get suppressed?
 		// It appears that any events tied to a loading image are swallowed if the src changes. See
 		// http://jsbin.com/merulogozu/edit?js,console for a test of changing the src after the image starts to load
-		if ( ! this._umounted ) {
+		if ( ! this._unmounted ) {
 			this.setState( {
 				suppressFeaturedImage: true,
 				useFeaturedEmbed: !! this.props.featuredEmbed // turn on the featured embed if it exists
