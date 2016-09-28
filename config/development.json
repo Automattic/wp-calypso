@@ -29,7 +29,6 @@
 	"features": {
 		"accept-invite": true,
 		"ad-tracking": false,
-		"brazil-survey-invitation": false,
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,
