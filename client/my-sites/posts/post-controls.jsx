@@ -4,6 +4,7 @@
 import React, { PureComponent, PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 import url from 'url';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -39,15 +40,11 @@ class PostControls extends PureComponent {
 		ga.recordEvent( 'Posts', 'Clicked Edit Post' );
 	}
 
-	copy() {
-		ga.recordEvent( 'Posts', 'Clicked Copy Post' );
-	}
-
 	viewStats() {
 		ga.recordEvent( 'Posts', 'Clicked View Post Stats' );
 	}
 
-	buildControls( controls ) {
+	getControlElements( controls ) {
 		return controls.map( ( control, i ) => {
 			return (
 				<li key={ `controls-${ this.props.post.ID }-${ i }` }>
@@ -67,7 +64,7 @@ class PostControls extends PureComponent {
 		} );
 	}
 
-	setControls() {
+	getAvailableControls() {
 		const { post, translate } = this.props;
 		const controls = {
 			main: [],
@@ -161,16 +158,6 @@ class PostControls extends PureComponent {
 			}
 		}
 
-		if ( 'publish' === post.status && utils.userCan( 'edit_post', post ) ) {
-			controls.main.push( {
-				text: translate( 'Copy' ),
-				className: 'copy',
-				href: `/post/${ this.props.site.slug }?copy=${ post.ID }`,
-				onClick: this.copy,
-				icon: 'clipboard',
-			} );
-		}
-
 		// More Controls (behind ... more link)
 		if ( ( controls.main.length > 2 && ! this.props.fullWidth ) || ( controls.main.length > 4 && this.props.fullWidth ) ) {
 			const moreControlsSpliceIndex = ( ! this.props.fullWidth ) ? 2 : 4;
@@ -203,30 +190,28 @@ class PostControls extends PureComponent {
 	}
 
 	render() {
-		const controls = this.setControls();
-		let postControlsClass = 'post-controls';
+		const controls = this.getAvailableControls();
+		const className = classNames( 'post-controls', {
+			'post-controls--desk-nomore': controls.more.length <= 2
+		} );
 
 		if ( controls.more.length ) {
-			if ( controls.more.length <= 2 ) {
-				postControlsClass += ' post-controls--desk-nomore';
-			}
-
 			return (
-				<div className={ postControlsClass }>
+				<div className={ className }>
 					<ul className="posts__post-controls post-controls__pane post-controls__more-options">
-						{ this.buildControls( controls.more ) }
+						{ this.getControlElements( controls.more ) }
 					</ul>
 					<ul className="posts__post-controls post-controls__pane post-controls__main-options">
-						{ this.buildControls( controls.main ) }
+						{ this.getControlElements( controls.main ) }
 					</ul>
 				</div>
 			);
 		}
 
 		return (
-			<div className={ postControlsClass }>
+			<div className={ className }>
 				<ul className="posts__post-controls post-controls__pane post-controls__main-options">
-					{ this.buildControls( controls.main ) }
+					{ this.getControlElements( controls.main ) }
 				</ul>
 			</div>
 		);
