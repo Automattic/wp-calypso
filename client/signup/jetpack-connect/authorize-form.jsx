@@ -65,7 +65,8 @@ const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 const SiteCard = React.createClass( {
 	render() {
 		const { site_icon, blogname, home_url, site_url } = this.props.queryObject;
-		const siteIcon = site_icon ? { img: safeImageUrl( site_icon ) } : false;
+		const safeIconUrl = site_icon ? safeImageUrl( site_icon ) : false;
+		const siteIcon = safeIconUrl ? { img: safeIconUrl } : false;
 		const url = decodeEntities( home_url );
 		const parsedUrl = urlModule.parse( url );
 		const path = ( parsedUrl.path === '/' ) ? '' : parsedUrl.path;
