@@ -15,7 +15,6 @@
 	"features": {
 		"accept-invite": true,
 		"ad-tracking": false,
-		"brazil-survey-invitation": false,
 		"catch-js-errors": true,
 		"code-splitting": true,
 		"community-translator": true,
