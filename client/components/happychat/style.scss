@@ -284,10 +284,25 @@
 	padding: 0 8px;
 	margin: 6px 0;
 
+	a {
+		color: lighten( $blue-light, 10% );
+		text-decoration: underline;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
+
 	&.is-user-message {
 		flex-direction: row;
 		margin-left: auto;
+
+		a {
+			color: $blue-medium;
+		}
+
 	}
+
 }
 
 .support-browser {
@@ -371,22 +386,22 @@
 			box-shadow: 0 1px 2px rgba( 0,0,0,.2 ), 0 1px 10px rgba( 0,0,0, .1 );
 			width: 280px;
 		}
-	
+
 		.happychat__container.is-open .happychat__title {
 			height: 32px;
 			line-height: 32px;
 			border-radius: 0;
-	
+
 			.happychat__active-toolbar {
-		
+
 				> div {
 					padding: 4px 11px;
 				}
-		
+
 			}
-	
+
 		}
-	
+
 		.happychat__message {
 			height: 48px;
 		}
@@ -394,7 +409,7 @@
 		.happychat__message > textarea {
 			padding: 12px;
 		}
-	
+
 		.happychat__conversation {
 			min-height: 160px;
 			max-height: 220px;
@@ -403,4 +418,3 @@
 	}
 
 }
-
