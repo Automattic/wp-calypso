@@ -52,6 +52,7 @@ const Search = React.createClass( {
 		onSearchOpen: PropTypes.func,
 		onSearchClose: PropTypes.func,
 		analyticsGroup: PropTypes.string,
+		overlayStyling: PropTypes.func,
 		autoFocus: PropTypes.bool,
 		disabled: PropTypes.bool,
 		onKeyDown: PropTypes.func,
@@ -84,6 +85,7 @@ const Search = React.createClass( {
 			onSearchOpen: noop,
 			onSearchClose: noop,
 			onKeyDown: noop,
+			overlayStyling: noop,
 			disableAutocorrect: false,
 			searching: false,
 			isOpen: false,
@@ -149,6 +151,8 @@ const Search = React.createClass( {
 			this.props.onSearch( this.state.keyword );
 		}
 		this.props.onSearchChange( this.state.keyword );
+
+		this.scrollOverlay()
 	},
 
 	componentDidMount: function() {
@@ -159,6 +163,17 @@ const Search = React.createClass( {
 		if ( this.props.autoFocus ) {
 			this.focus();
 		}
+	},
+
+	scrollOverlay: function() {
+		const _this = this;
+		window.requestAnimationFrame(function() {
+			console.log( 'init_tokens: ' + _this.refs.overlay.scrollLeft );
+			console.log( 'init_input: ' + _this.refs.searchInput.scrollLeft );
+			_this.refs.overlay.scrollLeft = _this.refs.searchInput.scrollLeft;
+			console.log( 'after_tokens: ' + _this.refs.overlay.scrollLeft );
+			console.log( 'after_input: ' + _this.refs.searchInput.scrollLeft );
+		} );
 	},
 
 	focus: function() {
@@ -331,6 +346,9 @@ const Search = React.createClass( {
 						maxLength={ this.props.maxLength }
 						{ ...autocorrect }
 					/>
+					<div className="search_text-overlay" ref="overlay">
+						{ this.props.overlayStyling( this.state.keyword ) }
+					</div>
 				</div>
 				{ this.closeButton() }
 			</div>
