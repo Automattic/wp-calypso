@@ -20,7 +20,7 @@ export default class FeaturedAsset extends React.Component {
 			useFeaturedEmbed: props.useFeaturedEmbed
 		};
 
-		[ 'handleImageError',
+		[	'handleImageError',
 			'updateFeatureSize',
 			'getMaxFeaturedWidthSize',
 			'setEmbedSizingStrategy',
