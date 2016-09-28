@@ -40,7 +40,6 @@ const
 	utils = require( 'reader/utils' ),
 	PostCommentHelper = require( 'reader/comments/helper' ),
 	LikeHelper = require( 'reader/like-helper' ),
-	EmbedHelper = require( 'reader/embed-helper' ),
 	readerRoute = require( 'reader/route' ),
 	stats = require( 'reader/stats' ),
 	PostPermalink = require( 'reader/post-permalink' ),
@@ -72,10 +71,6 @@ const Post = React.createClass( {
 
 	smartSetState: smartSetState,
 
-	getMaxFeaturedWidthSize: function() {
-		return ReactDom.findDOMNode( this ).offsetWidth;
-	},
-
 	shouldApplyIsLong: function() {
 		var node = ReactDom.findDOMNode( this.refs.siteName );
 		// give the clientWidth a 2 pixel buffer. IE is often off by at least one.
@@ -83,7 +78,6 @@ const Post = React.createClass( {
 	},
 
 	onWindowResize: function() {
-		this.updateFeatureSize();
 		this.checkSiteNameForOverflow();
 	},
 
@@ -132,7 +126,6 @@ const Post = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		this.updateFeatureSize();
 		this.checkSiteNameForOverflow();
 		this._parseEmoji();
 		SiteStore.on( 'change', this.updateState );
@@ -156,17 +149,8 @@ const Post = React.createClass( {
 	},
 
 	componentDidUpdate: function() {
-		this.updateFeatureSize();
 		this.checkSiteNameForOverflow();
 		this._parseEmoji();
-	},
-
-	getFeaturedSize: function( available ) {
-		available = available || this.getMaxFeaturedWidthSize();
-		if ( this.featuredSizingStrategy ) {
-			return this.featuredSizingStrategy( available );
-		}
-		return {};
 	},
 
 	featuredImageComponent: function( post ) {
@@ -174,8 +158,7 @@ const Post = React.createClass( {
 			featuredEmbed = head( filter( post.content_embeds, ( embed ) => {
 				return ! startsWith( embed.type, 'special-' );
 			} ) ),
-			maxWidth = Math.min( 653, window.innerWidth ),
-			featuredSize, useFeaturedEmbed;
+			useFeaturedEmbed;
 
 		if ( post.use_excerpt ) {
 			// don't feature embeds for excerpts
@@ -191,39 +174,13 @@ const Post = React.createClass( {
 		//
 		useFeaturedEmbed = featuredEmbed &&
 			( ! featuredImage || ( featuredImage !== post.featured_image && featuredImage !== get( post, 'post_thumbnail.URL' ) ) );
-		if ( useFeaturedEmbed ) {
-			this.featuredSizingStrategy = EmbedHelper.getEmbedSizingFunction( featuredEmbed );
-		} else if ( featuredImage && post.canonical_image.width >= maxWidth ) {
-			this.featuredSizingStrategy = function featuredImageSizingFunction( availible ) {
-				var aspectRatio = post.canonical_image.width / post.canonical_image.height;
 
-				return {
-					width: availible + 'px',
-					height: Math.floor( availible / aspectRatio ) + 'px'
-				};
-			};
-
-			featuredSize = this.getFeaturedSize( maxWidth );
-		}
 		const featuredAssetProps = {
 			featuredImage,
 			featuredEmbed,
 			useFeaturedEmbed
 		};
 		return <FeaturedAsset { ...featuredAssetProps } />;
-	},
-
-	updateFeatureSize: function() {
-		var node;
-		if ( this.refs.featuredImage ) {
-			node = ReactDom.findDOMNode( this.refs.featuredImage );
-		} else if ( this.refs.featuredEmbed ) {
-			node = ReactDom.findDOMNode( this.refs.featuredEmbed ).querySelector( 'iframe' );
-		}
-
-		if ( node ) {
-			assign( node.style, this.getFeaturedSize() );
-		}
 	},
 
 	checkSiteNameForOverflow: function() {
