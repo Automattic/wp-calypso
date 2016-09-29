@@ -171,7 +171,7 @@ export function enableAutoupdatePlugin( site, plugin ) {
 
 		const successCallback = ( data ) => {
 			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } ) );
-			this.update( site, plugin );
+			updatePlugin( site, plugin )( dispatch );
 		};
 
 		const errorCallback = ( error ) => {
