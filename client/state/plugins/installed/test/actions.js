@@ -45,14 +45,14 @@ import {
 	DISABLE_AUTOUPDATE_PLUGIN
 } from '../constants';
 import {
-	fetch as fetchPlugins,
-	activate as activatePlugin,
-	deactivate as deactivatePlugin,
-	update as updatePlugin,
-	enableAutoupdate as enableAutoupdatePlugin,
-	disableAutoupdate as disableAutoupdatePlugin,
-	install as installPlugin,
-	remove as removePlugin
+	fetchPlugins,
+	activatePlugin,
+	deactivatePlugin,
+	updatePlugin,
+	enableAutoupdatePlugin,
+	disableAutoupdatePlugin,
+	installPlugin,
+	removePlugin
 } from '../actions';
 import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
 

@@ -5,23 +5,21 @@ A module for managing installed plugins on connected sites.
 
 ## Actions
 
-### `fetch( sites: Array )`
+### `fetchPlugins( sites: Array )`
 
-### `install( site: Object, plugin: Object )`
+### `installPlugin( site: Object, plugin: Object )`
 
-### `update( site: Object, plugin: Object )`
+### `updatePlugin( site: Object, plugin: Object )`
 
-### `remove( site: Object, plugin: Object )`
+### `removePlugin( site: Object, plugin: Object )`
 
-### `activate( site: Object, plugin: Object )`
+### `activatePlugin( site: Object, plugin: Object )`
 
-### `deactivate( site: Object, plugin: Object )`
+### `deactivatePlugin( site: Object, plugin: Object )`
 
-### `enableAutoupdate( site: Object, plugin: Object )`
+### `enableAutoupdatePlugin( site: Object, plugin: Object )`
 
-### `disableAutoupdate( site: Object, plugin: Object )`
-
-### `toggleAutoUpdates( site: Object, plugin: Object )`
+### `disableAutoupdatePlugin( site: Object, plugin: Object )`
 
 ## Selectors
 

@@ -71,7 +71,7 @@ const getPluginHandler = ( site, pluginId ) => {
 	return pluginHandler;
 };
 
-export function activate( site, plugin ) {
+export function activatePlugin( site, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = getPluginId( site, plugin );
 		const defaultAction = {
@@ -97,7 +97,7 @@ export function activate( site, plugin ) {
 	};
 }
 
-export function deactivate( site, plugin ) {
+export function deactivatePlugin( site, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = getPluginId( site, plugin );
 		const defaultAction = {
@@ -123,7 +123,7 @@ export function deactivate( site, plugin ) {
 	};
 }
 
-export function update( site, plugin ) {
+export function updatePlugin( site, plugin ) {
 	return ( dispatch ) => {
 		if ( ! plugin.update ) {
 			return Promise.reject( 'Error: Plugin already up-to-date.' );
@@ -155,7 +155,7 @@ export function update( site, plugin ) {
 	};
 }
 
-export function enableAutoupdate( site, plugin ) {
+export function enableAutoupdatePlugin( site, plugin ) {
 	return ( dispatch ) => {
 		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return Promise.reject( 'Error: We can\'t update files on this site.' );
@@ -182,7 +182,7 @@ export function enableAutoupdate( site, plugin ) {
 	};
 }
 
-export function disableAutoupdate( site, plugin ) {
+export function disableAutoupdatePlugin( site, plugin ) {
 	return ( dispatch ) => {
 		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
 			return;
@@ -208,7 +208,7 @@ export function disableAutoupdate( site, plugin ) {
 	};
 }
 
-export function install( site, plugin ) {
+export function installPlugin( site, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = getPluginId( site, plugin );
 		const defaultAction = {
@@ -282,7 +282,7 @@ export function install( site, plugin ) {
 	};
 }
 
-export function remove( site, plugin ) {
+export function removePlugin( site, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = getPluginId( site, plugin );
 		const defaultAction = {
@@ -332,7 +332,7 @@ export function remove( site, plugin ) {
 	};
 }
 
-export function fetch( sites ) {
+export function fetchPlugins( sites ) {
 	return ( dispatch ) => {
 		return sites.map( ( site ) => {
 			const defaultAction = {
