@@ -124,7 +124,7 @@ export default React.createClass( {
 						args: { ratingsNumber: numRatings }
 					} ) }
 				</div>
-				<div className="plugin-ratings__tiers">
+				<div className="plugin-ratings__rating-tiers">
 					{ tierViews }
 				</div>
 				{ this.renderDownloaded() }
