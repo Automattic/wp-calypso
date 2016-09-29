@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 
-export default class PlanPurchaseFeatures extends Component {
+export default class ProductPurchaseFeatures extends Component {
 	render() {
 		return (
 			<div className="product-purchase-features">
