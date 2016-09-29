@@ -93,7 +93,7 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 					<div className="editor-media-modal__gallery-help-actions">
 						<label className="editor-media-modal__gallery-help-remember-dismiss">
 							<FormCheckbox checked={ this.state.rememberDismiss } onChange={ this.toggleRememberDismiss } />
-							<span onClick={ this.toggleRememberDismiss }>
+							<span>
 								{ this.translate( 'Don\'t show again' ) }
 							</span>
 						</label>
