@@ -26,7 +26,7 @@ import {
 import {
 	ACTIVATE_PLUGIN
 } from '../constants';
-import { isRequesting, hasRequested, plugins } from '../reducer';
+import { isRequesting, plugins } from '../reducer';
 import status from '../status/reducer';
 import { akismet, jetpack } from './fixtures/plugins';
 
@@ -46,24 +46,6 @@ describe( 'reducer:', () => {
 				siteId: 'one.site'
 			} );
 			expect( state ).to.eql( { 'one.site': false } );
-		} );
-	} );
-
-	describe( 'hasRequested', () => {
-		it( 'should track when fetches start', () => {
-			const state = hasRequested( undefined, {
-				type: PLUGINS_REQUEST,
-				siteId: 'one.site'
-			} );
-			expect( state ).to.eql( { 'one.site': true } );
-		} );
-
-		it( 'should not track when fetches end', () => {
-			const state = hasRequested( undefined, {
-				type: PLUGINS_RECEIVE,
-				siteId: 'one.site'
-			} );
-			expect( state ).to.not.eql( { 'one.site': false } );
 		} );
 	} );
 

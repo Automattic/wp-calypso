@@ -45,21 +45,6 @@ export function isRequesting( state = {}, action ) {
 }
 
 /*
- * Tracks the requesting state for installed plugins on a per-site index.
- */
-export function hasRequested( state = {}, action ) {
-	switch ( action.type ) {
-		case PLUGINS_REQUEST:
-			return Object.assign( {}, state, { [ action.siteId ]: true } );
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-		default:
-			return state;
-	}
-}
-
-/*
  * Tracks all known installed plugin objects indexed by site ID.
  */
 export function plugins( state = {}, action ) {
@@ -142,7 +127,6 @@ function plugin( state, action ) {
 
 export default combineReducers( {
 	isRequesting,
-	hasRequested,
 	plugins,
 	status
 } );

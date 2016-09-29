@@ -50,17 +50,6 @@ const isRequestingForSites = function( state, sites ) {
 	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
 };
 
-const hasRequested = function( state, siteId ) {
-	if ( typeof state.plugins.installed.hasRequested[ siteId ] === 'undefined' ) {
-		return false;
-	}
-	return state.plugins.installed.hasRequested[ siteId ];
-};
-
-const hasRequestedForSites = function( state, sites ) {
-	// All sites are requested when they all return hasRequested true
-	return every( sites, ( siteId ) => hasRequested( state, siteId ) );
-};
 
 const getPlugins = function( state, sites, pluginFilter = false ) {
 	let pluginList = {};
