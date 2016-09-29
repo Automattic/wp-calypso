@@ -51,7 +51,11 @@ export default React.createClass( {
 		};
 
 		return (
-			<a key={ `plugins-ratings__tier-${ ratingTier }` } className="plugin-ratings__rating-container" target="_blank" rel="noopener noreferrer"
+			<a
+				className="plugin-ratings__rating-container"
+				key={ `plugins-ratings__tier-${ ratingTier }` }
+				target="_blank"
+				rel="noopener noreferrer"
 				onClick={ onClickPluginRatingsLink }
 				href={ this.buildReviewUrl( ratingTier ) }
 			>
