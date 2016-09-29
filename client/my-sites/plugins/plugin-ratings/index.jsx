@@ -33,7 +33,7 @@ export default React.createClass( {
 	},
 
 	renderPlaceholder() {
-		return (
+		return ( // eslint-disable-next-line
 			<div className="plugin-ratings is-placeholder">
 				<div className="plugin-ratings__rating-stars">
 					<Rating rating={ 0 } />
@@ -63,13 +63,15 @@ export default React.createClass( {
 					{
 						this.translate(
 							'%(ratingTier)s star', '%(ratingTier)s stars', {
-								count: ratingTier, args: { ratingTier: ratingTier }
+								count: ratingTier,
+								args: { ratingTier: ratingTier }
 							}
 						)
 					}
 				</span>
-				<span className="plugin_ratings__bar">
-					<ProgressBar value={ numberOfRatings }
+				<span className="plugin-ratings__bar">
+					<ProgressBar
+						value={ numberOfRatings }
 						total={ numRatings }
 						title={ this.translate( '%(numberOfRatings)s ratings', { args: { numberOfRatings } } ) }
 					/>
@@ -122,7 +124,7 @@ export default React.createClass( {
 						args: { ratingsNumber: numRatings }
 					} ) }
 				</div>
-				<div className="plugin-ratings-tiers">
+				<div className="plugin-ratings__tiers">
 					{ tierViews }
 				</div>
 				{ this.renderDownloaded() }
