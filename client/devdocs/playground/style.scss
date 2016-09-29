@@ -1,14 +1,7 @@
-.previewArea {
-	background: #fff;
-	border: 1px solid lighten( $gray, 10% );
-	border-top-width: 0;
-	padding: 24px;
-}
-
 .playground .CodeMirror {
 	background: $gray-light;
 	font-size: 14px;
-	color: $gray;
+	color: darken( $gray, 10% );
 	height: auto;
 	padding: 24px;
 	border: 1px solid lighten( $gray, 10% );
@@ -23,4 +16,16 @@
 	color: darken( $gray, 10% );
 	font-size: 12px;
 	white-space: pre;
+}
+
+.previewArea {
+	border: 1px solid lighten( $gray, 10% );
+	border-top-width: 0;
+	padding: 24px;
+	background-image: linear-gradient( lighten( $gray, 25% ) 1px, transparent 1px ),
+	linear-gradient( 90deg, lighten( $gray, 25% ) 1px, transparent 1px ),
+	linear-gradient( lighten( $gray, 30% ) 1px, transparent 1px ),
+	linear-gradient( 90deg, lighten( $gray, 30% ) 1px, transparent 1px );
+	background-size: 64px 64px, 64px 64px, 8px 8px, 8px 8px;
+	background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
 }
