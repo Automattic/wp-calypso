@@ -37,7 +37,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 0;
-		padding-bottom: 10px;
+		padding-bottom: 20px;
 	}
 }
 
@@ -261,7 +261,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-medium} {
-				max-height: 150px;
+				max-height: 165px;
 			}
 
 			@media #{$reader-related-card-v2-breakpoint-small} {
@@ -283,10 +283,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 			}
 
 			.reader-related-card-v2__post {
-				max-height: 200px;
+				max-height: 220px;
 
 				@media #{$reader-related-card-v2-breakpoint-small} {
-					max-height: 150px;
+					max-height: 170px;
+				}
+
+				@media #{$reader-related-card-v2-breakpoint-medium} {
+					max-height: 170px;
 				}
 			}
 		}
