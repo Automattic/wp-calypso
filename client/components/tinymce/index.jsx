@@ -412,7 +412,8 @@ module.exports = React.createClass( {
 
 	setEditorContent: function( content, args ) {
 		if ( this._editor ) {
-			this._editor.setContent( formatting.wpautop( content ), args );
+			const { mode } = this.props;
+			this._editor.setContent( formatting.wpautop( content ), { ...args, mode } );
 
 			// clear the undo stack to ensure that we don't have any leftovers
 			this._editor.undoManager.clear();
