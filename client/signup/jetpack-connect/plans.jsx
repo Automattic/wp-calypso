@@ -178,7 +178,7 @@ export default connect(
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
 			userId: user ? user.ID : null,
 			canPurchasePlans: userCan( 'manage_options', selectedSite ),
-			flowType: getFlowType( state, selectedSite ),
+			flowType: getFlowType( state, selectedSite && selectedSite.slug ),
 			isRequestingPlans: isRequestingPlans( state ),
 			getPlanBySlug: searchPlanBySlug,
 			isCalypsoStartedConnection: isCalypsoStartedConnection.bind( state )
