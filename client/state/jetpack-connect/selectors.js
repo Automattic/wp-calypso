@@ -31,7 +31,7 @@ const getFlowType = function( state, siteSlug ) {
 const getJetpackSiteByUrl = ( state, url ) => {
 	const site = getSiteByUrl( state, url );
 	if ( site && ! site.jetpack ) {
-		return false;
+		return null;
 	}
 	return site;
 };
