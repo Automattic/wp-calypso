@@ -477,8 +477,7 @@ export const featuresList = {
 		getSlug: () => FEATURE_3GB_STORAGE,
 		getTitle: () => i18n.translate( '3GB Storage Space' ),
 		getDescription: () => i18n.translate(
-			"With increased storage space you'll be able to upload " +
-			'more images and documents to your website.'
+			"Ample storage space to upload images and documents to your website.'
 		),
 		plans: [ PLAN_FREE, PLAN_PERSONAL ]
 	},
