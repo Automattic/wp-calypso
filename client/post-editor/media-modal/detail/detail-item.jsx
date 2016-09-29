@@ -18,6 +18,7 @@ var EditorMediaModalDetailFields = require( './detail-fields' ),
 	Button = require( 'components/button' ),
 	Gridicon = require( 'components/gridicon' ),
 	userCan = require( 'lib/site/utils' ).userCan,
+	isJetpack = require( 'lib/site/utils' ).isJetpack,
 	MediaUtils = require( 'lib/media/utils' ),
 	config = require( 'config' );
 
@@ -62,6 +63,7 @@ module.exports = React.createClass( {
 		if (
 			! config.isEnabled( 'post-editor/image-editor' ) ||
 			! userCan( 'upload_files', site ) ||
+			isJetpack( site ) ||
 			this.isMobileTouchDevice() ||
 			! item
 		) {
