@@ -15,7 +15,7 @@ import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
-import { getSiteByUrl } from 'state/sites/selectors';
+import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
 import QuerySites from 'components/data/query-sites';
 import JetpackInstallStep from './install-step';
 import versionCompare from 'lib/version-compare';
@@ -392,16 +392,13 @@ const JetpackConnectMain = React.createClass( {
 
 export default connect(
 	state => {
-		const getJetpackSiteByUrl = ( url ) => {
-			const site = getSiteByUrl( state, url );
-			if ( site && ! site.jetpack ) {
-				return false;
-			}
-			return site;
+		const getJetpackSite = ( url ) => {
+			return getJetpackSiteByUrl( state, url );
 		};
+
 		return {
 			jetpackConnectSite: state.jetpackConnect.jetpackConnectSite,
-			getJetpackSiteByUrl
+			getJetpackSiteByUrl: getJetpackSite
 		};
 	},
 	dispatch => bindActionCreators( {
