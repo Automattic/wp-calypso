@@ -46,11 +46,14 @@ export default React.createClass( {
 	renderRatingTier( ratingTier ) {
 		const { ratings, slug, numRatings } = this.props;
 		const numberOfRatings = ( ratings && ratings[ ratingTier ] ) ? ratings[ ratingTier ] : 0;
+		const onClickPluginRatingsLink = () => {
+			analytics.ga.recordEvent( 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', slug );
+		};
 
 		return (
 			<div className="plugin-ratings__rating-tier" key={ `plugins-ratings__tier-${ ratingTier }` }>
 				<a className="plugin-ratings__rating-container" target="_blank" rel="noopener noreferrer"
-					onClick={ analytics.ga.recordEvent( 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', slug ) }
+					onClick={ onClickPluginRatingsLink }
 					href={ this.buildReviewUrl( ratingTier ) }
 				>
 					<span className="plugin-ratings__rating-tier-text">
