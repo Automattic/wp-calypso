@@ -15,17 +15,19 @@ import { ActionTypes } from './constants';
  * action, followed by a `RECEIVE_SHORTCODE` action after the request has
  * completed.
  *
- * @param  {Number} siteId    Site ID for which to render the shortcode
- * @param  {String} shortcode Shortcode text to be rendered
+ * @param {Number} siteId    Site ID for which to render the shortcode
+ * @param {String} shortcode Shortcode text to be rendered
+ * @param {Object} args      Additional arguments to send with request
  */
-export function fetch( siteId, shortcode ) {
+export function fetch( siteId, shortcode, args ) {
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.FETCH_SHORTCODE,
 		payload: { siteId, shortcode }
 	} );
 
 	wpcom.undocumented().site( siteId ).shortcodes( {
-		shortcode: shortcode
+		...args,
+		shortcode
 	}, ( error, data ) => {
 		Dispatcher.handleServerAction( {
 			type: ActionTypes.RECEIVE_SHORTCODE,
