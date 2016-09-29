@@ -65,6 +65,7 @@ export function render( element, key = JSON.stringify( element ) ) {
 
 export function serverRender( req, res ) {
 	const context = req.context;
+	let title, metas = [], links = [];
 
 	if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
@@ -76,8 +77,6 @@ export function serverRender( req, res ) {
 			Object.assign( context, render( context.layout, key ) );
 		}
 
-		let title, metas = [], links = [];
-
 		if ( context.store ) {
 			title = getDocumentHeadFormattedTitle( context.store.getState() );
 			metas = getDocumentHeadMeta( context.store.getState() );
@@ -85,9 +84,9 @@ export function serverRender( req, res ) {
 
 			context.initialReduxState = pick( context.store.getState(), 'documentHead', 'ui', 'themes' );
 		}
-
-		context.head = { title, metas, links };
 	}
+
+	context.head = { title, metas, links };
 
 	if ( config.isEnabled( 'desktop' ) ) {
 		res.render( 'desktop.jade', context );
