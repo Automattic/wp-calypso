@@ -425,7 +425,7 @@
 
 @include breakpoint( "480px-1040px" ) {
 
-	.wp:not( .is-section-chat ) {
+	.layout:not( .is-section-chat ) {
 		.happychat__container.is-open {
 			box-shadow: 0 1px 2px rgba( 0,0,0,.2 ), 0 1px 10px rgba( 0,0,0, .1 );
 			width: 280px;
@@ -454,10 +454,24 @@
 			padding: 12px;
 		}
 
-		.happychat__conversation {
+		.happychat__conversation,
+		.happychat__welcome {
 			min-height: 160px;
 			max-height: 220px;
 		}
+	}
+}
 
+@include breakpoint( "<480px" ) {
+	.layout:not( .is-section-chat ) {
+		.happychat__container.is-open {
+			right: 0;
+		}
+
+		.happychat__conversation,
+		.happychat__welcome {
+			min-height: 160px;
+			max-height: 220px;
+		}
 	}
 }
