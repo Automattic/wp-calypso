@@ -114,3 +114,17 @@
 	pointer-events: none;
 	white-space: pre;
 }
+
+.themes-magic-search {
+
+	.suggestions {
+		display: none;
+	}
+
+	&.has-suggestions {
+		.suggestions {
+			display: block;
+		}
+	}
+
+}

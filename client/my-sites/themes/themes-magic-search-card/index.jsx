@@ -10,6 +10,7 @@ import classNames from 'classnames';
  */
 import Search from 'components/search';
 import SegmentedControl from 'components/segmented-control';
+import Suggestions from 'components/suggestions';
 import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
@@ -116,20 +117,27 @@ const ThemesMagicSearchCard = React.createClass( {
 			/>
 		);
 
+		const magicSearchClass = classNames( 'themes-magic-search', {
+			'has-suggestions': this.state.searchIsOpen
+		} );
+
 		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
 			'has-highlight': this.state.searchIsOpen
 		} );
 
 		return (
-			<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
-				{ searchField }
-				{ isPremiumThemesEnabled && ! isJetpack &&
-					<SegmentedControl
-						initialSelected={ this.props.tier }
-						options={ tiers }
-						onSelect={ this.props.select }
-					/>
-				}
+			<div className={ magicSearchClass }>
+				<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
+					{ searchField }
+					{ isPremiumThemesEnabled && ! isJetpack &&
+						<SegmentedControl
+							initialSelected={ this.props.tier }
+							options={ tiers }
+							onSelect={ this.props.select }
+						/>
+					}
+				</div>
+				<Suggestions/>
 			</div>
 		);
 	}
