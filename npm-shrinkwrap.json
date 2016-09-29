@@ -436,6 +436,9 @@
         }
       }
     },
+    "blessed": {
+      "version": "0.1.81"
+    },
     "blob": {
       "version": "0.0.4"
     },
@@ -742,6 +745,9 @@
     },
     "creditcards": {
       "version": "1.1.1"
+    },
+    "cross-spawn": {
+      "version": "4.0.2"
     },
     "cross-spawn-async": {
       "version": "2.2.4"
@@ -1290,7 +1296,7 @@
       "version": "2.1.1"
     },
     "fbjs": {
-      "version": "0.8.4",
+      "version": "0.8.5",
       "dependencies": {
         "core-js": {
           "version": "1.2.7"
@@ -1413,7 +1419,7 @@
       "version": "2.6.0"
     },
     "gaze": {
-      "version": "1.1.1"
+      "version": "1.1.2"
     },
     "generate-function": {
       "version": "2.0.0"
@@ -3589,6 +3595,52 @@
       "dependencies": {
         "source-map": {
           "version": "0.4.4"
+        }
+      }
+    },
+    "webpack-dashboard": {
+      "version": "0.2.0",
+      "dependencies": {
+        "accepts": {
+          "version": "1.1.4"
+        },
+        "commander": {
+          "version": "2.9.0"
+        },
+        "engine.io": {
+          "version": "1.6.11"
+        },
+        "engine.io-client": {
+          "version": "1.6.11",
+          "dependencies": {
+            "component-emitter": {
+              "version": "1.1.2"
+            },
+            "ws": {
+              "version": "1.0.1"
+            }
+          }
+        },
+        "filesize": {
+          "version": "3.3.0"
+        },
+        "mime-db": {
+          "version": "1.12.0"
+        },
+        "mime-types": {
+          "version": "2.0.14"
+        },
+        "negotiator": {
+          "version": "0.4.9"
+        },
+        "socket.io": {
+          "version": "1.4.8"
+        },
+        "socket.io-client": {
+          "version": "1.4.8"
+        },
+        "ws": {
+          "version": "1.1.0"
         }
       }
     },

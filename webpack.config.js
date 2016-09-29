@@ -4,7 +4,8 @@
  * External dependencies
  */
 var webpack = require( 'webpack' ),
-	path = require( 'path' );
+	path = require( 'path' ),
+	DashboardPlugin = require('webpack-dashboard/plugin');
 
 /**
  * Internal dependencies
@@ -80,6 +81,7 @@ webpackConfig = {
 		fs: 'empty'
 	},
 	plugins: [
+		new DashboardPlugin(),
 		new webpack.DefinePlugin( {
 			'process.env': {
 				NODE_ENV: JSON.stringify( config( 'env' ) )
