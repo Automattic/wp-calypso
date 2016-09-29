@@ -91,9 +91,9 @@ export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick =
 		'has-thumbnail': !! featuredImage
 	} );
 
-	//if ( ! post || post.state == 'pending' ) {
+	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
 		return <RelatedPostCardPlaceholder />;
-	//}
+	}
 
 	return (
 		<Card className={ classes }>
