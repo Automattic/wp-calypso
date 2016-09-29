@@ -108,9 +108,8 @@ describe( 'Installed plugin selectors', function() {
 	} );
 
 	describe( 'isRequesting', function() {
-		// from selectors.js: we assume we are still launching the fetch action, so it's true
-		it( 'Should get `true` if this site is not in the current state', function() {
-			expect( selectors.isRequesting( state, 'no.site' ) ).to.be.true;
+		it( 'Should get `false` if this site is not in the current state', function() {
+			expect( selectors.isRequesting( state, 'no.site' ) ).to.be.false;
 		} );
 
 		it( 'Should get `false` if this site is not being fetched', function() {
@@ -135,8 +134,8 @@ describe( 'Installed plugin selectors', function() {
 			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.three' ] ) ).to.be.true;
 		} );
 
-		it( 'Should get `true` if this site is not in the current state', function() {
-			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.two' ] ) ).to.be.true;
+		it( 'Should get `false` if sites are not being fetched, including a site not in the current state', function() {
+			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.two' ] ) ).to.be.false;
 		} );
 	} );
 
