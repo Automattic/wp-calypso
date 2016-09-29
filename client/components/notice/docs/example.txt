@@ -1,0 +1,5 @@
+<Notice
+	showDismiss={ false }
+	isCompact={ false }>
+	I'm a notice with no status and <a>a link</a>.
+</Notice>

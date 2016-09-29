@@ -9,6 +9,10 @@ import Playground from 'component-playground';
  */
 import Main from 'components/main';
 import Button from 'components/button';
+import Notice from 'components/notice';
+
+var componentExample = require( "raw!./../../components/notice/docs/example.txt" );
+
 
 let DesignPlayGround = React.createClass( {
 	displayName: 'DesignPlayGround',
@@ -16,7 +20,7 @@ let DesignPlayGround = React.createClass( {
 	render() {
 		return (
 			<Main className="design">
-				<Playground codeText={ "<Button>hello</Button>" } theme="material" scope={ { React: React, Button: Button } } noRender={ true } />
+				<Playground codeText={ componentExample } theme="material" scope={ { React: React, Button: Button, Notice: Notice } } noRender={ true } />
 			</Main>
 		);
 	}
