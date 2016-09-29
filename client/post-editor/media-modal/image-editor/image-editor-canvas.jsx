@@ -101,7 +101,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 		this.drawImage();
 		this.updateCanvasPosition();
 		this.onWindowResize = throttle( this.updateCanvasPosition, 200 );
-		if ( window ) {
+		if ( typeof window !== 'undefined' ) {
 			window.addEventListener( 'resize', this.onWindowResize );
 		}
 
@@ -111,7 +111,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	componentWillUnmount: function() {
-		if ( window && this.onWindowResize ) {
+		if ( typeof window !== 'undefined' && this.onWindowResize ) {
 			window.removeEventListener( 'resize', this.onWindowResize );
 			this.onWindowResize = null;
 		}
