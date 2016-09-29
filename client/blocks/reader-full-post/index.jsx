@@ -189,7 +189,7 @@ export class FullPostView extends React.Component {
 								siteIcon={ get( site, 'icon.img' ) }
 								feedIcon={ get( feed, 'image' ) }
 								siteName={ post.site_name }
-								siteUrl= { post.site_URL }
+								feedUrl= { get( feed, 'feed_URL' ) }
 								followCount={ site && site.subscribers_count }
 								feedId={ +post.feed_ID }
 								siteId={ +post.site_ID } />
