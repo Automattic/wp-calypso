@@ -5,9 +5,11 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 		return false;
 	}
 	const site = siteSlug.replace( /.*?:\/\//g, '' );
-	if ( state && state[ site ] ) {
+	const sessions = state.jetpackConnect.jetpackConnectSessions;
+
+	if ( sessions && sessions[ site ] ) {
 		const currentTime = ( new Date() ).getTime();
-		return ( currentTime - state[ site ].timestamp < JETPACK_CONNECT_TTL );
+		return ( currentTime - sessions[ site ].timestamp < JETPACK_CONNECT_TTL );
 	}
 
 	return false;
@@ -15,8 +17,10 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 
 const getFlowType = function( state, site ) {
 	const siteSlug = site.slug.replace( /.*?:\/\//g, '' );
-	if ( state && state[ siteSlug ] ) {
-		return state[ siteSlug ].flowType;
+	const sessions = state.jetpackConnect.jetpackConnectSessions;
+
+	if ( sessions && sessions[ siteSlug ] ) {
+		return sessions[ siteSlug ].flowType;
 	}
 	return false;
 };
@@ -29,11 +33,14 @@ const getFlowType = function( state, site ) {
  * @returns {Boolean}
  */
 const hasXmlrpcError = function( state ) {
+	const authorizeData = state.jetpackConnect.jetpackConnectAuthorize;
+
 	return (
-		state.authorizeError &&
-		state.authorizeError.message &&
-		state.authorizationCode &&
-		state.authorizeError.message.indexOf( 'error' ) > -1
+		authorizeData &&
+		authorizeData.authorizeError &&
+		authorizeData.authorizeError.message &&
+		authorizeData.authorizationCode &&
+		authorizeData.authorizeError.message.indexOf( 'error' ) > -1
 	);
 };
 
