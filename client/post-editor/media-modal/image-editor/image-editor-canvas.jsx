@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
+import throttle from 'lodash/throttle';
 
 /**
  * Internal dependencies
@@ -21,6 +22,8 @@ import { setImageEditorCropBounds } from 'state/ui/editor/image-editor/actions';
 
 const MediaModalImageEditorCanvas = React.createClass( {
 	displayName: 'MediaModalImageEditorCanvas',
+
+	onWindowResize: null,
 
 	propTypes: {
 		src: React.PropTypes.string,
@@ -97,12 +100,22 @@ const MediaModalImageEditorCanvas = React.createClass( {
 
 		this.drawImage();
 		this.updateCanvasPosition();
+		this.onWindowResize = throttle( this.updateCanvasPosition, 200 );
+		if ( typeof window !== 'undefined' ) {
+			window.addEventListener( 'resize', this.onWindowResize );
+		}
 
 		this.setState( {
 			imageLoaded: true
 		} );
 	},
 
+	componentWillUnmount: function() {
+		if ( typeof window !== 'undefined' && this.onWindowResize ) {
+			window.removeEventListener( 'resize', this.onWindowResize );
+			this.onWindowResize = null;
+		}
+	},
 	componentDidUpdate() {
 		this.drawImage();
 		this.updateCanvasPosition();
