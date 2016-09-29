@@ -39,10 +39,8 @@ const _filters = {
 };
 
 const isRequesting = function( state, siteId ) {
-	// if the `isRequesting` attribute doesn't exist yet,
-	// we assume we are still launching the fetch action, so it's true
 	if ( typeof state.plugins.installed.isRequesting[ siteId ] === 'undefined' ) {
-		return true;
+		return false;
 	}
 	return state.plugins.installed.isRequesting[ siteId ];
 };
