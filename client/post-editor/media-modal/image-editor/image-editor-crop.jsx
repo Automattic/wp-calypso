@@ -60,7 +60,13 @@ const MediaModalImageEditorCrop = React.createClass( {
 			top: props.bounds.topBound,
 			left: props.bounds.leftBound,
 			bottom: props.bounds.bottomBound,
-			right: props.bounds.rightBound
+			right: props.bounds.rightBound,
+			crop: {
+				topRatio: props.crop.topRatio,
+				leftRatio: props.crop.leftRatio,
+				heightRatio: props.crop.heightRatio,
+				widthRatio: props.crop.widthRatio
+			}
 		};
 	},
 

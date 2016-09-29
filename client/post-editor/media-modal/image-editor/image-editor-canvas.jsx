@@ -208,6 +208,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 			<Crop
 				onApplyCrop={ this.onApplyCrop }
 				bounds={ this.state.bounds }
+				crop={ this.state.crop } // Pass down default crop values so we don't have to duplicate them in <Crop>.
 			/>
 		);
 	},
