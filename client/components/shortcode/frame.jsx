@@ -79,7 +79,7 @@ export default React.createClass( {
 		return (
 			<ResizableIframe
 				key={ key }
-				{ ...omit( this.props, 'body', 'scripts', 'style', 'siteId', 'shortcode', 'filterRenderResult', 'styles' ) }
+				{ ...omit( this.props, 'body', 'scripts', 'styles' ) }
 				src="https://wpcomwidgets.com/render/"
 				onLoad={ this.onFrameLoad }
 				frameBorder="0"
