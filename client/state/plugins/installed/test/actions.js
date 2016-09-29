@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -55,6 +54,7 @@ import {
 	removePlugin
 } from '../actions';
 import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -63,12 +63,8 @@ describe( 'actions', () => {
 		spy.reset();
 	} );
 
-	after( () => {
-		nock.cleanAll();
-	} );
-
 	describe( '#fetch()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/plugins' )
@@ -125,11 +121,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#activate()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { active: true } )
-				.reply( 200, Object.assign( {}, akismet, { active: true, log: [ 'Plugin activated.' ] } ) )
+				.reply( 200, { ...akismet, active: true, log: [ 'Plugin activated.' ] } )
 				.post( '/rest/v1.1/sites/2916284/plugins/fake%2Ffake' )
 				.reply( 400, {
 					error: 'activation_error',
@@ -156,7 +152,7 @@ describe( 'actions', () => {
 					action: ACTIVATE_PLUGIN,
 					siteId: 2916284,
 					pluginId: 'akismet/akismet',
-					data: Object.assign( {}, akismet, { active: true, log: [ 'Plugin activated.' ] } )
+					data: { ...akismet, active: true, log: [ 'Plugin activated.' ] }
 				} );
 			} );
 		} );
@@ -176,11 +172,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#deactivate()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { active: false } )
-				.reply( 200, Object.assign( {}, akismet, { active: false, log: [ 'Plugin deactivated.' ] } ) )
+				.reply( 200, { ...akismet, active: false, log: [ 'Plugin deactivated.' ] } )
 				.post( '/rest/v1.1/sites/2916284/plugins/fake%2Ffake' )
 				.reply( 400, {
 					error: 'deactivation_error',
@@ -207,7 +203,7 @@ describe( 'actions', () => {
 					action: DEACTIVATE_PLUGIN,
 					siteId: 2916284,
 					pluginId: 'akismet/akismet',
-					data: Object.assign( {}, akismet, { active: false, log: [ 'Plugin deactivated.' ] } )
+					data: { ...akismet, active: false, log: [ 'Plugin deactivated.' ] }
 				} );
 			} );
 		} );
@@ -233,13 +229,13 @@ describe( 'actions', () => {
 			canUpdateFiles: true
 		};
 
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack/update' )
 				.reply( 200, jetpackUpdated )
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet/update' )
-				.reply( 200, Object.assign( {}, akismet, { log: [ 'No update needed' ] } ) )
+				.reply( 200, { ...akismet, log: [ 'No update needed' ] } )
 				.post( '/rest/v1.1/sites/2916284/plugins/fake%2Ffake/update' )
 				.reply( 400, {
 					error: 'unknown_plugin',
@@ -304,11 +300,11 @@ describe( 'actions', () => {
 			}
 		};
 
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { autoupdate: true } )
-				.reply( 200, Object.assign( {}, akismet, { autoupdate: true } ) )
+				.reply( 200, { ...akismet, autoupdate: true } )
 				.post( '/rest/v1.1/sites/2916284/plugins/fake%2Ffake', { autoupdate: true } )
 				.reply( 400, {
 					error: 'unknown_plugin',
@@ -335,7 +331,7 @@ describe( 'actions', () => {
 					action: ENABLE_AUTOUPDATE_PLUGIN,
 					siteId: 2916284,
 					pluginId: 'akismet/akismet',
-					data: Object.assign( {}, akismet, { autoupdate: true } ),
+					data: { ...akismet, autoupdate: true },
 				} );
 			} );
 		} );
@@ -365,11 +361,11 @@ describe( 'actions', () => {
 			}
 		};
 
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { autoupdate: false } )
-				.reply( 200, Object.assign( {}, akismet, { autoupdate: false } ) )
+				.reply( 200, { ...akismet, autoupdate: false } )
 				.post( '/rest/v1.1/sites/2916284/plugins/fake%2Ffake', { autoupdate: false } )
 				.reply( 400, {
 					error: 'unknown_plugin',
@@ -396,7 +392,7 @@ describe( 'actions', () => {
 					action: DISABLE_AUTOUPDATE_PLUGIN,
 					siteId: 2916284,
 					pluginId: 'akismet/akismet',
-					data: Object.assign( {}, akismet, { autoupdate: false } )
+					data: { ...akismet, autoupdate: false }
 				} );
 			} );
 		} );
@@ -426,7 +422,7 @@ describe( 'actions', () => {
 			}
 		};
 
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack/install' )
@@ -439,11 +435,11 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack', { autoupdate: true } )
-				.reply( 200, Object.assign( {}, jetpackUpdated, { autoupdate: true } ) );
+				.reply( 200, { ...jetpackUpdated, autoupdate: true } );
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack', { active: true } )
-				.reply( 200, Object.assign( {}, jetpackUpdated, { active: true, log: [ 'Plugin activated.' ] } ) );
+				.reply( 200, { ...jetpackUpdated, active: true, log: [ 'Plugin activated.' ] } );
 		} );
 
 		it( 'should dispatch request action when triggered', () => {
@@ -495,11 +491,11 @@ describe( 'actions', () => {
 			}
 		};
 
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet/delete' )
-				.reply( 200, Object.assign( {}, akismet, { log: [ 'Plugin deleted' ] } ) )
+				.reply( 200, { ...akismet, log: [ 'Plugin deleted' ] } )
 				.post( '/rest/v1.1/sites/2916284/plugins/fake%2Ffake/delete' )
 				.reply( 400, {
 					error: 'unknown_plugin',
@@ -508,11 +504,11 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { autoupdate: false } )
-				.reply( 200, Object.assign( {}, akismet, { autoupdate: false } ) );
+				.reply( 200, { ...akismet, autoupdate: false } );
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { active: false } )
-				.reply( 200, Object.assign( {}, akismet, { active: false, log: [ 'Plugin deactivated.' ] } ) );
+				.reply( 200, { ...akismet, active: false, log: [ 'Plugin deactivated.' ] } );
 		} );
 
 		it( 'should dispatch request action when triggered', () => {
