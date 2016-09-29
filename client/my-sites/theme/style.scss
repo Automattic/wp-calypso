@@ -275,19 +275,18 @@
 	margin: -0.78em 0;
 	padding: 0;
 
+	a {
+		color: $gray-dark;
+	}
+
 	li {
 		list-style: none;
 		display: inline-block;
-		// background: lighten( $gray, 30% ); // To be restored once made clickable
-		color: $gray-dark;
+		background: lighten( $gray, 30% );
 		font-size: 0.925em;
 		margin: 0.38em 0.37rem;
 		padding: 0.25em 0.7em;
 		border-radius: 3px;
-
-		span {
-			display: block;
-		}
 	}
 }
 
