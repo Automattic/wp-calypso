@@ -323,62 +323,37 @@
 
 	blockquote.sidenote {
 		margin: 0;
-		padding: 0;
+		padding: 16px;
 		border: none;
 		background: none;
 		font-size: 13px;
 		width: 175px;
 
-		@media ( min-width: 1132px ) {
-			position: absolute;
+		&.left,
+		&.alignleft {
+			float: left;
+			padding: 0 16px 16px 0;
+		}
 
+		@media ( min-width: 1400px ) {
 			&.right,
 			&.alignright {
+				position: absolute;
 				right: -( 175px + 32px );
 				margin-right: 0;
 			}
-
-			&.left,
-			&.alignleft {
-				left: -( 175px + 32px );
-				margin-left: 0;
-			}
 		}
 
-		@media ( max-width: 1132px ) {
+		@media ( max-width: 1400px ) {
 			&.right,
 			&.alignright,
 			&.left,
 			&.alignleft {
-				background: lighten( $gray, 30 );
-				margin: 0 0 24px 0;
-				padding: 16px;
-				width: auto;
-			}
-		}
-
-		@include breakpoint( "<960px" ) {
-			&.right,
-			&.alignright {
-				float: right;
-			}
-
-			&.left,
-			&.alignleft {
-				float: left;
-			}
-		}
-
-		@include breakpoint( "<480px" ) {
-		  &.alignleft,
-			&.alignright,
-			&.right,
-			&.left {
-				width: auto;
 				float: none;
-				margin: 0 0 24px 0;
 				background: lighten( $gray, 30 );
+				margin: 0 0 24px 0;
 				padding: 16px;
+				width: auto;
 
 				img {
 					display: block;
