@@ -8,7 +8,6 @@ import debounce from 'lodash/debounce';
 import page from 'page';
 import { Provider as ReduxProvider } from 'react-redux';
 import url from 'url';
-import assign from 'lodash/assign';
 
 /**
  * Internal dependencies
@@ -24,16 +23,6 @@ import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
 import EmptyContent from 'components/empty-content';
 import { loadScript } from 'lib/load-script';
-
-function loadCSS( cssUrl ) {
-	const link = assign( document.createElement( 'link' ), {
-		rel: 'stylesheet',
-		type: 'text/css',
-		href: cssUrl
-	} );
-
-	document.head.appendChild( link );
-}
 
 const devdocs = {
 
@@ -119,8 +108,6 @@ const devdocs = {
 		// load code mirror code
 		loadScript( '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/codemirror.min.js' );
 		loadScript( '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/mode/javascript/javascript.min.js' );
-		loadCSS( '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/codemirror.min.css' );
-		loadCSS( '//cdnjs.cloudflare.com/ajax/libs/codemirror/5.0.0/theme/material.min.css' );
 
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
