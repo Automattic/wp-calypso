@@ -166,7 +166,7 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const omitProps = [ 'siteId', 'shortcode', 'filterRenderResult', 'styles', 'onResize' ];
+		const omitProps = [ 'onResize' ];
 		return (
 			<iframe
 				ref="iframe"
