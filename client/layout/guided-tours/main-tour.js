@@ -211,7 +211,7 @@ export const MainTour = makeTour(
 					{ translate( "We're all done!" ) }
 				</Quit>
 			</div>
-			<Link href="https://lean.wordpress.com">
+			<Link href="https://learn.wordpress.com">
 				{ translate( 'Learn more about WordPress.com' ) }
 			</Link>
 		</Step>
