@@ -226,6 +226,7 @@ const Flows = {
 	filterDestination,
 
 	defaultFlowName: 'main',
+	resumingFlow: false,
 
 	getFlow( flowName ) {
 		let flow = Flows.getFlows()[ flowName ];
@@ -243,6 +244,37 @@ const Flows = {
 
 	getFlows() {
 		return flows;
+	},
+
+	/**
+	 * Preload AB Test variations after a certain step has been completed.
+	 *
+	 * This gives the option to set the AB variation as late as possible in the
+	 * signup flow.
+	 *
+	 * Currently only the `main` flow is whitelisted.
+	 *
+	 * @param {String} flowName The current flow
+	 * @param {String} stepName The step that is being completed right now
+	 */
+	preloadABTestVariationsForStep( flowName, stepName ) {
+
+		/**
+		 * In cases where the flow is being resumed, the flow must not be changed from what the user
+		 * has seen before.
+		 *
+		 * E.g. A user is resuming signup from before the test was added. There is no need
+		 * to add a step somewhere back in the line.
+		 */
+		if ( Flows.resumingFlow ) {
+			return;
+		}
+
+		if ( 'main' === flowName ) {
+			if ( 'survey' === stepName ) {
+				abtest( 'siteTitleStep' );
+			}
+		}
 	},
 
 	/**
