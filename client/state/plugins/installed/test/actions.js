@@ -54,7 +54,7 @@ import {
 	install as installPlugin,
 	remove as removePlugin
 } from '../actions';
-import { akismet, helloDolly, jetpack, jetpackUpdated } from './plugins';
+import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
