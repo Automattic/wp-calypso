@@ -100,7 +100,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
-			expect( getFlowType( state, { slug: 'sitetest' } ) ).to.eql( 'pro' );
+			expect( getFlowType( state, 'sitetest' ) ).to.eql( 'pro' );
 		} );
 
 		it( 'should return the false if there\'s no session for a site', () => {
