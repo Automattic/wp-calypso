@@ -29,3 +29,10 @@
 	background-size: 64px 64px, 64px 64px, 8px 8px, 8px 8px;
 	background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
 }
+
+.cm-string {
+	color: $alert-green;
+}
+.cm-atom {
+	color: $blue-medium;
+}
