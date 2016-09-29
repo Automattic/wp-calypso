@@ -16,11 +16,9 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 };
 
 const getFlowType = function( state, site ) {
-	const siteSlug = site.slug.replace( /.*?:\/\//g, '' );
 	const sessions = state.jetpackConnect.jetpackConnectSessions;
-
-	if ( sessions && sessions[ siteSlug ] ) {
-		return sessions[ siteSlug ].flowType;
+	if ( sessions && sessions[ site.slug ] ) {
+		return sessions[ site.slug ].flowType;
 	}
 	return false;
 };
