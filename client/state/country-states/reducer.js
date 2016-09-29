@@ -10,6 +10,7 @@ import {
 	COUNTRY_STATES_RECEIVE,
 	COUNTRY_STATES_REQUEST,
 	COUNTRY_STATES_REQUEST_FAILURE,
+	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'state/action-types';
 import { itemSchema } from './schema';
 import { createReducer } from 'state/utils';
@@ -22,7 +23,7 @@ export const items = createReducer( {}, {
 // Tracks states list fetching state
 export const isFetching = createReducer( {}, {
 	[ COUNTRY_STATES_REQUEST ]: ( state, { countryCode } ) => ( { ...state, [ countryCode ]: true } ),
-	[ COUNTRY_STATES_RECEIVE ]: ( state, { countryCode } ) => ( { ...state, [ countryCode ]: false } ),
+	[ COUNTRY_STATES_REQUEST_SUCCESS ]: ( state, { countryCode } ) => ( { ...state, [ countryCode ]: false } ),
 	[ COUNTRY_STATES_REQUEST_FAILURE ]: ( state, { countryCode } ) => ( { ...state, [ countryCode ]: false } )
 } );
 

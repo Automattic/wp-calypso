@@ -6,6 +6,7 @@ import {
 	COUNTRY_STATES_RECEIVE,
 	COUNTRY_STATES_REQUEST,
 	COUNTRY_STATES_REQUEST_FAILURE,
+	COUNTRY_STATES_REQUEST_SUCCESS,
 } from 'state/action-types';
 
 export function receiveCountryStates( countryStates, countryCode ) {
@@ -24,14 +25,21 @@ export function requestCountryStates( countryCode ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: COUNTRY_STATES_REQUEST,
-			countryCode
+			countryCode,
 		} );
 
 		return wpcom.undocumented().getDomainRegistrationSupportedStates( countryCode )
-			.then( ( countryStates ) => dispatch( receiveCountryStates( countryStates, countryCode ) ) )
+			.then( ( countryStates ) => {
+				dispatch( receiveCountryStates( countryStates, countryCode ) );
+				dispatch( {
+					type: COUNTRY_STATES_REQUEST_SUCCESS,
+					countryCode,
+				} );
+			} )
 			.catch( ( error ) => dispatch( {
 				type: COUNTRY_STATES_REQUEST_FAILURE,
-				error
+				countryCode,
+				error,
 			} ) );
 	};
 }
