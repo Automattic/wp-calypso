@@ -309,7 +309,11 @@ describe( 'actions', () => {
 				.reply( 400, {
 					error: 'unknown_plugin',
 					message: 'Plugin file does not exist.'
-				} );
+				} )
+				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack', { autoupdate: true } )
+				.reply( 200, { ...jetpack, autoupdate: true } )
+				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack/update' )
+				.reply( 200, jetpackUpdated );
 		} );
 
 		it( 'should dispatch request action when triggered', () => {
@@ -345,6 +349,18 @@ describe( 'actions', () => {
 					siteId: 2916284,
 					pluginId: 'fake/fake',
 					error: sinon.match( { message: 'Plugin file does not exist.' } )
+				} );
+			} );
+		} );
+
+		it( 'should dispatch plugin update request', () => {
+			const response = enableAutoupdatePlugin( site, { slug: 'jetpack', id: 'jetpack/jetpack', update: {} } )( spy );
+			return response.then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: PLUGIN_UPDATE_REQUEST,
+					action: UPDATE_PLUGIN,
+					siteId: 2916284,
+					pluginId: 'jetpack/jetpack'
 				} );
 			} );
 		} );
