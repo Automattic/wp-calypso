@@ -1,13 +1,15 @@
-import filter from 'lodash/filter';
-import forEach from 'lodash/forEach';
-import values from 'lodash/values';
-import sortBy from 'lodash/sortBy';
-import find from 'lodash/find';
-import uniq from 'lodash/uniq';
-import compact from 'lodash/compact';
-import omit from 'lodash/omit';
-import every from 'lodash/every';
-import some from 'lodash/some';
+import {
+	filter,
+	forEach,
+	values,
+	sortBy,
+	find,
+	uniq,
+	compact,
+	omit,
+	every,
+	some
+} from 'lodash';
 
 const _filters = {
 	none: function() {

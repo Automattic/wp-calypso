@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import omit from 'lodash/omit';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
