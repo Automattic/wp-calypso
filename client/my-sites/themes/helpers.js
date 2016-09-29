@@ -31,7 +31,11 @@ export function getPreviewUrl( theme, site ) {
 		return site.options.admin_url + 'customize.php?theme=' + theme.id + '&return=' + encodeURIComponent( window.location );
 	}
 
-	return `${theme.demo_uri}?demo=true&iframe=true&theme_preview=true`;
+	return `${ theme.demo_uri }?demo=true&iframe=true&theme_preview=true`;
+}
+
+export function getPurchaseUrl( theme, site ) {
+	return `/checkout/${ site.slug }/theme:${ theme.id }`;
 }
 
 export function getCustomizeUrl( theme, site ) {
@@ -40,7 +44,8 @@ export function getCustomizeUrl( theme, site ) {
 	}
 
 	if ( site.jetpack ) {
-		return site.options.admin_url + 'customize.php?return=' + encodeURIComponent( window.location ) + ( theme ? '&theme=' + theme.id : '' );
+		return site.options.admin_url + 'customize.php?return=' +
+			encodeURIComponent( window.location ) + ( theme ? '&theme=' + theme.id : '' );
 	}
 
 	return '/customize/' + site.slug + ( theme && theme.stylesheet ? '?theme=' + theme.stylesheet : '' );
@@ -117,7 +122,7 @@ export function isPremium( theme ) {
 }
 
 export function trackClick( componentName, eventName, verb = 'click' ) {
-	const stat = `${componentName} ${eventName} ${verb}`;
+	const stat = `${ componentName } ${ eventName } ${ verb }`;
 	analytics.ga.recordEvent( 'Themes', titlecase( stat ) );
 }
 
@@ -150,7 +155,7 @@ export function getAnalyticsData( path, tier, site_id ) {
 	}
 
 	if ( tier ) {
-		analyticsPageTitle += ` > Type > ${titlecase( tier )}`;
+		analyticsPageTitle += ` > Type > ${ titlecase( tier ) }`;
 	}
 
 	return { basePath, analyticsPageTitle };
