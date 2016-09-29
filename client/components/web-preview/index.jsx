@@ -43,7 +43,6 @@ export class WebPreview extends Component {
 		this.setDeviceViewport = this.setDeviceViewport.bind( this );
 		this.setIframeMarkup = this.setIframeMarkup.bind( this );
 		this.setIframeUrl = this.setIframeUrl.bind( this );
-		this.shouldRenderIframe = this.shouldRenderIframe.bind( this );
 		this.setLoaded = this.setLoaded.bind( this );
 	}
 
@@ -79,7 +78,7 @@ export class WebPreview extends Component {
 			this.props.setPreviewShowing( showPreview );
 		}
 
-		if ( ! this.shouldRenderIframe() ) {
+		if ( ! this.props.showPreview ) {
 			this.setState( {
 				iframeUrl: null,
 				loaded: false,
@@ -133,12 +132,7 @@ export class WebPreview extends Component {
 	}
 
 	setIframeUrl( iframeUrl ) {
-		// Bail if iframe isn't rendered
-		if ( ! this.shouldRenderIframe() ) {
-			return;
-		}
-
-		if ( ! this.iframe ) {
+		if ( ! this.props.showPreview || ! this.iframe ) {
 			return;
 		}
 
@@ -155,12 +149,6 @@ export class WebPreview extends Component {
 				iframeUrl: iframeUrl,
 			} );
 		} catch ( e ) {}
-	}
-
-	shouldRenderIframe() {
-		// Don't preload iframe on mobile devices as bandwidth is typically more limited and
-		// the preview causes weird issues
-		return ! this._isMobile || this.props.showPreview;
 	}
 
 	setDeviceViewport( device = 'computer' ) {
@@ -218,16 +206,14 @@ export class WebPreview extends Component {
 									}
 								</div>
 							}
-							{ this.shouldRenderIframe() &&
-								<iframe
-									ref={ this.setIframeInstance }
-									className="web-preview__frame"
-									style={ { display: ('seo' === this.state.device ? 'none' : 'inherit') } }
-									src="about:blank"
-									onLoad={ this.setLoaded }
-									title={ this.props.iframeTitle || translate( 'Preview' ) }
-								/>
-							}
+							<iframe
+								ref={ this.setIframeInstance }
+								className="web-preview__frame"
+								style={ { display: ('seo' === this.state.device ? 'none' : 'inherit') } }
+								src="about:blank"
+								onLoad={ this.setLoaded }
+								title={ this.props.iframeTitle || translate( 'Preview' ) }
+							/>
 							{ 'seo' === this.state.device &&
 								<SeoPreviewPane />
 							}
