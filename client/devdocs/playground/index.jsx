@@ -36,15 +36,6 @@ const docClass = {
 	none: null,
 };
 
-const PlayGroundPreview = React.createClass( {
-	displayName: 'PlayGroundPreview',
-	render() {
-		return (
-			<Main><code>Preview</code>{ this.props.children }</Main>
-		);
-	}
-} );
-
 const DesignPlayGround = React.createClass( {
 	displayName: 'DesignPlayGround',
 
@@ -66,7 +57,6 @@ const DesignPlayGround = React.createClass( {
 						Gridicon: Gridicon,
 						Notice: Notice
 					} }
-					previewComponent={ PlayGroundPreview }
 					noRender={ true } />
 			</Main>
 		);

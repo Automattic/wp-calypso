@@ -1,11 +1,57 @@
-.playground .CodeMirror {
+// Playground styles
+.playground {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: stretch;
+}
+
+.playgroundCode {
+	background: $gray-light;
+	border: 1px solid lighten( $gray, 10% );
+	order: 1;
+	flex-grow: 1;
+}
+
+.playground .CodeMirror, {
 	background: $gray-light;
 	font-size: 14px;
 	color: darken( $gray, 10% );
 	height: auto;
 	padding: 24px;
-	border: 1px solid lighten( $gray, 10% );
 }
+
+.cm-string {
+	color: $alert-green;
+}
+.cm-atom {
+	color: $blue-medium;
+}
+
+// Proptype styles
+.playground > div:not(.playgroundCode):first-child {
+	border: 1px solid lighten( $gray, 10% );
+	border-left-width: 0;
+	padding: 24px;
+	order: 2;
+	color: 	darken( $gray, 10% );
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		font-size: 14px;
+	}
+
+	b {
+		font-weight: 500;
+	}
+
+	i {
+		color: $gray;
+	}
+}
+
+// Error styles
 
 .playgroundError {
 	padding: 15px 16px 16px;
@@ -15,7 +61,16 @@
 	color: $gray;
 	color: darken( $gray, 10% );
 	font-size: 12px;
-	white-space: pre;
+	white-space: pre-wrap;
+	order: 3;
+	flex-basis: 100%;
+}
+
+// Preview styles
+
+.playgroundPreview {
+	order: 3;
+	flex-basis: 100%;
 }
 
 .previewArea {
@@ -28,13 +83,6 @@
 	linear-gradient( 90deg, lighten( $gray, 30% ) 1px, transparent 1px );
 	background-size: 64px 64px, 64px 64px, 8px 8px, 8px 8px;
 	background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
-}
-
-.cm-string {
-	color: $alert-green;
-}
-.cm-atom {
-	color: $blue-medium;
 }
 
 // CodeMirror code
