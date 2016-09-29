@@ -27,10 +27,6 @@ A module for managing installed plugins on connected sites.
 
 ### `isRequestingForSites( state: Object, sites: Array )`
 
-### `hasRequested( state: Object, siteId: Number|String )`
-
-### `hasRequestedForSites( state: Object, sites: Array )`
-
 ### `getPlugins( state: Object, sites: Array, pluginFilter: Object )`
 
 Get plugins installed on a list of sites (can also be just one site, but it should still be an array). Each plugin returned also lists the sites it's installed on in a `sites` property. Can be filtered by `active`, `inactive`, `updates`.
@@ -53,10 +49,7 @@ Data from the aforementioned actions is added to the global state tree, under `p
 state.plugins.installed = {
 	isRequesting: {
 		'exampleSiteId': false,
-	}
-	hasRequested: {
-		'exampleSiteId': true,
-	}
+	},
 	plugins: {
 		'exampleSiteId': [ {
 			id: 'akismet/akismet',

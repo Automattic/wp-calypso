@@ -30,11 +30,6 @@ const state = deepFreeze( {
 				'site.two': false,
 				'site.three': true,
 			},
-			hasRequested: {
-				'site.one': true,
-				'site.two': true,
-				'site.three': true,
-			},
 			plugins: {
 				'site.one': [ akismet, helloDolly ],
 				'site.two': [ jetpack, helloDolly ],
@@ -69,14 +64,6 @@ describe( 'Installed plugin selectors', function() {
 
 	it( 'should contain isRequestingForSites method', function() {
 		expect( selectors.isRequestingForSites ).to.be.a( 'function' );
-	} );
-
-	it( 'should contain hasRequested method', function() {
-		expect( selectors.hasRequested ).to.be.a( 'function' );
-	} );
-
-	it( 'should contain hasRequestedForSites method', function() {
-		expect( selectors.hasRequestedForSites ).to.be.a( 'function' );
 	} );
 
 	it( 'should contain getPlugins method', function() {
@@ -136,30 +123,6 @@ describe( 'Installed plugin selectors', function() {
 
 		it( 'Should get `false` if sites are not being fetched, including a site not in the current state', function() {
 			expect( selectors.isRequestingForSites( state, [ 'no.site', 'site.two' ] ) ).to.be.false;
-		} );
-	} );
-
-	describe( 'hasRequested', function() {
-		it( 'Should get `false` if this site is not in the current state', function() {
-			expect( selectors.hasRequested( state, 'no.site' ) ).to.be.false;
-		} );
-
-		it( 'Should get `true` if this site is has already been fetched', function() {
-			expect( selectors.hasRequested( state, 'site.one' ) ).to.be.true;
-		} );
-
-		it( 'Should get `true` if this site is being fetched', function() {
-			expect( selectors.hasRequested( state, 'site.three' ) ).to.be.true;
-		} );
-	} );
-
-	describe( 'hasRequestedForSites', function() {
-		it( 'Should get `false` if a site is not in the current state', function() {
-			expect( selectors.hasRequestedForSites( state, [ 'no.site', 'site.two' ] ) ).to.be.false;
-		} );
-
-		it( 'Should get `true` if all sites have been requested', function() {
-			expect( selectors.hasRequestedForSites( state, [ 'site.one', 'site.three' ] ) ).to.be.true;
 		} );
 	} );
 
