@@ -118,7 +118,7 @@ const groupMessages = messages => {
 
 const welcomeMessage = () => (
 	<div className="happychat__welcome">
-		{ translate( 'This is the beginning of your chat history with WordPress.com support. A chat history will be stored here.' ) }
+		{ translate( 'Welcome to WordPress.com support chat!' ) }
 	</div>
 );
 
