@@ -409,6 +409,14 @@
 	    display: block;
 	    overflow: hidden;
 	}
+
+	// adjust when scoll arrows show up in stats insights when panel is open
+	.has-chat.is-section-stats {
+		.post-trends__scroll-left,
+		.post-trends__scroll-right {
+			display: block;
+		}
+	}
 }
 
 
