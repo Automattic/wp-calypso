@@ -387,15 +387,6 @@
 			}
 		}
 	}
-
-	.fullbleed {
-		@media ( min-width: 1132px ) {
-			position: relative;
-			left: -( 175px + 32px );
-			width: ( 668px + 414px );
-			max-width: ( 668px + 414px );
-		}
-	}
 }
 
 // Daily Post-Specific Full Post View Styles
