@@ -364,8 +364,39 @@
 
 	// add space in the editor for the docked sidebar
 	.has-chat.is-group-editor .layout__content {
-		padding: 0 304px 0 0;
+		padding: 0 272px 0 0;
 	}
+
+	.has-chat.is-group-editor .editor__header,
+	.has-chat.is-group-editor .editor .mce-edit-area {
+	    padding: 0 16px;
+	}
+
+	.has-chat.is-group-editor .editor-title {
+	    margin-left: 52px;
+	}
+
+	.has-chat.is-group-editor .editor__header {
+		padding-bottom: 27px;
+	}
+
+	.has-chat.is-group-editor .mce-toolbar-grp .mce-stack-layout-item {
+	    display: inline-block;
+	    overflow: hidden;
+	}
+
+	.has-chat.is-group-editor .editor__switch-mode {
+	    right: 32px;
+	}
+}
+
+@include breakpoint( ">1280px" ) {
+
+	.has-chat.is-group-editor .mce-toolbar-grp .mce-stack-layout-item {
+	    display: block;
+	    overflow: hidden;
+	}
+
 }
 
 
