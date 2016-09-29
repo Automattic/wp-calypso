@@ -50,6 +50,37 @@ function AuthorAndSiteFollow( { post, site } ) {
 	);
 }
 
+function AuthorAndSiteFollowPlaceholder() {
+	return (
+		<div className="reader-related-card-v2__meta is-placeholder">
+			<Gravatar user={ null } />
+			<div className="reader-related-card-v2__byline">
+				<span className="reader-related-card-v2__byline-author">
+					Author name
+				</span>
+				<span className="reader-related-card-v2__byline-site">
+					Site title
+				</span>
+			</div>
+		</div>
+	);
+}
+
+function RelatedPostCardPlaceholder() {
+	return (
+		<Card className="reader-related-card-v2 is-placeholder">
+			<AuthorAndSiteFollowPlaceholder />
+			<a className="reader-related-card-v2__post reader-related-card-v2__link-block">
+				<div className="reader-related-card-v2__featured-image"></div>
+				<div className="reader-related-card-v2__site-info">
+					<h1 className="reader-related-card-v2__title">Title</h1>
+					<div className="reader-related-card-v2__excerpt post-excerpt">Excerpt</div>
+				</div>
+			</a>
+		</Card>
+	);
+}
+
 /* eslint-disable no-unused-vars */
 export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
 // onSiteClick is not being used
@@ -59,6 +90,10 @@ export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick =
 	const classes = classnames( 'reader-related-card-v2', {
 		'has-thumbnail': !! featuredImage
 	} );
+
+	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
+		return <RelatedPostCardPlaceholder />;
+	}
 
 	return (
 		<Card className={ classes }>
