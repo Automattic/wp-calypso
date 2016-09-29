@@ -42,6 +42,10 @@ function sourcecode( editor ) {
 		event.content = wrapPre( event.content, event.initial );
 	} );
 
+	editor.on( 'BeforeSetTextAreaContent', ( event ) => {
+		event.content = unwrapPre( event.content );
+	} );
+
 	editor.on( 'GetContent', ( event ) => {
 		if ( event.format !== 'raw' || ! event.content || event.selection ) {
 			return;

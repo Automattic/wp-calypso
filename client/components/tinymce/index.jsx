@@ -407,7 +407,12 @@ module.exports = React.createClass( {
 	},
 
 	setTextAreaContent: function( content ) {
-		this.setState( { content }, this.doAutosizeUpdate );
+		const event = { content };
+		if ( this._editor ) {
+			this._editor.fire( 'BeforeSetTextAreaContent', event );
+		}
+
+		this.setState( { content: event.content }, this.doAutosizeUpdate );
 	},
 
 	setEditorContent: function( content, args ) {
