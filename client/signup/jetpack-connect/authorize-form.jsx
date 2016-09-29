@@ -611,13 +611,10 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		const props = Object.assign( {}, this.props, {
 			user: user
 		} );
-		const calypsoStartedConnection = this.props.isCalypsoStartedConnection(
-			this.props.jetpackConnectAuthorize.queryObject.site
-		);
 
 		return (
 			( user )
-				? <LoggedInForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() } />
+				? <LoggedInForm { ...props } calypsoStartedConnection={ this.props.calypsoStartedConnection } isSSO={ this.isSSO() } />
 				: <LoggedOutForm { ...props } isSSO={ this.isSSO() } />
 		);
 	},
@@ -656,7 +653,7 @@ export default connect(
 			isAlreadyOnSitesList: !! site,
 			isFetchingSites,
 			requestHasXmlrpcError,
-			isCalypsoStartedConnection: isCalypsoStartedConnection.bind( state )
+			calypsoStartedConnection: isCalypsoStartedConnection( state, site )
 		};
 	},
 	dispatch => bindActionCreators( { requestSites,

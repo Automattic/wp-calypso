@@ -99,7 +99,7 @@ const Plans = React.createClass( {
 		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
 			user: this.props.userId
 		} );
-		if ( this.props.isCalypsoStartedConnection( this.props.selectedSite.slug ) ) {
+		if ( this.props.calypsoStartedConnection ) {
 			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
 		} else {
 			const { queryObject } = this.props.jetpackConnectAuthorize;
@@ -181,7 +181,7 @@ export default connect(
 			flowType: getFlowType( state, selectedSite && selectedSite.slug ),
 			isRequestingPlans: isRequestingPlans( state ),
 			getPlanBySlug: searchPlanBySlug,
-			isCalypsoStartedConnection: isCalypsoStartedConnection.bind( state )
+			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSite.slug )
 		};
 	},
 	( dispatch ) => {
