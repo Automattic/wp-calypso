@@ -410,9 +410,9 @@ module.exports = React.createClass( {
 		this.setState( { content }, this.doAutosizeUpdate );
 	},
 
-	setEditorContent: function( content ) {
+	setEditorContent: function( content, args ) {
 		if ( this._editor ) {
-			this._editor.setContent( formatting.wpautop( content ) );
+			this._editor.setContent( formatting.wpautop( content ), args );
 
 			// clear the undo stack to ensure that we don't have any leftovers
 			this._editor.undoManager.clear();

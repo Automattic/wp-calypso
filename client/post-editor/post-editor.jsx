@@ -133,7 +133,7 @@ const PostEditor = React.createClass( {
 		debug( 'PostEditor react component mounted.' );
 		// if content is passed in, e.g., through url param
 		if ( this.state.post && this.state.post.content ) {
-			this.refs.editor.setEditorContent( this.state.post.content );
+			this.refs.editor.setEditorContent( this.state.post.content, { initial: true } );
 		}
 	},
 
@@ -390,7 +390,7 @@ const PostEditor = React.createClass( {
 			}
 			this.setState( postEditState, function() {
 				if ( didLoad || this.state.isLoadingAutosave ) {
-					this.refs.editor.setEditorContent( this.state.post.content );
+					this.refs.editor.setEditorContent( this.state.post.content, { initial: true } );
 				}
 
 				if ( this.state.isLoadingAutosave ) {
