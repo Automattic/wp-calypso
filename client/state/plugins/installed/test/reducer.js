@@ -29,7 +29,7 @@ import {
 } from '../constants';
 import { isRequesting, hasRequested, plugins } from '../reducer';
 import status from '../status/reducer';
-import { akismet, jetpack } from './plugins';
+import { akismet, jetpack } from './fixtures/plugins';
 
 describe( 'reducer:', () => {
 	describe( 'isRequesting', () => {

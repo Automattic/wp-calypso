@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import selectors from '../selectors';
-import { akismet, helloDolly, jetpack } from './plugins';
+import { akismet, helloDolly, jetpack } from './fixtures/plugins';
 import {
 	INSTALL_PLUGIN,
 	DEACTIVATE_PLUGIN,
