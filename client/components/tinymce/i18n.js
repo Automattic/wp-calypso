@@ -67,8 +67,6 @@ module.exports = {
 	'Toolbar Toggle': i18n.translate( 'Toolbar Toggle' ),
 	'Insert Read More tag': i18n.translate( 'Insert Read More tag' ),
 	'Insert Page Break tag': i18n.translate( 'Insert Page Break tag' ),
-	// Title on the placeholder inside the editor
-	'Read more...': i18n.translate( 'Read more...' ),
 	// Tooltip for the 'alignnone' button in the image toolbar
 	'No alignment': i18n.translate( 'No alignment' ),
 	// Tooltip for the 'remove' button in the image toolbar
