@@ -92,7 +92,6 @@
 .reader-full-post .author-compact-profile {
 	display: inline-flex;
 	flex-direction: column;
-	z-index: z-index( '.masterbar', '.reader-profile' );
 
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 35px;
