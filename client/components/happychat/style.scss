@@ -2,7 +2,6 @@
  * Live Chat
  */
 
-
 .happychat__title {
 	cursor: pointer;
 	padding: 0 12px;
@@ -41,10 +40,10 @@
 
 }
 
+
 /**
  * Base styles
  */
-
 
 .happychat__container {
 	overflow: hidden;
@@ -188,7 +187,6 @@
 	&:hover {
 		background: lighten( $blue-medium, 10% );
 	}
-
 }
 
 .happychat__timeline-join-message {
@@ -251,7 +249,6 @@
 			border-right: 6px solid transparent;
 		}
 	}
-
 }
 
 .happychat__message-meta {
@@ -274,7 +271,6 @@
 		width: 100%;
 		height: auto;
 	}
-
 }
 
 .happychat__timeline-message {
@@ -302,7 +298,6 @@
 		}
 
 	}
-
 }
 
 .support-browser {
@@ -330,8 +325,8 @@
 		height: 100%;
 		background: hsla( 0, 0%, 0%, 0.1 );
 	}
-
 }
+
 
 /**
  * Sidebar mode
@@ -371,7 +366,6 @@
 	.has-chat.is-group-editor .layout__content {
 		padding: 0 304px 0 0;
 	}
-
 }
 
 
@@ -416,5 +410,4 @@
 		}
 
 	}
-
 }
