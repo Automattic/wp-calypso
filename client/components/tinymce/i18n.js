@@ -5,6 +5,7 @@ const i18n = require( 'i18n-calypso' );
 
 /**
  * @see wp_mce_translation() in src/wp-includes/class-wp-editor.php from WordPress
+ * In short, TinyMCE uses these strings to translate its internal strings
  */
 module.exports = {
 
@@ -73,6 +74,8 @@ module.exports = {
 	// Tooltip for the 'remove' button in the image toolbar
 	Remove: i18n.translate( 'Remove' ),
 	// Tooltip for the 'edit' button in the image toolbar
-	'Edit ': i18n.translate( 'Edit' ) // eslint-disable-line
-
+	'Edit ': i18n.translate( 'Edit' ), // eslint-disable-line
+	'Horizontal line': i18n.translate( 'Horizontal line' ),
+	'Text color': i18n.translate( 'Text color' ),
+	'Paste as text': i18n.translate( 'Paste as text' )
 };
