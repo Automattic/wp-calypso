@@ -9,86 +9,112 @@ import { expect } from 'chai';
 import { isCalypsoStartedConnection, getFlowType, hasXmlrpcError } from '../selectors';
 
 const stateHasXmlrpcError = {
-	authorizeError: {
-		message: 'transport error - HTTP status code was not 200 (502)'
-	},
-	authorizationCode: 'xxxx'
+	jetpackConnect: {
+		jetpackConnectAuthorize: {
+			authorizeError: {
+				message: 'transport error - HTTP status code was not 200 (502)'
+			},
+			authorizationCode: 'xxxx'
+		}
+	}
 };
 
 const stateHasNoError = {
-	authorizeError: false
+	jetpackConnect: {
+		jetpackConnectAuthorize: {
+			authorizeError: false
+		}
+	}
 };
 
 const stateHasNoAuthorizationCode = {
-	authorizeError: {
-		message: 'Could not verify your request.'
+	jetpackConnect: {
+		jetpackConnectAuthorize: {
+			authorizeError: {
+				message: 'Could not verify your request.'
+			}
+		}
 	}
 };
 
 const stateHasOtherError = {
-	authorizeError: {
-		message: 'Jetpack: [already_connected] User already connected.'
-	},
-	authorizationCode: 'xxxx'
+	jetpackConnect: {
+		jetpackConnectAuthorize: {
+			authorizeError: {
+				message: 'Jetpack: [already_connected] User already connected.'
+			},
+			authorizationCode: 'xxxx'
+		}
+	}
 };
 
 describe( 'selectors', () => {
 	describe( '#isCalypsoStartedConnection()', () => {
 		it( 'should return true if the user have started a session in calypso less than an hour ago', () => {
 			const state = {
-				jetpackConnectSessions: {
-					sitetest: {
-						timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-						flowType: ''
+				jetpackConnect: {
+					jetpackConnectSessions: {
+						sitetest: {
+							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
+							flowType: ''
+						}
 					}
 				}
 			};
-			expect( isCalypsoStartedConnection( state.jetpackConnectSessions, 'sitetest' ) ).to.be.true;
+			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.true;
 		} );
 		it( 'should return false if the user haven\'t started a session in calypso  ', () => {
 			const state = {
-				jetpackConnectSessions: {
-					sitetest: {}
+				jetpackConnect: {
+					jetpackConnectSessions: {
+						sitetest: {}
+					}
 				}
 			};
-			expect( isCalypsoStartedConnection( state.jetpackConnectSessions, 'sitetest' ) ).to.be.false;
+			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.false;
 		} );
 
 		it( 'should return false if the user started a session in calypso more than an hour ago', () => {
 			const state = {
-				jetpackConnectSessions: {
-					sitetest: {
-						timestamp: new Date( Date.now() - 60 * 60 * 1000 ).getTime(),
-						flow: ''
+				jetpackConnect: {
+					jetpackConnectSessions: {
+						sitetest: {
+							timestamp: new Date( Date.now() - 60 * 60 * 1000 ).getTime(),
+							flow: ''
+						}
 					}
 				}
 			};
-			expect( isCalypsoStartedConnection( state.jetpackConnectSessions, 'sitetest' ) ).to.be.false;
+			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.false;
 		} );
 	} );
 	describe( '#getFlowType()', () => {
 		it( 'should return the flow of the session for a site', () => {
 			const state = {
-				jetpackConnectSessions: {
-					sitetest: {
-						timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
-						flowType: 'pro'
+				jetpackConnect: {
+					jetpackConnectSessions: {
+						sitetest: {
+							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
+							flowType: 'pro'
+						}
 					}
 				}
 			};
-			expect( getFlowType( state.jetpackConnectSessions, { slug: 'sitetest' } ) ).to.eql( 'pro' );
+			expect( getFlowType( state, { slug: 'sitetest' } ) ).to.eql( 'pro' );
 		} );
 
 		it( 'should return the false if there\'s no session for a site', () => {
 			const state = {
-				jetpackConnectSessions: {}
+				jetpackConnect: {
+					jetpackConnectSessions: {}
+				}
 			};
-			expect( getFlowType( state.jetpackConnectSessions, { slug: 'sitetest' } ) ).to.be.false;
+			expect( getFlowType( state, { slug: 'sitetest' } ) ).to.be.false;
 		} );
 	} );
 	describe( '#hasXmlrpcError', () => {
 		it( 'should be undefined when there is an empty state', () => {
-			const hasError = hasXmlrpcError( {} );
+			const hasError = hasXmlrpcError( { jetpackConnect: {} } );
 			expect( hasError ).to.be.undefined;
 		} );
 		it( 'should be false when there is no error', () => {
