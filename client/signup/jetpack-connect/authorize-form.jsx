@@ -636,9 +636,11 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
-		const site = state.jetpackConnect.jetpackConnectAuthorize &&
-				state.jetpackConnect.jetpackConnectAuthorize.queryObject &&
-				state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
+		const queryObjectSite = state.jetpackConnect.jetpackConnectAuthorize &&
+			state.jetpackConnect.jetpackConnectAuthorize.queryObject &&
+			state.jetpackConnect.jetpackConnectAuthorize.queryObject.site;
+
+		const site = queryObjectSite
 			? getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
 			: null;
 		const requestHasXmlrpcError = () => {
@@ -647,13 +649,14 @@ export default connect(
 		const isFetchingSites = () => {
 			return isRequestingSites( state );
 		};
+
 		return {
 			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
 			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
 			isAlreadyOnSitesList: !! site,
 			isFetchingSites,
 			requestHasXmlrpcError,
-			calypsoStartedConnection: isCalypsoStartedConnection( state, site )
+			calypsoStartedConnection: isCalypsoStartedConnection( state, queryObjectSite )
 		};
 	},
 	dispatch => bindActionCreators( { requestSites,
