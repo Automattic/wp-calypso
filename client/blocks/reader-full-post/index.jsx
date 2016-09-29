@@ -157,6 +157,15 @@ export class FullPostView extends React.Component {
 		const siteName = siteNameFromSiteAndPost( site, post );
 		const classes = { 'reader-full-post': true };
 		const showRelatedPosts = ! post.is_external && post.site_ID;
+		const relatedPostsFromOtherSitesTitle = translate(
+			'More on {{wpLink}}WordPress.com{{/wpLink}}',
+			{
+				components: {
+					wpLink: <a href="/" className="reader-related-card-v2__link" />
+				}
+			}
+		);
+
 		if ( post.site_ID ) {
 			classes[ 'blog-' + post.site_ID ] = true;
 		}
@@ -255,7 +264,7 @@ export class FullPostView extends React.Component {
 
 						{ showRelatedPosts &&
 							<RelatedPostsFromOtherSites siteId={ post.site_ID } postId={ post.ID }
-								title={ translate( 'More on WordPress.com' ) }
+								title={ relatedPostsFromOtherSitesTitle }
 								className="is-other-site" />
 						}
 					</article>
