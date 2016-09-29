@@ -9,6 +9,8 @@ import {
 } from 'state/action-types';
 
 export function receiveCountryStates( countryStates, countryCode ) {
+	countryCode = countryCode.toLowerCase();
+
 	return {
 		type: COUNTRY_STATES_RECEIVE,
 		countryCode,
@@ -17,6 +19,8 @@ export function receiveCountryStates( countryStates, countryCode ) {
 }
 
 export function requestCountryStates( countryCode ) {
+	countryCode = countryCode.toLowerCase();
+
 	return ( dispatch ) => {
 		dispatch( {
 			type: COUNTRY_STATES_REQUEST,
