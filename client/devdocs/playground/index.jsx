@@ -41,7 +41,6 @@ const DesignPlayGround = React.createClass( {
 
 	render() {
 		const path = this.props.component ? this.props.component : 'none';
-		console.log( path );
 		return (
 			<Main>
 				<Playground
