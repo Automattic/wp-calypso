@@ -12,7 +12,7 @@
 
 To be able to clone the repo and run the application **on Mac OS X or Linux** you need:
 
--	[Node.js](http://nodejs.org/) (at least version **4.3.0**) and a matching [NPM](https://www.npmjs.com/) [version](https://nodejs.org/en/download/releases/) installed. On Mac OS X using [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n) makes it easy to manage `node` versions.
+-	Install the [Node.js](http://nodejs.org/) and matching [NPM](https://www.npmjs.com/) [versions](https://nodejs.org/en/download/releases/) listed in the engines section of [package.json](https://github.com/Automattic/wp-calypso/blob/master/package.json). On Mac OS X using [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n) makes it easy to manage `node` versions.
 -	[Git](http://git-scm.com/). Try the `git` command from your terminal, if it's not found then use this [installer](http://git-scm.com/download/).
 -	The repository also uses `make` to orchestrate compiling the JavaScript, running the server, and several other tasks. On Mac OS X, the easiest way to install `make` is through Apple's [Command Line Tools for Xcode](https://developer.apple.com/downloads/) (requires free registration).
 
