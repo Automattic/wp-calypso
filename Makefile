@@ -86,9 +86,6 @@ install: node_modules
 run: welcome githooks install build
 	@$(NODE) build/bundle-$(CALYPSO_ENV).js
 
-dashboard:
-	@$(NODE_BIN)/webpack-dashboard -- make run
-
 # a helper rule to ensure that a specific module is installed,
 # without relying on a generic `npm install` command
 node_modules/%:
