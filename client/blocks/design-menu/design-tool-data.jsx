@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -36,45 +37,38 @@ export default function designTool( Component ) {
 		},
 
 		getUpdatedCustomizationsForKey( id, customizations ) {
-			const updatedCustomizations = { [ id ]: Object.assign( {}, this.getCustomizationsForKey( id ), customizations ) };
+			const updatedCustomizations = { [ id ]:
+				Object.assign( {}, this.getDefaultCustomizations(), this.getCustomizationsForKey( id ), customizations )
+			};
 			return Object.assign( {}, this.props.customizations, updatedCustomizations );
 		},
 
-		buildOnChangeFor( id ) {
+		buildOnChange() {
 			return customizations => {
-				const newCustomizations = this.getUpdatedCustomizationsForKey( id, customizations );
-				debug( `changed customizations for "${id}" to`, newCustomizations );
+				const newCustomizations = this.getUpdatedCustomizationsForKey( this.props.previewDataKey, customizations );
+				debug( `changed customizations for "${this.props.previewDataKey}" to`, newCustomizations );
 				return this.props.updateCustomizations( this.props.selectedSiteId, newCustomizations );
 			};
 		},
 
-		getDefaultPropsForKey( id ) {
-			const site = this.props.selectedSite;
-			switch ( id ) {
-				case 'siteTitle':
-					return { blogname: site.name, blogdescription: site.description };
-			}
-		},
-
-		getDefaultChildProps() {
-			const events = { onChange: this.buildOnChangeFor( this.props.previewDataKey ) };
-			const defaults = this.getDefaultPropsForKey( this.props.previewDataKey );
-			return Object.assign( {}, defaults, events );
+		getDefaultCustomizations() {
+			return this.props.controls.reduce( ( customizations, control ) => {
+				return Object.assign( {}, customizations, { [ control.id ]: control.input.initialValue } );
+			}, {} );
 		},
 
 		getCustomizationsForKey( key ) {
-			if ( ! this.props.customizations[ key ] ) {
-				return {};
-			}
-			return this.props.customizations[ key ];
+			return this.props.customizations[ key ] || {};
 		},
 
 		getChildProps() {
-			return Object.assign( {}, this.getDefaultChildProps(), this.getCustomizationsForKey( this.props.previewDataKey ) );
+			const values = Object.assign( {}, this.getDefaultCustomizations(), this.getCustomizationsForKey( this.props.previewDataKey ) );
+			return { values, onChange: this.buildOnChange() };
 		},
 
 		render() {
-			const props = this.getChildProps();
+			const myProps = omit( this.props, [ 'previewDataKey', 'customizations', 'selectedSiteId', 'selectedSite', 'allPages' ] );
+			const props = Object.assign( {}, myProps, this.getChildProps() );
 			return <Component { ...props } />;
 		}
 	} );

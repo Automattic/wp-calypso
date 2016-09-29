@@ -6,7 +6,9 @@ import { connect } from 'react-redux';
 import page from 'page';
 import classnames from 'classnames';
 import get from 'lodash/get';
+import find from 'lodash/find';
 import includes from 'lodash/includes';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -19,21 +21,24 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getActiveDesignTool } from 'state/ui/preview/selectors';
 import { setActiveDesignTool, closePreview } from 'state/ui/preview/actions';
 import accept from 'lib/accept';
-import designTool from './design-tool-data';
+import designToolData from './design-tool-data';
 import DesignToolList from './design-tool-list';
-import SiteTitleControl from 'components/site-title';
 import DesignMenuPanel from './design-menu-panel';
 import DesignMenuHeader from './design-menu-header';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getSiteFragment } from 'lib/route/path';
+import DesignTool from './design-tool';
 
-const WrappedSiteTitleControl = designTool( SiteTitleControl );
+const WrappedDesignTool = designToolData( DesignTool );
+
+const debug = debugFactory( 'calypso:design-menu' );
 
 const DesignMenu = React.createClass( {
 
 	propTypes: {
 		isVisible: React.PropTypes.bool,
+		designTools: React.PropTypes.array,
 		// These are provided by the connect method
 		isUnsaved: React.PropTypes.bool,
 		customizations: React.PropTypes.object,
@@ -52,6 +57,7 @@ const DesignMenu = React.createClass( {
 			isVisible: false,
 			isUnsaved: false,
 			customizations: {},
+			designTools: [],
 		};
 	},
 
@@ -101,21 +107,23 @@ const DesignMenu = React.createClass( {
 		const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
 		// If this route has nothing but the preview, redirect to somewhere else
 		if ( isEmptyRoute ) {
-			page.redirect( `/stats/${siteFragment}` );
+			page.redirect( `/stats/${ siteFragment }` );
 		}
 	},
 
 	renderActiveDesignTool() {
-		switch ( this.props.activeDesignToolId ) {
-			case 'siteTitle':
-				return (
-					<DesignMenuPanel label={ this.props.translate( 'Title and Tagline' ) }>
-						<WrappedSiteTitleControl previewDataKey="siteTitle" />
-					</DesignMenuPanel>
-				);
-			default:
-				return <DesignToolList onChange={ this.props.setActiveDesignTool } />;
+		debug( `rendering activeDesignToolId ${ this.props.activeDesignToolId }` );
+		const allTools = this.props.designTools.reduce( ( all, section ) => all.concat( section.items ), [] );
+		const panel = find( allTools, panelConfig => panelConfig.id === this.props.activeDesignToolId );
+		if ( panel ) {
+			debug( `the active design tool ${ this.props.activeDesignToolId } has this config`, panel );
+			return (
+				<DesignMenuPanel label={ panel.label }>
+					<WrappedDesignTool controls={ panel.controls } previewDataKey={ panel.id } />
+				</DesignMenuPanel>
+			);
 		}
+		return <DesignToolList onChange={ this.props.setActiveDesignTool } designTools={ this.props.designTools } />;
 	},
 
 	getSiteCardSite() {
@@ -138,7 +146,7 @@ const DesignMenu = React.createClass( {
 			'is-layout-preview-sidebar': this.props.currentLayoutFocus === 'preview-sidebar'
 		} );
 		if ( ! this.props.selectedSite ) {
-			return <RootChild><div className={ classNames }/></RootChild>;
+			return <RootChild><div className={ classNames } /></RootChild>;
 		}
 		const onShowPreview = () => this.props.setLayoutFocus( 'preview' );
 		return (

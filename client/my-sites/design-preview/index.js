@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import page from 'page';
 import includes from 'lodash/includes';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,7 +15,6 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import { fetchPreviewMarkup, undoCustomization } from 'state/preview/actions';
 import accept from 'lib/accept';
-import { updatePreviewWithChanges } from 'lib/design-preview';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
 import { getSiteOption } from 'state/sites/selectors';
@@ -24,6 +24,7 @@ import DesignMenu from 'blocks/design-menu';
 import { getSiteFragment } from 'lib/route/path';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import DesignPreviewCustomization from 'components/design-preview-customization';
 
 const debug = debugFactory( 'calypso:design-preview' );
 
@@ -46,48 +47,35 @@ export default function designPreview( WebPreview ) {
 		}
 
 		componentDidUpdate( prevProps ) {
+			if ( this.shouldReloadPreview( prevProps ) ) {
+				this.loadPreview();
+			}
+		}
+
+		shouldReloadPreview( prevProps ) {
 			// If there is no markup or the site has changed, fetch it
 			if ( ! this.props.previewMarkup || this.props.selectedSiteId !== prevProps.selectedSiteId ) {
-				this.loadPreview();
+				return true;
 			}
 			// Refresh the preview when it is being shown (since this component is
 			// always present but not always visible, this is similar to loading the
 			// preview when mounting).
 			if ( this.props.showPreview && ! prevProps.showPreview ) {
-				this.loadPreview();
+				return true;
 			}
 			// If the customizations have been removed, restore the original markup
 			if ( this.haveCustomizationsBeenRemoved( prevProps ) ) {
 				// Force the initial markup to be restored because the DOM may have been
 				// changed, and simply not applying customizations will not restore it.
 				debug( 'restoring original markup' );
-				this.loadPreview();
+				return true;
 			}
-			// Certain customizations cannot be applied by DOM changes, in which case we
-			// can reload the preview.
-			if ( this.shouldReloadPreview( prevProps ) ) {
-				debug( 'reloading preview due to customizations' );
-				this.loadPreview();
-			}
-			// Apply customizations as DOM changes
-			if ( this.props.customizations && this.previewDocument ) {
-				debug( 'updating preview with customizations', this.props.customizations );
-				updatePreviewWithChanges( this.previewDocument, this.props.customizations );
-			}
-		}
-
-		shouldReloadPreview( prevProps ) {
-			const customizations = this.props.customizations;
-			const prevCustomizations = prevProps.customizations || {};
-			return ( JSON.stringify( customizations.homePage ) !==
-				JSON.stringify( prevCustomizations.homePage ) );
+			return false;
 		}
 
 		haveCustomizationsBeenRemoved( prevProps ) {
-			return ( this.props.previewMarkup &&
-				this.props.customizations &&
+			return (
 				this.props.previewMarkup === prevProps.previewMarkup &&
-				prevProps.customizations &&
 				Object.keys( this.props.customizations ).length === 0 &&
 				Object.keys( prevProps.customizations ).length > 0
 			);
@@ -129,7 +117,7 @@ export default function designPreview( WebPreview ) {
 			const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
 			// If this route has nothing but the preview, redirect to somewhere else
 			if ( isEmptyRoute ) {
-				page.redirect( `/stats/${siteFragment}` );
+				page.redirect( `/stats/${ siteFragment }` );
 			}
 		}
 
@@ -147,10 +135,28 @@ export default function designPreview( WebPreview ) {
 				return null;
 			}
 			const showSidebar = () => this.props.setLayoutFocus( 'preview-sidebar' );
+			const applyCustomization = tool => {
+				return (
+					<DesignPreviewCustomization
+						key={ tool.id }
+						dom={ this.previewDocument }
+						customization={ this.props.customizations[ tool.id ] }
+						toolId={ tool.id }
+					/>
+				);
+			};
+			const applyCustomizations = () => {
+				const allTools = this.props.designTools.reduce( ( all, section ) => all.concat( section.items ), [] );
+				return (
+					<div>
+						{ allTools.map( applyCustomization ) }
+					</div>
+				);
+			};
 
 			return (
 				<div>
-					<DesignMenu isVisible={ this.props.showPreview } />
+					<DesignMenu isVisible={ this.props.showPreview } designTools={ this.props.designTools } />
 					<WebPreview
 						className={ this.props.className }
 						showPreview={ this.props.showPreview }
@@ -171,6 +177,7 @@ export default function designPreview( WebPreview ) {
 							</span>
 						</button>
 					</WebPreview>
+					{ applyCustomizations() }
 				</div>
 			);
 		}
@@ -185,6 +192,7 @@ export default function designPreview( WebPreview ) {
 		previewUrl: PropTypes.string,
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
+		designTools: PropTypes.array,
 		undoCustomization: PropTypes.func.isRequired,
 		fetchPreviewMarkup: PropTypes.func.isRequired,
 		closePreview: PropTypes.func.isRequired,
@@ -194,6 +202,7 @@ export default function designPreview( WebPreview ) {
 
 	DesignPreview.defaultProps = {
 		customizations: {},
+		designTools: [],
 	};
 
 	function mapStateToProps( state ) {
@@ -201,10 +210,44 @@ export default function designPreview( WebPreview ) {
 		const selectedSiteId = getSelectedSiteId( state );
 		const currentLayoutFocus = getCurrentLayoutFocus( state );
 
+		const site = selectedSite;
+		const siteTitleConfig = {
+			id: 'blogname',
+			input: {
+				type: 'text',
+				label: i18n.translate( 'Site Title' ),
+				initialValue: site.name,
+			},
+		};
+		const siteTaglineConfig = {
+			id: 'blogdescription',
+			input: {
+				type: 'text',
+				label: i18n.translate( 'Tagline' ),
+				initialValue: site.description,
+			},
+		};
+		const siteTitlePanel = {
+			id: 'siteTitle',
+			icon: 'heading',
+			label: i18n.translate( 'Title and Tagline' ),
+			controls: [
+				siteTitleConfig,
+				siteTaglineConfig,
+			],
+		};
+		const siteIdentity = {
+			title: i18n.translate( 'Site Identity' ),
+			items: [
+				siteTitlePanel,
+			]
+		};
+
 		return {
 			selectedSite,
 			selectedSiteId,
 			selectedSiteUrl: getSiteOption( state, selectedSiteId, 'unmapped_url' ),
+			designTools: [ siteIdentity ],
 			previewUrl: getPreviewUrl( state ),
 			previewMarkup: getPreviewMarkup( state, selectedSiteId ),
 			customizations: getPreviewCustomizations( state, selectedSiteId ),
