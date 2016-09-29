@@ -38,20 +38,19 @@ const _filters = {
 	}
 };
 
-const isRequesting = function( state, siteId ) {
+export function isRequesting( state, siteId ) {
 	if ( typeof state.plugins.installed.isRequesting[ siteId ] === 'undefined' ) {
 		return false;
 	}
 	return state.plugins.installed.isRequesting[ siteId ];
-};
+}
 
-const isRequestingForSites = function( state, sites ) {
+export function isRequestingForSites( state, sites ) {
 	// As long as any sites have isRequesting true, we consider this group requesting
 	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
-};
+}
 
-
-const getPlugins = function( state, sites, pluginFilter = false ) {
+export function getPlugins( state, sites, pluginFilter = false ) {
 	let pluginList = {};
 	forEach( sites, ( site ) => {
 		const list = state.plugins.installed.plugins[ site.ID ] || [];
@@ -70,22 +69,22 @@ const getPlugins = function( state, sites, pluginFilter = false ) {
 		pluginList = filter( pluginList, _filters[ pluginFilter ] );
 	}
 	return values( sortBy( pluginList, item => item.slug.toLowerCase() ) );
-};
+}
 
-const getPluginsWithUpdates = function( state, sites ) {
+export function getPluginsWithUpdates( state, sites ) {
 	const pluginList = getPlugins( state, sites );
 	if ( pluginList.length === 0 ) {
 		return [];
 	}
 	return filter( pluginList, _filters.updates );
-};
+}
 
-const getPluginOnSite = function( state, site, pluginSlug ) {
+export function getPluginOnSite( state, site, pluginSlug ) {
 	const pluginList = getPlugins( state, [ site ] );
 	return find( pluginList, { slug: pluginSlug } ) || false;
-};
+}
 
-const getSitesWithPlugin = function( state, sites, pluginSlug ) {
+export function getSitesWithPlugin( state, sites, pluginSlug ) {
 	const pluginList = getPlugins( state, sites );
 	const plugin = find( pluginList, { slug: pluginSlug } );
 	if ( ! plugin ) {
@@ -103,9 +102,9 @@ const getSitesWithPlugin = function( state, sites, pluginSlug ) {
 	) );
 
 	return sortBy( pluginSites, item => item.title.toLowerCase() );
-};
+}
 
-const getSitesWithoutPlugin = function( state, sites, pluginSlug ) {
+export function getSitesWithoutPlugin( state, sites, pluginSlug ) {
 	const installedOnSites = getSitesWithPlugin( state, sites, pluginSlug ) || [];
 	return filter( sites, function( site ) {
 		if ( ! site.visible || ! site.jetpack ) {
@@ -120,9 +119,9 @@ const getSitesWithoutPlugin = function( state, sites, pluginSlug ) {
 			return installedOnSite.slug !== site.slug;
 		} );
 	} );
-};
+}
 
-const getStatusForPlugin = function( state, siteId, pluginId ) {
+export function getStatusForPlugin( state, siteId, pluginId ) {
 	if ( typeof state.plugins.installed.status[ siteId ] === 'undefined' ) {
 		return false;
 	}
@@ -131,23 +130,9 @@ const getStatusForPlugin = function( state, siteId, pluginId ) {
 	}
 	const status = state.plugins.installed.status[ siteId ][ pluginId ];
 	return Object.assign( {}, status, { siteId: siteId, pluginId: pluginId } );
-};
+}
 
-const isPluginDoingAction = function( state, siteId, pluginId ) {
+export function isPluginDoingAction( state, siteId, pluginId ) {
 	const status = getStatusForPlugin( state, siteId, pluginId );
 	return ( !! status ) && ( 'inProgress' === status.status );
-};
-
-export default {
-	isRequesting,
-	isRequestingForSites,
-	hasRequested,
-	hasRequestedForSites,
-	getPlugins,
-	getPluginsWithUpdates,
-	getPluginOnSite,
-	getSitesWithPlugin,
-	getSitesWithoutPlugin,
-	getStatusForPlugin,
-	isPluginDoingAction
-};
+}
