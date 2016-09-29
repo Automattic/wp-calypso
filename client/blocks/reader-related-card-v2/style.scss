@@ -443,6 +443,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 }
 
+// Placeholders
 .reader-related-card-v2.is-placeholder {
 	.reader-related-card-v2__title,
 	.reader-related-card-v2__excerpt,
@@ -451,7 +452,14 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 		// Clobber the long-content-fade
 		&::after {
-			content: none !important;
+			content: none;
+		}
+	}
+
+	.reader-related-card-v2__post {
+		// Clobber the long-content-fade
+		&::after {
+			content: none;
 		}
 	}
 }
@@ -463,7 +471,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 		// Clobber the long-content-fade
 		&::after {
-			content: none !important;
+			content: none;
 		}
 	}
 
