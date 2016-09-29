@@ -4,7 +4,6 @@
 import { combineReducers } from 'redux';
 import debugFactory from 'debug';
 import omit from 'lodash/omit';
-import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
@@ -108,7 +107,9 @@ function system( state = {}, action ) {
 			}
 
 			return Object.assign( {}, state, {
-				wpcomSubscription: Object.assign( {}, pick( data, [ 'ID', 'settings' ] ) )
+				wpcomSubscription: {
+					ID: data.ID.toString(),
+					settings: data.settings }
 			} );
 		}
 	}
