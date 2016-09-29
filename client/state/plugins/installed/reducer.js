@@ -2,9 +2,11 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import uniqBy from 'lodash/uniqBy';
-import omit from 'lodash/omit';
-import findIndex from 'lodash/findIndex';
+import {
+	uniqBy,
+	omit,
+	findIndex,
+} from 'lodash';
 /**
  * Internal dependencies
  */
