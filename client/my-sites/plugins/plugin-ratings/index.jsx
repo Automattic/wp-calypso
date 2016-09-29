@@ -51,28 +51,26 @@ export default React.createClass( {
 		};
 
 		return (
-			<div className="plugin-ratings__rating-tier" key={ `plugins-ratings__tier-${ ratingTier }` }>
-				<a className="plugin-ratings__rating-container" target="_blank" rel="noopener noreferrer"
-					onClick={ onClickPluginRatingsLink }
-					href={ this.buildReviewUrl( ratingTier ) }
-				>
-					<span className="plugin-ratings__rating-tier-text">
-						{
-							this.translate(
-								'%(ratingTier)s star', '%(ratingTier)s stars', {
-									count: ratingTier, args: { ratingTier: ratingTier }
-								}
-							)
-						}
-					</span>
-					<span className="plugin_ratings__bar">
-						<ProgressBar value={ numberOfRatings }
-							total={ numRatings }
-							title={ this.translate( '%(numberOfRatings)s ratings', { args: { numberOfRatings } } ) }
-						/>
-					</span>
-				</a>
-			</div>
+			<a key={ `plugins-ratings__tier-${ ratingTier }` } className="plugin-ratings__rating-container" target="_blank" rel="noopener noreferrer"
+				onClick={ onClickPluginRatingsLink }
+				href={ this.buildReviewUrl( ratingTier ) }
+			>
+				<span className="plugin-ratings__rating-tier-text">
+					{
+						this.translate(
+							'%(ratingTier)s star', '%(ratingTier)s stars', {
+								count: ratingTier, args: { ratingTier: ratingTier }
+							}
+						)
+					}
+				</span>
+				<span className="plugin_ratings__bar">
+					<ProgressBar value={ numberOfRatings }
+						total={ numRatings }
+						title={ this.translate( '%(numberOfRatings)s ratings', { args: { numberOfRatings } } ) }
+					/>
+				</span>
+			</a>
 		);
 	},
 
@@ -120,7 +118,9 @@ export default React.createClass( {
 						args: { ratingsNumber: numRatings }
 					} ) }
 				</div>
-				{ tierViews }
+				<div className="plugin-ratings-tiers">
+					{ tierViews }
+				</div>
 				{ this.renderDownloaded() }
 			</div>
 		);
