@@ -1,0 +1,14 @@
+<div><Accordion
+	title="Section Four"
+	subtitle={ "With a Very Long Subtitle to Demonstrate the Fade Effect" }
+>
+	Drumstick ham tongue flank doner pork chop picanha.
+</Accordion>
+<Accordion
+	title="Section Five"
+	subtitle={ null }
+	icon={ <Gridicon icon="time" /> }
+>
+	Etiam dictum odio elit, id faucibus urna elementum ac. Mauris in est nec tortor luctus auctor ut a velit. sodales venenatis.
+</Accordion>
+</div>
