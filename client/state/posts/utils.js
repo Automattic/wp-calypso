@@ -188,12 +188,9 @@ export function getTermIdsFromEdits( post ) {
 		return post;
 	}
 
-	// Skip "post_tag" taxonomies until legacy token-field is removed
-	let taxonomies = omit( post.terms, [ 'post_tag' ] );
-
 	// Filter taxonomies that are set as arrays ( i.e. tags )
 	// This can be detected by an array of strings vs an array of objects
-	taxonomies = reduce( taxonomies, ( prev, taxonomyTerms, taxonomyName ) => {
+	const taxonomies = reduce( post.terms, ( prev, taxonomyTerms, taxonomyName ) => {
 		// Ensures we are working with an array
 		const termsArray = toArray( taxonomyTerms );
 		if ( termsArray && termsArray.length && ! isPlainObject( termsArray[ 0 ] ) ) {
