@@ -55,10 +55,9 @@ const getPluginHandler = ( siteId, pluginId ) => {
 	return siteHandler.plugin( pluginId );
 };
 
-export function activatePlugin( site, plugin ) {
+export function activatePlugin( siteId, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id;
-		const siteId = site.ID;
 		const defaultAction = {
 			action: ACTIVATE_PLUGIN,
 			siteId,
@@ -82,10 +81,9 @@ export function activatePlugin( site, plugin ) {
 	};
 }
 
-export function deactivatePlugin( site, plugin ) {
+export function deactivatePlugin( siteId, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id;
-		const siteId = site.ID;
 		const defaultAction = {
 			action: DEACTIVATE_PLUGIN,
 			siteId,
@@ -109,14 +107,13 @@ export function deactivatePlugin( site, plugin ) {
 	};
 }
 
-export function updatePlugin( site, plugin ) {
+export function updatePlugin( siteId, plugin ) {
 	return ( dispatch ) => {
 		if ( ! plugin.update ) {
 			return Promise.reject( 'Error: Plugin already up-to-date.' );
 		}
 
 		const pluginId = plugin.id;
-		const siteId = site.ID;
 		const defaultAction = {
 			action: UPDATE_PLUGIN,
 			siteId,
@@ -136,10 +133,9 @@ export function updatePlugin( site, plugin ) {
 	};
 }
 
-export function enableAutoupdatePlugin( site, plugin ) {
+export function enableAutoupdatePlugin( siteId, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id;
-		const siteId = site.ID;
 		const defaultAction = {
 			action: ENABLE_AUTOUPDATE_PLUGIN,
 			siteId,
@@ -149,7 +145,7 @@ export function enableAutoupdatePlugin( site, plugin ) {
 
 		const successCallback = ( data ) => {
 			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } ) );
-			updatePlugin( site, plugin )( dispatch );
+			updatePlugin( siteId, plugin )( dispatch );
 		};
 
 		const errorCallback = ( error ) => {
@@ -160,10 +156,9 @@ export function enableAutoupdatePlugin( site, plugin ) {
 	};
 }
 
-export function disableAutoupdatePlugin( site, plugin ) {
+export function disableAutoupdatePlugin( siteId, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id;
-		const siteId = site.ID;
 		const defaultAction = {
 			action: DISABLE_AUTOUPDATE_PLUGIN,
 			siteId,
@@ -260,10 +255,9 @@ export function installPluginOnMultisite( siteId, plugin ) {
 	return installPluginHelper( siteId, plugin, true );
 }
 
-export function removePlugin( site, plugin ) {
+export function removePlugin( siteId, plugin ) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id;
-		const siteId = site.ID;
 		const defaultAction = {
 			action: REMOVE_PLUGIN,
 			siteId,
