@@ -56,22 +56,25 @@
 .reader-full-post__sidebar {
 	width: 220px;
 	position: fixed;
+	text-align: center;
+
 	@include breakpoint( ">1280px" ) {
 		left: calc( 50% - 490px );
 	}
+
 	@include breakpoint( "1040px-1280px" ) {
 		left: calc( 50% - 480px );
 	}
+
 	@include breakpoint( "660px-1040px" ) {
 		left: 20px;
 	}
+
 	@include breakpoint( "<660px" ) {
 		position: static;
 		width: auto;
 		text-align: left;
 	}
-	text-align: center;
-	margin-top: 4px;
 }
 
 .reader-full-post__story {
@@ -109,10 +112,6 @@
 
 	.reader-author-link {
 		margin-top: 0;
-
-		@include breakpoint( ">660px" ) {
-			margin-top: -4px; // Aligns baseline of author name with baseline of title if no avatar
-		}
 	}
 
 	@include breakpoint( "<660px" ) {
@@ -246,6 +245,31 @@
 	.comment-button__label-status {
 		display: none;
 	}
+}
+
+// Align site name/author with title
+.reader-full-post .has-author-link.has-author-icon .author-compact-profile__avatar-link{
+	display: block;
+}
+
+.reader-full-post .has-author-link .author-compact-profile__avatar-link {
+	display: none;
+}
+
+.reader-full-post .has-author-link {
+	margin-top: 14px;
+}
+
+.reader-full-post .has-author-link.has-author-icon {
+	margin-top: 5px;
+}
+
+.reader-full-post .has-author-link .reader-author-link {
+	margin-top: 4px;
+}
+
+.reader-full-post .has-author-link.has-author-icon .reader-author-link {
+	margin-top: 0;
 }
 
 // For posts without a title
@@ -382,7 +406,7 @@
 }
 
 .reader-full-post__featured-image {
-	margin: 27px 0 26px;
+	margin: 28px 0 26px;
 }
 
 .reader-full-post__story-content img:first-child {
