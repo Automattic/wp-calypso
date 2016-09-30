@@ -21,6 +21,7 @@ const AuthorCompactProfile = React.createClass( {
 		author: React.PropTypes.object.isRequired,
 		siteName: React.PropTypes.string,
 		siteUrl: React.PropTypes.string,
+		feedUrl: React.PropTypes.string,
 		followCount: React.PropTypes.number,
 		feedId: React.PropTypes.number,
 		siteId: React.PropTypes.number,
@@ -29,7 +30,7 @@ const AuthorCompactProfile = React.createClass( {
 	},
 
 	render() {
-		const { author, siteIcon, feedIcon, siteName, siteUrl, followCount, feedId, siteId } = this.props;
+		const { author, siteIcon, feedIcon, siteName, siteUrl, feedUrl, followCount, feedId, siteId } = this.props;
 
 		if ( ! author ) {
 			return null;
@@ -42,6 +43,9 @@ const AuthorCompactProfile = React.createClass( {
 		} );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const authorNameBlacklist = [ 'admin' ];
+
+		// If we have a feed URL, use that for the follow button in preference to the site URL
+		const followUrl = feedUrl || siteUrl;
 
 		return (
 			<div className={ classes }>
@@ -70,7 +74,7 @@ const AuthorCompactProfile = React.createClass( {
 					) }
 					</div> : null }
 
-					<ReaderFollowButton siteUrl={ siteUrl } />
+					{ followUrl && <ReaderFollowButton siteUrl={ followUrl } /> }
 				</div>
 			</div>
 		);
