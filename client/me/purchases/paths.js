@@ -2,10 +2,6 @@ function list() {
 	return '/purchases';
 }
 
-function listNotice( noticeType = ':noticeType' ) {
-	return list() + `/${ noticeType }`;
-}
-
 function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
 	return list() + `/${ siteName }/${ purchaseId }`;
 }
@@ -37,6 +33,5 @@ export default {
 	confirmCancelDomain,
 	editCardDetails,
 	list,
-	listNotice,
 	managePurchase
 };
