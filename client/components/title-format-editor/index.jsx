@@ -260,7 +260,7 @@ export class TitleFormatEditor extends Component {
 			const contentState = Modifier.replaceText(
 				editorState.getCurrentContent(),
 				currentSelection,
-				` ${ title } `,
+				`\u205f${ title }\u205f`,
 				null,
 				tokenEntity
 			);
