@@ -48,6 +48,11 @@ export default function() {
 		);
 
 		page(
+			'/plans/features/:feature/:domain',
+			plansController.features
+		);
+
+		page(
 			'/plans/my-plan',
 			controller.siteSelection,
 			controller.sites,
