@@ -14,7 +14,7 @@ import forIn from 'lodash/forIn';
 
 // Regular expressions for matching "taxonomy:term" search-box syntax
 const FILTER_REGEX_STRING = '(\\w+)\\:\\s*([\\w-]+)';
-const FILTER_REGEX_GLOBAL = new RegExp( FILTER_REGEX_STRING, 'g' );
+export const FILTER_REGEX_GLOBAL = new RegExp( FILTER_REGEX_STRING, 'g' );
 const FILTER_REGEX_SINGLE = new RegExp( '^' + FILTER_REGEX_STRING + '$' );
 const FILTER_TAXONOMY_GROUP = 1;
 const FILTER_TERM_GROUP = 2;

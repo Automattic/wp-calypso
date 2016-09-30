@@ -86,6 +86,8 @@
 	box-sizing: border-box;
 	padding: 0px;
 	-webkit-appearance: none;
+	padding-top: 14px;
+	font-size: 16px;
 
 	&::-webkit-search-cancel-button {
 		-webkit-appearance: none;
@@ -94,6 +96,10 @@
 	&:focus {
 		box-shadow: none;
 		border: none;
+	}
+
+	br {
+		display: none;
 	}
 }
 
