@@ -11,17 +11,17 @@ A module for managing installed plugins on connected sites.
 
 ### `installPluginOnMultisite( siteId: Number, plugin: Object )`
 
-### `updatePlugin( site: Object, plugin: Object )`
+### `updatePlugin( siteId: Number, plugin: Object )`
 
-### `removePlugin( site: Object, plugin: Object )`
+### `removePlugin( siteId: Number, plugin: Object )`
 
-### `activatePlugin( site: Object, plugin: Object )`
+### `activatePlugin( siteId: Number, plugin: Object )`
 
-### `deactivatePlugin( site: Object, plugin: Object )`
+### `deactivatePlugin( siteId: Number, plugin: Object )`
 
-### `enableAutoupdatePlugin( site: Object, plugin: Object )`
+### `enableAutoupdatePlugin( siteId: Number, plugin: Object )`
 
-### `disableAutoupdatePlugin( site: Object, plugin: Object )`
+### `disableAutoupdatePlugin( siteId: Number, plugin: Object )`
 
 ## Selectors
 
