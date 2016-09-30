@@ -2,9 +2,7 @@
  * External Dependencies
  */
 import { partial } from 'lodash';
-import page from 'page';
 import React from 'react';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -17,7 +15,6 @@ import EditCardDetails from './payment/edit-card-details';
 import Main from 'components/main';
 import ManagePurchase from './manage-purchase';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
-import notices from 'notices';
 import paths from './paths';
 import PurchasesHeader from './list/header';
 import PurchasesList from './list';
@@ -25,7 +22,6 @@ import { receiveSite } from 'state/sites/actions';
 import { concatTitle, recordPageView, renderPage } from 'lib/react-helpers';
 import { setAllSitesSelected, setSelectedSiteId } from 'state/ui/actions';
 import sitesFactory from 'lib/sites-list';
-import supportPaths from 'lib/url/support';
 import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
@@ -186,31 +182,6 @@ export default {
 				noticeType={ context.params.noticeType }
 			/>
 		);
-	},
-
-	listNotice( context ) {
-		page.redirect( paths.list() );
-
-		const { noticeType } = context.params;
-
-		if ( noticeType === 'cancel-success' ) {
-			notices.success( i18n.translate(
-				'Your purchase was canceled and refunded. The refund may take up to ' +
-				'7 days to appear in your PayPal/bank/credit card account.'
-			), { persistent: true } );
-		}
-
-		if ( noticeType === 'cancel-problem' ) {
-			notices.error( i18n.translate(
-				'There was a problem canceling your purchase. ' +
-				'Please {{a}}contact support{{/a}} for more information.',
-				{
-					components: {
-						a: <a href={ supportPaths.CALYPSO_CONTACT } />
-					}
-				}
-			), { persistent: true } );
-		}
 	},
 
 	managePurchase( context ) {
