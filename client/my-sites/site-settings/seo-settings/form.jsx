@@ -498,8 +498,8 @@ export const SeoForm = React.createClass( {
 								<p>
 								{ this.translate(
 									'You can set the structure of page titles for different sections of your site. ' +
-									'Doing this will change the way your site title is displayed in search engine ' +
-									'results, and when shared on social media sites.'
+									'Doing this will change the way your site title is displayed in search engines, ' +
+									'social media sites, and browser tabs.'
 								) }
 								</p>
 								<MetaTitleEditor
