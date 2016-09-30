@@ -206,6 +206,11 @@ module.exports = React.createClass( {
 		if ( this.props.category ) {
 			return this.getNavigationBar();
 		}
+
+		if ( this.props.hideSearchForm ) {
+			return;
+		}
+
 		return (
 			<div className="plugins-browser__main-header">
 				{ this.getSearchBox( false ) }

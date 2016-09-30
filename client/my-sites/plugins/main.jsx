@@ -21,7 +21,6 @@ import PluginItem from './plugin-item/plugin-item';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import NoResults from 'my-sites/no-results';
 import Search from 'components/search';
 import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
@@ -33,6 +32,7 @@ import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
+import PluginsBrowser from './plugins-browser';
 
 /**
  * Module variables
@@ -255,13 +255,18 @@ const PluginsMain = React.createClass( {
 
 	renderPluginsContent() {
 		const plugins = this.state.plugins || [];
+		const selectedSite = this.props.sites.getSelectedSite();
 
 		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
 			if ( this.props.search ) {
-				return <NoResults text={ this.translate( 'No plugins match your search for {{searchTerm/}}.', {
-					textOnly: true,
-					components: { searchTerm: <em>{ this.props.search }</em> }
-				} ) } />
+				return <PluginsBrowser
+						hideSearchForm
+						site={ selectedSite ? selectedSite.slug : null }
+						path={ this.context.path }
+						sites={ this.props.sites }
+						search={ this.props.search }
+						store={ this.context.store }
+					/>
 			}
 
 			const emptyContentData = this.getEmptyContentData();
