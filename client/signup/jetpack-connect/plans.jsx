@@ -57,11 +57,11 @@ const Plans = React.createClass( {
 		}
 	},
 
-	componentWillReceiveProps( props ) {
+	componentDidUpdate() {
 		if ( this.hasPlan( this.props.selectedSite ) ) {
 			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
 		}
-		if ( ! props.canPurchasePlans ) {
+		if ( ! this.props.canPurchasePlans ) {
 			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
 		}
 
