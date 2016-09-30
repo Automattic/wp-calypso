@@ -150,7 +150,7 @@ export class FullPostView extends React.Component {
 	// Scroll to the top of the comments section.
 	scrollToComments() {
 		setTimeout( () => {
-			const commentsNode = ReactDom.findDOMNode( this.refs.commentsList );
+			const commentsNode = ReactDom.findDOMNode( this.refs.commentsWrapper );
 			if ( commentsNode && commentsNode.offsetTop ) {
 				scrollTo( {
 					x: 0,
@@ -288,14 +288,16 @@ export class FullPostView extends React.Component {
 								className="is-same-site" />
 						}
 
-						{ shouldShowComments( post )
-							? <Comments ref="commentsList"
-									post={ post }
-									initialSize={ 25 }
-									pageSize={ 25 }
-									onCommentsUpdate={ this.checkForCommentAnchor } />
-							: null
-						}
+						<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
+							{ shouldShowComments( post )
+								? <Comments ref="commentsList"
+										post={ post }
+										initialSize={ 25 }
+										pageSize={ 25 }
+										onCommentsUpdate={ this.checkForCommentAnchor } />
+								: null
+							}
+						</div>
 
 						{ showRelatedPosts &&
 							<RelatedPostsFromOtherSites siteId={ post.site_ID } postId={ post.ID }
