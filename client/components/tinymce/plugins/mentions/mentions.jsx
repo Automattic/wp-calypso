@@ -2,13 +2,16 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 const Suggestions = require( './suggestions-mixin' );
+import QueryUsersSuggestions from 'components/data/query-users-suggestions';
+import { getUserSuggestions } from 'state/users/suggestions/selectors';
 
-export default React.createClass( {
+const Mentions = React.createClass( {
 	displayName: 'Mentions',
 
 	mixins: [ Suggestions ],
@@ -39,8 +42,17 @@ export default React.createClass( {
 	render: function() {
 		return (
 			<div ref="mention">
+				<QueryUsersSuggestions siteId={ this.props.siteId } />
 				{ this.renderSuggestions() }
 			</div>
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	const { siteId } = ownProps;
+
+	return {
+		suggestions: getUserSuggestions( state, siteId )
+	};
+} )( Mentions );

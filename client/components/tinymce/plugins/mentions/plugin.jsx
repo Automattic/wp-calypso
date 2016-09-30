@@ -4,15 +4,15 @@
 import tinymce from 'tinymce/tinymce';
 import ReactDom from 'react-dom';
 import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import Client from './rest-client';
 import Mentions from './mentions';
+import sitesFactory from 'lib/sites-list';
 
-const sites = require( 'lib/sites-list' )();
-const client = new Client();
+const sites = sitesFactory();
 
 function mentions( editor ) {
 	let node, siteId;
@@ -25,11 +25,12 @@ function mentions( editor ) {
 		editor.getContainer().appendChild( node );
 
 		ReactDom.render(
-			<Mentions
-				siteId={ siteId }
-				client={ client }
-				editor={ editor }
-			/>,
+			<ReduxProvider store={ editor.getParam( 'redux_store' ) }>
+				<Mentions
+					siteId={ siteId }
+					editor={ editor }
+				/>
+			</ReduxProvider>,
 			node
 		);
 	} );

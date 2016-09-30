@@ -18,21 +18,6 @@ const stopEvent = function( event ) {
 };
 
 const SuggestionsMixin = {
-	componentWillMount: function() {
-		this.suggestions = [];
-		this.suggestionsAbove = false;
-	},
-
-	fetchSuggestions: function() {
-		const client = this.props.client,
-			siteId = this.props.siteId || null,
-			key = 'suggestions-' + siteId;
-
-		if ( ! client.suggestions || ! client.suggestions[ key ] ) {
-			client.getUsersSuggestions( siteId );
-		}
-	},
-
 	getQueryText: function( value ) {
 		if ( ! value ) {
 			return null;
@@ -49,7 +34,7 @@ const SuggestionsMixin = {
 	},
 
 	handleSuggestionsKeyDown: function( event ) {
-		if ( ! this.state.suggestionsVisible || this.suggestions.length === 0 ) {
+		if ( ! this.state.suggestionsVisible || this.props.suggestions.length === 0 ) {
 			return;
 		}
 
@@ -83,10 +68,6 @@ const SuggestionsMixin = {
 			default:
 				const query = this.getQueryText( value );
 
-				if ( query !== null ) {
-					this.fetchSuggestions();
-				}
-
 				newState = {
 					suggestionsQuery: query,
 					suggestionsVisible: typeof query === 'string',
@@ -112,40 +93,33 @@ const SuggestionsMixin = {
 			return;
 		}
 
-		const siteId = this.props.siteId || null,
-			key = 'suggestions-' + siteId,
-			client = this.props.client;
-
-		if ( client.suggestions && client.suggestions[ key ] ) {
-			this.suggestions = client.suggestions[ key ];
-		}
-
 		const matcher = new RegExp( "^" + this.state.suggestionsQuery + "| " + this.state.suggestionsQuery, 'ig' ); // start of string, or preceded by a space
 
-		let suggestions = this.suggestions;
+		let suggestions = this.props.suggestions;
 
 		if ( this.state.suggestionsQuery.length > 0 ) {
 			suggestions = [];
 
-			for ( let i = 0, len = this.suggestions.length; i < len; i++ ) {
-				const item = this.suggestions[i];
+			for ( let i = 0, len = this.props.suggestions.length; i < len; i++ ) {
+				const suggestion = this.props.suggestions[i];
+				const name = suggestion.name || suggestion.user_login + ' ' + suggestion.display_name;
 
-				if ( item['name'].toLowerCase().match( matcher ) ) {
-					suggestions.push( item );
+				if ( name.toLowerCase().match( matcher ) ) {
+					suggestions.push( suggestion );
 				}
 			}
 		}
 
-		this.suggestions = suggestions.slice( 0, 10 );
+		suggestions = suggestions.slice( 0, 10 );
 
-		if ( this.suggestions.length > 0 ) {
+		if ( suggestions.length > 0 ) {
 			return (
 				<PopoverMenu
 					className="suggestions"
 					context={ this.refs && this.refs.mention }
 					isVisible={ this.state.suggestionsVisible }
 					onClose={ this.onClose }>
-						{ this.suggestions.map( ( suggestion ) => {
+						{ suggestions.map( ( suggestion ) => {
 							return (
 								<PopoverMenuItem
 									key={ 'user-suggestion-' + suggestion.ID }>
