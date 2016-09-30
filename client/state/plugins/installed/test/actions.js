@@ -459,7 +459,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch request action when triggered', () => {
-			installPlugin( site, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy );
+			installPlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGIN_INSTALL_REQUEST,
@@ -470,7 +470,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch plugin install request success action when request completes', () => {
-			const response = installPlugin( site, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy );
+			const response = installPlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy );
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_INSTALL_REQUEST_SUCCESS,
@@ -483,7 +483,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			const response = installPlugin( site, { slug: 'fake', id: 'fake/fake' } )( spy );
+			const response = installPlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy );
 			return response.catch( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_INSTALL_REQUEST_FAILURE,

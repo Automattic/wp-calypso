@@ -183,10 +183,9 @@ export function disableAutoupdatePlugin( site, plugin ) {
 	};
 }
 
-export function installPlugin( site, plugin ) {
+function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id;
-		const siteId = site.ID;
 		const defaultAction = {
 			action: INSTALL_PLUGIN,
 			siteId,
@@ -216,7 +215,7 @@ export function installPlugin( site, plugin ) {
 
 		const errorCallback = ( error ) => {
 			if ( error.name === 'PluginAlreadyInstalledError' ) {
-				if ( site.isMainNetworkSite() ) {
+				if ( isMainNetworkSite ) {
 					return doUpdate( plugin )
 						.then( doAutoupdates )
 						.then( successCallback )
@@ -238,7 +237,7 @@ export function installPlugin( site, plugin ) {
 			return Promise.reject( error );
 		};
 
-		if ( site.isMainNetworkSite() ) {
+		if ( isMainNetworkSite ) {
 			return doInstall( plugin )
 				.then( doAutoupdates )
 				.then( successCallback )
@@ -251,6 +250,14 @@ export function installPlugin( site, plugin ) {
 			.then( successCallback )
 			.catch( errorCallback );
 	};
+}
+
+export function installPlugin( siteId, plugin ) {
+	return installPluginHelper( siteId, plugin );
+}
+
+export function installPluginOnMultisite( siteId, plugin ) {
+	return installPluginHelper( siteId, plugin, true );
 }
 
 export function removePlugin( site, plugin ) {

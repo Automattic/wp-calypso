@@ -7,7 +7,9 @@ A module for managing installed plugins on connected sites.
 
 ### `fetchPlugins( sites: Array )`
 
-### `installPlugin( site: Object, plugin: Object )`
+### `installPlugin( siteId: Number, plugin: Object )`
+
+### `installPluginOnMultisite( siteId: Number, plugin: Object )`
 
 ### `updatePlugin( site: Object, plugin: Object )`
 
