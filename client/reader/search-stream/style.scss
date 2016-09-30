@@ -11,6 +11,7 @@
 .search-stream__input-card.card {
 	margin-bottom: 16px;
 	padding: 0;
+	z-index: z-index( 'root', '.search-stream__input-card' );
 }
 
 .search-stream__blank {
