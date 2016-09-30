@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -43,6 +44,14 @@ class PostCommentList extends React.Component {
 		const postId = this.props.post.ID;
 
 		this.props.requestPostComments( siteId, postId );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		const nextSiteId = get( nextProps, 'post.site_ID' );
+		const nextPostId = get( nextProps, 'post.ID' );
+		if ( nextSiteId && nextPostId && ( this.props.post.site_ID !== nextSiteId || this.props.post.ID !== nextPostId ) ) {
+			this.props.requestPostComments( nextSiteId, nextPostId );
+		}
 	}
 
 	renderComment( commentId ) {
