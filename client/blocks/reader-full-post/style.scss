@@ -247,29 +247,32 @@
 	}
 }
 
-// Align site name/author with title
-.reader-full-post .has-author-link.has-author-icon .author-compact-profile__avatar-link{
-	display: block;
-}
-
+// Align meta info and post title
 .reader-full-post .has-author-link .author-compact-profile__avatar-link {
 	display: none;
+}
+
+.reader-full-post .has-author-link.has-author-icon {
+	margin-top: 5px;
+
+	.reader-author-link {
+		margin-top: 0;
+	}
+
+	.author-compact-profile__avatar-link {
+		display: block;
+	}
 }
 
 .reader-full-post .has-author-link {
 	margin-top: 14px;
 }
 
-.reader-full-post .has-author-link.has-author-icon {
-	margin-top: 5px;
-}
-
 .reader-full-post .has-author-link .reader-author-link {
-	margin-top: 4px;
-}
 
-.reader-full-post .has-author-link.has-author-icon .reader-author-link {
-	margin-top: 0;
+	@include breakpoint( ">660px" ) {
+		margin-top: 4px;
+	}
 }
 
 // For posts without a title
