@@ -410,12 +410,12 @@ export const SeoForm = React.createClass( {
 			preview = (
 				<FormSettingExplanation>
 					<Button
-						className="preview-button"
+						className="seo-settings__preview-button"
 						onClick={ this.showPreview }
 					>
 						{ this.translate( 'Show Previews' ) }
 					</Button>
-					<span className="preview-explanation">
+					<span className="seo-settings__preview-explanation">
 						{ this.translate(
 							'See how this will look on ' +
 							'Google, Facebook, and Twitter.'
@@ -454,18 +454,30 @@ export const SeoForm = React.createClass( {
 						title={ this.translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
 						subtitle={ this.translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
 						highlightedFeature={ FEATURE_ADVANCED_SEO }
-						event={ "calypso_seo_settings_upgrade_nudge" }
+						event={ 'calypso_seo_settings_upgrade_nudge' }
 						benefits={ [
-							this.translate( "Preview your site's posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader." ),
-							this.translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ),
-							this.translate( 'Modify front page meta data in order to customize how your site appears to search engines.' )
+							this.translate(
+								'Preview your site\'s posts and pages as they will appear ' +
+								'when shared on Facebook, Twitter and the WordPress.com Reader.'
+							),
+							this.translate(
+								'Allow you to control how page titles will appear on Google ' +
+								'search results, or when shared on social networks.'
+							),
+							this.translate(
+								'Modify front page meta data in order to customize ' +
+								'how your site appears to search engines.'
+							)
 						] }
 						testedRegularNudge={
 							<UpgradeNudge
 								feature={ FEATURE_ADVANCED_SEO }
 								title={ this.translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
-								message={ this.translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
-								event={ "calypso_seo_settings_upgrade_nudge" }
+								message={ this.translate(
+									'By upgrading to a Business Plan you\'ll enable advanced SEO ' +
+									'features on your site.'
+								) }
+								event={ 'calypso_seo_settings_upgrade_nudge' }
 							/>
 						}
 					/>
@@ -488,7 +500,7 @@ export const SeoForm = React.createClass( {
 					) }
 				</Card>
 
-				<form onChange={ this.markChanged } className="seo-form">
+				<form onChange={ this.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo && config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
 						<div>
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
@@ -516,7 +528,7 @@ export const SeoForm = React.createClass( {
 
 					{ ( showAdvancedSeo || showWebsiteMeta ) &&
 						<div>
-							<SectionHeader label={ this.translate('Website Meta') }>
+							<SectionHeader label={ this.translate( 'Website Meta' ) }>
 								{ submitButton }
 							</SectionHeader>
 							<Card>
@@ -529,7 +541,7 @@ export const SeoForm = React.createClass( {
 								</p>
 								<p>
 									<FormLabel htmlFor="advanced_seo_front_page_description">
-										{ this.translate('Front Page Meta Description') }
+										{ this.translate( 'Front Page Meta Description' ) }
 									</FormLabel>
 									<CountedTextarea
 										name="advanced_seo_front_page_description"
@@ -541,8 +553,8 @@ export const SeoForm = React.createClass( {
 										acceptableLength={ 159 }
 										onChange={ this.handleMetaChange }
 									/>
-									{ hasHtmlTagError
-										&& <FormInputValidation isError={ true } text={ this.translate('HTML tags are not allowed.') } />
+									{ hasHtmlTagError &&
+										<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
 									}
 								</p>
 								{ preview }
@@ -657,7 +669,7 @@ export const SeoForm = React.createClass( {
 						<FormFieldset>
 							<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
 							<ExternalLink
-								className="seo-sitemap"
+								className="seo-settings__seo-sitemap"
 								icon={ true }
 								href={ sitemapUrl }
 								target="_blank"
