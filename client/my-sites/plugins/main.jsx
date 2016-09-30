@@ -174,7 +174,7 @@ const PluginsMain = React.createClass( {
 	},
 
 	getEmptyContentUpdateData() {
-		let emptyContentData = { illustration: '/calypso/images/drake/drake-ok.svg' },
+		const emptyContentData = { illustration: '/calypso/images/drake/drake-ok.svg' },
 			selectedSite = this.props.sites.getSelectedSite();
 
 		if ( selectedSite ) {
@@ -266,7 +266,7 @@ const PluginsMain = React.createClass( {
 						sites={ this.props.sites }
 						search={ this.props.search }
 						store={ this.context.store }
-					/>
+					/>;
 			}
 
 			const emptyContentData = this.getEmptyContentData();
@@ -275,7 +275,7 @@ const PluginsMain = React.createClass( {
 					title={ emptyContentData.title }
 					illustration={ emptyContentData.illustration }
 					actionURL={ emptyContentData.actionURL }
-					action={ emptyContentData.action } />
+					action={ emptyContentData.action } />;
 			}
 		}
 		return (
@@ -321,7 +321,7 @@ const PluginsMain = React.createClass( {
 				sites={ [] }
 				selectedSite={ selectedSite }
 				progress={ [] }
-				isMock={ true } />
+				isMock={ true } />;
 		} );
 	},
 
@@ -342,7 +342,10 @@ const PluginsMain = React.createClass( {
 				<Main>
 					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
-					{ this.state.accessError.featureExample ? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample> : null }
+					{ this.state.accessError.featureExample
+						? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample>
+						: null
+					}
 				</Main>
 			);
 		}
@@ -377,7 +380,7 @@ const PluginsMain = React.createClass( {
 								return null;
 							}
 
-							let attr = {
+							const attr = {
 								key: filterItem.id,
 								path: filterItem.path,
 								selected: filterItem.id === this.props.filter,
