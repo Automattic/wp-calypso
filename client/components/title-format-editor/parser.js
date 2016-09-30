@@ -119,13 +119,31 @@ const emptyBlockMap = {
 };
 
 /**
+ * Preprocesses token title for display in editor.
+ *
+ * Explicit spacing is required here in order to make
+ * the display of the tokens look right. Simply adding
+ * CSS to a trimmed title leads to cursor and spacing
+ * inconsistencies.
+ *
+ * \u205f is a mathematical medium space. A normal space
+ * was being trimmed implicitly somewhere in WebKit and
+ * raising exceptions and causing visual glitches.
+ * See #8047
+ *
+ * @param {string} title - Token's title
+ * @returns string - Processed title
+ */
+export const mapTokenTitleForEditor = title => `\u205f${ title }\u205f`;
+
+/**
  * Returns the translated name for the chip
  *
  * @param {string} type chip name, e.g. 'siteName'
  * @param {object} tokens available tokens, e.g. { siteName: 'Site Name', tagline: 'Tagline' }
  * @returns {string} translated chip name
  */
-const tokenTitle = ( type, tokens ) => ` ${ get( tokens, type, '' ).trim() } `;
+const tokenTitle = ( type, tokens ) => mapTokenTitleForEditor( get( tokens, type, '' ).trim() );
 
 /**
  * Creates a new entity reference for a blockMap
