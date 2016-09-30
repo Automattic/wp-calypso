@@ -17,7 +17,6 @@ import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
 import GoogleAnalyticsUpgradeNudge from 'blocks/upgrade-nudge-expanded';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
-import { abtest } from 'lib/abtest';
 import { PLAN_BUSINESS, FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
@@ -96,27 +95,6 @@ export default React.createClass( {
 
 	onKeyPressAnalyticsInput() {
 		this.recordEventOnce( 'typedAnalyticsKey', 'Typed In Analytics Key Field' );
-	},
-
-	getUpgradeLink() {
-		if ( ! this.props.site || ! this.props.site.domain ) {
-			return '/plans';
-		}
-		const plansVariant = abtest( 'contextualGoogleAnalyticsNudge' );
-		let upgradeLink;
-		switch ( plansVariant ) {
-			case 'settingsDisabledFeature':
-				upgradeLink = `/plans/features/google-analytics/${ this.props.site.domain }`;
-				break;
-			case 'settingsDisabledPlansCompare':
-				upgradeLink = `/plans/compare/google-analytics/${ this.props.site.domain }`;
-				break;
-			case 'settingsDisabledPlans':
-			case 'drake':
-			default:
-				upgradeLink = `/plans/${ this.props.site.domain }`;
-		}
-		return upgradeLink;
 	},
 
 	form() {

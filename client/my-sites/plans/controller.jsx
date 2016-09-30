@@ -85,7 +85,7 @@ export default {
 	features( context ) {
 		const domain = context.params.domain;
 		const feature = get( context, 'params.feature' );
-		let comparePath = domain ? `/plans/compare/${ domain }` : '/plans/compare';
+		let comparePath = domain ? `/plans/${ domain }` : '/plans/';
 
 		if ( isValidFeatureKey( feature ) ) {
 			comparePath += '?feature=' + feature;
