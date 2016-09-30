@@ -85,15 +85,15 @@ function RelatedPostCardPlaceholder() {
 export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick = noop } ) {
 // onSiteClick is not being used
 /* eslint-enable no-unused-vars */
+	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
+		return <RelatedPostCardPlaceholder />;
+	}
+
 	const featuredImage = post.canonical_image;
 	const postLink = getPostUrl( post );
 	const classes = classnames( 'reader-related-card-v2', {
 		'has-thumbnail': !! featuredImage
 	} );
-
-	if ( ! post || post._state === 'minimal' || post._state === 'pending' ) {
-		return <RelatedPostCardPlaceholder />;
-	}
 
 	return (
 		<Card className={ classes }>

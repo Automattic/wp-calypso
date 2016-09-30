@@ -65,7 +65,7 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 							siteId,
 							postId,
 							scope,
-							posts: response && response.posts
+							posts: ( response && response.posts ) || []
 						}
 					} );
 				} );
@@ -75,6 +75,16 @@ export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 					type: READER_RELATED_POSTS_REQUEST_FAILURE,
 					payload: { siteId, postId, scope, error: err },
 					error: true
+				} );
+
+				dispatch( {
+					type: READER_RELATED_POSTS_RECEIVE,
+					payload: {
+						siteId,
+						postId,
+						scope,
+						posts: []
+					}
 				} );
 			}
 		);

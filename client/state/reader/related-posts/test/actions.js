@@ -34,11 +34,11 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/site/1/post/1/related?meta=site' )
 				.reply( 200, {
-					posts: {
+					posts: [ {
 						ID: 1,
 						global_ID: 1,
 						site_ID: 1
-					}
+					} ]
 				} );
 		} );
 
@@ -69,11 +69,11 @@ describe( 'actions', () => {
 						siteId: 1,
 						postId: 1,
 						scope: 'all',
-						posts: {
+						posts: [ {
 							ID: 1,
 							global_ID: 1,
 							site_ID: 1
-						}
+						} ]
 					}
 				} );
 			} );
@@ -114,6 +114,18 @@ describe( 'actions', () => {
 					siteId: 1,
 					postId: 1,
 					scope: 'all'
+				}
+			} );
+		} );
+
+		it( 'should have dispatched receive with an empty array', () => {
+			expect( fakeDispatch ).to.have.been.calledWith( {
+				type: READER_RELATED_POSTS_RECEIVE,
+				payload: {
+					siteId: 1,
+					postId: 1,
+					scope: 'all',
+					posts: []
 				}
 			} );
 		} );
