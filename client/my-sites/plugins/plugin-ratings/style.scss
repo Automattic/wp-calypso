@@ -17,40 +17,39 @@
 	}
 }
 
-.plugin-ratings__rating-tier {
-	line-height: 18px;
-}
-
 .plugin-ratings__rating-text {
-	font-size: 11px;
+	font-size: 12px;
 	color: $gray;
-	text-transform: uppercase;
 	margin-bottom: 16px;
 
 	@include breakpoint( '<480px' ) {
 		display: inline;
 		line-height: 24px;
-	vertical-align: top;
+		vertical-align: top;
 	}
-}
-
-.plugin-ratings__rating-container {
-	display: flex;
-	width: 100%;
-	justify-content: space-between;
 }
 
 .plugin-ratings__rating-tier-text,
 .plugin-ratings__downloads {
-	font-size: 11px;
+	font-size: 12px;
 	color: $gray;
 	white-space: pre;
 	text-overflow: ellipsis;
-	text-transform: uppercase;
 	overflow: hidden;
 }
 
+.plugin-ratings__rating-tiers {
+	display: table;
+}
+
+.plugin-ratings__rating-container {
+	display: table-row;
+	width: 100%;
+	line-height: 18px;
+}
+
 .plugin-ratings__rating-tier-text {
+	display: table-cell;
 	padding-right: 16px;
 }
 
@@ -58,14 +57,12 @@
 	margin-top: 16px;
 }
 
-.plugin_ratings__bar {
-	width: 78px;
-	display: inline-block;
-	flex-grow: 1;
+.plugin-ratings__bar {
+	display: table-cell;
+	width: 100%;
 
 	.progress-bar {
 		position: relative;
-		top: -2px;
 		border-radius: 0;
 		height: 8px;
 		background-color: lighten( $gray, 20% );

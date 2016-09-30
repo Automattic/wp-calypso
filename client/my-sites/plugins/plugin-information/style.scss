@@ -19,6 +19,7 @@
 
 .plugin-information__wrapper {
 	flex-grow: 1;
+	margin-bottom: 16px;
 }
 
 .plugin-information__version-shell {
@@ -86,12 +87,10 @@
 
 .plugin-information .plugin-ratings {
 	flex-grow: 1;
-	margin-top: 16px;
 
 	@include breakpoint( '>480px' ) {
 		flex-grow: 0;
 		width: 160px;
-		margin-top: 0;
 	}
 }
 
