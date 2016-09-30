@@ -124,7 +124,9 @@ class PlanFeatures extends Component {
 	}
 
 	renderMobileView() {
-		const { isPlaceholder, translate, planProperties, isInSignup, intervalType, site, isInJetpackConnect } = this.props;
+		const {
+			canPurchase, isPlaceholder, translate, planProperties, isInSignup, intervalType, site, isInJetpackConnect
+		} = this.props;
 
 		// move any free plan to last place in mobile view
 		let freePlanProperties;
@@ -177,6 +179,7 @@ class PlanFeatures extends Component {
 						{ planConstantObj.getDescription() }
 					</p>
 					<PlanFeaturesActions
+						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
 						primaryUpgrade={ primaryUpgrade }
@@ -270,7 +273,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderTopButtons() {
-		const { planProperties, isPlaceholder, isInSignup, site } = this.props;
+		const { canPurchase, planProperties, isPlaceholder, isInSignup, site } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -290,6 +293,7 @@ class PlanFeatures extends Component {
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
+						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
 						available = { available }
@@ -416,7 +420,7 @@ class PlanFeatures extends Component {
 	}
 
 	renderBottomButtons() {
-		const { planProperties, isPlaceholder, isInSignup, site } = this.props;
+		const { canPurchase, planProperties, isPlaceholder, isInSignup, site } = this.props;
 
 		return map( planProperties, ( properties ) => {
 			const {
@@ -434,6 +438,7 @@ class PlanFeatures extends Component {
 			return (
 				<td key={ planName } className={ classes }>
 					<PlanFeaturesActions
+						canPurchase={ canPurchase }
 						className={ getPlanClass( planName ) }
 						current={ current }
 						available = { available }
