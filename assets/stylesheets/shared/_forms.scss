@@ -126,7 +126,7 @@ input[type=radio] + span {
 
 input[type=checkbox] {
 	&:checked:before {
-		@extend %clear-text;
+		@include clear-text;
 
 		content: '\f418';
 		margin: -4px 0 0 -5px;

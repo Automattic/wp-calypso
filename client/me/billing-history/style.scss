@@ -155,7 +155,7 @@
 }
 
 .filter-popover-content:before {
-	@extend %clear-text;
+	@include clear-text;
 
 	display: block;
 	position: absolute;
@@ -188,7 +188,7 @@
 }
 
 .filter-popover-content th {
-	@extend %clear-text;
+	@include clear-text;
 	padding: 8px 10px;
 	font-size: 12px;
 	font-weight: 600;
