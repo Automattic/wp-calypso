@@ -7,7 +7,7 @@
 }
 
 .sharing-service-group__title {
-	@extend %heading;
+	@include heading;
 	margin: 0 0 4px;
 }
 
