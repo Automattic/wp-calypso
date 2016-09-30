@@ -494,14 +494,17 @@ export const SeoForm = React.createClass( {
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
 								{ submitButton }
 							</SectionHeader>
-							<Card>
-								<p>
+							<Card compact="true" className="page-title__header">
+								<img className="page-title__header-image" src="/calypso/images/seo/page-title.svg" />
+								<p className="page-title__header-text">
 								{ this.translate(
 									'You can set the structure of page titles for different sections of your site. ' +
 									'Doing this will change the way your site title is displayed in search engines, ' +
 									'social media sites, and browser tabs.'
 								) }
 								</p>
+							</Card>
+							<Card>
 								<MetaTitleEditor
 									disabled={ isRefreshingSiteData || isDisabled }
 									onChange={ this.updateTitleFormats }
