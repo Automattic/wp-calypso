@@ -155,7 +155,15 @@ export class FullPostView extends React.Component {
 				scrollTo( {
 					x: 0,
 					y: commentsNode.offsetTop - 48,
-					duration: 300
+					duration: 300,
+					onComplete: () => {
+						// check to see if the comment node moved while we were scrolling
+						// and scroll to the end position
+						const commentsNodeAfterScroll = ReactDom.findDOMNode( this.refs.commentsWrapper );
+						if ( commentsNodeAfterScroll && commentsNodeAfterScroll.offsetTop ) {
+							window.scrollTo( 0, commentsNodeAfterScroll.offsetTop - 48 );
+						}
+					}
 				} );
 				if ( this.hasCommentAnchor ) {
 					this.hasScrolledToCommentAnchor = true;
