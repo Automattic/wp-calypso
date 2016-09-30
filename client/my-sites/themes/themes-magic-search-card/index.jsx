@@ -38,6 +38,7 @@ const ThemesMagicSearchCard = React.createClass( {
 	},
 
 	componentDidMount() {
+		this.findTextForSuggestions( this.props.search );
 		window.addEventListener( 'resize', this.onResize );
 	},
 
@@ -69,8 +70,11 @@ const ThemesMagicSearchCard = React.createClass( {
 	},
 
 	onKeyDown( event ) {
-		const text = this.findTextForSuggestions( event.target.value );
-		this.setState( { editedSearchElement: text } );
+		this.findTextForSuggestions( event.target.value );
+	},
+
+	onClick( event ) {
+		this.findTextForSuggestions( event.target.value );
 	},
 
 	findEditedToken( tokens, cursorPosition ) {
@@ -92,7 +96,7 @@ const ThemesMagicSearchCard = React.createClass( {
 				//if this one is white space only next
 				//next one must be text
 				const moreTokensExist = i < tokens.length - 1;
-				if(  tokenIsWhiteSpace && moreTokensExist ) {
+				if( tokenIsWhiteSpace && moreTokensExist ) {
 					return tokens[ i + 1 ];
 				} else {
 					// "" indicates full suggestion request
@@ -110,22 +114,21 @@ const ThemesMagicSearchCard = React.createClass( {
 	findTextForSuggestions( input ) {
 		let val = input;
 		const _this = this;
-		//Do we realy need to do this? pobably to delete
 		window.requestAnimationFrame(function() {
-			_this.setState( { cursorPosition: val.slice(0, _this.refs['url-search'].refs.searchInput.selectionStart).length } );
+			_this.setState( { cursorPosition: val.slice( 0, _this.refs['url-search'].refs.searchInput.selectionStart ).length } );
+			console.log( _this.state.cursorPosition ) ;
+			const tokens = input.split(/(\s+)/);
+
+			// Get rid of empty match at end
+			tokens[tokens.length -1] === "" && tokens.splice( tokens.length - 1 , 1 );
+
+			const text =  _this.findEditedToken( tokens, _this.state.cursorPosition );
+			_this.setState( { editedSearchElement: text } );
 		} );
-
-		console.log(this.state.cursorPosition);
-		const tokens = input.split(/(\s+)/);
-
-		// Get rid of empty match at end
-		tokens[tokens.length -1] === "" && tokens.splice(tokens.length - 1 , 1 );
-		return this.findEditedToken( tokens, this.state.cursorPosition );
 	},
 
 	onSearchChange( input ) {
-		const text = this.findTextForSuggestions( input );
-		this.setState( { editedSearchElement: text } );
+		this.findTextForSuggestions( input );
 		this.setState( {searchInput: input } );
 	},
 
@@ -178,6 +181,7 @@ const ThemesMagicSearchCard = React.createClass( {
 				onSearchClose={ this.onSearchClose }
 				onSearchChange={ this.onSearchChange }
 				onKeyDown={ this.onKeyDown }
+				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
