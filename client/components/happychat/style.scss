@@ -362,6 +362,12 @@
 		padding: 32px 304px;
 	}
 
+	// adjust when scoll arrows show up in stats insights when panel is open
+	.has-chat.is-section-stats .post-trends__scroll-left,
+	.has-chat.is-section-stats .post-trends__scroll-right {
+			display: block;
+	}
+
 	// adjust themes page to accomodate docked sidebar
 	.has-chat.is-section-theme .layout__content {
 		padding: 32px 0;
@@ -409,6 +415,7 @@
 	    display: block;
 	    overflow: hidden;
 	}
+
 }
 
 
