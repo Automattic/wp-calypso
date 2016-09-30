@@ -7,7 +7,7 @@
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { forEach, isEqual, map } from 'lodash';
+import { debounce, forEach, isEqual, map } from 'lodash';
 
 /**
  * Internal dependencies.
@@ -46,8 +46,7 @@ class DocumentHead extends Component {
 	}
 
 	componentDidMount() {
-		const { formattedTitle } = this.props;
-		document.title = formattedTitle;
+		this.setFormattedTitle( this.props.formattedTitle );
 
 		this.refreshHeadTags();
 	}
@@ -70,7 +69,7 @@ class DocumentHead extends Component {
 		}
 
 		if ( nextProps.formattedTitle !== this.props.formattedTitle ) {
-			document.title = nextProps.formattedTitle;
+			this.setFormattedTitle( nextProps.formattedTitle );
 		}
 
 		this.refreshHeadTags( nextProps );
@@ -103,6 +102,10 @@ class DocumentHead extends Component {
 			head.appendChild( newTag );
 		}
 	}
+
+	setFormattedTitle = debounce( ( title ) => {
+		document.title = title;
+	} )
 
 	render() {
 		return null;
