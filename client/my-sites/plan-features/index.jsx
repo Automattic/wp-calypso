@@ -76,30 +76,32 @@ class PlanFeatures extends Component {
 			`has-${ planProperties.length }-cols` );
 
 		return (
-			<div className="plan-features">
+			<div>
 				{ this.renderUpgradeDisabledNotice() }
-				<div className="plan-features__mobile">
-					{ this.renderMobileView() }
-				</div>
-				<table className={ tableClasses }>
-					<tbody>
-						<tr>
-							{ this.renderPlanHeaders() }
-						</tr>
-						<tr>
-							{ this.renderPlanDescriptions() }
-						</tr>
-						<tr>
-							{ this.renderTopButtons() }
-						</tr>
-							{ this.renderPlanFeatureRows() }
-						<tr>
-							{ this.renderBottomButtons() }
-						</tr>
-					</tbody>
-				</table>
+				<div className="plan-features__content">
+					<div className="plan-features__mobile">
+						{ this.renderMobileView() }
+					</div>
+					<table className={ tableClasses }>
+						<tbody>
+							<tr>
+								{ this.renderPlanHeaders() }
+							</tr>
+							<tr>
+								{ this.renderPlanDescriptions() }
+							</tr>
+							<tr>
+								{ this.renderTopButtons() }
+							</tr>
+								{ this.renderPlanFeatureRows() }
+							<tr>
+								{ this.renderBottomButtons() }
+							</tr>
+						</tbody>
+					</table>
 
-				{ this.renderFeaturePopover() }
+					{ this.renderFeaturePopover() }
+				</div>
 			</div>
 		);
 	}
@@ -114,7 +116,8 @@ class PlanFeatures extends Component {
 		return (
 			<Notice
 				className="plan-features__notice"
-				showDismiss={ false }>
+				showDismiss={ false }
+				status="is-info">
 				{ translate( 'You need to be the plan owner to manage this site.' ) }
 			</Notice>
 		);
