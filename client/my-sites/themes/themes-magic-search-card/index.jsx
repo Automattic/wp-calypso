@@ -14,7 +14,7 @@ import Suggestions from 'components/suggestions';
 import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
-import { filterIsValid } from '../theme-filters.js';
+import { filterIsValid, getTaxonomies, } from '../theme-filters.js';
 
 const ThemesMagicSearchCard = React.createClass( {
 	propTypes: {
@@ -31,6 +31,7 @@ const ThemesMagicSearchCard = React.createClass( {
 	trackClick: trackClick.bind( null, 'search bar' ),
 
 	componentWillMount() {
+		this.setState( { taxonomies: getTaxonomies() } );
 		this.onResize = debounce( () => {
 			this.setState( { isMobile: isMobile() } );
 		}, 250 );
@@ -47,7 +48,10 @@ const ThemesMagicSearchCard = React.createClass( {
 	getInitialState() {
 		return {
 			isMobile: isMobile(),
-			searchIsOpen: false
+			searchIsOpen: false,
+			searchInput: "",
+			editedSearchElement: "",
+			taxonomies: {},
 		};
 	},
 
@@ -61,6 +65,61 @@ const ThemesMagicSearchCard = React.createClass( {
 
 	onSearchClose() {
 		this.setState( { searchIsOpen: false } );
+	},
+
+	onKeyDown( event ) {
+		const text = this.findTextForSuggestions( event.target.value );
+		this.setState( { editedSearchElement: text } );
+	},
+
+	findEditedToken( tokens, cursorPosition ) {
+		let tokenEnd = 0;
+		for( let i = 0; i <  tokens.length; i ++ ) {
+			tokenEnd += tokens[ i ].length;
+
+			const cursorIsInsideTheToken = cursorPosition < tokenEnd;
+			if( cursorIsInsideTheToken ) {
+				// "" indicates full suggestion request
+				return tokens[ i ].trim();
+			}
+
+			const cursorAtEndOfTheToken = cursorPosition === tokenEnd;
+			if( cursorAtEndOfTheToken ) {
+				//If token is whitespace only and we are at its end
+				//maybe we are at the start of next token
+				const tokenIsWhiteSpace = tokens[ i ].trim() === "";
+				//if this one is white space only next
+				//next one must be text
+				const moreTokensExist = i < tokens.length - 1;
+				if(  tokenIsWhiteSpace && moreTokensExist ) {
+					return tokens[ i + 1 ];
+				} else {
+					// "" indicates full suggestion request
+					return tokens[ i ].trim();
+				}
+			} else {
+				continue; // to the next token
+			}
+
+		}
+
+		return "";
+	},
+
+	findTextForSuggestions( input ){
+		const cursorPosition = this.refs['url-search'].refs.searchInput.selectionEnd;
+		console.log(cursorPosition);
+		const tokens = input.split(/(\s+)/);
+
+		// Get rid of empty match at end
+		tokens[tokens.length -1] === "" && tokens.splice(tokens.length - 1 , 1 );
+		return this.findEditedToken( tokens, cursorPosition );
+	},
+
+	onSearchChange( input ) {
+		const text = this.findTextForSuggestions( input );
+		this.setState( { editedSearchElement: text } );
+		this.setState( {searchInput: input } );
 	},
 
 	onBlur() {
@@ -110,6 +169,8 @@ const ThemesMagicSearchCard = React.createClass( {
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
+				onSearchChange={ this.onSearchChange }
+				onKeyDown={ this.onKeyDown }
 				overlayStyling={ this.searchTokens }
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
@@ -137,7 +198,10 @@ const ThemesMagicSearchCard = React.createClass( {
 						/>
 					}
 				</div>
-				<Suggestions/>
+				<Suggestions
+					terms={ this.state.taxonomies }
+					input={ this.state.editedSearchElement }
+				/>
 			</div>
 		);
 	}

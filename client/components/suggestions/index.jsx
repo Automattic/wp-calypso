@@ -11,6 +11,8 @@ import Card from 'components/card';
 const Suggestions = React.createClass( {
 
 	propTypes: {
+		terms: React.PropTypes.object,
+		input: React.PropTypes.string
 	},
 
 	componentDidMount: function() {
@@ -24,7 +26,7 @@ const Suggestions = React.createClass( {
 		return (
 			<div className="suggestions">
 				<Card >
-					<div>wow suggestions, so much content</div>
+					<div>{ this.props.input }</div>
 				</Card>
 			</div>
 			);
