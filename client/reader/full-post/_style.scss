@@ -404,6 +404,18 @@
 	}
 }
 
+// JP Related Post
+.reader-full-post .jp-relatedposts {
+	background: none;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.reader-full-post .jp-relatedposts li {
+	margin-top: 10px;
+}
+
 .detail-page__backdrop {
 	padding: 1px; // this fixes a strange rendering bug at the bottom of the full post card in safari and chrome -shaun
 	z-index: z-index( 'root', '.detail-page__backdrop' ); // above the masterbar
