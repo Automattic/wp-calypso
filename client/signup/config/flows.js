@@ -305,7 +305,7 @@ const Flows = {
 	},
 
 	insertStepIntoFlow( afterStep, stepName, flow ) {
-		if ( - 1 === flow.steps.indexOf( stepName ) ) {
+		if ( -1 === flow.steps.indexOf( stepName ) ) {
 			const afterStepIndex = flow.steps.indexOf( afterStep );
 			flow.steps.splice( afterStepIndex + 1, 0, stepName );
 		}
