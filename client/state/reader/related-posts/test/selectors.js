@@ -17,6 +17,9 @@ describe( 'selectors', () => {
 					relatedPosts: {
 						queuedRequests: {
 
+						},
+						items: {
+
 						}
 					}
 				}
@@ -28,6 +31,23 @@ describe( 'selectors', () => {
 					relatedPosts: {
 						queuedRequests: {
 							'1-1-all': true
+						},
+						items: {
+
+						}
+					}
+				}
+			}, 1, 1 ) ).to.be.false;
+		} );
+
+		it( 'should return false if we have a value', () => {
+			expect( shouldFetchRelated( {
+				reader: {
+					relatedPosts: {
+						queuedRequests: {
+						},
+						items: {
+							'1-1-all': []
 						}
 					}
 				}
