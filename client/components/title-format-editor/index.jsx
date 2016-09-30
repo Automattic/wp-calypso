@@ -343,7 +343,7 @@ export class TitleFormatEditor extends Component {
 			type
 		} = this.props;
 
-		const previewText = type.value
+		const previewText = type.value && editorState.getCurrentContent().hasText()
 			? buildSeoTitle( { [ type.value ]: fromEditor( editorState.getCurrentContent() ) }, type.value, titleData )
 			: '';
 
