@@ -16,13 +16,14 @@
 // So before adding a new z-index:
 // 1. You'll want to make sure the element actually creates a stacking context
 // 2. Look up what its parent stacking context is
-// You can run this handy gist: https://gist.github.com/gwwar/2f661deec7b99a1a418b in the console to find both.
+// There's a Chrome devtools extension that can help you find both:
+// https://chrome.google.com/webstore/detail/z-context/jigamimbjojkdgnlldajknogfgncplbh
 //
 // For readability please sort values from lowest to highest.
 //
 // Usage:
 // .environment-badge {
-//     z-index: z-index( 'root' '.environment-badge' );
+//     z-index: z-index( 'root', '.environment-badge' );
 // }
 //
 // For a refresher on stacking contexts see:
