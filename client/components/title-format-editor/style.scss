@@ -10,7 +10,8 @@
 }
 
 .title-format-editor__title {
-	font-weight: bold;
+	font-weight: 600;
+	font-size: 14px;
 	flex: 1;
 	margin-right: auto;
 }
@@ -37,15 +38,17 @@
 }
 
 .title-format-editor__editor-wrapper {
-	border: 1px solid $gray;
-	padding: 6px 12px;
+	border: 1px solid lighten( $gray, 10% );
+	padding: 7px 14px;
+	line-height: 24px;
 }
 
 .title-format-editor__token {
-	padding: 2px 0px;
+	padding: 0 4px 0 6px;
+	display: inline-block;
 	background-color: darken( $gray, 20% );
 	color: $white;
-	border-radius: 3px;
+	border-radius: 4px;
 	cursor: pointer;
 	transition: all 0.3s ease;
 
