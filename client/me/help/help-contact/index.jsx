@@ -119,7 +119,9 @@ const HelpContact = React.createClass( {
 
 		notifications.forEach( olarkActions.sendNotificationToOperator );
 
-		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin' );
+		analytics.tracks.recordEvent( 'calypso_help_live_chat_begin', {
+			site_plan_product_id: ( site ? site.plan.product_id : null )
+		} );
 
 		this.sendMessageToOperator( message );
 
@@ -156,12 +158,15 @@ const HelpContact = React.createClass( {
 					title: this.translate( 'We\'re on it!' ),
 					message: this.translate(
 						'We\'ve received your message, and you\'ll hear back from ' +
-						'one of our Happiness Engineers shortly.' 
+						'one of our Happiness Engineers shortly.'
 					)
 				}
 			} );
 
-			analytics.tracks.recordEvent( 'calypso_help_contact_submit', { ticket_type: 'kayako' } );
+			analytics.tracks.recordEvent( 'calypso_help_contact_submit', {
+				ticket_type: 'kayako',
+				site_plan_product_id: ( site ? site.plan.product_id : null )
+			} );
 		} );
 
 		this.clearSavedContactForm();
@@ -333,7 +338,10 @@ const HelpContact = React.createClass( {
 		if ( ! isUserEligible || isOlarkReady ) {
 			return;
 		}
-		notices.warning( this.translate( 'Our chat tools did not load. If you have an adblocker please disable it and refresh this page.' ) );
+		notices.warning( this.translate(
+			'Our chat tools did not load. If you have an adblocker ' +
+			'please disable it and refresh this page.'
+		) );
 	},
 
 	/**
