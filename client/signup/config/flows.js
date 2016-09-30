@@ -297,15 +297,18 @@ const Flows = {
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
 			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
-				if ( -1 === updatedFlow.steps.indexOf( 'site-title' )) {
-					// insert `site-title` step in the flow, after `survey`
-					const indexOfSurvey = updatedFlow.steps.indexOf( 'survey' );
-					updatedFlow.steps.splice( indexOfSurvey + 1, 0, 'site-title' );
-				}
+				Flows.insertStepIntoFlow( 'survey', 'site-title', updatedFlow );
 			}
 		}
 
 		return updatedFlow;
+	},
+
+	insertStepIntoFlow( afterStep, stepName, flow ) {
+		if ( - 1 === flow.steps.indexOf( stepName ) ) {
+			const afterStepIndex = flow.steps.indexOf( afterStep );
+			flow.steps.splice( afterStepIndex + 1, 0, stepName );
+		}
 	}
 };
 
