@@ -246,6 +246,9 @@ const Search = React.createClass( {
 			this.blur();
 		}
 
+		//Maybe not keyDown in here ?
+		this.props.onKeyDown( event );
+
 		if ( ! this.props.pinned ) {
 			return;
 		}

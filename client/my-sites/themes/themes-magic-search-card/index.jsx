@@ -52,6 +52,7 @@ const ThemesMagicSearchCard = React.createClass( {
 			searchInput: "",
 			editedSearchElement: "",
 			taxonomies: {},
+			cursorPosition: 0,
 		};
 	},
 
@@ -106,14 +107,20 @@ const ThemesMagicSearchCard = React.createClass( {
 		return "";
 	},
 
-	findTextForSuggestions( input ){
-		const cursorPosition = this.refs['url-search'].refs.searchInput.selectionEnd;
-		console.log(cursorPosition);
+	findTextForSuggestions( input ) {
+		let val = input;
+		const _this = this;
+		//Do we realy need to do this? pobably to delete
+		window.requestAnimationFrame(function() {
+			_this.setState( { cursorPosition: val.slice(0, _this.refs['url-search'].refs.searchInput.selectionStart).length } );
+		} );
+
+		console.log(this.state.cursorPosition);
 		const tokens = input.split(/(\s+)/);
 
 		// Get rid of empty match at end
 		tokens[tokens.length -1] === "" && tokens.splice(tokens.length - 1 , 1 );
-		return this.findEditedToken( tokens, cursorPosition );
+		return this.findEditedToken( tokens, this.state.cursorPosition );
 	},
 
 	onSearchChange( input ) {
