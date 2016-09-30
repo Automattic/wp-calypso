@@ -7,7 +7,7 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 	const site = siteSlug.replace( /.*?:\/\//g, '' );
 	const sessions = state.jetpackConnect.jetpackConnectSessions;
 
-	if ( sessions && sessions[ site ] ) {
+	if ( sessions[ site ] ) {
 		const currentTime = ( new Date() ).getTime();
 		return ( currentTime - sessions[ site ].timestamp < JETPACK_CONNECT_TTL );
 	}
@@ -17,7 +17,7 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 
 const getFlowType = function( state, siteSlug ) {
 	const sessions = state.jetpackConnect.jetpackConnectSessions;
-	if ( sessions && siteSlug && sessions[ siteSlug ] ) {
+	if ( siteSlug && sessions[ siteSlug ] ) {
 		return sessions[ siteSlug ].flowType;
 	}
 	return false;
