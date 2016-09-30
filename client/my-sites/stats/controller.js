@@ -2,7 +2,6 @@
  * External Dependencies
  */
 import React from 'react';
-import store from 'store';
 import page from 'page';
 import i18n from 'i18n-calypso';
 
@@ -24,26 +23,6 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 const user = userFactory();
 const sites = sitesFactory();
 const analyticsPageTitle = 'Stats';
-
-function getVisitDates() {
-	const statsVisitDates = store.get( 'statVisits' ) || [];
-	return statsVisitDates;
-}
-
-function recordVisitDate() {
-	let statsVisitDates = getVisitDates();
-	const visitDate = i18n.moment().format( 'YYYY-MM-DD' );
-
-	if ( statsVisitDates.indexOf( visitDate ) === -1 ) {
-		statsVisitDates.push( visitDate );
-	}
-
-	if ( statsVisitDates.length > 10 ) {
-		statsVisitDates = statsVisitDates.slice( statsVisitDates.length - 10 );
-	}
-
-	store.set( 'statVisits', statsVisitDates );
-}
 
 function rangeOfPeriod( period, date ) {
 	const periodRange = {
@@ -198,7 +177,6 @@ module.exports = {
 				{ title: i18n.translate( 'Years' ), path: '/stats/year', id: 'stats-year', period: 'year' }
 			];
 		};
-		const queryOptions = context.query;
 		const basePath = route.sectionify( context.path );
 
 		window.scrollTo( 0, 0 );
@@ -214,17 +192,10 @@ module.exports = {
 		if ( 0 === activeFilter.length ) {
 			next();
 		} else {
-			if ( queryOptions.from ) {
-				// For setting the oldStatsLink back to my-stats or wp-admin, depending on source
-				store.set( 'oldStatsLink', queryOptions.from );
-			}
-
 			activeFilter = activeFilter.shift();
 
 			analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 			analytics.pageView.record( basePath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
-
-			recordVisitDate();
 
 			renderWithReduxStore(
 				React.createElement( StatsComponent, {
@@ -331,36 +302,16 @@ module.exports = {
 			analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
 			analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
 
-			recordVisitDate();
-
 			period = rangeOfPeriod( activeFilter.period, date );
 			chartPeriod = rangeOfPeriod( activeFilter.period, chartDate );
 			endDate = period.endOf.format( 'YYYY-MM-DD' );
 			chartEndDate = chartPeriod.endOf.format( 'YYYY-MM-DD' );
 
-			if ( queryOptions.from ) {
-				// For setting the oldStatsLink back to my-stats or wp-admin, depending on source
-				store.set( 'oldStatsLink', queryOptions.from );
-			}
-
-			// If there is saved tab in store, use it then remove
-			if ( store.get( 'statTab' + siteId ) ) {
-				chartTab = store.get( 'statTab' + siteId );
-				store.remove( 'statTab' + siteId );
-			} else {
-				chartTab = 'views';
-			}
-
+			chartTab = queryOptions.tab || 'views';
 			visitsListFields = chartTab;
 			// If we are on the default Tab, grab visitors too
 			if ( 'views' === visitsListFields ) {
 				visitsListFields = 'views,visitors';
-			}
-
-			if ( queryOptions.tab ) {
-				store.set( 'statTab' + siteId, queryOptions.tab );
-				// We don't want to persist tab throughout navigation, it's only for selecting original tab
-				page.redirect( context.pathname );
 			}
 
 			switch ( activeFilter.period ) {
