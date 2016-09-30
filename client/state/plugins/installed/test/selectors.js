@@ -141,9 +141,7 @@ describe( 'Installed plugin selectors', function() {
 			const siteOneObj = { ID: 'site.one' };
 			const siteTwoObj = { ID: 'site.two' };
 			const plugins = selectors.getPlugins( state, [ siteOneObj, siteTwoObj ] );
-			const siteTwoWithPlugin = Object.assign( {}, siteTwoObj, { plugin: jetpack } );
-			const jetpackWithSite = Object.assign( {}, jetpack, { sites: [ siteTwoWithPlugin ] } );
-			expect( plugins ).to.deep.include( jetpackWithSite );
+			expect( plugins ).to.deep.include( { ...jetpack, sites: [ siteTwoObj.ID ] } );
 		} );
 
 		it( 'Should get a plugin list of length 2 if only site 1 is requested', function() {
@@ -152,7 +150,9 @@ describe( 'Installed plugin selectors', function() {
 		} );
 
 		it( 'Should get a plugin list of length 2 if active plugins on both sites are requested', function() {
-			const plugins = selectors.getPlugins( state, [ { ID: 'site.one' }, { ID: 'site.two' } ], 'active' );
+			const siteOneObj = { ID: 'site.one' };
+			const siteTwoObj = { ID: 'site.two' };
+			const plugins = selectors.getPlugins( state, [ siteOneObj, siteTwoObj ], 'active' );
 			expect( plugins ).to.have.lengthOf( 2 );
 		} );
 
@@ -203,9 +203,7 @@ describe( 'Installed plugin selectors', function() {
 		it( 'Should get the plugin if the it exists on the requested site', function() {
 			const siteOneObj = { ID: 'site.one' };
 			const plugin = selectors.getPluginOnSite( state, siteOneObj, 'akismet' );
-			const siteOneWithPlugin = Object.assign( {}, siteOneObj, { plugin: akismet } );
-			const akismetWithSite = Object.assign( {}, akismet, { sites: [ siteOneWithPlugin ] } );
-			expect( plugin ).to.eql( akismetWithSite );
+			expect( plugin ).to.eql( { akismet, sites: [ siteOneObj.ID ] } );
 		} );
 	} );
 
@@ -224,7 +222,7 @@ describe( 'Installed plugin selectors', function() {
 		} );
 
 		it( 'Should get an array of sites with the requested plugin', function() {
-			const siteWithPlugin = Object.assign( {}, siteList[ 1 ], { plugin: jetpack } );
+			const siteWithPlugin = siteList[ 1 ];
 			const sites = selectors.getSitesWithPlugin( state, siteList, 'jetpack' );
 			expect( sites ).to.eql( [ siteWithPlugin ] );
 		} );
