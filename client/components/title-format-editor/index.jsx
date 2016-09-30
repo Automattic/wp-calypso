@@ -100,6 +100,7 @@ const {
 // Parser also requires draft-js. Lets load it after the polyfills are created too.
 const {
 	fromEditor,
+	mapTokenTitleForEditor,
 	toEditor,
 } = require( './parser' );
 
@@ -260,7 +261,7 @@ export class TitleFormatEditor extends Component {
 			const contentState = Modifier.replaceText(
 				editorState.getCurrentContent(),
 				currentSelection,
-				`\u205f${ title }\u205f`,
+				mapTokenTitleForEditor( title ),
 				null,
 				tokenEntity
 			);
