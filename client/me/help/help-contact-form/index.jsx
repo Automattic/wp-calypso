@@ -70,7 +70,7 @@ module.exports = React.createClass( {
 	 * @return {Object} An object representing our initial state
 	 */
 	getInitialState: function() {
-		const site = sites.getLastSelectedSite() || sites.getPrimary();
+		const site = sites.getSelectedSite() || sites.getPrimary();
 
 		return this.props.valueLink.value || {
 			howCanWeHelp: 'gettingStarted',
