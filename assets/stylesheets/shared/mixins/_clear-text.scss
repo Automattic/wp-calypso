@@ -1,0 +1,8 @@
+// ==========================================================================
+// Clear fix mixin (clearfix)
+// ==========================================================================
+
+@mixin clear-text {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
