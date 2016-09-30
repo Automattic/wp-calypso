@@ -39,7 +39,8 @@ const AuthorCompactProfile = React.createClass( {
 		const hasAuthorName = has( author, 'name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && siteName.toLowerCase() === author.name.toLowerCase();
 		const classes = classnames( 'author-compact-profile', {
-			'has-author-link': ! hasMatchingAuthorAndSiteNames
+			'has-author-link': ! hasMatchingAuthorAndSiteNames,
+			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar )
 		} );
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const authorNameBlacklist = [ 'admin' ];
@@ -49,7 +50,7 @@ const AuthorCompactProfile = React.createClass( {
 
 		return (
 			<div className={ classes }>
-				<a href={ streamUrl }>
+				<a href={ streamUrl } className="author-compact-profile__avatar-link">
 					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
 				</a>
 				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && ! includes( authorNameBlacklist, author.name.toLowerCase() ) &&
