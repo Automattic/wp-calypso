@@ -6,7 +6,6 @@ import wpcom from 'lib/wp';
 /**
  * Internal dependencies
  */
-import utils from 'lib/site/utils';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -133,22 +132,12 @@ export function updatePlugin( site, plugin ) {
 			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_UPDATE_REQUEST_FAILURE, error } ) );
 		};
 
-		if ( ! site.canUpdateFiles ) {
-			const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
-			errorCallback( cantUpdateError );
-			return Promise.reject( cantUpdateError );
-		}
-
 		return getPluginHandler( siteId, pluginId ).updateVersion().then( successCallback ).catch( errorCallback );
 	};
 }
 
 export function enableAutoupdatePlugin( site, plugin ) {
 	return ( dispatch ) => {
-		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-			return Promise.reject( 'Error: We can\'t update files on this site.' );
-		}
-
 		const pluginId = plugin.id;
 		const siteId = site.ID;
 		const defaultAction = {
@@ -173,10 +162,6 @@ export function enableAutoupdatePlugin( site, plugin ) {
 
 export function disableAutoupdatePlugin( site, plugin ) {
 	return ( dispatch ) => {
-		if ( ! utils.userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-			return;
-		}
-
 		const pluginId = plugin.id;
 		const siteId = site.ID;
 		const defaultAction = {
@@ -253,11 +238,6 @@ export function installPlugin( site, plugin ) {
 			return Promise.reject( error );
 		};
 
-		if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
-			const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
-			return errorCallback( cantUpdateError );
-		}
-
 		if ( site.isMainNetworkSite() ) {
 			return doInstall( plugin )
 				.then( doAutoupdates )
@@ -310,11 +290,6 @@ export function removePlugin( site, plugin ) {
 			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST_FAILURE, error } ) );
 			return Promise.reject( error );
 		};
-
-		if ( ! site.canUpdateFiles || ! utils.userCan( 'manage_options', site ) ) {
-			const cantUpdateError = new Error( 'Error: Can\'t update files on the site' );
-			return errorCallback( cantUpdateError );
-		}
 
 		return doDeactivate( plugin )
 			.then( doDisableAutoupdate )
