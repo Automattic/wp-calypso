@@ -275,3 +275,7 @@ export function stripFilters( input ) {
 export function getSubjects() {
 	return taxonomies.subject;
 }
+
+export function isValidTerm( term ) {
+	return !! getTermTable()[ term ];
+}
