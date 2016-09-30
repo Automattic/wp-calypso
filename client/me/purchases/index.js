@@ -54,11 +54,6 @@ export default function() {
 	);
 
 	page(
-		paths.listNotice(),
-		controller.listNotice
-	);
-
-	page(
 		paths.managePurchase(),
 		meController.sidebar,
 		controller.noSitesMessage,
