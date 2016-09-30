@@ -34,7 +34,12 @@ describe( 'utils', function() {
 
 	before( () => {
 		flows = require( 'signup/config/flows' );
+
 		sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
+		sinon.stub( flows, 'getABTestFilteredFlow', ( flowName, flow ) => {
+			return flow;
+		} );
+
 		utils = require( '../utils' );
 	} );
 

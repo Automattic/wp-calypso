@@ -29,6 +29,9 @@ describe( 'flows', function() {
 
 		flows = require( 'signup/config/flows' );
 		sinon.stub( flows, 'getFlows' ).returns( mockedFlows );
+		sinon.stub( flows, 'getABTestFilteredFlow', ( flowName, flow ) => {
+			return flow;
+		} );
 	} );
 
 	it( 'should return the full flow when the user is not logged in', function() {
