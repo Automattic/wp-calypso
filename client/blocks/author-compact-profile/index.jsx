@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import { getStreamUrl } from 'reader/route';
 import { numberFormat } from 'i18n-calypso';
-import { has } from 'lodash';
+import { has, includes } from 'lodash';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
@@ -41,13 +41,14 @@ const AuthorCompactProfile = React.createClass( {
 			'has-author-link': ! hasMatchingAuthorAndSiteNames
 		} );
 		const streamUrl = getStreamUrl( feedId, siteId );
+		const authorNameBlacklist = [ 'admin' ];
 
 		return (
 			<div className={ classes }>
 				<a href={ streamUrl }>
 					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
 				</a>
-				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames &&
+				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && ! includes( authorNameBlacklist, author.name.toLowerCase() ) &&
 					<ReaderAuthorLink author={ author } siteUrl={ streamUrl }>{ author.name }</ReaderAuthorLink> }
 				{ siteName &&
 					<ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId }>
