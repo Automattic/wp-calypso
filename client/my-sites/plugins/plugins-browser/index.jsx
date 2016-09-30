@@ -57,7 +57,7 @@ module.exports = React.createClass( {
 	},
 
 	fetchNextPagePlugins() {
-		var doSearch = true;
+		let doSearch = true;
 
 		if ( this.state.fullLists.search && this.state.fullLists.search.fetching ) {
 			doSearch = false;
@@ -75,7 +75,7 @@ module.exports = React.createClass( {
 	},
 
 	getPluginsLists( search ) {
-		var shortLists = {},
+		const shortLists = {},
 			fullLists = {};
 		this.visibleCategories.forEach( category => {
 			shortLists[ category ] = PluginsListStore.getShortList( category );
@@ -119,17 +119,29 @@ module.exports = React.createClass( {
 	},
 
 	getFullListView( category ) {
-		var isFetching = this.state.fullLists[ category ] ? !! this.state.fullLists[ category ].fetching : true;
+		const isFetching = this.state.fullLists[ category ] ? !! this.state.fullLists[ category ].fetching : true;
 		if ( this.getPluginsFullList( category ).length > 0 || isFetching ) {
-			return <PluginsBrowserList plugins={ this.getPluginsFullList( category ) } listName={ category } title={ this.translateCategory( category ) } site={ this.props.site } showPlaceholders={ isFetching } currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
+			return <PluginsBrowserList
+				plugins={ this.getPluginsFullList( category ) }
+				listName={ category }
+				title={ this.translateCategory( category ) }
+				site={ this.props.site }
+				showPlaceholders={ isFetching }
+				currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
 	},
 
 	getSearchListView( searchTerm ) {
-		var isFetching = this.state.fullLists.search ? !! this.state.fullLists.search.fetching : true;
+		const isFetching = this.state.fullLists.search ? !! this.state.fullLists.search.fetching : true;
 		if ( this.getPluginsFullList( 'search' ).length > 0 || isFetching ) {
-			let searchTitle = this.translate( 'Results for: %(searchTerm)s', { textOnly: true, args: { searchTerm } } );
-			return <PluginsBrowserList plugins={ this.getPluginsFullList( 'search' ) } listName={ searchTerm } title={ searchTitle } site={ this.props.site } showPlaceholders={ isFetching } currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
+			const searchTitle = this.translate( 'Results for: %(searchTerm)s', { textOnly: true, args: { searchTerm } } );
+			return <PluginsBrowserList
+				plugins={ this.getPluginsFullList( 'search' ) }
+				listName={ searchTerm }
+				title={ searchTitle }
+				site={ this.props.site }
+				showPlaceholders={ isFetching }
+				currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
 		return (
 			<NoResults
@@ -143,14 +155,15 @@ module.exports = React.createClass( {
 	},
 
 	getPluginSingleListView( category ) {
+		const listLink = '/plugins/browse/' + category + '/';
 		return <PluginsBrowserList
 			plugins={ this.getPluginsShortList( category ) }
 			listName={ category }
 			title={ this.translateCategory( category ) }
 			site={ this.props.site }
-			expandedListLink={ this.getPluginsFullList( category ).length > this._SHORT_LIST_LENGTH ? '/plugins/browse/' + category + '/' : false }
+			expandedListLink={ this.getPluginsFullList( category ).length > this._SHORT_LIST_LENGTH ? listLink : false }
 			size={ this._SHORT_LIST_LENGTH }
-			showPlaceholders={ this.state.fullLists[ category].fetching !== false }
+			showPlaceholders={ this.state.fullLists[ category ].fetching !== false }
 			currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 	},
 
@@ -190,13 +203,33 @@ module.exports = React.createClass( {
 	},
 
 	getNavigationBar() {
-		var site = this.props.site ? '/' + this.props.site : '';
+		const site = this.props.site ? '/' + this.props.site : '';
 		return <SectionNav selectedText={ this.translate( 'Category', { context: 'Category of plugins to be filtered by' } ) }>
-			<NavTabs label="Category" >
-				<NavItem path={ '/plugins/browse' + site } selected={ false }>{ this.translate( 'All', { context: 'Filter all plugins' } ) } </NavItem>
-				<NavItem path={ '/plugins/browse/featured' + site } selected={ this.props.path === ( '/plugins/browse/featured' + site ) } > { this.translate( 'Featured', { context: 'Filter featured plugins' } ) } </NavItem>
-				<NavItem path={ '/plugins/browse/popular' + site } selected={ this.props.path === ( '/plugins/browse/popular' + site ) } > { this.translate( 'Popular', { context: 'Filter popular plugins' } ) } </NavItem>
-				<NavItem path={ '/plugins/browse/new' + site } selected={ this.props.path === ( '/plugins/browse/new' + site ) } > { this.translate( 'New', { context: 'Filter new plugins' } ) } </NavItem>
+			<NavTabs label="Category">
+				<NavItem
+					path={ '/plugins/browse' + site }
+					selected={ false }
+				>
+					{ this.translate( 'All', { context: 'Filter all plugins' } ) }
+				</NavItem>
+				<NavItem
+					path={ '/plugins/browse/featured' + site }
+					selected={ this.props.path === ( '/plugins/browse/featured' + site ) }
+				>
+					{ this.translate( 'Featured', { context: 'Filter featured plugins' } ) }
+				</NavItem>
+				<NavItem
+					path={ '/plugins/browse/popular' + site }
+					selected={ this.props.path === ( '/plugins/browse/popular' + site ) }
+				>
+					{ this.translate( 'Popular', { context: 'Filter popular plugins' } ) }
+				</NavItem>
+				<NavItem
+					path={ '/plugins/browse/new' + site }
+					selected={ this.props.path === ( '/plugins/browse/new' + site ) }
+				>
+					{ this.translate( 'New', { context: 'Filter new plugins' } ) }
+				</NavItem>
 			</NavTabs>
 			{ this.getSearchBox( true ) }
 		</SectionNav>;
@@ -232,7 +265,10 @@ module.exports = React.createClass( {
 				<MainComponent>
 					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
-					{ this.state.accessError.featureExample ? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample> : null }
+					{ this.state.accessError.featureExample
+						? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample>
+						: null
+					}
 				</MainComponent>
 			);
 		}
