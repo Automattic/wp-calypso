@@ -120,7 +120,7 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	getVerticalNav() {
-		if ( this.props.domain.expired || this.props.domain.pendingTransfer ) {
+		if ( this.props.domain.expired ) {
 			return null;
 		}
 
@@ -135,6 +135,10 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	emailNavItem() {
+		if ( this.props.domain.pendingTransfer ) {
+			return null;
+		}
+
 		const path = paths.domainManagementEmail(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -148,6 +152,10 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	nameServersNavItem() {
+		if ( this.props.domain.pendingTransfer ) {
+			return null;
+		}
+
 		const path = paths.domainManagementNameServers(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -161,6 +169,10 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	contactsPrivacyNavItem() {
+		if ( this.props.domain.pendingTransfer ) {
+			return null;
+		}
+
 		const path = paths.domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
 			this.props.domain.name
