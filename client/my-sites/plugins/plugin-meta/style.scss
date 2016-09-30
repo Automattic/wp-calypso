@@ -64,22 +64,7 @@
 
 .plugin-meta__detail {
 	position: relative;
-	width: 100%;
 	flex-grow: 1;
-
-	@include breakpoint( '>480px' ) {
-		max-width: calc(100% - 150px);
-
-		.has-button & {
-			max-width: 100%;
-		}
-	}
-
-	@include breakpoint( '>660px' ) {
-		.has-button & {
-			max-width: calc(100% - 150px);
-		}
-	}
 }
 
 .plugin-meta__meta {
@@ -128,10 +113,25 @@
 
 }
 
+.plugin-meta__actions .form-toggle__label {
+	display: flex;
+		justify-content: flex-end;
+
+	.form-toggle__switch {
+		float: none;
+		order: 2;
+	}
+}
+
 .plugin-meta__actions .plugin-action__label {
 	@include breakpoint( '<480px' ) {
+		flex-grow: 2;
 		color: $gray-dark;
 		font-size: 11px;
+	}
+	@include breakpoint( '<780px' ) {
+		display: block;
+		padding-right: 16px;
 	}
 }
 
