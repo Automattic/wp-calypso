@@ -66,7 +66,7 @@ function AuthorAndSiteFollowPlaceholder() {
 	);
 }
 
-export function RelatedPostCardPlaceholder() {
+function RelatedPostCardPlaceholder() {
 	return (
 		<Card className="reader-related-card-v2 is-placeholder">
 			<AuthorAndSiteFollowPlaceholder />
