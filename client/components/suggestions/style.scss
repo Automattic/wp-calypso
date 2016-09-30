@@ -1,38 +1,7 @@
-.search-tokens {
-	position: relative;
-	display: flex;
-	align-items: center;
-	font-size: 16px;
-	flex: 1 1 auto;
+.suggestions{
 
-	.search-tokens__input[type="text"] {
-		font: inherit;
-		border: 0px;
-		padding: 0px;
+	.suggestions__taxonomy {
+			padding-left: 4px;
+			padding-right: 4px;
 	}
-
-	.search-tokens__tokens {
-		position: absolute;
-		pointer-events: none;
-		white-space: nowrap;
-		flex: 1 1 auto;
-		overflow: hidden;
-		font: inherit;
-		width: 100%;
-		left: 0px;
-	}
-
-	.search-tokens__token {
-		font: inherit;
-		pointer-events: none;
-		color: rgba(1, 0, 0, 0.2);
-		background-color: blue;
-	}
-
-	.search-tokens__white-space {
-		font: inherit;
-		pointer-events: none;
-		white-space: pre;
-	}
-
 }
