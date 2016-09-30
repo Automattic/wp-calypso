@@ -17,7 +17,7 @@ import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts'
 function RelatedPosts( { siteId, postId, posts, title, scope, className = '', onPostClick = noop, onSiteClick = noop } ) {
 	let listItems;
 
-	if ( ! posts || ! posts.length ) {
+	if ( ! posts ) {
 		// Placeholders
 		listItems = times( 2, i => {
 			return (
@@ -26,6 +26,8 @@ function RelatedPosts( { siteId, postId, posts, title, scope, className = '', on
 				</li>
 			);
 		} );
+	} else if ( posts.length === 0 ) {
+		return null;
 	} else {
 		listItems = posts.map( post_id => {
 			return (
