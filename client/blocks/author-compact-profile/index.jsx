@@ -44,7 +44,7 @@ const AuthorCompactProfile = React.createClass( {
 		const streamUrl = getStreamUrl( feedId, siteId );
 
 		// If we have a feed URL, use that for the follow button in preference to the site URL
-		const followUrl = feedUrl ? feedUrl : siteUrl;
+		const followUrl = feedUrl || siteUrl;
 
 		return (
 			<div className={ classes }>
