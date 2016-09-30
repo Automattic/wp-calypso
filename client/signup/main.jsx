@@ -278,10 +278,7 @@ const Signup = React.createClass( {
 	},
 
 	loadNextStep() {
-		// preload the AB tests before going forward in the flow
-		flows.preloadABTestVariationsForStep( this.props.flowName, this.props.stepName );
-
-		const flowSteps = flows.getFlow( this.props.flowName ).steps,
+		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],

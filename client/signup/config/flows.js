@@ -228,7 +228,20 @@ const Flows = {
 	defaultFlowName: 'main',
 	resumingFlow: false,
 
-	getFlow( flowName ) {
+	/**
+	 * Get certain flow from the flows configuration.
+	 *
+	 * The returned flow is modified according to several filters here.
+	 *
+	 * `currentStepName` is the current step in the signup flow. It is used
+	 * to determine if any AB variations should be assigned after it is completed.
+	 * Example use case: To determine if a new signup step should be part of the flow or not.
+	 *
+	 * @param {String} flowName The name of the flow to return
+	 * @param {String} currentStepName The current step. See description above
+	 * @returns {Object} A flow object
+	 */
+	getFlow( flowName, currentStepName = '' ) {
 		let flow = Flows.getFlows()[ flowName ];
 
 		if ( user.get() ) {
@@ -237,6 +250,12 @@ const Flows = {
 
 		if ( ! user.get() && 'en' === i18n.getLocaleSlug() ) {
 			flow = filterDesignTypeInFlow( flow );
+		}
+
+		if ( ! user.get() ) {
+			// Preload the AB tests before going forward in the flow.
+			// Only valid for logged out users.
+			Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 		}
 
 		return Flows.getABTestFilteredFlow( flowName, flow );
