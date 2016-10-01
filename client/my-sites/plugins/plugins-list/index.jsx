@@ -9,6 +9,7 @@ import includes from 'lodash/includes';
 import negate from 'lodash/negate';
 import range from 'lodash/range';
 import isEqual from 'lodash/isEqual';
+import sortBy from 'lodash/sortBy';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
 import PluginsLog from 'lib/plugins/log-store';
 import PluginNotices from 'lib/plugins/notices';
 import SectionHeader from 'components/section-header';
+import { abtest } from 'lib/abtest';
 
 function checkPropsChange( nextProps, propArr ) {
 	var i, prop;
@@ -203,6 +205,10 @@ export default React.createClass( {
 			.forEach( site => action( site, site.plugin ) );
 	},
 
+	pluginHasUpdate( plugin )  {
+		return plugin.sites.some( site => site.plugin && site.plugin.update && site.canUpdateFiles );
+	},
+
 	updateAllPlugins() {
 		this.removePluginsNotices();
 		this.props.plugins.forEach( plugin => {
@@ -369,7 +375,10 @@ export default React.createClass( {
 		if ( this.props.isPlaceholder ) {
 			return (
 				<div className="plugins-list">
-					<SectionHeader key="plugins-list__section-placeholder" label={ this.props.header } className="plugins-list__section-actions is-placeholder" />
+					<SectionHeader
+						key="plugins-list__section-placeholder"
+						label={ this.props.header }
+						className="plugins-list__section-actions is-placeholder" />
 					<div className={ itemListClasses }>{ this.renderPlaceholders() }</div>
 				</div>
 				);
@@ -378,6 +387,10 @@ export default React.createClass( {
 		if ( isEmpty( this.props.plugins ) ) {
 			return null;
 		}
+
+		const sortedPlugins = abtest( 'pluginUpdatesAtTop' ) === 'updatesAtTop'
+			? this.orderPluginsByUpdates( this.props.plugins )
+			: this.props.plugins;
 
 		return (
 			<div className="plugins-list" >
@@ -400,14 +413,27 @@ export default React.createClass( {
 					haveActiveSelected={ this.props.plugins.some( this.filterSelection.active.bind( this ) ) }
 					haveInactiveSelected={ this.props.plugins.some( this.filterSelection.inactive.bind( this ) ) }
 					haveUpdatesSelected= { this.props.plugins.some( this.filterSelection.updates.bind( this ) ) } />
-				<div className={ itemListClasses }>{ this.props.plugins.map( this.renderPlugin ) }</div>
+				<div className={ itemListClasses }>
+					{ sortedPlugins.map( this.renderPlugin ) }
+				</div>
 				<DisconnectJetpackDialog ref="dialog" site={ this.props.site } sites={ this.props.sites } redirect="/plugins" />
 			</div>
 		);
 	},
 
-	renderPlugin( plugin ) {
+	orderPluginsByUpdates( plugins ) {
+		return sortBy( plugins, plugin => {
+			// Bring the plugins requiring updates to the front of the array
+			return this.pluginHasUpdate( plugin ) ? 0 : 1;
+		} );
+	},
+
+	renderPlugin( plugin, idx ) {
 		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
+
+		const isCompact = abtest( 'pluginUpdatesAtTop' ) === 'updatesAtTop'
+			? idx !== this.props.pluginUpdateCount - 1
+			: true;
 		return (
 			<PluginItem
 				key={ plugin.slug }
@@ -419,8 +445,10 @@ export default React.createClass( {
 				notices={ this.state.notices }
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ this.state.bulkManagementActive }
+				isCompact={ isCompact }
 				onClick={ selectThisPlugin }
 				selectedSite={ this.props.selectedSite }
+				hasUpdate = { this.pluginHasUpdate }
 				pluginLink={ '/plugins/' + encodeURIComponent( plugin.slug ) + this.siteSuffix() } />
 		);
 	},
