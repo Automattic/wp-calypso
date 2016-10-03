@@ -49,7 +49,7 @@ import QueryPreferences from 'components/data/query-preferences';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { protectForm } from 'lib/protect-form';
 import EditorSidebar from 'post-editor/editor-sidebar';
-import Site from 'my-sites/site';
+import Site from 'blocks/site';
 import StatusLabel from 'post-editor/editor-status-label';
 
 export const PostEditor = React.createClass( {
@@ -218,9 +218,6 @@ export const PostEditor = React.createClass( {
 								site={ site }
 								type={ this.props.type }
 							/>
-							<EditorNotice
-								{ ...this.state.notice }
-								onDismissClick={ this.onNoticeClick } />
 							<div className="editor__site">
 								<Site
 									site={ site }
@@ -233,15 +230,13 @@ export const PostEditor = React.createClass( {
 									type={ this.props.type }
 								/>
 							</div>
+							<EditorNotice
+								{ ...this.state.notice }
+								onDismissClick={ this.hideNotice } />
 							<FeaturedImage
 								site={ site }
 								post={ this.state.post }
 								maxWidth={ 1462 } />
-							<EditorNotice
-								{ ...this.state.notice }
-								layoutFocus={ layoutFocus }
-								onDismissClick={ this.hideNotice }
-							/>
 							<div className="editor__header">
 								<EditorTitleContainer
 									onChange={ this.debouncedAutosave }
@@ -370,11 +365,6 @@ export const PostEditor = React.createClass( {
 
 	closeVerifyEmailDialog: function() {
 		this.setState( { showVerifyEmailDialog: false } );
-	},
-
-	onNoticeClick: function( event ) {
-		event.preventDefault();
-		this.hideNotice();
 	},
 
 	onEditedPostChange: function() {
