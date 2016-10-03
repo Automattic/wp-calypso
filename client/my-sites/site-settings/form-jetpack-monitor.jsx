@@ -154,7 +154,7 @@ module.exports = React.createClass( {
 				<Button
 					compact
 					primary
-					onClick={ this.submitForm }
+					onClick={ this.handleSubmitForm }
 					>
 					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
 				</Button>

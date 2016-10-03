@@ -428,13 +428,13 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 
-			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
+			<form id="site-settings" onSubmit={ this.handleSubmitForm } onChange={ this.markChanged }>
 				<SectionHeader label={ this.translate( 'Discussion Settings' ) }>
 					<Button
 						primary
 						compact
 						disabled={ this.state.fetchingSettings || this.state.submittingForm }
-						onClick={ this.submitForm }>
+						onClick={ this.handleSubmitForm }>
 						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
