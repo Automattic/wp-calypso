@@ -297,12 +297,6 @@ export const PLANS_LIST = {
 	}
 };
 
-export const ALL_WPCOM_PAID_PLANS = [
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS
-];
-
 export const FEATURES_LIST = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
 		getSlug: () => FEATURE_GOOGLE_ANALYTICS,
