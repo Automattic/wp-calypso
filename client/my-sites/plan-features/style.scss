@@ -267,8 +267,37 @@ $plan-features-sidebar-width: 272px;
 
 	&.is-placeholder {
 		@include placeholder( 23% );
-		width: 100px;
+		width: 140px;
 		height: 12px;
+		margin-bottom: 15px;
+
+		@include breakpoint( "<960px" ) {
+			margin-bottom: 9px;
+		}
+	}
+}
+
+.plan-features__price {
+	&.is-placeholder {
+		@include placeholder( 23% );
+		width: 45px;
+		height: 25px;
+		margin-top: 9px;
+		margin-bottom: 5px;
+	}
+}
+
+.plan-features__price-jetpack {
+	&.is-placeholder {
+		@include placeholder( 23% );
+		height: 32px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		width: 140px;
+
+		@include breakpoint( "<960px" ) {
+			height: 26px;
+		}
 	}
 }
 
