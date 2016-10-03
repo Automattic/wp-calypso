@@ -11,6 +11,35 @@ import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
 import Button from 'components/button';
 
+export const getPublishButtonStatus = ( site, post, savedPost ) => {
+	if (
+		postUtils.isPublished( savedPost ) &&
+		! postUtils.isBackDatedPublished( savedPost ) &&
+		! postUtils.isFutureDated( post ) ||
+		(
+			savedPost &&
+			savedPost.status === 'future' &&
+			postUtils.isFutureDated( post )
+		)
+	) {
+		return 'update';
+	}
+
+	if ( postUtils.isFutureDated( post ) ) {
+		return 'schedule';
+	}
+
+	if ( siteUtils.userCan( 'publish_posts', site ) ) {
+		return 'publish';
+	}
+
+	if ( savedPost && savedPost.status === 'pending' ) {
+		return 'update';
+	}
+
+	return 'requestReview';
+};
+
 export default React.createClass( {
 	displayName: 'EditorPublishButton',
 
@@ -40,43 +69,14 @@ export default React.createClass( {
 			requestReview: 'Clicked Request-Review Page Button',
 			publish: 'Clicked Publish Page Button'
 		};
-		const buttonState = this.getButtonState();
+		const buttonState = getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost );
 		const eventString = postUtils.isPage( this.props.post ) ? pageEvents[ buttonState ] : postEvents[ buttonState ];
 		recordEvent( eventString );
 		recordEvent( 'Clicked Primary Button' );
 	},
 
-	getButtonState: function() {
-		if (
-			postUtils.isPublished( this.props.savedPost ) &&
-			! postUtils.isBackDatedPublished( this.props.savedPost ) &&
-			! postUtils.isFutureDated( this.props.post ) ||
-			(
-				this.props.savedPost &&
-				this.props.savedPost.status === 'future' &&
-				postUtils.isFutureDated( this.props.post )
-			)
-		) {
-			return 'update';
-		}
-
-		if ( postUtils.isFutureDated( this.props.post ) ) {
-			return 'schedule';
-		}
-
-		if ( siteUtils.userCan( 'publish_posts', this.props.site ) ) {
-			return 'publish';
-		}
-
-		if ( this.props.savedPost && this.props.savedPost.status === 'pending' ) {
-			return 'update';
-		}
-
-		return 'requestReview';
-	},
-
 	getButtonLabel: function() {
-		switch ( this.getButtonState() ) {
+		switch ( getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost ) ) {
 			case 'update':
 				return this.translate( 'Update' );
 			case 'schedule':
