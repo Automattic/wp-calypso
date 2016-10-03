@@ -45,10 +45,6 @@ const EditorMobileNavigation = React.createClass( {
 	},
 
 	render: function() {
-		if ( ! this.props.site ) {
-			return null;
-		}
-
 		return (
 			<div className="editor-mobile-navigation">
 				<div className="editor-mobile-navigation__actions">
