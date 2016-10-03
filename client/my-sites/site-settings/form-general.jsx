@@ -531,7 +531,7 @@ const FormGeneral = React.createClass( {
 				<SectionHeader label={ this.translate( 'Site Profile' ) }>
 					<Button
 						compact={ true }
-						onClick={ this.submitForm }
+						onClick={ this.handleSubmitForm }
 						primary={ true }
 
 						type="submit"
@@ -556,7 +556,7 @@ const FormGeneral = React.createClass( {
 				<SectionHeader label={ this.translate( 'Privacy' ) }>
 					<Button
 						compact={ true }
-						onClick={ this.submitForm }
+						onClick={ this.handleSubmitForm }
 						primary={ true }
 
 						type="submit"
@@ -597,7 +597,7 @@ const FormGeneral = React.createClass( {
 				<SectionHeader label={ this.translate( 'Related Posts' ) }>
 					<Button
 						compact={ true }
-						onClick={ this.submitForm }
+						onClick={ this.handleSubmitForm }
 						primary={ true }
 
 						type="submit"
@@ -621,7 +621,7 @@ const FormGeneral = React.createClass( {
 							{ this.showPublicPostTypesCheckbox()
 								? <Button
 									compact={ true }
-									onClick={ this.submitForm }
+									onClick={ this.handleSubmitForm }
 									primary={ true }
 									type="submit"
 									disabled={ this.state.fetchingSettings || this.state.submittingForm }>

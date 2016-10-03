@@ -85,7 +85,7 @@ module.exports = React.createClass( {
 
 	settings: function() {
 		return (
-			<form id="protect-settings" onChange={ this.markChanged } onSubmit={ this.submitForm }>
+			<form id="protect-settings" onChange={ this.markChanged } onSubmit={ this.handleSubmitForm }>
 				<FormLegend>{ this.translate( 'IP Address Whitelist' ) }</FormLegend>
 
 				<FormLabel>
@@ -134,7 +134,7 @@ module.exports = React.createClass( {
 					disabled={ this.disableForm() }
 					compact
 					primary
-					onClick={ this.submitForm }
+					onClick={ this.handleSubmitForm }
 					>
 					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
 				</Button>
