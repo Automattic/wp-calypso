@@ -1,38 +1,41 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-export default React.createClass( {
-
-	displayName: 'TrackComponentView',
-
-	propTypes: {
+class TrackComponentView extends Component {
+	static propTypes = {
 		eventName: PropTypes.string,
-		eventProperties: PropTypes.object
-	},
+		eventProperties: PropTypes.object,
+		recordTracksEvent: PropTypes.func
+	};
 
-	getDefaultProps() {
-		return {
-			eventName: null,
-			eventProperties: {}
-		}
-	},
+	static defaultProps = {
+		eventName: null,
+		eventProperties: {},
+		recordTracksEvent: () => {}
+	};
 
 	componentWillMount() {
 		if ( this.props.eventName ) {
-			analytics.tracks.recordEvent( this.props.eventName, this.props.eventProperties );
+			this.props.recordTracksEvent( this.props.eventName, this.props.eventProperties );
 		}
-	},
+	}
 
 	render() {
 		return null;
 	}
 
-} );
+}
+
+export default connect(
+	null,
+	{ recordTracksEvent }
+)( TrackComponentView );
 
