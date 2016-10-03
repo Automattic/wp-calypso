@@ -41,27 +41,6 @@
 	border-bottom: 1px solid #EBF0F2;
 }
 
-%status {
-	padding: 3px 5px;
-	font-size: 11px;
-	letter-spacing: 1px;
-	font-weight: 300;
-	text-transform: uppercase;
-	color: $white;
-	border-radius: 3px;
-}
-
-%status-draft,
-%status-pending {
-	background: $alert-yellow;
-	box-shadow: inset 0px 1px 0 darken($alert-yellow, 5%);
-}
-
-%status-scheduled {
-	background: $alert-green;
-	box-shadow: inset 0px 1px 0 darken($alert-green, 5%);
-}
-
 %placeholder {
 
 	.stats-module.is-loading & * {
