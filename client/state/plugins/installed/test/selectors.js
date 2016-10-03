@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
+import { pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -141,7 +142,8 @@ describe( 'Installed plugin selectors', function() {
 			const siteOneObj = { ID: 'site.one' };
 			const siteTwoObj = { ID: 'site.two' };
 			const plugins = selectors.getPlugins( state, [ siteOneObj, siteTwoObj ] );
-			expect( plugins ).to.deep.include( { ...jetpack, sites: [ siteTwoObj.ID ] } );
+			const siteWithPlugin = { [ siteTwoObj.ID ]: pick( jetpack, [ 'active', 'autoupdate', 'update' ] ) };
+			expect( plugins ).to.deep.include( { ...jetpack, sites: siteWithPlugin } );
 		} );
 
 		it( 'Should get a plugin list of length 2 if only site 1 is requested', function() {
@@ -192,7 +194,8 @@ describe( 'Installed plugin selectors', function() {
 		it( 'Should get the plugin if the it exists on the requested site', function() {
 			const siteOneObj = { ID: 'site.one' };
 			const plugin = selectors.getPluginOnSite( state, siteOneObj, 'akismet' );
-			expect( plugin ).to.eql( { akismet, sites: [ siteOneObj.ID ] } );
+			const siteWithPlugin = { [ siteOneObj.ID ]: pick( akismet, [ 'active', 'autoupdate', 'update' ] ) };
+			expect( plugin ).to.eql( { ...akismet, sites: siteWithPlugin } );
 		} );
 	} );
 
