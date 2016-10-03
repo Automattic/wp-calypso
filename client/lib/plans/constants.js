@@ -302,7 +302,7 @@ export const ALL_WPCOM_PAID_PLANS = [
 	PLAN_BUSINESS
 ];
 
-export const featuresList = {
+export const FEATURES_LIST = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
 		getSlug: () => FEATURE_GOOGLE_ANALYTICS,
 		getTitle: () => i18n.translate( 'Google Analytics Integration' ),
@@ -637,7 +637,7 @@ export const getPlanObject = planName => {
 
 export const getPlanFeaturesObject = planFeaturesList => {
 	return planFeaturesList.map( featuresConst =>
-		featuresList[ featuresConst ]
+		FEATURES_LIST[ featuresConst ]
 	);
 };
 
