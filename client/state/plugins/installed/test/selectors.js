@@ -192,12 +192,12 @@ describe( 'Installed plugin selectors', function() {
 	} );
 
 	describe( 'getPluginOnSite', function() {
-		it( 'Should get `false` if the requested site is not in the current state', function() {
-			expect( selectors.getPluginOnSite( state, { ID: 'no.site' }, 'akismet' ) ).to.be.false;
+		it( 'Should get an undefined value if the requested site is not in the current state', function() {
+			expect( selectors.getPluginOnSite( state, { ID: 'no.site' }, 'akismet' ) ).to.be.undefined;
 		} );
 
-		it( 'Should get `false` if the requested plugin on this site is not in the current state', function() {
-			expect( selectors.getPluginOnSite( state, { ID: 'site.one' }, 'jetpack' ) ).to.be.false;
+		it( 'Should get an undefined value if the requested plugin on this site is not in the current state', function() {
+			expect( selectors.getPluginOnSite( state, { ID: 'site.one' }, 'jetpack' ) ).to.be.undefined;
 		} );
 
 		it( 'Should get the plugin if the it exists on the requested site', function() {
