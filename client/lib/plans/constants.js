@@ -305,8 +305,7 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			'Track website statistics with Google Analytics for a ' +
 			'deeper understanding of your website visitors and customers.'
-		),
-		//plans: [ PLAN_BUSINESS ]
+		)
 	},
 
 	[ FEATURE_UNLIMITED_STORAGE ]: {
@@ -320,8 +319,7 @@ export const FEATURES_LIST = {
 			"With increased storage space you'll be able to upload " +
 			'more images, videos, audio, and documents to your website.'
 		),
-		getStoreSlug: () => 'unlimited_space',
-		plans: [ PLAN_BUSINESS ]
+		getStoreSlug: () => 'unlimited_space'
 	},
 
 	[ FEATURE_CUSTOM_DOMAIN ]: {
@@ -330,8 +328,7 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			'Get a free custom domain name (example.com) with this plan ' +
 			'to use for your website.'
-		),
-		plans: ALL_WPCOM_PAID_PLANS
+		)
 	},
 
 	[ FEATURE_UNLIMITED_PREMIUM_THEMES ]: {
@@ -345,8 +342,7 @@ export const FEATURES_LIST = {
 			'Unlimited access to all of our advanced premium theme templates, ' +
 			'including templates specifically tailored for businesses.'
 		),
-		getStoreSlug: () => 'unlimited_themes',
-		plans: [ PLAN_BUSINESS ]
+		getStoreSlug: () => 'unlimited_themes'
 	},
 
 	[ FEATURE_VIDEO_UPLOADS ]: {
@@ -356,8 +352,7 @@ export const FEATURES_LIST = {
 			'The easiest way to upload videos to your website and display them ' +
 			'using a fast, unbranded, customizable player with rich stats.'
 		),
-		getStoreSlug: () => 'videopress',
-		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ]
+		getStoreSlug: () => 'videopress'
 	},
 
 	[ FEATURE_AUDIO_UPLOADS ]: {
@@ -366,8 +361,7 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			'The easiest way to upload audio files that use any major audio file format. '
 		),
-		getStoreSlug: () => 'videopress',
-		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ]
+		getStoreSlug: () => 'videopress'
 	},
 
 	[ FEATURE_BASIC_DESIGN ]: {
@@ -377,8 +371,7 @@ export const FEATURES_LIST = {
 			'Customize your selected theme template with pre-set color schemes, ' +
 			'background designs, and font styles.'
 		),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-		plans: [ PLAN_FREE, PLAN_PERSONAL ]
+		getStoreSlug: () => FEATURE_ADVANCED_DESIGN
 	},
 
 	[ FEATURE_ADVANCED_DESIGN ]: {
@@ -392,8 +385,7 @@ export const FEATURES_LIST = {
 			'Customize your selected theme template with extended color schemes, ' +
 			'background designs, and complete control over website CSS.'
 		),
-		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-		plans: ALL_WPCOM_PAID_PLANS
+		getStoreSlug: () => FEATURE_ADVANCED_DESIGN
 	},
 
 	[ FEATURE_NO_ADS ]: {
@@ -403,8 +395,7 @@ export const FEATURES_LIST = {
 			'Allow your visitors to visit and read your website without ' +
 			'seeing any WordPress.com advertising.'
 		),
-		getStoreSlug: () => 'no-adverts/no-adverts.php',
-		plans: ALL_WPCOM_PAID_PLANS
+		getStoreSlug: () => 'no-adverts/no-adverts.php'
 	},
 
 	[ FEATURE_NO_BRANDING ]: {
@@ -413,8 +404,7 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			"Keep the focus on your site's brand by removing the WordPress.com footer branding."
 		),
-		getStoreSlug: () => 'no-adverts/no-adverts.php',
-		plans: [ PLAN_BUSINESS ]
+		getStoreSlug: () => 'no-adverts/no-adverts.php'
 	},
 
 	[ FEATURE_LIVE_COURSES ]: {
@@ -422,8 +412,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Attend live courses' ),
 		getDescription: () => i18n.translate(
 			'Attend live courses led by Happiness Engineers to get the most out of your site.'
-		),
-		plans: [ PLAN_BUSINESS ]
+		)
 	},
 
 	[ FEATURE_ADVANCED_SEO ]: {
@@ -435,8 +424,7 @@ export const FEATURES_LIST = {
 		} ),
 		getDescription: () => i18n.translate(
 			'Adds tools to enhance your site\'s content for better results on search engines and social media.'
-		),
-		plans: [ PLAN_BUSINESS ]
+		)
 	},
 
 	[ FEATURE_WORDADS_INSTANT ]: {
@@ -444,8 +432,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Monetize Your Site' ),
 		getDescription: () => i18n.translate(
 			'Add advertising to your site through our WordAds program and earn money from impressions.'
-		),
-		plans: [ PLAN_PREMIUM, PLAN_BUSINESS ]
+		)
 	},
 
 	[ FEATURE_WP_SUBDOMAIN ]: {
@@ -453,8 +440,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'WordPress.com Subdomain' ),
 		getDescription: () => i18n.translate(
 			'Your site address will use a WordPress.com subdomain (sitename.wordpress.com).'
-		),
-		plans: [ PLAN_FREE ]
+		)
 	},
 
 	[ FEATURE_FREE_THEMES ]: {
@@ -463,8 +449,7 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			'Access to a wide range of professional theme templates ' +
 			"for your website so you can find the exact design you're looking for."
-		),
-		plans: [ PLAN_FREE, PLAN_PREMIUM ]
+		)
 	},
 
 	[ FEATURE_3GB_STORAGE ]: {
@@ -472,8 +457,7 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( '3GB Storage Space' ),
 		getDescription: () => i18n.translate(
 			"Storage space for adding images and documents to your website."
-		),
-		plans: [ PLAN_FREE, PLAN_PERSONAL ]
+		)
 	},
 
 	[ FEATURE_13GB_STORAGE ]: {
@@ -486,8 +470,7 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			"With increased storage space you'll be able to upload " +
 			'more images, videos, audio, and documents to your website.'
-		),
-		plans: [ PLAN_PREMIUM ]
+		)
 	},
 
 	[ FEATURE_COMMUNITY_SUPPORT ]: {
@@ -496,8 +479,7 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			'Get support through our ' +
 			'user community forums.'
-		),
-		plans: [ PLAN_FREE ]
+		)
 	},
 
 	[ FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {
@@ -506,8 +488,7 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate(
 			'High quality support to help you get your website up ' +
 			'and running and working how you want it.'
-		),
-		plans: ALL_WPCOM_PAID_PLANS
+		)
 	},
 	[ FEATURE_STANDARD_SECURITY_TOOLS ]: {
 		getSlug: () => FEATURE_STANDARD_SECURITY_TOOLS,
