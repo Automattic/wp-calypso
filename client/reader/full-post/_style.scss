@@ -404,6 +404,12 @@
 	}
 }
 
+// Hides Jetpack RP in Reader
+.reader-full-post .jp-relatedposts-headline,
+.reader-full-post .jp-relatedposts {
+	display: none;
+}
+
 .detail-page__backdrop {
 	padding: 1px; // this fixes a strange rendering bug at the bottom of the full post card in safari and chrome -shaun
 	z-index: z-index( 'root', '.detail-page__backdrop' ); // above the masterbar
