@@ -2,7 +2,6 @@
  * External dependencies
  */
 import ReactDomServer from 'react-dom/server';
-import Helmet from 'react-helmet';
 import superagent from 'superagent';
 import Lru from 'lru-cache';
 import pick from 'lodash/pick';
@@ -12,6 +11,12 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
+import { isSectionIsomorphic } from 'state/ui/selectors';
+import {
+	getDocumentHeadFormattedTitle,
+	getDocumentHeadMeta,
+	getDocumentHeadLink
+} from 'client/state/document-head/selectors';
 
 const debug = debugFactory( 'calypso:server-render' );
 const markupCache = new Lru( { max: 3000 } );
@@ -44,14 +49,6 @@ export function render( element, key = JSON.stringify( element ) ) {
 			const renderedLayout = ReactDomServer.renderToString( element );
 			context = { renderedLayout };
 
-			if ( Helmet.peek() ) {
-				const helmetData = Helmet.rewind();
-				Object.assign( context, {
-					helmetTitle: helmetData.title,
-					helmetMeta: helmetData.meta,
-					helmetLink: helmetData.link,
-				} );
-			}
 			markupCache.set( key, context );
 		}
 		const rtsTimeMs = Date.now() - startTime;
@@ -73,19 +70,31 @@ export function render( element, key = JSON.stringify( element ) ) {
 
 export function serverRender( req, res ) {
 	const context = req.context;
+	let title, metas = [], links = [];
 
 	if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
 
-	if ( config.isEnabled( 'server-side-rendering' ) &&
-		context.store &&
-		context.layout &&
-		! context.user ) {
-		context.initialReduxState = pick( context.store.getState(), 'ui', 'themes' );
+	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user ) {
 		const key = context.renderCacheKey || JSON.stringify( context.layout );
 		Object.assign( context, render( context.layout, key ) );
 	}
+
+	if ( context.store ) {
+		title = getDocumentHeadFormattedTitle( context.store.getState() );
+		metas = getDocumentHeadMeta( context.store.getState() );
+		links = getDocumentHeadLink( context.store.getState() );
+
+		let reduxSubtrees = [ 'documentHead' ];
+		if ( isSectionIsomorphic( context.store.getState() ) ) {
+			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
+		}
+
+		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
+	}
+
+	context.head = { title, metas, links };
 
 	if ( config.isEnabled( 'desktop' ) ) {
 		res.render( 'desktop.jade', context );
