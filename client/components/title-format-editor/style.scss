@@ -1,3 +1,19 @@
+.page-title__header {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.page-title__header-image {
+	margin: 0 10px 10px 10px;
+}
+
+.page-title__header-text {
+	flex-basis: 330px;
+	margin: 0 10px 10px 10px;
+
+}
+
 .title-format-editor {
 	margin-bottom: 20px;
 }
