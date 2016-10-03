@@ -68,7 +68,9 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	componentWillReceiveProps( newProps ) {
-		this.getImage( newProps.src );
+		if ( this.props.src !== newProps.src ) {
+			this.getImage( newProps.src );
+		}
 	},
 
 	getImage( url ) {
