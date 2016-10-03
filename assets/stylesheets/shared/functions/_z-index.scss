@@ -43,6 +43,7 @@ $z-layers: (
 		'.reader__featured-post': 0,
 		'.reader__featured-post-title': 1,
 		'.search-stream__input-card': 0,
+		'.reader-search-card': 0,
 		'.reader-list-gap__button': 1,
 		'.post-trends__title': 1,
 		'.plugin-item__label': 1,
@@ -214,7 +215,7 @@ $z-layers: (
 		'.section-nav-tabs__dropdown.is-open': 4
 	),
 	'reader-card-follow-button-parent': (
-		'.reader__card.card .follow-button': 0
+		'.reader__card.card .follow-button': 1
 	)
 );
 
