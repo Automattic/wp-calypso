@@ -149,6 +149,16 @@ export class FullPostView extends React.Component {
 
 	// Scroll to the top of the comments section.
 	scrollToComments() {
+		if ( ! this.props.post ) {
+			return;
+		}
+		if ( this.props.post._state ) {
+			return;
+		}
+		if ( this._scrolling ) {
+			return;
+		}
+		this._scrolling = true;
 		setTimeout( () => {
 			const commentsNode = ReactDom.findDOMNode( this.refs.commentsWrapper );
 			if ( commentsNode && commentsNode.offsetTop ) {
@@ -163,6 +173,7 @@ export class FullPostView extends React.Component {
 						if ( commentsNodeAfterScroll && commentsNodeAfterScroll.offsetTop ) {
 							window.scrollTo( 0, commentsNodeAfterScroll.offsetTop - 48 );
 						}
+						this._scrolling = false;
 					}
 				} );
 				if ( this.hasCommentAnchor ) {
