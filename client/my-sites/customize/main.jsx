@@ -164,6 +164,7 @@ var Customize = React.createClass( {
 			fonts: { section: 'jetpack_fonts' },
 			identity: { section: 'title_tagline' },
 			'custom-css': { section: 'jetpack_custom_css' },
+			amp: { section: 'amp_design' },
 		};
 
 		if ( panels.hasOwnProperty( panel ) ) {
