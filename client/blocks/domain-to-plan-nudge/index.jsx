@@ -14,7 +14,8 @@ import DismissibleCard from 'blocks/dismissible-card';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isCurrentSitePlan } from 'state/sites/selectors';
-import { plansList, PLAN_FREE, PLAN_PERSONAL } from 'lib/plans/constants';
+import { PLAN_FREE, PLAN_PERSONAL } from 'lib/plans/constants';
+import { getPlan } from 'lib/plans';
 import PlanPrice from 'my-sites/plan-price';
 import PlanIcon from 'components/plans/plan-icon';
 import Gridicon from 'components/gridicon';
@@ -209,7 +210,7 @@ export default connect(
 	( state, props ) => {
 		const siteId = props.siteId || getSelectedSiteId( state ),
 			productSlug = PLAN_PERSONAL,
-			productId = plansList[ PLAN_PERSONAL ].getProductId();
+			productId = getPlan( PLAN_PERSONAL ).getProductId();
 
 		return {
 			canManage: canCurrentUser( state, siteId, 'manage_options' ),
@@ -217,7 +218,7 @@ export default connect(
 			hasFreePlan: isCurrentSitePlan(
 				state,
 				siteId,
-				plansList[ PLAN_FREE ].getProductId()
+				getPlan( PLAN_FREE ).getProductId()
 			),
 			productId,
 			productSlug,
