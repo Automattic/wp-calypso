@@ -22,9 +22,6 @@ var EditorMediaModalDetailFields = require( './detail-fields' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	config = require( 'config' );
 
-import { isDesktop } from 'lib/viewport';
-import { hasTouch } from 'lib/touch-detect';
-
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModalDetailItem',
 
@@ -48,11 +45,7 @@ module.exports = React.createClass( {
 		};
 	},
 
-	isMobileTouchDevice() {
-		return ! isDesktop() || hasTouch();
-	},
-
-	renderEditButton: function() {
+	renderEditButton: function( className ) {
 		const { item, onEdit, site } = this.props;
 
 		// Do not render edit button for private sites
@@ -64,7 +57,6 @@ module.exports = React.createClass( {
 			! config.isEnabled( 'post-editor/image-editor' ) ||
 			! userCan( 'upload_files', site ) ||
 			isJetpack( site ) ||
-			this.isMobileTouchDevice() ||
 			! item
 		) {
 			return;
@@ -78,7 +70,7 @@ module.exports = React.createClass( {
 
 		return (
 			<Button
-				className="is-desktop editor-media-modal-detail__edit"
+				className={ classNames( 'editor-media-modal-detail__edit', className ) }
 				onClick={ onEdit }>
 				<Gridicon icon="pencil" size={ 36 } /> { this.translate( 'Edit Image' ) }
 			</Button>
@@ -162,11 +154,12 @@ module.exports = React.createClass( {
 				<div className="editor-media-modal-detail__content editor-media-modal__content">
 					<div className="editor-media-modal-detail__preview-wrapper">
 						{ this.renderItem() }
-						{ this.renderEditButton() }
+						{ this.renderEditButton( 'is-desktop' ) }
 						{ this.renderPreviousItemButton() }
 						{ this.renderNextItemButton() }
 					</div>
 					<div className="editor-media-modal-detail__sidebar">
+						{ this.renderEditButton( 'is-mobile' ) }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo
 							item={ this.props.item } />
