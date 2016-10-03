@@ -54,12 +54,7 @@ export default function status( state = {}, action ) {
 		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE:
 		case PLUGIN_INSTALL_REQUEST_FAILURE:
 		case PLUGIN_REMOVE_REQUEST_FAILURE:
-			if ( state.hasOwnProperty( siteId ) ) {
-				return Object.assign( {}, state, {
-					[ siteId ]: statusForSite( state[ siteId ], action )
-				} );
-			}
-			return Object.assign( {}, state, { [ siteId ]: statusForSite( {}, action ) } );
+			return Object.assign( {}, state, { [ siteId ]: statusForSite( state[ siteId ], action ) } );
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
