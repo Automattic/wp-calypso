@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -19,7 +21,7 @@ const UNREAD_COUNT_CAP = 40;
  * @param  {Object}  state  Global state tree
  * @return {?String}        Document title
  */
-export function getTitle( state ) {
+export function getDocumentHeadTitle( state ) {
 	return state.documentHead.title;
 }
 
@@ -29,7 +31,7 @@ export function getTitle( state ) {
  * @param  {Object}  state  Global state tree
  * @return {?String}        Unread count (string because it can be e.g. '40+')
  */
-export function getUnreadCount( state ) {
+export function getDocumentHeadUnreadCount( state ) {
 	return state.documentHead.unreadCount;
 }
 
@@ -41,8 +43,8 @@ export function getUnreadCount( state ) {
  * @param  {Object}  state  Global state tree
  * @return {String}         Unread count (string because it can be e.g. '40+')
  */
-export function getCappedUnreadCount( state ) {
-	const unreadCount = getUnreadCount( state );
+export function getDocumentHeadCappedUnreadCount( state ) {
+	const unreadCount = getDocumentHeadUnreadCount( state );
 	if ( ! unreadCount ) {
 		return '';
 	}
@@ -59,16 +61,16 @@ export function getCappedUnreadCount( state ) {
  * @param  {Object}  state  Global state tree
  * @return {String}         Formatted title
  */
-export function getFormattedTitle( state ) {
+export function getDocumentHeadFormattedTitle( state ) {
 	let title = '';
 
-	const unreadCount = getCappedUnreadCount( state );
+	const unreadCount = getDocumentHeadCappedUnreadCount( state );
 	if ( unreadCount ) {
 		title += `(${ unreadCount }) `;
 	}
 
 	title += compact( [
-		getTitle( state ),
+		getDocumentHeadTitle( state ),
 		isSiteSection( state ) && getSiteTitle( state, getSelectedSiteId( state ) )
 	] ).join( ' ‹ ' );
 
@@ -77,4 +79,26 @@ export function getFormattedTitle( state ) {
 	}
 
 	return title + 'WordPress.com';
+}
+
+/**
+ * Returns an array of document meta objects as set by the DocumentHead
+ * component or addDocumentHeadMeta action.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Object[]}       Array of meta objects
+ */
+export function getDocumentHeadMeta( state ) {
+	return state.documentHead.meta;
+}
+
+/**
+ * Returns an array of document link objects as set by the DocumentHead
+ * component or addDocumentHeadLink action.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {Object[]}       Array of link objects
+ */
+export function getDocumentHeadLink( state ) {
+	return state.documentHead.link;
 }
