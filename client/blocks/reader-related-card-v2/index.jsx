@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import noop from 'lodash/noop';
+import partial from 'lodash/partial';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -98,14 +99,16 @@ export function RelatedPostCard( { post, site, onPostClick = noop, onSiteClick =
 	return (
 		<Card className={ classes }>
 			<AuthorAndSiteFollow post={ post } site={ site } />
-			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block">
-				{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
-				<div className="reader-related-card-v2__site-info">
-					<h1 className="reader-related-card-v2__title">{ post.title }</h1>
-					<div className="reader-related-card-v2__excerpt post-excerpt">
-						{ featuredImage ? post.short_excerpt : post.excerpt }
+			<a href={ postLink } className="reader-related-card-v2__post reader-related-card-v2__link-block"
+				onClick={ partial( onPostClick, post ) } >
+					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL }
+						onClick={ partial( onPostClick, post ) } /> }
+					<div className="reader-related-card-v2__site-info">
+						<h1 className="reader-related-card-v2__title">{ post.title }</h1>
+						<div className="reader-related-card-v2__excerpt post-excerpt">
+							{ featuredImage ? post.short_excerpt : post.excerpt }
+						</div>
 					</div>
-				</div>
 			</a>
 		</Card>
 	);
