@@ -28,6 +28,7 @@ import {
 import QuerySitePlans from 'components/data/query-site-plans';
 import formatCurrency from 'lib/format-currency';
 import { canCurrentUser } from 'state/current-user/selectors';
+import TrackComponentView from 'lib/analytics/track-component-view';
 
 class DomainToPlanNudge extends Component {
 
@@ -96,6 +97,13 @@ class DomainToPlanNudge extends Component {
 				preferenceName="domain-to-plan-nudge"
 				temporary
 			>
+			<TrackComponentView
+				eventName={ 'calypso_upgrade_nudge_impression' }
+				eventProperties={ {
+					cta_name: 'domain_to_personal_nudge',
+					cta_feature: 'no-adverts',
+					cta_size: 'banner'
+				} } />
 				<div className="domain-to-plan-nudge__header">
 					<div className="domain-to-plan-nudge__header-icon">
 						<PlanIcon plan={ productSlug } />
