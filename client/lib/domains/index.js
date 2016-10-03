@@ -87,7 +87,7 @@ function canRedirect( siteId, domainName, onComplete ) {
 		return;
 	}
 
-	if ( ! domainName.match(/^https?:\/\//)) {
+	if ( ! domainName.match( /^https?:\/\// ) ) {
 		domainName = 'http://' + domainName;
 	}
 
