@@ -59,11 +59,11 @@ export class FullPostView extends React.Component {
 		[
 			'handleBack',
 			'handleCommentClick',
-			'handleLike',
-			'bindComments'
+			'handleLike'
 		].forEach( fn => {
 			this[ fn ] = this[ fn ].bind( this );
 		} );
+		this.hasScrolledToCommentAnchor = false;
 	}
 
 	componentDidMount() {
@@ -75,6 +75,13 @@ export class FullPostView extends React.Component {
 		this.hasSentPageView = false;
 		this.hasLoaded = false;
 		this.attemptToSendPageView();
+
+		this.checkForCommentAnchor();
+
+		// If we have a comment anchor, scroll to comments
+		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
+			this.scrollToComments();
+		}
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -87,6 +94,20 @@ export class FullPostView extends React.Component {
 			this.hasSentPageView = false;
 			this.hasLoaded = false;
 			this.attemptToSendPageView();
+		}
+
+		this.checkForCommentAnchor();
+
+		// If we have a comment anchor, scroll to comments
+		if ( this.hasCommentAnchor && ! this.hasScrolledToCommentAnchor ) {
+			this.scrollToComments();
+		}
+	}
+
+	componentWillReceiveProps( newProps ) {
+		if ( newProps.shouldShowComments ) {
+			this.hasScrolledToCommentAnchor = false;
+			this.checkForCommentAnchor();
 		}
 	}
 
@@ -103,11 +124,7 @@ export class FullPostView extends React.Component {
 		recordAction( 'click_comments' );
 		recordGaEvent( 'Clicked Post Comment Button' );
 		recordTrackForPost( 'calypso_reader_full_post_comments_button_clicked', this.props.post );
-		scrollTo( {
-			x: 0,
-			y: ReactDom.findDOMNode( this.comments ).offsetTop - 48,
-			duration: 300
-		} );
+		this.scrollToComments();
 	}
 
 	handleLike() {
@@ -122,12 +139,48 @@ export class FullPostView extends React.Component {
 		}
 	}
 
-	bindComments( node ) {
-		this.comments = node;
+	// Does the URL contain the anchor #comments? If so, scroll to comments if we're not already there.
+	checkForCommentAnchor() {
+		const hash = window.location.hash.substr( 1 );
+		if ( hash.indexOf( 'comments' ) > -1 ) {
+			this.hasCommentAnchor = true;
+		}
 	}
 
-	checkForCommentAnchor() {
-
+	// Scroll to the top of the comments section.
+	scrollToComments() {
+		if ( ! this.props.post ) {
+			return;
+		}
+		if ( this.props.post._state ) {
+			return;
+		}
+		if ( this._scrolling ) {
+			return;
+		}
+		this._scrolling = true;
+		setTimeout( () => {
+			const commentsNode = ReactDom.findDOMNode( this.refs.commentsWrapper );
+			if ( commentsNode && commentsNode.offsetTop ) {
+				scrollTo( {
+					x: 0,
+					y: commentsNode.offsetTop - 48,
+					duration: 300,
+					onComplete: () => {
+						// check to see if the comment node moved while we were scrolling
+						// and scroll to the end position
+						const commentsNodeAfterScroll = ReactDom.findDOMNode( this.refs.commentsWrapper );
+						if ( commentsNodeAfterScroll && commentsNodeAfterScroll.offsetTop ) {
+							window.scrollTo( 0, commentsNodeAfterScroll.offsetTop - 48 );
+						}
+						this._scrolling = false;
+					}
+				} );
+				if ( this.hasCommentAnchor ) {
+					this.hasScrolledToCommentAnchor = true;
+				}
+			}
+		}, 0 );
 	}
 
 	parseEmoji() {
@@ -254,14 +307,16 @@ export class FullPostView extends React.Component {
 								className="is-same-site" />
 						}
 
-						{ shouldShowComments( post )
-							? <Comments ref={ this.bindComments }
-									post={ post }
-									initialSize={ 25 }
-									pageSize={ 25 }
-									onCommentsUpdate={ this.checkForCommentAnchor } />
-							: null
-						}
+						<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
+							{ shouldShowComments( post )
+								? <Comments ref="commentsList"
+										post={ post }
+										initialSize={ 25 }
+										pageSize={ 25 }
+										onCommentsUpdate={ this.checkForCommentAnchor } />
+								: null
+							}
+						</div>
 
 						{ showRelatedPosts &&
 							<RelatedPostsFromOtherSites siteId={ post.site_ID } postId={ post.ID }
