@@ -61,7 +61,7 @@ export const getSiteStatsPostStreakData = createSelector(
 		if ( streakData && streakData.data ) {
 			Object.keys( streakData.data ).forEach( ( timestamp ) => {
 				const postDay = i18n.moment.unix( timestamp ).locale( 'en' );
-				const datestamp = postDay.format( 'YYYY-MM-DD' );
+				const datestamp = postDay.utc().format( 'YYYY-MM-DD' );
 				if ( 'undefined' === typeof( response[ datestamp ] ) ) {
 					response[ datestamp ] = 0;
 				}
