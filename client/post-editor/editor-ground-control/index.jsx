@@ -23,7 +23,7 @@ const Card = require( 'components/card' ),
 	stats = require( 'lib/posts/stats' );
 
 import AsyncLoad from 'components/async-load';
-import EditorPublishButton from 'post-editor/editor-publish-button';
+import EditorPublishButton, { getPublishButtonStatus } from 'post-editor/editor-publish-button';
 
 export default React.createClass( {
 	displayName: 'EditorGroundControl',
@@ -143,7 +143,7 @@ export default React.createClass( {
 	},
 
 	getVerificationNoticeLabel: function() {
-		const primaryButtonState = this.getPrimaryButtonState();
+		const primaryButtonState = getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost );
 		let buttonLabels;
 
 		// TODO: switch entirely to new wording once translations catch up

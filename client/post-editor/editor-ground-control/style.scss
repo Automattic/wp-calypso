@@ -118,6 +118,10 @@
 }
 
 .editor-ground-control__email-verification-notice {
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+
 	font-size: 12px;
 	padding: 16px 16px 16px 48px;
 	background: white;
