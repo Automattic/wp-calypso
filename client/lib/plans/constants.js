@@ -72,6 +72,7 @@ export const FEATURE_MALWARE_SCANNING_DAILY_AND_ON_DEMAND = 'malware-scanning-da
 export const FEATURE_ONE_CLICK_THREAT_RESOLUTION = 'one-click-threat-resolution';
 export const FEATURE_POLLS_PRO = 'polls-pro';
 
+// DO NOT import. Use `getPlan` from `lib/plans` instead.
 export const plansList = {
 	[ PLAN_FREE ]: {
 		getTitle: () => i18n.translate( 'Free' ),
