@@ -11,7 +11,8 @@ var config = require( 'config' ),
 	utils = require( 'bundler/utils' ),
 	sectionsModule = require( '../../client/sections' ),
 	serverRouter = require( 'isomorphic-routing' ).serverRouter,
-	serverRender = require( 'render' ).serverRender;
+	serverRender = require( 'render' ).serverRender,
+	createReduxStore = require( 'state' ).createReduxStore;
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -119,7 +120,8 @@ function getDefaultContext( request ) {
 		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
-		devDocsURL: '/devdocs'
+		devDocsURL: '/devdocs',
+		store: createReduxStore()
 	} );
 
 	context.app = {

@@ -11,7 +11,12 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import config from 'config';
-import { getDocumentHeadFormattedTitle, getDocumentHeadMeta, getDocumentHeadLink } from 'client/state/document-head/selectors';
+import { isSectionIsomorphic } from 'state/ui/selectors';
+import {
+	getDocumentHeadFormattedTitle,
+	getDocumentHeadMeta,
+	getDocumentHeadLink
+} from 'client/state/document-head/selectors';
 
 const debug = debugFactory( 'calypso:server-render' );
 const markupCache = new Lru( { max: 3000 } );
@@ -71,19 +76,22 @@ export function serverRender( req, res ) {
 		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
 	}
 
-	if ( config.isEnabled( 'server-side-rendering' ) && ! context.user ) {
-		if ( context.layout ) {
-			const key = context.renderCacheKey || JSON.stringify( context.layout );
-			Object.assign( context, render( context.layout, key ) );
+	if ( config.isEnabled( 'server-side-rendering' ) && context.layout && ! context.user ) {
+		const key = context.renderCacheKey || JSON.stringify( context.layout );
+		Object.assign( context, render( context.layout, key ) );
+	}
+
+	if ( context.store ) {
+		title = getDocumentHeadFormattedTitle( context.store.getState() );
+		metas = getDocumentHeadMeta( context.store.getState() );
+		links = getDocumentHeadLink( context.store.getState() );
+
+		let reduxSubtrees = [ 'documentHead' ];
+		if ( isSectionIsomorphic( context.store.getState() ) ) {
+			reduxSubtrees = reduxSubtrees.concat( [ 'ui', 'themes' ] );
 		}
 
-		if ( context.store ) {
-			title = getDocumentHeadFormattedTitle( context.store.getState() );
-			metas = getDocumentHeadMeta( context.store.getState() );
-			links = getDocumentHeadLink( context.store.getState() );
-
-			context.initialReduxState = pick( context.store.getState(), 'documentHead', 'ui', 'themes' );
-		}
+		context.initialReduxState = pick( context.store.getState(), reduxSubtrees );
 	}
 
 	context.head = { title, metas, links };
