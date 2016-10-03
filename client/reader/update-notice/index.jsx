@@ -12,7 +12,7 @@ import classnames from 'classnames';
  */
 import DocumentHead from 'components/data/document-head';
 import Gridicon from 'components/gridicon';
-import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors';
+import { getCappedUnreadCount } from 'state/document-head/selectors';
 
 const UpdateNotice = React.createClass( {
 	mixins: [ PureRenderMixin ],
@@ -51,6 +51,6 @@ const UpdateNotice = React.createClass( {
 
 export default connect(
 	state => ( {
-		cappedUnreadCount: getDocumentHeadCappedUnreadCount( state )
+		cappedUnreadCount: getCappedUnreadCount( state )
 	} )
 )( UpdateNotice );
