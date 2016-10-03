@@ -296,7 +296,7 @@ export const plansList = {
 	}
 };
 
-export const allPaidPlans = [
+export const ALL_WPCOM_PAID_PLANS = [
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	PLAN_BUSINESS
@@ -335,7 +335,7 @@ export const featuresList = {
 			'Get a free custom domain name (example.com) with this plan ' +
 			'to use for your website.'
 		),
-		plans: allPaidPlans
+		plans: ALL_WPCOM_PAID_PLANS
 	},
 
 	[ FEATURE_JETPACK_ESSENTIAL ]: {
@@ -407,7 +407,7 @@ export const featuresList = {
 			'background designs, and complete control over website CSS.'
 		),
 		getStoreSlug: () => FEATURE_ADVANCED_DESIGN,
-		plans: allPaidPlans
+		plans: ALL_WPCOM_PAID_PLANS
 	},
 
 	[ FEATURE_NO_ADS ]: {
@@ -418,7 +418,7 @@ export const featuresList = {
 			'seeing any WordPress.com advertising.'
 		),
 		getStoreSlug: () => 'no-adverts/no-adverts.php',
-		plans: allPaidPlans
+		plans: ALL_WPCOM_PAID_PLANS
 	},
 
 	[ FEATURE_NO_BRANDING ]: {
@@ -521,7 +521,7 @@ export const featuresList = {
 			'High quality support to help you get your website up ' +
 			'and running and working how you want it.'
 		),
-		plans: allPaidPlans
+		plans: ALL_WPCOM_PAID_PLANS
 	},
 	[ FEATURE_STANDARD_SECURITY_TOOLS ]: {
 		getSlug: () => FEATURE_STANDARD_SECURITY_TOOLS,
