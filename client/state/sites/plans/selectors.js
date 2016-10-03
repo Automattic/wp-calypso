@@ -188,3 +188,16 @@ export function isCurrentPlanExpiring( state, siteId ) {
 	const expiration = get( currentPlan, 'userFacingExpiryMoment', null );
 	return expiration < moment().add( 30, 'days' );
 }
+
+/**
+ * Returns true if current user is also a current plan owner.
+ *
+ * @param  {Object}  state        global state
+ * @param  {Number}  siteId       the site id
+ * @return {Boolean}			  True when user is a plan owner
+ */
+export function isCurrentUserCurrentPlanOwner( state, siteId ) {
+	const currentPlan = getCurrentPlan( state, siteId );
+
+	return get( currentPlan, 'userIsOwner', false );
+}

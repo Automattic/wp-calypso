@@ -13,6 +13,7 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
 const PlanFeaturesActions = ( {
+	canPurchase,
 	className,
 	available = true,
 	current = false,
@@ -38,7 +39,7 @@ const PlanFeaturesActions = ( {
 		upgradeButton = (
 			<Button className={ classes } href={ manageHref } disabled={ ! manageHref }>
 				<Gridicon size={ 18 } icon="checkmark" />
-				{ translate( 'Your plan' ) }
+				{ canPurchase ? translate( 'Your plan' ) : translate( 'Current plan' ) }
 			</Button>
 		);
 	} else if ( available || isPlaceholder ) {
@@ -67,6 +68,7 @@ const PlanFeaturesActions = ( {
 };
 
 PlanFeaturesActions.propTypes = {
+	canPurchase: PropTypes.bool.isRequired,
 	className: PropTypes.string,
 	primaryUpgrade: PropTypes.bool,
 	current: PropTypes.bool,

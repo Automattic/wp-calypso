@@ -3,7 +3,7 @@ $plan-features-sidebar-width: 272px;
 
 /* Breakpoints 1150px, */
 
-.plan-features {
+.plan-features__content {
 	margin: -16px -16px 0 -16px;
 	padding-top: $plan-features-header-banner-height;
 }
@@ -12,6 +12,15 @@ $plan-features-sidebar-width: 272px;
 	display: block;
 	@media ( min-width: $plan-features-sidebar-width + 480px ) {
 		display: none;
+	}
+}
+
+.plan-features__notice {
+	margin-bottom: 16px;
+
+	@include breakpoint( ">1040px" ) {
+		margin-bottom: 32px;
+		margin-top: -19px;
 	}
 }
 
