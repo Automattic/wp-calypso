@@ -21,7 +21,7 @@ import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 
-function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeSlugWithRepo, themeItem } ) {
+function createSiteWithDomainItems( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeSlugWithRepo, themeItem } ) {
 	const siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
 
 	wpcom.undocumented().sitesNew( {
@@ -146,10 +146,10 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
 }
 
 module.exports = {
-	addDomainItemsToCart: addDomainItemsToCart,
+	createSiteWithDomainItems: createSiteWithDomainItems,
 
-	addDomainItemsToCartAndStartFreeTrial( callback, dependencies, data ) {
-		addDomainItemsToCart( ( error, providedDependencies ) => {
+	createSiteWithDomainItemsAndStartFreeTrial( callback, dependencies, data ) {
+		createSiteWithDomainItems( ( error, providedDependencies ) => {
 			if ( error ) {
 				callback( error, providedDependencies );
 			} else {
