@@ -32,6 +32,28 @@ export function imageEditorHasChanges( state ) {
 }
 
 /**
+ * Returns the bounds of the canvas crop tool
+ *
+ * @param  {Object} state Global state tree
+ * @return {Object} topBound, leftBound, bottomBound and rightBound of the canvas
+ *
+ */
+export function getImageEditorCropBounds( state ) {
+	return state.ui.editor.imageEditor.cropBounds;
+}
+
+/**
+ * Returns the crop data for the image editor
+ *
+ * @param  {Object} state Global state tree
+ * @return {Object} topRatio, leftRatio, widthRatio and heightRatio of the crop
+ *
+ */
+export function getImageEditorCrop( state ) {
+	return state.ui.editor.imageEditor.crop;
+}
+
+/**
  * Returns the crop data for the image editor
  *
  * @param  {Object} state Global state tree
