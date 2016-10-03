@@ -396,7 +396,7 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const { name: themeName, description } = this.props;
+		const {  name: themeName, description, currentUserId } = this.props;
 		const title = i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
 		} );
@@ -410,7 +410,7 @@ const ThemeSheet = React.createClass( {
 				canonicalUrl={ canonicalUrl }
 				image={ this.props.screenshot }>
 				<QueryThemeDetails id={ this.props.id } siteId={ siteID } />
-				<QueryUserPurchases userId={ this.props.currentUserId } />
+				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 				<Main className="theme__sheet">
 					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 						{ this.renderBar() }
