@@ -12,7 +12,7 @@ import map from 'lodash/map';
  * Internal dependencies
  */
 import Main from 'components/main';
-import ConnectHeader from './connect-header';
+import StepHeader from '../step-header';
 import observe from 'lib/mixins/data-observe';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
@@ -396,8 +396,7 @@ const JetpackSSOForm = React.createClass( {
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__sso">
-					<ConnectHeader
-						showLogo={ false }
+					<StepHeader
 						headerText={ this.translate( 'Connect with WordPress.com' ) }
 						subHeaderText={ this.getSubHeaderText() }
 					/>
