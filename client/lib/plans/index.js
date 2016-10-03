@@ -91,7 +91,7 @@ export function getPlanPath( plan ) {
 }
 
 export function planHasFeature( plan, feature ) {
-	return includes( get( FEATURES_LIST, [ feature, 'plans' ] ), plan );
+	return includes( get( PLANS_LIST, [ plan, 'getFeatures' ], () => [] ), feature );
 }
 
 export function hasFeature( feature, siteID ) {
