@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import assign from 'lodash/assign';
-import includes from 'lodash/includes';
-import reject from 'lodash/reject';
+import { assign, includes, reject, cloneDeep } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -307,7 +305,7 @@ const Flows = {
 	 * @param {Object} flow The flow object
 	 */
 	getABTestFilteredFlow( flowName, flow ){
-		const updatedFlow = Object.assign( {}, flow );
+		const updatedFlow = cloneDeep( flow );
 
 		/**
 		 * Filter according to running ABTests
