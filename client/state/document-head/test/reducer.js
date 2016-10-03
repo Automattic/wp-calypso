@@ -51,10 +51,10 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#meta()', () => {
-		it( 'should default to "og:site_name" set to "WordPress.com" array', () => {
+		it( 'should default to an empty array', () => {
 			const state = meta( undefined, {} );
 
-			expect( state ).to.eql( [ { property: 'og:site_name', content: 'WordPress.com' } ] );
+			expect( state ).to.eql( [] );
 		} );
 
 		it( 'should add a new meta tag', () => {

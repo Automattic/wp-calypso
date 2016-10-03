@@ -15,6 +15,7 @@ import {
 
 import {
 	setDocumentHeadTitle,
+	setDocumentHeadDescription,
 	addDocumentHeadLink,
 	addDocumentHeadMeta,
 	setDocumentHeadUnreadCount
@@ -28,6 +29,20 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: DOCUMENT_HEAD_TITLE_SET,
 				title: 'Home'
+			} );
+		} );
+	} );
+
+	describe( '#setDocumentHeadDescription()', () => {
+		it( 'should return an action object', () => {
+			const action = setDocumentHeadDescription( 'Lorem ipsum dolor sit amet.' );
+
+			expect( action ).to.eql( {
+				type: DOCUMENT_HEAD_META_ADD,
+				meta: {
+					name: 'description',
+					content: 'Lorem ipsum dolor sit amet.'
+				}
 			} );
 		} );
 	} );

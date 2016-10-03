@@ -2023,8 +2023,20 @@
     "lodash-deep": {
       "version": "1.5.3"
     },
+    "lodash._getnative": {
+      "version": "3.9.1"
+    },
     "lodash.assign": {
       "version": "4.2.0"
+    },
+    "lodash.isarguments": {
+      "version": "3.1.0"
+    },
+    "lodash.isarray": {
+      "version": "3.0.4"
+    },
+    "lodash.keys": {
+      "version": "3.1.2"
     },
     "lodash.pickby": {
       "version": "4.6.0"
@@ -2676,6 +2688,17 @@
     "react-element-to-jsx-string": {
       "version": "3.2.0"
     },
+    "react-helmet": {
+      "version": "2.2.0",
+      "dependencies": {
+        "core-js": {
+          "version": "1.2.6"
+        },
+        "invariant": {
+          "version": "2.1.2"
+        }
+      }
+    },
     "react-hot-api": {
       "version": "0.4.7"
     },
@@ -2698,6 +2721,20 @@
     },
     "react-redux": {
       "version": "4.4.5"
+    },
+    "react-side-effect": {
+      "version": "1.0.2",
+      "dependencies": {
+        "core-js": {
+          "version": "1.2.7"
+        },
+        "fbjs": {
+          "version": "0.1.0-alpha.10"
+        },
+        "whatwg-fetch": {
+          "version": "0.9.0"
+        }
+      }
     },
     "react-tap-event-plugin": {
       "version": "1.0.0",
@@ -3010,6 +3047,9 @@
     },
     "sha.js": {
       "version": "2.2.6"
+    },
+    "shallowequal": {
+      "version": "0.2.2"
     },
     "shebang-regex": {
       "version": "1.0.0"
@@ -3506,6 +3546,9 @@
     },
     "walk": {
       "version": "2.3.4"
+    },
+    "warning": {
+      "version": "2.1.0"
     },
     "watchpack": {
       "version": "0.2.9"
