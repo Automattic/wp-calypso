@@ -297,13 +297,6 @@ export const allPaidPlans = [
 	PLAN_BUSINESS
 ];
 
-export const allWpcomPlans = [
-	PLAN_FREE,
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS
-];
-
 export const featuresList = {
 	[ FEATURE_GOOGLE_ANALYTICS ]: {
 		getSlug: () => FEATURE_GOOGLE_ANALYTICS,
