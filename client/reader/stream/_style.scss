@@ -44,7 +44,10 @@
 		position: absolute;
 			top: -3px;
 			right: 0;
-		z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
+
+		@include breakpoint( ">660px" ) {
+			z-index: z-index( 'reader-card-follow-button-parent', '.reader__card.card .follow-button' );
+		}
 	}
 
 	.reader-post-byline {

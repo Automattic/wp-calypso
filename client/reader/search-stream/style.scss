@@ -29,3 +29,13 @@
 		padding-left: 16px;
 	}
 }
+
+.card.reader-search-card {
+
+	&.is-photo {
+
+		@include breakpoint( "<660px" ) {
+			z-index: z-index( 'root', '.reader-search-card' );
+		}
+	}
+}
