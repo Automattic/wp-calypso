@@ -74,7 +74,7 @@ export const FEATURE_ONE_CLICK_THREAT_RESOLUTION = 'one-click-threat-resolution'
 export const FEATURE_POLLS_PRO = 'polls-pro';
 
 // DO NOT import. Use `getPlan` from `lib/plans` instead.
-export const plansList = {
+export const PLANS_LIST = {
 	[ PLAN_FREE ]: {
 		getTitle: () => i18n.translate( 'Free' ),
 		getPriceTitle: () => i18n.translate( 'Free for life' ), //TODO: DO NOT USE
@@ -626,7 +626,7 @@ export const FEATURES_LIST = {
 };
 
 export const getPlanObject = planName => {
-	const plan = plansList[ planName ];
+	const plan = PLANS_LIST[ planName ];
 	const objectPlan = {};
 	Object.keys( plan ).forEach( key => {
 		const objectKey = key.substr( 3 ).charAt( 0 ).toLowerCase() + key.slice( 4 );
