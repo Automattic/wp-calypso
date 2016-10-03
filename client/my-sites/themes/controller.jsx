@@ -2,6 +2,8 @@
  * External Dependencies
  */
 import React from 'react';
+import i18n from 'i18n-calypso';
+import omit from 'lodash/omit';
 
 /**
  * Internal Dependencies
@@ -11,6 +13,22 @@ import MultiSiteComponent from './multi-site';
 import LoggedOutComponent from './logged-out';
 import trackScrollPage from 'lib/track-scroll-page';
 import { getAnalyticsData } from './helpers';
+import DocumentHead from 'components/data/document-head';
+
+function makeElement( ThemesComponent, Head, store, props ) {
+	return (
+		<Head
+			title={ props.title }
+			description={ props.description }
+			type={ 'website' }
+			canonicalUrl={ props.canonicalUrl }
+			image={ props.image }
+			tier={ props.tier || 'all' }>
+			<DocumentHead title={ props.title } />
+			<ThemesComponent { ...omit( props, [ 'title' ] ) } />
+		</Head>
+	);
+}
 
 function getProps( context ) {
 	const { tier, filter, vertical, site_id: siteId } = context.params;
@@ -30,6 +48,7 @@ function getProps( context ) {
 	};
 
 	return {
+		title: i18n.translate( 'Themes', { textOnly: true } ),
 		tier,
 		filter,
 		vertical,
@@ -41,6 +60,7 @@ function getProps( context ) {
 }
 
 export function singleSite( context, next ) {
+	const Head = require( 'layout/head' );
 	const { site_id: siteId } = context.params;
 	const props = getProps( context );
 
@@ -52,11 +72,12 @@ export function singleSite( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <SingleSiteComponent { ...props } />;
+	context.primary = makeElement( SingleSiteComponent, Head, context.store, props );
 	next();
 }
 
 export function multiSite( context, next ) {
+	const Head = require( 'layout/head' );
 	const props = getProps( context );
 
 	// Scroll to the top
@@ -64,13 +85,14 @@ export function multiSite( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = <MultiSiteComponent { ...props } />;
+	context.primary = makeElement( MultiSiteComponent, Head, context.store, props );
 	next();
 }
 
 export function loggedOut( context, next ) {
+	const Head = require( 'my-sites/themes/head' );
 	const props = getProps( context );
 
-	context.primary = <LoggedOutComponent { ...props } />;
+	context.primary = makeElement( LoggedOutComponent, Head, context.store, props );
 	next();
 }

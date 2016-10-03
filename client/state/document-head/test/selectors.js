@@ -7,18 +7,16 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	getDocumentHeadTitle,
-	getDocumentHeadUnreadCount,
-	getDocumentHeadCappedUnreadCount,
-	getDocumentHeadFormattedTitle,
-	getDocumentHeadMeta,
-	getDocumentHeadLink
+	getTitle,
+	getUnreadCount,
+	getCappedUnreadCount,
+	getFormattedTitle
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#getDocumentHeadTitle()', () => {
+	describe( '#getTitle()', () => {
 		it( 'should return the currently set title', () => {
-			const title = getDocumentHeadTitle( {
+			const title = getTitle( {
 				documentHead: {
 					title: 'My Section Title'
 				}
@@ -28,9 +26,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getDocumentHeadUnreadCount()', () => {
+	describe( '#getUnreadCount()', () => {
 		it( 'should return the unread posts counter', () => {
-			const unreadCount = getDocumentHeadUnreadCount( {
+			const unreadCount = getUnreadCount( {
 				documentHead: {
 					unreadCount: 3
 				}
@@ -40,9 +38,9 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getDocumentHeadCappedUnreadCount()', () => {
+	describe( '#getCappedUnreadCount()', () => {
 		it( 'should return the capped unread posts counter', () => {
-			const unreadCount = getDocumentHeadCappedUnreadCount( {
+			const unreadCount = getCappedUnreadCount( {
 				documentHead: {
 					unreadCount: 45
 				}
@@ -52,10 +50,10 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getDocumentHeadFormattedTitle()', () => {
+	describe( '#getFormattedTitle()', () => {
 		describe( 'for site-agnostic section', () => {
 			it( 'should return only "WordPress.com" if no title is set', () => {
-				const formattedTitle = getDocumentHeadFormattedTitle( {
+				const formattedTitle = getFormattedTitle( {
 					documentHead: {},
 					sites: {
 						items: {
@@ -78,7 +76,7 @@ describe( 'selectors', () => {
 			} );
 
 			it( 'should return formatted title made up of section but not site name', () => {
-				const formattedTitle = getDocumentHeadFormattedTitle( {
+				const formattedTitle = getFormattedTitle( {
 					documentHead: {
 						title: 'Reader',
 					},
@@ -103,7 +101,7 @@ describe( 'selectors', () => {
 			} );
 
 			it( 'should return formatted title made up of section and unread count but not site name', () => {
-				const formattedTitle = getDocumentHeadFormattedTitle( {
+				const formattedTitle = getFormattedTitle( {
 					documentHead: {
 						title: 'Reader',
 						unreadCount: '12'
@@ -131,7 +129,7 @@ describe( 'selectors', () => {
 
 		describe( 'for site-specific section', () => {
 			it( 'should return only "WordPress.com", if no title is set and no site is selected', () => {
-				const formattedTitle = getDocumentHeadFormattedTitle( {
+				const formattedTitle = getFormattedTitle( {
 					documentHead: {},
 					sites: {
 						items: {
@@ -154,7 +152,7 @@ describe( 'selectors', () => {
 			} );
 
 			it( 'should return formatted title made up of section only, for no selected site', () => {
-				const formattedTitle = getDocumentHeadFormattedTitle( {
+				const formattedTitle = getFormattedTitle( {
 					documentHead: {
 						title: 'Themes',
 					},
@@ -179,7 +177,7 @@ describe( 'selectors', () => {
 			} );
 
 			it( 'should return formatted title made up of site only, for unset title', () => {
-				const formattedTitle = getDocumentHeadFormattedTitle( {
+				const formattedTitle = getFormattedTitle( {
 					documentHead: {
 					},
 					sites: {
@@ -203,7 +201,7 @@ describe( 'selectors', () => {
 			} );
 
 			it( 'should return formatted title made up of section and site name', () => {
-				const formattedTitle = getDocumentHeadFormattedTitle( {
+				const formattedTitle = getFormattedTitle( {
 					documentHead: {
 						title: 'Themes',
 					},
@@ -226,40 +224,6 @@ describe( 'selectors', () => {
 
 				expect( formattedTitle ).to.equal( 'Themes ‹ WordPress.com Example Blog — WordPress.com' );
 			} );
-		} );
-	} );
-
-	describe( '#getDocumentHeadMeta()', () => {
-		it( 'should return the currently set metas', () => {
-			const meta = getDocumentHeadMeta( {
-				documentHead: {
-					meta: [
-						{ property: 'og:site_name', content: 'WordPress.com' },
-						{ property: 'og:type', content: 'website' }
-					]
-				}
-			} );
-
-			expect( meta ).to.eql( [
-				{ property: 'og:site_name', content: 'WordPress.com' },
-				{ property: 'og:type', content: 'website' }
-			] );
-		} );
-	} );
-
-	describe( '#getDocumentHeadLink()', () => {
-		it( 'should return the currently set links', () => {
-			const link = getDocumentHeadLink( {
-				documentHead: {
-					link: [
-						{ rel: 'canonical', href: 'https://wordpress.com' }
-					]
-				}
-			} );
-
-			expect( link ).to.eql( [
-				{ rel: 'canonical', href: 'https://wordpress.com' }
-			] );
 		} );
 	} );
 } );

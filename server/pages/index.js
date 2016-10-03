@@ -1,26 +1,17 @@
-/**
- * External dependencies
- */
-import express from 'express';
-import fs from 'fs';
-import crypto from 'crypto';
-import qs from 'qs';
-import { execSync } from 'child_process';
-import cookieParser from 'cookie-parser';
-import debugFactory from 'debug';
+var express = require( 'express' ),
+	fs = require( 'fs' ),
+	crypto = require( 'crypto' ),
+	qs = require( 'qs' ),
+	execSync = require( 'child_process' ).execSync,
+	cookieParser = require( 'cookie-parser' ),
+	debug = require( 'debug' )( 'calypso:pages' );
 
-/**
- * Internal dependencies
- */
-import config from 'config';
-import sanitize from 'sanitize';
-import utils from 'bundler/utils';
-import sectionsModule from '../../client/sections';
-import { serverRouter } from 'isomorphic-routing';
-import { serverRender } from 'render';
-import { createReduxStore } from 'state';
-
-const debug = debugFactory( 'calypso:pages' );
+var config = require( 'config' ),
+	sanitize = require( 'sanitize' ),
+	utils = require( 'bundler/utils' ),
+	sectionsModule = require( '../../client/sections' ),
+	serverRouter = require( 'isomorphic-routing' ).serverRouter,
+	serverRender = require( 'render' ).serverRender;
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -128,8 +119,7 @@ function getDefaultContext( request ) {
 		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
-		devDocsURL: '/devdocs',
-		store: createReduxStore()
+		devDocsURL: '/devdocs'
 	} );
 
 	context.app = {
