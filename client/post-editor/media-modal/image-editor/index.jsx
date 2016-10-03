@@ -19,6 +19,7 @@ import MediaUtils from 'lib/media/utils';
 import closeOnEsc from 'lib/mixins/close-on-esc';
 import {
 	resetImageEditorState,
+	resetAllImageEditorState,
 	setImageEditorFileInfo
 } from 'state/ui/editor/image-editor/actions';
 import {
@@ -83,6 +84,11 @@ const MediaModalImageEditor = React.createClass( {
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 		canvasComponent.toBlob( this.onImageExtracted );
 		this.props.onImageEditorClose();
+	},
+
+	onCancel() {
+		this.props.resetAllImageEditorState();
+		this.props.onImageEditorCancel();
 	},
 
 	onImageExtracted( blob ) {
@@ -164,7 +170,7 @@ const MediaModalImageEditor = React.createClass( {
 							/>
 						<EditToolbar />
 						<EditButtons
-							onCancel={ this.props.onImageEditorCancel }
+							onCancel={ this.onCancel }
 							onDone={ this.onDone } />
 					</div>
 				</figure>
@@ -181,5 +187,9 @@ const MediaModalImageEditor = React.createClass( {
 
 export default connect(
 	( state ) => ( getImageEditorFileInfo( state ) ),
-	{ resetImageEditorState, setImageEditorFileInfo }
+	{
+		resetImageEditorState,
+		resetAllImageEditorState,
+		setImageEditorFileInfo
+	}
 )( localize( MediaModalImageEditor ) );
