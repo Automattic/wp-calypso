@@ -12,6 +12,7 @@ import postsEditMiddleware from './posts/middleware';
 import application from './application/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
+import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
@@ -53,6 +54,7 @@ export const reducer = combineReducers( {
 	application,
 	comments,
 	componentsUsageStats,
+	countryStates,
 	currentUser,
 	documentHead,
 	domains,
