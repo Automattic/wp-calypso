@@ -23,10 +23,10 @@ import {
 	isMonthly
 } from 'lib/products-values';
 import {
-	featuresList,
+	FEATURES_LIST,
 	plansList,
 	PLAN_FREE,
-	PLAN_JETPACK_FREE, 
+	PLAN_JETPACK_FREE,
 	PLAN_PERSONAL
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
@@ -48,19 +48,19 @@ export function getPlan( plan ) {
 }
 
 export function getValidFeatureKeys() {
-	return Object.keys( featuresList );
+	return Object.keys( FEATURES_LIST );
 }
 
 export function isValidFeatureKey( feature ) {
-	return !! featuresList[ feature ];
+	return !! FEATURES_LIST[ feature ];
 }
 
 export function getFeatureByKey( feature ) {
-	return featuresList[ feature ];
+	return FEATURES_LIST[ feature ];
 }
 
 export function getFeatureTitle( feature ) {
-	return invoke( featuresList, [ feature, 'getTitle' ] );
+	return invoke( FEATURES_LIST, [ feature, 'getTitle' ] );
 }
 
 export function getSitePlanSlug( siteID ) {
@@ -91,7 +91,7 @@ export function getPlanPath( plan ) {
 }
 
 export function planHasFeature( plan, feature ) {
-	return includes( get( featuresList, [ feature, 'plans' ] ), plan );
+	return includes( get( FEATURES_LIST, [ feature, 'plans' ] ), plan );
 }
 
 export function hasFeature( feature, siteID ) {
