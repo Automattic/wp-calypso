@@ -103,5 +103,5 @@ module.exports = {
 			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
 		},
 		providesDependencies: [ 'bearer_token', 'username' ]
-	}
+	},
 };
