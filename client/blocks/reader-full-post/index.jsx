@@ -29,7 +29,7 @@ import { fetch as fetchSite } from 'lib/reader-site-store/actions';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
-import LikeButton from 'blocks/like-button';
+import LikeButton from 'reader/like-button';
 import { isDiscoverPost, isDiscoverSitePick, getSourceFollowUrl, getSiteUrl } from 'reader/discover/helper';
 import { isDailyPostChallengeOrPrompt } from 'reader/daily-post/helper';
 import DiscoverSiteAttribution from 'reader/discover/site-attribution';
@@ -59,7 +59,9 @@ export class FullPostView extends React.Component {
 		[
 			'handleBack',
 			'handleCommentClick',
-			'handleLike'
+			'handleLike',
+			'handleRelatedPostFromSameSiteClicked',
+			'handleRelatedPostFromOtherSiteClicked',
 		].forEach( fn => {
 			this[ fn ] = this[ fn ].bind( this );
 		} );
@@ -117,6 +119,10 @@ export class FullPostView extends React.Component {
 	}
 
 	handleBack() {
+		recordAction( 'full_post_close' );
+		recordGaEvent( 'Closed Full Post Dialog' );
+		recordTrackForPost( 'calypso_reader_article_closed', this.props.post );
+
 		this.props.onClose && this.props.onClose();
 	}
 
@@ -128,15 +134,29 @@ export class FullPostView extends React.Component {
 	}
 
 	handleLike() {
-		recordAction( 'click_like' );
-		recordGaEvent( 'Clicked Like Post Button' );
-		recordTrackForPost( 'calypso_reader_full_post_like_button_clicked', this.props.post );
 		const { site_ID: siteId, ID: postId } = this.props.post;
+		let liked;
+
 		if ( LikeStore.isPostLikedByCurrentUser( siteId, postId ) ) {
 			unlikePost( siteId, postId );
+			liked = false;
 		} else {
 			likePost( siteId, postId );
+			liked = true;
 		}
+
+		recordAction( liked ? 'liked_post' : 'unliked_post' );
+		recordGaEvent( liked ? 'Clicked Like Post' : 'Clicked Unlike Post' );
+		recordTrackForPost( liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked', this.props.post,
+				{ context: 'full-post', event_source: 'keyboard' } );
+	}
+
+	handleRelatedPostFromSameSiteClicked() {
+		recordTrackForPost( 'calypso_reader_related_post_from_same_site_clicked', this.props.post );
+	}
+
+	handleRelatedPostFromOtherSiteClicked() {
+		recordTrackForPost( 'calypso_reader_related_post_from_other_site_clicked', this.props.post );
 	}
 
 	// Does the URL contain the anchor #comments? If so, scroll to comments if we're not already there.
@@ -246,7 +266,8 @@ export class FullPostView extends React.Component {
 								feedUrl= { get( feed, 'feed_URL' ) }
 								followCount={ site && site.subscribers_count }
 								feedId={ +post.feed_ID }
-								siteId={ +post.site_ID } />
+								siteId={ +post.site_ID }
+								post={ post } />
 						}
 						{ shouldShowComments( post ) &&
 							<CommentButton key="comment-button"
@@ -296,7 +317,7 @@ export class FullPostView extends React.Component {
 						<ReaderFullPostActionLinks post={ post } site={ site } onCommentClick={ this.handleCommentClick } />
 
 						{ showRelatedPosts &&
-							<RelatedPostsFromSameSite siteId={ post.site_ID } postId={ post.ID }
+							<RelatedPostsFromSameSite siteId={ +post.site_ID } postId={ +post.ID }
 								title={
 									translate( 'More in {{ siteLink /}}', {
 										components: {
@@ -304,7 +325,8 @@ export class FullPostView extends React.Component {
 										}
 									} )
 								}
-								className="is-same-site" />
+								className="is-same-site"
+								onPostClick={ this.handleRelatedPostFromSameSiteClicked } />
 						}
 
 						<div className="reader-full-post__comments-wrapper" ref="commentsWrapper">
@@ -319,9 +341,10 @@ export class FullPostView extends React.Component {
 						</div>
 
 						{ showRelatedPosts &&
-							<RelatedPostsFromOtherSites siteId={ post.site_ID } postId={ post.ID }
+							<RelatedPostsFromOtherSites siteId={ +post.site_ID } postId={ +post.ID }
 								title={ relatedPostsFromOtherSitesTitle }
-								className="is-other-site" />
+								className="is-other-site"
+								onPostClick={ this.handleRelatedPostFromOtherSiteClicked } />
 						}
 					</article>
 				</div>

@@ -27,7 +27,7 @@ const ReaderSiteStreamLink = React.createClass( {
 
 	render() {
 		const link = getStreamUrl( this.props.feedId, this.props.siteId );
-		const omitProps = [ 'feedId', 'siteId' ];
+		const omitProps = [ 'feedId', 'siteId', 'post' ];
 
 		return (
 			<a { ...omit( this.props, omitProps ) } href={ link } onClick={ this.recordClick }>{ this.props.children }</a>
