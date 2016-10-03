@@ -1,32 +1,32 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	ReactDom = require( 'react-dom' ),
-	observe = require( 'lib/mixins/data-observe' );
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import isEmpty from 'lodash/isEmpty';
+import { localize } from 'i18n-calypso';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-const analytics = require( 'lib/analytics' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	scrollIntoViewport = require( 'lib/scroll-into-viewport' ),
-	Input = require( './input' );
+import analytics from 'lib/analytics';
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
+import FormInputValidation from 'components/forms/form-input-validation';
+import { getCountryStates } from 'state/country-states/selectors';
+import Input from './input';
+import QueryCountryStates from 'components/data/query-country-states';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
 
-module.exports = React.createClass( {
-	displayName: 'StateSelect',
+class StateSelect extends Component {
 
-	mixins: [ observe( 'statesList' ) ],
-
-	recordStateSelectClick: function() {
+	recordStateSelectClick() {
 		if ( this.props.eventFormName ) {
 			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } State Select` );
 		}
-	},
+	}
 
 	focus() {
 		const node = ReactDom.findDOMNode( this.refs.input );
@@ -36,27 +36,24 @@ module.exports = React.createClass( {
 		} else {
 			this.refs.state.focus();
 		}
-	},
+	}
 
-	render: function() {
-		const classes = classNames( this.props.additionalClasses, 'state' ),
-			statesList = this.props.statesList.getByCountry( this.props.countryCode );
-		let options = [];
+	query() {
+		return this.props.countryCode && <QueryCountryStates countryCode={ this.props.countryCode } />;
+	}
 
-		if ( isEmpty( statesList ) ) {
+	render() {
+		const classes = classNames( this.props.additionalClasses, 'state' );
+
+		this.query();
+
+		if ( isEmpty( this.props.countryStates ) ) {
 			return (
 				<Input ref="state" { ...this.props } />
 			);
 		}
 
-		options.push( { key: '', label: this.translate( 'Select State' ), disabled: 'disabled' } );
-
-		options = options.concat( statesList.map( function( state ) {
-			if ( ! state.code ) {
-				return { key: '--', label: '', disabled: 'disabled' };
-			}
-			return { key: state.code, label: state.name };
-		} ) );
+		this.props.countryStates.push( { code: '', name: this.translate( 'Select State' ) } );
 
 		return (
 			<div className={ classes }>
@@ -70,8 +67,15 @@ module.exports = React.createClass( {
 						onChange={ this.props.onChange }
 						onClick={ this.recordStateSelectClick }
 						isError={ this.props.isError } >
-						{ options.map( function( option ) {
-							return <option key={ option.key } value={ option.key } disabled={ option.disabled }>{ option.label }</option>;
+						{ this.props.countryStates.map( ( state ) => {
+							let disabled;
+
+							if ( ! state.code ) {
+								state.code = '--';
+								disabled = 'disabled';
+							}
+
+							return <option key={ state.code } value={ state.code } disabled={ disabled }>{ state.name }</option>;
 						} ) }
 					</FormSelect>
 				</div>
@@ -79,4 +83,24 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+StateSelect.propTypes = {
+	additionalClasses: PropTypes.string,
+	countryCode: PropTypes.string,
+	countryStates: PropTypes.array,
+	diabled: PropTypes.bool,
+	errorMessage: PropTypes.string,
+	eventFormName: PropTypes.string,
+	isError: PropTypes.bool,
+	label: PropTypes.string,
+	name: PropTypes.string,
+	onChange: PropTypes.func,
+	value: PropTypes.string,
+};
+
+module.exports = connect(
+	( state, { countryCode } ) => ( {
+		countryStates: countryCode ? getCountryStates( state, countryCode ) : []
+	} )
+)( localize( StateSelect ) );
