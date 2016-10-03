@@ -26,7 +26,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
 import PlanIcon from 'components/plans/plan-icon';
-import { abtest } from 'lib/abtest';
 
 class UpgradeNudgeExpanded extends Component {
 	constructor( props ) {
@@ -61,10 +60,6 @@ class UpgradeNudgeExpanded extends Component {
 		const features = this.props.planConstants.getPromotedFeatures().filter(
 			feature => feature !== this.props.highlightedFeature
 		).slice( 0, 6 );
-
-		if ( this.props.testedRegularNudge && abtest( 'expandedNudge' ) === 'regular' ) {
-			return this.props.testedRegularNudge;
-		}
 
 		return (
 			<Card className="upgrade-nudge-expanded">
@@ -136,8 +131,7 @@ UpgradeNudgeExpanded.propTypes = {
 	eventName: PropTypes.string,
 	event: PropTypes.string,
 	siteSlug: PropTypes.string,
-	recordTracksEvent: PropTypes.func.isRequired,
-	testedRegularNudge: PropTypes.element
+	recordTracksEvent: PropTypes.func.isRequired
 };
 
 const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
