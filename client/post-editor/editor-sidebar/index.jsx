@@ -40,55 +40,65 @@ export default React.createClass( {
 		onMoreInfoAboutEmailVerify: PropTypes.func
 	},
 
+	renderDraftsList() {
+		return (
+			<AsyncLoad
+				require="my-sites/drafts/draft-list"
+				sites={ this.props.sites }
+				onTitleClick={ this.props.onTitleClick }
+				showAllActionsMenu={ false }
+				siteID={ this.props.site ? this.props.site.ID : null }
+				selectedId={ this.props.post ? this.props.post.ID : null }
+			/>
+		);
+	},
+
+	renderSidebar() {
+		return (
+			<div>
+				<EditorActionBar
+					isNew={ this.props.isNew }
+					onTrashingPost={ this.props.onTrashingPost }
+					onPrivatePublish={ this.props.onPublish }
+					post={ this.props.post }
+					savedPost={ this.props.savedPost }
+					site={ this.props.site }
+					type={ this.props.type }
+				/>
+				<EditorGroundControl
+					hasContent={ this.props.hasContent }
+					isDirty={ this.props.isDirty }
+					isSaveBlocked={ this.props.isSaveBlocked }
+					isPublishing={ this.props.isPublishing }
+					isSaving={ this.props.isSaving }
+					onPreview={ this.props.onPreview }
+					onPublish={ this.props.onPublish }
+					onSave={ this.props.onSave }
+					onSaveDraft={ this.props.onSaveDraft }
+					post={ this.props.post }
+					savedPost={ this.props.savedPost }
+					site={ this.props.site }
+					user={ this.props.user }
+					userUtils={ this.props.userUtils }
+					type={ this.props.type }
+					onMoreInfoAboutEmailVerify={ this.props.onMoreInfoAboutEmailVerify }
+				/>
+				<EditorDrawer
+					site={ this.props.site }
+					post={ this.props.post }
+					isNew={ this.props.isNew }
+					type={ this.props.type }
+				/>
+			</div>
+		);
+	},
+
 	render() {
 		return (
 			<div className="post-editor__sidebar">
 				<EditorSidebarHeader
 					allPostsUrl={ this.props.allPostsUrl } />
-				{ this.props.showDrafts
-					? <AsyncLoad
-						require="my-sites/drafts/draft-list"
-						sites={ this.props.sites }
-						onTitleClick={ this.props.onTitleClick }
-						showAllActionsMenu={ false }
-						siteID={ this.props.site ? this.props.site.ID : null }
-						selectedId={ this.props.post ? this.props.post.ID : null }
-					/>
-					: <div>
-					<EditorActionBar
-						isNew={ this.props.isNew }
-						onTrashingPost={ this.props.onTrashingPost }
-						onPrivatePublish={ this.props.onPublish }
-						post={ this.props.post }
-						savedPost={ this.props.savedPost }
-						site={ this.props.site }
-						type={ this.props.type }
-					/>
-					<EditorGroundControl
-						hasContent={ this.props.hasContent }
-						isDirty={ this.props.isDirty }
-						isSaveBlocked={ this.props.isSaveBlocked }
-						isPublishing={ this.props.isPublishing }
-						isSaving={ this.props.isSaving }
-						onPreview={ this.props.onPreview }
-						onPublish={ this.props.onPublish }
-						onSave={ this.props.onSave }
-						onSaveDraft={ this.props.onSaveDraft }
-						post={ this.props.post }
-						savedPost={ this.props.savedPost }
-						site={ this.props.site }
-						user={ this.props.user }
-						userUtils={ this.props.userUtils }
-						type={ this.props.type }
-						onMoreInfoAboutEmailVerify={ this.props.onMoreInfoAboutEmailVerify }
-					/>
-					<EditorDrawer
-						site={ this.props.site }
-						post={ this.props.post }
-						isNew={ this.props.isNew }
-						type={ this.props.type }
-					/>
-				</div> }
+				{ this.props.showDrafts ? this.renderDraftsList() : this.renderSidebar() }
 				<SidebarFooter />
 			</div>
 		);
