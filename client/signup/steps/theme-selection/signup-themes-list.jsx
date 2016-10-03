@@ -10,7 +10,6 @@ import i18n from 'i18n-calypso';
  */
 import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
-import verticals from '../survey/verticals';
 import { abtest } from 'lib/abtest';
 
 module.exports = React.createClass( {
@@ -34,12 +33,6 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getInitialState() {
-		return {
-			verticalList: verticals.get()
-		};
-	},
-
 	shouldComponentUpdate( nextProps ) {
 		return ( nextProps.surveyQuestion !== this.props.surveyQuestion || nextProps.designType !== this.props.designType );
 	},
@@ -48,21 +41,7 @@ module.exports = React.createClass( {
 		return getThemes( this.props.surveyQuestion, this.props.designType );
 	},
 
-	getVerticalIdsForCategory( topLevelCategory ) {
-		return this.state.verticalList.reduce( ( match, category_id ) => {
-			if ( category_id.value === topLevelCategory ) {
-				return category_id.stepTwo.map( c => c.value );
-			}
-			return match;
-		}, [] );
-	},
-
 	getScreenshotUrl( theme ) {
-		const artsCategories = this.getVerticalIdsForCategory( 'a8c.1' );
-		if ( -1 !== artsCategories.indexOf( this.props.surveyQuestion ) && 'showVerticalScreenshots' === abtest( 'verticalScreenshots' ) ) {
-			return `https://headstartdata.files.wordpress.com/2016/09/${ theme.slug }.png?w=660`;
-		}
-
 		return `https://i1.wp.com/s0.wp.com/wp-content/themes/${ theme.repo }/${ theme.slug }/screenshot.png?w=660`;
 	},
 
