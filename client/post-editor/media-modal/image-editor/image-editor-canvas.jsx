@@ -4,9 +4,9 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import noop from 'lodash/noop';
 import classNames from 'classnames';
 import throttle from 'lodash/throttle';
-import { isEqual, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,8 +15,10 @@ import Crop from './image-editor-crop';
 import MediaUtils from 'lib/media/utils';
 import {
 	getImageEditorTransform,
-	getImageEditorFileInfo
+	getImageEditorFileInfo,
+	getImageEditorCrop
 } from 'state/ui/editor/image-editor/selectors';
+import { setImageEditorCropBounds } from 'state/ui/editor/image-editor/actions';
 
 const MediaModalImageEditorCanvas = React.createClass( {
 	displayName: 'MediaModalImageEditorCanvas',
@@ -31,18 +33,19 @@ const MediaModalImageEditorCanvas = React.createClass( {
 			scaleX: React.PropTypes.number,
 			scaleY: React.PropTypes.number
 		} ),
+		crop: React.PropTypes.shape( {
+			topRatio: React.PropTypes.number,
+			leftRatio: React.PropTypes.number,
+			widthRatio: React.PropTypes.number,
+			heightRatio: React.PropTypes.number,
+		} ),
+		setImageEditorCropBounds: React.PropTypes.func,
 		onLoadError: React.PropTypes.func
 	},
 
 	getInitialState() {
 		return {
-			imageLoaded: false,
-			crop: {
-				topRatio: 0,
-				leftRatio: 0,
-				widthRatio: 1,
-				heightRatio: 1
-			}
+			imageLoaded: false
 		};
 	},
 
@@ -51,9 +54,16 @@ const MediaModalImageEditorCanvas = React.createClass( {
 			transform: {
 				degrees: 0,
 				scaleX: 1,
-				scaleY: 1
+				scaleY: 1,
 			},
-			onLoadError: noop
+			crop: {
+				cropTopRatio: 0,
+				cropLeftRatio: 0,
+				cropWidthRatio: 1,
+				cropHeightRatio: 1,
+			},
+			setImageEditorCropBounds: noop,
+			onLoadError: noop,
 		};
 	},
 
@@ -106,11 +116,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 			this.onWindowResize = null;
 		}
 	},
-	componentDidUpdate( prevProps, prevState ) {
-		if ( isEqual( prevState.crop, this.state.crop ) ) {
-			return;
-		}
-
+	componentDidUpdate() {
 		this.drawImage();
 		this.updateCanvasPosition();
 	},
@@ -121,10 +127,10 @@ const MediaModalImageEditorCanvas = React.createClass( {
 		const rotated = this.props.transform.degrees % 180 !== 0;
 		const imageWidth = rotated ? this.image.height : this.image.width;
 		const imageHeight = rotated ? this.image.width : this.image.height;
-		const croppedLeft = this.state.crop.leftRatio * imageWidth;
-		const croppedTop = this.state.crop.topRatio * imageHeight;
-		const croppedWidth = this.state.crop.widthRatio * imageWidth;
-		const croppedHeight = this.state.crop.heightRatio * imageHeight;
+		const croppedLeft = this.props.crop.leftRatio * imageWidth;
+		const croppedTop = this.props.crop.topRatio * imageHeight;
+		const croppedWidth = this.props.crop.widthRatio * imageWidth;
+		const croppedHeight = this.props.crop.heightRatio * imageHeight;
 		const imageData = context.getImageData(
 			croppedLeft,
 			croppedTop,
@@ -174,28 +180,15 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	updateCanvasPosition() {
-		const { crop } = this.state;
-
 		const canvas = ReactDom.findDOMNode( this.refs.canvas );
-		const canvasX = -50 * crop.widthRatio - 100 * crop.leftRatio;
-		const canvasY = -50 * crop.heightRatio - 100 * crop.topRatio;
+		const canvasX = - 50 * this.props.crop.widthRatio - 100 * this.props.crop.leftRatio;
+		const canvasY = - 50 * this.props.crop.heightRatio - 100 * this.props.crop.topRatio;
 
-		const bounds = {
-			topBound: canvas.offsetTop - canvas.offsetHeight * -canvasY / 100,
-			leftBound: canvas.offsetLeft - canvas.offsetWidth * -canvasX / 100,
-			bottomBound: canvas.offsetTop + canvas.offsetHeight * ( 1 + canvasY / 100 ),
-			rightBound: canvas.offsetLeft + canvas.offsetWidth * ( 1 + canvasX / 100 )
-		};
-
-		this.setState( {
-			bounds: bounds
-		} );
-	},
-
-	onApplyCrop( crop ) {
-		this.setState( {
-			crop: crop
-		} );
+		this.props.setImageEditorCropBounds(
+			canvas.offsetTop - canvas.offsetHeight * -canvasY / 100,
+			canvas.offsetLeft - canvas.offsetWidth * -canvasX / 100,
+			canvas.offsetTop + canvas.offsetHeight * ( 1 + canvasY / 100 ),
+			canvas.offsetLeft + canvas.offsetWidth * ( 1 + canvasX / 100 ) );
 	},
 
 	preventDrag( event ) {
@@ -204,26 +197,20 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	renderCrop() {
-		return (
-			<Crop
-				onApplyCrop={ this.onApplyCrop }
-				bounds={ this.state.bounds }
-				crop={ this.state.crop } // Pass down default crop values so we don't have to duplicate them in <Crop>.
-			/>
-		);
+		return ( <Crop /> );
 	},
 
 	render() {
-		const { crop, imageLoaded } = this.state;
-
-		const canvasX = -50 * crop.widthRatio - 100 * crop.leftRatio;
-		const canvasY = -50 * crop.heightRatio - 100 * crop.topRatio;
+		const canvasX = - 50 * this.props.crop.widthRatio - 100 * this.props.crop.leftRatio;
+		const canvasY = - 50 * this.props.crop.heightRatio - 100 * this.props.crop.topRatio;
 
 		const canvasStyle = {
 			transform: 'translate(' + canvasX + '%, ' + canvasY + '%)',
-			maxWidth: ( 85 / crop.widthRatio ) + '%',
-			maxHeight: ( 85 / crop.heightRatio ) + '%'
+			maxWidth: ( 85 / this.props.crop.widthRatio ) + '%',
+			maxHeight: ( 85 / this.props.crop.heightRatio ) + '%'
 		};
+
+		const { imageLoaded } = this.state;
 
 		const canvasClasses = classNames( 'editor-media-modal-image-editor__canvas', {
 			'is-placeholder': ! imageLoaded
@@ -246,14 +233,16 @@ export default connect(
 	( state ) => {
 		const transform = getImageEditorTransform( state );
 		const { src, mimeType } = getImageEditorFileInfo( state );
+		const crop = getImageEditorCrop( state );
 
 		return {
 			src,
 			mimeType,
-			transform
+			transform,
+			crop
 		};
 	},
-	null,
+	{ setImageEditorCropBounds },
 	null,
 	{ withRef: true }
 )( MediaModalImageEditorCanvas );
