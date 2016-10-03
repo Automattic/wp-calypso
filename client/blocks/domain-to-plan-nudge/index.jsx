@@ -18,8 +18,6 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite, isCurrentSitePlan } from 'state/sites/selectors';
 import { plansList, PLAN_FREE, PLAN_PERSONAL } from 'lib/plans/constants';
 import { storedCardPayment } from 'lib/store-transactions';
-import { getStoredCards } from 'state/stored-cards/selectors';
-import QueryStoredCards from 'components/data/query-stored-cards';
 import { emptyCart } from 'lib/cart-values';
 import { add as addCartItem } from 'lib/cart-values/cart-items';
 import { submitTransaction } from 'lib/upgrades/actions/checkout';
@@ -67,7 +65,6 @@ class DomainToPlanNudge extends Component {
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		sitePlans: PropTypes.object,
-		storedCard: PropTypes.object,
 		translate: PropTypes.func,
 		userCurrency: PropTypes.string
 	};
@@ -79,11 +76,9 @@ class DomainToPlanNudge extends Component {
 			rawPrice,
 			site,
 			sitePlans,
-			storedCard
 		} = this.props;
 
 		return sitePlans.hasLoadedFromServer &&
-			storedCard &&     //has a payment option
 			canManage &&      //can manage site
 			rawPrice &&       //plans info has loaded
 			site &&           //site exists
@@ -312,7 +307,6 @@ class DomainToPlanNudge extends Component {
 
 		return (
 			<div className="domain-to-plan-nudge">
-				<QueryStoredCards />
 				<QuerySitePlans siteId={ siteId } />
 				{ this.isSiteEligible() && this.renderCard() }
 			</div>
@@ -341,7 +335,6 @@ export default connect(
 			site: getSite( state, siteId ),
 			siteId,
 			sitePlans: getPlansBySiteId( state, siteId ),
-			storedCard: get( getStoredCards( state ), '0' ),
 			userCurrency: getCurrentUserCurrencyCode( state ) //populated by either plans endpoint
 		};
 	},
