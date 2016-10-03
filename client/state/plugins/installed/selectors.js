@@ -77,7 +77,7 @@ export function getPluginsWithUpdates( state, sites ) {
 
 export function getPluginOnSite( state, site, pluginSlug ) {
 	const pluginList = getPlugins( state, [ site ] );
-	return find( pluginList, { slug: pluginSlug } ) || false;
+	return find( pluginList, { slug: pluginSlug } );
 }
 
 export function getSitesWithPlugin( state, sites, pluginSlug ) {
