@@ -305,20 +305,22 @@ const Flows = {
 	 * @param {Object} flow The flow object
 	 */
 	getABTestFilteredFlow( flowName, flow ){
-		const updatedFlow = cloneDeep( flow );
-
 		/**
 		 * Filter according to running ABTests
 		 */
 
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
+			const updatedFlow = cloneDeep( flow );
+			
 			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
 				Flows.insertStepIntoFlow( 'survey', 'site-title', updatedFlow );
 			}
+
+			return updatedFlow;
 		}
 
-		return updatedFlow;
+		return flow;
 	},
 
 	insertStepIntoFlow( afterStep, stepName, flow ) {
