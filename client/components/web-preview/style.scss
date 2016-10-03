@@ -139,6 +139,7 @@
 
 	&.web-preview__seo-button {
 		padding: 0 14px;
+		height: 100%;
 
 		&.is-showing-device-switcher {
 			border-left: 1px solid lighten( $gray, 20% );
