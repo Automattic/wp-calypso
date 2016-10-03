@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { defer } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -19,7 +20,7 @@ import storeTransactions from 'lib/store-transactions';
 import analytics from 'lib/analytics';
 import TransactionStepsMixin from './transaction-steps-mixin';
 import upgradesActions from 'lib/upgrades/actions';
-import countriesList from 'lib/countries-list';
+import { requestForPayments as requestCountriesForPayments } from 'state/countries/actions';
 import debugFactory from 'debug';
 import cartValues, {
 	isPaidForFullyInCredits,
@@ -31,7 +32,6 @@ import cartValues, {
  * Module variables
  */
 const { hasFreeTrial } = cartItems;
-const countriesListForPayments = countriesList.forPayments();
 const debug = debugFactory( 'calypso:checkout:payment' );
 
 const SecurePaymentForm = React.createClass( {
@@ -91,6 +91,10 @@ const SecurePaymentForm = React.createClass( {
 
 	componentWillMount() {
 		this.setInitialPaymentDetails();
+	},
+
+	componentDidMount() {
+		this.props.requestCountriesForPayments();
 	},
 
 	componentDidUpdate( prevProps, prevState ) {
@@ -176,7 +180,7 @@ const SecurePaymentForm = React.createClass( {
 				cards={ this.props.cards }
 				transaction={ this.props.transaction }
 				cart={ this.props.cart }
-				countriesList={ countriesListForPayments }
+				countriesList={ this.props.countries }
 				initialCard={ this.getInitialCard() }
 				selectedSite={ this.props.selectedSite }
 				onToggle={ this.selectPaymentBox }
@@ -190,7 +194,7 @@ const SecurePaymentForm = React.createClass( {
 			<PayPalPaymentBox
 				cart={ this.props.cart }
 				transaction={ this.props.transaction }
-				countriesList={ countriesListForPayments }
+				countriesList={ this.props.countries }
 				selectedSite={ this.props.selectedSite }
 				onToggle={ this.selectPaymentBox }
 				redirectTo={ this.props.redirectTo } />
@@ -242,5 +246,14 @@ const SecurePaymentForm = React.createClass( {
 	}
 } );
 
-export default SecurePaymentForm;
-
+export default connect(
+	( state ) => {
+		return {
+			countries: state.countriesForPayments.countries
+		};
+	}, ( dispatch ) => {
+		return {
+			requestCountriesForPayments: () => dispatch( requestCountriesForPayments() )
+		};
+	}
+)( SecurePaymentForm );

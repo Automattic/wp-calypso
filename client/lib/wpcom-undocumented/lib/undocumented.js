@@ -415,7 +415,7 @@ Undocumented.prototype.getDomainRegistrationSupportedStates = function( countryC
 Undocumented.prototype.getDomainRegistrationSupportedCountries = function( fn ) {
 	debug( '/domains/supported-countries/ query' );
 
-	this._sendRequestWithLocale( {
+	return this._sendRequestWithLocale( {
 		path: '/domains/supported-countries/',
 		method: 'get'
 	}, fn );
@@ -424,7 +424,7 @@ Undocumented.prototype.getDomainRegistrationSupportedCountries = function( fn ) 
 Undocumented.prototype.getPaymentSupportedCountries = function( fn ) {
 	debug( '/me/transactions/supported-countries/ query' );
 
-	this._sendRequestWithLocale( {
+	return this._sendRequestWithLocale( {
 		path: '/me/transactions/supported-countries/',
 		method: 'get'
 	}, fn );
