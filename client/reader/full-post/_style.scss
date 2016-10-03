@@ -404,16 +404,10 @@
 	}
 }
 
-// JP Related Post
+// Hides Jetpack RP in Reader
+.reader-full-post .jp-relatedposts-headline,
 .reader-full-post .jp-relatedposts {
-	background: none;
-	list-style-type: none;
-	margin: 0;
-	padding: 0;
-}
-
-.reader-full-post .jp-relatedposts li {
-	margin-top: 10px;
+	display: none;
 }
 
 .detail-page__backdrop {
