@@ -4,4 +4,24 @@
 			padding-left: 4px;
 			padding-right: 4px;
 	}
+
+	.suggestions__category {
+		background-color: $gray-light;
+		text-transform: uppercase;
+		text-indent: 10px;
+	}
+
+	.suggestions__value {
+		background-color: $white;
+		text-indent: 20px;
+
+		.suggestions__value-emphasis {
+			font-weight: bold;
+		}
+	}
+
+	.suggestions__suggestions {
+		display: flex;
+		flex-direction: column;
+	}
 }
