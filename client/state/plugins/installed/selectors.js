@@ -72,11 +72,7 @@ export function getPlugins( state, sites, pluginFilter = false ) {
 }
 
 export function getPluginsWithUpdates( state, sites ) {
-	const pluginList = getPlugins( state, sites );
-	if ( pluginList.length === 0 ) {
-		return [];
-	}
-	return filter( pluginList, _filters.updates );
+	return filter( getPlugins( state, sites ), _filters.updates );
 }
 
 export function getPluginOnSite( state, site, pluginSlug ) {
