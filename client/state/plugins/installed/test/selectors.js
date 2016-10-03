@@ -178,17 +178,6 @@ describe( 'Installed plugin selectors', function() {
 			} ] );
 			expect( plugins ).to.have.lengthOf( 1 );
 		} );
-
-		it( 'Should get a plugin list of length 0 when we cannot update files on the site', function() {
-			const plugins = selectors.getPluginsWithUpdates( state, [ {
-				ID: 'site.one',
-				canUpdateFiles: false
-			}, {
-				ID: 'site.two',
-				canUpdateFiles: false
-			} ] );
-			expect( plugins ).to.have.lengthOf( 0 );
-		} );
 	} );
 
 	describe( 'getPluginOnSite', function() {
