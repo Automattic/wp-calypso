@@ -1,14 +1,12 @@
 import {
-	filter,
-	forEach,
-	values,
-	sortBy,
-	find,
-	uniq,
-	compact,
-	omit,
 	every,
-	some
+	filter,
+	find,
+	pick,
+	reduce,
+	some,
+	sortBy,
+	values
 } from 'lodash';
 
 const _filters = {
@@ -19,18 +17,18 @@ const _filters = {
 		return true;
 	},
 	active: function( plugin ) {
-		return plugin.sites.some( function( site ) {
-			return site.plugin && site.plugin.active;
+		return some( plugin.sites, function( site ) {
+			return site.active;
 		} );
 	},
 	inactive: function( plugin ) {
-		return plugin.sites.some( function( site ) {
-			return site.plugin && ! site.plugin.active;
+		return some( plugin.sites, function( site ) {
+			return ! site.active;
 		} );
 	},
 	updates: function( plugin ) {
-		return plugin.sites.some( function( site ) {
-			return site.plugin && site.plugin.update && site.canUpdateFiles;
+		return some( plugin.sites, function( site ) {
+			return site.update;
 		} );
 	},
 	isEqual: function( pluginSlug, plugin ) {
@@ -50,22 +48,24 @@ export function isRequestingForSites( state, sites ) {
 	return some( sites, ( siteId ) => isRequesting( state, siteId ) );
 }
 
-export function getPlugins( state, sites, pluginFilter = false ) {
-	let pluginList = {};
-	forEach( sites, ( site ) => {
+export function getPlugins( state, sites, pluginFilter ) {
+	let pluginList = reduce( sites, ( memo, site ) => {
 		const list = state.plugins.installed.plugins[ site.ID ] || [];
-		list.map( ( item ) => {
-			// plugin has a sites property which lists the sites this plugin is installed on
-			// each site, in turn, has a plugin property for the specific plugin's info.
-			const siteWithPlugin = Object.assign( {}, site, { plugin: item } );
-			if ( pluginList[ item.slug ] ) {
-				pluginList[ item.slug ].sites.push( siteWithPlugin );
+		list.forEach( ( item ) => {
+			const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update' ] );
+			if ( memo[ item.slug ] ) {
+				memo[ item.slug ].sites = {
+					...memo[ item.slug ].sites,
+					[ site.ID ]: sitePluginInfo
+				};
 			} else {
-				pluginList[ item.slug ] = Object.assign( {}, item, { sites: [ siteWithPlugin ] } );
+				memo[ item.slug ] = { ...item, sites: { [ site.ID ]: sitePluginInfo } };
 			}
 		} );
-	} );
-	if ( !! pluginFilter && _filters[ pluginFilter ] ) {
+		return memo;
+	}, {} );
+
+	if ( pluginFilter && _filters[ pluginFilter ] ) {
 		pluginList = filter( pluginList, _filters[ pluginFilter ] );
 	}
 	return values( sortBy( pluginList, item => item.slug.toLowerCase() ) );
@@ -87,15 +87,10 @@ export function getSitesWithPlugin( state, sites, pluginSlug ) {
 		return [];
 	}
 
-	const pluginSites = uniq( compact(
-		plugin.sites.map( function( site ) {
-			// we create a copy of the site to avoid any possible modification down the line affecting the main list
-			const pluginSite = Object.assign( {}, site, { plugin: omit( plugin, 'sites' ) } );
-			if ( site.visible ) {
-				return pluginSite;
-			}
-		} )
-	) );
+	// Filter the requested sites list by the list of sites for this plugin
+	const pluginSites = filter( sites, ( site ) => {
+		return plugin.sites.hasOwnProperty( site.ID );
+	} );
 
 	return sortBy( pluginSites, item => item.title.toLowerCase() );
 }
