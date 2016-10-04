@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies.
  */
@@ -9,10 +11,9 @@ import isEqual from 'lodash/isEqual';
 /**
  * Internal dependencies.
  */
-import { getFormattedTitle } from 'state/document-head/selectors';
+import { getDocumentHeadFormattedTitle } from 'state/document-head/selectors';
 import {
 	setDocumentHeadTitle as setTitle,
-	setDocumentHeadDescription as setDescription,
 	addDocumentHeadLink as addLink,
 	addDocumentHeadMeta as addMeta,
 	setDocumentHeadUnreadCount as setUnreadCount
@@ -22,19 +23,14 @@ class DocumentHead extends Component {
 	componentWillMount() {
 		const {
 			title,
-			description,
 			unreadCount
 		} = this.props;
 
-		if ( 'title' in this.props ) {
+		if ( this.props.title !== undefined ) {
 			this.props.setTitle( title );
 		}
 
-		if ( 'description' in this.props ) {
-			this.props.setDescription( description );
-		}
-
-		if ( 'unreadCount' in this.props ) {
+		if ( this.props.unreadCount !== undefined ) {
 			this.props.setUnreadCount( unreadCount );
 		}
 
@@ -53,15 +49,11 @@ class DocumentHead extends Component {
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( this.props.title !== nextProps.title ) {
+		if ( nextProps.title !== undefined && this.props.title !== nextProps.title ) {
 			this.props.setTitle( nextProps.title );
 		}
 
-		if ( this.props.description !== nextProps.description ) {
-			this.props.setDescription( nextProps.description );
-		}
-
-		if ( this.props.unreadCount !== nextProps.unreadCount ) {
+		if ( nextProps.unreadCount !== undefined && this.props.unreadCount !== nextProps.unreadCount ) {
 			this.props.setUnreadCount( nextProps.unreadCount );
 		}
 
@@ -89,12 +81,10 @@ class DocumentHead extends Component {
 
 DocumentHead.propTypes = {
 	title: PropTypes.string,
-	description: PropTypes.string,
 	unreadCount: PropTypes.number,
 	link: PropTypes.array,
 	meta: PropTypes.array,
 	setTitle: PropTypes.func.isRequired,
-	setDescription: PropTypes.func.isRequired,
 	addLink: PropTypes.func.isRequired,
 	addMeta: PropTypes.func.isRequired,
 	setUnreadCount: PropTypes.func.isRequired
@@ -102,11 +92,10 @@ DocumentHead.propTypes = {
 
 export default connect(
 	state => ( {
-		formattedTitle: getFormattedTitle( state )
+		formattedTitle: getDocumentHeadFormattedTitle( state )
 	} ),
 	{
 		setTitle,
-		setDescription,
 		addLink,
 		addMeta,
 		setUnreadCount
