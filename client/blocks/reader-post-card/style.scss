@@ -1,0 +1,155 @@
+.reader-post-card.card {
+	box-shadow: none;
+	position: relative;
+	margin-bottom: 50px;
+	padding: 0;
+}
+
+.reader-post-card__featured-image {
+	display: block;
+	margin-right: 15px;
+	position: absolute;
+		bottom: 0;
+		left: 0;
+		top: 55px;
+	width: 250px;
+
+	@include breakpoint( "660px-960px" ) {
+		width: 115px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		width: 90px;
+	}
+}
+
+.reader-post-card__meta {
+	display: flex;
+	font-size: 13px;
+	margin-bottom: 15px;
+}
+
+.reader-post-card__author::after {
+	content: ', ';
+}
+
+.reader-post-card__timestamp-and-tag {
+	color: 	lighten( $gray, 10% );
+	margin-top: -6px;
+}
+
+.reader-post-card__timestamp {
+	margin-right: 10px;
+}
+
+.reader-post-card__tag .gridicons-tag {
+    height: 18px;
+    margin: 0 3px 0 6px;
+    position: relative;
+    	top: 5px;
+	width: 15px;
+}
+
+.reader-post-card .gravatar {
+	float: left;
+	height: 32px;
+	margin: 4px 6px 0 0;
+	vertical-align: text-top;
+	width: 32px;
+}
+
+.reader-post-card__link,
+.reader-post-card__link:visited {
+	color: $blue-medium;
+	cursor: pointer;
+}
+
+.reader-post-card__post {
+	align-items: flex-start;
+	display: flex;
+
+	@include breakpoint( "<660px" ) {
+		flex-direction: column;
+	}
+}
+
+.reader-post-card__post-details {
+	flex: 1;
+	font-family: $serif;
+	margin-top: -10px;
+
+	@include breakpoint( "660px-960px" ) {
+		padding-left: 135px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		padding-left: 108px;
+	}
+}
+
+.reader-post-card.has-thumbnail .reader-post-card__post-details {
+	padding-left: 270px;
+}
+
+.reader-post-card__title {
+	margin: 10px 0;
+}
+
+// Needs to overwrite .reader__content a
+.reader__content .reader-post-card__title-link,
+.reader__content .reader-post-card__title-link:visited,
+.reader-post-card__title-link,
+.reader-post-card__title-link:visited {
+	color: darken( $gray, 30% );
+	cursor: pointer;
+	font-size: 27px;
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.reader-post-card__excerpt {
+	font-size: 16px;
+	font-weight: 100;
+}
+
+.reader-post-card__social {
+	display: flex;
+	font-family: $sans;
+	height: 22px;
+	list-style-type: none;
+	margin: 0;
+	padding: 12px 0 0 0;
+
+	.gridicon {
+		fill: lighten( $gray, 10% );
+	}
+}
+
+.reader-post-card__visit,
+.reader-post-card__share,
+.reader-post-card__comments,
+.reader-post-card__likes,
+.reader-post-card__post-options {
+	align-items: center;
+    display: inline-flex;
+	padding: 0 4px 0 0;
+}
+
+.reader-post-card__visit {
+	padding: 0;
+}
+
+.reader-post-card__share .reader-share__button-label {
+	color: lighten( $gray, 10% );
+	font-size: 14px;
+	margin: 0 4px;
+}
+
+.reader-post-card__visit {
+	flex: 1;
+
+	.external-link {
+		color: lighten( $gray, 10% );
+		font-size: 14px;
+	}
+}
