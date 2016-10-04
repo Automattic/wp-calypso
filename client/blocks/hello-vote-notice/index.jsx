@@ -13,14 +13,14 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { canCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
-import { isSiteSection, getSelectedSiteId } from 'state/ui/selectors';
+import { isSiteSection, getSectionName, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 import { withAnalytics, bumpStat } from 'state/analytics/actions';
 
 function HelloVoteNotice( props ) {
-	const { siteSection, canManageOptions, siteSlug, hasDismissed, preferencesReceived } = props;
-	if ( ! siteSection || ! canManageOptions || ! siteSlug || hasDismissed || ! preferencesReceived ) {
+	const { applicableSection, canManageOptions, siteSlug, hasDismissed, preferencesReceived } = props;
+	if ( ! applicableSection || ! canManageOptions || ! siteSlug || hasDismissed || ! preferencesReceived ) {
 		return null;
 	}
 
@@ -41,7 +41,7 @@ function HelloVoteNotice( props ) {
 
 HelloVoteNotice.propTypes = {
 	translate: PropTypes.func,
-	siteSection: PropTypes.bool,
+	applicableSection: PropTypes.bool,
 	canManageOptions: PropTypes.bool,
 	siteSlug: PropTypes.string,
 	hasDismissed: PropTypes.bool,
@@ -55,7 +55,7 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {
-			siteSection: isSiteSection( state ),
+			applicableSection: isSiteSection( state ) && 'settings' !== getSectionName( state ),
 			canManageOptions: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 			siteSlug: getSiteSlug( state, selectedSiteId ),
 			hasDismissed: getPreference( state, 'helloVoteNoticeDismissed' ),
