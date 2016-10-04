@@ -31,7 +31,7 @@ export default React.createClass( {
 		/* eslint-disable max-len, wpcalypso/jsx-classname-namespace */
 		return (
 			<div className="first-view__icon">
-				<svg x="0px" y="0px" viewBox="0 0 792 612" enable-background="new 0 0 792 612">
+				<svg x="0px" y="0px" viewBox="0 0 792 612" enableBackground="new 0 0 792 612">
 					<g>
 						<circle fill="#D2DCE4" cx="395.8" cy="305.5" r="287.1"/>
 						<rect x="219.8" y="267.8" fill="#8FACBF" width="101" height="219.4"/>
