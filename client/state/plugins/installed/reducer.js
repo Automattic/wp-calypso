@@ -26,6 +26,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
+import { pluginsSchema } from './schema';
+import { isValidStateWithSchema } from 'state/utils';
 
 /*
  * Tracks the requesting state for installed plugins on a per-site index.
@@ -69,7 +71,10 @@ export function plugins( state = {}, action ) {
 			return state;
 		case SERIALIZE:
 		case DESERIALIZE:
-			return {};
+			if ( ! isValidStateWithSchema( state, pluginsSchema ) ) {
+				return {};
+			}
+			return state;
 		default:
 			return state;
 	}
