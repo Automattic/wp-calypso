@@ -115,9 +115,9 @@ class Markup extends React.Component {
 					<link rel="stylesheet" href={ this.getStylesheet() } />
 				</head>
 				<body className={ isRTL ? 'rtl' : null }>
-					<div id="wpcom" className="wpcom-site">
-						{ renderedLayout }
-					</div>
+					<div id="wpcom" className="wpcom-site" dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
+						renderedLayout
+					} } />
 					{ badge ? this.renderBadge() : null }
 
 					{ 'development' !== env &&
