@@ -202,8 +202,8 @@
 	flex: 1;
 	padding: 8px 12px;
 	border-radius: 8px 8px 8px 0;
-	color: $white;
-	background: $blue-medium;
+	color: $gray-dark;
+	background: $white;
 	position: relative;
 
 	overflow-wrap: break-word;
@@ -229,13 +229,13 @@
 		// draw a triangle
 		width: 0;
 		height: 0;
-		border-bottom: 8px solid $blue-medium;
+		border-bottom: 8px solid $white;
 		border-left: 8px solid transparent;
 	}
 
 	.is-user-message & {
-		background: $white;
-		color: $gray-dark;
+		color: $white;
+		background: $blue-medium;
 		border-radius: 8px 8px 0 8px;
 
 		&:after {
@@ -245,7 +245,7 @@
 			// draw a triangle
 			width: 0;
 			height: 0;
-			border-bottom: 8px solid $white;
+			border-bottom: 8px solid $blue-medium;
 			border-left: none;
 			border-right: 8px solid transparent;
 		}
@@ -337,6 +337,7 @@
 
 	.happychat__container.is-open {
 		position: fixed;
+		z-index: 0; // place it under the notifications drawer
 		height: calc( 100% - 47px );
 		bottom: 0;
 		right: 0;
