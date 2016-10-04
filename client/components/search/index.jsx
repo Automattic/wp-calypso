@@ -167,7 +167,7 @@ const Search = React.createClass( {
 	scrollOverlay: function() {
 		const _this = this;
 
-		window.requestAnimationFrame(function() {
+		window.requestAnimationFrame( function() {
 			console.log( 'init_tokens: ' + _this.refs.overlay.scrollLeft );
 			console.log( 'init_input: ' + _this.refs.searchInput.scrollLeft );
 			_this.refs.overlay.scrollLeft = _this.refs.searchInput.scrollLeft;
@@ -329,7 +329,7 @@ const Search = React.createClass( {
 				</div>
 				<div className={ fadeDivClass }>
 					<input
-						type="text"
+						type="search"
 						id={ 'search-component-' + this.state.instanceId }
 						className={ inputClass }
 						placeholder={ placeholder }
