@@ -416,9 +416,11 @@ module.exports = React.createClass( {
 		if ( this._editor ) {
 			const { mode } = this.props;
 			this._editor.setContent( wpautop( content ), { ...args, mode } );
-
-			// clear the undo stack to ensure that we don't have any leftovers
-			this._editor.undoManager.clear();
+			const resetHistory = args && args.initial;
+			if ( resetHistory ) {
+				// clear the undo stack to ensure that we don't have any leftovers
+				this._editor.undoManager.clear();
+			}
 		}
 
 		this.setTextAreaContent( content );
