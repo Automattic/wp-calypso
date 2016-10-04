@@ -15,9 +15,7 @@ import Card from 'components/card';
 import Button from 'components/button';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
-import GoogleAnalyticsUpgradeNudge from 'blocks/upgrade-nudge-expanded';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
-import { PLAN_BUSINESS, FEATURE_GOOGLE_ANALYTICS } from 'lib/plans/constants';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
@@ -181,34 +179,12 @@ export default React.createClass( {
 		debug( 'Google analitics is not enabled. adding nudge ...' );
 
 		return (
-			<GoogleAnalyticsUpgradeNudge
-				plan={ PLAN_BUSINESS }
-				title={ this.translate( 'Upgrade to a Business Plan and Enable Google Analytics' ) }
-				subtitle={ this.translate( 'By upgrading to a Business Plan you\'ll enable Google Analytics Tracking on your site.' ) }
-				highlightedFeature={ FEATURE_GOOGLE_ANALYTICS }
-				event={ "google_analytics_settings" }
-				benefits={ [
-					this.translate(
-						'Analyze visitor traffic and paint a complete picture of your audience and their needs.'
-					),
-					this.translate(
-						'Track the routes people take to reach you and the devices they use to get there with ' +
-						'reporting tools like Traffic Sources.'
-					),
-					this.translate(
-						'Learn what people are looking for and what they like with In-Page Analytics. ' +
-						'Then tailor your marketing and site content for maximum impact.'
-					)
-				] }
-				testedRegularNudge={
-					<UpgradeNudge
-						title={ this.translate( 'Add Google Analytics' ) }
-						message={ this.translate( 'Upgrade to the business plan and include your own analytics tracking ID.' ) }
-						feature="google-analytics"
-						event="google_analytics_settings"
-						icon="stats-alt"
-					/>
-				}
+			<UpgradeNudge
+				title={ this.translate( 'Add Google Analytics' ) }
+				message={ this.translate( 'Upgrade to the business plan and include your own analytics tracking ID.' ) }
+				feature="google-analytics"
+				event="google_analytics_settings"
+				icon="stats-alt"
 			/>
 		);
 	},
