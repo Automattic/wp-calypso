@@ -1,3 +1,8 @@
+/**
+ * Internal dependencies
+ */
+import { getSiteByUrl } from 'state/sites/selectors';
+
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // an hour
 
 const isCalypsoStartedConnection = function( state, siteSlug ) {
@@ -23,6 +28,14 @@ const getFlowType = function( state, siteSlug ) {
 	return false;
 };
 
+const getJetpackSiteByUrl = ( state, url ) => {
+	const site = getSiteByUrl( state, url );
+	if ( site && ! site.jetpack ) {
+		return null;
+	}
+	return site;
+};
+
 /**
  * XMLRPC errors can be identified by the presence of an error message, the presence of an authorization code
  * and if the error message contains the string 'error'
@@ -42,4 +55,4 @@ const hasXmlrpcError = function( state ) {
 	);
 };
 
-export default { isCalypsoStartedConnection, getFlowType, hasXmlrpcError };
+export default { isCalypsoStartedConnection, getFlowType, getJetpackSiteByUrl, hasXmlrpcError };
