@@ -61,6 +61,7 @@ const taxonomies = {
         "featured-content-with-pages",
         "featured-image-header",
         "featured-images",
+        "fixed-menu",
         "flexible-header",
         "front-page-post-form",
         "full-width-template",
