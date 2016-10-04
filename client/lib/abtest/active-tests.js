@@ -113,5 +113,14 @@ module.exports = {
 			hideVerticalScreenshots: 50,
 		},
 		defaultVariation: 'hideVerticalScreenshots',
+	},
+	readerFullPost: {
+		datestamp: '20160929',
+		variations: {
+			current: 50,
+			refreshed: 50
+		},
+		defaultVariation: 'current',
+		allowExistingUsers: true
 	}
 };
