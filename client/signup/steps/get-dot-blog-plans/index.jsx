@@ -9,7 +9,10 @@ const GetDotBlogPlansStep = ( { queryObject, ...props } ) => (
 	<PlansStep
 		additionalStepData={ {
 			isPurchasingItem: true,
-			domainItem: cartItems.domainMapping( { domain: queryObject.domain } ),
+			domainItem: cartItems.domainMapping( {
+				domain: queryObject.domain,
+				source: 'get-dot-blog-signup'
+			} ),
 			siteUrl: queryObject.domain.replace( /\W+/g, '' )
 		} }
 		{ ...props }
