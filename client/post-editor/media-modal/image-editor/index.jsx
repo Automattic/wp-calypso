@@ -27,7 +27,7 @@ import {
 } from 'state/ui/editor/image-editor/selectors';
 
 const MediaModalImageEditor = React.createClass( {
-	mixins: [ closeOnEsc( '_close' ) ],
+	mixins: [ closeOnEsc( 'onCancel' ) ],
 
 	displayName: 'MediaModalImageEditor',
 
@@ -88,7 +88,10 @@ const MediaModalImageEditor = React.createClass( {
 
 	onCancel() {
 		this.props.resetAllImageEditorState();
-		this.props.onImageEditorCancel();
+
+		if ( this.props.onImageEditorCancel ) {
+			this.props.onImageEditorCancel();
+		}
 	},
 
 	onImageExtracted( blob ) {
@@ -176,12 +179,6 @@ const MediaModalImageEditor = React.createClass( {
 				</figure>
 			</div>
 		);
-	},
-
-	_close: function() {
-		if ( this.props.onImageEditorCancel ) {
-			this.props.onImageEditorCancel();
-		}
 	}
 } );
 
