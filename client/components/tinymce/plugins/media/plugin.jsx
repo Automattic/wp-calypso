@@ -10,7 +10,6 @@ var ReactDom = require( 'react-dom' ),
 	assign = require( 'lodash/assign' ),
 	values = require( 'lodash/values' ),
 	debounce = require( 'lodash/debounce' ),
-	includes = require( 'lodash/includes' ),
 	i18n = require( 'i18n-calypso' ),
 	Shortcode = require( 'lib/shortcode' ),
 	closest = require( 'component-closest' );
@@ -508,6 +507,23 @@ function mediaButton( editor ) {
 
 		// Determine the next usable size
 		let sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
+
+		// Get the closest possible size when the current size is unknown
+		if ( sizeIndex === -1 ) {
+			const possibleSizes = SIZE_ORDER.filter( size => {
+				const dimensions = MediaUtils.getThumbnailSizeDimensions( size, site );
+
+				return increment > 0 ?
+					dimensions.width > parsed.media.width :
+					dimensions.width < parsed.media.width;
+			} );
+
+			if ( possibleSizes.length ) {
+				const nextSize = increment > 0 ? possibleSizes[ 0 ] : possibleSizes[ possibleSizes.length - 1 ];
+				sizeIndex = SIZE_ORDER.indexOf( nextSize ) - increment;
+			}
+		}
+
 		let size;
 		do {
 			sizeIndex += increment;
@@ -538,29 +554,29 @@ function mediaButton( editor ) {
 		editor.nodeChanged();
 	}
 
-	function toggleSizingControls( event ) {
+	function toggleSizingControls( increase, event ) {
 		if ( ! event.element || 'IMG' !== event.element.nodeName ) {
 			return;
 		}
 
 		const parsed = MediaSerialization.deserialize( event.element );
 
-		// Disable sizing toggles if the image is transient
-		let isHidden = parsed.media.transient;
-
-		// Disable sizing toggles if the image is of an unknown size
-		if ( ! isHidden ) {
-			isHidden = ! parsed.appearance.size || ! includes( SIZE_ORDER, parsed.appearance.size );
-		}
-
-		// Disable sizing toggles if the image is smaller than the smallest
-		// thumbnail size for the site
-		if ( ! isHidden ) {
-			const thumb = MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], sites.getSelectedSite() );
-			isHidden = ( parsed.media.width || Infinity ) < thumb.width && ( parsed.media.height || Infinity ) < thumb.height;
-		}
-
+		// Hide sizing toggles if the image is transient
+		const isHidden = parsed.media.transient;
 		this.classes.toggle( 'hidden', isHidden );
+
+		// Disable decrease button when smaller than the smallest thumbnail size
+		if ( ! increase ) {
+			const thumb = MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], sites.getSelectedSite() );
+			const isDisabled = ( parsed.media.width || Infinity ) <= thumb.width && ( parsed.media.height || Infinity ) <= thumb.height;
+			this.disabled( isDisabled );
+		}
+
+		// Disable increase button when we select full-size
+		if ( increase ) {
+			const isDisabled = parsed.appearance.size === SIZE_ORDER[ SIZE_ORDER.length - 1 ];
+			this.disabled( isDisabled );
+		}
 	}
 
 	editor.addButton( 'wpcom_img_size_decrease', {
@@ -568,11 +584,7 @@ function mediaButton( editor ) {
 		classes: 'toolbar-segment-start img-size-decrease',
 		icon: 'dashicon dashicons-minus',
 		onPostRender: function() {
-			editor.selection.selectorChanged( '.size-thumbnail', ( state ) => {
-				this.disabled( state );
-			} );
-
-			editor.on( 'wptoolbar', toggleSizingControls.bind( this ) );
+			editor.on( 'wptoolbar', toggleSizingControls.bind( this, false ) );
 		},
 		onclick: function() {
 			resize( -1 );
@@ -584,11 +596,7 @@ function mediaButton( editor ) {
 		classes: 'toolbar-segment-end img-size-increase',
 		icon: 'dashicon dashicons-plus',
 		onPostRender: function() {
-			editor.selection.selectorChanged( '.size-full', ( state ) => {
-				this.disabled( state );
-			} );
-
-			editor.on( 'wptoolbar', toggleSizingControls.bind( this ) );
+			editor.on( 'wptoolbar', toggleSizingControls.bind( this, true ) );
 		},
 		onclick: function() {
 			resize( 1 );
