@@ -21,17 +21,13 @@ export function wrapPre( content, initial ) {
 	} );
 }
 
-export function unwrapPre( content, mode ) {
+export function unwrapPre( content ) {
 	if ( ! content || content.indexOf( '[' ) === -1 ) {
 		return content;
 	}
 
 	return content.replace( REGEXP_CODE_SHORTCODE, function( match, shortcode ) {
 		shortcode = shortcode.replace( /&lt;/g, '<' ).replace( /&gt;/g, '>' ).replace( /&amp;/g, '&' );
-
-		if ( 'html' === mode ) {
-			return shortcode;
-		}
 
 		return `<p>${ shortcode }</p>`;
 	} );
@@ -44,10 +40,6 @@ function sourcecode( editor ) {
 		}
 
 		event.content = wrapPre( event.content, event.initial );
-	} );
-
-	editor.on( 'BeforeSetTextAreaContent', ( event ) => {
-		event.content = unwrapPre( event.content, 'html' );
 	} );
 
 	editor.on( 'GetContent', ( event ) => {
