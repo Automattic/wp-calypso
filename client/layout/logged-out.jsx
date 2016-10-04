@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import MasterbarLoggedOut from 'layout/masterbar/logged-out';
+import { hasSidebar } from 'state/ui/selectors';
 
 const LayoutLoggedOut = ( {
 	primary,
@@ -22,7 +23,7 @@ const LayoutLoggedOut = ( {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
-		'has-no-sidebar': true, // Logged-out never has a sidebar
+		'has-no-sidebar': ! this.props.hasSidebar,
 		'wp-singletree-layout': !! primary,
 	} );
 
@@ -57,6 +58,7 @@ LayoutLoggedOut.propTypes = {
 
 export default connect(
 	state => ( {
-		section: state.ui.section
+		section: state.ui.section,
+		hasSidebar: hasSidebar( state )
 	} )
 )( LayoutLoggedOut );
