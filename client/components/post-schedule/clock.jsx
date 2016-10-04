@@ -68,7 +68,7 @@ class PostScheduleClock extends Component {
 			hour = checkTimeValue( this.refs.timeHourRef.value ),
 			minute = checkTimeValue( this.refs.timeMinuteRef.value );
 
-		if ( false !== hour && hour <= 24 ) {
+		if ( false !== hour && hour < 24 ) {
 			modifiers.hour = Number( hour );
 		}
 
