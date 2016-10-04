@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isCalypsoStartedConnection, getFlowType, hasXmlrpcError } from '../selectors';
+import { isCalypsoStartedConnection, getFlowType, getJetpackSiteByUrl, hasXmlrpcError } from '../selectors';
 
 const stateHasXmlrpcError = {
 	jetpackConnect: {
@@ -112,6 +112,51 @@ describe( 'selectors', () => {
 			expect( getFlowType( state, { slug: 'sitetest' } ) ).to.be.false;
 		} );
 	} );
+
+	describe( '#getJetpackSiteByUrl()', () => {
+		it( 'should return null if site is not found', () => {
+			const state = {
+				sites: {
+					items: {}
+				}
+			};
+
+			expect( getJetpackSiteByUrl( state, 'example.wordpress.com' ) ).to.be.null;
+		} );
+
+		it( 'should return false if the site is not a jetpack site', () => {
+			const state = {
+				sites: {
+					items: {
+						12345678: {
+							ID: 12345678,
+							URL: 'https://example.wordpress.com/',
+							jetpack: false
+						}
+					}
+				}
+			};
+
+			expect( getJetpackSiteByUrl( state, 'https://example.wordpress.com/' ) ).to.be.null;
+		} );
+
+		it( 'should return the site object if the site is a jetpack site', () => {
+			const state = {
+				sites: {
+					items: {
+						12345678: {
+							ID: 12345678,
+							URL: 'https://example.wordpress.com/',
+							jetpack: true
+						}
+					}
+				}
+			};
+
+			expect( getJetpackSiteByUrl( state, 'https://example.wordpress.com/' ) ).to.eql( state.sites.items[ 12345678 ] );
+		} );
+	} );
+
 	describe( '#hasXmlrpcError', () => {
 		it( 'should be undefined when there is an empty state', () => {
 			const hasError = hasXmlrpcError( { jetpackConnect: {} } );
