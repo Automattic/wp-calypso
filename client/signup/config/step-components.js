@@ -21,6 +21,7 @@ module.exports = {
 	'domains-only': DomainsStepComponent,
 	'jetpack-user': UserSignupComponent,
 	'get-dot-blog-plans': GetDotBlogPlansStepComponent,
+	'get-dot-blog-themes': ThemeSelectionComponent,
 	plans: PlansStepComponent,
 	site: SiteComponent,
 	'site-title': SiteTitleComponent,

@@ -111,4 +111,13 @@ module.exports = {
 		dependencies: [ 'cartItem' ],
 		providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem' ]
 	},
+
+	'get-dot-blog-themes': {
+		stepName: 'get-dot-blog-themes',
+		props: {
+			designType: 'blog'
+		},
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'theme' ]
+	},
 };
