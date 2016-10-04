@@ -21,11 +21,13 @@ import { savePreference } from 'state/preferences/actions';
 import { withAnalytics, bumpStat } from 'state/analytics/actions';
 import { getGeoCountry } from 'state/geo/selectors';
 
-function HelloVoteNotice( { translate, visible, siteSlug, onDismiss, onActionClick } ) {
+function HelloVoteNotice( { translate, visibleIfUnitedStates, isUnitedStates, siteSlug, onDismiss, onActionClick } ) {
 	return (
 		<div>
-			<QueryGeo />
-			{ visible && [
+			{ visibleIfUnitedStates && (
+				<QueryGeo />
+			) }
+			{ visibleIfUnitedStates && isUnitedStates && [
 				<TrackComponentView
 					key="impression"
 					statGroup="hello-vote"
@@ -48,7 +50,8 @@ function HelloVoteNotice( { translate, visible, siteSlug, onDismiss, onActionCli
 
 HelloVoteNotice.propTypes = {
 	translate: PropTypes.func,
-	visible: PropTypes.bool,
+	visibleIfUnitedStates: PropTypes.bool,
+	isUnitedStates: PropTypes.bool,
 	siteSlug: PropTypes.string,
 	onActionClick: PropTypes.func,
 	onDismiss: PropTypes.func
@@ -61,13 +64,15 @@ export default connect(
 
 		return {
 			siteSlug,
-			visible: (
+			visibleIfUnitedStates: (
 				siteSlug &&
 				isSiteSection( state ) &&
 				'settings' !== getSectionName( state ) &&
 				canCurrentUser( state, selectedSiteId, 'manage_options' ) &&
 				hasReceivedRemotePreferences( state ) &&
-				! getPreference( state, 'helloVoteNoticeDismissed' ) &&
+				! getPreference( state, 'helloVoteNoticeDismissed' )
+			),
+			isUnitedStates: (
 				'United States' === getGeoCountry( state )
 			)
 		};
