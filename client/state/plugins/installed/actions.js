@@ -63,10 +63,10 @@ export function activatePlugin( siteId, plugin ) {
 			siteId,
 			pluginId,
 		};
-		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_ACTIVATE_REQUEST } ) );
+		dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST } );
 
 		const successCallback = ( data ) => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data } );
 		};
 
 		const errorCallback = ( error ) => {
@@ -74,7 +74,7 @@ export function activatePlugin( siteId, plugin ) {
 			if ( error && error.error === 'activation_error' ) {
 				successCallback( plugin );
 			}
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_ACTIVATE_REQUEST_FAILURE, error } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_FAILURE, error } );
 		};
 
 		return getPluginHandler( siteId, pluginId ).activate().then( successCallback ).catch( errorCallback );
@@ -89,10 +89,10 @@ export function deactivatePlugin( siteId, plugin ) {
 			siteId,
 			pluginId,
 		};
-		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_DEACTIVATE_REQUEST } ) );
+		dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST } );
 
 		const successCallback = ( data ) => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS, data } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS, data } );
 		};
 
 		const errorCallback = ( error ) => {
@@ -100,7 +100,7 @@ export function deactivatePlugin( siteId, plugin ) {
 			if ( error && error.error === 'deactivation_error' ) {
 				successCallback( plugin );
 			}
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_DEACTIVATE_REQUEST_FAILURE, error } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_FAILURE, error } );
 		};
 
 		return getPluginHandler( siteId, pluginId ).deactivate().then( successCallback ).catch( errorCallback );
@@ -119,14 +119,14 @@ export function updatePlugin( siteId, plugin ) {
 			siteId,
 			pluginId,
 		};
-		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_UPDATE_REQUEST } ) );
+		dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST } );
 
 		const successCallback = ( data ) => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } );
 		};
 
 		const errorCallback = ( error ) => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_UPDATE_REQUEST_FAILURE, error } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_FAILURE, error } );
 		};
 
 		return getPluginHandler( siteId, pluginId ).updateVersion().then( successCallback ).catch( errorCallback );
@@ -141,15 +141,15 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 			siteId,
 			pluginId,
 		};
-		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST } ) );
+		dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST } );
 
 		const successCallback = ( data ) => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } );
 			updatePlugin( siteId, plugin )( dispatch );
 		};
 
 		const errorCallback = ( error ) => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE, error } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE, error } );
 		};
 
 		return getPluginHandler( siteId, pluginId ).enableAutoupdate().then( successCallback ).catch( errorCallback );
@@ -164,14 +164,14 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 			siteId,
 			pluginId,
 		};
-		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST } ) );
+		dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST } );
 
 		const successCallback = ( data ) => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS, data } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS, data } );
 		};
 
 		const errorCallback = ( error ) => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE, error } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE, error } );
 		};
 
 		return getPluginHandler( siteId, pluginId ).disableAutoupdate().then( successCallback ).catch( errorCallback );
@@ -186,7 +186,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 			siteId,
 			pluginId,
 		};
-		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_INSTALL_REQUEST } ) );
+		dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST } );
 
 		const doInstall = function( pluginData ) {
 			return getPluginHandler( siteId, pluginData.id ).install();
@@ -205,7 +205,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 		};
 
 		const successCallback = ( data ) => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } );
 		};
 
 		const errorCallback = ( error ) => {
@@ -228,7 +228,7 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 					.then( successCallback )
 					.catch( errorCallback );
 			}
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_INSTALL_REQUEST_FAILURE, error } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_FAILURE, error } );
 			return Promise.reject( error );
 		};
 
@@ -263,7 +263,7 @@ export function removePlugin( siteId, plugin ) {
 			siteId,
 			pluginId,
 		};
-		dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST } ) );
+		dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST } );
 
 		const doDeactivate = function( pluginData ) {
 			if ( pluginData.active ) {
@@ -284,11 +284,11 @@ export function removePlugin( siteId, plugin ) {
 		};
 
 		const successCallback = () => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST_SUCCESS } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST_SUCCESS } );
 		};
 
 		const errorCallback = ( error ) => {
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGIN_REMOVE_REQUEST_FAILURE, error } ) );
+			dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST_FAILURE, error } );
 			return Promise.reject( error );
 		};
 
@@ -306,16 +306,16 @@ export function fetchPlugins( sites ) {
 			const defaultAction = {
 				siteId: site.ID,
 			};
-			dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_REQUEST } ) );
+			dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
 
 			const receivePluginsDispatchSuccess = ( data ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_RECEIVE } ) );
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_REQUEST_SUCCESS, data: data.plugins } ) );
+				dispatch( { ...defaultAction, type: PLUGINS_RECEIVE } );
+				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS, data: data.plugins } );
 			};
 
 			const receivePluginsDispatchFail = ( error ) => {
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_RECEIVE } ) );
-				dispatch( Object.assign( {}, defaultAction, { type: PLUGINS_REQUEST_FAILURE, error } ) );
+				dispatch( { ...defaultAction, type: PLUGINS_RECEIVE } );
+				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
 			};
 
 			return wpcom.site( site.ID ).pluginsList().then( receivePluginsDispatchSuccess ).catch( receivePluginsDispatchFail );
