@@ -2,7 +2,7 @@
  * External dependencies
  */
 import find from 'lodash/find';
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import Notice from 'components/notice';
@@ -14,6 +14,13 @@ import { abtest } from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'SignupProcessingScreen',
+
+	propTypes: {
+		hasCartItems: PropTypes.bool.isRequired,
+		loginHandler: PropTypes.func,
+		steps: PropTypes.array.isRequired,
+		user: PropTypes.object,
+	},
 
 	renderConfirmationNotice: function() {
 		if ( this.props.user && this.props.user.email_verified ) {
