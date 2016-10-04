@@ -104,4 +104,11 @@ module.exports = {
 		},
 		providesDependencies: [ 'bearer_token', 'username' ]
 	},
+
+	'get-dot-blog-plans': {
+		apiRequestFunction: stepActions.createSiteWithDomainItems,
+		stepName: 'get-dot-blog-plans',
+		dependencies: [ 'cartItem' ],
+		providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem' ]
+	},
 };
