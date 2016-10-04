@@ -43,6 +43,30 @@ export default React.createClass( {
 		};
 	},
 
+	renderHeaderText() {
+		if ( ( this.props.flowName === 'get-dot-blog' ) || ( this.props.surveySiteType === 'blog' ) ) {
+			const { domain } = this.props.signupDependencies;
+
+			if ( domain ) {
+				return this.translate( 'Start blogging on %(domain)s today!', {
+					args: { domain }
+				} );
+			}
+
+			return this.translate( 'Create your blog today!' );
+		}
+
+		return this.translate( 'Create your site today!' );
+	},
+
+	renderSubHeaderText() {
+		if ( this.props.flowName === 'get-dot-blog' ) {
+			return this.translate( 'WordPress.com is the best place for your WordPress blog.' );
+		}
+
+		return this.translate( 'WordPress.com is the best place for your WordPress blog or website.' );
+	},
+
 	renderStepTwoVertical( vertical ) {
 		const stepTwoClickHandler = ( event ) => {
 			event.preventDefault();
@@ -76,8 +100,11 @@ export default React.createClass( {
 	},
 
 	renderOptionList() {
-		const blogLabel = this.translate( 'What is your blog about?' );
-		const siteLabel = this.translate( 'What is your website about?' );
+		let label = this.translate( 'What is your website about?' );
+
+		if ( ( this.props.flowName === 'get-dot-blog' ) || ( this.props.surveySiteType === 'blog' ) ) {
+			label = this.translate( 'What is your blog about?' );
+		}
 
 		let verticalsClasses = classNames(
 				'survey-step__verticals',
@@ -92,7 +119,7 @@ export default React.createClass( {
 				<div className="survey-step__verticals-wrapper">
 					<div className={ verticalsClasses }>
 						<CompactCard className="survey-step__question">
-							<label>{ this.props.surveySiteType === 'blog' ? blogLabel : siteLabel }</label>
+							<label>{ label }</label>
 						</CompactCard>
 						{ this.state.verticalList.map( this.renderStepOneVertical ) }
 					</div>
@@ -107,16 +134,14 @@ export default React.createClass( {
 	},
 
 	render() {
-		const blogHeaderText = this.translate( 'Create your blog today!' );
-		const siteHeaderText = this.translate( 'Create your site today!' );
 		return (
 			<div className="survey-step__section-wrapper">
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
-					subHeaderText={ this.translate( 'WordPress.com is the best place for your WordPress blog or website.' ) }
+					headerText={ this.renderHeaderText() }
+					subHeaderText={ this.renderSubHeaderText() }
 					signupProgressStore={ this.props.signupProgressStore }
 					stepContent={ this.renderOptionList() } />
 			</div>
