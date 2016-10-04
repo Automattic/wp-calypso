@@ -1,4 +1,4 @@
-export const items = {
+export const postFormatsItemsSchema = {
 	type: 'object',
 	additionalProperties: false,
 	patternProperties: {
