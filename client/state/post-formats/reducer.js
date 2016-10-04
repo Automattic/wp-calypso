@@ -7,7 +7,7 @@ import { combineReducers } from 'redux';
  * Internal dependencies
  */
 import { isValidStateWithSchema } from 'state/utils';
-import * as schema from './schema';
+import { postFormatsItemsSchema } from './schema';
 import {
 	SERIALIZE,
 	DESERIALIZE,
@@ -58,7 +58,7 @@ export function items( state = {}, action ) {
 			} );
 
 		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, schema.items ) ) {
+			if ( isValidStateWithSchema( state, postFormatsItemsSchema ) ) {
 				return state;
 			}
 
