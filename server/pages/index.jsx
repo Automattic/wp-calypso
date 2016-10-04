@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import sanitize from 'sanitize';
+import { jsonStringifyForHtml } from 'sanitize';
 
 class Markup extends React.Component {
 	getStylesheet() {
@@ -42,15 +42,16 @@ class Markup extends React.Component {
 	}
 
 	renderBadge() {
-		const { badge, branchName, feedbackURL, devDocs } = this.props;
+		const { abTestHelper, badge, branchName, feedbackURL, devDocs } = this.props;
 		return (
 			<div className="environment-badge">
-				<a href={ feedbackURL } title="Report an issue" target="_blank" className="bug-report" />
+				{ abTestHelper && <div className="environment is-tests" /> }
+				{ branchName && branchName !== 'master' && this.renderBranchName() }
+				{ devDocs && this.renderDevDocsLink() }
 				<span className={ 'environment is-' + badge }>
 					{ badge }
 				</span>
-				{ branchName && branchName !== 'master' && this.renderBranchName() }
-				{ devDocs && this.renderDevDocsLink() }
+				<a href={ feedbackURL } title="Report an issue" target="_blank" className="bug-report" />
 			</div>
 		);
 	}
@@ -63,9 +64,7 @@ class Markup extends React.Component {
 			chunk,
 			env,
 			faviconURL,
-			helmetTitle,
-			helmetLink,
-			helmetMeta,
+			head,
 			i18nLocaleScript,
 			initialReduxState,
 			isDebug,
@@ -84,19 +83,23 @@ class Markup extends React.Component {
 				dir={ isRTL ? 'rtl' : 'ltr' }
 				className={ isFluidWidth ? 'is-fluid-with' : null }>
 				<head>
-					{ helmetTitle || <title>WordPress.com</title> }
+					<title>{ head.title }</title>
 					<meta charSet="utf-8" />
 					<meta httpEquiv="X-UA-Compatible" content="IE=Edge" />
 					<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 					<meta name="fomat-detection" content="telephone=no" />
 					<meta name="mobile-web-app-capable" content="yes" />
+					<meta name="apple-mobile-web-app-capable" content="yes" />
 					<meta name="referrer" content="origin" />
-					{ helmetMeta }
-					{ helmetLink }
+					{ head.metas.map( ( { name, property, content } ) => (
+						<meta name={ name } property={ property } content={ content } />
+					) ) }
+					{ head.links.map( ( { rel, href } ) => (
+						<link rel={ rel } href={ href } />
+					) ) }
 					<link rel="shortcut icon" type="image/vnd.microsoft.icon" href={ faviconURL } sizes="16x16 32x32" />
 					<link rel="shortcut icon" type="image/x-icon" href={ faviconURL } sizes="16x16 32x32" />
 					<link rel="icon" type="image/x-icon" href={ faviconURL } sizes="16x16 32x32" />
-					<link rel="profile" href="http://gmpg.org/xfn/11" />
 					<link rel="icon" type="image/png" href="//s1.wp.com/i/favicons/favicon-64x64.png" sizes="64x64" />
 					<link rel="icon" type="image/png" href="//s1.wp.com/i/favicons/favicon-96x96.png" sizes="96x96" />
 					<link rel="icon" type="image/png" href="//s1.wp.com/i/favicons/android-chrome-192x192.png" sizes="192x192" />
@@ -109,16 +112,23 @@ class Markup extends React.Component {
 					<link rel="apple-touch-icon" sizes="144x144" href="//s1.wp.com/i/favicons/apple-touch-icon-144x144.png" />
 					<link rel="apple-touch-icon" sizes="152x152" href="//s1.wp.com/i/favicons/apple-touch-icon-152x152.png" />
 					<link rel="apple-touch-icon" sizes="180x180" href="//s1.wp.com/i/favicons/apple-touch-icon-180x180.png" />
+					<link rel="profile" href="http://gmpg.org/xfn/11" />
+					<link rel="manifest" href="/calypso/manifest.json" />
 					<link rel="stylesheet" href="//s1.wp.com/i/fonts/merriweather/merriweather.css?v=20160210" />
 					<link rel="stylesheet" href="//s1.wp.com/i/noticons/noticons.css?v=20150727" />
 					<link rel="stylesheet" href="//s1.wp.com/wp-includes/css/dashicons.css?v=20150727" />
 					<link rel="stylesheet" href={ this.getStylesheet() } />
 				</head>
 				<body className={ isRTL ? 'rtl' : null }>
-					<div id="wpcom" className="wpcom-site" dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
-						renderedLayout
-					} } />
-					{ badge ? this.renderBadge() : null }
+					{ renderedLayout
+						? <div id="wpcom" className="wpcom-site" dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
+							renderedLayout
+						} } />
+						: <div id="wpcom" className="wpcom-site">
+							<div className="wpcom-site__logo noticon noticon-wordpress" />
+						</div>
+					}
+					{ badge && this.renderBadge() }
 
 					{ 'development' !== env &&
 						<script src={ catchJsErrors } />
@@ -127,19 +137,19 @@ class Markup extends React.Component {
 					{ user &&
 						<script type="text/javascript"
 							dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
-								'var currentUser = ' + sanitize.jsonStringifyForHtml( user )
+								'var currentUser = ' + jsonStringifyForHtml( user )
 							} } />
 					}
 					{ app &&
 						<script type="text/javascript"
 							dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
-								'var app = ' + sanitize.jsonStringifyForHtml( app )
+								'var app = ' + jsonStringifyForHtml( app )
 							} } />
 					}
 					{ initialReduxState &&
 						<script type="text/javascript"
 							dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
-								'var initialReduxState = ' + sanitize.jsonStringifyForHtml( initialReduxState )
+								'var initialReduxState = ' + jsonStringifyForHtml( initialReduxState )
 							} } />
 					}
 					{ i18nLocaleScript &&
