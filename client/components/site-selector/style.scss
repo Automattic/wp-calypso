@@ -52,33 +52,35 @@
 			color: $white;
 		}
 	}
+}
 
-	// Highlight & hover effects
-	&.is-highlighted,
-	.notouch &:hover {
-		background: $blue-medium;
-		cursor: pointer;
+// Highlight & hover effects
+.site-selector .site.is-highlighted,
+.site-selector .all-sites.is-highlighted,
+.notouch .site-selector.is-hover-enabled .site:hover,
+.notouch .site-selector.is-hover-enabled .all-sites:hover {
+	background: $blue-medium;
+	cursor: pointer;
 
-		.site__badge {
-			color: $white;
+	.site__badge {
+		color: $white;
+	}
+
+	.site__title,
+	.site__domain {
+		color: white;
+		&::after {
+			@include long-content-fade( $color: $blue-medium );
 		}
+	}
 
-		.site__title,
-		.site__domain {
-			color: white;
-			&::after {
-				@include long-content-fade( $color: $blue-medium );
-			}
-		}
+	.site__title:before {
+		color: white;
+	}
 
-		.site__title:before {
-			color: white;
-		}
-
-		.count {
-			border-color: $white;
-			color: $white;
-		}
+	.count {
+		border-color: $white;
+		color: $white;
 	}
 }
 

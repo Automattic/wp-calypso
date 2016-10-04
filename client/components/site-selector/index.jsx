@@ -83,11 +83,12 @@ const SiteSelector = React.createClass( {
 			search: terms,
 			highlightedIndex: ( terms ? 0 : -1 ),
 			showSearch: ( terms ? true : this.state.showSearch ),
+			isKeyboardEngaged: true,
 		} );
 	},
 
 	componentDidUpdate( prevProps, prevState ) {
-		if ( prevState.highlightedIndex !== this.state.highlightedIndex ) {
+		if ( this.state.isKeyboardEngaged && prevState.highlightedIndex !== this.state.highlightedIndex ) {
 			this.scrollToHightlightedSite();
 		}
 	},
@@ -144,7 +145,8 @@ const SiteSelector = React.createClass( {
 
 		if ( nextIndex !== null ) {
 			this.setState( {
-				highlightedIndex: nextIndex
+				highlightedIndex: nextIndex,
+				isKeyboardEngaged: true,
 			} );
 		}
 	},
@@ -153,7 +155,7 @@ const SiteSelector = React.createClass( {
 		const handledByHost = this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
 
-		let node = ReactDom.findDOMNode( this.refs.selector );
+		const node = ReactDom.findDOMNode( this.refs.selector );
 		if ( node ) {
 			node.scrollTop = 0;
 		}
@@ -172,6 +174,17 @@ const SiteSelector = React.createClass( {
 
 	onAllSitesSelect( event ) {
 		this.onSiteSelect( event, ALL_SITES );
+	},
+
+	onMouseMove( event ) {
+		if ( this.state.isKeyboardEngaged && ( event.clientX !== this.lastMouseMoveX || event.clientY !== this.lastMouseMoveY ) ) {
+			this.lastMouseMoveY = event.clientY;
+			this.lastMouseMoveX = event.clientX;
+			this.setState( {
+				highlightedIndex: -1,
+				isKeyboardEngaged: false,
+			} );
+		}
 	},
 
 	recordAddNewSite() {
@@ -213,7 +226,7 @@ const SiteSelector = React.createClass( {
 		if ( slug === ALL_SITES ) {
 			// default posts links to /posts/my when possible and /posts when not
 			const postsBase = ( this.props.sites.allSingleSites ) ? '/posts' : '/posts/my';
-			let allSitesPath = this.props.allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
+			const allSitesPath = this.props.allSitesPath.replace( /^\/posts\b(\/my)?/, postsBase );
 
 			// There is currently no "all sites" version of the insights page
 			return allSitesPath.replace( /^\/stats\/insights\/?$/, '/stats/day' );
@@ -232,7 +245,7 @@ const SiteSelector = React.createClass( {
 	},
 
 	isHighlighted( site ) {
-		return this.visibleSites.indexOf( site ) === this.state.highlightedIndex;
+		return this.state.isKeyboardEngaged && this.visibleSites.indexOf( site ) === this.state.highlightedIndex;
 	},
 
 	shouldShowGroups() {
@@ -266,7 +279,7 @@ const SiteSelector = React.createClass( {
 		}
 
 		// Render sites
-		siteElements = sites.map( this.renderSite, this );
+		siteElements = map( sites, this.renderSite, this );
 
 		if ( ! siteElements.length ) {
 			return <div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>;
@@ -289,7 +302,7 @@ const SiteSelector = React.createClass( {
 			this.visibleSites.push( ALL_SITES );
 
 			const isHighlighted = this.isHighlighted( ALL_SITES );
-			return(
+			return (
 				<AllSites
 					key="selector-all-sites"
 					sites={ this.props.sites.get() }
@@ -321,7 +334,7 @@ const SiteSelector = React.createClass( {
 
 	renderRecentSites() {
 		const sitesById = keyBy( this.props.sites.get(), 'ID' );
-		const sites = this.props.recentSites.map( (siteId) => sitesById[ siteId ] );
+		const sites = this.props.recentSites.map( siteId => sitesById[ siteId ] );
 
 		if ( ! sites || this.state.search || ! this.shouldShowGroups() || this.props.visibleSiteCount <= 11 ) {
 			return null;
@@ -340,13 +353,14 @@ const SiteSelector = React.createClass( {
 		const hiddenSitesCount = this.props.siteCount - this.props.visibleSiteCount;
 		const selectorClass = classNames( 'site-selector', 'sites-list', {
 			'is-large': this.props.siteCount > 6 || hiddenSitesCount > 0 || this.state.showSearch,
-			'is-single': this.props.visibleSiteCount === 1
+			'is-single': this.props.visibleSiteCount === 1,
+			'is-hover-enabled': ! this.state.isKeyboardEngaged,
 		} );
 
 		this.visibleSites = [];
 
 		return (
-			<div className={ selectorClass }>
+			<div className={ selectorClass } onMouseMove={ this.onMouseMove }>
 				<Search
 					ref="siteSearch"
 					onSearch={ this.onSearch }
