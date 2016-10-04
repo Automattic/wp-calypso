@@ -33,7 +33,7 @@ function HelloVoteNotice( { translate, visible, siteSlug, onDismiss, onActionCli
 				<Notice
 					key="notice"
 					status="is-info"
-					text={ translate( 'Encourage your US-based visitors to register to vote by adding a subtle prompt to your site' ) }
+					text={ translate( 'Encourage your US-based users to register to vote by adding a subtle prompt to your site' ) }
 					onDismissClick={ onDismiss }>
 					<NoticeAction
 						onClick={ onActionClick }
