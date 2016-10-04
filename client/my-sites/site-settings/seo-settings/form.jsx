@@ -32,7 +32,6 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
-import SeoSettingsUpgradeNudge from 'blocks/upgrade-nudge-expanded';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
@@ -44,9 +43,7 @@ import SearchPreview from 'components/seo/search-preview';
 import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
 import { isBusiness, isEnterprise } from 'lib/products-values';
-import {
-	PLAN_BUSINESS, FEATURE_ADVANCED_SEO
-} from 'lib/plans/constants';
+import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -338,7 +335,7 @@ export const SeoForm = React.createClass( {
 	},
 
 	render() {
-		const { showAdvancedSeo, showWebsiteMeta, showUpgradeNudge, upgradeToBusiness } = this.props;
+		const { showAdvancedSeo, showWebsiteMeta, showUpgradeNudge } = this.props;
 		const {
 			description: siteDescription,
 			slug = '',
@@ -448,38 +445,11 @@ export const SeoForm = React.createClass( {
 				}
 
 				{ showUpgradeNudge &&
-					<SeoSettingsUpgradeNudge
-						plan={ PLAN_BUSINESS }
-						upgrade={ upgradeToBusiness }
+					<UpgradeNudge
+						feature={ FEATURE_ADVANCED_SEO }
 						title={ this.translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
-						subtitle={ this.translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
-						highlightedFeature={ FEATURE_ADVANCED_SEO }
+						message={ this.translate( `By upgrading to a Business Plan you'll enable advanced SEO features on your site.` ) }
 						event={ 'calypso_seo_settings_upgrade_nudge' }
-						benefits={ [
-							this.translate(
-								'Preview your site\'s posts and pages as they will appear ' +
-								'when shared on Facebook, Twitter and the WordPress.com Reader.'
-							),
-							this.translate(
-								'Allow you to control how page titles will appear on Google ' +
-								'search results, or when shared on social networks.'
-							),
-							this.translate(
-								'Modify front page meta data in order to customize ' +
-								'how your site appears to search engines.'
-							)
-						] }
-						testedRegularNudge={
-							<UpgradeNudge
-								feature={ FEATURE_ADVANCED_SEO }
-								title={ this.translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
-								message={ this.translate(
-									'By upgrading to a Business Plan you\'ll enable advanced SEO ' +
-									'features on your site.'
-								) }
-								event={ 'calypso_seo_settings_upgrade_nudge' }
-							/>
-						}
 					/>
 				}
 

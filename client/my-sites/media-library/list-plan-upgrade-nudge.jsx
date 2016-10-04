@@ -8,8 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import UpgradeNudgeExpanded from 'blocks/upgrade-nudge-expanded';
-import { PLAN_PREMIUM, FEATURE_VIDEO_UPLOADS, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
+import { FEATURE_VIDEO_UPLOADS, FEATURE_AUDIO_UPLOADS } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import ListPlanPromo from './list-plan-promo';
 
@@ -29,64 +28,20 @@ function getSubtitle( filter, translate ) {
 	return translate( 'By upgrading to a Premium Plan you\'ll enable VideoPress support on your site.' );
 }
 
-function getBenefits( filter, translate ) {
-	if ( filter === 'audio' ) {
-		return [
-			translate(
-				'Add support for podcasting to your site, including a built-in audio player.',
-				{ comment: 'Perk for upgrading to premium plan' }
-			),
-			translate(
-				'Upload audio files that use any major audio file format.',
-				{ comment: 'Perk for upgrading to premium plan' }
-			),
-			translate(
-				'Get more than four times the storage space for all of your media files.',
-				{ comment: 'Perk for upgrading to premium plan' }
-			)
-		];
-	}
-
-	return [
-		translate(
-			'Upload videos to your site with an interface designed specifically for WordPress.',
-			{ comment: 'Perk for upgrading to premium plan' }
-		),
-		translate(
-			'Present videos using a lightweight and responsive player that is ad-free and unbranded.',
-			{ comment: 'Perk for upgrading to premium plan' }
-		),
-		translate(
-			'See where your videos have been shared as well as stats for individual and overall video plays.',
-			{ comment: 'Perk for upgrading to premium plan' }
-		)
-	];
-}
-
 export const MediaLibraryUpgradeNudge = ( { translate, filter, site } ) => (
 	<div className="media-library__videopress-nudge-container">
-		<UpgradeNudgeExpanded
-			plan={ PLAN_PREMIUM }
-			title={ getTitle( filter, translate ) }
-			subtitle={ getSubtitle( filter, translate ) }
-			highlightedFeature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
-			event="calypso_media_uploads_upgrade_nudge"
-			benefits={ getBenefits( filter, translate ) }
-			testedRegularNudge={
-				<ListPlanPromo
-					site={ site }
-					filter={ filter }
-				>
-					<UpgradeNudge
-						className="media-library__videopress-nudge-regular"
-						title={ getTitle( filter, translate ) }
-						message={ getSubtitle( filter, translate ) }
-						feature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
-						event="calypso_media_uploads_upgrade_nudge"
-					/>
-				</ListPlanPromo>
-			}
-		/>
+		<ListPlanPromo
+			site={ site }
+			filter={ filter }
+			>
+			<UpgradeNudge
+				className="media-library__videopress-nudge-regular"
+				title={ getTitle( filter, translate ) }
+				message={ getSubtitle( filter, translate ) }
+				feature={ 'audio' === filter ? FEATURE_AUDIO_UPLOADS : FEATURE_VIDEO_UPLOADS }
+				event="calypso_media_uploads_upgrade_nudge"
+			/>
+		</ListPlanPromo>
 	</div>
 );
 
