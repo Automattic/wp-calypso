@@ -344,7 +344,7 @@ Undocumented.prototype.isDomainAvailable = function( domain, fn ) {
  * @api public
  */
 Undocumented.prototype.canRedirect = function( siteId, domain, fn ) {
-	domain = encodeURIComponent( domain );
+	domain = encodeURIComponent( domain.toLowerCase() );
 
 	this.wpcom.req.get( { path: '/domains/' + siteId + '/' + domain + '/can-redirect' }, fn );
 };
@@ -806,7 +806,7 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
  * @param {int}       postId            The post ID
  * @param {String}    message           Message for social media
  * @param {Array(int)}skipped           CKeyring connection ids to skip publicizing
- * 
+ *
  * @returns {Promise}
  */
 Undocumented.prototype.publicizePost = function( siteId, postId, message, skippedConnections, fn ) {

@@ -87,6 +87,10 @@ function canRedirect( siteId, domainName, onComplete ) {
 		return;
 	}
 
+	if ( ! domainName.match( /^https?:\/\//i ) ) {
+		domainName = 'http://' + domainName;
+	}
+
 	wpcom.undocumented().canRedirect( siteId, domainName, function( serverError, data ) {
 		if ( serverError ) {
 			onComplete( new ValidationError( serverError.error ) );
