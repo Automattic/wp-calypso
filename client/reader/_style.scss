@@ -11,9 +11,12 @@
 	}
 }
 
-.is-reader-page .recommended-for-you.main,
-.is-reader-page .following.main {
-	margin: 30px auto;
+.is-group-reader-refresh .recommended-for-you.main,
+.is-group-reader-refresh .following.main {
+
+	@include breakpoint( ">660px" ) {
+		margin: 30px auto;
+	}
 }
 
 .is-reader-page .reader__full-post-content {
