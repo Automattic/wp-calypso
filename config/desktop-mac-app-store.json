@@ -62,6 +62,8 @@
 		"press-this": false,
 		"reader": true,
 		"reader/full-errors": false,
+		"reader/refresh/full-post-ab-test": false,
+		"reader/refresh/force-full-post": false,
 		"republicize": false,
 		"rubberband-scroll-disable": true,
 		"settings/security/monitor": true,
