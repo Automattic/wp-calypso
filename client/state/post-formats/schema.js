@@ -9,7 +9,7 @@ export const postFormatsItemsSchema = {
 			additionalProperties: false,
 			patternProperties: {
 				// ID of the post format
-				'^[0-9a-z]+$': {
+				'^[0-9a-z\-_]+$': {
 					type: 'string',
 					description: 'Label of the post format',
 				}
