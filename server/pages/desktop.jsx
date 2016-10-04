@@ -27,7 +27,7 @@ class Desktop extends React.Component {
 		const { badge, feedbackURL } = this.props;
 		return (
 			<div className="environment-badge">
-				<a href={ feedbackURL } title="Report an issue" target="_blank" className="bug-report" />
+				<a href={ feedbackURL } title="Report an issue" target="_blank" rel="noopener noreferrer" className="bug-report" />
 				<span className={ 'environment is-' + badge }>
 					{ badge }
 				</span>

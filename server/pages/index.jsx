@@ -52,7 +52,7 @@ class Markup extends React.Component {
 				<span className={ 'environment is-' + badge }>
 					{ badge }
 				</span>
-				<a href={ feedbackURL } title="Report an issue" target="_blank" className="bug-report" />
+				<a href={ feedbackURL } title="Report an issue" target="_blank" rel="noopener noreferrer" className="bug-report" />
 			</div>
 		);
 	}
