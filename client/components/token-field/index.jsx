@@ -3,6 +3,7 @@
  */
 var take = require( 'lodash/take' ),
 	clone = require( 'lodash/clone' ),
+	last = require( 'lodash/last' ),
 	map = require( 'lodash/map' ),
 	difference = require( 'lodash/difference' ),
 	React = require( 'react' ),
@@ -225,11 +226,57 @@ var TokenField = React.createClass( {
 		this._addNewToken( suggestion );
 	},
 
+	_handlePaste( text ) {
+		const items = text.split( /[ ,]+/ );
+		const tokenizableItems = items
+			.slice( 0, -1 )
+			.filter( item => !! this.props.saveTransform( item ).length );
+
+		debug( '_handlePaste', text, items );
+		debug( 'tokenizableItems', tokenizableItems );
+
+		/*
+		 * Due to the interactions between TokenField's `_addNewToken` and the
+		 * parent component's `onChange` handler, we can't call a sequence of
+		 * `_addNewToken` without deferring as done below.
+		 *
+		 * This forces each `_addNewToken` invocation to run once the state
+		 * updates have propagated from TokenField to parent and back.
+		 *
+		 * The `isBatchOperation` parameter avoids unnecessary state changes
+		 * within TokenField proper.
+		 */
+		tokenizableItems.forEach( item => {
+			debug( 'adding token', item );
+			setTimeout( () => {
+				this._addNewToken( item, { isBatchOperation: true } );
+			}, 0 );
+		} );
+
+		return {
+			remainder: last( items ),
+			hasAddedAny: !! tokenizableItems.length,
+		};
+	},
+
 	_onInputChange: function( event ) {
-		this.setState( {
-			incompleteTokenValue: event.value,
-			selectedSuggestionIndex: -1,
-			selectedSuggestionScroll: false
+		const { hasAddedAny, remainder } = this._handlePaste( event.value );
+
+		/*
+		 * We only need to defer the `setState` call when `_handlePaste`
+		 * actually called `_addNewToken`. Thus, for any normal key press,
+		 * `setTimeout` is an unnecessary indirection.
+		 */
+		const call = hasAddedAny
+			? fn => setTimeout( fn, 0 )
+			: fn => fn();
+
+		call( () => {
+			this.setState( {
+				incompleteTokenValue: remainder,
+				selectedSuggestionIndex: -1,
+				selectedSuggestionScroll: false
+			} );
 		} );
 	},
 
@@ -463,7 +510,7 @@ var TokenField = React.createClass( {
 		} );
 	},
 
-	_addNewToken: function( token ) {
+	_addNewToken: function( token, { isBatchOperation = false } = {} ) {
 		var newValue;
 
 		token = this.props.saveTransform( token );
@@ -472,7 +519,12 @@ var TokenField = React.createClass( {
 			newValue = clone( this.props.value );
 			newValue.splice( this._getIndexOfInput(), 0, token );
 
+			debug( '_addNewToken: onChange', newValue );
 			this.props.onChange( newValue );
+		}
+
+		if ( isBatchOperation ) {
+			return;
 		}
 
 		this.setState( {
