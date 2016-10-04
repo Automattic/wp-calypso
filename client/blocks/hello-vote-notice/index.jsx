@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import QueryGeo from 'components/data/query-geo';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import { canCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isSiteSection, getSectionName, getSelectedSiteId } from 'state/ui/selectors';
@@ -20,41 +21,35 @@ import { savePreference } from 'state/preferences/actions';
 import { withAnalytics, bumpStat } from 'state/analytics/actions';
 import { getGeoCountry } from 'state/geo/selectors';
 
-function HelloVoteNotice( props ) {
-	let notice;
-	const { applicableSection, canManageOptions, siteSlug, hasDismissed, preferencesReceived, usGeo } = props;
-	if ( applicableSection && canManageOptions && siteSlug && ! hasDismissed && preferencesReceived && usGeo ) {
-		const { translate, onActionClick, onDismiss } = props;
-		notice = (
-			<Notice
-				status="is-info"
-				text={ translate( 'Encourage your US-based visitors to register to vote by adding a subtle prompt to your site' ) }
-				onDismissClick={ onDismiss }>
-				<NoticeAction
-					onClick={ onActionClick }
-					href={ `/settings/general/${ siteSlug }` }>
-					{ translate( 'Manage Settings' ) }
-				</NoticeAction>
-			</Notice>
-		);
-	}
-
+function HelloVoteNotice( { translate, visible, siteSlug, onDismiss, onActionClick } ) {
 	return (
 		<div>
 			<QueryGeo />
-			{ notice }
+			{ visible && [
+				<TrackComponentView
+					key="impression"
+					statGroup="hello-vote"
+					statName="calypso-notice-impression" />,
+				<Notice
+					key="notice"
+					status="is-info"
+					text={ translate( 'Encourage your US-based visitors to register to vote by adding a subtle prompt to your site' ) }
+					onDismissClick={ onDismiss }>
+					<NoticeAction
+						onClick={ onActionClick }
+						href={ `/settings/general/${ siteSlug }` }>
+						{ translate( 'Manage Settings' ) }
+					</NoticeAction>
+				</Notice>
+			] }
 		</div>
 	);
 }
 
 HelloVoteNotice.propTypes = {
 	translate: PropTypes.func,
-	applicableSection: PropTypes.bool,
-	canManageOptions: PropTypes.bool,
+	visible: PropTypes.bool,
 	siteSlug: PropTypes.string,
-	hasDismissed: PropTypes.bool,
-	preferencesReceived: PropTypes.bool,
-	usGeo: PropTypes.bool,
 	onActionClick: PropTypes.func,
 	onDismiss: PropTypes.func
 };
@@ -62,20 +57,25 @@ HelloVoteNotice.propTypes = {
 export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const siteSlug = getSiteSlug( state, selectedSiteId );
 
 		return {
-			applicableSection: isSiteSection( state ) && 'settings' !== getSectionName( state ),
-			canManageOptions: canCurrentUser( state, selectedSiteId, 'manage_options' ),
-			siteSlug: getSiteSlug( state, selectedSiteId ),
-			hasDismissed: getPreference( state, 'helloVoteNoticeDismissed' ),
-			preferencesReceived: hasReceivedRemotePreferences( state ),
-			usGeo: 'United States' === getGeoCountry( state )
+			siteSlug,
+			visible: (
+				siteSlug &&
+				isSiteSection( state ) &&
+				'settings' !== getSectionName( state ) &&
+				canCurrentUser( state, selectedSiteId, 'manage_options' ) &&
+				hasReceivedRemotePreferences( state ) &&
+				! getPreference( state, 'helloVoteNoticeDismissed' ) &&
+				'United States' === getGeoCountry( state )
+			)
 		};
 	},
 	( dispatch ) => {
 		return mapValues( {
-			onActionClick: 'calypso-opt-in',
-			onDismiss: 'calypso-dismiss'
+			onActionClick: 'calypso-notice-opt-in',
+			onDismiss: 'calypso-notice-dismiss'
 		}, ( statValue ) => () => dispatch( withAnalytics(
 			bumpStat( 'hello-vote', statValue ),
 			savePreference( 'helloVoteNoticeDismissed', true )
