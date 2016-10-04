@@ -27,7 +27,7 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import { pluginsSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
+import { createReducer } from 'state/utils';
 
 /*
  * Tracks the requesting state for installed plugins on a per-site index.
@@ -47,38 +47,36 @@ export function isRequesting( state = {}, action ) {
 }
 
 /*
+ * Helper function to update a plugin's state after a successful plugin action
+ * (multiple action-types are possible)
+ */
+const updatePlugin = function( state, action ) {
+	if ( typeof state[ action.siteId ] !== 'undefined' ) {
+		return Object.assign( {}, state, {
+			[ action.siteId ]: pluginsForSite( state[ action.siteId ], action )
+		} );
+	}
+	return state;
+};
+
+/*
  * Tracks all known installed plugin objects indexed by site ID.
  */
-export function plugins( state = {}, action ) {
-	switch ( action.type ) {
-		case PLUGINS_REQUEST_SUCCESS:
-			const pluginData = uniqBy( action.data, 'slug' );
-			return Object.assign( {}, state, { [ action.siteId ]: pluginData } );
-		case PLUGINS_REQUEST_FAILURE:
-			return Object.assign( {}, state, { [ action.siteId ]: [] } );
-		case PLUGIN_ACTIVATE_REQUEST_SUCCESS:
-		case PLUGIN_DEACTIVATE_REQUEST_SUCCESS:
-		case PLUGIN_UPDATE_REQUEST_SUCCESS:
-		case PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS:
-		case PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS:
-		case PLUGIN_INSTALL_REQUEST_SUCCESS:
-		case PLUGIN_REMOVE_REQUEST_SUCCESS:
-			if ( typeof state[ action.siteId ] !== 'undefined' ) {
-				return Object.assign( {}, state, {
-					[ action.siteId ]: pluginsForSite( state[ action.siteId ], action )
-				} );
-			}
-			return state;
-		case SERIALIZE:
-		case DESERIALIZE:
-			if ( ! isValidStateWithSchema( state, pluginsSchema ) ) {
-				return {};
-			}
-			return state;
-		default:
-			return state;
-	}
-}
+export const plugins = createReducer( {}, {
+	[ PLUGINS_REQUEST_SUCCESS ]: ( state, action ) => {
+		return { ...state, [ action.siteId ]: uniqBy( action.data, 'slug' ) };
+	},
+	[ PLUGINS_REQUEST_FAILURE ]: ( state, action ) => {
+		return { ...state, [ action.siteId ]: [] };
+	},
+	[ PLUGIN_ACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
+	[ PLUGIN_DEACTIVATE_REQUEST_SUCCESS ]: updatePlugin,
+	[ PLUGIN_UPDATE_REQUEST_SUCCESS ]: updatePlugin,
+	[ PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS ]: updatePlugin,
+	[ PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS ]: updatePlugin,
+	[ PLUGIN_INSTALL_REQUEST_SUCCESS ]: updatePlugin,
+	[ PLUGIN_REMOVE_REQUEST_SUCCESS ]: updatePlugin,
+}, pluginsSchema );
 
 /*
  * Tracks the list of premium plugin objects for a single site
