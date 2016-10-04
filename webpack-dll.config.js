@@ -1,10 +1,17 @@
+/**
+ * External Dependencies
+ */
 const path = require( 'path' );
 const webpack = require( 'webpack' );
+
+/**
+ * Internal Dependencies
+ */
 const config = require( './server/config' );
 
 const bundleEnv = config( 'env' );
 
-const webpackConfig = {
+module.exports = {
 	entry: {
 		vendor: [ path.join( __dirname, 'client', 'vendor-dll.js' ) ]
 	},
@@ -50,9 +57,6 @@ const webpackConfig = {
 		fs: 'empty'
 	},
 	resolve: {
-		root: path.resolve( __dirname, 'client' ),
-		modulesDirectories: [ 'node_modules' ]
+		root: path.resolve( __dirname, 'client' )
 	}
 };
-
-module.exports = webpackConfig;
