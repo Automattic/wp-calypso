@@ -21,6 +21,7 @@ import Button from 'components/button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
+import { getSSO } from 'state/jetpack-connect/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 import config from 'config';
 import EmptyContent from 'components/empty-content';
@@ -463,7 +464,7 @@ const JetpackSSOForm = React.createClass( {
 
 export default connect(
 	state => {
-		const { jetpackSSO } = state.jetpackConnect;
+		const jetpackSSO = getSSO( state );
 		return {
 			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
 			isAuthorizing: get( jetpackSSO, 'isAuthorizing' ),
@@ -475,5 +476,8 @@ export default connect(
 			sharedDetails: get( jetpackSSO, 'sharedDetails' )
 		};
 	},
-	dispatch => bindActionCreators( { authorizeSSO, validateSSONonce }, dispatch )
+	dispatch => bindActionCreators( {
+		authorizeSSO,
+		validateSSONonce
+	}, dispatch )
 )( JetpackSSOForm );

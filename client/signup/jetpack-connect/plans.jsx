@@ -19,7 +19,7 @@ import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { userCan } from 'lib/site/utils';
-import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
+import { getAuthorize, isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import { goBackToWpAdmin } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -175,7 +175,7 @@ export default connect(
 		return {
 			selectedSite,
 			sitePlans: getPlansBySite( state, selectedSite ),
-			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
+			jetpackConnectAuthorize: getAuthorize( state ),
 			userId: user ? user.ID : null,
 			canPurchasePlans: userCan( 'manage_options', selectedSite ),
 			flowType: getFlowType( state, selectedSite && selectedSite.slug ),
