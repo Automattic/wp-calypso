@@ -25,12 +25,12 @@ function HelloVoteNotice( props ) {
 	return (
 		<Notice
 			status="is-info"
-			text={ 'Voting is important' /* Yep, that's a placeholder */ }
+			text={ translate( 'Encourage your US-based visitors to register to vote by adding a subtle prompt to your site' ) }
 			onDismissClick={ onDismiss }>
 			<NoticeAction
 				onClick={ onDismiss }
 				href={ `/settings/general/${ siteSlug }` }>
-				{ translate( 'Opt In' ) }
+				{ translate( 'Manage Settings' ) }
 			</NoticeAction>
 		</Notice>
 	);
