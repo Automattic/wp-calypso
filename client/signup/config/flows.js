@@ -333,11 +333,19 @@ const Flows = {
 		if ( -1 === flow.steps.indexOf( stepName ) ) {
 			const steps = flow.steps.slice();
 			const afterStepIndex = steps.indexOf( afterStep );
-			steps.splice( afterStepIndex + 1, 0, stepName );
 
-			return {
-				...flow,
-				steps,
+			/**
+			 * Only insert the step if
+			 * `afterStep` is empty ( insert at start )
+			 * or if `afterStep` is found in the flow. ( insert after `afterStep` )
+			 */
+			if (afterStepIndex > -1 || '' === afterStep ) {
+				steps.splice( afterStepIndex + 1, 0, stepName );
+
+				return {
+					...flow,
+					steps,
+				}
 			}
 		}
 
