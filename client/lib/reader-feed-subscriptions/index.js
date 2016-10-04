@@ -26,7 +26,7 @@ const subscriptionsTemplate = {
 	count: 0
 };
 
-var subscriptions = clone( subscriptionsTemplate ),
+let subscriptions = clone( subscriptionsTemplate ),
 	errors = [],
 	perPage = 50,
 	currentPage = 0,
@@ -37,12 +37,12 @@ var subscriptions = clone( subscriptionsTemplate ),
 		state: States.SUBSCRIBED
 	} );
 
-var FeedSubscriptionStore = {
+const FeedSubscriptionStore = {
 
 	// Tentatively add the new subscription
 	// We haven't received confirmation from the API yet, but we want to update the UI
 	receiveFollow: function( action ) {
-		var subscription = { URL: action.data.url };
+		const subscription = { URL: action.data.url };
 		debug( 'receiveFollow: ' + action.data.url );
 		if ( addSubscription( subscription ) ) {
 			FeedSubscriptionStore.emit( 'change' );
@@ -60,7 +60,7 @@ var FeedSubscriptionStore = {
 	},
 
 	receiveFollowResponse: function( action ) {
-		var updatedSubscriptionInfo;
+		let updatedSubscriptionInfo;
 
 		const siteUrl = FeedSubscriptionHelper.prepareSiteUrl( action.url );
 		debug( 'receiveFollowResponse: ' + siteUrl );
@@ -125,7 +125,7 @@ var FeedSubscriptionStore = {
 	},
 
 	receiveSubscriptions: function( data ) {
-		if ( ! data.subscriptions ) {
+		if ( ! ( data && data.subscriptions ) ) {
 			return;
 		}
 
@@ -209,7 +209,7 @@ var FeedSubscriptionStore = {
 	},
 
 	removeErrorsForSiteUrl: function( siteUrl ) {
-		var newErrors = reject( errors, { URL: FeedSubscriptionHelper.prepareSiteUrl( siteUrl ) } );
+		const newErrors = reject( errors, { URL: FeedSubscriptionHelper.prepareSiteUrl( siteUrl ) } );
 
 		if ( newErrors.length === errors.length ) {
 			return false;
@@ -364,7 +364,7 @@ Emitter( FeedSubscriptionStore ); // eslint-disable-line
 FeedSubscriptionStore.setMaxListeners( 100 );
 
 FeedSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	if ( ! action ) {
 		return;
