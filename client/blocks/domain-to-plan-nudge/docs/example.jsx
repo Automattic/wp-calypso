@@ -15,10 +15,6 @@ import QuerySites from 'components/data/query-sites';
 function DomainToPlanNudgeExample( { siteId } ) {
 	return (
 		<div className="docs__design-assets-group">
-			<h2>
-				<a href="/devdocs/blocks/domain-to-plan-nudge">Domain To Plan Nudge</a>
-			</h2>
-			<p> Warning! Clicking on "Upgrade Now" will charge your stored credit card </p>
 			<QuerySites siteId={ siteId } />
 			<DomainToPlanNudge siteId={ siteId } />
 		</div>
