@@ -31,14 +31,14 @@ const SuggestionList = React.createClass( {
 
 	getMatchingSuggestions() {
 		const { suggestions, query } = this.props;
-		const matcher = new RegExp( "^" + query + "| " + query, 'ig' ); // Start of string or preceded by a space.
+		const matcher = new RegExp( '^' + query + '| ' + query, 'ig' ); // Start of string or preceded by a space.
 		let matchingSuggestions = suggestions;
 
 		if ( query.length > 0 ) {
 			matchingSuggestions = [];
 
 			for ( let i = 0, len = suggestions.length; i < len; i++ ) {
-				const suggestion = suggestions[i];
+				const suggestion = suggestions[ i ];
 				const name = suggestion.name || suggestion.user_login + ' ' + suggestion.display_name;
 
 				if ( name.toLowerCase().match( matcher ) ) {
@@ -68,7 +68,8 @@ const SuggestionList = React.createClass( {
 							{ suggestions.map( ( suggestion ) => {
 								return (
 									<PopoverMenuItem
-										key={ 'user-suggestion-' + suggestion.ID }>
+										key={ 'user-suggestion-' + suggestion.ID }
+										onClick={ this.props.onClick.bind( null, suggestion ) }>
 										<Suggestion
 											ref={ 'suggestion-node-' + suggestion.ID }
 											avatarUrl={ suggestion.image_URL }
