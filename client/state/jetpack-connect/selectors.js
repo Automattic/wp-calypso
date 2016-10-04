@@ -5,18 +5,20 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 		return false;
 	}
 	const site = siteSlug.replace( /.*?:\/\//g, '' );
-	if ( state && state[ site ] ) {
+	const sessions = state.jetpackConnect.jetpackConnectSessions;
+
+	if ( sessions[ site ] ) {
 		const currentTime = ( new Date() ).getTime();
-		return ( currentTime - state[ site ].timestamp < JETPACK_CONNECT_TTL );
+		return ( currentTime - sessions[ site ].timestamp < JETPACK_CONNECT_TTL );
 	}
 
 	return false;
 };
 
-const getFlowType = function( state, site ) {
-	const siteSlug = site.slug.replace( /.*?:\/\//g, '' );
-	if ( state && state[ siteSlug ] ) {
-		return state[ siteSlug ].flowType;
+const getFlowType = function( state, siteSlug ) {
+	const sessions = state.jetpackConnect.jetpackConnectSessions;
+	if ( siteSlug && sessions[ siteSlug ] ) {
+		return sessions[ siteSlug ].flowType;
 	}
 	return false;
 };
@@ -25,15 +27,18 @@ const getFlowType = function( state, site ) {
  * XMLRPC errors can be identified by the presence of an error message, the presence of an authorization code
  * and if the error message contains the string 'error'
  *
- * @param state
- * @returns {Boolean}
+ * @param {object} state Global state tree
+ * @returns {Boolean} If there's an xmlrpc error or not
  */
 const hasXmlrpcError = function( state ) {
+	const authorizeData = state.jetpackConnect.jetpackConnectAuthorize;
+
 	return (
-		state.authorizeError &&
-		state.authorizeError.message &&
-		state.authorizationCode &&
-		state.authorizeError.message.indexOf( 'error' ) > -1
+		authorizeData &&
+		authorizeData.authorizeError &&
+		authorizeData.authorizeError.message &&
+		authorizeData.authorizationCode &&
+		authorizeData.authorizeError.message.indexOf( 'error' ) > -1
 	);
 };
 
