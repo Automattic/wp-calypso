@@ -7,35 +7,39 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
 
 class TrackComponentView extends Component {
 	static propTypes = {
 		eventName: PropTypes.string,
 		eventProperties: PropTypes.object,
-		recordTracksEvent: PropTypes.func
+		recordTracksEvent: PropTypes.func,
+		bumpStat: PropTypes.func
 	};
 
 	static defaultProps = {
-		eventName: null,
-		eventProperties: {},
-		recordTracksEvent: () => {}
+		recordTracksEvent: () => {},
+		bumpStat: () => {}
 	};
 
 	componentWillMount() {
-		if ( this.props.eventName ) {
-			this.props.recordTracksEvent( this.props.eventName, this.props.eventProperties );
+		const { eventName, eventProperties } = this.props;
+		if ( eventName ) {
+			this.props.recordTracksEvent( eventName, eventProperties );
+		}
+
+		const { statGroup, statName } = this.props;
+		if ( statGroup ) {
+			this.props.bumpStat( statGroup, statName );
 		}
 	}
 
 	render() {
 		return null;
 	}
-
 }
 
 export default connect(
 	null,
-	{ recordTracksEvent }
+	{ bumpStat, recordTracksEvent }
 )( TrackComponentView );
-
