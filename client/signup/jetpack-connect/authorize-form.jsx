@@ -26,7 +26,13 @@ import {
 	activateManage,
 	goToXmlrpcErrorFallbackUrl
 } from 'state/jetpack-connect/actions';
-import { isCalypsoStartedConnection, hasXmlrpcError } from 'state/jetpack-connect/selectors';
+import {
+	getAuthorize,
+	getAuthorizeSite,
+	getSSOSessions,
+	isCalypsoStartedConnection,
+	hasXmlrpcError
+} from 'state/jetpack-connect/selectors';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -636,34 +642,35 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
-		const queryObjectSite = state.jetpackConnect.jetpackConnectAuthorize &&
-			state.jetpackConnect.jetpackConnectAuthorize.queryObject &&
-			state.jetpackConnect.jetpackConnectAuthorize.queryObject.site;
-
-		const site = queryObjectSite
-			? getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
+		const authorizeSite = getAuthorizeSite( state );
+		const site = authorizeSite
+			? getSiteByUrl( state, authorizeSite )
 			: null;
+
 		const requestHasXmlrpcError = () => {
 			return hasXmlrpcError( state );
 		};
+
 		const isFetchingSites = () => {
 			return isRequestingSites( state );
 		};
 
 		return {
-			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
-			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
+			jetpackConnectAuthorize: getAuthorize( state ),
+			jetpackSSOSessions: getSSOSessions( state ),
 			isAlreadyOnSitesList: !! site,
 			isFetchingSites,
 			requestHasXmlrpcError,
-			calypsoStartedConnection: isCalypsoStartedConnection( state, queryObjectSite )
+			calypsoStartedConnection: isCalypsoStartedConnection( state, authorizeSite )
 		};
 	},
-	dispatch => bindActionCreators( { requestSites,
+	dispatch => bindActionCreators( {
+		requestSites,
 		recordTracksEvent,
 		authorize,
 		createAccount,
 		activateManage,
 		goBackToWpAdmin,
-		goToXmlrpcErrorFallbackUrl }, dispatch )
+		goToXmlrpcErrorFallbackUrl
+	}, dispatch )
 )( JetpackConnectAuthorizeForm );
