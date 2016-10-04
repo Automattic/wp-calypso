@@ -6,8 +6,8 @@ import { combineReducers } from 'redux';
 /**
  * Internal dependencies
  */
-import { isValidStateWithSchema } from 'state/utils';
 import { postFormatsItemsSchema } from './schema';
+import { createReducer } from 'state/utils';
 import {
 	SERIALIZE,
 	DESERIALIZE,
@@ -50,23 +50,11 @@ export function requesting( state = {}, action ) {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function items( state = {}, action ) {
-	switch ( action.type ) {
-		case POST_FORMATS_RECEIVE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: action.formats
-			} );
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, postFormatsItemsSchema ) ) {
-				return state;
-			}
-
-			return {};
+export const items = createReducer( {}, {
+	[ POST_FORMATS_RECEIVE ]: ( state, { siteId, formats } ) => {
+		return { ...state, [ siteId ]: formats };
 	}
-
-	return state;
-}
+}, postFormatsItemsSchema );
 
 export default combineReducers( {
 	requesting,
