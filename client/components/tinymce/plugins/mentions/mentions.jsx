@@ -39,10 +39,6 @@ const Mentions = React.createClass( {
 		const { editor } = this.props;
 
 		editor.on( 'keyup', this.onKeyUp );
-
-		editor.on( 'remove', () => {
-			editor.off( 'keyup', this.onKeyUp );
-		} );
 	},
 
 	getCurrentText: function() {
