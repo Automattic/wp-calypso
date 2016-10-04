@@ -206,7 +206,6 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__blocks {
 	border-top: 1px solid lighten( $gray, 20% );
-	margin-top: 12px;
 	padding-top: 11px;
 
 	.reader-related-card-v2__post {
@@ -252,6 +251,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	&.is-other-site {
+		margin-top: 40px;
 
 		.reader-related-card-v2__post {
 			max-height: 205px;
