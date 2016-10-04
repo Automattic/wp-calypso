@@ -20,46 +20,6 @@ import {
 	hasXmlrpcError
 } from '../selectors';
 
-const stateHasXmlrpcError = {
-	jetpackConnect: {
-		jetpackConnectAuthorize: {
-			authorizeError: {
-				message: 'transport error - HTTP status code was not 200 (502)'
-			},
-			authorizationCode: 'xxxx'
-		}
-	}
-};
-
-const stateHasNoError = {
-	jetpackConnect: {
-		jetpackConnectAuthorize: {
-			authorizeError: false
-		}
-	}
-};
-
-const stateHasNoAuthorizationCode = {
-	jetpackConnect: {
-		jetpackConnectAuthorize: {
-			authorizeError: {
-				message: 'Could not verify your request.'
-			}
-		}
-	}
-};
-
-const stateHasOtherError = {
-	jetpackConnect: {
-		jetpackConnectAuthorize: {
-			authorizeError: {
-				message: 'Jetpack: [already_connected] User already connected.'
-			},
-			authorizationCode: 'xxxx'
-		}
-	}
-};
-
 describe( 'selectors', () => {
 	describe( '#getConnectingSite()', () => {
 		it( 'should return undefined if user has not started connecting a site', () => {
@@ -309,8 +269,10 @@ describe( 'selectors', () => {
 					}
 				}
 			};
+
 			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.true;
 		} );
+
 		it( 'should return false if the user haven\'t started a session in calypso  ', () => {
 			const state = {
 				jetpackConnect: {
@@ -319,6 +281,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
+
 			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.false;
 		} );
 
@@ -333,9 +296,11 @@ describe( 'selectors', () => {
 					}
 				}
 			};
+
 			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.false;
 		} );
 	} );
+
 	describe( '#getFlowType()', () => {
 		it( 'should return the flow of the session for a site', () => {
 			const state = {
@@ -348,6 +313,7 @@ describe( 'selectors', () => {
 					}
 				}
 			};
+
 			expect( getFlowType( state, 'sitetest' ) ).to.eql( 'pro' );
 		} );
 
@@ -357,6 +323,7 @@ describe( 'selectors', () => {
 					jetpackConnectSessions: {}
 				}
 			};
+
 			expect( getFlowType( state, { slug: 'sitetest' } ) ).to.be.false;
 		} );
 	} );
@@ -406,25 +373,69 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#hasXmlrpcError', () => {
+		const stateHasXmlrpcError = {
+			jetpackConnect: {
+				jetpackConnectAuthorize: {
+					authorizeError: {
+						message: 'transport error - HTTP status code was not 200 (502)'
+					},
+					authorizationCode: 'xxxx'
+				}
+			}
+		};
+
+		const stateHasNoError = {
+			jetpackConnect: {
+				jetpackConnectAuthorize: {
+					authorizeError: false
+				}
+			}
+		};
+
+		const stateHasNoAuthorizationCode = {
+			jetpackConnect: {
+				jetpackConnectAuthorize: {
+					authorizeError: {
+						message: 'Could not verify your request.'
+					}
+				}
+			}
+		};
+
+		const stateHasOtherError = {
+			jetpackConnect: {
+				jetpackConnectAuthorize: {
+					authorizeError: {
+						message: 'Jetpack: [already_connected] User already connected.'
+					},
+					authorizationCode: 'xxxx'
+				}
+			}
+		};
+
 		it( 'should be undefined when there is an empty state', () => {
 			const hasError = hasXmlrpcError( { jetpackConnect: {} } );
 			expect( hasError ).to.be.undefined;
 		} );
+
 		it( 'should be false when there is no error', () => {
 			const hasError = hasXmlrpcError( stateHasNoError );
 			expect( hasError ).to.be.false;
 		} );
+
 		it( 'should be undefined when there is no authorization code', () => {
 			// An authorization code is received during the jetpack.login portion of the connection
 			// XMLRPC errors happen only during jetpack.authorize which only happens after jetpack.login is succesful
 			const hasError = hasXmlrpcError( stateHasNoAuthorizationCode );
 			expect( hasError ).to.be.undefined;
 		} );
+
 		it( 'should be false if a non-xmlrpc error is found', () => {
 			// eg a user is already connected, or they've taken too long and their secret expired
 			const hasError = hasXmlrpcError( stateHasOtherError );
 			expect( hasError ).to.be.false;
 		} );
+
 		it( 'should be true if all the conditions are met', () => {
 			const hasError = hasXmlrpcError( stateHasXmlrpcError );
 			expect( hasError ).to.be.true;
