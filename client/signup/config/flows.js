@@ -311,23 +311,37 @@ const Flows = {
 
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
-			const updatedFlow = cloneDeep( flow );
-			
 			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
-				Flows.insertStepIntoFlow( 'survey', 'site-title', updatedFlow );
+				return Flows.insertStepIntoFlow( 'site-title', flow, 'survey' );
 			}
-
-			return updatedFlow;
 		}
 
 		return flow;
 	},
 
-	insertStepIntoFlow( afterStep, stepName, flow ) {
+	/**
+	 * Insert a step into the flow.
+	 *
+	 * @param {String} stepName The step to insert into the flow
+	 * @param {Object} flow The flow that the step will be inserted into
+	 * @param {String} afterStep After which step to insert the new step.
+	 * 							 If left blank, the step will be added in the beginning.
+	 *
+	 * @returns {Object}
+	 */
+	insertStepIntoFlow( stepName, flow, afterStep = '') {
 		if ( -1 === flow.steps.indexOf( stepName ) ) {
-			const afterStepIndex = flow.steps.indexOf( afterStep );
-			flow.steps.splice( afterStepIndex + 1, 0, stepName );
+			const steps = flow.steps.slice();
+			const afterStepIndex = steps.indexOf( afterStep );
+			steps.splice( afterStepIndex + 1, 0, stepName );
+
+			return {
+				...flow,
+				steps,
+			}
 		}
+
+		return flow;
 	}
 };
 
