@@ -16,6 +16,7 @@ import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
+import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
 import help from './help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
@@ -58,6 +59,7 @@ export const reducer = combineReducers( {
 	currentUser,
 	documentHead,
 	domains,
+	geo,
 	googleAppsUsers,
 	happychat,
 	help,
