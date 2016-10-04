@@ -19,6 +19,7 @@ import MediaUtils from 'lib/media/utils';
 import closeOnEsc from 'lib/mixins/close-on-esc';
 import {
 	resetImageEditorState,
+	resetAllImageEditorState,
 	setImageEditorFileInfo
 } from 'state/ui/editor/image-editor/actions';
 import {
@@ -26,7 +27,7 @@ import {
 } from 'state/ui/editor/image-editor/selectors';
 
 const MediaModalImageEditor = React.createClass( {
-	mixins: [ closeOnEsc( '_close' ) ],
+	mixins: [ closeOnEsc( 'onCancel' ) ],
 
 	displayName: 'MediaModalImageEditor',
 
@@ -82,31 +83,52 @@ const MediaModalImageEditor = React.createClass( {
 	onDone() {
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 		canvasComponent.toBlob( this.onImageExtracted );
-		this.props.onImageEditorClose();
+
+		if ( this.props.onImageEditorClose ) {
+			this.props.onImageEditorClose();
+		}
+	},
+
+	onCancel() {
+		this.props.resetAllImageEditorState();
+
+		if ( this.props.onImageEditorCancel ) {
+			this.props.onImageEditorCancel();
+		}
 	},
 
 	onImageExtracted( blob ) {
-		const mimeType = MediaUtils.getMimeType( this.props.fileName );
+		const {
+			fileName,
+			site,
+			translate
+		} = this.props;
+
+		const mimeType = MediaUtils.getMimeType( fileName );
 
 		// check if a title is already post-fixed with '(edited copy)'
-		const editedCopyText = this.props.translate(
+		const editedCopyText = translate(
 			'%(title)s (edited copy)', {
 				args: {
 					title: ''
 				}
 			} );
-		let title = this.props.title;
+
+		let { title } = this.props;
+
 		if ( title.indexOf( editedCopyText ) === -1 ) {
-			title = this.props.translate(
+			title = translate(
 				'%(title)s (edited copy)', {
 					args: {
-						title: this.props.title
+						title: title
 					}
 				} );
 		}
 
-		MediaActions.add( this.props.site.ID, {
-			fileName: this.props.fileName,
+		this.props.resetAllImageEditorState();
+
+		MediaActions.add( site.ID, {
+			fileName: fileName,
 			fileContents: blob,
 			title: title,
 			mimeType: mimeType
@@ -164,22 +186,20 @@ const MediaModalImageEditor = React.createClass( {
 							/>
 						<EditToolbar />
 						<EditButtons
-							onCancel={ this.props.onImageEditorCancel }
+							onCancel={ this.onCancel }
 							onDone={ this.onDone } />
 					</div>
 				</figure>
 			</div>
 		);
-	},
-
-	_close: function() {
-		if ( this.props.onImageEditorCancel ) {
-			this.props.onImageEditorCancel();
-		}
 	}
 } );
 
 export default connect(
 	( state ) => ( getImageEditorFileInfo( state ) ),
-	{ resetImageEditorState, setImageEditorFileInfo }
+	{
+		resetImageEditorState,
+		resetAllImageEditorState,
+		setImageEditorFileInfo
+	}
 )( localize( MediaModalImageEditor ) );
