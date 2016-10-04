@@ -53,7 +53,7 @@ var config = require( 'config' ),
 	supportUser = require( 'lib/user/support-user-interop' ),
 	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
 
-import { getSelectedSiteId, getSectionName, isSectionIsomorphic } from 'state/ui/selectors';
+import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
 function init() {
@@ -182,7 +182,6 @@ function renderLayout( reduxStore ) {
 }
 
 function reduxStoreReady( reduxStore ) {
-	const isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
 	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore );
@@ -213,7 +212,7 @@ function reduxStoreReady( reduxStore ) {
 
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.
-	if ( ! isIsomorphic ) {
+	if ( ! document.getElementById( 'primary' ) ) {
 		renderLayout( reduxStore );
 
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
