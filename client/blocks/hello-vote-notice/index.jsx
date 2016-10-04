@@ -11,6 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
+import { canCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isSiteSection, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
@@ -18,8 +19,8 @@ import { savePreference } from 'state/preferences/actions';
 import { withAnalytics, bumpStat } from 'state/analytics/actions';
 
 function HelloVoteNotice( props ) {
-	const { siteSection, siteSlug, hasDismissed, preferencesReceived } = props;
-	if ( ! siteSection || ! siteSlug || hasDismissed || ! preferencesReceived ) {
+	const { siteSection, canManageOptions, siteSlug, hasDismissed, preferencesReceived } = props;
+	if ( ! siteSection || ! canManageOptions || ! siteSlug || hasDismissed || ! preferencesReceived ) {
 		return null;
 	}
 
@@ -41,6 +42,7 @@ function HelloVoteNotice( props ) {
 HelloVoteNotice.propTypes = {
 	translate: PropTypes.func,
 	siteSection: PropTypes.bool,
+	canManageOptions: PropTypes.bool,
 	siteSlug: PropTypes.string,
 	hasDismissed: PropTypes.bool,
 	preferencesReceived: PropTypes.bool,
@@ -49,12 +51,17 @@ HelloVoteNotice.propTypes = {
 };
 
 export default connect(
-	( state ) => ( {
-		siteSection: isSiteSection( state ),
-		siteSlug: getSiteSlug( state, getSelectedSiteId( state ) ),
-		hasDismissed: getPreference( state, 'helloVoteNoticeDismissed' ),
-		preferencesReceived: hasReceivedRemotePreferences( state )
-	} ),
+	( state ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+
+		return {
+			siteSection: isSiteSection( state ),
+			canManageOptions: canCurrentUser( state, selectedSiteId, 'manage_options' ),
+			siteSlug: getSiteSlug( state, selectedSiteId ),
+			hasDismissed: getPreference( state, 'helloVoteNoticeDismissed' ),
+			preferencesReceived: hasReceivedRemotePreferences( state )
+		};
+	},
 	( dispatch ) => {
 		return mapValues( {
 			onActionClick: 'calypso-opt-in',
