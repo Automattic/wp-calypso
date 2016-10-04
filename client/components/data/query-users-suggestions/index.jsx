@@ -12,9 +12,23 @@ import { requestUserSuggestions } from 'state/users/suggestions/actions';
 
 class QueryUsersSuggestions extends Component {
 	componentWillMount() {
-		if ( ! this.props.isRequesting ) {
-			this.props.requestUserSuggestions( this.props.siteId );
+		this.request( this.props );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( this.props.siteId === nextProps.siteId ) {
+			return;
 		}
+
+		this.request( nextProps );
+	}
+
+	request( props ) {
+		if ( props.isRequesting ) {
+			return;
+		}
+
+		props.requestUserSuggestions( props.siteId );
 	}
 
 	render() {
