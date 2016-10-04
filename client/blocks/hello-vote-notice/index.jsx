@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import QueryGeo from 'components/data/query-geo';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import { canCurrentUser } from 'state/current-user/selectors';
@@ -17,25 +18,32 @@ import { isSiteSection, getSectionName, getSelectedSiteId } from 'state/ui/selec
 import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
 import { withAnalytics, bumpStat } from 'state/analytics/actions';
+import { getGeoCountry } from 'state/geo/selectors';
 
 function HelloVoteNotice( props ) {
-	const { applicableSection, canManageOptions, siteSlug, hasDismissed, preferencesReceived } = props;
-	if ( ! applicableSection || ! canManageOptions || ! siteSlug || hasDismissed || ! preferencesReceived ) {
-		return null;
+	let notice;
+	const { applicableSection, canManageOptions, siteSlug, hasDismissed, preferencesReceived, usGeo } = props;
+	if ( applicableSection && canManageOptions && siteSlug && ! hasDismissed && preferencesReceived && usGeo ) {
+		const { translate, onActionClick, onDismiss } = props;
+		notice = (
+			<Notice
+				status="is-info"
+				text={ translate( 'Encourage your US-based visitors to register to vote by adding a subtle prompt to your site' ) }
+				onDismissClick={ onDismiss }>
+				<NoticeAction
+					onClick={ onActionClick }
+					href={ `/settings/general/${ siteSlug }` }>
+					{ translate( 'Manage Settings' ) }
+				</NoticeAction>
+			</Notice>
+		);
 	}
 
-	const { translate, onActionClick, onDismiss } = props;
 	return (
-		<Notice
-			status="is-info"
-			text={ translate( 'Encourage your US-based visitors to register to vote by adding a subtle prompt to your site' ) }
-			onDismissClick={ onDismiss }>
-			<NoticeAction
-				onClick={ onActionClick }
-				href={ `/settings/general/${ siteSlug }` }>
-				{ translate( 'Manage Settings' ) }
-			</NoticeAction>
-		</Notice>
+		<div>
+			<QueryGeo />
+			{ notice }
+		</div>
 	);
 }
 
@@ -46,6 +54,7 @@ HelloVoteNotice.propTypes = {
 	siteSlug: PropTypes.string,
 	hasDismissed: PropTypes.bool,
 	preferencesReceived: PropTypes.bool,
+	usGeo: PropTypes.bool,
 	onActionClick: PropTypes.func,
 	onDismiss: PropTypes.func
 };
@@ -59,7 +68,8 @@ export default connect(
 			canManageOptions: canCurrentUser( state, selectedSiteId, 'manage_options' ),
 			siteSlug: getSiteSlug( state, selectedSiteId ),
 			hasDismissed: getPreference( state, 'helloVoteNoticeDismissed' ),
-			preferencesReceived: hasReceivedRemotePreferences( state )
+			preferencesReceived: hasReceivedRemotePreferences( state ),
+			usGeo: 'United States' === getGeoCountry( state )
 		};
 	},
 	( dispatch ) => {
