@@ -10,15 +10,16 @@ import { jsonStringifyForHtml } from 'sanitize';
 
 class Markup extends React.Component {
 	getStylesheet() {
+		const { env, isDebug, isRTL, urls } = this.props;
 		let stylesheet = 'style.css';
 
-		if ( this.props.isRTL ) {
+		if ( isRTL ) {
 			stylesheet = 'style-rtl.css';
-		} else if ( 'development' === this.props.env || this.props.isDebug ) {
+		} else if ( 'development' === env || isDebug ) {
 			stylesheet = 'style-debug.css';
 		}
 
-		return this.props.urls[ stylesheet ];
+		return urls[ stylesheet ];
 	}
 
 	renderBranchName() {
