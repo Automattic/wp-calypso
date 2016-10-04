@@ -16,7 +16,10 @@ module.exports = function validateFilter( context, next ) {
 
 	if ( sortedValidFilters !== filterParam ) {
 		const path = context.path;
-		const newPath = path.replace( `/filter/${ filterParam }`, `/filter/${ sortedValidFilters }` );
+		const newPath = path.replace(
+			`/filter/${ filterParam }`,
+			sortedValidFilters ? `/filter/${ sortedValidFilters }` : ''
+		);
 		page.redirect( newPath );
 	}
 
