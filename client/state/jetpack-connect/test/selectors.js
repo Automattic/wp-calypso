@@ -6,7 +6,19 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isCalypsoStartedConnection, getFlowType, getJetpackSiteByUrl, hasXmlrpcError } from '../selectors';
+import {
+	getConnectingSite,
+	getAuthorize,
+	getAuthorizeQuery,
+	getAuthorizeSite,
+	getSessions,
+	getSSOSessions,
+	getSSO,
+	isCalypsoStartedConnection,
+	getFlowType,
+	getJetpackSiteByUrl,
+	hasXmlrpcError
+} from '../selectors';
 
 const stateHasXmlrpcError = {
 	jetpackConnect: {
@@ -49,6 +61,242 @@ const stateHasOtherError = {
 };
 
 describe( 'selectors', () => {
+	describe( '#getConnectingSite()', () => {
+		it( 'should return undefined if user has not started connecting a site', () => {
+			const state = {
+				jetpackConnect: {}
+			};
+
+			expect( getConnectingSite( state ) ).to.be.undefined;
+		} );
+
+		it( 'should return the current connecting site if there is such', () => {
+			const jetpackConnectSite = {
+				url: '',
+				isFetching: true,
+				isFetched: false,
+				isRedirecting: false,
+				installConfirmedByUser: true,
+				isDismissed: false,
+				data: {
+					isDotCom: false,
+					notExists: false,
+					notWordPress: false,
+					notJetpack: false,
+					jetpackVersion: '4.3.1',
+					outdatedJetpack: false,
+					notActiveJetpack: false,
+					notConnectedJetpack: true,
+					alreadyOwned: true,
+					alreadyConnected: false
+				}
+			};
+			const state = {
+				jetpackConnect: {
+					jetpackConnectSite
+				}
+			};
+
+			expect( getConnectingSite( state ) ).to.eql( jetpackConnectSite );
+		} );
+	} );
+
+	describe( '#getAuthorize()', () => {
+		it( 'should return undefined if user has not started the authorization flow', () => {
+			const state = {
+				jetpackConnect: {}
+			};
+
+			expect( getAuthorize( state ) ).to.be.undefined;
+		} );
+
+		it( 'should return the current authorize object if there is such', () => {
+			const jetpackConnectAuthorize = {
+				authorizationCode: 'abcdefgh12345678',
+				isAuthorizing: false,
+				queryObject: {},
+			};
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize
+				}
+			};
+
+			expect( getAuthorize( state ) ).to.eql( jetpackConnectAuthorize );
+		} );
+	} );
+
+	describe( '#getAuthorizeQuery()', () => {
+		it( 'should return undefined if user has not started the authorization flow', () => {
+			const state = {
+				jetpackConnect: {}
+			};
+
+			expect( getAuthorizeQuery( state ) ).to.be.undefined;
+		} );
+
+		it( 'should return the current authorize query object if there is such', () => {
+			const queryObject = {
+				_wp_nonce: 'nonce',
+				client_id: '12345678',
+				redirect_uri: 'https://wordpress.com/',
+				scope: 'auth',
+				secret: '1234abcd',
+				state: 12345678
+			};
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						queryObject
+					}
+				}
+			};
+
+			expect( getAuthorizeQuery( state ) ).to.eql( queryObject );
+		} );
+	} );
+
+	describe( '#getAuthorizeSite()', () => {
+		it( 'should return undefined if user has not started the authorization flow', () => {
+			const state = {
+				jetpackConnect: {}
+			};
+
+			expect( getAuthorizeSite( state ) ).to.be.undefined;
+		} );
+
+		it( 'should return the current authorize site if there is such', () => {
+			const site = 'wordpress.com';
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						queryObject: {
+							_wp_nonce: 'nonce',
+							client_id: '12345678',
+							redirect_uri: 'https://wordpress.com/',
+							scope: 'auth',
+							secret: '1234abcd',
+							state: 12345678,
+							site
+						}
+					}
+				}
+			};
+
+			expect( getAuthorizeSite( state ) ).to.eql( site );
+		} );
+	} );
+
+	describe( '#getSessions()', () => {
+		it( 'should return undefined if user has not started any jetpack connect sessions', () => {
+			const state = {
+				jetpackConnect: {}
+			};
+
+			expect( getSessions( state ) ).to.be.undefined;
+		} );
+
+		it( 'should return all of the user\'s single sign-on sessions', () => {
+			const jetpackConnectSessions = {
+				'wordpress.com': {
+					timestamp: 1234567890,
+					flowType: 'premium'
+				},
+				'jetpack.me': {
+					timestamp: 2345678901,
+					flowType: 'pro'
+				}
+			};
+			const state = {
+				jetpackConnect: {
+					jetpackConnectSessions
+				}
+			};
+
+			expect( getSessions( state ) ).to.eql( jetpackConnectSessions );
+		} );
+	} );
+
+	describe( '#getSSOSessions()', () => {
+		it( 'should return undefined if user has not started any single sign-on sessions', () => {
+			const state = {
+				jetpackConnect: {}
+			};
+
+			expect( getSSOSessions( state ) ).to.be.undefined;
+		} );
+
+		it( 'should return all of the user\'s single sign-on sessions', () => {
+			const jetpackSSOSessions = {
+				'wordpress.com': {
+					timestamp: 1234567890,
+					flowType: 'premium'
+				},
+				'jetpack.me': {
+					timestamp: 2345678901,
+					flowType: 'pro'
+				}
+			};
+			const state = {
+				jetpackConnect: {
+					jetpackSSOSessions
+				}
+			};
+
+			expect( getSSOSessions( state ) ).to.eql( jetpackSSOSessions );
+		} );
+	} );
+
+	describe( '#getSSO()', () => {
+		it( 'should return undefined if user has not yet started the single sign-on flow', () => {
+			const state = {
+				jetpackConnect: {}
+			};
+
+			expect( getSSO( state ) ).to.be.undefined;
+		} );
+
+		it( 'should return the current state of the single sign-on object', () => {
+			const jetpackSSO = {
+				ssoUrl: 'https://wordpress.com/',
+				isAuthorizing: false,
+				isValidating: false,
+				nonceValid: true,
+				authorizationError: false,
+				validationError: false,
+				blogDetails: {
+					URL: 'https://wordpress.com/',
+					admin_url: 'https://wordpress.com/wp-admin/',
+					domain: 'wordpress.com',
+					icon: {
+						img: 'https://wordpress.com/example.jpg',
+						ico: 'https://wordpress.com/example.ico',
+					},
+					title: 'Example Site Title',
+				},
+				sharedDetails: {
+					ID: 1234,
+					login: 'test',
+					email: 'test@wordpress.com',
+					url: 'https://wordpress.com',
+					first_name: 'Example',
+					last_name: 'Test',
+					display_name: 'Example Test',
+					description: 'User bio here',
+					two_step_enabled: false,
+					external_user_id: 1
+				}
+			};
+			const state = {
+				jetpackConnect: {
+					jetpackSSO
+				}
+			};
+
+			expect( getSSO( state ) ).to.eql( jetpackSSO );
+		} );
+	} );
+
 	describe( '#isCalypsoStartedConnection()', () => {
 		it( 'should return true if the user have started a session in calypso less than an hour ago', () => {
 			const state = {
