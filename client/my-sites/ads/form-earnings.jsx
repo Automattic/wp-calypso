@@ -86,7 +86,7 @@ module.exports = React.createClass( {
 	},
 
 	_fetchIfEmpty: function( site ) {
-		var site = site || this.props.site;
+		site = site || this.props.site;
 		if ( ! site || ! site.ID ) {
 			return;
 		}
