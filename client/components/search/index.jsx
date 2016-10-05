@@ -166,7 +166,9 @@ const Search = React.createClass( {
 
 	scrollOverlay: function() {
 		window.requestAnimationFrame( () => {
-			this.refs.overlay.scrollLeft = this.refs.searchInput.scrollLeft;
+			if ( this.refs.overlay && this.refs.searchInput ) {
+				this.refs.overlay.scrollLeft = this.refs.searchInput.scrollLeft;
+			}
 		} );
 	},
 
