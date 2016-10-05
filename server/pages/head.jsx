@@ -5,6 +5,16 @@ import React from 'react';
 
 const Head = ( { children, styleCss, title = 'WordPress.com', faviconUrl = '//s1.wp.com/i/favicon.ico' } ) => (
   <head>
+    <script dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
+    `/*
+    <3
+             _
+    ___ __ _| |_   _ _ __  ___  ___
+   / __/ _\` | | | | | '_ \\/ __|/ _ \\
+  | (_| (_| | | |_| | |_) \\__ \\ (_) |
+   \\___\\__,_|_|\\__, | .__/|___/\\___/
+               |___/|_|
+    */` } } />
     <title>{ title }</title>
     <meta charSet="utf-8" />
     <meta httpEquiv="X-UA-Compatible" content="IE=Edge" />
