@@ -119,7 +119,13 @@
 .survey__other {
 	margin: 0 auto 2em;
 	position: relative;
-	max-width: 500px;
+	max-width: 90%;
+}
+
+@include breakpoint( ">480px" ) {
+	.survey__other {
+		max-width: 500px;
+	}
 }
 
 input.survey__other-write-in {
