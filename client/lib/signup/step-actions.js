@@ -22,12 +22,7 @@ import { PLAN_PREMIUM } from 'lib/plans/constants';
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 
 function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeSlugWithRepo, themeItem } ) {
-
-	let siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
-
-	if ( '' === siteTitle ) {
-		siteTitle = siteUrl;
-	}
+	const siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
 
 	wpcom.undocumented().sitesNew( {
 		blog_name: siteUrl,
