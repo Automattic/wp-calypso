@@ -24,8 +24,7 @@ export default React.createClass( {
 		siteId: PropTypes.number.isRequired,
 		children: PropTypes.string.isRequired,
 		filterRenderResult: PropTypes.func,
-		className: PropTypes.string,
-		sandbox: PropTypes.string
+		className: PropTypes.string
 	},
 
 	componentDidMount() {
@@ -55,13 +54,7 @@ export default React.createClass( {
 		this.clearFetchTimeout();
 		this.fetchTimeout = setTimeout( () => {
 			this.clearFetchTimeout();
-
-			let fetchArgs;
-			if ( 'sandbox' in this.props ) {
-				fetchArgs = { force: 'wpcom' };
-			}
-
-			ShortcodesActions.fetch( siteId, shortcode, fetchArgs );
+			ShortcodesActions.fetch( siteId, shortcode );
 		}, 0 );
 	},
 
