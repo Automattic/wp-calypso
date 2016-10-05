@@ -2,13 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import find from 'lodash/find';
-import debounce from 'lodash/debounce';
+import { debounce, find, map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Search from 'components/search';
+import TokenField from 'components/token-field';
 import ThemesSelectDropdown from './select-dropdown';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
@@ -16,6 +15,7 @@ import NavItem from 'components/section-nav/item';
 import { getExternalThemesUrl, trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
+import { taxonomies } from '../theme-filters';
 
 const ThemesSearchCard = React.createClass( {
 	propTypes: {
@@ -93,16 +93,6 @@ const ThemesSearchCard = React.createClass( {
 						</NavItem> }
 					</NavTabs>
 
-					<Search
-						pinned
-						fitsContainer
-						onSearch={ this.props.onSearch }
-						initialValue={ this.props.search }
-						ref="url-search"
-						placeholder={ this.translate( 'Search themes…' ) }
-						analyticsGroup="Themes"
-						delaySearch={ true }
-					/>
 				</SectionNav>
 			</div>
 		);
@@ -122,16 +112,17 @@ const ThemesSearchCard = React.createClass( {
 			return this.renderMobile( tiers );
 		}
 
+		const tokens = this.props.search.split( ' ' ).map( token => {
+			const [ left, right ] = token.split( ':' );
+			if ( ! right ) {
+				return left;
+			}
+			return { key: left, value: right };
+		} );
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
-				<Search
-					onSearch={ this.props.onSearch }
-					initialValue={ this.props.search }
-					ref="url-search"
-					placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
-					analyticsGroup="Themes"
-					delaySearch={ true }
-				/>
+				<TokenField value={ tokens }
+					suggestions={ taxonomies }/>
 
 				{ isPremiumThemesEnabled && ! isJetpack && <ThemesSelectDropdown
 										tier={ this.props.tier }

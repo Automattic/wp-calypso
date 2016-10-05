@@ -20,6 +20,12 @@ var suggestions = [
 	'other', 'do', 'no', 'information', 'time', 'they', 'site', 'he', 'up', 'may', 'what', 'which', 'their'
 ];
 
+var keyedSuggestions = {
+  color: [ 'black', 'blue', 'brown', 'dark', 'gray', 'green', 'light', 'orange' ],
+	feature: [ 'accessibility-ready', 'author-bio', 'blog-excerpts', 'custom-background', 'custom-colors' ],
+	layout: [ 'fixed-layout', 'fluid-layout', 'responsive-layout']
+};
+
 var TokenFields = React.createClass( {
 	displayName: 'TokenFields',
 
@@ -29,6 +35,11 @@ var TokenFields = React.createClass( {
 		return {
 			tokenSuggestions: suggestions,
 			tokens: Object.freeze( [ 'foo', 'bar' ] ),
+			keyedTokens: Object.freeze( [
+				{ key: 'feature', value: 'infinite-scroll' },
+				{ key: 'color', value: 'blue' },
+				{ key: 'feature', value: 'post-slider' }
+			] ),
 			disabledTokens: [ 'foo', 'bar' ],
 			statusTokens: Object.freeze( [ 'success', 'error', 'validating', 'none' ] )
 		};
@@ -50,6 +61,15 @@ var TokenFields = React.createClass( {
 						suggestions={ this.state.tokenSuggestions }
 						value={ this.state.tokens }
 						onChange={ this._onTokensChange } />
+				</Card>
+
+				<Card>
+					<h3>Keyed TokenField with Suggestions</h3>
+					<TokenField
+						isBorderless={ this.state.isBorderless }
+						suggestions={ keyedSuggestions }
+						value={ this.state.keyedTokens }
+						onChange={ this._onKeyedTokensChange } />
 				</Card>
 
 				<Card>
@@ -105,6 +125,10 @@ var TokenFields = React.createClass( {
 
 	_onTokensChange: function( value ) {
 		this.setState( { tokens: value } );
+	},
+
+	_onKeyedTokensChange: function( value ) {
+		this.setState( { keyedTokens: value } );
 	}
 } );
 

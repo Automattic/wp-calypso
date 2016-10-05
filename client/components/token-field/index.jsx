@@ -74,6 +74,7 @@ var TokenField = React.createClass( {
 			incompleteTokenValue: '',
 			inputOffsetFromEnd: 0,
 			isActive: false,
+			selectedSuggestionKey: -1,
 			selectedSuggestionIndex: -1,
 			selectedSuggestionScroll: false
 		};
@@ -129,6 +130,7 @@ var TokenField = React.createClass( {
 					match={ this.props.saveTransform( this.state.incompleteTokenValue ) }
 					displayTransform={ this.props.displayTransform }
 					suggestions={ this._getMatchingSuggestions() }
+					selectedKeyIndex= { this.state.selectedSuggestionKey }
 					selectedIndex={ this.state.selectedSuggestionIndex }
 					scrollIntoView={ this.state.selectedSuggestionScroll }
 					isExpanded={ this.state.isActive }
@@ -148,12 +150,14 @@ var TokenField = React.createClass( {
 	},
 
 	_renderToken: function( token ) {
+		const key = this._getTokenKey( token );
 		const value = this._getTokenValue( token );
 		const status = token.status ? token.status : undefined;
 
 		return (
 			<Token
 				key={ 'token-' + value }
+				tokenKey={ key }
 				value={ value }
 				status={ status }
 				tooltip={ token.tooltip }
@@ -310,7 +314,45 @@ var TokenField = React.createClass( {
 		return preventDefault;
 	},
 
+	_getMatchingKeyedSuggestions: function() {
+		let match = this.props.saveTransform( this.state.incompleteTokenValue );
+		const suggestions = {};
+
+		if ( match.length === 0 ) {
+	//		suggestions = difference( suggestions, this.props.value );
+		} else {
+			match = match.toLocaleLowerCase();
+
+			each( this.props.suggestions, function( values, key ) {
+				const startsWithMatch = [];
+				const containsMatch = [];
+
+				each( values, function( value ) {
+					const index = value.toLocaleLowerCase().indexOf( match );
+
+					if ( this.props.value.indexOf( value ) === -1 ) {
+						if ( index === 0 ) {
+							startsWithMatch.push( value );
+						} else if ( index > 0 ) {
+							containsMatch.push( value );
+						}
+					}
+				}.bind( this ) );
+
+				if ( startsWithMatch.length || containsMatch.length ) {
+					suggestions[ key ] = startsWithMatch.concat( containsMatch );
+				}
+			}.bind( this ) );
+		}
+
+		return suggestions; // take( suggestions, this.props.maxSuggestions );
+	},
+
 	_getMatchingSuggestions: function() {
+		if ( this._isKeyedSuggestionsProp() ) {
+			return this._getMatchingKeyedSuggestions();
+		}
+
 		var suggestions = this.props.suggestions,
 			match = this.props.saveTransform( this.state.incompleteTokenValue ),
 			startsWithMatch = [],
@@ -339,9 +381,17 @@ var TokenField = React.createClass( {
 	},
 
 	_getSelectedSuggestion: function() {
-		if ( this.state.selectedSuggestionIndex !== -1 ) {
-			return this._getMatchingSuggestions()[ this.state.selectedSuggestionIndex ];
+		if ( this.state.selectedSuggestionIndex === -1 ) {
+			return;
 		}
+
+		if ( this._isKeyedSuggestionsProp() ) {
+			const key = this._getCurrentSuggestionKey();
+			const value = this._getMatchingSuggestionsForCurrentKey()[ this.state.selectedSuggestionIndex ];
+			return `${ key }:${ value }`; // FIXME
+		}
+
+		return this._getMatchingSuggestions()[ this.state.selectedSuggestionIndex ];
 	},
 
 	_addCurrentToken: function() {
@@ -390,12 +440,36 @@ var TokenField = React.createClass( {
 		return true; // preventDefault
 	},
 
+	_getCurrentSuggestionKey: function() {
+		const matchingSuggestionKeys = Object.keys( this._getMatchingSuggestions() );
+		return matchingSuggestionKeys[ this.state.selectedSuggestionKey ];
+	},
+
+	_getMatchingSuggestionsForCurrentKey: function() {
+		if ( ! this._isKeyedSuggestionsProp() ) {
+			return this._getMatchingSuggestions();
+		}
+
+		const currentSuggestionKey = this._getCurrentSuggestionKey();
+		const matchingSuggestionsForKey = this._getMatchingSuggestions()[ currentSuggestionKey ];
+
+		if ( Array.isArray( matchingSuggestionsForKey ) ) {
+			return matchingSuggestionsForKey;
+		}
+		return [];
+	},
+
 	_handleDownArrowKey: function() {
+		let selectedSuggestionIndex = this.state.selectedSuggestionIndex + 1 || 0;
+		let selectedSuggestionKey = this.state.selectedSuggestionKey;
+		if ( selectedSuggestionIndex > this._getMatchingSuggestionsForCurrentKey().length - 1 ) {
+			selectedSuggestionIndex = 0;
+			selectedSuggestionKey += 1;
+		}
+
 		this.setState( {
-			selectedSuggestionIndex: Math.min(
-				( this.state.selectedSuggestionIndex + 1 ) || 0,
-				this._getMatchingSuggestions().length - 1
-			),
+			selectedSuggestionIndex,
+			selectedSuggestionKey,
 			selectedSuggestionScroll: true
 		} );
 
@@ -414,6 +488,10 @@ var TokenField = React.createClass( {
 
 	_isInputEmpty: function() {
 		return this.state.incompleteTokenValue.length === 0;
+	},
+
+	_isKeyedSuggestionsProp: function() {
+		return ! Array.isArray( this.props.suggestions );
 	},
 
 	_inputHasValidValue: function() {
@@ -491,6 +569,14 @@ var TokenField = React.createClass( {
 		return some( this.props.value, ( item ) => {
 			return this._getTokenValue( token ) === this._getTokenValue( item );
 		} );
+	},
+
+	_getTokenKey( token ) {
+		if ( 'object' === typeof token ) {
+			return token.key;
+		}
+
+		return '';
 	},
 
 	_getTokenValue( token ) {

@@ -143,6 +143,10 @@ input[type="text"].token-field__input {
 	text-overflow: ellipsis;
 }
 
+.token-field__token-key {
+	background: lighten( $gray, 10% );
+}
+
 .token-field__remove-token {
 	cursor: pointer;
 	border-radius: 0 4px 4px 0;
