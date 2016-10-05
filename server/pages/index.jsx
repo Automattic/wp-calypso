@@ -49,11 +49,11 @@ class Markup extends React.Component {
 				dir={ config( 'rtl' ) ? 'rtl' : 'ltr' }
 				className={ !! config.isEnabled( 'fluid-width' ) ? 'is-fluid-with' : null }>
 				<Head title={ head.title } faviconUrl={ faviconUrl } styleCss={ this.getStylesheet() }>
-					{ head.metas.map( ( { name, property, content } ) => (
-						<meta name={ name } property={ property } content={ content } />
+					{ head.metas.map( ( { name, property, content }, i ) => (
+						<meta name={ name } property={ property } content={ content } key={ 'meta-' + i } />
 					) ) }
-					{ head.links.map( ( { rel, href } ) => (
-						<link rel={ rel } href={ href } />
+					{ head.links.map( ( { rel, href }, i ) => (
+						<link rel={ rel } href={ href } key={ 'link-' + i } />
 					) ) }
 				</Head>
 				<body className={ config( 'rtl' ) ? 'rtl' : null }>
