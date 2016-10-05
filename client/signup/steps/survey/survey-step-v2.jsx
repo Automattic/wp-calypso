@@ -44,7 +44,13 @@ export default React.createClass( {
 				data-label={ vertical.label }
 				onClick={ this.handleNextStep }
 			>
-				<span className="survey__vertical-label">{ vertical.label }</span>
+				<span
+					className="survey__vertical-label"
+					data-value={ vertical.value }
+					data-label={ vertical.label }
+				>
+					{ vertical.label }
+				</span>
 				<Gridicon className="survey__vertical-chevron" icon="chevron-right" />
 			</Button>
 		);
