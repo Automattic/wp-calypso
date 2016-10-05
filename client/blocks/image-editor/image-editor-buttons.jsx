@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,50 +18,57 @@ import {
 	imageEditorHasChanges
 } from 'state/ui/editor/image-editor/selectors';
 
-const MediaModalImageEditorButtons = React.createClass( {
-	displayName: 'MediaModalImageEditorButtons',
+class ImageEditorButtons extends Component {
+	static propTypes = {
+		src: PropTypes.string,
+		hasChanges: PropTypes.bool,
+		resetImageEditorState: PropTypes.func,
+		onDone: PropTypes.func,
+		onCancel: PropTypes.func
+	};
 
-	propTypes: {
-		src: React.PropTypes.string,
-		hasChanges: React.PropTypes.bool,
-		resetImageEditorState: React.PropTypes.func,
-		onDone: React.PropTypes.func,
-		onCancel: React.PropTypes.func
-	},
-
-	getDefaultProps() {
-		return {
-			src: '',
-			hasChanges: false,
-			resetImageEditorState: noop,
-			onDone: noop,
-			onCancel: noop
-		};
-	},
+	static defaultProps = {
+		src: '',
+		hasChanges: false,
+		resetImageEditorState: noop,
+		onDone: noop,
+		onCancel: noop
+	};
 
 	render() {
+		const {
+			hasChanges,
+			onCancel,
+			src,
+			onDone,
+			translate
+		} = this.props;
+
 		return (
 			<div className="editor-media-modal-image-editor__buttons">
 				<Button
 					className="editor-media-modal-image-editor__buttons-cancel"
-					onClick={ this.props.onCancel }>
-					{ this.translate( 'Cancel' ) }
+					onClick={ onCancel }
+				>
+					{ translate( 'Cancel' ) }
 				</Button>
 				<Button
-					disabled={ ! this.props.hasChanges }
-					onClick={ this.props.resetImageEditorState } >
-					{ this.translate( 'Reset' ) }
+					disabled={ ! hasChanges }
+					onClick={ this.props.resetImageEditorState }
+				>
+					{ translate( 'Reset' ) }
 				</Button>
 				<Button
-					disabled={ ! this.props.src }
+					disabled={ ! src }
 					primary
-					onClick={ this.props.onDone } >
-					{ this.translate( ' Done ' ) }
+					onClick={ onDone }
+				>
+					{ translate( ' Done ' ) }
 				</Button>
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state ) => {
@@ -72,5 +80,7 @@ export default connect(
 			hasChanges
 		};
 	},
-	{ resetImageEditorState }
-)( MediaModalImageEditorButtons );
+	{
+		resetImageEditorState
+	}
+)( localize( ImageEditorButtons ) );
