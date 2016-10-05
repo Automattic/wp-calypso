@@ -52,6 +52,7 @@ class StateSelect extends Component {
 						<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
 						<FormSelect
 							ref="input"
+							id={ this.props.name }
 							name={ this.props.name }
 							value={ this.props.value }
 							disabled={ this.props.disabled }
