@@ -46,7 +46,7 @@ describe( 'cache-index', () => {
 			return cacheIndex.getAll()
 				.then( res => {
 					expect( res ).to.equal( recordsList );
-				});
+				} );
 		} );
 	} );
 
@@ -187,7 +187,12 @@ describe( 'cache-index', () => {
 				[ postListDifferentSiteKey ]: postListDifferentSiteLocalRecord,
 				[ RECORDS_LIST_KEY ]: [
 					{ key: postListKey, reqParams: postListParams, pageSeriesKey: 'doesnotmatter', timestamp: now },
-					{ key: postListDifferentSiteKey, reqParams: postListDifferentSiteParams, pageSeriesKey: 'stilldoesnotmatter', timestamp: now }
+					{
+						key: postListDifferentSiteKey,
+						reqParams: postListDifferentSiteParams,
+						pageSeriesKey: 'stilldoesnotmatter',
+						timestamp: now
+					}
 				]
 			} );
 			const matchSiteFilter = ( reqParams ) => {
