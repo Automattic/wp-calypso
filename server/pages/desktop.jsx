@@ -73,9 +73,9 @@ class Desktop extends React.Component {
 					{ i18nLocaleScript &&
 						<script src={ i18nLocaleScript } />
 					}
-					<script type="text/javascript" dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
-						'startApp();'
-					} } />
+					<script>
+						startApp();
+					</script>
 				</body>
 			</html>
 		);

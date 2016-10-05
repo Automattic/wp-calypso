@@ -130,9 +130,9 @@ class Markup extends React.Component {
 					{ chunk &&
 						<script src={ urls[ chunk + scriptSuffix ] } />
 					}
-					<script type="text/javascript" dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
-						'window.AppBoot();'
-					} } />
+					<script>
+						window.AppBoot();
+					</script>
 					<noscript className="wpcom-site__global-noscript">
 						Please enable JavaScript in your browser to enjoy WordPress.com.
 					</noscript>
