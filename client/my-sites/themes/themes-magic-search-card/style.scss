@@ -43,3 +43,20 @@
 	}
 
 }
+
+.themes-magic-search-card__search-token {
+	font: inherit;
+	pointer-events: none;
+	background-color: rgba(0, 0, 255, 0.2);
+}
+
+.themes-magic-search-card__search-text {
+	font: inherit;
+	pointer-events: none;
+}
+
+.themes-magic-search-card__search-white-space {
+	font: inherit;
+	pointer-events: none;
+	white-space: pre;
+}
