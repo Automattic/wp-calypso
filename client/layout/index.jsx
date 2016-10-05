@@ -41,6 +41,7 @@ import { isHappychatOpen } from 'state/ui/happychat/selectors';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
+import HelloVoteNotice from 'blocks/hello-vote-notice';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -202,6 +203,7 @@ Layout = React.createClass( {
 				<div id="content" className="layout__content">
 					{ this.renderWelcome() }
 					{ this.renderPushNotificationPrompt() }
+					<HelloVoteNotice />
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
 					<div id="primary" className="layout__primary">
 						{ this.props.primary }

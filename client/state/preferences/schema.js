@@ -15,6 +15,9 @@ export const remoteValuesSchema = {
 		mediaModalGalleryInstructionsDismissed: {
 			type: 'boolean'
 		},
+		helloVoteNoticeDismissed: {
+			type: 'boolean'
+		},
 		firstViewHistory: {
 			type: 'array',
 			items: {
