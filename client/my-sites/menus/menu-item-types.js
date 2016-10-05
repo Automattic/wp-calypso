@@ -186,7 +186,7 @@ MenuItemTypes.prototype.parse = function() {
 			renderer: 'renderPostOptions',
 			show: true,
 			label: type.label, //FIXME: how do we handle i18n here?
-			createLink: this.site.options.admin_url + 'post-new.php?post_type=' + type.name,
+			createLink: `/edit/${ type.name }/${ this.site.slug }`,
 			gaEventLabel: type.label
 		} );
 	}, this );
