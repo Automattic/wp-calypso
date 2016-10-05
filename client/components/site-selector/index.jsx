@@ -108,7 +108,6 @@ const SiteSelector = React.createClass( {
 	},
 
 	onKeyDown( event ) {
-		const highlightedSite = this.visibleSites[ this.state.highlightedIndex ];
 		const visibleLength = this.visibleSites.length;
 
 		// ignore keyboard access when there are no results
@@ -117,17 +116,32 @@ const SiteSelector = React.createClass( {
 			return;
 		}
 
+		let highlightedSite, highlightedIndex;
+		if ( this.state.isKeyboardEngaged === false ) {
+			if ( this.lastMouseHover ) {
+				highlightedSite = this.lastMouseHover;
+				highlightedIndex = this.visibleSites.indexOf( highlightedSite );
+				this.lastMouseHover = null;
+			} else {
+				highlightedSite = null;
+				highlightedIndex = -1;
+			}
+		} else {
+			highlightedSite = this.visibleSites[ this.state.highlightedIndex ];
+			highlightedIndex = this.state.highlightedIndex;
+		}
+
 		let nextIndex = null;
 
 		switch ( event.key ) {
 			case 'ArrowUp':
-				nextIndex = this.state.highlightedIndex - 1;
+				nextIndex = highlightedIndex - 1;
 				if ( nextIndex < 0 ) {
 					nextIndex = visibleLength - 1;
 				}
 				break;
 			case 'ArrowDown':
-				nextIndex = this.state.highlightedIndex + 1;
+				nextIndex = highlightedIndex + 1;
 				if ( nextIndex >= visibleLength ) {
 					nextIndex = 0;
 				}
@@ -174,6 +188,18 @@ const SiteSelector = React.createClass( {
 
 	onAllSitesSelect( event ) {
 		this.onSiteSelect( event, ALL_SITES );
+	},
+
+	onSiteHover( event, siteSlug ) {
+		this.lastMouseHover = this.props.sites.getSite( siteSlug );
+	},
+
+	onAllSitesHover() {
+		this.lastMouseHover = ALL_SITES;
+	},
+
+	onMouseLeave() {
+		this.lastMouseHover = null;
 	},
 
 	onMouseMove( event ) {
@@ -285,15 +311,6 @@ const SiteSelector = React.createClass( {
 			return <div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>;
 		}
 
-		if ( this.shouldShowGroups() && ! this.state.search ) {
-			return (
-				<div>
-					{ this.props.showRecentSites && this.renderRecentSites() }
-					{ siteElements }
-				</div>
-			);
-		}
-
 		return siteElements;
 	},
 
@@ -307,6 +324,7 @@ const SiteSelector = React.createClass( {
 					key="selector-all-sites"
 					sites={ this.props.sites.get() }
 					onSelect={ this.onAllSitesSelect }
+					onMouseEnter={ this.onAllSitesHover }
 					isHighlighted={ isHighlighted }
 					isSelected={ this.isSelected( ALL_SITES ) }
 					ref={ isHighlighted ? 'highlightedSite' : null }
@@ -325,6 +343,7 @@ const SiteSelector = React.createClass( {
 				key={ 'site-' + site.ID }
 				indicator={ this.props.indicator }
 				onSelect={ this.onSiteSelect }
+				onMouseEnter={ this.onSiteHover }
 				isHighlighted={ isHighlighted }
 				isSelected={ this.isSelected( site ) }
 				ref={ isHighlighted ? 'highlightedSite' : null }
@@ -360,7 +379,7 @@ const SiteSelector = React.createClass( {
 		this.visibleSites = [];
 
 		return (
-			<div className={ selectorClass } onMouseMove={ this.onMouseMove }>
+			<div className={ selectorClass } onMouseMove={ this.onMouseMove } onMouseLeave={ this.onMouseLeave }>
 				<Search
 					ref="siteSearch"
 					onSearch={ this.onSearch }

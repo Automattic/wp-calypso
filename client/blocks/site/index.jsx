@@ -73,6 +73,14 @@ export default React.createClass( {
 		event.preventDefault(); // this doesn't actually do anything...
 	},
 
+	onMouseEnter( event ) {
+		this.props.onMouseEnter( event, this.props.site.slug );
+	},
+
+	onMouseLeave( event ) {
+		this.props.onMouseLeave( event, this.props.site.slug );
+	},
+
 	enableCogTooltip() {
 		this.setState( { cogTooltip: true } );
 	},
@@ -200,8 +208,8 @@ export default React.createClass( {
 							}
 							onTouchTap={ this.onSelect }
 							onClick={ this.props.onClick }
-							onMouseEnter={ this.props.onMouseEnter }
-							onMouseLeave={ this.props.onMouseLeave }
+							onMouseEnter={ this.onMouseEnter }
+							onMouseLeave={ this.onMouseLeave }
 							aria-label={ this.props.homeLink && site.is_previewable
 								? this.translate( 'Open site %(domain)s in a preview', {
 									args: { domain: site.domain }
