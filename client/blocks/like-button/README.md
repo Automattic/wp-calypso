@@ -40,6 +40,7 @@ render: function() {
 handleLikeToggle: function( newState ) {
 	// save the state somehow
 }
+```
 
 #### Props
 
