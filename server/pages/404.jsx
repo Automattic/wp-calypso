@@ -3,23 +3,14 @@
  */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
+import Head from './head';
+
 const NotFoundError = ( { urls: { 'style.css': styleCss } } ) => (
 	<html lang="en">
-		<head>
-			<title>WordPress.com</title>
-			<meta charSet="utf-8" />
-			<meta httpEquiv="X-UA-Compatible" content="IE=Edge" />
-			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-			<meta name="fomat-detection" content="telephone=no" />
-			<meta name="mobile-web-app-capable" content="yes" />
-			<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="//s1.wp.com/i/favicon.ico" sizes="16x16 32x32 48x48" />
-			<link rel="shortcut icon" type="image/x-icon" href="//s1.wp.com/i/favicon.ico" sizes="16x16" />
-			<link rel="icon" type="image/x-icon" href="//s1.wp.com/i/favicon.ico" sizes="16x16" />
-			<link rel="profile" href="http://gmpg.org/xfn/11" />
-			<link rel="stylesheet" href="//s1.wp.com/i/fonts/merriweather/merriweather.css?v=20160210" />
-			<link rel="stylesheet" href="//s1.wp.com/i/noticons/noticons.css?v=20150727" />
-			<link rel="stylesheet" href={ styleCss } />
-		</head>
+		<Head styleCss={ styleCss } />
 		<body>
 			<div id="wpcom" className="wpcom-site">
 				<div className="layout has-no-sidebar">

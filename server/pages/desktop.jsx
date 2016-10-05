@@ -8,6 +8,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { jsonStringifyForHtml } from 'sanitize';
+import Head from './head';
 import Badge from './badge';
 
 class Desktop extends React.Component {
@@ -28,7 +29,7 @@ class Desktop extends React.Component {
 		const {
 			app,
 			badge,
-			faviconURL,
+			faviconURL: faviconUrl,
 			i18nLocaleScript,
 			isFluidWidth,
 			isRTL,
@@ -39,25 +40,11 @@ class Desktop extends React.Component {
 			<html lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
 				className={ classNames( 'is-desktop', { 'is-fluid-with': isFluidWidth } ) }>
-				<head>
-					<title>WordPress.com</title>
-					<meta charSet="utf-8" />
-					<meta httpEquiv="X-UA-Compatible" content="IE=Edge" />
-					<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-					<meta name="fomat-detection" content="telephone=no" />
-					<meta name="mobile-web-app-capable" content="yes" />
-					<link rel="shortcut icon" type="image/vnd.microsoft.icon" href={ faviconURL } sizes="16x16 32x32 48x48" />
-					<link rel="shortcut icon" type="image/x-icon" href={ faviconURL } sizes="16x16" />
-					<link rel="icon" type="image/x-icon" href={ faviconURL } sizes="16x16" />
-					<link rel="profile" href="http://gmpg.org/xfn/11" />
-					<link rel="stylesheet" href="https://s1.wp.com/i/fonts/merriweather/merriweather.css?v=20160210" />
-					<link rel="stylesheet" href="https://s1.wp.com/i/noticons/noticons.css?v=20150727" />
-					<link rel="stylesheet" href="https://s1.wp.com/wp-includes/css/dashicons.css?v=20150727" />
-					<link rel="stylesheet" href={ this.getStylesheet() } />
+				<Head title="WordPress.com" faviconUrl={ faviconUrl } styleCss={ this.getStylesheet() }>
 					<link rel="stylesheet" href="/desktop/wordpress-desktop.css" />
 					<script src="/calypso/build.js" />
 					<script src="/desktop/desktop-app.js" />
-				</head>
+				</Head>
 				<body className={ isRTL ? 'rtl' : null }>
 					<div id="wpcom" className="wpcom-site">
 						<div className="wpcom-site__logo noticon noticon-wordpress" />
