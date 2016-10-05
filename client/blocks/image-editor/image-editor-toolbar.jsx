@@ -164,7 +164,7 @@ class ImageEditorToolbar extends Component {
 			<button
 				key={ 'image-editor-toolbar-' + button.tool }
 				ref={ button.ref }
-				className={ 'editor-media-modal-image-editor__toolbar-button' }
+				className={ 'image-editor__toolbar-button' }
 				onClick={ button.onClick }
 			>
 				<Gridicon icon={ button.icon } />
@@ -175,7 +175,7 @@ class ImageEditorToolbar extends Component {
 
 	render() {
 		return (
-			<div className="editor-media-modal-image-editor__toolbar">
+			<div className="image-editor__toolbar">
 				{ this.renderButtons() }
 				{ this.renderAspectMenu() }
 			</div>

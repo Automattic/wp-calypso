@@ -6,7 +6,7 @@
 	background: darken($gray, 52%);
 }
 
-.editor-media-modal-image-editor__toolbar {
+.image-editor__toolbar {
 	flex: 1;
 	display: flex;
 	justify-content: center;
@@ -16,7 +16,7 @@
 	text-align: center;
 }
 
-.editor-media-modal-image-editor__toolbar-button {
+.image-editor__toolbar-button {
 	background: $transparent;
 	border: none;
 	color: $white;
@@ -24,12 +24,12 @@
 	cursor: pointer;
 }
 
-.editor-media-modal-image-editor__toolbar-button .gridicon {
+.image-editor__toolbar-button .gridicon {
 	display: block;
 	margin: 0 auto;
 }
 
-.editor-media-modal-image-editor__toolbar-button:hover {
+.image-editor__toolbar-button:hover {
 	color: $gray;
 }
 
