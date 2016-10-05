@@ -74,8 +74,8 @@ module.exports = {
 	signupSurveyStep: {
 		datestamp: '20160825',
 		variations: {
-			surveyStepV1: 80,
-			surveyStepV2: 20,
+			surveyStepV1: 95,
+			surveyStepV2: 5,
 		},
 		defaultVariation: 'surveyStepV1'
 	},
