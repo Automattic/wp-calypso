@@ -65,7 +65,18 @@ var EmptyPlaceholder = React.createClass( {
 	},
 
 	noOptionsMessage: function() {
-		return this.translate( 'Nothing found.' );
+		switch ( this.props.typeName ) {
+			case 'category':
+				return this.translate( 'No categories found.' );
+			case 'post_tag':
+				return this.translate( 'No tags found.' );
+			case 'post':
+				return this.translate( 'No posts found.' );
+			case 'page':
+				return this.translate( 'No pages found.' );
+			default:
+				return this.translate( 'Nothing found.' );
+		}
 	},
 
 	noSearchResultsMessage: function() {
@@ -75,8 +86,15 @@ var EmptyPlaceholder = React.createClass( {
 	render: function() {
 		return (
 			<span className='is-empty-content'>
-				{ this.props.isSearch ? this.noSearchResultsMessage() : this.noOptionsMessage() }
-				&nbsp;{ this.createOptionMessage() }
+				{ this.props.isSearch
+					? this.noSearchResultsMessage()
+					: this.noOptionsMessage()
+				}
+				&nbsp;
+				{ this.props.typeName !== 'post_tag'
+					? this.createOptionMessage()
+					: null
+				}
 			</span>
 		);
 	},
