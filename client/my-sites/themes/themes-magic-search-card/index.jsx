@@ -71,12 +71,12 @@ const ThemesMagicSearchCard = React.createClass( {
 
 		return (
 			tokens.map( ( token, i ) => {
-				let classname = 'search-tokens__text';
+				let classname = 'themes-magic-search-card__search-text';
 
 				if ( token.trim() === '' ) {
-					classname = 'search-tokens__white-space';
+					classname = 'themes-magic-search-card__search-white-space';
 				} else if ( filterIsValid( token ) ) {
-					classname = 'search-tokens__token';
+					classname = 'themes-magic-search-card__search-token';
 				}
 
 				return <span className={ classname } key={ i }>{ token }</span>; // use shortid for key
