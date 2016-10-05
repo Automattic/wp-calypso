@@ -33,6 +33,10 @@ For more detailed instructions, see [Installing Calypso](/docs/install.md).
 
 Running `make run` will build all the code and continuously watch the front-end JS and CSS/Sass for changes and rebuild accordingly. In the case of React components, after the rebuild, the code is reloaded live in the browser and you should be able to see the changes without a refresh (CSS and changes deeper in the logic still need a refresh, but this will change, soon).
 
+### Tests
+
+The [test/README.md](../test/README.md) file documents how to create new tests, and how to run all or just some tests from the test suite. 
+
 ### Errors and Warnings
 
 Errors and warning appear in the normal places – the terminal where you ran `make run` and the JavaScript console in the browser. If something isn’t going the way you expected it, look at those places first.
