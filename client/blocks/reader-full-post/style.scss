@@ -415,14 +415,12 @@
 .reader-full-post .embed-youtube,
 .reader-full-post .embed-vimeo {
 	display: block;
-	height: 0;
 	position: relative;
 	padding: 25px 0 56.25%;
 
 	iframe {
 		height: 100%;
 		position: absolute;
-			left: 0;
 			top: 0;
 		width: 100%;
 	}
