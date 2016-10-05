@@ -10,7 +10,7 @@ import { SECTION_SET } from 'state/action-types';
 import reducer, {
 	name,
 	paths,
-	module,
+	module as moduleReducer,
 	enableLoggedOut,
 	secondary,
 	group,
@@ -72,13 +72,13 @@ describe( 'reducer', () => {
 
 	describe( 'module()', () => {
 		it( 'should default to null', () => {
-			const state = module( undefined, {} );
+			const state = moduleReducer( undefined, {} );
 
 			expect( state ).to.be.null;
 		} );
 
 		it( 'should change its value when specified on action section object', () => {
-			const state = module( null, {
+			const state = moduleReducer( null, {
 				type: SECTION_SET,
 				section: {
 					module: 'my-sites'

@@ -37,7 +37,8 @@ export const paths = createSectionReducer( [], 'paths' );
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export const module = createSectionReducer( null, 'module' );
+const moduleReducer = createSectionReducer( null, 'module' );
+export { moduleReducer as module };
 
 /**
  * Returns the updated section logged-out enabled state after an action has
@@ -95,7 +96,7 @@ export const title = createSectionReducer( null, 'title' );
 export default combineReducers( {
 	name,
 	paths,
-	module,
+	module: moduleReducer,
 	enableLoggedOut,
 	secondary,
 	group,
