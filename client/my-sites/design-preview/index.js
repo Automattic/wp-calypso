@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import page from 'page';
 import includes from 'lodash/includes';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -129,7 +130,7 @@ export default function designPreview( WebPreview ) {
 			const isEmptyRoute = includes( page.current, '/customize' ) || includes( page.current, '/paladin' );
 			// If this route has nothing but the preview, redirect to somewhere else
 			if ( isEmptyRoute ) {
-				page.redirect( `/stats/${siteFragment}` );
+				page.redirect( `/stats/${ siteFragment }` );
 			}
 		}
 
@@ -150,7 +151,7 @@ export default function designPreview( WebPreview ) {
 
 			return (
 				<div>
-					<DesignMenu isVisible={ this.props.showPreview } />
+					<DesignMenu isVisible={ this.props.showPreview } designTools={ this.props.designTools } />
 					<WebPreview
 						className={ this.props.className }
 						showPreview={ this.props.showPreview }
@@ -185,6 +186,7 @@ export default function designPreview( WebPreview ) {
 		previewUrl: PropTypes.string,
 		selectedSite: PropTypes.object,
 		selectedSiteId: PropTypes.number,
+		designTools: PropTypes.array,
 		undoCustomization: PropTypes.func.isRequired,
 		fetchPreviewMarkup: PropTypes.func.isRequired,
 		closePreview: PropTypes.func.isRequired,
@@ -194,6 +196,7 @@ export default function designPreview( WebPreview ) {
 
 	DesignPreview.defaultProps = {
 		customizations: {},
+		designTools: [],
 	};
 
 	function mapStateToProps( state ) {
@@ -201,10 +204,44 @@ export default function designPreview( WebPreview ) {
 		const selectedSiteId = getSelectedSiteId( state );
 		const currentLayoutFocus = getCurrentLayoutFocus( state );
 
+		const site = selectedSite;
+		const siteTitleConfig = {
+			id: 'blogname',
+			input: {
+				type: 'text',
+				label: i18n.translate( 'Site Title' ),
+				initialValue: site.name,
+			},
+		};
+		const siteTaglineConfig = {
+			id: 'blogdescription',
+			input: {
+				type: 'text',
+				label: i18n.translate( 'Tagline' ),
+				initialValue: site.description,
+			},
+		};
+		const siteTitlePanel = {
+			id: 'siteTitle',
+			icon: 'heading',
+			label: i18n.translate( 'Title and Tagline' ),
+			controls: [
+				siteTitleConfig,
+				siteTaglineConfig,
+			],
+		};
+		const siteIdentity = {
+			title: i18n.translate( 'Site Identity' ),
+			items: [
+				siteTitlePanel,
+			]
+		};
+
 		return {
 			selectedSite,
 			selectedSiteId,
 			selectedSiteUrl: getSiteOption( state, selectedSiteId, 'unmapped_url' ),
+			designTools: [ siteIdentity ],
 			previewUrl: getPreviewUrl( state ),
 			previewMarkup: getPreviewMarkup( state, selectedSiteId ),
 			customizations: getPreviewCustomizations( state, selectedSiteId ),
