@@ -33,6 +33,7 @@ function HelloVoteNotice( { translate, visibleIfUnitedStates, isUnitedStates, si
 					statGroup="hello-vote"
 					statName="calypso-notice-impression" />,
 				<Notice
+					className="hello-vote-notice"
 					key="notice"
 					status="is-info"
 					text={ translate( 'Encourage your US-based users to register to vote by adding a subtle prompt to your site' ) }
