@@ -83,7 +83,7 @@ const SiteSelector = React.createClass( {
 			search: terms,
 			highlightedIndex: ( terms ? 0 : -1 ),
 			showSearch: ( terms ? true : this.state.showSearch ),
-			isKeyboardEngaged: true,
+			isKeyboardEngaged: false,
 		} );
 	},
 
