@@ -27,8 +27,8 @@ import {
 	goToXmlrpcErrorFallbackUrl
 } from 'state/jetpack-connect/actions';
 import {
-	getAuthorize,
-	getAuthorizeSite,
+	getAuthorizationData,
+	getAuthorizationRemoteUrl,
 	getSSOSessions,
 	isCalypsoStartedConnection,
 	hasXmlrpcError
@@ -642,9 +642,9 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
-		const authorizeSite = getAuthorizeSite( state );
-		const site = authorizeSite
-			? getSiteByUrl( state, authorizeSite )
+		const remoteUrl = getAuthorizationRemoteUrl( state );
+		const site = remoteUrl
+			? getSiteByUrl( state, remoteUrl )
 			: null;
 
 		const requestHasXmlrpcError = () => {
@@ -656,12 +656,12 @@ export default connect(
 		};
 
 		return {
-			jetpackConnectAuthorize: getAuthorize( state ),
+			jetpackConnectAuthorize: getAuthorizationData( state ),
 			jetpackSSOSessions: getSSOSessions( state ),
 			isAlreadyOnSitesList: !! site,
 			isFetchingSites,
 			requestHasXmlrpcError,
-			calypsoStartedConnection: isCalypsoStartedConnection( state, authorizeSite )
+			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteUrl )
 		};
 	},
 	dispatch => bindActionCreators( {

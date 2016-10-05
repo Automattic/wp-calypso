@@ -8,9 +8,9 @@ import { expect } from 'chai';
  */
 import {
 	getConnectingSite,
-	getAuthorize,
-	getAuthorizeQuery,
-	getAuthorizeSite,
+	getAuthorizationData,
+	getAuthorizationRemoteQueryData,
+	getAuthorizationRemoteUrl,
 	getSessions,
 	getSSOSessions,
 	getSSO,
@@ -61,13 +61,13 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getAuthorize()', () => {
+	describe( '#getAuthorizationData()', () => {
 		it( 'should return undefined if user has not started the authorization flow', () => {
 			const state = {
 				jetpackConnect: {}
 			};
 
-			expect( getAuthorize( state ) ).to.be.undefined;
+			expect( getAuthorizationData( state ) ).to.be.undefined;
 		} );
 
 		it( 'should return the current authorize object if there is such', () => {
@@ -82,17 +82,17 @@ describe( 'selectors', () => {
 				}
 			};
 
-			expect( getAuthorize( state ) ).to.eql( jetpackConnectAuthorize );
+			expect( getAuthorizationData( state ) ).to.eql( jetpackConnectAuthorize );
 		} );
 	} );
 
-	describe( '#getAuthorizeQuery()', () => {
+	describe( '#getAuthorizationRemoteQueryData()', () => {
 		it( 'should return undefined if user has not started the authorization flow', () => {
 			const state = {
 				jetpackConnect: {}
 			};
 
-			expect( getAuthorizeQuery( state ) ).to.be.undefined;
+			expect( getAuthorizationRemoteQueryData( state ) ).to.be.undefined;
 		} );
 
 		it( 'should return the current authorize query object if there is such', () => {
@@ -112,17 +112,17 @@ describe( 'selectors', () => {
 				}
 			};
 
-			expect( getAuthorizeQuery( state ) ).to.eql( queryObject );
+			expect( getAuthorizationRemoteQueryData( state ) ).to.eql( queryObject );
 		} );
 	} );
 
-	describe( '#getAuthorizeSite()', () => {
+	describe( '#getAuthorizationRemoteUrl()', () => {
 		it( 'should return undefined if user has not started the authorization flow', () => {
 			const state = {
 				jetpackConnect: {}
 			};
 
-			expect( getAuthorizeSite( state ) ).to.be.undefined;
+			expect( getAuthorizationRemoteUrl( state ) ).to.be.undefined;
 		} );
 
 		it( 'should return the current authorize site if there is such', () => {
@@ -143,7 +143,7 @@ describe( 'selectors', () => {
 				}
 			};
 
-			expect( getAuthorizeSite( state ) ).to.eql( site );
+			expect( getAuthorizationRemoteUrl( state ) ).to.eql( site );
 		} );
 	} );
 

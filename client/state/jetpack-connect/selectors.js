@@ -14,16 +14,16 @@ const getConnectingSite = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectSite' ] );
 };
 
-const getAuthorize = ( state ) => {
+const getAuthorizationData = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectAuthorize' ] );
 };
 
-const getAuthorizeQuery = ( state ) => {
-	return get( getAuthorize( state ), [ 'queryObject' ] );
+const getAuthorizationRemoteQueryData = ( state ) => {
+	return get( getAuthorizationData( state ), [ 'queryObject' ] );
 };
 
-const getAuthorizeSite = ( state ) => {
-	return get( getAuthorizeQuery( state ), [ 'site' ] );
+const getAuthorizationRemoteUrl = ( state ) => {
+	return get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
 };
 
 const getSessions = ( state ) => {
@@ -77,7 +77,7 @@ const getJetpackSiteByUrl = ( state, url ) => {
  * @returns {Boolean} If there's an xmlrpc error or not
  */
 const hasXmlrpcError = function( state ) {
-	const authorizeData = getAuthorize( state );
+	const authorizeData = getAuthorizationData( state );
 
 	return (
 		authorizeData &&
@@ -90,9 +90,9 @@ const hasXmlrpcError = function( state ) {
 
 export default {
 	getConnectingSite,
-	getAuthorize,
-	getAuthorizeQuery,
-	getAuthorizeSite,
+	getAuthorizationData,
+	getAuthorizationRemoteQueryData,
+	getAuthorizationRemoteUrl,
 	getSessions,
 	getSSOSessions,
 	getSSO,
