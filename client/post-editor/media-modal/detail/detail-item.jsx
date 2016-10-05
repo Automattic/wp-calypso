@@ -19,7 +19,7 @@ import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import { userCan, isJetpack } from 'lib/site/utils';
-import MediaUtils from 'lib/media/utils';
+import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import config from 'config';
 
 const debug = debugFactory( 'calypso:post-editor:media:detail-item' );
@@ -76,7 +76,9 @@ class EditorMediaModalDetailItem extends Component {
 		return (
 			<Button
 				className={ classNames( 'editor-media-modal-detail__edit', className ) }
-				onClick={ onEdit }>
+				onClick={ onEdit }
+				disabled={ isItemBeingUploaded( item ) }
+			>
 				<Gridicon icon="pencil" size={ 36 } /> { translate( 'Edit Image' ) }
 			</Button>
 		);
