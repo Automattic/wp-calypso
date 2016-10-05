@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import path from 'path';
 import { localize } from 'i18n-calypso';
 
@@ -11,9 +11,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Notice from 'components/notice';
-import EditCanvas from './image-editor-canvas';
-import EditToolbar from './image-editor-toolbar';
-import EditButtons from './image-editor-buttons';
+import ImageEditorCanvas from './image-editor-canvas';
+import ImageEditorToolbar from './image-editor-toolbar';
+import ImageEditorButtons from './image-editor-buttons';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import closeOnEsc from 'lib/mixins/close-on-esc';
@@ -183,13 +183,13 @@ const ImageEditor = React.createClass( {
 				{ this.state.canvasError && this.renderError() }
 
 				<figure>
-					<div className="editor-media-modal-image-editor__content editor-media-modal__content" >
-						<EditCanvas
+					<div className="image-editor__content">
+						<ImageEditorCanvas
 							ref="editCanvas"
 							onLoadError={ this.onLoadCanvasError }
 						/>
-						<EditToolbar />
-						<EditButtons
+						<ImageEditorToolbar />
+						<ImageEditorButtons
 							onCancel={ this.onCancel }
 							onDone={ this.onDone }
 						/>
