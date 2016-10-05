@@ -1,7 +1,9 @@
 /**
  * External dependencies
  */
-var find = require( 'lodash/find'),
+var find = require( 'lodash/find' ),
+	get = require( 'lodash/get' ),
+	endsWith = require( 'lodash/endsWith' ),
 	i18n = require( 'i18n-calypso' );
 
 /**
@@ -77,7 +79,8 @@ MenuItemTypes.prototype.initializeDefaultTypes = function() {
 				renderer: 'renderPostOptions',
 				show: true,
 				label: i18n.translate( 'Page' ),
-				createLink: '//wordpress.com/page/' + this.site.ID  + '/new',
+				notFoundLabel: i18n.translate( 'No pages found.' ),
+				createLink: '/page/' + this.site.ID + '/new',
 				gaEventLabel: 'Page'
 			},
 			{
@@ -96,6 +99,7 @@ MenuItemTypes.prototype.initializeDefaultTypes = function() {
 				renderer: 'renderCategoryOptions',
 				show: true,
 				label: i18n.translate( 'Category' ),
+				notFoundLabel: i18n.translate( 'No categories found.' ),
 				createLink: this.site.options.admin_url + 'edit-tags.php?taxonomy=category',
 				gaEventLabel: 'Category'
 			},
@@ -107,6 +111,7 @@ MenuItemTypes.prototype.initializeDefaultTypes = function() {
 				renderer: 'renderTaxonomyOptions',
 				show: true,
 				label: i18n.translate( 'Tag' ),
+				notFoundLabel: i18n.translate( 'No tags found.' ),
 				createLink: this.site.options.admin_url + 'edit-tags.php?taxonomy=post_tag',
 				gaEventLabel: 'Tag'
 			},
@@ -117,6 +122,7 @@ MenuItemTypes.prototype.initializeDefaultTypes = function() {
 				renderer: 'renderTaxonomyContents',
 				show: false,
 				label: i18n.translate( 'Post Format' ),
+				notFoundLabel: i18n.translate( 'No post formats found.' ),
 				gaEventLabel: 'Post Format'
 			},
 			{
@@ -126,7 +132,8 @@ MenuItemTypes.prototype.initializeDefaultTypes = function() {
 				renderer: 'renderPostOptions',
 				show: true,
 				label: i18n.translate( 'Post' ),
-				createLink: '//wordpress.com/post/' + this.site.ID  + '/new',
+				notFoundLabel: i18n.translate( 'No posts found.' ),
+				createLink: '/post/' + this.site.ID + '/new',
 				gaEventLabel: 'Post'
 			}
 	];
@@ -179,6 +186,7 @@ MenuItemTypes.prototype.parse = function() {
 	debug( 'Found some new types', newTypes );
 
 	newTypes.forEach( function( type ) {
+		const notFoundLabel = get( type, [ 'labels', 'not_found' ], '' );
 		this.data.push( {
 			name: type.name,
 			family: 'post_type',
@@ -186,6 +194,7 @@ MenuItemTypes.prototype.parse = function() {
 			renderer: 'renderPostOptions',
 			show: true,
 			label: type.label, //FIXME: how do we handle i18n here?
+			notFoundLabel: notFoundLabel && endsWith( notFoundLabel, '.' ) ? notFoundLabel : notFoundLabel + '.',
 			createLink: `/edit/${ type.name }/${ this.site.slug }`,
 			gaEventLabel: type.label
 		} );
