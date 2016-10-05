@@ -125,7 +125,7 @@ class ImageEditorToolbar extends Component {
 						action={ item.action }>
 						{
 							aspectRatio === item.action
-								? <Gridicon icon="checkmark" size={ 14 } />
+								? <Gridicon icon="checkmark" size={ 12 } />
 								: false
 						}
 						{ item.label }
