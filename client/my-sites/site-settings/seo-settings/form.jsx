@@ -225,7 +225,9 @@ export const SeoForm = React.createClass( {
 		const {
 			site,
 			storedTitleFormats,
-			trackSubmission
+			trackSubmission,
+			showAdvancedSeo,
+			showWebsiteMeta
 		} = this.props;
 
 		const { dirtyFields } = this.state;
@@ -275,9 +277,15 @@ export const SeoForm = React.createClass( {
 			advanced_seo_title_formats: seoTitleToApi(
 				pickBy( this.state.seoTitleFormats, hasChanges )
 			),
-			advanced_seo_front_page_description: this.state.frontPageMetaDescription,
 			verification_services_codes: filteredCodes
 		};
+
+		// Update this option only if advanced SEO is enabled or grandfathered in order to
+		// avoid request errors on non-business sites when they attempt site verification
+		// services update
+		if ( showAdvancedSeo || showWebsiteMeta ) {
+			updatedOptions.advanced_seo_front_page_description = this.state.frontPageMetaDescription;
+		}
 
 		site.saveSettings( updatedOptions, error => {
 			if ( error ) {
