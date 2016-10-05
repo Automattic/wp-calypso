@@ -210,6 +210,10 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
+	if ( config.isEnabled( 'css-hot-reload' ) ) {
+		require( 'lib/css-hot-reload' )();
+	}
+
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.
 	if ( ! document.getElementById( 'primary' ) ) {
