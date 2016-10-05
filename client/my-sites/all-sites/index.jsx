@@ -36,7 +36,9 @@ export default React.createClass( {
 		showCount: React.PropTypes.bool,
 		count: React.PropTypes.number,
 		title: React.PropTypes.string,
-		domain: React.PropTypes.string
+		domain: React.PropTypes.string,
+		onMouseEnter: React.PropTypes.func,
+		onMouseLeave: React.PropTypes.func
 	},
 
 	onSelect( event ) {
@@ -59,7 +61,12 @@ export default React.createClass( {
 
 		return (
 			<div className={ allSitesClass }>
-				<a className="site__content" href={ this.props.href } onTouchTap={ this.onSelect }>
+				<a
+					className="site__content"
+					href={ this.props.href }
+					onMouseEnter={ this.props.onMouseEnter }
+					onMouseLeave={ this.props.onMouseLeave }
+					onTouchTap={ this.onSelect }>
 					{ this.props.showCount && this.renderSiteCount() }
 					<div className="site__info">
 						<span className="site__title">{ title }</span>
