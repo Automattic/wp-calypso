@@ -60,7 +60,7 @@ const Plans = React.createClass( {
 	},
 
 	componentDidUpdate() {
-		if ( this.hasPlan( this.props.selectedSite ) ) {
+		if ( this.props.hasPaidPlan ) {
 			page.redirect( CALYPSO_PLAN_PAGE + this.props.selectedSite.slug );
 		}
 		if ( ! this.props.canPurchasePlans ) {
@@ -70,12 +70,6 @@ const Plans = React.createClass( {
 		if ( ! this.props.isRequestingPlans && ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) ) {
 			return this.autoselectPlan();
 		}
-	},
-
-	hasPlan( site ) {
-		return site &&
-			site.plan &&
-			( site.plan.product_slug === 'jetpack_business' || site.plan.product_slug === 'jetpack_premium' );
 	},
 
 	autoselectPlan() {
@@ -133,7 +127,7 @@ const Plans = React.createClass( {
 			return null;
 		}
 
-		if ( ! this.props.canPurchasePlans || this.hasPlan( this.props.selectedSite ) ) {
+		if ( ! this.props.canPurchasePlans || this.props.hasPaidPlan ) {
 			return null;
 		}
 
