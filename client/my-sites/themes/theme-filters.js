@@ -230,7 +230,7 @@ export function getFilter( term ) {
  * @param {string} filter - filter in form taxonomy:term
  * @return {boolean} true if filter pair is valid
  */
-function filterIsValid( filter ) {
+export function filterIsValid( filter ) {
 	return getTermTable()[ getTerm( filter ) ] === getTaxonomy( filter );
 }
 
