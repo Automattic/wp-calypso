@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { jsonStringifyForHtml } from 'sanitize';
+import Badge from './badge';
 
 class Markup extends React.Component {
 	getStylesheet() {
@@ -20,41 +21,6 @@ class Markup extends React.Component {
 		}
 
 		return urls[ stylesheet ];
-	}
-
-	renderBranchName() {
-		const { branchName, commitChecksum } = this.props;
-		return (
-			<span className={ 'environment branch-name' } title={ 'Commit ' + commitChecksum }>
-				{ branchName }
-			</span>
-		);
-	}
-
-	renderDevDocsLink() {
-		const { devDocsURL, docs } = this.props;
-		return (
-			<span className="environment is-docs">
-				<a href={ devDocsURL } title="DevDocs">
-					{ docs }
-				</a>
-			</span>
-		);
-	}
-
-	renderBadge() {
-		const { abTestHelper, badge, branchName, feedbackURL, devDocs } = this.props;
-		return (
-			<div className="environment-badge">
-				{ abTestHelper && <div className="environment is-tests" /> }
-				{ branchName && branchName !== 'master' && this.renderBranchName() }
-				{ devDocs && this.renderDevDocsLink() }
-				<span className={ 'environment is-' + badge }>
-					{ badge }
-				</span>
-				<a href={ feedbackURL } title="Report an issue" target="_blank" rel="noopener noreferrer" className="bug-report" />
-			</div>
-		);
 	}
 
 	render() {
@@ -129,7 +95,7 @@ class Markup extends React.Component {
 							<div className="wpcom-site__logo noticon noticon-wordpress" />
 						</div>
 					}
-					{ badge && this.renderBadge() }
+					{ badge && <Badge { ...this.props } /> }
 
 					{ 'development' !== env &&
 						<script src={ catchJsErrors } />

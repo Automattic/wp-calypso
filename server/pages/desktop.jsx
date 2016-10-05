@@ -8,6 +8,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { jsonStringifyForHtml } from 'sanitize';
+import Badge from './badge';
 
 class Desktop extends React.Component {
 	getStylesheet() {
@@ -21,18 +22,6 @@ class Desktop extends React.Component {
 		}
 
 		return urls[ stylesheet ];
-	}
-
-	renderBadge() {
-		const { badge, feedbackURL } = this.props;
-		return (
-			<div className="environment-badge">
-				<a href={ feedbackURL } title="Report an issue" target="_blank" rel="noopener noreferrer" className="bug-report" />
-				<span className={ 'environment is-' + badge }>
-					{ badge }
-				</span>
-			</div>
-		);
 	}
 
 	render() {
@@ -73,7 +62,7 @@ class Desktop extends React.Component {
 					<div id="wpcom" className="wpcom-site">
 						<div className="wpcom-site__logo noticon noticon-wordpress" />
 					</div>
-					{ badge && this.renderBadge() }
+					{ badge && <Badge { ...this.props } /> }
 
 					{ app &&
 						<script type="text/javascript"
