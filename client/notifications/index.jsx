@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:notifications' ),
 	assign = require( 'lodash/assign' ),
 	oAuthToken = require( 'lib/oauth-token' );

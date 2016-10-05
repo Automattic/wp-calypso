@@ -37,7 +37,6 @@ module.exports = {
 		'no-nested-ternary': 1,
 		'no-new': 1,
 		'no-process-exit': 1,
-		'no-redeclare': 1,
 		'no-shadow': 1,
 		'no-spaced-func': 1,
 		'no-trailing-spaces': 1,
