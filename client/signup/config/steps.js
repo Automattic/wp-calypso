@@ -73,7 +73,7 @@ module.exports = {
 
 	domains: {
 		stepName: 'domains',
-		apiRequestFunction: stepActions.createSiteWithDomainItems,
+		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		dependencies: [ 'theme', 'surveyQuestion' ],
 		delayApiRequestUntilComplete: true
@@ -81,7 +81,7 @@ module.exports = {
 
 	'domains-with-plan': {
 		stepName: 'domains-with-plan',
-		apiRequestFunction: stepActions.createSiteWithDomainItemsAndStartFreeTrial,
+		apiRequestFunction: stepActions.createSiteWithCartAndStartFreeTrial,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		dependencies: [ 'theme' ],
 		delayApiRequestUntilComplete: true
@@ -89,7 +89,7 @@ module.exports = {
 
 	'domains-only': {
 		stepName: 'domains-only',
-		apiRequestFunction: stepActions.createSiteWithDomainItems,
+		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true
 	},
@@ -106,7 +106,7 @@ module.exports = {
 	},
 
 	'get-dot-blog-plans': {
-		apiRequestFunction: stepActions.createSiteWithDomainItems,
+		apiRequestFunction: stepActions.createSiteWithCart,
 		stepName: 'get-dot-blog-plans',
 		dependencies: [ 'cartItem' ],
 		providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem' ]

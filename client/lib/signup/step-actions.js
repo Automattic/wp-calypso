@@ -21,7 +21,16 @@ import { PLAN_PREMIUM } from 'lib/plans/constants';
 
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 
-function createSiteWithDomainItems( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeSlugWithRepo, themeItem } ) {
+function createSiteWithCart( callback, dependencies, {
+	cartItem,
+	domainItem,
+	googleAppsCartItem,
+	isPurchasingItem,
+	siteUrl,
+	themeSlug,
+	themeSlugWithRepo,
+	themeItem
+} ) {
 	const siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
 
 	wpcom.undocumented().sitesNew( {
@@ -52,19 +61,12 @@ function createSiteWithDomainItems( callback, dependencies, { domainItem, google
 			themeItem
 		};
 		const addToCartAndProceed = () => {
-			let newCartItems = [];
-
-			if ( domainItem ) {
-				newCartItems = [ ...newCartItems, domainItem ];
-			}
-
-			if ( googleAppsCartItem ) {
-				newCartItems = [ ...newCartItems, googleAppsCartItem ];
-			}
-
-			if ( themeItem ) {
-				newCartItems = [ ...newCartItems, themeItem ];
-			}
+			const newCartItems = [
+				cartItem,
+				domainItem,
+				googleAppsCartItem,
+				themeItem,
+			].filter( item => item );
 
 			if ( newCartItems.length ) {
 				SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
@@ -146,10 +148,10 @@ function setThemeOnSite( callback, { siteSlug }, { themeSlug } ) {
 }
 
 module.exports = {
-	createSiteWithDomainItems: createSiteWithDomainItems,
+	createSiteWithCart: createSiteWithCart,
 
-	createSiteWithDomainItemsAndStartFreeTrial( callback, dependencies, data ) {
-		createSiteWithDomainItems( ( error, providedDependencies ) => {
+	createSiteWithCartAndStartFreeTrial( callback, dependencies, data ) {
+		createSiteWithCart( ( error, providedDependencies ) => {
 			if ( error ) {
 				callback( error, providedDependencies );
 			} else {
