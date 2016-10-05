@@ -117,13 +117,13 @@
 }
 
 .survey__other {
-	margin: 0 auto 2em;
+	margin: 0 20px 2em;
 	position: relative;
-	max-width: 90%;
 }
 
 @include breakpoint( ">480px" ) {
 	.survey__other {
+		margin: 0 auto 2em;
 		max-width: 500px;
 	}
 }
