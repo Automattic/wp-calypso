@@ -45,20 +45,22 @@ class ImageEditorButtons extends Component {
 		} = this.props;
 
 		return (
-			<div className="editor-media-modal-image-editor__buttons">
+			<div className="image-editor__buttons">
 				<Button
-					className="editor-media-modal-image-editor__buttons-cancel"
+					className="image-editor__buttons-button image-editor__buttons-cancel"
 					onClick={ onCancel }
 				>
 					{ translate( 'Cancel' ) }
 				</Button>
 				<Button
+					className="image-editor__buttons-button"
 					disabled={ ! hasChanges }
 					onClick={ this.props.resetImageEditorState }
 				>
 					{ translate( 'Reset' ) }
 				</Button>
 				<Button
+					className="image-editor__buttons-button"
 					disabled={ ! src }
 					primary
 					onClick={ onDone }
