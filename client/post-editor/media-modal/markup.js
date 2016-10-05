@@ -196,11 +196,7 @@ Markup = {
 		 */
 		video: function( media ) {
 			if ( MediaUtils.isVideoPressItem( media ) ) {
-				return Shortcode.stringify( {
-					tag: 'wpvideo',
-					attrs: [ media.videopress_guid ],
-					type: 'single'
-				} );
+				return `https://videopress.com/v/${ media.videopress_guid }`;
 			}
 
 			return Shortcode.stringify( {

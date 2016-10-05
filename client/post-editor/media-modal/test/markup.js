@@ -289,12 +289,12 @@ describe( 'markup', function() {
 		} );
 
 		describe( '#video()', function() {
-			it( 'should return a `wpvideo` shortcode for a VideoPress video', function() {
-				var value = markup.mimeTypes.video( {
+			it( 'should return a VideoPress URL for a VideoPress video', function() {
+				const value = markup.mimeTypes.video( {
 					videopress_guid: '11acMj3O'
 				} );
 
-				expect( value ).to.equal( '[wpvideo 11acMj3O]' );
+				expect( value ).to.equal( 'https://videopress.com/v/11acMj3O' );
 			} );
 
 			it( 'should return a `video` shortcode for a video', function() {
