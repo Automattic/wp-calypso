@@ -60,15 +60,20 @@ const Plans = React.createClass( {
 	},
 
 	componentDidUpdate() {
-		if ( this.props.hasPaidPlan ) {
-			page.redirect( CALYPSO_PLAN_PAGE + this.props.selectedSite.slug );
-		}
-		if ( ! this.props.canPurchasePlans ) {
-			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
-		}
+		if ( this.props.calypsoStartedConnection ) {
+			if ( this.props.hasPaidPlan ) {
+				page.redirect( CALYPSO_PLAN_PAGE + this.props.selectedSite.slug );
+			}
+			if ( ! this.props.canPurchasePlans ) {
+				page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
+			}
 
-		if ( ! this.props.isRequestingPlans && ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) ) {
-			return this.autoselectPlan();
+			if ( ! this.props.isRequestingPlans && ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) ) {
+				return this.autoselectPlan();
+			}
+		} else if ( this.props.hasPaidPlan || ! this.props.canPurchasePlans ) {
+			const { queryObject } = this.props.jetpackConnectAuthorize;
+			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
 	},
 
@@ -96,7 +101,7 @@ const Plans = React.createClass( {
 			user: this.props.userId
 		} );
 		if ( this.props.calypsoStartedConnection ) {
-			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
+			page.redirect( CALYPSO_PLAN_PAGE + this.props.selectedSite.slug );
 		} else {
 			const { queryObject } = this.props.jetpackConnectAuthorize;
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
