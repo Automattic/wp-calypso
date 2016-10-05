@@ -13,7 +13,6 @@ import SegmentedControl from 'components/segmented-control';
 import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
-import { filterIsValid } from '../theme-filters.js';
 
 const ThemesMagicSearchCard = React.createClass( {
 	propTypes: {
@@ -66,24 +65,6 @@ const ThemesMagicSearchCard = React.createClass( {
 		this.setState( { searchIsOpen: false } );
 	},
 
-	searchTokens( input ) {
-		const tokens = input.split( /(\s+)/ );
-
-		return (
-			tokens.map( ( token, i ) => {
-				let classname = 'search-tokens__text';
-
-				if ( token.trim() === '' ) {
-					classname = 'search-tokens__white-space';
-				} else if ( filterIsValid( token ) ) {
-					classname = 'search-tokens__token';
-				}
-
-				return <span className={ classname } key={ i }>{ token }</span>; // use shortid for key
-			} )
-		);
-	},
-
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
@@ -104,7 +85,6 @@ const ThemesMagicSearchCard = React.createClass( {
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
-				overlayStyling={ this.searchTokens }
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
 				hideClose={ isMobile() }
