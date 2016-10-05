@@ -168,6 +168,7 @@
     "localStorage": "1.0.2",
     "lodash-deep": "1.5.3",
     "mixedindentlint": "1.1.1",
+    "md5-file": "3.1.0",
     "mocha": "2.3.4",
     "mocha-junit-reporter": "1.9.1",
     "mockery": "1.4.0",

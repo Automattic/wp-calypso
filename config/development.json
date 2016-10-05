@@ -31,6 +31,7 @@
 		"ad-tracking": false,
 		"code-splitting": true,
 		"community-translator": true,
+		"css-hot-reload": true,
 		"desktop-promo": true,
 		"devdocs": true,
 		"devdocs/redirect-loggedout-homepage": true,
