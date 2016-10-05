@@ -162,7 +162,7 @@ FullPostView = React.createClass( {
 				post.canonical_image &&
 				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ),
 			articleClasses = [ 'reader__full-post', 'is-group-reader' ],
-			shouldShowExcerptOnly = ( post && post.use_excerpt ? post.use_excerpt : false ),
+			shouldShowExcerptOnly = !! ( post && post.use_excerpt && post.is_jetpack ),
 			siteName = utils.siteNameFromSiteAndPost( site, post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
 			isDiscoverSitePick = DiscoverHelper.isDiscoverSitePick( post ),
@@ -224,7 +224,7 @@ FullPostView = React.createClass( {
 
 					<PostByline post={ post } site={ site } icon={ true } isDiscoverPost={ isDiscoverPost }/>
 
-					{ post && post.use_excerpt
+					{ shouldShowExcerptOnly
 						? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 						: <EmbedContainer>
 								<div className="reader__full-post-content" dangerouslySetInnerHTML={ { __html: post.content } } />
