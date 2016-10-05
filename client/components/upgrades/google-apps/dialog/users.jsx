@@ -38,7 +38,7 @@ const GoogleAppsUsers = React.createClass( {
 
 		return (
 			<div className="google-apps-dialog__users" key="google-apps-dialog__users">
-				<h4>{ this.translate( 'New Google Apps User:' ) }</h4>
+				<h4>{ this.translate( 'New G Suite User:' ) }</h4>
 
 				{ allUserInputs }
 

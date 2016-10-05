@@ -31,7 +31,7 @@ export default {
 	FOLLOWERS: `${root}/followers`,
 	GETTING_MORE_VIEWS_AND_TRAFFIC: `${root}/getting-more-views-and-traffic`,
 	GOOGLE_ANALYTICS: `${root}/google-analytics`,
-	GOOGLE_APPS_LEARNING_CENTER: 'https://apps.google.com/learning-center/',
+	GOOGLE_APPS_LEARNING_CENTER: 'https://gsuite.google.com/learning-center/',
 	GOOGLE_PLUS_EMBEDS: `${root}/google-plus-embeds`,
 	GRAVATAR_HOVERCARDS: `${root}/gravatar-hovercards`,
 	GUIDED_TRANSFER: `${root}/guided-transfer`,

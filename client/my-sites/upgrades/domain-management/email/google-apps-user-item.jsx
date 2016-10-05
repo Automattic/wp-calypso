@@ -37,7 +37,7 @@ const GoogleAppsUserItem = React.createClass( {
 					onClick={ this.props.onClick }
 					target="_blank"
 					rel="noopener noreferrer">
-					{ this.translate( 'Manage', { context: 'Google Apps user item' } ) }
+					{ this.translate( 'Manage', { context: 'G Suite user item' } ) }
 				</ExternalLink>
 			</li>
 		);
