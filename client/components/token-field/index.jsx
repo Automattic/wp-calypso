@@ -227,7 +227,9 @@ var TokenField = React.createClass( {
 	},
 
 	_handlePaste( text ) {
-		const items = text.split( /[ ,]+/ );
+		const separator = this.props.tokenizeOnSpace ? /[ ,]+/ : /,+/;
+		const items = text.split( separator );
+
 		const tokenizableItems = items
 			.slice( 0, -1 )
 			.filter( item => !! this.props.saveTransform( item ).length );
