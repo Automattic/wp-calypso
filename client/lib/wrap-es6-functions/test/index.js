@@ -64,7 +64,7 @@ describe( 'wrapping', () => {
 	} );
 
 	describe( 'RegExp', () => {
-		[ 'flags' ].forEach( partial( assertCall, /a/, 'flags', [ 'g' ] ) );
+		[ 'flags' ].forEach( partial( assertCall, /a/, [ 'g' ] ) );
 	} );
 
 } );
