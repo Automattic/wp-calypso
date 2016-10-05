@@ -10,13 +10,13 @@ import isFunction from 'lodash/isFunction';
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 
-
 describe( 'wrapping', () => {
-	let sandbox,
-		arrayProps = [ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find' ].filter( key => isFunction( Array.prototype[ key ] ) ),
-		stringProps = [ 'codePointAt', 'normalize', 'repeat', 'startsWith', 'endsWith', 'includes' ].filter( key => isFunction( String.prototype[ key ] ) ),
-		consoleSpy,
+	const arrayProps = [ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find' ].filter( key => isFunction( Array.prototype[ key ] ) ),
+		stringProps = [ 'codePointAt', 'normalize', 'repeat', 'startsWith', 'endsWith', 'includes' ].filter(
+			key => isFunction( String.prototype[ key ] )
+		),
 		regExpProps = [ 'flags' ].filter( key => isFunction( RegExp.prototype[ key ] ) );
+	let consoleSpy, sandbox;
 
 	function installSpies( props, obj ) {
 		props.forEach( key => {
@@ -30,7 +30,7 @@ describe( 'wrapping', () => {
 				obj[ key ].apply( obj, args );
 				assert( consoleSpy.calledOnce );
 			}
-		} )
+		} );
 	}
 
 	useSandbox( newSandbox => sandbox = newSandbox );
@@ -66,5 +66,4 @@ describe( 'wrapping', () => {
 	describe( 'RegExp', () => {
 		[ 'flags' ].forEach( partial( assertCall, /a/, [ 'g' ] ) );
 	} );
-
 } );
