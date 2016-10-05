@@ -51,7 +51,7 @@ class DocsExampleWrapper extends Component {
 		return (
 			<div className={ classNames(
 				'docs-example__wrapper',
-				{ 'docs-example__wrapper-unique': unique }
+				{ 'is-unique': unique }
 			) }>
 				<h2 className="docs-example__wrapper-header">
 					{ renderTitle( unique, name, url ) }
