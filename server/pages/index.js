@@ -122,8 +122,6 @@ function getDefaultContext( request ) {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
-		env: CALYPSO_ENV,
-		isRTL: config( 'rtl' ),
 		isDebug: request.query.debug !== undefined ? true : false,
 		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),

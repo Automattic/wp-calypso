@@ -13,12 +13,12 @@ import Badge from './badge';
 
 class Markup extends React.Component {
 	getStylesheet() {
-		const { env, isDebug, isRTL, urls } = this.props;
+		const { isDebug, urls } = this.props;
 		let stylesheet = 'style.css';
 
-		if ( isRTL ) {
+		if ( config( 'rtl' ) ) {
 			stylesheet = 'style-rtl.css';
-		} else if ( 'development' === env || isDebug ) {
+		} else if ( config( 'env' ) === 'development' || isDebug ) {
 			stylesheet = 'style-debug.css';
 		}
 
@@ -31,24 +31,22 @@ class Markup extends React.Component {
 			badge,
 			catchJsErrors,
 			chunk,
-			env,
 			faviconURL: faviconUrl,
 			head,
 			i18nLocaleScript,
 			initialReduxState,
 			isDebug,
-			isRTL,
 			jsFile,
 			lang,
 			renderedLayout,
 			user,
 			urls
 		} = this.props;
-		const scriptSuffix = ( 'development' === env || isDebug ) ? '' : '-min';
+		const scriptSuffix = ( config( 'env' ) === 'development' || isDebug ) ? '' : '-min';
 
 		return (
 			<html lang={ lang }
-				dir={ isRTL ? 'rtl' : 'ltr' }
+				dir={ config( 'rtl' ) ? 'rtl' : 'ltr' }
 				className={ !! config.isEnabled( 'fluid-width' ) ? 'is-fluid-with' : null }>
 				<Head title={ head.title } faviconUrl={ faviconUrl } styleCss={ this.getStylesheet() }>
 					{ head.metas.map( ( { name, property, content } ) => (
@@ -58,7 +56,7 @@ class Markup extends React.Component {
 						<link rel={ rel } href={ href } />
 					) ) }
 				</Head>
-				<body className={ isRTL ? 'rtl' : null }>
+				<body className={ config( 'rtl' ) ? 'rtl' : null }>
 					{ renderedLayout
 						? <div id="wpcom" className="wpcom-site" dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
 							renderedLayout
@@ -69,7 +67,7 @@ class Markup extends React.Component {
 					}
 					{ badge && <Badge { ...this.props } /> }
 
-					{ 'development' !== env &&
+					{ config( 'env' ) !== 'development' &&
 						<script src={ catchJsErrors } />
 					}
 
@@ -95,7 +93,7 @@ class Markup extends React.Component {
 						<script src={ i18nLocaleScript } />
 					}
 					<script src={ urls[ 'vendor' + scriptSuffix ] } />
-					<script src={ urls[ `${ jsFile }-${ env }${ scriptSuffix }` ] } />
+					<script src={ urls[ `${ jsFile }-${ config( 'env' ) }${ scriptSuffix }` ] } />
 					{ chunk &&
 						<script src={ urls[ '_commons' + scriptSuffix ] } />
 					}
