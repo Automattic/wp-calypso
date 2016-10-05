@@ -100,15 +100,15 @@ const Email = React.createClass( {
 
 		if ( selectedDomainName ) {
 			emptyContentProps = {
-				title: this.translate( 'Google Apps is not supported on this domain' ),
-				line: this.translate( 'Only domains registered with WordPress.com are eligible for Google Apps.' ),
+				title: this.translate( 'G Suite is not supported on this domain' ),
+				line: this.translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
 				secondaryAction: this.translate( 'Add Email Forwarding' ),
 				secondaryActionURL: paths.domainManagementEmailForwarding( selectedSite.slug, selectedDomainName )
 			};
 		} else if ( hasMappedDomain( domains.list ) ) {
 			emptyContentProps = {
-				title: this.translate( 'Google Apps is not supported on mapped domains' ),
-				line: this.translate( 'Only domains registered with WordPress.com are eligible for Google Apps.' )
+				title: this.translate( 'G Suite is not supported on mapped domains' ),
+				line: this.translate( 'Only domains registered with WordPress.com are eligible for G Suite.' )
 			};
 		} else {
 			emptyContentProps = {
@@ -116,7 +116,7 @@ const Email = React.createClass( {
 				line: this.translate(
 					'Add a domain to your site to make it easier ' +
 					'to remember and easier to share, and get access to email ' +
-					'forwarding, Google Apps for Work, and other email services.'
+					'forwarding, G Suite, and other email services.'
 				)
 			};
 		}

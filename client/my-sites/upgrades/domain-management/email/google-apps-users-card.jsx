@@ -74,7 +74,7 @@ const GoogleAppsUsers = React.createClass( {
 								this.props.selectedSite.slug, domain
 							) }
 							onClick={ this.goToAddGoogleApps }>
-							{ this.translate( 'Add Google Apps User' ) }
+							{ this.translate( 'Add G Suite User' ) }
 						</Button>
 					) }
 				</SectionHeader>
