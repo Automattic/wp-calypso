@@ -12,7 +12,7 @@ import {
 /**
  * Constants
  */
-export const GEO_ENDPOINT = 'https://public-api.wordpress.com/geo.php';
+export const GEO_ENDPOINT = 'https://public-api.wordpress.com/geo/';
 
 export function receiveGeo( geo ) {
 	return {
