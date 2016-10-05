@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import ReactDom from 'react-dom';
 
