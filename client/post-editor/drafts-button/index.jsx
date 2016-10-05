@@ -10,12 +10,12 @@ import { translate } from 'i18n-calypso';
  */
 import Button from 'components/button';
 import Count from 'components/count';
-import QueryPosts from 'components/data/query-posts';
+import QueryPostCounts from 'components/data/query-post-counts';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
-import { getSitePostsForQuery } from 'state/posts/selectors';
+import { getAllPostCount } from 'state/posts/counts/selectors';
 
-function EditorDraftsButton( { count, onClick, jetpack, siteId, hideText, query } ) {
+function EditorDraftsButton( { count, onClick, jetpack, siteId, hideText } ) {
 	return (
 		<Button
 			compact borderless
@@ -25,34 +25,28 @@ function EditorDraftsButton( { count, onClick, jetpack, siteId, hideText, query 
 			aria-label={ translate( 'View all drafts' ) }
 		>
 			{ siteId && (
-				<QueryPosts
-					siteId={ siteId }
-					query={ query } />
+				<QueryPostCounts siteId={ siteId } type="post" />
 			) }
 			{ ! hideText && <span>{ translate( 'Drafts' ) }</span> }
 			{ count && ! jetpack ? <Count count={ count } /> : null }
 		</Button>
 	);
-}
+};
 
 EditorDraftsButton.propTypes = {
 	count: PropTypes.number,
 	onClick: PropTypes.func,
 	jetpack: PropTypes.bool,
 	siteId: PropTypes.number,
-	hideText: PropTypes.bool,
-	query: PropTypes.object
+	hideText: PropTypes.bool
 };
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const query = { status: 'draft,pending' };
-	const posts = getSitePostsForQuery( state, siteId, query );
 
 	return {
 		jetpack: isJetpackSite( state, siteId ),
-		count: posts ? posts.length : 0,
-		siteId,
-		query
+		count: getAllPostCount( state, siteId, 'post', 'draft' ),
+		siteId
 	};
 } )( EditorDraftsButton );
