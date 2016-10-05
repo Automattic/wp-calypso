@@ -21,6 +21,11 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 class StateSelect extends Component {
+	static instances = 0;
+
+	componentWillMount() {
+		this.instance = ++this.constructor.instances;
+	}
 
 	recordStateSelectClick = () => {
 		const { eventFormName, recordGoogleEvent: recordEvent } = this.props;
@@ -49,10 +54,10 @@ class StateSelect extends Component {
 				{ isEmpty( this.props.countryStates )
 					? <Input ref="input" { ...this.props } />
 					: <div className={ classes }>
-						<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
+						<FormLabel htmlFor={ `${ this.constructor.name }-${ this.instance }` }>{ this.props.label }</FormLabel>
 						<FormSelect
 							ref="input"
-							id={ this.props.name }
+							id={ `${ this.constructor.name }-${ this.instance }` }
 							name={ this.props.name }
 							value={ this.props.value }
 							disabled={ this.props.disabled }
