@@ -267,8 +267,8 @@ const CancelPurchaseButton = React.createClass( {
 
 		if ( isGoogleApps( this.props.purchase ) ) {
 			cancelationEffectText = this.translate(
-				'You will be refunded %(cost)s, but your Google Apps account will continue working without interruption. ' +
-				'You will be able to manage your Google Apps billing directly through Google.', {
+				'You will be refunded %(cost)s, but your G Suite account will continue working without interruption. ' +
+				'You will be able to manage your G Suite billing directly through Google.', {
 					args: {
 						cost: refundText
 					}

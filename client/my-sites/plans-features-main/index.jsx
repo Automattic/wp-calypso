@@ -242,7 +242,7 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Do you offer email accounts?' ) }
 					answer={ translate(
 						'Yes. If you register a new domain with our premium or business plans, you can optionally' +
-						' add Google apps for work. You can also set up email forwarding for any custom domain' +
+						' add G Suite. You can also set up email forwarding for any custom domain' +
 						' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
 						{
 							components: {

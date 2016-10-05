@@ -258,7 +258,7 @@ module.exports = {
 
 	domainManagementAddGoogleApps( pageContext ) {
 		setTitle(
-			i18n.translate( 'Add Google Apps' ),
+			i18n.translate( 'Add G Suite' ),
 			pageContext
 		);
 

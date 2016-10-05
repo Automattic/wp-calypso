@@ -45,10 +45,10 @@ const AddGoogleApps = React.createClass( {
 				<Header
 					onClick={ this.goToEmail }
 					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.translate( 'Add Google Apps' ) }
+					{ this.translate( 'Add G Suite' ) }
 				</Header>
 
-				<SectionHeader label={ this.translate( 'Add Google Apps' ) } />
+				<SectionHeader label={ this.translate( 'Add G Suite' ) } />
 
 				<AddEmailAddressesCard
 					domains={ this.props.domains }

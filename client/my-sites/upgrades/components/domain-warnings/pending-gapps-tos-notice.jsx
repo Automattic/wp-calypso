@@ -96,8 +96,8 @@ const PendingGappsTosNotice = React.createClass( {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain"
 				text={ this.translate(
-					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, please log in to Google Apps and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
-					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, please log in to Google Apps and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
+					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, please log in to G Suite and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
+					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, please log in to G Suite and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
 					{
 						count: users.length,
 						args: { exclamation, emails: users.join( ', ' ) },
@@ -124,7 +124,7 @@ const PendingGappsTosNotice = React.createClass( {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domains">
 				{ this.translate(
-					'%(exclamation)s To activate your new email addresses, please log in to Google Apps and finish setting them up. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					'%(exclamation)s To activate your new email addresses, please log in to G Suite and finish setting them up. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 					{
 						args: { exclamation },
 						components: { learnMoreLink }

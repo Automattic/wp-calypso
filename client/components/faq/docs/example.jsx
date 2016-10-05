@@ -28,7 +28,7 @@ export default React.createClass( {
 				/>
 				<FAQItem
 					question="Do you offer email accounts?"
-					answer="Yes. If you register a new domain with our premium or business plans, you can optionally add Google apps for work. You can also set up email forwarding for any custom domain registered through WordPress.com."
+					answer="Yes. If you register a new domain with our premium or business plans, you can optionally add G Suite. You can also set up email forwarding for any custom domain registered through WordPress.com."
 				/>
 				<FAQItem
 					question="Another FAQ item?"
@@ -51,7 +51,7 @@ export default React.createClass( {
 				/>
 				<FAQItem
 					question="Do you offer email accounts?"
-					answer="Yes. If you register a new domain with our premium or business plans, you can optionally add Google apps for work. You can also set up email forwarding for any custom domain registered through WordPress.com."
+					answer="Yes. If you register a new domain with our premium or business plans, you can optionally add G Suite. You can also set up email forwarding for any custom domain registered through WordPress.com."
 				/>
 			</FAQ>
 		);
