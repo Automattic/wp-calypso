@@ -25,7 +25,7 @@ import Search from 'components/search';
 import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
-
+import { recordTracksEvent } from 'state/analytics/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import FeatureExample from 'components/feature-example';
@@ -259,6 +259,10 @@ const PluginsMain = React.createClass( {
 
 		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
 			if ( this.props.search ) {
+				this.props.recordTracksEvent( 'calypso_plugins_search_noresults_recommendations_show', {
+					search_query: this.props.search
+				} );
+
 				return <PluginsBrowser
 						hideSearchForm
 						site={ selectedSite ? selectedSite.slug : null }
@@ -418,5 +422,8 @@ export default connect(
 			wporgPlugins: state.plugins.wporg.items
 		};
 	},
-	dispatch => bindActionCreators( { wporgFetchPluginData }, dispatch )
+	dispatch => bindActionCreators( {
+		wporgFetchPluginData,
+		recordTracksEvent
+	}, dispatch )
 )( PluginsMain );
