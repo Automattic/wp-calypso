@@ -9,8 +9,6 @@ var path = require( 'path' ),
 	pages = require( 'pages' ),
 	ReactEngine = require( 'express-react-views' );
 
-var CALYPSO_ENV = process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
-
 /**
  * Returns the server HTTP request handler "app".
  *
@@ -31,7 +29,7 @@ function setup() {
 	// template engine
 	engine = ReactEngine.createEngine( {
 		transformViews: true,
-		beautify: CALYPSO_ENV === 'development'
+		beautify: config( 'env' ) === 'development'
 	} );
 	app.engine( '.jsx', engine );
 	app.set( 'view engine', 'jsx' );
