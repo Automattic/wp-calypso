@@ -380,9 +380,6 @@ const JetpackSSOForm = React.createClass( {
 					action={ this.translate( 'Read Single Sign-On Documentation' ) }
 					actionURL="https://jetpack.com/support/sso/"
 				/>
-				<LoggedOutFormLinks>
-					<HelpButton />
-				</LoggedOutFormLinks>
 			</Main>
 		);
 	},
@@ -454,13 +451,11 @@ const JetpackSSOForm = React.createClass( {
 							onClick={ this.onCancelClick }>
 							{ this.getReturnToSiteText() }
 						</LoggedOutFormLinkItem>
+						<HelpButton />
 					</LoggedOutFormLinks>
 				</div>
 
 				{ this.renderSharedDetailsDialog() }
-				<LoggedOutFormLinks>
-					<HelpButton />
-				</LoggedOutFormLinks>
 			</MainWrapper>
 		);
 	}
