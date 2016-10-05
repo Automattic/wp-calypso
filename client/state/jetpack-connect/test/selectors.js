@@ -10,7 +10,7 @@ import {
 	getConnectingSite,
 	getAuthorizationData,
 	getAuthorizationRemoteQueryData,
-	getAuthorizationRemoteUrl,
+	getAuthorizationRemoteSite,
 	getSessions,
 	getSSOSessions,
 	getSSO,
@@ -70,7 +70,7 @@ describe( 'selectors', () => {
 			expect( getAuthorizationData( state ) ).to.be.undefined;
 		} );
 
-		it( 'should return the current authorize object if there is such', () => {
+		it( 'should return the current authorization object if there is such', () => {
 			const jetpackConnectAuthorize = {
 				authorizationCode: 'abcdefgh12345678',
 				isAuthorizing: false,
@@ -95,7 +95,7 @@ describe( 'selectors', () => {
 			expect( getAuthorizationRemoteQueryData( state ) ).to.be.undefined;
 		} );
 
-		it( 'should return the current authorize query object if there is such', () => {
+		it( 'should return the current authorization query object if there is such', () => {
 			const queryObject = {
 				_wp_nonce: 'nonce',
 				client_id: '12345678',
@@ -116,18 +116,25 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getAuthorizationRemoteUrl()', () => {
-		it( 'should return undefined if user has not started the authorization flow', () => {
+	describe( '#getAuthorizationRemoteSite()', () => {
+		it( 'should return null if user has not started the authorization flow', () => {
 			const state = {
 				jetpackConnect: {}
 			};
 
-			expect( getAuthorizationRemoteUrl( state ) ).to.be.undefined;
+			expect( getAuthorizationRemoteSite( state ) ).to.be.null;
 		} );
 
-		it( 'should return the current authorize site if there is such', () => {
-			const site = 'wordpress.com';
+		it( 'should return the current authorization site if there is such', () => {
 			const state = {
+				sites: {
+					items: {
+						12345678: {
+							ID: 12345678,
+							URL: 'https://wordpress.com/'
+						}
+					}
+				},
 				jetpackConnect: {
 					jetpackConnectAuthorize: {
 						queryObject: {
@@ -137,13 +144,13 @@ describe( 'selectors', () => {
 							scope: 'auth',
 							secret: '1234abcd',
 							state: 12345678,
-							site
+							site: 'https://wordpress.com/'
 						}
 					}
 				}
 			};
 
-			expect( getAuthorizationRemoteUrl( state ) ).to.eql( site );
+			expect( getAuthorizationRemoteSite( state ) ).to.eql( state.sites.items[ 12345678 ] );
 		} );
 	} );
 

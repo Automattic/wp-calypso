@@ -22,8 +22,14 @@ const getAuthorizationRemoteQueryData = ( state ) => {
 	return get( getAuthorizationData( state ), [ 'queryObject' ] );
 };
 
-const getAuthorizationRemoteUrl = ( state ) => {
-	return get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
+const getAuthorizationRemoteSite = ( state ) => {
+	const remoteUrl = get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
+
+	if ( ! remoteUrl ) {
+		return null;
+	}
+
+	return getSiteByUrl( state, remoteUrl );
 };
 
 const getSessions = ( state ) => {
@@ -92,7 +98,7 @@ export default {
 	getConnectingSite,
 	getAuthorizationData,
 	getAuthorizationRemoteQueryData,
-	getAuthorizationRemoteUrl,
+	getAuthorizationRemoteSite,
 	getSessions,
 	getSSOSessions,
 	getSSO,

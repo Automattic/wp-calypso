@@ -28,7 +28,7 @@ import {
 } from 'state/jetpack-connect/actions';
 import {
 	getAuthorizationData,
-	getAuthorizationRemoteUrl,
+	getAuthorizationRemoteSite,
 	getSSOSessions,
 	isCalypsoStartedConnection,
 	hasXmlrpcError
@@ -42,7 +42,6 @@ import Gravatar from 'components/gravatar';
 import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteByUrl } from 'state/sites/selectors';
 import Spinner from 'components/spinner';
 import Site from 'blocks/site';
 import { decodeEntities } from 'lib/formatting';
@@ -642,10 +641,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
-		const remoteUrl = getAuthorizationRemoteUrl( state );
-		const site = remoteUrl
-			? getSiteByUrl( state, remoteUrl )
-			: null;
+		const remoteSite = getAuthorizationRemoteSite( state );
 
 		const requestHasXmlrpcError = () => {
 			return hasXmlrpcError( state );
@@ -658,10 +654,10 @@ export default connect(
 		return {
 			jetpackConnectAuthorize: getAuthorizationData( state ),
 			jetpackSSOSessions: getSSOSessions( state ),
-			isAlreadyOnSitesList: !! site,
+			isAlreadyOnSitesList: !! remoteSite,
 			isFetchingSites,
 			requestHasXmlrpcError,
-			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteUrl )
+			calypsoStartedConnection: remoteSite && isCalypsoStartedConnection( state, remoteSite.URL )
 		};
 	},
 	dispatch => bindActionCreators( {
