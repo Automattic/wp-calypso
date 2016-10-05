@@ -310,7 +310,7 @@ class ImageEditorCrop extends Component {
 
 		const width = right - left,
 			height = bottom - top,
-			handleClassName = 'editor-media-modal-image-editor__crop-handle';
+			handleClassName = 'image-editor__crop-handle';
 
 		const {
 			topBound,
@@ -322,7 +322,7 @@ class ImageEditorCrop extends Component {
 		return (
 			<div>
 				<div
-					className="editor-media-modal-image-editor__crop-background"
+					className="image-editor__crop-background"
 					style={ {
 						top: topBound + 'px',
 						left: left + 'px',
@@ -331,7 +331,7 @@ class ImageEditorCrop extends Component {
 					} }
 				/>
 				<div
-					className="editor-media-modal-image-editor__crop-background"
+					className="image-editor__crop-background"
 					style={ {
 						top: topBound + 'px',
 						left: leftBound + 'px',
@@ -340,7 +340,7 @@ class ImageEditorCrop extends Component {
 					} }
 				/>
 				<div
-					className="editor-media-modal-image-editor__crop-background"
+					className="image-editor__crop-background"
 					style={ {
 						top: bottom + 'px',
 						left: left + 'px',
@@ -349,7 +349,7 @@ class ImageEditorCrop extends Component {
 					} }
 				/>
 				<div
-					className="editor-media-modal-image-editor__crop-background"
+					className="image-editor__crop-background"
 					style={ {
 						top: topBound + 'px',
 						left: right + 'px',
@@ -371,7 +371,7 @@ class ImageEditorCrop extends Component {
 						bottom: bottomBound,
 						right: rightBound
 					} }
-					className="editor-media-modal-image-editor__crop"
+					className="image-editor__crop"
 				/>
 				<Draggable
 					onDrag={ this.onTopLeftDrag }
