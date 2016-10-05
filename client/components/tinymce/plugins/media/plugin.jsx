@@ -506,33 +506,26 @@ function mediaButton( editor ) {
 		media = assign( {}, parsed.media, media );
 
 		// Determine the next usable size
-		let sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
+		const sizeDimensions = SIZE_ORDER.reduce( ( dimensions, size ) => {
+			dimensions[ size ] = MediaUtils.getThumbnailSizeDimensions( size, site );
 
-		// Get the closest possible size when the current size is unknown
-		if ( sizeIndex === -1 ) {
-			const possibleSizes = SIZE_ORDER.filter( size => {
-				const dimensions = MediaUtils.getThumbnailSizeDimensions( size, site );
-
-				return increment > 0 ?
-					dimensions.width > parsed.media.width :
-					dimensions.width < parsed.media.width;
+			return dimensions;
+		}, {} );
+		const possibleSizes = SIZE_ORDER
+			.filter( size => {
+				return sizeDimensions[ size ].width < media.width;
+			} )
+			.filter( size => {
+				return increment > 0
+					? sizeDimensions[ size ].width > parsed.media.width
+					: sizeDimensions[ size ].width < parsed.media.width;
 			} );
-
-			if ( possibleSizes.length ) {
-				const nextSize = increment > 0 ? possibleSizes[ 0 ] : possibleSizes[ possibleSizes.length - 1 ];
-				sizeIndex = SIZE_ORDER.indexOf( nextSize ) - increment;
-			}
-		}
-
 		let size;
-		do {
-			sizeIndex += increment;
-			size = SIZE_ORDER[ Math.max( sizeIndex, 0 ) ];
-			const dimensions = MediaUtils.getThumbnailSizeDimensions( size, site );
-			if ( media.width > dimensions.width || media.height > dimensions.width ) {
-				break;
-			}
-		} while ( sizeIndex > 0 && sizeIndex < SIZE_ORDER.length - 1 );
+		if ( possibleSizes.length ) {
+			size = increment > 0 ? possibleSizes[ 0 ] : possibleSizes[ possibleSizes.length - 1 ];
+		} else {
+			size = SIZE_ORDER[ SIZE_ORDER.length - 1 ];
+		}
 
 		// Generate updated markup
 		const markup = MediaMarkup.get( media, assign( parsed.appearance, { size } ) );
@@ -559,22 +552,27 @@ function mediaButton( editor ) {
 			return;
 		}
 
+		const site = sites.getSelectedSite();
 		const parsed = MediaSerialization.deserialize( event.element );
+		const media = assign( { width: Infinity, height: Infinity }, MediaStore.get( site.ID, parsed.media.ID ) );
 
 		// Hide sizing toggles if the image is transient
-		const isHidden = parsed.media.transient;
+		const isHidden = parsed.media.transient || false;
 		this.classes.toggle( 'hidden', isHidden );
 
 		// Disable decrease button when smaller than the smallest thumbnail size
+		// and the full size is bigger than the current size
 		if ( ! increase ) {
-			const thumb = MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], sites.getSelectedSite() );
-			const isDisabled = ( parsed.media.width || Infinity ) <= thumb.width && ( parsed.media.height || Infinity ) <= thumb.height;
+			const thumb = MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], site );
+			const isDisabled =
+				( parsed.media.width || Infinity ) <= media.width &&
+				( parsed.media.width || Infinity ) <= thumb.width;
 			this.disabled( isDisabled );
 		}
 
 		// Disable increase button when we select full-size
 		if ( increase ) {
-			const isDisabled = parsed.appearance.size === SIZE_ORDER[ SIZE_ORDER.length - 1 ];
+			const isDisabled = ( parsed.media.width || Infinity ) >= media.width;
 			this.disabled( isDisabled );
 		}
 	}
