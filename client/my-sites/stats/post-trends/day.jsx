@@ -67,8 +67,8 @@ export default React.createClass( {
 
 		return (
 			<div className={ classNames( 'post-trends__day', hoveredClass, className ) }
-				onMouseEnter={ this.mouseEnter }
-				onMouseLeave={ this.mouseLeave }
+				onMouseEnter={ postCount > 0 ? this.mouseEnter : null }
+				onMouseLeave={ postCount > 0 ? this.mouseLeave : null }
 				ref="day">
 				{ ( postCount > 0 ) &&
 					<Tooltip
