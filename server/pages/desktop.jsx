@@ -73,7 +73,7 @@ class Desktop extends React.Component {
 					<div id="wpcom" className="wpcom-site">
 						<div className="wpcom-site__logo noticon noticon-wordpress" />
 					</div>
-					{ badge ? this.renderBadge() : null }
+					{ badge && this.renderBadge() }
 
 					{ app &&
 						<script type="text/javascript"
