@@ -150,7 +150,7 @@ const Plans = React.createClass( {
 						<div id="plans">
 							<PlansFeaturesMain
 								site={ this.props.selectedSite }
-								isInSignup={ true }
+								isInSignup={ false }
 								isInJetpackConnect={ true }
 								onUpgradeClick={ this.selectPlan }
 								intervalType={ this.props.intervalType } />
