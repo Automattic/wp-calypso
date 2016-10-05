@@ -429,6 +429,8 @@ function reduxStoreReady( reduxStore ) {
 			renderLayout( context.store );
 		} else if ( ! isMultiTreeLayout && ! previousLayoutIsSingleTree ) {
 			debug( 'Unmounting multi-tree layout' );
+			ReactDom.unmountComponentAtNode( document.getElementById( 'primary' ) );
+			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 			ReactDom.unmountComponentAtNode( document.getElementById( 'wpcom' ) );
 		}
 		next();
