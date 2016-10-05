@@ -161,6 +161,7 @@
 		min-height: initial;
 		align-self: stretch;
 		resize: none;
+		height: 100%;
 
 		&:focus, &:active {
 			outline: none;
@@ -199,10 +200,10 @@
 .happychat__message-text {
 	font-size: 14px;
 	flex: 1;
-	padding: 8px;
+	padding: 8px 12px;
 	border-radius: 8px 8px 8px 0;
-	color: $white;
-	background: $blue-medium;
+	color: $gray-dark;
+	background: $white;
 	position: relative;
 
 	overflow-wrap: break-word;
@@ -223,30 +224,30 @@
 		display: block;
 		position: absolute;
 		bottom: 0;
-		left: -6px;
+		left: -8px;
 
 		// draw a triangle
 		width: 0;
 		height: 0;
-		border-bottom: 6px solid $blue-medium;
-		border-left: 6px solid transparent;
+		border-bottom: 8px solid $white;
+		border-left: 8px solid transparent;
 	}
 
 	.is-user-message & {
-		background: $white;
-		color: $gray-dark;
+		color: $white;
+		background: $blue-medium;
 		border-radius: 8px 8px 0 8px;
 
 		&:after {
 			left: auto;
-			right: -6px;
+			right: -8px;
 
 			// draw a triangle
 			width: 0;
 			height: 0;
-			border-bottom: 6px solid $white;
+			border-bottom: 8px solid $blue-medium;
 			border-left: none;
-			border-right: 6px solid transparent;
+			border-right: 8px solid transparent;
 		}
 	}
 }
@@ -277,7 +278,7 @@
 	flex: 0 0 auto;
 	display: flex;
 	flex-direction: row-reverse;
-	padding: 0 8px;
+	padding: 0 10px;
 	margin: 6px 0;
 
 	a {
@@ -336,6 +337,7 @@
 
 	.happychat__container.is-open {
 		position: fixed;
+		z-index: 0; // place it under the notifications drawer
 		height: calc( 100% - 47px );
 		bottom: 0;
 		right: 0;
