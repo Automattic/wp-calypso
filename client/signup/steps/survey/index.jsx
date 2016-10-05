@@ -10,11 +10,14 @@ import SurveyStepV2 from './survey-step-v2';
 export default React.createClass( {
 	displayName: 'SurveyStep',
 
-  render() {
-    switch ( abtest( 'signupSurveyStep' ) ) {
-      case 'surveyStepV1': return ( <SurveyStepV1 {... this.props } /> );
-      case 'surveyStepV2': return ( <SurveyStepV2 {... this.props } /> );
-      default: throw new Error( 'Unknown variation' );
-    }
-  }
+	render() {
+		switch ( abtest( 'signupSurveyStep' ) ) {
+			case 'surveyStepV1':
+				return ( <SurveyStepV1 { ... this.props } /> );
+			case 'surveyStepV2':
+				return ( <SurveyStepV2 { ... this.props } /> );
+			default:
+				throw new Error( 'Unknown variation' );
+		}
+	}
 } );
