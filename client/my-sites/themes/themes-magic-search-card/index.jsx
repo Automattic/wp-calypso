@@ -50,8 +50,8 @@ const ThemesMagicSearchCard = React.createClass( {
 		return {
 			isMobile: isMobile(),
 			searchIsOpen: false,
-			searchInput: "",
-			editedSearchElement: "",
+			searchInput: '',
+			editedSearchElement: '',
 			taxonomies: {},
 			cursorPosition: 0,
 		};
@@ -79,57 +79,54 @@ const ThemesMagicSearchCard = React.createClass( {
 
 	findEditedToken( tokens, cursorPosition ) {
 		let tokenEnd = 0;
-		for( let i = 0; i <  tokens.length; i ++ ) {
+		for ( let i = 0; i < tokens.length; i++ ) {
 			tokenEnd += tokens[ i ].length;
 
 			const cursorIsInsideTheToken = cursorPosition < tokenEnd;
-			if( cursorIsInsideTheToken ) {
+			if ( cursorIsInsideTheToken ) {
 				// "" indicates full suggestion request
 				return tokens[ i ].trim();
 			}
 
 			const cursorAtEndOfTheToken = cursorPosition === tokenEnd;
-			if( cursorAtEndOfTheToken ) {
+			if ( cursorAtEndOfTheToken ) {
 				//If token is whitespace only and we are at its end
 				//maybe we are at the start of next token
-				const tokenIsWhiteSpace = tokens[ i ].trim() === "";
+				const tokenIsWhiteSpace = tokens[ i ].trim() === '';
 				//if this one is white space only next
 				//next one must be text
 				const moreTokensExist = i < tokens.length - 1;
-				if( tokenIsWhiteSpace && moreTokensExist ) {
+				if ( tokenIsWhiteSpace && moreTokensExist ) {
 					return tokens[ i + 1 ];
-				} else {
-					// "" indicates full suggestion request
-					return tokens[ i ].trim();
 				}
-			} else {
-				continue; // to the next token
+				// "" indicates full suggestion request
+				return tokens[ i ].trim();
 			}
-
+			continue; // to the next token
 		}
 
-		return "";
+		return '';
 	},
 
 	findTextForSuggestions( input ) {
-		let val = input;
+		const val = input;
 		const _this = this;
-		window.requestAnimationFrame(function() {
-			_this.setState( { cursorPosition: val.slice( 0, _this.refs['url-search'].refs.searchInput.selectionStart ).length } );
-			console.log( _this.state.cursorPosition ) ;
-			const tokens = input.split(/(\s+)/);
+		window.requestAnimationFrame( function() {
+			_this.setState( { cursorPosition: val.slice( 0, _this.refs[ 'url-search' ].refs.searchInput.selectionStart ).length } );
+			console.log( _this.state.cursorPosition );
+			const tokens = input.split( /(\s+)/ );
 
 			// Get rid of empty match at end
-			tokens[tokens.length -1] === "" && tokens.splice( tokens.length - 1 , 1 );
+			tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
 
-			const text =  _this.findEditedToken( tokens, _this.state.cursorPosition );
+			const text = _this.findEditedToken( tokens, _this.state.cursorPosition );
 			_this.setState( { editedSearchElement: text } );
 		} );
 	},
 
 	onSearchChange( input ) {
 		this.findTextForSuggestions( input );
-		this.setState( {searchInput: input } );
+		this.setState( { searchInput: input } );
 	},
 
 	onBlur() {
