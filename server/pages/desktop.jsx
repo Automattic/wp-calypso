@@ -7,6 +7,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { jsonStringifyForHtml } from 'sanitize';
 import Head from './head';
 import Badge from './badge';
@@ -31,7 +32,6 @@ class Desktop extends React.Component {
 			badge,
 			faviconURL: faviconUrl,
 			i18nLocaleScript,
-			isFluidWidth,
 			isRTL,
 			lang,
 		} = this.props;
@@ -39,7 +39,7 @@ class Desktop extends React.Component {
 		return (
 			<html lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ classNames( 'is-desktop', { 'is-fluid-with': isFluidWidth } ) }>
+				className={ classNames( 'is-desktop', { 'is-fluid-with': !! config.isEnabled( 'fluid-width' ) } ) }>
 				<Head title="WordPress.com" faviconUrl={ faviconUrl } styleCss={ this.getStylesheet() }>
 					<link rel="stylesheet" href="/desktop/wordpress-desktop.css" />
 					<script src="/calypso/build.js" />

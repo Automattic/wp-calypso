@@ -129,8 +129,6 @@ function getDefaultContext( request ) {
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
 		faviconURL: '//s1.wp.com/i/favicon.ico',
-		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
-		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		devDocsURL: '/devdocs',
 		store: createReduxStore()
 	} );

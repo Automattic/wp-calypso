@@ -3,6 +3,11 @@
  */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+
 const BranchName = ( { branchName, commitChecksum } ) => (
 	<span className={ 'environment branch-name' } title={ 'Commit ' + commitChecksum }>
 		{ branchName }
@@ -18,7 +23,6 @@ const DevDocsLink = ( { devDocsUrl, docs } ) => (
 );
 
 const Badge = ( {
-  abTestHelper,
   badge,
   branchName,
   commitChecksum,
@@ -28,7 +32,7 @@ const Badge = ( {
   feedbackURL: feedbackUrl
 } ) => (
 	<div className="environment-badge">
-		{ abTestHelper && <div className="environment is-tests" /> }
+		{ config.isEnabled( 'dev/test-helper' ) && <div className="environment is-tests" /> }
 		{ branchName && branchName !== 'master' &&
       <BranchName branchName={ branchName } commitChecksum={ commitChecksum } />
     }

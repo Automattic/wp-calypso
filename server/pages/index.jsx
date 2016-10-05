@@ -6,6 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import { jsonStringifyForHtml } from 'sanitize';
 import Head from './head';
 import Badge from './badge';
@@ -36,7 +37,6 @@ class Markup extends React.Component {
 			i18nLocaleScript,
 			initialReduxState,
 			isDebug,
-			isFluidWidth,
 			isRTL,
 			jsFile,
 			lang,
@@ -49,7 +49,7 @@ class Markup extends React.Component {
 		return (
 			<html lang={ lang }
 				dir={ isRTL ? 'rtl' : 'ltr' }
-				className={ isFluidWidth ? 'is-fluid-with' : null }>
+				className={ !! config.isEnabled( 'fluid-width' ) ? 'is-fluid-with' : null }>
 				<Head title={ head.title } faviconUrl={ faviconUrl } styleCss={ this.getStylesheet() }>
 					{ head.metas.map( ( { name, property, content } ) => (
 						<meta name={ name } property={ property } content={ content } />
