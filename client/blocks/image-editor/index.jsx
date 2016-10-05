@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import path from 'path';
@@ -26,23 +26,21 @@ import {
 	getImageEditorFileInfo
 } from 'state/ui/editor/image-editor/selectors';
 
-const MediaModalImageEditor = React.createClass( {
+const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
 
-	displayName: 'MediaModalImageEditor',
-
 	propTypes: {
-		site: React.PropTypes.object,
-		items: React.PropTypes.array,
-		selectedIndex: React.PropTypes.number,
-		src: React.PropTypes.string,
-		fileName: React.PropTypes.string,
-		mimeType: React.PropTypes.string,
-		setImageEditorFileInfo: React.PropTypes.func,
-		title: React.PropTypes.string,
-		translate: React.PropTypes.func,
-		onImageEditorClose: React.PropTypes.func,
-		onImageEditorCancel: React.PropTypes.func
+		site: PropTypes.object,
+		items: PropTypes.array,
+		selectedIndex: PropTypes.number,
+		src: PropTypes.string,
+		fileName: PropTypes.string,
+		mimeType: PropTypes.string,
+		setImageEditorFileInfo: PropTypes.func,
+		title: PropTypes.string,
+		translate: PropTypes.func,
+		onImageEditorClose: PropTypes.func,
+		onImageEditorCancel: PropTypes.func
 	},
 
 	getDefaultProps() {
@@ -60,16 +58,22 @@ const MediaModalImageEditor = React.createClass( {
 	},
 
 	componentDidMount() {
+		const {
+			items,
+			selectedIndex,
+			site
+		} = this.props;
+
 		let src,
 			fileName = 'default',
 			mimeType = 'image/png',
 			title = 'default';
 
-		const media = this.props.items ? this.props.items[ this.props.selectedIndex ] : null;
+		const media = items ? items[ selectedIndex ] : null;
 
 		if ( media ) {
 			src = MediaUtils.url( media, {
-				photon: this.props.site && ! this.props.site.is_private
+				photon: site && ! site.is_private
 			} );
 			fileName = media.file || path.basename( src );
 			mimeType = MediaUtils.getMimeType( media );
@@ -183,11 +187,12 @@ const MediaModalImageEditor = React.createClass( {
 						<EditCanvas
 							ref="editCanvas"
 							onLoadError={ this.onLoadCanvasError }
-							/>
+						/>
 						<EditToolbar />
 						<EditButtons
 							onCancel={ this.onCancel }
-							onDone={ this.onDone } />
+							onDone={ this.onDone }
+						/>
 					</div>
 				</figure>
 			</div>
@@ -202,4 +207,4 @@ export default connect(
 		resetAllImageEditorState,
 		setImageEditorFileInfo
 	}
-)( localize( MediaModalImageEditor ) );
+)( localize( ImageEditor ) );
