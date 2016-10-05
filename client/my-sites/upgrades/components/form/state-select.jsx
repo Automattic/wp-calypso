@@ -22,11 +22,13 @@ import scrollIntoViewport from 'lib/scroll-into-viewport';
 
 class StateSelect extends Component {
 
-	recordStateSelectClick( eventFormName ) {
+	recordStateSelectClick = () => {
+		const { eventFormName, recordGoogleEvent: recordEvent } = this.props;
+
 		if ( eventFormName ) {
-			recordGoogleEvent( 'Upgrades', `Clicked ${ eventFormName } State Select` );
+			recordEvent( 'Upgrades', `Clicked ${ eventFormName } State Select` );
 		}
-	}
+	};
 
 	focus() {
 		const node = ReactDom.findDOMNode( this.refs.input );
@@ -54,7 +56,7 @@ class StateSelect extends Component {
 							value={ this.props.value }
 							disabled={ this.props.disabled }
 							onChange={ this.props.onChange }
-							onClick={ this.recordStateSelectClick.bind( this, this.props.eventFormName ) }
+							onClick={ this.recordStateSelectClick }
 							isError={ this.props.isError } >
 
 							<option key="--" value="--" disabled="disabled">{ this.props.translate( 'Select State' ) }</option>
@@ -84,8 +86,9 @@ StateSelect.propTypes = {
 	value: PropTypes.string,
 };
 
-module.exports = connect(
+export default connect(
 	( state, { countryCode } ) => ( {
 		countryStates: countryCode ? getCountryStates( state, countryCode ) : []
-	} )
+	} ),
+	{ recordGoogleEvent }
 )( localize( StateSelect ) );
