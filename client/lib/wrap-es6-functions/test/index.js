@@ -1,54 +1,40 @@
 /**
  * External Dependencies
  */
-import partial from 'lodash/partial';
 import assert from 'assert';
-import isFunction from 'lodash/isFunction';
+import { isFunction, fromPairs, partial } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
 
-describe( 'wrapping', () => {
-	const arrayProps = [ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find' ].filter( key => isFunction( Array.prototype[ key ] ) ),
-		stringProps = [ 'codePointAt', 'normalize', 'repeat', 'startsWith', 'endsWith', 'includes' ].filter(
-			key => isFunction( String.prototype[ key ] )
-		),
-		regExpProps = [ 'flags' ].filter( key => isFunction( RegExp.prototype[ key ] ) );
-	let consoleSpy, sandbox;
-
-	function installSpies( props, obj ) {
-		props.forEach( key => {
-			sandbox.spy( obj, key );
-		} );
-	}
-
+describe( 'wrap-es6-functions', () => {
 	function assertCall( obj, args, key ) {
 		it( key, () => {
 			if ( isFunction( obj[ key ] ) ) {
 				obj[ key ].apply( obj, args );
-				assert( consoleSpy.calledOnce );
+				assert( console.error.calledOnce ); // eslint-disable-line no-console
 			}
 		} );
 	}
 
-	useSandbox( newSandbox => sandbox = newSandbox );
-	before( () => {
-		consoleSpy = sandbox.stub( console, 'error' );
-		installSpies( arrayProps, Array.prototype );
-		installSpies( stringProps, String.prototype );
-		installSpies( regExpProps, RegExp.prototype );
+	useSandbox( ( sandbox ) => {
+		sandbox.stub( console, 'error' );
+
+		fromPairs( [
+			[ Array, [ 'keys', 'entries', 'values', 'findIndex', 'fill', 'find' ] ],
+			[ String, [ 'codePointAt', 'normalize', 'repeat', 'startsWith', 'endsWith', 'includes' ] ],
+			[ RegExp, [ 'flags' ] ]
+		], ( object, keys ) => {
+			keys.forEach( ( key ) => {
+				if ( isFunction( object.prototype[ key ] ) ) {
+					sandbox.spy( object.prototype, key );
+				}
+			} );
+		} );
 
 		require( '../' )();
-	} );
-
-	after( () => {
-		sandbox.restore();
-	} );
-
-	beforeEach( () => {
-		consoleSpy.reset();
 	} );
 
 	describe( 'Array', () => {
