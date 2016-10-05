@@ -1,3 +1,6 @@
+// TODO (seear): This middleware should be made isomorphic once we
+// have a solution for isomorphic redirects.
+
 /**
  * External dependencies
  */
