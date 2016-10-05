@@ -79,11 +79,11 @@ export default React.createClass( {
 		return (
 			<ResizableIframe
 				key={ key }
-				sandbox="allow-scripts"
 				{ ...omit( this.props, 'body', 'scripts', 'styles' ) }
 				src="https://wpcomwidgets.com/render/"
 				onLoad={ this.onFrameLoad }
 				frameBorder="0"
+				sandbox="allow-scripts"
 				className={ classes } />
 		);
 	}

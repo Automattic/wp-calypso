@@ -27,7 +27,7 @@ function VideoView( { siteId, content, width } ) {
 	}, parse( content ) ) );
 
 	return (
-		<Shortcode sandbox={ null } { ...{ siteId, width } }>
+		<Shortcode { ...{ siteId, width } }>
 			{ shortcode }
 		</Shortcode>
 	);
