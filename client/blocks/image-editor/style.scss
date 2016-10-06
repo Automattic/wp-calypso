@@ -1,8 +1,8 @@
 .image-editor__content {
 	flex-direction: column;
 	position: absolute;
-		top: 0px;
-		bottom: 0px;
+		top: 0;
+		bottom: 0;
 	background: darken($gray, 52%);
 }
 
@@ -33,7 +33,7 @@
 	color: $gray;
 }
 
-.editor-media-modal-image-editor__canvas-container {
+.image-editor__canvas-container {
 	flex: 10;
 	position: relative;
 	width: 100%;
@@ -41,7 +41,7 @@
 	overflow: hidden;
 }
 
-.editor-media-modal-image-editor__canvas {
+.image-editor__canvas {
 	position: absolute;
 	top: 50%;
 	left: 50%;

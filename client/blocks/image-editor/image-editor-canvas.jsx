@@ -239,12 +239,12 @@ class ImageEditorCanvas extends Component {
 
 		const { imageLoaded } = this.state;
 
-		const canvasClasses = classNames( 'editor-media-modal-image-editor__canvas', {
+		const canvasClasses = classNames( 'image-editor__canvas', {
 			'is-placeholder': ! imageLoaded
 		} );
 
 		return (
-			<div className="editor-media-modal-image-editor__canvas-container">
+			<div className="image-editor__canvas-container">
 				{ imageLoaded && <ImageEditorCrop /> }
 				<canvas
 					ref="canvas"
