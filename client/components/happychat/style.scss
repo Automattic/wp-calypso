@@ -282,7 +282,7 @@
 	margin: 6px 0;
 
 	a {
-		color: lighten( $blue-light, 10% );
+		color: $blue-medium;
 		text-decoration: underline;
 	}
 
@@ -295,7 +295,7 @@
 		margin-left: auto;
 
 		a {
-			color: $blue-medium;
+			color: lighten( $blue-light, 10% );
 		}
 
 	}
