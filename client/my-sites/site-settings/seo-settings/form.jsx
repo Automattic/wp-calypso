@@ -39,7 +39,6 @@ import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
-import SearchPreview from 'components/seo/search-preview';
 import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
 import { isBusiness, isEnterprise } from 'lib/products-values';
@@ -345,12 +344,10 @@ export const SeoForm = React.createClass( {
 	render() {
 		const { showAdvancedSeo, showWebsiteMeta, showUpgradeNudge } = this.props;
 		const {
-			description: siteDescription,
 			slug = '',
 			settings: {
 				blog_public = 1
 			} = {},
-			title: siteTitle
 		} = this.props.site;
 
 		const {
@@ -370,9 +367,6 @@ export const SeoForm = React.createClass( {
 		const isDisabled = isSitePrivate || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
-		const seoTitle = siteDescription.length
-			? `${ siteTitle } | ${ siteDescription }`
-			: siteTitle;
 		const siteUrl = `https://${ slug }/`;
 		const sitemapUrl = `${ siteUrl }sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
@@ -402,33 +396,6 @@ export const SeoForm = React.createClass( {
 				}
 			</Button>
 		);
-
-		let preview = (
-			<SearchPreview
-				title={ seoTitle }
-				url={ siteUrl }
-				snippet={ frontPageMetaDescription }
-			/>
-		);
-
-		if ( config.isEnabled( 'manage/advanced-seo' ) ) {
-			preview = (
-				<FormSettingExplanation>
-					<Button
-						className="seo-settings__preview-button"
-						onClick={ this.showPreview }
-					>
-						{ this.translate( 'Show Previews' ) }
-					</Button>
-					<span className="seo-settings__preview-explanation">
-						{ this.translate(
-							'See how this will look on ' +
-							'Google, Facebook, and Twitter.'
-						) }
-					</span>
-				</FormSettingExplanation>
-			);
-		}
 
 		/* eslint-disable react/jsx-no-target-blank */
 		return (
@@ -484,9 +451,9 @@ export const SeoForm = React.createClass( {
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
 								{ submitButton }
 							</SectionHeader>
-							<Card compact="true" className="page-title__header">
-								<img className="page-title__header-image" src="/calypso/images/seo/page-title.svg" />
-								<p className="page-title__header-text">
+							<Card compact="true" className="seo-settings__page-title__header">
+								<img className="seo-settings__page-title__header-image" src="/calypso/images/seo/page-title.svg" />
+								<p className="seo-settings__page-title__header-text">
 								{ this.translate(
 									'You can set the structure of page titles for different sections of your site. ' +
 									'Doing this will change the way your site title is displayed in search engines, ' +
@@ -535,7 +502,20 @@ export const SeoForm = React.createClass( {
 										<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
 									}
 								</p>
-								{ preview }
+								<FormSettingExplanation>
+									<Button
+										className="seo-settings__preview-button"
+										onClick={ this.showPreview }
+									>
+										{ this.translate( 'Show Previews' ) }
+									</Button>
+									<span className="seo-settings__preview-explanation">
+										{ this.translate(
+											'See how this will look on ' +
+											'Google, Facebook, and Twitter.'
+										) }
+									</span>
+								</FormSettingExplanation>
 							</Card>
 						</div>
 					}
