@@ -11,8 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import Gridicon from 'components/gridicon';
 
-export const UnwrappedNotice = React.createClass( {
-	displayName: 'Notice',
+export const Notice = React.createClass( {
 	dismissTimeout: null,
 
 	getDefaultProps() {
@@ -133,4 +132,4 @@ export const UnwrappedNotice = React.createClass( {
 	}
 } );
 
-export default localize( UnwrappedNotice );
+export default localize( Notice );
