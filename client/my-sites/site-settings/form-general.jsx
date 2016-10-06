@@ -590,7 +590,7 @@ const FormGeneral = React.createClass( {
 						{ ! isBusiness( site.plan ) && <UpgradeNudge
 							className="site-settings__footer-credit-nudge"
 							feature={ FEATURE_NO_BRANDING }
-							title={ this.translate( 'Remove the footer credit entirely with Business Plan' ) }
+							title={ this.translate( 'Remove the footer credit entirely with WordPress.com Business' ) }
 							message={ this.translate( 'Upgrade to remove the footer credit, add Google Analytics and more' ) }
 							icon="customize"
 						/> }
