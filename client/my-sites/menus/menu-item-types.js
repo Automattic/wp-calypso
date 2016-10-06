@@ -195,7 +195,7 @@ MenuItemTypes.prototype.parse = function() {
 			show: true,
 			label: type.label, //FIXME: how do we handle i18n here?
 			notFoundLabel: notFoundLabel && endsWith( notFoundLabel, '.' ) ? notFoundLabel : notFoundLabel + '.',
-			createLink: `/edit/${ type.name }/${ this.site.slug }`,
+			createLink: `/edit/${ type.name }/${ this.site.slug }`, // TODO: Use the getEditorNewPostPath() selector.
 			gaEventLabel: type.label
 		} );
 	}, this );

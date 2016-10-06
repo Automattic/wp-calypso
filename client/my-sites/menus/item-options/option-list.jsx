@@ -100,7 +100,6 @@ var OptionList = React.createClass( {
 						<EmptyPlaceholder isSearch={ !! ( this.state.searchTerm && this.state.searchTerm.length ) }
 							notFoundLabel={ this.props.itemType.notFoundLabel }
 							createLink={ this.props.itemType.createLink }
-							typeFamily= { this.props.itemType.family }
 							typeName={ this.props.itemType.name } />
 					}
 				</form>
