@@ -77,10 +77,10 @@ const ThemesMagicSearchCard = React.createClass( {
 					const separator = ':';
 					const [ taxonomy, filter ] = token.split( separator );
 					return (
-						<span className="themes-magic-search-card__search-token" key={ i }>
-							<span className="themes-magic-search-card__search-taxonomy">{ taxonomy }</span>
-							<span className="themes-magic-search-card__search-separator">{ separator }</span>
-							<span className="themes-magic-search-card__search-filter">{ filter }</span>
+						<span className="themes-magic-search-card__token" key={ i }>
+							<span className="themes-magic-search-card__token-taxonomy">{ taxonomy }</span>
+							<span className="themes-magic-search-card__token-separator">{ separator }</span>
+							<span className="themes-magic-search-card__token-filter">{ filter }</span>
 						</span>
 					);
 				}

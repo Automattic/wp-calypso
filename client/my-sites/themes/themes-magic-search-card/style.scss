@@ -44,7 +44,7 @@
 
 }
 
-.themes-magic-search-card__search-token {
+.themes-magic-search-card__token {
 	font: inherit;
 	pointer-events: none;
 	color: rgba(0, 0, 0, 0.2);
@@ -53,7 +53,7 @@
 	position: relative;
 	z-index: 21; //needs to be made in a proper way.
 
-		.themes-magic-search-card__search-taxonomy {
+		.themes-magic-search-card__token-taxonomy {
 			font: inherit;
 			pointer-events: none;
 			color: inherit;
@@ -65,7 +65,7 @@
 			z-index: 1;
 		}
 
-		.themes-magic-search-card__search-separator {
+		.themes-magic-search-card__token-separator {
 			font: inherit;
 			pointer-events: none;
 			color: rgba(0, 0, 0, 0);
@@ -75,7 +75,7 @@
 			z-index: 1;
 		}
 
-		.themes-magic-search-card__search-filter {
+		.themes-magic-search-card__token-filter {
 			font: inherit;
 			pointer-events: none;
 			color: inherit;
@@ -88,7 +88,7 @@
 		}
 }
 
-.themes-magic-search-card__search-token::before {
+.themes-magic-search-card__token::before {
 	content: '';
 	position: absolute;
 	background-color: transparent;
