@@ -13,12 +13,7 @@ import {
 	KEYRING_SERVICES_REQUEST_FAILURE,
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 } from 'state/action-types';
-import {
-	requestKeyringServices,
-	receiveKeyringServices,
-	successKeyringServicesRequest,
-	failKeyringServicesRequest,
-} from '../actions';
+import { requestKeyringServices } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
@@ -33,8 +28,10 @@ describe( 'actions', () => {
 					.persist()
 					.get( '/rest/v1.1/meta/external-services/' )
 					.reply( 200, {
-						facebook: { ID: 'facebook' },
-						twitter: { ID: 'twitter' },
+						services: {
+							facebook: { ID: 'facebook' },
+							twitter: { ID: 'twitter' },
+						}
 					} );
 			} );
 
@@ -93,50 +90,6 @@ describe( 'actions', () => {
 						error: sinon.match( { message: 'A server error occurred' } )
 					} );
 				} );
-			} );
-		} );
-	} );
-
-	describe( 'receiveKeyringServices()', () => {
-		it( 'should return an action object', () => {
-			const action = receiveKeyringServices( {
-				facebook: { ID: 'facebook' },
-				twitter: { ID: 'twitter' },
-			} );
-
-			expect( action ).to.eql( {
-				type: KEYRING_SERVICES_RECEIVE,
-				services: {
-					facebook: { ID: 'facebook' },
-					twitter: { ID: 'twitter' },
-				}
-			} );
-		} );
-	} );
-
-	describe( 'successKeyringServicesRequest()', () => {
-		it( 'should return an action object', () => {
-			const action = successKeyringServicesRequest();
-
-			expect( action ).to.eql( {
-				type: KEYRING_SERVICES_REQUEST_SUCCESS,
-			} );
-		} );
-	} );
-
-	describe( 'failKeyringServicesRequest()', () => {
-		it( 'should return an action object', () => {
-			const action = failKeyringServicesRequest( {
-				error: 'server_error',
-				message: 'A server error occurred',
-			} );
-
-			expect( action ).to.eql( {
-				type: KEYRING_SERVICES_REQUEST_FAILURE,
-				error: {
-					error: 'server_error',
-					message: 'A server error occurred',
-				}
 			} );
 		} );
 	} );
