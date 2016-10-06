@@ -67,7 +67,13 @@ var webpackConfig = {
 			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs\/search-index)/,
-				loader: 'babel-loader'
+				loader: 'babel',
+				query: {
+					plugins: [ [
+						path.join( __dirname, 'server', 'bundler', 'babel', 'babel-plugin-transform-wpcalypso-async' ),
+						{ async: false }
+					] ]
+				}
 			},
 			{
 				test: /\.json$/,
