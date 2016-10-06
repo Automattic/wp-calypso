@@ -88,13 +88,14 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		var isSticky, isPublished, isPending, canPublish, isScheduled;
+		var isSticky, isPublished, isPending, canPublish, isScheduled, isPrivate;
 
 		if ( this.props.post ) {
 			isSticky = this.props.post.sticky;
 			isPending = postUtils.isPending( this.props.post );
 			isPublished = this.props.savedPost.status === 'publish';
 			isScheduled = this.props.savedPost.status === 'future';
+			isPrivate = this.props.savedPost.status === 'private';
 			canPublish = siteUtils.userCan( 'publish_posts', this.props.site );
 		}
 
@@ -162,7 +163,7 @@ export default React.createClass( {
 						/>
 					</label>
 				}
-				{ ( isPublished || isScheduled || isPending && ! canPublish ) &&
+				{ ( isPublished || isPrivate || isScheduled || isPending && ! canPublish ) &&
 					<Button
 						className="edit-post-status__revert-to-draft"
 						onClick={ this.revertToDraft }
