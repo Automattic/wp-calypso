@@ -69,7 +69,7 @@ export default React.createClass( {
 		};
 		return (
 			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
-				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
+				<Gridicon icon={ icon } className="survey-step__vertical__icon" />
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
 		);
@@ -79,11 +79,11 @@ export default React.createClass( {
 		const blogLabel = this.translate( 'What is your blog about?' );
 		const siteLabel = this.translate( 'What is your website about?' );
 
-		let verticalsClasses = classNames(
+		const verticalsClasses = classNames(
 				'survey-step__verticals',
 				{ active: ! this.state.stepOne } );
 
-		let subVerticalsClasses = classNames(
+		const subVerticalsClasses = classNames(
 				'survey-step__sub-verticals',
 				{ active: this.state.stepOne } );
 
