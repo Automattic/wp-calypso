@@ -48,7 +48,7 @@ function refreshCardFactory( /* post */ ) {
 
 const FollowingStream = ( props ) => {
 	let cardFactory = null;
-	if ( config.isEnabled( 'reader/refresh-2016-07' ) ) {
+	if ( config.isEnabled( 'reader/refresh/stream' ) ) {
 		cardFactory = refreshCardFactory;
 	}
 	return (
