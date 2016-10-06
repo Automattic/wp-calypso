@@ -286,7 +286,12 @@ const InvitePeople = React.createClass( {
 
 	renderRoleExplanation() {
 		return (
-			<a target="_blank" rel="noopener noreferrer" href="http://en.support.wordpress.com/user-roles/" onClick={ this.onClickRoleExplanation }>
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="http://en.support.wordpress.com/user-roles/"
+				onClick={ this.onClickRoleExplanation }
+			>
 				{ this.translate( 'Learn more about roles' ) }
 			</a>
 		);
@@ -315,7 +320,7 @@ const InvitePeople = React.createClass( {
 				<Card>
 					<EmailVerificationGate>
 						<form onSubmit={ this.submitForm } >
-							<FormFieldset>
+							<div role="group" className="invite-people__token-field-wrapper">
 								<FormLabel>{ this.translate( 'Usernames or Emails' ) }</FormLabel>
 								<TokenField
 									isBorderless
@@ -326,14 +331,14 @@ const InvitePeople = React.createClass( {
 									value={ this.getTokensWithStatus() }
 									onChange={ this.onTokensChange }
 									onFocus={ this.onFocusTokenField }
-									disabled={ this.state.sendingInvites }/>
+									disabled={ this.state.sendingInvites } />
 								<FormSettingExplanation>
 									{ this.translate(
 										'Invite up to 10 email addresses and/or WordPress.com usernames. ' +
 										'Those needing a username will be sent instructions on how to create one.'
 									) }
 								</FormSettingExplanation>
-							</FormFieldset>
+							</div>
 
 							<RoleSelect
 								id="role"
