@@ -103,14 +103,14 @@ export default React.createClass( {
 		}
 
 		return (
-			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
+			<form id="site-settings" onSubmit={ this.handleSubmitForm } onChange={ this.markChanged }>
 				{ this.renderNudge() }
 				<SectionHeader label={ this.translate( 'Analytics Settings' ) }>
 					<Button
 						primary
 						compact
 						disabled={ this.isSubmitButtonDisabled() }
-						onClick={ this.submitForm }
+						onClick={ this.handleSubmitForm }
 						>{
 							this.state.submittingForm
 									? this.translate( 'Saving…' )

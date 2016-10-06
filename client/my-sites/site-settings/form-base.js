@@ -133,12 +133,17 @@ module.exports = {
 		this.recordEvent( `Clicked to ${event} Jetpack ${module}` );
 	},
 
-	submitForm( event ) {
-		const { site } = this.props;
-
+	handleSubmitForm( event ) {
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 			event.preventDefault();
 		}
+
+		this.submitForm();
+		this.recordEvent( 'Clicked Save Settings Button' );
+	},
+
+	submitForm() {
+		const { site } = this.props;
 
 		notices.clearNotices( 'notices' );
 
@@ -168,7 +173,5 @@ module.exports = {
 				this.onSaveComplete( error );
 			}
 		} );
-
-		this.recordEvent( 'Clicked Save Settings Button' );
 	}
 };
