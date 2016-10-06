@@ -92,7 +92,7 @@ const SiteSettingsFormWriting = React.createClass( {
 	},
 
 	submitFormAndActivateCustomContentModule( event ) {
-		this.submitForm( event );
+		this.handleSubmitForm( event );
 
 		// Only need to activate module for Jetpack sites
 		if ( ! this.props.site || ! this.props.site.jetpack ) {

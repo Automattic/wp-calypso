@@ -148,6 +148,16 @@
 	}
 }
 
+.site-settings__amp {
+	.section-header__actions {
+		display: flex;
+
+		button {
+			margin-left: 15px;
+		}
+	}
+}
+
 .site-settings__footer-credit-container {
 	margin-bottom: 16px;
 }
@@ -333,4 +343,3 @@
 .site-settings__jetpack-prompt-text {
 	flex: 4;
 }
-
