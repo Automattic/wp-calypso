@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
 	EXPORT_ADVANCED_SETTINGS_FETCH,
 	EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
@@ -56,7 +56,7 @@ describe( 'actions', () => {
 		} }
 	} );
 
-	before( () => {
+	useNock( ( nock ) => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.get( '/rest/v1.1/sites/100658273/exports/settings' )
@@ -77,10 +77,6 @@ describe( 'actions', () => {
 
 	beforeEach( () => {
 		spy.reset();
-	} );
-
-	after( () => {
-		nock.cleanAll();
 	} );
 
 	describe( '#advancedSettingsFetch()', () => {

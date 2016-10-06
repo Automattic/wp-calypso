@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -17,7 +16,7 @@ import {
 	receiveDomainsSuggestions,
 	requestDomainsSuggestions
 } from '../actions';
-
+import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
@@ -61,7 +60,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestDomainsSuggestions()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/domains/suggestions' )
@@ -73,10 +72,6 @@ describe( 'actions', () => {
 					error: 'authorization_required',
 					message: 'An active access token must be used to access domains suggestions.'
 				} );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {

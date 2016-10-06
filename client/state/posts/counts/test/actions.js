@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -18,16 +17,13 @@ import {
 	receivePostCounts,
 	requestPostCounts
 } from '../actions';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
 
 	beforeEach( () => {
 		spy.reset();
-	} );
-
-	after( () => {
-		nock.cleanAll();
 	} );
 
 	describe( '#receivePostCounts()', () => {
@@ -48,7 +44,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPostCounts()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/wpcom/v2/sites/2916284/post-counts/post' )

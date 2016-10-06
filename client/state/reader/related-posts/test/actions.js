@@ -2,14 +2,13 @@
  * External Dependencies
  */
 import { expect } from 'chai';
-import useNock from 'test/helpers/use-nock';
-import useMockery from 'test/helpers/use-mockery';
 import sinon from 'sinon';
 
 /**
  * Internal Dependencies
  */
-
+import useNock from 'test/helpers/use-nock';
+import useMockery from 'test/helpers/use-mockery';
 import {
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
