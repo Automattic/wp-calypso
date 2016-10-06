@@ -354,7 +354,9 @@ const FormGeneral = React.createClass( {
 							'on phones and tablets. {{a}}Learn More{{/a}}.',
 							{
 								components: {
-									a: <a href="https://www.ampproject.org/" target="_blank" rel="noopener noreferrer" />
+									a: <a
+										href="https://support.wordpress.com/google-amp-accelerated-mobile-pages/"
+										target="_blank" rel="noopener noreferrer" />
 								}
 							}
 						) }
