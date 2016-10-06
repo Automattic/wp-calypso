@@ -31,7 +31,7 @@ export function requesting( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: action.type === WORDADS_SITE_APPROVE_REQUEST
 			} );
-			return state;
+
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
