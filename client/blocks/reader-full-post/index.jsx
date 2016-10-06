@@ -276,8 +276,8 @@ export class FullPostView extends React.Component {
 								tagName="div" />
 						}
 						{ shouldShowLikes( post ) &&
-							<LikeButton siteId={ post.site_ID }
-								postId={ post.ID }
+							<LikeButton siteId={ +post.site_ID }
+								postId={ +post.ID }
 								fullPost={ true }
 								tagName="div" />
 						}
