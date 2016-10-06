@@ -12,8 +12,8 @@ const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
 /**
  * Internal dependencies
  */
-import ConnectHeader from './connect-header';
 import Main from 'components/main';
+import StepHeader from '../step-header';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
@@ -110,8 +110,7 @@ const LoggedOutForm = React.createClass( {
 
 		return (
 			<div>
-				<ConnectHeader
-					showLogo={ false }
+				<StepHeader
 					headerText={ headerText }
 					subHeaderText={ subHeaderText } />
 				{ siteCard }
@@ -245,8 +244,7 @@ const LoggedInForm = React.createClass( {
 
 		return (
 			<div>
-				<ConnectHeader
-					showLogo={ false }
+				<StepHeader
 					headerText={ headerText }
 					subHeaderText={ subHeaderText } />
 				{ siteCard }

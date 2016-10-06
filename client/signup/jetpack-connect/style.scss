@@ -12,6 +12,10 @@
 		}
 
 	}
+
+	.step-header {
+		margin-bottom: 16px;
+	}
 }
 
 .jetpack-connect__main.is-wide {
@@ -26,19 +30,6 @@
 
 .jetpack-connect__site-url-entry-container {
 	max-width: 400px;
-}
-
-.jetpack-connect__header-container {
-	text-align: center;
-
-	.jetpack-connect__jetpack-logo {
-		width: 72px;
-		height: 72px;
-	}
-
-	.step-header {
-		margin-bottom: 16px;
-	}
 }
 
 .jetpack-connect__wp-admin-dialog.dialog.card {

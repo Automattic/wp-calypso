@@ -10,7 +10,6 @@ import { bindActionCreators } from 'redux';
  */
 import Button from 'components/button';
 import Card from 'components/card';
-import ConnectHeader from './connect-header';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import JetpackConnectNotices from './jetpack-connect-notices';
@@ -23,6 +22,7 @@ import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
 import Gridicon from 'components/gridicon';
 import MainWrapper from './main-wrapper';
+import StepHeader from '../step-header';
 import HelpButton from './help-button';
 import {
 	confirmJetpackInstallStatus,
@@ -32,6 +32,7 @@ import {
 	goToPluginActivation,
 	checkUrl
 } from 'state/jetpack-connect/actions';
+
 /**
  * Constants
  */
@@ -303,8 +304,7 @@ const JetpackConnectMain = React.createClass( {
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__site-url-entry-container">
 					<QuerySites allSites />
-					<ConnectHeader
-						showLogo={ false }
+					<StepHeader
 						headerText={ this.getTexts().headerTitle }
 						subHeaderText={ this.getTexts().headerSubtitle }
 						step={ 1 }
@@ -343,8 +343,7 @@ const JetpackConnectMain = React.createClass( {
 			<MainWrapper isWide>
 				{ this.renderLocaleSuggestions() }
 				<div className="jetpack-connect__install">
-					<ConnectHeader
-						showLogo={ false }
+					<StepHeader
 						headerText={ instructionsData.headerTitle }
 						subHeaderText={ instructionsData.headerSubtitle }
 						step={ 1 }

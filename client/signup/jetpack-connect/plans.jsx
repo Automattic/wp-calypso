@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getFlowType } from 'state/jetpack-connect/selectors';
 import Main from 'components/main';
-import ConnectHeader from './connect-header';
+import StepHeader from '../step-header';
 import observe from 'lib/mixins/data-observe';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -141,8 +141,7 @@ const Plans = React.createClass( {
 					<QueryPlans />
 					<QuerySitePlans siteId={ this.props.selectedSite.ID } />
 					<div className="jetpack-connect__plans">
-						<ConnectHeader
-							showLogo={ false }
+						<StepHeader
 							headerText={ this.translate( 'Your site is now connected!' ) }
 							subHeaderText={ this.translate( 'Now pick a plan that\'s right for you.' ) }
 							step={ 1 }
