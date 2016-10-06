@@ -11,7 +11,7 @@ import debugFactory from 'debug';
 import { closePreview } from 'state/ui/preview/actions';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreviewUrl } from 'state/ui/preview/selectors';
-import { getSiteOption } from 'state/sites/selectors';
+import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 
 const debug = debugFactory( 'calypso:design-preview' );
@@ -98,7 +98,7 @@ export default function urlPreview( WebPreview ) {
 		return {
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
-			selectedSiteUrl: getSiteOption( state, selectedSiteId, 'unmapped_url' ),
+			selectedSiteUrl: 'https://' + getSiteSlug( state, selectedSiteId ),
 			selectedSiteNonce: getSiteOption( state, selectedSiteId, 'frame_nonce' ),
 			previewUrl: getPreviewUrl( state ),
 		};
