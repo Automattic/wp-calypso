@@ -118,8 +118,8 @@ module.exports = React.createClass( {
 	},
 
 	toggleSelfHostedInstructions: function () {
-	    var isShowing = !this.state.showInstructions;
-	    this.setState( { showInstructions: isShowing } );
+		var isShowing = !this.state.showInstructions;
+		this.setState( { showInstructions: isShowing } );
 	},
 
 	render: function() {

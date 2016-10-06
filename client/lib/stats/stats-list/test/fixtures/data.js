@@ -27,8 +27,8 @@ successResponses.statsCountryViews = {
 		"date": "2014-09-12",
 		"days": { "2014-09-12":
 			{ "views": [ { "country_code": "US", "views": 54 }, { "country_code": "IL", "views": 10 }, { "country_code": "DE", "views": 3 }, { "country_code": "GB", "views": 1 }, { "country_code": "AR", "views": 1 } ],
-			  "other_views": 0,
-			  "total_views": 69
+				"other_views": 0,
+				"total_views": 69
 			}
 		},
 		"country-info": {

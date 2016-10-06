@@ -210,7 +210,7 @@ var MenuEditableItem = React.createClass( {
 	renderPostOptions: function( itemType ) {
 		return (
 			<PostList siteID={ siteMenus.siteID }
-			  site={ siteMenus.site }
+				site={ siteMenus.site }
 				type={ itemType.name }
 				item={ this.state.item }
 				back={ this.showLeftPanel }
