@@ -3,14 +3,13 @@
  */
 import noop from 'lodash';
 import React from 'react';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import FormCountrySelect from 'components/forms/form-country-select';
-import Spinner from 'components/spinner';
 import { formatNumber, findCountryFromNumber } from './phone-number';
+import CountryFlag from './country-flag';
 import { countries } from './data';
 
 const PhoneInput = React.createClass( {
@@ -49,10 +48,8 @@ const PhoneInput = React.createClass( {
 
 	handleInput( event ) {
 		let formattedNumber = '',
-			newSelectedCountry = this.state.selectedCountry,
-			freezeSelection = this.state.freezeSelection;
-
-		let value = event.target.value;
+			newSelectedCountry = this.state.selectedCountry;
+		const { value } = event.target;
 		if ( value === this.state.formattedNumber ) {
 			// nothing changed
 			return;
@@ -69,13 +66,13 @@ const PhoneInput = React.createClass( {
 		}
 
 		let caretPosition = event.target.selectionStart;
-		let oldFormattedText = this.state.formattedNumber;
-		let diff = formattedNumber.length - oldFormattedText.length;
+		const oldFormattedText = this.state.formattedNumber;
+		const diff = formattedNumber.length - oldFormattedText.length;
 
 		this.setState( {
 			value,
 			formattedNumber,
-			freezeSelection,
+			freezeSelection: this.state.freezeSelection,
 			selectedCountry: newSelectedCountry
 		}, () => {
 			if ( diff > 0 ) {
@@ -92,7 +89,7 @@ const PhoneInput = React.createClass( {
 
 	cursorToEnd() {
 		const pos = this.numberInput.value.length - 1;
-		this.numberInput.setSelectionRange( pos, pos )
+		this.numberInput.setSelectionRange( pos, pos );
 	},
 
 	handleCountrySelection( event ) {
@@ -104,29 +101,27 @@ const PhoneInput = React.createClass( {
 	},
 
 	render() {
-		const flagClasses = classNames(
-			'phone-input__flag-icon',
-			'flag-icon',
-			`flag-icon-${this.state.selectedCountry.isoCode}` );
-
 		return (
 			<div className="phone-input">
 				<input
-					placeholder={ formatNumber( ( this.state.selectedCountry.nationalPrefix || '' ) + '9876543210', this.state.selectedCountry ) }
+					placeholder={ formatNumber(
+						( this.state.selectedCountry.nationalPrefix || '' ) + '9876543210', this.state.selectedCountry
+					) }
 					onChange={ this.handleInput }
 					value={ this.state.formattedNumber }
 					ref={ c => this.numberInput = c }
 					type="tel" />
-				<div className="phone-input__flag-container">
-					<FormCountrySelect
-						className="phone-input__country-select"
-						onChange={ this.handleCountrySelection }
-						countriesList={ this.props.countriesList } />
-					<div className={ flagClasses } />
-					<Spinner size={ 16 } className="phone-input__flag-spinner" />
+				<div className="phone-input__select-container">
+					<div className="phone-input__select-inner-container">
+						<FormCountrySelect
+							className="phone-input__country-select"
+							onChange={ this.handleCountrySelection }
+							countriesList={ this.props.countriesList } />
+						<CountryFlag countryCode={ this.state.selectedCountry.isoCode } />
+					</div>
 				</div>
 			</div>
-		)
+		);
 	}
 } );
 

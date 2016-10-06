@@ -1,33 +1,50 @@
 .phone-input__flag-icon {
-	display: block;
-	margin: 0 auto;
 	pointer-events: none;
-	z-index: 1;
+	width: 24px;
+	align-self: center;
+}
+
+.phone-input__flag-selector-icon {
+	color: lighten( $gray, 10% );
+	margin-left: 3px;
+	align-self: center;
 }
 
 .phone-input__flag-container {
+	pointer-events: none;
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+	padding: 0 5px;
+}
+
+.phone-input__select-container {
 	position: absolute;
 	top: 0;
-	bottom: 0;
-	padding: 0;
-	background-color: #eaeaea;
-	border: 1px solid #cacaca;
-	border-radius: 3px 0 0 3px;
-	display: flex;
-	width: 40px;
+	width: 60px;
 	cursor: pointer;
+
+	&:hover .phone-input__flag-selector-icon {
+		color: $gray;
+	}
+}
+
+.phone-input__select-inner-container {
+	margin-top: 4px;
+	border-right: 1px solid lighten( $gray, 20% );
+	height: 32px;
+	display: flex;
 }
 
 select.phone-input__country-select {
-	line-height: 0;
-	padding: 0;
 	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+	top: 1px;
+	left: 1px;
+	width: 58px;
+	height: 38px;
 	border: 0;
 	background-image: none;
+	opacity: 0;
 
 	&:focus {
 		box-shadow: none;
@@ -38,14 +55,15 @@ select.phone-input__country-select {
 	z-index: 0;
 	position: absolute;
 	align-self: center;
-	left: 12px;
+	left: 10px;
 	pointer-events: none;
+	width: 24px;
 }
 
 .phone-input {
 	position: relative;
 	width: 100%;
 	input {
-		padding-left: 47px;
+		padding-left: 70px;
 	}
 }
