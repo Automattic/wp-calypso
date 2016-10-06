@@ -606,11 +606,12 @@ Undocumented.prototype.menusDelete = function( siteId, menuId, fn ) {
  * Return a list of third-party services that WordPress.com can integrate with
  *
  * @param {Function} fn The callback function
+ * @return {Promise} A Promise to resolve when complete
  * @api public
  */
 Undocumented.prototype.metaKeyring = function( fn ) {
 	debug( '/meta/external-services query' );
-	this.wpcom.req.get( {
+	return this.wpcom.req.get( {
 		path: '/meta/external-services/',
 		apiVersion: '1.1'
 	}, fn );
