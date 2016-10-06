@@ -20,7 +20,6 @@ module.exports = {
 		curly: 1,
 		'dot-notation': 1,
 		'computed-property-spacing': [ 1, 'always' ],
-		'eol-last': 1,
 		indent: [ 1, 'tab', { SwitchCase: 1 } ],
 		'jsx-quotes': [ 1, 'prefer-double' ],
 		'key-spacing': 1,
