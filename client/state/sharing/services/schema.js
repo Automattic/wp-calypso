@@ -2,7 +2,7 @@ export const itemSchema = {
 	type: 'object',
 	additionalProperties: false,
 	patternProperties: {
-		'[a-z]': {
+		'^[a-z_]+$': {
 			type: 'object',
 			required: [
 				'ID',
@@ -10,7 +10,6 @@ export const itemSchema = {
 				'description',
 				'genericon',
 				'icon',
-				'jetpack_module_required',
 				'jetpack_support',
 				'label',
 				'multiple_external_user_ID_support',
