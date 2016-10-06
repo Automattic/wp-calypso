@@ -339,7 +339,7 @@ const FormGeneral = React.createClass( {
 						compact
 						disabled={ isCustomizeDisabled }
 						onClick={ this.handleAmpCustomize }>
-						{ this.translate( 'Customize' ) }
+						{ this.translate( 'Edit Design' ) }
 					</Button>
 					<FormToggle
 						checked={ amp_is_enabled }
@@ -349,7 +349,7 @@ const FormGeneral = React.createClass( {
 				<Card className="site-settings__amp-explanation">
 					<p>
 						{ this.translate(
-							'Your WordPress.com site supports {{a}}Accelarated Mobile Pages (AMP){{/a}}, ' +
+							'Your WordPress.com site supports {{a}}Accelerated Mobile Pages (AMP){{/a}}, ' +
 							'a new Google-led initiative that dramatically improves loading speeds ' +
 							'on phones and tablets. {{a}}Learn More{{/a}}.',
 							{
