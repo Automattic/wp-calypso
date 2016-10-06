@@ -33,7 +33,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { site, item } = this.props;
+		const { site, item, showRemoveButton = true } = this.props;
 
 		return (
 			<div className="editor-media-modal-gallery__edit-item">
@@ -42,9 +42,12 @@ export default React.createClass( {
 					scale={ 1 }
 					photon={ false } />
 				{ this.renderCaption() }
-				<EditorMediaModalGalleryRemoveButton
-					siteId={ site.ID }
-					itemId={ item.ID } />
+				{ showRemoveButton &&
+					<EditorMediaModalGalleryRemoveButton
+						siteId={ site.ID }
+						itemId={ item.ID }
+					/>
+				}
 			</div>
 		);
 	}

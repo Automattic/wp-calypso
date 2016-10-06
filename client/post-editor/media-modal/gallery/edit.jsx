@@ -27,7 +27,7 @@ export default React.createClass( {
 	},
 
 	onOrderChanged: function( order ) {
-		var items = [];
+		const items = [];
 
 		this.props.settings.items.forEach( ( item, i ) => {
 			items[ order[ i ] ] = item;
@@ -53,7 +53,8 @@ export default React.createClass( {
 						<EditorMediaModalGalleryEditItem
 							key={ item.ID }
 							site={ site }
-							item={ item } />
+							item={ item }
+							showRemoveButton={ settings.items.length > 2 } />
 					);
 				} ) }
 			</SortableList>
