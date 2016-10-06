@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { assign, includes, reject, cloneDeep } from 'lodash';
+import { assign, includes, reject } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
