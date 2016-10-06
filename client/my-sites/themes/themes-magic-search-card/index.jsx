@@ -46,7 +46,10 @@ const ThemesMagicSearchCard = React.createClass( {
 	getInitialState() {
 		return {
 			isMobile: isMobile(),
-			searchIsOpen: false
+			searchIsOpen: false,
+			searchInput: '',
+			editedSearchElement: '',
+			cursorPosition: 0,
 		};
 	},
 
@@ -62,6 +65,10 @@ const ThemesMagicSearchCard = React.createClass( {
 		this.setState( { searchIsOpen: false } );
 	},
 
+	onSearchChange( input ) {
+		this.setState( { searchInput: input } );
+	},
+
 	onBlur() {
 		this.setState( { searchIsOpen: false } );
 	},
@@ -71,15 +78,22 @@ const ThemesMagicSearchCard = React.createClass( {
 
 		return (
 			tokens.map( ( token, i ) => {
-				let classname = 'themes-magic-search-card__search-text';
-
 				if ( token.trim() === '' ) {
-					classname = 'themes-magic-search-card__search-white-space';
+					return <span className="themes-magic-search-card__search-white-space" key={ i }>{ token }</span>; // use shortid for key
 				} else if ( filterIsValid( token ) ) {
-					classname = 'themes-magic-search-card__search-token';
+					const token_parts = token.split( /(:)/ );
+					const taxonomy = token_parts[ 0 ];
+					const separator = token_parts[ 1 ];
+					const filter = token_parts[ 2 ];
+					return (
+						<span className="themes-magic-search-card__search-token" key={ i }>
+							<span className="themes-magic-search-card__search-taxonomy">{ taxonomy }</span>
+							<span className="themes-magic-search-card__search-separator">{ separator }</span>
+							<span className="themes-magic-search-card__search-filter">{ filter }</span>
+						</span>
+					);
 				}
-
-				return <span className={ classname } key={ i }>{ token }</span>; // use shortid for key
+				return <span className="themes-magic-search-card__search-text" key={ i }>{ token }</span>; // use shortid for key
 			} )
 		);
 	},
@@ -104,6 +118,9 @@ const ThemesMagicSearchCard = React.createClass( {
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
+				onSearchChange={ this.onSearchChange }
+				onKeyDown={ this.onKeyDown }
+				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
@@ -111,12 +128,12 @@ const ThemesMagicSearchCard = React.createClass( {
 			/>
 		);
 
-		const themesSearchClass = classNames( 'themes-magic-search-card', {
+		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
 			'has-highlight': this.state.searchIsOpen
 		} );
 
 		return (
-			<div className={ themesSearchClass } data-tip-target="themes-search-card">
+			<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
 				{ searchField }
 				{ isPremiumThemesEnabled && ! isJetpack &&
 					<SegmentedControl
