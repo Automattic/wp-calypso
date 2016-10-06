@@ -103,7 +103,6 @@
 	z-index: 25;
 }
 
-
 .themes-magic-search-card__search-text {
 	font: inherit;
 	pointer-events: none;
@@ -114,19 +113,4 @@
 	font: inherit;
 	pointer-events: none;
 	white-space: pre;
-}
-
-.themes-magic-search {
-
-	.suggestions {
-		display: none;
-	}
-
-	&.has-suggestions {
-		.suggestions {
-			display: block;
-			margin-top: 5px;
-		}
-	}
-
 }

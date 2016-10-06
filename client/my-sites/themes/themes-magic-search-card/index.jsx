@@ -46,7 +46,7 @@ const ThemesMagicSearchCard = React.createClass( {
 	getInitialState() {
 		return {
 			isMobile: isMobile(),
-			searchIsOpen: false,
+			searchIsOpen: false
 		};
 	},
 
@@ -109,8 +109,6 @@ const ThemesMagicSearchCard = React.createClass( {
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
-				onKeyDown={ this.onKeyDown }
-				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
