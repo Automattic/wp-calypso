@@ -2,9 +2,6 @@
 @import '../../node_modules/react-virtualized/styles';
 @import '../../node_modules/draft-js/dist/Draft';
 
-$flag-icon-css-path: 'images/flags' !default;
-@import '../../node_modules/flag-icon-css/sass/flag-icon';
-
 // Shared
 @import 'shared/reset';                        // css reset before the rest of the styles are defined
 @import 'shared/functions';                    // functions that we've used from Compass, ported over
