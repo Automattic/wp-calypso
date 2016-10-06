@@ -26,7 +26,13 @@ import {
 	activateManage,
 	goToXmlrpcErrorFallbackUrl
 } from 'state/jetpack-connect/actions';
-import { isCalypsoStartedConnection, hasXmlrpcError } from 'state/jetpack-connect/selectors';
+import {
+	getAuthorizationData,
+	getAuthorizationRemoteSite,
+	getSSOSessions,
+	isCalypsoStartedConnection,
+	hasXmlrpcError
+} from 'state/jetpack-connect/selectors';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -36,7 +42,6 @@ import Gravatar from 'components/gravatar';
 import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteByUrl } from 'state/sites/selectors';
 import Spinner from 'components/spinner';
 import Site from 'blocks/site';
 import { decodeEntities } from 'lib/formatting';
@@ -636,34 +641,32 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
-		const queryObjectSite = state.jetpackConnect.jetpackConnectAuthorize &&
-			state.jetpackConnect.jetpackConnectAuthorize.queryObject &&
-			state.jetpackConnect.jetpackConnectAuthorize.queryObject.site;
+		const remoteSite = getAuthorizationRemoteSite( state );
 
-		const site = queryObjectSite
-			? getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
-			: null;
 		const requestHasXmlrpcError = () => {
 			return hasXmlrpcError( state );
 		};
+
 		const isFetchingSites = () => {
 			return isRequestingSites( state );
 		};
 
 		return {
-			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
-			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
-			isAlreadyOnSitesList: !! site,
+			jetpackConnectAuthorize: getAuthorizationData( state ),
+			jetpackSSOSessions: getSSOSessions( state ),
+			isAlreadyOnSitesList: !! remoteSite,
 			isFetchingSites,
 			requestHasXmlrpcError,
-			calypsoStartedConnection: isCalypsoStartedConnection( state, queryObjectSite )
+			calypsoStartedConnection: remoteSite && isCalypsoStartedConnection( state, remoteSite.URL )
 		};
 	},
-	dispatch => bindActionCreators( { requestSites,
+	dispatch => bindActionCreators( {
+		requestSites,
 		recordTracksEvent,
 		authorize,
 		createAccount,
 		activateManage,
 		goBackToWpAdmin,
-		goToXmlrpcErrorFallbackUrl }, dispatch )
+		goToXmlrpcErrorFallbackUrl
+	}, dispatch )
 )( JetpackConnectAuthorizeForm );

@@ -1,16 +1,55 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { getSiteByUrl } from 'state/sites/selectors';
 
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // an hour
 
+const getConnectingSite = ( state ) => {
+	return get( state, [ 'jetpackConnect', 'jetpackConnectSite' ] );
+};
+
+const getAuthorizationData = ( state ) => {
+	return get( state, [ 'jetpackConnect', 'jetpackConnectAuthorize' ] );
+};
+
+const getAuthorizationRemoteQueryData = ( state ) => {
+	return get( getAuthorizationData( state ), [ 'queryObject' ] );
+};
+
+const getAuthorizationRemoteSite = ( state ) => {
+	const remoteUrl = get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
+
+	if ( ! remoteUrl ) {
+		return null;
+	}
+
+	return getSiteByUrl( state, remoteUrl );
+};
+
+const getSessions = ( state ) => {
+	return get( state, [ 'jetpackConnect', 'jetpackConnectSessions' ] );
+};
+
+const getSSOSessions = ( state ) => {
+	return get( state, [ 'jetpackConnect', 'jetpackSSOSessions' ] );
+};
+
+const getSSO = ( state ) => {
+	return get( state, [ 'jetpackConnect', 'jetpackSSO' ] );
+};
+
 const isCalypsoStartedConnection = function( state, siteSlug ) {
 	if ( ! siteSlug ) {
 		return false;
 	}
 	const site = siteSlug.replace( /.*?:\/\//g, '' );
-	const sessions = state.jetpackConnect.jetpackConnectSessions;
+	const sessions = getSessions( state );
 
 	if ( sessions[ site ] ) {
 		const currentTime = ( new Date() ).getTime();
@@ -21,7 +60,7 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 };
 
 const getFlowType = function( state, siteSlug ) {
-	const sessions = state.jetpackConnect.jetpackConnectSessions;
+	const sessions = getSessions( state );
 	if ( siteSlug && sessions[ siteSlug ] ) {
 		return sessions[ siteSlug ].flowType;
 	}
@@ -44,7 +83,7 @@ const getJetpackSiteByUrl = ( state, url ) => {
  * @returns {Boolean} If there's an xmlrpc error or not
  */
 const hasXmlrpcError = function( state ) {
-	const authorizeData = state.jetpackConnect.jetpackConnectAuthorize;
+	const authorizeData = getAuthorizationData( state );
 
 	return (
 		authorizeData &&
@@ -55,4 +94,16 @@ const hasXmlrpcError = function( state ) {
 	);
 };
 
-export default { isCalypsoStartedConnection, getFlowType, getJetpackSiteByUrl, hasXmlrpcError };
+export default {
+	getConnectingSite,
+	getAuthorizationData,
+	getAuthorizationRemoteQueryData,
+	getAuthorizationRemoteSite,
+	getSessions,
+	getSSOSessions,
+	getSSO,
+	isCalypsoStartedConnection,
+	getFlowType,
+	getJetpackSiteByUrl,
+	hasXmlrpcError
+};
