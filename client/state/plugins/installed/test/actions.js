@@ -75,7 +75,9 @@ describe( 'actions', () => {
 				.reply( 403, {
 					error: 'unauthorized',
 					message: 'This endpoint is only available for Jetpack powered Sites'
-				} );
+				} )
+				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack/update' )
+				.reply( 200, jetpackUpdated );
 		} );
 
 		it( 'should dispatch fetch action when triggered', () => {
@@ -115,6 +117,18 @@ describe( 'actions', () => {
 					type: PLUGINS_REQUEST_FAILURE,
 					siteId: 77203074,
 					error: sinon.match( { message: 'This endpoint is only available for Jetpack powered Sites' } )
+				} );
+			} );
+		} );
+
+		it( 'should dispatch plugin update request if any site plugins need updating', () => {
+			const responses = fetchPlugins( [ { ID: 2916284, jetpack: true } ] )( spy );
+			return Promise.all( responses ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: PLUGIN_UPDATE_REQUEST,
+					action: UPDATE_PLUGIN,
+					siteId: 2916284,
+					pluginId: 'jetpack/jetpack'
 				} );
 			} );
 		} );
