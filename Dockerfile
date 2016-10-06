@@ -25,9 +25,6 @@ RUN        true \
                  make \
            # Sometimes "npm install" fails the first time when the
            # cache is empty, so we retry once if it failed
-           && rm -rf node_modules \
-           && rm -rf build \
-           && rm -rf public \
            && npm install --production || npm install --production \
            && CALYPSO_ENV=wpcalypso make build-wpcalypso \
            && CALYPSO_ENV=horizon make build-horizon \
