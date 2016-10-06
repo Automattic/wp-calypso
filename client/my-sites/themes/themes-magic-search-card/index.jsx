@@ -47,9 +47,6 @@ const ThemesMagicSearchCard = React.createClass( {
 		return {
 			isMobile: isMobile(),
 			searchIsOpen: false,
-			searchInput: '',
-			editedSearchElement: '',
-			cursorPosition: 0,
 		};
 	},
 
@@ -63,10 +60,6 @@ const ThemesMagicSearchCard = React.createClass( {
 
 	onSearchClose() {
 		this.setState( { searchIsOpen: false } );
-	},
-
-	onSearchChange( input ) {
-		this.setState( { searchInput: input } );
 	},
 
 	onBlur() {
@@ -118,7 +111,6 @@ const ThemesMagicSearchCard = React.createClass( {
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
-				onSearchChange={ this.onSearchChange }
 				onKeyDown={ this.onKeyDown }
 				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
