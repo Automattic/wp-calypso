@@ -2,10 +2,10 @@
  * Returns an object of service objects or null if there are no Keyring services.
  *
  * @param  {Object} state Global state tree
- * @return {?Object}      Keyring services, if known.
+ * @return {Object}       Keyring services, if known.
  */
 export function getKeyringServices( state ) {
-	return state.sharing.services.items || null;
+	return state.sharing.services.items;
 }
 
 /**
@@ -16,5 +16,5 @@ export function getKeyringServices( state ) {
  * @return {Boolean}       Whether a request is in progress
  */
 export function isKeyringServicesFetching( state ) {
-	return state.sharing.services.isFetching || false;
+	return state.sharing.services.isFetching;
 }
