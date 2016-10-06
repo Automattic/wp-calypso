@@ -8,6 +8,7 @@ import page from 'page';
 import classNames from 'classnames';
 import { get, filter, size, keyBy, map, includes } from 'lodash';
 import scrollIntoView from 'dom-scroll-into-view';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -26,6 +27,8 @@ import config from 'config';
 
 const noop = () => {};
 const ALL_SITES = 'ALL_SITES';
+
+const debug = debugFactory( 'calypso:site-selector' );
 
 const SiteSelector = React.createClass( {
 	mixins: [ observe( 'sites' ) ],
@@ -66,7 +69,8 @@ const SiteSelector = React.createClass( {
 		return {
 			search: '',
 			highlightedIndex: -1,
-			showSearch: false
+			showSearch: false,
+			isKeyboardEngaged: false
 		};
 	},
 
@@ -83,7 +87,7 @@ const SiteSelector = React.createClass( {
 			search: terms,
 			highlightedIndex: ( terms ? 0 : -1 ),
 			showSearch: ( terms ? true : this.state.showSearch ),
-			isKeyboardEngaged: false,
+			isKeyboardEngaged: true
 		} );
 	},
 
@@ -107,6 +111,27 @@ const SiteSelector = React.createClass( {
 		}
 	},
 
+	computeHighlightedSite() {
+		// site can be highlighted by either keyboard or by mouse and
+		// we need to switch seemlessly between the two
+		let highlightedSite, highlightedIndex;
+		if ( this.state.isKeyboardEngaged ) {
+			debug( 'using highlight from last keyboard interaction' );
+			highlightedSite = this.visibleSites[ this.state.highlightedIndex ];
+			highlightedIndex = this.state.highlightedIndex;
+		} else if ( this.lastMouseHover ) {
+			debug( `restoring highlight from last mouse hover (${ this.lastMouseHover })` );
+			highlightedSite = this.props.sites.getSite( this.lastMouseHover ) || this.lastMouseHover;
+			highlightedIndex = this.visibleSites.indexOf( highlightedSite );
+		} else {
+			debug( 'reseting highlight as mouse left site selector' );
+			highlightedSite = null;
+			highlightedIndex = -1;
+		}
+
+		return { highlightedSite, highlightedIndex };
+	},
+
 	onKeyDown( event ) {
 		const visibleLength = this.visibleSites.length;
 
@@ -116,21 +141,7 @@ const SiteSelector = React.createClass( {
 			return;
 		}
 
-		let highlightedSite, highlightedIndex;
-		if ( this.state.isKeyboardEngaged === false ) {
-			if ( this.lastMouseHover ) {
-				highlightedSite = this.lastMouseHover;
-				highlightedIndex = this.visibleSites.indexOf( highlightedSite );
-				this.lastMouseHover = null;
-			} else {
-				highlightedSite = null;
-				highlightedIndex = -1;
-			}
-		} else {
-			highlightedSite = this.visibleSites[ this.state.highlightedIndex ];
-			highlightedIndex = this.state.highlightedIndex;
-		}
-
+		const { highlightedSite, highlightedIndex } = this.computeHighlightedSite();
 		let nextIndex = null;
 
 		switch ( event.key ) {
@@ -158,6 +169,7 @@ const SiteSelector = React.createClass( {
 		}
 
 		if ( nextIndex !== null ) {
+			this.lastMouseHover = null;
 			this.setState( {
 				highlightedIndex: nextIndex,
 				isKeyboardEngaged: true,
@@ -191,25 +203,36 @@ const SiteSelector = React.createClass( {
 	},
 
 	onSiteHover( event, siteSlug ) {
-		this.lastMouseHover = this.props.sites.getSite( siteSlug );
+		if ( this.lastMouseHover !== siteSlug ) {
+			debug( `${ siteSlug } hovered` );
+			this.lastMouseHover = siteSlug;
+		}
 	},
 
 	onAllSitesHover() {
-		this.lastMouseHover = ALL_SITES;
+		if ( this.lastMouseHover !== ALL_SITES ) {
+			debug( 'ALL_SITES hovered' );
+			this.lastMouseHover = ALL_SITES;
+		}
 	},
 
 	onMouseLeave() {
+		debug( 'mouse left site selector - nothing hovered anymore' );
 		this.lastMouseHover = null;
 	},
 
 	onMouseMove( event ) {
-		if ( this.state.isKeyboardEngaged && ( event.clientX !== this.lastMouseMoveX || event.clientY !== this.lastMouseMoveY ) ) {
-			this.lastMouseMoveY = event.clientY;
-			this.lastMouseMoveX = event.clientX;
-			this.setState( {
-				highlightedIndex: -1,
-				isKeyboardEngaged: false,
-			} );
+		// we need to test here if cursor position was actually moved, because
+		// mouseMove event can also be triggered by scrolling the parent element
+		// and we scroll that element via keyboard access
+		if ( event.pageX !== this.lastMouseMoveX ||
+					event.pageY !== this.lastMouseMoveY ) {
+			this.lastMouseMoveY = event.pageY;
+			this.lastMouseMoveX = event.pageX;
+
+			if ( this.state.isKeyboardEngaged ) {
+				this.setState( { isKeyboardEngaged: false } );
+			}
 		}
 	},
 
