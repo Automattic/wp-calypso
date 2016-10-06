@@ -84,7 +84,11 @@ export default React.createClass( {
 				<LoggedOutForm className="pressable-theme__form" onSubmit={ this.onSubmit }>
 					<HeroImage />
 
-					<FormSectionHeading className="pressable-theme__heading">{ this.translate( 'Host your WordPress site, and use your own theme for as low as $25 / month' ) }</FormSectionHeading>
+					<FormSectionHeading className="pressable-theme__heading">
+						{ this.translate( 'Host your WordPress site, and use your own theme for as low as %(price)s / month', {
+							args: { price: '$25' }
+						} ) }
+					</FormSectionHeading>
 					<p className="pressable-theme__copy">{ this.translate( 'We\'ve partnered with Pressable, a top-notch WordPress hosting provider, to make setting up your WordPress site with your own theme a snap.' ) }</p>
 
 					<LoggedOutFormFooter>

@@ -86,7 +86,9 @@ class PressableStoreStep extends Component {
 					<HeroImage />
 
 					<FormSectionHeading className="pressable-store__heading">
-						{ translate( 'Get your store for as low as $25 / month' ) }
+						{ translate( 'Get your store for as low as %(price)s / month', {
+							args: { price: '$25' }
+						} ) }
 					</FormSectionHeading>
 					<p className="pressable-store__copy">
 						{ translate( 'We\'ve partnered with Pressable, a top-notch WordPress hosting provider,' +
