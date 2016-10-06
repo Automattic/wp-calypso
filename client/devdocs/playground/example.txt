@@ -1,0 +1,12 @@
+<div>
+	<Notice
+		status="is-info"
+		icon="heart"
+		showDismiss={ false }>
+		Welcome to the playground!
+	</Notice>
+	<Card>
+		<Card>Go ahead and start messing with the code above and watch as your changes are immediately reflected in the preview panel below. Try removing some props and adding some content of your own. Try playing in the <a href="/devdocs/playground/button">button playground</a>.</Card>
+		<Button primary><Gridicon icon="star" /> Like</Button>
+	</Card>
+</div>

@@ -1,0 +1,5 @@
+<Main>
+<Gridicon icon="add-image" size={ 48 }  />
+<Gridicon icon="add-outline" size={ 24 }  />
+<Gridicon icon="add" size={ 16 }  />
+</Main>
