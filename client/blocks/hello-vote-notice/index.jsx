@@ -63,7 +63,6 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, selectedSiteId );
-		const userStartDate = getCurrentUserDate( state );
 
 		return {
 			siteSlug,
@@ -72,10 +71,7 @@ export default connect(
 				isSiteSection( state ) &&
 				'settings' !== getSectionName( state ) &&
 				canCurrentUser( state, selectedSiteId, 'manage_options' ) &&
-				(
-					! userStartDate ||
-					moment( userStartDate ).isBefore( moment().subtract( 1, 'weeks' ) )
-				) &&
+				moment( getCurrentUserDate( state ) ).isBefore( moment().subtract( 1, 'weeks' ) ) &&
 				hasReceivedRemotePreferences( state ) &&
 				! getPreference( state, 'helloVoteNoticeDismissed' )
 			),
