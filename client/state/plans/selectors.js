@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import get from 'lodash/get';
+import { get, find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -35,7 +35,7 @@ export const isRequestingPlans = state => {
  * @return {Object} the matching plan
  */
 export const getPlan = createSelector(
-	( state, productId ) => getPlans( state ).filter( plan => plan.product_id === productId ).shift(),
+	( state, productId ) => find( getPlans( state ), { product_id: productId } ),
 	( state ) => getPlans( state )
 );
 
@@ -46,7 +46,7 @@ export const getPlan = createSelector(
  * @return {Object} the matching plan
  */
 export const getPlanBySlug = createSelector(
-	( state, planSlug ) => getPlans( state ).filter( plan => plan.product_slug === planSlug ).shift(),
+	( state, planSlug ) => find( getPlans( state ), { product_slug: planSlug } ),
 	( state ) => getPlans( state )
 );
 

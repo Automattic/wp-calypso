@@ -3,18 +3,8 @@
 /**
  * External dependencies
  */
-var update = require( 'react-addons-update' ),
-	every = require( 'lodash/every' ),
-	assign = require( 'lodash/assign' ),
-	flow = require( 'lodash/flow' ),
-	isEqual = require( 'lodash/isEqual' ),
-	merge = require( 'lodash/merge' ),
-	reject = require( 'lodash/reject' ),
-	tail = require( 'lodash/tail' ),
-	some = require( 'lodash/some' ),
-	uniq = require( 'lodash/uniq' ),
-	flatten = require( 'lodash/flatten' ),
-	filter = require( 'lodash/filter' );
+var update = require( 'react-addons-update' );
+import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -535,7 +525,7 @@ function getItemForPlan( plan, properties ) {
  * @returns {Object} the corresponding item in the shopping cart as `CartItemValue` object
  */
 function findFreeTrial( cart ) {
-	return filter( getAll( cart ), { free_trial: true } )[ 0 ];
+	return find( getAll( cart ), { free_trial: true } );
 }
 
 /**

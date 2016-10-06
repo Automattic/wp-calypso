@@ -1,16 +1,7 @@
 /**
  * External dependencies
  */
-import endsWith from 'lodash/endsWith';
-import filter from 'lodash/filter';
-import find from 'lodash/find';
-import includes from 'lodash/includes';
-import mapValues from 'lodash/mapValues';
-import startsWith from 'lodash/startsWith';
-import trimStart from 'lodash/trimStart';
-import without from 'lodash/without';
-import matches from 'lodash/matches';
-import negate from 'lodash/negate';
+import { endsWith, filter, find, includes, mapValues, startsWith, trimStart, without, matches, negate, some } from 'lodash';
 
 function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -154,9 +145,7 @@ function removeDuplicateWpcomRecords( domain, records ) {
 }
 
 function addMissingWpcomRecords( domain, records ) {
-	const rootARecords = filter( records, isRootARecord( domain ) );
-
-	if ( rootARecords.length === 0 ) {
+	if ( ! some( records, isRootARecord( domain ) ) ) {
 		const defaultRootARecord = {
 			domain,
 			id: `wpcom:A:${domain}.:${domain}`,

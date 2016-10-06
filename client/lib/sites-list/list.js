@@ -403,9 +403,7 @@ SitesList.prototype.getSite = function( siteID ) {
  * @api public
  **/
 SitesList.prototype.getPrimary = function() {
-	return this.get().filter( function( site ) {
-		return site.primary === true;
-	}, this ).shift();
+	return find( this.get(), 'primary' );
 };
 
 /**
