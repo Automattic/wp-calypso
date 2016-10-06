@@ -22,6 +22,7 @@
 	display: flex;
 	align-items: baseline;
 	justify-content: flex-end;
+	flex-wrap: wrap-reverse;
 	margin-bottom: 6px;
 }
 
@@ -33,12 +34,14 @@
 
 .title-format-editor__button {
 	border-radius: 3px;
-	background-color: lighten( $gray, 30% );
+	background-color: $white;
 	color: darken( $gray, 30% );
-	padding: 4px 8px;
+	border: 1px solid lighten( $gray, 20% );
+	padding: 3px 8px 3px 8px;
 	margin-left: 10px;
+	margin-top: 3px;
 	font-size: 12px;
-	font-weight: bold;
+	font-weight: 600;
 	cursor: pointer;
 
 	&:before {
@@ -48,7 +51,7 @@
 	}
 
 	&:hover {
-		background-color: lighten( $gray, 20% );
+		color: $blue-medium;
 	}
 }
 
