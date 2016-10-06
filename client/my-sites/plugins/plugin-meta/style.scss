@@ -129,7 +129,7 @@
 		color: $gray-dark;
 		font-size: 11px;
 	}
-	@include breakpoint( '<780px' ) {
+	@include breakpoint( '<660px' ) {
 		display: block;
 		padding-right: 16px;
 	}
