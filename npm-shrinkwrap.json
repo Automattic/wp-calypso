@@ -996,12 +996,7 @@
       "version": "1.1.2"
     },
     "draft-js": {
-      "version": "0.8.1",
-      "dependencies": {
-        "immutable": {
-          "version": "3.7.6"
-        }
-      }
+      "version": "0.8.1"
     },
     "duplexer": {
       "version": "0.1.1",
@@ -1816,7 +1811,7 @@
       "version": "4.1.1"
     },
     "immutable": {
-      "version": "3.8.1"
+      "version": "3.7.6"
     },
     "imports-loader": {
       "version": "0.6.5"
