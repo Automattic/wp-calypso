@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { mapValues } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ import QueryGeo from 'components/data/query-geo';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { canCurrentUser } from 'state/current-user/selectors';
+import { canCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { isSiteSection, getSectionName, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
@@ -62,6 +63,7 @@ export default connect(
 	( state ) => {
 		const selectedSiteId = getSelectedSiteId( state );
 		const siteSlug = getSiteSlug( state, selectedSiteId );
+		const userStartDate = getCurrentUserDate( state );
 
 		return {
 			siteSlug,
@@ -70,6 +72,10 @@ export default connect(
 				isSiteSection( state ) &&
 				'settings' !== getSectionName( state ) &&
 				canCurrentUser( state, selectedSiteId, 'manage_options' ) &&
+				(
+					! userStartDate ||
+					moment( userStartDate ).isBefore( moment().subtract( 1, 'weeks' ) )
+				) &&
 				hasReceivedRemotePreferences( state ) &&
 				! getPreference( state, 'helloVoteNoticeDismissed' )
 			),
