@@ -106,17 +106,27 @@ export default React.createClass( {
 		);
 	},
 
+	renderHeaderText() {
+		return this.props.surveySiteType === 'blog'
+			? this.translate( 'Create your blog today!' )
+			: this.translate( 'Create your site today!' );
+	},
+
+	renderSubHeaderText() {
+		return this.props.surveySiteType === 'blog'
+			? this.translate( 'WordPress.com is the best place for your WordPress blog.' )
+			: this.translate( 'WordPress.com is the best place for your WordPress blog or website.' );
+	},
+
 	render() {
-		const blogHeaderText = this.translate( 'Create your blog today!' );
-		const siteHeaderText = this.translate( 'Create your site today!' );
 		return (
 			<div className="survey-step__section-wrapper">
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
-					subHeaderText={ this.translate( 'WordPress.com is the best place for your WordPress blog or website.' ) }
+					headerText={ this.renderHeaderText() }
+					subHeaderText={ this.renderSubHeaderText() }
 					signupProgressStore={ this.props.signupProgressStore }
 					stepContent={ this.renderOptionList() } />
 			</div>
