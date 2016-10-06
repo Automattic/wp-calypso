@@ -74,10 +74,8 @@ const ThemesMagicSearchCard = React.createClass( {
 				if ( token.trim() === '' ) {
 					return <span className="themes-magic-search-card__search-white-space" key={ i }>{ token }</span>; // use shortid for key
 				} else if ( filterIsValid( token ) ) {
-					const token_parts = token.split( /(:)/ );
-					const taxonomy = token_parts[ 0 ];
-					const separator = token_parts[ 1 ];
-					const filter = token_parts[ 2 ];
+					const separator = ':';
+					const [ taxonomy, filter ] = token.split( separator );
 					return (
 						<span className="themes-magic-search-card__search-token" key={ i }>
 							<span className="themes-magic-search-card__search-taxonomy">{ taxonomy }</span>
