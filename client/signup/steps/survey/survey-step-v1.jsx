@@ -98,7 +98,9 @@ export default React.createClass( {
 					</div>
 
 					<Card className={ subVerticalsClasses }>
-						<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne && this.state.stepOne.label }</BackButton>
+						<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>
+							{ this.state.stepOne && this.state.stepOne.label }
+						</BackButton>
 						{ this.state.stepTwo.map( this.renderStepTwoVertical ) }
 					</Card>
 				</div>
@@ -170,7 +172,11 @@ export default React.createClass( {
 				category_label: label
 			} );
 		}
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
+		SignupActions.submitSignupStep(
+			{ stepName: this.props.stepName },
+			[],
+			{ surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value }
+		);
 		this.props.goToNextStep();
 	}
 } );
