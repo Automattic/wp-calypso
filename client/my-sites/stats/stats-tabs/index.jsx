@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,13 +28,7 @@ export default React.createClass( {
 		let statsTabs;
 
 		if ( dataList ) {
-			let data = dataList.response.data.filter( function( item ) {
-				return item[ activeKey ] === activeIndex;
-			} );
-
-			if ( data.length ) {
-				data = data.pop();
-			}
+			const data = find( dataList.response.data, { [ activeKey ]: activeIndex } );
 
 			statsTabs = tabs.map( function( tab ) {
 				const hasData = data && ( data[ tab.attr ] >= 0 ) && ( data[ tab.attr ] !== null );

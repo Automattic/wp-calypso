@@ -4,8 +4,8 @@
 var debug = require( 'debug' )( 'calypso:my-sites:billing-history:billing-data' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	store = require( 'store' ),
-	assign = require( 'lodash/assign'),
 	i18n = require( 'i18n-calypso' );
+import { assign, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -66,9 +66,7 @@ BillingData.prototype.getTransaction = function( id ) {
 		return null;
 	}
 
-	return this.data.billingHistory.filter( function( transaction ) {
-		return id === transaction.id;
-	} )[ 0 ];
+	return find( this.data.billingHistory, { id } );
 };
 
 module.exports = new BillingData();
