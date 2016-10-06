@@ -41,21 +41,11 @@ const Mentions = React.createClass( {
 		editor.on( 'keyup', this.onKeyUp );
 	},
 
-	getCurrentText: function() {
-		const rng = this.props.editor.selection.getRng( 1 );
-
-		return rng.startContainer.textContent;
-	},
-
 	getQueryText: function() {
-		const value = this.getCurrentText();
-
-		if ( ! value ) {
-			return null;
-		}
-
-		const matcher = new RegExp( '(?:^|\\s)@([A-Za-z0-9_\+\-]*)$|(?:^|\\s)@([^\\x00-\\xff]*)$', 'gi' ),
-			match = matcher.exec( value );
+		const range = this.props.editor.selection.getRng();
+		const textBeforeCaret = range.startContainer.textContent.slice( 0, range.startOffset );
+		const matcher = new RegExp( '(?:^|\\s)@([A-Za-z0-9_\+\-]*)$|(?:^|\\s)@([^\\x00-\\xff]*)$', 'gi' );
+		const match = matcher.exec( textBeforeCaret );
 
 		if ( match ) {
 			return match[ 2 ] || match[ 1 ];
