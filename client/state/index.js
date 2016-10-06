@@ -26,6 +26,7 @@ import notices from './notices/reducer';
 import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
+import postFormats from './post-formats/reducer';
 import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
 import preferences from './preferences/reducer';
@@ -69,10 +70,11 @@ export const reducer = combineReducers( {
 	pageTemplates,
 	plugins,
 	plans,
-	preferences,
-	preview,
+	postFormats,
 	posts,
 	postTypes,
+	preferences,
+	preview,
 	productsList,
 	purchases,
 	pushNotifications,
