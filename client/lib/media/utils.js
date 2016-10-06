@@ -482,6 +482,20 @@ const MediaUtils = {
 		}
 
 		canvas.toBlob( callback, type, quality );
+	},
+
+	/**
+	 * Returns true if specified item is currently being uploaded (i.e. is transient).
+	 *
+	 * @param  {Object}  item Media item
+	 * @return {Boolean}      Whether item is being uploaded
+	 */
+	isItemBeingUploaded( item ) {
+		if ( ! item ) {
+			return null;
+		}
+
+		return !! item.transient;
 	}
 };
 

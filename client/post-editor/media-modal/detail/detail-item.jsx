@@ -1,56 +1,61 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	noop = require( 'lodash/noop' ),
-	debug = require( 'debug' )( 'calypso:post-editor:media:detail-item' );
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import { noop } from 'lodash';
+import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var EditorMediaModalDetailFields = require( './detail-fields' ),
-	EditorMediaModalDetailFileInfo = require( './detail-file-info' ),
-	EditorMediaModalDetailPreviewImage = require( './detail-preview-image' ),
-	EditorMediaModalDetailPreviewVideo = require( './detail-preview-video' ),
-	EditorMediaModalDetailPreviewAudio = require( './detail-preview-audio' ),
-	EditorMediaModalDetailPreviewDocument = require( './detail-preview-document' ),
-	Button = require( 'components/button' ),
-	Gridicon = require( 'components/gridicon' ),
-	userCan = require( 'lib/site/utils' ).userCan,
-	isJetpack = require( 'lib/site/utils' ).isJetpack,
-	MediaUtils = require( 'lib/media/utils' ),
-	config = require( 'config' );
+import EditorMediaModalDetailFields from './detail-fields';
+import EditorMediaModalDetailFileInfo from './detail-file-info';
+import EditorMediaModalDetailPreviewImage from './detail-preview-image';
+import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
+import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
+import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
+import Button from 'components/button';
+import Gridicon from 'components/gridicon';
+import { userCan, isJetpack } from 'lib/site/utils';
+import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
+import config from 'config';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailItem',
+const debug = debugFactory( 'calypso:post-editor:media:detail-item' );
 
-	propTypes: {
-		site: React.PropTypes.object,
-		item: React.PropTypes.object,
-		hasPreviousItem: React.PropTypes.bool,
-		hasNextItem: React.PropTypes.bool,
-		onShowPreviousItem: React.PropTypes.func,
-		onShowNextItem: React.PropTypes.func,
-		onEdit: React.PropTypes.func
-	},
+class EditorMediaModalDetailItem extends Component {
+	static propTypes = {
+		site: PropTypes.object,
+		item: PropTypes.object,
+		hasPreviousItem: PropTypes.bool,
+		hasNextItem: PropTypes.bool,
+		onShowPreviousItem: PropTypes.func,
+		onShowNextItem: PropTypes.func,
+		onEdit: PropTypes.func
+	};
 
-	getDefaultProps: function() {
-		return {
-			hasPreviousItem: false,
-			hasNextItem: false,
-			onShowPreviousItem: noop,
-			onShowNextItem: noop,
-			onEdit: noop
-		};
-	},
+	static defaultProps = {
+		hasPreviousItem: false,
+		hasNextItem: false,
+		onShowPreviousItem: noop,
+		onShowNextItem: noop,
+		onEdit: noop
+	};
 
-	renderEditButton: function( className ) {
-		const { item, onEdit, site } = this.props;
+	renderEditButton( className ) {
+		const {
+			item,
+			onEdit,
+			site,
+			translate
+		} = this.props;
 
 		// Do not render edit button for private sites
 		if ( site.is_private ) {
-			return debug( 'Do not show `Edit button` for private sites' );
+			debug( 'Do not show `Edit button` for private sites' );
+
+			return null;
 		}
 
 		if (
@@ -59,94 +64,118 @@ module.exports = React.createClass( {
 			isJetpack( site ) ||
 			! item
 		) {
-			return;
+			return null;
 		}
 
 		const mimePrefix = MediaUtils.getMimePrefix( item );
 
 		if ( 'image' !== mimePrefix ) {
-			return;
+			return null;
 		}
 
 		return (
 			<Button
 				className={ classNames( 'editor-media-modal-detail__edit', className ) }
-				onClick={ onEdit }>
-				<Gridicon icon="pencil" size={ 36 } /> { this.translate( 'Edit Image' ) }
+				onClick={ onEdit }
+				disabled={ isItemBeingUploaded( item ) }
+			>
+				<Gridicon icon="pencil" size={ 36 } /> { translate( 'Edit Image' ) }
 			</Button>
 		);
-	},
+	}
 
-	renderFields: function() {
-		if ( ! userCan( 'upload_files', this.props.site ) ) {
-			return;
+	renderFields() {
+		const { site, item } = this.props;
+
+		if ( ! userCan( 'upload_files', site ) ) {
+			return null;
 		}
 
 		return (
 			<EditorMediaModalDetailFields
-				site={ this.props.site }
-				item={ this.props.item } />
+				site={ site }
+				item={ item } />
 		);
-	},
+	}
 
-	renderPreviousItemButton: function() {
-		if ( ! this.props.hasPreviousItem ) {
-			return;
+	renderPreviousItemButton() {
+		const {
+			hasPreviousItem,
+			onShowPreviousItem,
+			translate
+		} = this.props;
+
+		if ( ! hasPreviousItem ) {
+			return null;
 		}
 
 		return (
 			<button
-				onClick={ this.props.onShowPreviousItem }
+				onClick={ onShowPreviousItem }
 				className="editor-media-modal-detail__previous">
 				<Gridicon icon="chevron-left" size={ 36 } />
 				<span className="screen-reader-text">
-					{ this.translate( 'Previous' ) }
+					{ translate( 'Previous' ) }
 				</span>
 			</button>
 		);
-	},
+	}
 
-	renderNextItemButton: function() {
-		if ( ! this.props.hasNextItem ) {
-			return;
+	renderNextItemButton() {
+		const {
+			hasNextItem,
+			onShowNextItem,
+			translate
+		} = this.props;
+
+		if ( ! hasNextItem ) {
+			return null;
 		}
 
 		return (
 			<button
-				onClick={ this.props.onShowNextItem }
+				onClick={ onShowNextItem }
 				className="editor-media-modal-detail__next">
 				<Gridicon icon="chevron-right" size={ 36 } />
 				<span className="screen-reader-text">
-					{ this.translate( 'Next' ) }
+					{ translate( 'Next' ) }
 				</span>
 			</button>
 		);
-	},
+	}
 
-	renderItem: function() {
-		var mimePrefix, Component;
+	renderItem() {
+		const {
+			item,
+			site
+		} = this.props;
 
-		if ( ! this.props.item ) {
-			return;
+		if ( ! item ) {
+			return null;
 		}
 
-		mimePrefix = MediaUtils.getMimePrefix( this.props.item );
+		const mimePrefix = MediaUtils.getMimePrefix( item );
+
+		let Item;
+
 		switch ( mimePrefix ) {
-			case 'image': Component = EditorMediaModalDetailPreviewImage; break;
-			case 'video': Component = EditorMediaModalDetailPreviewVideo; break;
-			case 'audio': Component = EditorMediaModalDetailPreviewAudio; break;
-			default: Component = EditorMediaModalDetailPreviewDocument; break;
+			case 'image': Item = EditorMediaModalDetailPreviewImage; break;
+			case 'video': Item = EditorMediaModalDetailPreviewVideo; break;
+			case 'audio': Item = EditorMediaModalDetailPreviewAudio; break;
+			default: Item = EditorMediaModalDetailPreviewDocument; break;
 		}
 
-		return React.createElement( Component, {
-			site: this.props.site,
-			item: this.props.item
+		return React.createElement( Item, {
+			site: site,
+			item: item
 		} );
-	},
+	}
 
-	render: function() {
-		var classes = classNames( 'editor-media-modal-detail__item', {
-			'is-loading': ! this.props.item
+	render() {
+		const { item } = this.props;
+
+		const classes = classNames( 'editor-media-modal-detail__item', {
+			'is-loading': ! item
 		} );
 
 		return (
@@ -162,10 +191,12 @@ module.exports = React.createClass( {
 						{ this.renderEditButton( 'is-mobile' ) }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo
-							item={ this.props.item } />
+							item={ item } />
 					</div>
 				</div>
 			</figure>
 		);
 	}
-} );
+}
+
+export default localize( EditorMediaModalDetailItem );
