@@ -1,4 +1,4 @@
-FROM	   node:6.7.0-slim
+FROM       node:6.7.0-slim
 MAINTAINER Automattic
 
 WORKDIR    /calypso
@@ -38,12 +38,12 @@ RUN        true \
            && apt-get remove -y \
                  git \
            && apt-get autoremove -y \
-    	   && rm -rf /var/lib/apt/lists/* \
-    	   && rm -rf /var/lib/dpkg/info/* \
-    	   && rm -rf /tmp/* \
-    	   && rm -rf /var/tmp/* \
-    	   && rm -rf /usr/share/{doc,doc-base,info,locale,man}/* \
-    	   && rm -rf /root/.npm \
+           && rm -rf /var/lib/apt/lists/* \
+           && rm -rf /var/lib/dpkg/info/* \
+           && rm -rf /tmp/* \
+           && rm -rf /var/tmp/* \
+           && rm -rf /usr/share/{doc,doc-base,info,locale,man}/* \
+           && rm -rf /root/.npm \
            && true
 
 USER       nobody
