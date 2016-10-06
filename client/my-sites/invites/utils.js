@@ -27,7 +27,7 @@ export default {
 						displayOnNextPage
 					}
 				];
-				break;
+
 			case 'viewer':
 				return [
 					i18n.translate(
@@ -41,7 +41,7 @@ export default {
 						displayOnNextPage
 					}
 				];
-				break;
+
 			case 'administrator':
 				return [
 					<div>
@@ -58,7 +58,7 @@ export default {
 					</div>,
 					{ displayOnNextPage }
 				];
-				break;
+
 			case 'editor':
 				return [
 					<div>
@@ -73,7 +73,7 @@ export default {
 					</div>,
 					{ displayOnNextPage }
 				];
-				break;
+
 			case 'author':
 				return [
 					<div>
@@ -88,7 +88,7 @@ export default {
 					</div>,
 					{ displayOnNextPage }
 				];
-				break;
+
 			case 'contributor':
 				return [
 					<div>
@@ -103,7 +103,7 @@ export default {
 					</div>,
 					{ displayOnNextPage }
 				];
-				break;
+
 			case 'subscriber':
 				return [
 					i18n.translate( 'You\'re now a Subscriber of: {{site/}}', {
@@ -111,7 +111,6 @@ export default {
 					} ),
 					{ displayOnNextPage }
 				];
-				break;
 		}
 	},
 
@@ -124,7 +123,7 @@ export default {
 				case 'viewer':
 				case 'follower':
 					return get( invite, 'site.URL' ) || readerPath;
-					break;
+
 				default:
 					return get( invite, 'site.admin_url' ) || postsListPath;
 			}
@@ -134,7 +133,7 @@ export default {
 			case 'viewer':
 			case 'follower':
 				return readerPath;
-				break;
+
 			default:
 				return postsListPath;
 		}
