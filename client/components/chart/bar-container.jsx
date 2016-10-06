@@ -31,10 +31,8 @@ module.exports = React.createClass( {
 		bars = this.props.data.map( function ( item, index ) {
 			var barOffset = barWidth * ( index + 1 );
 
-			if (
-				 ( ( barOffset + 230 ) > width ) &&
-				 ( ( ( barOffset + barWidth ) - 230 ) > 0 )
-				) {
+			if ( ( ( barOffset + 230 ) > width ) &&
+					( ( ( barOffset + barWidth ) - 230 ) > 0 ) ) {
 				tooltipPosition = user.isRTL() ? 'bottom right' : 'bottom left';
 			}
 

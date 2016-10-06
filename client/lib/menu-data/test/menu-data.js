@@ -414,7 +414,7 @@ describe( 'MenuData', function() {
 
 			it( 'should move the child items to the root level', function() {
 				var menu = this.menuData.getMenu( 'primary' ),
-				 socks = find( menu.items, { name: 'Socks' } );
+					socks = find( menu.items, { name: 'Socks' } );
 
 				expect( find( menu.items, { name: 'Slippers' } ) ).to.be.ok;
 				expect( socks ).to.be.ok;
