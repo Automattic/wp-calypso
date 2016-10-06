@@ -145,7 +145,9 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } );
-			updatePlugin( siteId, plugin )( dispatch );
+			if ( data.update ) {
+				updatePlugin( siteId, data )( dispatch );
+			}
 		};
 
 		const errorCallback = ( error ) => {
@@ -311,6 +313,12 @@ export function fetchPlugins( sites ) {
 			const receivePluginsDispatchSuccess = ( data ) => {
 				dispatch( { ...defaultAction, type: PLUGINS_RECEIVE } );
 				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS, data: data.plugins } );
+
+				data.plugins.map( plugin => {
+					if ( plugin.update && plugin.autoupdate ) {
+						updatePlugin( site.ID, plugin )( dispatch );
+					}
+				} );
 			};
 
 			const receivePluginsDispatchFail = ( error ) => {
