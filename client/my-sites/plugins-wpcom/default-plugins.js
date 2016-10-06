@@ -185,6 +185,13 @@ export const defaultPremiumPlugins = [
  */
 export const defaultBusinessPlugins = [
 	{
+		name: i18n.translate( 'Advanced SEO' ),
+		descriptionLink: 'https://support.wordpress.com/advanced-seo/',
+		icon: 'search',
+		category: 'Traffic Growth',
+		description: i18n.translate( 'Custom meta descriptions, social media previews, and more.' )
+	},
+	{
 		name: i18n.translate( 'Google Analytics' ),
 		descriptionLink: '/plans/{siteSlug}/?feature=google-analytics',
 		icon: 'stats',
