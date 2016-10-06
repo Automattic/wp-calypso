@@ -9,8 +9,6 @@ import { combineReducers } from 'redux';
 import { postFormatsItemsSchema } from './schema';
 import { createReducer } from 'state/utils';
 import {
-	SERIALIZE,
-	DESERIALIZE,
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
 	POST_FORMATS_REQUEST_SUCCESS,
@@ -25,22 +23,11 @@ import {
  * @param  {Object} action Action payload
  * @return {Object}        Updated state
  */
-export function requesting( state = {}, action ) {
-	switch ( action.type ) {
-		case POST_FORMATS_REQUEST:
-		case POST_FORMATS_REQUEST_SUCCESS:
-		case POST_FORMATS_REQUEST_FAILURE:
-			return Object.assign( {}, state, {
-				[ action.siteId ]: POST_FORMATS_REQUEST === action.type
-			} );
-
-		case SERIALIZE:
-		case DESERIALIZE:
-			return {};
-	}
-
-	return state;
-}
+export const requesting = createReducer( {}, {
+	[ POST_FORMATS_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ POST_FORMATS_REQUEST_SUCCESS ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ POST_FORMATS_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
+} );
 
 /**
  * Returns the updated items state after an action has been dispatched. The
