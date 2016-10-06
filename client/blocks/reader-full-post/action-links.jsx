@@ -48,8 +48,8 @@ const ReaderFullPostActionLinks = ( { post, site, onCommentClick } ) => {
 				<li className="reader-full-post__action-links-item">
 					<LikeButton
 						key="like-button"
-						siteId={ post.site_ID }
-						postId={ post.ID }
+						siteId={ +post.site_ID }
+						postId={ +post.ID }
 						fullPost={ true }
 						tagName="div"
 						forceCounter={ true } />
