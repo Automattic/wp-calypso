@@ -15,7 +15,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { canCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
 import { isSiteSection, getSectionName, getSelectedSiteId } from 'state/ui/selectors';
 import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
 import { savePreference } from 'state/preferences/actions';
@@ -68,6 +68,7 @@ export default connect(
 			siteSlug,
 			visibleIfUnitedStates: (
 				siteSlug &&
+				! isJetpackSite( state, selectedSiteId ) &&
 				isSiteSection( state ) &&
 				'settings' !== getSectionName( state ) &&
 				canCurrentUser( state, selectedSiteId, 'manage_options' ) &&
