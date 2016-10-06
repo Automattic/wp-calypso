@@ -109,9 +109,19 @@ export default React.createClass( {
 	},
 
 	renderHeaderText() {
-		return this.props.surveySiteType === 'blog'
-			? this.translate( 'Create your blog today!' )
-			: this.translate( 'Create your site today!' );
+		if ( this.props.surveySiteType === 'blog' ) {
+			const domain = this.props.queryObject && this.props.queryObject.domain;
+
+			if ( domain ) {
+				return this.translate( 'Start blogging on %(domain)s today!', {
+					args: { domain }
+				} );
+			}
+
+			return this.translate( 'Create your blog today!' );
+		}
+
+		return this.translate( 'Create your site today!' );
 	},
 
 	renderSubHeaderText() {
