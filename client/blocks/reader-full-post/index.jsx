@@ -43,7 +43,7 @@ import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
 import { siteNameFromSiteAndPost } from 'reader/utils';
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import ReaderFullPostActionLinks from './action-links';
+import ReaderPostActions from 'blocks/reader-post-actions';
 import { state as SiteState } from 'lib/reader-site-store/constants';
 import PostStoreActions from 'lib/feed-post-store/actions';
 import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts-v2';
@@ -314,7 +314,7 @@ export class FullPostView extends React.Component {
 							: null
 						}
 
-						<ReaderFullPostActionLinks post={ post } site={ site } onCommentClick={ this.handleCommentClick } />
+						<ReaderPostActions post={ post } site={ site } onCommentClick={ this.handleCommentClick } />
 
 						{ showRelatedPosts &&
 							<RelatedPostsFromSameSite siteId={ +post.site_ID } postId={ +post.ID }
