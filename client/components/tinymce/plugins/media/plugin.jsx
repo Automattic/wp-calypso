@@ -505,20 +505,26 @@ function mediaButton( editor ) {
 		delete media.caption;
 		media = assign( {}, parsed.media, media );
 
-		// Determine the next usable size
-		const sizeDimensions = SIZE_ORDER.reduce( ( dimensions, size ) => {
-			dimensions[ size ] = MediaUtils.getThumbnailSizeDimensions( size, site );
+		// Compute a ratio used to order media sizes
+		const computeRatio = ( { width = media.width, height = media.height } ) => {
+			return Math.min(
+				( width / media.width ) || Infinity,
+				( height / media.height ) || Infinity
+			);
+		};
 
-			return dimensions;
-		}, {} );
+		// Determine the next usable size
+		const sizeRatios = SIZE_ORDER
+			.map( size => MediaUtils.getThumbnailSizeDimensions( size, site ) )
+			.map( computeRatio );
+		const sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
+		const displayedRatio = sizeIndex !== -1 ? sizeRatios[ sizeIndex ] : computeRatio( parsed.media );
 		const possibleSizes = SIZE_ORDER
-			.filter( size => {
-				return sizeDimensions[ size ].width < media.width;
-			} )
-			.filter( size => {
+			.filter( ( size, index ) => sizeRatios[ index ] <= 1 )
+			.filter( ( size, index ) => {
 				return increment > 0
-					? sizeDimensions[ size ].width > parsed.media.width
-					: sizeDimensions[ size ].width < parsed.media.width;
+					? sizeRatios[ index ] > displayedRatio
+					: sizeRatios[ index ] < displayedRatio;
 			} );
 		let size;
 		if ( possibleSizes.length ) {
