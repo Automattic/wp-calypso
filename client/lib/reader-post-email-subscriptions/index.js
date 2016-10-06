@@ -16,18 +16,18 @@ const Emitter = require( 'lib/mixins/emitter' ),
 	States = require( './constants' ).state,
 	FeedSubscriptionActionTypes = require( 'lib/reader-feed-subscriptions/constants' ).action;
 
-var subscriptions = {},
+let subscriptions = {},
 	errors = [],
 	subscriptionTemplate = Immutable.Map( { // eslint-disable-line
 		state: States.SUBSCRIBED
 	} );
 
-var PostEmailSubscriptionStore = {
+const PostEmailSubscriptionStore = {
 
 	// Tentatively add the new subscription
 	// We haven't received confirmation from the API yet, but we want to update the UI
 	receiveSubscribe: function( action ) {
-		var deliveryFrequency = 'instantly';
+		let deliveryFrequency = 'instantly';
 		if ( action.delivery_frequency ) {
 			deliveryFrequency = action.delivery_frequency;
 		}
@@ -50,7 +50,7 @@ var PostEmailSubscriptionStore = {
 	},
 
 	receiveSubscribeResponse: function( action ) {
-		var updatedSubscriptionInfo;
+		let updatedSubscriptionInfo;
 
 		if ( ! action.error && action.data && action.data.subscribed ) {
 			// The subscribe worked - discard any existing errors for this site
@@ -160,7 +160,7 @@ var PostEmailSubscriptionStore = {
 	},
 
 	removeErrorsForBlog: function( blogId ) {
-		var newErrors = reject( errors, { blogId: blogId } );
+		const newErrors = reject( errors, { blogId: blogId } );
 
 		if ( newErrors.length === errors.length ) {
 			return false;
@@ -186,10 +186,11 @@ var PostEmailSubscriptionStore = {
 
 	// Receive incoming subscriptions from feed subscription API response
 	receiveFeedSubscriptions: function( action ) {
-		var addedSubscriptionCount = 0,
+		let addedSubscriptionCount = 0,
 			postEmailSubscription;
 
-		if ( action.data && ( action.data.errors || ! action.data.subscriptions ) ) {
+		if ( ! action.data ||
+			( action.data && ( action.data.errors || ! action.data.subscriptions ) ) ) {
 			return;
 		}
 
@@ -279,7 +280,7 @@ Emitter( PostEmailSubscriptionStore ); // eslint-disable-line
 PostEmailSubscriptionStore.setMaxListeners( 200 );
 
 PostEmailSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	if ( ! action ) {
 		return;
