@@ -185,6 +185,13 @@ if ( config( 'env' ) === 'development' ) {
 		description: 'This flow is used to test plans choice in signup',
 		lastModified: '2016-06-30'
 	};
+
+	flows[ 'get-dot-blog' ] = {
+		steps: [ 'get-dot-blog-survey', 'get-dot-blog-themes', 'get-dot-blog-plans' ],
+		destination: getSiteDestination, 
+		description: 'Used by `get.blog` users that connect their site to WordPress.com',
+		lastModified: '2016-10-03'
+	};
 }
 
 function removeUserStepFromFlow( flow ) {
