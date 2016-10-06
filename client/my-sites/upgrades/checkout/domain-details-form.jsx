@@ -16,7 +16,6 @@ import PrivacyProtection from './privacy-protection';
 import PaymentBox from './payment-box';
 import { cartItems } from 'lib/cart-values';
 import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
-import { forDomainRegistrations as statesListForDomainRegistrations } from 'lib/states-list';
 import analytics from 'lib/analytics';
 import formState from 'lib/form-state';
 import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails } from 'lib/upgrades/actions';
@@ -24,8 +23,7 @@ import FormButton from 'components/forms/form-button';
 
 // Cannot convert to ES6 import
 const wpcom = require( 'lib/wp' ).undocumented(),
-	countriesList = countriesListForDomainRegistrations(),
-	statesList = statesListForDomainRegistrations();
+	countriesList = countriesListForDomainRegistrations();
 
 export default React.createClass( {
 	displayName: 'DomainDetailsForm',
@@ -238,7 +236,6 @@ export default React.createClass( {
 				<StateSelect
 					label={ this.translate( 'State', { textOnly: true } ) }
 					countryCode={ countryCode }
-					statesList={ statesList }
 					{ ...fieldProps( 'state' ) }/>
 
 				<Input label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
