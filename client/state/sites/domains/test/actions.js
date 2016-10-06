@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -14,7 +13,7 @@ import {
 	domainsRequestFailureAction,
 	fetchSiteDomains
 } from '../actions';
-
+import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 /**
@@ -63,15 +62,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSiteDomains() - success', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/domains` )
 				.reply( 200, wpcomResponse );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch REQUEST action when thunk triggered', () => {
@@ -91,15 +86,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSiteDomains() - failure', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ siteId }/domains` )
 				.reply( 403, wpcomErrorResponse );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch REQUEST_FAILURE action when request failed', () => {

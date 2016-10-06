@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
 	SITE_MEDIA_STORAGE_RECEIVE,
 	SITE_MEDIA_STORAGE_REQUEST,
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveMediaStorage()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/media-storage' )
@@ -58,10 +58,6 @@ describe( 'actions', () => {
 					error: 'authorization_required',
 					message: 'An active access token must be used to access media-storage.'
 				} );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {

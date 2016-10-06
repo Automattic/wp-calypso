@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -14,7 +13,7 @@ import {
 	plansRequestFailureAction,
 	requestPlans
 } from '../actions';
-
+import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 /**
@@ -61,15 +60,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPlans() - success', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.4/plans' )
 				.reply( 200, wpcomResponse );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch REQUEST action when thunk triggered', () => {

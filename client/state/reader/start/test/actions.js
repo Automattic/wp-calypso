@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-import { useNock } from 'test/helpers/use-nock';
-import useMockery from 'test/helpers/use-mockery';
 import sinon from 'sinon';
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
@@ -10,6 +8,8 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
+import useMockery from 'test/helpers/use-mockery';
 import {
 	READER_START_RECOMMENDATIONS_RECEIVE,
 	READER_START_RECOMMENDATIONS_REQUEST,

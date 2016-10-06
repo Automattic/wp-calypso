@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
@@ -26,10 +26,6 @@ describe( 'actions', () => {
 		spy.reset();
 	} );
 
-	after( () => {
-		nock.cleanAll();
-	} );
-
 	describe( '#receivePostStat()', () => {
 		it( 'should return an action object', () => {
 			const action = receivePostStat( 'views', 2916284, 2454, 2 );
@@ -45,7 +41,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestPostStat()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/stats/post/2454?fields=views' )

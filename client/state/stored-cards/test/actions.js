@@ -1,9 +1,13 @@
-// External dependencies
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
-import { nock, useNock } from 'test/helpers/use-nock';
 import sinon from 'sinon';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
+import useNock from 'test/helpers/use-nock';
 import {
 	addStoredCard,
 	deleteStoredCard,
@@ -22,8 +26,6 @@ import { useSandbox } from 'test/helpers/use-sinon';
 import wp from 'lib/wp';
 
 describe( 'actions', () => {
-	useNock();
-
 	const spy = sinon.spy();
 
 	beforeEach( () => {
@@ -67,7 +69,7 @@ describe( 'actions', () => {
 		];
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.get( '/rest/v1.1/me/stored-cards' )
 					.reply( 200, cards );
@@ -90,7 +92,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'fail', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.get( '/rest/v1.1/me/stored-cards' )
 					.reply( 403, error );
@@ -119,7 +121,7 @@ describe( 'actions', () => {
 		};
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( `/rest/v1.1/me/stored-cards/${ card.stored_details_id }/delete` )
 					.reply( 200, { success: true } );
@@ -142,7 +144,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'fail', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( `/rest/v1.1/me/stored-cards/${ card.stored_details_id }/delete` )
 					.reply( 403, error );

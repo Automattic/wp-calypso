@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import nock from 'nock';
 import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
 	WORDADS_SITE_APPROVE_REQUEST,
 	WORDADS_SITE_APPROVE_REQUEST_SUCCESS,
@@ -56,7 +56,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestWordAdsApproval()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/wordads/approve' )
@@ -68,10 +68,6 @@ describe( 'actions', () => {
 					error: 'authorization_required',
 					message: 'An active access token must be used to approve wordads.'
 				} );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {

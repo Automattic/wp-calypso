@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { nock, useNock } from 'test/helpers/use-nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -19,7 +18,7 @@ import {
 	READER_LIST_UPDATE_TITLE,
 	READER_LIST_UPDATE_DESCRIPTION
 } from 'state/action-types';
-
+import useNock from 'test/helpers/use-nock';
 import {
 	receiveLists,
 	requestList,
@@ -33,8 +32,6 @@ import {
 } from '../actions';
 
 describe( 'actions', () => {
-	useNock();
-
 	const spy = sinon.spy();
 
 	beforeEach( () => {
@@ -54,7 +51,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestList()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/lists/listowner/listslug' )
 				.reply( 200, {
@@ -75,7 +72,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSubscribedLists()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.2/read/lists' )
@@ -110,7 +107,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#followList()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/follow' )
 				.reply( 200, {
@@ -130,7 +127,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#unfollowList()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/unfollow' )
 				.reply( 200, {
@@ -150,7 +147,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#updateListDetails()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( '/rest/v1.2/read/lists/restapitests/testlist/update' )
 				.reply( 200, {
