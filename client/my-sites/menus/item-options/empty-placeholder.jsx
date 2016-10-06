@@ -9,8 +9,8 @@ import React, { PropTypes } from 'react';
 const EmptyPlaceholder = React.createClass( {
 	propTypes: {
 		typeName: PropTypes.string.isRequired,
-		typeFamily: PropTypes.string.isRequired,
 		createLink: PropTypes.string.isRequired,
+		notFoundLabel: PropTypes.string.isRequired,
 		isSearch: PropTypes.bool
 	},
 
