@@ -93,11 +93,11 @@ const SiteSelector = React.createClass( {
 
 	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.isKeyboardEngaged && prevState.highlightedIndex !== this.state.highlightedIndex ) {
-			this.scrollToHightlightedSite();
+			this.scrollToHighlightedSite();
 		}
 	},
 
-	scrollToHightlightedSite() {
+	scrollToHighlightedSite() {
 		const selectorElement = ReactDom.findDOMNode( this.refs.selector );
 		if ( selectorElement ) {
 			const highlightedSiteElement = ReactDom.findDOMNode( this.refs.highlightedSite );
