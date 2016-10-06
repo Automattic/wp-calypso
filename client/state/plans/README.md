@@ -16,9 +16,9 @@ Fetches plans
 
 > Action creators are exactly that—functions that create actions.
 
-### plansReceiveAction( plans )
+### plansRequest()
 
-### plansRequestAction()
+### plansReceiveAction( plans )
 
 ### plansRequestSuccessAction()
 
@@ -31,12 +31,12 @@ Fetches plans
 ```es6
 import {
 	plansReceiveAction,
-	plansRequestAction,
 	plansRequestSuccessAction,
-	plansRequestFailureAction
+	plansRequestFailureAction,
+	requestPlans,
 } from 'state/plans/actions';
 
-dispatch( plansRequestAction() );
+dispatch( requestPlans() );
 
 wpcom
 .plans()
