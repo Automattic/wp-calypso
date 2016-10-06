@@ -42,7 +42,7 @@ import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
 import DocumentHead from 'components/data/document-head';
-import i18n from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 
 /**
  * Constants
@@ -336,7 +336,7 @@ const Signup = React.createClass( {
 
 	pageTitle() {
 		const accountFlowName = 'account';
-		return this.props.flowName === accountFlowName ? i18n.translate( 'Create an account' ) : i18n.translate( 'Create a site' );
+		return this.props.flowName === accountFlowName ? translate( 'Create an account' ) : translate( 'Create a site' );
 	},
 
 	currentStep() {
