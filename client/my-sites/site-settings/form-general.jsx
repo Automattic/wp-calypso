@@ -538,7 +538,7 @@ const FormGeneral = React.createClass( {
 								checked={ this.state.hello_vote_enabled }
 								onChange={ this.onHelloVoteSettingChanged }
 							/>
-							<span>{ this.translate( 'Encourage your US-based users to register to vote by adding a subtle prompt to your site' ) }</span>
+							<span>{ this.translate( 'Encourage your US-based visitors to register to vote by adding a subtle prompt to your site' ) }</span>
 						</FormLabel>
 					</li>
 				</ul>
