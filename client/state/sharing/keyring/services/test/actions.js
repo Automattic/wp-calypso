@@ -25,14 +25,17 @@ import { useSandbox } from 'test/helpers/use-sinon';
 describe( 'actions', () => {
 	let spy;
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
-console.log(requestKeyringServices());
+
 	describe( 'requestKeyringServices()', () => {
 		describe( 'successful requests', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/meta/external-services/' )
-					.reply( 200, {} );
+					.reply( 200, {
+						facebook: { ID: 'facebook' },
+						twitter: { ID: 'twitter' },
+					} );
 			} );
 
 			it( 'should dispatch fetch action when thunk triggered', () => {
@@ -47,7 +50,10 @@ console.log(requestKeyringServices());
 				return requestKeyringServices()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: KEYRING_SERVICES_RECEIVE,
-						services: {}
+						services: {
+							facebook: { ID: 'facebook' },
+							twitter: { ID: 'twitter' },
+						}
 					} );
 				} );
 			} );
@@ -93,11 +99,17 @@ console.log(requestKeyringServices());
 
 	describe( 'receiveKeyringServices()', () => {
 		it( 'should return an action object', () => {
-			const action = receiveKeyringServices( {} );
+			const action = receiveKeyringServices( {
+				facebook: { ID: 'facebook' },
+				twitter: { ID: 'twitter' },
+			} );
 
 			expect( action ).to.eql( {
 				type: KEYRING_SERVICES_RECEIVE,
-				services: {}
+				services: {
+					facebook: { ID: 'facebook' },
+					twitter: { ID: 'twitter' },
+				}
 			} );
 		} );
 	} );
@@ -114,11 +126,17 @@ console.log(requestKeyringServices());
 
 	describe( 'failKeyringServicesRequest()', () => {
 		it( 'should return an action object', () => {
-			const action = failKeyringServicesRequest( {} );
+			const action = failKeyringServicesRequest( {
+				error: 'server_error',
+				message: 'A server error occurred',
+			} );
 
 			expect( action ).to.eql( {
 				type: KEYRING_SERVICES_REQUEST_FAILURE,
-				error: {}
+				error: {
+					error: 'server_error',
+					message: 'A server error occurred',
+				}
 			} );
 		} );
 	} );
