@@ -6,7 +6,7 @@ import page from 'page';
 // Internal dependencies
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getStepUrl } from 'signup/utils';
-import SurveyStep from 'signup/steps/survey';
+import SurveyStepV1 from 'signup/steps/survey/survey-step-v1';
 
 class GetDotBlogSurvey extends Component {
 	constructor( props ) {
@@ -25,7 +25,7 @@ class GetDotBlogSurvey extends Component {
 
 	render() {
 		return (
-			<SurveyStep { ...this.props } />
+			<SurveyStepV1 { ...this.props } />
 		);
 	}
 }
