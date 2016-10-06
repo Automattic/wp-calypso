@@ -7,7 +7,6 @@ import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 import qs from 'qs';
 import isEmpty from 'lodash/isEmpty';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -18,7 +17,6 @@ import analytics from 'lib/analytics';
 import SignupComponent from './main';
 import utils from './utils';
 import userModule from 'lib/user';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 const user = userModule();
@@ -87,8 +85,6 @@ export default {
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		context.store.dispatch( setLayoutFocus( 'content' ) );
 
-		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		context.store.dispatch( setTitle( i18n.translate( 'Create an account' ) ) );
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( SignupComponent, {
