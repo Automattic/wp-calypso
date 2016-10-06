@@ -18,10 +18,11 @@ module.exports = React.createClass( {
 	displayName: 'ThemeSelection',
 
 	propTypes: {
-		useHeadstart: React.PropTypes.bool,
-		stepName: React.PropTypes.string.isRequired,
+		designType: React.PropTypes.string,
 		goToNextStep: React.PropTypes.func.isRequired,
 		signupDependencies: React.PropTypes.object.isRequired,
+		stepName: React.PropTypes.string.isRequired,
+		useHeadstart: React.PropTypes.bool,
 	},
 
 	getInitialState() {
@@ -68,12 +69,14 @@ module.exports = React.createClass( {
 	},
 
 	renderThemesList() {
-		return ( <SignupThemesList
-			surveyQuestion={ this.props.signupDependencies.surveyQuestion }
-			designType={ this.props.signupDependencies.designType }
-			handleScreenshotClick={ this.handleScreenshotClick }
-			handleThemeUpload={ this.handleThemeUpload }
-		/> );
+		return (
+			<SignupThemesList
+				surveyQuestion={ this.props.signupDependencies.surveyQuestion }
+				designType={ this.props.designType || this.props.signupDependencies.designType }
+				handleScreenshotClick={ this.handleScreenshotClick }
+				handleThemeUpload={ this.handleThemeUpload }
+			/>
+		);
 	},
 
 	renderJetpackButton() {

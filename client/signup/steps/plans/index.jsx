@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -24,6 +24,7 @@ class PlansStep extends Component {
 
 	onSelectPlan( cartItem ) {
 		const {
+			additionalStepData,
 			stepSectionName,
 			stepName,
 			goToNextStep,
@@ -46,9 +47,10 @@ class PlansStep extends Component {
 			processingMessage: isEmpty( cartItem )
 				? translate( 'Free plan selected' )
 				: translate( 'Adding your plan' ),
-			stepName: stepName,
-			stepSectionName: stepSectionName,
-			cartItem
+			stepName,
+			stepSectionName,
+			cartItem,
+			...additionalStepData
 		}, [], { cartItem } );
 
 		goToNextStep();
@@ -108,5 +110,14 @@ class PlansStep extends Component {
 		</div>;
 	}
 }
+
+PlansStep.propTypes = {
+	additionalStepData: PropTypes.object,
+	goToNextStep: PropTypes.func.isRequired,
+	hideFreePlan: PropTypes.bool,
+	stepName: PropTypes.string.isRequired,
+	stepSectionName: PropTypes.string,
+	translate: PropTypes.func.isRequired,
+};
 
 export default localize( PlansStep );

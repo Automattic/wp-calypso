@@ -351,7 +351,8 @@ const Signup = React.createClass( {
 						hasCartItems={ this.state.hasCartItems }
 						steps={ this.state.progress }
 						user={ this.state.user }
-						loginHandler={ this.state.loginHandler }/>
+						loginHandler={ this.state.loginHandler }
+					/>
 					: <CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
