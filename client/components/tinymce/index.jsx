@@ -66,11 +66,11 @@ import insertMenuPlugin from './plugins/insert-menu/plugin';
 /**
  * Internal Dependencies
  */
-const formatting = require( 'lib/formatting' ),
-	user = require( 'lib/user' )(),
+const user = require( 'lib/user' )(),
 	i18n = require( './i18n' ),
 	viewport = require( 'lib/viewport' ),
 	config = require( 'config' );
+import { decodeEntities, wpautop, removep } from 'lib/formatting';
 
 /**
  * Internal Variables
@@ -393,7 +393,7 @@ module.exports = React.createClass( {
 			// TODO: fix code duplication between the wordpress plugin and the React component
 			content = content.replace( /<p>(?:<br ?\/?>|\u00a0|\uFEFF| )*<\/p>/g, '<p>&nbsp;</p>' );
 
-			content = formatting.removep( content );
+			content = removep( content );
 		}
 
 		return content;
@@ -407,12 +407,15 @@ module.exports = React.createClass( {
 	},
 
 	setTextAreaContent: function( content ) {
-		this.setState( { content }, this.doAutosizeUpdate );
+		this.setState( {
+			content: decodeEntities( content )
+		}, this.doAutosizeUpdate );
 	},
 
-	setEditorContent: function( content ) {
+	setEditorContent: function( content, args ) {
 		if ( this._editor ) {
-			this._editor.setContent( formatting.wpautop( content ) );
+			const { mode } = this.props;
+			this._editor.setContent( wpautop( content ), { ...args, mode } );
 
 			// clear the undo stack to ensure that we don't have any leftovers
 			this._editor.undoManager.clear();
