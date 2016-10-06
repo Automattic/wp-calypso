@@ -71,15 +71,20 @@ const ThemesMagicSearchCard = React.createClass( {
 
 		return (
 			tokens.map( ( token, i ) => {
-				let classname = 'themes-magic-search-card__search-text';
-
 				if ( token.trim() === '' ) {
-					classname = 'themes-magic-search-card__search-white-space';
+					return <span className="themes-magic-search-card__search-white-space" key={ i }>{ token }</span>; // use shortid for key
 				} else if ( filterIsValid( token ) ) {
-					classname = 'themes-magic-search-card__search-token';
+					const separator = ':';
+					const [ taxonomy, filter ] = token.split( separator );
+					return (
+						<span className="themes-magic-search-card__token" key={ i }>
+							<span className="themes-magic-search-card__token-taxonomy">{ taxonomy }</span>
+							<span className="themes-magic-search-card__token-separator">{ separator }</span>
+							<span className="themes-magic-search-card__token-filter">{ filter }</span>
+						</span>
+					);
 				}
-
-				return <span className={ classname } key={ i }>{ token }</span>; // use shortid for key
+				return <span className="themes-magic-search-card__search-text" key={ i }>{ token }</span>; // use shortid for key
 			} )
 		);
 	},
@@ -111,12 +116,12 @@ const ThemesMagicSearchCard = React.createClass( {
 			/>
 		);
 
-		const themesSearchClass = classNames( 'themes-magic-search-card', {
+		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
 			'has-highlight': this.state.searchIsOpen
 		} );
 
 		return (
-			<div className={ themesSearchClass } data-tip-target="themes-search-card">
+			<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
 				{ searchField }
 				{ isPremiumThemesEnabled && ! isJetpack &&
 					<SegmentedControl
