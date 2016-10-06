@@ -109,7 +109,7 @@ import { buildSeoTitle } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { localize } from 'i18n-calypso';
 
-const Chip = onClick => props => <Token { ...props } onClick={ onClick } />;
+const Chip = handlers => props => <Token { ...props } { ...handlers } />;
 
 export class TitleFormatEditor extends Component {
 	static propTypes = {
@@ -141,7 +141,8 @@ export class TitleFormatEditor extends Component {
 		this.state = {
 			editorState: EditorState.moveFocusToEnd(
 				this.editorStateFrom( props )
-			)
+			),
+			isTokenActive: false,
 		};
 	}
 
@@ -158,14 +159,26 @@ export class TitleFormatEditor extends Component {
 	editorStateFrom( props ) {
 		const { disabled } = props;
 
+		const onClick = disabled
+			? noop
+			: this.removeToken;
+
 		return EditorState.createWithContent(
 			toEditor( props.titleFormats, props.tokens ),
 			new CompositeDecorator( [ {
 				strategy: this.renderTokens,
-				component: Chip( disabled ? noop : this.removeToken )
+				component: Chip( {
+					onMouseEnter: this.holdForToken,
+					onMouseLeave: this.freeTokenHold,
+					onClick,
+				})
 			} ] )
 		);
 	}
+
+	freeTokenHold = () => this.setState( { isTokenActive: false } );
+
+	holdForToken = () => this.setState( { isTokenActive: true } );
 
 	/**
 	 * Returns a new editorState that forces
@@ -314,6 +327,7 @@ export class TitleFormatEditor extends Component {
 			);
 
 			this.updateEditor( selectionBeforeToken );
+			this.freeTokenHold();
 		};
 	}
 
@@ -333,7 +347,10 @@ export class TitleFormatEditor extends Component {
 	}
 
 	render() {
-		const { editorState } = this.state;
+		const {
+			editorState,
+			isTokenActive,
+		} = this.state;
 		const {
 			disabled,
 			placeholder,
@@ -371,6 +388,7 @@ export class TitleFormatEditor extends Component {
 						onChange={ disabled ? noop : this.updateEditor }
 						placeholder={ placeholder }
 						ref={ this.storeEditorReference }
+						readOnly={ isTokenActive }
 					/>
 				</div>
 				<div className="title-format-editor__preview">{ formattedPreview }</div>

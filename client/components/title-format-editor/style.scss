@@ -61,7 +61,7 @@
 }
 
 .title-format-editor__token {
-	padding: 2px 0px;
+	padding: 2px 0;
 	background-color: darken( $gray, 20% );
 	color: $white;
 	border-radius: 3px;
@@ -74,9 +74,8 @@
 }
 
 .title-format-editor__token-close {
-	margin-left: 10px;
-	color: lighten( $gray, 10% );
-	font-size: 10px;
+	margin-left: -4px;
+	margin-bottom: -5px;
 }
 
 .title-format-editor__preview {
