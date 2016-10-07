@@ -1,4 +1,5 @@
 /***** WARNING: ES5 code only here. Not transpiled! *****/
+/* eslint-disable no-var */
 
 /**
  * External dependencies
@@ -13,7 +14,7 @@ const config = require( './server/config' ),
 	sections = require( './client/sections' ),
 	cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
-	CopyWebpackPlugin = require( 'copy-webpack-plugin' );
+	CopyWebpackPlugin = require( 'copy-webpack-plugin' ),
 	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' );
 
 /**
@@ -197,10 +198,12 @@ if ( CALYPSO_ENV === 'production' ) {
 }
 
 if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
-	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'client-records.json' ),
+	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'client-records.json' );
 	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ) } ) );
 }
 
 webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
 
 module.exports = webpackConfig;
+
+/* eslint-enable no-var */
