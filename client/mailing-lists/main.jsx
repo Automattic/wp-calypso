@@ -99,6 +99,8 @@ const MainComponent = React.createClass( {
 			return this.translate( 'Research' );
 		} else if ( 'community' === this.props.category ) {
 			return this.translate( 'Community' );
+		} else if ( 'digest' === this.props.category ) {
+			return this.translate( 'Digests' );
 		}
 
 		return this.props.category;
