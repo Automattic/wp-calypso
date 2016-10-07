@@ -626,10 +626,8 @@ module.exports = {
 
 			case 'files_not_writable':
 				return i18n.translate( 'The update cannot be installed because we will be unable to copy some files. This is usually due to inconsistent file permissions.' );
-
-			default:
-				return null;
 		}
+
 		return null;
 	},
 
@@ -654,7 +652,7 @@ module.exports = {
 							args: translateArg
 						} );
 				}
-				break;
+
 			case 'REMOVE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -664,7 +662,7 @@ module.exports = {
 					default:
 						return i18n.translate( 'An error occurred while removing %(plugin)s on %(site)s.', { args: translateArg } );
 				}
-				break;
+
 			case 'UPDATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -680,7 +678,7 @@ module.exports = {
 						}
 						return i18n.translate( 'An error occurred while updating %(plugin)s on %(site)s.', { args: translateArg } );
 				}
-				break;
+
 			case 'ACTIVATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -693,7 +691,7 @@ module.exports = {
 						} );
 
 				}
-				break;
+
 			case 'DEACTIVATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -705,7 +703,7 @@ module.exports = {
 							args: translateArg
 						} );
 				}
-				break;
+
 			case 'ENABLE_AUTOUPDATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -717,7 +715,7 @@ module.exports = {
 							args: translateArg
 						} );
 				}
-				break;
+
 			case 'DISABLE_AUTOUPDATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -729,7 +727,6 @@ module.exports = {
 							args: translateArg
 						} );
 				}
-				break;
 		}
 	},
 

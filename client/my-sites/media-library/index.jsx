@@ -95,10 +95,9 @@ module.exports = React.createClass( {
 		switch ( filter ) {
 			case 'audio':
 				return ! ( site && site.options.upgraded_filetypes_enabled || site.jetpack );
-				break;
+
 			case 'videos':
 				return ! ( site && site.options.videopress_enabled || site.jetpack );
-				break;
 		}
 
 		return false;
