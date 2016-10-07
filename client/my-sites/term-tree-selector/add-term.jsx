@@ -6,7 +6,7 @@ import ReactDom from 'react-dom';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find } from 'lodash';
+import { get, find, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,6 +16,7 @@ import TermTreeSelectorTerms from './terms';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import FormInputValidation from 'components/forms/form-input-validation';
+import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -26,7 +27,7 @@ import viewport from 'lib/viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
-import { addTermForPost } from 'state/posts/actions';
+import { addTerm } from 'state/terms/actions';
 
 class TermSelectorAddTerm extends Component {
 	static initialState = {
@@ -39,12 +40,19 @@ class TermSelectorAddTerm extends Component {
 
 	static propTypes = {
 		labels: PropTypes.object,
+		onSuccess: PropTypes.func,
 		postType: PropTypes.string,
 		postId: PropTypes.number,
+		showDescriptionInput: PropTypes.bool,
 		siteId: PropTypes.number,
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
 		translate: PropTypes.func
+	};
+
+	static defaultProps = {
+		onSuccess: noop,
+		showDescriptionInput: false
 	};
 
 	constructor( props ) {
@@ -93,8 +101,12 @@ class TermSelectorAddTerm extends Component {
 	getFormValues() {
 		const name = ReactDom.findDOMNode( this.refs.termName ).value.trim();
 		const parent = this.state.selectedParent.length ? this.state.selectedParent[ 0 ] : 0;
+		const formValues = { name, parent };
+		if ( this.props.showDescriptionInput ) {
+			formValues.description = ReactDom.findDOMNode( this.refs.termDescription ).value.trim();
+		}
 
-		return { name, parent };
+		return formValues;
 	}
 
 	isValid() {
@@ -145,12 +157,14 @@ class TermSelectorAddTerm extends Component {
 
 		const { postId, siteId, taxonomy } = this.props;
 
-		this.props.addTermForPost( siteId, taxonomy, term, postId );
+		this.props
+			.addTerm( siteId, taxonomy, term, postId )
+			.then( this.props.onSuccess );
 		this.closeDialog();
 	}
 
 	render() {
-		const { labels, siteId, taxonomy, translate, terms } = this.props;
+		const { labels, siteId, taxonomy, translate, terms, showDescriptionInput } = this.props;
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' )
@@ -193,6 +207,15 @@ class TermSelectorAddTerm extends Component {
 							onKeyUp={ this.boundValidateInput } />
 						{ isError && <FormInputValidation isError text={ this.state.error } /> }
 					</FormFieldset>
+					{ showDescriptionInput && <FormFieldset>
+							<FormLegend>
+								{ translate( 'Description', { context: 'Terms: Term description label' } ) }
+							</FormLegend>
+							<FormTextarea
+								ref="termDescription"
+								onKeyUp={ this.boundValidateInput } />
+						</FormFieldset>
+					}
 					<FormFieldset>
 						<FormLegend>
 							{ labels.parent_item }
@@ -228,5 +251,5 @@ export default connect(
 			siteId
 		};
 	},
-	{ addTermForPost }
+	{ addTerm }
 )( localize( TermSelectorAddTerm ) );
