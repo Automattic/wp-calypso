@@ -1,13 +1,17 @@
 /**
- * Module dependencies
+ * External dependencies
  */
-var path = require( 'path' ),
-	build = require( 'build' ),
-	config = require( 'config' ),
-	express = require( 'express' ),
-	morgan = require( 'morgan' ),
-	pages = require( 'pages' ),
-	ReactEngine = require( 'express-react-views' );
+import path from 'path';
+import express from 'express';
+import morgan from 'morgan';
+import ReactEngine from 'express-react-views';
+
+/**
+ * External dependencies
+ */
+import build from 'build';
+import config from 'config';
+import pages from 'pages';
 
 /**
  * Returns the server HTTP request handler "app".
