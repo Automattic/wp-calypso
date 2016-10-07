@@ -179,10 +179,24 @@ function getStoreForRecommendedPosts( storeId ) {
 	} );
 
 	function fetcher( query, callback ) {
-		if ( 'coldstart_posts' === storeId ) {
-			query.algorithm = 'read:recommendations:posts/es/2';
-		} else {
-			query.algorithm = 'read:recommendations:posts/es/1';
+		switch( storeId ) {
+			case 'cold_posts':
+				query.algorithm = 'read:recommendations:posts/es/2';
+				break;
+			case 'cold_posts1w':
+				query.algorithm = 'read:recommendations:posts/es/3';
+				break;
+			case 'cold_posts2w':
+				query.algorithm = 'read:recommendations:posts/es/4';
+				break;
+			case 'cold_posts4w':
+				query.algorithm = 'read:recommendations:posts/es/5';
+				break;
+			case 'cold_posts_topics':
+				query.algorithm = 'read:recommendations:posts/es/6';
+				break;
+			default:
+				query.algorithm = 'read:recommendations:posts/es/1';
 		}
 		wpcomUndoc.readRecommendedPosts( query, trainTracksProxyForStream( stream, callback ) );
 	}
@@ -228,7 +242,15 @@ function feedStoreFactory( storeId ) {
 		} );
 	} else if ( storeId === 'recommendations_posts' ) {
 		store = getStoreForRecommendedPosts( storeId );
-	} else if ( storeId === 'coldstart_posts' ) {
+	} else if ( storeId === 'cold_posts' ) {
+		store = getStoreForRecommendedPosts( storeId );
+	} else if ( storeId === 'cold_posts_1w' ) {
+		store = getStoreForRecommendedPosts( storeId );
+	} else if ( storeId === 'cold_posts_2w' ) {
+		store = getStoreForRecommendedPosts( storeId );
+	} else if ( storeId === 'cold_posts_4w' ) {
+		store = getStoreForRecommendedPosts( storeId );
+	} else if ( storeId === 'cold_posts_topics' ) {
 		store = getStoreForRecommendedPosts( storeId );
 	} else if ( storeId.indexOf( 'feed:' ) === 0 ) {
 		store = getStoreForFeed( storeId );

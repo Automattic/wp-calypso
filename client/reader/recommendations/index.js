@@ -38,5 +38,33 @@ export default function() {
 			readerController.removePost,
 			readerController.sidebar,
 			controller.recommendedPosts );
+		page( '/recommendations/cold1w',
+			readerController.preloadReaderBundle,
+			readerController.loadSubscriptions,
+			readerController.updateLastRoute,
+			readerController.removePost,
+			readerController.sidebar,
+			controller.recommendedPosts );
+		page( '/recommendations/cold2w',
+			readerController.preloadReaderBundle,
+			readerController.loadSubscriptions,
+			readerController.updateLastRoute,
+			readerController.removePost,
+			readerController.sidebar,
+			controller.recommendedPosts );
+		page( '/recommendations/cold4w',
+			readerController.preloadReaderBundle,
+			readerController.loadSubscriptions,
+			readerController.updateLastRoute,
+			readerController.removePost,
+			readerController.sidebar,
+			controller.recommendedPosts );
+		page( '/recommendations/coldtopics',
+			readerController.preloadReaderBundle,
+			readerController.loadSubscriptions,
+			readerController.updateLastRoute,
+			readerController.removePost,
+			readerController.sidebar,
+			controller.recommendedPosts );
 	}
 }

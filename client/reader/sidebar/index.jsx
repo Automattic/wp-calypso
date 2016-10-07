@@ -175,6 +175,50 @@ export const ReaderSidebar = React.createClass( {
 										<Gridicon icon="star" size={ 24 } />
 										<span className="menu-link-text">{ this.props.translate( 'Coldstart (Alpha)' ) }</span>
 									</a>
+									</li>
+							)
+						}
+						{
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/cold1w', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/cold1w">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.props.translate( 'Coldstart+1wk (Alpha)' ) }</span>
+									</a>
+								</li>
+							)
+						}
+						{
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/cold2w', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/cold2w">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.props.translate( 'Coldstart+2wk (Alpha)' ) }</span>
+									</a>
+								</li>
+							)
+						}
+						{
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/cold4w', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/cold4w">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.props.translate( 'Coldstart+4wk (Alpha)' ) }</span>
+									</a>
+								</li>
+							)
+						}
+						{
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/coldtopics', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/coldtopics">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.props.translate( 'Coldstart Diverse (Alpha)' ) }</span>
+									</a>
 								</li>
 							)
 						}
