@@ -14,9 +14,12 @@ export default localize( ( props ) => {
 	const {
 		title,
 		description,
-		date,
-		youtubeId
+		parsedDate,
+		youtubeId,
+		moment,
 	} = props;
+
+	const date = moment( parsedDate );
 
 	return (
 		<div className="help-courses__course-video">

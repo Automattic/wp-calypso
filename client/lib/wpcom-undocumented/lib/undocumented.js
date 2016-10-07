@@ -2015,6 +2015,17 @@ Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
 };
 
 /**
+ * Get my help courses.
+ *
+ * @returns {Promise} A promise that resolves with help courses
+ */
+Undocumented.prototype.getHelpCourses = function() {
+	return this.wpcom.req.get( '/help/courses', {
+		apiNamespace: 'wpcom/v2'
+	} );
+};
+
+/**
  * Expose `Undocumented` module
  */
 module.exports = Undocumented;

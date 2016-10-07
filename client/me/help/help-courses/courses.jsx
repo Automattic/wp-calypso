@@ -10,24 +10,9 @@ import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import CourseList, { CourseListPlaceholder } from './course-list';
 import QueryUserPurchases from 'components/data/query-user-purchases';
+import QueryHelpCourses from 'components/data/query-help-courses';
 
 class Courses extends Component {
-	componentWillMount() {
-		this.fetchCoursesIfNeeded();
-	}
-
-	fetchCoursesIfNeeded() {
-		//TODO: When courses make it into the API we will no longer need this code.
-		//      We can move towards the use of something like <QueryHelpCourses />
-		const { courses, fetchCourses } = this.props;
-
-		if ( courses ) {
-			return;
-		}
-
-		fetchCourses();
-	}
-
 	render() {
 		const {
 			translate,
@@ -47,6 +32,7 @@ class Courses extends Component {
 					: <CourseList courses={ courses } isBusinessPlanUser={ isBusinessPlanUser } /> }
 
 				<QueryUserPurchases userId={ userId } />
+				<QueryHelpCourses />
 			</Main>
 		);
 	}

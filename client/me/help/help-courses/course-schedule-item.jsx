@@ -14,11 +14,14 @@ import analytics from 'lib/analytics';
 
 export default localize( ( props ) => {
 	const {
-		date,
 		registrationUrl,
 		isBusinessPlanUser,
-		translate
+		translate,
+		parsedDate,
+		moment,
 	} = props;
+
+	const date = moment( parsedDate );
 
 	const trackRegistrationClick = () => {
 		analytics.tracks.recordEvent( 'calypso_help_course_registration_click', {
