@@ -12,7 +12,7 @@ import i18n from 'i18n-calypso';
 import PurchaseItem from '../item';
 import SectionHeader from 'components/section-header';
 
-const PurchasesSite = ( { isPlaceholder, name, purchases, slug } ) => {
+const PurchasesSite = ( { isPlaceholder, name, purchases, slug, domain } ) => {
 	let items, label = name;
 
 	if ( isPlaceholder ) {
@@ -34,7 +34,7 @@ const PurchasesSite = ( { isPlaceholder, name, purchases, slug } ) => {
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<SectionHeader label={ label }>
-				<span className="purchases-site__slug">{ slug }</span>
+				<span className="purchases-site__slug">{ domain }</span>
 			</SectionHeader>
 
 			{ items }
@@ -43,6 +43,7 @@ const PurchasesSite = ( { isPlaceholder, name, purchases, slug } ) => {
 };
 
 PurchasesSite.propTypes = {
+	domain: React.PropTypes.string,
 	isPlaceholder: React.PropTypes.bool,
 	name: React.PropTypes.string,
 	purchases: React.PropTypes.array,

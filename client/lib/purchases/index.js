@@ -37,7 +37,6 @@ function getPurchasesBySite( purchases, sites ) {
 			const siteObject = find( sites, { ID: currentValue.siteId } );
 
 			result = result.concat( {
-				domain: currentValue.domain,
 				id: currentValue.siteId,
 				name: currentValue.siteName,
 				/* if the purchase is attached to a deleted site,
@@ -45,7 +44,8 @@ function getPurchasesBySite( purchases, sites ) {
 				 * we fall back on the domain. */
 				slug: siteObject ? siteObject.slug : currentValue.domain,
 				title: currentValue.siteName || currentValue.domain || '',
-				purchases: [ currentValue ]
+				purchases: [ currentValue ],
+				domain: siteObject ? siteObject.domain : currentValue.domain
 			} );
 		}
 
