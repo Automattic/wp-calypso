@@ -120,7 +120,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 		return feed;
 	},
 
-	_showPopoverMenu() {
+	showPopoverMenu() {
 		const newState = ! this.state.showPopoverMenu;
 		this.setState( {
 			showPopover: false,
@@ -131,7 +131,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 		stats.recordTrackForPost( 'calypso_reader_post_options_menu_' + ( newState ? 'opened' : 'closed' ), this.props.post );
 	},
 
-	_closePopoverMenu() {
+	closePopoverMenu() {
 		if ( this.isMounted() ) {
 			this.setState( { showPopoverMenu: false } );
 		}
@@ -184,7 +184,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 			<span className="reader-post-options-menu">
 				<span className={ triggerClasses }
 						ref="popoverMenuButton"
-						onClick={ this._showPopoverMenu }>
+						onClick={ this.showPopoverMenu }>
 					<svg className="gridicon gridicon__ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 						<g><circle cx="5" cy="12" r="2" /><circle cx="19" cy="12" r="2" /><circle cx="12" cy="12" r="2" /></g>
 					</svg>
@@ -192,7 +192,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 				</span>
 
 				<PopoverMenu isVisible={ this.state.showPopoverMenu }
-						onClose={ this._closePopoverMenu }
+						onClose={ this.closePopoverMenu }
 						position={ this.state.popoverPosition }
 						context={ this.refs && this.refs.popoverMenuButton }>
 
