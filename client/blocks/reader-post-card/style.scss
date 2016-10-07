@@ -1,3 +1,9 @@
+// Custom breakpoints needed to match original design
+
+$reader-post-card-breakpoint-large: "( min-width: 961px ) and ( max-width: 1030px )";
+$reader-post-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 850px )";
+$reader-post-card-breakpoint-small: "( max-width: 550px )";
+
 .reader-post-card.card {
 	box-shadow: none;
 	position: relative;
@@ -14,12 +20,22 @@
 		top: 55px;
 	width: 250px;
 
-	@include breakpoint( "660px-960px" ) {
-		width: 115px;
+	@include breakpoint( "<960px" ) {
+		width: 190px;
 	}
 
-	@include breakpoint( "<480px" ) {
-		width: 90px;
+	@media #{$reader-post-card-breakpoint-medium} {
+		width: 100%;
+		height: 100px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 190px;
+	}
+
+	@media #{$reader-post-card-breakpoint-small} {
+		width: 100%;
+		height: 100px;
 	}
 }
 
@@ -68,8 +84,36 @@
 	align-items: flex-start;
 	display: flex;
 
-	@include breakpoint( "<660px" ) {
+	@media #{$reader-post-card-breakpoint-medium} {
 		flex-direction: column;
+	}
+
+	.reader-post-card__featured-image {
+		@media #{$reader-post-card-breakpoint-medium} {
+			position: static;
+		}
+	}
+
+	.reader-post-card__post-details {
+		@media #{$reader-post-card-breakpoint-medium} {
+			padding-left: 0;
+		}
+	}
+
+	@media #{$reader-post-card-breakpoint-small} {
+		flex-direction: column;
+	}
+
+	.reader-post-card__featured-image {
+		@media #{$reader-post-card-breakpoint-small} {
+			position: static;
+		}
+	}
+
+	.reader-post-card__post-details {
+		@media #{$reader-post-card-breakpoint-small} {
+			padding-left: 0;
+		}
 	}
 }
 
@@ -77,18 +121,19 @@
 	flex: 1;
 	font-family: $serif;
 	margin-top: -10px;
+	padding-left: 265px;
 
 	@include breakpoint( "660px-960px" ) {
-		padding-left: 135px;
+		padding-left: 205px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		padding-left: 205px;
 	}
 
 	@include breakpoint( "<480px" ) {
 		padding-left: 108px;
 	}
-}
-
-.reader-post-card.has-thumbnail .reader-post-card__post-details {
-	padding-left: 270px;
 }
 
 .reader-post-card__title {
@@ -113,12 +158,27 @@
 }
 
 .reader-post-card__social {
+	box-sizing: border-box;
 	display: flex;
+	float: right;
 	font-family: $sans;
 	height: 22px;
 	list-style-type: none;
 	margin: 0;
-	padding: 12px 0 0 0;
+	padding: 12px 0 0 265px;
+	width: 100%;
+
+	@include breakpoint( "<960px" ) {
+		padding-left: 206px;
+	}
+
+	@media #{$reader-post-card-breakpoint-medium}  {
+		padding-left: 0;
+	}
+
+	@media #{$reader-post-card-breakpoint-small} {
+		padding-left: 0;
+	}
 
 	.gridicon {
 		fill: lighten( $gray, 10% );
@@ -143,6 +203,10 @@
 	color: lighten( $gray, 10% );
 	font-size: 14px;
 	margin: 0 4px;
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
 }
 
 .reader-post-card__visit {
@@ -151,5 +215,26 @@
 	.external-link {
 		color: lighten( $gray, 10% );
 		font-size: 14px;
+	}
+}
+
+.reader-post-card__share .reader-share__button-label,
+.reader-post-card__comments .comment-button__label-status,
+.reader-post-card__likes .like-button__label-status {
+
+	@media #{$reader-post-card-breakpoint-large} {
+		display: none;
+	}
+
+	@include breakpoint( "<960px" ) {
+		display: none;
+	}
+
+	@media #{$reader-post-card-breakpoint-small} {
+		display: inline;
+	}
+
+	@include breakpoint( "<480px" ) {
+		display: none;
 	}
 }
