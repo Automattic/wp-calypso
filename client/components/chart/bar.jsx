@@ -153,10 +153,10 @@ module.exports = React.createClass( {
 
 		return (
 			<div onClick={ this.clickHandler }
-				 onMouseEnter={ this.mouseEnter }
-				 onMouseLeave={ this.mouseLeave }
-				 className={ classNames( barClass ) }
-				 style={ barStyle }>
+				onMouseEnter={ this.mouseEnter }
+				onMouseLeave={ this.mouseLeave }
+				className={ classNames( barClass ) }
+				style={ barStyle }>
 				{ this.buildSections() }
 				<div className="chart__bar-marker is-hundred"></div>
 				<div className="chart__bar-marker is-fifty"></div>

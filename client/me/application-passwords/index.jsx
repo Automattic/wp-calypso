@@ -190,7 +190,7 @@ const ApplicationPasswords = React.createClass( {
 				<Card>
 
 					{ hasNewPassword
-					 	? this.renderNewAppPassword()
+						? this.renderNewAppPassword()
 						: this.renderNewAppPasswordForm() }
 
 					<p>

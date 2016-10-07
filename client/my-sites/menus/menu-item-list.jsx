@@ -182,7 +182,7 @@ var MenuItem = React.createClass( {
 		var draggedItem = this.props.dragDrop( 'getDraggedItem' );
 		return draggedItem &&
 			( draggedItem.id === this.props.item.id ||
-			  siteMenus.isAncestor( draggedItem, this.props.item ) );
+				siteMenus.isAncestor( draggedItem, this.props.item ) );
 	},
 
 	isCorrupt: function() {

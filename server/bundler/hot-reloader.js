@@ -58,11 +58,11 @@ hotReloader = {
 			sendStats( io.sockets, stats.toJson() );
 			_stats = stats;
 		} );
-		
+
 		// CSS hot reloading logic
 
 		io.of( '/css-hot-reload' ).on( 'connection', function() {
-		  debug( '/css-hot-reload new connection' );
+			debug( '/css-hot-reload new connection' );
 		} );
 
 		cssHotReloader( io );
