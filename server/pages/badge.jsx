@@ -14,10 +14,10 @@ const BranchName = ( { branchName, commitChecksum } ) => (
 	</span>
 );
 
-const DevDocsLink = ( { devDocsUrl, docs } ) => (
+const DevDocsLink = ( { devDocsUrl } ) => (
 	<span className="environment is-docs">
 		<a href={ devDocsUrl } title="DevDocs">
-			{ docs }
+			docs
 		</a>
 	</span>
 );
@@ -28,7 +28,6 @@ const Badge = ( {
 	commitChecksum,
 	devDocs,
 	devDocsURL: devDocsUrl,
-	docs,
 	feedbackURL: feedbackUrl
 } ) => (
 	<div className="environment-badge">
@@ -36,7 +35,7 @@ const Badge = ( {
 		{ branchName && branchName !== 'master' &&
 			<BranchName branchName={ branchName } commitChecksum={ commitChecksum } />
 		}
-		{ devDocs && <DevDocsLink devdocsURL={ devDocsUrl } docs={ docs } /> }
+		{ devDocs && <DevDocsLink devDocsUrl={ devDocsUrl } /> }
 		<span className={ 'environment is-' + badge }>
 			{ badge }
 		</span>
