@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -47,7 +48,7 @@ class Document extends React.Component {
 		return (
 			<html lang={ lang }
 				dir={ config( 'rtl' ) ? 'rtl' : 'ltr' }
-				className={ !! config.isEnabled( 'fluid-width' ) ? 'is-fluid-with' : null }>
+				className={ classNames( { 'is-fluid-with': !! config.isEnabled( 'fluid-width' ) } ) }>
 				<Head title={ head.title } faviconUrl={ faviconUrl } stylesheetUrl={ this.getStylesheetUrl() }>
 					{ head.metas.map( ( { name, property, content }, i ) => (
 						<meta name={ name } property={ property } content={ content } key={ 'meta-' + i } />
