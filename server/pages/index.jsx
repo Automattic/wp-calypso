@@ -11,7 +11,7 @@ import { jsonStringifyForHtml } from 'sanitize';
 import Head from './head';
 import Badge from './badge';
 
-class Markup extends React.Component {
+class Document extends React.Component {
 	getStylesheet() {
 		const { isDebug, urls } = this.props;
 		let stylesheet = 'style.css';
@@ -112,4 +112,4 @@ class Markup extends React.Component {
 	}
 }
 
-export default Markup;
+export default Document;
