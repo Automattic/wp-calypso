@@ -31,9 +31,7 @@ function getReadableStatus( status ) {
 		'pending': i18n.translate( 'Pending' ),
 		'future': i18n.translate( 'Future' ),
 		'private': i18n.translate( 'Private' ),
-		'trash': i18n.translate( 'Trashed' ),
-		'auto-draft': i18n.translate( 'Draft' ),
-		'inherit': i18n.translate( 'Inherited' )
+		'trash': i18n.translate( 'Trashed' )
 	};
 
 	return humanReadableStatus [ status ] || status;
