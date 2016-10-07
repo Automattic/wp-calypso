@@ -310,11 +310,15 @@ function recordProduct( product, orderId ) {
 
 		// Bing
 		if ( isSupportedCurrency( product.currency ) ) {
-			window.uetq.push( {
+			const bingParams = {
 				ec: 'purchase',
-				gv: costUSD,
-				el: isJetpackPlan ? 'jetpack' : 'wpcom'
-			} );
+				gv: costUSD
+			};
+			if ( isJetpackPlan ) {
+				// `el` must be included only for jetpack plans
+				bingParams.el = 'jetpack';
+			}
+			window.uetq.push( bingParams );
 		}
 
 		// Google
