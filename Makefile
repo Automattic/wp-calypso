@@ -171,7 +171,7 @@ clean:
 	@rm -rf public/style*.css public/style-debug.css.map public/*.js $(CLIENT_CONFIG_FILE) server/devdocs/search-index.js server/devdocs/components-usage-stats.json public/editor.css build/* server/bundler/*.json
 
 # the `distclean` rule deletes all the files created from `make install`
-distclean:
+distclean: clean
 	@rm -rf node_modules
 
 # create list of translations, saved as `./calypso-strings.pot`
@@ -203,5 +203,6 @@ shrinkwrap: node-version
 FORCE:
 
 .PHONY: build build-development build-server
+.PHONY: clean distclean
 .PHONY: run install test clean distclean translate route node-version
 .PHONY: githooks githooks-commit githooks-push
