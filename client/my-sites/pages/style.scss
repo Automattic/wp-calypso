@@ -35,7 +35,8 @@
 }
 
 // <Page> component
-.page {
+.page,
+.pages__blog-posts-page {
 
 	.site-icon {
 		display: none;
@@ -50,7 +51,9 @@
 }
 
 .page__title,
-.page__title:visited {
+.page__title:visited,
+.pages__blog-posts-page__title,
+.pages__blog-posts-page__title:visited {
 	display: inline;
 	color: $gray-dark;
 	font-weight: 500;
@@ -95,12 +98,12 @@
 	text-align: left;
 }
 
-.page__info {
+.pages__blog-posts-page__info {
 	color: $gray;
 	font-size: 12px;
 	max-width: 300px;
-	float: right;
 	line-height: 24px;
+	margin: -6px 33px 0px 26px;
 }
 
 .page__delete-item.popover__menu-item {
