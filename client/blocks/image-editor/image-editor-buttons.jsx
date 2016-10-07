@@ -47,7 +47,7 @@ class ImageEditorButtons extends Component {
 		return (
 			<div className="image-editor__buttons">
 				<Button
-					className="image-editor__buttons-button image-editor__buttons-cancel"
+					className="image-editor__buttons-button"
 					onClick={ onCancel }
 				>
 					{ translate( 'Cancel' ) }
