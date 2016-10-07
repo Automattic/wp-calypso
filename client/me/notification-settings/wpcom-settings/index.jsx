@@ -14,15 +14,12 @@ import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
 import Card from 'components/card';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggleWPcomEmailSetting, saveSettings } from 'lib/notification-settings-store/actions';
 import { successNotice, errorNotice } from 'state/notices/actions';
+import EmailCategory from './email-category';
 
 /**
  * Module variables
@@ -32,7 +29,8 @@ const options = {
 	research: 'research',
 	community: 'community',
 	promotion: 'promotion',
-	news: 'news'
+	news: 'news',
+	digest: 'digest'
 };
 
 const WPCOMNotifications = React.createClass( {
@@ -71,53 +69,60 @@ const WPCOMNotifications = React.createClass( {
 		toggleWPcomEmailSetting( setting );
 	},
 
+	saveSettings() {
+		saveSettings( 'wpcom', this.state.settings );
+	},
+
 	renderWpcomPreferences() {
 		return (
 			<div>
-				<p>{ this.translate( 'We\'ll always send important emails regarding your account, security, privacy, and purchase transactions, but you can get some fun extras, too!' ) }</p>
+				<p>
+					{ this.translate(
+						'We\'ll always send important emails regarding your account, security, ' +
+						'privacy, and purchase transactions, but you can get some fun extras, too!'
+					) }
+				</p>
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Suggestions' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.marketing ) } onChange={ this.toggleSetting.bind( this, options.marketing ) }/>
-						<span>{ this.translate( 'Tips for getting the most out of WordPress.com.' ) }</span>
-					</FormLabel>
-				</FormFieldset>
+				<EmailCategory
+					name={ options.marketing }
+					isEnabled={ this.state.settings.get( options.marketing ) }
+					title={ this.translate( 'Suggestions' ) }
+					description={ this.translate( 'Tips for getting the most out of WordPress.com.' ) }
+				/>
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Research' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.research ) } onChange={ this.toggleSetting.bind( this, options.research ) }/>
-						<span>{ this.translate( 'Opportunities to participate in WordPress.com research & surveys.' ) }</span>
-					</FormLabel>
-				</FormFieldset>
+				<EmailCategory
+					name={ options.research }
+					isEnabled={ this.state.settings.get( options.research ) }
+					title={ this.translate( 'Research' ) }
+					description={ this.translate( 'Opportunities to participate in WordPress.com research & surveys.' ) }
+				/>
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Community' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.community ) } onChange={ this.toggleSetting.bind( this, options.community ) }/>
-						<span>{ this.translate( 'Information on WordPress.com courses and events (online & in-person).' ) }</span>
-					</FormLabel>
-				</FormFieldset>
+				<EmailCategory
+					name={ options.community } isEnabled={ this.state.settings.get( options.community ) }
+					title={ this.translate( 'Community' ) }
+					description={ this.translate( 'Information on WordPress.com courses and events (online & in-person).' ) }
+				/>
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Promotions' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.promotion ) } onChange={ this.toggleSetting.bind( this, options.promotion ) }/>
-						<span>{ this.translate( 'Promotions and deals on upgrades.' ) }</span>
-					</FormLabel>
-				</FormFieldset>
+				<EmailCategory
+					name={ options.promotion } isEnabled={ this.state.settings.get( options.promotion ) }
+					title={ this.translate( 'Promotions' ) }
+					description={ this.translate( 'Promotions and deals on upgrades.' ) }
+				/>
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'News' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.news ) } onChange={ this.toggleSetting.bind( this, options.news ) }/>
-						<span>{ this.translate( 'WordPress.com news and announcements.' ) }</span>
-					</FormLabel>
-				</FormFieldset>
+				<EmailCategory
+					name={ options.news } isEnabled={ this.state.settings.get( options.news ) }
+					title={ this.translate( 'News' ) }
+					description={ this.translate( 'WordPress.com news and announcements.' ) }
+				/>
+
+				<EmailCategory
+					name={ options.digest } isEnabled={ this.state.settings.get( options.digest ) }
+					title={ this.translate( 'Digests' ) }
+					description={ this.translate( 'Reading & writing digests, tailored for you.' ) }
+				/>
 
 				<ActionButtons
-					onSave={ () => saveSettings( 'wpcom', this.state.settings ) }
+					onSave={ this.saveSettings }
 					disabled={ ! this.state.hasUnsavedChanges }
 				/>
 			</div>
@@ -139,7 +144,7 @@ const WPCOMNotifications = React.createClass( {
 				<Navigation path={ this.props.path } />
 
 				<Card>
-					<FormSectionHeading className="is-primary">
+					<FormSectionHeading>
 						{ this.translate( 'Email from WordPress.com' ) }
 					</FormSectionHeading>
 					{ this.state.settings ? this.renderWpcomPreferences() : this.renderPlaceholder() }
