@@ -1,7 +1,8 @@
 // Custom breakpoints needed to match original design
 
-$reader-post-card-breakpoint-large: "( min-width: 961px ) and ( max-width: 1030px )";
-$reader-post-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 850px )";
+$reader-post-card-breakpoint-xlarge: "( min-width: 1040px )";
+$reader-post-card-breakpoint-large: "( min-width: 961px ) and ( max-width: 1040px )";
+$reader-post-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 940px )";
 $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card.card {
@@ -19,6 +20,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		left: 0;
 		top: 55px;
 	width: 250px;
+
+	@media #{$reader-post-card-breakpoint-large} {
+		width: 190px;
+	}
 
 	@include breakpoint( "<960px" ) {
 		width: 190px;
@@ -123,6 +128,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	margin-top: -10px;
 	padding-left: 265px;
 
+	@media #{$reader-post-card-breakpoint-large} {
+		padding-left: 205px;
+	}
+
 	@include breakpoint( "660px-960px" ) {
 		padding-left: 205px;
 	}
@@ -138,6 +147,14 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card__title {
 	margin: 10px 0;
+
+	@media #{$reader-post-card-breakpoint-medium} {
+		margin: 30px 0 10px;
+	}
+
+	@media #{$reader-post-card-breakpoint-small} {
+		margin: 30px 0 10px;
+	}
 }
 
 // Needs to overwrite .reader__content a
@@ -145,11 +162,15 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader__content .reader-post-card__title-link:visited,
 .reader-post-card__title-link,
 .reader-post-card__title-link:visited {
-	color: darken( $gray, 30% );
+	color: $gray-dark;
 	cursor: pointer;
 	font-size: 27px;
 	font-weight: 600;
 	line-height: 1.2;
+
+	&:hover {
+		color: $gray-dark;
+	}
 }
 
 .reader-post-card__excerpt {
@@ -167,6 +188,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	margin: 0;
 	padding: 12px 0 0 265px;
 	width: 100%;
+
+	@media #{$reader-post-card-breakpoint-large} {
+		padding-left: 206px;
+	}
 
 	@include breakpoint( "<960px" ) {
 		padding-left: 206px;
@@ -226,15 +251,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		display: none;
 	}
 
-	@include breakpoint( "<960px" ) {
+	@media #{$reader-post-card-breakpoint-medium} {
 		display: none;
 	}
 
-	@media #{$reader-post-card-breakpoint-small} {
-		display: inline;
-	}
-
-	@include breakpoint( "<480px" ) {
+	@include breakpoint( "<660px" ) {
 		display: none;
 	}
 }
