@@ -25,7 +25,7 @@ const searchItems = [
 				email: 'sue@example.com'
 			},
 			discussion: {
-				comment_count: 15
+				comment_count: 99
 			},
 			canonical_image: {
 				uri: 'https://placekitten.com/600/400',
