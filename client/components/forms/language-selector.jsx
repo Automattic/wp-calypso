@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +17,7 @@ function coerceToOptions( data, valueKey = 'value' ) {
 }
 
 const LanguageSelector = props => {
-	const { languages, valueKey, translate } = props;
+	const { languages, valueKey, translate, ...selectProps } = props;
 	const allLanguages = coerceToOptions( languages, valueKey );
 	let popularLanguages = languages.filter( language => language.popular );
 	popularLanguages.sort( ( a, b ) => a.popular - b.popular );
@@ -35,7 +34,7 @@ const LanguageSelector = props => {
 		},
 	];
 
-	return <SelectOptGroups optGroups={ languageOptGroups } { ...omit( props, 'languages' ) } />;
+	return <SelectOptGroups optGroups={ languageOptGroups } { ...selectProps } />;
 };
 
 export default localize( LanguageSelector );
