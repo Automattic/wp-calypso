@@ -42,6 +42,12 @@ class ImageEditorToolbar extends Component {
 		this.state = {
 			showAspectPopover: false
 		};
+
+		this.setAspectMenuContext = this.setAspectMenuContext.bind( this );
+		this.onAspectOpen = this.onAspectOpen.bind( this );
+		this.onAspectClose = this.onAspectClose.bind( this );
+		this.rotate = this.rotate.bind( this );
+		this.flip = this.flip.bind( this );
 	}
 
 	rotate() {

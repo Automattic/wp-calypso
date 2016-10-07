@@ -20,13 +20,14 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	MediaModalSecondaryActions = require( './secondary-actions' ),
 	MediaModalDetail = require( './detail' ),
 	MediaModalGallery = require( './gallery' ),
-	MediaModalImageEditor = require( './image-editor' ),
 	MediaActions = require( 'lib/media/actions' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	Dialog = require( 'components/dialog' ),
 	markup = require( './markup' ),
 	accept = require( 'lib/accept' ),
 	ModalViews = require( './constants' ).Views;
+
+import ImageEditor from 'blocks/image-editor';
 
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModal',
@@ -396,7 +397,7 @@ module.exports = React.createClass( {
 
 			case ModalViews.IMAGE_EDITOR:
 				content = (
-					<MediaModalImageEditor
+					<ImageEditor
 						site={ this.props.site }
 						items={ this.props.mediaLibrarySelectedItems }
 						selectedIndex={ this.getDetailSelectedIndex() }

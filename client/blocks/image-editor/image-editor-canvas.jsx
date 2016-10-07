@@ -62,6 +62,8 @@ class ImageEditorCanvas extends Component {
 		};
 
 		this.onWindowResize = null;
+
+		this.onLoadComplete = this.onLoadComplete.bind( this );
 	}
 
 	componentWillReceiveProps( newProps ) {

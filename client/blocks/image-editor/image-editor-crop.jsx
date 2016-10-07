@@ -61,6 +61,14 @@ class ImageEditorCrop extends Component {
 		super( props );
 
 		this.state = this.getDefaultState( props );
+
+		this.onTopLeftDrag = this.onTopLeftDrag.bind( this );
+		this.onTopRightDrag = this.onTopRightDrag.bind( this );
+		this.onBottomLeftDrag = this.onBottomLeftDrag.bind( this );
+		this.onBottomRightDrag = this.onBottomRightDrag.bind( this );
+
+		this.applyCrop = this.applyCrop.bind( this );
+		this.onBorderDrag = this.onBorderDrag.bind( this );
 	}
 
 	getDefaultState( props ) {
