@@ -13,7 +13,7 @@ import Head from './head';
 import Badge from './badge';
 
 class Desktop extends React.Component {
-	getStylesheet() {
+	getStylesheetUrl() {
 		const { isDebug, urls } = this.props;
 		let stylesheet = 'style.css';
 
@@ -39,7 +39,7 @@ class Desktop extends React.Component {
 			<html lang={ lang }
 				dir={ config( 'rtl' ) ? 'rtl' : 'ltr' }
 				className={ classNames( 'is-desktop', { 'is-fluid-with': !! config.isEnabled( 'fluid-width' ) } ) }>
-				<Head title="WordPress.com" faviconUrl={ faviconUrl } styleCss={ this.getStylesheet() }>
+				<Head title="WordPress.com" faviconUrl={ faviconUrl } stylesheetUrl={ this.getStylesheetUrl() }>
 					<link rel="stylesheet" href="/desktop/wordpress-desktop.css" />
 					<script src="/calypso/build.js" />
 					<script src="/desktop/desktop-app.js" />

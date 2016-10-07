@@ -3,7 +3,7 @@
  */
 import React from 'react';
 
-const Head = ( { children, styleCss, title = 'WordPress.com', faviconUrl = '//s1.wp.com/i/favicon.ico' } ) => (
+const Head = ( { children, stylesheetUrl, title = 'WordPress.com', faviconUrl = '//s1.wp.com/i/favicon.ico' } ) => (
   <head>
     <script dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
     `/*
@@ -40,7 +40,7 @@ const Head = ( { children, styleCss, title = 'WordPress.com', faviconUrl = '//s1
     <link rel="stylesheet" href="//s1.wp.com/i/fonts/merriweather/merriweather.css?v=20160210" />
     <link rel="stylesheet" href="//s1.wp.com/i/noticons/noticons.css?v=20150727" />
     <link rel="stylesheet" href="//s1.wp.com/wp-includes/css/dashicons.css?v=20150727" />
-    <link rel="stylesheet" href={ styleCss } />
+    <link rel="stylesheet" href={ stylesheetUrl } />
     { children }
   </head>
 );

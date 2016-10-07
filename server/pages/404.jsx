@@ -8,9 +8,9 @@ import React from 'react';
  */
 import Head from './head';
 
-const NotFoundError = ( { urls: { 'style.css': styleCss } } ) => (
+const NotFoundError = ( { urls: { 'style.css': stylesheetUrl } } ) => (
 	<html lang="en">
-		<Head styleCss={ styleCss } />
+		<Head stylesheetUrl={ stylesheetUrl } />
 		<body>
 			<div id="wpcom" className="wpcom-site">
 				<div className="layout has-no-sidebar">

@@ -12,7 +12,7 @@ import Head from './head';
 import Badge from './badge';
 
 class Document extends React.Component {
-	getStylesheet() {
+	getStylesheetUrl() {
 		const { isDebug, urls } = this.props;
 		let stylesheet = 'style.css';
 
@@ -48,7 +48,7 @@ class Document extends React.Component {
 			<html lang={ lang }
 				dir={ config( 'rtl' ) ? 'rtl' : 'ltr' }
 				className={ !! config.isEnabled( 'fluid-width' ) ? 'is-fluid-with' : null }>
-				<Head title={ head.title } faviconUrl={ faviconUrl } styleCss={ this.getStylesheet() }>
+				<Head title={ head.title } faviconUrl={ faviconUrl } stylesheetUrl={ this.getStylesheetUrl() }>
 					{ head.metas.map( ( { name, property, content }, i ) => (
 						<meta name={ name } property={ property } content={ content } key={ 'meta-' + i } />
 					) ) }
