@@ -3,8 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import each from 'lodash/each';
-import pick from 'lodash/pick';
+import { each, pick, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -142,7 +141,7 @@ const SiteSettingsFormWriting = React.createClass( {
 							valueLink={ this.linkState( 'default_category' ) }
 							disabled={ this.props.isRequestingCategories }
 							onClick={ this.recordEvent.bind( this, 'Selected Default Post Category' ) }>
-							{ this.props.categories.map( category => {
+							{ map(this.props.categories, category => {
 								return <option value={ category.ID } key={ 'post-category-' + category.ID }>{ category.name }</option>;
 							} ) }
 						</FormSelect>
@@ -226,7 +225,7 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const isRequestingCategories = isRequestingTermsForQuery( state, siteId, 'category', {} );
-		const categories = getTerms( state, siteId, 'category' ) || [];
+		const categories = getTerms( state, siteId, 'category' );
 
 		return {
 			jetpackCustomTypesModuleActive: false !== isJetpackModuleActive( state, siteId, 'custom-content-types' ),
