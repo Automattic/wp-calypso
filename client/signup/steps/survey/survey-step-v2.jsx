@@ -123,7 +123,7 @@ export default React.createClass( {
 
 	handleOtherWriteIn( e ) {
 		this.setState( {
-			otherWriteIn: e.target.value
+			otherWriteIn: e.target.value.replace( /^(\s|\.|\,|\:|\!|\?)+|(\s|\.|\,|\:|\!|\?)+$/g, '' ),
 		} );
 	},
 
