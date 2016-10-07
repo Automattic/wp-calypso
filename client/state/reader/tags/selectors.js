@@ -1,7 +1,7 @@
 /*
  * External dependencies
  */
-import { filter, includes, sortBy, find } from 'lodash/filter';
+import { filter, includes, sortBy, find } from 'lodash';
 
 /**
  * Internal dependencies
