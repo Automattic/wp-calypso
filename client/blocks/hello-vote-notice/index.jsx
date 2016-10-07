@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { mapValues } from 'lodash';
+import { includes, mapValues } from 'lodash';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -70,7 +70,7 @@ export default connect(
 				siteSlug &&
 				! isJetpackSite( state, selectedSiteId ) &&
 				isSiteSection( state ) &&
-				'settings' !== getSectionName( state ) &&
+				! includes( [ 'customize', 'settings', 'upgrades' ], getSectionName( state ) ) &&
 				canCurrentUser( state, selectedSiteId, 'manage_options' ) &&
 				moment( getCurrentUserDate( state ) ).isBefore( moment().subtract( 1, 'weeks' ) ) &&
 				hasReceivedRemotePreferences( state ) &&
