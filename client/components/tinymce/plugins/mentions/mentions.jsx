@@ -4,6 +4,8 @@
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import { connect } from 'react-redux';
+import tinymce from 'tinymce/tinymce';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -12,6 +14,11 @@ import SuggestionList from './suggestion-list';
 import EditorMention from './editor-mention';
 import QueryUsersSuggestions from 'components/data/query-users-suggestions';
 import { getUserSuggestions } from 'state/users/suggestions/selectors';
+
+/**
+ * Module variables
+ */
+const VK = tinymce.util.VK;
 
 const Mentions = React.createClass( {
 	displayName: 'Mentions',
@@ -54,35 +61,17 @@ const Mentions = React.createClass( {
 		return null;
 	},
 
-	onKeyUp( event ) {
-		let newState = null;
-
-		switch ( event.keyCode ) {
-			case 13: //enter
-			case 27: //esc
-			case 32: //space
-				newState = {
-					showPopover: false
-				};
-
-				break;
-			case 38:  //up arrow
-			case 40:  //down arrow
-				break;
-			default:
-				const query = this.getQueryText();
-
-				newState = {
-					query: query,
-					showPopover: typeof query === 'string'
-				};
-
-				break;
+	onKeyUp( { keyCode } ) {
+		if ( includes( [ VK.ENTER, VK.SPACEBAR, VK.UP, VK.DOWN, 27 /* ESCAPE */ ], keyCode ) ) {
+			return this.setState( { showPopover: false } );
 		}
 
-		if ( newState ) {
-			this.setState( newState );
-		}
+		const query = this.getQueryText();
+
+		this.setState( {
+			showPopover: typeof query === 'string',
+			query,
+		} );
 	},
 
 	handleClick: function( suggestion ) {
