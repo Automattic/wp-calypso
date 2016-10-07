@@ -28,6 +28,16 @@ function setup() {
 
 	// template engine
 	engine = ReactEngine.createEngine( {
+		doctype: `<!DOCTYPE html><!--<3
+             _
+    ___ __ _| |_   _ _ __  ___  ___
+   / __/ _\` | | | | | '_ \\/ __|/ _ \\
+  | (_| (_| | | |_| | |_) \\__ \\ (_) |
+   \\___\\__,_|_|\\__, | .__/|___/\\___/
+               |___/|_|
+
+-->
+		`,
 		transformViews: true,
 		beautify: config( 'env' ) === 'development'
 	} );
