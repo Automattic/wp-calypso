@@ -459,7 +459,8 @@ export default React.createClass( {
 
 		if ( domains.length === 1 ) {
 			const fullMessage = this.translate(
-				'The domain {{strong}}%(domain)s{{/strong}} may be suspended because the owner ({{strong}}%(owner)s{{/strong}}) has not verified their contact information.',
+				'The domain {{strong}}%(domain)s{{/strong}} may be suspended because the owner, ' +
+					'{{strong}}%(owner)s{{/strong}}, has not verified their contact information.',
 				{
 					components: { strong: <strong /> },
 					args: {
