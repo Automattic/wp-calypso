@@ -103,7 +103,7 @@ const Help = React.createClass( {
 				<CompactCard className="help__support-link" href="https://dailypost.wordpress.com/blogging-university/" target="__blank">
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">
-							{ this.translate( 'Self-Guided email courses for site owners and bloggers' ) }
+							{ this.translate( 'Self-guided email courses for site owners and bloggers' ) }
 						</h2>
 						<p className="help__support-link-content">
 							{ this.translate( 'Pick from our ever-growing list of free email courses to improve your knowledge.' ) }
