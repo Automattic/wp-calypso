@@ -333,6 +333,8 @@ a.sidebar__button {
 	padding: 0;
 	border-top: 1px solid darken( $sidebar-bg-color, 10% );
 	margin: auto 0 0;
+	display: flex;
+	flex-direction: row;
 
 	@include breakpoint( "<660px" ) {
 		margin-top: 16px;
@@ -346,9 +348,23 @@ a.sidebar__button {
 	text-transform: uppercase;
 	font-size: 11px;
 	font-weight: 600;
-	padding: 11px 6px;
+	padding: 8px;
 	color: darken( $gray, 10% );
-	margin-right: 4px;
+	line-height: 2.1;
+	margin-right: auto;
+
+	&.sidebar__footer__help,
+	&.sidebar__footer__support-chat {
+		border-left: 1px solid darken( $sidebar-bg-color, 10% );
+		flex: 0 1 40px;
+		margin-right: 0;
+		margin-left: 0;
+
+		@include breakpoint( "<660px" ) {
+			flex: 0 1 56px;
+		}
+
+	}
 
 	&:hover {
 		color: $gray-dark;
@@ -356,6 +372,14 @@ a.sidebar__button {
 
 	@include breakpoint( "<660px" ) {
 		padding: 16px;
+	}
+
+	.gridicon {
+		display: block;
+		float: left;
+		margin-right: 6px;
+		top: auto;
+		margin-top: auto;
 	}
 
 }

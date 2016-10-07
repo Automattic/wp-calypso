@@ -15,8 +15,11 @@ import HappychatButton from 'components/happychat/button';
 const SidebarFooter = ( { translate, children } ) => (
 	<div className="sidebar__footer">
 		{ children }
-		<Button compact borderless href="/help">
-			<Gridicon icon="help-outline" /> { translate( 'Help' ) }
+		<Button borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' }>
+			<Gridicon icon="add-outline" /> { translate( 'Add New Site' ) }
+		</Button>
+		<Button className="sidebar__footer__help" borderless href="/help" title={ translate( 'Help' ) }>
+			<Gridicon icon="help-outline" />
 		</Button>
 		{ config.isEnabled( 'happychat' ) && <HappychatButton /> }
 	</div>
