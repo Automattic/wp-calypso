@@ -1,4 +1,4 @@
-.suggestions {
+.mentions__suggestions {
 	width: 40%;
 
 	img {
@@ -14,7 +14,7 @@
 		background: rgba( $blue-light, 0.25 );
 	}
 
-	.username {
+	.mentions__username {
 		float: left;
 		display: inline-block;
 		font-weight: 400;
@@ -31,8 +31,8 @@
 }
 
 .rtl {
-	.suggestions {
-		.suggestion {
+	.mentions__suggestions {
+		.mentions__suggestion {
 			direction: ltr; // required to get the '@' on the correct side
 		}
 
@@ -59,7 +59,7 @@
 }
 
 @media (max-width: 400px) {
-	.suggestions {
+	.mentions__suggestions {
 		width: 100%;
 		height: 100%;
 	}

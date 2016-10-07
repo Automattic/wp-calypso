@@ -64,9 +64,9 @@ const Suggestion = React.createClass( {
 		highlightedUsername.unshift( '@' );
 
 		return (
-			<div className="suggestion">
+			<div className="mentions__suggestion">
 				<img src={ avatarUrl } />
-				<span className="username">{ highlightedUsername }</span>
+				<span className="mentions__username">{ highlightedUsername }</span>
 				<small>{ highlightedFullName }</small>
 			</div>
 		);

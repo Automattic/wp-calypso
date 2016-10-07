@@ -62,7 +62,7 @@ const SuggestionList = React.createClass( {
 		if ( matchingSuggestions.length > 0 ) {
 			return (
 				<PopoverMenu
-					className="suggestions"
+					className="mentions__suggestions"
 					context={ popoverContext }
 					isVisible={ isVisible }
 					onClose={ onClose }>
