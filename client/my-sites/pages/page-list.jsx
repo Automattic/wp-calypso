@@ -18,10 +18,8 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	NoResults = require( 'my-sites/no-results' ),
 	actions = require( 'lib/posts/actions' ),
 	Placeholder = require( './placeholder' ),
-	CompactCard = require( 'components/card/compact' ),
 	mapStatus = require( 'lib/route' ).mapPostStatus;
 
-import Gridicon from 'components/gridicon';
 import BlogPostsPage from './blog-posts-page';
 
 var PageList = React.createClass( {
