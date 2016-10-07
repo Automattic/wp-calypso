@@ -515,16 +515,16 @@ function mediaButton( editor ) {
 
 		// Determine the next usable size
 		const sizeRatios = SIZE_ORDER
-			.map( size => MediaUtils.getThumbnailSizeDimensions( size, site ) )
-			.map( computeRatio );
+			.map( size => computeRatio( MediaUtils.getThumbnailSizeDimensions( size, site ) ) );
 		const sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
 		const displayedRatio = sizeIndex !== -1 ? sizeRatios[ sizeIndex ] : computeRatio( parsed.media );
 		const possibleSizes = SIZE_ORDER
-			.filter( ( size, index ) => sizeRatios[ index ] <= 1 )
 			.filter( ( size, index ) => {
-				return increment > 0
-					? sizeRatios[ index ] > displayedRatio
-					: sizeRatios[ index ] < displayedRatio;
+				return sizeRatios[ index ] <= 1 && (
+					increment > 0
+						? sizeRatios[ index ] > displayedRatio
+						: sizeRatios[ index ] < displayedRatio
+					);
 			} );
 		let size;
 		if ( possibleSizes.length ) {
