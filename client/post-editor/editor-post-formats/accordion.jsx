@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	pick = require( 'lodash/pick' ),
-	find = require( 'lodash/find' ),
+	has = require( 'lodash' ).has,
 	classNames = require( 'classnames' ),
 	isEmpty = require( 'lodash/isEmpty' );
 
@@ -21,10 +21,7 @@ module.exports = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		post: React.PropTypes.object,
-		postFormats: React.PropTypes.arrayOf( React.PropTypes.shape( {
-			slug: React.PropTypes.string,
-			label: React.PropTypes.string
-		} ) )
+		postFormats: React.PropTypes.object
 	},
 
 	getFormatValue: function() {
@@ -40,18 +37,14 @@ module.exports = React.createClass( {
 	},
 
 	getSubtitle: function() {
-		var postFormat;
+		const formatValue = this.getFormatValue();
 
 		if ( ! this.props.post || ! this.props.postFormats ) {
 			return this.translate( 'Loading…' );
 		}
 
-		postFormat = find( this.props.postFormats, {
-			slug: this.getFormatValue() || 'standard'
-		} );
-
-		if ( postFormat ) {
-			return postFormat.label;
+		if ( has( this.props.postFormats, formatValue ) ) {
+			return this.props.postFormats[ formatValue ];
 		}
 
 		return this.translate( 'Standard', { context: 'Post format' } );

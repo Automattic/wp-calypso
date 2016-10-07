@@ -2,6 +2,8 @@
  * External dependencies
  */
 const React = require( 'react' );
+const map = require( 'lodash' ).map;
+const some = require( 'lodash' ).some;
 
 /**
  * Internal dependencies
@@ -19,10 +21,7 @@ export default React.createClass( {
 	propTypes: {
 		post: React.PropTypes.object,
 		value: React.PropTypes.string,
-		postFormats: React.PropTypes.arrayOf( React.PropTypes.shape( {
-			slug: React.PropTypes.string,
-			label: React.PropTypes.string
-		} ) )
+		postFormats: React.PropTypes.object
 	},
 
 	getDefaultProps: function() {
@@ -38,8 +37,8 @@ export default React.createClass( {
 			return 'standard';
 		}
 
-		const isSupportedFormat = this.getPostFormats().some( ( postFormat ) => {
-			return postFormat.slug === value;
+		const isSupportedFormat = some( this.getPostFormats(), ( postFormatLabel, postFormatSlug ) => {
+			return postFormatSlug === value;
 		} );
 
 		if ( isSupportedFormat ) {
@@ -50,19 +49,18 @@ export default React.createClass( {
 	},
 
 	getPostFormats: function() {
-		var formats = [ {
-			slug: 'standard',
-			label: this.translate( 'Standard', { context: 'Post format' } )
-		} ];
+		var formats = {
+			standard: this.translate( 'Standard', { context: 'Post format' } )
+		};
 
 		if ( this.props.postFormats ) {
-			formats = formats.concat( this.props.postFormats );
+			formats = Object.assign( formats, this.props.postFormats );
 		}
 
 		return formats;
 	},
 
-	getPostFormatIcon: function( postFormat ) {
+	getPostFormatIcon: function( postFormatSlug ) {
 		var icons = {
 			aside: 'aside',
 			image: 'image',
@@ -75,7 +73,7 @@ export default React.createClass( {
 			chat: 'comment'
 		};
 
-		return icons[ postFormat.slug ] ? icons[ postFormat.slug ] : 'posts';
+		return icons[ postFormatSlug ] ? icons[ postFormatSlug ] : 'posts';
 	},
 
 	onChange: function( event ) {
@@ -91,22 +89,22 @@ export default React.createClass( {
 	renderPostFormats: function() {
 		var selectedFormat = this.getSelectedPostFormat();
 
-		return this.getPostFormats().map( function( postFormat ) {
+		return map( this.getPostFormats(), ( postFormatLabel, postFormatSlug ) => {
 			return (
-				<li key={ postFormat.slug } className="editor-post-formats__format">
+				<li key={ postFormatSlug } className="editor-post-formats__format">
 					<label>
 						<FormRadio
 							name="format"
-							value={ postFormat.slug }
-							checked={ postFormat.slug === selectedFormat }
+							value={ postFormatSlug }
+							checked={ postFormatSlug === selectedFormat }
 							onChange={ this.onChange } />
 						<span className="editor-post-formats__format-label">
 							<span className={ 'editor-post-formats__format-icon' } >
 								{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } />
+								<Gridicon icon={ this.getPostFormatIcon( postFormatSlug ) } size={ 20 } />
 								{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 							</span>
-							{ postFormat.label }
+							{ postFormatLabel }
 						</span>
 					</label>
 				</li>
