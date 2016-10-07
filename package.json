@@ -57,7 +57,6 @@
     "events": "1.0.2",
     "exports-loader": "0.6.2",
     "express": "4.13.3",
-    "express-react-views": "0.10.1",
     "filesize": "3.2.1",
     "flag-icon-css": "2.3.0",
     "flux": "2.1.1",

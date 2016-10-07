@@ -259,9 +259,6 @@
     "babel-plugin-syntax-export-extensions": {
       "version": "6.13.0"
     },
-    "babel-plugin-syntax-flow": {
-      "version": "6.18.0"
-    },
     "babel-plugin-syntax-jsx": {
       "version": "6.8.0"
     },
@@ -343,9 +340,6 @@
     "babel-plugin-transform-export-extensions": {
       "version": "6.8.0"
     },
-    "babel-plugin-transform-flow-strip-types": {
-      "version": "6.22.0"
-    },
     "babel-plugin-transform-imports": {
       "version": "1.1.0"
     },
@@ -358,12 +352,6 @@
     "babel-plugin-transform-react-jsx": {
       "version": "6.8.0"
     },
-    "babel-plugin-transform-react-jsx-self": {
-      "version": "6.22.0"
-    },
-    "babel-plugin-transform-react-jsx-source": {
-      "version": "6.22.0"
-    },
     "babel-plugin-transform-regenerator": {
       "version": "6.22.0"
     },
@@ -375,20 +363,6 @@
     },
     "babel-preset-es2015": {
       "version": "6.9.0"
-    },
-    "babel-preset-flow": {
-      "version": "6.23.0"
-    },
-    "babel-preset-react": {
-      "version": "6.23.0",
-      "dependencies": {
-        "babel-plugin-transform-react-display-name": {
-          "version": "6.23.0"
-        },
-        "babel-plugin-transform-react-jsx": {
-          "version": "6.23.0"
-        }
-      }
     },
     "babel-preset-stage-2": {
       "version": "6.5.0"
@@ -749,9 +723,6 @@
         }
       }
     },
-    "config-chain": {
-      "version": "1.1.11"
-    },
     "configstore": {
       "version": "0.3.2",
       "dev": true,
@@ -841,21 +812,10 @@
     },
     "cross-spawn": {
       "version": "4.0.2",
-      "dev": true,
-      "dependencies": {
-        "lru-cache": {
-          "version": "4.0.2",
-          "dev": true
-        }
-      }
+      "dev": true
     },
     "cross-spawn-async": {
-      "version": "2.2.5",
-      "dependencies": {
-        "lru-cache": {
-          "version": "4.0.2"
-        }
-      }
+      "version": "2.2.5"
     },
     "crypt": {
       "version": "0.0.2",
@@ -1074,17 +1034,6 @@
     "editions": {
       "version": "1.3.3",
       "dev": true
-    },
-    "editorconfig": {
-      "version": "0.13.2",
-      "dependencies": {
-        "bluebird": {
-          "version": "3.4.7"
-        },
-        "commander": {
-          "version": "2.9.0"
-        }
-      }
     },
     "ee-first": {
       "version": "1.1.1"
@@ -1495,9 +1444,6 @@
           "version": "1.0.1"
         }
       }
-    },
-    "express-react-views": {
-      "version": "0.10.1"
     },
     "extend": {
       "version": "3.0.0"
@@ -2151,9 +2097,6 @@
     "js-base64": {
       "version": "2.1.9"
     },
-    "js-beautify": {
-      "version": "1.6.9"
-    },
     "js-sha1": {
       "version": "0.4.1"
     },
@@ -2405,7 +2348,7 @@
       "version": "3.1.0"
     },
     "lru-cache": {
-      "version": "3.2.0"
+      "version": "4.0.2"
     },
     "lunr": {
       "version": "0.5.7"
@@ -2961,9 +2904,6 @@
       "version": "0.4.0",
       "dev": true
     },
-    "proto-list": {
-      "version": "1.2.4"
-    },
     "protochain": {
       "version": "1.0.5",
       "dev": true
@@ -3460,7 +3400,8 @@
       "dev": true
     },
     "sigmund": {
-      "version": "1.0.1"
+      "version": "1.0.1",
+      "dev": true
     },
     "signal-exit": {
       "version": "3.0.2"

@@ -4,7 +4,8 @@
 import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
-import ReactEngine from 'express-react-views';
+import React from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 /**
  * External dependencies
@@ -12,6 +13,32 @@ import ReactEngine from 'express-react-views';
 import build from 'build';
 import config from 'config';
 import pages from 'pages';
+
+function renderJsxFile( filename, options, callback ) {
+	let markup = `<!DOCTYPE html><!--
+	<3
+	             _
+	    ___ __ _| |_   _ _ __  ___  ___
+	   / __/ _\` | | | | | '_ \\/ __|/ _ \\
+	  | (_| (_| | | |_| | |_) \\__ \\ (_) |
+	   \\___\\__,_|_|\\__, | .__/|___/\\___/
+	               |___/|_|
+
+-->
+	`;
+	try {
+		const requireView = require.context( '../pages/', true, /^\.\/.*\.jsx$/ );
+		// Unfortunately, we need to prefix with './'
+		const component = requireView( './' + path.basename( filename ) );
+		markup += renderToStaticMarkup(
+			React.createElement( component, options )
+		);
+	} catch ( e ) {
+		callback( e );
+	}
+
+	callback( null, markup );
+}
 
 /**
  * Returns the server HTTP request handler "app".
@@ -24,28 +51,12 @@ function setup() {
 		assets,
 		devdocs,
 		api,
-		bundler,
-		engine;
+		bundler;
 
 	// for nginx
 	app.enable( 'trust proxy' );
 
-	// template engine
-	engine = ReactEngine.createEngine( {
-		doctype: `<!DOCTYPE html><!--<3
-             _
-    ___ __ _| |_   _ _ __  ___  ___
-   / __/ _\` | | | | | '_ \\/ __|/ _ \\
-  | (_| (_| | | |_| | |_) \\__ \\ (_) |
-   \\___\\__,_|_|\\__, | .__/|___/\\___/
-               |___/|_|
-
--->
-		`,
-		transformViews: true,
-		beautify: config( 'env' ) === 'development'
-	} );
-	app.engine( '.jsx', engine );
+	app.engine( '.jsx', renderJsxFile );
 	app.set( 'view engine', 'jsx' );
 
 	if ( 'development' === config( 'env' ) ) {
