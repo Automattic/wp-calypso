@@ -149,6 +149,6 @@
 		"vip/deploys": true,
 		"vip/logs": true,
 		"vip/support": true,
-		"webpack/persistent-caching": true
+		"webpack/persistent-caching": false
 	}
 }
