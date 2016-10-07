@@ -72,15 +72,14 @@ import { getKeyringServicesByType } from 'state/sharing/services/selectors';
 const publiciseServices = getKeyringServicesByType( state, 'publicize' );
 ```
 
-#### `getEligibleKeyringServices( state: object, site: object , type: string  )`
+#### `getEligibleKeyringServices( state: object, type: string  )`
 
 Returns an array of eligible keyring services with the specified type.
 
 ```js
 import { getEligibleKeyringServices } from 'state/sharing/services/selectors';
-import sites from 'lib/sites-list';
 
-const eligibleServices = getEligibleKeyringServices( state, sites().getSelectedSite(), 'publicize' );
+const eligibleServices = getEligibleKeyringServices( state, 'publicize' );
 ```
 
 #### `isKeyringServicesFetching( state: object )`

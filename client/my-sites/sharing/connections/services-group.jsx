@@ -83,7 +83,7 @@ class SharingServicesGroup extends Component {
 }
 
 export default connect(
-	( state, { site, type } ) => ( {
-		services: getEligibleKeyringServices( state, site, type )
+	( state, { type } ) => ( {
+		services: getEligibleKeyringServices( state, type )
 	} ),
 )( SharingServicesGroup );

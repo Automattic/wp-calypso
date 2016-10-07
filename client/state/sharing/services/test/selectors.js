@@ -20,7 +20,8 @@ describe( 'selectors', () => {
 				items: {},
 				isFetching: false,
 			}
-		}
+		},
+		ui: { selectedSiteId: 0 }
 	};
 	const activeState = {
 		sharing: {
@@ -40,7 +41,7 @@ describe( 'selectors', () => {
 						ID: 'eventbrite',
 						jetpack_support: true,
 						type: 'other',
-						jetpack_module_required: true,
+						jetpack_module_required: 'publicize',
 					},
 				},
 				isFetching: true,
@@ -72,7 +73,7 @@ describe( 'selectors', () => {
 				eventbrite: {
 					ID: 'eventbrite',
 					jetpack_support: true,
-					jetpack_module_required: true,
+					jetpack_module_required: 'publicize',
 					type: 'other',
 				},
 			} );
@@ -97,23 +98,43 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getEligibleKeyringServices()', () => {
-		let site = {
-			capabilities: {
-				manage_options: true,
-				publish_posts: true
+		let state = {
+			...activeState,
+			currentUser: {
+				capabilities: {
+					2916284: {
+						manage_options: true,
+						publish_posts: true
+					}
+				}
 			},
-			jetpack: true,
-			isModuleActive: () => true,
+			sites: {
+				items: {
+					2916284: {
+						ID: 2916284,
+						name: 'WordPress.com Example Blog',
+						URL: 'https://example.com',
+						options: {
+							unmapped_url: 'https://example.wordpress.com',
+							active_modules: [ 'publicize' ],
+						},
+						jetpack: true,
+					}
+				}
+			},
+			ui: {
+				selectedSiteId: 2916284
+			}
 		};
 
 		it( 'should return empty object if there are no services', () => {
-			const services = getEligibleKeyringServices( defaultState, site, 'other' );
+			const services = getEligibleKeyringServices( defaultState, 'other' );
 
 			expect( services ).to.eql( [] );
 		} );
 
 		it( 'should return the keyring services with the correct type', () => {
-			const services = getEligibleKeyringServices( activeState, site, 'publicize' );
+			const services = getEligibleKeyringServices( state, 'publicize' );
 
 			expect( services ).to.eql( [
 				{ ID: 'facebook', type: 'publicize', jetpack_support: true },
@@ -122,38 +143,38 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should omit eventbrite if user can not manage_options', () => {
-			site.capabilities.manage_options = false;
-			const services = getEligibleKeyringServices( activeState, site, 'other' );
-			site.capabilities.manage_options = true;
+			state.currentUser.capabilities[2916284].manage_options = false;
+			const services = getEligibleKeyringServices( state, 'other' );
+			state.currentUser.capabilities[2916284].manage_options = true;
 
 			expect( services ).to.eql( [] );
 		} );
 
 		it( 'should omit publicize services if user can not publish_posts', () => {
-			site.capabilities.publish_posts = false;
-			const services = getEligibleKeyringServices( activeState, site, 'publicize' );
-			site.capabilities.publish_posts = true;
+			state.currentUser.capabilities[2916284].publish_posts = false;
+			const services = getEligibleKeyringServices( state, 'publicize' );
+			state.currentUser.capabilities[2916284].publish_posts = true;
 
 			expect( services ).to.eql( [] );
 		} );
 
 		it( 'should include services if required module is activated', () => {
-			const services = getEligibleKeyringServices( activeState, site, 'other' );
+			const services = getEligibleKeyringServices( state, 'other' );
 
 			expect( services ).to.eql( [
 				{
 					ID: 'eventbrite',
 					jetpack_support: true,
-					jetpack_module_required: true,
+					jetpack_module_required: 'publicize',
 					type: 'other',
 				}
 			] );
 		} );
 
 		it( 'should omit services if required module is not activated', () => {
-			site.isModuleActive = () => false;
-			const services = getEligibleKeyringServices( activeState, site, 'other' );
-			site.isModuleActive = () => true;
+			state.sites.items[2916284].options.active_modules = [];
+			const services = getEligibleKeyringServices( state, 'other' );
+			state.sites.items[2916284].options.active_modules = [ 'publicize' ];
 
 			expect( services ).to.eql( [] );
 		} );

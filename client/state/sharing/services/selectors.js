@@ -6,7 +6,9 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import utils from 'lib/site/utils';
+import { canCurrentUser } from 'state/current-user/selectors';
+import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Returns an object of service objects.
@@ -32,37 +34,37 @@ export function getKeyringServicesByType( state, type ) {
 /**
  * Returns an object of eligible service objects with the specified type.
  *
- * @param  {Object} state Global state tree
- * @param  {Object} site  Site object.
- * @param  {String} type  Type of service. 'publicize' or 'other'.
- * @return {Array}        Keyring services, if known.
+ * @param  {Object} state  Global state tree
+ * @param  {String} type   Type of service. 'publicize' or 'other'.
+ * @return {Array}         Keyring services, if known.
  */
-export function getEligibleKeyringServices( state, site, type ) {
-	const services = getKeyringServicesByType( state, type );
+export function getEligibleKeyringServices( state, type ) {
+	const siteId = getSelectedSiteId( state ),
+		services = getKeyringServicesByType( state, type );
 
-	if ( ! site ) {
+	if ( ! siteId ) {
 		return services;
 	}
 
 	return services.filter( ( service ) => {
 		// Omit if the site is Jetpack and service doesn't support Jetpack
-		if ( site.jetpack && ! service.jetpack_support ) {
+		if ( isJetpackSite( state, siteId ) && ! service.jetpack_support ) {
 			return false;
 		}
 
 		// Omit if Jetpack module not activated
-		if ( site.jetpack && service.jetpack_module_required &&
-			! site.isModuleActive( service.jetpack_module_required ) ) {
+		if ( isJetpackSite( state, siteId ) && service.jetpack_module_required &&
+			! isJetpackModuleActive( state, siteId, service.jetpack_module_required ) ) {
 			return false;
 		}
 
 		// Omit if service is settings-oriented and user cannot manage
-		if ( 'eventbrite' === service.ID && ! utils.userCan( 'manage_options', site ) ) {
+		if ( 'eventbrite' === service.ID && ! canCurrentUser( state, siteId, 'manage_options' ) ) {
 			return false;
 		}
 
 		// Omit if Publicize service and user cannot publish
-		if ( 'publicize' === service.type && ! utils.userCan( 'publish_posts', site ) ) {
+		if ( 'publicize' === service.type && ! canCurrentUser( state, siteId, 'publish_posts' ) ) {
 			return false;
 		}
 
