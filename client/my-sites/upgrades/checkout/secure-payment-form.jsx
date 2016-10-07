@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { defer } from 'lodash';
+import { find, defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -26,6 +26,8 @@ import cartValues, {
 	isFree,
 	cartItems
 } from 'lib/cart-values';
+import Notice from 'components/notice';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Module variables
@@ -197,6 +199,23 @@ const SecurePaymentForm = React.createClass( {
 		);
 	},
 
+	renderGetDotBlogNotice() {
+		const hasProductFromGetDotBlogSignup = find( this.props.cart.products, product => (
+			product.extra && product.extra.source === 'get-dot-blog-signup'
+		) );
+
+		if ( this.state.visiblePaymentBox !== 'credit-card' || ! hasProductFromGetDotBlogSignup ) {
+			return;
+		}
+
+		return (
+			<Notice icon="notice" showDismiss={ false }>
+				{ preventWidows( this.translate( 'This is the payment information you entered on get.blog, ' +
+					'a WordPress.com service. Confirm your order below.' ), 4 ) }
+			</Notice>
+		);
+	},
+
 	renderPaymentBox() {
 		const { visiblePaymentBox } = this.state;
 		debug( 'getting %o payment box ...', visiblePaymentBox );
@@ -236,6 +255,7 @@ const SecurePaymentForm = React.createClass( {
 
 		return (
 			<div className="secure-payment-form">
+				{ this.renderGetDotBlogNotice() }
 				{ this.renderPaymentBox() }
 			</div>
 		);
