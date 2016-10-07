@@ -366,6 +366,25 @@ a.sidebar__button {
 
 	}
 
+	&.sidebar__footer__support-chat-unread {
+		color: $gray-dark;
+		position: relative;
+
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 6px;
+			left: 3px;
+			width: 10px;
+			height: 10px;
+			border: 2px solid lighten( $gray, 30% );
+			border-radius: 50%;
+			background: $orange-jazzy;
+		}
+
+	}
+
 	&:hover {
 		color: $gray-dark;
 	}
