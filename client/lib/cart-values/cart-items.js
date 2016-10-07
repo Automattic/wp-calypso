@@ -367,13 +367,16 @@ function businessPlan( slug, properties ) {
  *
  * @param {Object} productSlug - the unique string that identifies the product
  * @param {string} domain - domain name
+ * @param {string} source - optional source for the domain item, e.g. `getdotblog`.
  * @returns {Object} the new item as `CartItemValue` object
  */
-function domainItem( productSlug, domain ) {
-	return {
+function domainItem( productSlug, domain, source ) {
+	var extra = source ? { extra: { source: source } } : undefined;
+
+	return Object.assign( {
 		product_slug: productSlug,
 		meta: domain
-	};
+	}, extra );
 }
 
 function themeItem( themeSlug, source ) {
@@ -393,7 +396,7 @@ function themeItem( themeSlug, source ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRegistration( properties ) {
-	return assign( domainItem( properties.productSlug, properties.domain ), { is_domain_registration: true } );
+	return assign( domainItem( properties.productSlug, properties.domain, properties.source ), { is_domain_registration: true } );
 }
 
 /**
@@ -403,7 +406,7 @@ function domainRegistration( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainMapping( properties ) {
-	return domainItem( 'domain_map', properties.domain );
+	return domainItem( 'domain_map', properties.domain, properties.source );
 }
 
 /**
@@ -413,7 +416,7 @@ function domainMapping( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function siteRedirect( properties ) {
-	return domainItem( 'offsite_redirect', properties.domain );
+	return domainItem( 'offsite_redirect', properties.domain, properties.source );
 }
 
 /**
@@ -423,7 +426,7 @@ function siteRedirect( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainPrivacyProtection( properties ) {
-	return domainItem( 'private_whois', properties.domain );
+	return domainItem( 'private_whois', properties.domain, properties.source );
 }
 
 /**
@@ -433,7 +436,7 @@ function domainPrivacyProtection( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRedemption( properties ) {
-	return domainItem( 'domain_redemption', properties.domain );
+	return domainItem( 'domain_redemption', properties.domain, properties.source );
 }
 
 function googleApps( properties ) {
@@ -443,7 +446,7 @@ function googleApps( properties ) {
 }
 
 function googleAppsExtraLicenses( properties ) {
-	var item = domainItem( 'gapps_extra_license', properties.domain );
+	var item = domainItem( 'gapps_extra_license', properties.domain, properties.source );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
@@ -573,7 +576,7 @@ function getRenewalItemFromProduct( product, properties ) {
 	let cartItem;
 
 	if ( isDomainProduct( product ) ) {
-		cartItem = domainItem( product.product_slug, properties.domain );
+		cartItem = domainItem( product.product_slug, properties.domain, properties.source );
 	}
 
 	if ( isPlan( product ) ) {
