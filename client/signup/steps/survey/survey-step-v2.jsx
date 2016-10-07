@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
-import i18n from 'i18n-calypso';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,8 +32,7 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			shouldShowOther: false,
-			otherWriteIn: '',
+			otherWriteIn: get( find( this.props.signupProgressStore, { stepName: this.props.stepName } ), 'otherWriteIn', '' ),
 			verticalList: verticals.get(),
 		};
 	},
@@ -60,12 +59,11 @@ export default React.createClass( {
 	},
 
 	renderOther() {
-		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'survey-other', this.props.locale ) );
-
 		return (
 			<div className="survey__other">
 				<TextInput className="survey__other-write-in"
 					placeholder={ this.translate( 'Please describe what your site is about' ) }
+					defaultValue={ this.state.otherWriteIn }
 					onChange={ this.handleOtherWriteIn }
 					ref={ ( input ) => input && input.focus() } />
 				<Button className="survey__other-button" primary compact
@@ -100,19 +98,20 @@ export default React.createClass( {
 		const siteSubHeaderText = this.translate( 'To get started, tell us what your blog or website is about.' );
 
 		const backUrl = this.props.stepSectionName
-			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, i18n.getLocaleSlug() )
+			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, this.props.locale )
 			: undefined;
 
 		return (
 			<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
+					stepSectionName={ this.props.stepSectionName }
 					backUrl={ backUrl }
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
 					subHeaderText={ this.props.surveySiteType === 'blog' ? blogSubHeaderText : siteSubHeaderText }
 					signupProgressStore={ this.props.signupProgressStore }
-					stepContent={ this.state.shouldShowOther ? this.renderOther() : this.renderOptionList() } />
+					stepContent={ this.props.stepSectionName === 'other' ? this.renderOther() : this.renderOptionList() } />
 		);
 	},
 
@@ -123,9 +122,7 @@ export default React.createClass( {
 	},
 
 	handleOther() {
-		this.setState( {
-			shouldShowOther: true
-		} );
+		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale ) );
 	},
 
 	handleNextStep( e ) {
@@ -138,7 +135,11 @@ export default React.createClass( {
 			survey_version: '2',
 		} );
 		SignupActions.submitSignupStep(
-			{ stepName: this.props.stepName },
+			{
+				stepName: this.props.stepName,
+				stepSectionName: this.props.stepSectionName,
+				otherWriteIn: this.state.otherWriteIn,
+			},
 			[],
 			{ surveySiteType: this.props.surveySiteType, surveyQuestion: value }
 		);
