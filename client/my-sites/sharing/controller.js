@@ -42,7 +42,6 @@ module.exports = {
 
 	connections: function( context, next ) {
 		var SharingConnections = require( 'my-sites/sharing/connections/connections' ),
-			servicesList = require( 'lib/services-list' )(),
 			connectionsList = require( 'lib/connections-list' )(),
 			site = sites.getSelectedSite(),
 			basePath = route.sectionify( context.path ),
@@ -67,7 +66,6 @@ module.exports = {
 
 			context.contentComponent = React.createElement( SharingConnections, {
 				user: user,
-				services: servicesList,
 				connections: connectionsList,
 				sites: sites
 			} );

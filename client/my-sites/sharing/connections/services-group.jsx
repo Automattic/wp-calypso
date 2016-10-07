@@ -1,50 +1,51 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Service = require( './service' ),
-	ServicePlaceholder = require( './service-placeholder' ),
-	SectionHeader = require( 'components/section-header' ),
-	utils = require( 'lib/site/utils' );
+import { getKeyringServices } from 'state/sharing/services/selectors';
+import QueryKeyringServices from 'components/data/query-keyring-services';
+import SectionHeader from 'components/section-header';
+import Service from './service';
+import ServicePlaceholder from './service-placeholder';
+import utils from 'lib/site/utils';
 
 /**
- * Module variables
+ * Module constants
  */
-var NUMBER_OF_PLACEHOLDERS = 4;
+const NUMBER_OF_PLACEHOLDERS = 4;
 
-module.exports = React.createClass( {
-	displayName: 'SharingServicesGroup',
+class SharingServicesGroup extends Component {
 
-	propTypes: {
-		site: React.PropTypes.object,
-		user: React.PropTypes.object,
-		connections: React.PropTypes.object,
-		onAddConnection: React.PropTypes.func,
-		onRemoveConnection: React.PropTypes.func,
-		onRefreshConnection: React.PropTypes.func,
-		onToggleSitewideConnection: React.PropTypes.func,
-		initialized: React.PropTypes.bool,
-		services: React.PropTypes.array,
-		title: React.PropTypes.string.isRequired,
-		description: React.PropTypes.string
-	},
+	static propTypes = {
+		site: PropTypes.object,
+		user: PropTypes.object,
+		connections: PropTypes.object,
+		onAddConnection: PropTypes.func,
+		onRemoveConnection: PropTypes.func,
+		onRefreshConnection: PropTypes.func,
+		onToggleSitewideConnection: PropTypes.func,
+		initialized: PropTypes.bool,
+		services: PropTypes.array,
+		title: PropTypes.string.isRequired,
+		description: PropTypes.string
+	};
 
-	getDefaultProps: function() {
-		return {
-			onAddConnection: function() {},
-			onRemoveConnection: function() {},
-			onRefreshConnection: function() {},
-			onToggleSitewideConnection: function() {},
-			initialized: false
-		};
-	},
+	static defaultProps = {
+		onAddConnection: function() {},
+		onRemoveConnection: function() {},
+		onRefreshConnection: function() {},
+		onToggleSitewideConnection: function() {},
+		initialized: false
+	};
 
-	getEligibleServices: function() {
+	getEligibleServices() {
 		const { site, services } = this.props;
 
 		if ( ! site ) {
@@ -64,7 +65,7 @@ module.exports = React.createClass( {
 			}
 
 			// Omit if service is settings-oriented and user cannot manage
-			if ( 'eventbrite' === service.name && ! utils.userCan( 'manage_options', site ) ) {
+			if ( 'eventbrite' === service.ID && ! utils.userCan( 'manage_options', site ) ) {
 				return false;
 			}
 
@@ -75,11 +76,11 @@ module.exports = React.createClass( {
 
 			return true;
 		} );
-	},
+	}
 
-	renderService: function( service ) {
+	renderService( service ) {
 		return <Service
-			key={ service.name }
+			key={ service.ID }
 			site={ this.props.site }
 			user={ this.props.user }
 			service={ service }
@@ -88,31 +89,32 @@ module.exports = React.createClass( {
 			onRemoveConnection={ this.props.onRemoveConnection }
 			onRefreshConnection={ this.props.onRefreshConnection }
 			onToggleSitewideConnection={ this.props.onToggleSitewideConnection } />;
-	},
+	}
 
-	renderServicePlaceholders: function() {
+	renderServicePlaceholders() {
 		// The Array constructor isn't used here because constructed arrays
 		// can't be mapped since it doesn't truly contain any values
-		return Array.apply( null, Array( NUMBER_OF_PLACEHOLDERS ) ).map( function( value, i ) {
-			return <ServicePlaceholder key={ 'service-placeholder-' + i } />;
-		} );
-	},
+		return Array.apply( null, new Array( NUMBER_OF_PLACEHOLDERS ) ).map( ( value, i ) =>
+			<ServicePlaceholder key={ 'service-placeholder-' + i } />
+		);
+	}
 
-	renderServices: function( services ) {
+	renderServices( services ) {
 		if ( this.props.initialized ) {
 			return services.map( this.renderService, this );
 		}
 		return this.renderServicePlaceholders();
-	},
+	}
 
-	render: function() {
-		var services = this.getEligibleServices(),
+	render() {
+		const services = this.getEligibleServices(),
 			classes = classNames( 'sharing-services-group', {
 				'is-empty': this.props.initialized && ! services.length
 			} );
 
 		return (
 			<div className={ classes }>
+				<QueryKeyringServices />
 				<SectionHeader label={ this.props.title } />
 				<ul className="sharing-services-group__services">
 					{ this.renderServices( services ) }
@@ -120,4 +122,10 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state, { type } ) => ( {
+		services: filter( getKeyringServices( state ), { type: type } )
+	} ),
+)( SharingServicesGroup );
