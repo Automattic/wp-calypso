@@ -3,6 +3,7 @@
  */
 import debugFactory from 'debug';
 import store from 'store';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -111,13 +112,8 @@ PlansList.prototype.getPlanBySlug = function( slug ) {
 	if ( ! this.data ) {
 		return null;
 	}
-	const filteredPlans = this.data.filter( ( plan ) => {
-		if ( plan && plan.product_slug === slug ) {
-			return plan;
-		}
-	} );
 
-	return filteredPlans[ 0 ];
+	return find( this.data, { product_slug: slug } );
 };
 
 // Save the plans to memory to save them being fetched
