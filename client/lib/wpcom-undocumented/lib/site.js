@@ -99,7 +99,7 @@ UndocumentedSite.prototype.domains = function( callback ) {
 };
 
 UndocumentedSite.prototype.postFormatsList = function( callback ) {
-	this.wpcom.withLocale().req.get( '/sites/' + this._id + '/post-formats', {}, callback );
+	return this.wpcom.withLocale().req.get( '/sites/' + this._id + '/post-formats', {}, callback );
 };
 
 UndocumentedSite.prototype.postAutosave = function( postId, attributes, callback ) {
