@@ -91,7 +91,7 @@ const flows = {
 		lastModified: '2016-05-23'
 	},
 
-	'sitetitle': {
+	sitetitle: {
 		steps: [ 'survey', 'site-title', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
 		description: 'The current best performing flow in AB tests',
@@ -229,7 +229,7 @@ const Flows = {
 	/**
 	 * Get certain flow from the flows configuration.
 	 *
-	 * The returned flow is modified according to several filters here.
+	 * The returned flow is modified according to several filters.
 	 *
 	 * `currentStepName` is the current step in the signup flow. It is used
 	 * to determine if any AB variations should be assigned after it is completed.
@@ -250,11 +250,7 @@ const Flows = {
 			flow = filterDesignTypeInFlow( flow );
 		}
 
-		if ( ! user.get() ) {
-			// Preload the AB tests before going forward in the flow.
-			// Only valid for logged out users.
-			Flows.preloadABTestVariationsForStep( flowName, currentStepName );
-		}
+		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
 
 		return Flows.getABTestFilteredFlow( flowName, flow );
 	},
@@ -275,7 +271,6 @@ const Flows = {
 	 * @param {String} stepName The step that is being completed right now
 	 */
 	preloadABTestVariationsForStep( flowName, stepName ) {
-
 		/**
 		 * In cases where the flow is being resumed, the flow must not be changed from what the user
 		 * has seen before.
@@ -303,12 +298,10 @@ const Flows = {
 	 *
 	 * @param {String} flowName The current flow name
 	 * @param {Object} flow The flow object
+	 *
+	 * @return {Object} A filtered flow object
 	 */
-	getABTestFilteredFlow( flowName, flow ){
-		/**
-		 * Filter according to running ABTests
-		 */
-
+	getABTestFilteredFlow( flowName, flow ) {
 		// Only do this on the main flow
 		if ( 'main' === flowName ) {
 			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
@@ -327,9 +320,9 @@ const Flows = {
 	 * @param {String} afterStep After which step to insert the new step.
 	 * 							 If left blank, the step will be added in the beginning.
 	 *
-	 * @returns {Object}
+	 * @returns {Object} A flow object with inserted step
 	 */
-	insertStepIntoFlow( stepName, flow, afterStep = '') {
+	insertStepIntoFlow( stepName, flow, afterStep = '' ) {
 		if ( -1 === flow.steps.indexOf( stepName ) ) {
 			const steps = flow.steps.slice();
 			const afterStepIndex = steps.indexOf( afterStep );
@@ -339,13 +332,13 @@ const Flows = {
 			 * `afterStep` is empty ( insert at start )
 			 * or if `afterStep` is found in the flow. ( insert after `afterStep` )
 			 */
-			if (afterStepIndex > -1 || '' === afterStep ) {
+			if ( afterStepIndex > -1 || '' === afterStep ) {
 				steps.splice( afterStepIndex + 1, 0, stepName );
 
 				return {
 					...flow,
 					steps,
-				}
+				};
 			}
 		}
 
