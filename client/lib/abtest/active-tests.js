@@ -113,5 +113,14 @@ module.exports = {
 		},
 		defaultVariation: 'current',
 		allowExistingUsers: true
+	},
+	siteTitleStep: {
+		datestamp: '20160928',
+		variations: {
+			showSiteTitleStep: 5,
+			hideSiteTitleStep: 95,
+		},
+		defaultVariation: 'hideSiteTitleStep',
+		allowExistingUsers: false
 	}
 };

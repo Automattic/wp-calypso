@@ -240,6 +240,9 @@ const Signup = React.createClass( {
 	},
 
 	resumeProgress() {
+		// Update the Flows object to know that the signup flow is being resumed.
+		flows.resumingFlow = true;
+
 		const signupProgress = SignupProgressStore.get(),
 			lastUpdatedStep = sortBy( signupProgress, 'lastUpdated' ).reverse()[ 0 ],
 			lastUpdatedStepName = lastUpdatedStep.stepName,
@@ -275,7 +278,7 @@ const Signup = React.createClass( {
 	},
 
 	loadNextStep() {
-		var flowSteps = flows.getFlow( this.props.flowName ).steps,
+		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
