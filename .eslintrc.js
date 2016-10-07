@@ -40,7 +40,6 @@ module.exports = {
 		'no-shadow': 1,
 		'no-spaced-func': 1,
 		'no-trailing-spaces': 1,
-		'no-unreachable': 1,
 		// Allows Chai `expect` expressions
 		'no-unused-expressions': 0,
 		'no-var': 1,

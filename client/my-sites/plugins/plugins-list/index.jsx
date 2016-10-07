@@ -289,7 +289,7 @@ export default React.createClass( {
 						site: siteName
 					}
 				} );
-				break;
+
 			case '1 site n plugins':
 				return this.translate( 'You are about to remove {{em}}%(numberOfPlugins)d plugins from %(site)s{{/em}}.{{p}}This will deactivate the plugins and delete all associated files and data.{{/p}}', {
 					components: {
@@ -301,7 +301,7 @@ export default React.createClass( {
 						site: siteName
 					}
 				} );
-				break;
+
 			case 'n sites 1 plugin':
 				return this.translate( 'You are about to remove {{em}}%(plugin)s from %(numberOfSites)d sites{{/em}}.{{p}}This will deactivate the plugin and delete all associated files and data.{{/p}}', {
 					components: {
@@ -313,7 +313,7 @@ export default React.createClass( {
 						numberOfSites: siteListSize
 					}
 				} );
-				break;
+
 			case 'n sites n plugins':
 				return this.translate( 'You are about to remove {{em}}%(numberOfPlugins)d plugins from %(numberOfSites)d sites{{/em}}.{{p}}This will deactivate the plugins and delete all associated files and data.{{/p}}', {
 					components: {
@@ -325,7 +325,6 @@ export default React.createClass( {
 						numberOfSites: siteListSize
 					}
 				} );
-				break;
 		}
 	},
 
