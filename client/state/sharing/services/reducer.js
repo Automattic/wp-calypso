@@ -15,12 +15,12 @@ import {
 import { itemSchema } from './schema';
 import { createReducer } from 'state/utils';
 
-// Stores the complete list of states, indexed by locale key
+// Stores the list of available keyring services
 export const items = createReducer( {}, {
 	[ KEYRING_SERVICES_RECEIVE ]: ( state, action ) => action.services,
 }, itemSchema );
 
-// Tracks states list fetching state
+// Tracks fetching state for keyring services
 export const isFetching = createReducer( false, {
 	[ KEYRING_SERVICES_REQUEST ]: () => true,
 	[ KEYRING_SERVICES_REQUEST_SUCCESS ]: () => false,
