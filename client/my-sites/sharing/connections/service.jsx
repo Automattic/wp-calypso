@@ -12,6 +12,7 @@ var ServiceTip = require( './service-tip' ),
 	ServiceAction = require( './service-action' ),
 	ServiceConnectedAccounts = require( './service-connected-accounts' ),
 	notices = require( 'notices' ),
+	observe = require( 'lib/mixins/data-observe' ),
 	sites = require( 'lib/sites-list' )(),
 	serviceConnections = require( './service-connections' ),
 	analytics = require( 'lib/analytics' ),
@@ -31,6 +32,8 @@ module.exports = React.createClass( {
 		onRefreshConnection: React.PropTypes.func,       // Handler for refreshing a Keyring connection for this service
 		onToggleSitewideConnection: React.PropTypes.func // Handler to invoke when toggling a connection to be shared sitewide
 	},
+
+	mixins: [ observe( 'connections' ) ],
 
 	getInitialState: function() {
 		return {
