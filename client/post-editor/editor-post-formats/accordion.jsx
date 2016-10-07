@@ -1,61 +1,64 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	pick = require( 'lodash/pick' ),
-	has = require( 'lodash' ).has,
-	classNames = require( 'classnames' ),
-	isEmpty = require( 'lodash/isEmpty' );
+import React, { PropTypes } from 'react';
+import { has, isEmpty } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Accordion = require( 'components/accordion' ),
-	Gridicon = require( 'components/gridicon' ),
-	siteUtils = require( 'lib/site/utils' ),
-	PostFormats = require( './' );
+import Accordion from 'components/accordion';
+import Gridicon from 'components/gridicon';
+import siteUtils from 'lib/site/utils';
+import PostFormats from './';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorPostFormatsAccordion',
 
 	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		postFormats: React.PropTypes.object
+		site: PropTypes.object,
+		post: PropTypes.object,
+		postFormats: PropTypes.object
 	},
 
-	getFormatValue: function() {
-		if ( ! this.props.post ) {
+	getFormatValue() {
+		const { post, site } = this.props;
+		if ( ! post ) {
 			return;
 		}
 
-		if ( this.props.post.format ) {
-			return this.props.post.format;
+		if ( post.format ) {
+			return post.format;
 		}
 
-		return siteUtils.getDefaultPostFormat( this.props.site );
+		return siteUtils.getDefaultPostFormat( site );
 	},
 
-	getSubtitle: function() {
+	getSubtitle() {
 		const formatValue = this.getFormatValue();
+		const { post, postFormats } = this.props;
 
-		if ( ! this.props.post || ! this.props.postFormats ) {
+		if ( ! post || ! postFormats ) {
 			return this.translate( 'Loading…' );
 		}
 
-		if ( has( this.props.postFormats, formatValue ) ) {
-			return this.props.postFormats[ formatValue ];
+		if ( has( postFormats, formatValue ) ) {
+			return postFormats[ formatValue ];
 		}
 
-		return this.translate( 'Standard', { context: 'Post format' } );
+		return this.translate( 'Standard', {
+			context: 'Post format'
+		} );
 	},
 
-	render: function() {
-		var classes = classNames( 'editor-post-formats__accordion', this.props.className, {
-			'is-loading': ! this.props.post || ! this.props.postFormats
+	render() {
+		const { className, post, postFormats } = this.props;
+		const classes = classNames( 'editor-post-formats__accordion', className, {
+			'is-loading': ! post || ! postFormats
 		} );
 
-		if ( isEmpty( this.props.postFormats ) ) {
+		if ( isEmpty( postFormats ) ) {
 			return null;
 		}
 
@@ -66,8 +69,10 @@ module.exports = React.createClass( {
 				icon={ <Gridicon icon="types" /> }
 				className={ classes }>
 				<PostFormats
-					{ ...pick( this.props, 'post', 'postFormats' ) }
-					value={ this.getFormatValue() } />
+					post={ post }
+					postFormats={ postFormats }
+					value={ this.getFormatValue() }
+				/>
 			</Accordion>
 		);
 	}
