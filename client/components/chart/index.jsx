@@ -2,9 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:chart' ),
-	noop = require( 'lodash/noop' ),
-	throttle = require( 'lodash/throttle' );
+	debug = require( 'debug' )( 'calypso:chart' );
+import { some, noop, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -110,11 +109,7 @@ module.exports = React.createClass( {
 	},
 
 	isEmptyChart: function( values ) {
-		values = values.filter( function( value ) {
-			return value > 0;
-		}, this );
-
-		return values.length === 0;
+		return ! some( values, ( value ) => value > 0 );
 	},
 
 	render: function() {

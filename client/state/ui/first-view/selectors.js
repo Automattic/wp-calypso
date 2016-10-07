@@ -3,12 +3,8 @@
 /**
  * External dependencies
  */
-import filter from 'lodash/filter';
-import last from 'lodash/last';
 import moment from 'moment';
-import some from 'lodash/some';
-import startsWith from 'lodash/startsWith';
-import takeRightWhile from 'lodash/takeRightWhile';
+import { some, startsWith, takeRightWhile, find, findLast } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,11 +17,11 @@ import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
 import { getCurrentUserDate } from 'state/current-user/selectors';
 
 export function getConfigForCurrentView( state ) {
-	const currentRoute = last( filter( getActionLog( state ), { type: ROUTE_SET } ) );
+	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
 	const path = currentRoute.path ? currentRoute.path : '';
-	const config = FIRST_VIEW_CONFIG.filter( entry => some( entry.paths, entryPath => startsWith( path, entryPath ) ) );
+	const config = find( FIRST_VIEW_CONFIG, ( entry => some( entry.paths, entryPath => startsWith( path, entryPath ) ) ) );
 
-	return config.pop() || false;
+	return config || false;
 }
 
 export function isUserEligible( state, config ) {
@@ -57,8 +53,7 @@ export function isViewEnabled( state, config ) {
 		return false;
 	}
 
-	const firstViewHistory = filter( getPreference( state, 'firstViewHistory' ), entry => entry.view === config.name );
-	const latestFirstViewHistory = [ ...firstViewHistory ].pop();
+	const latestFirstViewHistory = findLast( getPreference( state, 'firstViewHistory' ), { view: config.name } );
 	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
 
 	// If the view is disabled, we want to return false, regardless of state
@@ -96,8 +91,7 @@ export function shouldViewBeVisible( state ) {
 }
 
 export function secondsSpentOnCurrentView( state, now = Date.now() ) {
-	const routeSets = filter( getActionLog( state ), { type: ROUTE_SET } );
-	const currentRoute = last( routeSets );
+	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
 	return currentRoute ? ( now - currentRoute.timestamp ) / 1000 : -1;
 }
 

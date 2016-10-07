@@ -4,9 +4,7 @@
 import React from 'react';
 import _debug from 'debug';
 import moment from 'moment';
-import intersection from 'lodash/intersection';
-import map from 'lodash/map';
-import every from 'lodash/every';
+import { intersection, map, every, find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -522,13 +520,11 @@ export default React.createClass( {
 	},
 
 	pendingTransfer() {
-		const domains = this.getDomains().filter( domain => domain.pendingTransfer );
+		const domain = find( this.getDomains(), 'pendingTransfer' );
 
-		if ( domains.length !== 1 ) {
+		if ( ! domain ) {
 			return null;
 		}
-
-		const domain = domains[ 0 ];
 
 		const compactNotice = this.translate( '{{strong}}%(domain)s{{/strong}} is pending transfer.', {
 				components: { strong: <strong /> },

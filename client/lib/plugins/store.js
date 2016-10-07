@@ -1,13 +1,8 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/assign' ),
-	isArray = require( 'lodash/isArray' ),
-	debug = require( 'debug' )( 'calypso:sites-plugins:sites-plugins-store' ),
-	sortBy = require( 'lodash/sortBy' ),
-	uniq = require( 'lodash/uniq' ),
-	compact = require( 'lodash/compact' ),
-	values = require( 'lodash/values' );
+var debug = require( 'debug' )( 'calypso:sites-plugins:sites-plugins-store' );
+import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -236,8 +231,8 @@ PluginsStore = {
 		if ( ! plugins ) {
 			return plugins;
 		}
-		plugins = plugins.filter( _filters.isEqual.bind( this, pluginSlug ) );
-		return plugins[ 0 ];
+
+		return find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
 	},
 
 	// Array of sites with a particular plugin.
@@ -248,8 +243,8 @@ PluginsStore = {
 		if ( ! plugins ) {
 			return;
 		}
-		plugins = plugins.filter( _filters.isEqual.bind( this, pluginSlug ) );
-		plugin = plugins.pop();
+
+		plugin = find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
 		if ( ! plugin ) {
 			return null;
 		}

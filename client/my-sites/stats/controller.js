@@ -4,6 +4,7 @@
 import React from 'react';
 import page from 'page';
 import i18n from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -184,16 +185,14 @@ module.exports = {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
-		let activeFilter = filters().filter( function( filter ) {
+		const activeFilter = find( filters(), ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
-		}, this );
+		} );
 
 		// Validate that date filter is legit
-		if ( 0 === activeFilter.length ) {
+		if ( ! activeFilter ) {
 			next();
 		} else {
-			activeFilter = activeFilter.shift();
-
 			analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 			analytics.pageView.record( basePath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
 
@@ -252,11 +251,11 @@ module.exports = {
 		}
 		siteId = currentSite ? ( currentSite.ID || 0 ) : 0;
 
-		let activeFilter = filters().filter( function( filter ) {
+		const activeFilter = find( filters(), ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
-		}, this );
+		} );
 
-		if ( ( ! siteFragment ) || ( 0 === activeFilter.length ) ) {
+		if ( ! siteFragment || ! activeFilter ) {
 			next();
 		} else {
 			if ( 0 === siteId ) {
@@ -278,7 +277,6 @@ module.exports = {
 				siteOffset = currentSite.options.gmt_offset;
 			}
 			momentSiteZone = i18n.moment().utcOffset( siteOffset );
-			activeFilter = activeFilter.shift();
 			chartDate = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).endOf;
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
@@ -449,9 +447,9 @@ module.exports = {
 		}
 		siteId = site ? ( site.ID || 0 ) : 0;
 
-		let activeFilter = filters().filter( function( filter ) {
+		const activeFilter = find( filters(), ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
-		}, this );
+		} );
 
 		// if we have a siteFragment, but no siteId, wait for the sites list
 		if ( siteFragment && 0 === siteId ) {
@@ -463,13 +461,12 @@ module.exports = {
 				// site is not in the user's site list
 				window.location = '/stats';
 			}
-		} else if ( 0 === activeFilter.length || -1 === validModules.indexOf( context.params.module ) ) {
+		} else if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
 			next();
 		} else {
 			if ( 'object' === typeof( site.options ) && 'undefined' !== typeof( site.options.gmt_offset ) ) {
 				momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
 			}
-			activeFilter = activeFilter.shift();
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate );
 			} else {

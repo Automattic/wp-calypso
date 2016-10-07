@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { assign, filter, head, startsWith } from 'lodash';
+import { assign, find, startsWith } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -23,9 +23,7 @@ export default function firstPassCanonicalImage( post ) {
 			type: 'image'
 		}, imageSizeFromAttachments( post.featured_image ) );
 	} else {
-		const candidate = head( filter( post.attachments, function( attachment ) {
-			return startsWith( attachment.mime_type, 'image/' );
-		} ) );
+		const candidate = find( post.attachments, ( { mime_type } ) => startsWith( mime_type, 'image/' ) );
 
 		if ( candidate ) {
 			post.canonical_image = {

@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	filter = require( 'lodash/filter' ),
 	classNames = require( 'classnames' );
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -86,7 +86,7 @@ var CreditCardSelector = React.createClass({
 	},
 
 	getStoredCardDetails: function( section ) {
-		return filter( this.props.cards, { stored_details_id: section } )[ 0 ];
+		return find( this.props.cards, { stored_details_id: section } );
 	}
 } );
 

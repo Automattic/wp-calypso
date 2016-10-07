@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import { filter } from 'lodash';
+import { find } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -34,7 +34,7 @@ export default function pickCanonicalImage( post ) {
 		post.canonical_image = null;
 	}
 	if ( post.images ) {
-		canonicalImage = filter( post.images, candidateForCanonicalImage )[ 0 ];
+		canonicalImage = find( post.images, candidateForCanonicalImage );
 		if ( canonicalImage ) {
 			canonicalImage = {
 				uri: canonicalImage.src,

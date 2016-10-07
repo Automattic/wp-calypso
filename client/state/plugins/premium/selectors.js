@@ -1,5 +1,7 @@
-import find from 'lodash/find';
-import filter from 'lodash/filter';
+/**
+ * External dependencies
+ */
+import { find, filter, some } from 'lodash';
 
 const isRequesting = function( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
@@ -35,10 +37,10 @@ const isFinished = function( state, siteId, whitelist = false ) {
 	if ( pluginList.length === 0 ) {
 		return true;
 	}
-	pluginList = filter( pluginList, ( item ) => {
+
+	return ! some( pluginList, ( item ) => {
 		return ( ( 'done' !== item.status ) && ( item.error === null ) );
 	} );
-	return ( pluginList.length === 0 );
 };
 
 const isInstalling = function( state, siteId, whitelist = false ) {
@@ -46,11 +48,11 @@ const isInstalling = function( state, siteId, whitelist = false ) {
 	if ( pluginList.length === 0 ) {
 		return false;
 	}
-	pluginList = filter( pluginList, ( item ) => {
+
+	// If any plugin is not done/waiting/error'd, it's in an installing state.
+	return some( pluginList, ( item ) => {
 		return ( ( -1 === [ 'done', 'wait' ].indexOf( item.status ) ) && ( item.error === null ) );
 	} );
-	// If any plugin is not done/waiting/error'd, it's in an installing state.
-	return ( pluginList.length > 0 );
 };
 
 const getActivePlugin = function( state, siteId, whitelist = false ) {
