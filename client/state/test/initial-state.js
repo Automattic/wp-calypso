@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import mockery from 'mockery';
 import { createStore } from 'redux';
 
@@ -15,11 +14,16 @@ import { useSandbox } from 'test/helpers/use-sinon';
 import { useFakeTimers } from 'test/helpers/use-sinon';
 
 describe( 'initial-state', () => {
-	let clock, localforage, createReduxStoreFromPersistedInitialState, persistOnChange, MAX_AGE, SERIALIZE_THROTTLE,
+	let clock,
+		localforage,
+		createReduxStoreFromPersistedInitialState,
+		persistOnChange,
+		MAX_AGE,
+		SERIALIZE_THROTTLE,
 		isSwitchedUser = false,
-		isReduxEnabled = false,
-		isEnabled = () => isReduxEnabled,
-		isSupportUserSession = () => isSwitchedUser;
+		isReduxEnabled = false;
+	const isEnabled = () => isReduxEnabled;
+	const isSupportUserSession = () => isSwitchedUser;
 
 	useFakeDom();
 
@@ -46,11 +50,14 @@ describe( 'initial-state', () => {
 	describe( 'createReduxStoreFromPersistedInitialState', () => {
 		describe( 'persist-redux disabled', () => {
 			describe( 'with recently persisted data and initial server data', () => {
-				var state,
-					serverState = { currentUser: { id: 123456789 } };
+				let state, sandbox;
+				const serverState = { currentUser: { id: 123456789 } };
+
+				useSandbox( ( _sandbox ) => sandbox = _sandbox );
+
 				before( ( done ) => {
 					window.initialReduxState = serverState;
-					sinon.spy( console, 'error' );
+					sandbox.spy( console, 'error' );
 					const reduxReady = function( reduxStore ) {
 						state = reduxStore.getState();
 						done();
@@ -58,11 +65,10 @@ describe( 'initial-state', () => {
 					createReduxStoreFromPersistedInitialState( reduxReady );
 				} );
 				after( () => {
-					console.error.restore();
 					window.initialReduxState = null;
 				} );
 				it( 'builds store without errors', () => {
-					expect( console.error.called ).to.equal( false );
+					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 				} );
 				it( 'does not add timestamp to store', () => {
 					expect( state._timestamp ).to.equal( undefined );
@@ -75,24 +81,25 @@ describe( 'initial-state', () => {
 		describe( 'persist-redux enabled', () => {
 			describe( 'switched user', () => {
 				describe( 'with recently persisted data and initial server data', () => {
-					var state,
-						savedState = {
-							postTypes: {
-								items: {
-									2916284: {
-										post: { name: 'post', label: 'Posts' },
-										page: { name: 'page', label: 'Pages' }
-									}
+					let state, sandbox;
+					useSandbox( ( _sandbox ) => sandbox = _sandbox );
+					const savedState = {
+						postTypes: {
+							items: {
+								2916284: {
+									post: { name: 'post', label: 'Posts' },
+									page: { name: 'page', label: 'Pages' }
 								}
-							},
-							_timestamp: Date.now()
-						};
+							}
+						},
+						_timestamp: Date.now()
+					};
 					before( ( done ) => {
 						isReduxEnabled = true;
 						isSwitchedUser = true;
 						window.initialReduxState = { currentUser: { id: 123456789 } };
-						sinon.spy( console, 'error' );
-						sinon.stub( localforage, 'getItem' )
+						sandbox.spy( console, 'error' );
+						sandbox.stub( localforage, 'getItem' )
 							.returns(
 								new Promise( function( resolve ) {
 									resolve( savedState );
@@ -108,11 +115,9 @@ describe( 'initial-state', () => {
 						isReduxEnabled = false;
 						isSwitchedUser = false;
 						window.initialReduxState = null;
-						console.error.restore();
-						localforage.getItem.restore();
 					} );
 					it( 'builds store without errors', () => {
-						expect( console.error.called ).to.equal( false );
+						expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 					} );
 					it( 'does not build using local forage state', () => {
 						expect( state.postTypes.items[ 2916284 ] ).to.equal( undefined );
@@ -126,8 +131,10 @@ describe( 'initial-state', () => {
 				} );
 			} );
 			describe( 'with recently persisted data and initial server data', () => {
-				var state,
-					savedState = {
+				let state, sandbox;
+				useSandbox( ( _sandbox ) => sandbox = _sandbox );
+
+				const savedState = {
 						currentUser: { id: 123456789 },
 						postTypes: {
 							items: {
@@ -151,8 +158,8 @@ describe( 'initial-state', () => {
 				before( ( done ) => {
 					window.initialReduxState = serverState;
 					isReduxEnabled = true;
-					sinon.spy( console, 'error' );
-					sinon.stub( localforage, 'getItem' )
+					sandbox.spy( console, 'error' );
+					sandbox.stub( localforage, 'getItem' )
 						.returns(
 						new Promise( function( resolve ) {
 							resolve( savedState );
@@ -167,11 +174,9 @@ describe( 'initial-state', () => {
 				after( () => {
 					window.initialReduxState = null;
 					isReduxEnabled = false;
-					console.error.restore();
-					localforage.getItem.restore();
 				} );
 				it( 'builds store without errors', () => {
-					expect( console.error.called ).to.equal( false );
+					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 				} );
 				it( 'builds state using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( 123456789 );
@@ -184,21 +189,23 @@ describe( 'initial-state', () => {
 				} );
 			} );
 			describe( 'with stale persisted data and initial server data', () => {
-				var state,
-					serverState = {
-						postTypes: {
-							items: {
-								77203074: {
-									post: { name: 'post', label: 'Posts' }
-								}
+				let state, sandbox;
+				useSandbox( ( _sandbox ) => sandbox = _sandbox );
+
+				const serverState = {
+					postTypes: {
+						items: {
+							77203074: {
+								post: { name: 'post', label: 'Posts' }
 							}
 						}
-					};
+					}
+				};
 				before( ( done ) => {
 					window.initialReduxState = serverState;
 					isReduxEnabled = true;
-					sinon.spy( console, 'error' );
-					sinon.stub( localforage, 'getItem' )
+					sandbox.spy( console, 'error' );
+					sandbox.stub( localforage, 'getItem' )
 						.returns(
 						new Promise( function( resolve ) {
 							resolve( {
@@ -224,11 +231,9 @@ describe( 'initial-state', () => {
 				after( () => {
 					window.initialReduxState = null;
 					isReduxEnabled = false;
-					console.error.restore();
-					localforage.getItem.restore();
 				} );
 				it( 'builds store without errors', () => {
-					expect( console.error.called ).to.equal( false );
+					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 				} );
 				it( 'builds using server state', () => {
 					expect( state.postTypes.items ).to.equal( serverState.postTypes.items );
@@ -241,8 +246,10 @@ describe( 'initial-state', () => {
 				} );
 			} );
 			describe( 'with recently persisted data and no initial server data', () => {
-				var state,
-					savedState = {
+				let state, sandbox;
+				useSandbox( ( _sandbox ) => sandbox = _sandbox );
+
+				const savedState = {
 						currentUser: { id: 123456789 },
 						postTypes: {
 							items: {
@@ -258,8 +265,8 @@ describe( 'initial-state', () => {
 				before( ( done ) => {
 					window.initialReduxState = serverState;
 					isReduxEnabled = true;
-					sinon.spy( console, 'error' );
-					sinon.stub( localforage, 'getItem' )
+					sandbox.spy( console, 'error' );
+					sandbox.stub( localforage, 'getItem' )
 						.returns(
 						new Promise( function( resolve ) {
 							resolve( savedState );
@@ -274,11 +281,9 @@ describe( 'initial-state', () => {
 				after( () => {
 					window.initialReduxState = null;
 					isReduxEnabled = false;
-					console.error.restore();
-					localforage.getItem.restore();
 				} );
 				it( 'builds store without errors', () => {
-					expect( console.error.called ).to.equal( false );
+					expect( console.error.called ).to.equal( false ); // eslint-disable-line no-console
 				} );
 				it( 'builds state using local forage state', () => {
 					expect( state.currentUser.id ).to.equal( 123456789 );
