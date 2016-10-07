@@ -13,6 +13,20 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 		} ).code;
 	}
 
+	describe( 'import foo from "async-component!foo";', () => {
+		it( 'should not transform other imports', () => {
+			const code = transform( 'import foo from "foo";' );
+
+			expect( code ).to.equal( 'import foo from "foo";' );
+		} );
+
+		it( 'should remove async-component loader for source', () => {
+			const code = transform( 'import foo from "async-component!foo";' );
+
+			expect( code ).to.equal( 'import foo from "foo";' );
+		} );
+	} );
+
 	describe( '<AsyncLoad require />', () => {
 		it( 'should not transform other components', () => {
 			const code = transform( '<div require="foo" />' );

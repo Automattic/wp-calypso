@@ -65,6 +65,13 @@ var webpackConfig = {
 				loader: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' )
 			},
 			{
+				test: /\.json$/,
+				exclude: /(devdocs\/components-usage-stats.json)/,
+				loader: 'json-loader'
+			}
+		],
+		postLoaders: [
+			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs\/search-index)/,
 				loader: 'babel',
@@ -74,13 +81,11 @@ var webpackConfig = {
 						{ async: false }
 					] ]
 				}
-			},
-			{
-				test: /\.json$/,
-				exclude: /(devdocs\/components-usage-stats.json)/,
-				loader: 'json-loader'
 			}
 		]
+	},
+	resolveLoader: {
+		modulesDirectories: [ 'node_modules', path.join( __dirname, 'server', 'bundler', 'loaders' ) ]
 	},
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
