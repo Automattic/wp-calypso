@@ -68,7 +68,7 @@ const NavigationLink = React.createClass( {
 	},
 
 	render() {
-		if ( this.props.positionInFlow === 0 && this.props.direction === 'back' ) {
+		if ( this.props.positionInFlow === 0 && this.props.direction === 'back' && !this.props.stepSectionName ) {
 			return null;
 		}
 
