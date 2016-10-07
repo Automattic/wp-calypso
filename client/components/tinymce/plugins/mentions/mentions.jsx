@@ -38,6 +38,7 @@ const Mentions = React.createClass( {
 	getInitialState() {
 		return {
 			query: '',
+			popoverContext: null,
 			showPopover: false
 		};
 	},
@@ -46,6 +47,12 @@ const Mentions = React.createClass( {
 		const { editor } = this.props;
 
 		editor.on( 'keyup', this.onKeyUp );
+	},
+
+	setPopoverContext( popoverContext ) {
+		if ( popoverContext ) {
+			this.setState( { popoverContext } );
+		}
 	},
 
 	getQueryText: function() {
@@ -97,13 +104,17 @@ const Mentions = React.createClass( {
 	},
 
 	render() {
+		const { siteId, suggestions } = this.props;
+		const { query, showPopover, popoverContext } = this.state;
+
 		return (
-			<div>
-				<QueryUsersSuggestions siteId={ this.props.siteId } />
+			<div ref={ this.setPopoverContext }>
+				<QueryUsersSuggestions siteId={ siteId } />
 				<SuggestionList
-					query={ this.state.query }
-					suggestions={ this.props.suggestions }
-					isVisible={ this.state.showPopover }
+					query={ query }
+					suggestions={ suggestions }
+					isVisible={ showPopover }
+					popoverContext={ popoverContext }
 					onClick={ this.handleClick }
 					onClose={ this.handleClose }>
 				</SuggestionList>

@@ -51,36 +51,36 @@ const SuggestionList = React.createClass( {
 	},
 
 	render() {
-		if ( ! this.props.isVisible || ! this.props.suggestions ) {
+		const { isVisible, suggestions, query, popoverContext, onClose, onClick } = this.props;
+
+		if ( ! isVisible || ! suggestions ) {
 			return null;
 		}
 
-		const suggestions = this.getMatchingSuggestions();
+		const matchingSuggestions = this.getMatchingSuggestions();
 
-		if ( suggestions.length > 0 ) {
+		if ( matchingSuggestions.length > 0 ) {
 			return (
-				<div ref="mention">
-					<PopoverMenu
-						className="suggestions"
-						context={ this.refs && this.refs.mention }
-						isVisible={ this.props.isVisible }
-						onClose={ this.props.onClose }>
-							{ suggestions.map( ( suggestion ) => {
-								return (
-									<PopoverMenuItem
-										key={ 'user-suggestion-' + suggestion.ID }
-										onClick={ this.props.onClick.bind( null, suggestion ) }>
-										<Suggestion
-											ref={ 'suggestion-node-' + suggestion.ID }
-											avatarUrl={ suggestion.image_URL }
-											username={ suggestion.user_login }
-											fullName={ suggestion.display_name }
-											query={ this.props.query } />
-									</PopoverMenuItem>
-								);
-							} ) }
-					</PopoverMenu>
-				</div>
+				<PopoverMenu
+					className="suggestions"
+					context={ popoverContext }
+					isVisible={ isVisible }
+					onClose={ onClose }>
+						{ matchingSuggestions.map( ( suggestion ) => {
+							return (
+								<PopoverMenuItem
+									key={ 'user-suggestion-' + suggestion.ID }
+									onClick={ onClick.bind( null, suggestion ) }>
+									<Suggestion
+										ref={ 'suggestion-node-' + suggestion.ID }
+										avatarUrl={ suggestion.image_URL }
+										username={ suggestion.user_login }
+										fullName={ suggestion.display_name }
+										query={ query } />
+								</PopoverMenuItem>
+							);
+						} ) }
+				</PopoverMenu>
 			);
 		}
 
