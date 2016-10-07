@@ -381,6 +381,12 @@ a.sidebar__button {
 			border: 2px solid lighten( $gray, 30% );
 			border-radius: 50%;
 			background: $orange-jazzy;
+
+			@include breakpoint( "<660px" ) {
+				top: 14px;
+				left: 11px;
+			}
+
 		}
 
 	}
