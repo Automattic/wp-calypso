@@ -26,7 +26,7 @@ export function getKeyringServices( state ) {
  * @return {Array}        Keyring services, if known.
  */
 export function getKeyringServicesByType( state, type ) {
-	return filter( getKeyringServices( state ), { type: type } );
+	return filter( getKeyringServices( state ), { type } );
 }
 
 /**
