@@ -17,6 +17,9 @@ import config from 'config';
 import { preload } from 'sections-preload';
 import ResumeEditing from 'my-sites/resume-editing';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { decorate } from 'plugins/helpers';
+
+const preloadStats = preload.bind( null, 'stats' );
 
 const MasterbarLoggedIn = React.createClass( {
 	propTypes: {
@@ -69,7 +72,7 @@ const MasterbarLoggedIn = React.createClass( {
 					onClick={ this.clickMySites }
 					isActive={ this.isActive( 'sites' ) }
 					tooltip={ this.translate( 'View a list of your sites and access their dashboards', { textOnly: true } ) }
-					preloadSection={ () => preload( 'stats' ) }
+					preloadSection={ preloadStats }
 				>
 					{ this.props.user.get().visible_site_count > 1
 						? this.translate( 'My Sites', { comment: 'Toolbar, must be shorter than ~12 chars' } )
@@ -88,6 +91,7 @@ const MasterbarLoggedIn = React.createClass( {
 				>
 					{ this.translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
+				{ this.props.extraChildren }
 				{ config.isEnabled( 'resume-editing' ) && <ResumeEditing /> }
 				<Publish
 					sites={ this.props.sites }
@@ -127,4 +131,4 @@ const MasterbarLoggedIn = React.createClass( {
 } );
 
 // TODO: make this pure when sites can be retrieved from the Redux state
-export default connect( null, { setNextLayoutFocus }, null, { pure: false } )( MasterbarLoggedIn );
+export default connect( null, { setNextLayoutFocus }, null, { pure: false } )( decorate( MasterbarLoggedIn, 'MasterbarLoggedIn' ) );

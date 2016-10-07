@@ -65,6 +65,11 @@ var webpackConfig = {
 				loader: path.join( __dirname, 'server', 'isomorphic-routing', 'loader' )
 			},
 			{
+				test: /external-plugins.js$/,
+				exclude: 'node_modules',
+				loader: path.join( __dirname, 'server', 'bundler', 'plugins-loader' )
+			},
+			{
 				test: /\.jsx?$/,
 				exclude: /(node_modules|devdocs\/search-index)/,
 				loader: 'babel-loader'

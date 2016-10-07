@@ -1,0 +1,14 @@
+{
+  "name": "hello-world",
+	"author": "Automattic",
+	"description": "Hello, world!",
+  "version": "0.0.0",
+	"section": {
+		"name": "hello-world",
+		"paths": [ "/hello-world" ],
+		"module": "hello-world",
+		"group": "sites",
+		"secondary": true,
+		"enableLoggedOut": true
+	}
+}

@@ -80,7 +80,7 @@ welcome:
 	@printf "\033[36m               |___/|_|                  \n"
 	@printf "\033[m\n"
 
-install: node_modules
+install: node_modules plugins-node_modules
 
 # Simply running `make run` will spawn the Node.js server instance.
 run: welcome githooks install build
@@ -103,6 +103,9 @@ node_modules: package.json | node-version
 	@$(NPM) prune
 	@$(NPM) install
 	@touch node_modules
+
+plugins-node_modules:
+	cd client/plugins && $(NODE_BIN)/npm-recursive-install
 
 test: build
 	@$(NPM) test
@@ -203,5 +206,5 @@ shrinkwrap: node-version
 FORCE:
 
 .PHONY: build build-development build-server
-.PHONY: run install test clean distclean translate route node-version
+.PHONY: run install plugins-node_modules test clean distclean translate route node-version
 .PHONY: githooks githooks-commit githooks-push
