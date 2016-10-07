@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -13,6 +15,7 @@ import verticals from './verticals';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import TextInput from 'components/forms/form-text-input';
+import signupUtils from 'signup/utils';
 
 export default React.createClass( {
 	displayName: 'SurveyStepV2',
@@ -57,6 +60,8 @@ export default React.createClass( {
 	},
 
 	renderOther() {
+		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'survey-other', this.props.locale ) );
+
 		return (
 			<div className="survey__other">
 				<TextInput className="survey__other-write-in"
@@ -93,10 +98,16 @@ export default React.createClass( {
 		const siteHeaderText = this.translate( 'Let\'s create your new WordPress.com site!' );
 		const blogSubHeaderText = this.translate( 'To get started, tell us what your blog is about.' );
 		const siteSubHeaderText = this.translate( 'To get started, tell us what your blog or website is about.' );
+
+		const backUrl = this.props.stepSectionName
+			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, i18n.getLocaleSlug() )
+			: undefined;
+
 		return (
 			<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
+					backUrl={ backUrl }
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
 					subHeaderText={ this.props.surveySiteType === 'blog' ? blogSubHeaderText : siteSubHeaderText }
