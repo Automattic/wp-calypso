@@ -19,7 +19,8 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div>
+			<div className="design-assets__group">
+				<h2><a href="/devdocs/design/gridicons">Gridicons</a></h2>
 				<Gridicon icon="add-image" size={ 48 } onClick={ this.handleClick.bind( this, 'add-image' ) } />
 				<Gridicon icon="add-outline" size={ 48 } onClick={ this.handleClick.bind( this, 'add-outline' ) } />
 				<Gridicon icon="add" size={ 48 } onClick={ this.handleClick.bind( this, 'add' ) } />
@@ -49,6 +50,7 @@ module.exports = React.createClass( {
 				<Gridicon icon="camera" size={ 48 } onClick={ this.handleClick.bind( this, 'camera' ) } />
 				<Gridicon icon="caption" size={ 48 } onClick={ this.handleClick.bind( this, 'caption' ) } />
 				<Gridicon icon="cart" size={ 48 } onClick={ this.handleClick.bind( this, 'cart' ) } />
+				<Gridicon icon="chat" size={ 48 } onClick={ this.handleClick.bind( this, 'chat' ) } />
 				<Gridicon icon="checkmark-circle" size={ 48 } onClick={ this.handleClick.bind( this, 'checkmark-circle' ) } />
 				<Gridicon icon="checkmark" size={ 48 } onClick={ this.handleClick.bind( this, 'checkmark' ) } />
 				<Gridicon icon="chevron-down" size={ 48 } onClick={ this.handleClick.bind( this, 'chevron-down' ) } />
