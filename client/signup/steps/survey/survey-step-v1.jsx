@@ -69,7 +69,7 @@ export default React.createClass( {
 		};
 		return (
 			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
-				<Gridicon icon={ icon } className="survey-step__vertical__icon"/>
+				<Gridicon icon={ icon } className="survey-step__vertical__icon" />
 				<label className="survey-step__label">{ vertical.label }</label>
 			</Card>
 		);
@@ -79,11 +79,11 @@ export default React.createClass( {
 		const blogLabel = this.translate( 'What is your blog about?' );
 		const siteLabel = this.translate( 'What is your website about?' );
 
-		let verticalsClasses = classNames(
+		const verticalsClasses = classNames(
 				'survey-step__verticals',
 				{ active: ! this.state.stepOne } );
 
-		let subVerticalsClasses = classNames(
+		const subVerticalsClasses = classNames(
 				'survey-step__sub-verticals',
 				{ active: this.state.stepOne } );
 
@@ -98,7 +98,9 @@ export default React.createClass( {
 					</div>
 
 					<Card className={ subVerticalsClasses }>
-						<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>{ this.state.stepOne && this.state.stepOne.label }</BackButton>
+						<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>
+							{ this.state.stepOne && this.state.stepOne.label }
+						</BackButton>
 						{ this.state.stepTwo.map( this.renderStepTwoVertical ) }
 					</Card>
 				</div>
@@ -106,17 +108,37 @@ export default React.createClass( {
 		);
 	},
 
+	renderHeaderText() {
+		if ( this.props.surveySiteType === 'blog' ) {
+			const domain = this.props.queryObject && this.props.queryObject.domain;
+
+			if ( domain ) {
+				return this.translate( 'Start blogging on %(domain)s today!', {
+					args: { domain }
+				} );
+			}
+
+			return this.translate( 'Create your blog today!' );
+		}
+
+		return this.translate( 'Create your site today!' );
+	},
+
+	renderSubHeaderText() {
+		return this.props.surveySiteType === 'blog'
+			? this.translate( 'WordPress.com is the best place for your WordPress blog.' )
+			: this.translate( 'WordPress.com is the best place for your WordPress blog or website.' );
+	},
+
 	render() {
-		const blogHeaderText = this.translate( 'Create your blog today!' );
-		const siteHeaderText = this.translate( 'Create your site today!' );
 		return (
 			<div className="survey-step__section-wrapper">
 				<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
 					positionInFlow={ this.props.positionInFlow }
-					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
-					subHeaderText={ this.translate( 'WordPress.com is the best place for your WordPress blog or website.' ) }
+					headerText={ this.renderHeaderText() }
+					subHeaderText={ this.renderSubHeaderText() }
 					signupProgressStore={ this.props.signupProgressStore }
 					stepContent={ this.renderOptionList() } />
 			</div>
@@ -160,7 +182,11 @@ export default React.createClass( {
 				category_label: label
 			} );
 		}
-		SignupActions.submitSignupStep( { stepName: this.props.stepName }, [], { surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value } );
+		SignupActions.submitSignupStep(
+			{ stepName: this.props.stepName },
+			[],
+			{ surveySiteType: this.props.surveySiteType, surveyQuestion: vertical.value }
+		);
 		this.props.goToNextStep();
 	}
 } );
