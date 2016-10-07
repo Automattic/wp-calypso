@@ -26,7 +26,7 @@ Emitter( Username.prototype );
 
 Username.prototype.validate = function( username ) {
 	if ( username !== user.get().username ) {
-	 	if ( username.length < 4 ) {
+		if ( username.length < 4 ) {
 			this.validation = {
 				error: 'invalid_input',
 				message: i18n.translate( 'Usernames must be at least 4 characters.' )

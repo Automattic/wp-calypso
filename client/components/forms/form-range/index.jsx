@@ -29,12 +29,12 @@ module.exports = React.createClass( {
 	},
 
 	shouldNormalizeChange: function() {
-	    var ua = window.navigator.userAgent;
+		var ua = window.navigator.userAgent;
 
-	    // Internet Explorer doesn't trigger the normal "input" event as the
-	    // user drags the thumb. Instead, it emits the equivalent event on
-	    // "change", so we watch the change event and emit a simulated event.
-	    return -1 !== ua.indexOf( 'MSIE' ) || -1 !== ua.indexOf( 'Trident/' );
+		// Internet Explorer doesn't trigger the normal "input" event as the
+		// user drags the thumb. Instead, it emits the equivalent event on
+		// "change", so we watch the change event and emit a simulated event.
+		return -1 !== ua.indexOf( 'MSIE' ) || -1 !== ua.indexOf( 'Trident/' );
 	},
 
 	onChange: function( event ) {

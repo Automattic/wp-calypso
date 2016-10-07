@@ -38,7 +38,7 @@ const calculateProgress = progress => {
 	if ( attachment.total > 0 && attachment.completed >= 0 ) {
 		// return a weight of 80% attachment, 20% other objects
 		return 80 * attachment.completed / attachment.total +
-		       0.2 * calculateProgress( omit( progress, [ 'attachment' ] ) );
+			0.2 * calculateProgress( omit( progress, [ 'attachment' ] ) );
 	}
 
 	const percentages = Object.keys( progress )

@@ -119,7 +119,7 @@ export const ThemesList = React.createClass( {
 				<Button
 					primary
 					onClick={ this.handleUploadThemeClick }
-				    className="themes-list__upload-button"
+					className="themes-list__upload-button"
 				>
 					{ this.props.translate( 'Upload Theme' ) }
 				</Button>
