@@ -85,7 +85,6 @@ const Search = React.createClass( {
 			onSearchOpen: noop,
 			onSearchClose: noop,
 			onKeyDown: noop,
-			overlayStyling: noop,
 			disableAutocorrect: false,
 			searching: false,
 			isOpen: false,
@@ -344,11 +343,17 @@ const Search = React.createClass( {
 						maxLength={ this.props.maxLength }
 						{ ...autocorrect }
 					/>
-					<div className="search__text-overlay" ref="overlay">
-						{ this.props.overlayStyling( this.state.keyword ) }
-					</div>
+					{ this.props.overlayStyling && this.renderStylingDiv() }
 				</div>
 				{ this.closeButton() }
+			</div>
+		);
+	},
+
+	renderStylingDiv: function() {
+		return (
+			<div className="search__text-overlay" ref="overlay">
+				{ this.props.overlayStyling( this.state.keyword ) }
 			</div>
 		);
 	},
