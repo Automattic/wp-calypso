@@ -54,7 +54,7 @@ Currently supports forcing a LTR field in a RTL language, but not the other way 
 
 Supported values are `'ltr'` and `undefined` (the default, which uses the current global writing direction of the app).
 
-### styleOverlay (optional) function ( default noop )
+### styleOverlay (optional) function ( default undefined )
 Implement this function to add markup to the content of the search box. Current content is supplied as a parameter. Return a string containing the same text but with markup added.
 
 For example, add `<span/>`s around tokens in the content, then add CSS elsewhere to style the `<span/>`s.
