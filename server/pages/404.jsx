@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Head from './head';
+import Head from './components/head';
 
 const NotFoundError = ( { urls: { 'style.css': stylesheetUrl } } ) => (
 	<html lang="en">
