@@ -12,7 +12,8 @@ var webpack = require( 'webpack' ),
  */
 var config = require( './server/config' ),
 	sections = require( './client/sections' ),
-	ChunkFileNamePlugin = require( './server/bundler/plugin' );
+	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
+	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 /**
  * Internal variables
@@ -148,6 +149,11 @@ if ( CALYPSO_ENV === 'production' ) {
 		/^debug$/,
 		path.join( __dirname, 'client', 'lib', 'debug-noop' )
 	) );
+}
+
+if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
+	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'client-records.json' ),
+	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ) } ) );
 }
 
 webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );

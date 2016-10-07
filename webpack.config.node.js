@@ -5,12 +5,14 @@
  */
 var webpack = require( 'webpack' ),
 	path = require( 'path' ),
+	HardSourceWebpackPlugin = require('hard-source-webpack-plugin'),
 	fs = require( 'fs' );
 
 /**
  * Internal dependencies
  */
 var	PragmaCheckPlugin = require( 'server/pragma-checker' );
+var config = require( 'config' );
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -47,7 +49,7 @@ function getExternals() {
 	return externals;
 }
 
-module.exports = {
+var webpackConfig = {
 	devtool: 'source-map',
 	entry: 'index.js',
 	target: 'node',
@@ -103,5 +105,12 @@ module.exports = {
 };
 
 if ( process.env.CALYPSO_ENV === 'development' || process.env.CALYPSO_ENV === 'test' ) {
-	module.exports.plugins.push( new PragmaCheckPlugin );
+	webpackConfig.plugins.push( new PragmaCheckPlugin );
 }
+
+if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
+	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' ),
+	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'server' ) } ) );
+}
+
+module.exports = webpackConfig;
