@@ -1,5 +1,5 @@
 export const geoSchema = {
-	type: 'object',
+	type: [ 'object', 'null' ],
 	properties: {
 		latitude: { type: 'string' },
 		longitude: { type: 'string' },

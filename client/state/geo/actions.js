@@ -14,6 +14,13 @@ import {
  */
 export const GEO_ENDPOINT = 'https://public-api.wordpress.com/geo/';
 
+/**
+ * Returns an action object used in signalling that the current browser IP
+ * geolocation has been received.
+ *
+ * @param  {Object} geo Geolocation data
+ * @return {Object}     Action object
+ */
 export function receiveGeo( geo ) {
 	return {
 		type: GEO_RECEIVE,
@@ -21,6 +28,12 @@ export function receiveGeo( geo ) {
 	};
 }
 
+/**
+ * Returns a function which, when invoked, triggers a network request to fetch
+ * browser IP geolocation.
+ *
+ * @return {Function} Action thunk
+ */
 export function requestGeo() {
 	return ( dispatch ) => {
 		dispatch( { type: GEO_REQUEST } );
