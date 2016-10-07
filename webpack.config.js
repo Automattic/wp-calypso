@@ -68,7 +68,8 @@ const webpackConfig = {
 		}
 	},
 	resolveLoader: {
-		root: [ __dirname ]
+		root: [ __dirname ],
+		modulesDirectories: [ 'node_modules', path.join( __dirname, 'server', 'bundler', 'loaders' ) ]
 	},
 	node: {
 		console: false,
@@ -197,6 +198,6 @@ if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
 	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ) } ) );
 }
 
-webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );
+webpackConfig.module.postLoaders = [ jsLoader ];
 
 module.exports = webpackConfig;
