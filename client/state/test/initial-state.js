@@ -34,7 +34,8 @@ describe( 'initial-state', () => {
 		configMock.isEnabled = isEnabled;
 		mockery.registerMock( 'lib/user/support-user-interop', { isSupportUserSession: isSupportUserSession } );
 		mockery.registerMock( 'config', configMock );
-		localforage = require( 'lib/localforage' );
+		localforage = require( 'lib/localforage/localforage-bypass' );
+		mockery.registerMock( 'lib/localforage', localforage );
 		const initialState = require( 'state/initial-state' );
 		createReduxStoreFromPersistedInitialState = initialState.default;
 		persistOnChange = initialState.persistOnChange;
