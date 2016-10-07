@@ -86,6 +86,11 @@ const taxonomies = {
         "fluid-layout",
         "responsive-layout"
     ],
+    "picks": [
+        "featured",
+        "staff-picks",
+        "takashi-collection"
+    ],
     "subject": [
         "announcement",
         "art",
