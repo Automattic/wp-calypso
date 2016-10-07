@@ -5,7 +5,7 @@
  */
 var webpack = require( 'webpack' ),
 	path = require( 'path' ),
-	HardSourceWebpackPlugin = require('hard-source-webpack-plugin'),
+	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' ),
 	fs = require( 'fs' );
 
 /**
