@@ -16,6 +16,7 @@ const CreditCardFormExample = () => {
 
 	return (
 		<CreditCardForm
+			actionType="test"
 			initialValues={ initialValues }
 			recordFormSubmitEvent={ noop }
 			saveStoredCard={ () => Promise.reject( { message: 'This is only example' } ) }
