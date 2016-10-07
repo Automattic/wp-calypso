@@ -39,7 +39,7 @@ const CurrentSite = React.createClass( {
 	componentWillMount() {
 		const selectedSite = this.getSelectedSite();
 
-		if ( selectedSite ) {
+		if ( selectedSite && ! selectedSite.jetpack ) {
 			UpgradesActions.fetchDomains( selectedSite.ID );
 		}
 		this.prevSelectedSite = selectedSite;
@@ -60,7 +60,7 @@ const CurrentSite = React.createClass( {
 	componentWillUpdate() {
 		const selectedSite = this.getSelectedSite();
 
-		if ( selectedSite && this.prevSelectedSite !== selectedSite ) {
+		if ( selectedSite && this.prevSelectedSite !== selectedSite && ! selectedSite.jetpack ) {
 			UpgradesActions.fetchDomains( selectedSite.ID );
 		}
 		this.prevSelectedSite = selectedSite;
@@ -107,14 +107,6 @@ const CurrentSite = React.createClass( {
 					'expiringDomainsCannotManage',
 					'wrongNSMappedDomains'
 				] } />
-		);
-	},
-
-	getSiteNotices: function() {
-		return (
-			<div>
-				{ this.getDomainWarnings() }
-			</div>
 		);
 	},
 
@@ -172,7 +164,7 @@ const CurrentSite = React.createClass( {
 						ref="site" />
 					: <AllSites sites={ this.props.sites.get() } />
 				}
-				{ this.getSiteNotices( site ) }
+				{ ! site.jetpack && this.getDomainWarnings() }
 				<SiteNotice site={ site } />
 			</Card>
 		);
