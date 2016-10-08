@@ -83,18 +83,20 @@ const Mentions = React.createClass( {
 
 	handleClick: function( suggestion ) {
 		const { editor } = this.props;
-		const re = new RegExp( '@\\S+___PLACEHOLDER___' );
+		const re = /@\S*/;
 		const markup = <EditorMention username={ suggestion.user_login } />;
+		const range = editor.selection.getRng();
+		const mentionRange = document.createRange();
 
-		editor.insertContent( '___PLACEHOLDER___<span id="cursor">&nbsp;</span>' );
+		// Set a range for the user-entered mention.
+		mentionRange.setStart( range.startContainer, Math.max( range.startOffset - ( this.state.query.length + 1 ), 0 ) );
+		mentionRange.setEnd( range.endContainer, range.endOffset );
+		editor.selection.setRng( mentionRange );
 
-		const newContent = editor.getContent().replace( re, ReactDomServer.renderToStaticMarkup( markup ) );
+		// Replace user-entered mention with full username.
+		editor.selection.setContent( editor.selection.getContent().replace( re, ReactDomServer.renderToStaticMarkup( markup ) ) );
 
-		editor.setContent( newContent );
 		editor.getBody().focus();
-		editor.selection.select( editor.dom.select( '#cursor' )[ 0 ] );
-		editor.selection.collapse( true );
-		editor.dom.remove( editor.dom.select( '#cursor' )[ 0 ] );
 	},
 
 	handleClose: function() {
