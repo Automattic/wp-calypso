@@ -14,14 +14,16 @@ import {
 const Suggestions = React.createClass( {
 
 	propTypes: {
-		weolcomeSign : React.PropTypes.func,
+		weolcomeSign: React.PropTypes.func,
+		suggest: React.PropTypes.func,
 		terms: React.PropTypes.object,
 		input: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
 		return {
-			weolcomeSign : noop,
+			weolcomeSign: noop,
+			suggest: noop,
 			terms: {},
 			input: ""
 		}
