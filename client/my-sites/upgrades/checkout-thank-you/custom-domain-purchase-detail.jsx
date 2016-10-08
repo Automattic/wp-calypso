@@ -12,22 +12,24 @@ import { hasCustomDomain } from 'lib/site/utils';
 
 const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate } ) => {
 	const renderClaimCustomDomain = () =>
-		<PurchaseDetail
-			icon="globe"
-			title={ translate( 'Select Your Custom Domain' ) }
-			description={
-				translate(
-					'Your plan includes a free custom domain. Replace {{em}}%(siteDomain)s{{/em}} ' +
-					'with a custom domain to personalize your site.',
-					{
-						args: { siteDomain: selectedSite.domain },
-						components: { em: <em /> }
-					}
-				)
-			}
-			buttonText={ translate( 'Claim your free domain' ) }
-			href={ `/domains/add/${ selectedSite.slug }` }
-		/>;
+		selectedSite.plan.user_is_owner
+			? <PurchaseDetail
+				icon="globe"
+				title={ translate( 'Select Your Custom Domain' ) }
+				description={
+					translate(
+						'Your plan includes a free custom domain. Replace {{em}}%(siteDomain)s{{/em}} ' +
+						'with a custom domain to personalize your site.',
+						{
+							args: { siteDomain: selectedSite.domain },
+							components: { em: <em /> }
+						}
+					)
+				}
+				buttonText={ translate( 'Claim your free domain' ) }
+				href={ `/domains/add/${ selectedSite.slug }` }
+			/>
+			: null;
 
 	const renderHasCustomDomain = () =>
 		<PurchaseDetail
