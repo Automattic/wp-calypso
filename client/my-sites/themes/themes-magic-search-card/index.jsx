@@ -118,12 +118,24 @@ const ThemesMagicSearchCard = React.createClass( {
 
 			// Get rid of empty match at end
 			tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
-
+			if( tokens.length === 0 ) {
+				_this.setState( { editedSearchElement: "" } );
+				return;
+			}
 			const tokenIndex = _this.findEditedTokenIndex( tokens, _this.state.cursorPosition );
 			const text = tokens[ tokenIndex ].trim();
 			_this.setState( { editedSearchElement: text } );
 		} );
 	},
+
+	insertSuggestion( suggestion ) {
+			const tokens = this.state.searchInput.split( /(\s+)/ );
+			// Get rid of empty match at end
+			tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
+			const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
+			tokens[ tokenIndex ] = suggestion;
+			return tokens.join('');
+		},
 
 	onSearchChange( input ) {
 		this.findTextForSuggestions( input );
@@ -167,6 +179,12 @@ const ThemesMagicSearchCard = React.createClass( {
 		);
 	},
 
+	suggest: function( suggestion ) {
+		const updatedInput = this.insertSuggestion( suggestion );
+		this.setState( { searchInput: updatedInput } );
+		this.refs[ 'url-search' ].clear();
+	},
+
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
@@ -180,7 +198,7 @@ const ThemesMagicSearchCard = React.createClass( {
 		const searchField = (
 			<Search
 				onSearch={ this.props.onSearch }
-				initialValue={ this.props.search }
+				initialValue={ this.state.searchInput }
 				ref="url-search"
 				placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
 				analyticsGroup="Themes"
@@ -220,6 +238,7 @@ const ThemesMagicSearchCard = React.createClass( {
 				<Suggestions
 					terms={ this.state.taxonomies }
 					input={ this.state.editedSearchElement }
+					suggest={ this.suggest }
 					welcomeSign={ this.renderWelcomeSign }
 				/>
 			</div>
