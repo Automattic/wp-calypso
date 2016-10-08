@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
+import { find, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,6 +15,7 @@ import verticals from './verticals';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import TextInput from 'components/forms/form-text-input';
+import signupUtils from 'signup/utils';
 
 export default React.createClass( {
 	displayName: 'SurveyStepV2',
@@ -29,10 +32,14 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			shouldShowOther: false,
 			otherWriteIn: '',
 			verticalList: verticals.get(),
 		};
+	},
+
+	getOtherWriteIn() {
+		return this.state.otherWriteIn ||
+			get( find( this.props.signupProgressStore, { stepName: this.props.stepName } ), 'otherWriteIn', '' );
 	},
 
 	renderVertical( vertical ) {
@@ -57,14 +64,16 @@ export default React.createClass( {
 	},
 
 	renderOther() {
+		const otherWriteIn = this.getOtherWriteIn();
 		return (
 			<div className="survey__other">
 				<TextInput className="survey__other-write-in"
 					placeholder={ this.translate( 'Please describe what your site is about' ) }
+					defaultValue={ otherWriteIn }
 					onChange={ this.handleOtherWriteIn }
 					ref={ ( input ) => input && input.focus() } />
 				<Button className="survey__other-button" primary compact
-					disabled={ this.state.otherWriteIn.length === 0 }
+					disabled={ otherWriteIn.length === 0 }
 					data-value="a8c.24"
 					data-label="Uncategorized"
 					onClick={ this.handleNextStep }
@@ -93,15 +102,22 @@ export default React.createClass( {
 		const siteHeaderText = this.translate( 'Let\'s create your new WordPress.com site!' );
 		const blogSubHeaderText = this.translate( 'To get started, tell us what your blog is about.' );
 		const siteSubHeaderText = this.translate( 'To get started, tell us what your blog or website is about.' );
+
+		const backUrl = this.props.stepSectionName
+			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, this.props.locale )
+			: undefined;
+
 		return (
 			<StepWrapper
 					flowName={ this.props.flowName }
 					stepName={ this.props.stepName }
+					stepSectionName={ this.props.stepSectionName }
+					backUrl={ backUrl }
 					positionInFlow={ this.props.positionInFlow }
 					headerText={ this.props.surveySiteType === 'blog' ? blogHeaderText : siteHeaderText }
 					subHeaderText={ this.props.surveySiteType === 'blog' ? blogSubHeaderText : siteSubHeaderText }
 					signupProgressStore={ this.props.signupProgressStore }
-					stepContent={ this.state.shouldShowOther ? this.renderOther() : this.renderOptionList() } />
+					stepContent={ this.props.stepSectionName === 'other' ? this.renderOther() : this.renderOptionList() } />
 		);
 	},
 
@@ -112,25 +128,33 @@ export default React.createClass( {
 	},
 
 	handleOther() {
-		this.setState( {
-			shouldShowOther: true
-		} );
+		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'other', this.props.locale ) );
 	},
 
 	handleNextStep( e ) {
 		const { value, label } = e.target.dataset;
+		const otherWriteIn = ( value === 'a8c.24' && this.getOtherWriteIn().length !== 0 )
+			? this.getOtherWriteIn()
+			: undefined;
+
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
 		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
 			category_label: label,
-			category_write_in: ( this.state.otherWriteIn.length !== 0 ? this.state.otherWriteIn : undefined ),
+			category_write_in: otherWriteIn,
 			survey_version: '2',
 		} );
+
 		SignupActions.submitSignupStep(
-			{ stepName: this.props.stepName },
+			{
+				stepName: this.props.stepName,
+				stepSectionName: this.props.stepSectionName,
+				otherWriteIn: otherWriteIn,
+			},
 			[],
 			{ surveySiteType: this.props.surveySiteType, surveyQuestion: value }
 		);
+
 		this.props.goToNextStep();
 	}
 } );
