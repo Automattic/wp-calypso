@@ -77,7 +77,7 @@ const ThemesMagicSearchCard = React.createClass( {
 		this.findTextForSuggestions( event.target.value );
 	},
 
-	findEditedToken( tokens, cursorPosition ) {
+	findEditedTokenIndex( tokens, cursorPosition ) {
 		let tokenEnd = 0;
 		for ( let i = 0; i < tokens.length; i++ ) {
 			tokenEnd += tokens[ i ].length;
@@ -85,7 +85,7 @@ const ThemesMagicSearchCard = React.createClass( {
 			const cursorIsInsideTheToken = cursorPosition < tokenEnd;
 			if ( cursorIsInsideTheToken ) {
 				// "" indicates full suggestion request
-				return tokens[ i ].trim();
+				return i;
 			}
 
 			const cursorAtEndOfTheToken = cursorPosition === tokenEnd;
@@ -97,10 +97,10 @@ const ThemesMagicSearchCard = React.createClass( {
 				//next one must be text
 				const moreTokensExist = i < tokens.length - 1;
 				if ( tokenIsWhiteSpace && moreTokensExist ) {
-					return tokens[ i + 1 ];
+					return i + 1;
 				}
 				// "" indicates full suggestion request
-				return tokens[ i ].trim();
+				return i;
 			}
 			continue; // to the next token
 		}
@@ -119,7 +119,8 @@ const ThemesMagicSearchCard = React.createClass( {
 			// Get rid of empty match at end
 			tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
 
-			const text = _this.findEditedToken( tokens, _this.state.cursorPosition );
+			const tokenIndex = _this.findEditedTokenIndex( tokens, _this.state.cursorPosition );
+			const text = tokens[ tokenIndex ].trim();
 			_this.setState( { editedSearchElement: text } );
 		} );
 	},
