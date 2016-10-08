@@ -35,6 +35,10 @@ const Suggestions = React.createClass( {
 	componentDidUpdate: function() {
 	},
 
+	onMouseDown: function( event ) {
+		this.props.suggest( event.target.textContent );
+	},
+
 	removeEmptySuggestions: function( suggestions ) {
 		const hasValues = x => x.length > 0;
 		return pickBy( suggestions, hasValues );
@@ -83,7 +87,7 @@ const Suggestions = React.createClass( {
 			rendered.push( <span className="suggestions__category">{ key }</span> )
 			//Add values
 			rendered.concat( suggestions[ key ].map(
-				value => rendered.push( <span className="suggestions__value">
+				value => rendered.push( <span className="suggestions__value" onMouseDown={ this.onMouseDown }>
 					<span className="suggestions__value-cathegory">{ key + ":" }</span>
 					{ this.createTextWithHighlight( value, this.props.input ) }
 				</span> )

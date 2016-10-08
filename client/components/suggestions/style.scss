@@ -17,7 +17,17 @@
 
 		.suggestions__value-emphasis {
 			font-weight: bold;
+			pointer-events: none;
 		}
+
+		.suggestions__value-normal {
+			pointer-events: none;
+		}
+
+		.suggestions__value-cathegory {
+			display: none;
+		}
+
 	}
 
 	.suggestions__suggestions {
