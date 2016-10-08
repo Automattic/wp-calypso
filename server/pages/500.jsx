@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import Head from './components/head';
-import EmptyContent from 'client/components/empty-content';
+import EmptyContent from 'components/empty-content';
 
 const ServerError = ( { urls: { 'style.css': stylesheetUrl } } ) => (
 	<html lang="en">
