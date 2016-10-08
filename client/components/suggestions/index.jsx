@@ -84,6 +84,7 @@ const Suggestions = React.createClass( {
 			//Add values
 			rendered.concat( suggestions[ key ].map(
 				value => rendered.push( <span className="suggestions__value">
+					<span className="suggestions__value-cathegory">{ key + ":" }</span>
 					{ this.createTextWithHighlight( value, this.props.input ) }
 				</span> )
 			) );
