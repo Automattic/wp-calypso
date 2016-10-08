@@ -32,9 +32,14 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			otherWriteIn: get( find( this.props.signupProgressStore, { stepName: this.props.stepName } ), 'otherWriteIn', '' ),
+			otherWriteIn: '',
 			verticalList: verticals.get(),
 		};
+	},
+
+	getOtherWriteIn() {
+		return this.state.otherWriteIn ||
+			get( find( this.props.signupProgressStore, { stepName: this.props.stepName } ), 'otherWriteIn', '' );
 	},
 
 	renderVertical( vertical ) {
@@ -59,15 +64,16 @@ export default React.createClass( {
 	},
 
 	renderOther() {
+		const otherWriteIn = this.getOtherWriteIn();
 		return (
 			<div className="survey__other">
 				<TextInput className="survey__other-write-in"
 					placeholder={ this.translate( 'Please describe what your site is about' ) }
-					defaultValue={ this.state.otherWriteIn }
+					defaultValue={ otherWriteIn }
 					onChange={ this.handleOtherWriteIn }
 					ref={ ( input ) => input && input.focus() } />
 				<Button className="survey__other-button" primary compact
-					disabled={ this.state.otherWriteIn.length === 0 }
+					disabled={ otherWriteIn.length === 0 }
 					data-value="a8c.24"
 					data-label="Uncategorized"
 					onClick={ this.handleNextStep }
@@ -127,18 +133,19 @@ export default React.createClass( {
 
 	handleNextStep( e ) {
 		const { value, label } = e.target.dataset;
+		const otherWriteIn = this.getOtherWriteIn();
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
 		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
 			category_label: label,
-			category_write_in: ( this.state.otherWriteIn.length !== 0 ? this.state.otherWriteIn : undefined ),
+			category_write_in: ( otherWriteIn.length !== 0 ? otherWriteIn : undefined ),
 			survey_version: '2',
 		} );
 		SignupActions.submitSignupStep(
 			{
 				stepName: this.props.stepName,
 				stepSectionName: this.props.stepSectionName,
-				otherWriteIn: this.state.otherWriteIn,
+				otherWriteIn: otherWriteIn,
 			},
 			[],
 			{ surveySiteType: this.props.surveySiteType, surveyQuestion: value }
