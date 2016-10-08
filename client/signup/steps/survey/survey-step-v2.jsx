@@ -133,14 +133,18 @@ export default React.createClass( {
 
 	handleNextStep( e ) {
 		const { value, label } = e.target.dataset;
-		const otherWriteIn = this.getOtherWriteIn();
+		const otherWriteIn = ( value === 'a8c.24' && this.getOtherWriteIn().length !== 0 )
+			? this.getOtherWriteIn()
+			: undefined;
+
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
 		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
 			category_label: label,
-			category_write_in: ( otherWriteIn.length !== 0 ? otherWriteIn : undefined ),
+			category_write_in: otherWriteIn,
 			survey_version: '2',
 		} );
+
 		SignupActions.submitSignupStep(
 			{
 				stepName: this.props.stepName,
@@ -150,6 +154,7 @@ export default React.createClass( {
 			[],
 			{ surveySiteType: this.props.surveySiteType, surveyQuestion: value }
 		);
+
 		this.props.goToNextStep();
 	}
 } );
