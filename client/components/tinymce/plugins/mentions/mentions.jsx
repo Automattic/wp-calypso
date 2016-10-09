@@ -47,6 +47,9 @@ const Mentions = React.createClass( {
 		const { editor } = this.props;
 
 		editor.on( 'keyup', this.onKeyUp );
+		editor.on( 'click', () => {
+			this.setState( { showPopover: false } );
+		} );
 	},
 
 	setPopoverContext( popoverContext ) {
