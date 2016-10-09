@@ -9,6 +9,7 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
+import { getSite } from 'state/sites/selectors';
 import {
 	getSerializedStatsQuery,
 	normalizers
@@ -55,13 +56,15 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
  */
 export const getSiteStatsPostStreakData = createSelector(
 	( state, siteId, query ) => {
+		const site = getSite( state, siteId );
 		const response = {};
 		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query );
 
 		if ( streakData && streakData.data ) {
 			Object.keys( streakData.data ).forEach( ( timestamp ) => {
-				const postDay = i18n.moment.unix( timestamp ).locale( 'en' );
-				const datestamp = postDay.utc().format( 'YYYY-MM-DD' );
+				const postDay = i18n.moment.unix( timestamp );
+				const datestamp = postDay.utcOffset( site.options.gmt_offset ).format( 'YYYY-MM-DD' );
+
 				if ( 'undefined' === typeof( response[ datestamp ] ) ) {
 					response[ datestamp ] = 0;
 				}

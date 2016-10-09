@@ -115,6 +115,16 @@ describe( 'selectors', () => {
 	describe( 'getSiteStatsPostStreakData()', () => {
 		it( 'should return an empty object if no matching query results exist', () => {
 			const stats = getSiteStatsPostStreakData( {
+				sites: {
+					items: {
+						2916284: {
+							options: {
+								gmt_offset: 0
+							},
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				},
 				stats: {
 					lists: {
 						items: {}
@@ -127,6 +137,16 @@ describe( 'selectors', () => {
 
 		it( 'should return properly formatted data if matching data for query exists', () => {
 			const stats = getSiteStatsPostStreakData( {
+				sites: {
+					items: {
+						2916284: {
+							options: {
+								gmt_offset: 0
+							},
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				},
 				stats: {
 					lists: {
 						items: {
@@ -157,6 +177,16 @@ describe( 'selectors', () => {
 	describe( 'getSiteStatsMaxPostsByDay()', () => {
 		it( 'should return null if no matching query results exist', () => {
 			const stats = getSiteStatsMaxPostsByDay( {
+				sites: {
+					items: {
+						2916284: {
+							options: {
+								gmt_offset: 0
+							},
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				},
 				stats: {
 					lists: {
 						items: {}
@@ -169,6 +199,16 @@ describe( 'selectors', () => {
 
 		it( 'should properly correct number of max posts grouped by day', () => {
 			const stats = getSiteStatsMaxPostsByDay( {
+				sites: {
+					items: {
+						2916284: {
+							options: {
+								gmt_offset: 0
+							},
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				},
 				stats: {
 					lists: {
 						items: {
@@ -193,6 +233,16 @@ describe( 'selectors', () => {
 
 		it( 'should compare numerically rather than lexically', () => {
 			const stats = getSiteStatsMaxPostsByDay( {
+				sites: {
+					items: {
+						2916284: {
+							options: {
+								gmt_offset: 0
+							},
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				},
 				stats: {
 					lists: {
 						items: {
@@ -218,6 +268,16 @@ describe( 'selectors', () => {
 	describe( 'getSiteStatsPostsCountByDay()', () => {
 		it( 'should return null if no matching query results exist', () => {
 			const stats = getSiteStatsPostsCountByDay( {
+				sites: {
+					items: {
+						2916284: {
+							options: {
+								gmt_offset: 0
+							},
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				},
 				stats: {
 					lists: {
 						items: {}
@@ -230,6 +290,16 @@ describe( 'selectors', () => {
 
 		it( 'should properly correct number of max posts for a day', () => {
 			const stats = getSiteStatsPostsCountByDay( {
+				sites: {
+					items: {
+						2916284: {
+							options: {
+								gmt_offset: 0
+							},
+							URL: 'https://example.wordpress.com'
+						}
+					}
+				},
 				stats: {
 					lists: {
 						items: {
