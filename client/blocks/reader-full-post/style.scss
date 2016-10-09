@@ -461,28 +461,3 @@
 	}
 }
 
-.reader-full-post__action-links {
-	list-style-type: none;
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-end;
-	margin: 10px 0 25px;
-	clear: both;
-}
-
-.reader-full-post__action-links-item {
-	display: inline;
-	margin-right: 10px;
-
-	.reader-share__button-label {
-		font-size: 14px;
-	}
-
-	.reader-share .gridicon {
-		top: 7px;
-
-		@include breakpoint( "<480px" ) {
-			top: 5px;
-		}
-	}
-}

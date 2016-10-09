@@ -16,7 +16,7 @@ import { shouldShowShare } from 'reader/share/helper';
 import { userCan } from 'lib/posts/utils';
 import * as stats from 'reader/stats';
 
-const ReaderFullPostActionLinks = ( { post, site, onCommentClick } ) => {
+const ReaderPostActions = ( { post, site, onCommentClick, showEdit } ) => {
 	const onEditClick = () => {
 		stats.recordAction( 'edit_post' );
 		stats.recordGaEvent( 'Clicked Edit Post', 'full_post' );
@@ -24,19 +24,19 @@ const ReaderFullPostActionLinks = ( { post, site, onCommentClick } ) => {
 	};
 
 	return (
-		<ul className="reader-full-post__action-links">
-			{ site && userCan( 'edit_post', post ) &&
-				<li className="reader-full-post__action-links-item">
+		<ul className="reader-post-actions">
+			{ showEdit && site && userCan( 'edit_post', post ) &&
+				<li className="reader-post-actions__item">
 					<PostEditButton post={ post } site={ site } onClick={ onEditClick } />
 				</li>
 			}
 			{ shouldShowShare( post ) &&
-				<li className="reader-full-post__action-links-item">
+				<li className="reader-post-actions__item">
 					<ShareButton post={ post } position="bottom" tagName="div" />
 				</li>
 			}
 			{ shouldShowComments( post ) &&
-				<li className="reader-full-post__action-links-item">
+				<li className="reader-post-actions__item">
 					<CommentButton
 						key="comment-button"
 						commentCount={ post.discussion.comment_count }
@@ -45,7 +45,7 @@ const ReaderFullPostActionLinks = ( { post, site, onCommentClick } ) => {
 				</li>
 			}
 			{ shouldShowLikes( post ) &&
-				<li className="reader-full-post__action-links-item">
+				<li className="reader-post-actions__item">
 					<LikeButton
 						key="like-button"
 						siteId={ +post.site_ID }
@@ -59,10 +59,15 @@ const ReaderFullPostActionLinks = ( { post, site, onCommentClick } ) => {
 	);
 };
 
-ReaderFullPostActionLinks.propTypes = {
+ReaderPostActions.propTypes = {
 	post: React.PropTypes.object.isRequired,
 	site: React.PropTypes.object,
-	onCommentClick: React.PropTypes.func
+	onCommentClick: React.PropTypes.func,
+	showEdit: React.PropTypes.bool
 };
 
-export default ReaderFullPostActionLinks;
+ReaderPostActions.defaultProps = {
+	showEdit: true
+};
+
+export default ReaderPostActions;
