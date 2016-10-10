@@ -15,6 +15,7 @@ import { createReduxStore } from 'state';
 import { LayoutLoggedOut } from 'layout/logged-out';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
+import emptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'main', function() {
 	context( 'when trying to renderToString() without theme data', function() {
@@ -22,6 +23,7 @@ describe( 'main', function() {
 		useFakeDom();
 
 		before( function() {
+			mockery.registerMock( 'my-sites/themes/theme-preview', emptyComponent );
 			mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 			mockery.registerMock( 'lib/wp', {
 				me: () => ( {
@@ -29,12 +31,11 @@ describe( 'main', function() {
 				} ),
 				undocumented: () => ( {
 					getProducts: noop
-				} )
+				} ),
 			} );
 
 			const store = createReduxStore();
 			const ThemeSheetComponent = require( '../main' );
-
 			const primary = <ThemeSheetComponent id={ 'twentysixteen' } />;
 
 			this.layout = (
