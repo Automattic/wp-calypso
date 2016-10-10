@@ -2,6 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -24,8 +26,9 @@ import infiniteScroll from 'lib/mixins/infinite-scroll';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import FeatureExample from 'components/feature-example';
 import { hasTouch } from 'lib/touch-detect';
+import { recordTracksEvent } from 'state/analytics/actions';
 
-module.exports = React.createClass( {
+const PluginsBrowser = React.createClass( {
 
 	displayName: 'PluginsBrowser',
 	_SHORT_LIST_LENGTH: 6,
@@ -37,6 +40,12 @@ module.exports = React.createClass( {
 	componentDidMount() {
 		PluginsListStore.on( 'change', this.refreshLists );
 		this.props.sites.on( 'change', this.refreshLists );
+
+		if ( this.props.search && this.props.searchTitle ) {
+			this.props.recordTracksEvent( 'calypso_plugins_search_noresults_recommendations_show', {
+				search_query: this.props.search
+			} );
+		}
 	},
 
 	getInitialState() {
@@ -310,3 +319,10 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( {
+		recordTracksEvent
+	}, dispatch )
+)( PluginsBrowser );
