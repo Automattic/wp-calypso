@@ -84,7 +84,7 @@ class Timezone extends Component {
 	render() {
 		const { selectedZone } = this.props;
 		return (
-			<select onChange={ this.onSelect } value={ selectedZone || null }>
+			<select onChange={ this.onSelect } value={ selectedZone || '' }>
 				{ this.renderOptionsByContinent() }
 				<optgroup label="UTC">
 					<option value="UTC">UTC</option>

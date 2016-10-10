@@ -1,22 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:forms:language-selector' );
+import React from 'react';
+import { omit } from 'lodash';
+import debugFactory from 'debug';
+const	debug = debugFactory( 'calypso:forms:language-selector' );
+
 /**
  * Internal dependencies
  */
-var SelectOptGroups = require( 'components/forms/select-opt-groups' );
+import SelectOptGroups from 'components/forms/select-opt-groups';
 
 function coerceToOptions( data, valueKey ) {
 	valueKey = 'undefined' === typeof valueKey ? 'value' : valueKey;
 
-	return data.map( function( language ){
+	return data.map( function( language ) {
 		return { value: language[ valueKey ], label: language.name };
 	} );
 }
 
-var LanguageSelector = React.createClass( {
+const LanguageSelector = React.createClass( {
 
 	displayName: 'LanguageSelector',
 
@@ -25,32 +28,32 @@ var LanguageSelector = React.createClass( {
 	},
 
 	languageOptGroups: function() {
-		var allLanguages, popularLanguages;
+		let popularLanguages;
+		const allLanguages = coerceToOptions( this.props.languages, this.props.valueKey );
 
-		allLanguages = coerceToOptions( this.props.languages, this.props.valueKey );
-
-		popularLanguages = this.props.languages.filter( function( language ) { return language.popular; } );
-		popularLanguages.sort( function( a, b ) { return a.popular - b.popular; } );
+		popularLanguages = this.props.languages.filter( language => language.popular );
+		popularLanguages.sort( ( a, b ) => a.popular - b.popular );
 		popularLanguages = coerceToOptions( popularLanguages, this.props.valueKey );
 
 		return [
-		{
-			label: this.translate( 'Popular languages', { textOnly: true } ),
-			options: popularLanguages
-		},
-		{
-			label: this.translate( 'All languages', { textOnly: true } ),
-			options: allLanguages
-		}
+			{
+				label: this.translate( 'Popular languages', { textOnly: true } ),
+				options: popularLanguages
+			},
+			{
+				label: this.translate( 'All languages', { textOnly: true } ),
+				options: allLanguages
+			}
 		];
-
 	},
 
 	render: function() {
+		const props = omit( this.props, 'languages' );
+
 		return (
-			<SelectOptGroups optGroups={ this.languageOptGroups() } {...this.props} />
+			<SelectOptGroups optGroups={ this.languageOptGroups() } { ...props } />
 		);
 	}
-});
+} );
 
 module.exports = LanguageSelector;
