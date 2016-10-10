@@ -412,6 +412,24 @@
 	margin: 28px 0 26px;
 }
 
+.reader-full-post .embed-youtube,
+.reader-full-post .embed-vimeo {
+	display: block;
+	position: relative;
+	padding: 25px 0 56.25%;
+
+	iframe {
+		height: 100%;
+		position: absolute;
+			top: 0;
+		width: 100%;
+	}
+}
+
+.reader-full-post .embed-vimeo {
+	margin-bottom: 33px;
+}
+
 .reader-full-post__story-content img:first-child {
 	margin-top: 0;
 }
