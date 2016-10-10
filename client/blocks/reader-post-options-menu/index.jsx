@@ -132,7 +132,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 	},
 
 	closePopoverMenu() {
-		if ( this.isMounted() ) {
+		if ( this.state.showPopoverMenu ) {
 			this.setState( { showPopoverMenu: false } );
 		}
 	},
@@ -194,7 +194,8 @@ const ReaderPostOptionsMenu = React.createClass( {
 				<PopoverMenu isVisible={ this.state.showPopoverMenu }
 						onClose={ this.closePopoverMenu }
 						position={ this.state.popoverPosition }
-						context={ this.refs && this.refs.popoverMenuButton }>
+						context={ this.refs && this.refs.popoverMenuButton }
+						className="reader-post-options-menu__popover">
 
 					<FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } />
 
