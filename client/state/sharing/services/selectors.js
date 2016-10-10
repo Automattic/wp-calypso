@@ -8,7 +8,6 @@ import { filter } from 'lodash';
  */
 import { canCurrentUser } from 'state/current-user/selectors';
 import { isJetpackSite, isJetpackModuleActive } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Returns an object of service objects.
@@ -35,12 +34,12 @@ export function getKeyringServicesByType( state, type ) {
  * Returns an object of eligible service objects with the specified type.
  *
  * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID.
  * @param  {String} type   Type of service. 'publicize' or 'other'.
  * @return {Array}         Keyring services, if known.
  */
-export function getEligibleKeyringServices( state, type ) {
-	const siteId = getSelectedSiteId( state ),
-		services = getKeyringServicesByType( state, type );
+export function getEligibleKeyringServices( state, siteId, type ) {
+	const services = getKeyringServicesByType( state, type );
 
 	if ( ! siteId ) {
 		return services;

@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { getEligibleKeyringServices } from 'state/sharing/services/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import QueryKeyringServices from 'components/data/query-keyring-services';
 import SectionHeader from 'components/section-header';
 import Service from './service';
@@ -84,6 +85,6 @@ class SharingServicesGroup extends Component {
 
 export default connect(
 	( state, { type } ) => ( {
-		services: getEligibleKeyringServices( state, type )
+		services: getEligibleKeyringServices( state, getSelectedSiteId( state ), type )
 	} ),
 )( SharingServicesGroup );
