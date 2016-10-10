@@ -29,10 +29,52 @@ const Suggestions = React.createClass( {
 		}
 	},
 
+	getInitialState: function() {
+		return {
+			suggestionPosition: -1,
+		};
+	},
 	componentDidMount: function() {
 	},
 
 	componentDidUpdate: function() {
+	},
+
+	countSuggestions: function( suggestions ) {
+		let noOfSuggestions = 0;
+		for( const key in suggestions ) {
+			if( ! suggestions.hasOwnProperty( key ) ) {
+				continue;
+			}
+			noOfSuggestions += suggestions[ key ].length;
+		}
+		return noOfSuggestions;
+	},
+	incPosition: function() {
+		const position = ( this.state.suggestionPosition + 1 ) % this.state.noOfSuggestions;
+		this.setState( {
+			suggestionPosition: position,
+		} );
+	},
+	decPosition: function() {
+		const position = ( this.state.suggestionPosition - 1 ) % this.state.noOfSuggestions;
+		this.setState( {
+			suggestionPosition: position,
+		} );
+	},
+
+	handleKeyEvent: function( event ) {
+		switch( event.key ) {
+			case "ArrowDown" :
+				this.incPosition();
+				event.preventDefault();
+				break;
+			case "ArrowUp" :
+				this.decPosition();
+				event.preventDefault();
+				break;
+		}
+
 	},
 
 	onMouseDown: function( event ) {
