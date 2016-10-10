@@ -404,7 +404,7 @@ const FormGeneral = React.createClass( {
 								<FormLabel>
 									<FormCheckbox
 										name="jetpack_relatedposts_show_headline"
-										checkedLink={ this.linkState( 'jetpack_relatedposts_show_headline' ) }/>
+										checkedLink={ this.linkState( 'jetpack_relatedposts_show_headline' ) } />
 									<span>
 										{ this.translate(
 											'Show a "Related" header to more clearly separate the related section from posts'
@@ -416,7 +416,7 @@ const FormGeneral = React.createClass( {
 								<FormLabel>
 									<FormCheckbox
 										name="jetpack_relatedposts_show_thumbnails"
-										checkedLink={ this.linkState( 'jetpack_relatedposts_show_thumbnails' ) }/>
+										checkedLink={ this.linkState( 'jetpack_relatedposts_show_thumbnails' ) } />
 									<span>{ this.translate( 'Use a large and visually striking layout' ) }</span>
 								</FormLabel>
 							</li>
@@ -473,13 +473,12 @@ const FormGeneral = React.createClass( {
 
 	jetpackDisconnectOption() {
 		const { site } = this.props;
-		let disconnectText;
 
 		if ( ! site.jetpack ) {
 			return null;
 		}
 
-		disconnectText = this.translate( 'Disconnect Site', {
+		const disconnectText = this.translate( 'Disconnect Site', {
 			context: 'Jetpack: Action user takes to disconnect Jetpack site from .com link in general site settings'
 		} );
 
@@ -511,7 +510,7 @@ const FormGeneral = React.createClass( {
 				<ul>
 					<li>
 						<FormLabel>
-							<FormCheckbox name="holidaysnow" checkedLink={ this.linkState( 'holidaysnow' ) }/>
+							<FormCheckbox name="holidaysnow" checkedLink={ this.linkState( 'holidaysnow' ) } />
 							<span>{ this.translate( 'Show falling snow on my blog until January 4th.' ) }</span>
 						</FormLabel>
 					</li>
