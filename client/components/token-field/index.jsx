@@ -226,59 +226,21 @@ var TokenField = React.createClass( {
 		this._addNewToken( suggestion );
 	},
 
-	_handlePaste( text ) {
+	_onInputChange: function( event ) {
+		const text = event.value;
 		const separator = this.props.tokenizeOnSpace ? /[ ,]+/ : /,+/;
-		const items = text.split( separator );
-
-		const tokenizableItems = items
-			.slice( 0, -1 )
+		const items = text
+			.split( separator )
 			.filter( item => !! this.props.saveTransform( item ).length );
 
-		debug( '_handlePaste', text, items );
-		debug( 'tokenizableItems', tokenizableItems );
+		if ( items.length > 1 ) {
+			this._addNewToken( items.slice( 0, -1 ), { isBatchOperation: true } );
+		}
 
-		/*
-		 * Due to the interactions between TokenField's `_addNewToken` and the
-		 * parent component's `onChange` handler, we can't call a sequence of
-		 * `_addNewToken` without deferring as done below.
-		 *
-		 * This forces each `_addNewToken` invocation to run once the state
-		 * updates have propagated from TokenField to parent and back.
-		 *
-		 * The `isBatchOperation` parameter avoids unnecessary state changes
-		 * within TokenField proper.
-		 */
-		tokenizableItems.forEach( item => {
-			debug( 'adding token', item );
-			setTimeout( () => {
-				this._addNewToken( item, { isBatchOperation: true } );
-			}, 0 );
-		} );
-
-		return {
-			remainder: last( items ),
-			hasAddedAny: !! tokenizableItems.length,
-		};
-	},
-
-	_onInputChange: function( event ) {
-		const { hasAddedAny, remainder } = this._handlePaste( event.value );
-
-		/*
-		 * We only need to defer the `setState` call when `_handlePaste`
-		 * actually called `_addNewToken`. Thus, for any normal key press,
-		 * `setTimeout` is an unnecessary indirection.
-		 */
-		const call = hasAddedAny
-			? fn => setTimeout( fn, 0 )
-			: fn => fn();
-
-		call( () => {
-			this.setState( {
-				incompleteTokenValue: remainder,
-				selectedSuggestionIndex: -1,
-				selectedSuggestionScroll: false
-			} );
+		this.setState( {
+			incompleteTokenValue: last( items ) || '',
+			selectedSuggestionIndex: -1,
+			selectedSuggestionScroll: false
 		} );
 	},
 
@@ -513,17 +475,20 @@ var TokenField = React.createClass( {
 	},
 
 	_addNewToken: function( token, { isBatchOperation = false } = {} ) {
-		var newValue;
+		const tokens = Array.isArray( token ) ? token : [ token ];
+		const newValue = clone( this.props.value );
+		let newValueIndex = this._getIndexOfInput();
 
-		token = this.props.saveTransform( token );
+		tokens.forEach( token => {
+			token = this.props.saveTransform( token );
 
-		if ( ! this._valueContainsToken( token ) ) {
-			newValue = clone( this.props.value );
-			newValue.splice( this._getIndexOfInput(), 0, token );
+			if ( ! this._valueContainsToken( token ) ) {
+				newValue.splice( newValueIndex++, 0, token );
+			}
+		} );
 
-			debug( '_addNewToken: onChange', newValue );
-			this.props.onChange( newValue );
-		}
+		debug( '_addNewToken: onChange', newValue );
+		this.props.onChange( newValue );
 
 		if ( isBatchOperation ) {
 			return;
