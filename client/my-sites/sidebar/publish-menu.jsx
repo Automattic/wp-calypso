@@ -78,6 +78,18 @@ const PublishMenu = React.createClass( {
 				buttonLink: site ? '/page/' + site.slug : '/page',
 				wpAdminLink: 'edit.php?post_type=page',
 				showOnAllMySites: true,
+			},
+			{
+				name: 'media',
+				label: this.translate( 'Media' ),
+				className: 'media',
+				capability: 'upload_files',
+				queryable: true,
+				config: 'manage/media',
+				link: '/media',
+				//buttonLink: site ? '/media/' + site.slug : '/media',
+				wpAdminLink: 'upload.php',
+				showOnAllMySites: true,
 			}
 		];
 	},
