@@ -9,11 +9,18 @@
 		background-color: $gray-light;
 		text-transform: uppercase;
 		text-indent: 10px;
+		border-width: 0px 0.5px 0.5px 0.5px;
+		border-color: $gray;
+		border-style: solid;
 	}
 
 	.suggestions__value {
 		background-color: $white;
 		text-indent: 20px;
+		border-width: 0px 0.5px 0.5px 0.5px;
+		height: 24px;
+		border-color: $gray;
+		border-style: solid;
 
 		.suggestions__value-emphasis {
 			font-weight: bold;
