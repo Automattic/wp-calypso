@@ -335,6 +335,7 @@ a.sidebar__button {
 	margin: auto 0 0;
 	display: flex;
 	flex-direction: row;
+	padding-left: 10px;
 
 	@include breakpoint( "<660px" ) {
 		margin-top: 16px;
