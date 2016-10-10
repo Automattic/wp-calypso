@@ -21,6 +21,7 @@ import FollowButton from 'reader/follow-button';
 import * as DiscoverHelper from 'reader/discover/helper';
 import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
+import Gridicon from 'components/gridicon';
 
 const ReaderPostOptionsMenu = React.createClass( {
 
@@ -185,9 +186,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 				<span className={ triggerClasses }
 						ref="popoverMenuButton"
 						onClick={ this.showPopoverMenu }>
-					<svg className="gridicon gridicon__ellipsis" height="24" width="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-						<g><circle cx="5" cy="12" r="2" /><circle cx="19" cy="12" r="2" /><circle cx="12" cy="12" r="2" /></g>
-					</svg>
+					<Gridicon icon="ellipsis" size={ 24 } />
 					<span className="reader-post-options-menu__label">{ this.translate( 'More' ) }</span>
 				</span>
 
@@ -200,9 +199,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 					<FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } />
 
 					{ isEditPossible ? <PopoverMenuItem onClick={ this.editPost } className="reader-post-options-menu__edit has-icon">
-						<svg className="gridicon gridicon__edit" height="20" width="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-							<g><path d="M4 15v5h5l9-9-5-5-9 9zM16 3l-2 2 5 5 2-2-5-5z" /></g>
-						</svg>
+						<Gridicon icon="pencil" size={ 18 } />
 						{ this.translate( 'Edit Post' ) }
 					</PopoverMenuItem> : null }
 
