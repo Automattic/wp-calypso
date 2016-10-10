@@ -1,17 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	page = require( 'page' );
+import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var MediaLibrary = require( 'my-sites/media-library' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	observe = require( 'lib/mixins/data-observe' );
+import MediaLibrary from 'my-sites/media-library';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import observe from 'lib/mixins/data-observe';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'Media',
 
 	mixins: [ observe( 'sites' ) ],
@@ -31,7 +31,7 @@ module.exports = React.createClass( {
 	},
 
 	onFilterChange: function( filter ) {
-		var redirect = '/media';
+		let redirect = '/media';
 
 		if ( filter ) {
 			redirect += '/' + filter;
