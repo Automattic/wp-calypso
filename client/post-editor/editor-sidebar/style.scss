@@ -5,11 +5,13 @@
 		position: relative;
 		top: 0;
 		left: 0;
-		display: none;
+		height: 0;
+		transition: none;
 
 		.focus-sidebar & {
-			display: block;
+			height: auto;
 			transform: none;
+			transition: none;
 		}
 	}
 }
