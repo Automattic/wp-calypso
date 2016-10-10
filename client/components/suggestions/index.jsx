@@ -47,6 +47,7 @@ const Suggestions = React.createClass( {
 		this.setState( {
 			suggestions: suggestions,
 			noOfSuggestions: this.countSuggestions( suggestions ),
+			currentSuggestion: "",
 		} );
 	},
 
@@ -57,6 +58,7 @@ const Suggestions = React.createClass( {
 				suggestions: suggestions,
 				noOfSuggestions: this.countSuggestions( suggestions ),
 				suggestionPosition: -1,
+				currentSuggestion: "",
 			} );
 		}
 	},
@@ -71,16 +73,30 @@ const Suggestions = React.createClass( {
 		}
 		return noOfSuggestions;
 	},
+
+	getSuggestionForPosition: function( position ) {
+		let suggestionIndex = 0;
+		for( const key in this.state.suggestions ) {
+			suggestionIndex += this.state.suggestions[ key ].length;
+			if( position <= suggestionIndex ) {
+				return key + ":" + this.state.suggestions[ key ][ this.state.suggestions[ key ].length - ( suggestionIndex - position ) ];
+			}
+		}
+	},
+
 	incPosition: function() {
 		const position = ( this.state.suggestionPosition + 1 ) % this.state.noOfSuggestions;
 		this.setState( {
 			suggestionPosition: position,
+			currentSuggestion: this.getSuggestionForPosition( position ),
 		} );
 	},
+
 	decPosition: function() {
 		const position = ( this.state.suggestionPosition - 1 ) % this.state.noOfSuggestions;
 		this.setState( {
 			suggestionPosition: position,
+			currentSuggestion: this.getSuggestionForPosition( position )
 		} );
 	},
 
