@@ -232,6 +232,8 @@ WebPreview.propTypes = {
 	showExternal: PropTypes.bool,
 	// Show close button
 	showClose: PropTypes.bool,
+	// Show SEO button
+	showSEO: PropTypes.bool,
 	// Show device viewport switcher
 	showDeviceSwitcher: PropTypes.bool,
 	// The URL that should be displayed in the iframe
@@ -260,6 +262,7 @@ WebPreview.propTypes = {
 WebPreview.defaultProps = {
 	showExternal: true,
 	showClose: true,
+	showSEO: true,
 	showDeviceSwitcher: true,
 	previewUrl: null,
 	previewMarkup: null,
