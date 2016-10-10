@@ -26,16 +26,24 @@ import {
 import {
 	getImageEditorFileInfo
 } from 'state/ui/editor/image-editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
+import QuerySites from 'components/data/query-sites';
 
 const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
 
 	propTypes: {
+		// Component props
 		media: PropTypes.object,
-		site: PropTypes.object,
+		siteId: PropTypes.number,
 		onImageEditorClose: PropTypes.func,
 		onImageEditorCancel: PropTypes.func,
 		additionalClasses: PropTypes.string,
+
+		// Redux props
+		site: PropTypes.object,
+		fileName: PropTypes.string,
 		setImageEditorFileInfo: PropTypes.func,
 		translate: PropTypes.func
 	},
@@ -173,7 +181,8 @@ const ImageEditor = React.createClass( {
 
 	render() {
 		const {
-			additionalClasses
+			additionalClasses,
+			siteId
 		} = this.props;
 
 		const classes = classNames(
@@ -184,6 +193,8 @@ const ImageEditor = React.createClass( {
 		return (
 			<div className={ classes }>
 				{ this.state.canvasError && this.renderError() }
+
+				<QuerySites siteId={ siteId } />
 
 				<figure>
 					<div className="image-editor__content">
@@ -204,7 +215,18 @@ const ImageEditor = React.createClass( {
 } );
 
 export default connect(
-	( state ) => ( getImageEditorFileInfo( state ) ),
+	( state, ownProps ) => {
+		let siteId = ownProps.siteId;
+
+		if ( ! siteId ) {
+			siteId = getSelectedSiteId( state );
+		}
+
+		return {
+			...getImageEditorFileInfo( state ),
+			site: getSite( state, siteId )
+		};
+	},
 	{
 		resetImageEditorState,
 		resetAllImageEditorState,

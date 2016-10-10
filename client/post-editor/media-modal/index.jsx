@@ -406,7 +406,7 @@ module.exports = React.createClass( {
 
 				content = (
 					<ImageEditor
-						site={ site }
+						siteId={ site && site.ID }
 						media={ media }
 						onImageEditorClose={ this.onImageEditorClose }
 						onImageEditorCancel={ this.onImageEditorCancel }
