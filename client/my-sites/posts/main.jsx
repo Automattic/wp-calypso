@@ -18,7 +18,6 @@ import Main from 'components/main';
 import notices from 'notices';
 import QueryPosts from 'components/data/query-posts';
 import QueryPostCounts from 'components/data/query-post-counts';
-import Draft from 'my-sites/draft';
 import PostItem from 'blocks/post-item';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
@@ -29,7 +28,10 @@ import Button from 'components/button';
 import Count from 'components/count';
 import SectionHeader from 'components/section-header';
 import { sectionify } from 'lib/route/path';
-import { getAllPostCount } from 'state/posts/counts/selectors';
+import {
+	getAllPostCount,
+	getMyPostCount
+} from 'state/posts/counts/selectors';
 import { getEditorNewPostPath } from 'state/ui/editor/selectors';
 
 const PostsMain = React.createClass( {
@@ -54,6 +56,10 @@ const PostsMain = React.createClass( {
 		}
 
 		if ( ! site.jetpack && this.props.draftCount === 0 ) {
+			return false;
+		}
+
+		if ( ! site.jetpack && this.props.author && this.props.myDraftCount === 0 ) {
 			return false;
 		}
 
@@ -82,7 +88,7 @@ const PostsMain = React.createClass( {
 				{ map( this.props.drafts, ( { global_ID: globalId } ) => (
 					<PostItem compact key={ globalId } globalId={ globalId } />
 				) ) }
-				{ isLoading && <Draft isPlaceholder /> }
+				{ isLoading && <PostItem compact /> }
 				{ this.props.draftCount > 6 &&
 					<Button compact borderless className="posts__see-all-drafts" href={ `/posts/drafts/${ site.slug }` }>
 						{ this.translate( 'See all drafts' ) }
@@ -138,6 +144,7 @@ export default connect( ( state, props ) => {
 		loadingDrafts: isRequestingSitePostsForQuery( state, siteId, draftsQuery ),
 		draftsQuery: draftsQuery,
 		draftCount: getAllPostCount( state, siteId, 'post', 'draft' ),
+		myDraftCount: getMyPostCount( state, siteId, 'post', 'draft' ),
 		newPostPath: getEditorNewPostPath( state, siteId )
 	};
 } )( PostsMain );
