@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import { times } from 'lodash';
 
 /**
  * Internal dependencies
@@ -52,11 +53,7 @@ class SharingServicesGroup extends Component {
 	}
 
 	renderServicePlaceholders() {
-		// The Array constructor isn't used here because constructed arrays
-		// can't be mapped since it doesn't truly contain any values
-		return Array.apply( null, new Array( NUMBER_OF_PLACEHOLDERS ) ).map( ( value, i ) =>
-			<ServicePlaceholder key={ 'service-placeholder-' + i } />
-		);
+		return times( NUMBER_OF_PLACEHOLDERS, ( index ) => <ServicePlaceholder key={ 'service-placeholder-' + index } /> );
 	}
 
 	renderServices() {
