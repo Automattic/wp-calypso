@@ -9,16 +9,15 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	box-shadow: none;
 	position: relative;
 	margin-bottom: 50px;
-	padding: 0;
+	padding: 6px; // Make card width 680px in a 720px container
 }
 
 .reader-post-card__featured-image {
 	display: block;
 	margin-right: 15px;
 	position: absolute;
-		bottom: 0;
-		left: 0;
-		top: 55px;
+		bottom: 6px;
+		top: 62px;
 	width: 250px;
 
 	@media #{$reader-post-card-breakpoint-large} {
@@ -47,7 +46,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card__meta {
 	display: flex;
 	font-size: 13px;
-	margin-bottom: 15px;
+	margin: -4px 0 15px;
 }
 
 .reader-post-card__author::after {
@@ -125,7 +124,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card__post-details {
 	flex: 1;
 	font-family: $serif;
-	margin-top: -10px;
+	margin-top: -13px;
 	padding-left: 265px;
 
 	@media #{$reader-post-card-breakpoint-large} {
@@ -258,4 +257,13 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	@include breakpoint( "<660px" ) {
 		display: none;
 	}
+}
+
+// For these borderless cards to look more presentable on Devdocs
+.is-section-devdocs .reader-post-card.card {
+	padding: 16px;
+}
+
+.is-section-devdocs .reader-post-card__featured-image {
+	bottom: 16px;
 }
