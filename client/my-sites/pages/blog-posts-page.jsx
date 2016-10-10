@@ -14,7 +14,7 @@ const BlogPostsPage = React.createClass( {
 	propTypes() {
 		return {
 			homePageType: React.PropTypes.string,
-			pageForPosts: React.PropTypes.string
+			pageForPosts: React.PropTypes.number
 		};
 	},
 
@@ -29,7 +29,10 @@ const BlogPostsPage = React.createClass( {
 
 		let notUsedLabel = null;
 		if ( isStaticHomePageWithNoPostsPage ) {
-			notUsedLabel = <div className="pages__blog-posts-page__not-used-label">Not Used</div>;
+			notUsedLabel =
+				<div className="pages__blog-posts-page__not-used-label">
+					{ this.translate( 'Not Used' ) }
+				</div>;
 		}
 
 		let homePageIcon = null;
