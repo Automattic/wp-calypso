@@ -11,6 +11,7 @@ const FormRadio = require( 'components/forms/form-radio' ),
 	PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	AccordionSection = require( 'components/accordion/section' );
+import EditorThemeHelp from 'post-editor/editor-theme-help';
 
 export default React.createClass( {
 	displayName: 'EditorPostFormats',
@@ -116,6 +117,7 @@ export default React.createClass( {
 	render: function() {
 		return (
 			<AccordionSection>
+				<EditorThemeHelp className="editor-post-formats__help-link" />
 				<ul className="editor-post-formats">
 					{ this.renderPostFormats() }
 				</ul>
