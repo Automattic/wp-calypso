@@ -38,10 +38,10 @@ class SharingServicesGroup extends Component {
 	};
 
 	static defaultProps = {
-		onAddConnection: function() {},
-		onRemoveConnection: function() {},
-		onRefreshConnection: function() {},
-		onToggleSitewideConnection: function() {},
+		onAddConnection: () => {},
+		onRemoveConnection: () => {},
+		onRefreshConnection: () => {},
+		onToggleSitewideConnection: () => {},
 		initialized: false
 	};
 
