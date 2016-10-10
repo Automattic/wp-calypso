@@ -26,6 +26,7 @@ const Suggestions = React.createClass( {
 			suggest: noop,
 			terms: {},
 			input: ""
+			suggestions: {}
 		}
 	},
 
@@ -38,6 +39,22 @@ const Suggestions = React.createClass( {
 	},
 
 	componentDidUpdate: function() {
+	},
+
+	componentWillMount: function() {
+		const suggestions = this.narrowDown( this.props.input )
+		this.setState( {
+			suggestions: suggestions,
+		} );
+	},
+
+	componentWillReceiveProps: function( nextProps ) {
+		if ( nextProps.input !== this.props.input ) {
+			const suggestions = this.narrowDown( nextProps.input )
+			this.setState( {
+				suggestions: suggestions,
+			} );
+		}
 	},
 
 	countSuggestions: function( suggestions ) {
