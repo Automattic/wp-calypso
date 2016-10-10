@@ -31,7 +31,13 @@ export function getKeyringServicesByType( state, type ) {
 }
 
 /**
- * Returns an object of eligible service objects with the specified type.
+ * Returns an array of eligible service objects with the specified type.
+ *
+ * A service is eligible for a given site if
+ *  1. it's a Jetpack site and the service supports Jetpack,
+ *  2. the service requires an active Jetpack module and that module is active on that site,
+ *  3. the current user can manage options in case of the eventbrite service,
+ *  4. the current user can publish posts in case of all publicize services.
  *
  * @param  {Object} state  Global state tree
  * @param  {Number} siteId Site ID.

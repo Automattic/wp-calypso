@@ -72,14 +72,21 @@ import { getKeyringServicesByType } from 'state/sharing/services/selectors';
 const publiciseServices = getKeyringServicesByType( state, 'publicize' );
 ```
 
-#### `getEligibleKeyringServices( state: object, type: string  )`
+#### `getEligibleKeyringServices( state: object,  siteId: number, type: string  )`
 
 Returns an array of eligible keyring services with the specified type.
 
+A service is eligible for a given site if
+1. it's a Jetpack site and the service supports Jetpack,
+2. the service requires an active Jetpack module and that module is active on that site,
+3. the current user can manage options in case of the eventbrite service,
+4. the current user can publish posts in case of all publicize services.
+
 ```js
 import { getEligibleKeyringServices } from 'state/sharing/services/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
-const eligibleServices = getEligibleKeyringServices( state, 'publicize' );
+const eligibleServices = getEligibleKeyringServices( state, getSelectedSiteId( site ), 'publicize' );
 ```
 
 #### `isKeyringServicesFetching( state: object )`
