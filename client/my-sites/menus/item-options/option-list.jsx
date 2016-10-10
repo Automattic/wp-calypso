@@ -97,8 +97,8 @@ var OptionList = React.createClass( {
 					{ this.props.children }
 					{ this.props.isLoading && <LoadingPlaceholder/> }
 					{ this.props.isEmpty &&
-						this.props.itemType === 'page' &&
 						<EmptyPlaceholder isSearch={ !! ( this.state.searchTerm && this.state.searchTerm.length ) }
+							notFoundLabel={ this.props.itemType.notFoundLabel }
 							createLink={ this.props.itemType.createLink }
 							typeName={ this.props.itemType.name } />
 					}
