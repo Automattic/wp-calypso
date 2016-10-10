@@ -12,12 +12,7 @@ import {
 	Link,
 } from 'layout/guided-tours/config-elements';
 import {
-	isNewUser,
 	isEnabled,
-	selectedSiteIsPreviewable,
-	selectedSiteIsCustomizable,
-	previewIsNotShowing,
-	previewIsShowing,
 	inSection,
 } from 'state/ui/guided-tours/contexts';
 import { getScrollableSidebar } from 'layout/guided-tours/positioning';
@@ -27,8 +22,10 @@ import scrollTo from 'lib/scroll-to';
 const scrollSidebarToTop = () =>
 	scrollTo( { y: 0, container: getScrollableSidebar() } );
 
+// TODO (markehrabe): user has unchanged title
+// TODO (markehrabe): what path to use?
 export const SiteTitleTour = makeTour(
-	<Tour name="siteTitle" version="20161010" path="/" when={ and( /* TODO (markehrabe): user has unchanged title */isEnabled( 'guided-tours/site-title' ) ) }>
+	<Tour name="siteTitle" version="20161010" path="/" when={ and( isEnabled( 'guided-tours/site-title' ) ) }>
 		<Step name="init" placement="right" next="click-settings" className="guided-tours__step-first">
 			<p className="guided-tours__step-text">
 				{
@@ -78,7 +75,7 @@ export const SiteTitleTour = makeTour(
 			</p>
 			{/* TODO (marekhrabe): change to either onChange of the input or just click */}
 			<div className="guided-tours__choice-button-row">
-				<Next step="finish" when={inSection('settings')} hidden />
+				<Next step="finish" when={ inSection( 'settings' ) } hidden />
 				<Quit />
 			</div>
 		</Step>
