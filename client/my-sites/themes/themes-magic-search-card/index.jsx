@@ -71,6 +71,7 @@ const ThemesMagicSearchCard = React.createClass( {
 
 	onKeyDown( event ) {
 		this.findTextForSuggestions( event.target.value );
+		this.refs.suggestions.handleKeyEvent( event );
 	},
 
 	onClick( event ) {
@@ -236,6 +237,7 @@ const ThemesMagicSearchCard = React.createClass( {
 					}
 				</div>
 				<Suggestions
+					ref="suggestions"
 					terms={ this.state.taxonomies }
 					input={ this.state.editedSearchElement }
 					suggest={ this.suggest }
