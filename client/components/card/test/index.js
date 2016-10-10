@@ -5,13 +5,11 @@ import React from 'react';
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
 
-//enzyme  - simulate
-
 /**
  * Internal dependencies
  */
-const Card = require( '../' );
-const CompactCard = require( '../compact' );
+import Card from '../';
+import CompactCard from '../compact';
 
 describe( 'Card', function() {
 	// it should have a class of `card`
