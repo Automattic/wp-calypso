@@ -59,8 +59,14 @@ class SharingServicesGroup extends Component {
 						? this.props.services.map( ( service ) =>
 							<Service
 								key={ service.ID }
+								connections={ this.props.connections }
+								onAddConnection={ this.props.onAddConnection }
+								onRefreshConnection={ this.props.onRefreshConnection }
+								onRemoveConnection={ this.props.onRemoveConnection }
+								onToggleSitewideConnection={ this.props.onToggleSitewideConnection }
 								service={ service }
-								{ ...this.props } /> )
+								site={ this.props.site }
+								user={ this.props.user } /> )
 						: times( NUMBER_OF_PLACEHOLDERS, ( index ) =>
 							<ServicePlaceholder
 								key={ 'service-placeholder-' + index } /> )
