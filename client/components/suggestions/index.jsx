@@ -153,8 +153,7 @@ const Suggestions = React.createClass( {
 		return token;
 	},
 
-	createSuggestions: function() {
-		const suggestions = this.narrowDown( this.props.input );
+	createSuggestions: function( suggestions ) {
 		const rendered = []
 
 		for( const key in suggestions ) {
@@ -181,7 +180,7 @@ const Suggestions = React.createClass( {
 		if( this.props.input === "" ){
 			suggestion = this.props.welcomeSign();
 		} else {
-			suggestion = this.createSuggestions();
+			suggestion = this.createSuggestions( this.state.suggestions );
 		}
 
 		return (
