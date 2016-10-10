@@ -32,6 +32,7 @@ const Suggestions = React.createClass( {
 
 	getInitialState: function() {
 		return {
+			noOfSuggestions: 0,
 			suggestionPosition: -1,
 		};
 	},
@@ -45,6 +46,7 @@ const Suggestions = React.createClass( {
 		const suggestions = this.narrowDown( this.props.input )
 		this.setState( {
 			suggestions: suggestions,
+			noOfSuggestions: this.countSuggestions( suggestions ),
 		} );
 	},
 
@@ -53,6 +55,8 @@ const Suggestions = React.createClass( {
 			const suggestions = this.narrowDown( nextProps.input )
 			this.setState( {
 				suggestions: suggestions,
+				noOfSuggestions: this.countSuggestions( suggestions ),
+				suggestionPosition: -1,
 			} );
 		}
 	},
