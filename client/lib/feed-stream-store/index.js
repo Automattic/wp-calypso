@@ -183,13 +183,13 @@ function getStoreForRecommendedPosts( storeId ) {
 			case 'cold_posts':
 				query.algorithm = 'read:recommendations:posts/es/2';
 				break;
-			case 'cold_posts1w':
+			case 'cold_posts_1w':
 				query.algorithm = 'read:recommendations:posts/es/3';
 				break;
-			case 'cold_posts2w':
+			case 'cold_posts_2w':
 				query.algorithm = 'read:recommendations:posts/es/4';
 				break;
-			case 'cold_posts4w':
+			case 'cold_posts_4w':
 				query.algorithm = 'read:recommendations:posts/es/5';
 				break;
 			case 'cold_posts_topics':

@@ -58,17 +58,17 @@ export default {
 				break;
 			case '/recommendations/cold1w':
 				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Coldstart+1w Posts';
-				RecommendedPostsStore = feedStreamFactory( 'cold_posts1w' );
+				RecommendedPostsStore = feedStreamFactory( 'cold_posts_1w' );
 				mcKey = 'coldstart_posts_1w';
 				break;
 			case '/recommendations/cold2w':
 				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Coldstart+2w Posts';
-				RecommendedPostsStore = feedStreamFactory( 'cold_posts2w' );
+				RecommendedPostsStore = feedStreamFactory( 'cold_posts_2w' );
 				mcKey = 'coldstart_posts_2w';
 				break;
 			case '/recommendations/cold4w':
 				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Coldstart+4w Posts';
-				RecommendedPostsStore = feedStreamFactory( 'cold_posts4w' );
+				RecommendedPostsStore = feedStreamFactory( 'cold_posts_4w' );
 				mcKey = 'coldstart_posts_4w';
 				break;
 			case '/recommendations/coldtopics':
