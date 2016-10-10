@@ -36,6 +36,7 @@ const Suggestions = React.createClass( {
 			suggestionPosition: -1,
 		};
 	},
+
 	componentDidMount: function() {
 	},
 
@@ -109,6 +110,11 @@ const Suggestions = React.createClass( {
 			case "ArrowUp" :
 				this.decPosition();
 				event.preventDefault();
+				break;
+			case "Enter" :
+				if( this.state.suggestionPosition !== -1 ) {
+					this.props.suggest( this.state.currentSuggestion );
+				}
 				break;
 		}
 
