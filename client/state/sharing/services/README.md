@@ -1,7 +1,7 @@
 Keyring Services
 ================
 
-A module for managing srevices that offer keyring connections.
+A module for managing services that offer keyring connections.
 
 ## Actions
 
