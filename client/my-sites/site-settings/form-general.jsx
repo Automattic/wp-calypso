@@ -140,7 +140,8 @@ const FormGeneral = React.createClass( {
 							valueLink={ this.linkState( 'blogname' ) }
 							disabled={ this.state.fetchingSettings }
 							onClick={ this.onRecordEvent( 'Clicked Site Title Field' ) }
-							onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) } />
+							onKeyPress={ this.onRecordEventOnce( 'typedTitle', 'Typed in Site Title Field' ) }
+							data-tip-target="site-title-input" />
 					</FormFieldset>
 					<FormFieldset>
 						<FormLabel htmlFor="blogdescription">{ this.translate( 'Site Tagline' ) }</FormLabel>
