@@ -17,14 +17,16 @@ export default class FeaturedAsset extends React.Component {
 		super( props );
 		this.state = {
 			suppressFeaturedImage: false,
-			useFeaturedEmbed: props.useFeaturedEmbed
+			useFeaturedEmbed: props.useFeaturedEmbed,
+			showThumbnailIfPossible: true,
 		};
 
 		[	'handleImageError',
 			'updateFeatureSize',
 			'getMaxFeaturedWidthSize',
 			'setEmbedSizingStrategy',
-			'handleResize'
+			'handleResize',
+			'handleThumbnailClick',
 		].forEach( method => {
 			this[ method ] = this[ method ].bind( this );
 		} );
@@ -94,13 +96,13 @@ export default class FeaturedAsset extends React.Component {
 	}
 
 	updateFeatureSize() {
-		if ( this.refs.featuredImage ) {
-			const img = ReactDom.findDOMNode( this.refs.featuredImage );
+		if ( this.featuredImageRef ) {
+			const img = ReactDom.findDOMNode( this.featuredImageRef );
 			assign( img.style, this.getImageSize() );
 		}
 
-		if ( this.refs.featuredEmbed ) {
-			const iframe = ReactDom.findDOMNode( this.refs.featuredEmbed ).querySelector( 'iframe' );
+		if ( this.featuredEmbedRef ) {
+			const iframe = ReactDom.findDOMNode( this.featuredEmbedRef ).querySelector( 'iframe' );
 			assign( iframe.style, this.getEmbedSize() );
 		}
 	}
@@ -118,14 +120,40 @@ export default class FeaturedAsset extends React.Component {
 		}
 	}
 
+	handleThumbnailClick( e ) {
+		e.preventDefault();
+		this.setState( { showThumbnailIfPossible: false } , () => this.updateFeatureSize() );
+	}
+
 	render() {
 		if ( this.state.useFeaturedEmbed ) {
-			return (
-				<div ref="featuredEmbed"
-					className="reader__post-featured-video"
-					key="featuredVideo"
-					dangerouslySetInnerHTML={ { __html: this.props.featuredEmbed.iframe } } />   //eslint-disable-line react/no-danger
-			);
+			if ( this.state.showThumbnailIfPossible && this.props.featuredEmbed.thumbnailUrl ) {
+				return (
+					<div ref={ (c) => this.featuredImageRef = c }
+						className="reader__post-featured-video"
+						key="featuredVideo"
+						onClick={ this.handleThumbnailClick }
+					>
+						<div className="reader__post-play-icon-container">
+							<img src={ this.props.featuredEmbed.thumbnailUrl } />
+							<img className="reader__post-play-icon" src="/calypso/images/reader/play-icon.png" />
+						</div>
+					</div>   //eslint-disable-line react/no-danger
+				);
+			} else {
+				let iframe = this.props.featuredEmbed.iframe;
+
+				if ( this.props.featuredEmbed.thumbnailUrl ) {
+					iframe = this.props.featuredEmbed.autoplayIframe;
+				}
+
+				return (
+					<div ref={ ( c ) => this.featuredEmbedRef = c }
+						className="reader__post-featured-video"
+						key="featuredVideo"
+						dangerouslySetInnerHTML={ { __html: iframe } } />   //eslint-disable-line react/no-danger
+				);
+			}
 		}
 
 		return (
@@ -134,7 +162,7 @@ export default class FeaturedAsset extends React.Component {
 				{
 				! this.state.suppressFeaturedImage
 				? <img className="reader__post-featured-image-image"
-						ref="featuredImage"
+						ref={ (c) => this.featuredImageRef = c }
 						src={ this.props.featuredImage.uri }
 						onError={ this.handleImageError }
 					/>

@@ -239,6 +239,19 @@
 	iframe {
 		display: block;
 	}
+
+	.reader__post-play-icon-container {
+		position: relative;
+	}
+
+	.reader__post-play-icon {
+		margin: auto;
+		position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+	}
 }
 
 
