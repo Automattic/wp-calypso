@@ -54,7 +54,7 @@
 	position: absolute;
 	top: 50%;
 	left: 50%;
-	z-index: z-index( '.dialog__backdrop', '.editor-media-modal-image-editor__canvas' );
+	z-index: z-index( '.dialog__backdrop', '.image-editor__canvas' );
 
 	&.is-placeholder {
 		@include placeholder-dark();
