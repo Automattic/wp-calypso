@@ -396,11 +396,18 @@ module.exports = React.createClass( {
 				break;
 
 			case ModalViews.IMAGE_EDITOR:
+				const {
+					site,
+					mediaLibrarySelectedItems: items
+				} = this.props;
+
+				const selectedIndex = this.getDetailSelectedIndex(),
+					media = items ? items[ selectedIndex ] : null;
+
 				content = (
 					<ImageEditor
-						site={ this.props.site }
-						items={ this.props.mediaLibrarySelectedItems }
-						selectedIndex={ this.getDetailSelectedIndex() }
+						site={ site }
+						media={ media }
 						onImageEditorClose={ this.onImageEditorClose }
 						onImageEditorCancel={ this.onImageEditorCancel }
 					/>

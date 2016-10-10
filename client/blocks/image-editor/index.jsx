@@ -31,23 +31,18 @@ const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
 
 	propTypes: {
+		media: PropTypes.object,
 		site: PropTypes.object,
-		items: PropTypes.array,
-		selectedIndex: PropTypes.number,
-		src: PropTypes.string,
-		fileName: PropTypes.string,
-		mimeType: PropTypes.string,
-		setImageEditorFileInfo: PropTypes.func,
-		title: PropTypes.string,
-		translate: PropTypes.func,
 		onImageEditorClose: PropTypes.func,
 		onImageEditorCancel: PropTypes.func,
-		additionalClasses: PropTypes.string
+		additionalClasses: PropTypes.string,
+		setImageEditorFileInfo: PropTypes.func,
+		translate: PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
-			selectedIndex: 0,
+			media: null,
 			onImageEditorClose: noop,
 			onImageEditorCancel: noop
 		};
@@ -61,8 +56,7 @@ const ImageEditor = React.createClass( {
 
 	componentDidMount() {
 		const {
-			items,
-			selectedIndex,
+			media,
 			site
 		} = this.props;
 
@@ -70,8 +64,6 @@ const ImageEditor = React.createClass( {
 			fileName = 'default',
 			mimeType = 'image/png',
 			title = 'default';
-
-		const media = items ? items[ selectedIndex ] : null;
 
 		if ( media ) {
 			src = MediaUtils.url( media, {
