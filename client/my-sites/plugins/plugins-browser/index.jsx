@@ -134,7 +134,12 @@ module.exports = React.createClass( {
 	getSearchListView( searchTerm ) {
 		const isFetching = this.state.fullLists.search ? !! this.state.fullLists.search.fetching : true;
 		if ( this.getPluginsFullList( 'search' ).length > 0 || isFetching ) {
-			const searchTitle = this.translate( 'Results for: %(searchTerm)s', { textOnly: true, args: { searchTerm } } );
+			const searchTitle = this.props.searchTitle || this.translate( 'Results for: %(searchTerm)s', {
+				textOnly: true,
+				args: {
+					searchTerm
+				}
+			} );
 			return <PluginsBrowserList
 				plugins={ this.getPluginsFullList( 'search' ) }
 				listName={ searchTerm }

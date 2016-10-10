@@ -263,6 +263,13 @@ const PluginsMain = React.createClass( {
 					search_query: this.props.search
 				} );
 
+				const searchTitle = this.translate( 'Suggested plugins for: %(searchQuery)s', {
+					textOnly: true,
+					args: {
+						searchQuery: this.props.search
+					}
+				} );
+
 				return <PluginsBrowser
 						hideSearchForm
 						site={ selectedSite ? selectedSite.slug : null }
@@ -270,6 +277,7 @@ const PluginsMain = React.createClass( {
 						sites={ this.props.sites }
 						search={ this.props.search }
 						store={ this.context.store }
+						searchTitle={ searchTitle }
 					/>;
 			}
 
