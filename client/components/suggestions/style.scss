@@ -18,16 +18,22 @@
 		.suggestions__value-emphasis {
 			font-weight: bold;
 			pointer-events: none;
+			color: inherit;
 		}
 
 		.suggestions__value-normal {
 			pointer-events: none;
+			color: inherit;
 		}
 
 		.suggestions__value-cathegory {
 			display: none;
 		}
+	}
 
+	.suggestions__value.has-highlight {
+		background-color: $blue-wordpress;
+		color: $white;
 	}
 
 	.suggestions__suggestions {

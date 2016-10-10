@@ -154,6 +154,7 @@ const Suggestions = React.createClass( {
 	},
 
 	createSuggestions: function( suggestions ) {
+		let noOfSuggestions = 0;
 		const rendered = []
 
 		for( const key in suggestions ) {
@@ -165,11 +166,19 @@ const Suggestions = React.createClass( {
 			rendered.push( <span className="suggestions__category">{ key }</span> )
 			//Add values
 			rendered.concat( suggestions[ key ].map(
-				value => rendered.push( <span className="suggestions__value" onMouseDown={ this.onMouseDown }>
-					<span className="suggestions__value-cathegory">{ key + ":" }</span>
-					{ this.createTextWithHighlight( value, this.props.input ) }
-				</span> )
+				( value, i ) => {
+					const hashighlight =  ( noOfSuggestions + i ) === this.state.suggestionPosition;
+					const className = "suggestions__value" + ( hashighlight ? " has-highlight" : "" );
+					return rendered.push(
+					 	<span className={ className } onMouseDown={ this.onMouseDown }>
+							<span className="suggestions__value-cathegory">{ key + ":" }</span>
+							{ this.createTextWithHighlight( value, this.props.input ) }
+						</span>
+					)
+				}
 			) );
+
+			noOfSuggestions += suggestions[ key ].length;
 		}
 
 		return <div className="suggestions__suggestions">{ rendered }</div>;
