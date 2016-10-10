@@ -104,7 +104,7 @@ function getNamespace( fetchOptions ) {
 
 function decrementPaginationData( siteId, followerId ) {
 	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.includes( 'siteId=' + siteId + '&' ) && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
+		if ( namespace.indexOf( 'siteId=' + siteId + '&' ) !== -1 && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
 			_totalFollowersByNamespace[ namespace ]--;
 			_followersFetchedByNamespace[ namespace ]--;
 			_pageByNamespace[ namespace ]--;
@@ -114,7 +114,7 @@ function decrementPaginationData( siteId, followerId ) {
 
 function incrementPaginationData( siteId, followerId ) {
 	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.includes( 'siteId=' + siteId + '&' ) && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
+		if ( namespace.indexOf( 'siteId=' + siteId + '&' ) !== -1 && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
 			_totalFollowersByNamespace[ namespace ]++;
 			_followersFetchedByNamespace[ namespace ]++;
 			_pageByNamespace[ namespace ]++;
@@ -132,7 +132,7 @@ function removeFollowerFromSite( siteId, followerId ) {
 
 function removeFollowerFromNamespaces( siteId, followerId ) {
 	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.includes( 'siteId=' + siteId + '&' ) && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
+		if ( namespace.indexOf( 'siteId=' + siteId + '&' ) !== -1 && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
 			delete _followerIDsByNamespace[ namespace ][ followerId ];
 		}
 	} );
