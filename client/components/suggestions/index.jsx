@@ -25,7 +25,7 @@ const Suggestions = React.createClass( {
 			weolcomeSign: noop,
 			suggest: noop,
 			terms: {},
-			input: ""
+			input: "",
 			suggestions: {}
 		}
 	},
