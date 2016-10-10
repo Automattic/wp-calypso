@@ -98,7 +98,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getEligibleKeyringServices()', () => {
-		let state = {
+		const state = {
 			...activeState,
 			currentUser: {
 				capabilities: {
@@ -143,17 +143,17 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should omit eventbrite if user can not manage_options', () => {
-			state.currentUser.capabilities[2916284].manage_options = false;
+			state.currentUser.capabilities[ 2916284 ].manage_options = false;
 			const services = getEligibleKeyringServices( state, 2916284, 'other' );
-			state.currentUser.capabilities[2916284].manage_options = true;
+			state.currentUser.capabilities[ 2916284 ].manage_options = true;
 
 			expect( services ).to.eql( [] );
 		} );
 
 		it( 'should omit publicize services if user can not publish_posts', () => {
-			state.currentUser.capabilities[2916284].publish_posts = false;
+			state.currentUser.capabilities[ 2916284 ].publish_posts = false;
 			const services = getEligibleKeyringServices( state, 2916284, 'publicize' );
-			state.currentUser.capabilities[2916284].publish_posts = true;
+			state.currentUser.capabilities[ 2916284 ].publish_posts = true;
 
 			expect( services ).to.eql( [] );
 		} );
@@ -172,9 +172,9 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should omit services if required module is not activated', () => {
-			state.sites.items[2916284].options.active_modules = [];
+			state.sites.items[ 2916284 ].options.active_modules = [];
 			const services = getEligibleKeyringServices( state, 2916284, 'other' );
-			state.sites.items[2916284].options.active_modules = [ 'publicize' ];
+			state.sites.items[ 2916284 ].options.active_modules = [ 'publicize' ];
 
 			expect( services ).to.eql( [] );
 		} );
