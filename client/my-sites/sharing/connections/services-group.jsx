@@ -45,24 +45,6 @@ class SharingServicesGroup extends Component {
 		initialized: false
 	};
 
-	renderService( service ) {
-		return <Service
-			key={ service.ID }
-			service={ service }
-			{ ...this.props } />;
-	}
-
-	renderServicePlaceholders() {
-		return times( NUMBER_OF_PLACEHOLDERS, ( index ) => <ServicePlaceholder key={ 'service-placeholder-' + index } /> );
-	}
-
-	renderServices() {
-		if ( this.props.initialized ) {
-			return this.props.services.map( this.renderService, this );
-		}
-		return this.renderServicePlaceholders();
-	}
-
 	render() {
 		const classes = classNames( 'sharing-services-group', {
 			'is-empty': this.props.initialized && ! this.props.services.length
@@ -73,7 +55,16 @@ class SharingServicesGroup extends Component {
 				<QueryKeyringServices />
 				<SectionHeader label={ this.props.title } />
 				<ul className="sharing-services-group__services">
-					{ this.renderServices() }
+					{ this.props.initialized
+						? this.props.services.map( ( service ) =>
+							<Service
+								key={ service.ID }
+								service={ service }
+								{ ...this.props } /> )
+						: times( NUMBER_OF_PLACEHOLDERS, ( index ) =>
+							<ServicePlaceholder
+								key={ 'service-placeholder-' + index } /> )
+					}
 				</ul>
 			</div>
 		);
