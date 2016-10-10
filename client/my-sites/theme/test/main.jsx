@@ -12,7 +12,6 @@ import noop from 'lodash/noop';
  * Internal dependencies
  */
 import { createReduxStore } from 'state';
-import { LayoutLoggedOut } from 'layout/logged-out';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import emptyComponent from 'test/helpers/react/empty-component';
@@ -24,6 +23,7 @@ describe( 'main', function() {
 
 		before( function() {
 			mockery.registerMock( 'my-sites/themes/theme-preview', emptyComponent );
+			mockery.registerMock( 'my-sites/themes/thanks-modal', emptyComponent );
 			mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 			mockery.registerMock( 'lib/wp', {
 				me: () => ( {
@@ -36,17 +36,16 @@ describe( 'main', function() {
 
 			const store = createReduxStore();
 			const ThemeSheetComponent = require( '../main' );
-			const primary = <ThemeSheetComponent id={ 'twentysixteen' } />;
 
 			this.layout = (
 				<ReduxProvider store={ store }>
-					<LayoutLoggedOut primary={ primary } />
+					<ThemeSheetComponent id={ 'twentysixteen' } />
 				</ReduxProvider>
 			);
 		} );
 
 		it( "doesn't throw an exception", function() {
-			assert.doesNotThrow( ReactDomServer.renderToString( this.layout ) );
+			assert.doesNotThrow( ReactDomServer.renderToString.bind( ReactDomServer, this.layout ) );
 		} );
 	} );
 } );
