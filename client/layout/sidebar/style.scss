@@ -354,8 +354,8 @@ a.sidebar__button {
 	line-height: 2.1;
 	margin-right: auto;
 
-	&.sidebar__footer__help,
-	&.sidebar__footer__support-chat {
+	&.sidebar__footer-help,
+	&.sidebar__footer-chat {
 		border-left: 1px solid darken( $sidebar-bg-color, 10% );
 		flex: 0 1 40px;
 		margin-right: 0;
@@ -367,7 +367,7 @@ a.sidebar__button {
 
 	}
 
-	&.sidebar__footer__support-chat-unread {
+	&.sidebar__footer-chat.has-unread {
 		color: $gray-dark;
 		position: relative;
 

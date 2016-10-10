@@ -18,7 +18,7 @@ const SidebarFooter = ( { translate, children } ) => (
 		<Button borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' }>
 			<Gridicon icon="add-outline" /> { translate( 'Add New Site' ) }
 		</Button>
-		<Button className="sidebar__footer__help" borderless href="/help" title={ translate( 'Help' ) }>
+		<Button className="sidebar__footer-help" borderless href="/help" title={ translate( 'Help' ) }>
 			<Gridicon icon="help-outline" />
 		</Button>
 		{ config.isEnabled( 'happychat' ) && <HappychatButton /> }
