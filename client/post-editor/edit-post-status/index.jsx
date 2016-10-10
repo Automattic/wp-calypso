@@ -4,11 +4,11 @@
 import React, { PropTypes, Component } from 'react';
 import noop from 'lodash/noop';
 import { moment, translate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import actions from 'lib/posts/actions';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
 import Revisions from 'post-editor/editor-revisions';
@@ -21,6 +21,10 @@ import PostSchedule from 'components/post-schedule';
 import postScheduleUtils from 'components/post-schedule/utils';
 import siteUtils from 'lib/site/utils';
 import { recordStat, recordEvent } from 'lib/posts/stats';
+import { editPost } from 'state/posts/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
 class EditPostStatus extends Component {
 
@@ -56,8 +60,9 @@ class EditPostStatus extends Component {
 		recordStat( stickyStat );
 		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( { sticky: ! this.props.post.sticky } );
+		this.props.editPost( this.props.siteId, this.props.postId,
+			{ sticky: ! this.props.post.sticky }
+		);
 	};
 
 	togglePendingStatus = () => {
@@ -66,8 +71,9 @@ class EditPostStatus extends Component {
 		recordStat( 'status_changed' );
 		recordEvent( 'Changed Pending Status', pending ? 'Marked Draft' : 'Marked Pending' );
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		actions.edit( { status: pending ? 'draft' : 'pending' } );
+		this.props.editPost( this.props.siteId, this.props.postId,
+			{ status: pending ? 'draft' : 'pending' }
+		);
 	};
 
 	togglePostSchedulePopover = () => {
@@ -236,4 +242,17 @@ class EditPostStatus extends Component {
 	}
 }
 
-export default EditPostStatus;
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
+
+		return {
+			siteId,
+			postId,
+			post
+		};
+	},
+	{ editPost }
+)( EditPostStatus );
