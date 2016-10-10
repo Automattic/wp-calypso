@@ -47,12 +47,11 @@ const MediaModalImageEditorButtons = React.createClass( {
 					{ this.translate( 'Cancel' ) }
 				</Button>
 				<Button
-					disabled={ ! this.props.hasChanges }
 					onClick={ this.props.resetImageEditorState } >
 					{ this.translate( 'Reset' ) }
 				</Button>
 				<Button
-					disabled={ ! this.props.src }
+					disabled={ ! this.props.src || ! this.props.hasChanges }
 					primary
 					onClick={ this.props.onDone } >
 					{ this.translate( ' Done ' ) }
