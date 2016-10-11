@@ -40,6 +40,7 @@ const contextTypes = Object.freeze( {
 	isValid: PropTypes.func.isRequired,
 	tour: PropTypes.string.isRequired,
 	tourVersion: PropTypes.string.isRequired,
+	shouldPause: PropTypes.bool.isRequired,
 	step: PropTypes.string.isRequired,
 	lastAction: PropTypes.object,
 } );
@@ -52,38 +53,15 @@ export class Tour extends Component {
 		when: PropTypes.func,
 	};
 
-	static childContextTypes = contextTypes;
-
-	getChildContext() {
-		const { branching, next, quit, isValid, lastAction, tour, tourVersion, step } = this.tourMeta;
-		return { branching, next, quit, isValid, lastAction, tour, tourVersion, step };
-	}
-
-	constructor( props, context ) {
-		super( props, context );
-		this.setTourMeta( props );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.setTourMeta( nextProps );
-	}
-
-	setTourMeta( props ) {
-		const { branching, next, quit, isValid, lastAction, name, version, stepName } = props;
-		this.tourMeta = { branching, next, quit, isValid, lastAction, tour: name, tourVersion: version, step: stepName };
-	}
+	static contextTypes = contextTypes;
 
 	render() {
-		const { children, stepName } = this.props;
+		const { children } = this.props;
+		const { step } = this.context;
 		const nextStep = find( children, stepComponent =>
-			stepComponent.props.name === stepName );
-		const isLastStep = nextStep === children[ children.length - 1 ];
+			stepComponent.props.name === step );
 
-		if ( ! nextStep ) {
-			return null;
-		}
-
-		return React.cloneElement( nextStep, { isLastStep } );
+		return nextStep || null;
 	}
 }
 
@@ -108,19 +86,9 @@ export class Step extends Component {
 
 	static contextTypes = contextTypes;
 
-	constructor( props, context ) {
-		super( props, context );
-
-		// keep track of current section for "blanket exit"
-		// (i.e. quitIfInvalidRoute in `Step` and `Continue`)
-		// TODO(mcsf,lsinger): works only in a few cases and could be more elegant
-		// e.g. doesn't work when switching from reader start to discover
-		// as the Step gets re-created anew
-		// (better than false positives, though)
-		this.section = this.pathToSection( location.pathname );
-	}
-
 	componentWillMount() {
+		this.setSection();
+		debug( 'Step#componentWillMount: section:', this.section );
 		this.skipIfInvalidContext( this.props, this.context );
 		this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || global.window;
 		this.setStepPosition( this.props );
@@ -131,6 +99,11 @@ export class Step extends Component {
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
+		if ( nextContext.step !== this.context.step ) {
+			this.setSection();
+			debug( 'Step#componentWillReceiveProps: section:', this.section );
+		}
+
 		this.skipIfInvalidContext( nextProps, nextContext );
 		this.quitIfInvalidRoute( nextProps, nextContext );
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
@@ -143,6 +116,16 @@ export class Step extends Component {
 	componentWillUnmount() {
 		global.window.removeEventListener( 'resize', this.onScrollOrResize );
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+	}
+
+	setSection() {
+		// keep track of current section for "blanket exit"
+		// (i.e. quitIfInvalidRoute in `Step` and `Continue`)
+		// TODO(mcsf,lsinger): works only in a few cases and could be more elegant
+		// e.g. doesn't work when switching from reader start to discover
+		// as the Step gets re-created anew
+		// (better than false positives, though)
+		this.section = this.pathToSection( location.pathname );
 	}
 
 	quitIfInvalidRoute( props, context ) {
@@ -200,6 +183,12 @@ export class Step extends Component {
 
 	render() {
 		const { when, children } = this.props;
+
+		debug( 'Step#render' );
+		if ( this.context.shouldPause ) {
+			debug( 'Step: shouldPause' );
+			return null;
+		}
 
 		if ( when && ! this.context.isValid( when ) ) {
 			return null;
@@ -384,32 +373,62 @@ export class Link extends Component {
 	}
 }
 
-//FIXME: where do these functions belong?
 export const makeTour = tree => {
-	const tour = ( { stepName, isValid, lastAction, next, quit } ) =>
-		React.cloneElement( tree, {
-			stepName, isValid, lastAction, next, quit,
-			branching: tourBranching( tree ),
-		} );
+	return class extends Component {
+		static propTypes = {
+			isValid: PropTypes.func.isRequired,
+			lastAction: PropTypes.object,
+			next: PropTypes.func.isRequired,
+			quit: PropTypes.func.isRequired,
+			shouldPause: PropTypes.bool.isRequired,
+			stepName: PropTypes.string.isRequired,
+		};
 
-	tour.propTypes = {
-		stepName: PropTypes.string.isRequired,
-		isValid: PropTypes.func.isRequired,
-		lastAction: PropTypes.object,
-		next: PropTypes.func.isRequired,
-		quit: PropTypes.func.isRequired,
-		branching: PropTypes.object.isRequired,
+		static childContextTypes = contextTypes;
+
+		static meta = omit( tree.props, 'children' );
+
+		getChildContext() {
+			return this.tourMeta;
+		}
+
+		constructor( props, context ) {
+			super( props, context );
+			this.setTourMeta( props );
+			debug( 'Anonymous#constructor', props, context );
+		}
+
+		componentWillReceiveProps( nextProps ) {
+			debug( 'Anonymous#componentWillReceiveProps' );
+			this.setTourMeta( nextProps );
+		}
+
+		setTourMeta( props ) {
+			const { isValid, lastAction, next, quit, shouldPause, stepName } = props;
+			this.tourMeta = {
+				next, quit, isValid, lastAction, shouldPause,
+				step: stepName,
+				branching: tourBranching( tree ),
+				tour: tree.props.name,
+				tourVersion: tree.props.version,
+			};
+		}
+
+		render() {
+			return tree;
+		}
 	};
-	tour.meta = omit( tree.props, 'children' );
-	return tour;
 };
 
-export const combineTours = tours => {
-	const combined = ( props ) => {
-		const tour = tours[ props.tourName ];
-		return tour ? tour( props ) : null;
-	};
-	combined.meta = mapValues( tours, property( 'meta' ) );
-
-	return combined;
-};
+export const combineTours = tours => (
+	class AllTours extends Component {
+		static meta = mapValues( tours, property( 'meta' ) );
+		render() {
+			debug( 'AllTours#render' );
+			const MyTour = tours[ this.props.tourName ];
+			return MyTour
+				? <MyTour { ...omit( this.props, 'tourName' ) } />
+				: null;
+		}
+	}
+);
