@@ -229,8 +229,14 @@ var Pages = React.createClass( {
 			const site = this.props.sites.getSelectedSite();
 			const status = this.props.status || 'published';
 
-			if ( status === 'published' && get( site, 'options.show_on_front' ) === 'posts' ) {
-				rows.push( <BlogPostsPage key="blog-posts-page" /> );
+			if ( site && status === 'published' ) {
+				rows.push(
+					<BlogPostsPage
+						key="blog-posts-page"
+						homePageType={ get( site, 'options.show_on_front' ) }
+						pageForPosts={ get( site, 'options.page_for_posts' ) }
+					/>
+				);
 			}
 		} else if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
 			rows.push( <div key="page-list-no-results">{ this.getNoContentMessage() }</div> );
