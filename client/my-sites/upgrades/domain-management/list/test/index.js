@@ -42,6 +42,7 @@ describe( 'index', function() {
 				getProducts: noop
 			} )
 		} );
+		mockery.registerMock( 'blocks/domain-to-plan-nudge', EmptyComponent );
 	} );
 
 	before( () => {
@@ -89,7 +90,6 @@ describe( 'index', function() {
 		return ReactDom.render(
 			<DomainList
 				{ ...props }
-				inUnitTesting={ true }
 			/>,
 			useFakeDom.getContainer()
 		);
