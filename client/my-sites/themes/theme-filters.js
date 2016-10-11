@@ -229,10 +229,9 @@ function splitFilter( filter, group ) {
 
 // return term from a taxonomy:term string
 function getTerm( filter ) {
-	const taxonomy = getTaxonomy( filter );
 	const term = splitFilter( filter, FILTER_TERM_GROUP );
 	if ( isTermAmbiguous( term ) ) {
-		return `${ taxonomy }__${ term }`;
+		return `${ getTaxonomy( filter ) }__${ term }`;
 	}
 	return term;
 }
