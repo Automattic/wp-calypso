@@ -1,76 +1,9 @@
-.reader-post-options-menu__trigger {
-	display: block;
-	cursor: pointer;
-	color: lighten( $gray, 10 );
-	border-radius: 4px;
-
-	.gridicon__ellipsis {
-		display: block;
-		padding: 2px 4px;
-		fill: lighten( $gray, 10 );
-		transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	}
-
-	.reader-post-options-menu__label {
-		display: none;
-	}
-
-	&:hover {
-		.gridicon__ellipsis {
-			fill: $blue-light;
-		}
-	}
-
-	&.is-triggered {
-		color: $blue-medium;
-
-		.gridicon__ellipsis {
-			fill: $blue-dark;
-			transform: rotate( 90deg );
-		}
-	}
-}
-
 .reader-post-options-menu__hr {
 	margin: 8px 0;
 	background: lighten( $gray, 30 );
 }
 
-.reader-post-options-menu__reblog,
-.reader-post-options-menu__save,
-.reader-post-options-menu__edit,
-.reader-post-options-menu__view {
-	.gridicon {
-		position: absolute;
-		top: 7px;
-		left: 13px;
-		fill: lighten( $gray, 10 );
-		transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	}
-
-	&:hover .gridicon,
-	&:focus .gridicon {
-		fill: $white;
-	}
-}
-
-.reader-post-options-menu__popover .popover__menu .follow-button {
-	.gridicon {
-		position: absolute;
-			left: 14px;
-			top: 11px;
-	}
-
-	&:hover,
-	&:focus {
-		background-color: $blue-medium;
-		color: white;
-
-		.gridicon {
-			fill: $white;
-		}
-	}
-
+.reader-post-options-menu__ellipsis-menu .follow-button {
 	&.is-following {
 
 		&:hover,
@@ -83,8 +16,4 @@
 			}
 		}
 	}
-}
-
-.reader-post-options-menu__popover .popover__menu .follow-button__label {
-	display: inline-block;
 }

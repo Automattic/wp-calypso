@@ -8,7 +8,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
+import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
@@ -21,7 +21,6 @@ import FollowButton from 'reader/follow-button';
 import * as DiscoverHelper from 'reader/discover/helper';
 import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
-import Gridicon from 'components/gridicon';
 
 const ReaderPostOptionsMenu = React.createClass( {
 
@@ -42,7 +41,6 @@ const ReaderPostOptionsMenu = React.createClass( {
 	getInitialState() {
 		const state = this.getStateFromStores();
 		state.popoverPosition = this.props.position;
-		state.showPopoverMenu = false;
 		return state;
 	},
 
@@ -65,21 +63,13 @@ const ReaderPostOptionsMenu = React.createClass( {
 
 		return {
 			isBlocked: SiteBlockStore.getIsBlocked( siteId ),
-			blockError: SiteBlockStore.getLastErrorBySite( siteId ),
 			feed: this.getFeed(),
-			followUrl: followUrl,
-			followError: FeedSubscriptionStore.getLastErrorBySiteUrl( followUrl )
+			followUrl: followUrl
 		};
 	},
 
 	updateState() {
 		this.smartSetState( this.getStateFromStores() );
-
-		// Hide the popover menu if there's an error
-		// Error message will be displayed on the post card
-		if ( this.state.blockError || this.state.followError ) {
-			this.state.showPopoverMenu = false;
-		}
 	},
 
 	blockSite() {
@@ -121,21 +111,10 @@ const ReaderPostOptionsMenu = React.createClass( {
 		return feed;
 	},
 
-	showPopoverMenu() {
-		const newState = ! this.state.showPopoverMenu;
-		this.setState( {
-			showPopover: false,
-			showPopoverMenu: newState
-		} );
-		stats.recordAction( newState ? 'open_post_options_menu' : 'close_post_options_menu' );
-		stats.recordGaEvent( newState ? 'Open Post Options Menu' : 'Close Post Options Menu' );
-		stats.recordTrackForPost( 'calypso_reader_post_options_menu_' + ( newState ? 'opened' : 'closed' ), this.props.post );
-	},
-
-	closePopoverMenu() {
-		if ( this.state.showPopoverMenu ) {
-			this.setState( { showPopoverMenu: false } );
-		}
+	onMenuToggle( isMenuVisible ) {
+		stats.recordAction( isMenuVisible ? 'open_post_options_menu' : 'close_post_options_menu' );
+		stats.recordGaEvent( isMenuVisible ? 'Open Post Options Menu' : 'Close Post Options Menu' );
+		stats.recordTrackForPost( 'calypso_reader_post_options_menu_' + ( isMenuVisible ? 'opened' : 'closed' ), this.props.post );
 	},
 
 	editPost( closeMenu ) {
@@ -167,14 +146,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 			isEditPossible = PostUtils.userCan( 'edit_post', post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
 
-		let triggerClasses = [ 'reader-post-options-menu__trigger', 'ignore-click' ],
-			isBlockPossible = false;
-
-		if ( this.state.showPopoverMenu ) {
-			triggerClasses.push( 'is-triggered' );
-		}
-
-		triggerClasses = triggerClasses.join( ' ' );
+		let isBlockPossible = false;
 
 		// Should we show the 'block' option?
 		if ( post.site_ID && ! post.is_external && ! post.is_jetpack && ! isEditPossible && ! isDiscoverPost ) {
@@ -183,30 +155,19 @@ const ReaderPostOptionsMenu = React.createClass( {
 
 		return (
 			<span className="reader-post-options-menu">
-				<span className={ triggerClasses }
-						ref="popoverMenuButton"
-						onClick={ this.showPopoverMenu }>
-					<Gridicon icon="ellipsis" size={ 24 } />
-					<span className="reader-post-options-menu__label">{ this.translate( 'More' ) }</span>
-				</span>
-
-				<PopoverMenu isVisible={ this.state.showPopoverMenu }
-						onClose={ this.closePopoverMenu }
-						position={ this.state.popoverPosition }
-						context={ this.refs && this.refs.popoverMenuButton }
-						className="reader-post-options-menu__popover">
-
+				<EllipsisMenu
+					className="reader-post-options-menu__ellipsis-menu"
+					onToggle={ this.onMenuToggle }>
 					<FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } />
 
-					{ isEditPossible ? <PopoverMenuItem onClick={ this.editPost } className="reader-post-options-menu__edit has-icon">
-						<Gridicon icon="pencil" size={ 18 } />
+					{ isEditPossible ? <PopoverMenuItem onClick={ this.editPost } icon="pencil">
 						{ this.translate( 'Edit Post' ) }
 					</PopoverMenuItem> : null }
 
 					{ isBlockPossible || isDiscoverPost ? <hr className="reader-post-options-menu__hr" /> : null }
 					{ isBlockPossible ? <PopoverMenuItem onClick={ this.blockSite }>{ this.translate( 'Block Site' ) }</PopoverMenuItem> : null }
 					{ isBlockPossible || isDiscoverPost ? <PopoverMenuItem onClick={ this.reportPost }>{ this.translate( 'Report this Post' ) }</PopoverMenuItem> : null }
-				</PopoverMenu>
+				</EllipsisMenu>
 			</span>
 		);
 	}
