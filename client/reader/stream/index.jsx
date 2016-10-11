@@ -10,7 +10,9 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal dependencies
  */
-var Main = require( 'components/main' ),
+var config = require( 'config' ),
+	Main = require( 'components/main' ),
+	ReaderMain = require( 'components/reader-main' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	EmptyContent = require( './empty' ),
 	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
@@ -459,8 +461,10 @@ module.exports = React.createClass( {
 			showingStream = true;
 		}
 
+		const StreamMain = config.isEnabled( 'reader/refresh/stream' ) ? ReaderMain : Main;
+
 		return (
-			<Main className={ classnames( 'following', this.props.className ) }>
+			<StreamMain className={ classnames( 'following', this.props.className ) }>
 				{ this.props.showMobileBackToSidebar && <MobileBackToSidebar>
 					<h1>{ this.props.listName }</h1>
 				</MobileBackToSidebar> }
@@ -472,7 +476,7 @@ module.exports = React.createClass( {
 					? <div className="infinite-scroll-end" />
 					: null
 				}
-			</Main>
+			</StreamMain>
 		);
 	}
 
