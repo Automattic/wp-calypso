@@ -4,6 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +20,12 @@ class EllipsisMenu extends Component {
 		position: PropTypes.string,
 		children: PropTypes.node,
 		disabled: PropTypes.bool,
+		onToggle: PropTypes.func
 	};
+
+	static defaultProps = {
+		onToggle: noop
+	}
 
 	constructor() {
 		super( ...arguments );
@@ -44,6 +50,7 @@ class EllipsisMenu extends Component {
 	toggleMenu( isMenuVisible ) {
 		if ( ! this.props.disabled ) {
 			this.setState( { isMenuVisible } );
+			this.props.onToggle( isMenuVisible );
 		}
 	}
 
