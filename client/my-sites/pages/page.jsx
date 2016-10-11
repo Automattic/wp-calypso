@@ -94,6 +94,27 @@ module.exports = React.createClass( {
 		return ( this.props.site && this.props.site.domain ) || '...';
 	},
 
+	setAsHomepage: function() {
+		//TODO: implementation missing
+	},
+
+	getSetAsHomepageItem: function() {
+		const isPublished = this.props.page.status === 'publish';
+		const isFrontPage = helpers.isFrontPage( this.props.page, this.props.site );
+
+		if ( ! isPublished || isFrontPage ) {
+			return null;
+		}
+
+		return (
+			<PopoverMenuItem onClick={ this.setAsHomepage() }>
+				<Gridicon icon="house" size={ 18 } />
+				{ this.translate( 'Set as Homepage' ) }
+			</PopoverMenuItem>
+		);
+	},
+
+
 	viewPage: function() {
 		window.open( this.props.page.URL );
 	},
@@ -299,6 +320,7 @@ module.exports = React.createClass( {
 					position={ 'bottom left' }
 					context={ this.refs && this.refs.popoverMenuButton }
 				>
+					{ this.getSetAsHomepageItem() }
 					{ this.getViewItem() }
 					{ this.getPublishItem() }
 					{ this.getEditItem() }
