@@ -14,6 +14,7 @@ import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
+import { abtest } from 'lib/abtest';
 
 const SiteSelectorAddSite = React.createClass( {
 	getInitialState() {
@@ -92,7 +93,11 @@ const SiteSelectorAddSite = React.createClass( {
 	},
 
 	render() {
-		return this.renderButtonWithPopover();
+		if ( abtest( 'siteSelectorAddSitePopover' ) === 'showPopover' ) {
+			return this.renderButtonWithPopover();
+		}
+
+		return this.renderButton();
 	}
 } );
 
