@@ -27,6 +27,7 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 	FormTelInput = require( 'components/forms/form-tel-input' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
+	FormTextInputWithAction = require( 'components/forms/form-text-input-with-action' ),
 	FormTextInputWithAffixes = require( 'components/forms/form-text-input-with-affixes' ),
 	FormToggle = require( 'components/forms/form-toggle' ),
 	CompactFormToggle = require( 'components/forms/form-toggle/compact' );
@@ -54,6 +55,10 @@ var FormFields = React.createClass( {
 
 	handleCompactToggle: function() {
 		this.setState( { compactToggled: ! this.state.compactToggled } );
+	},
+
+	handleAction: function() {
+		alert( 'Thank you.' );
 	},
 
 	render: function() {
@@ -121,6 +126,16 @@ var FormFields = React.createClass( {
 							placeholder="Placeholder text..."
 						/>
 						<FormInputValidation isError text="Your text is too short." />
+					</FormFieldset>
+
+					<FormFieldset>
+						<FormLabel htmlFor="text_with_affixes">Form Text Input With Action</FormLabel>
+						<FormTextInputWithAction
+							placeholder="Enter a name for your site"
+							action="Continue"
+							onAction={ this.handleAction }
+							/>
+						<FormSettingExplanation>Action becomes avaliable when filled. Can be triggered by clicking button or pressing enter.</FormSettingExplanation>
 					</FormFieldset>
 
 					<FormFieldset>
