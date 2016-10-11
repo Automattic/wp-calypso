@@ -18,7 +18,8 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	helpers = require( './helpers' ),
 	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/posts/utils' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	config = require( 'config' );
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -149,13 +150,19 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		return ( <div className="page__popover-more-info">{
-			this.translate( 'Currently set as {{link}}Front Page{{/link}}', {
-				components: {
-					link: <a target="_blank" rel="noopener noreferrer" href={ this.props.site.options.admin_url + 'options-reading.php' } />
-				}
-			} )
-		}</div> );
+		if ( config.isEnabled( 'manage/pages/set-homepage' ) ) {
+			return ( <div className="page__popover-more-info">{
+				this.translate( 'This page is set as your site\'s homepage' )
+			}</div> );
+		} else {
+			return ( <div className="page__popover-more-info">{
+				this.translate( 'Currently set as {{link}}Front Page{{/link}}', {
+					components: {
+						link: <a target="_blank" rel="noopener noreferrer" href={ this.props.site.options.admin_url + 'options-reading.php' } />
+					}
+				} )
+			}</div> );
+		}
 	},
 
 	getPublishItem: function() {
