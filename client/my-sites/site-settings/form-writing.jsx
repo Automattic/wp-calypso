@@ -21,6 +21,7 @@ import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
 import QueryTerms from 'components/data/query-terms';
+import TaxonomyManager from 'blocks/taxonomy-manager';
 import { isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
@@ -215,8 +216,8 @@ const SiteSettingsFormWriting = React.createClass( {
 						</FormFieldset>
 					}
 				</Card>
+				{ config.isEnabled( 'manage/site-settings/categories' ) && <TaxonomyManager taxonomy="category" /> }
 			</form>
-
 		);
 	}
 } );
