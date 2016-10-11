@@ -5,7 +5,6 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import noop from 'lodash/noop';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -25,7 +24,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	propTypes: {
 		src: React.PropTypes.string,
 		mimeType: React.PropTypes.string,
-		transform: React.PropTypes.shape( {
+		transfrom: React.PropTypes.shape( {
 			degrees: React.PropTypes.number,
 			scaleX: React.PropTypes.number,
 			scaleY: React.PropTypes.number
@@ -36,14 +35,7 @@ const MediaModalImageEditorCanvas = React.createClass( {
 			widthRatio: React.PropTypes.number,
 			heightRatio: React.PropTypes.number,
 		} ),
-		setImageEditorCropBounds: React.PropTypes.func,
-		onLoadError: React.PropTypes.func
-	},
-
-	getInitialState() {
-		return {
-			imageLoaded: false
-		};
+		setImageEditorCropBounds: React.PropTypes.func
 	},
 
 	getDefaultProps() {
@@ -59,28 +51,22 @@ const MediaModalImageEditorCanvas = React.createClass( {
 				cropWidthRatio: 1,
 				cropHeightRatio: 1,
 			},
-			setImageEditorCropBounds: noop,
-			onLoadError: noop,
+			setImageEditorCropBounds: noop
 		};
 	},
 
 	componentWillReceiveProps( newProps ) {
-		this.getImage( newProps.src );
+		if ( this.props.src !== newProps.src ) {
+			this.initImage( newProps.src );
+		}
 	},
 
-	getImage( url ) {
-		const { onLoadError, mimeType } = this.props;
+	componentDidMount() {
+		if ( ! this.props.src ) {
+			return;
+		}
 
-		const req = new XMLHttpRequest();
-		req.open( 'GET', url + '?', true ); // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
-		req.responseType = 'arraybuffer';
-		req.onload = () => {
-			const objectURL = window.URL.createObjectURL( new Blob( [ req.response ], { type: mimeType } ) );
-			this.initImage( objectURL );
-		};
-
-		req.onerror = error => onLoadError( error );
-		req.send();
+		this.initImage( this.props.src );
 	},
 
 	initImage( src ) {
@@ -97,10 +83,6 @@ const MediaModalImageEditorCanvas = React.createClass( {
 
 		this.drawImage();
 		this.updateCanvasPosition();
-
-		this.setState( {
-			imageLoaded: true
-		} );
 	},
 
 	componentDidUpdate() {
@@ -135,6 +117,8 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	drawImage() {
+		return;
+
 		if ( ! this.image ) {
 			return;
 		}
@@ -167,6 +151,8 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	updateCanvasPosition() {
+		return;
+
 		const canvas = ReactDom.findDOMNode( this.refs.canvas );
 		const canvasX = - 50 * this.props.crop.widthRatio - 100 * this.props.crop.leftRatio;
 		const canvasY = - 50 * this.props.crop.heightRatio - 100 * this.props.crop.topRatio;
@@ -184,33 +170,17 @@ const MediaModalImageEditorCanvas = React.createClass( {
 	},
 
 	renderCrop() {
+		if ( ! this.props.src ) {
+			return;
+		}
+
 		return ( <Crop /> );
 	},
 
 	render() {
-		const canvasX = - 50 * this.props.crop.widthRatio - 100 * this.props.crop.leftRatio;
-		const canvasY = - 50 * this.props.crop.heightRatio - 100 * this.props.crop.topRatio;
-
-		const canvasStyle = {
-			transform: 'translate(' + canvasX + '%, ' + canvasY + '%)',
-			maxWidth: ( 85 / this.props.crop.widthRatio ) + '%',
-			maxHeight: ( 85 / this.props.crop.heightRatio ) + '%'
-		};
-
-		const { imageLoaded } = this.state;
-
-		const canvasClasses = classNames( 'editor-media-modal-image-editor__canvas', {
-			'is-placeholder': ! imageLoaded
-		} );
-
 		return (
 			<div className="editor-media-modal-image-editor__canvas-container">
-				{ imageLoaded && this.renderCrop() }
-				<canvas
-					ref="canvas"
-					style={ canvasStyle }
-					onMouseDown={ this.preventDrag }
-					className={ canvasClasses } />
+				{ this.renderCrop() }
 			</div>
 		);
 	}

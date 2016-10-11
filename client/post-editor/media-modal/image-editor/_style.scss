@@ -42,6 +42,7 @@
 }
 
 .editor-media-modal-image-editor__canvas {
+	display: none;
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -50,6 +51,20 @@
 	&.is-placeholder {
 		@include placeholder-dark();
 	}
+}
+
+.editor-media-modal-image-editor__image {
+	position: absolute;
+	max-width: none;
+	z-index: z-index( '.dialog__backdrop', '.editor-media-modal-image-editor__canvas' );
+	opacity: 0.5;
+	transform-origin: 0 0;
+}
+
+.editor-media-modal-image-editor__crop-container {
+	position: relative;
+	width: 100%;
+	height: 100%;
 }
 
 .editor-media-modal-image-editor__crop {

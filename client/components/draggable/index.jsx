@@ -9,12 +9,15 @@ export default React.createClass( {
 	displayName: 'Draggable',
 
 	propTypes: {
+		onStart: React.PropTypes.func,
 		onDrag: React.PropTypes.func,
 		onStop: React.PropTypes.func,
 		width: React.PropTypes.number,
 		height: React.PropTypes.number,
 		x: React.PropTypes.number,
 		y: React.PropTypes.number,
+		invertX: React.PropTypes.bool,
+		invertY: React.PropTypes.bool,
 		controlled: React.PropTypes.bool,
 		bounds: React.PropTypes.shape( {
 			top: React.PropTypes.number,
@@ -26,12 +29,15 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
+			onStart: noop,
 			onDrag: noop,
 			onStop: noop,
 			width: 0,
 			height: 0,
 			x: 0,
 			y: 0,
+			invertX: false,
+			invertY: false,
 			controlled: false,
 			bounds: null
 		};
@@ -63,10 +69,17 @@ export default React.createClass( {
 		document.addEventListener( 'mousemove', this.onMouseMove );
 		document.addEventListener( 'mouseup', this.onMouseUp );
 
+		this.props.onStart();
+
 		this.dragging = true;
-		this.relativePos = {
-			x: event.pageX - this.state.x,
-			y: event.pageY - this.state.y
+		this.lastPos = {
+			x: event.pageX,
+			y: event.pageY
+		};
+
+		this.initialPos = {
+			x: this.state.x,
+			y: this.state.y
 		};
 
 		cancelAnimationFrame( this.frameRequestId );
@@ -74,28 +87,34 @@ export default React.createClass( {
 	},
 
 	onMouseMove( event ) {
-		let x = event.pageX - this.relativePos.x,
-			y = event.pageY - this.relativePos.y;
+		const dx = event.pageX - this.lastPos.x,
+			dy = event.pageY - this.lastPos.y;
 
-		this.mousePos = { x, y };
+		this.delta = {
+			dx: this.props.invertX ? -dx : dx,
+			dy: this.props.invertY ? -dy : dy
+		};
 	},
 
 	onMouseUp() {
 		this.dragging = false;
-		this.mousePos = null;
+		this.delta = null;
 		cancelAnimationFrame( this.frameRequestId );
 		this.removeListeners();
 		this.props.onStop();
 	},
 
 	update() {
-		if ( ! this.mousePos ) {
+		if ( ! this.delta ) {
 			this.frameRequestId = requestAnimationFrame( this.update );
 			return;
 		}
 
 		const bounds = this.props.bounds;
-		let { x, y } = this.mousePos;
+		const { dx, dy } = this.delta;
+		let { x, y } = this.initialPos;
+		x += dx;
+		y += dy;
 		if ( bounds ) {
 			x = Math.max( bounds.left, Math.min( bounds.right - this.props.width, x ) );
 			y = Math.max( bounds.top, Math.min( bounds.bottom - this.props.height, y ) );
@@ -105,7 +124,7 @@ export default React.createClass( {
 			this.frameRequestId = requestAnimationFrame( this.update );
 		}
 
-		this.props.onDrag( x, y );
+		this.props.onDrag( x, y, dx, dy );
 
 		if ( this.props.controlled ) {
 			return;
