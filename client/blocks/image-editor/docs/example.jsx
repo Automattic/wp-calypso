@@ -13,8 +13,9 @@ import { getCurrentUser } from 'state/current-user/selectors';
 
 function ImageEditorExample( { primarySiteId } ) {
 	const media = {
-		URL: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/SIPI_Jelly_Beans_4.1.07.tiff/lossy-page1-256px-SIPI_Jelly_Beans_4.1.07.tiff.jpg'
-	}
+		URL: 'https://cldup.com/mA_hqNVj0w.jpg'
+	};
+	
 	return (
 		<div style={ { height: '80vh' } }>
 			<ImageEditor
@@ -29,7 +30,7 @@ const ConnectedImageEditorExample = connect( ( state ) => {
 	const primarySiteId = get( getCurrentUser( state ), 'primary_blog', null );
 
 	return {
-		primarySiteId,
+		primarySiteId
 	};
 } )( ImageEditorExample );
 
