@@ -38,6 +38,34 @@ const searchItems = [
 
 			short_excerpt: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
 		}
+	},
+	{
+	post: {
+			ID: 2,
+			title: 'A Photo Post',
+			content: 'Look, I have content!',
+			site_ID: 2,
+			global_ID: 2,
+			site_URL: 'http://example.com',
+			feed_ID: 2,
+			feed_item_ID: 2,
+			display_type: DisplayTypes.PHOTO_ONLY,
+			author: {
+				name: 'Sue Smith',
+				email: 'sue@example.com'
+			},
+			discussion: {
+				comment_count: 99
+			},
+			canonical_image: {
+				uri: 'https://placekitten.com/600/400',
+				width: 300,
+				height: 200
+			},
+			date: '1976-09-15T10:12:00Z',
+
+			site: 'cats.wordpress.com'
+		}
 	}
 ];
 
@@ -47,8 +75,9 @@ const RefreshCards = React.createClass( {
 	render: function() {
 		return (
 			<div className="design-assets__group">
+			<h3>Thumbnail with excerpt</h3>
 				<div>
-					{ searchItems.map( item => <RefreshPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
+					{ searchItems.map( item => <RefreshPostCard key={ item.post.site_ID } post={ item.post } site={ item.site } /> ) }
 				</div>
 			</div>
 		);
