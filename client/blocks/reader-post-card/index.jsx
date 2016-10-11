@@ -62,10 +62,16 @@ export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentCl
 						<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
 					</h1>
 					<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
-					{ post &&
-						<ReaderPostActions post={ post } onCommentClick={ onCommentClick } showEdit={ false } className="ignore-click" /> }
 				</div>
 			</div>
+			{ post &&
+				<ReaderPostActions
+					post={ post }
+					showVisit={ true }
+					onCommentClick={ onCommentClick }
+					showEdit={ false }
+					className="ignore-click" />
+			}
 		</Card>
 	);
 }

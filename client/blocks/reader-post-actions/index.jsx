@@ -15,8 +15,10 @@ import { shouldShowLikes } from 'reader/like-helper';
 import { shouldShowShare } from 'reader/share/helper';
 import { userCan } from 'lib/posts/utils';
 import * as stats from 'reader/stats';
+import { localize } from 'i18n-calypso';
+import ExternalLink from 'components/external-link';
 
-const ReaderPostActions = ( { post, site, onCommentClick, showEdit } ) => {
+const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, showVisit, iconSize } ) => {
 	const onEditClick = () => {
 		stats.recordAction( 'edit_post' );
 		stats.recordGaEvent( 'Clicked Edit Post', 'full_post' );
@@ -25,6 +27,13 @@ const ReaderPostActions = ( { post, site, onCommentClick, showEdit } ) => {
 
 	return (
 		<ul className="reader-post-actions">
+			{ showVisit &&
+				<li className="reader-post-actions__item reader-post-actions__visit">
+					<ExternalLink icon={ true } showIconFirst={ true } iconSize={ iconSize }>
+						<span className="reader-post-actions__visit-label">{ translate( 'Visit' ) }</span>
+					</ExternalLink>
+				</li>
+			}
 			{ showEdit && site && userCan( 'edit_post', post ) &&
 				<li className="reader-post-actions__item">
 					<PostEditButton post={ post } site={ site } onClick={ onEditClick } />
@@ -63,11 +72,14 @@ ReaderPostActions.propTypes = {
 	post: React.PropTypes.object.isRequired,
 	site: React.PropTypes.object,
 	onCommentClick: React.PropTypes.func,
-	showEdit: React.PropTypes.bool
+	showEdit: React.PropTypes.bool,
+	iconSize: React.PropTypes.number
 };
 
 ReaderPostActions.defaultProps = {
-	showEdit: true
+	showEdit: true,
+	showVisit: false,
+	iconSize: 24
 };
 
-export default ReaderPostActions;
+export default localize( ReaderPostActions );

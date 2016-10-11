@@ -23,3 +23,12 @@
 		}
 	}
 }
+
+.reader-post-actions__visit .external-link {
+	color: lighten( $gray, 10% );
+	font-size: 14px;
+
+	.gridicon {
+		margin-right: 5px;
+	}
+}
