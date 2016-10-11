@@ -2567,9 +2567,9 @@
       "version": "0.2.0"
     },
     "phone": {
-      "version": "1.0.4-12",
-      "from": "git+https://github.com/Automattic/node-phone.git#f80b55251b54ab729f94c04f33ae1c7b2b2b0932",
-      "resolved": "git+https://github.com/Automattic/node-phone.git#f80b55251b54ab729f94c04f33ae1c7b2b2b0932"
+      "version": "1.0.8",
+      "from": "git+https://github.com/Automattic/node-phone.git#6be6549b03137f2cca01e202250bf2590750119e",
+      "resolved": "git+https://github.com/Automattic/node-phone.git#6be6549b03137f2cca01e202250bf2590750119e"
     },
     "photon": {
       "version": "2.0.0"
