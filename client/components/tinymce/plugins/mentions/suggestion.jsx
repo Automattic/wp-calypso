@@ -43,7 +43,7 @@ const Suggestion = React.createClass( {
 				let item = matches[ i ];
 
 				if ( textToHighlight.toLowerCase() === item.toLowerCase() && ! highlighted ) {
-					item = <strong key={ i }>{matches[ i ]}</strong>;
+					item = <strong key={ i }>{ matches[ i ] }</strong>;
 					highlighted = true;
 				}
 
