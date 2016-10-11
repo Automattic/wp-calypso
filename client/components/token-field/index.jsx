@@ -233,7 +233,7 @@ var TokenField = React.createClass( {
 		const items = text.split( separator );
 
 		if ( items.length > 1 ) {
-			this._addNewToken( items.slice( 0, -1 ), { isBatchOperation: true } );
+			this._addNewTokens( items.slice( 0, -1 ) );
 		}
 
 		this.setState( {
@@ -473,27 +473,28 @@ var TokenField = React.createClass( {
 		} );
 	},
 
-	_addNewToken: function( token, { isBatchOperation = false } = {} ) {
-		const tokens = uniq(
-			( Array.isArray( token ) ? token : [ token ] )
+	_addNewTokens: function( tokens ) {
+		const tokensToAdd = uniq(
+			tokens
 				.map( this.props.saveTransform )
 				.filter( Boolean )
 				.filter( token => ! this._valueContainsToken( token ) )
 		);
+		debug( '_addNewTokens: tokensToAdd', tokensToAdd );
 
-		if ( tokens.length > 0 ) {
+		if ( tokensToAdd.length > 0 ) {
 			const newValue = clone( this.props.value );
 			newValue.splice.apply(
 				newValue,
-				[ this._getIndexOfInput(), 0 ].concat( tokens )
+				[ this._getIndexOfInput(), 0 ].concat( tokensToAdd )
 			);
-			debug( '_addNewToken: onChange', newValue );
+			debug( '_addNewTokens: onChange', newValue );
 			this.props.onChange( newValue );
 		}
+	},
 
-		if ( isBatchOperation ) {
-			return;
-		}
+	_addNewToken: function( token ) {
+		this._addNewTokens( [ token ] );
 
 		this.setState( {
 			incompleteTokenValue: '',
