@@ -48,7 +48,7 @@ module.exports = React.createClass( {
 			this.props.isRefreshing || this.props.isConnecting;
 
 		if ( 'connected' === this.props.status ) {
-			removableConnections = serviceConnections.getRemovableConnections( this.props.service.name );
+			removableConnections = serviceConnections.getRemovableConnections( this.props.service.ID );
 		}
 
 		if ( 'unknown' === this.props.status ) {
