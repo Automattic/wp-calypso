@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import isEqual from 'lodash/isEqual';
-import noop from 'lodash/noop';
+import { isEqual, noop } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -20,50 +19,57 @@ import {
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 import { imageEditorCrop } from 'state/ui/editor/image-editor/actions';
 
-const MediaModalImageEditorCrop = React.createClass( {
-
-	propTypes: {
-		degrees: React.PropTypes.number,
-		bounds: React.PropTypes.shape( {
-			topBound: React.PropTypes.number,
-			leftBound: React.PropTypes.number,
-			bottomBound: React.PropTypes.number,
-			rightBound: React.PropTypes.number,
+class ImageEditorCrop extends Component {
+	static propTypes = {
+		degrees: PropTypes.number,
+		bounds: PropTypes.shape( {
+			topBound: PropTypes.number,
+			leftBound: PropTypes.number,
+			bottomBound: PropTypes.number,
+			rightBound: PropTypes.number
 		} ),
-		crop: React.PropTypes.shape( {
-			topRatio: React.PropTypes.number,
-			leftRatio: React.PropTypes.number,
-			widthRatio: React.PropTypes.number,
-			heightRatio: React.PropTypes.number,
+		crop: PropTypes.shape( {
+			topRatio: PropTypes.number,
+			leftRatio: PropTypes.number,
+			widthRatio: PropTypes.number,
+			heightRatio: PropTypes.number
 		} ),
-		aspectRatio: React.PropTypes.string,
-		imageEditorCrop: React.PropTypes.func,
-		minCropSize: React.PropTypes.shape( {
-			width: React.PropTypes.number,
-			height: React.PropTypes.number
+		aspectRatio: PropTypes.string,
+		imageEditorCrop: PropTypes.func,
+		minCropSize: PropTypes.shape( {
+			width: PropTypes.number,
+			height: PropTypes.number
 		} )
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			degrees: 0,
-			bounds: {
-				topBound: 0,
-				leftBound: 0,
-				bottomBound: 100,
-				rightBound: 100,
-			},
-			imageEditorCrop: noop,
-			minCropSize: {
-				width: 50,
-				height: 50
-			}
-		};
-	},
+	static defaultProps = {
+		degrees: 0,
+		bounds: {
+			topBound: 0,
+			leftBound: 0,
+			bottomBound: 100,
+			rightBound: 100
+		},
+		imageEditorCrop: noop,
+		minCropSize: {
+			width: 50,
+			height: 50
+		}
+	};
 
-	getInitialState() {
-		return this.getDefaultState( this.props );
-	},
+	constructor( props ) {
+		super( props );
+
+		this.state = this.getDefaultState( props );
+
+		this.onTopLeftDrag = this.onTopLeftDrag.bind( this );
+		this.onTopRightDrag = this.onTopRightDrag.bind( this );
+		this.onBottomLeftDrag = this.onBottomLeftDrag.bind( this );
+		this.onBottomRightDrag = this.onBottomRightDrag.bind( this );
+
+		this.applyCrop = this.applyCrop.bind( this );
+		this.onBorderDrag = this.onBorderDrag.bind( this );
+	}
 
 	getDefaultState( props ) {
 		return {
@@ -72,10 +78,15 @@ const MediaModalImageEditorCrop = React.createClass( {
 			bottom: props.bounds.bottomBound,
 			right: props.bounds.rightBound
 		};
-	},
+	}
 
 	componentWillReceiveProps( newProps ) {
-		if ( ! isEqual( this.props.bounds, newProps.bounds ) ) {
+		const {
+			bounds,
+			aspectRatio
+		} = this.props;
+
+		if ( ! isEqual( bounds, newProps.bounds ) ) {
 			const imageWidth = newProps.bounds.rightBound - newProps.bounds.leftBound;
 			const imageHeight = newProps.bounds.bottomBound - newProps.bounds.topBound;
 			const newTop = newProps.bounds.topBound + newProps.crop.topRatio * imageHeight;
@@ -91,10 +102,10 @@ const MediaModalImageEditorCrop = React.createClass( {
 			} );
 		}
 
-		if ( this.props.aspectRatio !== newProps.aspectRatio ) {
+		if ( aspectRatio !== newProps.aspectRatio ) {
 			this.updateCrop( this.getDefaultState( newProps ), newProps, this.applyCrop );
 		}
-	},
+	}
 
 	updateCrop( newValues, props, callback ) {
 		props = props || this.props;
@@ -103,43 +114,55 @@ const MediaModalImageEditorCrop = React.createClass( {
 
 		if ( aspectRatio === AspectRatios.FREE ) {
 			this.setState( newValues, callback );
+
 			return;
 		}
 
-		const rotated = props.degrees % 180 !== 0;
-		const bounds = props.bounds;
-		const newState = Object.assign( {}, this.state, newValues );
-		const newWidth = newState.right - newState.left;
-		const newHeight = newState.bottom - newState.top;
-		let ratio,
+		const rotated = props.degrees % 180 !== 0,
+			bounds = props.bounds,
+			newState = Object.assign( {}, this.state, newValues ),
+			newWidth = newState.right - newState.left,
+			newHeight = newState.bottom - newState.top;
+
+		let imageWidth,
+			imageHeight,
 			finalWidth = newWidth,
-			finalHeight = newHeight,
-			imageWidth, imageHeight;
+			finalHeight = newHeight;
 
 		switch ( aspectRatio ) {
 			case AspectRatios.ORIGINAL:
 				imageWidth = bounds.rightBound - bounds.leftBound;
 				imageHeight = bounds.bottomBound - bounds.topBound;
+
 				break;
+
 			case AspectRatios.ASPECT_1X1:
 				imageWidth = 1;
 				imageHeight = 1;
+
 				break;
+
 			case AspectRatios.ASPECT_16X9:
 				imageWidth = rotated ? 9 : 16;
 				imageHeight = rotated ? 16 : 9;
+
 				break;
+
 			case AspectRatios.ASPECT_4X3:
 				imageWidth = rotated ? 3 : 4;
 				imageHeight = rotated ? 4 : 3;
+
 				break;
+
 			case AspectRatios.ASPECT_3X2:
 				imageWidth = rotated ? 2 : 3;
 				imageHeight = rotated ? 3 : 2;
+
 				break;
 		}
 
-		ratio = Math.min( newWidth / imageWidth, newHeight / imageHeight );
+		const ratio = Math.min( newWidth / imageWidth, newHeight / imageHeight );
+
 		finalWidth = imageWidth * ratio;
 		finalHeight = imageHeight * ratio;
 
@@ -156,7 +179,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 		}
 
 		this.setState( newValues, callback );
-	},
+	}
 
 	onTopLeftDrag( x, y ) {
 		const { right, bottom } = this.state;
@@ -177,7 +200,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 			top,
 			left
 		} );
-	},
+	}
 
 	onTopRightDrag( x, y ) {
 		const { left, bottom } = this.state;
@@ -198,7 +221,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 			top,
 			right
 		} );
-	},
+	}
 
 	onBottomRightDrag( x, y ) {
 		const { left, top } = this.state;
@@ -219,7 +242,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 			bottom,
 			right
 		} );
-	},
+	}
 
 	onBottomLeftDrag( x, y ) {
 		const { right, top } = this.state;
@@ -240,7 +263,7 @@ const MediaModalImageEditorCrop = React.createClass( {
 			bottom,
 			left
 		} );
-	},
+	}
 
 	onBorderDrag( x, y ) {
 		const { top, left, right, bottom } = this.state,
@@ -253,63 +276,95 @@ const MediaModalImageEditorCrop = React.createClass( {
 			bottom: y + height,
 			right: x + width
 		} );
-	},
+	}
 
 	applyCrop() {
-		const currentTop = this.state.top - this.props.bounds.topBound;
-		const currentLeft = this.state.left - this.props.bounds.leftBound;
-		const currentWidth = this.state.right - this.state.left;
-		const currentHeight = this.state.bottom - this.state.top;
-		const imageWidth = this.props.bounds.rightBound - this.props.bounds.leftBound;
-		const imageHeight = this.props.bounds.bottomBound - this.props.bounds.topBound;
+		const {
+			top,
+			left,
+			right,
+			bottom
+		} = this.state;
+
+		const {
+			topBound,
+			leftBound,
+			rightBound,
+			bottomBound
+		} = this.props.bounds;
+
+		const currentTop = top - topBound,
+			currentLeft = left - leftBound,
+			currentWidth = right - left,
+			currentHeight = bottom - top,
+			imageWidth = rightBound - leftBound,
+			imageHeight = bottomBound - topBound;
 
 		this.props.imageEditorCrop(
 			currentTop / imageHeight,
 			currentLeft / imageWidth,
 			currentWidth / imageWidth,
-			currentHeight / imageHeight );
-	},
+			currentHeight / imageHeight
+		);
+	}
 
 	render() {
-		const { top, left, right, bottom } = this.state;
-		const width = right - left;
-		const height = bottom - top;
-		const handleClassName = 'editor-media-modal-image-editor__crop-handle';
+		const {
+			top,
+			left,
+			right,
+			bottom
+		} = this.state;
+
+		const width = right - left,
+			height = bottom - top,
+			handleClassName = 'image-editor__crop-handle';
+
+		const {
+			topBound,
+			leftBound,
+			rightBound,
+			bottomBound
+		} = this.props.bounds;
 
 		return (
 			<div>
 				<div
-					className="editor-media-modal-image-editor__crop-background"
+					className="image-editor__crop-background"
 					style={ {
-						top: this.props.bounds.topBound + 'px',
+						top: topBound + 'px',
 						left: left + 'px',
 						width: width + 'px',
-						height: Math.max( 0, top - this.props.bounds.topBound ) + 'px'
-					} }/>
+						height: Math.max( 0, top - topBound ) + 'px'
+					} }
+				/>
 				<div
-					className="editor-media-modal-image-editor__crop-background"
+					className="image-editor__crop-background"
 					style={ {
-						top: this.props.bounds.topBound + 'px',
-						left: this.props.bounds.leftBound + 'px',
-						width: Math.max( 0, left - this.props.bounds.leftBound ) + 'px',
-						height: Math.max( 0, this.props.bounds.bottomBound - this.props.bounds.topBound ) + 'px'
-					} }/>
+						top: topBound + 'px',
+						left: leftBound + 'px',
+						width: Math.max( 0, left - leftBound ) + 'px',
+						height: Math.max( 0, bottomBound - topBound ) + 'px'
+					} }
+				/>
 				<div
-					className="editor-media-modal-image-editor__crop-background"
+					className="image-editor__crop-background"
 					style={ {
 						top: bottom + 'px',
 						left: left + 'px',
 						width: width + 'px',
-						height: Math.max( 0, this.props.bounds.bottomBound - bottom ) + 'px'
-					} }/>
+						height: Math.max( 0, bottomBound - bottom ) + 'px'
+					} }
+				/>
 				<div
-					className="editor-media-modal-image-editor__crop-background"
+					className="image-editor__crop-background"
 					style={ {
-						top: this.props.bounds.topBound + 'px',
+						top: topBound + 'px',
 						left: right + 'px',
-						width: Math.max( 0, this.props.bounds.rightBound - right ) + 'px',
-						height: Math.max( 0, this.props.bounds.bottomBound - this.props.bounds.topBound ) + 'px'
-					} }/>
+						width: Math.max( 0, rightBound - right ) + 'px',
+						height: Math.max( 0, bottomBound - topBound ) + 'px'
+					} }
+				/>
 				<Draggable
 					ref="border"
 					onDrag={ this.onBorderDrag }
@@ -319,52 +374,77 @@ const MediaModalImageEditorCrop = React.createClass( {
 					width={ width }
 					height={ height }
 					bounds={ {
-						top: this.props.bounds.topBound,
-						left: this.props.bounds.leftBound,
-						bottom: this.props.bounds.bottomBound,
-						right: this.props.bounds.rightBound
+						top: topBound,
+						left: leftBound,
+						bottom: bottomBound,
+						right: rightBound
 					} }
-					className="editor-media-modal-image-editor__crop" />
+					className="image-editor__crop"
+				/>
 				<Draggable
 					onDrag={ this.onTopLeftDrag }
 					onStop={ this.applyCrop }
 					x={ left }
 					y={ top }
 					controlled
-					bounds={ { top: this.props.bounds.topBound - 1, left: this.props.bounds.leftBound - 1, bottom, right } }
+					bounds={ {
+						bottom,
+						right,
+						top: topBound - 1,
+						left: leftBound - 1
+					} }
 					ref="topLeft"
-					className={ classNames( handleClassName, handleClassName + '-nwse' ) }/>
+					className={ classNames( handleClassName, handleClassName + '-nwse' ) }
+				/>
 				<Draggable
 					onDrag={ this.onTopRightDrag }
 					onStop={ this.applyCrop }
 					y={ top }
 					x={ right }
 					controlled
-					bounds={ { top: this.props.bounds.topBound - 1, right: this.props.bounds.rightBound - 1, bottom, left } }
+					bounds={ {
+						bottom,
+						left,
+						top: topBound - 1,
+						right: rightBound - 1
+					} }
 					ref="topRight"
-					className={ classNames( handleClassName, handleClassName + '-nesw' ) } />
+					className={ classNames( handleClassName, handleClassName + '-nesw' ) }
+				/>
 				<Draggable
 					onDrag={ this.onBottomRightDrag }
 					onStop={ this.applyCrop }
 					y={ bottom }
 					x={ right }
 					controlled
-					bounds={ { bottom: this.props.bounds.bottomBound - 1, right: this.props.bounds.rightBound - 1, top, left } }
+					bounds={ {
+						top,
+						left,
+						bottom: bottomBound - 1,
+						right: rightBound - 1
+					} }
 					ref="bottomRight"
-					className={ classNames( handleClassName, handleClassName + '-nwse' ) } />
+					className={ classNames( handleClassName, handleClassName + '-nwse' ) }
+				/>
 				<Draggable
 					onDrag={ this.onBottomLeftDrag }
 					onStop={ this.applyCrop }
 					y={ bottom }
 					x={ left }
 					controlled
-					bounds={ { bottom: this.props.bounds.bottomBound - 1, left: this.props.bounds.leftBound - 1, top, right } }
+					bounds={ {
+						top,
+						right,
+						bottom: bottomBound - 1,
+						left: leftBound - 1
+					} }
 					ref="bottomLeft"
-					className={ classNames( handleClassName, handleClassName + '-nesw' ) } />
+					className={ classNames( handleClassName, handleClassName + '-nesw' ) }
+				/>
 			</div>
 		);
 	}
-} );
+}
 
 export default connect(
 	( state ) => {
@@ -373,7 +453,14 @@ export default connect(
 		const aspectRatio = getImageEditorAspectRatio( state );
 		const { degrees } = getImageEditorTransform( state );
 
-		return { bounds, crop, aspectRatio, degrees };
+		return {
+			bounds,
+			crop,
+			aspectRatio,
+			degrees
+		};
 	},
-	{ imageEditorCrop }
-)( MediaModalImageEditorCrop );
+	{
+		imageEditorCrop
+	}
+)( ImageEditorCrop );
