@@ -47,6 +47,27 @@ export function addTerm( siteId, taxonomy, term ) {
 }
 
 /**
+ * Returns an action thunk, dispatching progress of a request to add a new term
+ * the site and taxonomy.
+ *
+ * @param  {Number} siteId   Site ID
+ * @param  {String} taxonomy Taxonomy Slug
+ * @param  {Number} termId   term ID
+ * @param  {Object} term     Object of new term attributes
+ * @return {Object}          Action object
+ */
+export function updateTerm( siteId, taxonomy, termId, term ) {
+	return ( dispatch ) => {
+		return wpcom.site( siteId ).taxonomy( taxonomy ).term( termId ).update( term ).then(
+			( data ) => {
+				dispatch( receiveTerm( siteId, taxonomy, data ) );
+				return data;
+			}
+		);
+	};
+}
+
+/**
  * Returns an action object signalling that a term has been received
  *
  * @param  {Number} siteId   Site ID
