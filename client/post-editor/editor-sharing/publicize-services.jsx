@@ -24,9 +24,9 @@ module.exports = React.createClass( {
 
 		return services.map( function( service ) {
 			return (
-				<li key={ service.name } className="editor-sharing__publicize-service">
+				<li key={ service.ID } className="editor-sharing__publicize-service">
 					<h5 className="editor-sharing__publicize-service-heading">{ service.label }</h5>
-					{ this.renderConnections( service.name ) }
+					{ this.renderConnections( service.ID ) }
 				</li>
 			);
 		}, this );
