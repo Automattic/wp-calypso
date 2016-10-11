@@ -4,6 +4,7 @@
 import React from 'react';
 import {
 	noop,
+	pick,
 	pickBy
 }	from 'lodash';
 
@@ -26,7 +27,8 @@ const Suggestions = React.createClass( {
 			suggest: noop,
 			terms: {},
 			input: "",
-			suggestions: {}
+			suggestions: {},
+			filterTerm: ""
 		}
 	},
 
@@ -130,15 +132,45 @@ const Suggestions = React.createClass( {
 	},
 
 	narrowDown: function( input ) {
+
+		let [ taxonomy, filter ] = input.split(":");
+		if( taxonomy === '' ){
+			// empty string or just ":" or ":filter" -
+			// TODO: just show welcome screen
+			return {}
+		}
+
+		let terms; //terms that we will use to create suggestions
+
+		if( filter !== undefined ) {
+			// this means that we have at least taxonomy:
+			// so check if this is a correct taxonomy
+			if( this.props.terms.hasOwnProperty( taxonomy ) ) {
+				//so we will only filter elements from this taxonomy
+				terms = pick( this.props.terms, taxonomy );
+			} else {
+				// not a valid taxonomy
+				// TODO tell something to the user
+				return {};
+			}
+		} else {
+			// we just have one word so treat is as a search terms
+			filter = taxonomy;
+			terms = this.props.terms;
+		}
+
 		const filtered = {};
 
-		for( const key in this.props.terms ) {
+		// store filtering term for highlithing
+		this.setState( { filterTerm: filter } );
+
+		for( const key in terms ) {
 			if( ! this.props.terms.hasOwnProperty( key ) ) {
 				continue;
 			}
 
-			filtered[ key ] = this.props.terms[ key ].filter(
-				term => term.indexOf( input ) !== -1
+			filtered[ key ] = terms[ key ].filter(
+				term => term.indexOf( filter ) !== -1
 			);
 		}
 
@@ -178,7 +210,7 @@ const Suggestions = React.createClass( {
 					return rendered.push(
 					 	<span className={ className } onMouseDown={ this.onMouseDown }>
 							<span className="suggestions__value-cathegory">{ key + ":" }</span>
-							{ this.createTextWithHighlight( value, this.props.input ) }
+							{ this.createTextWithHighlight( value, this.state.filterTerm ) }
 						</span>
 					)
 				}

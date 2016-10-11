@@ -10,7 +10,7 @@
 		text-transform: uppercase;
 		text-indent: 10px;
 		border-width: 0px 0.5px 0.5px 0.5px;
-		border-color: $gray;
+		border-color: $gray-light;
 		border-style: solid;
 	}
 
@@ -19,7 +19,7 @@
 		text-indent: 20px;
 		border-width: 0px 0.5px 0.5px 0.5px;
 		height: 24px;
-		border-color: $gray;
+		border-color: $gray-light;
 		border-style: solid;
 
 		.suggestions__value-emphasis {
