@@ -10,7 +10,7 @@ import { cloneDeep, findIndex, map, toArray } from 'lodash';
  */
 import TermTreeSelector from 'my-sites/term-tree-selector';
 import AddTerm from 'my-sites/term-tree-selector/add-term';
-import { editPost } from 'state/posts/actions';
+import { editPost, addTermForPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
@@ -29,6 +29,11 @@ class EditorTermSelector extends Component {
 	constructor( props ) {
 		super( props );
 		this.boundOnTermsChange = this.onTermsChange.bind( this );
+	}
+
+	onAddTerm = ( term ) => {
+		const { postId, taxonomyName, siteId } = this.props;
+		this.props.addTermForPost( siteId, taxonomyName, term, postId );
 	}
 
 	onTermsChange( selectedTerm ) {
@@ -58,7 +63,7 @@ class EditorTermSelector extends Component {
 	}
 
 	render() {
-		const { postType, postId, siteId, taxonomyName, canEditTerms } = this.props;
+		const { postType, siteId, taxonomyName, canEditTerms } = this.props;
 
 		return (
 			<div>
@@ -70,7 +75,12 @@ class EditorTermSelector extends Component {
 					siteId={ siteId }
 					multiple={ true }
 				/>
-				{ canEditTerms && <AddTerm taxonomy={ taxonomyName } postType={ postType } postId={ postId } /> }
+				{ canEditTerms &&
+					<AddTerm
+						taxonomy={ taxonomyName }
+						postType={ postType }
+						onSuccess={ this.onAddTerm } />
+				}
 			</div>
 		);
 	}
@@ -89,5 +99,5 @@ export default connect(
 			postId
 		};
 	},
-	{ editPost }
+	{ editPost, addTermForPost }
 )( EditorTermSelector );

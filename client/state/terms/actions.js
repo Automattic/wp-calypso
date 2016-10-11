@@ -34,9 +34,36 @@ export function addTerm( siteId, taxonomy, term ) {
 		} ) );
 
 		return wpcom.site( siteId ).taxonomy( taxonomy ).term().add( term ).then(
-			( data ) => dispatch( receiveTerm( siteId, taxonomy, data ) ),
+			( data ) => {
+				dispatch( receiveTerm( siteId, taxonomy, data ) );
+				return data;
+			},
 			() => Promise.resolve() // Silently ignore failure so we can proceed to remove temporary
-		).then( () => dispatch( removeTerm( siteId, taxonomy, temporaryId ) ) );
+		).then( data => {
+			dispatch( removeTerm( siteId, taxonomy, temporaryId ) );
+			return data;
+		} );
+	};
+}
+
+/**
+ * Returns an action thunk, dispatching progress of a request to add a new term
+ * the site and taxonomy.
+ *
+ * @param  {Number} siteId   Site ID
+ * @param  {String} taxonomy Taxonomy Slug
+ * @param  {Number} termId   term ID
+ * @param  {Object} term     Object of new term attributes
+ * @return {Object}          Action object
+ */
+export function updateTerm( siteId, taxonomy, termId, term ) {
+	return ( dispatch ) => {
+		return wpcom.site( siteId ).taxonomy( taxonomy ).term( termId ).update( term ).then(
+			( data ) => {
+				dispatch( receiveTerm( siteId, taxonomy, data ) );
+				return data;
+			}
+		);
 	};
 }
 
