@@ -34,15 +34,9 @@ export function addTerm( siteId, taxonomy, term ) {
 		} ) );
 
 		return wpcom.site( siteId ).taxonomy( taxonomy ).term().add( term ).then(
-			( data ) => {
-				dispatch( receiveTerm( siteId, taxonomy, data ) );
-				return data;
-			},
+			( data ) => dispatch( receiveTerm( siteId, taxonomy, data ) ),
 			() => Promise.resolve() // Silently ignore failure so we can proceed to remove temporary
-		).then( data => {
-			dispatch( removeTerm( siteId, taxonomy, temporaryId ) );
-			return data;
-		} );
+		).then( () => dispatch( removeTerm( siteId, taxonomy, temporaryId ) ) );
 	};
 }
 
