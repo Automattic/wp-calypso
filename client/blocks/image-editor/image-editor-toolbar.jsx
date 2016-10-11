@@ -123,7 +123,7 @@ class ImageEditorToolbar extends Component {
 				onClose={ this.onAspectClose }
 				position="top"
 				context={ popoverContext }
-				className="popover is-dialog-visible"
+				className="image-editor__toolbar-popover popover is-dialog-visible"
 			>
 				{ items.map( item => (
 					<PopoverMenuItem
