@@ -69,7 +69,7 @@ export default React.createClass( {
 		if ( e.defaultPrevented ) {
 			return;
 		}
-		if ( e.which === 13 ) {
+		if ( e.which === 13 && this.getValue() !== '' ) {
 			this.props.onAction( e );
 		}
 	},
