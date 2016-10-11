@@ -166,13 +166,13 @@ module.exports = React.createClass( {
 		if ( ! connection ) {
 			// When triggering a refresh from the primary action button, find
 			// the first broken connection owned by the current user.
-			connection = serviceConnections.getRefreshableConnections( this.props.service.ID )[0];
+			connection = serviceConnections.getRefreshableConnections( this.props.service.ID )[ 0 ];
 		}
 		this.props.onRefreshConnection( connection );
 	},
 
 	performAction: function() {
-		var connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID );
+		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID );
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
@@ -189,26 +189,23 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID ),
+		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID ),
 			connections = serviceConnections.getConnections( this.props.service.ID ),
-			elementClass;
-
-		elementClass = [
-			'sharing-service',
-			this.props.service.ID,
-			connectionStatus,
-			this.state.isOpen ? 'is-open' : ''
-		].join( ' ' );
-
-		const iconsMap = {
-			Facebook: 'facebook',
-			Twitter: 'twitter',
-			'Google+': 'google-plus',
-			LinkedIn: 'linkedin',
-			Tumblr: 'tumblr',
-			Path: 'path',
-			Eventbrite: 'eventbrite'
-		};
+			elementClass = [
+				'sharing-service',
+				this.props.service.ID,
+				connectionStatus,
+				this.state.isOpen ? 'is-open' : ''
+			].join( ' ' ),
+			iconsMap = {
+				Facebook: 'facebook',
+				Twitter: 'twitter',
+				'Google+': 'google-plus',
+				LinkedIn: 'linkedin',
+				Tumblr: 'tumblr',
+				Path: 'path',
+				Eventbrite: 'eventbrite'
+			};
 
 		const header = (
 			<div>
