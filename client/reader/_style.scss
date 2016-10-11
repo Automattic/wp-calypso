@@ -215,11 +215,12 @@
 
 // Custom breakpoints that drop action labels text
 // to prevent Likes text from breaking onto a new line
-.reader-share__button-label,
-.comment-button__label-status,
-.like-button__label-status {
+.is-group-reader .reader-share__button-label,
+.is-group-reader .comment-button__label-status,
+.is-group-reader .like-button__label-status {
 	@media( max-width: 530px ) {
 		display: none;
+		border: 1px solid red;
 	}
 
 	@media( min-width: 661px ) and ( max-width: 790px ) {

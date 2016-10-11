@@ -50,6 +50,7 @@ import DismissibleCard from 'blocks/dismissible-card/docs/example';
 import PostEditButton from 'blocks/post-edit-button/docs/example';
 import ReaderAvatar from 'blocks/reader-avatar/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
+import RefreshPostCard from 'blocks/reader-post-card/docs/example';
 
 export default React.createClass( {
 
@@ -116,6 +117,7 @@ export default React.createClass( {
 					<ReaderSiteStreamLink />
 					<ReaderFullPostHeader />
 					<AuthorCompactProfile />
+					<RefreshPostCard />
 					<PlanPrice />
 					<PlanThankYouCard />
 					<DismissibleCard />

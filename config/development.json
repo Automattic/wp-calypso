@@ -125,6 +125,7 @@
 		"reader/related-posts": true,
 		"reader/refresh/full-post-ab-test": true,
 		"reader/refresh/force-full-post": false,
+		"reader/refresh/stream": true,
 		"reader/search": true,
 		"reader/start": true,
 		"reader/tags-with-elasticsearch": true,

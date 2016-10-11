@@ -194,7 +194,7 @@ module.exports = {
 	},
 
 	following: function( context ) {
-		var StreamComponent = require( 'reader/stream' ),
+		var StreamComponent = require( 'reader/following/main' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Following',
 			followingStore = feedStreamFactory( 'following' ),
