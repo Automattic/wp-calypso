@@ -124,7 +124,7 @@ module.exports = {
 		allowExistingUsers: false
 	},
 	domainToPersonalPlanNudge: {
-		datestamp: '20161010',
+		datestamp: '20161011',
 		variations: {
 			original: 50,
 			nudge: 50
