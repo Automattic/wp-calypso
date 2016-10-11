@@ -21,6 +21,8 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	classNames = require( 'classnames' ),
 	config = require( 'config' );
 
+import MenuSeparator from 'components/popover/menu-separator';
+
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
 }
@@ -271,7 +273,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				<hr className="popover__hr" />
+				<MenuSeparator />
 				{ status }
 				{ childPageInfo }
 				{ frontPageInfo }
@@ -290,6 +292,8 @@ module.exports = React.createClass( {
 		if ( page.parent ) {
 			depthIndicator = '— ';
 		}
+
+		const setAsHomepageItem = this.getSetAsHomepageItem();
 
 		return (
 			<CompactCard className="page">
@@ -320,7 +324,8 @@ module.exports = React.createClass( {
 					position={ 'bottom left' }
 					context={ this.refs && this.refs.popoverMenuButton }
 				>
-					{ this.getSetAsHomepageItem() }
+					{ setAsHomepageItem }
+					{ setAsHomepageItem ? <MenuSeparator /> : null }
 					{ this.getViewItem() }
 					{ this.getPublishItem() }
 					{ this.getEditItem() }
