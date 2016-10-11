@@ -9,12 +9,10 @@ import classnames from 'classnames';
  * Internal Dependencies
  */
 import Card from 'components/card';
-import LikeButton from 'reader/like-button';
-import CommentButton from 'blocks/comment-button';
 import DisplayTypes from 'state/reader/posts/display-types';
 import Gravatar from 'components/gravatar';
 import Gridicon from 'components/gridicon';
-import ExternalLink from 'components/external-link';
+import ReaderPostActions from 'blocks/reader-post-actions';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -64,33 +62,8 @@ export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentCl
 						<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
 					</h1>
 					<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
-					<ul className="reader-post-card__social ignore-click">
-						<li className="reader-post-card__visit">
-							<ExternalLink icon={ true }>Visit</ExternalLink>
-						</li>
-						<li className="reader-post-card__share">
-							<Gridicon icon="share" />
-							<span className="reader-share__button-label">Share</span>
-						</li>
-						<li className="reader-post-card__comments">
-							<CommentButton
-								commentCount={ post.discussion.comment_count }
-								tagName="span"
-								showLabel={ true }
-								onClick={ onCommentClick } />
-						</li>
-						<li className="reader-post-card__likes">
-							<LikeButton
-								siteId={ post.site_ID }
-								postId={ post.ID }
-								tagName="span"
-								showZeroCount={ true }
-								showLabel={ true } />
-						</li>
-						<li className="reader-post-card__post-options">
-							<Gridicon icon="ellipsis" />
-						</li>
-					</ul>
+					{ post &&
+						<ReaderPostActions post={ post } onCommentClick={ onCommentClick } showEdit={ false } className="ignore-click" /> }
 				</div>
 			</div>
 		</Card>
