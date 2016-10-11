@@ -1,29 +1,69 @@
 .domain-to-plan-nudge__card.card {
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
 		0 1px 2px lighten( $gray, 30% ), 0 -3px 0 0 $alert-yellow;
+
+	@media (max-width: 480px), (min-width: 660px) and (max-width: 750px) {
+		box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+			0 1px 2px lighten( $gray, 30% );
+	}
 }
 
 .domain-to-plan-nudge__header {
 	display: flex;
+
+	@media (max-width: 480px), (min-width: 660px) and (max-width: 750px) {
+		display: block;
+	}
 }
 
 .domain-to-plan-nudge__header-icon {
 	width: 58px;
 	height: 58px;
+
+	@media (max-width: 480px), (min-width: 660px) and (max-width: 750px) {
+		width: 50px;
+		height: 50px;
+	}
 }
 
 .domain-to-plan-nudge__header-copy {
 	margin-left: 20px;
+
+	@media (max-width: 480px), (min-width: 660px) and (max-width: 750px) {
+		margin-left: 0;
+		margin-top: -50px;
+	}
 }
 
 .domain-to-plan-nudge__header-title {
 	font-size: 22px;
 	color: $blue-wordpress;
+
+	@media (max-width: 480px), (min-width: 660px) and (max-width: 750px) {
+		min-height: 50px;
+		font-size: 18px;
+		padding-right: 32px;
+		padding-left: 62px;
+	}
 }
 
 .domain-to-plan-nudge__header-features {
 	margin: 14px 0 30px 0;
 	list-style: none;
+
+	@media (max-width: 480px), (min-width: 660px) and (max-width: 750px) {
+		padding: 4px 16px 12px;
+		margin: 12px -16px 0;
+		font-size: 13px;
+		background-color: lighten( $gray, 35% );
+		border-top: solid 2px $alert-yellow;
+		border-bottom: solid 1px lighten( $gray, 20% );
+	}
+
+	@media (min-width: 660px) and (max-width: 750px) {
+		margin-left: -24px;
+		margin-right: -24px;
+	}
 }
 
 .domain-to-plan-nudge__header-features-item {
@@ -36,6 +76,11 @@
 	left: 0;
 	top: 8px;
 	fill: $alert-green;
+
+	@media (max-width: 480px), (min-width: 660px) and (max-width: 750px) {
+		width: 18px;
+		height: 18px;
+	}
 }
 
 .domain-to-plan-nudge__actions-group {
@@ -45,12 +90,28 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 13px 24px;
+
+	@media (max-width: 480px), (min-width: 660px) and (max-width: 750px) {
+		flex-direction: column;
+		padding: 8px 0 0;
+		margin: 0;
+	}
 }
 
 .domain-to-plan-nudge__plan-price-group {
 	display: flex;
 	align-items: center;
 
+	@media (max-width: 480px), (min-width: 660px) and (max-width: 750px) {
+		margin-bottom: 4px;
+	}
+}
+
+.domain-to-plan-nudge__upgrade-group,
+.domain-to-plan-nudge__upgrade-button {
+	@media (max-width: 480px), (min-width: 660px) and (max-width: 750px) {
+		width: 100%;
+	}
 }
 
 .domain-to-plan-nudge__plan-price-timeframe {

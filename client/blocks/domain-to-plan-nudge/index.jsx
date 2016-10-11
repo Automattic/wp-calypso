@@ -176,6 +176,7 @@ class DomainToPlanNudge extends Component {
 					</div>
 					<div className="domain-to-plan-nudge__upgrade-group">
 						<Button
+							className="domain-to-plan-nudge__upgrade-button"
 							onClick={ this.personalCheckout }
 							primary
 						>
