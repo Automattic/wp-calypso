@@ -4,14 +4,14 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import noop from 'lodash/noop';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
 
-export const Notice = React.createClass( {
+export default React.createClass( {
+	displayName: 'Notice',
 	dismissTimeout: null,
 
 	getDefaultProps() {
@@ -115,7 +115,7 @@ export const Notice = React.createClass( {
 			dismiss = (
 				<span tabIndex="0" className="notice__dismiss" onClick={ this.props.onDismissClick } >
 					<Gridicon icon="cross" size={ 24 } />
-					<span className="screen-reader-text">{ this.props.translate( 'Dismiss' ) }</span>
+					<span className="screen-reader-text">{ this.translate( 'Dismiss' ) }</span>
 				</span>
 				);
 		}
@@ -131,5 +131,3 @@ export const Notice = React.createClass( {
 		);
 	}
 } );
-
-export default localize( Notice );
