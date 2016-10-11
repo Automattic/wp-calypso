@@ -13,12 +13,14 @@ import {
 	mapValues,
 	omit,
 	property,
+	startsWith,
 } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
+import sections from 'sections';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
@@ -32,6 +34,14 @@ import {
 	targetForSlug,
 } from './positioning';
 
+const pathToSection = path => {
+	const match = find( sections.get(), section =>
+			section.paths.some( sectionPath =>
+				startsWith( path, sectionPath ) ) );
+
+	return match && match.name;
+};
+
 const debug = debugFactory( 'calypso:guided-tours' );
 const contextTypes = Object.freeze( {
 	branching: PropTypes.object.isRequired,
@@ -40,6 +50,7 @@ const contextTypes = Object.freeze( {
 	isValid: PropTypes.func.isRequired,
 	tour: PropTypes.string.isRequired,
 	tourVersion: PropTypes.string.isRequired,
+	sectionName: PropTypes.string.isRequired,
 	shouldPause: PropTypes.bool.isRequired,
 	step: PropTypes.string.isRequired,
 	lastAction: PropTypes.object,
@@ -87,8 +98,8 @@ export class Step extends Component {
 	static contextTypes = contextTypes;
 
 	componentWillMount() {
-		this.setSection();
-		debug( 'Step#componentWillMount: section:', this.section );
+		this.setStepSection( this.context, { init: true } );
+		debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 		this.skipIfInvalidContext( this.props, this.context );
 		this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || global.window;
 		this.setStepPosition( this.props );
@@ -99,13 +110,9 @@ export class Step extends Component {
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
-		if ( nextContext.step !== this.context.step ) {
-			this.setSection();
-			debug( 'Step#componentWillReceiveProps: section:', this.section );
-		}
-
-		this.skipIfInvalidContext( nextProps, nextContext );
+		this.setStepSection( nextContext );
 		this.quitIfInvalidRoute( nextProps, nextContext );
+		this.skipIfInvalidContext( nextProps, nextContext );
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
 		this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
@@ -118,18 +125,51 @@ export class Step extends Component {
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 	}
 
-	setSection() {
-		// keep track of current section for "blanket exit"
-		// (i.e. quitIfInvalidRoute in `Step` and `Continue`)
-		// TODO(mcsf,lsinger): works only in a few cases and could be more elegant
-		// e.g. doesn't work when switching from reader start to discover
-		// as the Step gets re-created anew
-		// (better than false positives, though)
-		this.section = this.pathToSection( location.pathname );
+	/*
+	 * A step belongs to a specific section. This datum is used by the "blank
+	 * exit" feature (cf. quitIfInvalidRoute in Step and Continue).
+	 *
+	 * `setStepSection` has specific logic to deal with the fact that `step` and
+	 * `section` transitions are not synchronized. Notably, navigating to a
+	 * different section may trigger a route change (ROUTE_SET) before a step
+	 * change (GUIDED_TOUR_UPDATE). This is further obfuscated by code
+	 * splitting, because `section` doesn't transition immediately.
+	 *
+	 * Below, `shouldPause` tells us that we're waiting for the section to
+	 * change.
+	 */
+	setStepSection( nextContext, { init = false } = {} ) {
+		if ( init ) {
+			// hard reset on Step instantiation
+			this.stepSection = nextContext.sectionName;
+			return;
+		}
+
+		debug( 'Step#componentWillReceiveProps: stepSection:',
+				this.stepSection,
+				nextContext.sectionName );
+
+		if ( this.context.step !== nextContext.step ) {
+			// invalidate if waiting for section
+			this.stepSection = nextContext.shouldPause
+				? null
+				: nextContext.sectionName;
+		} else if ( this.context.shouldPause &&
+				! nextContext.shouldPause &&
+				! this.stepSection ) {
+			// only write if previously invalidated
+			this.stepSection = nextContext.sectionName;
+		}
 	}
 
-	quitIfInvalidRoute( props, context ) {
-		const { step, branching, lastAction } = context;
+	quitIfInvalidRoute( nextProps, nextContext ) {
+		if ( nextContext.step !== this.context.step ||
+				nextContext.sectionName === this.context.sectionName ||
+				! nextContext.sectionName ) {
+			return;
+		}
+
+		const { step, branching, lastAction } = nextContext;
 		const hasContinue = !! branching[ step ].continue;
 		const hasJustNavigated = lastAction.type === ROUTE_SET;
 
@@ -154,13 +194,8 @@ export class Step extends Component {
 	}
 
 	isDifferentSection( path ) {
-		debug( 'isDifferentSection', this.section, path );
-		return this.section && path &&
-			this.section !== this.pathToSection( path );
-	}
-
-	pathToSection( path ) {
-		return path && path.split( '/' ).slice( 0, 2 ).join( '/' );
+		return this.stepSection && path &&
+			this.stepSection !== pathToSection( path );
 	}
 
 	skipIfInvalidContext( props, context ) {
@@ -404,9 +439,9 @@ export const makeTour = tree => {
 		}
 
 		setTourMeta( props ) {
-			const { isValid, lastAction, next, quit, shouldPause, stepName } = props;
+			const { isValid, lastAction, next, quit, sectionName, shouldPause, stepName } = props;
 			this.tourMeta = {
-				next, quit, isValid, lastAction, shouldPause,
+				next, quit, isValid, lastAction, sectionName, shouldPause,
 				step: stepName,
 				branching: tourBranching( tree ),
 				tour: tree.props.name,
