@@ -42,6 +42,7 @@ describe( 'index', function() {
 				getProducts: noop
 			} )
 		} );
+		mockery.registerMock( 'blocks/domain-to-plan-nudge', EmptyComponent );
 	} );
 
 	before( () => {
@@ -86,7 +87,12 @@ describe( 'index', function() {
 	} );
 
 	function renderWithProps( props = defaultProps ) {
-		return ReactDom.render( <DomainList { ...props } />, useFakeDom.getContainer() );
+		return ReactDom.render(
+			<DomainList
+				{ ...props }
+			/>,
+			useFakeDom.getContainer()
+		);
 	}
 
 	describe( 'regular cases', function() {

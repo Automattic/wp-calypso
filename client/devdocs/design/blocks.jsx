@@ -49,7 +49,6 @@ import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
 import DismissibleCard from 'blocks/dismissible-card/docs/example';
 import PostEditButton from 'blocks/post-edit-button/docs/example';
 import ReaderAvatar from 'blocks/reader-avatar/docs/example';
-import DomainToPlanNudge from 'blocks/domain-to-plan-nudge/docs/example';
 import ImageEditor from 'blocks/image-editor/docs/example';
 
 export default React.createClass( {
@@ -121,7 +120,6 @@ export default React.createClass( {
 					<PlanThankYouCard />
 					<DismissibleCard />
 					<ReaderAvatar />
-					<DomainToPlanNudge />
 				</Collection>
 			</Main>
 		);
