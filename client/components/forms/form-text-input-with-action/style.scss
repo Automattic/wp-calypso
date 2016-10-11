@@ -1,0 +1,45 @@
+.form-text-input-with-action {
+	@extend %form-field;
+	display: flex;
+	padding: 0;
+
+	&.is-focused {
+		border-color: $blue-wordpress;
+		outline: none;
+		box-shadow: 0 0 0 2px $blue-light;
+	}
+
+	&.is-disabled {
+		background: $gray-light;
+		border-color: lighten( $gray, 30% );
+		color: lighten( $gray, 10% );
+		opacity: 1;
+		-webkit-text-fill-color: lighten( $gray, 10% );
+
+		&:hover {
+			cursor: default;
+		}
+
+		&::placeholder {
+			color: lighten( $gray, 10% );
+		}
+	}
+
+}
+
+.form-text-input-with-action__button.is-compact {
+	flex-grow: 0;
+	margin: 4px;
+	text-transform: none;
+}
+
+input[type="text"].form-text-input-with-action__input {
+	border: none;
+	flex-basis: 0;
+	flex-grow: 1;
+}
+
+input[type="text"].form-text-input-with-action__input:focus {
+	border: none;
+	box-shadow: none;
+}
