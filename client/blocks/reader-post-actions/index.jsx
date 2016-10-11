@@ -36,12 +36,12 @@ const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, s
 			}
 			{ showEdit && site && userCan( 'edit_post', post ) &&
 				<li className="reader-post-actions__item">
-					<PostEditButton post={ post } site={ site } onClick={ onEditClick } />
+					<PostEditButton post={ post } site={ site } onClick={ onEditClick } iconSize={ iconSize } />
 				</li>
 			}
 			{ shouldShowShare( post ) &&
 				<li className="reader-post-actions__item">
-					<ShareButton post={ post } position="bottom" tagName="div" />
+					<ShareButton post={ post } position="bottom" tagName="div" iconSize={ iconSize } />
 				</li>
 			}
 			{ shouldShowComments( post ) &&
@@ -50,7 +50,8 @@ const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, s
 						key="comment-button"
 						commentCount={ post.discussion.comment_count }
 						onClick={ onCommentClick }
-						tagName="div" />
+						tagName="div"
+						size={ iconSize } />
 				</li>
 			}
 			{ shouldShowLikes( post ) &&
@@ -61,7 +62,8 @@ const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, s
 						postId={ +post.ID }
 						fullPost={ true }
 						tagName="div"
-						forceCounter={ true } />
+						forceCounter={ true }
+						isMini={ iconSize < 24 } />
 				</li>
 			}
 		</ul>

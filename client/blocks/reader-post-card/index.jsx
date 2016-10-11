@@ -70,7 +70,8 @@ export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentCl
 					showVisit={ true }
 					onCommentClick={ onCommentClick }
 					showEdit={ false }
-					className="ignore-click" />
+					className="ignore-click"
+					iconSize={ 18 } />
 			}
 		</Card>
 	);
