@@ -13,7 +13,7 @@ import {
 } from 'layout/guided-tours/config-elements';
 import {
 	isEnabled,
-	inSection,
+	// inSection,
 } from 'state/ui/guided-tours/contexts';
 import { getScrollableSidebar } from 'layout/guided-tours/positioning';
 import Gridicon from 'components/gridicon';
@@ -65,7 +65,6 @@ export const SiteTitleTour = makeTour(
 			target="site-title-input"
 			arrow="top-left"
 			placement="below"
-			when={ inSection( 'settings' ) }
 			next="site-title"
 		>
 			<p className="guided-tours__step-text">
@@ -73,11 +72,12 @@ export const SiteTitleTour = makeTour(
 					translate( 'Go ahead and change the title to whatever you want!' )
 				}
 			</p>
-			{/* TODO (marekhrabe): change to either onChange of the input or just click */}
+			{/* TODO (marekhrabe): change to either onChange of the input or just click
 			<div className="guided-tours__choice-button-row">
 				<Next step="finish" when={ inSection( 'settings' ) } hidden />
 				<Quit />
 			</div>
+			*/}
 		</Step>
 
 		<Step name="finish"
