@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { has, isEmpty } from 'lodash';
 import classNames from 'classnames';
 
@@ -10,10 +11,13 @@ import classNames from 'classnames';
  */
 import Accordion from 'components/accordion';
 import Gridicon from 'components/gridicon';
+import QueryPostFormats from 'components/data/query-post-formats';
 import siteUtils from 'lib/site/utils';
 import PostFormats from './';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPostFormats } from 'state/post-formats/selectors';
 
-export default React.createClass( {
+const EditorPostFormatsAccordion = React.createClass( {
 	displayName: 'EditorPostFormatsAccordion',
 
 	propTypes: {
@@ -68,12 +72,23 @@ export default React.createClass( {
 				subtitle={ this.getSubtitle() }
 				icon={ <Gridicon icon="types" /> }
 				className={ classes }>
+				<QueryPostFormats siteId={ this.props.site.ID } />
 				<PostFormats
+					site={ this.props.site }
 					post={ post }
-					postFormats={ postFormats }
 					value={ this.getFormatValue() }
 				/>
 			</Accordion>
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			postFormats: getPostFormats( state, siteId )
+		};
+	}
+)( EditorPostFormatsAccordion );
