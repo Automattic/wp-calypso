@@ -41,7 +41,11 @@ import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mapping
 import { recordTracksEvent } from 'state/analytics/actions';
 import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
-import { isBusiness, isEnterprise } from 'lib/products-values';
+import {
+	isBusiness,
+	isEnterprise,
+	isJetpackBusiness
+} from 'lib/products-values';
 import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 
 const serviceIds = {
@@ -55,7 +59,7 @@ const serviceIds = {
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
 
-const hasBusinessPlan = overSome( isBusiness, isEnterprise );
+const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;

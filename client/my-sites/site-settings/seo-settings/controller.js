@@ -34,8 +34,8 @@ export default {
 			return;
 		}
 
-		// redirect seo and analytics tabs to general for Jetpack sites
-		if ( site.jetpack ) {
+		// redirect analytics tab to general for Jetpack sites
+		if ( site.jetpack && basePath === '/settings/analytics' ) {
 			page.redirect( '/settings/general/' + site.slug );
 			return;
 		}
