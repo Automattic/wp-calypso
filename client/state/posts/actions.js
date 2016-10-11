@@ -1,14 +1,10 @@
 /**
- * External dependencies
- */
-import { isNumber, toArray } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
+import { extendAction } from 'state/utils';
 import { normalizePostForApi } from './utils';
-import { getEditedPost } from 'state/posts/selectors';
+import { addTerm } from 'state/terms/actions';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -301,7 +297,9 @@ export function restorePost( siteId, postId ) {
 }
 
 /**
- * Returns an action thunk which, when dispatched, adds a term to the current edited post
+ * Returns an action thunk which, when dispatched, triggers a network request
+ * to create a new term. All actions dispatched by the thunk will include meta
+ * to associate it with the specified post ID.
  *
  * @param  {Number}   siteId   Site ID
  * @param  {String}   taxonomy Taxonomy Slug
@@ -310,25 +308,5 @@ export function restorePost( siteId, postId ) {
  * @return {Function}          Action thunk
  */
 export function addTermForPost( siteId, taxonomy, term, postId ) {
-	return ( dispatch, getState ) => {
-		const state = getState();
-		const post = getEditedPost( state, siteId, postId );
-
-		// if there is no post, no term, or term is temporary, bail
-		if ( ! post || ! term || ! isNumber( term.ID ) ) {
-			return;
-		}
-
-		const postTerms = post.terms || {};
-
-		// ensure we have an array since API returns an object
-		const taxonomyTerms = toArray( postTerms[ taxonomy ] );
-		taxonomyTerms.push( term );
-
-		dispatch( editPost( siteId, postId, {
-			terms: {
-				[ taxonomy ]: taxonomyTerms
-			}
-		} ) );
-	};
+	return extendAction( addTerm( siteId, taxonomy, term ), { postId } );
 }

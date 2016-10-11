@@ -6,7 +6,7 @@ import ReactDom from 'react-dom';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find, noop } from 'lodash';
+import { get, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import TermTreeSelectorTerms from './terms';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import FormInputValidation from 'components/forms/form-input-validation';
-import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import FormCheckbox from 'components/forms/form-checkbox';
@@ -27,7 +26,7 @@ import viewport from 'lib/viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
-import { addTerm } from 'state/terms/actions';
+import { addTermForPost } from 'state/posts/actions';
 
 class TermSelectorAddTerm extends Component {
 	static initialState = {
@@ -40,19 +39,12 @@ class TermSelectorAddTerm extends Component {
 
 	static propTypes = {
 		labels: PropTypes.object,
-		onSuccess: PropTypes.func,
 		postType: PropTypes.string,
 		postId: PropTypes.number,
-		showDescriptionInput: PropTypes.bool,
 		siteId: PropTypes.number,
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
 		translate: PropTypes.func
-	};
-
-	static defaultProps = {
-		onSuccess: noop,
-		showDescriptionInput: false
 	};
 
 	constructor( props ) {
@@ -100,15 +92,9 @@ class TermSelectorAddTerm extends Component {
 
 	getFormValues() {
 		const name = ReactDom.findDOMNode( this.refs.termName ).value.trim();
-		const formValues = { name };
-		if ( this.props.isHierarchical ) {
-			formValues.parent = this.state.selectedParent.length ? this.state.selectedParent[ 0 ] : 0;
-		}
-		if ( this.props.showDescriptionInput ) {
-			formValues.description = ReactDom.findDOMNode( this.refs.termDescription ).value.trim();
-		}
+		const parent = this.state.selectedParent.length ? this.state.selectedParent[ 0 ] : 0;
 
-		return formValues;
+		return { name, parent };
 	}
 
 	isValid() {
@@ -123,7 +109,7 @@ class TermSelectorAddTerm extends Component {
 		const lowerCasedTermName = values.name.toLowerCase();
 		const matchingTerm = find( this.props.terms, ( term ) => {
 			return ( term.name.toLowerCase() === lowerCasedTermName ) &&
-				( ! this.props.isHierarchical || ( term.parent === values.parent ) );
+				( term.parent === values.parent );
 		} );
 
 		if ( matchingTerm ) {
@@ -159,43 +145,12 @@ class TermSelectorAddTerm extends Component {
 
 		const { postId, siteId, taxonomy } = this.props;
 
-		this.props
-			.addTerm( siteId, taxonomy, term, postId )
-			.then( this.props.onSuccess );
+		this.props.addTermForPost( siteId, taxonomy, term, postId );
 		this.closeDialog();
 	}
 
-	renderParentSelector() {
-		const { labels, siteId, taxonomy, translate } = this.props;
-		const { searchTerm, selectedParent } = this.state;
-		const query = {};
-		if ( searchTerm && searchTerm.length ) {
-			query.search = searchTerm;
-		}
-
-		return (
-			<FormFieldset>
-				<FormLegend>
-					{ labels.parent_item }
-				</FormLegend>
-				<FormLabel>
-					<FormCheckbox ref="topLevel" checked={ this.state.isTopLevel } onChange={ this.boundOnTopLevelChange } />
-					<span>{ translate( 'Top level', { context: 'Terms: New term being created is top level' } ) }</span>
-				</FormLabel>
-				<TermTreeSelectorTerms
-					siteId={ siteId }
-					taxonomy={ taxonomy }
-					onSearch={ this.boundOnSearch }
-					onChange={ this.boundOnParentChange }
-					query={ query }
-					selected={ selectedParent }
-				/>
-			</FormFieldset>
-		);
-	}
-
 	render() {
-		const { isHierarchical, labels, translate, terms, showDescriptionInput } = this.props;
+		const { labels, siteId, taxonomy, translate, terms } = this.props;
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' )
@@ -206,6 +161,12 @@ class TermSelectorAddTerm extends Component {
 			disabled: ! this.state.isValid,
 			onClick: this.boundSaveTerm
 		} ];
+
+		const { searchTerm, selectedParent } = this.state;
+		const query = {};
+		if ( searchTerm && searchTerm.length ) {
+			query.search = searchTerm;
+		}
 
 		const isError = this.state.error && this.state.error.length;
 		const totalTerms = terms ? terms.length : 0;
@@ -232,16 +193,23 @@ class TermSelectorAddTerm extends Component {
 							onKeyUp={ this.boundValidateInput } />
 						{ isError && <FormInputValidation isError text={ this.state.error } /> }
 					</FormFieldset>
-					{ showDescriptionInput && <FormFieldset>
-							<FormLegend>
-								{ translate( 'Description', { context: 'Terms: Term description label' } ) }
-							</FormLegend>
-							<FormTextarea
-								ref="termDescription"
-								onKeyUp={ this.boundValidateInput } />
-						</FormFieldset>
-					}
-					{ isHierarchical && this.renderParentSelector() }
+					<FormFieldset>
+						<FormLegend>
+							{ labels.parent_item }
+						</FormLegend>
+						<FormLabel>
+							<FormCheckbox ref="topLevel" checked={ this.state.isTopLevel } onChange={ this.boundOnTopLevelChange } />
+							<span>{ translate( 'Top level', { context: 'Terms: New term being created is top level' } ) }</span>
+						</FormLabel>
+						<TermTreeSelectorTerms
+							siteId={ siteId }
+							taxonomy={ taxonomy }
+							onSearch={ this.boundOnSearch }
+							onChange={ this.boundOnParentChange }
+							query={ query }
+							selected={ selectedParent }
+						/>
+					</FormFieldset>
 				</Dialog>
 			</div>
 		);
@@ -252,16 +220,13 @@ export default connect(
 	( state, ownProps ) => {
 		const { taxonomy, postType } = ownProps;
 		const siteId = getSelectedSiteId( state );
-		const taxonomyDetails = getPostTypeTaxonomy( state, siteId, postType, taxonomy );
-		const labels = get( taxonomyDetails, 'labels', {} );
-		const isHierarchical = taxonomyDetails.hierarchical;
+		const labels = get( getPostTypeTaxonomy( state, siteId, postType, taxonomy ), 'labels', {} );
 
 		return {
 			terms: getTerms( state, siteId, taxonomy ),
-			isHierarchical,
 			labels,
 			siteId
 		};
 	},
-	{ addTerm }
+	{ addTermForPost }
 )( localize( TermSelectorAddTerm ) );
