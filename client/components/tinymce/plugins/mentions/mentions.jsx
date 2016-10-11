@@ -121,8 +121,7 @@ const Mentions = React.createClass( {
 					isVisible={ showPopover }
 					popoverContext={ popoverContext }
 					onClick={ this.handleClick }
-					onClose={ this.handleClose }>
-				</SuggestionList>
+					onClose={ this.handleClose } />
 			</div>
 		);
 	}
