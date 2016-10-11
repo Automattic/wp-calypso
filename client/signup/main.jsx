@@ -41,6 +41,8 @@ import utils from './utils';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
+import DocumentHead from 'components/data/document-head';
+import { translate } from 'i18n-calypso';
 
 /**
  * Constants
@@ -332,6 +334,11 @@ const Signup = React.createClass( {
 			null;
 	},
 
+	pageTitle() {
+		const accountFlowName = 'account';
+		return this.props.flowName === accountFlowName ? translate( 'Create an account' ) : translate( 'Create a site' );
+	},
+
 	currentStep() {
 		let currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
@@ -385,6 +392,7 @@ const Signup = React.createClass( {
 
 		return (
 			<span>
+				<DocumentHead title={ this.pageTitle() } />
 				{
 					this.state.loadingScreenStartTime ?
 					null :
