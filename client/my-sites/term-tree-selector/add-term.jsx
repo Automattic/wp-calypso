@@ -254,7 +254,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 		const taxonomyDetails = getPostTypeTaxonomy( state, siteId, postType, taxonomy );
 		const labels = get( taxonomyDetails, 'labels', {} );
-		const isHierarchical = taxonomyDetails.hierarchical;
+		const isHierarchical = get( taxonomyDetails, 'hierarchical', false );
 
 		return {
 			terms: getTerms( state, siteId, taxonomy ),
