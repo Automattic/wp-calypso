@@ -39,7 +39,7 @@ const ImageEditor = React.createClass( {
 		siteId: PropTypes.number,
 		onImageEditorClose: PropTypes.func,
 		onImageEditorCancel: PropTypes.func,
-		additionalClasses: PropTypes.string,
+		className: PropTypes.string,
 
 		// Redux props
 		site: PropTypes.object,
@@ -181,13 +181,13 @@ const ImageEditor = React.createClass( {
 
 	render() {
 		const {
-			additionalClasses,
+			className,
 			siteId
 		} = this.props;
 
 		const classes = classNames(
 			'image-editor',
-			additionalClasses
+			className
 		);
 
 		return (

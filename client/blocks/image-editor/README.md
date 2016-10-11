@@ -54,14 +54,14 @@ A function which will get called on saving an edited image (closing with saving)
 
 A function which will get called on cancelling the image editor (closing without saving).
 
-### `additionalClasses`
+### `className`
 
 <table>
 	<tr><th>Type</th><td>string</td></tr>
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-String of classes (class names) appended to the image editor wrapper (`.image-editor [additionalClasses]`).
+String of classes (class names) appended to the image editor wrapper (`.image-editor [className]`).
 
 ## Example
 
