@@ -3,6 +3,7 @@
  */
 var take = require( 'lodash/take' ),
 	clone = require( 'lodash/clone' ),
+	uniq = require( 'lodash/uniq' ),
 	last = require( 'lodash/last' ),
 	map = require( 'lodash/map' ),
 	difference = require( 'lodash/difference' ),
@@ -229,9 +230,7 @@ var TokenField = React.createClass( {
 	_onInputChange: function( event ) {
 		const text = event.value;
 		const separator = this.props.tokenizeOnSpace ? /[ ,]+/ : /,+/;
-		const items = text
-			.split( separator )
-			.filter( item => !! this.props.saveTransform( item ).length );
+		const items = text.split( separator );
 
 		if ( items.length > 1 ) {
 			this._addNewToken( items.slice( 0, -1 ), { isBatchOperation: true } );
@@ -475,20 +474,22 @@ var TokenField = React.createClass( {
 	},
 
 	_addNewToken: function( token, { isBatchOperation = false } = {} ) {
-		const tokens = Array.isArray( token ) ? token : [ token ];
-		const newValue = clone( this.props.value );
-		let newValueIndex = this._getIndexOfInput();
+		const tokens = uniq(
+			( Array.isArray( token ) ? token : [ token ] )
+				.map( this.props.saveTransform )
+				.filter( Boolean )
+				.filter( token => ! this._valueContainsToken( token ) )
+		);
 
-		tokens.forEach( token => {
-			token = this.props.saveTransform( token );
-
-			if ( ! this._valueContainsToken( token ) ) {
-				newValue.splice( newValueIndex++, 0, token );
-			}
-		} );
-
-		debug( '_addNewToken: onChange', newValue );
-		this.props.onChange( newValue );
+		if ( tokens.length > 0 ) {
+			const newValue = clone( this.props.value );
+			newValue.splice.apply(
+				newValue,
+				[ this._getIndexOfInput(), 0 ].concat( tokens )
+			);
+			debug( '_addNewToken: onChange', newValue );
+			this.props.onChange( newValue );
+		}
 
 		if ( isBatchOperation ) {
 			return;
