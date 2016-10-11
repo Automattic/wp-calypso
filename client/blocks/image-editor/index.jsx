@@ -37,7 +37,7 @@ const ImageEditor = React.createClass( {
 		// Component props
 		media: PropTypes.object,
 		siteId: PropTypes.number,
-		onImageEditorClose: PropTypes.func,
+		onImageEditorSave: PropTypes.func,
 		onImageEditorCancel: PropTypes.func,
 		className: PropTypes.string,
 
@@ -51,7 +51,7 @@ const ImageEditor = React.createClass( {
 	getDefaultProps() {
 		return {
 			media: null,
-			onImageEditorClose: noop,
+			onImageEditorSave: noop,
 			onImageEditorCancel: noop
 		};
 	},
@@ -90,8 +90,8 @@ const ImageEditor = React.createClass( {
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 		canvasComponent.toBlob( this.onImageExtracted );
 
-		if ( this.props.onImageEditorClose ) {
-			this.props.onImageEditorClose();
+		if ( this.props.onImageEditorSave ) {
+			this.props.onImageEditorSave();
 		}
 	},
 

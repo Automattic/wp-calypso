@@ -210,7 +210,7 @@ module.exports = React.createClass( {
 		this.setView( ModalViews.IMAGE_EDITOR );
 	},
 
-	onImageEditorClose: function() {
+	onImageEditorSave: function() {
 		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
 		this.setView( ModalViews.LIST );
 	},
@@ -408,7 +408,7 @@ module.exports = React.createClass( {
 					<ImageEditor
 						siteId={ site && site.ID }
 						media={ media }
-						onImageEditorClose={ this.onImageEditorClose }
+						onImageEditorSave={ this.onImageEditorSave }
 						onImageEditorCancel={ this.onImageEditorCancel }
 					/>
 				);
