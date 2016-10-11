@@ -86,7 +86,13 @@ describe( 'index', function() {
 	} );
 
 	function renderWithProps( props = defaultProps ) {
-		return ReactDom.render( <DomainList { ...props } />, useFakeDom.getContainer() );
+		return ReactDom.render(
+			<DomainList
+				{ ...props }
+				inUnitTesting={ true }
+			/>,
+			useFakeDom.getContainer()
+		);
 	}
 
 	describe( 'regular cases', function() {

@@ -93,10 +93,12 @@ export const List = React.createClass( {
 			return null;
 		}
 
+		const { inUnitTesting } = this.props;
+
 		return (
 			<Main wideLayout={ isPlanFeaturesEnabled() }>
 				<SidebarNavigation />
-				<DomainToPlanNudge />
+				{ ! inUnitTesting && <DomainToPlanNudge /> }
 				<UpgradesNavigation
 					path={ this.props.context.path }
 					cart={ this.props.cart }
