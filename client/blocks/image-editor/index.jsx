@@ -1,19 +1,20 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import noop from 'lodash/noop';
+import { noop } from 'lodash';
 import path from 'path';
 import { localize } from 'i18n-calypso';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Notice from 'components/notice';
-import EditCanvas from './image-editor-canvas';
-import EditToolbar from './image-editor-toolbar';
-import EditButtons from './image-editor-buttons';
+import ImageEditorCanvas from './image-editor-canvas';
+import ImageEditorToolbar from './image-editor-toolbar';
+import ImageEditorButtons from './image-editor-buttons';
 import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import closeOnEsc from 'lib/mixins/close-on-esc';
@@ -25,30 +26,32 @@ import {
 import {
 	getImageEditorFileInfo
 } from 'state/ui/editor/image-editor/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSite } from 'state/sites/selectors';
+import QuerySites from 'components/data/query-sites';
 
-const MediaModalImageEditor = React.createClass( {
+const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
 
-	displayName: 'MediaModalImageEditor',
-
 	propTypes: {
-		site: React.PropTypes.object,
-		items: React.PropTypes.array,
-		selectedIndex: React.PropTypes.number,
-		src: React.PropTypes.string,
-		fileName: React.PropTypes.string,
-		mimeType: React.PropTypes.string,
-		setImageEditorFileInfo: React.PropTypes.func,
-		title: React.PropTypes.string,
-		translate: React.PropTypes.func,
-		onImageEditorClose: React.PropTypes.func,
-		onImageEditorCancel: React.PropTypes.func
+		// Component props
+		media: PropTypes.object,
+		siteId: PropTypes.number,
+		onImageEditorSave: PropTypes.func,
+		onImageEditorCancel: PropTypes.func,
+		className: PropTypes.string,
+
+		// Redux props
+		site: PropTypes.object,
+		fileName: PropTypes.string,
+		setImageEditorFileInfo: PropTypes.func,
+		translate: PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
-			selectedIndex: 0,
-			onImageEditorClose: noop,
+			media: null,
+			onImageEditorSave: noop,
 			onImageEditorCancel: noop
 		};
 	},
@@ -60,16 +63,19 @@ const MediaModalImageEditor = React.createClass( {
 	},
 
 	componentDidMount() {
+		const {
+			media,
+			site
+		} = this.props;
+
 		let src,
 			fileName = 'default',
 			mimeType = 'image/png',
 			title = 'default';
 
-		const media = this.props.items ? this.props.items[ this.props.selectedIndex ] : null;
-
 		if ( media ) {
 			src = MediaUtils.url( media, {
-				photon: this.props.site && ! this.props.site.is_private
+				photon: site && ! site.is_private
 			} );
 			fileName = media.file || path.basename( src );
 			mimeType = MediaUtils.getMimeType( media );
@@ -84,8 +90,8 @@ const MediaModalImageEditor = React.createClass( {
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 		canvasComponent.toBlob( this.onImageExtracted );
 
-		if ( this.props.onImageEditorClose ) {
-			this.props.onImageEditorClose();
+		if ( this.props.onImageEditorSave ) {
+			this.props.onImageEditorSave();
 		}
 	},
 
@@ -174,20 +180,33 @@ const MediaModalImageEditor = React.createClass( {
 	},
 
 	render() {
+		const {
+			className,
+			siteId
+		} = this.props;
+
+		const classes = classNames(
+			'image-editor',
+			className
+		);
+
 		return (
-			<div className="image-editor">
+			<div className={ classes }>
 				{ this.state.canvasError && this.renderError() }
 
+				<QuerySites siteId={ siteId } />
+
 				<figure>
-					<div className="editor-media-modal-image-editor__content editor-media-modal__content" >
-						<EditCanvas
+					<div className="image-editor__content">
+						<ImageEditorCanvas
 							ref="editCanvas"
 							onLoadError={ this.onLoadCanvasError }
-							/>
-						<EditToolbar />
-						<EditButtons
+						/>
+						<ImageEditorToolbar />
+						<ImageEditorButtons
 							onCancel={ this.onCancel }
-							onDone={ this.onDone } />
+							onDone={ this.onDone }
+						/>
 					</div>
 				</figure>
 			</div>
@@ -196,10 +215,21 @@ const MediaModalImageEditor = React.createClass( {
 } );
 
 export default connect(
-	( state ) => ( getImageEditorFileInfo( state ) ),
+	( state, ownProps ) => {
+		let siteId = ownProps.siteId;
+
+		if ( ! siteId ) {
+			siteId = getSelectedSiteId( state );
+		}
+
+		return {
+			...getImageEditorFileInfo( state ),
+			site: getSite( state, siteId )
+		};
+	},
 	{
 		resetImageEditorState,
 		resetAllImageEditorState,
 		setImageEditorFileInfo
 	}
-)( localize( MediaModalImageEditor ) );
+)( localize( ImageEditor ) );

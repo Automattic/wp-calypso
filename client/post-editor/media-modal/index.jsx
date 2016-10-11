@@ -20,13 +20,14 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	MediaModalSecondaryActions = require( './secondary-actions' ),
 	MediaModalDetail = require( './detail' ),
 	MediaModalGallery = require( './gallery' ),
-	MediaModalImageEditor = require( './image-editor' ),
 	MediaActions = require( 'lib/media/actions' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	Dialog = require( 'components/dialog' ),
 	markup = require( './markup' ),
 	accept = require( 'lib/accept' ),
 	ModalViews = require( './constants' ).Views;
+
+import ImageEditor from 'blocks/image-editor';
 
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModal',
@@ -209,7 +210,7 @@ module.exports = React.createClass( {
 		this.setView( ModalViews.IMAGE_EDITOR );
 	},
 
-	onImageEditorClose: function() {
+	onImageEditorSave: function() {
 		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
 		this.setView( ModalViews.LIST );
 	},
@@ -395,12 +396,19 @@ module.exports = React.createClass( {
 				break;
 
 			case ModalViews.IMAGE_EDITOR:
+				const {
+					site,
+					mediaLibrarySelectedItems: items
+				} = this.props;
+
+				const selectedIndex = this.getDetailSelectedIndex(),
+					media = items ? items[ selectedIndex ] : null;
+
 				content = (
-					<MediaModalImageEditor
-						site={ this.props.site }
-						items={ this.props.mediaLibrarySelectedItems }
-						selectedIndex={ this.getDetailSelectedIndex() }
-						onImageEditorClose={ this.onImageEditorClose }
+					<ImageEditor
+						siteId={ site && site.ID }
+						media={ media }
+						onImageEditorSave={ this.onImageEditorSave }
 						onImageEditorCancel={ this.onImageEditorCancel }
 					/>
 				);
