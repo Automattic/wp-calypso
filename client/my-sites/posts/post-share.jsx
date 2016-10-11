@@ -24,7 +24,6 @@ import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
 import Notice from 'components/notice';
 import QueryPublicizeConnections from 'components/data/query-publicize-connections';
 import SocialLogo from 'components/social-logo';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 const PostSharing = React.createClass( {
 	propTypes: {
@@ -141,12 +140,6 @@ const PostSharing = React.createClass( {
 					>
 						{ this.translate( 'Share post' ) }
 					</Button>
-					<UpgradeNudge
-						title={ this.translate( 'Upgrade to the Business plan for advanced social media' ) }
-						message={ this.translate( 'Scheduling, assisted auto-posting and other features available in Business.' ) }
-						href={ '/plans/' + this.props.site.slug }
-						shouldDisplay={ () => true }
-					/>
 				</div>
 				{ this.props.site && <QueryPublicizeConnections siteId={ this.props.site.ID } /> }
 			</div>
