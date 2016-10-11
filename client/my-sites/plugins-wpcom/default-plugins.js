@@ -193,7 +193,7 @@ export const defaultBusinessPlugins = [
 	},
 	{
 		name: i18n.translate( 'Google Analytics' ),
-		descriptionLink: '/plans/{siteSlug}/?feature=google-analytics',
+		descriptionLink: 'https://en.support.wordpress.com/google-analytics/',
 		icon: 'stats',
 		category: 'Business',
 		description: i18n.translate( 'Advanced features to complement WordPress.com stats. Funnel reports, goal conversion, and more.' )
