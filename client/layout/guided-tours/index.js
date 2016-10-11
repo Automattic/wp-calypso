@@ -14,6 +14,7 @@ import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
+import { isSectionLoading } from 'state/ui/selectors';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 
 class GuidedTours extends Component {
@@ -55,6 +56,7 @@ class GuidedTours extends Component {
 				<div className="guided-tours">
 					<QueryPreferences />
 					<AllTours
+							shouldPause={ this.props.isSectionLoading }
 							tourName={ tourName }
 							stepName={ stepName }
 							lastAction={ this.props.lastAction }
@@ -68,8 +70,10 @@ class GuidedTours extends Component {
 }
 
 export default connect( ( state ) => ( {
+	isSectionLoading: isSectionLoading( state ),
 	tourState: getGuidedTourState( state ),
 	isValid: ( when ) => !! when( state ),
+	// TODO(mcsf): make it a cached selector:
 	lastAction: last( getActionLog( state ) ),
 } ), {
 	nextGuidedTourStep,
