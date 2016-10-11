@@ -11,6 +11,8 @@
  * External dependencies
  */
 import forIn from 'lodash/forIn';
+import omitBy from 'lodash/omitBy';
+import includes from 'lodash/includes';
 
 // Regular expressions for matching "taxonomy:term" search-box syntax
 const FILTER_REGEX_STRING = '(\\w+)\\:\\s*([\\w-]+)';
@@ -178,6 +180,7 @@ const taxonomies = {
 /* eslint-enable */
 
 let termTable;
+let ambiguousTerms;
 
 /**
  * @return {Object} a table of terms to taxonomies.
@@ -187,11 +190,32 @@ function getTermTable() {
 		termTable = {};
 		forIn( taxonomies, ( terms, taxonomy ) => {
 			terms.forEach( ( term ) => {
-				termTable[ term ] = taxonomy;
+				const key = isTermAmbiguous( term ) ? `${ taxonomy }__${ term }` : term;
+				termTable[ key ] = taxonomy;
 			} );
 		} );
 	}
 	return termTable;
+}
+
+// Ambiguous = belongs to more than one taxonomy
+function isTermAmbiguous( term ) {
+	if ( ! ambiguousTerms ) {
+		const ambiguousTermTable = omitBy( getTermCount(), ( count ) => count < 2 );
+		ambiguousTerms = Object.keys( ambiguousTermTable );
+	}
+	return includes( ambiguousTerms, term );
+}
+
+function getTermCount() {
+	const termCount = {};
+	forIn( taxonomies, ( terms ) => {
+		terms.forEach( ( term ) => {
+			const count = termCount[ term ];
+			termCount[ term ] = count ? count + 1 : 1;
+		} );
+	} );
+	return termCount;
 }
 
 // return specified part of a taxonomy:term string
@@ -205,7 +229,16 @@ function splitFilter( filter, group ) {
 
 // return term from a taxonomy:term string
 function getTerm( filter ) {
-	return splitFilter( filter, FILTER_TERM_GROUP );
+	const taxonomy = getTaxonomy( filter );
+	const term = splitFilter( filter, FILTER_TERM_GROUP );
+	if ( isTermAmbiguous( term ) ) {
+		return `${ taxonomy }__${ term }`;
+	}
+	return term;
+}
+
+function stripTermPrefix( term ) {
+	return term.replace( /^\w+__/, '' );
 }
 
 // return taxonomy from a taxonomy:term string
@@ -217,13 +250,16 @@ function getTaxonomy( filter ) {
  * Given the 'term' part, returns a complete filter
  * in "taxonomy:term" search-box format.
  *
+ * Supplied terms that belong to more than one taxonomy must be
+ * prefixed with taxonomy: taxonomy__term
+ *
  * @param {string} term - the term slug
  * @return {string} - complete taxonomy:term filter, or empty string if term is not valid
  */
 export function getFilter( term ) {
 	const terms = getTermTable();
 	if ( terms[ term ] ) {
-		return `${ terms[ term ] }:${ term }`;
+		return `${ terms[ term ] }:${ stripTermPrefix( term ) }`;
 	}
 	return '';
 }
@@ -244,6 +280,10 @@ export function filterIsValid( filter ) {
  *
  * Sort is alphabetical on the complete "taxonomy:term" string.
  *
+ * Supplied terms that belong to more than one taxonomy must be
+ * prefixed with taxonomy: taxonomy__term. Returned terms will
+ * keep the prefix.
+ *
  * @param {array} terms - Array of term strings
  * @return {array} sorted array
  */
@@ -255,6 +295,9 @@ export function sortFilterTerms( terms ) {
  * Return a string of valid, sorted, comma-separated filter
  * terms from an input string. Input may contain search
  * terms (which will be ignored) as well as filters.
+ *
+ * Returned terms that belong to more than one taxonomy will be
+ * prefixed with taxonomy: taxonomy__term
  *
  * @param {string} input - the string to parse
  * @return {string} comma-seperated list of valid filters
@@ -282,6 +325,15 @@ export function getSubjects() {
 	return taxonomies.subject;
 }
 
+/**
+ * Returns true for valid term.
+ *
+ * Supplied terms that belong to more than one taxonomy must be
+ * prefixed with taxonomy: taxonomy__term
+ *
+ * @param {string} term - term to validate
+ * @return {bool} true if term is valid
+ */
 export function isValidTerm( term ) {
 	return !! getTermTable()[ term ];
 }
