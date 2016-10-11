@@ -85,6 +85,7 @@ describe( 'selectors', () => {
 				isRedeemable: false,
 				isRefundable: false,
 				isRenewable: false,
+				isRenewal: false,
 				meta: undefined,
 				payment: {
 					countryCode: undefined,
