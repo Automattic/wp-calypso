@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import { map, some } from 'lodash';
 
 /**
@@ -9,15 +10,19 @@ import { map, some } from 'lodash';
  */
 import FormRadio from 'components/forms/form-radio';
 import Gridicon from 'components/gridicon';
+import QueryPostFormats from 'components/data/query-post-formats';
 import PostActions from 'lib/posts/actions';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import AccordionSection from 'components/accordion/section';
 import EditorThemeHelp from 'post-editor/editor-theme-help';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPostFormats } from 'state/post-formats/selectors';
 
-export default React.createClass( {
+const EditorPostFormats = React.createClass( {
 	displayName: 'EditorPostFormats',
 
 	propTypes: {
+		site: PropTypes.object,
 		post: PropTypes.object,
 		value: PropTypes.string,
 		postFormats: PropTypes.object
@@ -118,6 +123,7 @@ export default React.createClass( {
 		return (
 			<AccordionSection>
 				<EditorThemeHelp className="editor-post-formats__help-link" />
+				<QueryPostFormats siteId={ this.props.site.ID } />
 				<ul className="editor-post-formats">
 					{ this.renderPostFormats() }
 				</ul>
@@ -125,3 +131,13 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			postFormats: getPostFormats( state, siteId )
+		};
+	}
+)( EditorPostFormats );

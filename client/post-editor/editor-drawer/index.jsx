@@ -14,7 +14,6 @@ import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
-import QueryPostFormats from 'components/data/query-post-formats';
 import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
 import Location from 'post-editor/editor-location';
 import Discussion from 'post-editor/editor-discussion';
@@ -30,7 +29,6 @@ import QueryPostTypes from 'components/data/query-post-types';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostFormats } from 'state/post-formats/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import config from 'config';
@@ -136,15 +134,11 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 		return (
-			<div>
-				<QueryPostFormats siteId={ this.props.site.ID } />
-				<PostFormatsAccordion
-					site={ this.props.site }
-					post={ this.props.post }
-					postFormats={ this.props.postFormats }
-					className="editor-drawer__accordion"
-				/>
-			</div>
+			<PostFormatsAccordion
+				site={ this.props.site }
+				post={ this.props.post }
+				className="editor-drawer__accordion"
+			/>
 		);
 	},
 
@@ -308,8 +302,7 @@ export default connect(
 
 		return {
 			canJetpackUseTaxonomies: isJetpackMinimumVersion( state, siteId, '4.1' ),
-			typeObject: getPostType( state, siteId, type ),
-			postFormats: getPostFormats( state, siteId )
+			typeObject: getPostType( state, siteId, type )
 		};
 	},
 	null,
