@@ -197,10 +197,10 @@ module.exports = {
 	getServicesFromConnections: function( connections ) {
 		return uniq( connections.map( function( connection ) {
 			return {
-				name: connection.service,
+				ID: connection.service,
 				label: connection.label
 			};
-		} ), 'name' );
+		} ), 'ID' );
 	},
 
 	/**
