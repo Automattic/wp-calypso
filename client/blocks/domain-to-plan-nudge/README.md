@@ -1,7 +1,7 @@
 Domain to Plan Nudge
 =========
-This is an upgrade nudge that targets users with a site that has a free plan,
-paid domain, and has a stored CC on file.
+This is an upgrade nudge that targets users with a site that has a free plan
+and a paid domain.
 
 #### How to use:
 

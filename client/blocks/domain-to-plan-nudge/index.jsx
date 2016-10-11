@@ -29,6 +29,7 @@ import QuerySitePlans from 'components/data/query-site-plans';
 import formatCurrency from 'lib/format-currency';
 import { canCurrentUser } from 'state/current-user/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { abtest } from 'lib/abtest';
 
 class DomainToPlanNudge extends Component {
 
@@ -66,7 +67,8 @@ class DomainToPlanNudge extends Component {
 			rawPrice &&       //plans info has loaded
 			site &&           //site exists
 			site.wpcom_url && //has a mapped domain
-			hasFreePlan;      //has a free wpcom plan
+			hasFreePlan &&    //has a free wpcom plan
+			abtest( 'domainToPersonalPlanNudge' ) === 'nudge';
 	}
 
 	personalCheckout() {
@@ -95,7 +97,6 @@ class DomainToPlanNudge extends Component {
 			<DismissibleCard
 				className="domain-to-plan-nudge__card"
 				preferenceName="domain-to-plan-nudge"
-				temporary
 			>
 			<TrackComponentView
 				eventName={ 'calypso_upgrade_nudge_impression' }
@@ -170,11 +171,12 @@ class DomainToPlanNudge extends Component {
 						/>
 
 						<div className="domain-to-plan-nudge__plan-price-timeframe">
-							{ translate( 'for one year subscription' ) }
+							{ translate( 'for a one year subscription' ) }
 						</div>
 					</div>
 					<div className="domain-to-plan-nudge__upgrade-group">
 						<Button
+							className="domain-to-plan-nudge__upgrade-button"
 							onClick={ this.personalCheckout }
 							primary
 						>

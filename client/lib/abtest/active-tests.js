@@ -122,5 +122,14 @@ module.exports = {
 		},
 		defaultVariation: 'hideSiteTitleStep',
 		allowExistingUsers: false
+	},
+	domainToPersonalPlanNudge: {
+		datestamp: '20161011',
+		variations: {
+			original: 50,
+			nudge: 50
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: false
 	}
 };
