@@ -35,6 +35,7 @@ const Suggestions = React.createClass( {
 	getInitialState: function() {
 		return {
 			noOfSuggestions: 0,
+			taxonomySuggestionsArray: [],
 			suggestionPosition: -1,
 		};
 	},
