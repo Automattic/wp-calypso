@@ -7,6 +7,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import PostQueryManager from 'lib/query-manager/post';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -25,8 +26,7 @@ import {
 	POSTS_RECEIVE,
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
-	POSTS_REQUEST_FAILURE,
-	TERMS_RECEIVE
+	POSTS_REQUEST_FAILURE
 } from 'state/action-types';
 import {
 	receivePost,
@@ -544,31 +544,58 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'addTermForPost()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.post( '/rest/v1.1/sites/2916284/taxonomies/jetpack-portfolio/terms/new' )
-				.reply( 200, {
-					ID: 123,
-					name: 'ribs',
-					description: ''
-				} );
+		const postObject = {
+			ID: 841,
+			site_ID: 2916284,
+			global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+			title: 'Hello World'
+		};
+		const getState = () => {
+			return {
+				posts: {
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ]
+					},
+					queries: {
+						2916284: new PostQueryManager( {
+							items: { 841: postObject }
+						} )
+					},
+					edits: {}
+				}
+			};
+		};
+
+		it( 'should dispatch a EDIT_POST event with the new term', () => {
+			addTermForPost( 2916284, 'jetpack-portfolio', { ID: 123, name: 'ribs' }, 841 )( spy, getState );
+			expect( spy ).to.have.been.calledWith( {
+				post: {
+					terms: {
+						'jetpack-portfolio': [ {
+							ID: 123,
+							name: 'ribs'
+						} ]
+					}
+				},
+				postId: 841,
+				siteId: 2916284,
+				type: POST_EDIT
+			} );
 		} );
 
-		it( 'should dispatch a TERMS_RECEIVE event on success with post meta', () => {
-			return addTermForPost( 2916284, 'jetpack-portfolio', { name: 'ribs' }, 13640 )( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
-					type: TERMS_RECEIVE,
-					siteId: 2916284,
-					taxonomy: 'jetpack-portfolio',
-					terms: [ {
-						ID: 123,
-						name: 'ribs',
-						description: ''
-					} ],
-					postId: 13640
-				} );
-			} );
+		it( 'should not dispatch anything if no post', () => {
+			addTermForPost( 2916284, 'jetpack-portfolio', { ID: 123, name: 'ribs' }, 3434 )( spy, getState );
+			expect( spy ).not.to.have.been.called;
+		} );
+
+		it( 'should not dispatch anything if no term', () => {
+			addTermForPost( 2916284, 'jetpack-portfolio', null, 841 )( spy, getState );
+			expect( spy ).not.to.have.been.called;
+		} );
+
+		it( 'should not dispatch anything if the term is temporary', () => {
+			addTermForPost( 2916284, 'jetpack-portfolio', { id: 'temporary' }, 841 )( spy, getState );
+			expect( spy ).not.to.have.been.called;
 		} );
 	} );
 } );
