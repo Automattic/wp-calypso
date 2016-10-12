@@ -3,7 +3,30 @@
  */
 import React from 'react';
 
-const Head = ( { children, stylesheetUrl, title = 'WordPress.com', faviconUrl = '//s1.wp.com/i/favicon.ico' } ) => (
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+
+let faviconUrl = '//s1.wp.com/i/favicon.ico';
+
+if ( config( 'env' ) === 'wpcalypso' ) {
+	faviconUrl = '/calypso/images/favicons/favicon-wpcalypso.ico';
+}
+
+if ( config( 'env' ) === 'horizon' ) {
+	faviconUrl = '/calypso/images/favicons/favicon-horizon.ico';
+}
+
+if ( config( 'env' ) === 'stage' ) {
+	faviconUrl = '/calypso/images/favicons/favicon-staging.ico';
+}
+
+if ( config( 'env' ) === 'development' ) {
+	faviconUrl = '/calypso/images/favicons/favicon-development.ico';
+}
+
+const Head = ( { children, stylesheetUrl, title = 'WordPress.com' } ) => (
 	<head>
 		<title>{ title }</title>
 		<meta charSet="utf-8" />

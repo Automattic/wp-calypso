@@ -29,10 +29,8 @@ class Document extends React.Component {
 	render() {
 		const {
 			app,
-			badge,
 			catchJsErrors,
 			chunk,
-			faviconURL: faviconUrl,
 			head,
 			i18nLocaleScript,
 			initialReduxState,
@@ -49,7 +47,7 @@ class Document extends React.Component {
 			<html lang={ lang }
 				dir={ config( 'rtl' ) ? 'rtl' : 'ltr' }
 				className={ classNames( { 'is-fluid-with': !! config.isEnabled( 'fluid-width' ) } ) }>
-				<Head title={ head.title } faviconUrl={ faviconUrl } stylesheetUrl={ this.getStylesheetUrl() }>
+				<Head title={ head.title } stylesheetUrl={ this.getStylesheetUrl() }>
 					{ head.metas.map( ( { name, property, content }, i ) => (
 						<meta name={ name } property={ property } content={ content } key={ 'meta-' + i } />
 					) ) }
@@ -66,7 +64,7 @@ class Document extends React.Component {
 							<div className="wpcom-site__logo noticon noticon-wordpress" />
 						</div>
 					}
-					{ badge && <Badge { ...this.props } /> }
+					<Badge />
 
 					{ config( 'env' ) !== 'development' &&
 						<script src={ catchJsErrors } />

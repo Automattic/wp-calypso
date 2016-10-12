@@ -5,7 +5,6 @@ import express from 'express';
 import fs from 'fs';
 import crypto from 'crypto';
 import qs from 'qs';
-import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
 import { join as pathJoin } from 'path';
@@ -24,8 +23,7 @@ const debug = debugFactory( 'calypso:pages' );
 
 let HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
-	SERVER_BASE_PATH = '/public',
-	CALYPSO_ENV = process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
+	SERVER_BASE_PATH = '/public';
 
 const staticFiles = [
 	{ path: 'style.css' },
@@ -102,33 +100,14 @@ function generateStaticUrls( request ) {
 	return urls;
 }
 
-function getCurrentBranchName() {
-	try {
-		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
-	}
-}
-
-function getCurrentCommitShortChecksum() {
-	try {
-		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
-	} catch ( err ) {
-		return undefined;
-	}
-}
-
 function getDefaultContext( request ) {
 	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
 		isDebug: request.query.debug !== undefined ? true : false,
-		badge: false,
 		lang: config( 'i18n_default_locale_slug' ),
 		jsFile: 'build',
-		faviconURL: '//s1.wp.com/i/favicon.ico',
-		devDocsURL: '/devdocs',
 		store: createReduxStore()
 	} );
 
@@ -139,34 +118,6 @@ function getDefaultContext( request ) {
 		tinymceWpSkin: context.urls[ 'tinymce/skins/wordpress/wp-content.css' ],
 		tinymceEditorCss: context.urls[ 'editor.css' ]
 	};
-
-	if ( CALYPSO_ENV === 'wpcalypso' ) {
-		context.badge = CALYPSO_ENV;
-		context.devDocs = true;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
-	}
-
-	if ( CALYPSO_ENV === 'horizon' ) {
-		context.badge = 'feedback';
-		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
-		context.faviconURL = '/calypso/images/favicons/favicon-horizon.ico';
-	}
-
-	if ( CALYPSO_ENV === 'stage' ) {
-		context.badge = 'staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
-	}
-
-	if ( CALYPSO_ENV === 'development' ) {
-		context.badge = 'dev';
-		context.devDocs = true;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
-		context.branchName = getCurrentBranchName();
-		context.commitChecksum = getCurrentCommitShortChecksum();
-	}
 
 	return context;
 }

@@ -29,8 +29,6 @@ class Desktop extends React.Component {
 	render() {
 		const {
 			app,
-			badge,
-			faviconURL: faviconUrl,
 			i18nLocaleScript,
 			lang,
 		} = this.props;
@@ -39,7 +37,7 @@ class Desktop extends React.Component {
 			<html lang={ lang }
 				dir={ config( 'rtl' ) ? 'rtl' : 'ltr' }
 				className={ classNames( 'is-desktop', { 'is-fluid-with': !! config.isEnabled( 'fluid-width' ) } ) }>
-				<Head title="WordPress.com" faviconUrl={ faviconUrl } stylesheetUrl={ this.getStylesheetUrl() }>
+				<Head title="WordPress.com" stylesheetUrl={ this.getStylesheetUrl() }>
 					<link rel="stylesheet" href="/desktop/wordpress-desktop.css" />
 					<script src="/calypso/build.js" />
 					<script src="/desktop/desktop-app.js" />
@@ -48,7 +46,7 @@ class Desktop extends React.Component {
 					<div id="wpcom" className="wpcom-site">
 						<div className="wpcom-site__logo noticon noticon-wordpress" />
 					</div>
-					{ badge && <Badge { ...this.props } /> }
+					<Badge />
 
 					{ app &&
 						<script type="text/javascript"
