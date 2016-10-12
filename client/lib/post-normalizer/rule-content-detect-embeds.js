@@ -46,7 +46,11 @@ export default function detectEmbeds( post, dom ) {
 	const getAutoplayIframe = ( iframe ) => {
 		if ( iframe.src.indexOf( 'youtube' ) > 0 ) {
 			const autoplayIframe = iframe.cloneNode();
-			autoplayIframe.src += ';autoplay=1';
+			if ( autoplayIframe.src.indexOf( '?') === -1 ) {
+				autoplayIframe.src += '?autoplay=1';
+			} else {
+				autoplayIframe.src += '&autoplay=1';
+			}
 			return autoplayIframe.outerHTML;
 		}
 		return null;
@@ -61,7 +65,7 @@ export default function detectEmbeds( post, dom ) {
 			const match = iframe.src.match( regExp );
 			const videoId = match && ( match && match[ 2 ].length === 11 ) ? match[ 2 ] : false;
 
-			return videoId ? `https://img.youtube.com/vi/${ videoId }/0.jpg` : null;
+			return videoId ? `https://img.youtube.com/vi/${ videoId }/mqdefault.jpg` : null;
 		}
 		return null;
 	};
