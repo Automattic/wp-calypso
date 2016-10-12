@@ -1,0 +1,19 @@
+.reader-post-options-menu__hr {
+	margin: 8px 0;
+	background: lighten( $gray, 30 );
+}
+
+.reader-post-options-menu__ellipsis-menu .follow-button {
+	&.is-following {
+
+		&:hover,
+		&:focus {
+			color: $white;
+			background: $alert-green;
+
+			.gridicon {
+				fill: $white;
+			}
+		}
+	}
+}
