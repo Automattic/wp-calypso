@@ -34,7 +34,6 @@ const Suggestions = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			noOfSuggestions: 0,
 			taxonomySuggestionsArray: [],
 			suggestionPosition: -1,
 		};
@@ -50,7 +49,6 @@ const Suggestions = React.createClass( {
 		const suggestions = this.narrowDown( this.props.input )
 		this.setState( {
 			suggestions: suggestions,
-			noOfSuggestions: this.countSuggestions( suggestions ),
 			currentSuggestion: "",
 		} );
 	},
@@ -60,7 +58,6 @@ const Suggestions = React.createClass( {
 			const suggestions = this.narrowDown( nextProps.input )
 			this.setState( {
 				suggestions: suggestions,
-				noOfSuggestions: this.countSuggestions( suggestions ),
 				suggestionPosition: -1,
 				currentSuggestion: "",
 			} );
@@ -76,7 +73,7 @@ const Suggestions = React.createClass( {
 	},
 
 	incPosition: function() {
-		const position = ( this.state.suggestionPosition + 1 ) % this.state.noOfSuggestions;
+		const position = ( this.state.suggestionPosition + 1 ) % this.countSuggestions();
 		this.setState( {
 			suggestionPosition: position,
 			currentSuggestion: this.getSuggestionForPosition( position ),
@@ -84,7 +81,7 @@ const Suggestions = React.createClass( {
 	},
 
 	decPosition: function() {
-		const position = ( this.state.suggestionPosition - 1 ) % this.state.noOfSuggestions;
+		const position = ( this.state.suggestionPosition - 1 ) % this.countSuggestions();
 		this.setState( {
 			suggestionPosition: position,
 			currentSuggestion: this.getSuggestionForPosition( position )
