@@ -13,7 +13,6 @@ import url from 'url';
 /**
  * Internal Dependencies
  */
-
 export default function detectEmbeds( post, dom ) {
 	if ( ! dom ) {
 		throw new Error( 'this transform must be used as part of withContentDOM' );
@@ -42,6 +41,30 @@ export default function detectEmbeds( post, dom ) {
 		'spotify.com',
 		'kickstarter.com'
 	];
+
+	// get the iframe src that autoplays the embed if we know how to, else null
+	const getAutoplayIframe = ( iframe ) => {
+		if ( iframe.src.indexOf( 'youtube' ) > 0 ) {
+			const autoplayIframe = iframe.cloneNode();
+			autoplayIframe.src += ';autoplay=1';
+			return autoplayIframe.outerHTML;
+		}
+		return null;
+	};
+
+	// get a picture thumnail version of the embed if it exists, else null
+	const getThumbnailUrl = ( iframe ) => {
+		if ( iframe.src.indexOf( 'youtube' ) > 0 ) {
+			// grabbed from: http://stackoverflow.com/questions/3452546/javascript-regex-how-to-get-youtube-video-id-from-url
+			// TODO find better solution than crazy regex that nobody will ever understand
+			const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+			const match = iframe.src.match( regExp );
+			const videoId = match && ( match && match[ 2 ].length === 11 ) ? match[ 2 ] : false;
+
+			return videoId ? `https://img.youtube.com/vi/${ videoId }/0.jpg` : null;
+		}
+		return null;
+	};
 
 	embeds = filter( embeds, function( iframe ) {
 		const iframeSrc = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
@@ -96,34 +119,6 @@ export default function detectEmbeds( post, dom ) {
 			}
 		} while ( ( node = node.parentNode ) );
 
-		// get the iframe src that autoplays the embed if we know how to, else null
-		const getAutoplayIframe = ( iframe ) => {
-			if ( embedType === 'youtube' || embedType === 'vimeo' ) {
-				let autoplayIframe = iframe.cloneNode();
-				autoplayIframe.src += ';autoplay=1';
-				return autoplayIframe.outerHTML;
-			} else {
-				return null;
-			}
-		}
-
-		// get a picture thumnail version of the embed if it exists, else null
-		const getThumbnailUrl = ( iframe ) => {
-			if ( embedType === 'youtube' ) {
-				// grabbed from: http://stackoverflow.com/questions/3452546/javascript-regex-how-to-get-youtube-video-id-from-url
-				// TODO find better solution than crazy regex that nobody will ever understand
-				const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-				const match = iframe.src.match(regExp);
-				const videoId = match && ( match && match[7].length === 11 ) ? match[7] : false;
-
-				return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : null;
-			} else if ( embedType === 'vimeo' ) {
-				return null;
-			} else {
-				return null;
-			}
-		}
-
 		return {
 			type: embedType,
 			src: iframe.src,
@@ -132,8 +127,8 @@ export default function detectEmbeds( post, dom ) {
 			aspectRatio: aspectRatio,
 			width: width,
 			height: height,
-			thumbnailUrl: getThumbnailUrl(iframe),
-			autoplayIframe: getAutoplayIframe(iframe),
+			thumbnailUrl: getThumbnailUrl( iframe ),
+			autoplayIframe: getAutoplayIframe( iframe ),
 		};
 	} );
 
@@ -160,3 +155,4 @@ export default function detectEmbeds( post, dom ) {
 
 	return post;
 }
+
