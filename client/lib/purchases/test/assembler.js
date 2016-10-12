@@ -23,7 +23,7 @@ describe( 'assembler', () => {
 	} );
 
 	it( 'should convert the payment credit card data to the right data structure', () => {
-		expect( createPurchasesArray( [ {
+		const purchase = createPurchasesArray( [ {
 			payment_card_id: 1234,
 			payment_card_type: 'visa',
 			payment_details: 7890,
@@ -32,18 +32,17 @@ describe( 'assembler', () => {
 			payment_name: 'My VISA',
 			payment_country_code: 'US',
 			payment_country_name: 'United States'
-		} ] ) ).to.have.deep.property( '[0].payment' ).that.deep.equals( {
-			creditCard: {
-				expiryDate: '11/16',
-				expiryMoment: moment( '11/16', 'MM/YY' ),
-				id: 1234,
-				number: 7890,
-				type: 'visa'
-			},
-			type: 'credit_card',
-			countryCode: 'US',
-			countryName: 'United States',
-			name: 'My VISA'
-		} );
+		} ] );
+		const payment = purchase[ 0 ].payment;
+		const creditCard = payment.creditCard;
+		expect( creditCard.expiryDate ).to.equal( '11/16' );
+		expect( creditCard.expiryMoment.isSame( moment( '11/16', 'MM/YY' ) ) ).to.equal( true );
+		expect( creditCard.id ).to.equal( 1234 );
+		expect( creditCard.number ).to.equal( 7890 );
+		expect( creditCard.type ).to.equal( 'visa' );
+		expect( payment.type ).to.equal( 'credit_card' );
+		expect( payment.countryCode ).to.equal( 'US' );
+		expect( payment.countryName ).to.equal( 'United States' );
+		expect( payment.name ).to.equal( 'My VISA' );
 	} );
 } );
