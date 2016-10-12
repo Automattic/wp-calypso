@@ -174,7 +174,22 @@ const Suggestions = React.createClass( {
 			);
 		}
 
-		return this.removeEmptySuggestions( filtered );
+		const suggestions = this.removeEmptySuggestions( filtered );
+		this.setState( { taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ) } );
+		return suggestions;
+	},
+
+	createTaxonomySuggestionsArray: function( suggestions ) {
+		const taxonomySuggestionsArray = [];
+
+		for( const key in suggestions ) {
+			if( ! suggestions.hasOwnProperty( key ) ) {
+				continue;
+			}
+			taxonomySuggestionsArray.push( ... suggestions[ key ].map( value => key + ":" + value ) );
+		}
+
+		return taxonomySuggestionsArray;
 	},
 
 	createTextWithHighlight: function( text, highlighed_text ) {
