@@ -15,6 +15,8 @@ import {
 	getSortedFilterTerms,
 	stripFilters,
 	sortFilterTerms,
+	filterIsValid,
+	isValidTerm,
 } from '../theme-filters.js';
 
 describe( 'theme-filters', () => {
@@ -79,6 +81,35 @@ describe( 'theme-filters', () => {
 		it( 'should still strip invalid filters', () => {
 			const remaining = stripFilters( 'color:blue twenty color:lazer-puce' );
 			assert.equal( remaining, 'twenty' );
+		} );
+	} );
+
+	describe( 'filterIsValid', () => {
+		it( 'should return true for a valid filter string', () => {
+			assert.isTrue( filterIsValid( 'subject:music' ) );
+		} );
+
+		it( 'should return false for an invalid filter string', () => {
+			assert.isFalse( filterIsValid( 'subject' ) );
+			assert.isFalse( filterIsValid( 'music' ) );
+			assert.isFalse( filterIsValid( '' ) );
+			assert.isFalse( filterIsValid( 'subject:' ) );
+			assert.isFalse( filterIsValid( ':music' ) );
+			assert.isFalse( filterIsValid( ':' ) );
+		} );
+	} );
+
+	describe( 'isValidTerm', () => {
+		it( 'should return true for a valid term string', () => {
+			assert.isTrue( isValidTerm( 'music' ) );
+			assert.isTrue( isValidTerm( 'feature:video' ) );
+		} );
+
+		it( 'should return false for an invalid filter string', () => {
+			assert.isFalse( isValidTerm( 'video' ) );
+			assert.isFalse( isValidTerm( '' ) );
+			assert.isFalse( isValidTerm( ':video' ) );
+			assert.isFalse( isValidTerm( ':' ) );
 		} );
 	} );
 } );
