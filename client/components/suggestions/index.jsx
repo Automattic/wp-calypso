@@ -217,7 +217,12 @@ const Suggestions = React.createClass( {
 			}
 
 			//Add header
-			rendered.push( <span className="suggestions__category">{ key }</span> )
+			rendered.push(
+				<div>
+					<span className="suggestions__category">{ key }</span>
+					<span className="counter">{ " " + suggestions[ key ].length + " of " + this.props.terms[ key ].length } </span>
+				</div>
+			)
 			//Add values
 			rendered.concat( suggestions[ key ].map(
 				( value, i ) => {
