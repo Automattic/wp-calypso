@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import omit from 'lodash/omit';
-import find from 'lodash/find';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -13,9 +12,10 @@ import { connect } from 'react-redux';
 import Popover from 'components/popover';
 import Gridicon from 'components/gridicon';
 import PlanPrice from 'components/plans/plan-price';
-import { getPlansBySiteId } from 'state/sites/plans/selectors';
+import { getSitePlan } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPlans } from 'state/plans/selectors';
+import { getPlanBySlug } from 'state/plans/selectors';
+import { PLAN_PREMIUM } from 'lib/plans/constants';
 import QuerySitePlans from 'components/data/query-site-plans';
 import QueryPlans from 'components/data/query-plans';
 
@@ -49,9 +49,6 @@ const PremiumPopover = React.createClass( {
 			components: { small: <small /> }
 		} );
 	},
-	getSitePlan() {
-		return find( ( this.props.sitePlans.data || [] ), ( plan => plan.product_slug === 'value_bundle' ) );
-	},
 	componentWillUnmount() {
 		if ( exclusiveViewLock === this ) {
 			exclusiveViewLock = null;
@@ -82,8 +79,7 @@ const PremiumPopover = React.createClass( {
 		}
 	},
 	render() {
-		const { selectedSiteId } = this.props;
-		const premiumPlan = find( this.props.plans, ( plan => plan.product_slug === 'value_bundle' ) );
+		const { selectedSiteId, premiumPlan, premiumSitePlan } = this.props;
 		const popoverClasses = classNames( this.props.className, 'premium-popover popover' );
 		const context = this.refs && this.refs[ 'popover-premium-reference' ];
 
@@ -111,7 +107,7 @@ const PremiumPopover = React.createClass( {
 						<div className="premium-popover__header">
 							<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
 							{ premiumPlan
-								? <PlanPrice plan={ premiumPlan } sitePlan={ this.getSitePlan() } />
+								? <PlanPrice plan={ premiumPlan } sitePlan={ premiumSitePlan } />
 								: <h5>Loading</h5> }
 						</div>
 						<ul className="premium-popover__items">
@@ -137,7 +133,7 @@ export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		selectedSiteId,
-		sitePlans: getPlansBySiteId( state, selectedSiteId ),
-		plans: getPlans( state )
+		premiumPlan: getPlanBySlug( state, PLAN_PREMIUM ),
+		premiumSitePlan: getSitePlan( state, selectedSiteId, PLAN_PREMIUM )
 	};
 } )( PremiumPopover );
