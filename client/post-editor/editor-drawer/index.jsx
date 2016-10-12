@@ -129,13 +129,12 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderPostFormats: function() {
-		if ( ! this.props.site || ! this.props.post ||
-				! this.currentPostTypeSupports( 'post-formats' ) ) {
+		if ( ! this.props.post || ! this.currentPostTypeSupports( 'post-formats' ) ) {
 			return;
 		}
+
 		return (
 			<PostFormatsAccordion
-				site={ this.props.site }
 				post={ this.props.post }
 				className="editor-drawer__accordion"
 			/>

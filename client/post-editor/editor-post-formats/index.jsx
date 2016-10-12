@@ -22,7 +22,7 @@ const EditorPostFormats = React.createClass( {
 	displayName: 'EditorPostFormats',
 
 	propTypes: {
-		site: PropTypes.object,
+		siteId: PropTypes.number,
 		post: PropTypes.object,
 		value: PropTypes.string,
 		postFormats: PropTypes.object
@@ -123,7 +123,7 @@ const EditorPostFormats = React.createClass( {
 		return (
 			<AccordionSection>
 				<EditorThemeHelp className="editor-post-formats__help-link" />
-				<QueryPostFormats siteId={ this.props.site.ID } />
+				<QueryPostFormats siteId={ this.props.siteId } />
 				<ul className="editor-post-formats">
 					{ this.renderPostFormats() }
 				</ul>
@@ -137,6 +137,7 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			siteId,
 			postFormats: getPostFormats( state, siteId )
 		};
 	}
