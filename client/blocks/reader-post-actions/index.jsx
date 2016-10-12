@@ -66,7 +66,8 @@ const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, s
 						fullPost={ true }
 						tagName="div"
 						forceCounter={ true }
-						iconSize={ iconSize } />
+						iconSize={ iconSize }
+						showZeroCount={ false } />
 				</li>
 			}
 		</ul>
