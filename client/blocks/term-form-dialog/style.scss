@@ -1,0 +1,17 @@
+.term-form-dialog .dialog__content {
+	min-width: 40vw;
+}
+
+.term-form-dialog .form-input-validation {
+	padding-bottom: 0;
+}
+
+@include breakpoint( "<660px" ) {
+	.term-form-dialog {
+		width: 90%;
+	}
+
+	.term-form-dialog .dialog__content {
+		min-width: none;
+	}
+}
