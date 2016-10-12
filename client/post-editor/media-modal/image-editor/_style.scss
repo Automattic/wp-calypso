@@ -53,6 +53,15 @@
 	}
 }
 
+.editor-media-modal-image-editor__canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
 .editor-media-modal-image-editor__image {
 	position: absolute;
 	max-width: none;
