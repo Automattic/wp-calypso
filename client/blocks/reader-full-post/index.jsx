@@ -246,6 +246,8 @@ export class FullPostView extends React.Component {
 			classes[ 'feed-' + post.feed_ID ] = true;
 		}
 
+		const useExcerpt = post && post.use_excerpt && post.is_jetpack;
+
 		/*eslint-disable react/no-danger*/
 		return (
 			<ReaderMain className={ classNames( classes ) }>
@@ -289,7 +291,7 @@ export class FullPostView extends React.Component {
 						{ post.featured_image && ( ! ( post.display_type & CANONICAL_IN_CONTENT ) ) &&
 							<FeaturedImage src={ post.featured_image } />
 						}
-						{ post.use_excerpt
+						{ useExcerpt
 							? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 							: <EmbedContainer>
 									<div
@@ -298,7 +300,7 @@ export class FullPostView extends React.Component {
 								</EmbedContainer>
 						}
 
-						{ post.use_excerpt && ! isDiscoverPost( post )
+						{ useExcerpt && ! isDiscoverPost( post )
 							? <PostExcerptLink siteName={ siteName } postUrl={ post.URL } />
 							: null
 						}
