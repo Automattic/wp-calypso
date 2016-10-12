@@ -27,7 +27,9 @@ import {
 	getSitePlan,
 	isCurrentSitePlan,
 	isCurrentPlanPaid,
-	getSiteFrontPage
+	getSiteFrontPage,
+	getSitePostsPage,
+	getSiteFrontPageType
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -1050,7 +1052,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( 'getSiteFrontPage()', () => {
-		it( 'should return 0 if the site does not have a static page set as the front page', () => {
+		it( 'should return falsey if the site does not have a static page set as the front page', () => {
 			const frontPage = getSiteFrontPage( {
 				sites: {
 					items: {
@@ -1066,17 +1068,17 @@ describe( 'selectors', () => {
 				}
 			}, 77203074 );
 
-			expect( frontPage ).to.eql( 0 );
+			expect( frontPage ).to.be.not.ok;
 		} );
 
-		it( 'should return null if the site is not known', () => {
+		it( 'should return falsey if the site is not known', () => {
 			const frontPage = getSiteFrontPage( {
 				sites: {
 					items: {}
 				}
 			}, 77203074 );
 
-			expect( frontPage ).to.be.null;
+			expect( frontPage ).to.be.not.ok;
 		} );
 
 		it( 'should return the page ID if the site has a static page set as the front page', () => {
@@ -1096,6 +1098,90 @@ describe( 'selectors', () => {
 			}, 77203074 );
 
 			expect( frontPage ).to.eql( 1 );
+		} );
+	} );
+
+	describe( 'getSitePostsPage()', () => {
+		it( 'should return falsey if the site does not have a static page set as the posts page', () => {
+			const postsPage = getSitePostsPage( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							options: {
+								show_on_front: 'posts',
+								page_on_front: 0,
+								page_for_posts: 0
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( postsPage ).to.be.not.ok;
+		} );
+
+		it( 'should return falsey if the site is not known', () => {
+			const postsPage = getSitePostsPage( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( postsPage ).to.be.not.ok;
+		} );
+
+		it( 'should return the page ID if the site has a static page set as the posts page', () => {
+			const postsPage = getSitePostsPage( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							options: {
+								show_on_front: 'page',
+								page_on_front: 1,
+								page_for_posts: 2
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( postsPage ).to.eql( 2 );
+		} );
+	} );
+
+	describe( 'getSiteFrontPageType()', () => {
+		it( 'should return falsey if the site is not known', () => {
+			const frontPageType = getSiteFrontPageType( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( frontPageType ).to.be.not.ok;
+		} );
+
+		it( 'should return the site\'s front page type', () => {
+			const frontPageType = getSiteFrontPageType( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							options: {
+								show_on_front: 'page',
+								page_on_front: 1,
+								page_for_posts: 2
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( frontPageType ).to.eql( 'page' );
 		} );
 	} );
 } );
