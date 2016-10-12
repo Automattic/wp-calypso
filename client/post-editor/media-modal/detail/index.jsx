@@ -3,6 +3,7 @@
  */
 var React = require( 'react' ),
 	noop = require( 'lodash/noop' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,23 +12,21 @@ var DetailItem = require( './detail-item' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	HeaderCake = require( 'components/header-cake' ),
 	EditorMediaModalDetailTitle = require( './detail-title' ),
-	preloadImage = require( '../preload-image' ),
-	ModalViews = require( '../constants' ).Views;
+	preloadImage = require( '../preload-image' );
+import { ModalViews } from 'state/ui/media-modal/constants';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetail',
-
+const EditorMediaModalDetail = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		items: React.PropTypes.array,
-		onChangeView: React.PropTypes.func,
+		setView: React.PropTypes.func,
 		selectedIndex: React.PropTypes.number,
 		onSelectedIndexChange: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
 		return {
-			onChangeView: noop,
 			selectedIndex: 0,
 			onSelectedIndexChange: noop
 		};
@@ -52,11 +51,15 @@ module.exports = React.createClass( {
 	},
 
 	returnToList: function() {
-		this.props.onChangeView( ModalViews.LIST );
+		this.props.setView( ModalViews.LIST );
 	},
 
 	incrementIndex: function( increment ) {
 		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
+	},
+
+	editItem() {
+		this.props.setView( ModalViews.IMAGE_EDITOR );
 	},
 
 	render: function() {
@@ -76,8 +79,12 @@ module.exports = React.createClass( {
 					hasNextItem={ this.props.selectedIndex + 1 < items.length }
 					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
 					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
-					onEdit={ this.props.onEdit } />
+					onEdit={ this.editItem } />
 			</div>
 		);
 	}
 } );
+
+export default connect( null, {
+	setView: setEditorMediaModalView
+} )( EditorMediaModalDetail );

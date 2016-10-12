@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import noop from 'lodash/noop';
 import assign from 'lodash/assign';
 import omitBy from 'lodash/omitBy';
@@ -16,18 +17,17 @@ import MediaStore from 'lib/media/store';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
 import EditorMediaModalGalleryPreview from './preview';
-import { Views as MediaViews } from '../constants';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
+import { ModalViews } from 'state/ui/media-modal/constants';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGallery',
-
+const EditorMediaModalGallery = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		items: React.PropTypes.array,
 		settings: React.PropTypes.object,
 		onUpdateSettings: React.PropTypes.func,
-		onChangeView: React.PropTypes.func
+		setView: React.PropTypes.func
 	},
 
 	getInitialState() {
@@ -38,8 +38,7 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			onUpdateSettings: noop,
-			onChangeView: noop
+			onUpdateSettings: noop
 		};
 	},
 
@@ -120,7 +119,7 @@ export default React.createClass( {
 	},
 
 	returnToList() {
-		this.props.onChangeView( MediaViews.LIST );
+		this.props.setView( ModalViews.LIST );
 	},
 
 	render() {
@@ -152,3 +151,7 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( null, {
+	setView: setEditorMediaModalView
+} )( EditorMediaModalGallery );
