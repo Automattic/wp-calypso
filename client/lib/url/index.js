@@ -25,7 +25,7 @@ function isOutsideCalypso( url ) {
 }
 
 function isExternal( url ) {
-	const { hostname } = parseUrl( url );
+	const { hostname } = parseUrl( url, false, true ); // no qs needed, and slashesDenoteHost to handle protocol-relative URLs
 
 	if ( ! hostname ) {
 		return false;
