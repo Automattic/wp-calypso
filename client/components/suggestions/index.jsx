@@ -115,6 +115,13 @@ const Suggestions = React.createClass( {
 		this.props.suggest( event.target.textContent );
 	},
 
+	onMouseOver: function( event ) {
+		this.setState( {
+			suggestionPosition: this.getPositionForSuggestion( event.target.textContent ),
+			currentSuggestion: event.target.textContent,
+		} );
+	},
+
 	removeEmptySuggestions: function( suggestions ) {
 		const hasValues = x => x.length > 0;
 		return pickBy( suggestions, hasValues );
@@ -212,7 +219,7 @@ const Suggestions = React.createClass( {
 					const hashighlight =  ( noOfSuggestions + i ) === this.state.suggestionPosition;
 					const className = "suggestions__value" + ( hashighlight ? " has-highlight" : "" );
 					return rendered.push(
-					 	<span className={ className } onMouseDown={ this.onMouseDown }>
+					 	<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver }>
 							<span className="suggestions__value-cathegory">{ key + ":" }</span>
 							{ this.createTextWithHighlight( value, this.state.filterTerm ) }
 						</span>
