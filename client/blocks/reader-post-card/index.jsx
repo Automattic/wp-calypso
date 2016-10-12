@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { partial, noop, truncate } from 'lodash';
 import classnames from 'classnames';
 
@@ -40,44 +40,58 @@ function PostByline( { post } ) {
 	);
 }
 
-export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentClick = noop } ) {
-	const featuredImage = post.canonical_image;
-	const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
-	const title = truncate( post.title, {
-		length: isPhotoOnly ? 50 : 140,
-		separator: /,?\s+/ // a sequence of whitespace, optionally proceeded by a comma
-	} );
-	const classes = classnames( 'reader-post-card', {
-		'has-thumbnail': !! featuredImage,
-		'is-photo': isPhotoOnly
-	} );
+export default class RefreshPostCard extends PureComponent {
+	static propTypes = {
+		post: PropTypes.object.isRequired,
+		site: PropTypes.object,
+		feed: PropTypes.object,
+		onClick: PropTypes.func,
+		onCommentClick: PropTypes.func
+	};
 
-	// @todo Need a handleClick that processes ignore-click etc and then fires the provided onClick to open
-	// the full post where applicable
+	static defaultProps = {
+		onClick: noop,
+		onCommentClick: noop
+	};
 
-	return (
-		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
-			<PostByline post={ post } site={ site } feed={ feed } />
-			<div className="reader-post-card__post">
-				{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
-				<div className="reader-post-card__post-details">
-					<h1 className="reader-post-card__title">
-						<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
-					</h1>
-					<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
+	render() {
+		const { post, site, feed, onClick, onCommentClick } = this.props;
+		const featuredImage = post.canonical_image;
+		const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
+		const title = truncate( post.title, {
+			length: isPhotoOnly ? 50 : 140,
+			separator: /,? +/
+		} );
+		const classes = classnames( 'reader-post-card', {
+			'has-thumbnail': !! featuredImage,
+			'is-photo': isPhotoOnly
+		} );
+
+		// @todo Need a handleClick that processes ignore-click etc and then fires the provided onClick to open
+		// the full post where applicable
+
+		return (
+			<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
+				<PostByline post={ post } site={ site } feed={ feed } />
+				<div className="reader-post-card__post">
+					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
+					<div className="reader-post-card__post-details">
+						<h1 className="reader-post-card__title">
+							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
+						</h1>
+						<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
+					</div>
 				</div>
-			</div>
-			{ post &&
-				<ReaderPostActions
-					post={ post }
-					showVisit={ true }
-					onCommentClick={ onCommentClick }
-					showEdit={ false }
-					className="ignore-click"
-					iconSize={ 18 } />
-			}
-		</Card>
-	);
+				{ post &&
+					<ReaderPostActions
+						post={ post }
+						showVisit={ true }
+						onCommentClick={ onCommentClick }
+						showEdit={ false }
+						className="ignore-click"
+						iconSize={ 18 } />
+				}
+			</Card>
+		);
+	}
 }
-
-export default RefreshPostCard;
