@@ -9,7 +9,8 @@ var connect = require( 'react-redux' ).connect,
 	isEqual = require( 'lodash/isEqual' ),
 	page = require( 'page' ),
 	React = require( 'react' ),
-	reduce = require( 'lodash/reduce' );
+	reduce = require( 'lodash/reduce' ),
+	startsWith = require( 'lodash/startsWith' );
 
 /**
  * Internal dependencies
@@ -19,6 +20,7 @@ var analytics = require( 'lib/analytics' ),
 	clearSitePlans = require( 'state/sites/plans/actions' ).clearSitePlans,
 	clearPurchases = require( 'state/purchases/actions' ).clearPurchases,
 	DomainDetailsForm = require( './domain-details-form' ),
+	domainMapping = require( 'lib/cart-values/cart-items' ).domainMapping,
 	fetchReceiptCompleted = require( 'state/receipts/actions' ).fetchReceiptCompleted,
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
 	getStoredCards = require( 'state/stored-cards/selectors' ).getStoredCards,
@@ -119,9 +121,14 @@ const Checkout = React.createClass( {
 			cartItem = getCartItemForPlan( planSlug );
 		}
 
-		if ( this.props.product.indexOf( 'theme' ) === 0 ) {
-			cartMeta = this.props.product.split( ':' )[1];
+		if ( startsWith( this.props.product, 'theme' ) ) {
+			cartMeta = this.props.product.split( ':' )[ 1 ];
 			cartItem = themeItem( cartMeta );
+		}
+
+		if ( startsWith( this.props.product, 'domain-mapping' ) ) {
+			cartMeta = this.props.product.split( ':' )[ 1 ];
+			cartItem = domainMapping( { domain: cartMeta } );
 		}
 
 		if ( cartItem ) {
