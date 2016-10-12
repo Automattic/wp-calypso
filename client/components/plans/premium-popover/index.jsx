@@ -15,11 +15,10 @@ import Gridicon from 'components/gridicon';
 import PlanPrice from 'components/plans/plan-price';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { shouldFetchSitePlans } from 'lib/plans';
-import { getPlansBySite } from 'state/sites/plans/selectors';
-import SitesList from 'lib/sites-list';
+import { getPlansBySiteId } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import PlansList from 'lib/plans-list';
 const plansList = PlansList();
-const sitesList = SitesList();
 
 let exclusiveViewLock = null;
 
@@ -140,8 +139,9 @@ const PremiumPopover = React.createClass( {
 } );
 
 export default connect( ( state ) => {
+	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		sitePlans: getPlansBySite( state, sitesList.getSelectedSite() ),
+		sitePlans: getPlansBySiteId( state, selectedSiteId ),
 		plans: plansList.get()
 	};
 }, ( dispatch ) => {
