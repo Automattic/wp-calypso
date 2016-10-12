@@ -111,7 +111,7 @@ const PremiumPopover = React.createClass( {
 						<div className="premium-popover__header">
 							<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
 							{ premiumPlan
-								? <PlanPrice plan={ premiumPlan } sitePlan={ this.getSitePlan() }/>
+								? <PlanPrice plan={ premiumPlan } sitePlan={ this.getSitePlan() } />
 								: <h5>Loading</h5> }
 						</div>
 						<ul className="premium-popover__items">
@@ -122,7 +122,7 @@ const PremiumPopover = React.createClass( {
 								this.translate( 'Video Uploads' ),
 								this.translate( 'No Ads' ),
 								this.translate( 'Email and live chat support' )
-							].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark" size={ 18 }/> { message }
+							].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark" size={ 18 } /> { message }
 							</li> ) }
 						</ul>
 					</div>
