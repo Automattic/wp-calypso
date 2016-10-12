@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -9,6 +10,7 @@ import React from 'react';
 import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import { isEnabled } from 'config';
+import { getSiteFrontPageType, getSitePostsPage } from 'state/sites/selectors';
 
 const BlogPostsPage = React.createClass( {
 	propTypes() {
@@ -19,8 +21,8 @@ const BlogPostsPage = React.createClass( {
 	},
 
 	render() {
-		const isStaticHomePageWithNoPostsPage = this.props.homePageType === 'page' && this.props.pageForPosts === 0;
-		const shouldShow = this.props.homePageType === 'posts' ||
+		const isStaticHomePageWithNoPostsPage = this.props.frontPageType === 'page' && ! this.props.postsPage;
+		const shouldShow = this.props.frontPageType === 'posts' ||
 			( isEnabled( 'manage/pages/set-homepage' ) && isStaticHomePageWithNoPostsPage );
 
 		if ( ! shouldShow ) {
@@ -35,16 +37,16 @@ const BlogPostsPage = React.createClass( {
 				</div>;
 		}
 
-		let homePageIcon = null;
-		if ( this.props.homePageType === 'posts' ) {
-			homePageIcon = <Gridicon icon="house" size={ 18 } />;
+		let frontPageIcon = null;
+		if ( this.props.frontPageType === 'posts' ) {
+			frontPageIcon = <Gridicon icon="house" size={ 18 } />;
 		}
 
 		return (
 			<CompactCard className="pages__blog-posts-page">
 				{ notUsedLabel }
 				<span className="pages__blog-posts-page__title" href="">
-					{ homePageIcon }
+					{ frontPageIcon }
 					{ this.translate( 'Blog Posts' ) }
 				</span>
 				<div className="pages__blog-posts-page__info">
@@ -55,4 +57,11 @@ const BlogPostsPage = React.createClass( {
 	}
 } );
 
-export default BlogPostsPage;
+export default connect(
+	( state, props ) => {
+		return {
+			frontPageType: getSiteFrontPageType( state, props.siteId ),
+			postsPage: getSitePostsPage( state, props.siteId )
+		};
+	}
+)( BlogPostsPage );
