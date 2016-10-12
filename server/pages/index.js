@@ -114,7 +114,7 @@ function getDefaultContext( request ) {
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
 		clientIp: request.ip ? request.ip.replace( '::ffff:', '' ) : request.ip,
-		isDebug: context.env === 'development' || context.isDebug,
+		isDebug: config( 'env' ) === 'development' || context.isDebug,
 		tinymceWpSkin: context.urls[ 'tinymce/skins/wordpress/wp-content.css' ],
 		tinymceEditorCss: context.urls[ 'editor.css' ]
 	};
