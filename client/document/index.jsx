@@ -9,8 +9,8 @@ import classNames from 'classnames';
  */
 import config from 'config';
 import { jsonStringifyForHtml } from 'sanitize';
-import Head from './components/head';
-import Badge from './components/badge';
+import Head from 'components/head';
+import Badge from 'components/badge';
 
 class Document extends React.Component {
 	getStylesheetUrl() {

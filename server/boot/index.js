@@ -27,7 +27,7 @@ function renderJsxFile( filename, options, callback ) {
 -->
 	`;
 	try {
-		const requireView = require.context( '../pages/', true, /^\.\/.*\.jsx$/ );
+		const requireView = require.context( '../../client/document/', true, /^\.\/.*\.jsx$/ );
 		// Unfortunately, we need to prefix with './'
 		const component = requireView( './' + path.basename( filename ) );
 		markup += renderToStaticMarkup(

@@ -8,6 +8,7 @@ import qs from 'qs';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
+import { join as pathJoin } from 'path';
 
 /**
  * Internal dependencies
@@ -286,7 +287,7 @@ function render404( request, response ) {
 module.exports = function() {
 	const app = express();
 
-	app.set( 'views', __dirname );
+	app.set( 'views', pathJoin( __dirname, '../../client/document' ) );
 
 	app.use( cookieParser() );
 
