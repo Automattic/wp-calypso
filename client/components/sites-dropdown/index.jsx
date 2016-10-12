@@ -55,8 +55,8 @@ export default React.createClass( {
 		return sites.getSite( this.state.selected );
 	},
 
-	selectSite( siteSlug ) {
-		this.props.onSiteSelect( siteSlug );
+	selectSite( siteSlug, siteId ) {
+		this.props.onSiteSelect( siteSlug, siteId );
 		this.setState( {
 			selected: siteSlug,
 			open: false

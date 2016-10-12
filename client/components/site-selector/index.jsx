@@ -70,9 +70,9 @@ const SiteSelector = React.createClass( {
 		this.setState( { search: terms } );
 	},
 
-	onSiteSelect( siteSlug, event ) {
+	onSiteSelect( siteSlug, siteId, event ) {
 		this.closeSelector();
-		const handledByHost = this.props.onSiteSelect( siteSlug );
+		const handledByHost = this.props.onSiteSelect( siteSlug, siteId );
 		this.props.onClose( event );
 
 		let node = ReactDom.findDOMNode( this.refs.selector );
@@ -185,7 +185,7 @@ const SiteSelector = React.createClass( {
 					href={ this.props.siteBasePath ? siteHref : null }
 					key={ 'site-' + site.ID }
 					indicator={ this.props.indicator }
-					onSelect={ this.onSiteSelect.bind( this, site.slug ) }
+					onSelect={ this.onSiteSelect.bind( this, site.slug, site.ID ) }
 					isSelected={ isSelected }
 				/>
 			);
@@ -254,7 +254,7 @@ const SiteSelector = React.createClass( {
 							href={ siteHref }
 							key={ 'site-' + site.ID }
 							indicator={ this.props.indicator }
-							onSelect={ this.onSiteSelect.bind( this, site.slug ) }
+							onSelect={ this.onSiteSelect.bind( this, site.slug, site.ID ) }
 							isSelected={ this.isSelected( site ) }
 						/>
 					);
