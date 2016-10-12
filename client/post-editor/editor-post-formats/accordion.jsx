@@ -14,13 +14,14 @@ import Gridicon from 'components/gridicon';
 import QueryPostFormats from 'components/data/query-post-formats';
 import siteUtils from 'lib/site/utils';
 import PostFormats from './';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 
 const EditorPostFormatsAccordion = React.createClass( {
 	displayName: 'EditorPostFormatsAccordion',
 
 	propTypes: {
+		siteId: PropTypes.number,
 		site: PropTypes.object,
 		post: PropTypes.object,
 		postFormats: PropTypes.object
@@ -68,9 +69,9 @@ const EditorPostFormatsAccordion = React.createClass( {
 				subtitle={ this.getSubtitle() }
 				icon={ <Gridicon icon="types" /> }
 				className={ classes }>
-				<QueryPostFormats siteId={ this.props.site.ID } />
+				<QueryPostFormats siteId={ this.props.siteId } />
 				<PostFormats
-					site={ this.props.site }
+					siteId={ this.props.siteId }
 					post={ post }
 					value={ this.getFormatValue() }
 				/>
@@ -84,6 +85,8 @@ export default connect(
 		const siteId = getSelectedSiteId( state );
 
 		return {
+			siteId,
+			site: getSelectedSite( state ),
 			postFormats: getPostFormats( state, siteId )
 		};
 	}
