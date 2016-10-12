@@ -3,6 +3,9 @@
  */
 import wpcom from 'lib/wp';
 import {
+	SITE_FRONT_PAGE_SET,
+	SITE_FRONT_PAGE_SET_FAILURE,
+	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -89,6 +92,36 @@ export function requestSite( siteId ) {
 			dispatch( {
 				type: SITE_REQUEST_FAILURE,
 				siteId,
+				error
+			} );
+		} );
+	};
+}
+
+export function setFrontPage( siteId, pageId ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: SITE_FRONT_PAGE_SET,
+			siteId,
+			pageId
+		} );
+
+		const requestData = {
+			is_page_on_front: true,
+			page_on_front_id: pageId,
+		};
+
+		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( () => {
+			dispatch( {
+				type: SITE_FRONT_PAGE_SET_SUCCESS,
+				siteId,
+				pageId
+			} );
+		} ).catch( ( error ) => {
+			dispatch( {
+				type: SITE_FRONT_PAGE_SET_FAILURE,
+				siteId,
+				pageId,
 				error
 			} );
 		} );
