@@ -14,7 +14,7 @@ import noop from 'lodash/noop';
 import { createReduxStore } from 'state';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
-import emptyComponent from 'test/helpers/react/empty-component';
+import EmptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'main', function() {
 	context( 'when trying to renderToString() without theme data', function() {
@@ -22,8 +22,16 @@ describe( 'main', function() {
 		useFakeDom();
 
 		before( function() {
-			mockery.registerMock( 'my-sites/themes/theme-preview', emptyComponent );
-			mockery.registerMock( 'my-sites/themes/thanks-modal', emptyComponent );
+			mockery.registerMock( 'my-sites/themes/theme-preview', EmptyComponent );
+			mockery.registerMock( 'my-sites/themes/thanks-modal', EmptyComponent );
+			mockery.registerMock( 'my-sites/themes/themes-site-selector-modal', EmptyComponent );
+			mockery.registerMock( 'components/data/query-user-purchases', EmptyComponent );
+			mockery.registerMock( 'lib/analytics', {} );
+			mockery.registerMock( 'my-sites/themes/helpers', {
+				isPremium: noop,
+				getForumUrl: noop,
+				getDetailsUrl: noop,
+			} );
 			mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
 			mockery.registerMock( 'lib/wp', {
 				me: () => ( {
