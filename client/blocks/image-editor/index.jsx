@@ -15,7 +15,6 @@ import Notice from 'components/notice';
 import ImageEditorCanvas from './image-editor-canvas';
 import ImageEditorToolbar from './image-editor-toolbar';
 import ImageEditorButtons from './image-editor-buttons';
-import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import closeOnEsc from 'lib/mixins/close-on-esc';
 import {
@@ -37,7 +36,7 @@ const ImageEditor = React.createClass( {
 		// Component props
 		media: PropTypes.object,
 		siteId: PropTypes.number,
-		onImageEditorSave: PropTypes.func,
+		onImageExtracted: PropTypes.func,
 		onImageEditorCancel: PropTypes.func,
 		className: PropTypes.string,
 
@@ -51,7 +50,7 @@ const ImageEditor = React.createClass( {
 	getDefaultProps() {
 		return {
 			media: null,
-			onImageEditorSave: noop,
+			onImageExtracted: noop,
 			onImageEditorCancel: noop
 		};
 	},
@@ -88,57 +87,20 @@ const ImageEditor = React.createClass( {
 
 	onDone() {
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
-		canvasComponent.toBlob( this.onImageExtracted );
 
-		if ( this.props.onImageEditorSave ) {
-			this.props.onImageEditorSave();
-		}
+		canvasComponent.toBlob( ( blob ) => {
+			const {	onImageExtracted } = this.props;
+
+			onImageExtracted( blob, this.props );
+
+			this.props.resetAllImageEditorState();
+		} );
 	},
 
 	onCancel() {
 		this.props.resetAllImageEditorState();
 
-		if ( this.props.onImageEditorCancel ) {
-			this.props.onImageEditorCancel();
-		}
-	},
-
-	onImageExtracted( blob ) {
-		const {
-			fileName,
-			site,
-			translate
-		} = this.props;
-
-		const mimeType = MediaUtils.getMimeType( fileName );
-
-		// check if a title is already post-fixed with '(edited copy)'
-		const editedCopyText = translate(
-			'%(title)s (edited copy)', {
-				args: {
-					title: ''
-				}
-			} );
-
-		let { title } = this.props;
-
-		if ( title.indexOf( editedCopyText ) === -1 ) {
-			title = translate(
-				'%(title)s (edited copy)', {
-					args: {
-						title: title
-					}
-				} );
-		}
-
-		this.props.resetAllImageEditorState();
-
-		MediaActions.add( site.ID, {
-			fileName: fileName,
-			fileContents: blob,
-			title: title,
-			mimeType: mimeType
-		} );
+		this.props.onImageEditorCancel();
 	},
 
 	isValidTransfer: function( transfer ) {

@@ -210,7 +210,40 @@ module.exports = React.createClass( {
 		this.setView( ModalViews.IMAGE_EDITOR );
 	},
 
-	onImageEditorSave: function() {
+	onImageExtracted( blob, imageEditorProps ) {
+		const {
+			fileName,
+			site
+		} = imageEditorProps;
+
+		const mimeType = MediaUtils.getMimeType( fileName );
+
+		// check if a title is already post-fixed with '(edited copy)'
+		const editedCopyText = this.translate(
+			'%(title)s (edited copy)', {
+				args: {
+					title: ''
+				}
+			} );
+
+		let { title } = imageEditorProps;
+
+		if ( title.indexOf( editedCopyText ) === -1 ) {
+			title = this.translate(
+				'%(title)s (edited copy)', {
+					args: {
+						title: title
+					}
+				} );
+		}
+
+		MediaActions.add( site.ID, {
+			fileName: fileName,
+			fileContents: blob,
+			title: title,
+			mimeType: mimeType
+		} );
+
 		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
 		this.setView( ModalViews.LIST );
 	},
@@ -408,7 +441,7 @@ module.exports = React.createClass( {
 					<ImageEditor
 						siteId={ site && site.ID }
 						media={ media }
-						onImageEditorSave={ this.onImageEditorSave }
+						onImageExtracted={ this.onImageExtracted }
 						onImageEditorCancel={ this.onImageEditorCancel }
 					/>
 				);
