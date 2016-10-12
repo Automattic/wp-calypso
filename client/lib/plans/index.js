@@ -75,7 +75,7 @@ export function getSitePlanSlug( siteID ) {
 
 export function canUpgradeToPlan( planKey, site = sitesList.getSelectedSite() ) {
 	const plan = get( site, [ 'plan', 'expired' ], false ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
-	return get( PLANS_LIST, [ planKey, 'availableFor' ], () => false )( plan );
+	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
 }
 
 export function getUpgradePlanSlugFromPath( path, siteID ) {
@@ -87,11 +87,11 @@ export function getUpgradePlanSlugFromPath( path, siteID ) {
 }
 
 export function getPlanPath( plan ) {
-	return get( PLANS_LIST, [ plan, 'getPathSlug' ], () => undefined )();
+	return get( getPlan( plan ), 'getPathSlug', () => undefined )();
 }
 
 export function planHasFeature( plan, feature ) {
-	return includes( get( PLANS_LIST, [ plan, 'getFeatures' ], () => [] )(), feature );
+	return includes( get( getPlan( plan ), 'getFeatures', () => [] )(), feature );
 }
 
 export function hasFeature( feature, siteID ) {
@@ -205,8 +205,8 @@ export function plansLink( url, site, intervalType ) {
 }
 
 export function applyTestFiltersToPlansList( planName ) {
-	const filteredPlanConstantObj = { ...PLANS_LIST[ planName ] };
-	const filteredPlanFeaturesConstantList = PLANS_LIST[ planName ].getFeatures();
+	const filteredPlanConstantObj = { ...getPlan( planName ) };
+	const filteredPlanFeaturesConstantList = getPlan( planName ).getFeatures();
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests
