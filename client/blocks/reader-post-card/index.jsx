@@ -52,6 +52,9 @@ export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentCl
 		'is-photo': isPhotoOnly
 	} );
 
+	// @todo Need a handleClick that processes ignore-click etc and then fires the provided onClick to open
+	// the full post where applicable
+
 	return (
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
 			<PostByline post={ post } site={ site } feed={ feed } />
