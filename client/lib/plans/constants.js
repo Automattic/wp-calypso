@@ -83,8 +83,8 @@ export const plansList = {
 		getDescription: () => i18n.translate( 'Get a free website and be on your way to publishing your ' +
 			'first post in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
-			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_WP_SUBDOMAIN,
+			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_COMMUNITY_SUPPORT,
 			FEATURE_FREE_THEMES,
 			FEATURE_BASIC_DESIGN,
