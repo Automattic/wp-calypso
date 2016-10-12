@@ -2,19 +2,14 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import _debug from 'debug';
-const debug = _debug( 'calypso:media-library:header' );
 
 /**
  * Internal dependencies
  */
-import { isMobile } from 'lib/viewport';
-import FormRange from 'components/forms/range';
 import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import SegmentedControl from 'components/segmented-control';
-import SegmentedControlItem from 'components/segmented-control/item';
+import MediaLibraryScale from './scale';
 import UploadButton from './upload-button';
 import MediaLibraryUploadUrl from './upload-url';
 import { userCan } from 'lib/site/utils';
@@ -25,16 +20,9 @@ export default React.createClass( {
 	propTypes: {
 		site: PropTypes.object,
 		filter: PropTypes.string,
-		scale: PropTypes.number,
-		onMediaScaleChange: PropTypes.func,
-		mediaScaleChoices: PropTypes.arrayOf( PropTypes.number ).isRequired,
-		mediaScale: PropTypes.number.isRequired,
 		sliderPositionCount: PropTypes.number,
+		onMediaScaleChange: React.PropTypes.func,
 		onAddMedia: PropTypes.func
-	},
-
-	statics: {
-		SCALE_TOUCH_GRID: 0.32
 	},
 
 	getInitialState() {
@@ -47,7 +35,6 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			onAddMedia: () => {},
-			onMediaScaleChange: () => {},
 			sliderPositionCount: 100
 		};
 	},
@@ -60,50 +47,6 @@ export default React.createClass( {
 		this.setState( {
 			moreOptionsContext: component
 		} );
-	},
-
-	onMediaScaleChange( event ) {
-		const sliderPosition = parseInt( event.target.value ),
-			scaleIndex = sliderPosition * this.props.mediaScaleChoices.length / this.props.sliderPositionCount,
-			scale = this.props.mediaScaleChoices[ Math.floor( scaleIndex ) ];
-
-		debug(
-			'onMediaScaleChange sliderPosition=%d scaleIndex=%d scale=%f',
-			sliderPosition, scaleIndex, scale
-		);
-
-		this.props.onMediaScaleChange( scale );
-		this.setState( { sliderPosition } );
-	},
-
-	getMediaScaleSliderPosition() {
-		// As part of the smooth motion of the slider, the user can move it
-		// between two snap points, and we want to remember this.
-
-		if ( typeof this.state.sliderPosition !== 'undefined' ) {
-			return this.state.sliderPosition;
-		}
-
-		const scale = this.props.mediaScale,
-			scaleIndex = this.props.mediaScaleChoices.indexOf( scale );
-
-		// Map the media scale index back to a slider position as follows:
-		// index 0 -> position 0
-		// index this.props.mediaScaleChoices.length - 1 -> position this.props.sliderPositionCount - 1
-
-		if ( scaleIndex < 0 ) {
-			debug( 'getMediaScaleSliderPosition unrecognized scale %f', scale );
-			return 0;
-		}
-
-		const { sliderPositionCount, mediaScaleChoices } = this.props,
-			sliderPosition = Math.floor( scaleIndex * ( sliderPositionCount - 1 ) / ( mediaScaleChoices.length - 1 ) );
-
-		debug(
-			'getMediaScaleSliderPosition scale=%f scaleIndex=%d sliderPosition=%d',
-			scale, scaleIndex, sliderPosition
-		);
-		return sliderPosition;
 	},
 
 	toggleAddViaUrl( state ) {
@@ -163,45 +106,6 @@ export default React.createClass( {
 		);
 	},
 
-	renderScaleToggle() {
-		const { mediaScale, sliderPositionCount, onMediaScaleChange } = this.props;
-
-		if ( isMobile() ) {
-			return (
-				<SegmentedControl className="media-library__scale-toggle" compact>
-					<SegmentedControlItem
-						selected={ 1 !== mediaScale }
-						onClick={ () => onMediaScaleChange( this.constructor.SCALE_TOUCH_GRID ) }>
-						<span className="screen-reader-text">
-							{ this.translate( 'Grid' ) }
-						</span>
-						<Gridicon icon="grid" />
-					</SegmentedControlItem>
-					<SegmentedControlItem
-						selected={ 1 === mediaScale }
-						onClick={ () => onMediaScaleChange( 1 ) }>
-						<span className="screen-reader-text">
-							{ this.translate( 'List' ) }
-						</span>
-						<Gridicon icon="menu" />
-					</SegmentedControlItem>
-				</SegmentedControl>
-			);
-		}
-
-		return (
-			<FormRange
-				step="1"
-				min="0"
-				max={ sliderPositionCount - 1 }
-				minContent={ <Gridicon icon="image" size={ 16 } /> }
-				maxContent={ <Gridicon icon="image" size={ 24 }/> }
-				value={ this.getMediaScaleSliderPosition() }
-				onChange={ this.onMediaScaleChange }
-				className="media-library__scale-range" />
-		);
-	},
-
 	render() {
 		const { site, onAddMedia } = this.props;
 
@@ -219,7 +123,8 @@ export default React.createClass( {
 			<header className="media-library__header">
 				<h2 className="media-library__heading">{ this.translate( 'Media Library' ) }</h2>
 				{ this.renderUploadButtons() }
-				{ this.renderScaleToggle() }
+				<MediaLibraryScale
+					onChange={ this.props.onMediaScaleChange } />
 			</header>
 		);
 	}

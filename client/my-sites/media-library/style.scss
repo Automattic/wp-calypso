@@ -69,6 +69,22 @@
 	position: absolute;
 		top: 0;
 		right: 0;
+
+	@include breakpoint( ">480px" ) {
+		display: none;
+	}
+}
+
+.media-library__scale-range {
+	display: none;
+
+	@include breakpoint( ">480px" ) {
+		display: block;
+	}
+}
+
+.media-library__scale-toggle-label {
+	@extend .screen-reader-text;
 }
 
 .media-library__scale-toggle .gridicon {
