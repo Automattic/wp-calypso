@@ -175,7 +175,7 @@ function renderProvisionPlugins( context ) {
 
 const controller = {
 	validateFilters( filter, context, next ) {
-		const wpcomFilter = 'standard';
+		const wpcomFilter = 'jetpack';
 		const siteUrl = route.getSiteFragment( context.path );
 		const site = sites.getSelectedSite();
 		const appliedFilter = ( filter ? filter : context.params.plugin ).toLowerCase();

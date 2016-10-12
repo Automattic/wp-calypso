@@ -48,7 +48,7 @@ export const PluginPanel = React.createClass( {
 			siteSlug
 		} = this.props;
 
-		const standardPluginsLink = `/plugins/standard/${ siteSlug }`;
+		const standardPluginsLink = `/plugins/jetpack/${ siteSlug }`;
 		const purchaseLink = `/plans/${ siteSlug }`;
 
 		const hasBusiness = isBusiness( plan ) || isEnterprise( plan );
@@ -74,7 +74,7 @@ export const PluginPanel = React.createClass( {
 				</Card>
 				<StandardPluginsPanel plugins={ standardPlugins } displayCount={ 9 } />
 				<Card className="wpcom-plugin-panel__panel-footer" href={ standardPluginsLink }>
-					{ this.translate( 'View all standard plugins' ) }
+					{ this.translate( 'View all' ) }
 				</Card>
 				<PremiumPluginsPanel plugins={ premiumPlugins } isActive={ hasPremium } { ...{ purchaseLink } } />
 				<BusinessPluginsPanel plugins={ businessPlugins } isActive={ hasBusiness } { ...{ purchaseLink } } />
