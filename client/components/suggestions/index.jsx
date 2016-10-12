@@ -67,15 +67,8 @@ const Suggestions = React.createClass( {
 		}
 	},
 
-	countSuggestions: function( suggestions ) {
-		let noOfSuggestions = 0;
-		for( const key in suggestions ) {
-			if( ! suggestions.hasOwnProperty( key ) ) {
-				continue;
-			}
-			noOfSuggestions += suggestions[ key ].length;
-		}
-		return noOfSuggestions;
+	countSuggestions: function() {
+		return this.state.taxonomySuggestionsArray.length;
 	},
 
 	getSuggestionForPosition: function( position ) {
