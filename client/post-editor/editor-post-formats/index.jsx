@@ -19,11 +19,8 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 
 const EditorPostFormats = React.createClass( {
-	displayName: 'EditorPostFormats',
-
 	propTypes: {
 		siteId: PropTypes.number,
-		post: PropTypes.object,
 		value: PropTypes.string,
 		postFormats: PropTypes.object
 	},
