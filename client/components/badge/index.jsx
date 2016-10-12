@@ -9,30 +9,6 @@ import { execSync } from 'child_process';
  */
 import config from 'config';
 
-let badge = false, devDocs, feedbackUrl;
-
-if ( config( 'env' ) === 'wpcalypso' ) {
-	badge = config( 'env' );
-	devDocs = true;
-	feedbackUrl = 'https://github.com/Automattic/wp-calypso/issues/';
-}
-
-if ( config( 'env' ) === 'horizon' ) {
-	badge = 'feedback';
-	feedbackUrl = 'https://horizonfeedback.wordpress.com/';
-}
-
-if ( config( 'env' ) === 'stage' ) {
-	badge = 'staging';
-	feedbackUrl = 'https://github.com/Automattic/wp-calypso/issues/';
-}
-
-if ( config( 'env' ) === 'development' ) {
-	badge = 'dev';
-	devDocs = true;
-	feedbackUrl = 'https://github.com/Automattic/wp-calypso/issues/';
-}
-
 function getCurrentBranchName() {
 	try {
 		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
@@ -49,7 +25,7 @@ function getCurrentCommitShortChecksum() {
 	}
 }
 
-const BranchName = () => {
+export const BranchName = () => {
 	const branchName = getCurrentBranchName();
 	if ( branchName === 'master' ) {
 		return null;
@@ -62,30 +38,68 @@ const BranchName = () => {
 	);
 };
 
-const DevDocsLink = ( { devDocsUrl } ) => (
+export const DevDocsLink = () => (
 	<span className="environment is-docs">
-		<a href={ devDocsUrl } title="DevDocs">
+		<a href="/devdocs" title="DevDocs">
 			docs
 		</a>
 	</span>
 );
 
-const Badge = () => {
-	if ( ! badge ) {
-		return null;
+export class BadgeBase extends React.Component {
+	componentWillMount() {
+		const { env } = this.props;
+
+		this.badge = false;
+		this.devDocs = false;
+		this.feedbackUrl = false;
+
+		if ( env === 'wpcalypso' ) {
+			this.badge = env;
+			this.devDocs = true;
+			this.feedbackUrl = 'https://github.com/Automattic/wp-calypso/issues/';
+		}
+
+		if ( env === 'horizon' ) {
+			this.badge = 'feedback';
+			this.feedbackUrl = 'https://horizonfeedback.wordpress.com/';
+		}
+
+		if ( env === 'stage' ) {
+			this.badge = 'staging';
+			this.feedbackUrl = 'https://github.com/Automattic/wp-calypso/issues/';
+		}
+
+		if ( env === 'development' ) {
+			this.badge = 'dev';
+			this.devDocs = true;
+			this.feedbackUrl = 'https://github.com/Automattic/wp-calypso/issues/';
+		}
 	}
 
-	return (
-		<div className="environment-badge">
-			{ config.isEnabled( 'dev/test-helper' ) && <div className="environment is-tests" /> }
-			{ config( 'env' ) === 'development' && <BranchName /> }
-			{ devDocs && <DevDocsLink devDocsUrl={ '/devdocs' } /> }
-			<span className={ 'environment is-' + badge }>
-				{ badge }
-			</span>
-			<a href={ feedbackUrl } title="Report an issue" target="_blank" rel="noopener noreferrer" className="bug-report" />
-		</div>
-	);
-};
+	render() {
+		const { env } = this.props;
+
+		if ( ! this.badge ) {
+			return null;
+		}
+
+		return (
+			<div className="environment-badge">
+				{ config.isEnabled( 'dev/test-helper' ) && <div className="environment is-tests" /> }
+				{ env === 'development' && <BranchName /> }
+				{ this.devDocs && <DevDocsLink /> }
+				<span className={ 'environment is-' + this.badge }>
+					{ this.badge }
+				</span>
+				<a href={ this.feedbackUrl } title="Report an issue" target="_blank" rel="noopener noreferrer" className="bug-report" />
+			</div>
+		);
+	}
+}
+
+const Badge = () => (
+	<BadgeBase env={ config( 'env' ) } />
+);
 
 export default Badge;
