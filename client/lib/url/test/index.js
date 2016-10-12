@@ -56,6 +56,14 @@ describe( 'isExternal', () => {
 		expect( actual ).to.be.false;
 	} );
 
+	it( 'should return true when matching an external url with no protocol', () => {
+		const source = '//some-other-site.com';
+
+		const actual = isExternal( source );
+
+		expect( actual ).to.be.true;
+	} );
+
 	describe( 'without global.window', () => {
 		it( 'should return true when not matching config hostname', () => {
 			const source = 'https://not.localhost/me';
