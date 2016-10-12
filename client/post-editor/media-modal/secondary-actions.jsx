@@ -15,7 +15,6 @@ import page from 'page';
  */
 import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
-import { Views as ModalViews } from './constants';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
@@ -23,23 +22,25 @@ import { canUserDeleteItem } from 'lib/media/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import PlanStorage from 'my-sites/plan-storage';
+import { getMediaModalView } from 'state/ui/media-modal/selectors';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { ModalViews } from 'state/ui/media-modal/constants';
 
 const MediaModalSecondaryActions = React.createClass( {
 	propTypes: {
 		user: PropTypes.object,
 		site: PropTypes.object,
 		selectedItems: PropTypes.array,
-		activeView: React.PropTypes.oneOf( values( ModalViews ) ),
+		view: React.PropTypes.oneOf( values( ModalViews ) ),
 		disabled: PropTypes.bool,
 		onDelete: PropTypes.func,
-		onChangeView: PropTypes.func
+		setView: PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
 			disabled: false,
-			onDelete: noop,
-			onChangeView: noop
+			onDelete: noop
 		};
 	},
 
@@ -63,7 +64,7 @@ const MediaModalSecondaryActions = React.createClass( {
 		analytics.mc.bumpStat( 'editor_media_actions', 'edit_button_dialog' );
 		analytics.ga.recordEvent( 'Media', 'Clicked Dialog Edit Button' );
 
-		this.props.onChangeView( ModalViews.DETAIL );
+		this.props.setView( ModalViews.DETAIL );
 	},
 
 	navigateToPlans() {
@@ -79,14 +80,14 @@ const MediaModalSecondaryActions = React.createClass( {
 			user,
 			site,
 			selectedItems,
-			activeView,
+			view,
 			disabled,
 			onDelete
 		} = this.props;
 
 		let buttons = [];
 
-		if ( ModalViews.LIST === activeView && selectedItems.length ) {
+		if ( ModalViews.LIST === view && selectedItems.length ) {
 			buttons.push( {
 				key: 'edit',
 				value: this.translate( 'Edit' ),
@@ -99,7 +100,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			return canUserDeleteItem( item, user, site );
 		} );
 
-		if ( ModalViews.GALLERY !== activeView && canDeleteItems ) {
+		if ( ModalViews.GALLERY !== view && canDeleteItems ) {
 			buttons.push( {
 				key: 'delete',
 				value: this.translate( 'Delete' ),
@@ -201,9 +202,11 @@ const MediaModalSecondaryActions = React.createClass( {
 	}
 } );
 
-export default connect( ( state, ownProps ) => {
-	return {
+export default connect(
+	( state, ownProps ) => ( {
+		view: getMediaModalView( state ),
 		user: getCurrentUser( state ),
 		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : ''
-	};
-} )( MediaModalSecondaryActions );
+	} ),
+	{ setView: setEditorMediaModalView }
+)( MediaModalSecondaryActions );
