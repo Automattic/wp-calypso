@@ -29,6 +29,7 @@
 	"features": {
 		"accept-invite": true,
 		"ad-tracking": false,
+		"apple-pay": true,
 		"catch-js-errors": false,
 		"code-splitting": true,
 		"community-translator": true,

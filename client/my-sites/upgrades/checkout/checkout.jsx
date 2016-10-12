@@ -40,6 +40,7 @@ import {
 } from 'lib/plans';
 import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
 import { recordViewCheckout } from 'lib/analytics/ad-tracking';
+import { recordApplePayStatus } from 'lib/apple-pay';
 
 const Checkout = React.createClass( {
 	mixins: [ observe( 'sites', 'productsList' ) ],
@@ -55,6 +56,8 @@ const Checkout = React.createClass( {
 
 	componentWillMount: function() {
 		upgradesActions.resetTransaction();
+
+		this.props.recordApplePayStatus();
 	},
 
 	componentDidMount: function() {
@@ -299,6 +302,7 @@ module.exports = connect(
 	{
 		clearPurchases,
 		clearSitePlans,
-		fetchReceiptCompleted
+		fetchReceiptCompleted,
+		recordApplePayStatus
 	}
 )( Checkout );
