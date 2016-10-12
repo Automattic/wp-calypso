@@ -349,8 +349,8 @@ export const featuresList = {
 		getSlug: () => FEATURE_JETPACK_ESSENTIAL,
 		getTitle: () => i18n.translate( 'Jetpack Essential Features' ),
 		getDescription: () => i18n.translate(
-			'Jetpack is a simple and powerful plugin that enables all ' +
-			'of the power and flexibility you need from your WordPress.'
+			'Jetpack is a powerful plugin that includes SEO, spam protection, ' +
+			'social sharing, site stats, and more.'
 		),
 		plans: allPaidPlans
 	},
