@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { has, isEmpty } from 'lodash';
+import { has } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -44,7 +44,7 @@ const EditorPostFormatsAccordion = React.createClass( {
 		const { post, postFormats } = this.props;
 
 		if ( ! post || ! postFormats ) {
-			return this.translate( 'Loading…' );
+			return null;
 		}
 
 		if ( has( postFormats, formatValue ) ) {
@@ -61,10 +61,6 @@ const EditorPostFormatsAccordion = React.createClass( {
 		const classes = classNames( 'editor-post-formats__accordion', className, {
 			'is-loading': ! post || ! postFormats
 		} );
-
-		if ( isEmpty( postFormats ) ) {
-			return null;
-		}
 
 		return (
 			<Accordion
