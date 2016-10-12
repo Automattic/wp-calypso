@@ -13,12 +13,11 @@ import { connect } from 'react-redux';
 import Popover from 'components/popover';
 import Gridicon from 'components/gridicon';
 import PlanPrice from 'components/plans/plan-price';
-import { fetchSitePlans } from 'state/sites/plans/actions';
-import { shouldFetchSitePlans } from 'lib/plans';
 import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
-import PlansList from 'lib/plans-list';
-const plansList = PlansList();
+import { getPlans } from 'state/plans/selectors';
+import QuerySitePlans from 'components/data/query-site-plans';
+import QueryPlans from 'components/data/query-plans';
 
 let exclusiveViewLock = null;
 
@@ -35,13 +34,6 @@ const PremiumPopover = React.createClass( {
 			visibleByClick: false,
 			visibleByHover: false
 		};
-	},
-	componentDidMount() {
-		this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
-		this.props.fetchPlans();
-	},
-	componentWillReceiveProps( nextProps ) {
-		this.props.fetchSitePlans( nextProps.sitePlans, nextProps.selectedSite );
 	},
 	isVisible() {
 		return (
@@ -90,12 +82,15 @@ const PremiumPopover = React.createClass( {
 		}
 	},
 	render() {
+		const { selectedSiteId } = this.props;
 		const premiumPlan = find( this.props.plans, ( plan => plan.product_slug === 'value_bundle' ) );
 		const popoverClasses = classNames( this.props.className, 'premium-popover popover' );
 		const context = this.refs && this.refs[ 'popover-premium-reference' ];
 
 		return (
 			<div>
+				<QueryPlans />
+				<QuerySitePlans siteId={ selectedSiteId } />
 				<span
 					onClick={ this.handleClick }
 					onMouseEnter={ this.handleMouseEnter }
@@ -141,18 +136,8 @@ const PremiumPopover = React.createClass( {
 export default connect( ( state ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 	return {
+		selectedSiteId,
 		sitePlans: getPlansBySiteId( state, selectedSiteId ),
-		plans: plansList.get()
-	};
-}, ( dispatch ) => {
-	return {
-		fetchSitePlans( sitePlans, site ) {
-			if ( shouldFetchSitePlans( sitePlans, site ) ) {
-				dispatch( fetchSitePlans( site.ID ) );
-			}
-		},
-		fetchPlans() {
-			plansList.fetch();
-		}
+		plans: getPlans( state )
 	};
 } )( PremiumPopover );
