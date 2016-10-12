@@ -136,6 +136,9 @@ const Suggestions = React.createClass( {
 			return {}
 		}
 
+		//default limit, changed to 5 for single taxonomy
+		let limit = 3;
+
 		let terms; //terms that we will use to create suggestions
 
 		if( filter !== undefined ) {
@@ -144,6 +147,8 @@ const Suggestions = React.createClass( {
 			if( this.props.terms.hasOwnProperty( taxonomy ) ) {
 				//so we will only filter elements from this taxonomy
 				terms = pick( this.props.terms, taxonomy );
+				//limit to 5 suggestions
+				limit = 5;
 			} else {
 				// not a valid taxonomy
 				// TODO tell something to the user
@@ -167,7 +172,7 @@ const Suggestions = React.createClass( {
 
 			filtered[ key ] = terms[ key ].filter(
 				term => term.indexOf( filter ) !== -1
-			);
+			).splice( 0, limit );
 		}
 
 		const suggestions = this.removeEmptySuggestions( filtered );
