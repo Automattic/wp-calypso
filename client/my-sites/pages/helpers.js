@@ -7,6 +7,7 @@ module.exports = {
 		return '/page/' + site.slug + '/' + page.ID;
 	},
 
+	// TODO: switch all usage of this function to `isFrontPage` in `state/pages/selectors`
 	isFrontPage: function( page, site ) {
 		if ( ! page || ! page.ID || ! site || ! site.options ) {
 			return false;
