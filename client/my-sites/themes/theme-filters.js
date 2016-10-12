@@ -190,7 +190,7 @@ function getTermTable() {
 		termTable = {};
 		forIn( taxonomies, ( terms, taxonomy ) => {
 			terms.forEach( ( term ) => {
-				const key = isTermAmbiguous( term ) ? `${ taxonomy }__${ term }` : term;
+				const key = isTermAmbiguous( term ) ? `${ taxonomy }:${ term }` : term;
 				termTable[ key ] = taxonomy;
 			} );
 		} );
@@ -231,13 +231,13 @@ function splitFilter( filter, group ) {
 function getTerm( filter ) {
 	const term = splitFilter( filter, FILTER_TERM_GROUP );
 	if ( isTermAmbiguous( term ) ) {
-		return `${ getTaxonomy( filter ) }__${ term }`;
+		return `${ getTaxonomy( filter ) }:${ term }`;
 	}
 	return term;
 }
 
 function stripTermPrefix( term ) {
-	return term.replace( /^\w+__/, '' );
+	return term.replace( /^\w+:/, '' );
 }
 
 // return taxonomy from a taxonomy:term string
@@ -250,7 +250,7 @@ function getTaxonomy( filter ) {
  * in "taxonomy:term" search-box format.
  *
  * Supplied terms that belong to more than one taxonomy must be
- * prefixed with taxonomy: taxonomy__term
+ * prefixed taxonomy:term
  *
  * @param {string} term - the term slug
  * @return {string} - complete taxonomy:term filter, or empty string if term is not valid
@@ -280,8 +280,8 @@ export function filterIsValid( filter ) {
  * Sort is alphabetical on the complete "taxonomy:term" string.
  *
  * Supplied terms that belong to more than one taxonomy must be
- * prefixed with taxonomy: taxonomy__term. Returned terms will
- * keep the prefix.
+ * prefixed taxonomy:term. Returned terms will
+ * keep this prefix.
  *
  * @param {array} terms - Array of term strings
  * @return {array} sorted array
@@ -296,7 +296,7 @@ export function sortFilterTerms( terms ) {
  * terms (which will be ignored) as well as filters.
  *
  * Returned terms that belong to more than one taxonomy will be
- * prefixed with taxonomy: taxonomy__term
+ * prefixed taxonomy:term
  *
  * @param {string} input - the string to parse
  * @return {string} comma-seperated list of valid filters
@@ -328,7 +328,7 @@ export function getSubjects() {
  * Returns true for valid term.
  *
  * Supplied terms that belong to more than one taxonomy must be
- * prefixed with taxonomy: taxonomy__term
+ * prefixed with taxonomy:term
  *
  * @param {string} term - term to validate
  * @return {bool} true if term is valid
