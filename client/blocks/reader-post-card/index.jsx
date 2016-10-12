@@ -1,9 +1,11 @@
 /**
  * External Dependencies
  */
-import React, { PropTypes, PureComponent } from 'react';
-import { partial, noop, truncate } from 'lodash';
+import React, { PropTypes } from 'react';
+import { noop, truncate } from 'lodash';
 import classnames from 'classnames';
+import ReactDom from 'react-dom';
+import closest from 'component-closest';
 
 /**
  * Internal Dependencies
@@ -13,6 +15,7 @@ import DisplayTypes from 'state/reader/posts/display-types';
 import Gravatar from 'components/gravatar';
 import Gridicon from 'components/gridicon';
 import ReaderPostActions from 'blocks/reader-post-actions';
+import * as stats from 'reader/stats';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -40,7 +43,7 @@ function PostByline( { post } ) {
 	);
 }
 
-export default class RefreshPostCard extends PureComponent {
+export default class RefreshPostCard extends React.Component {
 	static propTypes = {
 		post: PropTypes.object.isRequired,
 		site: PropTypes.object,
@@ -54,8 +57,69 @@ export default class RefreshPostCard extends PureComponent {
 		onCommentClick: noop
 	};
 
+	constructor( props ) {
+		super( props );
+		[
+			'handleCardClick',
+			'propagateCardClick',
+		].forEach( fn => {
+			this[ fn ] = this[ fn ].bind( this );
+		} );
+	}
+
+	propagateCardClick() {
+		const postToOpen = this.props.post;
+
+		// @todo
+		// For Discover posts (but not site picks), open the original post in full post view
+		// https://github.com/Automattic/wp-calypso/issues/8696
+
+		this.props.onClick( { post: postToOpen, site: this.props.site, feed: this.props.feed } );
+	}
+
+	handleCardClick( event ) {
+		const rootNode = ReactDom.findDOMNode( this ),
+			selection = window.getSelection && window.getSelection();
+
+		// if the click has modifier or was not primary, ignore it
+		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+			if ( closest( event.target, '.reader-post-card__title-link', true, rootNode ) ) {
+				stats.recordPermalinkClick( 'card_title_with_modifier' );
+				stats.recordGaEvent( 'Clicked Post Permalink with Modifier' );
+			}
+			return;
+		}
+
+		if ( closest( event.target, '.should-scroll', true, rootNode ) ) {
+			setTimeout( function() {
+				window.scrollTo( 0, 0 );
+			}, 100 );
+		}
+
+		// declarative ignore
+		if ( closest( event.target, '.ignore-click, [rel~=external]', true, rootNode ) ) {
+			return;
+		}
+
+		// ignore clicks on anchors inside inline content
+		if ( closest( event.target, 'a', true, rootNode ) && closest( event.target, '.reader-post-card__excerpt', true, rootNode ) ) {
+			return;
+		}
+
+		// ignore clicks when highlighting text
+		if ( selection && selection.toString() ) {
+			return;
+		}
+
+		// programattic ignore
+		if ( ! event.defaultPrevented ) { // some child handled it
+			event.preventDefault();
+			this.propagateCardClick();
+		}
+	}
+
 	render() {
-		const { post, site, feed, onClick, onCommentClick } = this.props;
+		const { post, site, feed, onCommentClick } = this.props;
 		const featuredImage = post.canonical_image;
 		const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
 		const title = truncate( post.title, {
@@ -67,11 +131,8 @@ export default class RefreshPostCard extends PureComponent {
 			'is-photo': isPhotoOnly
 		} );
 
-		// @todo Need a handleClick that processes ignore-click etc and then fires the provided onClick to open
-		// the full post where applicable
-
 		return (
-			<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
+			<Card className={ classes } onClick={ this.handleCardClick }>
 				<PostByline post={ post } site={ site } feed={ feed } />
 				<div className="reader-post-card__post">
 					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }

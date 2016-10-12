@@ -28,11 +28,12 @@ const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, s
 
 	const listClassnames = classnames( 'reader-post-actions', className );
 
+	/* eslint-disable react/jsx-no-target-blank */
 	return (
 		<ul className={ listClassnames }>
 			{ showVisit &&
 				<li className="reader-post-actions__item reader-post-actions__visit">
-					<ExternalLink href={ post.URL } icon={ true } showIconFirst={ true } iconSize={ iconSize }>
+					<ExternalLink href={ post.URL } target="_blank" icon={ true } showIconFirst={ true } iconSize={ iconSize }>
 						<span className="reader-post-actions__visit-label">{ translate( 'Visit' ) }</span>
 					</ExternalLink>
 				</li>
@@ -72,6 +73,7 @@ const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, s
 			}
 		</ul>
 	);
+	/* eslint-enable react/jsx-no-target-blank */
 };
 
 ReaderPostActions.propTypes = {
