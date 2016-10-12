@@ -517,3 +517,7 @@ export function isCurrentSitePlan( state, siteId, planProductId ) {
 
 	return sitePlan.product_id === planProductId;
 }
+
+export function getSiteFrontPage( state, siteId ) {
+	return getSiteOption( state, siteId, 'page_on_front' );
+}

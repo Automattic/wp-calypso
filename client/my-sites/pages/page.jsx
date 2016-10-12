@@ -6,6 +6,9 @@ var React = require( 'react' ),
 	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' );
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 /**
  * Internal dependencies
  */
@@ -22,6 +25,8 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	config = require( 'config' );
 
 import MenuSeparator from 'components/popover/menu-separator';
+import { isFrontPage } from 'state/pages/selectors';
+import { setFrontPage } from 'state/sites/actions';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -40,7 +45,7 @@ function getReadableStatus( status ) {
 	return humanReadableStatus [ status ] || status;
 }
 
-module.exports = React.createClass( {
+const Page = React.createClass( {
 
 	displayName: 'Page',
 
@@ -97,25 +102,24 @@ module.exports = React.createClass( {
 	},
 
 	setAsHomepage: function() {
-		//TODO: implementation missing
+		this.setState( { showPageActions: false } );
+		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID );
 	},
 
 	getSetAsHomepageItem: function() {
 		const isPublished = this.props.page.status === 'publish';
-		const isFrontPage = helpers.isFrontPage( this.props.page, this.props.site );
 
-		if ( ! isPublished || isFrontPage ) {
+		if ( ! isPublished || this.props.isFrontPage ) {
 			return null;
 		}
 
 		return (
-			<PopoverMenuItem onClick={ this.setAsHomepage() }>
+			<PopoverMenuItem onClick={ this.setAsHomepage }>
 				<Gridicon icon="house" size={ 18 } />
 				{ this.translate( 'Set as Homepage' ) }
 			</PopoverMenuItem>
 		);
 	},
-
 
 	viewPage: function() {
 		window.open( this.props.page.URL );
@@ -169,7 +173,7 @@ module.exports = React.createClass( {
 	},
 
 	frontPageInfo: function() {
-		if ( ! helpers.isFrontPage( this.props.page, this.props.site ) ) {
+		if ( ! this.props.isFrontPage ) {
 			return null;
 		}
 
@@ -285,7 +289,6 @@ module.exports = React.createClass( {
 		var page = this.props.page,
 			title = page.title || this.translate( '(no title)' ),
 			site = this.props.site || {},
-			isFrontPage = helpers.isFrontPage( page, site ),
 			canEdit = utils.userCan( 'edit_post', this.props.page ),
 			depthIndicator;
 
@@ -306,7 +309,7 @@ module.exports = React.createClass( {
 					onClick={ this.analyticsEvents.pageTitle }
 					>
 					{ depthIndicator }
-					{ isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
+					{ this.props.isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
 					{ title }
 				</a>
 				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
@@ -368,3 +371,14 @@ module.exports = React.createClass( {
 		recordEvent( 'Clicked Delete Page' );
 	}
 } );
+
+export default connect(
+	( state, props ) => {
+		return {
+			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID )
+		};
+	},
+	( dispatch ) => bindActionCreators( {
+		setFrontPage
+	}, dispatch )
+)( Page );
