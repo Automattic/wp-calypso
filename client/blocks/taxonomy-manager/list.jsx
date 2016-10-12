@@ -13,6 +13,7 @@ import {
 	filter,
 	map,
 	memoize,
+	noop,
 	range,
 	reduce,
 } from 'lodash';
@@ -40,6 +41,7 @@ const ITEM_HEIGHT = 55;
 const TaxonomyManagerList = React.createClass( {
 
 	propTypes: {
+		onTermSelect: PropTypes.func,
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
 		search: PropTypes.string,
@@ -60,7 +62,8 @@ const TaxonomyManagerList = React.createClass( {
 			searchThreshold: 8,
 			loading: true,
 			terms: [],
-			onNextPage: () => {}
+			onNextPage: () => {},
+			onTermSelect: noop
 		};
 	},
 
@@ -250,7 +253,8 @@ const TaxonomyManagerList = React.createClass( {
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 		const children = this.getTermChildren( item.ID );
 
-		const { translate } = this.props;
+		const { translate, onTermSelect } = this.props;
+		const selectTerm = () => onTermSelect( item );
 		const itemId = item.ID;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
 
@@ -258,7 +262,8 @@ const TaxonomyManagerList = React.createClass( {
 			<div key={ 'term-wrapper-' + itemId } className="taxonomy-manager__list-item">
 				<CompactCard
 					key={ itemId }
-					ref={ setItemRef }>
+					ref={ setItemRef }
+					onClick={ selectTerm }>
 						<span className="taxonomy-manager__label">{ name }</span>
 				</CompactCard>
 				{ children.length > 0 && (

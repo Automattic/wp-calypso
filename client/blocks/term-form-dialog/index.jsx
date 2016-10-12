@@ -3,18 +3,15 @@
  */
 import React, { PropTypes, Component } from 'react';
 import ReactDom from 'react-dom';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find, noop } from 'lodash';
+import { get, find, noop, assign } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import TermTreeSelectorTerms from './terms';
-import Button from 'components/button';
-import Gridicon from 'components/gridicon';
+import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
@@ -27,13 +24,12 @@ import viewport from 'lib/viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
-import { addTerm } from 'state/terms/actions';
+import { addTerm, updateTerm } from 'state/terms/actions';
 
-class TermSelectorAddTerm extends Component {
+class TermFormDialog extends Component {
 	static initialState = {
 		description: '',
 		name: '',
-		showDialog: false,
 		selectedParent: [],
 		isTopLevel: true,
 		isValid: false,
@@ -41,12 +37,10 @@ class TermSelectorAddTerm extends Component {
 	};
 
 	static propTypes = {
-		description: PropTypes.string,
 		labels: PropTypes.object,
+		onClose: PropTypes.func,
 		onSuccess: PropTypes.func,
-		postId: PropTypes.number,
 		postType: PropTypes.string,
-		name: PropTypes.string,
 		showDescriptionInput: PropTypes.bool,
 		siteId: PropTypes.number,
 		taxonomy: PropTypes.string,
@@ -56,30 +50,19 @@ class TermSelectorAddTerm extends Component {
 	};
 
 	static defaultProps = {
+		onClose: noop,
 		onSuccess: noop,
-		showDescriptionInput: false
+		showDescriptionInput: false,
+		showDialog: false
 	};
-
-	constructor( props ) {
-		super( props );
-		this.state = this.constructor.initialState;
-	}
 
 	onSearch = searchTerm => {
 		this.setState( { searchTerm: searchTerm } );
 	};
 
-	openDialog = event => {
-		event.preventDefault();
-
-		this.setState( {
-			showDialog: true,
-			selectedParent: []
-		} );
-	};
-
 	closeDialog = () => {
 		this.setState( this.constructor.initialState );
+		this.props.onClose();
 	};
 
 	onParentChange = item => {
@@ -108,18 +91,52 @@ class TermSelectorAddTerm extends Component {
 		} );
 	};
 
-	willReceiveProps( newProps ) {
+	validateInput = event => {
+		if ( 13 === event.keyCode ) {
+			this.saveTerm();
+		} else {
+			this.isValid();
+		}
+	}
+
+	saveTerm = () => {
+		const term = this.getFormValues();
+		if ( ! this.isValid() ) {
+			return;
+		}
+
+		const { siteId, taxonomy } = this.props;
+		const isNew = ! this.props.term;
+		const savePromise = isNew
+			? this.props.addTerm( siteId, taxonomy, term )
+			: this.props.updateTerm( siteId, taxonomy, this.props.term.ID, term );
+
+		savePromise.then( this.props.onSuccess );
+		this.closeDialog();
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = this.constructor.initialState;
+	}
+
+	componentWillReceiveProps( newProps ) {
 		if ( this.props.term === newProps.term ) {
 			return;
 		}
 
+		if ( ! newProps.term ) {
+			this.setState( this.constructor.initialState );
+			return;
+		}
+
 		const { name, description, parent = false } = newProps.term;
-		this.setState( {
+		this.setState( assign( {}, this.constructor.initialState, {
 			name,
 			description,
 			isTopLevel: parent ? false : true,
 			selectedParent: parent ? [ parent ] : []
-		} );
+		} ) );
 	}
 
 	getFormValues() {
@@ -147,7 +164,9 @@ class TermSelectorAddTerm extends Component {
 		const lowerCasedTermName = values.name.toLowerCase();
 		const matchingTerm = find( this.props.terms, ( term ) => {
 			return ( term.name.toLowerCase() === lowerCasedTermName ) &&
-				( ! this.props.isHierarchical || ( term.parent === values.parent ) );
+				( ! this.props.isHierarchical ||
+					( term.parent === values.parent && ( ! this.props.term || term.ID !== this.props.term.ID ) )
+				);
 		} );
 
 		if ( matchingTerm ) {
@@ -167,30 +186,6 @@ class TermSelectorAddTerm extends Component {
 		return ! error;
 	}
 
-	validateInput = event => {
-		if ( 13 === event.keyCode ) {
-			this.saveTerm();
-		} else {
-			this.isValid();
-		}
-	}
-
-	saveTerm = () => {
-		const term = this.getFormValues();
-		if ( ! this.isValid() ) {
-			return;
-		}
-
-		const { siteId, taxonomy } = this.props;
-		const isNew = ! this.props.term;
-		const savePromise = isNew
-			? this.props.addTerm( siteId, taxonomy, term )
-			: this.props.updateTerm( siteId, taxonomy, this.props.term.ID, term );
-
-		savePromise.then( this.props.onSuccess );
-		this.closeDialog();
-	};
-
 	renderParentSelector() {
 		const { labels, siteId, taxonomy, translate } = this.props;
 		const { searchTerm, selectedParent } = this.state;
@@ -198,6 +193,7 @@ class TermSelectorAddTerm extends Component {
 		if ( searchTerm && searchTerm.length ) {
 			query.search = searchTerm;
 		}
+		const hideTermAndChildren = get( this.props.term, 'ID' );
 
 		return (
 			<FormFieldset>
@@ -215,68 +211,63 @@ class TermSelectorAddTerm extends Component {
 					onChange={ this.onParentChange }
 					query={ query }
 					selected={ selectedParent }
+					hideTermAndChildren={ hideTermAndChildren }
 				/>
 			</FormFieldset>
 		);
 	}
 
 	render() {
-		const { isHierarchical, labels, translate, terms, showDescriptionInput } = this.props;
+		const { isHierarchical, labels, translate, showDescriptionInput, showDialog } = this.props;
 		const { name, description } = this.state;
+		const isNew = ! this.props.term;
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' )
 		}, {
-			action: 'add',
-			label: translate( 'Add' ),
+			action: isNew ? 'add' : 'update',
+			label: isNew ? translate( 'Add' ) : translate( 'Update' ),
 			isPrimary: true,
 			disabled: ! this.state.isValid,
 			onClick: this.saveTerm
 		} ];
 
-		const isError = this.state.error && this.state.error.length;
-		const totalTerms = terms ? terms.length : 0;
-		const classes = classNames( 'term-tree-selector__add-term', { 'is-compact': totalTerms < 8 } );
+		const isError = this.state.error && !! this.state.error.length;
 
 		return (
-			<div className={ classes }>
-				<Button borderless compact={ true } onClick={ this.openDialog }>
-					<Gridicon icon="folder" /> { labels.add_new_item }
-				</Button>
-				<Dialog
-					autoFocus={ false }
-					isVisible={ this.state.showDialog }
-					buttons={ buttons }
-					onClose={ this.closeDialog }
-					additionalClassNames="term-tree-selector__add-term-dialog">
-					<FormSectionHeading>{ labels.add_new_item }</FormSectionHeading>
-					<FormFieldset>
-						<FormTextInput
-							autoFocus={ this.state.showDialog && ! viewport.isMobile() }
-							placeholder={ labels.new_item_name }
-							ref="termName"
-							isError={ isError }
+			<Dialog
+				autoFocus={ false }
+				isVisible={ showDialog }
+				buttons={ buttons }
+				onClose={ this.closeDialog }
+				additionalClassNames={ 'term-form-dialog' }>
+				<FormSectionHeading>{ isNew ? labels.add_new_item : labels.edit_item }</FormSectionHeading>
+				<FormFieldset>
+					<FormTextInput
+						autoFocus={ showDialog && ! viewport.isMobile() }
+						placeholder={ labels.new_item_name }
+						ref="termName"
+						isError={ isError }
+						onKeyUp={ this.validateInput }
+						value={ name }
+						onChange={ this.onNameChange }
+					/>
+					{ isError && <FormInputValidation isError text={ this.state.error } /> }
+				</FormFieldset>
+				{ showDescriptionInput && <FormFieldset>
+						<FormLegend>
+							{ translate( 'Description', { context: 'Terms: Term description label' } ) }
+						</FormLegend>
+						<FormTextarea
+							ref="termDescription"
 							onKeyUp={ this.validateInput }
-							value={ name }
-							onChange={ this.onNameChange }
+							value={ description }
+							onChange={ this.onDescriptionChange }
 						/>
-						{ isError && <FormInputValidation isError text={ this.state.error } /> }
 					</FormFieldset>
-					{ showDescriptionInput && <FormFieldset>
-							<FormLegend>
-								{ translate( 'Description', { context: 'Terms: Term description label' } ) }
-							</FormLegend>
-							<FormTextarea
-								ref="termDescription"
-								onKeyUp={ this.validateInput }
-								value={ description }
-								onChange={ this.onDescriptionChange }
-							/>
-						</FormFieldset>
-					}
-					{ isHierarchical && this.renderParentSelector() }
-				</Dialog>
-			</div>
+				}
+				{ isHierarchical && this.renderParentSelector() }
+			</Dialog>
 		);
 	}
 }
@@ -296,5 +287,5 @@ export default connect(
 			siteId
 		};
 	},
-	{ addTerm }
-)( localize( TermSelectorAddTerm ) );
+	{ addTerm, updateTerm }
+)( localize( TermFormDialog ) );
