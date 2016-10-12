@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { map, some } from 'lodash';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -36,20 +36,9 @@ const EditorPostFormats = React.createClass( {
 
 	getSelectedPostFormat() {
 		const { value } = this.props;
+		const isSupportedFormat = !! this.getPostFormats()[ value ];
 
-		if ( 'standard' === value ) {
-			return 'standard';
-		}
-
-		const isSupportedFormat = some( this.getPostFormats(), ( postFormatLabel, postFormatSlug ) => {
-			return postFormatSlug === value;
-		} );
-
-		if ( isSupportedFormat ) {
-			return value;
-		}
-
-		return 'standard';
+		return isSupportedFormat ? value : 'standard';
 	},
 
 	getPostFormats() {
