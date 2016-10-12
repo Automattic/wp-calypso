@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -18,18 +19,20 @@ import * as stats from 'reader/stats';
 import { localize } from 'i18n-calypso';
 import ExternalLink from 'components/external-link';
 
-const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, showVisit, iconSize } ) => {
+const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, showVisit, iconSize, className } ) => {
 	const onEditClick = () => {
 		stats.recordAction( 'edit_post' );
 		stats.recordGaEvent( 'Clicked Edit Post', 'full_post' );
 		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', post );
 	};
 
+	const listClassnames = classnames( 'reader-post-actions', className );
+
 	return (
-		<ul className="reader-post-actions">
+		<ul className={ listClassnames }>
 			{ showVisit &&
 				<li className="reader-post-actions__item reader-post-actions__visit">
-					<ExternalLink icon={ true } showIconFirst={ true } iconSize={ iconSize }>
+					<ExternalLink href={ post.URL } icon={ true } showIconFirst={ true } iconSize={ iconSize }>
 						<span className="reader-post-actions__visit-label">{ translate( 'Visit' ) }</span>
 					</ExternalLink>
 				</li>
