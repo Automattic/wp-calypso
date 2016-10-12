@@ -14,12 +14,14 @@ const CreditCardFormExample = () => {
 		name: 'John Doe'
 	};
 
+	const createPaygateToken = ( cardDetails, callback ) => callback( null, 'token' );
+
 	return (
 		<CreditCardForm
-			actionType="test"
+			createPaygateToken={ createPaygateToken }
 			initialValues={ initialValues }
 			recordFormSubmitEvent={ noop }
-			saveStoredCard={ () => Promise.reject( { message: 'This is only example' } ) }
+			saveStoredCard={ () => Promise.reject( { message: 'This is an example error.' } ) }
 			successCallback={ noop } />
 	);
 };

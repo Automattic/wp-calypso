@@ -9,7 +9,6 @@ import React, { PropTypes } from 'react';
 import camelCase from 'lodash/camelCase';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import CountriesList from 'lib/countries-list';
 import FormButton from 'components/forms/form-button';
@@ -30,8 +29,8 @@ const wpcom = wpcomFactory.undocumented();
 
 const CreditCardForm = React.createClass( {
 	propTypes: {
-		actionType: PropTypes.string.isRequired,
 		apiParams: PropTypes.object,
+		createPaygateToken: PropTypes.func.isRequired,
 		initialValues: PropTypes.object,
 		recordFormSubmitEvent: PropTypes.func.isRequired,
 		saveStoredCard: PropTypes.func,
@@ -150,7 +149,7 @@ const CreditCardForm = React.createClass( {
 	saveCreditCard() {
 		const cardDetails = this.getCardDetails();
 
-		createPaygateToken( this.props.actionType, cardDetails, ( paygateError, paygateToken ) => {
+		this.props.createPaygateToken( cardDetails, ( paygateError, paygateToken ) => {
 			if ( ! this._mounted ) {
 				return;
 			}
