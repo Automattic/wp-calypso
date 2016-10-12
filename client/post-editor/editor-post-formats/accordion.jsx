@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { has } from 'lodash';
+import { has, isEmpty } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -18,8 +18,6 @@ import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getPostFormats } from 'state/post-formats/selectors';
 
 const EditorPostFormatsAccordion = React.createClass( {
-	displayName: 'EditorPostFormatsAccordion',
-
 	propTypes: {
 		siteId: PropTypes.number,
 		site: PropTypes.object,
@@ -45,7 +43,7 @@ const EditorPostFormatsAccordion = React.createClass( {
 		const { post, postFormats } = this.props;
 
 		if ( ! post || ! postFormats ) {
-			return null;
+			return;
 		}
 
 		if ( has( postFormats, formatValue ) ) {
@@ -64,18 +62,18 @@ const EditorPostFormatsAccordion = React.createClass( {
 		} );
 
 		return (
-			<Accordion
-				title={ this.translate( 'Post Format' ) }
-				subtitle={ this.getSubtitle() }
-				icon={ <Gridicon icon="types" /> }
-				className={ classes }>
+			<div>
 				<QueryPostFormats siteId={ this.props.siteId } />
-				<PostFormats
-					siteId={ this.props.siteId }
-					post={ post }
-					value={ this.getFormatValue() }
-				/>
-			</Accordion>
+				{ ! isEmpty( postFormats ) && (
+					<Accordion
+						title={ this.translate( 'Post Format' ) }
+						subtitle={ this.getSubtitle() }
+						icon={ <Gridicon icon="types" /> }
+						className={ classes }>
+						<PostFormats value={ this.getFormatValue() } />
+					</Accordion>
+				) }
+			</div>
 		);
 	}
 } );
