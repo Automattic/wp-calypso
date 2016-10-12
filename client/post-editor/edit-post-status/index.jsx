@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
-import noop from 'lodash/noop';
-import { moment, translate } from 'i18n-calypso';
+import { noop } from 'lodash';
+import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
@@ -29,12 +29,14 @@ import { getEditedPost } from 'state/posts/selectors';
 class EditPostStatus extends Component {
 
 	static propTypes = {
+		moment: PropTypes.func,
+		onDateChange: PropTypes.func,
+		onSave: PropTypes.func,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
-		type: PropTypes.string,
-		onSave: PropTypes.func,
-		onDateChange: PropTypes.func,
-		site: PropTypes.object
+		site: PropTypes.object,
+		translate: PropTypes.func,
+		type: PropTypes.string
 	};
 
 	constructor( props ) {
@@ -96,6 +98,7 @@ class EditPostStatus extends Component {
 
 	render() {
 		let isSticky, isPublished, isPending, canPublish, isScheduled;
+		const { translate } = this.props;
 
 		if ( this.props.post ) {
 			isSticky = this.props.post.sticky;
@@ -186,7 +189,7 @@ class EditPostStatus extends Component {
 		const tz = siteUtils.timezone( this.props.site ),
 			gmt = siteUtils.gmtOffset( this.props.site ),
 			selectedDay = this.props.post && this.props.post.date
-				? moment( this.props.post.date )
+				? this.props.moment( this.props.post.date )
 				: null;
 
 		return (
@@ -255,4 +258,4 @@ export default connect(
 		};
 	},
 	{ editPost }
-)( EditPostStatus );
+)( localize( EditPostStatus ) );

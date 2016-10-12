@@ -21,7 +21,9 @@ const EditorSticky = React.createClass( {
 	displayName: 'EditorSticky',
 
 	propTypes: {
-		post: React.PropTypes.object
+		postId: React.PropTypes.number,
+		siteId: React.PropTypes.number,
+		sticky: React.PropTypes.bool
 	},
 
 	getInitialState: function() {
@@ -45,8 +47,9 @@ const EditorSticky = React.createClass( {
 		recordStat( stickyStat );
 		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
 
-		this.props.editPost( this.props.siteId, this.props.postId,
-			{ sticky: ! this.props.sticky } );
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			sticky: ! this.props.sticky
+		} );
 		this.setState( { tooltip: false } );
 	},
 
