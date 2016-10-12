@@ -6,6 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import useFakeDom from 'test/helpers/use-fake-dom';
 import { isExternal, withoutHttp } from '../';
 
 describe( 'withoutHttp', () => {
@@ -48,7 +49,7 @@ describe( 'withoutHttp', () => {
 } );
 
 describe( 'isExternal', () => {
-	it( 'should return false for url without hostname', () => {
+	it( 'should return false for relative path-only url', () => {
 		const source = '/relative';
 
 		const actual = isExternal( source );
@@ -56,29 +57,82 @@ describe( 'isExternal', () => {
 		expect( actual ).to.be.false;
 	} );
 
-	it( 'should return true when matching an external url with no protocol', () => {
-		const source = '//some-other-site.com';
+	it( 'should return false for relative query-only url', () => {
+		const source = '?foo=bar';
 
 		const actual = isExternal( source );
 
-		expect( actual ).to.be.true;
+		expect( actual ).to.be.false;
 	} );
 
-	describe( 'without global.window', () => {
-		it( 'should return true when not matching config hostname', () => {
-			const source = 'https://not.localhost/me';
+	describe( 'with global.window (test against window.location.hostname)', () => {
+		// window.location.hostname === 'example.com'
+		useFakeDom();
+
+		it( 'should return false for for internal protocol-relative url', () => {
+			const source = '//example.com';
+
+			const actual = isExternal( source );
+
+			expect( actual ).to.be.false;
+		} );
+
+		it( 'should return true for for external protocol-relative url', () => {
+			const source = '//some-other-site.com';
 
 			const actual = isExternal( source );
 
 			expect( actual ).to.be.true;
 		} );
 
-		it( 'should return false when matching config hostname', () => {
+		it( 'should return false for internal url', () => {
+			const source = 'https://example.com';
+
+			const actual = isExternal( source );
+
+			expect( actual ).to.be.false;
+		} );
+
+		it( 'should return true for external url', () => {
+			const source = 'https://not-example.com';
+
+			const actual = isExternal( source );
+
+			expect( actual ).to.be.true;
+		} );
+	} );
+
+	describe( 'without global.window (test against config hostname)', () => {
+		it( 'should return false for internal protocol-relative url', () => {
+			const source = '//calypso.localhost';
+
+			const actual = isExternal( source );
+
+			expect( actual ).to.be.false;
+		} );
+
+		it( 'should return true for external protocol-relative url', () => {
+			const source = '//some-other-site.com';
+
+			const actual = isExternal( source );
+
+			expect( actual ).to.be.true;
+		} );
+
+		it( 'should return false for internal url', () => {
 			const source = 'https://calypso.localhost/me';
 
 			const actual = isExternal( source );
 
 			expect( actual ).to.be.false;
+		} );
+
+		it( 'should return true for external url', () => {
+			const source = 'https://not.localhost/me';
+
+			const actual = isExternal( source );
+
+			expect( actual ).to.be.true;
 		} );
 	} );
 } );
