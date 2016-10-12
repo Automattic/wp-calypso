@@ -35,6 +35,7 @@ export const PLAN_ANNUAL_PERIOD = 365;
 // features constants
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
 export const FEATURE_CUSTOM_DOMAIN = 'custom-domain';
+export const FEATURE_JETPACK_ESSENTIAL = 'jetpack-essential';
 export const FEATURE_FREE_THEMES = 'free-themes';
 export const FEATURE_UNLIMITED_PREMIUM_THEMES = 'premium-themes';
 export const FEATURE_3GB_STORAGE = '3gb-storage';
@@ -82,6 +83,7 @@ export const plansList = {
 		getDescription: () => i18n.translate( 'Get a free website and be on your way to publishing your ' +
 			'first post in less than five minutes.' ),
 		getFeatures: () => [ // pay attention to ordering, it is used on /plan page
+			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_WP_SUBDOMAIN,
 			FEATURE_COMMUNITY_SUPPORT,
 			FEATURE_FREE_THEMES,
@@ -106,6 +108,7 @@ export const plansList = {
 			} ),
 		getFeatures: () => [
 			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_FREE_THEMES,
 			FEATURE_BASIC_DESIGN,
@@ -131,6 +134,7 @@ export const plansList = {
 			} ),
 		getFeatures: () => [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_FREE_THEMES,
 			FEATURE_ADVANCED_DESIGN,
@@ -164,6 +168,7 @@ export const plansList = {
 			} ),
 		getFeatures: () => compact( [ // pay attention to ordering, shared features should align on /plan page
 			FEATURE_CUSTOM_DOMAIN,
+			FEATURE_JETPACK_ESSENTIAL,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_UNLIMITED_PREMIUM_THEMES,
 			FEATURE_ADVANCED_DESIGN,
@@ -336,6 +341,16 @@ export const featuresList = {
 		getDescription: () => i18n.translate(
 			'Get a free custom domain name (example.com) with this plan ' +
 			'to use for your website.'
+		),
+		plans: allPaidPlans
+	},
+
+	[ FEATURE_JETPACK_ESSENTIAL ]: {
+		getSlug: () => FEATURE_JETPACK_ESSENTIAL,
+		getTitle: () => i18n.translate( 'Jetpack Essential Features' ),
+		getDescription: () => i18n.translate(
+			'Jetpack is a simple and powerful plugin that enables all ' +
+			'of the power and flexibility you need from your WordPress.'
 		),
 		plans: allPaidPlans
 	},
