@@ -72,6 +72,10 @@ const Suggestions = React.createClass( {
 		return this.state.taxonomySuggestionsArray[ position ];
 	},
 
+	getPositionForSuggestion: function( suggestion ) {
+		return this.state.taxonomySuggestionsArray.indexOf( suggestion );
+	},
+
 	incPosition: function() {
 		const position = ( this.state.suggestionPosition + 1 ) % this.countSuggestions();
 		this.setState( {
