@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import { getNormalizedPost } from 'state/posts/selectors';
 
-export function PostStatus( { translate, post } ) {
+export function PostStatus( { translate, post, showAll, showIcon } ) {
 	if ( ! post ) {
 		return null;
 	}
@@ -35,6 +35,14 @@ export function PostStatus( { translate, post } ) {
 		text = translate( 'Trashed' );
 		classModifier = 'is-trash';
 		icon = 'trash';
+	} else if ( showAll && 'draft' === status ) {
+		text = translate( 'Draft' );
+		classModifier = 'is-draft';
+		icon = 'aside';
+	} else if ( showAll && 'publish' === status ) {
+		text = translate( 'Published' );
+		classModifier = 'is-published';
+		icon = 'aside';
 	}
 
 	if ( ! text ) {
@@ -45,10 +53,12 @@ export function PostStatus( { translate, post } ) {
 
 	return (
 		<span className={ classes }>
-			<Gridicon
-				icon={ icon }
-				size={ 18 }
-				className="post-status__icon" />
+			{ showIcon &&
+				<Gridicon
+					icon={ icon }
+					size={ 18 }
+					className="post-status__icon" />
+			}
 			<span className="post-status__text">
 				{ text }
 			</span>
