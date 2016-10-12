@@ -65,8 +65,10 @@ export default React.createClass( {
 		const buttonHref = this.props.getPrimaryButtonHref ? this.props.getPrimaryButtonHref( this.props.theme ) : null;
 
 		return (
-			<WebPreview showPreview={ this.props.showPreview }
+			<WebPreview
+				showPreview={ this.props.showPreview }
 				showExternal={ this.props.showExternal }
+				showSEO={ false }
 				onClose={ this.props.onClose }
 				previewUrl={ previewUrl }
 				externalUrl={ this.props.theme.demo_uri } >
