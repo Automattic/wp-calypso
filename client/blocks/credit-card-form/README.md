@@ -11,11 +11,11 @@ import CreditCardForm from 'blocks/credit-card-form';
 render() {
 	return (
 		<CreditCardForm
-			createPaygateToken={ ( cardDetails, callback ) => callback( null, 'token' ) }
-			initialValues={ { name: 'John Doe' } }
-			recordFormSubmitEvent={ () => {} }
-			saveStoredCard={ () => Promise.reject( { message: 'This is only example!' } ) }
-			successCallback={ () => {} } />
+			createPaygateToken={ createPaygateToken }
+			initialValues={ initialValues }
+			recordFormSubmitEvent={ noop }
+			saveStoredCard={ saveStoredCard }
+			successCallback={ noop } />
 	);
 }
 ```

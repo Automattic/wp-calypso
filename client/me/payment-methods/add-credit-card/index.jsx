@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { curry } from 'lodash';
 import page from 'page';
 import React, { Component, PropTypes } from 'react';
 
@@ -23,6 +24,11 @@ class AddCreditCard extends Component {
 		addStoredCard: PropTypes.func.isRequired
 	};
 
+	constructor( props ) {
+		super( props );
+		this.createPaygateToken = curry( createPaygateToken )( 'card_add' );
+	}
+
 	goToBillingHistory() {
 		page( '/me/billing' );
 	}
@@ -39,7 +45,7 @@ class AddCreditCard extends Component {
 				<HeaderCake onClick={ this.goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
 
 				<CreditCardForm
-					createPaygateToken={ createPaygateToken( 'card_add' ) }
+					createPaygateToken={ this.createPaygateToken }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
 					saveStoredCard={ this.props.addStoredCard }
 					successCallback={ this.goToBillingHistory } />

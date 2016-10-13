@@ -8,7 +8,6 @@ import React, { PropTypes } from 'react';
  * Internal Dependencies
  */
 import { clearPurchases } from 'state/purchases/actions';
-import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardForm from 'blocks/credit-card-form';
 import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
 import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
@@ -71,7 +70,7 @@ class EditCardDetails extends PurchaseCardDetails {
 
 				<CreditCardForm
 					apiParams={ this.getApiParams() }
-					createPaygateToken={ createPaygateToken( 'card_update' ) }
+					createPaygateToken={ this.createPaygateToken }
 					initialValues={ this.props.card }
 					recordFormSubmitEvent={ this.recordFormSubmitEvent }
 					successCallback={ this.successCallback } />
