@@ -136,7 +136,7 @@ const RemovePurchase = React.createClass( {
 				);
 			}
 
-			page( purchasePaths.list() );
+			page( purchasePaths.purchasesRoot() );
 		} ).catch( () => {
 			this.setState( { isRemoving: false } );
 

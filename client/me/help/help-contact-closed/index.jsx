@@ -54,7 +54,7 @@ export default localize( ( props ) => {
 					'If you require a refund, you can still request one directly from your {{link}}Purchases{{/link}} ' +
 					'screen.', {
 						components: {
-							link: <a href={ purchasesPaths.list() } />
+							link: <a href={ purchasesPaths.purchasesRoot() } />
 						}
 					}
 				) }

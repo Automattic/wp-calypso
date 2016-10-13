@@ -40,7 +40,7 @@ export default function() {
 	);
 
 	page(
-		paths.list(),
+		paths.purchasesRoot(),
 		meController.sidebar,
 		controller.noSitesMessage,
 		controller.list
@@ -91,7 +91,7 @@ export default function() {
 	// redirect legacy urls
 	page(
 		'/purchases',
-		() => page.redirect( paths.list() )
+		() => page.redirect( paths.purchasesRoot() )
 	);
 	page(
 		'/purchases/:siteName/:purchaseId',
