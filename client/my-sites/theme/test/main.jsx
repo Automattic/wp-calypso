@@ -7,6 +7,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 import ReactDomServer from 'react-dom/server';
 import mockery from 'mockery';
 import noop from 'lodash/noop';
+import { receiveThemeDetails } from 'state/themes/actions';
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ import useMockery from 'test/helpers/use-mockery';
 import EmptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'main', function() {
-	context( 'when trying to renderToString() without theme data', function() {
+	describe( 'Calling renderToString() on Theme Info sheet', function() {
 		useMockery();
 		useFakeDom();
 
@@ -42,18 +43,40 @@ describe( 'main', function() {
 				} ),
 			} );
 
-			const store = createReduxStore();
-			const ThemeSheetComponent = require( '../main' );
+			this.ThemeSheetComponent = require( '../main' );
 
-			this.layout = (
-				<ReduxProvider store={ store }>
-					<ThemeSheetComponent id={ 'twentysixteen' } />
-				</ReduxProvider>
-			);
+			this.themeData = {
+				name: 'Twenty Sixteen',
+				author: 'the WordPress team',
+				screenshot: 'https://i0.wp.com/theme.wordpress.com/wp-content/themes/pub/twentysixteen/screenshot.png',
+				description: 'Twenty Sixteen is a modernized take on an ever-popular WordPress layout — ...',
+				descriptionLong: '<p>Mumble Mumble</p>',
+				download: 'https://public-api.wordpress.com/rest/v1/themes/download/twentysixteen.zip',
+				taxonomies: {},
+				stylesheet: 'pub/twentysixteen',
+				demo_uri: 'https://twentysixteendemo.wordpress.com/'
+			};
 		} );
 
-		it( "doesn't throw an exception", function() {
-			assert.doesNotThrow( ReactDomServer.renderToString.bind( ReactDomServer, this.layout ) );
+		it( "doesn't throw an exception without theme data", function() {
+			const store = createReduxStore();
+			const layout = (
+				<ReduxProvider store={ store }>
+					<this.ThemeSheetComponent id={ 'twentysixteen' } />
+				</ReduxProvider>
+			);
+			assert.doesNotThrow( ReactDomServer.renderToString.bind( ReactDomServer, layout ) );
+		} );
+
+		it( "doesn't throw an exception with theme data", function() {
+			const store = createReduxStore();
+			store.dispatch( receiveThemeDetails( this.themeData ) );
+			const layout = (
+				<ReduxProvider store={ store }>
+					<this.ThemeSheetComponent id={ 'twentysixteen' } />
+				</ReduxProvider>
+			);
+			assert.doesNotThrow( ReactDomServer.renderToString.bind( ReactDomServer, layout ) );
 		} );
 	} );
 } );
