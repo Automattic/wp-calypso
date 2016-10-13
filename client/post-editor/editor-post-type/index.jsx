@@ -62,7 +62,8 @@ EditorPostType.propTypes = {
 	siteId: PropTypes.number,
 	isNew: PropTypes.bool,
 	typeSlug: PropTypes.string,
-	type: PropTypes.object
+	type: PropTypes.object,
+	globalId: PropTypes.number
 };
 
 export default connect( ( state ) => {

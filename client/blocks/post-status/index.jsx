@@ -71,7 +71,9 @@ PostStatus.displayName = 'PostStatus';
 PostStatus.propTypes = {
 	globalId: PropTypes.string,
 	translate: PropTypes.func,
-	post: PropTypes.object
+	post: PropTypes.object,
+	showAll: PropTypes.bool,
+	showIcon: PropTypes.bool
 };
 
 export default connect( ( state, { globalId } ) => {
