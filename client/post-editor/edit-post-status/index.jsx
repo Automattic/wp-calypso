@@ -62,9 +62,9 @@ class EditPostStatus extends Component {
 		recordStat( stickyStat );
 		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
 
-		this.props.editPost( this.props.siteId, this.props.postId,
-			{ sticky: ! this.props.post.sticky }
-		);
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			sticky: ! this.props.post.sticky
+		} );
 	};
 
 	togglePendingStatus = () => {
@@ -73,9 +73,9 @@ class EditPostStatus extends Component {
 		recordStat( 'status_changed' );
 		recordEvent( 'Changed Pending Status', pending ? 'Marked Draft' : 'Marked Pending' );
 
-		this.props.editPost( this.props.siteId, this.props.postId,
-			{ status: pending ? 'draft' : 'pending' }
-		);
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			status: pending ? 'draft' : 'pending'
+		} );
 	};
 
 	togglePostSchedulePopover = () => {
