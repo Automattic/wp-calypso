@@ -76,18 +76,18 @@ export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentCl
 				</li>
 				<li className="reader-post-card__comments">
 					<CommentButton
-					commentCount={ post.discussion.comment_count }
-					tagName="span"
-					showLabel={ true }
-					onClick={ onCommentClick } />
+						commentCount={ post.discussion.comment_count }
+						tagName="span"
+						showLabel={ true }
+						onClick={ onCommentClick } />
 				</li>
 				<li className="reader-post-card__likes">
 					<LikeButton
-					siteId={ post.site_ID }
-					postId={ post.ID }
-					tagName="span"
-					showZeroCount={ true }
-					showLabel={ true } />
+						siteId={ post.site_ID }
+						postId={ post.ID }
+						tagName="span"
+						showZeroCount={ true }
+						showLabel={ true } />
 				</li>
 				<li className="reader-post-card__post-options">
 					<Gridicon icon="ellipsis" />
