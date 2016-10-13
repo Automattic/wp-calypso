@@ -60,13 +60,6 @@ sections = [
 		secondary: true
 	},
 	{
-		name: 'billing',
-		paths: [ '/me/purchases/billing' ],
-		module: 'me/billing-history',
-		group: 'me',
-		secondary: true
-	},
-	{
 		name: 'notification-settings',
 		paths: [ '/me/notifications' ],
 		module: 'me/notification-settings',

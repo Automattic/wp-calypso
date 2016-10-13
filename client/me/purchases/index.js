@@ -7,11 +7,26 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
+import billingController from 'me/billing-history/controller';
 import meController from 'me/controller';
 import controller from './controller';
 import paths from './paths';
 
 export default function() {
+	if ( config.isEnabled( 'me/billing-history' ) ) {
+		page(
+			paths.billingHistory(),
+			meController.sidebar,
+			billingController.billingHistory
+		);
+
+		page(
+			paths.billingHistoryReceipt(),
+			meController.sidebar,
+			billingController.transaction
+		);
+	}
+
 	page(
 		paths.cancelPurchase(),
 		meController.sidebar,
