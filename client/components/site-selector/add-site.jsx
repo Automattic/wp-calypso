@@ -71,23 +71,25 @@ const SiteSelectorAddSite = React.createClass( {
 	renderButtonWithPopover() {
 		return (
 			<span className="site-selector__add-new-site">
-				<PopoverMenu
-					isVisible={ this.state.showPopoverMenu }
-					onClose={ this.onClosePopover }
-					position={ this.state.popoverPosition }
-					context={ this.refs && this.refs.popoverMenuButton }
-					>
-					<PopoverMenuItem href={ this.getAddNewSiteUrl() } onClick={ this.recordPopoverAddNewSite }>
-						{ this.translate( 'Start a new WordPress.com site' ) }
-					</PopoverMenuItem>
-					<PopoverMenuItem href="/jetpack/connect" onClick={ this.recordPopoverAddJetpackSite }>
-						{ this.translate( 'Add a self-hosted WordPress site' ) }
-					</PopoverMenuItem>
-				</PopoverMenu>
+				<span className="site-selector__popover-target" ref="popoverMenuTarget">
+					<PopoverMenu
+						isVisible={ this.state.showPopoverMenu }
+						onClose={ this.onClosePopover }
+						position={ this.state.popoverPosition }
+						context={ this.refs && this.refs.popoverMenuTarget }
+						>
+						<PopoverMenuItem href={ this.getAddNewSiteUrl() } onClick={ this.recordPopoverAddNewSite }>
+							{ this.translate( 'Start a new WordPress.com site' ) }
+						</PopoverMenuItem>
+						<PopoverMenuItem href="/jetpack/connect" onClick={ this.recordPopoverAddJetpackSite }>
+							{ this.translate( 'Add a self-hosted WordPress site' ) }
+						</PopoverMenuItem>
+					</PopoverMenu>
 
-				<Button compact borderless onClick={ this.onPopoverButtonClick } ref="popoverMenuButton">
-					<Gridicon icon="add-outline" /> { this.translate( 'Add WordPress Site' ) }
-				</Button>
+					<Button compact borderless onClick={ this.onPopoverButtonClick }>
+						<Gridicon icon="add-outline" /> { this.translate( 'Add WordPress Site' ) }
+					</Button>
+				</span>
 			</span>
 		);
 	},
