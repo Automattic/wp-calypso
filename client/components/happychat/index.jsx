@@ -42,7 +42,7 @@ const connectingTitle = ( { onCloseChat } ) => {
 		<div className="happychat__active-toolbar">
 		<span>{ translate( 'Starting chat' ) }</span>
 			<div onClick={ onCloseChat }>
-				<GridIcon icon="cross" />
+				<GridIcon icon="chevron-down" />
 			</div>
 		</div>
 	);
