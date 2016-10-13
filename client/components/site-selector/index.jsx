@@ -357,6 +357,10 @@ const SiteSelector = React.createClass( {
 	},
 
 	renderSite( site ) {
+		if ( ! site ) {
+			return null;
+		}
+
 		this.visibleSites.push( site );
 
 		const isHighlighted = this.isHighlighted( site );
@@ -376,7 +380,7 @@ const SiteSelector = React.createClass( {
 
 	renderRecentSites() {
 		const sitesById = keyBy( this.props.sites.get(), 'ID' );
-		const sites = this.props.recentSites.map( siteId => sitesById[ siteId ] ).filter( site => site );
+		const sites = this.props.recentSites.map( siteId => sitesById[ siteId ] );
 
 		if ( ! sites || this.state.search || ! this.shouldShowGroups() || this.props.visibleSiteCount <= 11 ) {
 			return null;
