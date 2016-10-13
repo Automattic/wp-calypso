@@ -47,7 +47,7 @@ export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentCl
 	const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
 	const title = truncate( post.title, {
 		length: isPhotoOnly ? 50 : 140,
-		separator: /,? +/
+		separator: /,?\s+/ // a sequence of whitespace, optionally proceeded by a comma
 	} );
 	const classes = classnames( 'reader-post-card', {
 		'has-thumbnail': !! featuredImage,
