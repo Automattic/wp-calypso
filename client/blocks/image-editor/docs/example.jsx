@@ -16,10 +16,16 @@ function ImageEditorExample( { primarySiteId } ) {
 		URL: 'https://cldup.com/mA_hqNVj0w.jpg'
 	};
 	
+	const getTestingImage = () => document.querySelector( "#devdocs-example-image-editor-result" );
+	
 	const onImageExtracted = ( blob ) => {
 		const imageUrl = window.URL.createObjectURL( blob );
 		
-		document.querySelector( "#devdocs-example-image-editor-result" ).src = imageUrl;
+		getTestingImage().src = imageUrl;
+	};
+	
+	const onImageEditorReset = () => {
+		getTestingImage().src = media.URL;
 	};
 	
 	return (
@@ -29,6 +35,7 @@ function ImageEditorExample( { primarySiteId } ) {
 					siteId={ primarySiteId }
 					media={ media }
 					onImageExtracted={ onImageExtracted }
+					onReset={ onImageEditorReset }
 				/>
 			</div>
 			<div style={ { 
