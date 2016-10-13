@@ -39,7 +39,7 @@ export const jetpack = {
 	author: 'Automattic',
 	author_url: 'http://jetpack.com',
 	network: false,
-	autoupdate: false,
+	autoupdate: true,
 	update: {
 		id: '20101',
 		slug: 'jetpack',
