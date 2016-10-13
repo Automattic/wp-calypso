@@ -64,24 +64,7 @@
 
 .plugin-meta__detail {
 	position: relative;
-	width: 100%;
 	flex-grow: 1;
-
-	@include breakpoint( '>480px' ) {
-		.has-site & {
-			max-width: calc(100% - 150px);
-		}
-
-		.has-button & {
-			max-width: 100%;
-		}
-	}
-
-	@include breakpoint( '>660px' ) {
-		.has-button & {
-			max-width: calc(100% - 150px);
-		}
-	}
 }
 
 .plugin-meta__meta {
@@ -116,6 +99,8 @@
 		margin: 0;
 		padding: 0;
 		text-align: right;
+		justify-content: flex-end;
+		align-self: center;
 
 		.plugin-action {
 			margin-top: 16px;
@@ -128,10 +113,25 @@
 
 }
 
+.plugin-meta__actions .form-toggle__label {
+	display: flex;
+		justify-content: flex-end;
+
+	.form-toggle__switch {
+		float: none;
+		order: 2;
+	}
+}
+
 .plugin-meta__actions .plugin-action__label {
 	@include breakpoint( '<480px' ) {
+		flex-grow: 2;
 		color: $gray-dark;
 		font-size: 11px;
+	}
+	@include breakpoint( '<660px' ) {
+		display: block;
+		padding-right: 16px;
 	}
 }
 
@@ -140,5 +140,29 @@
 
 	@include breakpoint ( ">480px" ) {
 		margin-top: -15px;
+	}
+}
+
+.plugin-meta__actions .plugin-item__count {
+	padding: 0;
+}
+
+a.plugin-meta__settings-link {
+	color: $gray;
+	display: block;
+	font-size: 11px;
+	line-height: 16px;
+	margin: 16px 9px 0 0;
+	text-transform: uppercase;
+
+	@include breakpoint( '>480px' ) {
+		display: inline-block;
+	}
+
+	.gridicon {
+		float: right;
+		position: relative;
+			left: 7px;
+			top: -3px;
 	}
 }

@@ -53,7 +53,7 @@ const EditContactInfo = React.createClass( {
 		const domain = getSelectedDomain( this.props );
 
 		if ( ! domain.currentUserCanManage ) {
-			return <NonOwnerCard selectedDomainName={ this.props.selectedDomainName } />;
+			return <NonOwnerCard { ...this.props } />;
 		}
 
 		if ( ! domain.isWhoisEditable ) {

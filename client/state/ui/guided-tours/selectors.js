@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { get, difference, find, map, memoize, noop, startsWith, uniq } from 'lodash';
+import { get, difference, find, map, noop, startsWith, uniq } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -12,23 +12,18 @@ import debugFactory from 'debug';
 import { ROUTE_SET } from 'state/action-types';
 import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
 import { getPreference } from 'state/preferences/selectors';
+import GuidedToursConfig from 'layout/guided-tours/config';
 import createSelector from 'lib/create-selector';
-import guidedToursConfig from 'layout/guided-tours/config';
 
-const getToursConfig = memoize( ( tour ) => guidedToursConfig.get( tour ) );
 const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
-const relevantFeatures = map( guidedToursConfig.getAll(), ( tour, key ) => {
-	return {
-		tour: key,
-		path: tour.meta.path,
-		context: tour.meta.context,
-	};
-} );
 
-const DAY_IN_MILLISECONDS = 1000 * 3600 * 24;
+const relevantFeatures = map( GuidedToursConfig.meta, ( tourMeta, key ) => ( {
+	tour: key,
+	path: tourMeta.path,
+	when: tourMeta.when,
+} ) );
 
 /*
  * Returns a collection of tour names. These tours are selected if the user has
@@ -58,10 +53,7 @@ const getToursFromFeaturesReached = createSelector(
  * recently and in the past.
  */
 const getToursSeen = createSelector(
-	state => uniq(
-		getToursHistory( state )
-			.map( ( { tourName } ) => tourName )
-	),
+	state => uniq( map( getToursHistory( state ), 'tourName' ) ),
 	getToursHistory
 );
 
@@ -78,16 +70,6 @@ const getTourFromQuery = createSelector(
 	},
 	getInitialQueryArguments
 );
-
-export const isNewUser = state => {
-	const user = getCurrentUser( state );
-	if ( ! user ) {
-		return false;
-	}
-
-	const creation = Date.parse( user.date );
-	return ( Date.now() - creation ) <= DAY_IN_MILLISECONDS;
-};
 
 /*
  * Returns true if `tour` has been seen in the current Calypso session, false
@@ -117,8 +99,8 @@ const findRequestedTour = state => {
 
 /*
  * Returns the name of the first tour available from triggers, assuming the
- * tour hasn't been ruled out (e.g. if it has already been seen or if the
- * "context" isn't right.
+ * tour hasn't been ruled out (e.g. if it has already been seen, or if the
+ * "when" isn't right).
  */
 const findTriggeredTour = state => {
 	const toursFromTriggers = uniq( [
@@ -136,8 +118,8 @@ const findTriggeredTour = state => {
 
 	const newTours = difference( toursFromTriggers, toursToDismiss );
 	return find( newTours, tour => {
-		const { context = noop } = find( relevantFeatures, { tour } );
-		return context( state );
+		const { when = noop } = find( relevantFeatures, { tour } );
+		return when( state );
 	} );
 };
 
@@ -145,18 +127,6 @@ export const findEligibleTour = createSelector(
 	state => findRequestedTour( state ) || findTriggeredTour( state ),
 	[ getActionLog, getToursHistory ]
 );
-
-const getStepConfig = ( state, tourConfig, stepName ) => {
-	const step = tourConfig[ stepName ] || false;
-	const shouldSkip = !! (
-		step &&
-		( step.showInContext && ! step.showInContext( state ) ) ||
-		( step.continueIf && step.continueIf( state ) )
-	);
-	return shouldSkip
-		? getStepConfig( state, tourConfig, step.next )
-		: step;
-};
 
 /**
  * Returns the current state for Guided Tours.
@@ -173,8 +143,6 @@ const getRawGuidedTourState = state => get( state, 'ui.guidedTour', false );
 export const getGuidedTourState = createSelector(
 	state => {
 		const tourState = getRawGuidedTourState( state );
-		const { stepName = 'init' } = tourState;
-
 		const tour = findEligibleTour( state );
 		const shouldReallyShow = !! tour;
 
@@ -187,25 +155,8 @@ export const getGuidedTourState = createSelector(
 			return {
 				...tourState,
 				shouldShow: false,
-				stepConfig: false,
-				nextStepConfig: false,
 			};
 		}
-
-		const tourConfig = getToursConfig( tour );
-
-		if ( ! tourConfig ) {
-			debug( 'found no tour configuration for tour "' + tour + '", bailing out' );
-			return {
-				...tourState,
-				shouldShow: false,
-				stepConfig: false,
-				nextStepConfig: false,
-			};
-		}
-
-		const stepConfig = getStepConfig( state, tourConfig, stepName ) || false;
-		const nextStepConfig = getStepConfig( state, tourConfig, stepConfig.next ) || false;
 
 		const shouldShow = !! (
 			! isSectionLoading( state ) &&
@@ -215,8 +166,6 @@ export const getGuidedTourState = createSelector(
 		return {
 			...tourState,
 			tour,
-			stepConfig,
-			nextStepConfig,
 			shouldShow,
 		};
 	},

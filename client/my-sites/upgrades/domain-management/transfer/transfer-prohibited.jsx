@@ -20,7 +20,7 @@ const TransferProhibited = () => (
 					'{{learnMoreLink}}Learn more.{{/learnMoreLink}}',
 					{
 						components: {
-							learnMoreLink: <a href={ support.TRANSFER_DOMAIN_REGISTRATION } target="_blank"/>
+							learnMoreLink: <a href={ support.TRANSFER_DOMAIN_REGISTRATION } target="_blank" rel="noopener noreferrer"/>
 						}
 					}
 				) }

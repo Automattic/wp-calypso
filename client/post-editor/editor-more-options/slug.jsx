@@ -1,50 +1,56 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureRenderMixin from 'react-pure-render/mixin';
+import React, { PropTypes, PureComponent } from 'react';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import AccordionSection from 'components/accordion/section';
-import InfoPopover from 'components/info-popover';
 import Slug from 'post-editor/editor-slug';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
 
-export default React.createClass( {
-	displayName: 'EditorMoreOptionsSlug',
-
-	mixins: [ PureRenderMixin ],
-
-	propTypes: {
-		slug: PropTypes.string,
-		type: PropTypes.string
-	},
+class EditorMoreOptionsSlug extends PureComponent {
+	static propTypes = {
+		postType: PropTypes.string,
+		translate: PropTypes.func
+	};
 
 	getPopoverLabel() {
-		if ( 'page' === this.props.type ) {
-			return this.translate( 'The slug is the URL-friendly version of the page title.' );
+		const { translate, postType } = this.props;
+		if ( 'page' === postType ) {
+			return translate( 'The slug is the URL-friendly version of the page title.' );
 		}
 
-		return this.translate( 'The slug is the URL-friendly version of the post title.' );
-	},
+		return translate( 'The slug is the URL-friendly version of the post title.' );
+	}
 
 	render() {
-		const { slug, type } = this.props;
+		const { postType, translate } = this.props;
 
 		return (
 			<AccordionSection className="editor-more-options__slug">
-				<div className="editor-drawer__label-text">
-					{ this.translate( 'Slug' ) }
-					<InfoPopover position="top left">
-						{ this.getPopoverLabel() }
-					</InfoPopover>
-				</div>
-				<Slug
-					slug={ slug }
-					instanceName={ type + '-sidebar' }
-					className="editor-more-options__slug-field" />
+				<EditorDrawerLabel labelText={ translate( 'Slug' ) } helpText={ this.getPopoverLabel() }>
+					<Slug
+						instanceName={ postType + '-sidebar' }
+						className="editor-more-options__slug-field" />
+				</EditorDrawerLabel>
 			</AccordionSection>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			postType: getEditedPostValue( state, siteId, getEditorPostId( state ), 'type' )
+		};
+	},
+)( localize( EditorMoreOptionsSlug ) );

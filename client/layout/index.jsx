@@ -18,8 +18,6 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	translator = require( 'lib/translator-jumpstart' ),
 	TranslatorInvitation = require( './community-translator/invitation' ),
 	TranslatorLauncher = require( './community-translator/launcher' ),
-	PollInvitation = require( './poll-invitation' ),
-	PreferencesData = require( 'components/data/preferences-data' ),
 	PushNotificationPrompt = require( 'components/push-notification/prompt' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
 	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
@@ -34,11 +32,15 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	QueryPreferences = require( 'components/data/query-preferences' ),
 	KeyboardShortcutsMenu,
 	Layout,
-	SupportUser;
+	SupportUser,
+	Happychat = require( 'components/happychat' );
 
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
-import DesignPreview from 'my-sites/design-preview';
+import { isHappychatOpen } from 'state/ui/happychat/selectors';
+import SitePreview from 'blocks/site-preview';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import DocumentHead from 'components/data/document-head';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
@@ -51,9 +53,28 @@ if ( config.isEnabled( 'support-user' ) ) {
 Layout = React.createClass( {
 	displayName: 'Layout',
 
-	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
+	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
 
 	_sitesPoller: null,
+
+	propTypes: {
+		primary: React.PropTypes.element,
+		secondary: React.PropTypes.element,
+		tertiary: React.PropTypes.element,
+		sites: React.PropTypes.object,
+		user: React.PropTypes.object,
+		nuxWelcome: React.PropTypes.object,
+		translatorInvitation: React.PropTypes.object,
+		focus: React.PropTypes.object,
+		// connected props
+		isLoading: React.PropTypes.bool,
+		isSupportUser: React.PropTypes.bool,
+		section: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object,
+		] ),
+		isOffline: React.PropTypes.bool,
+	},
 
 	componentWillUpdate: function( nextProps ) {
 		if ( this.props.section.group !== nextProps.section.group ) {
@@ -92,8 +113,8 @@ Layout = React.createClass( {
 	},
 
 	renderPushNotificationPrompt: function() {
-		const participantInAbTest = config.isEnabled( 'push-notifications-ab-test' ) && abtest( 'browserNotifications' ) === 'enabled';
-		if ( ! config.isEnabled( 'push-notifications' ) && ! participantInAbTest ) {
+		const participantInAbTest = abtest( 'browserNotifications' ) === 'enabled';
+		if ( ! ( config.isEnabled( 'push-notifications' ) && participantInAbTest ) ) {
 			return null;
 		}
 
@@ -133,7 +154,6 @@ Layout = React.createClass( {
 		const showInvitation = ! showWelcome &&
 				translatorInvitation.isPending() &&
 				translatorInvitation.isValidSection( this.props.section.name );
-		const disablePollInvitation = showWelcome || showInvitation;
 
 		return (
 			<span>
@@ -141,9 +161,6 @@ Layout = React.createClass( {
 					<WelcomeMessage welcomeSite={ newestSite } />
 				</Welcome>
 				<TranslatorInvitation isVisible={ showInvitation } />
-				<PreferencesData>
-					<PollInvitation isVisible={ ! disablePollInvitation } section={ this.props.section } />
-				</PreferencesData>
 			</span>
 		);
 	},
@@ -151,11 +168,7 @@ Layout = React.createClass( {
 	renderPreview() {
 		if ( config.isEnabled( 'preview-layout' ) && this.props.section.group === 'sites' ) {
 			return (
-				<DesignPreview
-					className="layout__preview"
-					showPreview={ this.props.focus.getCurrent() === 'preview' }
-					defaultViewportDevice="computer"
-				/>
+				<SitePreview />
 			);
 		}
 	},
@@ -165,9 +178,11 @@ Layout = React.createClass( {
 				'layout',
 				`is-group-${this.props.section.group}`,
 				`is-section-${this.props.section.name}`,
-				`focus-${this.props.focus.getCurrent()}`,
+				`focus-${this.props.currentLayoutFocus}`,
 				{ 'is-support-user': this.props.isSupportUser },
-				{ 'has-no-sidebar': ! this.props.hasSidebar }
+				{ 'has-no-sidebar': ! this.props.hasSidebar },
+				{ 'wp-singletree-layout': !! this.props.primary },
+				{ 'has-chat': this.props.chatIsOpen }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -176,6 +191,7 @@ Layout = React.createClass( {
 
 		return (
 			<div className={ sectionClass }>
+				<DocumentHead />
 				<QueryPreferences />
 				{ config.isEnabled( 'guided-tours' ) ? <GuidedTours /> : null }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
@@ -187,14 +203,21 @@ Layout = React.createClass( {
 					{ this.renderWelcome() }
 					{ this.renderPushNotificationPrompt() }
 					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
-					<div id="primary" className="layout__primary" />
-					<div id="secondary" className="layout__secondary" />
+					<div id="primary" className="layout__primary">
+						{ this.props.primary }
+					</div>
+					<div id="secondary" className="layout__secondary">
+						{ this.props.secondary }
+					</div>
 				</div>
-				<div id="tertiary" />
+				<div id="tertiary">
+					{ this.props.tertiary }
+				</div>
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 				{ this.renderPreview() }
+				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <Happychat /> }
 			</div>
 		);
 	}
@@ -209,6 +232,8 @@ export default connect(
 			section,
 			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
+			currentLayoutFocus: getCurrentLayoutFocus( state ),
+			chatIsOpen: isHappychatOpen( state )
 		};
 	}
 )( Layout );

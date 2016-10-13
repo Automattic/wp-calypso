@@ -9,20 +9,23 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
 import HeaderCake from 'components/header-cake';
-import AccountInfo from './account-info';
+import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
+import IssuesNotices from './issues-notices';
+import TransferUnavailableCard from './transfer-unavailable-card';
 
 const guidedTransferHosts = {
 	bluehost: {
 		label: i18n.translate( 'Bluehost' ),
 		logo: '/calypso/images/guided-transfer/bluehost-logo.png',
-		url: '#bluehost',
+		url: 'https://bluehost.com/track/wpgt?page=/web-hosting/signup',
 	},
 	siteground: {
 		logo: '/calypso/images/guided-transfer/siteground-logo.png',
 		label: i18n.translate( 'SiteGround' ),
-		url: '#siteground'
+		url: 'https://www.siteground.com/wordpress-hosting.htm?afcode=134c903505c0a2296bd25772edebf669'
 	}
 };
 
@@ -31,6 +34,7 @@ export default React.createClass( {
 
 	propTypes: {
 		hostSlug: PropTypes.string,
+		siteId: PropTypes.number.isRequired,
 		siteSlug: PropTypes.string.isRequired
 	},
 
@@ -63,8 +67,11 @@ export default React.createClass( {
 			};
 		} );
 
+		const { siteId, siteSlug } = this.props;
+
 		return (
 			<div className="guided-transfer">
+				<QuerySiteGuidedTransfer siteId={ siteId } />
 				<div className="guided-transfer__header-nav">
 					<HeaderCake
 						onClick={ this.goBack }
@@ -74,12 +81,20 @@ export default React.createClass( {
 					</HeaderCake>
 				</div>
 
-				<div className="guided-transfer__content">
-					{ hostInfo
-						? <AccountInfo hostInfo={ hostInfo } />
-						: <HostSelect hosts={ hosts } />
-					}
-				</div>
+				<IssuesNotices siteId={ siteId } siteSlug={ siteSlug } />
+
+				{ this.props.isEligibleForGuidedTransfer
+					? <div className="guided-transfer__content">
+						{ hostInfo
+							? <HostCredentialsPage
+								siteId={ this.props.siteId }
+								hostSlug={ this.props.hostSlug }
+								hostInfo={ hostInfo } />
+							: <HostSelect hosts={ hosts } />
+						}
+					</div>
+					: <TransferUnavailableCard siteId={ siteId } siteSlug={ siteSlug } />
+				}
 			</div>
 		);
 	}

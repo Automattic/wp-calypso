@@ -15,7 +15,7 @@ You can try out the user-side of Calypso on [WordPress.com](https://wordpress.co
 1.	Make sure you have `git`, `node`, and `npm` installed.
 2.	Clone this repository locally.
 3.	Add `127.0.0.1 calypso.localhost` to your local hosts file.
-4.	Execute `make run` from the root directory of the repository.
+4.	Execute `make run` or `make dashboard` (for a more visually-oriented interface) from the root directory of the repository.
 5.	Open `calypso.localhost:3000` in your browser.
 
 Need more detailed installation instructions? [We have them](docs/install.md).
@@ -25,6 +25,8 @@ Need more detailed installation instructions? [We have them](docs/install.md).
 If Calypso sparks your interest, don’t hesitate to send a pull request, send a suggestion, file a bug, or just ask a question. We promise we’ll be nice. Just don’t forget to check out our [CONTRIBUTING](./.github/CONTRIBUTING.md) doc – it includes a few technical details that will make the process a lot smoother.
 
 Calypso welcomes – and indeed has been built by – contributors from all walks of life, with different backgrounds, and with a wide range of experience. We're committed to doing our part to make both Calypso and the wider WordPress community welcoming to everyone.
+
+You can contribute in many ways. You can help reporting, testing, and detailing bugs, and also test new features we release in our "beta" program for testing on [Horizon](https://horizonfeedback.wordpress.com/).
 
 To clarify these expectations, Calypso has adopted the code of conduct defined by the Contributor Covenant. It can be read in full [here](CODE-OF-CONDUCT.md).
 

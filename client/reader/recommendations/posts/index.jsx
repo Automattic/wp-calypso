@@ -1,7 +1,8 @@
 var React = require( 'react' );
 
 var Stream = require( 'reader/stream' ),
-	EmptyContent = require( './empty' );
+	EmptyContent = require( './empty' ),
+	DocumentHead = require( 'components/data/document-head' );
 
 var RecommendationPostsStream = React.createClass( {
 
@@ -9,15 +10,14 @@ var RecommendationPostsStream = React.createClass( {
 		var title = this.translate( 'Recommended Posts' ),
 			emptyContent = ( <EmptyContent /> );
 
-		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( title );
-		}
 		return (
 			<Stream { ...this.props }
 				listName = { title }
 				emptyContent = { emptyContent }
 				showFollowInHeader = { true }
-			/>
+			>
+				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
+			</Stream>
 		);
 	}
 

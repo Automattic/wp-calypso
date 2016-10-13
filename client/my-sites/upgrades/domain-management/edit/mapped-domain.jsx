@@ -13,6 +13,7 @@ const analyticsMixin = require( 'lib/mixins/analytics' ),
 	SubscriptionSettings = require( './card/subscription-settings' ),
 	VerticalNav = require( 'components/vertical-nav' ),
 	VerticalNavItem = require( 'components/vertical-nav/item' ),
+	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' ),
 	paths = require( 'my-sites/upgrades/paths' );
 
 const MappedDomain = React.createClass( {
@@ -43,9 +44,17 @@ const MappedDomain = React.createClass( {
 		this.recordEvent( 'paymentSettingsClick', this.props.domain );
 	},
 
+	domainWarnings() {
+		return <DomainWarnings
+			domain={ this.props.domain }
+			selectedSite={ this.props.selectedSite }
+			ruleWhiteList={ [ 'wrongNSMappedDomains' ] }/>;
+	},
+
 	render() {
 		return (
 			<div>
+				{ this.domainWarnings() }
 				{ this.getDomainDetailsCard() }
 				{ this.getVerticalNav() }
 			</div>

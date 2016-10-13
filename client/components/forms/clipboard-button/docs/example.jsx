@@ -28,10 +28,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/clipboard-buttons">Clipboard Buttons</a>
-				</h2>
+			<div>
 				<ClipboardButton
 					onCopy={ this.onCopy }
 					text="This text was copied via ClipboardButton"

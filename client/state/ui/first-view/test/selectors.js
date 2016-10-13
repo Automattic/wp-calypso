@@ -7,7 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	doesViewHaveFirstView,
+	isUserEligible,
+	getConfigForCurrentView,
 	isViewEnabled,
 	wasFirstViewHiddenSinceEnteringCurrentSection,
 	secondsSpentOnCurrentView,
@@ -18,26 +19,149 @@ import {
 	ROUTE_SET
 } from 'state/action-types';
 
-describe( 'selectors', () => {
-	describe( '#doesViewHaveFirstView()', () => {
-		it( 'should return false if the the first view is not listed along with its start date', () => {
-			const hasFirstView = doesViewHaveFirstView( 'devdocs' );
+describe( 'isUserEligible()', () => {
+	it( 'makes all users eligible if no start date is defined in the config', () => {
+		const state = {
+			users: {
+				items: {
+					73705554: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' }
+				}
+			},
+			currentUser: {
+				id: 73705554
+			}
+		};
+		const eligible = isUserEligible( state, {} );
 
-			expect( hasFirstView ).to.be.false;
+		expect( eligible ).to.be.true;
+	} );
+
+	it( 'does not show the first view if the user does not have a start date', () => {
+		const state = {
+			users: {
+				items: {
+					73705554: { ID: 73705554, login: 'testonesite2014' }
+				}
+			},
+			currentUser: {
+				id: 73705554
+			}
+		};
+		const config = { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' };
+		const eligible = isUserEligible( state, config );
+
+		expect( eligible ).to.be.false;
+	} );
+
+	it( 'shows the first view if the user registered after the first view start date', () => {
+		const state = {
+			users: {
+				items: {
+					73705554: { ID: 73705554, login: 'testonesite2014', date: '2016-07-27T17:14:52+00:00' }
+				}
+			},
+			currentUser: {
+				id: 73705554
+			}
+		};
+		const config = { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' };
+		const eligible = isUserEligible( state, config );
+
+		expect( eligible ).to.be.true;
+	} );
+
+	it( 'does not show the first view if the user registered before the first view start date', () => {
+		const state = {
+			users: {
+				items: {
+					73705554: { ID: 73705554, login: 'testonesite2014', date: '2016-07-25T17:14:52+00:00' }
+				}
+			},
+			currentUser: {
+				id: 73705554
+			}
+		};
+		const config = { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' };
+		const eligible = isUserEligible( state, config );
+
+		expect( eligible ).to.be.false;
+	} );
+} );
+
+describe( 'selectors', () => {
+	describe( '#getConfigForCurrentView()', () => {
+		it( 'should return false if there is no first view config for the active path', () => {
+			const firstViewConfig = getConfigForCurrentView( {
+				ui: {
+					actionLog: [
+						{
+							type: ROUTE_SET,
+							path: '/devdocs',
+						}
+					],
+					queryArguments: {
+						initial: {},
+					},
+				}
+			} );
+
+			expect( firstViewConfig ).to.be.false;
 		} );
 
-		it( 'should return true if the the first view is listed along with its start date', () => {
-			const hasFirstView = doesViewHaveFirstView( 'stats' );
+		it( 'should return the stats config object when the stats first view is enabled and the most recent route is a stats page', () => {
+			const firstViewConfig = getConfigForCurrentView( {
+				ui: {
+					actionLog: [
+						{
+							type: ROUTE_SET,
+							path: '/stats',
+						}
+					],
+					queryArguments: {
+						initial: {},
+					},
+				}
+			} );
 
-			expect( hasFirstView ).to.be.true;
+			expect( firstViewConfig ).to.deep.equal( { name: 'stats', paths: [ '/stats' ], enabled: true, startDate: '2016-07-26' } );
 		} );
 	} );
 
 	describe( '#isViewEnabled()', () => {
-		it( 'should return true if the preferences have been fetched, the view has a first view, and it is not disabled', () => {
+		const actions = [
+			{
+				type: ROUTE_SET,
+				path: '/stats',
+			}
+		];
+
+		const currentUser = {
+			id: 73705554
+		};
+
+		const users = {
+			items: {
+				73705554: { ID: 73705554, login: 'testonesite2014', date: '2014-10-18T17:14:52+00:00' }
+			}
+		};
+
+		const queryArguments = {
+			initial: {}
+		};
+
+		const config = {
+			name: 'stats',
+			paths: [ '/stats' ],
+			enabled: true,
+		};
+
+		it( 'should return true if the preferences have been fetched, the config has a first view for the current view,' +
+			' and it is not disabled', () => {
 			const viewEnabled = isViewEnabled( {
+				currentUser,
+				users,
 				preferences: {
-					values: {
+					remoteValues: {
 						firstViewHistory: [
 							{
 								view: 'stats',
@@ -47,29 +171,41 @@ describe( 'selectors', () => {
 						]
 					},
 					lastFetchedTimestamp: 123456,
+				},
+				ui: {
+					actionLog: actions,
+					queryArguments,
 				}
-			}, 'stats' );
+			}, config );
 
 			expect( viewEnabled ).to.be.true;
 		} );
 
 		it( 'should return true if preferences have been fetched and the history is empty', () => {
 			const viewEnabled = isViewEnabled( {
+				currentUser,
+				users,
 				preferences: {
-					values: {
+					remoteValues: {
 						firstViewHistory: []
 					},
 					lastFetchedTimestamp: 123456,
+				},
+				ui: {
+					actionLog: actions,
+					queryArguments,
 				}
-			}, 'stats' );
+			}, config );
 
 			expect( viewEnabled ).to.be.true;
 		} );
 
 		it( 'should return false if the view is disabled', () => {
 			const viewEnabled = isViewEnabled( {
+				currentUser,
+				users,
 				preferences: {
-					values: {
+					remoteValues: {
 						firstViewHistory: [
 							{
 								view: 'stats',
@@ -79,40 +215,67 @@ describe( 'selectors', () => {
 						]
 					},
 					lastFetchedTimestamp: 123456,
+				},
+				ui: {
+					actionLog: actions,
+					queryArguments,
 				}
-			}, 'stats' );
+			}, config );
 
 			expect( viewEnabled ).to.be.false;
 		} );
 
-		it( 'should return false if the view has no first view', () => {
+		it( 'should return false if the view is disabled in the config', () => {
 			const viewEnabled = isViewEnabled( {
+				currentUser,
+				users,
 				preferences: {
-					values: {
+					remoteValues: {
 						firstViewHistory: []
 					},
 					lastFetchedTimestamp: 123456,
+				},
+				ui: {
+					actionLog: [
+						{
+							type: ROUTE_SET,
+							path: '/devdocs',
+						}
+					],
+					queryArguments,
 				}
-			}, 'devdocs' );
+			}, { name: 'devdocs', paths: [ '/devdocs' ], enabled: false } );
 
 			expect( viewEnabled ).to.be.false;
 		} );
 
 		it( 'should return false if the preferences haven\'t been fetched', () => {
 			const viewEnabled = isViewEnabled( {
+				currentUser,
+				users,
 				preferences: {
-					values: {
+					remoteValues: {
 						firstViewHistory: []
 					},
 					lastFetchedTimestamp: false,
+				},
+				ui: {
+					actionLog: actions,
+					queryArguments,
 				}
-			}, 'stats' );
+			}, config );
 
 			expect( viewEnabled ).to.be.false;
-		} )
+		} );
 	} );
 
 	describe( '#wasFirstViewHiddenSinceEnteringCurrentSection()', () => {
+		const config = {
+			name: 'stats',
+			paths: [ '/stats' ],
+			enabled: true,
+		};
+
 		it( 'should return true if the first view was hidden since entering the current section', () => {
 			const actions = [
 				{
@@ -141,7 +304,7 @@ describe( 'selectors', () => {
 					},
 					actionLog: actions
 				}
-			} );
+			}, config );
 
 			expect( wasFirstViewHidden ).to.be.true;
 		} );
@@ -174,7 +337,7 @@ describe( 'selectors', () => {
 					},
 					actionLog: actions
 				}
-			} );
+			}, config );
 
 			expect( wasFirstViewHidden ).to.be.false;
 		} );

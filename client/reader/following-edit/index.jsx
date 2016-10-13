@@ -551,7 +551,7 @@ const FollowingEdit = React.createClass( {
 								aria-label={ this.translate( 'Open Search', { context: 'button label' } ) }
 								onClick={ this.toggleSearching }>
 								<Gridicon icon="search" />
-							  </Button>
+							</Button>
 							: null }
 				</SectionHeader>
 

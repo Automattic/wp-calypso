@@ -30,8 +30,7 @@ export function start( context ) {
 		ensureStoreLoading( feedStore, context );
 	}
 
-	setPageTitle( i18n.translate( 'Start' ) );
-
+	setPageTitle( context, i18n.translate( 'Start' ) );
 	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
 	if ( searchSlug ) {
@@ -48,7 +47,6 @@ export function start( context ) {
 				key: 'start',
 				feedStore: feedStore,
 				query: searchSlug,
-				setPageTitle: setPageTitle,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,

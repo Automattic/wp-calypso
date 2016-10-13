@@ -266,8 +266,7 @@ describe( 'reducer', () => {
 				ID: 841,
 				site_ID: 2916284,
 				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello World',
-				meta: null
+				title: 'Hello World'
 			} ] );
 		} );
 

@@ -13,10 +13,11 @@ import config from 'config';
 import DeleteSite from './delete-site';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
+import { sectionify } from 'lib/route/path';
 import SiteSettingsComponent from 'my-sites/site-settings/main';
 import sitesFactory from 'lib/sites-list';
 import StartOver from './start-over';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import titlecase from 'to-title-case';
 import utils from 'lib/site/utils';
 
@@ -62,11 +63,10 @@ module.exports = {
 		const basePath = route.sectionify( context.path );
 		const fiveMinutes = 5 * 60 * 1000;
 		let site = sites.getSelectedSite();
-		const { section } = context.params;
+		const section = sectionify( context.path ).split( '/' )[ 2 ];
 
-		titleActions.setTitle( i18n.translate( 'Site Settings', { textOnly: true } ),
-			{ siteID: route.getSiteFragment( context.path ) }
-		);
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Site Settings', { textOnly: true } ) ) );
 
 		// if site loaded, but user cannot manage site, redirect
 		if ( site && ! utils.userCan( 'manage_options', site ) ) {
@@ -77,12 +77,6 @@ module.exports = {
 		// if user went directly to jetpack settings page, redirect
 		if ( site.jetpack && ! config.isEnabled( 'manage/jetpack' ) ) {
 			window.location.href = '//wordpress.com/manage/' + site.ID;
-			return;
-		}
-
-		// redirect seo and analytics tabs to general for Jetpack sites
-		if ( site.jetpack && ( section === 'seo' || section === 'analytics' ) ) {
-			page.redirect( '/settings/general/' + site.slug );
 			return;
 		}
 
@@ -97,9 +91,11 @@ module.exports = {
 			}
 		}
 
+		const upgradeToBusiness = () => page( '/checkout/' + site.domain + '/business' );
+
 		renderPage(
 			context,
-			<SiteSettingsComponent sites={ sites } section={ section } />
+			<SiteSettingsComponent { ...{ sites, section, upgradeToBusiness } } />
 		);
 
 		// analytics tracking

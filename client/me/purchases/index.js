@@ -36,7 +36,7 @@ export default function() {
 		paths.addCardDetails(),
 		meController.sidebar,
 		controller.noSitesMessage,
-		controller.editCardDetails
+		controller.addCardDetails
 	);
 
 	page(
@@ -54,14 +54,9 @@ export default function() {
 	);
 
 	page(
-		paths.listNotice(),
-		controller.listNotice
-	);
-
-	page(
 		paths.managePurchase(),
 		meController.sidebar,
 		controller.noSitesMessage,
 		controller.managePurchase
 	);
-};
+}

@@ -66,7 +66,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should return a copy of what it was passed', function( done ) {
-		var post = {};
+		const post = {};
 		normalizer( post, [ identifyTransform ], function( err, normalized ) {
 			assert.notStrictEqual( normalized, post );
 			done( err );
@@ -74,7 +74,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should leave an empty object alone', function( done ) {
-		var post = {};
+		const post = {};
 		normalizer( post, allTransforms, function( err, normalized ) {
 			assert.deepEqual( normalized, post );
 			done( err );
@@ -82,7 +82,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'should support async transforms', function( done ) {
-		var post = {
+		const post = {
 			title: 'title'
 		};
 		normalizer( post, [ asyncTransform, asyncTransform ], function( err, normalized ) {
@@ -118,7 +118,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'can decode entities', function( done ) {
-		var post = {
+		const post = {
 			title: 'title <i>&amp; bar</i>',
 			excerpt: 'excerpt &amp; bar',
 			author: {
@@ -139,7 +139,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'can prevent widows', function( done ) {
-		var post = {
+		const post = {
 			excerpt: 'this is a longer excerpt bar'
 		};
 
@@ -152,7 +152,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'can prevent widows in empty strings', function( done ) {
-		var post = {
+		const post = {
 			excerpt: '   '
 		};
 
@@ -165,7 +165,7 @@ describe( 'index', function() {
 	} );
 
 	it( 'can remove html tags', function( done ) {
-		var post = {
+		const post = {
 			title: 'title <b>bar</b>',
 			excerpt: 'excerpt <b style="foo">bar</style>',
 			author: {
@@ -208,7 +208,7 @@ describe( 'index', function() {
 
 	describe( 'safeImageProperties', function() {
 		it( 'can make image properties safe', function( done ) {
-			var post = {
+			const post = {
 				author: {
 					avatar_URL: 'http://example.com/me.jpg'
 				},
@@ -216,6 +216,12 @@ describe( 'index', function() {
 				featured_media: {
 					uri: 'http://example.com/media.jpg',
 					type: 'image'
+				},
+				post_thumbnail: {
+					URL: 'http://example.com/thumb.jpg',
+					height: 1000,
+					width: 1000,
+					mime_type: ''
 				},
 				attachments: {
 					1234: {
@@ -231,6 +237,7 @@ describe( 'index', function() {
 			normalizer( post, [ normalizer.safeImageProperties( 200 ) ], function( err, normalized ) {
 				assert.strictEqual( normalized.author.avatar_URL, 'http://example.com/me.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_image, 'http://foo.bar/-SAFE?w=200&quality=80&strip=info' );
+				assert.strictEqual( normalized.post_thumbnail.URL, 'http://example.com/thumb.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.featured_media.uri, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.attachments[ '1234' ].URL, 'http://example.com/media.jpg-SAFE?w=200&quality=80&strip=info' );
 				assert.strictEqual( normalized.attachments[ '3456' ].URL, 'http://example.com/media.jpg' );
@@ -239,7 +246,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'will ignore featured_media that is not of type "image"', function( done ) {
-			var post = {
+			const post = {
 				featured_media: {
 					uri: 'http://example.com/media.jpg'
 				}
@@ -253,7 +260,7 @@ describe( 'index', function() {
 
 	describe( 'pickPrimaryTag', function() {
 		it( 'can pick the primary tag by taking the tag with the highest post_count as the primary', function( done ) {
-			var post = {
+			const post = {
 				tags: {
 					first: {
 						name: 'first',
@@ -273,7 +280,7 @@ describe( 'index', function() {
 		} );
 
 		it( 'can pick the primary tag by taking the first tag as primary if there is a tie', function( done ) {
-			var post = {
+			const post = {
 				tags: {
 					first: {
 						name: 'first',
@@ -323,7 +330,7 @@ describe( 'index', function() {
 
 	describe( 'the content normalizer (withContentDOM)', function() {
 		it( 'should not call nested transforms if content is blank', function( done ) {
-			var post = {
+			const post = {
 				content: ''
 			};
 			normalizer(
@@ -468,6 +475,18 @@ describe( 'index', function() {
 				}
 			);
 		} );
+
+		it( 'removes invalid srcsets', function( done ) {
+			normalizer(
+				{
+					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100-and-a-half.jpg 100.5w, http://example.com/example-600.jpg 600w">'
+				},
+				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
+					done( err );
+				}
+			);
+		} );
 	} );
 
 	describe( 'content.wordCountAndReadingTime', function() {
@@ -525,7 +544,7 @@ describe( 'index', function() {
 	describe( 'waitForImagesToLoad', function() {
 		it.skip( 'should fire when all images have loaded or errored', function( done ) {
 			// these need to be objects that mimic the Image object
-			var completeImage = {
+			let completeImage = {
 					complete: true,
 					src: 'http://example.com/one'
 				},
@@ -561,7 +580,7 @@ describe( 'index', function() {
 		} );
 
 		it.skip( 'should dedupe the images to check', function( done ) {
-			var first = {
+			let first = {
 					complete: true,
 					src: 'http://example.com/one'
 				},
@@ -590,7 +609,7 @@ describe( 'index', function() {
 
 	describe( 'canonical image picker', function() {
 		it( 'can pick the canonical image from images', function( done ) {
-			var postRunThroughWaitForImagesToLoad = {
+			const postRunThroughWaitForImagesToLoad = {
 				images: [
 					null, // null reference
 					{
@@ -638,6 +657,23 @@ describe( 'index', function() {
 				},
 				[ normalizer.pickCanonicalImage ], function( err, normalized ) {
 					assert.strictEqual( normalized.canonical_image.uri, 'http://example.com/featured.jpg' );
+					done( err );
+				}
+			);
+		} );
+
+		it( 'will pick post_thumbnail over featured_image if present and images missing', function( done ) {
+			normalizer(
+				{
+					featured_image: 'http://example.com/featured.jpg',
+					post_thumbnail: { URL: 'http://example.com/thumb.jpg', width: 1000, height: 1000, mime_type: '' },
+					featured_media: {
+						type: 'image',
+						uri: 'http://example.com/media.jpg'
+					}
+				},
+				[ normalizer.pickCanonicalImage ], function( err, normalized ) {
+					assert.strictEqual( normalized.canonical_image.uri, 'http://example.com/thumb.jpg' );
 					done( err );
 				}
 			);
@@ -735,7 +771,7 @@ describe( 'index', function() {
 					content: '<iframe width="100" height="50" src="https://youtube.com"></iframe>'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] ) ], function( err, normalized ) {
-					var embed;
+					let embed;
 					assert.lengthOf( normalized.content_embeds, 1 );
 
 					embed = normalized.content_embeds[ 0 ];
@@ -755,7 +791,7 @@ describe( 'index', function() {
 					content: '<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>'
 				},
 				[ normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] ) ], function( err, normalized ) {
-					var embed;
+					let embed;
 					assert.lengthOf( normalized.content_embeds, 1 );
 
 					embed = normalized.content_embeds[ 0 ];
@@ -907,7 +943,7 @@ describe( 'index', function() {
 				[
 					normalizer.withContentDOM( [ normalizer.content.detectPolls ] )
 				], function( err, normalized ) {
-					assert.include( normalized.content, '<p><a rel="external" target="_blank" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>' );
+					assert.include( normalized.content, '<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>' );
 					done( err );
 				}
 			);

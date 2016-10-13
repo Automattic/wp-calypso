@@ -22,10 +22,7 @@ var InfoPopoverExample = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/info-popover">Info Popover</a>
-				</h2>
+			<div>
 				<label>Position
 					<select value={ this.state.popoverPosition } onChange={ this._changePopoverPosition }>
 						<option value="top">top</option>
@@ -41,10 +38,12 @@ var InfoPopoverExample = React.createClass( {
 
 				<br />
 
-				<InfoPopover position={ this.state.popoverPosition }>
+				<InfoPopover
+					id="popover__info-popover-example"
+					position={ this.state.popoverPosition }
+				>
 					Some informational text.
 				</InfoPopover>
-
 			</div>
 		);
 	},

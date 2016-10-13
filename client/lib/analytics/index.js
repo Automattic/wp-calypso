@@ -29,7 +29,7 @@ window.ga = window.ga || function() {
 };
 window.ga.l = +new Date();
 
-loadScript( '//stats.wp.com/w.js?53' ); // W_JS_VER
+loadScript( '//stats.wp.com/w.js?54' ); // W_JS_VER
 loadScript( '//www.google-analytics.com/analytics.js' );
 
 function buildQuerystring( group, name ) {
@@ -194,8 +194,11 @@ var analytics = {
 	},
 
 	statsd: {
+		/* eslint-disable no-unused-vars */
 		recordTiming: function( pageUrl, eventType, duration, triggerName ) {
-			// ignore triggerName for now, it has no obvious place in statsd
+		// ignore triggerName for now, it has no obvious place in statsd
+		/* eslint-enable no-unused-vars */
+
 			if ( config( 'boom_analytics_enabled' ) ) {
 				var featureSlug = pageUrl === '/' ? 'homepage' : pageUrl.replace(/^\//, '').replace(/\.|\/|:/g, '_');
 				var matched;

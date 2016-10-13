@@ -1,4 +1,4 @@
-.reader__card.card, .reader__full-post {
+.reader__card.card, .reader__full-post, .reader-full-post {
 
 	.discover-attribution {
 		font-size: 13px;
@@ -13,14 +13,13 @@
 			margin-top: 15px;
 		}
 
-		.gridicon-arrow {
+		.gridicons-arrow-right {
 			height: 12px;
 			width: 12px;
 			fill: $white;
 			background: $gray;
 			padding: 4px;
 			border-radius: 100%;
-			transform: rotate(180deg);
 			position: relative;
 				top: 6px;
 			margin-right: 6px;

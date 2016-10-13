@@ -50,8 +50,6 @@ export const items = ( state = {}, action ) => {
 				}
 			} );
 
-			return { [ serviceType ]: {} };
-
 		case SITE_VOUCHERS_RECEIVE:
 			return Object.assign(
 				{},

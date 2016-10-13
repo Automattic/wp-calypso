@@ -2,12 +2,10 @@
 	background: $gray-light;
 	color: darken( $gray, 20 );
 	padding: 16px 48px 16px 24px;
-	margin: 20px -24px 8px -24px;
+	margin: 20px 0 8px;
 	position: relative;
 
 	@include breakpoint( "<480px" ) {
-		margin-left: -16px;
-		margin-right: -16px;
 		padding-left: 16px;
 	}
 

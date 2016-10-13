@@ -3,12 +3,15 @@
  */
 import { match } from 'sinon';
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
+	SITE_FRONT_PAGE_SET,
+	SITE_FRONT_PAGE_SET_FAILURE,
+	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -22,7 +25,8 @@ import {
 	receiveSite,
 	receiveSites,
 	requestSites,
-	requestSite
+	requestSite,
+	setFrontPage
 } from '../actions';
 
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -61,23 +65,18 @@ describe( 'actions', () => {
 	} );
 	describe( '#requestSites()', () => {
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/sites?site_visibility=all' )
 					.reply( 200, {
-						_headers: {
-							'Content-Type': 'application/json'
-						},
 						sites: [
 							{ ID: 2916284, name: 'WordPress.com Example Blog' },
 							{ ID: 77203074, name: 'WordPress.com Example Blog 2' }
 						]
 					} );
 			} );
-			after( () => {
-				nock.cleanAll();
-			} );
+
 			it( 'should dispatch request action when thunk triggered', () => {
 				requestSites()( spy );
 				expect( spy ).to.have.been.calledWith( {
@@ -104,7 +103,7 @@ describe( 'actions', () => {
 			} );
 		} );
 		describe( 'failure', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/me/sites?site_visibility=all' )
@@ -113,9 +112,7 @@ describe( 'actions', () => {
 						message: 'An active access token must be used to access sites.'
 					} );
 			} );
-			after( () => {
-				nock.cleanAll();
-			} );
+
 			it( 'should dispatch fail action when request fails', () => {
 				return requestSites()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
@@ -128,7 +125,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestSite()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284' )
@@ -177,6 +174,57 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_REQUEST_FAILURE,
 					siteId: 77203074,
+					error: match( { message: 'User cannot access this private blog.' } )
+				} );
+			} );
+		} );
+	} );
+
+	describe( 'setFrontPage()', () => {
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( '/rest/v1.1/sites/2916284/homepage', {
+					is_page_on_front: true,
+					page_on_front_id: 1
+				} )
+				.reply( 200, {
+					is_page_on_front: true,
+					page_on_front_id: 1
+				} )
+				.post( '/rest/v1.1/sites/77203074/homepage' )
+				.reply( 403, {
+					error: 'authorization_required',
+					message: 'User cannot access this private blog.'
+				} );
+		} );
+
+		it( 'should dispatch set action when thunk triggered', () => {
+			setFrontPage( 2916284, 1 )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: SITE_FRONT_PAGE_SET,
+				siteId: 2916284,
+				pageId: 1
+			} );
+		} );
+
+		it( 'should dispatch request success action when request completes', () => {
+			return setFrontPage( 2916284, 1 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: SITE_FRONT_PAGE_SET_SUCCESS,
+					siteId: 2916284,
+					pageId: 1
+				} );
+			} );
+		} );
+
+		it( 'should dispatch fail action when request fails', () => {
+			return setFrontPage( 77203074, 1 )( spy ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: SITE_FRONT_PAGE_SET_FAILURE,
+					siteId: 77203074,
+					pageId: 1,
 					error: match( { message: 'User cannot access this private blog.' } )
 				} );
 			} );

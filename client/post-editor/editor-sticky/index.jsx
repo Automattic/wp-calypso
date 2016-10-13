@@ -47,9 +47,10 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const classes = classnames( 'editor-sticky', {
-			'is-sticky': this.props.post && this.props.post.sticky
-		} );
+		const classes = classnames(
+			'editor-sticky',
+			{ 'is-sticky': this.props.post && this.props.post.sticky }
+		);
 
 		return (
 			<Button
@@ -63,6 +64,7 @@ export default React.createClass( {
 			>
 				<Gridicon icon="bookmark" />
 				<Tooltip
+					className="editor-sticky__tooltip"
 					context={ this.refs && this.refs.stickyPostButton }
 					isVisible={ this.state.tooltip }
 					position="bottom left"

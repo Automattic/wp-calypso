@@ -132,13 +132,10 @@ describe( 'index', function() {
 	} );
 
 	it( 'should further highlight the drop zone when dragging over the element', function() {
-		var tree, dragEnterEvent;
+		const tree = ReactDom.render( React.createElement( DropZone ), container );
+		sandbox.stub( tree, 'isWithinZoneBounds' ).returns( true );
 
-		sandbox.stub( DropZone.prototype, 'isWithinZoneBounds' ).returns( true );
-
-		tree = ReactDom.render( React.createElement( DropZone ), container );
-
-		dragEnterEvent = new window.MouseEvent( 'dragenter' );
+		const dragEnterEvent = new window.MouseEvent( 'dragenter' );
 		window.dispatchEvent( dragEnterEvent );
 
 		expect( tree.state.isDraggingOverDocument ).to.be.ok;

@@ -1,35 +1,33 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { connect } from 'react-redux';
-import defer from 'lodash/defer';
 import find from 'lodash/find';
 import page from 'page';
 import React from 'react';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
 import { activated } from 'state/themes/actions';
 import analytics from 'lib/analytics';
-import { abtest } from 'lib/abtest';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
-import config from 'config';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
 import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
-import FreeTrialNudge from './free-trial-nudge';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getReceiptById } from 'state/receipts/selectors';
+import { getCurrentUser, getCurrentUserDate } from 'state/current-user/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import GuidedTransferDetails from './guided-transfer-details';
 import HappinessSupport from 'components/happiness-support';
 import HeaderCake from 'components/header-cake';
+import PlanThankYouCard from 'blocks/plan-thank-you-card';
 import {
 	isChargeback,
 	isDomainMapping,
@@ -54,7 +52,9 @@ import BusinessPlanDetails from './business-plan-details';
 import PurchaseDetail from 'components/purchase-detail';
 import { getFeatureByKey, shouldFetchSitePlans } from 'lib/plans';
 import SiteRedirectDetails from './site-redirect-details';
+import Notice from 'components/notice';
 import upgradesPaths from 'my-sites/upgrades/paths';
+import { abtest } from 'lib/abtest';
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
@@ -111,6 +111,22 @@ const CheckoutThankYou = React.createClass( {
 		return getPurchases( props ).some( purchase => isPlan( purchase ) || isDomainProduct( purchase ) );
 	},
 
+	renderConfirmationNotice: function() {
+		if ( ! this.props.user || ! this.props.user.email || this.props.email_verified ) {
+			return null;
+		}
+
+		return (
+			<Notice className="checkout-thank-you__verification-notice" showDismiss={ false }>
+				{ this.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
+					'Please check your email to confirm your address.', {
+						args: { email: this.props.user.email },
+						components: { strong: <strong className="checkout-thank-you__verification-notice-email" />
+				} } ) }
+			</Notice>
+		);
+	},
+
 	isDataLoaded() {
 		if ( this.isGenericReceipt() ) {
 			return true;
@@ -154,19 +170,42 @@ const CheckoutThankYou = React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( 'checkout-thank-you', {
-			'is-placeholder': ! this.isDataLoaded()
-		} );
-
 		let purchases = null,
-			wasJetpackPlanPurchased = false;
+			wasJetpackPlanPurchased = false,
+			wasOnlyDotcomPlanPurchased = false;
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
 			purchases = getPurchases( this.props );
 			wasJetpackPlanPurchased = purchases.some( isJetpackPlan );
+			wasOnlyDotcomPlanPurchased = purchases.every( isPlan );
 		}
 
+		const userCreatedMoment = moment( this.props.userDate );
+		const isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
+		const isPaidNuxStreamlinedAbTest = abtest( 'paidNuxStreamlined' ) === 'streamlined';
+
+		// this placeholder is using just wp logo here because two possible states do not share a common layout
+		if ( ! purchases && ! this.isGenericReceipt() ) {
+			// disabled because we use global loader icon
+			/* eslint-disable wpcalypso/jsx-classname-namespace */
+			return (
+				<div className="wpcom-site__logo noticon noticon-wordpress"></div>
+			);
+			/* eslint-enable wpcalypso/jsx-classname-namespace */
+		}
+
+		// streamlined paid NUX thanks page
+		if ( isPaidNuxStreamlinedAbTest && isNewUser && wasOnlyDotcomPlanPurchased ) {
+			return (
+				<Main className="checkout-thank-you">
+					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
+					{ this.renderConfirmationNotice() }
+				</Main>
+			);
+		}
+
+		// standard thanks page
 		return (
-			<Main className={ classes }>
+			<Main className="checkout-thank-you">
 				<HeaderCake
 					onClick={ this.goBack }
 					isCompact
@@ -177,9 +216,7 @@ const CheckoutThankYou = React.createClass( {
 				</Card>
 
 				<Card className="checkout-thank-you__footer">
-					<HappinessSupport
-						isJetpack={ wasJetpackPlanPurchased }
-						isPlaceholder={ ! this.isDataLoaded() && ! this.isGenericReceipt() } />
+					<HappinessSupport isJetpack={ wasJetpackPlanPurchased } />
 				</Card>
 			</Main>
 		);
@@ -272,11 +309,6 @@ const CheckoutThankYou = React.createClass( {
 							selectedSite={ selectedSite }
 							selectedFeature={ getFeatureByKey( this.props.selectedFeature ) }
 							sitePlans={ sitePlans } />
-
-						<FreeTrialNudge
-							purchases={ purchases }
-							selectedSite={ selectedSite }
-							sitePlans={ sitePlans } />
 					</div>
 				) }
 			</div>
@@ -288,7 +320,9 @@ export default connect(
 	( state, props ) => {
 		return {
 			receipt: getReceiptById( state, props.receiptId ),
-			sitePlans: getPlansBySite( state, props.selectedSite )
+			sitePlans: getPlansBySite( state, props.selectedSite ),
+			user: getCurrentUser( state ),
+			userDate: getCurrentUserDate( state ),
 		};
 	},
 	( dispatch ) => {

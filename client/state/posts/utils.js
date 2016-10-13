@@ -13,8 +13,11 @@ import {
 	reduce,
 	toArray,
 	cloneDeep,
-	cloneDeepWith
+	pickBy,
+	isString,
+	every
 } from 'lodash';
+import { dissocPath } from 'lodash/fp';
 
 /**
  * Internal dependencies
@@ -36,6 +39,10 @@ const REGEXP_SERIALIZED_QUERY = /^((\d+):)?(.*)$/;
 
 const normalizeEditedFlow = flow( [
 	getTermIdsFromEdits
+] );
+
+const normalizeApiFlow = flow( [
+	normalizeTermsForApi
 ] );
 
 const normalizeDisplayFlow = flow( [
@@ -159,11 +166,15 @@ export function normalizePostForEditing( post ) {
  * @return {Object}      Normalized post object
  */
 export function normalizePostForState( post ) {
-	return cloneDeepWith( post, ( value, key ) => {
-		if ( 'meta' === key ) {
-			return null;
-		}
-	} );
+	return reduce( [
+		[],
+		...reduce( post.terms, ( memo, terms, taxonomy ) => (
+			memo.concat( map( terms, ( term, slug ) => [ 'terms', taxonomy, slug ] ) )
+		), [] ),
+		...map( post.categories, ( category, slug ) => [ 'categories', slug ] ),
+		...map( post.tags, ( tag, slug ) => [ 'tags', slug ] ),
+		...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] )
+	], ( memo, path ) => dissocPath( path.concat( 'meta' ), memo ), post );
 }
 
 /**
@@ -177,12 +188,9 @@ export function getTermIdsFromEdits( post ) {
 		return post;
 	}
 
-	// Skip "default" taxonomies until legacy token-field and category-selector are removed
-	let taxonomies = omit( post.terms, [ 'post_tag', 'category' ] );
-
 	// Filter taxonomies that are set as arrays ( i.e. tags )
 	// This can be detected by an array of strings vs an array of objects
-	taxonomies = reduce( taxonomies, ( prev, taxonomyTerms, taxonomyName ) => {
+	const taxonomies = reduce( post.terms, ( prev, taxonomyTerms, taxonomyName ) => {
 		// Ensures we are working with an array
 		const termsArray = toArray( taxonomyTerms );
 		if ( termsArray && termsArray.length && ! isPlainObject( termsArray[ 0 ] ) ) {
@@ -207,4 +215,37 @@ export function getTermIdsFromEdits( post ) {
 			return termIds.length ? termIds : null;
 		} )
 	};
+}
+
+/**
+ * Returns a normalized post terms object for sending to the API
+ *
+ * @param  {Object} post Raw post object
+ * @return {Object}      Normalized post object
+ */
+export function normalizeTermsForApi( post ) {
+	if ( ! post || ! post.terms ) {
+		return post;
+	}
+
+	return {
+		...post,
+		terms: pickBy( post.terms, ( terms ) => {
+			return terms.length && every( terms, isString );
+		} )
+	};
+}
+
+/**
+ * Returns a normalized post object for sending to the API
+ *
+ * @param  {Object} post Raw post object
+ * @return {Object}      Normalized post object
+ */
+export function normalizePostForApi( post ) {
+	if ( ! post ) {
+		return null;
+	}
+
+	return normalizeApiFlow( post );
 }

@@ -115,7 +115,7 @@ module.exports = {
 
 		function startEditing( siteId ) {
 			context.store.dispatch( setEditorPostId( postID ) );
-			context.store.dispatch( editPost( { type: postType }, siteId, postID ) );
+			context.store.dispatch( editPost( siteId, postID, { type: postType } ) );
 
 			if ( maybeRedirect( context ) ) {
 				return;

@@ -7,12 +7,12 @@ import page from 'page';
 import url from 'url';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { defer, startsWith } from 'lodash';
+import { defer, startsWith, identity, every } from 'lodash';
+import store from 'store';
 
 /**
  * Internal Dependencies
  */
-import layoutFocus from 'lib/layout-focus';
 import ReaderTagsSubscriptionStore from 'lib/reader-tags/subscriptions';
 import ReaderListsSubscriptionsStore from 'lib/reader-lists/subscriptions';
 import ReaderListsStore from 'lib/reader-lists/lists';
@@ -35,9 +35,13 @@ import QueryReaderLists from 'components/data/query-reader-lists';
 import observe from 'lib/mixins/data-observe';
 import config from 'config';
 import userSettings from 'lib/user-settings';
-import AppPromo from 'components/app-promo';
+import AppPromo from 'blocks/app-promo';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import userUtils from 'lib/user/utils';
+import viewport from 'lib/viewport';
+import { localize } from 'i18n-calypso';
 
-const ReaderSidebar = React.createClass( {
+export const ReaderSidebar = React.createClass( {
 
 	mixins: [
 		observe( 'userSettings' ),
@@ -88,7 +92,7 @@ const ReaderSidebar = React.createClass( {
 
 	handleClick( event ) {
 		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span', true ) ) {
-			layoutFocus.setNext( 'content' );
+			this.props.setNextLayoutFocus( 'content' );
 			window.scrollTo( 0, 0 );
 		}
 	},
@@ -132,42 +136,19 @@ const ReaderSidebar = React.createClass( {
 		}
 	},
 
-	renderAppPromo() {
-		// if promo not configured return
-		if ( ! config.isEnabled( 'desktop-promo' ) ) {
-			return;
-		}
-
-		// if user settings not loaded, return so we dont show
-		// before we can check if user is already a desktop user
-		if ( userSettings.getSetting( 'is_desktop_app_user' ) === null ) {
-			return;
-		}
-
-		// if already using desktop app, dont show promo
-		if ( userSettings.getSetting( 'is_desktop_app_user' ) ) {
-			return;
-		}
-
-		// made it through the gauntlet, show the promo!
-		return (
-			<AppPromo location="reader" />
-		);
-	},
-
 	render() {
 		return (
 			<Sidebar onClick={ this.handleClick }>
 				<SidebarRegion>
 				<SidebarMenu>
-					<SidebarHeading>{ this.translate( 'Streams' ) }</SidebarHeading>
+					<SidebarHeading>{ this.props.translate( 'Streams' ) }</SidebarHeading>
 					<ul>
 						<li className={ ReaderSidebarHelper.itemLinkClass( '/', this.props.path, { 'sidebar-streams__following': true } ) }>
 							<a href="/">
 								<Gridicon icon="checkmark-circle" size={ 24 } />
-								<span className="menu-link-text">{ this.translate( 'Followed Sites' ) }</span>
+								<span className="menu-link-text">{ this.props.translate( 'Followed Sites' ) }</span>
 							</a>
-							<a href="/following/edit" className="sidebar__button">{ this.translate( 'Manage' ) }</a>
+							<a href="/following/edit" className="sidebar__button">{ this.props.translate( 'Manage' ) }</a>
 						</li>
 
 						<ReaderSidebarTeams teams={ this.state.teams } path={ this.props.path } />
@@ -179,7 +160,7 @@ const ReaderSidebar = React.createClass( {
 								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/posts', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
 									<a href="/recommendations/posts">
 										<Gridicon icon="star" size={ 24 } />
-										<span className="menu-link-text">{ this.translate( 'Recommended Posts (Alpha)' ) }</span>
+										<span className="menu-link-text">{ this.props.translate( 'Recommended Posts (Alpha)' ) }</span>
 									</a>
 								</li>
 							)
@@ -192,7 +173,7 @@ const ReaderSidebar = React.createClass( {
 								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/cold', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
 									<a href="/recommendations/cold">
 										<Gridicon icon="star" size={ 24 } />
-										<span className="menu-link-text">{ this.translate( 'Coldstart (Alpha)' ) }</span>
+										<span className="menu-link-text">{ this.props.translate( 'Coldstart (Alpha)' ) }</span>
 									</a>
 								</li>
 							)
@@ -204,7 +185,7 @@ const ReaderSidebar = React.createClass( {
 									<li className={ ReaderSidebarHelper.itemLinkClass( '/discover', this.props.path, { 'sidebar-streams__discover': true } ) }>
 										<a href="/discover">
 											<Gridicon icon="my-sites" />
-											<span className="menu-link-text">{ this.translate( 'Discover' ) }</span>
+											<span className="menu-link-text">{ this.props.translate( 'Discover' ) }</span>
 										</a>
 									</li>
 								) : null
@@ -215,7 +196,7 @@ const ReaderSidebar = React.createClass( {
 								<li className={ ReaderSidebarHelper.itemLinkClass( '/read/search', this.props.path, { 'sidebar-streams__search': true } ) }>
 									<a href="/read/search">
 										<Gridicon icon="search" size={ 24 } />
-										<span className="menu-link-text">{ this.translate( 'Search' ) }</span>
+										<span className="menu-link-text">{ this.props.translate( 'Search' ) }</span>
 									</a>
 								</li>
 							)
@@ -224,14 +205,14 @@ const ReaderSidebar = React.createClass( {
 						<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations', this.props.path, { 'sidebar-streams__recommendations': true } ) }>
 							<a href="/recommendations">
 								<Gridicon icon="thumbs-up" size={ 24 } />
-								<span className="menu-link-text">{ this.translate( 'Recommendations' ) }</span>
+								<span className="menu-link-text">{ this.props.translate( 'Recommendations' ) }</span>
 							</a>
 						</li>
 
 						<li className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', this.props.path, { 'sidebar-activity__likes': true } ) }>
 							<a href="/activities/likes">
 								<Gridicon icon="star" size={ 24 } />
-								<span className="menu-link-text">{ this.translate( 'My Likes' ) }</span>
+								<span className="menu-link-text">{ this.props.translate( 'My Likes' ) }</span>
 							</a>
 						</li>
 					</ul>
@@ -254,9 +235,13 @@ const ReaderSidebar = React.createClass( {
 					onTagExists={ this.highlightNewTag }
 					currentTag={ this.state.currentTag } />
 
-				</SidebarRegion>
+			</SidebarRegion>
 
-				{ this.renderAppPromo() }
+			{ this.props.shouldRenderAppPromo &&
+				<div className="sidebar__app-promo">
+					<AppPromo location="reader" locale={ userUtils.getLocaleSlug() } />
+				</div>
+			}
 
 				<SidebarFooter />
 			</Sidebar>
@@ -264,18 +249,51 @@ const ReaderSidebar = React.createClass( {
 	}
 } );
 
+ReaderSidebar.defaultProps = {
+	translate: identity
+};
+
+export const shouldRenderAppPromo = ( options = { } ) => {
+	// Until the user settings have loaded we'll indicate the user is is a
+	// desktop app user because until the user settings have loaded
+	// userSettings.getSetting( 'is_desktop_app_user' ) will return false which
+	// makes the app think the user isn't a desktop app user for a few seconds
+	// resulting in the AppPromo potentially flashing in then out as soon as
+	// the user settings does properly indicate that the user is one.
+	const haveUserSettingsLoaded = userSettings.getSetting( ' is_desktop_app_user' ) === null;
+	const {
+		isDesktopPromoDisabled = store.get( 'desktop_promo_disabled' ),
+		isViewportMobile = viewport.isMobile(),
+		isUserLocaleEnglish = 'en' === userUtils.getLocaleSlug(),
+		isDesktopPromoConfiguredToRun = config.isEnabled( 'desktop-promo' ),
+		isUserDesktopAppUser = haveUserSettingsLoaded || userSettings.getSetting( 'is_desktop_app_user' ),
+		isUserOnChromeOs = /\bCrOS\b/.test( navigator.userAgent )
+	} = options;
+
+	return every( [
+		! isDesktopPromoDisabled,
+		isUserLocaleEnglish,
+		! isViewportMobile,
+		! isUserOnChromeOs,
+		isDesktopPromoConfiguredToRun,
+		! isUserDesktopAppUser
+	] );
+};
+
 export default connect(
 	( state ) => {
 		return {
 			isListsOpen: state.ui.reader.sidebar.isListsOpen,
 			isTagsOpen: state.ui.reader.sidebar.isTagsOpen,
-			subscribedLists: getSubscribedLists( state )
+			subscribedLists: getSubscribedLists( state ),
+			shouldRenderAppPromo: shouldRenderAppPromo(),
 		};
 	},
 	( dispatch ) => {
 		return bindActionCreators( {
 			toggleListsVisibility: toggleReaderSidebarLists,
-			toggleTagsVisibility: toggleReaderSidebarTags
+			toggleTagsVisibility: toggleReaderSidebarTags,
+			setNextLayoutFocus,
 		}, dispatch );
 	}
-)( ReaderSidebar );
+)( localize( ReaderSidebar ) );

@@ -98,7 +98,7 @@ module.exports = React.createClass( {
 			var isNowSitewide = event.target.checked;
 			this.setState( { isSavingSitewide: true } );
 			this.props.onToggleSitewideConnection( this.props.connection, isNowSitewide );
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Connection Available to All Users Checkbox', this.props.service.name, isNowSitewide ? 1 : 0 );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Connection Available to All Users Checkbox', this.props.service.ID, isNowSitewide ? 1 : 0 );
 		}
 	},
 
@@ -126,7 +126,7 @@ module.exports = React.createClass( {
 		var userCanUpdate = serviceConnections.canCurrentUserPerformActionOnConnection( 'update', this.props.connection ),
 			content = [];
 
-		if ( ! serviceConnections.isServiceForPublicize( this.props.service.name ) ) {
+		if ( ! serviceConnections.isServiceForPublicize( this.props.service.ID ) ) {
 			return;
 		}
 

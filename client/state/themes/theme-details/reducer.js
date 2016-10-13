@@ -13,11 +13,14 @@ import {
 	THEME_ACTIVATED,
 	THEME_DETAILS_RECEIVE,
 	THEME_DETAILS_RECEIVE_FAILURE,
+	THEME_DETAILS_REQUEST,
 } from 'state/action-types';
 import { setActiveTheme } from '../themes/reducer';
 
 export default ( state = Map(), action ) => {
 	switch ( action.type ) {
+		case THEME_DETAILS_REQUEST:
+			return state.setIn( [ action.themeId, 'isRequesting' ], true );
 		case THEME_DETAILS_RECEIVE:
 			return state
 				.set( action.themeId, Map( {
@@ -35,6 +38,7 @@ export default ( state = Map(), action ) => {
 					demo_uri: action.themeDemoUri,
 					active: action.themeActive,
 					purchased: action.themePurchased,
+					isRequesting: false
 				} ) );
 		case THEME_DETAILS_RECEIVE_FAILURE:
 			return state.set( action.themeId, Map( { error: action.error } ) );

@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import userSettings from 'lib/user-settings';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
@@ -22,7 +22,7 @@ export default {
 		const basePath = context.path;
 		let showNoticeInitially = false;
 
-		titleActions.setTitle( i18n.translate( 'Account Settings', { textOnly: true } ) );
+		context.store.dispatch( setTitle( i18n.translate( 'Account Settings', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		// Update the url and show the notice after a redirect
 		if ( context.query && context.query.updated === 'success' ) {

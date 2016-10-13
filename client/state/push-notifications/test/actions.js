@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -17,7 +16,7 @@ import {
 	receiveUnregisterDevice,
 	sendSubscriptionToWPCOM,
 } from '../actions';
-
+import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 
 const API_DOMAIN = 'https://public-api.wordpress.com:443';
@@ -32,10 +31,6 @@ describe( 'actions', () => {
 
 	beforeEach( () => {
 		spy.reset();
-	} );
-
-	after( () => {
-		nock.cleanAll();
 	} );
 
 	describe( 'receiveUnregisterDevice()', () => {
@@ -71,14 +66,11 @@ describe( 'actions', () => {
 		const getState = () => ( { pushNotifications: { settings: {}, system: {} } } );
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( API_DOMAIN )
 					.persist()
 					.post( `/rest/v1.1/devices/new` )
 					.reply( 200, { ID: 123, settings: {} } );
-			} );
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {

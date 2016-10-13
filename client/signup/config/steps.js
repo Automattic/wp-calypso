@@ -55,6 +55,11 @@ module.exports = {
 		providesDependencies: [ 'bearer_token', 'username' ]
 	},
 
+	'site-title': {
+		stepName: 'site-title',
+		providesDependencies: [ 'siteTitle' ]
+	},
+
 	test: {
 		stepName: 'test'
 	},
@@ -66,24 +71,17 @@ module.exports = {
 		providesDependencies: [ 'cartItem' ]
 	},
 
-	'select-plan': {
-		stepName: 'select-plan',
-		apiRequestFunction: stepActions.addPlanToCart,
-		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'cartItem' ]
-	},
-
 	domains: {
 		stepName: 'domains',
-		apiRequestFunction: stepActions.addDomainItemsToCart,
+		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
-		dependencies: [ 'theme' ],
+		dependencies: [ 'theme', 'surveyQuestion' ],
 		delayApiRequestUntilComplete: true
 	},
 
 	'domains-with-plan': {
 		stepName: 'domains-with-plan',
-		apiRequestFunction: stepActions.addDomainItemsToCartAndStartFreeTrial,
+		apiRequestFunction: stepActions.createSiteWithCartAndStartFreeTrial,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		dependencies: [ 'theme' ],
 		delayApiRequestUntilComplete: true
@@ -91,7 +89,7 @@ module.exports = {
 
 	'domains-only': {
 		stepName: 'domains-only',
-		apiRequestFunction: stepActions.addDomainItemsToCart,
+		apiRequestFunction: stepActions.createSiteWithCart,
 		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
 		delayApiRequestUntilComplete: true
 	},
@@ -105,5 +103,29 @@ module.exports = {
 			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
 		},
 		providesDependencies: [ 'bearer_token', 'username' ]
-	}
+	},
+
+	'get-dot-blog-plans': {
+		apiRequestFunction: stepActions.createSiteWithCart,
+		stepName: 'get-dot-blog-plans',
+		dependencies: [ 'cartItem' ],
+		providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem' ]
+	},
+
+	'get-dot-blog-themes': {
+		stepName: 'get-dot-blog-themes',
+		props: {
+			designType: 'blog'
+		},
+		dependencies: [ 'siteSlug' ],
+		providesDependencies: [ 'theme' ]
+	},
+
+	'get-dot-blog-survey': {
+		stepName: 'get-dot-blog-survey',
+		props: {
+			surveySiteType: 'blog'
+		},
+		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
+	},
 };

@@ -56,7 +56,7 @@ export default React.createClass( {
 	getWPCOMFollowerRole( siteId ) {
 		siteId = siteId ? siteId : this.props.siteId;
 
-		let site = sites.getSite( siteId ),
+		const site = sites.getSite( siteId ),
 			displayName = site.is_private
 			? this.translate( 'Viewer', { context: 'Role that is displayed in a select' } )
 			: this.translate( 'Follower', { context: 'Role that is displayed in a select' } );
@@ -76,7 +76,7 @@ export default React.createClass( {
 			let siteRoles = RolesStore.getRoles( siteId );
 
 			if ( this.props.includeFollower ) {
-				siteRoles = Object.assign( {}, this.getWPCOMFollowerRole(), siteRoles )
+				siteRoles = Object.assign( {}, this.getWPCOMFollowerRole(), siteRoles );
 			}
 
 			this.setState( {
@@ -111,13 +111,13 @@ export default React.createClass( {
 	render() {
 		const roleKeys = Object.keys( this.state.roles );
 		return (
-			<FormFieldset key={ this.props.key } disabled={ ! roleKeys.length }>
+			<FormFieldset key={ this.props.siteId } disabled={ ! roleKeys.length }>
 				<FormLabel htmlFor={ this.props.id }>
 					{ this.translate( 'Role', {
 						context: 'Text that is displayed in a label of a form.'
 					} ) }
 				</FormLabel>
-				<FormSelect { ...omit( this.props, [ 'site', 'key' ] ) }>
+				<FormSelect { ...omit( this.props, [ 'site', 'key', 'siteId', 'includeFollower', 'explanation' ] ) }>
 					{
 						map( this.state.roles, ( roleObject, key ) => {
 							return (

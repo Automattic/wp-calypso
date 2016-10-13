@@ -3,8 +3,6 @@
  */
 import { combineReducers } from 'redux';
 import keyBy from 'lodash/keyBy';
-import omitBy from 'lodash/omitBy';
-import isUndefined from 'lodash/isUndefined';
 
 /**
  * Internal dependencies

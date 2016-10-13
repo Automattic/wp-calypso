@@ -5,8 +5,6 @@ var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	omit = require( 'lodash/omit' );
 
-import get from 'lodash/get';
-
 /**
  * Internal dependencies
  */
@@ -18,10 +16,9 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	NoResults = require( 'my-sites/no-results' ),
 	actions = require( 'lib/posts/actions' ),
 	Placeholder = require( './placeholder' ),
-	CompactCard = require( 'components/card/compact' ),
 	mapStatus = require( 'lib/route' ).mapPostStatus;
 
-import Gridicon from 'components/gridicon';
+import BlogPostsPage from './blog-posts-page';
 
 var PageList = React.createClass( {
 
@@ -49,7 +46,7 @@ var PageList = React.createClass( {
 	}
 } );
 
-var Pages = React.createClass({
+var Pages = React.createClass( {
 
 	displayName: 'Pages',
 
@@ -121,8 +118,7 @@ var Pages = React.createClass({
 	},
 
 	getNoContentMessage: function() {
-		var selectedSite = this.props.sites.getSelectedSite(),
-			attributes, newPageLink;
+		var attributes, newPageLink;
 
 		if ( this.props.search ) {
 			return <NoResults
@@ -132,10 +128,9 @@ var Pages = React.createClass({
 						components: {
 							searchTerm: <em>{ this.props.search }</em>
 						}
-					} )	}
+					} ) }
 			/>;
 		} else {
-
 			newPageLink = this.props.siteID ? '/page/' + this.props.siteID : '/page';
 
 			if ( this.props.hasRecentError ) {
@@ -195,25 +190,11 @@ var Pages = React.createClass({
 	addLoadingRows: function( rows, count ) {
 		var i;
 		for ( i = 0; i < count; i++ ) {
-			if ( i % 4 === 0) {
-				rows.push ( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
+			if ( i % 4 === 0 ) {
+				rows.push( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
 			}
-			rows.push ( <Placeholder.Page key={ 'placeholder-page-' + i } multisite={ this.props.siteID === false } /> );
+			rows.push( <Placeholder.Page key={ 'placeholder-page-' + i } multisite={ this.props.siteID === false } /> );
 		}
-	},
-
-	blogPostsPage: function() {
-		return (
-			<CompactCard className="page" key="blog-posts-page">
-				<span className="page__title" href="">
-					<Gridicon icon="house" size={ 18 } />
-					{ this.translate( 'Blog Posts' ) }
-				</span>
-				<span className="page__info">
-					{ this.translate( 'Your latest posts' ) }
-				</span>
-			</CompactCard>
-		);
 	},
 
 	render: function() {
@@ -227,14 +208,14 @@ var Pages = React.createClass({
 				pages = this._insertTimeMarkers( pages );
 			}
 			rows = pages.map( function( page ) {
-					if ( ! ( 'site_ID' in page ) ) {
-						return page;
-					}
+				if ( ! ( 'site_ID' in page ) ) {
+					return page;
+				}
 					// Get the site the page belongs to
-					var site = this.props.sites.getSite( page.site_ID );
+				var site = this.props.sites.getSite( page.site_ID );
 
 					// Render each page
-					return (
+				return (
 						<Page key={ 'page-' + page.global_ID } page={ page } site={ site } multisite={ this.props.siteID === false } />
 					);
 			}, this );
@@ -246,10 +227,14 @@ var Pages = React.createClass({
 			const site = this.props.sites.getSelectedSite();
 			const status = this.props.status || 'published';
 
-			if ( status === 'published' && get( site, 'options.show_on_front' ) === 'posts' ) {
-				rows.push( this.blogPostsPage() );
+			if ( site && status === 'published' ) {
+				rows.push(
+					<BlogPostsPage
+						key="blog-posts-page"
+						siteId={ site.ID }
+					/>
+				);
 			}
-
 		} else if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
 			rows.push( <div key="page-list-no-results">{ this.getNoContentMessage() }</div> );
 		} else {
@@ -263,6 +248,6 @@ var Pages = React.createClass({
 			</div>
 		);
 	}
-});
+} );
 
 module.exports = PageList;

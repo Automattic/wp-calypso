@@ -10,12 +10,13 @@ import closest from 'component-closest';
  * Internal Dependencies
  */
 import CompactCard from 'components/card/compact';
+import DocumentHead from 'components/data/document-head';
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
 import BlankContent from './blank';
 import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
-import SearchCard from 'components/post-card/search';
+import SearchCard from 'blocks/reader-search-card';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { recordTrackForPost } from 'reader/stats';
@@ -52,7 +53,7 @@ const SearchCardAdapter = React.createClass( {
 		}
 
 		// declarative ignore
-		if ( closest( event.target, '.ignore-click, [rel=external]', true, rootNode ) ) {
+		if ( closest( event.target, '.ignore-click, [rel~=external]', true, rootNode ) ) {
 			return;
 		}
 
@@ -164,16 +165,6 @@ const FeedStream = React.createClass( {
 			? <EmptyContent query={ this.props.query } />
 			: blankContent;
 
-		// Override showing of EmptyContent in Reader stream
-		let showEmptyContent = true;
-		if ( this.props.showBlankContent === false || this.props.query ) {
-			showEmptyContent = false;
-		}
-
-		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( this.state.title || this.translate( 'Search' ) );
-		}
-
 		const store = this.props.store || emptyStore;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
@@ -185,11 +176,12 @@ const FeedStream = React.createClass( {
 			<Stream { ...this.props } store={ store }
 				listName={ this.translate( 'Search' ) }
 				emptyContent={ emptyContent }
-				showEmptyContent={ showEmptyContent }
+				showDefaultEmptyContentIfMissing={ this.props.showBlankContent }
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory }
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
+				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: this.state.title || this.translate( 'Search' ) } ) } />
 				<CompactCard className="search-stream__input-card">
 					<SearchInput
 						initialValue={ this.props.query }

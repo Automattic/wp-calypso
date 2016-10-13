@@ -21,7 +21,7 @@ export default React.createClass( {
 				context: 'Menus: item search/listing results',
 				comment: 'This is used when no posts or pages match the given search.',
 				components: {
-					a: <a className='create-link' href={ this.props.createLink } target="_blank" />
+					a: <a className='create-link' href={ this.props.createLink } target="_blank" rel="noopener noreferrer" />
 				}
 			} );
 		}

@@ -19,12 +19,12 @@ export default React.createClass( {
 	displayName: 'Input',
 
 	getDefaultProps() {
-		return { autofocus: false };
+		return { autoFocus: false, autoComplete: 'on' };
 	},
 
 	componentDidMount() {
 		this.setupInputModeHandlers();
-		this.autofocusInput();
+		this.autoFocusInput();
 	},
 
 	setupInputModeHandlers() {
@@ -48,7 +48,7 @@ export default React.createClass( {
 		if ( oldProps.disabled && ! this.props.disabled ) {
 			// We focus when the state goes from disabled to enabled. This is needed because we show a disabled input
 			// until we receive data from the server.
-			this.autofocusInput();
+			this.autoFocusInput();
 		}
 	},
 
@@ -58,8 +58,8 @@ export default React.createClass( {
 		scrollIntoViewport( node );
 	},
 
-	autofocusInput() {
-		if ( this.props.autofocus ) {
+	autoFocusInput() {
+		if ( this.props.autoFocus ) {
 			this.focus();
 		}
 	},
@@ -82,7 +82,8 @@ export default React.createClass( {
 					value={ this.props.value }
 					name={ this.props.name }
 					ref="input"
-					autofocus={ this.props.autofocus }
+					autoFocus={ this.props.autoFocus }
+					autoComplete={ this.props.autoComplete }
 					disabled={ this.props.disabled }
 					maxLength={ this.props.maxLength }
 					onChange={ this.props.onChange }

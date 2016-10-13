@@ -75,7 +75,7 @@ const ThemesSearchCard = React.createClass( {
 	renderMobile( tiers ) {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
-		const selectedTiers = isPremiumThemesEnabled ? tiers : [ tiers.find( tier => tier.value === 'free' ) ];
+		const selectedTiers = isPremiumThemesEnabled ? tiers : [ find( tiers, tier => tier.value === 'free' ) ];
 
 		return (
 			<div className="themes__search-card" data-tip-target="themes-search-card">
@@ -140,6 +140,7 @@ const ThemesSearchCard = React.createClass( {
 				{ isPremiumThemesEnabled && <a className="button more"
 												href={ getExternalThemesUrl( this.props.site ) }
 												target="_blank"
+												rel="noopener noreferrer"
 												onClick={ this.onMore }>
 
 												{ this.translate( 'More' ) }

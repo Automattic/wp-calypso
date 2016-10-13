@@ -1,18 +1,18 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var SelectDropdown = require( 'components/select-dropdown' ),
-	DropdownItem = require( 'components/select-dropdown/item' ),
-	DropdownLabel = require( 'components/select-dropdown/label' ),
-	DropdownSeparator = require( 'components/select-dropdown/separator' );
+import SelectDropdown from 'components/select-dropdown';
+import DropdownItem from 'components/select-dropdown/item';
+import DropdownLabel from 'components/select-dropdown/label';
+import DropdownSeparator from 'components/select-dropdown/separator';
 
-var SelectDropdownDemo = React.createClass( {
+const SelectDropdownDemo = React.createClass( {
 	displayName: 'SelectDropdown',
 
 	mixins: [ PureRenderMixin ],
@@ -29,7 +29,7 @@ var SelectDropdownDemo = React.createClass( {
 		return {
 			options: [
 				{ value: 'status-options', label: 'Statuses', isLabel: true },
-				{ value: 'published', label: 'Published' },
+				{ value: 'published', label: 'Published', count: 12 },
 				{ value: 'scheduled', label: 'Scheduled' },
 				{ value: 'drafts', label: 'Drafts' },
 				null,
@@ -43,14 +43,18 @@ var SelectDropdownDemo = React.createClass( {
 	},
 
 	render: function() {
-		var toggleButtonsText = this.state.compactButtons ? 'Normal Buttons' : 'Compact Buttons';
+		const toggleButtonsText = this.state.compactButtons
+			? 'Normal Buttons'
+			: 'Compact Buttons';
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/select-dropdown">Select Dropdown</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleButtons }>{ toggleButtonsText }</a>
-				</h2>
+			<div className="docs__select-dropdown-container">
+				<a
+					className="docs__design-toggle button"
+					onClick={ this.toggleButtons }
+				>
+					{ toggleButtonsText }
+				</a>
 
 				<h3>Items passed as options prop</h3>
 				<SelectDropdown
@@ -85,8 +89,9 @@ var SelectDropdownDemo = React.createClass( {
 					</DropdownItem>
 
 					<DropdownItem
+						count={ 3343 }
 						selected={ this.state.childSelected === 'Drafts' }
-						onClick={ this.selectItem.bind( this, 'Drafts', null ) }
+						onClick={ this.selectItem.bind( this, 'Drafts', 3343 ) }
 					>
 						Drafts
 					</DropdownItem>
@@ -101,6 +106,25 @@ var SelectDropdownDemo = React.createClass( {
 						Trashed
 					</DropdownItem>
 				</SelectDropdown>
+
+				<h3 style={ { marginTop: 20 } }>max-width: 220px;</h3>
+
+				<SelectDropdown
+					className="select-dropdown-example__fixed-width"
+					compact={ this.state.compactButtons }
+					onSelect={ this.onDropdownSelect }
+					selectedText="Published publish publish publish"
+					selectedCount={ 454 }
+				>
+
+					<DropdownLabel><strong>Statuses</strong></DropdownLabel>
+					<DropdownItem count={ 10 } selected={ true } >Published publish publish publish</DropdownItem>
+					<DropdownItem count={ 4 } > Scheduled scheduled</DropdownItem>
+					<DropdownItem>Drafts</DropdownItem>
+					<DropdownSeparator />
+					<DropdownItem count={ 3 }>Trashed</DropdownItem>
+				</SelectDropdown>
+
 			</div>
 		);
 	},

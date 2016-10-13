@@ -8,15 +8,18 @@ import { constant, times } from 'lodash';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'selectors', () => {
 	let getGuidedTourState;
 	let findEligibleTour;
 
+	useFakeDom();
+
 	useMockery( mockery => {
 		mockery.registerSubstitute(
 				'layout/guided-tours/config',
-				'state/ui/guided-tours/test/config' );
+				'state/ui/guided-tours/test/fixtures/config' );
 
 		const selectors = require( '../selectors' );
 		getGuidedTourState = selectors.getGuidedTourState;
@@ -35,13 +38,13 @@ describe( 'selectors', () => {
 					},
 				},
 				preferences: {
-					values: {
+					remoteValues: {
 						'guided-tours-history': [],
 					},
 				},
 			} );
 
-			expect( tourState ).to.deep.equal( { shouldShow: false, stepConfig: false, nextStepConfig: false } );
+			expect( tourState ).to.deep.equal( { shouldShow: false } );
 		} );
 	} );
 	describe( '#findEligibleTour()', () => {
@@ -58,7 +61,7 @@ describe( 'selectors', () => {
 				},
 			},
 			preferences: {
-				values: {
+				remoteValues: {
 					'guided-tours-history': toursHistory,
 				},
 			},
@@ -148,7 +151,7 @@ describe( 'selectors', () => {
 
 			expect( tour ).to.equal( undefined );
 		} );
-		it( 'should respect tour contexts', () => {
+		it( 'should respect tour "when" conditions', () => {
 			const state = makeState( {
 				actionLog: [ navigateToThemes ],
 				userData: { date: ( new Date() ).toJSON() }, // user was created just now
@@ -156,7 +159,7 @@ describe( 'selectors', () => {
 			const tour = findEligibleTour( state );
 
 			// Even though we navigated to `/themes`, this counts as navigating
-			// to `/`, and `state` satisfies `main`'s context that the user
+			// to `/`, and `state` satisfies `main`'s "when" condition that the user
 			// should be a new user. In our config, `main` is declared before
 			// `themes`, so the selector should prefer the former.
 			expect( tour ).to.equal( 'main' );

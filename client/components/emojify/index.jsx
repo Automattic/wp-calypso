@@ -4,8 +4,7 @@
 import React, { PropTypes } from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import twemoji from 'twemoji';
-
-const baseCDNUrl = '//s0.wp.com/wp-content/mu-plugins/emoji/twemoji/';
+import config from 'config';
 
 export default React.createClass( {
 	displayName: 'Emojify',
@@ -39,7 +38,7 @@ export default React.createClass( {
 		const { size, className } = this.props;
 
 		twemoji.parse( this.refs.emojified, {
-			base: baseCDNUrl,
+			base: config( 'twemoji_cdn_url' ),
 			size: size,
 			className: className
 		} );

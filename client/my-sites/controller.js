@@ -4,23 +4,22 @@
 import page from 'page';
 import ReactDom from 'react-dom';
 import React from 'react';
-import { Provider as ReduxProvider } from 'react-redux';
 import i18n from 'i18n-calypso';
+import { uniq } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
-import layoutFocus from 'lib/layout-focus';
 import { receiveSite } from 'state/sites/actions';
-
 import {
 	setSelectedSiteId,
 	setSection,
 	setAllSitesSelected
 } from 'state/ui/actions';
-
+import { savePreference } from 'state/preferences/actions';
+import { hasReceivedRemotePreferences, getPreference } from 'state/preferences/selectors';
 import NavigationComponent from 'my-sites/navigation';
 import route from 'lib/route';
 import notices from 'notices';
@@ -29,6 +28,8 @@ import analytics from 'lib/analytics';
 import siteStatsStickyTabActions from 'lib/site-stats-sticky-tab/actions';
 import utils from 'lib/site/utils';
 import trackScrollPage from 'lib/track-scroll-page';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 /**
  * Module vars
@@ -39,21 +40,23 @@ const sites = sitesFactory();
 /*
  * The main navigation of My Sites consists of a component with
  * the site selector list and the sidebar section items
+ * @param { object } context - Middleware context
+ * @returns { object } React element containing the site selector and sidebar
  */
-function renderNavigation( context, allSitesPath, siteBasePath ) {
-	// Render the My Sites navigation in #secondary
-	ReactDom.render(
-		React.createElement( ReduxProvider, { store: context.store },
-			React.createElement( NavigationComponent, {
-				layoutFocus,
-				path: context.path,
-				allSitesPath,
-				siteBasePath,
-				user,
-				sites
-			} )
-		),
-		document.getElementById( 'secondary' )
+function createNavigation( context ) {
+	const siteFragment = route.getSiteFragment( context.pathname );
+	let basePath = context.pathname;
+
+	if ( siteFragment ) {
+		basePath = route.sectionify( context.pathname );
+	}
+
+	return (
+		<NavigationComponent path={ context.path }
+			allSitesPath={ basePath }
+			siteBasePath={ basePath }
+			user={ user }
+			sites={ sites } />
 	);
 }
 
@@ -70,9 +73,10 @@ function renderEmptySites( context ) {
 
 	removeSidebar( context );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( NoSitesMessage ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -84,7 +88,7 @@ function renderNoVisibleSites( context ) {
 
 	removeSidebar( context );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( EmptyContentComponent, {
 			title: i18n.translate( 'You have %(hidden)d hidden WordPress site.', 'You have %(hidden)d hidden WordPress sites.', {
 				count: hiddenSites,
@@ -100,7 +104,8 @@ function renderNoVisibleSites( context ) {
 			secondaryAction: i18n.translate( 'Create New Site' ),
 			secondaryActionURL: `${ signup_url }?ref=calypso-nosites`
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -165,31 +170,55 @@ module.exports = {
 			siteStatsStickyTabActions.saveFilterAndSlug( false, selectedSite.slug );
 			context.store.dispatch( receiveSite( selectedSite ) );
 			context.store.dispatch( setSelectedSiteId( selectedSite.ID ) );
-			sites.setRecentlySelectedSite( selectedSite.ID );
+
+			// Update recent sites preference
+			const state = context.store.getState();
+			if ( hasReceivedRemotePreferences( state ) ) {
+				const recentSites = getPreference( state, 'recentSites' );
+				if ( selectedSite.ID !== recentSites[ 0 ] ) {
+					context.store.dispatch( savePreference( 'recentSites', uniq( [
+						selectedSite.ID,
+						...recentSites
+					] ).slice( 0, 3 ) ) );
+				}
+			}
 		};
 
 		// If there's a valid site from the url path
 		// set site visibility to just that site on the picker
 		if ( sites.select( siteID ) ) {
 			onSelectedSiteAvailable();
+			next();
 		} else {
 			// if sites has fresh data and siteID is invalid
 			// redirect to allSitesPath
 			if ( sites.fetched || ! sites.fetching ) {
 				return page.redirect( allSitesPath );
 			}
-			// Otherwise, check when sites has loaded
-			sites.once( 'change', function() {
+
+			let waitingNotice;
+			const selectOnSitesChange = () => {
 				// if sites have loaded, but siteID is invalid, redirect to allSitesPath
 				if ( sites.select( siteID ) ) {
+					sites.initialized = true;
 					onSelectedSiteAvailable();
+					if ( waitingNotice ) {
+						notices.removeNotice( waitingNotice );
+					}
+				} else if ( ( currentUser.visible_site_count !== sites.getVisible().length ) ) {
+					sites.initialized = false;
+					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
+					sites.once( 'change', selectOnSitesChange );
+					sites.fetch();
+					return;
 				} else {
 					page.redirect( allSitesPath );
 				}
-			} );
+				next();
+			};
+			// Otherwise, check when sites has loaded
+			sites.once( 'change', selectOnSitesChange );
 		}
-
-		next();
 	},
 
 	awaitSiteLoaded( context, next ) {
@@ -241,15 +270,18 @@ module.exports = {
 		checkSiteShouldFetch();
 	},
 
-	navigation( context, next ) {
-		const siteFragment = route.getSiteFragment( context.pathname );
-		let basePath = context.pathname;
+	makeNavigation: function( context, next ) {
+		context.secondary = createNavigation( context );
+		next();
+	},
 
-		if ( siteFragment ) {
-			basePath = route.sectionify( context.pathname );
-		}
-
-		renderNavigation( context, basePath, basePath );
+	navigation: function( context, next ) {
+		// Render the My Sites navigation in #secondary
+		renderWithReduxStore(
+			createNavigation( context ),
+			document.getElementById( 'secondary' ),
+			context.store
+		);
 		next();
 	},
 
@@ -260,14 +292,14 @@ module.exports = {
 		const selectedSite = sites.getSelectedSite();
 
 		if ( selectedSite && selectedSite.jetpack ) {
-			ReactDom.render( (
+			renderWithReduxStore( (
 				<Main>
 					<JetpackManageErrorPage
 						template="noDomainsOnJetpack"
 						site={ sites.getSelectedSite() }
 					/>
 				</Main>
-			), document.getElementById( 'primary' ) );
+			), document.getElementById( 'primary' ), context.store );
 
 			analytics.pageView.record( basePath, '> No Domains On Jetpack' );
 		} else {
@@ -288,14 +320,14 @@ module.exports = {
 		 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
 		 */
 		removeSidebar( context );
-		layoutFocus.set( 'content' );
+		context.store.dispatch( setLayoutFocus( 'content' ) );
 
 		// This path sets the URL to be visited once a site is selected
 		const sourcePath = ( basePath === '/sites' ) ? path : basePath;
 
 		analytics.pageView.record( basePath, analyticsPageTitle );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( SitesComponent, {
 				sites,
 				path: context.path,
@@ -309,7 +341,8 @@ module.exports = {
 					'Sites'
 				)
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

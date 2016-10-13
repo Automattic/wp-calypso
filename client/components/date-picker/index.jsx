@@ -67,6 +67,10 @@ module.exports = React.createClass( {
 		var moment = this.moment,
 			localeData = moment().localeData(),
 			locale = {
+				formatDay: function( date ) {
+					return moment( date ).format( 'llll' );
+				},
+
 				formatMonthTitle: function( date ) {
 					return moment( date ).format( 'MMMM YYYY' );
 				},

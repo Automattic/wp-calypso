@@ -2,30 +2,59 @@
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PurchaseDetail from 'components/purchase-detail';
+import { hasCustomDomain } from 'lib/site/utils';
 
-const CustomDomainPurchaseDetail = ( { selectedSite } ) => {
-	return (
+const CustomDomainPurchaseDetail = ( { selectedSite, hasDomainCredit, translate } ) => {
+	const renderClaimCustomDomain = () =>
 		<PurchaseDetail
 			icon="globe"
-			title={ i18n.translate( 'Get your custom domain' ) }
+			title={ translate( 'Select Your Custom Domain' ) }
 			description={
-				i18n.translate(
-					"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
-					'A free domain is included with your plan.',
+				translate(
+					'Your plan includes a free custom domain. Replace {{em}}%(siteDomain)s{{/em}} ' +
+					'with a custom domain to personalize your site.',
 					{
-						args: { siteDomain: selectedSite.slug },
+						args: { siteDomain: selectedSite.domain },
 						components: { em: <em /> }
 					}
 				)
 			}
-			buttonText={ i18n.translate( 'Claim your free domain' ) }
-			href={ '/domains/add/' + selectedSite.slug } />
+			buttonText={ translate( 'Claim your free domain' ) }
+			href={ `/domains/add/${ selectedSite.slug }` }
+		/>;
+
+	const renderHasCustomDomain = () =>
+		<PurchaseDetail
+			icon="globe"
+			title={ translate( 'Custom Domain' ) }
+			description={ translate(
+				'Your plan includes the custom domain {{em}}%(siteDomain)s{{/em}}, your own personal corner of the web.', {
+					args: { siteDomain: selectedSite.domain },
+					components: { em: <em /> }
+				}
+			) }
+			buttonText={ translate( 'Manage my domains' ) }
+			href={ `/domains/manage/${ selectedSite.slug }` }
+		/>;
+
+	const renderCustomDomainDetail = () => {
+		if ( hasCustomDomain( selectedSite ) ) {
+			return renderHasCustomDomain();
+		}
+
+		return null;
+	};
+
+	return (
+		hasDomainCredit
+			? renderClaimCustomDomain()
+			: renderCustomDomainDetail()
 	);
 };
 
@@ -33,7 +62,8 @@ CustomDomainPurchaseDetail.propTypes = {
 	selectedSite: React.PropTypes.oneOfType( [
 		React.PropTypes.bool,
 		React.PropTypes.object
-	] ).isRequired
+	] ).isRequired,
+	hasDomainCredit: React.PropTypes.bool
 };
 
-export default CustomDomainPurchaseDetail;
+export default localize( CustomDomainPurchaseDetail );

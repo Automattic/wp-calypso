@@ -1,0 +1,75 @@
+.preview-upgrade-nudge {
+	display: flex;
+	flex-direction: column;
+
+	.preview-upgrade-nudge__plan {
+		width: 100px;
+		height: 100px;
+		display: flex;
+		border: solid 3px $border-ultra-light-gray;
+		border-radius: 50%;
+		align-self: center;
+		margin: 20px 0;
+	}
+
+	.preview-upgrade-nudge__plan-icon {
+		width: inherit;
+		height: inherit;
+		margin: 2px;
+		background: url('/calypso/images/plans/plan-business.svg') no-repeat;
+	}
+
+	.preview-upgrade-nudge__title {
+		text-align: center;
+		color: $gray-dark;
+		font-size: 24px;
+		font-weight: 300;
+		margin-bottom: 20px;
+
+		@include breakpoint( "<660px" ) {
+			font-size: 16px;
+		}
+	}
+
+	.preview-upgrade-nudge__features {
+		display: flex;
+		padding: 0 20px 10px;
+
+		.feature-example {
+			width: 50%;
+			margin: 0 10px 0 16px;
+		}
+	}
+
+	.preview-upgrade-nudge__features-details {
+		width: 50%;
+	}
+
+	.preview-upgrade-nudge__features-title {
+		margin-bottom: 10px;
+	}
+
+	.preview-upgrade-nudge__features-list {
+		list-style: none;
+		margin: 0;
+	}
+
+	.preview-upgrade-nudge__features-list-item {
+		display: flex;
+		margin-bottom: 15px;
+	}
+
+	.preview-upgrade-nudge__features-list-item-checkmark {
+		color: $blue-wordpress;
+		flex: 0 0 auto;
+		margin-right: 5px;
+	}
+
+	.preview-upgrade-nudge__feature-comparison {
+		margin: 0;
+	}
+
+	.feature-example__gradient {
+		background: linear-gradient( to bottom, rgba(243, 246, 248, 0), rgba( 243, 246, 248, 1) );
+	}
+}

@@ -15,6 +15,7 @@ var tinymce = require( 'tinymce/tinymce' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react'),
 	i18n = require( 'i18n-calypso' );
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -90,11 +91,13 @@ function wpview( editor ) {
 			type = $view.attr( 'data-wpview-type' );
 
 			ReactDom.render(
-				React.createElement( views.components[ type ], {
-					content: getText( view ),
-					siteId: sites.getSelectedSite() ? sites.getSelectedSite().ID : null,
-					onResize: debounce( triggerNodeChanged, 500 )
-				} ),
+				React.createElement( ReduxProvider, { store: editor.getParam( 'redux_store' ) },
+					React.createElement( views.components[ type ], {
+						content: getText( view ),
+						siteId: sites.getSelectedSite() ? sites.getSelectedSite().ID : null,
+						onResize: debounce( triggerNodeChanged, 500 )
+					} )
+				),
 				$view.find( '.wpview-body' )[0]
 			);
 
@@ -271,8 +274,7 @@ function wpview( editor ) {
 	// matching view patterns, and transform the matches into
 	// view wrappers.
 	editor.on( 'BeforeSetContent', function( event ) {
-		var site = sites.getSelectedSite(),
-			node;
+		var node;
 
 		if ( ! event.selection ) {
 			$( '.wpview-wrap .wpview-body' ).each( function( i, viewBody ) {

@@ -1,0 +1,116 @@
+.themes-magic-search-card {
+	display: flex;
+	align-items: center;
+	background: white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	transition: all 0.15s ease-in-out;
+
+	&.has-highlight {
+		box-shadow: 0 0 0 1px $blue-wordpress, 0 0 0 4px $blue-light;
+	}
+
+	.search {
+		flex: 0 1 auto;
+		margin: 0;
+		&.has-focus {
+			box-shadow: none;
+		}
+	}
+
+	.section-nav {
+		margin: 0;
+	}
+
+	.search .search-open__icon {
+		color: lighten( $gray, 10% );
+	}
+
+	.segmented-control {
+		flex: 0 0 auto;
+		min-width: 0;
+		padding: 11px 14px 11px;
+
+		.segmented-control__item,
+		.segmented-control__link,
+		.segmented-control__text {
+			min-width: inherit;
+		}
+	}
+
+	.more {
+		flex: 0 1 auto;
+		padding: 8px 14px 8px;
+	}
+
+}
+
+.themes-magic-search-card__token {
+	font: inherit;
+	pointer-events: none;
+	color: rgba(0, 0, 0, 0.2);
+	border-radius: 2px;
+	height: 24px;
+	position: relative;
+	z-index: 21; //needs to be made in a proper way.
+
+		.themes-magic-search-card__token-taxonomy {
+			font: inherit;
+			pointer-events: none;
+			color: inherit;
+			background-color: rgba( $white, 0.2 );
+			border-top-left-radius: 3px;
+			border-bottom-left-radius: 3px;
+			height: 100%;
+			display: inline-block;
+			z-index: 1;
+		}
+
+		.themes-magic-search-card__token-separator {
+			font: inherit;
+			pointer-events: none;
+			color: rgba(0, 0, 0, 0);
+			background: linear-gradient( to right, $white 50%, rgb( 128, 128, 128 ) 50% );
+			height: 100%;
+			display: inline-block;
+			z-index: 1;
+		}
+
+		.themes-magic-search-card__token-filter {
+			font: inherit;
+			pointer-events: none;
+			color: inherit;
+			background-color: rgba( $gray-dark, 0.5 );
+			border-top-right-radius: 3px;
+			border-bottom-right-radius: 3px;
+			height: 100%;
+			display: inline-block;
+			z-index: 1;
+		}
+}
+
+.themes-magic-search-card__token::before {
+	content: '';
+	position: absolute;
+	background-color: transparent;
+	border-radius: 3px;
+	border-width: 0.5px;
+	border-style: solid;
+	border-color: rgba( $gray-dark, 0.5 );
+	box-sizing: border-box;
+ 	left: 0;
+ 	width: 100%;
+	height: 100%;
+	z-index: 25;
+}
+
+.themes-magic-search-card__search-text {
+	font: inherit;
+	pointer-events: none;
+	color: rgba(1, 0, 0, 0.2);
+}
+
+.themes-magic-search-card__search-white-space {
+	font: inherit;
+	pointer-events: none;
+	white-space: pre;
+}

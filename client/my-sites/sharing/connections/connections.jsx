@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import filter from 'lodash/filter';
 
 /**
  * Internal dependencies
@@ -16,7 +15,7 @@ import serviceConnections from './service-connections';
 export default React.createClass( {
 	displayName: 'SharingConnections',
 
-	mixins: [ observe( 'sites', 'services', 'connections', 'user' ) ],
+	mixins: [ observe( 'sites', 'connections', 'user' ) ],
 
 	getInitialState: function() {
 		return { selectingAccountForService: null };
@@ -25,13 +24,13 @@ export default React.createClass( {
 	getConnections: function() {
 		if ( this.props.sites.selected ) {
 			return this.props.connections.get( this.props.sites.getSelectedSite().ID );
-		} else {
-			return this.props.connections.get();
 		}
+
+		return this.props.connections.get();
 	},
 
 	addConnection: function( service, keyringConnectionId, externalUserId ) {
-		var siteId;
+		let siteId;
 		if ( this.props.sites.selected ) {
 			siteId = this.props.sites.getSelectedSite().ID;
 		}
@@ -45,19 +44,19 @@ export default React.createClass( {
 			// authorization to occur, then display with the available connections
 			if ( ! keyringConnectionId ) {
 				this.props.connections.once( 'connect', function() {
-					if ( serviceConnections.didKeyringConnectionSucceed( service.name, siteId ) &&
-							serviceConnections.isServiceForPublicize( service.name ) ) {
+					if ( serviceConnections.didKeyringConnectionSucceed( service.ID, siteId ) &&
+							serviceConnections.isServiceForPublicize( service.ID ) ) {
 						this.setState( { selectingAccountForService: service } );
 					}
 				}.bind( this ) );
 			} else {
-				analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Button in Modal', this.state.selectingAccountForService.name );
+				analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Button in Modal', this.state.selectingAccountForService.ID );
 			}
 		} else {
 			// If an account wasn't selected from the dialog or the user cancels
 			// the connection, the dialog should simply close
 			this.props.connections.emit( 'create:error', { cancel: true } );
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Cancel Button in Modal', this.state.selectingAccountForService.name );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Cancel Button in Modal', this.state.selectingAccountForService.ID );
 		}
 
 		// Reset active account selection
@@ -78,15 +77,15 @@ export default React.createClass( {
 	},
 
 	getAccountDialog: function() {
-		var isSelectingAccount = !! this.state.selectingAccountForService,
-			accounts, siteId;
+		const isSelectingAccount = !! this.state.selectingAccountForService;
+		let accounts, siteId;
 
 		if ( isSelectingAccount ) {
 			if ( this.props.sites.selected ) {
 				siteId = this.props.sites.getSelectedSite().ID;
 			}
 
-			accounts = serviceConnections.getAvailableExternalAccounts( this.state.selectingAccountForService.name, siteId );
+			accounts = serviceConnections.getAvailableExternalAccounts( this.state.selectingAccountForService.ID, siteId );
 		}
 
 		return (
@@ -99,15 +98,15 @@ export default React.createClass( {
 	},
 
 	renderServiceGroups: function() {
-		var commonGroupProps = {
+		const commonGroupProps = {
 			user: this.props.user,
 			connections: this.props.connections,
 			onAddConnection: this.addConnection,
 			onRemoveConnection: this.removeConnection,
 			onRefreshConnection: this.refreshConnection,
 			onToggleSitewideConnection: this.toggleSitewideConnection,
-			initialized: this.props.services.initialized && !! this.props.sites.selected
-		}, services = this.props.services.get();
+			initialized: !! this.props.sites.selected
+		};
 
 		if ( this.props.sites.selected ) {
 			commonGroupProps.site = this.props.sites.getSelectedSite();
@@ -116,11 +115,11 @@ export default React.createClass( {
 		return (
 			<div>
 				<SharingServicesGroup
-					services={ filter( services, { type: 'publicize' } ) }
+					type="publicize"
 					title={ this.translate( 'Publicize Your Posts' ) }
 					{ ...commonGroupProps } />
 				<SharingServicesGroup
-					services={ filter( services, { type: 'other' } ) }
+					type="other"
 					title={ this.translate( 'Other Connections' ) }
 					description={ this.translate( 'Connect any of these additional services to further enhance your site.' ) }
 					{ ...commonGroupProps } />

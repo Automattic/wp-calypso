@@ -18,7 +18,7 @@ var user = require( 'lib/user' )(),
 	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
 	trackScrollPage = require( 'lib/track-scroll-page' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
 module.exports = {
 
@@ -61,7 +61,7 @@ module.exports = {
 			return;
 		}
 
-		titleActions.setTitle( i18n.translate( 'Blog Posts', { textOnly: true } ), { siteID: siteID } );
+		context.store.dispatch( setTitle( i18n.translate( 'Blog Posts', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( siteID ) {
 			baseAnalyticsPath = basePath + '/:site';

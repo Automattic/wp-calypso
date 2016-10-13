@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-import { useNock } from 'test/helpers/use-nock';
-import useMockery from 'test/helpers/use-mockery';
 import sinon from 'sinon';
 import { assert, expect } from 'chai';
 import deepFreeze from 'deep-freeze';
-import assign from 'lodash/assign';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
+import useMockery from 'test/helpers/use-mockery';
 import {
 	READER_START_RECOMMENDATIONS_RECEIVE,
 	READER_START_RECOMMENDATIONS_REQUEST,
@@ -74,7 +73,7 @@ describe( 'actions', () => {
 			return request.then( () => {
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_START_RECOMMENDATIONS_REQUEST_SUCCESS,
-					data: assign( { _headers: { 'content-type': 'application/json' } }, sampleSuccessResponse )
+					data: sampleSuccessResponse
 				} );
 
 				expect( dispatchSpy ).to.have.been.calledWith( {
@@ -110,7 +109,7 @@ describe( 'actions', () => {
 			return request.then( () => {
 				expect( dispatchSpy ).to.have.been.calledWith( {
 					type: READER_START_GRADUATE_REQUEST_SUCCESS,
-					data: assign( { _headers: { 'content-type': 'application/json' } }, sampleResponse )
+					data: sampleResponse
 				} );
 
 				expect( dispatchSpy ).to.have.been.calledWith( {

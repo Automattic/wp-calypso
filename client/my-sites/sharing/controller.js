@@ -2,7 +2,6 @@
  * External Dependencies
  */
 var page = require( 'page' ),
-	ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	i18n = require( 'i18n-calypso' );
 
@@ -15,7 +14,7 @@ var sites = require( 'lib/sites-list' )(),
 	notices = require( 'notices' ),
 	route = require( 'lib/route' ),
 	analytics = require( 'lib/analytics' ),
-	titleActions = require( 'lib/screen-title/actions' ),
+	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
 	analyticsPageTitle = 'Sharing';
 
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -23,10 +22,9 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 module.exports = {
 	layout: function( context ) {
 		var Sharing = require( 'my-sites/sharing/main' ),
-			site = sites.getSelectedSite(),
-			siteUrl = route.getSiteFragment( context.path );
+			site = sites.getSelectedSite();
 
-		titleActions.setTitle( i18n.translate( 'Sharing', { textOnly: true } ), { siteID: siteUrl } );
+		context.store.dispatch( setTitle( i18n.translate( 'Sharing', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		if ( site && ! site.settings && utils.userCan( 'manage_options', site ) ) {
 			site.fetchSettings();
@@ -44,7 +42,6 @@ module.exports = {
 
 	connections: function( context, next ) {
 		var SharingConnections = require( 'my-sites/sharing/connections/connections' ),
-			servicesList = require( 'lib/services-list' )(),
 			connectionsList = require( 'lib/connections-list' )(),
 			site = sites.getSelectedSite(),
 			basePath = route.sectionify( context.path ),
@@ -69,7 +66,6 @@ module.exports = {
 
 			context.contentComponent = React.createElement( SharingConnections, {
 				user: user,
-				services: servicesList,
 				connections: connectionsList,
 				sites: sites
 			} );

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import tv4 from 'tv4';
+import validator from 'is-my-json-valid';
 import { merge } from 'lodash';
 
 /**
@@ -13,16 +13,13 @@ import {
 } from './action-types';
 import warn from 'lib/warn';
 
-/**
- * Module variables
- */
-
-export function isValidStateWithSchema( state, schema, checkForCycles = false, banUnknownProperties = false ) {
-	const result = tv4.validateResult( state, schema, checkForCycles, banUnknownProperties );
-	if ( ! result.valid ) {
-		warn( 'state validation failed', state, result.error );
+export function isValidStateWithSchema( state, schema ) {
+	const validate = validator( schema );
+	const valid = validate( state );
+	if ( ! valid ) {
+		warn( 'state validation failed for state:', state, 'with reason:', validate.errors );
 	}
-	return result.valid;
+	return valid;
 }
 
 /**
@@ -69,6 +66,8 @@ export function createReducer( initialState = null, customHandlers = {}, schema 
 				if ( isValidStateWithSchema( state, schema ) ) {
 					return state;
 				}
+
+				warn( 'state validation failed - check schema used for:', customHandlers );
 
 				return initialState;
 			}

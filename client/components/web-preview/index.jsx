@@ -43,7 +43,6 @@ export class WebPreview extends Component {
 		this.setDeviceViewport = this.setDeviceViewport.bind( this );
 		this.setIframeMarkup = this.setIframeMarkup.bind( this );
 		this.setIframeUrl = this.setIframeUrl.bind( this );
-		this.shouldRenderIframe = this.shouldRenderIframe.bind( this );
 		this.setLoaded = this.setLoaded.bind( this );
 	}
 
@@ -79,7 +78,7 @@ export class WebPreview extends Component {
 			this.props.setPreviewShowing( showPreview );
 		}
 
-		if ( ! this.shouldRenderIframe() ) {
+		if ( ! this.props.showPreview ) {
 			this.setState( {
 				iframeUrl: null,
 				loaded: false,
@@ -133,12 +132,7 @@ export class WebPreview extends Component {
 	}
 
 	setIframeUrl( iframeUrl ) {
-		// Bail if iframe isn't rendered
-		if ( ! this.shouldRenderIframe() ) {
-			return;
-		}
-
-		if ( ! this.iframe ) {
+		if ( ! this.props.showPreview || ! this.iframe ) {
 			return;
 		}
 
@@ -148,17 +142,13 @@ export class WebPreview extends Component {
 		}
 
 		debug( 'setIframeUrl', iframeUrl );
-		this.iframe.contentWindow.location.replace( iframeUrl );
-		this.setState( {
-			loaded: false,
-			iframeUrl: iframeUrl,
-		} );
-	}
-
-	shouldRenderIframe() {
-		// Don't preload iframe on mobile devices as bandwidth is typically more limited and
-		// the preview causes weird issues
-		return ! this._isMobile || this.props.showPreview;
+		try {
+			this.iframe.contentWindow.location.replace( iframeUrl );
+			this.setState( {
+				loaded: false,
+				iframeUrl: iframeUrl,
+			} );
+		} catch ( e ) {}
 	}
 
 	setDeviceViewport( device = 'computer' ) {
@@ -184,6 +174,7 @@ export class WebPreview extends Component {
 
 		const className = classNames( this.props.className, 'web-preview', {
 			'is-touch': this._hasTouch,
+			'is-with-sidebar': this.props.hasSidebar,
 			'is-visible': this.props.showPreview,
 			'is-computer': this.state.device === 'computer',
 			'is-tablet': this.state.device === 'tablet',
@@ -215,16 +206,14 @@ export class WebPreview extends Component {
 									}
 								</div>
 							}
-							{ this.shouldRenderIframe() &&
-								<iframe
-									ref={ this.setIframeInstance }
-									className="web-preview__frame"
-									style={ { display: ('seo' === this.state.device ? 'none' : 'inherit') } }
-									src="about:blank"
-									onLoad={ this.setLoaded }
-									title={ this.props.iframeTitle || translate( 'Preview' ) }
-								/>
-							}
+							<iframe
+								ref={ this.setIframeInstance }
+								className="web-preview__frame"
+								style={ { display: ('seo' === this.state.device ? 'none' : 'inherit') } }
+								src="about:blank"
+								onLoad={ this.setLoaded }
+								title={ this.props.iframeTitle || translate( 'Preview' ) }
+							/>
 							{ 'seo' === this.state.device &&
 								<SeoPreviewPane />
 							}
@@ -243,6 +232,8 @@ WebPreview.propTypes = {
 	showExternal: PropTypes.bool,
 	// Show close button
 	showClose: PropTypes.bool,
+	// Show SEO button
+	showSEO: PropTypes.bool,
 	// Show device viewport switcher
 	showDeviceSwitcher: PropTypes.bool,
 	// The URL that should be displayed in the iframe
@@ -263,17 +254,21 @@ WebPreview.propTypes = {
 	// Optional loading message to display during loading
 	loadingMessage: PropTypes.string,
 	// The iframe's title element, used for accessibility purposes
-	iframeTitle: PropTypes.string
+	iframeTitle: PropTypes.string,
+	// Makes room for a sidebar if desired
+	hasSidebar: React.PropTypes.bool,
 };
 
 WebPreview.defaultProps = {
 	showExternal: true,
 	showClose: true,
+	showSEO: true,
 	showDeviceSwitcher: true,
 	previewUrl: null,
 	previewMarkup: null,
 	onLoad: noop,
-	onClose: noop
+	onClose: noop,
+	hasSidebar: false,
 };
 
 export default connect( null, { setPreviewShowing } )( localize( WebPreview ) );

@@ -1,5 +1,7 @@
-import find from 'lodash/find';
-import filter from 'lodash/filter';
+/**
+ * External dependencies
+ */
+import { find, filter, some } from 'lodash';
 
 const isRequesting = function( state, siteId ) {
 	// if the `isRequesting` attribute doesn't exist yet,
@@ -17,41 +19,46 @@ const hasRequested = function( state, siteId ) {
 	return state.plugins.premium.hasRequested[ siteId ];
 };
 
-const getPluginsForSite = function( state, siteId ) {
-	let pluginList = state.plugins.premium.plugins[ siteId ];
+const getPluginsForSite = function( state, siteId, whitelist = false ) {
+	const pluginList = state.plugins.premium.plugins[ siteId ];
 	if ( typeof pluginList === 'undefined' ) {
 		return [];
 	}
-	return pluginList;
+	return filter( pluginList, ( plugin ) => {
+		if ( !! whitelist ) {
+			return ( whitelist === plugin.slug );
+		}
+		return true;
+	} );
 };
 
-const isFinished = function( state, siteId ) {
-	let pluginList = getPluginsForSite( state, siteId );
+const isFinished = function( state, siteId, whitelist = false ) {
+	let pluginList = getPluginsForSite( state, siteId, whitelist );
 	if ( pluginList.length === 0 ) {
 		return true;
 	}
-	pluginList = filter( pluginList, ( item ) => {
+
+	return ! some( pluginList, ( item ) => {
 		return ( ( 'done' !== item.status ) && ( item.error === null ) );
 	} );
-	return ( pluginList.length === 0 );
 };
 
-const isInstalling = function( state, siteId ) {
-	let pluginList = getPluginsForSite( state, siteId );
+const isInstalling = function( state, siteId, whitelist = false ) {
+	let pluginList = getPluginsForSite( state, siteId, whitelist );
 	if ( pluginList.length === 0 ) {
 		return false;
 	}
-	pluginList = filter( pluginList, ( item ) => {
-		return ( ( -1 === [ 'done', 'wait'].indexOf( item.status ) ) && ( item.error === null ) );
-	} );
+
 	// If any plugin is not done/waiting/error'd, it's in an installing state.
-	return ( pluginList.length > 0 );
+	return some( pluginList, ( item ) => {
+		return ( ( -1 === [ 'done', 'wait' ].indexOf( item.status ) ) && ( item.error === null ) );
+	} );
 };
 
-const getActivePlugin = function( state, siteId ) {
-	let pluginList = getPluginsForSite( state, siteId );
-	let plugin = find( pluginList, ( item ) => {
-		return ( ( -1 === [ 'done', 'wait'].indexOf( item.status ) ) && ( item.error === null ) );
+const getActivePlugin = function( state, siteId, whitelist = false ) {
+	const pluginList = getPluginsForSite( state, siteId, whitelist );
+	const plugin = find( pluginList, ( item ) => {
+		return ( ( -1 === [ 'done', 'wait' ].indexOf( item.status ) ) && ( item.error === null ) );
 	} );
 	if ( typeof plugin === 'undefined' ) {
 		return false;
@@ -59,9 +66,9 @@ const getActivePlugin = function( state, siteId ) {
 	return plugin;
 };
 
-const getNextPlugin = function( state, siteId ) {
-	let pluginList = getPluginsForSite( state, siteId );
-	let plugin = find( pluginList, ( item ) => {
+const getNextPlugin = function( state, siteId, whitelist = false ) {
+	const pluginList = getPluginsForSite( state, siteId, whitelist );
+	const plugin = find( pluginList, ( item ) => {
 		return ( ( 'wait' === item.status ) && ( item.error === null ) );
 	} );
 	if ( typeof plugin === 'undefined' ) {

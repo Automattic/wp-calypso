@@ -79,10 +79,6 @@ const successfulSyncStatusRequest = {
 		full_queue_size: 239,
 		full_queue_lag: 957.49082708359,
 		is_scheduled: false,
-		_headers: {
-			Date: 'Mon, 01 Aug 2016 21:18:47 GMT',
-			'Content-Type': 'application/json'
-		}
 	}
 };
 
@@ -137,10 +133,6 @@ const inProgressSyncStatusRequest = {
 		full_queue_size: 457,
 		full_queue_lag: 33.257718086243,
 		is_scheduled: false,
-		_headers: {
-			Date: 'Mon, 01 Aug 2016 16:36:53 GMT',
-			'Content-Type': 'application/json'
-		}
 	}
 };
 
@@ -156,11 +148,7 @@ const successfulFullSyncRequest = {
 	type: JETPACK_SYNC_START_SUCCESS,
 	siteId: 1234567,
 	data: {
-		scheduled: true,
-		_headers: {
-			Date: 'Wed, 15 Jun 2016 17:05:26 GMT',
-			'Content-Type': 'application/json'
-		}
+		scheduled: true
 	}
 };
 

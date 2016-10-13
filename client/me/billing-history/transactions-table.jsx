@@ -146,9 +146,15 @@ var TransactionsTable = React.createClass( {
 		}
 
 		if ( isEmpty( this.state.transactions ) ) {
+			let noResultsText;
+			if ( this.state.filter !== this.props.initialFilter ) {
+				noResultsText = this.props.noFilterResultsText;
+			} else {
+				noResultsText = this.props.emptyTableText;
+			}
 			return (
 				<tr className="billing-history__no-results">
-					<td className="billing-history__no-results-cell" colSpan="3">{ this.props.emptyTableText }</td>
+					<td className="billing-history__no-results-cell" colSpan="3">{ noResultsText }</td>
 				</tr>
 			);
 		}

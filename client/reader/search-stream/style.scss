@@ -11,6 +11,7 @@
 .search-stream__input-card.card {
 	margin-bottom: 16px;
 	padding: 0;
+	z-index: z-index( 'root', '.search-stream__input-card' );
 }
 
 .search-stream__blank {
@@ -23,4 +24,18 @@
 	color: $gray;
 	margin-top: 0;
 	text-align:left;
+
+	@include breakpoint( "<660px" ) {
+		padding-left: 16px;
+	}
+}
+
+.card.reader-search-card {
+
+	&.is-photo {
+
+		@include breakpoint( "<660px" ) {
+			z-index: z-index( 'root', '.reader-search-card' );
+		}
+	}
 }

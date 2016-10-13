@@ -10,8 +10,6 @@ import {
 	SELECTED_SITE_SET,
 	SECTION_SET,
 	PREVIEW_IS_SHOWING,
-	PREVIEW_URL_CLEAR,
-	PREVIEW_URL_SET,
 	SERIALIZE,
 	DESERIALIZE,
 } from 'state/action-types';
@@ -22,6 +20,9 @@ import queryArguments from './query-arguments/reducer';
 import reader from './reader/reducer';
 import olark from './olark/reducer';
 import actionLog from './action-log/reducer';
+import layoutFocus from './layout-focus/reducer';
+import preview from './preview/reducer';
+import happychat from './happychat/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -34,26 +35,6 @@ export function selectedSiteId( state = null, action ) {
 	switch ( action.type ) {
 		case SELECTED_SITE_SET:
 			return action.siteId || null;
-	}
-
-	return state;
-}
-
-/**
- * Tracks the four most recently selected site IDs.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function recentlySelectedSiteIds( state = [], action ) {
-	switch ( action.type ) {
-		case SELECTED_SITE_SET:
-			state = [ action.siteId, ...state ];
-			if ( state.length === 3 ) {
-				state.pop();
-			}
-			return state;
 	}
 
 	return state;
@@ -89,30 +70,21 @@ export const isPreviewShowing = createReducer( false, {
 		isShowing !== undefined ? isShowing : state,
 } );
 
-export function currentPreviewUrl( state = null, action ) {
-	switch ( action.type ) {
-		case PREVIEW_URL_SET:
-			return action.url;
-		case PREVIEW_URL_CLEAR:
-			return null;
-	}
-	return state;
-}
-
 const reducer = combineReducers( {
 	section,
 	isLoading,
+	layoutFocus,
 	hasSidebar,
 	isPreviewShowing,
-	currentPreviewUrl,
 	queryArguments,
 	selectedSiteId,
-	recentlySelectedSiteIds,
 	guidedTour,
 	editor,
 	reader,
 	olark,
+	preview,
 	actionLog,
+	happychat
 } );
 
 export default function( state, action ) {

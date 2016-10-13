@@ -7,7 +7,11 @@ not rendered, this analytics event will not be fired.
 
 ## Usage
 
-Render the component passing an `eventName` string and `eventProperties` object. 
+Render the component passing one or both of:
+
+- Tracks: An `eventName` string and `eventProperties` object
+- MC Stats: `statGroup` and `statName` strings
+
 ```
 <ContainerComponent>
 	<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />

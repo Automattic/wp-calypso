@@ -31,7 +31,7 @@ export default React.createClass( {
 			content: this.translate( 'Help translate the WordPress.com dashboard into your' +
 			' native language using the Community Translator tool. ' +
 			'{{docsLink}}Find out more{{/docsLink}}. ',
-				{ components: { docsLink: <a target="_blank"
+				{ components: { docsLink: <a target="_blank" rel="noopener noreferrer"
 						className="community-translator__translator-invitation__link"
 						href="https://en.support.wordpress.com/community-translator/"
 						onClick={ this.docsLink } /> } } )

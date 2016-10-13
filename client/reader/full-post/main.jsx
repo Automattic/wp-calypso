@@ -17,8 +17,7 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal Dependencies
  */
-var abtest = require( 'lib/abtest' ).abtest,
-	config = require( 'config' ),
+var config = require( 'config' ),
 	CommentButton = require( 'blocks/comment-button' ),
 	Dialog = require( 'components/dialog' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
@@ -52,7 +51,8 @@ var abtest = require( 'lib/abtest' ).abtest,
 	readerRoute = require( 'reader/route' ),
 	showReaderFullPost = require( 'state/ui/reader/fullpost/actions' ).showReaderFullPost,
 	smartSetState = require( 'lib/react-smart-set-state' ),
-	scrollTo = require( 'lib/scroll-to' );
+	scrollTo = require( 'lib/scroll-to' ),
+	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle;
 
 import PostExcerpt from 'components/post-excerpt';
 import { getPostTotalCommentsCount } from 'state/comments/selectors';
@@ -161,7 +161,7 @@ FullPostView = React.createClass( {
 			hasFeaturedImage = post &&
 				post.canonical_image &&
 				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ),
-			articleClasses = [ 'reader__full-post' ],
+			articleClasses = [ 'reader__full-post', 'is-group-reader' ],
 			shouldShowExcerptOnly = ( post && post.use_excerpt ? post.use_excerpt : false ),
 			siteName = utils.siteNameFromSiteAndPost( site, post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
@@ -196,7 +196,7 @@ FullPostView = React.createClass( {
 
 		articleClasses = articleClasses.join( ' ' );
 
-		/*eslint-disable react/no-danger*/
+		/*eslint-disable react/no-danger,react/jsx-no-target-blank*/
 		return (
 			<div>
 				<article className={ articleClasses } id="modal-full-post" ref="article">
@@ -239,7 +239,7 @@ FullPostView = React.createClass( {
 				</article>
 			</div>
 		);
-		/*eslint-enable react/no-danger*/
+		/*eslint-enable react/no-danger,react/jsx-no-target-blank*/
 	},
 
 	recordRelatedPostClicks: function( post ) {
@@ -523,8 +523,9 @@ FullPostContainer = React.createClass( {
 		var passedProps = omit( this.props, [ 'postId', 'feedId' ] ),
 			post = this.state.post;
 
-		if ( this.props.setPageTitle && this.props.isVisible ) { // only set the title if we're visible
-			this.props.setPageTitle( this.state.title );
+		if ( this.props.setTitle && this.props.isVisible ) { // only set the title if we're visible
+			// FIXME: Converted from the Flux setTitle action. If possible, please use <DocumentHead> instead.
+			this.props.setTitle( this.translate( '%s ‹ Reader', { args: this.state.title } ) );
 		}
 
 		return (
@@ -544,6 +545,7 @@ export default connect(
 		isVisible: state.ui.reader.fullpost.isVisible
 	} ),
 	( dispatch ) => bindActionCreators( {
-		showReaderFullPost
+		showReaderFullPost,
+		setTitle
 	}, dispatch )
 )( FullPostContainer );

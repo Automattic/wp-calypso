@@ -216,7 +216,7 @@ const PlansSetup = React.createClass( {
 	},
 
 	renderPluginsPlaceholders() {
-		const placeholderCount = 3;
+		const placeholderCount = !! this.props.whitelist ? 1 : 3;
 		return range( placeholderCount ).map( i => <PluginItem key={ 'placeholder-' + i } /> );
 	},
 
@@ -397,7 +397,11 @@ const PlansSetup = React.createClass( {
 
 		this.trackConfigFinished( 'calypso_plans_autoconfig_success' );
 
-		const noticeText = this.translate( 'We\'ve installed your plugins, your site is powered up!' );
+		const noticeText = this.translate(
+			'We\'ve set up your plugin, your site is powered up!',
+			'We\'ve set up your plugins, your site is powered up!',
+			{ count: this.props.plugins.length }
+		);
 		return (
 			<Notice status="is-success" text={ noticeText } showDismiss={ false }>
 				<NoticeAction href={ `/plans/my-plan/${site.slug}` }>
@@ -446,7 +450,7 @@ const PlansSetup = React.createClass( {
 
 		let turnOnManage;
 		if ( site && ! site.canManage() ) {
-			const manageUrl = site.getRemoteManagementURL() + '&section=plugins';
+			const manageUrl = site.getRemoteManagementURL() + '&section=plugins-setup';
 			turnOnManage = (
 				<Card className="jetpack-plugins-setup__need-manage">
 					<p>{
@@ -487,18 +491,20 @@ const PlansSetup = React.createClass( {
 } );
 
 export default connect(
-	state => {
+	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
 		const site = sites.getSelectedSite();
+		const whitelist = ownProps.whitelist || false;
+
 		return {
 			wporg: state.plugins.wporg.items,
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
-			isInstalling: isInstalling( state, siteId ),
-			isFinished: isFinished( state, siteId ),
-			plugins: getPluginsForSite( state, siteId ),
-			activePlugin: getActivePlugin( state, siteId ),
-			nextPlugin: getNextPlugin( state, siteId ),
+			isInstalling: isInstalling( state, siteId, whitelist ),
+			isFinished: isFinished( state, siteId, whitelist ),
+			plugins: getPluginsForSite( state, siteId, whitelist ),
+			activePlugin: getActivePlugin( state, siteId, whitelist ),
+			nextPlugin: getNextPlugin( state, siteId, whitelist ),
 			selectedSite: site && site.jetpack ? JetpackSite( site ) : site,
 			siteId
 		};

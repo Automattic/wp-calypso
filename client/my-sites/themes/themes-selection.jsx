@@ -3,18 +3,27 @@
  */
 import React, { PropTypes } from 'react';
 import page from 'page';
+import compact from 'lodash/compact';
 
 /**
  * Internal dependencies
  */
 import { trackClick } from './helpers';
-import ThemesSearchCard from './themes-search-card';
 import ThemesData from 'components/data/themes-list-fetcher';
 import ThemesList from 'components/themes-list';
 import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
-import { getFilterFromTerm, filterIsValid } from './theme-filters.js';
+import {
+	getFilter,
+	getSortedFilterTerms,
+	stripFilters,
+} from './theme-filters.js';
+import config from 'config';
+
+const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
+	? require( './themes-magic-search-card' )
+	: require( './themes-search-card' );
 
 const ThemesSelection = React.createClass( {
 	propTypes: {
@@ -30,6 +39,8 @@ const ThemesSelection = React.createClass( {
 		themesList: PropTypes.array.isRequired,
 		getActionLabel: React.PropTypes.func,
 		tier: React.PropTypes.string,
+		filter: React.PropTypes.string,
+		vertical: React.PropTypes.string,
 	},
 
 	getDefaultProps() {
@@ -37,32 +48,15 @@ const ThemesSelection = React.createClass( {
 	},
 
 	doSearch( searchBoxContent ) {
-		const filterRegex = /(\w+)\:\s*([\w-]+)/g;
-		const KEY = 1;
-		const VALUE = 2;
-
-		let matches;
-		const validFilters = [];
-		while ( ( matches = filterRegex.exec( searchBoxContent ) ) !== null ) {
-			const value = matches[ VALUE ];
-			const key = matches[ KEY ];
-			if ( key && value && filterIsValid( key, value ) ) {
-				validFilters.push( value );
-			}
-		}
-		validFilters.sort();
-		const filter = validFilters.join( ',' );
-
-		const searchString = searchBoxContent.replace( filterRegex, '' ).trim();
+		const filter = getSortedFilterTerms( searchBoxContent );
+		const searchString = stripFilters( searchBoxContent );
 		this.updateUrl( this.props.tier || 'all', filter, searchString );
 	},
 
 	prependFilterKeys() {
 		const { filter } = this.props;
 		if ( filter ) {
-			return filter.split( ',' ).map(
-				value => getFilterFromTerm( value )
-			).join( ' ' ) + ' ';
+			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
 		}
 		return '';
 	},
@@ -98,11 +92,14 @@ const ThemesSelection = React.createClass( {
 	},
 
 	updateUrl( tier, filter, searchString = this.props.search ) {
-		const siteId = this.props.siteId ? `/${this.props.siteId}` : '';
+		const { siteId, vertical } = this.props;
+
+		const siteIdSection = siteId ? `/${ siteId }` : '';
+		const verticalSection = vertical ? `/${ vertical }` : '';
 		const tierSection = tier === 'all' ? '' : `/${ tier }`;
 		const filterSection = filter ? `/filter/${ filter }` : '';
-		const url = `/design${ tierSection }${ filterSection }${siteId}`;
 
+		const url = `/design${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
 		page( buildUrl( url, searchString ) );
 	},
 
@@ -112,6 +109,11 @@ const ThemesSelection = React.createClass( {
 			this.recordSearchResultsClick( theme, resultsRank );
 		}
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
+	},
+
+	addVerticalToFilters() {
+		const { vertical, filter } = this.props;
+		return compact( [ filter, vertical ] ).join( ',' );
 	},
 
 	render() {
@@ -132,7 +134,7 @@ const ThemesSelection = React.createClass( {
 						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
 						search={ this.props.search }
 						tier={ this.props.tier }
-						filter={ this.props.filter }
+						filter={ this.addVerticalToFilters() }
 						onRealScroll={ this.trackScrollPage }
 						onLastPage={ this.trackLastPage } >
 					<ThemesList getButtonOptions={ this.props.getOptions }

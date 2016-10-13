@@ -52,10 +52,20 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	getPrivacyProtection() {
-		const { hasPrivacyProtection, privateDomain, name } = this.props.domain,
+		const { hasPrivacyProtection, privateDomain, name, pendingTransfer } = this.props.domain,
 			{ slug } = this.props.selectedSite,
 			privacyPath = paths.domainManagementContactsPrivacy( slug, name ),
 			transferPath = paths.domainManagementTransfer( slug, name );
+
+		if ( pendingTransfer ) {
+			return this.getLabel( {
+				status: 'is-warning',
+				icon: 'notice',
+				message: this.translate( 'Pending Transfer', {
+					context: 'An icon label when domain is pending transfer.'
+				} )
+			} );
+		}
 
 		if ( hasPrivacyProtection ) {
 			if ( privateDomain ) {
@@ -97,7 +107,16 @@ const RegisteredDomain = React.createClass( {
 		return <DomainWarnings
 			domain={ this.props.domain }
 			selectedSite={ this.props.selectedSite }
-			ruleWhiteList={ [ 'expiredDomains', 'expiringDomains', 'newDomainsWithPrimary', 'newDomains', 'pendingGappsTosAcceptanceDomains' ] }/>;
+			ruleWhiteList={ [
+				'expiredDomainsCanManage',
+				'expiringDomainsCanManage',
+				'newDomainsWithPrimary',
+				'newDomains',
+				'pendingGappsTosAcceptanceDomains',
+				'expiredDomainsCannotManage',
+				'expiringDomainsCannotManage',
+				'pendingTransfer'
+			] } />;
 	},
 
 	getVerticalNav() {
@@ -116,6 +135,10 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	emailNavItem() {
+		if ( this.props.domain.pendingTransfer ) {
+			return null;
+		}
+
 		const path = paths.domainManagementEmail(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -129,6 +152,10 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	nameServersNavItem() {
+		if ( this.props.domain.pendingTransfer ) {
+			return null;
+		}
+
 		const path = paths.domainManagementNameServers(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -142,6 +169,10 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	contactsPrivacyNavItem() {
+		if ( this.props.domain.pendingTransfer ) {
+			return null;
+		}
+
 		const path = paths.domainManagementContactsPrivacy(
 			this.props.selectedSite.slug,
 			this.props.domain.name
@@ -192,10 +223,10 @@ const RegisteredDomain = React.createClass( {
 						</Property>
 
 						<SubscriptionSettings
-							onClick={ this.handlePaymentSettingsClick }/>
+							onClick={ this.handlePaymentSettingsClick } />
 					</Card>
 
-					{ domain.isPendingIcannVerification && <IcannVerificationCard selectedDomainName={ domain.name } selectedSite={ this.props.selectedSite } /> }
+					{ domain.isPendingIcannVerification && domain.currentUserCanManage && <IcannVerificationCard selectedDomainName={ domain.name } selectedSite={ this.props.selectedSite } /> }
 				</div>
 
 				{ this.getVerticalNav() }

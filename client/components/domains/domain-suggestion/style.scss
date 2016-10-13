@@ -1,6 +1,7 @@
 .domain-suggestion {
 	box-sizing: border-box;
 	display: flex;
+	align-items: center;
 
 	@include clear-fix;
 
@@ -9,6 +10,15 @@
 
 		.domain-product-price {
 			margin-left: 5%;
+		}
+	}
+
+	&.is-clickable {
+		cursor: pointer;
+
+		&:hover {
+			box-shadow: 0 0 0 1px $gray;
+			z-index: z-index('root', '.domain-suggestion.is-clickable:hover');
 		}
 	}
 
@@ -25,6 +35,7 @@
 
 .domain-suggestion__content {
 	width: 100%;
+	min-height: 32px;
 
 	@include breakpoint( ">660px" ) {
 		display: flex;
@@ -43,6 +54,24 @@
 		animation: loading-fade 1.6s ease-in-out infinite;
 		background-color: lighten( $gray, 30% );
 		color: transparent;
+		min-height: 44px;
+	}
+
+	@include breakpoint( ">660px" ) {
+		.is-placeholder & {
+			margin-right: 50%;
+			min-height: 22px;
+			margin-top: 9px;
+			margin-bottom: 9px;
+		}
+
+		.is-placeholder:nth-of-type(2n+1) & {
+			margin-right: 52%;
+		}
+
+		.is-placeholder:nth-of-type(1) & {
+			margin-right: 40%;
+		}
 	}
 
 	> h3 {
@@ -54,8 +83,36 @@
 
 		.is-placeholder & {
 			color: transparent;
-			height: 32px;
 		}
+	}
+}
+
+.domain-suggestion__non-button-action {
+	flex: 1 0 auto;
+	min-width: 66px;
+	text-align: center;
+	color: $blue-medium;
+
+	.is-placeholder & {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: lighten( $gray, 30% );
+		border: none;
+		border-radius: 0;
+		color: transparent;
+		margin-left: 40px;
+		min-height: 26px;
+	}
+}
+
+.domain-suggestion__chevron {
+
+	margin-left: 10px;
+	flex: 1 0 auto;
+	color: $gray;
+
+	.is-placeholder & {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		color: lighten( $gray, 30% );
 	}
 }
 
@@ -78,6 +135,7 @@
 		border: none;
 		border-radius: 0;
 		color: transparent;
+		height: 40px;
 
 		.button {
 			opacity: 0;

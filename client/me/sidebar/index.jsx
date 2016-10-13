@@ -1,46 +1,48 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:sidebar' );
+import React from 'react';
+import debugFactory from 'debug';
+import { connect } from 'react-redux';
+
+const debug = debugFactory( 'calypso:me:sidebar' );
 
 /**
  * Internal dependencies
  */
-var Sidebar = require( 'layout/sidebar' ),
+const Sidebar = require( 'layout/sidebar' ),
 	SidebarHeading = require( 'layout/sidebar/heading' ),
 	SidebarItem = require( 'layout/sidebar/item' ),
 	SidebarMenu = require( 'layout/sidebar/menu' ),
 	config = require( 'config' ),
-	layoutFocus = require( 'lib/layout-focus' ),
 	ProfileGravatar = require( 'me/profile-gravatar' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	FormButton = require( 'components/forms/form-button' ),
 	userUtilities = require( 'lib/user/utils' );
 
-module.exports = React.createClass( {
+import Button from 'components/button';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
 
-	displayName: 'MeSidebar',
+const MeSidebar = React.createClass( {
 
-	mixins: [ eventRecorder, observe( 'user' ) ],
+	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		debug( 'The MeSidebar React component is mounted.' );
 	},
 
 	onNavigate: function() {
-		layoutFocus.setNext( 'content' );
+		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	},
 
 	onSignOut: function() {
-		const currentUser = this.props.user.get();
+		const currentUser = this.props.currentUser;
 
 		// If user is using en locale, redirect to app promo page on sign out
 		const isEnLocale = ( currentUser && currentUser.localeSlug === 'en' );
 		let redirect = null;
-		if ( isEnLocale && !config.isEnabled( 'desktop' ) ) {
+		if ( isEnLocale && ! config.isEnabled( 'desktop' ) ) {
 			redirect = '/?apppromo';
 		}
 		userUtilities.logout( redirect );
@@ -48,21 +50,22 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var context = this.props.context,
-			filterMap = {
-				'/me': 'profile',
-				'/me/security/two-step': 'security',
-				'/me/security/connected-applications': 'security',
-				'/me/security/checkup': 'security',
-				'/me/notifications/comments': 'notifications',
-				'/me/notifications/updates': 'notifications',
-				'/me/notifications/subscriptions': 'notifications',
-				'/help/contact': 'help',
-				'/purchases': 'billing',
-				'/me/billing': 'billing'
-			},
-			filteredPath = context.path.replace( /\/\d+$/, '' ), // Remove ID from end of path
-			selected;
+		const context = this.props.context;
+		const filterMap = {
+			'/me': 'profile',
+			'/me/security/two-step': 'security',
+			'/me/security/connected-applications': 'security',
+			'/me/security/checkup': 'security',
+			'/me/notifications/comments': 'notifications',
+			'/me/notifications/updates': 'notifications',
+			'/me/notifications/subscriptions': 'notifications',
+			'/help/contact': 'help',
+			'/purchases': 'billing',
+			'/me/billing': 'billing',
+			'/me/chat': 'happychat'
+		};
+		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
+		let selected;
 
 		/*
 		 * Determine currently-active path to use for 'selected' menu highlight
@@ -78,16 +81,16 @@ module.exports = React.createClass( {
 
 		return (
 			<Sidebar>
-				<ProfileGravatar user={ this.props.user.get() } />
+				<ProfileGravatar user={ this.props.currentUser } />
 				<div className="me-sidebar__signout">
-					<FormButton
+					<Button
+						compact
 						className="me-sidebar__signout-button"
-						isPrimary={ false }
 						onClick={ this.onSignOut }
 						title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
 					>
 						{ this.translate( 'Sign Out' ) }
-					</FormButton>
+					</Button>
 				</div>
 				<SidebarMenu>
 					<SidebarHeading>{ this.translate( 'Profile' ) }</SidebarHeading>
@@ -158,6 +161,13 @@ module.exports = React.createClass( {
 							onNavigate={ this.onNavigate }
 							preloadSectionName="help"
 						/>
+						{ config.isEnabled( 'happychat' ) && <SidebarItem
+								selected= { selected === 'happychat' }
+								link="/me/chat"
+								icon="comment"
+								label= { this.translate( 'Support Chat' ) }
+								preloadSectionName="happychat"
+								onNavigate={ this.onNavigate } /> }
 					</ul>
 				</SidebarMenu>
 			</Sidebar>
@@ -165,7 +175,7 @@ module.exports = React.createClass( {
 	},
 
 	renderNextStepsItem: function( selected ) {
-		var currentUser = this.props.user.get();
+		const currentUser = this.props.currentUser;
 		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
 			return (
 				<SidebarItem
@@ -179,3 +189,11 @@ module.exports = React.createClass( {
 		}
 	}
 } );
+
+function mapStateToProps( state ) {
+	return {
+		currentUser: getCurrentUser( state ),
+	};
+}
+
+export default connect( mapStateToProps, { setNextLayoutFocus } )( MeSidebar );

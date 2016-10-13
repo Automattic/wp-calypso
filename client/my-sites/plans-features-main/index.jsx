@@ -37,6 +37,7 @@ class PlansFeaturesMain extends Component {
 			onUpgradeClick,
 			hideFreePlan,
 			isInSignup,
+			isInJetpackConnect,
 			selectedFeature
 		} = this.props;
 
@@ -54,6 +55,9 @@ class PlansFeaturesMain extends Component {
 						selectedFeature={ selectedFeature }
 						onUpgradeClick={ onUpgradeClick }
 						isInSignup={ isInSignup }
+						isInJetpackConnect={ isInJetpackConnect }
+						intervalType={ intervalType }
+						site={ site }
 					/>
 				</div>
 			);
@@ -71,6 +75,9 @@ class PlansFeaturesMain extends Component {
 						selectedFeature={ selectedFeature }
 						onUpgradeClick={ onUpgradeClick }
 						isInSignup={ isInSignup }
+						isInJetpackConnect={ isInJetpackConnect }
+						intervalType={ intervalType }
+						site={ site }
 					/>
 				</div>
 			);
@@ -92,7 +99,10 @@ class PlansFeaturesMain extends Component {
 					plans={ plans }
 					onUpgradeClick={ onUpgradeClick }
 					isInSignup={ isInSignup }
+					isInJetpackConnect={ isInJetpackConnect }
 					selectedFeature={ selectedFeature }
+					intervalType={ intervalType }
+					site={ site }
 				/>
 			</div>
 		);
@@ -161,7 +171,7 @@ class PlansFeaturesMain extends Component {
 					answer={ translate(
 						'No problem! Feel free to {{a}}get in touch{{/a}} with our Happiness Engineers.',
 						{
-							components: { a: <a href="https://jetpack.com/contact-support/" target="_blank" /> }
+							components: { a: <a href="https://jetpack.com/contact-support/" target="_blank" rel="noopener noreferrer" /> }
 						}
 					) }
 				/>
@@ -182,7 +192,13 @@ class PlansFeaturesMain extends Component {
 						' domains purchased through WordPress.com or your own existing domain that you can map' +
 						' to your WordPress.com site. {{a}}Find out more about domains.{{/a}}',
 						{
-							components: { a: <a href="https://en.support.wordpress.com/all-about-domains/" target="_blank" /> }
+							components: {
+								a: <a
+									href="https://en.support.wordpress.com/all-about-domains/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
 						}
 					) }
 				/>
@@ -226,10 +242,16 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Do you offer email accounts?' ) }
 					answer={ translate(
 						'Yes. If you register a new domain with our premium or business plans, you can optionally' +
-						' add Google apps for work. You can also set up email forwarding for any custom domain' +
+						' add G Suite. You can also set up email forwarding for any custom domain' +
 						' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
 						{
-							components: { a: <a href="https://en.support.wordpress.com/add-email/" target="_blank" /> }
+							components: {
+								a: <a
+									href="https://en.support.wordpress.com/add-email/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
 						}
 					) }
 				/>
@@ -242,8 +264,23 @@ class PlansFeaturesMain extends Component {
 						' more precise control of your site’s' +
 						' design. {{a}}Find out more about custom design{{/a}}.',
 						{
-							components: { a: <a href="https://en.support.wordpress.com/custom-design/" target="_blank" /> }
+							components: {
+								a: <a
+									href="https://en.support.wordpress.com/custom-design/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
 						}
+					) }
+				/>
+
+				<FAQItem
+					question={ translate( 'Will upgrading affect my content?' ) }
+					answer={ translate(
+						'Plans add extra features to your site, but they do not affect the content of your site' +
+						" or your site's followers. You will never lose content by upgrading or downgrading" +
+						" your site's plan."
 					) }
 				/>
 
@@ -253,8 +290,7 @@ class PlansFeaturesMain extends Component {
 						'Yes. We want you to love everything you do at WordPress.com, so we provide a 30-day' +
 						' refund on all of our plans. {{a}}Manage purchases{{/a}}.',
 						{
-							// TODO: needs correct url
-							components: { a: <a href={ '#' } /> }
+							components: { a: <a href={ '/purchases' } /> }
 						}
 					) }
 				/>
@@ -265,7 +301,7 @@ class PlansFeaturesMain extends Component {
 						'Need help deciding which plan works for you? Our happiness engineers are available for' +
 						' any questions you may have. {{a}}Get help{{/a}}.',
 						{
-							components: { a: <a href="https://wordpress.com/help" target="_blank" /> }
+							components: { a: <a href="https://wordpress.com/help" target="_blank" rel="noopener noreferrer" /> }
 						}
 					) }
 				/>
@@ -281,7 +317,7 @@ class PlansFeaturesMain extends Component {
 				: this.getFAQ( site );
 
 		return (
-			<div class="plans-features-main">
+			<div className="plans-features-main">
 				{ this.getPlanFeatures() }
 
 				{
@@ -297,6 +333,7 @@ class PlansFeaturesMain extends Component {
 PlansFeaturesMain.PropTypes = {
 	site: PropTypes.object,
 	isInSignup: PropTypes.bool,
+	isInJetpackConnect: PropTypes.bool,
 	intervalType: PropTypes.string,
 	onUpgradeClick: PropTypes.func,
 	hideFreePlan: PropTypes.bool,
@@ -305,6 +342,8 @@ PlansFeaturesMain.PropTypes = {
 };
 
 PlansFeaturesMain.defaultProps = {
+	isInJetpackConnect: false,
+	intervalType: 'yearly',
 	hideFreePlan: false,
 	site: {},
 	showFAQ: true

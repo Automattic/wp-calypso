@@ -17,10 +17,7 @@ export default React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/foldable-card">Foldable Card</a>
-				</h2>
+			<div>
 				<div>
 					<FoldableCard header="This is a foldable card" screenReaderText="More">
 						These are its contents

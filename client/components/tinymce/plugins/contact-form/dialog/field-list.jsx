@@ -24,7 +24,6 @@ export default React.createClass( {
 			return (
 				<div className="editor-contact-form-modal-fields">
 					{ this.props.fields.map( ( field, index ) => {
-						const { label, type, options, required } = field;
 						return (
 							<Field
 								key={ index }
@@ -42,6 +41,6 @@ export default React.createClass( {
 			line={ this.translate( 'An empty form is no fun! Go ahead and add some fields!' ) }
 			action={ this.translate( 'Add New Field' ) }
 			actionCallback={ this.props.onFieldAdd }
-			isCompact={ true } />
+			isCompact={ true } />;
 	}
 } );

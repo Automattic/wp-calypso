@@ -3,8 +3,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureComponent from 'react-pure-render/component';
+import React, { PropTypes, PureComponent } from 'react';
 import {
 	identity,
 	partial

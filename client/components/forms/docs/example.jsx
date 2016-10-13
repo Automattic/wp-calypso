@@ -58,11 +58,7 @@ var FormFields = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/form-fields">Form Fields</a>
-				</h2>
-
+			<div>
 				<p>
 					The form fields components act as wrapper components to aid in componentizing CSS.
 					Here is an example of all of the form fields components and their expected markup.

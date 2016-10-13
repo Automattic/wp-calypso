@@ -10,7 +10,9 @@ var ReactDom = require( 'react-dom' ),
 /**
  * Internal dependencies
  */
-var Main = require( 'components/main' ),
+var config = require( 'config' ),
+	Main = require( 'components/main' ),
+	ReaderMain = require( 'components/reader-main' ),
 	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
 	EmptyContent = require( './empty' ),
 	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
@@ -48,7 +50,7 @@ module.exports = React.createClass( {
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
 		className: React.PropTypes.string,
-		showEmptyContent: React.PropTypes.bool,
+		showDefaultEmptyContentIfMissing: React.PropTypes.bool,
 		showPrimaryFollowButtonOnCards: React.PropTypes.bool,
 		showMobileBackToSidebar: React.PropTypes.bool
 	},
@@ -60,7 +62,7 @@ module.exports = React.createClass( {
 			showFollowInHeader: false,
 			onShowUpdates: noop,
 			className: '',
-			showEmptyContent: true,
+			showDefaultEmptyContentIfMissing: true,
 			showPrimaryFollowButtonOnCards: false,
 			showMobileBackToSidebar: true
 		};
@@ -439,7 +441,10 @@ module.exports = React.createClass( {
 			body, showingStream;
 
 		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
-			body = this.props.showEmptyContent ? ( this.props.emptyContent || ( <EmptyContent /> ) ) : null;
+			body = this.props.emptyContent;
+			if ( ! body && this.props.showDefaultEmptyContentIfMissing ) {
+				body = ( <EmptyContent /> );
+			}
 			showingStream = false;
 		} else {
 			body = ( <InfiniteList
@@ -452,13 +457,14 @@ module.exports = React.createClass( {
 			fetchNextPage={ this.fetchNextPage }
 			getItemRef= { this.getPostRef }
 			renderItem={ this.renderPost }
-			selectedIndex={ this.props.store.getSelectedIndex() }
 			renderLoadingPlaceholders={ this.renderLoadingPlaceholders } /> );
 			showingStream = true;
 		}
 
+		const StreamMain = config.isEnabled( 'reader/refresh/stream' ) ? ReaderMain : Main;
+
 		return (
-			<Main className={ classnames( 'following', this.props.className ) }>
+			<StreamMain className={ classnames( 'following', this.props.className ) }>
 				{ this.props.showMobileBackToSidebar && <MobileBackToSidebar>
 					<h1>{ this.props.listName }</h1>
 				</MobileBackToSidebar> }
@@ -470,7 +476,7 @@ module.exports = React.createClass( {
 					? <div className="infinite-scroll-end" />
 					: null
 				}
-			</Main>
+			</StreamMain>
 		);
 	}
 

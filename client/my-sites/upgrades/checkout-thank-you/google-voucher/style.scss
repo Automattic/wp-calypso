@@ -3,16 +3,7 @@
 	padding-bottom: 12px;
 	border-bottom: solid 1px $gray-light;
 
-
-	p.form-setting-explanation {
-		flex: 1;
-		margin-right: 16px;
-		margin-top: 0px
-	}
-
 	@include breakpoint( ">660px" ) {
-		display: flex;
-		align-items: flex-start;
 	}
 }
 
@@ -27,9 +18,9 @@
 }
 
 .button.google-voucher-code__setup-google-adwords:not(.is-compact) {
-	margin-top: 10px;
+	margin-top: 16px;
+
 	@include breakpoint( ">660px" ) {
-		width: 190px;
 		text-align: center;
 	}
 }
@@ -84,10 +75,6 @@
 	text-align: right;
 	padding: 15px;
 	margin: 0px -25px -25px;
-
-	.button {
-		width: 100px;
-	}
 }
 
 .google-vouchers-dialog__cancel-button {
@@ -98,4 +85,13 @@ li.google-voucher__terms-and-conditions {
 	line-height: 1.6em;
 	color: lighten( $gray, 10% );
 	margin-bottom: 15px;
+}
+
+.google-voucher__initial-step .purchase-detail__info {
+	margin-top: 16px;
+	display: block;
+
+	@include breakpoint( "<660px" ) {
+		max-width: none;
+	}
 }

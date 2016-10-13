@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import filter from 'lodash/filter';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -120,9 +120,8 @@ module.exports = React.createClass( {
 
 	checkForSubscriptions( event ) {
 		trackDeleteSiteOption( 'delete-site' );
-		const activeSubscriptions = filter( this.props.sitePurchases, 'active' );
 
-		if ( ! activeSubscriptions.length ) {
+		if ( ! some( this.props.sitePurchases, 'active' ) ) {
 			return true;
 		}
 

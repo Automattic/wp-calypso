@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import Dialog from 'components/dialog';
 import CancelPurchaseForm from 'components/marketing-survey/cancel-purchase-form';
 import { getName, getSubscriptionEndDate, isOneTimePurchase, isRefundable, isSubscription } from 'lib/purchases';
-import { isDomainRegistration, isTheme, isGoogleApps } from 'lib/products-values';
+import { isDomainRegistration, isTheme, isGoogleApps, isJetpackPlan } from 'lib/products-values';
 import notices from 'notices';
 import paths from 'me/purchases/paths';
 import { refreshSitePlans } from 'state/sites/plans/actions';
@@ -267,8 +267,19 @@ const CancelPurchaseButton = React.createClass( {
 
 		if ( isGoogleApps( this.props.purchase ) ) {
 			cancelationEffectText = this.translate(
-				'You will be refunded %(cost)s, but your Google Apps account will continue working without interruption. ' +
-				'You will be able to manage your Google Apps billing directly through Google.', {
+				'You will be refunded %(cost)s, but your G Suite account will continue working without interruption. ' +
+				'You will be able to manage your G Suite billing directly through Google.', {
+					args: {
+						cost: refundText
+					}
+				}
+			);
+		}
+
+		if ( isJetpackPlan( this.props.purchase ) ) {
+			cancelationEffectText = this.translate(
+				'All plan features - spam filtering, backups, and security screening - will be removed from your site ' +
+				'and you will be refunded %(cost)s.', {
 					args: {
 						cost: refundText
 					}

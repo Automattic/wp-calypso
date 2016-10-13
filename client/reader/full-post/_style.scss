@@ -214,7 +214,7 @@
 		margin-bottom: 24px;
 	}
 
-	.alignnone {
+	.wp-caption.alignnone {
 		clear: both;
 		display: block;
 		margin-top: 24px;
@@ -224,6 +224,28 @@
 	.wp-caption {
 		position: relative;
 		max-width: 100%;
+
+		&.alignright {
+			float: right;
+		}
+
+		&.alignleft {
+			float: left;
+		}
+
+		&.alignright,
+		&.alignleft {
+			max-width: 100%;
+
+			@include breakpoint( ">660px" ) {
+				max-width: 50%;
+			}
+
+			img.alignright,
+			img.alignleft {
+				float: none;
+			}
+		}
 
 		img {
 			display: block;
@@ -257,7 +279,7 @@
 			font-size: inherit;
 
 			&::before {
-				@extend %noticon;
+				@include noticon-style;
 				content: '\f456';
 				position: absolute;
 				top: 23px;
@@ -276,7 +298,7 @@
 }
 
 // Discover-Specific Full Post View Styles
-.reader__full-post.blog-53424024 .reader__full-post-content {
+.blog-53424024 .reader__full-post-content {
 
 	.intro {
 		font-size: 20px;
@@ -301,62 +323,37 @@
 
 	blockquote.sidenote {
 		margin: 0;
-		padding: 0;
+		padding: 16px;
 		border: none;
 		background: none;
 		font-size: 13px;
 		width: 175px;
 
-		@media ( min-width: 1132px ) {
-			position: absolute;
+		&.left,
+		&.alignleft {
+			float: left;
+			padding: 0 16px 16px 0;
+		}
 
+		@media ( min-width: 1400px ) {
 			&.right,
 			&.alignright {
+				position: absolute;
 				right: -( 175px + 32px );
 				margin-right: 0;
 			}
-
-			&.left,
-			&.alignleft {
-				left: -( 175px + 32px );
-				margin-left: 0;
-			}
 		}
 
-		@media ( max-width: 1132px ) {
+		@media ( max-width: 1400px ) {
 			&.right,
 			&.alignright,
 			&.left,
 			&.alignleft {
-				background: lighten( $gray, 30 );
-				margin: 0 0 24px 0;
-				padding: 16px;
-				width: auto;
-			}
-		}
-
-		@include breakpoint( "<960px" ) {
-			&.right,
-			&.alignright {
-				float: right;
-			}
-
-			&.left,
-			&.alignleft {
-				float: left;
-			}
-		}
-
-		@include breakpoint( "<480px" ) {
-		  &.alignleft,
-			&.alignright,
-			&.right,
-			&.left {
-				width: auto;
 				float: none;
-				margin: 0 0 24px 0;
 				background: lighten( $gray, 30 );
+				margin: 0 0 24px 0;
 				padding: 16px;
+				width: auto;
 
 				img {
 					display: block;
@@ -365,19 +362,10 @@
 			}
 		}
 	}
-
-	.fullbleed {
-		@media ( min-width: 1132px ) {
-			position: relative;
-			left: -( 175px + 32px );
-			width: ( 668px + 414px );
-			max-width: ( 668px + 414px );
-		}
-	}
 }
 
 // Daily Post-Specific Full Post View Styles
-.reader__full-post.blog-489937 .reader__full-post-content {
+.is-group-reader.blog-489937 .reader__full-post-content {
 
 	blockquote.left,
 	blockquote.alignleft,
@@ -414,6 +402,12 @@
 			}
 		}
 	}
+}
+
+// Hides Jetpack RP in Reader
+.reader-full-post .jp-relatedposts-headline,
+.reader-full-post .jp-relatedposts {
+	display: none;
 }
 
 .detail-page__backdrop {

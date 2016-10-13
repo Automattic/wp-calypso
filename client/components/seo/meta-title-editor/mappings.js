@@ -2,10 +2,20 @@
 
 // Maps between different title format formats
 //
-// raw is a string like: '%site_name% | %tagline%'
-//                        \_________/   \_______/
-//                             |            |
-//                             \------------\- tags
+// raw from API is
+// {
+// 	"advanced_seo_title_formats": {
+// 		"pages": [
+// 			{ "type": "token", "value": "page_title" },
+// 			{ "type": "string", "value": " is awesome!" }
+// 		],
+// 		"posts": [
+// 			{ "type": "token", "value": "post_title" },
+// 			{ "type": "string", "value": " | " },
+// 			{ "type": "token", "value": "site_name" }
+// 		],
+// 	}
+// }
 //
 // native is an array of plain-text strings and tokens
 //   [ { type: 'postTitle' }, { type: 'string', value: ' on ' }, { type: 'siteName' } ]
@@ -27,36 +37,63 @@
 import {
 	camelCase,
 	flowRight as compose,
-	join,
+	get,
+	initial,
+	last,
 	map,
 	mapKeys,
 	mapValues,
-	matchesProperty,
 	partialRight,
 	rearg,
-	reject,
+	reduce,
 	snakeCase,
-	split
+	unary,
 } from 'lodash';
 
-export const removeBlanks = values => reject( values, matchesProperty( 'value', '' ) );
+const mergeStringPieces = ( a, b ) => ( {
+	type: 'string',
+	value: a.value + b.value,
+} );
 
-// %site_name%, %tagline%, etc…
-const tagPattern = /(%[a-zA-Z_]+%)/;
-const isTag = s => tagPattern.test( s );
+/**
+ * Converts an individual title format
+ * from the API representation to a
+ * Calypso-native format
+ *
+ * @param {Array} r List of raw format pieces
+ * @returns {Array} List of native format pieces
+ */
+export const rawToNative = unary(
+	partialRight( map, p => Object.assign( {},
+		{ type: 'string' === p.type ? 'string' : camelCase( p.value ) },
+		'string' === p.type && { value: p.value },
+	) ),
+);
 
-const tagToToken = s =>
-	isTag( s )
-		? { type: camelCase( s.slice( 1, -1 ) ) } // %site_name% -> type: siteName
-		: { type: 'string', value: s };           // arbitrary text passes through
+/**
+ * Converts an individual title format
+ * from the Calypso-native representation
+ * to a Calypso-native format
+ *
+ * @param {Array} n List of native format pieces
+ * @returns {Array} List of raw format pieces
+ */
+export const nativeToRaw = unary( compose(
+	// combine adjacent strings
+	partialRight( reduce, ( format, piece ) => {
+		const lastPiece = last( format );
 
-const tokenToTag = n =>
-	'string' !== n.type
-		? `%${ snakeCase( n.type ) }%` // siteName -> %site_name%
-		: n.value;                     // arbitrary text passes through
+		if ( lastPiece && 'string' === lastPiece.type && 'string' === piece.type ) {
+			return [ ...initial( format ), mergeStringPieces( lastPiece, piece ) ];
+		}
 
-export const rawToNative = r => removeBlanks( map( split( r, tagPattern ), tagToToken ) );
-export const nativeToRaw = n => join( map( n, tokenToTag ), '' );
+		return [ ...format, piece ];
+	}, [] ),
+	partialRight( map, p => ( {
+		type: p.type === 'string' ? 'string' : 'token',
+		value: get( p, 'value', snakeCase( p.type ) )
+	} ) ),
+) );
 
 // Not only are the format strings themselves stored differently
 // than on the server, but the API expects a different structure
@@ -66,14 +103,14 @@ export const nativeToRaw = n => join( map( n, tokenToTag ), '' );
 // title format strings.
 //
 //  - Rename keys: `front_page` -> `frontPage`
-//  - Translate formats: `%page_title%` -> [ { type: 'pageTitle' } ]
+//  - Translate formats: see above
 
 export const toApi = compose(
 	partialRight( mapKeys, rearg( snakeCase, 1 ) ), // 1 -> key from ( value, key )
-	partialRight( mapValues, nativeToRaw )          // native objects to raw strings
+	partialRight( mapValues, nativeToRaw ),         // native objects to raw objects
 );
 
 export const fromApi = compose(
 	partialRight( mapKeys, rearg( camelCase, 1 ) ), // 1 -> key from ( value, key )
-	partialRight( mapValues, rawToNative )          // raw strings to native objects
+	partialRight( mapValues, rawToNative ),         // raw objects to native objects
 );

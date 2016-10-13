@@ -8,3 +8,7 @@
 		animation: loading-dot-pulse 0.8s ease-in-out infinite;
 	}
 }
+
+.editor-delete-post__tooltip .popover__inner {
+	white-space: nowrap;
+}

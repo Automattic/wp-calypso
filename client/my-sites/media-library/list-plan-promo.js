@@ -24,10 +24,10 @@ module.exports = React.createClass( {
 		switch ( this.props.filter ) {
 			case 'videos':
 				return this.translate( 'Upload Videos', { textOnly: true, context: 'Media upload plan needed' } );
-				break;
+
 			case 'audio':
 				return this.translate( 'Upload Audio', { textOnly: true, context: 'Media upload plan needed' } );
-				break;
+
 			default:
 				return this.translate( 'Upload Media', { textOnly: true, context: 'Media upload plan needed' } );
 		}
@@ -41,14 +41,14 @@ module.exports = React.createClass( {
 						'To upload video files to your site, upgrade your plan.',
 						{ textOnly: true, context: 'Media upgrade promo' }
 				), 2 );
-				break;
+
 			case 'audio':
 				return preventWidows(
 					this.translate(
 						'To upload audio files to your site, upgrade your plan.',
 						{ textOnly: true, context: 'Media upgrade promo' }
 				), 2 );
-				break;
+
 			default:
 				return preventWidows(
 					this.translate(
@@ -75,7 +75,7 @@ module.exports = React.createClass( {
 			<EmptyContent
 				title={ this.getTitle() }
 				line={ this.getSummary() }
-				action={ action }
+				action={ this.props.children || action }
 				illustration={ '' } />
 		);
 	}

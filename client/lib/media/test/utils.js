@@ -569,4 +569,22 @@ describe( 'MediaUtils', function() {
 			expect( MediaUtils.canUserDeleteItem( item, user, site ) ).to.be.true;
 		} );
 	} );
+
+	describe( '#isItemBeingUploaded()', () => {
+		it( 'should return null if item was not specified', () => {
+			expect( MediaUtils.isItemBeingUploaded() ).to.be.null;
+		} );
+
+		it( 'should return true if the item is currently being uploaded', () => {
+			const item = { 'transient': true };
+
+			expect( MediaUtils.isItemBeingUploaded( item ) ).to.be.true;
+		} );
+
+		it( 'should return false if the item is not being uploaded', () => {
+			const item = {};
+
+			expect( MediaUtils.isItemBeingUploaded( item ) ).to.be.false;
+		} );
+	} );
 } );

@@ -6,6 +6,7 @@ import noop from 'lodash/noop';
 import some from 'lodash/some';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:ad-tracking' );
+import { clone, cloneDeep } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,8 +21,7 @@ import userModule from 'lib/user';
  */
 const user = userModule();
 let hasStartedFetchingScripts = false,
-	hasFinishedFetchingScripts = false,
-	retargetingInitialized = false;
+	hasFinishedFetchingScripts = false;
 
 /**
  * Constants
@@ -30,14 +30,31 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 	ATLAS_TRACKING_SCRIPT_URL = 'https://ad.atdmt.com/m/a.js',
 	GOOGLE_TRACKING_SCRIPT_URL = 'https://www.googleadservices.com/pagead/conversion_async.js',
 	BING_TRACKING_SCRIPT_URL = 'https://bat.bing.com/bat.js',
+	CRITEO_TRACKING_SCRIPT_URL = 'https://static.criteo.net/js/ld/ld.js',
 	GOOGLE_CONVERSION_ID = config( 'google_adwords_conversion_id' ),
-	ONE_BY_AOL_PIXEL_URL = 'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
+	ONE_BY_AOL_CONVERSION_PIXEL_URL = 'https://secure.ace-tag.advertising.com/action/type=132958/bins=1/rich=0/Mnum=1516/',
+	ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL = 'https://secure.leadback.advertising.com/adcedge/lb' +
+		'?site=695501&betr=sslbet_1472760417=[+]ssprlb_1472760417[720]|sslbet_1472760452=[+]ssprlb_1472760452[8760]',
+	PANDORA_CONVERSION_PIXEL_URL = 'https://data.adxcel-ec2.com/pixel/' +
+		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
 		googleConversionLabel: 'MznpCMGHr2MQ1uXz_AM',
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
-		atlasUniveralTagId: '11187200770563'
+		atlasUniveralTagId: '11187200770563',
+		criteo: '31321',
+		quantcast: 'p-3Ma3jHaQMB_bS'
+	},
+
+	// For converting other currencies into USD for tracking purposes
+	EXCHANGE_RATES = {
+		USD: 1,
+		EUR: 1,
+		JPY: 125,
+		AUD: 1.35,
+		CAD: 1.35,
+		GBP: 0.75
 	};
 
 /**
@@ -49,6 +66,15 @@ if ( ! window.fbq ) {
 
 if ( ! window.uetq ) {
 	window.uetq = []; // Bing global
+}
+
+if ( ! window.criteo_q ) {
+	window.criteo_q = [];
+}
+
+// Quantcast Asynchronous Tag
+if ( ! window._qevents ) {
+	window._qevents = [];
 }
 
 /**
@@ -86,6 +112,12 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( BING_TRACKING_SCRIPT_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( CRITEO_TRACKING_SCRIPT_URL, onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( quantcastAsynchronousTagURL(), onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
@@ -115,6 +147,11 @@ function loadTrackingScripts( callback ) {
 	} );
 }
 
+/**
+ * Fire tracking events for the purposes of retargeting on all Calypso pages
+ *
+ * @returns {void}
+ */
 function retarget() {
 	if ( ! hasStartedFetchingScripts ) {
 		return loadTrackingScripts( retarget );
@@ -122,24 +159,51 @@ function retarget() {
 
 	// The reason we check whether the scripts have finished is to avoid a situation
 	// where retarget is called once (which starts the load process) then immediately
-	// again (in which case they've started to be fetched, but haven't finished) which
-	// would cause an undefined function error for `google_trackConversion` below.
-	if ( hasFinishedFetchingScripts && ! retargetingInitialized ) {
-		debug( 'Retargeting initialized' );
+	// again (in which case they've started to be fetched, but haven't finished).
+	if ( ! hasFinishedFetchingScripts ) {
+		return;
+	}
 
-		retargetingInitialized = true;
+	debug( 'Retargeting' );
 
-		// Facebook
-		window.fbq( 'track', 'PageView' );
+	// Facebook
+	window.fbq( 'track', 'PageView' );
 
-		// AdWords
+	// AdWords
+	if ( window.google_trackConversion ) {
 		window.google_trackConversion( {
 			google_conversion_id: GOOGLE_CONVERSION_ID,
 			google_remarketing_only: true
 		} );
 	}
+
+	// Quantcast
+	window._qevents.push( {
+		qacct: TRACKING_IDS.quantcast,
+		event: 'refresh'
+	} );
+
+	// One by AOL
+	new Image().src = ONE_BY_AOL_AUDIENCE_BUILDING_PIXEL_URL;
 }
 
+/**
+ * A generic function that we can export and call to track plans page views with our ad partners
+ */
+function retargetViewPlans() {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	recordPlansViewInCriteo();
+}
+
+/**
+ * Records that an item was added to the cart
+ *
+ * @param {Object} cartItem - The item added to the cart
+ * @returns {void}
+ */
 function recordAddToCart( cartItem ) {
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
 		return;
@@ -159,6 +223,47 @@ function recordAddToCart( cartItem ) {
 			free_trial: Boolean( cartItem.free_trial )
 		}
 	);
+
+	recordInCriteo( 'viewItem', {
+		item: cartItem.product_id
+	} );
+}
+
+/**
+ * Records that a user viewed the checkout page
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ */
+function recordViewCheckout( cart ) {
+	recordViewCheckoutInCriteo( cart );
+}
+
+/**
+ * Tracks a purchase conversion
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrder( cart, orderId ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	// Purchase tracking happens in one of three ways:
+
+	// 1. Fire a tracking event for each product purchased
+	cart.products.forEach( product => {
+		recordProduct( product, orderId );
+	} );
+
+	// 2. Fire one tracking event that includes details about each product purchased
+	recordOrderInAtlas( cart, orderId );
+	recordOrderInCriteo( cart, orderId );
+
+	// 3. Fire a single tracking event without any details about what was purchased
+	new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
+	new Image().src = PANDORA_CONVERSION_PIXEL_URL;
 }
 
 /**
@@ -168,13 +273,13 @@ function recordAddToCart( cartItem ) {
  * @param {Number} orderId - the order id
  * @returns {void}
  */
-function recordPurchase( product, orderId ) {
+function recordProduct( product, orderId ) {
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
 		return;
 	}
 
 	if ( ! hasStartedFetchingScripts ) {
-		return loadTrackingScripts( recordPurchase.bind( null, product, orderId ) );
+		return loadTrackingScripts( recordProduct.bind( null, product, orderId ) );
 	}
 
 	const isJetpackPlan = productsValues.isJetpackPlan( product );
@@ -185,46 +290,64 @@ function recordPurchase( product, orderId ) {
 		debug( 'Recording purchase', product );
 	}
 
-	// record the user id as a custom parameter
 	const currentUser = user.get(),
-		userId = currentUser ? currentUser.ID : 0;
+		userId = currentUser ? currentUser.ID : 0,
+		costUSD = costToUSD( product.cost, product.currency );
 
-	// record the purchase w/ Facebook
-	window.fbq(
-		'track',
-		'Purchase',
-		{
-			currency: product.currency,
-			product_slug: product.product_slug,
-			value: product.cost,
-			user_id: userId,
-			order_id: orderId
+	try {
+		// Facebook
+		window.fbq(
+			'track',
+			'Purchase',
+			{
+				currency: product.currency,
+				product_slug: product.product_slug,
+				value: product.cost,
+				user_id: userId,
+				order_id: orderId
+			}
+		);
+
+		// Bing
+		if ( isSupportedCurrency( product.currency ) ) {
+			window.uetq.push( {
+				ec: 'purchase',
+				gv: costUSD
+			} );
 		}
-	);
 
-	// record the purchase w/ Bing if it is made with USD - Bing doesn't handle multiple currencies
-	if ( 'USD' === product.currency ) {
-		window.uetq.push( {
-			ec: 'purchase',
-			gv: product.cost
-		} );
+		// Google
+		if ( window.google_trackConversion ) {
+			window.google_trackConversion( {
+				google_conversion_id: GOOGLE_CONVERSION_ID,
+				google_conversion_label: isJetpackPlan
+					? TRACKING_IDS.googleConversionLabelJetpack
+					: TRACKING_IDS.googleConversionLabel,
+				google_conversion_value: product.cost,
+				google_conversion_currency: product.currency,
+				google_custom_params: {
+					product_slug: product.product_slug,
+					user_id: userId,
+					order_id: orderId
+				},
+				google_remarketing_only: false
+			} );
+		}
+
+		// Quantcast
+		// Note that all properties have to be strings or they won't get tracked
+		if ( isSupportedCurrency( product.currency ) ) {
+			window._qevents.push( {
+				qacct: TRACKING_IDS.quantcast,
+				labels: '_fp.event.Purchase Confirmation,_fp.pcat.' + product.product_slug,
+				orderid: orderId.toString(),
+				revenue: costUSD.toString(),
+				event: 'refresh'
+			} );
+		}
+	} catch ( err ) {
+		debug( 'Unable to save purchase tracking data', err );
 	}
-
-	// record the purchase w/ Google
-	window.google_trackConversion( {
-		google_conversion_id: GOOGLE_CONVERSION_ID,
-		google_conversion_label: isJetpackPlan
-			? TRACKING_IDS.googleConversionLabelJetpack
-			: TRACKING_IDS.googleConversionLabel,
-		google_conversion_value: product.cost,
-		google_conversion_currency: product.currency,
-		google_custom_params: {
-			product_slug: product.product_slug,
-			user_id: userId,
-			order_id: orderId
-		},
-		google_remarketing_only: false
-	} );
 }
 
 /**
@@ -263,16 +386,164 @@ function recordOrderInAtlas( cart, orderId ) {
 }
 
 /**
- * Tracks the purchase conversion with One by AOL
+ * Records an order in Criteo
  *
- * @note One by AOL does not record any specifics about the purchase
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
  */
-function recordConversionInOneByAOL() {
+function recordOrderInCriteo( cart, orderId ) {
 	if ( ! config.isEnabled( 'ad-tracking' ) ) {
 		return;
 	}
 
-	new Image().src = ONE_BY_AOL_PIXEL_URL;
+	recordInCriteo( 'trackTransaction', {
+		id: orderId,
+		currency: cart.currency,
+		item: cartToCriteoItems( cart )
+	} );
+}
+
+/**
+ * Records that a user viewed the checkout page
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {void}
+ */
+function recordViewCheckoutInCriteo( cart ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	// Note that unlike `recordOrderInCriteo` above, this doesn't include the order id
+	recordInCriteo( 'viewBasket', {
+		currency: cart.currency,
+		item: cartToCriteoItems( cart )
+	} );
+}
+
+/**
+ * Converts the products in a cart to the format Criteo expects for its `items` property
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {Array} - An array of items to include in the Criteo tracking call
+ */
+function cartToCriteoItems( cart ) {
+	return cart.products.map( product => {
+		return {
+			id: product.product_id,
+			price: product.cost,
+			quantity: product.volume
+		};
+	} );
+}
+
+/**
+ * Records in Criteo that the visitor viewed the plans page
+ */
+function recordPlansViewInCriteo() {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	recordInCriteo( 'viewItem', {
+		item: '1'
+	} );
+}
+
+/**
+ * Records an event in Criteo
+ *
+ * @param {String} eventName - The name of the 'event' property such as 'viewItem' or 'viewBasket'
+ * @param {Object} eventProps - Additional details about the event such as `{ item: '1' }`
+ *
+ * @returns {void}
+ */
+function recordInCriteo( eventName, eventProps ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	if ( ! hasStartedFetchingScripts ) {
+		return loadTrackingScripts( recordInCriteo.bind( null, eventName, eventProps ) );
+	}
+
+	const events = [];
+	events.push( { event: 'setAccount', account: TRACKING_IDS.criteo } );
+	events.push( { event: 'setSiteType', type: criteoSiteType() } );
+
+	if ( user.get() ) {
+		events.push( { event: 'setEmail', email: [ user.get().email ] } );
+	}
+
+	const conversionEvent = clone( eventProps );
+	conversionEvent.event = eventName;
+	events.push( conversionEvent );
+
+	// The deep clone is necessary because the Criteo script modifies the objects in the
+	// array which causes the console to display different data than is originally added
+	debug( 'Track `' + eventName + '` event in Criteo', cloneDeep( events ) );
+
+	window.criteo_q.push( ...events );
+}
+
+/**
+ * Returns the site type value that Criteo expects
+ *
+ * @note This logic was provided by Criteo and should not be modified
+ *
+ * @returns {String} 't', 'm', or 'd' for tablet, mobile, or desktop
+ */
+function criteoSiteType() {
+	if ( /iPad/.test( navigator.userAgent ) ) {
+		return 't';
+	}
+
+	if ( /Mobile|iP(hone|od)|Android|BlackBerry|IEMobile|Silk/.test( navigator.userAgent ) ) {
+		return 'm';
+	}
+
+	return 'd';
+}
+
+/**
+ * Returns the URL for Quantcast's Purchase Confirmation Tag
+ *
+ * @see https://www.quantcast.com/help/guides/using-the-quantcast-asynchronous-tag/
+ *
+ * @returns {String} The URL
+ */
+function quantcastAsynchronousTagURL() {
+	const protocolAndSubdomain = document.location.protocol === 'https:' ? 'https://secure' : 'http://edge';
+
+	return protocolAndSubdomain + '.quantserve.com/quant.js';
+}
+
+/**
+ * Converts a cost into USD
+ *
+ * @note Don't rely on this for precise conversions, it's meant to be an estimate for ad tracking purposes
+ *
+ * @param {Number} cost - The cost of the cart or product
+ * @param {String} currency - The currency such as `USD`, `JPY`, etc
+ * @returns {String} Or null if the currency is not supported
+ */
+function costToUSD( cost, currency ) {
+	if ( ! isSupportedCurrency( currency ) ) {
+		return null;
+	}
+
+	return ( cost / EXCHANGE_RATES[ currency ] ).toFixed( 3 );
+}
+
+/**
+ * Returns whether a currency is supported
+ *
+ * @param {String} currency - `USD`, `JPY`, etc
+ * @returns {Boolean} Whether there's an exchange rate for the currency
+ */
+function isSupportedCurrency( currency ) {
+	return Object.keys( EXCHANGE_RATES ).indexOf( currency ) !== -1;
 }
 
 module.exports = {
@@ -286,8 +557,8 @@ module.exports = {
 		nextFunction();
 	},
 
+	retargetViewPlans,
 	recordAddToCart,
-	recordPurchase,
-	recordOrderInAtlas,
-	recordConversionInOneByAOL
+	recordViewCheckout,
+	recordOrder
 };

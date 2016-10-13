@@ -27,7 +27,7 @@ import {
 	plansList,
 	PLAN_FREE,
 	PLAN_JETPACK_FREE, 
-	PLAN_PERSONAL,
+	PLAN_PERSONAL
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
 import SitesList from 'lib/sites-list';
@@ -191,6 +191,7 @@ export const isPlanFeaturesEnabled = () => {
 	return isEnabled( 'manage/plan-features' );
 };
 
+
 export function plansLink( url, site, intervalType ) {
 	if ( 'monthly' === intervalType ) {
 		url += '/monthly';
@@ -210,7 +211,9 @@ export function applyTestFiltersToPlansList( planName ) {
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests
 	const removeDisabledFeatures = () => {};
+
 	const updatePlanDescriptions = () => {};
+
 	const updatePlanFeatures = () => {};
 
 	removeDisabledFeatures();

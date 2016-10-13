@@ -56,7 +56,7 @@ module.exports = React.createClass( {
 	},
 
 	getConnectAnotherElement: function() {
-		if ( serviceConnections.supportsMultipleConnectionsPerSite( this.props.service.name ) ) {
+		if ( serviceConnections.supportsMultipleConnectionsPerSite( this.props.service.ID ) ) {
 			return (
 				<a onClick={ this.connectAnother } className="button new-account">
 					{ this.translate( 'Connect a different account', { comment: 'Sharing: Publicize connections' } ) }
@@ -67,7 +67,7 @@ module.exports = React.createClass( {
 
 	connectAnother: function() {
 		this.props.onAddConnection();
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.name );
+		analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.ID );
 	},
 
 	render: function() {

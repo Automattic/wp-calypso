@@ -3,9 +3,7 @@
  */
 import { combineReducers } from 'redux';
 import debugFactory from 'debug';
-import moment from 'moment';
 import omit from 'lodash/omit';
-import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
@@ -100,7 +98,6 @@ function system( state = {}, action ) {
 		}
 
 		case PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE: {
-			let lastUpdated;
 			const { data } = action;
 
 			debug( 'Received WPCOM device registration results', data );
@@ -109,19 +106,10 @@ function system( state = {}, action ) {
 				return state;
 			}
 
-			if ( data._headers && data._headers.Date ) {
-				lastUpdated = new Date( data._headers.Date );
-				if ( lastUpdated.getTime() ) {
-					// Calling moment with non-ISO date strings is deprecated
-					// see: https://github.com/moment/moment/issues/1407
-					lastUpdated = lastUpdated.toISOString();
-				}
-			}
-
 			return Object.assign( {}, state, {
-				wpcomSubscription: Object.assign( {}, pick( data, [ 'ID', 'settings' ] ), {
-					lastUpdated: moment( lastUpdated ).format()
-				} )
+				wpcomSubscription: {
+					ID: data.ID.toString(),
+					settings: data.settings }
 			} );
 		}
 	}
@@ -175,6 +163,12 @@ function settings( state = {}, action ) {
 		case PUSH_NOTIFICATIONS_TOGGLE_UNBLOCK_INSTRUCTIONS: {
 			return Object.assign( {}, state, {
 				showingUnblockInstructions: ! state.showingUnblockInstructions
+			} );
+		}
+
+		case PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE: {
+			return Object.assign( {}, state, {
+				enabled: true
 			} );
 		}
 	}

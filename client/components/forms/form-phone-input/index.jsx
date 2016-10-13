@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/noop' ),
-	head = require( 'lodash/head' ),
-	filter = require( 'lodash/filter' );
+var React = require( 'react' );
+import { noop, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -95,9 +93,9 @@ module.exports = React.createClass( {
 
 	_getCountryData: function() {
 		// TODO: move this to country-list or CountrySelect
-		return head( filter( this.props.countriesList.get(), {
+		return find( this.props.countriesList.get(), {
 			code: this.state.countryCode
-		} ) );
+		} );
 	},
 
 	_handleCountryChange: function( newValue ) {

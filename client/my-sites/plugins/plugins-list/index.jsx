@@ -9,7 +9,6 @@ import includes from 'lodash/includes';
 import negate from 'lodash/negate';
 import range from 'lodash/range';
 import isEqual from 'lodash/isEqual';
-import map from 'lodash/map';
 
 /**
  * Internal dependencies
@@ -76,7 +75,7 @@ export default React.createClass( {
 		if ( ! isEqual( this.state.selectedPlugins, nextState.selectedPlugins ) ) {
 			return true;
 		}
-		if ( this.shouldComponentUpdateNotices( this.state.notices, nextState.notices) ) {
+		if ( this.shouldComponentUpdateNotices( this.state.notices, nextState.notices ) ) {
 			return true;
 		}
 
@@ -113,7 +112,7 @@ export default React.createClass( {
 
 	setBulkSelectionState( plugins, selectionState ) {
 		let slugsToBeUpdated = {};
-		plugins.forEach( plugin => slugsToBeUpdated[ plugin.slug] = this.hasNoSitesThatCanManage( plugin ) ? false : selectionState );
+		plugins.forEach( plugin => slugsToBeUpdated[ plugin.slug ] = this.hasNoSitesThatCanManage( plugin ) ? false : selectionState );
 
 		this.setState( { selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ) } );
 	},
@@ -290,7 +289,7 @@ export default React.createClass( {
 						site: siteName
 					}
 				} );
-				break;
+
 			case '1 site n plugins':
 				return this.translate( 'You are about to remove {{em}}%(numberOfPlugins)d plugins from %(site)s{{/em}}.{{p}}This will deactivate the plugins and delete all associated files and data.{{/p}}', {
 					components: {
@@ -302,7 +301,7 @@ export default React.createClass( {
 						site: siteName
 					}
 				} );
-				break;
+
 			case 'n sites 1 plugin':
 				return this.translate( 'You are about to remove {{em}}%(plugin)s from %(numberOfSites)d sites{{/em}}.{{p}}This will deactivate the plugin and delete all associated files and data.{{/p}}', {
 					components: {
@@ -314,7 +313,7 @@ export default React.createClass( {
 						numberOfSites: siteListSize
 					}
 				} );
-				break;
+
 			case 'n sites n plugins':
 				return this.translate( 'You are about to remove {{em}}%(numberOfPlugins)d plugins from %(numberOfSites)d sites{{/em}}.{{p}}This will deactivate the plugins and delete all associated files and data.{{/p}}', {
 					components: {
@@ -326,7 +325,6 @@ export default React.createClass( {
 						numberOfSites: siteListSize
 					}
 				} );
-				break;
 		}
 	},
 
@@ -373,7 +371,7 @@ export default React.createClass( {
 					<SectionHeader key="plugins-list__section-placeholder" label={ this.props.header } className="plugins-list__section-actions is-placeholder" />
 					<div className={ itemListClasses }>{ this.renderPlaceholders() }</div>
 				</div>
-				)
+				);
 		}
 
 		if ( isEmpty( this.props.plugins ) ) {

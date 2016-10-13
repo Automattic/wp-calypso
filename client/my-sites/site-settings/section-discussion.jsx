@@ -7,10 +7,9 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
-	DiscussionForm = require( 'my-sites/site-settings/form-discussion' );
+var DiscussionForm = require( 'my-sites/site-settings/form-discussion' );
 
-module.exports = React.createClass({
+module.exports = React.createClass( {
 	displayName: 'SiteSettingsDiscussion',
 
 	componentWillMount: function() {
@@ -18,10 +17,8 @@ module.exports = React.createClass({
 	},
 
 	render: function() {
-
 		return (
 			<DiscussionForm site={ this.props.site } />
 		);
-
 	}
-});
+} );

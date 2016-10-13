@@ -85,11 +85,10 @@ export function queuedRequests( state = {}, action ) {
 			return assign( {}, state, {
 				[ action.payload.feed_ID ]: true
 			} );
-			break;
+
 		case READER_FEED_REQUEST_SUCCESS:
 		case READER_FEED_REQUEST_FAILURE:
 			return omit( state, action.payload.feed_ID );
-			break;
 	}
 	return state;
 }

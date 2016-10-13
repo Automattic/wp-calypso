@@ -24,15 +24,14 @@ var TokenInput = React.createClass( {
 	mixins: [ PureRenderMixin ],
 
 	render: function() {
+		const props = { ...this.props, onChange: this._onChange };
+
 		return (
 			<input
 				ref="input"
 				type="text"
-				disabled={ this.props.disabled }
-				value={ this.props.value }
+				{ ...props }
 				size={ this.props.value.length + 1 }
-				onBlur={ this.props.onBlur }
-				onChange={ this._onChange }
 				className="token-field__input"
 			/>
 		);

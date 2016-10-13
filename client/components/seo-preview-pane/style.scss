@@ -1,6 +1,7 @@
 .seo-preview-pane {
 	display: flex;
 	flex-direction: column;
+	height: 100%;
 
 	@include breakpoint( ">660px" ) {
 		flex-direction: row;
@@ -25,7 +26,7 @@
 
 		.vertical-menu__items.is-selected {
 			border-left: 0;
-    		border-bottom: 3px solid #0087be;
+			border-bottom: 3px solid #0087be;
 		}
 
 		.vertical-menu__items__social-label {
@@ -85,12 +86,13 @@
 
 .seo-preview-pane__preview-area {
 	margin: 10px auto;
+	overflow-y: scroll;
 }
 
 .seo-preview-pane__preview {
-	padding: 10px;
 	min-width: 400px;
 	height: auto;
+	margin: 0 10px;
 
 	background-color: $white;
 	border: 1px solid lighten( $gray, 25% );
@@ -99,11 +101,4 @@
 .seo-preview-pane__message {
 	padding: 10px;
 	text-align: center;
-}
-
-.seo-preview-pane__preview-spacer {
-	background: transparent;
-	border: none;
-	height: 100%;
-	width: 100%;
 }

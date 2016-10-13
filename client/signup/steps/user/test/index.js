@@ -1,14 +1,18 @@
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
-import TestUtils from 'react-addons-test-utils' ;
-import useMockery from 'test/helpers/use-mockery' ;
-
+import { identity, noop } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import sinon from 'sinon';
+import TestUtils from 'react-addons-test-utils' ;
 
-import identity from 'lodash/identity';
+/**
+ * Internal dependencies
+ */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery' ;
 
 describe( '#signupStep User', () => {
 	let User, testElement, rendered, EMPTY_COMPONENT;
@@ -18,6 +22,7 @@ describe( '#signupStep User', () => {
 	useMockery( ( mockery ) => {
 		EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
 
+		mockery.registerMock( 'lib/abtest', noop );
 		mockery.registerMock( 'lib/analytics', {} );
 		mockery.registerMock( 'components/signup-form', EMPTY_COMPONENT );
 		mockery.registerMock( 'signup/step-wrapper', EMPTY_COMPONENT );
@@ -73,7 +78,7 @@ describe( '#signupStep User', () => {
 
 			spyComponentProps = sinon.spy( User.prototype, 'componentWillReceiveProps' );
 
-			let element = React.createElement( User, {
+			const element = React.createElement( User, {
 				subHeaderText: 'test subheader message',
 				flowName: 'someOtherFlow'
 			} );
@@ -85,7 +90,7 @@ describe( '#signupStep User', () => {
 		} );
 
 		it( 'should show community subheader text when new flow has user as first step', () => {
-			let testProps = {
+			const testProps = {
 				subHeaderText: 'My test message',
 				flowName: 'userAsFirstStepInFlow'
 			};
@@ -99,7 +104,7 @@ describe( '#signupStep User', () => {
 		} );
 
 		it( 'should show provided subheader text when new flow doesn\'t have user as first step', () => {
-			let testProps = {
+			const testProps = {
 				subHeaderText: 'My test message',
 				flowName: 'another test message test'
 			};

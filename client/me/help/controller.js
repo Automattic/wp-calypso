@@ -11,29 +11,44 @@ import i18n from 'i18n-calypso';
  */
 import analytics from 'lib/analytics';
 import route from 'lib/route';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import config from 'config';
 import { renderWithReduxStore } from 'lib/react-helpers';
+import HelpComponent from './main';
+import CoursesComponent from './help-courses';
+import ContactComponent from './help-contact';
 
-module.exports = {
-	help: function( context ) {
-		var Help = require( './main' ),
-			basePath = route.sectionify( context.path );
+export default {
+	help( context ) {
+		const basePath = route.sectionify( context.path );
 
-		titleActions.setTitle( i18n.translate( 'Help', { textOnly: true } ) );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) );
 
 		analytics.pageView.record( basePath, 'Help' );
 
 		renderWithReduxStore(
-			React.createElement( Help ),
+			<HelpComponent isCoursesEnabled={ config.isEnabled( 'help/courses' ) } />,
 			document.getElementById( 'primary' ),
 			context.store
 		);
 	},
 
-	contact: function( context ) {
-		var ContactComponent = require( './help-contact' ),
-			basePath = route.sectionify( context.path );
+	courses( context ) {
+		const basePath = route.sectionify( context.path );
+
+		analytics.pageView.record( basePath, 'Help > Courses' );
+
+		ReactDom.render(
+			<ReduxProvider store={ context.store } >
+				<CoursesComponent />
+			</ReduxProvider>,
+			document.getElementById( 'primary' )
+		);
+	},
+
+	contact( context ) {
+		const basePath = route.sectionify( context.path );
 
 		analytics.pageView.record( basePath, 'Help > Contact' );
 

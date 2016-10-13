@@ -5,7 +5,7 @@
  */
 var webpack = require( 'webpack' ),
 	path = require( 'path' ),
-	config = require( 'config' );
+	DashboardPlugin = require('webpack-dashboard/plugin');
 
 /**
  * Internal dependencies
@@ -13,7 +13,7 @@ var webpack = require( 'webpack' ),
 var config = require( './server/config' ),
 	sections = require( './client/sections' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
-	PragmaCheckPlugin = require( 'server/pragma-checker' );
+	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 /**
  * Internal variables
@@ -117,7 +117,7 @@ jsLoader = {
 };
 
 if ( CALYPSO_ENV === 'development' ) {
-	webpackConfig.plugins.push( new PragmaCheckPlugin() );
+	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
 		'webpack-dev-server/client?/',
@@ -142,6 +142,18 @@ if ( CALYPSO_ENV === 'development' ) {
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot' );
 	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
+}
+
+if ( CALYPSO_ENV === 'production' ) {
+	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin(
+		/^debug$/,
+		path.join( __dirname, 'client', 'lib', 'debug-noop' )
+	) );
+}
+
+if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
+	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'client-records.json' ),
+	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ) } ) );
 }
 
 webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );

@@ -1,6 +1,5 @@
 /** @ssr-ready **/
-import React, { PropTypes } from 'react';
-import PureComponent from 'react-pure-render/component';
+import React, { PropTypes, PureComponent } from 'react';
 
 const baseDomain = url =>
 	url
@@ -24,8 +23,9 @@ export class TwitterPreview extends PureComponent {
 		return (
 			<div className="twitter-card-preview__container">
 				<div className={ `twitter-card-preview twitter-card-preview__${ type }` }>
-					<div className="twitter-card-preview__image" style={ previewImageStyle }>
-					</div>
+					{ image &&
+						<div className="twitter-card-preview__image" style={ previewImageStyle } />
+					}
 					<div className="twitter-card-preview__body">
 						<div className="twitter-card-preview__title">
 							{ title }

@@ -7,7 +7,6 @@ import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 import qs from 'qs';
 import isEmpty from 'lodash/isEmpty';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -15,11 +14,11 @@ import i18n from 'i18n-calypso';
 import config from 'config';
 import route from 'lib/route';
 import analytics from 'lib/analytics';
-import layoutFocus from 'lib/layout-focus';
 import SignupComponent from './main';
 import utils from './utils';
 import userModule from 'lib/user';
-import titleActions from 'lib/screen-title/actions';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+
 const user = userModule();
 
 /**
@@ -84,9 +83,7 @@ export default {
 		analytics.pageView.record( basePath, basePageTitle + ' > Start > ' + flowName + ' > ' + stepName );
 
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		layoutFocus.set( 'content' );
-
-		titleActions.setTitle( i18n.translate( 'Create an account' ) );
+		context.store.dispatch( setLayoutFocus( 'content' ) );
 
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },

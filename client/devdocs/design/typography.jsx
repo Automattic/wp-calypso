@@ -69,8 +69,8 @@ export default React.createClass( {
 		};
 
 		return (
-			<Main className="design-assets">
-				<div className="design-assets__group">
+			<Main className="design">
+				<div className="docs__design-group">
 					<h2>
 						<a href="/devdocs/design/typography">Typography</a>
 					</h2>

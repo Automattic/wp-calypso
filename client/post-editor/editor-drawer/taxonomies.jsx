@@ -15,6 +15,7 @@ import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostTypeTaxonomies } from 'state/post-types/taxonomies/selectors';
+import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import Accordion from 'components/accordion';
 import Gridicon from 'components/gridicon';
 import TermTokenField from 'post-editor/term-token-field';
@@ -32,7 +33,11 @@ function isSkippedTaxonomy( postType, taxonomy ) {
 	return false;
 }
 
-function EditorDrawerTaxonomies( { translate, siteId, postType, taxonomies, terms } ) {
+function EditorDrawerTaxonomies( { translate, siteId, postType, isSupported, taxonomies, terms } ) {
+	if ( ! isSupported ) {
+		return null;
+	}
+
 	return (
 		<div className="editor-drawer__taxonomies">
 			{ siteId && postType && (
@@ -83,6 +88,7 @@ EditorDrawerTaxonomies.propTypes = {
 	translate: PropTypes.func,
 	siteId: PropTypes.number,
 	postType: PropTypes.string,
+	isSupported: PropTypes.bool,
 	terms: PropTypes.oneOfType( [
 		PropTypes.object,
 		PropTypes.array
@@ -94,10 +100,12 @@ export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 	const postId = getEditorPostId( state );
 	const postType = getEditedPostValue( state, siteId, postId, 'type' );
+	const isSupported = false !== isJetpackMinimumVersion( state, siteId, '4.1.0' );
 
 	return {
 		siteId,
 		postType,
+		isSupported,
 		terms: getEditedPostValue( state, siteId, postId, 'terms' ),
 		taxonomies: getPostTypeTaxonomies( state, siteId, postType )
 	};

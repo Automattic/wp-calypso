@@ -30,15 +30,12 @@ import DomainSearchResults from 'components/domains/domain-search-results';
 import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
 import analyticsMixin from 'lib/mixins/analytics';
 import { getCurrentUser } from 'state/current-user/selectors';
-import { abtest } from 'lib/abtest';
 import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
-import cartItems from 'lib/cart-values/cart-items';
 import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError
 } from 'state/domains/suggestions/selectors';
 import support from 'lib/url/support';
-import * as upgradesActions from '../../../lib/upgrades/actions/cart';
 
 const domains = wpcom.domains();
 
@@ -47,7 +44,7 @@ const SUGGESTION_QUANTITY = 10;
 const INITIAL_SUGGESTION_QUANTITY = 2;
 
 const analytics = analyticsMixin( 'registerDomain' ),
-	searchVendor = abtest( 'domainSuggestionVendor' );
+	searchVendor = 'domainsbot';
 
 let searchQueue = [],
 	searchStackTimer = null,
@@ -268,6 +265,7 @@ const RegisterDomainStep = React.createClass( {
 					delaySearch={ true }
 					delayTimeout={ 1000 }
 					dir="ltr"
+					maxLength={ 60 }
 				/>
 			</div>
 		);
@@ -315,7 +313,8 @@ const RegisterDomainStep = React.createClass( {
 						this.showValidationErrorMessage( domain, error );
 						return callback();
 					}
-					if ( ! domain.match( /.{3,}\..{2,}/ ) ) {
+
+					if ( ! domain.match( /^[A-Za-z][A-Za-z0-9\.-]{2,}\.[A-Za-z]{2,}$/ ) ) {
 						return callback();
 					}
 					const timestamp = Date.now();
@@ -347,7 +346,7 @@ const RegisterDomainStep = React.createClass( {
 							query: domain,
 							quantity: SUGGESTION_QUANTITY,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
-							vendor: abtest( 'domainSuggestionVendor' )
+							vendor: searchVendor
 						},
 						timestamp = Date.now();
 
@@ -443,7 +442,7 @@ const RegisterDomainStep = React.createClass( {
 			isSearchedDomain = function( suggestion ) {
 				return suggestion.domain_name === lastDomainSearched;
 			},
-			availableDomain = find( this.state.searchResults, isSearchedDomain );
+			availableDomain = this.state.lastDomainError ? undefined : find( this.state.searchResults, isSearchedDomain );
 		let suggestions = reject( this.state.searchResults, isSearchedDomain ),
 			onAddMapping;
 
@@ -495,7 +494,7 @@ const RegisterDomainStep = React.createClass( {
 			mapDomainUrl = this.props.mapDomainUrl;
 		} else {
 			const query = qs.stringify( { initialQuery: this.state.lastQuery.trim() } );
-			mapDomainUrl = `${this.props.basePath}/mapping`;
+			mapDomainUrl = `${ this.props.basePath }/mapping`;
 			if ( this.props.selectedSite ) {
 				mapDomainUrl += `/${ this.props.selectedSite.slug }?${ query }`;
 			}
@@ -531,20 +530,31 @@ const RegisterDomainStep = React.createClass( {
 						components: {
 							a: <a
 								target="_blank"
+								rel="noopener noreferrer"
 								href={ `https://dotblog.wordpress.com/
 									?email=${ this.props.currentUser && encodeURIComponent( this.props.currentUser.email ) || '' }
 									&domain=${ domain }`
-									}/>
+									} />
 						}
 					}
 				);
 				severity = 'info';
 				break;
 			case 'not_registrable':
-				if ( domain.indexOf( '.' ) ) {
-					message = this.translate( 'Sorry but %(domain)s cannot be registered on WordPress.com.', {
-						args: { domain: domain }
-					} );
+				const tldIndex = domain.lastIndexOf( '.' );
+				if ( tldIndex !== -1 ) {
+					message = this.translate(
+						'To use a domain ending with {{strong}}%(tld)s{{/strong}} on your site, ' +
+						'you can register it elsewhere first and then add it here. {{a}}Learn more{{/a}}.',
+						{
+							args: { tld: domain.substring( tldIndex ) },
+							components: {
+								strong: <strong />,
+								a: <a target="_blank" rel="noopener noreferrer" href={ support.MAP_EXISTING_DOMAIN } />
+							}
+						}
+					);
+					severity = 'info';
 				}
 				break;
 			case 'not_available':
@@ -558,12 +568,14 @@ const RegisterDomainStep = React.createClass( {
 			case 'mappable_but_blacklisted_domain':
 				if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 					message = this.translate(
-						'Due to {{a1}}trademark policy{{/a1}}, we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. Please {{a2}}contact support{{/a2}} if you have any questions.',
+						'Due to {{a1}}trademark policy{{/a1}}, ' +
+						'we are not able to allow domains containing {{strong}}WordPress{{/strong}} to be registered or mapped here. ' +
+						'Please {{a2}}contact support{{/a2}} if you have any questions.',
 						{
 							components: {
 								strong: <strong />,
-								a1: <a target="_blank" href="http://wordpressfoundation.org/trademark-policy/"/>,
-								a2: <a href={ support.CALYPSO_CONTACT }/>
+								a1: <a target="_blank" rel="noopener noreferrer" href="http://wordpressfoundation.org/trademark-policy/" />,
+								a2: <a href={ support.CALYPSO_CONTACT } />
 							}
 						}
 					);
@@ -581,7 +593,9 @@ const RegisterDomainStep = React.createClass( {
 				break;
 
 			case 'mappable_but_restricted_domain':
-				message = this.translate( 'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.' );
+				message = this.translate(
+					'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.'
+				);
 				break;
 
 			case 'empty_query':
@@ -595,13 +609,13 @@ const RegisterDomainStep = React.createClass( {
 				break;
 
 			case 'invalid_query':
-				message = this.translate( 'Sorry but %(domain)s does not appear to be a valid domain name.', {
+				message = this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'server_error':
-				message = this.translate( 'Sorry but there was a problem processing your request. Please try again in a few minutes.' );
+				message = this.translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
 				break;
 
 			case 'mappable_but_recently_mapped':

@@ -1,22 +1,20 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	classNames = require( 'classnames' ),
-	omit = require( 'lodash/omit' ),
-	isEmpty = require( 'lodash/isEmpty' );
+import classNames from 'classnames';
+import { omit } from 'lodash';
+import React, { Children } from 'react';
 
 /**
  * Internal dependencies
  */
-var Button = require( 'components/button' );
+import Button from 'components/button';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'FormsButton',
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			isSubmitting: false,
 			isPrimary: true,
@@ -24,21 +22,22 @@ module.exports = React.createClass( {
 		};
 	},
 
-	getDefaultButtonAction: function() {
+	getDefaultButtonAction() {
 		return this.props.isSubmitting ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' );
 	},
 
-	render: function() {
-		var buttonClasses = classNames( {
-			'form-button': true
-		} );
+	render() {
+		const { children, className, isPrimary, ...props } = this.props,
+			buttonClasses = classNames( className, {
+				'form-button': true
+			} );
 
 		return (
 			<Button
-				{ ...omit( this.props, 'className' ) }
-				primary={ this.props.isPrimary }
-				className={ classnames( this.props.className, buttonClasses ) }>
-				{ isEmpty( this.props.children ) ? this.getDefaultButtonAction() : this.props.children }
+				{ ...omit( props, 'isSubmitting' ) }
+				primary={ isPrimary }
+				className={ buttonClasses }>
+				{ Children.count( children ) ? children : this.getDefaultButtonAction() }
 			</Button>
 		);
 	}

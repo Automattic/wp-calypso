@@ -12,14 +12,14 @@ import { bindActionCreators } from 'redux';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { getFlowType } from 'state/jetpack-connect/selectors';
 import Main from 'components/main';
-import ConnectHeader from './connect-header';
+import StepHeader from '../step-header';
 import observe from 'lib/mixins/data-observe';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import * as upgradesActions from 'lib/upgrades/actions';
 import { userCan } from 'lib/site/utils';
-import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
+import { getAuthorizationData, isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import { goBackToWpAdmin } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -37,7 +37,14 @@ const Plans = React.createClass( {
 		destinationType: React.PropTypes.string,
 		sites: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
-		showJetpackFreePlan: React.PropTypes.bool
+		showJetpackFreePlan: React.PropTypes.bool,
+		intervalType: React.PropTypes.string
+	},
+
+	getDefaultProps() {
+		return {
+			intervalType: 'yearly'
+		};
 	},
 
 	componentDidMount() {
@@ -50,13 +57,12 @@ const Plans = React.createClass( {
 		}
 	},
 
-	componentWillReceiveProps( props ) {
-		const selectedSite = props.sites.getSelectedSite();
-		if ( this.hasPlan( selectedSite ) ) {
-			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
+	componentDidUpdate() {
+		if ( this.hasPlan( this.props.selectedSite ) ) {
+			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
 		}
-		if ( ! props.canPurchasePlans ) {
-			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
+		if ( ! this.props.canPurchasePlans ) {
+			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
 		}
 
 		if ( ! this.props.isRequestingPlans && ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) ) {
@@ -90,12 +96,11 @@ const Plans = React.createClass( {
 	},
 
 	selectFreeJetpackPlan() {
-		const selectedSite = this.props.sites.getSelectedSite();
 		this.props.recordTracksEvent( 'calypso_jpc_plans_submit_free', {
 			user: this.props.userId
 		} );
-		if ( isCalypsoStartedConnection( this.props.jetpackConnectSessions, selectedSite.slug ) ) {
-			page.redirect( CALYPSO_REDIRECTION_PAGE + selectedSite.slug );
+		if ( this.props.calypsoStartedConnection ) {
+			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
 		} else {
 			const { queryObject } = this.props.jetpackConnectAuthorize;
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
@@ -103,8 +108,7 @@ const Plans = React.createClass( {
 	},
 
 	selectPlan( cartItem ) {
-		const selectedSite = this.props.sites.getSelectedSite();
-		const checkoutPath = `/checkout/${ selectedSite.slug }`;
+		const checkoutPath = `/checkout/${ this.props.selectedSite.slug }`;
 		if ( cartItem.product_slug === 'jetpack_free' ) {
 			return this.selectFreeJetpackPlan();
 		}
@@ -127,9 +131,7 @@ const Plans = React.createClass( {
 			return null;
 		}
 
-		const selectedSite = this.props.sites.getSelectedSite();
-
-		if ( ! this.props.canPurchasePlans || this.hasPlan( selectedSite ) ) {
+		if ( ! this.props.canPurchasePlans || this.hasPlan( this.props.selectedSite ) ) {
 			return null;
 		}
 
@@ -137,21 +139,21 @@ const Plans = React.createClass( {
 			<div>
 				<Main wideLayout>
 					<QueryPlans />
-					<QuerySitePlans siteId={ selectedSite.ID } />
+					<QuerySitePlans siteId={ this.props.selectedSite.ID } />
 					<div className="jetpack-connect__plans">
-						<ConnectHeader
-							showLogo={ false }
+						<StepHeader
 							headerText={ this.translate( 'Your site is now connected!' ) }
-							subHeaderText={ this.translate( 'Now pick a plan that\'s right for you' ) }
+							subHeaderText={ this.translate( 'Now pick a plan that\'s right for you.' ) }
 							step={ 1 }
 							steps={ 3 } />
 
-						<div id="plans" className="plans has-sidebar">
+						<div id="plans">
 							<PlansFeaturesMain
-								site={ selectedSite }
+								site={ this.props.selectedSite }
 								isInSignup={ true }
+								isInJetpackConnect={ true }
 								onUpgradeClick={ this.selectPlan }
-								intervalType="yearly" />
+								intervalType={ this.props.intervalType } />
 						</div>
 					</div>
 				</Main>
@@ -170,14 +172,15 @@ export default connect(
 		};
 
 		return {
+			selectedSite,
 			sitePlans: getPlansBySite( state, selectedSite ),
-			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
-			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
+			jetpackConnectAuthorize: getAuthorizationData( state ),
 			userId: user ? user.ID : null,
 			canPurchasePlans: userCan( 'manage_options', selectedSite ),
-			flowType: getFlowType( state.jetpackConnect.jetpackConnectSessions, selectedSite ),
+			flowType: getFlowType( state, selectedSite && selectedSite.slug ),
 			isRequestingPlans: isRequestingPlans( state ),
-			getPlanBySlug: searchPlanBySlug
+			getPlanBySlug: searchPlanBySlug,
+			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSite.slug )
 		};
 	},
 	( dispatch ) => {

@@ -21,8 +21,8 @@ const HappinessSupport = React.createClass( {
 	getInitialState() {
 		return {
 			user: sample( [
-				{ display_name: 'Erica', avatar_URL: '//gravatar.com/avatar/066a6509253d682f4e0d05b048b08b2c' },
-				{ display_name: 'Paolo', avatar_URL: '//gravatar.com/avatar/3cb9afe63d364690c0e188fb16473277' }
+				{ display_name: 'Spencer', avatar_URL: '//gravatar.com/avatar/368dd11821ca7e9293d1707ab838f5c7' },
+				{ display_name: 'Luca', avatar_URL: '//gravatar.com/avatar/7f7ba3ba8305287770e0cba76d1eb3db' }
 			] )
 		};
 	},
@@ -62,7 +62,7 @@ const HappinessSupport = React.createClass( {
 		}
 
 		return (
-			<Button href={ url } target="_blank">
+			<Button href={ url } target="_blank" rel="noopener noreferrer">
 				{ this.translate( 'Search our support site' ) }
 			</Button>
 		);

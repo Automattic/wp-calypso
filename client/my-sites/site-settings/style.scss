@@ -106,12 +106,12 @@
 		}
 	}
 
-	.seo-form .form-text-input-with-affixes__prefix {
+	.seo-settings__seo-form .form-text-input-with-affixes__prefix {
 		min-width: 60px;
 		text-align: center;
 	}
 
-	.seo-sitemap {
+	.seo-settings__seo-sitemap {
 		word-wrap: break-word;
 		word-break: break-word;
 	}
@@ -121,9 +121,39 @@
 		font-weight: bold;
 	}
 
-	.seo-form .counted-textarea {
+	.seo-settings__seo-form .counted-textarea {
 		&.is-exceeding-acceptable-length {
 			background: $alert-yellow;
+		}
+	}
+
+	.seo-settings__seo-form .section-header {
+		margin-top: 32px;
+	}
+
+	.seo-settings__seo-form .seo-settings__preview-button {
+		display: block;
+		float: left;
+		margin-right: 24px;
+	}
+
+	.seo-settings__seo-form .seo-settings__preview-explanation {
+		display: block;
+		float: left;
+		line-height: 40px;
+	}
+
+	fieldset.site-icon-setting {
+		margin-bottom: 24px;
+	}
+}
+
+.site-settings__amp {
+	.section-header__actions {
+		display: flex;
+
+		button {
+			margin-left: 15px;
 		}
 	}
 }
@@ -143,8 +173,8 @@
 
 .site-settings__footer-credit-explanation {
 	display:flex;
-    flex-direction: row;
-    justify-content: space-between;
+	flex-direction: row;
+	justify-content: space-between;
 }
 
 
@@ -163,6 +193,15 @@
 
 .site-settings .site-settings__custom-post-type p.form-setting-explanation {
 	margin: 0 0 16px;
+}
+
+.site-settings__custom-post-type-fieldset .feature-example__content {
+	box-sizing: border-box;
+	padding: 1px; // Example overflow is hidden, obscuring border effect from box-shadow
+}
+
+.site-settings__custom-post-type-fieldset .feature-example__gradient {
+	background: linear-gradient( to bottom, rgba( $white, 0.4 ), rgba( $white, 1 ) );
 }
 
 .press-this {
@@ -304,4 +343,3 @@
 .site-settings__jetpack-prompt-text {
 	flex: 4;
 }
-

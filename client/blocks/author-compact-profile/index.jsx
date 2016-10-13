@@ -6,54 +6,77 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import ReaderAuthorLink from 'components/reader-author-link';
-import ReaderSiteStreamLink from 'components/reader-site-stream-link';
+import ReaderAvatar from 'blocks/reader-avatar';
+import ReaderAuthorLink from 'blocks/reader-author-link';
+import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
 import ReaderFollowButton from 'reader/follow-button';
 import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
+import { getStreamUrl } from 'reader/route';
+import { numberFormat } from 'i18n-calypso';
+import { has, includes } from 'lodash';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
 		author: React.PropTypes.object.isRequired,
 		siteName: React.PropTypes.string,
 		siteUrl: React.PropTypes.string,
+		feedUrl: React.PropTypes.string,
 		followCount: React.PropTypes.number,
 		feedId: React.PropTypes.number,
-		siteId: React.PropTypes.number
+		siteId: React.PropTypes.number,
+		siteIcon: React.PropTypes.string,
+		feedIcon: React.PropTypes.string,
+		post: React.PropTypes.object,
 	},
 
 	render() {
-		const { author, siteName, siteUrl, followCount, feedId, siteId } = this.props;
+		const { author, siteIcon, feedIcon, siteName, siteUrl, feedUrl, followCount, feedId, siteId, post } = this.props;
 
 		if ( ! author ) {
 			return null;
 		}
 
+		const hasAuthorName = has( author, 'name' );
+		const hasMatchingAuthorAndSiteNames = hasAuthorName && siteName.toLowerCase() === author.name.toLowerCase();
+		const classes = classnames( 'author-compact-profile', {
+			'has-author-link': ! hasMatchingAuthorAndSiteNames,
+			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar )
+		} );
+		const streamUrl = getStreamUrl( feedId, siteId );
+		const authorNameBlacklist = [ 'admin' ];
+
+		// If we have a feed URL, use that for the follow button in preference to the site URL
+		const followUrl = feedUrl || siteUrl;
+
 		return (
-			<div className="author-compact-profile">
-				<Gravatar size={ 96 } user={ author } />
-				<ReaderAuthorLink author={ author }>{ author.name }</ReaderAuthorLink>
-				{ siteName && siteUrl
-					? <ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId }>
+			<div className={ classes }>
+				<a href={ streamUrl } className="author-compact-profile__avatar-link">
+					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
+				</a>
+				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && ! includes( authorNameBlacklist, author.name.toLowerCase() ) &&
+					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>{ author.name }</ReaderAuthorLink> }
+				{ siteName &&
+					<ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId } post={ post } >
 						{ siteName }
-					</ReaderSiteStreamLink> : null }
+					</ReaderSiteStreamLink> }
 
 				<div className="author-compact-profile__follow">
 				{ followCount
 					? <div className="author-compact-profile__follow-count">
 					{ this.props.translate(
-						'%(followCount)d follower',
-						'%(followCount)d followers',
+						'%(followCount)s follower',
+						'%(followCount)s followers',
 						{
 							count: followCount,
 							args: {
-								followCount: followCount
+								followCount: numberFormat( followCount )
 							}
 						}
 					) }
 					</div> : null }
 
-				<ReaderFollowButton siteUrl={ siteUrl } />
+					{ followUrl && <ReaderFollowButton siteUrl={ followUrl } /> }
 				</div>
 			</div>
 		);

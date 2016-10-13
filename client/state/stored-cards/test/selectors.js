@@ -33,7 +33,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( getStoredCardById( state, 12345 ) ).to.be.eql( STORED_CARDS_FROM_API[ 1 ] );
+			expect( getStoredCardById( state, '12345' ) ).to.be.eql( STORED_CARDS_FROM_API[ 1 ] );
 		} );
 	} );
 

@@ -12,13 +12,10 @@ import SiteIcon from 'components/site-icon';
 import Gridicon from 'components/gridicon';
 import SiteIndicator from 'my-sites/site-indicator';
 import { getCustomizeUrl } from 'my-sites/themes/helpers';
-import sitesList from 'lib/sites-list';
 import { userCan } from 'lib/site/utils';
 import Tooltip from 'components/tooltip';
 import ExternalLink from 'components/external-link';
 import analytics from 'lib/analytics';
-
-const sites = sitesList();
 
 export default React.createClass( {
 	displayName: 'Site',
@@ -42,8 +39,7 @@ export default React.createClass( {
 			isSelected: false,
 
 			homeLink: false,
-			enableActions: false,
-			disableStarring: true
+			enableActions: false
 		};
 	},
 
@@ -55,16 +51,15 @@ export default React.createClass( {
 		onMouseEnter: React.PropTypes.func,
 		onMouseLeave: React.PropTypes.func,
 		isSelected: React.PropTypes.bool,
+		isHighlighted: React.PropTypes.bool,
 		site: React.PropTypes.object.isRequired,
 		onClick: React.PropTypes.func,
-		enableActions: React.PropTypes.bool,
-		disableStarring: React.PropTypes.bool
+		enableActions: React.PropTypes.bool
 	},
 
 	getInitialState() {
 		return {
 			showActions: false,
-			starTooltip: false,
 			cogTooltip: false
 		};
 	},
@@ -74,21 +69,16 @@ export default React.createClass( {
 			return;
 		}
 
-		this.props.onSelect( event );
+		this.props.onSelect( event, this.props.site.slug );
 		event.preventDefault(); // this doesn't actually do anything...
 	},
 
-	starSite() {
-		const site = this.props.site;
-		sites.toggleStarred( site.ID );
+	onMouseEnter( event ) {
+		this.props.onMouseEnter( event, this.props.site.slug );
 	},
 
-	enableStarTooltip() {
-		this.setState( { starTooltip: true } );
-	},
-
-	disableStarTooltip() {
-		this.setState( { starTooltip: false } );
+	onMouseLeave( event ) {
+		this.props.onMouseLeave( event, this.props.site.slug );
 	},
 
 	enableCogTooltip() {
@@ -97,38 +87,6 @@ export default React.createClass( {
 
 	disableCogTooltip() {
 		this.setState( { cogTooltip: false } );
-	},
-
-	renderStar() {
-		const site = this.props.site;
-
-		if ( ! site || this.props.disableStarring ) {
-			return null;
-		}
-
-		const isStarred = sites.isStarred( site );
-
-		return (
-			<button
-				className="site__star"
-				onClick={ this.starSite }
-				onMouseEnter={ this.enableStarTooltip }
-				onMouseLeave={ this.disableStarTooltip }
-				ref="starButton"
-			>
-				{ isStarred
-					? <Gridicon icon="star" />
-					: <Gridicon icon="star-outline" />
-				}
-				<Tooltip
-					context={ this.refs && this.refs.starButton }
-					isVisible={ this.state.starTooltip && ! isStarred }
-					position="bottom"
-				>
-					{ this.translate( 'Star this site' ) }
-				</Tooltip>
-			</button>
-		);
 	},
 
 	renderCog() {
@@ -170,12 +128,14 @@ export default React.createClass( {
 			url = this.props.site.options.admin_url + 'options-general.php';
 		}
 
+		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<ExternalLink icon={ true } href={ url } target="_blank" className="site__edit-icon" onClick={ this.onEditIconClick }>
 				<SiteIcon site={ this.props.site } />
 				<span className="site__edit-icon-text">{ this.translate( 'Edit Icon' ) }</span>
 			</ExternalLink>
 		);
+		/* eslint-enable react/jsx-no-target-blank */
 	},
 
 	getHref() {
@@ -230,6 +190,7 @@ export default React.createClass( {
 			'is-private': site.is_private,
 			'is-redirect': site.options && site.options.is_redirect,
 			'is-selected': this.props.isSelected,
+			'is-highlighted': this.props.isHighlighted,
 			'is-toggled': this.state.showMoreActions,
 			'has-edit-capabilities': userCan( 'manage_options', site )
 		} );
@@ -247,8 +208,8 @@ export default React.createClass( {
 							}
 							onTouchTap={ this.onSelect }
 							onClick={ this.props.onClick }
-							onMouseEnter={ this.props.onMouseEnter }
-							onMouseLeave={ this.props.onMouseLeave }
+							onMouseEnter={ this.onMouseEnter }
+							onMouseLeave={ this.onMouseLeave }
 							aria-label={ this.props.homeLink && site.is_previewable
 								? this.translate( 'Open site %(domain)s in a preview', {
 									args: { domain: site.domain }
@@ -282,22 +243,16 @@ export default React.createClass( {
 									<Gridicon icon="house" size={ 18 } />
 								</span>
 							}
-							{ ! this.props.disableStarring && sites.isStarred( this.props.site ) &&
-								<span className="site__badge">
-									<Gridicon icon="star" size={ 18 } />
-								</span>
-							}
 						</a>
 					: <div className="site__content">
 							{ this.renderEditIcon() }
 							<div className="site__actions">
-								{ this.renderStar() }
 								{ this.renderCog() }
 							</div>
 						</div>
 				}
 				{ this.props.indicator
-					? <SiteIndicator site={ site } onSelect={ this.props.onSelect } />
+					? <SiteIndicator site={ site } />
 					: null
 				}
 				{ this.props.enableActions &&

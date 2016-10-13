@@ -89,13 +89,9 @@ export const counts = ( () => {
 	 * @return {Object}        Updated state
 	 */
 	function transitionPostStateToStatus( state, siteId, postId, status ) {
-		if ( ! state[ siteId ] ) {
-			return state;
-		}
-
 		const postStatusKey = getPostStatusKey( siteId, postId );
 		const postStatus = postStatuses[ postStatusKey ];
-		if ( ! postStatus || ! state[ siteId ][ postStatus.type ] ) {
+		if ( ! postStatus ) {
 			return state;
 		}
 
@@ -107,12 +103,12 @@ export const counts = ( () => {
 		}
 
 		const revisions = subKeys.reduce( ( memo, subKey ) => {
-			const subKeyCounts = state[ siteId ][ postStatus.type ][ subKey ];
+			const subKeyCounts = get( state, [ siteId, postStatus.type, subKey ], {} );
 
 			memo[ subKey ] = {};
 
 			// Decrement count from the current status before transitioning
-			memo[ subKey ][ postStatus.status ] = ( subKeyCounts[ postStatus.status ] || 0 ) - 1;
+			memo[ subKey ][ postStatus.status ] = Math.max( ( subKeyCounts[ postStatus.status ] || 0 ) - 1, 0 );
 
 			// So long as we're not trashing an already trashed post or page,
 			// increment the count for the transitioned status
@@ -130,6 +126,12 @@ export const counts = ( () => {
 			// Otherwise, update object to reflect new status
 			postStatus.status = status;
 		}
+
+		// Ensure that `all` and `mine` keys are always present
+		merge( revisions, {
+			all: {},
+			mine: {}
+		} );
 
 		return merge( {}, state, {
 			[ siteId ]: {

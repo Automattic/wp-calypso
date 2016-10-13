@@ -10,7 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
-import ResizableIframe from 'components/resizable-iframe'
+import ResizableIframe from 'components/resizable-iframe';
 
 export default React.createClass( {
 	displayName: 'ShortcodeFrame',
@@ -26,7 +26,7 @@ export default React.createClass( {
 	getDefaultProps() {
 		return {
 			onLoad: () => {}
-		}
+		};
 	},
 
 	getInitialState: function() {
@@ -79,7 +79,7 @@ export default React.createClass( {
 		return (
 			<ResizableIframe
 				key={ key }
-				{ ...omit( this.props, 'body', 'scripts', 'style' ) }
+				{ ...omit( this.props, 'body', 'scripts', 'styles' ) }
 				src="https://wpcomwidgets.com/render/"
 				onLoad={ this.onFrameLoad }
 				frameBorder="0"

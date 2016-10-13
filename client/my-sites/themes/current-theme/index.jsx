@@ -70,7 +70,9 @@ const CurrentTheme = React.createClass( {
 					{ 'two-buttons': Object.keys( this.props.options ).length === 2 }
 					) } >
 					{ map( this.props.options, ( option, name ) => (
-						<CurrentThemeButton name={ name }
+						<CurrentThemeButton
+							key={ name }
+							name={ name }
 							label={ option.label }
 							icon={ option.icon }
 							href={ currentTheme && option.getUrl( currentTheme ) }

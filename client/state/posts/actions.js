@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import omit from 'lodash/omit';
+import { isNumber, toArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
-import { extendAction } from 'state/utils';
-import { addTerm } from 'state/terms/actions';
+import { normalizePostForApi } from './utils';
+import { getEditedPost } from 'state/posts/selectors';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -149,12 +149,12 @@ export function requestPosts( query = {} ) {
  * Returns an action object to be used in signalling that the specified
  * post updates should be applied to the set of edits.
  *
- * @param  {Object} post   Post attribute updates
  * @param  {Number} siteId Site ID
  * @param  {Number} postId Post ID
+ * @param  {Object} post   Post attribute updates
  * @return {Object}        Action object
  */
-export function editPost( post, siteId, postId ) {
+export function editPost( siteId, postId = null, post ) {
 	return {
 		type: POST_EDIT,
 		post,
@@ -183,12 +183,12 @@ export function resetPostEdits( siteId, postId ) {
  * Returns an action thunk which, when dispatched, triggers a network request
  * to save the specified post object.
  *
- * @param  {Object}   post   Post attributes
  * @param  {Number}   siteId Site ID
  * @param  {Number}   postId Post ID
+ * @param  {Object}   post   Post attributes
  * @return {Function}        Action thunk
  */
-export function savePost( post, siteId, postId ) {
+export function savePost( siteId, postId = null, post ) {
 	return async ( dispatch ) => {
 		dispatch( {
 			type: POST_SAVE,
@@ -198,8 +198,9 @@ export function savePost( post, siteId, postId ) {
 		} );
 
 		let postHandle = wpcom.site( siteId ).post( postId );
+		const normalizedPost = normalizePostForApi( post );
 		postHandle = postHandle[ postId ? 'update' : 'add' ].bind( postHandle );
-		return postHandle( { apiVersion: '1.2' }, post ).then( ( savedPost ) => {
+		return postHandle( { apiVersion: '1.2' }, normalizedPost ).then( ( savedPost ) => {
 			dispatch( {
 				type: POST_SAVE_SUCCESS,
 				siteId,
@@ -228,7 +229,7 @@ export function savePost( post, siteId, postId ) {
  * @return {Function}        Action thunk
  */
 export function trashPost( siteId, postId ) {
-	return savePost( { status: 'trash' }, siteId, postId );
+	return savePost( siteId, postId, { status: 'trash' } );
 }
 
 /**
@@ -287,7 +288,7 @@ export function restorePost( siteId, postId ) {
 				siteId,
 				postId
 			} );
-			dispatch( receivePost( omit( restoredPost, '_headers' ) ) );
+			dispatch( receivePost( restoredPost ) );
 		} ).catch( ( error ) => {
 			dispatch( {
 				type: POST_RESTORE_FAILURE,
@@ -300,9 +301,7 @@ export function restorePost( siteId, postId ) {
 }
 
 /**
- * Returns an action thunk which, when dispatched, triggers a network request
- * to create a new term. All actions dispatched by the thunk will include meta
- * to associate it with the specified post ID.
+ * Returns an action thunk which, when dispatched, adds a term to the current edited post
  *
  * @param  {Number}   siteId   Site ID
  * @param  {String}   taxonomy Taxonomy Slug
@@ -311,5 +310,25 @@ export function restorePost( siteId, postId ) {
  * @return {Function}          Action thunk
  */
 export function addTermForPost( siteId, taxonomy, term, postId ) {
-	return extendAction( addTerm( siteId, taxonomy, term ), { postId } );
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const post = getEditedPost( state, siteId, postId );
+
+		// if there is no post, no term, or term is temporary, bail
+		if ( ! post || ! term || ! isNumber( term.ID ) ) {
+			return;
+		}
+
+		const postTerms = post.terms || {};
+
+		// ensure we have an array since API returns an object
+		const taxonomyTerms = toArray( postTerms[ taxonomy ] );
+		taxonomyTerms.push( term );
+
+		dispatch( editPost( siteId, postId, {
+			terms: {
+				[ taxonomy ]: taxonomyTerms
+			}
+		} ) );
+	};
 }

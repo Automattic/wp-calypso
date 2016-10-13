@@ -12,7 +12,7 @@ import defer from 'lodash/defer';
 /**
  * Internal Dependencies
  */
-import abtest from 'lib/abtest';
+import { abtest } from 'lib/abtest';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
 import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from './controller-helper';
@@ -28,6 +28,8 @@ import { requestGraduate } from 'state/reader/start/actions';
 import { isRequestingGraduation } from 'state/reader/start/selectors';
 import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
 import { preload } from 'sections-preload';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import ReaderSidebarComponent from 'reader/sidebar';
 
 const analyticsPageTitle = 'Reader';
 
@@ -40,10 +42,11 @@ function userHasHistory( context ) {
 	return !! context.lastRoute;
 }
 
-function renderFeedError() {
-	ReactDom.render(
+function renderFeedError( context ) {
+	renderWithReduxStore(
 		React.createElement( FeedError ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -133,6 +136,13 @@ module.exports = {
 		const FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' );
 		const user = getCurrentUser( context.store.getState() );
 		const numberofTries = 3;
+		let graduationThreshold;
+
+		if ( abtest( 'coldStartReader' ) === 'noEmailColdStartWithAutofollows' ) {
+			graduationThreshold = config( 'reader_cold_start_graduation_threshold_with_autofollows' );
+		} else {
+			graduationThreshold = config( 'reader_cold_start_graduation_threshold' );
+		}
 
 		if ( ! user ) {
 			next();
@@ -147,7 +157,7 @@ module.exports = {
 		function checkSubCount( tries ) {
 			if ( FeedSubscriptionStore.getCurrentPage() > 0 || FeedSubscriptionStore.isLastPage() ) {
 				// we have total subs now, make the decision
-				if ( FeedSubscriptionStore.getTotalSubscriptions() < config( 'reader_cold_start_graduation_threshold' ) ) {
+				if ( FeedSubscriptionStore.getTotalSubscriptions() < graduationThreshold ) {
 					defer( page.redirect.bind( page, '/recommendations/start' ) );
 				} else {
 					if ( ! isRequestingGraduation( context.store.getState() ) ) {
@@ -166,13 +176,13 @@ module.exports = {
 	},
 
 	sidebar: function( context, next ) {
-		var ReaderSidebarComponent = require( 'reader/sidebar' );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( ReduxProvider, { store: context.store },
 				React.createElement( ReaderSidebarComponent, { path: context.path } )
 			),
-			document.getElementById( 'secondary' )
+			document.getElementById( 'secondary' ),
+			context.store
 		);
 
 		next();
@@ -184,7 +194,7 @@ module.exports = {
 	},
 
 	following: function( context ) {
-		var FollowingComponent = require( 'reader/following/main' ),
+		var StreamComponent = require( 'reader/following/main' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > Following',
 			followingStore = feedStreamFactory( 'following' ),
@@ -195,11 +205,11 @@ module.exports = {
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 		recordTrack( 'calypso_reader_following_loaded' );
 
-		setPageTitle( i18n.translate( 'Following' ) );
+		setPageTitle( context, i18n.translate( 'Following' ) );
 
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( FollowingComponent, {
+				React.createElement( StreamComponent, {
 					key: 'following',
 					listName: i18n.translate( 'Followed Sites' ),
 					store: followingStore,
@@ -226,7 +236,7 @@ module.exports = {
 					page.redirect( `/read/feeds/${feedId}` );
 				} )
 				.catch( function() {
-					renderFeedError();
+					renderFeedError( context );
 				} );
 		} else {
 			next();
@@ -247,12 +257,11 @@ module.exports = {
 			feed_id: context.params.feed_id
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( FeedStream, {
 				key: 'feed-' + context.params.feed_id,
 				store: feedStore,
 				feedId: context.params.feed_id,
-				setPageTitle: setPageTitle,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,
@@ -264,7 +273,8 @@ module.exports = {
 				suppressSiteNameLink: true,
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -282,12 +292,11 @@ module.exports = {
 			blog_id: context.params.blog_id
 		} );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( SiteStream, {
 				key: 'site-' + context.params.blog_id,
 				store: feedStore,
 				siteId: context.params.blog_id,
-				setPageTitle: setPageTitle,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,
@@ -299,7 +308,8 @@ module.exports = {
 				suppressSiteNameLink: true,
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -309,7 +319,7 @@ module.exports = {
 	},
 
 	readA8C: function( context ) {
-		var FollowingComponent = require( 'reader/following/main' ),
+		var StreamComponent = require( 'reader/stream' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = analyticsPageTitle + ' > A8C',
 			feedStore = feedStreamFactory( 'a8c' ),
@@ -319,11 +329,11 @@ module.exports = {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		setPageTitle( 'Automattic' );
+		setPageTitle( context, 'Automattic' );
 
 		ReactDom.render(
 			React.createElement( ReduxProvider, { store: context.store },
-				React.createElement( FollowingComponent, {
+				React.createElement( StreamComponent, {
 					key: 'read-a8c',
 					className: 'is-a8c',
 					listName: 'Automattic',

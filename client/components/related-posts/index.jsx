@@ -12,7 +12,7 @@ import noop from 'lodash/noop';
 import { relatedPostsForPost } from 'state/reader/related-posts/selectors';
 import { getPost } from 'state/reader/posts/selectors';
 import { getSite } from 'state/reader/sites/selectors';
-import SmallPost from 'components/post-card/small';
+import SmallPost from 'blocks/reader-related-card';
 import QueryReaderRelatedPosts from 'components/data/query-reader-related-posts';
 
 const RelatedPost = React.createClass( {

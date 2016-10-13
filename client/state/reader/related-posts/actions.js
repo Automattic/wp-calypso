@@ -1,8 +1,7 @@
 /**
  * External Dependencies
  */
-import filter from 'lodash/filter';
-import map from 'lodash/map';
+import { filter, map } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -18,22 +17,38 @@ import {
 	receivePosts
 } from 'state/reader/posts/actions';
 import wpcom from 'lib/wp';
+import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from './utils';
 
-export function requestRelatedPosts( siteId, postId ) {
+export function requestRelatedPosts( siteId, postId, scope = SCOPE_ALL ) {
 	return function( dispatch ) {
 		dispatch( {
 			type: READER_RELATED_POSTS_REQUEST,
 			payload: {
 				siteId,
-				postId
+				postId,
+				scope
 			}
 		} );
 
-		return wpcom.undocumented().readSitePostRelated( { site_id: siteId, post_id: postId, meta: 'site' } ).then(
+		const query = {
+			site_id: siteId,
+			post_id: postId,
+			meta: 'site'
+		};
+
+		if ( scope === SCOPE_SAME ) {
+			query.size_local = 2;
+			query.size_global = 0;
+		} else if ( scope === SCOPE_OTHER ) {
+			query.size_local = 0;
+			query.size_global = 2;
+		}
+
+		return wpcom.undocumented().readSitePostRelated( query ).then(
 			response => {
 				dispatch( {
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
-					payload: { siteId, postId }
+					payload: { siteId, postId, scope }
 				} );
 				const sites = filter( map( response && response.posts, 'meta.data.site' ), Boolean );
 				if ( sites && sites.length !== 0 ) {
@@ -49,7 +64,8 @@ export function requestRelatedPosts( siteId, postId ) {
 						payload: {
 							siteId,
 							postId,
-							posts: response && response.posts
+							scope,
+							posts: ( response && response.posts ) || []
 						}
 					} );
 				} );
@@ -57,8 +73,18 @@ export function requestRelatedPosts( siteId, postId ) {
 			err => {
 				dispatch( {
 					type: READER_RELATED_POSTS_REQUEST_FAILURE,
-					payload: { siteId, postId, error: err },
+					payload: { siteId, postId, scope, error: err },
 					error: true
+				} );
+
+				dispatch( {
+					type: READER_RELATED_POSTS_RECEIVE,
+					payload: {
+						siteId,
+						postId,
+						scope,
+						posts: []
+					}
 				} );
 			}
 		);

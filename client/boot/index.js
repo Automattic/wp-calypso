@@ -1,10 +1,14 @@
 // Initialize localStorage polyfill before any dependencies are loaded
 require( 'lib/local-storage' )();
+if ( process.env.NODE_ENV === 'development' ) {
+	require( 'lib/wrap-es6-functions' )();
+}
 
 /**
  * External dependencies
  */
 var React = require( 'react' ),
+	ReactDom = require( 'react-dom' ),
 	store = require( 'store' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
 	some = require( 'lodash/some' ),
@@ -15,7 +19,6 @@ var React = require( 'react' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
 	i18n = require( 'i18n-calypso' ),
-	isEmpty = require( 'lodash/isEmpty' ),
 	includes = require( 'lodash/includes' );
 
 /**
@@ -24,11 +27,12 @@ var React = require( 'react' ),
 // lib/local-storage must be run before lib/user
 var config = require( 'config' ),
 	abtestModule = require( 'lib/abtest' ),
-	abtest = abtestModule.abtest,
 	getSavedVariations = abtestModule.getSavedVariations,
 	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	analytics = require( 'lib/analytics' ),
 	route = require( 'lib/route' ),
+	normalize = require( 'lib/route/normalize' ),
+	{ isLegacyRoute } = require( 'lib/route/legacy-routes' ),
 	user = require( 'lib/user' )(),
 	receiveUser = require( 'state/users/actions' ).receiveUser,
 	setCurrentUserId = require( 'state/current-user/actions' ).setCurrentUserId,
@@ -36,27 +40,21 @@ var config = require( 'config' ),
 	sites = require( 'lib/sites-list' )(),
 	superProps = require( 'lib/analytics/super-props' ),
 	translatorJumpstart = require( 'lib/translator-jumpstart' ),
-	translatorInvitation = require( 'layout/community-translator/invitation-utils' ),
-	layoutFocus = require( 'lib/layout-focus' ),
 	nuxWelcome = require( 'layout/nux-welcome' ),
 	emailVerification = require( 'components/email-verification' ),
 	viewport = require( 'lib/viewport' ),
 	detectHistoryNavigation = require( 'lib/detect-history-navigation' ),
 	pushNotificationsInit = require( 'state/push-notifications/actions' ).init,
-	sections = require( 'sections' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	setRouteAction = require( 'state/ui/actions' ).setRoute,
 	accessibleFocus = require( 'lib/accessible-focus' ),
-	TitleStore = require( 'lib/screen-title/store' ),
 	syncHandler = require( 'lib/wp/sync-handler' ),
-	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
-	// The following components require the i18n mixin, so must be required after i18n is initialized
-	Layout;
+	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
 
-import { getSelectedSiteId, getSectionName, isSectionIsomorphic } from 'state/ui/selectors';
+import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
+import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
 function init() {
 	var i18nLocaleStringsObject = null;
@@ -87,14 +85,6 @@ function init() {
 
 	// Add accessible-focus listener
 	accessibleFocus();
-
-	// Set document title
-	TitleStore.on( 'change', function() {
-		var title = TitleStore.getState().formattedTitle;
-		if ( title && title !== document.title ) {
-			document.title = title;
-		}
-	} );
 }
 
 function setUpContext( reduxStore ) {
@@ -177,24 +167,21 @@ function boot() {
 }
 
 function renderLayout( reduxStore ) {
-	const props = { focus: layoutFocus };
+	const Layout = require( 'controller' ).ReduxWrappedLayout;
 
-	if ( user.get() ) {
-		Object.assign( props, { user, sites, nuxWelcome, translatorInvitation } );
-	}
+	const layoutElement = React.createElement( Layout, {
+		store: reduxStore
+	} );
 
-	Layout = require( 'layout' );
-	renderWithReduxStore(
-		React.createElement( Layout, props ),
-		document.getElementById( 'wpcom' ),
-		reduxStore
+	ReactDom.render(
+		layoutElement,
+		document.getElementById( 'wpcom' )
 	);
 
 	debug( 'Main layout rendered.' );
 }
 
 function reduxStoreReady( reduxStore ) {
-	const isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
 	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore );
@@ -211,9 +198,7 @@ function reduxStoreReady( reduxStore ) {
 		reduxStore.dispatch( setCurrentUserId( user.get().ID ) );
 		reduxStore.dispatch( setCurrentUserFlags( user.get().meta.data.flags.active_flags ) );
 
-		const participantInPushNotificationsAbTest = config.isEnabled( 'push-notifications-ab-test' ) &&
-			( abtest( 'browserNotifications' ) === 'enabled' || abtest( 'browserNotificationsPreferences' ) === 'enabled' );
-		if ( config.isEnabled( 'push-notifications' ) || participantInPushNotificationsAbTest ) {
+		if ( config.isEnabled( 'push-notifications' ) ) {
 			// If the browser is capable, registers a service worker & exposes the API
 			reduxStore.dispatch( pushNotificationsInit() );
 		}
@@ -225,17 +210,20 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
-	// Render Layout only for non-isomorphic sections, unless logged-in.
-	// Isomorphic sections will take care of rendering their Layout last themselves,
-	// unless in logged-in mode, where we can't do that yet.
-	// TODO: Remove the ! user.get() check once isomorphic sections render their
-	// Layout themselves when logged in.
-	if ( ! isIsomorphic || user.get() ) {
+	if ( config.isEnabled( 'css-hot-reload' ) ) {
+		require( 'lib/css-hot-reload' )();
+	}
+
+	// Render Layout only for non-isomorphic sections.
+	// Isomorphic sections will take care of rendering their Layout last themselves.
+	if ( ! document.getElementById( 'primary' ) ) {
 		renderLayout( reduxStore );
 
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
 			const Logger = require( 'lib/catch-js-errors' );
 			const errorLogger = new Logger();
+			//Save errorLogger to a singleton for use in arbitrary logging.
+			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
 			//Save data to JS error logger
 			errorLogger.saveDiagnosticData( {
 				user_id: user.get().ID,
@@ -262,8 +250,8 @@ function reduxStoreReady( reduxStore ) {
 	page( '*', function( context, next ) {
 		if ( [ 'sb', 'sp' ].indexOf( context.querystring ) !== -1 ) {
 			layoutSection = ( context.querystring === 'sb' ) ? 'sidebar' : 'sites';
-			layoutFocus.set( layoutSection );
-			page.redirect( context.pathname );
+			reduxStore.dispatch( setNextLayoutFocus( layoutSection ) );
+			page.replace( context.pathname );
 		}
 
 		next();
@@ -271,7 +259,15 @@ function reduxStoreReady( reduxStore ) {
 
 	setUpContext( reduxStore );
 
-	page( '*', require( 'lib/route/normalize' ) );
+	page( '*', function( context, next ) {
+		// Don't normalize legacy routes - let them fall through and be unhandled
+		// so that page redirects away from Calypso
+		if ( isLegacyRoute( context.pathname ) ) {
+			return next();
+		}
+
+		return normalize( context, next );
+	} );
 
 	// warn against navigating from changed, unsaved forms
 	page.exit( '*', require( 'lib/mixins/protect-form' ).checkFormHandler );
@@ -281,21 +277,13 @@ function reduxStoreReady( reduxStore ) {
 
 		// Bypass this global handler for legacy routes
 		// to avoid bumping stats and changing focus to the content
-		if ( /.php$/.test( path ) ||
-				/^\/?$/.test( path ) && ! config.isEnabled( 'reader' ) ||
-				/^\/my-stats/.test( path ) ||
-				/^\/notifications/.test( path ) ||
-				/^\/themes/.test( path ) ||
-				/^\/manage/.test( path ) ||
-				/^\/plans/.test( path ) && ! config.isEnabled( 'manage/plans' ) ||
-				/^\/me/.test( path ) && ! /^\/me\/billing/.test( path ) &&
-				! /^\/me\/next/.test( path ) && ! config.isEnabled( 'me/my-profile' ) ) {
+		if ( isLegacyRoute( path ) ) {
 			return next();
 		}
 
 		// Focus UI on the content on page navigation
 		if ( ! config.isEnabled( 'code-splitting' ) ) {
-			layoutFocus.next();
+			context.store.dispatch( activateNextLayoutFocus() );
 		}
 
 		// If `?welcome` is present, and `?tour` isn't, show the welcome message
@@ -328,6 +316,7 @@ function reduxStoreReady( reduxStore ) {
 	}
 
 	// Load the application modules for the various sections and features
+	const sections = require( 'sections' );
 	sections.load();
 
 	// delete any lingering local storage data from signup
@@ -342,7 +331,7 @@ function reduxStoreReady( reduxStore ) {
 	if ( ! user.get() ) {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function( context, next ) {
-			var isValidSection = some( validSections, function( validPath ) {
+			const isValidSection = some( validSections, function( validPath ) {
 				return startsWith( context.path, validPath );
 			} );
 
@@ -357,8 +346,13 @@ function reduxStoreReady( reduxStore ) {
 
 			//see server/pages/index for prod redirect
 			if ( '/plans' === context.pathname ) {
-				// pricing page is outside of Calypso, needs a full page load
-				window.location = 'https://wordpress.com/pricing';
+				const queryFor = context.query && context.query.for;
+				if ( queryFor && 'jetpack' === queryFor ) {
+					window.location = 'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans';
+				} else {
+					// pricing page is outside of Calypso, needs a full page load
+					window.location = 'https://wordpress.com/pricing';
+				}
 				return;
 			}
 
@@ -421,8 +415,8 @@ function reduxStoreReady( reduxStore ) {
 	 * make this unnecessary.
 	 */
 	page( '*', function( context, next ) {
-		const previousLayoutIsSingleTree = ! isEmpty(
-			document.getElementsByClassName( 'wp-singletree-layout' )
+		const previousLayoutIsSingleTree = !! (
+			document.getElementsByClassName( 'wp-singletree-layout' ).length
 		);
 
 		const singleTreeSections = [ 'theme', 'themes' ];
@@ -431,7 +425,12 @@ function reduxStoreReady( reduxStore ) {
 
 		if ( isMultiTreeLayout && previousLayoutIsSingleTree ) {
 			debug( 'Re-rendering multi-tree layout' );
+
 			renderLayout( context.store );
+		} else if ( ! isMultiTreeLayout && ! previousLayoutIsSingleTree ) {
+			debug( 'Unmounting multi-tree layout' );
+			ReactDom.unmountComponentAtNode( document.getElementById( 'primary' ) );
+			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		}
 		next();
 	} );

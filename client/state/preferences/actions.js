@@ -7,9 +7,26 @@ import {
 	PREFERENCES_RECEIVE,
 	PREFERENCES_FETCH,
 	PREFERENCES_FETCH_SUCCESS,
-	PREFERENCES_FETCH_FAILURE
+	PREFERENCES_FETCH_FAILURE,
+	PREFERENCES_SAVE,
+	PREFERENCES_SAVE_FAILURE,
+	PREFERENCES_SAVE_SUCCESS
 } from 'state/action-types';
 import { USER_SETTING_KEY } from './constants';
+
+/**
+ * Returns an action object signalling the remote preferences have been
+ * received.
+ *
+ * @param  {Object} values Preference values
+ * @return {Object}        Action object
+ */
+export function receivePreferences( values ) {
+	return {
+		type: PREFERENCES_RECEIVE,
+		values
+	};
+}
 
 /**
  * Returns an action thunk that fetches all preferences
@@ -18,16 +35,16 @@ import { USER_SETTING_KEY } from './constants';
 export function fetchPreferences() {
 	return ( dispatch ) => {
 		dispatch( { type: PREFERENCES_FETCH } );
-		return wpcom.me().settings().get()
-		.then( data => dispatch( {
-			type: PREFERENCES_FETCH_SUCCESS,
-			data
-		} ) )
-		.catch( ( data, error ) => dispatch( {
-			type: PREFERENCES_FETCH_FAILURE,
-			data,
-			error
-		} ) );
+
+		return wpcom.me().settings().get().then( ( data ) => {
+			dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
+			dispatch( { type: PREFERENCES_FETCH_SUCCESS } );
+		} ).catch( ( data, error ) => {
+			dispatch( {
+				type: PREFERENCES_FETCH_FAILURE,
+				error
+			} );
+		} );
 	};
 }
 
@@ -53,17 +70,29 @@ export const setPreference = ( key, value ) => ( {
  */
 export const savePreference = ( key, value ) => dispatch => {
 	dispatch( setPreference( key, value ) );
-	const settings = {
+	dispatch( {
+		type: PREFERENCES_SAVE,
+		key,
+		value
+	} );
+
+	const payload = JSON.stringify( {
 		[ USER_SETTING_KEY ]: {
 			[ key ]: value
 		}
-	};
+	} );
 
-	return wpcom.me().settings().update( JSON.stringify( settings ) )
-		.then( ( data ) => {
-			dispatch( {
-				type: PREFERENCES_RECEIVE,
-				data
-			} );
+	return wpcom.me().settings().update( payload ).then( ( data ) => {
+		dispatch( receivePreferences( data[ USER_SETTING_KEY ] ) );
+		dispatch( {
+			type: PREFERENCES_SAVE_SUCCESS,
+			key,
+			value
 		} );
+	} ).catch( ( error ) => {
+		dispatch( {
+			type: PREFERENCES_SAVE_FAILURE,
+			error
+		} );
+	} );
 };

@@ -8,7 +8,6 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { useSandbox } from 'test/helpers/use-sinon';
-import { getValidDataFromResponse } from '../actions';
 
 // Reducers
 import plansReducer, {
@@ -56,7 +55,7 @@ describe( 'reducer', () => {
 
 		it( 'should index items state', () => {
 			const initialState = undefined;
-			const plans = getValidDataFromResponse( WPCOM_RESPONSE );
+			const plans = WPCOM_RESPONSE;
 			const action = plansReceiveAction( plans );
 			const expectedState = plans;
 			deepFreeze( expectedState );
@@ -67,7 +66,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should override plans', () => {
-			const plans = getValidDataFromResponse( WPCOM_RESPONSE );
+			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
 			const action = plansReceiveAction( plans );
 			const expectedState = plans;
@@ -81,7 +80,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should persist state', () => {
-			const plans = getValidDataFromResponse( WPCOM_RESPONSE );
+			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
 			const action = { type: 'SERIALIZE' };
 			const expectedState = plans;
@@ -95,7 +94,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should load persisted state', () => {
-			const plans = getValidDataFromResponse( WPCOM_RESPONSE );
+			const plans = WPCOM_RESPONSE;
 			const initialState = plans;
 			const action = { type: 'DESERIALIZE' };
 			const expectedState = plans;

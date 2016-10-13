@@ -67,9 +67,7 @@ describe( 'selectors', () => {
 		it( 'should return null if counts haven\'t been received for site', () => {
 			const postCounts = getAllPostCounts( {
 				posts: {
-					counts: {
-						all: {}
-					}
+					counts: {}
 				}
 			}, 2916284, 'post' );
 
@@ -85,7 +83,8 @@ describe( 'selectors', () => {
 								post: {
 									all: {
 										publish: 2
-									}
+									},
+									mine: {}
 								}
 							}
 						}
@@ -100,8 +99,20 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getAllPostCount()', () => {
+		it( 'should return null if post counts haven\'t been received for site', () => {
+			const postCount = getAllPostCount( {
+				posts: {
+					counts: {
+						counts: {}
+					}
+				}
+			}, 2916284, 'post', 'publish' );
+
+			expect( postCount ).to.be.null;
+		} );
+
 		it( 'should return post count for status', () => {
-			const postCounts = getAllPostCount( {
+			const postCount = getAllPostCount( {
 				posts: {
 					counts: {
 						counts: {
@@ -109,7 +120,8 @@ describe( 'selectors', () => {
 								post: {
 									all: {
 										publish: 2
-									}
+									},
+									mine: {}
 								}
 							}
 						}
@@ -117,7 +129,28 @@ describe( 'selectors', () => {
 				}
 			}, 2916284, 'post', 'publish' );
 
-			expect( postCounts ).to.equal( 2 );
+			expect( postCount ).to.equal( 2 );
+		} );
+
+		it( 'should return 0 if post counts have been received for site, but no status key exists', () => {
+			const postCount = getAllPostCount( {
+				posts: {
+					counts: {
+						counts: {
+							2916284: {
+								post: {
+									all: {
+										publish: 1
+									},
+									mine: {}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'post', 'draft' );
+
+			expect( postCount ).to.equal( 0 );
 		} );
 	} );
 
@@ -125,9 +158,7 @@ describe( 'selectors', () => {
 		it( 'should return null if counts haven\'t been received for site', () => {
 			const postCounts = getMyPostCounts( {
 				posts: {
-					counts: {
-						mine: {}
-					}
+					counts: {}
 				}
 			}, 2916284, 'post' );
 
@@ -141,6 +172,7 @@ describe( 'selectors', () => {
 						counts: {
 							2916284: {
 								post: {
+									all: {},
 									mine: {
 										publish: 1
 									}
@@ -158,13 +190,26 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#getMyPostCount()', () => {
+		it( 'should return null if post counts haven\'t been received for site', () => {
+			const postCount = getMyPostCount( {
+				posts: {
+					counts: {
+						counts: {}
+					}
+				}
+			}, 2916284, 'post', 'publish' );
+
+			expect( postCount ).to.be.null;
+		} );
+
 		it( 'should return post count for status', () => {
-			const postCounts = getMyPostCount( {
+			const postCount = getMyPostCount( {
 				posts: {
 					counts: {
 						counts: {
 							2916284: {
 								post: {
+									all: {},
 									mine: {
 										publish: 1
 									}
@@ -175,7 +220,28 @@ describe( 'selectors', () => {
 				}
 			}, 2916284, 'post', 'publish' );
 
-			expect( postCounts ).to.equal( 1 );
+			expect( postCount ).to.equal( 1 );
+		} );
+
+		it( 'should return 0 if post counts have been received for site, but no status key exists', () => {
+			const postCount = getMyPostCount( {
+				posts: {
+					counts: {
+						counts: {
+							2916284: {
+								post: {
+									all: {},
+									mine: {
+										publish: 1
+									}
+								}
+							}
+						}
+					}
+				}
+			}, 2916284, 'post', 'draft' );
+
+			expect( postCount ).to.equal( 0 );
 		} );
 	} );
 
@@ -187,6 +253,7 @@ describe( 'selectors', () => {
 						counts: {
 							2916284: {
 								post: {
+									all: {},
 									mine: {
 										publish: 1,
 										'private': 1,
@@ -219,7 +286,8 @@ describe( 'selectors', () => {
 								post: {
 									all: {
 										publish: 1
-									}
+									},
+									mine: {}
 								}
 							}
 						}
@@ -244,6 +312,7 @@ describe( 'selectors', () => {
 						counts: {
 							2916284: {
 								post: {
+									all: {},
 									mine: {
 										publish: 1
 									}

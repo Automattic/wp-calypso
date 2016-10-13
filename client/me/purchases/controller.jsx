@@ -1,14 +1,13 @@
 /**
  * External Dependencies
  */
-import page from 'page';
+import { partial } from 'lodash';
 import React from 'react';
-import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'lib/analytics';
+import AddCardDetails from './payment/add-card-details';
 import CancelPrivateRegistration from './cancel-private-registration';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
@@ -16,45 +15,26 @@ import EditCardDetails from './payment/edit-card-details';
 import Main from 'components/main';
 import ManagePurchase from './manage-purchase';
 import NoSitesMessage from 'components/empty-content/no-sites-message';
-import notices from 'notices';
 import paths from './paths';
 import PurchasesHeader from './list/header';
 import PurchasesList from './list';
 import { receiveSite } from 'state/sites/actions';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { concatTitle, recordPageView, renderPage } from 'lib/react-helpers';
 import { setAllSitesSelected, setSelectedSiteId } from 'state/ui/actions';
 import sitesFactory from 'lib/sites-list';
-import supportPaths from 'lib/url/support';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle } from 'state/document-head/actions';
 import titles from './titles';
 import userFactory from 'lib/user';
 
+const recordPurchasesPageView = partial( recordPageView, partial.placeholder, 'Purchases' );
 const sites = sitesFactory();
 const user = userFactory();
 
-function concatTitle( ...parts ) {
-	return parts.join( ' › ' );
-}
-
-function recordPageView( path, ...title ) {
-	analytics.pageView.record(
-		path,
-		concatTitle( 'Purchases', ...title )
-	);
-}
-
-function renderPage( context, component ) {
-	renderWithReduxStore(
-		component,
-		document.getElementById( 'primary' ),
-		context.store
-	);
-}
-
-function setTitle( ...title ) {
-	titleActions.setTitle(
+// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+function setTitle( context, ...title ) {
+	context.store.dispatch( setDocumentHeadTitle(
 		concatTitle( titles.purchases, ...title )
-	);
+	) );
 }
 
 /**
@@ -84,12 +64,33 @@ const setSelectedSite = ( siteSlug, dispatch ) => {
 };
 
 export default {
+	addCardDetails( context ) {
+		setTitle(
+			context,
+			titles.addCardDetails
+		);
+
+		recordPurchasesPageView(
+			paths.addCardDetails(),
+			'Add Card Details'
+		);
+
+		setSelectedSite( context.params.site, context.store.dispatch );
+
+		renderPage(
+			context,
+			<AddCardDetails
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) } />
+		);
+	},
+
 	cancelPrivateRegistration( context ) {
 		setTitle(
+			context,
 			titles.cancelPrivateRegistration
 		);
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.cancelPrivateRegistration(),
 			'Cancel Private Registration'
 		);
@@ -106,10 +107,11 @@ export default {
 
 	cancelPurchase( context ) {
 		setTitle(
+			context,
 			titles.cancelPurchase
 		);
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.cancelPurchase(),
 			'Cancel Purchase'
 		);
@@ -126,10 +128,11 @@ export default {
 
 	confirmCancelDomain( context ) {
 		setTitle(
+			context,
 			titles.confirmCancelDomain
 		);
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.confirmCancelDomain(),
 			'Confirm Cancel Domain'
 		);
@@ -146,10 +149,11 @@ export default {
 
 	editCardDetails( context ) {
 		setTitle(
+			context,
 			titles.editCardDetails
 		);
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.editCardDetails(),
 			'Edit Card Details'
 		);
@@ -165,9 +169,9 @@ export default {
 	},
 
 	list( context ) {
-		setTitle();
+		setTitle( context );
 
-		recordPageView(
+		recordPurchasesPageView(
 			paths.list()
 		);
 
@@ -180,37 +184,13 @@ export default {
 		);
 	},
 
-	listNotice( context ) {
-		page.redirect( paths.list() );
-
-		const { noticeType } = context.params;
-
-		if ( noticeType === 'cancel-success' ) {
-			notices.success( i18n.translate(
-				'Your purchase was canceled and refunded. The refund may take up to ' +
-				'7 days to appear in your PayPal/bank/credit card account.'
-			), { persistent: true } );
-		}
-
-		if ( noticeType === 'cancel-problem' ) {
-			notices.error( i18n.translate(
-				'There was a problem canceling your purchase. ' +
-				'Please {{a}}contact support{{/a}} for more information.',
-				{
-					components: {
-						a: <a href={ supportPaths.CALYPSO_CONTACT } />
-					}
-				}
-			), { persistent: true } );
-		}
-	},
-
 	managePurchase( context ) {
 		setTitle(
+			context,
 			titles.managePurchase
 		);
 
-		analytics.pageView.record(
+		recordPurchasesPageView(
 			paths.managePurchase(),
 			'Manage Purchase'
 		);
@@ -231,9 +211,9 @@ export default {
 			return next();
 		}
 
-		setTitle();
+		setTitle( context );
 
-		recordPageView(
+		recordPurchasesPageView(
 			context.path,
 			'No Sites'
 		);

@@ -31,3 +31,15 @@ export function isPushNotificationsDenied() {
 		'denied' === window.Notification.permission
 	);
 }
+
+export function isOpera() {
+	return getOperaVersion() !== -1
+}
+
+export function getOperaVersion() {
+	if ( window && window.navigator && window.navigator.appVersion ) {
+		const match = window.navigator.appVersion.match( /OPR\/(\d+)/ );
+		return match ? match[ 1 ] : -1;
+	}
+	return -1;
+}

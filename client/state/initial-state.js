@@ -99,4 +99,3 @@ export default function createReduxStoreFromPersistedInitialState( reduxStoreRea
 		reduxStoreReady( loadInitialState( {} ) );
 	}
 }
-

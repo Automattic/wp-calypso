@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { partial, includes } from 'lodash';
+import { includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,13 +33,13 @@ class PostActionsEllipsisMenuPublish extends Component {
 	}
 
 	publishPost() {
-		const { siteId, postId, publishPost } = this.props;
+		const { siteId, postId } = this.props;
 		if ( ! siteId || ! postId ) {
 			return;
 		}
 
 		mc.bumpStat( 'calypso_cpt_actions', 'publish' );
-		publishPost( siteId, postId );
+		this.props.savePost( siteId, postId, { status: 'publish' } );
 	}
 
 	render() {
@@ -70,5 +70,5 @@ export default connect(
 			canPublish: canCurrentUser( state, post.site_ID, 'publish_posts' )
 		};
 	},
-	{ publishPost: partial( savePost, { status: 'publish' } ) }
+	{ savePost }
 )( localize( PostActionsEllipsisMenuPublish ) );

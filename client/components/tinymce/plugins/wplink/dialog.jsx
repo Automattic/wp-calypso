@@ -66,6 +66,10 @@ var LinkDialog = React.createClass( {
 	getCorrectedUrl() {
 		const url = this.state.url.trim();
 
+		if ( REGEXP_EMAIL.test( url ) ) {
+			return 'mailto:' + url;
+		}
+
 		if ( ! REGEXP_STANDALONE_URL.test( url ) ) {
 			return 'http://' + url;
 		}

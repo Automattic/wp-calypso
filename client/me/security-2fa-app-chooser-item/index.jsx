@@ -79,6 +79,7 @@ module.exports = React.createClass( {
 									downloadLink: <a
 										href={ this.props.app.appURL }
 										target="_blank"
+										rel="noopener noreferrer"
 										onClick={ function() {
 											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download ' + this.props.app.appName + ' Link' );
 										}.bind( this ) }

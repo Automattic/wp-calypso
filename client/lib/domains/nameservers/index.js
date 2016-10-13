@@ -3,7 +3,6 @@
  */
 import update from 'react-addons-update';
 import reject from 'lodash/reject';
-import constant from 'lodash/constant';
 import every from 'lodash/every';
 
 const WPCOM_DEFAULTS = [

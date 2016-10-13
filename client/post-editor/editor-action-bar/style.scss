@@ -39,3 +39,7 @@
 		color: darken( $gray, 10% );
 	}
 }
+
+.editor-action-bar__view-post-tooltip .popover__inner {
+	white-space: nowrap;
+}

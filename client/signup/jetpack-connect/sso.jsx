@@ -12,7 +12,7 @@ import map from 'lodash/map';
  * Internal dependencies
  */
 import Main from 'components/main';
-import ConnectHeader from './connect-header';
+import StepHeader from '../step-header';
 import observe from 'lib/mixins/data-observe';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
@@ -21,6 +21,7 @@ import Button from 'components/button';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
+import { getSSO } from 'state/jetpack-connect/selectors';
 import addQueryArgs from 'lib/route/add-query-args';
 import config from 'config';
 import EmptyContent from 'components/empty-content';
@@ -34,6 +35,8 @@ import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
 import MainWrapper from './main-wrapper';
+import HelpButton from './help-button';
+import EmailVerificationGate from 'components/email-verification/email-verification-gate';
 
 /*
  * Module variables
@@ -122,8 +125,9 @@ const JetpackSSOForm = React.createClass( {
 	},
 
 	isButtonDisabled() {
+		const user = this.props.userModule.get();
 		const { nonceValid, isAuthorizing, isValidating, ssoUrl, authorizationError } = this.props;
-		return !! ( ! nonceValid || isAuthorizing || isValidating || ssoUrl || authorizationError );
+		return !! ( ! nonceValid || isAuthorizing || isValidating || ssoUrl || authorizationError || ! user.email_verified );
 	},
 
 	getSignInLink() {
@@ -392,47 +396,50 @@ const JetpackSSOForm = React.createClass( {
 		return (
 			<MainWrapper>
 				<div className="jetpack-connect__sso">
-					<ConnectHeader
-						showLogo={ false }
+					<StepHeader
 						headerText={ this.translate( 'Connect with WordPress.com' ) }
 						subHeaderText={ this.getSubHeaderText() }
 					/>
 
 					{ this.renderSiteCard() }
 
-					<Card>
-						{ this.maybeRenderErrorNotice() }
-						<div className="jetpack-connect__sso-user-profile">
-							<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
-							<h3 className="jetpack-connect__sso-log-in-as">
-								{ this.translate(
-									'Log in as {{strong}}%s{{/strong}}',
-									{
-										args: user.display_name,
-										components: {
-											strong: <strong className="jetpack-connect__sso-display-name"/>
-										}
-									}
-								) }
-							</h3>
-							<div className="jetpack-connect__sso-user-email">
-								{ user.email }
-							</div>
-						</div>
+					<EmailVerificationGate
+						noticeText={ this.translate( 'You must verify your email to sign in with WordPress.com.' ) }
+						noticeStatus="is-info">
+						<Card>
+							{ user.email_verified && this.maybeRenderErrorNotice() }
+								<div className="jetpack-connect__sso-user-profile">
+									<Gravatar user={ user } size={ 120 } imgSize={ 400 } />
+									<h3 className="jetpack-connect__sso-log-in-as">
+										{ this.translate(
+											'Log in as {{strong}}%s{{/strong}}',
+											{
+												args: user.display_name,
+												components: {
+													strong: <strong className="jetpack-connect__sso-display-name" />
+												}
+											}
+										) }
+									</h3>
+									<div className="jetpack-connect__sso-user-email">
+										{ user.email }
+									</div>
+								</div>
 
-						<LoggedOutFormFooter className="jetpack-connect__sso-actions">
-							<p className="jetpack-connect__tos-link">
-								{ this.getTOSText() }
-							</p>
+								<LoggedOutFormFooter className="jetpack-connect__sso-actions">
+									<p className="jetpack-connect__tos-link">
+										{ this.getTOSText() }
+									</p>
 
-							<Button
-								primary
-								onClick={ this.onApproveSSO }
-								disabled={ this.isButtonDisabled() }>
-								{ this.translate( 'Log in' ) }
-							</Button>
-						</LoggedOutFormFooter>
-					</Card>
+									<Button
+										primary
+										onClick={ this.onApproveSSO }
+										disabled={ this.isButtonDisabled() }>
+										{ this.translate( 'Log in' ) }
+									</Button>
+								</LoggedOutFormFooter>
+						</Card>
+					</EmailVerificationGate>
 
 					<LoggedOutFormLinks>
 						<LoggedOutFormLinkItem href={ this.getSignInLink() } onClick={ this.onClickSignInDifferentUser }>
@@ -444,6 +451,7 @@ const JetpackSSOForm = React.createClass( {
 							onClick={ this.onCancelClick }>
 							{ this.getReturnToSiteText() }
 						</LoggedOutFormLinkItem>
+						<HelpButton />
 					</LoggedOutFormLinks>
 				</div>
 
@@ -455,7 +463,7 @@ const JetpackSSOForm = React.createClass( {
 
 export default connect(
 	state => {
-		const { jetpackSSO } = state.jetpackConnect;
+		const jetpackSSO = getSSO( state );
 		return {
 			ssoUrl: get( jetpackSSO, 'ssoUrl' ),
 			isAuthorizing: get( jetpackSSO, 'isAuthorizing' ),
@@ -467,5 +475,8 @@ export default connect(
 			sharedDetails: get( jetpackSSO, 'sharedDetails' )
 		};
 	},
-	dispatch => bindActionCreators( { authorizeSSO, validateSSONonce }, dispatch )
+	dispatch => bindActionCreators( {
+		authorizeSSO,
+		validateSSONonce
+	}, dispatch )
 )( JetpackSSOForm );

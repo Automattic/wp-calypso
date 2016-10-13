@@ -10,6 +10,7 @@ import deepFreeze from 'deep-freeze';
 import {
 	normalizePostForDisplay,
 	normalizePostForState,
+	normalizePostForApi,
 	getNormalizedPostsQuery,
 	getSerializedPostsQuery,
 	getDeserializedPostsQueryDetails,
@@ -19,6 +20,37 @@ import {
 } from '../utils';
 
 describe( 'utils', () => {
+	describe( 'normalizePostForApi()', () => {
+		it( 'should return null if post is falsey', () => {
+			const normalizedPost = normalizePostForApi();
+			expect( normalizedPost ).to.be.null;
+		} );
+
+		it( 'should return a normalized post object', () => {
+			const post = {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Ribs &amp; Chicken',
+				terms: {
+					category: [ { ID: 777, name: 'recipes' } ],
+					post_tag: [ 'super', 'yummy', 'stuff' ]
+				}
+			};
+
+			const normalizedPost = normalizePostForApi( post );
+			expect( normalizedPost ).to.eql( {
+				ID: 841,
+				site_ID: 2916284,
+				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
+				title: 'Ribs &amp; Chicken',
+				terms: {
+					post_tag: [ 'super', 'yummy', 'stuff' ]
+				}
+			} );
+		} );
+	} );
+
 	describe( 'normalizePostForDisplay()', () => {
 		it( 'should return null if post is falsey', () => {
 			const normalizedPost = normalizePostForDisplay();
@@ -59,10 +91,38 @@ describe( 'utils', () => {
 				meta: {},
 				terms: {
 					category: {
-						Code: {
-							ID: 6,
+						meta: {
+							ID: 171,
+							name: 'meta',
 							meta: {}
 						}
+					},
+					post_tag: {
+						meta: {
+							ID: 171,
+							name: 'meta',
+							meta: {}
+						}
+					}
+				},
+				categories: {
+					meta: {
+						ID: 171,
+						name: 'meta',
+						meta: {}
+					}
+				},
+				tags: {
+					meta: {
+						ID: 171,
+						name: 'meta',
+						meta: {}
+					}
+				},
+				attachments: {
+					14209: {
+						ID: 14209,
+						meta: {}
 					}
 				}
 			} );
@@ -71,13 +131,35 @@ describe( 'utils', () => {
 			expect( revised ).to.not.equal( original );
 			expect( revised ).to.eql( {
 				ID: 814,
-				meta: null,
 				terms: {
 					category: {
-						Code: {
-							ID: 6,
-							meta: null
+						meta: {
+							ID: 171,
+							name: 'meta'
 						}
+					},
+					post_tag: {
+						meta: {
+							ID: 171,
+							name: 'meta'
+						}
+					}
+				},
+				categories: {
+					meta: {
+						ID: 171,
+						name: 'meta'
+					}
+				},
+				tags: {
+					meta: {
+						ID: 171,
+						name: 'meta'
+					}
+				},
+				attachments: {
+					14209: {
+						ID: 14209
 					}
 				}
 			} );

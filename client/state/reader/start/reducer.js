@@ -2,9 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import union from 'lodash/union';
-import find from 'lodash/find';
-import filter from 'lodash/filter';
+import { union, find, filter } from 'lodash';
 
 /**
  * Internal dependencies

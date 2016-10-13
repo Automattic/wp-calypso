@@ -1,21 +1,29 @@
 /**
-* External dependencies
-*/
+ * External dependencies
+ */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import page from 'page';
-import toTitleCase from 'to-title-case';
+import { slugToCamelCase } from 'devdocs/docs-example/util';
 import trim from 'lodash/trim';
 
 /**
  * Internal dependencies
  */
 import config from 'config';
+import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
+import HeaderCake from 'components/header-cake';
+import Main from 'components/main';
 import SearchCard from 'components/search-card';
+
+/**
+ * Docs examples
+ */
 import SearchDemo from 'components/search/docs/example';
 import Notices from 'components/notice/docs/example';
 import GlobalNotices from 'components/global-notices/docs/example';
+import Gravatar from 'components/gravatar/docs/example';
 import Buttons from 'components/button/docs/example';
 import ButtonGroups from 'components/button-group/docs/example';
 import Gridicons from 'components/gridicon/docs/example';
@@ -36,16 +44,18 @@ import DropZones from 'components/drop-zone/docs/example';
 import FormFields from 'components/forms/docs/example';
 import SectionNav from 'components/section-nav/docs/example';
 import Spinner from 'components/spinner/docs/example';
+import SpinnerButton from 'components/spinner-button/docs/example';
 import SpinnerLine from 'components/spinner-line/docs/example';
 import Rating from 'components/rating/docs/example';
 import DatePicker from 'components/date-picker/docs/example';
 import InputChrono from 'components/input-chrono/docs/example';
+import ImagePreloader from 'components/image-preloader/docs/example';
 import Ribbon from 'components/ribbon/docs/example';
 import Timezone from 'components/timezone/docs/example';
 import ClipboardButtons from 'components/forms/clipboard-button/docs/example';
 import ClipboardButtonInput from 'components/clipboard-button-input/docs/example';
-import HeaderCake from 'components/header-cake';
 import InfoPopover from 'components/info-popover/docs/example';
+import Tooltip from 'components/tooltip/docs/example';
 import FoldableCard from 'components/foldable-card/docs/example';
 import SectionHeader from 'components/section-header/docs/example';
 import PaymentLogo from 'components/payment-logo/docs/example';
@@ -56,7 +66,6 @@ import ExternalLink from 'components/external-link/docs/example';
 import FeatureGate from 'components/feature-example/docs/example';
 import FilePickers from 'components/file-picker/docs/example';
 import Collection from 'devdocs/design/search-collection';
-import fetchComponentsUsageStats from 'state/components-usage-stats/actions';
 import FAQ from 'components/faq/docs/example';
 import VerticalMenu from 'components/vertical-menu/docs/example';
 
@@ -83,22 +92,27 @@ let DesignAssets = React.createClass( {
 	},
 
 	render() {
-		const { componentsUsageStats = {} } = this.props;
+		const { componentsUsageStats = {}, component } = this.props;
+		const { filter } = this.state;
+
 		return (
-			<div className="design-assets" role="main">
-				{
-					this.props.component
+			<Main className="design">
+				{ component
 					? <HeaderCake onClick={ this.backToComponents } backText="All Components">
-						{ toTitleCase( this.props.component ) }
+						{ slugToCamelCase( component ) }
 					</HeaderCake>
+
 					: <SearchCard
 						onSearch={ this.onSearch }
-						initialValue={ this.state.filter }
+						initialValue={ filter }
 						placeholder="Search components…"
-						analyticsGroup="Docs">
-					</SearchCard>
+						analyticsGroup="Docs" />
 				}
-				<Collection component={ this.props.component } filter={ this.state.filter }>
+
+				<Collection
+					component={ component }
+					filter={ filter }
+				>
 					<Accordions componentUsageStats={ componentsUsageStats.accordion } />
 					<BulkSelect />
 					<ButtonGroups />
@@ -116,12 +130,15 @@ let DesignAssets = React.createClass( {
 					<FeatureGate />
 					<FilePickers />
 					<FoldableCard />
-					<FormFields searchKeywords="input textbox textarea radio"/>
+					<FormFields searchKeywords="input textbox textarea radio" />
 					<Gauge />
 					<GlobalNotices />
+					<Gravatar />
 					<Gridicons />
 					<Headers />
+					<ImagePreloader />
 					<InfoPopover />
+					<Tooltip />
 					<InputChrono />
 					<Notices />
 					<PaymentLogo />
@@ -137,13 +154,14 @@ let DesignAssets = React.createClass( {
 					<SelectDropdown searchKeywords="menu" />
 					<SocialLogos />
 					<Spinner searchKeywords="loading" />
+					<SpinnerButton searchKeywords="loading input submit" />
 					<SpinnerLine searchKeywords="loading" />
 					<Timezone />
 					<TokenFields />
 					<VerticalMenu />
 					<Version />
 				</Collection>
-			</div>
+			</Main>
 		);
 	}
 } );

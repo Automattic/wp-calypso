@@ -35,7 +35,7 @@ export const hasPaginationChanged = ( serverResponseBody, localResponseBody ) =>
 		return false;
 	}
 	return true;
-}
+};
 
 /**
  * SyncHandler class
@@ -93,7 +93,7 @@ export class SyncHandler {
 				if ( localRecord && localRecord.body ) {
 					debug( 'local callback run => %o, params (%o), response (%o)', path, reqParams, localRecord );
 					// try/catch in case cached record does not match expected schema
-					localRecord.body.__sync = { requestKey, responseSource: 'local'};
+					localRecord.body.__sync = { requestKey, responseSource: 'local' };
 					try {
 						callback( null, localRecord.body );
 					} catch ( error ) {
@@ -195,11 +195,9 @@ export class SyncHandler {
 				}
 
 				const { serverResponse } = combinedResponse;
-				// get response object without _headers property
-				let responseWithoutHeaders = Object.assign( {}, serverResponse );
-				delete responseWithoutHeaders._headers;
+				const responseWithoutHeaders = Object.assign( {}, serverResponse );
 
-				let storingData = {
+				const storingData = {
 					__sync: {
 						requestKey,
 						synced: Date.now(),
@@ -300,11 +298,11 @@ export function syncOptOut( wpcom ) {
 
 export const pruneStaleRecords = lifetime => {
 	return cacheIndex.pruneStaleRecords( lifetime );
-}
+};
 
 export const clearAll = () => {
 	return cacheIndex.clearAll();
-}
+};
 
 // expose `cacheIndex` global var (dev mode)
 if ( 'development' === config( 'env' ) && typeof window !== 'undefined' ) {

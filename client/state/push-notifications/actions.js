@@ -2,7 +2,6 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import moment from 'moment';
 import wpcom from 'lib/wp';
 
 /**
@@ -24,19 +23,19 @@ import {
 import {
 	isApiReady,
 	getDeviceId,
-	getLastUpdated,
 	getStatus,
 	isBlocked,
 	isEnabled,
 } from './selectors';
 import {
+	isOpera,
 	isPushNotificationsDenied,
 	isPushNotificationsSupported,
 	isUnsupportedChromeVersion,
-	getChromeVersion
+	getChromeVersion,
+	getOperaVersion,
 } from './utils';
 import {
-	isServiceWorkerSupported,
 	registerServerWorker,
 } from 'lib/service-worker';
 import {
@@ -45,13 +44,22 @@ import {
 } from 'state/analytics/actions';
 
 const debug = debugFactory( 'calypso:push-notifications' );
-const DAYS_BEFORE_FORCING_REGISTRATION_REFRESH = 15;
 const serviceWorkerOptions = {
 	path: '/service-worker.js',
 };
 
 export function init() {
 	return dispatch => {
+		// require `lib/user/support-user-interop` here so that unit tests don't
+		// fail because of lack of `window` global when importing this module
+		// from test (before a chance to mock things is possible)
+		const isSupportUserSession = require( 'lib/user/support-user-interop' ).isSupportUserSession;
+		if ( isSupportUserSession() ) {
+			debug( 'Push Notifications are not supported when SU is active' );
+			dispatch( apiNotReady() );
+			return;
+		}
+
 		// Only continue if the service worker supports notifications
 		if ( ! isPushNotificationsSupported() ) {
 			debug( 'Push Notifications are not supported' );
@@ -62,7 +70,21 @@ export function init() {
 		if ( isUnsupportedChromeVersion() ) {
 			debug( 'Push Notifications are not supported in Chrome 49 and below' );
 			const chromeVersion = getChromeVersion();
-			dispatch( bumpStat( 'calypso_push_notif_unsup_chrome', ( chromeVersion > 39 && chromeVersion < 50 ) ? chromeVersion : 'other') );
+			dispatch( bumpStat( 'calypso_push_notif_unsup_chrome',
+				( chromeVersion > 39 && chromeVersion < 50 ) ? chromeVersion : 'other' )
+			);
+			dispatch( apiNotReady() );
+			return;
+		}
+
+		// Opera claims to support PNs, but doesn't
+		// http://forums.opera.com/discussion/1868659/opera-push-notifications/p1
+		if ( isOpera() ) {
+			debug( 'Push Notifications are not supported in Opera' );
+			const operaVersion = getOperaVersion();
+			dispatch( bumpStat( 'calypso_push_notif_unsup_opera',
+				( operaVersion > 15 && operaVersion < 100 ) ? operaVersion : 'other' )
+			);
 			dispatch( apiNotReady() );
 			return;
 		}
@@ -70,8 +92,6 @@ export function init() {
 		if ( isPushNotificationsDenied() ) {
 			debug( 'Push Notifications have been denied' );
 			dispatch( block() );
-			dispatch( apiReady() );
-			return;
 		}
 
 		dispatch( fetchAndLoadServiceWorker() );
@@ -100,7 +120,7 @@ export function apiReady() {
 			return;
 		}
 
-		dispatch( mustPrompt() );
+		dispatch( checkPermissionsState() );
 		if ( 'disabling' === getStatus( state ) ) {
 			debug( 'Forcibly unregistering device (disabling on apiReady)' );
 			dispatch( unregisterDevice() );
@@ -110,10 +130,6 @@ export function apiReady() {
 
 export function fetchAndLoadServiceWorker() {
 	return dispatch => {
-		if ( ! isServiceWorkerSupported() ) {
-			debug( 'Service workers are not supported' );
-			return;
-		}
 		debug( 'Registering service worker' );
 
 		registerServerWorker( serviceWorkerOptions )
@@ -204,31 +220,20 @@ export function fetchPushManagerSubscription() {
 }
 
 export function sendSubscriptionToWPCOM( pushSubscription ) {
-	return ( dispatch, getState ) => {
+	return ( dispatch ) => {
 		if ( ! pushSubscription ) {
 			debug( 'No subscription to send to WPCOM' );
 			return;
 		}
-		const state = getState();
-		const lastUpdated = getLastUpdated( state );
-		debug( 'Subscription last updated: ' + lastUpdated );
-
-		let age;
-
-		if ( lastUpdated ) {
-			age = moment().diff( moment( lastUpdated ), 'days' );
-			if ( age < DAYS_BEFORE_FORCING_REGISTRATION_REFRESH ) {
-				debug( 'Subscription did not need updating.', age );
-				return;
-			}
-			debug( 'Subscription needed updating.', age );
-		}
 
 		debug( 'Sending subscription to WPCOM', pushSubscription );
-		return wpcom.undocumented().registerDevice( JSON.stringify( pushSubscription ), 'browser', 'Browser' )
-			.then( data => dispatch( {
+		return wpcom
+			.undocumented()
+			.registerDevice( JSON.stringify( pushSubscription ), 'browser', 'Browser' )
+			.then( ( data, headers ) => dispatch( {
 				type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
-				data
+				data,
+				headers
 			} ) )
 			.catch( err => debug( 'Couldn\'t register device', err ) )
 		;

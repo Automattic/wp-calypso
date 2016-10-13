@@ -13,11 +13,8 @@ export default React.createClass( {
 	displayName: 'CommentButtonExample',
 
 	render() {
-		return(
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/comment-button">Comment Buttons</a>
-				</h2>
+		return (
+			<div>
 				<Card compact>
 					<CommentButton commentCount={ 0 } />
 				</Card>

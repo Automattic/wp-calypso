@@ -43,6 +43,7 @@
 		background: $gray-light;
 		border-color: lighten( $gray, 30% );
 		color: lighten( $gray, 10% );
+		opacity: 1;
 		-webkit-text-fill-color: lighten( $gray, 10% );
 
 		&:hover {
@@ -210,7 +211,6 @@ select {
 	outline: 0;
 	overflow: hidden;
 	font-size: 14px;
-	line-height: 21px;
 	font-weight: 600;
 	text-overflow: ellipsis;
 	text-decoration: none;

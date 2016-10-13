@@ -14,7 +14,8 @@ const ReactDom = require( 'react-dom' ),
 	startsWith = require( 'lodash/startsWith' ),
 	twemoji = require( 'twemoji' ),
 	get = require( 'lodash/get' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	pick = require( 'lodash/pick' );
 
 /**
  * Internal Dependencies
@@ -39,7 +40,6 @@ const
 	utils = require( 'reader/utils' ),
 	PostCommentHelper = require( 'reader/comments/helper' ),
 	LikeHelper = require( 'reader/like-helper' ),
-	EmbedHelper = require( 'reader/embed-helper' ),
 	readerRoute = require( 'reader/route' ),
 	stats = require( 'reader/stats' ),
 	PostPermalink = require( 'reader/post-permalink' ),
@@ -51,7 +51,8 @@ const
 	FeedPostStore = require( 'lib/feed-post-store' ),
 	FeedPostStoreActions = require( 'lib/feed-post-store/actions' ),
 	Gridicon = require( 'components/gridicon' ),
-	smartSetState = require( 'lib/react-smart-set-state' );
+	smartSetState = require( 'lib/react-smart-set-state' ),
+	FeaturedAsset = require( 'reader/stream/featured-asset' );
 
 const Post = React.createClass( {
 
@@ -70,10 +71,6 @@ const Post = React.createClass( {
 
 	smartSetState: smartSetState,
 
-	getMaxFeaturedWidthSize: function() {
-		return ReactDom.findDOMNode( this ).offsetWidth;
-	},
-
 	shouldApplyIsLong: function() {
 		var node = ReactDom.findDOMNode( this.refs.siteName );
 		// give the clientWidth a 2 pixel buffer. IE is often off by at least one.
@@ -81,7 +78,6 @@ const Post = React.createClass( {
 	},
 
 	onWindowResize: function() {
-		this.updateFeatureSize();
 		this.checkSiteNameForOverflow();
 	},
 
@@ -130,7 +126,6 @@ const Post = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		this.updateFeatureSize();
 		this.checkSiteNameForOverflow();
 		this._parseEmoji();
 		SiteStore.on( 'change', this.updateState );
@@ -154,32 +149,21 @@ const Post = React.createClass( {
 	},
 
 	componentDidUpdate: function() {
-		this.updateFeatureSize();
 		this.checkSiteNameForOverflow();
 		this._parseEmoji();
 	},
 
-	getFeaturedSize: function( available ) {
-		available = available || this.getMaxFeaturedWidthSize();
-		if ( this.featuredSizingStrategy ) {
-			return this.featuredSizingStrategy( available );
-		}
-		return {};
-	},
-
 	featuredImageComponent: function( post ) {
-		var featuredImage = ( post.canonical_image && post.canonical_image.uri ),
+		var featuredImage = ( post.canonical_image && pick( post.canonical_image, [ 'uri', 'width', 'height' ] ) ),
 			featuredEmbed = head( filter( post.content_embeds, ( embed ) => {
 				return ! startsWith( embed.type, 'special-' );
 			} ) ),
-			maxWidth = Math.min( 653, window.innerWidth ),
-			featuredSize, useFeaturedEmbed;
+			useFeaturedEmbed;
 
 		if ( post.use_excerpt ) {
 			// don't feature embeds for excerpts
 			featuredEmbed = null;
 		}
-
 		if ( ! ( featuredImage || featuredEmbed ) ) {
 			return null;
 		}
@@ -189,53 +173,14 @@ const Post = React.createClass( {
 		//   - there is an available embed
 		//
 		useFeaturedEmbed = featuredEmbed &&
-			( ! featuredImage || ( featuredImage !== post.featured_image ) );
-		if ( useFeaturedEmbed ) {
-			this.featuredSizingStrategy = EmbedHelper.getEmbedSizingFunction( featuredEmbed );
-		} else if ( featuredImage && post.canonical_image.width >= maxWidth ) {
-			this.featuredSizingStrategy = function featuredImageSizingFunction( availible ) {
-				var aspectRatio = post.canonical_image.width / post.canonical_image.height;
+			( ! featuredImage || ( featuredImage !== post.featured_image && featuredImage !== get( post, 'post_thumbnail.URL' ) ) );
 
-				return {
-					width: availible + 'px',
-					height: Math.floor( availible / aspectRatio ) + 'px'
-				};
-			};
-
-			featuredSize = this.getFeaturedSize( maxWidth );
-		}
-
-		return useFeaturedEmbed
-			? <div
-					ref="featuredEmbed"
-					className="reader__post-featured-video"
-					key="featuredVideo"
-					dangerouslySetInnerHTML={ { __html: featuredEmbed.iframe } } />  //eslint-disable-line react/no-danger
-			: <div
-					className="reader__post-featured-image"
-					onClick={ this.handlePermalinkClick }>
-				{ featuredSize
-					? <img className="reader__post-featured-image-image"
-							ref="featuredImage"
-							src={ featuredImage }
-							style={ featuredSize }
-						/>
-					: <img className="reader__post-featured-image-image" src={ featuredImage } />
-				}
-			</div>;
-	},
-
-	updateFeatureSize: function() {
-		var node;
-		if ( this.refs.featuredImage ) {
-			node = ReactDom.findDOMNode( this.refs.featuredImage );
-		} else if ( this.refs.featuredEmbed ) {
-			node = ReactDom.findDOMNode( this.refs.featuredEmbed ).querySelector( 'iframe' );
-		}
-
-		if ( node ) {
-			assign( node.style, this.getFeaturedSize() );
-		}
+		const featuredAssetProps = {
+			featuredImage,
+			featuredEmbed,
+			useFeaturedEmbed
+		};
+		return <FeaturedAsset { ...featuredAssetProps } />;
 	},
 
 	checkSiteNameForOverflow: function() {
@@ -276,7 +221,7 @@ const Post = React.createClass( {
 		}
 
 		// declarative ignore
-		if ( closest( event.target, '.ignore-click, [rel=external]', true, rootNode ) ) {
+		if ( closest( event.target, '.ignore-click, [rel~=external]', true, rootNode ) ) {
 			return;
 		}
 
@@ -343,11 +288,6 @@ const Post = React.createClass( {
 				'has-featured-image': hasFeaturedImage,
 				'hide-xpost': this.props.xPostedTo
 			}, this.additionalClasses ),
-			primaryTag = post.primary_tag,
-			tagClasses = {
-				'reader__post-tag': true,
-				'is-long': ( primaryTag && primaryTag.name.length > 25 )
-			},
 			shouldShowExcerptOnly = !! post.use_excerpt,
 			shouldUseFullExcerpt = ! shouldShowExcerptOnly && ( post.display_type & DISPLAY_TYPES.ONE_LINER ),
 			siteName = utils.siteNameFromSiteAndPost( this.state.site, post ),
@@ -392,8 +332,6 @@ const Post = React.createClass( {
 
 		articleClasses = classnames( articleClasses );
 
-		tagClasses = classnames( tagClasses );
-
 		if ( isDiscoverPost ) {
 			discoverSiteUrl = DiscoverHelper.getSiteUrl( post );
 		}
@@ -419,7 +357,7 @@ const Post = React.createClass( {
 
 				{ featuredImage }
 
-				{ post.title ? <h1 className="reader__post-title"><a className="reader__post-title-link" href={ post.URL } target="_blank">{ post.title }</a></h1> : null }
+				{ post.title ? <h1 className="reader__post-title"><a className="reader__post-title-link" href={ post.URL } target="_blank" rel="noopener noreferrer">{ post.title }</a></h1> : null }
 
 				<PostByline post={ post } site={ this.props.site } isDiscoverPost={ isDiscoverPost } />
 

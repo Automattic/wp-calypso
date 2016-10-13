@@ -13,10 +13,9 @@ import productsValues from 'lib/products-values';
 import protectForm from 'lib/mixins/protect-form';
 import Card from 'components/card';
 import Button from 'components/button';
-import UpgradeNudge from 'my-sites/upgrade-nudge';
 import SectionHeader from 'components/section-header';
 import ExternalLink from 'components/external-link';
-import { abtest } from 'lib/abtest';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
@@ -96,27 +95,6 @@ export default React.createClass( {
 		this.recordEventOnce( 'typedAnalyticsKey', 'Typed In Analytics Key Field' );
 	},
 
-	getUpgradeLink() {
-		if ( ! this.props.site || ! this.props.site.domain ) {
-			return '/plans';
-		}
-		const plansVariant = abtest( 'contextualGoogleAnalyticsNudge' );
-		let upgradeLink;
-		switch ( plansVariant ) {
-			case 'settingsDisabledFeature':
-				upgradeLink = `/plans/features/google-analytics/${ this.props.site.domain }`;
-				break;
-			case 'settingsDisabledPlansCompare':
-				upgradeLink = `/plans/compare/google-analytics/${ this.props.site.domain }`;
-				break;
-			case 'settingsDisabledPlans':
-			case 'drake':
-			default:
-				upgradeLink = `/plans/${ this.props.site.domain }`;
-		}
-		return upgradeLink;
-	},
-
 	form() {
 		var placeholderText = '';
 
@@ -125,13 +103,14 @@ export default React.createClass( {
 		}
 
 		return (
-			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
+			<form id="site-settings" onSubmit={ this.handleSubmitForm } onChange={ this.markChanged }>
+				{ this.renderNudge() }
 				<SectionHeader label={ this.translate( 'Analytics Settings' ) }>
 					<Button
 						primary
 						compact
 						disabled={ this.isSubmitButtonDisabled() }
-						onClick={ this.submitForm }
+						onClick={ this.handleSubmitForm }
 						>{
 							this.state.submittingForm
 									? this.translate( 'Saving…' )
@@ -140,7 +119,6 @@ export default React.createClass( {
 					</Button>
 				</SectionHeader>
 				<Card className="analytics-settings">
-					{ this.renderNudge() }
 					<fieldset>
 						<label htmlFor="wgaCode">{ this.translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }</label>
 						<input
@@ -158,6 +136,7 @@ export default React.createClass( {
 							icon={ true }
 							href="https://support.google.com/analytics/answer/1032385?hl=en"
 							target="_blank"
+							rel="noopener noreferrer"
 						>
 							{ this.translate( 'Where can I find my Tracking ID?' ) }
 						</ExternalLink>
@@ -178,7 +157,7 @@ export default React.createClass( {
 					{ this.translate( 'Learn more about using {{a}}Google Analytics with WordPress.com{{/a}}.',
 						{
 							components: {
-								a: <a href="http://en.support.wordpress.com/google-analytics/" target="_blank" />
+								a: <a href="http://en.support.wordpress.com/google-analytics/" target="_blank" rel="noopener noreferrer" />
 							}
 						}
 					) }

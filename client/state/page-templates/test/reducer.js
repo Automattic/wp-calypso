@@ -224,7 +224,7 @@ describe( 'reducer', () => {
 			const state = items( original, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
-			expect( console.warn ).to.have.been.calledOnce; // eslint-disable-line no-console
+			expect( console.warn ).to.have.been.calledTwice; // eslint-disable-line no-console
 		} );
 	} );
 } );

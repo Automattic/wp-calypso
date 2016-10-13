@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-import { useNock } from 'test/helpers/use-nock';
 import sinon from 'sinon';
 import { assert, expect } from 'chai';
-
 
 /**
  * Internal deps
@@ -15,6 +13,7 @@ import {
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE
 } from 'state/action-types';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	describe( 'a valid fetch', () => {

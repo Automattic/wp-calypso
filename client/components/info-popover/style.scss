@@ -12,7 +12,7 @@
 }
 
 .popover.info-popover__tooltip {
-	.tip-inner {
+	.popover__inner {
 		color: darken( $gray, 20% );
 		font-size: 13px;
 		max-width: 220px;

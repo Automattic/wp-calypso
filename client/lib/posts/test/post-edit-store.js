@@ -2,8 +2,7 @@
  * External dependencies
  */
 import assert from 'assert';
-import assign from 'lodash/assign';
-import isEqual from 'lodash/isEqual';
+import { assign, isEqual, noop } from 'lodash';
 import { spy } from 'sinon';
 
 /**
@@ -17,8 +16,13 @@ describe( 'post-edit-store', function() {
 
 	useFakeDom();
 
-	// makes sure we always load fresh instance of Dispatcher
-	useMockery();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+	} );
 
 	before( () => {
 		Dispatcher = require( 'dispatcher' );
@@ -50,56 +54,8 @@ describe( 'post-edit-store', function() {
 		} );
 	}
 
-	function dispatchCreateTerm( createNewDraft, postId ) {
-		if ( createNewDraft ) {
-			dispatcherCallback( {
-				action: {
-					type: 'DRAFT_NEW_POST',
-					siteId: 123
-				}
-			} );
-		}
-
-		dispatcherCallback( {
-			action: {
-				type: 'CREATE_TERM',
-				id: 'default',
-				siteId: 123,
-				data: {
-					termType: 'categories',
-					terms: [ {
-						name: 'wookies',
-						ID: 'temporary-0',
-						postId: postId
-					} ]
-				},
-				error: null
-			}
-		} );
-	}
-
-	function dispatchReceiveAddTerm() {
-		dispatcherCallback( {
-			action: {
-				type: 'RECEIVE_ADD_TERM',
-				id: 'default',
-				siteId: 123,
-				data: {
-					termType: 'categories',
-					terms: [ {
-						ID: 787,
-						name: 'wookies',
-						temporaryId: 'temporary-0'
-					} ]
-				},
-				error: null
-			}
-		} );
-	}
-
 	it( 'initializes new draft post properly', function() {
-		var siteId = 1234,
-			post;
+		const siteId = 1234;
 
 		dispatcherCallback( {
 			action: {
@@ -110,13 +66,13 @@ describe( 'post-edit-store', function() {
 
 		assert( PostEditStore.getSavedPost().ID === undefined );
 		assert( PostEditStore.getSavedPost().site_ID === siteId );
-		post = PostEditStore.get();
+		const post = PostEditStore.get();
 		assert( post.status === 'draft' );
 		assert( PostEditStore.isNew() );
 	} );
 
 	it( 'initialize existing post', function() {
-		var siteId = 12,
+		const siteId = 12,
 			postId = 345;
 
 		dispatcherCallback( {
@@ -130,21 +86,9 @@ describe( 'post-edit-store', function() {
 		assert( ! PostEditStore.isNew() );
 	} );
 
-	it( 'sets category_ids array properly', function() {
-		var post;
-
-		dispatchReceivePost();
-		post = PostEditStore.get();
-		assert( post.ID === 777 );
-		assert( Array.isArray( post.category_ids ) );
-		assert( post.category_ids[ 0 ] === 199 );
-	} );
-
 	it( 'sets parent_id properly', function() {
-		var post;
-
 		dispatchReceivePost();
-		post = PostEditStore.get();
+		const post = PostEditStore.get();
 		assert( post.parent_id === null );
 	} );
 
@@ -160,7 +104,6 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'updates parent_id after a set', function() {
-		var post;
 		dispatchReceivePost();
 		dispatcherCallback( {
 			action: {
@@ -171,23 +114,8 @@ describe( 'post-edit-store', function() {
 			}
 		} );
 
-		post = PostEditStore.get();
+		const post = PostEditStore.get();
 		assert( post.parent_id, 101 );
-	} );
-
-	it( 'sets category_ids on EDIT_POST', function() {
-		var post;
-		dispatchReceivePost();
-		dispatcherCallback( {
-			action: {
-				type: 'EDIT_POST',
-				post: {
-					categories: [ 200, 201 ]
-				}
-			}
-		} );
-		post = PostEditStore.get();
-		assert( post.category_ids[ 0 ] === 200 );
 	} );
 
 	it( 'does not decode post title entities on EDIT_POST', function() {
@@ -257,7 +185,7 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'updates attributes on edit', function() {
-		var siteId = 1234,
+		const siteId = 1234,
 			postEdits = {
 				title: 'hello, world!',
 				content: 'initial edit',
@@ -291,7 +219,7 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'preserves attributes when update is in-flight', function() {
-		var siteId = 1234,
+		const siteId = 1234,
 			initialPost = {
 				ID: 2345,
 				title: 'hello, world!',
@@ -337,7 +265,7 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'excludes metadata without an operation on edit', function() {
-		var postEdits = {
+		const postEdits = {
 				title: 'Super Duper',
 				metadata: [
 					{ key: 'super', value: 'duper', operation: 'update' },
@@ -371,7 +299,7 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'reset post after saving an edit', function() {
-		var siteId = 1234,
+		const siteId = 1234,
 			postEdits = {
 				title: 'hello, world!',
 				content: 'initial edit'
@@ -459,7 +387,7 @@ describe( 'post-edit-store', function() {
 
 	describe( '#setRawContent', function() {
 		it( 'should not emit a change event if content hasn\'t changed', function() {
-			var onChange = spy();
+			const onChange = spy();
 
 			dispatcherCallback( {
 				action: {
@@ -517,8 +445,7 @@ describe( 'post-edit-store', function() {
 				type: 'post',
 				parent_id: null,
 				title: '',
-				content: '',
-				slug: null
+				content: ''
 			} ) );
 		} );
 	} );
@@ -829,156 +756,13 @@ describe( 'post-edit-store', function() {
 		} );
 	} );
 
-	describe( 'TermActions', function() {
-		it( 'should add temporary cateogry on CREATE_TERM', function() {
-			var post;
-			dispatchCreateTerm( true );
-			post = PostEditStore.get();
-			assert( post.category_ids.length === 1 );
-			assert( post.category_ids[ 0 ] === 'temporary-0' );
-		} );
-
-		it( 'should replace temporary id on RECEIVE_ADD_TERM', function() {
-			var post;
-			dispatchCreateTerm( true );
-			dispatchReceiveAddTerm();
-			post = PostEditStore.get();
-
-			assert( post.category_ids.length === 1 );
-			assert( post.category_ids[ 0 ] === 787 );
-		} );
-
-		it( 'should add to existing category_ids on CREATE_TERM if transient postId is null', function() {
-			var post;
-			dispatchReceivePost();
-			dispatchCreateTerm();
-			post = PostEditStore.get();
-			assert( post.category_ids.length === 2 );
-			assert( post.category_ids[ 1 ] === 'temporary-0' );
-		} );
-
-		it( 'should not add to existing category_ids on CREATE_TERM if transient postId does not match', function() {
-			var post;
-			dispatchReceivePost();
-			dispatchCreateTerm( false, 9999 );
-			post = PostEditStore.get();
-			assert( post.category_ids.length === 1 );
-		} );
-	} );
-
-	describe( 'slugs', function() {
-		it( 'should use existing slug on puglished posts', function() {
-			var post;
-			dispatcherCallback( {
-				action: {
-					type: 'RECEIVE_POST_TO_EDIT',
-					post: {
-						ID: 777,
-						site_ID: 123,
-						title: 'Super Slug',
-						slug: 'super-rad-slug',
-						status: 'publish',
-						other_URLs: {
-							suggested_slug: 'no-slugs-for-you'
-						}
-					}
-				}
-			} );
-			post = PostEditStore.get();
-			assert( post.slug === 'super-rad-slug' );
-		} );
-
-		it( 'should use new suggested slug if prior _savedPost did', function() {
-			var post;
-			dispatcherCallback( {
-				action: {
-					type: 'RECEIVE_POST_TO_EDIT',
-					post: {
-						ID: 777,
-						site_ID: 123,
-						title: 'Oh My Slugness',
-						status: 'draft',
-						slug: 'oh-my-slugness',
-						other_URLs: {
-							suggested_slug: 'oh-my-slugness'
-						}
-
-					}
-				}
-			} );
-
-			post = PostEditStore.get();
-			assert( post.slug === 'oh-my-slugness' );
-
-			dispatcherCallback( {
-				action: {
-					type: 'RECEIVE_POST_BEING_EDITED',
-					post: {
-						ID: 777,
-						site_ID: 123,
-						title: 'Oh My Slugness Wat!',
-						status: 'draft',
-						other_URLs: {
-							suggested_slug: 'oh-my-slugness-wat'
-						}
-					}
-				}
-			} );
-
-			post = PostEditStore.get();
-			assert( post.slug === 'oh-my-slugness-wat' );
-		} );
-
-		it( 'should not use suggested slug if a custom one has been set', function() {
-			var post;
-			dispatcherCallback( {
-				action: {
-					type: 'RECEIVE_POST_TO_EDIT',
-					post: {
-						ID: 777,
-						site_ID: 123,
-						title: 'Too Many Slugs',
-						status: 'draft',
-						slug: 'too-many-slugs',
-						other_URLs: {
-							suggested_slug: 'oh-my-slugness'
-						}
-
-					}
-				}
-			} );
-
-			post = PostEditStore.get();
-			assert( post.slug === 'too-many-slugs' );
-
-			dispatcherCallback( {
-				action: {
-					type: 'RECEIVE_POST_BEING_EDITED',
-					post: {
-						ID: 777,
-						site_ID: 123,
-						title: 'Too Many Slugs on my API',
-						status: 'draft',
-						slug: 'sluga-saurus-rex',
-						other_URLs: {
-							suggested_slug: 'too-many-slugs-on-my-api'
-						}
-					}
-				}
-			} );
-
-			post = PostEditStore.get();
-			assert( post.slug === 'sluga-saurus-rex' );
-		} );
-	} );
-
 	describe( 'rawContent', function() {
 		after( function() {
 			PostEditStore.removeAllListeners();
 		} );
 
 		it( 'should not trigger changes if isDirty() and hadContent() don\'t change', function() {
-			var called = false;
+			let called = false;
 
 			dispatcherCallback( {
 				action: {

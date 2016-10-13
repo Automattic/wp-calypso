@@ -19,14 +19,6 @@ export function getDeviceId( state ) {
 	return subscription.ID;
 }
 
-export function getLastUpdated( state ) {
-	const wpcomSubscription = getSavedWPCOMSubscription( state );
-	if ( ! wpcomSubscription ) {
-		return;
-	}
-	return wpcomSubscription.lastUpdated;
-}
-
 export function getStatus( state ) {
 	if ( ! isApiReady( state ) ) {
 		return 'unknown';

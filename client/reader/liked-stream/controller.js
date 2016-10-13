@@ -2,14 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage, setPageTitle } from 'reader/controller-helper';
+import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -25,11 +25,10 @@ export default {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( LikedPostsStream, {
 				key: 'liked',
 				store: likedPostsStore,
-				setPageTitle: setPageTitle,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,
@@ -39,7 +38,8 @@ export default {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

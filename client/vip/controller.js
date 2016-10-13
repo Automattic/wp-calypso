@@ -1,16 +1,14 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
+var React = require( 'react' ),
 	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' );
 
 /**
  * Internal Dependencies
  */
-var route = require( 'lib/route' ),
-	titleActions = require( 'lib/screen-title/actions' ),
+var setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
 	sites = require( 'lib/sites-list' )();
 
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -22,11 +20,10 @@ module.exports = {
 	},
 
 	dashboard: function( context ) {
-		var siteUrl = route.getSiteFragment( context.path ),
-			site = sites.getSelectedSite(),
+		var site = sites.getSelectedSite(),
 			vipdashboard = require( './vip-dashboard' );
 
-		titleActions.setTitle( i18n.translate( 'VIP', { textOnly: true } ), { siteID: siteUrl } );
+		context.store.dispatch( setTitle( i18n.translate( 'VIP', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		renderWithReduxStore(
 			React.createElement( vipdashboard, {
@@ -41,11 +38,10 @@ module.exports = {
 	},
 
 	deploys: function( context ) {
-		var siteUrl = route.getSiteFragment( context.path ),
-			site = sites.getSelectedSite(),
+		var site = sites.getSelectedSite(),
 			vipdeploys = require( './vip-deploys' );
 
-		titleActions.setTitle( i18n.translate( 'VIP Deploys', { textOnly: true } ), { siteID: siteUrl } );
+		context.store.dispatch( setTitle( i18n.translate( 'VIP Deploys', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		renderWithReduxStore(
 			React.createElement( vipdeploys, {
@@ -60,11 +56,10 @@ module.exports = {
 	},
 
 	billing: function( context ) {
-		var siteUrl = route.getSiteFragment( context.path ),
-			site = sites.getSelectedSite(),
+		var site = sites.getSelectedSite(),
 			vipbilling = require( './vip-billing' );
 
-		titleActions.setTitle( i18n.translate( 'VIP Billing', { textOnly: true } ), { siteID: siteUrl } );
+		context.store.dispatch( setTitle( i18n.translate( 'VIP Billing', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		renderWithReduxStore(
 			React.createElement( vipbilling, {
@@ -79,11 +74,10 @@ module.exports = {
 	},
 
 	support: function( context ) {
-		var siteUrl = route.getSiteFragment( context.path ),
-			site = sites.getSelectedSite(),
+		var site = sites.getSelectedSite(),
 			vipsupport = require( './vip-support' );
 
-		titleActions.setTitle( i18n.translate( 'VIP Support', { textOnly: true } ), { siteID: siteUrl } );
+		context.store.dispatch( setTitle( i18n.translate( 'VIP Support', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		renderWithReduxStore(
 			React.createElement( vipsupport, {
@@ -98,11 +92,10 @@ module.exports = {
 	},
 
 	backups: function( context ) {
-		var siteUrl = route.getSiteFragment( context.path ),
-			site = sites.getSelectedSite(),
+		var site = sites.getSelectedSite(),
 			vipbackups = require( './vip-backups' );
 
-		titleActions.setTitle( i18n.translate( 'VIP Backups', { textOnly: true } ), { siteID: siteUrl } );
+		context.store.dispatch( setTitle( i18n.translate( 'VIP Backups', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		renderWithReduxStore(
 			React.createElement( vipbackups, {
@@ -118,12 +111,11 @@ module.exports = {
 
 	logs: function( context ) {
 		var search = context.query.s,
-			siteUrl = route.getSiteFragment( context.path ),
 			site = sites.getSelectedSite(),
 			status = context.params.status,
 			viplogs = require( './vip-logs' );
 
-		titleActions.setTitle( i18n.translate( 'VIP Logs', { textOnly: true } ), { siteID: siteUrl } );
+		context.store.dispatch( setTitle( i18n.translate( 'VIP Logs', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 		renderWithReduxStore(
 			React.createElement( viplogs, {

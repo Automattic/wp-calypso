@@ -16,6 +16,7 @@ import {
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_AUTHORIZE,
+	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_CREATE_ACCOUNT,
@@ -24,6 +25,7 @@ import {
 	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
+	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -34,6 +36,7 @@ import {
 import userFactory from 'lib/user';
 import config from 'config';
 import addQueryArgs from 'lib/route/add-query-args';
+import { externalRedirect } from 'lib/route/path';
 
 /**
  *  Local variables;
@@ -41,10 +44,9 @@ import addQueryArgs from 'lib/route/add-query-args';
 const _fetching = {};
 const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
 const apiBaseUrl = 'https://jetpack.wordpress.com';
-const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
+const remoteAuthPath = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 const remoteInstallPath = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
 const remoteActivatePath = '/wp-admin/plugins.php';
-const userModule = userFactory();
 const tracksEvent = ( dispatch, eventName, props ) => {
 	setTimeout( () => {
 		dispatch( recordTracksEvent( eventName, props ) );
@@ -175,7 +177,12 @@ export default {
 				url: url,
 				type: 'remote_auth'
 			} );
-			window.location = addQueryArgs( { jetpack_connect_url: url + remoteAuthPath }, apiBaseUrl );
+			externalRedirect(
+				addQueryArgs( {
+					jetpack_connect_url: url + remoteAuthPath,
+					calypso_env: calypsoEnv
+				}, apiBaseUrl )
+			);
 		};
 	},
 	goToPluginInstall( url ) {
@@ -188,7 +195,12 @@ export default {
 				url: url,
 				type: 'plugin_install'
 			} );
-			window.location = addQueryArgs( { jetpack_connect_url: url + remoteInstallPath }, apiBaseUrl );
+			externalRedirect(
+				addQueryArgs( {
+					jetpack_connect_url: url + remoteInstallPath,
+					calypso_env: calypsoEnv
+				}, apiBaseUrl )
+			);
 		};
 	},
 	goToPluginActivation( url ) {
@@ -201,7 +213,12 @@ export default {
 				url: url,
 				type: 'plugin_activation'
 			} );
-			window.location = addQueryArgs( { jetpack_connect_url: url + remoteActivatePath }, apiBaseUrl );
+			externalRedirect(
+				addQueryArgs( {
+					jetpack_connect_url: url + remoteActivatePath,
+					calypso_env: calypsoEnv
+				}, apiBaseUrl )
+			);
 		};
 	},
 	goBackToWpAdmin( url ) {
@@ -209,7 +226,21 @@ export default {
 			dispatch( {
 				type: JETPACK_CONNECT_REDIRECT_WP_ADMIN
 			} );
-			window.location = url;
+			externalRedirect( url );
+		};
+	},
+	goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode ) {
+		return ( dispatch ) => {
+			const url = addQueryArgs(
+				{ code: authorizationCode, state: queryObject.state },
+				queryObject.redirect_uri
+			);
+			dispatch( {
+				type: JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
+				url
+			} );
+			tracksEvent( dispatch, 'calyspo_jpc_xmlrpc_error', { error: queryObject.authorizeError } );
+			externalRedirect( url );
 		};
 	},
 	createAccount( userData ) {
@@ -253,9 +284,13 @@ export default {
 				type: JETPACK_CONNECT_AUTHORIZE,
 				queryObject: queryObject
 			} );
-			wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
+			return wpcom.undocumented().jetpackLogin( client_id, _wp_nonce, redirect_uri, scope, state )
 			.then( ( data ) => {
 				debug( 'Jetpack login complete. Trying Jetpack authorize.', data );
+				dispatch( {
+					type: JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
+					data
+				} );
 				return wpcom.undocumented().jetpackAuthorize( client_id, data.code, state, redirect_uri, secret );
 			} )
 			.then( ( data ) => {
@@ -272,7 +307,7 @@ export default {
 					error: null
 				} );
 				// Update the user now that we are fully connected.
-				userModule.fetch();
+				userFactory().fetch();
 				return wpcom.me().sites( { site_visibility: 'all' } );
 			} )
 			.then( ( data ) => {
@@ -300,7 +335,7 @@ export default {
 					type: JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 					siteId: client_id,
 					data: null,
-					error: error
+					error: pick( error, [ 'error', 'status', 'message' ] )
 				} );
 			} );
 		};
@@ -365,7 +400,7 @@ export default {
 				type: JETPACK_CONNECT_ACTIVATE_MANAGE,
 				blogId: blogId
 			} );
-			wpcom.undocumented().activateManage( blogId, state, secret )
+			return wpcom.undocumented().activateManage( blogId, state, secret )
 			.then( ( data ) => {
 				tracksEvent( dispatch, 'calypso_jpc_activate_manage_success' );
 				debug( 'Manage activated!', data );
@@ -381,7 +416,7 @@ export default {
 				dispatch( {
 					type: JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE,
 					data: null,
-					error: error
+					error: pick( error, [ 'error', 'status', 'message' ] )
 				} );
 			} );
 		};

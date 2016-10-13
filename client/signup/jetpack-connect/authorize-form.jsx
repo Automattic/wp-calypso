@@ -12,15 +12,27 @@ const debug = require( 'debug' )( 'calypso:jetpack-connect:authorize-form' );
 /**
  * Internal dependencies
  */
-import ConnectHeader from './connect-header';
 import Main from 'components/main';
+import StepHeader from '../step-header';
 import LoggedOutFormLinks from 'components/logged-out-form/links';
 import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
 import SignupForm from 'components/signup-form';
 import WpcomLoginForm from 'signup/wpcom-login-form';
 import config from 'config';
-import { createAccount, authorize, goBackToWpAdmin, activateManage } from 'state/jetpack-connect/actions';
-import { isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
+import {
+	createAccount,
+	authorize,
+	goBackToWpAdmin,
+	activateManage,
+	goToXmlrpcErrorFallbackUrl
+} from 'state/jetpack-connect/actions';
+import {
+	getAuthorizationData,
+	getAuthorizationRemoteSite,
+	getSSOSessions,
+	isCalypsoStartedConnection,
+	hasXmlrpcError
+} from 'state/jetpack-connect/selectors';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import observe from 'lib/mixins/data-observe';
 import userUtilities from 'lib/user/utils';
@@ -30,7 +42,6 @@ import Gravatar from 'components/gravatar';
 import Gridicon from 'components/gridicon';
 import LocaleSuggestions from 'signup/locale-suggestions';
 import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteByUrl } from 'state/sites/selectors';
 import Spinner from 'components/spinner';
 import Site from 'blocks/site';
 import { decodeEntities } from 'lib/formatting';
@@ -41,19 +52,26 @@ import Button from 'components/button';
 import { requestSites } from 'state/sites/actions';
 import { isRequestingSites } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
+import HelpButton from './help-button';
+import { withoutHttp } from 'lib/url';
+import LoggedOutFormFooter from 'components/logged-out-form/footer';
+import FormLabel from 'components/forms/form-label';
+import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
 
 /**
  * Constants
  */
-const calypsoEnv = config( 'env_id' ) || process.env.NODE_ENV;
 const PLANS_PAGE = '/jetpack/connect/plans/';
-const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true&calypso_env=' + calypsoEnv;
+const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
 const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
 const SiteCard = React.createClass( {
 	render() {
 		const { site_icon, blogname, home_url, site_url } = this.props.queryObject;
-		const siteIcon = site_icon ? { img: safeImageUrl( site_icon ) } : false;
+		const safeIconUrl = site_icon ? safeImageUrl( site_icon ) : false;
+		const siteIcon = safeIconUrl ? { img: safeIconUrl } : false;
 		const url = decodeEntities( home_url );
 		const parsedUrl = urlModule.parse( url );
 		const path = ( parsedUrl.path === '/' ) ? '' : parsedUrl.path;
@@ -92,8 +110,7 @@ const LoggedOutForm = React.createClass( {
 
 		return (
 			<div>
-				<ConnectHeader
-					showLogo={ false }
+				<StepHeader
 					headerText={ headerText }
 					subHeaderText={ subHeaderText } />
 				{ siteCard }
@@ -139,6 +156,7 @@ const LoggedOutForm = React.createClass( {
 				<LoggedOutFormLinkItem href={ loginUrl }>
 					{ this.translate( 'Already have an account? Sign in' ) }
 				</LoggedOutFormLinkItem>
+				<HelpButton />
 			</LoggedOutFormLinks>
 		);
 	},
@@ -208,7 +226,7 @@ const LoggedInForm = React.createClass( {
 				this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 			}
 		} else if ( siteReceived && ! isActivating ) {
-			this.activateManage();
+			this.activateManageAndRedirect();
 		}
 	},
 
@@ -226,8 +244,7 @@ const LoggedInForm = React.createClass( {
 
 		return (
 			<div>
-				<ConnectHeader
-					showLogo={ false }
+				<StepHeader
 					headerText={ headerText }
 					subHeaderText={ subHeaderText } />
 				{ siteCard }
@@ -235,10 +252,15 @@ const LoggedInForm = React.createClass( {
 		);
 	},
 
-	activateManage() {
+	activateManageAndRedirect() {
 		const { queryObject, activateManageSecret } = this.props.jetpackConnectAuthorize;
+		debug( 'Activating Manage module and calculating redirection', queryObject );
 		this.props.activateManage( queryObject.client_id, queryObject.state, activateManageSecret );
-		page.redirect( this.getRedirectionTarget() );
+		if ( 'jpo' === queryObject.from || this.props.isSSO ) {
+			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
+		} else {
+			page.redirect( this.getRedirectionTarget() );
+		}
 	},
 
 	handleSubmit() {
@@ -254,7 +276,7 @@ const LoggedInForm = React.createClass( {
 			return this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
 		if ( activateManageSecret && ! manageActivated ) {
-			return this.activateManage();
+			return this.activateManageAndRedirect();
 		}
 		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			window.location.href = queryObject.site + authUrl;
@@ -281,6 +303,50 @@ const LoggedInForm = React.createClass( {
 		return ( ! this.props.isAlreadyOnSitesList && ( isAuthorizing || isActivating ) );
 	},
 
+	handleResolve() {
+		const { queryObject, authorizationCode } = this.props.jetpackConnectAuthorize;
+		this.props.goToXmlrpcErrorFallbackUrl( queryObject, authorizationCode );
+	},
+
+	renderErrorDetails() {
+		const { authorizeError } = this.props.jetpackConnectAuthorize;
+		return (
+			<div className="jetpack-connect__error-details">
+				<FormLabel>{ this.translate( 'Error Details' ) }</FormLabel>
+				<FormSettingExplanation>
+					{ authorizeError.message }
+				</FormSettingExplanation>
+			</div>
+		);
+	},
+
+	renderXmlrpcFeedback() {
+		const xmlrpcErrorText = this.translate( 'We had trouble connecting.' );
+		return (
+			<div>
+				<div className="jetpack-connect__notices-container">
+					<Notice icon="notice" status="is-error" text={ xmlrpcErrorText } showDismiss={ false }>
+						<NoticeAction onClick={ this.handleResolve }>
+							{ this.translate( 'Try again' ) }
+						</NoticeAction>
+					</Notice>
+				</div>
+				<p>
+					{ this.translate(
+						'WordPress.com was unable to reach your site and approve the connection. ' +
+						'Try again by clicking the button above; ' +
+						'if that doesn\'t work you may need to {{link}}contact support{{/link}}.', {
+							components: {
+								link: <a href="https://jetpack.com/contact-support" target="_blank" rel="noopener noreferrer" />
+							}
+						}
+					) }
+				</p>
+				{ this.renderErrorDetails() }
+			</div>
+		);
+	},
+
 	renderNotices() {
 		const { authorizeError, queryObject } = this.props.jetpackConnectAuthorize;
 		if ( queryObject.already_authorized && ! this.props.isAlreadyOnSitesList ) {
@@ -296,7 +362,15 @@ const LoggedInForm = React.createClass( {
 		if ( authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
 		}
-		return <JetpackConnectNotices noticeType="authorizeError" />;
+		if ( this.props.requestHasXmlrpcError() ) {
+			return this.renderXmlrpcFeedback();
+		}
+		return (
+			<div>
+				<JetpackConnectNotices noticeType="defaultAuthorizeError" />
+				{ this.renderErrorDetails() }
+			</div>
+		);
 	},
 
 	getButtonText() {
@@ -342,6 +416,42 @@ const LoggedInForm = React.createClass( {
 		return this.translate( 'Approve' );
 	},
 
+	onClickDisclaimerLink() {
+		this.props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click' );
+	},
+
+	getDisclaimerText() {
+		const { queryObject } = this.props.jetpackConnectAuthorize;
+		const { blogname } = queryObject;
+
+		const detailsLink = (
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ this.onClickDisclaimerLink }
+				href="https://jetpack.com/support/what-data-does-jetpack-sync/"
+				className="jetpack-connect__sso-actions-modal-link" />
+		);
+
+		const text = this.translate(
+			'By connecting your site, you agree to {{detailsLink}}share details{{/detailsLink}} between WordPress.com and %(siteName)s.',
+			{
+				components: {
+					detailsLink
+				},
+				args: {
+					siteName: decodeEntities( blogname )
+				}
+			}
+		);
+
+		return (
+			<p className="jetpack-connect__tos-link">
+				{ text }
+			</p>
+		);
+	},
+
 	getUserText() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		let text = this.translate( 'Connecting as {{strong}}%(user)s{{/strong}}', {
@@ -367,12 +477,17 @@ const LoggedInForm = React.createClass( {
 	getRedirectionTarget() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const site = queryObject.site;
-		const siteSlug = site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+		const siteSlug = withoutHttp( site ).replace( /\//g, '::' );
 		return PLANS_PAGE + siteSlug;
 	},
 
 	renderFooterLinks() {
-		const { queryObject, authorizeSuccess, isAuthorizing } = this.props.jetpackConnectAuthorize;
+		const {
+			queryObject,
+			authorizeSuccess,
+			isAuthorizing,
+			isRedirectingToWpAdmin
+		} = this.props.jetpackConnectAuthorize;
 		const { blogname, redirect_after_auth, _wp_nonce } = queryObject;
 		const loginUrl = config( 'login_url' ) +
 			'?jetpack_calypso_login=1&redirect_to=' + encodeURIComponent( window.location.href ) +
@@ -386,7 +501,7 @@ const LoggedInForm = React.createClass( {
 			</LoggedOutFormLinkItem>
 		);
 
-		if ( isAuthorizing ) {
+		if ( isAuthorizing || isRedirectingToWpAdmin ) {
 			return null;
 		}
 
@@ -410,34 +525,47 @@ const LoggedInForm = React.createClass( {
 				<LoggedOutFormLinkItem onClick={ this.handleSignOut }>
 					{ this.translate( 'Create a new account' ) }
 				</LoggedOutFormLinkItem>
+				<HelpButton />
 			</LoggedOutFormLinks>
 		);
 	},
 
 	renderStateAction() {
 		const { authorizeSuccess, siteReceived } = this.props.jetpackConnectAuthorize;
-		if ( this.props.isFetchingSites() || this.isAuthorizing() || ( authorizeSuccess && ! siteReceived ) ) {
+		if (
+			this.props.isFetchingSites() ||
+			this.isAuthorizing() ||
+			( authorizeSuccess && ! siteReceived )
+		) {
 			return (
-				<div className="jetpack-connect-logged-in-form__loading">
+				<div className="jetpack-connect__logged-in-form-loading">
 					<span>{ this.getButtonText() }</span> <Spinner size={ 20 } duration={ 3000 } />
 				</div>
 			);
 		}
 		return (
-			<Button primary disabled={ this.isAuthorizing() } onClick={ this.handleSubmit }>
-				{ this.getButtonText() }
-			</Button>
+			<LoggedOutFormFooter className="jetpack-connect__action-disclaimer">
+				{ this.getDisclaimerText() }
+				<Button
+					primary
+					disabled={ this.isAuthorizing() || this.props.requestHasXmlrpcError() }
+					onClick={ this.handleSubmit }
+				>
+					{ this.getButtonText() }
+				</Button>
+			</LoggedOutFormFooter>
+
 		);
 	},
 
 	render() {
 		const { authorizeSuccess } = this.props.jetpackConnectAuthorize;
 		return (
-			<div className="jetpack-connect-logged-in-form">
+			<div className="jetpack-connect__logged-in-form">
 				{ this.renderFormHeader( authorizeSuccess ) }
 				<Card>
 					<Gravatar user={ this.props.user } size={ 64 } />
-					<p className="jetpack-connect-logged-in-form__user-text">{ this.getUserText() }</p>
+					<p className="jetpack-connect__logged-in-form-user-text">{ this.getUserText() }</p>
 					{ this.renderNotices() }
 					{ this.renderStateAction() }
 				</Card>
@@ -473,6 +601,9 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 					action={ this.translate( 'Get back to Jetpack Connect screen' ) }
 					actionURL="/jetpack/connect"
 				/>
+				<LoggedOutFormLinks>
+					<HelpButton />
+				</LoggedOutFormLinks>
 			</Main>
 		);
 	},
@@ -483,14 +614,10 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 		const props = Object.assign( {}, this.props, {
 			user: user
 		} );
-		const calypsoStartedConnection = isCalypsoStartedConnection(
-			this.props.jetpackConnectSessions,
-			this.props.jetpackConnectAuthorize.queryObject.site
-		);
 
 		return (
 			( user )
-				? <LoggedInForm { ...props } calypsoStartedConnection={ calypsoStartedConnection } isSSO={ this.isSSO() } />
+				? <LoggedInForm { ...props } calypsoStartedConnection={ this.props.calypsoStartedConnection } isSSO={ this.isSSO() } />
 				: <LoggedOutForm { ...props } isSSO={ this.isSSO() } />
 		);
 	},
@@ -512,26 +639,32 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
-		const site = state.jetpackConnect.jetpackConnectAuthorize &&
-				state.jetpackConnect.jetpackConnectAuthorize.queryObject &&
-				state.jetpackConnect.jetpackConnectAuthorize.queryObject.site
-			? getSiteByUrl( state, state.jetpackConnect.jetpackConnectAuthorize.queryObject.site )
-			: null;
+		const remoteSite = getAuthorizationRemoteSite( state );
+
+		const requestHasXmlrpcError = () => {
+			return hasXmlrpcError( state );
+		};
+
 		const isFetchingSites = () => {
 			return isRequestingSites( state );
 		};
+
 		return {
-			jetpackConnectAuthorize: state.jetpackConnect.jetpackConnectAuthorize,
-			jetpackSSOSessions: state.jetpackConnect.jetpackSSOSessions,
-			jetpackConnectSessions: state.jetpackConnect.jetpackConnectSessions,
-			isAlreadyOnSitesList: !! site,
-			isFetchingSites
+			jetpackConnectAuthorize: getAuthorizationData( state ),
+			jetpackSSOSessions: getSSOSessions( state ),
+			isAlreadyOnSitesList: !! remoteSite,
+			isFetchingSites,
+			requestHasXmlrpcError,
+			calypsoStartedConnection: remoteSite && isCalypsoStartedConnection( state, remoteSite.URL )
 		};
 	},
-	dispatch => bindActionCreators( { requestSites,
+	dispatch => bindActionCreators( {
+		requestSites,
 		recordTracksEvent,
 		authorize,
 		createAccount,
 		activateManage,
-		goBackToWpAdmin }, dispatch )
+		goBackToWpAdmin,
+		goToXmlrpcErrorFallbackUrl
+	}, dispatch )
 )( JetpackConnectAuthorizeForm );

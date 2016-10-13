@@ -10,7 +10,8 @@
  */
 var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
-	tinymce = require( 'tinymce/tinymce' );
+	tinymce = require( 'tinymce/tinymce' ),
+	translate = require( 'i18n-calypso' ).translate;
 
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -62,7 +63,7 @@ function wpLink( editor ) {
 
 	editor.addButton( 'link', {
 		icon: 'link',
-		tooltip: 'Insert/edit link',
+		tooltip: translate( 'Insert/edit link' ),
 		cmd: 'WP_Link',
 		stateSelector: 'a[href]'
 	} );
@@ -75,7 +76,7 @@ function wpLink( editor ) {
 
 	editor.addMenuItem( 'link', {
 		icon: 'link',
-		text: 'Insert/edit link',
+		text: translate( 'Insert/edit link' ),
 		cmd: 'WP_Link',
 		stateSelector: 'a[href]',
 		context: 'insert',
@@ -108,7 +109,7 @@ function wpLink( editor ) {
 		renderHtml: function() {
 			return (
 				'<div id="' + this._id + '" class="wp-link-preview">' +
-					'<a href="' + this.url + '" target="_blank" tabindex="-1">' + this.url + '</a>' +
+					'<a href="' + this.url + '" target="_blank" rel="noopener noreferrer" tabindex="-1">' + this.url + '</a>' +
 				'</div>'
 			);
 		},

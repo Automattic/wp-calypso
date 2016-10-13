@@ -42,7 +42,9 @@ export default React.createClass( {
 	render() {
 		const isChecked = this.hasAllElementsSelected();
 		const inputClasses = classNames( 'bulk-select__box', {
-			'is-checked': isChecked // we need to add this css class to be able to test if the input if checked, since enzyme still doesn't support :checked pseudoselector
+			// We need to add this CSS class to be able to test if the input if checked,
+			// since Enzyme still doesn't support :checked pseudoselector.
+			'is-checked': isChecked,
 		} );
 		return (
 			<span className="bulk-select" onClick={ this.handleToggleAll }>

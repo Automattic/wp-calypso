@@ -129,11 +129,16 @@ function mapPostStatus( status ) {
 	}
 }
 
+function externalRedirect( url ) {
+	window.location = url;
+}
+
 module.exports = {
 	getSiteFragment: getSiteFragment,
 	addSiteFragment: addSiteFragment,
 	getStatsDefaultSitePage: getStatsDefaultSitePage,
 	getStatsPathForTab: getStatsPathForTab,
 	sectionify: sectionify,
-	mapPostStatus: mapPostStatus
+	mapPostStatus: mapPostStatus,
+	externalRedirect: externalRedirect
 };

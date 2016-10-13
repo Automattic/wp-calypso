@@ -1,6 +1,5 @@
 // External dependencies
 import { expect } from 'chai';
-import { nock, useNock } from 'test/helpers/use-nock';
 import sinon from 'sinon';
 
 // Internal dependencies
@@ -12,18 +11,16 @@ import {
 	PURCHASES_SITE_FETCH_COMPLETED,
 	PURCHASES_USER_FETCH,
 	PURCHASES_USER_FETCH_COMPLETED,
-	PURCHASE_REMOVE,
 	PURCHASE_REMOVE_COMPLETED,
 } from 'state/action-types';
 import useMockery from 'test/helpers/use-mockery';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	const purchases = [ { ID: 1 } ],
 		userId = 1337,
 		siteId = 1234,
 		purchaseId = 31337;
-
-	useNock();
 
 	let cancelPrivateRegistration,
 		clearPurchases,
@@ -59,7 +56,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#cancelPrivateRegistration', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/upgrades/${ purchaseId }/cancel-privacy-protection` )
 				.reply( 200, { upgrade: purchases[ 0 ] } );
@@ -83,7 +80,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchSitePurchases', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( `/rest/v1.1/sites/${ siteId }/purchases` )
 				.reply( 200, purchases );
@@ -108,7 +105,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#fetchUserPurchases', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/me/purchases' )
 				.reply( 200, purchases );
@@ -134,7 +131,7 @@ describe( 'actions', () => {
 	describe( '#removePurchase', () => {
 		const response = { purchases };
 
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.post( `/rest/v1.1/me/purchases/${ purchaseId }/delete` )
 				.reply( 200, response );

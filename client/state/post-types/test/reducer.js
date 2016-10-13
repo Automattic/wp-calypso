@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -17,14 +16,11 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import reducer, { requesting, items } from '../reducer';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'reducer', () => {
-	before( () => {
-		sinon.stub( console, 'warn' );
-	} );
-
-	after( () => {
-		console.warn.restore();
+	useSandbox( ( sandbox ) => {
+		sandbox.stub( console, 'warn' );
 	} );
 
 	it( 'should include expected keys in return value', () => {

@@ -1,25 +1,30 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	omit = require( 'lodash/omit' ),
-	debug = require( 'debug' )( 'calypso:my-sites:people:main' );
+import React from 'react';
+import omit from 'lodash/omit';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
  */
-var Main = require( 'components/main' ),
-	FollowersList = require( './followers-list' ),
-	ViewersList = require( './viewers-list' ),
-	TeamList = require( 'my-sites/people/team-list' ),
-	EmptyContent = require( 'components/empty-content' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	PeopleNotices = require( 'my-sites/people/people-notices' ),
-	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' ),
-	PeopleSectionNav = require( 'my-sites/people/people-section-nav' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' );
+import Main from 'components/main';
+import FollowersList from './followers-list';
+import ViewersList from './viewers-list';
+import TeamList from 'my-sites/people/team-list';
+import EmptyContent from 'components/empty-content';
+import observe from 'lib/mixins/data-observe';
+import PeopleNotices from 'my-sites/people/people-notices';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import PeopleSectionNav from 'my-sites/people/people-section-nav';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
 
-module.exports = React.createClass( {
+/**
+ * Module variables
+ */
+const debug = debugModule( 'calypso:my-sites:people:main' );
+
+export default React.createClass( {
 
 	displayName: 'People',
 
@@ -33,13 +38,14 @@ module.exports = React.createClass( {
 		switch ( this.props.filter ) {
 			case 'team':
 				return <TeamList site={ site } search={ this.props.search } />;
-				break;
 			case 'followers':
 				return <FollowersList site={ site } label={ this.translate( 'Followers' ) } />;
-				break;
 			case 'email-followers':
-				return <FollowersList site={ site } search={ this.props.search } label={ this.translate( 'Email Followers' ) } type="email" />;
-				break;
+				return <FollowersList
+					site={ site }
+					search={ this.props.search }
+					label={ this.translate( 'Email Followers' ) }
+					type="email" />;
 			case 'viewers':
 				return <ViewersList site={ site } label={ this.translate( 'Viewers' ) } />;
 			default:
@@ -48,7 +54,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var site = this.props.sites.getSelectedSite();
+		const site = this.props.sites.getSelectedSite();
 
 		// Jetpack 3.7 is necessary to manage people
 		if ( site && site.jetpack && site.versionCompare( '3.7.0-beta', '<' ) ) {
@@ -79,7 +85,7 @@ module.exports = React.createClass( {
 				<SidebarNavigation />
 				<div>
 					{ <PeopleSectionNav { ...omit( this.props, [ 'sites' ] ) } site={ site } /> }
-					<PeopleNotices siteId={ site && site.ID } />
+					<PeopleNotices />
 					{ this.renderPeopleList( site ) }
 				</div>
 			</Main>

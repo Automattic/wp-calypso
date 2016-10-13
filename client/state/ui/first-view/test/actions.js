@@ -8,7 +8,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	FIRST_VIEW_HIDE
+	FIRST_VIEW_HIDE,
+	ROUTE_SET,
 } from 'state/action-types';
 import {
 	hideView
@@ -18,12 +19,17 @@ describe( 'actions', () => {
 	const spy = sinon.spy();
 	const getState = () => ( {
 		preferences: {
-			values: {
+			remoteValues: {
 				firstViewHistory: []
 			}
 		},
 		ui: {
-			actionLog: []
+			actionLog: [
+				{
+					type: ROUTE_SET,
+					path: '/stats',
+				},
+			]
 		}
 	} );
 

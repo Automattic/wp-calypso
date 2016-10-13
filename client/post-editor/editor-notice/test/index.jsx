@@ -61,14 +61,14 @@ describe( 'EditorNotice', () => {
 				action="view"
 				site={ {
 					URL: 'https://example.wordpress.com',
-					name: 'Example Site'
+					title: 'Example Site'
 				} } />
 		);
 
 		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).eql(
 			translate( 'Page published on {{siteLink/}}!', {
 				components: {
-					siteLink: <a href="https://example.wordpress.com" target="_blank">Example Site</a>
+					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>
 				}
 			} )
 		);
@@ -94,14 +94,14 @@ describe( 'EditorNotice', () => {
 				action="view"
 				site={ {
 					URL: 'https://example.wordpress.com',
-					name: 'Example Site'
+					title: 'Example Site'
 				} } />
 		);
 
 		expect( wrapper.find( Notice ) ).to.have.prop( 'text' ).eql(
 			translate( 'Post published on {{siteLink/}}!', {
 				components: {
-					siteLink: <a href="https://example.wordpress.com" target="_blank">Example Site</a>
+					siteLink: <a href="https://example.wordpress.com" target="_blank" rel="noopener noreferrer">Example Site</a>
 				}
 			} )
 		);

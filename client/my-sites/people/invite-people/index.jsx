@@ -85,16 +85,15 @@ const InvitePeople = React.createClass( {
 			analytics.tracks.recordEvent( 'calypso_invite_people_form_refresh_initial' );
 			debug( 'Submit successful. Resetting form.' );
 		} else {
-			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId );
-			const errors = get( sendInvitesErrored, 'errors', {} );
-
-			let updatedState = { sendingInvites: false };
+			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId ),
+				errors = get( sendInvitesErrored, 'errors', {} ),
+				updatedState = { sendingInvites: false };
 			if ( ! isEmpty( errors ) && 'object' === typeof errors ) {
 				const errorKeys = Object.keys( errors );
 				Object.assign( updatedState, {
 					usernamesOrEmails: errorKeys,
-					errorToDisplay: errorKeys[0],
-					errors,
+					errorToDisplay: errorKeys[ 0 ],
+					errors
 				} );
 			}
 
@@ -171,7 +170,7 @@ const InvitePeople = React.createClass( {
 		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID, this.state.role ) || {},
 			success = InvitesCreateValidationStore.getSuccess( this.props.site.ID, this.state.role ) || [],
 			errorsKeys = Object.keys( errors ),
-			errorToDisplay = this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[0] );
+			errorToDisplay = this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
 
 		this.setState( {
 			errorToDisplay,
@@ -287,7 +286,7 @@ const InvitePeople = React.createClass( {
 
 	renderRoleExplanation() {
 		return (
-			<a target="_blank" href="http://en.support.wordpress.com/user-roles/" onClick={ this.onClickRoleExplanation }>
+			<a target="_blank" rel="noopener noreferrer" href="http://en.support.wordpress.com/user-roles/" onClick={ this.onClickRoleExplanation }>
 				{ this.translate( 'Learn more about roles' ) }
 			</a>
 		);
@@ -321,6 +320,8 @@ const InvitePeople = React.createClass( {
 								<TokenField
 									isBorderless
 									tokenizeOnSpace
+									autoCapitalize="none"
+									autoComplete="off"
 									maxLength={ 10 }
 									value={ this.getTokensWithStatus() }
 									onChange={ this.onTokensChange }
@@ -337,7 +338,6 @@ const InvitePeople = React.createClass( {
 							<RoleSelect
 								id="role"
 								name="role"
-								key={ this.props.site.ID }
 								includeFollower
 								siteId={ this.props.site.ID }
 								onChange={ this.onRoleChange }
@@ -361,7 +361,8 @@ const InvitePeople = React.createClass( {
 									disabled={ this.state.sendingInvites } />
 								<FormSettingExplanation>
 									{ this.translate(
-										'(Optional) You can enter a custom message of up to 500 characters that will be included in the invitation to the user(s).'
+										'(Optional) You can enter a custom message of up to 500 characters ' +
+										'that will be included in the invitation to the user(s).'
 									) }
 								</FormSettingExplanation>
 							</FormFieldset>

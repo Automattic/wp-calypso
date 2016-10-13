@@ -12,11 +12,11 @@ import mapValues from 'lodash/mapValues';
  */
 import config from 'config';
 import {
-	purchase as purchaseAction,
 	activate as activateAction
 } from 'state/themes/actions';
 import {
 	getSignupUrl,
+	getPurchaseUrl,
 	getCustomizeUrl,
 	getDetailsUrl,
 	getSupportUrl,
@@ -33,7 +33,7 @@ export const purchase = config.isEnabled( 'upgrades/checkout' )
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
-		action: purchaseAction,
+		getUrl: ( theme, site ) => getPurchaseUrl( theme, site ),
 		hideForTheme: theme => ! theme.price || theme.active || theme.purchased
 	}
 	: {};
@@ -65,7 +65,7 @@ export const tryandcustomize = {
 };
 
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
-// respectively. TODO: Replace with a real action once we're able to use `DesignPreview`.
+// respectively. TODO: Replace with a real action once we're able to use `SitePreview`.
 export const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'

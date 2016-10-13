@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 
 import PluginPanel from 'my-sites/plugins-wpcom/plugin-panel';
 

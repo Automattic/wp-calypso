@@ -8,7 +8,7 @@ import trim from 'lodash/trim';
 /**
  * Internal dependencies
  */
-import { isHttps } from 'lib/url';
+import { isHttps, withoutHttp } from 'lib/url';
 import config from 'config';
 
 export default function( site ) {
@@ -20,7 +20,7 @@ export default function( site ) {
 
 	// Add URL without protocol as a `domain` attribute
 	if ( site.URL ) {
-		attributes.domain = site.URL.replace( /^https?:\/\//, '' );
+		attributes.domain = withoutHttp( site.URL );
 		attributes.slug = attributes.domain.replace( /\//g, '::' );
 	}
 	attributes.title = trim( site.name ) || attributes.domain;
@@ -28,13 +28,13 @@ export default function( site ) {
 	// If a WordPress.com site has a mapped domain create a `wpcom_url`
 	// attribute to allow site selection with either domain.
 	if ( attributes.options && attributes.options.is_mapped_domain && ! site.is_jetpack ) {
-		attributes.wpcom_url = site.options.unmapped_url.replace( /^https?:\/\//, '' );
+		attributes.wpcom_url = withoutHttp( site.options.unmapped_url );
 	}
 
 	// If a site has an `is_redirect` property use the `unmapped_url`
 	// for the slug and domain to match the wordpress.com original site.
 	if ( ( attributes.options && attributes.options.is_redirect ) || site.hasConflict ) {
-		attributes.slug = attributes.options.unmapped_url.replace( /^https?:\/\//, '' );
+		attributes.slug = withoutHttp( attributes.options.unmapped_url );
 		attributes.domain = attributes.slug;
 	}
 

@@ -38,6 +38,10 @@ const MediaUtils = {
 	 * @return {string}         URL to the media
 	 */
 	url: function( media, options ) {
+		if ( ! media ) {
+			return;
+		}
+
 		if ( media.transient ) {
 			return media.URL;
 		}
@@ -107,7 +111,8 @@ const MediaUtils = {
 		} else if ( media.extension ) {
 			extension = media.extension;
 		} else {
-			extension = path.extname( url.parse( media.URL || media.file || media.guid || '' ).pathname ).slice( 1 );
+			const pathname = url.parse( media.URL || media.file || media.guid || '' ).pathname || '';
+			extension = path.extname( pathname ).slice( 1 );
 		}
 
 		return extension;
@@ -477,6 +482,20 @@ const MediaUtils = {
 		}
 
 		canvas.toBlob( callback, type, quality );
+	},
+
+	/**
+	 * Returns true if specified item is currently being uploaded (i.e. is transient).
+	 *
+	 * @param  {Object}  item Media item
+	 * @return {Boolean}      Whether item is being uploaded
+	 */
+	isItemBeingUploaded( item ) {
+		if ( ! item ) {
+			return null;
+		}
+
+		return !! item.transient;
 	}
 };
 

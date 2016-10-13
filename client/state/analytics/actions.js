@@ -20,7 +20,7 @@ const mergedMetaData = ( a, b ) => [
 
 const joinAnalytics = ( analytics, action ) =>
 	isFunction( action )
-		? dispatch => { dispatch( analytics ); action( dispatch ); }
+		? dispatch => { dispatch( analytics ); dispatch( action ); }
 		: merge( {}, action, { meta: { analytics: mergedMetaData( analytics, action ) } } );
 
 export const composeAnalytics = ( ...analytics ) => ( {

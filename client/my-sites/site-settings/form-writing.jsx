@@ -3,8 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import each from 'lodash/each';
-import pick from 'lodash/pick';
+import { each, pick, map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -21,23 +20,25 @@ import FormLabel from 'components/forms/form-label';
 import SectionHeader from 'components/section-header';
 import Card from 'components/card';
 import Button from 'components/button';
+import QueryTerms from 'components/data/query-terms';
+import TaxonomyManager from 'blocks/taxonomy-manager';
 import { isJetpackModuleActive, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { requestPostTypes } from 'state/post-types/actions';
+import { isRequestingTermsForQuery, getTerms } from 'state/terms/selectors';
 import CustomPostTypeFieldset from './custom-post-types-fieldset';
 
 const SiteSettingsFormWriting = React.createClass( {
 	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite: function( site ) {
-		var writingAttributes = [
-				'default_category',
-				'post_categories',
-				'default_post_format',
-				'wpcom_publish_posts_with_markdown',
-				'markdown_supported',
-			],
-			settings = {};
+		let writingAttributes = [
+			'default_category',
+			'default_post_format',
+			'wpcom_publish_posts_with_markdown',
+			'markdown_supported',
+		];
+		const settings = {};
 
 		site = site || this.props.site;
 
@@ -54,7 +55,6 @@ const SiteSettingsFormWriting = React.createClass( {
 			}, this );
 		}
 		settings.fetchingSettings = site.fetchingSettings;
-		settings.post_categories = settings.post_categories || [];
 
 		return settings;
 	},
@@ -62,8 +62,7 @@ const SiteSettingsFormWriting = React.createClass( {
 	isCustomPostTypesSettingsEnabled() {
 		return (
 			config.isEnabled( 'manage/custom-post-types' ) &&
-			false !== this.props.jetpackVersionSupportsCustomTypes &&
-			false !== this.props.jetpackCustomTypesModuleActive
+			this.props.jetpackVersionSupportsCustomTypes
 		);
 	},
 
@@ -71,7 +70,6 @@ const SiteSettingsFormWriting = React.createClass( {
 		this.replaceState( {
 			fetchingSettings: true,
 			default_category: '',
-			post_categories: [],
 			default_post_format: '',
 		} );
 	},
@@ -92,21 +90,49 @@ const SiteSettingsFormWriting = React.createClass( {
 		this.markChanged();
 	},
 
+	submitFormAndActivateCustomContentModule( event ) {
+		this.handleSubmitForm( event );
+
+		// Only need to activate module for Jetpack sites
+		if ( ! this.props.site || ! this.props.site.jetpack ) {
+			return;
+		}
+
+		// Jetpack support applies only to more recent versions
+		if ( ! this.props.jetpackVersionSupportsCustomTypes ) {
+			return;
+		}
+
+		// No action necessary if neither content type is enabled in form
+		if ( ! this.state.jetpack_testimonial && ! this.state.jetpack_portfolio ) {
+			return;
+		}
+
+		// Only activate module if not already activated (saves an unnecessary
+		// request for post types after submission completes)
+		if ( ! this.props.jetpackCustomTypesModuleActive ) {
+			// [TODO]: This should be migrated to a Redux action creator, but
+			// is complicated by requirements to sync back to legacy sites-list
+			this.props.site.activateModule( 'custom-content-types', this.onSaveComplete );
+		}
+	},
+
 	render: function() {
 		const markdownSupported = this.state.markdown_supported;
 		return (
-			<form id="site-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
+			<form id="site-settings" onSubmit={ this.submitFormAndActivateCustomContentModule } onChange={ this.markChanged }>
 				<SectionHeader label={ this.translate( 'Writing Settings' ) }>
 					<Button
 						compact
 						primary
-						onClick={ this.submitForm }
+						onClick={ this.submitFormAndActivateCustomContentModule }
 						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
 						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
 					</Button>
 				</SectionHeader>
 				<Card className="site-settings">
 					<FormFieldset>
+						<QueryTerms siteId={ this.props.siteId } taxonomy="category" />
 						<FormLabel htmlFor="default_category">
 							{ this.translate( 'Default Post Category' ) }
 						</FormLabel>
@@ -114,10 +140,10 @@ const SiteSettingsFormWriting = React.createClass( {
 							name="default_category"
 							id="default_category"
 							valueLink={ this.linkState( 'default_category' ) }
-							disabled={ this.state.fetchingSettings }
+							disabled={ this.props.isRequestingCategories }
 							onClick={ this.recordEvent.bind( this, 'Selected Default Post Category' ) }>
-							{ this.state.post_categories.map( function( category ) {
-								return <option value={ category.value } key={ 'post-category-' + category.value }>{ category.name }</option>;
+							{ map(this.props.categories, category => {
+								return <option value={ category.ID } key={ 'post-category-' + category.ID }>{ category.name }</option>;
 							} ) }
 						</FormSelect>
 						<FormLabel htmlFor="default_post_format">
@@ -142,13 +168,13 @@ const SiteSettingsFormWriting = React.createClass( {
 						</FormSelect>
 					</FormFieldset>
 
-					{ this.isCustomPostTypesSettingsEnabled() && (
+					{ config.isEnabled( 'manage/custom-post-types' ) && this.props.jetpackVersionSupportsCustomTypes && (
 						<CustomPostTypeFieldset
 							requestingSettings={ this.state.fetchingSettings }
 							value={ pick( this.state, 'jetpack_testimonial', 'jetpack_portfolio' ) }
 							onChange={ this.setCustomPostTypeSetting }
 							recordEvent={ this.recordEvent }
-							className="has-divider is-top-only" />
+							className="site-settings__custom-post-type-fieldset has-divider is-top-only" />
 					) }
 					{ markdownSupported &&
 						<FormFieldset className="has-divider is-top-only">
@@ -163,7 +189,7 @@ const SiteSettingsFormWriting = React.createClass( {
 									onClick={ this.recordEvent.bind( this, 'Clicked Markdown for Posts Checkbox' ) } />
 								<span>{ this.translate( 'Use markdown for posts and pages. {{a}}Learn more about markdown{{/a}}.', {
 										components: {
-											a: <a href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank" />
+											a: <a href="http://en.support.wordpress.com/markdown-quick-reference/" target="_blank" rel="noopener noreferrer" />
 										}
 									} ) }</span>
 							</FormLabel>
@@ -190,8 +216,8 @@ const SiteSettingsFormWriting = React.createClass( {
 						</FormFieldset>
 					}
 				</Card>
+				{ config.isEnabled( 'manage/site-settings/categories' ) && <TaxonomyManager taxonomy="category" /> }
 			</form>
-
 		);
 	}
 } );
@@ -199,10 +225,15 @@ const SiteSettingsFormWriting = React.createClass( {
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const isRequestingCategories = isRequestingTermsForQuery( state, siteId, 'category', {} );
+		const categories = getTerms( state, siteId, 'category' );
 
 		return {
-			jetpackCustomTypesModuleActive: isJetpackModuleActive( state, siteId, 'custom-content-types' ),
-			jetpackVersionSupportsCustomTypes: isJetpackMinimumVersion( state, siteId, '4.2.0' )
+			jetpackCustomTypesModuleActive: false !== isJetpackModuleActive( state, siteId, 'custom-content-types' ),
+			jetpackVersionSupportsCustomTypes: false !== isJetpackMinimumVersion( state, siteId, '4.2.0' ),
+			categories,
+			isRequestingCategories,
+			siteId
 		};
 	},
 	{ requestPostTypes },

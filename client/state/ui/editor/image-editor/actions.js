@@ -8,12 +8,21 @@ import {
 	IMAGE_EDITOR_SET_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_SET_FILE_INFO,
-	IMAGE_EDITOR_STATE_RESET
+	IMAGE_EDITOR_STATE_RESET,
+	IMAGE_EDITOR_STATE_RESET_ALL
 } from 'state/action-types';
 
+// Doesn't reset image file info (src, fileName, etc).
 export function resetImageEditorState() {
 	return {
 		type: IMAGE_EDITOR_STATE_RESET
+	};
+}
+
+// Resets image file info as well (src, fileName, etc).
+export function resetAllImageEditorState() {
+	return {
+		type: IMAGE_EDITOR_STATE_RESET_ALL
 	};
 }
 
@@ -36,12 +45,13 @@ export function setImageEditorAspectRatio( ratio ) {
 	};
 }
 
-export function setImageEditorFileInfo( src, fileName, mimeType ) {
+export function setImageEditorFileInfo( src, fileName, mimeType, title ) {
 	return {
 		type: IMAGE_EDITOR_SET_FILE_INFO,
 		src,
 		fileName,
-		mimeType
+		mimeType,
+		title
 	};
 }
 

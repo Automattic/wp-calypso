@@ -22,11 +22,8 @@ var Cards = React.createClass( {
 		var toggleCardsText = this.state.compactCards ? 'Normal Cards' : 'Compact Cards';
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/cards">Card</a>
-					<a className="design-assets__toggle button" onClick={ this.toggleCards }>{ toggleCardsText }</a>
-				</h2>
+			<div>
+				<a className="docs__design-toggle button" onClick={ this.toggleCards }>{ toggleCardsText }</a>
 				{ this.renderCards() }
 			</div>
 		);
@@ -40,7 +37,7 @@ var Cards = React.createClass( {
 					<Card>I am another Card.</Card>
 					<Card className="awesome sauce">I am a third Card with custom classes!</Card>
 					<Card href="#cards">I am a linkable Card</Card>
-					<Card href="#cards" target="_blank">I am a externally linked Card</Card>
+					<Card href="#cards" target="_blank" rel="noopener noreferrer">I am a externally linked Card</Card>
 				</div>
 			);
 		} else {
@@ -50,7 +47,7 @@ var Cards = React.createClass( {
 					<CompactCard>I am another CompactCard.</CompactCard>
 					<CompactCard className="awesome sauce">I am a third CompactCard with custom classes!</CompactCard>
 					<CompactCard href="#cards">I am a linkable CompactCard</CompactCard>
-					<CompactCard href="#cards" target="_blank">I am a externally linked CompactCard</CompactCard>
+					<CompactCard href="#cards" target="_blank" rel="noopener noreferrer">I am a externally linked CompactCard</CompactCard>
 				</div>
 			);
 		}

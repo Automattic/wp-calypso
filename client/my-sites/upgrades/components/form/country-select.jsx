@@ -44,16 +44,16 @@ export default React.createClass( {
 			options.push( { key: 'loading', label: this.translate( 'Loading…' ), disabled: 'disabled' } );
 		} else {
 			options = options.concat( [
-				{ key: 'select-country', label: this.translate( 'Select Country' ) },
-				{ key: 'divider1', label: '', disabled: 'disabled' }
+				{ key: 'select-country', label: this.translate( 'Select Country' ), value: '' },
+				{ key: 'divider1', label: '', disabled: 'disabled', value: '-' }
 			] );
 
-			options = options.concat( countriesList.map( country => {
+			options = options.concat( countriesList.map( ( country, index ) => {
 				if ( isEmpty( country.code ) ) {
-					return { key: 'divider2', label: '', disabled: 'disabled' };
+					return { key: 'divider2', label: '', disabled: 'disabled', value: '-' };
 				}
 
-				return { key: country.code, label: country.name, value: country.code };
+				return { key: `country-select-${ index }-${ country.code }`, label: country.name, value: country.code };
 			} ) );
 		}
 

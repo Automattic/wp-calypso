@@ -3,26 +3,49 @@
 /**
  * External dependencies
  */
-import filter from 'lodash/filter';
-import last from 'lodash/last';
-import some from 'lodash/some';
-import startsWith from 'lodash/startsWith';
-import takeRightWhile from 'lodash/takeRightWhile';
+import moment from 'moment';
+import { some, startsWith, takeRightWhile, find, findLast } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { FIRST_VIEW_START_DATES } from './constants';
+import { FIRST_VIEW_CONFIG } from './constants';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference, preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import { getSectionName, isSectionLoading } from 'state/ui/selectors';
+import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
 import { FIRST_VIEW_HIDE, ROUTE_SET } from 'state/action-types';
+import { getCurrentUserDate } from 'state/current-user/selectors';
 
-export function doesViewHaveFirstView( view ) {
-	return !! ( FIRST_VIEW_START_DATES[ view ] );
+export function getConfigForCurrentView( state ) {
+	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
+	const path = currentRoute.path ? currentRoute.path : '';
+	const config = find( FIRST_VIEW_CONFIG, ( entry => some( entry.paths, entryPath => startsWith( path, entryPath ) ) ) );
+
+	return config || false;
 }
 
-export function isViewEnabled( state, view ) {
+export function isUserEligible( state, config ) {
+	const userStartDate = getCurrentUserDate( state );
+
+	// If no start date is defined, all users are eligible
+	if ( ! config.startDate ) {
+		return true;
+	}
+
+	// If the user doesn't have a start date, we don't want to show the first view
+	if ( ! userStartDate ) {
+		return false;
+	}
+
+	return moment( userStartDate ).isAfter( config.startDate );
+}
+
+export function isQueryStringEnabled( state, config ) {
+	const queryArguments = getInitialQueryArguments( state );
+	return queryArguments.firstView === config.name;
+}
+
+export function isViewEnabled( state, config ) {
 	// in order to avoid using an out-of-date preference for whether a
 	// FV should be enabled or not, wait until we have fetched the
 	// preferences from the API
@@ -30,20 +53,24 @@ export function isViewEnabled( state, view ) {
 		return false;
 	}
 
-	const firstViewHistory = getPreference( state, 'firstViewHistory' ).filter( entry => entry.view === view );
-	const latestFirstViewHistory = [ ...firstViewHistory ].pop();
+	const latestFirstViewHistory = findLast( getPreference( state, 'firstViewHistory' ), { view: config.name } );
 	const isViewDisabled = latestFirstViewHistory ? ( !! latestFirstViewHistory.disabled ) : false;
-	return doesViewHaveFirstView( view ) && ! isViewDisabled;
+
+	// If the view is disabled, we want to return false, regardless of state
+	if ( isViewDisabled ) {
+		return false;
+	}
+
+	return isQueryStringEnabled( state, config ) || ( config.enabled && isUserEligible( state, config ) );
 }
 
-export function wasFirstViewHiddenSinceEnteringCurrentSection( state ) {
-	const sectionName = getSectionName( state );
+export function wasFirstViewHiddenSinceEnteringCurrentSection( state, config ) {
 	const actionsSinceEnteringCurrentSection = takeRightWhile( getActionLog( state ), ( action ) => {
 		return ( action.type !== ROUTE_SET ) || ( action.type === ROUTE_SET && routeSetIsInCurrentSection( state, action ) );
 	} );
 
 	return some( actionsSinceEnteringCurrentSection,
-		action => action.type === FIRST_VIEW_HIDE && action.view === sectionName );
+		action => action.type === FIRST_VIEW_HIDE && action.view === config.name );
 }
 
 function routeSetIsInCurrentSection( state, routeSet ) {
@@ -52,16 +79,19 @@ function routeSetIsInCurrentSection( state, routeSet ) {
 }
 
 export function shouldViewBeVisible( state ) {
-	const sectionName = getSectionName( state );
+	const firstViewConfig = getConfigForCurrentView( state );
 
-	return isViewEnabled( state, sectionName ) &&
-		! wasFirstViewHiddenSinceEnteringCurrentSection( state ) &&
+	if ( ! firstViewConfig ) {
+		return false;
+	}
+
+	return isViewEnabled( state, firstViewConfig ) &&
+		! wasFirstViewHiddenSinceEnteringCurrentSection( state, firstViewConfig ) &&
 		! isSectionLoading( state );
 }
 
 export function secondsSpentOnCurrentView( state, now = Date.now() ) {
-	const routeSets = filter( getActionLog( state ), { type: ROUTE_SET } );
-	const currentRoute = last( routeSets );
+	const currentRoute = findLast( getActionLog( state ), { type: ROUTE_SET } );
 	return currentRoute ? ( now - currentRoute.timestamp ) / 1000 : -1;
 }
 

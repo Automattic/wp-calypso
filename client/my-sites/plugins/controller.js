@@ -20,7 +20,7 @@ import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { setSection } from 'state/ui/actions';
 
@@ -51,16 +51,24 @@ function renderSinglePlugin( context, siteUrl ) {
 	// Scroll to the top
 	window.scrollTo( 0, 0 );
 
+	let prevPath;
+	if ( lastPluginsListVisited ) {
+		prevPath = lastPluginsListVisited;
+	} else if ( context.prevPath ) {
+		prevPath = route.sectionify( context.prevPath );
+	}
+
 	// Render single plugin component
 	renderWithReduxStore(
 		React.createElement( PluginComponent, {
 			path: context.path,
-			prevPath: lastPluginsListVisited || context.prevPath,
 			prevQuerystring: lastPluginsQuerystring,
+			prevPath,
 			sites,
 			pluginSlug,
 			siteUrl,
-			onPluginRefresh: title => titleActions.setTitle( title )
+			// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+			onPluginRefresh: title => context.store.dispatch( setTitle( title ) )
 		} ),
 		document.getElementById( 'primary' ),
 		context.store
@@ -75,13 +83,13 @@ function getPathWithoutSiteSlug( context, site ) {
 	return path;
 }
 
-function renderPluginList( context, basePath, siteUrl ) {
+function renderPluginList( context, basePath ) {
 	const search = context.query.s;
 	const site = sites.getSelectedSite();
 
 	lastPluginsListVisited = getPathWithoutSiteSlug( context, site );
 	lastPluginsQuerystring = context.querystring;
-	titleActions.setTitle( i18n.translate( 'Plugins', { textOnly: true } ), { siteID: siteUrl } );
+	context.store.dispatch( setTitle( i18n.translate( 'Plugins', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 	renderWithReduxStore(
 		React.createElement( PluginListComponent, {
@@ -110,7 +118,7 @@ function renderPluginList( context, basePath, siteUrl ) {
 	.record( context.pathname.replace( site.domain, ':site' ), analyticsPageTitle );
 }
 
-function renderPluginsBrowser( context, siteUrl ) {
+function renderPluginsBrowser( context ) {
 	const searchTerm = context.query.s;
 	let site = sites.getSelectedSite();
 	let { category } = context.params;
@@ -128,14 +136,14 @@ function renderPluginsBrowser( context, siteUrl ) {
 		site = { slug: context.params.siteOrCategory };
 	}
 
-	titleActions.setTitle( i18n.translate( 'Plugin Browser', { textOnly: true } ), { siteID: siteUrl } );
+	context.store.dispatch( setTitle( i18n.translate( 'Plugin Browser', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 	const analyticsPageTitle = 'Plugin Browser' + ( category ? ': ' + category : '' );
 	analytics
 	.pageView
 	.record( context.pathname.replace( site.domain, ':site' ), analyticsPageTitle );
 
-	ReactDom.render(
+	renderWithReduxStore(
 		React.createElement( PluginBrowser, {
 			site: site ? site.slug : null,
 			path: context.path,
@@ -143,7 +151,8 @@ function renderPluginsBrowser( context, siteUrl ) {
 			sites,
 			search: searchTerm
 		} ),
-		document.getElementById( 'primary' )
+		document.getElementById( 'primary' ),
+		context.store
 	);
 }
 
@@ -156,7 +165,9 @@ function renderProvisionPlugins( context ) {
 	analytics.pageView.record( context.pathname.replace( site.domain, ':site' ), 'Jetpack Plugins Setup' );
 
 	renderWithReduxStore(
-		React.createElement( PlanSetup, {} ),
+		React.createElement( PlanSetup, {
+			whitelist: context.query.only || false
+		} ),
 		document.getElementById( 'primary' ),
 		context.store
 	);
@@ -207,7 +218,7 @@ const controller = {
 
 		context.params.pluginFilter = filter;
 		notices.clearNotices( 'notices' );
-		renderPluginList( context, basePath, siteUrl );
+		renderPluginList( context, basePath );
 	},
 
 	plugin( context ) {
@@ -227,8 +238,7 @@ const controller = {
 	},
 
 	browsePlugins( context ) {
-		const siteUrl = route.getSiteFragment( context.path );
-		renderPluginsBrowser( context, siteUrl );
+		renderPluginsBrowser( context );
 	},
 
 	jetpackCanUpdate( filter, context, next ) {
@@ -254,6 +264,12 @@ const controller = {
 
 	setupPlugins( context ) {
 		renderProvisionPlugins( context );
+	},
+
+	resetHistory( context, next ) {
+		lastPluginsListVisited = null;
+		lastPluginsQuerystring = null;
+		next();
 	}
 };
 

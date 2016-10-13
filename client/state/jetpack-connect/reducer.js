@@ -4,7 +4,6 @@
 import isEmpty from 'lodash/isEmpty';
 import omit from 'lodash/omit';
 import { combineReducers } from 'redux';
-import urlModule from 'url';
 
 /**
  * Internal dependencies
@@ -17,6 +16,7 @@ import {
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_QUERY_UPDATE,
 	JETPACK_CONNECT_AUTHORIZE,
+	JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE,
 	JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST,
 	JETPACK_CONNECT_ACTIVATE_MANAGE,
@@ -25,6 +25,7 @@ import {
 	JETPACK_CONNECT_CREATE_ACCOUNT_RECEIVE,
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
+	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -156,6 +157,8 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 					autoAuthorize: false
 				}
 			);
+		case JETPACK_CONNECT_AUTHORIZE_LOGIN_COMPLETE:
+			return Object.assign( {}, state, { authorizationCode: action.data.code } );
 		case JETPACK_CONNECT_AUTHORIZE_RECEIVE_SITE_LIST:
 			const updateQueryObject = omit( state.queryObject, '_wp_nonce', 'secret', 'scope' );
 			return Object.assign(
@@ -236,6 +239,8 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 					bearerToken: action.data.bearer_token
 				}
 			);
+		case JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL:
+			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case DESERIALIZE:

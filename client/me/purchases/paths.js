@@ -2,10 +2,6 @@ function list() {
 	return '/purchases';
 }
 
-function listNotice( noticeType = ':noticeType' ) {
-	return list() + `/${ noticeType }`;
-}
-
 function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
 	return list() + `/${ siteName }/${ purchaseId }`;
 }
@@ -23,11 +19,11 @@ function cancelPrivateRegistration( siteName, purchaseId ) {
 }
 
 function addCardDetails( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/payment/edit';
+	return managePurchase( siteName, purchaseId ) + '/payment/add';
 }
 
 function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
-	return addCardDetails( siteName, purchaseId ) + `/${ cardId }`;
+	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
 }
 
 export default {
@@ -37,6 +33,5 @@ export default {
 	confirmCancelDomain,
 	editCardDetails,
 	list,
-	listNotice,
 	managePurchase
 };

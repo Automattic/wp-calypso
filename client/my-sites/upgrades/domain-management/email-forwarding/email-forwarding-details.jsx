@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var i18n = require( 'i18n-calypso' ),
-	React = require( 'react' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -20,6 +19,7 @@ var EmailForwardingDetails = React.createClass( {
 				{ ' ' }
 				<a href={ support.EMAIL_FORWARDING }
 						target="_blank"
+						rel="noopener noreferrer"
 						onClick={ this.handleLearnMoreClick }>
 					{ this.translate( 'Learn more.' ) }
 				</a>
@@ -33,4 +33,3 @@ var EmailForwardingDetails = React.createClass( {
 } );
 
 module.exports = EmailForwardingDetails;
-

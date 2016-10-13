@@ -33,22 +33,26 @@ describe( 'assembler', () => {
 		} ),
 		redirectDomainObject = {
 			autoRenewalDate: undefined,
+			currentUserCanManage: undefined,
 			expirationMoment: null,
 			expired: undefined,
 			expirySoon: undefined,
 			googleAppsSubscription: undefined,
 			hasPrivacyProtection: undefined,
 			isAutoRenewing: undefined,
-			currentUserCanManage: undefined,
 			isWhoisEditable: undefined,
 			isPendingIcannVerification: undefined,
 			isPrimary: false,
 			name: DOMAIN_NAME,
 			manualTransferRequired: undefined,
+			owner: undefined,
 			privateDomain: undefined,
+			pendingTransfer: undefined,
 			registrationDate: undefined,
 			registrationMoment: undefined,
-			type: domainTypes.SITE_REDIRECT
+			type: domainTypes.SITE_REDIRECT,
+			hasZone: undefined,
+			pointsToWpcom: undefined
 		},
 		mappedDomainObject = assign( {}, redirectDomainObject, {
 			type: domainTypes.MAPPED

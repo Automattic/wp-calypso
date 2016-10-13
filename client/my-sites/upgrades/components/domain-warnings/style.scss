@@ -1,7 +1,10 @@
-.domain-warnings__unverified-domains {
+.domain-warnings__notice {
 	li {
 		font-size: 12px;
 		list-style: none;
 		margin-left: 0;
+	}
+	a {
+		align-self: center;
 	}
 }

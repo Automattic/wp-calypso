@@ -1,16 +1,18 @@
 /**
  * External Dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react'),
-	i18n = require( 'i18n-calypso' );
+import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import sitesFactory from 'lib/sites-list';
+import route from 'lib/route';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
+
+const sites = sitesFactory();
 
 module.exports = {
 
@@ -18,15 +20,17 @@ module.exports = {
 		var Drafts = require( 'my-sites/drafts/main' ),
 			siteID = route.getSiteFragment( context.path );
 
-		titleActions.setTitle( i18n.translate( 'Drafts', { textOnly: true } ), { siteID: siteID } );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Drafts', { textOnly: true } ) ) );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( Drafts, {
 				siteID: siteID,
 				sites: sites,
 				trackScrollPage: function() {}
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 

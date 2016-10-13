@@ -27,6 +27,7 @@ module.exports = React.createClass( {
 				components: { link: <a href="/purchases" /> }
 			}
 		);
+		const noFilterResultsText = this.translate( 'No upcoming charges found.' );
 
 		if ( this.props.sites.initialized ) {
 			// `TransactionsTable` will render a loading state until the transactions are present
@@ -38,6 +39,7 @@ module.exports = React.createClass( {
 				transactions={ transactions }
 				initialFilter={ { date: { newest: 20 } } }
 				emptyTableText={ emptyTableText }
+				noFilterResultsText={ noFilterResultsText }
 				transactionRenderer={ this.renderTransaction } />
 		);
 	},

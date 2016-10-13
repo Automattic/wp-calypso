@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
 import i18n from 'i18n-calypso';
 
 /**
@@ -11,6 +10,7 @@ import i18n from 'i18n-calypso';
 import route from 'lib/route';
 import userSettings from 'lib/user-settings';
 import { trackPageLoad, setPageTitle } from 'reader/controller-helper';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
 
@@ -22,11 +22,11 @@ export default {
 			mcKey = 'following_edit',
 			search = context.query.s;
 
-		setPageTitle( i18n.translate( 'Manage Followed Sites' ) );
+		setPageTitle( context, i18n.translate( 'Manage Followed Sites' ) );
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( FollowingEdit, {
 				key: 'following-edit',
 				initialFollowUrl: context.query.follow,
@@ -34,7 +34,8 @@ export default {
 				context: context,
 				userSettings: userSettings
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

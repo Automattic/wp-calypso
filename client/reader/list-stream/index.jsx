@@ -11,6 +11,7 @@ import config from 'config';
  */
 import Stream from 'reader/stream';
 import EmptyContent from './empty';
+import DocumentHead from 'components/data/document-head';
 import ListMissing from './missing';
 import StreamHeader from 'reader/stream-header';
 import { followList, unfollowList } from 'state/reader/lists/actions';
@@ -57,16 +58,13 @@ const ListStream = React.createClass( {
 			}
 		}
 
-		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( title );
-		}
-
 		if ( this.props.isMissing ) {
 			return <ListMissing owner={ this.props.owner } slug={ this.props.slug } />;
 		}
 
 		return (
 			<Stream { ...this.props } store={ this.props.postStore } listName={ title } emptyContent={ emptyContent } showFollowInHeader={ shouldShowFollow }>
+				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: title } ) } />
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<StreamHeader
 					isPlaceholder={ ! list }

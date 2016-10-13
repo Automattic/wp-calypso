@@ -1,5 +1,5 @@
-var i18n = require( 'i18n-calypso' ),
-	Emitter = require( 'lib/mixins/emitter' );
+import i18n from 'i18n-calypso';
+import Emitter from 'lib/mixins/emitter';
 
 function KeyBindings() {
 	i18n.on( 'change', this.emitLanguageChange.bind( this ) );
@@ -15,7 +15,7 @@ KeyBindings.prototype.emitLanguageChange = function() {
 };
 
 KeyBindings.prototype.get = function() {
-	var descriptionCtrlKey = 'ctrl';
+	let descriptionCtrlKey = 'ctrl';
 
 	if ( typeof navigator !== 'undefined' && navigator.userAgent.indexOf( 'Mac OS X' ) !== -1 ) {
 		// the ctrl key in the description is platform dependent and displays the command symbol on OS X
@@ -63,7 +63,7 @@ KeyBindings.prototype.get = function() {
 				eventName: 'open-keyboard-shortcuts-menu',
 				keys: [
 					[ 'shift', '/' ],
-					[ 'shift', ',']
+					[ 'shift', ',' ]
 				],
 				// On Win/Webkit `?` is incorrectly identified as upside-down
 				// question mark. https://bugs.webkit.org/show_bug.cgi?id=19906
@@ -164,6 +164,14 @@ KeyBindings.prototype.get = function() {
 				description: {
 					keys: [ descriptionCtrlKey, 'enter' ],
 					text: i18n.translate( 'Reply to post' )
+				}
+			},
+			{
+				eventName: 'close-full-post',
+				keys: [ 'esc' ],
+				description: {
+					keys: [ 'esc' ],
+					text: i18n.translate( 'Close full post' )
 				}
 			}
 		],

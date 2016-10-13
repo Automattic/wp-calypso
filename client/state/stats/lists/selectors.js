@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import forOwn from 'lodash/forOwn';
-import get from 'lodash/get';
+import { forOwn, get, reduce } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
@@ -98,6 +97,27 @@ export const getSiteStatsMaxPostsByDay = createSelector(
 		} );
 
 		return max || null;
+	},
+	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
+	( state, siteId, query ) => {
+		const serializedQuery = getSerializedStatsQuery( query );
+		return [ siteId, 'statsStreakMax', serializedQuery ].join();
+	}
+);
+
+/**
+ * Returns the total number of posts per streak data for a query
+ *
+ * @param  {Object}  state    Global state tree
+ * @param  {Number}  siteId   Site ID
+ * @param  {Object}  query    Stats query object
+ * @return {?Number}          Max number of posts by day
+ */
+export const getSiteStatsTotalPostsForStreakQuery = createSelector(
+	( state, siteId, query ) => {
+		return reduce( getSiteStatsPostStreakData( state, siteId, query ), ( posts, sum ) => {
+			return sum + posts;
+		}, 0 );
 	},
 	( state, siteId, query ) => getSiteStatsForQuery( state, siteId, 'statsStreak', query ),
 	( state, siteId, query ) => {

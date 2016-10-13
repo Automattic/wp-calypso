@@ -2,13 +2,11 @@
  * External dependencies
  */
 import React from 'react';
-import debugModule from 'debug';
 import noop from 'lodash/noop';
 
 /**
  * Module variables
  */
-//const debug = debugModule( 'calypso:reader:following-edit:sort' );
 
 const FollowingEditSortControls = React.createClass( {
 

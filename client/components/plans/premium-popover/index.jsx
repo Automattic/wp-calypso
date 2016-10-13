@@ -45,9 +45,12 @@ const PremiumPopover = React.createClass( {
 		this.props.fetchSitePlans( nextProps.sitePlans, nextProps.selectedSite );
 	},
 	isVisible() {
-		return ( this.props.isVisible || this.state.visibleByClick || this.state.visibleByHover ) && (
-				! exclusiveViewLock || exclusiveViewLock === this
-			);
+		return (
+			this.props.isVisible ||
+			this.state.visibleByClick ||
+			this.state.visibleByHover
+		) &&
+			( ! exclusiveViewLock || exclusiveViewLock === this );
 	},
 	priceMessage( price ) {
 		return this.translate( '%(cost)s {{small}}/year{{/small}}', {
@@ -89,18 +92,27 @@ const PremiumPopover = React.createClass( {
 	},
 	render() {
 		const premiumPlan = find( this.props.plans, ( plan => plan.product_slug === 'value_bundle' ) );
+		const popoverClasses = classNames( this.props.className, 'premium-popover popover' );
+		const context = this.refs && this.refs[ 'popover-premium-reference' ];
+
 		return (
-			<span
-				onClick={ this.handleClick }
-				onMouseEnter={ this.handleMouseEnter }
-				onMouseLeave={ this.handleMouseLeave }>
-				{ this.props.textLabel }
+			<div>
+				<span
+					onClick={ this.handleClick }
+					onMouseEnter={ this.handleMouseEnter }
+					ref="popover-premium-reference"
+					onMouseLeave={ this.handleMouseLeave }>
+					{ this.props.textLabel }
+				</span>
+
 				<Popover
+					id="popover__premium"
 					{ ...omit( this.props, [ 'children', 'className', 'textLabel' ] ) }
 					onClose={ this.onClose }
-					context={ this }
+					context={ context }
 					isVisible={ this.isVisible() }
-					className={ classNames( this.props.className, 'premium-popover popover' ) }>
+					className={ popoverClasses }
+				>
 					<div className="premium-popover__content">
 						<div className="premium-popover__header">
 							<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
@@ -120,8 +132,9 @@ const PremiumPopover = React.createClass( {
 							</li> ) }
 						</ul>
 					</div>
+
 				</Popover>
-			</span>
+			</div>
 		);
 	}
 } );

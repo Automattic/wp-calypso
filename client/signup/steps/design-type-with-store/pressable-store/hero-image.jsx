@@ -5,7 +5,7 @@ import React from 'react';
 
 export default () => (
 	<svg className="pressable-store__hero-image" width="550px" height="77px" viewBox="0 0 550 77" version="1.1" xmlns="http://www.w3.org/2000/svg">
-		<g id="Triforce-E-Commerce" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+		<g id="Triforce-E-Commerce" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
 			<g id="Triforce-E-Commerce-Step-2-Alt-3" transform="translate(-275.000000, -234.000000)">
 				<g id="Group-2" transform="translate(275.000000, 234.000000)">
 					<g id="Page-1">

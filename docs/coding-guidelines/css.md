@@ -305,9 +305,9 @@ So, to add a new z-index:
    stacking context as the initial key and the element's full CSS selector as 
    the final key.
 
-You can run this handy
-[gist](https://gist.github.com/gwwar/2f661deec7b99a1a418b) in the console to
-find the stacking contexts of both the element and its parent.
+You can use this handy Chrome
+[extension](https://chrome.google.com/webstore/detail/z-context/jigamimbjojkdgnlldajknogfgncplbh)
+to find the stacking contexts of both the element and its parent.
 
 As a simple example, imagine that we have a page with the following markup:
 

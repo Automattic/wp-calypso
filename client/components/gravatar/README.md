@@ -6,9 +6,9 @@ This component is used to display the [Gravatar](https://gravatar.com/) for a us
 #### How to use:
 
 ```js
-var Gravatar = require( 'components/gravatar' );
+import Gravatar from 'components/gravatar';
 
-render: function() {
+render() {
     return (
         <Gravatar user={ post.author } />
     );

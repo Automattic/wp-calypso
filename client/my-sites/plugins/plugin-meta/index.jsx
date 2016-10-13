@@ -11,18 +11,17 @@ import some from 'lodash/some';
  */
 import analytics from 'lib/analytics';
 import Card from 'components/card';
+import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
 import Notice from 'components/notice';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsActions from 'lib/plugins/actions';
-import PluginsLog from 'lib/plugins/log-store';
 import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
 import safeProtocolUrl from 'lib/safe-protocol-url';
 import config from 'config';
 import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
-import PluginSettingsLink from 'my-sites/plugins/plugin-settings-link';
 import PluginInformation from 'my-sites/plugins/plugin-information';
 import { userCan } from 'lib/site/utils';
 
@@ -44,22 +43,38 @@ export default React.createClass( {
 	displayBanner() {
 		if ( this.props.plugin && this.props.plugin.banners && ( this.props.plugin.banners.high || this.props.plugin.banners.low ) ) {
 			return <div className="plugin-meta__banner">
-						<img className="plugin-meta__banner-image" src={ this.props.plugin.banners.high || this.props.plugin.banners.low }/>
+						<img className="plugin-meta__banner-image"
+						src={ this.props.plugin.banners.high || this.props.plugin.banners.low } />
 					</div>;
 		}
 	},
 
 	renderActions() {
 		if ( ! this.props.selectedSite ) {
-			return;
+			return (
+				<div className="plugin-meta__actions">
+					<div className="plugin-item__count">
+						{
+							this.translate( 'Sites {{count/}}',
+								{
+									components: {
+										count: <Count count={ this.props.sites.length } />
+									}
+								}
+							)
+						}
+					</div>
+				</div>
+			);
 		}
 
 		if ( this.props.isPlaceholder ) {
 			return;
 		}
 
-		if ( this.props.isInstalledOnSite === null )
+		if ( this.props.isInstalledOnSite === null ) {
 			return;
+		}
 
 		if ( this.props.isInstalledOnSite === false ) {
 			return ( <div className="plugin-meta__actions"> { this.getInstallButton() } </div> );
@@ -67,32 +82,14 @@ export default React.createClass( {
 
 		return (
 			<div className="plugin-meta__actions">
-				<PluginActivateToggle plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } isMock={ this.props.isMock } />
-				<PluginAutoupdateToggle plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } wporg={ this.props.plugin.wporg } isMock={ this.props.isMock } />
-				<PluginRemoveButton plugin={ this.props.plugin } site={ this.props.selectedSite } notices={ this.props.notices } isMock={ this.props.isMock } />
-				{ this.renderSettingsLink() }
+				<PluginActivateToggle plugin={ this.props.plugin } site={ this.props.selectedSite }
+					notices={ this.props.notices } isMock={ this.props.isMock } />
+				<PluginAutoupdateToggle plugin={ this.props.plugin } site={ this.props.selectedSite }
+					notices={ this.props.notices } wporg={ this.props.plugin.wporg } isMock={ this.props.isMock } />
+				<PluginRemoveButton plugin={ this.props.plugin } site={ this.props.selectedSite }
+					notices={ this.props.notices } isMock={ this.props.isMock } />
 			</div>
 		);
-	},
-
-	renderSettingsLink() {
-		if ( ! this.props.plugin ||
-				! this.props.plugin.wp_admin_settings_page_url ||
-				! this.props.plugin.active ||
-				! this.props.selectedSite ) {
-			return;
-		}
-
-		const isInProgress = PluginsLog.isInProgressAction( this.props.selectedSite.ID, this.props.plugin.slug, [
-			'ACTIVATE_PLUGIN',
-			'DEACTIVATE_PLUGIN'
-		] );
-
-		if ( isInProgress ) {
-			return;
-		}
-
-		return <PluginSettingsLink linkUrl={ this.props.plugin.wp_admin_settings_page_url } />;
 	},
 
 	renderName() {
@@ -109,7 +106,11 @@ export default React.createClass( {
 		if ( ! this.props.plugin || ! ( this.props.plugin.author_url && this.props.plugin.author_name ) ) {
 			return;
 		}
-		const linkToAuthor = <a className="plugin-meta__author" href={ safeProtocolUrl( this.props.plugin.author_url ) }>{ this.props.plugin.author_name }</a>;
+		const linkToAuthor = (
+			<a className="plugin-meta__author" href={ safeProtocolUrl( this.props.plugin.author_url ) }>
+				{ this.props.plugin.author_name }
+			</a>
+		);
 
 		return this.translate( 'By {{linkToAuthor/}}', {
 			components: {
@@ -126,7 +127,7 @@ export default React.createClass( {
 
 	isOutOfDate() {
 		if ( this.props.plugin && this.props.plugin.last_updated ) {
-			let lastUpdated = this.moment( this.props.plugin.last_updated, 'YYYY-MM-DD' );
+			const lastUpdated = this.moment( this.props.plugin.last_updated, 'YYYY-MM-DD' );
 			return this.moment().diff( lastUpdated, 'years' ) >= this.OUT_OF_DATE_YEARS;
 		}
 		return false;
@@ -137,7 +138,8 @@ export default React.createClass( {
 		if ( this.isOutOfDate() && newVersions.length === 0 ) {
 			return <Notice
 				className="plugin-meta__version-notice"
-				text={ this.translate( 'This plugin hasn\'t been updated in over 2 years. It may no longer be maintained or supported and may have compatibility issues when used with more recent versions of WordPress' ) }
+				text={ this.translate( 'This plugin hasn\'t been updated in over 2 years. It may no longer be maintained or ' +
+					'supported and may have compatibility issues when used with more recent versions of WordPress' ) }
 				status="is-warning"
 				showDismiss={ false } />;
 		} else if ( config.isEnabled( 'manage/plugins/compatibility-warning' ) && ! this.isVersionCompatible() ) {
@@ -161,17 +163,23 @@ export default React.createClass( {
 						icon="sync"
 						text={ i18n.translate( 'A new version is available.' ) }>
 						<NoticeAction onClick={ this.handlePluginUpdatesSingleSite }>
-							{ i18n.translate( 'Update to %(newPluginVersion)s', { args: { newPluginVersion: newVersions[ 0 ].newVersion } } ) }
+							{
+								i18n.translate( 'Update to %(newPluginVersion)s',
+									{ args: { newPluginVersion: newVersions[ 0 ].newVersion } }
+								)
+							}
 						</NoticeAction>
 					</Notice>
 				);
 			}
 			const noticeMessage = newVersions.length > 1
-				? i18n.translate( 'Version %(newPluginVersion)s is available for %(numberOfSites)s sites', { args: { numberOfSites: newVersions.length, newPluginVersion: this.props.plugin.version } } )
-				: i18n.translate( 'Version %(newPluginVersion)s is available for %(siteName)s', { args: { siteName: newVersions[0].title, newPluginVersion: this.props.plugin.version } } );
+				? i18n.translate( 'Version %(newPluginVersion)s is available for %(numberOfSites)s sites',
+					{ args: { numberOfSites: newVersions.length, newPluginVersion: this.props.plugin.version } } )
+				: i18n.translate( 'Version %(newPluginVersion)s is available for %(siteName)s',
+					{ args: { siteName: newVersions[ 0 ].title, newPluginVersion: this.props.plugin.version } } );
 			const noticeActionMessage = newVersions.length > 1
 				? i18n.translate( 'Update all' )
-				: i18n.translate( 'Update' )
+				: i18n.translate( 'Update' );
 			return (
 				<Notice
 					status="is-warning"
@@ -271,8 +279,8 @@ export default React.createClass( {
 		const plugin = this.props.selectedSite && this.props.sites[ 0 ] ? this.props.sites[ 0 ].plugin : this.props.plugin;
 
 		return (
-			<div>
-				<Card className="plugin-meta">
+			<div className="plugin-meta">
+				<Card>
 					{ this.displayBanner() }
 					<div className={ cardClasses } >
 						<div className="plugin-meta__detail">

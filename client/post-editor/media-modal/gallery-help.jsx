@@ -80,7 +80,7 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 				context={ renderContext }
 				position="bottom"
 				isVisible={ ! isMobile() }
-				className="popover is-dialog-visible">
+				className="popover__gallery-help is-dialog-visible">
 				<div className="editor-media-modal__gallery-help-content">
 					<div className="editor-media-modal__gallery-help-instruction">
 						<span className="editor-media-modal__gallery-help-icon">
@@ -93,7 +93,7 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 					<div className="editor-media-modal__gallery-help-actions">
 						<label className="editor-media-modal__gallery-help-remember-dismiss">
 							<FormCheckbox checked={ this.state.rememberDismiss } onChange={ this.toggleRememberDismiss } />
-							<span onClick={ this.toggleRememberDismiss }>
+							<span>
 								{ this.translate( 'Don\'t show again' ) }
 							</span>
 						</label>

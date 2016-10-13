@@ -2,11 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import map from 'lodash/map';
-import forEach from 'lodash/forEach';
-import head from 'lodash/head';
-import includes from 'lodash/includes';
-import keys from 'lodash/keys';
+import { map, forEach, head, includes, keys } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
@@ -377,7 +373,8 @@ export default React.createClass( {
 							a: <a
 								href={ this.getTermsOfServiceUrl() }
 								onClick={ this.handleOnClickTos }
-								target="_blank" />
+								target="_blank"
+								rel="noopener noreferrer" />
 						}
 					}
 				)

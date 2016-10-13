@@ -51,7 +51,7 @@ module.exports = React.createClass({
 			// Arrows are always present, whether or not they are active is determined in the pagination page module
 			pageList.unshift( '-->' );
 			pageList.unshift( '<--' );
-			
+
 			pageList = pageList.map( function( pageNumber, index ) {
 				return <PaginationPage key={ index } pageNumber={ pageNumber } currentPage={ currentPage } totalPages={ pageCount } pageClick={ this.props.pageClick } />;
 			}, this );

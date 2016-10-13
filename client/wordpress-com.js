@@ -25,6 +25,13 @@ sections = [
 		secondary: true
 	},
 	{
+		name: 'paladin',
+		paths: [ '/paladin' ],
+		module: 'my-sites/paladin',
+		group: 'sites',
+		secondary: true
+	},
+	{
 		name: 'me',
 		paths: [ '/me' ],
 		module: 'me',
@@ -112,6 +119,13 @@ sections = [
 		name: 'settings',
 		paths: [ '/settings' ],
 		module: 'my-sites/site-settings',
+		secondary: true,
+		group: 'sites'
+	},
+	{
+		name: 'settings-seo',
+		paths: [ '/settings/seo' ],
+		module: 'my-sites/site-settings/seo-settings',
 		secondary: true,
 		group: 'sites'
 	},
@@ -206,6 +220,16 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 	} );
 }
 
+if ( config.isEnabled( 'manage/payment-methods' ) ) {
+	sections.push( {
+		name: 'payment-methods',
+		paths: [ '/payment-methods/add-credit-card' ],
+		module: 'me/payment-methods',
+		group: 'me',
+		secondary: true
+	} );
+}
+
 if ( config.isEnabled( 'reader' ) ) {
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	sections.push( {
@@ -213,14 +237,14 @@ if ( config.isEnabled( 'reader' ) ) {
 		paths: [ '/', '/read' ],
 		module: 'reader',
 		secondary: true,
-		group: 'reader'
+		group: 'reader',
 	} );
 
 	sections.push( {
 		name: 'reader',
 		paths: [ '/read/feeds/[^\\/]+/posts/[^\\/]+', '/read/blogs/[^\\/]+/posts/[^\\/]+' ],
 		module: 'reader/full-post',
-		secondary: config.isEnabled( 'reader/refresh-2016-07' ) ? false : true,
+		secondary: false,
 		group: 'reader'
 	} );
 
@@ -353,6 +377,16 @@ if ( config.isEnabled( 'manage/custom-post-types' ) ) {
 		module: 'my-sites/types',
 		secondary: true,
 		group: 'sites'
+	} );
+}
+
+if ( config.isEnabled( 'happychat' ) ) {
+	sections.push( {
+		name: 'happychat',
+		paths: [ '/me/chat' ],
+		module: 'me/happychat',
+		group: 'me',
+		secondary: true
 	} );
 }
 

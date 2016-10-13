@@ -15,6 +15,26 @@ import ThemesSelection from './themes-selection';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import { addTracking } from './helpers';
+import DocumentHead from 'components/data/document-head';
+
+const themesMeta = {
+	'': {
+		title: 'WordPress Themes',
+		description: 'Beautiful, responsive, free and premium WordPress themes \
+			for your photography site, portfolio, magazine, business website, or blog.',
+		canonicalUrl: 'https://wordpress.com/design',
+	},
+	free: {
+		title: 'Free WordPress Themes',
+		description: 'Discover Free WordPress Themes on the WordPress.com Theme Showcase.',
+		canonicalUrl: 'https://wordpress.com/design/free',
+	},
+	premium: {
+		title: 'Premium WordPress Themes',
+		description: 'Discover Premium WordPress Themes on the WordPress.com Theme Showcase.',
+		canonicalUrl: 'https://wordpress.com/design/premium',
+	}
+};
 
 const optionShape = PropTypes.shape( {
 	label: PropTypes.string,
@@ -25,16 +45,18 @@ const optionShape = PropTypes.shape( {
 
 const ThemeShowcase = React.createClass( {
 	propTypes: {
+		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
 		// Connected props
 		options: PropTypes.objectOf( optionShape ),
 		defaultOption: optionShape,
 		secondaryOption: optionShape,
-		getScreenshotOption: PropTypes.func
+		getScreenshotOption: PropTypes.func,
 	},
 
 	getDefaultProps() {
 		return {
-			selectedSite: false
+			selectedSite: false,
+			tier: ''
 		};
 	},
 
@@ -82,7 +104,7 @@ const ThemeShowcase = React.createClass( {
 	},
 
 	render() {
-		const { options, getScreenshotOption, secondaryOption } = this.props;
+		const { options, getScreenshotOption, secondaryOption, tier } = this.props;
 		const primaryOption = this.getPrimaryOption();
 
 		// If a preview action is passed, use that. Otherwise, use our own.
@@ -90,9 +112,17 @@ const ThemeShowcase = React.createClass( {
 			options.preview.action = theme => this.togglePreview( theme );
 		}
 
+		const metas = [
+			{ name: 'description', property: 'og:description', content: themesMeta[ tier ].description },
+			{ property: 'og:url', content: themesMeta[ tier ].canonicalUrl },
+			{ property: 'og:type', content: 'website' }
+		];
+
+		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<Main className="themes">
-				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle }/>
+				<DocumentHead title={ themesMeta[ tier ].title } meta={ metas } />
+				<PageViewTracker path={ this.props.analyticsPath } title={ this.props.analyticsPageTitle } />
 				{ this.props.children }
 				{ this.state.showPreview &&
 					<ThemePreview showPreview={ this.state.showPreview }
@@ -132,6 +162,7 @@ const ThemeShowcase = React.createClass( {
 					trackScrollPage={ this.props.trackScrollPage }
 					tier={ this.props.tier }
 					filter={ this.props.filter }
+					vertical={ this.props.vertical }
 					queryParams={ this.props.queryParams }
 					themesList={ this.props.themesList } />
 			</Main>

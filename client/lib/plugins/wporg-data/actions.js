@@ -20,8 +20,7 @@ var _LIST_DEFAULT_SIZE = 24,
 /**
  *  Local variables;
  */
-var _fetching = {},
-	_fetchingLists = {},
+var _fetchingLists = {},
 	_currentSearchTerm = null,
 	_lastFetchedPagePerCategory = {},
 	_totalPagesPerCategory = {};
@@ -100,7 +99,6 @@ var PluginsDataActions = {
 	},
 
 	reset: function() {
-		_fetching = {};
 		_fetchingLists = {};
 		_lastFetchedPagePerCategory = {};
 		_totalPagesPerCategory = {};

@@ -53,7 +53,8 @@ export default React.createClass( {
 		if ( this.props.event || this.props.feature ) {
 			analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
 				cta_name: this.props.event,
-				cta_feature: this.props.feature
+				cta_feature: this.props.feature,
+				cta_size: 'regular'
 			} );
 		}
 		this.props.onClick();
@@ -130,7 +131,8 @@ export default React.createClass( {
 				{ ( this.props.event || this.props.feature ) &&
 					<TrackComponentView eventName={ 'calypso_upgrade_nudge_impression' } eventProperties={ {
 						cta_name: this.props.event,
-						cta_feature: this.props.feature
+						cta_feature: this.props.feature,
+						cta_size: 'regular'
 					} } />
 				}
 			</Card>

@@ -8,6 +8,8 @@ var analytics = require( 'lib/analytics' ),
 	includes = require( 'lodash/includes' ),
 	React = require( 'react' );
 
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -28,16 +30,24 @@ import Button from 'components/button';
 import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 
-module.exports = React.createClass( {
-	displayName: 'MySitesSidebar',
+export const MySitesSidebar = React.createClass( {
+	propTypes: {
+		setNextLayoutFocus: React.PropTypes.func.isRequired,
+		setLayoutFocus: React.PropTypes.func.isRequired,
+		path: React.PropTypes.string,
+		sites: React.PropTypes.object,
+		currentUser: React.PropTypes.object,
+	},
 
 	componentDidMount: function() {
 		debug( 'The sidebar React component is mounted.' );
 	},
 
 	onNavigate: function() {
-		this.props.layoutFocus.setNext( 'content' );
+		this.props.setNextLayoutFocus( 'content' );
 		window.scrollTo( 0, 0 );
 	},
 
@@ -45,7 +55,7 @@ module.exports = React.createClass( {
 		const site = this.getSelectedSite();
 		if ( site.is_previewable && ! event.metaKey && ! event.ctrlKey ) {
 			event.preventDefault();
-			this.props.layoutFocus.set( 'preview' );
+			this.props.setLayoutFocus( 'preview' );
 		}
 	},
 
@@ -484,7 +494,7 @@ module.exports = React.createClass( {
 
 	wpAdmin: function() {
 		var site = this.getSelectedSite(),
-			currentUser = this.props.user.get();
+			currentUser = this.props.currentUser;
 
 		if ( ! site.options ) {
 			return null;
@@ -504,7 +514,7 @@ module.exports = React.createClass( {
 
 		return (
 			<li className="wp-admin">
-				<a onClick={ this.trackWpadminClick } href={ site.options.admin_url } target="_blank">
+				<a onClick={ this.trackWpadminClick } href={ site.options.admin_url } target="_blank" rel="noopener noreferrer">
 					<Gridicon icon="my-sites" size={ 24 } />
 					<span className="menu-link-text">{ this.translate( 'WP Admin' ) }</span>
 					<span className="noticon noticon-external" />
@@ -651,11 +661,11 @@ module.exports = React.createClass( {
 	},
 
 	focusContent: function() {
-		this.props.layoutFocus.set( 'content' );
+		this.props.setLayoutFocus( 'content' );
 	},
 
 	addNewSite: function() {
-		if ( this.props.user.get().visible_site_count > 1 ) {
+		if ( this.props.currentUser.visible_site_count > 1 ) {
 			return null;
 		}
 
@@ -681,7 +691,7 @@ module.exports = React.createClass( {
 				<SidebarRegion>
 				<CurrentSite
 					sites={ this.props.sites }
-					siteCount={ this.props.user.get().visible_site_count }
+					siteCount={ this.props.currentUser.visible_site_count }
 					onClick={ this.onPreviewSite }
 				/>
 				<SidebarMenu>
@@ -748,3 +758,12 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+function mapStateToProps( state ) {
+	return {
+		currentUser: getCurrentUser( state ),
+	};
+}
+
+// TODO: make this pure when sites can be retrieved from the Redux state
+export default connect( mapStateToProps, { setNextLayoutFocus, setLayoutFocus }, null, { pure: false } )( MySitesSidebar );

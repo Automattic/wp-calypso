@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/noop' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import { noop } from 'lodash';
+import classNames from 'classnames';
 
 module.exports = React.createClass( {
 	displayName: 'Accordion',
@@ -32,7 +32,7 @@ module.exports = React.createClass( {
 	},
 
 	toggleExpanded: function() {
-		var isExpanded = ! this.state.isExpanded;
+		const isExpanded = ! this.state.isExpanded;
 
 		this.setState( {
 			isExpanded: isExpanded
@@ -60,7 +60,7 @@ module.exports = React.createClass( {
 	},
 
 	renderHeader: function() {
-		var classes = classNames( 'accordion__header', {
+		const classes = classNames( 'accordion__header', {
 			'has-icon': !! this.props.icon,
 			'has-subtitle': !! this.props.subtitle
 		} );
@@ -77,7 +77,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var classes = classNames( 'accordion', this.props.className, {
+		const classes = classNames( 'accordion', this.props.className, {
 			'is-expanded': this.state.isExpanded
 		} );
 

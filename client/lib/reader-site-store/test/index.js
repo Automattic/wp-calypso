@@ -149,7 +149,6 @@ describe( 'store', function() {
 		expect( SiteFromStore ).to.be.ok;
 		expect( SiteFromStore.get( 'state' ) ).to.equal( State.COMPLETE );
 
-		delete Site._headers;
 		delete Site.meta;
 		Site.domain = 'testonesite2014.wordpress.com';
 		Site.slug = 'testonesite2014.wordpress.com';

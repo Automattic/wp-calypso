@@ -43,7 +43,7 @@ describe( 'reducer', () => {
 			expect( state ).to.equal( 0 );
 		} );
 
-		it( 'should properly set a new uread count', () => {
+		it( 'should properly set a new unread count', () => {
 			const newState = unreadCount( undefined, { type: DOCUMENT_HEAD_UNREAD_COUNT_SET, count: 123 } );
 
 			expect( newState ).to.equal( 123 );
@@ -51,10 +51,10 @@ describe( 'reducer', () => {
 	} );
 
 	describe( '#meta()', () => {
-		it( 'should default to an empty array', () => {
+		it( 'should default to "og:site_name" set to "WordPress.com" array', () => {
 			const state = meta( undefined, {} );
 
-			expect( state ).to.eql( [] );
+			expect( state ).to.eql( [ { property: 'og:site_name', content: 'WordPress.com' } ] );
 		} );
 
 		it( 'should add a new meta tag', () => {

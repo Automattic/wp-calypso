@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { omit } from 'lodash/object';
-
-/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -25,11 +20,10 @@ export function requestProductsList() {
 		dispatch( { type: PRODUCTS_LIST_REQUEST } );
 
 		return wpcom.undocumented().getProducts()
-			.then( response => omit( response, '_headers' ) )
 			.then( productsList => dispatch( receiveProductsList( productsList ) ) )
 			.catch( error => dispatch( {
 				type: PRODUCTS_LIST_REQUEST_FAILURE,
-				error,
+				error
 			} ) );
 	};
 }

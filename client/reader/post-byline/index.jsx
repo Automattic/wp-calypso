@@ -16,7 +16,7 @@ import {
 	recordGaEvent,
 	recordTrackForPost,
 	recordPermalinkClick
- } from 'reader/stats';
+} from 'reader/stats';
 
 class PostByline extends React.Component {
 
@@ -71,12 +71,14 @@ class PostByline extends React.Component {
 			);
 		}
 
+		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<ExternalLink href={ post.author.URL } target="_blank" onClick={ this.recordAuthorClick }>
 				{ gravatar }
 				{ authorName }
 			</ExternalLink>
 		);
+		/* eslint-enable react/jsx-no-target-blank */
 	}
 
 	render() {
@@ -100,7 +102,8 @@ class PostByline extends React.Component {
 					<a className="reader-post-byline__date-link"
 						onClick={ this.recordDateClick }
 						href={ post.URL }
-						target="_blank"><PostTime date={ post.date } />{ icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
+						target="_blank"
+						rel="noopener noreferrer"><PostTime date={ post.date } />{ icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
 				</li> : null }
 			{ primaryTag ?
 				<li className="reader-post-byline__tag">

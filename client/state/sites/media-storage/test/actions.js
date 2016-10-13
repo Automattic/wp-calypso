@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
 	SITE_MEDIA_STORAGE_RECEIVE,
 	SITE_MEDIA_STORAGE_REQUEST,
@@ -45,7 +45,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#receiveMediaStorage()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/media-storage' )
@@ -60,16 +60,12 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		after( () => {
-			nock.cleanAll();
-		} );
-
 		it( 'should dispatch fetch action when thunk triggered', () => {
 			requestMediaStorage( 2916284 )( spy );
 			expect( spy ).to.have.been.calledWith( {
 				type: SITE_MEDIA_STORAGE_REQUEST,
 				siteId: 2916284
-			} )
+			} );
 		} );
 
 		it( 'should dispatch receive action when request completes', () => {
@@ -77,7 +73,6 @@ describe( 'actions', () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: SITE_MEDIA_STORAGE_RECEIVE,
 					mediaStorage: {
-						_headers: { 'content-type': 'application/json' },
 						max_storage_bytes: 3221225472,
 						storage_used_bytes: 323506
 					},

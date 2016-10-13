@@ -3,7 +3,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' ),
 	find = require( 'lodash/find' );
 
 /**
@@ -49,13 +48,8 @@ const FreeTrialConfirmationBox = React.createClass( {
 	},
 
 	render() {
-		const classSet = classNames( {
-			'credits-payment-box': true,
-			selected: this.props.selected === true
-		} );
-
 		return (
-			<PaymentBox classSet={ classSet }>
+			<PaymentBox classSet="credits-payment-box">
 				{ this.content() }
 			</PaymentBox>
 		);

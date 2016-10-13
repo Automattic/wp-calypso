@@ -9,12 +9,13 @@ const createSitePlanObject = ( plan ) => {
 	}
 
 	return {
+		autoRenew: Boolean( plan.auto_renew ), // Always true for plans paid with credits.
 		canStartTrial: Boolean( plan.can_start_trial ),
 		currentPlan: Boolean( plan.current_plan ),
 		currencyCode: plan.currency_code,
 		discountReason: plan.discount_reason,
 		expiry: plan.expiry,
-		expiryMoment: moment( plan.expiry ).startOf( 'day' ),
+		expiryMoment: plan.expiry ? moment( plan.expiry ).startOf( 'day' ) : null,
 		formattedDiscount: plan.formatted_discount,
 		formattedPrice: plan.formatted_price,
 		freeTrial: Boolean( plan.free_trial ),
@@ -28,7 +29,9 @@ const createSitePlanObject = ( plan ) => {
 		subscribedDate: plan.subscribed_date,
 		subscribedDayMoment: moment( plan.subscribed_date ).startOf( 'day' ),
 		userFacingExpiry: plan.user_facing_expiry,
-		userFacingExpiryMoment: moment( plan.user_facing_expiry ).startOf( 'day' ),
+		userFacingExpiryMoment: plan.user_facing_expiry
+			? moment( plan.user_facing_expiry ).startOf( 'day' )
+			: null,
 		userIsOwner: Boolean( plan.user_is_owner )
 	};
 };

@@ -41,7 +41,7 @@ export default React.createClass( {
 
 	isDisabled() {
 		const { connection } = this.props;
-		return ! connection || this.isConnectionDone() || connection.read_only;
+		return ! connection || connection.read_only;
 	},
 
 	onChange( event ) {

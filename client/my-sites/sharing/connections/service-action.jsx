@@ -8,8 +8,6 @@ import React from 'react';
  */
 import serviceConnections from './service-connections';
 import Button from 'components/button';
-import Gridicon from 'components/gridicon';
-import classNames from 'classnames';
 
 module.exports = React.createClass( {
 	displayName: 'SharingServiceAction',
@@ -50,7 +48,7 @@ module.exports = React.createClass( {
 			this.props.isRefreshing || this.props.isConnecting;
 
 		if ( 'connected' === this.props.status ) {
-			removableConnections = serviceConnections.getRemovableConnections( this.props.service.name );
+			removableConnections = serviceConnections.getRemovableConnections( this.props.service.ID );
 		}
 
 		if ( 'unknown' === this.props.status ) {

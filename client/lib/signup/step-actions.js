@@ -23,12 +23,26 @@ import {
 	SIGNUP_OPTIONAL_DEPENDENCY_SUGGESTED_USERNAME,
 } from 'state/action-types';
 
-function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsCartItem, isPurchasingItem, siteUrl, themeSlug, themeSlugWithRepo, themeItem } ) {
+import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
+
+function createSiteWithCart( callback, dependencies, {
+	cartItem,
+	domainItem,
+	googleAppsCartItem,
+	isPurchasingItem,
+	siteUrl,
+	themeSlug,
+	themeSlugWithRepo,
+	themeItem
+} ) {
+	const siteTitle = getSiteTitle( this._reduxStore.getState() ).trim();
+
 	wpcom.undocumented().sitesNew( {
 		blog_name: siteUrl,
-		blog_title: siteUrl,
+		blog_title: siteTitle,
 		options: {
-			theme: dependencies.theme || themeSlugWithRepo
+			theme: dependencies.theme || themeSlugWithRepo,
+			vertical: dependencies.surveyQuestion || undefined
 		},
 		validate: false,
 		find_available_url: isPurchasingItem
@@ -51,19 +65,12 @@ function addDomainItemsToCart( callback, dependencies, { domainItem, googleAppsC
 			themeItem
 		};
 		const addToCartAndProceed = () => {
-			let newCartItems = [];
-
-			if ( domainItem ) {
-				newCartItems = [ ...newCartItems, domainItem ];
-			}
-
-			if ( googleAppsCartItem ) {
-				newCartItems = [ ...newCartItems, googleAppsCartItem ];
-			}
-
-			if ( themeItem ) {
-				newCartItems = [ ...newCartItems, themeItem ];
-			}
+			const newCartItems = [
+				cartItem,
+				domainItem,
+				googleAppsCartItem,
+				themeItem,
+			].filter( item => item );
 
 			if ( newCartItems.length ) {
 				SignupCart.addToCart( siteSlug, newCartItems, function( cartError ) {
@@ -207,10 +214,10 @@ function getUsernameSuggestion( username, reduxState ) {
 }
 
 module.exports = {
-	addDomainItemsToCart: addDomainItemsToCart,
+	createSiteWithCart: createSiteWithCart,
 
-	addDomainItemsToCartAndStartFreeTrial( callback, dependencies, data ) {
-		addDomainItemsToCart( ( error, providedDependencies ) => {
+	createSiteWithCartAndStartFreeTrial( callback, dependencies, data ) {
+		createSiteWithCart( ( error, providedDependencies ) => {
 			if ( error ) {
 				callback( error, providedDependencies );
 			} else {
@@ -251,7 +258,7 @@ module.exports = {
 	createSite( callback, { theme }, { site } ) {
 		var data = {
 			blog_name: site,
-			blog_title: site,
+			blog_title: '',
 			options: { theme },
 			validate: false
 		};

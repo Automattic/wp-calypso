@@ -10,11 +10,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
 import titlecase from 'to-title-case';
-import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
  */
+import QueryThemeDetails from 'components/data/query-theme-details';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
 import SectionHeader from 'components/section-header';
@@ -28,9 +28,12 @@ import Card from 'components/card';
 import Gridicon from 'components/gridicon';
 import { getSelectedSite } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { isUserPaid } from 'state/purchases/selectors';
 import { isPremium, getForumUrl } from 'my-sites/themes/helpers';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
+import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
 import {
 	signup,
@@ -38,15 +41,17 @@ import {
 	activate,
 	customize,
 	tryandcustomize,
-	bindOptionToDispatch,
+	bindOptionsToDispatch,
 	bindOptionsToSite
 } from 'my-sites/themes/theme-options';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Head from 'layout/head';
+import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
+import { getThemeDetails } from 'state/themes/theme-details/selectors';
+import { isValidTerm } from 'my-sites/themes/theme-filters';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -66,8 +71,8 @@ const ThemeSheet = React.createClass( {
 		stylesheet: React.PropTypes.string,
 		active: React.PropTypes.bool,
 		purchased: React.PropTypes.bool,
-		isLoggedIn: React.PropTypes.bool,
 		// Connected props
+		isLoggedIn: React.PropTypes.bool,
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
 		backPath: React.PropTypes.string,
@@ -227,33 +232,78 @@ const ThemeSheet = React.createClass( {
 		);
 	},
 
+	renderContactUsCard( isPrimary = false ) {
+		return (
+			<Card className="theme__sheet-card-support">
+				<Gridicon icon="help-outline" size={ 48 } />
+				<div className="theme__sheet-card-support-details">
+					{ i18n.translate( 'Need extra help?' ) }
+					<small>{ i18n.translate( 'Get in touch with our support team' ) }</small>
+				</div>
+				<Button primary={ isPrimary } href={ '/help/contact/' }>Contact us</Button>
+			</Card>
+		);
+	},
+
+	renderThemeForumCard( isPrimary = false ) {
+		const description = isPremium( this.props )
+			? i18n.translate( 'Get in touch with the theme author' )
+			: i18n.translate( 'Get help from volunteers and staff' );
+
+		return (
+			<Card className="theme__sheet-card-support">
+				<Gridicon icon="comment" size={ 48 } />
+				<div className="theme__sheet-card-support-details">
+					{ i18n.translate( 'Have a question about this theme?' ) }
+					<small>{ description }</small>
+				</div>
+				<Button primary={ isPrimary } href={ getForumUrl( this.props ) }>Visit forum</Button>
+			</Card>
+		);
+	},
+
+	renderCssSupportCard() {
+		return (
+			<Card className="theme__sheet-card-support">
+				<Gridicon icon="briefcase" size={ 48 } />
+				<div className="theme__sheet-card-support-details">
+					{ i18n.translate( 'Need CSS help? ' ) }
+					<small>{ i18n.translate( 'Get help from the experts in our CSS forum' ) }</small>
+				</div>
+				<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
+			</Card>
+		);
+	},
+
 	renderSupportTab() {
+		if ( this.props.isCurrentUserPaid ) {
+			return (
+				<div>
+					{ this.renderContactUsCard( true ) }
+					{ this.renderThemeForumCard() }
+					{ this.renderCssSupportCard() }
+				</div>
+			);
+		}
+
 		return (
 			<div>
-				<Card className="theme__sheet-card-support">
-					<Gridicon icon="comment" size={ 48 } />
-					<div className="theme__sheet-card-support-details">
-						{ i18n.translate( 'Need extra help?' ) }
-						<small>{ i18n.translate( 'Visit the theme support forum' ) }</small>
-					</div>
-					<Button primary={ true } href={ getForumUrl( this.props ) }>Visit forum</Button>
-				</Card>
-				<Card className="theme__sheet-card-support">
-					<Gridicon icon="briefcase" size={ 48 } />
-					<div className="theme__sheet-card-support-details">
-						{ i18n.translate( 'Need CSS help? ' ) }
-						<small>{ i18n.translate( 'Visit the CSS customization forum' ) }</small>
-					</div>
-					<Button href="//en.forums.wordpress.com/forum/css-customization">Visit forum</Button>
-				</Card>
+				{ this.renderThemeForumCard( true ) }
+				{ this.renderCssSupportCard() }
 			</div>
 		);
 	},
 
 	renderFeaturesCard() {
-		const themeFeatures = this.props.taxonomies && this.props.taxonomies.theme_feature instanceof Array
-		? this.props.taxonomies.theme_feature.map( function( item ) {
-			return ( <li key={ 'theme-features-item-' + item.slug }><span>{ item.name }</span></li> );
+		const { siteSlug, taxonomies } = this.props;
+		const themeFeatures = taxonomies && taxonomies.theme_feature instanceof Array
+		? taxonomies.theme_feature.map( function( item ) {
+			const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
+			return (
+				<li key={ 'theme-features-item-' + item.slug }>
+					<a href={ `/design/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
+				</li>
+			);
 		} ) : [];
 
 		return (
@@ -306,7 +356,8 @@ const ThemeSheet = React.createClass( {
 					title={ emptyContentTitle }
 					line={ emptyContentMessage }
 					action={ i18n.translate( 'View the showcase' ) }
-					actionURL="/design"/>
+					actionURL="/design"
+				/>
 			</Main>
 		);
 	},
@@ -347,48 +398,61 @@ const ThemeSheet = React.createClass( {
 		const analyticsPath = `/theme/:slug${ section ? '/' + section : '' }${ siteID ? '/:site_id' : '' }`;
 		const analyticsPageTitle = `Themes > Details Sheet${ section ? ' > ' + titlecase( section ) : '' }${ siteID ? ' > Site' : '' }`;
 
-		const { name: themeName, description } = this.props;
-		const title = i18n.translate( '%(themeName)s Theme', {
+		const { name: themeName, description, currentUserId } = this.props;
+		const title = themeName && i18n.translate( '%(themeName)s Theme', {
 			args: { themeName }
-		} ); // TODO: Use lib/screen-title's buildTitle. Cf. https://github.com/Automattic/wp-calypso/issues/3796
-
+		} );
 		const canonicalUrl = `https://wordpress.com/theme/${ this.props.id }`; // TODO: use getDetailsUrl() When it becomes availavle
 
-		return (
+		const metas = [
+			{ property: 'og:url', content: canonicalUrl },
+			{ property: 'og:image', content: this.props.screenshot },
+			{ property: 'og:type', content: 'website' }
+		];
 
-			<Head
-				title= { themeName && decodeEntities( title ) + ' — WordPress.com' }
-				description={ description && decodeEntities( description ) }
-				type={ 'website' }
-				canonicalUrl={ canonicalUrl }
-				image={ this.props.screenshot }>
-				<Main className="theme__sheet">
-					<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
-						{ this.renderBar() }
-						{ siteID && <QueryCurrentTheme siteId={ siteID }/> }
-					<ThanksModal
-						site={ this.props.selectedSite }
-						source={ 'details' }/>
-					{ this.state.showPreview && this.renderPreview() }
-					<HeaderCake className="theme__sheet-action-bar"
-								backHref={ this.props.backPath }
-								backText={ i18n.translate( 'All Themes' ) }>
-						{ this.renderButton() }
-					</HeaderCake>
-					<div className="theme__sheet-columns">
-						<div className="theme__sheet-column-left">
-							<div className="theme__sheet-content">
-								{ this.renderSectionNav( section ) }
-								{ this.renderSectionContent( section ) }
-								<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
-							</div>
-						</div>
-						<div className="theme__sheet-column-right">
-							{ this.renderScreenshot() }
+		if ( description ) {
+			metas.push( {
+				name: 'description',
+				property: 'og:description',
+				content: decodeEntities( description )
+			} );
+		}
+
+		const links = [ { rel: 'canonical', href: canonicalUrl } ];
+
+		return (
+			<Main className="theme__sheet">
+				<QueryThemeDetails id={ this.props.id } siteId={ siteID } />
+				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				<DocumentHead
+					title={ title }
+					meta={ metas }
+					link={ links } />
+				<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
+					{ this.renderBar() }
+					{ siteID && <QueryCurrentTheme siteId={ siteID } /> }
+				<ThanksModal
+					site={ this.props.selectedSite }
+					source={ 'details' } />
+				{ this.state.showPreview && this.renderPreview() }
+				<HeaderCake className="theme__sheet-action-bar"
+							backHref={ this.props.backPath }
+							backText={ i18n.translate( 'All Themes' ) }>
+					{ this.renderButton() }
+				</HeaderCake>
+				<div className="theme__sheet-columns">
+					<div className="theme__sheet-column-left">
+						<div className="theme__sheet-content">
+							{ this.renderSectionNav( section ) }
+							{ this.renderSectionContent( section ) }
+							<div className="theme__sheet-footer-line"><Gridicon icon="my-sites" /></div>
 						</div>
 					</div>
-				</Main>
-			</Head>
+					<div className="theme__sheet-column-right">
+						{ this.renderScreenshot() }
+					</div>
+				</div>
+			</Main>
 		);
 	},
 
@@ -413,49 +477,62 @@ const WrappedThemeSheet = ( props ) => {
 	);
 };
 
-const bindDefaultOptionToDispatch = ( dispatch, ownProps ) => {
-	const { active: isActive, price, isLoggedIn } = ownProps;
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const { selectedSite: site, active: isActive, price, isLoggedIn } = stateProps;
 
 	let defaultOption;
 
 	if ( ! isLoggedIn ) {
-		defaultOption = signup;
+		defaultOption = dispatchProps.signup;
 	} else if ( isActive ) {
-		defaultOption = customize;
+		defaultOption = dispatchProps.customize;
 	} else if ( price ) {
-		defaultOption = purchase;
+		defaultOption = dispatchProps.purchase;
 		defaultOption.label = i18n.translate( 'Pick this design' );
 	} else {
-		defaultOption = activate;
+		defaultOption = dispatchProps.activate;
 		defaultOption.label = i18n.translate( 'Activate this design' );
 	}
 
-	return {
-		defaultOption: bindOptionToDispatch( defaultOption, 'showcase-sheet' )( dispatch ),
-		secondaryOption: bindOptionToDispatch( tryandcustomize, 'showcase-sheet' )( dispatch ),
+	const dispatchOptions = {
+		defaultOption,
+		secondaryOption: dispatchProps.tryandcustomize
 	};
-};
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { selectedSite: site } = stateProps;
-	const filteredOptions = pickBy( dispatchProps, option =>
-		option.hideForSite ? option.hideForSite( stateProps ) : true
-	);
 	return Object.assign(
 		{},
 		ownProps,
 		stateProps,
-		site ? bindOptionsToSite( filteredOptions, site ) : dispatchProps
+		site ? bindOptionsToSite( dispatchOptions, site ) : dispatchOptions,
 	);
 };
 
 export default connect(
-	( state ) => {
+	( state, props ) => {
 		const selectedSite = getSelectedSite( state );
 		const siteSlug = selectedSite ? getSiteSlug( state, selectedSite.ID ) : '';
 		const backPath = getBackPath( state );
-		return { selectedSite, siteSlug, backPath };
+		const currentUserId = getCurrentUserId( state );
+		const isCurrentUserPaid = isUserPaid( state, currentUserId );
+		const themeDetails = getThemeDetails( state, props.id );
+
+		return {
+			...themeDetails,
+			id: props.id,
+			selectedSite,
+			siteSlug,
+			backPath,
+			currentUserId,
+			isCurrentUserPaid,
+			isLoggedIn: !! currentUserId,
+		};
 	},
-	bindDefaultOptionToDispatch,
+	bindOptionsToDispatch( {
+		signup,
+		customize,
+		tryandcustomize,
+		purchase,
+		activate,
+	}, 'showcase-sheet' ),
 	mergeProps
 )( WrappedThemeSheet );

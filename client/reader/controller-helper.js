@@ -3,7 +3,7 @@ import i18n from 'i18n-calypso';
 
 import analytics from 'lib/analytics';
 import { recordTrack } from 'reader/stats';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
 
 export function ensureStoreLoading( store, context ) {
@@ -46,8 +46,8 @@ export function trackUpdatesLoaded( key ) {
 	} );
 }
 
-export function setPageTitle( title ) {
-	titleActions.setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) );
+export function setPageTitle( context, title ) {
+	context.store.dispatch( setTitle( i18n.translate( '%s ‹ Reader', { args: title } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 }
 
 export function userHasHistory( context ) {

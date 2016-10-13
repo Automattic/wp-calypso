@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import page from 'page';
-import property from 'lodash/property';
+import { some } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -82,7 +82,10 @@ export const DeleteSite = React.createClass( {
 			adminURL = site.options && site.options.admin_url ? site.options.admin_url : '',
 			exportLink = config.isEnabled( 'manage/export' ) ? '/settings/export/' + site.slug : adminURL + 'tools.php?page=export-choices',
 			exportTarget = config.isEnabled( 'manage/export' ) ? undefined : '_blank',
-			deleteDisabled = ( typeof this.state.confirmDomain !== 'string' || this.state.confirmDomain.replace( /\s/g, '' ) !== site.domain );
+			deleteDisabled = (
+				typeof this.state.confirmDomain !== 'string' ||
+				this.state.confirmDomain.toLowerCase().replace( /\s/g, '' ) !== site.domain
+			);
 
 		const deleteButtons = [
 			<Button
@@ -195,7 +198,13 @@ export const DeleteSite = React.createClass( {
 								}
 							} )
 						}</p>
-					<input className="delete-site__confirm-input" type="text" valueLink={ this.linkState( 'confirmDomain' ) }/>
+
+						<input
+							autoCapitalize="off"
+							className="delete-site__confirm-input"
+							type="text"
+							valueLink={ this.linkState( 'confirmDomain' ) }
+							/>
 					</Dialog>
 				</ActionPanel>
 			</div>
@@ -203,15 +212,13 @@ export const DeleteSite = React.createClass( {
 	},
 
 	handleDeleteSiteClick: function( event ) {
-		var hasActiveSubscriptions;
-
 		event.preventDefault();
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
 			return;
 		}
 
-		hasActiveSubscriptions = this.props.sitePurchases.filter( property( 'active' ) ).length > 0;
+		const hasActiveSubscriptions = some( this.props.sitePurchases, 'active' );
 
 		if ( hasActiveSubscriptions ) {
 			this.setState( { showWarningDialog: true } );

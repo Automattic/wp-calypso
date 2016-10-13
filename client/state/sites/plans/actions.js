@@ -3,7 +3,6 @@
  */
 import debugFactory from 'debug';
 import map from 'lodash/map';
-import omit from 'lodash/omit';
 import i18n from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:site-plans:actions' );
@@ -50,7 +49,9 @@ export function cancelSitePlanTrial( siteId, planId ) {
 				} else {
 					debug( 'Canceling site plan trial failed: ', error );
 
-					const errorMessage = error.message || i18n.translate( 'There was a problem canceling the plan trial. Please try again later or contact support.' );
+					const errorMessage = error.message || i18n.translate(
+						'There was a problem canceling the plan trial. Please try again later or contact support.'
+					);
 
 					dispatch( {
 						type: SITE_PLANS_TRIAL_CANCEL_FAILED,
@@ -96,7 +97,9 @@ export function fetchSitePlans( siteId ) {
 				if ( error ) {
 					debug( 'Fetching site plans failed: ', error );
 
-					const errorMessage = error.message || i18n.translate( 'There was a problem fetching site plans. Please try again later or contact support.' );
+					const errorMessage = error.message || i18n.translate(
+						'There was a problem fetching site plans. Please try again later or contact support.'
+					);
 
 					dispatch( {
 						type: SITE_PLANS_FETCH_FAILED,
@@ -117,13 +120,11 @@ export function fetchSitePlans( siteId ) {
  * Returns an action object to be used in signalling that an object containing
  * the plans for a given site have been received.
  *
- * @param {Number} siteId identifier of the site
- * @param {Object} data list of plans received from the API
+ * @param {Number} siteId - identifier of the site
+ * @param {Object} plans - list of plans received from the API
  * @returns {Object} the corresponding action object
  */
-export function fetchSitePlansCompleted( siteId, data ) {
-	const plans = omit( data, '_headers' );
-
+export function fetchSitePlansCompleted( siteId, plans ) {
 	return {
 		type: SITE_PLANS_FETCH_COMPLETED,
 		siteId,

@@ -25,7 +25,6 @@ export const StandardPluginsPanel = React.createClass( {
 			plugins = []
 		} = this.props;
 
-		const selectPlugin = name => () => onClick( name );
 		const shownPlugins = plugins.slice( 0, displayCount );
 
 		return (

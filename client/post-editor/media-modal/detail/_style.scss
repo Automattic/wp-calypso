@@ -101,9 +101,25 @@
 }
 
 .editor-media-modal-detail__edit {
-	width: 100%;
-	margin-bottom: 16px;
 	font-weight: bold;
+	display: none;
+	&.is-desktop {
+		@include breakpoint( ">480px" ) {
+			display: block;
+			position: absolute;
+			top: 8px;
+			right: 8px;
+		}
+	}
+
+	&.is-mobile {
+		@include breakpoint( "<480px" ) {
+			display: block;
+			width: 100%;
+ 			margin-bottom: 16px;
+		}
+	}
+
 }
 
 .editor-media-modal-detail__sidebar {

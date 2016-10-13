@@ -3,7 +3,6 @@
  */
 import page from 'page';
 import React from 'react';
-import store from 'store';
 import debugFactory from 'debug';
 
 /**
@@ -20,6 +19,7 @@ import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
 import analytics from 'lib/analytics';
 import StatsFirstView from './stats-first-view';
+import config from 'config';
 
 const debug = debugFactory( 'calypso:stats:site' );
 
@@ -64,16 +64,10 @@ module.exports = React.createClass( {
 
 	componentDidMount: function() {
 		const scrollPosition = this.state.scrollPosition;
-		const localKey = 'statsHide' + this.props.siteId;
-		const hiddenSiteModules = store.get( localKey ) || [];
 
 		setTimeout( function() {
 			window.scrollTo( 0, scrollPosition );
 		} );
-
-		if ( hiddenSiteModules.length ) {
-			analytics.mc.bumpStat( 'calypso_stats_mod_hidden', hiddenSiteModules.length );
-		}
 	},
 
 	updateScrollPosition: function() {
@@ -84,12 +78,6 @@ module.exports = React.createClass( {
 	// When user clicks on a bar, set the date to the bar's period
 	chartBarClick: function( bar ) {
 		page.redirect( this.props.path + '?startDate=' + bar.period );
-	},
-
-	trackOldStats: function() {
-		const oldStatsLocation = ( 'wp-admin' === store.get( 'oldStatsLink' ) ) ? 'wp-admin' : 'my-stats';
-		analytics.mc.bumpStat( 'calypso_stats_return', oldStatsLocation );
-		analytics.ga.recordEvent( 'Stats', 'Clicked Visit Old Stats Page Button', oldStatsLocation );
 	},
 
 	barClick: function( bar ) {
@@ -115,6 +103,7 @@ module.exports = React.createClass( {
 		const moduleStrings = statsStrings();
 		let nonPeriodicModules;
 		let videoList;
+		let podcastList;
 
 		debug( 'Rendering site stats component', this.props );
 
@@ -126,6 +115,16 @@ module.exports = React.createClass( {
 					moduleStrings={ moduleStrings.videoplays }
 					site={ site }
 					dataList={ this.props.videoPlaysList }
+					period={ this.props.period }
+					date={ queryDate }
+					beforeNavigate={ this.updateScrollPosition } />;
+			}
+			if ( config.isEnabled( 'manage/stats/podcasts' ) && site.options.podcasting_archive ) {
+				podcastList = <StatsModule
+					path={ 'podcastdownloads' }
+					moduleStrings={ moduleStrings.podcastdownloads }
+					site={ site }
+					dataList={ this.props.podcastDownloadsList }
 					period={ this.props.period }
 					date={ queryDate }
 					beforeNavigate={ this.updateScrollPosition } />;
@@ -205,6 +204,7 @@ module.exports = React.createClass( {
 								date={ queryDate }
 								beforeNavigate={ this.updateScrollPosition } />
 							{ videoList }
+							{ podcastList }
 						</div>
 					</div>
 					{ nonPeriodicModules }

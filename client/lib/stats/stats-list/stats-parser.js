@@ -579,6 +579,37 @@ StatsParser.prototype.statsVideoPlays = function( payload ) {
 	return response;
 };
 
+StatsParser.prototype.statsPodcastDownloads = function( payload ) {
+	var response = { data: [] },
+		periodRange = rangeOfPeriod( this.options.period, this.options.date ),
+		startDate = periodRange.startOf.format( 'YYYY-MM-DD' );
+
+	if ( payload && payload.date && payload.days && payload.days[ startDate ] ) {
+		response.data = payload.days[ startDate ].downloads.map( function( item ) {
+			var detailPage = '/stats/' + this.options.period + '/podcastdownloads/' + this.options.domain + '?post=' + item.post_id;
+			return {
+				label: item.title,
+				page: detailPage,
+				value: item.downloads,
+				actions: [ {
+					type: 'link',
+					data: item.url
+				} ]
+			};
+		}, this );
+
+		if ( payload.days[ startDate ].other_downloads ) {
+			response.summaryPage = this.options ? '/stats/' + this.options.period + '/podcastdownloads/' + this.options.domain + '?startDate=' + startDate : null;
+		}
+
+		if ( payload.days[ startDate ].total_downloads ) {
+			response.total = payload.days[ startDate ].total_downloads;
+		}
+	}
+
+	return response;
+};
+
 StatsParser.prototype.statsComments = function( payload ) {
 	var response = {
 			data: {
@@ -635,7 +666,6 @@ StatsParser.prototype.statsTopPosts = function( payload ) {
 		response.data = payload.days[ startDate ].postviews.map( function( item ) {
 			var detailPage = '/stats/post/' + item.id + '/' + this.options.domain,
 				postDate,
-				children,
 				inPeriod = false;
 
 			if ( item.date ) {
@@ -647,17 +677,6 @@ StatsParser.prototype.statsTopPosts = function( payload ) {
 				) {
 					inPeriod = true;
 				}
-			}
-
-			if ( item.children ) {
-				children = item.children.map( function( child ) {
-					return {
-						label: child.title,
-						value: child.views,
-						link: child.link,
-						labelIcon: 'attachment'
-					};
-				} );
 			}
 
 			return {

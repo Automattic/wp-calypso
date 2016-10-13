@@ -1,5 +1,5 @@
 .devdocs,
-.design-assets {
+.design {
 	font-size: 18px;
 	line-height: 1.618;
 	color: $gray-dark;
@@ -140,63 +140,6 @@
 	margin-top: 48px;
 }
 
-.design-assets {
-	@include breakpoint( "<660px" ) {
-		padding: 0 6px;
-	}
-}
-
-.design-assets__group > h2,
-.docs__design-assets-group > h2,
-.design-assets__group > h2 a:first-child,
-.docs__design-assets-group > h2 a:first-child {
-	color: $gray-dark;
-	font-family: $serif;
-	font-size: 38px;
-	font-weight: bold;
-	margin: 40px 0 15px;
-}
-.design-assets h3, .design-assets h4 {
-	font-weight: bold;
-	margin-bottom: 8px;
-}
-
-.design-assets__toggle {
-	float: right;
-}
-
-.design-assets__group,
-.docs__design-assets-group {
-	color: $gray-dark;
-}
-
-.design-assets__group .docs-example,
-.docs__design-assets-group .docs-example {
-	margin-top: 40px;
-}
-
-.design-assets__group > .gridicon:hover,
-.design-assets__group > .social-logo:hover,
-.docs__design-assets-group > .gridicon:hover,
-.docs__design-assets-group > .social-logo:hover {
-	fill: $gray;
-	cursor: pointer;
-}
-
-// ==========================================================================
-// Button component styles
-// ==========================================================================
-
-.design-assets__button-row {
-	&:first-child {
-		margin-top: -16px;
-	}
-	.button {
-		margin-top: 16px !important;
-		margin-right: 16px !important;
-	}
-}
-
 .devdocs__welcome {
 	color: $gray-dark;
 }
@@ -210,4 +153,49 @@
 .devdocs__welcome-illustration {
 	float: right;
 	margin-top: -120px;
+}
+
+
+.docs__popover-hover-example__bullet {
+	list-style: none;
+	float: left;
+	cursor: pointer;
+	width: 25px;
+	height: 25px;
+	line-height: 25px;
+	text-align: center;
+	font-size: 10px;
+	background-color: #e0ffe0;
+
+	&:hover {
+		background-color: $gray;
+		color: $white;
+	}
+
+	&:nth-child(4n) {
+		background-color: #e0ffff;
+
+		&:hover {
+			background-color: $gray;
+			color: $white;
+		}
+	}
+
+	&:nth-child(4n + 1) {
+		background-color: #e0e0ff;
+
+		&:hover {
+			background-color: $gray;
+			color: $white;
+		}
+	}
+
+	&:nth-child(4n + 2) {
+		background-color: #ffffe0;
+
+		&:hover {
+			background-color: $gray;
+			color: $white;
+		}
+	}
 }

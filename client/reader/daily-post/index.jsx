@@ -45,6 +45,10 @@ function preloadEditor() {
 	preload( 'post-editor' );
 }
 
+function onlyOneSite() {
+	return sitesList.data.length === 1;
+}
+
 class DailyPostButton extends React.Component {
 	constructor() {
 		super();
@@ -55,7 +59,7 @@ class DailyPostButton extends React.Component {
 		this._closeTimerId = null;
 		this._isMounted = false;
 
-		[ 'pickSiteToPostTo', 'toggle', 'closeMenu' ].forEach(
+		[ 'openEditorWithSite', 'toggle', 'closeMenu', 'renderSitesPopover' ].forEach(
 			( method ) => this[ method ] = this[ method ].bind( this )
 		);
 	}
@@ -93,7 +97,7 @@ class DailyPostButton extends React.Component {
 		} );
 	}
 
-	pickSiteToPostTo( siteSlug ) {
+	openEditorWithSite( siteSlug ) {
 		const pingbackAttributes = getPingbackAttributes( this.props.post );
 
 		recordAction( 'daily_post_challenge' );
@@ -112,6 +116,11 @@ class DailyPostButton extends React.Component {
 			recordAction( 'open_daily_post_challenge' );
 			recordGaEvent( 'Opened Daily Post Challenge' );
 			recordTrackForPost( 'calypso_reader_daily_post_challenge_opened', this.props.post );
+
+			if ( onlyOneSite() ) {
+				const primarySlug = get( sitesList.getPrimary(), 'slug' );
+				return this.openEditorWithSite( primarySlug );
+			}
 		}
 		this._deferMenuChange( ! this.state.showingMenu );
 	}
@@ -123,6 +132,22 @@ class DailyPostButton extends React.Component {
 		if ( this._isMounted ) {
 			this._deferMenuChange( false );
 		}
+	}
+
+	renderSitesPopover() {
+		return (
+			<SitesPopover
+				key="menu"
+				header={ <div> { translate( 'Post on' ) } </div> }
+				sites={ sitesList }
+				context={ this.refs && this.refs.dailyPostButton }
+				visible={ this.state.showingMenu }
+				groups={ true }
+				onSiteSelect={ this.openEditorWithSite }
+				onClose={ this.closeMenu }
+				position="top"
+				className="is-reader"/>
+		);
 	}
 
 	render() {
@@ -146,21 +171,9 @@ class DailyPostButton extends React.Component {
 			onMouseEnter: preloadEditor
 		}, [
 			( <Button ref="dailyPostButton" key="button" compact primary className={ buttonClasses }>
-					<Gridicon icon="create" /><span>{ translate( 'Post about ' ) + title } </span>
+					<Gridicon icon="create" /><span>{ translate( 'Post about %(title)s', { args: { title } } ) } </span>
 				</Button> ),
-			( this.state.showingMenu
-				? <SitesPopover
-					key="menu"
-					header={ <div> { translate( 'Post on' ) } </div> }
-					sites={ sitesList }
-					context={ this.refs && this.refs.dailyPostButton }
-					visible={ this.state.showingMenu }
-					groups={ true }
-					onSiteSelect={ this.pickSiteToPostTo }
-					onClose={ this.closeMenu }
-					position="top"
-					className="is-reader"/>
-				: null )
+			( this.state.showingMenu ? this.renderSitesPopover() : null )
 		] );
 	}
 }

@@ -15,7 +15,6 @@ const SignupActions = {
 	},
 
 	saveSignupStep( step ) {
-		analytics.tracks.recordEvent( 'calypso_signup_actions_save_step', { step: step.stepName } );
 
 		// there are some conditions in which a step could be saved/processed in the same event loop
 		// so we should defer the action
@@ -28,7 +27,6 @@ const SignupActions = {
 	},
 
 	submitSignupStep( step, errors, providedDependencies ) {
-		analytics.tracks.recordEvent( 'calypso_signup_actions_submit_step', { step: step.stepName } );
 
 		Dispatcher.handleViewAction( {
 			type: 'SUBMIT_SIGNUP_STEP',
@@ -39,7 +37,6 @@ const SignupActions = {
 	},
 
 	processSignupStep( step, errors, providedDependencies ) {
-		analytics.tracks.recordEvent( 'calypso_signup_actions_process_step', { step: step.stepName } );
 
 		// deferred because a step can be processed as soon as it is submitted
 		defer( () => {

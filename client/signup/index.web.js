@@ -54,6 +54,12 @@ module.exports = function() {
 			sitesController.siteSelection,
 			jetpackConnectController.plansLanding
 		);
+
+		page(
+			'/jetpack/connect/plans/:intervalType?/:site',
+			sitesController.siteSelection,
+			jetpackConnectController.plansLanding
+		);
 	}
 
 	if ( config.isEnabled( 'jetpack/sso' ) ) {

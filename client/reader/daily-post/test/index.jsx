@@ -12,37 +12,40 @@ import noop from 'lodash/noop';
  * Internal dependencies
  */
 import useMockery from 'test/helpers/use-mockery';
-import { sitesList, dailyPromptPost } from './fixtures';
+import { sites, dailyPromptPost } from './fixtures';
 
 describe( 'DailyPostButton', () => {
 	const SitesPopover = props => <span { ...props } />;
 	const pageSpy = spy();
+	const sitesListMock = {
+		fetched: true,
+		data: sites,
+		getPrimary: stub()
+	};
 	let DailyPostButton;
 
 	useMockery( ( mockery ) => {
-		const getPrimary = stub();
 		const statsMocks = {
 			recordAction: noop,
 			recordGaEvent: noop,
 			recordTrackForPost: noop,
 		};
 		mockery.registerMock( 'reader/stats', statsMocks );
-
-		getPrimary.onFirstCall().returns( );
-		getPrimary.returns( sitesList );
-		mockery.registerMock( 'lib/sites-list', () => {
-			return { getPrimary };
-		} );
-
+		mockery.registerMock( 'lib/sites-list', () => sitesListMock );
 		mockery.registerMock( 'page', pageSpy );
 		mockery.registerMock( 'components/sites-popover', SitesPopover );
 	} );
 
 	before( () =>{
 		DailyPostButton = require( '../index' );
+		sitesListMock.getPrimary.returns( sitesListMock.data[ 0 ] );
 	} );
 
 	describe( 'rendering', () => {
+		before( () => {
+			sitesListMock.getPrimary.onFirstCall().returns();
+		} );
+
 		it( 'does not render if the user does not have any sites', () => {
 			const dailyPostPrompt = shallow( <DailyPostButton post={ dailyPromptPost }/> );
 			assert.isNull( dailyPostPrompt.type() );
@@ -69,18 +72,33 @@ describe( 'DailyPostButton', () => {
 		} );
 	} );
 
-	describe( 'creating a post', () => {
-		let prompt;
+	describe( 'clicking daily post button', () => {
+		let dailyPostButton;
+
 		before( () => {
-			prompt = shallow( <DailyPostButton post={ dailyPromptPost } /> );
+			dailyPostButton = shallow( <DailyPostButton post={ dailyPromptPost } /> );
 		} );
-		it( 'redirects to the choosen site', () => {
-			prompt.instance().pickSiteToPostTo( 'calypsop2.wordpress.com' );
+
+		afterEach( () => {
+			sitesListMock.data = sites;
+		} );
+
+		it( 'rediects to primary site if the user only has one site', () => {
+			sitesListMock.data = sitesListMock.data.slice( 0, 1 );
+			dailyPostButton.simulate( 'touchTap', { preventDefault: noop } );
 			assert.isTrue( pageSpy.calledWithMatch( /post\/calypsop2.wordpress.com?/ ) );
 		} );
 
+		it( 'shows the site selector if the user has more than one site', ( done ) => {
+			dailyPostButton.instance().renderSitesPopover = done;
+			dailyPostButton.simulate( 'touchTap', { preventDefault: noop } );
+		} );
+	} );
+
+	describe( 'staring a post', () => {
 		it( 'adds the daily post prompt attributes to the redirect url', () => {
-			prompt.instance().pickSiteToPostTo( 'calypsop2.wordpress.com' );
+			const prompt = shallow( <DailyPostButton post={ dailyPromptPost } /> );
+			prompt.instance().openEditorWithSite( 'calypsop2.wordpress.com' );
 			const pageArgs = pageSpy.lastCall.args[ 0 ];
 			const query = qs.parse( pageArgs.split( '?' )[ 1 ] );
 			const { title, URL } = dailyPromptPost;

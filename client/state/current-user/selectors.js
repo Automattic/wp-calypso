@@ -55,6 +55,21 @@ export function getCurrentUserCurrencyCode( state ) {
 }
 
 /**
+ * Returns the date (of registration) for the current user.
+ *
+ * @param  {Object}  state  Global state tree
+ * @return {?String}        Date of registration for user
+ */
+export function getCurrentUserDate( state ) {
+	const user = getCurrentUser( state );
+	if ( ! user ) {
+		return null;
+	}
+
+	return user.date || null;
+}
+
+/**
  * Returns true if the capability name is valid for the current user on a given
  * site, false if capabilities are known for the site but the name is invalid,
  * or null if capabilities are not known for the site.

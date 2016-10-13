@@ -3,9 +3,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PureComponent } from 'react';
 import classNames from 'classnames';
-import PureComponent from 'react-pure-render/component';
 
 /**
  * Constants

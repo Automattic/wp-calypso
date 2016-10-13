@@ -47,7 +47,7 @@ class EditorPageOrder extends Component {
 			recordEvent( 'Changed page menu order' );
 		}
 
-		this.props.editPost( { menu_order: newOrder }, siteId, postId );
+		this.props.editPost( siteId, postId, { menu_order: newOrder } );
 	}
 
 	render() {

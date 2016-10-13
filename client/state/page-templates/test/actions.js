@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import { match } from 'sinon';
 import { expect } from 'chai';
 
@@ -19,14 +18,11 @@ import {
 	receivePageTemplates,
 	requestPageTemplates
 } from '../actions';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	let spy;
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
-
-	after( () => {
-		nock.cleanAll();
-	} );
 
 	describe( 'receivePageTemplates()', () => {
 		it( 'should return an action object', () => {
@@ -45,7 +41,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestPageTemplates()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/sites/2916284/page-templates' )

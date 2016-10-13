@@ -32,7 +32,7 @@ var PostUnavailable = React.createClass( {
 		return (
 			<Card tagName="article" className="reader__card is-error">
 				<div className="reader__post-header">
-					<h1 className="reader__post-title"><a className="reader__post-title-link" target="_blank"><span className="reader__placeholder-text">Oops!</span></a></h1>
+					<h1 className="reader__post-title"><a className="reader__post-title-link" target="_blank" rel="noopener noreferrer"><span className="reader__placeholder-text">Oops!</span></a></h1>
 				</div>
 
 				<div className="reader__post-excerpt">

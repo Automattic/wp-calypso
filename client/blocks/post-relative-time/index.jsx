@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import { getNormalizedPost } from 'state/posts/selectors';
 
-function PostRelativeTime( { moment, post } ) {
+export function PostRelativeTime( { moment, post } ) {
 	let time;
 	if ( post ) {
 		const { status, modified, date } = post;

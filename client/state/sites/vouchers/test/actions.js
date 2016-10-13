@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
- * Action types
+ * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
 	SITE_VOUCHERS_ASSIGN_RECEIVE,
 	SITE_VOUCHERS_ASSIGN_REQUEST,
@@ -17,10 +17,6 @@ import {
 	SITE_VOUCHERS_REQUEST_SUCCESS,
 	SITE_VOUCHERS_REQUEST_FAILURE
 } from 'state/action-types';
-
-/**
- * Actions
- */
 import {
 	vouchersAssignReceiveAction,
 	vouchersAssignRequestAction,
@@ -33,12 +29,7 @@ import {
 	assignSiteVoucher,
 	requestSiteVouchers
 } from '../actions';
-
 import { useSandbox } from 'test/helpers/use-sinon';
-
-/**
- * Fixture data
- */
 import {
 	SITE_ID_0 as siteId,
 	REST_API_RESPONSE as wpcomResponse,
@@ -134,15 +125,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteVouchers() - success', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wpcom/v2/sites/${ siteId }/vouchers` )
 				.reply( 200, wpcomResponse );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch REQUEST action when thunk triggered', () => {
@@ -162,15 +149,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#assignSiteVoucher() - success', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/wpcom/v2/sites/${ siteId }/vouchers/${ oneOfOurServiceTypes }/assign` )
 				.reply( 200, wpcomAssignResponse );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch REQUEST action when thunk triggered', () => {
@@ -190,15 +173,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSiteVouchers() - failure', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/wpcom/v2/sites/${ siteId }/vouchers` )
 				.reply( 403, wpcomErrorResponse );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch REQUEST_FAILURE action when request failed', () => {
@@ -216,15 +195,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#assignSiteVoucher() - failure', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( `/wpcom/v2/sites/${ siteId }/vouchers/${ oneOfOurServiceTypes }/assign` )
 				.reply( 403, wpcomErrorResponse );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch assign_FAILURE action when assign failed', () => {

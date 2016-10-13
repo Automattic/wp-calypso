@@ -7,6 +7,7 @@ import React, { PropTypes } from 'react';
  * Internal dependencies
  */
 import Notice from 'components/notice';
+import { withoutHttp } from 'lib/url';
 
 export default React.createClass( {
 	displayName: 'JetpackConnectNotices',
@@ -97,14 +98,19 @@ export default React.createClass( {
 			noticeValues.icon = 'notice';
 			return noticeValues;
 		}
-		if ( this.props.noticeType === 'authorizeError' ) {
-			noticeValues.text = this.translate( 'Error authorizing your site. Please contact support.' );
+		if ( this.props.noticeType === 'defaultAuthorizeError' ) {
+			noticeValues.text = this.translate( 'Error authorizing your site. Please {{link}}contact support{{/link}}.', {
+				components: { link: <a href="https://jetpack.com/contact-support" target="_blank" rel="noopener noreferrer" /> }
+			} );
 			noticeValues.status = 'is-error';
 			noticeValues.icon = 'notice';
 			return noticeValues;
 		}
 		if ( this.props.noticeType === 'alreadyConnectedByOtherUser' ) {
-			noticeValues.text = this.translate( 'This site is already connected to a different WordPress.com user, you need to disconnect that user before you can connect another.' );
+			noticeValues.text = this.translate(
+				'This site is already connected to a different WordPress.com user, ' +
+				'you need to disconnect that user before you can connect another.'
+			);
 			noticeValues.status = 'is-warning';
 			noticeValues.icon = 'notice';
 			return noticeValues;
@@ -114,7 +120,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const urlSlug = this.props.url ? this.props.url.replace( /^https?:\/\//, '' ).replace( /\//g, '::' ) : '';
+		const urlSlug = this.props.url ? withoutHttp( this.props.url ).replace( /\//g, '::' ) : '';
 		const values = this.getNoticeValues( urlSlug );
 		if ( values ) {
 			return (

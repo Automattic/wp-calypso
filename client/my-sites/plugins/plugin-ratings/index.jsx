@@ -1,7 +1,8 @@
 /**
- * External depe;ndencies
+ * External dependencies
  */
 import React from 'react';
+
 /**
  * Internal dependencies
  */
@@ -9,12 +10,7 @@ import ProgressBar from 'components/progress-bar';
 import Rating from 'components/rating';
 import analytics from 'lib/analytics';
 
-/**
- * Constants
- */
-const REVIEW_URL = 'https://wordpress.org/support/view/plugin-reviews/';
-
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'PluginRatings',
 
 	propTypes: {
@@ -22,44 +18,70 @@ module.exports = React.createClass( {
 		ratings: React.PropTypes.object,
 		downloaded: React.PropTypes.number,
 		slug: React.PropTypes.string,
-		numRatings: React.PropTypes.number,
+		numRatings: React.PropTypes.number
 	},
 
 	ratingTiers: [ 5, 4, 3, 2, 1 ],
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return { barWidth: 88 };
 	},
 
-	renderPlaceholder: function() {
-		return (
-		<div className="plugin-ratings is-placeholder">
-			<div className="plugin-ratings__rating-stars"><Rating rating={ 0 } /></div>
-			<div className="plugin-ratings__rating-text">Based on</div>
-		</div>
-		);
+	buildReviewUrl( ratingTier ) {
+		const { slug } = this.props;
+		return `https://wordpress.org/support/plugin/${ slug }/reviews/?filter=${ ratingTier }`;
 	},
 
-	renderRatingTier: function( ratingTier ) {
-		var numberOfRatings = ( this.props.ratings && this.props.ratings[ ratingTier ] ) ? this.props.ratings[ ratingTier ] : 0;
-		return (
-			<div className="plugin-ratings__rating-tier" key={ 'plugins-ratings__tier-' + ratingTier }>
-				<a className="plugin-ratings__rating-container" target="_blank"
-					onClick={ analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', this.props.slug ) }
-					href={ REVIEW_URL + this.props.slug }>
-					<span className="plugin-ratings__rating-tier-text"> { this.translate( '%(ratingTier)s stars', { args: { ratingTier: ratingTier } } ) } </span>
-					<span className="plugin_ratings__bar">
-						<ProgressBar value={ numberOfRatings }
-							total={ this.props.numRatings }
-							title={ this.translate( '%(numberOfRatings)s ratings', { args: { numberOfRatings } } ) } />
-					</span>
-				</a>
+	renderPlaceholder() {
+		return ( // eslint-disable-next-line
+			<div className="plugin-ratings is-placeholder">
+				<div className="plugin-ratings__rating-stars">
+					<Rating rating={ 0 } />
+				</div>
+				<div className="plugin-ratings__rating-text">{ this.translate( 'Based on' ) }</div>
 			</div>
 		);
 	},
 
-	renderDownloaded: function() {
-		var downloaded = this.props.downloaded;
+	renderRatingTier( ratingTier ) {
+		const { ratings, slug, numRatings } = this.props;
+		const numberOfRatings = ( ratings && ratings[ ratingTier ] ) ? ratings[ ratingTier ] : 0;
+		const onClickPluginRatingsLink = () => {
+			analytics.ga.recordEvent( 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', slug );
+		};
+
+		return (
+			<a
+				className="plugin-ratings__rating-container"
+				key={ `plugins-ratings__tier-${ ratingTier }` }
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ onClickPluginRatingsLink }
+				href={ this.buildReviewUrl( ratingTier ) }
+			>
+				<span className="plugin-ratings__rating-tier-text">
+					{
+						this.translate(
+							'%(ratingTier)s star', '%(ratingTier)s stars', {
+								count: ratingTier,
+								args: { ratingTier: ratingTier }
+							}
+						)
+					}
+				</span>
+				<span className="plugin-ratings__bar">
+					<ProgressBar
+						value={ numberOfRatings }
+						total={ numRatings }
+						title={ this.translate( '%(numberOfRatings)s ratings', { args: { numberOfRatings } } ) }
+					/>
+				</span>
+			</a>
+		);
+	},
+
+	renderDownloaded() {
+		let downloaded = this.props.downloaded;
 		if ( downloaded > 100000 ) {
 			downloaded = this.numberFormat( Math.floor( downloaded / 10000 ) * 10000 ) + '+';
 		} else if ( downloaded > 10000 ) {
@@ -68,33 +90,43 @@ module.exports = React.createClass( {
 			downloaded = this.numberFormat( downloaded );
 		}
 
-		return <div className="plugin-ratings__downloads">{ this.translate( '%(installs)s downloads', { args: { installs: downloaded } } ) }</div>;
+		return (
+			<div className="plugin-ratings__downloads">
+				{
+					this.translate( '%(installs)s downloads', {
+						args: { installs: downloaded }
+					} )
+				}
+			</div>
+		);
 	},
 
-	render: function() {
-		var tierViews;
+	render() {
+		const { placeholder, ratings, rating, numRatings } = this.props;
 
-		if ( this.props.placeholder ) {
+		if ( placeholder ) {
 			return this.renderPlaceholder();
 		}
 
-		if ( ! this.props.ratings ) {
+		if ( ! ratings ) {
 			return null;
 		}
 
-		tierViews = this.ratingTiers.map( function( tierLevel ) {
-			return this.renderRatingTier( tierLevel );
-		}, this );
+		const tierViews = this.ratingTiers.map( tierLevel => this.renderRatingTier( tierLevel ) );
 		return (
 			<div className="plugin-ratings">
-				<div className="plugin-ratings__rating-stars"><Rating rating={ this.props.rating } /></div>
+				<div className="plugin-ratings__rating-stars">
+					<Rating rating={ rating } />
+				</div>
 				<div className="plugin-ratings__rating-text">
 					{ this.translate( 'Based on %(ratingsNumber)s rating', 'Based on %(ratingsNumber)s ratings', {
-						count: this.props.numRatings,
-						args: { ratingsNumber: this.props.numRatings }
+						count: numRatings,
+						args: { ratingsNumber: numRatings }
 					} ) }
 				</div>
-				{ tierViews }
+				<div className="plugin-ratings__rating-tiers">
+					{ tierViews }
+				</div>
 				{ this.renderDownloaded() }
 			</div>
 		);

@@ -1,17 +1,14 @@
 /**
  * External dependencies
  */
-import assign from 'lodash/assign';
-import includes from 'lodash/includes';
-import reject from 'lodash/reject';
+import { assign, includes, reject } from 'lodash';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
+import { abtest, getABTestVariation } from 'lib/abtest';
 import config from 'config';
-import { isOutsideCalypso } from 'lib/url';
 import stepConfig from './steps';
 import userFactory from 'lib/user';
 
@@ -94,6 +91,13 @@ const flows = {
 		lastModified: '2016-05-23'
 	},
 
+	sitetitle: {
+		steps: [ 'survey', 'site-title', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		destination: getSiteDestination,
+		description: 'The current best performing flow in AB tests',
+		lastModified: '2016-05-23'
+	},
+
 	website: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
@@ -169,6 +173,13 @@ const flows = {
 	jetpack: {
 		steps: [ 'jetpack-user' ],
 		destination: '/'
+	},
+
+	'get-dot-blog': {
+		steps: [ 'get-dot-blog-survey', 'get-dot-blog-themes', 'get-dot-blog-plans' ],
+		destination: getSiteDestination,
+		description: 'Used by `get.blog` users that connect their site to WordPress.com',
+		lastModified: '2016-10-03'
 	}
 };
 
@@ -220,8 +231,22 @@ const Flows = {
 	filterDestination,
 
 	defaultFlowName: 'main',
+	resumingFlow: false,
 
-	getFlow( flowName ) {
+	/**
+	 * Get certain flow from the flows configuration.
+	 *
+	 * The returned flow is modified according to several filters.
+	 *
+	 * `currentStepName` is the current step in the signup flow. It is used
+	 * to determine if any AB variations should be assigned after it is completed.
+	 * Example use case: To determine if a new signup step should be part of the flow or not.
+	 *
+	 * @param {String} flowName The name of the flow to return
+	 * @param {String} currentStepName The current step. See description above
+	 * @returns {Object} A flow object
+	 */
+	getFlow( flowName, currentStepName = '' ) {
 		let flow = Flows.getFlows()[ flowName ];
 
 		if ( user.get() ) {
@@ -232,11 +257,99 @@ const Flows = {
 			flow = filterDesignTypeInFlow( flow );
 		}
 
-		return flow;
+		Flows.preloadABTestVariationsForStep( flowName, currentStepName );
+
+		return Flows.getABTestFilteredFlow( flowName, flow );
 	},
 
 	getFlows() {
 		return flows;
+	},
+
+	/**
+	 * Preload AB Test variations after a certain step has been completed.
+	 *
+	 * This gives the option to set the AB variation as late as possible in the
+	 * signup flow.
+	 *
+	 * Currently only the `main` flow is whitelisted.
+	 *
+	 * @param {String} flowName The current flow
+	 * @param {String} stepName The step that is being completed right now
+	 */
+	preloadABTestVariationsForStep( flowName, stepName ) {
+		/**
+		 * In cases where the flow is being resumed, the flow must not be changed from what the user
+		 * has seen before.
+		 *
+		 * E.g. A user is resuming signup from before the test was added. There is no need
+		 * to add a step somewhere back in the line.
+		 */
+		if ( Flows.resumingFlow ) {
+			return;
+		}
+
+		if ( 'main' === flowName ) {
+			if ( 'survey' === stepName ) {
+				abtest( 'siteTitleStep' );
+			}
+		}
+	},
+
+	/**
+	 * Return a flow that is modified according to the ABTest rules.
+	 *
+	 * Useful when testing new steps in the signup flows.
+	 *
+	 * Example usage: Inject or remove a step in the flow if a user is part of an ABTest.
+	 *
+	 * @param {String} flowName The current flow name
+	 * @param {Object} flow The flow object
+	 *
+	 * @return {Object} A filtered flow object
+	 */
+	getABTestFilteredFlow( flowName, flow ) {
+		// Only do this on the main flow
+		if ( 'main' === flowName ) {
+			if ( getABTestVariation( 'siteTitleStep' ) === 'showSiteTitleStep' ) {
+				return Flows.insertStepIntoFlow( 'site-title', flow, 'survey' );
+			}
+		}
+
+		return flow;
+	},
+
+	/**
+	 * Insert a step into the flow.
+	 *
+	 * @param {String} stepName The step to insert into the flow
+	 * @param {Object} flow The flow that the step will be inserted into
+	 * @param {String} afterStep After which step to insert the new step.
+	 * 							 If left blank, the step will be added in the beginning.
+	 *
+	 * @returns {Object} A flow object with inserted step
+	 */
+	insertStepIntoFlow( stepName, flow, afterStep = '' ) {
+		if ( -1 === flow.steps.indexOf( stepName ) ) {
+			const steps = flow.steps.slice();
+			const afterStepIndex = steps.indexOf( afterStep );
+
+			/**
+			 * Only insert the step if
+			 * `afterStep` is empty ( insert at start )
+			 * or if `afterStep` is found in the flow. ( insert after `afterStep` )
+			 */
+			if ( afterStepIndex > -1 || '' === afterStep ) {
+				steps.splice( afterStepIndex + 1, 0, stepName );
+
+				return {
+					...flow,
+					steps,
+				};
+			}
+		}
+
+		return flow;
 	}
 };
 

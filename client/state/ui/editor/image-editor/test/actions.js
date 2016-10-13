@@ -13,11 +13,13 @@ import {
 	IMAGE_EDITOR_SET_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
-	IMAGE_EDITOR_STATE_RESET
+	IMAGE_EDITOR_STATE_RESET,
+	IMAGE_EDITOR_STATE_RESET_ALL
 } from 'state/action-types';
 
 import {
 	resetImageEditorState,
+	resetAllImageEditorState,
 	imageEditorRotateCounterclockwise,
 	imageEditorFlip,
 	setImageEditorAspectRatio,
@@ -34,6 +36,16 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_STATE_RESET
+			} );
+		} );
+	} );
+
+	describe( '#resetAllImageEditorState()', () => {
+		it( 'should return an action object', () => {
+			const action = resetAllImageEditorState();
+
+			expect( action ).to.eql( {
+				type: IMAGE_EDITOR_STATE_RESET_ALL
 			} );
 		} );
 	} );
@@ -60,13 +72,14 @@ describe( 'actions', () => {
 
 	describe( '#setImageEditorFileInfo()', () => {
 		it( 'should return an action object', () => {
-			const action = setImageEditorFileInfo( 'testSrc', 'testFileName', 'image/jpg' );
+			const action = setImageEditorFileInfo( 'testSrc', 'testFileName', 'image/jpg', 'My Title' );
 
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_SET_FILE_INFO,
 				src: 'testSrc',
 				fileName: 'testFileName',
-				mimeType: 'image/jpg'
+				mimeType: 'image/jpg',
+				title: 'My Title'
 			} );
 		} );
 	} );

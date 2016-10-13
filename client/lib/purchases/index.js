@@ -163,6 +163,10 @@ function isRenewable( purchase ) {
 	return purchase.isRenewable;
 }
 
+function isRenewal( purchase ) {
+	return purchase.isRenewal;
+}
+
 function isRenewing( purchase ) {
 	return includes( [ 'active', 'autoRenewing' ], purchase.expiryStatus );
 }
@@ -251,6 +255,7 @@ export {
 	isRefundable,
 	isRemovable,
 	isRenewable,
+	isRenewal,
 	isRenewing,
 	isSubscription,
 	paymentLogoType,

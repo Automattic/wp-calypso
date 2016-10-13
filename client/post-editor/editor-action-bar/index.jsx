@@ -82,6 +82,7 @@ export default React.createClass( {
 						<Button
 							href={ this.props.savedPost.URL }
 							target="_blank"
+							rel="noopener noreferrer"
 							onMouseEnter={ () => this.setState( { viewLinkTooltip: true } ) }
 							onMouseLeave={ () => this.setState( { viewLinkTooltip: false } ) }
 							ref="viewLink"
@@ -89,6 +90,7 @@ export default React.createClass( {
 						>
 							<Gridicon icon="external" />
 							<Tooltip
+								className="editor-action-bar__view-post-tooltip"
 								context={ this.refs && this.refs.viewLink }
 								isVisible={ this.state.viewLinkTooltip }
 								position="bottom left"

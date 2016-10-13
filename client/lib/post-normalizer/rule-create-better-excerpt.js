@@ -10,9 +10,9 @@ import trim from 'lodash/trim';
  */
 import { domForHtml } from './utils';
 
-export default function createBetterExcerpt( post ) {
-	if ( ! post || ! post.content ) {
-		return post;
+export function formatExcerpt( content ) {
+	if ( ! content ) {
+		return '';
 	}
 
 	function removeElement( element ) {
@@ -20,9 +20,9 @@ export default function createBetterExcerpt( post ) {
 	}
 
 	// Spin up a new DOM for the linebreak markup
-	const dom = domForHtml( post.content );
+	const dom = domForHtml( content );
 	dom.id = '__better_excerpt__';
-	dom.innerHTML = post.content;
+	dom.innerHTML = content;
 
 	// Ditch any photo captions with the wp-caption-text class, styles, scripts
 	forEach( dom.querySelectorAll( '.wp-caption-text, style, script, blockquote[class^="instagram-"], figure' ), removeElement );
@@ -55,8 +55,18 @@ export default function createBetterExcerpt( post ) {
 		}
 	} );
 
-	post.better_excerpt = trim( dom.innerHTML );
+	// trim and replace &nbsp; entities
+	const betterExcerpt = trim( dom.innerHTML.replace( /&nbsp;/g, ' ' ) );
 	dom.innerHTML = '';
+	return betterExcerpt;
+}
+
+export default function createBetterExcerpt( post ) {
+	if ( ! post || ! post.content ) {
+		return post;
+	}
+
+	post.better_excerpt = formatExcerpt( post.content );
 
 	// also make a shorter excerpt...
 	if ( post.excerpt ) {

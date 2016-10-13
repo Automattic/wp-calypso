@@ -13,8 +13,8 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { mc } from 'lib/analytics';
 import { getPost, getPostPreviewUrl } from 'state/posts/selectors';
 import { isSitePreviewable } from 'state/sites/selectors';
-import { setPreviewUrl } from 'state/ui/actions';
-import layoutFocus from 'lib/layout-focus';
+import { setPreviewUrl } from 'state/ui/preview/actions';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 class PostActionsEllipsisMenuView extends Component {
 	static propTypes = {
@@ -23,7 +23,8 @@ class PostActionsEllipsisMenuView extends Component {
 		status: PropTypes.string,
 		isPreviewable: PropTypes.bool,
 		previewUrl: PropTypes.string,
-		setPreviewUrl: PropTypes.func.isRequired
+		setPreviewUrl: PropTypes.func.isRequired,
+		setLayoutFocus: PropTypes.func.isRequired,
 	};
 
 	constructor() {
@@ -40,7 +41,7 @@ class PostActionsEllipsisMenuView extends Component {
 		}
 
 		this.props.setPreviewUrl( previewUrl );
-		layoutFocus.set( 'preview' );
+		this.props.setLayoutFocus( 'preview' );
 		event.preventDefault();
 	}
 
@@ -55,7 +56,8 @@ class PostActionsEllipsisMenuView extends Component {
 				href={ previewUrl }
 				onClick={ this.previewPost }
 				icon="visible"
-				target="_blank">
+				target="_blank"
+				rel="noopener noreferrer">
 				{ includes( [ 'publish', 'private' ], status )
 					? translate( 'View', { context: 'verb' } )
 					: translate( 'Preview', { context: 'verb' } ) }
@@ -77,5 +79,5 @@ export default connect(
 			previewUrl: getPostPreviewUrl( state, post.site_ID, post.ID )
 		};
 	},
-	{ setPreviewUrl }
+	{ setPreviewUrl, setLayoutFocus }
 )( localize( PostActionsEllipsisMenuView ) );

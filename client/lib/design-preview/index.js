@@ -1,3 +1,9 @@
+import siteTitle from './updaters/site-title';
+
+const updaterFunctions = [
+	siteTitle,
+];
+
 export function updatePreviewWithChanges( previewDocument, customizations ) {
-	// Update the preview here
+	updaterFunctions.map( callback => callback( previewDocument, customizations ) );
 }

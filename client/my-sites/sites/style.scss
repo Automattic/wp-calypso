@@ -12,4 +12,8 @@
 
 .sites__selector-wrapper.card {
 	padding: 0;
+
+	.site-selector {
+		overflow: auto;
+	}
 }

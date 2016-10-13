@@ -1,48 +1,54 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import noop from 'lodash/noop';
 import omit from 'lodash/omit';
 
-export default React.createClass( {
-	displayName: 'Draggable',
-
-	propTypes: {
-		onDrag: React.PropTypes.func,
-		onStop: React.PropTypes.func,
-		width: React.PropTypes.number,
-		height: React.PropTypes.number,
-		x: React.PropTypes.number,
-		y: React.PropTypes.number,
-		controlled: React.PropTypes.bool,
-		bounds: React.PropTypes.shape( {
-			top: React.PropTypes.number,
-			left: React.PropTypes.number,
-			bottom: React.PropTypes.number,
-			right: React.PropTypes.number
+export default class Draggable extends Component {
+	static propTypes = {
+		onDrag: PropTypes.func,
+		onStop: PropTypes.func,
+		width: PropTypes.number,
+		height: PropTypes.number,
+		x: PropTypes.number,
+		y: PropTypes.number,
+		controlled: PropTypes.bool,
+		bounds: PropTypes.shape( {
+			top: PropTypes.number,
+			left: PropTypes.number,
+			bottom: PropTypes.number,
+			right: PropTypes.number
 		} )
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			onDrag: noop,
-			onStop: noop,
-			width: 0,
-			height: 0,
-			x: 0,
-			y: 0,
-			controlled: false,
-			bounds: null
-		};
-	},
+	static defaultProps = {
+		onDrag: noop,
+		onStop: noop,
+		width: 0,
+		height: 0,
+		x: 0,
+		y: 0,
+		controlled: false,
+		bounds: null
+	};
 
-	getInitialState() {
-		return {
+	constructor( props ) {
+		super( props );
+
+		this.state = {
 			x: this.props.x,
 			y: this.props.y
 		};
-	},
+
+		this.onTouchStartHandler = this.onTouchStartHandler.bind( this );
+		this.onMouseDownHandler = this.onMouseDownHandler.bind( this );
+
+		this.draggingHandler = this.draggingHandler.bind( this );
+		this.draggingEndedHandler = this.draggingEndedHandler.bind( this );
+
+		this.update = this.update.bind( this );
+	}
 
 	componentWillReceiveProps( newProps ) {
 		if ( this.state.x !== newProps.x || this.state.y !== newProps.y ) {
@@ -51,42 +57,78 @@ export default React.createClass( {
 				y: newProps.y
 			} );
 		}
-	},
+	}
 
 	componentWillUnmount() {
 		this.removeListeners();
-	},
+	}
 
-	onMouseDown( event ) {
-		event.preventDefault();
-
-		document.addEventListener( 'mousemove', this.onMouseMove );
-		document.addEventListener( 'mouseup', this.onMouseUp );
-
+	draggingStartedHandler( event ) {
 		this.dragging = true;
+
+		let coords = event;
+
+		if ( this.isTouchEvent( event ) ) {
+			coords = event.touches[ 0 ];
+		}
+
 		this.relativePos = {
-			x: event.pageX - this.state.x,
-			y: event.pageY - this.state.y
+			x: coords.pageX - this.state.x,
+			y: coords.pageY - this.state.y
 		};
 
 		cancelAnimationFrame( this.frameRequestId );
 		this.frameRequestId = requestAnimationFrame( this.update );
-	},
+	}
 
-	onMouseMove( event ) {
-		let x = event.pageX - this.relativePos.x,
-			y = event.pageY - this.relativePos.y;
+	isTouchEvent( event ) {
+		return (
+			( ! event.pageX || ! event.pageY ) &&
+			( event.targetTouches && event.targetTouches.length )
+		);
+	}
+
+	draggingHandler( event ) {
+		let coords = event;
+
+		if ( this.isTouchEvent( event ) ) {
+			coords = event.touches[ 0 ];
+		}
+
+		const x = coords.pageX - this.relativePos.x,
+			y = coords.pageY - this.relativePos.y;
 
 		this.mousePos = { x, y };
-	},
+	}
 
-	onMouseUp() {
+	draggingEndedHandler( ) {
 		this.dragging = false;
 		this.mousePos = null;
+
 		cancelAnimationFrame( this.frameRequestId );
+
 		this.removeListeners();
+
 		this.props.onStop();
-	},
+	}
+
+	onTouchStartHandler( event ) {
+		event.preventDefault();
+
+		document.addEventListener( 'touchmove', this.draggingHandler );
+		document.addEventListener( 'touchend', this.draggingEndedHandler );
+
+		this.draggingStartedHandler( event );
+	}
+
+	onMouseDownHandler( event ) {
+		event.preventDefault();
+
+		document.addEventListener( 'mousemove', this.draggingHandler );
+		document.addEventListener( 'mouseup', this.draggingEndedHandler );
+
+		this.draggingStartedHandler( event );
+	}
 
 	update() {
 		if ( ! this.mousePos ) {
@@ -112,12 +154,15 @@ export default React.createClass( {
 		}
 
 		this.setState( { x, y } );
-	},
+	}
 
 	removeListeners() {
-		document.removeEventListener( 'mousemove', this.onMouseMove );
-		document.removeEventListener( 'mouseup', this.onMouseUp );
-	},
+		document.removeEventListener( 'mousemove', this.draggingHandler );
+		document.removeEventListener( 'mouseup', this.draggingEndedHandler );
+
+		document.removeEventListener( 'touchmove', this.draggingHandler );
+		document.removeEventListener( 'touchend', this.draggingEndedHandler );
+	}
 
 	render() {
 		const elementProps = omit( this.props, Object.keys( this.constructor.propTypes ) ),
@@ -134,8 +179,10 @@ export default React.createClass( {
 			<div
 				{ ...elementProps }
 				style={ style }
-				onMouseDown={ this.onMouseDown }>
+				onMouseDown={ this.onMouseDownHandler }
+				onTouchStart={ this.onTouchStartHandler }
+			>
 			</div>
 		);
 	}
-} );
+}

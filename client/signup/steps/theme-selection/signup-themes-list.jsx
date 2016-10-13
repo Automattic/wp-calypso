@@ -3,15 +3,14 @@
  */
 import React from 'react';
 import noop from 'lodash/noop';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import getThemes from 'lib/signup/themes';
 import ThemesList from 'components/themes-list';
-import config from 'config';
-
-const themeDemosEnabled = config.isEnabled( 'signup/theme-demos' );
+import { abtest } from 'lib/abtest';
 
 module.exports = React.createClass( {
 	displayName: 'SignupThemesList',
@@ -20,6 +19,8 @@ module.exports = React.createClass( {
 		surveyQuestion: React.PropTypes.string,
 		designType: React.PropTypes.string,
 		handleScreenshotClick: React.PropTypes.func,
+		handleThemeUpload: React.PropTypes.func,
+		showThemeUpload: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
@@ -27,6 +28,8 @@ module.exports = React.createClass( {
 			surveyQuestion: null,
 			designType: null,
 			handleScreenshotClick: noop,
+			handleThemeUpload: noop,
+			showThemeUpload: 'showThemeUpload' === abtest( 'signupThemeUpload' ) && i18n.getLocaleSlug() === 'en'
 		};
 	},
 
@@ -38,20 +41,18 @@ module.exports = React.createClass( {
 		return getThemes( this.props.surveyQuestion, this.props.designType );
 	},
 
-	getScreenshotUrl( slug ) {
-		return 'https://i1.wp.com/s0.wp.com/wp-content/themes/pub/' + slug + '/screenshot.png?w=660';
+	getScreenshotUrl( theme ) {
+		return `https://i1.wp.com/s0.wp.com/wp-content/themes/${ theme.repo }/${ theme.slug }/screenshot.png?w=660`;
 	},
 
 	render() {
-		const actionLabel = themeDemosEnabled ? this.translate( 'Preview' ) : this.translate( 'Pick' );
+		const actionLabel = this.translate( 'Pick' );
 		const getActionLabel = () => actionLabel;
 		const themes = this.getComputedThemes().map( theme => {
-			return {
+			return Object.assign( theme, {
 				id: theme.slug,
-				name: theme.name,
-				demo_uri: theme.demo_uri,
-				screenshot: this.getScreenshotUrl( theme.slug ),
-			};
+				screenshot: this.getScreenshotUrl( theme )
+			} );
 		} );
 		return (
 			<ThemesList
@@ -59,7 +60,10 @@ module.exports = React.createClass( {
 				onScreenshotClick= { this.props.handleScreenshotClick }
 				onMoreButtonClick= { noop }
 				getActionLabel={ getActionLabel }
-				themes= { themes } />
+				themes= { themes }
+				showThemeUpload= { this.props.showThemeUpload }
+				onThemeUpload= { this.props.handleThemeUpload }
+			/>
 		);
 	}
 } );

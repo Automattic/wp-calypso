@@ -1,30 +1,41 @@
 .author-compact-profile {
 	font-size: 14px;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
 
-	.gravatar {
-    	display: flex;
-    	margin: auto;
-    }
+	.reader-avatar {
+		margin-bottom: 18px;
+	}
 
-    .follow-button {
-    	border: 0;
-    	border-radius: 0;
-    	padding: 0;
+	.gravatar,
+	.site-icon {
+		margin: auto;
+	}
 
-    	.gridicon__follow {
-    		fill: $blue-medium;
-    	}
+	.follow-button {
+		border: 0;
+		border-radius: 0;
+		padding: 0;
 
-    	.follow-button__label {
-    		color: $blue-medium;
+		.gridicon__follow {
+			fill: $blue-medium;
+		}
 
-    		@include breakpoint( "<660px" ) {
-    			display: inline-block;
-    		}
-    	}
+		.follow-button__label {
+			color: $blue-medium;
+
+
+			@include breakpoint( "<660px" ) {
+				display: inline-block;
+			}
+		}
+
+		&.is-following .follow-button__label {
+			color: $alert-green;
+		}
 
 		&:hover {
-
 			.gridicon__follow {
 				fill: lighten( $gray, 10% );
 			}
@@ -33,32 +44,59 @@
 				color: lighten( $gray, 10% );
 			}
 		}
-    }
+
+		// No hover if already following
+		&.is-following {
+			&:hover {
+				.gridicon__follow {
+					fill: $alert-green;
+				}
+
+				.follow-button__label {
+					color: $alert-green;
+				}
+			}
+		}
+	}
+
+	// If there's an author link, present site stream link in normal font weight
+	&.has-author-link {
+		.author-compact-profile__site-link {
+			font-weight: inherit;
+			margin-top: 4px;
+		}
+	}
 }
 
-.author-compact-profile .external-link,
+.author-compact-profile .reader-author-link,
 .author-compact-profile__site-link,
 .author-compact-profile__follow {
-    align-items: center;
-    color: $blue-medium;
-    display: flex;
-    justify-content: center;
+	align-items: center;
+	color: $blue-medium;
+	display: flex;
+	justify-content: center;
 
-    &:hover {
-    	color: lighten( $gray, 10% );
-    }
+	&:hover {
+		color: lighten( $gray, 10% );
+	}
 }
 
-.author-compact-profile .external-link {
+.author-compact-profile .reader-author-link,
+.author-compact-profile__site-link {
 	font-weight: 600;
-	margin-top: 15px;
 }
 
-.author-compact-profile__follow-count {
-	display: inline-flex;
+.author-compact-profile__follow {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 11px 0;
+
+	.follow-button {
+		padding: 5px;
+	}
 }
 
 .author-compact-profile__follow-count {
 	color: lighten( $gray, 10% );
-	margin-right: 15px;
+	padding: 5px;
 }

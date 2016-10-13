@@ -29,6 +29,7 @@ import {
 	isRedeemable,
 	isRefundable,
 	isRenewable,
+	isRenewal,
 	isRenewing,
 	isSubscription,
 	paymentLogoType,
@@ -198,7 +199,7 @@ const ManagePurchase = React.createClass( {
 
 	renderCreditCardExpiringNotice() {
 		const purchase = getPurchase( this.props ),
-			{ id, payment: { creditCard } } = purchase;
+			{ payment: { creditCard } } = purchase;
 
 		if ( isExpired( purchase ) || isOneTimePurchase( purchase ) || isIncludedWithPlan( purchase ) || ! getSelectedSite( this.props ) ) {
 			return null;
@@ -507,11 +508,16 @@ const ManagePurchase = React.createClass( {
 			return null;
 		}
 
-		let text;
+		let text, link = paths.cancelPurchase( this.props.selectedSite.slug, id );
 
 		if ( isRefundable( purchase ) ) {
 			if ( isDomainRegistration( purchase ) ) {
-				text = this.translate( 'Cancel Domain and Refund' );
+				if ( isRenewal( purchase ) ) {
+					text = this.translate( 'Contact Support to Cancel Domain and Refund' );
+					link = support.CALYPSO_CONTACT;
+				} else {
+					text = this.translate( 'Cancel Domain and Refund' );
+				}
 			}
 
 			if ( isSubscription( purchase ) ) {
@@ -532,7 +538,7 @@ const ManagePurchase = React.createClass( {
 		}
 
 		return (
-			<CompactCard href={ paths.cancelPurchase( this.props.selectedSite.slug, id ) }>
+			<CompactCard href={ link }>
 				{ text }
 			</CompactCard>
 		);

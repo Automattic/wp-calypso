@@ -1,14 +1,20 @@
-// External dependencies
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
-import { nock, useNock } from 'test/helpers/use-nock';
 import sinon from 'sinon';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
+import useNock from 'test/helpers/use-nock';
 import {
+	addStoredCard,
 	deleteStoredCard,
 	fetchStoredCards
 } from '../actions';
 import {
+	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
 	STORED_CARDS_DELETE_COMPLETED,
 	STORED_CARDS_DELETE_FAILED,
@@ -16,10 +22,10 @@ import {
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED
 } from 'state/action-types';
+import { useSandbox } from 'test/helpers/use-sinon';
+import wp from 'lib/wp';
 
 describe( 'actions', () => {
-	useNock();
-
 	const spy = sinon.spy();
 
 	beforeEach( () => {
@@ -31,6 +37,31 @@ describe( 'actions', () => {
 		message: 'you are unauthorized'
 	};
 
+	describe( '#addStoredCard', () => {
+		const paygateToken = 'pg_1234',
+			item = { stored_details_id: 123 };
+		let sandbox;
+
+		useSandbox( newSandbox => sandbox = newSandbox );
+
+		it( 'should dispatch complete action when API returns card item', () => {
+			sandbox.stub( wp, 'undocumented', () => ( {
+				me: () => ( {
+					storedCardAdd: ( token, callback ) => callback( null, item )
+				} )
+			} ) );
+
+			const result = addStoredCard( paygateToken )( spy );
+
+			return result.then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: STORED_CARDS_ADD_COMPLETED,
+					item
+				} );
+			} );
+		} );
+	} );
+
 	describe( '#fetchStoredCards', () => {
 		const cards = [
 			{ stored_details_id: 1 },
@@ -38,7 +69,7 @@ describe( 'actions', () => {
 		];
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.get( '/rest/v1.1/me/stored-cards' )
 					.reply( 200, cards );
@@ -61,7 +92,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'fail', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.get( '/rest/v1.1/me/stored-cards' )
 					.reply( 403, error );
@@ -90,7 +121,7 @@ describe( 'actions', () => {
 		};
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( `/rest/v1.1/me/stored-cards/${ card.stored_details_id }/delete` )
 					.reply( 200, { success: true } );
@@ -113,7 +144,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'fail', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.post( `/rest/v1.1/me/stored-cards/${ card.stored_details_id }/delete` )
 					.reply( 403, error );

@@ -98,7 +98,7 @@ const DomainsStep = React.createClass( {
 
 	getThemeArgs: function() {
 		const themeSlug = this.getThemeSlug(),
-			themeSlugWithRepo = this.getThemeSlugWithRepo(),
+			themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug ),
 			themeItem = this.isPurchasingTheme()
 			? cartItems.themeItem( themeSlug, 'signup-with-theme' )
 			: undefined;
@@ -106,13 +106,12 @@ const DomainsStep = React.createClass( {
 		return { themeSlug, themeSlugWithRepo, themeItem };
 	},
 
-	getThemeSlugWithRepo: function() {
-		const themeSlug = this.getThemeSlug();
+	getThemeSlugWithRepo: function( themeSlug ) {
 		if ( ! themeSlug ) {
 			return undefined;
 		}
-		// Only allow free themes for now; a valid theme value here (free or premium) will cause a theme_switch by Headstart.
-		return this.isPurchasingTheme() ? undefined : 'pub/' + themeSlug;
+		const repo = this.isPurchasingTheme() ? 'premium' : 'pub';
+		return `${repo}/${themeSlug}`;
 	},
 
 	submitWithDomain: function( googleAppsCartItem ) {

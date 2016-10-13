@@ -3,6 +3,7 @@
  */
 import { expect } from 'chai';
 import moment from 'moment';
+import { noop } from 'lodash';
 import React from 'react';
 import sinon from 'sinon';
 import mockery from 'mockery';
@@ -29,7 +30,9 @@ const MOCK_USER = {
 };
 
 const MOCK_USER_UTILS = {
-	needsVerificationForSite: function ( site ) { return !MOCK_USER.email_verified; }
+	needsVerificationForSite: function( site ) { // eslint-disable-line no-unused-vars
+		return ! MOCK_USER.email_verified;
+	}
 };
 
 describe( 'EditorGroundControl', function() {
@@ -48,9 +51,15 @@ describe( 'EditorGroundControl', function() {
 		mockery.registerMock( 'post-editor/edit-post-status', EmptyComponent );
 		mockery.registerMock( 'post-editor/editor-status-label', EmptyComponent );
 		mockery.registerMock( 'components/sticky-panel', EmptyComponent );
+		mockery.registerMock( 'components/post-list-fetcher', EmptyComponent );
 		mockery.registerMock( 'components/post-schedule', EmptyComponent );
+		mockery.registerMock( 'lib/posts/actions', { edit: noop } );
+		mockery.registerMock( 'lib/posts/stats', {
+			recordEvent: noop,
+			recordStat: noop
+		} );
 		mockery.registerMock( 'lib/user/utils', {
-			needsVerificationForSite: () => !MOCK_USER.email_verified,
+			needsVerificationForSite: () => ! MOCK_USER.email_verified,
 		} );
 		EditorGroundControl = require( '../' );
 
@@ -373,41 +382,41 @@ describe( 'EditorGroundControl', function() {
 		it( 'should schedule a posted dated in future', function() {
 			var now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
-				onSave = sinon.spy(),
+				onPublish = sinon.spy(),
 				tree;
 
 			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'draft', date: nextMonth } }
 					post={ { title: 'change', status: 'draft', date: nextMonth } }
-					onSave={ onSave }
+					onPublish={ onPublish }
 					site={ MOCK_SITE }
 				/>
 			).instance();
 
 			tree.onPrimaryButtonClick();
 
-			expect( onSave ).to.have.been.calledWith( 'future' );
+			expect( onPublish ).to.have.been.called;
 		} );
 
 		it( 'should save a scheduled post dated in future', function() {
 			var now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
-				onSave = sinon.spy(),
+				onPublish = sinon.spy(),
 				tree;
 
 			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'future', date: nextMonth } }
 					post={ { title: 'change', status: 'future', date: nextMonth } }
-					onSave={ onSave }
+					onPublish={ onPublish }
 					site={ MOCK_SITE }
 				/>
 			).instance();
 
 			tree.onPrimaryButtonClick();
 
-			expect( onSave ).to.have.been.calledWith( 'future' );
+			expect( onPublish ).to.have.been.called;
 		} );
 
 		it( 'should publish a scheduled post dated in past', function() {

@@ -1,5 +1,11 @@
 .help-results {
 	margin-bottom: 16px;
+
+	&.is-placeholder {
+		@include placeholder();
+		height: 380px;
+		margin-bottom: 15px;
+	}
 }
 
 .help-results__header.card.is-compact,

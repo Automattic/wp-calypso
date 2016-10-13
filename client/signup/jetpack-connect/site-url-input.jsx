@@ -45,11 +45,11 @@ export default React.createClass( {
 	renderButtonLabel() {
 		if ( ! this.props.isFetching ) {
 			if ( ! this.props.isInstall ) {
-				return( this.translate( 'Connect Now' ) );
+				return this.translate( 'Connect Now' );
 			}
 			return this.translate( 'Start Installation' );
 		}
-		return( this.translate( 'Connecting…' ) );
+		return this.translate( 'Connecting…' );
 	},
 
 	handleKeyPress( event ) {
@@ -73,7 +73,8 @@ export default React.createClass( {
 								className="jetpack-connect__tos-link-text"
 								href={ this.getTermsOfServiceUrl() }
 								onClick={ this.props.handleOnClickTos }
-								target="_blank" />
+								target="_blank"
+								rel="noopener noreferrer" />
 						}
 					}
 				)
@@ -85,13 +86,15 @@ export default React.createClass( {
 		const hasError = this.props.isError && ( 'notExists' !== this.props.isError );
 		return (
 			<div>
-				<FormLabel>{ this.translate( 'Site Address' ) }</FormLabel>
-				<div className="site-address-container">
+				<FormLabel htmlFor="siteUrl">{ this.translate( 'Site Address' ) }</FormLabel>
+				<div className="jetpack-connect__site-address-container">
 					<Gridicon
 						size={ 24 }
 						icon="globe" />
 					<FormTextInput
 						ref="siteUrl"
+						id="siteUrl"
+						autoCapitalize="off"
 						autoFocus="autofocus"
 						onChange={ this.onChange }
 						disabled={ this.props.isFetching }

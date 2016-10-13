@@ -18,8 +18,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2><a href="/devdocs/design/social-logos">Social Logo</a></h2>
+			<div>
 				<SocialLogo icon="amazon" size={ 48 } onClick={ this.handleClick.bind( this, 'amazon' ) } />
 				<SocialLogo icon="behance" size={ 48 } onClick={ this.handleClick.bind( this, 'behance' ) } />
 				<SocialLogo icon="blogger-alt" size={ 48 } onClick={ this.handleClick.bind( this, 'blogger-alt' ) } />

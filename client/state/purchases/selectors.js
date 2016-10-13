@@ -1,3 +1,13 @@
+/** @ssr-ready **/
+
+/**
+ * External dependencies
+ */
+import { find } from 'lodash';
+
+/**
+ * Internal Dependencies
+ */
 import createSelector from 'lib/create-selector';
 import purchasesAssembler from 'lib/purchases/assembler';
 import { isSubscription } from 'lib/purchases';
@@ -65,12 +75,22 @@ export const getIncludedDomainPurchase = ( state, subscriptionPurchase ) => {
 
 	const { includedDomain } = subscriptionPurchase;
 	const sitePurchases = getSitePurchases( state, subscriptionPurchase.siteId );
-	const domainPurchase = sitePurchases.find( purchase => ( isDomainMapping( purchase ) ||
+	const domainPurchase = find( sitePurchases, purchase => ( isDomainMapping( purchase ) ||
 															isDomainRegistration( purchase ) ) &&
 															includedDomain === purchase.meta );
 
 	return domainPurchase;
 };
+
+/**
+ * Returns a list of Purchases associated with a User from the state using its userId
+ * @param  {Object}  state       global state
+ * @param  {Number}  userId      the user id
+ * @return {Boolean} if the user currently has any purchases.
+ */
+export const isUserPaid = ( state, userId ) => (
+	state.purchases.hasLoadedUserPurchasesFromServer && 0 < getUserPurchases( state, userId ).length
+);
 
 export const isFetchingUserPurchases = state => state.purchases.isFetchingUserPurchases;
 export const isFetchingSitePurchases = state => state.purchases.isFetchingSitePurchases;

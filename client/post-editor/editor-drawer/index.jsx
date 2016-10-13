@@ -12,17 +12,13 @@ import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
-import CategoryListData from 'components/data/category-list-data';
-import TagListData from 'components/data/tag-list-data';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
-import PostFormatsData from 'components/data/post-formats-data';
 import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
 import Location from 'post-editor/editor-location';
 import Discussion from 'post-editor/editor-discussion';
 import SeoAccordion from 'post-editor/editor-seo-accordion';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
-import InfoPopover from 'components/info-popover';
 import PostMetadata from 'lib/post-metadata';
 import TrackInputChanges from 'components/track-input-changes';
 import actions from 'lib/posts/actions';
@@ -39,6 +35,7 @@ import config from 'config';
 import EditorDrawerFeaturedImage from './featured-image';
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
+import EditorDrawerLabel from './label';
 
 /**
  * Constants
@@ -107,7 +104,7 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderTaxonomies: function() {
-		const { type, post, site, canJetpackUseTaxonomies } = this.props;
+		const { type, canJetpackUseTaxonomies } = this.props;
 
 		// Compatibility: Allow Tags for pages when supported prior to launch
 		// of custom post types feature (#6934). [TODO]: Remove after launch.
@@ -118,20 +115,8 @@ const EditorDrawer = React.createClass( {
 		let categories;
 		if ( 'post' === type || typeSupportsTags ) {
 			categories = (
-				<CategoriesTagsAccordion
-					site={ site }
-					post={ post } />
+				<CategoriesTagsAccordion />
 			);
-
-			if ( site ) {
-				categories = (
-					<CategoryListData siteId={ site.ID }>
-						<TagListData siteId={ site.ID }>
-							{ categories }
-						</TagListData>
-					</CategoryListData>
-				);
-			}
 		}
 
 		// Custom Taxonomies
@@ -144,18 +129,15 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderPostFormats: function() {
-		if ( ! this.props.site || ! this.props.post ||
-				! this.currentPostTypeSupports( 'post-formats' ) ) {
+		if ( ! this.props.post || ! this.currentPostTypeSupports( 'post-formats' ) ) {
 			return;
 		}
 
 		return (
-			<PostFormatsData siteId={ this.props.site.ID }>
-				<PostFormatsAccordion
-					site={ this.props.site }
-					post={ this.props.post }
-					className="editor-drawer__accordion" />
-			</PostFormatsData>
+			<PostFormatsAccordion
+				post={ this.props.post }
+				className="editor-drawer__accordion"
+			/>
 		);
 	},
 
@@ -180,7 +162,7 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderExcerpt: function() {
-		var excerpt;
+		let excerpt;
 
 		if ( ! this.currentPostTypeSupports( 'excerpt' ) ) {
 			return;
@@ -192,22 +174,21 @@ const EditorDrawer = React.createClass( {
 
 		return (
 			<AccordionSection>
-				<span className="editor-drawer__label-text">
-					{ this.translate( 'Excerpt' ) }
-					<InfoPopover position="top left">
-						{ this.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
-					</InfoPopover>
-				</span>
-				<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
-					<FormTextarea
-						id="excerpt"
-						name="excerpt"
-						onChange={ this.onExcerptChange }
-						value={ excerpt }
-						placeholder={ this.translate( 'Write an excerpt…' ) }
-						aria-label={ this.translate( 'Write an excerpt…' ) }
-					/>
-				</TrackInputChanges>
+				<EditorDrawerLabel
+					labelText={ this.translate( 'Excerpt' ) }
+					helpText={ this.translate( 'Excerpts are optional hand-crafted summaries of your content.' ) }
+				>
+					<TrackInputChanges onNewValue={ this.recordExcerptChangeStats }>
+						<FormTextarea
+							id="excerpt"
+							name="excerpt"
+							onChange={ this.onExcerptChange }
+							value={ excerpt }
+							placeholder={ this.translate( 'Write an excerpt…' ) }
+							aria-label={ this.translate( 'Write an excerpt…' ) }
+						/>
+					</TrackInputChanges>
+				</EditorDrawerLabel>
 			</AccordionSection>
 		);
 	},
@@ -223,7 +204,7 @@ const EditorDrawer = React.createClass( {
 
 		return (
 			<AccordionSection>
-				<span className="editor-drawer__label-text">{ this.translate( 'Location' ) }</span>
+				<EditorDrawerLabel labelText={ this.translate( 'Location' ) } />
 				<Location coordinates={ PostMetadata.geoCoordinates( this.props.post ) } />
 			</AccordionSection>
 		);
@@ -234,7 +215,7 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 
-		return(
+		return (
 			<AccordionSection>
 				<Discussion
 					site={ this.props.site }
@@ -277,11 +258,7 @@ const EditorDrawer = React.createClass( {
 				icon={ <Gridicon icon="ellipsis" /> }
 				className="editor-drawer__more-options"
 			>
-				{ siteUtils.isPermalinkEditable( this.props.site ) && (
-					<EditorMoreOptionsSlug
-						slug={ this.props.post ? this.props.post.slug : '' }
-						type={ this.props.type } />
-				) }
+				{ siteUtils.isPermalinkEditable( this.props.site ) && <EditorMoreOptionsSlug /> }
 				{ this.renderExcerpt() }
 				{ this.renderLocation() }
 				{ this.renderDiscussion() }
@@ -294,11 +271,11 @@ const EditorDrawer = React.createClass( {
 			return;
 		}
 
-		return <EditorDrawerPageOptions post={ this.props.post } />;
+		return <EditorDrawerPageOptions />;
 	},
 
 	render: function() {
-		const { site, type } = this.props;
+		const { site } = this.props;
 
 		return (
 			<div className="editor-drawer">

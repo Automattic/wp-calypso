@@ -13,7 +13,8 @@ import {
 	IMAGE_EDITOR_SET_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
-	IMAGE_EDITOR_STATE_RESET
+	IMAGE_EDITOR_STATE_RESET,
+	IMAGE_EDITOR_STATE_RESET_ALL
 } from 'state/action-types';
 
 import { AspectRatios } from '../constants';
@@ -77,6 +78,14 @@ describe( 'reducer', () => {
 
 			expect( state ).to.be.false;
 		} );
+
+		it( 'should change to false on reset all', () => {
+			const state = hasChanges( undefined, {
+				type: IMAGE_EDITOR_STATE_RESET_ALL
+			} );
+
+			expect( state ).to.be.false;
+		} );
 	} );
 
 	describe( '#aspectRatio()', () => {
@@ -95,9 +104,17 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( AspectRatios.ORIGINAL );
 		} );
 
-		it( 'should reset to free', () => {
+		it( 'should reset to free on reset', () => {
 			const state = aspectRatio( undefined, {
 				type: IMAGE_EDITOR_STATE_RESET
+			} );
+
+			expect( state ).to.eql( AspectRatios.FREE );
+		} );
+
+		it( 'should reset to free on reset all', () => {
+			const state = aspectRatio( undefined, {
+				type: IMAGE_EDITOR_STATE_RESET_ALL
 			} );
 
 			expect( state ).to.eql( AspectRatios.FREE );
@@ -199,9 +216,22 @@ describe( 'reducer', () => {
 			expect( state.heightRatio ).to.be.within( 0.69, 0.71 );
 		} );
 
-		it( 'should reset', () => {
+		it( 'should reset on reset', () => {
 			const state = crop( undefined, {
 				type: IMAGE_EDITOR_STATE_RESET
+			} );
+
+			expect( state ).to.eql( {
+				topRatio: 0,
+				leftRatio: 0,
+				widthRatio: 1,
+				heightRatio: 1
+			} );
+		} );
+
+		it( 'should reset on reset all', () => {
+			const state = crop( undefined, {
+				type: IMAGE_EDITOR_STATE_RESET_ALL
 			} );
 
 			expect( state ).to.eql( {
@@ -220,7 +250,8 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				src: '',
 				fileName: 'default',
-				mimeType: 'image/png'
+				mimeType: 'image/png',
+				title: 'default'
 			} );
 		} );
 
@@ -229,13 +260,28 @@ describe( 'reducer', () => {
 				type: IMAGE_EDITOR_SET_FILE_INFO,
 				src: 'testSrc',
 				fileName: 'testFileName',
-				mimeType: 'image/jpg'
+				mimeType: 'image/jpg',
+				title: 'My Title'
 			} );
 
 			expect( state ).to.eql( {
 				src: 'testSrc',
 				fileName: 'testFileName',
-				mimeType: 'image/jpg'
+				mimeType: 'image/jpg',
+				title: 'My Title'
+			} );
+		} );
+
+		it( 'should default to empty source, default file name and type on reset all', () => {
+			const state = fileInfo( undefined, {
+				type: IMAGE_EDITOR_STATE_RESET_ALL
+			} );
+
+			expect( state ).to.eql( {
+				src: '',
+				fileName: 'default',
+				mimeType: 'image/png',
+				title: 'default'
 			} );
 		} );
 	} );
@@ -311,13 +357,29 @@ describe( 'reducer', () => {
 			} );
 		} );
 
-		it( 'should reset', () => {
+		it( 'should reset on reset', () => {
 			const state = transform( {
 				degrees: 360,
 				scaleX: -1,
 				scaleY: 1
 			}, {
 				type: IMAGE_EDITOR_STATE_RESET
+			} );
+
+			expect( state ).to.eql( {
+				degrees: 0,
+				scaleX: 1,
+				scaleY: 1
+			} );
+		} );
+
+		it( 'should reset on reset all', () => {
+			const state = transform( {
+				degrees: 360,
+				scaleX: -1,
+				scaleY: 1
+			}, {
+				type: IMAGE_EDITOR_STATE_RESET_ALL
 			} );
 
 			expect( state ).to.eql( {

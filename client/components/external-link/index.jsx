@@ -4,7 +4,7 @@
 import React from 'react';
 import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
-import assign from 'lodash/assign';
+import { assign, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,7 +22,8 @@ export default React.createClass( {
 		href: React.PropTypes.string,
 		onClick: React.PropTypes.func,
 		icon: React.PropTypes.bool,
-		iconSize: React.PropTypes.number
+		iconSize: React.PropTypes.number,
+		target: React.PropTypes.string
 	},
 
 	getDefaultProps() {
@@ -36,10 +37,14 @@ export default React.createClass( {
 			'has-icon': !! this.props.icon,
 		} );
 
-		const props = assign( {}, this.props, {
+		const props = assign( {}, omit( this.props, 'icon', 'iconSize' ), {
 			className: classes,
 			rel: 'external'
 		} );
+
+		if ( props.target ) {
+			props.rel = props.rel.concat( ' noopener noreferrer' );
+		}
 
 		return (
 			<a { ...props }>

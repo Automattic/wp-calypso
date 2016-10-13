@@ -12,7 +12,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import InviteAccept from 'my-sites/invites/invite-accept';
 import { setSection } from 'state/ui/actions';
 import { renderWithReduxStore } from 'lib/react-helpers';
@@ -49,7 +49,7 @@ export function redirectWithoutLocaleifLoggedIn( context, next ) {
 }
 
 export function acceptInvite( context ) {
-	titleActions.setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) );
+	context.store.dispatch( setTitle( i18n.translate( 'Accept Invite', { textOnly: true } ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	context.store.dispatch( setSection( null, { hasSidebar: false } ) );

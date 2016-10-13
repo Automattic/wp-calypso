@@ -4,30 +4,40 @@
 import config from 'config';
 import userFactory from 'lib/user';
 import { makeLayout } from 'controller';
-import { navigation, siteSelection } from 'my-sites/controller';
+import { makeNavigation, siteSelection } from 'my-sites/controller';
 import { singleSite, multiSite, loggedOut } from './controller';
-
-// FIXME: These routes will SSR the logged-out Layout even if logged-in.
-// While subsequently replaced by the logged-in Layout on the client-side,
-// we'll want to render it on the server, too.
-
-// `logged-out` middleware isn't SSR-compliant yet, but we can at least render
-// the layout.
-// FIXME: Also create loggedOut/multiSite/singleSite elements, depending on route.
+import { getSubjects } from './theme-filters';
+import validateFilters from './validate-filters';
 
 export default function( router ) {
 	const user = userFactory();
 	const isLoggedIn = !! user.get();
+	const verticals = getSubjects().join( '|' );
 
 	if ( config.isEnabled( 'manage/themes' ) ) {
 		if ( isLoggedIn ) {
-			router( '/design/:tier(free|premium)?', multiSite, navigation, siteSelection );
-			router( '/design/:tier(free|premium)?/:site_id', singleSite, navigation, siteSelection );
-			router( '/design/:tier(free|premium)?/filter/:filter', multiSite, navigation, siteSelection );
-			router( '/design/:tier(free|premium)?/filter/:filter/:site_id', singleSite, navigation, siteSelection );
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?`,
+				multiSite, makeNavigation, makeLayout
+			);
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?/:site_id`,
+				siteSelection, singleSite, makeNavigation, makeLayout
+			);
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+				validateFilters, siteSelection, multiSite, makeNavigation, makeLayout
+			);
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter/:site_id`,
+				validateFilters, siteSelection, singleSite, makeNavigation, makeLayout
+			);
 		} else {
-			router( '/design/:tier(free|premium)?', loggedOut, makeLayout );
-			router( '/design/:tier(free|premium)?/filter/:filter', loggedOut, makeLayout );
+			router( `/design/:vertical(${ verticals })?/:tier(free|premium)?`, loggedOut, makeLayout );
+			router(
+				`/design/:vertical(${ verticals })?/:tier(free|premium)?/filter/:filter`,
+				validateFilters, loggedOut, makeLayout
+			);
 		}
 	}
 }

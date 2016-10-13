@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:notifications' ),
 	assign = require( 'lodash/assign' ),
 	oAuthToken = require( 'lib/oauth-token' );
@@ -19,13 +18,13 @@ var analytics = require( 'lib/analytics' ),
  */
 var widgetDomain = 'https://widgets.wp.com';
 
-var Notifications = React.createClass({
+var Notifications = React.createClass( {
 	getInitialState: function() {
 		return {
-			'loaded' : true,
-			'iframeLoaded' : false,
-			'shownOnce' : false,
-			'widescreen' : false
+			'loaded': true,
+			'iframeLoaded': false,
+			'shownOnce': false,
+			'widescreen': false
 		};
 	},
 
@@ -42,18 +41,18 @@ var Notifications = React.createClass({
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.visible && !this.state.loaded ) {
-			this.setState( { 'loaded' : true } );
-		} else if ( !nextProps.visible && !this.state.iframeLoaded && this.state.shownOnce ) {
+		if ( nextProps.visible && ! this.state.loaded ) {
+			this.setState( { 'loaded': true } );
+		} else if ( ! nextProps.visible && ! this.state.iframeLoaded && this.state.shownOnce ) {
 			// for cases where iframe is stuck loading, this will remove it from
 			// the DOM so we can try reloading it next time
-			this.setState( { 'loaded' : false } );
+			this.setState( { 'loaded': false } );
 		}
 
 		// tell the iframe if we're changing visible status
 		if ( nextProps.visible !== this.props.visible ) {
 			this.postMessage( { 'action': 'togglePanel', 'showing': nextProps.visible } );
-			this.setState( { 'shownOnce' : true, 'widescreen': false } );
+			this.setState( { 'shownOnce': true, 'widescreen': false } );
 		}
 
 		if ( document.documentElement.classList.contains( 'touch' ) ) {
@@ -128,8 +127,8 @@ var Notifications = React.createClass({
 
 	handleVisibilityChange: function() {
 		this.postMessage( {
-			'action' : 'toggleVisibility',
-			'hidden' : document.hidden ? true : false
+			'action': 'toggleVisibility',
+			'hidden': document.hidden ? true : false
 		} );
 	},
 
@@ -146,7 +145,7 @@ var Notifications = React.createClass({
 		}
 	},
 
-	receiveMessage: function(event) {
+	receiveMessage: function( event ) {
 		// Receives messages from the notifications widget
 		if ( event.origin !== widgetDomain ) {
 			return;
@@ -165,10 +164,9 @@ var Notifications = React.createClass({
 			this.props.checkToggle();
 		} else if ( data.action === 'render' ) {
 			this.props.setIndicator( data.num_new );
-
 		} else if ( data.action === 'iFrameReady' ) {
 			// the iframe is loaded, send any pending messages
-			this.setState( { 'iframeLoaded' : true } );
+			this.setState( { 'iframeLoaded': true } );
 			debug( 'notifications iframe loaded' );
 
 			// We always want this to happen, in addition to whatever may be queued
@@ -178,11 +176,10 @@ var Notifications = React.createClass({
 				this.postMessage( this.queuedMessage );
 				this.queuedMessage = null;
 			}
-
 		} else if ( data.action === 'renderAllSeen' ) {
 			// user has seen the notes, no longer new
 			this.props.setIndicator( 0 );
-		} else if ( data.action === 'widescreen') {
+		} else if ( data.action === 'widescreen' ) {
 			this.setState( { widescreen: data.widescreen } );
 		} else {
 			debug( 'unknown message from iframe: %s', event.data );
@@ -191,12 +188,13 @@ var Notifications = React.createClass({
 
 	receiveServiceWorkerMessage: function( event ) {
 		// Receives messages from the service worker
-		// Firefox sets event.origin to "" for service worker messages
-		if ( event.origin && event.origin !== document.origin ) {
+		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
+		// Firefox does not support document.origin; we can use location.origin instead
+		if ( event.origin && event.origin !== location.origin ) {
 			return;
 		}
 
-		if ( !( 'action' in event.data ) ) {
+		if ( ! ( 'action' in event.data ) ) {
 			return;
 		}
 
@@ -245,7 +243,6 @@ var Notifications = React.createClass({
 		var userData = user.get(),
 			localeSlug = userData.localeSlug || config( 'i18n_default_locale_slug' ),
 			widgetURL = widgetDomain,
-			divStyle = {},
 			frameClasses = [ 'wide' ],
 			panelClasses = [ 'wide' ],
 			now = new Date();
@@ -283,6 +280,6 @@ var Notifications = React.createClass({
 			</div>
 		);
 	}
-});
+} );
 
 module.exports = Notifications;

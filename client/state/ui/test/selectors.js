@@ -10,6 +10,8 @@ import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSectionName,
+	getSectionGroup,
+	isSiteSection,
 	isSectionIsomorphic,
 	hasSidebar
 } from '../selectors';
@@ -102,6 +104,78 @@ describe( 'selectors', () => {
 			} );
 
 			expect( sectionName ).to.equal( 'post-editor' );
+		} );
+	} );
+
+	describe( 'getSectionGroup()', () => {
+		it( 'should return null if no section is assigned', () => {
+			const sectionName = getSectionGroup( {
+				ui: {
+					section: false
+				}
+			} );
+
+			expect( sectionName ).to.be.null;
+		} );
+
+		it( 'should return the name of the current section', () => {
+			const sectionName = getSectionGroup( {
+				ui: {
+					section: {
+						name: 'post-editor',
+						paths: [ '/post', '/page' ],
+						module: 'post-editor',
+						group: 'editor',
+						secondary: true
+					}
+				}
+			} );
+
+			expect( sectionName ).to.equal( 'editor' );
+		} );
+	} );
+
+	describe( 'isSiteSection()', () => {
+		it( 'should return false if no section is assigned', () => {
+			const siteSection = isSiteSection( {
+				ui: {
+					section: false
+				}
+			} );
+
+			expect( siteSection ).to.be.false;
+		} );
+
+		it( 'should return false if the current section is not site-specific', () => {
+			const siteSection = isSiteSection( {
+				ui: {
+					section: {
+						name: 'reader',
+						paths: [ '/me' ],
+						module: 'me',
+						group: 'me',
+						secondary: true
+					}
+				}
+			} );
+
+			expect( siteSection ).to.be.false;
+		} );
+
+		it( 'should return true if the current section is site-specific', () => {
+			const siteSection = isSiteSection( {
+				ui: {
+					section: {
+						name: 'post-editor',
+						paths: [ '/post', '/page' ],
+						module: 'post-editor',
+						group: 'editor',
+						secondary: true
+					}
+				}
+			} );
+
+			expect( siteSection ).to.be.true;
 		} );
 	} );
 

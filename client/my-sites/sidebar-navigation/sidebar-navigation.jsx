@@ -9,8 +9,7 @@ var React = require( 'react' );
 var SidebarNavigation = require( 'components/sidebar-navigation' ),
 	AllSitesIcon = require( 'my-sites/all-sites-icon' ),
 	SiteIcon = require( 'components/site-icon' ),
-	sites = require( 'lib/sites-list' )(),
-	TitleData = require( 'components/data/screen-title' );
+	sites = require( 'lib/sites-list' )();
 
 module.exports = React.createClass( {
 	displayName: 'SidebarNavigation',
@@ -26,16 +25,14 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<TitleData>
-				<SidebarNavigation
-					linkClassName={ allSitesClass }
-					sectionName="site"
-					sectionTitle={ currentSiteTitle }>
-					{ site ?
-						<SiteIcon site={ site } size={ 30 } /> :
-						<AllSitesIcon sites={ sites.get() } /> }
-				</SidebarNavigation>
-			</TitleData>
+			<SidebarNavigation
+				linkClassName={ allSitesClass }
+				sectionName="site"
+				sectionTitle={ currentSiteTitle }>
+				{ site ?
+					<SiteIcon site={ site } size={ 30 } /> :
+					<AllSitesIcon sites={ sites.get() } /> }
+			</SidebarNavigation>
 		);
 	}
 } );

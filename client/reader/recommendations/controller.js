@@ -2,28 +2,28 @@
  * External dependencies
  */
 import React from 'react';
-import ReactDom from 'react-dom';
 import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import trackScrollPage from 'lib/track-scroll-page';
-import titleActions from 'lib/screen-title/actions';
-import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, setPageTitle, userHasHistory } from 'reader/controller-helper';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { ensureStoreLoading, trackPageLoad, trackUpdatesLoaded, userHasHistory } from 'reader/controller-helper';
 import route from 'lib/route';
 import feedStreamFactory from 'lib/feed-stream-store';
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
 export default {
-	recommendedForYou() {
+	recommendedForYou( context ) {
 		const RecommendedForYou = require( 'reader/recommendations/for-you' ),
 			basePath = '/recommendations',
 			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Sites For You',
 			mcKey = 'recommendations_for_you';
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( RecommendedForYou, {
 				trackScrollPage: trackScrollPage.bind(
 					null,
@@ -33,11 +33,13 @@ export default {
 					mcKey
 				)
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
-		titleActions.setTitle( i18n.translate( 'Recommended Sites For You ‹ Reader' ) );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Recommended Sites For You ‹ Reader' ) ) );
 	},
 
 	// Post Recommendations - Used by the Data team to test recommendation algorithms
@@ -61,11 +63,10 @@ export default {
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		ReactDom.render(
+		renderWithReduxStore(
 			React.createElement( RecommendedPostsStream, {
 				key: 'recommendations_posts',
 				store: RecommendedPostsStore,
-				setPageTitle: setPageTitle,
 				trackScrollPage: trackScrollPage.bind(
 					null,
 					basePath,
@@ -76,7 +77,8 @@ export default {
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				showBack: userHasHistory( context )
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

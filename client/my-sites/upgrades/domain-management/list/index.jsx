@@ -36,6 +36,7 @@ import { hasDomainCredit } from 'state/sites/plans/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { isPlanFeaturesEnabled } from 'lib/plans';
+import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
 
 export const List = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'list' ) ],
@@ -53,7 +54,14 @@ export const List = React.createClass( {
 			return <DomainWarnings
 				domains={ this.props.domains.list }
 				selectedSite={ this.props.selectedSite }
-				ruleWhiteList={ [ 'newDomainsWithPrimary', 'newDomains', 'unverifiedDomains', 'pendingGappsTosAcceptanceDomains' ] } />;
+				ruleWhiteList={ [
+					'newDomainsWithPrimary',
+					'newDomains',
+					'unverifiedDomainsCanManage',
+					'pendingGappsTosAcceptanceDomains',
+					'unverifiedDomainsCannotManage',
+					'wrongNSMappedDomains'
+				] } />;
 		}
 	},
 
@@ -76,7 +84,6 @@ export const List = React.createClass( {
 				</NoticeAction>
 			</Notice>
 		);
-
 	},
 
 	render() {
@@ -89,6 +96,7 @@ export const List = React.createClass( {
 		return (
 			<Main wideLayout={ isPlanFeaturesEnabled() }>
 				<SidebarNavigation />
+				<DomainToPlanNudge />
 				<UpgradesNavigation
 					path={ this.props.context.path }
 					cart={ this.props.cart }

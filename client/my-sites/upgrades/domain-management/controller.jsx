@@ -23,16 +23,13 @@ import SiteRedirectData from 'components/data/domain-management/site-redirect';
 import SitesList from 'lib/sites-list';
 import TransferData from 'components/data/domain-management/transfer';
 import WhoisData from 'components/data/domain-management/whois';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle } from 'state/document-head/actions';
 
 const productsList = new ProductsList(),
 	sites = new SitesList();
 
 const setTitle = function( title, pageContext ) {
-	titleActions.setTitle(
-		title,
-		{ siteID: pageContext.params.site }
-	);
+	pageContext.store.dispatch( setDocumentHeadTitle( title ) );
 };
 
 module.exports = {
@@ -261,7 +258,7 @@ module.exports = {
 
 	domainManagementAddGoogleApps( pageContext ) {
 		setTitle(
-			i18n.translate( 'Add Google Apps' ),
+			i18n.translate( 'Add G Suite' ),
 			pageContext
 		);
 

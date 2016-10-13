@@ -27,40 +27,32 @@ export default class FilePickers extends React.Component {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/file-pickers">File Picker</a>
-				</h2>
+			<Card>
+				<h4>Select a single file:</h4>
+				<FilePicker onPick={ this.onSingle } >
+					<Button>Single Item</Button>
+				</FilePicker>
 
-				<Card>
+				<h4>Select a multiple files:</h4>
+				<FilePicker multiple onPick={ this.onMulti } >
+					<Button>Multiple Items</Button>
+				</FilePicker>
 
-					<h4>Select a single file:</h4>
-					<FilePicker onPick={ this.onSingle } >
-						<Button>Single Item</Button>
-					</FilePicker>
+				<h4>Select a directory:</h4>
+				<FilePicker directory onPick={ this.onMulti } >
+					<Button>Directory</Button>
+				</FilePicker>
 
-					<h4>Select a multiple files:</h4>
-					<FilePicker multiple onPick={ this.onMulti } >
-						<Button>Multiple Items</Button>
-					</FilePicker>
+				<h4>Select an image file:</h4>
+				<FilePicker accept="image/*" onPick={ this.onSingle } >
+					<Button>JPEG / PNG / GIF</Button>
+				</FilePicker>
 
-					<h4>Select a directory:</h4>
-					<FilePicker directory onPick={ this.onMulti } >
-						<Button>Directory</Button>
-					</FilePicker>
-
-					<h4>Select an image file:</h4>
-					<FilePicker accept="image/*" onPick={ this.onSingle } >
-						<Button>JPEG / PNG / GIF</Button>
-					</FilePicker>
-
-					<h4>Any internal content works:</h4>
-					<FilePicker onPick={ this.onSingle } >
-						<a href="#">Select File…</a>
-					</FilePicker>
-
-				</Card>
-			</div>
+				<h4>Any internal content works:</h4>
+				<FilePicker onPick={ this.onSingle } >
+					<a href="#">Select File…</a>
+				</FilePicker>
+			</Card>
 		);
 	}
 }

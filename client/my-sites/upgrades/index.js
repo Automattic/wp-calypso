@@ -142,6 +142,7 @@ module.exports = function() {
 			'/domains/add',
 			controller.siteSelection,
 			upgradesController.domainsAddHeader,
+			upgradesController.redirectToAddMappingIfVipSite(),
 			controller.jetPackWarning,
 			controller.sites
 		);
@@ -166,6 +167,7 @@ module.exports = function() {
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add' ),
+			upgradesController.redirectToAddMappingIfVipSite(),
 			controller.jetPackWarning,
 			upgradesController.domainSearch
 		);
@@ -174,6 +176,7 @@ module.exports = function() {
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add' ),
+			upgradesController.redirectToAddMappingIfVipSite(),
 			controller.jetPackWarning,
 			upgradesController.domainSearch
 		);

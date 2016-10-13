@@ -14,7 +14,8 @@ var i18nUtils = require( 'lib/i18n-utils' ),
 	steps = require( 'signup/config/steps' ),
 	flows = require( 'signup/config/flows' ),
 	defaultFlowName = require( 'signup/config/flows' ).defaultFlowName,
-	formState = require( 'lib/form-state' );
+	formState = require( 'lib/form-state' ),
+	user = require( 'lib/user' )();
 
 function getFlowName( parameters ) {
 	const flow = ( parameters.flowName && isFlowName( parameters.flowName ) ) ? parameters.flowName : defaultFlowName;
@@ -63,7 +64,10 @@ function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 	const flow = flowName ? `/${ flowName }` : '',
 		step = stepName ? `/${ stepName }` : '',
 		section = stepSectionName ? `/${ stepSectionName }` : '',
-		locale = localeSlug ? `/${ localeSlug }` : '';
+		// when the user is logged in, the locale slug is meaningless in a
+		// signup URL, as the page will be translated in the language the user
+		// has in their settings.
+		locale = localeSlug && ! user.get() ? `/${ localeSlug }` : '';
 
 	if ( flowName === defaultFlowName ) {
 		// we don't include the default flow name in the route

@@ -30,9 +30,8 @@ export default React.createClass( {
 				<Card>
 					<p>{ this.translate(
 '{{strong}}Please choose{{/strong}} one of our Guided Transfer compatible ' +
-'{{partner_link}}partner hosts{{/partner_link}}. You must have a hosting account ' +
-'with one of them to be able to move your site. Visit them {{lobby_link}}Guided ' +
-'Transfer Lobby{{/lobby_link}} if you have any question before starting, or ' +
+'{{partner_link}}partner hosts{{/partner_link}}. Visit the {{lobby_link}}Guided ' +
+'Transfer Lobby{{/lobby_link}} if you have any questions before starting, or ' +
 '{{learn_link}}learn more{{/learn_link}} about the process.',
 						{
 							components: {

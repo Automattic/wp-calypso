@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import tinymce from 'tinymce/tinymce';
 import throttle from 'lodash/throttle';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -54,8 +55,8 @@ function advanced( editor ) {
 	}, 500 );
 
 	editor.addButton( 'wpcom_advanced', {
-		text: 'Toggle Advanced',
-		tooltip: 'Toggle Advanced',
+		text: translate( 'Toggle Advanced' ),
+		tooltip: translate( 'Toggle Advanced' ),
 		classes: 'btn wpcom-icon-button advanced',
 		cmd: 'WPCOM_ToggleAdvancedVisible',
 		onPostRender: function() {

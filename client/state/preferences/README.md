@@ -23,28 +23,18 @@ export default connect(
 )( PostEditor );
 ```
 
-
 ## Adding new preference key
 
-To add a new preference key, you only need to add a key and defaut value in `DEFAULT_PREFERENCES` in [./constants.js](./constants.js).
-`createReducerForPreferenceKey` in [./reducer.js](./reducer.js) will create a reducer for you along with fetching, persistance and tests.
+When adding a new preference key, you may want to specify a default value and/or a schema to validate its expected values.
 
-# How does it work?
+Schemas for persisted preference keys should be defined in the [`schema.js`](./schema.js) JSON schema.
 
-### Tree shape.
+Default values can be defined in the [`constants.js`](./constants.js) `DEFAULT_PREFERENCE_VALUES` mapping.
 
-- **fetching** (boolean) - are we currently fetching data?
-- **values** ( Object ) - preferences
+## Local and persisted preferences
 
-### Selectors
+Sometimes you only need a preference to last the duration of the current browser session. For these cases, use the `setPreference` action creator.
 
-- **fetchingPreferences( state )** - are we currently fetching?
-- **getPreference( state, key )** - get value for the specific preference key
+Otherwise, if you want the preference to be saved to the user's account settings, use the `savePreference` action creator.
 
-
-### Actions
-
-- **fetchPreferences()** - populate the tree
-- **savePreference( key, value )** - set preference and persist all preferences in the endpoint
-- **setPreference( key, value )** - set preference without persisting in API
-
+When retrieving a value from state using the `getPreference` selector, it will first attempt to find a value in the local preferences state, next checking for a persisted value, then falling back to any applicable default before finally returning `null` if the preference could not be found.

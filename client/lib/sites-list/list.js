@@ -17,9 +17,6 @@ var wpcom = require( 'lib/wp' ),
 	Searchable = require( 'lib/mixins/searchable' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	isPlan = require( 'lib/products-values' ).isPlan,
-	PreferencesActions = require( 'lib/preferences/actions' ),
-	PreferencesStore = require( 'lib/preferences/store' ),
-	user = require( 'lib/user' )(),
 	userUtils = require( 'lib/user/utils' );
 
 /**
@@ -38,8 +35,6 @@ function SitesList() {
 	this.selected = null;
 	this.lastSelected = null;
 	this.propagateChange = this.propagateChange.bind( this );
-	this.starred = PreferencesStore.get( 'starredSites' ) || [];
-	this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
 }
 
 /**
@@ -111,7 +106,7 @@ SitesList.prototype.sync = function( data ) {
 		}
 	}
 	store.set( 'SitesList', sites );
-}
+};
 
 /**
  * Initialize data with Site objects
@@ -190,8 +185,7 @@ SitesList.prototype.parse = function( data ) {
  **/
 SitesList.prototype.update = function( sites ) {
 	var sitesMap = {},
-		changed = false,
-		oldSelected = this.getSelectedSite();
+		changed = false;
 
 	// Create ID -> site map from existing data
 	this.data.forEach( function( site ) {
@@ -292,7 +286,6 @@ SitesList.prototype.propagateChange = function() {
  */
 SitesList.prototype.getNetworkSites = function( multisite ) {
 	return this.get().filter( function( site ) {
-
 		return site.jetpack &&
 			site.visible &&
 			( this.isConnectedSecondaryNetworkSite( site ) || site.isMainNetworkSite() ) &&
@@ -386,93 +379,6 @@ SitesList.prototype.isSelected = function( site ) {
 };
 
 /**
- * Is the site starred?
- *
- * @api public
- */
-SitesList.prototype.isStarred = function( site ) {
-	return this.starred.indexOf( site.ID ) > -1;
-};
-
-SitesList.prototype.toggleStarred = function( siteID ) {
-	if ( ! siteID ) {
-		return;
-	}
-
-	// do not add duplicates
-	if ( this.starred.indexOf( siteID ) === -1 ) {
-		this.starred.unshift( siteID );
-	} else {
-		this.starred.splice( this.starred.indexOf( siteID ), 1 );
-	}
-
-	PreferencesActions.set( 'starredSites', this.starred );
-
-	this.emit( 'change' );
-};
-
-SitesList.prototype.getStarred = function() {
-	// Disable stars
-	return false;
-	this.starred = PreferencesStore.get( 'starredSites' ) || [];
-	return this.get().filter( this.isStarred, this );
-};
-
-/**
- * Set recently selected site
- *
- * @param {number} Site ID
- * @api private
- */
-SitesList.prototype.setRecentlySelectedSite = function( siteID ) {
-	if ( ! this.recentlySelected || this.recentlySelected.length === 0 ) {
-		this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
-	}
-
-	if ( ! siteID || ! this.initialized ) {
-		return;
-	}
-
-	const index = this.recentlySelected.indexOf( siteID );
-
-	// do not add duplicates
-	if ( index === -1 ) {
-		if ( ! this.isStarred( this.getSite( siteID ) ) ) {
-			this.recentlySelected.unshift( siteID );
-		}
-	} else {
-		this.recentlySelected.splice( index, 1 );
-		if ( ! this.isStarred( this.getSite( siteID ) ) ) {
-			this.recentlySelected.unshift( siteID );
-		}
-	}
-
-	const sites = this.recentlySelected.slice( 0, 3 );
-	PreferencesActions.set( 'recentSites', sites );
-
-	this.emit( 'change' );
-};
-
-SitesList.prototype.getRecentlySelected = function() {
-	this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
-
-	if ( ! this.recentlySelected.length || ! this.initialized ) {
-		return false;
-	}
-
-	let sites = [];
-
-	this.recentlySelected.forEach( function( id, index ) {
-		sites[ index ] = this.get().filter( function( site ) {
-			return id === site.ID;
-		}, this )[0];
-	}, this );
-
-	// remove undefined sites
-	return sites.filter( site => site );
-};
-
-/**
  * Get a single site object from a numeric ID or domain ID
  *
  * @api public
@@ -482,13 +388,13 @@ SitesList.prototype.getSite = function( siteID ) {
 		return false;
 	}
 
-	return this.get().filter( function( site ) {
+	return find( this.get(), function( site ) {
 		// We need to check `slug` before `domain` to grab the correct site on certain
 		// clashes between a domain redirect and a Jetpack site, as well as domains
 		// on subfolders, but we also need to look for the `domain` as a last resort
 		// to cover mapped domains for regular WP.com sites.
 		return site.ID === siteID || site.slug === siteID || site.domain === siteID || site.wpcom_url === siteID;
-	}, this ).shift();
+	} );
 };
 
 /**
@@ -497,9 +403,7 @@ SitesList.prototype.getSite = function( siteID ) {
  * @api public
  **/
 SitesList.prototype.getPrimary = function() {
-	return this.get().filter( function( site ) {
-		return site.primary === true;
-	}, this ).shift();
+	return find( this.get(), 'primary' );
 };
 
 /**
@@ -560,37 +464,6 @@ SitesList.prototype.getVisible = function() {
 	}, this );
 };
 
-/**
- * Get sites that are marked as visible and not recently selected
- *
- * @api public
- **/
-SitesList.prototype.getVisibleAndNotRecent = function() {
-	this.recentlySelected = PreferencesStore.get( 'recentSites' ) || [];
-	return this.get().filter( function( site ) {
-		if ( user.get().visible_site_count < 12 ) {
-			return site.visible === true;
-		}
-
-		return site.visible === true && this.recentlySelected && this.recentlySelected.indexOf( site.ID ) === -1;
-	}, this );
-};
-
-/**
- * Get sites that are marked as visible and not recently selected
- *
- * @api public
- **/
-SitesList.prototype.getVisibleAndNotRecentNorStarred = function() {
-	return this.get().filter( function( site ) {
-		if ( user.get().visible_site_count < 12 ) {
-			return site.visible === true && ! this.isStarred( site );
-		}
-
-		return site.visible === true && this.recentlySelected && this.recentlySelected.indexOf( site.ID ) === -1 && ! this.isStarred( site );
-	}, this );
-};
-
 SitesList.prototype.getUpgradeable = function() {
 	return this.get().filter( function( site ) {
 		return site.isUpgradeable();
@@ -611,7 +484,7 @@ SitesList.prototype.getSelectedOrAllWithPlugins = function() {
 		return site.capabilities &&
 			site.capabilities.manage_options &&
 			site.jetpack &&
-			( site.visible || this.selected )
+			( site.visible || this.selected );
 	} );
 };
 

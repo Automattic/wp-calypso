@@ -5,7 +5,6 @@
  */
 import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import config from 'config';
 import { connect } from 'react-redux';
 import {
 	overSome,
@@ -15,6 +14,7 @@ import {
 /**
  * Internal dependencies
  */
+import { isEnabled } from 'config';
 import Gridicon from 'components/gridicon';
 import { isBusiness, isEnterprise } from 'lib/products-values';
 import { localize } from 'i18n-calypso';
@@ -39,7 +39,7 @@ export const PreviewToolbar = props => {
 		showClose,
 		showDeviceSwitcher,
 		showExternal,
-		showSeo,
+		showSEO,
 		translate
 	} = props;
 
@@ -60,6 +60,7 @@ export const PreviewToolbar = props => {
 					className="web-preview__external"
 					href={ externalUrl || previewUrl }
 					target="_blank"
+					rel="noopener noreferrer"
 				>
 					<Gridicon icon="external" />
 				</a>
@@ -80,7 +81,7 @@ export const PreviewToolbar = props => {
 					) ) }
 				</div>
 			}
-			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
+			{ showSEO &&
 			<button
 				aria-hidden={ true }
 				key={ 'back-to-preview' }
@@ -94,17 +95,21 @@ export const PreviewToolbar = props => {
 				<Gridicon icon="phone" />
 			</button>
 			}
-			{ showSeo && config.isEnabled( 'manage/advanced-seo' ) &&
+			{ showSEO &&
 				<button
 					aria-label={ translate( 'Show SEO and search previews' ) }
 					className={ classNames(
 						'web-preview__seo-button',
 						'web-preview__device-button', {
-						'is-active': 'seo' === currentDevice
+						'is-active': 'seo' === currentDevice,
+						'is-showing-device-switcher': showDeviceSwitcher
 					} ) }
 					onClick={ selectSeoPreview }
 				>
-					<Gridicon icon="share" />
+					<Gridicon icon="globe" />
+					<span className="web-preview__seo-label">
+						{ translate( 'SEO' ) }
+					</span>
 				</button>
 			}
 			<div className="web-preview__toolbar-tray">
@@ -121,6 +126,8 @@ PreviewToolbar.propTypes = {
 	showExternal: PropTypes.bool,
 	// Show close button
 	showClose: PropTypes.bool,
+	// Show SEO button
+	showSEO: PropTypes.bool,
 	// The device to display, used for setting preview dimensions
 	device: PropTypes.string,
 	// Elements to render on the right side of the toolbar
@@ -131,12 +138,18 @@ PreviewToolbar.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => {
-	const site = getSelectedSite( state );
+PreviewToolbar.defaultProps = {
+	showSEO: true
+};
 
-	return {
-		showSeo: site && site.plan && hasBusinessPlan( site.plan )
-	}
+const mapStateToProps = ( state, ownProps ) => {
+	const site = getSelectedSite( state );
+	const showSEO = ownProps.showSEO && (
+		( site && site.plan && hasBusinessPlan( site.plan ) && isEnabled( 'manage/advanced-seo' ) ) ||
+		( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) )
+	);
+
+	return { showSEO };
 };
 
 export default connect( mapStateToProps )( localize( PreviewToolbar ) );

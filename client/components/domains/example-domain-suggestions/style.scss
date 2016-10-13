@@ -1,88 +1,64 @@
 .example-domain-suggestions {
-	background-color: $gray-light;
-	padding: 0;
-}
+	box-sizing: border-box;
+	position: relative;
+	padding-top: 16px;
+	padding-right: 348px;
+	max-width: 600px;
+	margin: 0 auto 60px auto;
 
-.example-domain-suggestions__illustration {
-	background: url( '/calypso/images/drake/drake-nomedia.svg' ) center no-repeat;
-	background-size: 175%;
-	float: left;
-	height: 100%;
-	position: absolute;
-		top: 50%;
-	transform: translateY( -50% );
-	width: 25%;
+	p {
+		color: darken( $gray, 20% );
+		text-align: right;
+		margin-bottom: 8px;
+	}
+
+	a {
+		text-decoration: underline;
+	}
 
 	@include breakpoint( "<660px" ) {
-		display: none;
-	}
-}
-
-.example-domain-suggestions__premium-price {
-	cursor: pointer;
-	border-bottom: 1px dotted $gray;
-}
-
-.example-domain-suggestions__information {
-	background-color: $white;
-	width: 100%;
-
-	@include breakpoint( "<660px" ) {
-		padding: 5px 0;
-	}
-
-	@include breakpoint( ">660px" ) {
-		float: right;
-		width: 75%;
-	}
-}
-
-.example-domain-suggestions__header {
-	color: darken( $gray, 30% );
-	font-size: 16px;
-	margin: 16px 24px;
-}
-
-.example-domain-suggestions__list {
-	list-style: none;
-	margin: 0 24px;
-
-	li {
-		background: $gray-light;
-		margin-bottom: 1px;
+		max-width: 100%;
 		padding: 16px;
+		margin: 0 auto;
 
-		@include clear-fix;
-
-		@include breakpoint( ">480px" ) {
-			display: flex;
+		p {
+			text-align: center;
 		}
 	}
 }
 
-.example-domain-suggestions__price {
-	color: darken( $gray, 10 );
-	font-size: 14px;
+.example-domain-suggestions__browser {
+	pointer-events: none;
+	position: absolute;
+		top: 0;
+		right: 0;
+	width: 300px;
 
-	@include breakpoint( ">660px" ) {
-		font-size: 16px;
+	&:before {
+		display: block;
+		content: '';
+		position: absolute;
+			right: 0;
+			bottom: 0;
+			left: 0;
+		height: 30px;
+		background: linear-gradient( to bottom, rgba( $gray-light, 0 ) 0%, rgba( $gray-light, 1 ) 100% );
 	}
 
-	@include breakpoint( ">480px" ) {
-		text-align: right;
-		width: 100%;
+	&:after {
+		display: block;
+		content: '';
+		position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+		width: 80px;
+		background: linear-gradient( to right, rgba( $gray-light, 0 ) 0%, rgba( $gray-light, 1 ) 100% );
 	}
 
-	&.is-free {
-		text-transform: uppercase;
-	}
-}
-
-.example-domain-suggestions__mapping-information {
-	color: darken( $gray, 20% );
-	margin: 16px 24px;
-
-	a {
-		text-decoration: underline;
+	@include breakpoint( "<660px" ) {
+		padding-top: 24px;
+		position: relative;
+		margin: 0 auto;
 	}
 }

@@ -96,7 +96,7 @@ const PrimaryDomain = React.createClass( {
 				<Card className="primary-domain-card">
 					<section>
 						<div className="primary-domain-explanation">
-							{ this.translate( 'Your primary domain is the address visitors will see in their browser when visiting your site.' ) } <a href={ primaryDomainSupportUrl } target="_blank">{ this.translate( 'Learn More' ) }</a>
+							{ this.translate( 'Your primary domain is the address visitors will see in their browser when visiting your site.' ) } <a href={ primaryDomainSupportUrl } target="_blank" rel="noopener noreferrer">{ this.translate( 'Learn More' ) }</a>
 						</div>
 					</section>
 

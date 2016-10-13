@@ -111,14 +111,16 @@ var MapDomainStep = React.createClass( {
 
 		return (
 			<div className="domain-search-results__domain-availability is-mapping-suggestion">
-				<div className="domain-search-results__domain-availability-copy notice is-success">
+				<Notice
+					status="is-success"
+					showDismiss={ false }>
 					{
 						this.translate(
 							'%(domain)s is available!',
 							{ args: { domain: suggestion.domain_name } }
 						)
 					}
-				</div>
+				</Notice>
 				<DomainRegistrationSuggestion
 					suggestion={ suggestion }
 					selectedSite={ this.props.selectedSite }
@@ -191,6 +193,7 @@ var MapDomainStep = React.createClass( {
 						components: {
 							a: <a
 								target="_blank"
+								rel="noopener noreferrer"
 								href={ `https://dotblog.wordpress.com/
 								?email=${ this.props.currentUser && encodeURIComponent( this.props.currentUser.email ) || '' }
 								&domain=${ domain }` }/>
@@ -199,25 +202,25 @@ var MapDomainStep = React.createClass( {
 				severity = 'info';
 				break;
 			case 'not_mappable':
-				message = this.translate( 'Sorry but %(domain)s has not been registered yet therefore cannot be mapped.', {
+				message = this.translate( 'Sorry, %(domain)s has not been registered yet therefore cannot be mapped.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'invalid_domain':
-				message = this.translate( 'Sorry but %(domain)s does not appear to be a valid domain name.', {
+				message = this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'mapped_domain':
-				message = this.translate( 'Sorry but %(domain)s is already mapped to a WordPress.com blog.', {
+				message = this.translate( 'Sorry, %(domain)s is already mapped to a WordPress.com blog.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'restricted_domain':
-				message = this.translate( 'Sorry but WordPress.com domains cannot be mapped to a WordPress.com blog.' );
+				message = this.translate( 'Sorry, WordPress.com domains cannot be mapped to a WordPress.com blog.' );
 				break;
 
 			case 'blacklisted_domain':
@@ -227,26 +230,26 @@ var MapDomainStep = React.createClass( {
 						{
 							components: {
 								strong: <strong />,
-								a1: <a target="_blank" href="http://wordpressfoundation.org/trademark-policy/"/>,
+								a1: <a target="_blank" rel="noopener noreferrer" href="http://wordpressfoundation.org/trademark-policy/"/>,
 								a2: <a href={ support.CALYPSO_CONTACT }/>
 							}
 						}
 					);
 				} else {
-					message = this.translate( 'Sorry but %(domain)s cannot be mapped to a WordPress.com blog.', {
+					message = this.translate( 'Sorry, %(domain)s cannot be mapped to a WordPress.com blog.', {
 						args: { domain: domain }
 					} );
 				}
 				break;
 
 			case 'forbidden_domain':
-				message = this.translate( 'Sorry but you do not have the correct permissions to map %(domain)s.', {
+				message = this.translate( 'Sorry, you do not have the correct permissions to map %(domain)s.', {
 					args: { domain: domain }
 				} );
 				break;
 
 			case 'invalid_tld':
-				message = this.translate( 'Sorry but %(domain)s does not end with a valid domain extension.', {
+				message = this.translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
 					args: { domain: domain }
 				} );
 				break;

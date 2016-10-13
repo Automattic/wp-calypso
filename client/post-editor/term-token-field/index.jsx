@@ -17,11 +17,16 @@ import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { editPost } from 'state/posts/actions';
 import TokenField from 'components/token-field';
 import { decodeEntities } from 'lib/formatting';
-import TermsConstants from 'lib/terms/constants';
 import { recordStat, recordEvent } from 'lib/posts/stats';
 import QueryTerms from 'components/data/query-terms';
 
 const debug = _debug( 'calypso:post-editor:editor-terms' );
+const DEFAULT_NON_HIERARCHICAL_QUERY = {
+	number: 1000,
+	order_by: 'count',
+	order: 'DESC'
+};
+const MAX_TERMS_SUGGESTIONS = 20;
 
 class TermTokenField extends React.Component {
 	componentWillMount() {
@@ -42,12 +47,12 @@ class TermTokenField extends React.Component {
 		recordStat( termStat );
 		recordEvent( 'Changed Terms', termEventLabel );
 
-		const { siteId, postId, postTerms, taxonomyName } = this.props;
-		this.props.editPost( {
+		const { siteId, postId, taxonomyName } = this.props;
+		this.props.editPost( siteId, postId, {
 			terms: {
 				[ taxonomyName ]: selectedTerms
 			}
-		}, siteId, postId );
+		} );
 	}
 
 	getPostTerms() {
@@ -68,23 +73,20 @@ class TermTokenField extends React.Component {
 		const termNames = map( this.props.terms, 'name' );
 
 		return (
-			<label className="editor-drawer__label">
-				<span className="editor-drawer__label-text">
-					{ this.props.taxonomyLabel }
-				</span>
+			<div>
 				<QueryTerms
 					siteId={ this.props.siteId }
 					taxonomy={ this.props.taxonomyName }
-					query={ TermsConstants.defaultNonHierarchicalQuery }
+					query={ DEFAULT_NON_HIERARCHICAL_QUERY }
 				/>
 				<TokenField
 					value={ this.getPostTerms() }
 					displayTransform={ decodeEntities }
 					suggestions={ termNames }
 					onChange={ this.boundOnTermsChange }
-					maxSuggestions={ TermsConstants.MAX_TERMS_SUGGESTIONS }
+					maxSuggestions={ MAX_TERMS_SUGGESTIONS }
 				/>
-			</label>
+			</div>
 		);
 	}
 }

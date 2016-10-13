@@ -9,12 +9,14 @@ import { connect } from 'react-redux';
 import GuidedTransfer from './guided-transfer';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
+import { isEligibleForGuidedTransfer } from 'state/sites/guided-transfer/selectors';
 
 function mapStateToProps( state ) {
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
 	return {
-		siteSlug,
+		siteId,
+		siteSlug: getSiteSlug( state, siteId ),
+		isEligibleForGuidedTransfer: isEligibleForGuidedTransfer( state, siteId ),
 	};
 }
 

@@ -1,157 +1,148 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
+import { get, toArray } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
+import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import Gridicon from 'components/gridicon';
-import Categories from 'post-editor/editor-categories';
-import Tags from 'post-editor/editor-tags';
-import TermStore from 'lib/terms/store';
-import siteUtils from 'lib/site/utils';
-import InfoPopover from 'components/info-popover';
-import { isPage } from 'lib/posts/utils';
+import TermSelector from 'post-editor/editor-term-selector';
+import TermTokenField from 'post-editor/term-token-field';
 import unescapeString from 'lodash/unescape';
+import Notice from 'components/notice';
+import NoticeAction from 'components/notice/notice-action';
+import { addSiteFragment } from 'lib/route';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { getSiteOption, isJetpackMinimumVersion, getSiteSlug } from 'state/sites/selectors';
+import { getTerm } from 'state/terms/selectors';
 
-module.exports = React.createClass( {
-	displayName: 'EditorCategoriesTagsAccordion',
+export class EditorCategoriesTagsAccordion extends Component {
+	static propTypes = {
+		translate: PropTypes.func,
+		postTerms: PropTypes.object,
+		postType: PropTypes.string,
+		defaultCategory: PropTypes.object,
+		isTermsSupported: PropTypes.bool,
+		siteSlug: PropTypes.string,
+	};
 
-	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		// passed down from CategoryListData
-		categories: React.PropTypes.array,
-		categoriesFound: React.PropTypes.number,
-		categoriesHasNextPage: React.PropTypes.bool,
-		categoriesFetchingNextPage: React.PropTypes.bool,
-		// passed down from TagListData
-		tags: React.PropTypes.array,
-		tagsHasNextPage: React.PropTypes.bool,
-		tagsFetchingNextPage: React.PropTypes.bool
-	},
+	renderJetpackNotice() {
+		const { translate, siteSlug } = this.props;
+		return (
+			<Notice
+				status="is-warning"
+				showDismiss={ false }
+				text={ translate( 'You must update Jetpack to use this feature.' ) }
+				className="editor-categories-tags__upgrade-notice" >
+				<NoticeAction href={ addSiteFragment( '/plugins/jetpack', siteSlug ) }>
+					{ translate( 'Update Now' ) }
+				</NoticeAction>
+			</Notice>
+		);
+	}
 
-	isCategoriesLoading: function() {
-		if ( ! this.props.site ) {
-			return true;
-		}
-
-		return this.props.categoriesFetchingNextPage;
-	},
-
-	getCategories: function() {
-		var defaultCategory;
-
-		if ( ! this.props.post ) {
-			return [];
-		}
-
-		if ( this.props.post.category_ids ) {
-			return this.props.post.category_ids;
-		}
-
-		defaultCategory = siteUtils.getDefaultCategory( this.props.site );
-		if ( defaultCategory ) {
-			return [ defaultCategory ];
-		}
-
-		return [];
-	},
-
-	renderCategories: function() {
-		if ( isPage( this.props.post ) ) {
+	renderCategories() {
+		const { translate, postType, isTermsSupported } = this.props;
+		if ( postType === 'page' ) {
 			return;
 		}
 
 		return (
 			<AccordionSection>
-				<label className="editor-drawer__label">
-					<span className="editor-drawer__label-text">
-						{ this.translate( 'Categories' ) }
-						<InfoPopover position="top left">
-							{ this.translate( 'Use categories to group your posts by topic.' ) }
-						</InfoPopover>
-					</span>
-				</label>
-				<Categories site={ this.props.site } post={ this.props.post } />
+				<EditorDrawerLabel
+					helpText={ translate( 'Use categories to group your posts by topic.' ) }
+					labelText={ translate( 'Categories' ) } />
+				{ isTermsSupported
+					? <TermSelector taxonomyName="category" />
+					: this.renderJetpackNotice()
+				}
 			</AccordionSection>
 		);
-	},
+	}
 
-	renderTags: function() {
+	renderTags() {
+		const { isTermsSupported, postType, translate } = this.props;
+		const helpText = postType === 'page'
+			? translate( 'Use tags to associate more specific keywords with your pages.' )
+			: translate( 'Use tags to associate more specific keywords with your posts.' );
+
 		return (
 			<AccordionSection>
-				<Tags
-					post={ this.props.post }
-					tags={ this.props.tags }
-					tagsHasNextPage={ this.props.tagsHasNextPage }
-					tagsFetchingNextPage={ this.props.tagsFetchingNextPage }
-				/>
+				<EditorDrawerLabel helpText={ helpText } labelText={ translate( 'Tags' ) }>
+					{ isTermsSupported
+						? <TermTokenField taxonomyName="post_tag" />
+						: this.renderJetpackNotice()
+					}
+				</EditorDrawerLabel>
+
 			</AccordionSection>
 		);
-	},
+	}
 
 	getCategoriesSubtitle() {
-		const siteId = this.props.site.ID;
+		const { translate, postTerms, defaultCategory } = this.props;
+		const categories = toArray( get( postTerms, 'category' ) );
 
-		// There's also post.categories but it doesn't have category names
-		// either, so we need to get them from the site categories data
-		const categories = this.getCategories().map( ( categoryId ) => {
-			const category = TermStore.get( siteId, categoryId );
-			return category ? unescapeString( category.name ) : null;
-		} ).filter( categoryName => categoryName );
-
-		switch ( categories.length ) {
-			case 0:
-				return null; // No categories subtitle
-			case 1:
-				return categories[0];
-			default:
-				// Special-casing the singular is good, but we still need the
-				// singular+plural version for the default branch because some
-				// languages use the singular for numbers ending in 1, sort of
-				// like how we’d say "21st", "31st", etc.
-				return this.translate(
-					'%d category',
-					'%d categories',
-					{ args: [ categories.length ], count: categories.length }
-				);
+		if ( categories.length > 1 ) {
+			return translate( '%d category', '%d categories', {
+				args: [ categories.length ],
+				count: categories.length
+			} );
 		}
-	},
+
+		let category;
+		if ( categories.length > 0 ) {
+			category = categories[ 0 ];
+		} else {
+			category = defaultCategory;
+		}
+
+		if ( category ) {
+			return unescapeString( category.name );
+		}
+	}
 
 	getTagsSubtitle() {
-		let tags = this.props.post.tags || [];
-		tags = Array.isArray( tags ) ? tags : Object.keys( tags );
-		tags = tags.map( unescapeString );
+		const { translate, postTerms } = this.props;
+		const tags = toArray( get( postTerms, 'post_tag' ) );
+		const tagsLength = tags.length;
 
-		switch ( tags.length ) {
+		switch ( tagsLength ) {
 			case 0:
 				return null; // No tags subtitle
 			case 1:
-				return '#' + tags[0];
 			case 2:
-				return '#' + tags[0] + ', #' + tags[1];
+				return tags.map( ( tag ) => {
+					return '#' + unescapeString( tag.name || tag );
+				} ).join( ', ' );
 			default:
-				return this.translate(
+				return translate(
 					'%d tag',
 					'%d tags',
-					{ args: [ tags.length ], count: tags.length }
+					{ args: [ tagsLength ], count: tagsLength }
 				);
 		}
-	},
+	}
 
-	getSubtitle: function() {
+	getSubtitle() {
 		const subtitlePieces = [];
+		const { postType, siteId } = this.props;
 
-		if ( ! this.props.site || ! this.props.post ) {
+		if ( ! siteId ) {
 			return null;
 		}
 
-		if ( ! isPage( this.props.post ) ) {
+		if ( postType === 'post' ) {
 			const categoriesSubtitle = this.getCategoriesSubtitle();
 			if ( categoriesSubtitle ) {
 				subtitlePieces.push( categoriesSubtitle );
@@ -163,27 +154,26 @@ module.exports = React.createClass( {
 			subtitlePieces.push( tagsSubtitle );
 		}
 
-		if ( ! isPage( this.props.post ) && this.isCategoriesLoading() ) {
-			return this.translate( 'Loading…' );
-		}
-
 		return subtitlePieces.join( ', ' );
-	},
+	}
 
-	getTitle: function() {
+	getTitle() {
+		const { translate, postType } = this.props;
 		let title;
-		if ( isPage( this.props.post ) ) {
-			title = this.translate( 'Tags' );
+		if ( postType === 'page' ) {
+			title = translate( 'Tags' );
 		} else {
-			title = this.translate( 'Categories & Tags' );
+			title = translate( 'Categories & Tags' );
 		}
 		return title;
-	},
+	}
 
-	render: function() {
-		var classes = classNames( 'editor-drawer__accordion', 'editor-categories-tags__accordion', this.props.className, {
-			'is-loading': ! this.props.site || ! this.props.post || this.isCategoriesLoading()
-		} );
+	render() {
+		const classes = classNames(
+			'editor-drawer__accordion',
+			'editor-categories-tags__accordion',
+			this.props.className
+		);
 
 		return (
 			<Accordion
@@ -197,4 +187,23 @@ module.exports = React.createClass( {
 			</Accordion>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const defaultCategoryId = getSiteOption( state, siteId, 'default_category' );
+		const isTermsSupported = false !== isJetpackMinimumVersion( state, siteId, '4.1.0' );
+
+		return {
+			defaultCategory: getTerm( state, siteId, 'category', defaultCategoryId ),
+			postTerms: getEditedPostValue( state, siteId, postId, 'terms' ),
+			postType: getEditedPostValue( state, siteId, postId, 'type' ),
+			siteSlug: getSiteSlug( state, siteId ),
+			siteId,
+			postId,
+			isTermsSupported,
+		};
+	}
+)( localize( EditorCategoriesTagsAccordion ) );

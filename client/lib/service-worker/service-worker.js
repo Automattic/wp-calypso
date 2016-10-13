@@ -37,9 +37,9 @@ self.addEventListener( 'push', function( event ) {
 			icon: notification.icon,
 			timestamp: notification.note_timestamp,
 			data: notification
-		} ).then( function () {
+		} ).then( function() {
 			if ( notification.note_opened_pixel ) {
-				fetch( notification.note_opened_pixel, { mode: 'no-cors' } ).catch( function( err ) {
+				fetch( notification.note_opened_pixel, { mode: 'no-cors' } ).catch( function( err ) { // eslint-disable-line no-unused-vars
 					console.log( 'Could not load the pixel %s', notification.note_opened_pixel );
 				} );
 			}
@@ -55,7 +55,7 @@ self.addEventListener( 'notificationclick', function( event ) {
 		self.clients.matchAll().then( function( clientList ) {
 			if ( clientList.length > 0 ) {
 				clientList[ 0 ].postMessage( { action: 'openPanel' } );
-				clientList[ 0 ].postMessage( { action: 'trackClick', notification: notification.data  } );
+				clientList[ 0 ].postMessage( { action: 'trackClick', notification: notification.data } );
 				try {
 					clientList[ 0 ].focus();
 				} catch ( err ) {

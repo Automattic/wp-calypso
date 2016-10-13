@@ -3,6 +3,7 @@
  */
 import i18n from 'i18n-calypso';
 import get from 'lodash/get';
+import { withoutHttp } from 'lib/url';
 
 export default {
 	userCan( capability, site ) {
@@ -164,7 +165,7 @@ export default {
 				return false;
 			}
 			// Compare unmapped_url with the main_network_site to see if is the main network site.
-			return ! ( unmappedUrl.replace( /^https?:\/\//, '' ) !== mainNetworkSite.replace( /^https?:\/\//, '' ) );
+			return ! ( withoutHttp( unmappedUrl ) !== withoutHttp( mainNetworkSite ) );
 		}
 
 		return false;
@@ -172,5 +173,18 @@ export default {
 
 	isJetpack( site ) {
 		return site && site.jetpack;
+	},
+
+	/**
+	 * Checks whether a site has a custom mapped URL.
+	 * @param  {Object}   site Site object
+	 * @return {?Boolean}      Whether site has custom domain
+	 */
+	hasCustomDomain( site ) {
+		if ( ! site || ! site.domain || ! site.wpcom_url ) {
+			return null;
+		}
+
+		return site.domain !== site.wpcom_url;
 	}
 };

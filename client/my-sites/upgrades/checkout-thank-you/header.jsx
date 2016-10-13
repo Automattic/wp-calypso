@@ -73,7 +73,7 @@ const CheckoutThankYouHeader = React.createClass( {
 
 		if ( isGoogleApps( this.props.primaryPurchase ) ) {
 			return this.translate(
-				'Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use Google Apps. ' +
+				'Your domain {{strong}}%(domainName)s{{/strong}} is now set up to use G Suite. ' +
 				"It's doing somersaults in excitement!", {
 					args: { domainName: this.props.primaryPurchase.meta },
 					components: { strong: <strong /> }

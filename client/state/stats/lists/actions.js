@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import omit from 'lodash/omit';
-
-/**
  * Internal dependencies
  */
 import wpcom from 'lib/wp';
@@ -53,7 +48,7 @@ export function requestSiteStats( siteId, statType, query ) {
 		} );
 
 		return wpcom.site( siteId )[ statType ]( query ).then( data => {
-			dispatch( receiveSiteStats( siteId, statType, query, omit( data, '_headers' ) ) );
+			dispatch( receiveSiteStats( siteId, statType, query, data ) );
 			dispatch( {
 				type: SITE_STATS_REQUEST_SUCCESS,
 				statType,

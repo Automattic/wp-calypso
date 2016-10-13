@@ -3,7 +3,6 @@
  */
 import page from 'page';
 import React from 'react';
-import ReactDom from 'react-dom';
 import i18n from 'i18n-calypso';
 
 /**
@@ -14,7 +13,7 @@ import { isEnabled } from 'config';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import get from 'lodash/get';
 import { isValidFeatureKey } from 'lib/plans';
 
@@ -35,7 +34,7 @@ export default {
 		if ( site && site.jetpack && ! isEnabled( 'manage/jetpack-plans' ) ) {
 			analytics.pageView.record( basePath + '/jetpack/:site', analyticsPageTitle + ' > Jetpack Plans Not Available' );
 
-			ReactDom.render(
+			renderWithReduxStore(
 				React.createElement( MainComponent, null,
 					React.createElement( EmptyContentComponent, {
 						title: i18n.translate( 'Plans are not available for Jetpack sites yet.' ),
@@ -45,7 +44,8 @@ export default {
 						illustration: '/calypso/images/drake/drake-nomenus.svg'
 					} )
 				),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 			return;
 		}
@@ -56,9 +56,8 @@ export default {
 			analyticsBasePath = basePath;
 		}
 
-		titleActions.setTitle( i18n.translate( 'Plans', { textOnly: true } ),
-			{ siteID: route.getSiteFragment( context.path ) }
-		);
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
 
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
@@ -83,58 +82,10 @@ export default {
 		);
 	},
 
-	plansCompare( context ) {
-		const PlansCompare = require( 'components/plans/plans-compare' ),
-			Main = require( 'components/main' ),
-			CheckoutData = require( 'components/data/checkout' ),
-			features = require( 'lib/features-list' )(),
-			productsList = require( 'lib/products-list' )(),
-			analyticsPageTitle = 'Plans > Compare',
-			site = sites.getSelectedSite(),
-			basePath = route.sectionify( context.path );
-		let baseAnalyticsPath;
-
-		if ( site && ! site.isUpgradeable() ) {
-			return page.redirect( '/plans/compare' );
-		}
-
-		if ( site ) {
-			baseAnalyticsPath = basePath + '/:site';
-		} else {
-			baseAnalyticsPath = basePath;
-		}
-
-		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
-
-		titleActions.setTitle( i18n.translate( 'Compare Plans', { textOnly: true } ), {
-			siteID: context.params.domain
-		} );
-
-		// Scroll to the top
-		if ( typeof window !== 'undefined' ) {
-			window.scrollTo( 0, 0 );
-		}
-
-		renderWithReduxStore(
-			<Main className="plans has-sidebar">
-				<CheckoutData>
-					<PlansCompare
-						selectedSite={ site }
-						features={ features }
-						selectedFeature={ context.params.feature || context.query.feature }
-						intervalType={ context.params.intervalType }
-						productsList={ productsList } />
-				</CheckoutData>
-			</Main>,
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
-
 	features( context ) {
 		const domain = context.params.domain;
 		const feature = get( context, 'params.feature' );
-		let comparePath = domain ? `/plans/compare/${ domain }` : '/plans/compare';
+		let comparePath = domain ? `/plans/${ domain }` : '/plans/';
 
 		if ( isValidFeatureKey( feature ) ) {
 			comparePath += '?feature=' + feature;

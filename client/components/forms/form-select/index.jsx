@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import omit from 'lodash/omit';
 
 const FormSelect = React.createClass( {
 	getDefaultProps() {
@@ -13,12 +12,13 @@ const FormSelect = React.createClass( {
 	},
 
 	render() {
-		const classes = classNames( this.props.className, 'form-select', {
-			'is-error': this.props.isError,
-		} );
+		const { className, isError, ...props } = this.props,
+			classes = classNames( className, 'form-select', {
+				'is-error': isError,
+			} );
 
 		return (
-			<select { ...omit( this.props, 'className' ) } className={ classes } >
+			<select { ...props } className={ classes }>
 				{ this.props.children }
 			</select>
 		);

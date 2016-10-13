@@ -1,5 +1,14 @@
 export const themes = [
 	{
+		name: 'Affinity',
+		slug: 'affinity',
+		repo: 'pub',
+		fallback: false,
+		design: 'page',
+		demo_uri: 'https://affinitydemo.wordpress.com',
+		verticals: []
+	},
+	{
 		name: 'Apostrophe',
 		slug: 'apostrophe',
 		repo: 'pub',
@@ -15,15 +24,6 @@ export const themes = [
 		fallback: false,
 		design: 'grid',
 		demo_uri: 'https://baskervilledemo.wordpress.com',
-		verticals: []
-	},
-	{
-		name: 'Big Brother',
-		slug: 'big-brother',
-		repo: 'pub',
-		fallback: false,
-		design: 'page',
-		demo_uri: 'https://bigbrotherdemo.wordpress.com',
 		verticals: []
 	},
 	{
@@ -135,6 +135,15 @@ export const themes = [
 		verticals: []
 	},
 	{
+		name: 'Karuna',
+		slug: 'karuna',
+		repo: 'pub',
+		fallback: false,
+		design: 'page',
+		demo_uri: 'https://karunademo.wordpress.com',
+		verticals: []
+	},
+	{
 		name: 'Libre',
 		slug: 'libre',
 		repo: 'pub',
@@ -150,15 +159,6 @@ export const themes = [
 		fallback: false,
 		design: 'blog',
 		demo_uri: 'https://librettodemo.wordpress.com',
-		verticals: []
-	},
-	{
-		name: 'Motif',
-		slug: 'motif',
-		repo: 'pub',
-		fallback: false,
-		design: 'page',
-		demo_uri: 'https://motifdemo.wordpress.com',
 		verticals: []
 	},
 	{
@@ -243,12 +243,12 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Sequential',
-		slug: 'sequential',
+		name: 'Shoreditch',
+		slug: 'shoreditch',
 		repo: 'pub',
 		fallback: false,
 		design: 'page',
-		demo_uri: 'https://sequentialdemo.wordpress.com',
+		demo_uri: 'https://shoreditchdemo.wordpress.com',
 		verticals: []
 	},
 	{

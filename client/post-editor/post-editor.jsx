@@ -28,7 +28,6 @@ const actions = require( 'lib/posts/actions' ),
 	SegmentedControl = require( 'components/segmented-control' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
 	EditorMobileNavigation = require( 'post-editor/editor-mobile-navigation' ),
-	layoutFocus = require( 'lib/layout-focus' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	DraftList = require( 'my-sites/drafts/draft-list' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
@@ -54,12 +53,14 @@ import { savePreference } from 'state/preferences/actions';
 import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import SidebarFooter from 'layout/sidebar/footer';
+import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 const PostEditor = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.number,
 		preferences: React.PropTypes.object,
 		setEditorModePreference: React.PropTypes.func,
+		setLayoutFocus: React.PropTypes.func.isRequired,
 		editorModePreference: React.PropTypes.string,
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
@@ -105,7 +106,8 @@ const PostEditor = React.createClass( {
 	componentWillMount: function() {
 		PostEditStore.on( 'change', this.onEditedPostChange );
 		this.debouncedSaveRawContent = debounce( this.saveRawContent, 200 );
-		this.debouncedAutosave = debounce( throttle( this.autosave, 20000 ), 3000 );
+		this.throttledAutosave = throttle( this.autosave, 20000 );
+		this.debouncedAutosave = debounce( this.throttledAutosave, 3000 );
 		this.switchEditorVisualMode = this.switchEditorMode.bind( this, 'tinymce' );
 		this.switchEditorHtmlMode = this.switchEditorMode.bind( this, 'html' );
 
@@ -131,7 +133,7 @@ const PostEditor = React.createClass( {
 		debug( 'PostEditor react component mounted.' );
 		// if content is passed in, e.g., through url param
 		if ( this.state.post && this.state.post.content ) {
-			this.refs.editor.setEditorContent( this.state.post.content );
+			this.refs.editor.setEditorContent( this.state.post.content, { initial: true } );
 		}
 	},
 
@@ -145,6 +147,7 @@ const PostEditor = React.createClass( {
 		actions.stopEditing();
 
 		this.debouncedAutosave.cancel();
+		this.throttledAutosave.cancel();
 		this.debouncedSaveRawContent.cancel();
 		this._previewWindow = null;
 		clearTimeout( this._switchEditorTimeout );
@@ -161,7 +164,7 @@ const PostEditor = React.createClass( {
 
 	toggleSidebar: function() {
 		this.hideDrafts();
-		layoutFocus.set( 'content' );
+		this.props.setLayoutFocus( 'content' );
 	},
 
 	hideDrafts() {
@@ -216,7 +219,6 @@ const PostEditor = React.createClass( {
 									tabIndex={ 1 } />
 								{ this.state.post && isPage && site
 									? <EditorPageSlug
-										slug={ this.state.post.slug }
 										path={ this.state.post.URL && ( this.state.post.URL !== siteURL )
 											? utils.getPagePath( this.state.post )
 											: siteURL
@@ -388,7 +390,7 @@ const PostEditor = React.createClass( {
 			}
 			this.setState( postEditState, function() {
 				if ( didLoad || this.state.isLoadingAutosave ) {
-					this.refs.editor.setEditorContent( this.state.post.content );
+					this.refs.editor.setEditorContent( this.state.post.content, { initial: true } );
 				}
 
 				if ( this.state.isLoadingAutosave ) {
@@ -591,12 +593,12 @@ const PostEditor = React.createClass( {
 			// so we need to delay opening it a bit to avoid flickering
 			setTimeout( function() {
 				this.setState( { showPreview: true }, function() {
-					layoutFocus.set( 'content' );
+					this.props.setLayoutFocus( 'content' );
 				} );
 			}.bind( this ), 150 );
 		} else {
 			this.setState( { showPreview: true }, function() {
-				layoutFocus.set( 'content' );
+				this.props.setLayoutFocus( 'content' );
 			} );
 		}
 	},
@@ -611,6 +613,7 @@ const PostEditor = React.createClass( {
 
 	onSaveDraftSuccess: function() {
 		const { post } = this.state;
+
 		if ( utils.isPublished( post ) ) {
 			this.onSaveSuccess( 'updated', 'view', post.URL );
 		} else {
@@ -627,6 +630,8 @@ const PostEditor = React.createClass( {
 		// determine if this is a private publish
 		if ( utils.isPrivate( this.state.post ) ) {
 			edits.status = 'private';
+		} else if ( utils.isFutureDated( this.state.post ) ) {
+			edits.status = 'future';
 		}
 
 		// Update content on demand to avoid unnecessary lag and because it is expensive
@@ -653,10 +658,18 @@ const PostEditor = React.createClass( {
 	},
 
 	onPublishSuccess: function() {
-		const { savedPost, post } = this.state;
-		const message = utils.isPrivate( savedPost ) ? 'publishedPrivately' : 'published';
+		const { savedPost } = this.state;
 
-		this.onSaveSuccess( message, 'view', post.URL );
+		let message;
+		if ( utils.isPrivate( savedPost ) ) {
+			message = 'publishedPrivately';
+		} else if ( utils.isFutureDated( savedPost ) ) {
+			message = 'scheduled';
+		} else {
+			message = 'published';
+		}
+
+		this.onSaveSuccess( message, ( message === 'published' ? 'view' : 'preview' ), savedPost.URL );
 		this.toggleSidebar();
 	},
 
@@ -781,6 +794,7 @@ export default connect(
 			resetPostEdits,
 			setEditorPostId,
 			setEditorModePreference: savePreference.bind( null, 'editor-mode' ),
+			setLayoutFocus,
 		}, dispatch );
 	},
 	null,

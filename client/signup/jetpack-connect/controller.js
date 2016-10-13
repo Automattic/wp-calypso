@@ -26,7 +26,7 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import route from 'lib/route';
 import sitesFactory from 'lib/sites-list';
-import titleActions from 'lib/screen-title/actions';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 
 const sites = sitesFactory();
 
@@ -36,14 +36,18 @@ const sites = sitesFactory();
 const debug = new Debug( 'calypso:jetpack-connect:controller' );
 const userModule = userFactory();
 
-const jetpackConnectFirstStep = ( context, type ) => {
+const removeSidebar = ( context ) => {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 
-	userModule.fetch();
-
-	context.store.dispatch( setSection( 'jetpackConnect', {
+	context.store.dispatch( setSection( { name: 'jetpackConnect' }, {
 		hasSidebar: false
 	} ) );
+};
+
+const jetpackConnectFirstStep = ( context, type ) => {
+	removeSidebar( context );
+
+	userModule.fetch();
 
 	renderWithReduxStore(
 		React.createElement( JetpackConnect, {
@@ -131,10 +135,7 @@ export default {
 		const analyticsBasePath = 'jetpack/connect/authorize',
 			analyticsPageTitle = 'Jetpack Authorize';
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		context.store.dispatch( setSection( 'jetpackConnect', {
-			hasSidebar: false
-		} ) );
+		removeSidebar( context );
 
 		userModule.fetch();
 
@@ -155,10 +156,7 @@ export default {
 		const analyticsBasePath = '/jetpack/sso',
 			analyticsPageTitle = 'Jetpack SSO';
 
-		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		context.store.dispatch( setSection( 'jetpackConnect', {
-			hasSidebar: false
-		} ) );
+		removeSidebar( context );
 
 		userModule.fetch();
 
@@ -189,9 +187,10 @@ export default {
 			return;
 		}
 
-		titleActions.setTitle( i18n.translate( 'Plans', { textOnly: true } ),
-			{ siteID: route.getSiteFragment( context.path ) }
-		);
+		removeSidebar( context );
+
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
 
 		analytics.tracks.recordEvent( 'calypso_plans_view' );
 		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
@@ -201,7 +200,8 @@ export default {
 				<Plans
 					sites={ sites }
 					context={ context }
-					destinationType={ context.params.destinationType } />
+					destinationType={ context.params.destinationType }
+					intervalType={ context.params.intervalType } />
 			</CheckoutData>,
 			document.getElementById( 'primary' ),
 			context.store

@@ -1,30 +1,42 @@
 /**
  * External dependencies
  */
-var defer = require( 'lodash/defer' ),
-	React = require( 'react' );
+import React from 'react';
+import { find, defer } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var CreditCardPaymentBox = require( './credit-card-payment-box' ),
-	EmptyContent = require( 'components/empty-content' ),
-	FreeTrialConfirmationBox = require( './free-trial-confirmation-box' ),
-	PayPalPaymentBox = require( './paypal-payment-box' ),
-	CreditsPaymentBox = require( './credits-payment-box' ),
-	FreeCartPaymentBox = require( './free-cart-payment-box' ),
-	PaymentBox = require( './payment-box.jsx' ),
-	storeTransactions = require( 'lib/store-transactions' ),
-	cartValues = require( 'lib/cart-values' ),
-	isPaidForFullyInCredits = cartValues.isPaidForFullyInCredits,
-	isFree = cartValues.isFree,
-	hasFreeTrial = cartValues.cartItems.hasFreeTrial,
-	countriesList = require( 'lib/countries-list' ).forPayments(),
-	analytics = require( 'lib/analytics' ),
-	TransactionStepsMixin = require( './transaction-steps-mixin' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import EmptyContent from 'components/empty-content';
 
-var SecurePaymentForm = React.createClass( {
+import CreditsPaymentBox from './credits-payment-box';
+import FreeTrialConfirmationBox from './free-trial-confirmation-box';
+import FreeCartPaymentBox from './free-cart-payment-box';
+import CreditCardPaymentBox from './credit-card-payment-box';
+import PayPalPaymentBox from './paypal-payment-box';
+
+import storeTransactions from 'lib/store-transactions';
+import analytics from 'lib/analytics';
+import TransactionStepsMixin from './transaction-steps-mixin';
+import upgradesActions from 'lib/upgrades/actions';
+import countriesList from 'lib/countries-list';
+import debugFactory from 'debug';
+import cartValues, {
+	isPaidForFullyInCredits,
+	isFree,
+	cartItems
+} from 'lib/cart-values';
+import Notice from 'components/notice';
+import { preventWidows } from 'lib/formatting';
+
+/**
+ * Module variables
+ */
+const { hasFreeTrial } = cartItems;
+const countriesListForPayments = countriesList.forPayments();
+const debug = debugFactory( 'calypso:checkout:payment' );
+
+const SecurePaymentForm = React.createClass( {
 	mixins: [ TransactionStepsMixin ],
 
 	propTypes: {
@@ -32,17 +44,15 @@ var SecurePaymentForm = React.createClass( {
 		redirectTo: React.PropTypes.func.isRequired
 	},
 
-	getInitialState: function() {
-		var cart = this.props.cart;
-
+	getInitialState() {
 		return {
 			userSelectedPaymentBox: null,
-			visiblePaymentBox: this.getVisiblePaymentBox( cart ),
+			visiblePaymentBox: this.getVisiblePaymentBox( this.props.cart ),
 			previousCart: null
 		};
 	},
 
-	getVisiblePaymentBox: function( cart ) {
+	getVisiblePaymentBox( cart ) {
 		if ( isPaidForFullyInCredits( cart ) ) {
 			return 'credits';
 		} else if ( isFree( cart ) ) {
@@ -55,104 +65,44 @@ var SecurePaymentForm = React.createClass( {
 			return 'credit-card';
 		} else if ( cartValues.isPayPalExpressEnabled( cart ) ) {
 			return 'paypal';
-		} else {
-			return null;
 		}
+
+		return null;
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.transaction.step.name !== 'before-submit' ) {
 			return;
 		}
-		var newCart = nextProps.cart;
 
 		this.setState( {
-			visiblePaymentBox: this.getVisiblePaymentBox( newCart )
+			visiblePaymentBox: this.getVisiblePaymentBox( nextProps.cart )
 		} );
 	},
 
-	handlePaymentBoxSubmit: function( event ) {
+	handlePaymentBoxSubmit( event ) {
 		analytics.ga.recordEvent( 'Upgrades', 'Submitted Checkout Form' );
 
 		// `submitTransaction` comes from the `TransactionStepsMixin`
 		this.submitTransaction( event );
 	},
 
-	render: function() {
-		if ( this.state.visiblePaymentBox === null ) {
-			return (
-				<EmptyContent
-					illustration='/calypso/images/drake/drake-500.svg'
-					title={ this.translate( 'Checkout is not available' ) }
-					line={ this.translate( "We're hard at work on the issue. Please check back shortly." ) }
-					action={ this.translate( 'Back to Plans' ) }
-					actionURL={ '/plans/' + this.props.selectedSite.slug } />
-			);
-		}
-
-		return (
-			<div className="secure-payment-form">
-				<CreditsPaymentBox
-					cart={ this.props.cart }
-					selected={ this.state.visiblePaymentBox === 'credits' }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					transactionStep={ this.props.transaction.step } />
-
-				<FreeTrialConfirmationBox
-					cart={ this.props.cart }
-					selected={ this.state.visiblePaymentBox === 'free-trial' }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					transactionStep={ this.props.transaction.step } />
-
-				<FreeCartPaymentBox
-					cart={ this.props.cart }
-					selected={ this.state.visiblePaymentBox === 'free-cart' }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					products={ this.props.products }
-					selectedSite={ this.props.selectedSite }
-					transactionStep={ this.props.transaction.step } />
-
-				<CreditCardPaymentBox
-					cards={ this.props.cards }
-					transaction={ this.props.transaction }
-					cart={ this.props.cart }
-					countriesList={ countriesList }
-					initialCard={ this.getInitialCard() }
-					selected={ this.state.visiblePaymentBox === 'credit-card' }
-					selectedSite={ this.props.selectedSite }
-					onToggle={ this.selectPaymentBox }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					transactionStep={ this.props.transaction.step } />
-
-				<PayPalPaymentBox
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					countriesList={ countriesList }
-					selected={ this.state.visiblePaymentBox === 'paypal' }
-					selectedSite={ this.props.selectedSite }
-					onToggle={ this.selectPaymentBox }
-					redirectTo={ this.props.redirectTo } />
-
-			</div>
-		);
-	},
-
-	getInitialCard: function() {
+	getInitialCard() {
 		return this.props.cards[ 0 ];
 	},
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.setInitialPaymentDetails();
 	},
 
-	componentDidUpdate: function( prevProps, prevState ) {
+	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.visiblePaymentBox !== prevState.visiblePaymentBox ) {
 			this.setInitialPaymentDetails();
 		}
 	},
 
-	setInitialPaymentDetails: function() {
-		var newPayment;
+	setInitialPaymentDetails() {
+		let newPayment;
 
 		switch ( this.state.visiblePaymentBox ) {
 			case 'credits':
@@ -186,46 +136,131 @@ var SecurePaymentForm = React.createClass( {
 		}
 	},
 
-	selectPaymentBox: function( paymentBox ) {
+	selectPaymentBox( paymentBox ) {
 		this.setState( {
 			userSelectedPaymentBox: paymentBox,
 			visiblePaymentBox: paymentBox
 		} );
-	}
-} );
+	},
 
-SecurePaymentForm.Placeholder = React.createClass( {
-	displayName: 'SecurePaymentForm.Placeholder',
-
-	render: function() {
+	renderCreditsPayentBox() {
 		return (
-			<PaymentBox
-				classSet="selected is-empty"
-				contentClassSet="selected is-empty" >
-				<div className="payment-box-section">
+			<CreditsPaymentBox
+				cart={ this.props.cart }
+				onSubmit={ this.handlePaymentBoxSubmit }
+				transactionStep={ this.props.transaction.step } />
+		);
+	},
 
-					<div className="placeholder-row placeholder"/>
-					<div className="placeholder-row placeholder"/>
-					<div className="placeholder-col-narrow placeholder-inline-pad">
-						<div className="placeholder" />
-					</div>
-					<div className="placeholder-col-narrow placeholder-inline-pad-only-wide">
-						<div className="placeholder" />
-					</div>
-					<div className="placeholder-col-wide">
-						<div className="placeholder" />
-					</div>
-					<div className="placeholder-row placeholder"/>
-				</div>
-				<div className="payment-box-hr" />
-				<div className="placeholder-button-container">
-					<div className="placeholder-col-narrow">
-						<div className="placeholder placeholder-button"></div>
-					</div>
-				</div>
-			</PaymentBox>
+	renderFreeTrialConfirmationBox() {
+		return (
+			<FreeTrialConfirmationBox
+				cart={ this.props.cart }
+				onSubmit={ this.handlePaymentBoxSubmit }
+				transactionStep={ this.props.transaction.step } />
+		);
+	},
+
+	renderFreeCartPaymentBox() {
+		return (
+			<FreeCartPaymentBox
+				cart={ this.props.cart }
+				onSubmit={ this.handlePaymentBoxSubmit }
+				products={ this.props.products }
+				selectedSite={ this.props.selectedSite }
+				transactionStep={ this.props.transaction.step } />
+		);
+	},
+
+	renderCreditCardPaymentBox() {
+		return (
+			<CreditCardPaymentBox
+				cards={ this.props.cards }
+				transaction={ this.props.transaction }
+				cart={ this.props.cart }
+				countriesList={ countriesListForPayments }
+				initialCard={ this.getInitialCard() }
+				selectedSite={ this.props.selectedSite }
+				onToggle={ this.selectPaymentBox }
+				onSubmit={ this.handlePaymentBoxSubmit }
+				transactionStep={ this.props.transaction.step } />
+		);
+	},
+
+	renderPayPalPaymentBox() {
+		return (
+			<PayPalPaymentBox
+				cart={ this.props.cart }
+				transaction={ this.props.transaction }
+				countriesList={ countriesListForPayments }
+				selectedSite={ this.props.selectedSite }
+				onToggle={ this.selectPaymentBox }
+				redirectTo={ this.props.redirectTo } />
+		);
+	},
+
+	renderGetDotBlogNotice() {
+		const hasProductFromGetDotBlogSignup = find( this.props.cart.products, product => (
+			product.extra && product.extra.source === 'get-dot-blog-signup'
+		) );
+
+		if ( this.state.visiblePaymentBox !== 'credit-card' || ! hasProductFromGetDotBlogSignup ) {
+			return;
+		}
+
+		return (
+			<Notice icon="notice" showDismiss={ false }>
+				{ preventWidows( this.translate( 'This is the payment information you entered on get.blog, ' +
+					'a WordPress.com service. Confirm your order below.' ), 4 ) }
+			</Notice>
+		);
+	},
+
+	renderPaymentBox() {
+		const { visiblePaymentBox } = this.state;
+		debug( 'getting %o payment box ...', visiblePaymentBox );
+
+		switch ( visiblePaymentBox ) {
+			case 'credits':
+				return this.renderCreditsPayentBox();
+
+			case 'free-trial':
+				return this.renderFreeTrialConfirmationBox();
+
+			case 'free-cart':
+				return this.renderFreeCartPaymentBox();
+
+			case 'credit-card':
+				return this.renderCreditCardPaymentBox();
+
+			case 'paypal':
+				return this.renderPayPalPaymentBox();
+			default:
+				debug( 'WARN: %o payment unknown', visiblePaymentBox );
+				return null;
+		}
+	},
+
+	render() {
+		if ( this.state.visiblePaymentBox === null ) {
+			return (
+				<EmptyContent
+					illustration="/calypso/images/drake/drake-500.svg"
+					title={ this.translate( 'Checkout is not available' ) }
+					line={ this.translate( "We're hard at work on the issue. Please check back shortly." ) }
+					action={ this.translate( 'Back to Plans' ) }
+					actionURL={ '/plans/' + this.props.selectedSite.slug } />
+			);
+		}
+
+		return (
+			<div className="secure-payment-form">
+				{ this.renderGetDotBlogNotice() }
+				{ this.renderPaymentBox() }
+			</div>
 		);
 	}
 } );
 
-module.exports = SecurePaymentForm;
+export default SecurePaymentForm;
+

@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import EmailValidator from 'email-validator';
+import { connect } from 'react-redux';
+import { invoke } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,32 +22,31 @@ import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import StepHeader from 'signup/step-header';
 import Button from 'components/button';
+import { localize } from 'i18n-calypso';
+import { recordTracksEvent } from 'state/analytics/actions';
 
 import HeroImage from './hero-image';
 
-export default React.createClass( {
-	displayName: 'PressableStoreStep',
+class PressableStoreStep extends Component {
+	constructor( props ) {
+		super( props );
 
-	propTypes: {
-		onBackClick: PropTypes.func.isRequired,
-	},
-
-	getInitialState() {
-		return {
+		this.state = {
 			email: '',
 			isValid: false,
 			error: null,
 		};
-	},
+	}
 
-	focus() {
-		if ( this._input ) {
-			this._input.focus();
-		}
-	},
+	componentDidMount() {
+		this.props.setRef( this );
+	}
 
-	onEmailChange( event ) {
-		const email = event.target.value;
+	focus = () => {
+		invoke( this, 'input.focus' );
+	};
+
+	onEmailChange = ( { target: { value: email } } ) => {
 		const isValid = EmailValidator.validate( email );
 		const error = this.state.error && isValid
 			? null
@@ -55,67 +56,115 @@ export default React.createClass( {
 			isValid,
 			error,
 		} );
-	},
+	};
 
-	onSubmit( event ) {
+	onSubmit = ( event ) => {
 		event.preventDefault();
 
 		if ( ! this.state.isValid ) {
 			this.setState( {
-				error: this.translate( 'Please provide a valid email address.' ),
+				error: this.props.translate( 'Please provide a valid email address.' ),
 			} );
 			return;
 		}
 
-		window.location.href = `https://my.pressable.com/signup/ecommerce-five-sites?email=${ encodeURIComponent( this.state.email ) }&utm_source=wordpresscom&utm_medium=signupref&utm_campaign=wpcomecomm2`;
-	},
+		this.props.partnerClickRecorder();
 
-	onEmailInputRef( input ) {
-		this._input = input;
-	},
+		window.open( `https://my.pressable.com/signup/ecommerce-five-sites?email=${ encodeURIComponent( this.state.email ) }&utm_source=wordpresscom&utm_medium=signupref&utm_campaign=wpcomecomm3` );
+	};
+
+	onEmailInputRef = ( input ) => {
+		this.input = input;
+	};
 
 	renderStoreForm() {
+		const { translate } = this.props;
+
 		return (
 			<div>
 				<LoggedOutForm className="pressable-store__form" onSubmit={ this.onSubmit }>
 					<HeroImage />
 
-					<FormSectionHeading className="pressable-store__heading">{ this.translate( 'Get your store for as low as $25 / month' ) }</FormSectionHeading>
-					<p className="pressable-store__copy">{ this.translate( 'We\'ve partnered with Pressable, a top-notch WordPress hosting provider, and WooCommerce, the go-to eCommerce solution for WordPress, to make setting up your store a snap.' ) }</p>
+					<FormSectionHeading className="pressable-store__heading">
+						{ translate( 'Get your store for as low as %(price)s / month', {
+							args: { price: '$25' }
+						} ) }
+					</FormSectionHeading>
+					<p className="pressable-store__copy">
+						{ translate( 'We\'ve partnered with Pressable, a top-notch WordPress hosting provider,' +
+							' and WooCommerce, the go-to eCommerce solution for WordPress, to make setting up ' +
+							'your store a snap.' ) }
+					</p>
 
 					<LoggedOutFormFooter>
-						<FormLabel className="pressable-store__form-label" for="email">{ this.translate( 'Start by entering your email address:' ) }</FormLabel>
+						<FormLabel className="pressable-store__form-label" htmlFor="email">
+							{ translate( 'Start by entering your email address:' ) }
+						</FormLabel>
 						<div className="pressable-store__form-fields">
-							<FormTextInput ref={ this.onEmailInputRef } isError={ this.state.error } isValid={ this.state.isValid } onChange={ this.onEmailChange } className="pressable-store__form-email is-spaced" type="email" placeholder="Email Address" name="email" />
-							<FormButton className="pressable-store__form-submit">{ this.translate( 'Get started on Pressable' ) } <Gridicon icon="external" size={ 12 } /></FormButton>
+							<FormTextInput
+								ref={ this.onEmailInputRef }
+								isError={ this.state.error }
+								isValid={ this.state.isValid }
+								onChange={ this.onEmailChange }
+								className="pressable-store__form-email is-spaced"
+								type="email"
+								placeholder="Email Address"
+								name="email"
+							/>
+							<FormButton className="pressable-store__form-submit">
+								{ translate( 'Get started on Pressable' ) }
+								<Gridicon icon="external" size={ 12 } />
+							</FormButton>
 						</div>
 						{ this.state.error && <FormInputValidation isError={ true } text={ this.state.error } /> }
 					</LoggedOutFormFooter>
 				</LoggedOutForm>
 				<LoggedOutFormLinks>
-					<LoggedOutFormLinkItem className="pressable-store__privacy-policy" target="__blank" href="https://pressable.com/legal/privacy-policy/">
-						{ this.translate( 'Pressable Privacy Policy', { comment: '“Pressable” is the name of a WordPress.org hosting provider' } ) } <Gridicon icon="external" size={ 12 } />
+					<LoggedOutFormLinkItem
+						className="pressable-store__privacy-policy"
+						target="__blank"
+						href="https://pressable.com/legal/privacy-policy/"
+					>
+						{ translate(
+							'Pressable Privacy Policy',
+							{ comment: '“Pressable” is the name of a WordPress.org hosting provider' }
+						) }
+						<Gridicon icon="external" size={ 12 } />
 					</LoggedOutFormLinkItem>
 				</LoggedOutFormLinks>
 			</div>
 		);
-	},
+	}
 
 	render() {
+		const { translate } = this.props;
+
 		return (
 			<div className="pressable-store">
 				<StepHeader
-					headerText={ this.translate( 'Create your WordPress Store' ) }
-					subHeaderText={ this.translate( 'Our partners at Pressable and WooCommerce are here for you' ) }
+					headerText={ translate( 'Create your WordPress Store' ) }
+					subHeaderText={ translate( 'Our partners at Pressable and WooCommerce are here for you.' ) }
 				/>
 				{ this.renderStoreForm() }
 				<div className="pressable-store__back-button-wrapper">
-					<Button compact borderless onClick={ this.props.onBackClick }>
+					<Button compact={ true } borderless={ true } onClick={ this.props.onBackClick }>
 						<Gridicon icon="arrow-left" size={ 18 } />
-						{ this.translate( 'Back' ) }
+						{ translate( 'Back', { context: 'Return to previous step' } ) }
 					</Button>
 				</div>
 			</div>
 		);
 	}
+}
+
+PressableStoreStep.propTypes = {
+	onBackClick: PropTypes.func.isRequired,
+	setRef: PropTypes.func
+};
+
+const mapDispatchToProps = dispatch => ( {
+	partnerClickRecorder: () =>
+		dispatch( recordTracksEvent( 'calypso_triforce_partner_redirect', { partner_name: 'Pressable' } ) )
 } );
+
+export default connect( null, mapDispatchToProps )( localize( PressableStoreStep ) );

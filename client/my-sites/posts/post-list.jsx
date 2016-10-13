@@ -56,7 +56,6 @@ var PostList = React.createClass( {
 	}
 } );
 
-
 var Posts = React.createClass( {
 
 	propTypes: {
@@ -145,8 +144,7 @@ var Posts = React.createClass( {
 	},
 
 	getNoContentMessage: function() {
-		var selectedSite = this.props.sites.getSelectedSite(),
-			attributes, newPostLink;
+		var attributes, newPostLink;
 
 		if ( this.props.search ) {
 			return <NoResults
@@ -165,7 +163,7 @@ var Posts = React.createClass( {
 				attributes = {
 					title: this.translate( 'Oh, no! We couldn\'t fetch your posts.' ),
 					line: this.translate( 'Please check your internet connection.' )
-				}
+				};
 			} else {
 				switch ( this.props.statusSlug ) {
 					case 'drafts':
@@ -278,7 +276,6 @@ var Posts = React.createClass( {
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				/>
 			);
-
 		} else {
 			if ( this.props.loading || ! this.props.sites.fetched ) {
 				for ( i = 0; i < placeholderCount; i++ ) {

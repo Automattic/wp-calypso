@@ -167,9 +167,11 @@ var TokenField = React.createClass( {
 	},
 
 	_renderInput: function() {
-		const { maxLength, value } = this.props;
+		const { autoCapitalize, autoComplete, maxLength, value } = this.props;
 
 		let props = {
+			autoCapitalize,
+			autoComplete,
 			ref: 'input',
 			key: 'input',
 			disabled: this.props.disabled,
@@ -178,9 +180,7 @@ var TokenField = React.createClass( {
 		};
 
 		if ( ! ( maxLength && value.length >= maxLength ) ) {
-			Object.assign( props, {
-				onChange: this._onInputChange
-			} );
+			props = { ...props, onChange: this._onInputChange };
 		}
 
 		return (
@@ -195,7 +195,7 @@ var TokenField = React.createClass( {
 		}
 	},
 
-	_onBlur: function( event ) {
+	_onBlur: function( event ) { // eslint-disable-line no-unused-vars
 		if ( this._inputHasValidValue() ) {
 			debug( '_onBlur adding current token' );
 			this.setState( { isActive: false }, this._addCurrentToken );

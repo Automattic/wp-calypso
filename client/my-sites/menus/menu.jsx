@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var protectForm = require( 'lib/mixins/protect-form' ),
-	observe = require( 'lib/mixins/data-observe' ),
 	assign = require( 'lodash/assign' ),
 	classNames = require( 'classnames' ),
 	MenuName = require( './menu-name' ),

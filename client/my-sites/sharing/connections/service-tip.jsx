@@ -56,10 +56,10 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		if ( 'function' === typeof this.props.tips[ this.props.service.name ] ) {
+		if ( 'function' === typeof this.props.tips[ this.props.service.ID ] ) {
 			return (
 				<div className="sharing-service-tip">
-					<span className="noticon noticon-info"></span>{ this.props.tips[ this.props.service.name ].call( this ) }
+					<span className="noticon noticon-info"></span>{ this.props.tips[ this.props.service.ID ].call( this ) }
 				</div>
 			);
 		} else {

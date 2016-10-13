@@ -3,16 +3,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/assign' ),
-	classnames = require( 'classnames' );
+import React from 'react';
+import { assign } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' );
+import Card from 'components/card';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'CompactCard',
 
 	render: function() {

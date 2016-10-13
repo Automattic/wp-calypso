@@ -2,7 +2,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import debugModule from 'debug';
 
 // Internal dependencies
 import Card from 'components/card';
@@ -17,8 +16,6 @@ import Notice from 'components/notice';
 import { updateListDetails, dismissListNotice, updateTitle, updateDescription } from 'state/reader/lists/actions';
 import { isUpdatedList, hasError } from 'state/reader/lists/selectors';
 import protectForm from 'lib/mixins/protect-form';
-
-const debug = debugModule( 'calypso:reader:list-management' );
 
 const ListManagementDescriptionEdit = React.createClass( {
 

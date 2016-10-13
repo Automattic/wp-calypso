@@ -50,12 +50,14 @@ const BillingHistoryTable = React.createClass( {
 				components: { link: <a href="/plans" /> }
 			}
 		);
+		const noFilterResultsText = this.translate( 'No receipts found.' );
 		return (
 			<TransactionsTable
 				{ ...this.props }
 				initialFilter={ { date: { newest: 5 } } }
 				header
 				emptyTableText={ emptyTableText }
+				noFilterResultsText={ noFilterResultsText }
 				transactionRenderer={ this.renderTransaction } />
 		);
 	},

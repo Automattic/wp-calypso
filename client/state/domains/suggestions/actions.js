@@ -41,7 +41,6 @@ export function requestDomainsSuggestions( queryObject ) {
 			queryObject
 		} );
 		return wpcom.domains().suggestions( queryObject ).then( ( suggestions ) => {
-			delete suggestions._headers;
 			dispatch( receiveDomainsSuggestions( suggestions, queryObject ) );
 			dispatch( {
 				type: DOMAINS_SUGGESTIONS_REQUEST_SUCCESS,

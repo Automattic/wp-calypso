@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { noop } from 'lodash';
 import sinon from 'sinon';
 
 /**
@@ -22,7 +23,14 @@ describe( 'MediaStore', function() {
 	let Dispatcher, sandbox, MediaStore, handler;
 
 	useFakeDom();
-	useMockery();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} ),
+			site: noop
+		} );
+	} );
 
 	before( function() {
 		Dispatcher = require( 'dispatcher' );

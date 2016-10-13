@@ -1,5 +1,4 @@
 import get from 'lodash/get';
-import omit from 'lodash/omit';
 import isArray from 'lodash/isArray';
 
 import wpcom from 'lib/wp';
@@ -24,7 +23,7 @@ export function requestSite( siteId ) {
 			function success( data ) {
 				dispatch( {
 					type: READER_SITE_REQUEST_SUCCESS,
-					payload: omit( data, '_headers' )
+					payload: data
 				} );
 				const feedInfo = get( data, 'meta.data.feed' );
 				if ( feedInfo ) {

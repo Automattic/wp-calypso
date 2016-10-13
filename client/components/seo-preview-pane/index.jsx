@@ -3,26 +3,93 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
-import PureComponent from 'react-pure-render/component';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
+import {
+	compact,
+	find,
+	get,
+	identity,
+	overSome
+} from 'lodash';
 
 /**
  * Internal dependencies
  */
+import SeoPreviewUpgradeNudge from 'components/seo/preview-upgrade-nudge';
+import ReaderPreview from 'components/seo/reader-preview';
 import FacebookPreview from 'components/seo/facebook-preview';
 import TwitterPreview from 'components/seo/twitter-preview';
 import SearchPreview from 'components/seo/search-preview';
 import VerticalMenu from 'components/vertical-menu';
+import PostMetadata from 'lib/post-metadata';
+import { formatExcerpt } from 'lib/post-normalizer/rule-create-better-excerpt';
+import { isBusiness, isEnterprise } from 'lib/products-values';
+import { parseHtml } from 'lib/formatting';
 import { SocialItem } from 'components/vertical-menu/items';
 import { getEditorPostId } from 'state/ui/editor/selectors';
 import { getSitePost } from 'state/posts/selectors';
+import { getSeoTitle } from 'state/sites/selectors';
 import {
 	getSectionName,
 	getSelectedSite
 } from 'state/ui/selectors';
+
+const PREVIEW_IMAGE_WIDTH = 512;
+const largeBlavatar = site => `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=${ PREVIEW_IMAGE_WIDTH }`;
+const hasBusinessPlan = overSome( isBusiness, isEnterprise );
+
+const getPostImage = ( post ) => {
+	if ( ! post ) {
+		return null;
+	}
+
+	// Use the featured image if one was set
+	if ( post.featured_image ) {
+		return post.featured_image;
+	}
+
+	// Otherwise we'll look for a large enough image in the post
+	const content = post.content;
+	if ( ! content ) {
+		return null;
+	}
+
+	const imgElements = parseHtml( content ).querySelectorAll( 'img' );
+	const imageUrl = get(
+		find( imgElements, ( { width } ) => width >= PREVIEW_IMAGE_WIDTH ),
+		'src',
+		null
+	);
+
+	return imageUrl
+		? `${ imageUrl }?s=${ PREVIEW_IMAGE_WIDTH }`
+		: null;
+};
+
+const getSeoExcerptForPost = ( post ) => {
+	if ( ! post ) {
+		return null;
+	}
+
+	return formatExcerpt( find( [
+		PostMetadata.metaDescription( post ),
+		post.excerpt,
+		post.content
+	], identity ) );
+};
+
+const getSeoExcerptForSite = ( site ) => {
+	if ( ! site ) {
+		return null;
+	}
+
+	return formatExcerpt( find( [
+		get( site, 'options.advanced_seo_front_page_description' ),
+		site.description
+	], identity ) );
+};
 
 const ComingSoonMessage = translate => (
 	<div className="seo-preview-pane__message">
@@ -30,30 +97,59 @@ const ComingSoonMessage = translate => (
 	</div>
 );
 
-const GooglePreview = site =>
+const ReaderPost = ( site, post ) => {
+	return (
+		<ReaderPreview
+			siteTitle={ site.name }
+			siteSlug={ site.slug }
+			siteIcon={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=32` }
+			postTitle={ get( post, 'title', '' ) }
+			postExcerpt={ formatExcerpt(
+				get( post, 'excerpt', false ) ||
+				get( post, 'content', false )
+			) }
+			postImage={ getPostImage( post ) }
+			postDate={ get( post, 'date', (new Date()).toISOString() ) }
+			authorName={ get( post, 'author.name', '' ) }
+			authorIcon={ get( post, 'author.avatar_URL', '' ) }
+		/>
+	);
+};
+
+const GoogleSite = site => (
 	<SearchPreview
 		title={ site.name }
 		url={ site.URL }
-		snippet={ site.description }
-	/>;
+		snippet={ getSeoExcerptForSite( site ) }
+	/>
+);
+
+const GooglePost = ( site, post ) => (
+	<SearchPreview
+		title={ get( post, 'seoTitle', '' ) }
+		url={ get( post, 'URL', '' ) }
+		snippet={ getSeoExcerptForPost( post ) }
+	/>
+);
 
 const FacebookSite = site => (
 	<FacebookPreview
 		title={ site.name }
 		url={ site.URL }
 		type="website"
-		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		description={ getSeoExcerptForSite( site ) }
+		image={ largeBlavatar( site ) }
 	/>
 );
 
 const FacebookPost = ( site, post ) => (
 	<FacebookPreview
-		title={ site.name }
-		url={ site.URL }
+		title={ get( post, 'seoTitle', '' ) }
+		url={ get( post, 'URL', '' ) }
 		type="article"
-		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		description={ getSeoExcerptForPost( post ) }
+		image={ getPostImage( post ) }
+		author={ get( post, 'author.name', '' ) }
 	/>
 );
 
@@ -62,18 +158,18 @@ const TwitterSite = site => (
 		title={ site.name }
 		url={ site.URL }
 		type="summary"
-		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		description={ getSeoExcerptForSite( site ) }
+		image={ largeBlavatar( site ) }
 	/>
 );
 
 const TwitterPost = ( site, post ) => (
 	<TwitterPreview
-		title={ site.name }
-		url={ site.URL }
+		title={ get( post, 'seoTitle', '' ) }
+		url={ get( post, 'URL', '' ) }
 		type="large_image_summary"
-		description={ site.description }
-		image={ `${ get( site, 'icon.img', '//gravatar.com/avatar/' ) }?s=512` }
+		description={ getSeoExcerptForPost( post ) }
+		image={ getPostImage( post ) }
 	/>
 );
 
@@ -82,7 +178,7 @@ export class SeoPreviewPane extends PureComponent {
 		super( props );
 
 		this.state = {
-			selectedService: 'google'
+			selectedService: props.post ? 'wordpress' : 'google'
 		};
 
 		this.selectPreview = this.selectPreview.bind( this );
@@ -96,9 +192,24 @@ export class SeoPreviewPane extends PureComponent {
 		const {
 			post,
 			site,
-			translate
+			translate,
+			showNudge
 		} = this.props;
+
 		const { selectedService } = this.state;
+
+		const services = compact( [
+			post && 'wordpress',
+			'google',
+			'facebook',
+			'twitter'
+		] );
+
+		if ( showNudge ) {
+			return (
+				<SeoPreviewUpgradeNudge { ...{ site } } />
+			);
+		}
 
 		return (
 			<div className="seo-preview-pane">
@@ -117,25 +228,23 @@ export class SeoPreviewPane extends PureComponent {
 						</p>
 					</div>
 					<VerticalMenu onClick={ this.selectPreview }>
-						<SocialItem service="google" />
-						<SocialItem service="facebook" />
-						<SocialItem service="twitter" />
+						{ services.map( service => <SocialItem { ...{ key: service, service } } /> ) }
 					</VerticalMenu>
 				</div>
 				<div className="seo-preview-pane__preview-area">
 					<div className="seo-preview-pane__preview">
 						{ post && get( {
+							wordpress: ReaderPost( site, post ),
 							facebook: FacebookPost( site, post ),
-							google: GooglePreview( site ),
+							google: GooglePost( site, post ),
 							twitter: TwitterPost( site, post )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 						{ ! post && get( {
 							facebook: FacebookSite( site ),
-							google: GooglePreview( site ),
+							google: GoogleSite( site ),
 							twitter: TwitterSite( site )
 						}, selectedService, ComingSoonMessage( translate ) ) }
 					</div>
-					<div className="seo-preview-pane__preview-spacer" />
 				</div>
 			</div>
 		);
@@ -145,12 +254,20 @@ export class SeoPreviewPane extends PureComponent {
 const mapStateToProps = state => {
 	const site = getSelectedSite( state );
 	const postId = getEditorPostId( state );
+	const post = getSitePost( state, site.ID, postId );
 	const isEditorShowing = 'post-editor' === getSectionName( state );
 
 	return {
-		site: site,
-		post: isEditorShowing && getSitePost( state, site.ID, postId )
-	}
+		site: {
+			...site,
+			name: getSeoTitle( state, 'frontPage', { site } )
+		},
+		post: isEditorShowing && {
+			...post,
+			seoTitle: getSeoTitle( state, 'posts', { site, post } )
+		},
+		showNudge: site && site.plan && ! hasBusinessPlan( site.plan )
+	};
 };
 
 export default connect( mapStateToProps, null )( localize( SeoPreviewPane ) );
