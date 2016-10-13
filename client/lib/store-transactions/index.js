@@ -179,46 +179,44 @@ TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	}.bind( this ) );
 };
 
-function createPaygateToken( requestType ) {
-	return ( cardDetails, callback ) => {
-		wpcom.paygateConfiguration( {
-			request_type: requestType,
-			country: cardDetails.country,
-		}, function( error, configuration ) {
+function createPaygateToken( requestType, cardDetails, callback ) {
+	wpcom.paygateConfiguration( {
+		request_type: requestType,
+		country: cardDetails.country,
+	}, function( error, configuration ) {
+		if ( error ) {
+			callback( error );
+			return;
+		}
+
+		paygateLoader.ready( configuration.js_url, function( error, Paygate ) {
+			var parameters;
 			if ( error ) {
 				callback( error );
 				return;
 			}
 
-			paygateLoader.ready( configuration.js_url, function( error, Paygate ) {
-				var parameters;
-				if ( error ) {
-					callback( error );
-					return;
-				}
+			Paygate.setProcessor( configuration.processor );
+			Paygate.setApiUrl( configuration.api_url );
+			Paygate.setPublicKey( configuration.public_key );
+			Paygate.setEnvironment( configuration.environment );
 
-				Paygate.setProcessor( configuration.processor );
-				Paygate.setApiUrl( configuration.api_url );
-				Paygate.setPublicKey( configuration.public_key );
-				Paygate.setEnvironment( configuration.environment );
-
-				parameters = getPaygateParameters( cardDetails );
-				Paygate.createToken( parameters, onSuccess, onFailure );
-			} );
+			parameters = getPaygateParameters( cardDetails );
+			Paygate.createToken( parameters, onSuccess, onFailure );
 		} );
+	} );
 
-		function onSuccess( data ) {
-			if ( data.is_error ) {
-				return callback( new Error( 'Paygate Response Error: ' + data.error_msg ) );
-			}
-
-			callback( null, data.token );
+	function onSuccess( data ) {
+		if ( data.is_error ) {
+			return callback( new Error( 'Paygate Response Error: ' + data.error_msg ) );
 		}
 
-		function onFailure() {
-			callback( new Error( 'Paygate Request Error' ) );
-		}
-	};
+		callback( null, data.token );
+	}
+
+	function onFailure() {
+		callback( new Error( 'Paygate Request Error' ) );
+	}
 }
 
 function getPaygateParameters( cardDetails ) {
