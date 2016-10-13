@@ -9,7 +9,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 
 ### `requestKeyringConnections()`
 
-Get a list of keyring services.
+Get a list of keyring connections.
 
 ```js
 import { connect } from 'react-redux';
