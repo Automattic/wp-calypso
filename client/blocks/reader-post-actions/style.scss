@@ -9,35 +9,54 @@
 }
 
 .reader-post-actions__item {
+	font-size: 14px;
 	margin-right: 10px;
 
 	&:last-child {
 		margin-right: 0;
 	}
 
-	.reader-share__button-label {
-		font-size: 14px;
-	}
+	&.is-liked {
 
-	.reader-share .gridicon {
-		top: 7px;
-
-		@include breakpoint( "<480px" ) {
-			top: 5px;
+		.gridicon {
+			fill: orange-jazzy;
 		}
 	}
+}
 
-	.comment-button__icon {
+.reader-post-actions__item .reader-post-card__visit {
+	flex: 1;
+
+	.external-link {
+		color: lighten( $gray, 10% );
+		font-size: 14px;
+	}
+}
+
+.reader-post-actions__item .reader-share__button-label {
+	color: lighten( $gray, 10% );
+
+	&:hover {
+		color: $blue-light;
+	}
+}
+
+.reader-post-actions__item .comment-button {
+
+	.gridicon {
 		top: 0;
 	}
+}
 
-	.gridicons-star-outline {
-		left: 5px;
-	}
+.reader-post-actions__item .like-button {
 
-	.like-button__label {
-		margin-top: -3px;
+	.gridicon {
+		top: 4px;
 	}
+}
+
+.reader-post-actions__item .like-button__label {
+	margin: -4px 0 0 -5px;
 }
 
 .reader-post-actions__visit {

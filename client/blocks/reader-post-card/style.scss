@@ -14,22 +14,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	@include breakpoint( ">660px" ) {
 		padding: 20px 0;
 	}
-
-	&.has-thumbnail {
-
-		.reader-post-card__excerpt {
-			margin-bottom: 20px;
-		}
-
-		.reader-post-actions {
-			padding: 10px 0 37px 265px;
-			width: 100%;
-
-			.gridicon {
-				fill: lighten( $gray, 10% );
-			}
-		}
-	}
 }
 
 .reader-post-card__meta {
@@ -147,32 +131,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card.card .reader-post-actions {
-	display: flex;
 	margin: 10px 0 0;
-	padding: 0 0 37px;
 	width: 100%;
 }
 
-.reader-post-card__visit,
-.reader-post-card__share,
-.reader-post-card__comments,
-.reader-post-card__likes,
-.reader-post-card__post-options {
-	align-items: center;
-    display: inline-flex;
-
-	.gridicon {
-		fill: lighten( $gray, 10% );
-	}
-}
-
-.reader-post-card__visit {
-	padding: 0;
-}
-
-.reader-post-card__share .reader-share__button-label {
-	color: lighten( $gray, 10% );
-	font-size: 14px;
+.reader-post-actions__item .reader-share__button-label {
 	margin: 0 4px;
 
 	@include breakpoint( "<660px" ) {
@@ -180,18 +143,9 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
-.reader-post-card__visit {
-	flex: 1;
-
-	.external-link {
-		color: lighten( $gray, 10% );
-		font-size: 14px;
-	}
-}
-
-.reader-post-card__share .reader-share__button-label,
-.reader-post-card__comments .comment-button__label-status,
-.reader-post-card__likes .like-button__label-status {
+.reader-post-actions__item .reader-share__button-label,
+.reader-post-actions__item .comment-button__label-status,
+.reader-post-actions__item .like-button__label-status {
 
 	@media #{$reader-post-card-breakpoint-large} {
 		display: none;
@@ -208,13 +162,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 // For these borderless cards to look more presentable on Devdocs
 .is-section-devdocs .reader-post-card.card {
-	padding: 16px;
-}
-
-.is-section-devdocs .reader-post-card__featured-image {
-	bottom: 16px;
-}
- .reader-post-card.card {
 	padding: 16px;
 }
 
