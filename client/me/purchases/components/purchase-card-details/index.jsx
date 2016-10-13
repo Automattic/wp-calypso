@@ -28,7 +28,7 @@ class PurchaseCardDetails extends Component {
 		}
 
 		if ( ! this.isDataValid( props ) ) {
-			page( paths.list() );
+			page( paths.purchasesRoot() );
 		}
 	}
 

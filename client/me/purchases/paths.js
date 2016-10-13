@@ -1,13 +1,13 @@
-function list() {
+function purchasesRoot() {
 	return '/me/purchases';
 }
 
 function addCreditCard() {
-	return list() + '/add-credit-card';
+	return purchasesRoot() + '/add-credit-card';
 }
 
 function billingHistory() {
-	return list() + '/billing';
+	return purchasesRoot() + '/billing';
 }
 
 function billingHistoryReceipt( receiptId = ':receiptId' ) {
@@ -15,7 +15,7 @@ function billingHistoryReceipt( receiptId = ':receiptId' ) {
 }
 
 function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
-	return list() + `/${ siteName }/${ purchaseId }`;
+	return purchasesRoot() + `/${ siteName }/${ purchaseId }`;
 }
 
 function cancelPurchase( siteName, purchaseId ) {
@@ -47,6 +47,6 @@ export default {
 	cancelPurchase,
 	confirmCancelDomain,
 	editCardDetails,
-	list,
-	managePurchase
+	managePurchase,
+	purchasesRoot
 };

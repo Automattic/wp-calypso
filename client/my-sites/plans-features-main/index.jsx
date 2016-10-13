@@ -291,7 +291,7 @@ class PlansFeaturesMain extends Component {
 						'Yes. We want you to love everything you do at WordPress.com, so we provide a 30-day' +
 						' refund on all of our plans. {{a}}Manage purchases{{/a}}.',
 						{
-							components: { a: <a href={ purchasesPaths.list() } /> }
+							components: { a: <a href={ purchasesPaths.purchasesRoot() } /> }
 						}
 					) }
 				/>

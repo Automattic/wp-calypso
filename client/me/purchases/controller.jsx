@@ -185,7 +185,7 @@ export default {
 		setTitle( context );
 
 		recordPurchasesPageView(
-			paths.list()
+			paths.purchasesRoot()
 		);
 
 		renderPage(

@@ -61,7 +61,7 @@ const MeSidebar = React.createClass( {
 			'/me/notifications/updates': 'notifications',
 			'/me/notifications/subscriptions': 'notifications',
 			'/help/contact': 'help',
-			[ purchasesPaths.list() ]: 'purchases',
+			[ purchasesPaths.purchasesRoot() ]: 'purchases',
 			[ purchasesPaths.billingHistory() ]: 'purchases',
 			[ purchasesPaths.addCreditCard() ]: 'purchases',
 			'/me/chat': 'happychat'
@@ -116,7 +116,7 @@ const MeSidebar = React.createClass( {
 
 						<SidebarItem
 							selected={ selected === 'purchases' }
-							link={ purchasesPaths.list() }
+							link={ purchasesPaths.purchasesRoot() }
 							label={ this.translate( 'Manage Purchases' ) }
 							icon="credit-card"
 							onNavigate={ this.onNavigate }

@@ -19,7 +19,7 @@ var observe = require( 'lib/mixins/data-observe' ),
 	SectionHeader = require( 'components/section-header' );
 
 import Main from 'components/main';
-import puchasesPaths from 'me/purchases/paths';
+import purchasesPaths from 'me/purchases/paths';
 
 module.exports = React.createClass( {
 	displayName: 'BillingHistory',
@@ -37,7 +37,7 @@ module.exports = React.createClass( {
 				<Card className="billing-history__receipts">
 					<BillingHistoryTable transactions={ data.billingHistory } />
 				</Card>
-				<Card href={ puchasesPaths.list() }>
+				<Card href={ purchasesPaths.purchasesRoot() }>
 					{ this.translate( 'Go to "Purchases" to add or cancel a plan.' ) }
 				</Card>
 				{ hasBillingHistory &&

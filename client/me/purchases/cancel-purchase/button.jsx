@@ -165,7 +165,7 @@ const CancelPurchaseButton = React.createClass( {
 					}
 				), { persistent: true } );
 
-				page( paths.list() );
+				page( paths.purchasesRoot() );
 			} else {
 				notices.error( this.translate(
 					'There was a problem canceling %(purchaseName)s. ' +
@@ -213,7 +213,7 @@ const CancelPurchaseButton = React.createClass( {
 			{ product_slug: this.props.purchase.productSlug }
 		);
 
-		page.redirect( paths.list() );
+		page.redirect( paths.purchasesRoot() );
 	},
 
 	submitCancelAndRefundPurchase() {
