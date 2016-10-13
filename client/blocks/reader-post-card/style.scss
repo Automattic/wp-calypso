@@ -72,6 +72,28 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
+.reader-post-card.card {
+
+	&.is-photo {
+
+		.reader-post-card__post {
+			flex-direction: column;
+		}
+
+		.reader-post-card__featured-image {
+			position: relative;
+				top: 0;
+			height: 225px;
+			width: 100%;
+		}
+
+		.reader-post-card__post-details,
+		.reader-post-card__social {
+			padding-left: 0;
+		}
+	}
+}
+
 .reader-post-card__featured-image {
 	display: block;
 	height: calc( 100% - 92px );
@@ -280,7 +302,14 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 // For these borderless cards to look more presentable on Devdocs
 .is-section-devdocs .reader-post-card.card {
-	padding: 16px;
+
+	&.has-thumbnail {
+		padding: 16px;
+	}
+
+	&.is-photo {
+		padding: 0;
+	}
 }
 
 .is-section-devdocs .reader-post-card__featured-image {
