@@ -14,24 +14,24 @@ import { openChat } from 'state/ui/happychat/actions';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
-const HappychatButton = ( { translate, onOpenChat } ) =>
-	<Button compact borderless onClick={ onOpenChat }>
-		<Gridicon icon="comment" /> { translate( 'Support Chat' ) }
-	</Button>;
-
-const mapStateToProps = () => ( {} );
-
-const mapDispatchToProps = dispatch => {
-	return {
-		onOpenChat() {
-			if ( viewport.isMobile() ) {
-				// For mobile clients, happychat will always use the page compoent instead of the sidebar
-				page( '/me/chat' );
-				return;
-			}
-			dispatch( openChat() );
+const HappychatButton = React.createClass( {
+	onOpenChat: function() {
+		const { onOpenChat } = this.props;
+		if ( viewport.isMobile() ) {
+			// For mobile clients, happychat will always use the page compoent instead of the sidebar
+			page( '/me/chat' );
+			return;
 		}
-	};
-};
+		onOpenChat();
+	},
+	render: function() {
+		const { translate } = this.props;
+		return (
+			<Button compact borderless onClick={ this.onOpenChat }>
+				<Gridicon icon="comment" /> { translate( 'Support Chat' ) }
+			</Button>
+		);
+	}
+} );
 
-export default connect( mapStateToProps, mapDispatchToProps )( localize( HappychatButton ) );
+export default connect( null, { onOpenChat: openChat } )( localize( HappychatButton ) );
