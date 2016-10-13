@@ -48,6 +48,7 @@ class TermFormDialog extends Component {
 	};
 
 	static defaultProps = {
+		onClose: noop,
 		onSuccess: noop,
 		showDescriptionInput: false,
 		showDialog: false

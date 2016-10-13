@@ -52,6 +52,16 @@ Whether the dialog is shown/hidden
 
 A function invoked when the dialog is closed.
 
+### `onSuccess`
+
+<table>
+	<tr><th>Type</th><td>Function</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>() => {}</code></td></tr>
+</table>
+
+A function invoked when the term is saved. It receives the term as a parameter.
+
 ### `showDescriptionInput`
 
 <table>
@@ -60,4 +70,4 @@ A function invoked when the dialog is closed.
 	<tr><th>Default</th><td><code>false</code></td></tr>
 </table>
 
-Whether we allow specifying a description or not.
+Toggles the display of the term description field.

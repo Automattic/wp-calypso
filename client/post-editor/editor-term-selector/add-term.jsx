@@ -4,7 +4,7 @@
 import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -19,7 +19,14 @@ import { getTerms } from 'state/terms/selectors';
 class TermSelectorAddTerm extends Component {
 	static propTypes = {
 		labels: PropTypes.object,
+		onSuccess: PropTypes.func,
+		postType: PropTypes.string,
+		taxonomy: PropTypes.string,
 		terms: PropTypes.array
+	};
+
+	static defaultProps = {
+		onSuccess: noop
 	};
 
 	constructor( props ) {
@@ -36,10 +43,10 @@ class TermSelectorAddTerm extends Component {
 
 	closeDialog = () => {
 		this.setState( { showDialog: false } );
-	}
+	};
 
 	render() {
-		const { labels, terms, ...props } = this.props;
+		const { labels, onSuccess, postType, terms, taxonomy } = this.props;
 		const totalTerms = terms ? terms.length : 0;
 		const classes = classNames( 'editor-term-selector__add-term', { 'is-compact': totalTerms < 8 } );
 
@@ -51,7 +58,9 @@ class TermSelectorAddTerm extends Component {
 				<TermFormDialog
 					showDialog={ this.state.showDialog }
 					onClose={ this.closeDialog }
-					{ ...props }
+					postType={ postType }
+					taxonomy={ taxonomy }
+					onSuccess={ onSuccess }
 				/>
 			</div>
 		);
