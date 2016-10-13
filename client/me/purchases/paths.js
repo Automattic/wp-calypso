@@ -10,8 +10,8 @@ function billingHistory() {
 	return list() + '/billing';
 }
 
-function billingHistoryReceipt( transactionId = ':transaction_id' ) {
-	return billingHistory() + `/${ transactionId }`;
+function billingHistoryReceipt( receiptId = ':receiptId' ) {
+	return billingHistory() + `/${ receiptId }`;
 }
 
 function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
