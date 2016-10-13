@@ -37,7 +37,7 @@ const ImageEditor = React.createClass( {
 		media: PropTypes.object,
 		siteId: PropTypes.number,
 		onImageExtracted: PropTypes.func,
-		onImageEditorCancel: PropTypes.func,
+		onCancel: PropTypes.func,
 		className: PropTypes.string,
 
 		// Redux props
@@ -51,7 +51,7 @@ const ImageEditor = React.createClass( {
 		return {
 			media: null,
 			onImageExtracted: noop,
-			onImageEditorCancel: null
+			onCancel: null
 		};
 	},
 
@@ -96,7 +96,7 @@ const ImageEditor = React.createClass( {
 	},
 
 	onCancel() {
-		this.props.onImageEditorCancel( this.props );
+		this.props.onCancel( this.props );
 	},
 
 	onLoadCanvasError() {
@@ -121,8 +121,7 @@ const ImageEditor = React.createClass( {
 	render() {
 		const {
 			className,
-			siteId,
-			onImageEditorCancel
+			siteId
 		} = this.props;
 
 		const classes = classNames(
@@ -144,7 +143,7 @@ const ImageEditor = React.createClass( {
 						/>
 						<ImageEditorToolbar />
 						<ImageEditorButtons
-							onCancel={ onImageEditorCancel && this.onCancel }
+							onCancel={ this.props.onCancel && this.onCancel }
 							onDone={ this.onDone }
 						/>
 					</div>

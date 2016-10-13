@@ -448,7 +448,7 @@ module.exports = React.createClass( {
 						siteId={ site && site.ID }
 						media={ media }
 						onImageExtracted={ this.onImageExtracted }
-						onImageEditorCancel={ this.onImageEditorCancel }
+						onCancel={ this.onImageEditorCancel }
 					/>
 				);
 				break;
