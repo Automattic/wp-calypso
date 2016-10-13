@@ -56,7 +56,6 @@ const FormGeneral = React.createClass( {
 			settings.timezone_string = site.settings.timezone_string;
 			settings.jetpack_relatedposts_allowed = site.settings.jetpack_relatedposts_allowed;
 			settings.jetpack_sync_non_public_post_stati = site.settings.jetpack_sync_non_public_post_stati;
-			settings.hello_vote_enabled = site.settings.hello_vote_enabled;
 
 			settings.amp_is_supported = site.settings.amp_is_supported;
 			settings.amp_is_enabled = site.settings.amp_is_enabled;
@@ -111,7 +110,6 @@ const FormGeneral = React.createClass( {
 			jetpack_relatedposts_show_thumbnails: false,
 			jetpack_sync_non_public_post_stati: false,
 			holidaysnow: false,
-			hello_vote_enabled: false,
 			amp_is_supported: false,
 			amp_is_enabled: false,
 		} );
@@ -520,42 +518,6 @@ const FormGeneral = React.createClass( {
 		);
 	},
 
-	helloVoteOption() {
-		const site = this.props.site;
-
-		if ( site.jetpack ) {
-			return null;
-		}
-
-		return (
-			<FormFieldset>
-				<legend>{ this.translate( 'US Voter Registration Form' ) }</legend>
-				<ul>
-					<li>
-						<FormLabel>
-							<FormCheckbox
-								name="hello_vote_enabled"
-								checked={ this.state.hello_vote_enabled }
-								onChange={ this.onHelloVoteSettingChanged }
-							/>
-							<span>{ this.translate( 'Encourage your US-based visitors to register to vote by adding a subtle prompt to your site' ) }</span>
-						</FormLabel>
-					</li>
-				</ul>
-			</FormFieldset>
-		);
-	},
-
-	onHelloVoteSettingChanged( event ) {
-		const newValue = event.target.checked;
-		if ( newValue ) {
-			analytics.mc.bumpStat( 'hello-vote', 'calypso-option-enabled' );
-		} else {
-			analytics.mc.bumpStat( 'hello-vote', 'calypso-option-disabled' );
-		}
-		this.linkState( 'hello_vote_enabled' ).requestChange( newValue );
-	},
-
 	Timezone() {
 		if ( this.props.site.jetpack ) {
 			return;
@@ -625,7 +587,6 @@ const FormGeneral = React.createClass( {
 						{ this.languageOptions() }
 						{ this.Timezone() }
 						{ this.holidaySnowOption() }
-						{ this.helloVoteOption() }
 					</form>
 				</Card>
 
