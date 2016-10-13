@@ -351,42 +351,33 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__item {
-	position: relative;
+	display: flex;
+	flex: none;
 	margin: 0 24px;
-	padding: 12px 20px 12px 30px;
+	padding: 12px 0;
 	font-size: 14px;
 	color: $gray-dark;
-
-	@include breakpoint( "<1040px" ) {
-		margin: 0 12px;
-	}
 
 	@include breakpoint( "<960px" ) {
 		font-size: 12px;
 	}
+
+	@include breakpoint( "<1040px" ) {
+		margin: 0 12px;
+	}
+}
+
+.plan-features__item-title {
+	flex: 1 0 0;
+	margin-left: 10px;
 }
 
 .plan-features__item-checkmark {
-	position: absolute;
-	left: 0;
-	top: 14px;
 	fill: $blue-wordpress;
 }
 
 .plan-features__item-tip-info {
-	position: absolute;
-	right: 0;
-	top: 14px;
-	width: 18px;
-	height: 18px;
-	margin-top: 0px;
-	color: lighten( $gray, 20% );
-	cursor: pointer;
-
-	&:hover,
-	&:focus {
-		color: $gray-dark;
-	}
+	align-self: center;
 }
 
 .popover__plan-features {

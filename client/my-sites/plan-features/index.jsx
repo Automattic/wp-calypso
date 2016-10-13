@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
 import config from 'config';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
-import Popover from 'components/popover';
 import PlanFeaturesActions from './actions';
 import { isCurrentPlanPaid, isCurrentSitePlan, getSitePlan, getSiteSlug } from 'state/sites/selectors';
 import { isCurrentUserCurrentPlanOwner, getPlansBySiteId } from 'state/sites/plans/selectors';
@@ -55,24 +54,6 @@ import { retargetViewPlans } from 'lib/analytics/ad-tracking';
 
 class PlanFeatures extends Component {
 
-	static getFeaturePopoverHiddenState() {
-		return {
-			showPopover: false,
-			popoverReference: null,
-			popoverDescription: ''
-		};
-	}
-
-	constructor() {
-		super();
-
-		this.state = PlanFeatures.getFeaturePopoverHiddenState();
-
-		this.closeFeaturePopover = this.closeFeaturePopover.bind( this );
-		this.showFeaturePopover = this.showFeaturePopover.bind( this );
-		this.swapFeaturePopover = this.swapFeaturePopover.bind( this );
-	}
-
 	render() {
 		const { planProperties } = this.props;
 
@@ -103,8 +84,6 @@ class PlanFeatures extends Component {
 							</tr>
 						</tbody>
 					</table>
-
-					{ this.renderFeaturePopover() }
 				</div>
 			</div>
 		);
@@ -345,25 +324,6 @@ class PlanFeatures extends Component {
 		} );
 	}
 
-	renderFeaturePopover() {
-		return (
-			<Popover
-				showDelay={ 100 }
-				id="popover__plan-features"
-				isVisible={ this.state.showPopover }
-				context={ this.state.popoverReference }
-				position="right"
-				onClose={ this.closeFeaturePopover }
-				className={ classNames(
-						'info-popover__tooltip',
-						'popover__plan-features'
-					) }
-				>
-					{ this.state.popoverDescription }
-			</Popover>
-		);
-	}
-
 	renderFeatureItem( feature, index ) {
 		return (
 			<PlanFeaturesItem
@@ -372,33 +332,10 @@ class PlanFeatures extends Component {
 					? feature.getDescription()
 					: null
 				}
-				onMouseEnter={ this.showFeaturePopover }
-				onMouseLeave={ this.closeFeaturePopover }
-				onTouchStart={ this.swapFeaturePopover }
 			>
-				{ feature.getTitle() }
+				<span className="plan-features__item-title">{ feature.getTitle() }</span>
 			</PlanFeaturesItem>
 		);
-	}
-
-	showFeaturePopover( el, popoverDescription ) {
-		this.setState( {
-			showPopover: true,
-			popoverDescription,
-			popoverReference: el
-		} );
-	}
-
-	closeFeaturePopover() {
-		this.setState( PlanFeatures.getFeaturePopoverHiddenState() );
-	}
-
-	swapFeaturePopover( el, popoverDescription ) {
-		if ( this.state.showPopover ) {
-			this.closeFeaturePopover();
-		} else {
-			this.showFeaturePopover( el, popoverDescription );
-		}
 	}
 
 	renderPlanFeatureColumns( rowIndex ) {
@@ -576,4 +513,3 @@ export default connect(
 		recordTracksEvent
 	}
 )( localize( PlanFeatures ) );
-
