@@ -57,17 +57,7 @@ export default class RefreshPostCard extends React.Component {
 		onCommentClick: noop
 	};
 
-	constructor( props ) {
-		super( props );
-		[
-			'handleCardClick',
-			'propagateCardClick',
-		].forEach( fn => {
-			this[ fn ] = this[ fn ].bind( this );
-		} );
-	}
-
-	propagateCardClick() {
+	propagateCardClick = () => {
 		const postToOpen = this.props.post;
 
 		// @todo
@@ -77,7 +67,7 @@ export default class RefreshPostCard extends React.Component {
 		this.props.onClick( { post: postToOpen, site: this.props.site, feed: this.props.feed } );
 	}
 
-	handleCardClick( event ) {
+	handleCardClick = ( event ) => {
 		const rootNode = ReactDom.findDOMNode( this ),
 			selection = window.getSelection && window.getSelection();
 
