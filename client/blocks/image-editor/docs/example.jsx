@@ -31,14 +31,16 @@ function ImageEditorExample( { primarySiteId } ) {
 					onImageExtracted={ onImageExtracted }
 				/>
 			</div>
-			
-			<img 
-				id="devdocs-example-image-editor-result"
-				style={ {
-					display: 'block',
-					margin: '10px auto'
-				} }
-			/>
+			<div style={ { 
+				textAlign: 'center',
+				marginTop: '15px'
+			} }>
+				<h4>Changes to the image above are shown below</h4>
+				<img
+					id="devdocs-example-image-editor-result"
+					src={ media.URL }
+				/>
+			</div>
 		</div>
 	);
 }
