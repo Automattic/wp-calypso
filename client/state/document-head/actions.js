@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * Internal dependencies
  */
@@ -34,20 +36,6 @@ export function setDocumentHeadUnreadCount( count ) {
 		type: DOCUMENT_HEAD_UNREAD_COUNT_SET,
 		count
 	};
-}
-
-/**
- * Returns an action object used in signalling that the document head
- * description meta should be assigned to the specified value.
- *
- * @param  {String} description Document description
- * @return {Object}             Action object
- */
-export function setDocumentHeadDescription( description ) {
-	return addDocumentHeadMeta( {
-		name: 'description',
-		content: description
-	} );
 }
 
 /**

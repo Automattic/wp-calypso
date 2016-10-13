@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { noop } from 'lodash';
 import { shallow } from 'enzyme';
 import React from 'react';
 import { expect } from 'chai';
@@ -9,6 +10,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables
@@ -27,7 +29,16 @@ describe( 'PublicizeConnection', function() {
 
 	useFakeDom();
 
-	before( () => {
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/posts/actions', {
+			deleteMetadata: noop,
+			updateMetadata: noop
+		} );
+		mockery.registerMock( 'lib/posts/stats', {
+			recordEvent: noop,
+			recordState: noop
+		} );
+
 		PublicizeConnection = require( '../publicize-connection' );
 	} );
 

@@ -99,6 +99,7 @@ const SubscriptionListItem = React.createClass( {
 			isFollowing = this.isFollowing(),
 			feedTitle = decodeEntities( FeedDisplayHelper.getFeedTitle( siteData, feedData, displayUrl ) );
 
+		/* eslint-disable react/jsx-no-target-blank */
 		const cardHeader = (
 			<div className="subscription-list-item__header-content">
 				<Icon>{ iconUrl ? <img src={ iconUrl.get( 'img' ) } alt="Feed icon" /> : null }</Icon>
@@ -111,6 +112,7 @@ const SubscriptionListItem = React.createClass( {
 				</Actions>
 			</div>
 		);
+		/* eslint-enable react/jsx-no-target-blank */
 
 		const key = 'foldable-card-subscription-' + subscription.get( 'ID' ),
 			isCardExpanded = this.props.openCards && this.props.openCards.includes( displayUrl );

@@ -20,6 +20,7 @@ import SelectDropdown from 'components/select-dropdown';
 import DropdownItem from 'components/select-dropdown/item';
 import TokenField from 'components/token-field';
 import FieldRemoveButton from './field-remove-button';
+import FieldEditButton from './field-edit-button';
 import getLabel from './locales';
 
 /**
@@ -57,8 +58,15 @@ export default React.createClass( {
 				<FormLabel>{ this.translate( 'Options' ) }</FormLabel>
 				<TokenField
 					value={ options }
-					onChange={ tokens => this.props.onUpdate( { options: tokens.join() } ) }/>
-				{ optionsValidationError && <FormTextValidation isError={ true } text={ this.translate( 'Options can not be empty.' ) } /> }
+					onChange={ tokens => this.props.onUpdate( { options: tokens.join() } ) }
+				/>
+				{
+					optionsValidationError &&
+						<FormTextValidation
+							isError={ true }
+							text={ this.translate( 'Options can not be empty.' ) }
+						/>
+				}
 				<FormSettingExplanation>Insert an option and press enter.</FormSettingExplanation>
 			</FormFieldset>
 		);
@@ -66,6 +74,14 @@ export default React.createClass( {
 
 	onLabelChange( event ) {
 		this.props.onUpdate( { label: event.target.value } );
+	},
+
+	handleCardOpen() {
+		this.props.onUpdate( { isExpanded: true } );
+	},
+
+	handleCardClose() {
+		this.props.onUpdate( { isExpanded: false } );
 	},
 
 	render() {
@@ -77,10 +93,11 @@ export default React.createClass( {
 				header={ <FieldHeader { ...omit( this.props, [ 'onUpdate' ] ) } /> }
 				summary={ remove }
 				expandedSummary={ remove }
-				icon="pencil"
 				expanded={ this.props.isExpanded }
-				onOpen={ () => this.props.onUpdate( { isExpanded: true } ) }
-				onClose={ () => this.props.onUpdate( { isExpanded: false } ) }>
+				onClose={ this.handleCardClose }
+				onOpen={ this.handleCardOpen }
+				actionButton={ <FieldEditButton expanded={ false } /> }
+				actionButtonExpanded={ <FieldEditButton expanded={ true } /> }>
 				<FormFieldset>
 					<FormLabel>{ this.translate( 'Field Label' ) }</FormLabel>
 					<FormTextInput value={ this.props.label } onChange={ this.onLabelChange } isError={ fielLabelValidationError } />

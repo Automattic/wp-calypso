@@ -74,6 +74,15 @@ export default class ErrorLogger {
 		return this.diagnosticData;
 	}
 
+	log( msg, data ) {
+		if ( typeof data === 'object' ) {
+			this.saveExtraData( data );
+		}
+		try {
+			TraceKit.report( new Error( msg ) );
+		} catch ( e ) {}
+	}
+
 	sendToApi( error ) {
 		const xhr = new XMLHttpRequest();
 		xhr.open( 'POST', 'https://public-api.wordpress.com/rest/v1.1/js-error?http_envelope=1', true );

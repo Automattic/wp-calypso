@@ -1,10 +1,7 @@
 /**
  * External dependencies
  */
-import get from 'lodash/get';
-import map from 'lodash/map';
-import omit from 'lodash/omit';
-import property from 'lodash/property';
+import { get, map, omit, property } from 'lodash';
 import debugModule from 'debug';
 
 /**

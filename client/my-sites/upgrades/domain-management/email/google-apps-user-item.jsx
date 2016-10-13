@@ -35,8 +35,9 @@ const GoogleAppsUserItem = React.createClass( {
 					className="google-apps-user-item__manage-link"
 					href={ this.getLoginLink() }
 					onClick={ this.props.onClick }
-					target="_blank">
-					{ this.translate( 'Manage', { context: 'Google Apps user item' } ) }
+					target="_blank"
+					rel="noopener noreferrer">
+					{ this.translate( 'Manage', { context: 'G Suite user item' } ) }
 				</ExternalLink>
 			</li>
 		);

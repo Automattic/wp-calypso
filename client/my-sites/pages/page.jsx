@@ -6,6 +6,9 @@ var React = require( 'react' ),
 	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' );
 
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
 /**
  * Internal dependencies
  */
@@ -18,7 +21,14 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	helpers = require( './helpers' ),
 	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/posts/utils' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	config = require( 'config' );
+
+import MenuSeparator from 'components/popover/menu-separator';
+import { isFrontPage } from 'state/pages/selectors';
+import { setFrontPage } from 'state/sites/actions';
+import { userCan } from 'lib/site/utils';
+
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -31,15 +41,13 @@ function getReadableStatus( status ) {
 		'pending': i18n.translate( 'Pending' ),
 		'future': i18n.translate( 'Future' ),
 		'private': i18n.translate( 'Private' ),
-		'trash': i18n.translate( 'Trashed' ),
-		'auto-draft': i18n.translate( 'Draft' ),
-		'inherit': i18n.translate( 'Inherited' )
+		'trash': i18n.translate( 'Trashed' )
 	};
 
 	return humanReadableStatus [ status ] || status;
 }
 
-module.exports = React.createClass( {
+const Page = React.createClass( {
 
 	displayName: 'Page',
 
@@ -95,6 +103,28 @@ module.exports = React.createClass( {
 		return ( this.props.site && this.props.site.domain ) || '...';
 	},
 
+	setAsHomepage: function() {
+		this.setState( { showPageActions: false } );
+		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID );
+	},
+
+	getSetAsHomepageItem: function() {
+		const isPublished = this.props.page.status === 'publish';
+
+		if ( ! isPublished || this.props.isFrontPage ||
+			! config.isEnabled( 'manage/pages/set-homepage' ) ||
+			! userCan( 'edit_theme_options', this.props.site ) ) {
+			return null;
+		}
+
+		return (
+			<PopoverMenuItem onClick={ this.setAsHomepage }>
+				<Gridicon icon="house" size={ 18 } />
+				{ this.translate( 'Set as Homepage' ) }
+			</PopoverMenuItem>
+		);
+	},
+
 	viewPage: function() {
 		window.open( this.props.page.URL );
 	},
@@ -147,17 +177,23 @@ module.exports = React.createClass( {
 	},
 
 	frontPageInfo: function() {
-		if ( ! helpers.isFrontPage( this.props.page, this.props.site ) ) {
+		if ( ! this.props.isFrontPage ) {
 			return null;
 		}
 
-		return ( <div className="page__popover-more-info">{
-			this.translate( 'Currently set as {{link}}Front Page{{/link}}', {
-				components: {
-					link: <a target="_blank" href={ this.props.site.options.admin_url + 'options-reading.php' } />
-				}
-			} )
-		}</div> );
+		if ( config.isEnabled( 'manage/pages/set-homepage' ) ) {
+			return ( <div className="page__popover-more-info">{
+				this.translate( 'This page is set as your site\'s homepage' )
+			}</div> );
+		} else {
+			return ( <div className="page__popover-more-info">{
+				this.translate( 'Currently set as {{link}}Front Page{{/link}}', {
+					components: {
+						link: <a target="_blank" rel="noopener noreferrer" href={ this.props.site.options.admin_url + 'options-reading.php' } />
+					}
+				} )
+			}</div> );
+		}
 	},
 
 	getPublishItem: function() {
@@ -245,7 +281,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				<hr className="popover__hr" />
+				<MenuSeparator />
 				{ status }
 				{ childPageInfo }
 				{ frontPageInfo }
@@ -257,13 +293,14 @@ module.exports = React.createClass( {
 		var page = this.props.page,
 			title = page.title || this.translate( '(no title)' ),
 			site = this.props.site || {},
-			isFrontPage = helpers.isFrontPage( page, site ),
 			canEdit = utils.userCan( 'edit_post', this.props.page ),
 			depthIndicator;
 
 		if ( page.parent ) {
 			depthIndicator = '— ';
 		}
+
+		const setAsHomepageItem = this.getSetAsHomepageItem();
 
 		return (
 			<CompactCard className="page">
@@ -276,7 +313,7 @@ module.exports = React.createClass( {
 					onClick={ this.analyticsEvents.pageTitle }
 					>
 					{ depthIndicator }
-					{ isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
+					{ this.props.isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
 					{ title }
 				</a>
 				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
@@ -294,6 +331,8 @@ module.exports = React.createClass( {
 					position={ 'bottom left' }
 					context={ this.refs && this.refs.popoverMenuButton }
 				>
+					{ setAsHomepageItem }
+					{ setAsHomepageItem ? <MenuSeparator /> : null }
 					{ this.getViewItem() }
 					{ this.getPublishItem() }
 					{ this.getEditItem() }
@@ -336,3 +375,14 @@ module.exports = React.createClass( {
 		recordEvent( 'Clicked Delete Page' );
 	}
 } );
+
+export default connect(
+	( state, props ) => {
+		return {
+			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID )
+		};
+	},
+	( dispatch ) => bindActionCreators( {
+		setFrontPage
+	}, dispatch )
+)( Page );

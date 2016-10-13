@@ -11,6 +11,10 @@ Callback to fire to obtain search results. By default this gets called `onChange
 ### onSearchChange (optional)
 This is only necessary if `delaySearch` is being used to delay a fetch callback, but you want to respond immediately to the updated value (e.g., show that the user is currently searching). Passes in a string matching the value of the field or `false` when the search field is closed.
 
+### onSearchClose (optional)
+Callback to fire when search input is closed. Useful for styling of elements and used
+to detect that the user wants to finish searching without expecting results.
+
 ### analyticsGroup
 We track usage of the search component, so we need to know where search is being used. E.g., "Posts" for the search instance in the Posts page.
 
@@ -49,6 +53,11 @@ Whether to force a specific writing direction for the search field, regardless o
 Currently supports forcing a LTR field in a RTL language, but not the other way around.
 
 Supported values are `'ltr'` and `undefined` (the default, which uses the current global writing direction of the app).
+
+### styleOverlay (optional) function ( default undefined )
+Implement this function to add markup to the content of the search box. Current content is supplied as a parameter. Return a string containing the same text but with markup added.
+
+For example, add `<span/>`s around tokens in the content, then add CSS elsewhere to style the `<span/>`s.
 
 ## Methods
 

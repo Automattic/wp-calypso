@@ -33,7 +33,7 @@ export function unreadCount( state = 0, action ) {
 	return state;
 }
 
-export function meta( state = [], action ) {
+export function meta( state = [ { property: 'og:site_name', content: 'WordPress.com' } ], action ) {
 	switch ( action.type ) {
 		case DOCUMENT_HEAD_META_ADD:
 			return [ ...state, action.meta ];

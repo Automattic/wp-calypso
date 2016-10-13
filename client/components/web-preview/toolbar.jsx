@@ -39,7 +39,7 @@ export const PreviewToolbar = props => {
 		showClose,
 		showDeviceSwitcher,
 		showExternal,
-		showSeo,
+		showSEO,
 		translate
 	} = props;
 
@@ -60,6 +60,7 @@ export const PreviewToolbar = props => {
 					className="web-preview__external"
 					href={ externalUrl || previewUrl }
 					target="_blank"
+					rel="noopener noreferrer"
 				>
 					<Gridicon icon="external" />
 				</a>
@@ -80,7 +81,7 @@ export const PreviewToolbar = props => {
 					) ) }
 				</div>
 			}
-			{ showSeo &&
+			{ showSEO &&
 			<button
 				aria-hidden={ true }
 				key={ 'back-to-preview' }
@@ -94,7 +95,7 @@ export const PreviewToolbar = props => {
 				<Gridicon icon="phone" />
 			</button>
 			}
-			{ showSeo &&
+			{ showSEO &&
 				<button
 					aria-label={ translate( 'Show SEO and search previews' ) }
 					className={ classNames(
@@ -125,6 +126,8 @@ PreviewToolbar.propTypes = {
 	showExternal: PropTypes.bool,
 	// Show close button
 	showClose: PropTypes.bool,
+	// Show SEO button
+	showSEO: PropTypes.bool,
 	// The device to display, used for setting preview dimensions
 	device: PropTypes.string,
 	// Elements to render on the right side of the toolbar
@@ -135,12 +138,18 @@ PreviewToolbar.propTypes = {
 	onClose: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => {
-	const site = getSelectedSite( state );
-	const showSeo = ( site && site.plan && hasBusinessPlan( site.plan ) && isEnabled( 'manage/advanced-seo' ) ) ||
-		( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) );
+PreviewToolbar.defaultProps = {
+	showSEO: true
+};
 
-	return { showSeo };
+const mapStateToProps = ( state, ownProps ) => {
+	const site = getSelectedSite( state );
+	const showSEO = ownProps.showSEO && (
+		( site && site.plan && hasBusinessPlan( site.plan ) && isEnabled( 'manage/advanced-seo' ) ) ||
+		( isEnabled( 'manage/advanced-seo' ) && isEnabled( 'manage/advanced-seo/preview-nudge' ) )
+	);
+
+	return { showSEO };
 };
 
 export default connect( mapStateToProps )( localize( PreviewToolbar ) );

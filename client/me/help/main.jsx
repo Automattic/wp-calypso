@@ -100,11 +100,21 @@ const Help = React.createClass( {
 						</p>
 					</div>
 				</CompactCard>
-				<CompactCard className="help__support-link" href="https://dailypost.wordpress.com/" target="__blank">
+				<CompactCard className="help__support-link" href="https://dailypost.wordpress.com/blogging-university/" target="__blank">
 					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">{ this.translate( 'The Daily Post' ) }</h2>
+						<h2 className="help__support-link-title">
+							{ this.translate( 'Self-guided email courses for site owners and bloggers' ) }
+						</h2>
 						<p className="help__support-link-content">
-							{ this.translate( 'Get daily tips for your blog and connect with others to share your journey.' ) }
+							{ this.translate( 'Pick from our ever-growing list of free email courses to improve your knowledge.' ) }
+						</p>
+					</div>
+				</CompactCard>
+				<CompactCard className="help__support-link" href="https://learn.wordpress.com" target="__blank">
+					<div className="help__support-link-section">
+						<h2 className="help__support-link-title">{ this.translate( 'Self-guided online tutorial' ) }</h2>
+						<p className="help__support-link-content">
+							{ this.translate( 'A step-by-step guide to getting familiar with the platform.' ) }
 						</p>
 					</div>
 				</CompactCard>
@@ -112,7 +122,7 @@ const Help = React.createClass( {
 					<div className="help__support-link-section">
 						<h2 className="help__support-link-title">{ this.translate( 'Get in touch' ) }</h2>
 						<p className="help__support-link-content">
-							{ this.translate( `Can't find the answer? Drop us a line and we'll lend a hand.` ) }
+							{ this.translate( 'Can\'t find the answer? Drop us a line and we\'ll lend a hand.' ) }
 						</p>
 					</div>
 					<Button className="help__support-link-button" primary>{ this.translate( 'Contact Us' ) }</Button>
@@ -137,17 +147,19 @@ const Help = React.createClass( {
 
 	trackCoursesButtonClick() {
 		const { isBusinessPlanUser } = this.props;
-		analytics.tracks.recordEvent( 'calypso_help_courses_click', { isBusinessPlanUser } );
+		analytics.tracks.recordEvent( 'calypso_help_courses_click', {
+			is_business_plan_user: isBusinessPlanUser
+		} );
 	},
 
 	getPlaceholders() {
 		return (
 			<Main className="help">
 				<MeSidebarNavigation />
-				<div className="help-search is-placeholder"/>
-				<div className="help__help-teaser-button is-placeholder"/>
-				<div className="help-results is-placeholder"/>
-				<div className="help__support-links is-placeholder"/>
+				<div className="help-search is-placeholder" />
+				<div className="help__help-teaser-button is-placeholder" />
+				<div className="help-results is-placeholder" />
+				<div className="help__support-links is-placeholder" />
 			</Main>
 		);
 	},

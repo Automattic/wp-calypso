@@ -1,14 +1,17 @@
 .comment-button {
 	align-items: center;
-	color: lighten( $gray, 10 );
+	box-sizing: border-box;
+	color: lighten( $gray, 10% );
+	cursor: pointer;
 	display: inline-flex;
 	list-style-type: none;
 	padding: 4px;
 	position: relative;
 
-	&:hover {
+	&:hover,
+	&:focus,
+	&:active {
 		color: $blue-light;
-		cursor: pointer;
 	}
 
 	.comment-button__label-count {

@@ -16,6 +16,7 @@ import olarkActions from 'lib/olark-store/actions';
 import olarkEvents from 'lib/olark-events';
 import olarkApi from 'lib/olark-api';
 import HelpContactForm from 'me/help/help-contact-form';
+import HelpContactClosed from 'me/help/help-contact-closed';
 import HelpContactConfirmation from 'me/help/help-contact-confirmation';
 import HeaderCake from 'components/header-cake';
 import wpcomLib from 'lib/wp';
@@ -155,7 +156,8 @@ const HelpContact = React.createClass( {
 					title: this.translate( 'We\'re on it!' ),
 					message: this.translate(
 						'We\'ve received your message, and you\'ll hear back from ' +
-						'one of our Happiness Engineers shortly.' )
+						'one of our Happiness Engineers shortly.' 
+					)
 				}
 			} );
 
@@ -376,6 +378,10 @@ const HelpContact = React.createClass( {
 			return <HelpContactConfirmation { ...confirmation } />;
 		}
 
+		if ( olark.isSupportClosed ) {
+			return <HelpContactClosed />;
+		}
+
 		if ( ! ( olark.isOlarkReady && sitesInitialized ) && ! this.props.olarkTimedOut ) {
 			return (
 				<div className="help-contact__placeholder">
@@ -411,7 +417,7 @@ const HelpContact = React.createClass( {
 			},
 			showKayakoVariation && {
 				onSubmit: this.submitKayakoTicket,
-				buttonLabel: isSubmitting ? this.translate( 'Submitting support ticket' ) : this.translate( 'Submit support ticket' )
+				buttonLabel: isSubmitting ? this.translate( 'Sending email' ) : this.translate( 'Email us' )
 			},
 			showForumsVariation && {
 				onSubmit: this.submitSupportForumsTopic,

@@ -3,7 +3,6 @@
  */
 import { expect } from 'chai';
 import sinon from 'sinon';
-import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -21,6 +20,7 @@ import {
 import { useSandbox } from 'test/helpers/use-sinon';
 import { DEFAULT_PREFERENCES, USER_SETTING_KEY } from '../constants';
 import { receivePreferences, fetchPreferences, savePreference, setPreference } from '../actions';
+import useNock from 'test/helpers/use-nock';
 
 describe( 'actions', () => {
 	let sandbox, spy;
@@ -47,15 +47,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'fetchPreferences()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/settings' )
 				.reply( 200, responseShape );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {
@@ -76,15 +72,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'fetchPreferences()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( '/rest/v1.1/me/settings' )
 				.reply( 404 );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
@@ -107,7 +99,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'savePreference()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/me/settings/', {
@@ -124,10 +116,6 @@ describe( 'actions', () => {
 					error: 'authorization_required',
 					message: 'An active access token must be used to query information about the current user.'
 				} );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch PREFERENCES_SET action when thunk triggered', () => {

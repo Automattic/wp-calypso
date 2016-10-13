@@ -29,6 +29,7 @@
 	"features": {
 		"accept-invite": true,
 		"ad-tracking": false,
+		"apple-pay": true,
 		"catch-js-errors": false,
 		"code-splitting": true,
 		"community-translator": true,
@@ -95,6 +96,7 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
+		"republicize": false,
 		"rubberband-scroll-disable": false,
 		"server-side-rendering": true,
 		"settings/security/monitor": true,

@@ -16,7 +16,7 @@ const PostActions = require( 'lib/posts/actions' ),
 /**
  * Module variables
  */
-const GOOGLE_MAPS_BASE_URL = 'http://maps.google.com/maps/api/staticmap?';
+const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 
 export default React.createClass( {
 	displayName: 'EditorLocation',
@@ -95,13 +95,11 @@ export default React.createClass( {
 	},
 
 	renderCurrentLocation: function() {
-		var src;
-
 		if ( ! this.props.coordinates ) {
 			return;
 		}
 
-		src = GOOGLE_MAPS_BASE_URL + qs.stringify( {
+		const src = GOOGLE_MAPS_BASE_URL + qs.stringify( {
 			markers: this.props.coordinates.join( ',' ),
 			zoom: 8,
 			size: '400x300'

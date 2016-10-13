@@ -4,7 +4,6 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import classNames from 'classnames';
 import page from 'page';
 import { bindActionCreators } from 'redux';
 
@@ -21,11 +20,12 @@ import formatCurrency from 'lib/format-currency';
 import { preventWidows } from 'lib/formatting';
 import { getFeatureTitle } from 'lib/plans';
 import { getPlanBySlug } from 'state/plans/selectors';
-import { PLAN_PERSONAL, getPlanClass, plansList } from 'lib/plans/constants';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { PLAN_PERSONAL, plansList } from 'lib/plans/constants';
+import { getSitePlan } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import { recordTracksEvent } from 'state/analytics/actions';
+import PlanIcon from 'components/plans/plan-icon';
 
 class UpgradeNudgeExpanded extends Component {
 	constructor( props ) {
@@ -51,7 +51,7 @@ class UpgradeNudgeExpanded extends Component {
 		//Display only if upgrade path available
 		if (
 			! this.props.currentPlan ||
-			( this.props.planConstants.availableFor && ! this.props.planConstants.availableFor( this.props.currentPlan.productSlug ) )
+			( this.props.planConstants.availableFor && ! this.props.planConstants.availableFor( this.props.currentPlan.product_slug ) )
 		) {
 			return null;
 		}
@@ -89,7 +89,7 @@ class UpgradeNudgeExpanded extends Component {
 				<div className="upgrade-nudge-expanded__description">
 					{ this.props.title && <div className="upgrade-nudge-expanded__title">
 						<div className="upgrade-nudge-expanded__title-plan">
-							<div className={ classNames( 'upgrade-nudge-expanded__title-plan-icon', this.props.planClass ) }></div>
+							<PlanIcon plan={ this.props.plan.product_slug } className="upgrade-nudge-expanded__title-plan-icon" />
 						</div>
 						<p className="upgrade-nudge-expanded__title-message">
 							{ this.props.title }
@@ -123,7 +123,6 @@ UpgradeNudgeExpanded.propTypes = {
 	plan: PropTypes.object.isRequired,
 	currentPlan: PropTypes.object,
 	planConstants: PropTypes.object,
-	planClass: PropTypes.string,
 	upgrade: PropTypes.func,
 	benefits: PropTypes.array,
 	title: PropTypes.string,
@@ -137,9 +136,8 @@ UpgradeNudgeExpanded.propTypes = {
 
 const mapStateToProps = ( state, { plan = PLAN_PERSONAL } ) => ( {
 	plan: getPlanBySlug( state, plan ),
-	currentPlan: getCurrentPlan( state, getSelectedSiteId( state ) ),
+	currentPlan: getSitePlan( state, getSelectedSiteId( state ) ),
 	planConstants: plansList[ plan ],
-	planClass: getPlanClass( plan ),
 	siteSlug: getSiteSlug( state, getSelectedSiteId( state ) )
 } );
 

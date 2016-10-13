@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -84,8 +85,9 @@ class PressThisLink extends React.Component {
 	}
 
 	render() {
+		const omitProps = [ 'site' ];
 		return (
-			<a {...this.props} href={ this.buildPressThisLink() }>
+			<a { ...omit( this.props, omitProps ) } href={ this.buildPressThisLink() }>
 				{ this.props.children }
 			</a>
 		);

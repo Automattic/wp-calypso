@@ -17,6 +17,7 @@ import formState from 'lib/form-state';
 import forOwn from 'lodash/forOwn';
 import kebabCase from 'lodash/kebabCase';
 import mapKeys from 'lodash/mapKeys';
+import values from 'lodash/values';
 import notices from 'notices';
 import { validateCardDetails } from 'lib/credit-card-details';
 import ValidationErrorList from 'notices/validation-error-list';
@@ -172,7 +173,12 @@ const CreditCardForm = React.createClass( {
 						this.setState( { formSubmitting: false } );
 					}
 
-					notices.error( message );
+					if ( typeof message === 'object' ) {
+						notices.error( <ValidationErrorList messages={ values( message ) } /> );
+					} else {
+						notices.error( message )
+					}
+
 				} );
 			} else {
 				const apiParams = this.getParamsForApi( cardDetails, paygateToken, this.props.apiParams );
@@ -257,10 +263,11 @@ const CreditCardForm = React.createClass( {
 								'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
 								{
 									components: {
-										tosLink: <a href="//wordpress.com/tos/" target="_blank" />,
-										autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL } target="_blank" />,
+										tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
+										autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
 										managePurchasesSupportPage: <a href={ support.MANAGE_PURCHASES }
-											target="_blank" />
+											target="_blank"
+											rel="noopener noreferrer" />
 									}
 								}
 							) }

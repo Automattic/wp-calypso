@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
- import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 const CommentCount = ( { count, translate } ) => {
 	let countPhrase;

@@ -4,6 +4,7 @@
 import React from 'react';
 import page from 'page';
 import debugFactory from 'debug';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,9 +28,9 @@ module.exports = React.createClass( {
 	mixins: [ observe( 'sites', 'summaryList' ) ],
 
 	getActiveFilter: function() {
-		return this.props.filters().filter( function( filter ) {
+		return find( this.props.filters(), ( filter ) => {
 			return this.props.path === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( this.props.path ) );
-		}, this ).shift();
+		} );
 	},
 
 	goBack: function() {
@@ -143,6 +144,19 @@ module.exports = React.createClass( {
 					key="videoplays-summary"
 					path={ 'videoplays' }
 					moduleStrings={ StatsStrings.videoplays }
+					site={ site }
+					dataList={ this.props.summaryList }
+					period={ this.props.period }
+					followList={ this.props.followList }
+					summary={ true } />;
+				break;
+
+			case 'podcastdownloads':
+				title = this.translate( 'Podcasts' );
+				summaryView = <StatsModule
+					key="podcastdownloads-summary"
+					path={ 'podcastdownloads' }
+					moduleStrings={ StatsStrings.podcastdownloads }
 					site={ site }
 					dataList={ this.props.summaryList }
 					period={ this.props.period }

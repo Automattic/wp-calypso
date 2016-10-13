@@ -12,10 +12,8 @@ import Accordion from 'components/accordion';
 import AccordionSection from 'components/accordion/section';
 import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
-import TagListData from 'components/data/tag-list-data';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
-import PostFormatsData from 'components/data/post-formats-data';
 import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
 import Location from 'post-editor/editor-location';
 import Discussion from 'post-editor/editor-discussion';
@@ -106,7 +104,7 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderTaxonomies: function() {
-		const { type, post, site, canJetpackUseTaxonomies } = this.props;
+		const { type, canJetpackUseTaxonomies } = this.props;
 
 		// Compatibility: Allow Tags for pages when supported prior to launch
 		// of custom post types feature (#6934). [TODO]: Remove after launch.
@@ -117,18 +115,8 @@ const EditorDrawer = React.createClass( {
 		let categories;
 		if ( 'post' === type || typeSupportsTags ) {
 			categories = (
-				<CategoriesTagsAccordion
-					site={ site }
-					post={ post } />
+				<CategoriesTagsAccordion />
 			);
-
-			if ( site ) {
-				categories = (
-					<TagListData siteId={ site.ID }>
-						{ categories }
-					</TagListData>
-				);
-			}
 		}
 
 		// Custom Taxonomies
@@ -141,18 +129,15 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderPostFormats: function() {
-		if ( ! this.props.site || ! this.props.post ||
-				! this.currentPostTypeSupports( 'post-formats' ) ) {
+		if ( ! this.props.post || ! this.currentPostTypeSupports( 'post-formats' ) ) {
 			return;
 		}
 
 		return (
-			<PostFormatsData siteId={ this.props.site.ID }>
-				<PostFormatsAccordion
-					site={ this.props.site }
-					post={ this.props.post }
-					className="editor-drawer__accordion" />
-			</PostFormatsData>
+			<PostFormatsAccordion
+				post={ this.props.post }
+				className="editor-drawer__accordion"
+			/>
 		);
 	},
 

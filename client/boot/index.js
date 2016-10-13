@@ -19,7 +19,6 @@ var React = require( 'react' ),
 	qs = require( 'querystring' ),
 	injectTapEventPlugin = require( 'react-tap-event-plugin' ),
 	i18n = require( 'i18n-calypso' ),
-	isEmpty = require( 'lodash/isEmpty' ),
 	includes = require( 'lodash/includes' );
 
 /**
@@ -54,7 +53,7 @@ var config = require( 'config' ),
 	supportUser = require( 'lib/user/support-user-interop' ),
 	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
 
-import { getSelectedSiteId, getSectionName, isSectionIsomorphic } from 'state/ui/selectors';
+import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
 function init() {
@@ -183,7 +182,6 @@ function renderLayout( reduxStore ) {
 }
 
 function reduxStoreReady( reduxStore ) {
-	const isIsomorphic = isSectionIsomorphic( reduxStore.getState() );
 	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore );
@@ -212,14 +210,20 @@ function reduxStoreReady( reduxStore ) {
 		require( 'lib/network-connection' ).init( reduxStore );
 	}
 
+	if ( config.isEnabled( 'css-hot-reload' ) ) {
+		require( 'lib/css-hot-reload' )();
+	}
+
 	// Render Layout only for non-isomorphic sections.
 	// Isomorphic sections will take care of rendering their Layout last themselves.
-	if ( ! isIsomorphic ) {
+	if ( ! document.getElementById( 'primary' ) ) {
 		renderLayout( reduxStore );
 
 		if ( config.isEnabled( 'catch-js-errors' ) ) {
 			const Logger = require( 'lib/catch-js-errors' );
 			const errorLogger = new Logger();
+			//Save errorLogger to a singleton for use in arbitrary logging.
+			require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
 			//Save data to JS error logger
 			errorLogger.saveDiagnosticData( {
 				user_id: user.get().ID,
@@ -327,7 +331,7 @@ function reduxStoreReady( reduxStore ) {
 	if ( ! user.get() ) {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function( context, next ) {
-			var isValidSection = some( validSections, function( validPath ) {
+			const isValidSection = some( validSections, function( validPath ) {
 				return startsWith( context.path, validPath );
 			} );
 
@@ -342,8 +346,13 @@ function reduxStoreReady( reduxStore ) {
 
 			//see server/pages/index for prod redirect
 			if ( '/plans' === context.pathname ) {
-				// pricing page is outside of Calypso, needs a full page load
-				window.location = 'https://wordpress.com/pricing';
+				const queryFor = context.query && context.query.for;
+				if ( queryFor && 'jetpack' === queryFor ) {
+					window.location = 'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans';
+				} else {
+					// pricing page is outside of Calypso, needs a full page load
+					window.location = 'https://wordpress.com/pricing';
+				}
 				return;
 			}
 
@@ -406,8 +415,8 @@ function reduxStoreReady( reduxStore ) {
 	 * make this unnecessary.
 	 */
 	page( '*', function( context, next ) {
-		const previousLayoutIsSingleTree = ! isEmpty(
-			document.getElementsByClassName( 'wp-singletree-layout' )
+		const previousLayoutIsSingleTree = !! (
+			document.getElementsByClassName( 'wp-singletree-layout' ).length
 		);
 
 		const singleTreeSections = [ 'theme', 'themes' ];
@@ -420,7 +429,8 @@ function reduxStoreReady( reduxStore ) {
 			renderLayout( context.store );
 		} else if ( ! isMultiTreeLayout && ! previousLayoutIsSingleTree ) {
 			debug( 'Unmounting multi-tree layout' );
-			ReactDom.unmountComponentAtNode( document.getElementById( 'wpcom' ) );
+			ReactDom.unmountComponentAtNode( document.getElementById( 'primary' ) );
+			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		}
 		next();
 	} );

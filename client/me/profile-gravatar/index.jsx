@@ -31,6 +31,7 @@ export default React.createClass( {
 					<a
 						href="https://secure.gravatar.com/site/wpcom?wpcc-no-close"
 						target="_blank"
+						rel="noopener noreferrer"
 						className="profile-gravatar__edit"
 						onClick={ this.recordClickEvent( 'Gravatar Update Profile Photo in Sidebar' ) } >
 
@@ -45,7 +46,7 @@ export default React.createClass( {
 				</Animate>
 				<h2 className="profile-gravatar__user-display-name">{ this.props.user.display_name }</h2>
 				<div className="profile-gravatar__user-secondary-info">
-					<a href={ profileURL } target="_blank">@{ this.props.user.username }</a>
+					<a href={ profileURL } target="_blank" rel="noopener noreferrer">@{ this.props.user.username }</a>
 				</div>
 			</div>
 		);

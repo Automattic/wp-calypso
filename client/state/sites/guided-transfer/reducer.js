@@ -36,6 +36,23 @@ export const isFetching = createReducer( {}, {
 		( { ...state, [ action.siteId ]: false } ),
 } );
 
+// Tracks whether we're fetching the status of a guided transfer for a site
+export const error = createReducer( {}, {
+	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE ]: ( state, action ) =>
+		( { ...state, [ action.siteId ]: null } ),
+
+	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: ( state, action ) =>
+		( { ...state, [ action.siteId ]: null } ),
+
+	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_FAILURE ]: ( state, action ) => {
+		let errorCode = true;
+		if ( action.error && action.error.error ) {
+			errorCode = action.error.error;
+		}
+		return ( { ...state, [ action.siteId ]: errorCode } );
+	}
+} );
+
 // Tracks whether we're saving host details on a guided transfer for a site
 export const isSaving = createReducer( {}, {
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE ]: ( state, action ) =>
@@ -49,6 +66,7 @@ export const isSaving = createReducer( {}, {
 } );
 
 export default combineReducers( {
+	error,
 	isFetching,
 	isSaving,
 	status,

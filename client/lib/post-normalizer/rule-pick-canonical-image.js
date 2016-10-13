@@ -1,12 +1,13 @@
 /**
  * External Dependencies
  */
-import filter from 'lodash/filter';
+import { find } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
  */
+import { thumbIsLikelyImage } from './utils';
 
 const debug = debugFactory( 'calypso:post-normalizer:pick-canonical-image' );
 
@@ -28,9 +29,12 @@ function candidateForCanonicalImage( image ) {
 }
 
 export default function pickCanonicalImage( post ) {
-	var canonicalImage;
+	let canonicalImage;
+	if ( post.canonical_image ) {
+		post.canonical_image = null;
+	}
 	if ( post.images ) {
-		canonicalImage = filter( post.images, candidateForCanonicalImage )[ 0 ];
+		canonicalImage = find( post.images, candidateForCanonicalImage );
 		if ( canonicalImage ) {
 			canonicalImage = {
 				uri: canonicalImage.src,
@@ -38,6 +42,12 @@ export default function pickCanonicalImage( post ) {
 				height: canonicalImage.naturalHeight
 			};
 		}
+	} else if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
+		canonicalImage = {
+			uri: post.post_thumbnail.URL,
+			width: post.post_thumbnail.width,
+			height: post.post_thumbnail.height
+		};
 	} else if ( post.featured_image ) {
 		canonicalImage = {
 			uri: post.featured_image,

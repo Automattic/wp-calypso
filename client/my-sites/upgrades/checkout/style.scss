@@ -2,28 +2,25 @@
 	position: relative;
 
 	.payment-box {
-		height: 0;
 		margin-bottom: 0;
-		opacity: 0;
-		overflow: hidden;
 		padding: 0;
-		transform: translateZ(0) scale(.8); // Zoom out effect
-		transition: all .3s ease-in-out;
-		visibility: hidden; // To deal with layering issues
 		width: 100%;
+		overflow: hidden;
+
+		opacity: 0;
+		visibility: hidden;
+		transform: translateZ(0) scale(.8); // Zoom out effect
+
+		animation-delay: 0.3s;
+		animation-fill-mode: forwards;
+		animation-duration: 0.4s;
+		animation-name: increase;
 
 		&:not(.domain-details) {
 			@include breakpoint( "<660px" ) {
 				background-color: transparent;
 				box-shadow: none;
 			}
-		}
-
-		&.selected {
-			height: auto;
-			opacity: 1;
-			transform: translateZ(0) scale(1); // Zoom in effect
-			visibility: visible; // To deal with layering issues
 		}
 
 		&.is-empty {
@@ -861,4 +858,20 @@
 .checkout__privacy-protection-free-text {
 	color: $alert-green;
 	padding-left: 8px;
+}
+
+@keyframes increase {
+	from {
+		height: 0;
+		opacity: 0;
+		visibility: hidden;
+		transform: translateZ(0) scale(.8);
+	}
+
+	to {
+		height: auto;
+		opacity: 1;
+		visibility: visible;
+		transform: translateZ(0) scale(1);
+	}
 }

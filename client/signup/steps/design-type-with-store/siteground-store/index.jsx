@@ -48,7 +48,8 @@ export const SitegroundStoreStep = ( { onBackClick, translate, partnerClickRecor
 						primary
 						className="design-type-with-store__button"
 						target="_blank"
-						href="https://www.siteground.com/go/wordpress-ecommerce"
+						rel="noopener noreferrer"
+						href="https://www.siteground.com/go/wordpress-ecommerce2"
 						onClick={ partnerClickRecorder }
 					>
 						{ translate( 'Create Store' ) }

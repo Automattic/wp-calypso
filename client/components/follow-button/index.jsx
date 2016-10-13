@@ -28,8 +28,8 @@ const FollowButtonContainer = React.createClass( {
 		return this.getStateFromStores();
 	},
 
-	getStateFromStores() {
-		return { following: FeedSubscriptionStore.getIsFollowingBySiteUrl( this.props.siteUrl ) };
+	getStateFromStores( props = this.props ) {
+		return { following: FeedSubscriptionStore.getIsFollowingBySiteUrl( props.siteUrl ) };
 	},
 
 	componentDidMount() {
@@ -40,11 +40,19 @@ const FollowButtonContainer = React.createClass( {
 		FeedSubscriptionStore.off( 'change', this.onStoreChange );
 	},
 
-	onStoreChange() {
-		const newState = this.getStateFromStores();
+	componentWillReceiveProps( nextProps ) {
+		this.updateState( nextProps );
+	},
+
+	updateState( props = this.props ) {
+		const newState = this.getStateFromStores( props );
 		if ( newState.following !== this.state.following ) {
 			this.setState( newState );
 		}
+	},
+
+	onStoreChange() {
+		this.updateState();
 	},
 
 	handleFollowToggle( following ) {
@@ -59,7 +67,7 @@ const FollowButtonContainer = React.createClass( {
 				onFollowToggle={ this.handleFollowToggle }
 				iconSize={ this.props.iconSize }
 				tagName={ this.props.tagName }
-				disabled={ this.props.disabled }/>
+				disabled={ this.props.disabled } />
 		);
 	}
 } );

@@ -82,6 +82,7 @@ export default React.createClass( {
 						<Button
 							href={ this.props.savedPost.URL }
 							target="_blank"
+							rel="noopener noreferrer"
 							onMouseEnter={ () => this.setState( { viewLinkTooltip: true } ) }
 							onMouseLeave={ () => this.setState( { viewLinkTooltip: false } ) }
 							ref="viewLink"

@@ -1,8 +1,15 @@
 .author-compact-profile {
 	font-size: 14px;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
 
-	.gravatar {
-		display: flex;
+	.reader-avatar {
+		margin-bottom: 18px;
+	}
+
+	.gravatar,
+	.site-icon {
 		margin: auto;
 	}
 
@@ -61,7 +68,7 @@
 	}
 }
 
-.author-compact-profile .external-link,
+.author-compact-profile .reader-author-link,
 .author-compact-profile__site-link,
 .author-compact-profile__follow {
 	align-items: center;
@@ -77,7 +84,6 @@
 .author-compact-profile .reader-author-link,
 .author-compact-profile__site-link {
 	font-weight: 600;
-	margin-top: 18px;
 }
 
 .author-compact-profile__follow {

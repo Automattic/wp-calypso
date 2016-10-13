@@ -7,7 +7,7 @@ tl;dr: Don't depend on the DOM/BOM; make sure your initial render is synchronous
 
 #### React Components
 
-React components used on the server will be rendered to HTML by being passed to a [renderToString()](https://facebook.github.io/react/docs/top-level-api.html#reactdomserver.rendertostring) call, which calls `componentWillMount()` and `render()` _once_. This means that any components in the `shared` folder need to satisfy the following constraints:
+React components used on the server will be rendered to HTML by being passed to a [renderToString()](https://facebook.github.io/react/docs/top-level-api.html#reactdomserver.rendertostring) call, which calls `componentWillMount()` and `render()` _once_. This means that any components used by a server-side rendered section need to satisfy the following constraints:
 * Must not rely on event handling for the initial render.
 * Must not hook up any change listeners, or do anything asynchronous, inside `componentWillMount()`.
 * All data must be available before the initial render.
@@ -38,10 +38,10 @@ You may also need to add the module to the SSR pragma `IGNORED_MODULES` [list](h
 
 When you're satisfied that your component or library will render on the server, mark it and its dependencies as SSR-ready by inserting `/** @ssr-ready **/` at the top of the file. This will signal to the `PragmaChecker` webpack plugin that your file's dependencies should be checked. It also communicates to other developers that your code is going to be rendered on the server, so should be modified with care.
 
-If you know that your code will never be called on the server, instead of adding `/** @ssr-ready **/`, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/master/webpack.config.node.js).
+If you know that your code will never be called on the server, instead of adding `/** @ssr-ready **/`, you can stub-out the module using `NormalModuleReplacementPlugin` in the [config file](https://github.com/Automattic/wp-calypso/blob/master/webpack.config.node.js), and make the same change in the Desktop [config](https://github.com/Automattic/wp-desktop/blob/master/webpack.shared.js).
 
 ### I want to server-side render my components!
 
-Awesome! Have a look at the [Isomorphic Routing] docs to see how to achieve this. In addition, there are a couple of things you'll need to keep in mind: if your components need dynamic data, we'll need to cache; `renderToString` is synchronous, and will affect server response time; you should add a test to `server/pages/test/index.js` to make sure your code doesn't break; if you want to SSR something logged in, dependency nightmares will ensue.
+Awesome! Have a look at the [Isomorphic Routing](isomorphic-routing.md) docs to see how to achieve this. In addition, there are a couple of things you'll need to keep in mind: if your components need dynamic data, we'll need to cache; `renderToString` is synchronous, and will affect server response time; you should add a test to your section that ensures that it can really be rendered with `renderToString`; if you want to SSR something logged in, dependency nightmares will ensue.
 
 Please ping @ehg, @mcsf, @ockham, or @seear if you're thinking of doing this, or if you have any questions. :)

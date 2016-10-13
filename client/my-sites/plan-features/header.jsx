@@ -147,12 +147,19 @@ class PlanFeaturesHeader extends Component {
 			discountPrice,
 			rawPrice,
 			isPlaceholder,
-			relatedMonthlyPlan
+			relatedMonthlyPlan,
+			site
 		} = this.props;
 
 		if ( isPlaceholder ) {
+			const isJetpackSite = !! site.jetpack;
+			const classes = classNames( 'is-placeholder', {
+				'plan-features__price': ! isJetpackSite,
+				'plan-features__price-jetpack': isJetpackSite
+			} );
+
 			return (
-				<div className="plan-features__price is-placeholder"></div>
+				<div className={ classes } ></div>
 			);
 		}
 

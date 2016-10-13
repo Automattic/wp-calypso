@@ -112,7 +112,7 @@ PluginUtils = {
 			const img = li.querySelectorAll( 'img' );
 			const captionP = li.querySelectorAll( 'p' );
 
-			if ( img[ 0 ].src ) {
+			if ( img[ 0 ] && img[ 0 ].src ) {
 				return {
 					url: img[ 0 ].src,
 					caption: captionP[ 0 ] ? captionP[ 0 ].textContent : null

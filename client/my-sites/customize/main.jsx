@@ -164,10 +164,15 @@ var Customize = React.createClass( {
 			fonts: { section: 'jetpack_fonts' },
 			identity: { section: 'title_tagline' },
 			'custom-css': { section: 'jetpack_custom_css' },
+			amp: { section: 'amp_design' },
 		};
 
 		if ( panels.hasOwnProperty( panel ) ) {
 			query.autofocus = panels[ panel ];
+		}
+
+		if ( panel === 'amp' ) {
+			query.customize_amp = 1;
 		}
 
 		return Qs.stringify( query );

@@ -23,6 +23,9 @@ import CurrentPlanHeader from './header';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { plansList, PLAN_BUSINESS } from 'lib/plans/constants';
+import QuerySiteDomains from 'components/data/query-site-domains';
+import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
+import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
 
 class CurrentPlan extends Component {
 	static propTypes = {
@@ -61,6 +64,31 @@ class CurrentPlan extends Component {
 		};
 	}
 
+	renderDomainWarnings() {
+		const {
+			domains,
+			selectedSite,
+			hasDomainsLoaded
+		} = this.props;
+
+		if ( hasDomainsLoaded ) {
+			return (
+				<DomainWarnings
+					domains={ domains }
+					selectedSite={ selectedSite }
+					ruleWhiteList={ [
+						'newDomainsWithPrimary',
+						'newDomains',
+						'unverifiedDomainsCanManage',
+						'pendingGappsTosAcceptanceDomains',
+						'unverifiedDomainsCannotManage',
+						'wrongNSMappedDomains'
+					] }
+				/>
+			);
+		}
+	}
+
 	render() {
 		const {
 			selectedSite,
@@ -78,14 +106,17 @@ class CurrentPlan extends Component {
 
 		return (
 			<Main className="current-plan" wideLayout>
-				{ selectedSiteId && <QuerySites siteId={ selectedSiteId } /> }
+				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
+				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				<PlansNavigation
 					sitePlans={ sitePlans }
 					path={ context.path }
 					selectedSite={ selectedSite }
 				/>
+
+				{ this.renderDomainWarnings() }
 
 				<ProductPurchaseFeatures>
 					<CurrentPlanHeader
@@ -99,8 +130,6 @@ class CurrentPlan extends Component {
 					/>
 					<ProductPurchaseFeaturesList
 						plan={ currentPlanSlug }
-						selectedSite={ selectedSite }
-						sitePlans={ sitePlans }
 						isPlaceholder={ isLoading }
 					/>
 				</ProductPurchaseFeatures>
@@ -113,15 +142,18 @@ class CurrentPlan extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const selectedSite = getSelectedSite( state );
+		const selectedSite = getSelectedSite( state ),
+			selectedSiteId = getSelectedSiteId( state );
 
 		return {
 			selectedSite,
-			selectedSiteId: getSelectedSiteId( state ),
+			selectedSiteId,
 			sitePlans: getPlansBySite( state, selectedSite ),
 			context: ownProps.context,
 			currentPlan: getCurrentPlan( state, getSelectedSiteId( state ) ),
-			isExpiring: isCurrentPlanExpiring( state, getSelectedSiteId( state ) )
+			isExpiring: isCurrentPlanExpiring( state, getSelectedSiteId( state ) ),
+			domains: getDecoratedSiteDomains( state, selectedSiteId ),
+			hasDomainsLoaded: ! isRequestingSiteDomains( state, selectedSiteId )
 		};
 	}
 )( localize( CurrentPlan ) );

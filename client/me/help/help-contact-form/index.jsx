@@ -4,7 +4,7 @@
 import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import PureRenderMixin from 'react-pure-render/mixin';
-import isEqual from 'lodash/isEqual';
+import { isEqual, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -136,7 +136,7 @@ module.exports = React.createClass( {
 			}
 		} ) );
 
-		const selectedItem = options.filter( o => o.props.selected )[0];
+		const selectedItem = find( options, 'props.selected' );
 
 		return (
 			<div className="help-contact-form__selection">

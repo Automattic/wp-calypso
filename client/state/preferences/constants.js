@@ -8,5 +8,6 @@ export const DEFAULT_PREFERENCE_VALUES = {
 	mediaModalGalleryInstructionsDismissed: false,
 	mediaModalGalleryInstructionsDismissedForSession: false,
 	'guided-tours-history': [],
-	recentSites: []
+	recentSites: [],
+	mediaScale: 0.157
 };

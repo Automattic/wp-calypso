@@ -98,6 +98,7 @@ export default React.createClass( {
 					components: {
 						siteLink: <a
 							target="_blank"
+							rel="noopener noreferrer"
 							href={ safeProtocolUrl( this.props.connection.site.site_URL ) }
 							onClick={ this.recordClickEvent( 'Connected Application Scope Blog Link' ) }
 						/>
@@ -141,6 +142,7 @@ export default React.createClass( {
 						href={ safeProtocolUrl( URL ) }
 						onClick={ this.recordClickEvent( 'Connected Application Website Link' ) }
 						target="_blank"
+						rel="noopener noreferrer"
 					>
 						{ safeProtocolUrl( URL ) }
 					</a>

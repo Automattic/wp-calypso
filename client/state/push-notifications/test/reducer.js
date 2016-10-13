@@ -9,13 +9,13 @@ import deepFreeze from 'deep-freeze';
  */
 import {
 	SERIALIZE,
-	DESERIALIZE
+	DESERIALIZE,
+	PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE
 } from 'state/action-types';
 import reducer, {} from '../reducer';
 
 const wpcomSubscription = {
 	ID: '42',
-	lastUpdated: '2016-06-16T14:41:09+02:00',
 	settings: {
 		comments: {
 			desc: 'Comments',
@@ -81,6 +81,19 @@ describe( 'system reducer', () => {
 		expect( newState.system ).to.eql( {
 			wpcomSubscription: wpcomSubscriptionId,
 		} );
+	} );
+
+	it( 'should accept an integer for wpcomSubscription ID and store it as string', () => {
+		const action = {
+			type: PUSH_NOTIFICATIONS_RECEIVE_REGISTER_DEVICE,
+			data: {
+				ID: parseInt( wpcomSubscription.ID ),
+				settings: wpcomSubscription.settings
+			}
+		};
+		const newState = reducer( {}, action );
+
+		expect( newState.system ).to.eql( { wpcomSubscription } );
 	} );
 } );
 

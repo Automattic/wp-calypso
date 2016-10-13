@@ -5,12 +5,14 @@
  */
 var webpack = require( 'webpack' ),
 	path = require( 'path' ),
+	HardSourceWebpackPlugin = require( 'hard-source-webpack-plugin' ),
 	fs = require( 'fs' );
 
 /**
  * Internal dependencies
  */
 var	PragmaCheckPlugin = require( 'server/pragma-checker' );
+var config = require( 'config' );
 
 /**
  * This lists modules that must use commonJS `require()`s
@@ -47,7 +49,7 @@ function getExternals() {
 	return externals;
 }
 
-module.exports = {
+var webpackConfig = {
 	devtool: 'source-map',
 	entry: 'index.js',
 	target: 'node',
@@ -89,7 +91,7 @@ module.exports = {
 		// Require source-map-support at the top, so we get source maps for the bundle
 		new webpack.BannerPlugin( 'require( "source-map-support" ).install();', { raw: true, entryOnly: false } ),
 		new webpack.NormalModuleReplacementPlugin( /^lib\/analytics$/, 'lodash/noop' ), // Depends on BOM
-		new webpack.NormalModuleReplacementPlugin( /^lib\/upgrades\/actions$/, 'lodash/noop' ), // Uses Flux dispatcher
+		new webpack.NormalModuleReplacementPlugin( /^lib\/olark$/, 'lodash/noop' ), // Too many dependencies, e.g. sites-list
 		new webpack.NormalModuleReplacementPlugin( /^lib\/route$/, 'lodash/noop' ), // Depends too much on page.js
 		new webpack.NormalModuleReplacementPlugin( /^lib\/post-normalizer\/rule-create-better-excerpt$/, 'lodash/noop' ), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin( /^components\/seo\/preview-upgrade-nudge$/, 'components/empty-component' ), //Depends on page.js and should never be required server side
@@ -103,6 +105,12 @@ module.exports = {
 };
 
 if ( process.env.CALYPSO_ENV === 'development' || process.env.CALYPSO_ENV === 'test' ) {
-	module.exports.plugins.push( new PragmaCheckPlugin );
+	webpackConfig.plugins.push( new PragmaCheckPlugin );
 }
 
+if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
+	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'server-records.json' ),
+	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'server' ) } ) );
+}
+
+module.exports = webpackConfig;

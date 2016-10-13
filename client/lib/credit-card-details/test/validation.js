@@ -37,5 +37,17 @@ describe( 'validation', function() {
 				}
 			} );
 		} );
+
+		it( 'should return error when cvv is the wrong length', function() {
+			const invalidCVVCard = { ...validCard, 'cvv': '12345' };
+
+			const result = validateCardDetails( invalidCVVCard );
+
+			expect( result ).to.be.eql( {
+				errors: {
+					'cvv': [ 'Credit card cvv code is invalid' ]
+				}
+			} );
+		} );
 	} );
 } );

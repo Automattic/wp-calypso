@@ -272,22 +272,50 @@
 
 .theme__sheet-features-list {
 	text-align: center;
-	margin: -0.78em 0;
+	margin: -10px;
 	padding: 0;
+
+	a {
+		display: inline-block;
+		position: relative;
+		background: lighten( $gray, 30% );
+		color: $gray-dark;
+		margin: 4px;
+		padding: 2px 12px;
+		border-radius: 3px;
+		transition: all 100ms ease-in;
+
+		&:after {
+			content: "";
+			pointer-events: none;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			border-radius: 3px;
+			background: $blue-dark;
+			top: 0;
+			left: 0;
+			padding: 0;
+			z-index: -1;
+			transform: scale(0.9, 0.9);
+			transition: transform 300ms, opacity 400ms;
+		}
+
+		&:hover {
+			color: $white;
+			background-color: $blue-dark;
+
+			&:after {
+				transform: scale(1.07, 1.16);
+			}
+		}
+	}
 
 	li {
 		list-style: none;
 		display: inline-block;
-		// background: lighten( $gray, 30% ); // To be restored once made clickable
-		color: $gray-dark;
-		font-size: 0.925em;
-		margin: 0.38em 0.37rem;
-		padding: 0.25em 0.7em;
-		border-radius: 3px;
-
-		span {
-			display: block;
-		}
+		position: relative;
+		z-index: 0;
 	}
 }
 

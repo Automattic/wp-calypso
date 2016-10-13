@@ -11,7 +11,7 @@ import PurchaseDetail from 'components/purchase-detail';
 import supportUrls from 'lib/url/support';
 
 const DomainMappingDetails = ( { domain, registrarSupportUrl } ) => {
-	const registrarSupportLink = registrarSupportUrl ? <a target="_blank" href={ registrarSupportUrl } /> : <span />;
+	const registrarSupportLink = registrarSupportUrl ? <a target="_blank" rel="noopener noreferrer" href={ registrarSupportUrl } /> : <span />;
 	const description = (
 		<div>
 			<p>
@@ -53,6 +53,7 @@ const DomainMappingDetails = ( { domain, registrarSupportUrl } ) => {
 				buttonText={ i18n.translate( 'Learn more' ) }
 				href={ supportUrls.MAP_EXISTING_DOMAIN }
 				target="_blank"
+				rel="noopener noreferrer"
 				requiredText={ i18n.translate( 'Almost done! One step remaining…' ) }
 				isRequired />
 		</div>

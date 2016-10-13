@@ -52,6 +52,7 @@ PostTypesList.prototype.fetch = function( siteId ) {
 
 		debug( 'getting PostTypesList from api' );
 		wpcom
+		.withLocale()
 		.site( siteId )
 		.postTypesList( function( error, data ) {
 			if ( error ) {

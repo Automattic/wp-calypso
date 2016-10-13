@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import { keys } from 'lodash';
+import { keys, trim } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -23,8 +24,14 @@ const ReaderFullPostHeader = ( { post } ) => {
 		recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
 	};
 
+	const classes = { 'reader-full-post__header': true };
+	if ( ! post.title || trim( post.title ).length < 1 ) {
+		classes[ 'is-missing-title' ] = true;
+	}
+
+	/* eslint-disable react/jsx-no-target-blank */
 	return (
-		<div className="reader-full-post__header">
+		<div className={ classNames( classes ) }>
 			{ post.title
 				? <h1 className="reader-full-post__header-title" onClick={ handlePermalinkClick }>
 					<ExternalLink className="reader-full-post__header-title-link" href={ post.URL } target="_blank" icon={ false }>
@@ -38,7 +45,8 @@ const ReaderFullPostHeader = ( { post } ) => {
 						<a className="reader-full-post__header-date-link"
 							onClick={ recordDateClick }
 							href={ post.URL }
-							target="_blank">
+							target="_blank"
+							rel="noopener noreferrer">
 							<PostTime date={ post.date } />
 						</a>
 					</span> : null }
@@ -51,6 +59,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 			</div>
 		</div>
 	);
+	/* eslint-enable react/jsx-no-target-blank */
 };
 
 ReaderFullPostHeader.propTypes = {

@@ -2,11 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import map from 'lodash/map';
-import forEach from 'lodash/forEach';
-import head from 'lodash/head';
-import includes from 'lodash/includes';
-import keys from 'lodash/keys';
+import { map, forEach, head, includes, keys, find } from 'lodash';
 import debugModule from 'debug';
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
@@ -69,9 +65,9 @@ export default React.createClass( {
 
 	autoFillUsername( form ) {
 		const steps = getFlowSteps( this.props.flowName );
-		const domainSteps = steps.filter( step => step.match( /^domain/ ) );
+		const domainStep = find( steps, step => step.match( /^domain/ ) );
 		let domainName = getValueFromProgressStore( {
-			stepName: domainSteps[0] || null,
+			stepName: domainStep || null,
 			fieldName: 'siteUrl',
 			signupProgressStore: this.props.signupProgressStore
 		} );
@@ -385,7 +381,8 @@ export default React.createClass( {
 							a: <a
 								href={ this.getTermsOfServiceUrl() }
 								onClick={ this.handleOnClickTos }
-								target="_blank" />
+								target="_blank"
+								rel="noopener noreferrer" />
 						}
 					}
 				)

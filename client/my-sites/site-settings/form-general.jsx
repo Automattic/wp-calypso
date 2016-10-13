@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -25,9 +26,11 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormRadio from 'components/forms/form-radio';
 import FormCheckbox from 'components/forms/form-checkbox';
+import FormToggle from 'components/forms/form-toggle';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Timezone from 'components/timezone';
 import JetpackSyncPanel from './jetpack-sync-panel';
+import SiteIconSetting from './site-icon-setting';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { isBusiness } from 'lib/products-values';
 import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
@@ -53,6 +56,9 @@ const FormGeneral = React.createClass( {
 			settings.timezone_string = site.settings.timezone_string;
 			settings.jetpack_relatedposts_allowed = site.settings.jetpack_relatedposts_allowed;
 			settings.jetpack_sync_non_public_post_stati = site.settings.jetpack_sync_non_public_post_stati;
+
+			settings.amp_is_supported = site.settings.amp_is_supported;
+			settings.amp_is_enabled = site.settings.amp_is_enabled;
 
 			if ( settings.jetpack_relatedposts_allowed ) {
 				settings.jetpack_relatedposts_enabled = ( site.settings.jetpack_relatedposts_enabled ) ? 1 : 0;
@@ -103,7 +109,9 @@ const FormGeneral = React.createClass( {
 			jetpack_relatedposts_show_headline: false,
 			jetpack_relatedposts_show_thumbnails: false,
 			jetpack_sync_non_public_post_stati: false,
-			holidaysnow: false
+			holidaysnow: false,
+			amp_is_supported: false,
+			amp_is_enabled: false,
 		} );
 	},
 
@@ -147,6 +155,7 @@ const FormGeneral = React.createClass( {
 						{ this.translate( 'In a few words, explain what this site is about.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
+				<SiteIconSetting />
 			</div>
 		);
 	},
@@ -287,6 +296,73 @@ const FormGeneral = React.createClass( {
 				}
 
 			</FormFieldset>
+		);
+	},
+
+	handleAmpToggle() {
+		this.setState( { amp_is_enabled: ! this.state.amp_is_enabled }, () => {
+			this.submitForm();
+			this.onRecordEvent( 'Clicked AMP Toggle' );
+		} );
+	},
+
+	handleAmpCustomize() {
+		this.onRecordEvent( 'Clicked AMP Customize button' );
+		page( '/customize/amp/' + this.props.site.slug );
+	},
+
+	renderAmpSection() {
+		const { site } = this.props;
+
+		if ( site.jetpack ) {
+			return;
+		}
+
+		const {
+			fetchingSettings,
+			submittingForm,
+			amp_is_supported,
+			amp_is_enabled,
+		} = this.state;
+
+		const isDisabled = fetchingSettings || submittingForm;
+		const isCustomizeDisabled = isDisabled || ! amp_is_enabled;
+
+		if ( ! amp_is_supported ) {
+			return null;
+		}
+
+		return (
+			<div className="site-settings__amp">
+				<SectionHeader label={ this.translate( 'AMP' ) }>
+					<Button
+						compact
+						disabled={ isCustomizeDisabled }
+						onClick={ this.handleAmpCustomize }>
+						{ this.translate( 'Edit Design' ) }
+					</Button>
+					<FormToggle
+						checked={ amp_is_enabled }
+						onChange={ this.handleAmpToggle }
+						disabled={ isDisabled } />
+				</SectionHeader>
+				<Card className="site-settings__amp-explanation">
+					<p>
+						{ this.translate(
+							'Your WordPress.com site supports {{a}}Accelerated Mobile Pages (AMP){{/a}}, ' +
+							'a new Google-led initiative that dramatically improves loading speeds ' +
+							'on phones and tablets. {{a}}Learn More{{/a}}.',
+							{
+								components: {
+									a: <a
+										href="https://support.wordpress.com/google-amp-accelerated-mobile-pages/"
+										target="_blank" rel="noopener noreferrer" />
+								}
+							}
+						) }
+					</p>
+				</Card>
+			</div>
 		);
 	},
 
@@ -493,7 +569,7 @@ const FormGeneral = React.createClass( {
 				<SectionHeader label={ this.translate( 'Site Profile' ) }>
 					<Button
 						compact={ true }
-						onClick={ this.submitForm }
+						onClick={ this.handleSubmitForm }
 						primary={ true }
 
 						type="submit"
@@ -517,7 +593,7 @@ const FormGeneral = React.createClass( {
 				<SectionHeader label={ this.translate( 'Privacy' ) }>
 					<Button
 						compact={ true }
-						onClick={ this.submitForm }
+						onClick={ this.handleSubmitForm }
 						primary={ true }
 
 						type="submit"
@@ -533,6 +609,9 @@ const FormGeneral = React.createClass( {
 						{ this.visibilityOptions() }
 					</form>
 				</Card>
+
+				{ this.renderAmpSection() }
+
 				{
 					! this.props.site.jetpack && <div className="site-settings__footer-credit-container">
 						<SectionHeader label={ this.translate( 'Footer Credit' ) } />
@@ -549,7 +628,7 @@ const FormGeneral = React.createClass( {
 						{ ! isBusiness( site.plan ) && <UpgradeNudge
 							className="site-settings__footer-credit-nudge"
 							feature={ FEATURE_NO_BRANDING }
-							title={ this.translate( 'Remove the footer credit entirely with Business Plan' ) }
+							title={ this.translate( 'Remove the footer credit entirely with WordPress.com Business' ) }
 							message={ this.translate( 'Upgrade to remove the footer credit, add Google Analytics and more' ) }
 							icon="customize"
 						/> }
@@ -558,7 +637,7 @@ const FormGeneral = React.createClass( {
 				<SectionHeader label={ this.translate( 'Related Posts' ) }>
 					<Button
 						compact={ true }
-						onClick={ this.submitForm }
+						onClick={ this.handleSubmitForm }
 						primary={ true }
 
 						type="submit"
@@ -582,7 +661,7 @@ const FormGeneral = React.createClass( {
 							{ this.showPublicPostTypesCheckbox()
 								? <Button
 									compact={ true }
-									onClick={ this.submitForm }
+									onClick={ this.handleSubmitForm }
 									primary={ true }
 									type="submit"
 									disabled={ this.state.fetchingSettings || this.state.submittingForm }>

@@ -174,7 +174,8 @@ class GoogleVoucherDetails extends Component {
 										a: <a
 											className="google-voucher-code__help-link"
 											href="https://en.support.wordpress.com/google-adwords-credit/"
-											target="_blank" />
+											target="_blank"
+											rel="noopener noreferrer" />
 									}
 								}
 							)
@@ -185,6 +186,7 @@ class GoogleVoucherDetails extends Component {
 						className="google-voucher-code__setup-google-adwords"
 						href="https://www.google.com/adwords/"
 						target="_blank"
+						rel="noopener noreferrer"
 						onClick= { this.onSetupGoogleAdWordsLink }
 						text={ this.props.translate( 'Setup Google AdWords' ) } />
 

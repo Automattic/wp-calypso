@@ -9,7 +9,7 @@ var Selects = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
+			<div className="docs__design-group">
 				<h2>
 					<a href="/devdocs/design/selects">Selects</a>
 				</h2>

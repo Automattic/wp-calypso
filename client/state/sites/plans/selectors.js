@@ -70,23 +70,104 @@ export const getSitePlan = createSelector(
 );
 
 /**
- * Returns a plan discount price
- * @param  {Object}  state         global state
- * @param  {Number}  siteId       the site id
- * @param  {String}  productSlug   the plan product slug
- * @param  {Boolean} isMonthly     if true, returns monthly price
- * @return {Number}  plan discount price
+ * Returns true if a plan is discounted
+ *
+ * @param  {Object}   state         global state
+ * @param  {Number}   siteId        the site id
+ * @param  {String}   productSlug   the plan product slug
+ * @return {?Boolean}              true if a plan has a discount
  */
-export function getPlanDiscountPrice( state, siteId, productSlug, isMonthly = false ) {
+export function isSitePlanDiscounted(
+	state,
+	siteId,
+	productSlug
+) {
 	const plan = getSitePlan( state, siteId, productSlug );
 
-	if ( get( plan, 'rawPrice', -1 ) < 0 || get( plan, 'rawDiscount', -1 ) <= 0 ) {
+	if ( ! plan ) {
+		return null;
+	}
+
+	return ( get( plan, 'rawDiscount', -1 ) > 0 );
+}
+
+/**
+ * Returns a plan price, including any applied discounts
+ *
+ * @param  {Object}  state         global state
+ * @param  {Number}  siteId        the site id
+ * @param  {String}  productSlug   the plan product slug
+ * @param  {Boolean} isMonthly     if true, returns monthly price
+ * @return {Number}                plan discounted raw price
+ */
+export function getPlanDiscountedRawPrice(
+	state,
+	siteId,
+	productSlug,
+	{ isMonthly = false } = {}
+) {
+	const plan = getSitePlan( state, siteId, productSlug );
+
+	if ( get( plan, 'rawPrice', -1 ) < 0 || ! isSitePlanDiscounted( state, siteId, productSlug ) ) {
 		return null;
 	}
 
 	const discountPrice = plan.rawPrice;
 
 	return isMonthly ? parseFloat( ( discountPrice / 12 ).toFixed( 2 ) ) : discountPrice;
+}
+
+/**
+ * Returns a plan price before discount
+ *
+ * @param  {Object}  state         global state
+ * @param  {Number}  siteId        the site id
+ * @param  {String}  productSlug   the plan product slug
+ * @param  {Boolean} isMonthly     if true, returns monthly price
+ * @return {Number}                plan raw price
+ */
+export function getSitePlanRawPrice(
+	state,
+	siteId,
+	productSlug,
+	{ isMonthly = false } = {}
+) {
+	const plan = getSitePlan( state, siteId, productSlug );
+
+	if ( get( plan, 'rawPrice', -1 ) < 0 ) {
+		return null;
+	}
+
+	const price = plan.rawPrice + get( plan, 'rawDiscount', 0 );
+
+	return isMonthly ? parseFloat( ( price / 12 ).toFixed( 2 ) ) : price;
+}
+
+/**
+ * Returns a plan raw discount. It's the value which was subtracted from the plan's original raw price.
+ * Use getPlanDiscountedRawPrice if you need a plan's raw price after applying the discount.
+ *
+ * @param  {Object}  state        global state
+ * @param  {Number}  siteId       the site id
+ * @param  {String}  productSlug  the plan product slug
+ * @param  {Boolean} isMonthly    if true, returns monthly price
+ * @return {Number}               plan raw discount
+ */
+export function getPlanRawDiscount(
+	state,
+	siteId,
+	productSlug,
+	{ isMonthly = false } = {}
+) {
+	const plan = getSitePlan( state, siteId, productSlug );
+
+	if ( ! isSitePlanDiscounted( state, siteId, productSlug ) ) {
+		return null;
+	}
+
+	return isMonthly
+		? parseFloat( ( plan.rawDiscount / 12 ).toFixed( 2 ) )
+		: plan.rawDiscount;
 }
 
 export function hasDomainCredit( state, siteId ) {
@@ -106,4 +187,17 @@ export function isCurrentPlanExpiring( state, siteId ) {
 	const currentPlan = getCurrentPlan( state, siteId );
 	const expiration = get( currentPlan, 'userFacingExpiryMoment', null );
 	return expiration < moment().add( 30, 'days' );
+}
+
+/**
+ * Returns true if current user is also a current plan owner.
+ *
+ * @param  {Object}  state        global state
+ * @param  {Number}  siteId       the site id
+ * @return {Boolean}			  True when user is a plan owner
+ */
+export function isCurrentUserCurrentPlanOwner( state, siteId ) {
+	const currentPlan = getCurrentPlan( state, siteId );
+
+	return get( currentPlan, 'userIsOwner', false );
 }

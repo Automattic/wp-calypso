@@ -19,7 +19,7 @@ export default React.createClass( {
 	displayName: 'Input',
 
 	getDefaultProps() {
-		return { autoFocus: false };
+		return { autoFocus: false, autoComplete: 'on' };
 	},
 
 	componentDidMount() {
@@ -83,6 +83,7 @@ export default React.createClass( {
 					name={ this.props.name }
 					ref="input"
 					autoFocus={ this.props.autoFocus }
+					autoComplete={ this.props.autoComplete }
 					disabled={ this.props.disabled }
 					maxLength={ this.props.maxLength }
 					onChange={ this.props.onChange }

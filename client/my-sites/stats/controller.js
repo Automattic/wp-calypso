@@ -2,13 +2,14 @@
  * External Dependencies
  */
 import React from 'react';
-import store from 'store';
 import page from 'page';
 import i18n from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import userFactory from 'lib/user';
 import sitesFactory from 'lib/sites-list';
 import route from 'lib/route';
@@ -23,26 +24,6 @@ import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 const user = userFactory();
 const sites = sitesFactory();
 const analyticsPageTitle = 'Stats';
-
-function getVisitDates() {
-	const statsVisitDates = store.get( 'statVisits' ) || [];
-	return statsVisitDates;
-}
-
-function recordVisitDate() {
-	let statsVisitDates = getVisitDates();
-	const visitDate = i18n.moment().format( 'YYYY-MM-DD' );
-
-	if ( statsVisitDates.indexOf( visitDate ) === -1 ) {
-		statsVisitDates.push( visitDate );
-	}
-
-	if ( statsVisitDates.length > 10 ) {
-		statsVisitDates = statsVisitDates.slice( statsVisitDates.length - 10 );
-	}
-
-	store.set( 'statVisits', statsVisitDates );
-}
 
 function rangeOfPeriod( period, date ) {
 	const periodRange = {
@@ -197,7 +178,6 @@ module.exports = {
 				{ title: i18n.translate( 'Years' ), path: '/stats/year', id: 'stats-year', period: 'year' }
 			];
 		};
-		const queryOptions = context.query;
 		const basePath = route.sectionify( context.path );
 
 		window.scrollTo( 0, 0 );
@@ -205,25 +185,16 @@ module.exports = {
 		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
-		let activeFilter = filters().filter( function( filter ) {
+		const activeFilter = find( filters(), ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
-		}, this );
+		} );
 
 		// Validate that date filter is legit
-		if ( 0 === activeFilter.length ) {
+		if ( ! activeFilter ) {
 			next();
 		} else {
-			if ( queryOptions.from ) {
-				// For setting the oldStatsLink back to my-stats or wp-admin, depending on source
-				store.set( 'oldStatsLink', queryOptions.from );
-			}
-
-			activeFilter = activeFilter.shift();
-
 			analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 			analytics.pageView.record( basePath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
-
-			recordVisitDate();
 
 			renderWithReduxStore(
 				React.createElement( StatsComponent, {
@@ -280,11 +251,11 @@ module.exports = {
 		}
 		siteId = currentSite ? ( currentSite.ID || 0 ) : 0;
 
-		let activeFilter = filters().filter( function( filter ) {
+		const activeFilter = find( filters(), ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
-		}, this );
+		} );
 
-		if ( ( ! siteFragment ) || ( 0 === activeFilter.length ) ) {
+		if ( ! siteFragment || ! activeFilter ) {
 			next();
 		} else {
 			if ( 0 === siteId ) {
@@ -306,7 +277,6 @@ module.exports = {
 				siteOffset = currentSite.options.gmt_offset;
 			}
 			momentSiteZone = i18n.moment().utcOffset( siteOffset );
-			activeFilter = activeFilter.shift();
 			chartDate = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).endOf;
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
@@ -330,36 +300,16 @@ module.exports = {
 			analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
 			analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
 
-			recordVisitDate();
-
 			period = rangeOfPeriod( activeFilter.period, date );
 			chartPeriod = rangeOfPeriod( activeFilter.period, chartDate );
 			endDate = period.endOf.format( 'YYYY-MM-DD' );
 			chartEndDate = chartPeriod.endOf.format( 'YYYY-MM-DD' );
 
-			if ( queryOptions.from ) {
-				// For setting the oldStatsLink back to my-stats or wp-admin, depending on source
-				store.set( 'oldStatsLink', queryOptions.from );
-			}
-
-			// If there is saved tab in store, use it then remove
-			if ( store.get( 'statTab' + siteId ) ) {
-				chartTab = store.get( 'statTab' + siteId );
-				store.remove( 'statTab' + siteId );
-			} else {
-				chartTab = 'views';
-			}
-
+			chartTab = queryOptions.tab || 'views';
 			visitsListFields = chartTab;
 			// If we are on the default Tab, grab visitors too
 			if ( 'views' === visitsListFields ) {
 				visitsListFields = 'views,visitors';
-			}
-
-			if ( queryOptions.tab ) {
-				store.set( 'statTab' + siteId, queryOptions.tab );
-				// We don't want to persist tab throughout navigation, it's only for selecting original tab
-				page.redirect( context.pathname );
 			}
 
 			switch ( activeFilter.period ) {
@@ -414,36 +364,47 @@ module.exports = {
 				siteID: siteId, statType: 'statsCommentFollowers', domain: siteDomain, max: 7 } );
 
 			siteComponent = SiteStatsComponent;
+			const siteComponentChildren = {
+				date,
+				charts,
+				chartDate,
+				chartTab,
+				context,
+				sites,
+				activeTabVisitsList,
+				visitsList,
+				postsPagesList,
+				referrersList,
+				clicksList,
+				authorsList,
+				countriesList,
+				videoPlaysList,
+				siteId,
+				period,
+				chartPeriod,
+				tagsList,
+				commentsList,
+				wpcomFollowersList,
+				emailFollowersList,
+				commentFollowersList,
+				followList,
+				searchTermsList,
+				slug: siteDomain,
+				path: context.pathname,
+			};
+
+			if ( config.isEnabled( 'manage/stats/podcasts' ) ) {
+				siteComponentChildren.podcastDownloadsList = new StatsList( {
+					siteID: siteId,
+					statType: 'statsPodcastDownloads',
+					period: activeFilter.period,
+					date: endDate,
+					domain: siteDomain
+				} );
+			}
 
 			renderWithReduxStore(
-				React.createElement( siteComponent, {
-					date: date,
-					charts: charts,
-					chartDate: chartDate,
-					chartTab: chartTab,
-					path: context.pathname,
-					context: context,
-					sites: sites,
-					activeTabVisitsList: activeTabVisitsList,
-					visitsList: visitsList,
-					postsPagesList: postsPagesList,
-					referrersList: referrersList,
-					clicksList: clicksList,
-					authorsList: authorsList,
-					countriesList: countriesList,
-					videoPlaysList: videoPlaysList,
-					siteId: siteId,
-					period: period,
-					chartPeriod: chartPeriod,
-					tagsList: tagsList,
-					commentsList: commentsList,
-					wpcomFollowersList: wpcomFollowersList,
-					emailFollowersList: emailFollowersList,
-					commentFollowersList: commentFollowersList,
-					followList: followList,
-					searchTermsList: searchTermsList,
-					slug: siteDomain
-				} ),
+				React.createElement( siteComponent, siteComponentChildren ),
 				document.getElementById( 'primary' ),
 				context.store
 			);
@@ -476,7 +437,7 @@ module.exports = {
 		let summaryList;
 		let visitsList;
 		const followList = new FollowList();
-		const validModules = [ 'posts', 'referrers', 'clicks', 'countryviews', 'authors', 'videoplays', 'videodetails', 'searchterms' ];
+		const validModules = [ 'posts', 'referrers', 'clicks', 'countryviews', 'authors', 'videoplays', 'videodetails', 'podcastdownloads', 'searchterms' ];
 		let momentSiteZone = i18n.moment();
 		const basePath = route.sectionify( context.path );
 
@@ -486,9 +447,9 @@ module.exports = {
 		}
 		siteId = site ? ( site.ID || 0 ) : 0;
 
-		let activeFilter = filters().filter( function( filter ) {
+		const activeFilter = find( filters(), ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
-		}, this );
+		} );
 
 		// if we have a siteFragment, but no siteId, wait for the sites list
 		if ( siteFragment && 0 === siteId ) {
@@ -500,13 +461,12 @@ module.exports = {
 				// site is not in the user's site list
 				window.location = '/stats';
 			}
-		} else if ( 0 === activeFilter.length || -1 === validModules.indexOf( context.params.module ) ) {
+		} else if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
 			next();
 		} else {
 			if ( 'object' === typeof( site.options ) && 'undefined' !== typeof( site.options.gmt_offset ) ) {
 				momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
 			}
-			activeFilter = activeFilter.shift();
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate );
 			} else {
@@ -567,6 +527,10 @@ module.exports = {
 						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
 					break;
 
+				case 'podcastdownloads':
+					summaryList = new StatsList( { statType: 'statsPodcastDownloads', siteID: siteId,
+						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
+					break;
 			}
 
 			analytics.pageView.record(

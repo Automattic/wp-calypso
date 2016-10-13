@@ -16,7 +16,7 @@ import {
 	setPageTitle,
 	trackPageLoad
 } from 'reader/controller-helper';
-import { getTitle } from 'state/document-head/selectors';
+import { getDocumentHeadTitle as getTitle } from 'state/document-head/selectors';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import FullPostDialog from './main';
 import ReaderFullPost from 'blocks/reader-full-post';

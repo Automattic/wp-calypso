@@ -32,20 +32,17 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import CountedTextarea from 'components/forms/counted-textarea';
-import SeoSettingsUpgradeNudge from 'blocks/upgrade-nudge-expanded';
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
 import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
-import SearchPreview from 'components/seo/search-preview';
 import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
 import { isBusiness, isEnterprise } from 'lib/products-values';
-import {
-	PLAN_BUSINESS, FEATURE_ADVANCED_SEO
-} from 'lib/plans/constants';
+import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -66,7 +63,7 @@ function getGeneralTabUrl( slug ) {
 
 function stateForSite( site ) {
 	return {
-		seoMetaDescription: get( site, 'options.seo_meta_description', '' ),
+		frontPageMetaDescription: get( site, 'options.advanced_seo_front_page_description', '' ),
 		googleCode: get( site, 'options.verification_services_codes.google', '' ),
 		bingCode: get( site, 'options.verification_services_codes.bing', '' ),
 		pinterestCode: get( site, 'options.verification_services_codes.pinterest', '' ),
@@ -106,10 +103,22 @@ export const SeoForm = React.createClass( {
 	getInitialState() {
 		return {
 			...stateForSite( this.props.site ),
-			seoTitleFormats: {},
-			isRefreshingSiteData: false,
-			dirtyFields: Set()
+			seoTitleFormats: this.props.storedTitleFormats,
+			// dirtyFields is used to prevent prop updates
+			// from overwriting local stateful edits that
+			// are in progress and haven't yet been saved
+			// to the server
+			dirtyFields: Set(),
+			isRefreshingSiteData: true,
+			invalidatedSiteObject: this.props.selectedSite,
 		};
+	},
+
+	componentWillMount() {
+		this.changeGoogleCode = this.handleVerificationCodeChange( 'googleCode' );
+		this.changeBingCode = this.handleVerificationCodeChange( 'bingCode' );
+		this.changePinterestCode = this.handleVerificationCodeChange( 'pinterestCode' );
+		this.changeYandexCode = this.handleVerificationCodeChange( 'yandexCode' );
 	},
 
 	componentDidMount() {
@@ -117,70 +126,89 @@ export const SeoForm = React.createClass( {
 	},
 
 	componentWillReceiveProps( nextProps ) {
+		const { selectedSite: prevSite } = this.props;
+		const { selectedSite: nextSite } = nextProps;
 		const { dirtyFields } = this.state;
+
+		// if we are changing sites, everything goes
+		if ( prevSite.ID !== nextSite.ID ) {
+			return this.setState( {
+				...stateForSite( nextSite ),
+				seoTitleFormats: nextProps.storedTitleFormats,
+				invalidatedSiteObject: nextSite,
+				isRefreshingSiteData: true,
+				dirtyFields: Set(),
+			}, this.refreshCustomTitles );
+		}
 
 		let nextState = {
 			...stateForSite( nextProps.site ),
-			seoTitleFormats: nextProps.storedTitleFormats
+			seoTitleFormats: nextProps.storedTitleFormats,
 		};
 
-		// Don't update state for fields the user has edited
-		nextState = omit( nextState, dirtyFields.toArray() );
-
-		const wasRefreshingSiteData = this.state.isRefreshingSiteData;
 		const isRefreshingSiteData = (
-			this.state.isSubmittingForm ||
-			(
-				wasRefreshingSiteData &&
-				isEqual( this.props.storedTitleFormats, nextProps.storedTitleFormats )
-			)
+			this.state.isRefreshingSiteData &&
+			( this.state.invalidatedSiteObject === nextProps.selectedSite )
 		);
+
+		if ( this.state.isRefreshingSiteData && ! isRefreshingSiteData ) {
+			nextState = {
+				...nextState,
+				seoTitleFormats: nextProps.storedTitleFormats,
+				dirtyFields: dirtyFields.delete( 'seoTitleFormats' ),
+			};
+		}
 
 		if ( isRefreshingSiteData ) {
 			nextState = omit( nextState, [ 'seoTitleFormats' ] );
 		}
 
+		// Don't update state for fields the user has edited
+		nextState = omit( nextState, dirtyFields.toArray() );
+
 		this.setState( {
 			...nextState,
-			isRefreshingSiteData
+			isRefreshingSiteData,
 		} );
 	},
 
-	handleMetaChange( { target: { value: seoMetaDescription } } ) {
+	handleMetaChange( { target: { value: frontPageMetaDescription } } ) {
 		const { dirtyFields } = this.state;
 
 		// Don't allow html tags in the input field
-		const hasHtmlTagError = anyHtmlTag.test( seoMetaDescription );
+		const hasHtmlTagError = anyHtmlTag.test( frontPageMetaDescription );
 
 		this.setState( Object.assign(
 			{ hasHtmlTagError },
-			! hasHtmlTagError && { seoMetaDescription },
-			{ dirtyFields: dirtyFields.add( 'seoMetaDescription' ) }
+			! hasHtmlTagError && { frontPageMetaDescription },
+			{ dirtyFields: dirtyFields.add( 'frontPageMetaDescription' ) }
 		) );
 	},
 
-	handleVerificationCodeChange( event, serviceCode ) {
-		const { dirtyFields } = this.state;
+	handleVerificationCodeChange( serviceCode ) {
+		return event => {
+			const { dirtyFields } = this.state;
 
-		if ( ! this.state.hasOwnProperty( serviceCode ) ) {
-			return;
-		}
+			if ( ! this.state.hasOwnProperty( serviceCode ) ) {
+				return;
+			}
 
-		// Show an error if the user types into the field
-		if ( event.target.value.length === 1 ) {
+			// Show an error if the user types into the field
+			if ( event.target.value.length === 1 ) {
+				this.setState( {
+					showPasteError: true,
+					invalidCodes: [ serviceCode.replace( 'Code', '' ) ]
+				} );
+				return;
+			}
+
 			this.setState( {
-				showPasteError: true,
-				invalidCodes: [ serviceCode.replace( 'Code', '' ) ]
+				invalidCodes: [],
+				showPasteError: false,
+				[ serviceCode ]: event.target.value,
+				dirtyFields: dirtyFields.add( serviceCode )
 			} );
-			return;
-		}
-
-		this.setState( {
-			invalidCodes: [],
-			showPasteError: false,
-			[ serviceCode ]: event.target.value,
-			dirtyFields: dirtyFields.add( serviceCode )
-		} );
+		};
 	},
 
 	updateTitleFormats( seoTitleFormats ) {
@@ -196,7 +224,9 @@ export const SeoForm = React.createClass( {
 		const {
 			site,
 			storedTitleFormats,
-			trackSubmission
+			trackSubmission,
+			showAdvancedSeo,
+			showWebsiteMeta
 		} = this.props;
 
 		const { dirtyFields } = this.state;
@@ -246,9 +276,15 @@ export const SeoForm = React.createClass( {
 			advanced_seo_title_formats: seoTitleToApi(
 				pickBy( this.state.seoTitleFormats, hasChanges )
 			),
-			seo_meta_description: this.state.seoMetaDescription,
 			verification_services_codes: filteredCodes
 		};
+
+		// Update this option only if advanced SEO is enabled or grandfathered in order to
+		// avoid request errors on non-business sites when they attempt site verification
+		// services update
+		if ( showAdvancedSeo || showWebsiteMeta ) {
+			updatedOptions.advanced_seo_front_page_description = this.state.frontPageMetaDescription;
+		}
 
 		site.saveSettings( updatedOptions, error => {
 			if ( error ) {
@@ -280,7 +316,10 @@ export const SeoForm = React.createClass( {
 		} = this.props;
 
 		if ( selectedSite && selectedSite.ID ) {
-			refreshSiteData( selectedSite.ID );
+			this.setState( {
+				isRefreshingSiteData: true,
+				invalidatedSiteObject: selectedSite,
+			}, () => refreshSiteData( selectedSite.ID ) );
 		}
 	},
 
@@ -303,20 +342,19 @@ export const SeoForm = React.createClass( {
 	},
 
 	render() {
-		const { showAdvancedSeo, showUpgradeNudge, upgradeToBusiness } = this.props;
+		const { showAdvancedSeo, showWebsiteMeta, showUpgradeNudge } = this.props;
 		const {
-			description: siteDescription,
 			slug = '',
 			settings: {
 				blog_public = 1
 			} = {},
-			title: siteTitle
 		} = this.props.site;
 
 		const {
 			isSubmittingForm,
 			isFetchingSettings,
-			seoMetaDescription,
+			isRefreshingSiteData,
+			frontPageMetaDescription,
 			showPasteError = false,
 			hasHtmlTagError = false,
 			invalidCodes = [],
@@ -329,9 +367,6 @@ export const SeoForm = React.createClass( {
 		const isDisabled = isSitePrivate || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
-		const seoTitle = siteDescription.length
-			? `${ siteTitle } | ${ siteDescription }`
-			: siteTitle;
 		const siteUrl = `https://${ slug }/`;
 		const sitemapUrl = `${ siteUrl }sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
@@ -362,49 +397,34 @@ export const SeoForm = React.createClass( {
 			</Button>
 		);
 
-		let preview = (
-			<SearchPreview
-				title={ seoTitle }
-				url={ siteUrl }
-				snippet={ seoMetaDescription }
-			/>
-		);
-
-		if ( config.isEnabled('manage/advanced-seo') ) {
-			preview = (
-				<FormSettingExplanation>
-					<Button className="preview-button" onClick={ this.showPreview }>
-						{ this.translate('Show Previews') }
-					</Button>
-					<span className="preview-explanation">
-						{ this.translate('See how this will look on Google, Facebook, and Twitter.') }
-					</span>
-				</FormSettingExplanation>
-			);
-		}
-
+		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div>
-				<PageViewTracker path="/settings/seo/:site" title="Site Settings > SEO" />
+				<PageViewTracker
+					path="/settings/seo/:site"
+					title="Site Settings > SEO"
+				/>
 				{ isSitePrivate &&
-					<Notice status="is-warning" showDismiss={ false } text={ this.translate( 'SEO settings are disabled because the site visibility is not set to Public.' ) }>
-						<NoticeAction href={ generalTabUrl }>{ this.translate( 'View Settings' ) }</NoticeAction>
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ this.translate(
+							'SEO settings are disabled because the ' +
+							'site visibility is not set to Public.'
+						) }
+					>
+						<NoticeAction href={ generalTabUrl }>
+							{ this.translate( 'View Settings' ) }
+						</NoticeAction>
 					</Notice>
 				}
 
 				{ showUpgradeNudge &&
-					<SeoSettingsUpgradeNudge
-						plan={ PLAN_BUSINESS }
-						upgrade={ upgradeToBusiness }
+					<UpgradeNudge
+						feature={ FEATURE_ADVANCED_SEO }
 						title={ this.translate( 'Upgrade to a Business Plan and Enable Advanced SEO' ) }
-						subtitle={ this.translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
-						highlightedFeature={ FEATURE_ADVANCED_SEO }
-						eventName={ "calypso_seo_settings_upgrade_nudge_impression" }
-						benefits={ [
-							this.translate( "Preview your site's posts and pages as they will appear when shared on Facebook, Twitter and the WordPress.com Reader." ),
-							this.translate( 'Allow you to control how page titles will appear on Google search results, or when shared on social networks.' ),
-							this.translate( 'Modify front page meta data in order to customize how your site appears to search engines.' )
-						] }
+						message={ this.translate( `By upgrading to a Business Plan you'll enable advanced SEO features on your site.` ) }
+						event={ 'calypso_seo_settings_upgrade_nudge' }
 					/>
 				}
 
@@ -425,58 +445,80 @@ export const SeoForm = React.createClass( {
 					) }
 				</Card>
 
-				<form onChange={ this.markChanged } className="seo-form">
+				<form onChange={ this.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo && config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
 						<div>
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
 								{ submitButton }
 							</SectionHeader>
-							<Card>
-								<p>
+							<Card compact="true" className="seo-settings__page-title__header">
+								<img className="seo-settings__page-title__header-image" src="/calypso/images/seo/page-title.svg" />
+								<p className="seo-settings__page-title__header-text">
 								{ this.translate(
 									'You can set the structure of page titles for different sections of your site. ' +
-									'Doing this will change the way your site title is displayed in search engine ' +
-									'results, and when shared on social media sites.'
+									'Doing this will change the way your site title is displayed in search engines, ' +
+									'social media sites, and browser tabs.'
 								) }
 								</p>
-								<MetaTitleEditor onChange={ this.updateTitleFormats } />
+							</Card>
+							<Card>
+								<MetaTitleEditor
+									disabled={ isRefreshingSiteData || isDisabled }
+									onChange={ this.updateTitleFormats }
+									titleFormats={ this.state.seoTitleFormats }
+								/>
 							</Card>
 						</div>
 					}
 
-					<div>
-						<SectionHeader label={ this.translate( 'Website Meta' ) }>
-							{ submitButton }
-						</SectionHeader>
-						<Card>
-							<p>
-								{ this.translate(
-									'Craft a description of your Website up to 160 characters that will be used in ' +
-									'search engine results for your front page, and when your website is shared ' +
-									'on social media sites.'
-								) }
-							</p>
-							<p>
-								<FormLabel htmlFor="seo_meta_description">
-									{ this.translate( 'Front Page Meta Description' ) }
-								</FormLabel>
-								<CountedTextarea
-									name="seo_meta_description"
-									type="text"
-									id="seo_meta_description"
-									value={ seoMetaDescription || '' }
-									disabled={ isDisabled }
-									maxLength="300"
-									acceptableLength={ 159 }
-									onChange={ this.handleMetaChange }
-								/>
-								{ hasHtmlTagError &&
-									<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
-								}
-							</p>
-							{ preview }
-						</Card>
-					</div>
+					{ ( showAdvancedSeo || showWebsiteMeta ) &&
+						<div>
+							<SectionHeader label={ this.translate( 'Website Meta' ) }>
+								{ submitButton }
+							</SectionHeader>
+							<Card>
+								<p>
+									{ this.translate(
+										'Craft a description of your Website up to 160 characters that will be used in ' +
+										'search engine results for your front page, and when your website is shared ' +
+										'on social media sites.'
+									) }
+								</p>
+								<p>
+									<FormLabel htmlFor="advanced_seo_front_page_description">
+										{ this.translate( 'Front Page Meta Description' ) }
+									</FormLabel>
+									<CountedTextarea
+										name="advanced_seo_front_page_description"
+										type="text"
+										id="advanced_seo_front_page_description"
+										value={ frontPageMetaDescription || '' }
+										disabled={ isDisabled }
+										maxLength="300"
+										acceptableLength={ 159 }
+										onChange={ this.handleMetaChange }
+									/>
+									{ hasHtmlTagError &&
+										<FormInputValidation isError={ true } text={ this.translate( 'HTML tags are not allowed.' ) } />
+									}
+								</p>
+								<FormSettingExplanation>
+									<Button
+										className="seo-settings__preview-button"
+										onClick={ this.showPreview }
+									>
+										{ this.translate( 'Show Previews' ) }
+									</Button>
+									<span className="seo-settings__preview-explanation">
+										{ this.translate(
+											'See how this will look on ' +
+											'Google, Facebook, and Twitter.'
+										) }
+									</span>
+								</FormSettingExplanation>
+							</Card>
+						</div>
+					}
 
 					<SectionHeader label={ this.translate( 'Site Verification Services' ) }>
 						{ submitButton }
@@ -494,10 +536,34 @@ export const SeoForm = React.createClass( {
 									components: {
 										b: <strong />,
 										support: <a href="https://en.support.wordpress.com/webmaster-tools/" />,
-										google: <ExternalLink icon={ true } target="_blank" href="https://www.google.com/webmasters/tools/" />,
-										bing: <ExternalLink icon={ true } target="_blank" href="https://www.bing.com/webmaster/" />,
-										pinterest: <ExternalLink icon={ true } target="_blank" href="https://pinterest.com/website/verify/" />,
-										yandex: <ExternalLink icon={ true } target="_blank" href="https://webmaster.yandex.com/sites/" />
+										google: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://www.google.com/webmasters/tools/"
+											/>
+										),
+										bing: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://www.bing.com/webmaster/"
+											/>
+										),
+										pinterest: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://pinterest.com/website/verify/"
+											/>
+										),
+										yandex: (
+											<ExternalLink
+												icon={ true }
+												target="_blank"
+												href="https://webmaster.yandex.com/sites/"
+											/>
+										),
 									}
 								}
 							) }
@@ -513,7 +579,7 @@ export const SeoForm = React.createClass( {
 								disabled={ isDisabled }
 								isError={ hasError( 'google' ) }
 								placeholder={ getMetaTag( 'google', placeholderTagContent ) }
-								onChange={ event => this.handleVerificationCodeChange( event, 'googleCode' ) } />
+								onChange={ this.changeGoogleCode } />
 							{ hasError( 'google' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
@@ -527,7 +593,7 @@ export const SeoForm = React.createClass( {
 								disabled={ isDisabled }
 								isError={ hasError( 'bing' ) }
 								placeholder={ getMetaTag( 'bing', placeholderTagContent ) }
-								onChange={ event => this.handleVerificationCodeChange( event, 'bingCode' ) } />
+								onChange={ this.changeBingCode } />
 							{ hasError( 'bing' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
@@ -541,7 +607,7 @@ export const SeoForm = React.createClass( {
 								disabled={ isDisabled }
 								isError={ hasError( 'pinterest' ) }
 								placeholder={ getMetaTag( 'pinterest', placeholderTagContent ) }
-								onChange={ event => this.handleVerificationCodeChange( event, 'pinterestCode' ) } />
+								onChange={ this.changePinterestCode } />
 							{ hasError( 'pinterest' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
@@ -555,12 +621,19 @@ export const SeoForm = React.createClass( {
 								disabled={ isDisabled }
 								isError={ hasError( 'yandex' ) }
 								placeholder={ getMetaTag( 'yandex', placeholderTagContent ) }
-								onChange={ event => this.handleVerificationCodeChange( event, 'yandexCode' ) } />
+								onChange={ this.changeYandexCode } />
 							{ hasError( 'yandex' ) && this.getVerificationError( showPasteError ) }
 						</FormFieldset>
 						<FormFieldset>
 							<FormLabel htmlFor="seo_sitemap">{ this.translate( 'XML Sitemap' ) }</FormLabel>
-							<ExternalLink className="seo-sitemap" icon={ true } href={ sitemapUrl } target="_blank">{ sitemapUrl }</ExternalLink>
+							<ExternalLink
+								className="seo-settings__seo-sitemap"
+								icon={ true }
+								href={ sitemapUrl }
+								target="_blank"
+							>
+								{ sitemapUrl }
+							</ExternalLink>
 							<FormSettingExplanation>
 								{ this.translate( 'Your site\'s sitemap is automatically sent to all major search engines for indexing.' ) }
 							</FormSettingExplanation>
@@ -569,14 +642,15 @@ export const SeoForm = React.createClass( {
 				</form>
 				<WebPreview
 					showPreview={ showPreview }
-				    onClose={ this.hidePreview }
-				    previewUrl={ siteUrl }
-				    showDeviceSwitcher={ false }
-				    showExternal={ false }
-				    defaultViewportDevice="seo"
+					onClose={ this.hidePreview }
+					previewUrl={ siteUrl }
+					showDeviceSwitcher={ false }
+					showExternal={ false }
+					defaultViewportDevice="seo"
 				/>
 			</div>
 		);
+		/* eslint-enable react/jsx-no-target-blank */
 	}
 } );
 
@@ -588,13 +662,14 @@ const mapStateToProps = ( state, ownProps ) => {
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' ),
+		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' )
 	};
 };
 
 const mapDispatchToProps = {
 	refreshSiteData: siteId => requestSite( siteId ),
-	trackSubmission: () => recordTracksEvent( 'calypso_seo_settings_form_submit', {} )
+	trackSubmission: () => recordTracksEvent( 'calypso_seo_settings_form_submit', {} ),
 };
 
 export default connect(

@@ -26,7 +26,7 @@ export default class PostTrackback extends React.Component {
 					</div>
 
 					{ comment.author.URL
-						? <a href={ comment.author.URL } target="_blank" className="comment__username">{ unescape( comment.author.name ) }<Gridicon icon="external" /></a>
+						? <a href={ comment.author.URL } target="_blank" rel="noopener noreferrer" className="comment__username">{ unescape( comment.author.name ) }<Gridicon icon="external" /></a>
 						: <strong className="comment__username">{ unescape( comment.author.name ) }</strong> }
 
 					<small className="comment__timestamp">

@@ -13,7 +13,8 @@ import {
 	IMAGE_EDITOR_SET_ASPECT_RATIO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_SET_FILE_INFO,
-	IMAGE_EDITOR_STATE_RESET
+	IMAGE_EDITOR_STATE_RESET,
+	IMAGE_EDITOR_STATE_RESET_ALL
 } from 'state/action-types';
 import { AspectRatios } from './constants';
 
@@ -50,8 +51,11 @@ export function hasChanges( state = false, action ) {
 		case IMAGE_EDITOR_CROP:
 		case IMAGE_EDITOR_ROTATE_COUNTERCLOCKWISE:
 		case IMAGE_EDITOR_FLIP:
+			return true;
+
 		case IMAGE_EDITOR_STATE_RESET:
-			return action.type !== IMAGE_EDITOR_STATE_RESET;
+		case IMAGE_EDITOR_STATE_RESET_ALL:
+			return false;
 	}
 
 	return state;
@@ -62,6 +66,12 @@ export function fileInfo( state = defaultFileInfo, action ) {
 		case IMAGE_EDITOR_SET_FILE_INFO:
 			const { src, fileName, mimeType, title } = action;
 			return { ...state, src, fileName, mimeType, title };
+
+		case IMAGE_EDITOR_STATE_RESET_ALL:
+			return {
+				...state,
+				...defaultFileInfo
+			};
 	}
 
 	return state;
@@ -74,6 +84,7 @@ export function transform( state = defaultTransform, action ) {
 		case IMAGE_EDITOR_FLIP:
 			return Object.assign( {}, state, { scaleX: -state.scaleX } );
 		case IMAGE_EDITOR_STATE_RESET:
+		case IMAGE_EDITOR_STATE_RESET_ALL:
 			return Object.assign( {}, defaultTransform );
 	}
 
@@ -115,6 +126,7 @@ export function crop( state = defaultCrop, action ) {
 				leftRatio: 1 - state.widthRatio - state.leftRatio
 			} );
 		case IMAGE_EDITOR_STATE_RESET:
+		case IMAGE_EDITOR_STATE_RESET_ALL:
 			return Object.assign( {}, defaultCrop );
 	}
 
@@ -126,6 +138,7 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 		case IMAGE_EDITOR_SET_ASPECT_RATIO:
 			return action.ratio;
 		case IMAGE_EDITOR_STATE_RESET:
+		case IMAGE_EDITOR_STATE_RESET_ALL:
 			return AspectRatios.FREE;
 	}
 

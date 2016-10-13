@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+const React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' ),
+const Card = require( 'components/card' ),
 	Search = require( 'components/search' );
 
-var SearchCard = React.createClass( {
+const SearchCard = React.createClass( {
 
 	propTypes: {
 		additionalClasses: React.PropTypes.string,
@@ -21,7 +21,8 @@ var SearchCard = React.createClass( {
 		analyticsGroup: React.PropTypes.string,
 		autoFocus: React.PropTypes.bool,
 		disabled: React.PropTypes.bool,
-		dir: React.PropTypes.string
+		dir: React.PropTypes.string,
+		maxLength: React.PropTypes.number
 	},
 
 	render: function() {

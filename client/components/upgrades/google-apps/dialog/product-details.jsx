@@ -13,7 +13,7 @@ var GoogleAppsProductDetails = React.createClass( {
 			<div className="google-apps-dialog__product-details">
 				<h3 className="google-apps-dialog__product-name">
 					{ /* Intentionally not translable as it is a brand name and Google keeps it in English */ }
-					<span className="google-apps-dialog__product-logo">Google </span>Apps for Work
+					<span className="google-apps-dialog__product-logo">G Suite</span>
 				</h3>
 
 				<h5 className="google-apps-dialog__file-storage">

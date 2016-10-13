@@ -294,8 +294,8 @@ const RemovePurchase = React.createClass( {
 					{ ' ' }
 					{ isGoogleApps( purchase )
 						? this.translate(
-							'Your Google Apps account will continue working without interruption. ' +
-								'You will be able to manage your Google Apps billing directly through Google.'
+							'Your G Suite account will continue working without interruption. ' +
+								'You will be able to manage your G Suite billing directly through Google.'
 						)
 						: this.translate(
 							'You will not be able to reuse it again without purchasing a new subscription.',

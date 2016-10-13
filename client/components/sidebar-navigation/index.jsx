@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import Gridicon from 'components/gridicon';
-import { getTitle } from 'state/document-head/selectors';
+import { getDocumentHeadTitle } from 'state/document-head/selectors';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 class SidebarNavigation extends React.Component {
@@ -48,7 +48,7 @@ SidebarNavigation.propTypes = {
 
 export default connect(
 	state => ( {
-		title: getTitle( state )
+		title: getDocumentHeadTitle( state )
 	} ),
 	{ setLayoutFocus }
 )( SidebarNavigation );

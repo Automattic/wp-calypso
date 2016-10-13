@@ -2,6 +2,11 @@
 
 export const remoteValuesSchema = {
 	type: [ 'null', 'object' ],
+	patternProperties: {
+		'^dismissible-card-.+$': {
+			type: 'boolean'
+		}
+	},
 	properties: {
 		'editor-mode': {
 			type: 'string',
@@ -35,13 +40,16 @@ export const remoteValuesSchema = {
 				additionalProperties: false,
 			}
 		},
-	},
-	recentSites: {
-		schema: {
+		recentSites: {
 			type: 'array',
 			items: {
 				type: 'number'
 			}
+		},
+		mediaScale: {
+			type: 'number',
+			minimum: 0,
+			maximum: 1
 		}
 	}
 };

@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { noop } from 'lodash';
 import sinon from 'sinon';
 
 /**
@@ -19,6 +20,11 @@ describe( 'UserUtils', () => {
 		configMock = sinon.stub();
 		configMock.isEnabled = sinon.stub();
 		mockery.registerMock( 'config', configMock );
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
 	} );
 
 	before( () => {

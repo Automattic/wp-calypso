@@ -1,12 +1,11 @@
 /**
  * External Dependencies
  */
- import { assert } from 'chai';
+import { assert } from 'chai';
 
 /**
  * Internal Dependencies
  */
-
 import * as posts from './fixtures';
 import * as helper from '../helper';
 

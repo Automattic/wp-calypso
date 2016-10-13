@@ -91,10 +91,38 @@ describe( 'utils', () => {
 				meta: {},
 				terms: {
 					category: {
-						Code: {
-							ID: 6,
+						meta: {
+							ID: 171,
+							name: 'meta',
 							meta: {}
 						}
+					},
+					post_tag: {
+						meta: {
+							ID: 171,
+							name: 'meta',
+							meta: {}
+						}
+					}
+				},
+				categories: {
+					meta: {
+						ID: 171,
+						name: 'meta',
+						meta: {}
+					}
+				},
+				tags: {
+					meta: {
+						ID: 171,
+						name: 'meta',
+						meta: {}
+					}
+				},
+				attachments: {
+					14209: {
+						ID: 14209,
+						meta: {}
 					}
 				}
 			} );
@@ -103,13 +131,35 @@ describe( 'utils', () => {
 			expect( revised ).to.not.equal( original );
 			expect( revised ).to.eql( {
 				ID: 814,
-				meta: null,
 				terms: {
 					category: {
-						Code: {
-							ID: 6,
-							meta: null
+						meta: {
+							ID: 171,
+							name: 'meta'
 						}
+					},
+					post_tag: {
+						meta: {
+							ID: 171,
+							name: 'meta'
+						}
+					}
+				},
+				categories: {
+					meta: {
+						ID: 171,
+						name: 'meta'
+					}
+				},
+				tags: {
+					meta: {
+						ID: 171,
+						name: 'meta'
+					}
+				},
+				attachments: {
+					14209: {
+						ID: 14209
 					}
 				}
 			} );

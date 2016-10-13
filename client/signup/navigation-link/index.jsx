@@ -13,6 +13,7 @@ import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 import { submitSignupStep } from 'lib/signup/actions';
 import signupUtils from 'signup/utils';
+import { get } from 'lodash';
 
 const NavigationLink = React.createClass( {
 	propTypes: {
@@ -34,8 +35,9 @@ const NavigationLink = React.createClass( {
 			return this.props.backUrl;
 		}
 
-		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName ),
-			{ stepSectionName } = find( this.props.signupProgressStore, { stepName: previousStepName } );
+		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName );
+
+		const stepSectionName = get( find( this.props.signupProgressStore, { stepName: previousStepName } ), 'stepSectionName', '' );
 
 		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, i18n.getLocaleSlug() );
 	},
@@ -66,7 +68,7 @@ const NavigationLink = React.createClass( {
 	},
 
 	render() {
-		if ( this.props.positionInFlow === 0 && this.props.direction === 'back' ) {
+		if ( this.props.positionInFlow === 0 && this.props.direction === 'back' && ! this.props.stepSectionName ) {
 			return null;
 		}
 

@@ -16,9 +16,9 @@ import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
-	isRequestingSiteStatsForQuery,
 	getSiteStatsPostStreakData,
-	getSiteStatsMaxPostsByDay
+	getSiteStatsMaxPostsByDay,
+	getSiteStatsTotalPostsForStreakQuery
 } from 'state/stats/lists/selectors';
 
 const PostTrends = React.createClass( {
@@ -55,6 +55,12 @@ const PostTrends = React.createClass( {
 	// Remove listener
 	componentWillUnmount: function() {
 		window.removeEventListener( 'resize', this.resize );
+	},
+
+	shouldComponentUpdate: function( nextProps ) {
+		// only update if the total number of posts, or query.endDate has changed
+		return nextProps.totalPosts !== this.props.totalPosts ||
+			nextProps.query.endDate !== this.props.query.endDate;
 	},
 
 	resize: function() {
@@ -130,27 +136,19 @@ const PostTrends = React.createClass( {
 	},
 
 	render: function() {
-		var leftClass,
-			rightClass,
-			containerClass;
+		const { siteId, query } = this.props;
 
-		const { siteId, query, requesting } = this.props;
-
-		leftClass = classNames( 'post-trends__scroll-left', {
+		const leftClass = classNames( 'post-trends__scroll-left', {
 			'is-active': this.state.canScrollLeft
 		} );
 
-		rightClass = classNames( 'post-trends__scroll-right', {
+		const rightClass = classNames( 'post-trends__scroll-right', {
 			'is-active': this.state.canScrollRight
-		} );
-
-		containerClass = classNames( 'post-trends', {
-			'is-loading': requesting
 		} );
 
 		return (
 
-			<div className={ containerClass }>
+			<div className="post-trends">
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
 				<SectionHeader label={ this.translate( 'Posting Activity' ) }></SectionHeader>
 				<Card>
@@ -187,9 +185,9 @@ export default connect( ( state ) => {
 	};
 
 	return {
-		requesting: isRequestingSiteStatsForQuery( state, siteId, 'statsStreak', query ),
 		streakData: getSiteStatsPostStreakData( state, siteId, query ),
 		max: getSiteStatsMaxPostsByDay( state, siteId, query ),
+		totalPosts: getSiteStatsTotalPostsForStreakQuery( state, siteId, query ),
 		query,
 		siteId
 	};

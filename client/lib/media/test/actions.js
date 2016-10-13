@@ -3,8 +3,7 @@
  */
 import sinon from 'sinon';
 import { expect } from 'chai';
-import assign from 'lodash/assign';
-import isPlainObject from 'lodash/isPlainObject';
+import { assign, isPlainObject, noop } from 'lodash';
 import mockery from 'mockery';
 
 /**
@@ -47,10 +46,6 @@ describe( 'MediaActions', function() {
 	useMockery();
 
 	before( function() {
-		Dispatcher = require( 'dispatcher' );
-		PostEditStore = require( 'lib/posts/post-edit-store' );
-		MediaListStore = require( '../list-store' );
-
 		mockery.registerMock( './library-selected-store', {
 			getAll: function() {
 				return [ DUMMY_ITEM ];
@@ -62,6 +57,9 @@ describe( 'MediaActions', function() {
 			}
 		} );
 		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} ),
 			site: function( siteId ) {
 				return {
 					addMediaFiles: mediaAdd.bind( siteId ),
@@ -89,6 +87,10 @@ describe( 'MediaActions', function() {
 
 			return isPlainObject( obj );
 		} );
+
+		Dispatcher = require( 'dispatcher' );
+		PostEditStore = require( 'lib/posts/post-edit-store' );
+		MediaListStore = require( '../list-store' );
 
 		MediaActions = require( '../actions' );
 	} );

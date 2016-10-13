@@ -114,6 +114,7 @@ KeyboardShortcuts.prototype.bindShortcut = function( eventName, keys, type, chec
 				// https://bugs.webkit.org/show_bug.cgi?id=19906
 				if ( checkKeys && checkKeys.length > 0 ) {
 					keyValue = self._getKey( event );
+					// TODO: Could this be replaced by Array#some ?
 					matches = checkKeys.filter( function( key ) {
 						return key === keyValue;
 					} );

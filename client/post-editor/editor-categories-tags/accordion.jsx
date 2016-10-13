@@ -15,7 +15,7 @@ import AccordionSection from 'components/accordion/section';
 import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 import Gridicon from 'components/gridicon';
 import TermSelector from 'post-editor/editor-term-selector';
-import Tags from 'post-editor/editor-tags';
+import TermTokenField from 'post-editor/term-token-field';
 import unescapeString from 'lodash/unescape';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
@@ -28,18 +28,12 @@ import { getTerm } from 'state/terms/selectors';
 
 export class EditorCategoriesTagsAccordion extends Component {
 	static propTypes = {
-		site: PropTypes.object,
-		post: PropTypes.object,
 		translate: PropTypes.func,
 		postTerms: PropTypes.object,
 		postType: PropTypes.string,
 		defaultCategory: PropTypes.object,
 		isTermsSupported: PropTypes.bool,
 		siteSlug: PropTypes.string,
-		// passed down from TagListData
-		tags: PropTypes.array,
-		tagsHasNextPage: PropTypes.bool,
-		tagsFetchingNextPage: PropTypes.bool
 	};
 
 	renderJetpackNotice() {
@@ -77,14 +71,20 @@ export class EditorCategoriesTagsAccordion extends Component {
 	}
 
 	renderTags() {
+		const { isTermsSupported, postType, translate } = this.props;
+		const helpText = postType === 'page'
+			? translate( 'Use tags to associate more specific keywords with your pages.' )
+			: translate( 'Use tags to associate more specific keywords with your posts.' );
+
 		return (
 			<AccordionSection>
-				<Tags
-					post={ this.props.post }
-					tags={ this.props.tags }
-					tagsHasNextPage={ this.props.tagsHasNextPage }
-					tagsFetchingNextPage={ this.props.tagsFetchingNextPage }
-				/>
+				<EditorDrawerLabel helpText={ helpText } labelText={ translate( 'Tags' ) }>
+					{ isTermsSupported
+						? <TermTokenField taxonomyName="post_tag" />
+						: this.renderJetpackNotice()
+					}
+				</EditorDrawerLabel>
+
 			</AccordionSection>
 		);
 	}
@@ -92,49 +92,53 @@ export class EditorCategoriesTagsAccordion extends Component {
 	getCategoriesSubtitle() {
 		const { translate, postTerms, defaultCategory } = this.props;
 		const categories = toArray( get( postTerms, 'category' ) );
-		const categoriesCount = categories.length;
 
-		switch ( categoriesCount ) {
-			case 0:
-				return defaultCategory ? defaultCategory.name : null;
-			case 1:
-				return unescapeString( categories[ 0 ].name );
-			default:
-				return translate(
-					'%d category',
-					'%d categories',
-					{ args: [ categoriesCount ], count: categoriesCount }
-				);
+		if ( categories.length > 1 ) {
+			return translate( '%d category', '%d categories', {
+				args: [ categories.length ],
+				count: categories.length
+			} );
+		}
+
+		let category;
+		if ( categories.length > 0 ) {
+			category = categories[ 0 ];
+		} else {
+			category = defaultCategory;
+		}
+
+		if ( category ) {
+			return unescapeString( category.name );
 		}
 	}
 
 	getTagsSubtitle() {
-		const { translate } = this.props;
-		let tags = this.props.post.tags || [];
-		tags = Array.isArray( tags ) ? tags : Object.keys( tags );
-		tags = tags.map( unescapeString );
+		const { translate, postTerms } = this.props;
+		const tags = toArray( get( postTerms, 'post_tag' ) );
+		const tagsLength = tags.length;
 
-		switch ( tags.length ) {
+		switch ( tagsLength ) {
 			case 0:
 				return null; // No tags subtitle
 			case 1:
-				return '#' + tags[ 0 ];
 			case 2:
-				return '#' + tags[ 0 ] + ', #' + tags[ 1 ];
+				return tags.map( ( tag ) => {
+					return '#' + unescapeString( tag.name || tag );
+				} ).join( ', ' );
 			default:
 				return translate(
 					'%d tag',
 					'%d tags',
-					{ args: [ tags.length ], count: tags.length }
+					{ args: [ tagsLength ], count: tagsLength }
 				);
 		}
 	}
 
 	getSubtitle() {
 		const subtitlePieces = [];
-		const { postType, site, post } = this.props;
+		const { postType, siteId } = this.props;
 
-		if ( ! site || ! post ) {
+		if ( ! siteId ) {
 			return null;
 		}
 

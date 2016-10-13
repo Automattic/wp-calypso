@@ -39,6 +39,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/stats/#marking-spam-referrers">
 									<Gridicon icon="help-outline" />
 									{ this.translate( 'How do I mark a referrer as spam?' ) }
@@ -48,6 +49,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/stats/#referrers">
 									<Gridicon icon="info-outline" />
 									{ this.translate( 'About Referrers' ) }
@@ -67,6 +69,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/stats/#clicks">
 									<Gridicon icon="info-outline" />
 									{ this.translate( 'About Clicks' ) }
@@ -86,6 +89,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/stats/#search-engine-terms">
 									<Gridicon icon="info-outline" />
 									{ this.translate( 'About Search Terms', { context: 'Stats: search terms info module documentation link' } ) }
@@ -105,6 +109,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/getting-more-views-and-traffic/#use-appropriate-tags">
 									<Gridicon icon="help-outline" />
 									{ this.translate( 'How do I tag content effectively?' ) }
@@ -114,6 +119,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/posts/categories-vs-tags/">
 									<Gridicon icon="info-outline" />
 									{ this.translate( 'About Tags & Categories' ) }
@@ -143,6 +149,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/getting-more-views-and-traffic/">
 									<Gridicon icon="help-outline" />
 									{ this.translate( 'How do I get more visitors?', {
@@ -154,6 +161,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/stats/#top-posts-pages">
 									<Gridicon icon="info-outline" />
 									{ this.translate( 'About Posts & Pages', {
@@ -175,6 +183,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/adding-users/">
 									<Gridicon icon="help-outline" />
 									{ this.translate( 'How do I invite someone to my website?' ) }
@@ -184,6 +193,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/category/users/">
 									<Gridicon icon="folder" />
 									{ this.translate( 'About Users' ) }
@@ -203,6 +213,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/videos/">
 									<Gridicon icon="folder" />
 									{ this.translate( 'About Videos on WordPress.com' ) }
@@ -222,6 +233,7 @@ export default React.createClass( {
 								<a
 									onClick={ this.recordEvent }
 									target="_blank"
+									rel="noopener noreferrer"
 									href="http://en.support.wordpress.com/publicize/">
 									<Gridicon icon="info-outline" />
 									{ this.translate( 'About Publicize' ) }

@@ -54,10 +54,24 @@ function creditCardFieldRules() {
 	};
 }
 
+function parseExpiration( value ) {
+	const [ month, year ] = value.split( '/' );
+	return {
+		month: creditcards.expiration.month.parse( month ),
+		year: creditcards.expiration.year.parse( year, true )
+	};
+}
+
+function validationError( description ) {
+	return i18n.translate( '%(description)s is invalid', {
+		args: { description: capitalize( description ) }
+	} );
+}
+
 const validators = {};
 
 validators.required = {
-	isValid: function( value ) {
+	isValid( value ) {
 		return ! isEmpty( value );
 	},
 
@@ -68,54 +82,39 @@ validators.required = {
 	}
 };
 
-validators.validCreditCardNumber = creditCardValidator( 'validCardNumber' );
-
-validators.validCvvNumber = creditCardValidator( 'validCvc' );
-
-validators.validExpirationDate = creditCardValidator(
-	'notExpired',
-	'validExpirationMonth',
-	'validExpirationYear',
-);
-
-function validateCreditCard( cardDetails ) {
-	const expirationDate = cardDetails[ 'expiration-date' ] || '/',
-		expirationMonth = parseInt( expirationDate.split( '/' )[ 0 ], 10 ),
-		expirationYear = 2000 + parseInt( expirationDate.split( '/' )[ 1 ], 10 );
-
-	return creditcards.validate( {
-		number: cardDetails.number,
-		expirationMonth: expirationMonth,
-		expirationYear: expirationYear,
-		cvc: cardDetails.cvv
-	} );
-}
-
-function creditCardValidator( ...validationProperties ) {
-	return {
-		isValid: function( value, cardDetails ) {
-			if ( ! value ) {
-				return false;
-			}
-
-			const validationResult = validateCreditCard( cardDetails );
-
-			return validationProperties.every( function( property ) {
-				if ( property === 'notExpired' ) {
-					return ! validationResult.expired;
-				}
-
-				return validationResult[ property ];
-			} );
-		},
-
-		error: function( description ) {
-			return i18n.translate( '%(description)s is invalid', {
-				args: { description: capitalize( description ) }
-			} );
+validators.validCreditCardNumber = {
+	isValid( value ) {
+		if ( ! value ) {
+			return false;
 		}
-	};
-}
+		return creditcards.card.isValid( value );
+	},
+	error: validationError
+};
+
+validators.validCvvNumber = {
+	isValid( value ) {
+		if ( ! value ) {
+			return false;
+		}
+		return creditcards.cvc.isValid( value );
+	},
+	error: validationError
+};
+
+validators.validExpirationDate = {
+	isValid: function( value ) {
+		if ( ! value ) {
+			return false;
+		}
+		const expiration = parseExpiration( value );
+
+		return creditcards.expiration.month.isValid( expiration.month ) &&
+			creditcards.expiration.year.isValid( expiration.year ) &&
+			! creditcards.expiration.isPast( expiration.month, expiration.year );
+	},
+	error: validationError
+};
 
 function validateCardDetails( cardDetails ) {
 	const rules = creditCardFieldRules(),
@@ -148,7 +147,9 @@ function getCreditCardType( number ) {
 			return 'amex';
 		} else if ( number.match( /^4\d{0,12}$/ ) || number.match( /^4\d{15}$/ ) ) {
 			return 'visa';
-		} else if ( number.match( /^5[1-5]\d{0,14}$/ ) ) {
+		} else if ( number.match( /^5[1-5]\d{0,14}|^2(?:2(?:2[1-9]|[3-9]\d)|[3-6]\d\d|7(?:[01]\d|20))\d{0,12}$/ ) ) {
+			//valid 2-series range: 2221 - 2720
+			//valid 5-series range: 51 - 55
 			return 'mastercard';
 		} else if (
 			number.match( /^6011\d{0,12}$/ ) ||

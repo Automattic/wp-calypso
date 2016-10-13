@@ -13,12 +13,22 @@ var CartBody = require( 'my-sites/upgrades/cart/cart-body' ),
 	CartPlanDiscountAd = require( './cart-plan-discount-ad' ),
 	Sidebar = require( 'layout/sidebar' ),
 	observe = require( 'lib/mixins/data-observe' );
+import CartBodyLoadingPlaceholder from 'my-sites/upgrades/cart/cart-body/loading-placeholder';
 
 var SecondaryCart = React.createClass( {
 	mixins: [ CartMessagesMixin, observe( 'sites' ) ],
 
 	render: function() {
 		const { cart, selectedSite } = this.props;
+
+		if ( ! cart.hasLoadedFromServer ) {
+			return (
+				<Sidebar className="secondary-cart">
+					<CartSummaryBar additionalClasses="cart-header" />
+					<CartBodyLoadingPlaceholder />
+				</Sidebar>
+			);
+		}
 
 		return (
 			<Sidebar className="secondary-cart">

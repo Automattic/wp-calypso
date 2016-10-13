@@ -14,11 +14,9 @@ import { connect } from 'react-redux';
 import {
 	first,
 	when,
-	forEach,
-	propExists
+	forEach
 } from './functional';
 import autoscroll from './autoscroll';
-import AgentW from 'components/happychat/agent-w';
 import scrollbleed from './scrollbleed';
 import { translate } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -58,7 +56,6 @@ const messageWithLinks = ( { message, key, links } ) => {
  * Otherwise just return a single paragraph with the text.
  */
 const messageText = when( linksNotEmpty, messageWithLinks, messageParagraph );
-const messageAvatar = when( propExists( 'image' ), ( { image, name } ) => <img alt={ name } src={ image } /> );
 
 /*
  * Group messages based on user so when any user sends multiple messages they will be grouped
@@ -66,7 +63,6 @@ const messageAvatar = when( propExists( 'image' ), ( { image, name } ) => <img a
  */
 const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 	const [ event, ... rest ] = item;
-	const userAvatar = messageAvatar( event );
 	return (
 		<div className={ classnames( 'happychat__timeline-message', { 'is-user-message': isCurrentUser } ) } key={ event.id || index }>
 			<div className="happychat__message-text">
@@ -77,11 +73,6 @@ const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 					links: event.links
 				} ) }
 				{ rest.map( ( { message, id: key, links } ) => messageText( { message, key, links } ) ) }
-			</div>
-			<div className="happychat__message-meta">
-				<div className="happychat__message-avatar">
-				{ isCurrentUser ? userAvatar : <AgentW /> }
-				</div>
 			</div>
 		</div>
 	);
@@ -118,7 +109,7 @@ const groupMessages = messages => {
 
 const welcomeMessage = () => (
 	<div className="happychat__welcome">
-		{ translate( 'This is the beginning of your chat history with WordPress.com support. A chat history will be stored here.' ) }
+		{ translate( 'Welcome to WordPress.com support chat!' ) }
 	</div>
 );
 

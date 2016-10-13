@@ -11,7 +11,7 @@ var Accordion = require( 'components/accordion' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
-	displayName: 'Accordions',
+	displayName: 'AccordionExample',
 
 	mixins: [ PureRenderMixin ],
 
@@ -29,11 +29,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/accordions">Accordions</a>
-				</h2>
-
+			<div>
 				<div style={ { paddingBottom: '10px' } }>
 					<label>
 						<input

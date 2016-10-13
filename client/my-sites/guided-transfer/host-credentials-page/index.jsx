@@ -3,13 +3,28 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import Bluehost from './bluehost';
+import ErrorNotice from './error-notice';
 import SiteGround from './siteground';
 import SectionHeader from 'components/section-header';
+import { cartItems } from 'lib/cart-values';
+import upgradesActions from 'lib/upgrades/actions';
+import page from 'page';
+import {
+	saveHostDetails,
+} from 'state/sites/guided-transfer/actions';
+import {
+	isGuidedTransferSavingHostDetails,
+	isGuidedTransferAwaitingPurchase,
+} from 'state/sites/guided-transfer/selectors';
+import {
+	getSiteSlug,
+} from 'state/sites/selectors';
 
 class HostCredentialsPage extends Component {
 	static propTypes = {
@@ -29,16 +44,35 @@ class HostCredentialsPage extends Component {
 		this.setFieldValue( fieldName, e.target.value );
 	}
 
+	redirectToCart = () => {
+		upgradesActions.addItem( cartItems.guidedTransferItem() );
+		page.redirect( `/checkout/${ this.props.siteSlug }` );
+	}
+
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.isAwaitingPurchase ) {
+			this.redirectToCart();
+		}
+	}
+
 	submit = () => {
-		// Future PR: This function will trigger the Redux API call
+		const payload = {
+			...this.state.fieldValues,
+			host_slug: this.props.hostSlug
+		};
+
+		this.props.submit( payload );
 	}
 
 	getHostForm() {
 		const props = {
 			onFieldChange: this.onFieldChange,
+
 			fieldValues: this.state.fieldValues,
-			submit: this.submit,
 			hostInfo: this.props.hostInfo,
+
+			submit: this.submit,
+			isSubmitting: this.props.isSubmitting,
 		};
 
 		switch ( this.props.hostSlug ) {
@@ -54,6 +88,7 @@ class HostCredentialsPage extends Component {
 	render() {
 		return (
 			<div>
+				<ErrorNotice />
 				<SectionHeader label={ this.props.translate( 'Account Info' ) } />
 				{ this.getHostForm() }
 			</div>
@@ -61,4 +96,16 @@ class HostCredentialsPage extends Component {
 	}
 }
 
-export default localize( HostCredentialsPage );
+const mapStateToProps = ( state, { siteId } ) => ( {
+	isSubmitting: isGuidedTransferSavingHostDetails( state, siteId ),
+	isAwaitingPurchase: isGuidedTransferAwaitingPurchase( state, siteId ),
+	siteSlug: getSiteSlug( state, siteId ),
+} );
+
+const mapDispatchToProps = ( dispatch, { siteId } ) => ( {
+	submit: data => dispatch( saveHostDetails( siteId, data ) ),
+} );
+
+export default localize(
+	connect( mapStateToProps, mapDispatchToProps )( HostCredentialsPage )
+);

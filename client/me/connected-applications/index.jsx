@@ -69,7 +69,7 @@ const ConnectedApplications = React.createClass( {
 				title={ this.translate( "You haven't connected any apps yet." ) }
 				line={ this.translate( 'You can get started with the {{link}}WordPress mobile apps!{{/link}}', {
 					components: {
-						link: <a href="https://apps.wordpress.org/" target="_blank" title="WordPress Mobile Apps" />
+						link: <a href="https://apps.wordpress.org/" target="_blank" rel="noopener noreferrer" title="WordPress Mobile Apps" />
 					}
 				} ) }
 			/>

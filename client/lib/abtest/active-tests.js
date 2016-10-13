@@ -16,13 +16,22 @@ module.exports = {
 		allowExistingUsers: true,
 	},
 	coldStartReader: {
-		datestamp: '20160804',
+		datestamp: '20160901',
 		variations: {
-			noEmailColdStart: 20,
-			noChanges: 80
+			noEmailColdStart: 33,
+			noEmailColdStartWithAutofollows: 33,
+			noChanges: 34
 		},
 		defaultVariation: 'noChanges',
 		allowExistingUsers: false,
+	},
+	domainSuggestionClickableRow: {
+		datestamp: '20160802',
+		variations: {
+			clickableRow: 20,
+			clickableButton: 80
+		},
+		defaultVariation: 'clickableButton'
 	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
@@ -33,53 +42,42 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	plansDescriptions: {
-		datestamp: '20160826',
-		variations: {
-			ascendingPriceSubtleDescription: 25,
-			ascendingPriceEagerDescription: 25,
-			descendingPriceSubtleDescription: 25,
-			descendingPriceEagerDescription: 25
-		},
-		defaultVariation: 'ascendingPriceSubtleDescription',
-		allowExistingUsers: false,
-	},
-	signupCheckoutRedirect: {
-		datestamp: '20160826',
-		variations: {
-			auto: 50,
-			manual: 50,
-		},
-		defaultVariation: 'manual',
-		allowExistingUsers: false,
-	},
 	signupStore: {
-		datestamp: '20160727',
+		datestamp: '20160927',
 		variations: {
-			designTypeWithoutStore: 80,
-			designTypeWithStore: 20,
+			designTypeWithoutStore: 0,
+			designTypeWithStore: 100,
 		},
-		defaultVariation: 'designTypeWithoutStore',
+		defaultVariation: 'designTypeWithStore',
 		allowExistingUsers: false,
 	},
 	signupStoreBenchmarking: {
-		datestamp: '20160817',
+		datestamp: '20160927',
 		variations: {
-			pressable: 94,
-			bluehost: 2,
-			bluehostWithWoo: 2,
-			siteground: 2
+			pressable: 97,
+			bluehost: 1,
+			bluehostWithWoo: 1,
+			siteground: 1
 		},
 		defaultVariation: 'pressable',
 		allowExistingUsers: false,
 	},
-	signupThemePreview: {
-		datestamp: '20160727',
+	signupThemeUpload: {
+		datestamp: '20160928',
 		variations: {
-			showThemePreview: 20,
-			hideThemePreview: 80,
+			showThemeUpload: 10,
+			hideThemeUpload: 90,
 		},
-		defaultVariation: 'hideThemePreview',
+		defaultVariation: 'hideThemeUpload',
+		allowExistingUsers: false,
+	},
+	signupSurveyStep: {
+		datestamp: '20161010',
+		variations: {
+			surveyStepV1: 50,
+			surveyStepV2: 50,
+		},
+		defaultVariation: 'surveyStepV1'
 	},
 	readerSearchSuggestions: {
 		datestamp: '20160804',
@@ -99,20 +97,39 @@ module.exports = {
 		defaultVariation: 'showPopover',
 		allowExistingUsers: false,
 	},
-	plansWording: {
-		datestamp: '20160817',
-		variations: {
-			originalWording: 50,
-			targetedWording: 50
-		},
-		defaultVariation: 'originalWording'
-	},
 	paidNuxStreamlined: {
-		datestamp: '20160825',
+		datestamp: '20160912',
 		variations: {
-			original: 100,
-			streamlined: 0,
+			original: 50,
+			streamlined: 50,
 		},
 		defaultVariation: 'original',
 	},
+	readerFullPost: {
+		datestamp: '20160929',
+		variations: {
+			current: 50,
+			refreshed: 50
+		},
+		defaultVariation: 'current',
+		allowExistingUsers: true
+	},
+	siteTitleStep: {
+		datestamp: '20160928',
+		variations: {
+			showSiteTitleStep: 5,
+			hideSiteTitleStep: 95,
+		},
+		defaultVariation: 'hideSiteTitleStep',
+		allowExistingUsers: false
+	},
+	domainToPersonalPlanNudge: {
+		datestamp: '20161011',
+		variations: {
+			original: 50,
+			nudge: 50
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: false
+	}
 };

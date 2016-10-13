@@ -1,32 +1,39 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	isEmpty = require( 'lodash/isEmpty' ),
-	ReactDom = require( 'react-dom' ),
-	observe = require( 'lib/mixins/data-observe' );
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-const analytics = require( 'lib/analytics' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	scrollIntoViewport = require( 'lib/scroll-into-viewport' ),
-	Input = require( './input' );
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
+import FormInputValidation from 'components/forms/form-input-validation';
+import { getCountryStates } from 'state/country-states/selectors';
+import Input from './input';
+import QueryCountryStates from 'components/data/query-country-states';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
 
-module.exports = React.createClass( {
-	displayName: 'StateSelect',
+class StateSelect extends Component {
+	static instances = 0;
 
-	mixins: [ observe( 'statesList' ) ],
+	componentWillMount() {
+		this.instance = ++this.constructor.instances;
+	}
 
-	recordStateSelectClick: function() {
-		if ( this.props.eventFormName ) {
-			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } State Select` );
+	recordStateSelectClick = () => {
+		const { eventFormName, recordGoogleEvent: recordEvent } = this.props;
+
+		if ( eventFormName ) {
+			recordEvent( 'Upgrades', `Clicked ${ eventFormName } State Select` );
 		}
-	},
+	};
 
 	focus() {
 		const node = ReactDom.findDOMNode( this.refs.input );
@@ -36,47 +43,58 @@ module.exports = React.createClass( {
 		} else {
 			this.refs.state.focus();
 		}
-	},
+	}
 
-	render: function() {
-		const classes = classNames( this.props.additionalClasses, 'state' ),
-			statesList = this.props.statesList.getByCountry( this.props.countryCode );
-		let options = [];
-
-		if ( isEmpty( statesList ) ) {
-			return (
-				<Input ref="state" { ...this.props } />
-			);
-		}
-
-		options.push( { key: '', label: this.translate( 'Select State' ), disabled: 'disabled' } );
-
-		options = options.concat( statesList.map( function( state ) {
-			if ( ! state.code ) {
-				return { key: '--', label: '', disabled: 'disabled' };
-			}
-			return { key: state.code, label: state.name };
-		} ) );
+	render() {
+		const classes = classNames( this.props.additionalClasses, 'state' );
 
 		return (
-			<div className={ classes }>
-				<div>
-					<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
-					<FormSelect
-						ref="input"
-						name={ this.props.name }
-						value={ this.props.value }
-						disabled={ this.props.disabled }
-						onChange={ this.props.onChange }
-						onClick={ this.recordStateSelectClick }
-						isError={ this.props.isError } >
-						{ options.map( function( option ) {
-							return <option key={ option.key } value={ option.key } disabled={ option.disabled }>{ option.label }</option>;
-						} ) }
-					</FormSelect>
-				</div>
+			<div>
+				{ this.props.countryCode && <QueryCountryStates countryCode={ this.props.countryCode } /> }
+				{ isEmpty( this.props.countryStates )
+					? <Input ref="input" { ...this.props } />
+					: <div className={ classes }>
+						<FormLabel htmlFor={ `${ this.constructor.name }-${ this.instance }` }>{ this.props.label }</FormLabel>
+						<FormSelect
+							ref="input"
+							id={ `${ this.constructor.name }-${ this.instance }` }
+							name={ this.props.name }
+							value={ this.props.value }
+							disabled={ this.props.disabled }
+							onChange={ this.props.onChange }
+							onClick={ this.recordStateSelectClick }
+							isError={ this.props.isError } >
+
+							<option key="--" value="--" disabled="disabled">{ this.props.translate( 'Select State' ) }</option>
+							{ this.props.countryStates.map( ( state ) =>
+								<option key={ state.code } value={ state.code }>{ state.name }</option>
+							) }
+						</FormSelect>
+					</div>
+				}
 				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);
 	}
-} );
+}
+
+StateSelect.propTypes = {
+	additionalClasses: PropTypes.string,
+	countryCode: PropTypes.string,
+	countryStates: PropTypes.array,
+	disabled: PropTypes.bool,
+	errorMessage: PropTypes.string,
+	eventFormName: PropTypes.string,
+	isError: PropTypes.bool,
+	label: PropTypes.string,
+	name: PropTypes.string,
+	onChange: PropTypes.func,
+	value: PropTypes.string,
+};
+
+export default connect(
+	( state, { countryCode } ) => ( {
+		countryStates: countryCode ? getCountryStates( state, countryCode ) : []
+	} ),
+	{ recordGoogleEvent }
+)( localize( StateSelect ) );

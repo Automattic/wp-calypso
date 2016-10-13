@@ -4,7 +4,6 @@
 import React from 'react';
 import config from 'config';
 import classNames from 'classnames';
-import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -20,14 +19,7 @@ export default React.createClass( {
 	displayName: 'SiteIndicator',
 
 	propTypes: {
-		site: React.PropTypes.object.isRequired,
-		onSelect: React.PropTypes.func
-	},
-
-	getDefaultProps() {
-		return {
-			onSelect: noop
-		};
+		site: React.PropTypes.object.isRequired
 	},
 
 	getInitialState() {
@@ -148,9 +140,9 @@ export default React.createClass( {
 		}.bind( this ), 15000 );
 	},
 
-	handlePluginsUpdate( event ) {
+	handlePluginsUpdate() {
 		window.scrollTo( 0, 0 );
-		this.props.onSelect( event );
+		this.setState( { expand: false } );
 		analytics.ga.recordEvent( 'Site-Indicator', 'Clicked updates available link to plugins updates', 'Total Updates', this.props.site.update && this.props.site.update.total );
 	},
 

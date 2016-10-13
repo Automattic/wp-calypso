@@ -1,18 +1,21 @@
 /**
  * External Dependencies
  */
-import filter from 'lodash/filter';
-import find from 'lodash/find';
-import flow from 'lodash/flow';
-import forEach from 'lodash/forEach';
-import map from 'lodash/map';
-import pick from 'lodash/pick';
-import pull from 'lodash/pull';
-import uniq from 'lodash/uniq';
+import {
+	filter,
+	find,
+	flow,
+	forEach,
+	map,
+	pick,
+	pull,
+	uniq
+} from 'lodash';
 
 /**
  * Internal Dependencies
  */
+import { thumbIsLikelyImage } from './utils';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:post-normalizer:wait-for-images-to-load' );
@@ -22,7 +25,7 @@ function convertImageToObject( image ) {
 }
 
 function imageForURL( imageUrl ) {
-	var img = new Image();
+	const img = new Image();
 	img.src = imageUrl;
 	return img;
 }
@@ -42,6 +45,13 @@ const promiseForURL = flow( imageForURL, promiseForImage );
 export default function waitForImagesToLoad( post ) {
 	return new Promise( ( resolve ) => {
 		function acceptLoadedImages( images ) {
+			if ( post.featured_image ) {
+				if ( ! find( images, { src: post.featured_image } ) ) {
+					// featured image didn't load, nix it
+					post.featured_image = null;
+				}
+			}
+
 			post.images = map( images, convertImageToObject );
 
 			post.content_images = filter( map( post.content_images, function( image ) {
@@ -53,7 +63,9 @@ export default function waitForImagesToLoad( post ) {
 
 		let imagesToCheck = [];
 
-		if ( post.featured_image ) {
+		if ( thumbIsLikelyImage( post.post_thumbnail ) ) {
+			imagesToCheck.push( post.post_thumbnail.URL );
+		} else if ( post.featured_image ) {
 			imagesToCheck.push( post.featured_image );
 		}
 

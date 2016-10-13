@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	titleCase = require( 'to-title-case' ),
 	find = require( 'lodash/find' ),
 	filter = require( 'lodash/filter' ),
@@ -10,19 +10,19 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
+const analytics = require( 'lib/analytics' ),
 	Card = require( 'components/card' ),
-	PluginCardHeader = require( 'my-sites/plugins/plugin-card-header' ),
 	SectionNav = require( 'components/section-nav' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
-	NavItem = require( 'components/section-nav/item' ),
-	descriptionHeight = 0;
+	NavItem = require( 'components/section-nav/item' );
 
 module.exports = React.createClass( {
 
 	_COLLAPSED_DESCRIPTION_HEIGHT: 140,
 
 	displayName: 'PluginSections',
+
+	descriptionHeight: 0,
 
 	recordEvent: function( eventAction ) {
 		analytics.ga.recordEvent( 'Plugins', eventAction, 'Plugin Name', this.props.plugin.slug );
@@ -33,7 +33,7 @@ module.exports = React.createClass( {
 			const node = this.refs.content;
 
 			if ( node && node.offsetHeight ) {
-				descriptionHeight = node.offsetHeight;
+				this.descriptionHeight = node.offsetHeight;
 			}
 		}
 	},
@@ -104,7 +104,7 @@ module.exports = React.createClass( {
 	},
 
 	getNavTitle: function( sectionKey ) {
-		var titleSection = find( this.getFilteredSections(), function( section ) {
+		const titleSection = find( this.getFilteredSections(), function( section ) {
 			return section.key === sectionKey;
 		} );
 
@@ -126,28 +126,29 @@ module.exports = React.createClass( {
 	},
 
 	renderReadMore: function() {
-		if ( descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
+		if ( this.descriptionHeight < this._COLLAPSED_DESCRIPTION_HEIGHT ) {
 			return null;
 		}
+		const button = (
+			<button className="plugin-sections__read-more-link" onClick={ this.toggleReadMore }>
+				<span className="plugin-sections__read-more-text">
+					{ this.translate( 'Read More' ) }
+				</span>
+			</button>
+		);
 		return (
 			<div className="plugin-sections__read-more">
 				{
-					//
 					// We remove the link but leave the plugin-sections__read-more container
 					// in order to minimize jump on small sections.
-					this.state.readMore ? null :
-					<button className="plugin-sections__read-more-link" onClick={ this.toggleReadMore }>
-						<span className="plugin-sections__read-more-text">
-							{ this.translate( 'Read More' ) }
-						</span>
-					</button>
+					this.state.readMore ? null : button
 				}
 			</div>
 		);
 	},
 
 	render: function() {
-		var contentClasses = classNames( 'plugin-sections__content', { trimmed: ! this.state.readMore } );
+		const contentClasses = classNames( 'plugin-sections__content', { trimmed: ! this.state.readMore } );
 
 		// Defensively check if this plugin has sections. If not, don't render anything.
 		if ( ! this.props.plugin || ! this.props.plugin.sections || ! this.getAvailableSections() ) {
@@ -157,7 +158,7 @@ module.exports = React.createClass( {
 		/*eslint-disable react/no-danger*/
 		return (
 			<div className="plugin-sections">
-				<PluginCardHeader>
+				<div className="plugin-sections__header">
 					<SectionNav selectedText={ this.getNavTitle( this.getSelected() ) }>
 						<NavTabs>
 							{
@@ -175,7 +176,7 @@ module.exports = React.createClass( {
 							}
 						</NavTabs>
 					</SectionNav>
-				</PluginCardHeader>
+				</div>
 				<Card>
 					<div ref="content"
 						className={ contentClasses }

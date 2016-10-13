@@ -2,16 +2,26 @@
  * External dependencies
  */
 import assert from 'assert';
+import { noop } from 'lodash';
 
 /**
 * Internal dependencies
 */
 import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'utils', function() {
 	let postUtils;
 
 	useFakeDom();
+
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+	} );
 
 	before( () => {
 		postUtils = require( '../utils' );
@@ -128,12 +138,12 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should strip slug on post URL', function() {
-			var noSlug = postUtils.removeSlug( 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/' );
+			const noSlug = postUtils.removeSlug( 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/' );
 			assert( noSlug === 'https://en.blog.wordpress.com/2015/08/26/' );
 		} );
 
 		it( 'should strip slug on page URL', function() {
-			var noSlug = postUtils.removeSlug( 'https://en.blog.wordpress.com/a-test-page/' );
+			const noSlug = postUtils.removeSlug( 'https://en.blog.wordpress.com/a-test-page/' );
 			assert( noSlug === 'https://en.blog.wordpress.com/' );
 		} );
 	} );
@@ -144,12 +154,18 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should return post.URL when post is published', function() {
-			var path = postUtils.getPermalinkBasePath( { status: 'publish', URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/' } );
+			const path = postUtils.getPermalinkBasePath( {
+				status: 'publish',
+				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/'
+			} );
 			assert( path === 'https://en.blog.wordpress.com/2015/08/26/' );
 		} );
 
 		it( 'should use permalink_URL when not published and present', function() {
-			var path = postUtils.getPermalinkBasePath( { other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' }, URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/' } );
+			const path = postUtils.getPermalinkBasePath( {
+				other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' },
+				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/'
+			} );
 			assert( path === 'http://zo.mg/a/permalink/' );
 		} );
 	} );
@@ -160,12 +176,18 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should return post.URL without slug when page is published', function() {
-			var path = postUtils.getPagePath( { status: 'publish', URL: 'http://zo.mg/a/permalink/' } );
+			const path = postUtils.getPagePath( {
+				status: 'publish',
+				URL: 'http://zo.mg/a/permalink/'
+			} );
 			assert( path === 'http://zo.mg/a/' );
 		} );
 
 		it( 'should use permalink_URL when not published and present', function() {
-			var path = postUtils.getPagePath( { status: 'draft', other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' } } );
+			const path = postUtils.getPagePath( {
+				status: 'draft',
+				other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' }
+			} );
 			assert( path === 'http://zo.mg/a/permalink/' );
 		} );
 	} );
@@ -176,7 +198,7 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should return a non-URL featured_image property', function() {
-			var id = postUtils.getFeaturedImageId( {
+			const id = postUtils.getFeaturedImageId( {
 				featured_image: 'media-1',
 				post_thumbnail: {
 					ID: 1
@@ -189,7 +211,7 @@ describe( 'utils', function() {
 		it( 'should return a `null` featured_image property', function() {
 			// This describes the behavior of unassigning a featured image
 			// from the current post
-			var id = postUtils.getFeaturedImageId( {
+			const id = postUtils.getFeaturedImageId( {
 				featured_image: null,
 				post_thumbnail: {
 					ID: 1
@@ -200,7 +222,7 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should fall back to post thumbnail object ID if exists, if featured_image is URL', function() {
-			var id = postUtils.getFeaturedImageId( {
+			const id = postUtils.getFeaturedImageId( {
 				featured_image: 'https://example.com/image.png',
 				post_thumbnail: {
 					ID: 1
@@ -211,7 +233,7 @@ describe( 'utils', function() {
 		} );
 
 		it( 'should return undefined if featured_image is URL and post thumbnail object doesn\'t exist', function() {
-			var id = postUtils.getFeaturedImageId( {
+			const id = postUtils.getFeaturedImageId( {
 				featured_image: 'https://example.com/image.png'
 			} );
 

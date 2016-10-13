@@ -1,34 +1,18 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	omit = require( 'lodash/omit' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
+import omit from 'lodash/omit';
+import { localize } from 'i18n-calypso';
 
-module.exports = React.createClass( {
+const ActionRemove = ( props ) =>
+	<button
+		title={ props.translate( 'Remove', { textOnly: true } ) }
+		{ ...omit( props, 'moment', 'numberFormat', 'translate' ) }
+		className={ classNames( 'action-remove', props.className ) }
+	>
+		{ props.children }
+	</button>;
 
-	displayName: 'ActionRemove',
-
-	getDefaultProps: function() {
-		return {
-			isSubmitting: false,
-			isPrimary: true
-		};
-	},
-
-	render: function() {
-		var buttonClasses = classNames( {
-			'action-remove': true
-		} );
-
-		return (
-			<button
-				title={ this.translate( 'Remove', { textOnly: true } ) }
-				{ ...omit( this.props, 'className' ) }
-				className={ classnames( this.props.className, buttonClasses ) } >
-				{ this.props.children }
-			</button>
-		);
-	}
-} );
+export default localize( ActionRemove );

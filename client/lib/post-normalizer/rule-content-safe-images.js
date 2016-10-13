@@ -63,7 +63,7 @@ function isCandidateForContentImage( imageUrl ) {
 
 export default function( maxWidth ) {
 	return function safeContentImages( post, dom ) {
-		var content_images = [],
+		let content_images = [],
 			images;
 
 		if ( ! dom ) {
@@ -111,14 +111,26 @@ export default function( maxWidth ) {
 			image.setAttribute( 'src', safeSource );
 
 			if ( image.hasAttribute( 'srcset' ) ) {
-				const imgSrcSet = srcset.parse( image.getAttribute( 'srcset' ) ).map( imgSrc => {
+				let imgSrcSet;
+				try {
+					imgSrcSet = srcset.parse( image.getAttribute( 'srcset' ) );
+				} catch ( ex ) {
+					// if srcset parsing fails, set the srcset to an empty array. This will have the effect of removing the srcset entirely.
+					imgSrcSet = [];
+				}
+				imgSrcSet = imgSrcSet.map( imgSrc => {
 					if ( ! url.parse( imgSrc.url, false, true ).hostname ) {
 						imgSrc.url = url.resolve( post.URL, imgSrc.url );
 					}
 					imgSrc.url = safeImageURL( imgSrc.url );
 					return imgSrc;
 				} ).filter( imgSrc => imgSrc.url );
-				image.setAttribute( 'srcset', srcset.stringify( imgSrcSet ) );
+				const newSrcSet = srcset.stringify( imgSrcSet );
+				if ( newSrcSet ) {
+					image.setAttribute( 'srcset', newSrcSet );
+				} else {
+					image.removeAttribute( 'srcset' );
+				}
 			}
 
 			if ( isCandidateForContentImage( imgSource ) ) {

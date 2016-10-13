@@ -11,7 +11,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import support from 'lib/url/support';
 
-const learnMoreLink = <a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" />,
+const learnMoreLink = <a href={ support.COMPLETING_GOOGLE_APPS_SIGNUP } target="_blank" rel="noopener noreferrer" />,
 	strong = <strong />;
 
 const PendingGappsTosNotice = React.createClass( {
@@ -96,8 +96,8 @@ const PendingGappsTosNotice = React.createClass( {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domain"
 				text={ this.translate(
-					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, please log in to Google Apps and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
-					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, please log in to Google Apps and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
+					'%(exclamation)s To activate your email {{strong}}%(emails)s{{/strong}}, please log in to G Suite and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
+					'%(exclamation)s To activate your emails {{strong}}%(emails)s{{/strong}}, please log in to G Suite and finish setting it up. {{learnMoreLink}}Learn More{{/learnMoreLink}}',
 					{
 						count: users.length,
 						args: { exclamation, emails: users.join( ', ' ) },
@@ -124,7 +124,7 @@ const PendingGappsTosNotice = React.createClass( {
 				showDismiss={ false }
 				key="pending-gapps-tos-acceptance-domains">
 				{ this.translate(
-					'%(exclamation)s To activate your new email addresses, please log in to Google Apps and finish setting them up. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
+					'%(exclamation)s To activate your new email addresses, please log in to G Suite and finish setting them up. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 					{
 						args: { exclamation },
 						components: { learnMoreLink }
@@ -137,7 +137,8 @@ const PendingGappsTosNotice = React.createClass( {
 							<a
 								href={ this.getGappsLoginUrl( users[0], domainName ) }
 								onClick={ this.generateLogInClickHandler( { domainName, user: users[0], severity, isMultipleDomains: true } ) }
-								target="_blank">
+								target="_blank"
+								rel="noopener noreferrer">
 									{ this.translate( 'Log in' ) }
 							</a>
 						</li>;

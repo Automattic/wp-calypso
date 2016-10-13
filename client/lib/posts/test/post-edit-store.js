@@ -2,8 +2,7 @@
  * External dependencies
  */
 import assert from 'assert';
-import assign from 'lodash/assign';
-import isEqual from 'lodash/isEqual';
+import { assign, isEqual, noop } from 'lodash';
 import { spy } from 'sinon';
 
 /**
@@ -17,8 +16,13 @@ describe( 'post-edit-store', function() {
 
 	useFakeDom();
 
-	// makes sure we always load fresh instance of Dispatcher
-	useMockery();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+	} );
 
 	before( () => {
 		Dispatcher = require( 'dispatcher' );
@@ -51,8 +55,7 @@ describe( 'post-edit-store', function() {
 	}
 
 	it( 'initializes new draft post properly', function() {
-		var siteId = 1234,
-			post;
+		const siteId = 1234;
 
 		dispatcherCallback( {
 			action: {
@@ -63,13 +66,13 @@ describe( 'post-edit-store', function() {
 
 		assert( PostEditStore.getSavedPost().ID === undefined );
 		assert( PostEditStore.getSavedPost().site_ID === siteId );
-		post = PostEditStore.get();
+		const post = PostEditStore.get();
 		assert( post.status === 'draft' );
 		assert( PostEditStore.isNew() );
 	} );
 
 	it( 'initialize existing post', function() {
-		var siteId = 12,
+		const siteId = 12,
 			postId = 345;
 
 		dispatcherCallback( {
@@ -84,10 +87,8 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'sets parent_id properly', function() {
-		var post;
-
 		dispatchReceivePost();
-		post = PostEditStore.get();
+		const post = PostEditStore.get();
 		assert( post.parent_id === null );
 	} );
 
@@ -103,7 +104,6 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'updates parent_id after a set', function() {
-		var post;
 		dispatchReceivePost();
 		dispatcherCallback( {
 			action: {
@@ -114,7 +114,7 @@ describe( 'post-edit-store', function() {
 			}
 		} );
 
-		post = PostEditStore.get();
+		const post = PostEditStore.get();
 		assert( post.parent_id, 101 );
 	} );
 
@@ -185,7 +185,7 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'updates attributes on edit', function() {
-		var siteId = 1234,
+		const siteId = 1234,
 			postEdits = {
 				title: 'hello, world!',
 				content: 'initial edit',
@@ -219,7 +219,7 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'preserves attributes when update is in-flight', function() {
-		var siteId = 1234,
+		const siteId = 1234,
 			initialPost = {
 				ID: 2345,
 				title: 'hello, world!',
@@ -265,7 +265,7 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'excludes metadata without an operation on edit', function() {
-		var postEdits = {
+		const postEdits = {
 				title: 'Super Duper',
 				metadata: [
 					{ key: 'super', value: 'duper', operation: 'update' },
@@ -299,7 +299,7 @@ describe( 'post-edit-store', function() {
 	} );
 
 	it( 'reset post after saving an edit', function() {
-		var siteId = 1234,
+		const siteId = 1234,
 			postEdits = {
 				title: 'hello, world!',
 				content: 'initial edit'
@@ -387,7 +387,7 @@ describe( 'post-edit-store', function() {
 
 	describe( '#setRawContent', function() {
 		it( 'should not emit a change event if content hasn\'t changed', function() {
-			var onChange = spy();
+			const onChange = spy();
 
 			dispatcherCallback( {
 				action: {
@@ -762,7 +762,7 @@ describe( 'post-edit-store', function() {
 		} );
 
 		it( 'should not trigger changes if isDirty() and hadContent() don\'t change', function() {
-			var called = false;
+			let called = false;
 
 			dispatcherCallback( {
 				action: {

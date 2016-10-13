@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import debounce from 'lodash/debounce';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -12,6 +13,7 @@ import SegmentedControl from 'components/segmented-control';
 import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
+import { filterIsValid } from '../theme-filters.js';
 
 const ThemesMagicSearchCard = React.createClass( {
 	propTypes: {
@@ -61,9 +63,30 @@ const ThemesMagicSearchCard = React.createClass( {
 	},
 
 	onBlur() {
-		if ( this.state.isMobile ) {
-			this.setState( { searchIsOpen: false } );
-		}
+		this.setState( { searchIsOpen: false } );
+	},
+
+	searchTokens( input ) {
+		const tokens = input.split( /(\s+)/ );
+
+		return (
+			tokens.map( ( token, i ) => {
+				if ( token.trim() === '' ) {
+					return <span className="themes-magic-search-card__search-white-space" key={ i }>{ token }</span>; // use shortid for key
+				} else if ( filterIsValid( token ) ) {
+					const separator = ':';
+					const [ taxonomy, filter ] = token.split( separator );
+					return (
+						<span className="themes-magic-search-card__token" key={ i }>
+							<span className="themes-magic-search-card__token-taxonomy">{ taxonomy }</span>
+							<span className="themes-magic-search-card__token-separator">{ separator }</span>
+							<span className="themes-magic-search-card__token-filter">{ filter }</span>
+						</span>
+					);
+				}
+				return <span className="themes-magic-search-card__search-text" key={ i }>{ token }</span>; // use shortid for key
+			} )
+		);
 	},
 
 	render() {
@@ -86,14 +109,19 @@ const ThemesMagicSearchCard = React.createClass( {
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
+				overlayStyling={ this.searchTokens }
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
 				hideClose={ isMobile() }
 			/>
 		);
 
+		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
+			'has-highlight': this.state.searchIsOpen
+		} );
+
 		return (
-			<div className="themes-magic-search-card" data-tip-target="themes-search-card">
+			<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
 				{ searchField }
 				{ isPremiumThemesEnabled && ! isJetpack &&
 					<SegmentedControl

@@ -83,3 +83,14 @@ There are two different modes of operation:
 ### Caching
 
 In most of the environments that Calypso is deployed to, the static assets are served and cached by nginx. Each filename includes a hash that is calculated by Webpack, which means that we can cache assets for all the various versions of Calpso that may be in active use. The hash also busts the cache on the client-side.
+
+### Webpack Stats
+
+Webpack stats can be serialized as JSON for the purposes of analyzing the results of a build. This can be used with tools like [Webpack Analyze](https://webpack.github.io/analyse/) or [Webpack Visualizer](https://chrisbateman.github.io/webpack-visualizer/) to visualize the modules and dependencies comprising a build. To generate a JSON file during a build, use the `WEBPACK_OUTPUT_JSON` environment variable flag:
+
+```bash
+WEBPACK_OUTPUT_JSON=1 NODE_ENV=production make build
+```
+
+This will cause a JSON file `stats.json` to be written to the root project directory once the build succeeds.
+

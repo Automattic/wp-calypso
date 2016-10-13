@@ -4,9 +4,7 @@
 import React from 'react';
 import _debug from 'debug';
 import moment from 'moment';
-import intersection from 'lodash/intersection';
-import map from 'lodash/map';
-import every from 'lodash/every';
+import { intersection, map, every, find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -459,7 +457,8 @@ export default React.createClass( {
 
 		if ( domains.length === 1 ) {
 			const fullMessage = this.translate(
-				'The domain {{strong}}%(domain)s{{/strong}} may be suspended because the owner ({{strong}}%(owner)s{{/strong}}) has not verified their contact information.',
+				'The domain {{strong}}%(domain)s{{/strong}} may be suspended because the owner, ' +
+					'{{strong}}%(owner)s{{/strong}}, has not verified their contact information.',
 				{
 					components: { strong: <strong /> },
 					args: {
@@ -521,13 +520,11 @@ export default React.createClass( {
 	},
 
 	pendingTransfer() {
-		const domains = this.getDomains().filter( domain => domain.pendingTransfer );
+		const domain = find( this.getDomains(), 'pendingTransfer' );
 
-		if ( domains.length !== 1 ) {
+		if ( ! domain ) {
 			return null;
 		}
-
-		const domain = domains[ 0 ];
 
 		const compactNotice = this.translate( '{{strong}}%(domain)s{{/strong}} is pending transfer.', {
 				components: { strong: <strong /> },

@@ -92,7 +92,7 @@ export default React.createClass( {
 	closePopover( event ) {
 		var stateChanges = {};
 
-		if ( this.showingAcceptDialog ) {
+		if ( this.showingAcceptDialog && event ) {
 			event.preventDefault();
 			return;
 		}

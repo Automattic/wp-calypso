@@ -56,22 +56,25 @@
 .reader-full-post__sidebar {
 	width: 220px;
 	position: fixed;
+	text-align: center;
+
 	@include breakpoint( ">1280px" ) {
 		left: calc( 50% - 490px );
 	}
+
 	@include breakpoint( "1040px-1280px" ) {
 		left: calc( 50% - 480px );
 	}
+
 	@include breakpoint( "660px-1040px" ) {
 		left: 20px;
 	}
+
 	@include breakpoint( "<660px" ) {
 		position: static;
 		width: auto;
 		text-align: left;
 	}
-	text-align: center;
-	margin-top: 4px;
 }
 
 .reader-full-post__story {
@@ -83,28 +86,113 @@
 		font-size: 15px;
 		line-height: 24px;
 	}
+
+	@include breakpoint( "<660px" ) {
+		margin-top: -35px;
+	}
 }
 
 .reader-full-post .author-compact-profile {
-	z-index: z-index( '.masterbar', '.reader-profile' );
+	display: inline-flex;
+	flex-direction: column;
+
 	@include breakpoint( "<660px" ) {
-		margin-top: 20px;
-		.gravatar {
-			display: inline-block;
-			vertical-align: bottom;
-			height: 24px;
-			width: 24px;
-			margin-right: 1em;
+		margin-bottom: 35px;
+		overflow: hidden;
+		text-overflow: clip;
+		padding-right: 10px;
+		position: relative;
+		white-space: nowrap;
+
+		&::after {
+			@include long-content-fade( $size: 15% );
+			height: 40px;
 		}
+	}
+
+	.reader-author-link {
+		margin-top: 0;
+	}
+
+	@include breakpoint( "<660px" ) {
+		flex-direction: row;
+		margin-top: 20px;
+
+		.reader-avatar {
+			flex: 1;
+			margin: 0 0 0 -9px;
+
+			&.has-site-and-author-icon,
+			&.has-site-icon,
+			&.has-gravatar {
+				margin: 0 10px 5px 0;
+			}
+
+			&.has-gravatar {
+
+				.gravatar {
+					height: 32px!important;
+					width: 32px!important;
+					max-width: none;
+				}
+			}
+
+			&.has-site-and-author-icon.has-site-icon.has-gravatar {
+				margin-bottom: -15px;
+
+				.gravatar {
+					height: 24px!important;
+					margin-right: 1em;
+					position: relative;
+						left: 18px;
+						top: -18px;
+					vertical-align: bottom;
+					width: 24px!important;
+				}
+			}
+
+			.site-icon {
+				height: 32px!important;
+				width: 32px!important;
+				line-height: 32px!important;
+				font-size: 32px!important;
+
+				.gridicon {
+
+					@include breakpoint( "<660px" ) {
+						height: 32px!important;
+						width: 32px!important;
+						line-height: 32px!important;
+						font-size: 32px!important;
+					}
+				}
+			}
+		}
+
 		.reader-author-link {
 			font-weight: 700;
 			display: inline;
-			margin: 0;
+			margin-right: 5px;
+
+			&::after {
+				content: ',';
+				font-weight: normal;
+			}
 		}
+
 		.author-compact-profile__site-link {
 			display: inline;
-			margin-left: 1em;
+
+			@include breakpoint( "<660px" ) {
+				margin-top: 0;
+			}
 		}
+
+		.reader-author-link,
+		.author-compact-profile__site-link {
+			padding-top: 5px;
+		}
+
 		.author-compact-profile__follow .follow-button {
 			position: fixed;
 			top: 10px;
@@ -146,6 +234,7 @@
 
 .reader-full-post__sidebar .comment-button {
 	margin-right: 18px;
+
 	@include breakpoint( "<660px" ) {
 		position: fixed;
 			top: 10px;
@@ -158,6 +247,43 @@
 	}
 }
 
+// Align meta info and post title
+.reader-full-post .has-author-link .author-compact-profile__avatar-link {
+	display: none;
+}
+
+.reader-full-post .has-author-link.has-author-icon {
+	margin-top: 5px;
+
+	.reader-author-link {
+		margin-top: 0;
+	}
+
+	.author-compact-profile__avatar-link {
+		display: block;
+	}
+}
+
+.reader-full-post .has-author-link {
+	margin-top: 14px;
+}
+
+.reader-full-post .has-author-link .reader-author-link {
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 4px;
+	}
+}
+
+// For posts without a title
+.reader-full-post__header.is-missing-title {
+	margin-top: 60px;
+
+	.reader-full-post__header-meta {
+		margin-bottom: 20px;
+	}
+}
+
 .reader-full-post__header-title {
 	clear: none;
 	color: $gray-dark;
@@ -167,7 +293,7 @@
 	font-size: 26px;
 	font-weight: 700;
 	line-height: 34px;
-	margin: 56px 0 8px;
+	margin: 56px 0 0;
 	max-width: 750px;
 
 	@include breakpoint( ">960px" ) {
@@ -198,7 +324,11 @@
 }
 
 .reader-full-post__header-date {
-	line-height: 1.4;
+	line-height: 1.6;
+
+	@include breakpoint( "<480px" ) {
+		line-height: 1.4;
+	}
 }
 
 .reader-full-post__header-date-link {
@@ -274,12 +404,42 @@
 	}
 }
 
+.reader-full-post__header {
+	margin-bottom: 23px;
+}
+
+.reader-full-post__featured-image {
+	margin: 28px 0 26px;
+}
+
+.reader-full-post .embed-youtube,
+.reader-full-post .embed-vimeo {
+	display: block;
+	position: relative;
+	padding: 25px 0 56.25%;
+
+	iframe {
+		height: 100%;
+		position: absolute;
+			top: 0;
+		width: 100%;
+	}
+}
+
+.reader-full-post .embed-vimeo {
+	margin-bottom: 33px;
+}
+
 .reader-full-post__story-content img:first-child {
 	margin-top: 0;
 }
 
+.is-reader-page .reader__full-post-content {
+	padding-top: 0!important;
+}
+
 // Daily Post-Specific Full Post View Styles
-.is-group-reader-refresh .blog-489937 .reader__full-post-content {
+.is-reader-page .blog-489937 .reader__full-post-content {
 	blockquote.left,
 	blockquote.alignleft,
 	blockquote.align-left,
@@ -318,3 +478,4 @@
 		}
 	}
 }
+

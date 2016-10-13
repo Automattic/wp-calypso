@@ -12,6 +12,7 @@ var ServiceTip = require( './service-tip' ),
 	ServiceAction = require( './service-action' ),
 	ServiceConnectedAccounts = require( './service-connected-accounts' ),
 	notices = require( 'notices' ),
+	observe = require( 'lib/mixins/data-observe' ),
 	sites = require( 'lib/sites-list' )(),
 	serviceConnections = require( './service-connections' ),
 	analytics = require( 'lib/analytics' ),
@@ -31,6 +32,8 @@ module.exports = React.createClass( {
 		onRefreshConnection: React.PropTypes.func,       // Handler for refreshing a Keyring connection for this service
 		onToggleSitewideConnection: React.PropTypes.func // Handler to invoke when toggling a connection to be shared sitewide
 	},
+
+	mixins: [ observe( 'connections' ) ],
 
 	getInitialState: function() {
 		return {
@@ -146,7 +149,7 @@ module.exports = React.createClass( {
 		if ( 'undefined' === typeof connections ) {
 			// If connections is undefined, assume that all connections for
 			// this service are to be removed.
-			connections = serviceConnections.getRemovableConnections( this.props.service.name );
+			connections = serviceConnections.getRemovableConnections( this.props.service.ID );
 		}
 
 		this.setState( { isDisconnecting: true } );
@@ -163,49 +166,46 @@ module.exports = React.createClass( {
 		if ( ! connection ) {
 			// When triggering a refresh from the primary action button, find
 			// the first broken connection owned by the current user.
-			connection = serviceConnections.getRefreshableConnections( this.props.service.name )[0];
+			connection = serviceConnections.getRefreshableConnections( this.props.service.ID )[ 0 ];
 		}
 		this.props.onRefreshConnection( connection );
 	},
 
 	performAction: function() {
-		var connectionStatus = serviceConnections.getConnectionStatus( this.props.service.name );
+		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID );
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
-		if ( 'connected' === connectionStatus && serviceConnections.getRemovableConnections( this.props.service.name ).length ) {
+		if ( 'connected' === connectionStatus && serviceConnections.getRemovableConnections( this.props.service.ID ).length ) {
 			this.disconnect();
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.name );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
 		} else if ( 'reconnect' === connectionStatus ) {
 			this.refresh();
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.name );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
 		} else {
 			this.connect();
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Button', this.props.service.name );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
 		}
 	},
 
 	render: function() {
-		var connectionStatus = serviceConnections.getConnectionStatus( this.props.service.name ),
-			connections = serviceConnections.getConnections( this.props.service.name ),
-			elementClass;
-
-		elementClass = [
-			'sharing-service',
-			this.props.service.name,
-			connectionStatus,
-			this.state.isOpen ? 'is-open' : ''
-		].join( ' ' );
-
-		const iconsMap = {
-			Facebook: 'facebook',
-			Twitter: 'twitter',
-			'Google+': 'google-plus',
-			LinkedIn: 'linkedin',
-			Tumblr: 'tumblr',
-			Path: 'path',
-			Eventbrite: 'eventbrite'
-		};
+		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID ),
+			connections = serviceConnections.getConnections( this.props.service.ID ),
+			elementClass = [
+				'sharing-service',
+				this.props.service.ID,
+				connectionStatus,
+				this.state.isOpen ? 'is-open' : ''
+			].join( ' ' ),
+			iconsMap = {
+				Facebook: 'facebook',
+				Twitter: 'twitter',
+				'Google+': 'google-plus',
+				LinkedIn: 'linkedin',
+				Tumblr: 'tumblr',
+				Path: 'path',
+				Eventbrite: 'eventbrite'
+			};
 
 		const header = (
 			<div>

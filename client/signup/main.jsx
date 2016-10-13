@@ -41,13 +41,13 @@ import utils from './utils';
 import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
 import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
-import { abtest } from 'lib/abtest';
+import DocumentHead from 'components/data/document-head';
+import { translate } from 'i18n-calypso';
 
 /**
  * Constants
  */
-const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_FREE = 8000;
-const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_PREMIUM = 3000;
+const MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED = 3000;
 
 const Signup = React.createClass( {
 	displayName: 'Signup',
@@ -100,22 +100,17 @@ const Signup = React.createClass( {
 
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
+			reduxStore: this.context.store,
 			onComplete: function( dependencies, destination ) {
 				const timeSinceLoading = this.state.loadingScreenStartTime
 					? Date.now() - this.state.loadingScreenStartTime
 					: undefined;
 				const filteredDestination = utils.getDestination( destination, dependencies, this.props.flowName );
-				let loadingScreenDelay;
-				if ( dependencies.cartItem && abtest( 'signupCheckoutRedirect' ) === 'auto' ) {
-					loadingScreenDelay = MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_PREMIUM;
-				} else {
-					loadingScreenDelay = MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED_FREE;
-				}
 
-				if ( timeSinceLoading && timeSinceLoading < loadingScreenDelay ) {
+				if ( timeSinceLoading && timeSinceLoading < MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED ) {
 					return delay(
 						this.handleFlowComplete.bind( this, dependencies, filteredDestination ),
-						loadingScreenDelay - timeSinceLoading
+						MINIMUM_TIME_LOADING_SCREEN_IS_DISPLAYED - timeSinceLoading
 					);
 				}
 				return this.handleFlowComplete( dependencies, filteredDestination );
@@ -178,7 +173,7 @@ const Signup = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
 
 		this.signupFlowController.reset();
-		if ( dependencies.cartItem && abtest( 'signupCheckoutRedirect' ) === 'auto' ) {
+		if ( dependencies.cartItem || dependencies.domainItem ) {
 			this.handleLogin( dependencies, destination );
 		} else {
 			this.setState( {
@@ -247,6 +242,9 @@ const Signup = React.createClass( {
 	},
 
 	resumeProgress() {
+		// Update the Flows object to know that the signup flow is being resumed.
+		flows.resumingFlow = true;
+
 		const signupProgress = SignupProgressStore.get(),
 			lastUpdatedStep = sortBy( signupProgress, 'lastUpdated' ).reverse()[ 0 ],
 			lastUpdatedStepName = lastUpdatedStep.stepName,
@@ -282,7 +280,7 @@ const Signup = React.createClass( {
 	},
 
 	loadNextStep() {
-		var flowSteps = flows.getFlow( this.props.flowName ).steps,
+		const flowSteps = flows.getFlow( this.props.flowName, this.props.stepName ).steps,
 			currentStepIndex = indexOf( flowSteps, this.props.stepName ),
 			nextStepName = flowSteps[ currentStepIndex + 1 ],
 			nextProgressItem = this.state.progress[ currentStepIndex + 1 ],
@@ -336,6 +334,11 @@ const Signup = React.createClass( {
 			null;
 	},
 
+	pageTitle() {
+		const accountFlowName = 'account';
+		return this.props.flowName === accountFlowName ? translate( 'Create an account' ) : translate( 'Create a site' );
+	},
+
 	currentStep() {
 		let currentStepProgress = find( this.state.progress, { stepName: this.props.stepName } ),
 			CurrentComponent = stepComponents[ this.props.stepName ],
@@ -358,7 +361,8 @@ const Signup = React.createClass( {
 						hasCartItems={ this.state.hasCartItems }
 						steps={ this.state.progress }
 						user={ this.state.user }
-						loginHandler={ this.state.loginHandler }/>
+						loginHandler={ this.state.loginHandler }
+					/>
 					: <CurrentComponent
 						path={ this.props.path }
 						step={ currentStepProgress }
@@ -388,6 +392,7 @@ const Signup = React.createClass( {
 
 		return (
 			<span>
+				<DocumentHead title={ this.pageTitle() } />
 				{
 					this.state.loadingScreenStartTime ?
 					null :

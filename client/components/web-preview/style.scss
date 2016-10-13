@@ -19,6 +19,12 @@
 			transform: translateY( 0 ) scale( 1 );
 		}
 	}
+
+	&.is-with-sidebar {
+		@include breakpoint( ">660px" ) {
+			left: 273px;
+		}
+	}
 }
 
 .web-preview__backdrop {
@@ -132,9 +138,8 @@
 	}
 
 	&.web-preview__seo-button {
-		display: flex;
-		align-items: center;
 		padding: 0 14px;
+		height: 100%;
 
 		&.is-showing-device-switcher {
 			border-left: 1px solid lighten( $gray, 20% );
@@ -145,6 +150,7 @@
 
 .web-preview__seo-label {
 	margin-left: 6px;
+	vertical-align: middle;
 }
 
 .web-preview__back-to-preview-button {

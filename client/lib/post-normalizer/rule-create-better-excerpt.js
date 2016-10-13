@@ -55,7 +55,8 @@ export function formatExcerpt( content ) {
 		}
 	} );
 
-	const betterExcerpt = trim( dom.innerHTML );
+	// trim and replace &nbsp; entities
+	const betterExcerpt = trim( dom.innerHTML.replace( /&nbsp;/g, ' ' ) );
 	dom.innerHTML = '';
 	return betterExcerpt;
 }

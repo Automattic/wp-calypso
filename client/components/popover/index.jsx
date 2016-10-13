@@ -36,22 +36,22 @@ class Popover extends Component {
 		closeOnEsc: PropTypes.bool,
 		id: PropTypes.string,
 		ignoreContext: PropTypes.shape( { getDOMNode: React.PropTypes.function } ),
+		isVisible: PropTypes.bool,
 		position: PropTypes.string,
 		rootClassName: PropTypes.string,
 		showDelay: PropTypes.number,
-
-		onClose: PropTypes.func.isRequired,
+		onClose: PropTypes.func,
 		onShow: PropTypes.func,
 	};
 
 	static defaultProps = {
 		autoPosition: true,
-		className: 'popover',
+		className: '',
 		closeOnEsc: true,
 		isVisible: false,
 		position: 'top',
 		showDelay: 0,
-
+		onClose: noop,
 		onShow: noop,
 	}
 

@@ -12,11 +12,11 @@ import mapValues from 'lodash/mapValues';
  */
 import config from 'config';
 import {
-	purchase as purchaseAction,
 	activate as activateAction
 } from 'state/themes/actions';
 import {
 	getSignupUrl,
+	getPurchaseUrl,
 	getCustomizeUrl,
 	getDetailsUrl,
 	getSupportUrl,
@@ -33,7 +33,7 @@ export const purchase = config.isEnabled( 'upgrades/checkout' )
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
-		action: purchaseAction,
+		getUrl: ( theme, site ) => getPurchaseUrl( theme, site ),
 		hideForTheme: theme => ! theme.price || theme.active || theme.purchased
 	}
 	: {};

@@ -4,6 +4,7 @@
 import ReactDom from 'react-dom';
 import React from 'react';
 import debugFactory from 'debug';
+import { omit } from 'lodash';
 
 /**
  * Globals
@@ -70,7 +71,7 @@ export default React.createClass( {
 			return;
 		}
 
-		let script = document.createElement( 'script' );
+		const script = document.createElement( 'script' );
 		script.innerHTML = `
 			( function() {
 				var observer;
@@ -96,6 +97,8 @@ export default React.createClass( {
 					childList: true,
 					subtree: true
 				} );
+
+				window.addEventListener( 'load', sendResize, true );
 
 				// Hack: Remove viewport unit styles, as these are relative
 				// the iframe root and interfere with our mechanism for
@@ -165,10 +168,11 @@ export default React.createClass( {
 	},
 
 	render: function() {
+		const omitProps = [ 'onResize' ];
 		return (
 			<iframe
 				ref="iframe"
-				{ ...this.props }
+				{ ...omit( this.props, omitProps ) }
 				onLoad={ this.onLoad }
 				width={ this.props.width || this.state.width }
 				height={ this.props.height || this.state.height } />

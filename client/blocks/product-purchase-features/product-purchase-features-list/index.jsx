@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, PropTypes } from 'react';
-import { find } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -24,6 +24,7 @@ import GoogleVouchers from './google-vouchers';
 import CustomizeTheme from './customize-theme';
 import VideoAudioPosts from './video-audio-posts';
 import MonetizeSite from './monetize-site';
+import LiveCourses from './live-courses';
 import CustomDomain from './custom-domain';
 import GoogleAnalyticsStats from './google-analytics-stats';
 import JetpackAntiSpam from './jetpack-anti-spam';
@@ -31,19 +32,15 @@ import JetpackBackupSecurity from './jetpack-backup-security';
 import JetpackReturnToDashboard from './jetpack-return-to-dashboard';
 import JetpackSurveysPolls from './jetpack-surveys-polls';
 import JetpackWordPressCom from './jetpack-wordpress-com';
-import {
-	isPremium as isWpcomPremium,
-	isBusiness as isWpcomBusiness
-} from 'lib/products-values';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
+import { hasDomainCredit } from 'state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
-export default class ProductPurchaseFeaturesList extends Component {
+class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes
 			.oneOf( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ] )
 			.isRequired,
-		selectedSite: PropTypes.object,
-		sitePlans: PropTypes.object,
 		isPlaceholder: PropTypes.bool
 	};
 
@@ -54,15 +51,13 @@ export default class ProductPurchaseFeaturesList extends Component {
 	getBusinessFeatures() {
 		const {
 			selectedSite,
-			sitePlans,
+			planHasDomainCredit
 		} = this.props;
-
-		const plan = find( sitePlans.data, isWpcomBusiness );
 
 		return [
 			<CustomDomain
 				selectedSite={ selectedSite }
-				hasDomainCredit={ plan && plan.hasDomainCredit }
+				hasDomainCredit={ planHasDomainCredit }
 				key="customDomainFeature"
 			/>,
 			<AdvertisingRemoved
@@ -76,6 +71,9 @@ export default class ProductPurchaseFeaturesList extends Component {
 			<CustomizeTheme
 				selectedSite={ selectedSite }
 				key="customizeThemeFeature"
+			/>,
+			<LiveCourses
+				key="attendLiveCourses"
 			/>,
 			<VideoAudioPosts
 				selectedSite={ selectedSite }
@@ -101,15 +99,13 @@ export default class ProductPurchaseFeaturesList extends Component {
 	getPremiumFeatures() {
 		const {
 			selectedSite,
-			sitePlans,
+			planHasDomainCredit
 		} = this.props;
-
-		const plan = find( sitePlans.data, isWpcomPremium );
 
 		return [
 			<CustomDomain
 				selectedSite={ selectedSite }
-				hasDomainCredit={ plan && plan.hasDomainCredit }
+				hasDomainCredit={ planHasDomainCredit }
 				key="customDomainFeature"
 			/>,
 			<AdvertisingRemoved
@@ -140,15 +136,13 @@ export default class ProductPurchaseFeaturesList extends Component {
 	getPersonalFeatures() {
 		const {
 			selectedSite,
-			sitePlans,
+			planHasDomainCredit
 		} = this.props;
-
-		const plan = find( sitePlans.data, isWpcomPremium );
 
 		return [
 			<CustomDomain
 				selectedSite={ selectedSite }
-				hasDomainCredit={ plan && plan.hasDomainCredit }
+				hasDomainCredit={ planHasDomainCredit }
 				key="customDomainFeature"
 			/>,
 			<AdvertisingRemoved
@@ -253,3 +247,15 @@ export default class ProductPurchaseFeaturesList extends Component {
 		);
 	}
 }
+
+export default connect(
+	( state ) => {
+		const selectedSite = getSelectedSite( state ),
+			selectedSiteId = getSelectedSiteId( state );
+
+		return {
+			selectedSite,
+			planHasDomainCredit: hasDomainCredit( state, selectedSiteId )
+		};
+	}
+)( ProductPurchaseFeaturesList );

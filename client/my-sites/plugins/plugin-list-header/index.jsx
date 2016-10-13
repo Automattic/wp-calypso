@@ -166,10 +166,14 @@ export default React.createClass( {
 
 		if ( ! this.props.isBulkManagementActive ) {
 			if ( 0 < this.props.pluginUpdateCount ) {
+				const textUpdate = this.translate( 'Update', { context: 'button label' } );
+				const textNumber = this.numberFormat( this.props.pluginUpdateCount );
+				const textPlugin = this.translate( 1 < this.props.pluginUpdateCount ? 'Plugins' : 'Plugin', { context: 'button label' } );
+
 				rightSideButtons.push(
 					<ButtonGroup key="plugin-list-header__buttons-update-all">
 						<Button compact primary onClick={ this.props.updateAllPlugins } >
-							{ this.translate( 'Update All', { context: 'button label' } ) }
+							{ `${textUpdate} ${textNumber} ${textPlugin}` }
 						</Button>
 					</ButtonGroup>
 				);

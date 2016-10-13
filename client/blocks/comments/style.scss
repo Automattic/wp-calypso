@@ -1,8 +1,9 @@
 // The main comment list wrapper
 .comments__comment-list {
-	clear: both;
-	margin-top: 32px;
 	border-top: 1px solid lighten( $gray, 20% );
+	clear: both;
+	margin: 36px 0 0;
+	padding-top: 11px;
 }
 
 
@@ -42,7 +43,6 @@
 			min-height: 33px;
 			margin: 0;
 			padding: 5px 60px 5px 5px;
-			resize: vertical;
 			font-size: 14px;
 			font-family: $serif;
 			line-height: 21px;
@@ -56,6 +56,7 @@
 				top: 0;
 				left: 0;
 			height: 100%;
+			resize: none;
 		}
 
 		pre {
@@ -122,7 +123,7 @@
 
 	&.is-root {
 		margin-top: 0 !important; // the !important can go when the old reader/comments is retired
- 	}
+	}
 
 	&.is-children {
 		margin-left: -2px;
@@ -191,7 +192,7 @@
 
 .comments__comment-trackbackicon {
 	position: absolute;
-		top: 1px;
+		top: 12px;
 		left: 8px;
 	border-radius: 50%;
 	background-color: $gray-light;
@@ -233,7 +234,7 @@ a.comments__comment-username {
 .comments__comment-timestamp a {
 	font-weight: normal;
 	font-size: 13px;
-	color: lighten( $gray, 20% );
+	color: lighten( $gray, 10% );
 	text-decoration: none;
 
 	&:hover {
@@ -326,7 +327,7 @@ a.comments__comment-username {
 }
 
 .comments__info-bar {
-	margin: 12px 24px 0 0;
+	margin: 0 24px -24px 0;
 	overflow: auto;
 
 	&.is-no-comments {
@@ -337,9 +338,10 @@ a.comments__comment-username {
 .comments__view-earlier {
 	color: $gray;
 	cursor: pointer;
-	display: inline-block;
+	display: block !important; // to overwrite inline-block rule
 	font-size: 14px;
-	margin-bottom: 0 !important; // the !important can go when the old reader/comments is retired
+	line-height: 1;
+	margin-bottom: 15px !important; // to overwrite 10px value
 
 	&:hover {
 		color: $blue-light;
@@ -366,6 +368,9 @@ a.comments__comment-username {
 .comments__comment-count {
 	color: lighten( $gray, 10% );
 	font-size: 14px;
+	font-weight: 600;
+	line-height: 1;
+	margin: 8px 0 17px;
 }
 
 .comments__comment-count-phrase {

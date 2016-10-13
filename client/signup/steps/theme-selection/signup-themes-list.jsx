@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import noop from 'lodash/noop';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,6 +19,8 @@ module.exports = React.createClass( {
 		surveyQuestion: React.PropTypes.string,
 		designType: React.PropTypes.string,
 		handleScreenshotClick: React.PropTypes.func,
+		handleThemeUpload: React.PropTypes.func,
+		showThemeUpload: React.PropTypes.bool
 	},
 
 	getDefaultProps() {
@@ -25,6 +28,8 @@ module.exports = React.createClass( {
 			surveyQuestion: null,
 			designType: null,
 			handleScreenshotClick: noop,
+			handleThemeUpload: noop,
+			showThemeUpload: 'showThemeUpload' === abtest( 'signupThemeUpload' ) && i18n.getLocaleSlug() === 'en'
 		};
 	},
 
@@ -41,8 +46,7 @@ module.exports = React.createClass( {
 	},
 
 	render() {
-		const actionLabel = ( abtest( 'signupThemePreview' ) === 'showThemePreview' )
-			? this.translate( 'Preview' ) : this.translate( 'Pick' );
+		const actionLabel = this.translate( 'Pick' );
 		const getActionLabel = () => actionLabel;
 		const themes = this.getComputedThemes().map( theme => {
 			return Object.assign( theme, {
@@ -56,7 +60,10 @@ module.exports = React.createClass( {
 				onScreenshotClick= { this.props.handleScreenshotClick }
 				onMoreButtonClick= { noop }
 				getActionLabel={ getActionLabel }
-				themes= { themes } />
+				themes= { themes }
+				showThemeUpload= { this.props.showThemeUpload }
+				onThemeUpload= { this.props.handleThemeUpload }
+			/>
 		);
 	}
 } );

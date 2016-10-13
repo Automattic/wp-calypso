@@ -3,7 +3,8 @@
  */
 var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
-	forEach = require( 'lodash/forEach' );
+	forEach = require( 'lodash/forEach' ),
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies
@@ -83,7 +84,7 @@ var SectionNavigation = React.createClass( {
 	render: function() {
 		var demoSections = {};
 
-		forEach( this.props, function( prop, key ) {
+		forEach( omit( this.props, 'isolated', 'uniqueInstance' ), function( prop, key ) {
 			demoSections[ key ] = [];
 
 			prop.forEach( function( item, index ) {
@@ -101,11 +102,7 @@ var SectionNavigation = React.createClass( {
 		}.bind( this ) );
 
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/section-nav">Section Navigation</a>
-				</h2>
-
+			<div>
 				<h3>Basic Tabs</h3>
 				<SectionNav
 					selectedText={ this.getSelectedText( 'basicTabs' ) }

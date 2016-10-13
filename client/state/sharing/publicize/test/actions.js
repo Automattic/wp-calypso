@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import nock from 'nock';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
@@ -18,11 +17,12 @@ import {
 	receiveConnections,
 	failConnectionsRequest
 } from '../actions';
+import useNock from 'test/helpers/use-nock';
 
 describe( '#fetchConnections()', () => {
 	const spy = sinon.spy();
 
-	before( () => {
+	useNock( ( nock ) => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
 			.get( '/rest/v1.1/sites/2916284/publicize-connections' )
@@ -40,10 +40,6 @@ describe( '#fetchConnections()', () => {
 
 	beforeEach( () => {
 		spy.reset();
-	} );
-
-	after( () => {
-		nock.cleanAll();
 	} );
 
 	it( 'should dispatch fetch action when thunk triggered', () => {

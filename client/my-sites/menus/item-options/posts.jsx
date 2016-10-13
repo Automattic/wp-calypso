@@ -62,15 +62,15 @@ var Posts = React.createClass( {
 	render: function() {
 		return (
 			<OptionList itemType={ this.props.itemType }
-			            onScroll={ actions.fetchNextPage }
-			            onBackClick={ this.props.back }
-			            onSearch={ this.props.onSearch }
-			            isEmpty={ this.props.posts.length === 0 && ! this.props.loading }
-			            isLoading={ this.props.loading && ! this.props.isLastPage } >
+				onScroll={ actions.fetchNextPage }
+				onBackClick={ this.props.back }
+				onSearch={ this.props.onSearch }
+				isEmpty={ this.props.posts.length === 0 && ! this.props.loading }
+				isLoading={ this.props.loading && ! this.props.isLastPage }>
 				<Options item={ this.props.item }
-				         itemType={ this.props.itemType }
-				         options={ this.maybeInjectPosts( this.props.posts ) }
-				         onChange={ this.props.onChange }
+					itemType={ this.props.itemType }
+					options={ this.maybeInjectPosts( this.props.posts ) }
+					onChange={ this.props.onChange }
 					/>
 			</OptionList>
 		);

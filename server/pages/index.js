@@ -1,17 +1,26 @@
-var express = require( 'express' ),
-	fs = require( 'fs' ),
-	crypto = require( 'crypto' ),
-	qs = require( 'qs' ),
-	execSync = require( 'child_process' ).execSync,
-	cookieParser = require( 'cookie-parser' ),
-	debug = require( 'debug' )( 'calypso:pages' );
+/**
+ * External dependencies
+ */
+import express from 'express';
+import fs from 'fs';
+import crypto from 'crypto';
+import qs from 'qs';
+import { execSync } from 'child_process';
+import cookieParser from 'cookie-parser';
+import debugFactory from 'debug';
 
-var config = require( 'config' ),
-	sanitize = require( 'sanitize' ),
-	utils = require( 'bundler/utils' ),
-	sectionsModule = require( '../../client/sections' ),
-	serverRouter = require( 'isomorphic-routing' ).serverRouter,
-	serverRender = require( 'render' ).serverRender;
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+import sanitize from 'sanitize';
+import utils from 'bundler/utils';
+import sectionsModule from '../../client/sections';
+import { serverRouter } from 'isomorphic-routing';
+import { serverRender } from 'render';
+import { createReduxStore } from 'state';
+
+const debug = debugFactory( 'calypso:pages' );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -119,7 +128,8 @@ function getDefaultContext( request ) {
 		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
-		devDocsURL: '/devdocs'
+		devDocsURL: '/devdocs',
+		store: createReduxStore()
 	} );
 
 	context.app = {
@@ -318,7 +328,12 @@ module.exports = function() {
 
 		app.get( '/plans', function( req, res, next ) {
 			if ( ! req.cookies.wordpress_logged_in ) {
-				res.redirect( 'https://wordpress.com/pricing' );
+				const queryFor = req.query && req.query.for;
+				if ( queryFor && 'jetpack' === queryFor ) {
+					res.redirect( 'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans' );
+				} else {
+					res.redirect( 'https://wordpress.com/pricing' );
+				}
 			} else {
 				next();
 			}

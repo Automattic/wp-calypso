@@ -34,7 +34,7 @@ const ProductLink = ( { selectedPurchase, selectedSite } ) => {
 
 	if ( isGoogleApps( selectedPurchase ) ) {
 		url = googleAppsSettingsUrl( selectedPurchase.meta );
-		text = i18n.translate( 'Google Apps Settings' );
+		text = i18n.translate( 'G Suite Settings' );
 	}
 
 	if ( isTheme( selectedPurchase ) ) {

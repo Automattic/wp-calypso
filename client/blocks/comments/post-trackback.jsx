@@ -27,14 +27,14 @@ export default class PostTrackback extends React.Component {
 					</div>
 
 					{ comment.author.URL
-						? <a href={ comment.author.URL } target="_blank" className="comments__comment-username">{ unescapedAuthorName }<Gridicon icon="external" /></a>
+						? <a href={ comment.author.URL } target="_blank" rel="noopener noreferrer" className="comments__comment-username">{ unescapedAuthorName }</a>
 						: <strong className="comments__comment-username">{ unescapedAuthorName }</strong> }
 
-					<small className="comments__comment-timestamp">
+					<div className="comments__comment-timestamp">
 						<a href={ comment.URL }>
 							<PostTime date={ comment.date } />
 						</a>
-					</small>
+					</div>
 				</div>
 
 			</li>

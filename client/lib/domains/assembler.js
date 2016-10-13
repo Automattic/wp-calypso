@@ -10,7 +10,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { type as domainTypes } from './constants';
+import { getDomainType } from './utils';
 
 function createDomainObjects( dataTransferObject ) {
 	let domains = [];
@@ -54,22 +54,6 @@ function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 	}
 
 	return mapKeys( googleAppsSubscription, ( value, key ) => camelCase( key ) );
-}
-
-function getDomainType( domainFromApi ) {
-	if ( domainFromApi.type === 'redirect' ) {
-		return domainTypes.SITE_REDIRECT;
-	}
-
-	if ( domainFromApi.wpcom_domain ) {
-		return domainTypes.WPCOM;
-	}
-
-	if ( domainFromApi.has_registration ) {
-		return domainTypes.REGISTERED;
-	}
-
-	return domainTypes.MAPPED;
 }
 
 function ensurePrimaryDomainIsFirst( domains ) {

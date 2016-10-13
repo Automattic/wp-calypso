@@ -23,7 +23,6 @@ import {
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
 import { isEnabled } from 'config';
-import { abtest } from 'lib/abtest';
 
 class PlansFeaturesMain extends Component {
 
@@ -84,31 +83,15 @@ class PlansFeaturesMain extends Component {
 			);
 		}
 
-		let plans;
-		if (
-			abtest( 'plansDescriptions' ) === 'descendingPriceSubtleDescription' ||
-			abtest( 'plansDescriptions' ) === 'descendingPriceEagerDescription'
-		) {
-			plans = filter(
-				[
-					PLAN_BUSINESS,
-					PLAN_PREMIUM,
-					isPersonalPlanEnabled ? PLAN_PERSONAL : null,
-					hideFreePlan ? null : PLAN_FREE,
-				],
-				value => !! value
-			);
-		} else {
-			plans = filter(
-				[
-					hideFreePlan ? null : PLAN_FREE,
-					isPersonalPlanEnabled ? PLAN_PERSONAL : null,
-					PLAN_PREMIUM,
-					PLAN_BUSINESS
-				],
-				value => !! value
-			);
-		}
+		const plans = filter(
+			[
+				hideFreePlan ? null : PLAN_FREE,
+				isPersonalPlanEnabled ? PLAN_PERSONAL : null,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS
+			],
+			value => !! value
+		);
 
 		return (
 			<div className="plans-features-main__group">
@@ -188,7 +171,7 @@ class PlansFeaturesMain extends Component {
 					answer={ translate(
 						'No problem! Feel free to {{a}}get in touch{{/a}} with our Happiness Engineers.',
 						{
-							components: { a: <a href="https://jetpack.com/contact-support/" target="_blank" /> }
+							components: { a: <a href="https://jetpack.com/contact-support/" target="_blank" rel="noopener noreferrer" /> }
 						}
 					) }
 				/>
@@ -209,7 +192,13 @@ class PlansFeaturesMain extends Component {
 						' domains purchased through WordPress.com or your own existing domain that you can map' +
 						' to your WordPress.com site. {{a}}Find out more about domains.{{/a}}',
 						{
-							components: { a: <a href="https://en.support.wordpress.com/all-about-domains/" target="_blank" /> }
+							components: {
+								a: <a
+									href="https://en.support.wordpress.com/all-about-domains/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
 						}
 					) }
 				/>
@@ -253,10 +242,16 @@ class PlansFeaturesMain extends Component {
 					question={ translate( 'Do you offer email accounts?' ) }
 					answer={ translate(
 						'Yes. If you register a new domain with our premium or business plans, you can optionally' +
-						' add Google apps for work. You can also set up email forwarding for any custom domain' +
+						' add G Suite. You can also set up email forwarding for any custom domain' +
 						' registered through WordPress.com. {{a}}Find out more about email{{/a}}.',
 						{
-							components: { a: <a href="https://en.support.wordpress.com/add-email/" target="_blank" /> }
+							components: {
+								a: <a
+									href="https://en.support.wordpress.com/add-email/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
 						}
 					) }
 				/>
@@ -269,8 +264,23 @@ class PlansFeaturesMain extends Component {
 						' more precise control of your site’s' +
 						' design. {{a}}Find out more about custom design{{/a}}.',
 						{
-							components: { a: <a href="https://en.support.wordpress.com/custom-design/" target="_blank" /> }
+							components: {
+								a: <a
+									href="https://en.support.wordpress.com/custom-design/"
+									target="_blank"
+									rel="noopener noreferrer"
+								/>
+							}
 						}
+					) }
+				/>
+
+				<FAQItem
+					question={ translate( 'Will upgrading affect my content?' ) }
+					answer={ translate(
+						'Plans add extra features to your site, but they do not affect the content of your site' +
+						" or your site's followers. You will never lose content by upgrading or downgrading" +
+						" your site's plan."
 					) }
 				/>
 
@@ -291,7 +301,7 @@ class PlansFeaturesMain extends Component {
 						'Need help deciding which plan works for you? Our happiness engineers are available for' +
 						' any questions you may have. {{a}}Get help{{/a}}.',
 						{
-							components: { a: <a href="https://wordpress.com/help" target="_blank" /> }
+							components: { a: <a href="https://wordpress.com/help" target="_blank" rel="noopener noreferrer" /> }
 						}
 					) }
 				/>

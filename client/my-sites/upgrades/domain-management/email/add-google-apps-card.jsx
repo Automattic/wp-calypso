@@ -42,8 +42,7 @@ const AddGoogleAppsCard = React.createClass( {
 				<header className="add-google-apps-card__header">
 					<h3 className="add-google-apps-card__product-logo">
 						{ /* Intentionally not translated */ }
-						<strong>Google</strong>
-						<span>Apps for Work</span>
+						<strong>G Suite</strong>
 					</h3>
 
 					<div className="add-google-apps-card__price">
@@ -93,6 +92,7 @@ const AddGoogleAppsCard = React.createClass( {
 											a: (
 												<a href={ googleAppsSupportUrl }
 													target="_blank"
+													rel="noopener noreferrer"
 													onClick={ this.handleLearnMoreClick } />
 											)
 										}
@@ -143,6 +143,7 @@ const AddGoogleAppsCard = React.createClass( {
 											a: (
 												<a href={ googleAppsSupportUrl }
 													target="_blank"
+													rel="noopener noreferrer"
 													onClick={ this.handleAndMoreClick } />
 											)
 										}
@@ -167,7 +168,7 @@ const AddGoogleAppsCard = React.createClass( {
 			<Button
 				type="button"
 				onClick={ this.goToAddGoogleApps }>
-				{ this.translate( 'Add Google Apps' ) }
+				{ this.translate( 'Add G Suite' ) }
 			</Button>
 		);
 	},

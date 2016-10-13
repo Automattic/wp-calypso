@@ -21,6 +21,7 @@ export default React.createClass( {
 				flowName={ this.props.flowName }
 				positionInFlow={ this.props.positionInFlow }
 				stepName={ this.props.stepName }
+				stepSectionName={ this.props.stepSectionName }
 				backUrl={ this.props.backUrl }
 				signupProgressStore={ this.props.signupProgressStore } />
 		);

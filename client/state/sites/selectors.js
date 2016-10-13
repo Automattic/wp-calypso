@@ -8,9 +8,11 @@ import {
 	find,
 	flowRight as compose,
 	get,
+	has,
 	map,
 	partialRight,
 	some,
+	split,
 	includes,
 } from 'lodash';
 
@@ -330,9 +332,7 @@ export const getSeoTitleFormats = compose(
 	getRawSite
 );
 
-export const getSeoTitle = ( state, type, { site, post = {} } ) => {
-	const titleFormats = getSeoTitleFormats( state, site.ID );
-
+export const buildSeoTitle = ( titleFormats, type, { site, post = {}, tag = '', date = '' } ) => {
 	const processPiece = ( piece = {}, data ) =>
 		'string' === piece.type
 			? piece.value
@@ -347,18 +347,49 @@ export const getSeoTitle = ( state, type, { site, post = {} } ) => {
 			return buildTitle( 'frontPage', {
 				siteName: site.name,
 				tagline: site.description
-			} );
+			} ) || site.name;
 
 		case 'posts':
 			return buildTitle( 'posts', {
 				siteName: site.name,
 				tagline: site.description,
-				postTitle: post.title
+				postTitle: get( post, 'title', '' )
+			} ) || get( post, 'title', '' );
+
+		case 'pages':
+			return buildTitle( 'pages', {
+				siteName: site.name,
+				tagline: site.description,
+				pageTitle: get( post, 'title', '' )
+			} );
+
+		case 'groups':
+			return buildTitle( 'groups', {
+				siteName: site.name,
+				tagline: site.description,
+				groupTitle: tag
+			} );
+
+		case 'archives':
+			return buildTitle( 'archives', {
+				siteName: site.name,
+				tagline: site.description,
+				date: date
 			} );
 
 		default:
 			return post.title || site.name;
 	}
+};
+
+export const getSeoTitle = ( state, type, data ) => {
+	if ( ! has( data, 'site.ID' ) ) {
+		return '';
+	}
+
+	const titleFormats = getSeoTitleFormats( state, data.site.ID );
+
+	return buildSeoTitle( titleFormats, type, data );
 };
 
 /**
@@ -379,6 +410,32 @@ export function getSiteByUrl( state, url ) {
 	}
 
 	return site;
+}
+
+/**
+ * Returns a site's theme showcase path.
+ *
+ * @param  {Object}  state  Global state tree
+ * @param  {Number}  siteId SiteId
+ * @return {?String}        Theme showcase path
+ */
+export function getSiteThemeShowcasePath( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	if ( ! site || site.jetpack ) {
+		return null;
+	}
+
+	const [ type, slug ] = split( getSiteOption( state, siteId, 'theme_slug' ), '/', 2 );
+
+	// to accomodate a8c and other theme types
+	if ( ! includes( [ 'pub', 'premium' ], type ) ) {
+		return null;
+	}
+
+	const siteSlug = getSiteSlug( state, siteId );
+	return type === 'premium'
+		? `/theme/${ slug }/setup/${ siteSlug }`
+		: `/theme/${ slug }/${ siteSlug }`;
 }
 
 /**
@@ -459,4 +516,37 @@ export function isCurrentSitePlan( state, siteId, planProductId ) {
 	}
 
 	return sitePlan.product_id === planProductId;
+}
+
+/**
+ * Returns the ID of the static page set as the front page, or 0 if a static page is not set.
+ *
+ * @param {Object} state Global state tree
+ * @param {Object} siteId Site ID
+ * @return {Number} ID of the static page set as the front page, or 0 if a static page is not set
+ */
+export function getSiteFrontPage( state, siteId ) {
+	return getSiteOption( state, siteId, 'page_on_front' );
+}
+
+/**
+ * Returns the ID of the static page set as the page for posts, or 0 if a static page is not set.
+ *
+ * @param {Object} state Global state tree
+ * @param {Object} siteId Site ID
+ * @return {Number} ID of the static page set as page for posts, or 0 if a static page is not set
+ */
+export function getSitePostsPage( state, siteId ) {
+	return getSiteOption( state, siteId, 'page_for_posts' );
+}
+
+/**
+ * Returns the front page type.
+ *
+ * @param {Object} state Global state tree
+ * @param {Object} siteId Site ID
+ * @return {String} 'posts' if blog posts are set as the front page or 'page' if a static page is
+ */
+export function getSiteFrontPageType( state, siteId ) {
+	return getSiteOption( state, siteId, 'show_on_front' );
 }

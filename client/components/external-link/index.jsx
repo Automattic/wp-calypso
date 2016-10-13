@@ -22,7 +22,8 @@ export default React.createClass( {
 		href: React.PropTypes.string,
 		onClick: React.PropTypes.func,
 		icon: React.PropTypes.bool,
-		iconSize: React.PropTypes.number
+		iconSize: React.PropTypes.number,
+		target: React.PropTypes.string
 	},
 
 	getDefaultProps() {
@@ -40,6 +41,10 @@ export default React.createClass( {
 			className: classes,
 			rel: 'external'
 		} );
+
+		if ( props.target ) {
+			props.rel = props.rel.concat( ' noopener noreferrer' );
+		}
 
 		return (
 			<a { ...props }>

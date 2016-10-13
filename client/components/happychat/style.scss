@@ -2,7 +2,6 @@
  * Live Chat
  */
 
-
 .happychat__title {
 	cursor: pointer;
 	padding: 0 12px;
@@ -41,10 +40,10 @@
 
 }
 
+
 /**
  * Base styles
  */
-
 
 .happychat__container {
 	overflow: hidden;
@@ -64,7 +63,7 @@
 		display: block;
 		background: lighten( $gray, 30% );
 		bottom: 0;
-		z-index: 10;
+		z-index: z-index( 'root', '.happychat__container.is-open' );
 
 		.happychat__title {
 			cursor: default;
@@ -162,6 +161,7 @@
 		min-height: initial;
 		align-self: stretch;
 		resize: none;
+		height: 100%;
 
 		&:focus, &:active {
 			outline: none;
@@ -188,7 +188,6 @@
 	&:hover {
 		background: lighten( $blue-medium, 10% );
 	}
-
 }
 
 .happychat__timeline-join-message {
@@ -201,10 +200,10 @@
 .happychat__message-text {
 	font-size: 14px;
 	flex: 1;
-	padding: 8px;
+	padding: 8px 12px;
 	border-radius: 8px 8px 8px 0;
-	color: $white;
-	background: $blue-medium;
+	color: $gray-dark;
+	background: $white;
 	position: relative;
 
 	overflow-wrap: break-word;
@@ -225,33 +224,32 @@
 		display: block;
 		position: absolute;
 		bottom: 0;
-		left: -6px;
+		left: -8px;
 
 		// draw a triangle
 		width: 0;
 		height: 0;
-		border-bottom: 6px solid $blue-medium;
-		border-left: 6px solid transparent;
+		border-bottom: 8px solid $white;
+		border-left: 8px solid transparent;
 	}
 
 	.is-user-message & {
-		background: $white;
-		color: $gray-dark;
+		color: $white;
+		background: $blue-medium;
 		border-radius: 8px 8px 0 8px;
 
 		&:after {
 			left: auto;
-			right: -6px;
+			right: -8px;
 
 			// draw a triangle
 			width: 0;
 			height: 0;
-			border-bottom: 6px solid $white;
+			border-bottom: 8px solid $blue-medium;
 			border-left: none;
-			border-right: 6px solid transparent;
+			border-right: 8px solid transparent;
 		}
 	}
-
 }
 
 .happychat__message-meta {
@@ -274,19 +272,36 @@
 		width: 100%;
 		height: auto;
 	}
-
 }
 
 .happychat__timeline-message {
 	flex: 0 0 auto;
 	display: flex;
 	flex-direction: row-reverse;
-	padding: 0 8px;
-	margin: 6px 0;
+	padding: 0 10px;
+	margin-top: 6px;
+	margin-bottom: 6px;
+	margin-right: auto;
+	margin-left: 0;
+
+	a {
+		color: $blue-medium;
+		text-decoration: underline;
+	}
+
+	a:hover {
+		text-decoration: none;
+	}
 
 	&.is-user-message {
 		flex-direction: row;
 		margin-left: auto;
+		margin-right: 0;
+
+		a {
+			color: lighten( $blue-light, 10% );
+		}
+
 	}
 }
 
@@ -315,8 +330,8 @@
 		height: 100%;
 		background: hsla( 0, 0%, 0%, 0.1 );
 	}
-
 }
+
 
 /**
  * Sidebar mode
@@ -326,6 +341,7 @@
 
 	.happychat__container.is-open {
 		position: fixed;
+		z-index: 0; // place it under the notifications drawer
 		height: calc( 100% - 47px );
 		bottom: 0;
 		right: 0;
@@ -352,9 +368,58 @@
 		padding: 32px 304px;
 	}
 
+	// adjust when scoll arrows show up in stats insights when panel is open
+	.has-chat.is-section-stats .post-trends__scroll-left,
+	.has-chat.is-section-stats .post-trends__scroll-right {
+			display: block;
+	}
+
+	// adjust themes page to accomodate docked sidebar
+	.has-chat.is-section-theme .layout__content {
+		padding: 32px 0;
+	}
+
+	.has-chat.is-section-theme .theme__sheet {
+		margin-right: 272px;
+	}
+
+	.has-chat.is-section-theme .theme__sheet-screenshot {
+		width: calc( 49% - 182px );
+	}
+
 	// add space in the editor for the docked sidebar
 	.has-chat.is-group-editor .layout__content {
-		padding: 0 304px 0 0;
+		padding: 0 272px 0 0;
+	}
+
+	.has-chat.is-group-editor .editor__header,
+	.has-chat.is-group-editor .editor .mce-edit-area {
+	    padding: 0 16px;
+	}
+
+	.has-chat.is-group-editor .editor-title {
+	    margin-left: 52px;
+	}
+
+	.has-chat.is-group-editor .editor__header {
+		padding-bottom: 27px;
+	}
+
+	.has-chat.is-group-editor .mce-toolbar-grp .mce-stack-layout-item {
+	    display: inline-block;
+	    overflow: hidden;
+	}
+
+	.has-chat.is-group-editor .editor__switch-mode {
+	    right: 32px;
+	}
+}
+
+@include breakpoint( ">1280px" ) {
+
+	.has-chat.is-group-editor .mce-toolbar-grp .mce-stack-layout-item {
+	    display: block;
+	    overflow: hidden;
 	}
 
 }
@@ -366,27 +431,27 @@
 
 @include breakpoint( "480px-1040px" ) {
 
-	.wp:not( .is-section-chat ) {
+	.layout:not( .is-section-chat ) {
 		.happychat__container.is-open {
 			box-shadow: 0 1px 2px rgba( 0,0,0,.2 ), 0 1px 10px rgba( 0,0,0, .1 );
 			width: 280px;
 		}
-	
+
 		.happychat__container.is-open .happychat__title {
 			height: 32px;
 			line-height: 32px;
 			border-radius: 0;
-	
+
 			.happychat__active-toolbar {
-		
+
 				> div {
 					padding: 4px 11px;
 				}
-		
+
 			}
-	
+
 		}
-	
+
 		.happychat__message {
 			height: 48px;
 		}
@@ -394,65 +459,25 @@
 		.happychat__message > textarea {
 			padding: 12px;
 		}
-	
-		.happychat__conversation {
+
+		.happychat__conversation,
+		.happychat__welcome {
 			min-height: 160px;
 			max-height: 220px;
 		}
-
-	}
-
-}
-
-
-/**
- * Mobile fullscreen mode
- * Includes code to make the Me > Chat section nice on larger breakoints as well,
- * even though we'll be hiding that for the time being.
- */
-
-.is-section-chat {
-	.happychat, .happychat__page {
-		position: fixed;
-		overflow: auto;
-		-webkit-overflow-scrolling: touch;
-		display: flex;
-		flex-direction: column;
-		box-sizing: border-box;
-		top: 0;
-		margin-top: 47px;
-		left: 272px;
-		right: 0;
-		bottom: 0;
 	}
 }
 
-@include breakpoint( ">1040px" ) {
+@include breakpoint( "<480px" ) {
+	.layout:not( .is-section-chat ) {
+		.happychat__container.is-open {
+			right: 0;
+		}
 
-	.is-section-chat .happychat__timeline-message {
-		max-width: 80%;
-	}
-
-}
-
-@include breakpoint( "<960px" ) {
-
-	.is-section-chat {
-		.happychat, .happychat__page {
-			left: 229px;
+		.happychat__conversation,
+		.happychat__welcome {
+			min-height: 160px;
+			max-height: 220px;
 		}
 	}
-
 }
-
-@include breakpoint( "<660px" ) {
-
-	.is-section-chat {
-		.happychat, .happychat__page {
-				left: 0;
-		}
-	}
-
-}
-
-

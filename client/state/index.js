@@ -8,14 +8,16 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  * Internal dependencies
  */
 import noticesMiddleware from './notices/middleware';
-import postsEditMiddleware from './posts/middleware';
 import application from './application/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
+import countryStates from './country-states/reducer';
 import currentUser from './current-user/reducer';
 import documentHead from './document-head/reducer';
 import domains from './domains/reducer';
+import geo from './geo/reducer';
 import googleAppsUsers from './google-apps-users/reducer';
+import help from './help/reducer';
 import jetpackConnect from './jetpack-connect/reducer';
 import jetpackSync from './jetpack-sync/reducer';
 import happychat from './happychat/reducer';
@@ -23,6 +25,7 @@ import notices from './notices/reducer';
 import pageTemplates from './page-templates/reducer';
 import plans from './plans/reducer';
 import plugins from './plugins/reducer';
+import postFormats from './post-formats/reducer';
 import posts from './posts/reducer';
 import postTypes from './post-types/reducer';
 import preferences from './preferences/reducer';
@@ -52,21 +55,25 @@ export const reducer = combineReducers( {
 	application,
 	comments,
 	componentsUsageStats,
+	countryStates,
 	currentUser,
 	documentHead,
 	domains,
+	geo,
 	googleAppsUsers,
 	happychat,
+	help,
 	jetpackConnect,
 	jetpackSync,
 	notices,
 	pageTemplates,
 	plugins,
 	plans,
-	preferences,
-	preview,
+	postFormats,
 	posts,
 	postTypes,
+	preferences,
+	preview,
 	productsList,
 	purchases,
 	pushNotifications,
@@ -86,7 +93,7 @@ export const reducer = combineReducers( {
 	wordads
 } );
 
-const middleware = [ thunkMiddleware, noticesMiddleware, postsEditMiddleware ];
+const middleware = [ thunkMiddleware, noticesMiddleware ];
 
 if ( typeof window === 'object' ) {
 	// Browser-specific middlewares

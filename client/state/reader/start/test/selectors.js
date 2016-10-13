@@ -131,7 +131,7 @@ describe( 'selectors', () => {
 				},
 				users: {
 					items: {
-						'14782056': {
+						14782056: {
 							is_new_reader: null
 						}
 					}
@@ -153,7 +153,7 @@ describe( 'selectors', () => {
 				},
 				users: {
 					items: {
-						'14782056': {
+						14782056: {
 							is_new_reader: true
 						}
 					}

@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -26,7 +25,7 @@ import {
 	JETPACK_CONNECT_ACTIVATE_MANAGE,
 	JETPACK_CONNECT_ACTIVATE_MANAGE_RECEIVE
 } from 'state/action-types';
-
+import useNock from 'test/helpers/use-nock';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
 import path from 'lib/route/path';
@@ -163,7 +162,7 @@ describe( 'actions', () => {
 		const { _wp_nonce, client_id, redirect_uri, scope, secret, state } = queryObject;
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + client_id + '/jetpack-login' )
@@ -206,10 +205,6 @@ describe( 'actions', () => {
 					}, {
 						'Content-Type': 'application/json'
 					} );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch authorize request action when thunk triggered', () => {
@@ -268,7 +263,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.get( '/rest/v1.1/jetpack-blogs/' + client_id + '/jetpack-login' )
@@ -284,10 +279,6 @@ describe( 'actions', () => {
 					}, {
 						'Content-Type': 'application/json'
 					} );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch authorize receive action when request completes', () => {
@@ -313,22 +304,22 @@ describe( 'actions', () => {
 		const siteId = '123456';
 		const ssoNonce = '123456789';
 		const blogDetails = {
-			domain: 'website.com',
+			domain: 'example.wordpress.com',
 			title: 'My BBQ Site',
 			icon: {
 				img: '',
 				ico: '',
 			},
-			URL: 'https://website.com',
+			URL: 'https://example.wordpress.com',
 			is_vip: false,
-			admin_url: 'https://website.com/wp-admin'
+			admin_url: 'https://example.wordpress.com/wp-admin'
 		};
 
 		const sharedDetails = {
 			ID: 0,
 			login: 'bbquser',
-			email: 'ieatbbq@website.com',
-			url: 'https://website.com',
+			email: 'ieatbbq@example.wordpress.com',
+			url: 'https://example.wordpress.com',
 			first_name: 'Lou',
 			last_name: 'Bucket',
 			display_name: 'bestbbqtester',
@@ -338,7 +329,7 @@ describe( 'actions', () => {
 		};
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-validate', {
@@ -351,10 +342,6 @@ describe( 'actions', () => {
 					}, {
 						'Content-Type': 'application/json'
 					} );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch validate action when thunk triggered', () => {
@@ -382,7 +369,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-validate', {
@@ -394,10 +381,6 @@ describe( 'actions', () => {
 					}, {
 						'Content-Type': 'application/json'
 					} );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {
@@ -420,10 +403,10 @@ describe( 'actions', () => {
 	describe( '#authorizeSSO()', () => {
 		const siteId = '123456';
 		const ssoNonce = '123456789';
-		const ssoUrl = 'http://website.com';
+		const ssoUrl = 'http://example.wordpress.com';
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-authorize', {
@@ -434,10 +417,6 @@ describe( 'actions', () => {
 					}, {
 						'Content-Type': 'application/json'
 					} );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch validate action when thunk triggered', () => {
@@ -464,7 +443,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/sso-authorize', {
@@ -476,10 +455,6 @@ describe( 'actions', () => {
 					}, {
 						'Content-Type': 'application/json'
 					} );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {
@@ -505,7 +480,7 @@ describe( 'actions', () => {
 		const secret = 'abcdefgh12345678';
 
 		describe( 'success', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/activate-manage', {
@@ -517,10 +492,6 @@ describe( 'actions', () => {
 					}, {
 						'Content-Type': 'application/json'
 					} );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch activate manage action when thunk triggered', () => {
@@ -549,7 +520,7 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'failure', () => {
-			before( () => {
+			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( '/rest/v1.1/jetpack-blogs/' + siteId + '/activate-manage', {
@@ -562,10 +533,6 @@ describe( 'actions', () => {
 					}, {
 						'Content-Type': 'application/json'
 					} );
-			} );
-
-			after( () => {
-				nock.cleanAll();
 			} );
 
 			it( 'should dispatch receive action when request completes', () => {

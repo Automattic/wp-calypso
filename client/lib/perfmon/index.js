@@ -64,10 +64,10 @@ function observeDomChanges( MutationObserver ) {
 	} );
 
 	observer.observe( OBSERVE_ROOT, {
-	  subtree: true,
-	  attributes: true,
-	  childList: true,
-	  attributeFilter: ['class']
+		subtree: true,
+		attributes: true,
+		childList: true,
+		attributeFilter: ['class']
 	} );
 }
 

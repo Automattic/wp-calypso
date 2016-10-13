@@ -5,8 +5,44 @@ import wpcom from 'lib/wp';
 import {
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
-	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE
+	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
+	PUBLICIZE_SHARE,
+	PUBLICIZE_SHARE_SUCCESS,
+	PUBLICIZE_SHARE_FAILURE,
+	PUBLICIZE_SHARE_DISMISS
 } from 'state/action-types';
+
+export function dismissShareConfirmation( siteId, postId ) {
+	return {
+		type: PUBLICIZE_SHARE_DISMISS,
+		siteId,
+		postId,
+	}
+}
+
+export function sharePost( siteId, postId, skippedConnections, message ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: PUBLICIZE_SHARE,
+			siteId,
+			postId,
+			skippedConnections,
+			message
+		} );
+
+		return new Promise( ( resolve ) => {
+			wpcom.undocumented().publicizePost( siteId, postId, message, skippedConnections, ( error, data ) => {
+				if ( error || ! data.success ) {
+					dispatch( { type: PUBLICIZE_SHARE_FAILURE, siteId, postId, error } );
+				} else {
+					dispatch( { type: PUBLICIZE_SHARE_SUCCESS, siteId, postId } );
+				}
+
+				resolve();
+			} );
+		} );
+	};
+}
 
 /**
  * Triggers a network request to fetch Publicize connections for the specified

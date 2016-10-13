@@ -3,11 +3,11 @@
  */
 import sinon from 'sinon';
 import { expect } from 'chai';
-import nock from 'nock';
 
 /**
  * Internal dependencies
  */
+import useNock from 'test/helpers/use-nock';
 import {
 	SITE_STATS_RECEIVE,
 	SITE_STATS_REQUEST,
@@ -38,10 +38,6 @@ describe( 'actions', () => {
 		spy.reset();
 	} );
 
-	after( () => {
-		nock.cleanAll();
-	} );
-
 	describe( 'receiveSiteStats()', () => {
 		it( 'should return an action object', () => {
 			const action = receiveSiteStats(
@@ -62,7 +58,7 @@ describe( 'actions', () => {
 	} );
 
 	describe( 'requestSiteStats()', () => {
-		before( () => {
+		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.get( `/rest/v1.1/sites/${ SITE_ID }/stats/streak?startDate=2015-06-01&endDate=2016-06-01` )

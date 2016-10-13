@@ -49,20 +49,20 @@ const successfulSSOValidation = {
 	type: JETPACK_CONNECT_SSO_VALIDATION_SUCCESS,
 	success: true,
 	blogDetails: {
-		domain: 'website.com',
+		domain: 'example.wordpress.com',
 		title: 'My BBQ Site',
 		icon: {
 			img: '',
 			ico: '',
 		},
-		URL: 'https://website.com',
-		admin_url: 'https://website.com/wp-admin'
+		URL: 'https://example.wordpress.com',
+		admin_url: 'https://example.wordpress.com/wp-admin'
 	},
 	sharedDetails: {
 		ID: 0,
 		login: 'bbquser',
-		email: 'ieatbbq@website.com',
-		url: 'https://website.com',
+		email: 'ieatbbq@example.wordpress.com',
+		url: 'https://example.wordpress.com',
 		first_name: 'Lou',
 		last_name: 'Bucket',
 		display_name: 'bestbbqtester',
@@ -98,36 +98,36 @@ describe( 'reducer', () => {
 		it( 'should add the url slug as a new property when checking a new url', () => {
 			const state = jetpackConnectSessions( undefined, {
 				type: JETPACK_CONNECT_CHECK_URL,
-				url: 'https://website.com'
+				url: 'https://example.wordpress.com'
 			} );
 
-			expect( state ).to.have.property( 'website.com' ).to.be.a( 'object' );
+			expect( state ).to.have.property( 'example.wordpress.com' ).to.be.a( 'object' );
 		} );
 
 		it( 'should store a timestamp when checking a new url', () => {
 			const nowTime = ( new Date() ).getTime();
 			const state = jetpackConnectSessions( undefined, {
 				type: JETPACK_CONNECT_CHECK_URL,
-				url: 'https://website.com'
+				url: 'https://example.wordpress.com'
 			} );
 
-			expect( state[ 'website.com' ] ).to.have.property( 'timestamp' )
+			expect( state[ 'example.wordpress.com' ] ).to.have.property( 'timestamp' )
 				.to.be.at.least( nowTime );
 		} );
 
 		it( 'should update the timestamp when checking an existent url', () => {
 			const nowTime = ( new Date() ).getTime();
-			const state = jetpackConnectSessions( { 'website.com': { timestamp: 1 } }, {
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
 				type: JETPACK_CONNECT_CHECK_URL,
-				url: 'https://website.com'
+				url: 'https://example.wordpress.com'
 			} );
 
-			expect( state[ 'website.com' ] ).to.have.property( 'timestamp' )
+			expect( state[ 'example.wordpress.com' ] ).to.have.property( 'timestamp' )
 				.to.be.at.least( nowTime );
 		} );
 
 		it( 'should not restore a state with a property without a timestamp', () => {
-			const state = jetpackConnectSessions( { 'website.com': {} }, {
+			const state = jetpackConnectSessions( { 'example.wordpress.com': {} }, {
 				type: DESERIALIZE
 			} );
 
@@ -135,7 +135,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not restore a state with a property with a non-integer timestamp', () => {
-			const state = jetpackConnectSessions( { 'website.com': { timestamp: '1' } }, {
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: '1' } }, {
 				type: DESERIALIZE
 			} );
 
@@ -143,7 +143,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not restore a state with a session stored with extra properties', () => {
-			const state = jetpackConnectSessions( { 'website.com': { timestamp: 1, foo: 'bar' } }, {
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1, foo: 'bar' } }, {
 				type: DESERIALIZE
 			} );
 
@@ -151,19 +151,19 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should restore a valid state', () => {
-			const state = jetpackConnectSessions( { 'website.com': { timestamp: 1 } }, {
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.be.eql( { 'website.com': { timestamp: 1 } } );
+			expect( state ).to.be.eql( { 'example.wordpress.com': { timestamp: 1 } } );
 		} );
 
 		it( 'should restore a valid state including dashes, slashes and semicolons', () => {
-			const state = jetpackConnectSessions( { 'https://website.com:3000/test-one': { timestamp: 1 } }, {
+			const state = jetpackConnectSessions( { 'https://example.wordpress.com:3000/test-one': { timestamp: 1 } }, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.be.eql( { 'https://website.com:3000/test-one': { timestamp: 1 } } );
+			expect( state ).to.be.eql( { 'https://example.wordpress.com:3000/test-one': { timestamp: 1 } } );
 		} );
 	} );
 
@@ -177,11 +177,11 @@ describe( 'reducer', () => {
 		it( 'should add the url and mark it as currently fetching', () => {
 			const state = jetpackConnectSite( undefined, {
 				type: JETPACK_CONNECT_CHECK_URL,
-				url: 'https://website.com'
+				url: 'https://example.wordpress.com'
 			} );
 
 			expect( state ).to.have.property( 'url' )
-				.to.eql( 'https://website.com' );
+				.to.eql( 'https://example.wordpress.com' );
 			expect( state ).to.have.property( 'isFetching' )
 				.to.be.true;
 			expect( state ).to.have.property( 'isFetched' )
@@ -202,9 +202,9 @@ describe( 'reducer', () => {
 				isJetpackActive: true,
 				isWordPressDotCom: false
 			};
-			const state = jetpackConnectSite( { url: 'https://website.com' }, {
+			const state = jetpackConnectSite( { url: 'https://example.wordpress.com' }, {
 				type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
-				url: 'https://website.com',
+				url: 'https://example.wordpress.com',
 				data: data
 			} );
 
@@ -224,19 +224,19 @@ describe( 'reducer', () => {
 				isJetpackActive: true,
 				isWordPressDotCom: false
 			};
-			const state = jetpackConnectSite( { url: 'https://anotherwebsite.com' }, {
+			const state = jetpackConnectSite( { url: 'https://automattic.com' }, {
 				type: JETPACK_CONNECT_CHECK_URL_RECEIVE,
-				url: 'https://website.com',
+				url: 'https://example.wordpress.com',
 				data: data
 			} );
 
-			expect( state ).to.eql( { url: 'https://anotherwebsite.com' } );
+			expect( state ).to.eql( { url: 'https://automattic.com' } );
 		} );
 
 		it( 'should mark the url as dismissed if it is the current one', () => {
-			const state = jetpackConnectSite( { url: 'https://website.com' }, {
+			const state = jetpackConnectSite( { url: 'https://example.wordpress.com' }, {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
-				url: 'https://website.com'
+				url: 'https://example.wordpress.com'
 			} );
 
 			expect( state ).to.have.property( 'installConfirmedByUser' )
@@ -246,18 +246,18 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not mark the url as dismissed if it is not the current one', () => {
-			const state = jetpackConnectSite( { url: 'https://anotherwebsite.com' }, {
+			const state = jetpackConnectSite( { url: 'https://automattic.com' }, {
 				type: JETPACK_CONNECT_DISMISS_URL_STATUS,
-				url: 'https://website.com'
+				url: 'https://example.wordpress.com'
 			} );
 
-			expect( state ).to.eql( { url: 'https://anotherwebsite.com' } );
+			expect( state ).to.eql( { url: 'https://automattic.com' } );
 		} );
 
 		it( 'should schedule a redirect to the url if it is the current one', () => {
-			const state = jetpackConnectSite( { url: 'https://website.com' }, {
+			const state = jetpackConnectSite( { url: 'https://example.wordpress.com' }, {
 				type: JETPACK_CONNECT_REDIRECT,
-				url: 'https://website.com'
+				url: 'https://example.wordpress.com'
 			} );
 
 			expect( state ).to.have.property( 'isRedirecting' )
@@ -265,16 +265,16 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should not schedule a redirect to the url if it is not the current one', () => {
-			const state = jetpackConnectSite( { url: 'https://anotherwebsite.com' }, {
+			const state = jetpackConnectSite( { url: 'https://automattic.com' }, {
 				type: JETPACK_CONNECT_REDIRECT,
-				url: 'https://website.com'
+				url: 'https://example.wordpress.com'
 			} );
 
-			expect( state ).to.eql( { url: 'https://anotherwebsite.com' } );
+			expect( state ).to.eql( { url: 'https://automattic.com' } );
 		} );
 
 		it( 'should set the jetpack confirmed status to the new one', () => {
-			const state = jetpackConnectSite( { url: 'https://website.com' }, {
+			const state = jetpackConnectSite( { url: 'https://example.wordpress.com' }, {
 				type: JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 				status: true
 			} );
@@ -285,7 +285,7 @@ describe( 'reducer', () => {
 
 		it( 'should not persist state', () => {
 			const originalState = deepFreeze( {
-				url: 'https://website.com'
+				url: 'https://example.wordpress.com'
 			} );
 			const state = jetpackConnectSite( originalState, {
 				type: SERIALIZE
@@ -296,7 +296,7 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const originalState = deepFreeze( {
-				url: 'https://website.com'
+				url: 'https://example.wordpress.com'
 			} );
 			const state = jetpackConnectSite( originalState, {
 				type: DESERIALIZE
@@ -316,20 +316,20 @@ describe( 'reducer', () => {
 			const nowTime = ( new Date() ).getTime();
 			const state = jetpackSSOSessions( undefined, {
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-				ssoUrl: 'https://website.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
-				siteUrl: 'https://website.com'
+				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://example.wordpress.com'
 			} );
 
-			expect( state ).to.have.property( 'website.com' )
+			expect( state ).to.have.property( 'example.wordpress.com' )
 				.to.be.a( 'object' );
-			expect( state[ 'website.com' ] ).to.have.property( 'timestamp' )
+			expect( state[ 'example.wordpress.com' ] ).to.have.property( 'timestamp' )
 				.to.be.at.least( nowTime );
 		} );
 
 		it( 'should persist state', () => {
 			const originalState = deepFreeze( {
-				ssoUrl: 'https://website.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
-				siteUrl: 'https://website.com'
+				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://example.wordpress.com'
 			} );
 			const state = jetpackSSOSessions( originalState, {
 				type: SERIALIZE
@@ -340,8 +340,8 @@ describe( 'reducer', () => {
 
 		it( 'should load valid persisted state', () => {
 			const originalState = deepFreeze( {
-				ssoUrl: 'https://website.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
-				siteUrl: 'https://website.com'
+				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://example.wordpress.com'
 			} );
 			const state = jetpackSSOSessions( originalState, {
 				type: DESERIALIZE
@@ -532,7 +532,7 @@ describe( 'reducer', () => {
 
 		it( 'should use new query object over default authorize state when setting a connect query', () => {
 			const queryObject = {
-				redirect_uri: 'https://somewebsite.com'
+				redirect_uri: 'https://example.wordpress.com'
 			};
 			const state = jetpackConnectAuthorize( undefined, {
 				type: JETPACK_CONNECT_QUERY_SET,
@@ -558,13 +558,13 @@ describe( 'reducer', () => {
 			}, {
 				type: JETPACK_CONNECT_QUERY_UPDATE,
 				property: 'redirect_uri',
-				value: 'https://anotherwebsite.com/'
+				value: 'https://automattic.com/'
 			} );
 
 			expect( state ).to.have.property( 'queryObject' )
 				.to.eql( {
 					client_id: 'example.com',
-					redirect_uri: 'https://anotherwebsite.com/'
+					redirect_uri: 'https://automattic.com/'
 				} );
 		} );
 
@@ -686,7 +686,7 @@ describe( 'reducer', () => {
 				isAuthorizing: false,
 				site_id: 0,
 				authorizationError: false,
-				ssoUrl: 'http://website.com'
+				ssoUrl: 'http://example.wordpress.com'
 			} );
 
 			const state = jetpackSSO( original, { type: SERIALIZE } );
@@ -756,8 +756,8 @@ describe( 'reducer', () => {
 			const actions = [
 				{
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-					ssoUrl: 'http://website.com',
-					siteUrl: 'http://website.com'
+					ssoUrl: 'http://example.wordpress.com',
+					siteUrl: 'http://example.wordpress.com'
 				},
 				{
 					type: JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -776,8 +776,8 @@ describe( 'reducer', () => {
 		it( 'should store sso_url after authorization', () => {
 			const action = deepFreeze( {
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
-				ssoUrl: 'http://website.com',
-				siteUrl: 'http://website.com'
+				ssoUrl: 'http://example.wordpress.com',
+				siteUrl: 'http://example.wordpress.com'
 			} );
 
 			const state = jetpackSSO( undefined, action );
@@ -787,8 +787,8 @@ describe( 'reducer', () => {
 
 		it( 'should not persist state', () => {
 			const originalState = deepFreeze( {
-				ssoUrl: 'http://website.com',
-				siteUrl: 'http://website.com'
+				ssoUrl: 'http://example.wordpress.com',
+				siteUrl: 'http://example.wordpress.com'
 			} );
 			const state = jetpackSSO( originalState, {
 				type: SERIALIZE
@@ -799,8 +799,8 @@ describe( 'reducer', () => {
 
 		it( 'should not load persisted state', () => {
 			const originalState = deepFreeze( {
-				ssoUrl: 'http://website.com',
-				siteUrl: 'http://website.com'
+				ssoUrl: 'http://example.wordpress.com',
+				siteUrl: 'http://example.wordpress.com'
 			} );
 			const state = jetpackSSO( originalState, {
 				type: DESERIALIZE

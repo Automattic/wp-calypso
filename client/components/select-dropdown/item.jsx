@@ -46,11 +46,18 @@ var SelectDropdownItem = React.createClass( {
 					aria-selected={ this.props.selected } >
 					<span className="select-dropdown__item-text">
 						{ this.props.children }
-						{
-							'number' === typeof this.props.count &&
-							<Count count={ this.props.count } />
-						}
 					</span>
+					{
+						'number' === typeof this.props.count &&
+						<span
+							data-text={ this.props.count }
+							className="select-dropdown__item-count"
+						>
+							<Count
+								count={ this.props.count }
+							/>
+						</span>
+					}
 				</a>
 			</li>
 		);

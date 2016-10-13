@@ -8,6 +8,8 @@ var ReactDom = require( 'react-dom' ),
 	filter = require( 'lodash/filter' ),
 	findIndex = require( 'lodash/findIndex' );
 
+import { connect } from 'react-redux';
+
 /**
  * Internal dependencies
  */
@@ -16,11 +18,13 @@ var MediaActions = require( 'lib/media/actions' ),
 	ListItem = require( './list-item' ),
 	ListNoResults = require( './list-no-results' ),
 	ListNoContent = require( './list-no-content' ),
-	ListPlanPromo = require( './list-plan-promo' ),
 	InfiniteList = require( 'components/infinite-list' ),
 	user = require( 'lib/user' )();
 
-module.exports = React.createClass( {
+import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
+import { getPreference } from 'state/preferences/selectors';
+
+export const MediaLibraryList = React.createClass( {
 	displayName: 'MediaLibraryList',
 
 	propTypes: {
@@ -198,9 +202,7 @@ module.exports = React.createClass( {
 		var onFetchNextPage;
 
 		if ( this.props.filterRequiresUpgrade ) {
-			return (
-				<ListPlanPromo site={ this.props.site } filter={ this.props.filter } />
-			);
+			return <ListPlanUpgradeNudge filter={ this.props.filter } site={ this.props.site } />;
 		}
 
 		if ( ! this.props.mediaHasNextPage && this.props.media && 0 === this.props.media.length ) {
@@ -234,3 +236,7 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => ( {
+	mediaScale: getPreference( state, 'mediaScale' )
+} ), null, null, { pure: false } )( MediaLibraryList );

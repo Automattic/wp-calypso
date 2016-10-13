@@ -3,28 +3,16 @@
  */
 import React, { Component, PropTypes } from 'react';
 import {
-	difference,
-	findKey,
 	get,
 	identity,
-	isString,
-	isUndefined,
-	map,
-	matches,
 	noop,
-	pick,
-	property,
-	values as valuesOf
 } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import SegmentedControl from 'components/segmented-control';
-import TokenField from 'components/token-field';
+import TitleFormatEditor from 'components/title-format-editor';
 import { localize } from 'i18n-calypso';
-
-import { removeBlanks } from './mappings';
 
 const titleTypes = translate => [
 	{ value: 'frontPage', label: translate( 'Front Page' ) },
@@ -39,7 +27,7 @@ const getValidTokens = translate => ( {
 	tagline: translate( 'Tagline' ),
 	postTitle: translate( 'Post Title' ),
 	pageTitle: translate( 'Page Title' ),
-	groupTitle: translate( 'Category/Tag Title' ),
+	groupTitle: translate( 'Tag or Category Name' ),
 	date: translate( 'Date' )
 } );
 
@@ -51,96 +39,65 @@ const tokenMap = {
 	archives: [ 'siteName', 'tagline', 'date' ]
 };
 
-const tokenize = translate => value => {
-	if ( ! isString( value ) ) {
-		return value;
-	}
-
-	// find token key from translated label
-	// e.g. "Post Title" > postTitle: translate( 'Post Title' )
-	//         value          type           translation
-	const type = findKey( getValidTokens( translate ), matches( value ) );
-
-	return isUndefined( type )
-		? { type: 'string', isBorderless: true, value }
-		: { type, value };
+const getTokensForType = ( type, translate ) => {
+	return get( tokenMap, type, [] )
+		.reduce( ( allTokens, name ) => ( {
+			...allTokens,
+			[ name ]: get( getValidTokens( translate ), name, '' )
+		} ), {} );
 };
 
 export class MetaTitleEditor extends Component {
+	static propTypes = {
+		disabled: PropTypes.bool,
+		onChange: PropTypes.func,
+		titleFormats: PropTypes.object.isRequired,
+	};
+
+	static defaultProps = {
+		disabled: false,
+		onChange: noop,
+		translate: identity
+	};
+
 	constructor( props ) {
 		super( props );
-
-		this.state = {
-			type: 'frontPage'
-		};
-
-		this.switchType = this.switchType.bind( this );
 		this.updateTitleFormat = this.updateTitleFormat.bind( this );
 	}
 
-	switchType( { value: type } ) {
-		this.setState( { type } );
-	}
-
-	updateTitleFormat( values ) {
-		const { onChange, translate, titleFormats } = this.props;
-		const { type } = this.state;
-
-		const tokens = removeBlanks( map( values, tokenize( translate ) ) );
+	updateTitleFormat( type, values ) {
+		const { onChange, titleFormats } = this.props;
 
 		onChange( {
 			...titleFormats,
-			[ type ]: tokens
+			[ type ]: values
 		} );
 	}
 
 	render() {
-		const { disabled, translate, titleFormats } = this.props;
-		const { type } = this.state;
-
-		const validTokens = getValidTokens( translate );
-
-		const values = map(
-			get( titleFormats, type, [] ),
-			token => 'string' !== token.type
-				? { ...token, value: validTokens[ token.type ] } // use translations of token names
-				: { ...token, isBorderless: true }               // and remove the styling on plain text
-		);
-
-		const suggestions = difference(
-			valuesOf( pick( validTokens, tokenMap[ type ] ) ), // grab list of translated tokens for this type
-			map( values, property( 'value' ) )                 // but remove tokens already in use in the format
-		);
+		const {
+			disabled,
+			site,
+			titleFormats,
+			translate,
+		} = this.props;
 
 		return (
 			<div className="meta-title-editor">
-				<SegmentedControl
-					initialSelected={ type }
-					options={ titleTypes( translate ) }
-					onSelect={ this.switchType }
-				/>
-				<TokenField
-					disabled={ disabled }
-					onChange={ this.updateTitleFormat }
-					saveTransform={ identity } // don't trim whitespace
-					suggestions={ suggestions }
-					value={ values }
-				/>
+				{ titleTypes( translate ).map( type =>
+					<TitleFormatEditor
+						key={ type.value }
+						disabled={ disabled }
+						onChange={ this.updateTitleFormat }
+						placeholder={ site && site.title }
+						type={ type }
+						titleFormats={ get( titleFormats, type.value, [] ) }
+						tokens={ getTokensForType( type.value, translate ) }
+					/>
+				) }
 			</div>
 		);
 	}
 }
-
-MetaTitleEditor.propTypes = {
-	disabled: PropTypes.bool,
-	onChange: PropTypes.func,
-	titleFormats: PropTypes.object.isRequired
-};
-
-MetaTitleEditor.defaultProps = {
-	disabled: false,
-	onChange: noop,
-	translate: identity
-};
 
 export default localize( MetaTitleEditor );

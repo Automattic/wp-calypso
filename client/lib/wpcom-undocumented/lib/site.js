@@ -16,6 +16,7 @@ var Export = require( './export' );
 var resources = [
 	[ 'statsEvents', 'posts/' ],
 	[ 'statsInsights', 'stats/insights', '1.1' ],
+	[ 'statsPodcastDownloads', 'stats/podcast-downloads', '1.1' ],
 	[ 'sshCredentialsNew', 'ssh-credentials/new', '1.1', 'post' ],
 	[ 'sshCredentialsMine', 'ssh-credentials/mine', '1.1' ],
 	[ 'sshCredentialsMineDelete', 'ssh-credentials/mine/delete', '1.1', 'post' ],
@@ -98,7 +99,7 @@ UndocumentedSite.prototype.domains = function( callback ) {
 };
 
 UndocumentedSite.prototype.postFormatsList = function( callback ) {
-	this.wpcom.withLocale().req.get( '/sites/' + this._id + '/post-formats', {}, callback );
+	return this.wpcom.withLocale().req.get( '/sites/' + this._id + '/post-formats', {}, callback );
 };
 
 UndocumentedSite.prototype.postAutosave = function( postId, attributes, callback ) {

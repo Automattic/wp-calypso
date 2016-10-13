@@ -40,7 +40,8 @@
 	background-color: $gray-dark;
 	transition: all 0.1s ease-in-out;
 	cursor: pointer;
-	
+	z-index: z-index( 'root', '.reader__featured-post' );
+
 	// Break into 3 columns on larger screens
 	@include breakpoint( ">960px" ) {
 		flex: 1;

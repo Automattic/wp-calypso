@@ -23,6 +23,7 @@ import URLSearch from 'lib/mixins/url-search';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import FeatureExample from 'components/feature-example';
+import { hasTouch } from 'lib/touch-detect';
 
 module.exports = React.createClass( {
 
@@ -179,6 +180,7 @@ module.exports = React.createClass( {
 
 		return (
 			<SearchCard
+				autoFocus={ ! hasTouch() }
 				onSearch={ this.doSearch }
 				initialValue={ this.props.search }
 				placeholder={ this.translate( 'Search Plugins' ) }

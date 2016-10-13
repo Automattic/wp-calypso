@@ -2,14 +2,13 @@
  * External Dependencies
  */
 import { expect } from 'chai';
-import useNock from 'test/helpers/use-nock';
-import useMockery from 'test/helpers/use-mockery';
 import sinon from 'sinon';
 
 /**
  * Internal Dependencies
  */
-
+import useNock from 'test/helpers/use-nock';
+import useMockery from 'test/helpers/use-mockery';
 import {
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
@@ -34,11 +33,11 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.2/read/site/1/post/1/related?meta=site' )
 				.reply( 200, {
-					posts: {
+					posts: [ {
 						ID: 1,
 						global_ID: 1,
 						site_ID: 1
-					}
+					} ]
 				} );
 		} );
 
@@ -55,7 +54,8 @@ describe( 'actions', () => {
 				type: READER_RELATED_POSTS_REQUEST,
 				payload: {
 					siteId: 1,
-					postId: 1
+					postId: 1,
+					scope: 'all'
 				}
 			} );
 		} );
@@ -67,11 +67,12 @@ describe( 'actions', () => {
 					payload: {
 						siteId: 1,
 						postId: 1,
-						posts: {
+						scope: 'all',
+						posts: [ {
 							ID: 1,
 							global_ID: 1,
 							site_ID: 1
-						}
+						} ]
 					}
 				} );
 			} );
@@ -83,7 +84,8 @@ describe( 'actions', () => {
 					type: READER_RELATED_POSTS_REQUEST_SUCCESS,
 					payload: {
 						siteId: 1,
-						postId: 1
+						postId: 1,
+						scope: 'all'
 					}
 				} );
 			} );
@@ -109,7 +111,20 @@ describe( 'actions', () => {
 				type: READER_RELATED_POSTS_REQUEST,
 				payload: {
 					siteId: 1,
-					postId: 1
+					postId: 1,
+					scope: 'all'
+				}
+			} );
+		} );
+
+		it( 'should have dispatched receive with an empty array', () => {
+			expect( fakeDispatch ).to.have.been.calledWith( {
+				type: READER_RELATED_POSTS_RECEIVE,
+				payload: {
+					siteId: 1,
+					postId: 1,
+					scope: 'all',
+					posts: []
 				}
 			} );
 		} );
@@ -122,6 +137,7 @@ describe( 'actions', () => {
 						payload: {
 							siteId: 1,
 							postId: 1,
+							scope: 'all',
 							error: sinon.match.instanceOf( Error )
 						},
 						error: true

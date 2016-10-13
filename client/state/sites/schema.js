@@ -51,7 +51,8 @@ export const sitesSchema = {
 						product_slug: { type: 'string' },
 						product_name_short: { type: 'string' },
 						free_trial: { type: 'boolean' },
-						expired: { type: 'boolean' }
+						expired: { type: 'boolean' },
+						user_is_owner: { type: 'boolean' }
 					}
 				},
 				single_user_site: { type: 'boolean' }

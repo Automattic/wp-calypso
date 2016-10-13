@@ -42,10 +42,7 @@ class GlobalNotices extends Component {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/global-notices">Global Notices</a>
-				</h2>
+			<div>
 				<label>
 					<FormCheckbox
 						onChange={ this.toggleUseState }

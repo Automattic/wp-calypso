@@ -12,6 +12,10 @@
 		}
 
 	}
+
+	.step-header {
+		margin-bottom: 16px;
+	}
 }
 
 .jetpack-connect__main.is-wide {
@@ -28,19 +32,6 @@
 	max-width: 400px;
 }
 
-.jetpack-connect__header-container {
-	text-align: center;
-
-	.jetpack-connect__jetpack-logo {
-		width: 72px;
-		height: 72px;
-	}
-
-	.step-header {
-		margin-bottom: 16px;
-	}
-}
-
 .jetpack-connect__wp-admin-dialog.dialog.card {
 	max-width: 400px;
 
@@ -50,9 +41,11 @@
 	}
 }
 
-.jetpack-connect__site-url-input-container {
+.jetpack-connect__site-url-input-container,
+.example-components__site-url-input-container {
 
-	.jetpack-connect__site-address-container {
+	.jetpack-connect__site-address-container,
+	.example-components__site-address-container {
 		position: relative;
 
 		.gridicon {
@@ -148,22 +141,22 @@
 	flex-grow: 2;
 }
 
-.jetpack-connect__example {
+.example-components__main {
 	width: 100%;
 }
 
-.jetpack-connect__browser-chrome {
+.example-components__browser-chrome {
 	padding: 8px;
 	background-color: lighten( $gray, 30% );
 	border-radius: 8px 8px 0 0;
 }
 
-.jetpack-connect__browser-chrome-dots {
+.example-components__browser-chrome-dots {
 	line-height: 0;
 	margin-bottom: 8px;
 }
 
-.jetpack-connect__browser-chrome-dot {
+.example-components__browser-chrome-dot {
 	display: inline-block;
 	margin-right: 8px;
 	background-color: lighten( $gray, 10% );
@@ -172,7 +165,7 @@
 	border-radius: 50%;
 }
 
-.jetpack-connect__example-content {
+.example-components__content {
 	position: relative;
 	margin: 0 1px;
 	line-height: 0;
@@ -180,18 +173,18 @@
 		0 1px 2px lighten( $gray, 30% );
 }
 
-.jetpack-connect__example-install-plugin-header {
+.example-components__install-plugin-header {
 	width: 100%;
 	padding-bottom: 12%;
 	background-color: #8CC258; //Jetpack Green
 }
 
-.jetpack-connect__example-install-plugin-body {
+.example-components__install-plugin-body {
 	width: 100%;
 	padding-bottom: 38%;
 }
 
-.jetpack-connect__example-install-plugin-footer {
+.example-components__install-plugin-footer {
 	position: absolute;
 		right: 0;
 		bottom: 0;
@@ -201,7 +194,7 @@
 	background-color: #F3F3F3;
 }
 
-.jetpack-connect__example-install-plugin-footer-button {
+.example-components__install-plugin-footer-button {
 	display: inline-block;
 	font-size: 12px;
 	padding: 7px 14px;
@@ -212,21 +205,21 @@
 	border-radius: 3px;
 }
 
-.jetpack-connect__example-activate-jetpack {
+.example-components__activate-jetpack {
 	background-color: #F1F1F1;
 }
 
-.jetpack-connect__example-connect-jetpack {
+.example-components__connect-jetpack {
 	background-color: #F1F1F1;
 }
 
-.jetpack-connect__example-content-wp-admin-masterbar {
+.example-components__content-wp-admin-masterbar {
 	width: 100%;
 	padding-bottom: 6%;
 	background-color: #23282D;
 }
 
-.jetpack-connect__example-content-wp-admin-sidebar {
+.example-components__content-wp-admin-sidebar {
 	display: inline-block;
 	width: 15%;
 	padding-bottom: 44%;
@@ -234,57 +227,88 @@
 	background-color: #23282D;
 }
 
-.jetpack-connect__example-content-wp-admin-main {
+.example-components__content-wp-admin-main {
 	display: inline-block;
 	vertical-align: top;
 	width: 85%;
 	line-height: 1.5;
 }
 
-.jetpack-connect__example-content-wp-admin-connect-banner {
-	margin: 10px;
-	padding: 12px 10px 16px 10px;
-	text-align: right;
-	background-color: #81A844;
+.example-components__connect-jetpack {
+
+	.example-components__content-wp-admin-plugin-name {
+		font-size: 14px;
+		margin-bottom: 8px;
+	}
+
+	.example-components__content-wp-admin-connect-banner {
+		margin: 10px;
+		padding: 10px 10px 12px 10px;
+		background-color: $white;
+		border-left: 4px solid #46b450;
+	}
+
+	.example-components__content-wp-admin-connect-button {
+		display: inline-block;
+		font-size: 12px;
+		padding: 7px 14px;
+		line-height: 1;
+		color: $white;
+		background-color: #008EC2; // wp-admin button blue
+		border: 1px solid #006799;
+		border-radius: 3px;
+	}
 }
 
-.jetpack-connect__example-content-wp-admin-connect-button {
-	display: inline-block;
-	font-size: 12px;
-	line-height: 1;
-	padding: 11px 10px;
-	color: $white;
-	background-color: #518D2A;
-	border-radius: 4px;
-	box-shadow: 0 2px 3px 0 rgba( 0, 0, 0, .2 ), 0 4px 0 0 #3E6C20;
+.example-components__connect-jetpack.is-legacy {
+
+	.example-components__content-wp-admin-connect-banner {
+		margin: 10px;
+		padding: 12px 10px 16px 10px;
+		text-align: right;
+		background-color: #81A844;
+		border-left: 0;
+	}
+
+	.example-components__content-wp-admin-connect-button {
+		display: inline-block;
+		font-size: 12px;
+		line-height: 1;
+		padding: 11px 10px;
+		color: $white;
+		background-color: #518D2A;
+		border-color: #518D2A;
+		border-radius: 4px;
+		box-shadow: 0 2px 3px 0 rgba( 0, 0, 0, .2 ), 0 4px 0 0 #3E6C20;
+	}
 }
 
-.jetpack-connect__example-content-wp-admin-plugin-card {
+.example-components__content-wp-admin-plugin-card {
 	margin: 10px;
 	padding: 12px 10px;
 	background-color: $white;
 }
 
-.jetpack-connect__example-content-wp-admin-plugin-name {
+.example-components__content-wp-admin-plugin-name {
 	font-size: 12px;
 }
 
-.jetpack-connect__example-content-wp-admin-plugin-activate-link {
+.example-components__content-wp-admin-plugin-activate-link {
 	font-size: 12px;
 	color: #0073AA;
 }
 
-.jetpack-connect__example-content-wp-admin-activate-view {
+.example-components__content-wp-admin-activate-view {
 	margin: 10px;
 }
 
-.jetpack-connect__example-content-wp-admin-activate-link {
+.example-components__content-wp-admin-activate-link {
 	font-size: 12px;
 	color: #0073AA;
 	text-decoration: underline;
 }
 
-.jetpack-connect__site-url-input-container .jetpack-connect__site-address-container .jetpack-connect__browser-chrome-url {
+.example-components__site-url-input-container .example-components__site-address-container .example-components__browser-chrome-url {
 	height: 40px;
 	font-size: 12px;
 	color: $gray;
@@ -419,6 +443,15 @@
 
 .jetpack-connect__sso-placeholder a {
 	color: transparent;
+}
+
+.jetpack-connect__sso .email-verification-gate .notice {
+	margin-bottom: 0;
+}
+
+.jetpack-connect__sso .email-verification-gate .notice__text {
+	word-wrap: break-word;
+	word-break: break-word;
 }
 
 .jetpack-connect__help-button {

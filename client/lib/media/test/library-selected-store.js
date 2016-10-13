@@ -2,14 +2,14 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import assign from 'lodash/assign';
+import { assign, noop } from 'lodash';
 import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import Dispatcher from 'dispatcher';
+import useMockery from 'test/helpers/use-mockery';
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_OBJECTS = {
@@ -21,21 +21,31 @@ var DUMMY_SITE_ID = 1,
 	DUMMY_TRANSIENT_MEDIA_OBJECT = DUMMY_OBJECTS[ 'media-1' ];
 
 describe( 'MediaLibrarySelectedStore', function() {
-	let sandbox, MediaLibrarySelectedStore, handler, MediaStore;
+	let Dispatcher, sandbox, MediaLibrarySelectedStore, handler, MediaStore;
 
 	useFakeDom();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} ),
+			site: noop
+		} );
+	} );
 
 	before( function() {
-		MediaStore = require( '../store' );
-
 		sandbox = sinon.sandbox.create();
+		Dispatcher = require( 'dispatcher' );
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
+
+		MediaStore = require( '../store' );
 		sandbox.stub( MediaStore, 'get', function( siteId, itemId ) {
 			if ( siteId === DUMMY_SITE_ID ) {
 				return DUMMY_OBJECTS[ itemId ];
 			}
 		} );
+
 		MediaLibrarySelectedStore = require( '../library-selected-store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );

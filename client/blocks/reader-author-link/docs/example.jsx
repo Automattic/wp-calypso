@@ -16,14 +16,9 @@ export default React.createClass( {
 	render() {
 		const author = { URL: 'http://wpcalypso.wordpress.com' };
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/reader-author-link">Reader Author Link</a>
-				</h2>
-				<Card>
-					<ReaderAuthorLink author={ author }>Author site</ReaderAuthorLink>
-				</Card>
-			</div>
+			<Card>
+				<ReaderAuthorLink author={ author }>Author site</ReaderAuthorLink>
+			</Card>
 		);
 	}
 } );

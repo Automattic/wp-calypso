@@ -6,7 +6,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
 
 const ReaderAuthorLink = ( { author, post, siteUrl, children } ) => {
@@ -18,27 +17,26 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children } ) => {
 		}
 	};
 
-	let linkUrl = author.URL;
-	if ( ! linkUrl ) {
-		linkUrl = siteUrl;
+	if ( ! siteUrl ) {
+		siteUrl = author.URL;
 	}
 
 	// If we have neither author.URL or siteUrl, just return children
-	if ( ! linkUrl ) {
+	if ( ! siteUrl ) {
 		return children;
 	}
 
 	return (
-		<ExternalLink className="reader-author-link" href={ linkUrl } target="_blank" onClick={ recordAuthorClick }>
+		<a className="reader-author-link" href={ siteUrl } onClick={ recordAuthorClick }>
 			{ children }
-		</ExternalLink>
+		</a>
 	);
 };
 
 ReaderAuthorLink.propTypes = {
 	author: React.PropTypes.object.isRequired,
 	post: React.PropTypes.object, // for stats only,
-	siteUrl: React.PropTypes.string // used as fallback if author.URL is missing
+	siteUrl: React.PropTypes.string // used instead of author.URL if present
 };
 
 export default ReaderAuthorLink;

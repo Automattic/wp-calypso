@@ -161,7 +161,7 @@ FullPostView = React.createClass( {
 			hasFeaturedImage = post &&
 				post.canonical_image &&
 				! ( post.display_type & DISPLAY_TYPES.CANONICAL_IN_CONTENT ),
-			articleClasses = [ 'reader__full-post' ],
+			articleClasses = [ 'reader__full-post', 'is-group-reader' ],
 			shouldShowExcerptOnly = ( post && post.use_excerpt ? post.use_excerpt : false ),
 			siteName = utils.siteNameFromSiteAndPost( site, post ),
 			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
@@ -196,7 +196,7 @@ FullPostView = React.createClass( {
 
 		articleClasses = articleClasses.join( ' ' );
 
-		/*eslint-disable react/no-danger*/
+		/*eslint-disable react/no-danger,react/jsx-no-target-blank*/
 		return (
 			<div>
 				<article className={ articleClasses } id="modal-full-post" ref="article">
@@ -239,7 +239,7 @@ FullPostView = React.createClass( {
 				</article>
 			</div>
 		);
-		/*eslint-enable react/no-danger*/
+		/*eslint-enable react/no-danger,react/jsx-no-target-blank*/
 	},
 
 	recordRelatedPostClicks: function( post ) {

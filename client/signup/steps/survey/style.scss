@@ -81,3 +81,89 @@
 		color: $gray;
 	}
 }
+
+.survey__verticals-list {
+	text-align: center;
+}
+
+.survey__vertical {
+	margin: 8px;
+	border-bottom-width: 1px;
+
+	&:hover {
+		.survey__vertical-label {
+			color: $blue-medium;
+		}
+		.survey__vertical-chevron {
+			color: $blue-medium;
+			animation: survey__vertical-chevron-wiggle 1.5s ease infinite;
+		}
+	}
+
+	&:active {
+		border-top-width: 1px;
+		background: lighten( $gray, 30% );
+	}
+}
+
+.survey__vertical-label {
+	margin: 10px;
+	font-weight: 400;
+	color: darken( $gray, 30% )
+}
+
+.survey__vertical-chevron {
+	color: lighten( $gray, 20% );
+}
+
+.survey__other {
+	margin: 0 20px 2em;
+	position: relative;
+}
+
+@include breakpoint( ">480px" ) {
+	.survey__other {
+		margin: 0 auto 2em;
+		max-width: 500px;
+	}
+}
+
+input.survey__other-write-in {
+	padding-right: 76px;
+}
+
+.survey__other-button {
+	position: absolute;
+	top: 6px;
+	right: 6px;
+	&.is-compact {
+		text-transform: none;
+	}
+}
+
+.survey__other-copy {
+	text-align: center;
+	color: lighten( $gray, 20% );
+	padding-top: 0.5em;
+}
+
+@keyframes survey__vertical-chevron-wiggle {
+	0% {
+		transform: none;
+	}
+	60% {
+		transform: none;
+	}
+	70% {
+		transform: translate(5px, 0);
+	}
+	80% {
+		transform: none;
+	}
+	90% {
+		transform: translate(5px, 0);
+	}
+	100% {
+		transform: none;
+	}
+}

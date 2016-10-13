@@ -16,6 +16,15 @@ const sites = sitesFactory();
 const user = userFactory();
 
 export default class EmailVerificationGate extends React.Component {
+	static propTypes = {
+		noticeText: React.PropTypes.node,
+		noticeStatus: React.PropTypes.string
+	};
+
+	static defaultProps = {
+		noticeText: null,
+		noticeStatus: ''
+	};
 
 	constructor( props ) {
 		super( props );
@@ -54,9 +63,11 @@ export default class EmailVerificationGate extends React.Component {
 		if ( this.state.needsVerification ) {
 			return (
 				<div tabIndex="-1" className="email-verification-gate" onFocus={ this.handleFocus }>
-					<EmailUnverifiedNotice />
+					<EmailUnverifiedNotice
+						noticeText={ this.props.noticeText }
+						noticeStatus={ this.props.noticeStatus } />
 					<div className="email-verification-gate__content">
-						{	this.props.children }
+						{ this.props.children }
 					</div>
 				</div>
 			);

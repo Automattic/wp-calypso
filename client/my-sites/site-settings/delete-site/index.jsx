@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import page from 'page';
-import property from 'lodash/property';
+import { some } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -212,15 +212,13 @@ export const DeleteSite = React.createClass( {
 	},
 
 	handleDeleteSiteClick: function( event ) {
-		var hasActiveSubscriptions;
-
 		event.preventDefault();
 
 		if ( ! this.props.hasLoadedSitePurchasesFromServer ) {
 			return;
 		}
 
-		hasActiveSubscriptions = this.props.sitePurchases.filter( property( 'active' ) ).length > 0;
+		const hasActiveSubscriptions = some( this.props.sitePurchases, 'active' );
 
 		if ( hasActiveSubscriptions ) {
 			this.setState( { showWarningDialog: true } );

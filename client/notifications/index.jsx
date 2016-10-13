@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:notifications' ),
 	assign = require( 'lodash/assign' ),
 	oAuthToken = require( 'lib/oauth-token' );
@@ -189,8 +188,9 @@ var Notifications = React.createClass( {
 
 	receiveServiceWorkerMessage: function( event ) {
 		// Receives messages from the service worker
-		// Firefox sets event.origin to "" for service worker messages
-		if ( event.origin && event.origin !== document.origin ) {
+		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
+		// Firefox does not support document.origin; we can use location.origin instead
+		if ( event.origin && event.origin !== location.origin ) {
 			return;
 		}
 

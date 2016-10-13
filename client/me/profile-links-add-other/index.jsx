@@ -1,25 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	LinkedStateMixin = require( 'react-addons-linked-state-mixin' );
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
  */
-var FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormButton = require( 'components/forms/form-button' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	Notice = require( 'components/notice' );
+import FormFieldset from 'components/forms/form-fieldset';
+import FormTextInput from 'components/forms/form-text-input';
+import FormButton from 'components/forms/form-button';
+import eventRecorder from 'me/event-recorder';
+import Notice from 'components/notice';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'ProfileLinksAddOther',
 
 	mixins: [ LinkedStateMixin, eventRecorder ],
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			title: '',
 			value: '',
@@ -30,8 +30,8 @@ module.exports = React.createClass( {
 	// As the user types, the component state changes thanks to the LinkedStateMixin.
 	// This function, called in render, validates their input on each state change
 	// and is used to decide whether or not to enable the Add Site button
-	getFormDisabled: function() {
-		var trimmedValue = this.state.value.trim();
+	getFormDisabled() {
+		const trimmedValue = this.state.value.trim();
 
 		if ( ! this.state.title.trim() || ! trimmedValue ) {
 			return true;
@@ -57,7 +57,7 @@ module.exports = React.createClass( {
 		return false;
 	},
 
-	onSubmit: function( event ) {
+	onSubmit( event ) {
 		event.preventDefault();
 
 		// When the form's submit button is disabled, the form's onSubmit does not
@@ -76,12 +76,12 @@ module.exports = React.createClass( {
 		);
 	},
 
-	onCancel: function( event ) {
+	onCancel( event ) {
 		event.preventDefault();
 		this.props.onCancel();
 	},
 
-	onSubmitResponse: function( error, data ) {
+	onSubmitResponse( error, data ) {
 		if ( error ) {
 			this.setState(
 				{
@@ -105,11 +105,13 @@ module.exports = React.createClass( {
 		}
 	},
 
-	clearLastError: function() {
-		this.setState( { lastError: false } );
+	clearLastError() {
+		this.setState( {
+			lastError: false
+		} );
 	},
 
-	possiblyRenderError: function() {
+	possiblyRenderError() {
 		if ( ! this.state.lastError ) {
 			return null;
 		}
@@ -124,7 +126,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		return (
 			<form className="profile-links-add-other" onSubmit={ this.onSubmit }>
 				<p>

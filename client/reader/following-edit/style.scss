@@ -89,17 +89,15 @@
 		display: none;
 	}
 
-	select {
-		font-size: 12px;
+	.is-compact {
 		color: $gray;
-		padding-top: 2px;
-		padding-bottom: 2px;
-		padding-left: 10px;
-		margin: 0;
+		font-size: 12px;
+		line-height: 1.3;
+		margin-left: 0;
+		padding: 5px 20px 6px 6px;
 
 		&:hover {
-			border-color: #a8bece;
-			color: #2e4453;
+			border-color: lighten( $gray, 10% );
 		}
 	}
 }
@@ -129,16 +127,11 @@
 
 	.search {
 		margin-bottom: 0;
+		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .search' );
 	}
 
 	.search__input[type="search"] {
 		height: 50px;
-		border: 1px solid transparent;
-
-		&:focus {
-			border-color: $blue-wordpress;
-			box-shadow: 0 0 0 2px $blue-light;
-		}
 	}
 
 	.card.is-search-result {

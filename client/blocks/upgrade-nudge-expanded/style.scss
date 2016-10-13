@@ -41,17 +41,14 @@
 		border: solid 2px $border-ultra-light-gray;
 		border-radius: 50%;
 		align-self: center;
+		flex-shrink: 0;
 	}
 
 	.upgrade-nudge-expanded__title-plan-icon {
-		width: 54px;
-		height: 54px;
+		width: 55px;
+		height: 55px;
 		margin: 1px;
-		background: no-repeat;
-
-		&.is-business-plan {
-			background: url('/calypso/images/plans/plan-business.svg')
-		}
+		background-repeat: no-repeat;
 	}
 
 	.upgrade-nudge-expanded__title-message {

@@ -9,7 +9,6 @@ import page from 'page';
 import config from 'config';
 import controller from 'my-sites/controller';
 import plansController from './controller';
-import googleAnalyticsLandingPage from './plan-feature/google-analytics';
 import currentPlanController from './current-plan/controller';
 
 export default function() {
@@ -49,6 +48,11 @@ export default function() {
 		);
 
 		page(
+			'/plans/features/:feature/:domain',
+			plansController.features
+		);
+
+		page(
 			'/plans/my-plan',
 			controller.siteSelection,
 			controller.sites,
@@ -67,18 +71,6 @@ export default function() {
 			'/plans/select/:plan/:domain',
 			controller.siteSelection,
 			plansController.redirectToCheckout
-		);
-
-		page(
-			'/plans/features/google-analytics/:domain',
-			controller.siteSelection,
-			controller.navigation,
-			googleAnalyticsLandingPage
-		);
-
-		page(
-			'/plans/features/google-analytics',
-			controller.sites
 		);
 
 		// This route renders the plans page for both WPcom and Jetpack sites.

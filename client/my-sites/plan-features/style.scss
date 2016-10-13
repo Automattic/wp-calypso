@@ -3,7 +3,7 @@ $plan-features-sidebar-width: 272px;
 
 /* Breakpoints 1150px, */
 
-.plan-features {
+.plan-features__content {
 	margin: -16px -16px 0 -16px;
 	padding-top: $plan-features-header-banner-height;
 }
@@ -12,6 +12,15 @@ $plan-features-sidebar-width: 272px;
 	display: block;
 	@media ( min-width: $plan-features-sidebar-width + 480px ) {
 		display: none;
+	}
+}
+
+.plan-features__notice {
+	margin-bottom: 16px;
+
+	@include breakpoint( ">1040px" ) {
+		margin-bottom: 32px;
+		margin-top: -19px;
 	}
 }
 
@@ -258,8 +267,37 @@ $plan-features-sidebar-width: 272px;
 
 	&.is-placeholder {
 		@include placeholder( 23% );
-		width: 100px;
+		width: 140px;
 		height: 12px;
+		margin-bottom: 15px;
+
+		@include breakpoint( "<960px" ) {
+			margin-bottom: 9px;
+		}
+	}
+}
+
+.plan-features__price {
+	&.is-placeholder {
+		@include placeholder( 23% );
+		width: 45px;
+		height: 25px;
+		margin-top: 9px;
+		margin-bottom: 5px;
+	}
+}
+
+.plan-features__price-jetpack {
+	&.is-placeholder {
+		@include placeholder( 23% );
+		height: 32px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		width: 140px;
+
+		@include breakpoint( "<960px" ) {
+			height: 26px;
+		}
 	}
 }
 
@@ -379,11 +417,6 @@ $plan-features-sidebar-width: 272px;
 	margin-top: 8px;
 
 	&.is-current {
-		border-bottom-width: 1px;
-		border-color: lighten( $gray, 27% );
-		background: transparent;
-		font-weight: 400;
-		color: $gray;
 
 		.gridicon {
 			fill: $alert-green;

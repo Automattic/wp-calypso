@@ -10,8 +10,8 @@ import { each, omit } from 'lodash';
 /**
  * Internal dependencies
  */
- import useMockery from 'test/helpers/use-mockery';
- import { post } from './fixtures';
+import useMockery from 'test/helpers/use-mockery';
+import { post } from './fixtures';
 
 describe( 'PostByline', () => {
 	let PostByline;

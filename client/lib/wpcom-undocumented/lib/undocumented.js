@@ -117,7 +117,7 @@ Undocumented.prototype.updateWordPressCore = function( siteId, fn ) {
  */
 Undocumented.prototype.getAvailableUpdates = function( siteId, fn ) {
 	debug( '/sites/:site_id:/updates query' );
-	this.wpcom.req.get( { path: '/sites/' + siteId + '/updates' }, fn );
+	return this.wpcom.req.get( { path: '/sites/' + siteId + '/updates' }, fn );
 };
 
 /**
@@ -344,7 +344,7 @@ Undocumented.prototype.isDomainAvailable = function( domain, fn ) {
  * @api public
  */
 Undocumented.prototype.canRedirect = function( siteId, domain, fn ) {
-	domain = encodeURIComponent( domain );
+	domain = encodeURIComponent( domain.toLowerCase() );
 
 	this.wpcom.req.get( { path: '/domains/' + siteId + '/' + domain + '/can-redirect' }, fn );
 };
@@ -406,7 +406,7 @@ Undocumented.prototype.getDomainContactInformation = function( fn ) {
 Undocumented.prototype.getDomainRegistrationSupportedStates = function( countryCode, fn ) {
 	debug( '/domains/supported-states/ query' );
 
-	this._sendRequestWithLocale( {
+	return this._sendRequestWithLocale( {
 		path: '/domains/supported-states/' + countryCode,
 		method: 'get'
 	}, fn );
@@ -606,11 +606,12 @@ Undocumented.prototype.menusDelete = function( siteId, menuId, fn ) {
  * Return a list of third-party services that WordPress.com can integrate with
  *
  * @param {Function} fn The callback function
+ * @return {Promise} A Promise to resolve when complete
  * @api public
  */
 Undocumented.prototype.metaKeyring = function( fn ) {
 	debug( '/meta/external-services query' );
-	this.wpcom.req.get( {
+	return this.wpcom.req.get( {
 		path: '/meta/external-services/',
 		apiVersion: '1.1'
 	}, fn );
@@ -798,6 +799,31 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
 
 	this.wpcom.req.post( { path, body, apiVersion: '1.1' }, fn );
 };
+
+/**
+ * Share an arbitrary post using publicize connection
+ *
+ * @param {int}       siteId            The site ID
+ * @param {int}       postId            The post ID
+ * @param {String}    message           Message for social media
+ * @param {Array(int)}skipped           CKeyring connection ids to skip publicizing
+ *
+ * @returns {Promise}
+ */
+Undocumented.prototype.publicizePost = function( siteId, postId, message, skippedConnections, fn ) {
+	const body = { skipped_connections: [] };
+
+	if ( message ) {
+		body.message = message;
+	}
+
+	if ( skippedConnections && skippedConnections.length > 0 ) {
+		body.skipped_connections = skippedConnections;
+	}
+
+	this.wpcom.req.post( { path: `/sites/${ siteId }/post/${ postId }/publicize`, body, apiVersion: '1.1' }, fn );
+};
+
 
 /**
  * Updates a single publicize connection
@@ -1986,6 +2012,23 @@ Undocumented.prototype.wordAdsApprove = function( siteId ) {
 Undocumented.prototype.getWordadsStatus = function( siteId, fn ) {
 	debug( '/sites/:site:/wordads/status' );
 	return this.wpcom.req.get( '/sites/' + siteId + '/wordads/status', fn );
+};
+
+/**
+ * Set site homepage settings
+ *
+ * @param    {int|string}    siteId     the ID of the site
+ * @param    {object}        data       the POST request body data
+ * @param    {Function}      fn         the callback function
+ * @returns  {Promise}
+ */
+Undocumented.prototype.setSiteHomepageSettings = function( siteId, data, fn ) {
+	debug( '/sites/:site:/homepage' );
+
+	return this.wpcom.req.post( {
+			path: '/sites/' + siteId + '/homepage',
+			body: data
+		}, fn );
 };
 
 /**

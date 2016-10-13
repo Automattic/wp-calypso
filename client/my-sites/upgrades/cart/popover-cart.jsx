@@ -9,6 +9,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import CartBody from './cart-body';
+import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
 import CartMessagesMixin from './cart-messages-mixin';
 import CartButtons from './cart-buttons';
 import Popover from 'components/popover';
@@ -100,9 +101,11 @@ var PopoverCart = React.createClass( {
 	},
 
 	cartBody: function() {
-		var cartEmpty = this.props.cart.hasLoadedFromServer && ! this.props.cart.products.length;
+		if ( ! this.props.cart.hasLoadedFromServer ) {
+			return <CartBodyLoadingPlaceholder />;
+		}
 
-		if ( cartEmpty ) {
+		if ( ! this.props.cart.products.length ) {
 			return (
 				<CartEmpty selectedSite={ this.props.selectedSite } path={ this.props.path } />
 			);

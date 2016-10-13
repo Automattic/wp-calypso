@@ -29,6 +29,7 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 						buttonText={ i18n.translate( 'Learn more about verifying your domain' ) }
 						href={ supportUrls.EMAIL_VALIDATION_AND_VERIFICATION }
 						target="_blank"
+						rel="noopener noreferrer"
 						requiredText={ i18n.translate( 'Important! Your action is required.' ) }
 						isRequired />
 				) }
@@ -42,7 +43,8 @@ const DomainRegistrationDetails = ( { selectedSite, domain, purchases } ) => {
 				description={ i18n.translate( 'Your domain should start working immediately, but may be unreliable during the first 72 hours.' ) }
 				buttonText={ i18n.translate( 'Learn more about your domain' ) }
 				href={ supportUrls.REGISTER_DOMAIN }
-				target="_blank" />
+				target="_blank"
+				rel="noopener noreferrer" />
 
 			{ hasOtherPrimaryDomain && (
 				<PurchaseDetail

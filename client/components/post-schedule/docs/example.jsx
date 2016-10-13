@@ -97,11 +97,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/post-schedule">PostSchedule</a>
-				</h2>
-
+			<div>
 				<Card style={ {
 					width: '300px',
 					verticalAlign: 'top',

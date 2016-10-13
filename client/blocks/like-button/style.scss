@@ -1,0 +1,89 @@
+.like-button {
+	align-items: center;
+	display: inline-flex;
+	padding: 4px;
+	color: lighten( $gray, 10 );
+	position: relative;
+	box-sizing: border-box;
+
+	.gridicon {
+		position: absolute;
+		left: 0;
+	}
+
+	.gridicons-star {
+		opacity: 0;
+		pointer-events: none;
+		fill: $orange-jazzy;
+		transform: scale( 4 ) rotate( 90deg );
+	}
+
+	&.is-animated .gridicons-star {
+		transition: all 0.3s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+	}
+
+	.gridicons-star-outline {
+		fill: lighten( $gray, 20 );
+	}
+
+	&.is-animated .gridicons-star-outline {
+		transition: all 0.2s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+	}
+
+	&:hover {
+		cursor: pointer;
+		color: $blue-light;
+
+		.gridicons-star-outline {
+			fill: $blue-light;
+		}
+	}
+
+	&.is-liked {
+		color: lighten( $gray, 10 );;
+
+		.gridicons-star {
+			opacity: 1;
+			fill: $orange-jazzy;
+			pointer-events: auto;
+			transform: scale( 1 ) rotate( 0 );
+		}
+
+		.gridicons-star-outline {
+			opacity: 0;
+			pointer-events: none;
+			fill: $orange-jazzy;
+			transform: translateX( -10px ) rotate( 1deg ) scale( 0.3 );
+		}
+
+		.like-button__label {
+			color: $orange-jazzy;
+		}
+	}
+
+	&.has-count {
+		&.has-label {
+			.like-button__label-status:before {
+				content: ' ';
+			}
+		}
+	}
+
+	@include breakpoint( "<480px" ) {
+		.like-button__label-status {
+			display: none;
+		}
+	}
+}
+
+.like-button__like-icons {
+	height: 24px;
+	width: 24px;
+}
+
+.like-button__label {
+	// this keeps the label from collapsing and making the icon drop down
+	margin-left: 1px;
+	font-size: 14px;
+	min-width: 10px;
+}

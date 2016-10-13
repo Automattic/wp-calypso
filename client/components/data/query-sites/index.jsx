@@ -22,7 +22,7 @@ class QuerySites extends Component {
 	}
 
 	request( props ) {
-		if ( ! props.siteId && ! props.requestingSites ) {
+		if ( props.allSites && ! props.requestingSites ) {
 			props.requestSites();
 		}
 
@@ -37,6 +37,7 @@ class QuerySites extends Component {
 }
 
 QuerySites.propTypes = {
+	allSites: PropTypes.bool,
 	siteId: PropTypes.number,
 	requestingSites: PropTypes.bool,
 	requestingSite: PropTypes.bool,
@@ -45,6 +46,7 @@ QuerySites.propTypes = {
 };
 
 QuerySites.defaultProps = {
+	allSites: false,
 	requestSites: () => {},
 	requestSite: () => {}
 };

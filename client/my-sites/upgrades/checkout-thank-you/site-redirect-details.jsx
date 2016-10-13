@@ -27,7 +27,8 @@ const SiteRedirectDetails = ( { selectedSite, domain } ) => {
 				}
 				buttonText={ i18n.translate( 'Try it now' ) }
 				href={ `${ selectedSite.options.unmapped_url }` }
-				target="_blank" />
+				target="_blank"
+				rel="noopener noreferrer" />
 
 			<PurchaseDetail
 				icon="cog"

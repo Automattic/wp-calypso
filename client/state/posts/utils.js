@@ -13,11 +13,11 @@ import {
 	reduce,
 	toArray,
 	cloneDeep,
-	cloneDeepWith,
 	pickBy,
 	isString,
 	every
 } from 'lodash';
+import { dissocPath } from 'lodash/fp';
 
 /**
  * Internal dependencies
@@ -166,11 +166,15 @@ export function normalizePostForEditing( post ) {
  * @return {Object}      Normalized post object
  */
 export function normalizePostForState( post ) {
-	return cloneDeepWith( post, ( value, key ) => {
-		if ( 'meta' === key ) {
-			return null;
-		}
-	} );
+	return reduce( [
+		[],
+		...reduce( post.terms, ( memo, terms, taxonomy ) => (
+			memo.concat( map( terms, ( term, slug ) => [ 'terms', taxonomy, slug ] ) )
+		), [] ),
+		...map( post.categories, ( category, slug ) => [ 'categories', slug ] ),
+		...map( post.tags, ( tag, slug ) => [ 'tags', slug ] ),
+		...map( post.attachments, ( attachment, id ) => [ 'attachments', id ] )
+	], ( memo, path ) => dissocPath( path.concat( 'meta' ), memo ), post );
 }
 
 /**
@@ -184,12 +188,9 @@ export function getTermIdsFromEdits( post ) {
 		return post;
 	}
 
-	// Skip "post_tag" taxonomies until legacy token-field is removed
-	let taxonomies = omit( post.terms, [ 'post_tag' ] );
-
 	// Filter taxonomies that are set as arrays ( i.e. tags )
 	// This can be detected by an array of strings vs an array of objects
-	taxonomies = reduce( taxonomies, ( prev, taxonomyTerms, taxonomyName ) => {
+	const taxonomies = reduce( post.terms, ( prev, taxonomyTerms, taxonomyName ) => {
 		// Ensures we are working with an array
 		const termsArray = toArray( taxonomyTerms );
 		if ( termsArray && termsArray.length && ! isPlainObject( termsArray[ 0 ] ) ) {

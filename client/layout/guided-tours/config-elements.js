@@ -5,6 +5,7 @@ import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import {
+	debounce,
 	find,
 	mapValues,
 	omit,
@@ -22,6 +23,7 @@ import {
 	posToCss,
 	getStepPosition,
 	getValidatedArrowPosition,
+	query,
 	targetForSlug
 } from './positioning';
 
@@ -105,10 +107,26 @@ export class Step extends Component {
 
 	componentWillMount() {
 		this.skipIfInvalidContext( this.props, this.context );
+		this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || global.window;
+		this.setStepPosition( this.props );
+	}
+
+	componentDidMount() {
+		global.window.addEventListener( 'resize', this.onScrollOrResize );
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
 		this.skipIfInvalidContext( nextProps, nextContext );
+		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
+		this.scrollContainer.addEventListener( 'scroll', this.onScrollOrResize );
+		const shouldScrollTo = nextProps.shouldScrollTo && ( this.props.name !== nextProps.name );
+		this.setStepPosition( nextProps, shouldScrollTo );
+	}
+
+	componentWillUnmount() {
+		global.window.removeEventListener( 'resize', this.onScrollOrResize );
+		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 	}
 
 	skipIfInvalidContext( props, context ) {
@@ -118,6 +136,17 @@ export class Step extends Component {
 		}
 	}
 
+	onScrollOrResize = debounce( () => {
+		this.setStepPosition( this.props );
+	}, 50 )
+
+	setStepPosition( props, shouldScrollTo ) {
+		const { placement, target } = props;
+		const stepPos = getStepPosition( { placement, targetSlug: target, shouldScrollTo } );
+		const stepCoords = posToCss( stepPos );
+		this.setState( { stepPos, stepCoords } );
+	}
+
 	render() {
 		const { when, children } = this.props;
 
@@ -125,9 +154,8 @@ export class Step extends Component {
 			return null;
 		}
 
-		const { arrow, placement, target: targetSlug } = this.props;
-		const stepPos = getStepPosition( { placement, targetSlug } );
-		const stepCoords = posToCss( stepPos );
+		const { arrow, target: targetSlug } = this.props;
+		const { stepCoords, stepPos } = this.state;
 
 		const classes = [
 			this.props.className,
@@ -187,7 +215,8 @@ export class Quit extends Component {
 		super( props, context );
 	}
 
-	onClick = () => {
+	onClick = ( event ) => {
+		this.props.onClick && this.props.onClick( event );
 		this.context.quit();
 	}
 
@@ -275,11 +304,13 @@ export class Link extends Component {
 	}
 
 	render() {
+		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<div className="guided-tours__external-link">
 				<ExternalLink target="_blank" icon={ true } href={ this.props.href }>{ this.props.children }</ExternalLink>
 			</div>
 		);
+		/* eslint-enable react/jsx-no-target-blank */
 	}
 }
 

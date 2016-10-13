@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -31,7 +30,7 @@ var CreditCardPaymentBox = React.createClass( {
 		var cart = this.props.cart;
 
 		return (
-			<form onSubmit={ this.props.onSubmit }>
+			<form autoComplete="off" onSubmit={ this.props.onSubmit }>
 				<CreditCardSelector
 					cards={ this.props.cards }
 					countriesList={ this.props.countriesList }
@@ -56,14 +55,9 @@ var CreditCardPaymentBox = React.createClass( {
 	},
 
 	render: function() {
-		var classSet = classNames( {
-			'credit-card-payment-box': true,
-			selected: this.props.selected === true
-		} );
-
 		return (
 			<PaymentBox
-				classSet={ classSet }
+				classSet="credit-card-payment-box"
 				title={ this.translate( 'Secure Payment' ) }>
 				{ this.content() }
 			</PaymentBox>

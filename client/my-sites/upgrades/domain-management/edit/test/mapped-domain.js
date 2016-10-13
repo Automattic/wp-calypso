@@ -31,7 +31,9 @@ describe( 'mapped-domain', () => {
 	} );
 
 	useFakeDom.withContainer();
-	useMockery();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/analytics', {} );
+	} );
 
 	before( () => {
 		React = require( 'react' );

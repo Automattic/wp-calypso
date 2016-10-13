@@ -1,7 +1,7 @@
 # Reader Like Button
 
-A specialization of the generic `components/like-button` that sends stats
+A specialization of the generic `blocks/like-button` that sends stats
 
 ## Props
 
-See `components/like-button` for props this takes
+See `blocks/like-button` for props this takes

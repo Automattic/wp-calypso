@@ -19,22 +19,22 @@ const Unlocked = React.createClass( {
 	getInitialState() {
 		return {
 			submitting: false
-		}
+		};
 	},
 
 	handleCancelTransferClick() {
-		const { privateDomain, hasPrivacyProtection } = getSelectedDomain( this.props );
+		const { privateDomain, hasPrivacyProtection, pendingTransfer } = getSelectedDomain( this.props );
 
 		this.setState( { submitting: true } );
 
 		enableDomainLocking( {
 			domainName: this.props.selectedDomainName,
-			declineTransfer: true,
+			declineTransfer: pendingTransfer,
 			enablePrivacy: hasPrivacyProtection && ! privateDomain,
 			siteId: this.props.selectedSite.ID
 		}, ( error ) => {
 			if ( error ) {
-				const contactLink = <a href={ support.CALYPSO_CONTACT } target="_blank"/>;
+				const contactLink = <a href={ support.CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />;
 				let errorMessage;
 
 				switch ( error.error ) {
@@ -62,14 +62,13 @@ const Unlocked = React.createClass( {
 						break;
 				}
 				notices.error( errorMessage );
+			} else if ( hasPrivacyProtection ) {
+				notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
+					'Privacy Protection has been enabled.' ) );
 			} else {
-				if ( hasPrivacyProtection ) {
-					notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked and ' +
-						'Privacy Protection has been enabled.' ) );
-				} else {
-					notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked back.' ) );
-				}
+				notices.success( this.translate( 'We\'ve canceled your domain transfer. Your domain is now locked back.' ) );
 			}
+
 			if ( this.isMounted() ) {
 				// component might be unmounted since it's state changed to locked
 				this.setState( { submitting: false } );
@@ -94,11 +93,20 @@ const Unlocked = React.createClass( {
 	},
 
 	render() {
-		const { privateDomain, hasPrivacyProtection, manualTransferRequired } = getSelectedDomain( this.props );
+		const { privateDomain, hasPrivacyProtection, manualTransferRequired, pendingTransfer } = getSelectedDomain( this.props );
+		let domainStateMessage = this.translate( 'Your domain is unlocked to prepare for transfer.' );
+
+		if ( pendingTransfer ) {
+			domainStateMessage = this.translate( 'Your domain is pending transfer.' );
+		} else if ( hasPrivacyProtection && ! privateDomain ) {
+			domainStateMessage = this.translate( 'Your domain is unlocked and Privacy Protection has been disabled' +
+				' to prepare for transfer.' );
+		}
+
 		return (
 			<div>
 				<SectionHeader label={ this.translate( 'Transfer Domain' ) } className="transfer__section-header">
-						<Button
+					<Button
 							onClick={ this.handleCancelTransferClick }
 							disabled={ this.state.submitting }
 							compact>{ this.translate( 'Cancel Transfer' ) }</Button>
@@ -111,11 +119,7 @@ const Unlocked = React.createClass( {
 
 				<Card className="transfer-card">
 					<div>
-						<p>{ hasPrivacyProtection && ! privateDomain
-								? this.translate( 'Your domain is unlocked and Privacy Protection has been disabled to prepare for transfer.' )
-								: this.translate( 'Your domain is unlocked to prepare for transfer.' ) }
-						</p>
-
+						<p>{ domainStateMessage }</p>
 						<p>
 							{
 								! manualTransferRequired
@@ -127,7 +131,8 @@ const Unlocked = React.createClass( {
 									'shortly to help you complete the process.' )
 							} <a
 							href={ support.TRANSFER_DOMAIN_REGISTRATION }
-							target="_blank">{ this.translate( 'Learn More.' ) }</a>
+							target="_blank"
+							rel="noopener noreferrer">{ this.translate( 'Learn More.' ) }</a>
 						</p>
 					</div>
 				</Card>

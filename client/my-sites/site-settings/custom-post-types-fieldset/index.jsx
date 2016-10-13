@@ -114,7 +114,7 @@ class CustomPostTypesFieldset extends Component {
 				<p>
 					{ translate( 'Display different types of content on your site with {{link}}custom content types{{/link}}.', {
 						components: {
-							link: <a href="https://en.support.wordpress.com/custom-post-types/" target="_blank" />
+							link: <a href="https://en.support.wordpress.com/custom-post-types/" target="_blank" rel="noopener noreferrer" />
 						}
 					} ) }
 				</p>

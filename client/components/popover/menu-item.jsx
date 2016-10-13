@@ -10,42 +10,47 @@ import { omit } from 'lodash';
  */
 import Gridicon from 'components/gridicon';
 
-export default React.createClass( {
-	displayName: 'PopoverMenuItem',
+const handlerMouseOver = ( event ) => {
+	event.target.focus();
+};
 
-	propTypes: {
-		href: PropTypes.string,
-		className: PropTypes.string,
-		icon: PropTypes.string,
-		focusOnHover: PropTypes.bool,
-		children: PropTypes.node
-	},
+const PopoverItem = ( props ) => {
+	const {
+		focusOnHover,
+		className,
+		href,
+		icon,
+		children
+	} = props;
 
-	getDefaultProps() {
-		return {
-			focusOnHover: true
-		};
-	},
+	const Component = href ? 'a' : 'button';
 
-	render() {
-		const { focusOnHover, className, href, icon, children } = this.props;
-		const onMouseOver = focusOnHover ? this._onMouseOver : null;
-		const Component = href ? 'a' : 'button';
+	return (
+		<Component
+			role="menuitem"
+			onMouseOver={ focusOnHover ? handlerMouseOver : null }
+			tabIndex="-1"
+			{ ...omit( props, 'icon', 'focusOnHover' ) }
+			className={ classnames( 'popover__menu-item', className ) }
+		>
+			{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+			{ children }
+		</Component>
+	);
+};
 
-		return (
-			<Component
-				role="menuitem"
-				onMouseOver={ onMouseOver }
-				tabIndex="-1"
-				{ ...omit( this.props, 'icon', 'focusOnHover' ) }
-				className={ classnames( 'popover__menu-item', className ) }>
-				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
-				{ children }
-			</Component>
-		);
-	},
+PopoverItem.displayName = 'PopoverMenuItem';
 
-	_onMouseOver( event ) {
-		event.target.focus();
-	}
-} );
+PopoverItem.propTypes = {
+	href: PropTypes.string,
+	className: PropTypes.string,
+	icon: PropTypes.string,
+	focusOnHover: PropTypes.bool,
+	children: PropTypes.node
+};
+
+PopoverItem.defaultProps = {
+	focusOnHover: true
+};
+
+export default PopoverItem;
