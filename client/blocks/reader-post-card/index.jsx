@@ -18,12 +18,12 @@ import ExternalLink from 'components/external-link';
 
 function FeaturedImage( { image, href } ) {
 	return (
-		<div className="reader-post-card__featured-image" href={ href } style={ {
+		<a className="reader-post-card__featured-image" href={ href } style={ {
 			backgroundImage: 'url(' + image.uri + ')',
 			backgroundSize: 'cover',
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: '50% 50%'
-		} } ></div> );
+		} } ></a> );
 }
 
 function PostByline( { post } ) {
