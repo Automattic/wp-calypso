@@ -16,11 +16,28 @@ function ImageEditorExample( { primarySiteId } ) {
 		URL: 'https://cldup.com/mA_hqNVj0w.jpg'
 	};
 	
+	const onImageExtracted = ( blob ) => {
+		const imageUrl = window.URL.createObjectURL( blob );
+		
+		document.querySelector( "#devdocs-example-image-editor-result" ).src = imageUrl;
+	};
+	
 	return (
-		<div style={ { height: '80vh' } }>
-			<ImageEditor
-				siteId={ primarySiteId }
-				media={ media }
+		<div>
+			<div style={ { height: '80vh' } }>
+				<ImageEditor
+					siteId={ primarySiteId }
+					media={ media }
+					onImageExtracted={ onImageExtracted }
+				/>
+			</div>
+			
+			<img 
+				id="devdocs-example-image-editor-result"
+				style={ {
+					display: 'block',
+					margin: '10px auto'
+				} }
 			/>
 		</div>
 	);
