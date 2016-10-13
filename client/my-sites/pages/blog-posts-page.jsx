@@ -16,12 +16,12 @@ import PopoverMenuItem from 'components/popover/menu-item';
 import { isEnabled } from 'config';
 import { getSiteFrontPageType, getSitePostsPage } from 'state/sites/selectors';
 import { setFrontPage } from 'state/sites/actions';
+import { userCan } from 'lib/site/utils';
 
 const BlogPostsPage = React.createClass( {
 	propTypes() {
 		return {
-			homePageType: React.PropTypes.string,
-			pageForPosts: React.PropTypes.number
+			site: React.PropTypes.object
 		};
 	},
 
@@ -37,14 +37,10 @@ const BlogPostsPage = React.createClass( {
 
 	setAsHomepage: function() {
 		this.setState( { showPageActions: false } );
-		this.props.setFrontPage( this.props.siteId, 0 );
+		this.props.setFrontPage( this.props.site.ID, 0 );
 	},
 
 	getSetAsHomepageItem: function() {
-		if ( this.props.isFrontPage ) {
-			return null;
-		}
-
 		return (
 			<PopoverMenuItem onClick={ this.setAsHomepage }>
 				<Gridicon icon="house" size={ 18 } />
@@ -53,22 +49,13 @@ const BlogPostsPage = React.createClass( {
 		);
 	},
 
-	getFrontPageInfo: function() {
-		if ( ! this.props.isFrontPage ) {
-			return null;
-		}
-
-		return (
-			<div className="pages__blog-posts-page__popover-more-info">
-				{ this.translate( 'This page is set as your site\'s homepage' ) }
-			</div>
-		);
-	},
-
 	render() {
 		const isStaticHomePageWithNoPostsPage = this.props.frontPageType === 'page' && ! this.props.postsPage;
+		const isCurrentlySetAsHomepage = this.props.frontPageType === 'posts';
 		const shouldShow = this.props.isFrontPage ||
 			( isEnabled( 'manage/pages/set-homepage' ) && isStaticHomePageWithNoPostsPage );
+		const shouldShowPageActions = ! isCurrentlySetAsHomepage &&
+			userCan( 'edit_theme_options', this.props.site ) && isEnabled( 'manage/pages/set-homepage' );
 
 		if ( ! shouldShow ) {
 			return null;
@@ -82,38 +69,43 @@ const BlogPostsPage = React.createClass( {
 				</div>;
 		}
 
-		let frontPageIcon = null;
-		if ( this.props.frontPageType === 'posts' ) {
-			frontPageIcon = <Gridicon icon="house" size={ 18 } />;
-		}
-
 		return (
 			<CompactCard className="pages__blog-posts-page">
 				{ notUsedLabel }
 				<span className="pages__blog-posts-page__title" href="">
-					{ frontPageIcon }
+					{ isCurrentlySetAsHomepage ? <Gridicon icon="house" size={ 18 } /> : null }
 					{ this.translate( 'Blog Posts' ) }
 				</span>
 				<div className="pages__blog-posts-page__info">
-					{ this.translate( 'Your latest posts' ) }
+					{
+						isCurrentlySetAsHomepage
+						? this.translate( 'Your latest posts, shown on homepage' )
+						: this.translate( 'Your latest posts' )
+					}
 				</div>
-				<Gridicon
-					icon="ellipsis"
-					className={ classNames( {
-						'page__actions-toggle': true,
-						'is-active': this.state.showPageActions
-					} ) }
-					onClick={ this.togglePageActions }
-					ref="popoverMenuButton" />
-				<PopoverMenu
-					isVisible={ this.state.showPageActions }
-					onClose={ this.togglePageActions }
-					position={ 'bottom left' }
-					context={ this.refs && this.refs.popoverMenuButton }
-				>
-					{ this.getSetAsHomepageItem() }
-					{ this.getFrontPageInfo() }
-				</PopoverMenu>
+				{
+					shouldShowPageActions
+					? <div>
+							<Gridicon
+								icon="ellipsis"
+								className={ classNames( {
+									'page__actions-toggle': true,
+									'is-active': this.state.showPageActions
+								} ) }
+								onClick={ this.togglePageActions }
+								ref="popoverMenuButton" />
+							<PopoverMenu
+								isVisible={ this.state.showPageActions }
+								onClose={ this.togglePageActions }
+								position={ 'bottom left' }
+								context={ this.refs && this.refs.popoverMenuButton }
+							>
+								{ this.getSetAsHomepageItem() }
+							</PopoverMenu>
+						</div>
+					: null
+				}
+
 			</CompactCard>
 		);
 	}
@@ -122,9 +114,9 @@ const BlogPostsPage = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
-			frontPageType: getSiteFrontPageType( state, props.siteId ),
-			isFrontPage: getSiteFrontPageType( state, props.siteId ) === 'posts',
-			postsPage: getSitePostsPage( state, props.siteId )
+			frontPageType: getSiteFrontPageType( state, props.site.ID ),
+			isFrontPage: getSiteFrontPageType( state, props.site.ID ) === 'posts',
+			postsPage: getSitePostsPage( state, props.site.ID )
 		};
 	},
 	( dispatch ) => bindActionCreators( {
