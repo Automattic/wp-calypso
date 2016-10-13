@@ -66,7 +66,7 @@ class CurrentPlanHeader extends Component {
 			<Card className="current-plan__header-purchase-info-wrapper" compact>
 				<div className={ classes }>
 					<span className="current-plan__header-expires-in">
-						{ hasAutoRenew
+						{ hasAutoRenew && currentPlan.autoRenewDateMoment && typeof currentPlan.autoRenewDateMoment.format === 'function'
 							? translate( 'Set to Auto Renew on %s.', { args: currentPlan.autoRenewDateMoment.format( 'LL' ) } )
 							: translate( 'Expires on %s.', { args: currentPlan.userFacingExpiryMoment.format( 'LL' ) } )
 						}
