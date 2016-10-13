@@ -48,7 +48,6 @@
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
 		"me/account": true,
-		"me/billing-history": true,
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/next-steps": true,
