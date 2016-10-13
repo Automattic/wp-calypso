@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -13,6 +13,7 @@ import {
 	filter,
 	map,
 	memoize,
+	noop,
 	range,
 	reduce,
 } from 'lodash';
@@ -20,6 +21,7 @@ import {
 /**
  * Internal dependencies
  */
+import ListItem from './list-item';
 import CompactCard from 'components/card/compact';
 import { decodeEntities } from 'lib/formatting';
 import QueryTerms from 'components/data/query-terms';
@@ -37,32 +39,30 @@ const DEFAULT_TERMS_PER_PAGE = 100;
 const LOAD_OFFSET = 10;
 const ITEM_HEIGHT = 55;
 
-const TaxonomyManagerList = React.createClass( {
-
-	propTypes: {
+export class TaxonomyManagerList extends Component {
+	static propTypes = {
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
 		search: PropTypes.string,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
 		lastPage: PropTypes.number,
-	},
+		onTermClick: PropTypes.func,
+	};
 
-	getInitialState() {
-		return {
+	static defaultProps = {
+		loading: true,
+		terms: [],
+		onNextPage: noop,
+		onTermClick: noop,
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = {
 			requestedPages: [ 1 ]
 		};
-	},
-
-	getDefaultProps() {
-		return {
-			analyticsPrefix: 'Category Selector',
-			searchThreshold: 8,
-			loading: true,
-			terms: [],
-			onNextPage: () => {}
-		};
-	},
+	}
 
 	componentWillMount() {
 		this.itemHeights = {};
@@ -72,7 +72,7 @@ const TaxonomyManagerList = React.createClass( {
 		this.termIds = map( this.props.terms, 'ID' );
 		this.getTermChildren = memoize( this.getTermChildren );
 		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
-	},
+	}
 
 	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.taxonomy !== this.props.taxonomy ) {
@@ -83,7 +83,7 @@ const TaxonomyManagerList = React.createClass( {
 			this.getTermChildren.cache.clear();
 			this.termIds = map( nextProps.terms, 'ID' );
 		}
-	},
+	}
 
 	componentDidUpdate( prevProps ) {
 		const forceUpdate = (
@@ -98,24 +98,24 @@ const TaxonomyManagerList = React.createClass( {
 		if ( this.props.terms !== prevProps.terms ) {
 			this.recomputeRowHeights();
 		}
-	},
+	}
 
-	recomputeRowHeights: function() {
+	recomputeRowHeights() {
 		if ( ! this.virtualScroll ) {
 			return;
 		}
 
 		this.virtualScroll.recomputeRowHeights();
 		this.virtualScroll.forceUpdate();
-	},
+	}
 
-	setSelectorRef( selectorRef ) {
+	setSelectorRef = selectorRef => {
 		if ( ! selectorRef ) {
 			return;
 		}
 
 		this.setState( { selectorRef } );
-	},
+	}
 
 	getPageForIndex( index ) {
 		const { query, lastPage } = this.props;
@@ -123,9 +123,9 @@ const TaxonomyManagerList = React.createClass( {
 		const page = Math.ceil( index / perPage );
 
 		return Math.max( Math.min( page, lastPage || Infinity ), 1 );
-	},
+	}
 
-	setRequestedPages( { startIndex, stopIndex } ) {
+	setRequestedPages = ( { startIndex, stopIndex } ) => {
 		const { requestedPages } = this.state;
 		const pagesToRequest = difference( range(
 			this.getPageForIndex( startIndex - LOAD_OFFSET ),
@@ -139,7 +139,7 @@ const TaxonomyManagerList = React.createClass( {
 		this.setState( {
 			requestedPages: requestedPages.concat( pagesToRequest )
 		} );
-	},
+	}
 
 	setItemRef( item, itemRef ) {
 		if ( ! itemRef || ! item ) {
@@ -158,32 +158,32 @@ const TaxonomyManagerList = React.createClass( {
 		if ( height !== nextHeight ) {
 			this.queueRecomputeRowHeights();
 		}
-	},
+	}
 
 	hasNoSearchResults() {
 		return ! this.props.loading &&
 			( this.props.terms && ! this.props.terms.length ) &&
 			( this.props.query.search && !! this.props.query.search.length );
-	},
+	}
 
 	hasNoTerms() {
 		return ! this.props.loading && ( this.props.terms && ! this.props.terms.length );
-	},
+	}
 
 	getItem( index ) {
 		if ( this.props.terms ) {
 			return this.props.terms[ index ];
 		}
-	},
+	}
 
 	isRowLoaded( { index } ) {
 		return this.props.lastPage || !! this.getItem( index );
-	},
+	}
 
 	getTermChildren( termId ) {
 		const { terms } = this.props;
 		return filter( terms, ( { parent } ) => parent === termId );
-	},
+	}
 
 	getItemHeight( item, _recurse = false ) {
 		if ( ! item ) {
@@ -202,17 +202,17 @@ const TaxonomyManagerList = React.createClass( {
 		return reduce( this.getTermChildren( item.ID ), ( memo, childItem ) => {
 			return memo + this.getItemHeight( childItem, true );
 		}, ITEM_HEIGHT );
-	},
+	}
 
-	getRowHeight( { index } ) {
+	getRowHeight = ( { index } ) => {
 		return this.getItemHeight( this.getItem( index ) );
-	},
+	}
 
 	getCompactContainerHeight() {
 		return range( 0, this.getRowCount() ).reduce( ( memo, index ) => {
 			return memo + this.getRowHeight( { index } );
 		}, 0 );
-	},
+	}
 
 	getResultsWidth() {
 		const { selectorRef } = this.state;
@@ -221,7 +221,7 @@ const TaxonomyManagerList = React.createClass( {
 		}
 
 		return 0;
-	},
+	}
 
 	getRowCount() {
 		let count = 0;
@@ -235,11 +235,11 @@ const TaxonomyManagerList = React.createClass( {
 		}
 
 		return count;
-	},
+	}
 
-	setVirtualScrollRef( ref ) {
+	setVirtualScrollRef = ref => {
 		this.virtualScroll = ref;
-	},
+	}
 
 	renderItem( item, _recurse = false ) {
 		// if item has a parent and it is in current props.terms, do not render
@@ -250,16 +250,21 @@ const TaxonomyManagerList = React.createClass( {
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 		const children = this.getTermChildren( item.ID );
 
-		const { translate } = this.props;
+		const { translate, onTermClick } = this.props;
 		const itemId = item.ID;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
+		const onClick = () => {
+			onTermClick( item );
+		};
 
 		return (
 			<div key={ 'term-wrapper-' + itemId } className="taxonomy-manager__list-item">
 				<CompactCard
+					onClick={ onClick }
 					key={ itemId }
-					ref={ setItemRef }>
-						<span className="taxonomy-manager__label">{ name }</span>
+					ref={ setItemRef }
+					className="taxonomy-manager__list-item-card">
+					<ListItem name={ name } onClick={ onClick } />
 				</CompactCard>
 				{ children.length > 0 && (
 					<div className="taxonomy-manager__nested-list">
@@ -268,9 +273,9 @@ const TaxonomyManagerList = React.createClass( {
 				) }
 			</div>
 		);
-	},
+	}
 
-	renderNoResults() {
+	renderNoResults = () => {
 		if ( this.hasNoTerms() ) {
 			return (
 				<div key="no-results" className="taxonomy-manager__list-item is-empty">
@@ -278,9 +283,9 @@ const TaxonomyManagerList = React.createClass( {
 				</div>
 			);
 		}
-	},
+	}
 
-	renderRow( { index } ) {
+	renderRow = ( { index } ) => {
 		const item = this.getItem( index );
 		if ( item ) {
 			return this.renderItem( item );
@@ -293,7 +298,7 @@ const TaxonomyManagerList = React.createClass( {
 				</span>
 			</CompactCard>
 		);
-	},
+	}
 
 	render() {
 		const rowCount = this.getRowCount();
@@ -325,7 +330,7 @@ const TaxonomyManagerList = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
 export default connect( ( state, ownProps ) => {
 	const siteId = getSelectedSiteId( state );

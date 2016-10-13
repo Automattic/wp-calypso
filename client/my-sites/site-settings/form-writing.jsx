@@ -216,7 +216,7 @@ const SiteSettingsFormWriting = React.createClass( {
 						</FormFieldset>
 					}
 				</Card>
-				{ config.isEnabled( 'manage/site-settings/categories' ) && <TaxonomyManager taxonomy="category" /> }
+				{ config.isEnabled( 'manage/site-settings/categories' ) && <TaxonomyManager taxonomy="category" postType="post" /> }
 			</form>
 		);
 	}

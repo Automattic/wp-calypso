@@ -14,3 +14,35 @@
 .taxonomy-manager__list-item {
 	background-color: $gray-light;
 }
+
+.taxonomy-manager__list-item-card {
+	cursor: pointer;
+}
+
+.taxonomy-manager__list-item-toggle {
+	color: $gray;
+	cursor: pointer;
+	font-size: 24px;
+	margin: 17px 28px;
+	position: absolute;
+		right: 0;
+		top: 0;
+	transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+	&.is-active {
+		color: $blue-medium;
+		transform: rotate( 90deg );
+	}
+}
+
+.taxonomy-manager__label {
+	position: relative;
+	display: flex;
+	justify-content: space-between;
+
+	.taxonomy-manager__list-item.is-placeholder & {
+		color: transparent;
+		background-color: lighten( $gray, 30% );
+		animation: loading-fade 1.6s ease-in-out infinite;
+	}
+}

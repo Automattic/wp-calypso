@@ -15,20 +15,22 @@ import Button from 'components/button';
 import TermsList from './list';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
+import QueryTaxonomies from 'components/data/query-taxonomies';
 
 export class TaxonomyManager extends Component {
 	static propTypes = {
 		taxonomy: PropTypes.string,
 		labels: PropTypes.object,
 		postType: PropTypes.string,
+		siteId: PropTypes.number,
 	};
 
 	static defaultProps = {
 		postType: 'post'
 	};
 
-	constructor() {
-		super( ...arguments );
+	constructor( props ) {
+		super( props );
 		this.state = {
 			search: null
 		};
@@ -36,7 +38,7 @@ export class TaxonomyManager extends Component {
 		this.onSearch = this.onSearch.bind( this );
 	}
 
-	onSearch( searchTerm ) {
+	onSearch = searchTerm => {
 		if ( searchTerm !== this.state.search ) {
 			this.setState( {
 				search: searchTerm
@@ -46,6 +48,7 @@ export class TaxonomyManager extends Component {
 
 	render() {
 		const { search } = this.state;
+		const { siteId, postType, labels, taxonomy } = this.props;
 		const query = {};
 		if ( search && search.length ) {
 			query.search = search;
@@ -53,14 +56,15 @@ export class TaxonomyManager extends Component {
 
 		return (
 			<div>
-				<SectionHeader label={ this.props.labels.name }>
+				{ siteId && <QueryTaxonomies { ...{ siteId, postType } } /> }
+				<SectionHeader label={ labels.name }>
 					<Button compact primary>
-						{ this.props.labels.add_new_item }
+						{ labels.add_new_item }
 					</Button>
 				</SectionHeader>
 				<Card>
 					<SearchCard onSearch={ this.onSearch } className="taxonomy-manager__search" />
-					<TermsList query={ query } taxonomy={ this.props.taxonomy } />
+					<TermsList query={ query } taxonomy={ taxonomy } />
 				</Card>
 			</div>
 		);
@@ -71,7 +75,7 @@ export default connect(
 	( state, ownProps ) => {
 		const { taxonomy, postType } = ownProps;
 		const siteId = getSelectedSiteId( state );
-		const labels = get( getPostTypeTaxonomy( state, siteId, postType || 'post', taxonomy ), 'labels', {} );
-		return { labels };
+		const labels = get( getPostTypeTaxonomy( state, siteId, postType, taxonomy ), 'labels', {} );
+		return { labels, siteId };
 	}
 )( TaxonomyManager );
