@@ -27,29 +27,17 @@ export default function() {
 		);
 	}
 
-	if ( config.isEnabled( 'me/billing-history' ) ) {
-		page(
-			paths.billingHistory(),
-			meController.sidebar,
-			billingController.billingHistory
-		);
+	page(
+		paths.billingHistory(),
+		meController.sidebar,
+		billingController.billingHistory
+	);
 
-		page(
-			paths.billingHistoryReceipt(),
-			meController.sidebar,
-			billingController.transaction
-		);
-
-		// redirect legacy urls
-		page(
-			'/me/billing',
-			() => page.redirect( paths.billingHistory() )
-		);
-		page(
-			'/me/billing/:receiptId',
-			( { params: { receiptId } } ) => page.redirect( paths.billingHistoryReceipt( receiptId ) )
-		);
-	}
+	page(
+		paths.billingHistoryReceipt(),
+		meController.sidebar,
+		billingController.transaction
+	);
 
 	page(
 		paths.list(),
@@ -128,5 +116,13 @@ export default function() {
 	page(
 		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
 		( { params: { siteName, purchaseId, cardId } } ) => page.redirect( paths.editCardDetails( siteName, purchaseId, cardId ) )
+	);
+	page(
+		'/me/billing',
+		() => page.redirect( paths.billingHistory() )
+	);
+	page(
+		'/me/billing/:receiptId',
+		( { params: { receiptId } } ) => page.redirect( paths.billingHistoryReceipt( receiptId ) )
 	);
 }
