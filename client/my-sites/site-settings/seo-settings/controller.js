@@ -34,12 +34,6 @@ export default {
 			return;
 		}
 
-		// redirect analytics tab to general for Jetpack sites
-		if ( site.jetpack && basePath === '/settings/analytics' ) {
-			page.redirect( '/settings/general/' + site.slug );
-			return;
-		}
-
 		if ( ! site.latestSettings || new Date().getTime() - site.latestSettings > ( fiveMinutes ) ) {
 			if ( sites.initialized ) {
 				site.fetchSettings();
