@@ -51,6 +51,7 @@ export default React.createClass( {
 		onMouseEnter: React.PropTypes.func,
 		onMouseLeave: React.PropTypes.func,
 		isSelected: React.PropTypes.bool,
+		isHighlighted: React.PropTypes.bool,
 		site: React.PropTypes.object.isRequired,
 		onClick: React.PropTypes.func,
 		enableActions: React.PropTypes.bool
@@ -68,8 +69,16 @@ export default React.createClass( {
 			return;
 		}
 
-		this.props.onSelect( event );
+		this.props.onSelect( event, this.props.site.slug );
 		event.preventDefault(); // this doesn't actually do anything...
+	},
+
+	onMouseEnter( event ) {
+		this.props.onMouseEnter( event, this.props.site.slug );
+	},
+
+	onMouseLeave( event ) {
+		this.props.onMouseLeave( event, this.props.site.slug );
 	},
 
 	enableCogTooltip() {
@@ -181,6 +190,7 @@ export default React.createClass( {
 			'is-private': site.is_private,
 			'is-redirect': site.options && site.options.is_redirect,
 			'is-selected': this.props.isSelected,
+			'is-highlighted': this.props.isHighlighted,
 			'is-toggled': this.state.showMoreActions,
 			'has-edit-capabilities': userCan( 'manage_options', site )
 		} );
@@ -198,8 +208,8 @@ export default React.createClass( {
 							}
 							onTouchTap={ this.onSelect }
 							onClick={ this.props.onClick }
-							onMouseEnter={ this.props.onMouseEnter }
-							onMouseLeave={ this.props.onMouseLeave }
+							onMouseEnter={ this.onMouseEnter }
+							onMouseLeave={ this.onMouseLeave }
 							aria-label={ this.props.homeLink && site.is_previewable
 								? this.translate( 'Open site %(domain)s in a preview', {
 									args: { domain: site.domain }
