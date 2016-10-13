@@ -96,9 +96,7 @@ const ImageEditor = React.createClass( {
 	},
 
 	onCancel() {
-		this.props.resetAllImageEditorState();
-
-		this.props.onImageEditorCancel();
+		this.props.onImageEditorCancel( this.props );
 	},
 
 	onLoadCanvasError() {
