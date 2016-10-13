@@ -7,5 +7,5 @@ Supported routes:
 
 ```
 /me/purchases/billing
-/me/purchases/billing/:transactionId
+/me/purchases/billing/:receiptId
 ```

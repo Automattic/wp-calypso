@@ -180,8 +180,8 @@ module.exports = {
 				notifications: '/me/notifications',
 				disbursements: '/me/public-profile',
 				earnings: '/me/public-profile',
-				'billing-history': purchasesPaths.list(),
-				'billing-history-v2': purchasesPaths.list(),
+				'billing-history': purchasesPaths.billingHistory(),
+				'billing-history-v2': purchasesPaths.billingHistory(),
 				'connected-apps': '/me/security/connected-applications'
 			};
 		if ( ! context ) {
