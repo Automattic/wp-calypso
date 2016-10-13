@@ -251,8 +251,8 @@ const SiteSelector = React.createClass( {
 	},
 
 	getSiteBasePath( site ) {
-		var siteBasePath = this.props.siteBasePath,
-			postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
+		let siteBasePath = this.props.siteBasePath;
+		const postsBase = ( site.jetpack || site.single_user_site ) ? '/posts' : '/posts/my';
 
 		// Default posts to /posts/my when possible and /posts when not
 		siteBasePath = siteBasePath.replace( /^\/posts\b(\/my)?/, postsBase );
@@ -285,7 +285,7 @@ const SiteSelector = React.createClass( {
 	},
 
 	isSelected( site ) {
-		var selectedSite = this.props.selected || this.props.sites.selected;
+		const selectedSite = this.props.selected || this.props.sites.selected;
 		return (
 			( site === ALL_SITES && selectedSite === null ) ||
 			( selectedSite === site.domain ) ||
@@ -302,7 +302,7 @@ const SiteSelector = React.createClass( {
 	},
 
 	renderSites() {
-		var sites, siteElements;
+		let sites;
 
 		if ( ! this.props.sites.initialized ) {
 			return <SitePlaceholder key="site-placeholder" />;
@@ -328,7 +328,7 @@ const SiteSelector = React.createClass( {
 		}
 
 		// Render sites
-		siteElements = map( sites, this.renderSite, this );
+		const siteElements = map( sites, this.renderSite, this );
 
 		if ( ! siteElements.length ) {
 			return <div className="site-selector__no-results">{ this.translate( 'No sites found' ) }</div>;
@@ -357,6 +357,10 @@ const SiteSelector = React.createClass( {
 	},
 
 	renderSite( site ) {
+		if ( ! site ) {
+			return null;
+		}
+
 		this.visibleSites.push( site );
 
 		const isHighlighted = this.isHighlighted( site );
