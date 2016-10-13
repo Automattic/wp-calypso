@@ -185,7 +185,7 @@ const taxonomies = {
  * @return {Object} [taxonomies][terms]
  */
 export function getTaxonomies( ) {
-  return taxonomies;
+	return taxonomies;
 }
 
 let termTable;

@@ -114,13 +114,12 @@ const ThemesMagicSearchCard = React.createClass( {
 		const _this = this;
 		window.requestAnimationFrame( function() {
 			_this.setState( { cursorPosition: val.slice( 0, _this.refs[ 'url-search' ].refs.searchInput.selectionStart ).length } );
-			console.log( _this.state.cursorPosition );
 			const tokens = input.split( /(\s+)/ );
 
 			// Get rid of empty match at end
 			tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
-			if( tokens.length === 0 ) {
-				_this.setState( { editedSearchElement: "" } );
+			if ( tokens.length === 0 ) {
+				_this.setState( { editedSearchElement: '' } );
 				return;
 			}
 			const tokenIndex = _this.findEditedTokenIndex( tokens, _this.state.cursorPosition );
@@ -130,13 +129,13 @@ const ThemesMagicSearchCard = React.createClass( {
 	},
 
 	insertSuggestion( suggestion ) {
-			const tokens = this.state.searchInput.split( /(\s+)/ );
-			// Get rid of empty match at end
-			tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
-			const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
-			tokens[ tokenIndex ] = suggestion;
-			return tokens.join('');
-		},
+		const tokens = this.state.searchInput.split( /(\s+)/ );
+		// Get rid of empty match at end
+		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
+		const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
+		tokens[ tokenIndex ] = suggestion;
+		return tokens.join( '' );
+	},
 
 	onSearchChange( input ) {
 		this.findTextForSuggestions( input );

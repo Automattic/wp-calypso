@@ -26,10 +26,10 @@ const Suggestions = React.createClass( {
 			weolcomeSign: noop,
 			suggest: noop,
 			terms: {},
-			input: "",
+			input: '',
 			suggestions: {},
-			filterTerm: ""
-		}
+			filterTerm: ''
+		};
 	},
 
 	getInitialState: function() {
@@ -46,20 +46,20 @@ const Suggestions = React.createClass( {
 	},
 
 	componentWillMount: function() {
-		const suggestions = this.narrowDown( this.props.input )
+		const suggestions = this.narrowDown( this.props.input );
 		this.setState( {
 			suggestions: suggestions,
-			currentSuggestion: "",
+			currentSuggestion: '',
 		} );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
 		if ( nextProps.input !== this.props.input ) {
-			const suggestions = this.narrowDown( nextProps.input )
+			const suggestions = this.narrowDown( nextProps.input );
 			this.setState( {
 				suggestions: suggestions,
 				suggestionPosition: -1,
-				currentSuggestion: "",
+				currentSuggestion: '',
 			} );
 		}
 	},
@@ -93,22 +93,21 @@ const Suggestions = React.createClass( {
 	},
 
 	handleKeyEvent: function( event ) {
-		switch( event.key ) {
-			case "ArrowDown" :
+		switch ( event.key ) {
+			case 'ArrowDown' :
 				this.incPosition();
 				event.preventDefault();
 				break;
-			case "ArrowUp" :
+			case 'ArrowUp' :
 				this.decPosition();
 				event.preventDefault();
 				break;
-			case "Enter" :
-				if( this.state.suggestionPosition !== -1 ) {
+			case 'Enter' :
+				if ( this.state.suggestionPosition !== -1 ) {
 					this.props.suggest( this.state.currentSuggestion );
 				}
 				break;
 		}
-
 	},
 
 	onMouseDown: function( event ) {
@@ -128,12 +127,11 @@ const Suggestions = React.createClass( {
 	},
 
 	narrowDown: function( input ) {
-
-		let [ taxonomy, filter ] = input.split(":");
-		if( taxonomy === '' ){
+		let [ taxonomy, filter ] = input.split( ':' );
+		if ( taxonomy === '' ) {
 			// empty string or just ":" or ":filter" -
 			// TODO: just show welcome screen
-			return {}
+			return {};
 		}
 
 		//default limit, changed to 5 for single taxonomy
@@ -141,10 +139,10 @@ const Suggestions = React.createClass( {
 
 		let terms; //terms that we will use to create suggestions
 
-		if( filter !== undefined ) {
+		if ( filter !== undefined ) {
 			// this means that we have at least taxonomy:
 			// so check if this is a correct taxonomy
-			if( this.props.terms.hasOwnProperty( taxonomy ) ) {
+			if ( this.props.terms.hasOwnProperty( taxonomy ) ) {
 				//so we will only filter elements from this taxonomy
 				terms = pick( this.props.terms, taxonomy );
 				//limit to 5 suggestions
@@ -165,8 +163,8 @@ const Suggestions = React.createClass( {
 		// store filtering term for highlithing
 		this.setState( { filterTerm: filter } );
 
-		for( const key in terms ) {
-			if( ! this.props.terms.hasOwnProperty( key ) ) {
+		for ( const key in terms ) {
+			if ( ! this.props.terms.hasOwnProperty( key ) ) {
 				continue;
 			}
 
@@ -183,25 +181,24 @@ const Suggestions = React.createClass( {
 	createTaxonomySuggestionsArray: function( suggestions ) {
 		const taxonomySuggestionsArray = [];
 
-		for( const key in suggestions ) {
-			if( ! suggestions.hasOwnProperty( key ) ) {
+		for ( const key in suggestions ) {
+			if ( ! suggestions.hasOwnProperty( key ) ) {
 				continue;
 			}
-			taxonomySuggestionsArray.push( ... suggestions[ key ].map( value => key + ":" + value ) );
+			taxonomySuggestionsArray.push( ... suggestions[ key ].map( value => key + ':' + value ) );
 		}
 
 		return taxonomySuggestionsArray;
 	},
 
 	createTextWithHighlight: function( text, highlighed_text ) {
-		const re = new RegExp( "(" + highlighed_text + ")", "g" );
+		const re = new RegExp( '(' + highlighed_text + ')', 'g' );
 		const parts = text.split( re );
 		const token = parts.map( part => {
-			if( part === highlighed_text ) {
-				return <span className="suggestions__value-emphasis" >{ part }</span>
-			} else {
-				return <span className="suggestions__value-normal" >{ part }</span>
+			if ( part === highlighed_text ) {
+				return <span className="suggestions__value-emphasis" >{ part }</span>;
 			}
+			return <span className="suggestions__value-normal" >{ part }</span>;
 		} );
 
 		return token;
@@ -209,10 +206,10 @@ const Suggestions = React.createClass( {
 
 	createSuggestions: function( suggestions ) {
 		let noOfSuggestions = 0;
-		const rendered = []
+		const rendered = [];
 
-		for( const key in suggestions ) {
-			if( ! suggestions.hasOwnProperty( key ) ) {
+		for ( const key in suggestions ) {
+			if ( ! suggestions.hasOwnProperty( key ) ) {
 				continue;
 			}
 
@@ -220,20 +217,22 @@ const Suggestions = React.createClass( {
 			rendered.push(
 				<div>
 					<span className="suggestions__category">{ key }</span>
-					<span className="counter">{ " " + suggestions[ key ].length + " of " + this.props.terms[ key ].length } </span>
+					<span className="suggestions__category-counter">
+						{ ' ' + suggestions[ key ].length + ' of ' + this.props.terms[ key ].length }
+					</span>
 				</div>
-			)
+			);
 			//Add values
 			rendered.concat( suggestions[ key ].map(
 				( value, i ) => {
-					const hashighlight =  ( noOfSuggestions + i ) === this.state.suggestionPosition;
-					const className = "suggestions__value" + ( hashighlight ? " has-highlight" : "" );
+					const hashighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
+					const className = 'suggestions__value' + ( hashighlight ? ' has-highlight' : '' );
 					return rendered.push(
-					 	<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver }>
-							<span className="suggestions__value-cathegory">{ key + ":" }</span>
+						<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver }>
+							<span className="suggestions__value-cathegory">{ key + ':' }</span>
 							{ this.createTextWithHighlight( value, this.state.filterTerm ) }
 						</span>
-					)
+					);
 				}
 			) );
 
@@ -245,7 +244,7 @@ const Suggestions = React.createClass( {
 
 	render() {
 		let suggestion;
-		if( this.props.input === "" ){
+		if ( this.props.input === '' ) {
 			suggestion = this.props.welcomeSign();
 		} else {
 			suggestion = this.createSuggestions( this.state.suggestions );
