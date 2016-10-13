@@ -21,6 +21,7 @@ export default React.createClass( {
 			onSelect: function() {},
 			href: null,
 			isSelected: false,
+			isHighlighted: false,
 			showCount: true,
 			domain: ''
 		};
@@ -31,10 +32,13 @@ export default React.createClass( {
 		onSelect: React.PropTypes.func,
 		href: React.PropTypes.string,
 		isSelected: React.PropTypes.bool,
+		isHighlighted: React.PropTypes.bool,
 		showCount: React.PropTypes.bool,
 		count: React.PropTypes.number,
 		title: React.PropTypes.string,
-		domain: React.PropTypes.string
+		domain: React.PropTypes.string,
+		onMouseEnter: React.PropTypes.func,
+		onMouseLeave: React.PropTypes.func
 	},
 
 	onSelect( event ) {
@@ -49,14 +53,20 @@ export default React.createClass( {
 	render() {
 		const allSitesClass = classNames( {
 			'all-sites': true,
-			'is-selected': this.props.isSelected
+			'is-selected': this.props.isSelected,
+			'is-highlighted': this.props.isHighlighted
 		} );
 
 		const title = this.props.title || this.translate( 'All My Sites' );
 
 		return (
 			<div className={ allSitesClass }>
-				<a className="site__content" href={ this.props.href } onTouchTap={ this.onSelect }>
+				<a
+					className="site__content"
+					href={ this.props.href }
+					onMouseEnter={ this.props.onMouseEnter }
+					onMouseLeave={ this.props.onMouseLeave }
+					onTouchTap={ this.onSelect }>
 					{ this.props.showCount && this.renderSiteCount() }
 					<div className="site__info">
 						<span className="site__title">{ title }</span>
