@@ -88,10 +88,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		flex-basis: auto;
 		flex-grow: 1;
 		margin-right: 20px;
-		max-width: 250px;
+		max-width: 190px;
 
-		@include breakpoint( "<960px" ) {
-			max-width: 190px;
+		@include breakpoint( ">960px" ) {
+			max-width: 250px;
 		}
 
 		@media #{$reader-post-card-breakpoint-medium} {
