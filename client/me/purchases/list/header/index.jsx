@@ -26,7 +26,7 @@ const PurchasesHeader = ( { section } ) => {
 					{ i18n.translate( 'Purchases' ) }
 				</NavItem>
 
-				<NavItem path="/me/billing" selected={ section === 'billing' }>
+				<NavItem path={ paths.billingHistory() } selected={ section === 'billing' }>
 					{ i18n.translate( 'Billing History' ) }
 				</NavItem>
 			</NavTabs>
