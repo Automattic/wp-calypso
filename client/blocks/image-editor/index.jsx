@@ -104,7 +104,11 @@ const ImageEditor = React.createClass( {
 	},
 
 	onLoadCanvasError() {
-		this.setState( { canvasError: this.translate( 'We are unable to edit this image.' ) } );
+		const { translate } = this.props;
+
+		this.setState( {
+			canvasError: translate( 'We are unable to edit this image.' )
+		} );
 	},
 
 	renderError() {
