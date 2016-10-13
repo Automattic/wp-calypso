@@ -27,6 +27,8 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 import MenuSeparator from 'components/popover/menu-separator';
 import { isFrontPage } from 'state/pages/selectors';
 import { setFrontPage } from 'state/sites/actions';
+import { userCan } from 'lib/site/utils';
+
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -109,7 +111,9 @@ const Page = React.createClass( {
 	getSetAsHomepageItem: function() {
 		const isPublished = this.props.page.status === 'publish';
 
-		if ( ! isPublished || this.props.isFrontPage ) {
+		if ( ! isPublished || this.props.isFrontPage ||
+			! config.isEnabled( 'manage/pages/set-homepage' ) ||
+			! userCan( 'edit_theme_options', this.props.site ) ) {
 			return null;
 		}
 
