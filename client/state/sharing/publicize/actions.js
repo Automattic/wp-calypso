@@ -82,9 +82,9 @@ export function fetchConnections( siteId ) {
 export function createSiteConnection( siteId, keyringConnectionId, externalUserId ) {
 	return ( dispatch ) =>
 		wpcom.undocumented().createConnection( keyringConnectionId, siteId, externalUserId, { shared: false } )
-			.then( ( response ) => dispatch( {
+			.then( ( connection ) => dispatch( {
 				type: PUBLICIZE_CONNECTION_CREATE,
-				connection: response,
+				connection,
 			} ) )
 			.catch( ( error ) => dispatch( {
 				type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
