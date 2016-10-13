@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component } from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -14,17 +14,18 @@ import { openChat } from 'state/ui/happychat/actions';
 import Button from 'components/button';
 import Gridicon from 'components/gridicon';
 
-const HappychatButton = React.createClass( {
-	onOpenChat: function() {
+class HappychatButton extends Component {
+	onOpenChat = () => {
 		const { onOpenChat } = this.props;
 		if ( viewport.isMobile() ) {
 			// For mobile clients, happychat will always use the page compoent instead of the sidebar
 			page( '/me/chat' );
-			return;
+		} else {
+			onOpenChat();
 		}
-		onOpenChat();
-	},
-	render: function() {
+	}
+
+	render() {
 		const { translate } = this.props;
 		return (
 			<Button compact borderless onClick={ this.onOpenChat }>
@@ -32,6 +33,6 @@ const HappychatButton = React.createClass( {
 			</Button>
 		);
 	}
-} );
+}
 
 export default connect( null, { onOpenChat: openChat } )( localize( HappychatButton ) );
