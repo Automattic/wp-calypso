@@ -22,8 +22,7 @@ import ProductPurchaseFeaturesList from 'blocks/product-purchase-features/produc
 import CurrentPlanHeader from './header';
 import QuerySites from 'components/data/query-sites';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
-import { getPlan } from 'lib/plans';
+import { plansList, PLAN_BUSINESS } from 'lib/plans/constants';
 import QuerySiteDomains from 'components/data/query-site-domains';
 import { getDecoratedSiteDomains, isRequestingSiteDomains } from 'state/sites/domains/selectors';
 import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
@@ -45,7 +44,7 @@ class CurrentPlan extends Component {
 	getHeaderWording( plan ) {
 		const { translate } = this.props;
 
-		const planConstObj = getPlan( plan ),
+		const planConstObj = plansList[ plan ],
 			title = translate( 'Your site is on a %(planName)s plan', {
 				args: {
 					planName: planConstObj.getTitle()
