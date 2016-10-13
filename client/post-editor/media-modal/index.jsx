@@ -213,7 +213,8 @@ module.exports = React.createClass( {
 	onImageExtracted( blob, imageEditorProps ) {
 		const {
 			fileName,
-			site
+			site,
+			resetAllImageEditorState
 		} = imageEditorProps;
 
 		const mimeType = MediaUtils.getMimeType( fileName );
@@ -243,6 +244,8 @@ module.exports = React.createClass( {
 			title: title,
 			mimeType: mimeType
 		} );
+
+		resetAllImageEditorState();
 
 		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
 		this.setView( ModalViews.LIST );

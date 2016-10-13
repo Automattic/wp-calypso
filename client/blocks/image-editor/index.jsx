@@ -92,8 +92,6 @@ const ImageEditor = React.createClass( {
 			const {	onImageExtracted } = this.props;
 
 			onImageExtracted( blob, this.props );
-
-			this.props.resetAllImageEditorState();
 		} );
 	},
 
