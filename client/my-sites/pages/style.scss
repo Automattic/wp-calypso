@@ -90,12 +90,17 @@
 	}
 }
 
-.page__popover-more-info {
+.page__popover-more-info,
+.pages__blog-posts-page__popover-more-info {
 	color: $gray;
 	padding: 4px 16px 8px;
 	font-size: 12px;
 	max-width: 200px;
 	text-align: left;
+}
+
+.pages__blog-posts-page__popover-more-info {
+	padding: 8px 16px;
 }
 
 .pages__blog-posts-page__not-used-label {
