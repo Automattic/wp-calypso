@@ -23,10 +23,10 @@ import {
 	isMonthly
 } from 'lib/products-values';
 import {
-	featuresList,
-	plansList,
+	FEATURES_LIST,
+	PLANS_LIST,
 	PLAN_FREE,
-	PLAN_JETPACK_FREE, 
+	PLAN_JETPACK_FREE,
 	PLAN_PERSONAL
 } from 'lib/plans/constants';
 import { createSitePlanObject } from 'state/sites/plans/assembler';
@@ -44,23 +44,23 @@ export function isFreePlan( plan ) {
 }
 
 export function getPlan( plan ) {
-	return plansList[ plan ];
+	return PLANS_LIST[ plan ];
 }
 
 export function getValidFeatureKeys() {
-	return Object.keys( featuresList );
+	return Object.keys( FEATURES_LIST );
 }
 
 export function isValidFeatureKey( feature ) {
-	return !! featuresList[ feature ];
+	return !! FEATURES_LIST[ feature ];
 }
 
 export function getFeatureByKey( feature ) {
-	return featuresList[ feature ];
+	return FEATURES_LIST[ feature ];
 }
 
 export function getFeatureTitle( feature ) {
-	return invoke( featuresList, [ feature, 'getTitle' ] );
+	return invoke( FEATURES_LIST, [ feature, 'getTitle' ] );
 }
 
 export function getSitePlanSlug( siteID ) {
@@ -75,23 +75,23 @@ export function getSitePlanSlug( siteID ) {
 
 export function canUpgradeToPlan( planKey, site = sitesList.getSelectedSite() ) {
 	const plan = get( site, [ 'plan', 'expired' ], false ) ? PLAN_FREE : get( site, [ 'plan', 'product_slug' ], PLAN_FREE );
-	return get( plansList, [ planKey, 'availableFor' ], () => false )( plan );
+	return get( getPlan( planKey ), 'availableFor', () => false )( plan );
 }
 
 export function getUpgradePlanSlugFromPath( path, siteID ) {
 	const site = siteID ? sitesList.getSite( siteID ) : sitesList.getSelectedSite();
-	return find( Object.keys( plansList ), planKey => (
+	return find( Object.keys( PLANS_LIST ), planKey => (
 		( planKey === path || getPlanPath( planKey ) === path ) &&
 		canUpgradeToPlan( planKey, site )
 	) );
 }
 
 export function getPlanPath( plan ) {
-	return get( plansList, [ plan, 'getPathSlug' ], () => undefined )();
+	return get( getPlan( plan ), 'getPathSlug', () => undefined )();
 }
 
 export function planHasFeature( plan, feature ) {
-	return includes( get( featuresList, [ feature, 'plans' ] ), plan );
+	return includes( get( getPlan( plan ), 'getFeatures', () => [] )(), feature );
 }
 
 export function hasFeature( feature, siteID ) {
@@ -205,8 +205,8 @@ export function plansLink( url, site, intervalType ) {
 }
 
 export function applyTestFiltersToPlansList( planName ) {
-	const filteredPlanConstantObj = { ...plansList[ planName ] };
-	const filteredPlanFeaturesConstantList = plansList[ planName ].getFeatures();
+	const filteredPlanConstantObj = { ...getPlan( planName ) };
+	const filteredPlanFeaturesConstantList = getPlan( planName ).getFeatures();
 
 	// these becomes no-ops when we removed some of the abtest overrides, but
 	// we're leaving the code in place for future tests
