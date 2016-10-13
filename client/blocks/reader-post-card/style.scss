@@ -25,6 +25,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 				padding-left: 205px;
 			}
 
+			@include breakpoint( "<960px" ) {
+				padding-left: 205px;
+			}
+
 			@media #{$reader-post-card-breakpoint-medium} {
 				padding-left: 0;
 			}
