@@ -19,7 +19,7 @@ import {
 	isFetchingStoredCards
 } from 'state/stored-cards/selectors';
 import QueryStoredCards from 'components/data/query-stored-cards';
-import { addCreditCard } from 'me/payment-methods/paths';
+import { addCreditCard } from 'me/purchases/paths';
 import SectionHeader from 'components/section-header';
 
 class CreditCards extends Component {

@@ -24,7 +24,7 @@ module.exports = React.createClass( {
 		const emptyTableText = this.translate(
 			'The upgrades on your account will not renew automatically. ' +
 			'To manage your upgrades or enable Auto Renew visit {{link}}My Upgrades{{/link}}.', {
-				components: { link: <a href="/purchases" /> }
+				components: { link: <a href={ purchasesPaths.list() } /> }
 			}
 		);
 		const noFilterResultsText = this.translate( 'No upcoming charges found.' );

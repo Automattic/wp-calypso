@@ -18,6 +18,7 @@ import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake' ;
 import Main from 'components/main';
 import * as titles from 'me/payment-methods/titles';
+import purchasesPaths from 'me/purchases/paths';
 
 class AddCreditCard extends Component {
 	static propTypes = {
@@ -30,7 +31,7 @@ class AddCreditCard extends Component {
 	}
 
 	goToBillingHistory() {
-		page( '/me/billing' );
+		page( purchasesPaths.billingHistory() );
 	}
 
 	recordFormSubmitEvent() {

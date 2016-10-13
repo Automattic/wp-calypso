@@ -54,14 +54,14 @@ sections = [
 	},
 	{
 		name: 'purchases',
-		paths: [ '/purchases' ],
+		paths: [ '/me/purchases' ],
 		module: 'me/purchases',
 		group: 'me',
 		secondary: true
 	},
 	{
 		name: 'billing',
-		paths: [ '/me/billing' ],
+		paths: [ '/me/purchases/billing' ],
 		module: 'me/billing-history',
 		group: 'me',
 		secondary: true
@@ -223,7 +223,7 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 if ( config.isEnabled( 'manage/payment-methods' ) ) {
 	sections.push( {
 		name: 'payment-methods',
-		paths: [ '/payment-methods/add-credit-card' ],
+		paths: [ '/me/purchases/add-credit-card' ],
 		module: 'me/payment-methods',
 		group: 'me',
 		secondary: true

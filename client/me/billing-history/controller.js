@@ -36,7 +36,7 @@ export default {
 	transaction( context ) {
 		const Receipt = require( './receipt' );
 		const billingData = require( 'lib/billing-history-data' );
-		const transactionId = context.params.transaction_id;
+		const transactionId = context.params.transactionId;
 		const basePath = route.sectionify( context.path );
 
 		// Initialize billing data

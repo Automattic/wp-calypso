@@ -1,5 +1,17 @@
 function list() {
-	return '/purchases';
+	return '/me/purchases';
+}
+
+function addCreditCard() {
+	return list() + '/add-credit-card';
+}
+
+function billingHistory() {
+	return list() + '/billing';
+}
+
+function billingHistoryReceipt( transactionId = ':transaction_id' ) {
+	return billingHistory() + `/${ transactionId }`;
 }
 
 function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
@@ -28,6 +40,9 @@ function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
 
 export default {
 	addCardDetails,
+	addCreditCard,
+	billingHistory,
+	billingHistoryReceipt,
 	cancelPrivateRegistration,
 	cancelPurchase,
 	confirmCancelDomain,
