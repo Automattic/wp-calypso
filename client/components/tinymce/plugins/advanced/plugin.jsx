@@ -10,33 +10,37 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PreferencesStore from 'lib/preferences/store';
-import PreferencesActions from 'lib/preferences/actions';
 import { isWithinBreakpoint } from 'lib/viewport';
 import Gridicon from 'components/gridicon';
+import { savePreference, fetchPreferences } from 'state/preferences/actions';
+import { getPreference, isFetchingPreferences } from 'state/preferences/selectors';
 
 function advanced( editor ) {
-	let menuButton, updateVisibleState;
-
-	function isAdvancedVisible() {
-		return !! PreferencesStore.get( 'editorAdvancedVisible' );
+	const store = editor.getParam( 'redux_store' );
+	if ( ! store ) {
+		return;
 	}
 
-	function toggleAdvancedVisible() {
-		PreferencesActions.set( 'editorAdvancedVisible', ! isAdvancedVisible() );
+	const { dispatch, getState, subscribe } = store;
+
+	function getVisibleState() {
+		return getPreference( getState(), 'editorAdvancedVisible' );
 	}
 
-	updateVisibleState = throttle( function() {
+	let isAdvancedVisible = getVisibleState();
+	let menuButton;
+
+	const updateVisibleState = throttle( function() {
 		var toolbars = editor.theme.panel.find( '.toolbar:not(.menubar)' ),
 			isSmallViewport = isWithinBreakpoint( '<960px' ),
 			containerPadding = 0;
 
 		toolbars.each( function( toolbar, i ) {
-			var isToolbarVisible = isSmallViewport || i === 0 || isAdvancedVisible();
+			var isToolbarVisible = isSmallViewport || i === 0 || isAdvancedVisible;
 
 			toolbar.visible( isToolbarVisible );
 
-			if ( isAdvancedVisible ) {
+			if ( isToolbarVisible ) {
 				if ( isSmallViewport ) {
 					containerPadding = Math.max( containerPadding, toolbar.getEl().clientHeight );
 				} else {
@@ -50,7 +54,7 @@ function advanced( editor ) {
 		} );
 
 		if ( menuButton ) {
-			menuButton.active( isAdvancedVisible() );
+			menuButton.active( isAdvancedVisible );
 		}
 	}, 500 );
 
@@ -74,10 +78,14 @@ function advanced( editor ) {
 		}
 	} );
 
-	editor.addCommand( 'WPCOM_ToggleAdvancedVisible', toggleAdvancedVisible );
+	editor.addCommand( 'WPCOM_ToggleAdvancedVisible', () => {
+		dispatch( savePreference( 'editorAdvancedVisible', ! isAdvancedVisible ) );
+	} );
 
 	editor.on( 'init', function() {
-		PreferencesActions.fetch();
+		if ( ! isFetchingPreferences( getState() ) ) {
+			dispatch( fetchPreferences() );
+		}
 	} );
 
 	editor.on( 'preInit', function() {
@@ -88,7 +96,13 @@ function advanced( editor ) {
 
 	window.addEventListener( 'resize', updateVisibleState );
 
-	PreferencesStore.on( 'change', function() {
+	subscribe( () => {
+		const nextVisible = getVisibleState();
+		if ( nextVisible === isAdvancedVisible ) {
+			return;
+		}
+
+		isAdvancedVisible = nextVisible;
 		updateVisibleState();
 	} );
 }

@@ -50,6 +50,9 @@ export const remoteValuesSchema = {
 			type: 'number',
 			minimum: 0,
 			maximum: 1
+		},
+		editorAdvancedVisible: {
+			type: 'boolean'
 		}
 	}
 };
