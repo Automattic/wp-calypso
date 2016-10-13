@@ -51,7 +51,7 @@ const ImageEditor = React.createClass( {
 		return {
 			media: null,
 			onImageExtracted: noop,
-			onImageEditorCancel: noop
+			onImageEditorCancel: null
 		};
 	},
 
@@ -121,7 +121,8 @@ const ImageEditor = React.createClass( {
 	render() {
 		const {
 			className,
-			siteId
+			siteId,
+			onImageEditorCancel
 		} = this.props;
 
 		const classes = classNames(
@@ -143,7 +144,7 @@ const ImageEditor = React.createClass( {
 						/>
 						<ImageEditorToolbar />
 						<ImageEditorButtons
-							onCancel={ this.onCancel }
+							onCancel={ onImageEditorCancel && this.onCancel }
 							onDone={ this.onDone }
 						/>
 					</div>

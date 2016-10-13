@@ -46,12 +46,14 @@ class ImageEditorButtons extends Component {
 
 		return (
 			<div className="image-editor__buttons">
-				<Button
-					className="image-editor__buttons-button"
-					onClick={ onCancel }
-				>
-					{ translate( 'Cancel' ) }
-				</Button>
+				{ onCancel &&
+					<Button
+						className="image-editor__buttons-button"
+						onClick={ onCancel }
+					>
+						{ translate( 'Cancel' ) }
+					</Button>
+				}
 				<Button
 					className="image-editor__buttons-button"
 					disabled={ ! hasChanges }
