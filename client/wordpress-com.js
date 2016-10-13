@@ -54,7 +54,7 @@ sections = [
 	},
 	{
 		name: 'purchases',
-		paths: [ '/me/purchases' ],
+		paths: [ '/me/purchases', '/purchases', '/me/billing', '/payment-methods/add-credit-card' ],
 		module: 'me/purchases',
 		group: 'me',
 		secondary: true

@@ -13,6 +13,20 @@ import controller from './controller';
 import paths from './paths';
 
 export default function() {
+	if ( config.isEnabled( 'manage/payment-methods' ) ) {
+		page(
+			paths.addCreditCard(),
+			meController.sidebar,
+			controller.addCreditCard
+		);
+
+		// redirect legacy urls
+		page(
+			'/payment-methods/add-credit-card',
+			() => page.redirect( paths.addCreditCard() )
+		);
+	}
+
 	if ( config.isEnabled( 'me/billing-history' ) ) {
 		page(
 			paths.billingHistory(),
@@ -25,7 +39,31 @@ export default function() {
 			meController.sidebar,
 			billingController.transaction
 		);
+
+		// redirect legacy urls
+		page(
+			'/me/billing',
+			() => page.redirect( paths.billingHistory() )
+		);
+		page(
+			'/me/billing/:receiptId',
+			( { params: { receiptId } } ) => page.redirect( paths.billingHistoryReceipt( receiptId ) )
+		);
 	}
+
+	page(
+		paths.list(),
+		meController.sidebar,
+		controller.noSitesMessage,
+		controller.list
+	);
+
+	page(
+		paths.managePurchase(),
+		meController.sidebar,
+		controller.noSitesMessage,
+		controller.managePurchase
+	);
 
 	page(
 		paths.cancelPurchase(),
@@ -55,14 +93,6 @@ export default function() {
 		controller.addCardDetails
 	);
 
-	if ( config.isEnabled( 'manage/payment-methods' ) ) {
-		page(
-			paths.addCreditCard(),
-			meController.sidebar,
-			controller.addCreditCard
-		);
-	}
-
 	page(
 		paths.editCardDetails(),
 		meController.sidebar,
@@ -70,17 +100,33 @@ export default function() {
 		controller.editCardDetails
 	);
 
+	// redirect legacy urls
 	page(
-		paths.list(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.list
+		'/purchases',
+		() => page.redirect( paths.list() )
 	);
-
 	page(
-		paths.managePurchase(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.managePurchase
+		'/purchases/:siteName/:purchaseId',
+		( { params: { siteName, purchaseId } } ) => page.redirect( paths.managePurchase( siteName, purchaseId ) )
+	);
+	page(
+		'/purchases/:siteName/:purchaseId/cancel',
+		( { params: { siteName, purchaseId } } ) => page.redirect( paths.cancelPurchase( siteName, purchaseId ) )
+	);
+	page(
+		'/purchases/:siteName/:purchaseId/cancel-private-registration',
+		( { params: { siteName, purchaseId } } ) => page.redirect( paths.cancelPrivateRegistration( siteName, purchaseId ) )
+	);
+	page(
+		'/purchases/:siteName/:purchaseId/confirm-cancel-domain',
+		( { params: { siteName, purchaseId } } ) => page.redirect( paths.confirmCancelDomain( siteName, purchaseId ) )
+	);
+	page(
+		'/purchases/:siteName/:purchaseId/payment/add',
+		( { params: { siteName, purchaseId } } ) => page.redirect( paths.addCardDetails( siteName, purchaseId ) )
+	);
+	page(
+		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
+		( { params: { siteName, purchaseId, cardId } } ) => page.redirect( paths.editCardDetails( siteName, purchaseId, cardId ) )
 	);
 }
