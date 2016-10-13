@@ -21,10 +21,10 @@ export function requestKeyringConnections() {
 		} );
 
 		return wpcom.undocumented().mekeyringConnections()
-			.then( ( response ) => {
+			.then( ( { connections } ) => {
 				dispatch( {
 					type: KEYRING_CONNECTIONS_RECEIVE,
-					connections: response.connections,
+					connections,
 				} );
 				dispatch( {
 					type: KEYRING_CONNECTIONS_REQUEST_SUCCESS,
