@@ -220,16 +220,6 @@ if ( config.isEnabled( 'manage/drafts' ) ) {
 	} );
 }
 
-if ( config.isEnabled( 'manage/payment-methods' ) ) {
-	sections.push( {
-		name: 'payment-methods',
-		paths: [ '/me/purchases/add-credit-card' ],
-		module: 'me/payment-methods',
-		group: 'me',
-		secondary: true
-	} );
-}
-
 if ( config.isEnabled( 'reader' ) ) {
 	// this MUST be the first section for /read paths so subsequent sections under /read can override settings
 	sections.push( {

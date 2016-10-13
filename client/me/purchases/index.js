@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import config from 'config';
 import page from 'page';
 
 /**
@@ -38,6 +39,14 @@ export default function() {
 		controller.noSitesMessage,
 		controller.addCardDetails
 	);
+
+	if ( config.isEnabled( 'manage/payment-methods' ) ) {
+		page(
+			paths.addCreditCard(),
+			meController.sidebar,
+			controller.addCreditCard
+		);
+	}
 
 	page(
 		paths.editCardDetails(),
