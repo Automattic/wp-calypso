@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { defer, last } from 'lodash';
+import { defer } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,7 +13,7 @@ import AllTours from 'layout/guided-tours/config';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
-import { getActionLog } from 'state/ui/action-log/selectors';
+import { getLastAction } from 'state/ui/action-log/selectors';
 import { getSectionName, isSectionLoading } from 'state/ui/selectors';
 import { nextGuidedTourStep, quitGuidedTour } from 'state/ui/guided-tours/actions';
 
@@ -77,8 +77,7 @@ export default connect( ( state ) => ( {
 	isSectionLoading: isSectionLoading( state ),
 	tourState: getGuidedTourState( state ),
 	isValid: ( when ) => !! when( state ),
-	// TODO(mcsf): make it a cached selector:
-	lastAction: last( getActionLog( state ) ),
+	lastAction: getLastAction( state ),
 } ), {
 	nextGuidedTourStep,
 	quitGuidedTour,
