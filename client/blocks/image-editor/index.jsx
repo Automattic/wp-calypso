@@ -78,9 +78,12 @@ const ImageEditor = React.createClass( {
 			src = MediaUtils.url( media, {
 				photon: site && ! site.is_private
 			} );
+
 			fileName = media.file || path.basename( src );
-			mimeType = MediaUtils.getMimeType( media );
-			title = media.title;
+
+			mimeType = MediaUtils.getMimeType( media ) || mimeType;
+
+			title = media.title || title;
 		}
 
 		this.props.resetImageEditorState();
