@@ -95,18 +95,17 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
 /**
  * Triggers a network request to update a Publicize connection for a specific site.
  *
- * @param  {Object} connection         Connections to be removed.
- * @param  {Number} connection.site_ID Site ID for which the connection is deleted.
- * @param  {Number} connection.ID      ID of the connection to be deleted.
- * @param  {Object} attributes         The update request body.
- * @return {Function}                  Action thunk
+ * @param  {Number} siteId       Site ID for which the connection is deleted.
+ * @param  {Number} connectionId ID of the connection to be deleted.
+ * @param  {Object} attributes   The update request body.
+ * @return {Function}            Action thunk
  */
-export function updateSiteConnection( connection, attributes ) {
+export function updateSiteConnection( siteId, connectionId, attributes ) {
 	return ( dispatch ) =>
-		wpcom.undocumented().updateConnection( connection.site_ID, connection.ID, attributes )
-			.then( ( response ) => dispatch( {
+		wpcom.undocumented().updateConnection( siteId, connectionId, attributes )
+			.then( ( connection ) => dispatch( {
 				type: PUBLICIZE_CONNECTION_UPDATE,
-				connection: response,
+				connection,
 			} ) )
 			.catch( ( error ) => dispatch( {
 				type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,

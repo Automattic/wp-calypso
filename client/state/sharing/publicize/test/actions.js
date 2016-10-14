@@ -151,7 +151,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch update action when request completes', () => {
-			updateSiteConnection( { ID: 2, site_ID: 2916284 }, attributes )( spy ).then( () => {
+			updateSiteConnection( 2916284, 2, attributes )( spy ).then( () => {
 				const action = spy.getCall( 0 ).args[ 0 ];
 
 				expect( action.type ).to.equal( PUBLICIZE_CONNECTION_UPDATE );
@@ -160,7 +160,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			updateSiteConnection( { ID: 2, site_ID: 77203074 }, attributes )( spy ).then( () => {
+			updateSiteConnection( 77203074, 2, attributes )( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
 					error: sinon.match( { message: 'An active access token must be used to access publicize connections.' } )
