@@ -79,10 +79,10 @@ const SiteSelectorAddSite = React.createClass( {
 						context={ this.refs && this.refs.popoverMenuTarget }
 						>
 						<PopoverMenuItem href={ this.getAddNewSiteUrl() } onClick={ this.recordPopoverAddNewSite }>
-							{ this.translate( 'Start a new WordPress.com site' ) }
+							{ this.translate( 'New WordPress.com site' ) }
 						</PopoverMenuItem>
 						<PopoverMenuItem href="/jetpack/connect" onClick={ this.recordPopoverAddJetpackSite }>
-							{ this.translate( 'Add a self-hosted WordPress site' ) }
+							{ this.translate( 'Self-hosted WordPress site' ) }
 						</PopoverMenuItem>
 					</PopoverMenu>
 
