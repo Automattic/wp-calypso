@@ -1,66 +1,56 @@
+$avatar-size: 24px;
+$avatar-margin: 10px;
+
 .mentions__suggestions {
-	width: 40%;
+	width: 70%;
 
-	img {
-		border-radius: 50%;
-		width: 24px;
-		height: 24px;
-		float: left;
-		margin: 0 10px 0 0;
+	@include breakpoint( ">660px" ) {
+		width: 40%;
 	}
+}
 
-	strong {
-		font-weight: 400;
-		background: rgba( $blue-light, 0.25 );
+.mentions__avatar {
+	border-radius: 50%;
+	width: $avatar-size;
+	height: $avatar-size;
+	float: left;
+	margin: 0 $avatar-margin 0 0;
+}
+
+.mentions__username {
+	float: left;
+	display: inline-block;
+	font-weight: 400;
+	padding-top: 10px;
+	margin: -10px 0 0 0;
+
+	@include breakpoint( ">960px" ) {
+		padding-right: 10px;
+		padding-bottom: 10px;
 	}
+}
 
-	.mentions__username {
-		float: left;
-		display: inline-block;
-		font-weight: 400;
-		padding: 10px 0;
-		margin: -10px 0 0 0;
-	}
+.mentions__fullname {
+	float: left;
+	clear: left;
+	margin-left: $avatar-size + $avatar-margin;
+	font-size: 11px;
+	font-weight: 400;
+	display: inline-block;
 
-	small {
-		font-size: 11px;
-		font-weight: 400;
+	@include breakpoint( ">960px" ) {
 		float: right;
-		display: inline-block;
+		clear: none;
 	}
+}
+
+.mentions__highlight {
+	font-weight: 400;
+	background: rgba( $blue-light, 0.25 );
 }
 
 .rtl {
-	.mentions__suggestions {
-		.mentions__suggestion {
-			direction: ltr; // required to get the '@' on the correct side
-		}
-
-		img {
-			float: right;
-			margin: 0 0 0 10px;
-		}
-
-		.username {
-			float: left;
-		}
-
-		&.right {
-			img {
-				float: left;
-				margin: 0 10px 0 0;
-			}
-
-			.username {
-				float: right;
-			}
-		}
-	}
-}
-
-@media (max-width: 400px) {
-	.mentions__suggestions {
-		width: 100%;
-		height: 100%;
+	.mentions__suggestion {
+		direction: ltr; // required to get the '@' on the correct side
 	}
 }

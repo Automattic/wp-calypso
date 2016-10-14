@@ -43,7 +43,7 @@ const Suggestion = React.createClass( {
 				let item = matches[ i ];
 
 				if ( textToHighlight.toLowerCase() === item.toLowerCase() && ! highlighted ) {
-					item = <strong key={ i }>{ matches[ i ] }</strong>;
+					item = <strong className="mentions__highlight" key={ i }>{ matches[ i ] }</strong>;
 					highlighted = true;
 				}
 
@@ -65,9 +65,9 @@ const Suggestion = React.createClass( {
 
 		return (
 			<div className="mentions__suggestion">
-				<img src={ avatarUrl } />
+				<img className="mentions__avatar" src={ avatarUrl } />
 				<span className="mentions__username">{ highlightedUsername }</span>
-				<small>{ highlightedFullName }</small>
+				<small className="mentions__fullname">{ highlightedFullName }</small>
 			</div>
 		);
 	}
