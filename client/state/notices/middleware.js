@@ -20,6 +20,7 @@ import {
 	POST_RESTORE_FAILURE,
 	POST_RESTORE_SUCCESS,
 	POST_SAVE_SUCCESS,
+	PUBLICIZE_CONNECTION_CREATE,
 	SITE_FRONT_PAGE_SET_FAILURE
 } from 'state/action-types';
 
@@ -86,6 +87,13 @@ export function onPostSaveSuccess( dispatch, action ) {
 	}
 }
 
+export const onPublicizeConnectionCreate = ( dispatch, action ) => dispatch(
+	successNotice( translate( 'The %(service)s account was successfully connected.', {
+		args: { service: action.connection.label },
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
 /**
  * Handler action type mapping
  */
@@ -102,6 +110,7 @@ export const handlers = {
 	[ POST_RESTORE_FAILURE ]: onPostRestoreFailure,
 	[ POST_RESTORE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully restored' ) ),
 	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
+	[ PUBLICIZE_CONNECTION_CREATE ]: onPublicizeConnectionCreate,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) )
 };
