@@ -14,10 +14,10 @@ import Badge from 'components/badge';
 
 class Desktop extends React.Component {
 	getStylesheetUrl() {
-		const { isDebug, urls } = this.props;
+		const { isDebug, isRtl, urls } = this.props;
 		let stylesheet = 'style.css';
 
-		if ( config( 'rtl' ) ) {
+		if ( isRtl ) {
 			stylesheet = 'style-rtl.css';
 		} else if ( config( 'env' ) === 'development' || isDebug ) {
 			stylesheet = 'style-debug.css';
@@ -30,19 +30,20 @@ class Desktop extends React.Component {
 		const {
 			app,
 			i18nLocaleScript,
+			isRtl,
 			lang,
 		} = this.props;
 
 		return (
 			<html lang={ lang }
-				dir={ config( 'rtl' ) ? 'rtl' : 'ltr' }
+				dir={ isRtl ? 'rtl' : 'ltr' }
 				className={ classNames( 'is-desktop', { 'is-fluid-with': !! config.isEnabled( 'fluid-width' ) } ) }>
 				<Head title="WordPress.com" stylesheetUrl={ this.getStylesheetUrl() }>
 					<link rel="stylesheet" href="/desktop/wordpress-desktop.css" />
 					<script src="/calypso/build.js" />
 					<script src="/desktop/desktop-app.js" />
 				</Head>
-				<body className={ config( 'rtl' ) ? 'rtl' : null }>
+				<body className={ isRtl ? 'rtl' : null }>
 					<div id="wpcom" className="wpcom-site">
 						<div className="wpcom-site__logo noticon noticon-wordpress" />
 					</div>

@@ -14,10 +14,10 @@ import Badge from 'components/badge';
 
 class Document extends React.Component {
 	getStylesheetUrl() {
-		const { isDebug, urls } = this.props;
+		const { isDebug, isRtl, urls } = this.props;
 		let stylesheet = 'style.css';
 
-		if ( config( 'rtl' ) ) {
+		if ( isRtl ) {
 			stylesheet = 'style-rtl.css';
 		} else if ( config( 'env' ) === 'development' || isDebug ) {
 			stylesheet = 'style-debug.css';
@@ -35,6 +35,7 @@ class Document extends React.Component {
 			i18nLocaleScript,
 			initialReduxState,
 			isDebug,
+			isRtl,
 			jsFile,
 			lang,
 			renderedLayout,
@@ -45,7 +46,7 @@ class Document extends React.Component {
 
 		return (
 			<html lang={ lang }
-				dir={ config( 'rtl' ) ? 'rtl' : 'ltr' }
+				dir={ isRtl ? 'rtl' : 'ltr' }
 				className={ classNames( { 'is-fluid-with': !! config.isEnabled( 'fluid-width' ) } ) }>
 				<Head title={ head.title } stylesheetUrl={ this.getStylesheetUrl() }>
 					{ head.metas.map( ( { name, property, content }, i ) => (
@@ -55,7 +56,7 @@ class Document extends React.Component {
 						<link rel={ rel } href={ href } key={ 'link-' + i } />
 					) ) }
 				</Head>
-				<body className={ config( 'rtl' ) ? 'rtl' : null }>
+				<body className={ isRtl ? 'rtl' : null }>
 					{ renderedLayout
 						? <div id="wpcom" className="wpcom-site" dangerouslySetInnerHTML={ { __html: // eslint-disable-line react/no-danger
 							renderedLayout
