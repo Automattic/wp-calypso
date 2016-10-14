@@ -7,7 +7,10 @@ import { Provider as ReduxProvider } from 'react-redux';
 import ReactDomServer from 'react-dom/server';
 import mockery from 'mockery';
 import noop from 'lodash/noop';
-import { receiveThemeDetails } from 'state/themes/actions';
+import {
+	receiveThemeDetails,
+	receiveThemeDetailsFailure,
+} from 'state/themes/actions';
 
 /**
  * Internal dependencies
@@ -44,7 +47,7 @@ describe( 'main', function() {
 			} );
 
 			// longer timeout for compilation of main.jsx
-			this.timeout( 3000 );
+			this.timeout( 4000 );
 			this.ThemeSheetComponent = require( '../main' );
 
 			this.themeData = {
@@ -67,7 +70,11 @@ describe( 'main', function() {
 					<this.ThemeSheetComponent id={ 'twentysixteen' } />
 				</ReduxProvider>
 			);
-			assert.doesNotThrow( ReactDomServer.renderToString.bind( ReactDomServer, layout ) );
+			let markup;
+			assert.doesNotThrow( () => {
+				markup = ReactDomServer.renderToString( layout );
+			} );
+			assert.isTrue( markup.includes( 'theme__sheet' ) );
 		} );
 
 		it( "doesn't throw an exception with theme data", function() {
@@ -78,7 +85,26 @@ describe( 'main', function() {
 					<this.ThemeSheetComponent id={ 'twentysixteen' } />
 				</ReduxProvider>
 			);
-			assert.doesNotThrow( ReactDomServer.renderToString.bind( ReactDomServer, layout ) );
+			let markup;
+			assert.doesNotThrow( () => {
+				markup = ReactDomServer.renderToString( layout );
+			} );
+			assert.isTrue( markup.includes( 'theme__sheet' ) );
+		} );
+
+		it( "doesn't throw an exception with invalid theme data", function() {
+			const store = createReduxStore();
+			store.dispatch( receiveThemeDetailsFailure( 'invalidthemeid', 'not found' ) );
+			const layout = (
+				<ReduxProvider store={ store }>
+					<this.ThemeSheetComponent id={ 'invalidthemeid' } />
+				</ReduxProvider>
+			);
+			let markup;
+			assert.doesNotThrow( () => {
+				markup = ReactDomServer.renderToString( layout );
+			} );
+			assert.isTrue( markup.includes( 'empty-content' ) );
 		} );
 	} );
 } );
