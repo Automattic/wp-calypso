@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import debounce from 'lodash/debounce';
 import noop from 'lodash/noop';
 import i18n from 'i18n-calypso';
+import { Editor, EditorState } from 'draft-js';
 
 /**
  * Internal dependencies
@@ -70,7 +71,8 @@ const Search = React.createClass( {
 		return {
 			keyword: this.props.initialValue || '',
 			isOpen: !! this.props.isOpen,
-			hasFocus: false
+			hasFocus: false,
+			editorState: EditorState.createEmpty(),
 		};
 	},
 
@@ -124,7 +126,6 @@ const Search = React.createClass( {
 	},
 
 	componentDidUpdate: function( prevProps, prevState ) {
-		this.scrollOverlay();
 		// Focus if the search box was opened or the autoFocus prop has changed
 		if (
 			( this.state.isOpen && ! prevState.isOpen ) ||
@@ -164,14 +165,6 @@ const Search = React.createClass( {
 		}
 	},
 
-	scrollOverlay: function() {
-		this.refs.overlay && window.requestAnimationFrame( () => {
-			if ( this.refs.overlay && this.refs.searchInput ) {
-				this.refs.overlay.scrollLeft = this.refs.searchInput.scrollLeft;
-			}
-		} );
-	},
-
 	focus: function() {
 		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
 		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
@@ -183,7 +176,7 @@ const Search = React.createClass( {
 	},
 
 	getCurrentSearchValue: function() {
-		return ReactDom.findDOMNode( this.refs.searchInput ).value;
+		return ReactDom.findDOMNode( this.refs.searchInput ).innerText;
 	},
 
 	clear: function() {
@@ -198,9 +191,9 @@ const Search = React.createClass( {
 		this.setState( { hasFocus: false } );
 	},
 
-	onChange: function() {
+	onChange: function( editorState ) {
 		this.setState( {
-			keyword: this.getCurrentSearchValue()
+			editorState
 		} );
 	},
 
@@ -253,11 +246,9 @@ const Search = React.createClass( {
 		if ( event.key === 'Escape' ) {
 			this.closeSearch( event );
 		}
-		this.scrollOverlay();
 	},
 
 	keyDown: function( event ) {
-		this.scrollOverlay();
 		if ( event.key === 'Escape' && event.target.value === '' ) {
 			this.closeSearch( event );
 		}
@@ -324,7 +315,8 @@ const Search = React.createClass( {
 					<Gridicon icon="search" className="search__open-icon" />
 				</div>
 				<div className={ fadeDivClass }>
-					<input
+					<Editor
+						editorState={ this.state.editorState }
 						type="search"
 						id={ 'search-component-' + this.state.instanceId }
 						className={ inputClass }
@@ -342,9 +334,7 @@ const Search = React.createClass( {
 						autoCapitalize="none"
 						dir={ this.props.dir }
 						maxLength={ this.props.maxLength }
-						{ ...autocorrect }
-					/>
-					{ this.props.overlayStyling && this.renderStylingDiv() }
+						{ ...autocorrect } />
 				</div>
 				{ this.closeButton() }
 			</div>
