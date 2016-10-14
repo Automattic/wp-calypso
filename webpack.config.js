@@ -87,11 +87,7 @@ const webpackConfig = {
 			}
 		} ),
 		new webpack.optimize.OccurenceOrderPlugin( true ),
-		new webpack.IgnorePlugin( /^props$/ ),
-		new webpack.DllReferencePlugin( {
-			context: path.join( __dirname, 'client' ),
-			manifest: require( './build/dll/vendor.' + bundleEnv + '-manifest.json' )
-		} )
+		new webpack.IgnorePlugin( /^props$/ )
 	],
 	externals: [ 'electron' ]
 };
@@ -99,6 +95,12 @@ const webpackConfig = {
 if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.output.filename = '[name].js';
 } else {
+	webpackConfig.plugins.push(
+		new webpack.DllReferencePlugin( {
+			context: path.join( __dirname, 'client' ),
+			manifest: require( './build/dll/vendor.' + bundleEnv + '-manifest.json' )
+		} )
+	);
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
 		children: true,
 		minChunks: Math.floor( sectionCount * 0.25 ),
