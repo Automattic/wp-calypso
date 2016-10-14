@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { last } from 'lodash';
+import { defer, last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,9 +23,11 @@ class GuidedTours extends Component {
 	}
 
 	next = ( tour, nextStepName ) => {
-		this.props.nextGuidedTourStep( {
-			stepName: nextStepName,
-			tour: tour,
+		defer( () => {
+			this.props.nextGuidedTourStep( {
+				stepName: nextStepName,
+				tour: tour,
+			} );
 		} );
 	}
 
