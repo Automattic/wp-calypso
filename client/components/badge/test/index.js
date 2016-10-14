@@ -21,12 +21,20 @@ describe( 'Badge', function() {
 		} );
 	} );
 
+	context( 'with environment set to desktop', function() {
+		const wrapper = shallow( <BadgeBase env="desktop" /> );
+
+		it( 'should return null', function() {
+			expect( wrapper.type() ).to.be.null;
+		} );
+	} );
+
 	context( 'with environment set to stage', function() {
 		const element = <BadgeBase env="stage" />;
 		const wrapper = shallow( element );
 
-		it( 'should render a <div> with classes "environment" and "is-tests"', function() {
-			expect( wrapper.find( 'div.environment.is-tests' ) ).to.have.length( 1 );
+		it( 'should not render a <div> with classes "environment" and "is-tests"', function() {
+			expect( wrapper.find( 'div.environment.is-tests' ) ).to.have.length( 0 );
 		} );
 
 		it( 'should not render a BranchName component', function() {
@@ -49,7 +57,7 @@ describe( 'Badge', function() {
 
 		it( 'should renderToStaticMarkup() successfully', function() {
 			const markup = renderToStaticMarkup( element );
-			expect( markup ).to.equal( '<div class="environment-badge"><div class="environment is-tests"></div><span class="environment is-staging">staging</span><a href="https://github.com/Automattic/wp-calypso/issues/" title="Report an issue" target="_blank" rel="noopener noreferrer" class="bug-report"></a></div>' );
+			expect( markup ).to.equal( '<div class="environment-badge"><span class="environment is-staging">staging</span><a href="https://github.com/Automattic/wp-calypso/issues/" title="Report an issue" target="_blank" rel="noopener noreferrer" class="bug-report"></a></div>' );
 		} );
 	} );
 
@@ -57,8 +65,8 @@ describe( 'Badge', function() {
 		const element = <BadgeBase env="horizon" />;
 		const wrapper = shallow( element );
 
-		it( 'should render a <div> with classes "environment" and "is-tests"', function() {
-			expect( wrapper.find( 'div.environment.is-tests' ) ).to.have.length( 1 );
+		it( 'should not render a <div> with classes "environment" and "is-tests"', function() {
+			expect( wrapper.find( 'div.environment.is-tests' ) ).to.have.length( 0 );
 		} );
 
 		it( 'should not render a BranchName component', function() {
@@ -81,12 +89,12 @@ describe( 'Badge', function() {
 
 		it( 'should renderToStaticMarkup() successfully', function() {
 			const markup = renderToStaticMarkup( element );
-			expect( markup ).to.equal( '<div class="environment-badge"><div class="environment is-tests"></div><span class="environment is-feedback">feedback</span><a href="https://horizonfeedback.wordpress.com/" title="Report an issue" target="_blank" rel="noopener noreferrer" class="bug-report"></a></div>' );
+			expect( markup ).to.equal( '<div class="environment-badge"><span class="environment is-feedback">feedback</span><a href="https://horizonfeedback.wordpress.com/" title="Report an issue" target="_blank" rel="noopener noreferrer" class="bug-report"></a></div>' );
 		} );
 	} );
 
-	context( 'with environment set to wpcalypso', function() {
-		const element = <BadgeBase env="wpcalypso" />;
+	context( 'with environment set to wpcalypso and testHelper set to true', function() {
+		const element = <BadgeBase env="wpcalypso" testHelper={ true } />;
 		const wrapper = shallow( element );
 
 		it( 'should render a <div> with classes "environment" and "is-tests"', function() {
@@ -117,8 +125,8 @@ describe( 'Badge', function() {
 		} );
 	} );
 
-	context( 'with environment set to development', function() {
-		const element = <BadgeBase env="development" />;
+	context( 'with environment set to development and testHelper set to true', function() {
+		const element = <BadgeBase env="development" testHelper={ true } />;
 		const wrapper = shallow( element );
 
 		it( 'should render a <div> with classes "environment" and "is-tests"', function() {

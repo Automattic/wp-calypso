@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { execSync } from 'child_process';
 
 /**
@@ -78,7 +78,7 @@ export class BadgeBase extends React.Component {
 	}
 
 	render() {
-		const { env } = this.props;
+		const { env, testHelper } = this.props;
 
 		if ( ! this.badge ) {
 			return null;
@@ -86,7 +86,7 @@ export class BadgeBase extends React.Component {
 
 		return (
 			<div className="environment-badge">
-				{ config.isEnabled( 'dev/test-helper' ) && <div className="environment is-tests" /> }
+				{ testHelper && <div className="environment is-tests" /> }
 				{ env === 'development' && <BranchName /> }
 				{ this.devDocs && <DevDocsLink /> }
 				<span className={ 'environment is-' + this.badge }>
@@ -98,8 +98,17 @@ export class BadgeBase extends React.Component {
 	}
 }
 
+BadgeBase.propTypes = {
+	env: PropTypes.string.isRequired,
+	testHelper: PropTypes.bool
+};
+
+BadgeBase.defaultProps = {
+	testHelper: false
+};
+
 const Badge = () => (
-	<BadgeBase env={ config( 'env' ) } />
+	<BadgeBase env={ config( 'env' ) } testHelper={ config.isEnabled( 'dev/test-helper' ) } />
 );
 
 export default Badge;
