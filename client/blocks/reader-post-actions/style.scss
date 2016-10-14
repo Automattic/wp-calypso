@@ -1,71 +1,26 @@
 .reader-post-actions {
 	box-sizing: border-box;
 	display: flex;
-	float: right;
 	font-family: $sans;
-	height: 22px;
+	flex-direction: row;
+	height: auto;
+	justify-content: flex-end;
 	list-style-type: none;
-	margin: 0;
+	margin: 10px 0 0;
 }
 
-.reader-post-actions__item {
-	font-size: 14px;
-	margin-right: 10px;
+.reader-post-actions .reader-post-actions__item {
+	margin-right: 13px;
+
+	&.reader-post-actions__visit {
+		flex: 1;
+
+		.reader-post-actions__visit-label {
+			color: lighten( $gray, 10% );
+		}
+	}
 
 	&:last-child {
 		margin-right: 0;
-	}
-}
-
-.reader-post-actions__item .reader-post-card__visit {
-	flex: 1;
-
-	.external-link {
-		color: lighten( $gray, 10% );
-		font-size: 14px;
-	}
-}
-
-.reader-post-actions__item .reader-share__button-label {
-	color: lighten( $gray, 10% );
-
-	&:hover {
-		color: $blue-light;
-	}
-}
-
-.reader-post-actions__item .comment-button {
-
-	.gridicon {
-		top: 0;
-	}
-}
-
-.reader-post-actions__item .like-button {
-
-	.gridicon {
-		top: 4px;
-	}
-}
-
-.reader-post-actions__item .like-button__label {
-	margin: -4px 0 0 -5px;
-}
-
-.reader-post-actions__visit {
-	box-sizing: border-box;
-	flex: 1;
-	font-size: 14px;
-	padding: 2px;
-}
-
-.reader-post-actions__visit .external-link {
-	color: lighten( $gray, 10% );
-
-	.gridicons-external {
-		margin-left: 0;
-		position: relative;
-			left: -5px;
-			top: 3px;
 	}
 }

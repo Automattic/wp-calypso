@@ -215,6 +215,7 @@
 
 // Custom breakpoints that drop action labels text
 // to prevent Likes text from breaking onto a new line
+.is-group-reader .post-edit-button__label,
 .is-group-reader .reader-share__button-label,
 .is-group-reader .comment-button__label-status,
 .is-group-reader .like-button__label-status {

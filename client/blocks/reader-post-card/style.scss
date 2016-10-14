@@ -130,33 +130,69 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	font-weight: 100;
 }
 
-.reader-post-card.card .reader-post-actions {
-	margin: 10px 0 0;
-	width: 100%;
-}
+// Action buttons in post card
+.reader-post-card.card .reader-post-actions__item {
+	font-size: 14px;
 
-.reader-post-actions__item .reader-share__button-label {
-	margin: 0 4px;
-
-	@include breakpoint( "<660px" ) {
-		display: none;
-	}
-}
-
-.reader-post-actions__item .reader-share__button-label,
-.reader-post-actions__item .comment-button__label-status,
-.reader-post-actions__item .like-button__label-status {
-
-	@media #{$reader-post-card-breakpoint-large} {
-		display: none;
+	&.reader-post-actions__visit .gridicon {
+		fill: lighten( $gray, 10% );;
+		position: relative;
+			left: -8px;
+			top: 3px;
 	}
 
-	@media #{$reader-post-card-breakpoint-medium} {
-		display: none;
+	.gridicons-external {
+		margin-right: -2px;
 	}
 
-	@include breakpoint( "<660px" ) {
-		display: none;
+	.like-button .gridicon {
+		top: 5px;
+	}
+
+	.like-button__label {
+		margin: -4px 0 0 -5px;
+	}
+
+	.comment-button {
+		align-items: flex-start;
+	}
+
+	.comment-button .gridicon {
+		top: 2px;
+		margin-right: 2px;
+	}
+
+	.comment-button,
+	.like-button {
+
+		@media #{$reader-post-card-breakpoint-large} {
+			top: -2px;
+		}
+
+		@media #{$reader-post-card-breakpoint-medium} {
+			top: -2px;
+		}
+
+		@include breakpoint( "<660px" ) {
+			top: -2px;
+		}
+	}
+
+	.reader-share__button-label,
+	.comment-button__label-status,
+	.like-button__label-status {
+
+		@media #{$reader-post-card-breakpoint-large} {
+			display: none;
+		}
+
+		@media #{$reader-post-card-breakpoint-medium} {
+			display: none;
+		}
+
+		@include breakpoint( "<660px" ) {
+			display: none;
+		}
 	}
 }
 
