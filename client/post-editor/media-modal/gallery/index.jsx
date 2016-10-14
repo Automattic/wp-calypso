@@ -3,11 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import noop from 'lodash/noop';
-import assign from 'lodash/assign';
-import omitBy from 'lodash/omitBy';
-import some from 'lodash/some';
-import isEqual from 'lodash/isEqual';
+import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,7 +23,7 @@ const EditorMediaModalGallery = React.createClass( {
 		items: React.PropTypes.array,
 		settings: React.PropTypes.object,
 		onUpdateSettings: React.PropTypes.func,
-		setView: React.PropTypes.func
+		onReturnToList: React.PropTypes.func
 	},
 
 	getInitialState() {
@@ -118,10 +114,6 @@ const EditorMediaModalGallery = React.createClass( {
 		this.props.onUpdateSettings( updatedSettings );
 	},
 
-	returnToList() {
-		this.props.setView( ModalViews.LIST );
-	},
-
 	render() {
 		const { site, items, settings } = this.props;
 
@@ -130,7 +122,7 @@ const EditorMediaModalGallery = React.createClass( {
 				<EditorMediaModalGalleryDropZone
 					site={ site }
 					onInvalidItemAdded={ () => this.setState( { invalidItemDropped: true } ) } />
-				<HeaderCake onClick={ this.returnToList } backText={ this.translate( 'Media Library' ) } />
+				<HeaderCake onClick={ this.props.onReturnToList } backText={ this.translate( 'Media Library' ) } />
 				<div className="editor-media-modal-gallery__content editor-media-modal__content">
 					<EditorMediaModalGalleryPreview
 						site={ site }
@@ -153,5 +145,5 @@ const EditorMediaModalGallery = React.createClass( {
 } );
 
 export default connect( null, {
-	setView: setEditorMediaModalView
+	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST )
 } )( EditorMediaModalGallery );

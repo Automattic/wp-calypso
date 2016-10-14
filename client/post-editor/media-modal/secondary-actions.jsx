@@ -4,10 +4,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import values from 'lodash/values';
-import noop from 'lodash/noop';
-import some from 'lodash/some';
-import every from 'lodash/every';
+import { values, noop, some, every, flow, partial } from 'lodash';
 import page from 'page';
 
 /**
@@ -25,6 +22,7 @@ import PlanStorage from 'my-sites/plan-storage';
 import { getMediaModalView } from 'state/ui/media-modal/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
+import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
 const MediaModalSecondaryActions = React.createClass( {
 	propTypes: {
@@ -34,7 +32,7 @@ const MediaModalSecondaryActions = React.createClass( {
 		view: React.PropTypes.oneOf( values( ModalViews ) ),
 		disabled: PropTypes.bool,
 		onDelete: PropTypes.func,
-		setView: PropTypes.func
+		onViewDetails: PropTypes.func
 	},
 
 	getDefaultProps() {
@@ -58,13 +56,6 @@ const MediaModalSecondaryActions = React.createClass( {
 		this.setState( {
 			mobilePopoverContext: component
 		} );
-	},
-
-	onEdit() {
-		analytics.mc.bumpStat( 'editor_media_actions', 'edit_button_dialog' );
-		analytics.ga.recordEvent( 'Media', 'Clicked Dialog Edit Button' );
-
-		this.props.setView( ModalViews.DETAIL );
 	},
 
 	navigateToPlans() {
@@ -92,7 +83,7 @@ const MediaModalSecondaryActions = React.createClass( {
 				key: 'edit',
 				value: this.translate( 'Edit' ),
 				disabled: disabled,
-				onClick: this.onEdit
+				onClick: this.props.onViewDetails
 			} );
 		}
 
@@ -208,5 +199,11 @@ export default connect(
 		user: getCurrentUser( state ),
 		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : ''
 	} ),
-	{ setView: setEditorMediaModalView }
+	{
+		onViewDetails: flow(
+			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
+			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
+			partial( setEditorMediaModalView, ModalViews.DETAIL )
+		)
+	}
 )( MediaModalSecondaryActions );
