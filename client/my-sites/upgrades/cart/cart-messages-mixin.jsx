@@ -8,16 +8,17 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var notices = require( 'notices' ),
-	getNewMessages = require( 'lib/cart-values' ).getNewMessages,
-	CartStore = require( 'lib/cart/store' );
+	getNewMessages = require( 'lib/cart-values' ).getNewMessages;
 
 module.exports = {
-	componentDidMount: function() {
-		CartStore.on( 'change', this.displayCartMessages );
-	},
+	componentWillReceiveProps( nextProps ) {
+		if ( ! nextProps.cart.hasLoadedFromServer ) {
+			return;
+		}
 
-	componentWillUnmount: function() {
-		CartStore.off( 'change', this.displayCartMessages );
+		if ( this.props.cart.messages !== nextProps.cart.messages ) {
+			this.displayCartMessages( nextProps.cart );
+		}
 	},
 
 	getChargebackErrorMessage: function() {
@@ -59,9 +60,8 @@ module.exports = {
 		}, this );
 	},
 
-	displayCartMessages: function() {
-		var newCart = this.props.cart,
-			previousCart = ( this.state ) ? this.state.previousCart : null,
+	displayCartMessages: function( newCart ) {
+		var previousCart = ( this.state ) ? this.state.previousCart : null,
 			messages = getNewMessages( previousCart, newCart );
 
 		messages.errors = this.getPrettyErrorMessages( messages.errors );
