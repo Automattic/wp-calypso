@@ -14,7 +14,7 @@
 		"accept-invite": true,
 		"ad-tracking": true,
 		"apple-pay": false,
-		"catch-js-errors": true,
+		"catch-js-errors": false,
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,
