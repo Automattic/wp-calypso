@@ -41,18 +41,13 @@ const searchItems = [
 	}
 ];
 
-const RefreshCards = React.createClass( {
-	displayName: 'RefreshCard',
+const RefreshCards = () => (
+	<div className="design-assets__group">
+		<div>
+			{ searchItems.map( item => <RefreshPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
+		</div>
+	</div>
+);
 
-	render: function() {
-		return (
-			<div className="design-assets__group">
-				<div>
-					{ searchItems.map( item => <RefreshPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
-				</div>
-			</div>
-		);
-	}
-} );
+export default RefreshCards;
 
-module.exports = RefreshCards;
