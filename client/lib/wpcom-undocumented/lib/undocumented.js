@@ -700,10 +700,11 @@ Undocumented.prototype.saveSharingButtons = function( siteId, buttons, fn ) {
  *
  * @param {Function} fn The callback function
  * @api public
+ * @return {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.mekeyringConnections = function( fn ) {
 	debug( '/me/keyring-connections query' );
-	this.wpcom.req.get( {
+	return this.wpcom.req.get( {
 		path: '/me/keyring-connections',
 		apiVersion: '1.1'
 	}, fn );
@@ -726,13 +727,14 @@ Undocumented.prototype.deletekeyringConnection = function( keyringConnectionId, 
 /**
  * Return a list of user's connected publicize services for the given site
  *
- * @param {int|string} siteId The site ID or domain
- * @param {Function} fn The callback function
+ * @param {Number|String} siteId The site ID or domain
+ * @param {Function}      fn     The callback function
  * @api public
+ * @return {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.siteConnections = function( siteId, fn ) {
 	debug( '/sites/:site_id:/publicize-connections query' );
-	this.wpcom.req.get( {
+	return this.wpcom.req.get( {
 		path: '/sites/' + siteId + '/publicize-connections',
 		apiVersion: '1.1'
 	}, fn );
@@ -741,13 +743,14 @@ Undocumented.prototype.siteConnections = function( siteId, fn ) {
 /**
  * Deletes a single site connection
  *
- * @param {int|string} siteId The site ID or domain
- * @param {int} connectionId The connection ID to remove
- * @param {Function} fn Method to invoke when request is complete
+ * @param {Number|String} siteId       The site ID or domain
+ * @param {Number}        connectionId The connection ID to remove
+ * @param {Function}      fn           Method to invoke when request is complete
+ * @return {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.deleteSiteConnection = function( siteId, connectionId, fn ) {
 	debug( '/sites/:site_id:/publicize-connections/:connection_id:/delete query' );
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		path: '/sites/' + siteId + '/publicize-connections/' + connectionId + '/delete',
 		apiVersion: '1.1'
 	}, fn );
@@ -768,11 +771,13 @@ Undocumented.prototype.deleteSite = function( siteId, fn ) {
  * Creates a single connection using the specified Keyring connection ID and an
  *  optional `options` object, which can include a `shared` property
  *
- * @param {int} keyringConnectionId The Keyring connection ID to use
- * @param {int|string} siteId The site ID or domain
- * @param {string} externalUserId User ID if not connecting to primary account
- * @param {object} options Optional options
- * @param {Function} fn Method to invoke when request is complete
+ * @param {Number}        keyringConnectionId The Keyring connection ID to use
+ * @param {Number|String} siteId              The site ID or domain
+ * @param {String}        externalUserId      User ID if not connecting to primary account
+ * @param {Object}        options             Optional options
+ * @param {Boolean}       options.shared      Whether this connection is available to other users.
+ * @param {Function}      fn                  Method to invoke when request is complete
+ * @return {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.createConnection = function( keyringConnectionId, siteId, externalUserId, options, fn ) {
 	var body, path;
@@ -797,7 +802,7 @@ Undocumented.prototype.createConnection = function( keyringConnectionId, siteId,
 		? '/sites/' + siteId + '/publicize-connections/new'
 		: '/me/publicize-connections/new';
 
-	this.wpcom.req.post( { path, body, apiVersion: '1.1' }, fn );
+	return this.wpcom.req.post( { path, body, apiVersion: '1.1' }, fn );
 };
 
 /**
@@ -824,14 +829,14 @@ Undocumented.prototype.publicizePost = function( siteId, postId, message, skippe
 	this.wpcom.req.post( { path: `/sites/${ siteId }/post/${ postId }/publicize`, body, apiVersion: '1.1' }, fn );
 };
 
-
 /**
  * Updates a single publicize connection
  *
- * @param {int|string} siteId An optional site ID or domain
- * @param {int} connectionId The connection ID to update
- * @param {object} data The update request body
- * @param {Function} fn Function to invoke when request is complete
+ * @param {Number|String} siteId       An optional site ID or domain
+ * @param {Number}        connectionId The connection ID to update
+ * @param {Object}        data         The update request body
+ * @param {Function}      fn           Function to invoke when request is complete
+ * @return {Promise} A Promise to resolve when complete.
  */
 Undocumented.prototype.updateConnection = function( siteId, connectionId, data, fn ) {
 	var path;
@@ -844,7 +849,7 @@ Undocumented.prototype.updateConnection = function( siteId, connectionId, data, 
 		path = '/me/publicize-connections/' + connectionId;
 	}
 
-	this.wpcom.req.post( {
+	return this.wpcom.req.post( {
 		path: path,
 		body: data,
 		apiVersion: '1.1'
