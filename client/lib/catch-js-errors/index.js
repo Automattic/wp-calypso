@@ -37,7 +37,7 @@ export default class ErrorLogger {
 				this.diagnose();
 
 				if ( this.reportingTimeout ) {
-					this.diagnosticData.debounced_count++;
+					this.diagnosticData.extra.debounced_count++;
 					clearTimeout( this.reportingTimeout );
 				}
 
@@ -45,7 +45,7 @@ export default class ErrorLogger {
 					this.sendToApi( Object.assign( error, this.diagnosticData ) );
 					clearTimeout( this.reportingTimeout );
 					this.reportingTimeout = null;
-					this.diagnosticData.debounced_count = 0;
+					this.diagnosticData.extra.debounced_count = 0;
 				}, 60000 );
 			} );
 		}
