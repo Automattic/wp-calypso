@@ -4,10 +4,12 @@ export default class ErrorLogger {
 	constructor() {
 		this.diagnosticData = {
 			extra: {
-				previous_paths: []
+				previous_paths: [],
+				debounced_count: 0
 			}
 		};
 		this.diagnosticReducers = [];
+		this.reportingTimeout = null;
 
 		if ( ! window.onerror ) {
 			TraceKit.report.subscribe( errorReport => {
@@ -33,7 +35,18 @@ export default class ErrorLogger {
 				}
 
 				this.diagnose();
-				this.sendToApi( Object.assign( error, this.diagnosticData ) );
+
+				if ( this.reportingTimeout ) {
+					this.diagnosticData.debounced_count++;
+					clearTimeout( this.reportingTimeout );
+				}
+
+				this.reportingTimeout = setTimeout( () => {
+					this.sendToApi( Object.assign( error, this.diagnosticData ) );
+					clearTimeout( this.reportingTimeout );
+					this.reportingTimeout = null;
+					this.diagnosticData.debounced_count = 0;
+				}, 60000 );
 			} );
 		}
 	}
