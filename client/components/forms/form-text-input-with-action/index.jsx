@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
 import { keys, omit, noop } from 'lodash';
 
@@ -15,17 +15,17 @@ export default React.createClass( {
 	displayName: 'FormTextInputWithAction',
 
 	propTypes: {
-		action: React.PropTypes.node,
-		inputRef: React.PropTypes.func,
-		onFocus: React.PropTypes.func,
-		onBlur: React.PropTypes.func,
-		onKeyDown: React.PropTypes.func,
-		onChange: React.PropTypes.func,
-		onAction: React.PropTypes.func,
-		defaultValue: React.PropTypes.string,
-		disabled: React.PropTypes.bool,
-		isError: React.PropTypes.bool,
-		isValid: React.PropTypes.bool,
+		action: PropTypes.node,
+		inputRef: PropTypes.func,
+		onFocus: PropTypes.func,
+		onBlur: PropTypes.func,
+		onKeyDown: PropTypes.func,
+		onChange: PropTypes.func,
+		onAction: PropTypes.func,
+		defaultValue: PropTypes.string,
+		disabled: PropTypes.bool,
+		isError: PropTypes.bool,
+		isValid: PropTypes.bool,
 	},
 
 	getDefaultProps() {
