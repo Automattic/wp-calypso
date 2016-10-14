@@ -2,102 +2,64 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import omitBy from 'lodash/omitBy';
-import keyBy from 'lodash/keyBy';
+import { keyBy, omit, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
+	PUBLICIZE_CONNECTION_CREATE,
+	PUBLICIZE_CONNECTION_DELETE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
-	SERIALIZE,
-	DESERIALIZE,
 	PUBLICIZE_SHARE,
 	PUBLICIZE_SHARE_SUCCESS,
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS
 } from 'state/action-types';
 import { connectionsSchema } from './schema';
-import { isValidStateWithSchema } from 'state/utils';
 import { createReducer } from 'state/utils';
 
-const getStateWithSharePostFetching = ( state, fetching, siteId, postId ) => Object.assign( {}, state, {
-	[ siteId ]: Object.assign( {}, state[ siteId ], { [ postId ]: fetching } )
+export const sharePostStatus = createReducer( {}, {
+	[ PUBLICIZE_SHARE ]: ( state, { siteId, postId } ) => ( { ...state, [ siteId ]: { ...state[ siteId ], [ postId ]: {
+		requesting: true,
+	} } } ),
+	[ PUBLICIZE_SHARE_SUCCESS ]: ( state, { siteId, postId } ) => ( { ...state, [ siteId ]: { ...state[ siteId ], [ postId ]: {
+		requesting: false,
+		success: true,
+	} } } ),
+	[ PUBLICIZE_SHARE_FAILURE ]: ( state, { siteId, postId, error } ) => ( { ...state, [ siteId ]: { ...state[ siteId ], [ postId ]: {
+		requesting: false,
+		success: false,
+		error,
+	} } } ),
+	[ PUBLICIZE_SHARE_DISMISS ]: ( state, { siteId, postId } ) => ( { ...state, [ siteId ]: {
+		...state[ siteId ], [ postId ]: undefined
+	} } ),
 } );
-const sharePostStatus = createReducer( {}, {
-	[ PUBLICIZE_SHARE ]: ( state, action ) => getStateWithSharePostFetching( state, { requesting: true }, action.siteId, action.postId ),
-	[ PUBLICIZE_SHARE_SUCCESS ]: ( state, action ) => getStateWithSharePostFetching(
-		state,
-		{ requesting: false, success: true },
-		action.siteId,
-		action.postId
-	),
-	[ PUBLICIZE_SHARE_FAILURE ]: ( state, action ) => getStateWithSharePostFetching(
-		state,
-		{ requesting: false, success: false, error: action.error },
-		action.siteId,
-		action.postId
-	),
-	[ PUBLICIZE_SHARE_DISMISS ]: ( state, action ) => getStateWithSharePostFetching( state, undefined, action.siteId, action.postId ),
-} );
-
 
 /**
  * Track the current status for fetching connections. Maps site ID to the
  * fetching status for that site. Assigns `true` for currently fetching,
  * `false` for done or failed fetching, or `undefined` if no fetch attempt
  * has been made for the site.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
  */
-export function fetchingConnections( state = {}, action ) {
-	switch ( action.type ) {
-		case PUBLICIZE_CONNECTIONS_REQUEST:
-		case PUBLICIZE_CONNECTIONS_RECEIVE:
-		case PUBLICIZE_CONNECTIONS_REQUEST_FAILURE:
-			const { type, siteId } = action;
-			return Object.assign( {}, state, {
-				[ siteId ]: PUBLICIZE_CONNECTIONS_REQUEST === type
-			} );
-		case SERIALIZE:
-			return {};
-		case DESERIALIZE:
-			return {};
-	}
+export const fetchingConnections = createReducer( {}, {
+	[ PUBLICIZE_CONNECTIONS_REQUEST ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: true } ),
+	[ PUBLICIZE_CONNECTIONS_RECEIVE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } ),
+	[ PUBLICIZE_CONNECTIONS_REQUEST_FAILURE ]: ( state, { siteId } ) => ( { ...state, [ siteId ]: false } )
+} );
 
-	return state;
-}
-
-/**
- * Tracks all known connection objects, indexed by connection ID.
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- */
-export function connections( state = {}, action ) {
-	switch ( action.type ) {
-		case PUBLICIZE_CONNECTIONS_RECEIVE:
-			state = omitBy( state, { site_ID: action.siteId } );
-			return Object.assign( state, keyBy( action.data.connections, 'ID' ) );
-
-		case SERIALIZE:
-			return state;
-
-		case DESERIALIZE:
-			if ( isValidStateWithSchema( state, connectionsSchema ) ) {
-				return state;
-			}
-
-			return {};
-	}
-
-	return state;
-}
+// Tracks all known connection objects, indexed by connection ID.
+export const connections = createReducer( {}, {
+	[ PUBLICIZE_CONNECTIONS_RECEIVE ]: ( state, action ) => ( {
+		...omitBy( state, { site_ID: action.siteId } ),
+		...keyBy( action.data.connections, 'ID' )
+	} ),
+	[ PUBLICIZE_CONNECTION_CREATE ]: ( state, { connection } ) => ( { ...state, [ connection.ID ]: connection } ),
+	[ PUBLICIZE_CONNECTION_DELETE ]: ( state, { ID } ) => omit( state, ID ),
+}, connectionsSchema );
 
 export default combineReducers( {
 	fetchingConnections,
