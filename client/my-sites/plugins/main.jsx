@@ -21,18 +21,17 @@ import PluginItem from './plugin-item/plugin-item';
 import SectionNav from 'components/section-nav';
 import NavTabs from 'components/section-nav/tabs';
 import NavItem from 'components/section-nav/item';
-import NoResults from 'my-sites/no-results';
 import Search from 'components/search';
 import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
-
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import WpcomPluginPanel from 'my-sites/plugins-wpcom';
+import PluginsBrowser from './plugins-browser';
 
 /**
  * Module variables
@@ -174,7 +173,7 @@ const PluginsMain = React.createClass( {
 	},
 
 	getEmptyContentUpdateData() {
-		let emptyContentData = { illustration: '/calypso/images/drake/drake-ok.svg' },
+		const emptyContentData = { illustration: '/calypso/images/drake/drake-ok.svg' },
 			selectedSite = this.props.sites.getSelectedSite();
 
 		if ( selectedSite ) {
@@ -255,13 +254,26 @@ const PluginsMain = React.createClass( {
 
 	renderPluginsContent() {
 		const plugins = this.state.plugins || [];
+		const selectedSite = this.props.sites.getSelectedSite();
 
 		if ( isEmpty( plugins ) && ! this.isFetchingPlugins() ) {
 			if ( this.props.search ) {
-				return <NoResults text={ this.translate( 'No plugins match your search for {{searchTerm/}}.', {
+				const searchTitle = this.translate( 'Suggested plugins for: %(searchQuery)s', {
 					textOnly: true,
-					components: { searchTerm: <em>{ this.props.search }</em> }
-				} ) } />
+					args: {
+						searchQuery: this.props.search
+					}
+				} );
+
+				return <PluginsBrowser
+						hideSearchForm
+						site={ selectedSite ? selectedSite.slug : null }
+						path={ this.context.path }
+						sites={ this.props.sites }
+						search={ this.props.search }
+						store={ this.context.store }
+						searchTitle={ searchTitle }
+					/>;
 			}
 
 			const emptyContentData = this.getEmptyContentData();
@@ -270,7 +282,7 @@ const PluginsMain = React.createClass( {
 					title={ emptyContentData.title }
 					illustration={ emptyContentData.illustration }
 					actionURL={ emptyContentData.actionURL }
-					action={ emptyContentData.action } />
+					action={ emptyContentData.action } />;
 			}
 		}
 		return (
@@ -316,7 +328,7 @@ const PluginsMain = React.createClass( {
 				sites={ [] }
 				selectedSite={ selectedSite }
 				progress={ [] }
-				isMock={ true } />
+				isMock={ true } />;
 		} );
 	},
 
@@ -337,7 +349,10 @@ const PluginsMain = React.createClass( {
 				<Main>
 					<SidebarNavigation />
 					<EmptyContent { ...this.state.accessError } />
-					{ this.state.accessError.featureExample ? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample> : null }
+					{ this.state.accessError.featureExample
+						? <FeatureExample>{ this.state.accessError.featureExample }</FeatureExample>
+						: null
+					}
 				</Main>
 			);
 		}
@@ -372,7 +387,7 @@ const PluginsMain = React.createClass( {
 								return null;
 							}
 
-							let attr = {
+							const attr = {
 								key: filterItem.id,
 								path: filterItem.path,
 								selected: filterItem.id === this.props.filter,
@@ -410,5 +425,7 @@ export default connect(
 			wporgPlugins: state.plugins.wporg.items
 		};
 	},
-	dispatch => bindActionCreators( { wporgFetchPluginData }, dispatch )
+	dispatch => bindActionCreators( {
+		wporgFetchPluginData
+	}, dispatch )
 )( PluginsMain );
