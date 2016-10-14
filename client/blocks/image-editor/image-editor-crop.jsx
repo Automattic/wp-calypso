@@ -390,8 +390,8 @@ class ImageEditorCrop extends Component {
 					bounds={ {
 						bottom,
 						right,
-						top: topBound - 1,
-						left: leftBound - 1
+						top: topBound,
+						left: leftBound
 					} }
 					ref="topLeft"
 					className={ classNames( handleClassName, handleClassName + '-nwse' ) }
@@ -405,8 +405,8 @@ class ImageEditorCrop extends Component {
 					bounds={ {
 						bottom,
 						left,
-						top: topBound - 1,
-						right: rightBound - 1
+						top: topBound,
+						right: rightBound
 					} }
 					ref="topRight"
 					className={ classNames( handleClassName, handleClassName + '-nesw' ) }
@@ -420,8 +420,8 @@ class ImageEditorCrop extends Component {
 					bounds={ {
 						top,
 						left,
-						bottom: bottomBound - 1,
-						right: rightBound - 1
+						bottom: bottomBound,
+						right: rightBound
 					} }
 					ref="bottomRight"
 					className={ classNames( handleClassName, handleClassName + '-nwse' ) }
@@ -435,8 +435,8 @@ class ImageEditorCrop extends Component {
 					bounds={ {
 						top,
 						right,
-						bottom: bottomBound - 1,
-						left: leftBound - 1
+						bottom: bottomBound,
+						left: leftBound
 					} }
 					ref="bottomLeft"
 					className={ classNames( handleClassName, handleClassName + '-nesw' ) }

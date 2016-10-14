@@ -64,6 +64,7 @@ class ImageEditorCanvas extends Component {
 		this.onWindowResize = null;
 
 		this.onLoadComplete = this.onLoadComplete.bind( this );
+		this.updateCanvasPosition = this.updateCanvasPosition.bind( this );
 	}
 
 	componentWillReceiveProps( newProps ) {
@@ -247,12 +248,13 @@ class ImageEditorCanvas extends Component {
 
 		return (
 			<div className="image-editor__canvas-container">
-				{ imageLoaded && <ImageEditorCrop /> }
 				<canvas
 					ref="canvas"
 					style={ canvasStyle }
 					onMouseDown={ this.preventDrag }
-					className={ canvasClasses } />
+					className={ canvasClasses }
+				/>
+				{ imageLoaded && <ImageEditorCrop /> }
 			</div>
 		);
 	}
