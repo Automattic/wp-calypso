@@ -15,6 +15,10 @@ import {
 	SITES_REQUEST_SUCCESS,
 	SITES_REQUEST_FAILURE
 } from 'state/action-types';
+import {
+	bumpStat,
+	recordTracksEvent,
+} from 'state/analytics/actions';
 import { omit } from 'lodash';
 
 /**
@@ -112,12 +116,18 @@ export function setFrontPage( siteId, pageId ) {
 		};
 
 		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( () => {
+			dispatch( recordTracksEvent( 'calypso_front_page_set', {
+				siteId,
+				pageId,
+			} ) );
+			dispatch( bumpStat( 'calypso_front_page_set', 'success' ) );
 			dispatch( {
 				type: SITE_FRONT_PAGE_SET_SUCCESS,
 				siteId,
 				pageId
 			} );
 		} ).catch( ( error ) => {
+			dispatch( bumpStat( 'calypso_front_page_set', 'failure' ) );
 			dispatch( {
 				type: SITE_FRONT_PAGE_SET_FAILURE,
 				siteId,
