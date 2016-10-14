@@ -219,17 +219,34 @@
 	}
 }
 
+// Action buttons in full-post
+.reader-full-post .reader-post-actions{
+	margin-bottom: 20px;
+}
+
+.reader-full-post .post-edit-button__label,
+.reader-full-post .comment-button__label,
+.reader-full-post .like-button__label {
+	font-size: 17px;
+}
+
 .reader-full-post__sidebar .like-button {
-	.like-button__label-status {
-		display: none;
-	}
 
 	@include breakpoint( "<660px" ) {
 		position: fixed;
-			top: 9px;
 			right: 20px;
+			top: 10px;
 		z-index: z-index( '.masterbar', '.reader-profile' );
 	}
+
+	.like-button__label-status {
+		display: none;
+	}
+}
+
+.reader-full-post__sidebar .comment-button__label,
+.reader-full-post__sidebar .like-button__label {
+	font-size: 14px;
 }
 
 .reader-full-post__sidebar .comment-button {
@@ -242,6 +259,7 @@
 		z-index: z-index( '.masterbar', '.reader-profile' );
 		margin-right: 0;
 	}
+
 	.comment-button__label-status {
 		display: none;
 	}
@@ -478,4 +496,3 @@
 		}
 	}
 }
-

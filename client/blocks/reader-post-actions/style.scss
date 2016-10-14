@@ -1,25 +1,26 @@
 .reader-post-actions {
-	list-style-type: none;
+	box-sizing: border-box;
 	display: flex;
+	font-family: $sans;
 	flex-direction: row;
+	height: auto;
 	justify-content: flex-end;
-	margin: 10px 0 25px;
-	clear: both;
+	list-style-type: none;
+	margin: 10px 0 0;
 }
 
-.reader-post-actions__item {
-	display: inline;
-	margin-right: 10px;
+.reader-post-actions .reader-post-actions__item {
+	margin-right: 13px;
 
-	.reader-share__button-label {
-		font-size: 14px;
+	&.reader-post-actions__visit {
+		flex: 1;
+
+		.reader-post-actions__visit-label {
+			color: lighten( $gray, 10% );
+		}
 	}
 
-	.reader-share .gridicon {
-		top: 7px;
-
-		@include breakpoint( "<480px" ) {
-			top: 5px;
-		}
+	&:last-child {
+		margin-right: 0;
 	}
 }

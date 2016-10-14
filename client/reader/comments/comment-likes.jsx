@@ -50,7 +50,7 @@ class CommentLikeButtonContainer extends React.Component {
 				liked={ iLike }
 				onLikeToggle={ this.boundHandleLikeToggle }
 				likedLabel={ likedLabel }
-				isMini={ true } />;
+				iconSize={ 18 } />;
 	}
 }
 
