@@ -3,18 +3,12 @@
  */
 import React from 'react';
 
-export default class EditorMention extends React.Component {
-	static propTypes = {
-		username: React.PropTypes.string
-	};
+const EditorMention = ( { username } ) => (
+	<span>@{ username }</span>
+);
 
-	render() {
-		const { username } = this.props;
+EditorMention.propTypes = {
+	username: React.PropTypes.string,
+};
 
-		return (
-			<span>
-				@{ username }
-			</span>
-		);
-	}
-}
+export default EditorMention;

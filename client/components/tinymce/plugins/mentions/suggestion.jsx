@@ -3,74 +3,67 @@
  */
 import React from 'react';
 
-const Suggestion = React.createClass( {
-	displayName: 'Suggestion',
+const getRegExpFor = function( type, textToHighlight ) {
+	const expressions = {};
 
-	propTypes: {
-		avatarUrl: React.PropTypes.string,
-		username: React.PropTypes.string,
-		fullName: React.PropTypes.string,
-		query: React.PropTypes.string
-	},
+	expressions.username = '(^' + textToHighlight + ')(\\w*)\\s*';
+	expressions.fullName = '(^.*?)(\\b' + textToHighlight + ')(.*)';
 
-	getDefaultProps() {
-		return {
-			avatarUrl: '',
-			username: '',
-			fullName: '',
-			query: ''
-		};
-	},
+	return new RegExp( expressions[ type ], 'ig' );
+};
 
-	getRegExpFor( type, textToHighlight ) {
-		const expressions = {};
+const highlight = function( content, textToHighlight, type ) {
+	const matcher = getRegExpFor( type, textToHighlight ),
+		matches = matcher.exec( content );
 
-		expressions.username = '(^' + textToHighlight + ')(\\w*)\\s*';
-		expressions.fullName = '(^.*?)(\\b' + textToHighlight + ')(.*)';
+	if ( matches ) {
+		const highlights = [];
+		let highlighted = false;
 
-		return new RegExp( expressions[ type ], 'ig' );
-	},
+		for ( let i = 1, length = matches.length; i < length; i++ ) {
+			let item = matches[ i ];
 
-	highlight( content, textToHighlight, type ) {
-		const matcher = this.getRegExpFor( type, textToHighlight ),
-			matches = matcher.exec( content );
-
-		if ( matches ) {
-			const highlights = [];
-			let highlighted = false;
-
-			for ( let i = 1, length = matches.length; i < length; i++ ) {
-				let item = matches[ i ];
-
-				if ( textToHighlight.toLowerCase() === item.toLowerCase() && ! highlighted ) {
-					item = <strong className="mentions__highlight" key={ i }>{ matches[ i ] }</strong>;
-					highlighted = true;
-				}
-
-				highlights.push( item );
+			if ( textToHighlight.toLowerCase() === item.toLowerCase() && ! highlighted ) {
+				item = <strong className="mentions__highlight" key={ i }>{ matches[ i ] }</strong>;
+				highlighted = true;
 			}
 
-			return highlights;
+			highlights.push( item );
 		}
 
-		return [ content ];
-	},
-
-	render() {
-		const { avatarUrl, username, fullName, query } = this.props,
-			highlightedUsername = this.highlight( username, query, 'username' ),
-			highlightedFullName = this.highlight( fullName, query, 'fullName' );
-
-		highlightedUsername.unshift( '@' );
-
-		return (
-			<div className="mentions__suggestion">
-				<img className="mentions__avatar" src={ avatarUrl } />
-				<span className="mentions__username">{ highlightedUsername }</span>
-				<small className="mentions__fullname">{ highlightedFullName }</small>
-			</div>
-		);
+		return highlights;
 	}
-} );
+
+	return [ content ];
+};
+
+const Suggestion = ( { avatarUrl, username, fullName, query } ) => {
+	const highlightedUsername = highlight( username, query, 'username' );
+	const highlightedFullName = highlight( fullName, query, 'fullName' );
+
+	highlightedUsername.unshift( '@' );
+
+	return (
+		<div className="mentions__suggestion">
+			<img className="mentions__avatar" src={ avatarUrl } />
+			<span className="mentions__username">{ highlightedUsername }</span>
+			<small className="mentions__fullname">{ highlightedFullName }</small>
+		</div>
+	);
+};
+
+Suggestion.propTypes = {
+	avatarUrl: React.PropTypes.string,
+	username: React.PropTypes.string,
+	fullName: React.PropTypes.string,
+	query: React.PropTypes.string,
+};
+
+Suggestion.defaultProps = {
+	avatarUrl: '',
+	username: '',
+	fullName: '',
+	query: '',
+};
 
 export default Suggestion;

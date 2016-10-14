@@ -4,8 +4,8 @@
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import { connect } from 'react-redux';
+import { includes } from 'lodash';
 import tinymce from 'tinymce/tinymce';
-import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
@@ -20,45 +20,37 @@ import { getUserSuggestions } from 'state/users/suggestions/selectors';
  */
 const VK = tinymce.util.VK;
 
-const Mentions = React.createClass( {
-	displayName: 'Mentions',
+class Mentions extends React.Component {
+	constructor( props ) {
+		super( props );
 
-	propTypes: {
-		siteId: React.PropTypes.number,
-		editor: React.PropTypes.object,
-		suggestions: React.PropTypes.array
-	},
-
-	getDefaultProps() {
-		return {
-			suggestions: []
-		};
-	},
-
-	getInitialState() {
-		return {
+		this.state = {
 			query: '',
 			popoverContext: null,
-			showPopover: false
+			showPopover: false,
 		};
-	},
 
-	componentDidMount: function() {
+		this.setPopoverContext = this.setPopoverContext.bind( this );
+		this.handleClick = this.handleClick.bind( this );
+		this.handleClose = this.handleClose.bind( this );
+	}
+
+	componentDidMount() {
 		const { editor } = this.props;
 
-		editor.on( 'keyup', this.onKeyUp );
+		editor.on( 'keyup', this.onKeyUp.bind( this ) );
 		editor.on( 'click', () => {
 			this.setState( { showPopover: false } );
 		} );
-	},
+	}
 
 	setPopoverContext( popoverContext ) {
 		if ( popoverContext ) {
 			this.setState( { popoverContext } );
 		}
-	},
+	}
 
-	getQueryText: function() {
+	getQueryText() {
 		const range = this.props.editor.selection.getRng();
 		const textBeforeCaret = range.startContainer.textContent.slice( 0, range.startOffset );
 		const matcher = new RegExp( '(?:^|\\s)@([A-Za-z0-9_\+\-]*)$|(?:^|\\s)@([^\\x00-\\xff]*)$', 'gi' );
@@ -69,7 +61,7 @@ const Mentions = React.createClass( {
 		}
 
 		return null;
-	},
+	}
 
 	onKeyUp( { keyCode } ) {
 		if ( includes( [ VK.ENTER, VK.SPACEBAR, VK.UP, VK.DOWN, 27 /* ESCAPE */ ], keyCode ) ) {
@@ -82,9 +74,9 @@ const Mentions = React.createClass( {
 			showPopover: typeof query === 'string',
 			query,
 		} );
-	},
+	}
 
-	handleClick: function( suggestion ) {
+	handleClick( suggestion ) {
 		const { editor } = this.props;
 		const re = /@\S*/;
 		const markup = <EditorMention username={ suggestion.user_login } />;
@@ -100,13 +92,13 @@ const Mentions = React.createClass( {
 		editor.selection.setContent( editor.selection.getContent().replace( re, ReactDomServer.renderToStaticMarkup( markup ) ) );
 
 		editor.getBody().focus();
-	},
+	}
 
-	handleClose: function() {
+	handleClose() {
 		this.setState( {
 			showPopover: false
 		} );
-	},
+	}
 
 	render() {
 		const { siteId, suggestions } = this.props;
@@ -125,7 +117,17 @@ const Mentions = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+Mentions.propTypes = {
+	siteId: React.PropTypes.number,
+	editor: React.PropTypes.object,
+	suggestions: React.PropTypes.array,
+};
+
+Mentions.defaultProps = {
+	suggestions: [],
+};
 
 export default connect( ( state, ownProps ) => {
 	const { siteId } = ownProps;
