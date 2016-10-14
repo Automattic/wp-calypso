@@ -22,6 +22,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_PERSONAL
 } from 'lib/plans/constants';
+import purchasesPaths from 'me/purchases/paths';
 
 class CurrentPlanHeader extends Component {
 	static propTypes = {
@@ -72,7 +73,7 @@ class CurrentPlanHeader extends Component {
 						}
 					</span>
 					{ currentPlan.userIsOwner &&
-					<Button compact href={ `/purchases/${ selectedSite.slug }/${ currentPlan.id }` }>
+					<Button compact href={ purchasesPaths.managePurchase( selectedSite.slug, currentPlan.id ) }>
 						{ hasAutoRenew
 							? translate( 'Manage Payment' )
 							: translate( 'Renew Now' )

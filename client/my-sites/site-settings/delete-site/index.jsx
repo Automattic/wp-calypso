@@ -288,7 +288,7 @@ export const DeleteSite = React.createClass( {
 	},
 
 	managePurchases: function() {
-		page( purchasesPaths.list() );
+		page( purchasesPaths.purchasesRoot() );
 	}
 
 } );

@@ -77,7 +77,7 @@ const ConfirmCancelDomain = React.createClass( {
 		const purchase = getPurchase( props );
 
 		if ( ! purchase || ! isDomainRegistration( purchase ) || ! props.selectedSite ) {
-			page.redirect( paths.list() );
+			page.redirect( paths.purchasesRoot() );
 		}
 	},
 
@@ -137,7 +137,7 @@ const ConfirmCancelDomain = React.createClass( {
 				{ product_slug: purchase.productSlug }
 			);
 
-			page.redirect( paths.list( this.props.selectedSite.slug ) );
+			page.redirect( paths.purchasesRoot() );
 		} );
 	},
 

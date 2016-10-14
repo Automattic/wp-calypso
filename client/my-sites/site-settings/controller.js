@@ -11,6 +11,7 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import config from 'config';
 import DeleteSite from './delete-site';
+import purchasesPaths from 'me/purchases/paths';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import { sectionify } from 'lib/route/path';
@@ -179,8 +180,8 @@ module.exports = {
 				notifications: '/me/notifications',
 				disbursements: '/me/public-profile',
 				earnings: '/me/public-profile',
-				'billing-history': '/me/billing',
-				'billing-history-v2': '/me/billing',
+				'billing-history': purchasesPaths.billingHistory(),
+				'billing-history-v2': purchasesPaths.billingHistory(),
 				'connected-apps': '/me/security/connected-applications'
 			};
 		if ( ! context ) {

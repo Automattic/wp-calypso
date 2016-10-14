@@ -13,6 +13,7 @@ var tableRows = require( './table-rows' ),
 import Card from 'components/card';
 import Main from 'components/main';
 import HeaderCake from 'components/header-cake';
+import purchasesPaths from 'me/purchases/paths';
 
 module.exports = React.createClass( {
 	displayName: 'BillingReceipt',
@@ -26,7 +27,7 @@ module.exports = React.createClass( {
 
 		return (
 			<Main>
-				<HeaderCake backHref="/me/billing">
+				<HeaderCake backHref={ purchasesPaths.billingHistory() }>
 					{ this.translate( 'Billing History' ) }
 				</HeaderCake>
 				<Card compact className="billing-history__receipt-card">

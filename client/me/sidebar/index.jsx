@@ -20,6 +20,7 @@ const Sidebar = require( 'layout/sidebar' ),
 	userUtilities = require( 'lib/user/utils' );
 
 import Button from 'components/button';
+import purchasesPaths from 'me/purchases/paths';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 
@@ -60,8 +61,9 @@ const MeSidebar = React.createClass( {
 			'/me/notifications/updates': 'notifications',
 			'/me/notifications/subscriptions': 'notifications',
 			'/help/contact': 'help',
-			'/purchases': 'billing',
-			'/me/billing': 'billing',
+			[ purchasesPaths.purchasesRoot() ]: 'purchases',
+			[ purchasesPaths.billingHistory() ]: 'purchases',
+			[ purchasesPaths.addCreditCard() ]: 'purchases',
 			'/me/chat': 'happychat'
 		};
 		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
@@ -113,8 +115,8 @@ const MeSidebar = React.createClass( {
 						/>
 
 						<SidebarItem
-							selected={ selected === 'billing' }
-							link="/purchases"
+							selected={ selected === 'purchases' }
+							link={ purchasesPaths.purchasesRoot() }
 							label={ this.translate( 'Manage Purchases' ) }
 							icon="credit-card"
 							onNavigate={ this.onNavigate }
