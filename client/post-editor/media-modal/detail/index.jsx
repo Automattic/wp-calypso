@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
 import { connect } from 'react-redux';
+import { noop, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,9 +20,10 @@ const EditorMediaModalDetail = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		items: React.PropTypes.array,
-		setView: React.PropTypes.func,
 		selectedIndex: React.PropTypes.number,
-		onSelectedIndexChange: React.PropTypes.func
+		onSelectedIndexChange: React.PropTypes.func,
+		onReturnToList: React.PropTypes.func,
+		onEdit: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
@@ -50,16 +51,8 @@ const EditorMediaModalDetail = React.createClass( {
 		}, this );
 	},
 
-	returnToList: function() {
-		this.props.setView( ModalViews.LIST );
-	},
-
 	incrementIndex: function( increment ) {
 		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
-	},
-
-	editItem() {
-		this.props.setView( ModalViews.IMAGE_EDITOR );
 	},
 
 	render: function() {
@@ -67,7 +60,7 @@ const EditorMediaModalDetail = React.createClass( {
 
 		return (
 			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ this.returnToList } backText={ this.translate( 'Media Library' ) }>
+				<HeaderCake onClick={ this.props.onReturnToList } backText={ this.translate( 'Media Library' ) }>
 					<EditorMediaModalDetailTitle
 						site={ this.props.site }
 						item={ items[ this.props.selectedIndex ] } />
@@ -79,12 +72,13 @@ const EditorMediaModalDetail = React.createClass( {
 					hasNextItem={ this.props.selectedIndex + 1 < items.length }
 					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
 					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
-					onEdit={ this.editItem } />
+					onEdit={ this.props.onEditItem } />
 			</div>
 		);
 	}
 } );
 
 export default connect( null, {
-	setView: setEditorMediaModalView
+	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+	onEditItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR )
 } )( EditorMediaModalDetail );
