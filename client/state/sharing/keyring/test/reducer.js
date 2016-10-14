@@ -173,7 +173,7 @@ describe( 'reducers', () => {
 
 			it( 'should ignore loading data with invalid values', () => {
 				const persistedState = deepFreeze( {
-					1: { ID: 1, site_ID: 'foo' },
+					1: { ID: 1, sites: 'foo' },
 					2: { ID: 2, sites: [ '77203074' ] }
 				} );
 				const state = items( persistedState, {
