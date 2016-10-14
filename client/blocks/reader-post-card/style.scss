@@ -134,11 +134,27 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card.card .reader-post-actions__item {
 	font-size: 14px;
 
-	&.reader-post-actions__visit .gridicon {
-		fill: lighten( $gray, 10% );;
-		position: relative;
-			left: -8px;
-			top: 3px;
+	&.reader-post-actions__visit {
+		padding: 2px 0 0;
+
+		@media #{$reader-post-card-breakpoint-large} {
+			padding: 0;
+		}
+
+		@media #{$reader-post-card-breakpoint-medium} {
+			padding: 0;
+		}
+
+		@include breakpoint( "<660px" ) {
+			padding: 0;
+		}
+
+		.gridicon {
+			fill: lighten( $gray, 10% );
+			position: relative;
+				left: -8px;
+				top: 3px;
+		}
 	}
 
 	.gridicons-external {
