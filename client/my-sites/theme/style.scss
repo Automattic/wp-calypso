@@ -88,13 +88,13 @@
 
 .theme__sheet-screenshot {
 	display: block;
-	position: absolute;
-	top: 90px;
-	width: 49%;
+	position: relative;
+	top: -156px;
+	width: 98%;
 	box-shadow: 0px 2px 8px 0px rgba(46,68,83,0.45);
 	background-color: transparentize( white, 0.5 );
 
-	// with width: 49%, gives 4:3 ratio before the image loads
+	// with width: 98%, gives 4:3 ratio before the image loads
 	// also x-browser issues, so it's smaller than 4:3 proper
 	min-height: 36.15vw; // 36.75vw would be correct, but Safari is slightly off
 
