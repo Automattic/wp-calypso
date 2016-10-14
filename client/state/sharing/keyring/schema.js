@@ -1,5 +1,6 @@
 export const itemSchema = {
 	type: 'object',
+	additionalProperties: false,
 	patternProperties: {
 		'^\\d+$': {
 			type: 'object',
@@ -24,5 +25,4 @@ export const itemSchema = {
 			},
 		}
 	},
-	additionalProperties: false
 };
