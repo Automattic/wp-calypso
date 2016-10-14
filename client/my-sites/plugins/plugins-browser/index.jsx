@@ -27,6 +27,8 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import FeatureExample from 'components/feature-example';
 import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
+import { fetchPluginsList } from 'state/plugins/wporg/actions';
+import { canFetchList, getList } from 'state/plugins/wporg/selectors';
 
 const PluginsBrowser = React.createClass( {
 
@@ -77,9 +79,17 @@ const PluginsBrowser = React.createClass( {
 		}
 
 		if ( this.props.search && doSearch ) {
+			const lastFetchedPage = this.props.lastPage.search || -1;
 			PluginsActions.fetchNextCategoryPage( 'search', this.props.search );
+			if ( this.props.canFetchList ) {
+				this.props.fetchPluginsList( 'search', lastFetchedPage + 1, this.props.search );
+			}
 		} else if ( this.props.category ) {
+			const lastFetchedPage = this.props.lastPage[ this.props.category ] || -1;
 			PluginsActions.fetchNextCategoryPage( this.props.category );
+			if ( this.props.canFetchList ) {
+				this.props.fetchPluginsList( this.props.category, lastFetchedPage + 1 );
+			}
 		}
 	},
 
@@ -128,14 +138,13 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	getFullListView( category ) {
-		const isFetching = this.state.fullLists[ category ] ? !! this.state.fullLists[ category ].fetching : true;
-		if ( this.getPluginsFullList( category ).length > 0 || isFetching ) {
+		if ( ( this.props.list && this.props.list.length > 0 ) || this.props.isFetching ) {
 			return <PluginsBrowserList
-				plugins={ this.getPluginsFullList( category ) }
+				plugins={ this.props.list }
 				listName={ category }
 				title={ this.translateCategory( category ) }
 				site={ this.props.site }
-				showPlaceholders={ isFetching }
+				showPlaceholders={ this.props.isFetching }
 				currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
 	},
@@ -321,8 +330,18 @@ const PluginsBrowser = React.createClass( {
 } );
 
 export default connect(
-	null,
+	( state, props ) => {
+		const category = props.search ? 'search' : props.category;
+		return {
+			lastPage: state.plugins.wporg.lists.lastFetchedPage,
+			canFetchList: canFetchList( state, category, props.search ),
+			list: getList( state, category ),
+			isFetching: !! state.plugins.wporg.lists.fetching[ category ]
+		};
+	},
 	dispatch => bindActionCreators( {
-		recordTracksEvent
+		canFetchList,
+		recordTracksEvent,
+		fetchPluginsList
 	}, dispatch )
 )( PluginsBrowser );

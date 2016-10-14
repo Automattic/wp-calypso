@@ -24,4 +24,20 @@ const isFetched = function( state, pluginSlug ) {
 	return !! plugin.fetched;
 };
 
-export default { getPlugin, isFetching, isFetched };
+const canFetchList = function( state, category, searchTerm ) {
+	const { lists } = state.plugins.wporg;
+	if ( searchTerm && lists.fetching.search ) {
+		return false;
+	}
+	if ( lists.fetching[ category ] ) {
+		return false;
+	}
+
+	return true;
+};
+
+const getList = function( state, category ) {
+	return state.plugins.wporg.lists.fullLists[ category ] ? state.plugins.wporg.fullLists[ category ] : [];
+};
+
+export default { getPlugin, isFetching, isFetched, canFetchList, getList };
