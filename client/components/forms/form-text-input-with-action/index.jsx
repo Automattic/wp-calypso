@@ -15,14 +15,14 @@ export default React.createClass( {
 	displayName: 'FormTextInputWithAction',
 
 	propTypes: {
-		action: React.PropTypes.element,
-		inputRef: React.PropTypes.function,
-		onFocus: React.PropTypes.function,
-		onBlur: React.PropTypes.function,
-		onKeyDown: React.PropTypes.function,
-		onChange: React.PropTypes.function,
-		onAction: React.PropTypes.function,
-		defaultValue: React.PropTypes.defaultValue,
+		action: React.PropTypes.node,
+		inputRef: React.PropTypes.func,
+		onFocus: React.PropTypes.func,
+		onBlur: React.PropTypes.func,
+		onKeyDown: React.PropTypes.func,
+		onChange: React.PropTypes.func,
+		onAction: React.PropTypes.func,
+		defaultValue: React.PropTypes.string,
 		disabled: React.PropTypes.bool,
 	},
 
