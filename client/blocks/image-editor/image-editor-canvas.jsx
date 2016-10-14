@@ -15,9 +15,13 @@ import MediaUtils from 'lib/media/utils';
 import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
-	getImageEditorCrop
+	getImageEditorCrop,
+	imageEditorIsImageLoaded
 } from 'state/ui/editor/image-editor/selectors';
-import { setImageEditorCropBounds } from 'state/ui/editor/image-editor/actions';
+import {
+	setImageEditorCropBounds,
+	imageEditorImageIsLoaded
+} from 'state/ui/editor/image-editor/actions';
 
 class ImageEditorCanvas extends Component {
 	static propTypes = {
@@ -35,7 +39,9 @@ class ImageEditorCanvas extends Component {
 			heightRatio: PropTypes.number
 		} ),
 		setImageEditorCropBounds: PropTypes.func,
-		onLoadError: PropTypes.func
+		imageEditorImageIsLoaded: PropTypes.func,
+		onLoadError: PropTypes.func,
+		isImageLoaded: PropTypes.bool
 	};
 
 	static defaultProps = {
@@ -51,15 +57,13 @@ class ImageEditorCanvas extends Component {
 			cropHeightRatio: 1
 		},
 		setImageEditorCropBounds: noop,
-		onLoadError: noop
+		imageEditorImageIsLoaded: noop,
+		onLoadError: noop,
+		isImageLoaded: false
 	};
 
 	constructor( props ) {
 		super( props );
-
-		this.state = {
-			imageLoaded: false
-		};
 
 		this.onWindowResize = null;
 
@@ -107,9 +111,7 @@ class ImageEditorCanvas extends Component {
 			window.addEventListener( 'resize', this.onWindowResize );
 		}
 
-		this.setState( {
-			imageLoaded: true
-		} );
+		this.props.imageEditorImageIsLoaded();
 	}
 
 	componentWillUnmount() {
@@ -240,10 +242,10 @@ class ImageEditorCanvas extends Component {
 			maxHeight: ( 85 / heightRatio ) + '%'
 		};
 
-		const { imageLoaded } = this.state;
+		const { isImageLoaded } = this.props;
 
 		const canvasClasses = classNames( 'image-editor__canvas', {
-			'is-placeholder': ! imageLoaded
+			'is-placeholder': ! isImageLoaded
 		} );
 
 		return (
@@ -254,7 +256,7 @@ class ImageEditorCanvas extends Component {
 					onMouseDown={ this.preventDrag }
 					className={ canvasClasses }
 				/>
-				{ imageLoaded && <ImageEditorCrop /> }
+				{ isImageLoaded && <ImageEditorCrop /> }
 			</div>
 		);
 	}
@@ -265,16 +267,19 @@ export default connect(
 		const transform = getImageEditorTransform( state );
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );
+		const isImageLoaded = imageEditorIsImageLoaded( state );
 
 		return {
 			src,
 			mimeType,
 			transform,
-			crop
+			crop,
+			isImageLoaded
 		};
 	},
 	{
-		setImageEditorCropBounds
+		setImageEditorCropBounds,
+		imageEditorImageIsLoaded
 	},
 	null,
 	{ withRef: true }

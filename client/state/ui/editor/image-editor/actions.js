@@ -9,7 +9,8 @@ import {
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_STATE_RESET,
-	IMAGE_EDITOR_STATE_RESET_ALL
+	IMAGE_EDITOR_STATE_RESET_ALL,
+	IMAGE_EDITOR_IMAGE_IS_LOADED
 } from 'state/action-types';
 
 // Doesn't reset image file info (src, fileName, etc).
@@ -72,5 +73,11 @@ export function imageEditorCrop( topRatio, leftRatio, widthRatio, heightRatio ) 
 		leftRatio,
 		widthRatio,
 		heightRatio
+	};
+}
+
+export function imageEditorImageIsLoaded() {
+	return {
+		type: IMAGE_EDITOR_IMAGE_IS_LOADED
 	};
 }

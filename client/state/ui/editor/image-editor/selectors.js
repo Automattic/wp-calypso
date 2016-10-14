@@ -32,6 +32,17 @@ export function imageEditorHasChanges( state ) {
 }
 
 /**
+ * Returns true if image has been loaded.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {Boolean} true if image has been loaded
+ *
+ */
+export function imageEditorIsImageLoaded( state ) {
+	return ! state.ui.editor.imageEditor.imageIsLoading;
+}
+
+/**
  * Returns the bounds of the canvas crop tool
  *
  * @param  {Object} state Global state tree
