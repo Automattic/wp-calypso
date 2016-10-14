@@ -22,7 +22,9 @@ class QueryKeyringConnections extends Component {
 		}
 	}
 
-	render() { return null; }
+	render() {
+		return null;
+	}
 }
 
 export default connect(
