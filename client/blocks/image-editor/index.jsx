@@ -15,7 +15,6 @@ import Notice from 'components/notice';
 import ImageEditorCanvas from './image-editor-canvas';
 import ImageEditorToolbar from './image-editor-toolbar';
 import ImageEditorButtons from './image-editor-buttons';
-import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import closeOnEsc from 'lib/mixins/close-on-esc';
 import {
@@ -37,8 +36,9 @@ const ImageEditor = React.createClass( {
 		// Component props
 		media: PropTypes.object,
 		siteId: PropTypes.number,
-		onImageEditorSave: PropTypes.func,
-		onImageEditorCancel: PropTypes.func,
+		onImageExtracted: PropTypes.func,
+		onCancel: PropTypes.func,
+		onReset: PropTypes.func,
 		className: PropTypes.string,
 
 		// Redux props
@@ -51,8 +51,9 @@ const ImageEditor = React.createClass( {
 	getDefaultProps() {
 		return {
 			media: null,
-			onImageEditorSave: noop,
-			onImageEditorCancel: noop
+			onImageExtracted: noop,
+			onCancel: null,
+			onReset: noop
 		};
 	},
 
@@ -77,9 +78,12 @@ const ImageEditor = React.createClass( {
 			src = MediaUtils.url( media, {
 				photon: site && ! site.is_private
 			} );
+
 			fileName = media.file || path.basename( src );
-			mimeType = MediaUtils.getMimeType( media );
-			title = media.title;
+
+			mimeType = MediaUtils.getMimeType( media ) || mimeType;
+
+			title = media.title || title;
 		}
 
 		this.props.resetImageEditorState();
@@ -88,84 +92,49 @@ const ImageEditor = React.createClass( {
 
 	onDone() {
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
-		canvasComponent.toBlob( this.onImageExtracted );
 
-		if ( this.props.onImageEditorSave ) {
-			this.props.onImageEditorSave();
-		}
-	},
+		canvasComponent.toBlob( ( blob ) => {
+			const {	onImageExtracted } = this.props;
 
-	onCancel() {
-		this.props.resetAllImageEditorState();
-
-		if ( this.props.onImageEditorCancel ) {
-			this.props.onImageEditorCancel();
-		}
-	},
-
-	onImageExtracted( blob ) {
-		const {
-			fileName,
-			site,
-			translate
-		} = this.props;
-
-		const mimeType = MediaUtils.getMimeType( fileName );
-
-		// check if a title is already post-fixed with '(edited copy)'
-		const editedCopyText = translate(
-			'%(title)s (edited copy)', {
-				args: {
-					title: ''
-				}
-			} );
-
-		let { title } = this.props;
-
-		if ( title.indexOf( editedCopyText ) === -1 ) {
-			title = translate(
-				'%(title)s (edited copy)', {
-					args: {
-						title: title
-					}
-				} );
-		}
-
-		this.props.resetAllImageEditorState();
-
-		MediaActions.add( site.ID, {
-			fileName: fileName,
-			fileContents: blob,
-			title: title,
-			mimeType: mimeType
+			onImageExtracted( blob, this.getImageEditorProps() );
 		} );
 	},
 
-	isValidTransfer: function( transfer ) {
-		if ( ! transfer ) {
-			return false;
-		}
+	onCancel() {
+		this.props.onCancel( this.getImageEditorProps() );
+	},
 
-		// Firefox will claim that images dragged from within the same page are
-		// files, but will also identify them with a `mozSourceNode` attribute.
-		// This value will be `null` for files dragged from outside the page.
-		//
-		// See: https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/mozSourceNode
-		if ( transfer.mozSourceNode ) {
-			return false;
-		}
+	onReset() {
+		this.props.resetImageEditorState();
 
-		// `types` is a DOMStringList, which is treated as an array in Chrome,
-		// but as an array-like object in Firefox. Therefore, we call `indexOf`
-		// using the Array prototype. Safari may pass types as `null` which
-		// makes detection impossible, so we err on allowing the transfer.
-		//
-		// See: http://www.w3.org/html/wg/drafts/html/master/editing.html#the-datatransfer-interface
-		return ! transfer.types || -1 !== Array.prototype.indexOf.call( transfer.types, 'Files' );
+		this.props.onReset( this.getImageEditorProps() );
+	},
+
+	getImageEditorProps() {
+		const {
+			src,
+			fileName,
+			mimeType,
+			title,
+			site
+		} = this.props;
+
+		return {
+			src,
+			fileName,
+			mimeType,
+			title,
+			site,
+			resetAllImageEditorState: this.props.resetAllImageEditorState
+		};
 	},
 
 	onLoadCanvasError() {
-		this.setState( { canvasError: this.translate( 'We are unable to edit this image.' ) } );
+		const { translate } = this.props;
+
+		this.setState( {
+			canvasError: translate( 'We are unable to edit this image.' )
+		} );
 	},
 
 	renderError() {
@@ -204,8 +173,9 @@ const ImageEditor = React.createClass( {
 						/>
 						<ImageEditorToolbar />
 						<ImageEditorButtons
-							onCancel={ this.onCancel }
+							onCancel={ this.props.onCancel && this.onCancel }
 							onDone={ this.onDone }
+							onReset={ this.onReset }
 						/>
 					</div>
 				</figure>
