@@ -23,7 +23,8 @@ import {
 	setImageEditorFileInfo
 } from 'state/ui/editor/image-editor/actions';
 import {
-	getImageEditorFileInfo
+	getImageEditorFileInfo,
+	imageEditorIsImageLoaded
 } from 'state/ui/editor/image-editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
@@ -45,7 +46,8 @@ const ImageEditor = React.createClass( {
 		site: PropTypes.object,
 		fileName: PropTypes.string,
 		setImageEditorFileInfo: PropTypes.func,
-		translate: PropTypes.func
+		translate: PropTypes.func,
+		isImageLoaded: PropTypes.bool
 	},
 
 	getDefaultProps() {
@@ -53,7 +55,8 @@ const ImageEditor = React.createClass( {
 			media: null,
 			onImageExtracted: noop,
 			onCancel: null,
-			onReset: noop
+			onReset: noop,
+			isImageLoaded: false
 		};
 	},
 
@@ -91,6 +94,12 @@ const ImageEditor = React.createClass( {
 	},
 
 	onDone() {
+		const { isImageLoaded } = this.props;
+
+		if ( ! isImageLoaded ) {
+			this.onCancel();
+		}
+
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 
 		canvasComponent.toBlob( ( blob ) => {
@@ -194,7 +203,8 @@ export default connect(
 
 		return {
 			...getImageEditorFileInfo( state ),
-			site: getSite( state, siteId )
+			site: getSite( state, siteId ),
+			isImageLoaded: imageEditorIsImageLoaded( state )
 		};
 	},
 	{
