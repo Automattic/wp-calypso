@@ -24,6 +24,8 @@ export default React.createClass( {
 		onAction: React.PropTypes.func,
 		defaultValue: React.PropTypes.string,
 		disabled: React.PropTypes.bool,
+		isError: React.PropTypes.bool,
+		isValid: React.PropTypes.bool,
 	},
 
 	getDefaultProps() {
@@ -34,6 +36,8 @@ export default React.createClass( {
 			onKeyDown: noop,
 			onChange: noop,
 			onAction: noop,
+			isError: false,
+			isValid: false,
 		};
 	},
 
@@ -96,7 +100,9 @@ export default React.createClass( {
 			<div
 				className={ classNames( 'form-text-input-with-action', {
 					'is-focused': this.state.focused,
-					'is-disabled': this.props.disabled
+					'is-disabled': this.props.disabled,
+					'is-error': this.props.isError,
+					'is-valid': this.props.isValid,
 				} ) }
 			>
 				<FormTextInput

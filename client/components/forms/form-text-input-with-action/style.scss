@@ -7,6 +7,22 @@
 		border-color: $blue-wordpress;
 		outline: none;
 		box-shadow: 0 0 0 2px $blue-light;
+
+		&.is-valid {
+			box-shadow: 0 0 0 2px lighten( $alert-green, 35 );
+		}
+
+		&.is-valid:hover {
+			box-shadow: 0 0 0 2px lighten( $alert-green, 25 );
+		}
+
+		&.is-error {
+			box-shadow: 0 0 0 2px lighten( $alert-red, 35 );
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px lighten( $alert-red, 25 );
+		}
 	}
 
 	&.is-disabled {
@@ -23,6 +39,22 @@
 		&::placeholder {
 			color: lighten( $gray, 10% );
 		}
+	}
+
+	&.is-valid {
+		border-color: $alert-green;
+	}
+
+	&.is-valid:hover {
+		border-color: darken( $alert-green, 10 );
+	}
+
+	&.is-error {
+		border-color: $alert-red;
+	}
+
+	&.is-error:hover {
+		border-color: darken( $alert-red, 10 );
 	}
 }
 
