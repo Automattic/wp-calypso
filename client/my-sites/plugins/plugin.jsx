@@ -18,7 +18,7 @@ import HeaderCake from 'components/header-cake';
 import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
-import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
+import * as WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import PluginsActions from 'lib/plugins/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import PluginNotices from 'lib/plugins/notices';

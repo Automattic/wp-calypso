@@ -26,7 +26,7 @@ import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import WporgPluginsSelectors from 'state/plugins/wporg/selectors';
+import * as WporgPluginsSelectors from 'state/plugins/wporg/selectors';
 import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
