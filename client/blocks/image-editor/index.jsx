@@ -93,18 +93,37 @@ const ImageEditor = React.createClass( {
 		canvasComponent.toBlob( ( blob ) => {
 			const {	onImageExtracted } = this.props;
 
-			onImageExtracted( blob, this.props );
+			onImageExtracted( blob, this.getImageEditorProps() );
 		} );
 	},
 
 	onCancel() {
-		this.props.onCancel( this.props );
+		this.props.onCancel( this.getImageEditorProps() );
 	},
 
 	onReset() {
 		this.props.resetImageEditorState();
 
-		this.props.onReset( this.props );
+		this.props.onReset( this.getImageEditorProps() );
+	},
+
+	getImageEditorProps() {
+		const {
+			src,
+			fileName,
+			mimeType,
+			title,
+			site
+		} = this.props;
+
+		return {
+			src,
+			fileName,
+			mimeType,
+			title,
+			site,
+			resetAllImageEditorState: this.props.resetAllImageEditorState
+		};
 	},
 
 	onLoadCanvasError() {

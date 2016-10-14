@@ -252,15 +252,19 @@ module.exports = React.createClass( {
 	},
 
 	onImageEditorCancel: function( imageEditorProps ) {
-		const item = this.props.mediaLibrarySelectedItems[ this.getDetailSelectedIndex() ];
+		const { mediaLibrarySelectedItems } = this.props;
 
-		imageEditorProps.resetAllImageEditorState();
+		const item = mediaLibrarySelectedItems[ this.getDetailSelectedIndex() ];
 
 		if ( ! item ) {
 			this.setView( ModalViews.LIST );
 			return;
 		}
 		this.setView( ModalViews.DETAIL );
+
+		const {	resetAllImageEditorState } = imageEditorProps;
+
+		resetAllImageEditorState();
 	},
 
 	getDetailSelectedIndex() {
