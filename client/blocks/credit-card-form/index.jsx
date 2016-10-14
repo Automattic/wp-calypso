@@ -9,7 +9,6 @@ import React, { PropTypes } from 'react';
 import camelCase from 'lodash/camelCase';
 import Card from 'components/card';
 import CompactCard from 'components/card/compact';
-import { createPaygateToken } from 'lib/store-transactions';
 import CreditCardFormFields from 'components/credit-card-form-fields';
 import CountriesList from 'lib/countries-list';
 import FormButton from 'components/forms/form-button';
@@ -31,11 +30,11 @@ const wpcom = wpcomFactory.undocumented();
 const CreditCardForm = React.createClass( {
 	propTypes: {
 		apiParams: PropTypes.object,
+		createPaygateToken: PropTypes.func.isRequired,
 		initialValues: PropTypes.object,
 		recordFormSubmitEvent: PropTypes.func.isRequired,
 		saveStoredCard: PropTypes.func,
-		successCallback: PropTypes.func.isRequired,
-		actionType: PropTypes.string.isRequired
+		successCallback: PropTypes.func.isRequired
 	},
 
 	getInitialState() {
@@ -150,7 +149,7 @@ const CreditCardForm = React.createClass( {
 	saveCreditCard() {
 		const cardDetails = this.getCardDetails();
 
-		createPaygateToken( this.props.actionType, cardDetails, ( paygateError, paygateToken ) => {
+		this.props.createPaygateToken( cardDetails, ( paygateError, paygateToken ) => {
 			if ( ! this._mounted ) {
 				return;
 			}
@@ -176,9 +175,8 @@ const CreditCardForm = React.createClass( {
 					if ( typeof message === 'object' ) {
 						notices.error( <ValidationErrorList messages={ values( message ) } /> );
 					} else {
-						notices.error( message )
+						notices.error( message );
 					}
-
 				} );
 			} else {
 				const apiParams = this.getParamsForApi( cardDetails, paygateToken, this.props.apiParams );
@@ -264,7 +262,9 @@ const CreditCardForm = React.createClass( {
 								{
 									components: {
 										tosLink: <a href="//wordpress.com/tos/" target="_blank" rel="noopener noreferrer" />,
-										autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />,
+										autoRenewalSupportPage: <a href={ support.AUTO_RENEWAL }
+											target="_blank"
+											rel="noopener noreferrer" />,
 										managePurchasesSupportPage: <a href={ support.MANAGE_PURCHASES }
 											target="_blank"
 											rel="noopener noreferrer" />

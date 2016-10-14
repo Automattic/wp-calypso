@@ -224,10 +224,10 @@ function getPaygateParameters( cardDetails ) {
 		name: cardDetails.name,
 		number: cardDetails.number,
 		cvc: cardDetails.cvv,
-		zip: cardDetails['postal-code'],
+		zip: cardDetails[ 'postal-code' ],
 		country: cardDetails.country,
-		exp_month: cardDetails['expiration-date'].substring( 0, 2 ),
-		exp_year: '20' + cardDetails['expiration-date'].substring( 3, 5 )
+		exp_month: cardDetails[ 'expiration-date' ].substring( 0, 2 ),
+		exp_year: '20' + cardDetails[ 'expiration-date' ].substring( 3, 5 )
 	};
 }
 
@@ -253,11 +253,11 @@ function fullCreditsPayment() {
 	return { paymentMethod: 'WPCOM_Billing_WPCOM' };
 }
 
-module.exports = {
-	hasDomainDetails: hasDomainDetails,
-	submit: submit,
-	newCardPayment: newCardPayment,
-	storedCardPayment: storedCardPayment,
-	fullCreditsPayment: fullCreditsPayment,
-	createPaygateToken: createPaygateToken
+export default {
+	createPaygateToken,
+	fullCreditsPayment,
+	hasDomainDetails,
+	newCardPayment,
+	storedCardPayment,
+	submit
 };
