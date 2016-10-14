@@ -76,7 +76,6 @@
 		"manage/themes/details": true,
 		"manage/themes/logged-out": true,
 		"me/account": true,
-		"me/billing-history": true,
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/next-steps": true,

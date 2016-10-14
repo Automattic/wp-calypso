@@ -1,9 +1,21 @@
-function list() {
-	return '/purchases';
+function purchasesRoot() {
+	return '/me/purchases';
+}
+
+function addCreditCard() {
+	return purchasesRoot() + '/add-credit-card';
+}
+
+function billingHistory() {
+	return purchasesRoot() + '/billing';
+}
+
+function billingHistoryReceipt( receiptId = ':receiptId' ) {
+	return billingHistory() + `/${ receiptId }`;
 }
 
 function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
-	return list() + `/${ siteName }/${ purchaseId }`;
+	return purchasesRoot() + `/${ siteName }/${ purchaseId }`;
 }
 
 function cancelPurchase( siteName, purchaseId ) {
@@ -28,10 +40,13 @@ function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
 
 export default {
 	addCardDetails,
+	addCreditCard,
+	billingHistory,
+	billingHistoryReceipt,
 	cancelPrivateRegistration,
 	cancelPurchase,
 	confirmCancelDomain,
 	editCardDetails,
-	list,
-	managePurchase
+	managePurchase,
+	purchasesRoot
 };

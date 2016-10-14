@@ -17,7 +17,8 @@ import CreditCardForm from 'blocks/credit-card-form';
 import DocumentHead from 'components/data/document-head';
 import HeaderCake from 'components/header-cake' ;
 import Main from 'components/main';
-import * as titles from 'me/payment-methods/titles';
+import titles from 'me/purchases/titles';
+import purchasesPaths from 'me/purchases/paths';
 
 class AddCreditCard extends Component {
 	static propTypes = {
@@ -30,7 +31,7 @@ class AddCreditCard extends Component {
 	}
 
 	goToBillingHistory() {
-		page( '/me/billing' );
+		page( purchasesPaths.billingHistory() );
 	}
 
 	recordFormSubmitEvent() {
@@ -40,7 +41,7 @@ class AddCreditCard extends Component {
 	render() {
 		return (
 			<Main>
-				<DocumentHead title={ concatTitle( titles.paymentMethods, titles.addCreditCard ) } />
+				<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
 
 				<HeaderCake onClick={ this.goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
 

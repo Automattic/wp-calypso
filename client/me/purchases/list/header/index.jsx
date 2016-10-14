@@ -22,11 +22,11 @@ const PurchasesHeader = ( { section } ) => {
 	return (
 		<SectionNav selectedText={ text }>
 			<NavTabs>
-				<NavItem path={ paths.list() } selected={ section === 'purchases' }>
+				<NavItem path={ paths.purchasesRoot() } selected={ section === 'purchases' }>
 					{ i18n.translate( 'Purchases' ) }
 				</NavItem>
 
-				<NavItem path="/me/billing" selected={ section === 'billing' }>
+				<NavItem path={ paths.billingHistory() } selected={ section === 'billing' }>
 					{ i18n.translate( 'Billing History' ) }
 				</NavItem>
 			</NavTabs>
