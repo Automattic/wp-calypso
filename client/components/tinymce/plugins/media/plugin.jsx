@@ -391,7 +391,7 @@ function mediaButton( editor ) {
 		const caption = editor.dom.getParent( node, '.mceTemp' );
 		if ( caption ) {
 			editor.selection.select( caption );
-			parsed.media.caption = editor.dom.$( '.wp-caption-dd' ).text();
+			parsed.media.caption = editor.dom.$( '.wp-caption-dd', caption ).text();
 		}
 
 		// Attempt to find media in Flux store
