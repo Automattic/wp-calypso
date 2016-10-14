@@ -87,7 +87,7 @@ const SiteSelectorAddSite = React.createClass( {
 					</PopoverMenu>
 
 					<Button compact borderless onClick={ this.onPopoverButtonClick }>
-						<Gridicon icon="add-outline" /> { this.translate( 'Add WordPress Site' ) }
+						<Gridicon icon="add-outline" /> { this.translate( 'Add Site' ) }
 					</Button>
 				</span>
 			</span>
