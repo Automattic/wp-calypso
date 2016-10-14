@@ -4,7 +4,7 @@
 import { assert } from 'chai';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import ReactDomServer from 'react-dom/server';
+import { renderToString } from 'react-dom/server';
 import mockery from 'mockery';
 import noop from 'lodash/noop';
 import {
@@ -16,14 +16,12 @@ import {
  * Internal dependencies
  */
 import { createReduxStore } from 'state';
-import useFakeDom from 'test/helpers/use-fake-dom';
 import useMockery from 'test/helpers/use-mockery';
 import EmptyComponent from 'test/helpers/react/empty-component';
 
 describe( 'main', function() {
 	describe( 'Calling renderToString() on Theme Info sheet', function() {
 		useMockery();
-		useFakeDom();
 
 		before( function() {
 			mockery.registerMock( 'my-sites/themes/theme-preview', EmptyComponent );
@@ -72,7 +70,7 @@ describe( 'main', function() {
 			);
 			let markup;
 			assert.doesNotThrow( () => {
-				markup = ReactDomServer.renderToString( layout );
+				markup = renderToString( layout );
 			} );
 			assert.isTrue( markup.includes( 'theme__sheet' ) );
 		} );
@@ -87,7 +85,7 @@ describe( 'main', function() {
 			);
 			let markup;
 			assert.doesNotThrow( () => {
-				markup = ReactDomServer.renderToString( layout );
+				markup = renderToString( layout );
 			} );
 			assert.isTrue( markup.includes( 'theme__sheet' ) );
 		} );
@@ -102,7 +100,7 @@ describe( 'main', function() {
 			);
 			let markup;
 			assert.doesNotThrow( () => {
-				markup = ReactDomServer.renderToString( layout );
+				markup = renderToString( layout );
 			} );
 			assert.isTrue( markup.includes( 'empty-content' ) );
 		} );
