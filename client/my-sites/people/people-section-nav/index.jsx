@@ -87,6 +87,26 @@ module.exports = React.createClass( {
 					id: 'team'
 				},
 				{
+					title: this.translate( 'Administrators', { context: 'Filter label for people list' } ),
+					path: '/people/administrators/' + siteFilter,
+					id: 'administrators'
+				},
+				{
+					title: this.translate( 'Editors', { context: 'Filter label for people list' } ),
+					path: '/people/editors/' + siteFilter,
+					id: 'editors'
+				},
+				{
+					title: this.translate( 'Authors', { context: 'Filter label for people list' } ),
+					path: '/people/authors/' + siteFilter,
+					id: 'authors'
+				},
+				{
+					title: this.translate( 'Contributors', { context: 'Filter label for people list' } ),
+					path: '/people/contributors/' + siteFilter,
+					id: 'contributors'
+				},
+				{
 					title: this.translate( 'Followers', { context: 'Filter label for people list' } ),
 					path: '/people/followers/' + siteFilter,
 					id: 'followers'
@@ -107,7 +127,7 @@ module.exports = React.createClass( {
 	},
 
 	getNavigableFilters: function() {
-		var allowedFilterIds = [ 'team' ];
+		var allowedFilterIds = [ 'team', 'administrators', 'editors', 'authors', 'contributors' ];
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
 			allowedFilterIds.push( 'email-followers' );

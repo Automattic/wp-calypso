@@ -144,6 +144,7 @@ module.exports = React.createClass( {
 			order: 'ASC',
 			order_by: 'display_name',
 			search: ( this.props.search ) ? '*' + this.props.search + '*' : null,
+			role: this.props.role,
 			search_columns: [ 'display_name', 'user_login' ]
 		};
 

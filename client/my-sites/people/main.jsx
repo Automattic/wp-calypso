@@ -38,6 +38,14 @@ export default React.createClass( {
 		switch ( this.props.filter ) {
 			case 'team':
 				return <TeamList site={ site } search={ this.props.search } />;
+			case 'administrators':
+				return <TeamList site={ site } search={ this.props.search } role='administrator' />;
+			case 'editors':
+				return <TeamList site={ site } search={ this.props.search } role='editor' />;
+			case 'authors':
+				return <TeamList site={ site } search={ this.props.search } role='author' />;
+			case 'contributors':
+				return <TeamList site={ site } search={ this.props.search } role='contributor' />;
 			case 'followers':
 				return <FollowersList site={ site } label={ this.translate( 'Followers' ) } />;
 			case 'email-followers':

@@ -12,7 +12,7 @@ var controller = require( 'my-sites/controller' ),
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/people' ) ) {
-		[ 'team', 'followers', 'email-followers', 'viewers' ].forEach( function( filter ) {
+		[ 'team', 'administrators', 'editors', 'authors', 'contributors', 'followers', 'email-followers', 'viewers' ].forEach( function( filter ) {
 			page( '/people/' + filter, controller.siteSelection, controller.sites );
 			page(
 				'/people/' + filter + '/:site_id',
