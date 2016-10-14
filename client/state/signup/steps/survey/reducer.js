@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {
-	SIGNUP_STEPS_SURVEY,
+	SIGNUP_STEPS_SURVEY_SET,
 } from 'state/action-types';
 
 import { createReducer } from 'state/utils';
@@ -10,7 +10,7 @@ import { surveyStepSchema } from './schema';
 
 export default createReducer( {},
 	{
-		[ SIGNUP_STEPS_SURVEY ]: ( state = {}, action ) => {
+		[ SIGNUP_STEPS_SURVEY_SET ]: ( state = {}, action ) => {
 			return {
 				...state,
 				vertical: action.survey.vertical,
