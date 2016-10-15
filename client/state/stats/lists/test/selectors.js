@@ -93,9 +93,9 @@ describe( 'selectors', () => {
 							2916284: {
 								statsStreak: {
 									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
-										1461961382: 1,
-										1464110402: 1,
-										1464110448: 1
+										1461889800: 1,	// 2016-04-29 00:30:00 (UTC)
+										1461972600: 1,	// 2016-04-29 23:30:00 (UTC)
+										1462059000: 1 	// 2016-04-30 23:30:00 (UTC)
 									}
 								}
 							}
@@ -105,9 +105,9 @@ describe( 'selectors', () => {
 			}, 2916284, 'statsStreak', { startDate: '2015-06-01', endDate: '2016-06-01' } );
 
 			expect( stats ).to.eql( {
-				1461961382: 1,
-				1464110402: 1,
-				1464110448: 1
+				1461889800: 1,
+				1461972600: 1,
+				1462059000: 1
 			} );
 		} );
 	} );
@@ -115,16 +115,6 @@ describe( 'selectors', () => {
 	describe( 'getSiteStatsPostStreakData()', () => {
 		it( 'should return an empty object if no matching query results exist', () => {
 			const stats = getSiteStatsPostStreakData( {
-				sites: {
-					items: {
-						2916284: {
-							options: {
-								gmt_offset: 0
-							},
-							URL: 'https://example.wordpress.com'
-						}
-					}
-				},
 				stats: {
 					lists: {
 						items: {}
@@ -137,16 +127,6 @@ describe( 'selectors', () => {
 
 		it( 'should return properly formatted data if matching data for query exists', () => {
 			const stats = getSiteStatsPostStreakData( {
-				sites: {
-					items: {
-						2916284: {
-							options: {
-								gmt_offset: 0
-							},
-							URL: 'https://example.wordpress.com'
-						}
-					}
-				},
 				stats: {
 					lists: {
 						items: {
@@ -155,9 +135,9 @@ describe( 'selectors', () => {
 									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
 										streak: {},
 										data: {
-											1461961382: 1,
-											1464110402: 1,
-											1464110448: 1
+											1461889800: 1,	// 2016-04-29 00:30:00 (UTC)
+											1461972600: 1,	// 2016-04-29 23:30:00 (UTC)
+											1462059000: 1 	// 2016-04-30 23:30:00 (UTC)
 										}
 									}
 								}
@@ -168,8 +148,82 @@ describe( 'selectors', () => {
 			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' } );
 
 			expect( stats ).to.eql( {
+				'2016-04-29': 2,
+				'2016-04-30': 1
+			} );
+		} );
+
+		it( 'should return post streak data based on the GMT offset of the current site', () => {
+			const state = {
+				stats: {
+					lists: {
+						items: {
+							2916284: {
+								statsStreak: {
+									[ '[["endDate","2016-06-01"],["gmtOffset",-10],["startDate","2015-06-01"]]' ]: {
+										streak: {},
+										data: {
+											1461889800: 1,	// 2016-04-29 00:30:00 (UTC)
+											1461972600: 1,	// 2016-04-29 23:30:00 (UTC)
+											1462059000: 1 	// 2016-04-30 23:30:00 (UTC)
+										}
+									},
+									[ '[["endDate","2016-06-01"],["gmtOffset",0],["startDate","2015-06-01"]]' ]: {
+										streak: {},
+										data: {
+											1461889800: 1,	// 2016-04-29 00:30:00 (UTC)
+											1461972600: 1,	// 2016-04-29 23:30:00 (UTC)
+											1462059000: 1 	// 2016-04-30 23:30:00 (UTC)
+										}
+									},
+									[ '[["endDate","2016-06-01"],["gmtOffset",10],["startDate","2015-06-01"]]' ]: {
+										streak: {},
+										data: {
+											1461889800: 1,	// 2016-04-29 00:30:00 (UTC)
+											1461972600: 1,	// 2016-04-29 23:30:00 (UTC)
+											1462059000: 1 	// 2016-04-30 23:30:00 (UTC)
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			};
+
+			const stats1 = getSiteStatsPostStreakData( state, 2916284, {
+				startDate: '2015-06-01',
+				endDate: '2016-06-01',
+				gmtOffset: -10
+			} );
+
+			const stats2 = getSiteStatsPostStreakData( state, 2916284, {
+				startDate: '2015-06-01',
+				endDate: '2016-06-01',
+				gmtOffset: 0
+			} );
+
+			const stats3 = getSiteStatsPostStreakData( state, 2916284, {
+				startDate: '2015-06-01',
+				endDate: '2016-06-01',
+				gmtOffset: 10
+			} );
+
+			expect( stats1 ).to.eql( {
+				'2016-04-28': 1,
 				'2016-04-29': 1,
-				'2016-05-24': 2
+				'2016-04-30': 1
+			} );
+
+			expect( stats2 ).to.eql( {
+				'2016-04-29': 2,
+				'2016-04-30': 1
+			} );
+
+			expect( stats3 ).to.eql( {
+				'2016-04-29': 1,
+				'2016-04-30': 1,
+				'2016-05-01': 1
 			} );
 		} );
 	} );
@@ -177,16 +231,6 @@ describe( 'selectors', () => {
 	describe( 'getSiteStatsMaxPostsByDay()', () => {
 		it( 'should return null if no matching query results exist', () => {
 			const stats = getSiteStatsMaxPostsByDay( {
-				sites: {
-					items: {
-						2916284: {
-							options: {
-								gmt_offset: 0
-							},
-							URL: 'https://example.wordpress.com'
-						}
-					}
-				},
 				stats: {
 					lists: {
 						items: {}
@@ -199,16 +243,6 @@ describe( 'selectors', () => {
 
 		it( 'should properly correct number of max posts grouped by day', () => {
 			const stats = getSiteStatsMaxPostsByDay( {
-				sites: {
-					items: {
-						2916284: {
-							options: {
-								gmt_offset: 0
-							},
-							URL: 'https://example.wordpress.com'
-						}
-					}
-				},
 				stats: {
 					lists: {
 						items: {
@@ -216,9 +250,9 @@ describe( 'selectors', () => {
 								statsStreak: {
 									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
 										data: {
-											1461961382: 1,
-											1464110402: 1,
-											1464110448: 1
+											1461889800: 1, // 2016-04-29 00:30:00 (UTC)
+											1461972600: 1, // 2016-04-29 23:30:00 (UTC)
+											1462059000: 1  // 2016-04-30 23:30:00 (UTC)
 										}
 									}
 								}
@@ -233,16 +267,6 @@ describe( 'selectors', () => {
 
 		it( 'should compare numerically rather than lexically', () => {
 			const stats = getSiteStatsMaxPostsByDay( {
-				sites: {
-					items: {
-						2916284: {
-							options: {
-								gmt_offset: 0
-							},
-							URL: 'https://example.wordpress.com'
-						}
-					}
-				},
 				stats: {
 					lists: {
 						items: {
@@ -250,8 +274,8 @@ describe( 'selectors', () => {
 								statsStreak: {
 									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
 										data: {
-											1461961382: 12,
-											1464110402: 2
+											1461889800: 12, // 2016-04-29 00:30:00 (UTC)
+											1462059000: 2 	// 2016-04-30 23:30:00 (UTC)
 										}
 									}
 								}
@@ -268,16 +292,6 @@ describe( 'selectors', () => {
 	describe( 'getSiteStatsPostsCountByDay()', () => {
 		it( 'should return null if no matching query results exist', () => {
 			const stats = getSiteStatsPostsCountByDay( {
-				sites: {
-					items: {
-						2916284: {
-							options: {
-								gmt_offset: 0
-							},
-							URL: 'https://example.wordpress.com'
-						}
-					}
-				},
 				stats: {
 					lists: {
 						items: {}
@@ -290,16 +304,6 @@ describe( 'selectors', () => {
 
 		it( 'should properly correct number of max posts for a day', () => {
 			const stats = getSiteStatsPostsCountByDay( {
-				sites: {
-					items: {
-						2916284: {
-							options: {
-								gmt_offset: 0
-							},
-							URL: 'https://example.wordpress.com'
-						}
-					}
-				},
 				stats: {
 					lists: {
 						items: {
@@ -307,9 +311,9 @@ describe( 'selectors', () => {
 								statsStreak: {
 									'[["endDate","2016-06-01"],["startDate","2015-06-01"]]': {
 										data: {
-											1461961382: 1,
-											1464110402: 1,
-											1464110448: 1
+											1461889800: 1,	// 2016-04-29 00:30:00 (UTC)
+											1461972600: 1,	// 2016-04-29 23:30:00 (UTC)
+											1462059000: 1	// 2016-04-30 23:30:00 (UTC)
 										}
 									}
 								}
@@ -317,7 +321,7 @@ describe( 'selectors', () => {
 						}
 					}
 				}
-			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' }, '2016-05-24' );
+			}, 2916284, { startDate: '2015-06-01', endDate: '2016-06-01' }, '2016-04-29' );
 
 			expect( stats ).to.eql( 2 );
 		} );

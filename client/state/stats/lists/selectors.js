@@ -9,7 +9,6 @@ import i18n from 'i18n-calypso';
  * Internal dependencies
  */
 import createSelector from 'lib/create-selector';
-import { getSite } from 'state/sites/selectors';
 import {
 	getSerializedStatsQuery,
 	normalizers
@@ -49,21 +48,21 @@ export function getSiteStatsForQuery( state, siteId, statType, query ) {
  * Returns a parsed object of statsStreak data for a given query, or default "empty" object
  * if no statsStreak data has been received for that site.
  *
- * @param  {Object}  state    Global state tree
- * @param  {Number}  siteId   Site ID
- * @param  {Object}  query    Stats query object
- * @return {Object}           Parsed Data for the query
+ * @param  {Object}  state    			Global state tree
+ * @param  {Number}  siteId   			Site ID
+ * @param  {Object}  query    			Stats query object
+ * @param  {?Number} query.gmtOffset    GMT offset of the queried site
+ * @return {Object}           			Parsed Data for the query
  */
 export const getSiteStatsPostStreakData = createSelector(
 	( state, siteId, query ) => {
-		const site = getSite( state, siteId );
+		const { gmtOffset = 0 } = query;
 		const response = {};
 		const streakData = getSiteStatsForQuery( state, siteId, 'statsStreak', query );
-
 		if ( streakData && streakData.data ) {
 			Object.keys( streakData.data ).forEach( ( timestamp ) => {
-				const postDay = i18n.moment.unix( timestamp );
-				const datestamp = postDay.utcOffset( site.options.gmt_offset ).format( 'YYYY-MM-DD' );
+				const postDay = i18n.moment.unix( timestamp ).locale( 'en' );
+				const datestamp = postDay.utcOffset( gmtOffset ).format( 'YYYY-MM-DD' );
 
 				if ( 'undefined' === typeof( response[ datestamp ] ) ) {
 					response[ datestamp ] = 0;
