@@ -162,10 +162,9 @@ module.exports = {
 		renderWithReduxStore(
 			<EmailData
 				component={ DomainManagement.Email }
-				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				context={ pageContext }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);

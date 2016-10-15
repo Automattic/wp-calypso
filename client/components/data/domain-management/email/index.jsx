@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -10,7 +11,7 @@ import { connect } from 'react-redux';
 import StoreConnection from 'components/data/store-connection';
 import DomainsStore from 'lib/domains/store';
 import CartStore from 'lib/cart/store';
-import observe from 'lib/mixins/data-observe';
+import QueryProducts from 'components/data/query-products-list';
 import { fetchDomains } from 'lib/upgrades/actions';
 import userFactory from 'lib/user';
 import {
@@ -25,10 +26,12 @@ import {
 import { shouldFetchSitePlans } from 'lib/plans';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
+import { getProductsList } from 'state/products-list/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const user = userFactory();
 
-var stores = [
+const stores = [
 	DomainsStore,
 	CartStore
 ];
@@ -48,84 +51,125 @@ function getStateFromStores( props ) {
 	};
 }
 
-const EmailData = React.createClass( {
-	displayName: 'EmailData',
+export class EmailData extends Component {
+	static propTypes = {
+		context: PropTypes.object.isRequired,
+		fetchSitePlans: PropTypes.func.isRequired,
+		products: PropTypes.object.isRequired,
+		selectedDomainName: PropTypes.string,
+		selectedSite: PropTypes.object.isRequired,
+		sitePlans: PropTypes.object.isRequired,
+		googleAppsUsers: PropTypes.array.isRequired,
+		googleAppsUsersLoaded: PropTypes.bool.isRequired,
+	};
 
-	propTypes: {
-		component: React.PropTypes.func.isRequired,
-		context: React.PropTypes.object.isRequired,
-		productsList: React.PropTypes.object.isRequired,
-		selectedDomainName: React.PropTypes.string,
-		sitePlans: React.PropTypes.object.isRequired,
-		sites: React.PropTypes.object.isRequired,
-		googleAppsUsers: React.PropTypes.array.isRequired,
-		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
-	},
+	constructor( props ) {
+		super( props );
 
-	mixins: [ observe( 'productsList' ) ],
+		props.loadDomainsAndSitePlans();
+	}
 
-	componentWillMount() {
-		this.loadDomainsAndSitePlans();
+	componentDidMount() {
 		this.props.fetchGoogleAppsUsers();
-	},
+	}
 
-	componentWillUpdate() {
-		this.loadDomainsAndSitePlans();
-	},
+	componentWillUpdate( nextProps ) {
+		const { selectedSite: nextSite } = nextProps;
+		const { selectedSite: prevSite } = this.props;
 
-	loadDomainsAndSitePlans() {
-		const selectedSite = this.props.sites.getSelectedSite();
-
-		if ( this.prevSelectedSite !== selectedSite ) {
-			fetchDomains( selectedSite.ID );
-			this.props.fetchSitePlans( this.props.sitePlans, this.props.sites.getSelectedSite() );
-
-			this.prevSelectedSite = selectedSite;
+		if ( nextSite !== prevSite ) {
+			this.props.loadDomainsAndSitePlans();
 		}
-	},
+	}
 
 	render() {
 		return (
-			<StoreConnection
-				domains={ this.props.domains }
-				googleAppsUsers={ this.props.googleAppsUsers }
-				googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
-				component={ this.props.component }
-				stores={ stores }
-				getStateFromStores={ getStateFromStores }
-				products={ this.props.productsList.get() }
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() }
-				sitePlans={ this.props.sitePlans }
-				context={ this.props.context } />
+			<div>
+				<QueryProducts />
+				<StoreConnection
+					component={ this.props.component }
+					domains={ this.props.domains }
+					googleAppsUsers={ this.props.googleAppsUsers }
+					googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
+					stores={ stores }
+					getStateFromStores={ getStateFromStores }
+					products={ this.props.products }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.selectedSite }
+					sitePlans={ this.props.sitePlans }
+					context={ this.props.context }
+				/>
+			</div>
 		);
 	}
-} );
+}
+
+const loadDomainsAndSitePlans = ( fetchSitePlans, selectedSite, sitePlans ) => {
+	if ( ! selectedSite ) {
+		return;
+	}
+
+	if ( ! shouldFetchSitePlans( sitePlans, selectedSite ) ) {
+		return;
+	}
+
+	fetchDomains( selectedSite.ID );
+	fetchSitePlans( selectedSite.ID );
+};
+
+const mapStateToProps = ( state, { selectedDomainName } ) => {
+	const selectedSite = getSelectedSite( state );
+	const googleAppsUsers = selectedDomainName
+		? getByDomain( state, selectedDomainName )
+		: getBySite( state, selectedSite.ID );
+
+	return {
+		googleAppsUsers,
+		googleAppsUsersLoaded: isLoaded( state ),
+		products: getProductsList( state ),
+		selectedSite,
+		sitePlans: getPlansBySite( state, selectedSite ),
+	};
+};
+
+const mapDispatchToProps = ( dispatch, { selectedDomainName } ) => {
+	const googleAppsUsersFetcher = selectedDomainName
+		? () => dispatch( fetchByDomain( selectedDomainName ) )
+		: selectedSite => dispatch( fetchBySiteId( selectedSite.ID ) );
+
+	return {
+		fetchSitePlans: siteId => dispatch( fetchSitePlans( siteId ) ),
+		googleAppsUsersFetcher,
+	};
+};
+
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const {
+		selectedSite,
+		sitePlans,
+	} = stateProps;
+
+	const {
+		fetchSitePlans,
+		googleAppsUsersFetcher,
+	} = dispatchProps;
+
+	return {
+		...ownProps,
+		...stateProps,
+		...dispatchProps,
+		fetchGoogleAppsUsers: () => googleAppsUsersFetcher( selectedSite ),
+		loadDomainsAndSitePlans: partial(
+			loadDomainsAndSitePlans,
+			fetchSitePlans,
+			selectedSite,
+			sitePlans,
+		)
+	};
+};
 
 export default connect(
-	( state, { selectedDomainName, sites } ) => {
-		const googleAppsUsers = selectedDomainName
-			? getByDomain( state, selectedDomainName )
-			: getBySite( state, sites.getSelectedSite().ID );
-
-		return {
-			googleAppsUsers,
-			googleAppsUsersLoaded: isLoaded( state ),
-			sitePlans: getPlansBySite( state, sites.getSelectedSite() )
-		}
-	},
-	( dispatch, { selectedDomainName, sites } ) => {
-		const googleAppsUsersFetcher = selectedDomainName
-			? () => fetchByDomain( selectedDomainName )
-			: () => fetchBySiteId( sites.getSelectedSite().ID );
-
-		return {
-			fetchGoogleAppsUsers: () => dispatch( googleAppsUsersFetcher() ),
-			fetchSitePlans: ( sitePlans, site ) => {
-				if ( shouldFetchSitePlans( sitePlans, site ) ) {
-					dispatch( fetchSitePlans( site.ID ) );
-				}
-			}
-		}
-	}
+	mapStateToProps,
+	mapDispatchToProps,
+	mergeProps
 )( EmailData );
