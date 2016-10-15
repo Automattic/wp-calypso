@@ -15,6 +15,7 @@ import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
 import { filterIsValid, getTaxonomies, } from '../theme-filters.js';
+import MagicSearchWelcome from './welcome';
 
 const ThemesMagicSearchCard = React.createClass( {
 	propTypes: {
@@ -169,17 +170,7 @@ const ThemesMagicSearchCard = React.createClass( {
 		);
 	},
 
-	renderWelcomeSign: function() {
-		const taxonomies = Object.keys( this.state.taxonomies );
-
-		return (
-			taxonomies.map( ( taxonomy, i ) => {
-				return <span className="suggestions__taxonomy" key={ i }>{ taxonomy }</span>;
-			} )
-		);
-	},
-
-	suggest: function( suggestion ) {
+		suggest: function( suggestion ) {
 		const updatedInput = this.insertSuggestion( suggestion );
 		this.setState( { searchInput: updatedInput } );
 		this.refs[ 'url-search' ].clear();
@@ -194,6 +185,9 @@ const ThemesMagicSearchCard = React.createClass( {
 			{ value: 'free', label: this.translate( 'Free' ) },
 			{ value: 'premium', label: this.translate( 'Premium' ) },
 		];
+
+		const taxonomies = Object.keys( this.state.taxonomies );
+		const welcomeSignProps = { taxonomies: taxonomies, topSearches: [] };
 
 		const searchField = (
 			<Search
@@ -240,7 +234,8 @@ const ThemesMagicSearchCard = React.createClass( {
 					terms={ this.state.taxonomies }
 					input={ this.state.editedSearchElement }
 					suggest={ this.suggest }
-					welcomeSign={ this.renderWelcomeSign }
+					welcomeSign={ MagicSearchWelcome }
+					welcomeSignProps={ welcomeSignProps }
 				/>
 			</div>
 		);

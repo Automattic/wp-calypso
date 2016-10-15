@@ -129,3 +129,46 @@
 	}
 
 }
+
+.themes-magic-search-card__welcome {
+	color: $gray;
+	background-color: white;
+	text-transform: uppercase;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+		display: flex;
+		flex-direction: column;
+
+		.themes-magic-search-card__welcome-top-searches,
+		.themes-magic-search-card__welcome-taxonomies {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+		}
+
+		.themes-magic-search-card__welcome-header {
+			padding: 5px 10px 5px 25px;
+			font-size: smaller;
+		}
+
+		.themes-magic-search-card__welcome-taxonomies {
+			padding: 0px 10px 5px 25px;
+
+			.themes-magic-search-card__welcome-taxonomy {
+				padding: 0px 5px 0px 5px;
+				margin: 0px 10px 0px 0px;
+				box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+					0 1px 2px lighten( $gray, 30% );
+					display: flex;
+					align-items: center;
+			}
+
+
+		}
+
+		.themes-magic-search-card__welcome-taxonomy-icon {
+			width: 20px;
+			height: 20px;
+			padding-right: 4px;
+		}
+}

@@ -8,14 +8,11 @@ import {
 	pickBy
 }	from 'lodash';
 
-/**
- * Internal dependencies
- */
-
 const Suggestions = React.createClass( {
 
 	propTypes: {
-		weolcomeSign: React.PropTypes.func,
+		welcomeSign: React.PropTypes.element,
+		welcomeSignProps: React.PropTypes.object,
 		suggest: React.PropTypes.func,
 		terms: React.PropTypes.object,
 		input: React.PropTypes.string
@@ -23,7 +20,7 @@ const Suggestions = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
-			weolcomeSign: noop,
+			welcomeSign: noop,
 			suggest: noop,
 			terms: {},
 			input: '',
@@ -242,10 +239,18 @@ const Suggestions = React.createClass( {
 		return <div className="suggestions__suggestions">{ rendered }</div>;
 	},
 
+	welcomeCallback: function( text ) {
+		console.log(" hello from welcome " + text );
+	},
+
 	render() {
 		let suggestion;
 		if ( this.props.input === '' ) {
-			suggestion = this.props.welcomeSign();
+			suggestion =
+			<this.props.welcomeSign
+				{...this.props.welcomeSignProps}
+				suggestionsCallback={this.welcomeCallback}
+			/>;
 		} else {
 			suggestion = this.createSuggestions( this.state.suggestions );
 		}
