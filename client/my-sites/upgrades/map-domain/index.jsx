@@ -79,16 +79,12 @@ var MapDomain = React.createClass( {
 	},
 
 	handleRegisterDomain( suggestion ) {
-		const items = cartItems.bundleItemWithPlanIfNecessary(
+		upgradesActions.addItem(
 			cartItems.domainRegistration( {
 				productSlug: suggestion.product_slug,
 				domain: suggestion.domain
-			} ),
-			this.props.domainsWithPlansOnly,
-			this.props.sites.getSelectedSite(),
-			this.props.cart
+			} )
 		);
-		upgradesActions.addItems( items );
 
 		if ( this.isMounted() ) {
 			page( '/checkout/' + this.props.sites.getSelectedSite().slug );
@@ -110,14 +106,7 @@ var MapDomain = React.createClass( {
 			return;
 		}
 
-		const items = cartItems.bundleItemWithPlanIfNecessary(
-			cartItems.domainMapping( { domain } ),
-			this.props.domainsWithPlansOnly,
-			selectedSite,
-			this.props.cart
-		);
-
-		upgradesActions.addItems( items );
+		upgradesActions.addItem( cartItems.domainMapping( { domain } ) );
 
 		if ( this.isMounted() ) {
 			page( '/checkout/' + selectedSite.slug );
