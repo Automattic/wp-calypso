@@ -36,7 +36,7 @@ export default ( state = initialState, action ) => {
 	switch ( action.type ) {
 		case THEMES_RECEIVE: {
 			const isCurrentSite = action.siteId === state.get( 'currentSiteId' );
-			const isNewSite = action.isJetpack && !isCurrentSite;
+			const isNewSite = action.isJetpack && ! isCurrentSite;
 			const currentThemes = isNewSite ? new Map() : state.get( 'themes' );
 			const mergedThemes = add( action.themes, currentThemes );
 
