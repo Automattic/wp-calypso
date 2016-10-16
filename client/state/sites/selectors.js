@@ -4,6 +4,7 @@
  * External dependencies
  */
 import {
+	every,
 	filter,
 	find,
 	flowRight as compose,
@@ -15,6 +16,7 @@ import {
 	split,
 	includes,
 } from 'lodash';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -587,4 +589,211 @@ export function getSiteFrontPageType( state, siteId ) {
  */
 export function hasStaticFrontPage( state, siteId ) {
 	return !! getSiteFrontPage( state, siteId );
+}
+
+/**
+ * Determines if a Jetpack site has opted in for full-site management
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Boolean} if the site can be managed from calypso
+ */
+export function canJetpackSiteManage( state, siteId ) {
+	// for versions 3.4 and higher, canManage can be determined by the state of the Manage Module
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+
+	if ( ! siteJetpackVersion ) {
+		return null;
+	}
+
+	if ( versionCompare( siteJetpackVersion, '3.4', '>=' ) ) {
+		// if we haven't fetched the modules yet, we default to true
+		const modules = getSiteOption( state, siteId, 'active_modules' );
+		if ( ! modules || modules.length === 0 ) {
+			return true;
+		}
+		return isJetpackModuleActive( state, siteId, 'manage' );
+	}
+	// for version lower than 3.4, we cannot not determine canManage, we'll assume they can
+	return true;
+}
+
+// TODO: remove this once #8197 is merged
+export function canJetpackSiteUpdateFiles() {
+	return null;
+}
+
+/**
+ * Determines if a Jetpack site can auto update its files.
+ * This function checks if the given Jetpack site can update its files and if the automatic updater is enabled
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Boolean} if the site can auto update
+ */
+export function canJetpackSiteAutoUpdateFiles( state, siteId ) {
+	if ( ! canJetpackSiteUpdateFiles( state, siteId ) ) {
+		return false;
+	}
+
+	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
+
+	if ( fileModDisabled && includes( fileModDisabled, 'automatic_updater_disabled' ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Determines if a Jetpack site can auto update WordPress core.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Boolean} if the site can auto update WordPress
+ */
+export function canJetpackSiteAutoUpdateCore( state, siteId ) {
+	return canJetpackSiteAutoUpdateFiles( state, siteId );
+}
+
+/**
+ * Determines if the Jetpack plugin of a Jetpack Site has menus
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Boolean} if the site has Jetpack menus
+ */
+export function hasJetpackSiteJetpackMenus( state, siteId ) {
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+	return versionCompare( siteJetpackVersion, '3.5-alpha' ) >= 0;
+}
+
+/**
+ * Determines if the Jetpack plugin of a Jetpack Site has themes
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Boolean} if the site has Jetpack themes
+ */
+export function hasJetpackSiteJetpackThemes( state, siteId ) {
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
+	return versionCompare( siteJetpackVersion, '3.7-beta' ) >= 0;
+}
+
+/**
+ * Determines if a Jetpack site is a secondary network site
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Boolean} if the site is a secondary network site
+ */
+export function isJetpackSiteSecondaryNetworkSite( state, siteId ) {
+	const site = getRawSite( state, siteId );
+
+	if ( ! site ) {
+		return null;
+	}
+
+	const isMultiNetwork = getSiteOption( state, siteId, 'is_multi_network' );
+
+	if ( site.is_multisite === false || isMultiNetwork === false ) {
+		return false;
+	}
+
+	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' ),
+		mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
+
+	// Compare unmapped_url with the main_network_site to see if is not the main network site.
+	return withoutHttp( unmappedUrl ) !== withoutHttp( mainNetworkSite );
+}
+
+/**
+ * Determines if all given modules are active for a Jetpack Site
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @param {Array} moduleIds A list of active module ids to verify
+ * @return {Boolean} if the all the given modules are active for this site
+ */
+export function verifyJetpackModulesActive( state, siteId, moduleIds ) {
+	if ( ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
+	if ( ! Array.isArray( moduleIds ) ) {
+		moduleIds = [ moduleIds ];
+	}
+
+	return every( moduleIds, moduleId => isJetpackModuleActive( state, siteId, moduleId ) );
+}
+
+/**
+ * Returns the remote management url for a Jetpack site
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {String} the remote management url for the site
+ */
+export function getJetpackSiteRemoteManagementURL( state, siteId ) {
+	if ( ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
+	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' ),
+		siteAdminUrl = getSiteOption( state, siteId, 'admin_url' ),
+		configure = versionCompare( siteJetpackVersion, '3.4' ) < 0 ? 'manage' : 'json-api';
+
+	return siteAdminUrl + 'admin.php?page=jetpack&configure=' + configure;
+}
+
+/**
+ * Checks whether a Jetpack site has a custom mapped URL.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {?Boolean} Whether site has custom domain
+ */
+export function hasJetpackSiteCustomDomain( state, siteId ) {
+	const site = getRawSite( state, siteId ),
+		domain = getSiteDomain( state, siteId ),
+		unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
+	if ( ! site || ! domain || ! unmappedUrl ) {
+		return null;
+	}
+
+	return domain !== withoutHttp( unmappedUrl );
+}
+
+/**
+ * Returns an explanation on why updates are disabled on a Jetpack Site
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @param {String} action The update action we wanted to perform on this site
+ * @return {?String} The reason why file update is disabled
+ */
+export function getJetpackSiteFileModDisableReasons( state, siteId, action = 'modifyFiles' ) {
+	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
+
+	return fileModDisabled.map( clue => {
+		if ( action === 'modifyFiles' || action === 'autoupdateFiles' || action === 'autoupdateCore' ) {
+			if ( clue === 'has_no_file_system_write_access' ) {
+				return i18n.translate( 'The file permissions on this host prevent editing files.' );
+			}
+			if ( clue === 'disallow_file_mods' ) {
+				return i18n.translate( 'File modifications are explicitly disabled by a site administrator.' );
+			}
+		}
+
+		if ( ( action === 'autoupdateFiles' || action === 'autoupdateCore' ) &&
+			clue === 'automatic_updater_disabled' ) {
+			return i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' );
+		}
+
+		if ( action === 'autoupdateCore' &&
+			clue === 'wp_auto_update_core_disabled' ) {
+			return i18n.translate( 'Core autoupdates are explicitly disabled by a site administrator.' );
+		}
+		return null;
+	} ).filter( reason => reason );
 }
