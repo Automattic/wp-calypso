@@ -35,14 +35,13 @@ describe( 'EditorPublishButton', function() {
 		mockery.registerMock( 'lib/posts/stats', {
 			recordEvent: noop
 		} );
-		EditorPublishButton = require( '../' ).default;
-		EditorPublishButton.prototype.translate = identity;
+		EditorPublishButton = require( '../' ).EditorPublishButton;
 	} );
 
 	describe( '#getButtonLabel()', function() {
 		it( 'should return Update if the post was originally published and is still slated to be published', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					savedPost={ { status: 'publish' } }
 					post={ { status: 'publish' } }
 					site={ MOCK_SITE }
@@ -53,7 +52,7 @@ describe( 'EditorPublishButton', function() {
 
 		it( 'should return Update if the post was originally published and is currently reverted to non-published status', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					savedPost={ { status: 'publish' } }
 					post={ { status: 'draft' } }
 					site={ MOCK_SITE }
@@ -67,7 +66,7 @@ describe( 'EditorPublishButton', function() {
 			const now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						savedPost={ { status: 'draft' } }
 						post={ { date: nextMonth } }
 						site={ MOCK_SITE }
@@ -81,7 +80,7 @@ describe( 'EditorPublishButton', function() {
 			const now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						savedPost={ { status: 'draft' } }
 						post={ { date: nextMonth } }
 						site={ MOCK_SITE }
@@ -95,7 +94,7 @@ describe( 'EditorPublishButton', function() {
 			const now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						savedPost={ { status: 'future', date: nextMonth } }
 						post={ { title: 'change', status: 'future', date: nextMonth } }
 						site={ MOCK_SITE }
@@ -109,7 +108,7 @@ describe( 'EditorPublishButton', function() {
 			const now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						savedPost={ { status: 'future', date: nextMonth } }
 						post={ { title: 'change', status: 'draft', date: nextMonth } }
 						site={ MOCK_SITE }
@@ -123,7 +122,7 @@ describe( 'EditorPublishButton', function() {
 			const now = moment( new Date() ),
 				lastMonth = now.month( now.month() - 1 ).format(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						savedPost={ { status: 'future', date: lastMonth } }
 						post={ { title: 'change', status: 'future', date: lastMonth } }
 						site={ MOCK_SITE }
@@ -135,7 +134,7 @@ describe( 'EditorPublishButton', function() {
 
 		it( 'should return Publish if the post is a draft', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					savedPost={ { status: 'draft' } }
 					site={ MOCK_SITE }
 				/>
@@ -146,7 +145,7 @@ describe( 'EditorPublishButton', function() {
 
 		it( 'should return "Submit for Review" if the post is a draft and user can\'t publish', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					savedPost={ { status: 'draft' } }
 					site={ {
 						capabilities: {
@@ -163,7 +162,7 @@ describe( 'EditorPublishButton', function() {
 	describe( '#isEnabled()', function() {
 		it( 'should return true if form is not publishing and post is not empty', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					isPublishing={ false }
 					post={ {} }
 					hasContent
@@ -176,7 +175,7 @@ describe( 'EditorPublishButton', function() {
 
 		it( 'should return false if form is not publishing and post is not empty, but user is not verified', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					isPublishing={ false }
 					post={ {} }
 					needsVerification={ true }
@@ -190,7 +189,7 @@ describe( 'EditorPublishButton', function() {
 
 		it( 'should return true if form is not published and post is new and has content, but is not dirty', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					isPublishing={ false }
 					post={ {} }
 					hasContent
@@ -203,7 +202,7 @@ describe( 'EditorPublishButton', function() {
 
 		it( 'should return false if form is publishing', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					isPublishing
 				/> ).instance();
 
@@ -212,7 +211,7 @@ describe( 'EditorPublishButton', function() {
 
 		it( 'should return false if saving is blocked', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					isSaveBlocked
 				/> ).instance();
 
@@ -221,7 +220,7 @@ describe( 'EditorPublishButton', function() {
 
 		it( 'should return false if not dirty and has no content', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					post={ {} }
 					isDirty={ false }
 					hasContent={ false }
@@ -233,7 +232,7 @@ describe( 'EditorPublishButton', function() {
 
 		it( 'should return false if post has no content', function() {
 			const tree = shallow(
-				<EditorPublishButton
+				<EditorPublishButton translate={ identity }
 					post={ {} }
 					hasContent={ false }
 				/> ).instance();
@@ -246,7 +245,7 @@ describe( 'EditorPublishButton', function() {
 		it( 'should publish a draft', function() {
 			const onPublish = sinon.spy(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						post={ { status: 'draft' } }
 						site={ MOCK_SITE }
 						onPublish={ onPublish }
@@ -263,7 +262,7 @@ describe( 'EditorPublishButton', function() {
 				nextMonth = now.month( now.month() + 1 ).format(),
 				onPublish = sinon.spy(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						savedPost={ { status: 'draft', date: nextMonth } }
 						post={ { title: 'change', status: 'draft', date: nextMonth } }
 						onPublish={ onPublish }
@@ -281,7 +280,7 @@ describe( 'EditorPublishButton', function() {
 				nextMonth = now.month( now.month() + 1 ).format(),
 				onPublish = sinon.spy(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						savedPost={ { status: 'future', date: nextMonth } }
 						post={ { title: 'change', status: 'future', date: nextMonth } }
 						onPublish={ onPublish }
@@ -299,7 +298,7 @@ describe( 'EditorPublishButton', function() {
 				lastMonth = now.month( now.month() - 1 ).format(),
 				onPublish = sinon.spy(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						savedPost={ { status: 'future', date: lastMonth } }
 						post={ { title: 'change', status: 'future', date: lastMonth } }
 						onPublish={ onPublish }
@@ -315,7 +314,7 @@ describe( 'EditorPublishButton', function() {
 		it( 'should update a published post that has changed status', function() {
 			const onSave = sinon.spy(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						savedPost={ { status: 'publish' } }
 						post={ { title: 'change', status: 'draft' } }
 						onSave={ onSave }
@@ -331,7 +330,7 @@ describe( 'EditorPublishButton', function() {
 		it( 'should set status to "pending" if the user can\'t publish', function() {
 			const onSave = sinon.spy(),
 				tree = shallow(
-					<EditorPublishButton
+					<EditorPublishButton translate={ identity }
 						savedPost={ { status: 'draft' } }
 						onSave={ onSave }
 						site={ {

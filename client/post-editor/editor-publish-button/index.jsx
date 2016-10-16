@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 
 /**
  * Internal dependencies
@@ -10,6 +10,7 @@ import { recordEvent } from 'lib/posts/stats';
 import postUtils from 'lib/posts/utils';
 import siteUtils from 'lib/site/utils';
 import Button from 'components/button';
+import { localize } from 'i18n-calypso';
 
 export const getPublishButtonStatus = ( site, post, savedPost ) => {
 	if (
@@ -40,10 +41,8 @@ export const getPublishButtonStatus = ( site, post, savedPost ) => {
 	return 'requestReview';
 };
 
-export default React.createClass( {
-	displayName: 'EditorPublishButton',
-
-	propTypes: {
+export class EditorPublishButton extends Component {
+	static propTypes = {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		savedPost: PropTypes.object,
@@ -54,9 +53,9 @@ export default React.createClass( {
 		isSaveBlocked: PropTypes.bool,
 		hasContent: PropTypes.bool,
 		needsVerification: PropTypes.bool
-	},
+	};
 
-	trackClick: function() {
+	trackClick() {
 		const postEvents = {
 			update: 'Clicked Update Post Button',
 			schedule: 'Clicked Schedule Post Button',
@@ -73,22 +72,22 @@ export default React.createClass( {
 		const eventString = postUtils.isPage( this.props.post ) ? pageEvents[ buttonState ] : postEvents[ buttonState ];
 		recordEvent( eventString );
 		recordEvent( 'Clicked Primary Button' );
-	},
+	}
 
-	getButtonLabel: function() {
+	getButtonLabel() {
 		switch ( getPublishButtonStatus( this.props.site, this.props.post, this.props.savedPost ) ) {
 			case 'update':
-				return this.translate( 'Update' );
+				return this.props.translate( 'Update' );
 			case 'schedule':
-				return this.translate( 'Schedule' );
+				return this.props.translate( 'Schedule' );
 			case 'publish':
-				return this.translate( 'Publish' );
+				return this.props.translate( 'Publish' );
 			case 'requestReview':
-				return this.translate( 'Submit for Review' );
+				return this.props.translate( 'Submit for Review' );
 		}
-	},
+	}
 
-	onClick: function() {
+	onClick() {
 		this.trackClick();
 
 		if ( postUtils.isPublished( this.props.savedPost ) &&
@@ -102,20 +101,20 @@ export default React.createClass( {
 		}
 
 		return this.props.onSave( 'pending' );
-	},
+	}
 
-	isEnabled: function() {
+	isEnabled() {
 		return ! this.props.isPublishing &&
 			! this.props.isSaveBlocked &&
 			this.props.hasContent &&
 			! this.props.needsVerification;
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<Button
 				className="editor-publish-button"
-				primary={ true }
+				primary
 				onClick={ this.onClick }
 				disabled={ ! this.isEnabled() }
 				tabIndex={ this.props.tabIndex }
@@ -124,4 +123,6 @@ export default React.createClass( {
 			</Button>
 		);
 	}
-} );
+}
+
+export default localize( EditorPublishButton );
