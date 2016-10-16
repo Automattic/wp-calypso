@@ -10,26 +10,16 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import Mentions from './mentions';
-import sitesFactory from 'lib/sites-list';
-
-const sites = sitesFactory();
 
 function mentions( editor ) {
-	let node, siteId;
-
 	editor.on( 'init', () => {
-		node = document.createElement( 'div' );
-		siteId = sites.getSelectedSite() ? sites.getSelectedSite().ID : null;
+		const node = document.createElement( 'div' );
 
-		node.setAttribute( 'class', 'mention' );
 		editor.getContainer().appendChild( node );
 
 		ReactDom.render(
 			<ReduxProvider store={ editor.getParam( 'redux_store' ) }>
-				<Mentions
-					siteId={ siteId }
-					editor={ editor }
-				/>
+				<Mentions editor={ editor } />
 			</ReduxProvider>,
 			node
 		);

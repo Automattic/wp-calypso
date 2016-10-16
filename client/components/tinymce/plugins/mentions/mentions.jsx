@@ -13,6 +13,7 @@ import tinymce from 'tinymce/tinymce';
 import SuggestionList from './suggestion-list';
 import EditorMention from './editor-mention';
 import QueryUsersSuggestions from 'components/data/query-users-suggestions';
+import { getSelectedSiteId } from 'state/ui/selectors';
 import { getUserSuggestions } from 'state/users/suggestions/selectors';
 
 /**
@@ -120,7 +121,6 @@ class Mentions extends React.Component {
 }
 
 Mentions.propTypes = {
-	siteId: React.PropTypes.number,
 	editor: React.PropTypes.object,
 	suggestions: React.PropTypes.array,
 };
@@ -129,8 +129,8 @@ Mentions.defaultProps = {
 	suggestions: [],
 };
 
-export default connect( ( state, ownProps ) => {
-	const { siteId } = ownProps;
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state );
 
 	return {
 		suggestions: getUserSuggestions( state, siteId )
