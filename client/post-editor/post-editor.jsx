@@ -218,7 +218,7 @@ export const PostEditor = React.createClass( {
 								site={ site }
 								type={ this.props.type }
 							/>
-							<div className="editor__site">
+							<div className="post-editor__site">
 								<Site
 									site={ site }
 									indicator={ false }

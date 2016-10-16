@@ -391,7 +391,7 @@ export default React.createClass( {
 									? <Gridicon icon="scheduled" size={ 18 } />
 									: <Gridicon icon="calendar" size={ 18 } />
 								}
-								<span className="editor-ground-control__time-button__label">
+								<span className="editor-ground-control__time-button-label">
 									{ postUtils.isFutureDated( this.props.post )
 										? this.moment( this.props.post.date ).calendar()
 										: this.translate( 'Choose Date' )
