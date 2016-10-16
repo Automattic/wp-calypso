@@ -59,13 +59,13 @@ const connectedTitle = ( { onCloseChat } ) => (
 	<div className="happychat__active-toolbar">
 	<h4>{ translate( 'WP.com' ) }</h4>
 		<div onClick={ onCloseChat }>
-			<GridIcon icon="cross" />
+			<GridIcon icon="chevron-down" />
 		</div>
 	</div>
 );
 
 /**
- * Funciton for rendering correct titlebar based on happychat client state
+ * Function for rendering correct titlebar based on happychat client state
  */
 const title = first(
 	when( isConnected, connectedTitle ),
