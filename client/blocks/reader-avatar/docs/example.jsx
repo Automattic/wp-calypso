@@ -8,24 +8,22 @@ import React from 'react';
  */
 import ReaderAvatar from 'blocks/reader-avatar';
 
-export default React.createClass( {
+const ReaderAvatarExample = () => {
+	const author = {
+		avatar_URL: 'https://1.gravatar.com/avatar/767fc9c115a1b989744c755db47feb60?s=96&d=mm&r=G',
+		name: 'Matt',
+		URL: 'http://discover.wordpress.com',
+		has_avatar: true
+	};
+	const siteIcon = 'https://secure.gravatar.com/blavatar/c9e4e04719c81ca4936a63ea2dce6ace?s=120';
 
-	displayName: 'ReaderAvatar',
+	return (
+		<div className="design-assets__group">
+			<ReaderAvatar author={ author } siteIcon={ siteIcon } />
+		</div>
+	);
+};
 
-	render() {
-		const author = {
-			avatar_URL: 'https://0.gravatar.com/avatar/cf55adb1a5146c0a11a808bce7842f7b?s=96&d=identicon',
-			name: 'Bob The Tester',
-			URL: 'http://wpcalypso.wordpress.com'
-		};
+ReaderAvatarExample.displayName = 'ReaderAvatar';
 
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/reader-avatar">Reader Avatar</a>
-				</h2>
-				<ReaderAvatar />
-			</div>
-		);
-	}
-} );
+export default ReaderAvatarExample;
