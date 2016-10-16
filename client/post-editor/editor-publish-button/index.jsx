@@ -55,6 +55,13 @@ export class EditorPublishButton extends Component {
 		needsVerification: PropTypes.bool
 	};
 
+	constructor( props ) {
+		super( props );
+
+		// bound methods
+		this.onClick = this.onClick.bind( this );
+	}
+
 	trackClick() {
 		const postEvents = {
 			update: 'Clicked Update Post Button',
