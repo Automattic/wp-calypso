@@ -125,9 +125,9 @@ const mapStateToProps = ( state, { selectedDomainName } ) => {
 
 	return {
 		googleAppsUsers,
+		selectedSite,
 		googleAppsUsersLoaded: isLoaded( state ),
 		products: getProductsList( state ),
-		selectedSite,
 		sitePlans: getPlansBySite( state, selectedSite ),
 	};
 };
