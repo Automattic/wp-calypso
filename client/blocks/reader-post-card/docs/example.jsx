@@ -43,13 +43,13 @@ const searchItems = [
 const RefreshCards = () => (
 	<div className="design-assets__group">
 		<div>
-			{ searchItems.map( item =>
+			{ searchItems.map( item => (
 				<RefreshPostCard
 					key={ item.post.global_ID }
 					post={ item.post }
 					site={ item.site }
 				/>
-			) }
+			) ) }
 		</div>
 	</div>
 );
