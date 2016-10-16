@@ -7,8 +7,7 @@ import React from 'react';
 import sinon from 'sinon';
 import mockery from 'mockery';
 import { shallow } from 'enzyme';
-import identity from 'lodash/identity';
-import noop from 'lodash/noop';
+import { identity, noop } from 'lodash';
 
 /**
  * Internal dependencies
