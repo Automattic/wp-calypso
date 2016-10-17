@@ -10,6 +10,8 @@ var Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	MediaValidationStore = require( './validation-store' );
 
+import { isItemBeingUploaded } from 'lib/media/utils';
+
 /**
  * Module variables
  */
@@ -31,6 +33,15 @@ function receiveSingle( siteId, item, itemId ) {
 		}
 
 		MediaStore._pointers[ siteId ][ itemId ] = item.ID;
+
+		const maybeTransientMediaItem = MediaStore._media[ siteId ][ itemId ];
+
+		if ( isItemBeingUploaded( maybeTransientMediaItem ) ) {
+			item.description = maybeTransientMediaItem.description;
+			item.alt = maybeTransientMediaItem.alt;
+			item.caption = maybeTransientMediaItem.caption;
+		}
+
 		delete MediaStore._media[ siteId ][ itemId ];
 	}
 
