@@ -319,7 +319,8 @@ export function getSortedFilterTerms( input ) {
  * @return {string} input string minus any filters
  */
 export function stripFilters( input ) {
-	return input.replace( FILTER_REGEX_GLOBAL, '' ).trim();
+	const withoutFilters = input.replace( FILTER_REGEX_GLOBAL, '' ).trim();
+	return withoutFilters.replace( /\s+/g, ' ' );
 }
 
 export function getSubjects() {
