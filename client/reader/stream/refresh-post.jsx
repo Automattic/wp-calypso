@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -46,9 +47,11 @@ export class ReaderPostCardAdapter extends React.Component {
 
 export default connect(
 	( state, ownProps ) => {
+		const siteId = get( ownProps, 'post.site_ID' );
+		const feedId = get( ownProps, 'post.feed_ID' );
 		return {
-			site: getSite( state, ownProps.site_ID ),
-			feed: getFeed( state, ownProps.feed_ID )
+			site: getSite( state, siteId ),
+			feed: getFeed( state, feedId )
 		};
 	}
 )( ReaderPostCardAdapter );
