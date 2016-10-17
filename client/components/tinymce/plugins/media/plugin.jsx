@@ -283,7 +283,7 @@ function mediaButton( editor ) {
 				}
 
 				// Use markup utility to generate replacement element
-				markup = MediaMarkup.get( merged, options );
+				markup = MediaMarkup.get( selectedSite, merged, options );
 
 				// If a media includes a caption shortcode, we can get the HTML markup of the shortcode with
 				// the following method.
@@ -540,7 +540,7 @@ function mediaButton( editor ) {
 		const size = findFn( SIZE_ORDER, isMatchingSize ) || SIZE_ORDER[ SIZE_ORDER.length - 1 ];
 
 		// Generate updated markup
-		const markup = MediaMarkup.get( media, assign( parsed.appearance, { size } ) );
+		const markup = MediaMarkup.get( selectedSite, media, assign( parsed.appearance, { size } ) );
 
 		// Replace selected content
 		editor.selection.setContent( markup );
