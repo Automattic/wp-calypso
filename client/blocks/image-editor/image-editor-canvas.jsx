@@ -69,6 +69,12 @@ class ImageEditorCanvas extends Component {
 
 		this.onLoadComplete = this.onLoadComplete.bind( this );
 		this.updateCanvasPosition = this.updateCanvasPosition.bind( this );
+
+		this.isVisible = false;
+	}
+
+	componentDidMount() {
+		this.isVisible = true;
 	}
 
 	componentWillReceiveProps( newProps ) {
@@ -84,6 +90,10 @@ class ImageEditorCanvas extends Component {
 		req.open( 'GET', url + '?', true ); // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
 		req.responseType = 'arraybuffer';
 		req.onload = () => {
+			if ( ! this.isVisible ) {
+				return;
+			}
+
 			const objectURL = window.URL.createObjectURL( new Blob( [ req.response ], { type: mimeType } ) );
 			this.initImage( objectURL );
 		};
@@ -100,7 +110,7 @@ class ImageEditorCanvas extends Component {
 	}
 
 	onLoadComplete( event ) {
-		if ( event.type !== 'load' ) {
+		if ( event.type !== 'load' || ! this.isVisible ) {
 			return;
 		}
 
@@ -119,6 +129,8 @@ class ImageEditorCanvas extends Component {
 			window.removeEventListener( 'resize', this.onWindowResize );
 			this.onWindowResize = null;
 		}
+
+		this.isVisible = false;
 	}
 
 	componentDidUpdate() {
