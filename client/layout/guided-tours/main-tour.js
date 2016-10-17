@@ -64,7 +64,7 @@ export const MainTour = makeTour(
 				}
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue icon="my-sites" target="my-sites" step="sidebar" click>
+				<Continue icon="my-sites" target="my-sites" step="sidebar" targetEvent="click">
 					{
 						translate( 'Click the {{GridIcon/}} to continue.', {
 							components: {
@@ -110,11 +110,11 @@ export const MainTour = makeTour(
 				}
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue step="in-preview" target="site-card-preview" click>
+				<Continue step="in-preview" target="site-card-preview" targetEvent="click">
 					{
 						translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
 							components: {
-								strong: <strong/>,
+								strong: <strong />,
 							},
 						} )
 					}
