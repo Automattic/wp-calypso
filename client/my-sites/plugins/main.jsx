@@ -26,7 +26,7 @@ import URLSearch from 'lib/mixins/url-search';
 import EmptyContent from 'components/empty-content';
 import PluginsStore from 'lib/plugins/store';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import * as WporgPluginsSelectors from 'state/plugins/wporg/selectors';
+import { getPlugin as getWporgPlugin } from 'state/plugins/wporg/selectors';
 import FeatureExample from 'components/feature-example';
 import PluginsList from './plugins-list';
 import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
@@ -86,7 +86,7 @@ const PluginsMain = React.createClass( {
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( plugin => {
-			const pluginData = WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, plugin.slug );
+			const pluginData = getWporgPlugin( this.props.wporgPlugins, plugin.slug );
 			if ( ! pluginData ) {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}

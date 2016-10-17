@@ -18,7 +18,11 @@ import HeaderCake from 'components/header-cake';
 import PluginMeta from 'my-sites/plugins/plugin-meta';
 import PluginsStore from 'lib/plugins/store';
 import PluginsLog from 'lib/plugins/log-store';
-import * as WporgPluginsSelectors from 'state/plugins/wporg/selectors';
+import {
+	getPlugin as getWporgPlugin,
+	isFetching as isWporgFetching,
+	isFetched as isWporgFetched
+} from 'state/plugins/wporg/selectors';
 import PluginsActions from 'lib/plugins/actions';
 import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
 import PluginNotices from 'lib/plugins/notices';
@@ -195,7 +199,7 @@ const SinglePlugin = React.createClass( {
 	},
 
 	isFetched() {
-		return WporgPluginsSelectors.isFetched( this.props.wporgPlugins, this.props.pluginSlug );
+		return isWporgFetched( this.props.wporgPlugins, this.props.pluginSlug );
 	},
 
 	isFetchingSites() {
@@ -206,7 +210,7 @@ const SinglePlugin = React.createClass( {
 	getPlugin() {
 		let plugin = Object.assign( {}, this.state.plugin );
 		// assign it .org details
-		plugin = Object.assign( plugin, WporgPluginsSelectors.getPlugin( this.props.wporgPlugins, this.props.pluginSlug ) );
+		plugin = Object.assign( plugin, getWporgPlugin( this.props.wporgPlugins, this.props.pluginSlug ) );
 
 		return plugin;
 	},
@@ -371,7 +375,7 @@ export default connect(
 	( state, props ) => {
 		return {
 			wporgPlugins: state.plugins.wporg.items,
-			wporgFetching: WporgPluginsSelectors.isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug )
+			wporgFetching: isWporgFetching( state.plugins.wporg.fetchingItems, props.pluginSlug )
 		};
 	},
 	dispatch => bindActionCreators( { wporgFetchPluginData }, dispatch )
