@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -13,6 +14,7 @@ import {
 	getPlanRawDiscount,
 	getPlansBySite,
 	getPlansBySiteId,
+	getCurrentPlan,
 	hasDomainCredit,
 	isCurrentUserCurrentPlanOwner,
 	isRequestingSitePlans,
@@ -54,6 +56,73 @@ describe( 'selectors', () => {
 			expect( plans ).to.eql( plans1 );
 		} );
 	} );
+	describe( '#getCurrentPlan()', () => {
+		context( 'when no plan data is found for the given siteId', () => {
+			const siteId = 77203074;
+			const state = deepFreeze( {
+				sites: {
+					plans: {
+						[ siteId ]: {}
+					}
+				}
+			} );
+
+			it( 'returns null', () => {
+				const plan = getCurrentPlan( state, siteId );
+				expect( plan ).to.eql( null );
+			} );
+		} );
+
+		context( 'when plans are found for the given siteId', () => {
+			context( 'when those plans include a \'currentPlan\'', () => {
+				const siteId = 77203074;
+				const plan1 = { currentPlan: true };
+				const state = deepFreeze( {
+					sites: {
+						plans: {
+							[ siteId ]: {
+								data: [ plan1 ]
+							}
+						},
+						items: {
+							[ siteId ]: {
+								URL: 'https://example.wordpress.com'
+							}
+						}
+					}
+				} );
+
+				it( 'returns the currentPlan', () => {
+					const plan = getCurrentPlan( state, siteId );
+					expect( plan ).to.eql( plan1 );
+				} );
+			} );
+
+			context( 'when those plans do not include a \'currentPlan\'', () => {
+				const siteId = 77203074;
+				const plan1 = { currentPlan: false };
+				const state = deepFreeze( {
+					sites: {
+						plans: {
+							[ siteId ]: {
+								data: [ plan1 ]
+							}
+						},
+						items: {
+							[ siteId ]: {
+								URL: 'https://example.wordpress.com'
+							}
+						}
+					}
+				} );
+
+				it( 'returns a new sitePlanObject', () => {
+					const plan = getCurrentPlan( state, siteId );
+					expect( plan ).to.eql( {} );
+				} );
+			} );
+		} );
+	} );
 	describe( '#getSitePlan()', () => {
 		it( 'should return plans by site and plan slug', () => {
 			const plans1 = {
@@ -65,6 +134,7 @@ describe( 'selectors', () => {
 					productSlug: 'silver'
 				}, { currentPlan: true, productSlug: 'bronze' } ]
 			};
+
 			const plans2 = {
 				data: [ {
 					currentPlan: true,
