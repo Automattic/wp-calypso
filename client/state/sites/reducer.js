@@ -31,6 +31,7 @@ import {
 } from 'state/action-types';
 import { sitesSchema } from './schema';
 import { isValidStateWithSchema, createReducer } from 'state/utils';
+import sitesFactory from 'lib/sites-list';
 
 /**
  * Constants
@@ -38,6 +39,7 @@ import { isValidStateWithSchema, createReducer } from 'state/utils';
 // [TODO]: This validation is only necessary so long as we continue to receive
 // decorated sites from the `lib/sites-list` module.
 const VALID_SITE_KEYS = Object.keys( sitesSchema.patternProperties[ '^\\d+$' ].properties );
+const sites = sitesFactory();
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -54,6 +56,10 @@ export function items( state = {}, action ) {
 			if ( ! site ) {
 				break;
 			}
+
+			// Update the sites-list so that our change doesn't get wiped when the state is restored
+			// @TODO: Remove this when https://github.com/Automattic/wp-calypso/issues/8726 is complete
+			sites.fetch();
 
 			return {
 				...state,
