@@ -26,14 +26,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	content: ', ';
 }
 
-.reader-post-card__timestamp-and-tag {
-	margin-top: -6px;
-}
-
-.reader-post-card__timestamp {
-	margin-right: 10px;
-}
-
 // Need .reader__content to override .reader__content a
 .reader__content .reader-post-card__timestamp-link,
 .reader__content .reader-post-card__tag-link
@@ -43,9 +35,36 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	cursor: pointer;
 }
 
+.reader-post-card__meta-details {
+	margin-top: -2px;
+}
+
+.reader-post-card__timestamp-and-tag {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	margin-top: 1px;
+}
+
+.reader-post-card__timestamp {
+	display: inline-table;
+	margin-right: 10px;
+}
+
+.reader-post-card__tag {
+    overflow: hidden;
+    position: relative;
+    height: 20px;
+    width: 100%;
+
+    &::after {
+    	@include long-content-fade( $size: 20% );
+    }
+}
+
 .reader-post-card__tag .gridicons-tag {
     height: 18px;
-    margin: 0 3px 0 6px;
+    margin: -4px 5px 0 0;
     position: relative;
     	top: 5px;
 	width: 15px;
