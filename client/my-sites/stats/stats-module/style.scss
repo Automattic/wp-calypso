@@ -47,7 +47,7 @@
 // Section title
 
 .stats-section-title {
-	@extend %heading;
+	@include heading;
 
 	@include breakpoint( "<660px" ) {
 		margin-left: 24px;

@@ -29,7 +29,7 @@
 	}
 
 	.welcome-section-title {
-		@extend %heading;
+		@include heading;
 
 		font-size: 21px;
 		line-height: 24px;
