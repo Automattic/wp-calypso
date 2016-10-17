@@ -28,7 +28,8 @@ describe( 'reducer', () => {
 			'transform',
 			'cropBounds',
 			'crop',
-			'aspectRatio'
+			'aspectRatio',
+			'imageIsLoading'
 		] );
 	} );
 
