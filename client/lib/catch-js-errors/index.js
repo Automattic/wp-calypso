@@ -1,13 +1,18 @@
 import TraceKit from 'tracekit';
 
+// Interval for error reports so we don't flood te endpoint. More frequent reports get throttled.
+const REPORT_INTERVAL = 60000;
+
 export default class ErrorLogger {
 	constructor() {
 		this.diagnosticData = {
 			extra: {
-				previous_paths: []
+				previous_paths: [],
+				throttled: 0
 			}
 		};
 		this.diagnosticReducers = [];
+		this.lastReport = 0;
 
 		if ( ! window.onerror ) {
 			TraceKit.report.subscribe( errorReport => {
@@ -32,8 +37,15 @@ export default class ErrorLogger {
 					}
 				}
 
-				this.diagnose();
-				this.sendToApi( Object.assign( error, this.diagnosticData ) );
+				const now = Date.now();
+				if ( this.lastReport + REPORT_INTERVAL < now ) {
+					this.lastReport = now;
+					this.diagnose();
+					this.sendToApi( Object.assign( error, this.diagnosticData ) );
+					this.diagnosticData.extra.throttled = 0;
+				} else {
+					this.diagnosticData.extra.throttled++;
+				}
 			} );
 		}
 	}
