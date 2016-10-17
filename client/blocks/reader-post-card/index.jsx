@@ -12,10 +12,8 @@ import closest from 'component-closest';
  */
 import Card from 'components/card';
 import DisplayTypes from 'state/reader/posts/display-types';
-import Gridicon from 'components/gridicon';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import * as stats from 'reader/stats';
-import ExternalLink from 'components/external-link';
 import PostByline from './byline';
 
 function FeaturedImage( { image, href } ) {
