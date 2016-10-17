@@ -27,12 +27,20 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__timestamp-and-tag {
-	color: 	lighten( $gray, 10% );
 	margin-top: -6px;
 }
 
 .reader-post-card__timestamp {
 	margin-right: 10px;
+}
+
+// Need .reader__content to override .reader__content a
+.reader__content .reader-post-card__timestamp-link,
+.reader__content .reader-post-card__tag-link
+{
+	color: lighten( $gray, 10% );
+	margin-top: 2px;
+	cursor: pointer;
 }
 
 .reader-post-card__tag .gridicons-tag {
@@ -41,6 +49,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
     position: relative;
     	top: 5px;
 	width: 15px;
+	fill: lighten( $gray, 10% );
 }
 
 .reader-post-card .gravatar {
@@ -213,7 +222,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__meta-separator {
-	padding-right: 4px;
+	padding-right: 2px;
 	color: $blue-medium;
 }
 

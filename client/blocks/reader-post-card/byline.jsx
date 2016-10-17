@@ -69,6 +69,7 @@ class PostByline extends React.Component {
 				<div className="reader-post-card__meta-details">
 					{ shouldDisplayAuthor &&
 						<ReaderAuthorLink
+							className="reader-post-card__link"
 							author={ post.author }
 							siteUrl={ streamUrl }
 							post={ post }>
@@ -98,7 +99,7 @@ class PostByline extends React.Component {
 						{ primaryTag &&
 							<span className="reader-post-card__tag">
 								<Gridicon icon="tag" />
-								<a href={ '/tag/' + primaryTag.slug } className="reader-post-card__tag-name ignore-click" onClick={ this.recordTagClick }>
+								<a href={ '/tag/' + primaryTag.slug } className="reader-post-card__tag-link ignore-click" onClick={ this.recordTagClick }>
 									{ primaryTag.name }
 								</a>
 							</span>

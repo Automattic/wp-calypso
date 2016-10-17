@@ -3,13 +3,14 @@
  */
 import React from 'react';
 import { get, includes } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import * as stats from 'reader/stats';
 
-const ReaderAuthorLink = ( { author, post, siteUrl, children } ) => {
+const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 	const recordAuthorClick = ( { } ) => {
 		stats.recordAction( 'click_author' );
 		stats.recordGaEvent( 'Clicked Author Link' );
@@ -35,8 +36,10 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children } ) => {
 		return children;
 	}
 
+	const classes = classnames( 'reader-author-link', className );
+
 	return (
-		<a className="reader-author-link" href={ siteUrl } onClick={ recordAuthorClick }>
+		<a className={ classes } href={ siteUrl } onClick={ recordAuthorClick }>
 			{ children }
 		</a>
 	);
