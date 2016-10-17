@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	omit = require( 'lodash' ).omit;
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreviewAction',
@@ -43,7 +44,7 @@ module.exports = React.createClass( {
 		} );
 
 		return (
-			<button type="button" className={ classes } { ...this.props }>
+			<button type="button" className={ classes } { ...omit( this.props, [ 'active', 'position' ] ) }>
 				{ this.getIconElement() }
 				{ this.props.children }
 			</button>
