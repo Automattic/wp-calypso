@@ -14,11 +14,20 @@ import {
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_STATE_RESET,
-	IMAGE_EDITOR_STATE_RESET_ALL
+	IMAGE_EDITOR_STATE_RESET_ALL,
+	IMAGE_EDITOR_IMAGE_IS_LOADED
 } from 'state/action-types';
 
 import { AspectRatios } from '../constants';
-import reducer, { hasChanges, fileInfo, transform, cropBounds, crop, aspectRatio } from '../reducer';
+import reducer, {
+	hasChanges,
+	fileInfo,
+	transform,
+	cropBounds,
+	crop,
+	aspectRatio,
+	imageIsLoading
+} from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
@@ -388,6 +397,30 @@ describe( 'reducer', () => {
 				scaleX: 1,
 				scaleY: 1
 			} );
+		} );
+	} );
+
+	describe( '#imageIsLoading()', () => {
+		it( 'should default to true', () => {
+			const state = imageIsLoading( undefined, {} );
+
+			expect( state ).to.be.true;
+		} );
+
+		it( 'should change to false after image is loaded', () => {
+			const state = imageIsLoading( undefined, {
+				type: IMAGE_EDITOR_IMAGE_IS_LOADED
+			} );
+
+			expect( state ).to.be.false;
+		} );
+
+		it( 'should change to true on reset all', () => {
+			const state = imageIsLoading( undefined, {
+				type: IMAGE_EDITOR_STATE_RESET_ALL
+			} );
+
+			expect( state ).to.be.true;
 		} );
 	} );
 } );

@@ -14,7 +14,8 @@ import {
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_STATE_RESET,
-	IMAGE_EDITOR_STATE_RESET_ALL
+	IMAGE_EDITOR_STATE_RESET_ALL,
+	IMAGE_EDITOR_IMAGE_IS_LOADED
 } from 'state/action-types';
 
 import {
@@ -25,7 +26,8 @@ import {
 	setImageEditorAspectRatio,
 	setImageEditorFileInfo,
 	setImageEditorCropBounds,
-	imageEditorCrop
+	imageEditorCrop,
+	imageEditorImageIsLoaded
 } from '../actions';
 import { AspectRatios } from '../constants';
 
@@ -119,6 +121,16 @@ describe( 'actions', () => {
 			expect( action ).to.eql( {
 				type: IMAGE_EDITOR_SET_ASPECT_RATIO,
 				ratio: AspectRatios.ORIGINAL
+			} );
+		} );
+	} );
+
+	describe( '#imageEditorImageIsLoaded()', () => {
+		it( 'should return an action object', () => {
+			const action = imageEditorImageIsLoaded();
+
+			expect( action ).to.eql( {
+				type: IMAGE_EDITOR_IMAGE_IS_LOADED
 			} );
 		} );
 	} );
