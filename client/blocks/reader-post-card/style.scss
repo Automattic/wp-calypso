@@ -69,7 +69,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		max-width: 190px;
 
 		@include breakpoint( ">960px" ) {
-			max-width: 300px;
+			max-width: 250px;
 		}
 
 		@media #{$reader-post-card-breakpoint-medium} {
