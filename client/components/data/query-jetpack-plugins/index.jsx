@@ -13,21 +13,21 @@ import { isRequestingForSites } from 'state/plugins/installed/selectors';
 
 class QueryJetpackPlugins extends Component {
 	componentWillMount() {
-		if ( this.props.sites && ! this.props.isRequestingForSites ) {
-			this.props.fetchPlugins( this.props.sites );
+		if ( this.props.siteIds && ! this.props.isRequestingForSites ) {
+			this.props.fetchPlugins( this.props.siteIds );
 		}
 	}
 
 	componentWillReceiveProps( nextProps ) {
-		if ( isEqual( nextProps.sites, this.props.sites ) ) {
+		if ( isEqual( nextProps.siteIds, this.props.siteIds ) ) {
 			return;
 		}
-		this.refresh( nextProps.isRequestingForSites, nextProps.sites );
+		this.refresh( nextProps.isRequestingForSites, nextProps.siteIds );
 	}
 
-	refresh( isRequesting, sites ) {
+	refresh( isRequesting, siteIds ) {
 		if ( ! isRequesting ) {
-			this.props.fetchPlugins( sites );
+			this.props.fetchPlugins( siteIds );
 		}
 	}
 
@@ -37,16 +37,15 @@ class QueryJetpackPlugins extends Component {
 }
 
 QueryJetpackPlugins.propTypes = {
-	sites: PropTypes.array.isRequired,
+	siteIds: PropTypes.array.isRequired,
 	isRequestingForSites: PropTypes.bool,
 	fetchPlugins: PropTypes.func
 };
 
 export default connect(
 	( state, props ) => {
-		const sites = props.sites;
 		return {
-			isRequestingForSites: isRequestingForSites( state, sites.map( site => site.ID ) ),
+			isRequestingForSites: isRequestingForSites( state, props.siteIds ),
 		};
 	},
 	{ fetchPlugins }

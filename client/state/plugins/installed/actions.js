@@ -302,11 +302,11 @@ export function removePlugin( siteId, plugin ) {
 	};
 }
 
-export function fetchPlugins( sites ) {
+export function fetchPlugins( siteIds ) {
 	return ( dispatch ) => {
-		return sites.map( ( site ) => {
+		return siteIds.map( ( siteId ) => {
 			const defaultAction = {
-				siteId: site.ID,
+				siteId
 			};
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
 
@@ -316,7 +316,7 @@ export function fetchPlugins( sites ) {
 
 				data.plugins.map( plugin => {
 					if ( plugin.update && plugin.autoupdate ) {
-						updatePlugin( site.ID, plugin )( dispatch );
+						updatePlugin( siteId, plugin )( dispatch );
 					}
 				} );
 			};
@@ -326,7 +326,7 @@ export function fetchPlugins( sites ) {
 				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
 			};
 
-			return wpcom.site( site.ID ).pluginsList().then( receivePluginsDispatchSuccess ).catch( receivePluginsDispatchFail );
+			return wpcom.site( siteId ).pluginsList().then( receivePluginsDispatchSuccess ).catch( receivePluginsDispatchFail );
 		} );
 	};
 }
