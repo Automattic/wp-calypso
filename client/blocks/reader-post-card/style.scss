@@ -37,6 +37,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card__meta-details {
 	margin-top: -2px;
+	width: 100%;
 }
 
 .reader-post-card__timestamp-and-tag {
@@ -58,7 +59,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
     width: 100%;
 
     &::after {
-    	@include long-content-fade( $size: 20% );
+    	@include long-content-fade( $size: 10% );
     }
 }
 
