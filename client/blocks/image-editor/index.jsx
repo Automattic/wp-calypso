@@ -98,6 +98,8 @@ const ImageEditor = React.createClass( {
 
 		if ( ! isImageLoaded ) {
 			this.onCancel();
+
+			return;
 		}
 
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
