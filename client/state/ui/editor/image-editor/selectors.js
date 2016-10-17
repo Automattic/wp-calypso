@@ -38,7 +38,7 @@ export function imageEditorHasChanges( state ) {
  * @return {Boolean} true if image has been loaded
  *
  */
-export function imageEditorIsImageLoaded( state ) {
+export function isImageEditorImageLoaded( state ) {
 	return ! state.ui.editor.imageEditor.imageIsLoading;
 }
 

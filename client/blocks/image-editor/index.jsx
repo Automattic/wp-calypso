@@ -24,7 +24,7 @@ import {
 } from 'state/ui/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo,
-	imageEditorIsImageLoaded
+	isImageEditorImageLoaded
 } from 'state/ui/editor/image-editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
@@ -206,7 +206,7 @@ export default connect(
 		return {
 			...getImageEditorFileInfo( state ),
 			site: getSite( state, siteId ),
-			isImageLoaded: imageEditorIsImageLoaded( state )
+			isImageLoaded: isImageEditorImageLoaded( state )
 		};
 	},
 	{

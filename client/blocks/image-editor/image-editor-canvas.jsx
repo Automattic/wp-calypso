@@ -16,7 +16,7 @@ import {
 	getImageEditorTransform,
 	getImageEditorFileInfo,
 	getImageEditorCrop,
-	imageEditorIsImageLoaded
+	isImageEditorImageLoaded
 } from 'state/ui/editor/image-editor/selectors';
 import {
 	setImageEditorCropBounds,
@@ -279,7 +279,7 @@ export default connect(
 		const transform = getImageEditorTransform( state );
 		const { src, mimeType } = getImageEditorFileInfo( state );
 		const crop = getImageEditorCrop( state );
-		const isImageLoaded = imageEditorIsImageLoaded( state );
+		const isImageLoaded = isImageEditorImageLoaded( state );
 
 		return {
 			src,
