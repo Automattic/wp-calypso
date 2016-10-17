@@ -39,13 +39,11 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ThemeShowcase from './theme-showcase';
 
 const JetpackThemeReferrerPage = localize(
-	( { translate, adminUrl, site, isCustomizable, analyticsPath, analyticsPageTitle } ) => (
+	( { translate, adminUrl, site, analyticsPath, analyticsPageTitle } ) => (
 		<Main className="themes">
 			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 			<SidebarNavigation />
-			<CurrentTheme
-				site={ site }
-				canCustomize={ isCustomizable } />
+			<CurrentTheme site={ site } />
 			<EmptyContent title={ translate( 'Changing Themes?' ) }
 				line={ translate( 'Use your site theme browser to manage themes.' ) }
 				action={ translate( 'Open Site Theme Browser' ) }
@@ -100,9 +98,7 @@ const ThemesSingleSite = ( props ) => {
 			<ThanksModal
 				site={ site }
 				source={ 'list' } />
-			<CurrentTheme
-				site={ site }
-				canCustomize={ isCustomizable } />
+			<CurrentTheme site={ site } />
 			<UpgradeNudge
 				title={ translate( 'Get Custom Design with Premium' ) }
 				message={ translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
