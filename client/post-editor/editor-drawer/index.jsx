@@ -14,7 +14,6 @@ import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import EditorSharingAccordion from 'post-editor/editor-sharing/accordion';
 import FormTextarea from 'components/forms/form-textarea';
-import PostFormatsData from 'components/data/post-formats-data';
 import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
 import Location from 'post-editor/editor-location';
 import Discussion from 'post-editor/editor-discussion';
@@ -130,18 +129,15 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderPostFormats: function() {
-		if ( ! this.props.site || ! this.props.post ||
-				! this.currentPostTypeSupports( 'post-formats' ) ) {
+		if ( ! this.props.post || ! this.currentPostTypeSupports( 'post-formats' ) ) {
 			return;
 		}
 
 		return (
-			<PostFormatsData siteId={ this.props.site.ID }>
-				<PostFormatsAccordion
-					site={ this.props.site }
-					post={ this.props.post }
-					className="editor-drawer__accordion" />
-			</PostFormatsData>
+			<PostFormatsAccordion
+				post={ this.props.post }
+				className="editor-drawer__accordion"
+			/>
 		);
 	},
 

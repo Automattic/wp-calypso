@@ -67,7 +67,7 @@ export default React.createClass( {
 		),
 			compactMessage = this.translate( 'Renew', { context: 'Call to action link for renewing an expiring/expired domain' } );
 		return (
-			<NoticeAction href={ purchasesPaths.list() }>
+			<NoticeAction href={ purchasesPaths.purchasesRoot() }>
 				{ this.props.isCompact ? compactMessage : fullMessage }
 			</NoticeAction>
 		);

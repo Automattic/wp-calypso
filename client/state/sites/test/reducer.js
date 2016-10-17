@@ -9,6 +9,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -243,6 +244,34 @@ describe( 'reducer', () => {
 					}
 				}
 			} );
+		} );
+
+		it( 'should update properties when the front page is changed', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { show_on_front: 'posts', page_on_front: 0 } }
+			} );
+			const state = items( original, {
+				type: SITE_FRONT_PAGE_SET_SUCCESS,
+				siteId: 2916284,
+				pageId: 1
+			} );
+
+			expect( state ).to.eql( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { show_on_front: 'page', page_on_front: 1 } }
+			} );
+		} );
+
+		it( 'should do nothing when site is not loaded and the front page is changed', () => {
+			const original = deepFreeze( {
+				2916284: { ID: 2916284, name: 'WordPress.com Example Blog', options: { show_on_front: 'posts', page_on_front: 0 } }
+			} );
+			const state = items( original, {
+				type: SITE_FRONT_PAGE_SET_SUCCESS,
+				siteId: 77203074,
+				pageId: 1
+			} );
+
+			expect( state ).to.eql( original );
 		} );
 
 		it( 'should persist state', () => {

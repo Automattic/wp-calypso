@@ -1,20 +1,21 @@
 /**
  * External Dependencies
  */
-import React from 'react';
-import { partial, noop, truncate } from 'lodash';
+import React, { PropTypes } from 'react';
+import { noop, truncate } from 'lodash';
 import classnames from 'classnames';
+import ReactDom from 'react-dom';
+import closest from 'component-closest';
 
 /**
  * Internal Dependencies
  */
 import Card from 'components/card';
-import LikeButton from 'reader/like-button';
-import CommentButton from 'blocks/comment-button';
 import DisplayTypes from 'state/reader/posts/display-types';
 import Gravatar from 'components/gravatar';
 import Gridicon from 'components/gridicon';
-import ExternalLink from 'components/external-link';
+import ReaderPostActions from 'blocks/reader-post-actions';
+import * as stats from 'reader/stats';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -42,59 +43,106 @@ function PostByline( { post } ) {
 	);
 }
 
-export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentClick = noop } ) {
-	const featuredImage = post.canonical_image;
-	const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
-	const title = truncate( post.title, {
-		length: isPhotoOnly ? 50 : 140,
-		separator: /,? +/
-	} );
-	const classes = classnames( 'reader-post-card', {
-		'has-thumbnail': !! featuredImage,
-		'is-photo': isPhotoOnly
-	} );
+export default class RefreshPostCard extends React.Component {
+	static propTypes = {
+		post: PropTypes.object.isRequired,
+		site: PropTypes.object,
+		feed: PropTypes.object,
+		onClick: PropTypes.func,
+		onCommentClick: PropTypes.func
+	};
 
-	return (
-		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
-			<PostByline post={ post } site={ site } feed={ feed } />
-			<div className="reader-post-card__post">
-				{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
-				<div className="reader-post-card__post-details">
-					<h1 className="reader-post-card__title">
-						<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
-					</h1>
-					<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
+	static defaultProps = {
+		onClick: noop,
+		onCommentClick: noop
+	};
+
+	propagateCardClick = () => {
+		const postToOpen = this.props.post;
+
+		// @todo
+		// For Discover posts (but not site picks), open the original post in full post view
+		// https://github.com/Automattic/wp-calypso/issues/8696
+
+		this.props.onClick( { post: postToOpen, site: this.props.site, feed: this.props.feed } );
+	}
+
+	handleCardClick = ( event ) => {
+		const rootNode = ReactDom.findDOMNode( this ),
+			selection = window.getSelection && window.getSelection();
+
+		// if the click has modifier or was not primary, ignore it
+		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
+			if ( closest( event.target, '.reader-post-card__title-link', true, rootNode ) ) {
+				stats.recordPermalinkClick( 'card_title_with_modifier' );
+				stats.recordGaEvent( 'Clicked Post Permalink with Modifier' );
+			}
+			return;
+		}
+
+		if ( closest( event.target, '.should-scroll', true, rootNode ) ) {
+			setTimeout( function() {
+				window.scrollTo( 0, 0 );
+			}, 100 );
+		}
+
+		// declarative ignore
+		if ( closest( event.target, '.ignore-click, [rel~=external]', true, rootNode ) ) {
+			return;
+		}
+
+		// ignore clicks on anchors inside inline content
+		if ( closest( event.target, 'a', true, rootNode ) && closest( event.target, '.reader-post-card__excerpt', true, rootNode ) ) {
+			return;
+		}
+
+		// ignore clicks when highlighting text
+		if ( selection && selection.toString() ) {
+			return;
+		}
+
+		// programattic ignore
+		if ( ! event.defaultPrevented ) { // some child handled it
+			event.preventDefault();
+			this.propagateCardClick();
+		}
+	}
+
+	render() {
+		const { post, site, feed, onCommentClick } = this.props;
+		const featuredImage = post.canonical_image;
+		const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
+		const title = truncate( post.title, {
+			length: isPhotoOnly ? 50 : 140,
+			separator: /,? +/
+		} );
+		const classes = classnames( 'reader-post-card', {
+			'has-thumbnail': !! featuredImage,
+			'is-photo': isPhotoOnly
+		} );
+
+		return (
+			<Card className={ classes } onClick={ this.handleCardClick }>
+				<PostByline post={ post } site={ site } feed={ feed } />
+				<div className="reader-post-card__post">
+					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
+					<div className="reader-post-card__post-details">
+						<h1 className="reader-post-card__title">
+							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
+						</h1>
+						<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
+						{ post &&
+							<ReaderPostActions
+								post={ post }
+								showVisit={ true }
+								onCommentClick={ onCommentClick }
+								showEdit={ false }
+								className="ignore-click"
+								iconSize={ 18 } />
+						}
+					</div>
 				</div>
-			</div>
-			<ul className="reader-post-card__social ignore-click">
-				<li className="reader-post-card__visit">
-					<ExternalLink icon={ true }>Visit</ExternalLink>
-				</li>
-				<li className="reader-post-card__share">
-					<Gridicon icon="share" />
-					<span className="reader-share__button-label">Share</span>
-				</li>
-				<li className="reader-post-card__comments">
-					<CommentButton
-					commentCount={ post.discussion.comment_count }
-					tagName="span"
-					showLabel={ true }
-					onClick={ onCommentClick } />
-				</li>
-				<li className="reader-post-card__likes">
-					<LikeButton
-					siteId={ post.site_ID }
-					postId={ post.ID }
-					tagName="span"
-					showZeroCount={ true }
-					showLabel={ true } />
-				</li>
-				<li className="reader-post-card__post-options">
-					<Gridicon icon="ellipsis" />
-				</li>
-			</ul>
-		</Card>
-	);
+			</Card>
+		);
+	}
 }
-
-export default RefreshPostCard;

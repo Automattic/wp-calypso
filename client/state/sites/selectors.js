@@ -517,3 +517,36 @@ export function isCurrentSitePlan( state, siteId, planProductId ) {
 
 	return sitePlan.product_id === planProductId;
 }
+
+/**
+ * Returns the ID of the static page set as the front page, or 0 if a static page is not set.
+ *
+ * @param {Object} state Global state tree
+ * @param {Object} siteId Site ID
+ * @return {Number} ID of the static page set as the front page, or 0 if a static page is not set
+ */
+export function getSiteFrontPage( state, siteId ) {
+	return getSiteOption( state, siteId, 'page_on_front' );
+}
+
+/**
+ * Returns the ID of the static page set as the page for posts, or 0 if a static page is not set.
+ *
+ * @param {Object} state Global state tree
+ * @param {Object} siteId Site ID
+ * @return {Number} ID of the static page set as page for posts, or 0 if a static page is not set
+ */
+export function getSitePostsPage( state, siteId ) {
+	return getSiteOption( state, siteId, 'page_for_posts' );
+}
+
+/**
+ * Returns the front page type.
+ *
+ * @param {Object} state Global state tree
+ * @param {Object} siteId Site ID
+ * @return {String} 'posts' if blog posts are set as the front page or 'page' if a static page is
+ */
+export function getSiteFrontPageType( state, siteId ) {
+	return getSiteOption( state, siteId, 'show_on_front' );
+}

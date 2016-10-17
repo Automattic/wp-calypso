@@ -13,5 +13,5 @@ Holds the reducers that take care of the data passed to `SignupDependencyStore`,
 It has only two reducers, because these are the only actions that actually happen in `SignupDependencyStore`:
 
 * `SIGNUP_DEPENDENCY_STORE_UPDATE` - update store data with new values
-* `SIGNUP_DEPENDENCY_STORE_RESET` - clear out the store
+* `SIGNUP_COMPLETE_RESET` - clear out the store
 

@@ -15,9 +15,9 @@ var Content = require( './content' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	filterToMimePrefix = require( './filter-to-mime-prefix' ),
 	FilterBar = require( './filter-bar' ),
-	PreferencesData = require( 'components/data/preferences-data' ),
 	MediaValidationData = require( 'components/data/media-validation-data' ),
 	urlSearch = require( 'lib/mixins/url-search' );
+import QueryPreferences from 'components/data/query-preferences';
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibrary',
@@ -145,6 +145,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ classes }>
+				<QueryPreferences />
 				{ this.renderDropZone() }
 				<FilterBar
 					site={ this.props.site }
@@ -154,9 +155,7 @@ module.exports = React.createClass( {
 					search={ this.props.search }
 					onFilterChange={ this.props.onFilterChange }
 					onSearch={ this.doSearch } />
-				<PreferencesData>
-					{ content }
-				</PreferencesData>
+				{ content }
 			</div>
 		);
 	}

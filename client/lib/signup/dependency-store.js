@@ -7,7 +7,7 @@ import { keys, difference, isEmpty } from 'lodash';
  * Internal dependencies
  */
 import {
-	SIGNUP_DEPENDENCY_STORE_RESET,
+	SIGNUP_COMPLETE_RESET,
 	SIGNUP_DEPENDENCY_STORE_UPDATE,
 } from 'state/action-types';
 
@@ -22,7 +22,7 @@ const SignupDependencyStore = {
 	},
 	reset: function() {
 		SignupDependencyStore.reduxStore.dispatch( {
-			type: SIGNUP_DEPENDENCY_STORE_RESET,
+			type: SIGNUP_COMPLETE_RESET,
 			data: {}
 		} );
 	},

@@ -54,7 +54,7 @@ export default React.createClass( {
 							key={ item.ID }
 							site={ site }
 							item={ item }
-							showRemoveButton={ settings.items.length > 2 } />
+							showRemoveButton={ settings.items.length > 1 } />
 					);
 				} ) }
 			</SortableList>

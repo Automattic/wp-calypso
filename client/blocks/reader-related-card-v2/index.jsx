@@ -4,8 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import noop from 'lodash/noop';
-import partial from 'lodash/partial';
+import { noop, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**

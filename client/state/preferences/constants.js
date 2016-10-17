@@ -7,7 +7,7 @@ export const DEFAULT_PREFERENCE_VALUES = {
 	firstViewHistory: [],
 	mediaModalGalleryInstructionsDismissed: false,
 	mediaModalGalleryInstructionsDismissedForSession: false,
-	helloVoteNoticeDismissed: false,
 	'guided-tours-history': [],
-	recentSites: []
+	recentSites: [],
+	mediaScale: 0.157
 };

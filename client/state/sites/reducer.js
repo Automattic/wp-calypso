@@ -16,6 +16,7 @@ import updates from './updates/reducer';
 
 import mediaStorage from './media-storage/reducer';
 import {
+	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -47,6 +48,24 @@ const VALID_SITE_KEYS = Object.keys( sitesSchema.patternProperties[ '^\\d+$' ].p
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {
+		case SITE_FRONT_PAGE_SET_SUCCESS: {
+			const { siteId, pageId } = action;
+			const site = state[ siteId ];
+			if ( ! site ) {
+				break;
+			}
+
+			return {
+				...state,
+				[ siteId ]: merge( {}, site, {
+					options: {
+						show_on_front: pageId === 0 ? 'posts' : 'page',
+						page_on_front: pageId
+					}
+				} )
+			};
+		}
+
 		case WORDADS_SITE_APPROVE_REQUEST_SUCCESS:
 			const prevSite = state[ action.siteId ];
 			if ( prevSite ) {
@@ -55,6 +74,7 @@ export function items( state = {}, action ) {
 				} );
 			}
 			return state;
+
 		case SITE_RECEIVE: {
 			const site = pick( action.site, VALID_SITE_KEYS );
 			return Object.assign( {}, state, {

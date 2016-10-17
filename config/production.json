@@ -13,7 +13,8 @@
 	"features": {
 		"accept-invite": true,
 		"ad-tracking": true,
-		"catch-js-errors": true,
+		"apple-pay": false,
+		"catch-js-errors": false,
 		"code-splitting": true,
 		"community-translator": true,
 		"desktop-promo": true,
@@ -62,7 +63,6 @@
 		"manage/themes/details": true,
 		"manage/themes/logged-out": true,
 		"me/account": true,
-		"me/billing-history": true,
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/next-steps": true,

@@ -58,7 +58,7 @@ export default React.createClass( {
 		};
 
 		return (
-			<EditorVisibility {...props} />
+			<EditorVisibility { ...props } />
 		);
 	},
 
@@ -72,7 +72,7 @@ export default React.createClass( {
 				</div>
 				<EditorPostType />
 				<div className="editor-action-bar__last-group">
-					{ this.props.post && this.props.type === 'post' && <EditorSticky post={ this.props.post } /> }
+					{ this.props.post && this.props.type === 'post' && <EditorSticky /> }
 					{ this.renderPostVisibility() }
 					<EditorDeletePost
 						post={ this.props.post }

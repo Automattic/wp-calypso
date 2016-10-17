@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import React, { Component, PropTypes } from 'react';
+import invoke from 'lodash/invoke';
 
 /**
  * Internal dependencies
@@ -22,6 +23,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_PERSONAL
 } from 'lib/plans/constants';
+import purchasesPaths from 'me/purchases/paths';
 
 class CurrentPlanHeader extends Component {
 	static propTypes = {
@@ -66,13 +68,13 @@ class CurrentPlanHeader extends Component {
 			<Card className="current-plan__header-purchase-info-wrapper" compact>
 				<div className={ classes }>
 					<span className="current-plan__header-expires-in">
-						{ hasAutoRenew
-							? translate( 'Set to Auto Renew on %s.', { args: currentPlan.userFacingExpiryMoment.format( 'LL' ) } )
-							: translate( 'Expires on %s.', { args: currentPlan.userFacingExpiryMoment.format( 'LL' ) } )
+						{ hasAutoRenew && currentPlan.autoRenewDateMoment
+							? translate( 'Set to Auto Renew on %s.', { args: invoke( currentPlan, 'autoRenewDateMoment.format', 'LL' ) } )
+							: translate( 'Expires on %s.', { args: invoke( currentPlan, 'userFacingExpiryMoment.format', 'LL' ) } )
 						}
 					</span>
 					{ currentPlan.userIsOwner &&
-					<Button compact href={ `/purchases/${ selectedSite.slug }/${ currentPlan.id }` }>
+					<Button compact href={ purchasesPaths.managePurchase( selectedSite.slug, currentPlan.id ) }>
 						{ hasAutoRenew
 							? translate( 'Manage Payment' )
 							: translate( 'Renew Now' )

@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import {
+	SIGNUP_COMPLETE_RESET,
 	SIGNUP_STEPS_SITE_TITLE,
 } from 'state/action-types';
 
@@ -12,6 +13,9 @@ export default createReducer( '',
 	{
 		[ SIGNUP_STEPS_SITE_TITLE ]: ( state = '', action ) => {
 			return action.siteTitle;
+		},
+		[ SIGNUP_COMPLETE_RESET ]: () => {
+			return '';
 		},
 	},
 	siteTitleSchema

@@ -210,18 +210,61 @@ module.exports = React.createClass( {
 		this.setView( ModalViews.IMAGE_EDITOR );
 	},
 
-	onImageEditorSave: function() {
+	onImageExtracted( blob, imageEditorProps ) {
+		const {
+			fileName,
+			site,
+			resetAllImageEditorState
+		} = imageEditorProps;
+
+		const mimeType = MediaUtils.getMimeType( fileName );
+
+		// check if a title is already post-fixed with '(edited copy)'
+		const editedCopyText = this.translate(
+			'%(title)s (edited copy)', {
+				args: {
+					title: ''
+				}
+			} );
+
+		let { title } = imageEditorProps;
+
+		if ( title.indexOf( editedCopyText ) === -1 ) {
+			title = this.translate(
+				'%(title)s (edited copy)', {
+					args: {
+						title: title
+					}
+				} );
+		}
+
+		MediaActions.add( site.ID, {
+			fileName: fileName,
+			fileContents: blob,
+			title: title,
+			mimeType: mimeType
+		} );
+
+		resetAllImageEditorState();
+
 		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
 		this.setView( ModalViews.LIST );
 	},
 
-	onImageEditorCancel: function() {
-		const item = this.props.mediaLibrarySelectedItems[ this.getDetailSelectedIndex() ];
+	onImageEditorCancel: function( imageEditorProps ) {
+		const { mediaLibrarySelectedItems } = this.props;
+
+		const item = mediaLibrarySelectedItems[ this.getDetailSelectedIndex() ];
+
 		if ( ! item ) {
 			this.setView( ModalViews.LIST );
 			return;
 		}
 		this.setView( ModalViews.DETAIL );
+
+		const {	resetAllImageEditorState } = imageEditorProps;
+
+		resetAllImageEditorState();
 	},
 
 	getDetailSelectedIndex() {
@@ -408,8 +451,8 @@ module.exports = React.createClass( {
 					<ImageEditor
 						siteId={ site && site.ID }
 						media={ media }
-						onImageEditorSave={ this.onImageEditorSave }
-						onImageEditorCancel={ this.onImageEditorCancel }
+						onImageExtracted={ this.onImageExtracted }
+						onCancel={ this.onImageEditorCancel }
 					/>
 				);
 				break;

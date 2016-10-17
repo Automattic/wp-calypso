@@ -60,7 +60,7 @@ describe( 'MediaLibraryList item selection', function() {
 			data: fixtures
 		} );
 
-		MediaList = require( '../list' );
+		MediaList = require( '../list' ).MediaLibraryList;
 	} );
 
 	beforeEach( function() {

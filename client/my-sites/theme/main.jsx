@@ -51,6 +51,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import DocumentHead from 'components/data/document-head';
 import { decodeEntities } from 'lib/formatting';
 import { getThemeDetails } from 'state/themes/theme-details/selectors';
+import { isValidTerm } from 'my-sites/themes/theme-filters';
 
 const ThemeSheet = React.createClass( {
 	displayName: 'ThemeSheet',
@@ -297,9 +298,10 @@ const ThemeSheet = React.createClass( {
 		const { siteSlug, taxonomies } = this.props;
 		const themeFeatures = taxonomies && taxonomies.theme_feature instanceof Array
 		? taxonomies.theme_feature.map( function( item ) {
+			const term = isValidTerm( item.slug ) ? item.slug : `feature:${ item.slug }`;
 			return (
 				<li key={ 'theme-features-item-' + item.slug }>
-					<a href={ `/design/filter/${ item.slug }/${ siteSlug || '' }` }>{ item.name }</a>
+					<a href={ `/design/filter/${ term }/${ siteSlug || '' }` }>{ item.name }</a>
 				</li>
 			);
 		} ) : [];

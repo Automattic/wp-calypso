@@ -16,7 +16,6 @@
 @import 'blocks/comments/style';
 @import 'blocks/dismissible-card/style';
 @import 'blocks/domain-to-plan-nudge/style';
-@import 'blocks/hello-vote-notice/style';
 @import 'blocks/image-editor/style';
 @import 'blocks/like-button/style';
 @import 'blocks/plan-thank-you-card/style';
@@ -28,6 +27,7 @@
 @import 'blocks/reader-full-post/style';
 @import 'blocks/reader-post-actions/style';
 @import 'blocks/reader-post-card/style';
+@import 'blocks/reader-post-options-menu/style';
 @import 'blocks/reader-related-card/style';
 @import 'blocks/reader-related-card-v2/style';
 @import 'blocks/reader-search-card/style';
@@ -176,8 +176,6 @@
 @import 'me/connected-application-item/style';
 @import 'me/connected-applications/style';
 @import 'me/connected-application-icon/style';
-@import 'me/credit-cards/credit-card-delete';
-@import 'me/credit-cards/credit-cards';
 @import 'me/get-apps/style';
 @import 'me/happychat/style';
 @import 'me/help/help-contact-confirmation/style';
@@ -206,6 +204,8 @@
 @import 'me/purchases/cancel-purchase/style';
 @import 'me/purchases/components/loading-placeholder/style';
 @import 'me/purchases/confirm-cancel-domain/style';
+@import 'me/purchases/credit-cards/credit-card-delete';
+@import 'me/purchases/credit-cards/credit-cards';
 @import 'me/purchases/list/item/style';
 @import 'me/purchases/list/site/style';
 @import 'me/purchases/manage-purchase/style';
@@ -248,6 +248,7 @@
 @import 'my-sites/people/people-list-item/style';
 @import 'my-sites/people/people-profile/style';
 @import 'my-sites/people/people-notices/style';
+@import 'my-sites/people/invite-people/style';
 @import 'my-sites/plan-compare-card/style';
 @import 'my-sites/plan-features/style';
 @import 'my-sites/plan-price/style';

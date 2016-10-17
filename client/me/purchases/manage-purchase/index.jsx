@@ -98,7 +98,7 @@ const ManagePurchase = React.createClass( {
 
 	componentWillMount() {
 		if ( ! this.isDataValid() ) {
-			page.redirect( paths.list() );
+			page.redirect( paths.purchasesRoot() );
 			return;
 		}
 
@@ -107,7 +107,7 @@ const ManagePurchase = React.createClass( {
 
 	componentWillReceiveProps( nextProps ) {
 		if ( this.isDataValid() && ! this.isDataValid( nextProps ) ) {
-			page.redirect( paths.list() );
+			page.redirect( paths.purchasesRoot() );
 			return;
 		}
 

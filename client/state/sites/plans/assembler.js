@@ -10,6 +10,7 @@ const createSitePlanObject = ( plan ) => {
 
 	return {
 		autoRenew: Boolean( plan.auto_renew ), // Always true for plans paid with credits.
+		autoRenewDateMoment: plan.auto_renew_date ? moment( plan.auto_renew_date ).startOf( 'day' ) : null,
 		canStartTrial: Boolean( plan.can_start_trial ),
 		currentPlan: Boolean( plan.current_plan ),
 		currencyCode: plan.currency_code,

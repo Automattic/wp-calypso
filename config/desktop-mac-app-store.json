@@ -13,6 +13,7 @@
 	"features": {
 		"ad-tracking": true,
 		"always_use_logout_url": true,
+		"apple-pay": false,
 		"code-splitting": false,
 		"community-translator": true,
 		"desktop": true,
@@ -47,7 +48,6 @@
 		"manage/themes": true,
 		"manage/themes-jetpack": true,
 		"me/account": true,
-		"me/billing-history": true,
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/next-steps": true,

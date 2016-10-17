@@ -5,8 +5,6 @@ var React = require( 'react' ),
 	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	omit = require( 'lodash/omit' );
 
-import get from 'lodash/get';
-
 /**
  * Internal dependencies
  */
@@ -233,8 +231,7 @@ var Pages = React.createClass( {
 				rows.push(
 					<BlogPostsPage
 						key="blog-posts-page"
-						homePageType={ get( site, 'options.show_on_front' ) }
-						pageForPosts={ get( site, 'options.page_for_posts' ) }
+						site={ site }
 					/>
 				);
 			}

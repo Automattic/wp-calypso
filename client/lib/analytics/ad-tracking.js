@@ -37,6 +37,7 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		'?site=695501&betr=sslbet_1472760417=[+]ssprlb_1472760417[720]|sslbet_1472760452=[+]ssprlb_1472760452[8760]',
 	PANDORA_CONVERSION_PIXEL_URL = 'https://data.adxcel-ec2.com/pixel/' +
 		'?ad_log=referer&action=purchase&pixid=7efc5994-458b-494f-94b3-31862eee9e26',
+	YAHOO_TRACKING_SCRIPT_URL = 'https://s.yimg.com/wi/ytc.js',
 	TRACKING_IDS = {
 		bingInit: '4074038',
 		facebookInit: '823166884443641',
@@ -44,7 +45,9 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		googleConversionLabelJetpack: '0fwbCL35xGIQqv3svgM',
 		atlasUniveralTagId: '11187200770563',
 		criteo: '31321',
-		quantcast: 'p-3Ma3jHaQMB_bS'
+		quantcast: 'p-3Ma3jHaQMB_bS',
+		yahooProjectId: '10000',
+		yahooPixelId: '10014088'
 	},
 
 	// For converting other currencies into USD for tracking purposes
@@ -118,6 +121,9 @@ function loadTrackingScripts( callback ) {
 		},
 		function( onComplete ) {
 			loadScript.loadScript( quantcastAsynchronousTagURL(), onComplete );
+		},
+		function( onComplete ) {
+			loadScript.loadScript( YAHOO_TRACKING_SCRIPT_URL, onComplete );
 		}
 	], function( errors ) {
 		if ( ! some( errors ) ) {
@@ -334,9 +340,9 @@ function recordProduct( product, orderId ) {
 			} );
 		}
 
-		// Quantcast
-		// Note that all properties have to be strings or they won't get tracked
 		if ( isSupportedCurrency( product.currency ) ) {
+			// Quantcast
+			// Note that all properties have to be strings or they won't get tracked
 			window._qevents.push( {
 				qacct: TRACKING_IDS.quantcast,
 				labels: '_fp.event.Purchase Confirmation,_fp.pcat.' + product.product_slug,
@@ -344,6 +350,25 @@ function recordProduct( product, orderId ) {
 				revenue: costUSD.toString(),
 				event: 'refresh'
 			} );
+
+			// Yahoo
+			// Like the Quantcast tracking above, the price has to be passed as a string
+			// See: https://developer.yahoo.com/gemini/guide/dottags/installing-tags/
+
+			/*global YAHOO*/
+			YAHOO.ywa.I13N.fireBeacon( [ {
+				projectId: TRACKING_IDS.yahooProjectId,
+				properties: {
+					pixelId: TRACKING_IDS.yahooPixelId,
+					qstrings: {
+						et: 'custom',
+						ec: 'wordpress.com',
+						ea: 'purchase',
+						el: product.product_slug,
+						gv: costUSD.toString()
+					}
+				}
+			} ] );
 		}
 	} catch ( err ) {
 		debug( 'Unable to save purchase tracking data', err );

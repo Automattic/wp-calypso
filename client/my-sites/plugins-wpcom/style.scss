@@ -47,10 +47,18 @@
 	}
 }
 
-// Special styles for displaying only one plugin
+// Special styles for displaying only two plugins
 .wpcom-plugins__business-panel .wpcom-plugins__plugin-item {
 	width: 100%;
-	border: none;
+	
+	&:last-child {
+		border-right: none;
+	}
+	
+	@include breakpoint( ">960px" ) {
+		width: 50%;
+		border-right: 1px solid lighten( $gray, 20% );
+	}
 }
 
 .wpcom-plugins__plugin-item a {
