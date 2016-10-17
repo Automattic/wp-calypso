@@ -36,8 +36,16 @@ const canFetchList = function( state, category, searchTerm ) {
 	return true;
 };
 
+const isFetchingList = function( state, category ) {
+	return !! state.plugins.wporg.lists.fetching[ category ];
+};
+
 const getList = function( state, category ) {
 	return state.plugins.wporg.lists.fullLists[ category ] ? state.plugins.wporg.lists.fullLists[ category ] : [];
 };
 
-export default { getPlugin, isFetching, isFetched, canFetchList, getList };
+const getShortList = function( state, category ) {
+	return state.plugins.wporg.lists.shortLists[ category ] ? state.plugins.wporg.lists.shortLists[ category ] : [];
+};
+
+export default { getPlugin, isFetching, isFetched, isFetchingList, canFetchList, getList, getShortList };
