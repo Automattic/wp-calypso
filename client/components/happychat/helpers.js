@@ -35,7 +35,6 @@ export const isMinimizing = propEquals( 'minimizingStatus', 'minimizing' );
  */
 export const timeline = when(
 	isConnecting,
-	isMinimizing,
 	renderLoading,
 	( { onScrollContainer } ) => <Timeline onScrollContainer={ onScrollContainer } />
 );

@@ -101,8 +101,7 @@ const Happychat = React.createClass( {
 
 		return (
 			<div className="happychat">
-				<div
-					className={ classnames( 'happychat__container', { 'is-open': isChatOpen( { connectionStatus } ) }, { 'is-minimizing': isChatMinimizing( { minimizingStatus } ) } ) }>
+				<div className={ classnames( 'happychat__container', { 'is-open': isChatOpen( { connectionStatus } ) }, { 'is-minimizing': isChatMinimizing( { minimizingStatus } ) } ) }>
 					<div className="happychat__title">
 						{ title( {
 							connectionStatus,
