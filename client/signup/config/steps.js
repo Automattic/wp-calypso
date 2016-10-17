@@ -74,7 +74,7 @@ module.exports = {
 	domains: {
 		stepName: 'domains',
 		apiRequestFunction: stepActions.createSiteWithCart,
-		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem', 'privacyItem' ],
 		dependencies: [ 'theme', 'surveyQuestion' ],
 		delayApiRequestUntilComplete: true
 	},
@@ -82,7 +82,7 @@ module.exports = {
 	'domains-with-plan': {
 		stepName: 'domains-with-plan',
 		apiRequestFunction: stepActions.createSiteWithCartAndStartFreeTrial,
-		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem', 'privacyItem' ],
 		dependencies: [ 'theme' ],
 		delayApiRequestUntilComplete: true
 	},
@@ -90,7 +90,7 @@ module.exports = {
 	'domains-only': {
 		stepName: 'domains-only',
 		apiRequestFunction: stepActions.createSiteWithCart,
-		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem' ],
+		providesDependencies: [ 'siteId', 'siteSlug', 'domainItem', 'themeItem', 'privacyItem' ],
 		delayApiRequestUntilComplete: true
 	},
 

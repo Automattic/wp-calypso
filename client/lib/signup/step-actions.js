@@ -27,6 +27,7 @@ function createSiteWithCart( callback, dependencies, {
 	googleAppsCartItem,
 	isPurchasingItem,
 	siteUrl,
+	privacyItem,
 	themeSlug,
 	themeSlugWithRepo,
 	themeItem
@@ -58,13 +59,16 @@ function createSiteWithCart( callback, dependencies, {
 			siteId,
 			siteSlug,
 			domainItem,
+			privacyItem,
 			themeItem
 		};
+
 		const addToCartAndProceed = () => {
 			const newCartItems = [
 				cartItem,
 				domainItem,
 				googleAppsCartItem,
+				privacyItem,
 				themeItem,
 			].filter( item => item );
 

@@ -120,6 +120,11 @@ const DomainsStep = React.createClass( {
 					domain: suggestion.domain_name,
 					productSlug: suggestion.product_slug
 				} )
+				: undefined,
+			privacyItem = isPurchasingItem && this.props.domainsWithPlansOnly
+				? cartItems.domainPrivacyProtection( {
+					domain: suggestion.domain_name
+				} )
 				: undefined;
 
 		SignupActions.submitSignupStep( Object.assign( {
@@ -128,9 +133,10 @@ const DomainsStep = React.createClass( {
 			domainItem,
 			googleAppsCartItem,
 			isPurchasingItem,
+			privacyItem,
 			siteUrl,
 			stepSectionName: this.props.stepSectionName
-		}, this.getThemeArgs() ), [], { domainItem } );
+		}, this.getThemeArgs() ), [], { domainItem, privacyItem } );
 
 		this.props.goToNextStep();
 	},
