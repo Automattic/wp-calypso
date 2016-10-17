@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
-import DisplayTypes from 'state/reader/posts/display-types';
+import Card from 'components/card';
 
 const smallItems = [
 	{
@@ -25,6 +25,7 @@ const smallItems = [
 				height: 256,
 				width: 256
 			},
+			site_URL: 'http://discover.wordpress.com',
 			short_excerpt: 'Gumbo beet greens corn soko endive gumbo gourd. Parsley shallot courgette tatsoi pea sprouts fava bean collard greens dandelion okra wakame tomato. Dandelion cucumber earthnut pea peanut soko zucchini.'
 		},
 		site: {
@@ -46,6 +47,7 @@ const smallItems = [
 				height: 256,
 				width: 1024
 			},
+			site_URL: 'http://discover.wordpress.com',
 			short_excerpt: 'Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko.'
 		},
 		site: {
@@ -54,34 +56,28 @@ const smallItems = [
 	},
 ];
 
-const RelatedPostCards = React.createClass( {
-	displayName: 'RelatedPostCardv2',
-
-	render: function() {
-		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/blocks/post-card">More in Site</a>
-				</h2>
-				<div className="reader-related-card-v2__container">
-					<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">Cats and Cats</a></h1>
-					<div className="reader-related-card-v2__posts is-site-post">
-						{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
-					</div>
-				</div>
-
-				<h2>
-					<a href="/devdocs/blocks/post-card">More in WordPress.com</a>
-				</h2>
-				<div className="reader-related-card-v2__container">
-					<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">WordPress.com</a></h1>
-					<div className="reader-related-card-v2__posts is-global-post">
-						{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
-					</div>
+const RelatedPostCardv2Example = () => (
+	<div className="design-assets__group">
+		<Card>
+			<div className="reader-related-card-v2__container">
+				<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">Cats and Cats</a></h1>
+				<div className="reader-related-card-v2__posts is-site-post">
+					{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
 				</div>
 			</div>
-		);
-	}
-} );
+		</Card>
 
-module.exports = RelatedPostCards;
+		<Card>
+			<div className="reader-related-card-v2__container">
+				<h1 className="reader-related-card-v2__heading">More in <a href="#" className="reader-related-card-v2__link">WordPress.com</a></h1>
+				<div className="reader-related-card-v2__posts is-global-post">
+					{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }
+				</div>
+			</div>
+		</Card>
+	</div>
+);
+
+RelatedPostCardv2Example.displayName = 'RelatedPostCardv2';
+
+export default RelatedPostCardv2Example;
