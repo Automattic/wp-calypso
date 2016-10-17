@@ -2,7 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import i18n from 'i18n-calypso';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -10,19 +11,18 @@ import i18n from 'i18n-calypso';
 import Gravatar from 'components/gravatar';
 import NavSegmented from 'components/section-nav/segmented';
 import NavItem from 'components/section-nav/item';
-import userLib from 'lib/user';
-const user = userLib();
+import { getCurrentUser } from 'state/current-user/selectors';
 
-function AuthorSelector( { selectedScope, onChange } ) {
+function AuthorSelector( { onChange, selectedScope, translate, user } ) {
 	const scopes = [
 		{
 			id: 'me',
-			caption: i18n.translate( 'Me', { context: 'Filter label for posts list' } ),
+			caption: translate( 'Me', { context: 'Filter label for posts list' } ),
 			showGravatar: true
 		},
 		{
 			id: 'everyone',
-			caption: i18n.translate( 'Everyone', { context: 'Filter label for posts list' } ),
+			caption: translate( 'Everyone', { context: 'Filter label for posts list' } ),
 			showGravatar: false
 		}
 	];
@@ -30,7 +30,7 @@ function AuthorSelector( { selectedScope, onChange } ) {
 	return (
 		<div className="drafts__author-selector">
 			<NavSegmented
-				label={ i18n.translate( 'Author', { context: 'Filter group label for segmented' } ) }
+				label={ translate( 'Author', { context: 'Filter group label for segmented' } ) }
 			>
 				{ scopes.map( scope => {
 					const selectScope = () => onChange( scope.id );
@@ -42,7 +42,7 @@ function AuthorSelector( { selectedScope, onChange } ) {
 							onClick={ selectScope }
 						>
 							{ scope.caption }
-							{ scope.showGravatar && <Gravatar size={ 16 } user={ user.get() } /> }
+							{ scope.showGravatar && <Gravatar size={ 16 } user={ user } /> }
 						</NavItem>
 					);
 				} ) }
@@ -51,4 +51,8 @@ function AuthorSelector( { selectedScope, onChange } ) {
 	);
 }
 
-export default AuthorSelector;
+export default connect( state => {
+	return {
+		user: getCurrentUser( state )
+	};
+} )( localize( AuthorSelector ) );

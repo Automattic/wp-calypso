@@ -3,7 +3,6 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -23,8 +22,7 @@ import actions from 'lib/posts/actions';
 import { hasTouch } from 'lib/touch-detect';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
 import observe from 'lib/mixins/data-observe';
-import userLib from 'lib/user';
-const user = userLib();
+import { getCurrentUser } from 'state/current-user/selectors';
 
 class DraftList extends Component {
 
@@ -55,10 +53,11 @@ class DraftList extends Component {
 	}
 
 	render() {
-		const { siteID, counts, isRequestingCounts, selectedId } = this.props;
+		const { siteID, myCounts, everyoneCounts, isRequestingCounts, selectedId, user } = this.props;
 		const { authorFilter } = this.state;
-		const author = authorFilter === 'me' ? user.get().ID : null;
-		const showCount = siteID && ( ! isRequestingCounts || counts[ authorFilter ] );
+		const author = authorFilter === 'me' ? user.ID : null;
+		const count = authorFilter === 'me' ? myCounts.draft : everyoneCounts.draft;
+		const showCount = siteID && ( ! isRequestingCounts || count );
 
 		return (
 			<div>
@@ -66,18 +65,18 @@ class DraftList extends Component {
 				<div className="drafts__header">
 					<AuthorSelector selectedScope={ authorFilter }
 						onChange={ this.setAuthorFilter } />
-					{ showCount && <Count count={ counts[ authorFilter ] } /> }
+					{ showCount && <Count count={ count } /> }
 				</div>
 				<PostListFetcher
 					siteID={ this.props.siteID }
 					status="draft,pending"
 					author={ author }
-					withImages={ true }
-					withCounts={ true }
+					withImages
+					withCounts
 					onTitleClick={ this.props.onTitleClick }
 				>
 					<Drafts
-						{ ...omit( this.props, 'children' ) }
+						{ ...this.props }
 						status="draft"
 						selectedId={ selectedId }
 					/>
@@ -184,13 +183,10 @@ const Drafts = React.createClass( {
 } );
 
 module.exports = connect( ( state, { siteID } ) => {
-	const counts = {
-		me: getNormalizedMyPostCounts( state, siteID, 'post' ).draft,
-		everyone: getNormalizedPostCounts( state, siteID, 'post' ).draft
-	};
-
 	return {
 		isRequestingCounts: isRequestingPostCounts( state, siteID, 'post' ),
-		counts
+		myCounts: getNormalizedMyPostCounts( state, siteID, 'post' ),
+		everyoneCounts: getNormalizedPostCounts( state, siteID, 'post' ),
+		user: getCurrentUser( state )
 	};
 } )( DraftList );
