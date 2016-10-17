@@ -42,6 +42,8 @@ function updatePluginsList( state = defaultPluginsListState, category, page, lis
 		const fullList = state.fullLists[ category ] || [];
 		state.fullLists[ category ] = fullList.concat( Object.assign( [], list ) );
 	}
+	state.fetching[ category ] = false;
+	state.lastFetchedPage[ category ] = page;
 	return state;
 }
 
@@ -86,6 +88,10 @@ export function lists( state = defaultPluginsListState, action ) {
 			const nextState = defaultPluginsListState;
 			if ( action.category ) {
 				nextState.fetching[ action.category ] = true;
+				nextState.currentSearchTerm = action.searchTerm;
+				if ( nextState.currentSearchTerm !== state.currentSearchTerm ) {
+					nextState.lastFetchedPage.search = -1;
+				}
 				nextState.lastFetchedPage[ action.category ] = action.page;
 				if ( action.category === 'search' ) {
 					nextState.currentSearchTerm = action.searchTerm;

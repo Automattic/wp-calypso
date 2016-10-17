@@ -26,7 +26,7 @@ import FeatureExample from 'components/feature-example';
 import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { fetchPluginsList } from 'state/plugins/wporg/actions';
-import { canFetchList, getList, getShortList, isFetchingList } from 'state/plugins/wporg/selectors';
+import { canFetchList, getList, getShortList, isFetchingList, getCurrentSearchTerm } from 'state/plugins/wporg/selectors';
 import QueryPluginLists from 'components/data/query-plugin-lists';
 
 const PluginsBrowser = React.createClass( {
@@ -46,24 +46,26 @@ const PluginsBrowser = React.createClass( {
 		}
 	},
 
-	fetchNextPagePlugins() {
-		// let doSearch = true;
-
-		/* if ( this.state.fullLists.search && this.state.fullLists.search.fetching ) {
-			doSearch = false;
+	componentWillReceiveProps( nextProps ) {
+		if ( nextProps.search ) {
+			if ( nextProps.search !== this.props.search ) {
+				this.fetchNextPagePlugins( nextProps.search );
+			}
 		}
+	},
 
-		if ( this.state.fullLists.search && this.state.fullLists.search.list && this.state.fullLists.search.list.length < 10 ) {
-			doSearch = false;
-		}*/
-
-		const lastFetchedPage = this.props.lastPage[ this.props.category ] >= 0 ? this.props.lastPage[ this.props.category ] : -1;
-		if ( this.props.search ) { // && doSearch ) {
-			if ( this.props.canFetchList ) {
-				this.props.fetchPluginsList( 'search', lastFetchedPage + 1, this.props.search );
+	fetchNextPagePlugins( searchTerm ) {
+		searchTerm = typeof searchTerm === 'string' ? searchTerm : this.props.search;
+		if ( searchTerm ) {
+			const lastFetchedPage = this.props.lastPage.search >= 0 ? this.props.lastPage.search : -1;
+			if ( this.props.currentSearchTerm !== searchTerm ) {
+				this.props.fetchPluginsList( 'search', 0, searchTerm );
+			} else if ( this.props.canFetchList( 'search', lastFetchedPage + 1, searchTerm ) ) {
+				this.props.fetchPluginsList( 'search', lastFetchedPage + 1, searchTerm );
 			}
 		} else if ( this.props.category ) {
-			if ( this.props.canFetchList ) {
+			const lastFetchedPage = this.props.lastPage[ this.props.category ] >= 0 ? this.props.lastPage[ this.props.category ] : -1;
+			if ( this.props.canFetchList( this.props.category, lastFetchedPage + 1 ) ) {
 				this.props.fetchPluginsList( this.props.category, lastFetchedPage + 1 );
 			}
 		}
@@ -92,13 +94,13 @@ const PluginsBrowser = React.createClass( {
 
 	getFullListView( category ) {
 		const list = this.props.getList( category );
-		if ( ( list && list.length > 0 ) || this.props.isFetching ) {
+		if ( ( list && list.length > 0 ) || this.props.isFetchingList( category ) ) {
 			return <PluginsBrowserList
 				plugins={ list }
 				listName={ category }
 				title={ this.translateCategory( category ) }
 				site={ this.props.site }
-				showPlaceholders={ this.props.isFetching }
+				showPlaceholders={ this.props.isFetchingList( category ) }
 				currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 		}
 	},
@@ -285,19 +287,17 @@ const PluginsBrowser = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => {
-		const currentCategory = props.search ? 'search' : props.category;
+	( state ) => {
 		return {
 			lastPage: state.plugins.wporg.lists.lastFetchedPage,
-			canFetchList: canFetchList( state, currentCategory, props.search ),
+			canFetchList: ( category, searchTerm ) => canFetchList( state, category, searchTerm ),
 			getList: ( category ) => getList( state, category ),
 			getShortList: ( category ) => getShortList( state, category ),
 			isFetchingList: ( category ) => isFetchingList( state, category ),
-			isFetching: !! state.plugins.wporg.lists.fetching[ currentCategory ]
+			currentSearchTerm: getCurrentSearchTerm( state )
 		};
 	},
 	dispatch => bindActionCreators( {
-		canFetchList,
 		recordTracksEvent,
 		fetchPluginsList
 	}, dispatch )

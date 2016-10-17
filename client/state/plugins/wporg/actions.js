@@ -88,12 +88,13 @@ export default {
 					dispatch( {
 						type: WPORG_PLUGIN_RECEIVE_LIST,
 						page: page,
+						seachTerm: searchTerm,
 						category: category,
 						data: data ? utils.normalizePluginsList( data.plugins ) : null,
 						error: error
 					} );
 				}
 			} );
-		}, 500 );
+		}, 50 );
 	}
 };
