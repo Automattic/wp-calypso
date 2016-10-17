@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
 
@@ -17,11 +18,12 @@ import Gridicon from 'components/gridicon';
 import TextInput from 'components/forms/form-text-input';
 import signupUtils from 'signup/utils';
 
-export default React.createClass( {
-	displayName: 'SurveyStepV2',
+import { setSurvey } from 'state/signup/steps/survey/actions';
 
+const SurveyStepV2 = React.createClass( {
 	propTypes: {
-		surveySiteType: React.PropTypes.string
+		surveySiteType: PropTypes.string,
+		setSurvey: PropTypes.func.isRequired,
 	},
 
 	getDefaultProps() {
@@ -145,6 +147,11 @@ export default React.createClass( {
 			survey_version: '2',
 		} );
 
+		this.props.setSurvey( {
+			vertical: value,
+			otherText: otherWriteIn || '',
+		} );
+
 		SignupActions.submitSignupStep(
 			{
 				stepName: this.props.stepName,
@@ -158,3 +165,8 @@ export default React.createClass( {
 		this.props.goToNextStep();
 	}
 } );
+
+export default connect(
+	null,
+	{ setSurvey }
+)( SurveyStepV2 );
