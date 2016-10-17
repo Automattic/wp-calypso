@@ -2,11 +2,10 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { noop, truncate, get } from 'lodash';
+import { noop, truncate } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
-import debugFactory from 'debug';
 
 /**
  * Internal Dependencies
@@ -17,8 +16,6 @@ import Gravatar from 'components/gravatar';
 import Gridicon from 'components/gridicon';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import * as stats from 'reader/stats';
-
-const debug = debugFactory( 'calypso:blocks:reader-post-card' );
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -123,12 +120,6 @@ export default class RefreshPostCard extends React.Component {
 			'has-thumbnail': !! featuredImage,
 			'is-photo': isPhotoOnly
 		} );
-
-		const postTitle = get( post, 'title' );
-		debug( 'site for post ' + postTitle );
-		debug( site );
-		debug( 'feed for post ' + postTitle );
-		debug( feed );
 
 		return (
 			<Card className={ classes } onClick={ this.handleCardClick }>
