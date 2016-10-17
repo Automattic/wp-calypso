@@ -220,14 +220,14 @@
 }
 
 // Action buttons in full-post
-.reader-full-post .reader-post-actions{
+.reader-full-post .reader-post-actions {
 	margin-bottom: 20px;
-}
 
-.reader-full-post .post-edit-button__label,
-.reader-full-post .comment-button__label,
-.reader-full-post .like-button__label {
-	font-size: 17px;
+	.post-edit-button__label,
+	.comment-button__label,
+	.like-button__label {
+		font-size: 17px;
+	}
 }
 
 .reader-full-post__sidebar .like-button {
