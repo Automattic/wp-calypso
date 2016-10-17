@@ -1,5 +1,9 @@
 // Reader-specific tweaks to components
 
+.following.main {
+	max-width: 850px;
+}
+
 .following {
 
 	@include breakpoint( "<660px" ) {
