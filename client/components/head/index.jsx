@@ -40,8 +40,6 @@ const Head = ( { children, stylesheetUrl, title = 'WordPress.com' } ) => (
 	</head>
 );
 
-Head.displayName = 'Head';
-
 Head.defaultProps = {
 	title: 'WordPress.com'
 };
