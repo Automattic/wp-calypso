@@ -37,7 +37,7 @@ const ImageEditor = React.createClass( {
 		// Component props
 		media: PropTypes.object,
 		siteId: PropTypes.number,
-		onImageExtracted: PropTypes.func,
+		onDone: PropTypes.func,
 		onCancel: PropTypes.func,
 		onReset: PropTypes.func,
 		className: PropTypes.string,
@@ -53,7 +53,7 @@ const ImageEditor = React.createClass( {
 	getDefaultProps() {
 		return {
 			media: null,
-			onImageExtracted: noop,
+			onDone: noop,
 			onCancel: null,
 			onReset: noop,
 			isImageLoaded: false
@@ -94,10 +94,10 @@ const ImageEditor = React.createClass( {
 	},
 
 	onDone() {
-		const { isImageLoaded } = this.props;
+		const { isImageLoaded, onDone } = this.props;
 
 		if ( ! isImageLoaded ) {
-			this.onCancel();
+			onDone( new Error( 'Image not loaded yet.' ), null, this.getImageEditorProps() );
 
 			return;
 		}
@@ -105,9 +105,7 @@ const ImageEditor = React.createClass( {
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 
 		canvasComponent.toBlob( ( blob ) => {
-			const {	onImageExtracted } = this.props;
-
-			onImageExtracted( blob, this.getImageEditorProps() );
+			onDone( null, blob, this.getImageEditorProps() );
 		} );
 	},
 
