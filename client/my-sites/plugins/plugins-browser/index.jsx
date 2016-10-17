@@ -78,14 +78,13 @@ const PluginsBrowser = React.createClass( {
 			doSearch = false;
 		}
 
+		const lastFetchedPage = this.props.lastPage[ this.props.category ] >= 0 ? this.props.lastPage[ this.props.category ] : -1;
 		if ( this.props.search && doSearch ) {
-			const lastFetchedPage = this.props.lastPage.search || -1;
 			PluginsActions.fetchNextCategoryPage( 'search', this.props.search );
 			if ( this.props.canFetchList ) {
 				this.props.fetchPluginsList( 'search', lastFetchedPage + 1, this.props.search );
 			}
 		} else if ( this.props.category ) {
-			const lastFetchedPage = this.props.lastPage[ this.props.category ] || -1;
 			PluginsActions.fetchNextCategoryPage( this.props.category );
 			if ( this.props.canFetchList ) {
 				this.props.fetchPluginsList( this.props.category, lastFetchedPage + 1 );

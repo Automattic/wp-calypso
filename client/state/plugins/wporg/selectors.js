@@ -37,7 +37,7 @@ const canFetchList = function( state, category, searchTerm ) {
 };
 
 const getList = function( state, category ) {
-	return state.plugins.wporg.lists.fullLists[ category ] ? state.plugins.wporg.fullLists[ category ] : [];
+	return state.plugins.wporg.lists.fullLists[ category ] ? state.plugins.wporg.lists.fullLists[ category ] : [];
 };
 
 export default { getPlugin, isFetching, isFetched, canFetchList, getList };

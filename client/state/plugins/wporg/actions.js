@@ -67,7 +67,6 @@ export default {
 				searchTerm = searchTerm.trim();
 				_currentSearchTerm = searchTerm;
 			}
-
 			dispatch( {
 				type: WPORG_PLUGIN_FETCH_LIST,
 				page: page,
@@ -95,6 +94,6 @@ export default {
 					} );
 				}
 			} );
-		}, 25 );
+		}, 500 );
 	}
 };
