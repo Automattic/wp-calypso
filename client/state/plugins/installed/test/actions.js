@@ -63,7 +63,7 @@ describe( 'actions', () => {
 		spy.reset();
 	} );
 
-	describe( '#fetch()', () => {
+	describe( '#fetchPlugins()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -134,7 +134,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#activate()', () => {
+	describe( '#activatePlugin()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -185,7 +185,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#deactivate()', () => {
+	describe( '#deactivatePlugin()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -236,7 +236,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#update()', () => {
+	describe( '#updatePlugin()', () => {
 		const site = {
 			ID: 2916284,
 			jetpack: true,
@@ -303,7 +303,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#enableAutoupdate()', () => {
+	describe( '#enableAutoupdatePlugin()', () => {
 		const site = {
 			ID: 2916284,
 			jetpack: true,
@@ -380,7 +380,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#disableAutoupdate()', () => {
+	describe( '#disableAutoupdatePlugin()', () => {
 		const site = {
 			ID: 2916284,
 			jetpack: true,
@@ -441,7 +441,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#install()', () => {
+	describe( '#installPlugin()', () => {
 		const site = {
 			ID: 2916284,
 			jetpack: true,
@@ -510,7 +510,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#remove()', () => {
+	describe( '#removePlugin()', () => {
 		const site = {
 			ID: 2916284,
 			jetpack: true,
