@@ -1,46 +1,45 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	ReactDomServer = require( 'react-dom/server' ),
-	ReduxProvider = require( 'react-redux' ).Provider,
-	React = require( 'react' ),
-	tinymce = require( 'tinymce/tinymce' ),
-	pick = require( 'lodash/pick' ),
-	assign = require( 'lodash/assign' ),
-	values = require( 'lodash/values' ),
-	debounce = require( 'lodash/debounce' ),
-	i18n = require( 'i18n-calypso' ),
-	Shortcode = require( 'lib/shortcode' ),
-	closest = require( 'component-closest' );
+import ReactDom from 'react-dom';
+import ReactDomServer from 'react-dom/server';
+import { Provider as ReduxProvider } from 'react-redux';
+import React from 'react';
+import tinymce from 'tinymce/tinymce';
+import { assign, debounce, find, findLast, pick, values } from 'lodash';
+import i18n from 'i18n-calypso';
+import Shortcode from 'lib/shortcode';
+import closest from 'component-closest';
 
 /**
  * Internal dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	PostActions = require( 'lib/posts/actions' ),
-	PostEditStore = require( 'lib/posts/post-edit-store' ),
-	MediaConstants = require( 'lib/media/constants' ),
-	MediaActions = require( 'lib/media/actions' ),
-	MediaUtils = require( 'lib/media/utils' ),
-	MediaSerialization = require( 'lib/media-serialization' ),
-	MediaMarkup = require( 'post-editor/media-modal/markup' ),
-	MediaStore = require( 'lib/media/store' ),
-	MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
-	notices = require( 'notices' ),
-	TinyMCEDropZone = require( './drop-zone' ),
-	restrictSize = require( './restrict-size' ).default,
-	advanced = require( './advanced' ),
-	Gridicon = require( 'components/gridicon' ),
-	config = require( 'config' );
+import SiteListFactory from 'lib/sites-list';
+const sites = SiteListFactory();
+import PostActions from 'lib/posts/actions';
+import PostEditStore from 'lib/posts/post-edit-store';
+import MediaConstants from 'lib/media/constants';
+import MediaActions from 'lib/media/actions';
+import MediaUtils from 'lib/media/utils';
+import { deserialize } from 'lib/media-serialization';
+import MediaMarkup from 'post-editor/media-modal/markup';
+import { ModalViews } from 'post-editor/media-modal/constants';
+import MediaStore from 'lib/media/store';
+import MediaLibrarySelectedData from 'components/data/media-library-selected-data';
 import EditorMediaModal from 'post-editor/media-modal';
+import notices from 'notices';
+import TinyMCEDropZone from './drop-zone';
+import restrictSize from './restrict-size';
+import advanced from './advanced';
+import Gridicon from 'components/gridicon';
+import config from 'config';
+import { getSelectedSite } from 'state/ui/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
 
 /**
  * Module variables
  */
-var REGEXP_IMG = /<img\s[^>]*\/?>/ig,
+const REGEXP_IMG = /<img\s[^>]*\/?>/ig,
 	SIZE_ORDER = [ 'thumbnail', 'medium', 'large', 'full' ];
 
 let lastDirtyImage = null,
@@ -48,15 +47,27 @@ let lastDirtyImage = null,
 
 function mediaButton( editor ) {
 	const store = editor.getParam( 'redux_store' );
-	var nodes = {},
-		updateMedia, resizeEditor;
+
+	if ( ! store ) {
+		return;
+	}
+
+	const { getState, subscribe } = store;
+
+	let nodes = {},
+		resizeEditor,
+		selectedSite = getSelectedSite( getState() ),
+		updateMedia;
+
+	subscribe( () => {
+		selectedSite = getSelectedSite( getState() );
+	} );
 
 	function insertMedia( markup ) {
 		editor.execCommand( 'mceInsertContent', false, markup );
 	}
 
 	function renderModal( props = {}, options = {} ) {
-		var selectedSite = sites.getSelectedSite();
 		if ( ! selectedSite ) {
 			return;
 		}
@@ -138,17 +149,15 @@ function mediaButton( editor ) {
 	} )();
 
 	updateMedia = debounce( function() {
-		var selectedSite = sites.getSelectedSite(),
-			isTransientDetected = false,
+		let isTransientDetected = false,
 			transients = 0,
-			isVisualEditMode, content, images;
+			content, images;
 
 		if ( ! selectedSite ) {
 			return;
 		}
 
-
-		isVisualEditMode = ! editor.isHidden();
+		const isVisualEditMode = ! editor.isHidden();
 
 		if ( isVisualEditMode ) {
 			images = editor.dom.select( 'img' );
@@ -165,7 +174,7 @@ function mediaButton( editor ) {
 
 		// Let's loop through all the images in a post/page editor.
 		images.forEach( function( img ) {
-			const current = MediaSerialization.deserialize( img );
+			const current = deserialize( img );
 
 			// Ignore images which weren't inserted via media modal
 			if ( ! current.media.ID ) {
@@ -290,7 +299,7 @@ function mediaButton( editor ) {
 			}
 
 			// Enable plugins to filter markup
-			let event = {
+			const event = {
 				content: markup,
 				mode: isVisualEditMode ? 'tinymce' : 'html'
 			};
@@ -385,7 +394,6 @@ function mediaButton( editor ) {
 	}
 
 	editor.addCommand( 'wpcomAddMedia', () => {
-		var selectedSite = sites.getSelectedSite();
 		if ( selectedSite ) {
 			MediaActions.clearValidationErrors( selectedSite.ID );
 		}
@@ -416,16 +424,15 @@ function mediaButton( editor ) {
 		classes: 'toolbar-segment-start toolbar-segment-end',
 		stateSelector: '.wp-caption',
 		onclick: function() {
-			var node = editor.selection.getStart(),
-				site = sites.getSelectedSite(),
-				parsed = MediaSerialization.deserialize( node ),
-				caption, media, content, attrs, shortcode;
+			const node = editor.selection.getStart(),
+				parsed = deserialize( node );
+			let content;
 
-			if ( ! parsed || ! site ) {
+			if ( ! parsed || ! selectedSite ) {
 				return;
 			}
 
-			caption = closest( node, '.wp-caption' );
+			const caption = closest( node, '.wp-caption' );
 			if ( caption ) {
 				// If already wrapped as caption, restore the original image
 				editor.dom.replace( node, caption.parentNode );
@@ -442,7 +449,7 @@ function mediaButton( editor ) {
 			}
 
 			// Attempt to find media in Flux store
-			media = MediaStore.get( site.ID, parsed.media.ID );
+			const media = MediaStore.get( selectedSite.ID, parsed.media.ID );
 			if ( media && media.caption ) {
 				content = media.caption;
 			} else {
@@ -458,7 +465,7 @@ function mediaButton( editor ) {
 			} );
 
 			// Generate a caption to wrap the image
-			attrs = {
+			const attrs = {
 				width: parsed.media.width
 			};
 
@@ -470,7 +477,7 @@ function mediaButton( editor ) {
 				attrs.align = 'align' + parsed.appearance.align;
 			}
 
-			shortcode = Shortcode.stringify( {
+			const shortcode = Shortcode.stringify( {
 				tag: 'caption',
 				attrs: attrs,
 				content: [ node.outerHTML, content ].join( ' ' )
@@ -485,10 +492,9 @@ function mediaButton( editor ) {
 
 	function resize( increment ) {
 		const node = editor.selection.getStart();
-		const site = sites.getSelectedSite();
-		const parsed = MediaSerialization.deserialize( node );
+		const parsed = deserialize( node );
 
-		if ( ! parsed || ! site ) {
+		if ( ! parsed || ! selectedSite ) {
 			return;
 		}
 
@@ -501,7 +507,7 @@ function mediaButton( editor ) {
 		}
 
 		// Attempt to find media in Flux store
-		let media = assign( {}, MediaStore.get( site.ID, parsed.media.ID ) );
+		let media = assign( {}, MediaStore.get( selectedSite.ID, parsed.media.ID ) );
 		delete media.caption;
 		media = assign( {}, parsed.media, media );
 
@@ -515,23 +521,23 @@ function mediaButton( editor ) {
 
 		// Determine the next usable size
 		const sizeRatios = SIZE_ORDER
-			.map( size => computeRatio( MediaUtils.getThumbnailSizeDimensions( size, site ) ) );
+			.map( size => computeRatio( MediaUtils.getThumbnailSizeDimensions( size, selectedSite ) ) );
 		const sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
 		const displayedRatio = sizeIndex !== -1 ? sizeRatios[ sizeIndex ] : computeRatio( parsed.media );
-		const possibleSizes = SIZE_ORDER
-			.filter( ( size, index ) => {
-				return sizeRatios[ index ] <= 1 && (
-					increment > 0
-						? sizeRatios[ index ] > displayedRatio
-						: sizeRatios[ index ] < displayedRatio
-					);
-			} );
-		let size;
-		if ( possibleSizes.length ) {
-			size = increment > 0 ? possibleSizes[ 0 ] : possibleSizes[ possibleSizes.length - 1 ];
-		} else {
-			size = SIZE_ORDER[ SIZE_ORDER.length - 1 ];
-		}
+		const isMatchingSize = ( currentSize, index ) => {
+			if ( sizeRatios[ index ] > 1 ) {
+				return false;
+			}
+
+			if ( increment > 0 ) {
+				return sizeRatios[ index ] > displayedRatio;
+			}
+
+			return sizeRatios[ index ] < displayedRatio;
+		};
+
+		const findFn = increment > 0 ? find : findLast;
+		const size = findFn( SIZE_ORDER, isMatchingSize ) || SIZE_ORDER[ SIZE_ORDER.length - 1 ];
 
 		// Generate updated markup
 		const markup = MediaMarkup.get( media, assign( parsed.appearance, { size } ) );
@@ -554,22 +560,21 @@ function mediaButton( editor ) {
 	}
 
 	function toggleSizingControls( increase, event ) {
-		if ( ! event.element || 'IMG' !== event.element.nodeName ) {
+		if ( ! event.element || 'IMG' !== event.element.nodeName || ! selectedSite ) {
 			return;
 		}
 
-		const site = sites.getSelectedSite();
-		const parsed = MediaSerialization.deserialize( event.element );
-		const media = assign( { width: Infinity, height: Infinity }, MediaStore.get( site.ID, parsed.media.ID ) );
+		const parsed = deserialize( event.element );
+		const media = assign( { width: Infinity, height: Infinity }, MediaStore.get( selectedSite.ID, parsed.media.ID ) );
 
 		// Hide sizing toggles if the image is transient
-		const isHidden = parsed.media.transient || false;
+		const isHidden = !! parsed.media.transient;
 		this.classes.toggle( 'hidden', isHidden );
 
 		// Disable decrease button when smaller than the smallest thumbnail size
 		// and the full size is bigger than the current size
 		if ( ! increase ) {
-			const thumb = MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], site );
+			const thumb = MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], selectedSite );
 			const isDisabled =
 				( parsed.media.width || Infinity ) <= media.width &&
 				( parsed.media.width || Infinity ) <= thumb.width;
@@ -612,8 +617,7 @@ function mediaButton( editor ) {
 	} );
 
 	editor.addCommand( 'wpcomEditGallery', function( content ) {
-		const site = sites.getSelectedSite();
-		if ( ! site ) {
+		if ( ! selectedSite ) {
 			return;
 		}
 
@@ -627,9 +631,9 @@ function mediaButton( editor ) {
 		gallery.items = gallery.ids.split( ',' ).map( ( id ) => {
 			id = parseInt( id, 10 );
 
-			const media = MediaStore.get( site.ID, id );
+			const media = MediaStore.get( selectedSite.ID, id );
 			if ( ! media ) {
-				MediaActions.fetch( site.ID, id );
+				MediaActions.fetch( selectedSite.ID, id );
 			}
 
 			return assign( { ID: id }, media );
@@ -646,7 +650,7 @@ function mediaButton( editor ) {
 			delete gallery.orderby;
 		}
 
-		MediaActions.setLibrarySelectedItems( site.ID, gallery.items );
+		MediaActions.setLibrarySelectedItems( selectedSite.ID, gallery.items );
 
 		renderModal( {
 			visible: true,
@@ -671,38 +675,35 @@ function mediaButton( editor ) {
 	}
 
 	function fetchUnknownImages( event ) {
-		var site = sites.getSelectedSite();
-		if ( ! site ) {
+		if ( ! selectedSite ) {
 			return;
 		}
 
 		( event.content.match( REGEXP_IMG ) || [] ).forEach( function( img ) {
-			const parsed = MediaSerialization.deserialize( img );
+			const parsed = deserialize( img );
 
-			if ( ! parsed.media.ID || MediaStore.get( site.ID, parsed.media.ID ) ) {
+			if ( ! parsed.media.ID || MediaStore.get( selectedSite.ID, parsed.media.ID ) ) {
 				return;
 			}
 
 			setTimeout( function() {
-				MediaActions.fetch( site.ID, parsed.media.ID );
+				MediaActions.fetch( selectedSite.ID, parsed.media.ID );
 			}, 0 );
 		} );
 	}
 
 	function preventCaptionTripleClick( event ) {
-		var caption;
 		if ( ! event.detail || event.detail < 2 ) {
 			return;
 		}
 
-		caption = closest( event.target, '.wp-caption-dd', true );
+		const caption = closest( event.target, '.wp-caption-dd', true );
 		if ( caption ) {
 			editor.selection.select( caption );
 		}
 	}
 
 	function preventCaptionBackspaceRemove( event ) {
-		var target, range;
 		if ( 8 !== event.keyCode && 46 !== event.keyCode ) { // Backspace
 			return;
 		}
@@ -710,7 +711,7 @@ function mediaButton( editor ) {
 		// `event.target` won't return the expected target on a keypress
 		// within a `contenteditable`. Passing `true` to `getStart` will
 		// return the parent of the collapsed node when no content exists.
-		target = editor.selection.getStart( true );
+		const target = editor.selection.getStart( true );
 		if ( ! editor.dom.hasClass( target, 'wp-caption-dd' ) ) {
 			return;
 		}
@@ -718,7 +719,7 @@ function mediaButton( editor ) {
 		// Prevent the keypress default in one of two cases:
 		//  - Backspace (8) and selection at start of line
 		//  - Forward delete (46) and selection at end of line
-		range = editor.selection.getRng();
+		const range = editor.selection.getRng();
 		if ( ( 8 === event.keyCode && 0 === range.startOffset ) ||
 				( 46 === event.keyCode && target.textContent.length === range.endOffset ) ) {
 			event.preventDefault();
@@ -731,13 +732,12 @@ function mediaButton( editor ) {
 		}
 
 		editor.dom.select( '.wp-caption-dd' ).forEach( function( caption ) {
-			var wrapper, img;
 			if ( caption.textContent.trim().length ) {
 				return;
 			}
 
-			wrapper = closest( caption, '.wp-caption' );
-			img = wrapper.querySelector( 'img' );
+			const wrapper = closest( caption, '.wp-caption' );
+			const img = wrapper.querySelector( 'img' );
 			editor.dom.replace( img, wrapper.parentNode );
 		} );
 	}

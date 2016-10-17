@@ -186,5 +186,9 @@ export default {
 		}
 
 		return site.domain !== site.wpcom_url;
+	},
+
+	isModuleActive( site, moduleId ) {
+		return site.modules && site.modules.indexOf( moduleId ) > -1;
 	}
 };
