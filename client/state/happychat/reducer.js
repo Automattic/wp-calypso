@@ -9,8 +9,7 @@ import {
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_CONNECTING,
-	HAPPYCHAT_CONNECTED,
-	HAPPYCHAT_MINIMIZING
+	HAPPYCHAT_CONNECTED
 } from 'state/action-types';
 
 /**
@@ -107,13 +106,11 @@ const status = ( state = 'disconnected', action ) => {
  *
  */
 const minimizing = ( state = 'minimizing', action ) => {
-	switch ( action.type ) {
-		case SERIALIZE:
-			return 'maximized';
-		case DESERIALIZE:
-			return state;
-		case HAPPYCHAT_MINIMIZING:
+	switch ( action.isMinimizing ) {
+		case true:
 			return 'minimizing';
+		case false:
+			return '';
 	}
 	return state;
 };

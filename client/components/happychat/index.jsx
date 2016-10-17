@@ -21,7 +21,8 @@ import {
 import {
 	openChat,
 	closeChat,
-	minimizeChat
+	minimizeChat,
+	minimizedChat
 } from 'state/ui/happychat/actions';
 import {
 	isConnected,
@@ -134,6 +135,7 @@ const mapDispatch = ( dispatch ) => {
 		onCloseChat() {
 			dispatch( minimizeChat() );
 			setTimeout( function() {
+				dispatch( minimizedChat() );
 				dispatch( closeChat() );
 			}, 500 );
 		},
