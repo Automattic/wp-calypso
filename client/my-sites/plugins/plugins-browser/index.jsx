@@ -27,6 +27,7 @@ import { hasTouch } from 'lib/touch-detect';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { fetchPluginsList } from 'state/plugins/wporg/actions';
 import { canFetchList, getList, getShortList, isFetchingList } from 'state/plugins/wporg/selectors';
+import QueryPluginLists from 'components/data/query-plugin-lists';
 
 const PluginsBrowser = React.createClass( {
 
@@ -90,7 +91,7 @@ const PluginsBrowser = React.createClass( {
 	},
 
 	getFullListView( category ) {
-		const list = this.props.getList( category )
+		const list = this.props.getList( category );
 		if ( ( list && list.length > 0 ) || this.props.isFetching ) {
 			return <PluginsBrowserList
 				plugins={ list }
@@ -274,6 +275,7 @@ const PluginsBrowser = React.createClass( {
 
 		return (
 			<MainComponent>
+				<QueryPluginLists categories={ this.visibleCategories } />
 				<SidebarNavigation />
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }
