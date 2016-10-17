@@ -81,7 +81,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fetch action when triggered', () => {
-			fetchPlugins( [ { ID: 2916284, jetpack: true } ] )( spy );
+			fetchPlugins( [ 2916284 ] )( spy );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGINS_REQUEST,
@@ -90,7 +90,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch plugins receive action when request completes', () => {
-			const responses = fetchPlugins( [ { ID: 2916284, jetpack: true } ] )( spy );
+			const responses = fetchPlugins( [ 2916284 ] )( spy );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_RECEIVE,
@@ -100,7 +100,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch plugin request success action when request completes', () => {
-			const responses = fetchPlugins( [ { ID: 2916284, jetpack: true } ] )( spy );
+			const responses = fetchPlugins( [ 2916284 ] )( spy );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_REQUEST_SUCCESS,
@@ -111,7 +111,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch fail action when request fails', () => {
-			const responses = fetchPlugins( [ { ID: 77203074, jetpack: true } ] )( spy );
+			const responses = fetchPlugins( [ 77203074 ] )( spy );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_REQUEST_FAILURE,
@@ -122,7 +122,7 @@ describe( 'actions', () => {
 		} );
 
 		it( 'should dispatch plugin update request if any site plugins need updating', () => {
-			const responses = fetchPlugins( [ { ID: 2916284, jetpack: true } ] )( spy );
+			const responses = fetchPlugins( [ 2916284 ] )( spy );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_UPDATE_REQUEST,
