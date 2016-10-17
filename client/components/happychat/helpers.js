@@ -8,7 +8,8 @@ import React from 'react';
  */
 import {
 	propEquals,
-	when
+	when,
+	any
 } from './functional';
 import Timeline from './timeline';
 import Composer from './composer';
@@ -28,13 +29,12 @@ const renderLoading = () => (
  */
 export const isConnecting = propEquals( 'connectionStatus', 'connecting' );
 export const isConnected = propEquals( 'connectionStatus', 'connected' );
-export const isMinimizing = propEquals( 'minimizingStatus', 'minimizing' );
 
 /*
  * Renders the timeline once the happychat client has connected
  */
 export const timeline = when(
-	isConnecting,
+	any( isConnecting, propEquals( 'isMinimizing', true ) ),
 	renderLoading,
 	( { onScrollContainer } ) => <Timeline onScrollContainer={ onScrollContainer } />
 );
