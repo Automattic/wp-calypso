@@ -25,7 +25,7 @@ import sitesFactory from 'lib/sites-list';
 /**
  * Constants
  */
- const sites = sitesFactory();
+const sitesList = sitesFactory();
 
 /**
  * Returns an action object to be used in signalling that a site object has
@@ -124,7 +124,7 @@ export function setFrontPage( siteId, pageId ) {
 		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( () => {
 			// Update the sites-list so that our change doesn't get wiped when the state is restored
 			// @TODO: Remove this when https://github.com/Automattic/wp-calypso/issues/8726 is complete
-			sites.fetch();
+			sitesList.fetch();
 
 			dispatch( recordTracksEvent( 'calypso_front_page_set', {
 				siteId,
