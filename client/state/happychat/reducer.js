@@ -10,6 +10,7 @@ import {
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
+	HAPPYCHAT_MINIMIZING
 } from 'state/action-types';
 
 /**
@@ -97,4 +98,24 @@ const status = ( state = 'disconnected', action ) => {
 	return state;
 };
 
-export default combineReducers( { timeline, message, status } );
+/**
+ * Tracks the state of the happychat minimizing process
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ *
+ */
+const minimizing = ( state = 'minimizing', action ) => {
+	switch ( action.type ) {
+		case SERIALIZE:
+			return 'maximized';
+		case DESERIALIZE:
+			return state;
+		case HAPPYCHAT_MINIMIZING:
+			return 'minimizing';
+	}
+	return state;
+};
+
+export default combineReducers( { timeline, message, status, minimizing } );

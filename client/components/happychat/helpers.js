@@ -28,12 +28,14 @@ const renderLoading = () => (
  */
 export const isConnecting = propEquals( 'connectionStatus', 'connecting' );
 export const isConnected = propEquals( 'connectionStatus', 'connected' );
+export const isMinimizing = propEquals( 'minimizingStatus', 'minimizing' );
 
 /*
  * Renders the timeline once the happychat client has connected
  */
 export const timeline = when(
 	isConnecting,
+	isMinimizing,
 	renderLoading,
 	( { onScrollContainer } ) => <Timeline onScrollContainer={ onScrollContainer } />
 );

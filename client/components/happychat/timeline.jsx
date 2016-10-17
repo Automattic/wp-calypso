@@ -22,6 +22,7 @@ import { translate } from 'i18n-calypso';
 import { getCurrentUser } from 'state/current-user/selectors';
 import {
 	getHappychatConnectionStatus,
+	getHappychatMinimizingStatus,
 	getHappychatTimeline
 } from 'state/happychat/selectors';
 
@@ -152,6 +153,7 @@ const mapProps = state => {
 	const current_user = getCurrentUser( state );
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
+		minimizingStatus: getHappychatMinimizingStatus( state ),
 		timeline: getHappychatTimeline( state ),
 		isCurrentUser: ( { user_id } ) => user_id === current_user.ID
 	};

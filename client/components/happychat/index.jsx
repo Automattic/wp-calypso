@@ -15,21 +15,25 @@ import {
 } from './functional';
 import { connectChat } from 'state/happychat/actions';
 import {
-	getHappychatConnectionStatus
+	getHappychatConnectionStatus,
+	getHappychatMinimizingStatus
 } from 'state/happychat/selectors';
 import {
 	openChat,
 	closeChat,
+	minimizeChat
 } from 'state/ui/happychat/actions';
 import {
 	isConnected,
 	isConnecting,
+	isMinimizing,
 	timeline,
 	composer
 } from './helpers';
 import { translate } from 'i18n-calypso';
 
 const isChatOpen = any( isConnected, isConnecting );
+const isChatMinimizing = any( isMinimizing );
 
 /**
  * Renders the title text of the chat sidebar when happychat is connecting.
@@ -88,6 +92,7 @@ const Happychat = React.createClass( {
 	render() {
 		const {
 			connectionStatus,
+			minimizingStatus,
 			user,
 			onCloseChat,
 			onOpenChat
@@ -96,17 +101,18 @@ const Happychat = React.createClass( {
 		return (
 			<div className="happychat">
 				<div
-					className={ classnames( 'happychat__container', { 'is-open': isChatOpen( { connectionStatus } ) } ) }>
+					className={ classnames( 'happychat__container', { 'is-open': isChatOpen( { connectionStatus } ) }, { 'is-minimizing': isChatMinimizing( { minimizingStatus } ) } ) }>
 					<div className="happychat__title">
 						{ title( {
 							connectionStatus,
+							minimizingStatus,
 							user,
 							onCloseChat,
 							onOpenChat
 						} ) }
 					</div>
-					{ timeline( { connectionStatus } ) }
-					{ composer( { connectionStatus } ) }
+					{ timeline( { connectionStatus, minimizingStatus } ) }
+					{ composer( { connectionStatus, minimizingStatus } ) }
 				</div>
 			</div>
 		);
@@ -115,7 +121,8 @@ const Happychat = React.createClass( {
 
 const mapState = state => {
 	return {
-		connectionStatus: getHappychatConnectionStatus( state )
+		connectionStatus: getHappychatConnectionStatus( state ),
+		minimizingStatus: getHappychatMinimizingStatus( state )
 	};
 };
 
@@ -125,7 +132,10 @@ const mapDispatch = ( dispatch ) => {
 			dispatch( openChat() );
 		},
 		onCloseChat() {
-			dispatch( closeChat() );
+			dispatch( minimizeChat() );
+			setTimeout( function() {
+				dispatch( closeChat() );
+			}, 500 );
 		},
 		connectChat() {
 			dispatch( connectChat() );

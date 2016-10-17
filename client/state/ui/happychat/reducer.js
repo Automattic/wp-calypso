@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux';
 
 import {
-	HAPPYCHAT_OPEN,
+	HAPPYCHAT_OPEN
 } from 'state/action-types';
 
 const open = ( state = false, action ) => {
