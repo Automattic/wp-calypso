@@ -15,8 +15,7 @@ import {
 } from './functional';
 import { connectChat } from 'state/happychat/actions';
 import {
-	getHappychatConnectionStatus,
-	getHappychatMinimizingStatus
+	getHappychatConnectionStatus
 } from 'state/happychat/selectors';
 import {
 	openChat,
@@ -25,16 +24,17 @@ import {
 	minimizedChat
 } from 'state/ui/happychat/actions';
 import {
+	isHappychatMinimizing
+} from 'state/ui/happychat/selectors';
+import {
 	isConnected,
 	isConnecting,
-	isMinimizing,
 	timeline,
 	composer
 } from './helpers';
 import { translate } from 'i18n-calypso';
 
 const isChatOpen = any( isConnected, isConnecting );
-const isChatMinimizing = any( isMinimizing );
 
 /**
  * Renders the title text of the chat sidebar when happychat is connecting.
@@ -93,7 +93,7 @@ const Happychat = React.createClass( {
 	render() {
 		const {
 			connectionStatus,
-			minimizingStatus,
+			isMinimizing,
 			user,
 			onCloseChat,
 			onOpenChat
@@ -101,18 +101,22 @@ const Happychat = React.createClass( {
 
 		return (
 			<div className="happychat">
-				<div className={ classnames( 'happychat__container', { 'is-open': isChatOpen( { connectionStatus } ) }, { 'is-minimizing': isChatMinimizing( { minimizingStatus } ) } ) }>
+				<div
+					className={ classnames( 'happychat__container', {
+						'is-open': isChatOpen( { connectionStatus } ),
+						'is-minimizing': isMinimizing
+					} ) } >
 					<div className="happychat__title">
 						{ title( {
 							connectionStatus,
-							minimizingStatus,
+							isMinimizing,
 							user,
 							onCloseChat,
 							onOpenChat
 						} ) }
 					</div>
-					{ timeline( { connectionStatus, minimizingStatus } ) }
-					{ composer( { connectionStatus, minimizingStatus } ) }
+					{ timeline( { connectionStatus, isMinimizing } ) }
+					{ composer( { connectionStatus, isMinimizing } ) }
 				</div>
 			</div>
 		);
@@ -122,7 +126,7 @@ const Happychat = React.createClass( {
 const mapState = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
-		minimizingStatus: getHappychatMinimizingStatus( state )
+		isMinimizing: isHappychatMinimizing( state )
 	};
 };
 
