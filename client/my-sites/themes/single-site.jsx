@@ -30,7 +30,6 @@ import {
 	bindOptionsToDispatch,
 	bindOptionsToSite
 } from './theme-options';
-import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSite } from 'state/ui/selectors';
@@ -39,16 +38,14 @@ import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ThemeShowcase from './theme-showcase';
 
-const sites = sitesFactory();
-
 const JetpackThemeReferrerPage = localize(
-	( { translate, site, analyticsPath, analyticsPageTitle } ) => (
+	( { translate, site, isCustomizable, analyticsPath, analyticsPageTitle } ) => (
 		<Main className="themes">
-			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
+			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 			<SidebarNavigation />
 			<CurrentTheme
 				site={ site }
-				canCustomize={ site && site.isCustomizable() } />
+				canCustomize={ isCustomizable } />
 			<EmptyContent title={ translate( 'Changing Themes?' ) }
 				line={ translate( 'Use your site theme browser to manage themes.' ) }
 				action={ translate( 'Open Site Theme Browser' ) }
@@ -60,8 +57,14 @@ const JetpackThemeReferrerPage = localize(
 );
 
 const ThemesSingleSite = ( props ) => {
-	const site = sites.getSelectedSite(),
-		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
+	const {
+		analyticsPath,
+		analyticsPageTitle,
+		selectedSite: site,
+		isCustomizable,
+		isJetpack,
+		translate
+	} = props,
 		jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
 
 	// If we've only just switched from single to multi-site, there's a chance
@@ -75,6 +78,7 @@ const ThemesSingleSite = ( props ) => {
 		if ( ! jetpackEnabled ) {
 			return (
 				<JetpackThemeReferrerPage site={ site }
+					isCustomizable={ isCustomizable }
 					analyticsPath={ analyticsPath }
 					analyticsPageTitle={ analyticsPageTitle }/>
 			);
@@ -95,7 +99,7 @@ const ThemesSingleSite = ( props ) => {
 				source={ 'list' }/>
 			<CurrentTheme
 				site={ site }
-				canCustomize={ site && site.isCustomizable() } />
+				canCustomize={ isCustomizable } />
 			<UpgradeNudge
 				title={ translate( 'Get Custom Design with Premium' ) }
 				message={ translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
