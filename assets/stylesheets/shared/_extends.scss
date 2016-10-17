@@ -67,21 +67,6 @@
 	}
 }
 
-%placeholder-icon {
-
-	.stats-module.is-loading & {
-		animation: loading-fade 1.6s ease-in-out infinite;
-	}
-
-	.stats-module.is-loading &:hover::before,
-	.stats-module.is-loading &::before,
-	.stats-module.is-loading &:hover,
-	.stats-module.is-loading & {
-		color: $gray-light;
-		fill: $gray-light;
-	}
-}
-
 %heading {
 	color: darken( $gray, 20% );
 	font-size: 2rem;
