@@ -33,13 +33,13 @@ import {
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import { getSiteOption, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ThemeShowcase from './theme-showcase';
 
 const JetpackThemeReferrerPage = localize(
-	( { translate, site, isCustomizable, analyticsPath, analyticsPageTitle } ) => (
+	( { translate, adminUrl, site, isCustomizable, analyticsPath, analyticsPageTitle } ) => (
 		<Main className="themes">
 			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 			<SidebarNavigation />
@@ -49,7 +49,7 @@ const JetpackThemeReferrerPage = localize(
 			<EmptyContent title={ translate( 'Changing Themes?' ) }
 				line={ translate( 'Use your site theme browser to manage themes.' ) }
 				action={ translate( 'Open Site Theme Browser' ) }
-				actionURL={ site.options.admin_url + 'themes.php' }
+				actionURL={ adminUrl + 'themes.php' }
 				actionTarget="_blank"
 				illustration="/calypso/images/drake/drake-jetpack.svg" />
 		</Main>
@@ -58,11 +58,13 @@ const JetpackThemeReferrerPage = localize(
 
 const ThemesSingleSite = ( props ) => {
 	const {
+		adminUrl,
 		analyticsPath,
 		analyticsPageTitle,
-		selectedSite: site,
+		hasJetpackThemes,
 		isCustomizable,
 		isJetpack,
+		selectedSite: site,
 		translate
 	} = props,
 		jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
@@ -78,12 +80,13 @@ const ThemesSingleSite = ( props ) => {
 		if ( ! jetpackEnabled ) {
 			return (
 				<JetpackThemeReferrerPage site={ site }
+					adminUrl={ adminUrl }
 					isCustomizable={ isCustomizable }
 					analyticsPath={ analyticsPath }
-					analyticsPageTitle={ analyticsPageTitle }/>
+					analyticsPageTitle={ analyticsPageTitle } />
 			);
 		}
-		if ( ! site.hasJetpackThemes ) {
+		if ( ! hasJetpackThemes ) {
 			return <JetpackUpgradeMessage site={ site } />;
 		}
 		if ( ! site.canManage() ) {
@@ -96,7 +99,7 @@ const ThemesSingleSite = ( props ) => {
 			<SidebarNavigation />
 			<ThanksModal
 				site={ site }
-				source={ 'list' }/>
+				source={ 'list' } />
 			<CurrentTheme
 				site={ site }
 				canCustomize={ isCustomizable } />
@@ -139,7 +142,9 @@ export default connect(
 		return {
 			selectedSite,
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
+			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
+			adminUrl: getSiteOption( state, selectedSite.ID, 'admin_url' ),
+			hasJetpackThemes: isJetpackMinimumVersion( state, selectedSite.ID, '3.7-beta' )
 		};
 	},
 	bindOptionsToDispatch( {
