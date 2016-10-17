@@ -55,12 +55,13 @@ import {
 } from '../actions';
 import { akismet, helloDolly, jetpack, jetpackUpdated } from './fixtures/plugins';
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
-
-	beforeEach( () => {
-		spy.reset();
+	let spy;
+	useSandbox( ( sandbox ) => {
+		spy = sandbox.spy();
+		sandbox.stub( console, 'error' );
 	} );
 
 	describe( '#fetchPlugins()', () => {
