@@ -134,7 +134,7 @@ const emptyBlockMap = {
  * @param {string} title - Token's title
  * @returns string - Processed title
  */
-export const mapTokenTitleForEditor = title => `\u205f${ title }\u205f`;
+export const mapTokenTitleForEditor = title => `\u205f\u205f${ title }\u205f\u205f`;
 
 /**
  * Returns the translated name for the chip
