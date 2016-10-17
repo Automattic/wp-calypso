@@ -19,16 +19,6 @@ export const getHappychatConnectionStatus = createSelector(
 );
 
 /**
- * Gets the current happychat minimizing status
- * @param {Object} state - global redux state
- * @return {String} current state value
- */
-export const getHappychatMinimizingStatus = createSelector(
-	state => state.happychat.minimizing,
-	state => state.happychat.minimizing
-);
-
-/**
  * Gets timeline chat events from the happychat state
  * @param {Object} state - Global redux state
  * @return [{Object}] events - an array of timeline chat events

@@ -97,22 +97,4 @@ const status = ( state = 'disconnected', action ) => {
 	return state;
 };
 
-/**
- * Tracks the state of the happychat minimizing process
- *
- * @param  {Object} state  Current state
- * @param  {Object} action Action payload
- * @return {Object}        Updated state
- *
- */
-const minimizing = ( state = 'minimizing', action ) => {
-	switch ( action.isMinimizing ) {
-		case true:
-			return 'minimizing';
-		case false:
-			return '';
-	}
-	return state;
-};
-
-export default combineReducers( { timeline, message, status, minimizing } );
+export default combineReducers( { timeline, message, status } );
