@@ -7,7 +7,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { getShortcode } from '../selectors';
-import { LOAD_STATUS } from '../constants';
 
 describe( 'selectors', () => {
 	describe( '#getShortcode()', () => {
@@ -15,7 +14,7 @@ describe( 'selectors', () => {
 			shortcodes: {
 				12345678: {
 					'[gallery ids="1,2,3"]': {
-						status: LOAD_STATUS.LOADED,
+						status: true,
 						body: '<html></html>',
 						scripts: {},
 						styles: {}
@@ -28,7 +27,7 @@ describe( 'selectors', () => {
 			const shortcode = getShortcode( state, 12345678, '[gallery ids="1,2,3"]' );
 
 			expect( shortcode ).to.eql( {
-				status: LOAD_STATUS.LOADED,
+				status: true,
 				body: '<html></html>',
 				scripts: {},
 				styles: {}
