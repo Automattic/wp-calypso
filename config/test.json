@@ -25,6 +25,7 @@
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",
+	"faviconUrl": "//s1.wp.com/i/favicon.ico",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
 	"features": {
 		"ad-tracking": false,
