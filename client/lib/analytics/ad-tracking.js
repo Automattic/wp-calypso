@@ -57,7 +57,8 @@ const FACEBOOK_TRACKING_SCRIPT_URL = 'https://connect.facebook.net/en_US/fbevent
 		JPY: 125,
 		AUD: 1.35,
 		CAD: 1.35,
-		GBP: 0.75
+		GBP: 0.75,
+		BRL: 2.55
 	};
 
 /**
