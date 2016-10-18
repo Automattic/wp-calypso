@@ -49,7 +49,7 @@ class PostByline extends React.Component {
 
 	render() {
 		const { post, site, feed, isDiscoverPost } = this.props;
-		const feedId = get( feed, 'ID' );
+		const feedId = get( feed, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const primaryTag = post && post.primary_tag;
 		let siteName = siteNameFromSiteAndPost( site, post );
