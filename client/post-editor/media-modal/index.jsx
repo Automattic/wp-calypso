@@ -80,7 +80,7 @@ export const EditorMediaModal = React.createClass( {
 	},
 
 	componentWillUnmount() {
-		this.props.resetMediaModalView();
+		this.props.resetView();
 	},
 
 	getDefaultState: function( props ) {
