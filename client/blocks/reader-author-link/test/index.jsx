@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'ReaderAuthorLink', () => {
-	let ReaderAuthorLink;
+	let ReaderAuthorLink, author;
 
 	useMockery( mockery => {
 		mockery.registerMock( 'reader/stats', {
@@ -24,12 +24,28 @@ describe( 'ReaderAuthorLink', () => {
 
 	before( () => {
 		ReaderAuthorLink = require( '../index' );
+		author = { URL: 'http://wpcalypso.wordpress.com', name: 'Barnaby Blogwit' };
 	} );
 
-	// check that content within a card renders correctly
 	it( 'should render children', () => {
-		const author = { URL: 'http://wpcalypso.wordpress.com', name: 'Barnaby Blogwit' };
 		const link = shallow( <ReaderAuthorLink author={ author }>Barnaby Blogwit</ReaderAuthorLink> );
 		expect( link.contains( 'Barnaby Blogwit' ) ).to.equal( true );
+	} );
+
+	it( 'should accept a custom class of `test__ace`', () => {
+		const link = shallow( <ReaderAuthorLink author={ author } className="test__ace">xyz</ReaderAuthorLink> );
+		expect( link.is( '.test__ace' ) ).to.equal( true );
+	} );
+
+	it( 'it should return null with a null author name', () => {
+		author.name = null;
+		const link = shallow( <ReaderAuthorLink author={ author } className="test__ace">xyz</ReaderAuthorLink> );
+		expect( link.type() ).to.be.null;
+	} );
+
+	it( 'it should return null with a blacklisted author name', () => {
+		author.name = 'admin';
+		const link = shallow( <ReaderAuthorLink author={ author } className="test__ace">xyz</ReaderAuthorLink> );
+		expect( link.type() ).to.be.null;
 	} );
 } );
