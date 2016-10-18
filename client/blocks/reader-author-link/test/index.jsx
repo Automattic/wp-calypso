@@ -9,10 +9,11 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import ReaderAuthorLink from '../index';
 import useMockery from 'test/helpers/use-mockery';
 
 describe( 'ReaderAuthorLink', () => {
+	let ReaderAuthorLink;
+
 	useMockery( mockery => {
 		mockery.registerMock( 'reader/stats', {
 			recordAction: noop,
@@ -21,9 +22,14 @@ describe( 'ReaderAuthorLink', () => {
 		} );
 	} );
 
+	before( () => {
+		ReaderAuthorLink = require( '../index' );
+	} );
+
 	// check that content within a card renders correctly
 	it( 'should render children', () => {
-		const link = shallow( <ReaderAuthorLink>Barnaby Blogwit</ReaderAuthorLink> );
+		const author = { URL: 'http://wpcalypso.wordpress.com', name: 'Barnaby Blogwit' };
+		const link = shallow( <ReaderAuthorLink author={ author }>Barnaby Blogwit</ReaderAuthorLink> );
 		expect( link.contains( 'Barnaby Blogwit' ) ).to.equal( true );
 	} );
 } );
