@@ -118,6 +118,7 @@ export default class RefreshPostCard extends React.Component {
 							<ReaderPostActions
 								post={ post }
 								showVisit={ true }
+								showMenu={ true }
 								onCommentClick={ onCommentClick }
 								showEdit={ false }
 								className="ignore-click"

@@ -11,6 +11,7 @@ import CommentButton from 'blocks/comment-button';
 import LikeButton from 'reader/like-button';
 import ShareButton from 'reader/share';
 import PostEditButton from 'blocks/post-edit-button';
+import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import { shouldShowComments } from 'blocks/comments/helper';
 import { shouldShowLikes } from 'reader/like-helper';
 import { shouldShowShare } from 'reader/share/helper';
@@ -19,7 +20,7 @@ import * as stats from 'reader/stats';
 import { localize } from 'i18n-calypso';
 import ExternalLink from 'components/external-link';
 
-const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, showVisit, iconSize, className } ) => {
+const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, showVisit, showMenu, iconSize, className } ) => {
 	const onEditClick = () => {
 		stats.recordAction( 'edit_post' );
 		stats.recordGaEvent( 'Clicked Edit Post', 'full_post' );
@@ -71,6 +72,11 @@ const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, s
 						showZeroCount={ false } />
 				</li>
 			}
+			{ showMenu &&
+				<li className="reader-post-actions__item">
+					<ReaderPostOptionsMenu className="ignore-click" post={ post } />
+				</li>
+			}
 		</ul>
 	);
 	/* eslint-enable react/jsx-no-target-blank */
@@ -81,12 +87,14 @@ ReaderPostActions.propTypes = {
 	site: React.PropTypes.object,
 	onCommentClick: React.PropTypes.func,
 	showEdit: React.PropTypes.bool,
-	iconSize: React.PropTypes.number
+	iconSize: React.PropTypes.number,
+	showMenu: React.PropTypes.bool
 };
 
 ReaderPostActions.defaultProps = {
 	showEdit: true,
 	showVisit: false,
+	showMenu: false,
 	iconSize: 24
 };
 
