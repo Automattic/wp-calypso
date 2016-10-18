@@ -20,7 +20,7 @@ import {
 } from 'state/ui/editor/image-editor/selectors';
 import {
 	setImageEditorCropBounds,
-	imageEditorImageIsLoaded
+	setImageEditorImageHasLoaded
 } from 'state/ui/editor/image-editor/actions';
 
 class ImageEditorCanvas extends Component {
@@ -39,7 +39,7 @@ class ImageEditorCanvas extends Component {
 			heightRatio: PropTypes.number
 		} ),
 		setImageEditorCropBounds: PropTypes.func,
-		imageEditorImageIsLoaded: PropTypes.func,
+		setImageEditorImageHasLoaded: PropTypes.func,
 		onLoadError: PropTypes.func,
 		isImageLoaded: PropTypes.bool
 	};
@@ -57,7 +57,7 @@ class ImageEditorCanvas extends Component {
 			cropHeightRatio: 1
 		},
 		setImageEditorCropBounds: noop,
-		imageEditorImageIsLoaded: noop,
+		setImageEditorImageHasLoaded: noop,
 		onLoadError: noop,
 		isImageLoaded: false
 	};
@@ -121,7 +121,7 @@ class ImageEditorCanvas extends Component {
 			window.addEventListener( 'resize', this.onWindowResize );
 		}
 
-		this.props.imageEditorImageIsLoaded();
+		this.props.setImageEditorImageHasLoaded();
 	}
 
 	componentWillUnmount() {
@@ -291,7 +291,7 @@ export default connect(
 	},
 	{
 		setImageEditorCropBounds,
-		imageEditorImageIsLoaded
+		setImageEditorImageHasLoaded
 	},
 	null,
 	{ withRef: true }

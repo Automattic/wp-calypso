@@ -15,7 +15,7 @@ import {
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_STATE_RESET,
 	IMAGE_EDITOR_STATE_RESET_ALL,
-	IMAGE_EDITOR_IMAGE_IS_LOADED
+	IMAGE_EDITOR_IMAGE_HAS_LOADED
 } from 'state/action-types';
 import { AspectRatios } from './constants';
 
@@ -64,7 +64,7 @@ export function hasChanges( state = false, action ) {
 
 export function imageIsLoading( state = true, action ) {
 	switch ( action.type ) {
-		case IMAGE_EDITOR_IMAGE_IS_LOADED:
+		case IMAGE_EDITOR_IMAGE_HAS_LOADED:
 			return false;
 
 		case IMAGE_EDITOR_STATE_RESET_ALL:

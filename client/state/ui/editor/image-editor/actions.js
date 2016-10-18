@@ -10,7 +10,7 @@ import {
 	IMAGE_EDITOR_SET_FILE_INFO,
 	IMAGE_EDITOR_STATE_RESET,
 	IMAGE_EDITOR_STATE_RESET_ALL,
-	IMAGE_EDITOR_IMAGE_IS_LOADED
+	IMAGE_EDITOR_IMAGE_HAS_LOADED
 } from 'state/action-types';
 
 // Doesn't reset image file info (src, fileName, etc).
@@ -76,8 +76,8 @@ export function imageEditorCrop( topRatio, leftRatio, widthRatio, heightRatio ) 
 	};
 }
 
-export function imageEditorImageIsLoaded() {
+export function setImageEditorImageHasLoaded() {
 	return {
-		type: IMAGE_EDITOR_IMAGE_IS_LOADED
+		type: IMAGE_EDITOR_IMAGE_HAS_LOADED
 	};
 }

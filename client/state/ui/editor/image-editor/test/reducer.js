@@ -15,7 +15,7 @@ import {
 	IMAGE_EDITOR_SET_CROP_BOUNDS,
 	IMAGE_EDITOR_STATE_RESET,
 	IMAGE_EDITOR_STATE_RESET_ALL,
-	IMAGE_EDITOR_IMAGE_IS_LOADED
+	IMAGE_EDITOR_IMAGE_HAS_LOADED
 } from 'state/action-types';
 
 import { AspectRatios } from '../constants';
@@ -409,7 +409,7 @@ describe( 'reducer', () => {
 
 		it( 'should change to false after image is loaded', () => {
 			const state = imageIsLoading( undefined, {
-				type: IMAGE_EDITOR_IMAGE_IS_LOADED
+				type: IMAGE_EDITOR_IMAGE_HAS_LOADED
 			} );
 
 			expect( state ).to.be.false;
