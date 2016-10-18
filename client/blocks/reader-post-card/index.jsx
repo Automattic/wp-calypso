@@ -13,6 +13,7 @@ import closest from 'component-closest';
 import Card from 'components/card';
 import DisplayTypes from 'state/reader/posts/display-types';
 import ReaderPostActions from 'blocks/reader-post-actions';
+import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
 import * as stats from 'reader/stats';
 import PostByline from './byline';
 
@@ -123,6 +124,7 @@ export default class RefreshPostCard extends React.Component {
 								className="ignore-click"
 								iconSize={ 18 } />
 						}
+						{ post && <ReaderPostOptionsMenu className="ignore-click" post={ post } /> }
 					</div>
 				</div>
 				{ this.props.children }
