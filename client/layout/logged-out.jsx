@@ -22,7 +22,9 @@ const LayoutLoggedOut = ( {
 		[ 'is-group-' + section.group ]: !! section,
 		[ 'is-section-' + section.name ]: !! section,
 		'focus-content': true,
-		'has-no-sidebar': true, // Logged-out never has a sidebar
+		'has-no-sidebar': false, // Logged out has sidebar because
+					// the layout expects it to be there
+					// but no content is rendered
 		'wp-singletree-layout': !! primary,
 	} );
 
