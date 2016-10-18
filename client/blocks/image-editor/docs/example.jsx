@@ -15,30 +15,34 @@ function ImageEditorExample( { primarySiteId } ) {
 	const media = {
 		URL: 'https://cldup.com/mA_hqNVj0w.jpg'
 	};
-	
+
 	const getTestingImage = () => document.querySelector( "#devdocs-example-image-editor-result" );
-	
-	const onImageExtracted = ( blob ) => {
-		const imageUrl = window.URL.createObjectURL( blob );
+
+	const onImageEditorDone = ( error, blob ) => {
+		if ( error ) {
+			return;
+		}
 		
+		const imageUrl = window.URL.createObjectURL( blob );
+
 		getTestingImage().src = imageUrl;
 	};
-	
+
 	const onImageEditorReset = () => {
 		getTestingImage().src = media.URL;
 	};
-	
+
 	return (
 		<div>
 			<div style={ { height: '80vh' } }>
 				<ImageEditor
 					siteId={ primarySiteId }
 					media={ media }
-					onImageExtracted={ onImageExtracted }
+					onDone={ onImageEditorDone }
 					onReset={ onImageEditorReset }
 				/>
 			</div>
-			<div style={ { 
+			<div style={ {
 				textAlign: 'center',
 				marginTop: '15px'
 			} }>
