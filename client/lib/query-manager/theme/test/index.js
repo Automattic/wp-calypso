@@ -131,8 +131,6 @@ describe( 'ThemeQueryManager', () => {
 
 				expect( isMatch ).to.be.false;
 			} );
-
-			// search terms
 		} );
 
 		context( 'query.filters', () => {
