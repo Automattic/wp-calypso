@@ -4,6 +4,7 @@
 import React from 'react';
 import { noop, get } from 'lodash';
 import page from 'page';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -153,8 +154,10 @@ const ReaderPostOptionsMenu = React.createClass( {
 			isBlockPossible = true;
 		}
 
+		const classes = classnames( 'reader-post-options-menu', this.props.className );
+
 		return (
-			<span className="reader-post-options-menu">
+			<span className={ classes }>
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
 					onToggle={ this.onMenuToggle }>
