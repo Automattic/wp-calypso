@@ -14,7 +14,7 @@ import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 import { getStreamUrl } from 'reader/route';
 import { numberFormat } from 'i18n-calypso';
-import { has, includes } from 'lodash';
+import { has } from 'lodash';
 
 const AuthorCompactProfile = React.createClass( {
 	propTypes: {
@@ -44,7 +44,6 @@ const AuthorCompactProfile = React.createClass( {
 			'has-author-icon': siteIcon || feedIcon || ( author && author.has_avatar )
 		} );
 		const streamUrl = getStreamUrl( feedId, siteId );
-		const authorNameBlacklist = [ 'admin' ];
 
 		// If we have a feed URL, use that for the follow button in preference to the site URL
 		const followUrl = feedUrl || siteUrl;
@@ -54,7 +53,7 @@ const AuthorCompactProfile = React.createClass( {
 				<a href={ streamUrl } className="author-compact-profile__avatar-link">
 					<ReaderAvatar siteIcon={ siteIcon } feedIcon={ feedIcon } author={ author } />
 				</a>
-				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames && ! includes( authorNameBlacklist, author.name.toLowerCase() ) &&
+				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames &&
 					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>{ author.name }</ReaderAuthorLink> }
 				{ siteName &&
 					<ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId } post={ post } >
