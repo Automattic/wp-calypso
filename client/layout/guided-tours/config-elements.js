@@ -235,11 +235,11 @@ export class Continue extends Component {
 
 	static propTypes = {
 		children: PropTypes.node,
-		click: PropTypes.bool,
 		hidden: PropTypes.bool,
 		icon: PropTypes.string,
 		step: PropTypes.string.isRequired,
 		target: PropTypes.string,
+		targetEvent: PropTypes.string,
 		when: PropTypes.func,
 	};
 
@@ -272,20 +272,20 @@ export class Continue extends Component {
 	}
 
 	addTargetListener() {
-		const { target = false, click, when } = this.props;
+		const { target = false, targetEvent, when } = this.props;
 		const targetNode = targetForSlug( target );
 
-		if ( click && ! when && targetNode && targetNode.addEventListener ) {
-			targetNode.addEventListener( 'click', this.onContinue );
+		if ( targetEvent && ! when && targetNode && targetNode.addEventListener ) {
+			targetNode.addEventListener( targetEvent, this.onContinue );
 		}
 	}
 
 	removeTargetListener() {
-		const { target = false, click, when } = this.props;
+		const { target = false, targetEvent, when } = this.props;
 		const targetNode = targetForSlug( target );
 
-		if ( click && ! when && targetNode && targetNode.removeEventListener ) {
-			targetNode.removeEventListener( 'click', this.onContinue );
+		if ( targetEvent && ! when && targetNode && targetNode.removeEventListener ) {
+			targetNode.removeEventListener( targetEvent, this.onContinue );
 		}
 	}
 
