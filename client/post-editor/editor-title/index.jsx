@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
+import { connect } from 'react-redux';
 import ReactDom from 'react-dom';
 import classNames from 'classnames';
-import { omit, get } from 'lodash';
+import { get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import PostActions from 'lib/posts/actions';
 import PostUtils from 'lib/posts/utils';
 import SiteUtils from 'lib/site/utils';
 import EditorPermalink from 'post-editor/editor-permalink';
@@ -17,28 +18,31 @@ import TrackInputChanges from 'components/track-input-changes';
 import TextareaAutosize from 'components/textarea-autosize';
 import { isMobile } from 'lib/viewport';
 import * as stats from 'lib/posts/stats';
+import { getSelectedSite } from 'state/ui/selectors';
+import { isEditorNewPost, getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
+import { editPost } from 'state/posts/actions';
 
 /**
  * Constants
  */
 const REGEXP_NEWLINES = /[\r\n]+/g;
 
-export default React.createClass( {
-	displayName: 'EditorTitle',
-
-	propTypes: {
+class EditorTitle extends Component {
+	static propTypes = {
+		editPost: PropTypes.func,
+		isNew: PropTypes.bool,
+		onChange: PropTypes.func,
+		ownProps: PropTypes.object,
 		post: PropTypes.object,
 		site: PropTypes.object,
-		isNew: PropTypes.bool,
-		onChange: PropTypes.func
-	},
+		translate: PropTypes.func
+	};
 
-	getDefaultProps() {
-		return {
-			isNew: true,
-			onChange: () => {}
-		};
-	},
+	static defaultProps = {
+		isNew: true,
+		onChange: () => {}
+	};
 
 	componentDidUpdate( prevProps ) {
 		if ( isMobile() ) {
@@ -52,40 +56,39 @@ export default React.createClass( {
 			const input = ReactDom.findDOMNode( this.refs.titleInput );
 			input.focus();
 		}
-	},
+	}
 
-	onChange( event ) {
+	onChange = event => {
 		if ( ! this.props.post ) {
 			return;
 		}
 
-		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
-		PostActions.edit( {
+		this.props.editPost( this.props.site.ID, this.props.post.ID, {
 			title: event.target.value.replace( REGEXP_NEWLINES, ' ' )
 		} );
 		this.props.onChange( event );
-	},
+	};
 
-	resizeAfterNewlineInput( event ) {
+	resizeAfterNewlineInput = event => {
 		const title = event.target.value;
 		if ( REGEXP_NEWLINES.test( title ) ) {
 			event.target.value = title.replace( REGEXP_NEWLINES, ' ' );
 			this.refs.titleInput.resize();
 		}
-	},
+	};
 
-	recordChangeStats() {
+	recordChangeStats = () => {
 		const isPage = PostUtils.isPage( this.props.post );
 		stats.recordStat( isPage ? 'page_title_changed' : 'post_title_changed' );
 		stats.recordEvent( isPage ? 'Changed Page Title' : 'Changed Post Title' );
-	},
+	};
 
-	onBlur( event ) {
+	onBlur = event => {
 		this.onChange( event );
-	},
+	};
 
 	render() {
-		const { post, site, isNew } = this.props;
+		const { ownProps, post, site, isNew, translate } = this.props;
 		const isPermalinkEditable = SiteUtils.isPermalinkEditable( site );
 
 		const classes = classNames( 'editor-title', {
@@ -101,19 +104,36 @@ export default React.createClass( {
 				}
 				<TrackInputChanges onNewValue={ this.recordChangeStats }>
 					<TextareaAutosize
-						{ ...omit( this.props, Object.keys( this.constructor.propTypes ) ) }
+						{ ...ownProps }
 						className="editor-title__input"
-						placeholder={ this.translate( 'Title' ) }
+						placeholder={ translate( 'Title' ) }
 						onChange={ this.onChange }
 						onInput={ this.resizeAfterNewlineInput }
 						onBlur={ this.onBlur }
 						autoFocus={ isNew && ! isMobile() }
 						value={ post ? post.title : '' }
-						aria-label={ this.translate( 'Edit title' ) }
+						aria-label={ translate( 'Edit title' ) }
 						ref="titleInput"
 						rows="1" />
 				</TrackInputChanges>
 			</div>
 		);
 	}
-} );
+}
+
+export default connect(
+	( state, ownProps ) => {
+		const site = getSelectedSite( state );
+		const editedPostId = getEditorPostId( state );
+		const post = getEditedPost( state, site.ID, editedPostId );
+		const isNew = isEditorNewPost( state );
+
+		return {
+			isNew,
+			post,
+			site,
+			ownProps
+		};
+	},
+	{ editPost }
+)( localize( EditorTitle ) );
