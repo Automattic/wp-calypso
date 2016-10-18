@@ -123,13 +123,13 @@ module.exports = {
 		defaultVariation: 'hideSiteTitleStep',
 		allowExistingUsers: false
 	},
-	domainToPersonalPlanNudge: {
-		datestamp: '20161011',
+	domainToPersonalPlanNudge2: {
+		datestamp: '20161018',
 		variations: {
 			original: 50,
 			nudge: 50
 		},
 		defaultVariation: 'original',
-		allowExistingUsers: false
+		allowExistingUsers: true
 	}
 };
