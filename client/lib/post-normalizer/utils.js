@@ -92,7 +92,7 @@ export function domForHtml( html ) {
  * @return {boolean}       whether or not we think this is an image
  */
 export function thumbIsLikelyImage( thumb ) {
-	if ( ! thumb ) {
+	if ( ! thumb || ! thumb.URL ) {
 		return false;
 	}
 	// this doesn't work because jetpack 4.2 lies
