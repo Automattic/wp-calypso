@@ -16,16 +16,20 @@ import * as paths from 'lib/paths';
 import PostMetadata from 'lib/post-metadata';
 import PopupMonitor from 'lib/popup-monitor';
 import Button from 'components/button';
-import siteUtils from 'lib/site/utils';
 import Gridicon from 'components/gridicon';
 import { recordStat, recordEvent } from 'lib/posts/stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
-import { isJetpackModuleActive } from 'state/sites/selectors';
+import { isJetpackModuleActive, getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { getEditedPostValue } from 'state/posts/selectors';
 import { postTypeSupports } from 'state/post-types/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteUserConnections, isRequestingSharePost, sharePostFailure, sharePostSuccessMessage  } from 'state/sharing/publicize/selectors';
+import { getCurrentUserId, canCurrentUser } from 'state/current-user/selectors';
+import {
+	getSiteUserConnections,
+	isRequestingSharePost,
+	sharePostFailure,
+	sharePostSuccessMessage
+} from 'state/sharing/publicize/selectors';
 import { fetchConnections as requestConnections, sharePost, dismissShareConfirmation } from 'state/sharing/publicize/actions';
 import config from 'config';
 import Notice from 'components/notice';
@@ -41,7 +45,10 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		siteId: PropTypes.number,
 		isPublicizeEnabled: PropTypes.bool,
 		connections: PropTypes.array,
-		requestConnections: PropTypes.func
+		requestConnections: PropTypes.func,
+		publicizePermanentlyDisabled: PropTypes.bool,
+		isJetpack: PropTypes.bool,
+		userCanPublishPosts: PropTypes.bool,
 	},
 
 	hasConnections: function() {
@@ -76,7 +83,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 	},
 
 	onNewConnectionPopupClosed() {
-		this.props.requestConnections( this.props.site.ID );
+		this.props.requestConnections( this.props.siteId );
 	},
 
 	newConnection: function() {
@@ -86,13 +93,11 @@ const EditorSharingPublicizeOptions = React.createClass( {
 	},
 
 	jetpackModulePopup: function() {
-		let href;
-
-		if ( ! this.props.site || ! this.props.site.jetpack ) {
+		if ( ! this.props.isJetpack ) {
 			return;
 		}
 
-		href = paths.jetpackModules( this.props.site, 'publicize' );
+		const href = paths.jetpackModules( this.props.site, 'publicize' );
 
 		if ( ! this.jetpackModulePopupMonitor ) {
 			this.jetpackModulePopupMonitor = new PopupMonitor();
@@ -103,18 +108,15 @@ const EditorSharingPublicizeOptions = React.createClass( {
 	},
 
 	onModuleConnectionPopupClosed: function() {
-		if ( ! this.props.site || ! this.props.site.jetpack ) {
+		const { isJetpack, isPublicizeEnabled, siteId } = this.props;
+		if ( ! isJetpack || ! isPublicizeEnabled ) {
 			return;
 		}
 
 		// Refresh the list of connections so that the user is given the latest
 		// possible state.  Also prevents a possible infinite loading state due
 		// to connections previously returning a 400 error
-		this.props.site.once( 'change', () => {
-			if ( this.props.site.isModuleActive( 'publicize' ) ) {
-				this.props.requestConnections( this.props.site.ID );
-			}
-		} );
+		this.props.requestConnections( siteId );
 	},
 
 	renderServices: function() {
@@ -125,7 +127,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		return (
 			<PublicizeServices
 				post={ this.props.post }
-				siteId={ this.props.site.ID }
+				siteId={ this.props.siteId }
 				connections={ this.props.connections }
 				newConnectionPopup={ this.newConnectionPopup } />
 		);
@@ -155,7 +157,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 
 	renderAddNewButton: function() {
 		// contributors cannot create publicize connections
-		if ( ! siteUtils.userCan( 'publish_posts', this.props.site ) ) {
+		if ( ! this.props.userCanPublishPosts ) {
 			return;
 		}
 
@@ -172,7 +174,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 	renderInfoNotice: function() {
 		// don't show the message if the are no connections
 		// and the user is not allowed to add any
-		if ( ! this.hasConnections() && ! siteUtils.userCan( 'publish_posts', this.props.site ) ) {
+		if ( ! this.hasConnections() && ! this.props.userCanPublishPosts ) {
 			return;
 		}
 
@@ -204,11 +206,12 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
 	},
 	render: function() {
-		if ( ! this.props.isPublicizeEnabled ) {
+		const { isPublicizeEnabled, publicizePermanentlyDisabled, site } = this.props;
+		if ( ! isPublicizeEnabled ) {
 			return null;
 		}
 
-		if ( this.props.site && this.props.site.options.publicize_permanently_disabled ) {
+		if ( site && publicizePermanentlyDisabled ) {
 			return (
 				<div className="editor-sharing__publicize-disabled">
 					<p><span>{ this.translate( 'Publicize is disabled on this site.' ) }</span></p>
@@ -216,7 +219,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 			);
 		}
 
-		if ( this.props.site && this.props.site.jetpack && ! this.props.site.isModuleActive( 'publicize' ) ) {
+		if ( site && ! isPublicizeEnabled ) {
 			return (
 				<div className="editor-sharing__publicize-disabled">
 					<p><span>{ this.translate( 'Enable the Publicize module to automatically share new posts to social networks.' ) }</span></p>
@@ -231,7 +234,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 
 		const classes = classNames( 'editor-sharing__publicize-options', {
 			'has-connections': this.hasConnections(),
-			'has-add-option': siteUtils.userCan( 'publish_posts', this.props.site )
+			'has-add-option': this.props.userCanPublishPosts
 		} );
 
 		return (
@@ -269,6 +272,10 @@ export default connect(
 		return {
 			siteId,
 			isPublicizeEnabled,
+			userCanPublishPosts: canCurrentUser( state, siteId, 'publish_posts' ),
+			isJetpack: isJetpackSite( state, siteId ),
+			publicizePermanentlyDisabled: getSiteOption( state, siteId, 'publicize_permanently_disabled' ),
+			site: getSelectedSite( state ),
 			connections: getSiteUserConnections( state, siteId, userId ),
 			requesting: isRequestingSharePost( state, siteId, postId ),
 			failed: sharePostFailure( state, siteId, postId ),
