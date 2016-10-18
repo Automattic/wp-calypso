@@ -19,6 +19,82 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin: 0 15px;
 		padding: 20px 0;
 	}
+
+	&.has-thumbnail {
+
+		.reader-post-card__featured-image {
+			flex-basis: auto;
+			flex-grow: 1;
+			margin-right: 20px;
+			max-width: 190px;
+
+			@include breakpoint( ">960px" ) {
+				max-width: 250px;
+			}
+
+			@media #{$reader-post-card-breakpoint-medium} {
+				height: 100px;
+				max-width: none;
+				width: 100%;
+			}
+
+			@media #{$reader-post-card-breakpoint-small} {
+				height: 100px;
+				max-width: none;
+				width: 100%;
+			}
+		}
+
+		&.is-photo {
+
+			.reader-post-card__featured-image {
+				position: relative;
+					top: 0;
+				height: 225px;
+				margin-right: 0;
+				max-width: 100%;
+
+				&::before {
+					content: '';
+					background: $gray-dark;
+					height: 225px;
+					opacity: .4;
+					position: absolute;
+					width: 100%;
+					z-index: 1;
+				}
+			}
+
+			.reader-post-card__post {
+				flex-direction: column;
+			}
+
+			.reader-post-card__post-details,
+			.reader-post-card__social {
+				padding-left: 0;
+			}
+
+			.reader-post-card__post-details {
+				margin-top: -10px;
+			}
+
+			.reader-post-card__title {
+				font-family: $sans;
+				font-size: 10px;
+				position: relative;
+					bottom: 22px;
+					left: 20px;
+				text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+				z-index: 2;
+			}
+
+			.reader-post-card__title .reader-post-card__title-link {
+				color: $white;
+				font-size: 12px;
+				letter-spacing: 0.01em;
+			}
+		}
+	}
 }
 
 .reader-post-card__byline {
@@ -96,29 +172,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
-
-	.reader-post-card__featured-image {
-		flex-basis: auto;
-		flex-grow: 1;
-		margin-right: 20px;
-		max-width: 190px;
-
-		@include breakpoint( ">960px" ) {
-			max-width: 250px;
-		}
-
-		@media #{$reader-post-card-breakpoint-medium} {
-			height: 100px;
-			max-width: none;
-			width: 100%;
-		}
-
-		@media #{$reader-post-card-breakpoint-small} {
-			height: 100px;
-			max-width: none;
-			width: 100%;
-		}
-	}
 
 	.reader-post-card__post-details {
 		flex: 1;
