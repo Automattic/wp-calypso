@@ -25,6 +25,9 @@
 	}
 }
 
-.reader-post-actions .reader-post-options-menu .button.is-borderless .gridicon {
-	top: -2px;
+.reader-post-actions .reader-post-options-menu .button.is-borderless {
+	color: lighten( $gray, 10% );
+	.gridicon {
+		top: -2px;
+	}
 }
