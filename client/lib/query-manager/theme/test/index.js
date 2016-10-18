@@ -100,6 +100,22 @@ describe( 'ThemeQueryManager', () => {
 				expect( isMatch ).to.be.true;
 			} );
 
+			it( 'should return true for a matching author search', () => {
+				const isMatch = manager.matches( {
+					search: 'team'
+				}, DEFAULT_THEME );
+
+				expect( isMatch ).to.be.true;
+			} );
+
+			it( 'should return true for a matching filter search', () => {
+				const isMatch = manager.matches( {
+					search: 'journal'
+				}, DEFAULT_THEME );
+
+				expect( isMatch ).to.be.true;
+			} );
+
 			it( 'should search case-insensitive', () => {
 				const isMatch = manager.matches( {
 					search: 'Sidebar'
