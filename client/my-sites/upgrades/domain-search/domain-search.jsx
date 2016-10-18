@@ -99,7 +99,7 @@ var DomainSearch = React.createClass( {
 		}
 
 		if ( cartItems.isNextDomainFree( this.props.cart ) || shouldBundleDomainWithPlan ) {
-			upgradesActions.addItem( cartItems.domainPrivacyProtection( {
+			items.push( cartItems.domainPrivacyProtection( {
 				domain: suggestion.domain_name
 			} ) );
 		}
