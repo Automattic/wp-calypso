@@ -132,8 +132,8 @@
     "xgettext-js": "1.0.0"
   },
   "engines": {
-    "node": "6.7.0",
-    "npm": "3.10.3"
+    "node": "6.9.0",
+    "npm": "3.10.8"
   },
   "scripts": {
     "test": "npm run test-client && npm run test-server && npm run test-test",
