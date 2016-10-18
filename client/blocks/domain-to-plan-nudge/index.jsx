@@ -69,7 +69,7 @@ class DomainToPlanNudge extends Component {
 			site &&           //site exists
 			site.wpcom_url && //has a mapped domain
 			hasFreePlan &&    //has a free wpcom plan
-			abtest( 'domainToPersonalPlanNudge' ) === 'nudge';
+			abtest( 'domainToPersonalPlanNudge2' ) === 'nudge';
 	}
 
 	personalCheckout() {
