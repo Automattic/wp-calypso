@@ -53,9 +53,7 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 					const filters = value.split( ',' );
 					return every( filters, ( filter ) => (
 						some( theme.taxonomies, ( terms ) => (
-							some( terms, ( { slug } ) => (
-								slug === filter
-							) )
+							some( terms, { slug: filter } )
 						) )
 					) );
 
