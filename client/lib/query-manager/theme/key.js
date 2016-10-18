@@ -19,7 +19,7 @@ import { DEFAULT_THEME_QUERY } from './constants';
  */
 function isDefaultOrNullQueryValue( value, key ) {
 	return (
-		null == value || // Double-equals null checks undefined, null
+		value === undefined || value === null ||
 		DEFAULT_THEME_QUERY[ key ] === value
 	);
 }
