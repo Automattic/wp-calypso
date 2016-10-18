@@ -27,7 +27,11 @@ export class ReaderPostCardAdapter extends React.Component {
 	// take what the stream hands to a card and adapt it
 	// for use by a ReaderPostCard
 	render() {
-		const { feed_ID: feedId, site_ID: siteId } = this.props.post;
+		const {
+			feed_ID: feedId,
+			site_ID: siteId,
+			is_external: isExternal
+		} = this.props.post;
 
 		// only query the site if the feed id is missing. feed queries end up fetching site info
 		// via a meta query, so we don't need both.
@@ -38,8 +42,8 @@ export class ReaderPostCardAdapter extends React.Component {
 				feed={ this.props.feed }
 				onClick={ this.onClick }
 				onCommentClick={ this.onCommentClick } >
-				{ feedId && <QueryReaderFeed feedId={ feedId } /> }
-				{ ! feedId && siteId && <QueryReaderSite siteId={ +siteId } /> }
+				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
+				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
 			</ReaderPostCard>
 		);
 	}
@@ -48,9 +52,10 @@ export class ReaderPostCardAdapter extends React.Component {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = get( ownProps, 'post.site_ID' );
+		const isExternal = get( ownProps, 'post.is_external' );
 		const feedId = get( ownProps, 'post.feed_ID' );
 		return {
-			site: getSite( state, siteId ),
+			site: isExternal ? null : getSite( state, siteId ),
 			feed: getFeed( state, feedId )
 		};
 	}
