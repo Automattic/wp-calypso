@@ -48,7 +48,7 @@ export default {
 			basePath = route.sectionify( context.path );
 
 		let fullAnalyticsPageTitle = '';
-		let RecommendedPostsStore = null;feedStreamFactory( 'recommendations_posts' )
+		let RecommendedPostsStore = null;
 		let mcKey = '';
 		switch( basePath ) {
 			case '/recommendations/cold':
