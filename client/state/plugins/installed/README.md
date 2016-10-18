@@ -5,7 +5,7 @@ A module for managing installed plugins on connected sites.
 
 ## Actions
 
-### `fetchPlugins( sites: Array )`
+### `fetchPlugins( siteIds: Array )`
 
 ### `installPlugin( siteId: Number, plugin: Object )`
 

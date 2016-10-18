@@ -142,6 +142,7 @@ export default class RefreshPostCard extends React.Component {
 						}
 					</div>
 				</div>
+				{ this.props.children }
 			</Card>
 		);
 	}

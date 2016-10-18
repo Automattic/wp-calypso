@@ -1,7 +1,7 @@
 const root = 'https://support.wordpress.com';
 
 export default {
-	ADDING_GOOGLE_APPS_TO_YOUR_SITE: `${root}/add-email/adding-google-apps-to-your-site`,
+	ADDING_GOOGLE_APPS_TO_YOUR_SITE: `${root}/adding-g-suite-to-your-site`,
 	ADDING_USERS: `${root}/adding-users`,
 	ALL_ABOUT_DOMAINS: `${root}/all-about-domains`,
 	AUTO_RENEWAL: `${root}/auto-renewal`,
@@ -11,7 +11,7 @@ export default {
 	CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS: `${root}/domains/change-name-servers/#finding-out-your-new-name-server`,
 	COMMENTS: `${root}/category/comments`,
 	COMMUNITY_TRANSLATOR: `${root}/community-translator`,
-	COMPLETING_GOOGLE_APPS_SIGNUP: `${root}/adding-google-apps-to-your-site/#completing-sign-up`,
+	COMPLETING_GOOGLE_APPS_SIGNUP: `${root}/adding-g-suite-to-your-site/#completing-sign-up`,
 	CONNECT: `${ root }/connect`,
 	CALYPSO_CONTACT: '/help/contact',
 	CALYPSO_COURSES: '/help/courses',

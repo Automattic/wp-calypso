@@ -8,6 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getActionLog,
+	getLastAction,
 } from '../selectors';
 
 import {
@@ -16,7 +17,7 @@ import {
 } from 'state/action-types';
 
 describe( 'selectors', () => {
-	describe( 'actionLog', () => {
+	describe( 'getActionLog', () => {
 		it( 'should initially return one empty list', () => {
 			const log = getActionLog( {
 				ui: {
@@ -45,6 +46,30 @@ describe( 'selectors', () => {
 			} );
 
 			expect( log ).to.eql( actions );
+		} );
+	} );
+
+	describe( 'getLastAction', () => {
+		it( 'should return undefined for an empty action log', () => {
+			const action = getLastAction( {
+				ui: {
+					actionLog: [],
+				}
+			} );
+
+			expect( action ).to.be.undefined;
+		} );
+
+		it( 'should retrieve the last action from the action log', () => {
+			const navToMenus = { type: 'ROUTE_SET', path: '/menus', timestamp: 0 };
+			const navToDesign = { type: 'ROUTE_SET', path: '/design', timestamp: 1 };
+			const action = getLastAction( {
+				ui: {
+					actionLog: [ navToMenus, navToDesign ],
+				}
+			} );
+
+			expect( action ).to.equal( navToDesign );
 		} );
 	} );
 } );

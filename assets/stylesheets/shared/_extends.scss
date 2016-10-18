@@ -67,28 +67,6 @@
 	}
 }
 
-%placeholder-icon {
-
-	.stats-module.is-loading & {
-		animation: loading-fade 1.6s ease-in-out infinite;
-	}
-
-	.stats-module.is-loading &:hover::before,
-	.stats-module.is-loading &::before,
-	.stats-module.is-loading &:hover,
-	.stats-module.is-loading & {
-		color: $gray-light;
-		fill: $gray-light;
-	}
-}
-
-%heading {
-	color: darken( $gray, 20% );
-	font-size: 2rem;
-	font-weight: 300;
-	margin: 1em 0;
-}
-
 %mobile-link-element {
 	-webkit-tap-highlight-color: rgba($white, .4); // Until we capture ontouch events in JS this is better than :active
 	-webkit-user-select: none;

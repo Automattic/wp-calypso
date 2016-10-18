@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
@@ -6,27 +8,41 @@ import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 import {
 	debounce,
+	defer,
 	find,
 	mapValues,
 	omit,
 	property,
+	startsWith,
 } from 'lodash';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
+import sections from 'sections';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
+import { ROUTE_SET } from 'state/action-types';
 import { tourBranching } from './config-parsing';
 import {
 	posToCss,
 	getStepPosition,
 	getValidatedArrowPosition,
 	query,
-	targetForSlug
+	targetForSlug,
 } from './positioning';
 
+const pathToSection = path => {
+	const match = find( sections.get(), section =>
+			section.paths.some( sectionPath =>
+				startsWith( path, sectionPath ) ) );
+
+	return match && match.name;
+};
+
+const debug = debugFactory( 'calypso:guided-tours' );
 const contextTypes = Object.freeze( {
 	branching: PropTypes.object.isRequired,
 	next: PropTypes.func.isRequired,
@@ -34,7 +50,10 @@ const contextTypes = Object.freeze( {
 	isValid: PropTypes.func.isRequired,
 	tour: PropTypes.string.isRequired,
 	tourVersion: PropTypes.string.isRequired,
+	sectionName: PropTypes.string.isRequired,
+	shouldPause: PropTypes.bool.isRequired,
 	step: PropTypes.string.isRequired,
+	lastAction: PropTypes.object,
 } );
 
 export class Tour extends Component {
@@ -45,38 +64,15 @@ export class Tour extends Component {
 		when: PropTypes.func,
 	};
 
-	static childContextTypes = contextTypes;
-
-	getChildContext() {
-		const { branching, next, quit, isValid, tour, tourVersion, step } = this.tourMeta;
-		return { branching, next, quit, isValid, tour, tourVersion, step };
-	}
-
-	constructor( props, context ) {
-		super( props, context );
-		this.setTourMeta( props );
-	}
-
-	componentWillReceiveProps( nextProps ) {
-		this.setTourMeta( nextProps );
-	}
-
-	setTourMeta( props ) {
-		const { branching, next, quit, isValid, name, version, stepName } = props;
-		this.tourMeta = { branching, next, quit, isValid, tour: name, tourVersion: version, step: stepName };
-	}
+	static contextTypes = contextTypes;
 
 	render() {
-		const { children, stepName } = this.props;
+		const { children } = this.props;
+		const { step } = this.context;
 		const nextStep = find( children, stepComponent =>
-			stepComponent.props.name === stepName );
-		const isLastStep = nextStep === children[ children.length - 1 ];
+			stepComponent.props.name === step );
 
-		if ( ! nextStep ) {
-			return null;
-		}
-
-		return React.cloneElement( nextStep, { isLastStep } );
+		return nextStep || null;
 	}
 }
 
@@ -101,11 +97,9 @@ export class Step extends Component {
 
 	static contextTypes = contextTypes;
 
-	constructor( props, context ) {
-		super( props, context );
-	}
-
 	componentWillMount() {
+		this.setStepSection( this.context, { init: true } );
+		debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 		this.skipIfInvalidContext( this.props, this.context );
 		this.scrollContainer = query( this.props.scrollContainer )[ 0 ] || global.window;
 		this.setStepPosition( this.props );
@@ -116,6 +110,8 @@ export class Step extends Component {
 	}
 
 	componentWillReceiveProps( nextProps, nextContext ) {
+		this.setStepSection( nextContext );
+		this.quitIfInvalidRoute( nextProps, nextContext );
 		this.skipIfInvalidContext( nextProps, nextContext );
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 		this.scrollContainer = query( nextProps.scrollContainer )[ 0 ] || global.window;
@@ -129,10 +125,83 @@ export class Step extends Component {
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 	}
 
+	/*
+	 * A step belongs to a specific section. This datum is used by the "blank
+	 * exit" feature (cf. quitIfInvalidRoute in Step and Continue).
+	 *
+	 * `setStepSection` has specific logic to deal with the fact that `step` and
+	 * `section` transitions are not synchronized. Notably, navigating to a
+	 * different section may trigger a route change (ROUTE_SET) before a step
+	 * change (GUIDED_TOUR_UPDATE). This is further obfuscated by code
+	 * splitting, because `section` doesn't transition immediately.
+	 *
+	 * Below, `shouldPause` tells us that we're waiting for the section to
+	 * change.
+	 */
+	setStepSection( nextContext, { init = false } = {} ) {
+		if ( init ) {
+			// hard reset on Step instantiation
+			this.stepSection = nextContext.sectionName;
+			return;
+		}
+
+		debug( 'Step#componentWillReceiveProps: stepSection:',
+				this.stepSection,
+				nextContext.sectionName );
+
+		if ( this.context.step !== nextContext.step ) {
+			// invalidate if waiting for section
+			this.stepSection = nextContext.shouldPause
+				? null
+				: nextContext.sectionName;
+		} else if ( this.context.shouldPause &&
+				! nextContext.shouldPause &&
+				! this.stepSection ) {
+			// only write if previously invalidated
+			this.stepSection = nextContext.sectionName;
+		}
+	}
+
+	quitIfInvalidRoute( nextProps, nextContext ) {
+		if ( nextContext.step !== this.context.step ||
+				nextContext.sectionName === this.context.sectionName ||
+				! nextContext.sectionName ) {
+			return;
+		}
+
+		const { step, branching, lastAction } = nextContext;
+		const hasContinue = !! branching[ step ].continue;
+		const hasJustNavigated = lastAction.type === ROUTE_SET;
+
+		debug( 'Step.quitIfInvalidRoute',
+			'step', step,
+			'previousStep', this.context.step,
+			'hasContinue', hasContinue,
+			'hasJustNavigated', hasJustNavigated,
+			'lastAction', lastAction,
+			'path', lastAction.path,
+			'isDifferentSection', this.isDifferentSection( lastAction.path ) );
+
+		if ( ! hasContinue && hasJustNavigated &&
+				this.isDifferentSection( lastAction.path ) ) {
+			defer( () => {
+				debug( 'Step.quitIfInvalidRoute: quitting' );
+				this.context.quit();
+			} );
+		} else {
+			debug( 'Step.quitIfInvalidRoute: not quitting' );
+		}
+	}
+
+	isDifferentSection( path ) {
+		return this.stepSection && path &&
+			this.stepSection !== pathToSection( path );
+	}
+
 	skipIfInvalidContext( props, context ) {
 		const { when, next } = props;
 		if ( when && ! context.isValid( when ) ) {
-			this.context.next( this.tour, next ); //TODO(ehg): use future branching code get next step
+			this.context.next( this.tour, next );
 		}
 	}
 
@@ -149,6 +218,12 @@ export class Step extends Component {
 
 	render() {
 		const { when, children } = this.props;
+
+		debug( 'Step#render' );
+		if ( this.context.shouldPause ) {
+			debug( 'Step: shouldPause' );
+			return null;
+		}
 
 		if ( when && ! this.context.isValid( when ) ) {
 			return null;
@@ -249,6 +324,7 @@ export class Continue extends Component {
 
 	componentDidMount() {
 		! this.props.hidden && this.addTargetListener();
+		this.quitIfInvalidRoute( this.props, this.context );
 	}
 
 	componentWillUnmount() {
@@ -264,7 +340,23 @@ export class Continue extends Component {
 	}
 
 	componentDidUpdate() {
+		this.quitIfInvalidRoute( this.props, this.context );
 		this.addTargetListener();
+	}
+
+	quitIfInvalidRoute( props ) {
+		debug( 'Continue.quitIfInvalidRoute' );
+		defer( () => {
+			const quit = this.context.quit;
+			const target = targetForSlug( props.target );
+			// quit if we have a target but cant find it
+			if ( props.target && ! target ) {
+				debug( 'Continue.quitIfInvalidRoute: quitting' );
+				quit();
+			} else {
+				debug( 'Continue.quitIfInvalidRoute: not quitting' );
+			}
+		} );
 	}
 
 	onContinue = () => {
@@ -277,6 +369,7 @@ export class Continue extends Component {
 
 		if ( click && ! when && targetNode && targetNode.addEventListener ) {
 			targetNode.addEventListener( 'click', this.onContinue );
+			targetNode.addEventListener( 'touchstart', this.onContinue );
 		}
 	}
 
@@ -286,6 +379,7 @@ export class Continue extends Component {
 
 		if ( click && ! when && targetNode && targetNode.removeEventListener ) {
 			targetNode.removeEventListener( 'click', this.onContinue );
+			targetNode.removeEventListener( 'touchstart', this.onContinue );
 		}
 	}
 
@@ -314,31 +408,62 @@ export class Link extends Component {
 	}
 }
 
-//FIXME: where do these functions belong?
 export const makeTour = tree => {
-	const tour = ( { stepName, isValid, next, quit } ) =>
-		React.cloneElement( tree, {
-			stepName, isValid, next, quit,
-			branching: tourBranching( tree ),
-		} );
+	return class extends Component {
+		static propTypes = {
+			isValid: PropTypes.func.isRequired,
+			lastAction: PropTypes.object,
+			next: PropTypes.func.isRequired,
+			quit: PropTypes.func.isRequired,
+			shouldPause: PropTypes.bool.isRequired,
+			stepName: PropTypes.string.isRequired,
+		};
 
-	tour.propTypes = {
-		stepName: PropTypes.string.isRequired,
-		isValid: PropTypes.func.isRequired,
-		next: PropTypes.func.isRequired,
-		quit: PropTypes.func.isRequired,
-		branching: PropTypes.object.isRequired,
+		static childContextTypes = contextTypes;
+
+		static meta = omit( tree.props, 'children' );
+
+		getChildContext() {
+			return this.tourMeta;
+		}
+
+		constructor( props, context ) {
+			super( props, context );
+			this.setTourMeta( props );
+			debug( 'Anonymous#constructor', props, context );
+		}
+
+		componentWillReceiveProps( nextProps ) {
+			debug( 'Anonymous#componentWillReceiveProps' );
+			this.setTourMeta( nextProps );
+		}
+
+		setTourMeta( props ) {
+			const { isValid, lastAction, next, quit, sectionName, shouldPause, stepName } = props;
+			this.tourMeta = {
+				next, quit, isValid, lastAction, sectionName, shouldPause,
+				step: stepName,
+				branching: tourBranching( tree ),
+				tour: tree.props.name,
+				tourVersion: tree.props.version,
+			};
+		}
+
+		render() {
+			return tree;
+		}
 	};
-	tour.meta = omit( tree.props, 'children' );
-	return tour;
 };
 
-export const combineTours = tours => {
-	const combined = ( props ) => {
-		const tour = tours[ props.tourName ];
-		return tour ? tour( props ) : null;
-	};
-	combined.meta = mapValues( tours, property( 'meta' ) );
-
-	return combined;
-};
+export const combineTours = tours => (
+	class AllTours extends Component {
+		static meta = mapValues( tours, property( 'meta' ) );
+		render() {
+			debug( 'AllTours#render' );
+			const MyTour = tours[ this.props.tourName ];
+			return MyTour
+				? <MyTour { ...omit( this.props, 'tourName' ) } />
+				: null;
+		}
+	}
+);

@@ -47,7 +47,7 @@
 // Section title
 
 .stats-section-title {
-	@extend %heading;
+	@include heading;
 
 	@include breakpoint( "<660px" ) {
 		margin-left: 24px;
@@ -179,8 +179,19 @@ ul.module-header-actions {
 	}
 
 	.gridicon {
-		@extend %placeholder-icon;
 		vertical-align: middle;
+
+		.stats-module.is-loading & {
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.stats-module.is-loading &:hover::before,
+		.stats-module.is-loading &::before,
+		.stats-module.is-loading &:hover,
+		.stats-module.is-loading & {
+			color: $gray-light;
+			fill: $gray-light;
+		}
 	}
 
 	.module-header-action-link {

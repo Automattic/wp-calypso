@@ -9,7 +9,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MenuPanelBackButton = require( '../menu-panel-back-button' ),
-	CategorySelector = require( 'my-sites/term-tree-selector' );
+	CategorySelector = require( 'blocks/term-tree-selector' );
 
 // The `selected` prop item passed in from MenuEditableItem
 // Isn't a Category object, a quick transform to get the correct ID in place

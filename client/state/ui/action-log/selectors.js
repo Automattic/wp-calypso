@@ -1,6 +1,16 @@
 /** @ssr-ready **/
 
 /**
+ * External dependencies
+ */
+import { last } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import createSelector from 'lib/create-selector';
+
+/**
  * Returns a log of actions from certain types that have previously been
  * dispatched for the current user.
  *
@@ -14,3 +24,14 @@
 export function getActionLog( state ) {
 	return state.ui.actionLog;
 }
+
+/**
+ * Returns the last item from the action log.
+ *
+ * @param  {Object}   state      Global state tree
+ * @return {Object}              The matching dispatched action
+ */
+export const getLastAction = createSelector(
+	( state ) => last( state.ui.actionLog ),
+	( state ) => [ state.ui.actionLog ]
+);
