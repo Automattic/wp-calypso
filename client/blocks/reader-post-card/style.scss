@@ -14,6 +14,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	@include breakpoint( ">660px" ) {
 		padding: 20px 0;
 	}
+
+	@media #{$reader-post-card-breakpoint-xlarge}  {
+		padding: 20px 15px;
+	}
 }
 
 .reader-post-card__byline {

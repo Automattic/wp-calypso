@@ -1,5 +1,10 @@
 // Reader-specific tweaks to components
 
+// Overrides default 720px width
+.is-reader-page .following.main {
+	max-width: 830px;
+}
+
 .following {
 
 	@include breakpoint( "<660px" ) {
