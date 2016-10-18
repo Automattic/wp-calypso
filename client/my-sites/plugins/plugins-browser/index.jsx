@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-// import pluginsAccessControl from 'my-sites/plugins/access-control';
+import pluginsAccessControl from 'my-sites/plugins/access-control';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import Search from 'components/search';
 import SearchCard from 'components/search-card';
@@ -52,6 +52,9 @@ const PluginsBrowser = React.createClass( {
 				this.fetchNextPagePlugins( nextProps.search );
 			}
 		}
+		this.setState( {
+			accessError: pluginsAccessControl.hasRestrictedAccess()
+		} );
 	},
 
 	fetchNextPagePlugins( searchTerm ) {
