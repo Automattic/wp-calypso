@@ -1,42 +1,65 @@
 /**
  * External dependencies
  */
-var ReactDom = require( 'react-dom' ),
-	React = require( 'react' ),
-	classnames = require( 'classnames' ),
-	noop = require( 'lodash/noop' ),
-	times = require( 'lodash/times' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import classnames from 'classnames';
+import noop from 'lodash/noop';
+import times from 'lodash/times';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	Main = require( 'components/main' ),
-	ReaderMain = require( 'components/reader-main' ),
-	DISPLAY_TYPES = require( 'lib/feed-post-store/display-types' ),
-	EmptyContent = require( './empty' ),
-	FeedStreamStoreActions = require( 'lib/feed-stream-store/actions' ),
-	FeedPostStoreActions = require( 'lib/feed-post-store/actions' ),
-	ListGap = require( 'reader/list-gap' ),
-	LikeStore = require( 'lib/like-store/like-store' ),
-	LikeStoreActions = require( 'lib/like-store/actions' ),
-	LikeHelper = require( 'reader/like-helper' ),
-	InfiniteList = require( 'components/infinite-list' ),
-	MobileBackToSidebar = require( 'components/mobile-back-to-sidebar' ),
-	Post = require( './post' ),
-	CrossPost = require( './x-post' ),
-	page = require( 'page' ),
-	PostUnavailable = require( './post-unavailable' ),
-	PostPlaceholder = require( './post-placeholder' ),
-	PostStore = require( 'lib/feed-post-store' ),
-	UpdateNotice = require( 'reader/update-notice' ),
-	PostBlocked = require( './post-blocked' ),
-	KeyboardShortcuts = require( 'lib/keyboard-shortcuts' ),
-	scrollTo = require( 'lib/scroll-to' ),
-	XPostHelper = require( 'reader/xpost-helper' );
+import config from 'config';
+import Main from 'components/main';
+import ReaderMain from 'components/reader-main';
+import DISPLAY_TYPES from 'lib/feed-post-store/display-types';
+import EmptyContent from './empty';
+import FeedStreamStoreActions from 'lib/feed-stream-store/actions';
+import FeedPostStoreActions from 'lib/feed-post-store/actions';
+import ListGap from 'reader/list-gap';
+import LikeStore from 'lib/like-store/like-store';
+import LikeStoreActions from 'lib/like-store/actions';
+import LikeHelper from 'reader/like-helper';
+import InfiniteList from 'components/infinite-list';
+import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
+import Post from './post';
+import CrossPost from './x-post';
+import RefreshPost from './refresh-post';
+import page from 'page';
+import PostUnavailable from './post-unavailable';
+import PostPlaceholder from './post-placeholder';
+import PostStore from 'lib/feed-post-store';
+import UpdateNotice from 'reader/update-notice';
+import PostBlocked from './post-blocked';
+import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import scrollTo from 'lib/scroll-to';
+import XPostHelper from 'reader/xpost-helper';
 
-const GUESSED_POST_HEIGHT = 600,
-	HEADER_OFFSET_TOP = 46;
+const GUESSED_POST_HEIGHT = 600;
+const HEADER_OFFSET_TOP = 46;
+
+function oldCardFactory( post ) {
+	if ( post.display_type & DISPLAY_TYPES.X_POST ) {
+		return CrossPost;
+	}
+
+	if ( post.is_site_blocked ) {
+		return PostBlocked;
+	}
+
+	return Post;
+}
+
+function refreshCardFactory( post ) {
+	let postClass = oldCardFactory( post );
+	if ( postClass === Post ) {
+		postClass = RefreshPost;
+	}
+	return postClass;
+}
+
+const defaultCardFactory = config.isEnabled( 'reader/refresh/stream' ) ? refreshCardFactory : oldCardFactory;
 
 module.exports = React.createClass( {
 	displayName: 'ReaderFollowing',
@@ -107,19 +130,11 @@ module.exports = React.createClass( {
 				return externalPostClass;
 			}
 		}
-		if ( post.display_type & DISPLAY_TYPES.X_POST ) {
-			return CrossPost;
-		}
-
-		if ( post.is_site_blocked ) {
-			return PostBlocked;
-		}
-
-		return Post;
+		return defaultCardFactory( post );
 	},
 
 	scrollToSelectedPost: function( animate ) {
-		var HEADER_OFFSET = -80, // a fixed position header means we can't just scroll the element into view.
+		let HEADER_OFFSET = -80, // a fixed position header means we can't just scroll the element into view.
 			selectedNode,
 			boundingClientRect,
 			documentElement,
@@ -185,7 +200,7 @@ module.exports = React.createClass( {
 	},
 
 	showSelectedPost: function( options ) {
-		var postKey = this.props.store.getSelectedPost(),
+		let postKey = this.props.store.getSelectedPost(),
 			mappedPost;
 		if ( !! postKey ) {
 			// gap
@@ -193,7 +208,7 @@ module.exports = React.createClass( {
 				return this._selectedGap.handleClick();
 			}
 			// xpost
-			let post = PostStore.get( postKey );
+			const post = PostStore.get( postKey );
 			if ( this.cardClassForPost( post ) === CrossPost && ! options.replaceHistory ) {
 				return this.showFullXPost( XPostHelper.getXPostMetadata( post ) );
 			}
@@ -262,7 +277,7 @@ module.exports = React.createClass( {
 	},
 
 	selectNextItem: function() {
-		var visibleIndexes = this.getVisibleItemIndexes(),
+		let visibleIndexes = this.getVisibleItemIndexes(),
 			visibleIndex,
 			index,
 			i;
@@ -284,7 +299,7 @@ module.exports = React.createClass( {
 	},
 
 	selectPrevItem: function() {
-		var visibleIndexes = this.getVisibleItemIndexes(),
+		let visibleIndexes = this.getVisibleItemIndexes(),
 			visibleIndex,
 			index,
 			i;
@@ -324,7 +339,7 @@ module.exports = React.createClass( {
 	},
 
 	renderLoadingPlaceholders: function() {
-		var count = this.state.posts.length ? 2 : this.props.store.getPerPage(),
+		let count = this.state.posts.length ? 2 : this.props.store.getPerPage(),
 			placeholders = [];
 
 		times( count, function( i ) {
@@ -365,7 +380,7 @@ module.exports = React.createClass( {
 	},
 
 	renderPost: function( postKey, index ) {
-		var post,
+		let post,
 			postState,
 			itemKey,
 			content,
@@ -436,7 +451,7 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var store = this.props.store,
+		let store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
 			body, showingStream;
 

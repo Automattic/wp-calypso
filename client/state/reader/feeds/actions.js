@@ -1,5 +1,4 @@
 import isArray from 'lodash/isArray';
-import get from 'lodash/get';
 
 import wpcom from 'lib/wp';
 
@@ -7,8 +6,7 @@ import {
 	READER_FEED_REQUEST,
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
-	READER_FEED_UPDATE,
-	READER_SITE_UPDATE
+	READER_FEED_UPDATE
 } from 'state/action-types';
 
 export function requestFeed( feedId ) {
@@ -19,19 +17,12 @@ export function requestFeed( feedId ) {
 				feed_ID: feedId
 			}
 		} );
-		return wpcom.undocumented().readFeed( { ID: feedId, meta: 'site' } ).then(
+		return wpcom.undocumented().readFeed( { ID: feedId } ).then(
 			function success( data ) {
 				dispatch( {
 					type: READER_FEED_REQUEST_SUCCESS,
 					payload: data
 				} );
-				const siteInfo = get( data, 'meta.data.site' );
-				if ( siteInfo ) {
-					dispatch( {
-						type: READER_SITE_UPDATE,
-						payload: siteInfo
-					} );
-				}
 				return data;
 			},
 			function failure( err ) {
