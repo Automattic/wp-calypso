@@ -129,6 +129,12 @@ export class Step extends Component {
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
 	}
 
+	componentWillUnmount() {
+		if ( this.props.isLastStep ) {
+			this.context.quit( { finished: true } );
+		}
+	}
+
 	skipIfInvalidContext( props, context ) {
 		const { when, next } = props;
 		if ( when && ! context.isValid( when ) ) {

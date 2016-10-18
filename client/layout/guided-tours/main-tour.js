@@ -1,6 +1,9 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { overEvery as and } from 'lodash';
+import {
+	overEvery as and,
+	negate as not,
+} from 'lodash';
 
 import {
 	makeTour,
@@ -16,7 +19,6 @@ import {
 	isEnabled,
 	selectedSiteIsPreviewable,
 	selectedSiteIsCustomizable,
-	previewIsNotShowing,
 	previewIsShowing,
 } from 'state/ui/guided-tours/contexts';
 import { getScrollableSidebar } from 'layout/guided-tours/positioning';
@@ -139,7 +141,7 @@ export const MainTour = makeTour(
 			<div className="guided-tours__choice-button-row">
 				<Next step="close-preview" />
 				<Quit />
-				<Continue step="close-preview" when={ previewIsNotShowing } hidden />
+				<Continue step="close-preview" when={ not( previewIsShowing ) } hidden />
 			</div>
 		</Step>
 
@@ -155,7 +157,7 @@ export const MainTour = makeTour(
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
 			</p>
 			<p className="guided-tours__actionstep-instructions">
-				<Continue step="themes" target="web-preview__close" when={ previewIsNotShowing }>
+				<Continue step="themes" target="web-preview__close" when={ not( previewIsShowing ) }>
 					{
 						translate( 'Click the {{GridIcon/}} to continue.', {
 							components: {
