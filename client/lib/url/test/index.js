@@ -7,7 +7,12 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import useFakeDom from 'test/helpers/use-fake-dom';
-import { isExternal, withoutHttp } from '../';
+import {
+	isExternal,
+	withoutHttp,
+	addSchemeIfMissing,
+	setUrlScheme,
+} from '../';
 
 describe( 'withoutHttp', () => {
 	it( 'should return null if URL is not provided', () => {
@@ -134,5 +139,54 @@ describe( 'isExternal', () => {
 
 			expect( actual ).to.be.true;
 		} );
+	} );
+} );
+
+describe( 'addSchemeIfMissing()', () => {
+	it( 'should add scheme if missing', () => {
+		const source = 'example.com/path';
+		const expected = 'https://example.com/path';
+
+		const actual = addSchemeIfMissing( source, 'https' );
+
+		expect( actual ).to.equal( expected );
+	} );
+
+	it( 'should skip if scheme exists', () => {
+		const source = 'https://example.com/path';
+		const expected = 'https://example.com/path';
+
+		const actual = addSchemeIfMissing( source, 'https' );
+
+		expect( actual ).to.equal( expected );
+	} );
+} );
+
+describe( 'setUrlScheme()', () => {
+	it( 'should skip if scheme already set', () => {
+		const source = 'http://example.com/path';
+		const expected = 'http://example.com/path';
+
+		const actual = setUrlScheme( source, 'http' );
+
+		expect( actual ).to.equal( expected );
+	} );
+
+	it( 'should add scheme if missing', () => {
+		const source = 'example.com/path';
+		const expected = 'http://example.com/path';
+
+		const actual = setUrlScheme( source, 'http' );
+
+		expect( actual ).to.equal( expected );
+	} );
+
+	it( 'should replace scheme if different', () => {
+		const source = 'https://example.com/path';
+		const expected = 'http://example.com/path';
+
+		const actual = setUrlScheme( source, 'http' );
+
+		expect( actual ).to.equal( expected );
 	} );
 } );

@@ -24,7 +24,11 @@ import {
 	getHappychatConnectionStatus,
 	getHappychatTimeline
 } from 'state/happychat/selectors';
-import { isExternal } from 'lib/url';
+import {
+	isExternal,
+	addSchemeIfMissing,
+	setUrlScheme,
+} from 'lib/url';
 
 const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 
@@ -38,18 +42,25 @@ const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
  */
 const messageWithLinks = ( { message, key, links } ) => {
 	const children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
+		let href = url;
 		let rel = null;
 		let target = null;
+
 		if ( isExternal( url ) ) {
+			href = addSchemeIfMissing( href, 'http' );
 			rel = 'noopener noreferrer';
 			target = '_blank';
+		} else if ( typeof window !== 'undefined' ) {
+			// Force internal URLs to the current scheme to avoid a page reload
+			const scheme = window.location.protocol.replace( /:+$/, '' );
+			href = setUrlScheme( href, scheme );
 		}
 
 		if ( last < startIndex ) {
 			parts = parts.concat( <span key={ parts.length }>{ message.slice( last, startIndex ) }</span> );
 		}
 
-		parts = parts.concat( <a key={ parts.length } href={ url } rel={ rel } target={ target }>{ url }</a> );
+		parts = parts.concat( <a key={ parts.length } href={ href } rel={ rel } target={ target }>{ href }</a> );
 
 		return { parts, last: startIndex + length };
 	}, { parts: [], last: 0 } );
