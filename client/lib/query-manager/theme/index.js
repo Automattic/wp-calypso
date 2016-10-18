@@ -25,7 +25,7 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 	 */
 
 	matches( query, theme ) {
-		const queryWithDefaults = Object.assign( {}, DEFAULT_THEME_QUERY, query );
+		const queryWithDefaults = { ...DEFAULT_THEME_QUERY, ...query };
 		return every( queryWithDefaults, ( value, key ) => {
 			switch ( key ) {
 				case 'search':
