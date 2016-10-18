@@ -8,8 +8,8 @@ import { cloneDeep, findIndex, map, toArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import TermTreeSelector from 'my-sites/term-tree-selector';
-import AddTerm from 'my-sites/term-tree-selector/add-term';
+import TermTreeSelector from 'blocks/term-tree-selector';
+import AddTerm from './add-term';
 import { editPost, addTermForPost } from 'state/posts/actions';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getEditorPostId } from 'state/ui/editor/selectors';
