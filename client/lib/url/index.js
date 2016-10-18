@@ -42,6 +42,7 @@ function isHttps( url ) {
 	return url && startsWith( url, 'https://' );
 }
 
+const schemeRegex = /^\w+:\/\//;
 const urlWithoutHttpRegex = /^https?:\/\//;
 
 /**
@@ -61,9 +62,32 @@ function withoutHttp( url ) {
 	return url.replace( urlWithoutHttpRegex, '' );
 }
 
+function addSchemeIfMissing( url, scheme ) {
+	if ( false === schemeRegex.test( url ) ) {
+		return scheme + '://' + url;
+	}
+	return url;
+}
+
+function setUrlScheme( url, scheme ) {
+	const schemeWithSlashes = scheme + '://';
+	if ( startsWith( url, schemeWithSlashes ) ) {
+		return url;
+	}
+
+	const newUrl = addSchemeIfMissing( url, scheme );
+	if ( newUrl !== url ) {
+		return newUrl;
+	}
+
+	return url.replace( schemeRegex, schemeWithSlashes );
+}
+
 export default {
 	isOutsideCalypso,
 	isExternal,
 	isHttps,
-	withoutHttp
+	withoutHttp,
+	addSchemeIfMissing,
+	setUrlScheme,
 };
