@@ -72,7 +72,7 @@ class PostByline extends React.Component {
 							{ post.author.name }
 						</ReaderAuthorLink>
 					}
-					{ shouldDisplayAuthor && <span className="reader-post-card__byline-separator">,</span> }
+					{ shouldDisplayAuthor && ', ' }
 					<ReaderSiteStreamLink
 						className="reader-post-card__site reader-post-card__link"
 						feedId={ feedId }
