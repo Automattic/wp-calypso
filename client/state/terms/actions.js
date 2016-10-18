@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import uniqueId from 'lodash/uniqueId';
+import { filter, uniqueId, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -14,6 +14,8 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE
 } from 'state/action-types';
+import { editPost } from 'state/posts/actions';
+import { getSitePosts } from 'state/posts/selectors';
 
 /**
  * Returns an action thunk, dispatching progress of a request to add a new term
@@ -43,6 +45,47 @@ export function addTerm( siteId, taxonomy, term ) {
 			dispatch( removeTerm( siteId, taxonomy, temporaryId ) );
 			return data;
 		} );
+	};
+}
+
+/**
+ * Returns an action thunk, editing a term and dispatching the updated term to the store
+ *
+ * @param  {Number} siteId   Site ID
+ * @param  {String} taxonomy Taxonomy Slug
+ * @param  {Number} termId   term Id
+ * @param  {String} termSlug term Slug
+ * @param  {Object} term     Object of new term attributes
+ * @return {Object}          Action object
+ */
+export function updateTerm( siteId, taxonomy, termId, termSlug, term ) {
+	return ( dispatch, getState ) => {
+		return wpcom.site( siteId ).taxonomy( taxonomy ).term( termSlug ).update( term ).then(
+			( updatedTerm ) => {
+				// When updating a term, we receive a newId and a new Slug
+				// We have to remove the old term and add the new one
+				dispatch( removeTerm( siteId, taxonomy, termId ) );
+				dispatch( receiveTerm( siteId, taxonomy, updatedTerm ) );
+
+				// We also have to update post terms
+				const postsToUpdate = filter( getSitePosts( getState(), siteId ), post => {
+					return post.terms && post.terms[ taxonomy ] &&
+						find( post.terms[ taxonomy ], postTerm => postTerm.ID === termId );
+				} );
+
+				postsToUpdate.forEach( post => {
+					const newTerms = filter( post.terms[ taxonomy ], postTerm => postTerm.ID !== termId );
+					newTerms.push( updatedTerm );
+					dispatch( editPost( siteId, post.ID, {
+						terms: {
+							[ taxonomy ]: newTerms
+						}
+					} ) );
+				} );
+
+				return updatedTerm;
+			}
+		);
 	};
 }
 
