@@ -22,7 +22,7 @@ describe( 'actions', () => {
 
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/read/feed/1?meta=site' )
+				.get( '/rest/v1.1/read/feed/1' )
 				.reply( 200, {
 					feed_ID: 1,
 					name: 'My test feed'
@@ -61,7 +61,7 @@ describe( 'actions', () => {
 
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/read/feed/1?meta=site' )
+				.get( '/rest/v1.1/read/feed/1' )
 				.reply( 404 );
 			request = requestFeed( 1 )( spy );
 		} );
