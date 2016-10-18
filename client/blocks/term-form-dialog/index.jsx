@@ -3,7 +3,6 @@
  */
 import React, { PropTypes, Component } from 'react';
 import ReactDom from 'react-dom';
-import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { get, find, noop } from 'lodash';
@@ -12,9 +11,7 @@ import { get, find, noop } from 'lodash';
  * Internal dependencies
  */
 import Dialog from 'components/dialog';
-import TermTreeSelectorTerms from './terms';
-import Button from 'components/button';
-import Gridicon from 'components/gridicon';
+import TermTreeSelectorTerms from 'blocks/term-tree-selector/terms';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormTextarea from 'components/forms/form-textarea';
 import FormTextInput from 'components/forms/form-text-input';
@@ -29,9 +26,8 @@ import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
 import { addTerm } from 'state/terms/actions';
 
-class TermSelectorAddTerm extends Component {
+class TermFormDialog extends Component {
 	static initialState = {
-		showDialog: false,
 		selectedParent: [],
 		isTopLevel: true,
 		isValid: false,
@@ -40,10 +36,11 @@ class TermSelectorAddTerm extends Component {
 
 	static propTypes = {
 		labels: PropTypes.object,
+		onClose: PropTypes.func,
 		onSuccess: PropTypes.func,
 		postType: PropTypes.string,
-		postId: PropTypes.number,
 		showDescriptionInput: PropTypes.bool,
+		showDialog: PropTypes.bool,
 		siteId: PropTypes.number,
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
@@ -51,15 +48,16 @@ class TermSelectorAddTerm extends Component {
 	};
 
 	static defaultProps = {
+		onClose: noop,
 		onSuccess: noop,
-		showDescriptionInput: false
+		showDescriptionInput: false,
+		showDialog: false
 	};
 
 	constructor( props ) {
 		super( props );
 		this.state = this.constructor.initialState;
 		this.boundCloseDialog = this.closeDialog.bind( this );
-		this.boundOpenDialog = this.openDialog.bind( this );
 		this.boundOnParentChange = this.onParentChange.bind( this );
 		this.boundOnSearch = this.onSearch.bind( this );
 		this.boundSaveTerm = this.saveTerm.bind( this );
@@ -71,17 +69,17 @@ class TermSelectorAddTerm extends Component {
 		this.setState( { searchTerm: searchTerm } );
 	}
 
-	openDialog( event ) {
-		event.preventDefault();
-
-		this.setState( {
-			showDialog: true,
-			selectedParent: []
-		} );
+	componentWillReceiveProps( newProps ) {
+		if ( newProps.showDialog !== this.props.showDialog ) {
+			this.setState( {
+				selectedParent: []
+			} );
+		}
 	}
 
 	closeDialog() {
 		this.setState( this.constructor.initialState );
+		this.props.onClose();
 	}
 
 	onParentChange( item ) {
@@ -157,10 +155,10 @@ class TermSelectorAddTerm extends Component {
 			return;
 		}
 
-		const { postId, siteId, taxonomy } = this.props;
+		const { siteId, taxonomy } = this.props;
 
 		this.props
-			.addTerm( siteId, taxonomy, term, postId )
+			.addTerm( siteId, taxonomy, term )
 			.then( this.props.onSuccess );
 		this.closeDialog();
 	}
@@ -195,7 +193,7 @@ class TermSelectorAddTerm extends Component {
 	}
 
 	render() {
-		const { isHierarchical, labels, translate, terms, showDescriptionInput } = this.props;
+		const { isHierarchical, labels, translate, showDescriptionInput, showDialog } = this.props;
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' )
@@ -207,43 +205,36 @@ class TermSelectorAddTerm extends Component {
 			onClick: this.boundSaveTerm
 		} ];
 
-		const isError = this.state.error && this.state.error.length;
-		const totalTerms = terms ? terms.length : 0;
-		const classes = classNames( 'term-tree-selector__add-term', { 'is-compact': totalTerms < 8 } );
+		const isError = this.state.error && !! this.state.error.length;
 
 		return (
-			<div className={ classes }>
-				<Button borderless compact={ true } onClick={ this.boundOpenDialog }>
-					<Gridicon icon="folder" /> { labels.add_new_item }
-				</Button>
-				<Dialog
-					autoFocus={ false }
-					isVisible={ this.state.showDialog }
-					buttons={ buttons }
-					onClose={ this.boundCloseDialog }
-					additionalClassNames="term-tree-selector__add-term-dialog">
-					<FormSectionHeading>{ labels.add_new_item }</FormSectionHeading>
-					<FormFieldset>
-						<FormTextInput
-							autoFocus={ this.state.showDialog && ! viewport.isMobile() }
-							placeholder={ labels.new_item_name }
-							ref="termName"
-							isError={ isError }
+			<Dialog
+				autoFocus={ false }
+				isVisible={ showDialog }
+				buttons={ buttons }
+				onClose={ this.boundCloseDialog }
+				additionalClassNames="term-form-dialog">
+				<FormSectionHeading>{ labels.add_new_item }</FormSectionHeading>
+				<FormFieldset>
+					<FormTextInput
+						autoFocus={ showDialog && ! viewport.isMobile() }
+						placeholder={ labels.new_item_name }
+						ref="termName"
+						isError={ isError }
+						onKeyUp={ this.boundValidateInput } />
+					{ isError && <FormInputValidation isError text={ this.state.error } /> }
+				</FormFieldset>
+				{ showDescriptionInput && <FormFieldset>
+						<FormLegend>
+							{ translate( 'Description', { context: 'Terms: Term description label' } ) }
+						</FormLegend>
+						<FormTextarea
+							ref="termDescription"
 							onKeyUp={ this.boundValidateInput } />
-						{ isError && <FormInputValidation isError text={ this.state.error } /> }
 					</FormFieldset>
-					{ showDescriptionInput && <FormFieldset>
-							<FormLegend>
-								{ translate( 'Description', { context: 'Terms: Term description label' } ) }
-							</FormLegend>
-							<FormTextarea
-								ref="termDescription"
-								onKeyUp={ this.boundValidateInput } />
-						</FormFieldset>
-					}
-					{ isHierarchical && this.renderParentSelector() }
-				</Dialog>
-			</div>
+				}
+				{ isHierarchical && this.renderParentSelector() }
+			</Dialog>
 		);
 	}
 }
@@ -264,4 +255,4 @@ export default connect(
 		};
 	},
 	{ addTerm }
-)( localize( TermSelectorAddTerm ) );
+)( localize( TermFormDialog ) );
