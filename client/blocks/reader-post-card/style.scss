@@ -16,7 +16,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
-.reader-post-card__meta {
+.reader-post-card__byline {
 	display: flex;
 	font-size: 13px;
 	margin: -4px 0 15px;
@@ -35,7 +35,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	cursor: pointer;
 }
 
-.reader-post-card__meta-details {
+.reader-post-card__byline-details {
 	margin-top: -2px;
 	width: 100%;
 }
@@ -241,7 +241,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
-.reader-post-card__meta-separator {
+.reader-post-card__byline-separator {
 	padding-right: 2px;
 	color: $blue-medium;
 }

@@ -10,6 +10,8 @@ import classnames from 'classnames';
  */
 import * as stats from 'reader/stats';
 
+const authorNameBlacklist = [ 'admin' ];
+
 const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 	const recordAuthorClick = ( { } ) => {
 		stats.recordAction( 'click_author' );
@@ -23,11 +25,10 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 		siteUrl = author.URL;
 	}
 
-	const authorName = get( author, 'name' );
-	const authorNameBlacklist = [ 'admin' ];
+	const authorName = get( author, 'name', null );
 
 	// If the author name is blacklisted, don't return anything
-	if ( typeof authorName === 'string' && includes( authorNameBlacklist, author.name.toLowerCase() ) ) {
+	if ( ! authorName || includes( authorNameBlacklist, authorName.toLowerCase() ) ) {
 		return null;
 	}
 

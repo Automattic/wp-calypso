@@ -48,25 +48,21 @@ class PostByline extends React.Component {
 	}
 
 	render() {
-		const { post, site, feed, isDiscoverPost } = this.props;
-		const feedId = get( feed, 'feed_ID' );
+		const { post, site, isDiscoverPost } = this.props;
+		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const primaryTag = post && post.primary_tag;
-		let siteName = siteNameFromSiteAndPost( site, post );
+		const siteName = siteNameFromSiteAndPost( site, post );
 		const hasAuthorName = has( post, 'author.name' );
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && siteName.toLowerCase() === post.author.name.toLowerCase();
 		const shouldDisplayAuthor = ! isDiscoverPost && hasAuthorName && ! hasMatchingAuthorAndSiteNames;
 		const streamUrl = getStreamUrl( feedId, siteId );
 
-		if ( ! siteName ) {
-			siteName = this.translate( '(no title)' );
-		}
-
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
-			<div className="reader-post-card__meta ignore-click">
+			<div className="reader-post-card__byline ignore-click">
 				<Gravatar user={ post.author } />
-				<div className="reader-post-card__meta-details">
+				<div className="reader-post-card__byline-details">
 					{ shouldDisplayAuthor &&
 						<ReaderAuthorLink
 							className="reader-post-card__link"
@@ -76,7 +72,7 @@ class PostByline extends React.Component {
 							{ post.author.name }
 						</ReaderAuthorLink>
 					}
-					{ shouldDisplayAuthor && <span className="reader-post-card__meta-separator">,</span> }
+					{ shouldDisplayAuthor && <span className="reader-post-card__byline-separator">,</span> }
 					<ReaderSiteStreamLink
 						className="reader-post-card__site reader-post-card__link"
 						feedId={ feedId }
@@ -99,7 +95,9 @@ class PostByline extends React.Component {
 						{ primaryTag &&
 							<span className="reader-post-card__tag">
 								<Gridicon icon="tag" />
-								<a href={ '/tag/' + primaryTag.slug } className="reader-post-card__tag-link ignore-click" onClick={ this.recordTagClick }>
+								<a href={ '/tag/' + primaryTag.slug }
+									className="reader-post-card__tag-link ignore-click"
+									onClick={ this.recordTagClick }>
 									{ primaryTag.name }
 								</a>
 							</span>
