@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,16 +13,17 @@ import SitesPopover from 'components/sites-popover';
 import paths from 'lib/paths';
 import viewport from 'lib/viewport';
 import { preload } from 'sections-preload';
+import { getSelectedSite } from 'state/ui/selectors';
 
-export default React.createClass( {
-	displayName: 'MasterbarItemNew',
-
+const MasterbarItemNew = React.createClass( {
 	propTypes: {
 		user: React.PropTypes.object,
 		sites: React.PropTypes.object,
 		isActive: React.PropTypes.bool,
 		className: React.PropTypes.string,
 		tooltip: React.PropTypes.string,
+		// connected props
+		selectedSite: React.PropTypes.object,
 	},
 
 	getInitialState() {
@@ -69,7 +71,7 @@ export default React.createClass( {
 
 	render() {
 		const classes = classNames( this.props.className );
-		const currentSite = this.props.sites.getSelectedSite() || this.props.user.get().primarySiteSlug;
+		const currentSite = this.props.selectedSite || this.props.user.get().primarySiteSlug;
 		const newPostPath = paths.newPost( currentSite );
 
 		return (
@@ -96,3 +98,7 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	return { selectedSite: getSelectedSite( state ) };
+} )( MasterbarItemNew );
