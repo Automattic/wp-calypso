@@ -40,6 +40,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__byline-details {
+	color: $blue-medium;
 	margin-top: -2px;
 	width: 100%;
 }
@@ -243,11 +244,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			display: none;
 		}
 	}
-}
-
-.reader-post-card__byline-separator {
-	padding-right: 2px;
-	color: $blue-medium;
 }
 
 // For these borderless cards to look more presentable on Devdocs
