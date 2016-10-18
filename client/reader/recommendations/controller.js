@@ -47,17 +47,40 @@ export default {
 		const RecommendedPostsStream = require( 'reader/recommendations/posts' ),
 			basePath = route.sectionify( context.path );
 
-		const fullAnalyticsPageTitle = ( '/recommendations/posts' === basePath )
-			? ANALYTICS_PAGE_TITLE + ' > Recommended Posts'
-			: ANALYTICS_PAGE_TITLE + ' > Coldstart Posts';
-
-		const RecommendedPostsStore = ( '/recommendations/posts' === basePath )
-			? feedStreamFactory( 'recommendations_posts' )
-			: feedStreamFactory( 'coldstart_posts' );
-
-		const mcKey = ( '/recommendations/posts' === basePath )
-			? 'recommendations_posts'
-			: 'coldstart_posts';
+		let fullAnalyticsPageTitle = '';
+		let RecommendedPostsStore = null;
+		let mcKey = '';
+		switch( basePath ) {
+			case '/recommendations/cold':
+				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Coldstart Posts';
+				RecommendedPostsStore = feedStreamFactory( 'cold_posts' );
+				mcKey = 'coldstart_posts';
+				break;
+			case '/recommendations/cold1w':
+				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Coldstart+1w Posts';
+				RecommendedPostsStore = feedStreamFactory( 'cold_posts_1w' );
+				mcKey = 'coldstart_posts_1w';
+				break;
+			case '/recommendations/cold2w':
+				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Coldstart+2w Posts';
+				RecommendedPostsStore = feedStreamFactory( 'cold_posts_2w' );
+				mcKey = 'coldstart_posts_2w';
+				break;
+			case '/recommendations/cold4w':
+				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Coldstart+4w Posts';
+				RecommendedPostsStore = feedStreamFactory( 'cold_posts_4w' );
+				mcKey = 'coldstart_posts_4w';
+				break;
+			case '/recommendations/coldtopics':
+				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Coldstart Diverse Posts';
+				RecommendedPostsStore = feedStreamFactory( 'cold_posts_topics' );
+				mcKey = 'coldstart_posts_topics';
+				break;
+			default:
+				fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Recommended Posts';
+				RecommendedPostsStore = feedStreamFactory( 'recommendations_posts' );
+				mcKey = 'recommendations_posts';
+		}
 
 		ensureStoreLoading( RecommendedPostsStore, context );
 

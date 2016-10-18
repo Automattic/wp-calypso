@@ -154,26 +154,69 @@ export const ReaderSidebar = React.createClass( {
 						<ReaderSidebarTeams teams={ this.state.teams } path={ this.props.path } />
 
 						{
-							// Post Recommendations - Used by the Data team to test recommendation algorithms
-							config.isEnabled( 'reader/recommendations/posts' ) &&
-							(
-								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/posts', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
-									<a href="/recommendations/posts">
-										<Gridicon icon="star" size={ 24 } />
-										<span className="menu-link-text">{ this.props.translate( 'Recommended Posts (Alpha)' ) }</span>
-									</a>
-								</li>
-							)
-						}
-
-						{
 							// Post Recommendations Cold Start - Used by the Data team to test cold start algorithms
 							config.isEnabled( 'reader/recommendations/posts' ) &&
 							(
 								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/cold', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
 									<a href="/recommendations/cold">
 										<Gridicon icon="star" size={ 24 } />
-										<span className="menu-link-text">{ this.props.translate( 'Coldstart (Alpha)' ) }</span>
+										<span className="menu-link-text">{ this.props.translate( 'New User Recs (Alpha)' ) }</span>
+									</a>
+									</li>
+							)
+						}
+						{
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/cold1w', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/cold1w">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.props.translate( '1wk User Recs (Alpha)' ) }</span>
+									</a>
+								</li>
+							)
+						}
+						{
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/cold2w', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/cold2w">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.props.translate( '2Wk User Recs (Alpha)' ) }</span>
+									</a>
+								</li>
+							)
+						}
+						{
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/cold4w', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/cold4w">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.props.translate( '4wk User Recs (Alpha)' ) }</span>
+									</a>
+								</li>
+							)
+						}
+						{
+							// Post Recommendations - Used by the Data team to test recommendation algorithms
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/posts', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/posts">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.props.translate( 'Warm Recs (Alpha)' ) }</span>
+									</a>
+								</li>
+							)
+						}
+						{
+							config.isEnabled( 'reader/recommendations/posts' ) &&
+							(
+								<li className={ ReaderSidebarHelper.itemLinkClass( '/recommendations/coldtopics', this.props.path, { 'sidebar-streams__post-recommendations': true } ) }>
+									<a href="/recommendations/coldtopics">
+										<Gridicon icon="star" size={ 24 } />
+										<span className="menu-link-text">{ this.props.translate( 'New User Recs by Topics (Alpha)' ) }</span>
 									</a>
 								</li>
 							)
