@@ -3,7 +3,13 @@
 /**
  * External dependencies
  */
+import { parse as parseUrl } from 'url';
 import startsWith from 'lodash/startsWith';
+
+/**
+ * Internal dependencies
+ */
+import config from 'config';
 
 /**
  * Check if a URL is located outside of Calypso.
@@ -19,7 +25,17 @@ function isOutsideCalypso( url ) {
 }
 
 function isExternal( url ) {
-	return isOutsideCalypso( url ) && ! startsWith( url, '//wordpress.com' );
+	const { hostname } = parseUrl( url, false, true ); // no qs needed, and slashesDenoteHost to handle protocol-relative URLs
+
+	if ( ! hostname ) {
+		return false;
+	}
+
+	if ( typeof window !== 'undefined' ) {
+		return hostname !== window.location.hostname;
+	}
+
+	return hostname !== config( 'hostname' );
 }
 
 function isHttps( url ) {

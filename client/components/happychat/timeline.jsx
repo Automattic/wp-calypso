@@ -24,6 +24,7 @@ import {
 	getHappychatConnectionStatus,
 	getHappychatTimeline
 } from 'state/happychat/selectors';
+import { isExternal } from 'lib/url';
 
 const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 
@@ -37,10 +38,19 @@ const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
  */
 const messageWithLinks = ( { message, key, links } ) => {
 	const children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
+		let rel = null;
+		let target = null;
+		if ( isExternal( url ) ) {
+			rel = 'noopener noreferrer';
+			target = '_blank';
+		}
+
 		if ( last < startIndex ) {
 			parts = parts.concat( <span key={ parts.length }>{ message.slice( last, startIndex ) }</span> );
 		}
-		parts = parts.concat( <a key={ parts.length } href={ url } rel="noopener noreferrer" target="_blank">{ url }</a> );
+
+		parts = parts.concat( <a key={ parts.length } href={ url } rel={ rel } target={ target }>{ url }</a> );
+
 		return { parts, last: startIndex + length };
 	}, { parts: [], last: 0 } );
 
