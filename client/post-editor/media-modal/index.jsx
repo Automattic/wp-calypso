@@ -210,7 +210,13 @@ module.exports = React.createClass( {
 		this.setView( ModalViews.IMAGE_EDITOR );
 	},
 
-	onImageExtracted( blob, imageEditorProps ) {
+	onImageEditorDone( error, blob, imageEditorProps ) {
+		if ( error ) {
+			this.onImageEditorCancel( imageEditorProps );
+
+			return;
+		}
+
 		const {
 			fileName,
 			site,
@@ -451,7 +457,7 @@ module.exports = React.createClass( {
 					<ImageEditor
 						siteId={ site && site.ID }
 						media={ media }
-						onImageExtracted={ this.onImageExtracted }
+						onDone={ this.onImageEditorDone }
 						onCancel={ this.onImageEditorCancel }
 					/>
 				);

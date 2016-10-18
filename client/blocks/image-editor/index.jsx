@@ -23,7 +23,8 @@ import {
 	setImageEditorFileInfo
 } from 'state/ui/editor/image-editor/actions';
 import {
-	getImageEditorFileInfo
+	getImageEditorFileInfo,
+	isImageEditorImageLoaded
 } from 'state/ui/editor/image-editor/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
@@ -36,7 +37,7 @@ const ImageEditor = React.createClass( {
 		// Component props
 		media: PropTypes.object,
 		siteId: PropTypes.number,
-		onImageExtracted: PropTypes.func,
+		onDone: PropTypes.func,
 		onCancel: PropTypes.func,
 		onReset: PropTypes.func,
 		className: PropTypes.string,
@@ -45,15 +46,17 @@ const ImageEditor = React.createClass( {
 		site: PropTypes.object,
 		fileName: PropTypes.string,
 		setImageEditorFileInfo: PropTypes.func,
-		translate: PropTypes.func
+		translate: PropTypes.func,
+		isImageLoaded: PropTypes.bool
 	},
 
 	getDefaultProps() {
 		return {
 			media: null,
-			onImageExtracted: noop,
+			onDone: noop,
 			onCancel: null,
-			onReset: noop
+			onReset: noop,
+			isImageLoaded: false
 		};
 	},
 
@@ -91,12 +94,18 @@ const ImageEditor = React.createClass( {
 	},
 
 	onDone() {
+		const { isImageLoaded, onDone } = this.props;
+
+		if ( ! isImageLoaded ) {
+			onDone( new Error( 'Image not loaded yet.' ), null, this.getImageEditorProps() );
+
+			return;
+		}
+
 		const canvasComponent = this.refs.editCanvas.getWrappedInstance();
 
 		canvasComponent.toBlob( ( blob ) => {
-			const {	onImageExtracted } = this.props;
-
-			onImageExtracted( blob, this.getImageEditorProps() );
+			onDone( null, blob, this.getImageEditorProps() );
 		} );
 	},
 
@@ -194,7 +203,8 @@ export default connect(
 
 		return {
 			...getImageEditorFileInfo( state ),
-			site: getSite( state, siteId )
+			site: getSite( state, siteId ),
+			isImageLoaded: isImageEditorImageLoaded( state )
 		};
 	},
 	{
