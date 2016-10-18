@@ -55,6 +55,10 @@ describe( 'formatCurrency', () => {
 			const money = formatCurrency( 9800900.32, 'JPY' );
 			expect( money ).to.equal( '¥9,800,900' );
 		} );
+		it( 'BRL', () => {
+			const money = formatCurrency( 9800900.32, 'BRL' );
+			expect( money ).to.equal( 'R$9,800,900.32' );
+		} );
 	} );
 
 	describe( 'getCurrencyDefaults()', () => {
@@ -139,6 +143,15 @@ describe( 'formatCurrency', () => {
 					symbol: '¥',
 					integer: '9,800,900',
 					fraction: '',
+					sign: ''
+				} );
+			} );
+			it( 'BRL', () => {
+				const money = getCurrencyObject( 9800900.32, 'BRL' );
+				expect( money ).to.eql( {
+					symbol: 'R$',
+					integer: '9,800,900',
+					fraction: '.32',
 					sign: ''
 				} );
 			} );
