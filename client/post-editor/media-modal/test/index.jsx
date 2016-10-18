@@ -13,7 +13,6 @@ import { expect } from 'chai';
 import useMockery from 'test/helpers/use-mockery';
 import useFakeDom from 'test/helpers/use-fake-dom';
 import { useSandbox } from 'test/helpers/use-sinon';
-import { ModalViews } from 'state/ui/media-modal/constants';
 
 /**
  * Module variables
@@ -30,17 +29,18 @@ const EMPTY_COMPONENT = React.createClass( {
 } );
 
 describe( 'EditorMediaModal', function() {
-	let spy, i18n, deleteMedia, accept, EditorMediaModal;
+	let sandbox, i18n, ModalViews, deleteMedia, accept, EditorMediaModal;
 
 	useMockery();
 	useFakeDom();
-	useSandbox( ( sandbox ) => {
-		spy = sandbox.spy();
+	useSandbox( ( newSandbox ) => {
+		sandbox = newSandbox;
 		deleteMedia = sandbox.stub();
 		accept = sandbox.stub().callsArgWithAsync( 1, true );
 	} );
 
 	before( function() {
+		ModalViews = require( '../constants' ).Views;
 		i18n = require( 'i18n-calypso' );
 
 		// Mockery
@@ -61,7 +61,7 @@ describe( 'EditorMediaModal', function() {
 			recordState: noop
 		} );
 
-		EditorMediaModal = require( '../' ).EditorMediaModal;
+		EditorMediaModal = require( '../' );
 		EditorMediaModal.prototype.translate = i18n.translate;
 	} );
 
@@ -99,8 +99,9 @@ describe( 'EditorMediaModal', function() {
 			tree;
 
 		tree = shallow(
-			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ [ media ] } view={ ModalViews.DETAIL } />
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ [ media ] } />
 		).instance();
+		tree.setView( ModalViews.DETAIL );
 		tree.deleteMedia();
 
 		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete this item?' );
@@ -112,8 +113,9 @@ describe( 'EditorMediaModal', function() {
 
 	it( 'should prompt to delete a single item from the detail view, even when multiple selected', function( done ) {
 		var tree = shallow(
-			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } view={ ModalViews.DETAIL } />
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />
 		).instance();
+		tree.setView( ModalViews.DETAIL );
 		tree.deleteMedia();
 
 		expect( accept ).to.have.been.calledWith( 'Are you sure you want to permanently delete this item?' );
@@ -124,35 +126,28 @@ describe( 'EditorMediaModal', function() {
 	} );
 
 	it( 'should return to the list view after deleting the only item in detail view', function( done ) {
-		const tree = shallow(
-			<EditorMediaModal
-				site={ DUMMY_SITE }
-				mediaLibrarySelectedItems={ DUMMY_MEDIA.slice( 0, 1 ) }
-				view={ ModalViews.DETAIL }
-				setView={ spy } />
+		var tree = shallow(
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA.slice( 0, 1 ) } />
 		).instance();
-
+		tree.setView( ModalViews.DETAIL );
 		tree.deleteMedia();
 
 		process.nextTick( function() {
-			expect( spy ).to.have.been.calledWith( ModalViews.LIST );
+			expect( tree.state.activeView ).to.equal( ModalViews.LIST );
 			done();
 		} );
 	} );
 
 	it( 'should revert to an earlier media item when the last item is deleted from detail view', function( done ) {
 		var tree = shallow(
-			<EditorMediaModal
-				site={ DUMMY_SITE }
-				mediaLibrarySelectedItems={ DUMMY_MEDIA }
-				view={ ModalViews.DETAIL }
-				setView={ spy } />
+			<EditorMediaModal site={ DUMMY_SITE } mediaLibrarySelectedItems={ DUMMY_MEDIA } />
 		).instance();
+		tree.setView( ModalViews.DETAIL );
 		tree.setDetailSelectedIndex( 1 );
 		tree.deleteMedia();
 
 		process.nextTick( function() {
-			expect( spy ).to.not.have.been.called;
+			expect( tree.state.activeView ).to.equal( ModalViews.DETAIL );
 			expect( tree.state.detailSelectedIndex ).to.equal( 0 );
 			done();
 		} );
