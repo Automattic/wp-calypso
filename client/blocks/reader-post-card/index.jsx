@@ -12,10 +12,9 @@ import closest from 'component-closest';
  */
 import Card from 'components/card';
 import DisplayTypes from 'state/reader/posts/display-types';
-import Gravatar from 'components/gravatar';
-import Gridicon from 'components/gridicon';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import * as stats from 'reader/stats';
+import PostByline from './byline';
 
 function FeaturedImage( { image, href } ) {
 	return (
@@ -25,22 +24,6 @@ function FeaturedImage( { image, href } ) {
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: '50% 50%'
 		} } ></a> );
-}
-
-function PostByline( { post } ) {
-	return (
-		<div className="reader-post-card__meta ignore-click">
-			<Gravatar user={ post.author } />
-			<div className="reader-post-card__meta-details">
-				<a className="reader-post-card__author reader-post-card__link">Sue Smith</a>
-				<a className="reader-post-card__link">catsandfurballs.wordpress.com</a>
-				<div className="reader-post-card__timestamp-and-tag">
-					<span className="reader-post-card__timestamp">1 hour ago</span>
-					<span className="reader-post-card__tag"><Gridicon icon="tag" />Pets</span>
-				</div>
-			</div>
-		</div>
-	);
 }
 
 export default class RefreshPostCard extends React.Component {

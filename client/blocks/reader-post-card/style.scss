@@ -16,7 +16,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
-.reader-post-card__meta {
+.reader-post-card__byline {
 	display: flex;
 	font-size: 13px;
 	margin: -4px 0 15px;
@@ -26,21 +26,50 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	content: ', ';
 }
 
+// Need .reader__content to override .reader__content a
+.reader__content .reader-post-card__timestamp-link,
+.reader__content .reader-post-card__tag-link
+{
+	color: lighten( $gray, 10% );
+	margin-top: 2px;
+	cursor: pointer;
+}
+
+.reader-post-card__byline-details {
+	margin-top: -2px;
+	width: 100%;
+}
+
 .reader-post-card__timestamp-and-tag {
-	color: 	lighten( $gray, 10% );
-	margin-top: -6px;
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	margin-top: 1px;
 }
 
 .reader-post-card__timestamp {
+	display: inline-table;
 	margin-right: 10px;
+}
+
+.reader-post-card__tag {
+    overflow: hidden;
+    position: relative;
+    height: 20px;
+    width: 100%;
+
+    &::after {
+    	@include long-content-fade( $size: 10% );
+    }
 }
 
 .reader-post-card__tag .gridicons-tag {
     height: 18px;
-    margin: 0 3px 0 6px;
+    margin: -4px 5px 0 0;
     position: relative;
     	top: 5px;
 	width: 15px;
+	fill: lighten( $gray, 10% );
 }
 
 .reader-post-card .gravatar {
@@ -210,6 +239,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			display: none;
 		}
 	}
+}
+
+.reader-post-card__byline-separator {
+	padding-right: 2px;
+	color: $blue-medium;
 }
 
 // For these borderless cards to look more presentable on Devdocs

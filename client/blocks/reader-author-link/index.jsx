@@ -2,18 +2,22 @@
  * External dependencies
  */
 import React from 'react';
+import { get, includes } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
+import * as stats from 'reader/stats';
 
-const ReaderAuthorLink = ( { author, post, siteUrl, children } ) => {
+const authorNameBlacklist = [ 'admin' ];
+
+const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 	const recordAuthorClick = ( { } ) => {
-		recordAction( 'click_author' );
-		recordGaEvent( 'Clicked Author Link' );
+		stats.recordAction( 'click_author' );
+		stats.recordGaEvent( 'Clicked Author Link' );
 		if ( post ) {
-			recordTrackForPost( 'calypso_reader_author_link_clicked', post );
+			stats.recordTrackForPost( 'calypso_reader_author_link_clicked', post );
 		}
 	};
 
@@ -21,13 +25,22 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children } ) => {
 		siteUrl = author.URL;
 	}
 
+	const authorName = get( author, 'name', null );
+
+	// If the author name is blacklisted, don't return anything
+	if ( ! authorName || includes( authorNameBlacklist, authorName.toLowerCase() ) ) {
+		return null;
+	}
+
 	// If we have neither author.URL or siteUrl, just return children
 	if ( ! siteUrl ) {
 		return children;
 	}
 
+	const classes = classnames( 'reader-author-link', className );
+
 	return (
-		<a className="reader-author-link" href={ siteUrl } onClick={ recordAuthorClick }>
+		<a className={ classes } href={ siteUrl } onClick={ recordAuthorClick }>
 			{ children }
 		</a>
 	);
