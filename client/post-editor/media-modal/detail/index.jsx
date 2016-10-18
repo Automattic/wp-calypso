@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/noop' );
+import React from 'react';
+import { connect } from 'react-redux';
+import { noop, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,23 +12,22 @@ var DetailItem = require( './detail-item' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	HeaderCake = require( 'components/header-cake' ),
 	EditorMediaModalDetailTitle = require( './detail-title' ),
-	preloadImage = require( '../preload-image' ),
-	ModalViews = require( '../constants' ).Views;
+	preloadImage = require( '../preload-image' );
+import { ModalViews } from 'state/ui/media-modal/constants';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetail',
-
+const EditorMediaModalDetail = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		items: React.PropTypes.array,
-		onChangeView: React.PropTypes.func,
 		selectedIndex: React.PropTypes.number,
-		onSelectedIndexChange: React.PropTypes.func
+		onSelectedIndexChange: React.PropTypes.func,
+		onReturnToList: React.PropTypes.func,
+		onEdit: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
 		return {
-			onChangeView: noop,
 			selectedIndex: 0,
 			onSelectedIndexChange: noop
 		};
@@ -51,10 +51,6 @@ module.exports = React.createClass( {
 		}, this );
 	},
 
-	returnToList: function() {
-		this.props.onChangeView( ModalViews.LIST );
-	},
-
 	incrementIndex: function( increment ) {
 		this.props.onSelectedIndexChange( this.props.selectedIndex + increment );
 	},
@@ -64,7 +60,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ this.returnToList } backText={ this.translate( 'Media Library' ) }>
+				<HeaderCake onClick={ this.props.onReturnToList } backText={ this.translate( 'Media Library' ) }>
 					<EditorMediaModalDetailTitle
 						site={ this.props.site }
 						item={ items[ this.props.selectedIndex ] } />
@@ -76,8 +72,13 @@ module.exports = React.createClass( {
 					hasNextItem={ this.props.selectedIndex + 1 < items.length }
 					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
 					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
-					onEdit={ this.props.onEdit } />
+					onEdit={ this.props.onEditItem } />
 			</div>
 		);
 	}
 } );
+
+export default connect( null, {
+	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST ),
+	onEditItem: partial( setEditorMediaModalView, ModalViews.IMAGE_EDITOR )
+} )( EditorMediaModalDetail );
