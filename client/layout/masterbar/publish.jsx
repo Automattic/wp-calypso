@@ -15,9 +15,7 @@ import viewport from 'lib/viewport';
 import { preload } from 'sections-preload';
 import { getSelectedSite } from 'state/ui/selectors';
 
-const Publish = React.createClass( {
-	displayName: 'MasterbarItemNew',
-
+const MasterbarItemNew = React.createClass( {
 	propTypes: {
 		user: React.PropTypes.object,
 		sites: React.PropTypes.object,
@@ -103,4 +101,4 @@ const Publish = React.createClass( {
 
 export default connect( ( state ) => {
 	return { selectedSite: getSelectedSite( state ) };
-} )( Publish );
+} )( MasterbarItemNew );
