@@ -29,8 +29,7 @@ describe( 'reducer', () => {
 			'olark',
 			'preview',
 			'actionLog',
-			'happychat',
-			'mediaModal'
+			'happychat'
 		] );
 	} );
 
