@@ -18,6 +18,19 @@
 		.reader-post-actions__visit-label {
 			color: lighten( $gray, 10% );
 		}
+
+		.external-link:hover,
+		.external-link:focus,
+		.external-link:active {
+
+			.gridicon {
+				fill: $blue-light;
+			}
+
+			.reader-post-actions__visit-label {
+				color: $blue-light;
+			}
+		}
 	}
 
 	&:last-child {
@@ -25,9 +38,9 @@
 	}
 }
 
-.reader-post-actions .reader-post-options-menu .button.is-borderless {
-	color: lighten( $gray, 10% );
-	.gridicon {
+.reader-post-actions .reader-post-options-menu .button {
+
+	&.is-borderless .gridicon {
 		top: -2px;
 	}
 }
