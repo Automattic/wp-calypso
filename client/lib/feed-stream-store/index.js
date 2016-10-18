@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import startsWith from 'lodash/startsWith';
+
+/**
  * Internal dependencies
  */
 var config = require( 'config' ),
@@ -242,15 +247,7 @@ function feedStoreFactory( storeId ) {
 		} );
 	} else if ( storeId === 'recommendations_posts' ) {
 		store = getStoreForRecommendedPosts( storeId );
-	} else if ( storeId === 'cold_posts' ) {
-		store = getStoreForRecommendedPosts( storeId );
-	} else if ( storeId === 'cold_posts_1w' ) {
-		store = getStoreForRecommendedPosts( storeId );
-	} else if ( storeId === 'cold_posts_2w' ) {
-		store = getStoreForRecommendedPosts( storeId );
-	} else if ( storeId === 'cold_posts_4w' ) {
-		store = getStoreForRecommendedPosts( storeId );
-	} else if ( storeId === 'cold_posts_topics' ) {
+	} else if ( startsWith( storeId, 'cold_posts' ) ) {
 		store = getStoreForRecommendedPosts( storeId );
 	} else if ( storeId.indexOf( 'feed:' ) === 0 ) {
 		store = getStoreForFeed( storeId );
