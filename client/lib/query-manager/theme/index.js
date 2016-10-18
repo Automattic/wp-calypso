@@ -10,6 +10,8 @@ import PaginatedQueryManager from '../paginated';
 import ThemeQueryKey from './key';
 import { DEFAULT_THEME_QUERY } from './constants';
 
+const SEARCH_TAXONOMIES = [ 'subject', 'feature', 'color', 'style', 'column', 'layout' ];
+
 /**
  * ThemeQueryManager manages themes which can be queried
  */
@@ -33,8 +35,7 @@ export default class ThemeQueryManager extends PaginatedQueryManager {
 
 					const search = value.toLowerCase();
 
-					const taxonomiesToSearch = [ 'subject', 'feature', 'color', 'style', 'column', 'layout' ];
-					const foundInTaxonomies = some( taxonomiesToSearch, ( taxonomy ) => (
+					const foundInTaxonomies = some( SEARCH_TAXONOMIES, ( taxonomy ) => (
 						some( theme.taxonomies[ 'theme_' + taxonomy ], ( { name } ) => (
 							includes( name.toLowerCase(), search )
 						) )
