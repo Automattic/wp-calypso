@@ -4,7 +4,10 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { values, noop, some, every, flow, partial } from 'lodash';
+import values from 'lodash/values';
+import noop from 'lodash/noop';
+import some from 'lodash/some';
+import every from 'lodash/every';
 import page from 'page';
 
 /**
@@ -12,6 +15,7 @@ import page from 'page';
  */
 import analytics from 'lib/analytics';
 import TrackComponentView from 'lib/analytics/track-component-view';
+import { Views as ModalViews } from './constants';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
@@ -19,26 +23,23 @@ import { canUserDeleteItem } from 'lib/media/utils';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { getSiteSlug } from 'state/sites/selectors';
 import PlanStorage from 'my-sites/plan-storage';
-import { getMediaModalView } from 'state/ui/media-modal/selectors';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { withAnalytics, bumpStat, recordGoogleEvent } from 'state/analytics/actions';
 
 const MediaModalSecondaryActions = React.createClass( {
 	propTypes: {
 		user: PropTypes.object,
 		site: PropTypes.object,
 		selectedItems: PropTypes.array,
-		view: React.PropTypes.oneOf( values( ModalViews ) ),
+		activeView: React.PropTypes.oneOf( values( ModalViews ) ),
 		disabled: PropTypes.bool,
 		onDelete: PropTypes.func,
-		onViewDetails: PropTypes.func
+		onChangeView: PropTypes.func
 	},
 
 	getDefaultProps() {
 		return {
 			disabled: false,
-			onDelete: noop
+			onDelete: noop,
+			onChangeView: noop
 		};
 	},
 
@@ -58,6 +59,13 @@ const MediaModalSecondaryActions = React.createClass( {
 		} );
 	},
 
+	onEdit() {
+		analytics.mc.bumpStat( 'editor_media_actions', 'edit_button_dialog' );
+		analytics.ga.recordEvent( 'Media', 'Clicked Dialog Edit Button' );
+
+		this.props.onChangeView( ModalViews.DETAIL );
+	},
+
 	navigateToPlans() {
 		analytics.ga.recordEvent( 'Media', 'Clicked Plan Storage Button' );
 		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
@@ -71,19 +79,19 @@ const MediaModalSecondaryActions = React.createClass( {
 			user,
 			site,
 			selectedItems,
-			view,
+			activeView,
 			disabled,
 			onDelete
 		} = this.props;
 
 		let buttons = [];
 
-		if ( ModalViews.LIST === view && selectedItems.length ) {
+		if ( ModalViews.LIST === activeView && selectedItems.length ) {
 			buttons.push( {
 				key: 'edit',
 				value: this.translate( 'Edit' ),
 				disabled: disabled,
-				onClick: this.props.onViewDetails
+				onClick: this.onEdit
 			} );
 		}
 
@@ -91,7 +99,7 @@ const MediaModalSecondaryActions = React.createClass( {
 			return canUserDeleteItem( item, user, site );
 		} );
 
-		if ( ModalViews.GALLERY !== view && canDeleteItems ) {
+		if ( ModalViews.GALLERY !== activeView && canDeleteItems ) {
 			buttons.push( {
 				key: 'delete',
 				value: this.translate( 'Delete' ),
@@ -193,17 +201,9 @@ const MediaModalSecondaryActions = React.createClass( {
 	}
 } );
 
-export default connect(
-	( state, ownProps ) => ( {
-		view: getMediaModalView( state ),
+export default connect( ( state, ownProps ) => {
+	return {
 		user: getCurrentUser( state ),
 		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : ''
-	} ),
-	{
-		onViewDetails: flow(
-			withAnalytics( bumpStat( 'editor_media_actions', 'edit_button_dialog' ) ),
-			withAnalytics( recordGoogleEvent( 'Media', 'Clicked Dialog Edit Button' ) ),
-			partial( setEditorMediaModalView, ModalViews.DETAIL )
-		)
-	}
-)( MediaModalSecondaryActions );
+	};
+} )( MediaModalSecondaryActions );

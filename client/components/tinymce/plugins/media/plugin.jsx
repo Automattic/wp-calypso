@@ -26,17 +26,16 @@ var sites = require( 'lib/sites-list' )(),
 	MediaUtils = require( 'lib/media/utils' ),
 	MediaSerialization = require( 'lib/media-serialization' ),
 	MediaMarkup = require( 'post-editor/media-modal/markup' ),
+	MediaModalViews = require( 'post-editor/media-modal/constants' ).Views,
 	MediaStore = require( 'lib/media/store' ),
 	MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
+	EditorMediaModal = require( 'post-editor/media-modal' ),
 	notices = require( 'notices' ),
 	TinyMCEDropZone = require( './drop-zone' ),
 	restrictSize = require( './restrict-size' ).default,
 	advanced = require( './advanced' ),
 	Gridicon = require( 'components/gridicon' ),
 	config = require( 'config' );
-import EditorMediaModal from 'post-editor/media-modal';
-import { setEditorMediaModalView } from 'state/ui/editor/actions';
-import { ModalViews } from 'state/ui/media-modal/constants';
 
 /**
  * Module variables
@@ -45,7 +44,6 @@ var REGEXP_IMG = /<img\s[^>]*\/?>/ig,
 	SIZE_ORDER = [ 'thumbnail', 'medium', 'large', 'full' ];
 
 function mediaButton( editor ) {
-	const store = editor.getParam( 'redux_store' );
 	var nodes = {},
 		updateMedia, resizeEditor;
 
@@ -73,14 +71,8 @@ function mediaButton( editor ) {
 			editor.focus( false );
 		}
 
-		// Dispatch modal active view
-		if ( props.visible ) {
-			const { view = ModalViews.LIST } = options;
-			store.dispatch( setEditorMediaModalView( view ) );
-		}
-
 		ReactDom.render(
-			<ReduxProvider store={ store }>
+			<ReduxProvider store={ editor.getParam( 'redux_store' ) }>
 				<MediaLibrarySelectedData siteId={ selectedSite.ID }>
 					<EditorMediaModal
 						{ ...props }
@@ -292,7 +284,8 @@ function mediaButton( editor ) {
 		}
 
 		renderModal( {
-			visible: true
+			visible: true,
+			initialActiveView: MediaModalViews.LIST
 		} );
 	} );
 
@@ -538,13 +531,13 @@ function mediaButton( editor ) {
 
 		renderModal( {
 			visible: true,
+			initialActiveView: MediaModalViews.GALLERY,
 			initialGallerySettings: gallery,
 			labels: {
 				confirm: i18n.translate( 'Update', { context: 'verb' } )
 			}
 		}, {
-			preserveFocus: true,
-			view: ModalViews.GALLERY
+			preserveFocus: true
 		} );
 	} );
 
