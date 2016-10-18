@@ -10,7 +10,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { ROUTE_SET } from 'state/action-types';
-import { isSectionLoading, getInitialQueryArguments } from 'state/ui/selectors';
+import { getInitialQueryArguments } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
 import GuidedToursConfig from 'layout/guided-tours/config';
@@ -144,7 +144,7 @@ export const getGuidedTourState = createSelector(
 	state => {
 		const tourState = getRawGuidedTourState( state );
 		const tour = findEligibleTour( state );
-		const shouldReallyShow = !! tour;
+		const shouldShow = !! tour;
 
 		debug(
 			'tours: reached', getToursFromFeaturesReached( state ),
@@ -158,16 +158,11 @@ export const getGuidedTourState = createSelector(
 			};
 		}
 
-		const shouldShow = !! (
-			! isSectionLoading( state ) &&
-			shouldReallyShow
-		);
-
 		return {
 			...tourState,
 			tour,
 			shouldShow,
 		};
 	},
-	[ getRawGuidedTourState, isSectionLoading, getActionLog ]
+	[ getRawGuidedTourState, getActionLog ]
 );
