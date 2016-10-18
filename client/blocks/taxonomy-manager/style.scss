@@ -1,0 +1,16 @@
+.taxonomy-manager {
+	position: relative;
+	border: 1px solid lighten( $gray, 20% );
+}
+
+.taxonomy-manager__search {
+	margin-bottom: 0;
+}
+
+.taxonomy-manager__nested-list {
+	margin-left: 2em;
+}
+
+.taxonomy-manager__list-item {
+	background-color: $gray-light;
+}

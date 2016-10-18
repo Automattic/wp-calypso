@@ -31,6 +31,9 @@
 @import 'blocks/reader-related-card/style';
 @import 'blocks/reader-related-card-v2/style';
 @import 'blocks/reader-search-card/style';
+@import 'blocks/taxonomy-manager/style';
+@import 'blocks/term-form-dialog/style';
+@import 'blocks/term-tree-selector/style';
 @import 'components/accordion/style';
 @import 'components/animate/style';
 @import 'components/bulk-select/style';
@@ -318,7 +321,6 @@
 @import 'my-sites/stats/stats-overview-placeholder/style';
 @import 'my-sites/stats/stats-site-overview/style';
 @import 'my-sites/stats/stats-tabs/style';
-@import 'my-sites/term-tree-selector/style';
 @import 'my-sites/theme/style';
 @import 'my-sites/theme/theme-download-card/style';
 @import 'my-sites/theme/themes-related-card/style';
@@ -372,6 +374,7 @@
 @import 'post-editor/editor-status-label/style';
 @import 'post-editor/editor-slug/style';
 @import 'post-editor/editor-sticky/style';
+@import 'post-editor/editor-term-selector/add-term';
 @import 'post-editor/editor-title/style';
 @import 'post-editor/editor-visibility/style';
 @import 'post-editor/editor-word-count/style';

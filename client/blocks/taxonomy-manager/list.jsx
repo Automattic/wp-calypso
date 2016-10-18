@@ -10,10 +10,10 @@ import {
 	debounce,
 	difference,
 	includes,
-	isEqual,
 	filter,
 	map,
 	memoize,
+	noop,
 	range,
 	reduce,
 } from 'lodash';
@@ -21,9 +21,7 @@ import {
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
-import NoResults from './no-results';
-import Search from './search';
+import CompactCard from 'components/card/compact';
 import { decodeEntities } from 'lib/formatting';
 import QueryTerms from 'components/data/query-terms';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -36,31 +34,24 @@ import {
 /**
  * Constants
  */
-const SEARCH_DEBOUNCE_TIME_MS = 500;
 const DEFAULT_TERMS_PER_PAGE = 100;
 const LOAD_OFFSET = 10;
-const ITEM_HEIGHT = 25;
+const ITEM_HEIGHT = 55;
 
-const TermTreeSelectorList = React.createClass( {
+const TaxonomyManagerList = React.createClass( {
 
 	propTypes: {
+		onTermSelect: PropTypes.func,
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
-		multiple: PropTypes.bool,
-		selected: PropTypes.array,
 		search: PropTypes.string,
 		siteId: PropTypes.number,
 		translate: PropTypes.func,
-		defaultTermId: PropTypes.number,
 		lastPage: PropTypes.number,
-		onSearch: PropTypes.func,
-		onChange: PropTypes.func
 	},
 
 	getInitialState() {
-		// getInitialState is also used to reset state when a the taxonomy prop changes
 		return {
-			searchTerm: '',
 			requestedPages: [ 1 ]
 		};
 	},
@@ -71,9 +62,8 @@ const TermTreeSelectorList = React.createClass( {
 			searchThreshold: 8,
 			loading: true,
 			terms: [],
-			onSearch: () => {},
-			onChange: () => {},
-			onNextPage: () => {}
+			onNextPage: () => {},
+			onTermSelect: noop
 		};
 	},
 
@@ -85,9 +75,6 @@ const TermTreeSelectorList = React.createClass( {
 		this.termIds = map( this.props.terms, 'ID' );
 		this.getTermChildren = memoize( this.getTermChildren );
 		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
-		this.debouncedSearch = debounce( () => {
-			this.props.onSearch( this.state.searchTerm );
-		}, SEARCH_DEBOUNCE_TIME_MS );
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -103,7 +90,6 @@ const TermTreeSelectorList = React.createClass( {
 
 	componentDidUpdate( prevProps ) {
 		const forceUpdate = (
-			! isEqual( prevProps.selected, this.props.selected ) ||
 			prevProps.loading && ! this.props.loading ||
 			( ! prevProps.terms && this.props.terms )
 		);
@@ -124,12 +110,6 @@ const TermTreeSelectorList = React.createClass( {
 
 		this.virtualScroll.recomputeRowHeights();
 		this.virtualScroll.forceUpdate();
-
-		// Compact mode passes the height of the scrollable region as a derived
-		// number, and will not be updated unless our component re-renders
-		if ( this.isCompact() ) {
-			this.forceUpdate();
-		}
 	},
 
 	setSelectorRef( selectorRef ) {
@@ -186,7 +166,7 @@ const TermTreeSelectorList = React.createClass( {
 	hasNoSearchResults() {
 		return ! this.props.loading &&
 			( this.props.terms && ! this.props.terms.length ) &&
-			!! this.state.searchTerm.length;
+			( this.props.query.search && !! this.props.query.search.length );
 	},
 
 	hasNoTerms() {
@@ -197,14 +177,6 @@ const TermTreeSelectorList = React.createClass( {
 		if ( this.props.terms ) {
 			return this.props.terms[ index ];
 		}
-	},
-
-	isCompact() {
-		if ( ! this.props.terms || this.state.searchTerm ) {
-			return false;
-		}
-
-		return this.props.terms.length < this.props.searchThreshold;
 	},
 
 	isRowLoaded( { index } ) {
@@ -268,25 +240,6 @@ const TermTreeSelectorList = React.createClass( {
 		return count;
 	},
 
-	onSearch( event ) {
-		const searchTerm = event.target.value;
-		if ( this.state.searchTerm && ! searchTerm ) {
-			this.props.onSearch( '' );
-		}
-
-		if ( searchTerm === this.state.searchTerm ) {
-			return;
-		}
-
-		if ( ! this.hasPerformedSearch ) {
-			this.hasPerformedSearch = true;
-			analytics.ga.recordEvent( this.props.analyticsPrefix, 'Performed Term Search' );
-		}
-
-		this.setState( { searchTerm } );
-		this.debouncedSearch();
-	},
-
 	setVirtualScrollRef( ref ) {
 		this.virtualScroll = ref;
 	},
@@ -297,44 +250,24 @@ const TermTreeSelectorList = React.createClass( {
 			return;
 		}
 
-		const onChange = ( ...args ) => this.props.onChange( item, ...args );
 		const setItemRef = ( ...args ) => this.setItemRef( item, ...args );
 		const children = this.getTermChildren( item.ID );
 
-		const { multiple, defaultTermId, translate, selected } = this.props;
+		const { translate, onTermSelect } = this.props;
+		const selectTerm = () => onTermSelect( item );
 		const itemId = item.ID;
 		const name = decodeEntities( item.name ) || translate( 'Untitled' );
-		const checked = includes( selected, itemId );
-		const inputType = multiple ? 'checkbox' : 'radio';
-		const disabled = (
-			multiple &&
-			checked &&
-			defaultTermId &&
-			1 === selected.length &&
-			defaultTermId === itemId
-		);
-
-		const input = (
-			<input
-				type={ inputType }
-				value={ itemId }
-				onChange={ onChange }
-				disabled={ disabled }
-				checked={ checked }
-			/>
-		);
 
 		return (
-			<div
-				key={ itemId }
-				ref={ setItemRef }
-				className="term-tree-selector__list-item">
-				<label>
-					{ input }
-					<span className="term-tree-selector__label">{ name }</span>
-				</label>
+			<div key={ 'term-wrapper-' + itemId } className="taxonomy-manager__list-item">
+				<CompactCard
+					key={ itemId }
+					ref={ setItemRef }
+					onClick={ selectTerm }>
+						<span className="taxonomy-manager__label">{ name }</span>
+				</CompactCard>
 				{ children.length > 0 && (
-					<div className="term-tree-selector__nested-list">
+					<div className="taxonomy-manager__nested-list">
 						{ children.map( ( child ) => this.renderItem( child, true ) ) }
 					</div>
 				) }
@@ -343,14 +276,10 @@ const TermTreeSelectorList = React.createClass( {
 	},
 
 	renderNoResults() {
-		if ( this.hasNoSearchResults() || this.hasNoTerms() ) {
+		if ( this.hasNoTerms() ) {
 			return (
-				<div key="no-results" className="term-tree-selector__list-item is-empty">
-					{ ( this.hasNoSearchResults() || ! this.props.emptyMessage ) && (
-						<NoResults
-							createLink={ this.props.createLink } />
-					) }
-					{ this.hasNoTerms() && this.props.emptyMessage }
+				<div key="no-results" className="taxonomy-manager__list-item is-empty">
+					No Results Found
 				</div>
 			);
 		}
@@ -363,30 +292,19 @@ const TermTreeSelectorList = React.createClass( {
 		}
 
 		return (
-			<div key="placeholder" className="term-tree-selector__list-item is-placeholder">
-				<label>
-					<input
-						type={ this.props.multiple ? 'checkbox' : 'radio' }
-						disabled
-						className="term-tree-selector__input" />
-					<span className="term-tree-selector__label">
-						{ this.props.translate( 'Loading…' ) }
-					</span>
-				</label>
-			</div>
+			<CompactCard className="taxonomy-manager__list-item is-placeholder">
+				<span className="taxonomy-manager__label">
+					{ this.props.translate( 'Loading…' ) }
+				</span>
+			</CompactCard>
 		);
 	},
 
 	render() {
 		const rowCount = this.getRowCount();
-		const isCompact = this.isCompact();
-		const searchLength = this.state.searchTerm.length;
-		const showSearch = ( searchLength > 0 || ! isCompact ) &&
-			( this.props.terms || ( ! this.props.terms && searchLength > 0 ) );
 		const { className, loading, siteId, taxonomy, query } = this.props;
-		const classes = classNames( 'term-tree-selector', className, {
-			'is-loading': loading,
-			'is-compact': isCompact
+		const classes = classNames( 'taxonomy-manager', className, {
+			'is-loading': loading
 		} );
 
 		return (
@@ -398,22 +316,17 @@ const TermTreeSelectorList = React.createClass( {
 						taxonomy={ taxonomy }
 						query={ { ...query, page } } />
 				) ) }
-				{ showSearch && (
-					<Search
-						searchTerm={ this.state.searchTerm }
-						onSearch={ this.onSearch } />
-				) }
 				<VirtualScroll
 					ref={ this.setVirtualScrollRef }
 					width={ this.getResultsWidth() }
-					height={ isCompact ? this.getCompactContainerHeight() : 300 }
+					height={ 300 }
 					onRowsRendered={ this.setRequestedPages }
 					rowCount={ rowCount }
 					estimatedRowSize={ ITEM_HEIGHT }
 					rowHeight={ this.getRowHeight }
 					rowRenderer={ this.renderRow }
 					noRowsRenderer={ this.renderNoResults }
-					className="term-tree-selector__results" />
+					className="taxonomy-manager__results" />
 			</div>
 		);
 	}
@@ -430,5 +343,4 @@ export default connect( ( state, ownProps ) => {
 		siteId,
 		query
 	};
-} )( localize( TermTreeSelectorList ) );
-
+} )( localize( TaxonomyManagerList ) );
