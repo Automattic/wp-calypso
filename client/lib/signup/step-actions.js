@@ -160,7 +160,7 @@ module.exports = {
 		}, dependencies, data );
 	},
 
-	addPlanToCart( callback, { siteSlug }, { cartItem } ) {
+	addPlanToCart( callback, { siteSlug }, { cartItem, privacyItem } ) {
 		if ( isEmpty( cartItem ) ) {
 			// the user selected the free plan
 			defer( callback );
@@ -168,7 +168,9 @@ module.exports = {
 			return;
 		}
 
-		SignupCart.addToCart( siteSlug, cartItem, callback );
+		const newCartItems = [ cartItem, privacyItem ].filter( item => item );
+
+		SignupCart.addToCart( siteSlug, newCartItems, callback );
 	},
 
 	createAccount( callback, dependencies, { userData, flowName, queryArgs } ) {
