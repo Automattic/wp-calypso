@@ -36,15 +36,17 @@ It can also contain these optional properties (with defaults if not set):
 - `media.mime_type` `{string}`: the MIME of the edited image (e.g. `image/jpeg`), defaults to `image/png`
 - `media.title` `{string}`: the title of the edited image (e.g. `some image file`), defaults to `default`
 
-### `onImageExtracted`
+### `onDone`
 
 <table>
 	<tr><th>Type</th><td>Function</td></tr>
 	<tr><th>Required</th><td>No</td></tr>
 </table>
 
-A function which will get called on extracting an edited image. It receives two arguments:
-- the extracted image in form of `Blob` object
+A function which will get called on extracting an edited image after clicking the "Done" button.
+It receives three arguments:
+- a JS `Error` object if image is not loaded/present, otherwise `null`
+- the extracted image in form of `Blob` object or `null` if image is not loaded/present
 - the props of the image editor which include image meta and functions to reset image editor state (for the full list,
 have a look into the `image-editor/index` file)
 
@@ -56,7 +58,7 @@ have a look into the `image-editor/index` file)
 </table>
 
 A function which will get called on clicking the "Cancel" image editor button. If this prop is omitted, the "Cancel"
-button won't be rendered. The function receives one argument: the props of the image editor. 
+button won't be rendered. The function receives one argument: the props of the image editor.
 
 ### `onReset`
 
@@ -66,7 +68,7 @@ button won't be rendered. The function receives one argument: the props of the i
 </table>
 
 A function which will get called on clicking the "Reset" image editor button. The function is called after image editor's
- state is reset. The function receives one argument: the props of the image editor. 
+ state is reset. The function receives one argument: the props of the image editor.
 
 ### `className`
 
