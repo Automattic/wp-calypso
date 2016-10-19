@@ -134,6 +134,23 @@ export function isJetpackSite( state, siteId ) {
 }
 
 /**
+ * Returns true if site is a Pressable Jetpack site, false if the site is hosted on
+ * WordPress.com or is a regular Jetpack, or null if the site is unknown.
+ *
+ * @param  {Object}   state  Global state tree
+ * @param  {Number}   siteId Site ID
+ * @return {?Boolean}        Whether site is a Pressable site
+ */
+export function isPressableSite( state, siteId ) {
+	const site = getRawSite( state, siteId );
+	if ( ! site ) {
+		return null;
+	}
+
+	return site.options.pressable;
+}
+
+/**
  * Returns true if the site is a Jetpack site with the specified module active,
  * or false if the module is not active. Returns null if the site is not known
  * or is not a Jetpack site.

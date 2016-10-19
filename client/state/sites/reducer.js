@@ -75,6 +75,15 @@ export function items( state = {}, action ) {
 			}
 			return state;
 
+		case 'PRESSABLE_ACTIVATE':
+			const originalSite = state[ action.siteId ];
+			if ( originalSite ) {
+				return Object.assign( {}, state, {
+					[ action.siteId ]: merge( {}, originalSite, { options: { pressable: true } } )
+				} );
+			}
+			return state;
+
 		case SITE_RECEIVE: {
 			const site = pick( action.site, VALID_SITE_KEYS );
 			return Object.assign( {}, state, {
