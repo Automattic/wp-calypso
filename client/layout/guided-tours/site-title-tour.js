@@ -87,7 +87,7 @@ export const SiteTitleTour = makeTour(
 					translate( "Don't forget to save your new settings." )
 				}
 			</p>
-			<Continue target="settings-site-profile-save" step="finish" click hidden />
+			<Continue target="settings-site-profile-save" step="finish" click />
 		</Step>
 
 		<Step name="finish"
