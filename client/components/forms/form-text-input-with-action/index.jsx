@@ -102,6 +102,7 @@ const FormTextInputWithAction = React.createClass( {
 					'is-error': this.props.isError,
 					'is-valid': this.props.isValid,
 				} ) }
+				role="group"
 			>
 				<FormTextInput
 					className="form-text-input-with-action__input"
