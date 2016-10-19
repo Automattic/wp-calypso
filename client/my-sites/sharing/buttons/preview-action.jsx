@@ -1,52 +1,44 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
+import { omit, startsWith, endsWith } from 'lodash';
 
-module.exports = React.createClass( {
-	displayName: 'SharingButtonsPreviewAction',
+const SharingButtonsPreviewAction = ( props ) => {
+	const { active, position, icon, children } = props;
+	const classes = classNames( 'sharing-buttons-preview-action', {
+		'is-active': active,
+		'is-top': startsWith( position, 'top' ),
+		'is-right': endsWith( position, '-right' ),
+		'is-bottom': startsWith( position, 'bottom' ),
+		'is-left': endsWith( position, '-left' )
+	} );
 
-	propTypes: {
-		active: React.PropTypes.bool,
-		position: React.PropTypes.oneOf( [
-			'top-left',
-			'top-right',
-			'bottom-left',
-			'bottom-right'
-		] ),
-		icon: React.PropTypes.string,
-		onClick: React.PropTypes.func
-	},
+	return (
+		<button type="button" className={ classes } { ...omit( props, [ 'active', 'position', 'icon' ] ) }>
+			{ icon && <span className={ 'noticon noticon-' + icon } /> }
+			{ children }
+		</button>
+	);
+};
 
-	getDefaultProps: function() {
-		return {
-			active: true,
-			position: 'top-left',
-			onClick: function() {}
-		};
-	},
+SharingButtonsPreviewAction.propTypes = {
+	active: PropTypes.bool,
+	position: PropTypes.oneOf( [
+		'top-left',
+		'top-right',
+		'bottom-left',
+		'bottom-right'
+	] ),
+	icon: PropTypes.string,
+	onClick: PropTypes.func
+};
 
-	getIconElement: function() {
-		if ( this.props.icon ) {
-			return <span className={ 'noticon noticon-' + this.props.icon } />;
-		}
-	},
+SharingButtonsPreviewAction.defaultProps = {
+	active: true,
+	position: 'top-left',
+	onClick: () => {}
+};
 
-	render: function() {
-		var classes = classNames( 'sharing-buttons-preview-action', {
-			'is-active': this.props.active,
-			'is-top': 0 === this.props.position.indexOf( 'top' ),
-			'is-right': -1 !== this.props.position.indexOf( '-right' ),
-			'is-bottom': 0 === this.props.position.indexOf( 'bottom' ),
-			'is-left': -1 !== this.props.position.indexOf( '-left' )
-		} );
-
-		return (
-			<button type="button" className={ classes } { ...this.props }>
-				{ this.getIconElement() }
-				{ this.props.children }
-			</button>
-		);
-	}
-} );
+export default SharingButtonsPreviewAction;
