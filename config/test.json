@@ -50,7 +50,6 @@
 		"manage/edit-user": true,
 		"manage/export": true,
 		"manage/jetpack": true,
-		"manage/jetpack-plans": true,
 		"manage/media": true,
 		"manage/menus": true,
 		"manage/menus-jetpack": true,

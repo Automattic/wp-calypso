@@ -64,7 +64,6 @@
 		"manage/export/guided-transfer": true,
 		"manage/import/medium": true,
 		"manage/jetpack": true,
-		"manage/jetpack-plans": true,
 		"manage/media": true,
 		"manage/menus": true,
 		"manage/menus-jetpack": true,
