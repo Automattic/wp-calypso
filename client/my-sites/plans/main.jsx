@@ -8,15 +8,15 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import analytics from 'lib/analytics';
 import DocumentHead from 'components/data/document-head';
 import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import { getPlans } from 'state/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
-import route from 'lib/route';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
@@ -39,14 +39,6 @@ const Plans = React.createClass( {
 	},
 
 	componentDidMount() {
-		const { context, selectedSite } = this.props,
-			analyticsPageTitle = 'Plans',
-			basePath = route.sectionify( context.path ),
-			analyticsBasePath = ( selectedSite ) ? basePath + '/:site' : basePath;
-
-		analytics.tracks.recordEvent( 'calypso_plans_view' );
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
 			window.scrollTo( 0, 0 );
@@ -59,6 +51,8 @@ const Plans = React.createClass( {
 		return (
 			<div>
 				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
+				<PageViewTracker path="/plans/:site" title="Plans" />
+				<TrackComponentView eventName="calypso_plans_view" />
 				<Main wideLayout={ true } >
 					<SidebarNavigation />
 
