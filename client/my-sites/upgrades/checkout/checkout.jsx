@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var connect = require( 'react-redux' ).connect,
+const connect = require( 'react-redux' ).connect,
 	forEach = require( 'lodash/forEach' ),
 	find = require( 'lodash/find' ),
 	i18n = require( 'i18n-calypso' ),
@@ -9,16 +9,18 @@ var connect = require( 'react-redux' ).connect,
 	isEqual = require( 'lodash/isEqual' ),
 	page = require( 'page' ),
 	React = require( 'react' ),
-	reduce = require( 'lodash/reduce' );
+	reduce = require( 'lodash/reduce' ),
+	startsWith = require( 'lodash/startsWith' );
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'lib/analytics' ),
+const analytics = require( 'lib/analytics' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	clearSitePlans = require( 'state/sites/plans/actions' ).clearSitePlans,
 	clearPurchases = require( 'state/purchases/actions' ).clearPurchases,
 	DomainDetailsForm = require( './domain-details-form' ),
+	domainMapping = require( 'lib/cart-values/cart-items' ).domainMapping,
 	fetchReceiptCompleted = require( 'state/receipts/actions' ).fetchReceiptCompleted,
 	getExitCheckoutUrl = require( 'lib/checkout' ).getExitCheckoutUrl,
 	getStoredCards = require( 'state/stored-cards/selectors' ).getStoredCards,
@@ -85,13 +87,12 @@ const Checkout = React.createClass( {
 	},
 
 	componentDidUpdate: function() {
-		var previousCart, nextCart;
 		if ( ! this.props.cart.hasLoadedFromServer ) {
 			return false;
 		}
 
-		previousCart = this.state.previousCart;
-		nextCart = this.props.cart;
+		const previousCart = this.state.previousCart,
+			nextCart = this.props.cart;
 
 		if ( ! isEqual( previousCart, nextCart ) ) {
 			this.redirectIfEmptyCart();
@@ -111,17 +112,23 @@ const Checkout = React.createClass( {
 	},
 
 	addProductToCart: function() {
-		var planSlug = getUpgradePlanSlugFromPath( this.props.product ),
-			cartItem,
+		const planSlug = getUpgradePlanSlugFromPath( this.props.product );
+
+		let cartItem,
 			cartMeta;
 
 		if ( planSlug ) {
 			cartItem = getCartItemForPlan( planSlug );
 		}
 
-		if ( this.props.product.indexOf( 'theme' ) === 0 ) {
-			cartMeta = this.props.product.split( ':' )[1];
+		if ( startsWith( this.props.product, 'theme' ) ) {
+			cartMeta = this.props.product.split( ':' )[ 1 ];
 			cartItem = themeItem( cartMeta );
+		}
+
+		if ( startsWith( this.props.product, 'domain-mapping' ) ) {
+			cartMeta = this.props.product.split( ':' )[ 1 ];
+			cartItem = domainMapping( { domain: cartMeta } );
 		}
 
 		if ( cartItem ) {
@@ -130,7 +137,7 @@ const Checkout = React.createClass( {
 	},
 
 	redirectIfEmptyCart: function() {
-		var redirectTo = '/plans/';
+		let redirectTo = '/plans/';
 
 		if ( ! this.state.previousCart && this.props.product ) {
 			// the plan hasn't been added to the cart yet
@@ -155,8 +162,9 @@ const Checkout = React.createClass( {
 	},
 
 	getPurchasesFromReceipt: function() {
-		var purchases = this.props.transaction.step.data.purchases,
-			flatPurchases = [];
+		const purchases = this.props.transaction.step.data.purchases;
+
+		let flatPurchases = [];
 
 		// purchases are of the format { [siteId]: [ { product_id: ... } ] },
 		// so we need to flatten them to get a list of purchases
@@ -168,11 +176,12 @@ const Checkout = React.createClass( {
 	},
 
 	getCheckoutCompleteRedirectPath: function() {
-		var product,
+		let product,
 			purchasedProducts,
 			renewalItem,
-			receipt = this.props.transaction.step.data,
 			receiptId = ':receiptId';
+
+		const receipt = this.props.transaction.step.data;
 
 		this.props.clearPurchases();
 
@@ -189,26 +198,30 @@ const Checkout = React.createClass( {
 
 			if ( product && product.will_auto_renew ) {
 				notices.success(
-					this.translate( '%(productName)s has been renewed and will now auto renew in the future. {{a}}Learn more{{/a}}', {
-						args: {
-							productName: renewalItem.product_name
-						},
-						components: {
-							a: <a href={ supportPaths.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
+					this.translate( '%(productName)s has been renewed and will now auto renew in the future. ' +
+						'{{a}}Learn more{{/a}}', {
+							args: {
+								productName: renewalItem.product_name
+							},
+							components: {
+								a: <a href={ supportPaths.AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
+							}
 						}
-					} ),
+					),
 					{ persistent: true }
 				);
 			} else if ( product ) {
 				notices.success(
-					this.translate( 'Success! You renewed %(productName)s for %(duration)s, until %(date)s. We sent your receipt to %(email)s.', {
-						args: {
-							productName: renewalItem.product_name,
-							duration: i18n.moment.duration( renewalItem.bill_period, 'days' ).humanize(),
-							date: i18n.moment( product.expiry ).format( 'MMM DD, YYYY' ),
-							email: product.user_email
+					this.translate( 'Success! You renewed %(productName)s for %(duration)s, until %(date)s. ' +
+						'We sent your receipt to %(email)s.', {
+							args: {
+								productName: renewalItem.product_name,
+								duration: i18n.moment.duration( renewalItem.bill_period, 'days' ).humanize(),
+								date: i18n.moment( product.expiry ).format( 'MMM DD, YYYY' ),
+								email: product.user_email
+							}
 						}
-					} ),
+					),
 					{ persistent: true }
 				);
 			}
@@ -230,12 +243,12 @@ const Checkout = React.createClass( {
 		}
 
 		return this.props.selectedFeature && isValidFeatureKey( this.props.selectedFeature )
-			? `/checkout/thank-you/features/${this.props.selectedFeature}/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`
+			? `/checkout/thank-you/features/${ this.props.selectedFeature }/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`
 			: `/checkout/thank-you/${ this.props.sites.getSelectedSite().slug }/${ receiptId }`;
 	},
 
 	content: function() {
-		var selectedSite = this.props.sites.getSelectedSite();
+		const selectedSite = this.props.sites.getSelectedSite();
 
 		if ( ! this.isLoading() && this.needsDomainDetails() ) {
 			return (
@@ -263,14 +276,14 @@ const Checkout = React.createClass( {
 	},
 
 	isLoading: function() {
-		var isLoadingCart = ! this.props.cart.hasLoadedFromServer,
+		const isLoadingCart = ! this.props.cart.hasLoadedFromServer,
 			isLoadingProducts = ! this.props.productsList.hasLoadedFromServer();
 
 		return isLoadingCart || isLoadingProducts;
 	},
 
 	needsDomainDetails: function() {
-		var cart = this.props.cart,
+		const cart = this.props.cart,
 			transaction = this.props.transaction;
 
 		if ( cart && cartItems.hasOnlyRenewalItems( cart ) ) {
