@@ -651,17 +651,14 @@ export function canJetpackSiteUpdateFiles( state, siteId ) {
 
 	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
 
-	if (
-		fileModDisabled &&
-		(
-			-1 < fileModDisabled.indexOf( 'disallow_file_mods' ) ||
-			-1 < fileModDisabled.indexOf( 'has_no_file_system_write_access' )
-		)
-	) {
-		return false;
+	if ( ! fileModDisabled ) {
+		return true;
 	}
 
-	return true;
+	return (
+		! includes( fileModDisabled, 'disallow_file_mods' ) &&
+		! includes( fileModDisabled, 'has_no_file_system_write_access' )
+	);
 }
 
 /**
