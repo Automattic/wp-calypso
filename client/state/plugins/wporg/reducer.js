@@ -96,7 +96,7 @@ export function lists( state = defaultPluginsListState, action ) {
 				if ( action.category === 'search' ) {
 					nextState.currentSearchTerm = action.searchTerm;
 					if ( action.page === _DEFAULT_FIRST_PAGE ) {
-						return Object.assign( {}, state, updatePluginsList( nextState, 'search', _DEFAULT_FIRST_PAGE, [] ) );
+						nextState.fullLists.search = [];
 					}
 				}
 			}

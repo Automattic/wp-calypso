@@ -26,11 +26,9 @@ const canFetchList = ( category, page, searchTerm ) => {
 	if ( _fetchingLists[ category ] || page <= _lastFetchedPagePerCategory[ category ] ) {
 		return false;
 	}
-
 	if ( _totalPagesPerCategory[ category ] < page ) {
 		return false;
 	}
-
 	return true;
 };
 
@@ -69,7 +67,7 @@ export default {
 			// Since the infinite scroll mixin is launching a bunch of fetch requests at the same time, without debounce is too easy
 			// to get two of those requests running at (almost) the same time and getting react to freak out.
 			_lastFetchedPagePerCategory[ category ] = typeof _lastFetchedPagePerCategory[ category ] === 'undefined'
-				? _DEFAULT_FIRST_PAGE : _lastFetchedPagePerCategory[ category ];
+				? _DEFAULT_FIRST_PAGE - 1 : _lastFetchedPagePerCategory[ category ];
 			page = page || _DEFAULT_FIRST_PAGE;
 
 			if ( category === 'search' && page === _DEFAULT_FIRST_PAGE ) {
