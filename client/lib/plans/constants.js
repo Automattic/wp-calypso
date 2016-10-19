@@ -268,7 +268,8 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-			FEATURE_POLLS_PRO
+			FEATURE_POLLS_PRO,
+			FEATURE_ADVANCED_SEO
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 
@@ -291,7 +292,8 @@ export const PLANS_LIST = {
 			FEATURE_EASY_SITE_MIGRATION,
 			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
 			FEATURE_ONE_CLICK_THREAT_RESOLUTION,
-			FEATURE_POLLS_PRO
+			FEATURE_POLLS_PRO,
+			FEATURE_ADVANCED_SEO
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	}
