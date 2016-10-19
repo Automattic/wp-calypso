@@ -2,24 +2,18 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import omit from 'lodash/omit';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import ShortcodesStore from 'lib/shortcodes/store';
-import * as ShortcodesActions from 'lib/shortcodes/actions';
-
-/**
- * Local dependencies
- */
-import ShortcodeData from './data';
+import QueryShortcode from 'components/data/query-shortcode';
 import ShortcodeFrame from './frame';
+import { getShortcode } from 'state/shortcodes/selectors';
 
-export default React.createClass( {
-	displayName: 'Shortcode',
-
+const Shortcode = React.createClass( {
 	propTypes: {
 		siteId: PropTypes.number.isRequired,
 		children: PropTypes.string.isRequired,
@@ -27,57 +21,31 @@ export default React.createClass( {
 		className: PropTypes.string
 	},
 
-	componentDidMount() {
-		this.fetchRendered();
-		this.listener = ShortcodesStore.addListener( this.fetchRendered );
-	},
-
-	componentDidUpdate() {
-		this.fetchRendered();
-	},
-
-	componentWillUnmount() {
-		this.clearFetchTimeout();
-
-		if ( this.listener ) {
-			this.listener.remove();
-		}
-	},
-
-	fetchRendered() {
-		const { siteId, children: shortcode } = this.props;
-
-		if ( ShortcodesStore.get( siteId, shortcode ) ) {
-			return;
-		}
-
-		this.clearFetchTimeout();
-		this.fetchTimeout = setTimeout( () => {
-			this.clearFetchTimeout();
-			ShortcodesActions.fetch( siteId, shortcode );
-		}, 0 );
-	},
-
-	clearFetchTimeout() {
-		clearTimeout( this.fetchTimeout );
-		this.fetchTimeout = null;
-	},
-
 	render() {
-		const { siteId, className, filterRenderResult, children } = this.props;
+		const { siteId, className, children, filterRenderResult } = this.props;
 		const classes = classNames( 'shortcode', className );
-
+		const filteredShortcode = filterRenderResult( this.props.shortcode );
 		return (
-			<ShortcodeData
-				siteId={ siteId }
-				shortcode={ children }
-				filterRenderResult={ filterRenderResult }
-			>
+			<div>
+				<QueryShortcode
+					siteId={ siteId }
+					shortcode={ children }
+				/>
 				<ShortcodeFrame
-					{ ...omit( this.props, 'siteId', 'filterRenderResult' ) }
+					{ ...omit( this.props, 'siteId', 'filterRenderResult', 'shortcode', 'dispatch' ) }
+					{ ...filteredShortcode }
 					className={ classes }
 				/>
-			</ShortcodeData>
+			</div>
 		);
 	}
 } );
+
+export default connect(
+	( state, ownProps ) => (
+		{
+			shortcode: getShortcode( state, ownProps.siteId, ownProps.children )
+		}
+	),
+	null
+)( Shortcode );
