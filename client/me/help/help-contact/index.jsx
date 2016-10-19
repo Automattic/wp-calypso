@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import Card from 'components/card';
 import OlarkChatbox from 'components/olark-chatbox';
@@ -26,8 +27,11 @@ import analytics from 'lib/analytics';
 import i18n from 'lib/i18n-utils';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { isHappychatAvailable } from 'state/happychat/selectors';
 import QueryOlark from 'components/data/query-olark';
 import HelpUnverifiedWarning from '../help-unverified-warning';
+import Happychat from '../../happychat/main';
+import { connectChat as connectHappychat } from 'state/happychat/actions';
 
 /**
  * Module variables
@@ -45,6 +49,10 @@ const HelpContact = React.createClass( {
 	},
 
 	componentDidMount: function() {
+		if ( config.isEnabled( 'happychat' ) ) {
+			this.props.connectHappychat();
+		}
+
 		olarkStore.on( 'change', this.updateOlarkState );
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
 		olarkEvents.on( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
@@ -451,6 +459,10 @@ const HelpContact = React.createClass( {
 	},
 
 	render: function() {
+		if ( config.isEnabled( 'happychat' ) && this.props.isHappychatAvailable ) {
+			return <Happychat />;
+		}
+
 		return (
 			<Main className="help-contact">
 				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>{ this.translate( 'Contact Us' ) }</HeaderCake>
@@ -469,6 +481,8 @@ export default connect(
 		return {
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
+			isHappychatAvailable: isHappychatAvailable( state )
 		};
-	}
+	},
+	{ connectHappychat }
 )( HelpContact );
