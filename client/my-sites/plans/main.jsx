@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import i18n from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
@@ -70,9 +70,9 @@ const Plans = React.createClass( {
 		return (
 			<MainComponent>
 				<EmptyContentComponent
-					title={ i18n.translate( 'Plans are not available for Jetpack sites yet.' ) }
-					line={ i18n.translate( 'Looking for spam protection?' ) }
-					action={ i18n.translate( 'Try Akismet' ) }
+					title={ this.props.translate( 'Plans are not available for Jetpack sites yet.' ) }
+					line={ this.props.translate( 'Looking for spam protection?' ) }
+					action={ this.props.translate( 'Try Akismet' ) }
 					actionURL={ '//akismet.com/plans/?ref=calypso-plans' }
 					illustration={ '/calypso/images/drake/drake-nomenus.svg' }
 				/>
@@ -89,7 +89,7 @@ const Plans = React.createClass( {
 
 		return (
 			<div>
-				<DocumentHead title={ i18n.translate( 'Plans', { textOnly: true } ) } />
+				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
 				<Main wideLayout={ true } >
 					<SidebarNavigation />
 
@@ -126,4 +126,4 @@ export default connect(
 			selectedSiteId: selectedSiteId
 		};
 	}
-)( Plans );
+)( localize( Plans ) );
