@@ -619,6 +619,13 @@ export function canJetpackSiteManage( state, siteId ) {
 	return true;
 }
 
+/**
+ * Determines if a Jetpack site can update its files.
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Boolean} if the site can update
+ */
 export function canJetpackSiteUpdateFiles( state, siteId ) {
 	if ( ! siteId ) {
 		return null;
@@ -679,38 +686,6 @@ export function canJetpackSiteAutoUpdateFiles( state, siteId ) {
 	return true;
 }
 
-export function isMainNetworkSite( state, siteId ) {
-	const site = getRawSite( state, siteId );
-
-	if ( ! site ) {
-		return null;
-	}
-
-	const isMultiNetwork = getSiteOption( state, siteId, 'is_multi_network' );
-
-	if ( isMultiNetwork ) {
-		return false;
-	}
-
-	if ( site.is_multisite === false ) {
-		return true;
-	}
-
-	if ( site.is_multisite ) {
-		const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
-		const mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
-
-		if ( ! unmappedUrl || ! mainNetworkSite ) {
-			return false;
-		}
-
-		// Compare unmapped_url with the main_network_site to see if is the main network site.
-		return withoutHttp( unmappedUrl ) === withoutHttp( mainNetworkSite );
-	}
-
-	return false;
-}
-
 /**
  * Determines if a Jetpack site can auto update WordPress core.
  *
@@ -744,6 +719,47 @@ export function hasJetpackSiteJetpackMenus( state, siteId ) {
 export function hasJetpackSiteJetpackThemes( state, siteId ) {
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
 	return versionCompare( siteJetpackVersion, '3.7-beta' ) >= 0;
+}
+
+/**
+ * Determines if a site is the main site in a Network
+ * True if it is either in a non multi-site configuration
+ * or if its url matches the `main_network_site` url option
+ *
+ * @param {Object} state Global state tree
+ * @param {Number} siteId Site ID
+ * @return {Boolean} if the site is the main site
+ */
+export function isMainNetworkSite( state, siteId ) {
+	const site = getRawSite( state, siteId );
+
+	if ( ! site ) {
+		return null;
+	}
+
+	const isMultiNetwork = getSiteOption( state, siteId, 'is_multi_network' );
+
+	if ( isMultiNetwork ) {
+		return false;
+	}
+
+	if ( site.is_multisite === false ) {
+		return true;
+	}
+
+	if ( site.is_multisite ) {
+		const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
+		const mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
+
+		if ( ! unmappedUrl || ! mainNetworkSite ) {
+			return false;
+		}
+
+		// Compare unmapped_url with the main_network_site to see if is the main network site.
+		return withoutHttp( unmappedUrl ) === withoutHttp( mainNetworkSite );
+	}
+
+	return false;
 }
 
 /**
