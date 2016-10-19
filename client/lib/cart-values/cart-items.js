@@ -736,17 +736,6 @@ function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggesti
 		( ! selectedSite || ( selectedSite && selectedSite.plan.product_slug === 'free_plan' ) ); // site has a plan
 }
 
-function bundleItemWithPlan( cartItem, planSlug = 'value_bundle' ) {
-	return [ cartItem, planItem( planSlug, false ) ];
-}
-
-function bundleItemWithPlanIfNecessary( cartItem, withPlansOnly, selectedSite, cart, planSlug = 'value_bundle' ) {
-	if ( shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, cartItem ) ) {
-		return bundleItemWithPlan( cartItem, planSlug );
-	}
-	return [ cartItem ];
-}
-
 function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
 	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
 		return 'FREE_DOMAIN';
@@ -770,8 +759,6 @@ function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
 module.exports = {
 	add,
 	addPrivacyToAllDomains,
-	bundleItemWithPlan,
-	bundleItemWithPlanIfNecessary,
 	businessPlan,
 	customDesignItem,
 	domainMapping,
