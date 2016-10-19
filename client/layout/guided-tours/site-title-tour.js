@@ -41,10 +41,9 @@ export const SiteTitleTour = makeTour(
 
 		<Step name="click-settings"
 			target="settings"
-			arrow="bottom-left"
-			placement="above"
+			arrow="left-middle"
+			placement="beside"
 			scrollContainer=".sidebar__region"
-			next="site-title-input"
 			shouldScrollTo
 		>
 			<div className="guided-tours__actionstep-instructions">
@@ -65,19 +64,30 @@ export const SiteTitleTour = makeTour(
 			target="site-title-input"
 			arrow="top-left"
 			placement="below"
-			next="site-title"
 		>
 			<p className="guided-tours__step-text">
 				{
 					translate( 'Go ahead and change the title to whatever you want!' )
 				}
 			</p>
-			{/* TODO (marekhrabe): change to either onChange of the input or just click
 			<div className="guided-tours__choice-button-row">
-				<Next step="finish" when={ inSection( 'settings' ) } hidden />
+				<Next step="click-save">{ translate( 'Looks Good' ) }</Next>
 				<Quit />
 			</div>
-			*/}
+		</Step>
+
+		<Step name="click-save"
+			target="settings-site-profile-save"
+			arrow="top-right"
+			placement="below"
+			next="site-title"
+		>
+			<p className="guided-tours__step-text">
+				{
+					translate( "Don't forget to save your new settings." )
+				}
+			</p>
+			<Continue target="settings-site-profile-save" step="finish" click hidden />
 		</Step>
 
 		<Step name="finish"

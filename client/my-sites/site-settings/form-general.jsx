@@ -574,7 +574,7 @@ const FormGeneral = React.createClass( {
 						compact={ true }
 						onClick={ this.handleSubmitForm }
 						primary={ true }
-
+						data-tip-target="settings-site-profile-save"
 						type="submit"
 						disabled={ this.state.fetchingSettings || this.state.submittingForm }>
 							{ this.state.submittingForm
