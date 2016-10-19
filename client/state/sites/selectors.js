@@ -645,7 +645,7 @@ export function canJetpackSiteUpdateFiles( state, siteId ) {
 		return false;
 	}
 
-	if ( ! isMainNetworkSite( state, siteId ) ) {
+	if ( ! isJetpackSiteMainNetworkSite( state, siteId ) ) {
 		return false;
 	}
 
@@ -730,7 +730,7 @@ export function hasJetpackSiteJetpackThemes( state, siteId ) {
  * @param {Number} siteId Site ID
  * @return {Boolean} if the site is the main site
  */
-export function isMainNetworkSite( state, siteId ) {
+export function isJetpackSiteMainNetworkSite( state, siteId ) {
 	const site = getRawSite( state, siteId );
 
 	if ( ! site ) {
