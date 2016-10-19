@@ -100,6 +100,10 @@ describe( 'reducer', () => {
 		it( 'should set shortcode of that site ID to false if request finishes successfully', () => {
 			const state = requesting( deepFreeze( {
 				12345678: {
+					test_shortcode: true,
+					another_shortcode: true
+				},
+				87654321: {
 					test_shortcode: true
 				}
 			} ), {
@@ -110,14 +114,22 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				12345678: {
-					test_shortcode: false
+					test_shortcode: false,
+					another_shortcode: true
 				},
+				87654321: {
+					test_shortcode: true
+				}
 			} );
 		} );
 
 		it( 'should set shortcode of that site ID to false if request finishes unsuccessfully', () => {
 			const state = requesting( deepFreeze( {
 				12345678: {
+					test_shortcode: true,
+					another_shortcode: true
+				},
+				87654321: {
 					test_shortcode: true
 				}
 			} ), {
@@ -129,8 +141,12 @@ describe( 'reducer', () => {
 
 			expect( state ).to.eql( {
 				12345678: {
-					test_shortcode: false
+					test_shortcode: false,
+					another_shortcode: true
 				},
+				87654321: {
+					test_shortcode: true
+				}
 			} );
 		} );
 
