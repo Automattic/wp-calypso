@@ -11,9 +11,7 @@ import { keys, omit, noop } from 'lodash';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 
-export default React.createClass( {
-	displayName: 'FormTextInputWithAction',
-
+let FormTextInputWithAction = React.createClass( {
 	propTypes: {
 		action: PropTypes.node,
 		inputRef: PropTypes.func,
@@ -127,3 +125,5 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default FormTextInputWithAction;
