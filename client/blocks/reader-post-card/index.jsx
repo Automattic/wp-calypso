@@ -96,7 +96,7 @@ export default class RefreshPostCard extends React.Component {
 		const featuredImage = post.canonical_image;
 		const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
 		const title = truncate( post.title, {
-			length: isPhotoOnly ? 50 : 140,
+			length: 140,
 			separator: /,? +/
 		} );
 		const classes = classnames( 'reader-post-card', {
@@ -113,7 +113,7 @@ export default class RefreshPostCard extends React.Component {
 						<h1 className="reader-post-card__title">
 							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
 						</h1>
-						<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
+						{ ! isPhotoOnly && <div className="reader-post-card__excerpt">{ post.short_excerpt }</div> }
 						{ post &&
 							<ReaderPostActions
 								post={ post }
