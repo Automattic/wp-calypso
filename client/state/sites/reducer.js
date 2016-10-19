@@ -75,11 +75,11 @@ export function items( state = {}, action ) {
 			}
 			return state;
 
-		case 'PRESSABLE_ACTIVATE':
+		case 'PRESSABLE_TEST':
 			const originalSite = state[ action.siteId ];
 			if ( originalSite ) {
 				return Object.assign( {}, state, {
-					[ action.siteId ]: merge( {}, originalSite, { options: { pressable: true } } )
+					[ action.siteId ]: merge( {}, originalSite, { jetpack: true, options: { pressable: true } } )
 				} );
 			}
 			return state;
