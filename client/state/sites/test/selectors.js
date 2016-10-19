@@ -29,7 +29,8 @@ import {
 	isCurrentPlanPaid,
 	getSiteFrontPage,
 	getSitePostsPage,
-	getSiteFrontPageType
+	getSiteFrontPageType,
+	hasStaticFrontPage,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -1098,6 +1099,74 @@ describe( 'selectors', () => {
 			}, 77203074 );
 
 			expect( frontPage ).to.eql( 1 );
+		} );
+	} );
+
+	describe( 'hasStaticFrontPage()', () => {
+		it( 'should return false if the site does not have a static page set as the front page', () => {
+			const hasFrontPage = hasStaticFrontPage( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							options: {
+								show_on_front: 'posts',
+								page_on_front: 0
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( hasFrontPage ).to.eql( false );
+		} );
+
+		it( 'should return false if the site does not have a `page_on_front` value', () => {
+			const hasFrontPage = hasStaticFrontPage( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							options: {
+								show_on_front: 'posts',
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( hasFrontPage ).to.eql( false );
+		} );
+
+		it( 'should return false if the site is not known', () => {
+			const hasFrontPage = hasStaticFrontPage( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( hasFrontPage ).to.eql( false );
+		} );
+
+		it( 'should return true if the site has a static page set as the front page', () => {
+			const hasFrontPage = hasStaticFrontPage( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							options: {
+								show_on_front: 'page',
+								page_on_front: 42
+							}
+						}
+					}
+				}
+			}, 77203074 );
+
+			expect( hasFrontPage ).to.eql( true );
 		} );
 	} );
 

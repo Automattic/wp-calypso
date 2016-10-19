@@ -25,6 +25,7 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	config = require( 'config' );
 
 import MenuSeparator from 'components/popover/menu-separator';
+import { hasStaticFrontPage } from 'state/sites/selectors';
 import {
 	isFrontPage,
 	isPostsPage,
@@ -137,6 +138,10 @@ const Page = React.createClass( {
 			return null;
 		}
 
+		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
+			return null;
+		}
+
 		if ( this.props.page.status !== 'publish' ) {
 			return (
 				<PopoverMenuItem onClick={ this.viewPage }>
@@ -213,6 +218,10 @@ const Page = React.createClass( {
 	},
 
 	getEditItem: function() {
+		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
+			return null;
+		}
+
 		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
 			return null;
 		}
@@ -226,6 +235,10 @@ const Page = React.createClass( {
 	},
 
 	getSendToTrashItem: function() {
+		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
+			return null;
+		}
+
 		if ( ! utils.userCan( 'delete_post', this.props.page ) ) {
 			return null;
 		}
@@ -304,6 +317,23 @@ const Page = React.createClass( {
 		}
 
 		const setAsHomepageItem = this.getSetAsHomepageItem();
+		const viewItem = this.getViewItem();
+		const publishItem = this.getPublishItem();
+		const editItem = this.getEditItem();
+		const restoreItem = this.getRestoreItem();
+		const sendToTrashItem = this.getSendToTrashItem();
+		const moreInfoItem = this.popoverMoreInfo();
+
+		const setHomepageMenuSeparator = (
+			setAsHomepageItem && (
+				viewItem ||
+				publishItem ||
+				editItem ||
+				restoreItem ||
+				sendToTrashItem ||
+				moreInfoItem
+			)
+		) ? <MenuSeparator /> : null;
 
 		return (
 			<CompactCard className="page">
@@ -336,13 +366,13 @@ const Page = React.createClass( {
 					context={ this.refs && this.refs.popoverMenuButton }
 				>
 					{ setAsHomepageItem }
-					{ setAsHomepageItem ? <MenuSeparator /> : null }
-					{ this.getViewItem() }
-					{ this.getPublishItem() }
-					{ this.getEditItem() }
-					{ this.getRestoreItem() }
-					{ this.getSendToTrashItem() }
-					{ this.popoverMoreInfo() }
+					{ setHomepageMenuSeparator }
+					{ viewItem }
+					{ publishItem }
+					{ editItem }
+					{ restoreItem }
+					{ sendToTrashItem }
+					{ moreInfoItem }
 				</PopoverMenu>
 				<ReactCSSTransitionGroup
 					transitionName="updated-trans"
@@ -383,6 +413,7 @@ const Page = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
+			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
 			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
 			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
 		};

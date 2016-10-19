@@ -550,3 +550,14 @@ export function getSitePostsPage( state, siteId ) {
 export function getSiteFrontPageType( state, siteId ) {
 	return getSiteOption( state, siteId, 'show_on_front' );
 }
+
+/**
+ * Returns true if the site is using a static front page
+ *
+ * @param {Object} state Global state tree
+ * @param {Object} siteId Site ID
+ * @return {Boolean} False if not set or set to `0`. True otherwise.
+ */
+export function hasStaticFrontPage( state, siteId ) {
+	return !! getSiteFrontPage( state, siteId );
+}
