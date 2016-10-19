@@ -24,6 +24,10 @@
 		padding: 0;
 		margin: 0;
 	}
+
+	@media print {
+		padding: 0;
+	}
 }
 
 // Tablets
@@ -70,6 +74,15 @@
 	.sidebar__menu {
 		transform: translateX( 0 );
 		transition: all 0.15s cubic-bezier(0.075, 0.820, 0.165, 1.000);
+	}
+}
+
+.layout {
+	.sidebar,
+	.masterbar {
+		@media print {
+			display: none;
+		}
 	}
 }
 
