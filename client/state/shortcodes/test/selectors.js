@@ -6,19 +6,79 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getShortcode } from '../selectors';
+import { getShortcode, isRequestingShortcode } from '../selectors';
 
 describe( 'selectors', () => {
+	describe( '#isRequestingShortcode()', () => {
+		it( 'should return false if shortcodes have never been fetched for that site', () => {
+			const isRequesting = isRequestingShortcode( {
+				shortcodes: {
+					requesting: {
+						87654321: {
+							test_shortcode: true
+						}
+					}
+				}
+			}, 12345678, 'test_shortcode' );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return false if the shortcode is not being fetched for that site', () => {
+			const isRequesting = isRequestingShortcode( {
+				shortcodes: {
+					requesting: {
+						12345678: {
+							test_shortcode: false
+						}
+					}
+				}
+			}, 12345678, 'test_shortcode' );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return false if the shortcode is being fetched only for another site', () => {
+			const isRequesting = isRequestingShortcode( {
+				shortcodes: {
+					requesting: {
+						87654321: {
+							test_shortcode: false
+						}
+					}
+				}
+			}, 12345678, 'test_shortcode' );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		it( 'should return true if the shortcode is being fetched for that site', () => {
+			const isRequesting = isRequestingShortcode( {
+				shortcodes: {
+					requesting: {
+						12345678: {
+							test_shortcode: true
+						}
+					}
+				}
+			}, 12345678, 'test_shortcode' );
+
+			expect( isRequesting ).to.be.true;
+		} );
+	} );
+
 	describe( '#getShortcode()', () => {
 		const state = {
 			shortcodes: {
-				12345678: {
-					'[gallery ids="1,2,3"]': {
-						status: true,
-						body: '<html></html>',
-						scripts: {},
-						styles: {}
-					},
+				items: {
+					12345678: {
+						'[gallery ids="1,2,3"]': {
+							status: true,
+							body: '<html></html>',
+							scripts: {},
+							styles: {}
+						},
+					}
 				}
 			}
 		};
