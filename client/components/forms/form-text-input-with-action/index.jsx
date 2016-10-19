@@ -11,7 +11,7 @@ import { keys, omit, noop } from 'lodash';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 
-let FormTextInputWithAction = React.createClass( {
+const FormTextInputWithAction = React.createClass( {
 	propTypes: {
 		action: PropTypes.node,
 		inputRef: PropTypes.func,
