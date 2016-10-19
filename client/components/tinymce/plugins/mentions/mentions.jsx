@@ -121,7 +121,8 @@ class Mentions extends React.Component {
 }
 
 Mentions.propTypes = {
-	editor: React.PropTypes.object,
+	editor: React.PropTypes.object.isRequired,
+	siteId: React.PropTypes.number.isRequired,
 	suggestions: React.PropTypes.array,
 };
 
@@ -133,6 +134,7 @@ export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
 
 	return {
-		suggestions: getUserSuggestions( state, siteId )
+		suggestions: getUserSuggestions( state, siteId ),
+		siteId
 	};
 } )( Mentions );
