@@ -4,8 +4,7 @@
  * External dependencies
  */
 var webpack = require( 'webpack' ),
-	path = require( 'path' ),
-	DashboardPlugin = require('webpack-dashboard/plugin');
+	path = require( 'path' );
 
 /**
  * Internal dependencies
@@ -117,6 +116,7 @@ jsLoader = {
 };
 
 if ( CALYPSO_ENV === 'development' ) {
+	const DashboardPlugin = require( 'webpack-dashboard/plugin' );
 	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
