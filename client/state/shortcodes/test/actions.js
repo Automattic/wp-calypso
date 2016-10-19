@@ -35,9 +35,8 @@ describe( 'actions', () => {
 					} )
 					.reply( 200, {
 						body: '<html></html>',
-						scripts: [],
-						styles: [],
-						status: 'success'
+						scripts: {},
+						styles: {}
 					}, {
 						'Content-Type': 'application/json'
 					} );
@@ -71,9 +70,8 @@ describe( 'actions', () => {
 							shortcode,
 							data: {
 								body: '<html></html>',
-								scripts: [],
-								styles: [],
-								status: 'success'
+								scripts: {},
+								styles: {}
 							}
 						} );
 					}

@@ -177,10 +177,9 @@ describe( 'reducer', () => {
 
 	describe( '#items()', () => {
 		const shortcodeData = {
-			status: true,
 			body: 'body',
-			scripts: 'scripts',
-			styles: 'styles'
+			scripts: {},
+			styles: {}
 		};
 
 		it( 'should default to an empty object', () => {
@@ -213,7 +212,7 @@ describe( 'reducer', () => {
 				type: SHORTCODE_RECEIVE,
 				siteId: 87654321,
 				shortcode: 'test_shortcode',
-				data: { ...shortcodeData, status: false }
+				data: { ...shortcodeData, body: '<html></html>' }
 			} );
 
 			expect( state ).to.eql( {
@@ -221,7 +220,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, status: false }
+					test_shortcode: { ...shortcodeData, body: '<html></html>' }
 				}
 			} );
 		} );
@@ -232,22 +231,22 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, status: false }
+					test_shortcode: { ...shortcodeData, body: '<html></html>' }
 				}
 			} ), {
 				type: SHORTCODE_RECEIVE,
 				siteId: 12345678,
 				shortcode: 'another_shortcode',
-				data: { ...shortcodeData, status: false }
+				data: { ...shortcodeData, body: '<html><head></head></html>' }
 			} );
 
 			expect( state ).to.eql( {
 				12345678: {
 					test_shortcode: shortcodeData,
-					another_shortcode: { ...shortcodeData, status: false }
+					another_shortcode: { ...shortcodeData, body: '<html><head></head></html>' }
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, status: false }
+					test_shortcode: { ...shortcodeData, body: '<html></html>' }
 				}
 			} );
 		} );
@@ -258,7 +257,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, status: false }
+					test_shortcode: { ...shortcodeData, body: '<html></html>' }
 				}
 			} ), {
 				type: SHORTCODE_RECEIVE,
@@ -283,7 +282,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, status: false }
+					test_shortcode: { ...shortcodeData, body: '<html></html>' }
 				}
 			} ), {
 				type: SERIALIZE
@@ -294,7 +293,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, status: false }
+					test_shortcode: { ...shortcodeData, body: '<html></html>' }
 				}
 			} );
 		} );
@@ -305,7 +304,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, status: false }
+					test_shortcode: { ...shortcodeData, body: '<html></html>' }
 				}
 			} ), {
 				type: DESERIALIZE
@@ -316,7 +315,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, status: false }
+					test_shortcode: { ...shortcodeData, body: '<html></html>' }
 				}
 			} );
 		} );

@@ -1,5 +1,10 @@
 export const siteShortcodeSchema = {
 	type: 'object',
+	properties: {
+		body: { type: 'string' },
+		scripts: { type: 'object' },
+		styles: { type: 'object' }
+	}
 };
 
 export const siteShortcodesSchema = {
