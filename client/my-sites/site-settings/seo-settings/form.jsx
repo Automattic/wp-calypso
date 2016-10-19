@@ -401,8 +401,8 @@ export const SeoForm = React.createClass( {
 		};
 
 		const nudgeTitle = jetpack
-			? this.translate( 'Enable Advanced SEO features by Upgrading to Jetpack Pro' )
-			: this.translate( 'Enable Advanced SEO features by Upgrading to the Business Plan' );
+			? this.translate( 'Enable Advanced SEO Features by Upgrading to Jetpack Pro' )
+			: this.translate( 'Enable Advanced SEO Features by Upgrading to the Business Plan' );
 
 		const submitButton = (
 			<Button
