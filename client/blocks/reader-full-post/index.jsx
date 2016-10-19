@@ -4,7 +4,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import config from 'config';
@@ -22,10 +21,6 @@ import PostExcerpt from 'components/post-excerpt';
 import { setSection } from 'state/ui/actions';
 import smartSetState from 'lib/react-smart-set-state';
 import PostStore from 'lib/feed-post-store';
-import SiteStore from 'lib/reader-site-store';
-import FeedStore from 'lib/feed-store';
-import { fetch as fetchFeed } from 'lib/feed-store/actions';
-import { fetch as fetchSite } from 'lib/reader-site-store/actions';
 import { fetchPost } from 'lib/feed-post-store/actions';
 import ReaderFullPostHeader from './header';
 import AuthorCompactProfile from 'blocks/author-compact-profile';
@@ -52,6 +47,10 @@ import { CANONICAL_IN_CONTENT } from 'state/reader/posts/display-types';
 import { likePost, unlikePost } from 'lib/like-store/actions';
 import LikeStore from 'lib/like-store/like-store';
 import FeaturedImage from 'blocks/reader-full-post/featured-image';
+import { getFeed } from 'state/reader/feeds/selectors';
+import { getSite } from 'state/reader/sites/selectors';
+import QueryReaderSite from 'components/data/query-reader-site';
+import QueryReaderFeed from 'components/data/query-reader-feed';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -249,6 +248,8 @@ export class FullPostView extends React.Component {
 		/*eslint-disable react/no-danger*/
 		return (
 			<ReaderMain className={ classNames( classes ) }>
+				{ post && post.feed_ID && <QueryReaderFeed feedId={ post.feed_ID } /> }
+				{ post && ! post.is_external && post.site_ID && <QueryReaderSite siteId={ post.site_ID } /> }
 				<div className="reader-full-post__back-container">
 					<Button className="reader-full-post__back" borderless compact onClick={ this.handleBack }>
 						<Gridicon icon="arrow-left" /> { translate( 'Back' ) }
@@ -353,14 +354,34 @@ export class FullPostView extends React.Component {
 	}
 }
 
+const ConnectedFullPostView = connect(
+	( state, ownProps ) => {
+		const {
+			site_ID: siteId,
+			feed_ID: feedId,
+			is_external: isExternal
+		} = ownProps.post;
+
+		const props = {};
+
+		if ( ! isExternal && siteId ) {
+			props.site = getSite( state, siteId )
+		}
+		if ( feedId ) {
+			props.feed = getFeed( state, feedId );
+		}
+		return props;
+	},
+	{ setSection }
+)( FullPostView );
+
 /**
  * A container for the FullPostView responsible for binding to Flux stores
  */
-export class FullPostFluxContainer extends React.Component {
+export default class FullPostFluxContainer extends React.Component {
 	constructor( props ) {
 		super( props );
 		this.state = this.getStateFromStores( props );
-		this.updateState = this.updateState.bind( this );
 		this.smartSetState = smartSetState;
 	}
 
@@ -377,36 +398,17 @@ export class FullPostFluxContainer extends React.Component {
 			fetchPost( postKey );
 		}
 
-		let feed, site;
-
-		if ( post && post.feed_ID ) {
-			feed = FeedStore.get( post.feed_ID );
-			if ( ! feed ) {
-				fetchFeed( post.feed_ID );
-			}
-		}
-		if ( post && post.site_ID && ! post.is_external ) {
-			site = SiteStore.get( post.site_ID );
-			if ( ! site ) {
-				fetchSite( post.site_ID );
-			}
-		}
-
 		return {
-			post,
-			site,
-			feed
+			post
 		};
 	}
 
-	updateState( newState = this.getStateFromStores() ) {
+	updateState = ( newState = this.getStateFromStores() ) => {
 		this.smartSetState( newState );
 	}
 
 	componentWillMount() {
 		PostStore.on( 'change', this.updateState );
-		SiteStore.on( 'change', this.updateState );
-		FeedStore.on( 'change', this.updateState );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -415,28 +417,13 @@ export class FullPostFluxContainer extends React.Component {
 
 	componentWillUnmount() {
 		PostStore.off( 'change', this.updateState );
-		SiteStore.off( 'change', this.updateState );
-		FeedStore.off( 'change', this.updateState );
 	}
 
 	render() {
 		return this.state.post
-			? <FullPostView
+			? <ConnectedFullPostView
 					onClose={ this.props.onClose }
-					post={ this.state.post }
-					site={ this.state.site && this.state.site.toJS() }
-					feed={ this.state.feed && this.state.feed.toJS() } />
+					post={ this.state.post } />
 			: null;
 	}
 }
-
-export default connect(
-	state => { // eslint-disable-line no-unused-vars
-		return { };
-	},
-	dispatch => {
-		return bindActionCreators( {
-			setSection
-		}, dispatch );
-	}
-)( FullPostFluxContainer );
