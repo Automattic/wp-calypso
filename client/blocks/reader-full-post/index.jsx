@@ -4,7 +4,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import config from 'config';
@@ -360,12 +359,12 @@ const ConnectedFullPostView = connect(
 		const {
 			site_ID: siteId,
 			feed_ID: feedId,
-			isExternal: is_external
+			is_external: isExternal
 		} = ownProps.post;
 
 		const props = {};
 
-		if ( ! is_external && siteId ) {
+		if ( ! isExternal && siteId ) {
 			props.site = getSite( state, siteId )
 		}
 		if ( feedId ) {
@@ -373,11 +372,7 @@ const ConnectedFullPostView = connect(
 		}
 		return props;
 	},
-	dispatch => {
-		return bindActionCreators( {
-			setSection
-		}, dispatch );
-	}
+	{ setSection }
 )( FullPostView );
 
 /**
