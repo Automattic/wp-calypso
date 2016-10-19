@@ -8,8 +8,10 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	SHORTCODE_FETCH,
 	SHORTCODE_RECEIVE,
+	SHORTCODE_REQUEST,
+	SHORTCODE_REQUEST_FAILURE,
+	SHORTCODE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE
 } from 'state/action-types';
@@ -37,7 +39,7 @@ describe( 'reducer', () => {
 
 		it( 'should set shortcode of that site ID to true value if a request is initiated', () => {
 			const state = requesting( undefined, {
-				type: SHORTCODE_FETCH,
+				type: SHORTCODE_REQUEST,
 				siteId: 12345678,
 				shortcode: 'test_shortcode'
 			} );
@@ -55,7 +57,7 @@ describe( 'reducer', () => {
 					test_shortcode: true
 				}
 			} ), {
-				type: SHORTCODE_FETCH,
+				type: SHORTCODE_REQUEST,
 				siteId: 87654321,
 				shortcode: 'another_shortcode'
 			} );
@@ -79,7 +81,7 @@ describe( 'reducer', () => {
 					another_shortcode: true
 				}
 			} ), {
-				type: SHORTCODE_FETCH,
+				type: SHORTCODE_REQUEST,
 				siteId: 12345678,
 				shortcode: 'some_shortcode'
 			} );
@@ -101,9 +103,28 @@ describe( 'reducer', () => {
 					test_shortcode: true
 				}
 			} ), {
-				type: SHORTCODE_RECEIVE,
+				type: SHORTCODE_REQUEST_SUCCESS,
 				siteId: 12345678,
 				shortcode: 'test_shortcode'
+			} );
+
+			expect( state ).to.eql( {
+				12345678: {
+					test_shortcode: false
+				},
+			} );
+		} );
+
+		it( 'should set shortcode of that site ID to false if request finishes unsuccessfully', () => {
+			const state = requesting( deepFreeze( {
+				12345678: {
+					test_shortcode: true
+				}
+			} ), {
+				type: SHORTCODE_REQUEST_FAILURE,
+				siteId: 12345678,
+				shortcode: 'test_shortcode',
+				error: 'The requested shortcode does not exist.'
 			} );
 
 			expect( state ).to.eql( {

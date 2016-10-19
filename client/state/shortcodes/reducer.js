@@ -10,8 +10,10 @@ import { has } from 'lodash';
 import { shortcodesSchema } from './schema';
 import { createReducer } from 'state/utils';
 import {
-	SHORTCODE_FETCH,
-	SHORTCODE_RECEIVE
+	SHORTCODE_RECEIVE,
+	SHORTCODE_REQUEST,
+	SHORTCODE_REQUEST_FAILURE,
+	SHORTCODE_REQUEST_SUCCESS
 } from 'state/action-types';
 
 const requestingShortcode = ( state, siteId, shortcode, requesting ) => {
@@ -35,8 +37,9 @@ const requestingShortcode = ( state, siteId, shortcode, requesting ) => {
  * @return {Object}        Updated state
  */
 export const requesting = createReducer( {}, {
-	[ SHORTCODE_FETCH ]: ( state, { siteId, shortcode } ) => requestingShortcode( state, siteId, shortcode, true ),
-	[ SHORTCODE_RECEIVE ]: ( state, { siteId, shortcode } ) => requestingShortcode( state, siteId, shortcode, false ),
+	[ SHORTCODE_REQUEST ]: ( state, { siteId, shortcode } ) => requestingShortcode( state, siteId, shortcode, true ),
+	[ SHORTCODE_REQUEST_FAILURE ]: ( state, { siteId, shortcode } ) => requestingShortcode( state, siteId, shortcode, false ),
+	[ SHORTCODE_REQUEST_SUCCESS ]: ( state, { siteId, shortcode } ) => requestingShortcode( state, siteId, shortcode, false ),
 } );
 
 /**
