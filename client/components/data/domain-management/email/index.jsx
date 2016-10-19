@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import StoreConnection from 'components/data/store-connection';
 import DomainsStore from 'lib/domains/store';
 import CartStore from 'lib/cart/store';
-import observe from 'lib/mixins/data-observe';
+import QueryProducts from 'components/data/query-products-list';
 import { fetchDomains } from 'lib/upgrades/actions';
 import userFactory from 'lib/user';
 import {
@@ -23,6 +23,7 @@ import {
 	isLoaded
 } from 'state/google-apps-users/selectors';
 import { shouldFetchSitePlans } from 'lib/plans';
+import { getProductsList } from 'state/products-list/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 
@@ -62,8 +63,6 @@ const EmailData = React.createClass( {
 		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
 	},
 
-	mixins: [ observe( 'productsList' ) ],
-
 	componentWillMount() {
 		this.loadDomainsAndSitePlans();
 		this.props.fetchGoogleAppsUsers();
@@ -86,18 +85,21 @@ const EmailData = React.createClass( {
 
 	render() {
 		return (
-			<StoreConnection
-				domains={ this.props.domains }
-				googleAppsUsers={ this.props.googleAppsUsers }
-				googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
-				component={ this.props.component }
-				stores={ stores }
-				getStateFromStores={ getStateFromStores }
-				products={ this.props.productsList.get() }
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() }
-				sitePlans={ this.props.sitePlans }
-				context={ this.props.context } />
+			<div>
+				<QueryProducts />
+				<StoreConnection
+					domains={ this.props.domains }
+					googleAppsUsers={ this.props.googleAppsUsers }
+					googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
+					component={ this.props.component }
+					stores={ stores }
+					getStateFromStores={ getStateFromStores }
+					products={ this.props.products }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.sites.getSelectedSite() }
+					sitePlans={ this.props.sitePlans }
+					context={ this.props.context } />
+			</div>
 		);
 	}
 } );
@@ -111,6 +113,7 @@ export default connect(
 		return {
 			googleAppsUsers,
 			googleAppsUsersLoaded: isLoaded( state ),
+			products: getProductsList( state ),
 			sitePlans: getPlansBySite( state, sites.getSelectedSite() )
 		}
 	},
