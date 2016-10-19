@@ -138,12 +138,19 @@ const ThemesMagicSearchCard = React.createClass( {
 		return tokens.join( '' );
 	},
 
+	insertTextAtCursor( text ) {
+		const input = this.state.searchInput;
+		const position = this.state.cursorPosition;
+		return input.slice( 0, position ) + text + input.slice( position );
+	},
+
 	onSearchChange( input ) {
 		this.findTextForSuggestions( input );
 		this.setState( { searchInput: input } );
 	},
 
-	onBlur() {
+	onBlur( event ) {
+		event.preventDefault();
 		this.setState( { searchIsOpen: false } );
 	},
 
@@ -170,10 +177,19 @@ const ThemesMagicSearchCard = React.createClass( {
 		);
 	},
 
-		suggest: function( suggestion ) {
-		const updatedInput = this.insertSuggestion( suggestion );
+	updateInput: function( updatedInput ) {
 		this.setState( { searchInput: updatedInput } );
 		this.refs[ 'url-search' ].clear();
+	},
+
+	suggest: function( suggestion ) {
+		const updatedInput = this.insertSuggestion( suggestion );
+		this.updateInput( updatedInput );
+	},
+
+	insertTextInInput: function( text ) {
+		const updatedInput = this.insertTextAtCursor( text );
+		this.updateInput( updatedInput );
 	},
 
 	render() {
@@ -187,7 +203,11 @@ const ThemesMagicSearchCard = React.createClass( {
 		];
 
 		const taxonomies = Object.keys( this.state.taxonomies );
-		const welcomeSignProps = { taxonomies: taxonomies, topSearches: [] };
+		const welcomeSignProps = {
+			taxonomies: taxonomies,
+			topSearches: [],
+			suggestionsCallback: this.insertTextInInput
+		};
 
 		const searchField = (
 			<Search
@@ -217,7 +237,9 @@ const ThemesMagicSearchCard = React.createClass( {
 			'has-highlight': this.state.searchIsOpen
 		} );
 
-		return (
+		const welcome = ( <MagicSearchWelcome {...welcomeSignProps}/> );
+
+			return (
 			<div className={ magicSearchClass }>
 				<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
 					{ searchField }
@@ -234,8 +256,7 @@ const ThemesMagicSearchCard = React.createClass( {
 					terms={ this.state.taxonomies }
 					input={ this.state.editedSearchElement }
 					suggest={ this.suggest }
-					welcomeSign={ MagicSearchWelcome }
-					welcomeSignProps={ welcomeSignProps }
+					welcomeSign={ welcome }
 				/>
 			</div>
 		);

@@ -11,8 +11,6 @@ import {
 const Suggestions = React.createClass( {
 
 	propTypes: {
-		welcomeSign: React.PropTypes.element,
-		welcomeSignProps: React.PropTypes.object,
 		suggest: React.PropTypes.func,
 		terms: React.PropTypes.object,
 		input: React.PropTypes.string
@@ -24,8 +22,6 @@ const Suggestions = React.createClass( {
 			suggest: noop,
 			terms: {},
 			input: '',
-			suggestions: {},
-			filterTerm: ''
 		};
 	},
 
@@ -33,13 +29,9 @@ const Suggestions = React.createClass( {
 		return {
 			taxonomySuggestionsArray: [],
 			suggestionPosition: -1,
+			suggestions: {},
+			filterTerm: ''
 		};
-	},
-
-	componentDidMount: function() {
-	},
-
-	componentDidUpdate: function() {
 	},
 
 	componentWillMount: function() {
@@ -246,11 +238,7 @@ const Suggestions = React.createClass( {
 	render() {
 		let suggestion;
 		if ( this.props.input === '' ) {
-			suggestion =
-			<this.props.welcomeSign
-				{...this.props.welcomeSignProps}
-				suggestionsCallback={this.welcomeCallback}
-			/>;
+			suggestion = this.props.welcomeSign;
 		} else {
 			suggestion = this.createSuggestions( this.state.suggestions );
 		}
