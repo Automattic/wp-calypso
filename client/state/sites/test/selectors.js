@@ -1414,6 +1414,12 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#canJetpackSiteUpdateFiles()', () => {
+		let config;
+
+		useSandbox( ( sandbox ) => {
+			config = sandbox.stub().withArgs( 'jetpack_min_version' ).returns( '3.3' );
+		} );
+
 		it( 'should return `null` for a non-existing site', () => {
 			const state = {
 				sites: {
