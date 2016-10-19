@@ -1297,7 +1297,7 @@ describe( 'selectors', () => {
 					items: {}
 				}
 			};
-			let siteId;
+			const siteId = 123;
 
 			const canManage = canJetpackSiteManage( state, siteId );
 			expect( canManage ).to.equal( null );
@@ -1426,7 +1426,7 @@ describe( 'selectors', () => {
 					items: {}
 				}
 			};
-			let siteId;
+			const siteId = 123;
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
 			expect( canUpdateFiles ).to.equal( null );
@@ -1655,7 +1655,7 @@ describe( 'selectors', () => {
 					items: {}
 				}
 			};
-			let siteId;
+			const siteId = 123;
 
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
 			expect( hasMinimumVersion ).to.equal( null );
@@ -1848,7 +1848,7 @@ describe( 'selectors', () => {
 					items: {}
 				}
 			};
-			let siteId;
+			const siteId = 123;
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
 			expect( isSecondary ).to.equal( null );
@@ -1966,7 +1966,7 @@ describe( 'selectors', () => {
 					items: {}
 				}
 			};
-			let siteId;
+			const siteId = 123;
 
 			const modulesActive = verifyJetpackModulesActive( state, siteId, [ 'manage' ] );
 			expect( modulesActive ).to.equal( null );
@@ -2043,7 +2043,7 @@ describe( 'selectors', () => {
 					items: {}
 				}
 			};
-			let siteId;
+			const siteId = 123;
 
 			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
 			expect( managementUrl ).to.equal( null );
@@ -2124,7 +2124,7 @@ describe( 'selectors', () => {
 					items: {}
 				}
 			};
-			let siteId;
+			const siteId = 123;
 
 			const hasCustomDomain = hasJetpackSiteCustomDomain( state, siteId );
 			expect( hasCustomDomain ).to.equal( null );
@@ -2262,7 +2262,7 @@ describe( 'selectors', () => {
 					items: {}
 				}
 			};
-			let siteId;
+			const siteId = 123;
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
 			expect( isMainNetwork ).to.equal( null );
