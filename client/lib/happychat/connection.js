@@ -7,7 +7,7 @@ import config from 'config';
 import { v4 as uuid } from 'uuid';
 
 /*
- * Happychat client connectionf or Socket.IO
+ * Happychat client connection for Socket.IO
  */
 const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
