@@ -18,6 +18,10 @@ export const getHappychatConnectionStatus = createSelector(
 	state => state.happychat.status
 );
 
+export const isHappychatAvailable = createSelector(
+	state => state.happychat.isAvailable
+);
+
 /**
  * Gets timeline chat events from the happychat state
  * @param {Object} state - Global redux state
