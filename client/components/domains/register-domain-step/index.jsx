@@ -314,7 +314,7 @@ const RegisterDomainStep = React.createClass( {
 						return callback();
 					}
 
-					if ( ! domain.match( /^[A-Za-z][A-Za-z0-9\.-]{2,}\.[A-Za-z]{2,}$/ ) ) {
+					if ( ! domain.match( /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?\.[a-z]{2,63}$/i ) ) {
 						return callback();
 					}
 					const timestamp = Date.now();
