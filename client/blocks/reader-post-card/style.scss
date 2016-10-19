@@ -56,8 +56,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 				&::before {
 					content: '';
-					background: $gray-dark;
-					background: linear-gradient(to top, black 0px, transparent 60px);
+					background: linear-gradient( to bottom, rgba( 0, 0, 0, 0 ) 36%, rgba( 0, 0, 0, 0.37 ) 73%, rgba( 0, 0, 0, 1) 100% );
 					height: 225px;
 					opacity: .4;
 					position: absolute;
