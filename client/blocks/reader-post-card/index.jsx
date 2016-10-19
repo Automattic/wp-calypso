@@ -96,7 +96,7 @@ export default class RefreshPostCard extends React.Component {
 		const featuredImage = post.canonical_image;
 		const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
 		const title = truncate( post.title, {
-			length: isPhotoOnly ? 50 : 140,
+			length: isPhotoOnly ? 500 : 140,
 			separator: /,? +/
 		} );
 		const classes = classnames( 'reader-post-card', {

@@ -57,6 +57,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 				&::before {
 					content: '';
 					background: $gray-dark;
+					background: linear-gradient(to top, black 0px, transparent 60px);
 					height: 225px;
 					opacity: .4;
 					position: absolute;
@@ -79,6 +80,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			}
 
 			.reader-post-card__title {
+				color: $white;
 				font-family: $sans;
 				font-size: 10px;
 				position: relative;
@@ -86,6 +88,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 					left: 20px;
 				text-shadow: 0 1px rgba(0, 0, 0, 0.3);
 				z-index: 2;
+				white-space: nowrap;
+				width: calc( 100% - 44px );
+				text-overflow: ellipsis;
+				overflow: hidden;
 			}
 
 			.reader-post-card__title .reader-post-card__title-link {
