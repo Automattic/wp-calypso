@@ -183,11 +183,12 @@ const Suggestions = React.createClass( {
 	createTextWithHighlight: function( text, highlighed_text ) {
 		const re = new RegExp( '(' + highlighed_text + ')', 'g' );
 		const parts = text.split( re );
-		const token = parts.map( part => {
+		const token = parts.map( ( part, i ) => {
+			const key =  text + i;
 			if ( part === highlighed_text ) {
-				return <span className="suggestions__value-emphasis" >{ part }</span>;
+				return <span key={ key } className="suggestions__value-emphasis" >{ part }</span>;
 			}
-			return <span className="suggestions__value-normal" >{ part }</span>;
+			return <span key={ key }className="suggestions__value-normal" >{ part }</span>;
 		} );
 
 		return token;
@@ -204,7 +205,7 @@ const Suggestions = React.createClass( {
 
 			//Add header
 			rendered.push(
-				<div>
+				<div key={ key }>
 					<span className="suggestions__category">{ key }</span>
 					<span className="suggestions__category-counter">
 						{ ' ' + suggestions[ key ].length + ' of ' + this.props.terms[ key ].length }
@@ -212,12 +213,12 @@ const Suggestions = React.createClass( {
 				</div>
 			);
 			//Add values
-			rendered.concat( suggestions[ key ].map(
-				( value, i ) => {
+			rendered.push( suggestions[ key ].map( ( value, i ) =>
+				{
 					const hashighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
 					const className = 'suggestions__value' + ( hashighlight ? ' has-highlight' : '' );
-					return rendered.push(
-						<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver }>
+					return (
+						<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
 							<span className="suggestions__value-cathegory">{ key + ':' }</span>
 							{ this.createTextWithHighlight( value, this.state.filterTerm ) }
 						</span>
