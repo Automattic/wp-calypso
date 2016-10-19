@@ -4,16 +4,20 @@
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-list' );
 
+import { saveAs } from 'browser-filesaver';
+import userFactory from 'lib/user';
+
 /**
  * Internal dependencies
  */
-var	FormButton = require( 'components/forms/form-button' ),
+const	FormButton = require( 'components/forms/form-button' ),
 	analytics = require( 'lib/analytics' ),
 	FormButtonBar = require( 'components/forms/form-buttons-bar' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	config = require( 'config' ),
-	Notice = require( 'components/notice' );
+	Notice = require( 'components/notice' ),
+	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
 
@@ -61,8 +65,18 @@ module.exports = React.createClass( {
 		return true;
 	},
 
-	onPrint: function( event ) {
-		event.preventDefault();
+	saveCodesToFile: function() {
+		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Save Backup Codes Button' );
+		const user = userFactory();
+		const username = user.get().username;
+
+		const backupCodes = this.props.backupCodes.join( '\n' );
+		const toSave = new Blob( [ backupCodes ], { type: 'text/plain;charset=utf-8' } );
+		saveAs( toSave, `${username}-backup-codes.txt` );
+	},
+
+	onPrint: function() {
+		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
 
 		if ( config.isEnabled( 'desktop' ) ) {
 			require( 'lib/desktop' ).print( this.translate( 'Backup verification codes' ), this.getBackupCodeHTML( this.props.backupCodes ) );
@@ -136,8 +150,8 @@ module.exports = React.createClass( {
 		}.bind( this ), 100 );
 	},
 
-	onNextStep: function( event ) {
-		event.preventDefault();
+	onNextStep: function() {
+		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Next Step Button' );
 		this.props.onNextStep();
 	},
 
@@ -206,22 +220,23 @@ module.exports = React.createClass( {
 
 					<FormButton
 						className="security-2fa-backup-codes-list__next"
-						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Backup Codes Next Step Button' );
-							this.onNextStep( event );
-						}.bind( this ) }
+						onClick={ this.onNextStep }
 						disabled={ this.getSubmitDisabled() }
 					>
 						{ this.translate( 'All Finished!', { context: 'The user presses the All Finished button at the end of Two-Step setup.' } ) }
 					</FormButton>
 
 					<FormButton
+						isPrimary={ false }
+						onClick={ this.saveCodesToFile }
+					>
+						<Gridicon icon="cloud-download" />
+					</FormButton>
+
+					<FormButton
 						className="security-2fa-backup-codes-list__print"
 						isPrimary={ false }
-						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Button' );
-							this.onPrint( event );
-						}.bind( this ) }
+						onClick={ this.onPrint }
 					>
 						{ this.translate( 'Print', { context: 'The user presses the print button during Two-Step setup to print their backup codes.' } ) }
 					</FormButton>
