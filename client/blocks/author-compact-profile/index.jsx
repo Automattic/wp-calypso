@@ -56,7 +56,7 @@ const AuthorCompactProfile = React.createClass( {
 				{ hasAuthorName && ! hasMatchingAuthorAndSiteNames &&
 					<ReaderAuthorLink author={ author } siteUrl={ streamUrl } post={ post }>{ author.name }</ReaderAuthorLink> }
 				{ siteName &&
-					<ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId } post={ post } >
+					<ReaderSiteStreamLink className="author-compact-profile__site-link" feedId={ feedId } siteId={ siteId } post={ post }>
 						{ siteName }
 					</ReaderSiteStreamLink> }
 
