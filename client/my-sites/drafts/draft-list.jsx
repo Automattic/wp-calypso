@@ -7,33 +7,35 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import AuthorSelector from './author-selector';
+import DraftsAuthorFilter from './author-filter';
 import Count from 'components/count';
 import Draft from 'my-sites/draft';
 import EmptyContent from 'components/empty-content';
 import PostListFetcher from 'components/post-list-fetcher';
 import QueryPostCounts from 'components/data/query-post-counts';
 import {
-	getNormalizedPostCounts,
-	getNormalizedMyPostCounts,
+	getMyPostCount,
+	getAllPostCount,
 	isRequestingPostCounts
 } from 'state/posts/counts/selectors';
 import actions from 'lib/posts/actions';
 import { hasTouch } from 'lib/touch-detect';
 import infiniteScroll from 'lib/mixins/infinite-scroll';
 import observe from 'lib/mixins/data-observe';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUserId } from 'state/current-user/selectors';
 
 class DraftList extends Component {
 
 	static propTypes = {
 		search: PropTypes.string,
 		sites: PropTypes.object,
-		siteID: PropTypes.any,
+		siteId: PropTypes.any,
 		trackScrollPage: PropTypes.func,
 		onTitleClick: PropTypes.func,
 		showAllActionsMenu: PropTypes.bool,
-		selectedId: PropTypes.number
+		selectedId: PropTypes.number,
+		myCount: React.PropTypes.number,
+		allCount: React.PropTypes.number
 	};
 
 	static defaultProps = {
@@ -53,22 +55,22 @@ class DraftList extends Component {
 	}
 
 	render() {
-		const { siteID, myCounts, everyoneCounts, isRequestingCounts, selectedId, user } = this.props;
+		const { siteId, myCount, allCount, isRequestingCounts, selectedId, userId } = this.props;
 		const { authorFilter } = this.state;
-		const author = authorFilter === 'me' ? user.ID : null;
-		const count = authorFilter === 'me' ? myCounts.draft : everyoneCounts.draft;
-		const showCount = siteID && ( ! isRequestingCounts || count );
+		const author = authorFilter === 'me' ? userId : null;
+		const count = authorFilter === 'me' ? myCount : allCount;
+		const showCount = siteId && ( ! isRequestingCounts || count );
 
 		return (
 			<div>
-				{ siteID && <QueryPostCounts siteId={ siteID } type="post" /> }
+				{ siteId && <QueryPostCounts siteId={ siteId } type="post" /> }
 				<div className="drafts__header">
-					<AuthorSelector selectedScope={ authorFilter }
+					<DraftsAuthorFilter selectedScope={ authorFilter }
 						onChange={ this.setAuthorFilter } />
 					{ showCount && <Count count={ count } /> }
 				</div>
 				<PostListFetcher
-					siteID={ this.props.siteID }
+					siteID={ this.props.siteId }
 					status="draft,pending"
 					author={ author }
 					withImages
@@ -100,7 +102,7 @@ const Drafts = React.createClass( {
 		posts: React.PropTypes.array.isRequired,
 		postImages: React.PropTypes.object.isRequired,
 		search: React.PropTypes.string,
-		siteID: React.PropTypes.any,
+		siteId: React.PropTypes.any,
 		showAllActionsMenu: React.PropTypes.bool,
 		selectedId: React.PropTypes.number
 	},
@@ -182,11 +184,11 @@ const Drafts = React.createClass( {
 	}
 } );
 
-module.exports = connect( ( state, { siteID } ) => {
+export default connect( ( state, { siteId } ) => {
 	return {
-		isRequestingCounts: isRequestingPostCounts( state, siteID, 'post' ),
-		myCounts: getNormalizedMyPostCounts( state, siteID, 'post' ),
-		everyoneCounts: getNormalizedPostCounts( state, siteID, 'post' ),
-		user: getCurrentUser( state )
+		isRequestingCounts: isRequestingPostCounts( state, siteId, 'post' ),
+		myCount: getMyPostCount( state, siteId, 'post', 'draft' ),
+		allCount: getAllPostCount( state, siteId, 'post', 'draft' ),
+		userId: getCurrentUserId( state )
 	};
 } )( DraftList );

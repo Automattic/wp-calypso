@@ -13,7 +13,7 @@ import NavSegmented from 'components/section-nav/segmented';
 import NavItem from 'components/section-nav/item';
 import { getCurrentUser } from 'state/current-user/selectors';
 
-function AuthorSelector( { onChange, selectedScope, translate, user } ) {
+function DraftsAuthorFilter( { onChange, selectedScope, translate, user } ) {
 	const scopes = [
 		{
 			id: 'me',
@@ -28,7 +28,7 @@ function AuthorSelector( { onChange, selectedScope, translate, user } ) {
 	];
 
 	return (
-		<div className="drafts__author-selector">
+		<div className="drafts__author-filter">
 			<NavSegmented
 				label={ translate( 'Author', { context: 'Filter group label for segmented' } ) }
 			>
@@ -55,4 +55,4 @@ export default connect( state => {
 	return {
 		user: getCurrentUser( state )
 	};
-} )( localize( AuthorSelector ) );
+} )( localize( DraftsAuthorFilter ) );
