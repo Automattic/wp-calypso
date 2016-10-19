@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import { getNormalizedPost } from 'state/posts/selectors';
 
-export function PostStatus( { translate, post, showAll, showIcon } ) {
+export function PostStatus( { translate, post, showAll, showIcon = true } ) {
 	if ( ! post ) {
 		return null;
 	}
