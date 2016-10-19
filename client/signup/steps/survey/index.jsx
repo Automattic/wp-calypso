@@ -20,7 +20,7 @@ import signupUtils from 'signup/utils';
 
 import { setSurvey } from 'state/signup/steps/survey/actions';
 
-const SurveyStepV2 = React.createClass( {
+const SurveyStep = React.createClass( {
 	propTypes: {
 		surveySiteType: PropTypes.string,
 		setSurvey: PropTypes.func.isRequired,
@@ -169,4 +169,4 @@ const SurveyStepV2 = React.createClass( {
 export default connect(
 	null,
 	{ setSurvey }
-)( SurveyStepV2 );
+)( SurveyStep );
