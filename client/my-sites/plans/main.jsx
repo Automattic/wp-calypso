@@ -2,31 +2,33 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 import React from 'react';
 
 /**
  * Internal dependencies
  */
-import { getPlansBySite } from 'state/sites/plans/selectors';
+import DocumentHead from 'components/data/document-head';
+import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import { getPlans } from 'state/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import Main from 'components/main';
-import observe from 'lib/mixins/data-observe';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import UpgradesNavigation from 'my-sites/upgrades/navigation';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 
 const Plans = React.createClass( {
-	mixins: [ observe( 'sites' ) ],
-
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		context: React.PropTypes.object.isRequired,
 		intervalType: React.PropTypes.string,
 		plans: React.PropTypes.array.isRequired,
-		sites: React.PropTypes.object.isRequired,
+		selectedSite: React.PropTypes.object.isRequired,
+		selectedSiteId: React.PropTypes.number.isRequired,
 		sitePlans: React.PropTypes.object.isRequired
 	},
 
@@ -36,12 +38,21 @@ const Plans = React.createClass( {
 		};
 	},
 
+	componentDidMount() {
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+	},
+
 	render() {
-		const selectedSite = this.props.sites.getSelectedSite(),
-			siteId = this.props.siteId;
+		const { selectedSite, selectedSiteId, translate } = this.props;
 
 		return (
 			<div>
+				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
+				<PageViewTracker path="/plans/:site" title="Plans" />
+				<TrackComponentView eventName="calypso_plans_view" />
 				<Main wideLayout={ true } >
 					<SidebarNavigation />
 
@@ -53,7 +64,7 @@ const Plans = React.createClass( {
 							selectedSite={ selectedSite } />
 
 						<QueryPlans />
-						<QuerySitePlans siteId={ siteId } />
+						<QuerySitePlans siteId={ selectedSiteId } />
 
 						<PlansFeaturesMain
 							site={ selectedSite }
@@ -69,11 +80,13 @@ const Plans = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => {
+	( state ) => {
+		const selectedSiteId = getSelectedSiteId( state );
 		return {
 			plans: getPlans( state ),
-			sitePlans: getPlansBySite( state, props.sites.getSelectedSite() ),
-			siteId: getSelectedSiteId( state )
+			sitePlans: getPlansBySiteId( state, selectedSiteId ),
+			selectedSite: getSelectedSite( state ),
+			selectedSiteId: selectedSiteId
 		};
 	}
-)( Plans );
+)( localize( Plans ) );

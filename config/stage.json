@@ -40,7 +40,6 @@
 		"manage/edit-user": true,
 		"manage/export": true,
 		"manage/jetpack": true,
-		"manage/jetpack-plans": true,
 		"manage/menus": true,
 		"manage/menus-jetpack": true,
 		"manage/option_sync_non_public_post_stati": false,
