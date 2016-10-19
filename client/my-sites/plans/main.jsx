@@ -10,13 +10,10 @@ import React from 'react';
  */
 import analytics from 'lib/analytics';
 import DocumentHead from 'components/data/document-head';
-import EmptyContentComponent from 'components/empty-content';
 import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import { getPlans } from 'state/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isEnabled } from 'config';
 import Main from 'components/main';
-import MainComponent from 'components/main';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import route from 'lib/route';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
@@ -41,24 +38,14 @@ const Plans = React.createClass( {
 		};
 	},
 
-	shouldDisplayJetpackPlansDisabled() {
-		const { selectedSite } = this.props;
-
-		return selectedSite && selectedSite.jetpack && ! isEnabled( 'manage/jetpack-plans' );
-	},
-
 	componentDidMount() {
 		const { context, selectedSite } = this.props,
 			analyticsPageTitle = 'Plans',
 			basePath = route.sectionify( context.path ),
 			analyticsBasePath = ( selectedSite ) ? basePath + '/:site' : basePath;
 
-		if ( this.shouldDisplayJetpackPlansDisabled() ) {
-			analytics.pageView.record( basePath + '/jetpack/:site', analyticsPageTitle + ' > Jetpack Plans Not Available' );
-		} else {
-			analytics.tracks.recordEvent( 'calypso_plans_view' );
-			analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-		}
+		analytics.tracks.recordEvent( 'calypso_plans_view' );
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
 
 		// Scroll to the top
 		if ( typeof window !== 'undefined' ) {
@@ -66,30 +53,12 @@ const Plans = React.createClass( {
 		}
 	},
 
-	renderJetpackPlansDisabled() {
-		return (
-			<MainComponent>
-				<EmptyContentComponent
-					title={ this.props.translate( 'Plans are not available for Jetpack sites yet.' ) }
-					line={ this.props.translate( 'Looking for spam protection?' ) }
-					action={ this.props.translate( 'Try Akismet' ) }
-					actionURL={ '//akismet.com/plans/?ref=calypso-plans' }
-					illustration={ '/calypso/images/drake/drake-nomenus.svg' }
-				/>
-			</MainComponent>
-		);
-	},
-
 	render() {
-		const { selectedSite, selectedSiteId } = this.props;
-
-		if ( this.shouldDisplayJetpackPlansDisabled() ) {
-			this.renderJetpackPlansDisabled();
-		}
+		const { selectedSite, selectedSiteId, translate } = this.props;
 
 		return (
 			<div>
-				<DocumentHead title={ this.props.translate( 'Plans', { textOnly: true } ) } />
+				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
 				<Main wideLayout={ true } >
 					<SidebarNavigation />
 
