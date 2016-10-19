@@ -11,7 +11,7 @@ import React from 'react';
 import analytics from 'lib/analytics';
 import DocumentHead from 'components/data/document-head';
 import EmptyContentComponent from 'components/empty-content';
-import { getPlansBySite } from 'state/sites/plans/selectors';
+import { getPlansBySiteId } from 'state/sites/plans/selectors';
 import { getPlans } from 'state/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { isEnabled } from 'config';
@@ -117,10 +117,13 @@ const Plans = React.createClass( {
 } );
 
 export default connect(
-	( state ) => ( {
-		plans: getPlans( state ),
-		sitePlans: getPlansBySite( state, getSelectedSiteId( state ) ),
-		selectedSite: getSelectedSite( state ),
-		selectedSiteId: getSelectedSiteId( state )
-	} )
+	( state ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+		return {
+			plans: getPlans( state ),
+			sitePlans: getPlansBySiteId( state, selectedSiteId ),
+			selectedSite: getSelectedSite( state ),
+			selectedSiteId: selectedSiteId
+		};
+	}
 )( Plans );
