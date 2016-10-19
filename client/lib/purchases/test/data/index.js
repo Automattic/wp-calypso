@@ -9,6 +9,16 @@ const DOMAIN_PURCHASE = {
 	isCancelable: true
 };
 
+const DOMAIN_PURCHASE_PENDING_TRANSFER = {
+	expiryStatus: 'active',
+	id: 10001,
+	isDomainRegistration: true,
+	meta: 'foo.com',
+	productName: 'Domain Registration',
+	productSlug: 'domain_reg',
+	pendingTransfer: true
+};
+
 const DOMAIN_PURCHASE_EXPIRED = Object.assign( {}, DOMAIN_PURCHASE, {
 	expiryStatus: 'expired',
 	id: 10002,
@@ -65,6 +75,7 @@ const PLAN_PURCHASE = {
 
 export default {
 	DOMAIN_PURCHASE,
+	DOMAIN_PURCHASE_PENDING_TRANSFER,
 	DOMAIN_PURCHASE_EXPIRED,
 	DOMAIN_PURCHASE_INCLUDED_IN_PLAN,
 	DOMAIN_MAPPING_PURCHASE,
@@ -72,4 +83,4 @@ export default {
 	PLAN_PURCHASE,
 	SITE_REDIRECT_PURCHASE,
 	SITE_REDIRECT_PURCHASE_EXPIRED
-}
+};
