@@ -23,7 +23,8 @@ class Connection extends EventEmitter {
 					.on( 'init', ( ... args ) => debug( 'initialized', ... args ) )
 					.on( 'identify', () => socket.emit( 'token', token ) )
 					.on( 'token', handler => handler( { signer_user_id: user_id, jwt: token } ) )
-					.on( 'message', message => this.emit( 'message', message ) );
+					.on( 'message', message => this.emit( 'message', message ) )
+					.on( 'accept', accept => this.emit( 'accept', accept ) );
 			} );
 		} else {
 			debug( 'socket already initiaized' );
