@@ -20,7 +20,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import sections from 'sections';
+import wpSections from 'wordpress-com';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
@@ -34,8 +34,11 @@ import {
 	targetForSlug,
 } from './positioning';
 
+// FIXME(mcsf): this is temporarily requiring 'wordpress-com', as requiring
+// 'sections' directly  makes webpack create a lot of new dependencies on
+// chunks 'theme' and 'themes'
 const pathToSection = path => {
-	const match = find( sections.get(), section =>
+	const match = find( wpSections, section =>
 			section.paths.some( sectionPath =>
 				startsWith( path, sectionPath ) ) );
 
