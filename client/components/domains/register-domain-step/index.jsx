@@ -608,6 +608,7 @@ const RegisterDomainStep = React.createClass( {
 				} );
 				break;
 
+			case 'mappable_but_invalid_tld':
 			case 'invalid_query':
 				message = this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain }
