@@ -47,6 +47,7 @@ import {
 	isJetpackBusiness
 } from 'lib/products-values';
 import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
+import versionCompare from 'lib/version-compare';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -63,6 +64,10 @@ const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
+}
+
+function getJetpackPluginUrl( slug ) {
+	return `/plugins/jetpack/${ slug }`;
 }
 
 function stateForSite( site ) {
@@ -97,6 +102,12 @@ function isValidCode( serviceName = '', content = '' ) {
 	content = getMetaTag( serviceName, content );
 
 	return includes( content, serviceIds[ serviceName ] );
+}
+
+function jetpackVersionUnsupported( site ) {
+	// TODO: replace with actual supported Jetpack version when that is known
+	return get( site, 'jetpack', false ) &&
+		versionCompare( get( site, 'options.jetpack_version', '0' ), '4.3.1', '<' );
 }
 
 export const SeoForm = React.createClass( {
@@ -368,12 +379,14 @@ export const SeoForm = React.createClass( {
 		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
-		const isDisabled = isSitePrivate || isSubmittingForm || isFetchingSettings;
+		const isJetpackUnsupported = jetpackVersionUnsupported( this.props.site );
+		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
 		const siteUrl = `https://${ slug }/`;
 		const sitemapUrl = `${ siteUrl }sitemap.xml`;
 		const generalTabUrl = getGeneralTabUrl( slug );
+		const jetpackUpdateUrl = getJetpackPluginUrl( slug );
 		const placeholderTagContent = '1234';
 
 		// The API returns 'false' for an empty array value, so we force it to an empty string if needed
@@ -419,6 +432,20 @@ export const SeoForm = React.createClass( {
 					>
 						<NoticeAction href={ generalTabUrl }>
 							{ this.translate( 'View Settings' ) }
+						</NoticeAction>
+					</Notice>
+				}
+
+				{ isJetpackUnsupported &&
+					<Notice
+						status="is-warning"
+						showDismiss={ false }
+						text={ this.translate(
+							'Advanced SEO requires a newer version of Jetpack.'
+						) }
+					>
+						<NoticeAction href={ jetpackUpdateUrl }>
+							{ this.translate( 'Update Now' ) }
 						</NoticeAction>
 					</Notice>
 				}
