@@ -117,10 +117,7 @@ const Search = React.createClass( {
 			this.setState( { isOpen: nextProps.isOpen } );
 		}
 
-		if ( nextProps.initialValue !== this.props.initialValue &&
-				( this.state.keyword === this.props.initialValue || this.state.keyword === '' ) ) {
 			this.setState( { keyword: nextProps.initialValue || '' } );
-		}
 	},
 
 	componentDidUpdate: function( prevProps, prevState ) {
@@ -312,6 +309,7 @@ const Search = React.createClass( {
 				<Spinner />
 				<div
 					className="search__icon-navigation"
+					id="searchOpen"
 					ref="openIcon"
 					onTouchTap={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
@@ -323,7 +321,7 @@ const Search = React.createClass( {
 					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
 					<Gridicon icon="search" className="search__open-icon" />
 				</div>
-				<div className={ fadeDivClass }>
+				<div className={ fadeDivClass } id="searchInput" >
 					<input
 						type="search"
 						id={ 'search-component-' + this.state.instanceId }
@@ -347,6 +345,7 @@ const Search = React.createClass( {
 					{ this.props.overlayStyling && this.renderStylingDiv() }
 				</div>
 				{ this.closeButton() }
+				{ this.children() }
 			</div>
 		);
 	},
@@ -364,6 +363,7 @@ const Search = React.createClass( {
 			return (
 				<div
 					className="search__icon-navigation"
+					id="searchClose"
 					onTouchTap={ this.closeSearch }
 					tabIndex="0"
 					onKeyDown={ this.closeListener }
@@ -375,6 +375,14 @@ const Search = React.createClass( {
 		}
 
 		return null;
+	},
+
+	children: function() {
+		return (
+			<div className="search__children" id="searchChildren" >
+				{ this.props.children }
+			</div>
+		)
 	}
 } );
 

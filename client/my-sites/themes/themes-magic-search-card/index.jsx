@@ -46,7 +46,8 @@ const ThemesMagicSearchCard = React.createClass( {
 	getInitialState() {
 		return {
 			isMobile: isMobile(),
-			searchIsOpen: false
+			searchIsOpen: false,
+			textInInput: "",
 		};
 	},
 
@@ -89,6 +90,11 @@ const ThemesMagicSearchCard = React.createClass( {
 		);
 	},
 
+	onSearch( input ) {
+		this.setState( { textInInput: this.state.textInInput + input })
+		this.props.onSearch( this.state.textInInput );
+	},
+
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
@@ -101,19 +107,25 @@ const ThemesMagicSearchCard = React.createClass( {
 
 		const searchField = (
 			<Search
-				onSearch={ this.props.onSearch }
-				initialValue={ this.props.search }
+				onSearch={ this.onSearch }
+				initialValue={ "" }
 				ref="url-search"
 				placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
 				analyticsGroup="Themes"
-				delaySearch={ true }
+				delaySearch={ false }
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
 				overlayStyling={ this.searchTokens }
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
 				hideClose={ isMobile() }
-			/>
+			>
+				{
+					<div>
+						{ this.state.textInInput }
+					</div>
+				}
+			</Search>
 		);
 
 		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
