@@ -32,12 +32,12 @@ const ReaderAuthorLink = ( { author, post, siteUrl, children, className } ) => {
 		return null;
 	}
 
-	// If we have neither author.URL or siteUrl, just return children
-	if ( ! siteUrl ) {
-		return children;
-	}
-
 	const classes = classnames( 'reader-author-link', className );
+
+	// If we have neither author.URL or siteUrl, just return children in a wrapper
+	if ( ! siteUrl ) {
+		return ( <span className={ classes }>{children}</span> );
+	}
 
 	return (
 		<a className={ classes } href={ siteUrl } onClick={ recordAuthorClick }>
