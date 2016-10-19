@@ -47,6 +47,7 @@ Then configure the rules you want to use under the rules section.
 - [`i18n-named-placeholders`](docs/rules/i18n-named-placeholders.md): Disallow multiple unnamed placeholders
 - [`i18n-no-collapsible-whitespace`](docs/rules/i18n-no-collapsible-whitespace.md): Disallow collapsible whitespace in translatable strings
 - [`i18n-no-placeholders-only`](docs/rules/i18n-no-placeholders-only.md): Disallow strings which include only placeholders
+- [`i18n-no-this-translate`](docs/rules/i18n-no-this-translate.md): Disallow this.translate()
 - [`i18n-no-variables`](docs/rules/i18n-no-variables.md): Disallow variables as translate strings
 - [`jsx-classname-namespace`](docs/rules/jsx-classname-namespace.md): Ensure JSX className adheres to CSS namespace guidelines
 - [`jsx-gridicon-size`](docs/rules/jsx-gridicon-size.md): Enforce recommended Gridicon size attributes
