@@ -113,7 +113,7 @@ export default class RefreshPostCard extends React.Component {
 						<h1 className="reader-post-card__title">
 							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
 						</h1>
-						<div className="reader-post-card__excerpt">{ post.short_excerpt }</div>
+						{ ! isPhotoOnly && <div className="reader-post-card__excerpt">{ post.short_excerpt }</div> }
 						{ post &&
 							<ReaderPostActions
 								post={ post }
