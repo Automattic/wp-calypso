@@ -744,19 +744,19 @@ export function isJetpackSiteMainNetworkSite( state, siteId ) {
 		return true;
 	}
 
-	if ( site.is_multisite ) {
-		const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
-		const mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
-
-		if ( ! unmappedUrl || ! mainNetworkSite ) {
-			return false;
-		}
-
-		// Compare unmapped_url with the main_network_site to see if is the main network site.
-		return withoutHttp( unmappedUrl ) === withoutHttp( mainNetworkSite );
+	if ( ! site.is_multisite ) {
+		return false;
 	}
 
-	return false;
+	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
+	const mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
+
+	if ( ! unmappedUrl || ! mainNetworkSite ) {
+		return false;
+	}
+
+	// Compare unmapped_url with the main_network_site to see if is the main network site.
+	return withoutHttp( unmappedUrl ) === withoutHttp( mainNetworkSite );
 }
 
 /**
