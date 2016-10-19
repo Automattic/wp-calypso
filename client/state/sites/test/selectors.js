@@ -7,7 +7,6 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import config from 'config';
-import i18n from 'i18n-calypso';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	getSite,
@@ -2191,7 +2190,7 @@ describe( 'selectors', () => {
 			};
 
 			const reason = getJetpackSiteFileModDisableReasons( state, siteId );
-			expect( reason ).to.deep.equal( [ i18n.translate( 'The file permissions on this host prevent editing files.' ) ] );
+			expect( reason ).to.deep.equal( [ 'The file permissions on this host prevent editing files.' ] );
 		} );
 
 		it( 'it should have the correct reason for the clue `disallow_file_mods`', () => {
@@ -2211,7 +2210,7 @@ describe( 'selectors', () => {
 			};
 
 			const reason = getJetpackSiteFileModDisableReasons( state, siteId );
-			expect( reason ).to.deep.equal( [ i18n.translate( 'File modifications are explicitly disabled by a site administrator.' ) ] );
+			expect( reason ).to.deep.equal( [ 'File modifications are explicitly disabled by a site administrator.' ] );
 		} );
 
 		it( 'it should have the correct reason for the clue `automatic_updater_disabled`', () => {
@@ -2231,7 +2230,7 @@ describe( 'selectors', () => {
 			};
 
 			const reason = getJetpackSiteFileModDisableReasons( state, siteId, 'autoupdateCore' );
-			expect( reason ).to.deep.equal( [ i18n.translate( 'Any autoupdates are explicitly disabled by a site administrator.' ) ] );
+			expect( reason ).to.deep.equal( [ 'Any autoupdates are explicitly disabled by a site administrator.' ] );
 		} );
 
 		it( 'it should have the correct reason for the clue `wp_auto_update_core_disabled`', () => {
@@ -2251,7 +2250,7 @@ describe( 'selectors', () => {
 			};
 
 			const reason = getJetpackSiteFileModDisableReasons( state, siteId, 'autoupdateCore' );
-			expect( reason ).to.deep.equal( [ i18n.translate( 'Core autoupdates are explicitly disabled by a site administrator.' ) ] );
+			expect( reason ).to.deep.equal( [ 'Core autoupdates are explicitly disabled by a site administrator.' ] );
 		} );
 	} );
 
