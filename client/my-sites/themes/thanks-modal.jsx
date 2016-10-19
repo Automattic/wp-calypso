@@ -44,10 +44,6 @@ const ThanksModal = React.createClass( {
 		page( this.props.site.URL );
 	},
 
-	visitSiteDisabled() {
-		return this.props.hasActivated ? false : true;
-	},
-
 	goBack() {
 		this.trackClick( 'go back' );
 		this.onCloseModal();
@@ -182,7 +178,7 @@ const ThanksModal = React.createClass( {
 	render() {
 		const buttons = [
 			{ action: 'back', label: this.translate( 'Back to themes' ), onClick: this.goBack },
-			{ action: 'visitSite', label: this.translate( 'Visit site' ), isPrimary: true, disabled: this.visitSiteDisabled(), onClick: this.visitSite },
+			{ action: 'visitSite', label: this.translate( 'Visit site' ), isPrimary: true, disabled: ! this.props.hasActivated, onClick: this.visitSite },
 		];
 
 		return (
