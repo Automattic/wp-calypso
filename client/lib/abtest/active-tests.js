@@ -71,15 +71,6 @@ module.exports = {
 		defaultVariation: 'hideThemeUpload',
 		allowExistingUsers: false,
 	},
-	signupSurveyStep: {
-		datestamp: '20161020',
-		variations: {
-			surveyStepV1: 50,
-			surveyStepV2: 50,
-		},
-		defaultVariation: 'surveyStepV1',
-		allowAnyLocale: true,
-	},
 	readerSearchSuggestions: {
 		datestamp: '20160804',
 		variations: {
