@@ -367,6 +367,10 @@ a.sidebar__button {
 
 	}
 
+	&.sidebar__footer-help {
+		margin-left: auto;
+	}
+
 	&.sidebar__footer-chat.has-unread {
 		color: $gray-dark;
 		position: relative;
