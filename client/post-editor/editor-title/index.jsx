@@ -33,9 +33,9 @@ class EditorTitle extends Component {
 		editPost: PropTypes.func,
 		isNew: PropTypes.bool,
 		onChange: PropTypes.func,
-		ownProps: PropTypes.object,
 		post: PropTypes.object,
 		site: PropTypes.object,
+		tabIndex: PropTypes.number,
 		translate: PropTypes.func
 	};
 
@@ -88,7 +88,7 @@ class EditorTitle extends Component {
 	};
 
 	render() {
-		const { ownProps, post, site, isNew, translate } = this.props;
+		const { post, site, isNew, tabIndex, translate } = this.props;
 		const isPermalinkEditable = SiteUtils.isPermalinkEditable( site );
 
 		const classes = classNames( 'editor-title', {
@@ -104,7 +104,7 @@ class EditorTitle extends Component {
 				}
 				<TrackInputChanges onNewValue={ this.recordChangeStats }>
 					<TextareaAutosize
-						{ ...ownProps }
+						tabIndex={ tabIndex }
 						className="editor-title__input"
 						placeholder={ translate( 'Title' ) }
 						onChange={ this.onChange }
@@ -122,7 +122,7 @@ class EditorTitle extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
+	state => {
 		const site = getSelectedSite( state );
 		const editedPostId = getEditorPostId( state );
 		const post = getEditedPost( state, site.ID, editedPostId );
@@ -131,8 +131,7 @@ export default connect(
 		return {
 			isNew,
 			post,
-			site,
-			ownProps
+			site
 		};
 	},
 	{ editPost }
