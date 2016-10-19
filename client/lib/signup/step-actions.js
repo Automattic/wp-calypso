@@ -18,6 +18,7 @@ import { getSavedVariations } from 'lib/abtest';
 import SignupCart from 'lib/signup/cart';
 import { startFreeTrial } from 'lib/upgrades/actions';
 import { PLAN_PREMIUM } from 'lib/plans/constants';
+import analytics from 'lib/analytics';
 
 import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
 
@@ -184,6 +185,12 @@ module.exports = {
 		), ( error, response ) => {
 			var errors = error && error.error ? [ { error: error.error, message: error.message } ] : undefined,
 				bearerToken = error && error.error ? {} : { bearer_token: response.bearer_token };
+
+			if ( ! errors ) {
+				// Fire after a new user registers.
+				analytics.tracks.recordEvent( 'calypso_user_registration_complete' );
+				analytics.ga.recordEvent( 'Signup', 'calypso_user_registration_complete' );
+			}
 
 			callback( errors, assign( {}, { username: userData.username }, bearerToken ) );
 		} );
