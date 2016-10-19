@@ -23,6 +23,12 @@ RUN        true \
            && apt-get -y install \
                  git \
                  make \
+           && apt-get autoremove -y \
+           && rm -rf /tmp/* \
+           && rm -rf /var/tmp/* \
+           && rm -rf /usr/share/{doc,doc-base,info,locale,man}/* \
+           && rm -rf /var/lib/apt/lists/* \
+           && rm -rf /var/lib/dpkg/info/* \
            && true
 
 # Build a "dependencies" layer
@@ -35,7 +41,10 @@ RUN        true \
 # Sometimes "npm install" fails the first time when the
 # cache is empty, so we retry once if it failed
 COPY       ./package.json ./npm-shrinkwrap.json /calypso/
-RUN        npm install --production || npm install --production
+RUN        true \
+           && npm install --production || npm install --production \
+           && rm -rf /root/.npm \
+           && true
 
 # Build the final layer
 #
@@ -48,16 +57,6 @@ RUN        true \
            && CALYPSO_ENV=stage make build-stage \
            && CALYPSO_ENV=production make build-production \
            && chown -R nobody /calypso \
-           # Clean up the dependencies we no longer need
-           && apt-get remove -y \
-                 git \
-           && apt-get autoremove -y \
-           && rm -rf /var/lib/apt/lists/* \
-           && rm -rf /var/lib/dpkg/info/* \
-           && rm -rf /tmp/* \
-           && rm -rf /var/tmp/* \
-           && rm -rf /usr/share/{doc,doc-base,info,locale,man}/* \
-           && rm -rf /root/.npm \
            && true
 
 USER       nobody
