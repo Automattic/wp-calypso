@@ -184,7 +184,7 @@ const Suggestions = React.createClass( {
 		const re = new RegExp( '(' + highlighed_text + ')', 'g' );
 		const parts = text.split( re );
 		const token = parts.map( ( part, i ) => {
-			const key =  text + i;
+			const key = text + i;
 			if ( part === highlighed_text ) {
 				return <span key={ key } className="suggestions__value-emphasis" >{ part }</span>;
 			}
@@ -213,27 +213,21 @@ const Suggestions = React.createClass( {
 				</div>
 			);
 			//Add values
-			rendered.push( suggestions[ key ].map( ( value, i ) =>
-				{
-					const hashighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
-					const className = 'suggestions__value' + ( hashighlight ? ' has-highlight' : '' );
-					return (
-						<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
-							<span className="suggestions__value-cathegory">{ key + ':' }</span>
-							{ this.createTextWithHighlight( value, this.state.filterTerm ) }
-						</span>
-					);
-				}
-			) );
+			rendered.push( suggestions[ key ].map( ( value, i ) => {
+				const hashighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
+				const className = 'suggestions__value' + ( hashighlight ? ' has-highlight' : '' );
+				return (
+					<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
+						<span className="suggestions__value-cathegory">{ key + ':' }</span>
+						{ this.createTextWithHighlight( value, this.state.filterTerm ) }
+					</span>
+				);
+			} ) );
 
 			noOfSuggestions += suggestions[ key ].length;
 		}
 
 		return <div className="suggestions__suggestions">{ rendered }</div>;
-	},
-
-	welcomeCallback: function( text ) {
-		console.log(" hello from welcome " + text );
 	},
 
 	render() {

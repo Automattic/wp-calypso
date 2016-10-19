@@ -237,9 +237,9 @@ const ThemesMagicSearchCard = React.createClass( {
 			'has-highlight': this.state.searchIsOpen
 		} );
 
-		const welcome = ( <MagicSearchWelcome {...welcomeSignProps}/> );
+		const welcome = ( <MagicSearchWelcome { ...welcomeSignProps } /> );
 
-			return (
+		return (
 			<div className={ magicSearchClass }>
 				<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
 					{ searchField }

@@ -168,28 +168,27 @@ const Search = React.createClass( {
 	},
 
 	scrollOverlay: function() {
-	 this.refs.overlay && window.requestAnimationFrame( () => {
-		 if ( this.refs.overlay && this.refs.searchInput ) {
-			 this.refs.overlay.scrollLeft = this.getScrollLeft( this.refs.searchInput );
-		 }
-	 } );
- },
+		this.refs.overlay && window.requestAnimationFrame( () => {
+			if ( this.refs.overlay && this.refs.searchInput ) {
+				this.refs.overlay.scrollLeft = this.getScrollLeft( this.refs.searchInput );
+			}
+		} );
+	},
 
- //This is fic for IE11 does not work on Edge.
-	getScrollLeft: function ( inputElement ) {
+	//This is fic for IE11 does not work on Edge.
+	getScrollLeft: function( inputElement ) {
 		let range;
 		if ( inputElement.createTextRange ) {
 			range = inputElement.createTextRange();
-	 	} else {
-		 return inputElement.scrollLeft;
+		} else {
+			return inputElement.scrollLeft;
 		}
-	 	const inputStyle = window.getComputedStyle(inputElement, undefined);
-	 	const paddingLeft = parseFloat(inputStyle.paddingLeft);
-	 	const rangeRect = range.getBoundingClientRect();
-	 	const scrollLeft = inputElement.getBoundingClientRect().left + inputElement.clientLeft + paddingLeft - rangeRect.left;
-	 	return scrollLeft;
- },
-
+		const inputStyle = window.getComputedStyle( inputElement, undefined );
+		const paddingLeft = parseFloat( inputStyle.paddingLeft );
+		const rangeRect = range.getBoundingClientRect();
+		const scrollLeft = inputElement.getBoundingClientRect().left + inputElement.clientLeft + paddingLeft - rangeRect.left;
+		return scrollLeft;
+	},
 
 	focus: function() {
 		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
