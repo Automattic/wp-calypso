@@ -102,9 +102,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		flex-grow: 1;
 		margin-right: 20px;
 		max-width: 190px;
+		min-height: 143px;
 
 		@include breakpoint( ">960px" ) {
 			max-width: 250px;
+			min-height: 188px;
 		}
 
 		@media #{$reader-post-card-breakpoint-medium} {
