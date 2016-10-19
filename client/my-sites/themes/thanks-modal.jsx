@@ -178,7 +178,7 @@ const ThanksModal = React.createClass( {
 	render() {
 		const buttons = [
 			{ action: 'back', label: this.translate( 'Back to themes' ), onClick: this.goBack },
-			{ action: 'visitSite', label: this.translate( 'Visit site' ), isPrimary: true, onClick: this.visitSite },
+			{ action: 'visitSite', label: this.translate( 'Visit site' ), isPrimary: true, disabled: ! this.props.hasActivated, onClick: this.visitSite },
 		];
 
 		return (
