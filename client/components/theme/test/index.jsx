@@ -30,9 +30,13 @@ describe( 'Theme', function() {
 		mockery.registerMock( 'components/popover/menu-item', EmptyComponent );
 
 		togglePopoverStub = sinon.stub().returnsArg( 0 );
-		let MockMoreButton = require( '../more-button' );
+		const moreButtonModule = require( '../more-button' );
+		const MockMoreButton = moreButtonModule.default;
 		MockMoreButton.prototype.togglePopover = togglePopoverStub;
-		mockery.registerMock( './more-button', MockMoreButton );
+		mockery.registerMock( './more-button', {
+			...moreButtonModule,
+			default: MockMoreButton,
+		} );
 
 		Theme = require( '../' );
 	} );
