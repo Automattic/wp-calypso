@@ -7,8 +7,10 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
-	SHORTCODE_FETCH,
-	SHORTCODE_RECEIVE
+	SHORTCODE_RECEIVE,
+	SHORTCODE_REQUEST,
+	SHORTCODE_REQUEST_FAILURE,
+	SHORTCODE_REQUEST_SUCCESS
 } from 'state/action-types';
 import { fetchShortcode } from '../actions';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -45,7 +47,7 @@ describe( 'actions', () => {
 				fetchShortcode( siteId, shortcode )( spy );
 
 				expect( spy ).to.have.been.calledWith( {
-					type: SHORTCODE_FETCH,
+					type: SHORTCODE_REQUEST,
 					siteId,
 					shortcode
 				} );
@@ -58,6 +60,12 @@ describe( 'actions', () => {
 					},
 					() => {
 						expect( spy ).to.have.been.calledWith( {
+							type: SHORTCODE_REQUEST_SUCCESS,
+							siteId,
+							shortcode,
+						} );
+
+						expect( spy ).to.have.been.calledWith( {
 							type: SHORTCODE_RECEIVE,
 							siteId,
 							shortcode,
@@ -66,8 +74,7 @@ describe( 'actions', () => {
 								scripts: [],
 								styles: [],
 								status: 'success'
-							},
-							error: null
+							}
 						} );
 					}
 				);
@@ -96,11 +103,10 @@ describe( 'actions', () => {
 					},
 					() => {
 						expect( spy ).to.have.been.calledWith( {
-							type: SHORTCODE_RECEIVE,
+							type: SHORTCODE_REQUEST_FAILURE,
 							siteId,
 							shortcode,
-							data: null,
-							error: ''
+							error: 'The requested shortcode does not exist.'
 						} );
 					}
 				);
