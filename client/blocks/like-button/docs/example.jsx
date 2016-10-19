@@ -47,13 +47,13 @@ const LikeButtons = React.createClass( {
 		return (
 			<div>
 				<Card compact>
-					<SimpleLikeButtonContainer tagName="button" likeCount={ 0 } />
+					<SimpleLikeButtonContainer tagName="a" likeCount={ 0 } />
 				</Card>
 				<Card compact>
-					<SimpleLikeButtonContainer tagName="button" likeCount={ 12 } />
+					<SimpleLikeButtonContainer tagName="a" likeCount={ 12 } />
 				</Card>
 				<Card compact>
-					<SimpleLikeButtonContainer tagName="button" likeCount={ 12 } liked={ true } />
+					<SimpleLikeButtonContainer tagName="a" likeCount={ 12 } liked={ true } />
 				</Card>
 			</div>
 		);
