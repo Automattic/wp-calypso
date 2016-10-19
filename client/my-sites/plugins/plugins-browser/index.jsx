@@ -29,10 +29,12 @@ import { fetchPluginsList } from 'state/plugins/wporg/actions';
 import { canFetchList, getList, getShortList, isFetchingList, getCurrentSearchTerm } from 'state/plugins/wporg/selectors';
 import QueryPluginLists from 'components/data/query-plugin-lists';
 
+const SHORT_LIST_LENGTH = 6;
+const FIST_PAGE = 1;
+
 const PluginsBrowser = React.createClass( {
 
 	displayName: 'PluginsBrowser',
-	_SHORT_LIST_LENGTH: 6,
 
 	visibleCategories: [ 'new', 'popular', 'featured' ],
 
@@ -60,14 +62,16 @@ const PluginsBrowser = React.createClass( {
 	fetchNextPagePlugins( searchTerm ) {
 		searchTerm = typeof searchTerm === 'string' ? searchTerm : this.props.search;
 		if ( searchTerm ) {
-			const lastFetchedPage = this.props.lastPage.search >= 0 ? this.props.lastPage.search : -1;
+			const lastFetchedPage = this.props.lastPage.search >= FIST_PAGE ? this.props.lastPage.search : -1;
 			if ( this.props.currentSearchTerm !== searchTerm ) {
-				this.props.fetchPluginsList( 'search', 0, searchTerm );
+				this.props.fetchPluginsList( 'search', FIST_PAGE, searchTerm );
 			} else if ( this.props.canFetchList( 'search', lastFetchedPage + 1, searchTerm ) ) {
 				this.props.fetchPluginsList( 'search', lastFetchedPage + 1, searchTerm );
 			}
 		} else if ( this.props.category ) {
-			const lastFetchedPage = this.props.lastPage[ this.props.category ] >= 0 ? this.props.lastPage[ this.props.category ] : -1;
+			const lastFetchedPage = this.props.lastPage[ this.props.category ] >= FIST_PAGE
+				? this.props.lastPage[ this.props.category ]
+				: -1;
 			if ( this.props.canFetchList( this.props.category, lastFetchedPage + 1 ) ) {
 				this.props.fetchPluginsList( this.props.category, lastFetchedPage + 1 );
 			}
@@ -143,8 +147,8 @@ const PluginsBrowser = React.createClass( {
 			listName={ category }
 			title={ this.translateCategory( category ) }
 			site={ this.props.site }
-			expandedListLink={ this.props.getList( category ).length > this._SHORT_LIST_LENGTH ? listLink : false }
-			size={ this._SHORT_LIST_LENGTH }
+			expandedListLink={ this.props.getList( category ).length > SHORT_LIST_LENGTH ? listLink : false }
+			size={ SHORT_LIST_LENGTH }
 			showPlaceholders={ this.props.isFetchingList( category ) !== false }
 			currentSites={ this.props.sites.getSelectedOrAllJetpackCanManage() } />;
 	},

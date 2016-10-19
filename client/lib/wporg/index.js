@@ -72,7 +72,7 @@ module.exports = {
 	fetchPluginsList: function( options, callback ) {
 		var payload;
 		// default variables;
-		options.page = options.page || _DEFAULT_FIRST_PAGE;
+		options.page = options.page || _DEFAULT_FIRST_PAGE; // the API returns the same for page 0 and page 1
 		options.pageSize = options.pageSize || _DEFAULT_PAGE_SIZE;
 		options.category = options.category || _DEFAULT_CATEGORY;
 		options.search = options.search;

@@ -17,7 +17,7 @@ import {
 /**
  * Constants
  */
-const _DEFAULT_FIRST_PAGE = 0;
+import { _DEFAULT_FIRST_PAGE } from './constants';
 
 function updatePluginState( state = {}, pluginSlug, attributes ) {
 	return Object.assign( {},
@@ -95,8 +95,8 @@ export function lists( state = defaultPluginsListState, action ) {
 				nextState.lastFetchedPage[ action.category ] = action.page;
 				if ( action.category === 'search' ) {
 					nextState.currentSearchTerm = action.searchTerm;
-					if ( action.page === 0 ) {
-						return Object.assign( {}, state, updatePluginsList( nextState, 'search', 0, [] ) );
+					if ( action.page === _DEFAULT_FIRST_PAGE ) {
+						return Object.assign( {}, state, updatePluginsList( nextState, 'search', _DEFAULT_FIRST_PAGE, [] ) );
 					}
 				}
 			}
