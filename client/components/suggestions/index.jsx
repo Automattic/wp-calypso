@@ -239,7 +239,7 @@ const Suggestions = React.createClass( {
 		}
 
 		return (
-			<div className="suggestions"> {suggestion } </div>
+			<div className="suggestions">{ suggestion }</div>
 		);
 	}
 
