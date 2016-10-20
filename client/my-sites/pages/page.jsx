@@ -323,17 +323,39 @@ const Page = React.createClass( {
 		const restoreItem = this.getRestoreItem();
 		const sendToTrashItem = this.getSendToTrashItem();
 		const moreInfoItem = this.popoverMoreInfo();
-
-		const setHomepageMenuSeparator = (
-			setAsHomepageItem && (
-				viewItem ||
-				publishItem ||
-				editItem ||
-				restoreItem ||
-				sendToTrashItem ||
-				moreInfoItem
-			)
-		) ? <MenuSeparator /> : null;
+		const hasSeparatedItems = (
+			viewItem || publishItem || editItem ||
+			restoreItem || sendToTrashItem || moreInfoItem
+		);
+		const hasPopoverItems = setAsHomepageItem || hasSeparatedItems;
+		const setHomepageMenuSeparator = ( setAsHomepageItem && hasSeparatedItems ) ? <MenuSeparator /> : null;
+		const popoverMenu = hasPopoverItems ? (
+			<PopoverMenu
+				isVisible={ this.state.showPageActions }
+				onClose={ this.togglePageActions }
+				position={ 'bottom left' }
+				context={ this.refs && this.refs.popoverMenuButton }
+			>
+				{ setAsHomepageItem }
+				{ setHomepageMenuSeparator }
+				{ viewItem }
+				{ publishItem }
+				{ editItem }
+				{ restoreItem }
+				{ sendToTrashItem }
+				{ moreInfoItem }
+			</PopoverMenu>
+		) : null;
+		const ellipsisGridicon = hasPopoverItems ? (
+			<Gridicon
+			icon="ellipsis"
+			className={ classNames( {
+				'page__actions-toggle': true,
+				'is-active': this.state.showPageActions
+			} ) }
+			onClick={ this.togglePageActions }
+			ref="popoverMenuButton" />
+		) : null;
 
 		return (
 			<CompactCard className="page">
@@ -351,29 +373,8 @@ const Page = React.createClass( {
 				</a>
 				{ this.props.isPostsPage ? <div className="page__posts-page">{ this.translate( 'Your latest posts' ) }</div> : null }
 				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
-				<Gridicon
-					icon="ellipsis"
-					className={ classNames( {
-						'page__actions-toggle': true,
-						'is-active': this.state.showPageActions
-					} ) }
-					onClick={ this.togglePageActions }
-					ref="popoverMenuButton" />
-				<PopoverMenu
-					isVisible={ this.state.showPageActions }
-					onClose={ this.togglePageActions }
-					position={ 'bottom left' }
-					context={ this.refs && this.refs.popoverMenuButton }
-				>
-					{ setAsHomepageItem }
-					{ setHomepageMenuSeparator }
-					{ viewItem }
-					{ publishItem }
-					{ editItem }
-					{ restoreItem }
-					{ sendToTrashItem }
-					{ moreInfoItem }
-				</PopoverMenu>
+				{ ellipsisGridicon }
+				{ popoverMenu }
 				<ReactCSSTransitionGroup
 					transitionName="updated-trans"
 					transitionEnterTimeout={ 300 }
