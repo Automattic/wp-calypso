@@ -3,7 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import { noop, isEqual } from 'lodash';
 import path from 'path';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -66,11 +66,24 @@ const ImageEditor = React.createClass( {
 		};
 	},
 
-	componentDidMount() {
+	componentWillReceiveProps( newProps ) {
 		const {
-			media,
-			site
+			media: currentMedia
 		} = this.props;
+
+		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
+			this.props.resetAllImageEditorState();
+
+			this.updateFileInfo( newProps.media );
+		}
+	},
+
+	componentDidMount() {
+		this.updateFileInfo( this.props.media );
+	},
+
+	updateFileInfo( media ) {
+		const {	site } = this.props;
 
 		let src,
 			fileName = 'default',
@@ -78,7 +91,7 @@ const ImageEditor = React.createClass( {
 			title = 'default';
 
 		if ( media ) {
-			src = MediaUtils.url( media, {
+			src = media.src || MediaUtils.url( media, {
 				photon: site && ! site.is_private
 			} );
 
