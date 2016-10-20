@@ -50,15 +50,15 @@ const SurveyStepV2 = React.createClass( {
 				className="survey__vertical"
 				key={ vertical.value }
 				data-value={ vertical.value }
-				data-label={ vertical.label }
+				data-label={ vertical.label() }
 				onClick={ this.handleNextStep }
 			>
 				<span
 					className="survey__vertical-label"
 					data-value={ vertical.value }
-					data-label={ vertical.label }
+					data-label={ vertical.label() }
 				>
-					{ vertical.label }
+					{ vertical.label() }
 				</span>
 				<Gridicon className="survey__vertical-chevron" icon="chevron-right" />
 			</Button>

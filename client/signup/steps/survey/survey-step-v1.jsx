@@ -51,7 +51,7 @@ export default React.createClass( {
 		};
 		return (
 			<Card className="survey-step__vertical" key={ vertical.value } href="#" onClick={ stepTwoClickHandler }>
-				<label className="survey-step__label">{ vertical.label }</label>
+				<label className="survey-step__label">{ vertical.label() }</label>
 			</Card>
 		);
 	},
@@ -70,7 +70,7 @@ export default React.createClass( {
 		return (
 			<Card className="survey-step__vertical" key={ 'step-one-' + vertical.value } href="#" onClick={ stepOneClickHandler }>
 				<Gridicon icon={ icon } className="survey-step__vertical__icon" />
-				<label className="survey-step__label">{ vertical.label }</label>
+				<label className="survey-step__label">{ vertical.label() }</label>
 			</Card>
 		);
 	},
@@ -99,7 +99,7 @@ export default React.createClass( {
 
 					<Card className={ subVerticalsClasses }>
 						<BackButton isCompact className="survey-step__title" onClick={ this.showStepOne }>
-							{ this.state.stepOne && this.state.stepOne.label }
+							{ this.state.stepOne && this.state.stepOne.label() }
 						</BackButton>
 						{ this.state.stepTwo.map( this.renderStepTwoVertical ) }
 					</Card>
@@ -149,7 +149,7 @@ export default React.createClass( {
 		const { value, label } = this.state.stepOne;
 		analytics.tracks.recordEvent( 'calypso_survey_category_back_click', {
 			category_id: value,
-			category_label: label
+			category_label: label()
 		} );
 		this.setState( { stepOne: null } );
 	},
@@ -158,7 +158,7 @@ export default React.createClass( {
 		const { value, label } = stepOne;
 		analytics.tracks.recordEvent( 'calypso_survey_category_click_level_one', {
 			category_id: value,
-			category_label: label
+			category_label: label()
 		} );
 		this.setState( { stepOne, stepTwo: stepOne.stepTwo } );
 	},
@@ -168,18 +168,18 @@ export default React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_survey_site_type', { type: this.props.surveySiteType } );
 		analytics.tracks.recordEvent( 'calypso_survey_category_chosen', {
 			category_id: value,
-			category_label: label,
+			category_label: label(),
 			survey_version: '1',
 		} );
 		if ( this.state.stepOne ) {
 			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_two', {
 				category_id: value,
-				category_label: label
+				category_label: label()
 			} );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_survey_category_click_level_one', {
 				category_id: value,
-				category_label: label
+				category_label: label()
 			} );
 		}
 		SignupActions.submitSignupStep(
