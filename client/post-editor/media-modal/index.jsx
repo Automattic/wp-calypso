@@ -2,13 +2,10 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	noop = require( 'lodash/noop' ),
-	head = require( 'lodash/head' ),
-	some = require( 'lodash/some' ),
-	findIndex = require( 'lodash/findIndex' ),
-	values = require( 'lodash/values' ),
 	closest = require( 'component-closest' ),
 	debug = require( 'debug' )( 'calypso:post-editor:media' );
+import { connect } from 'react-redux';
+import { noop, head, some, findIndex, partial, values } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,17 +21,16 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	Dialog = require( 'components/dialog' ),
 	markup = require( './markup' ),
-	accept = require( 'lib/accept' ),
-	ModalViews = require( './constants' ).Views;
-
+	accept = require( 'lib/accept' );
+import { getMediaModalView } from 'state/ui/media-modal/selectors';
+import { resetMediaModalView } from 'state/ui/media-modal/actions';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
+import { ModalViews } from 'state/ui/media-modal/constants';
 import ImageEditor from 'blocks/image-editor';
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModal',
-
+export const EditorMediaModal = React.createClass( {
 	propTypes: {
 		visible: React.PropTypes.bool,
-		initialActiveView: React.PropTypes.oneOf( values( ModalViews ) ),
 		mediaLibrarySelectedItems: React.PropTypes.arrayOf( React.PropTypes.object ),
 		onClose: React.PropTypes.func,
 		onInsertMedia: React.PropTypes.func,
@@ -42,7 +38,10 @@ module.exports = React.createClass( {
 		labels: React.PropTypes.object,
 		single: React.PropTypes.bool,
 		defaultFilter: React.PropTypes.string,
-		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string )
+		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
+		view: React.PropTypes.oneOf( values( ModalViews ) ),
+		setView: React.PropTypes.func,
+		resetView: React.PropTypes.func
 	},
 
 	getInitialState: function() {
@@ -55,7 +54,10 @@ module.exports = React.createClass( {
 			mediaLibrarySelectedItems: Object.freeze( [] ),
 			onClose: noop,
 			onInsertMedia: noop,
-			labels: Object.freeze( {} )
+			labels: Object.freeze( {} ),
+			setView: noop,
+			resetView: noop,
+			view: ModalViews.LIST
 		};
 	},
 
@@ -77,10 +79,13 @@ module.exports = React.createClass( {
 		this.statsTracking = {};
 	},
 
+	componentWillUnmount() {
+		this.props.resetMediaModalView();
+	},
+
 	getDefaultState: function( props ) {
 		return {
 			filter: '',
-			activeView: props.initialActiveView || ModalViews.LIST,
 			detailSelectedIndex: 0,
 			gallerySettings: props.initialGallerySettings
 		};
@@ -89,7 +94,7 @@ module.exports = React.createClass( {
 	isDisabled: function() {
 		return some( this.props.mediaLibrarySelectedItems, function( item ) {
 			var mimePrefix = MediaUtils.getMimePrefix( item );
-			return item.transient && ( mimePrefix !== 'image' || ModalViews.GALLERY === this.state.activeView );
+			return item.transient && ( mimePrefix !== 'image' || ModalViews.GALLERY === this.props.view );
 		}.bind( this ) );
 	},
 
@@ -102,7 +107,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		if ( ModalViews.GALLERY === this.state.activeView ) {
+		if ( ModalViews.GALLERY === this.props.view ) {
 			if ( gallerySettings && 'individual' === gallerySettings.type ) {
 				media = gallerySettings.items.map( markup.get ).join( '' );
 			} else {
@@ -129,25 +134,6 @@ module.exports = React.createClass( {
 		this.props.onClose( selectedItems );
 	},
 
-	setView: function( view ) {
-		var stat;
-
-		this.setState( {
-			activeView: view
-		} );
-
-		switch ( view ) {
-			case ModalViews.LIST: stat = 'view_list'; break;
-			case ModalViews.DETAIL: stat = 'view_detail'; break;
-			case ModalViews.GALLERY: stat = 'view_gallery'; break;
-			case ModalViews.IMAGE_EDITOR: stat = 'view_edit'; break;
-		}
-
-		if ( stat ) {
-			analytics.mc.bumpStat( 'editor_media_actions', stat );
-		}
-	},
-
 	setDetailSelectedIndex: function( index ) {
 		this.setState( {
 			detailSelectedIndex: index
@@ -157,7 +143,7 @@ module.exports = React.createClass( {
 	setNextAvailableDetailView: function() {
 		if ( 1 === this.props.mediaLibrarySelectedItems.length ) {
 			// If this is the only selected item, return user to the list
-			this.setView( ModalViews.LIST );
+			this.props.setView( ModalViews.LIST );
 		} else if ( this.getDetailSelectedIndex() === this.props.mediaLibrarySelectedItems.length - 1 ) {
 			// If this is the last selected item, decrement to the previous
 			this.setDetailSelectedIndex( Math.max( this.getDetailSelectedIndex() - 1, 0 ) );
@@ -172,7 +158,7 @@ module.exports = React.createClass( {
 		}
 
 		let toDelete = mediaLibrarySelectedItems;
-		if ( ModalViews.DETAIL === this.state.activeView ) {
+		if ( ModalViews.DETAIL === this.props.view ) {
 			toDelete = toDelete[ this.getDetailSelectedIndex() ];
 			this.setNextAvailableDetailView();
 		}
@@ -184,7 +170,7 @@ module.exports = React.createClass( {
 	deleteMedia: function() {
 		var selectedCount, confirmMessage;
 
-		if ( ModalViews.DETAIL === this.state.activeView ) {
+		if ( ModalViews.DETAIL === this.props.view ) {
 			selectedCount = 1;
 		} else {
 			selectedCount = this.props.mediaLibrarySelectedItems.length;
@@ -207,7 +193,7 @@ module.exports = React.createClass( {
 	onAddAndEditImage: function() {
 		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
 
-		this.setView( ModalViews.IMAGE_EDITOR );
+		this.props.setView( ModalViews.IMAGE_EDITOR );
 	},
 
 	onImageEditorDone( error, blob, imageEditorProps ) {
@@ -254,7 +240,7 @@ module.exports = React.createClass( {
 		resetAllImageEditorState();
 
 		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
-		this.setView( ModalViews.LIST );
+		this.props.setView( ModalViews.LIST );
 	},
 
 	onImageEditorCancel: function( imageEditorProps ) {
@@ -263,10 +249,11 @@ module.exports = React.createClass( {
 		const item = mediaLibrarySelectedItems[ this.getDetailSelectedIndex() ];
 
 		if ( ! item ) {
-			this.setView( ModalViews.LIST );
+			this.props.setView( ModalViews.LIST );
 			return;
 		}
-		this.setView( ModalViews.DETAIL );
+
+		this.props.setView( ModalViews.DETAIL );
 
 		const {	resetAllImageEditorState } = imageEditorProps;
 
@@ -337,7 +324,7 @@ module.exports = React.createClass( {
 		analytics.mc.bumpStat( 'editor_media_actions', 'edit_button_contextual' );
 		analytics.ga.recordEvent( 'Media', 'Clicked Contextual Edit Button' );
 
-		this.setView( ModalViews.DETAIL );
+		this.props.setView( ModalViews.DETAIL );
 	},
 
 	getFirstEnabledFilter: function() {
@@ -351,7 +338,7 @@ module.exports = React.createClass( {
 			selectedItems = this.props.mediaLibrarySelectedItems,
 			buttons;
 
-		if ( ModalViews.IMAGE_EDITOR === this.state.activeView ) {
+		if ( ModalViews.IMAGE_EDITOR === this.props.view ) {
 			return;
 		}
 
@@ -359,24 +346,22 @@ module.exports = React.createClass( {
 			<MediaModalSecondaryActions
 				site={ this.props.site }
 				selectedItems={ selectedItems }
-				activeView={ this.state.activeView }
 				disabled={ isDisabled }
-				onDelete={ this.deleteMedia }
-				onChangeView={ this.setView } />,
+				onDelete={ this.deleteMedia } />,
 			{
 				action: 'cancel',
 				label: this.translate( 'Cancel' )
 			}
 		];
 
-		if ( ModalViews.GALLERY !== this.state.activeView && selectedItems.length > 1 &&
+		if ( ModalViews.GALLERY !== this.props.view && selectedItems.length > 1 &&
 				! some( selectedItems, ( item ) => MediaUtils.getMimePrefix( item ) !== 'image' ) ) {
 			buttons.push( {
 				action: 'confirm',
 				label: this.translate( 'Continue' ),
 				isPrimary: true,
 				disabled: isDisabled || ! this.props.site,
-				onClick: this.setView.bind( this, ModalViews.GALLERY )
+				onClick: partial( this.props.setView, ModalViews.GALLERY )
 			} );
 		} else {
 			buttons.push( {
@@ -392,7 +377,7 @@ module.exports = React.createClass( {
 	},
 
 	preventClose: function( event ) {
-		if ( ModalViews.IMAGE_EDITOR === this.state.activeView ||
+		if ( ModalViews.IMAGE_EDITOR === this.props.view ||
 			closest( event.target, '.popover.is-dialog-visible' ) ) {
 			return true;
 		}
@@ -401,7 +386,7 @@ module.exports = React.createClass( {
 	renderContent: function() {
 		var content;
 
-		switch ( this.state.activeView ) {
+		switch ( this.props.view ) {
 			case ModalViews.LIST:
 				content = (
 					<MediaLibrary
@@ -427,9 +412,7 @@ module.exports = React.createClass( {
 						site={ this.props.site }
 						items={ this.props.mediaLibrarySelectedItems }
 						selectedIndex={ this.getDetailSelectedIndex() }
-						onSelectedIndexChange={ this.setDetailSelectedIndex }
-						onChangeView={ this.setView }
-						onEdit={ this.setView.bind( this, ModalViews.IMAGE_EDITOR ) } />
+						onSelectedIndexChange={ this.setDetailSelectedIndex } />
 				);
 				break;
 
@@ -439,8 +422,7 @@ module.exports = React.createClass( {
 						site={ this.props.site }
 						items={ this.props.mediaLibrarySelectedItems }
 						settings={ this.state.gallerySettings }
-						onUpdateSettings={ ( gallerySettings ) => this.setState( { gallerySettings } ) }
-						onChangeView={ this.setView } />
+						onUpdateSettings={ ( gallerySettings ) => this.setState( { gallerySettings } ) } />
 				);
 				break;
 
@@ -480,3 +462,13 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => ( {
+		view: getMediaModalView( state )
+	} ),
+	{
+		setView: setEditorMediaModalView,
+		resetView: resetMediaModalView
+	}
+)( EditorMediaModal );
