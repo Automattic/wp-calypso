@@ -333,6 +333,9 @@ a.sidebar__button {
 	padding: 0;
 	border-top: 1px solid darken( $sidebar-bg-color, 10% );
 	margin: auto 0 0;
+	display: flex;
+	flex-direction: row;
+	padding-left: 10px;
 
 	@include breakpoint( "<660px" ) {
 		margin-top: 16px;
@@ -346,9 +349,52 @@ a.sidebar__button {
 	text-transform: uppercase;
 	font-size: 11px;
 	font-weight: 600;
-	padding: 11px 6px;
+	padding: 8px;
 	color: darken( $gray, 10% );
-	margin-right: 4px;
+	line-height: 2.1;
+	margin-right: auto;
+
+	&.sidebar__footer-help,
+	&.sidebar__footer-chat {
+		border-left: 1px solid darken( $sidebar-bg-color, 10% );
+		flex: 0 1 40px;
+		margin-right: 0;
+		margin-left: 0;
+
+		@include breakpoint( "<660px" ) {
+			flex: 0 1 56px;
+		}
+
+	}
+
+	&.sidebar__footer-help {
+		margin-left: auto;
+	}
+
+	&.sidebar__footer-chat.has-unread {
+		color: $gray-dark;
+		position: relative;
+
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			top: 6px;
+			left: 3px;
+			width: 10px;
+			height: 10px;
+			border: 2px solid lighten( $gray, 30% );
+			border-radius: 50%;
+			background: $orange-jazzy;
+
+			@include breakpoint( "<660px" ) {
+				top: 14px;
+				left: 11px;
+			}
+
+		}
+
+	}
 
 	&:hover {
 		color: $gray-dark;
@@ -356,6 +402,14 @@ a.sidebar__button {
 
 	@include breakpoint( "<660px" ) {
 		padding: 16px;
+	}
+
+	.gridicon {
+		display: block;
+		float: left;
+		margin-right: 6px;
+		top: auto;
+		margin-top: auto;
 	}
 
 }

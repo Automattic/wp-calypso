@@ -243,7 +243,7 @@ const SiteSelector = React.createClass( {
 	renderNewSiteButton() {
 		return (
 			<span className="site-selector__add-new-site">
-				<Button compact borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' } onClick={ this.recordAddNewSite }>
+				<Button borderless href={ config( 'signup_url' ) + '?ref=calypso-selector' } onClick={ this.recordAddNewSite }>
 					<Gridicon icon="add-outline" /> { this.translate( 'Add New Site' ) }
 				</Button>
 			</span>

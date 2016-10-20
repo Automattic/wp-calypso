@@ -28,8 +28,12 @@ class HappychatButton extends Component {
 	render() {
 		const { translate } = this.props;
 		return (
-			<Button compact borderless onClick={ this.onOpenChat }>
-				<Gridicon icon="comment" /> { translate( 'Support Chat' ) }
+			<Button
+				className="sidebar__footer-chat"
+				borderless
+				onClick={ this.onOpenChat }
+				title={ translate( 'Support Chat' ) }>
+				<Gridicon icon="chat" />
 			</Button>
 		);
 	}
