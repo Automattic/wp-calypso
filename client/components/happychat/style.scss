@@ -52,6 +52,10 @@
 	right: 12px;
 	font-size: 14px;
 	display: none;		/* disabled */
+	box-sizing: border-box;
+
+	transform: translateZ(0);
+	backface-visibility: hidden;
 
 	.happychat__title {
 		height: auto;
@@ -96,6 +100,11 @@
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
+
+	.spinner {
+		margin: 16px 0;
+	}
+
 }
 
 .happychat__welcome {
@@ -132,6 +141,83 @@
 
 	}
 
+}
+
+
+/**
+ * Minimize animation
+ */
+
+.layout .happychat .happychat__container.is-open.is-minimizing {
+	box-shadow: none;
+	border-top: 1px solid lighten( $gray, 20% );
+	border-left: 1px solid lighten( $gray, 20% );
+	border-right: 1px solid lighten( $gray, 20% );
+	background: lighten( $gray, 30% );
+	animation: happychat-minimize .5s 1 forwards;
+
+	> .happychat__loading,
+	> .happychat__composer,
+	> .happychat__welcome,
+	> .happychat__conversation,
+	> .happychat__title .happychat__active-toolbar * {
+		visibility: hidden;
+	}
+
+	> .happychat__title {
+		transform: translateZ(0);
+		position: relative;
+		animation: happychat-disappear .1s 1 forwards;
+	}
+
+}
+
+@keyframes happychat-disappear {
+	0% {
+		top: 0px;
+	}
+	50% {
+		top: 4px;
+	}
+	100% {
+		top: -47px;
+	}
+}
+
+@keyframes happychat-minimize {
+	0% {
+		max-height: 220px;
+		bottom: 0px;
+	}
+	99%, 100% {
+		right: calc( 100% - 229px ); // small sidebar
+		width: 34px;
+		max-height: 34px;
+		bottom: 0px;
+	}
+	100% {
+		max-height: 0;
+		bottom: -34px;
+	}
+}
+
+@include breakpoint( ">960px" ) {
+	@keyframes happychat-minimize {
+		0% {
+			max-height: 100%;
+			bottom: 0px;
+		}
+		99%, 100% {
+			right: calc( 100% - 273px ); // large sidebar
+			width: 34px;
+			max-height: 34px;
+			bottom: 0px;
+		}
+		100% {
+			max-height: 0;
+			bottom: -34px;
+		}
+	}
 }
 
 
