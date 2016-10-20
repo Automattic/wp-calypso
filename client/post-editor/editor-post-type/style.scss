@@ -15,10 +15,8 @@
 		margin-left: 4px;
 		vertical-align: baseline;
 		&::before {
-			content: '(';
-		}
-		&::after {
-			content: ')';
+			content: '– ';
+			margin-right: 4px;
 		}
 	}
 }
