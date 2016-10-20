@@ -10,6 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import { cartItems } from 'lib/cart-values';
 import SignupActions from 'lib/signup/actions';
 import StepWrapper from 'signup/step-wrapper';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
@@ -28,8 +29,10 @@ class PlansStep extends Component {
 			stepSectionName,
 			stepName,
 			goToNextStep,
-			translate
-		} = this.props;
+			translate,
+			signupDependencies: { domainItem }
+		} = this.props,
+			privacyItem = cartItem && domainItem && cartItems.domainPrivacyProtection( { domain: domainItem.meta } );
 
 		if ( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
@@ -50,8 +53,9 @@ class PlansStep extends Component {
 			stepName,
 			stepSectionName,
 			cartItem,
+			privacyItem,
 			...additionalStepData
-		}, [], { cartItem } );
+		}, [], { cartItem, privacyItem } );
 
 		goToNextStep();
 	}
