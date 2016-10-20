@@ -28,8 +28,8 @@ The config files contain a features object that can be used to determine whether
 
 If you want to temporarily enable/disable some feature flags for a given build, you can do so by setting the `ENABLE_FEATURES` and/or `DISABLE_FEATURES` environment variables. Set them to a comma separated list of features you want to enable/disable, respectively:
 
-`bash
+```bash
 ENABLE_FEATURES=manage/plugins/compatibility-warning DISABLE_FEATURES=code-splitting,reader make run
-`
+```
 
 This will generate the appropriate `client/config/index.js` file. Afterwards, when you run `make run` without setting these variables, `client/config/index.js` will regenerate according to the selected config file - making this method ideal for quickly reviewing PRs or reproducing bugs.
