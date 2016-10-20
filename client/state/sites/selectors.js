@@ -624,7 +624,7 @@ export function canJetpackSiteManage( state, siteId ) {
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {Boolean} if the site can update
+ * @return {Boolean} if the site can update its file
  */
 export function canJetpackSiteUpdateFiles( state, siteId ) {
 	if ( ! siteId ) {
@@ -851,7 +851,7 @@ export function hasJetpackSiteCustomDomain( state, siteId ) {
  * @param {String} action The update action we wanted to perform on this site
  * @return {?String} The reason why file update is disabled
  */
-export function getJetpackSiteFileModDisableReasons( state, siteId, action = 'modifyFiles' ) {
+export function getJetpackSiteUpdateFilesDisabledReasons( state, siteId, action = 'modifyFiles' ) {
 	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
 
 	return fileModDisabled.map( clue => {
