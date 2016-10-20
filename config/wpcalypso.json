@@ -97,6 +97,7 @@
 		"reader/recommendations/posts": true,
 		"reader/refresh/full-post-ab-test": false,
 		"reader/refresh/force-full-post": true,
+		"reader/refresh/stream": true,
 		"reader/related-posts": true,
 		"reader/search": true,
 		"reader/start": true,
