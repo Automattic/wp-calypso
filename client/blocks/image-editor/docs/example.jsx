@@ -12,9 +12,15 @@ import ImageEditor from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
 
 class ImageEditorExample extends Component {
-	media = {
-		URL: 'https://cldup.com/mA_hqNVj0w.jpg'
-	};
+	constructor() {
+		super();
+		
+		this.state = {
+			media: {
+				URL: 'https://cldup.com/mA_hqNVj0w.jpg'
+			}
+		};
+	}
 
 	getTestingImage = () => document.querySelector( "#devdocs-example-image-editor-result" );
 
@@ -29,7 +35,27 @@ class ImageEditorExample extends Component {
 	};
 
 	onImageEditorReset = () => {
-		this.getTestingImage().src = this.media.URL;
+		this.getTestingImage().src = this.state.media.URL || this.state.media.src;
+	};
+	
+	componentDidMount() {
+		const fileInput = document.querySelector( '#devdocs-example-image-editor-file-input' );
+		
+		fileInput.addEventListener( 'change', this.onImageUpload );
+	}
+
+	onImageUpload = ( e ) => {
+		const imageFile = e.target.files[ 0 ];
+		
+		const imageObjectUrl = URL.createObjectURL( imageFile );
+		
+		this.setState( {
+			media: {
+				src: imageObjectUrl
+			}
+		} );
+
+		this.getTestingImage().src = imageObjectUrl;
 	};
 
 	render() {
@@ -39,14 +65,22 @@ class ImageEditorExample extends Component {
 		
 		return (
 			<div>
+				<div style={ {
+					marginBottom: '20px'
+				} }>
+					<h4>Upload an image</h4>
+					<input type="file" id="devdocs-example-image-editor-file-input" />
+				</div>
+
 				<div style={ { height: '80vh' } }>
 					<ImageEditor
 						siteId={ primarySiteId }
-						media={ this.media }
+						media={ this.state.media }
 						onDone={ this.onImageEditorDone }
 						onReset={ this.onImageEditorReset }
 					/>
 				</div>
+
 				<div style={ {
 					textAlign: 'center',
 					marginTop: '15px'
@@ -54,7 +88,7 @@ class ImageEditorExample extends Component {
 					<h4>Changes to the image above are shown below</h4>
 					<img
 						id="devdocs-example-image-editor-result"
-						src={ this.media.URL }
+						src={ this.state.media.URL }
 					/>
 				</div>
 			</div>
