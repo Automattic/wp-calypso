@@ -72,15 +72,23 @@ export function multiSite( context, next ) {
 
 export function loggedOut( context, next ) {
 	const props = getProps( context );
+
+	context.primary = <LoggedOutComponent { ...props } />;
+	next();
+}
+
+export function fetchThemeData( context, next ) {
+	if ( ! context.isServerSide ) {
+		return next();
+	}
+
 	const queryParams = {
 		search: context.query.s,
 		tier: context.params.tier,
-		filter: props.filter,
+		filter: context.params.filter,
 		page: 0,
 		perPage: PER_PAGE,
 	};
-
-	context.primary = <LoggedOutComponent { ...props } />;
 
 	context.store.dispatch( query( queryParams ) );
 	context.store.dispatch( fetchNextPage( false ) ).then( () => next() );
