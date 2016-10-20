@@ -1,0 +1,297 @@
+.reader__full-post-content {
+	@extend %content-font;
+	margin: 0;
+	padding-top: 16px;
+	position: relative;
+
+	font-size: 16px;
+	line-height: 1.7;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+
+	h1 {
+		font-size: 28px;
+		font-weight: 700;
+		margin: 0 0 16px;
+	}
+
+	h2 {
+		font-size: 24px;
+		font-weight: 700;
+		margin: 0 0 8px;
+	}
+
+	h3 {
+		font-size: 20px;
+		font-weight: 700;
+		margin: 0 0 8px;
+	}
+
+	h4 {
+		font-size: 18px;
+		font-weight: 700;
+		margin: 0 0 8px;
+	}
+
+	p {
+		margin: 0 0 24px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	blockquote {
+		padding: 0 24px 0 32px;
+		margin: 16px 0 32px;
+		border-left: 3px solid lighten( $gray, 30% );
+		color: darken( $gray, 20% );
+		font-weight: normal;
+		background: transparent;
+	}
+
+	hr {
+		background: lighten( $gray, 30% );
+		margin: 24px -32px;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+		display: inline;
+		margin: auto;
+	}
+
+	iframe[class^="twitter-"],
+	iframe[class^="instagram-"],
+	.fb_iframe_widget {
+		display: block;
+		margin: 24px auto !important;
+	}
+
+	@include breakpoint( ">660px" ) {
+		.alignleft {
+			max-width: 100%;
+			float: left;
+			margin-top: 12px;
+			margin-bottom: 12px;
+			margin-right: 32px;
+		}
+
+		.alignright {
+			max-width: 100%;
+			float: right;
+			margin-top: 12px;
+			margin-bottom: 12px;
+			margin-left: 32px;
+		}
+	}
+
+	@include breakpoint( "<660px" ) {
+		.alignleft,
+		.alignright {
+			clear: both;
+			margin-top: 24px;
+			margin-bottom: 24px;
+		}
+	}
+
+	.aligncenter {
+		clear: both;
+		display: block;
+		margin-top: 24px;
+		margin-bottom: 24px;
+	}
+
+	.wp-caption.alignnone {
+		clear: both;
+		display: block;
+		margin-top: 24px;
+		margin-bottom: 24px;
+	}
+
+	.wp-caption {
+		position: relative;
+		max-width: 100%;
+
+		&.alignright {
+			float: right;
+		}
+
+		&.alignleft {
+			float: left;
+		}
+
+		&.alignright,
+		&.alignleft {
+			max-width: 100%;
+
+			@include breakpoint( ">660px" ) {
+				max-width: 50%;
+			}
+
+			img.alignright,
+			img.alignleft {
+				float: none;
+			}
+		}
+
+		img {
+			display: block;
+			margin: 0 auto;
+
+			&.emoji {
+				display: inline;
+			}
+		}
+	}
+
+	.wp-caption-text,
+	figure figcaption {
+		padding: 12px;
+		margin: 0;
+		font-size: 13px;
+		text-align: center;
+		color: darken( $gray, 10% );
+	}
+
+	// placeholder for videopress videos
+	.video-plh-notice {
+		position: relative;
+		margin-bottom: 24px;
+		padding: 11px 24px;
+		border-radius: 1px;
+		background: $gray-light;
+		box-sizing: border-box;
+		font-size: 14px;
+		line-height: 1.4285;
+		animation: appear .3s ease-in-out;
+
+		@include breakpoint( ">660px" ) {
+			padding: 13px 48px;
+			font-size: inherit;
+
+			&::before {
+				@include noticon-style;
+				content: '\f456';
+				position: absolute;
+				top: 23px;
+				left: 20px;
+				margin: -12px 0px 0 -8px;
+				font-size: 24px;
+				line-height: 1;
+			}
+		}
+	}
+}
+
+// Discover-Specific Full Post View Styles
+.blog-53424024 .reader__full-post-content {
+	.intro {
+		font-size: 20px;
+	    font-weight: 700;
+	    margin: 0 0 24px 0;
+
+		&:first-child:first-letter {
+			float: left;
+			margin: 18px 12px 0 0;
+			font-size: 66px;
+		    font-weight: 400;
+		    line-height: 0.5;
+		}
+
+		// Firefox-only position fix
+		@-moz-document url-prefix() {
+			&:first-child:first-letter {
+				margin-top: 9px;
+			}
+		}
+	}
+
+	blockquote.sidenote {
+		margin: 0;
+		padding: 16px;
+		border: none;
+		background: none;
+		font-size: 13px;
+		width: 175px;
+
+		&.left,
+		&.alignleft {
+			float: left;
+			padding: 0 16px 16px 0;
+		}
+
+		@media ( min-width: 1400px ) {
+			&.right,
+			&.alignright {
+				position: absolute;
+				right: -( 175px + 32px );
+				margin-right: 0;
+			}
+		}
+
+		@media ( max-width: 1400px ) {
+			&.right,
+			&.alignright,
+			&.left,
+			&.alignleft {
+				float: none;
+				background: lighten( $gray, 30 );
+				margin: 0 0 24px 0;
+				padding: 16px;
+				width: auto;
+
+				img {
+					display: block;
+					margin-bottom: 8px;
+				}
+			}
+		}
+	}
+}
+
+// Daily Post-Specific Full Post View Styles
+.is-group-reader.blog-489937 .reader__full-post-content {
+	blockquote.left,
+	blockquote.alignleft,
+	blockquote.align-left,
+	blockquote.left-align {
+		margin: 0;
+		padding: 0;
+		border: none;
+		background: none;
+		font-size: 13px;
+		width: 175px;
+
+		@media ( min-width: 1132px ) {
+			position: absolute;
+			left: -( 175px + 32px );
+			margin-left: 0;
+		}
+
+		@media ( max-width: 1132px ) {
+			background: lighten( $gray, 30 );
+			margin: 0 0 24px 0;
+			padding: 16px;
+			width: calc( 100% - 32px );
+		}
+
+		@include breakpoint( "<480px" ) {
+			margin: 0 0 24px 0;
+			background: lighten( $gray, 30 );
+			padding: 16px;
+
+			img {
+				display: block;
+				margin-bottom: 8px;
+			}
+		}
+	}
+}
+
+// Hides Jetpack RP in Reader
+.reader-full-post .jp-relatedposts-headline,
+.reader-full-post .jp-relatedposts {
+	display: none;
+}
