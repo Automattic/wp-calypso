@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
-import SingleSiteComponent from './single-site';
-import MultiSiteComponent from './multi-site';
+import SingleSiteComponent from 'my-sites/themes/single-site';
+import MultiSiteComponent from 'my-sites/themes/multi-site';
 import LoggedOutComponent from './logged-out';
 import trackScrollPage from 'lib/track-scroll-page';
 import { getAnalyticsData } from './helpers';
