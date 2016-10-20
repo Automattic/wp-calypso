@@ -56,14 +56,14 @@ function changeVersion( version, operator = 1 ) {
 	const splitVersion = version.split( '.' );
 
 	if ( operator >= 1 ) {
-		splitVersion[ splitVersion.length - 1 ] ++;
+		splitVersion[ splitVersion.length - 1 ]++;
 		return splitVersion.join( '.' );
 	}
 
 	if ( splitVersion[ splitVersion.length - 1 ] === '0' ) {
-		splitVersion[ splitVersion.length - 2 ] --;
+		splitVersion[ splitVersion.length - 2 ]--;
 	} else {
-		splitVersion[ splitVersion.length - 1 ] --;
+		splitVersion[ splitVersion.length - 1 ]--;
 	}
 
 	return splitVersion.join( '.' );
@@ -1385,10 +1385,10 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#canJetpackSiteUpdateFiles()', () => {
-		let config;
+		let configStub;
 
 		useSandbox( ( sandbox ) => {
-			config = sandbox.stub().withArgs( 'jetpack_min_version' ).returns( '3.3' );
+			configStub = sandbox.stub().withArgs( 'jetpack_min_version' ).returns( '3.3' );
 		} );
 
 		it( 'should return `null` for a non-existing site', () => {
@@ -1409,7 +1409,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'it should return `false` if jetpack version is smaller than minimum version', () => {
-			const jetpackMinVersion = config( 'jetpack_min_version' );
+			const jetpackMinVersion = configStub( 'jetpack_min_version' );
 			const smallerVersion = changeVersion( jetpackMinVersion, -1 );
 			const state = createStateWithItems( {
 				[ siteId ]: {
