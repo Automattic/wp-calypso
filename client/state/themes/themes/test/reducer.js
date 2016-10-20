@@ -13,7 +13,8 @@ import {
 	SERIALIZE,
 	DESERIALIZE,
 	SERVER_DESERIALIZE,
-	THEME_ACTIVATED
+	THEME_ACTIVATED,
+	THEMES_RECEIVE,
 } from 'state/action-types';
 import reducer, { initialState } from '../reducer';
 
@@ -156,6 +157,40 @@ describe( 'themes reducer', () => {
 			} );
 			const state = reducer( jsObject, { type: SERVER_DESERIALIZE } );
 			expect( state ).to.eql( fromJS( jsObject ) );
+		} );
+	} );
+
+	describe( 'themes received', () => {
+		const siteId = 12345678;
+		const twentyfifteen = Map( {
+			name: 'Twenty Fifteen',
+			id: 'twentyfifteen'
+		} );
+		const twentysixteen = {
+			name: 'Twenty Sixteen',
+			id: 'twentysixteen'
+		};
+		const state = fromJS( {
+			themes: {
+				twentyfifteen
+			},
+			siteId: 87654321
+		} );
+		const newState = reducer( state, {
+			type: THEMES_RECEIVE,
+			themes: [
+				twentysixteen
+			],
+			siteId: siteId
+		} );
+
+		it( 'adds newly received themes to existing themes state', () => {
+			expect( newState.getIn( [ 'themes', 'twentysixteen' ] ).toJS() ).to.eql( twentysixteen );
+			expect( newState.get( 'themes' ).size ).to.eql( 2 );
+		} );
+
+		it( 'sets the currentSiteId', () => {
+			expect( newState.get( 'currentSiteId' ) ).to.eql( siteId );
 		} );
 	} );
 } );
