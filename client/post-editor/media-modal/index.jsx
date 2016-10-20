@@ -66,11 +66,15 @@ export const EditorMediaModal = React.createClass( {
 			MediaActions.setLibrarySelectedItems( nextProps.site.ID, [] );
 		}
 
-		if ( ! nextProps.visible || this.props.visible === nextProps.visible ) {
+		if ( this.props.visible === nextProps.visible ) {
 			return;
 		}
 
-		this.replaceState( this.getDefaultState( nextProps ) );
+		if ( nextProps.visible ) {
+			this.replaceState( this.getDefaultState( nextProps ) );
+		} else {
+			this.props.resetView();
+		}
 	},
 
 	componentDidMount: function() {
