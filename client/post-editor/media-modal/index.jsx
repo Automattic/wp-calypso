@@ -387,25 +387,6 @@ export const EditorMediaModal = React.createClass( {
 		var content;
 
 		switch ( this.props.view ) {
-			case ModalViews.LIST:
-				content = (
-					<MediaLibrary
-						site={ this.props.site }
-						filter={ this.state.filter || this.props.defaultFilter || this.getFirstEnabledFilter() }
-						enabledFilters={ this.props.enabledFilters }
-						search={ this.state.search }
-						onAddMedia={ this.onAddMedia }
-						onAddAndEditImage={ this.onAddAndEditImage }
-						onFilterChange={ this.onFilterChange }
-						onScaleChange={ this.onScaleChange }
-						onSearch={ this.onSearch }
-						onEditItem={ this.editItem }
-						fullScreenDropZone={ false }
-						single={ this.props.single }
-						scrollable />
-				);
-				break;
-
 			case ModalViews.DETAIL:
 				content = (
 					<MediaModalDetail
@@ -442,6 +423,25 @@ export const EditorMediaModal = React.createClass( {
 						onDone={ this.onImageEditorDone }
 						onCancel={ this.onImageEditorCancel }
 					/>
+				);
+				break;
+
+			default:
+				content = (
+					<MediaLibrary
+						site={ this.props.site }
+						filter={ this.state.filter || this.props.defaultFilter || this.getFirstEnabledFilter() }
+						enabledFilters={ this.props.enabledFilters }
+						search={ this.state.search }
+						onAddMedia={ this.onAddMedia }
+						onAddAndEditImage={ this.onAddAndEditImage }
+						onFilterChange={ this.onFilterChange }
+						onScaleChange={ this.onScaleChange }
+						onSearch={ this.onSearch }
+						onEditItem={ this.editItem }
+						fullScreenDropZone={ false }
+						single={ this.props.single }
+						scrollable />
 				);
 				break;
 		}
