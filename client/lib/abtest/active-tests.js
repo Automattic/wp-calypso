@@ -98,12 +98,13 @@ module.exports = {
 		allowExistingUsers: false,
 	},
 	paidNuxStreamlined: {
-		datestamp: '20160912',
+		datestamp: '20161020',
 		variations: {
 			original: 50,
 			streamlined: 50,
 		},
 		defaultVariation: 'original',
+		allowAnyLocale: true,
 	},
 	readerFullPost: {
 		datestamp: '20160929',
