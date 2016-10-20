@@ -118,7 +118,7 @@ const WPCOMNotifications = React.createClass( {
 				<EmailCategory
 					name={ options.digest } isEnabled={ this.state.settings.get( options.digest ) }
 					title={ this.translate( 'Digests' ) }
-					description={ this.translate( 'Reading & writing digests, tailored for you.' ) }
+					description={ this.translate( 'A compilation of interesting tidbits from both your personal feed and your own writing.' ) }
 				/>
 
 				<ActionButtons

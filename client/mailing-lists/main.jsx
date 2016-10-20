@@ -114,7 +114,7 @@ const MainComponent = React.createClass( {
 		} else if ( 'community' === this.props.category ) {
 			return this.translate( 'Information on WordPress.com courses and events (online & in-person).' );
 		} else if ( 'digest' === this.props.category ) {
-			return this.translate( 'Reading & writing digests, tailored for you.' );
+			return this.translate( 'A compilation of interesting tidbits from both your personal feed and your own writing.' );
 		}
 
 		return null;
