@@ -5,6 +5,7 @@ import React from 'react';
 import { noop, get } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -13,8 +14,6 @@ import EllipsisMenu from 'components/ellipsis-menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 import SiteStore from 'lib/reader-site-store';
-import FeedStore from 'lib/feed-store';
-import FeedStoreActions from 'lib/feed-store/actions';
 import SiteBlockStore from 'lib/reader-site-blocks';
 import SiteBlockActions from 'lib/reader-site-blocks/actions';
 import PostUtils from 'lib/posts/utils';
@@ -22,11 +21,14 @@ import FollowButton from 'reader/follow-button';
 import * as DiscoverHelper from 'reader/discover/helper';
 import smartSetState from 'lib/react-smart-set-state';
 import * as stats from 'reader/stats';
+import { getFeed } from 'state/reader/feeds/selectors';
+import QueryReaderFeed from 'components/data/query-reader-feed';
 
 const ReaderPostOptionsMenu = React.createClass( {
 
 	propTypes: {
 		post: React.PropTypes.object.isRequired,
+		feed: React.PropTypes.object,
 		onBlock: React.PropTypes.func
 	},
 
@@ -48,24 +50,18 @@ const ReaderPostOptionsMenu = React.createClass( {
 	componentDidMount() {
 		SiteBlockStore.on( 'change', this.updateState );
 		FeedSubscriptionStore.on( 'change', this.updateState );
-		FeedStore.on( 'change', this.updateState );
 	},
 
 	componentWillUnmount() {
 		SiteBlockStore.off( 'change', this.updateState );
 		FeedSubscriptionStore.off( 'change', this.updateState );
-		FeedStore.off( 'change', this.updateState );
 	},
 
 	getStateFromStores() {
-		const siteId = this.props.post.site_ID,
-			feed = this.getFeed(),
-			followUrl = this.getFollowUrl( feed );
+		const siteId = this.props.post.site_ID;
 
 		return {
-			isBlocked: SiteBlockStore.getIsBlocked( siteId ),
-			feed: this.getFeed(),
-			followUrl: followUrl
+			isBlocked: SiteBlockStore.getIsBlocked( siteId )
 		};
 	},
 
@@ -93,23 +89,8 @@ const ReaderPostOptionsMenu = React.createClass( {
 		window.open( 'https://wordpress.com/abuse/?report_url=' + encodeURIComponent( this.props.post.URL ), '_blank' );
 	},
 
-	getFollowUrl( feed ) {
-		return feed ? feed.get( 'feed_URL' ) : this.props.post.site_URL;
-	},
-
-	getFeed() {
-		const feedId = get( this.props, 'post.feed_ID' );
-		if ( ! feedId || feedId < 1 ) {
-			return;
-		}
-
-		const feed = FeedStore.get( feedId );
-
-		if ( ! feed ) {
-			FeedStoreActions.fetch( feedId );
-		}
-
-		return feed;
+	getFollowUrl() {
+		return this.props.feed ? this.props.feed.feed_URL : this.props.post.site_URL;
 	},
 
 	onMenuToggle( isMenuVisible ) {
@@ -145,7 +126,8 @@ const ReaderPostOptionsMenu = React.createClass( {
 	render() {
 		const post = this.props.post,
 			isEditPossible = PostUtils.userCan( 'edit_post', post ),
-			isDiscoverPost = DiscoverHelper.isDiscoverPost( post );
+			isDiscoverPost = DiscoverHelper.isDiscoverPost( post ),
+			followUrl = this.getFollowUrl();
 
 		let isBlockPossible = false;
 
@@ -158,10 +140,11 @@ const ReaderPostOptionsMenu = React.createClass( {
 
 		return (
 			<span className={ classes }>
+				{ post && post.feed_ID && <QueryReaderFeed feedId={ post.feed_ID } /> }
 				<EllipsisMenu
 					className="reader-post-options-menu__ellipsis-menu"
 					onToggle={ this.onMenuToggle }>
-					<FollowButton tagName={ PopoverMenuItem } siteUrl={ this.state.followUrl } />
+					<FollowButton tagName={ PopoverMenuItem } siteUrl={ followUrl } />
 
 					{ isEditPossible ? <PopoverMenuItem onClick={ this.editPost } icon="pencil">
 						{ this.translate( 'Edit Post' ) }
@@ -177,4 +160,13 @@ const ReaderPostOptionsMenu = React.createClass( {
 
 } );
 
-export default ReaderPostOptionsMenu;
+export default connect(
+	( state, ownProps ) => {
+		const props = {};
+		const feedId = get( ownProps, 'post.feed_ID' );
+		if ( feedId && feedId > 0 ) {
+			props.feed = getFeed( state, feedId );
+		}
+		return props;
+	}
+)( ReaderPostOptionsMenu );
