@@ -82,7 +82,7 @@ try {
 		// text/html parsing is natively supported
 		_useDomParser = true;
 	}
-} catch ( ex ) { }
+} catch ( ex ) {}
 
 export function domForHtml( html ) {
 	let dom;
