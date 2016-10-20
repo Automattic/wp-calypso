@@ -25,7 +25,10 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	config = require( 'config' );
 
 import MenuSeparator from 'components/popover/menu-separator';
-import { isFrontPage } from 'state/pages/selectors';
+import {
+	isFrontPage,
+	isPostsPage,
+} from 'state/pages/selectors';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
 
@@ -316,6 +319,7 @@ const Page = React.createClass( {
 					{ this.props.isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
 					{ title }
 				</a>
+				{ this.props.isPostsPage ? <div className="page__posts-page">{ this.translate( 'Your latest posts' ) }</div> : null }
 				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
 				<Gridicon
 					icon="ellipsis"
@@ -379,7 +383,8 @@ const Page = React.createClass( {
 export default connect(
 	( state, props ) => {
 		return {
-			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID )
+			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
+			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
 		};
 	},
 	( dispatch ) => bindActionCreators( {
