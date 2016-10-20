@@ -609,11 +609,8 @@ export function canJetpackSiteManage( state, siteId ) {
 
 	if ( versionCompare( siteJetpackVersion, '3.4', '>=' ) ) {
 		// if we haven't fetched the modules yet, we default to true
-		const modules = getSiteOption( state, siteId, 'active_modules' );
-		if ( ! modules || modules.length === 0 ) {
-			return true;
-		}
-		return isJetpackModuleActive( state, siteId, 'manage' );
+		const isModuleActive = isJetpackModuleActive( state, siteId, 'manage' );
+		return isModuleActive === null ? true : isModuleActive;
 	}
 	// for version lower than 3.4, we cannot not determine canManage, we'll assume they can
 	return true;
