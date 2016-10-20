@@ -4,6 +4,7 @@
 import React, { PropTypes } from 'react';
 import debounce from 'lodash/debounce';
 import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
