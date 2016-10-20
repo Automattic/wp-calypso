@@ -115,11 +115,16 @@ function shuffleVerticals( elements ) {
 	return newVerticals;
 }
 
+let shuffledVerticals = null;
+
 export default {
 	get() {
+		if ( shuffledVerticals ) {
+			return shuffledVerticals;
+		}
 		switch ( abtest( 'signupSurveyStep' ) ) {
-			case 'surveyStepV1': return shuffleVerticals( verticalsV1 );
-			case 'surveyStepV2': return shuffleVerticals( verticalsV2 );
+			case 'surveyStepV1': return shuffledVerticals = shuffleVerticals( verticalsV1 );
+			case 'surveyStepV2': return shuffledVerticals = shuffleVerticals( verticalsV2 );
 			default: throw new Error( 'Unknown variation' );
 		}
 	}
