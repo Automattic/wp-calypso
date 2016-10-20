@@ -14,7 +14,9 @@ import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import { recordTracksEvent } from 'state/analytics/actions';
 import config from 'config';
-import { abtest } from 'lib/abtest';
+import sitesFactory from 'lib/sites-list';
+
+const sites = sitesFactory();
 
 const SiteSelectorAddSite = React.createClass( {
 	getInitialState() {
@@ -95,7 +97,7 @@ const SiteSelectorAddSite = React.createClass( {
 	},
 
 	render() {
-		if ( abtest( 'siteSelectorAddSitePopover' ) === 'showPopover' ) {
+		if ( sites.getJetpack().length ) {
 			return this.renderButtonWithPopover();
 		}
 
