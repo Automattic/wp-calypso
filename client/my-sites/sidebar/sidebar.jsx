@@ -670,7 +670,7 @@ export const MySitesSidebar = React.createClass( {
 		}
 
 		return (
-			<Button compact borderless
+			<Button borderless
 				className="my-sites-sidebar__add-new-site"
 				href={ config( 'signup_url' ) + '?ref=calypso-selector' }
 				onClick={ this.focusContent }

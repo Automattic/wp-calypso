@@ -15,8 +15,8 @@ import HappychatButton from 'components/happychat/button';
 const SidebarFooter = ( { translate, children } ) => (
 	<div className="sidebar__footer">
 		{ children }
-		<Button compact borderless href="/help">
-			<Gridicon icon="help-outline" /> { translate( 'Help' ) }
+		<Button className="sidebar__footer-help" borderless href="/help" title={ translate( 'Help' ) }>
+			<Gridicon icon="help-outline" />
 		</Button>
 		{ config.isEnabled( 'happychat' ) && <HappychatButton /> }
 	</div>
