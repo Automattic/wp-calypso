@@ -1,7 +1,24 @@
-import { property } from 'lodash';
+/**
+ * External dependencies
+ */
+import {
+	flowRight as compose,
+	property,
+} from 'lodash';
 
-export const getProductsList = property( 'productsList.items' );
+/**
+ * Internal dependencies
+ */
+import {
+	getProductsListState,
+} from 'state/selectors';
 
-export function isProductsListFetching( state ) {
-	return state.productsList.isFetching;
-}
+export const getProductsList = compose(
+	property( 'items' ),
+	getProductsListState,
+);
+
+export const isProductsListFetching = compose(
+	property( 'isFetching' ),
+	getProductsListState,
+);
