@@ -72,7 +72,7 @@ module.exports = {
 		allowExistingUsers: false,
 	},
 	signupSurveyStep: {
-		datestamp: '20161019',
+		datestamp: '20161020',
 		variations: {
 			surveyStepV1: 50,
 			surveyStepV2: 50,
