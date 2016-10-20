@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import PureRenderMixin from 'react-pure-render/mixin';
 import debugModule from 'debug';
 import omit from 'lodash/omit';
@@ -42,21 +41,21 @@ const user = userModule();
 const EditUserForm = React.createClass( {
 	displayName: 'EditUserForm',
 
-	mixins: [ LinkedStateMixin, PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.getStateObject( this.props );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.replaceState( this.getStateObject( nextProps ) );
 	},
 
-	getRole: function( roles ) {
+	getRole( roles ) {
 		return roles && roles[ 0 ] ? roles[ 0 ] : null;
 	},
 
-	getStateObject: function( props ) {
+	getStateObject( props ) {
 		props = 'undefined' !== typeof props ? props : this.props;
 		const role = this.getRole( props.roles );
 		return assign(
@@ -65,7 +64,7 @@ const EditUserForm = React.createClass( {
 		);
 	},
 
-	getChangedSettings: function() {
+	getChangedSettings() {
 		const originalUser = this.getStateObject( this.props.user );
 		const changedKeys = filter( this.getAllowedSettingsToChange(), ( setting ) => {
 			return 'undefined' !== typeof originalUser[ setting ] &&
@@ -76,7 +75,7 @@ const EditUserForm = React.createClass( {
 		return pick( this.state, changedKeys );
 	},
 
-	getAllowedSettingsToChange: function() {
+	getAllowedSettingsToChange() {
 		const currentUser = user.get();
 		let allowedSettings = []; // eslint-disable-line
 
@@ -100,11 +99,11 @@ const EditUserForm = React.createClass( {
 		return allowedSettings;
 	},
 
-	hasUnsavedSettings: function() {
+	hasUnsavedSettings() {
 		return Object.keys( this.getChangedSettings() ).length;
 	},
 
-	updateUser: function( event ) {
+	updateUser( event ) {
 		event.preventDefault();
 
 		const changedSettings = this.getChangedSettings();
@@ -123,11 +122,17 @@ const EditUserForm = React.createClass( {
 		analytics.ga.recordEvent( 'People', 'Clicked Save Changes Button on User Edit' );
 	},
 
-	recordFieldFocus: ( fieldId ) => () => {
+	recordFieldFocus( fieldId ) {
 		analytics.ga.recordEvent( 'People', 'Focused on field on User Edit', 'Field', fieldId );
 	},
 
-	renderField: function( fieldId ) {
+	handleChange( event ) {
+		this.setState( {
+			[ event.target.name ]: event.target.value
+		} );
+	},
+
+	renderField( fieldId ) {
 		let returnField = null;
 		switch ( fieldId ) {
 			case 'roles':
@@ -137,7 +142,8 @@ const EditUserForm = React.createClass( {
 						name="roles"
 						key="roles"
 						siteId={ this.props.siteId }
-						valueLink={ this.linkState( 'roles' ) }
+						value={ this.state.roles }
+						onChange={ this.handleChange }
 						onFocus={ this.recordFieldFocus( 'roles' ) }
 					/>
 				);
@@ -151,7 +157,8 @@ const EditUserForm = React.createClass( {
 						<FormTextInput
 							id="first_name"
 							name="first_name"
-							valueLink={ this.linkState( 'first_name' ) }
+							defaultValue={ this.state.first_name }
+							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'first_name' ) }
 						/>
 					</FormFieldset>
@@ -166,7 +173,8 @@ const EditUserForm = React.createClass( {
 						<FormTextInput
 							id="last_name"
 							name="last_name"
-							valueLink={ this.linkState( 'last_name' ) }
+							defaultValue={ this.state.last_name }
+							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'last_name' ) }
 						/>
 					</FormFieldset>
@@ -181,7 +189,8 @@ const EditUserForm = React.createClass( {
 						<FormTextInput
 							id="name"
 							name="name"
-							valueLink={ this.linkState( 'name' ) }
+							defaultValue={ this.state.name }
+							onChange={ this.handleChange }
 							onFocus={ this.recordFieldFocus( 'name' ) }
 						/>
 					</FormFieldset>
@@ -192,7 +201,7 @@ const EditUserForm = React.createClass( {
 		return returnField;
 	},
 
-	render: function() {
+	render() {
 		let editableFields;
 		if ( ! this.state.ID ) {
 			return null;
@@ -231,14 +240,14 @@ module.exports = React.createClass( {
 
 	mixins: [ PureRenderMixin, protectForm.mixin ],
 
-	getInitialState: function() {
+	getInitialState() {
 		return ( {
 			user: UsersStore.getUserByLogin( this.props.siteId, this.props.userLogin ),
 			removingUser: false
 		} );
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		UsersStore.on( 'change', this.refreshUser );
 		PeopleLog.on( 'change', this.checkRemoveUser );
 		if ( ! this.state.user && this.props.siteId ) {
@@ -246,16 +255,16 @@ module.exports = React.createClass( {
 		}
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		UsersStore.removeListener( 'change', this.refreshUser );
 		PeopleLog.removeListener( 'change', this.checkRemoveUser );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		this.refreshUser( nextProps );
 	},
 
-	refreshUser: function( nextProps ) {
+	refreshUser( nextProps ) {
 		const siteId = nextProps && nextProps.siteId ? nextProps.siteId : this.props.siteId;
 
 		this.setState( {
@@ -263,7 +272,7 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	checkRemoveUser: function() {
+	checkRemoveUser() {
 		if ( ! this.props.siteId ) {
 			return;
 		}
@@ -293,7 +302,7 @@ module.exports = React.createClass( {
 		}
 	},
 
-	goBack: function() {
+	goBack() {
 		analytics.ga.recordEvent( 'People', 'Clicked Back Button on User Edit' );
 		if ( this.props.siteSlug ) {
 			const teamBack = '/people/team/' + this.props.siteSlug,
@@ -310,7 +319,7 @@ module.exports = React.createClass( {
 		page( '/people/team' );
 	},
 
-	renderNotices: function() {
+	renderNotices() {
 		if ( ! this.state.user ) {
 			return;
 		}
@@ -319,7 +328,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		return (
 			<Main className="edit-team-member-form">
 				<HeaderCake onClick={ this.goBack } isCompact />
