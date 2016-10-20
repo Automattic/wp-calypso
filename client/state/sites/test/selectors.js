@@ -1549,7 +1549,7 @@ describe( 'selectors', () => {
 			expect( canAutoUpdateFiles ).to.equal( true );
 		} );
 
-		it( 'it should return `true` if the `file_mod_disabled` option contains `automatic_updater_disabled`', () => {
+		it( 'it should return `false` if the `file_mod_disabled` option contains `automatic_updater_disabled`', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
@@ -1569,6 +1569,12 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#siteHasMinimumJetpackVersion()', () => {
+		let configStub;
+
+		useSandbox( ( sandbox ) => {
+			configStub = sandbox.stub().withArgs( 'jetpack_min_version' ).returns( '3.3' );
+		} );
+
 		it( 'it should return `null` for a non-existing site', () => {
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( stateWithNoItems, nonExistingSiteId );
 			expect( hasMinimumVersion ).to.equal( null );
@@ -1587,7 +1593,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'it should return `true` if jetpack version is greater that minimum version', () => {
-			const jetpackMinVersion = config( 'jetpack_min_version' );
+			const jetpackMinVersion = configStub( 'jetpack_min_version' );
 			const greaterVersion = changeVersion( jetpackMinVersion );
 			const state = createStateWithItems( {
 				[ siteId ]: {
@@ -1604,8 +1610,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'it should return `true` if jetpack version is equal to minimum version', () => {
-			const jetpackMinVersion = config( 'jetpack_min_version' );
-			const equalVersion = jetpackMinVersion;
+			const equalVersion = config( 'jetpack_min_version' );
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
@@ -1904,7 +1909,7 @@ describe( 'selectors', () => {
 			expect( hasCustomDomain ).to.equal( null );
 		} );
 
-		it( 'it should return `true` if `URL` and `unmapped_url` have the same domain', () => {
+		it( 'it should return `true` if `URL` and `unmapped_url` have different domains', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
@@ -1919,7 +1924,7 @@ describe( 'selectors', () => {
 			expect( hasCustomDomain ).to.equal( true );
 		} );
 
-		it( 'it should return `false` if `URL` and `unmapped_url` have different domains', () => {
+		it( 'it should return `false` if `URL` and `unmapped_url` have the same domain', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
