@@ -175,7 +175,7 @@ const Search = React.createClass( {
 		} );
 	},
 
-	//This is fic for IE11 does not work on Edge.
+	//This is fix for IE11. Does not work on Edge.
 	getScrollLeft: function( inputElement ) {
 		let range;
 		if ( inputElement.createTextRange ) {
