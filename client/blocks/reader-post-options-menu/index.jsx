@@ -90,7 +90,7 @@ const ReaderPostOptionsMenu = React.createClass( {
 	},
 
 	getFollowUrl() {
-		return this.props.feed ? get( this.props.feed, 'feed_URL' ) : get( this.props.post, 'site_URL' );
+		return this.props.feed ? this.props.feed.feed_URL : this.props.post.site_URL;
 	},
 
 	onMenuToggle( isMenuVisible ) {
@@ -168,6 +168,5 @@ export default connect(
 			props.feed = getFeed( state, feedId );
 		}
 		return props;
-	},
-	{}
+	}
 )( ReaderPostOptionsMenu );
