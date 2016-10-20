@@ -18,7 +18,9 @@ import {
 } from './fixtures';
 
 describe( 'selectors', () => {
-	const initialState = reducer( undefined, { type: 'INIT' } );
+	const initialState = {
+		productsList: reducer( undefined, { type: 'INIT' } )
+	};
 
 	describe( '#getProductsList', () => {
 		it( 'should return the initial products list', () => {
@@ -26,12 +28,14 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return a hydrated products list', () => {
-			const hydrated = reducer( initialState, {
-				type: PRODUCTS_LIST_RECEIVE,
-				productsList: { guided_transfer },
-			} );
+			const hydrated = {
+				productsList: reducer( initialState.productsList, {
+					type: PRODUCTS_LIST_RECEIVE,
+					productsList: { guided_transfer },
+				} )
+			};
 
-			expect( getProductsList( hydrated ) ).to.eql( { guided_transfer });
+			expect( getProductsList( hydrated ) ).to.eql( { guided_transfer } );
 		} );
 	} );
 } );
