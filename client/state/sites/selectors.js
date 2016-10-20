@@ -597,7 +597,7 @@ export function hasStaticFrontPage( state, siteId ) {
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {Boolean} if the site can be managed from calypso
+ * @return {?Boolean} if the site can be managed from calypso
  */
 export function canJetpackSiteManage( state, siteId ) {
 	// for versions 3.4 and higher, canManage can be determined by the state of the Manage Module
