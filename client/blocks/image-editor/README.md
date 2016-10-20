@@ -28,8 +28,15 @@ Id of a site the edited image belongs to.
 	<tr><th>Required</th><td>Yes</td></tr>
 </table>
 
-This object needs to contain at least these properties:
-- `media.URL` `{string}`: the `url` of the image to be edited (e.g. `https://my-site.com/full-width1-e1.jpg`)
+This object needs to contain at least one of these properties:
+
+`media.URL` `{string}`: the `url` of the image to be edited (e.g. `https://my-site.com/full-width1-e1.jpg`).
+Use this approach if you want to load and edit a remote image file.
+
+or
+
+`media.src` `{string}`: the [object url](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL) of
+the image to be edited. Use this approach if you want to edit a local image file (e.g. uploaded file or blob).
 
 It can also contain these optional properties (with defaults if not set):
 - `media.file` `{string}`: the base name of the edited image file (e.g. `full-width1-e1.jpg`), defaults to `default`
