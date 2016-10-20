@@ -15,8 +15,9 @@ import { getEditorPostId, isEditorNewPost } from 'state/ui/editor/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import QueryPostTypes from 'components/data/query-post-types';
 import { decodeEntities } from 'lib/formatting';
+import PostStatus from 'blocks/post-status';
 
-function EditorPostType( { translate, siteId, isNew, typeSlug, type } ) {
+function EditorPostType( { translate, siteId, isNew, typeSlug, type, globalId } ) {
 	let label;
 	if ( 'page' === typeSlug ) {
 		if ( isNew ) {
@@ -51,7 +52,7 @@ function EditorPostType( { translate, siteId, isNew, typeSlug, type } ) {
 			{ siteId && 'page' !== typeSlug && 'post' !== typeSlug && (
 				<QueryPostTypes siteId={ siteId } />
 			) }
-			{ label }
+			{ label } <PostStatus globalId={ globalId } showAll showIcon={ false } />
 		</span>
 	);
 }
@@ -61,7 +62,8 @@ EditorPostType.propTypes = {
 	siteId: PropTypes.number,
 	isNew: PropTypes.bool,
 	typeSlug: PropTypes.string,
-	type: PropTypes.object
+	type: PropTypes.object,
+	globalId: PropTypes.number
 };
 
 export default connect( ( state ) => {
@@ -79,6 +81,7 @@ export default connect( ( state ) => {
 
 	return Object.assign( props, {
 		typeSlug: post.type,
-		type: getPostType( state, site.ID, post.type )
+		type: getPostType( state, site.ID, post.type ),
+		globalId: post.global_ID
 	} );
 } )( localize( EditorPostType ) );
