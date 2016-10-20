@@ -252,7 +252,7 @@
 }
 
 // Daily Post-Specific Full Post View Styles
-.is-group-reader.blog-489937 .reader__full-post-content {
+.is-reader-page .blog-489937 .reader__full-post-content {
 	blockquote.left,
 	blockquote.alignleft,
 	blockquote.align-left,
@@ -263,14 +263,16 @@
 		background: none;
 		font-size: 13px;
 		width: 175px;
+		position: relative;
 
-		@media ( min-width: 1132px ) {
+		@media ( min-width: 1400px ) {
 			position: absolute;
-			left: -( 175px + 32px );
+			left: inherit;
+			right: -( 175px + 32px );
 			margin-left: 0;
 		}
 
-		@media ( max-width: 1132px ) {
+		@media ( max-width: 1400px ) {
 			background: lighten( $gray, 30 );
 			margin: 0 0 24px 0;
 			padding: 16px;
@@ -289,6 +291,7 @@
 		}
 	}
 }
+
 
 // Hides Jetpack RP in Reader
 .reader-full-post .jp-relatedposts-headline,
