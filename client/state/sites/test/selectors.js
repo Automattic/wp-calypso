@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
 
 /**
@@ -55,20 +56,28 @@ function changeVersion( version, operator = 1 ) {
 	const splitVersion = version.split( '.' );
 
 	if ( operator >= 1 ) {
-		splitVersion[ splitVersion.length - 1 ]++;
+		splitVersion[ splitVersion.length - 1 ] ++;
 		return splitVersion.join( '.' );
 	}
 
 	if ( splitVersion[ splitVersion.length - 1 ] === '0' ) {
-		splitVersion[ splitVersion.length - 2 ]--;
+		splitVersion[ splitVersion.length - 2 ] --;
 	} else {
-		splitVersion[ splitVersion.length - 1 ]--;
+		splitVersion[ splitVersion.length - 1 ] --;
 	}
 
 	return splitVersion.join( '.' );
 }
 
 describe( 'selectors', () => {
+	const createStateWithItems = items => deepFreeze( {
+		sites: { items }
+	} );
+
+	const siteId = 77203074;
+	const nonExistingSiteId = 123;
+	const stateWithNoItems = createStateWithItems( {} );
+
 	beforeEach( () => {
 		getSite.memoizedSelector.cache.clear();
 		getSiteCollisions.memoizedSelector.cache.clear();
@@ -1291,121 +1300,84 @@ describe( 'selectors', () => {
 
 	describe( '#canJetpackSiteManage()', () => {
 		it( 'it should return `null` for a non-existing site', () => {
-			const state = {
-				sites: {
-					items: {}
-				}
-			};
-			const siteId = 123;
-
-			const canManage = canJetpackSiteManage( state, siteId );
+			const canManage = canJetpackSiteManage( stateWithNoItems, nonExistingSiteId );
 			expect( canManage ).to.equal( null );
 		} );
 
 		it( 'it should return `null` for a non jetpack site', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: false
-						}
-					}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: false
 				}
-			};
+			} );
 
 			const canManage = canJetpackSiteManage( state, siteId );
 			expect( canManage ).to.equal( null );
 		} );
 
 		it( 'it should return `true` if jetpack version is strictly less than 3.4', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								jetpack_version: '3.3'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						jetpack_version: '3.3'
 					}
 				}
-			};
+			} );
 
 			const canManage = canJetpackSiteManage( state, siteId );
 			expect( canManage ).to.equal( true );
 		} );
 
 		it( 'it should return `true` if the modules has not yet been fetched', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								active_modules: [],
-								jetpack_version: '3.4'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						active_modules: [],
+						jetpack_version: '3.4'
 					}
 				}
-			};
+			} );
 
 			const canManage = canJetpackSiteManage( state, siteId );
 			expect( canManage ).to.equal( true );
 		} );
 
 		it( 'it should return `true` if jetpack version is greater or equal to 3.4 and the manage module is active', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								active_modules: [ 'manage' ],
-								jetpack_version: '3.4'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						active_modules: [ 'manage' ],
+						jetpack_version: '3.4'
 					}
 				}
-			};
+			} );
 
 			const canManage = canJetpackSiteManage( state, siteId );
 			expect( canManage ).to.equal( true );
 		} );
 
 		it( 'it should return `false` if jetpack version is greater or equal to 3.4 and the manage module is not active', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								active_modules: [ 'sso' ],
-								jetpack_version: '3.4'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						active_modules: [ 'sso' ],
+						jetpack_version: '3.4'
 					}
 				}
-			};
+			} );
 
 			const canManage = canJetpackSiteManage( state, siteId );
 			expect( canManage ).to.equal( false );
@@ -1420,30 +1392,17 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'should return `null` for a non-existing site', () => {
-			const state = {
-				sites: {
-					items: {}
-				}
-			};
-			const siteId = 123;
-
-			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
+			const canUpdateFiles = canJetpackSiteUpdateFiles( stateWithNoItems, nonExistingSiteId );
 			expect( canUpdateFiles ).to.equal( null );
 		} );
 
 		it( 'it should return `false` for a non jetpack site', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: false,
-						}
-					}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: false,
 				}
-			};
+			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
 			expect( canUpdateFiles ).to.equal( null );
@@ -1452,147 +1411,111 @@ describe( 'selectors', () => {
 		it( 'it should return `false` if jetpack version is smaller than minimum version', () => {
 			const jetpackMinVersion = config( 'jetpack_min_version' );
 			const smallerVersion = changeVersion( jetpackMinVersion, -1 );
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: true,
-							options: {
-								jetpack_version: smallerVersion
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: true,
+					options: {
+						jetpack_version: smallerVersion
 					}
 				}
-			};
+			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
 			expect( canUpdateFiles ).to.equal( false );
 		} );
 
 		it( 'it should return `false` if is a multi-network site', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: true,
-							is_multi_network: true,
-						}
-					}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: true,
+					is_multi_network: true,
 				}
-			};
+			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
 			expect( canUpdateFiles ).to.equal( false );
 		} );
 
 		it( 'it should return `false` if is not a main network site (urls don\'t match)', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: true,
-							URL: 'https://jetpacksite.me',
-							is_multisite: true,
-							options: {
-								is_multi_network: false,
-								unmapped_url: 'https://example.wordpress.com',
-								main_network_site: 'https://anotherexample.wordpress.com'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: true,
+					URL: 'https://jetpacksite.me',
+					is_multisite: true,
+					options: {
+						is_multi_network: false,
+						unmapped_url: 'https://example.wordpress.com',
+						main_network_site: 'https://anotherexample.wordpress.com'
 					}
 				}
-			};
+			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
 			expect( canUpdateFiles ).to.equal( false );
 		} );
 
 		it( 'it should return `false` if `disallow_file_mods` is disabled', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: true,
-							URL: 'https://jetpacksite.me',
-							is_multisite: true,
-							options: {
-								is_multi_network: false,
-								unmapped_url: 'https://example.wordpress.com',
-								main_network_site: 'https://example.wordpress.com',
-								file_mod_disabled: [
-									'disallow_file_mods',
-								]
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: true,
+					URL: 'https://jetpacksite.me',
+					is_multisite: true,
+					options: {
+						is_multi_network: false,
+						unmapped_url: 'https://example.wordpress.com',
+						main_network_site: 'https://example.wordpress.com',
+						file_mod_disabled: [
+							'disallow_file_mods',
+						]
 					}
 				}
-			};
+			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
 			expect( canUpdateFiles ).to.equal( false );
 		} );
 
 		it( 'it should return `false` if `has_no_file_system_write_access` is disabled', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: true,
-							URL: 'https://jetpacksite.me',
-							is_multisite: true,
-							options: {
-								is_multi_network: false,
-								unmapped_url: 'https://example.wordpress.com',
-								main_network_site: 'https://example.wordpress.com',
-								file_mod_disabled: [
-									'has_no_file_system_write_access',
-								]
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: true,
+					URL: 'https://jetpacksite.me',
+					is_multisite: true,
+					options: {
+						is_multi_network: false,
+						unmapped_url: 'https://example.wordpress.com',
+						main_network_site: 'https://example.wordpress.com',
+						file_mod_disabled: [
+							'has_no_file_system_write_access',
+						]
 					}
 				}
-			};
+			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
 			expect( canUpdateFiles ).to.equal( false );
 		} );
 
 		it( 'it should return `true` for the site right configurations', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: true,
-							URL: 'https://jetpacksite.me',
-							is_multisite: true,
-							options: {
-								is_multi_network: false,
-								unmapped_url: 'https://example.wordpress.com',
-								main_network_site: 'https://example.wordpress.com',
-								file_mod_disabled: []
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: true,
+					URL: 'https://jetpacksite.me',
+					is_multisite: true,
+					options: {
+						is_multi_network: false,
+						unmapped_url: 'https://example.wordpress.com',
+						main_network_site: 'https://example.wordpress.com',
+						file_mod_disabled: []
 					}
 				}
-			};
+			} );
 
 			const canUpdateFiles = canJetpackSiteUpdateFiles( state, siteId );
 			expect( canUpdateFiles ).to.equal( false );
@@ -1601,46 +1524,36 @@ describe( 'selectors', () => {
 
 	describe( '#canJetpackSiteAutoUpdateFiles()', () => {
 		it( 'it should return `true` if the `file_mod_disabled` option does not contain `automatic_updater_disabled`', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							is_multisite: false,
-							jetpack: true,
-							options: {
-								file_mod_disabled: [],
-								jetpack_version: '3.4'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: false,
+					jetpack: true,
+					options: {
+						file_mod_disabled: [],
+						jetpack_version: '3.4'
 					}
 				}
-			};
+			} );
 
 			const canAutoUpdateFiles = canJetpackSiteAutoUpdateFiles( state, siteId );
 			expect( canAutoUpdateFiles ).to.equal( true );
 		} );
 
 		it( 'it should return `true` if the `file_mod_disabled` option contains `automatic_updater_disabled`', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							is_multisite: false,
-							jetpack: true,
-							options: {
-								file_mod_disabled: [ 'automatic_updater_disabled' ],
-								jetpack_version: '3.4'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: false,
+					jetpack: true,
+					options: {
+						file_mod_disabled: [ 'automatic_updater_disabled' ],
+						jetpack_version: '3.4'
 					}
 				}
-			};
+			} );
 
 			const canAutoUpdateFiles = canJetpackSiteAutoUpdateFiles( state, siteId );
 			expect( canAutoUpdateFiles ).to.equal( false );
@@ -1649,30 +1562,17 @@ describe( 'selectors', () => {
 
 	describe( '#siteHasMinimumJetpackVersion()', () => {
 		it( 'it should return `null` for a non-existing site', () => {
-			const state = {
-				sites: {
-					items: {}
-				}
-			};
-			const siteId = 123;
-
-			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
+			const hasMinimumVersion = siteHasMinimumJetpackVersion( stateWithNoItems, nonExistingSiteId );
 			expect( hasMinimumVersion ).to.equal( null );
 		} );
 
 		it( 'it should return `null` for a non jetpack site', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: false,
-						}
-					}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: false,
 				}
-			};
+			} );
 
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
 			expect( hasMinimumVersion ).to.equal( null );
@@ -1681,21 +1581,15 @@ describe( 'selectors', () => {
 		it( 'it should return `true` if jetpack version is greater that minimum version', () => {
 			const jetpackMinVersion = config( 'jetpack_min_version' );
 			const greaterVersion = changeVersion( jetpackMinVersion );
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: true,
-							options: {
-								jetpack_version: greaterVersion
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: true,
+					options: {
+						jetpack_version: greaterVersion
 					}
 				}
-			};
+			} );
 
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
 			expect( hasMinimumVersion ).to.equal( true );
@@ -1704,21 +1598,15 @@ describe( 'selectors', () => {
 		it( 'it should return `true` if jetpack version is equal to minimum version', () => {
 			const jetpackMinVersion = config( 'jetpack_min_version' );
 			const equalVersion = jetpackMinVersion;
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: true,
-							options: {
-								jetpack_version: equalVersion
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: true,
+					options: {
+						jetpack_version: equalVersion
 					}
 				}
-			};
+			} );
 
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
 			expect( hasMinimumVersion ).to.equal( true );
@@ -1727,21 +1615,15 @@ describe( 'selectors', () => {
 		it( 'it should return `false` if jetpack version is smaller than minimum version', () => {
 			const jetpackMinVersion = config( 'jetpack_min_version' );
 			const smallerVersion = changeVersion( jetpackMinVersion, -1 );
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							jetpack: true,
-							options: {
-								jetpack_version: smallerVersion
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					jetpack: true,
+					options: {
+						jetpack_version: smallerVersion
 					}
 				}
-			};
+			} );
 
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( state, siteId );
 			expect( hasMinimumVersion ).to.equal( false );
@@ -1750,44 +1632,32 @@ describe( 'selectors', () => {
 
 	describe( '#hasJetpackSiteJetpackMenus()', () => {
 		it( 'it should return `false` if jetpack version is smaller than 3.5-alpha', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								jetpack_version: '3.4'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						jetpack_version: '3.4'
 					}
 				}
-			};
+			} );
 
 			const hasMenus = hasJetpackSiteJetpackMenus( state, siteId );
 			expect( hasMenus ).to.equal( false );
 		} );
 
 		it( 'it should return `true` if jetpack version is greater or equal to 3.5-alpha', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								jetpack_version: '3.5'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						jetpack_version: '3.5'
 					}
 				}
-			};
+			} );
 
 			const hasMenus = hasJetpackSiteJetpackMenus( state, siteId );
 			expect( hasMenus ).to.equal( true );
@@ -1796,44 +1666,32 @@ describe( 'selectors', () => {
 
 	describe( '#hasJetpackSiteJetpackThemes()', () => {
 		it( 'it should return `false` if jetpack version is smaller than 3.7-beta', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								jetpack_version: '3.7-alpha'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						jetpack_version: '3.7-alpha'
 					}
 				}
-			};
+			} );
 
 			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
 			expect( hasThemes ).to.equal( false );
 		} );
 
 		it( 'it should return `true` if jetpack version is greater or equal to 3.7-beta', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								jetpack_version: '3.7'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						jetpack_version: '3.7'
 					}
 				}
-			};
+			} );
 
 			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
 			expect( hasThemes ).to.equal( true );
@@ -1842,116 +1700,84 @@ describe( 'selectors', () => {
 
 	describe( '#isJetpackSiteSecondaryNetworkSite()', () => {
 		it( 'should return `null` for a non-existing site', () => {
-			const state = {
-				sites: {
-					items: {}
-				}
-			};
-			const siteId = 123;
-
-			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
+			const isSecondary = isJetpackSiteSecondaryNetworkSite( stateWithNoItems, nonExistingSiteId );
 			expect( isSecondary ).to.equal( null );
 		} );
 
 		it( 'it should return `false` for non multisite site', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							is_multisite: false
-						}
-					}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: false
 				}
-			};
+			} );
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
 			expect( isSecondary ).to.equal( false );
 		} );
 
 		it( 'it should return `false` for non-multisite/non-multinetwork sites', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							options: {
-								is_multi_network: false
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					options: {
+						is_multi_network: false
 					}
 				}
-			};
+			} );
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
 			expect( isSecondary ).to.equal( false );
 		} );
 
 		it( 'it should return `false` for multisite sites without unmapped url', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							is_multisite: true,
-							options: {
-								is_multi_network: false,
-								main_network_site: 'https://example.wordpress.com'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: true,
+					options: {
+						is_multi_network: false,
+						main_network_site: 'https://example.wordpress.com'
 					}
 				}
-			};
+			} );
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
 			expect( isSecondary ).to.equal( false );
 		} );
 
 		it( 'it should return `false` for multisite sites without main_network_site', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							is_multisite: true,
-							options: {
-								is_multi_network: false,
-								unmapped_url: 'https://example.wordpress.com'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: true,
+					options: {
+						is_multi_network: false,
+						unmapped_url: 'https://example.wordpress.com'
 					}
 				}
-			};
+			} );
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
 			expect( isSecondary ).to.equal( false );
 		} );
 
 		it( 'it should return `true` for multisite sites which unmapped_url does not match with main_network_site', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							is_multisite: true,
-							options: {
-								unmapped_url: 'https://secondary.wordpress.com',
-								main_network_site: 'https://example.wordpress.com'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: true,
+					options: {
+						unmapped_url: 'https://secondary.wordpress.com',
+						main_network_site: 'https://example.wordpress.com'
 					}
 				}
-			};
+			} );
 
 			const isSecondary = isJetpackSiteSecondaryNetworkSite( state, siteId );
 			expect( isSecondary ).to.equal( true );
@@ -1960,75 +1786,49 @@ describe( 'selectors', () => {
 
 	describe( '#verifyJetpackModulesActive()', () => {
 		it( 'should return `null` for a non-existing site', () => {
-			const state = {
-				sites: {
-					items: {}
-				}
-			};
-			const siteId = 123;
-
-			const modulesActive = verifyJetpackModulesActive( state, siteId, [ 'manage' ] );
+			const modulesActive = verifyJetpackModulesActive( stateWithNoItems, nonExistingSiteId, [ 'manage' ] );
 			expect( modulesActive ).to.equal( null );
 		} );
 
 		it( 'it should return `null` for a non jetpack site', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							options: {
-							}
-						}
-					}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					options: {}
 				}
-			};
+			} );
 
 			const modulesActive = verifyJetpackModulesActive( state, siteId, [ 'manage' ] );
 			expect( modulesActive ).to.equal( null );
 		} );
 
 		it( 'it should return `true` if all given modules are active for a site', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ]
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ]
 					}
 				}
-			};
+			} );
 
 			const modulesActive = verifyJetpackModulesActive( state, siteId, [ 'omnisearch', 'sso', 'photon' ] );
 			expect( modulesActive ).to.equal( true );
 		} );
 
 		it( 'it should return `false` if not all given modules are active for a site', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ]
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ]
 					}
 				}
-			};
+			} );
 
 			const modulesActive = verifyJetpackModulesActive( state, siteId, [ 'after-the-deadline', 'manage' ] );
 			expect( modulesActive ).to.equal( false );
@@ -2037,79 +1837,53 @@ describe( 'selectors', () => {
 
 	describe( '#getJetpackSiteRemoteManagementURL()', () => {
 		it( 'should return `null` for a non-existing site', () => {
-			const state = {
-				sites: {
-					items: {}
-				}
-			};
-			const siteId = 123;
-
-			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
+			const managementUrl = getJetpackSiteRemoteManagementURL( stateWithNoItems, nonExistingSiteId );
 			expect( managementUrl ).to.equal( null );
 		} );
 
 		it( 'it should return `false` for a non jetpack site', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							options: {
-							}
-						}
-					}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					options: {}
 				}
-			};
+			} );
 
 			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
 			expect( managementUrl ).to.equal( null );
 		} );
 
 		it( 'it should return the correct url for version of jetpack less than 3.4', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ],
-								admin_url: 'https://jetpacksite.me/wp-admin/',
-								jetpack_version: '3.3'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ],
+						admin_url: 'https://jetpacksite.me/wp-admin/',
+						jetpack_version: '3.3'
 					}
 				}
-			};
+			} );
 
 			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
 			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=manage' );
 		} );
 
 		it( 'it should return the correct url for versions of jetpack greater than or equal to 3.4', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							jetpack: true,
-							options: {
-								active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ],
-								admin_url: 'https://jetpacksite.me/wp-admin/',
-								jetpack_version: '3.4'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					jetpack: true,
+					options: {
+						active_modules: [ 'manage', 'sso', 'photon', 'omnisearch' ],
+						admin_url: 'https://jetpacksite.me/wp-admin/',
+						jetpack_version: '3.4'
 					}
 				}
-			};
+			} );
 
 			const managementUrl = getJetpackSiteRemoteManagementURL( state, siteId );
 			expect( managementUrl ).to.equal( 'https://jetpacksite.me/wp-admin/admin.php?page=jetpack&configure=json-api' );
@@ -2118,54 +1892,35 @@ describe( 'selectors', () => {
 
 	describe( '#hasJetpackSiteCustomDomain()', () => {
 		it( 'should return `null` for a non-existing site', () => {
-			const state = {
-				sites: {
-					items: {}
-				}
-			};
-			const siteId = 123;
-
-			const hasCustomDomain = hasJetpackSiteCustomDomain( state, siteId );
+			const hasCustomDomain = hasJetpackSiteCustomDomain( stateWithNoItems, nonExistingSiteId );
 			expect( hasCustomDomain ).to.equal( null );
 		} );
 
 		it( 'it should return `true` if `URL` and `unmapped_url` have the same domain', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							options: {
-								unmapped_url: 'https://jetpack.co'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					options: {
+						unmapped_url: 'https://jetpack.co'
 					}
 				}
-			};
+			} );
 
 			const hasCustomDomain = hasJetpackSiteCustomDomain( state, siteId );
 			expect( hasCustomDomain ).to.equal( true );
 		} );
 
 		it( 'it should return `false` if `URL` and `unmapped_url` have different domains', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							options: {
-								unmapped_url: 'https://jetpacksite.me'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					options: {
+						unmapped_url: 'https://jetpacksite.me'
 					}
 				}
-			};
+			} );
 
 			const hasCustomDomain = hasJetpackSiteCustomDomain( state, siteId );
 			expect( hasCustomDomain ).to.equal( false );
@@ -2174,80 +1929,56 @@ describe( 'selectors', () => {
 
 	describe( '#getJetpackSiteFileModDisableReasons()', () => {
 		it( 'it should have the correct reason for the clue `has_no_file_system_write_access`', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							options: {
-								file_mod_disabled: [ 'has_no_file_system_write_access' ]
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					options: {
+						file_mod_disabled: [ 'has_no_file_system_write_access' ]
 					}
 				}
-			};
+			} );
 
 			const reason = getJetpackSiteFileModDisableReasons( state, siteId );
 			expect( reason ).to.deep.equal( [ 'The file permissions on this host prevent editing files.' ] );
 		} );
 
 		it( 'it should have the correct reason for the clue `disallow_file_mods`', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							options: {
-								file_mod_disabled: [ 'disallow_file_mods' ]
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					options: {
+						file_mod_disabled: [ 'disallow_file_mods' ]
 					}
 				}
-			};
+			} );
 
 			const reason = getJetpackSiteFileModDisableReasons( state, siteId );
 			expect( reason ).to.deep.equal( [ 'File modifications are explicitly disabled by a site administrator.' ] );
 		} );
 
 		it( 'it should have the correct reason for the clue `automatic_updater_disabled`', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							options: {
-								file_mod_disabled: [ 'automatic_updater_disabled' ]
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					options: {
+						file_mod_disabled: [ 'automatic_updater_disabled' ]
 					}
 				}
-			};
+			} );
 
 			const reason = getJetpackSiteFileModDisableReasons( state, siteId, 'autoupdateCore' );
 			expect( reason ).to.deep.equal( [ 'Any autoupdates are explicitly disabled by a site administrator.' ] );
 		} );
 
 		it( 'it should have the correct reason for the clue `wp_auto_update_core_disabled`', () => {
-			const siteId = 77203074;
-
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							options: {
-								file_mod_disabled: [ 'wp_auto_update_core_disabled' ]
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					options: {
+						file_mod_disabled: [ 'wp_auto_update_core_disabled' ]
 					}
 				}
-			};
+			} );
 
 			const reason = getJetpackSiteFileModDisableReasons( state, siteId, 'autoupdateCore' );
 			expect( reason ).to.deep.equal( [ 'Core autoupdates are explicitly disabled by a site administrator.' ] );
@@ -2256,117 +1987,85 @@ describe( 'selectors', () => {
 
 	describe( '#isJetpackSiteMainNetworkSite()', () => {
 		it( 'should return `null` for a non-existing site', () => {
-			const state = {
-				sites: {
-					items: {}
-				}
-			};
-			const siteId = 123;
-
-			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
+			const isMainNetwork = isJetpackSiteMainNetworkSite( stateWithNoItems, nonExistingSiteId );
 			expect( isMainNetwork ).to.equal( null );
 		} );
 
 		it( 'it should return `false` for multi-network sites', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							options: {
-								is_multi_network: true
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					options: {
+						is_multi_network: true
 					}
 				}
-			};
+			} );
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
 			expect( isMainNetwork ).to.equal( false );
 		} );
 
 		it( 'it should return `true` for non multisite site', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							is_multisite: false,
-						}
-					}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: false,
 				}
-			};
+			} );
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
 			expect( isMainNetwork ).to.equal( true );
 		} );
 
 		it( 'it should return `false` for multisite sites without unmapped url', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							is_multisite: true,
-							options: {
-								is_multi_network: false,
-								main_network_site: 'https://example.wordpress.com'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: true,
+					options: {
+						is_multi_network: false,
+						main_network_site: 'https://example.wordpress.com'
 					}
 				}
-			};
+			} );
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
 			expect( isMainNetwork ).to.equal( false );
 		} );
 
 		it( 'it should return `false` for multisite sites without main_network_site', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							is_multisite: true,
-							options: {
-								is_multi_network: false,
-								unmapped_url: 'https://example.wordpress.com'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: true,
+					options: {
+						is_multi_network: false,
+						unmapped_url: 'https://example.wordpress.com'
 					}
 				}
-			};
+			} );
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
 			expect( isMainNetwork ).to.equal( false );
 		} );
 
 		it( 'it should return `true` for multisite sites and unmapped_url matches with main_network_site', () => {
-			const siteId = 77203074;
-			const state = {
-				sites: {
-					items: {
-						77203074: {
-							ID: siteId,
-							URL: 'https://jetpacksite.me',
-							is_multisite: true,
-							options: {
-								is_multi_network: false,
-								unmapped_url: 'https://example.wordpress.com',
-								main_network_site: 'https://example.wordpress.com'
-							}
-						}
+			const state = createStateWithItems( {
+				[ siteId ]: {
+					ID: siteId,
+					URL: 'https://jetpacksite.me',
+					is_multisite: true,
+					options: {
+						is_multi_network: false,
+						unmapped_url: 'https://example.wordpress.com',
+						main_network_site: 'https://example.wordpress.com'
 					}
 				}
-			};
+			} );
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
 			expect( isMainNetwork ).to.equal( true );
