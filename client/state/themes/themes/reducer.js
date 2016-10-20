@@ -34,13 +34,18 @@ export function setActiveTheme( themeId, themes ) {
 
 export default ( state = initialState, action ) => {
 	switch ( action.type ) {
-		case THEMES_RECEIVE:
-			const isNewSite = action.isJetpack && ( action.siteId !== state.get( 'currentSiteId' ) );
-			return state
-				.update( 'themes', themes => isNewSite ? new Map() : themes )
-				.set( 'currentSiteId', action.siteId )
-				.update( 'themes', add.bind( null, action.themes ) );
+		case THEMES_RECEIVE: {
+			const isCurrentSite = action.siteId === state.get( 'currentSiteId' );
+			const isNewSite = action.isJetpack && ! isCurrentSite;
+			const currentThemes = isNewSite ? new Map() : state.get( 'themes' );
+			const mergedThemes = add( action.themes, currentThemes );
 
+			return state.withMutations( ( temporaryState ) => {
+				temporaryState
+					.set( 'themes', mergedThemes )
+					.set( 'currentSiteId', action.siteId )
+			} );
+		}
 		case THEME_ACTIVATED:
 			return state.update( 'themes', setActiveTheme.bind( null, action.theme.id ) );
 		case DESERIALIZE:
