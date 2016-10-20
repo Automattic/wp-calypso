@@ -235,7 +235,7 @@ const Page = React.createClass( {
 	},
 
 	getSendToTrashItem: function() {
-		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
+		if ( ( this.props.hasStaticFrontPage && this.props.isPostsPage ) || this.props.isFrontPage ) {
 			return null;
 		}
 
