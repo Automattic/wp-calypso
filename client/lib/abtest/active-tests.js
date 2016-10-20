@@ -107,15 +107,6 @@ module.exports = {
 		defaultVariation: 'hideSiteTitleStep',
 		allowExistingUsers: false
 	},
-	siteSelectorAddSitePopover: {
-		datestamp: '20161011',
-		variations: {
-			showPopover: 10,
-			hidePopover: 90
-		},
-		defaultVariation: 'hidePopover',
-		allowExistingUsers: true
-	},
 	domainToPersonalPlanNudge2: {
 		datestamp: '20161018',
 		variations: {
