@@ -74,11 +74,24 @@ export function makeImageURLSafe( object, propName, maxWidth, baseURL ) {
 	}
 }
 
+let _useDomParser = false;
+// Firefox/Opera/IE throw errors on unsupported types
+try {
+	// WebKit returns null on unsupported types
+	if ( ( new DOMParser() ).parseFromString( '', 'text/html' ) ) {
+		// text/html parsing is natively supported
+		_useDomParser = true;
+	}
+} catch ( ex ) { }
+
 export function domForHtml( html ) {
 	let dom;
-	if ( typeof DOMParser !== 'undefined' && DOMParser.prototype.parseFromString ) {
+	if ( _useDomParser ) {
 		const parser = new DOMParser();
-		dom = parser.parseFromString( html, 'text/html' ).body;
+		const doc = parser.parseFromString( html, 'text/html' );
+		if ( doc && doc.body ) {
+			dom = doc.body;
+		}
 	} else {
 		dom = document.createElement( 'div' );
 		dom.innerHTML = html;
