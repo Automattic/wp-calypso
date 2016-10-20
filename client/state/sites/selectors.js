@@ -627,10 +627,6 @@ export function canJetpackSiteManage( state, siteId ) {
  * @return {Boolean} if the site can update its file
  */
 export function canJetpackSiteUpdateFiles( state, siteId ) {
-	if ( ! siteId ) {
-		return null;
-	}
-
 	if ( ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
