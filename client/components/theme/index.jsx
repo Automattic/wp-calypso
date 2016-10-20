@@ -121,7 +121,7 @@ const Theme = React.createClass( {
 			return this.renderPlaceholder();
 		}
 
-		const screenshotWidth = window && window.devicePixelRatio > 1 ? 680 : 340;
+		const screenshotWidth = typeof window !== 'undefined' && window.devicePixelRatio > 1 ? 680 : 340;
 		return (
 			<Card className={ themeClass }>
 				<div className="theme__content">
