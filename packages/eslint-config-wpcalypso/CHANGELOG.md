@@ -1,4 +1,4 @@
-#### v0.6.0 (---)
+#### v0.6.0 (2016-10-21)
 
 - General: Update to `eslint-plugin-wpcalypso@3.0.1` ([see changelog](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/CHANGELOG.md#v301-2016-10-21))
 - Added: [`wpcalypso/i18n-no-collapsible-whitespace`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/i18n-no-collapsible-whitespace.md) as error
