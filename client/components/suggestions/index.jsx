@@ -116,17 +116,16 @@ const Suggestions = React.createClass( {
 	},
 
 	narrowDown: function( input ) {
-		let [ taxonomy, filter ] = input.split( ':' );
+		const [ taxonomy, filter ] = input.split( ':' );
 		if ( taxonomy === '' ) {
 			// empty string or just ":" or ":filter" -
 			// TODO: just show welcome screen
 			return {};
 		}
 
-		//default limit, changed to 5 for single taxonomy
-		let limit = 3;
-
+		let limit = 3; //default limit, changed to 5 for single taxonomy
 		let terms; //terms that we will use to create suggestions
+		let filterTerm; // part of input that will be used for filtering
 
 		if ( filter !== undefined ) {
 			// this means that we have at least taxonomy:
@@ -141,16 +140,17 @@ const Suggestions = React.createClass( {
 				// TODO tell something to the user
 				return {};
 			}
+			filterTerm = filter;
 		} else {
 			// we just have one word so treat is as a search terms
-			filter = taxonomy;
+			filterTerm = taxonomy;
 			terms = this.props.terms;
 		}
 
 		const filtered = {};
 
 		// store filtering term for highlithing
-		this.setState( { filterTerm: filter } );
+		this.setState( { filterTerm: filterTerm } );
 
 		for ( const key in terms ) {
 			if ( ! this.props.terms.hasOwnProperty( key ) ) {
@@ -158,7 +158,7 @@ const Suggestions = React.createClass( {
 			}
 
 			filtered[ key ] = terms[ key ].filter(
-				term => term.indexOf( filter ) !== -1
+				term => term.indexOf( filterTerm ) !== -1
 			).splice( 0, limit );
 		}
 
