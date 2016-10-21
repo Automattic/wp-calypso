@@ -21,7 +21,7 @@ import { getUserSuggestions } from 'state/users/suggestions/selectors';
  */
 const VK = tinymce.util.VK;
 
-class Mentions extends React.Component {
+export class Mentions extends React.Component {
 	constructor( props ) {
 		super( props );
 
@@ -108,13 +108,14 @@ class Mentions extends React.Component {
 		return (
 			<div ref={ this.setPopoverContext }>
 				<QueryUsersSuggestions siteId={ siteId } />
-				<SuggestionList
-					query={ query }
-					suggestions={ suggestions }
-					isVisible={ showPopover }
-					popoverContext={ popoverContext }
-					onClick={ this.handleClick }
-					onClose={ this.handleClose } />
+				{ suggestions.length > 1 && showPopover &&
+					<SuggestionList
+						query={ query }
+						suggestions={ suggestions }
+						popoverContext={ popoverContext }
+						onClick={ this.handleClick }
+						onClose={ this.handleClose } />
+				}
 			</div>
 		);
 	}

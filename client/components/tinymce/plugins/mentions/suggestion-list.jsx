@@ -30,11 +30,7 @@ const getMatchingSuggestions = function( suggestions, query ) {
 	return matchingSuggestions.slice( 0, 10 );
 };
 
-const SuggestionList = ( { isVisible, suggestions, query, popoverContext, onClose, onClick } ) => {
-	if ( ! isVisible || ! suggestions ) {
-		return null;
-	}
-
+const SuggestionList = ( { suggestions, query, popoverContext, onClose, onClick } ) => {
 	const matchingSuggestions = getMatchingSuggestions( suggestions, query );
 
 	if ( matchingSuggestions.length > 0 ) {
@@ -42,7 +38,7 @@ const SuggestionList = ( { isVisible, suggestions, query, popoverContext, onClos
 			<PopoverMenu
 				className="mentions__suggestions"
 				context={ popoverContext }
-				isVisible={ isVisible }
+				isVisible={ true }
 				onClose={ onClose }>
 					{ matchingSuggestions.map( ( suggestion ) => {
 						return (
@@ -67,7 +63,6 @@ const SuggestionList = ( { isVisible, suggestions, query, popoverContext, onClos
 SuggestionList.propTypes = {
 	query: React.PropTypes.string,
 	suggestions: React.PropTypes.array,
-	isVisible: React.PropTypes.bool,
 	onClick: React.PropTypes.func,
 	onClose: React.PropTypes.func,
 };
@@ -75,7 +70,6 @@ SuggestionList.propTypes = {
 SuggestionList.defaultProps = {
 	query: '',
 	suggestions: [],
-	isVisible: false,
 };
 
 export default SuggestionList;
