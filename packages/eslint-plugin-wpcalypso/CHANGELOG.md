@@ -1,3 +1,7 @@
+#### v3.0.1 (2016-10-21)
+
+- Fix: Resolve issue where `i18n-no-collapsible-whitespace` may result in an error when text cannot be determined
+
 #### v3.0.0 (2016-10-21)
 
 - Breaking: Removed `no-lodash-import` rule in favor of using [`babel-plugin-lodash`](https://github.com/lodash/babel-plugin-lodash) to transform root Lodash imports

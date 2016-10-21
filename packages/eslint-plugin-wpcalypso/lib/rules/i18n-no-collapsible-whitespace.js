@@ -26,12 +26,13 @@ var rule = module.exports = function( context ) {
 
 			node.arguments.forEach( function( arg ) {
 				var string = getTextContentFromNode( arg ),
-					collapsibleWhitespace = string.match( /(\n|\t|\r|(?:  ))/ ),
-					problem, problemString, problemsByCharCode;
+					collapsibleWhitespace, problem, problemString, problemsByCharCode;
 
 				if ( ! string ) {
 					return;
 				}
+
+				collapsibleWhitespace = string.match( /(\n|\t|\r|(?:  ))/ );
 
 				if ( collapsibleWhitespace ) {
 					problemsByCharCode = {
