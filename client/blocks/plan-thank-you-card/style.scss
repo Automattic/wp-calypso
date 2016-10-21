@@ -24,7 +24,7 @@
 	overflow: hidden;
 
 	@include breakpoint( ">480px" ) {
-		padding: 37px 0 15px;
+		padding: 32px 0 15px;
 	}
 }
 
@@ -68,8 +68,9 @@
 	font-size: 14px;
 	height: 40px;
 	line-height: 40px;
+	max-width: 280px;
 	padding: 0;
-	width: 280px;
+	width: 100%;
 	margin: 0 auto;
 	border-style: solid;
 	border-color: darken( $alert-green, 20 );
@@ -222,11 +223,11 @@
 }
 
 .plan-thank-you-card__main-icon {
-	width: 100px;
-	height: 100px;
+	width: 72px;
+	height: 72px;
 
 	@include breakpoint( ">480px" ) {
-		width: 140px;
-		height: 140px;
+		width: 96px;
+		height: 96px;
 	}
 }
