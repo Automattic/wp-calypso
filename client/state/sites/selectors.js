@@ -872,8 +872,8 @@ export function getJetpackSiteUpdateFilesDisabledReasons( state, siteId, action 
 }
 
 /**
- * Return true is the given Jetpack site has a version equal
- * or greater than the minimum Jetpack version to operate.
+ * Return true is the given Jetpack site has a version equal or greater than
+ * the minimum Jetpack version as set by the 'jetpack_min_version' config value.
  *
  * @param  {Object} state - whole state tree
  * @param  {Number} siteId - site id
