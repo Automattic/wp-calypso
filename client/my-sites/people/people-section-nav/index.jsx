@@ -88,22 +88,22 @@ module.exports = React.createClass( {
 				},
 				{
 					title: this.translate( 'Administrators', { context: 'Filter label for people list' } ),
-					path: '/people/administrators/' + siteFilter,
+					path: '/people/team/administrators/' + siteFilter,
 					id: 'administrators'
 				},
 				{
 					title: this.translate( 'Editors', { context: 'Filter label for people list' } ),
-					path: '/people/editors/' + siteFilter,
+					path: '/people/team/editors/' + siteFilter,
 					id: 'editors'
 				},
 				{
 					title: this.translate( 'Authors', { context: 'Filter label for people list' } ),
-					path: '/people/authors/' + siteFilter,
+					path: '/people/team/authors/' + siteFilter,
 					id: 'authors'
 				},
 				{
 					title: this.translate( 'Contributors', { context: 'Filter label for people list' } ),
-					path: '/people/contributors/' + siteFilter,
+					path: '/people/team/contributors/' + siteFilter,
 					id: 'contributors'
 				},
 				{
