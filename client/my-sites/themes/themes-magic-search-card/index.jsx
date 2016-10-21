@@ -32,7 +32,6 @@ const ThemesMagicSearchCard = React.createClass( {
 	trackClick: trackClick.bind( null, 'search bar' ),
 
 	componentWillMount() {
-		this.setState( { taxonomies: getTaxonomies() } );
 		this.onResize = debounce( () => {
 			this.setState( { isMobile: isMobile() } );
 		}, 250 );
@@ -53,7 +52,6 @@ const ThemesMagicSearchCard = React.createClass( {
 			searchIsOpen: false,
 			searchInput: '',
 			editedSearchElement: '',
-			taxonomies: {},
 			cursorPosition: 0,
 		};
 	},
@@ -202,9 +200,10 @@ const ThemesMagicSearchCard = React.createClass( {
 			{ value: 'premium', label: this.translate( 'Premium' ) },
 		];
 
-		const taxonomies = Object.keys( this.state.taxonomies );
+		const taxonomies = getTaxonomies();
+		const taxonomiesKeys = Object.keys( taxonomies );
 		const welcomeSignProps = {
-			taxonomies: taxonomies,
+			taxonomies: taxonomiesKeys,
 			topSearches: [],
 			suggestionsCallback: this.insertTextInInput
 		};
@@ -253,7 +252,7 @@ const ThemesMagicSearchCard = React.createClass( {
 				</div>
 				<Suggestions
 					ref="suggestions"
-					terms={ this.state.taxonomies }
+					terms={ taxonomies }
 					input={ this.state.editedSearchElement }
 					suggest={ this.suggest }
 					welcomeSign={ welcome }
