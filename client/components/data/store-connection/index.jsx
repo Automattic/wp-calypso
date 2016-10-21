@@ -58,17 +58,22 @@ const StoreConnection = React.createClass( {
 	},
 
 	render() {
+		const props = {
+			...this.props,
+			...this.state,
+		};
+
 		if ( this.isDataLoading() ) {
-			return React.createElement( this.props.loadingPlaceholder, this.state );
+			return React.createElement( this.props.loadingPlaceholder, props );
 		}
 
 		if ( this.props.component ) {
-			return React.createElement( this.props.component, this.state );
+			return React.createElement( this.props.component, props );
 		}
 
 		const child = React.Children.only( this.props.children );
 
-		return React.cloneElement( child, this.state );
+		return React.cloneElement( child, props );
 	}
 } );
 

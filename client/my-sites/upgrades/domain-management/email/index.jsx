@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
+import { identity, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -74,8 +75,16 @@ const Email = React.createClass( {
 	},
 
 	content() {
-		if ( ! ( this.props.domains.hasLoadedFromServer && this.props.googleAppsUsersLoaded ) ) {
-			return <Placeholder />;
+		const {
+			domains,
+			googleAppsUsersLoaded,
+		} = this.props;
+
+		if ( some( [
+			! domains.list.length && domains.isFetching,
+			! googleAppsUsersLoaded,
+		], identity ) ) {
+			return <Placeholder/>;
 		}
 
 		const domainList = this.props.selectedDomainName

@@ -24,7 +24,7 @@ class QuerySitePlans extends Component {
 		}
 	}
 
-	componentWillMount() {
+	componentDidMount() {
 		this.requestPlans();
 	}
 
