@@ -5,26 +5,26 @@
 	background-color: darken( $alert-green, 10 );
 	border-radius: 8px 8px 6px 6px;
 	overflow: hidden;
-	margin: 0 auto 24px;
+	margin: 12px auto 24px;
 	color: $white;
 	font-family: $sans;
 	text-align: center;
 
 	@include breakpoint( ">480px" ) {
-		margin-top: 56px;
+		margin-top: 28px;
 	}
 }
 
 .plan-thank-you-card__header {
 	background-color: $alert-green;
-	padding: 24px 0;
+	padding: 12px 0;
 	position: relative;
 	line-height: 1.2;
 	border-radius: 6px 6px 0 0;
 	overflow: hidden;
 
 	@include breakpoint( ">480px" ) {
-		padding: 75px 0 30px;
+		padding: 37px 0 15px;
 	}
 }
 

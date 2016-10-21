@@ -116,7 +116,11 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		return (
-			<Notice className="checkout-thank-you__verification-notice" showDismiss={ false }>
+			<Notice
+				className="checkout-thank-you__verification-notice"
+				showDismiss={ false }
+				status="is-warning"
+				>
 				{ this.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
 					'Please check your email to confirm your address.', {
 						args: { email: this.props.user.email },
@@ -195,8 +199,8 @@ const CheckoutThankYou = React.createClass( {
 		if ( isNewUser && wasOnlyDotcomPlanPurchased ) {
 			return (
 				<Main className="checkout-thank-you">
-					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
 					{ this.renderConfirmationNotice() }
+					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
 		}
