@@ -7,7 +7,7 @@ import { get, has } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Gravatar from 'components/gravatar';
+import ReaderAvatar from 'blocks/reader-avatar';
 import Gridicon from 'components/gridicon';
 import PostTime from 'reader/post-time';
 import { siteNameFromSiteAndPost } from 'reader/utils';
@@ -48,7 +48,7 @@ class PostByline extends React.Component {
 	}
 
 	render() {
-		const { post, site, isDiscoverPost } = this.props;
+		const { post, site, feed, isDiscoverPost } = this.props;
 		const feedId = get( post, 'feed_ID' );
 		const siteId = get( site, 'ID' );
 		const primaryTag = post && post.primary_tag;
@@ -57,11 +57,17 @@ class PostByline extends React.Component {
 		const hasMatchingAuthorAndSiteNames = hasAuthorName && siteName.toLowerCase() === post.author.name.toLowerCase();
 		const shouldDisplayAuthor = ! isDiscoverPost && hasAuthorName && ! hasMatchingAuthorAndSiteNames;
 		const streamUrl = getStreamUrl( feedId, siteId );
+		const siteIcon = get( site, 'icon.img' );
+		const feedIcon = get( feed, 'image' );
+		const hasBlavatar = !! ( siteIcon || feedIcon );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="reader-post-card__byline ignore-click">
-				<Gravatar user={ post.author } />
+				<ReaderAvatar
+					siteIcon={ siteIcon }
+					feedIcon={ feedIcon }
+					author={ hasBlavatar ? {} : post.author } />
 				<div className="reader-post-card__byline-details">
 					{ shouldDisplayAuthor &&
 						<ReaderAuthorLink
