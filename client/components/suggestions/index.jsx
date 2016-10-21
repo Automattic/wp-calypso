@@ -38,6 +38,7 @@ const Suggestions = React.createClass( {
 		const suggestions = this.narrowDown( this.props.input );
 		this.setState( {
 			suggestions: suggestions,
+			taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ),
 			currentSuggestion: '',
 		} );
 	},
@@ -47,6 +48,7 @@ const Suggestions = React.createClass( {
 			const suggestions = this.narrowDown( nextProps.input );
 			this.setState( {
 				suggestions: suggestions,
+				taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ),
 				suggestionPosition: -1,
 				currentSuggestion: '',
 			} );
@@ -162,9 +164,7 @@ const Suggestions = React.createClass( {
 			).splice( 0, limit );
 		}
 
-		const suggestions = this.removeEmptySuggestions( filtered );
-		this.setState( { taxonomySuggestionsArray: this.createTaxonomySuggestionsArray( suggestions ) } );
-		return suggestions;
+		return this.removeEmptySuggestions( filtered );
 	},
 
 	createTaxonomySuggestionsArray: function( suggestions ) {
