@@ -35,7 +35,7 @@ import CountedTextarea from 'components/forms/counted-textarea';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import config from 'config';
-import { getSeoTitleFormatsForSite } from 'state/sites/selectors';
+import { getSeoTitleFormatsForSite, isJetpackMinimumVersion } from 'state/sites/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -47,7 +47,6 @@ import {
 	isJetpackBusiness
 } from 'lib/products-values';
 import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
-import versionCompare from 'lib/version-compare';
 
 const serviceIds = {
 	google: 'google-site-verification',
@@ -102,12 +101,6 @@ function isValidCode( serviceName = '', content = '' ) {
 	content = getMetaTag( serviceName, content );
 
 	return includes( content, serviceIds[ serviceName ] );
-}
-
-function jetpackVersionUnsupported( site ) {
-	// TODO: replace with actual supported Jetpack version when that is known
-	return get( site, 'jetpack', false ) &&
-		versionCompare( get( site, 'options.jetpack_version', '0' ), '4.3.1', '<' );
 }
 
 export const SeoForm = React.createClass( {
@@ -357,7 +350,11 @@ export const SeoForm = React.createClass( {
 	},
 
 	render() {
-		const { showAdvancedSeo, showWebsiteMeta, showUpgradeNudge } = this.props;
+		const { showAdvancedSeo,
+			showWebsiteMeta,
+			showUpgradeNudge,
+			jetpackVersionSupportsSeo,
+		} = this.props;
 		const {
 			slug = '',
 			settings: {
@@ -380,7 +377,7 @@ export const SeoForm = React.createClass( {
 		let { googleCode, bingCode, pinterestCode, yandexCode } = this.state;
 
 		const isSitePrivate = parseInt( blog_public, 10 ) !== 1;
-		const isJetpackUnsupported = jetpackVersionUnsupported( this.props.site );
+		const isJetpackUnsupported = jetpack && ! jetpackVersionSupportsSeo;
 		const isDisabled = isSitePrivate || isJetpackUnsupported || isSubmittingForm || isFetchingSettings;
 		const isSaveDisabled = isDisabled || isSubmittingForm || ( ! showPasteError && invalidCodes.length > 0 );
 
@@ -441,7 +438,7 @@ export const SeoForm = React.createClass( {
 					</Notice>
 				}
 
-				{ showAdvancedSeo && isJetpackUnsupported &&
+				{ isJetpackUnsupported &&
 					<Notice
 						status="is-warning"
 						showDismiss={ false }
@@ -697,13 +694,15 @@ export const SeoForm = React.createClass( {
 const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
 	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
+	const siteId = get( site, 'ID', 0 );
 
 	return {
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
 		showAdvancedSeo: isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' ),
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
-		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' )
+		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' ),
+		jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.3.1' ), // TODO: Update to SEO Jetpack version
 	};
 };
 
