@@ -70,7 +70,7 @@ function classifyPost( post ) {
 	if ( post.images &&
 			post.images.length >= 1 &&
 			canonicalImage && canonicalImage.width >= PHOTO_ONLY_MIN_WIDTH &&
-			post.word_count < 100 ) {
+			post.character_count <= 130 ) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
 	}
 
