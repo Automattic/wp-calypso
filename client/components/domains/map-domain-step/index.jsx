@@ -79,7 +79,7 @@ var MapDomainStep = React.createClass( {
 						rule={ cartItems.getDomainPriceRule( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
 						price={ price } />
 
-					<div className="map-domain-step__add-domain">
+					<div className="map-domain-step__add-domain" role="group">
 						<input
 							className="map-domain-step__external-domain"
 							type="text"
