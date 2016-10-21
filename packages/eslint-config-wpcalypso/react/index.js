@@ -24,6 +24,7 @@ module.exports = {
 		'react/no-did-mount-set-state': 2,
 		'react/no-did-update-set-state': 2,
 		'react/no-is-mounted': 2,
+		'react/prefer-es6-class': 2,
 		'react/react-in-jsx-scope': 2
 	}
 };

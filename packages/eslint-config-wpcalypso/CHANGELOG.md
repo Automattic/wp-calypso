@@ -4,6 +4,7 @@
 - Added: [`wpcalypso/i18n-no-collapsible-whitespace`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/i18n-no-collapsible-whitespace.md) as error
 - Added: [`wpcalypso/i18n-no-this-translate`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/i18n-no-this-translate.md) as error
 - Added: [`wpcalypso/import-docblock`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/import-docblock.md) as error
+- Added: [`react/prefer-es6-class`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/prefer-es6-class.md) as error
 
 #### v0.5.0 (2016-08-29)
 
