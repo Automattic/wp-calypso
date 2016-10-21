@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import StoreConnection from 'components/data/store-connection';
 import DomainsStore from 'lib/domains/store';
 import CartStore from 'lib/cart/store';
-import observe from 'lib/mixins/data-observe';
+import QueryProducts from 'components/data/query-products-list';
 import { fetchDomains } from 'lib/upgrades/actions';
 import userFactory from 'lib/user';
 import {
@@ -28,7 +28,7 @@ import { getPlansBySite } from 'state/sites/plans/selectors';
 
 const user = userFactory();
 
-var stores = [
+const stores = [
 	DomainsStore,
 	CartStore
 ];
@@ -62,8 +62,6 @@ const EmailData = React.createClass( {
 		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
 	},
 
-	mixins: [ observe( 'productsList' ) ],
-
 	componentWillMount() {
 		this.loadDomainsAndSitePlans();
 		this.props.fetchGoogleAppsUsers();
@@ -86,18 +84,21 @@ const EmailData = React.createClass( {
 
 	render() {
 		return (
-			<StoreConnection
-				domains={ this.props.domains }
-				googleAppsUsers={ this.props.googleAppsUsers }
-				googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
-				component={ this.props.component }
-				stores={ stores }
-				getStateFromStores={ getStateFromStores }
-				products={ this.props.productsList.get() }
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() }
-				sitePlans={ this.props.sitePlans }
-				context={ this.props.context } />
+			<div>
+				<QueryProducts />
+				<StoreConnection
+					domains={ this.props.domains }
+					googleAppsUsers={ this.props.googleAppsUsers }
+					googleAppsUsersLoaded={ this.props.googleAppsUsersLoaded }
+					component={ this.props.component }
+					stores={ stores }
+					getStateFromStores={ getStateFromStores }
+					products={ this.props.products }
+					selectedDomainName={ this.props.selectedDomainName }
+					selectedSite={ this.props.sites.getSelectedSite() }
+					sitePlans={ this.props.sitePlans }
+					context={ this.props.context } />
+			</div>
 		);
 	}
 } );
@@ -111,8 +112,9 @@ export default connect(
 		return {
 			googleAppsUsers,
 			googleAppsUsersLoaded: isLoaded( state ),
+			products: state.productsList.items,
 			sitePlans: getPlansBySite( state, sites.getSelectedSite() )
-		}
+		};
 	},
 	( dispatch, { selectedDomainName, sites } ) => {
 		const googleAppsUsersFetcher = selectedDomainName
@@ -126,6 +128,6 @@ export default connect(
 					dispatch( fetchSitePlans( site.ID ) );
 				}
 			}
-		}
+		};
 	}
 )( EmailData );
