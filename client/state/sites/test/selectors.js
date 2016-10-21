@@ -3,6 +3,7 @@
  */
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -1385,11 +1386,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#canJetpackSiteUpdateFiles()', () => {
-		let configStub;
-
-		useSandbox( ( sandbox ) => {
-			configStub = sandbox.stub().withArgs( 'jetpack_min_version' ).returns( '3.3' );
-		} );
+		const configStub = sinon.stub().withArgs( 'jetpack_min_version' ).returns( '3.3' );
 
 		it( 'should return `null` for a non-existing site', () => {
 			const canUpdateFiles = canJetpackSiteUpdateFiles( stateWithNoItems, nonExistingSiteId );
@@ -1569,11 +1566,7 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#siteHasMinimumJetpackVersion()', () => {
-		let configStub;
-
-		useSandbox( ( sandbox ) => {
-			configStub = sandbox.stub().withArgs( 'jetpack_min_version' ).returns( '3.3' );
-		} );
+		const configStub = sinon.stub().withArgs( 'jetpack_min_version' ).returns( '3.3' );
 
 		it( 'it should return `null` for a non-existing site', () => {
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( stateWithNoItems, nonExistingSiteId );
