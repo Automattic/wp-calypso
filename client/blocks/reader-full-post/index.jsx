@@ -372,7 +372,7 @@ const ConnectedFullPostView = connect(
 		const props = {};
 
 		if ( ! isExternal && siteId ) {
-			props.site = getSite( state, siteId )
+			props.site = getSite( state, siteId );
 		}
 		if ( feedId ) {
 			props.feed = getFeed( state, feedId );
