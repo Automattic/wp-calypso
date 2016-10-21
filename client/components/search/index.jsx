@@ -75,6 +75,8 @@ const Search = React.createClass( {
 		};
 	},
 
+	//Undefined value for overlayStyling is an optimalization
+	//that will disable overlay scrolling calculation when no overlay is provided.
 	getDefaultProps: function() {
 		return {
 			pinned: false,
@@ -87,7 +89,7 @@ const Search = React.createClass( {
 			onSearchClose: noop,
 			onKeyDown: noop,
 			onClick: noop,
-			overlayStyling: noop,
+			overlayStyling: undefined,
 			disableAutocorrect: false,
 			searching: false,
 			isOpen: false,
