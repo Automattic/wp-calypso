@@ -1,5 +1,6 @@
 #### v?.?.? (---)
 
+- New rule: [`import-docblock`](docs/rules/import-docblock.md)
 - Fix: `jsx-classname-namespace` will not allow underscores except as separator after namespace
 
 #### v2.0.0 (August 24, 2016)

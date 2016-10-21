@@ -52,6 +52,7 @@ Then configure the rules you want to use under the rules section.
 - [`jsx-classname-namespace`](docs/rules/jsx-classname-namespace.md): Ensure JSX className adheres to CSS namespace guidelines
 - [`jsx-gridicon-size`](docs/rules/jsx-gridicon-size.md): Enforce recommended Gridicon size attributes
 - [`no-lodash-import`](docs/rules/no-lodash-import.md): Disallow importing from the root Lodash module
+- [`import-docblock`](docs/rules/import-docblock.md): Enforce external, internal dependencies docblocks
 
 ## License
 
