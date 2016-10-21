@@ -4,6 +4,7 @@
  * External dependencies
  */
 import {
+	compact,
 	every,
 	filter,
 	find,
@@ -847,7 +848,7 @@ export function hasJetpackSiteCustomDomain( state, siteId ) {
 export function getJetpackSiteUpdateFilesDisabledReasons( state, siteId, action = 'modifyFiles' ) {
 	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
 
-	return fileModDisabled.map( clue => {
+	return compact( fileModDisabled.map( clue => {
 		if ( action === 'modifyFiles' || action === 'autoupdateFiles' || action === 'autoupdateCore' ) {
 			if ( clue === 'has_no_file_system_write_access' ) {
 				return i18n.translate( 'The file permissions on this host prevent editing files.' );
@@ -867,7 +868,7 @@ export function getJetpackSiteUpdateFilesDisabledReasons( state, siteId, action 
 			return i18n.translate( 'Core autoupdates are explicitly disabled by a site administrator.' );
 		}
 		return null;
-	} ).filter( reason => reason );
+	} ) );
 }
 
 /**
