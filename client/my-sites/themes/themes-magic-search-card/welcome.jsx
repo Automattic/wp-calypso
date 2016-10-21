@@ -44,12 +44,6 @@ const MagicSearchWelcome = React.createClass( {
 							{taxonomy}
 						</div> ) }
 				</div>
-				{/*
-					<span className="themes-magic-search-card__welcome-header">TOP SEARCHES</span>
-					<div className="themes-magic-search-card__welcome-top-searches">
-					{ topSearches.map( search =>	<div onMouseDown={ onMouseDown }>{ search }</div> ) }
-					</div>
-				*/}
 			</div>
 		);
 	}
