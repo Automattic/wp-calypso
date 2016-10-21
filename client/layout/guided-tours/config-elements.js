@@ -10,6 +10,7 @@ import {
 	debounce,
 	defer,
 	find,
+	isEmpty,
 	mapValues,
 	omit,
 	property,
@@ -50,7 +51,9 @@ const contextTypes = Object.freeze( {
 	branching: PropTypes.object.isRequired,
 	next: PropTypes.func.isRequired,
 	quit: PropTypes.func.isRequired,
+	start: PropTypes.func.isRequired,
 	isValid: PropTypes.func.isRequired,
+	isLastStep: PropTypes.bool.isRequired,
 	tour: PropTypes.string.isRequired,
 	tourVersion: PropTypes.string.isRequired,
 	sectionName: PropTypes.string.isRequired,
@@ -58,6 +61,11 @@ const contextTypes = Object.freeze( {
 	step: PropTypes.string.isRequired,
 	lastAction: PropTypes.object,
 } );
+
+const anyFrom = ( obj ) => {
+	const key = Object.keys( obj )[ 0 ];
+	return key && obj[ key ];
+};
 
 export class Tour extends Component {
 	static propTypes = {
@@ -101,6 +109,7 @@ export class Step extends Component {
 	static contextTypes = contextTypes;
 
 	componentWillMount() {
+		this.start();
 		this.setStepSection( this.context, { init: true } );
 		debug( 'Step#componentWillMount: stepSection:', this.stepSection );
 		this.skipIfInvalidContext( this.props, this.context );
@@ -126,6 +135,14 @@ export class Step extends Component {
 	componentWillUnmount() {
 		global.window.removeEventListener( 'resize', this.onScrollOrResize );
 		this.scrollContainer.removeEventListener( 'scroll', this.onScrollOrResize );
+	}
+
+	/*
+	 * Needed for analytics, since GT is selector-driven
+	 */
+	start() {
+		const { start, tour, tourVersion } = this.context;
+		start( { tour, tourVersion } );
 	}
 
 	/*
@@ -189,7 +206,7 @@ export class Step extends Component {
 				this.isDifferentSection( lastAction.path ) ) {
 			defer( () => {
 				debug( 'Step.quitIfInvalidRoute: quitting' );
-				this.context.quit();
+				this.context.quit( this.context );
 			} );
 		} else {
 			debug( 'Step.quitIfInvalidRoute: not quitting' );
@@ -202,10 +219,28 @@ export class Step extends Component {
 	}
 
 	skipIfInvalidContext( props, context ) {
-		const { when, next } = props;
-		if ( when && ! context.isValid( when ) ) {
-			this.context.next( this.tour, next );
+		const { when } = props;
+		const { branching, isValid, next, step, tour, tourVersion } = context;
+
+		this.setAnalyticsTimestamp( context );
+
+		if ( when && ! isValid( when ) ) {
+			const nextStepName = anyFrom( branching[ step ] );
+			const skipping = this.shouldSkipAnalytics();
+			next( { tour, tourVersion, step, nextStepName, skipping } );
 		}
+	}
+
+	setAnalyticsTimestamp( { step, shouldPause } ) {
+		if ( this.context.step !== step ||
+				( this.context.shouldPause && ! shouldPause ) ) {
+			this.lastTransitionTimestamp = Date.now();
+		}
+	}
+
+	shouldSkipAnalytics() {
+		return this.lastTransitionTimestamp &&
+			Date.now() - this.lastTransitionTimestamp < 500;
 	}
 
 	onScrollOrResize = debounce( () => {
@@ -268,7 +303,9 @@ export class Next extends Component {
 	}
 
 	onClick = () => {
-		this.context.next( this.context.tour, this.props.step );
+		const { next, tour, tourVersion, step } = this.context;
+		const { step: nextStepName } = this.props;
+		next( { tour, tourVersion, step, nextStepName } );
 	}
 
 	render() {
@@ -295,7 +332,8 @@ export class Quit extends Component {
 
 	onClick = ( event ) => {
 		this.props.onClick && this.props.onClick( event );
-		this.context.quit();
+		const { quit, tour, tourVersion, step, isLastStep } = this.context;
+		quit( { tour, tourVersion, step, isLastStep } );
 	}
 
 	render() {
@@ -350,12 +388,12 @@ export class Continue extends Component {
 	quitIfInvalidRoute( props ) {
 		debug( 'Continue.quitIfInvalidRoute' );
 		defer( () => {
-			const quit = this.context.quit;
+			const { quit } = this.context;
 			const target = targetForSlug( props.target );
 			// quit if we have a target but cant find it
 			if ( props.target && ! target ) {
 				debug( 'Continue.quitIfInvalidRoute: quitting' );
-				quit();
+				quit( this.context );
 			} else {
 				debug( 'Continue.quitIfInvalidRoute: not quitting' );
 			}
@@ -363,7 +401,9 @@ export class Continue extends Component {
 	}
 
 	onContinue = () => {
-		this.context.next( this.context.tour, this.props.step );
+		const { next, tour, tourVersion, step } = this.context;
+		const { step: nextStepName } = this.props;
+		next( { tour, tourVersion, step, nextStepName } );
 	}
 
 	addTargetListener() {
@@ -442,14 +482,30 @@ export const makeTour = tree => {
 		}
 
 		setTourMeta( props ) {
-			const { isValid, lastAction, next, quit, sectionName, shouldPause, stepName } = props;
+			const {
+				isValid,
+				lastAction,
+				next,
+				quit,
+				start,
+				sectionName,
+				shouldPause,
+				stepName,
+			} = props;
+			const step = stepName;
+			const branching = tourBranching( tree );
 			this.tourMeta = {
-				next, quit, isValid, lastAction, sectionName, shouldPause,
-				step: stepName,
-				branching: tourBranching( tree ),
+				next, quit, start, isValid, lastAction, sectionName, shouldPause,
+				step,
+				branching,
+				isLastStep: this.isLastStep( { step, branching } ),
 				tour: tree.props.name,
 				tourVersion: tree.props.version,
 			};
+		}
+
+		isLastStep( { step, branching } ) {
+			return isEmpty( branching[ step ] );
 		}
 
 		render() {
