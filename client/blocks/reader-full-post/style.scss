@@ -43,11 +43,7 @@
 		padding: 18px 40px 18px 20px;
 
 		@include breakpoint( "<660px" ) {
-			padding: 20px 40px 16px 20px;
-		}
-
-		@include breakpoint( "<660px" ) {
-			padding: 20px 20px 16px;
+			padding: 20px 8px 16px;
 		}
 	}
 
@@ -93,7 +89,7 @@
 		padding: 10px 20px 15px 20px;
 
 		@include breakpoint( "<660px" ) {
-			padding: 10px 20px 15px 12px;
+			padding: 10px 10px 15px 6px;
 		}
 
 		&:hover {
@@ -264,7 +260,7 @@
 		.author-compact-profile__follow .follow-button {
 			position: fixed;
 				top: 10px;
-				right: 180px;
+				right: 175px;
 			z-index: z-index( '.masterbar', '.reader-profile' );
 		}
 
@@ -323,7 +319,7 @@
 	@include breakpoint( "<660px" ) {
 		position: fixed;
 			top: 10px;
-			right: 110px;
+			right: 108px;
 		z-index: z-index( '.masterbar', '.reader-profile' );
 		margin-right: 0;
 	}
