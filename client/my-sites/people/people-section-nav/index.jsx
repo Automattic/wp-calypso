@@ -87,26 +87,6 @@ module.exports = React.createClass( {
 					id: 'team'
 				},
 				{
-					title: this.translate( 'Administrators', { context: 'Filter label for people list' } ),
-					path: '/people/team/administrators/' + siteFilter,
-					id: 'administrators'
-				},
-				{
-					title: this.translate( 'Editors', { context: 'Filter label for people list' } ),
-					path: '/people/team/editors/' + siteFilter,
-					id: 'editors'
-				},
-				{
-					title: this.translate( 'Authors', { context: 'Filter label for people list' } ),
-					path: '/people/team/authors/' + siteFilter,
-					id: 'authors'
-				},
-				{
-					title: this.translate( 'Contributors', { context: 'Filter label for people list' } ),
-					path: '/people/team/contributors/' + siteFilter,
-					id: 'contributors'
-				},
-				{
 					title: this.translate( 'Followers', { context: 'Filter label for people list' } ),
 					path: '/people/followers/' + siteFilter,
 					id: 'followers'
@@ -129,12 +109,6 @@ module.exports = React.createClass( {
 	getNavigableFilters: function() {
 		var allowedFilterIds = [ 'team' ];
 
-		if ( config.isEnabled( 'manage/people/role-filtering' ) ) {
-			[ 'administrators', 'editors', 'authors', 'contributors' ].forEach( function( filter ) {
-				allowedFilterIds.push( filter );
-			} )
-		}
-
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
 			allowedFilterIds.push( 'email-followers' );
@@ -155,7 +129,8 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var selectedText,
+		var selectedFilter,
+			selectedText,
 			hasPinnedItems = false,
 			search = null;
 
@@ -168,7 +143,8 @@ module.exports = React.createClass( {
 			search = <PeopleSearch { ...this.props } />;
 		}
 
-		selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
+		selectedFilter = find( this.getFilters(), { id: this.props.filter } )
+		selectedText = selectedFilter ? selectedFilter.title : 'team';
 		return (
 			<SectionNav selectedText={ selectedText } hasPinnedItems={ hasPinnedItems }>
 				<PeopleNavTabs { ...this.props } selectedText={ selectedText } filters={ this.getNavigableFilters() } />
