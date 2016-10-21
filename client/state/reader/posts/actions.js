@@ -59,11 +59,11 @@ export function fetchPost( postKey ) {
 					type: READER_POSTS_RECEIVE,
 					posts: [ {
 						feed_ID: postKey.feedId,
-						ID: postKey.ID,
+						ID: postKey.postId,
 						site_ID: postKey.blogId,
 						is_external: ! postKey.blogId,
 						is_error: true,
-						global_ID: `${ postKey.feedId }-${ postKey.blogId }-${ postKey.postId }`,
+						global_ID: `${ postKey.feedId || 'na' }-${ postKey.blogId || 'na' }-${ postKey.postId }`,
 						error: err
 					} ]
 				} );
