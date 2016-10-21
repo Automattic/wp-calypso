@@ -28,7 +28,7 @@ const scrollSidebarToTop = () =>
 
 export const MainTour = makeTour(
 	<Tour name="main" version="20160601" path="/" when={ and( isNewUser, isEnabled( 'guided-tours/main' ) ) }>
-		<Step name="init" placement="right" next="my-sites" className="guided-tours__step-first">
+		<Step name="init" placement="right" className="guided-tours__step-first">
 			<p className="guided-tours__step-text">
 				{
 					translate( "{{strong}}Need a hand?{{/strong}} We'd love to show you around the place," +
@@ -50,7 +50,6 @@ export const MainTour = makeTour(
 			target="my-sites"
 			placement="below"
 			arrow="top-left"
-			next="sidebar"
 		>
 			<p className="guided-tours__step-text">
 				{
@@ -80,7 +79,6 @@ export const MainTour = makeTour(
 			target="sidebar"
 			arrow="left-middle"
 			placement="beside"
-			next="click-preview"
 		>
 			<p className="guided-tours__step-text">
 				{ translate( 'This menu lets you navigate around, and will adapt to give you the tools you need when you need them.' ) }
@@ -98,7 +96,6 @@ export const MainTour = makeTour(
 			placement="below"
 			when={ selectedSiteIsPreviewable }
 			scrollContainer=".sidebar__region"
-			next="in-preview"
 		>
 			<p className="guided-tours__step-text">
 				{
@@ -114,7 +111,7 @@ export const MainTour = makeTour(
 					{
 						translate( "Click {{strong}}your site's name{{/strong}} to continue.", {
 							components: {
-								strong: <strong/>,
+								strong: <strong />,
 							},
 						} )
 					}
@@ -125,7 +122,6 @@ export const MainTour = makeTour(
 		<Step name="in-preview"
 			placement="center"
 			when={ selectedSiteIsPreviewable }
-			next="close-preview"
 		>
 			<p className="guided-tours__step-text">
 				{
@@ -149,7 +145,6 @@ export const MainTour = makeTour(
 			arrow="left-top"
 			placement="beside"
 			when={ and( selectedSiteIsPreviewable, previewIsShowing ) }
-			next="themes"
 		>
 			<p className="guided-tours__step-text">
 				{ translate( 'Take a look at your site — and then close the site preview. You can come back here anytime.' ) }
@@ -173,7 +168,6 @@ export const MainTour = makeTour(
 			placement="below"
 			when={ selectedSiteIsCustomizable }
 			scrollContainer=".sidebar__region"
-			next="finish"
 			shouldScrollTo
 		>
 			<p className="guided-tours__step-text">

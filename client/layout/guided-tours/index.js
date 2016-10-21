@@ -9,6 +9,7 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
+import { tracks } from 'lib/analytics';
 import AllTours from 'layout/guided-tours/config';
 import QueryPreferences from 'components/data/query-preferences';
 import RootChild from 'components/root-child';
@@ -22,24 +23,52 @@ class GuidedTours extends Component {
 		return this.props.tourState !== nextProps.tourState;
 	}
 
-	next = ( tour, nextStepName ) => {
+	start = ( { tour, tourVersion: tour_version } ) => {
+		if ( tour && tour_version ) {
+			tracks.recordEvent( 'calypso_guided_tours_start', {
+				tour,
+				tour_version,
+			} );
+		}
+	}
+
+	next = ( { step, tour, tourVersion, nextStepName, skipping = false } ) => {
+		if ( ! skipping && step ) {
+			tracks.recordEvent( 'calypso_guided_tours_seen_step', {
+				tour,
+				step,
+				tour_version: tourVersion,
+			} );
+		}
+
 		defer( () => {
 			this.props.nextGuidedTourStep( {
+				tour,
 				stepName: nextStepName,
-				tour: tour,
 			} );
 		} );
 	}
 
-	quit = ( options = {} ) => {
-		this.props.quitGuidedTour( Object.assign( {
-			stepName: this.props.tourState.stepName,
-			tour: this.props.tourState.tour,
-		}, options ) );
-	}
+	quit = ( { step, tour, tourVersion: tour_version, isLastStep } ) => {
+		if ( step ) {
+			tracks.recordEvent( 'calypso_guided_tours_seen_step', {
+				tour,
+				step,
+				tour_version,
+			} );
+		}
 
-	finish = () => {
-		this.quit( { finished: true } );
+		tracks.recordEvent( `calypso_guided_tours_${ isLastStep ? 'finished' : 'quit' }`, {
+			step,
+			tour,
+			tour_version,
+		} );
+
+		this.props.quitGuidedTour( {
+			tour,
+			stepName: step,
+			finished: isLastStep,
+		} );
 	}
 
 	render() {
@@ -65,7 +94,8 @@ class GuidedTours extends Component {
 							lastAction={ this.props.lastAction }
 							isValid={ this.props.isValid }
 							next={ this.next }
-							quit={ this.quit } />
+							quit={ this.quit }
+							start={ this.start } />
 				</div>
 			</RootChild>
 		);
