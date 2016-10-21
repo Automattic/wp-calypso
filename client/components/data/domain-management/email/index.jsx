@@ -23,13 +23,12 @@ import {
 	isLoaded
 } from 'state/google-apps-users/selectors';
 import { shouldFetchSitePlans } from 'lib/plans';
-import { getProductsList } from 'state/products-list/selectors';
 import { fetchSitePlans } from 'state/sites/plans/actions';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 
 const user = userFactory();
 
-var stores = [
+const stores = [
 	DomainsStore,
 	CartStore
 ];
@@ -113,9 +112,9 @@ export default connect(
 		return {
 			googleAppsUsers,
 			googleAppsUsersLoaded: isLoaded( state ),
-			products: getProductsList( state ),
+			products: state.productsList.items,
 			sitePlans: getPlansBySite( state, sites.getSelectedSite() )
-		}
+		};
 	},
 	( dispatch, { selectedDomainName, sites } ) => {
 		const googleAppsUsersFetcher = selectedDomainName
@@ -129,6 +128,6 @@ export default connect(
 					dispatch( fetchSitePlans( site.ID ) );
 				}
 			}
-		}
+		};
 	}
 )( EmailData );
