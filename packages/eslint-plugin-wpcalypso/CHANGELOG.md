@@ -1,9 +1,12 @@
-#### v?.?.? (---)
+#### v3.0.0 (2016-10-21)
 
+- Breaking: Removed `no-lodash-import` rule in favor of using [`babel-plugin-lodash`](https://github.com/lodash/babel-plugin-lodash) to transform root Lodash imports
+- Breaking: Removed `i18n-no-newlines` rule in favor of using `i18n-no-collapsible-whitespace`, which warns for a superset of whitespace issues
 - New rule: [`import-docblock`](docs/rules/import-docblock.md)
+- New rule: [`i18n-no-this-translate`](docs/rules/i18n-no-this-translate.md)
 - Fix: `jsx-classname-namespace` will not allow underscores except as separator after namespace
 
-#### v2.0.0 (August 24, 2016)
+#### v2.0.0 (2016-08-24)
 
 - Breaking: Required Node version increased from >=0.10.x to >=4.x ([see ESLint 3.0.0 migration guide](http://eslint.org/docs/user-guide/migrating-to-3.0.0))
 - Fix: `jsx-classname-namespace` can accurately validate elements assigned to variables within render ([#21](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/21))
@@ -15,55 +18,55 @@
 - General: Use shared configuration for linting (yo dawg, i herd you like ESLint rules...) ([#22](https://github.com/Automattic/eslint-plugin-wpcalypso/pull/22))
 - General: Updated ESLint from 2.x to 3.x
 
-#### v1.4.1 (August 12, 2016)
+#### v1.4.1 (2016-08-12)
 
 - Add: String template support for all rules 
 
-#### v1.4.0 (July 29, 2016)
+#### v1.4.0 (2016-07-29)
 
 - Add: i18n-no-newlines: Warn on newlines in translatable text
 
-#### v1.3.3 (June 28, 2016)
+#### v1.3.3 (2016-06-28)
 
 - Fix: jsx-classname-namespace: Only consider components in index.js(x) as being eligible for root export
 - Fix: jsx-classname-namespace: Ensure child component isn't exactly equal to namespace prefix
 
-#### v1.3.2 (June 23, 2016)
+#### v1.3.2 (2016-06-23)
 
 - Fix: jsx-classname-namespace: Skip validation on render call expressions (ReactDOM.render)
 - General: Upgrade ESLint (^1.10.3 to ^2.13.1) and babel-eslint (^5.0.0-beta6 to ^6.1.0)
 - General: Add `npm run lint` npm script, included in `npm test`
 
-#### v1.3.1 (June 17, 2016)
+#### v1.3.1 (2016-06-17)
 
 - Fix: jsx-classname-namespace: JSX child expressions should not be considered root elements
 
-#### v1.3.0 (June 16, 2016)
+#### v1.3.0 (2016-06-16)
 
 - New rule: [`jsx-classname-namespace`](docs/rules/jsx-classname-namespace.md)
 
-#### v1.2.0 (June 9, 2016)
+#### v1.2.0 (2016-06-09)
 
 - New rule: [`jsx-gridicon-size`](docs/rules/jsx-gridicon-size.md)
 
-#### v1.1.4 (June 9, 2016)
+#### v1.1.4 (2016-06-09)
 
 - Fix: i18n-no-variables should allow ES2015 template literal strings as long as there are no interpolated variables
 
-#### v1.1.3 (March 8, 2016)
+#### v1.1.3 (2016-03-08)
 
 - Fix: i18n-named-placeholders: Account for escaped percentage
 - Fix: Extract callee from MemberExpression (e.g. `this.translate`, `i18n.translate`)
 
-#### v1.1.2 (March 8, 2016)
+#### v1.1.2 (2016-03-08)
 
 - Fix: i18n-no-variables: Account for options passed as first argument
 
-#### v1.1.1 (March 8, 2016)
+#### v1.1.1 (2016-03-08)
 
 - Fix: Include missing credits for regular expression adaptation
 
-#### v1.1.0 (March 8, 2016)
+#### v1.1.0 (2016-03-08)
 
 - New rule: [`i18n-ellipsis`](docs/rules/i18n-ellipsis.md)
 - New rule: [`i18n-no-variables`](docs/rules/i18n-no-variables.md)
