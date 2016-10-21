@@ -1741,7 +1741,7 @@ describe( 'selectors', () => {
 			expect( isSecondary ).to.equal( false );
 		} );
 
-		it( 'it should return `true` for multisite sites which unmapped_url does not match with main_network_site', () => {
+		it( 'it should return `true` for multisite sites which unmapped_url does not match their main_network_site', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
