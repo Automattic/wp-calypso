@@ -55,7 +55,6 @@ import SiteRedirectDetails from './site-redirect-details';
 import Notice from 'components/notice';
 import upgradesPaths from 'my-sites/upgrades/paths';
 import { abtest } from 'lib/abtest';
-import { localize } from 'i18n-calypso';
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
@@ -110,6 +109,26 @@ const CheckoutThankYou = React.createClass( {
 
 	hasPlanOrDomainProduct( props = this.props ) {
 		return getPurchases( props ).some( purchase => isPlan( purchase ) || isDomainProduct( purchase ) );
+	},
+
+	renderConfirmationNotice: function() {
+		if ( ! this.props.user || ! this.props.user.email || this.props.email_verified ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				className="checkout-thank-you__verification-notice"
+				showDismiss={ false }
+				status="is-warning"
+				>
+				{ this.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
+					'Please check your email to confirm your address.', {
+						args: { email: this.props.user.email },
+						components: { strong: <strong className="checkout-thank-you__verification-notice-email" />
+				} } ) }
+			</Notice>
+		);
 	},
 
 	isDataLoaded() {
@@ -181,9 +200,7 @@ const CheckoutThankYou = React.createClass( {
 		if ( isNewUser && wasOnlyDotcomPlanPurchased ) {
 			return (
 				<Main className="checkout-thank-you">
-					{ this.props.user && this.props.user.email && this.props.email_verified &&
-						<ConfirmationNotice email={ this.props.user.email } />
-					}
+					{ this.renderConfirmationNotice() }
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
 				</Main>
 			);
@@ -301,20 +318,6 @@ const CheckoutThankYou = React.createClass( {
 		);
 	}
 } );
-
-const ConfirmationNotice = localize( ( { email, translate } ) => (
-	<Notice
-		className="checkout-thank-you__verification-notice"
-		showDismiss={ false }
-		status="is-warning"
-		>
-		{ translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
-			'Please check your email to confirm your address.', {
-				args: { email },
-				components: { strong: <strong className="checkout-thank-you__verification-notice-email" />
-		} } ) }
-	</Notice>
-) );
 
 export default connect(
 	( state, props ) => {
