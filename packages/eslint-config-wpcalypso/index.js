@@ -87,10 +87,13 @@ module.exports = {
 		'template-curly-spacing': [ 2, 'always' ],
 		'valid-jsdoc': [ 2, { requireReturn: false } ],
 		'wpcalypso/i18n-ellipsis': 2,
+		'wpcalypso/i18n-no-collapsible-whitespace': 2,
 		'wpcalypso/i18n-no-variables': 2,
 		'wpcalypso/i18n-no-placeholders-only': 2,
+		'wpcalypso/i18n-no-this-translate': 2,
 		'wpcalypso/i18n-mismatched-placeholders': 2,
 		'wpcalypso/i18n-named-placeholders': 2,
+		'wpcalypso/import-docblock': 2,
 		'wpcalypso/jsx-gridicon-size': 2,
 		'wpcalypso/jsx-classname-namespace': 2,
 		yoda: 0

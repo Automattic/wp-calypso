@@ -1,3 +1,10 @@
+#### v0.6.0 (---)
+
+- General: Update to `eslint-plugin-wpcalypso@3.0.1` ([see changelog](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/CHANGELOG.md#v301-2016-10-21))
+- Added: [`wpcalypso/i18n-no-collapsible-whitespace`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/i18n-no-collapsible-whitespace.md) as error
+- Added: [`wpcalypso/i18n-no-this-translate`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/i18n-no-this-translate.md) as error
+- Added: [`wpcalypso/import-docblock`](https://github.com/Automattic/eslint-plugin-wpcalypso/blob/master/docs/rules/import-docblock.md) as error
+
 #### v0.5.0 (2016-08-29)
 
 - Added: [`react/jsx-space-before-closing`](https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/jsx-space-before-closing.md) enforces a space before closing brackets in self-closing JSX elements (this only applies to the React superset of rules)
