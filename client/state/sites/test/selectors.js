@@ -3,7 +3,6 @@
  */
 import deepFreeze from 'deep-freeze';
 import { expect } from 'chai';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
@@ -46,29 +45,6 @@ import {
 	siteHasMinimumJetpackVersion,
 	isJetpackSiteMainNetworkSite
 } from '../selectors';
-
-/**
- * Simple util function to increase/decrease a version with `x.x.x` format
- * @param  {String} version - version reference
- * @param  {Number} operator - increase/decrease given version
- * @return {String} new version string
- */
-function changeVersion( version, operator = 1 ) {
-	const splitVersion = version.split( '.' );
-
-	if ( operator >= 1 ) {
-		splitVersion[ splitVersion.length - 1 ]++;
-		return splitVersion.join( '.' );
-	}
-
-	if ( splitVersion[ splitVersion.length - 1 ] === '0' ) {
-		splitVersion[ splitVersion.length - 2 ]--;
-	} else {
-		splitVersion[ splitVersion.length - 1 ]--;
-	}
-
-	return splitVersion.join( '.' );
-}
 
 describe( 'selectors', () => {
 	const createStateWithItems = items => deepFreeze( {
@@ -1340,7 +1316,7 @@ describe( 'selectors', () => {
 					URL: 'https://jetpacksite.me',
 					jetpack: true,
 					options: {
-						active_modules: [],
+						active_modules: null,
 						jetpack_version: '3.4'
 					}
 				}
@@ -1386,8 +1362,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#canJetpackSiteUpdateFiles()', () => {
-		const configStub = sinon.stub().withArgs( 'jetpack_min_version' ).returns( '3.3' );
-
 		it( 'should return `null` for a non-existing site', () => {
 			const canUpdateFiles = canJetpackSiteUpdateFiles( stateWithNoItems, nonExistingSiteId );
 			expect( canUpdateFiles ).to.equal( null );
@@ -1406,8 +1380,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'it should return `false` if jetpack version is smaller than minimum version', () => {
-			const jetpackMinVersion = configStub( 'jetpack_min_version' );
-			const smallerVersion = changeVersion( jetpackMinVersion, -1 );
+			const smallerVersion = '3.2';
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
@@ -1566,8 +1539,6 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#siteHasMinimumJetpackVersion()', () => {
-		const configStub = sinon.stub().withArgs( 'jetpack_min_version' ).returns( '3.3' );
-
 		it( 'it should return `null` for a non-existing site', () => {
 			const hasMinimumVersion = siteHasMinimumJetpackVersion( stateWithNoItems, nonExistingSiteId );
 			expect( hasMinimumVersion ).to.equal( null );
@@ -1586,8 +1557,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'it should return `true` if jetpack version is greater that minimum version', () => {
-			const jetpackMinVersion = configStub( 'jetpack_min_version' );
-			const greaterVersion = changeVersion( jetpackMinVersion );
+			const greaterVersion = '3.5';
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
@@ -1619,8 +1589,7 @@ describe( 'selectors', () => {
 		} );
 
 		it( 'it should return `false` if jetpack version is smaller than minimum version', () => {
-			const jetpackMinVersion = config( 'jetpack_min_version' );
-			const smallerVersion = changeVersion( jetpackMinVersion, -1 );
+			const smallerVersion = '3.2';
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
