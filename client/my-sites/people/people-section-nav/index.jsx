@@ -127,7 +127,14 @@ module.exports = React.createClass( {
 	},
 
 	getNavigableFilters: function() {
-		var allowedFilterIds = [ 'team', 'administrators', 'editors', 'authors', 'contributors' ];
+		var allowedFilterIds = [ 'team' ];
+
+		if ( config.isEnabled( 'manage/people/role-filtering' ) ) {
+			[ 'administrators', 'editors', 'authors', 'contributors' ].forEach( function( filter ) {
+				allowedFilterIds.push( filter );
+			} )
+		}
+
 		if ( config.isEnabled( 'manage/people/readers' ) ) {
 			allowedFilterIds.push( 'followers' );
 			allowedFilterIds.push( 'email-followers' );

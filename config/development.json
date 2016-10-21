@@ -73,6 +73,7 @@
 		"manage/payment-methods": true,
 		"manage/people": true,
 		"manage/people/readers": true,
+		"manage/people/role-filtering": true,
 		"manage/plans": true,
 		"manage/plan-features": true,
 		"manage/plugins": true,

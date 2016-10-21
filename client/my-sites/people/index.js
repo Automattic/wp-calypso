@@ -12,7 +12,7 @@ var controller = require( 'my-sites/controller' ),
 
 module.exports = function() {
 	if ( config.isEnabled( 'manage/people' ) ) {
-		[ 'team', 'administrators', 'editors', 'authors', 'contributors', 'followers', 'email-followers', 'viewers' ].forEach( function( filter ) {
+		[ 'team', 'followers', 'email-followers', 'viewers' ].forEach( function( filter ) {
 			page( '/people/' + filter, controller.siteSelection, controller.sites );
 			page(
 				'/people/' + filter + '/:site_id',
@@ -22,6 +22,18 @@ module.exports = function() {
 				peopleController.people.bind( null, filter )
 			);
 		} );
+
+		if ( config.isEnabled( 'manage/people/role-filtering' ) ) {
+			[ 'administrators', 'editors', 'authors', 'contributors' ].forEach( function( filter ) {
+				page(
+					'/people/' + filter + '/:site_id',
+					peopleController.enforceSiteEnding,
+					controller.siteSelection,
+					controller.navigation,
+					peopleController.people.bind( null, filter )
+				);
+			} );
+		}
 
 		if ( config.isEnabled( 'manage/add-people' ) ) {
 			page(
