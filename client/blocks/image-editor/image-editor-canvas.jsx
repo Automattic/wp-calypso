@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import { noop, throttle } from 'lodash';
+import { noop, throttle, startsWith } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -83,12 +83,22 @@ class ImageEditorCanvas extends Component {
 		}
 	}
 
-	getImage( url ) {
+	isBlobSrc( src ) {
+		return startsWith( src, 'blob' );
+	}
+
+	getImage( src ) {
 		const { onLoadError, mimeType } = this.props;
 
 		const req = new XMLHttpRequest();
-		req.open( 'GET', url + '?', true ); // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
+
+		if ( ! this.isBlobSrc( src ) ) {
+			src = src + '?'; // Fix #7991 by forcing Safari to ignore cache and perform valid CORS request
+		}
+
+		req.open( 'GET', src, true );
 		req.responseType = 'arraybuffer';
+
 		req.onload = () => {
 			if ( ! this.isVisible ) {
 				return;
