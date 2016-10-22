@@ -11,6 +11,7 @@ var Popover = require( 'components/popover' );
 
 var PopoverMenu = React.createClass( {
 	propTypes: {
+		autoPosition: React.PropTypes.bool,
 		isVisible: React.PropTypes.bool.isRequired,
 		onClose: React.PropTypes.func.isRequired,
 		position: React.PropTypes.string,
@@ -20,6 +21,7 @@ var PopoverMenu = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			autoPosition: true,
 			position: 'top'
 		};
 	},
@@ -36,6 +38,7 @@ var PopoverMenu = React.createClass( {
 			<Popover
 				isVisible={ this.props.isVisible }
 				context={ this.props.context }
+				autoPosition={ this.props.autoPosition }
 				position={ this.props.position }
 				onClose={ this._onClose }
 				onShow={ this._onShow }
