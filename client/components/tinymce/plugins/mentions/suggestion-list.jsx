@@ -39,6 +39,8 @@ const SuggestionList = ( { suggestions, query, popoverContext, onClose, onClick 
 				className="mentions__suggestions"
 				context={ popoverContext }
 				isVisible={ true }
+				autoPosition={ false }
+				position="bottom"
 				onClose={ onClose }>
 					{ matchingSuggestions.map( ( suggestion ) => {
 						return (

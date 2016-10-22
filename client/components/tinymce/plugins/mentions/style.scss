@@ -1,11 +1,15 @@
 $avatar-size: 24px;
 $avatar-margin: 10px;
 
+.mce-container .mentions__container {
+	position: absolute;
+}
+
 .mentions__suggestions {
 	width: 70%;
 
 	@include breakpoint( ">660px" ) {
-		width: 40%;
+		width: 30%;
 	}
 }
 
