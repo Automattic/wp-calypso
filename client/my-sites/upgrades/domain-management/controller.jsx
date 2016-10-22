@@ -165,7 +165,7 @@ module.exports = {
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
 				context={ pageContext }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
