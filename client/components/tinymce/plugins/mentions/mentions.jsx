@@ -107,8 +107,10 @@ export class Mentions extends React.Component {
 
 		return (
 			<div ref={ this.setPopoverContext }>
-				<QueryUsersSuggestions siteId={ siteId } />
-				{ suggestions.length > 1 && showPopover &&
+				{ ( ! suggestions || suggestions.length > 1 ) &&
+					<QueryUsersSuggestions siteId={ siteId } />
+				}
+				{ suggestions && suggestions.length > 1 && showPopover &&
 					<SuggestionList
 						query={ query }
 						suggestions={ suggestions }
