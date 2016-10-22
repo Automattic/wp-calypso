@@ -1,15 +1,15 @@
 /**
 * External dependencies
 */
-var ReactDom = require( 'react-dom' ),
+const ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
 /**
 * Internal dependencies
 */
-var Popover = require( 'components/popover' );
+const Popover = require( 'components/popover' );
 
-var PopoverMenu = React.createClass( {
+const PopoverMenu = React.createClass( {
 	propTypes: {
 		autoPosition: React.PropTypes.bool,
 		isVisible: React.PropTypes.bool.isRequired,
@@ -32,7 +32,7 @@ var PopoverMenu = React.createClass( {
 	},
 
 	render: function() {
-		var children = React.Children.map( this.props.children, this._setPropsOnChild, this );
+		const children = React.Children.map( this.props.children, this._setPropsOnChild, this );
 
 		return (
 			<Popover
@@ -56,8 +56,8 @@ var PopoverMenu = React.createClass( {
 			return child;
 		}
 
-		let boundOnClose = this._onClose.bind( this, child.props.action ),
-			onClick = boundOnClose;
+		const boundOnClose = this._onClose.bind( this, child.props.action );
+		let onClick = boundOnClose;
 
 		if ( child.props.onClick ) {
 			onClick = child.props.onClick.bind( null, boundOnClose );
@@ -69,7 +69,7 @@ var PopoverMenu = React.createClass( {
 	},
 
 	_onShow: function() {
-		var elementToFocus = ReactDom.findDOMNode( this.refs.menu );
+		const elementToFocus = ReactDom.findDOMNode( this.refs.menu );
 
 		this._previouslyFocusedElement = document.activeElement;
 
@@ -103,20 +103,20 @@ var PopoverMenu = React.createClass( {
 			return first;
 		}
 
-		const closest = target[ isDownwardMotion ?
-			'nextSibling' : 'previousSibling' ];
+		const closest = target[ isDownwardMotion
+			? 'nextSibling' : 'previousSibling' ];
 
 		const sibling = closest || last;
 
-		return this._isInvalidTarget( sibling ) ?
-			this._getClosestSibling( sibling, isDownwardMotion ) :
-			sibling;
+		return this._isInvalidTarget( sibling )
+			? this._getClosestSibling( sibling, isDownwardMotion )
+			: sibling;
 	},
 
 	_onKeyDown: function( event ) {
-		var handled = false,
-			target = event.target,
-			elementToFocus;
+		const target = event.target;
+		let handled = false;
+		let elementToFocus;
 
 		switch ( event.keyCode ) {
 			case 9: // tab
