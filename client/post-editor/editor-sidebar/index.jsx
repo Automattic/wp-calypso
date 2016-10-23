@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 
 /**
  * Internal dependencies
@@ -13,10 +13,8 @@ import EditorSidebarHeader from './header';
 import SidebarFooter from 'layout/sidebar/footer';
 import EditorActionBar from 'post-editor/editor-action-bar';
 
-export default React.createClass( {
-	displayName: 'EditorSidebar',
-
-	propTypes: {
+export default class EditorSidebar extends Component {
+	static propTypes = {
 		allPostsUrl: PropTypes.string,
 		sites: PropTypes.object,
 		onTitleClick: PropTypes.func,
@@ -38,7 +36,7 @@ export default React.createClass( {
 		type: PropTypes.string,
 		showDrafts: PropTypes.bool,
 		onMoreInfoAboutEmailVerify: PropTypes.func
-	},
+	}
 
 	renderDraftsList() {
 		return (
@@ -51,7 +49,7 @@ export default React.createClass( {
 				selectedId={ this.props.post ? this.props.post.ID : null }
 			/>
 		);
-	},
+	}
 
 	renderSidebar() {
 		return (
@@ -91,7 +89,7 @@ export default React.createClass( {
 				/>
 			</div>
 		);
-	},
+	}
 
 	render() {
 		return (
@@ -104,4 +102,4 @@ export default React.createClass( {
 		);
 	}
 
-} );
+}
