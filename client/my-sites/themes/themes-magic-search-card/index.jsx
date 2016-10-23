@@ -110,20 +110,19 @@ const ThemesMagicSearchCard = React.createClass( {
 
 	findTextForSuggestions( input ) {
 		const val = input;
-		const _this = this;
-		window.requestAnimationFrame( function() {
-			_this.setState( { cursorPosition: val.slice( 0, _this.refs[ 'url-search' ].refs.searchInput.selectionStart ).length } );
+		window.requestAnimationFrame( () => {
+			this.setState( { cursorPosition: val.slice( 0, this.refs[ 'url-search' ].refs.searchInput.selectionStart ).length } );
 			const tokens = input.split( /(\s+)/ );
 
 			// Get rid of empty match at end
 			tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
 			if ( tokens.length === 0 ) {
-				_this.setState( { editedSearchElement: '' } );
+				this.setState( { editedSearchElement: '' } );
 				return;
 			}
-			const tokenIndex = _this.findEditedTokenIndex( tokens, _this.state.cursorPosition );
+			const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
 			const text = tokens[ tokenIndex ].trim();
-			_this.setState( { editedSearchElement: text } );
+			this.setState( { editedSearchElement: text } );
 		} );
 	},
 
