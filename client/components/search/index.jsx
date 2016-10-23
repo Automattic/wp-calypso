@@ -155,7 +155,7 @@ const Search = React.createClass( {
 			}
 			this.props.onSearch( this.state.keyword );
 		}
-		this.props.onSearchChange( this.refs.searchInput.value );
+		this.props.onSearchChange( this.state.keyword );
 	},
 
 	componentDidMount: function() {
