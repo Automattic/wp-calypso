@@ -138,7 +138,7 @@ export class EditorNotice extends Component {
 							siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
 						},
 						comment: 'Editor: Message displayed when a page is published privately,' +
-						' with a link to the site it was published on.'
+							' with a link to the site it was published on.'
 					} );
 				}
 
@@ -147,7 +147,7 @@ export class EditorNotice extends Component {
 						siteLink: <a href={ site.URL } target="_blank" rel="noopener noreferrer">{ site.title }</a>
 					},
 					comment: 'Editor: Message displayed when a post is published privately,' +
-					' with a link to the site it was published on.'
+						' with a link to the site it was published on.'
 				} );
 
 			case 'view':
