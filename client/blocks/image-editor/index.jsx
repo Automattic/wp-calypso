@@ -36,6 +36,8 @@ import { getSite } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
 import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 
+const aspectRatiosValues = objectValues( AspectRatios );
+
 const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
 
@@ -47,22 +49,8 @@ const ImageEditor = React.createClass( {
 		onCancel: PropTypes.func,
 		onReset: PropTypes.func,
 		className: PropTypes.string,
-		defaultAspectRatio: PropTypes.oneOf( [
-			AspectRatios.FREE,
-			AspectRatios.ORIGINAL,
-			AspectRatios.ASPECT_1X1,
-			AspectRatios.ASPECT_16X9,
-			AspectRatios.ASPECT_4X3,
-			AspectRatios.ASPECT_3X2
-		] ),
-		allowedAspectRatios: PropTypes.arrayOf( PropTypes.oneOf( [
-			AspectRatios.FREE,
-			AspectRatios.ORIGINAL,
-			AspectRatios.ASPECT_1X1,
-			AspectRatios.ASPECT_16X9,
-			AspectRatios.ASPECT_4X3,
-			AspectRatios.ASPECT_3X2
-		] ) ),
+		defaultAspectRatio: PropTypes.oneOf( aspectRatiosValues ),
+		allowedAspectRatios: PropTypes.arrayOf( PropTypes.oneOf( aspectRatiosValues ) ),
 
 		// Redux props
 		site: PropTypes.object,
@@ -80,7 +68,7 @@ const ImageEditor = React.createClass( {
 			onReset: noop,
 			isImageLoaded: false,
 			defaultAspectRatio: AspectRatios.FREE,
-			allowedAspectRatios: objectValues( AspectRatios )
+			allowedAspectRatios: aspectRatiosValues
 		};
 	},
 
