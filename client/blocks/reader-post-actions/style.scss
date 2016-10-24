@@ -19,6 +19,14 @@
 			color: lighten( $gray, 10% );
 		}
 
+		.external-link {
+			align-items: center;
+			box-sizing: border-box;
+			display: inline-flex;
+			padding: 4px 4px 4px 0;
+			position: relative;
+		}
+
 		.external-link:hover,
 		.external-link:focus,
 		.external-link:active {
