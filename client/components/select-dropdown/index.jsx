@@ -127,6 +127,19 @@ class SelectDropdown extends Component {
 		return selectedItem && selectedItem.value;
 	}
 
+	getSelectedText() {
+		const { options, selectedText } = this.props;
+		const { selected } = this.state;
+		
+		if ( selectedText ) {
+			return selectedText;
+		}
+		
+		// return currently selected text
+		const selectedValue = selected ? selected : this.getInitialSelectedItem( this.props );
+		return result( find( options, { value: selectedValue } ), 'label' );
+	}
+
 	dropdownOptions() {
 		let refIndex = 0;
 		const self = this;
@@ -207,12 +220,9 @@ class SelectDropdown extends Component {
 			} );
 		}
 
-		let dropdownClassName = classNames( dropdownClasses );
-		let selectedText = this.props.selectedText
-			? this.props.selectedText
-			: result( find(
-				this.props.options, { value: this.state.selected }
-			), 'label' );
+		const dropdownClassName = classNames( dropdownClasses );
+
+		const selectedText = this.getSelectedText();
 
 		return (
 			<div style={ this.props.style } className={ dropdownClassName }>
