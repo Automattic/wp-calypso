@@ -76,7 +76,11 @@ const DomainsStep = React.createClass( {
 	},
 
 	getThemeSlug: function() {
-		return this.props.queryObject ? this.props.queryObject.theme : undefined;
+		if ( this.props.queryObject && this.props.queryObject.theme ) {
+			return this.props.queryObject.theme;
+		}
+
+		return 'developer' === this.props.flowName ? 'twentysixteen' : undefined;
 	},
 
 	getThemeArgs: function() {
