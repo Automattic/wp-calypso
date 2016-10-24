@@ -10,10 +10,12 @@ import classNames from 'classnames';
  */
 import Search from 'components/search';
 import SegmentedControl from 'components/segmented-control';
+import Suggestions from 'components/suggestions';
 import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
-import { filterIsValid } from '../theme-filters.js';
+import { filterIsValid, getTaxonomies, } from '../theme-filters.js';
+import MagicSearchWelcome from './welcome';
 
 const ThemesMagicSearchCard = React.createClass( {
 	propTypes: {
@@ -36,6 +38,8 @@ const ThemesMagicSearchCard = React.createClass( {
 	},
 
 	componentDidMount() {
+		this.setState( { searchInput: this.props.search } );
+		this.findTextForSuggestions( this.props.search );
 		window.addEventListener( 'resize', this.onResize );
 	},
 
@@ -46,7 +50,10 @@ const ThemesMagicSearchCard = React.createClass( {
 	getInitialState() {
 		return {
 			isMobile: isMobile(),
-			searchIsOpen: false
+			searchIsOpen: false,
+			searchInput: '',
+			editedSearchElement: '',
+			cursorPosition: 0,
 		};
 	},
 
@@ -62,7 +69,86 @@ const ThemesMagicSearchCard = React.createClass( {
 		this.setState( { searchIsOpen: false } );
 	},
 
-	onBlur() {
+	onKeyDown( event ) {
+		this.findTextForSuggestions( event.target.value );
+		this.refs.suggestions.handleKeyEvent( event );
+	},
+
+	onClick( event ) {
+		this.findTextForSuggestions( event.target.value );
+	},
+
+	findEditedTokenIndex( tokens, cursorPosition ) {
+		let tokenEnd = 0;
+		for ( let i = 0; i < tokens.length; i++ ) {
+			tokenEnd += tokens[ i ].length;
+
+			const cursorIsInsideTheToken = cursorPosition < tokenEnd;
+			if ( cursorIsInsideTheToken ) {
+				// "" indicates full suggestion request
+				return i;
+			}
+
+			const cursorAtEndOfTheToken = cursorPosition === tokenEnd;
+			if ( cursorAtEndOfTheToken ) {
+				//If token is whitespace only and we are at its end
+				//maybe we are at the start of next token
+				const tokenIsWhiteSpace = tokens[ i ].trim() === '';
+				//if this one is white space only next
+				//next one must be text
+				const moreTokensExist = i < tokens.length - 1;
+				if ( tokenIsWhiteSpace && moreTokensExist ) {
+					return i + 1;
+				}
+				// "" indicates full suggestion request
+				return i;
+			}
+			continue; // to the next token
+		}
+
+		return '';
+	},
+
+	findTextForSuggestions( input ) {
+		const val = input;
+		window.requestAnimationFrame( () => {
+			this.setState( { cursorPosition: val.slice( 0, this.refs[ 'url-search' ].refs.searchInput.selectionStart ).length } );
+			const tokens = input.split( /(\s+)/ );
+
+			// Get rid of empty match at end
+			tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
+			if ( tokens.length === 0 ) {
+				this.setState( { editedSearchElement: '' } );
+				return;
+			}
+			const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
+			const text = tokens[ tokenIndex ].trim();
+			this.setState( { editedSearchElement: text } );
+		} );
+	},
+
+	insertSuggestion( suggestion ) {
+		const tokens = this.state.searchInput.split( /(\s+)/ );
+		// Get rid of empty match at end
+		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
+		const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
+		tokens[ tokenIndex ] = suggestion;
+		return tokens.join( '' );
+	},
+
+	insertTextAtCursor( text ) {
+		const input = this.state.searchInput;
+		const position = this.state.cursorPosition;
+		return input.slice( 0, position ) + text + input.slice( position );
+	},
+
+	onSearchChange( input ) {
+		this.findTextForSuggestions( input );
+		this.setState( { searchInput: input } );
+	},
+
+	onBlur( event ) {
+		event.preventDefault();
 		this.setState( { searchIsOpen: false } );
 	},
 
@@ -89,6 +175,21 @@ const ThemesMagicSearchCard = React.createClass( {
 		);
 	},
 
+	updateInput: function( updatedInput ) {
+		this.setState( { searchInput: updatedInput } );
+		this.refs[ 'url-search' ].clear();
+	},
+
+	suggest: function( suggestion ) {
+		const updatedInput = this.insertSuggestion( suggestion );
+		this.updateInput( updatedInput );
+	},
+
+	insertTextInInput: function( text ) {
+		const updatedInput = this.insertTextAtCursor( text );
+		this.updateInput( updatedInput );
+	},
+
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
@@ -99,16 +200,27 @@ const ThemesMagicSearchCard = React.createClass( {
 			{ value: 'premium', label: this.translate( 'Premium' ) },
 		];
 
+		const taxonomies = getTaxonomies();
+		const taxonomiesKeys = Object.keys( taxonomies );
+		const welcomeSignProps = {
+			taxonomies: taxonomiesKeys,
+			topSearches: [],
+			suggestionsCallback: this.insertTextInInput
+		};
+
 		const searchField = (
 			<Search
 				onSearch={ this.props.onSearch }
-				initialValue={ this.props.search }
+				initialValue={ this.state.searchInput }
 				ref="url-search"
 				placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
 				analyticsGroup="Themes"
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
+				onSearchChange={ this.onSearchChange }
+				onKeyDown={ this.onKeyDown }
+				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
 				onBlur={ this.onBlur }
 				fitsContainer={ this.state.isMobile && this.state.searchIsOpen }
@@ -116,20 +228,35 @@ const ThemesMagicSearchCard = React.createClass( {
 			/>
 		);
 
+		const magicSearchClass = classNames( 'themes-magic-search', {
+			'has-suggestions': this.state.searchIsOpen
+		} );
+
 		const themesSearchCardClass = classNames( 'themes-magic-search-card', {
 			'has-highlight': this.state.searchIsOpen
 		} );
 
+		const welcome = ( <MagicSearchWelcome { ...welcomeSignProps } /> );
+
 		return (
-			<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
-				{ searchField }
-				{ isPremiumThemesEnabled && ! isJetpack &&
-					<SegmentedControl
-						initialSelected={ this.props.tier }
-						options={ tiers }
-						onSelect={ this.props.select }
-					/>
-				}
+			<div className={ magicSearchClass }>
+				<div className={ themesSearchCardClass } data-tip-target="themes-search-card">
+					{ searchField }
+					{ isPremiumThemesEnabled && ! isJetpack &&
+						<SegmentedControl
+							initialSelected={ this.props.tier }
+							options={ tiers }
+							onSelect={ this.props.select }
+						/>
+					}
+				</div>
+				<Suggestions
+					ref="suggestions"
+					terms={ taxonomies }
+					input={ this.state.editedSearchElement }
+					suggest={ this.suggest }
+					welcomeSign={ welcome }
+				/>
 			</div>
 		);
 	}
