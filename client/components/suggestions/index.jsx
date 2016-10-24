@@ -218,7 +218,7 @@ const Suggestions = React.createClass( {
 				const className = 'suggestions__value' + ( hashighlight ? ' has-highlight' : '' );
 				return (
 					<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
-						<span className="suggestions__value-cathegory">{ key + ':' }</span>
+						<span className="suggestions__value-category">{ key + ':' }</span>
 						{ this.createTextWithHighlight( value, this.state.filterTerm ) }
 					</span>
 				);
