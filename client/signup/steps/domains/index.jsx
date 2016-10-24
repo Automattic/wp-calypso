@@ -152,6 +152,14 @@ const DomainsStep = React.createClass( {
 		} );
 	},
 
+	getSuggestion: function() {
+		if ( this.props.queryObject && this.props.queryObject.new ) {
+			return this.props.queryObject.new;
+		}
+
+		return 'developer' === this.props.flowName ? 'calypsodev' : '';
+	},
+
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
 
@@ -174,7 +182,7 @@ const DomainsStep = React.createClass( {
 				isSignupStep
 				surveyVertical={ this.props.surveyVertical }
 				showExampleSuggestions={ ! isDeveloperFlow }
-				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
+				suggestion={ this.getSuggestion() } />
 		);
 	},
 
