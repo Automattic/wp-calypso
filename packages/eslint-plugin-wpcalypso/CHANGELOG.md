@@ -1,3 +1,7 @@
+#### v3.0.2 (2016-10-24)
+
+- Fix: `import-docblock` less strict with matched docblocks (case insensitive, trailing spaces)
+
 #### v3.0.1 (2016-10-21)
 
 - Fix: Resolve issue where `i18n-no-collapsible-whitespace` may result in an error when text cannot be determined
