@@ -1,5 +1,6 @@
 // Custom breakpoints needed to match original design
 
+$reader-post-card-breakpoint-xxlarge: "( min-width: 1100px )";
 $reader-post-card-breakpoint-xlarge: "( min-width: 1040px )";
 $reader-post-card-breakpoint-large: "( min-width: 961px ) and ( max-width: 1040px )";
 $reader-post-card-breakpoint-medium: "( min-width: 661px ) and ( max-width: 940px )";
@@ -227,27 +228,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card.card .reader-post-actions__item {
 	font-size: 14px;
 
-	&.reader-post-actions__visit {
-		padding: 2px 0 0;
-
-		@media #{$reader-post-card-breakpoint-large} {
-			padding: 0;
-		}
-
-		@media #{$reader-post-card-breakpoint-medium} {
-			padding: 0;
-		}
-
-		@include breakpoint( "<660px" ) {
-			padding: 0;
-		}
-
-		.gridicon {
-			fill: lighten( $gray, 10% );
-			position: relative;
-				left: -8px;
-				top: 3px;
-		}
+	&.reader-post-actions__visit .gridicon {
+		fill: lighten( $gray, 10% );
+		position: relative;
+			left: -8px;
+			top: -1px;
 	}
 
 	.gridicons-external {
@@ -271,35 +256,42 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		margin-right: 2px;
 	}
 
-	.comment-button,
-	.like-button {
-
-		@media #{$reader-post-card-breakpoint-large} {
-			top: -2px;
-		}
-
-		@media #{$reader-post-card-breakpoint-medium} {
-			top: -2px;
-		}
-
-		@include breakpoint( "<660px" ) {
-			top: -2px;
-		}
-	}
-
 	.reader-share__button-label,
 	.comment-button__label-status,
 	.like-button__label-status {
 
-		@media #{$reader-post-card-breakpoint-large} {
+		@include breakpoint( ">960px" ) {
 			display: none;
 		}
 
-		@media #{$reader-post-card-breakpoint-medium} {
-			display: none;
+		@media #{$reader-post-card-breakpoint-xxlarge} {
+			display: inline;
 		}
 
 		@include breakpoint( "<660px" ) {
+			display: none;
+		}
+	}
+}
+
+// If chat window is open
+.is-group-reader.has-chat {
+
+	@media #{$reader-post-card-breakpoint-xlarge} {
+
+		.reader-post-card__post {
+			flex-direction: column;
+		}
+
+		.reader-post-card__post .reader-post-card__featured-image {
+			height: 100px;
+			margin-right: 0;
+			max-width: 100%;
+		}
+
+		.reader-share__button-label,
+		.comment-button__label-status,
+		.like-button__label-status {
 			display: none;
 		}
 	}
