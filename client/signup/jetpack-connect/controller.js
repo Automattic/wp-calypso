@@ -61,6 +61,31 @@ const jetpackConnectFirstStep = ( context, type ) => {
 	);
 };
 
+const getPlansLandingPage = ( context, hideFreePlan ) => {
+	const PlansLanding = require( './plans-landing' ),
+		analyticsPageTitle = 'Plans',
+		basePath = route.sectionify( context.path ),
+		analyticsBasePath = basePath + '/:site';
+
+	removeSidebar( context );
+
+	context.store.dispatch( setTitle( i18n.translate( 'Plans', { textOnly: true } ) ) );
+
+	analytics.tracks.recordEvent( 'calypso_plans_view' );
+	analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+	renderWithReduxStore(
+		<PlansLanding
+				context={ context }
+			destinationType={ context.params.destinationType }
+			intervalType={ context.params.intervalType }
+			isLanding={ true }
+			hideFreePlan={ hideFreePlan } />,
+		document.getElementById( 'primary' ),
+		context.store
+	);
+};
+
 export default {
 	redirectWithoutLocaleifLoggedIn( context, next ) {
 		if ( userModule.get() && i18nUtils.getLocaleFromPath( context.path ) ) {
@@ -174,7 +199,19 @@ export default {
 		);
 	},
 
+	vaultpressLanding( context ) {
+		getPlansLandingPage( context, true );
+	},
+
+	akismetLanding( context ) {
+		getPlansLandingPage( context, false );
+	},
+
 	plansLanding( context ) {
+		getPlansLandingPage( context, false );
+	},
+
+	plansSelection( context ) {
 		const Plans = require( './plans' ),
 			CheckoutData = require( 'components/data/checkout' ),
 			state = context.store.getState(),
@@ -203,6 +240,25 @@ export default {
 					destinationType={ context.params.destinationType }
 					intervalType={ context.params.intervalType } />
 			</CheckoutData>,
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	plansPreSelection( context ) {
+		const Plans = require( './plans' ),
+			analyticsPageTitle = 'Plans',
+			basePath = route.sectionify( context.path ),
+			analyticsBasePath = basePath + '/:site';
+
+		analytics.tracks.recordEvent( 'calypso_plans_view' );
+		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
+
+		renderWithReduxStore(
+			<Plans
+				context={ context }
+				showFirst={ true }
+				destinationType={ context.params.destinationType } />,
 			document.getElementById( 'primary' ),
 			context.store
 		);

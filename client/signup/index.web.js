@@ -30,6 +30,10 @@ module.exports = function() {
 
 		page( '/jetpack/connect', jetpackConnectController.connect );
 
+		page( '/jetpack/connect/choose/:site',
+			jetpackConnectController.plansPreSelection
+		);
+
 		page(
 			'/jetpack/connect/authorize/:locale?',
 			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
@@ -44,6 +48,21 @@ module.exports = function() {
 		);
 
 		page(
+			'/jetpack/connect/store',
+			jetpackConnectController.plansLanding
+		);
+
+		page(
+			'/jetpack/connect/vaultpress',
+			jetpackConnectController.vaultpressLanding
+		);
+
+		page(
+			'/jetpack/connect/akismet',
+			jetpackConnectController.akismetLanding
+		);
+
+		page(
 			'/jetpack/connect/:locale?',
 			jetpackConnectController.redirectWithoutLocaleifLoggedIn,
 			jetpackConnectController.connect
@@ -52,13 +71,13 @@ module.exports = function() {
 		page(
 			'/jetpack/connect/plans/:site',
 			sitesController.siteSelection,
-			jetpackConnectController.plansLanding
+			jetpackConnectController.plansSelection
 		);
 
 		page(
-			'/jetpack/connect/plans/:intervalType?/:site',
+			'/jetpack/connect/plans/:intervalType/:site',
 			sitesController.siteSelection,
-			jetpackConnectController.plansLanding
+			jetpackConnectController.plansSelection
 		);
 	}
 

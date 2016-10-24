@@ -12,6 +12,7 @@ import {
 	JETPACK_CONNECT_CHECK_URL_RECEIVE,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
+	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_QUERY_SET,
 	JETPACK_CONNECT_QUERY_UPDATE,
 	JETPACK_CONNECT_AUTHORIZE,
@@ -25,6 +26,7 @@ import {
 	JETPACK_CONNECT_REDIRECT,
 	JETPACK_CONNECT_REDIRECT_WP_ADMIN,
 	JETPACK_CONNECT_REDIRECT_XMLRPC_ERROR_FALLBACK_URL,
+	JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE,
 	JETPACK_CONNECT_SSO_AUTHORIZE_REQUEST,
 	JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 	JETPACK_CONNECT_SSO_AUTHORIZE_ERROR,
@@ -117,6 +119,8 @@ export function jetpackConnectSite( state = {}, action ) {
 			return state;
 		case JETPACK_CONNECT_CONFIRM_JETPACK_STATUS:
 			return Object.assign( {}, state, { installConfirmedByUser: action.status } );
+		case JETPACK_CONNECT_COMPLETE_FLOW:
+			return {};
 		case SERIALIZE:
 		case DESERIALIZE:
 			return {};
@@ -250,6 +254,8 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
+		case JETPACK_CONNECT_COMPLETE_FLOW:
+			return {};
 		case DESERIALIZE:
 			return ! isStale( state.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL ) ? state : {};
 		case SERIALIZE:
@@ -297,10 +303,27 @@ export function jetpackSSOSessions( state = {}, action ) {
 	return state;
 }
 
+export function jetpackConnectSelectedPlans( state = {}, action ) {
+	switch ( action.type ) {
+		case JETPACK_CONNECT_SELECT_PLAN_IN_ADVANCE:
+			const siteSlug = action.site.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+			return Object.assign( {}, state, { [ siteSlug ]: action.plan } );
+		case JETPACK_CONNECT_CHECK_URL:
+			return { '*': state[ '*' ] };
+		case JETPACK_CONNECT_COMPLETE_FLOW:
+			return {};
+		case SERIALIZE:
+		case DESERIALIZE:
+			return state;
+	}
+	return state;
+}
+
 export default combineReducers( {
 	jetpackConnectSite,
 	jetpackSSOSessions,
 	jetpackSSO,
 	jetpackConnectAuthorize,
 	jetpackConnectSessions,
+	jetpackConnectSelectedPlans,
 } );
