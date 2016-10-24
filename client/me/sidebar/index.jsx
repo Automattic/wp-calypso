@@ -165,8 +165,9 @@ const MeSidebar = React.createClass( {
 						/>
 						{ config.isEnabled( 'happychat' ) && <SidebarItem
 								selected= { selected === 'happychat' }
+								className="sidebar__menu-happychat"
 								link="/me/chat"
-								icon="comment"
+								icon="chat"
 								label= { this.translate( 'Support Chat' ) }
 								preloadSectionName="happychat"
 								onNavigate={ this.onNavigate } /> }
