@@ -152,7 +152,7 @@ const Suggestions = React.createClass( {
 		const filtered = {};
 
 		// store filtering term for highlithing
-		this.setState( { filterTerm: filterTerm } );
+		this.setState( { filterTerm } );
 
 		for ( const key in terms ) {
 			if ( ! this.props.terms.hasOwnProperty( key ) ) {
@@ -249,4 +249,4 @@ const Suggestions = React.createClass( {
 
 } );
 
-module.exports = Suggestions;
+export default Suggestions;
