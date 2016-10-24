@@ -79,6 +79,12 @@ class ImageEditorExample extends Component {
 						media={ this.state.media }
 						onDone={ this.onImageEditorDone }
 						onReset={ this.onImageEditorReset }
+						allowedAspectRatios={ [
+							AspectRatios.ASPECT_1X1,
+							AspectRatios.ASPECT_4X3,
+							AspectRatios.ASPECT_16X9
+						] }
+						defaultAspectRatio={ AspectRatios.ASPECT_1X1 }
 					/>
 				</div>
 
