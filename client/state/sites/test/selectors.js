@@ -43,7 +43,9 @@ import {
 	hasJetpackSiteCustomDomain,
 	getJetpackSiteUpdateFilesDisabledReasons,
 	siteHasMinimumJetpackVersion,
-	isJetpackSiteMainNetworkSite
+	isJetpackSiteMainNetworkSite,
+	getSiteAdminUrl,
+	getCustomizerUrl
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -2061,6 +2063,166 @@ describe( 'selectors', () => {
 
 			const isMainNetwork = isJetpackSiteMainNetworkSite( state, siteId );
 			expect( isMainNetwork ).to.equal( true );
+		} );
+	} );
+
+	describe( 'getSiteAdminUrl()', () => {
+		it( 'should return null if the admin URL is not known', () => {
+			const adminUrl = getSiteAdminUrl( {
+				sites: {
+					items: {}
+				}
+			}, 2916284 );
+
+			expect( adminUrl ).to.be.null;
+		} );
+
+		it( 'should return the root admin url if no path specified', () => {
+			const adminUrl = getSiteAdminUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							options: {
+								admin_url: 'https://example.wordpress.com/wp-admin/'
+							}
+						}
+					}
+				}
+			}, 77203199 );
+
+			expect( adminUrl ).to.equal( 'https://example.wordpress.com/wp-admin/' );
+		} );
+
+		it( 'should return the admin url concatenated with path', () => {
+			const adminUrl = getSiteAdminUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							options: {
+								admin_url: 'https://example.wordpress.com/wp-admin/'
+							}
+						}
+					}
+				}
+			}, 77203199, 'customize.php' );
+
+			expect( adminUrl ).to.equal( 'https://example.wordpress.com/wp-admin/customize.php' );
+		} );
+
+		it( 'should return the admin url with path left slash trimmed automatically', () => {
+			const adminUrl = getSiteAdminUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							options: {
+								admin_url: 'https://example.wordpress.com/wp-admin/'
+							}
+						}
+					}
+				}
+			}, 77203199, '/customize.php' );
+
+			expect( adminUrl ).to.equal( 'https://example.wordpress.com/wp-admin/customize.php' );
+		} );
+	} );
+
+	describe( 'getCustomizerUrl()', () => {
+		it( 'should return null if slug for WordPress.com site is not known', () => {
+			const customizerUrl = getCustomizerUrl( {
+				sites: {
+					items: {}
+				}
+			}, 77203199 );
+
+			expect( customizerUrl ).to.be.null;
+		} );
+
+		it( 'should return customizer URL for WordPress.com site', () => {
+			const customizerUrl = getCustomizerUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							jetpack: false
+						}
+					}
+				}
+			}, 77203199 );
+
+			expect( customizerUrl ).to.equal( '/customize/example.com' );
+		} );
+
+		it( 'should return null if admin URL for Jetpack site is not known', () => {
+			const customizerUrl = getCustomizerUrl( {
+				sites: {
+					items: {
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							jetpack: true
+						}
+					}
+				}
+			}, 77203199 );
+
+			expect( customizerUrl ).to.be.null;
+		} );
+
+		context( 'browser', () => {
+			before( () => {
+				global.window = { location: 'https://wordpress.com' };
+			} );
+
+			after( () => {
+				delete global.window;
+			} );
+
+			it( 'should return customizer URL for Jetpack site', () => {
+				const customizerUrl = getCustomizerUrl( {
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.com/wp-admin/'
+								}
+							}
+						}
+					}
+				}, 77203199 );
+
+				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php?return=https%253A%252F%252Fwordpress.com' );
+			} );
+		} );
+
+		context( 'node', () => {
+			it( 'should return customizer URL for Jetpack site', () => {
+				const customizerUrl = getCustomizerUrl( {
+					sites: {
+						items: {
+							77203199: {
+								ID: 77203199,
+								URL: 'https://example.com',
+								jetpack: true,
+								options: {
+									admin_url: 'https://example.com/wp-admin/'
+								}
+							}
+						}
+					}
+				}, 77203199 );
+
+				expect( customizerUrl ).to.equal( 'https://example.com/wp-admin/customize.php' );
+			} );
 		} );
 	} );
 } );
