@@ -46,15 +46,38 @@ module.exports = React.createClass( {
 		);
 	},
 
+	getFormTarget() {
+		return this.props.silentSubmit ? 'login-hidden-iframe-target' : '_self';
+	},
+
+	getTargetIFrame() {
+		return this.props.silentSubmit
+			? (
+				<iframe
+					name="login-hidden-iframe-target"
+					style={ { display: 'none' } }
+				/>
+			)
+			: null;
+	},
+
 	render: function() {
 		return (
-			<form method="post" action={ this.action() } ref="wpcomLoginForm">
-				<input type="hidden" name="log" value={ this.props.log } />
-				<input type="hidden" name="pwd" value={ this.props.pwd } />
-				<input type="hidden" name="authorization" value={ this.props.authorization } />
-				<input type="hidden" name="redirect_to" value={ this.props.redirectTo } />
-				{ this.renderExtraFields() }
-			</form>
+			<div>
+				<form
+					method="post"
+					action={ this.action() }
+					ref="wpcomLoginForm"
+					target={ this.getFormTarget() }
+				>
+					<input type="hidden" name="log" value={ this.props.log } />
+					<input type="hidden" name="pwd" value={ this.props.pwd } />
+					<input type="hidden" name="authorization" value={ this.props.authorization } />
+					<input type="hidden" name="redirect_to" value={ this.props.redirectTo } />
+					{ this.renderExtraFields() }
+				</form>
+				{ this.getTargetIFrame() }
+			</div>
 		);
 	}
 } );

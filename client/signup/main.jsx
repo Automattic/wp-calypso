@@ -173,6 +173,8 @@ const Signup = React.createClass( {
 		analytics.tracks.recordEvent( 'calypso_signup_complete', { flow: this.props.flowName } );
 
 		this.signupFlowController.reset();
+		this.setToken( dependencies );
+
 		if ( dependencies.cartItem || dependencies.domainItem ) {
 			this.handleLogin( dependencies, destination );
 		} else {
@@ -202,6 +204,19 @@ const Signup = React.createClass( {
 				bearerToken: dependencies.bearer_token,
 				username: dependencies.username,
 				redirectTo: this.loginRedirectTo( destination )
+			} );
+		}
+	},
+
+	setToken( dependencies ) {
+		const userIsLoggedIn = Boolean( user.get() );
+
+		if ( ! userIsLoggedIn && ! config.isEnabled( 'oauth' ) ) {
+			oauthToken.setToken( dependencies.bearer_token );
+			this.setState( {
+				bearerToken: dependencies.bearer_token,
+				username: dependencies.username,
+				redirectTo: undefined
 			} );
 		}
 	},
@@ -326,12 +341,14 @@ const Signup = React.createClass( {
 	},
 
 	loginForm() {
-		return this.state.bearerToken ?
-			<WpcomLoginForm
+		return this.state.bearerToken
+			? <WpcomLoginForm
 				authorization={ 'Bearer ' + this.state.bearerToken }
 				log={ this.state.username }
-				redirectTo={ this.state.redirectTo } /> :
-			null;
+				redirectTo={ this.state.redirectTo }
+				silentSubmit={ true }
+		/>
+			: null;
 	},
 
 	pageTitle() {
