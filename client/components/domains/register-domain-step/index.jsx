@@ -540,7 +540,7 @@ const RegisterDomainStep = React.createClass( {
 				);
 				severity = 'info';
 				break;
-			case 'not_registrable':
+			case 'available_but_not_registrable':
 				const tldIndex = domain.lastIndexOf( '.' );
 				if ( tldIndex !== -1 ) {
 					message = this.translate(
@@ -557,7 +557,6 @@ const RegisterDomainStep = React.createClass( {
 					severity = 'info';
 				}
 				break;
-			case 'not_available':
 			case 'not_available_but_mappable':
 			case 'domain_registration_unavailable':
 				// unavailable domains are displayed in the search results, not as a notice OR
@@ -565,7 +564,7 @@ const RegisterDomainStep = React.createClass( {
 				message = null;
 				break;
 
-			case 'mappable_but_blacklisted_domain':
+			case 'not_mappable_blacklisted_domain':
 				if ( domain.toLowerCase().indexOf( 'wordpress' ) > -1 ) {
 					message = this.translate(
 						'Due to {{a1}}trademark policy{{/a1}}, ' +
@@ -584,18 +583,34 @@ const RegisterDomainStep = React.createClass( {
 				}
 				break;
 
-			case 'mappable_but_forbidden_subdomain':
+			case 'not_mappable_forbidden_subdomain':
 				message = this.translate( 'Subdomains starting with \'www.\' cannot be mapped to a WordPress.com blog' );
 				break;
 
-			case 'mappable_but_mapped_domain':
+			case 'not_mappable_invalid_tld':
+			case 'invalid_query':
+				message = this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
+					args: { domain: domain }
+				} );
+				break;
+
+			case 'not_mappable_mapped_domain':
 				message = this.translate( 'This domain is already mapped to a WordPress.com site.' );
 				break;
 
-			case 'mappable_but_restricted_domain':
+			case 'not_mappable_restricted_domain':
 				message = this.translate(
 					'You cannot map another WordPress.com subdomain - try creating a new site or one of the custom domains below.'
 				);
+				break;
+
+			case 'not_mappable_recently_mapped':
+				message = this.translate( 'This domain has been recently mapped by a different user - please try again later.' );
+				break;
+
+			// Generic error message when domain is not mappable without an explicit unmappability reason
+			case 'not_mappable':
+				message = this.translate( 'This domain cannot be mapped.' );
 				break;
 
 			case 'empty_query':
@@ -608,19 +623,8 @@ const RegisterDomainStep = React.createClass( {
 				} );
 				break;
 
-			case 'mappable_but_invalid_tld':
-			case 'invalid_query':
-				message = this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
-					args: { domain: domain }
-				} );
-				break;
-
 			case 'server_error':
 				message = this.translate( 'Sorry, there was a problem processing your request. Please try again in a few minutes.' );
-				break;
-
-			case 'mappable_but_recently_mapped':
-				message = this.translate( 'This domain cannot currently be mapped.' );
 				break;
 
 			default:
