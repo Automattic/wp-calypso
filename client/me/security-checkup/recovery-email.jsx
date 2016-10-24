@@ -1,51 +1,51 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/assign' );
+import React, { Component } from 'react';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var AccountRecoveryStore = require( 'lib/security-checkup/account-recovery-store' ),
-	SecurityCheckupActions = require( 'lib/security-checkup/actions' ),
-	ManageContact = require( './manage-contact' ),
-	EditEmail = require( './edit-email' ),
-	accept = require( 'lib/accept' );
+import AccountRecoveryStore from 'lib/security-checkup/account-recovery-store';
+import SecurityCheckupActions from 'lib/security-checkup/actions';
+import ManageContact from './manage-contact';
+import EditEmail from './edit-email';
+import accept from 'lib/accept';
 
-module.exports = React.createClass( {
-	displayName: 'SecurityCheckupRecoveryEmail',
+class RecoveryEmail extends Component {
+	constructor( props ) {
+		super( props );
 
-	componentDidMount: function() {
+		this.state = this.getDataFromStores();
+	}
+
+	componentDidMount() {
 		AccountRecoveryStore.on( 'change', this.refreshData );
-	},
+	}
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		AccountRecoveryStore.off( 'change', this.refreshData );
-	},
+	}
 
-	getInitialState: function() {
-		return assign( {}, this.getDataFromStores() );
-	},
-
-	refreshData: function() {
+	refreshData = () => {
 		this.setState( this.getDataFromStores() );
-	},
+	}
 
-	getDataFromStores: function() {
+	getDataFromStores() {
 		return AccountRecoveryStore.getEmail();
-	},
+	}
 
-	render: function() {
-		var email = this.state.data ? this.state.data.email : false,
+	render() {
+		const email = this.state.data ? this.state.data.email : false,
 			primaryEmail = this.props.userSettings.getSetting( 'user_email' );
 
 		return (
 			<ManageContact
 				type="email"
 				isLoading={ this.state.loading }
-				title={ this.translate( 'Recovery Email Address' ) }
-				subtitle={ email ? email : this.translate( 'Not set' ) }
+				title={ translate( 'Recovery Email Address' ) }
+				subtitle={ email ? email : translate( 'Not set' ) }
 				hasValue={ !! email }
 				lastNotice={ this.state.lastNotice }
 
@@ -59,25 +59,29 @@ module.exports = React.createClass( {
 						/>
 				</ManageContact>
 		);
-	},
+	}
 
-	haveEmail: function() {
+	haveEmail() {
 		return !! this.state.data.email;
-	},
+	}
 
-	onSave: function( email ) {
+	onSave = ( email ) => {
 		SecurityCheckupActions.updateEmail( email, this.state.data.email );
-	},
+	}
 
-	onDelete: function() {
-		accept( this.translate( 'Are you sure you want to remove the email address?' ), function( accepted ) {
+	onDelete = () => {
+		accept( translate( 'Are you sure you want to remove the email address?' ), function( accepted ) {
 			if ( accepted ) {
 				SecurityCheckupActions.deleteEmail();
 			}
 		} );
-	},
+	}
 
-	onDismissNotice: function() {
+	onDismissNotice = () => {
 		SecurityCheckupActions.dismissEmailNotice();
 	}
-} );
+}
+
+RecoveryEmail.displayName = 'SecurityCheckupRecoveryEmail';
+
+export default RecoveryEmail;
