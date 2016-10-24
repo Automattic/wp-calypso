@@ -3,7 +3,11 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { noop, isEqual } from 'lodash';
+import {
+	noop,
+	isEqual,
+	values as objectValues
+} from 'lodash';
 import path from 'path';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -75,7 +79,8 @@ const ImageEditor = React.createClass( {
 			onCancel: null,
 			onReset: noop,
 			isImageLoaded: false,
-			defaultAspectRatio: AspectRatios.FREE
+			defaultAspectRatio: AspectRatios.FREE,
+			allowedAspectRatios: objectValues( AspectRatios )
 		};
 	},
 
@@ -211,7 +216,8 @@ const ImageEditor = React.createClass( {
 	render() {
 		const {
 			className,
-			siteId
+			siteId,
+			allowedAspectRatios
 		} = this.props;
 
 		const classes = classNames(
@@ -231,7 +237,9 @@ const ImageEditor = React.createClass( {
 							ref="editCanvas"
 							onLoadError={ this.onLoadCanvasError }
 						/>
-						<ImageEditorToolbar />
+						<ImageEditorToolbar
+							allowedAspectRatios={ allowedAspectRatios }
+						/>
 						<ImageEditorButtons
 							onCancel={ this.props.onCancel && this.onCancel }
 							onDone={ this.onDone }

@@ -64,6 +64,11 @@ class ImageEditorExample extends Component {
 			primarySiteId
 		} = this.props;
 		
+		const allowedAspectRatios = [
+			AspectRatios.ASPECT_1X1,
+			AspectRatios.ASPECT_4X3
+		];
+		
 		return (
 			<div>
 				<div style={ {
@@ -80,6 +85,7 @@ class ImageEditorExample extends Component {
 						onDone={ this.onImageEditorDone }
 						onReset={ this.onImageEditorReset }
 						defaultAspectRatio={ AspectRatios.ASPECT_3X2 }
+						allowedAspectRatios={ allowedAspectRatios }
 					/>
 				</div>
 
