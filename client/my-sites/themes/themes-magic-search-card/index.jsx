@@ -38,6 +38,7 @@ const ThemesMagicSearchCard = React.createClass( {
 	},
 
 	componentDidMount() {
+		this.setState( { searchInput: this.props.search } );
 		this.findTextForSuggestions( this.props.search );
 		window.addEventListener( 'resize', this.onResize );
 	},
