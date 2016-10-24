@@ -8,11 +8,6 @@ import {
 	pickBy
 } from 'lodash';
 
-/**
- * Internal dependencies
- */
-import i18n from 'i18n-calypso';
-
 const Suggestions = React.createClass( {
 
 	propTypes: {
@@ -215,7 +210,7 @@ const Suggestions = React.createClass( {
 				<div className="suggestions__category" key={ key }>
 					<span className="suggestions__category-name">{ key }</span>
 					<span className="suggestions__category-counter">
-						{ i18n.translate( '%(filtered)s of %(total)s', {
+						{ this.translate( '%(filtered)s of %(total)s', {
 							args: { filtered, total }
 						} ) }
 					</span>
