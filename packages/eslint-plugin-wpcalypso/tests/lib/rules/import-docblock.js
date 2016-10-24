@@ -37,7 +37,13 @@ import eslint from \'eslint\';`
  * External dependencies
  */
 import eslint from \'eslint\';`
-		}
+		},
+		{
+			code:
+`/**
+ * External dependencies${ ' ' }
+ */
+import eslint from \'eslint\';`
 		}
 	],
 
