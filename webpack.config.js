@@ -10,7 +10,6 @@ var webpack = require( 'webpack' ),
  * Internal dependencies
  */
 var config = require( './server/config' ),
-	sections = require( './client/sections' ),
 	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
 	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
@@ -20,8 +19,6 @@ var config = require( './server/config' ),
 var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
 	jsLoader,
 	webpackConfig;
-
-const sectionCount = sections.length;
 
 webpackConfig = {
 	bail: CALYPSO_ENV !== 'development',
@@ -99,7 +96,7 @@ if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
 		children: true,
-		minChunks: Math.floor( sectionCount * 0.25 ),
+		minChunks: 4,
 		async: true,
 		filename: 'commons.[hash].js'
 	} ) );
