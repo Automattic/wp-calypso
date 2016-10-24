@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { PropTypes, Component } from 'react';
 import classNames from 'classnames';
 import { keys, omit, noop } from 'lodash';
 
@@ -11,8 +11,8 @@ import { keys, omit, noop } from 'lodash';
 import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 
-const FormTextInputWithAction = React.createClass( {
-	propTypes: {
+export default class FormTextInputWithAction extends Component {
+	static propTypes = {
 		action: PropTypes.node,
 		inputRef: PropTypes.func,
 		onFocus: PropTypes.func,
@@ -24,29 +24,28 @@ const FormTextInputWithAction = React.createClass( {
 		disabled: PropTypes.bool,
 		isError: PropTypes.bool,
 		isValid: PropTypes.bool,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			defaultValue: '',
-			onFocus: noop,
-			onBlur: noop,
-			onKeyDown: noop,
-			onChange: noop,
-			onAction: noop,
-			isError: false,
-			isValid: false,
-		};
-	},
+	static defaultProps = {
+		defaultValue: '',
+		onFocus: noop,
+		onBlur: noop,
+		onKeyDown: noop,
+		onChange: noop,
+		onAction: noop,
+		isError: false,
+		isValid: false,
+	};
 
-	getInitialState() {
-		return {
+	constructor() {
+		super();
+		this.state = {
 			focused: false,
 			value: null,
 		};
-	},
+	};
 
-	handleFocus( e ) {
+	handleFocus = ( e ) => {
 		this.props.onFocus( e );
 		if ( e.defaultPrevented ) {
 			return;
@@ -54,9 +53,9 @@ const FormTextInputWithAction = React.createClass( {
 		this.setState( {
 			focused: true,
 		} );
-	},
+	};
 
-	handleBlur( e ) {
+	handleBlur = ( e ) => {
 		this.props.onBlur( e );
 		if ( e.defaultPrevented ) {
 			return;
@@ -64,9 +63,9 @@ const FormTextInputWithAction = React.createClass( {
 		this.setState( {
 			focused: false,
 		} );
-	},
+	};
 
-	handleKeyDown( e ) {
+	handleKeyDown = ( e ) => {
 		this.props.onKeyDown( e );
 		if ( e.defaultPrevented ) {
 			return;
@@ -74,9 +73,9 @@ const FormTextInputWithAction = React.createClass( {
 		if ( e.which === 13 && this.getValue() !== '' ) {
 			this.props.onAction( e );
 		}
-	},
+	};
 
-	handleChange( e ) {
+	handleChange = ( e ) => {
 		this.props.onChange( e );
 		if ( e.defaultPrevented ) {
 			return;
@@ -84,14 +83,14 @@ const FormTextInputWithAction = React.createClass( {
 		this.setState( {
 			value: e.target.value,
 		} );
-	},
+	};
 
 	getValue() {
 		if ( this.state.value === null ) {
 			return this.props.defaultValue;
 		}
 		return this.state.value;
-	},
+	};
 
 	render() {
 		return (
@@ -124,7 +123,5 @@ const FormTextInputWithAction = React.createClass( {
 				</FormButton>
 			</div>
 		);
-	}
-} );
-
-export default FormTextInputWithAction;
+	};
+}
