@@ -26,7 +26,7 @@ class EditorMediaAdvanced extends Component {
 
 	save() {
 		const { media, appearance } = this.props.item;
-		const markup = MediaMarkup.get( this.props.site, Object.assign( {}, media, {
+		const markup = MediaMarkup.get( this.props.selectedSite, Object.assign( {}, media, {
 			alt: ReactDom.findDOMNode( this.refs.alt ).value
 		} ), appearance );
 
