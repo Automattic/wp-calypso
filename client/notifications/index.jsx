@@ -2,15 +2,15 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	config = require( 'config' ),
 	debug = require( 'debug' )( 'calypso:notifications' ),
-	assign = require( 'lodash/object/assign' ),
-	classes = require( 'component-classes' );
+	assign = require( 'lodash/assign' ),
+	oAuthToken = require( 'lib/oauth-token' );
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
+var analytics = require( 'lib/analytics' ),
+	config = require( 'config' ),
 	user = require( 'lib/user' )();
 
 /**
@@ -18,13 +18,13 @@ var config = require( 'config' ),
  */
 var widgetDomain = 'https://widgets.wp.com';
 
-var Notifications = React.createClass({
+var Notifications = React.createClass( {
 	getInitialState: function() {
 		return {
-			'loaded' : true,
-			'iframeLoaded' : false,
-			'shownOnce' : false,
-			'widescreen' : false
+			'loaded': true,
+			'iframeLoaded': false,
+			'shownOnce': false,
+			'widescreen': false
 		};
 	},
 
@@ -41,21 +41,21 @@ var Notifications = React.createClass({
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
-		if ( nextProps.visible && !this.state.loaded ) {
-			this.setState( { 'loaded' : true } );
-		} else if ( !nextProps.visible && !this.state.iframeLoaded && this.state.shownOnce ) {
+		if ( nextProps.visible && ! this.state.loaded ) {
+			this.setState( { 'loaded': true } );
+		} else if ( ! nextProps.visible && ! this.state.iframeLoaded && this.state.shownOnce ) {
 			// for cases where iframe is stuck loading, this will remove it from
 			// the DOM so we can try reloading it next time
-			this.setState( { 'loaded' : false } );
+			this.setState( { 'loaded': false } );
 		}
 
 		// tell the iframe if we're changing visible status
 		if ( nextProps.visible !== this.props.visible ) {
 			this.postMessage( { 'action': 'togglePanel', 'showing': nextProps.visible } );
-			this.setState( { 'shownOnce' : true, 'widescreen': false } );
+			this.setState( { 'shownOnce': true, 'widescreen': false } );
 		}
 
-		if ( classes( document.documentElement ).has( 'touch' ) ) {
+		if ( document.documentElement.classList.contains( 'touch' ) ) {
 			// prevent scrolling on main page on mobile
 			if ( this.props.visible && ! nextProps.visible ) {
 				document.body.removeEventListener( 'touchmove', this.preventDefault, false );
@@ -69,7 +69,7 @@ var Notifications = React.createClass({
 		var frameNode;
 		if ( this.props.visible && ! prevProps.visible ) {
 			// showing the panel, focus so we can use shortcuts
-			frameNode = this.refs.widgetFrame.getDOMNode();
+			frameNode = this.refs.widgetFrame;
 			if ( frameNode ) {
 				frameNode.contentWindow.focus();
 			}
@@ -85,6 +85,11 @@ var Notifications = React.createClass({
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.addEventListener( 'visibilitychange', this.handleVisibilityChange );
 		}
+
+		if ( 'serviceWorker' in window.navigator && 'addEventListener' in window.navigator.serviceWorker ) {
+			window.navigator.serviceWorker.addEventListener( 'message', this.receiveServiceWorkerMessage );
+			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
+		}
 	},
 
 	componentWillUnmount: function() {
@@ -97,6 +102,10 @@ var Notifications = React.createClass({
 
 		if ( typeof document.hidden !== 'undefined' ) {
 			document.removeEventListener( 'visibilitychange', this.handleVisibilityChange );
+		}
+
+		if ( 'serviceWorker' in window.navigator && 'removeEventListener' in window.navigator.serviceWorker ) {
+			window.navigator.serviceWorker.removeEventListener( 'message', this.receiveServiceWorkerMessage );
 		}
 	},
 
@@ -118,12 +127,25 @@ var Notifications = React.createClass({
 
 	handleVisibilityChange: function() {
 		this.postMessage( {
-			'action' : 'toggleVisibility',
-			'hidden' : document.hidden ? true : false
+			'action': 'toggleVisibility',
+			'hidden': document.hidden ? true : false
 		} );
 	},
 
-	receiveMessage: function(event) {
+	postAuth: function() {
+		if ( config.isEnabled( 'oauth' ) ) {
+			const token = oAuthToken.getToken();
+
+			if ( token !== false ) {
+				this.postMessage( {
+					action: 'setAuthToken',
+					token: token
+				} );
+			}
+		}
+	},
+
+	receiveMessage: function( event ) {
 		// Receives messages from the notifications widget
 		if ( event.origin !== widgetDomain ) {
 			return;
@@ -142,23 +164,55 @@ var Notifications = React.createClass({
 			this.props.checkToggle();
 		} else if ( data.action === 'render' ) {
 			this.props.setIndicator( data.num_new );
-
 		} else if ( data.action === 'iFrameReady' ) {
 			// the iframe is loaded, send any pending messages
-			this.setState( { 'iframeLoaded' : true } );
+			this.setState( { 'iframeLoaded': true } );
 			debug( 'notifications iframe loaded' );
+
+			// We always want this to happen, in addition to whatever may be queued
+			this.postAuth();
+
 			if ( this.queuedMessage ) {
 				this.postMessage( this.queuedMessage );
 				this.queuedMessage = null;
 			}
-
 		} else if ( data.action === 'renderAllSeen' ) {
 			// user has seen the notes, no longer new
 			this.props.setIndicator( 0 );
-		} else if ( data.action === 'widescreen') {
+		} else if ( data.action === 'widescreen' ) {
 			this.setState( { widescreen: data.widescreen } );
 		} else {
 			debug( 'unknown message from iframe: %s', event.data );
+		}
+	},
+
+	receiveServiceWorkerMessage: function( event ) {
+		// Receives messages from the service worker
+		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
+		// Firefox does not support document.origin; we can use location.origin instead
+		if ( event.origin && event.origin !== location.origin ) {
+			return;
+		}
+
+		if ( ! ( 'action' in event.data ) ) {
+			return;
+		}
+
+		switch ( event.data.action ) {
+			case 'openPanel':
+				// checktoggle closes panel with no parameters
+				this.props.checkToggle();
+				// ... and toggles when the 2nd parameter is true
+				this.props.checkToggle( null, true );
+				// force refresh the panel
+				this.postMessage( { action: 'refreshNotes' } );
+				break;
+			case 'trackClick':
+				analytics.tracks.recordEvent( 'calypso_web_push_notification_clicked', {
+					push_notification_note_id: event.data.notification.note_id,
+					push_notification_type: event.data.notification.type
+				} );
+				break;
 		}
 	},
 
@@ -167,7 +221,7 @@ var Notifications = React.createClass({
 		iframeMessage = assign( {}, iframeMessage, message );
 
 		if ( this.refs.widgetFrame && this.state.iframeLoaded ) {
-			var widgetWindow = this.refs.widgetFrame.getDOMNode().contentWindow;
+			var widgetWindow = this.refs.widgetFrame.contentWindow;
 			widgetWindow.postMessage( JSON.stringify( iframeMessage ), widgetDomain );
 		} else {
 			// save only the latest message to send when iframe is loaded
@@ -175,11 +229,20 @@ var Notifications = React.createClass({
 		}
 	},
 
+	postServiceWorkerMessage: function( message ) {
+		if ( 'serviceWorker' in window.navigator ) {
+			window.navigator.serviceWorker.ready.then( ( serviceWorkerRegistration ) => {
+				if ( 'active' in serviceWorkerRegistration ) {
+					serviceWorkerRegistration.active.postMessage( message );
+				}
+			} );
+		}
+	},
+
 	render: function() {
 		var userData = user.get(),
 			localeSlug = userData.localeSlug || config( 'i18n_default_locale_slug' ),
 			widgetURL = widgetDomain,
-			divStyle = {},
 			frameClasses = [ 'wide' ],
 			panelClasses = [ 'wide' ],
 			now = new Date();
@@ -195,7 +258,7 @@ var Notifications = React.createClass({
 		widgetURL += '?locale=' + localeSlug;
 
 		// cache buster
-		widgetURL += '&' + now.getFullYear() + ( now.getMonth() + 1 ) + now.getDate();
+		widgetURL += '&' + now.getFullYear() + ( now.getMonth() + 1 ) + now.getDate() + ( now.getHours() + 10 );
 
 		if ( this.state.widescreen && this.props.visible ) {
 			frameClasses.push( 'widescreen' );
@@ -217,6 +280,6 @@ var Notifications = React.createClass({
 			</div>
 		);
 	}
-});
+} );
 
 module.exports = Notifications;

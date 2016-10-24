@@ -41,11 +41,13 @@ class PostEditEmbedsStore extends ReduceStore {
 							status: 'ERROR'
 						}
 					} );
-				} else {
+				} else if ( action.data ) {
 					state = Object.assign( {}, state, {
 						[action.url]: {
 							status: 'LOADED',
-							body: action.body
+							body: action.data.result,
+							scripts: action.data.scripts,
+							styles: action.data.styles
 						}
 					} );
 				}

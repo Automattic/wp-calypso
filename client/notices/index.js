@@ -11,8 +11,7 @@ var list = { containerNames: {} };
 Emitter( list );
 var delayedNotices = [];
 
-module.exports = {
-
+const notices = {
 	/**
 	 * Creates a new notice
 	 * @private
@@ -37,7 +36,12 @@ module.exports = {
 			container: container,
 			button: options.button,
 			href: options.href,
-			onClick: options.onClick,
+			onClick: ( event ) => {
+				if ( typeof options.onClick === 'function' ) {
+					const closeFn = notices.removeNotice.bind( notices, noticeObject );
+					return options.onClick( event, closeFn );
+				}
+			},
 			onRemoveCallback: options.onRemoveCallback || function() {},
 			arrow: options.arrow,
 			isCompact: options.isCompact,
@@ -154,7 +158,7 @@ module.exports = {
 		}
 
 		if ( changed ) {
-			list.emit( 'changed' );
+			list.emit( 'change' );
 		}
 		next();
 	},
@@ -189,3 +193,5 @@ module.exports = {
 	}
 
 };
+
+export default notices;

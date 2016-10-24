@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import update from 'react-addons-update';
 
 /**
  * Internal dependencies
@@ -23,7 +23,7 @@ function updateDomainState( state, domainName, data ) {
 		}
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 function reducer( state, payload ) {
@@ -47,7 +47,7 @@ function reducer( state, payload ) {
 				needsUpdate: true
 			} );
 
-		case UpgradesActionTypes.DOMAIN_ENABLE_LOCKING_COMPLETED:
+		case UpgradesActionTypes.DOMAIN_LOCKING_ENABLE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					locked: true,
@@ -55,7 +55,7 @@ function reducer( state, payload ) {
 				} )
 			} );
 
-		case UpgradesActionTypes.DOMAIN_ENABLE_PRIVACY_PROTECTION_COMPLETED:
+		case UpgradesActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED:
 			return updateDomainState( state, action.domainName, {
 				data: Object.assign( {}, state[ action.domainName ].data, {
 					pendingTransfer: false
@@ -65,7 +65,7 @@ function reducer( state, payload ) {
 		case UpgradesActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
 			const { data } = state[ action.domainName ],
 				domainData = getSelectedDomain( {
-					domains: DomainsStore.getForSite( action.siteId ),
+					domains: DomainsStore.getBySite( action.siteId ),
 					selectedDomainName: action.domainName
 				} ),
 				locked = ( ! action.unlock ) && data.locked,

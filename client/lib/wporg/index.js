@@ -1,13 +1,18 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'wporg' ),
-	superagent = require( 'superagent' );
+import debugFactory from 'debug';
+import i18n from 'i18n-calypso';
+import superagent from 'superagent';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies
  */
-var jsonp = require( './jsonp' );
+import jsonp from './jsonp';
+import config from 'config';
+
+const debug = debugFactory( 'wporg' );
 
 /**
  * Constants
@@ -16,6 +21,23 @@ var _WPORG_PLUGINS_LIST = 'https://api.wordpress.org/plugins/info/1.1/?action=qu
 	_DEFAULT_PAGE_SIZE = 24,
 	_DEFAULT_CATEGORY = 'all',
 	_DEFAULT_FIRST_PAGE = 1;
+
+function getWporgLocaleCode( ) {
+	var currentLocaleCode,
+		wpOrgLocaleCode;
+
+	currentLocaleCode = i18n.getLocaleSlug();
+	wpOrgLocaleCode = find(
+		config( 'languages' ),
+		{ langSlug: currentLocaleCode }
+	).wpLocale;
+
+	if ( wpOrgLocaleCode === '' ) {
+		wpOrgLocaleCode = currentLocaleCode;
+	}
+
+	return wpOrgLocaleCode;
+}
 
 module.exports = {
 
@@ -26,7 +48,7 @@ module.exports = {
 	 */
 	fetchPluginInformation: function( pluginSlug, callback ) {
 		var baseUrl,
-			query = { fields: 'icons,banners,compatibility,ratings,-contributors' };
+			query = { fields: 'icons,banners,compatibility,ratings,-contributors', locale: getWporgLocaleCode() };
 
 		pluginSlug = pluginSlug.replace( new RegExp( '.php$' ), '' );
 

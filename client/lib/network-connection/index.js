@@ -3,15 +3,16 @@
  */
 var debug = require( 'debug' )( 'calypso:network-connection' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	request = require( 'superagent' );
+	request = require( 'superagent' ),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
  */
 var config = require( 'config' ),
-	PollerPool = require( 'lib/data-poller' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	notices = require( 'notices' );
+	PollerPool = require( 'lib/data-poller' );
+
+import { connectionLost, connectionRestored } from 'state/application/actions';
 
 var STATUS_CHECK_INTERVAL = 20000,
 	connected = true,
@@ -29,10 +30,8 @@ NetworkConnectionApp = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 */
-	init: function() {
-		var changeCallback,
-			disconnectedNotice = null,
-			connectedNotice = null;
+	init: function( reduxStore ) {
+		var changeCallback;
 
 		if ( ! this.isEnabled( 'network-connection' ) ) {
 			return;
@@ -41,31 +40,10 @@ NetworkConnectionApp = {
 		changeCallback = function() {
 			if ( connected ) {
 				debug( 'Showing notice "Connection restored".' );
-				if ( disconnectedNotice ) {
-					notices.removeNotice( disconnectedNotice );
-					disconnectedNotice = null;
-				}
-				connectedNotice = notices.success(
-					i18n.translate( 'Connection restored.' ),
-					{
-						showDismiss: false,
-						duration: 5000,
-						persistent: true
-					}
-				);
+				reduxStore.dispatch( connectionRestored( i18n.translate( 'Connection restored.' ) ) );
 			} else {
+				reduxStore.dispatch( connectionLost( i18n.translate( 'Not connected. Some information may be out of sync.' ) ) );
 				debug( 'Showing notice "No internet connection".' );
-				if ( connectedNotice ) {
-					notices.removeNotice( connectedNotice );
-					connectedNotice = null;
-				}
-				disconnectedNotice = notices.warning(
-					i18n.translate( 'Not connected. Some information may be out of sync.' ),
-					{
-						showDismiss: false,
-						persistent: true
-					}
-				);
 			}
 		};
 

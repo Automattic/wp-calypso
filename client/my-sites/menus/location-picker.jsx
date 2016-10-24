@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:menus:location-picker' ); // eslint-disable-line no-unused-vars
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' );
+var analytics = require( 'lib/analytics' );
 
 var LocationPicker = React.createClass({
 

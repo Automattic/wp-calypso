@@ -8,7 +8,7 @@ Load [http://calypso.localhost:3000](http://calypso.localhost:3000/) in your bro
 
 ## Adding a new section
 
-Sections are usually bigger areas of the appliction that have their own chunk of code, loaded asyncronously when its URLs is hit.
+Sections are usually bigger areas of the application that have their own chunk of code, loaded asynchronously when its URLs are hit.
 
 Creating a new section is composed of five steps:
 
@@ -16,7 +16,7 @@ Creating a new section is composed of five steps:
 2. Setup your section folder.
 3. Create a controller `client/my-sites/my-section/controller.js`.
 4. Setup the entry routes in `client/my-sites/my-section/index.js`.
-5. Register section in `client/sections.js.`
+5. Register section in `client/sections.js`.
 
 ### 1. Add a feature
 
@@ -26,7 +26,7 @@ First thing is to enable your new feature in Calypso. We'll do that by opening `
 "hello-world": true
 ```
 
-Features flags are a great way to enable/disable certain features in specific environments. For example, we can merge our "Hello, World!" code in `master,` but hide it behind a feature flag. We have [more documentation on feature flags](../client/config).
+Features flags are a great way to enable/disable certain features in specific environments. For example, we can merge our "Hello, World!" code in `master,` but hide it behind a feature flag. We have [more documentation on feature flags](../../client/config).
 
 ### 2. Set up folder structure
 
@@ -114,7 +114,7 @@ Restart the server doing:
 
 * `make run`
 
-We are ready to load http://calypso.localhost:3000/hello-world! Your console should respond with `Hello, world?` if everything is working and you should see Calypso's sidebar for "My Sites".
+We are ready to load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world)! Your console should respond with `Hello, world?` if everything is working and you should see Calypso's sidebar for "My Sites".
 
 ----
 
@@ -167,14 +167,21 @@ If you want to learn more about our approach to writing React components, check 
 
 ### 2. Hook up controller
 
-Time to hook this up with our controller function. Open `/hello-world/controller.js`. Import React again at the top of the file, then remove the `console.log` call and enter the following instead:
+Time to hook this up with our controller function. Open `/hello-world/controller.js`. Import ReactDom and React at the top of the file:
+
+```javascript
+var React = require( 'react' ),
+	ReactDom = require( 'react-dom' );
+```
+
+Then remove the `console.log` call and enter the following instead:
 
 ```javascript
 helloWorld() {
 	const Main = require( 'my-sites/hello-world/main' );
 
 	// Render hello world...
-	React.render(
+	ReactDom.render(
 		React.createElement( Main ),
 		document.getElementById( 'primary' )
 	);

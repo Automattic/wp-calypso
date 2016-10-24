@@ -1,6 +1,6 @@
 .wplink__dialog.dialog.card {
 	min-width: 380px;
-	z-index: 100200; // See: div.mce-inline-toolbar-grp
+	z-index: z-index( 'root', '.wplink__dialog.dialog.card' ); // See: div.mce-inline-toolbar-grp
 }
 
 .wplink__remove-link {
@@ -20,4 +20,13 @@
 		margin-right: 5px;
 		margin-bottom: -3px;
 	}
+}
+
+.wplink__dialog .form-fieldset {
+	margin-bottom: 8px;
+}
+
+.wplink__dialog .post-selector__results {
+	height: 24vh;
+	max-height: none;
 }

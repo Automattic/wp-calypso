@@ -1,7 +1,9 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
-var find = require( 'lodash/collection/find' );
+var find = require( 'lodash/find' );
 
 /**
  * Module variables
@@ -92,6 +94,21 @@ PostMetadata = {
 		}
 
 		return getValueByKey( post.metadata, 'geo_address' );
+	},
+
+	/**
+	 * Given a post object, returns the custom post meta description for
+	 * the post, or undefined if it is has not been set.
+	 *
+	 * @param  {Object} post Post object
+	 * @return {string}      Custom post meta description
+	 */
+	metaDescription: function( post ) {
+		if ( ! post ) {
+			return;
+		}
+
+		return getValueByKey( post.metadata, 'advanced_seo_description' );
 	},
 
 	/**

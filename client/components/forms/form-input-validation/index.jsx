@@ -1,26 +1,39 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
+
+/**
+ * Interal dependencies
+ */
+import Gridicon from 'components/gridicon';
 
 module.exports = React.createClass( {
 
 	displayName: 'FormInputValidation',
 
-	getDefaultProps: function() {
+	propTypes: {
+		isError: React.PropTypes.bool,
+		text: React.PropTypes.string,
+		icon: React.PropTypes.string
+	},
+
+	getDefaultProps() {
 		return { isError: false };
 	},
 
-	render: function() {
-		var classes = classNames( {
+	render() {
+		const classes = classNames( {
 			'form-input-validation': true,
 			'is-error': this.props.isError
 		} );
 
+		const icon = this.props.isError ? 'notice-outline' : 'checkmark';
+
 		return (
 			<div className={ classes }>
-				<span>{ this.props.text }</span>
+				<span><Gridicon size={ 24 } icon={ this.props.icon ? this.props.icon : icon } /> { this.props.text }</span>
 			</div>
 		);
 	}

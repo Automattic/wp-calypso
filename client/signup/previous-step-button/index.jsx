@@ -2,12 +2,13 @@
  * External dependencies
  */
 import React from 'react';
-import find from 'lodash/collection/find';
+import find from 'lodash/find';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import signupUtils from 'signup/utils';
 
 export default React.createClass( {
@@ -29,7 +30,7 @@ export default React.createClass( {
 		const previousStepName = signupUtils.getPreviousStepName( this.props.flowName, this.props.stepName ),
 			{ stepSectionName } = find( this.props.signupProgressStore, { stepName: previousStepName } );
 
-		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName );
+		return signupUtils.getStepUrl( this.props.flowName, previousStepName, stepSectionName, i18n.getLocaleSlug() );
 	},
 
 	recordClick() {

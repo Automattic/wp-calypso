@@ -1,16 +1,14 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
-	classNames = require( 'classnames' ),
+var assign = require( 'lodash/assign' ),
 	React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	CheckoutThankYou = require( './thank-you' ),
+var analytics = require( 'lib/analytics' ),
+	cartValues = require( 'lib/cart-values' ),
 	CountrySelect = require( 'my-sites/upgrades/components/form/country-select' ),
 	Input = require( 'my-sites/upgrades/components/form/input' ),
 	notices = require( 'notices' ),
@@ -75,7 +73,7 @@ module.exports = React.createClass( {
 		} );
 
 		dataForApi = assign( {}, this.state, {
-			successUrl: origin + this.props.redirectTo,
+			successUrl: origin + this.props.redirectTo(),
 			cancelUrl: origin + '/checkout/' + this.props.selectedSite.slug,
 			cart: cart,
 			domainDetails: transaction.domainDetails
@@ -104,17 +102,13 @@ module.exports = React.createClass( {
 				} );
 				analytics.ga.recordEvent( 'Upgrades', 'Clicked Checkout With Paypal Button' );
 				analytics.tracks.recordEvent( 'calypso_checkout_with_paypal' );
-				CheckoutThankYou.setLastTransaction( {
-					cart: cart,
-					selectedSite: this.props.selectedSite
-				} );
 				window.location = paypalExpressURL;
 			}
 		}.bind( this ) );
 	},
 
 	renderButtonText: function() {
-		if ( cartItems.hasRenewalItem( this.props.cart ) ) {
+		if ( cartValues.cartItems.hasRenewalItem( this.props.cart ) ) {
 			return this.translate( 'Purchase %(price)s subscription with PayPal', {
 				args: { price: this.props.cart.total_cost_display },
 				context: 'Pay button on /checkout'
@@ -133,7 +127,7 @@ module.exports = React.createClass( {
 				<div className="payment-box-section">
 					<CountrySelect
 						additionalClasses="checkout-field"
-						name='country'
+						name="country"
 						label={ this.translate( 'Country', { textOnly: true } ) }
 						countriesList={ this.props.countriesList }
 						value={ this.state.country }
@@ -149,31 +143,33 @@ module.exports = React.createClass( {
 						eventFormName="Checkout Form" />
 				</div>
 
-				<TermsOfService />
+				<TermsOfService
+					hasRenewableSubscription={ cartValues.cartItems.hasRenewableSubscription( this.props.cart ) } />
 
 				<div className="payment-box-actions">
 					<div className="pay-button">
-						<button type='submit' className="button is-primary button-pay" disabled={ this.state.formDisabled }>
+						<button type="submit" className="button is-primary button-pay" disabled={ this.state.formDisabled }>
 							{ this.renderButtonText() }
 						</button>
 						<SubscriptionText cart={ this.props.cart } />
 					</div>
-					
-					<a href="" className="credit-card-payment-box__switch-link" onClick={ this.handleToggle }>{ this.translate( 'or use a credit card', { context: 'Upgrades: PayPal checkout screen', comment: '"Checkout with PayPal -- or use a credit card"' } ) }</a>
+
+					{ cartValues.isCreditCardPaymentsEnabled( this.props.cart ) &&
+						<a href="" className="credit-card-payment-box__switch-link" onClick={ this.handleToggle }>
+							{ this.translate( 'or use a credit card', {
+								context: 'Upgrades: PayPal checkout screen',
+								comment: 'Checkout with PayPal -- or use a credit card'
+							} ) }
+						</a> }
 				</div>
 			</form>
 		);
 	},
 
 	render: function() {
-		var classSet = classNames( {
-			'paypal-payment-box': true,
-			selected: this.props.selected === true
-		} );
-
 		return (
 			<PaymentBox
-				classSet={ classSet }
+				classSet="paypal-payment-box"
 				title={ this.translate( 'Secure Payment with PayPal' ) }>
 				{ this.content() }
 			</PaymentBox>

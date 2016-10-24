@@ -2,19 +2,21 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import Immutable from 'immutable';
-import { zip, contains } from 'lodash';
+import zip from 'lodash/zip';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
-import SiteInfo from 'my-sites/site';
+import analytics from 'lib/analytics';
+import SiteInfo from 'blocks/site';
 
 export default React.createClass( {
 	displayName: 'BlogSettingsHeader',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		blog: PropTypes.object.isRequired,
@@ -48,7 +50,7 @@ export default React.createClass( {
 
 		let counts = this.props.settings
 			.deleteIn( [ 'email', 'achievement' ] )
-			.filterNot( ( _, key ) => contains( [ 'blog_id', 'devices' ], key ) )
+			.filterNot( ( _, key ) => includes( [ 'blog_id', 'devices' ], key ) )
 			.map( sizeAndSum )
 			.toArray();
 

@@ -6,7 +6,7 @@ and render an appropriate error page before any management tools are rendered.
 
 This component is an extension of the [EmptyContent component][1], and it accepts
 the same properties.
-[1]: https://github.com/Automattic/wp-calypso/tree/master/shared/components/empty-content
+[1]: https://github.com/Automattic/wp-calypso/tree/master/client/components/empty-content
 
 Additionally, this component accepts a `template` property which will render some pre-defined
 templates. Here are acceptable values for `template` along with examples of how to use them.
@@ -41,6 +41,11 @@ To display a page that will prompt the user to opt-in to Jetpack manage:
 ### default
 
 As stated above, this component renders an `emptyContent` component by default. For example:
+
+
+### Feature Example
+If you initialize the component with a property `featureExample` containing jsx, it will be added in the bottom of the Jetpack Manage Error Page as an example of what the user could be viewing if there weren't any access errors.
+
 
 ```
 JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );

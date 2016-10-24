@@ -1,8 +1,8 @@
 var React = require( 'react' );
 
 var EmptyContent = require( 'components/empty-content' ),
-	ExternalLink = require( 'components/external-link' ),
-	stats = require( 'reader/stats' );
+	stats = require( 'reader/stats' ),
+	discoverHelper = require( 'reader/discover/helper' );
 
 var SiteEmptyContent = React.createClass( {
 	shouldComponentUpdate: function() {
@@ -12,19 +12,22 @@ var SiteEmptyContent = React.createClass( {
 	recordAction: function() {
 		stats.recordAction( 'clicked_discover_on_empty' );
 		stats.recordGaEvent( 'Clicked Discover on EmptyContent' );
+		stats.recordTrack( 'calypso_reader_discover_on_empty_site_stream_clicked' );
 	},
 
 	recordSecondaryAction: function() {
 		stats.recordAction( 'clicked_recommendations_on_empty' );
 		stats.recordGaEvent( 'Clicked Recommendations on EmptyContent' );
+		stats.recordTrack( 'calypso_reader_recommendations_on_empty_site_stream_clicked' );
 	},
 
 	render: function() {
-		var action = (
+		var action = discoverHelper.isDiscoverEnabled()
+		? (
 			<a
 				className="empty-content__action button is-primary"
 				onClick={ this.recordAction }
-				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ),
+				href="/discover">{ this.translate( 'Explore Discover' ) }</a> ) : null,
 			secondaryAction = (
 				<a
 					className="empty-content__action button"

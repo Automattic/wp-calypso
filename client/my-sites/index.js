@@ -1,16 +1,13 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var controller = require( './controller' ),
-	removeOverlay = require( 'remove-overlay' );
+import controller from './controller';
 
-module.exports = function() {
-
-	page( '/sites/:sitesFilter?', controller.siteSelection, removeOverlay, controller.sites );
-
+export default function() {
+	page( '/sites/:sitesFilter?', controller.siteSelection, controller.sites );
 };

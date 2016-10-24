@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
-	omit = require( 'lodash/object/omit' ),
+var React = require( 'react' ),
+	classnames = require( 'classnames' ),
+	omit = require( 'lodash/omit' ),
 	classNames = require( 'classnames' );
 
 module.exports = React.createClass( {
@@ -27,8 +27,8 @@ module.exports = React.createClass( {
 			<input
 				{ ...otherProps }
 				type={ 'tel' }
-				pattern={ '[0-9]*'}
-				className={ joinClasses( this.props.className, classes ) } />
+				pattern={ '[0-9]*' }
+				className={ classnames( this.props.className, classes ) } />
 		);
 	}
 } );

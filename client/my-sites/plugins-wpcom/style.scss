@@ -1,0 +1,199 @@
+.wpcom-plugins__standard-panel.is-compact,
+.wpcom-plugins__premium-panel,
+.wpcom-plugins__business-panel {
+	padding: 0;
+}
+
+// Disabled styles for not activated plans
+.wpcom-plugins__premium-panel.is-disabled,
+.wpcom-plugins__business-panel.is-disabled {
+	.wpcom-plugins__plugin-item {
+		opacity: 0.5;
+	}
+}
+
+.wpcom-plugins__list {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+.wpcom-plugins__plugin-item {
+	list-style: none;
+	box-sizing: border-box;
+	padding: 16px;
+	border-bottom: 1px solid lighten( $gray, 20% );
+	width: 100%;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	@include breakpoint( ">960px" ) {
+		width: 33.33%;
+		border-right: 1px solid lighten( $gray, 20% );
+	}
+}
+
+// Styles for 3 columns
+.wpcom-plugins__plugin-item:nth-child(3n+3) { // Select every third item
+	@include breakpoint( ">960px" ) {
+		border-right: none;
+	}
+}
+
+.wpcom-plugins__plugin-item:nth-last-child(-n+3) { // Select last three items
+	@include breakpoint( ">960px" ) {
+		border-bottom: none;
+	}
+}
+
+// Special styles for displaying only two plugins
+.wpcom-plugins__business-panel .wpcom-plugins__plugin-item {
+	width: 100%;
+	
+	&:last-child {
+		border-right: none;
+	}
+	
+	@include breakpoint( ">960px" ) {
+		width: 50%;
+		border-right: 1px solid lighten( $gray, 20% );
+	}
+}
+
+.wpcom-plugins__plugin-item a {
+	color: $gray-dark;
+}
+
+.wpcom-plugins__plugin-icon {
+	width: 40px;
+	height: 40px;
+	background: lighten( $gray, 10%);
+	float: left;
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.wpcom-plugins__plugin-icon .gridicon {
+	fill: $white;
+}
+
+.wpcom-plugins__plugin-icon .gridicons-checkmark-circle {
+	position: absolute;
+		bottom: -5px;
+		right: -8px;
+	border-radius: 100%;
+	fill: $alert-green;
+	background: $white;
+}
+
+.wpcom-plugins__plugin-title,
+.wpcom-plugins__plugin-category,
+.wpcom-plugins__plugin-plan {
+	margin-left: 52px;
+}
+
+.wpcom-plugins__plugin-title {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.wpcom-plugins__plugin-category,
+.wpcom-plugins__plugin-plan {
+	font-size: 11px;
+	color: $gray;
+	text-transform: uppercase;
+}
+
+.wpcom-plugins__plugin-description {
+	font-size: 14px;
+	margin-top: 10px;
+	margin-bottom: 0;
+}
+
+.wpcom-plugin-panel button.is-active-plugin {
+	color: $alert-green;
+
+	&:hover {
+		color: $alert-green;
+	}
+}
+
+.wpcom-plugins-expanded .section-header {
+	border-bottom: none;
+}
+
+.wpcom-plugin-panel__panel-footer {
+	padding-top: 14px;
+	padding-bottom: 14px;
+}
+
+.plugins-wpcom__header.card.is-compact {
+	overflow: hidden;
+	padding: 0;
+	position: relative;
+}
+
+.plugins-wpcom__header-image {
+	display: block;
+
+	@include breakpoint( ">960px" ) {
+		max-width: none;
+		margin-left: -22%;
+	}
+}
+
+.wpcom-plugin-panel .notice {
+	margin: 0;
+}
+
+.plugins-wpcom__header-text {
+	width: 100%;
+	padding: 16px 24px;
+
+	@include breakpoint( ">960px" ) {
+		text-align: center;
+		padding: 0;
+		position: absolute;
+			top: 10%;
+	}
+}
+
+.plugins-wpcom__header-title {
+	color: $gray-dark;
+	font-size: 19px;
+	font-weight: 300;
+	display: block;
+	margin-bottom: 20px;
+
+	&::after {
+		content: '';
+		display: block;
+		border-bottom: 1px solid lighten( $gray, 20% );
+		width: 60px;
+		position: absolute;
+			left: 24px;
+		margin: 8px 0 0;
+
+		@include breakpoint( ">960px" ) {
+			left: 50%;
+			margin-left: -30px;
+		}
+	}
+}
+
+.plugins-wpcom__header-subtitle {
+	background: $white;
+	color: $gray;
+	font-size: 13px;
+	font-weight: 300;
+	display: block;
+	width: 300px;
+
+	@include breakpoint( ">960px" ) {
+		margin: 0 auto;
+	}
+}

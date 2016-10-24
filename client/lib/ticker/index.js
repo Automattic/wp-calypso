@@ -1,5 +1,5 @@
 var Emitter = require( 'lib/mixins/emitter' ),
-	wrap = require( 'lodash/function/wrap' ),
+	wrap = require( 'lodash/wrap' ),
 	debug = require( 'debug' )( 'calypso:ticker' );
 
 var ticker = {};
@@ -24,9 +24,11 @@ ticker._start = function() {
 		return;
 	}
 
+	debug( '%d listeners active', ticker.listeners( 'tick' ).length );
+
 	if ( ! ticker.interval ) {
 		debug( 'starting interval' );
-		ticker.interval = setInterval( ticker.tick, 60000 );
+		ticker.interval = setInterval( ticker.tick, 10000 );
 	}
 };
 

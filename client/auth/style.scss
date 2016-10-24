@@ -2,21 +2,29 @@
  * Oauth login page, used in WordPress Desktop App
  */
 
-html.is-desktop {
-	.logged-out-auth {
-		background: $blue-wordpress;
+.is-section-auth {
+	background: $blue-wordpress;
+	height: 100%;
 
-		.wp-content {
-			margin: 0 auto;
-			overflow: hidden;
-			max-width: none;
-			padding-left: 0;
-			padding-right: 0;
-		}
+	.layout__content {
+		height: 100%;
+		margin: 0 auto;
+		overflow: hidden;
+		max-width: none;
+		padding-left: 0;
+		padding-right: 0;
+	}
 
-		.wp-content:after {
-			content: none;
-		}
+	.layout__content::after {
+		content: none;
+	}
+
+	.layout__primary {
+		height: 100%;
+	}
+
+	.masterbar {
+		display: none;
 	}
 }
 
@@ -39,15 +47,15 @@ html.is-desktop {
 	.notice.is-info {
 		color: $gray-light;
 		padding: 0;
-		margin: 20px 0 0 0;
+		margin: 20px auto 0 auto;
 	}
 
 	.notice.is-info .notice__text {
 		padding: 0;
 	}
 
-	.notice.is-info:before {
-		content: none;
+	.notice.is-info .notice__icon {
+		display: none;
 	}
 }
 
@@ -57,7 +65,7 @@ html.is-desktop {
 
 		.form-fieldset input {
 		position: relative;
-		z-index: 1;
+		z-index: z-index( 'root', '.auth__form .form-fieldset input' );
 	}
 
 	.form-fieldset input[type="text"],
@@ -66,7 +74,7 @@ html.is-desktop {
 	}
 
 	.form-fieldset input:focus {
-		z-index: 2;
+		z-index: z-index( 'root', '.auth__form .form-fieldset input:focus' );
 	}
 
 	.form-password-input {
@@ -95,12 +103,12 @@ html.is-desktop {
 		margin-bottom: 1px;
 	}
 
-		.form-fieldset input[type="number"] {
+	.form-fieldset input[type="number"] {
 		text-align: center;
 	}
 
 	.form-password-input__toggle-visibility {
-		z-index: 4;
+		z-index: z-index( 'root', '.auth__form .form-password-input__toggle-visibility' );
 		.gridicon {
 			position: static;
 		}
@@ -117,7 +125,7 @@ html.is-desktop {
 
 	.gridicon {
 		position: absolute;
-		z-index: 3;
+		z-index: z-index( 'root', '.auth__input-wrapper .gridicon' );
 		left: 8px;
 		top: 7px;
 		fill: $gray;
@@ -139,7 +147,8 @@ html.is-desktop {
 	margin: 0 auto 20px auto;
 }
 
-.auth__help {
+.auth__help,
+.auth__help:visited {
 	position: absolute;
 	top: 16px;
 	right: 16px;
@@ -158,4 +167,112 @@ html.is-desktop {
 	color: $white;
 	margin: 0 16px;
 	padding: 10px 0;
+}
+
+.auth__links a:hover,
+.auth__links a:focus {
+	color: $gray-light;
+}
+
+.auth__self-hosted-instructions {
+	color: #fff;
+	background: $blue-dark;
+	border-radius: 8px;
+	padding: 40px;
+	position: absolute;
+	z-index: z-index( 'root', '.auth__self-hosted-instructions' );
+	top: 50%;
+	left: 50%;
+	transform: translate( -50%, -50% );
+	min-width: 320px;
+	max-width: 60%;
+	max-height: 80%;
+	overflow: auto;
+	text-align: left;
+	counter-reset: item;
+
+	@include breakpoint( "<480px" ) {
+		left: 0;
+		top: -8px;
+		right: 0;
+		bottom: -8px;
+		min-width: 0;
+		min-height: 0;
+		max-width: none;
+		max-height: none;
+		overflow: auto;
+		transform: translate( 0, 0 );
+		border-radius: 0;
+	}
+
+	ol {
+		list-style: none;
+		position: relative;
+	}
+
+	ol li {
+		counter-increment: item;
+		margin-bottom: 1.5em;
+	}
+
+	ol li:before {
+		margin-right: 2em;
+		content: counter(item);
+		background: $white;
+		border-radius: 100%;
+		color: $blue-dark;
+		width: 24px;
+		height: 24px;
+		text-align: center;
+		display: inline-block;
+		position: absolute;
+		left: -3em;
+		font-weight: bold;
+	}
+
+	h2 {
+		font-weight: bold;
+		margin-bottom: 1.5em;
+	}
+
+	a {
+		color: $blue-light;
+		text-decoration: underline;
+	}
+
+	.auth__self-hosted-instructions-close {
+		display: block;
+		width: 24px;
+		height: 24px;
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		text-decoration: none;
+		color: $white;
+	}
+
+	.auth__self-hosted-instructions-close:hover {
+		color: $blue-light;
+	}
+
+}
+
+.auth__welcome {
+	color: $white;
+}
+
+.auth__connect-intro {
+	width: 420px;
+	margin: 0 auto;
+}
+
+.auth__connect .button,
+.auth__connect .button:visited {
+	background: #00a8db;
+	border: #00a8db;
+	color: $white;
+}
+
+.auth .pulsing-dot {
+	top: 40%;
 }

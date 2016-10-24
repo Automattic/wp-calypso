@@ -1,3 +1,5 @@
+/** @ssr-ready **/
+
 /**
  * External Dependencies
  */
@@ -25,9 +27,10 @@ var SelectDropdownItem = React.createClass( {
 	},
 
 	render: function() {
-		var optionClassName = classNames( {
+		var optionClassName = classNames( this.props.className, {
 			'select-dropdown__item': true,
-			'is-selected': this.props.selected
+			'is-selected': this.props.selected,
+			'is-disabled': this.props.disabled
 		} );
 
 		return (
@@ -36,19 +39,25 @@ var SelectDropdownItem = React.createClass( {
 					ref="itemLink"
 					href={ this.props.path }
 					className={ optionClassName }
-					onClick={ this.props.onClick }
+					onClick={ this.props.disabled ? null : this.props.onClick }
 					data-bold-text={ this.props.value || this.props.children }
 					role="menuitem"
 					tabIndex={ 0 }
-					aria-selected={ this.props.selected }
-				>
+					aria-selected={ this.props.selected } >
 					<span className="select-dropdown__item-text">
 						{ this.props.children }
-						{
-							'number' === typeof this.props.count &&
-							<Count count={ this.props.count } />
-						}
 					</span>
+					{
+						'number' === typeof this.props.count &&
+						<span
+							data-text={ this.props.count }
+							className="select-dropdown__item-count"
+						>
+							<Count
+								count={ this.props.count }
+							/>
+						</span>
+					}
 				</a>
 			</li>
 		);

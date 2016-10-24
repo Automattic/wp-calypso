@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import assign from 'lodash/object/assign';
-import noop from 'lodash/utility/noop';
-import includes from 'lodash/collection/includes';
-import times from 'lodash/utility/times';
-import zipObject from 'lodash/array/zipObject';
+import assign from 'lodash/assign';
+import noop from 'lodash/noop';
+import includes from 'lodash/includes';
+import times from 'lodash/times';
+import fromPairs from 'lodash/fromPairs';
 
 /**
  * Internal dependencies
@@ -88,7 +88,7 @@ export default React.createClass( {
 
 	getColumnOptions() {
 		const max = Math.min( this.props.numberOfItems, 9 );
-		return zipObject( times( max, ( n ) => [ n + 1, ( n + 1 ).toString() ] ) );
+		return fromPairs( times( max, ( n ) => [ n + 1, ( n + 1 ).toString() ] ) );
 	},
 
 	updateRandomOrder( event ) {

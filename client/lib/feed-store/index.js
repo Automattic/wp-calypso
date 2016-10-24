@@ -1,7 +1,7 @@
 
 // External Dependencies
 var Immutable = require( 'immutable' ),
-	pick = require( 'lodash/object/pick' );
+	pick = require( 'lodash/pick' );
 
 // Internal Dependencies
 var ActionType = require( './constants' ).action,
@@ -27,19 +27,22 @@ var feeds = {},
 		error: undefined
 	} );
 
-function changeState( feedId, newState ) {
-	var feed = feeds[ feedId ];
-	if ( ! feed ) {
-		feed = new FeedRecord( { feed_ID: feedId } );
-	}
-
-	feed = feed.set( 'state', newState );
-	setFeed( feedId, feed );
-}
-
 function setFeed( feedId, feed ) {
 	if ( feed !== feeds[ feedId ] ) {
 		feeds[ feedId ] = feed;
+		FeedStore.emit( 'change' );
+	}
+}
+
+function setFeeds( feedList ) {
+	var hadChanges = false;
+	feedList.forEach( function( feed ) {
+		if ( feed !== feeds[ feed.feed_ID ] ) {
+			feeds[ feed.feed_ID ] = feed;
+			hadChanges = true;
+		}
+	} );
+	if ( hadChanges ) {
 		FeedStore.emit( 'change' );
 	}
 }
@@ -51,10 +54,10 @@ function receiveError( feedId, error ) {
 	} );
 }
 
-function receiveFeed( feedId, attributes ) {
+function acceptFeed( feedId, attributes ) {
 	var feed = feeds[ feedId ];
 	if ( ! feed ) {
-		throw new Error( 'feed for ' + feedId + ' not found' );
+		feed = new FeedRecord( { feed_ID: feedId } );
 	}
 	attributes = pick( attributes, [
 		'feed_ID',
@@ -73,7 +76,17 @@ function receiveFeed( feedId, attributes ) {
 		attributes.state = State.COMPLETE;
 	}
 	feed = feed.merge( attributes );
-	setFeed( feedId, feed );
+	return feed;
+}
+
+function receiveFeed( feedId, attributes ) {
+	setFeed( feedId, acceptFeed( feedId, attributes ) );
+}
+
+function receiveFeeds( newFeeds ) {
+	setFeeds( newFeeds.map( function( feed ) {
+		return acceptFeed( feed.feed_ID, feed );
+	} ) );
 }
 
 Emitter( FeedStore ); // eslint-disable-line new-cap
@@ -88,15 +101,15 @@ FeedStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 
 	switch ( action.type ) {
-		case ActionType.FETCH:
-			changeState( action.feedId, State.PENDING );
-			break;
 		case ActionType.RECEIVE_FETCH:
 			if ( action.error ) {
 				receiveError( action.feedId, action.error );
 			} else {
 				receiveFeed( action.feedId, action.data );
 			}
+			break;
+		case ActionType.RECEIVE_BULK_UPDATE:
+			receiveFeeds( action.data );
 			break;
 	}
 } );

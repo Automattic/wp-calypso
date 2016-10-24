@@ -4,12 +4,12 @@
 
 .security-2fa-status__off {
 	text-transform: uppercase;
-	color: red;
+	color: $alert-red;
 	font-weight: bold;
 }
 
 .security-2fa-status__on {
 	text-transform: uppercase;
-	color: green;
+	color: $alert-green;
 	font-weight: bold;
 }

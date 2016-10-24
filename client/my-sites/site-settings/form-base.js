@@ -1,24 +1,27 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:my-sites:site-settings' );
+import debugFactory from 'debug';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' ),
-	analytics = require( 'analytics' );
+import notices from 'notices';
+import analytics from 'lib/analytics';
+
+const debug = debugFactory( 'calypso:my-sites:site-settings' );
 
 module.exports = {
 
-	componentWillMount: function() {
+	componentWillMount() {
 		debug( 'Mounting ' + this.constructor.displayName + ' React component.' );
 		if ( this.props.site.settings ) {
 			this.setState( this.getSettingsFromSite() );
 		}
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.updateJetpackSettings();
 	},
 
@@ -26,14 +29,15 @@ module.exports = {
 	 * Jetpack sites have special needs. When we first load a jetpack site's settings page
 	 * or when we switch to a different jetpack site, we may need to get information about
 	 * a module or we may need to get ssh credentials. if these methods exist, call them.
+	 *
+	 * @param {String|Number} site - site identification
 	 */
-	updateJetpackSettings: function( site ) {
+	updateJetpackSettings( site ) {
 		this.getModuleStatus && this.getModuleStatus( site );
 		this.getSshSettings && this.getSshSettings( site );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
-
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.site ) {
 			return;
 		}
@@ -43,7 +47,14 @@ module.exports = {
 		}
 
 		if ( nextProps.site.settings ) {
-			return this.setState( this.getSettingsFromSite( nextProps.site ) );
+			let newState = this.getSettingsFromSite( nextProps.site );
+			//for dirtyFields, see lib/mixins/dirty-linked-state
+			if ( this.state.dirtyFields ) {
+				//If we have any fields that the user has updated,
+				//do not wipe out those fields from the poll update.
+				newState = omit( newState, this.state.dirtyFields );
+			}
+			return this.setState( newState );
 		}
 
 		/**
@@ -59,10 +70,15 @@ module.exports = {
 		if ( nextProps.site.fetchingSettings ) {
 			this.setState( { fetchingSettings: true } );
 		}
-
 	},
 
-	recordEvent: function( eventAction ) {
+	recordClickEventAndStop( recordObject, clickEvent ) {
+		this.recordEvent( recordObject );
+		clickEvent.preventDefault();
+	},
+
+	recordEvent( eventAction ) {
+		debug( 'record event: %o', eventAction );
 		analytics.ga.recordEvent( 'Site Settings', eventAction );
 	},
 
@@ -71,71 +87,72 @@ module.exports = {
 	 * @param  {string} key         - unique key to namespace the event
 	 * @param  {string} eventAction - the description of the action to appear in analytics
 	 */
-	recordEventOnce: function( key, eventAction ) {
-		var newSetting = {};
+	recordEventOnce( key, eventAction ) {
+		debug( 'record event once: %o - %o', key, eventAction );
 		if ( this.state[ 'recordEventOnce-' + key ] ) {
 			return;
 		}
 		this.recordEvent( eventAction );
-		newSetting[ 'recordEventOnce-' + key ] = true;
-		this.setState( newSetting );
+		this.setState( { [ 'recordEventOnce-' + key ]: true } );
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.getSettingsFromSite();
 	},
 
-	handleRadio: function( event ) {
-		var name = event.currentTarget.name,
-			value = event.currentTarget.value,
-			updateObj = {};
+	handleRadio( event ) {
+		const currentTargetName = event.currentTarget.name,
+			currentTargetValue = event.currentTarget.value;
 
-		updateObj[ name ] = value;
-		this.setState( updateObj );
-
+		this.setState( { [ currentTargetName ]: currentTargetValue } );
 	},
 
-	toggleJetpackModule: function( module ) {
-		var event = this.props.site.isModuleActive( module ) ? 'deactivate' : 'activate';
+	toggleJetpackModule( module ) {
+		const event = this.props.site.isModuleActive( module ) ? 'deactivate' : 'activate';
 		notices.clearNotices( 'notices' );
 		this.setState( { togglingModule: true } );
-		this.props.site.toggleModule( module, function( error ) {
-				this.setState( { togglingModule: false } );
-				if ( error ) {
-					debug( 'jetpack module toggle error', error );
-					this.handleError();
-					this.props.site.handleError(
-						error,
-						this.props.site.isModuleActive( module ) ? 'deactivateModule' : 'activateModule',
-						{},
-						this.props.site.getModule( module )
-					);
-				} else {
-					if( 'protect' === module ) {
-						this.props.site.fetchSettings();
-					}
-					this.getModuleStatus();
+		this.props.site.toggleModule( module, error => {
+			this.setState( { togglingModule: false } );
+			if ( error ) {
+				debug( 'jetpack module toggle error', error );
+				this.handleError();
+				this.props.site.handleError(
+					error,
+					this.props.site.isModuleActive( module ) ? 'deactivateModule' : 'activateModule',
+					{},
+					module
+				);
+			} else {
+				if ( 'protect' === module ) {
+					this.props.site.fetchSettings();
 				}
-			}.bind( this )
-		);
+				this.getModuleStatus();
+			}
+		} );
 
-		this.recordEvent( "Clicked to " + event + " Jetpack " + module );
+		this.recordEvent( `Clicked to ${event} Jetpack ${module}` );
 	},
 
-	submitForm: function( event ) {
-		var site = this.props.site;
-
+	handleSubmitForm( event ) {
 		if ( ! event.isDefaultPrevented() && event.nativeEvent ) {
 			event.preventDefault();
 		}
 
+		this.submitForm();
+		this.recordEvent( 'Clicked Save Settings Button' );
+	},
+
+	submitForm() {
+		const { site } = this.props;
+
 		notices.clearNotices( 'notices' );
 
 		this.setState( { submittingForm: true } );
-		site.saveSettings( this.state, function( error ) {
+
+		site.saveSettings( omit( this.state, 'dirtyFields' ), error => {
 			if ( error ) {
 				// handle error case here
-				switch( error.error ) {
+				switch ( error.error ) {
 					case 'invalid_ip':
 						notices.error( this.translate( 'One of your IP Addresses was invalid. Please, try again.' ) );
 						break;
@@ -144,14 +161,17 @@ module.exports = {
 				}
 				this.setState( { submittingForm: false } );
 			} else {
-				notices.success( this.translate( 'Settings saved successfully!' ) );
+				notices.success( this.translate( 'Settings saved!' ) );
 				this.markSaved();
-				this.setState( { submittingForm: false } );
+				//for dirtyFields, see lib/mixins/dirty-linked-state
+				this.setState( { submittingForm: false, dirtyFields: [] } );
+
 				site.fetchSettings();
 			}
-		}.bind( this ) );
 
-		this.recordEvent( 'Clicked Save Settings Button' );
+			if ( 'function' === typeof this.onSaveComplete ) {
+				this.onSaveComplete( error );
+			}
+		} );
 	}
-
 };

@@ -9,10 +9,13 @@ import React from 'react';
 import EditorAuthor from 'post-editor/editor-author';
 import EditorDeletePost from 'post-editor/editor-delete-post';
 import EditorPostType from 'post-editor/editor-post-type';
+import EditorSticky from 'post-editor/editor-sticky';
 import EditorVisibility from 'post-editor/editor-visibility';
 import Gridicon from 'components/gridicon';
 import utils from 'lib/posts/utils';
 import Tooltip from 'components/tooltip';
+import Button from 'components/button';
+import EditorActionBarViewLabel from './view-label';
 
 export default React.createClass( {
 
@@ -55,7 +58,7 @@ export default React.createClass( {
 		};
 
 		return (
-			<EditorVisibility {...props} />
+			<EditorVisibility { ...props } />
 		);
 	},
 
@@ -67,38 +70,35 @@ export default React.createClass( {
 				<div className="editor-action-bar__first-group">
 					{ multiUserSite && <EditorAuthor post={ this.props.post } isNew={ this.props.isNew } /> }
 				</div>
-				<EditorPostType
-					type={ this.props.type }
-					isNew={ this.props.isNew }
-					siteSlug={ this.props.site && this.props.site.slug }
-				/>
+				<EditorPostType />
 				<div className="editor-action-bar__last-group">
+					{ this.props.post && this.props.type === 'post' && <EditorSticky /> }
 					{ this.renderPostVisibility() }
 					<EditorDeletePost
 						post={ this.props.post }
 						onTrashingPost={ this.props.onTrashingPost }
 					/>
-					{ utils.isPublished( this.props.savedPost ) &&
-						<a
-							className="editor-action-bar__view-link"
+					{ utils.isPublished( this.props.savedPost ) && (
+						<Button
 							href={ this.props.savedPost.URL }
 							target="_blank"
+							rel="noopener noreferrer"
 							onMouseEnter={ () => this.setState( { viewLinkTooltip: true } ) }
 							onMouseLeave={ () => this.setState( { viewLinkTooltip: false } ) }
 							ref="viewLink"
+							borderless
 						>
 							<Gridicon icon="external" />
 							<Tooltip
+								className="editor-action-bar__view-post-tooltip"
 								context={ this.refs && this.refs.viewLink }
 								isVisible={ this.state.viewLinkTooltip }
-								position="bottom"
+								position="bottom left"
 							>
-								{ this.props.type === 'page' ?
-									this.translate( 'View page' ) :
-									this.translate( 'View post' )
-								}
+								<EditorActionBarViewLabel />
 							</Tooltip>
-						</a> }
+						</Button>
+					) }
 				</div>
 			</div>
 		);

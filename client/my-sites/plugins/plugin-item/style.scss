@@ -1,18 +1,32 @@
-// ==========================================================================
-// PluginItem
-// ==========================================================================
-
 .plugin-item.card {
 	padding: 0;
+
+	.is-bulk-editing & {
+		padding-left: 24px;
+	}
+
+	& ~ .notice.is-error {
+		margin-bottom: 0;
+	}
+
+	input {
+		margin-right: 8px;
+	}
 
 	@include breakpoint( '>660px' ) {
 		padding: 0;
 	}
+
 	.plugins-list &.is-compact:last-child {
 		margin-bottom: 0;
 	}
-}
 
+	.notice.is-info {
+		.notice__icon {
+			display: none;
+		}
+	}
+}
 
 .plugin-item {
 	position: relative;
@@ -22,11 +36,15 @@
 	@include breakpoint( '<480px' ) {
 		flex-wrap: wrap;
 	}
+
+	&.disabled {
+		opacity: 0.5;
+		background: $gray-light;
+	}
 }
 
 .plugin-item__link,
 .plugin-item__disabled,
-.is-bulk-editing .plugin-item,
 .plugin-item.is-placeholder {
 	display: block;
 	flex-grow: 1;
@@ -42,6 +60,12 @@
 	}
 }
 
+.plugin-item__link {
+	.is-bulk-editing & {
+		padding-left: 40px;
+	}
+}
+
 .plugin-item__disabled {
 	opacity: 0.5;
 	background: $gray-light;
@@ -49,7 +73,9 @@
 
 // Checkbox for multiselect purposes
 .plugin-item__checkbox[type=checkbox] {
-	margin-top: 0;
+	position: absolute;
+	top: 50%;
+	margin-top: -8px;
 
 	&:after { // Making tap area larger
 		content: '';
@@ -68,7 +94,7 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 1;
+	z-index: z-index( 'root', '.plugin-item__label' );
 	cursor: pointer;
 }
 
@@ -84,17 +110,19 @@
 
 // Plugin title
 .plugin-item__title {
-	display: block;
-	margin-top: 2px;
 	color: $gray-dark;
+	display: block;
 	font-size: 14px;
+	line-height: 21px;
 	font-weight: 600;
-	white-space: pre;
-	text-overflow: ellipsis;
 	overflow: hidden;
+	text-align: left;
+	text-overflow: ellipsis;
+	white-space: pre;
 
 	@include breakpoint( '>480px' ) {
 		font-size: 24px;
+		line-height: 32px;
 		font-weight: 700;
 		font-family: $serif;
 	}
@@ -125,91 +153,6 @@
 	}
 }
 
-.plugins__lists .is-compact {
-	margin-bottom: 1px;
-}
-.plugins__lists .is-compact:last-child {
-	margin-bottom: 8px;
-}
-
-// Last updated, version, whatever
-.plugin-item__meta {
-	display: block;
-	font-size: 11px;
-	color: $gray;
-	white-space: pre;
-	text-overflow: ellipsis;
-	overflow: hidden;
-
-	@include breakpoint( '>480px' ) {
-		text-transform: uppercase;
-	}
-	&.has-update {
-		display: inline-block;
-
-		@include breakpoint( '>480px' ) {
-			padding: 2px 6px 2px 2px;
-			border-radius: 2px;
-			background: $alert-yellow;
-			color: $white;
-		}
-	}
-	&.is-warning {
-		@include breakpoint( '>480px' ) {
-			display: inline-block;
-			margin-top: -3px;
-			padding: 2px 6px 2px 2px;
-			border-radius: 2px;
-			background: $alert-red;
-			color: $white;
-		}
-	}
-	&.is-placeholder {
-		margin-top: 4px;
-		width: 40%;
-		background-color: lighten( $gray, 30% );
-		animation: loading-fade 1.6s ease-in-out infinite;
-
-		@include breakpoint( '>480px' ) {
-			margin-top: 5px;
-		}
-		&:before {
-			content: ' ';
-		}
-	}
-	.noticon {
-		margin-right: 2px;
-		vertical-align: middle;
-
-		@include breakpoint( '<480px' ) {
-			position: absolute;
-			top: 50%;
-			right: 16px;
-			margin-top: -12px;
-			color: $alert-yellow;
-			font-size: 24px;
-		}
-	}
-
-	.plugin-item__meta ~ & {
-		margin-left: 8px;
-	}
-}
-
-.plugin-item__meta-text {
-	vertical-align: middle;
-
-	 @include breakpoint( "<480px" ) {
-		display: none;
-	}
-}
-
-.plugin-item__meta_manage {
-	left: 5px;
-	top: 60px;
-}
-
-
 .plugin-item__meta.has-update {
 	@include breakpoint( "<480px" ) {
 		& ~ .plugin-item__meta.is-warning .noticon {
@@ -218,7 +161,8 @@
 	}
 }
 
-// Plugin actions
+// Plugin actions and Count
+.plugin-item__count,
 .plugin-item__actions {
 	padding: 16px;
 	flex-grow: 1;
@@ -229,16 +173,37 @@
 		flex-grow: 0;
 		text-align: right;
 	}
+
 	@include breakpoint( '>660px' ) {
 		padding-right: 24px;
 		padding-left: 24px;
 	}
 }
 
+.plugin-item__count {
+	font-size: 11px;
+	line-height: 18px;
+	color: $gray;
+	text-transform: uppercase;
+}
+
+.plugin-item__count .count {
+	margin-left: 8px;
+	float: right;
+}
+
+.plugin-item  .plugin-item__count,
 .plugin-item .plugin-item__actions {
 	display: none;
 
 	@include breakpoint( '>480px' ) {
 		display: block;
 	}
+}
+
+.plugin-item__last_updated {
+	color: $gray;
+	font-size: 12px;
+	line-height: 1;
+	padding: 6px 0;
 }

@@ -90,8 +90,8 @@ module.exports = React.createClass( {
 				args: { service: this.props.service.label },
 				context: 'Sharing: Publicize'
 			} );
-		} else if ( 'function' === typeof this.props.descriptions[ this.props.service.name ] ) {
-			description = this.props.descriptions[ this.props.service.name ].call( this );
+		} else if ( 'function' === typeof this.props.descriptions[ this.props.service.ID ] ) {
+			description = this.props.descriptions[ this.props.service.ID ].call( this );
 		}
 
 		return ( <p className="sharing-service__description">{ description }</p> );

@@ -43,6 +43,11 @@ module.exports = function() {
 		page( '/stats/follows/:follow_type/:site_id', controller.siteSelection, controller.navigation, statsController.follows );
 		page( '/stats/follows/:follow_type/:page_num/:site_id', controller.siteSelection, controller.navigation, statsController.follows );
 
+		// Reset first view
+		if ( config.isEnabled( 'ui/first-view/reset-route' ) ) {
+			page( '/stats/reset-first-view', statsController.resetFirstView );
+		}
+
 		// Anything else should require site-selection
 		page( '/stats/(.*)', controller.siteSelection, controller.navigation, statsController.redirectToDefaultSitePage, controller.sites );
 	}

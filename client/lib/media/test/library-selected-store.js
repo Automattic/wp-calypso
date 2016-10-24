@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	rewire = require( 'rewire' ),
-	assign = require( 'lodash/object/assign' ),
-	sinon = require( 'sinon' );
+import { expect } from 'chai';
+import { assign, noop } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	MediaStore = require( '../store' );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_OBJECTS = {
@@ -22,23 +21,37 @@ var DUMMY_SITE_ID = 1,
 	DUMMY_TRANSIENT_MEDIA_OBJECT = DUMMY_OBJECTS[ 'media-1' ];
 
 describe( 'MediaLibrarySelectedStore', function() {
-	var sandbox, MediaLibrarySelectedStore, handler;
+	let Dispatcher, sandbox, MediaLibrarySelectedStore, handler, MediaStore;
+
+	useFakeDom();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} ),
+			site: noop
+		} );
+	} );
 
 	before( function() {
 		sandbox = sinon.sandbox.create();
+		Dispatcher = require( 'dispatcher' );
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
+
+		MediaStore = require( '../store' );
 		sandbox.stub( MediaStore, 'get', function( siteId, itemId ) {
 			if ( siteId === DUMMY_SITE_ID ) {
 				return DUMMY_OBJECTS[ itemId ];
 			}
 		} );
-		MediaLibrarySelectedStore = rewire( '../library-selected-store' );
+
+		MediaLibrarySelectedStore = require( '../library-selected-store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		MediaLibrarySelectedStore.__set__( '_media', {} );
+		MediaLibrarySelectedStore._media = {};
 	} );
 
 	after( function() {
@@ -129,7 +142,7 @@ describe( 'MediaLibrarySelectedStore', function() {
 			dispatchSetLibrarySelectedItems();
 			dispatchRemoveMediaItem();
 
-			expect( MediaLibrarySelectedStore.__get__( '_media' )[ DUMMY_SITE_ID ] ).to.be.empty;
+			expect( MediaLibrarySelectedStore._media[ DUMMY_SITE_ID ] ).to.be.empty;
 		} );
 	} );
 } );

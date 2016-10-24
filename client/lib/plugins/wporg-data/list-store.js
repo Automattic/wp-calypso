@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var _clone = require( 'lodash/lang/clone' );
+var clone = require( 'lodash/clone' );
 
 /**
  * Internal dependencies
@@ -24,13 +24,13 @@ var _shortLists = {},
 
 function appendPage( category, page, list ) {
 	_fullLists[ category ] = _fullLists[ category ] || [];
-	_fullLists[ category ] = _fullLists[ category ].concat( _clone( list ) );
+	_fullLists[ category ] = _fullLists[ category ].concat( clone( list ) );
 }
 
 function update( category, page, list ) {
 	if ( ! page || page === _DEFAULT_FIRST_PAGE ) {
-		_shortLists[ category ] = _clone( list.slice( 0, 6 ) );
-		_fullLists[ category ] = _clone( list );
+		_shortLists[ category ] = clone( list.slice( 0, 6 ) );
+		_fullLists[ category ] = clone( list );
 		if ( _CACHEABLE_CATEGORIES.indexOf( category ) >= 0 ) {
 			storePluginsList( category, _shortLists[ category ] );
 		}

@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	serviceConnections = require( './service-connections' );
 
 module.exports = React.createClass( {
@@ -98,7 +98,7 @@ module.exports = React.createClass( {
 			var isNowSitewide = event.target.checked;
 			this.setState( { isSavingSitewide: true } );
 			this.props.onToggleSitewideConnection( this.props.connection, isNowSitewide );
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Connection Available to All Users Checkbox', this.props.service.name, isNowSitewide ? 1 : 0 );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Connection Available to All Users Checkbox', this.props.service.ID, isNowSitewide ? 1 : 0 );
 		}
 	},
 
@@ -126,7 +126,7 @@ module.exports = React.createClass( {
 		var userCanUpdate = serviceConnections.canCurrentUserPerformActionOnConnection( 'update', this.props.connection ),
 			content = [];
 
-		if ( ! serviceConnections.isServiceForPublicize( this.props.service.name ) ) {
+		if ( ! serviceConnections.isServiceForPublicize( this.props.service.ID ) ) {
 			return;
 		}
 
@@ -135,7 +135,7 @@ module.exports = React.createClass( {
 		}
 
 		if ( userCanUpdate || this.props.connection.shared ) {
-			content.push( <span key="label">{ this.translate( 'Connection available to all editors and site admins', { context: 'Sharing: Publicize' } ) }</span> );
+			content.push( <span key="label">{ this.translate( 'Connection available to all administrators, editors, and authors', { context: 'Sharing: Publicize' } ) }</span> );
 		}
 
 		if ( content.length ) {

@@ -1,37 +1,65 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal Dependencies
  */
-var Gravatar = require( 'components/gravatar' ),
-	Gridicon = require( 'components/gridicon' ),
-	PostTime = require( 'reader/post-time' ),
-	utils = require( 'reader/utils' ),
-	stats = require( 'reader/stats' );
+import ExternalLink from 'components/external-link';
+import Gravatar from 'components/gravatar';
+import Gridicon from 'components/gridicon';
+import PostTime from 'reader/post-time';
+import { siteNameFromSiteAndPost } from 'reader/utils';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrackForPost,
+	recordPermalinkClick
+} from 'reader/stats';
 
-var PostByline = React.createClass( {
+class PostByline extends React.Component {
 
-	recordTagClick: function() {
-		stats.recordAction( 'click_tag' );
-		stats.recordGaEvent( 'Clicked Tag Link' );
-	},
+	constructor( ) {
+		super( );
+		this.recordTagClick = this.recordTagClick.bind( this );
+		this.recordAuthorClick = this.recordAuthorClick.bind( this );
+	}
 
-	recordDateClick: function() {
-		stats.recordPermalinkClick( 'timestamp' );
-		stats.recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
-	},
+	static propTypes = {
+		post: React.PropTypes.object.isRequired,
+		site: React.PropTypes.object,
+		icon: React.PropTypes.bool,
+		isDiscoverPost: React.PropTypes.bool
+	}
 
-	recordAuthorClick: function() {
-		stats.recordAction( 'click_author' );
-		stats.recordGaEvent( 'Clicked Author Link' );
-	},
+	static defaultProps = {
+		icon: false,
+		isDiscoverPost: false
+	}
 
-	renderAuthorName: function() {
+	recordTagClick() {
+		recordAction( 'click_tag' );
+		recordGaEvent( 'Clicked Tag Link' );
+		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
+			tag: this.props.post.primary_tag.slug
+		} );
+	}
+
+	recordDateClick() {
+		recordPermalinkClick( 'timestamp' );
+		recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
+	}
+
+	recordAuthorClick() {
+		recordAction( 'click_author' );
+		recordGaEvent( 'Clicked Author Link' );
+		recordTrackForPost( 'calypso_reader_author_link_clicked', this.props.post );
+	}
+
+	renderAuthorName() {
 		const post = this.props.post,
-			gravatar = ( <Gravatar user={post.author} size={ 24 } /> ),
+			gravatar = ( <Gravatar user={ post.author } size={ 24 } /> ),
 			authorName = ( <span className="byline__author-name">{ post.author.name }</span> );
 
 		if ( ! post.author.URL ) {
@@ -43,27 +71,29 @@ var PostByline = React.createClass( {
 			);
 		}
 
+		/* eslint-disable react/jsx-no-target-blank */
 		return (
-			<a href={ post.author.URL } target="_blank" onClick={ this.recordAuthorClick }>
+			<ExternalLink href={ post.author.URL } target="_blank" onClick={ this.recordAuthorClick }>
 				{ gravatar }
 				{ authorName }
-			</a>
+			</ExternalLink>
 		);
-	},
+		/* eslint-enable react/jsx-no-target-blank */
+	}
 
-	render: function() {
-		var post = this.props.post,
-			site = this.props.site,
-			siteName = utils.siteNameFromSiteAndPost( site, post ),
+	render() {
+		const { post, site, icon, isDiscoverPost } = this.props,
 			primaryTag = post && post.primary_tag;
+		let siteName = siteNameFromSiteAndPost( site, post );
 
 		if ( ! siteName ) {
 			siteName = this.translate( '(no title)' );
 		}
 
+		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<ul className="reader-post-byline">
-			{ post.author && post.author.name ?
+			{ ! isDiscoverPost && post.author && post.author.name ?
 				<li className="reader-post-byline__author">
 					{ this.renderAuthorName() }
 				</li> : null }
@@ -72,7 +102,8 @@ var PostByline = React.createClass( {
 					<a className="reader-post-byline__date-link"
 						onClick={ this.recordDateClick }
 						href={ post.URL }
-						target="_blank"><PostTime date={ post.date } /></a>
+						target="_blank"
+						rel="noopener noreferrer"><PostTime date={ post.date } />{ icon ? <Gridicon icon="external" size={ 14 } /> : null }</a>
 				</li> : null }
 			{ primaryTag ?
 				<li className="reader-post-byline__tag">
@@ -80,8 +111,9 @@ var PostByline = React.createClass( {
 				</li> : null }
 			</ul>
 		);
+		/* eslint-enable wpcalypso/jsx-gridicon-size */
 	}
 
-} );
+}
 
-module.exports = PostByline;
+export default PostByline;

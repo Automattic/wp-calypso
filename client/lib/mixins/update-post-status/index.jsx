@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var actions = require( 'lib/posts/actions' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = {
 

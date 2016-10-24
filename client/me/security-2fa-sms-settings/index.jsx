@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-sms-settings' ),
 	observe = require( 'lib/mixins/data-observe' );
 
@@ -13,10 +14,10 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 	formBase = require( 'me/form-base' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	Notice = require( 'components/notice' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 
@@ -31,7 +32,7 @@ module.exports = React.createClass( {
 		debug( this.constructor.displayName + ' React component will unmount.' );
 	},
 
-	mixins: [ formBase, React.addons.LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ) ],
+	mixins: [ formBase, LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ) ],
 
 	propTypes: {
 		onCancel: React.PropTypes.func.isRequired,
@@ -157,10 +158,9 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice
-				isCompact
+			<Notice
 				status="is-error"
-				onClick={ this.clearLastError }
+				onDismissClick={ this.clearLastError }
 				text={ errorMessage }
 			/>
 		);

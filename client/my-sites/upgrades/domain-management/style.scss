@@ -1,6 +1,11 @@
 .domain-main-placeholder {
-	.header-cake__title {
+	.domain-management-header__children {
 		@include placeholder(23%);
+
+		@include breakpoint('>480px') {
+			max-width: 60%;
+			margin: 0 auto;
+		}
 	}
 }
 
@@ -20,65 +25,65 @@
 	border-top: 1px solid $gray-light;
 	margin: 16px -16px -16px -16px;
 	padding: 16px;
+	display: flex;
+	justify-content: flex-end;
 
 	@include breakpoint('>480px') {
 		padding: 24px;
 		margin: 24px -24px -24px -24px;
 	}
 
-	.button {
-		float: right;
-		margin: 0;
+	@include breakpoint( '<480px' ) {
+		flex-direction: column;
+	}
 
-		+ .button {
-			margin: 15px 0 0 0;
+	.button {
+		margin: 0 0 0 15px;
+
+		&.is-primary {
+			margin: 0 0 15px 0;
 
 			@include breakpoint('>480px') {
-				margin: 0 15px 0 0;
+				margin: 0;
+			}
+
+			@include breakpoint( '<480px' ) {
+				order: 1;
 			}
 		}
 
 		@include breakpoint( '<480px' ) {
-			text-align: center;
 			width: 100%;
+			order: 2;
 		}
 	}
 }
 
 .domain-management-header__children {
 	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
-.domain-management-list-item.card {
-	padding: 0;
-	@include clear-fix;
+.domain-management-list__notice {
+	margin-bottom: 0;
+}
+
+.domain-management-list-item {
+	&.busy {
+		background-color: $gray-light;
+
+		.domain-management-list-item__title,
+		.domain-management-list-item__meta {
+			color: lighten( $gray, 20% );
+		}
+	}
 }
 
 .domain-management-list-item__link {
 	cursor: pointer;
 	display: block;
-	padding: 16px;
 	overflow: hidden;
-
-	@include breakpoint( ">660px" ) {
-		padding: 24px;
-	}
-
-	&:after {
-		@include noticon( '\f431', 25px );
-		color: $gray;
-		display: block;
-		height: auto;
-		line-height: 72px;
-		position: absolute;
-			right: 16px;
-			top: 0;
-		transform: rotate( -90deg );
-
-		@include breakpoint( ">660px" ) {
-			line-height: 103px;
-		}
-	}
 }
 
 .domain-management-list-item__title {
@@ -90,18 +95,18 @@
 	overflow: hidden;
 	white-space: pre;
 	max-width: 70%;
+	font-family: $serif;
 
 	@include breakpoint( ">480px" ) {
-		font-size: 24px;
+		font-size: 18px;
 		font-weight: 700;
-		font-family: $serif;
 		max-width: none;
 		white-space: normal;
 	}
 }
 
 .domain-management-list-item__meta {
-	font-size: 11px;
+	font-size: 12px;
 	color: $gray;
 	min-height: 20px;
 	text-overflow: ellipsis;
@@ -111,9 +116,8 @@
 		text-transform: uppercase;
 	}
 
-	.flag {
-		cursor: pointer;
-		margin: 0 0 0 5px;
+	.notice {
+		margin: 0 0 0 8px;
 	}
 }
 
@@ -138,9 +142,32 @@
 	}
 }
 
-.domain-management-list__add-a-domain.add-new-button {
-	display: flex;
-	justify-content: center;
+input[type=radio].domain-management-list-item__radio {
+	margin-left: -8px;
+	margin-right: 12px;
+	margin-top: 19px;
+}
+
+.domain-management-list-item__spinner {
+	float: right;
+	margin-top: 12px;
+}
+
+.domain-management-list-item__busy-message {
+	text-transform: uppercase;
+	color: darken( $gray, 20% );
+	font-weight: 600;
+	font-size: 12px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	margin-top: 5px;
+
+
+	@include breakpoint( ">480px" ) {
+		float: right;
+		margin-top: -11px;
+		margin-right: 15px;
+	}
 }
 
 .domain-management-primary-domain {
@@ -298,13 +325,6 @@
 			width: 100%;
 		}
 
-		&.invalid {
-			input,
-			select {
-				border-color: $alert-red;
-			}
-		}
-
 		input[ disabled ], select[ disabled ] {
 			cursor: not-allowed;
 		}
@@ -423,8 +443,7 @@
 	position: relative;
 
 	@include breakpoint( ">660px" ) {
-		padding: 24px;
-		padding-bottom: 20px;
+		padding: 24px 24px 20px;
 	}
 
 	.button {
@@ -441,7 +460,6 @@
 }
 
 .add-google-apps-card__product-logo {
-	margin: -5px 0;
 
 	@include breakpoint( "<660px" ) {
 		width: 236px;
@@ -449,39 +467,27 @@
 
 	@include breakpoint( ">660px" ) {
 		float: left;
-		margin: -10px 0 0 0;
 	}
 
 	strong {
-		background: url('/calypso/images/upgrades/google-apps-logo.png');
-		background-position: left center;
-		background-repeat: no-repeat;
-		background-size: 80px;
+		background: url('/calypso/images/upgrades/g-suite-logo.png') no-repeat left;
+		background-size: 73px;
 		display: inline-block;
-		height: 40px;
-		margin: -1px 6px 0 0;
+		height: 19px;
+		margin: 0 6px 0 0;
 		text-indent: -999999px;
 		vertical-align: text-top;
-		width: 80px;
-	}
-
-	span {
-		color: #888;
-		display: inline-block;
-		font-size: 22px;
-		font-weight: 400;
-		position: relative;
-			top: 10px;
+		width: 73px;
 	}
 }
 
 .add-google-apps-card__price {
 	clear: both;
-	font-style: italic;
 	margin: 0;
 
 	.add-google-apps-card__price-per-user {
 		display: inline-block;
+		font-style: italic;
 
 		strong {
 			color: darken($gray, 15%);
@@ -489,23 +495,23 @@
 			font-weight: 600;
 		}
 
-		span, em {
+		span {
 			color: $gray;
 			font-size: 12px;
 			font-weight: normal;
 		}
+	}
 
-		em {
-			@include breakpoint( "<660px" ) {
-				display: none;
-			}
-		}
+	.add-google-apps-card__price-separator {
+		color: $gray;
+		font-size: 12px;
 	}
 
 	.add-google-apps-card__billing-period {
 		color: lighten( $gray, 10% );
 		display: inline-block;
 		font-size: 11px;
+		font-style: italic;
 		text-transform: uppercase;
 	}
 }
@@ -627,7 +633,7 @@ ul.email-forwarding__list {
 
 		.button {
 			float: right;
-			margin-top: -2px;
+			margin-top: -3px;
 		}
 	}
 }
@@ -650,8 +656,7 @@ ul.email-forwarding__list {
 	border-bottom: 2px solid lighten( $gray, 20% );
 	display: block;
 	overflow: auto;
-	padding: 16px;
-	padding-bottom: 20px;
+	padding: 16px 16px 20px;
 	position: relative;
 
 	@include breakpoint( ">660px" ) {
@@ -847,28 +852,25 @@ ul.email-forwarding__list {
 .name-servers {
 	.custom-nameservers-row {
 		margin-top: 10px;
-	}
+		position: relative;
 
-	.remove,
-	.add {
-		border-radius: 2px;
-		color: #FFF;
-		cursor: pointer;
-		display: inline-block;
-		font-size: 9px;
-		padding: 3px 8px;
-		position: absolute;
-		margin-top: 11px;
-		margin-right: 34px;
-		text-transform: uppercase;
-		right: 0px;
-	}
+		input[type=text] {
+			padding-right: 38px;
 
-	.add {
-		background: $alert-green;
-	}
-	.remove {
-		background: $alert-red;
+			@include breakpoint( '<480px' ) {
+				padding-right: 35px;
+			}
+		}
+
+		.button {
+			position: absolute;
+			right: 7px;
+			top: 8px;
+
+			@include breakpoint( '<480px' ) {
+				right: 4px;
+			}
+		}
 	}
 
 	.notice {
@@ -876,31 +878,44 @@ ul.email-forwarding__list {
 		margin-top: 10px;
 		padding-right: 15px;
 	}
-}
 
-.name-servers {
-	.icann-verification {
-		.button {
-			margin-bottom: 15px;
+	&.is-placeholder {
+		.name-servers__dns {
+			.name-servers__title {
+				@include placeholder();
+			}
 
-			@include breakpoint( '<480px' ) {
-				width: 100%;
+			.name-servers__toggle {
+				display: none;
+			}
+
+			.name-servers__explanation,
+			.name-servers__explanation a {
+				@include placeholder();
+			}
+		}
+
+		.vertical-nav-item {
+			.noticon {
+				display: none;
+			}
+
+			span:nth-of-type( 2 ) {
+				@include placeholder();
 			}
 		}
 	}
-
-	.icann-verification__explanation {
-		margin-bottom: 15px;
-	}
 }
 
-ul.dns__list {
+.dns__list > ul {
 	list-style: none;
 	margin: 15px 0 0 0;
 	padding: 0;
 
 	li {
 		border-top: 1px solid $gray-light;
+		display: flex;
+		justify-content: space-between;
 		overflow: auto;
 		padding: 10px 0;
 		position: relative;
@@ -915,29 +930,36 @@ ul.dns__list {
 			background: #87a6bc;
 			border-radius: 2px;
 			color: $white;
-			float: left;
+			display: block;
 			font-size: 12px;
 			margin: 0 10px 0 0;
 			padding: 10px 5px;
 			text-align: center;
-			width: 60px;
 		}
 
 		strong {
 			color: #58819e;
 			font-weight: normal;
 		}
+
+		&.is-disabled {
+			opacity: 0.2;
+			cursor: not-allowed;
+		}
 	}
-	.remove {
-		background-color: #87a6bc;
-		border-radius: 2px;
-		color: #FFF;
-		cursor: pointer;
-		display: inline-block;
-		float: right;
-		font-size: 9px;
-		padding: 3px 8px;
-		text-transform: uppercase;
+
+	.dns__list-type {
+		min-width: 60px;
+	}
+
+	.dns__list-info {
+		width: 100%;
+		word-break: break-all;
+	}
+
+	.dns__list-remove {
+		text-align: right;
+		width: 100px;
 	}
 }
 
@@ -952,55 +974,62 @@ ul.dns__list {
 	}
 }
 
-.google-apps-users-card.card {
-	@include clear-fix;
-}
+.domain-management-email {
+	.is-placeholder {
+		.section-header__label {
+			@include placeholder();
 
-.google-apps-users-card__add-user-button {
-	@include breakpoint( '<480px' ) {
-		width: 100%;
+			&::before {
+				display: none;
+			}
+		}
+
+		.google-apps-user-item__email,
+		.google-apps-user-item__manage-link {
+			@include placeholder();
+		}
 	}
-
-	@include breakpoint( '>480px' ) {
-		float: right;
-	}
 }
 
-.google-apps-users-card__subtext {
-	font-size: 13px;
-	margin: 5px 0;
-	font-style: italic;
-	font-weight: 400;
-	color: $gray;
-}
-
-.google-apps-users-card__notice.notice {
-	font-size: 13px;
-	margin: 10px 0;
-	animation: none;
+.google-apps-users-card {
+	margin-bottom: 10px;
 }
 
 .google-apps-users-card__user-list {
+	&.card {
+		padding: 0;
+		@include clear-fix;
+	}
+}
+
+.google-apps-users-card__user-list-inner {
 	list-style: none;
-	margin: 0 0 16px 0;
+	margin: 0;
 
 	li {
-		color: #58819e;
 		border-top: 1px solid $gray-light;
-		padding: 10px 0;
+		padding: 20px 24px;
 		@include clear-fix;
+
+		&:first-of-type {
+			border-top: none;
+		}
 
 		&:last-of-type {
 			border-bottom: 1px solid $gray-light;
 		}
 	}
+
+	.notice {
+		margin: 0;
+	}
 }
 
-.google-apps-users-card__user-email {
+.google-apps-user-item__email {
 	float: left;
 }
 
-.google-apps-users-card__user-manage-link {
+.google-apps-user-item__manage-link {
 	float: right;
 	font-size: 13px;
 }

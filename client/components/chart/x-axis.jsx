@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:module-chart:x-axis' ),
-	throttle = require( 'lodash/function/throttle' );
+	throttle = require( 'lodash/throttle' );
 
 /**
  * Internal dependencies
@@ -54,7 +54,7 @@ module.exports = React.createClass( {
 				labelWidth,
 				divisor;
 
-			node = this.getDOMNode();
+			node = this.refs.axis;
 
 			if ( nextProps && ! ( nextProps instanceof Event ) ) {
 				props = nextProps;
@@ -100,7 +100,7 @@ module.exports = React.createClass( {
 		}, this );
 
 		return (
-			<div className="chart__x-axis">{ labels }</div>
+			<div ref="axis" className="chart__x-axis">{ labels }</div>
 		);
 	}
 } );

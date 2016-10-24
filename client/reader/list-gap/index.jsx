@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	classnames = require( 'classnames' );
 
 /**
@@ -41,6 +41,9 @@ var Gap = React.createClass( {
 		this.setState( { isFilling: true } );
 		stats.recordAction( 'fill_gap' );
 		stats.recordGaEvent( 'Clicked Fill Gap' );
+		stats.recordTrack( 'calypso_reader_filled_gap', {
+			stream: this.props.store.id
+		} );
 	}
 
 } );

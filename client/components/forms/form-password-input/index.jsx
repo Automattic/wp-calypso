@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	Gridicon = require( 'components/gridicon' ),
 	classNames = require( 'classnames' ),
-	omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies
@@ -37,6 +37,10 @@ module.exports = React.createClass( {
 		return this.props.submitting || this.state.hidePassword;
 	},
 
+	focus: function() {
+		this.refs.textField.focus();
+	},
+
 	render: function() {
 
 		var toggleVisibilityClasses = classNames( {
@@ -46,8 +50,9 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="form-password-input">
-				<FormTextInput { ...omit( this.props, 'hideToggle' ) }
+				<FormTextInput { ...omit( this.props, 'hideToggle', 'submitting' ) }
 					autoComplete="off"
+					ref="textField"
 					type={ this.hidden() ? 'password' : 'text' } />
 
 				<span className={ toggleVisibilityClasses } onClick={ this.togglePasswordVisibility }>

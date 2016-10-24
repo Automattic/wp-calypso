@@ -1,40 +1,65 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import FormTextInput from 'components/forms/form-text-input';
 import FormPasswordInput from 'components/forms/form-password-input';
 import FormFieldset from 'components/forms/form-fieldset';
 import FormButton from 'components/forms/form-button';
 import FormButtonsBar from 'components/forms/form-buttons-bar';
-import Notice from 'notices/notice';
+import Notice from 'components/notice';
 import AuthStore from 'lib/oauth-store';
 import * as AuthActions from 'lib/oauth-store/actions';
 import eventRecorder from 'me/event-recorder';
 import Gridicon from 'components/gridicon';
 import WordPressLogo from 'components/wordpress-logo';
+import AuthCodeButton from './auth-code-button';
 
 const LostPassword = React.createClass( {
 	render: function() {
 		return (
 			<p className="auth__lost-password">
-				<a href="https://wordpress.com/wp-login.php?action=lostpassword" target="_blank">
+				<a href="https://wordpress.com/wp-login.php?action=lostpassword" target="_blank" rel="noopener noreferrer">
 					{ this.translate( 'Lost your password?' ) }
 				</a>
 			</p>
-        );
+		);
+	}
+} );
+
+const SelfHostedInstructions = React.createClass( {
+
+	render: function() {
+		return (
+			<div className="auth__self-hosted-instructions">
+				<a href="#" onClick={ this.props.onClickClose } className="auth__self-hosted-instructions-close"><Gridicon icon="cross" size={ 24 } /></a>
+
+				<h2>{ this.translate( 'Add self-hosted site' ) }</h2>
+				<p>{ this.translate( 'By default when you sign into the WordPress.com app, you can edit blogs and sites hosted at WordPress.com' ) }</p>
+				<p>{ this.translate( 'If you\'d like to edit your self-hosted WordPress blog or site, you can do that by following these instructions:' ) }</p>
+
+				<ol>
+					<li><strong>{ this.translate( 'Install the Jetpack plugin.' ) }</strong><br /><a href="http://jetpack.me/install/">{ this.translate( 'Please follow these instructions to install Jetpack' ) }</a>.</li>
+					<li>{ this.translate( 'Connect Jetpack to WordPress.com.' ) }</li>
+					<li>{ this.translate( 'Now you can sign in to the app using the WordPress.com account Jetpack is connected to, and you can find your self-hosted site under the "My Sites" section.' ) }</li>
+				</ol>
+			</div>
+		);
 	}
 } );
 
 module.exports = React.createClass( {
 	displayName: 'Auth',
 
-	mixins: [ React.addons.LinkedStateMixin, eventRecorder ],
+	mixins: [ LinkedStateMixin, eventRecorder ],
 
 	componentDidMount: function() {
 		AuthStore.on( 'change', this.refreshData );
@@ -50,7 +75,7 @@ module.exports = React.createClass( {
 
 	componentDidUpdate() {
 		if ( this.state.requires2fa && this.state.inProgress === false ) {
-			this.refs.auth_code.getDOMNode().focus();
+			ReactDom.findDOMNode( this.refs.auth_code ).focus();
 		}
 	},
 
@@ -92,11 +117,16 @@ module.exports = React.createClass( {
 		return this.hasLoginDetails();
 	},
 
+	toggleSelfHostedInstructions: function () {
+		var isShowing = !this.state.showInstructions;
+		this.setState( { showInstructions: isShowing } );
+	},
+
 	render: function() {
-		const { requires2fa, inProgress, errorMessage, errorLevel } = this.state;
+		const { requires2fa, inProgress, errorMessage, errorLevel, showInstructions } = this.state;
 
 		return (
-			<Main className="auth is-full">
+			<Main className="auth">
 				<WordPressLogo />
 				<form className="auth__form" onSubmit={ this.submitForm }>
 					<FormFieldset>
@@ -142,14 +172,16 @@ module.exports = React.createClass( {
 					</FormButtonsBar>
 					{ ! requires2fa && <LostPassword /> }
 					{ errorMessage && <Notice text={ errorMessage } status={ errorLevel } showDismiss={ false } /> }
+					{ requires2fa && <AuthCodeButton username={ this.state.login } password={ this.state.password } /> }
 				</form>
-				<a className="auth__help" target="_blank" title={ this.translate( 'Visit the WordPress.com support site for help' ) } href="https://en.support.wordpress.com/">
+				<a className="auth__help" target="_blank" rel="noopener noreferrer" title={ this.translate( 'Visit the WordPress.com support site for help' ) } href="https://en.support.wordpress.com/">
 					<Gridicon icon="help" />
 				</a>
 				<div className="auth__links">
-					<a href="https://jetpack.me/support/site-management/" target="_blank">{ this.translate( 'Add self-hosted site' ) }</a>
-					<a href="https://wordpress.com/signup" target="_blank">{ this.translate( 'Create account' ) }</a>
+					<a href="#" onClick={ this.toggleSelfHostedInstructions }>{ this.translate( 'Add self-hosted site' ) }</a>
+					<a href={ config( 'signup_url' ) }>{ this.translate( 'Create account' ) }</a>
 				</div>
+				{ showInstructions && <SelfHostedInstructions onClickClose={ this.toggleSelfHostedInstructions } /> }
 			</Main>
 		);
 	}

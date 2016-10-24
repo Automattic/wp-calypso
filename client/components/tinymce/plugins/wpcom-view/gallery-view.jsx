@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React, { Component, PropTypes } from 'react';
 
 /**
@@ -12,14 +13,14 @@ import GalleryShortcode from 'components/gallery-shortcode';
 class GalleryView extends Component {
 
 	static match( content ) {
-		const match = shortcodeUtils.next( 'gallery', content );
+		const nextMatch = shortcodeUtils.next( 'gallery', content );
 
-		if ( match ) {
+		if ( nextMatch ) {
 			return {
-				index: match.index,
-				content: match.content,
+				index: nextMatch.index,
+				content: nextMatch.content,
 				options: {
-					shortcode: match.shortcode
+					shortcode: nextMatch.shortcode
 				}
 			};
 		}
@@ -43,12 +44,12 @@ class GalleryView extends Component {
 
 	componentDidMount() {
 		this.setState( {
-			wrapper: React.findDOMNode( this.refs.view )
+			wrapper: ReactDom.findDOMNode( this.refs.view )
 		} );
 
 		if ( window.MutationObserver ) {
 			this.observer = new MutationObserver( this.props.onResize );
-			this.observer.observe( React.findDOMNode( this.refs.view ), {
+			this.observer.observe( ReactDom.findDOMNode( this.refs.view ), {
 				attributes: true,
 				childList: true,
 				subtree: true

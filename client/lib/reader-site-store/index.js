@@ -2,7 +2,9 @@
 
 // External Dependencies
 var Immutable = require( 'immutable' ),
-	omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/omit' ),
+	has = require( 'lodash/has' ),
+	trim = require( 'lodash/trim' );
 
 // Internal Dependencies
 var Dispatcher = require( 'dispatcher' ),
@@ -10,6 +12,8 @@ var Dispatcher = require( 'dispatcher' ),
 	SiteStoreActionType = require( './constants' ).action,
 	FeedStoreActionType = require( 'lib/feed-store/constants' ).action,
 	State = require( './constants' ).state;
+
+import { withoutHttp } from 'lib/url';
 
 var sites = {}, SiteStore;
 
@@ -23,33 +27,40 @@ Emitter( SiteStore ); //eslint-disable-line
 
 SiteStore.setMaxListeners( 100 );
 
-function setSite( attributes ) {
-	var site = sites[ attributes.ID ], newSite;
-
+function adaptSite( attributes ) {
 	if ( ! attributes.state ) {
 		attributes.state = State.COMPLETE;
 	}
 
-	attributes = omit( attributes, [ 'meta', '_headers' ] );
+	attributes.has_featured = has( attributes, 'meta.links.featured' );
+
+	attributes = omit( attributes, [ 'meta' ] );
 
 	if ( attributes.URL ) {
-		attributes.domain = attributes.URL.replace( /^https?:\/\//, '' );
+		attributes.domain = withoutHttp( attributes.URL );
 		attributes.slug = attributes.domain.replace( /\//g, '::' );
 	}
-	attributes.title = attributes.name ? attributes.name : attributes.domain;
+	attributes.title = trim( attributes.name ) || attributes.domain;
 
 	// If a WordPress.com site has a mapped domain create a `wpcom_url`
 	// attribute to allow site selection with either domain.
 	if ( attributes.options && attributes.options.is_mapped_domain && ! attributes.is_jetpack ) {
-		attributes.wpcom_url = attributes.options.unmapped_url.replace( /^https?:\/\//, '' );
+		attributes.wpcom_url = withoutHttp( attributes.options.unmapped_url );
 	}
 
 	// If a site has an `is_redirect` property use the `unmapped_url`
 	// for the slug and domain to match the wordpress.com original site.
 	if ( attributes.options && attributes.options.is_redirect ) {
-		attributes.slug = attributes.options.unmapped_url.replace( /^https?:\/\//, '' );
+		attributes.slug = withoutHttp( attributes.options.unmapped_url );
 		attributes.domain = attributes.slug;
 	}
+	return attributes;
+}
+
+function setSite( attributes ) {
+	var site = sites[ attributes.ID ], newSite;
+
+	attributes = adaptSite( attributes );
 
 	if ( site ) {
 		newSite = site.mergeDeep( attributes );
@@ -65,6 +76,28 @@ function setSite( attributes ) {
 	sites[ attributes.ID ] = newSite;
 
 	SiteStore.emit( 'change' );
+}
+
+function setManySites( siteList ) {
+	var adaptedSites = siteList.map( adaptSite ),
+		changes = 0;
+	adaptedSites.forEach( function( site ) {
+		var existing = sites[ site.ID ],
+			newSite;
+		if ( existing ) {
+			newSite = existing.mergeDeep( site );
+			if ( newSite === existing ) {
+				return;
+			}
+		} else {
+			newSite = Immutable.fromJS( site );
+		}
+		sites[ site.ID ] = newSite;
+		changes++;
+	} );
+	if ( changes > 0 ) {
+		SiteStore.emit( 'change' );
+	}
 }
 
 SiteStore.dispatchToken = Dispatcher.register( function( payload ) {
@@ -85,6 +118,9 @@ SiteStore.dispatchToken = Dispatcher.register( function( payload ) {
 			} else {
 				setSite( action.data );
 			}
+			break;
+		case SiteStoreActionType.RECEIVE_BULK_UPDATE:
+			setManySites( action.data );
 			break;
 		case FeedStoreActionType.RECEIVE_FETCH:
 			// check to see if the feed fetch had site meta

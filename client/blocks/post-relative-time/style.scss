@@ -1,0 +1,26 @@
+.post-relative-time.is-placeholder {
+	@include placeholder;
+}
+
+.post-relative-time,
+.post-relative-time__icon,
+.post-relative-time__text {
+	display: inline-block;
+}
+
+.post-relative-time__icon {
+	margin-right: 8px;
+}
+
+.post-relative-time__icon,
+.post-relative-time__text {
+	vertical-align: middle;
+}
+
+.post-relative-time__text {
+	line-height: 1;
+
+	&::first-letter {
+		text-transform: capitalize;
+	}
+}

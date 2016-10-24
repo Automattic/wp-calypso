@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	paths = require( 'lib/paths' ),
+var paths = require( 'lib/paths' ),
 	config = require( 'config' );
 
 function buildCustomizeButtonURL( site ) {

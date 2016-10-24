@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal dependencies
@@ -10,7 +10,6 @@ var React = require( 'react' ),
 var DetailItem = require( './detail-item' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	HeaderCake = require( 'components/header-cake' ),
-	BackToLibrary = require( '../back-to-library' ),
 	EditorMediaModalDetailTitle = require( './detail-title' ),
 	preloadImage = require( '../preload-image' ),
 	ModalViews = require( '../constants' ).Views;
@@ -61,11 +60,11 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		const items = MediaUtils.sortItemsByDate( this.props.items );
+		const { items } = this.props;
 
 		return (
 			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ this.returnToList } backText={ <BackToLibrary /> }>
+				<HeaderCake onClick={ this.returnToList } backText={ this.translate( 'Media Library' ) }>
 					<EditorMediaModalDetailTitle
 						site={ this.props.site }
 						item={ items[ this.props.selectedIndex ] } />
@@ -76,7 +75,8 @@ module.exports = React.createClass( {
 					hasPreviousItem={ this.props.selectedIndex - 1 >= 0 }
 					hasNextItem={ this.props.selectedIndex + 1 < items.length }
 					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
-					onShowNextItem={ this.incrementIndex.bind( this, 1 ) } />
+					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
+					onEdit={ this.props.onEdit } />
 			</div>
 		);
 	}

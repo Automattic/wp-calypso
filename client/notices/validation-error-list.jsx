@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	map = require( 'lodash/collection/map' );
+	map = require( 'lodash/map' );
 
 module.exports = React.createClass( {
 	displayName: 'ValidationErrorList',

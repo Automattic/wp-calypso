@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/utility/noop';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
@@ -50,7 +50,7 @@ export default React.createClass( {
 				key="back"
 				isPrimary={ false }
 				onClick={ this.props.onClose }>
-					{ this.translate( 'Close' ) }
+					{ this.translate( "Don't restore" ) }
 			</FormButton>
 		];
 	},

@@ -6,7 +6,7 @@
 	height: 26px;
 	text-align: center;
 	position: absolute;
-	z-index: 1;
+	z-index: z-index( '.popover', '.post-schedule__header' );
 	top: 47px;
 	color: $gray;
 	font-size: 18px;
@@ -119,7 +119,7 @@ input.post-schedule__clock_time {
 .info-popover__tooltip.post-schedule__timezone-info {
 	margin-left: 0;
 
-	.tip-inner {
+	.popover__inner {
 		font-size: 12px;
 	}
 }

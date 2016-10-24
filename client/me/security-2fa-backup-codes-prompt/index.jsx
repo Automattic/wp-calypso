@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-backup-codes-prompt' );
 
 /**
@@ -10,16 +11,17 @@ var React = require( 'react' ),
 var FormButton = require( 'components/forms/form-button' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	FormTelInput = require( 'components/forms/form-tel-input' ),
+	Notice = require( 'components/notice' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' ),
+	constants = require( 'me/constants' );
 
 module.exports = React.createClass( {
 
 	displayName: 'Security2faBackupCodesPrompt',
 
-	mixins: [ React.addons.LinkedStateMixin ],
+	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
 		onPrintAgain: React.PropTypes.func,
@@ -84,6 +86,11 @@ module.exports = React.createClass( {
 		this.setState( { lastError: false } );
 	},
 
+	onClickPrintButton: function( event ) {
+		analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Again Button' );
+		this.onPrintAgain( event );
+	},
+
 	possiblyRenderPrintAgainButton: function() {
 		if ( ! this.props.onPrintAgain ) {
 			return null;
@@ -94,10 +101,7 @@ module.exports = React.createClass( {
 				className="security-2fa-backup-codes-prompt__print"
 				disabled={ this.state.submittingCode }
 				isPrimary={ false }
-				onClick={ function( event ) {
-					analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Print Backup Codes Again Button' );
-					this.onPrintAgain( event );
-				}.bind( this ) }
+				onClick={ this.onClickPrintButton }
 				type="button"
 			>
 				{ this.translate( "Didn't Print The Codes?" ) }
@@ -111,10 +115,9 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice
-				isCompact
+			<Notice
 				status="is-error"
-				onClick={ this.clearLastError }
+				onDismissClick={ this.clearLastError }
 				text={ this.state.lastError }
 			/>
 		);
@@ -124,13 +127,12 @@ module.exports = React.createClass( {
 		return (
 			<form className="security-2fa-backup-codes-prompt" onSubmit={ this.onVerify }>
 				<FormFieldset>
-					<FormLabel htmlFor="backup-code-entry">{ this.translate( 'Type a Backup Code' ) }</FormLabel>
-					<FormTextInput
+					<FormLabel htmlFor="backup-code-entry">{ this.translate( 'Type a Backup Code to Verify' ) }</FormLabel>
+					<FormTelInput
 						disabled={ this.state.submittingCode }
 						name="backup-code-entry"
-						type="text"
 						autoComplete="off"
-						placeholder="12345678"
+						placeholder={ constants.eightDigitBackupCodePlaceholder }
 						valueLink={ this.linkState( 'backupCodeEntry' ) }
 						onFocus={ function() {
 							analytics.ga.recordEvent( 'Me', 'Focused On 2fa Backup Codes Confirm Printed Backup Codes Input' );

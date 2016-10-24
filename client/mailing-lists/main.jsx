@@ -8,12 +8,10 @@ import React from 'react';
  * Internal dependencies
  */
 import Card from 'components/card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import Gridicon from 'components/gridicon';
 import notices from 'notices';
 import utils from './utils';
+import { preventWidows } from 'lib/formatting';
 
 /**
  * Constants
@@ -51,7 +49,7 @@ const MainComponent = React.createClass( {
 	},
 
 	getSubscribedMessage() {
-		return this.translate( 'Successfully subscribed to {{em}}%(categoryName)s{{/em}} mailing list!', {
+		return this.translate( 'Subscribed to {{em}}%(categoryName)s{{/em}}', {
 			args: {
 				categoryName: this.getCategoryName()
 			},
@@ -62,7 +60,7 @@ const MainComponent = React.createClass( {
 	},
 
 	getUnsubscribedMessage() {
-		return this.translate( 'Successfully unsubscribed from {{em}}%(categoryName)s{{/em}} mailing list.', {
+		return this.translate( 'Unsubscribed from {{em}}%(categoryName)s{{/em}}', {
 			args: {
 				categoryName: this.getCategoryName()
 			},
@@ -101,6 +99,8 @@ const MainComponent = React.createClass( {
 			return this.translate( 'Research' );
 		} else if ( 'community' === this.props.category ) {
 			return this.translate( 'Community' );
+		} else if ( 'digest' === this.props.category ) {
+			return this.translate( 'Digests' );
 		}
 
 		return this.props.category;
@@ -113,6 +113,8 @@ const MainComponent = React.createClass( {
 			return this.translate( 'Opportunities to participate in WordPress.com research & surveys.' );
 		} else if ( 'community' === this.props.category ) {
 			return this.translate( 'Information on WordPress.com courses and events (online & in-person).' );
+		} else if ( 'digest' === this.props.category ) {
+			return this.translate( 'Reading & writing digests, tailored for you.' );
 		}
 
 		return null;
@@ -141,49 +143,33 @@ const MainComponent = React.createClass( {
 	},
 
 	render() {
-		return this.state.isSubscribed
-			? this.renderUnsubscribe()
-			: this.renderSubscribe();
-	},
+		var headingLabel = this.state.isSubscribed
+								? this.translate( 'You\'re subscribed' )
+								: this.translate( 'We\'ve unsubscribed your email.' ),
+			messageLabel = this.state.isSubscribed
+								? this.translate( 'We\'ll send you updates for this mailing list.' )
+								: this.translate( 'You will no longer receive updates for this mailing list.' );
 
-	renderUnsubscribe() {
-		return (
-			<Card>
-				<FormSectionHeading>{ this.translate( 'Unsubscribe from Updates from WordPress.com' ) }</FormSectionHeading>
-				{ this.renderCategoryAndEmail() }
-				<button className="button is-primary" onClick={ this.onUnsubscribeClick }>{ this.translate( 'Unsubscribe' ) }</button>
-			</Card>
-		);
-	},
+		return(
+			<div className="mailing-lists">
+				<div className="mailing-lists__header">
+					<Gridicon icon="mail" size={ 54 } />
+					{ this.state.isSubscribed
+						? null
+						: <Gridicon icon="cross" size={ 24 } /> }
+					<h1>{ preventWidows( headingLabel, 2 ) }</h1>
+					<p>{ preventWidows( messageLabel, 2 ) }</p>
+				</div>
 
-	renderSubscribe() {
-		return (
-			<Card>
-				<FormSectionHeading>{ this.translate( 'We\'re sorry to see you go!' ) }</FormSectionHeading>
-				<p>{ this.translate( 'If you unsubscribed by mistake or changed your mind, resubscribe below.' ) }</p>
-				{ this.renderCategoryAndEmail() }
-				<button className="button is-primary" onClick={ this.onResubscribeClick }>{ this.translate( 'Resubscribe' ) }</button>
-				{/* Hide link to manage all updates until that page is live.
-				<p></p>
-				<button className="button is-link" onClick={ this.onManageUpdatesClick }>{ this.translate( 'Manage all your updates from WordPress.com' ) }</button>
-				*/}
-			</Card>
-		);
-	},
+				<Card className="mailing-lists__details">
+					<h4>{ this.getCategoryName() }</h4>
+					<p>{ this.getCategoryDescription() }</p>
+					{ this.state.isSubscribed
+						? <button className="button is-primary" onClick={ this.onUnsubscribeClick }>{ this.translate( 'Unsubscribe' ) }</button>
+						: <button className="button" onClick={ this.onResubscribeClick }>{ this.translate( 'Resubscribe' ) }</button> }
+				</Card>
 
-	renderCategoryAndEmail() {
-		return (
-			<div>
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Category' ) }</FormLegend>
-					{ this.getCategoryName() }
-					<FormSettingExplanation>{ this.getCategoryDescription() }</FormSettingExplanation>
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Email Address' ) }</FormLegend>
-					{ this.props.email }
-				</FormFieldset>
+				<p className="mailing-lists__manage-link"><button className="button is-link" onClick={ this.onManageUpdatesClick }>{ this.translate( 'Manage all your email subscriptions' ) }</button></p>
 			</div>
 		);
 	}

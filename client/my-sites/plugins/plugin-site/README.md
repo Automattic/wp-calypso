@@ -1,7 +1,7 @@
 Plugin Site
 ===========
 
-This component is used to represent the state of a single instance of a plugin in a site. Internally, it follows a factory pattern, returning one instance of `plugin-site-network`, `plugin-site-business` or `plugin-site-jetpack` depending on the properties of the site received.
+This component is used to represent the state of a single instance of a plugin in a site. Internally, it follows a factory pattern, returning one instance of `plugin-site-network` or `plugin-site-jetpack` depending on the properties of the site received.
 
 #### How to use:
 

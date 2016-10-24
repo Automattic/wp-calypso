@@ -9,23 +9,22 @@
 
 	&.is-expired {
 		background: $gray-light;
-		margin-bottom: 0;
 
-		.manage-purchase__detail,
-		.manage-purchase__detail-label,
-		.manage-purchase__settings-link,
-		.manage-purchase__title,
-		.manage-purchase__subtitle {
+		.manage-purchase__content {
 			opacity: .6;
 		}
 	}
 
+	&.is-expired + .notice {
+		margin-top: -10px;
+
+		@include breakpoint ( ">480px" ) {
+			margin-top: -16px;
+		}
+	}
+
 	&.is-placeholder {
-		.manage-purchase__detail,
-		.manage-purchase__detail-label,
-		.manage-purchase__settings-link,
-		.manage-purchase__title,
-		.manage-purchase__subtitle {
+		.manage-purchase__content {
 			@include placeholder( 23% );
 
 			display: block;
@@ -34,10 +33,6 @@
 		.manage-purchase__subtitle,
 		.manage-purchase__title {
 			margin-bottom: 3px;
-		}
-
-		.manage-purchase__detail {
-			height: 40px;
 		}
 
 		.manage-purchase__detail-label {
@@ -54,6 +49,23 @@
 
 		.manage-purchase__title {
 			width: 60%;
+		}
+
+		@include breakpoint( ">660px" ) {
+			.manage-purchase__detail,
+			.manage-purchase__detail-label {
+				height: 40px;
+			}
+		}
+
+		@include breakpoint( "<660px" ) {
+			.manage-purchase__detail {
+				width: 25%;
+			}
+
+			.manage-purchase__detail-label {
+				width: 70%;
+			}
 		}
 	}
 }
@@ -179,11 +191,8 @@
 		text-align: right;
 	}
 
-	&.is-placeholder {
-		@include placeholder( 23% );
-
-		display: block;
-		height: 25px;
+	.payment-logo {
+		margin-right: 5px;
 	}
 
 	a {
@@ -215,6 +224,9 @@
 	}
 }
 
-.manage-purchase__payment-info .payment-logo {
-	margin-right: 5px;
+.manage-purchase__contact-support {
+	border-top: solid 1px lighten( $gray, 30% );
+	color: $gray;
+	margin-top: 15px;
+	padding-top: 10px;
 }

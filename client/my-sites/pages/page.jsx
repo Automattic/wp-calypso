@@ -1,9 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	ReactCSSTransitionGroup = React.addons.CSSTransitionGroup,
+var React = require( 'react' ),
+	ReactCSSTransitionGroup = require( 'react-addons-css-transition-group' ),
+	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' );
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -15,10 +19,20 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	PopoverMenuItem = require( 'components/popover/menu-item' ),
 	SiteIcon = require( 'components/site-icon' ),
 	helpers = require( './helpers' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
-	config = require( 'config' ),
-	utils = require( 'lib/posts/utils' );
+	analytics = require( 'lib/analytics' ),
+	utils = require( 'lib/posts/utils' ),
+	classNames = require( 'classnames' ),
+	config = require( 'config' );
+
+import MenuSeparator from 'components/popover/menu-separator';
+import { hasStaticFrontPage } from 'state/sites/selectors';
+import {
+	isFrontPage,
+	isPostsPage,
+} from 'state/pages/selectors';
+import { setFrontPage } from 'state/sites/actions';
+import { userCan } from 'lib/site/utils';
+
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -31,15 +45,13 @@ function getReadableStatus( status ) {
 		'pending': i18n.translate( 'Pending' ),
 		'future': i18n.translate( 'Future' ),
 		'private': i18n.translate( 'Private' ),
-		'trash': i18n.translate( 'Trashed' ),
-		'auto-draft': i18n.translate( 'Draft' ),
-		'inherit': i18n.translate( 'Inherited' )
+		'trash': i18n.translate( 'Trashed' )
 	};
 
 	return humanReadableStatus [ status ] || status;
 }
 
-module.exports = React.createClass( {
+const Page = React.createClass( {
 
 	displayName: 'Page',
 
@@ -95,12 +107,38 @@ module.exports = React.createClass( {
 		return ( this.props.site && this.props.site.domain ) || '...';
 	},
 
+	setAsHomepage: function() {
+		this.setState( { showPageActions: false } );
+		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID );
+	},
+
+	getSetAsHomepageItem: function() {
+		const isPublished = this.props.page.status === 'publish';
+
+		if ( ! isPublished || this.props.isFrontPage ||
+			! config.isEnabled( 'manage/pages/set-homepage' ) ||
+			! userCan( 'edit_theme_options', this.props.site ) ) {
+			return null;
+		}
+
+		return (
+			<PopoverMenuItem onClick={ this.setAsHomepage }>
+				<Gridicon icon="house" size={ 18 } />
+				{ this.translate( 'Set as Homepage' ) }
+			</PopoverMenuItem>
+		);
+	},
+
 	viewPage: function() {
 		window.open( this.props.page.URL );
 	},
 
 	getViewItem: function() {
 		if ( this.props.page.status === 'trash' ) {
+			return null;
+		}
+
+		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
 			return null;
 		}
 
@@ -135,7 +173,7 @@ module.exports = React.createClass( {
 		// This is technically if you can edit the current page, not the parent.
 		// Capabilities are not exposed on the parent page.
 		parentHref = utils.userCan( 'edit_post', this.props.page ) ? helpers.editLinkForPage( page.parent, site ) : page.parent.URL;
-		parentLink = <a target={ config.isEnabled( 'post-editor/pages' ) ? null : '_blank' } href={ parentHref }>{ parentTitle }</a>;
+		parentLink = <a href={ parentHref }>{ parentTitle }</a>;
 
 		return ( <div className="page__popover-more-info">{
 			this.translate( "Child of {{PageTitle/}}", {
@@ -147,17 +185,23 @@ module.exports = React.createClass( {
 	},
 
 	frontPageInfo: function() {
-		if ( ! helpers.isFrontPage( this.props.page, this.props.site ) ) {
+		if ( ! this.props.isFrontPage ) {
 			return null;
 		}
 
-		return ( <div className="page__popover-more-info">{
-			this.translate( 'Currently set as {{link}}Front Page{{/link}}', {
-				components: {
-					link: <a target="_blank" href={ this.props.site.options.admin_url + 'options-reading.php' } />
-				}
-			} )
-		}</div> );
+		if ( config.isEnabled( 'manage/pages/set-homepage' ) ) {
+			return ( <div className="page__popover-more-info">{
+				this.translate( 'This page is set as your site\'s homepage' )
+			}</div> );
+		} else {
+			return ( <div className="page__popover-more-info">{
+				this.translate( 'Currently set as {{link}}Front Page{{/link}}', {
+					components: {
+						link: <a target="_blank" rel="noopener noreferrer" href={ this.props.site.options.admin_url + 'options-reading.php' } />
+					}
+				} )
+			}</div> );
+		}
 	},
 
 	getPublishItem: function() {
@@ -174,6 +218,10 @@ module.exports = React.createClass( {
 	},
 
 	getEditItem: function() {
+		if ( this.props.hasStaticFrontPage && this.props.isPostsPage ) {
+			return null;
+		}
+
 		if ( ! utils.userCan( 'edit_post', this.props.page ) ) {
 			return null;
 		}
@@ -187,6 +235,10 @@ module.exports = React.createClass( {
 	},
 
 	getSendToTrashItem: function() {
+		if ( ( this.props.hasStaticFrontPage && this.props.isPostsPage ) || this.props.isFrontPage ) {
+			return null;
+		}
+
 		if ( ! utils.userCan( 'delete_post', this.props.page ) ) {
 			return null;
 		}
@@ -195,14 +247,14 @@ module.exports = React.createClass( {
 			return (
 				<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusTrash }>
 					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Send to Trash' ) }
+					{ this.translate( 'Trash' ) }
 				</PopoverMenuItem>
 			);
 		} else {
 			return (
-				<PopoverMenuItem className="page__trash-item" onClick={ this.updateStatusDelete }>
+				<PopoverMenuItem className="page__delete-item" onClick={ this.updateStatusDelete }>
 					<Gridicon icon="trash" size={ 18 } />
-					{ this.translate( 'Delete permanently' ) }
+					{ this.translate( 'Delete' ) }
 				</PopoverMenuItem>
 			);
 		}
@@ -245,7 +297,7 @@ module.exports = React.createClass( {
 
 		return (
 			<div>
-				<hr className="popover__hr" />
+				<MenuSeparator />
 				{ status }
 				{ childPageInfo }
 				{ frontPageInfo }
@@ -255,21 +307,55 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var page = this.props.page,
-			published = this.moment( page.modified ).fromNow(),
 			title = page.title || this.translate( '(no title)' ),
 			site = this.props.site || {},
-			isFrontPage = helpers.isFrontPage( page, site ),
 			canEdit = utils.userCan( 'edit_post', this.props.page ),
 			depthIndicator;
-
-		// Replace published date with `Draft` if the page is a draft
-		if ( page.status === 'draft' ) {
-			published = ( <span>{ published } <em>{ this.translate( 'Draft', { context: 'page status' } ) }</em></span> );
-		}
 
 		if ( page.parent ) {
 			depthIndicator = '— ';
 		}
+
+		const setAsHomepageItem = this.getSetAsHomepageItem();
+		const viewItem = this.getViewItem();
+		const publishItem = this.getPublishItem();
+		const editItem = this.getEditItem();
+		const restoreItem = this.getRestoreItem();
+		const sendToTrashItem = this.getSendToTrashItem();
+		const moreInfoItem = this.popoverMoreInfo();
+		const hasSeparatedItems = (
+			viewItem || publishItem || editItem ||
+			restoreItem || sendToTrashItem || moreInfoItem
+		);
+		const hasPopoverItems = setAsHomepageItem || hasSeparatedItems;
+		const setHomepageMenuSeparator = ( setAsHomepageItem && hasSeparatedItems ) ? <MenuSeparator /> : null;
+		const popoverMenu = hasPopoverItems ? (
+			<PopoverMenu
+				isVisible={ this.state.showPageActions }
+				onClose={ this.togglePageActions }
+				position={ 'bottom left' }
+				context={ this.refs && this.refs.popoverMenuButton }
+			>
+				{ setAsHomepageItem }
+				{ setHomepageMenuSeparator }
+				{ viewItem }
+				{ publishItem }
+				{ editItem }
+				{ restoreItem }
+				{ sendToTrashItem }
+				{ moreInfoItem }
+			</PopoverMenu>
+		) : null;
+		const ellipsisGridicon = hasPopoverItems ? (
+			<Gridicon
+			icon="ellipsis"
+			className={ classNames( {
+				'page__actions-toggle': true,
+				'is-active': this.state.showPageActions
+			} ) }
+			onClick={ this.togglePageActions }
+			ref="popoverMenuButton" />
+		) : null;
 
 		return (
 			<CompactCard className="page">
@@ -279,29 +365,20 @@ module.exports = React.createClass( {
 					title={ canEdit ?
 						this.translate( 'Edit %(title)s', { textOnly: true, args: { title: page.title } } ) :
 						this.translate( 'View %(title)s', { textOnly: true, args: { title: page.title } } ) }
-					target={ config.isEnabled( 'post-editor/pages' ) ? null : '_blank' }
 					onClick={ this.analyticsEvents.pageTitle }
 					>
 					{ depthIndicator }
-					{ isFrontPage ? <span className="noticon noticon-home" /> : null }
+					{ this.props.isFrontPage ? <Gridicon icon="house" size={ 18 } /> : null }
 					{ title }
 				</a>
+				{ this.props.isPostsPage ? <div className="page__posts-page">{ this.translate( 'Your latest posts' ) }</div> : null }
 				{ this.props.multisite ? <span className="page__site-url">{ this.getSiteDomain() }</span> : null }
-				<span className="page__actions-toggle noticon noticon-ellipsis" onClick={ this.togglePageActions } ref="popoverMenuButton" />
-				<PopoverMenu
-					isVisible={ this.state.showPageActions }
-					onClose={ this.togglePageActions }
-					position={ 'bottom left' }
-					context={ this.refs && this.refs.popoverMenuButton }
-				>
-					{ this.getViewItem() }
-					{ this.getPublishItem() }
-					{ this.getEditItem() }
-					{ this.getRestoreItem() }
-					{ this.getSendToTrashItem() }
-					{ this.popoverMoreInfo() }
-				</PopoverMenu>
-				<ReactCSSTransitionGroup transitionName="updated-trans">
+				{ ellipsisGridicon }
+				{ popoverMenu }
+				<ReactCSSTransitionGroup
+					transitionName="updated-trans"
+					transitionEnterTimeout={ 300 }
+					transitionLeaveTimeout={ 300 }>
 					{ this.buildUpdateTemplate() }
 				</ReactCSSTransitionGroup>
 			</CompactCard>
@@ -333,3 +410,16 @@ module.exports = React.createClass( {
 		recordEvent( 'Clicked Delete Page' );
 	}
 } );
+
+export default connect(
+	( state, props ) => {
+		return {
+			hasStaticFrontPage: hasStaticFrontPage( state, props.page.site_ID ),
+			isFrontPage: isFrontPage( state, props.page.site_ID, props.page.ID ),
+			isPostsPage: isPostsPage( state, props.page.site_ID, props.page.ID ),
+		};
+	},
+	( dispatch ) => bindActionCreators( {
+		setFrontPage
+	}, dispatch )
+)( Page );

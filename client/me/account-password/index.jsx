@@ -2,11 +2,14 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:account-password' ),
-	_debounce = require( 'lodash/function/debounce' ),
-	_first = require( 'lodash/array/first' ),
-	_isEmpty = require( 'lodash/lang/isEmpty' ),
-	classNames = require( 'classnames' );
+	debounce = require( 'lodash/debounce' ),
+	head = require( 'lodash/head' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	classNames = require( 'classnames' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -20,18 +23,17 @@ var protectForm = require( 'lib/mixins/protect-form' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	notices = require( 'notices' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	notices = require( 'notices' );
+	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
-module.exports = React.createClass( {
+const AccountPassword = React.createClass( {
 
 	displayName: 'AccountPassword',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, observe( 'accountPasswordData' ), eventRecorder ],
+	mixins: [ LinkedStateMixin, protectForm.mixin, observe( 'accountPasswordData' ), eventRecorder ],
 
 	componentDidMount: function() {
-		this.debouncedPasswordValidate = _debounce( this.validatePassword, 300 );
+		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
 	},
 
 	componentWillUnmount: function() {
@@ -74,6 +76,7 @@ module.exports = React.createClass( {
 	},
 
 	submitForm: function( event ) {
+		const { errorNotice: showErrorNotice } = this.props;
 		event.preventDefault();
 
 		this.setState( {
@@ -89,7 +92,7 @@ module.exports = React.createClass( {
 					debug( 'Error saving password: ' + JSON.stringify( error ) );
 
 					// handle error case here
-					notices.error( this.translate( 'There was a problem saving your password. Please, try again.' ) );
+					showErrorNotice( this.translate( 'There was a problem saving your password. Please, try again.' ) );
 					this.setState( { submittingForm: false } );
 				} else {
 					debug( 'Password saved successfully' + JSON.stringify( response ) );
@@ -103,13 +106,13 @@ module.exports = React.createClass( {
 	},
 
 	renderValidationNotices: function() {
-		var failure = _first( this.props.accountPasswordData.getValidationFailures() );
+		var failure = head( this.props.accountPasswordData.getValidationFailures() );
 
 		if ( this.props.accountPasswordData.passwordValidationSuccess() ) {
 			return (
 				<FormInputValidation text={ this.translate( 'Your password can be saved.' ) } />
 			);
-		} else if ( ! _isEmpty( failure ) ) {
+		} else if ( ! isEmpty( failure ) ) {
 			return (
 				<FormInputValidation isError text={ failure.explanation } />
 			);
@@ -170,3 +173,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { errorNotice }, dispatch )
+)( AccountPassword );

@@ -1,10 +1,10 @@
 Plugins
 =======
 
-Plugins uses a [flux](https://facebook.github.io/flux/docs/overview.html#content) approach to managing plugins data in calypso. 
+Plugins uses a [flux](https://facebook.github.io/flux/docs/overview.html#content) approach to managing plugins data in calypso.
 
 ###Plugins Store
-The Plugins Store is responsible for keeping each site's plugin list up to date. Initially it loads the data and request it as it gets updated. This store also listens to any actions relevant to keep the data up to date such as the plugin update/activate/deactivate etc. 
+The Plugins Store is responsible for keeping each site's plugin list up to date. Initially it loads the data and request it as it gets updated. This store also listens to any actions relevant to keep the data up to date such as the plugin update/activate/deactivate etc.
 
 ####The Data
 The Data that is stored in the sites plugin store looks like this:
@@ -81,21 +81,21 @@ Returns an array of sites that have a particular plugin.
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var PluginsStore = require( 'lib/plugins/store' );
 
-module.exports = React.createClass( { 
+module.exports = React.createClass( {
 
 	displayName: 'yourComponent',
-	
+
 	componentDidMount: function() {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
 	},
-	
+
 	componentWillUnmount: function() {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
 	},
@@ -103,7 +103,7 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return this.getPlugins();
 	},
-	
+
 	getPlugins: function() {
 
 		var sites = this.props.sites.getSelectedOrAllWithPlugins();
@@ -116,20 +116,20 @@ module.exports = React.createClass( {
 	refreshSitesAndPlugins: function() {
 		this.setState( this.getPlugins() );
 	},
-	
+
 	render: function() {
-		
+
 	}
-	
+
 } );
 
 ```
 
 
-###Actions 
-Actions get triggered by views and stores. 
+###Actions
+Actions get triggered by views and stores.
 
-####Public methods. 
+####Public methods.
 
 Triggers api call to fetch the site data.
 
@@ -184,27 +184,27 @@ Toggle AutoUpdates for a plugin on a site.
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var PluginsActions = require( 'lib/plugins/actions' );
 
-module.exports = React.createClass( { 
+module.exports = React.createClass( {
 
 	displayName: 'yourComponent',
-	
+
 	updatePlugin: function() {
 		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
 	},
-	
+
 	render: function() {
 		return (
 			<button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</button>
 		)
 	}
-	
+
 } );
 
 ```
@@ -213,6 +213,5 @@ module.exports = React.createClass( {
 
 ###Testing
 
-To run tests go to 
+To run tests go to
 ```cd client/lib/plugins/ && make test```
-

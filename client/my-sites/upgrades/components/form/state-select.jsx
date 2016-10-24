@@ -1,73 +1,100 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	observe = require( 'lib/mixins/data-observe' );
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { isEmpty } from 'lodash';
+import { localize } from 'i18n-calypso';
+import ReactDom from 'react-dom';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	FocusMixin = require( './focus-mixin.js' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormSelect = require( 'components/forms/form-select' ),
-	Input = require( './input' );
+import FormLabel from 'components/forms/form-label';
+import FormSelect from 'components/forms/form-select';
+import FormInputValidation from 'components/forms/form-input-validation';
+import { getCountryStates } from 'state/country-states/selectors';
+import Input from './input';
+import QueryCountryStates from 'components/data/query-country-states';
+import { recordGoogleEvent } from 'state/analytics/actions';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
 
-module.exports = React.createClass( {
-	displayName: 'StateSelect',
+class StateSelect extends Component {
+	static instances = 0;
 
-	mixins: [ FocusMixin(), observe( 'statesList' ) ],
+	componentWillMount() {
+		this.instance = ++this.constructor.instances;
+	}
 
-	recordStateSelectClick: function() {
-		if ( this.props.eventFormName ) {
-			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } State Select` );
+	recordStateSelectClick = () => {
+		const { eventFormName, recordGoogleEvent: recordEvent } = this.props;
+
+		if ( eventFormName ) {
+			recordEvent( 'Upgrades', `Clicked ${ eventFormName } State Select` );
 		}
-	},
+	};
 
-	render: function() {
-		var classes = classNames( this.props.additionalClasses, 'state', {
-				focus: this.state.focus,
-				invalid: this.props.invalid
-			} ),
-			statesList = this.props.statesList.getForCountry( this.props.countryCode ),
-			options = [];
-
-		if ( isEmpty( statesList ) ) {
-			return (
-				<Input { ...this.props } />
-			);
+	focus() {
+		const node = ReactDom.findDOMNode( this.refs.input );
+		if ( node ) {
+			node.focus();
+			scrollIntoViewport( node );
 		} else {
-			options.push( { key: '', label: this.translate( 'Select State' ), disabled: 'disabled' } );
+			this.refs.state.focus();
+		}
+	}
 
-			options = options.concat( statesList.map( function( state ) {
-				if ( isEmpty( state.code ) ) {
-					return { key: '--', label: '', disabled: 'disabled' };
-				} else {
-					return { key: state.code, label: state.name };
-				}
-			} ) );
+	render() {
+		const classes = classNames( this.props.additionalClasses, 'state' );
 
-			return (
-				<div className={ classes }>
-					<div>
-						<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
+		return (
+			<div>
+				{ this.props.countryCode && <QueryCountryStates countryCode={ this.props.countryCode } /> }
+				{ isEmpty( this.props.countryStates )
+					? <Input ref="input" { ...this.props } />
+					: <div className={ classes }>
+						<FormLabel htmlFor={ `${ this.constructor.name }-${ this.instance }` }>{ this.props.label }</FormLabel>
 						<FormSelect
+							ref="input"
+							id={ `${ this.constructor.name }-${ this.instance }` }
 							name={ this.props.name }
 							value={ this.props.value }
 							disabled={ this.props.disabled }
-							onBlur={ this.handleBlur }
 							onChange={ this.props.onChange }
 							onClick={ this.recordStateSelectClick }
-							onFocus={ this.handleFocus } >
-						{ options.map( function( option ) {
-							return <option key={ option.key } value={ option.key } disabled={ option.disabled }>{ option.label }</option>;
-						} ) }
+							isError={ this.props.isError } >
+
+							<option key="--" value="--" disabled="disabled">{ this.props.translate( 'Select State' ) }</option>
+							{ this.props.countryStates.map( ( state ) =>
+								<option key={ state.code } value={ state.code }>{ state.name }</option>
+							) }
 						</FormSelect>
 					</div>
-				</div>
-			);
-		}
+				}
+				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
+			</div>
+		);
 	}
-} );
+}
+
+StateSelect.propTypes = {
+	additionalClasses: PropTypes.string,
+	countryCode: PropTypes.string,
+	countryStates: PropTypes.array,
+	disabled: PropTypes.bool,
+	errorMessage: PropTypes.string,
+	eventFormName: PropTypes.string,
+	isError: PropTypes.bool,
+	label: PropTypes.string,
+	name: PropTypes.string,
+	onChange: PropTypes.func,
+	value: PropTypes.string,
+};
+
+export default connect(
+	( state, { countryCode } ) => ( {
+		countryStates: countryCode ? getCountryStates( state, countryCode ) : []
+	} ),
+	{ recordGoogleEvent }
+)( localize( StateSelect ) );

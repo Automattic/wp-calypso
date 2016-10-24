@@ -1,0 +1,125 @@
+.help-courses__course-list{
+	&.is-placeholder {
+		@include placeholder( 23% );
+		height: 300px;
+	}
+}
+
+.help-courses__course{
+	&.is-placeholder {
+		@include placeholder( 23% );
+	}
+
+	.help__help-teaser-button-icon {
+		color: $alert-yellow !important;
+	}
+
+	.help__help-teaser-button .card {
+		border-color: $alert-yellow !important;
+	}
+}
+
+.help-courses__course-videos-label,
+.help-courses__header-cake .header-cake__title,
+.help-courses__course-label {
+	color: $gray;
+}
+
+.help-courses__course-video-title,
+.help-courses__course-title {
+	@extend %content-font;
+	color: $gray-dark;
+	font-weight: 700;
+	font-size: 21px;
+	line-height: 1.3;
+
+	margin-bottom: 8px;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 24px;
+		line-height: 1.416;
+	}
+}
+
+.help-courses__course-video-description,
+.help-courses__course-description {
+	@extend %content-font;
+	font-size: 15px;
+	line-height: 22px;
+	margin-bottom: 0px;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 16px;
+		line-height: 1.618;
+	}
+}
+
+.help-courses__course-schedule-item {
+	color: $gray;
+	display: flex;
+	align-items: center;
+}
+
+.help-courses__course-schedule-item-date {
+	font-size: 13px;
+	display: inline-block;
+	margin: 0px 10px 0px 0px;
+	white-space: normal;
+
+	@include breakpoint( ">480px" ) {
+		font-size: 15px;
+	}
+}
+
+.help-courses__course-video-date-icon,
+.help-courses__course-schedule-item-icon {
+	align-self: center;
+	margin-right: 5px;
+	margin-bottom: -3px;
+}
+
+.help-courses__course-schedule-item-buttons {
+	margin-left: auto;
+}
+
+.help-courses__course-schedule-item-businessplan-button {
+	background-color: $gray-dark;
+	border-radius: 3px;
+	color: $gray-light;
+	padding: 5px 12px;
+	cursor: default;
+	font-size: 14px;
+	white-space: nowrap;
+}
+
+.help-courses__course-videos {
+	margin-top: 16px;
+}
+
+.help-courses__course-video-date {
+	color: $gray;
+	font-size: 13px;
+}
+
+.help-courses__course-video-embed {
+	/*Maintain a 16:9 aspect ratio*/
+	position: relative;
+	&:before {
+		display: block;
+		content: "";
+		width: 100%;
+		padding-top: ( 9 / 16 ) * 100%;
+		background-color: #000;
+	}
+}
+
+.help-courses__course-video-embed-iframe {
+	border: none;
+	display: block;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+}

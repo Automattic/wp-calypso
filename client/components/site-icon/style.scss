@@ -1,7 +1,3 @@
-/**
- * @component SiteIcon
- */
-
 .site-icon {
 	position: relative;
 	background: lighten( $gray, 20% );
@@ -9,13 +5,13 @@
 	overflow: hidden;
 	align-self: center;
 	margin: 0;
+	text-align: center;
 
 	// Globe icon for sites without an icon
 	&.is-blank {
-		.noticon {
+		.gridicon {
 			color: $white;
-			text-align: center;
-			z-index: 0;
+			z-index: z-index( 'root', '.site-icon.is-blank .gridicon' );
 		}
 	}
 }

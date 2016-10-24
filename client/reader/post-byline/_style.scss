@@ -4,15 +4,6 @@
 	margin: 0;
 	padding: 16px 0 8px 0;
 
-	img.emoji, img.wp-smiley {
-		display: inline;
-		height: 1em;
-		width: 1em;
-		margin: 0;
-		padding: 0 0.2em;
-		vertical-align: -0.1em;
-	}
-
 	li {
 		margin: 0 16px 0 0;
 		display: inline-block;
@@ -45,11 +36,17 @@
 
 		color: darken( $gray, 20 );
 	}
-
 }
 
 .reader-post-byline__tag .gridicon {
-		color: #C8D7E1;
+		color: lighten( $gray, 20% );
 		position: relative;
 			top: 4px;
+}
+
+.reader-post-byline__date-link .gridicon {
+	color: inherit;
+	position: relative;
+	top: 2px;
+	margin-left: 2px;
 }

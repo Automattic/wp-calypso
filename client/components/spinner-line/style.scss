@@ -1,0 +1,18 @@
+@keyframes spinner-line__animation {
+	0% { background-position: 0 0; }
+	100% { background-position: 600px 0; }
+}
+
+hr.spinner-line {
+	border: none;
+	height: 3px;
+	margin: 24px 0;
+	background-image: linear-gradient(
+		to right,
+		lighten( $gray, 10% ) 0%,
+		lighten( $gray, 20% ) 50%,
+		lighten( $gray, 10% ) 100%
+	);
+	background-size: 300px 100%;
+	animation: spinner-line__animation 1.2s infinite linear;
+}

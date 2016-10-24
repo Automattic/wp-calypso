@@ -3,9 +3,10 @@
  */
 var debug = require( 'debug' )( 'calypso:sites-list' ),
 	store = require( 'store' ),
-	assign = require( 'lodash/object/assign' ),
-	find = require( 'lodash/collection/find' ),
-	some = require( 'lodash/collection/some' );
+	assign = require( 'lodash/assign' ),
+	find = require( 'lodash/find' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	some = require( 'lodash/some' );
 
 /**
  * Internal dependencies
@@ -15,8 +16,8 @@ var wpcom = require( 'lib/wp' ),
 	JetpackSite = require( 'lib/site/jetpack' ),
 	Searchable = require( 'lib/mixins/searchable' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	isBusiness = require( 'lib/products-values' ).isBusiness,
-	user = require( 'lib/user' )();
+	isPlan = require( 'lib/products-values' ).isPlan,
+	userUtils = require( 'lib/user/utils' );
 
 /**
  * SitesList component
@@ -67,48 +68,44 @@ SitesList.prototype.get = function() {
  * @api public
  */
 SitesList.prototype.fetch = function() {
-	var currentUser = user.get(),
-		siteVisiblity = 'all';
-
-	if ( this.fetching ) {
+	if ( ! userUtils.isLoggedIn() || this.fetching ) {
 		return;
 	}
 
-	// If the user has too many sites the endpoint fails to resolve
-	if ( currentUser && currentUser.site_count > 300 ) {
-		siteVisiblity = 'visible';
-	}
-
 	this.fetching = true;
-	debug( 'getting SitesList from api' );
-	wpcom.me().sites( { site_visibility: siteVisiblity }, function( error, data ) {
-		var sites, changed;
 
+	debug( 'getting SitesList from api' );
+
+	wpcom.me().sites( { site_visibility: 'all' }, function( error, data ) {
 		if ( error ) {
 			debug( 'error fetching SitesList from api', error );
 			this.fetching = false;
+
 			return;
 		}
 
-		debug( 'SitesList fetched from api:', data.sites );
-
-		sites = this.parse( data );
-
-		if ( ! this.initialized ) {
-			this.initialize( sites );
-			this.fetched = true;
-			this.emit( 'change' );
-		} else {
-			changed = this.transaction( this.update, sites );
-			if ( changed || ! this.fetched ) {
-				this.fetched = true;
-				debug( 'SitesList changed via update' );
-				this.emit( 'change' );
-			}
-		}
+		this.sync( data );
 		this.fetching = false;
-		store.set( 'SitesList', sites );
 	}.bind( this ) );
+};
+
+SitesList.prototype.sync = function( data ) {
+	debug( 'SitesList fetched from api:', data.sites );
+
+	let sites = this.parse( data );
+	if ( ! this.initialized ) {
+		this.initialize( sites );
+		this.fetched = true;
+		this.emit( 'change' );
+	} else {
+		let changed = this.transaction( this.update, sites );
+		if ( changed || ! this.fetched ) {
+			this.fetched = true;
+			debug( 'SitesList changed via update' );
+			this.emit( 'change' );
+		}
+	}
+	store.set( 'SitesList', sites );
 };
 
 /**
@@ -188,8 +185,7 @@ SitesList.prototype.parse = function( data ) {
  **/
 SitesList.prototype.update = function( sites ) {
 	var sitesMap = {},
-		changed = false,
-		oldSelected = this.getSelectedSite();
+		changed = false;
 
 	// Create ID -> site map from existing data
 	this.data.forEach( function( site ) {
@@ -225,6 +221,29 @@ SitesList.prototype.update = function( sites ) {
 	}
 
 	return changed;
+};
+
+/**
+ * Updates the `plan` property of existing sites.
+ *
+ * @param {array} purchases - Array of purchases indexed by site IDs
+ */
+SitesList.prototype.updatePlans = function( purchases ) {
+	if ( this.data ) {
+		this.data = this.data.map( function( site ) {
+			var plan;
+
+			if ( purchases[ site.ID ] ) {
+				plan = find( purchases[ site.ID ], isPlan );
+
+				if ( plan ) {
+					site.set( { plan: plan } );
+				}
+			}
+
+			return site;
+		} );
+	}
 };
 
 /**
@@ -267,7 +286,6 @@ SitesList.prototype.propagateChange = function() {
  */
 SitesList.prototype.getNetworkSites = function( multisite ) {
 	return this.get().filter( function( site ) {
-
 		return site.jetpack &&
 			site.visible &&
 			( this.isConnectedSecondaryNetworkSite( site ) || site.isMainNetworkSite() ) &&
@@ -339,7 +357,7 @@ SitesList.prototype.resetSelectedSite = function() {
 /**
  * Set selected site
  *
- * @param {number} Site ID to update visibility state
+ * @param {number} Site ID
  * @api private
  */
 SitesList.prototype.setSelectedSite = function( siteID ) {
@@ -370,13 +388,13 @@ SitesList.prototype.getSite = function( siteID ) {
 		return false;
 	}
 
-	return this.get().filter( function( site ) {
+	return find( this.get(), function( site ) {
 		// We need to check `slug` before `domain` to grab the correct site on certain
 		// clashes between a domain redirect and a Jetpack site, as well as domains
 		// on subfolders, but we also need to look for the `domain` as a last resort
 		// to cover mapped domains for regular WP.com sites.
 		return site.ID === siteID || site.slug === siteID || site.domain === siteID || site.wpcom_url === siteID;
-	}, this ).shift();
+	} );
 };
 
 /**
@@ -385,9 +403,7 @@ SitesList.prototype.getSite = function( siteID ) {
  * @api public
  **/
 SitesList.prototype.getPrimary = function() {
-	return this.get().filter( function( site ) {
-		return site.primary === true;
-	}, this ).shift();
+	return find( this.get(), 'primary' );
 };
 
 /**
@@ -459,22 +475,21 @@ SitesList.prototype.getSelectedOrAllJetpackCanManage = function() {
 		return site.jetpack &&
 			site.capabilities &&
 			site.capabilities.manage_options &&
-			( ! site.modules || site.canManage() );
+			site.canManage();
 	} );
 };
 
 SitesList.prototype.getSelectedOrAllWithPlugins = function() {
-	return this.getSelectedOrAll().concat(
-		this.getSelectedOrAll().filter( function( site ) {
-			return isBusiness( site.plan );
-		} )
-	);
+	return this.getSelectedOrAll().filter( site => {
+		return site.capabilities &&
+			site.capabilities.manage_options &&
+			site.jetpack &&
+			( site.visible || this.selected );
+	} );
 };
 
 SitesList.prototype.hasSiteWithPlugins = function() {
-	return some( this.get(), function( site ) {
-		return isBusiness( site.plan ) || site.jetpack;
-	} );
+	return ! isEmpty( this.getSelectedOrAllWithPlugins() );
 };
 
 SitesList.prototype.fetchAvailableUpdates = function() {
@@ -538,19 +553,6 @@ SitesList.prototype.canUpdateFiles = function() {
  */
 SitesList.prototype.canManageSelectedOrAll = function() {
 	return this.getSelectedOrAll().some( function( site ) {
-		if ( site.capabilities && site.capabilities.manage_options ) {
-			return true;
-		} else {
-			return false;
-		}
-	} );
-};
-/**
- * Whether the user has any jetpack site that the user can manage
- * @return bool
- */
-SitesList.prototype.canManageAnyJetpack = function() {
-	return this.getJetpack().some( function( site ) {
 		if ( site.capabilities && site.capabilities.manage_options ) {
 			return true;
 		} else {

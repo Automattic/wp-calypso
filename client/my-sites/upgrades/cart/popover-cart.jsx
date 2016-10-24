@@ -1,21 +1,23 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	reject = require( 'lodash/collection/reject' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import reject from 'lodash/reject';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var CartBody = require( './cart-body' ),
-	CartMessagesMixin = require( './cart-messages-mixin' ),
-	CartButtons = require( './cart-buttons' ),
-	Popover = require( 'components/popover' ),
-	CartEmpty = require( './cart-empty' ),
-	CartPlanAd = require( './cart-plan-ad' ),
-	isCredits = require( 'lib/products-values' ).isCredits,
-	Gridicon = require( 'components/gridicon' );
+import CartBody from './cart-body';
+import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
+import CartMessagesMixin from './cart-messages-mixin';
+import CartButtons from './cart-buttons';
+import Popover from 'components/popover';
+import CartEmpty from './cart-empty';
+import CartPlanAd from './cart-plan-ad';
+import CartTrialAd from './cart-trial-ad';
+import { isCredits } from 'lib/products-values';
+import Gridicon from 'components/gridicon';
 
 var PopoverCart = React.createClass( {
 	propTypes: {
@@ -24,6 +26,7 @@ var PopoverCart = React.createClass( {
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
+		sitePlans: React.PropTypes.object.isRequired,
 		onToggle: React.PropTypes.func.isRequired,
 		closeSectionNavMobilePanel: React.PropTypes.func,
 		visible: React.PropTypes.bool.isRequired,
@@ -98,9 +101,11 @@ var PopoverCart = React.createClass( {
 	},
 
 	cartBody: function() {
-		var cartEmpty = this.props.cart.hasLoadedFromServer && ! this.props.cart.products.length;
+		if ( ! this.props.cart.hasLoadedFromServer ) {
+			return <CartBodyLoadingPlaceholder />;
+		}
 
-		if ( cartEmpty ) {
+		if ( ! this.props.cart.products.length ) {
 			return (
 				<CartEmpty selectedSite={ this.props.selectedSite } path={ this.props.path } />
 			);
@@ -108,7 +113,14 @@ var PopoverCart = React.createClass( {
 
 		return (
 			<div>
-				<CartPlanAd cart={ this.props.cart } selectedSite={ this.props.selectedSite } />
+				<CartTrialAd
+					cart={ this.props.cart }
+					selectedSite={ this.props.selectedSite }
+					sitePlans={ this.props.sitePlans } />
+
+				<CartPlanAd
+					cart={ this.props.cart }
+					selectedSite={ this.props.selectedSite } />
 
 				<CartBody
 					collapse={ true }

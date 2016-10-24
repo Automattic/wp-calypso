@@ -1,5 +1,4 @@
 .following-edit {
-	position: relative;
 
 	ul {
 		list-style-type: none;
@@ -15,7 +14,8 @@
 		margin-bottom: 13px;
 	}
 
-	.foldable-card.card, .foldable-card.card.is-expanded {
+	.foldable-card.card,
+	.foldable-card.card.is-expanded {
 		margin-bottom: 0;
 	}
 
@@ -27,24 +27,200 @@
 	}
 
 	.follow-button__label {
-		display: none;
+
+		@include breakpoint( "<660px" ) {
+			display: none;
+		}
 	}
 
-	.reader-list-item__title,
-	.reader-list-item__description {
-		margin-right: 0;
+	.external-link .gridicons-external {
+		margin-left: 4px;
 	}
 }
 
+// The header on top of the "Existing Feed"
+.section-header.following-edit__header {
+	height: 51px;
+	margin-top: 34px;
+
+	.section-header__actions {
+		transition: all 0.15s ease-in-out;
+	}
+
+	.button {
+		color: $gray;
+		font-weight: 600;
+		font-size: 12px;
+		text-transform: capitalize;
+	}
+
+	.is-searching & {
+		pointer-events: none;
+
+		.section-header__actions {
+			transform: translateX( -30px );
+		}
+	}
+}
+
+// More Options
+.following-edit__more-options {
+	float: left;
+	margin-right: 16px;
+
+	.gridicon {
+		fill: $gray;
+		position: relative;
+			top: 2px;
+		cursor: pointer;
+
+		&:hover {
+			fill: $blue-medium;
+		}
+	}
+}
+
+// Sort Controls
+.following-edit__sort-controls {
+	float: left;
+	margin-right: 8px;
+
+	label {
+		display: none;
+	}
+
+	.is-compact {
+		color: $gray;
+		font-size: 12px;
+		line-height: 1.3;
+		margin-left: 0;
+		padding: 5px 20px 6px 6px;
+
+		&:hover {
+			border-color: lighten( $gray, 10% );
+		}
+	}
+}
+
+.following-edit__search {
+	margin-right: 0;
+	padding: 0;
+
+	.gridicons-search {
+		color: $blue-wordpress;
+	}
+
+	&.button.is-borderless .gridicons-search {
+		top: 4px;
+	}
+
+	&:focus .gridicons-search {
+		color: $blue-light;
+	}
+}
+
+
+// Add to Following
+.following-edit__subscribe-form {
+	position: relative;
+	padding-top: 18px;
+
+	.search {
+		margin-bottom: 0;
+		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .search' );
+	}
+
+	.search__input[type="search"] {
+		height: 50px;
+	}
+
+	.card.is-search-result {
+		position: absolute;
+			top: 70px;
+		width: 100%;
+		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .card.is-search-result' );
+
+		&.is-compact {
+			padding: 16px 24px;
+		}
+
+		&.is-valid {
+
+			.gridicon {
+				fill: $gray-dark;
+
+				&:hover,
+				&:active {
+					cursor: pointer;
+				}
+			}
+
+			.reader-list-item__icon .gridicon {
+				fill: $white;
+			}
+
+			.follow-button {
+				cursor: pointer;
+			}
+
+			.follow-button__label {
+				color: $gray-dark;
+			}
+
+			.following-edit__list-title {
+				margin-top: 8px;
+				margin-bottom: 11px;
+			}
+		}
+	}
+}
+
+// Existing Feed Search
+
+.following-edit > .search-card {
+	position: relative;
+	margin-top: -58px;
+	margin-bottom: 1px;
+	opacity: 0;
+	pointer-events: none;
+	transition: all 0.15s ease-in-out;
+
+	@include breakpoint( ">480px" ) {
+		margin-top: -52px;
+	}
+}
+
+// Followed Sites and Search Transitions
+.following-edit__sites,
+.following-edit > .search-card,
+.following-edit .no-results {
+	transition: all 0.2s ease-in-out;
+}
+
+.following-edit .no-results {
+	@include breakpoint( "<660px" ) {
+		text-align: center;
+	}
+}
+
+.following-edit.is-searching > .search-card {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+// Followed Site Cards
 .following-edit .reader-list-item__card {
 
 	&.is-placeholder {
+
+		height: 74px;
+
 		.reader-list-item__title,
 		.reader-list-item__description {
-			margin-left: 92px;
+			margin: 1px 0 0 91px;
 
-			@include breakpoint( ">660px" ) {
-				margin-left: 80px;
+			@include breakpoint( ">480px" ) {
+				margin-left: 83px;
 			}
 		}
 
@@ -56,103 +232,44 @@
 			margin-top: 4px;
 			width: 25%;
 		}
+
+		.reader-list-item__icon {
+			left: 42px;
+		}
 	}
 
 	.reader-list-item__title,
 	.reader-list-item__description {
-		padding-left: 12px;
-		margin-left: 80px;
 		margin-right: 100px;
+
 		@include breakpoint( ">660px" ) {
-			padding-left: 0;
+			margin-right: 100px;
+			padding-left: 3px;
 		}
 	}
 
 	.reader-list-item__icon {
 		top: 14px;
-		left: 40px;
-	}
-
-	&.is-search-result {
-		.gridicon__follow {
-			fill: lighten( $gray, 20% );
-		}
-
-		.follow-button {
-			cursor: default;
-			color: lighten( $gray, 20% );
-		}
-
-		&.is-valid {
-			.gridicon__follow {
-				fill: #12b0df;
-			}
-
-			.follow-button {
-				cursor: pointer;
-			}
-
-			.follow-button__label {
-				color: #12b0df;
-			}
-
-			.following-edit__list-title {
-				margin-top: 8px;
-				margin-bottom: 11px;
-			}
-		}
-
-		.reader-list-item__icon .noticon {
-			display: block;
-		}
-
-		border-radius: 5px;
-		box-shadow: 0 0 0 2px #78dcfa;
-		position: absolute;
-		width: 100%;
-		top: 44px;
-		border: 1px solid #0087be;
-		z-index: 35;
 	}
 }
 
-.following-edit__subscribe-form {
-	.search {
-		margin-bottom: 0;
-	}
+.following-edit.has-no-subscriptions .reader-list-item__card {
 
-	.search__input[type="search"] {
-		height: 38px;
-		padding-left: 33px;
-		border: 1px solid #c8d7e1;
+	&.is-placeholder {
+		.reader-list-item__icon {
+			left: 17px;
+		}
 
-		&:focus {
-			border-color: #0087be;
- 			box-shadow: 0 0 0 2px #78dcfa;
+		.reader-list-item__title,
+		.reader-list-item__description {
+			margin-left: 68px;
+
+			@include breakpoint( ">480px" ) {
+				margin-left: 55px;
+			}
 		}
 	}
-
-	position: relative;
-
-	.noticon {
-		display: none;
-	}
-
-	.gridicons-add-outline {
-		position: absolute;
-		top: 7px;
-		left: 6px;
-		fill: #12b0df;
-		z-index: 40;
-	}
-
-	.noticon-close-alt {
-		top: -12px;
-		right: -8px;
-		color: $gray;
-	}
 }
-
 
 .following-edit-navigation {
 	min-height: 25px;
@@ -166,17 +283,17 @@
 .following-edit__notification-settings-card {
 	background-color: $gray-light;
 	position: relative;
-	color: #2e4453;
+	color: $gray-dark;
 
 	&.is-compact {
-		padding-top: 10px;
-		padding-bottom: 10px;
+		padding: 10px 16px;
+
 		@include breakpoint( ">660px" ) {
 			padding-left: 105px;
 		}
 	}
 
-	&.is-external {
+	&.is-impossible-to-send-email {
 		color: $gray;
 		padding-left: 22px;
 
@@ -195,7 +312,7 @@
 
 	.following-edit__form-toggle-wrapper {
 		position: absolute;
-		right: 16px;
+			right: 16px;
 	}
 
 	.following-edit__form-toggle-status {
@@ -222,72 +339,23 @@
 		left: 0;
 		top: 0;
 	cursor: pointer;
-	padding: 26px 8px 20px 8px;
+	padding: 26px 8px 20px;
 
 	.gridicon {
 		fill: $gray;
-		transform: rotate(0deg);
-		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+		transform: rotate( 0deg );
+		transition: transform .15s cubic-bezier( 0.175, .885, .32, 1.275 ), color .20s ease-in;
 
 		.is-expanded & {
-			transform: rotate(90deg);
+			transform: rotate( 90deg );
 		}
 	}
 }
 
 .following-edit__notification-settings-error {
-	margin-top: 12px;
+	margin-top: 14px;
 }
 
-.following-edit__existing-feed-search {
-	margin-bottom: 0;
-	margin-left: -1px;
-
-	.search__input[type="search"] {
-		box-shadow: inset 0 0 0 1px lighten( $gray, 20% );
-	}
-
-	.noticon-close-alt {
-		right: 191px;
-	}
-}
-
-.following-edit-sort-controls {
-	position: absolute;
-		right: -1px;
-	z-index: 30;
-	background-color: $gray-light;
-	padding: 13px 8px 0 16px;
-	box-shadow: inset 0px 0px 0px 1px lighten( $gray, 20% );
-	min-height: 51px;
-	box-sizing: border-box;
-
-	label {
-		vertical-align: middle;
-		color: $gray;
-		display: inline-block;
-		font-size: 13px;
-		font-weight: 600;
-		margin-top: -1px;
-		margin-right: 6px;
-	}
-
-	select {
-		vertical-align: middle;
-		min-width: 100px;
-		display: inline;
-	}
-}
-
-@include breakpoint( ">660px" ) {
-	.following-edit {
-		.follow-button__label {
-			display: block;
-		}
-
-		.reader-list-item__title,
-		.reader-list-item__description {
-			margin-right: 100px;
-		}
-	}
+.is-section-reader .main.following-edit .empty-content {
+	margin-top: -40px;
 }

@@ -1,0 +1,41 @@
+.search-stream__intro {
+	@include breakpoint( "<660px" ) {
+		margin-left: 16px;
+	}
+}
+
+.search-stream .search {
+	margin: 0;
+}
+
+.search-stream__input-card.card {
+	margin-bottom: 16px;
+	padding: 0;
+	z-index: z-index( 'root', '.search-stream__input-card' );
+}
+
+.search-stream__blank {
+	margin-top: 0;
+	text-align:center;
+}
+
+.search-stream__blank-suggestions {
+	font-size: 13px;
+	color: $gray;
+	margin-top: 0;
+	text-align:left;
+
+	@include breakpoint( "<660px" ) {
+		padding-left: 16px;
+	}
+}
+
+.card.reader-search-card {
+
+	&.is-photo {
+
+		@include breakpoint( "<660px" ) {
+			z-index: z-index( 'root', '.reader-search-card' );
+		}
+	}
+}

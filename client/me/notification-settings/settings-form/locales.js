@@ -1,4 +1,4 @@
-import i18n from 'lib/mixins/i18n'
+import i18n from 'i18n-calypso'
 
 export const streamLabels = {
 	timeline: () => i18n.translate( 'Timeline' ),
@@ -6,7 +6,7 @@ export const streamLabels = {
 };
 
 export const settingLabels = {
-	comment_like: () => i18n.translate( 'Likes on my comments' ),
+	comment_like: () => i18n.translate( 'Likes on your comments' ),
 	comment_reply: () => i18n.translate( 'Replies to your comments' ),
 
 	new_comment: () => i18n.translate( 'New Comment' ),

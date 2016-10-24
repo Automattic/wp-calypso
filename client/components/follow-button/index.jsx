@@ -1,66 +1,75 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' );
+import React from 'react';
+import { noop } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-var FollowButton = require( './button' ),
-	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions' );
+import FollowButton from './button';
+import FeedSubscriptionActions from 'lib/reader-feed-subscriptions/actions';
+import FeedSubscriptionStore from 'lib/reader-feed-subscriptions';
 
-var FollowButtonContainer = React.createClass( {
+const FollowButtonContainer = React.createClass( {
 	propTypes: {
 		siteUrl: React.PropTypes.string.isRequired,
 		iconSize: React.PropTypes.number,
 		onFollowToggle: React.PropTypes.func
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			onFollowToggle: noop
 		};
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return this.getStateFromStores();
 	},
 
-	getStateFromStores: function() {
-		return { following: FeedSubscriptionStore.getIsFollowingBySiteUrl( this.props.siteUrl ) };
+	getStateFromStores( props = this.props ) {
+		return { following: FeedSubscriptionStore.getIsFollowingBySiteUrl( props.siteUrl ) };
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		FeedSubscriptionStore.on( 'change', this.onStoreChange );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		FeedSubscriptionStore.off( 'change', this.onStoreChange );
 	},
 
-	onStoreChange: function() {
-		var newState = this.getStateFromStores();
+	componentWillReceiveProps( nextProps ) {
+		this.updateState( nextProps );
+	},
+
+	updateState( props = this.props ) {
+		const newState = this.getStateFromStores( props );
 		if ( newState.following !== this.state.following ) {
 			this.setState( newState );
 		}
 	},
 
-	handleFollowToggle: function( following ) {
+	onStoreChange() {
+		this.updateState();
+	},
+
+	handleFollowToggle( following ) {
 		FeedSubscriptionActions[ following ? 'follow' : 'unfollow' ]( this.props.siteUrl );
 		this.props.onFollowToggle( following );
 	},
 
-	render: function() {
+	render() {
 		return (
 			<FollowButton
 				following={ this.state.following }
 				onFollowToggle={ this.handleFollowToggle }
 				iconSize={ this.props.iconSize }
-				tagName={ this.props.tagName } />
+				tagName={ this.props.tagName }
+				disabled={ this.props.disabled } />
 		);
 	}
 } );
 
-module.exports = FollowButtonContainer;
+export default FollowButtonContainer;

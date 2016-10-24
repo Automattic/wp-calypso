@@ -16,7 +16,14 @@ export default React.createClass( {
 
 	propTypes: {
 		site: PropTypes.object,
-		item: PropTypes.object
+		item: PropTypes.object,
+		showRemoveButton: PropTypes.bool
+	},
+
+	getDefaultProps: function() {
+		return {
+			showRemoveButton: true
+		};
 	},
 
 	renderCaption() {
@@ -33,7 +40,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { site, item } = this.props;
+		const { site, item, showRemoveButton } = this.props;
 
 		return (
 			<div className="editor-media-modal-gallery__edit-item">
@@ -42,9 +49,12 @@ export default React.createClass( {
 					scale={ 1 }
 					photon={ false } />
 				{ this.renderCaption() }
-				<EditorMediaModalGalleryRemoveButton
-					siteId={ site.ID }
-					itemId={ item.ID } />
+				{ showRemoveButton &&
+					<EditorMediaModalGalleryRemoveButton
+						siteId={ site.ID }
+						itemId={ item.ID }
+					/>
+				}
 			</div>
 		);
 	}

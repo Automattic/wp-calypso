@@ -1,38 +1,62 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var Masterbar = require( './masterbar' ),
-	NoticesList = require( 'notices/notices-list' ),
-	notices = require( 'notices' );
+import MasterbarLoggedOut from 'layout/masterbar/logged-out';
 
-module.exports = React.createClass( {
-	displayName: 'LayoutLoggedOut',
+const LayoutLoggedOut = ( {
+	primary,
+	secondary,
+	tertiary,
+	section,
+} ) => {
+	const classes = classNames( 'layout', {
+		[ 'is-group-' + section.group ]: !! section,
+		[ 'is-section-' + section.name ]: !! section,
+		'focus-content': true,
+		'has-no-sidebar': true, // Logged-out never has a sidebar
+		'wp-singletree-layout': !! primary,
+	} );
 
-	getInitialState: function() {
-		return {
-			section: undefined
-		};
-	},
-
-	render: function() {
-		var sectionClass = 'wp' + ( this.state.section ? ' is-section-' + this.state.section : '' );
-
-		return (
-			<div className={ sectionClass }>
-				<Masterbar />
-				<div id="content" className="wp-content">
-					<NoticesList id="notices" notices={ notices.list } />
-					<div id="primary" className="wp-primary wp-section" />
-					<div id="secondary" className="wp-secondary" />
+	return (
+		<div className={ classes }>
+			<MasterbarLoggedOut title={ section.title } />
+			<div id="content" className="layout__content">
+				<div id="primary" className="layout__primary">
+					{ primary }
 				</div>
-				<div id="tertiary" className="wp-overlay fade-background" />
+				<div id="secondary" className="layout__secondary">
+					{ secondary }
+				</div>
 			</div>
-		);
-	}
+			<div id="tertiary">
+				{ tertiary }
+			</div>
+		</div>
+	);
+};
 
-} );
+LayoutLoggedOut.displayName = 'LayoutLoggedOut';
+LayoutLoggedOut.propTypes = {
+	primary: React.PropTypes.element,
+	secondary: React.PropTypes.element,
+	tertiary: React.PropTypes.element,
+	section: React.PropTypes.oneOfType( [
+		React.PropTypes.bool,
+		React.PropTypes.object,
+	] )
+};
+
+export default connect(
+	state => ( {
+		section: state.ui.section
+	} )
+)( LayoutLoggedOut );

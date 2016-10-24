@@ -1,10 +1,11 @@
 /**
  * Exernal dependencies
  */
-var isEmpty = require( 'lodash/lang/isEmpty' ),
-	find = require( 'lodash/collection/find' ),
-	indexOf = require( 'lodash/array/indexOf' ),
-	pick = require( 'lodash/object/pick' );
+var isEmpty = require( 'lodash/isEmpty' ),
+	find = require( 'lodash/find' ),
+	indexOf = require( 'lodash/indexOf' ),
+	pick = require( 'lodash/pick' ),
+	merge = require( 'lodash/merge' );
 
 /**
  * Internal dependencies
@@ -12,19 +13,23 @@ var isEmpty = require( 'lodash/lang/isEmpty' ),
 var i18nUtils = require( 'lib/i18n-utils' ),
 	steps = require( 'signup/config/steps' ),
 	flows = require( 'signup/config/flows' ),
-	defaultFlowName = require( 'signup/config/flows' ).defaultFlowName;
+	defaultFlowName = require( 'signup/config/flows' ).defaultFlowName,
+	formState = require( 'lib/form-state' ),
+	user = require( 'lib/user' )();
 
 function getFlowName( parameters ) {
-	var currentFlowName = flows.currentFlowName;
-	if ( parameters.flowName && isFlowName( parameters.flowName ) ) {
-		return parameters.flowName;
-	}
+	const flow = ( parameters.flowName && isFlowName( parameters.flowName ) ) ? parameters.flowName : defaultFlowName;
+	return maybeFilterFlowName( flow, flows.filterFlowName );
+}
 
-	if ( ! isFlowName( parameters.flowName ) && currentFlowName === defaultFlowName ) {
-		return defaultFlowName;
+function maybeFilterFlowName( flowName, filterCallback ) {
+	if ( filterCallback && typeof filterCallback === 'function' ) {
+		const filteredFlow = filterCallback( flowName );
+		if ( isFlowName( filteredFlow ) ) {
+			return filteredFlow;
+		}
 	}
-
-	return currentFlowName;
+	return flowName;
 }
 
 function isFlowName( pathFragment ) {
@@ -59,7 +64,10 @@ function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
 	const flow = flowName ? `/${ flowName }` : '',
 		step = stepName ? `/${ stepName }` : '',
 		section = stepSectionName ? `/${ stepSectionName }` : '',
-		locale = localeSlug ? `/${ localeSlug }` : '';
+		// when the user is logged in, the locale slug is meaningless in a
+		// signup URL, as the page will be translated in the language the user
+		// has in their settings.
+		locale = localeSlug && ! user.get() ? `/${ localeSlug }` : '';
 
 	if ( flowName === defaultFlowName ) {
 		// we don't include the default flow name in the route
@@ -93,13 +101,43 @@ function getNextStepName( flowName, currentStepName ) {
 	return flow.steps[ indexOf( flow.steps, currentStepName ) + 1 ];
 }
 
+function getFlowSteps( flowName ) {
+	const flow = flows.getFlow( flowName );
+	return flow.steps;
+}
+
+function getValueFromProgressStore( { signupProgressStore, stepName, fieldName } ) {
+	const siteStepProgress = find(
+		signupProgressStore,
+		step => step.stepName === stepName
+	);
+	return siteStepProgress ? siteStepProgress[fieldName] : null;
+}
+
+function mergeFormWithValue( { form, fieldName, fieldValue} ) {
+	if ( ! formState.getFieldValue( form, fieldName ) ) {
+		return merge( form, {
+			[fieldName]: { value: fieldValue }
+		} );
+	}
+	return form;
+}
+
+function getDestination( destination, dependencies, flowName ) {
+	return flows.filterDestination( destination, dependencies, flowName );
+}
+
 module.exports = {
 	getFlowName: getFlowName,
+	getFlowSteps: getFlowSteps,
 	getStepName: getStepName,
 	getLocale: getLocale,
 	getStepSectionName: getStepSectionName,
 	getStepUrl: getStepUrl,
 	getValidPath: getValidPath,
 	getPreviousStepName: getPreviousStepName,
-	getNextStepName: getNextStepName
+	getNextStepName: getNextStepName,
+	getValueFromProgressStore: getValueFromProgressStore,
+	getDestination: getDestination,
+	mergeFormWithValue: mergeFormWithValue
 };

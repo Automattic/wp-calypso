@@ -3,10 +3,10 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' ),
-	assign = require( 'lodash/object/assign' ),
-	omit = require( 'lodash/object/omit' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	noop = require( 'lodash/noop' ),
+	assign = require( 'lodash/assign' ),
+	omit = require( 'lodash/omit' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * External dependencies
@@ -18,10 +18,11 @@ var Spinner = require( 'components/spinner' ),
 	ListItemVideo = require( './list-item-video' ),
 	ListItemAudio = require( './list-item-audio' ),
 	ListItemDocument = require( './list-item-document' ),
-	EditorMediaModalGalleryHelpContainer = require( 'post-editor/media-modal/gallery-help-container' ),
 	MediaUtils = require( 'lib/media/utils' );
 
-module.exports = React.createClass( {
+import EditorMediaModalGalleryHelp from 'post-editor/media-modal/gallery-help';
+
+export default React.createClass( {
 	displayName: 'MediaLibraryListItem',
 
 	propTypes: {
@@ -46,7 +47,7 @@ module.exports = React.createClass( {
 		};
 	},
 
-	shouldComponentUpdate: function( nextProps, nextState ) {
+	shouldComponentUpdate: function( nextProps ) {
 		return ! ( nextProps.media === this.props.media &&
 			nextProps.scale === this.props.scale &&
 			nextProps.maxImageWidth === this.props.maxImageWidth &&
@@ -123,9 +124,7 @@ module.exports = React.createClass( {
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }
 					{ this.renderSpinner() }
-					{ this.props.showGalleryHelp && (
-						<EditorMediaModalGalleryHelpContainer />
-					) }
+					{ this.props.showGalleryHelp && <EditorMediaModalGalleryHelp /> }
 					<Button type="button" className="media-library__list-item-edit" onClick={ this.editItem }>
 						<span className="screen-reader-text">
 							{ this.translate( 'Edit', { context: 'verb' } ) }
@@ -137,3 +136,4 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+

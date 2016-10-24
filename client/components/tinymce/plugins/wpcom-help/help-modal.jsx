@@ -4,7 +4,7 @@
  * External dependencies
  */
 const React = require( 'react' ),
-	forEach = require( 'lodash/collection/forEach' );
+	forEach = require( 'lodash/forEach' );
 
 /**
  * Internal dependencies

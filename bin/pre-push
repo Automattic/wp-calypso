@@ -1,16 +1,6 @@
 #!/bin/sh
 
-echo "\nBy contributing to this project, you license the materials you contribute under the GNU General Public License v2 (or later). All materials must have GPLv2 compatible licenses — see CONTRIBUTING.md for details.\n\n"
-
-echo "\nRunning tests ...\n"
-make test
-if [ $? -ne 0 ]; then
-    echo "\n\n\033[41mPUSH NOT ALLOWED:\033[0m The tests are broken! Please fix them and try again.\n"
-    echo "(If you want to push anyway, you can repeat the command using --no-verify to skip this check)\n"
-    exit 1
-fi
-
-echo "\n\n\033[42mPUSH READY TO GO\033[0m\n"
+echo "\nBy contributing to this project, you license the materials you contribute under the GNU General Public License v2 (or later). All materials must have GPLv2 compatible licenses — see .github/CONTRIBUTING.md for details.\n\n"
 
 current_branch=$(git symbolic-ref HEAD | sed -e 's,.*/\(.*\),\1,')
 if [ 'master' = $current_branch ]
@@ -24,4 +14,3 @@ then
     exit 1 # push will not execute
 fi
 exit 0
-

@@ -1,5 +1,3 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
@@ -8,10 +6,13 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
+import useFakeDom from 'test/helpers/use-fake-dom';
 import { deserialize } from '../';
 import { MediaTypes } from '../constants';
 
 describe( 'MediaSerialization', function() {
+	useFakeDom();
+
 	describe( '#deserialize()', function() {
 		it( 'should parse a caption shortcode string containing an image', function() {
 			const parsed = deserialize( '[caption id="attachment_1627" align="aligncenter" width="660"]<img class="size-full wp-image-1627" src="https://andrewmduthietest.files.wordpress.com/2015/01/img_0372.jpg" alt="Example" width="660" height="660" /> Ceramic[/caption]' );
@@ -75,8 +76,11 @@ describe( 'MediaSerialization', function() {
 					get: () => 660
 				} );
 			} );
-			img.naturalWidth = 1320;
-			img.naturalHeight = 1320;
+			[ 'naturalWidth', 'naturalHeight' ].forEach( ( dimension ) => {
+				Object.defineProperty( img, dimension, {
+					get: () => 1320
+				} );
+			} );
 			const parsed = deserialize( img );
 
 			expect( parsed.type ).to.equal( MediaTypes.IMAGE );
@@ -88,8 +92,11 @@ describe( 'MediaSerialization', function() {
 			let img = document.createElement( 'img' );
 			img.width = 660;
 			img.height = 660;
-			img.naturalWidth = 1320;
-			img.naturalHeight = 1320;
+			[ 'naturalWidth', 'naturalHeight' ].forEach( ( dimension ) => {
+				Object.defineProperty( img, dimension, {
+					get: () => 1320
+				} );
+			} );
 			img.setAttribute( 'width', '990' );
 			img.setAttribute( 'height', '990' );
 			const parsed = deserialize( img );

@@ -2,9 +2,9 @@
  * External dependencies
  */
 import inherits from 'inherits';
-import some from 'lodash/collection/some';
-import includes from 'lodash/collection/includes';
-import find from 'lodash/collection/find';
+import some from 'lodash/some';
+import includes from 'lodash/includes';
+import find from 'lodash/find';
 
 /**
  * Internal dependencies
@@ -22,33 +22,31 @@ function ValidationError( code ) {
 
 inherits( ValidationError, Error );
 
-function canAddGoogleApps( domain ) {
-	var tld = domain.split( '.' )[ 1 ],
+function canAddGoogleApps( domainName ) {
+	var tld = domainName.split( '.' )[ 1 ],
 		includesBannedPhrase = some( GOOGLE_APPS_BANNED_PHRASES, function( phrase ) {
-			return includes( domain, phrase );
+			return includes( domainName, phrase );
 		} );
 
-	if ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase ) {
-		return false;
-	}
-
-	return true;
+	return ! ( includes( GOOGLE_APPS_INVALID_TLDS, tld ) || includesBannedPhrase );
 }
 
-function canRegister( domain, onComplete ) {
-	if ( ! domain ) {
+function canRegister( domainName, onComplete ) {
+	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
 		return;
 	}
 
-	wpcom.undocumented().isDomainAvailable( domain, function( serverError, data ) {
+	wpcom.undocumented().isDomainAvailable( domainName, function( serverError, data ) {
 		var errorCode;
 		if ( serverError ) {
 			errorCode = serverError.error;
-		} else if ( ! data.is_registrable ) {
-			errorCode = 'not_registrable';
 		} else if ( ! data.is_available && data.is_mappable ) {
 			errorCode = 'not_available_but_mappable';
+		} else if ( ! data.is_mappable && data.unmappability_reason ) {
+			errorCode = `mappable_but_${data.unmappability_reason}`;
+		} else if ( ! data.is_registrable ) {
+			errorCode = 'not_registrable';
 		} else if ( ! data.is_available ) {
 			errorCode = 'not_available';
 		}
@@ -61,13 +59,13 @@ function canRegister( domain, onComplete ) {
 	} );
 }
 
-function canMap( domain, onComplete ) {
-	if ( ! domain ) {
+function canMap( domainName, onComplete ) {
+	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
 		return;
 	}
 
-	wpcom.undocumented().isDomainMappable( domain, function( serverError, data ) {
+	wpcom.undocumented().isDomainMappable( domainName, function( serverError, data ) {
 		var errorCode;
 		if ( serverError ) {
 			errorCode = serverError.error;
@@ -83,13 +81,17 @@ function canMap( domain, onComplete ) {
 	} );
 }
 
-function canRedirect( siteId, domain, onComplete ) {
-	if ( ! domain ) {
+function canRedirect( siteId, domainName, onComplete ) {
+	if ( ! domainName ) {
 		onComplete( new ValidationError( 'empty_query' ) );
 		return;
 	}
 
-	wpcom.undocumented().canRedirect( siteId, domain, function( serverError, data ) {
+	if ( ! domainName.match( /^https?:\/\//i ) ) {
+		domainName = 'http://' + domainName;
+	}
+
+	wpcom.undocumented().canRedirect( siteId, domainName, function( serverError, data ) {
 		if ( serverError ) {
 			onComplete( new ValidationError( serverError.error ) );
 		} else if ( ! data.can_redirect ) {
@@ -101,17 +103,20 @@ function canRedirect( siteId, domain, onComplete ) {
 }
 
 function getPrimaryDomain( siteId, onComplete ) {
-	wpcom.undocumented().getPrimaryDomain( siteId, function( serverError, data ) {
-		onComplete( serverError, data );
-	} );
+	wpcom
+		.site( siteId )
+		.domain()
+		.getPrimary( function( serverError, data ) {
+			onComplete( serverError, data );
+		} );
 }
 
-function getFixedDomainSearch( domain ) {
-	return domain.trim().toLowerCase().replace( /^(https?:\/\/)?(www\.)?/, '' ).replace( /\/$/, '' );
+function getFixedDomainSearch( domainName ) {
+	return domainName.trim().toLowerCase().replace( /^(https?:\/\/)?(www\.)?/, '' ).replace( /\/$/, '' );
 }
 
-function isSubdomain( domain ) {
-	return domain.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
+function isSubdomain( domainName ) {
+	return domainName.match( /\..+\.[a-z]{2,3}\.[a-z]{2}$|\..+\.[a-z]{3,}$|\..{4,}\.[a-z]{2}$/ );
 }
 
 function isInitialized( state, siteId ) {
@@ -123,14 +128,24 @@ function hasGoogleApps( domain ) {
 	return domain.googleAppsSubscription.status !== 'no_subscription';
 }
 
+function isMappedDomain( domain ) {
+	return domain.type === domainTypes.MAPPED;
+}
+
 function getGoogleAppsSupportedDomains( domains ) {
 	return domains.filter( function( domain ) {
-		return ( domain.type === domainTypes.REGISTERED );
+		return ( domain.type === domainTypes.REGISTERED && canAddGoogleApps( domain.name ) );
 	} );
 }
 
-function canAddEmail( domains ) {
-	return ( getGoogleAppsSupportedDomains( domains ).length > 0 );
+function hasGoogleAppsSupportedDomain( domains ) {
+	return getGoogleAppsSupportedDomains( domains ).length > 0;
+}
+
+function hasPendingGoogleAppsUsers( domain ) {
+	return domain.googleAppsSubscription &&
+		domain.googleAppsSubscription.pendingUsers &&
+		domain.googleAppsSubscription.pendingUsers.length !== 0;
 }
 
 function getSelectedDomain( { domains, selectedDomainName } ) {
@@ -141,8 +156,19 @@ function isRegisteredDomain( domain ) {
 	return ( domain.type === domainTypes.REGISTERED );
 }
 
+function getRegisteredDomains( domains ) {
+	return domains.filter( isRegisteredDomain );
+}
+
+function getMappedDomains( domains ) {
+	return domains.filter( isMappedDomain );
+}
+
+function hasMappedDomain( domains ) {
+	return getMappedDomains( domains ).length > 0;
+}
+
 export {
-	canAddEmail,
 	canAddGoogleApps,
 	canMap,
 	canRedirect,
@@ -151,7 +177,12 @@ export {
 	getGoogleAppsSupportedDomains,
 	getPrimaryDomain,
 	getSelectedDomain,
+	getRegisteredDomains,
+	getMappedDomains,
 	hasGoogleApps,
+	hasGoogleAppsSupportedDomain,
+	hasMappedDomain,
+	hasPendingGoogleAppsUsers,
 	isInitialized,
 	isRegisteredDomain,
 	isSubdomain

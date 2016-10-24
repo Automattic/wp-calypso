@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -33,7 +34,7 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 var FormFields = React.createClass( {
 	displayName: 'FormFields',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return {
@@ -57,11 +58,7 @@ var FormFields = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/form-fields">Form Fields</a>
-				</h2>
-
+			<div>
 				<p>
 					The form fields components act as wrapper components to aid in componentizing CSS.
 					Here is an example of all of the form fields components and their expected markup.
@@ -144,6 +141,13 @@ var FormFields = React.createClass( {
 							<option>3</option>
 							<option>4</option>
 						</FormSelect>
+						<FormSelect id="select-disabled" disabled>
+							<option>Disabled</option>
+						</FormSelect>
+						<br />
+						<FormSelect id="select-error" className="is-error">
+							<option>Error</option>
+						</FormSelect>
 					</FormFieldset>
 
 					<FormFieldset>
@@ -161,6 +165,11 @@ var FormFields = React.createClass( {
 					<br />
 					<FormToggle
 						checked={ false }
+						disabled={ true }
+					/>
+					<br />
+					<FormToggle
+						checked={ true }
 						disabled={ true }
 					/>
 					<br />
@@ -214,7 +223,7 @@ var FormFields = React.createClass( {
 						<FormLabel>Form Phone Input</FormLabel>
 						<FormPhoneInput
 							initialCountryCode="US"
-							initialPhoneNumber="877-273-3049"
+							initialPhoneNumber="8772733049"
 							countriesList={ countriesList }
 							/>
 					</FormFieldset>

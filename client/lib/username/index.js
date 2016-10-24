@@ -1,9 +1,13 @@
 /**
+ * External dependencies
+ */
+var i18n = require( 'i18n-calypso' );
+
+/**
  * Internal dependencies
  */
 var Emitter = require( 'lib/mixins/emitter' ),
 	wpcom = require( 'lib/wp' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	user = require( 'lib/user' )();
 
 /**
@@ -22,7 +26,7 @@ Emitter( Username.prototype );
 
 Username.prototype.validate = function( username ) {
 	if ( username !== user.get().username ) {
-	 	if ( username.length < 4 ) {
+		if ( username.length < 4 ) {
 			this.validation = {
 				error: 'invalid_input',
 				message: i18n.translate( 'Usernames must be at least 4 characters.' )

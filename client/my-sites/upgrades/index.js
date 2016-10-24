@@ -11,177 +11,144 @@ const controller = require( 'my-sites/controller' ),
 	domainManagementController = require( './domain-management/controller' ),
 	SiftScience = require( 'lib/siftscience' ),
 	config = require( 'config' ),
-	paths = require( './paths' ),
-	adTracking = require( 'analytics/ad-tracking' );
+	paths = require( './paths' );
+
+function registerMultiPage( { paths, handlers } ) {
+	paths.forEach( path => page( path, ...handlers ) );
+}
+
+function getCommonHandlers( { noSitePath = paths.domainManagementRoot(), warnIfJetpack = true } = {} ) {
+	const handlers = [
+		controller.siteSelection,
+		controller.navigation
+	];
+
+	if ( noSitePath ) {
+		handlers.push( upgradesController.redirectIfNoSite( noSitePath ) );
+	}
+
+	if ( warnIfJetpack ) {
+		handlers.push( controller.jetPackWarning );
+	}
+
+	return handlers;
+}
 
 module.exports = function() {
 	SiftScience.recordUser();
 
-	if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-		page(
-			paths.domainManagementRoot(),
-			controller.siteSelection,
-			controller.sites
-		);
+	page(
+		paths.domainManagementEmail(),
+		controller.siteSelection,
+		controller.sites
+	);
 
-		page(
-			paths.domainManagementList( ':site' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementList
-		);
-
-		page(
-			paths.domainManagementEdit( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementEdit
-		);
-
-		page(
-			paths.domainManagementPrivacyProtection( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			domainManagementController.domainManagementPrivacyProtection
-		);
-
-		page(
-			paths.domainManagementPrimaryDomain( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementPrimaryDomain
-		);
-	}
-
-	if ( config.isEnabled( 'upgrades/domain-management/email' ) ) {
-		page(
+	registerMultiPage( {
+		paths: [
 			paths.domainManagementEmail( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
+			paths.domainManagementEmail( ':site' )
+		],
+		handlers: [
+			...getCommonHandlers( { noSitePath: paths.domainManagementEmail() } ),
 			domainManagementController.domainManagementEmail
-		);
+		]
+	} );
 
-		page(
-			paths.domainManagementEmail( ':site' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementEmail
-		);
-
-		page(
+	registerMultiPage( {
+		paths: [
 			paths.domainManagementAddGoogleApps( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
+			paths.domainManagementAddGoogleApps( ':site' )
+		],
+		handlers: [
+			...getCommonHandlers(),
 			domainManagementController.domainManagementAddGoogleApps
-		);
+		]
+	} );
 
-		page(
-			paths.domainManagementAddGoogleApps( ':site' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementAddGoogleApps
-		);
+	page(
+		paths.domainManagementEmailForwarding( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementEmailForwarding
+	);
 
-		page(
-			paths.domainManagementEmailForwarding( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementEmailForwarding
-		);
-	}
+	page(
+		paths.domainManagementRedirectSettings( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementRedirectSettings
+	);
 
-	if ( config.isEnabled( 'upgrades/domain-management/site-redirect' ) ) {
-		page(
-			paths.domainManagementRedirectSettings( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementRedirectSettings
-		);
-	}
+	page(
+		paths.domainManagementContactsPrivacy( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementContactsPrivacy
+	);
 
-	if ( config.isEnabled( 'upgrades/domain-management/contacts-privacy' ) ) {
-		page(
-			paths.domainManagementContactsPrivacy( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementContactsPrivacy
-		);
+	page(
+		paths.domainManagementEditContactInfo( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementEditContactInfo
+	);
 
-		page(
-			paths.domainManagementEditContactInfo( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementEditContactInfo
-		);
-	}
+	page(
+		paths.domainManagementDns( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementDns
+	);
 
-	if ( config.isEnabled( 'upgrades/domain-management/name-servers' ) ) {
-		page(
-			paths.domainManagementDns( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementDns
-		);
+	page(
+		paths.domainManagementNameServers( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementNameServers
+	);
 
-		page(
-			paths.domainManagementNameServers( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementNameServers
-		);
-	}
+	page(
+		paths.domainManagementTransfer( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementTransfer
+	);
 
-	if ( config.isEnabled( 'upgrades/domain-management/transfer' ) ) {
-		page(
-			paths.domainManagementTransfer( ':site', ':domain' ),
-			controller.siteSelection,
-			controller.navigation,
-			upgradesController.redirectIfNoSite( paths.domainManagementRoot() ),
-			controller.jetPackWarning,
-			domainManagementController.domainManagementTransfer
-		);
-	}
+	page(
+		paths.domainManagementRoot(),
+		controller.siteSelection,
+		controller.sites
+	);
+
+	page(
+		paths.domainManagementList( ':site' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementList
+	);
+
+	page(
+		paths.domainManagementEdit( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementEdit
+	);
+
+	page(
+		paths.domainManagementPrivacyProtection( ':site', ':domain' ),
+		...getCommonHandlers( { warnIfJetpack: false } ),
+		domainManagementController.domainManagementPrivacyProtection
+	);
+
+	page(
+		paths.domainManagementPrimaryDomain( ':site', ':domain' ),
+		...getCommonHandlers(),
+		domainManagementController.domainManagementPrimaryDomain
+	);
 
 	if ( config.isEnabled( 'upgrades/domain-search' ) ) {
 		page(
 			'/domains/add',
-			adTracking.retarget,
 			controller.siteSelection,
 			upgradesController.domainsAddHeader,
+			upgradesController.redirectToAddMappingIfVipSite(),
 			controller.jetPackWarning,
 			controller.sites
 		);
 
 		page(
 			'/domains/add/mapping',
-			adTracking.retarget,
 			controller.siteSelection,
 			upgradesController.domainsAddHeader,
 			controller.jetPackWarning,
@@ -190,7 +157,6 @@ module.exports = function() {
 
 		page(
 			'/domains/add/site-redirect',
-			adTracking.retarget,
 			controller.siteSelection,
 			upgradesController.domainsAddRedirectHeader,
 			controller.jetPackWarning,
@@ -198,16 +164,24 @@ module.exports = function() {
 		);
 
 		page( '/domains/add/:domain',
-			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add' ),
+			upgradesController.redirectToAddMappingIfVipSite(),
+			controller.jetPackWarning,
+			upgradesController.domainSearch
+		);
+
+		page( '/domains/add/suggestion/:suggestion/:domain',
+			controller.siteSelection,
+			controller.navigation,
+			upgradesController.redirectIfNoSite( '/domains/add' ),
+			upgradesController.redirectToAddMappingIfVipSite(),
 			controller.jetPackWarning,
 			upgradesController.domainSearch
 		);
 
 		page( '/domains/add/:registerDomain/google-apps/:domain',
-			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add' ),
@@ -216,7 +190,6 @@ module.exports = function() {
 		);
 
 		page( '/domains/add/mapping/:domain',
-			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add/mapping' ),
@@ -225,7 +198,6 @@ module.exports = function() {
 		);
 
 		page( '/domains/add/site-redirect/:domain',
-			adTracking.retarget,
 			controller.siteSelection,
 			controller.navigation,
 			upgradesController.redirectIfNoSite( '/domains/add/site-redirect' ),
@@ -234,49 +206,41 @@ module.exports = function() {
 		);
 	}
 
-	if ( config.isEnabled( 'upgrades/domain-management/list' ) ) {
-		page(
-			'/domains',
-			controller.siteSelection,
-			controller.sites
-		);
+	page(
+		'/domains',
+		controller.siteSelection,
+		controller.sites
+	);
 
-		page(
-			'/domains/:site',
-			controller.siteSelection,
-			controller.navigation,
-			controller.jetPackWarning,
-			domainManagementController.domainManagementIndex
-		);
-	} else {
-		page(
-			'/domains',
-			adTracking.retarget,
-			controller.siteSelection,
-			upgradesController.domainsAddHeader,
-			controller.jetPackWarning,
-			controller.sites
-		);
-
-		page( '/domains/:domain',
-			adTracking.retarget,
-			controller.siteSelection,
-			controller.navigation,
-			controller.jetPackWarning,
-			upgradesController.domainSearchIndex
-		);
-	}
+	page(
+		'/domains/:site',
+		controller.siteSelection,
+		controller.navigation,
+		controller.jetPackWarning,
+		domainManagementController.domainManagementIndex
+	);
 
 	if ( config.isEnabled( 'upgrades/checkout' ) ) {
 		page(
-			'/checkout/thank-you',
-			upgradesController.redirectIfThemePurchased,
+			'/checkout/thank-you/:site/:receiptId?',
+			controller.siteSelection,
 			upgradesController.checkoutThankYou
 		);
 
 		page(
-			'/checkout/:domain',
-			adTracking.retarget,
+			'/checkout/features/:feature/:domain/:plan_name?',
+			controller.siteSelection,
+			upgradesController.checkout
+		);
+
+		page(
+			'/checkout/thank-you/features/:feature/:site/:receiptId?',
+			controller.siteSelection,
+			upgradesController.checkoutThankYou
+		);
+
+		page(
+			'/checkout/:domain/:product?',
 			controller.siteSelection,
 			upgradesController.checkout
 		);

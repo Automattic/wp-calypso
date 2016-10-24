@@ -1,15 +1,12 @@
-//const debug = require( 'debug' )( 'calypso:reader:following:edit' );
-
 // External dependencies
 const React = require( 'react' ),
 	url = require( 'url' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 
 // Internal dependencies
-const Search = require( 'components/search' ),
+const SearchCard = require( 'components/search-card' ),
 	FollowingEditSubscribeFormResult = require( './subscribe-form-result' ),
-	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	Gridicon = require( 'components/gridicon' );
+	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' );
 
 const minSearchLength = 8; // includes protocol
 
@@ -19,7 +16,8 @@ var FollowingEditSubscribeForm = React.createClass( {
 		onSearch: React.PropTypes.func,
 		onSearchClose: React.PropTypes.func,
 		onFollow: React.PropTypes.func,
-		initialSearchString: React.PropTypes.string
+		initialSearchString: React.PropTypes.string,
+		isSearchOpen: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
@@ -27,8 +25,9 @@ var FollowingEditSubscribeForm = React.createClass( {
 			onSearch: noop,
 			onSearchClose: noop,
 			onFollow: noop,
-			initialSearchString: ''
-		}
+			initialSearchString: '',
+			isSearchOpen: false
+		};
 	},
 
 	getInitialState: function() {
@@ -39,6 +38,10 @@ var FollowingEditSubscribeForm = React.createClass( {
 		this.verifySearchString( this.props.initialSearchString );
 	},
 
+	focus: function() {
+		this.refs.followingEditSubscriptionSearch.focus();
+	},
+
 	handleFollowToggle: function() {
 		FeedSubscriptionActions.follow( this.state.searchString, true );
 		this.setState( { previousSearchString: this.state.searchString } );
@@ -47,16 +50,12 @@ var FollowingEditSubscribeForm = React.createClass( {
 		this.refs.followingEditSubscriptionSearch.clear();
 
 		// Call onFollow method on the parent
-		this.props.onFollow();
-	},
-
-	handleFollowIconClick: function() {
-		this.refs.followingEditSubscriptionSearch.focus();
+		this.props.onFollow( this.state.searchString );
 	},
 
 	handleKeyDown: function( event ) {
 		// Use Enter to submit
-		if ( event.keyCode === 13 && this.state.searchString.length > minSearchLength  && this.state.isWellFormedFeedUrl ) {
+		if ( event.keyCode === 13 && this.state.searchString.length > minSearchLength && this.state.isWellFormedFeedUrl ) {
 			event.preventDefault();
 			this.handleFollowToggle();
 		}
@@ -98,11 +97,22 @@ var FollowingEditSubscribeForm = React.createClass( {
 	},
 
 	isWellFormedFeedUrl: function( parsedUrl ) {
-		if ( parsedUrl.hostname && parsedUrl.hostname.indexOf( '.' ) !== -1 ) {
-			return true;
+		if ( ! parsedUrl.hostname || parsedUrl.hostname.indexOf( '.' ) === -1 ) {
+			return false;
 		}
 
-		return false;
+		// Check for a valid-looking TLD
+		if ( parsedUrl.hostname.lastIndexOf( '.' ) > ( parsedUrl.hostname.length - 3 ) ) {
+			return false;
+		}
+
+		// Make sure the hostname has at least two parts separated by a dot
+		const hostnameParts = parsedUrl.hostname.split( '.' ).filter( Boolean );
+		if ( hostnameParts.length < 2 ) {
+			return false;
+		}
+
+		return true;
 	},
 
 	render: function() {
@@ -128,8 +138,9 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 		return (
 			<div className="following-edit__subscribe-form">
-				<Gridicon icon="add-outline" onClick={ this.handleFollowIconClick } />
-				<Search
+				<SearchCard
+					isOpen={ this.props.isSearchOpen }
+					autoFocus={ true }
 					key="newSubscriptionSearch"
 					onSearch={ this.handleSearch }
 					onSearchClose={ this.handleSearchClose }
@@ -138,7 +149,6 @@ var FollowingEditSubscribeForm = React.createClass( {
 					ref="followingEditSubscriptionSearch"
 					onKeyDown={ this.handleKeyDown }
 					disableAutocorrect={ true }
-					autoFocus={ true }
 					initialValue={ this.props.initialSearchString }
 				/>
 				{ searchResult }

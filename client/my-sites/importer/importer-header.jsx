@@ -2,15 +2,18 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import includes from 'lodash/collection/includes';
+import PureRenderMixin from 'react-pure-render/mixin';
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/forms/form-button';
-import { appStates } from 'lib/importer/constants';
+import { appStates } from 'state/imports/constants';
 import { cancelImport, resetImport, startImport } from 'lib/importer/actions';
-import ImporterIcon from './importer-icons';
+import SocialLogo from 'components/social-logo';
+import flowRight from 'lodash/flowRight';
+import { connectDispatcher } from './dispatcher-converter';
 
 /**
  * Module variables
@@ -26,10 +29,10 @@ const startStates = [ appStates.DISABLED, appStates.INACTIVE ],
 	stopStates = [ appStates.IMPORT_FAILURE, appStates.IMPORTING ],
 	doneStates = [ appStates.IMPORT_SUCCESS ];
 
-export default React.createClass( {
+export const ImporterHeader = React.createClass( {
 	displayName: 'ImporterHeader',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		importerStatus: PropTypes.shape( {
@@ -43,14 +46,24 @@ export default React.createClass( {
 	},
 
 	controlButtonClicked: function() {
-		const { id: importerId, importerState, type } = this.props.importerStatus;
+		const {
+			importerStatus: {
+				importerId,
+				importerState,
+				type
+			},
+			site: {
+				ID: siteId
+			},
+			startImport
+		} = this.props;
 
 		if ( includes( [ ...cancelStates, ...stopStates ], importerState ) ) {
-			cancelImport( importerId );
+			cancelImport( siteId, importerId );
 		} else if ( includes( startStates, importerState ) ) {
-			startImport( type );
+			startImport( siteId, type );
 		} else if ( includes( doneStates, importerState ) ) {
-			resetImport( importerId );
+			resetImport( siteId, importerId );
 		}
 	},
 
@@ -75,16 +88,20 @@ export default React.createClass( {
 	},
 
 	render: function() {
-		const { importerStatus: { importerState }, icon, isEnabled, title, description } = this.props,
-			isPrimary = includes( [ ...cancelStates, ...stopStates ], importerState );
+		const { importerStatus: { importerState }, icon, isEnabled, title, description } = this.props;
+		const canCancel = isEnabled && ! includes( [ appStates.UPLOADING ], importerState );
+		const isScary = includes( [ ...stopStates, ...cancelStates ], importerState );
 
 		return (
 			<header className="importer-service">
-				<ImporterIcon {...{ icon } } />
+				{ includes( [ 'wordpress', 'medium' ], icon )
+					? <SocialLogo className="importer__service-icon" icon={ icon } size={ 48 } />
+					: <svg className="importer__service-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" /> }
 				<Button
 					className="importer__master-control"
-					disabled={ ! isEnabled }
-					isPrimary={ isPrimary }
+					disabled={ ! canCancel }
+					isPrimary={ false }
+					scary={ isScary }
 					onClick={ this.controlButtonClicked }
 				>
 					{ this.getButtonText() }
@@ -97,3 +114,9 @@ export default React.createClass( {
 		);
 	}
 } );
+
+const mapDispatchToProps = dispatch => ( {
+	startImport: flowRight( dispatch, startImport )
+} );
+
+export default connectDispatcher( null, mapDispatchToProps )( ImporterHeader );

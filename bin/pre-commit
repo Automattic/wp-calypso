@@ -2,7 +2,7 @@
 
 PATH="$PATH:/usr/local/bin"
 
-echo "\nBy contributing to this project, you license the materials you contribute under the GNU General Public License v2 (or later). All materials must have GPLv2 compatible licenses — see CONTRIBUTING.md for details.\n\n"
+printf "\nBy contributing to this project, you license the materials you contribute under the GNU General Public License v2 (or later). All materials must have GPLv2 compatible licenses — see .github/CONTRIBUTING.md for details.\n\n"
 
 files=$(git diff --cached --name-only --diff-filter=ACM | grep ".jsx*$")
 if [ "$files" = "" ]; then
@@ -11,36 +11,23 @@ fi
 
 pass=true
 
-# i18nlinting.  Just have i18nlint issue warnings for now without failing
-echo "\nValidating translatable strings:\n"
+printf "\nValidating .jsx and .js:\n"
+
 for file in ${files}; do
-    result=$(./bin/i18nlint --color ${file})
+    ./node_modules/.bin/eslint --cache ${file}
     if [ $? -ne 0 ]; then
-        echo "\033[31mi18nlint Failed: \033[0m$result"
-        echo "\n -----\n"
+        printf "\033[31meslint Failed: %s\033[0m\n" "${file}"
         pass=false
     else
-        echo "\033[32mi18nlint Passed: ${file}\033[0m"
+        printf "\033[32meslint Passed: %s\033[0m\n" "${file}"
     fi
 done
 
-echo "\nValidating .jsx and .js:\n"
-
-for file in ${files}; do
-    ./node_modules/.bin/eslint ${file}
-    if [ $? -ne 0 ]; then
-        echo "\033[31meslint Failed: ${file}\033[0m"
-        pass=false
-    else
-        echo "\033[32meslint Passed: ${file}\033[0m"
-    fi
-done
-
-echo "\neslint validation complete\n"
+printf "\neslint validation complete\n"
 
 if ! $pass; then
-    echo "\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass validation tests but do not. Please fix the errors and try again.\n"
+    printf "\n\033[41mCOMMIT FAILED:\033[0m Your commit contains files that should pass validation tests but do not. Please fix the errors and try again.\n\n"
     exit 1
 else
-    echo "\033[42mCOMMIT SUCCEEDED\033[0m\n"
+    printf "\n\033[42mCOMMIT SUCCEEDED\033[0m\n\n"
 fi

@@ -2,6 +2,10 @@
 	margin: 24px 0;
 	background: $white;
 	box-shadow: 0 1px 2px lighten( $gray, 30% );
+
+	.feature-example & {
+		margin: 0 0;
+	}
 }
 
 .plugins-browser-list__header {
@@ -13,7 +17,7 @@
 .button.plugins-browser-list__select-all,
 .plugins-browser-list__title {
 	display: inline-block;
-	padding: 6px 16px 7px;
+	padding: 6px 0px 7px;
 	color: $gray;
 	font-size: 11px;
 	line-height: 1.6;
@@ -34,10 +38,10 @@
 
 .button.plugins-browser-list__select-all {
 	float: right;
-	padding-right: 16px;
 }
 
 .plugins-browser-list__elements {
 	min-height: 50px;
 	overflow: hidden; // lazy clearfix
+	padding: 0;
 }

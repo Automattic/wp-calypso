@@ -1,14 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+var React = require( 'react' ),
+	classnames = require( 'classnames' ),
+	includes = require( 'lodash/includes' );
 
 /**
  * Internal dependencies
  */
 var Dialog = require( 'components/dialog' ),
-	SelectSite = require( 'me/select-site' ),
+	Button = require( 'components/button' ),
+	SitesDropdown = require( 'components/sites-dropdown' ),
 	sitesList = require( 'lib/sites-list' )();
 
 /**
@@ -27,7 +29,7 @@ var SiteSelectorModal = React.createClass( {
 		// mainAction: Will be run upon clicking the call-for-action button. Receives `site` as argument.
 		mainAction: React.PropTypes.func.isRequired,
 		// getMainUrl: Use if the call-for-action button should be turned into an `<a>` link. Receives `site` as argument, returns a URL.
-		getMainUrl: React.PropTypes.func.isRequired,
+		getMainUrl: React.PropTypes.func,
 		// mainActionLabel: Label for the call-for-action button.
 		mainActionLabel: React.PropTypes.string.isRequired,
 		// className: class name(s) to be added to the Dialog
@@ -35,15 +37,22 @@ var SiteSelectorModal = React.createClass( {
 	},
 
 	getInitialState: function() {
-		return ( {
-			site: sitesList.getPrimary().jetpack ?
-				sitesList.get().filter( this.props.filter )[0] :
-				sitesList.getPrimary()
-		} );
+		const primarySite = sitesList.getPrimary();
+		let filteredSites = sitesList.getVisible();
+
+		if ( this.props.filter ) {
+			filteredSites = filteredSites.filter( this.props.filter );
+		}
+
+		return {
+			site: includes( filteredSites, primarySite )
+				? primarySite
+				: filteredSites[0]
+		};
 	},
 
-	setSite: function( event ) {
-		var site = sitesList.getSite( parseInt( event.target.value ) );
+	setSite: function( slug ) {
+		var site = sitesList.getSite( slug );
 		this.setState( { site: site } );
 	},
 
@@ -55,12 +64,16 @@ var SiteSelectorModal = React.createClass( {
 		this.props.hide();
 	},
 
+	onButtonClick: function() {
+		this.props.mainAction( this.state.site );
+	},
+
 	getMainLink: function() {
 		var url = this.props.getMainUrl && this.props.getMainUrl( this.state.site );
 
-		return url ?
-			<a href={ url } className="button is-primary">{ this.props.mainActionLabel }</a> :
-			{ action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
+		return url
+			? <Button primary href={ url } onClick={ this.onButtonClick } >{ this.props.mainActionLabel }</Button>
+			: { action: 'mainAction', label: this.props.mainActionLabel, isPrimary: true };
 	},
 
 	render: function() {
@@ -69,7 +82,7 @@ var SiteSelectorModal = React.createClass( {
 				{ action: 'back', label: this.translate( 'Back' ) },
 				mainLink
 			],
-			classNames = joinClasses( 'site-selector-modal', this.props.className );
+			classNames = classnames( 'site-selector-modal', this.props.className );
 
 		return (
 			<Dialog className={ classNames }
@@ -79,12 +92,10 @@ var SiteSelectorModal = React.createClass( {
 				<div className="site-selector-modal__content">
 					{ this.props.children }
 				</div>
-				<SelectSite className="site-selector-modal__dropdown"
-					sites={ sitesList }
-					value={ this.state.site && this.state.site.ID }
-					onChange={ this.setSite }
+				<SitesDropdown
+					onSiteSelect={ this.setSite }
+					selected={ this.state.site.slug }
 					filter={ this.props.filter } />
-
 			</Dialog>
 		);
 	}

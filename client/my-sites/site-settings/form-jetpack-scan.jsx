@@ -13,20 +13,20 @@ var formBase = require( 'my-sites/site-settings/form-base' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
 	FormInput = require( 'components/forms/form-text-input' ),
 	FormLabel = require( 'components/forms/form-label' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormButton = require( 'components/forms/form-button' ),
 	FormPasswordInput = require( 'components/forms/form-password-input' ),
 	Dialog = require( 'components/dialog' ),
-	SettingsCardFooter = require( 'my-sites/site-settings/settings-card-footer' ),
 	ProgressIndicator = require( 'components/progress-indicator' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
-	notices = require( 'notices' );
+	notices = require( 'notices' ),
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
+	SectionHeader = require( 'components/section-header' ),
+	Button = require( 'components/button' );
 
 module.exports = React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackScan',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	settingsTimer: false,
 
@@ -46,7 +46,6 @@ module.exports = React.createClass( {
 				} );
 			}.bind( this ) );
 		}
-
 	},
 
 	setSshSettings: function( data ) {
@@ -74,8 +73,8 @@ module.exports = React.createClass( {
 			}.bind( this ), 5000 );
 		} else {
 			// remove the timer if necessary
-			if ( typeof this.settingsTimer === "number" ) {
-				debug( 'credentials have been validated');
+			if ( typeof this.settingsTimer === 'number' ) {
+				debug( 'credentials have been validated' );
 				clearTimeout( this.settingsTimer );
 			}
 
@@ -87,7 +86,7 @@ module.exports = React.createClass( {
 						'We are unable to connect to your server using these credentials. Please make sure they are correct, and {{a}}contact us{{/a}} if you are still having trouble.',
 						{
 							components: {
-								a: <a href="http://jetpack.me/contact-support/" target="_blank" />
+								a: <a href="http://jetpack.me/contact-support/" target="_blank" rel="noopener noreferrer" />
 							}
 						}
 					)
@@ -123,7 +122,7 @@ module.exports = React.createClass( {
 			<p>
 				{ this.translate(
 					'There was a problem getting your SSH information from our server. Please refresh the page. If the problem persists, {{a}}please contact support{{/a}}.',
-					{ components: { a: <a href="http://jetpack.me/contact-support/" target="_blank" /> } }
+					{ components: { a: <a href="http://jetpack.me/contact-support/" target="_blank" rel="noopener noreferrer" /> } }
 				) }
 			</p>
 		);
@@ -135,17 +134,13 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div>
-				<p>{ this.translate( 'Scan your WordPress site for known security threats.' ) }</p>
-				<p>{ this.translate( 'By allowing Jetpack Scan to access your site via SSH, you enable us to scan your server for security threats. As soon as we encounter potentially malicious code, we will alert you by email.' ) }</p>
-				<SettingsCardFooter>
-					<FormButton
-						onClick={ this.toggleScan }
-						disabled={ this.disableForm() }
-					>
-						{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate Scan' ) }
-					</FormButton>
-				</SettingsCardFooter>
+			<div className="site-settings__jetpack-prompt">
+				<img src="/calypso/images/jetpack/illustration-jetpack-scan.svg" width="128" height="128" />
+
+				<div className="site-settings__jetpack-prompt-text">
+					<p>{ this.translate( 'Scan your WordPress site for known security threats.' ) }</p>
+					<p>{ this.translate( 'By allowing Jetpack Scan to access your site via SSH, you enable us to scan your server for security threats. As soon as we encounter potentially malicious code, we will alert you by email.' ) }</p>
+				</div>
 			</div>
 		);
 	},
@@ -158,7 +153,7 @@ module.exports = React.createClass( {
 
 	lastScanned: function() {
 		var dateObject = new Date( this.state.lastScanned );
-		if ( Object.prototype.toString.call( dateObject ) !== "[object Date]" ) {
+		if ( Object.prototype.toString.call( dateObject ) !== '[object Date]' ) {
 			return null;
 		}
 		if ( isNaN( dateObject.getTime() ) ) {
@@ -189,18 +184,6 @@ module.exports = React.createClass( {
 					) }
 				</p>
 				{ this.lastScanned() }
-				<SettingsCardFooter>
-					<FormButton className="button" disabled={ this.disableForm() } isPrimary={ false } onClick={ this.editSettings }>
-						{ this.translate( 'Edit Settings' ) }
-					</FormButton>
-					<FormButton
-						disabled={ this.disableForm() }
-						className="jetpack-scan__deactivate is-link"
-						isPrimary={ false }
-						onClick={ this.toggleScan }>
-						{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
-					</FormButton>
-				</SettingsCardFooter>
 			</div>
 		);
 	},
@@ -240,30 +223,6 @@ module.exports = React.createClass( {
 			return this.success();
 		}
 
-		if ( this.state.credentialsPending ) {
-			footerContents = (
-				<SettingsCardFooter>
-					<ProgressIndicator key="update-progress" status="processing" className="site-settings__progress-indicator" />
-					{ this.translate( 'Testing connection. This may take a few minutes.' ) }
-				</SettingsCardFooter>
-			);
-		} else {
-			footerContents = (
-				<SettingsCardFooter>
-					<FormButton className="button is-primary" disabled={ this.disableForm() }>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-					</FormButton>
-					<FormButton
-						disabled={ this.disableForm() }
-						className="jetpack-scan__deactivate is-link"
-						isPrimary={ false }
-						onClick={ this.toggleScan }>
-						{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
-					</FormButton>
-				</SettingsCardFooter>
-			);
-		}
-
 		return (
 			<form id="jetpack-scan-settings" onChange={ this.markChanged } onSubmit={ this.onSubmit }>
 				<p>{ this.translate(
@@ -281,7 +240,7 @@ module.exports = React.createClass( {
 					disabled={ this.disableForm() }
 					className={ this.inputErrorClass( 'hostname' ) } />
 				<FormSettingExplanation>
-					{ this.translate( "The full hostname of your server. May be different from your domain name." ) }
+					{ this.translate( 'The full hostname of your server. May be different from your domain name.' ) }
 				</FormSettingExplanation>
 				{ this.inputErrorMessage( 'hostname' ) }
 
@@ -295,7 +254,7 @@ module.exports = React.createClass( {
 					onClick={ this.handleClick }
 					disabled={ this.disableForm() } />
 				<FormSettingExplanation>
-					{ this.translate( "Unless you connect to a special port, this will be '22'." ) }
+					{ this.translate( 'Unless you connect to a special port, this will be \'22\'.' ) }
 				</FormSettingExplanation>
 
 				<FormLabel htmlFor="jetpack_scan_username">
@@ -309,10 +268,9 @@ module.exports = React.createClass( {
 					disabled={ this.disableForm() }
 					className={ this.inputErrorClass( 'username' ) }/>
 				<FormSettingExplanation>
-					{ this.translate( "User with SSH file access to your website's files." ) }
+					{ this.translate( 'User with SSH file access to your website\'s files.' ) }
 				</FormSettingExplanation>
 				{ this.inputErrorMessage( 'username' ) }
-
 
 				<FormLabel htmlFor="jetpack_scan_password">
 					{ this.translate( 'Password', { context: 'Security scan credentials parameter, e.g. mystrongpass' } ) }
@@ -324,10 +282,10 @@ module.exports = React.createClass( {
 					disabled={ this.disableForm() } />
 
 				<FormSettingExplanation>
-					{ this.translate( "Password is not required if you use public key authentication. " ) }
-					<a onClick={ this._onShowDialog } href="#">
-						{ this.translate( "Get your public key string." ) }
-					</a>
+					{ this.translate(
+						'Password is not required if you use public key authentication. {{a}}Get your public key string.{{/a}}',
+						{ components: { a: <a onClick={ this._onShowDialog } href="#" /> } }
+					) }
 				</FormSettingExplanation>
 				{ footerContents }
 			</form>
@@ -349,12 +307,13 @@ module.exports = React.createClass( {
 		} else {
 			this.recordEvent.bind( this, 'Clicked enable Jetpack Scan button' );
 			enable = true;
+			this.setState( { needsCreds: true } );
 		}
 
 		if ( this.state.needsCreds ) {
 			this.setState( {
 				enabled: enable,
-				submittingForm : false,
+				submittingForm: false,
 				togglingModule: false
 			} );
 		} else {
@@ -363,7 +322,6 @@ module.exports = React.createClass( {
 				this.handleResponse
 			);
 		}
-
 	},
 
 	editSettings: function( event ) {
@@ -383,7 +341,7 @@ module.exports = React.createClass( {
 	// updates the state when the server responds
 	handleResponse: function( error, data ) {
 		this.setState( {
-			submittingForm : false,
+			submittingForm: false,
 			togglingModule: false
 		} );
 		this.markSaved();
@@ -394,7 +352,6 @@ module.exports = React.createClass( {
 			this.setSshSettings( data );
 			debug( 'Updated settings on server', data );
 		}
-
 	},
 
 	onSubmit: function( event ) {
@@ -406,18 +363,25 @@ module.exports = React.createClass( {
 		}
 	},
 
+	onCancelButton: function() {
+		this.setState( { editing: false } );
+
+		if ( ! this.credentialsValid ) {
+			this.toggleScan();
+		}
+	},
+
 	validateData: function() {
-		return (  this.state.hostname && this.state.username );
+		return ( this.state.hostname && this.state.username );
 	},
 
 	processData: function() {
 		this.setState( {
-			submittingForm : true,
+			submittingForm: true,
 			credentialsPending: true,
 			credentialsValid: false
 		} );
 		notices.clearNotices( 'notices' );
-		debug( 'Saving state', this.state );
 		this.props.site.updateSshCredentials(
 			{
 				hostname: this.state.hostname,
@@ -459,8 +423,9 @@ module.exports = React.createClass( {
 					<p>
 						<FormInput
 							valueLink={ this.linkState( 'publicKeyString' ) }
-							selectOnFocus="true"
-							readOnly="readonly" />
+							selectOnFocus
+							readOnly
+						/>
 					</p>
 				</div>
 			</Dialog>
@@ -471,15 +436,98 @@ module.exports = React.createClass( {
 		return this.state.fetchingSettings || this.state.submittingForm || this.props.site.fetchingModules || this.state.togglingModule || this.state.fetchingSsh || ( this.state.enabled && this.state.credentialsPending );
 	},
 
+	showActivateButton: function() {
+		if ( ! this.state.enabled ) {
+			return (
+				<Button
+					compact
+					primary
+					disabled={ this.disableForm() }
+					onClick={ this.toggleScan }
+					>
+					{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate' ) }
+				</Button>
+			);
+		}
+	},
+
+	showDeactivateButtons: function() {
+		if ( this.state.enabled && this.state.credentialsValid && ! this.state.editing ) {
+			return (
+				<div>
+					<Button
+						compact
+						disabled={ this.disableForm() }
+						className="jetpack-scan__deactivate"
+						onClick={ this.toggleScan }
+						>
+						{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
+					</Button>
+
+					<Button
+						compact
+						disabled={ this.disableForm() }
+						onClick={ this.editSettings }
+						className="jetpack-protect__edit-settings"
+						>
+						{ this.translate( 'Edit Settings' ) }
+					</Button>
+				</div>
+			);
+		}
+	},
+
+	showSaveSettingsButtons: function() {
+		if ( ! this.state.credentialsPending && this.state.editing ) {
+			return (
+				<div>
+					<Button
+						className="jetpack-scan__deactivate"
+						compact
+						disabled={ this.disableForm() }
+						onClick={ this.onCancelButton }
+						>
+						{ this.translate( 'Cancel' ) }
+					</Button>
+					<Button
+						primary
+						compact
+						disabled={ this.disableForm() }
+						onClick={ this.onSubmit }
+						>
+						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+					</Button>
+				</div>
+			);
+		}
+	},
+
+	showLoadingIndicator: function() {
+		if ( this.state.credentialsPending ) {
+			return (
+				<div>
+					<ProgressIndicator key="update-progress" status="processing" className="site-settings__progress-indicator" />
+				</div>
+			);
+		}
+	},
+
 	render: function() {
 		return (
-			<Card className="jetpack-protect-settings">
-				<FormSectionHeading>{ this.translate( 'Jetpack Scan' ) }</FormSectionHeading>
-				{ this.sshConnectionError() }
-				{ this.sshCredentialsForm() }
-				{ this.publicKeyDialog() }
-				{ this.prompt() }
-			</Card>
+			<div>
+				<SectionHeader label={ this.translate( 'Jetpack Scan' ) }>
+					{ this.showActivateButton() }
+					{ this.showDeactivateButtons() }
+					{ this.showSaveSettingsButtons() }
+					{ this.showLoadingIndicator() }
+				</SectionHeader>
+				<Card className="jetpack-protect-settings">
+					{ this.sshConnectionError() }
+					{ this.sshCredentialsForm() }
+					{ this.publicKeyDialog() }
+					{ this.prompt() }
+				</Card>
+			</div>
 		);
 	}
 } );

@@ -1,34 +1,33 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	groupBy = require( 'lodash/collection/groupBy' );
+import groupBy from 'lodash/groupBy';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var notices = require( 'notices' ),
-	NoticeArrowAction = require( 'notices/arrow-link' ),
-	PluginsLog = require( 'lib/plugins/log-store' ),
-	PluginsActions = require( 'lib/plugins/actions' ),
-	PluginsUtil = require( 'lib/plugins/utils' ),
-	versionCompare = require( 'lib/version-compare' ),
-	i18n = require( 'lib/mixins/i18n' );
+import notices from 'notices';
+import PluginsLog from 'lib/plugins/log-store';
+import PluginsActions from 'lib/plugins/actions';
+import PluginsUtil from 'lib/plugins/utils';
+import versionCompare from 'lib/version-compare';
 
 function getCombination( translateArg ) {
 	return ( translateArg.numberOfSites > 1 ? 'n sites' : '1 site' ) + ' ' + ( translateArg.numberOfPlugins > 1 ? 'n plugins' : '1 plugin' );
 }
 
-function getTranslateArg( logs, sampleLog ) {
-	var groupedBySite,
-		groupedByPlugin;
-
-	groupedBySite = groupBy( logs, function( log ) {
-		return log.site.ID && log.type === sampleLog.type;
+function getTranslateArg( logs, sampleLog, typeFilter ) {
+	const filteredLogs = logs.filter( ( log ) => {
+		return log.status === typeFilter ? typeFilter : sampleLog.type;
 	} );
 
-	groupedByPlugin = groupBy( logs, function( log ) {
-		return log.plugin.slug && log.type === sampleLog.type;
+	const groupedBySite = groupBy( filteredLogs, ( log ) => {
+		return log.site.ID;
+	} );
+
+	const groupedByPlugin = groupBy( filteredLogs, ( log ) => {
+		return log.plugin.slug;
 	} );
 
 	return {
@@ -42,19 +41,33 @@ function getTranslateArg( logs, sampleLog ) {
 }
 
 module.exports = {
-	getInitialState: function() {
+	shouldComponentUpdateNotices( currentNotices, nextNotices ) {
+		if ( currentNotices.errors && currentNotices.errors.length !== nextNotices.errors.length ) {
+			return true;
+		}
+		if ( currentNotices.inProgress && currentNotices.inProgress.length !== nextNotices.inProgress.length ) {
+			return true;
+		}
+		if ( currentNotices.completed && currentNotices.completed.length !== nextNotices.completed.length ) {
+			return true;
+		}
+		return false;
+	},
+
+	getInitialState() {
 		return { notices: this.refreshPluginNotices() };
 	},
-	componentDidMount: function() {
+
+	componentDidMount() {
 		PluginsLog.on( 'change', this.showNotification );
 	},
 
-	componentWillUnmount: function() {
+	componentWillUnmount() {
 		PluginsLog.removeListener( 'change', this.showNotification );
 	},
 
-	refreshPluginNotices: function() {
-		var site = this.props.sites.getSelectedSite();
+	refreshPluginNotices() {
+		const site = this.props.sites.getSelectedSite();
 		return {
 			errors: PluginsUtil.filterNotices( PluginsLog.getErrors(), site, this.props.pluginSlug ),
 			inProgress: PluginsUtil.filterNotices( PluginsLog.getInProgress(), site, this.props.pluginSlug ),
@@ -62,11 +75,11 @@ module.exports = {
 		};
 	},
 
-	showNotification: function() {
-		var logNotices = this.refreshPluginNotices();
+	showNotification() {
+		const logNotices = this.refreshPluginNotices();
 		this.setState( { notices: logNotices } );
 		if ( logNotices.inProgress.length > 0 ) {
-			notices.info( this.getMessage( logNotices.inProgress, this.inProgressMessage ) );
+			notices.info( this.getMessage( logNotices.inProgress, this.inProgressMessage, 'inProgress' ) );
 			return;
 		}
 
@@ -75,34 +88,35 @@ module.exports = {
 				onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, logNotices.completed.concat( logNotices.errors ) )
 			} );
 		} else if ( logNotices.errors.length > 0 ) {
-			notices.error( this.getMessage( logNotices.errors, this.errorMessage ), {
+			notices.error( this.getMessage( logNotices.errors, this.errorMessage, 'errors' ), {
 				button: this.getErrorButton( logNotices.errors ),
 				href: this.getErrorHref( logNotices.errors ),
 				onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, logNotices.errors )
 			} );
 		} else if ( logNotices.completed.length > 0 ) {
-			const sampleLog = logNotices.completed[ 0 ].status === 'inProgress' ?
-				logNotices.completed[ 0 ] :
-				logNotices.completed[ logNotices.completed.length - 1 ],
+			const sampleLog = logNotices.completed[ 0 ].status === 'inProgress'
+				? logNotices.completed[ 0 ]
+				: logNotices.completed[ logNotices.completed.length - 1 ],
 				// the dismiss button would overlap the link to the settings page when activating
 				showDismiss = ! ( sampleLog.plugin.wp_admin_settings_page_url && 'ACTIVATE_PLUGIN' === sampleLog.action );
 
-			notices.success( this.getMessage( logNotices.completed, this.successMessage ), {
+			notices.success( this.getMessage( logNotices.completed, this.successMessage, 'completed' ), {
+				button: this.getSuccessButton( logNotices.completed ),
+				href: this.getSuccessHref( logNotices.completed ),
 				onRemoveCallback: PluginsActions.removePluginsNotices.bind( this, logNotices.completed ),
 				showDismiss
 			} );
 		}
 	},
 
-	getMessage: function( logs, messageFunction ) {
-		var sampleLog, combination, translateArg;
-		sampleLog = ( logs[ 0 ].status === 'inProgress' ? logs[ 0 ] : logs[ logs.length - 1 ] );
-		translateArg = getTranslateArg( logs, sampleLog );
-		combination = getCombination( translateArg );
+	getMessage( logs, messageFunction, typeFilter ) {
+		const sampleLog = ( logs[ 0 ].status === 'inProgress' ? logs[ 0 ] : logs[ logs.length - 1 ] ),
+			translateArg = getTranslateArg( logs, sampleLog, typeFilter ),
+			combination = getCombination( translateArg );
 		return messageFunction( sampleLog.action, combination, translateArg, sampleLog );
 	},
 
-	successMessage: function( action, combination, translateArg ) {
+	successMessage( action, combination, translateArg ) {
 		switch ( action ) {
 			case 'INSTALL_PLUGIN':
 				if ( translateArg.isMultiSite ) {
@@ -182,18 +196,6 @@ module.exports = {
 			case 'ACTIVATE_PLUGIN':
 				switch ( combination ) {
 					case '1 site 1 plugin':
-						if ( translateArg.wp_admin_settings_page_url ) {
-							return i18n.translate( 'Successfully activated %(plugin)s on %(site)s. ' +
-									'{{action}}Setup{{/action}}', {
-										args: translateArg,
-										components: {
-											action: <NoticeArrowAction
-												href={ translateArg.wp_admin_settings_page_url }
-												target="_blank" />
-										},
-										context: 'Success message when activating a plugin with a link to the plugin settings.'
-									} );
-						}
 						return i18n.translate( 'Successfully activated %(plugin)s on %(site)s.', { args: translateArg } );
 					case '1 site n plugins':
 						return i18n.translate( 'Successfully activated %(numberOfPlugins)d plugins on %(site)s.', {
@@ -270,7 +272,7 @@ module.exports = {
 		}
 	},
 
-	inProgressMessage: function( action, combination, translateArg ) {
+	inProgressMessage( action, combination, translateArg ) {
 		switch ( action ) {
 			case 'INSTALL_PLUGIN':
 				switch ( combination ) {
@@ -433,13 +435,13 @@ module.exports = {
 		}
 	},
 
-	erroredAndCompletedMessage: function( logNotices ) {
-		var completedMessage = this.getMessage( logNotices.completed, this.successMessage ),
-			errorMessage = this.getMessage( logNotices.errors, this.errorMessage );
+	erroredAndCompletedMessage( logNotices ) {
+		const completedMessage = this.getMessage( logNotices.completed, this.successMessage, 'completed' ),
+			errorMessage = this.getMessage( logNotices.errors, this.errorMessage, 'errors' );
 		return ' ' + completedMessage + ' ' + errorMessage;
 	},
 
-	errorMessage: function( action, combination, translateArg, sampleLog ) {
+	errorMessage( action, combination, translateArg, sampleLog ) {
 		if ( combination === '1 site 1 plugin' ) {
 			return this.singleErrorMessage( action, translateArg, sampleLog );
 		}
@@ -559,7 +561,78 @@ module.exports = {
 		}
 	},
 
-	singleErrorMessage: function( action, translateArg, sampleLog ) {
+	additionalExplanation( error_code ) {
+		switch ( error_code ) {
+			case 'no_package':
+				return i18n.translate( 'Plugin doesn\'t exist in the plugin repo.' );
+
+			case 'resource_not_found':
+				return i18n.translate( 'The site could not be reached.' );
+
+			case 'download_failed':
+				return i18n.translate( 'Download failed.' );
+
+			case 'plugin_already_installed':
+				return i18n.translate( 'Plugin is already installed.' );
+
+			case 'incompatible_archive':
+				return i18n.translate( 'Incompatible Archive. The package could not be installed.' );
+
+			case 'empty_archive_pclzip':
+				return i18n.translate( 'Empty archive.' );
+
+			case 'disk_full_unzip_file':
+				return i18n.translate( 'Could not copy files. You may have run out of disk space.' );
+
+			case 'mkdir_failed_ziparchive':
+			case 'mkdir_failed_pclzip':
+				return i18n.translate( 'Could not create directory.' );
+
+			case 'copy_failed_pclzip':
+				return i18n.translate( 'Could not copy file.' );
+
+			case 'md5_mismatch':
+				return i18n.translate( 'The checksum of the files don\'t match.' );
+
+			case 'bad_request':
+				return i18n.translate( 'Invalid Data provided.' );
+
+			case 'fs_unavailable':
+				return i18n.translate( 'Could not access filesystem.' );
+
+			case 'fs_error':
+				return i18n.translate( 'Filesystem error.' );
+
+			case 'fs_no_root_dir':
+				return i18n.translate( 'Unable to locate WordPress Root directory.' );
+
+			case 'fs_no_content_dir':
+				return i18n.translate( 'Unable to locate WordPress Content directory (wp-content).' );
+
+			case 'fs_no_plugins_dir':
+				return i18n.translate( 'Unable to locate WordPress Plugin directory.' );
+
+			case 'fs_no_folder':
+				return i18n.translate( 'Unable to locate needed folder.' );
+
+			case 'no_files':
+				return i18n.translate( 'The package contains no files.' );
+
+			case 'folder_exists':
+				return i18n.translate( 'Destination folder already exists.' );
+
+			case 'mkdir_failed':
+				return i18n.translate( 'Could not create directory.' );
+
+			case 'files_not_writable':
+				return i18n.translate( 'The update cannot be installed because we will be unable to copy some files. This is usually due to inconsistent file permissions.' );
+		}
+
+		return null;
+	},
+
+	singleErrorMessage( action, translateArg, sampleLog ) {
+		const additionalExplanation = this.additionalExplanation( sampleLog.error.error );
 		switch ( action ) {
 			case 'INSTALL_PLUGIN':
 				switch ( sampleLog.error.error ) {
@@ -567,12 +640,19 @@ module.exports = {
 						return i18n.translate( 'Error installing %(plugin)s on %(site)s, remote management is off.', {
 							args: translateArg
 						} );
+
 					default:
+						if ( additionalExplanation ) {
+							translateArg.additionalExplanation = additionalExplanation;
+							return i18n.translate( 'Error installing %(plugin)s on %(site)s. %(additionalExplanation)s', {
+								args: translateArg
+							} );
+						}
 						return i18n.translate( 'An error occurred while installing %(plugin)s on %(site)s.', {
 							args: translateArg
 						} );
 				}
-				break;
+
 			case 'REMOVE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -582,7 +662,7 @@ module.exports = {
 					default:
 						return i18n.translate( 'An error occurred while removing %(plugin)s on %(site)s.', { args: translateArg } );
 				}
-				break;
+
 			case 'UPDATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -590,9 +670,15 @@ module.exports = {
 							args: translateArg
 						} );
 					default:
+						if ( additionalExplanation ) {
+							translateArg.additionalExplanation = additionalExplanation;
+							return i18n.translate( 'Error updating %(plugin)s on %(site)s. %(additionalExplanation)s', {
+								args: translateArg
+							} );
+						}
 						return i18n.translate( 'An error occurred while updating %(plugin)s on %(site)s.', { args: translateArg } );
 				}
-				break;
+
 			case 'ACTIVATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -605,7 +691,7 @@ module.exports = {
 						} );
 
 				}
-				break;
+
 			case 'DEACTIVATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -617,7 +703,7 @@ module.exports = {
 							args: translateArg
 						} );
 				}
-				break;
+
 			case 'ENABLE_AUTOUPDATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -629,7 +715,7 @@ module.exports = {
 							args: translateArg
 						} );
 				}
-				break;
+
 			case 'DISABLE_AUTOUPDATE_PLUGIN':
 				switch ( sampleLog.error.error ) {
 					case 'unauthorized_full_access':
@@ -641,11 +727,10 @@ module.exports = {
 							args: translateArg
 						} );
 				}
-				break;
 		}
 	},
 
-	getErrorButton: function( log ) {
+	getErrorButton( log ) {
 		if ( log.length > 1 ) {
 			return null;
 		}
@@ -656,8 +741,7 @@ module.exports = {
 		return null;
 	},
 
-	getErrorHref: function( log ) {
-		var remoteManagementUrl;
+	getErrorHref( log ) {
 		if ( log.length > 1 ) {
 			return null;
 		}
@@ -665,10 +749,37 @@ module.exports = {
 		if ( log.error.error !== 'unauthorized_full_access' ) {
 			return null;
 		}
-		remoteManagementUrl = log.site.options.admin_url + 'admin.php?page=jetpack&configure=json-api';
+		let remoteManagementUrl = log.site.options.admin_url + 'admin.php?page=jetpack&configure=json-api';
 		if ( versionCompare( log.site.options.jetpack_version, 3.4 ) >= 0 ) {
 			remoteManagementUrl = log.site.options.admin_url + 'admin.php?page=jetpack&configure=manage';
 		}
 		return remoteManagementUrl;
+	},
+
+	getSuccessButton( log ) {
+		if ( log.length > 1 ) {
+			return null;
+		}
+		log = log.length ? log[ 0 ] : log;
+
+		if ( log.action !== 'ACTIVATE_PLUGIN' ||
+			! log.plugin.wp_admin_settings_page_url ) {
+			return null;
+		}
+
+		return i18n.translate( 'Setup' );
+	},
+
+	getSuccessHref( log ) {
+		if ( log.length > 1 ) {
+			return null;
+		}
+		log = log.length ? log[ 0 ] : log;
+
+		if ( log.action !== 'ACTIVATE_PLUGIN' &&
+			! log.plugin.wp_admin_settings_page_url ) {
+			return null;
+		}
+		return log.plugin.wp_admin_settings_page_url;
 	}
 };

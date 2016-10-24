@@ -1,0 +1,66 @@
+.empty-content {
+	max-width: 960px;
+	overflow: hidden;
+	margin: 35px auto 0;
+	padding-top: 20px;
+	text-align: center;
+
+	@include breakpoint( "<660px" ) {
+		padding-top: 10px;
+		margin-left: 15px;
+		margin-right: 15px;
+	}
+
+	&.has-title-only {
+		.empty-content__title {
+			margin-bottom: 40px;
+		}
+	}
+}
+
+.empty-content__title {
+	color: $gray-dark;
+	font-size: 34px;
+	font-weight: 300;
+
+	@include breakpoint( "<660px" ) {
+		font-size: 24px;
+	}
+}
+
+.empty-content__line {
+	color: $gray;
+	font-size: 22px;
+	font-weight: 300;
+	margin-bottom: 40px;
+
+	@include breakpoint( "<660px" ) {
+		font-size: 16px;
+	}
+}
+
+.empty-content__action {
+	margin: 0 0 10px 10px;
+}
+
+.empty-content.is-compact {
+	margin-top: 0;
+	padding-top: 0;
+	padding-bottom: 20px;
+
+	.empty-content__illustration {
+		margin-top: -130px;
+
+		@include breakpoint( "<660px" ) {
+			margin-top: -80px;
+		}
+	}
+
+	.empty-content__title {
+		font-size: 30px;
+
+		@include breakpoint( "<660px" ) {
+			font-size: 24px;
+		}
+	}
+}

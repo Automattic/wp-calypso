@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import keyMirror from 'react/lib/keyMirror';
+import keyMirror from 'key-mirror';
 
 /**
  * Module variables
@@ -13,4 +13,6 @@ export const action = keyMirror( {
 	OLARK_DETAILS: null,
 	OLARK_LOCALE: null,
 	OLARK_USER_ELIGIBILITY: null,
+	OLARK_SET_CLOSED: null,
+	OLARK_SET_EXPANDED: null
 } );

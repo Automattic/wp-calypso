@@ -1,13 +1,16 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 export default React.createClass( {
 
 	displayName: 'Count',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		count: React.PropTypes.number.isRequired,

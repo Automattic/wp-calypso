@@ -2,6 +2,10 @@
 	position: relative;
 }
 
+.editor-drawer-well.is-empty .editor-drawer-well__content {
+	display: none;
+}
+
 .editor-drawer-well__placeholder {
 	@extend .card;
 	display: block;
@@ -49,14 +53,13 @@
 	cursor: pointer;
 }
 
-.editor-drawer-well__remove-icon {
+.editor-drawer-well__remove .editor-drawer-well__remove-icon.gridicon {
 	position: absolute;
 		top: 50%;
-		right: 0;
-		left: 0;
-	transform: translateY( -50% );
-	font-size: 14px;
-	font-weight: bold;
-	text-align: center;
+		left: 50%;
+	transform: translate( -50%, -50% );
+	width: 24px;
+	height: 24px;
+	margin: 0;
 	color: lighten( $gray, 10% );
 }

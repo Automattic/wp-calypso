@@ -1,10 +1,11 @@
 /**
  * External dependencies
  */
-import keyMirror from 'react/lib/keyMirror';
+import keyMirror from 'key-mirror';
 
 export const Views = keyMirror( {
 	LIST: null,
 	DETAIL: null,
-	GALLERY: null
+	GALLERY: null,
+	IMAGE_EDITOR: null
 } );

@@ -99,7 +99,7 @@ The structure of files will be changing as we move remaining section-specific co
 
 ## Media Queries
 
-We don't do device specific breakpoints, we use layout-specific breakpoints that communicate the state of the UI. DO NOT define your own media queries. Utilize the mixins provided in `_.mixins.scss` that have default break points for `960px`, `660px`, and `480px`. Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. This means that devices with smaller screens have to process less CSS (which makes sense since they are generally less powerful). You should avoid the use of `<` breakpoints like this:
+We don't do device specific breakpoints, we use layout-specific breakpoints that communicate the state of the UI. DO NOT define your own media queries. Utilize the mixins [provided in `_mixins.scss`](https://github.com/Automattic/wp-calypso/blob/master/assets/stylesheets/shared/mixins/_breakpoints.scss). Furthermore, we are pushing for a mobile-first approach to media queries, meaning your default styles should apply to mobile, and desktop should build on top of that. This means that devices with smaller screens have to process less CSS (which makes sense since they are generally less powerful). You should avoid the use of `<` breakpoints like this:
 
 Bad:
 ```scss
@@ -142,11 +142,7 @@ Good:
 }
 ```
 
-The value passed to this mixin is actually a string rather than a pixel value. Accepted values are:
-
-`<480px`, `<660px`, `<960px`, `>480px`, `>660px`, `>960px`, `480px-660px`, `660px-960px`, `480px-960px`.
-
-If you provide any other value to the mixin it will fail and give you a warning in the output from `make run`.
+The value passed to this mixin is actually a string rather than a pixel value. Accepted values are: `"<X"`, `">X"`, or `"X-Y"` — where `X` and `Y` are valid breakpoints, for example `480px`. If you provide any other value to the mixin it will fail and give you a warning in the output from `make run`.
 
 Adding additional breakpoints should not be undertaken lightly.
 
@@ -162,7 +158,7 @@ If you are adding a new Sass file to `assets/stylesheets` you will need to refer
 
 ### Nesting
 
-* DON'T nest selectors in general. Exceptions are `:hover`/`:focus`/`::before`/`.is-modifyer`, and alike.
+* DON'T nest selectors in general. Exceptions are `:hover`/`:focus`/`::before`/`.is-modifier`, and alike.
 * DO attempt to keep nesting to 2 levels deep at most.
 * DO list items inside a selector in the following order (not all will necessarily be present):
     1. `@extend`(s).
@@ -176,7 +172,7 @@ Example of the above:
 .parent {
     @extend %awesomeness;
     border: 1px solid;
-    z-index: 5;
+    font-size: 2em;
     @include moar-awesome( true );
 
     &::before {
@@ -278,3 +274,118 @@ selector {
 }
 ```
 - DO [remove trailing whitespace](trailing-whitespace.md)
+
+## Z-Index
+
+When adding z-indexes use our scss z-index function. This means you'll need to
+add another entry to the `$z-layers` variable in
+`assets/stylesheets/shared/functions/_z-index.scss`.
+
+Because browsers support a hierarchy of stacking contexts rather than a single
+global one, we use a tree with two levels of keys. The first is the name of the
+parent stacking context, and the latter is the selector for the stacking 
+context you've just created.  We keep each level of the tree sorted by z-index 
+so we can quickly compare z-index values within a given stacking context.
+
+An element creates a new stacking context when any of the following are true:
+
+1. It's the root element (`html`)
+2. Has a position other than `static`, with a `z-index` value
+3. Has one of the following CSS properties: (`transform`, `opacity` < 1,
+   `mix-blend-mode`, `filter`)
+4. Has `position: fixed`
+5. Has `isolation: isolate`
+6. Has `-webkit-overflow-scrolling: touch`
+
+So, to add a new z-index:
+
+1. You'll want to make sure the element actually creates a stacking context
+2. Look up its parent stacking context
+3. Put the new rule in the `$z-layers` tree, using the selector of the parent 
+   stacking context as the initial key and the element's full CSS selector as 
+   the final key.
+
+You can use this handy Chrome
+[extension](https://chrome.google.com/webstore/detail/z-context/jigamimbjojkdgnlldajknogfgncplbh)
+to find the stacking contexts of both the element and its parent.
+
+As a simple example, imagine that we have a page with the following markup:
+
+```html
+<div class="masterbar"></div>
+<div class="modal">
+  <div class="modal__icon"></div>
+  <div class="modal__content"></div>
+  <div class="modal__header"></div>
+</div>
+```
+
+With CSS of:
+```css
+div {
+    position: relative;
+}
+.masterbar {
+    z-index: 2;
+}
+.modal {
+    z-index: 1;
+}
+.modal__icon {
+    z-index: 100;
+}
+.modal__content {
+   z-index: 300;
+}
+.modal__header {
+   z-index: 200;
+}
+```
+
+Each `div` in this case creates a stacking context, with the render order
+summarized as:
+
+```
+1.0 .modal
+1.100 .modal__icon
+1.200 .modal__header
+1.300 .modal__content
+2.0 .masterbar
+```
+
+In this case icon, header, and content can never be rendered above the
+masterbar because it is contained within the modal stacking context, which has
+a lower value than the masterbar.
+
+With this in mind our `$z-layers` might look like the following, with z-index
+values sorted from lowest to highest within a stacking context:
+
+```scss
+$z-layers: (
+    'root': (
+        '.modal': 1,
+        '.masterbar': 2
+    ),
+    '.modal': (
+        '.modal__icon': 100,
+        '.modal__header': 200,
+        '.modal__content': 300
+    )
+);
+```
+
+```scss
+.modal__icon {
+    z-index: z-index( '.modal', '.modal__icon' ); // returns 100
+}
+```
+
+While we can support a map with more than 2 layers, there isn't much benefit to doing
+this. Stacking of children are completely resolved within their parent context. So in 
+our example the stacking of `.modal__icon`, `.modal__header`, and `.modal__content` are
+completely resolved within `.modal`. Once this is done the entire `.modal` element is 
+passed for stacking in the root element, with it's sibling `.masterbar`.
+
+For further reading on stacking contexts see:
+- [https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
+- [Appendix E. Elaborate description of Stacking Contexts](http://www.w3.org/TR/CSS2/zindex.html)

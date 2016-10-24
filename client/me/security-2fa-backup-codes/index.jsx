@@ -7,11 +7,20 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Security2faBackupCodesPrompt = require( 'me/security-2fa-backup-codes-prompt' );
+var Security2faBackupCodesPrompt = require( 'me/security-2fa-backup-codes-prompt' ),
+	SectionHeader = require( 'components/section-header' ),
+	Button = require( 'components/button' ),
+	Card = require( 'components/card' ),
+	eventRecorder = require( 'me/event-recorder' ),
+	twoStepAuthorization = require( 'lib/two-step-authorization' ),
+	Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
+	Notice = require( 'components/notice' );
 
 module.exports = React.createClass( {
 
 	displayName: 'Security2faBackupCodes',
+
+	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		debug( this.constructor.displayName + ' React component is mounted.' );
@@ -27,82 +36,94 @@ module.exports = React.createClass( {
 		return {
 			printed: printed,
 			verified: printed,
-			showPrompt: ! printed
+			showPrompt: ! printed,
+			backupCodes: [],
+			generatingCodes: false
 		};
 	},
 
 	onGenerate: function() {
-		this.setState(
-			{
-				verified: false,
-				showPrompt: true
-			}
-		);
+		this.setState( {
+			generatingCodes: true,
+			verified: false,
+			showPrompt: true
+		} );
+
+		twoStepAuthorization.backupCodes( this.onRequestComplete );
+	},
+
+	onRequestComplete: function( error, data ) {
+		if ( error ) {
+			this.setState( {
+				lastError: this.translate( 'Unable to obtain backup codes.  Please try again later.' )
+			} );
+			return;
+		}
+
+		this.setState( {
+			backupCodes: data.codes,
+			generatingCodes: false
+		} );
 	},
 
 	onNextStep: function() {
-		this.setState(
-			{
-				printed: true,
-				verified: false,
-				showPrompt: true
-			}
-		);
+		this.setState( {
+			backupCodes: [],
+			printed: true,
+		} );
 	},
 
 	onVerified: function() {
-		this.setState(
-			{
-				printed: true,
-				verified: true,
-				showPrompt: false
-			}
-		);
+		this.setState( {
+			printed: true,
+			verified: true,
+			showPrompt: false
+		} );
 	},
 
 	renderStatus: function() {
 		if ( ! this.state.printed ) {
 			return (
-				this.translate(
-					'{{status}}Status:{{/status}} Backup Codes have {{notVerified}}not been verified{{/notVerified}}.',
-					{
-						components: {
-							status: <span className="security-2fa-backup-codes__status-heading"/>,
-							notVerified: <span className="security-2fa-backup-codes__status-not-verified"/>
-						}
-					}
-				)
+				<Notice
+					isCompact
+					status="is-error"
+					text={ this.translate( 'Backup codes have not been verified.' ) }
+				/>
 			);
 		}
 
 		if ( ! this.state.verified ) {
 			return (
-				this.translate(
-					'{{verify}}Backup Codes have just been printed, but need to be verified. ' +
-					'Please enter one of them below for verification.{{/verify}}',
-					{
-						components: {
-							verify: <span className="security-2fa-backup-codes__status-need-verification"/>,
-						}
-					}
-				)
+				<Notice
+					isCompact
+					text={ this.translate(
+						'New backup codes have just been generated, but need to be verified.'
+					) }
+				/>
 			);
 		}
 
 		return (
-			this.translate(
-				'{{status}}Status:{{/status}} Backup Codes have been {{verified}}verified{{/verified}}.',
-				{
-					components: {
-						status: <span className="security-2fa-backup-codes__status-heading"/>,
-						verified: <span className="security-2fa-backup-codes__status-verified"/>
-					}
-				}
-			)
+			<Notice
+				isCompact
+				status="is-success"
+				text={ this.translate( 'Backup codes have been verified' ) }
+			/>
 		);
 	},
 
-	render: function() {
+	renderList: function() {
+		return (
+			<Security2faBackupCodesList
+				backupCodes={ this.state.backupCodes }
+				onNextStep={ this.onNextStep }
+				userSettings={ this.props.userSettings }
+				showList
+			/>
+		);
+	},
+
+	renderPrompt: function() {
 		return (
 			<div>
 				<p>
@@ -115,9 +136,34 @@ module.exports = React.createClass( {
 					}
 				</p>
 
-				<p className="security-2fa-backup-codes__status">{ this.renderStatus() }</p>
+				{ this.renderStatus() }
 
-				{ this.state.showPrompt ? <Security2faBackupCodesPrompt onSuccess={ this.onVerified }/> : null }
+				{ this.state.showPrompt &&
+					<Security2faBackupCodesPrompt onSuccess={ this.onVerified } />
+				}
+			</div>
+		);
+	},
+
+	render: function() {
+		return (
+			<div className="security-2fa-backup-codes">
+				<SectionHeader label={ this.translate( 'Backup Codes' ) }>
+					<Button
+						compact
+						disabled={ this.state.generatingCodes || !! this.state.backupCodes.length }
+						onClick={ this.recordClickEvent( 'Generate New Backup Codes Button', this.onGenerate ) }
+					>
+						{ this.translate( 'Generate New Backup Codes' ) }
+					</Button>
+				</SectionHeader>
+				<Card>
+					{
+						this.state.generatingCodes || this.state.backupCodes.length
+						? this.renderList()
+						: this.renderPrompt()
+					}
+				</Card>
 			</div>
 		);
 	}

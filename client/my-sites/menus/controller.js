@@ -1,22 +1,25 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
-	MainComponent = require( 'components/main' ),
-	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' ),
-	itemTypes = require( 'my-sites/menus/menu-item-types' ),
-	MenusComponent = require( 'my-sites/menus/main' ),
-	notices = require( 'notices' ),
-	siteMenus = require( 'lib/menu-data' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import sitesFactory from 'lib/sites-list';
+import route from 'lib/route';
+import analytics from 'lib/analytics';
+import MainComponent from 'components/main';
+import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
+import itemTypes from 'my-sites/menus/menu-item-types';
+import MenusComponent from 'my-sites/menus/main';
+import notices from 'notices';
+import siteMenus from 'lib/menu-data';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
+
+const sites = sitesFactory();
 
 var controller = {
 
@@ -31,10 +34,11 @@ var controller = {
 			return;
 		}
 
-		titleActions.setTitle( i18n.translate( 'Menus', { textOnly: true } ), { siteID: context.params.site_id } );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Menus', { textOnly: true } ) ) );
 
 		function renderJetpackUpgradeMessage() {
-			React.render(
+			renderWithReduxStore(
 				React.createElement( MainComponent, null,
 					React.createElement( JetpackManageErrorPage, {
 						template: 'updateJetpack',
@@ -46,7 +50,8 @@ var controller = {
 						secondaryActionTarget: '_blank'
 					} )
 				),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 
@@ -63,14 +68,15 @@ var controller = {
 
 		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
 
-		React.render(
+		renderWithReduxStore(
 			React.createElement( MenusComponent, {
 				siteMenus: siteMenus,
 				itemTypes: itemTypes,
 				key: siteMenus.siteID,
 				site: site
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 

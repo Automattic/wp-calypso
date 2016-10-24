@@ -12,7 +12,7 @@ In your controller method, retrieve the search parameter from the URL and pass t
 ```
 var search = search = qs.parse( context.querystring ).s;
 
-React.render(
+ReactDom.render(
 	PostsComponent({
 		search: search,
 		context: context

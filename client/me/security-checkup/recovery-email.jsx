@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	assign = require( 'lodash/object/assign' );
+	assign = require( 'lodash/assign' );
 
 /**
  * Internal dependencies

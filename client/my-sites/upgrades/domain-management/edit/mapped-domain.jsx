@@ -7,13 +7,13 @@ const React = require( 'react' );
  * Internal dependencies
  */
 const analyticsMixin = require( 'lib/mixins/analytics' ),
-	config = require( 'config' ),
 	Card = require( 'components/card/compact' ),
 	Header = require( './card/header' ),
 	Property = require( './card/property' ),
 	SubscriptionSettings = require( './card/subscription-settings' ),
 	VerticalNav = require( 'components/vertical-nav' ),
 	VerticalNavItem = require( 'components/vertical-nav/item' ),
+	DomainWarnings = require( 'my-sites/upgrades/components/domain-warnings' ),
 	paths = require( 'my-sites/upgrades/paths' );
 
 const MappedDomain = React.createClass( {
@@ -30,9 +30,12 @@ const MappedDomain = React.createClass( {
 			);
 		}
 
+		const expirationMessage = domain.expirationMoment && domain.expirationMoment.format( 'MMMM D, YYYY' ) ||
+			<em>{ this.translate( 'Never Expires', { context: 'Expiration detail for a mapped domain' } ) }</em>;
+
 		return (
 			<Property label={ this.translate( 'Mapping expires on' ) }>
-				{ domain.expirationDate }
+				{ expirationMessage }
 			</Property>
 		);
 	},
@@ -41,9 +44,17 @@ const MappedDomain = React.createClass( {
 		this.recordEvent( 'paymentSettingsClick', this.props.domain );
 	},
 
+	domainWarnings() {
+		return <DomainWarnings
+			domain={ this.props.domain }
+			selectedSite={ this.props.selectedSite }
+			ruleWhiteList={ [ 'wrongNSMappedDomains' ] }/>;
+	},
+
 	render() {
 		return (
 			<div>
+				{ this.domainWarnings() }
 				{ this.getDomainDetailsCard() }
 				{ this.getVerticalNav() }
 			</div>
@@ -80,7 +91,7 @@ const MappedDomain = React.createClass( {
 
 	emailNavItem() {
 		const path = paths.domainManagementEmail(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 
@@ -92,12 +103,8 @@ const MappedDomain = React.createClass( {
 	},
 
 	dnsRecordsNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/name-servers' ) ) {
-			return null;
-		}
-
 		const path = paths.domainManagementDns(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 

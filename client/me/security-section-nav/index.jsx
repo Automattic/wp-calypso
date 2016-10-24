@@ -2,13 +2,13 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	find = require( 'lodash/collection/find' );
+	i18n = require( 'i18n-calypso' ),
+	find = require( 'lodash/find' );
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	SectionNav = require( 'components/section-nav' ),
+var SectionNav = require( 'components/section-nav' ),
 	NavTabs = require( 'components/section-nav/tabs' ),
 	NavItem = require( 'components/section-nav/item' ),
 	config = require( 'config' );
@@ -18,34 +18,41 @@ module.exports = React.createClass( {
 		path: React.PropTypes.string.isRequired
 	},
 
-	getDefaultProps: function() {
-		return {
-			tabs: [
-				{
-					title: i18n.translate( 'Password', { textOnly: true } ),
-					path: '/me/security',
-				},
-				{
-					title: i18n.translate( 'Two-Step Authentication', { textOnly: true } ),
-					path: '/me/security/two-step',
-				},
-				{
-					title: i18n.translate( 'Connected Applications', { textOnly: true } ),
-					path: '/me/security/connected-applications',
-				},
-				config.isEnabled( 'me/security/checkup' ) ? {
-					title: i18n.translate( 'Checkup', { textOnly: true } ),
-					path: '/me/security/checkup',
-				} : false
-			]
-		};
+	getNavtabs: function() {
+		var tabs = [
+			{
+				title: i18n.translate( 'Password', { textOnly: true } ),
+				path: '/me/security',
+			},
+			{
+				title: i18n.translate( 'Two-Step Authentication', { textOnly: true } ),
+				path: '/me/security/two-step',
+			},
+			{
+				title: i18n.translate( 'Connected Applications', { textOnly: true } ),
+				path: '/me/security/connected-applications',
+			}
+		];
+
+		if ( config.isEnabled( 'me/security/checkup' ) ) {
+			tabs.push( {
+				title: i18n.translate( 'Checkup', { textOnly: true } ),
+				path: '/me/security/checkup',
+			} );
+		}
+
+		return tabs;
+	},
+
+	getFilteredPath: function() {
+		var paramIndex = this.props.path.indexOf( '?' );
+		return ( paramIndex < 0 ) ? this.props.path : this.props.path.substring( 0, paramIndex );
 	},
 
 	getSelectedText: function() {
 		var text = '',
-			found = find( this.props.tabs, function( tab ) {
-				return this.props.path === tab.path;
-			}, this );
+			filteredPath = this.getFilteredPath(),
+			found = find( this.getNavtabs(), { path: filteredPath } );
 
 		if ( 'undefined' !== typeof found ) {
 			text = found.title;
@@ -62,13 +69,13 @@ module.exports = React.createClass( {
 		return (
 			<SectionNav selectedText={ this.getSelectedText() }>
 				<NavTabs>
-					{ this.props.tabs.map( function( tab ) {
+					{ this.getNavtabs().map( function( tab ) {
 						return (
 							<NavItem
 								key={ tab.path }
 								onClick={ this.onClick }
 								path={ tab.path }
-								selected={ tab.path === this.props.path }
+								selected={ tab.path === this.getFilteredPath() }
 							>
 								{ tab.title }
 							</NavItem>

@@ -1,31 +1,27 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-import chai from 'chai';
-import React from 'react/addons';
+import { expect } from 'chai';
 import sinon from 'sinon';
-import mockery from 'mockery';
-
-const expect = chai.expect,
-	TestUtils = React.addons.TestUtils;
+import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 describe( 'Search', function() {
-	beforeEach( function() {
-		mockery.registerMock( 'analytics', {} );
-		mockery.enable();
-		mockery.warnOnUnregistered( false );
+	var React, TestUtils, EMPTY_COMPONENT;
 
-		this.searchClass = require( '../' );
-		this.searchClass.prototype.__reactAutoBindMap.translate = sinon.stub();
+	useFakeDom();
+	useMockery( mockery => {
+		React = require( 'react' );
+		TestUtils = require( 'react-addons-test-utils' );
+
+		EMPTY_COMPONENT = require( 'test/helpers/react/empty-component' );
+
+		mockery.registerMock( 'lib/analytics', {} );
+		mockery.registerMock( 'components/gridicon', EMPTY_COMPONENT );
 	} );
 
-	afterEach( function() {
-		mockery.deregisterMock( 'analytics' );
-		mockery.disable();
-
-		delete this.searchClass.prototype.__reactAutoBindMap.translate;
+	before( function() {
+		this.searchClass = require( '../' );
 	} );
 
 	describe( 'initialValue', function() {

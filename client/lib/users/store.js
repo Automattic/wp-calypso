@@ -2,8 +2,9 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:users:store' ),
-	omit = require( 'lodash/object/omit' ),
-	find = require( 'lodash/collection/find' );
+	omit = require( 'lodash/omit' ),
+	find = require( 'lodash/find' ),
+	endsWith = require( 'lodash/endsWith' );
 
 /**
  * Internal dependencies
@@ -12,12 +13,13 @@ var Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	deterministicStringify = require( 'lib/deterministic-stringify' );
 
-var _fetchingUsersByNamespace = {}, // store fetching state (boolean)
-	_usersBySite = {}, // store user objects
-	_totalUsersByNamespace = {}, // store total found for params
-	_usersFetchedByNamespace = {}, // store fetch progress
-	_offsetByNamespace = {}, // store fetch progress
-	_userIDsByNamespace = {}; // store user order
+var _fetchingUsersByNamespace = {},        // store fetching state (boolean)
+	_fetchingUpdatedUsersByNamespace = {}, // store fetching state (boolean)
+	_usersBySite = {},                     // store user objects
+	_totalUsersByNamespace = {},           // store total found for params
+	_usersFetchedByNamespace = {},         // store fetch progress
+	_offsetByNamespace = {},               // store fetch progress
+	_userIDsByNamespace = {};              // store user order
 
 var UsersStore = {
 	// This data can help manage infinite scroll
@@ -68,6 +70,16 @@ var UsersStore = {
 		} );
 	},
 
+	getUpdatedParams( fetchOptions ) {
+		const namespace = getNamespace( fetchOptions );
+		const requestNumber = _usersFetchedByNamespace[ namespace ] || fetchOptions.number;
+
+		return Object.assign( {}, fetchOptions, {
+			offset: 0,
+			number: Math.min( requestNumber, 1000 )
+		} );
+	},
+
 	emitChange: function() {
 		this.emit( 'change' );
 	}
@@ -87,7 +99,7 @@ function updateUser( siteId, id, user ) {
 
 function decrementPaginationData( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+		if ( endsWith( namespace, 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
 			_totalUsersByNamespace[ namespace ]--;
 			_usersFetchedByNamespace[ namespace ]--;
 		}
@@ -96,7 +108,7 @@ function decrementPaginationData( siteId, userId ) {
 
 function incrementPaginationData( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+		if ( endsWith( namespace, 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
 			_totalUsersByNamespace[ namespace ]++;
 			_usersFetchedByNamespace[ namespace ]++;
 		}
@@ -113,8 +125,8 @@ function deleteUserFromSite( siteId, userId ) {
 
 function deleteUserFromNamespaces( siteId, userId ) {
 	Object.keys( _userIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
-			delete _userIDsByNamespace[ namespace ][ userId ];
+		if ( endsWith( namespace, 'siteId=' + siteId ) && _userIDsByNamespace[ namespace ].has( userId ) ) {
+			_userIDsByNamespace[ namespace ].delete( userId );
 		}
 	} );
 }
@@ -167,6 +179,15 @@ UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 
 			break;
+		case 'RECEIVE_UPDATED_USERS':
+			namespace = getNamespace( action.fetchOptions );
+			_fetchingUpdatedUsersByNamespace[ namespace ] = false;
+
+			if ( ! action.error ) {
+				updateUsers( action.fetchOptions, action.data.users, action.data.found );
+				UsersStore.emitChange();
+			}
+			break;
 		case 'UPDATE_SITE_USER':
 			updateUser( action.siteId, action.user.ID, action.user );
 			UsersStore.emitChange();
@@ -191,6 +212,11 @@ UsersStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'FETCHING_USERS':
 			namespace = getNamespace( action.fetchOptions );
 			_fetchingUsersByNamespace[ namespace ] = true;
+			UsersStore.emitChange();
+			break;
+		case 'FETCHING_UPDATED_USERS':
+			namespace = getNamespace( action.fetchOptions );
+			_fetchingUpdatedUsersByNamespace[ namespace ] = true;
 			UsersStore.emitChange();
 			break;
 		case 'RECEIVE_SINGLE_USER':

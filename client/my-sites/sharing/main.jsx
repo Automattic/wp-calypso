@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:sharing' ),
-	find = require( 'lodash/collection/find' );
+	find = require( 'lodash/find' );
 
 /**
  * Internal dependencies
@@ -13,7 +13,10 @@ var SectionNav = require( 'components/section-nav' ),
 	NavItem = require( 'components/section-nav/item' ),
 	Main = require( 'components/main' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
+	utils = require( 'lib/site/utils' ),
 	sites = require( 'lib/sites-list' )();
+
+import UpgradeNudge from 'my-sites/upgrade-nudge';
 
 module.exports = React.createClass( {
 	displayName: 'Sharing',
@@ -44,7 +47,11 @@ module.exports = React.createClass( {
 
 		// Include Sharing Buttons link if a site is selected and the
 		// required Jetpack module is active
-		if ( site && site.user_can_manage && ( ! site.jetpack || ( site.isModuleActive( 'sharedaddy' ) && site.versionCompare( '3.4-dev', '>=' ) ) ) ) {
+		if ( site && utils.userCan( 'manage_options', site ) &&
+			( ! site.jetpack ||
+				( site.isModuleActive( 'sharedaddy' ) && site.versionCompare( '3.4-dev', '>=' ) )
+			)
+		) {
 			filters.push( { title: this.translate( 'Sharing Buttons' ), path: '/sharing/buttons' + pathSuffix, id: 'sharing-buttons' } );
 		}
 
@@ -70,6 +77,12 @@ module.exports = React.createClass( {
 						}, this ) }
 					</NavTabs>
 				</SectionNav>
+				<UpgradeNudge
+					title={ this.translate( 'No Ads with WordPress.com Premium' ) }
+					message={ this.translate( 'Prevent ads from showing on your site.' ) }
+					feature="no-adverts"
+					event="sharing_no_ads"
+				/>
 				{ this.props.contentComponent }
 			</Main>
 		);

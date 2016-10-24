@@ -1,147 +1,60 @@
 /**
  * External Dependencies
  */
-var page = require( 'page' ),
-	React = require( 'react' ),
-	defer = require( 'lodash/function/defer' );
+import page from 'page';
+import React from 'react';
 
 /**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
-	plans = require( 'lib/plans-list' )(),
-	config = require( 'config' ),
-	upgradesActions = require( 'lib/upgrades/actions' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import { renderWithReduxStore } from 'lib/react-helpers';
+import get from 'lodash/get';
+import { isValidFeatureKey } from 'lib/plans';
 
-function handlePlanSelect( cartItem, siteSlug ) {
-	upgradesActions.addItem( cartItem );
+export default {
+	plans( context ) {
+		const Plans = require( 'my-sites/plans/main' ),
+			CheckoutData = require( 'components/data/checkout' );
 
-	// FIXME: @rads: The `defer` is necessary here to prevent an error with
-	//   React when changing pages, but the root cause is currently unknown.
-	defer( function() {
-		page( '/checkout/' + sites.getSelectedSite().slug );
-	} );
-}
-
-function onSelectPlan( cartItem ) {
-	handlePlanSelect( cartItem, sites.getSelectedSite().slug );
-}
-
-module.exports = {
-
-	plans: function( context ) {
-		var Plans = require( 'my-sites/plans/main' ),
-			CartData = require( 'components/data/cart' ),
-			MainComponent = require( 'components/main' ),
-			EmptyContentComponent = require( 'components/empty-content' ),
-			siteSpecificPlansDetailsList = require( 'lib/site-specific-plans-details-list' )(),
-			site = sites.getSelectedSite(),
-			analyticsPageTitle = 'Plans',
-			basePath = route.sectionify( context.path ),
-			analyticsBasePath;
-
-		// Don't show plans for Jetpack sites
-		if ( site && site.jetpack && ! config.isEnabled( 'manage/jetpack-plans' ) ) {
-			analytics.pageView.record( basePath + '/jetpack/:site', analyticsPageTitle + ' > Jetpack Plans Not Available' );
-
-			React.render(
-				React.createElement( MainComponent, null,
-					React.createElement( EmptyContentComponent, {
-						title: i18n.translate( 'Plans are not available for Jetpack sites yet.' ),
-						line: i18n.translate( 'Looking for spam protection?' ),
-						action: i18n.translate( 'Try Akismet' ),
-						actionURL: '//akismet.com/plans/?ref=calypso-plans',
-						illustration: '/calypso/images/drake/drake-nomenus.svg'
-					} )
-				),
-				document.getElementById( 'primary' )
-			);
-			return;
-		}
-
-		if ( site ) {
-			analyticsBasePath = basePath + '/:site';
-		} else {
-			analyticsBasePath = basePath;
-		}
-
-		titleActions.setTitle( i18n.translate( 'Plans', { textOnly: true } ),
-			{ siteID: route.getSiteFragment( context.path ) }
-		);
-
-		analytics.tracks.recordEvent( 'calypso_plans_view' );
-		analytics.pageView.record( analyticsBasePath, analyticsPageTitle );
-
-		React.render(
-			<CartData>
-				<Plans sites={ sites }
-					onSelectPlan={ onSelectPlan }
-					plans={ plans }
-					siteSpecificPlansDetailsList={ siteSpecificPlansDetailsList }
-					context={ context } />
-			</CartData>,
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			<CheckoutData>
+				<Plans
+					context={ context }
+					intervalType={ context.params.intervalType }
+					destinationType={ context.params.destinationType }
+					selectedFeature={ context.query.feature }
+				/>
+			</CheckoutData>,
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
-	plansCompare: function( context ) {
-		var PlansCompare = require( 'components/plans/plans-compare' ),
-			Main = require( 'components/main' ),
-			CartData = require( 'components/data/cart' ),
-			siteSpecificPlansDetailsList = require( 'lib/site-specific-plans-details-list' )(),
-			features = require( 'lib/features-list' )(),
-			productsList = require( 'lib/products-list' )(),
-			analyticsPageTitle = 'Plans > Compare',
-			site = sites.getSelectedSite(),
-			basePath = route.sectionify( context.path ),
-			baseAnalyticsPath;
+	features( context ) {
+		const domain = context.params.domain;
+		const feature = get( context, 'params.feature' );
+		let comparePath = domain ? `/plans/${ domain }` : '/plans/';
 
-		if ( site && ! site.isUpgradeable() ) {
-			return page.redirect( '/plans/compare' );
+		if ( isValidFeatureKey( feature ) ) {
+			comparePath += '?feature=' + feature;
 		}
 
-		if ( site ) {
-			baseAnalyticsPath = basePath + '/:site';
-		} else {
-			baseAnalyticsPath = basePath;
+		// otherwise redirect to the compare page if not found
+		page.redirect( comparePath );
+	},
+
+	redirectToCheckout( context ) {
+		// this route is deprecated, use `/checkout/:site/:plan` to link to plan checkout
+		page.redirect( `/checkout/${ context.params.domain }/${ context.params.plan }` );
+	},
+
+	redirectToPlans( context ) {
+		const siteDomain = context.params.domain;
+
+		if ( siteDomain ) {
+			return page.redirect( `/plans/${ siteDomain }` );
 		}
 
-		analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle );
-
-		titleActions.setTitle( i18n.translate( 'Compare Plans', { textOnly: true } ), {
-			siteID: context.params.domain
-		} );
-
-		React.render(
-			<Main className="plans has-sidebar">
-				<CartData>
-					<PlansCompare sites={ sites }
-						onSelectPlan={ onSelectPlan }
-						plans={ plans }
-						features={ features }
-						siteSpecificPlansDetailsList={ siteSpecificPlansDetailsList }
-						productsList={ productsList } />
-				</CartData>
-			</Main>,
-			document.getElementById( 'primary' )
-		);
-	},
-
-	plansSelect: function( context ) {
-		var CartData = require( 'components/data/cart' ),
-			PlansSelect = require( 'my-sites/plans/plans-select' );
-
-		React.render(
-			<CartData>
-				<PlansSelect context={ context } sites={ sites } plans={ plans } />
-			</CartData>,
-			document.getElementById( 'primary' )
-		);
-	},
-
-	handlePlanSelect,
+		return page.redirect( '/plans' );
+	}
 };

@@ -1,23 +1,24 @@
 /**
  * External dependencies
  */
-const React = require( 'react/addons' ),
-	classNames = require( 'classnames' ),
-	omit = require( 'lodash/object/omit' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
  */
-const CompactCard = require( 'components/card/compact' ),
-	PeopleProfile = require( 'my-sites/people/people-profile' ),
-	analytics = require( 'analytics' ),
-	config = require( 'config' );
+import CompactCard from 'components/card/compact';
+import PeopleProfile from 'my-sites/people/people-profile';
+import analytics from 'lib/analytics';
+import config from 'config';
 
 export default React.createClass( {
 
 	displayName: 'PeopleListItem',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	navigateToUser() {
 		window.scrollTo( 0, 0 );
@@ -47,11 +48,11 @@ export default React.createClass( {
 		const canLinkToProfile = this.canLinkToProfile();
 		return (
 			<CompactCard
-				{ ...omit( this.props, 'className' ) }
+				{ ...omit( this.props, 'className', 'user', 'site', 'isSelectable', 'onRemove' ) }
 				className={ classNames( 'people-list-item', this.props.className ) }
+				tagName="a"
 				href={ canLinkToProfile && '/people/edit/' + this.props.user.login + '/' + this.props.site.slug }
-				onClick={ canLinkToProfile && this.navigateToUser }
-			>
+				onClick={ canLinkToProfile && this.navigateToUser }>
 				<div className="people-list-item__profile-container">
 					<PeopleProfile user={ this.props.user } />
 				</div>

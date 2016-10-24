@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/object/assign' ),
+var ReactDomServer = require( 'react-dom/server' ),
+	React = require( 'react' ),
+	assign = require( 'lodash/assign' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -58,7 +59,7 @@ Markup = {
 			title: media.title
 		}, media.title );
 
-		return React.renderToStaticMarkup( element );
+		return ReactDomServer.renderToStaticMarkup( element );
 	},
 
 	/**
@@ -97,12 +98,14 @@ Markup = {
 			width = MediaSerialization.deserialize( img ).width;
 		}
 
+		/*eslint-disable react/no-danger*/
 		return (
 			<dl className={ classNames( 'wp-caption', parsed.attrs.named.align, parsed.attrs.named.classes ) } style={ { width: width } }>
 				<dt className="wp-caption-dt" dangerouslySetInnerHTML={ { __html: img } } />
 				<dd className="wp-caption-dd">{ caption }</dd>
 			</dl>
 		);
+		/*eslint-enable react/no-danger*/
 	},
 
 	mimeTypes: {
@@ -153,7 +156,7 @@ Markup = {
 				className: classNames( 'align' + options.align, 'size-' + options.size, 'wp-image-' + media.ID )
 			} );
 
-			let markup = React.renderToStaticMarkup( img );
+			let markup = ReactDomServer.renderToStaticMarkup( img );
 			if ( media.caption && width ) {
 				markup = Shortcode.stringify( {
 					tag: 'caption',

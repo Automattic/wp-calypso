@@ -79,6 +79,12 @@ Optional URL to navigate to when option is clicked.
 
 Optional callback that will be applied when a `DropdownItem` has been clicked. This could be used for updating a parent's state, tracking analytics, etc.
 
+### Label
+
+An item "label" can be added like as a sibling to `DropdownItem`. The purpose
+of this `DropdownLabel` component is used to display a static item, for example, to group
+items.
+
 ### Separator
 
 As a sibling to `DropdownItem`, an item "separator" or horizontal line can be used to visually separate items.
@@ -97,6 +103,7 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<SelectDropdown selectedText="Published">
+				<DropdownLabel><em>Post status<em></DropdownLabel>
 				<DropdownItem selected={ true } path="/published">Published</DropdownItem>
 				<DropdownItem path="/scheduled">Scheduled</DropdownItem>
 				<DropdownItem path="/drafts">Drafts</DropdownItem>
@@ -121,6 +128,7 @@ A good example for this case is a form element. You don't want to have to write 
 ```js
 var SelectDropdown = require( 'components/select-dropdown' );
 var options = [
+	{ label: 'Post status', isLabel: true },
 	{ value: 'published', label: 'Published' },
 	{ value: 'scheduled', label: 'Scheduled' },
 	{ value: 'drafts', label: 'Drafts' },
@@ -157,6 +165,7 @@ var options = [
 	{
 		value: // *required* - (string) tracked by component
 		label: // *required* - (string) displayed to user
+		isLabel: // optional - (boolean) set this item like a static label
 		path: // optional - (string) URL to navigate when clicked
 	},
 	// ...
@@ -167,6 +176,10 @@ var options = [
 
 Optional string representing the initial selected option's `value`. Default will be the first option's `value`.
 
+`compact`
+
+Optional boolean indicating the dropdown will be rendered in compact mode
+
 `onSelect`
 
 Optional callback that will be run whenever a new selection has been clicked.
@@ -174,6 +187,21 @@ Optional callback that will be run whenever a new selection has been clicked.
 `onToggle`
 
 Optional callback that will be run after the dropdown is opened or closed. An event object is passed, including a `target` property equal to the `SelectDropdown` React element instance, and `open` equal to the current toggle state of the dropdown.
+
+### Label
+
+Adding `isLabel` key set to `true` into the item object will create a `DropdownLabel` component.
+
+```js
+var options = [
+	{ label: 'Post status', isLabel: true },
+	{ value: 'published', label: 'Published' },
+	{ value: 'scheduled', label: 'Scheduled' },
+	{ value: 'drafts', label: 'Drafts' },
+	null,
+	{ value: 'trashed', label: 'Trashed' }
+];
+```
 
 ### Separator
 

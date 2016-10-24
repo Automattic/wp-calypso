@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
-import i18n from 'lib/mixins/i18n';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -24,6 +24,11 @@ var user = new User(),
 class PostSchedule extends Component {
 	constructor( props ) {
 		super( props );
+
+		// bounds
+		this.updateDate = this.updateDate.bind( this );
+		this.setViewDate = this.setViewDate.bind( this );
+		this.setCurrentMonth = this.setCurrentMonth.bind( this );
 
 		this.state = {
 			calendarViewDate: i18n.moment(
@@ -80,7 +85,7 @@ class PostSchedule extends Component {
 				id: post.ID,
 				title: post.title,
 				date: localDate.toDate()
-			}
+			};
 		} );
 	}
 
@@ -141,7 +146,7 @@ class PostSchedule extends Component {
 					value={ chronoText }
 					placeholder={ date.calendar() }
 					lang={ lang ? lang.langSlug : null }
-					onSet={ this.updateDate.bind( this ) }
+					onSet={ this.updateDate }
 				/>
 
 				<hr className="post-schedule__hr" />
@@ -161,7 +166,7 @@ class PostSchedule extends Component {
 				date={ date }
 				timezone={ this.props.timezone }
 				gmtOffset={ this.props.gmtOffset }
-				onChange={ this.updateDate.bind( this ) }
+				onChange={ this.updateDate }
 			/>
 		);
 	}
@@ -171,7 +176,7 @@ class PostSchedule extends Component {
 			<div className="post-schedule" >
 				<Header
 					date={ this.state.calendarViewDate }
-					onDateChange={ this.setViewDate.bind( this ) }
+					onDateChange={ this.setViewDate }
 				/>
 
 				{ this.renderInputChrono() }
@@ -187,15 +192,15 @@ class PostSchedule extends Component {
 					timeReference={ this.getCurrentDate() }
 					calendarViewDate={ this.state.calendarViewDate.toDate() }
 
-					onMonthChange={ this.setCurrentMonth.bind( this ) }
-					onSelectDay={ this.updateDate.bind( this ) }
+					onMonthChange={ this.setCurrentMonth }
+					onSelectDay={ this.updateDate }
 				/>
 
 				{ this.renderClock() }
 			</div>
 		);
 	}
-};
+}
 
 /**
  * Statics

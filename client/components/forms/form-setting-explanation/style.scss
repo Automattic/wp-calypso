@@ -5,4 +5,8 @@
 	font-style: italic;
 	font-weight: 400;
 	margin: 5px 0 0 0;
+
+	&.is-indented {
+		margin-left: 24px;
+	}
 }

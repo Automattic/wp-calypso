@@ -1,7 +1,7 @@
 Countries List
 ==============
 
-The `countries-list` module provides access to localized list of countries as returned from the REST API. These lists are ordered alphabetically with a list of favorite countries at the top.
+The `countries-list` module provides access to localized list of countries as returned from the REST-API. These lists are ordered alphabetically with a list of favorite countries at the top.
 
 ## Usage
 

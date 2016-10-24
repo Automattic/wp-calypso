@@ -10,7 +10,7 @@ var debug = require( 'debug' )( 'calypso:user:utilities' ),
 var user = require( 'lib/user' )();
 
 var userUtils = {
-	getLogoutUrl: function() {
+	getLogoutUrl: function( redirect ) {
 		var url = '/logout',
 			userData = user.get(),
 			subdomain = '';
@@ -29,13 +29,18 @@ var userUtils = {
 			url = userData.logout_URL;
 		}
 
+		if ( 'string' === typeof redirect ) {
+			redirect = '&redirect_to=' + encodeURIComponent( redirect );
+			url += redirect;
+		}
+
 		debug( 'Logout Url: ' + url );
 
 		return url;
 	},
 
-	logout: function() {
-		var logoutUrl = userUtils.getLogoutUrl();
+	logout: function( redirect ) {
+		var logoutUrl = userUtils.getLogoutUrl( redirect );
 
 		// Clear any data stored locally within the user data module or localStorage
 		user.clear();
@@ -43,7 +48,21 @@ var userUtils = {
 
 		// Forward user to WordPress.com to be logged out
 		location.href = logoutUrl;
-	}
+	},
+
+	getLocaleSlug: function() {
+		return user.get().localeSlug;
+	},
+
+	isLoggedIn: function() {
+		return Boolean( user.data );
+	},
+
+	needsVerificationForSite: function( site ) {
+		// do not allow publish for unverified e-mails,
+		// but allow if the site is VIP
+		return !user.get().email_verified && !( site && site.is_vip );
+	},
 };
 
 module.exports = userUtils;

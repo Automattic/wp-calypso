@@ -1,31 +1,34 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+import React from 'react';
+import classnames from 'classnames';
 
-var PostExcerpt = React.createClass( {
+const PostExcerpt = React.createClass( {
 
-	render: function() {
-		var text = this.props.text,
-			textClass = [ 'post-excerpt__text' ];
+	propTypes: {
+		content: React.PropTypes.string.isRequired,
+		maxLength: React.PropTypes.number
+	},
 
-		if ( ! text ) {
+	defaultProps: {
+		maxLength: 80
+	},
+
+	render() {
+		if ( ! this.props.content ) {
 			return null;
 		}
 
-		if ( text.length > 80 ) {
-			textClass.push( 'is-long' );
-		}
-
-		textClass = textClass.join( ' ' );
+		const classes = classnames( {
+			'post-excerpt': true,
+			'is-long': ( this.props.content.length > this.props.maxLength )
+		} );
 
 		return (
-			<div className={ joinClasses( this.props.className, 'post-excerpt' ) }>
-				<p className={ textClass }>{ text }</p>
-			</div>
+			<div className={ classes } dangerouslySetInnerHTML={{ __html: this.props.content }}></div> //eslint-disable-line react/no-danger
 		);
 	}
 } );
 
-module.exports = PostExcerpt;
+export default PostExcerpt;

@@ -239,8 +239,8 @@ module.exports = React.createClass( {
 	getExamples: function() {
 		var examples;
 
-		if ( this.props.examples[ this.props.service.name ] ) {
-			examples = this.props.examples[ this.props.service.name ].call( this );
+		if ( this.props.examples[ this.props.service.ID ] ) {
+			examples = this.props.examples[ this.props.service.ID ].call( this );
 
 			return examples.map( function( example, i ) {
 				return <ServiceExample key={ i } image={ example.image } label={ example.label } single={ 1 === examples.length } />;

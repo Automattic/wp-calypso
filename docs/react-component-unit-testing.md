@@ -4,27 +4,14 @@ Calypso has a lot of React UI components. (Try for example running `find -name *
 
 ## [Getting started](#getting-started)
 
-To run all current tests, run `make test` in the root source folder. You can also run individual tests by going into their folder and running `make test` there.
-
-An easy way to find existing tests, to see how they were done or otherwise, is to run `find -name Makefile` under the folder from which you want to find the tests. This works because Makefiles are almost exclusively used for setting up a test environment for a folder. Searching the Calypso Github repository also works.
+To run all current tests, run `npm test` in the root source folder. You can also run individual tests. Check [How to run single test runner](https://github.com/Automattic/wp-calypso/blob/master/test/README.md#how-to-run-single-test-runner) documentation for more details.
 
 Going through the current tests is a good way to get ideas for how different kinds of things can be tested.
 
 ### [Set up a test environment](#setting-up-environment)
-Tests are currently set up using Makefiles. If the component you're testing uses jsx syntax (which a lot of the React code uses, read more about it [here](https://facebook.github.io/react/docs/jsx-in-depth.html)) and hence is named .jsx, the --compilers flag with the jsx:jsx-require-extension option is needed. Otherwise you should leave it out.
-```
-REPORTER ?= spec
-MOCHA ?= ../../../node_modules/.bin/mocha
 
-test:
-     @NODE_ENV=test NODE_PATH=test:../../ $(MOCHA) --compilers jsx:babel/register --reporter $(REPORTER)
-
-.PHONY: test
-```
-
-
-Put this next to your component in a file named Makefile. Then make a test folder next to it and place your tests there. Now your tests should be runnable both from your component's folder and from all folders above it.
-
+It's very possible that your tests will assume the existence of a browser environment to work properly.
+Refer to the [Use fake DOM](https://github.com/Automattic/wp-calypso/tree/master/test/test/helpers/use-fake-dom) test helper documentation to learn how to configure an emulated DOM for your test.
 
 ### [What to test?](#what-to-test)
 
@@ -67,7 +54,7 @@ Example test from `client/components/Accordion`
 ```javascript
 var tree = TestUtils.renderIntoDocument( <Accordion title="Section" onToggle={ finishTest }>Content</Accordion> );
 
-TestUtils.Simulate.touchTap( React.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
+TestUtils.Simulate.touchTap( ReactDom.findDOMNode( TestUtils.findRenderedDOMComponentWithClass( tree, 'accordion__toggle' ) ) );
 
 function finishTest( isExpanded ) {
 	expect( isExpanded ).to.be.ok;
@@ -88,7 +75,7 @@ Shallow rendering helps with inspecting whether our component renders correctly,
 >Shallow rendering is an experimental feature that lets you render a component "one level deep" and assert facts about what its render method returns, without worrying about the behavior of child components, which are not instantiated or rendered. This does not require a DOM.
 https://facebook.github.io/react/docs/test-utils.html#shallow-rendering
 
-For a complete example of usage, see `shared/components/themes-list/test/index.jsx`.
+For a complete example of usage, see `client/components/themes-list/test/index.jsx`.
 
 The render function basically just draws a bunch of Theme subcomponents:
 ```javascript
@@ -100,7 +87,7 @@ render: function() {
 			{ this.props.themes.map( function( theme ) {
 				return (
 					<li key={ 'theme' + theme.name }>
-						<Theme { ...theme } />
+						<Theme theme={ theme } />
 					</li>
 				);
 			} ) }
@@ -142,4 +129,3 @@ assert( this.themesList.props.children.length === this.props.themes.length, 'chi
 ```
 
 So here we avoid having to actually draw the `Theme` components when testing `ThemesList`.
-

@@ -1,0 +1,166 @@
+// Setting up the .main div to accept the transitions for
+// the First View component.
+.is-first-view-active .main {
+	opacity: 1;
+	pointer-events: auto;
+	transition: all .6s ease-in-out;
+}
+
+.is-first-view-visible .main {
+	opacity: 0.3;
+	pointer-events: none;
+
+	// This limits the blur filter to Safari, as other browsers can't handle the
+	// awesomeness of transitioning blurs.
+	@supports (overflow:-webkit-marquee) and (justify-content:inherit) {
+		filter: blur( 3px );
+	}
+}
+
+.first-view {
+	box-sizing: border-box;
+	margin: calc( 47px + 10vh ) 0 0 0;
+	padding: 32px 32px 32px 32px;
+	pointer-events: none;
+	position: fixed;
+		bottom: 0;
+		top: 0;
+	width: 100%;
+	z-index: z-index( 'root', '.first-view' );
+
+	@include breakpoint( "<480px" ) {
+		padding: 0;
+		margin-top: 47px;
+	}
+
+	@include breakpoint( ">660px" ) {
+		padding-left: ( $sidebar-width-min + 32px );
+	}
+
+	@include breakpoint( ">960px" ) {
+		padding-left: ( $sidebar-width-max + 32px );
+	}
+
+	@media (max-height: 480px) {
+		padding: 0;
+		margin: 47px 0;
+	}
+}
+
+.first-view__content {
+	margin: 0 auto;
+	max-width: 575px;
+	opacity: 0;
+	padding: 20px 24px 20px ( 128px + 4px + 24px );
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), 0.5 ),
+		0 8px 30px rgba( $gray, 0.2 );
+	position: relative;
+	pointer-events: auto;
+	transform: scale( 0.98 ) translateY( 32px );
+	transition: all 0.25s ease-in;
+
+	@include breakpoint( "<480px" ) {
+		height: 100%;
+		padding-left: 24px;
+		text-align: center;
+	}
+
+	@include breakpoint( ">660px" ) {}
+
+	@include breakpoint( ">960px" ) {}
+
+	.first-view__icon {
+		position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+		width: 128px;
+		background: $gray-light;
+		border-right: 1px solid lighten( $gray, 30 );
+		padding: 2px;
+
+		@include breakpoint( "<480px" ) {
+			position: relative;
+			width: calc( 100% + 48px );
+			border-right: none;
+			border-bottom: 1px solid lighten( $gray, 30 );
+			padding: 16px 0;
+			margin: -20px -24px 24px -24px;
+
+			@media (max-height: 480px) {
+				display: none;
+			}
+
+			@media (max-height: 660px) {
+				width: calc( 100% + 80px );
+				margin: -34px -40px 40px -40px;
+				zoom: 0.6;
+			}
+		}
+
+		svg {
+			width: 128px;
+			height: 128px;
+
+			@include breakpoint( "<480px" ) {
+				margin: 0 auto;
+				width: 220px;
+				height: 220px;
+			}
+		}
+	}
+
+	h1 {
+		font-size: 18px;
+		font-weight: 600;
+		margin: 0 0 12px 0;
+		line-height: 1.4;
+
+		@include breakpoint( "<480px" ) {
+			font-size: 24px;
+		}
+	}
+
+	p {
+		font-size: 15px;
+		margin: 0 0 20px 0;
+		line-height: 1.5;
+	}
+
+	.button {
+		min-width: 120px;
+
+		@include breakpoint( "<480px" ) {
+			min-width: 200px;
+		}
+	}
+}
+
+.is-first-view-visible .first-view__content {
+	opacity: 1;
+	transform: scale( 1 ) translateY( 0 );
+}
+
+.first-view__hide-preference {
+	color: darken( $gray, 30 );
+	padding: 8px 0;
+
+	@include breakpoint( "<480px" ) {
+		padding: 24px 0;
+	}
+
+	@include breakpoint( ">660px" ) {
+		display: inline-block;
+		padding-left: 32px;
+	}
+
+	label {
+		cursor: pointer;
+	}
+
+	input[type='checkbox'] {
+		float: none;
+		margin-right: 8px;
+		margin-top: -2px;
+	}
+}

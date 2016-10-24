@@ -19,7 +19,6 @@
 }
 
 .cart-body {
-	background: $white;
 	padding: 15px;
 
 	.cart-items {
@@ -64,6 +63,13 @@
 			font-size: 13px;
 		}
 
+		.product-monthly-price {
+			color: $gray;
+			display: block;
+			font-size: 11px;
+			font-style: italic;
+		}
+
 		.remove-item {
 			box-shadow: none;
 			cursor: pointer;
@@ -76,6 +82,14 @@
 			position: absolute;
 			right: 0;
 			top: 0;
+		}
+	}
+
+	.cart-item__loading-placeholder {
+		.remove-item {
+			@include placeholder(23%);
+			border-radius: 0;
+			width: 25px;
 		}
 	}
 
@@ -139,7 +153,7 @@
 	font-size: 14px;
 }
 
-.cart-plan-ad {
+.cart__cart-ad {
 	background: lighten( $gray, 34% );
 	border: 1px solid lighten( $gray, 30% );
 	border-radius: 4px;
@@ -206,11 +220,11 @@
 div.popover-cart__popover {
 	width: 330px;
 
-	.tip-arrow {
+	.popover__arrow {
 		margin-left: 8px !important;
 	}
 
-	.tip-inner {
+	.popover__inner {
 		text-align: left;
 	}
 
@@ -328,4 +342,23 @@ div.popover-cart__popover {
 
 .secondary-cart {
 	background: $white;
+}
+
+.cart-item__loading-placeholder {
+	span {
+		@include placeholder(23%);
+		margin-bottom: 1px;
+	}
+
+	.product-name {
+		width: 55%;
+	}
+
+	.product-domain {
+		width: 40%;
+	}
+
+	.product-price {
+		width: 20%;
+	}
 }

@@ -2,11 +2,11 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' ),
-	first = require( 'lodash/array/first' ),
-	some = require( 'lodash/collection/some' ),
-	findIndex = require( 'lodash/array/findIndex' ),
-	values = require( 'lodash/object/values' ),
+	noop = require( 'lodash/noop' ),
+	head = require( 'lodash/head' ),
+	some = require( 'lodash/some' ),
+	findIndex = require( 'lodash/findIndex' ),
+	values = require( 'lodash/values' ),
 	closest = require( 'component-closest' ),
 	debug = require( 'debug' )( 'calypso:post-editor:media' );
 
@@ -14,7 +14,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var MediaLibrary = require( 'my-sites/media-library' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	PostActions = require( 'lib/posts/actions' ),
 	PostStats = require( 'lib/posts/stats' ),
 	MediaModalSecondaryActions = require( './secondary-actions' ),
@@ -23,10 +23,11 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	MediaActions = require( 'lib/media/actions' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	Dialog = require( 'components/dialog' ),
-	config = require( 'config' ),
 	markup = require( './markup' ),
 	accept = require( 'lib/accept' ),
 	ModalViews = require( './constants' ).Views;
+
+import ImageEditor from 'blocks/image-editor';
 
 module.exports = React.createClass( {
 	displayName: 'EditorMediaModal',
@@ -63,11 +64,6 @@ module.exports = React.createClass( {
 			MediaActions.setLibrarySelectedItems( nextProps.site.ID, [] );
 		}
 
-		if ( nextProps.site && nextProps.site.jetpack && ! nextProps.site.modulesFetched &&
-				( ! this.props.site || this.props.site.ID !== nextProps.site.ID ) ) {
-			nextProps.site.fetchModules();
-		}
-
 		if ( ! nextProps.visible || this.props.visible === nextProps.visible ) {
 			return;
 		}
@@ -76,11 +72,6 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount: function() {
-		var site = this.props.site;
-		if ( site && site.jetpack && ! site.modulesFetched ) {
-			site.fetchModules();
-		}
-
 		debug( '%s component mounted.', this.constructor.name );
 
 		this.statsTracking = {};
@@ -97,15 +88,9 @@ module.exports = React.createClass( {
 
 	isDisabled: function() {
 		return some( this.props.mediaLibrarySelectedItems, function( item ) {
-			var mimePrefix;
-
-			if ( ! config.isEnabled( 'post-editor/live-image-updates' ) && item.transient ) {
-				return true;
-			}
-
-			mimePrefix = MediaUtils.getMimePrefix( item );
+			var mimePrefix = MediaUtils.getMimePrefix( item );
 			return item.transient && ( mimePrefix !== 'image' || ModalViews.GALLERY === this.state.activeView );
-		}, this );
+		}.bind( this ) );
 	},
 
 	confirmSelection: function() {
@@ -155,6 +140,7 @@ module.exports = React.createClass( {
 			case ModalViews.LIST: stat = 'view_list'; break;
 			case ModalViews.DETAIL: stat = 'view_detail'; break;
 			case ModalViews.GALLERY: stat = 'view_gallery'; break;
+			case ModalViews.IMAGE_EDITOR: stat = 'view_edit'; break;
 		}
 
 		if ( stat ) {
@@ -172,25 +158,26 @@ module.exports = React.createClass( {
 		if ( 1 === this.props.mediaLibrarySelectedItems.length ) {
 			// If this is the only selected item, return user to the list
 			this.setView( ModalViews.LIST );
-		} else if ( this.state.detailSelectedIndex === this.props.mediaLibrarySelectedItems.length - 1 ) {
+		} else if ( this.getDetailSelectedIndex() === this.props.mediaLibrarySelectedItems.length - 1 ) {
 			// If this is the last selected item, decrement to the previous
-			this.setDetailSelectedIndex( this.state.detailSelectedIndex - 1 );
+			this.setDetailSelectedIndex( Math.max( this.getDetailSelectedIndex() - 1, 0 ) );
 		}
 	},
 
 	confirmDeleteMedia: function( accepted ) {
-		var toDelete = this.props.mediaLibrarySelectedItems;
+		const { site, mediaLibrarySelectedItems } = this.props;
 
-		if ( ! this.props.site || ! accepted ) {
+		if ( ! site || ! accepted ) {
 			return;
 		}
 
+		let toDelete = mediaLibrarySelectedItems;
 		if ( ModalViews.DETAIL === this.state.activeView ) {
-			toDelete = MediaUtils.sortItemsByDate( toDelete )[ this.state.detailSelectedIndex ];
+			toDelete = toDelete[ this.getDetailSelectedIndex() ];
 			this.setNextAvailableDetailView();
 		}
 
-		MediaActions.delete( this.props.site.ID, toDelete );
+		MediaActions.delete( site.ID, toDelete );
 		analytics.mc.bumpStat( 'editor_media_actions', 'delete_media' );
 	},
 
@@ -215,6 +202,84 @@ module.exports = React.createClass( {
 	onAddMedia: function() {
 		PostStats.recordStat( 'media_explorer_upload' );
 		PostStats.recordEvent( 'Upload Media' );
+	},
+
+	onAddAndEditImage: function() {
+		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+
+		this.setView( ModalViews.IMAGE_EDITOR );
+	},
+
+	onImageEditorDone( error, blob, imageEditorProps ) {
+		if ( error ) {
+			this.onImageEditorCancel( imageEditorProps );
+
+			return;
+		}
+
+		const {
+			fileName,
+			site,
+			resetAllImageEditorState
+		} = imageEditorProps;
+
+		const mimeType = MediaUtils.getMimeType( fileName );
+
+		// check if a title is already post-fixed with '(edited copy)'
+		const editedCopyText = this.translate(
+			'%(title)s (edited copy)', {
+				args: {
+					title: ''
+				}
+			} );
+
+		let { title } = imageEditorProps;
+
+		if ( title.indexOf( editedCopyText ) === -1 ) {
+			title = this.translate(
+				'%(title)s (edited copy)', {
+					args: {
+						title: title
+					}
+				} );
+		}
+
+		MediaActions.add( site.ID, {
+			fileName: fileName,
+			fileContents: blob,
+			title: title,
+			mimeType: mimeType
+		} );
+
+		resetAllImageEditorState();
+
+		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
+		this.setView( ModalViews.LIST );
+	},
+
+	onImageEditorCancel: function( imageEditorProps ) {
+		const { mediaLibrarySelectedItems } = this.props;
+
+		const item = mediaLibrarySelectedItems[ this.getDetailSelectedIndex() ];
+
+		if ( ! item ) {
+			this.setView( ModalViews.LIST );
+			return;
+		}
+		this.setView( ModalViews.DETAIL );
+
+		const {	resetAllImageEditorState } = imageEditorProps;
+
+		resetAllImageEditorState();
+	},
+
+	getDetailSelectedIndex() {
+		const { mediaLibrarySelectedItems } = this.props;
+		const { detailSelectedIndex } = this.state;
+		if ( detailSelectedIndex >= mediaLibrarySelectedItems.length ) {
+			return 0;
+		}
+		return detailSelectedIndex;
 	},
 
 	onFilterChange: function( filter ) {
@@ -250,7 +315,7 @@ module.exports = React.createClass( {
 	},
 
 	editItem: function( item ) {
-		const { site, mediaLibrarySelectedItems } = this.props;
+		const { site, mediaLibrarySelectedItems, single } = this.props;
 		if ( ! site ) {
 			return;
 		}
@@ -258,14 +323,16 @@ module.exports = React.createClass( {
 		// Append item to set of selected items if not already selected.
 		let items = mediaLibrarySelectedItems;
 		if ( ! items.some( ( selected ) => selected.ID === item.ID ) ) {
-			items = items.concat( item );
+			if ( single ) {
+				items = [ item ];
+			} else {
+				items = items.concat( item );
+			}
 			MediaActions.setLibrarySelectedItems( site.ID, items );
 		}
 
-		// The detail view sorts items by dates, so to ensure proper selected
-		// index is set, first sort the selected set
-		const sortedItems = MediaUtils.sortItemsByDate( items );
-		this.setDetailSelectedIndex( findIndex( sortedItems, { ID: item.ID } ) );
+		// Find and set detail selected index for the edited item
+		this.setDetailSelectedIndex( findIndex( items, { ID: item.ID } ) );
 
 		analytics.mc.bumpStat( 'editor_media_actions', 'edit_button_contextual' );
 		analytics.ga.recordEvent( 'Media', 'Clicked Contextual Edit Button' );
@@ -275,7 +342,7 @@ module.exports = React.createClass( {
 
 	getFirstEnabledFilter: function() {
 		if ( this.props.enabledFilters ) {
-			return first( this.props.enabledFilters );
+			return head( this.props.enabledFilters );
 		}
 	},
 
@@ -283,6 +350,10 @@ module.exports = React.createClass( {
 		var isDisabled = this.isDisabled(),
 			selectedItems = this.props.mediaLibrarySelectedItems,
 			buttons;
+
+		if ( ModalViews.IMAGE_EDITOR === this.state.activeView ) {
+			return;
+		}
 
 		buttons = [
 			<MediaModalSecondaryActions
@@ -304,7 +375,7 @@ module.exports = React.createClass( {
 				action: 'confirm',
 				label: this.translate( 'Continue' ),
 				isPrimary: true,
-				disabled: isDisabled || ! this.props.site || ( this.props.site.jetpack && ! this.props.site.modulesFetched ),
+				disabled: isDisabled || ! this.props.site,
 				onClick: this.setView.bind( this, ModalViews.GALLERY )
 			} );
 		} else {
@@ -320,9 +391,10 @@ module.exports = React.createClass( {
 		return buttons;
 	},
 
-	preventPopoverClose: function( event ) {
-		if ( closest( event.target, '.popover.is-dialog-visible' ) ) {
-			event.preventDefault();
+	preventClose: function( event ) {
+		if ( ModalViews.IMAGE_EDITOR === this.state.activeView ||
+			closest( event.target, '.popover.is-dialog-visible' ) ) {
+			return true;
 		}
 	},
 
@@ -338,6 +410,7 @@ module.exports = React.createClass( {
 						enabledFilters={ this.props.enabledFilters }
 						search={ this.state.search }
 						onAddMedia={ this.onAddMedia }
+						onAddAndEditImage={ this.onAddAndEditImage }
 						onFilterChange={ this.onFilterChange }
 						onScaleChange={ this.onScaleChange }
 						onSearch={ this.onSearch }
@@ -353,9 +426,10 @@ module.exports = React.createClass( {
 					<MediaModalDetail
 						site={ this.props.site }
 						items={ this.props.mediaLibrarySelectedItems }
-						selectedIndex={ this.state.detailSelectedIndex }
+						selectedIndex={ this.getDetailSelectedIndex() }
 						onSelectedIndexChange={ this.setDetailSelectedIndex }
-						onChangeView={ this.setView } />
+						onChangeView={ this.setView }
+						onEdit={ this.setView.bind( this, ModalViews.IMAGE_EDITOR ) } />
 				);
 				break;
 
@@ -367,6 +441,25 @@ module.exports = React.createClass( {
 						settings={ this.state.gallerySettings }
 						onUpdateSettings={ ( gallerySettings ) => this.setState( { gallerySettings } ) }
 						onChangeView={ this.setView } />
+				);
+				break;
+
+			case ModalViews.IMAGE_EDITOR:
+				const {
+					site,
+					mediaLibrarySelectedItems: items
+				} = this.props;
+
+				const selectedIndex = this.getDetailSelectedIndex(),
+					media = items ? items[ selectedIndex ] : null;
+
+				content = (
+					<ImageEditor
+						siteId={ site && site.ID }
+						media={ media }
+						onDone={ this.onImageEditorDone }
+						onCancel={ this.onImageEditorCancel }
+					/>
 				);
 				break;
 		}
@@ -381,7 +474,7 @@ module.exports = React.createClass( {
 				buttons={ this.getModalButtons() }
 				onClose={ this.onClose }
 				additionalClassNames="editor-media-modal"
-				onClickOutside={ this.preventPopoverClose }>
+				onClickOutside={ this.preventClose }>
 				{ this.renderContent() }
 			</Dialog>
 		);

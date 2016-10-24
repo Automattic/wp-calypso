@@ -12,17 +12,17 @@ var formBase = require( './form-base' ),
 	Card = require( 'components/card' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
 	FormLabel = require( 'components/forms/form-label' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
 	FormLegend = require( 'components/forms/form-legend' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
-	FormButton = require( 'components/forms/form-button' ),
-	SettingsCardFooter = require( './settings-card-footer' );
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
+	SectionHeader = require( 'components/section-header' ),
+	Button = require( 'components/button' );
 
 module.exports = React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackProtect',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		var settings = {};
@@ -31,7 +31,7 @@ module.exports = React.createClass( {
 		settings.fetchingSettings = site.fetchingSettings;
 
 		if ( site.settings && site.settings.jetpack_protect_whitelist ) {
-			settings.whitelistString = site.settings.jetpack_protect_whitelist.local.join( "\n" );
+			settings.whitelistString = site.settings.jetpack_protect_whitelist.local.join( '\n' );
 		}
 
 		return settings;
@@ -48,29 +48,25 @@ module.exports = React.createClass( {
 	getIP: function() {
 		if ( window.app && window.app.clientIp ) {
 			return window.app.clientIp;
-		} else {
-			return this.translate( 'Unknown IP address' );
 		}
+
+		return this.translate( 'Unknown IP address' );
 	},
 
 	prompt: function() {
 		return (
-			<div>
-				<p>{ this.translate( 'Prevent brute force login attempts on your WordPress site.' ) }</p>
-				<p>
-					{ this.translate(
-						'Brute force attacks are one of the most common (and successful) ways that attackers gain access to your site. ' +
-						"When you activate Jetpack Protect, we'll automatically prevent malicious attempts to log into your site, but allow you to ensure you can always log in."
-					) }
-				</p>
-				<SettingsCardFooter>
-					<FormButton
-						onClick={ this.toggleJetpackModule.bind( this, 'protect' ) }
-						disabled={ this.disableForm() }
-					>
-						{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate Protect' ) }
-					</FormButton>
-				</SettingsCardFooter>
+			<div className="site-settings__jetpack-prompt">
+				<img src="/calypso/images/jetpack/illustration-jetpack-protect.svg" width="128" height="128" />
+
+				<div className="site-settings__jetpack-prompt-text">
+					<p>{ this.translate( 'Prevent brute force login attempts on your WordPress site.' ) }</p>
+					<p>
+						{ this.translate(
+							'Brute force attacks are one of the most common (and successful) ways that attackers gain access to your site. ' +
+							"When you activate Jetpack Protect, we'll automatically prevent malicious attempts to log into your site, but allow you to ensure you can always log in."
+						) }
+					</p>
+				</div>
 			</div>
 		);
 	},
@@ -89,7 +85,7 @@ module.exports = React.createClass( {
 
 	settings: function() {
 		return (
-			<form id="protect-settings" onChange={ this.markChanged } onSubmit={ this.submitForm }>
+			<form id="protect-settings" onChange={ this.markChanged } onSubmit={ this.handleSubmitForm }>
 				<FormLegend>{ this.translate( 'IP Address Whitelist' ) }</FormLegend>
 
 				<FormLabel>
@@ -109,25 +105,13 @@ module.exports = React.createClass( {
 				<FormSettingExplanation>
 						{ this.translate( 'IPv4 and IPv6 are acceptable. To specify a range, enter the low value and high value separated by a dash.' ) }
 				</FormSettingExplanation>
-				<SettingsCardFooter>
-					<FormButton disabled={ this.disableForm() }>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-					</FormButton>
-					<FormButton
-						disabled={ this.disableForm() }
-						className="jetpack-protect__deactivate is-link"
-						isPrimary={ false }
-						onClick={ this.toggleJetpackModule.bind( this, 'protect' ) }>
-						{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
-					</FormButton>
-				</SettingsCardFooter>
 			</form>
 		);
 	},
 
 	// updates the state when an error occurs
 	handleError: function() {
-		this.setState( { submittingForm : false } );
+		this.setState( { submittingForm: false } );
 		this.markSaved();
 	},
 
@@ -135,17 +119,60 @@ module.exports = React.createClass( {
 		return this.state.fetchingSettings || this.state.submittingForm || this.props.site.fetchingModules || this.state.togglingModule;
 	},
 
+	deactivateFormButtons: function() {
+		return(
+			<div>
+				<Button
+					compact
+					disabled={ this.disableForm() }
+					className="jetpack-protect__deactivate"
+					onClick={ this.toggleJetpackModule.bind( this, 'protect' ) }
+					>
+					{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
+				</Button>
+				<Button
+					disabled={ this.disableForm() }
+					compact
+					primary
+					onClick={ this.handleSubmitForm }
+					>
+					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+				</Button>
+			</div>
+		);
+	},
+
+	activateFormButtons: function() {
+		return(
+			<Button
+				onClick={ this.toggleJetpackModule.bind( this, 'protect' ) }
+				disabled={ this.disableForm() }
+				primary
+				compact
+				>
+				{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate' ) }
+			</Button>
+		);
+	},
+
 	render: function() {
 		return (
-			<Card className="jetpack-protect-settings">
-				<FormSectionHeading>{ this.translate( 'Jetpack Protect' ) }</FormSectionHeading>
-				{
-					( this.state.enabled ) ?
-					this.settings() :
-					this.prompt()
-				}
-			</Card>
+			<div>
+				<SectionHeader label={ this.translate( 'Jetpack Protect' ) }>
+					{ this.state.enabled
+						? this.deactivateFormButtons()
+						: this.activateFormButtons()
+
+					}
+				</SectionHeader>
+				<Card className="jetpack-protect-settings">
+					{
+						this.state.enabled
+						? this.settings()
+						: this.prompt()
+					}
+				</Card>
+			</div>
 		);
 	}
 } );
-

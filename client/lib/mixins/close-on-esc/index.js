@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var filter = require( 'lodash/collection/filter' ),
-	last = require( 'lodash/array/last' );
+var filter = require( 'lodash/filter' ),
+	last = require( 'lodash/last' );
 
 var components = [];
 

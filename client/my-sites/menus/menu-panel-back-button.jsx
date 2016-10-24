@@ -11,12 +11,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' );
+var analytics = require( 'lib/analytics' );
 
 var MenuPanelBackButton = React.createClass( {
 

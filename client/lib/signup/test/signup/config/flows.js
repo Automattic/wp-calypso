@@ -25,8 +25,6 @@ var flows = {
 };
 
 module.exports = {
-	currentFlowName: 'simple_flow',
-
 	defaultFlowName: 'simple_flow',
 
 	getFlow: function( flowName ) {

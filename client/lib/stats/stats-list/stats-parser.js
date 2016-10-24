@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+var i18n = require( 'i18n-calypso' );
+
+/**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	sites = require( 'lib/sites-list' )();
+var sites = require( 'lib/sites-list' )();
 
 function StatsParser() {
 	if ( ! ( this instanceof StatsParser ) ) {
@@ -13,7 +17,7 @@ function StatsParser() {
 }
 
 function rangeOfPeriod( period, date ) {
-	date = new i18n.moment( date );
+	date = new i18n.moment( date ).locale( 'en' );
 	var periodRange = { period: period,
 		startOf: date.clone().startOf( period ),
 		endOf: date.clone().endOf( period )
@@ -163,7 +167,7 @@ StatsParser.prototype.statsVisits = function( payload ) {
 		attributes = [ 'visits', 'likes', 'visitors', 'comments', 'posts' ];
 
 	response.data = payload.data.map( function( record ) {
-		var dataRecord = {}, date, dayOfWeek;
+		var dataRecord = {}, date, dayOfWeek, localizedDate;
 
 		record.forEach( function( value, i ) {
 			// Remove W from weeks
@@ -188,16 +192,17 @@ StatsParser.prototype.statsVisits = function( payload ) {
 		dataRecord.classNames = [];
 
 		if ( dataRecord.period ) {
-			date = i18n.moment( dataRecord.period, 'YYYY-MM-DD' );
+			date = i18n.moment( dataRecord.period, 'YYYY-MM-DD' ).locale( 'en' );
+			localizedDate = i18n.moment( dataRecord.period, 'YYYY-MM-DD' );
 			if ( date.isValid() ) {
 				dayOfWeek = date.toDate().getDay();
 				if ( ( 'day' === payload.unit ) && ( ( 6 === dayOfWeek ) || ( 0 === dayOfWeek ) ) ) {
 					dataRecord.classNames.push( 'is-weekend' );
 				}
-				dataRecord.labelDay = date.format( 'MMM D' );
-				dataRecord.labelWeek = date.format( 'MMM D' );
-				dataRecord.labelMonth = date.format( 'MMM' );
-				dataRecord.labelYear = date.format( 'YYYY' );
+				dataRecord.labelDay = localizedDate.format( 'MMM D' );
+				dataRecord.labelWeek = localizedDate.format( 'MMM D' );
+				dataRecord.labelMonth = localizedDate.format( 'MMM' );
+				dataRecord.labelYear = localizedDate.format( 'YYYY' );
 			}
 		}
 
@@ -574,6 +579,37 @@ StatsParser.prototype.statsVideoPlays = function( payload ) {
 	return response;
 };
 
+StatsParser.prototype.statsPodcastDownloads = function( payload ) {
+	var response = { data: [] },
+		periodRange = rangeOfPeriod( this.options.period, this.options.date ),
+		startDate = periodRange.startOf.format( 'YYYY-MM-DD' );
+
+	if ( payload && payload.date && payload.days && payload.days[ startDate ] ) {
+		response.data = payload.days[ startDate ].downloads.map( function( item ) {
+			var detailPage = '/stats/' + this.options.period + '/podcastdownloads/' + this.options.domain + '?post=' + item.post_id;
+			return {
+				label: item.title,
+				page: detailPage,
+				value: item.downloads,
+				actions: [ {
+					type: 'link',
+					data: item.url
+				} ]
+			};
+		}, this );
+
+		if ( payload.days[ startDate ].other_downloads ) {
+			response.summaryPage = this.options ? '/stats/' + this.options.period + '/podcastdownloads/' + this.options.domain + '?startDate=' + startDate : null;
+		}
+
+		if ( payload.days[ startDate ].total_downloads ) {
+			response.total = payload.days[ startDate ].total_downloads;
+		}
+	}
+
+	return response;
+};
+
 StatsParser.prototype.statsComments = function( payload ) {
 	var response = {
 			data: {
@@ -630,7 +666,6 @@ StatsParser.prototype.statsTopPosts = function( payload ) {
 		response.data = payload.days[ startDate ].postviews.map( function( item ) {
 			var detailPage = '/stats/post/' + item.id + '/' + this.options.domain,
 				postDate,
-				children,
 				inPeriod = false;
 
 			if ( item.date ) {
@@ -642,17 +677,6 @@ StatsParser.prototype.statsTopPosts = function( payload ) {
 				) {
 					inPeriod = true;
 				}
-			}
-
-			if ( item.children ) {
-				children = item.children.map( function( child ) {
-					return {
-						label: child.title,
-						value: child.views,
-						link: child.link,
-						labelIcon: 'attachment'
-					};
-				} );
 			}
 
 			return {

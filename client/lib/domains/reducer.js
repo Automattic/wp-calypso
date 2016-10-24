@@ -2,7 +2,8 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import React from 'react/addons';
+import update from 'react-addons-update';
+import sortBy from 'lodash/sortBy';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ const debug = debugFactory( 'calypso:lib:domains:store' );
 const initialState = {};
 
 function updateSiteState( state, siteId, attributes ) {
-	return React.addons.update( state, {
+	return update( state, {
 		[ siteId ]: {
 			$apply: ( value ) => Object.assign( {}, value, attributes )
 		}
@@ -23,7 +24,7 @@ function updateSiteState( state, siteId, attributes ) {
 }
 
 function updateDomainState( state, siteId, domainName, attributes ) {
-	return React.addons.update( state, {
+	return update( state, {
 		[ siteId ]: {
 			list: {
 				$apply: domains => domains.map( ( domain ) => {
@@ -82,19 +83,26 @@ function reducer( state, payload ) {
 			} );
 
 		case UpgradesActionTypes.PRIMARY_DOMAIN_SET_COMPLETED:
+			return updateSiteState( state, siteId, {
+				settingPrimaryDomain: false,
+				list: sortBy( getBySite( state, siteId ).list.map( domain => {
+					return Object.assign( {}, domain, { isPrimary: domain.name === action.domainName } );
+				} ), domain => ! domain.isPrimary )
+			} );
+
 		case UpgradesActionTypes.PRIMARY_DOMAIN_SET_FAILED:
 			return updateSiteState( state, siteId, {
 				settingPrimaryDomain: false
 			} );
 
-		case UpgradesActionTypes.DOMAIN_ENABLE_PRIVACY_PROTECTION_COMPLETED:
+		case UpgradesActionTypes.PRIVACY_PROTECTION_ENABLE_COMPLETED:
 			return updateDomainState( state, action.siteId, action.domainName, {
 				privateDomain: true
 			} );
 
 		case UpgradesActionTypes.DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED:
 			domainData = getSelectedDomain( {
-				domains: getForSite( state, action.siteId ),
+				domains: getBySite( state, action.siteId ),
 				selectedDomainName: action.domainName
 			} );
 			privateDomain = ( ! action.disablePrivacy ) && domainData.privateDomain;
@@ -108,12 +116,12 @@ function reducer( state, payload ) {
 	}
 }
 
-function getForSite( state, siteId ) {
+function getBySite( state, siteId ) {
 	return state[ siteId ];
 }
 
 export {
-	getForSite,
+	getBySite,
 	initialState,
 	reducer
 };

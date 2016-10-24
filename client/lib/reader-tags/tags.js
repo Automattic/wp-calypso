@@ -1,8 +1,14 @@
-var forOwn = require( 'lodash/object/forOwn' );
+/**
+ * External dependencies
+ */
+import forOwn from 'lodash/forOwn';
 
-var decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' );
+/**
+ * Internal dependencies
+ */
+import { decodeEntities } from 'lib/formatting';
+import dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
 
 var tags = {};
 
@@ -16,7 +22,7 @@ emitter( TagStore );
 
 function receiveTags( newTags ) {
 	forOwn( newTags, ( sub ) => {
-		sub.URL = '/tag/' + sub.slug + '/';
+		sub.URL = '/tag/' + sub.slug;
 		sub.title = decodeEntities( sub.title );
 		sub.slug = sub.slug.toLowerCase();
 		tags[ sub.slug ] = sub;

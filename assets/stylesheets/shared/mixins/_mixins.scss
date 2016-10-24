@@ -2,8 +2,29 @@
 @import 'calc';
 @import 'clear-fix';
 @import 'dropdown-menu';
+@import 'heading';
 @import 'hide-content-accessibly';
 @import 'long-content-fade';
+@import 'no-select';
 @import 'noticon';
 @import 'placeholder';
 @import 'stats-fade-text';
+
+//======================================================
+// Copied _extends rules that are used in @media
+//======================================================
+@mixin noticon-style { //copy of %noticon
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	display: inline-block;
+	font: normal 16px/1 Noticons;
+	vertical-align: middle;
+}
+
+@mixin mobile-link-element {
+	-webkit-tap-highlight-color: rgba($white, .4); // Until we capture ontouch events in JS this is better than :active
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}

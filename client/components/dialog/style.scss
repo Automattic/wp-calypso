@@ -8,7 +8,7 @@
 	right: 0;
 	top: 46px;
 	transition: background-color .2s ease-in;
-	z-index: 100200; // try to ensure that dialogs are on top of everything else
+	z-index: z-index( 'root', '.dialog__backdrop' ); // try to ensure that dialogs are on top of everything else
 
 	&.dialog-enter,
 	&.dialog-leave.dialog-leave-active {

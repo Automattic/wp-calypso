@@ -2,7 +2,7 @@
  * External dependencies
  */
 var assert = require( 'chai' ).assert,
-	range = require( 'lodash/utility/range' );
+	range = require( 'lodash/range' );
 
 /**
  * Internal dependencies
@@ -13,10 +13,8 @@ function getItemRef( item ) {
 	return 'i' + item;
 }
 
-describe( 'Infinite Scroll Helper', function() {
-
+describe( 'scroll-helper', function() {
 	describe( 'Hide Levels', function() {
-
 		describe( 'Context Higher than 5 items', function() {
 			var helper = new ScrollHelper();
 			helper.props = {
@@ -66,7 +64,6 @@ describe( 'Infinite Scroll Helper', function() {
 				assert.equal( helper.bottomHideLevelUltraSoft, 1700 );
 			} );
 		} );
-
 	} );
 
 	describe( 'Container and placeholder positioning', function() {
@@ -99,7 +96,6 @@ describe( 'Infinite Scroll Helper', function() {
 		it( 'Container bottom determined using bottom placeholder bounds', function() {
 			assert.equal( helper.containerBottom, 4000 );
 		} );
-
 	} );
 
 	describe( 'Initial last rendered index', function() {
@@ -125,7 +121,6 @@ describe( 'Infinite Scroll Helper', function() {
 	} );
 
 	describe( 'Items Above', function() {
-
 		it( 'Starts hiding when placeholder bottom edge is above soft level', function() {
 			var helper = new ScrollHelper();
 			helper.containerTop = -3000;
@@ -333,11 +328,9 @@ describe( 'Infinite Scroll Helper', function() {
 
 			assert.equal( 0, helper.topPlaceholderHeight );
 		} );
-
 	} );
 
 	describe( 'Items Below', function() {
-
 		it( 'Starts hiding when placholder top edge is below 3rd hide limit', function() {
 			var helper = new ScrollHelper();
 			helper.containerBottom = 5000;
@@ -437,7 +430,6 @@ describe( 'Infinite Scroll Helper', function() {
 				assert.equal( -1, helper.lastRenderedIndex );
 			} );
 		} );
-
 
 		it( 'Starts showing when placeholder top edge is above first hide limit', function() {
 			var helper = new ScrollHelper();
@@ -585,7 +577,6 @@ describe( 'Infinite Scroll Helper', function() {
 		} );
 	} );
 
-
 	describe( 'Next page', function() {
 		var helper;
 
@@ -619,8 +610,5 @@ describe( 'Infinite Scroll Helper', function() {
 			helper.bottomPlaceholderHeight = 100;
 			assert.notOk( helper.shouldLoadNextPage() );
 		} );
-
 	} );
-
 } );
-

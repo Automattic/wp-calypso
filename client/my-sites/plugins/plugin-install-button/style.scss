@@ -7,18 +7,10 @@
 	align-items: center;
 
 	&.embed {
+			color: $gray;
 			height: 100%;
 			position: initial;
 			margin-right: 16px;
-
-			button {
-				display: flex;
-				color: $blue-medium;
-				&:hover {
-					color: $link-highlight;
-				}
-			}
-
 		}
 
 	@include breakpoint( "<480px" ) {
@@ -46,7 +38,7 @@
 		align-content: space-between;
 
 		a {
-			font-size: 10px;
+			font-size: 11px;
 			text-transform: uppercase;
 		}
 	}
@@ -54,7 +46,7 @@
 
 .plugin-install-button__warning {
 	margin-right: 8px;
-	font-size: 10px;
+	font-size: 11px;
 	color:  $gray;
 	text-transform: uppercase;
 	white-space: nowrap;

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import page from 'page';
 import React from 'react';
 
 /**
@@ -9,8 +8,7 @@ import React from 'react';
  */
 import analyticsMixin from 'lib/mixins/analytics';
 import Card from 'components/card/compact';
-import config from 'config';
-import Flag from 'components/flag';
+import Notice from 'components/notice';
 import DomainWarnings from 'my-sites/upgrades/components/domain-warnings';
 import Header from './card/header';
 import paths from 'my-sites/upgrades/paths';
@@ -18,6 +16,7 @@ import Property from './card/property';
 import SubscriptionSettings from './card/subscription-settings';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
+import IcannVerificationCard from 'my-sites/upgrades/domain-management/components/icann-verification/icann-verification-card';
 
 const RegisteredDomain = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -35,34 +34,69 @@ const RegisteredDomain = React.createClass( {
 
 		return (
 			<Property label={ this.translate( 'Expires on' ) }>
-				{ domain.expirationDate }
+				{ domain.expirationMoment.format( 'MMMM D, YYYY' ) }
 			</Property>
 		);
 	},
 
+	getLabel( { status, icon, message, href } ) {
+		return (
+			<a href={ href }>
+				<Notice
+					isCompact
+					status={ status }
+					icon={ icon }>{ message }
+				</Notice>
+			</a>
+		);
+	},
+
 	getPrivacyProtection() {
-		if ( this.props.domain.hasPrivacyProtection ) {
-			return (
-				<Flag
-					type="is-success"
-					icon="noticon-lock">
-					{ this.translate( 'On', {
-						context: 'An icon label when Privacy Protection is enabled.'
-					} ) }
-				</Flag>
-			);
+		const { hasPrivacyProtection, privateDomain, name, pendingTransfer } = this.props.domain,
+			{ slug } = this.props.selectedSite,
+			privacyPath = paths.domainManagementContactsPrivacy( slug, name ),
+			transferPath = paths.domainManagementTransfer( slug, name );
+
+		if ( pendingTransfer ) {
+			return this.getLabel( {
+				status: 'is-warning',
+				icon: 'notice',
+				message: this.translate( 'Pending Transfer', {
+					context: 'An icon label when domain is pending transfer.'
+				} )
+			} );
 		}
 
-		return (
-			<Flag
-				type="is-warning"
-				icon="noticon-warning"
-				onClick={ this.goToPrivacyProtection }>
-				{ this.translate( 'None', {
-					context: 'An icon label when Privacy Protection is disabled.'
-				} ) }
-			</Flag>
-		);
+		if ( hasPrivacyProtection ) {
+			if ( privateDomain ) {
+				return this.getLabel( {
+					status: 'is-success',
+					icon: 'lock',
+					href: privacyPath,
+					message: this.translate( 'On', {
+						context: 'An icon label when Privacy Protection is enabled.'
+					} )
+				} );
+			}
+
+			return this.getLabel( {
+				status: 'is-warning',
+				icon: 'notice',
+				href: transferPath,
+				message: this.translate( 'Disabled for Transfer', {
+					context: 'An icon label when Privacy Protection is temporarily disabled for transfer.'
+				} )
+			} );
+		}
+
+		return this.getLabel( {
+			status: 'is-warning',
+			icon: 'notice',
+			href: privacyPath,
+			message: this.translate( 'None', {
+				context: 'An icon label when Privacy Protection is not purchased by the user.'
+			} )
+		} );
 	},
 
 	handlePaymentSettingsClick() {
@@ -73,7 +107,16 @@ const RegisteredDomain = React.createClass( {
 		return <DomainWarnings
 			domain={ this.props.domain }
 			selectedSite={ this.props.selectedSite }
-			ruleWhiteList={ [ 'expiredDomains', 'expiringDomains', 'newDomainsWithPrimary', 'newDomains' ] } />;
+			ruleWhiteList={ [
+				'expiredDomainsCanManage',
+				'expiringDomainsCanManage',
+				'newDomainsWithPrimary',
+				'newDomains',
+				'pendingGappsTosAcceptanceDomains',
+				'expiredDomainsCannotManage',
+				'expiringDomainsCannotManage',
+				'pendingTransfer'
+			] } />;
 	},
 
 	getVerticalNav() {
@@ -92,8 +135,12 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	emailNavItem() {
+		if ( this.props.domain.pendingTransfer ) {
+			return null;
+		}
+
 		const path = paths.domainManagementEmail(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 
@@ -105,12 +152,12 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	nameServersNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/name-servers' ) ) {
+		if ( this.props.domain.pendingTransfer ) {
 			return null;
 		}
 
 		const path = paths.domainManagementNameServers(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 
@@ -122,12 +169,12 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	contactsPrivacyNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/contacts-privacy' ) ) {
+		if ( this.props.domain.pendingTransfer ) {
 			return null;
 		}
 
 		const path = paths.domainManagementContactsPrivacy(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 
@@ -139,12 +186,8 @@ const RegisteredDomain = React.createClass( {
 	},
 
 	transferNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/transfer' ) ) {
-			return null;
-		}
-
 		const path = paths.domainManagementTransfer(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.domain.name
 		);
 
@@ -182,17 +225,13 @@ const RegisteredDomain = React.createClass( {
 						<SubscriptionSettings
 							onClick={ this.handlePaymentSettingsClick } />
 					</Card>
+
+					{ domain.isPendingIcannVerification && domain.currentUserCanManage && <IcannVerificationCard selectedDomainName={ domain.name } selectedSite={ this.props.selectedSite } /> }
 				</div>
 
 				{ this.getVerticalNav() }
 			</div>
 		);
-	},
-
-	goToPrivacyProtection() {
-		this.recordEvent( 'noneClick', this.props.domain );
-
-		page( paths.domainManagementPrivacyProtection( this.props.selectedSite.domain, this.props.domain.name ) );
 	}
 } );
 

@@ -1,13 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	ReactDomServer = require( 'react-dom/server' ),
+	ReduxProvider = require( 'react-redux' ).Provider,
+	React = require( 'react' ),
 	tinymce = require( 'tinymce/tinymce' ),
-	pick = require( 'lodash/object/pick' ),
-	assign = require( 'lodash/object/assign' ),
-	values = require( 'lodash/object/values' ),
-	debounce = require( 'lodash/function/debounce' ),
-	includes = require( 'lodash/collection/includes' ),
+	pick = require( 'lodash/pick' ),
+	assign = require( 'lodash/assign' ),
+	values = require( 'lodash/values' ),
+	debounce = require( 'lodash/debounce' ),
+	includes = require( 'lodash/includes' ),
+	i18n = require( 'i18n-calypso' ),
 	Shortcode = require( 'lib/shortcode' ),
 	closest = require( 'component-closest' );
 
@@ -15,7 +19,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var sites = require( 'lib/sites-list' )(),
-	i18n = require( 'lib/mixins/i18n' ),
 	PostActions = require( 'lib/posts/actions' ),
 	PostEditStore = require( 'lib/posts/post-edit-store' ),
 	MediaConstants = require( 'lib/media/constants' ),
@@ -29,7 +32,8 @@ var sites = require( 'lib/sites-list' )(),
 	EditorMediaModal = require( 'post-editor/media-modal' ),
 	notices = require( 'notices' ),
 	TinyMCEDropZone = require( './drop-zone' ),
-	restrictSize = require( './restrict-size' ),
+	restrictSize = require( './restrict-size' ).default,
+	advanced = require( './advanced' ),
 	Gridicon = require( 'components/gridicon' ),
 	config = require( 'config' );
 
@@ -67,17 +71,19 @@ function mediaButton( editor ) {
 			editor.focus( false );
 		}
 
-		React.render(
-			<MediaLibrarySelectedData siteId={ selectedSite.ID }>
-				<EditorMediaModal
-					{ ...props }
-					onClose={ renderModal.bind( null, { visible: false } ) }
-					onInsertMedia={ ( markup ) => {
-						insertMedia( markup );
-						renderModal( { visible: false } );
-					} }
-					site={ selectedSite } />
-			</MediaLibrarySelectedData>,
+		ReactDom.render(
+			<ReduxProvider store={ editor.getParam( 'redux_store' ) }>
+				<MediaLibrarySelectedData siteId={ selectedSite.ID }>
+					<EditorMediaModal
+						{ ...props }
+						onClose={ renderModal.bind( null, { visible: false } ) }
+						onInsertMedia={ ( markup ) => {
+							insertMedia( markup );
+							renderModal( { visible: false } );
+						} }
+						site={ selectedSite } />
+				</MediaLibrarySelectedData>
+			</ReduxProvider>,
 			nodes.modal
 		);
 	}
@@ -85,12 +91,8 @@ function mediaButton( editor ) {
 	function renderDropZone( { visible } ) {
 		if ( ! visible ) {
 			if ( nodes.dropzone ) {
-				React.unmountComponentAtNode( nodes.dropzone );
+				ReactDom.unmountComponentAtNode( nodes.dropzone );
 			}
-			return;
-		}
-
-		if ( ! config.isEnabled( 'post-editor/live-image-updates' ) ) {
 			return;
 		}
 
@@ -100,7 +102,7 @@ function mediaButton( editor ) {
 			editor.getContainer().parentNode.insertBefore( nodes.dropzone, editor.getContainer() );
 		}
 
-		React.render(
+		ReactDom.render(
 			<TinyMCEDropZone
 				editor={ editor }
 				sites={ sites }
@@ -110,13 +112,28 @@ function mediaButton( editor ) {
 		);
 	}
 
+	const loadedImages = ( () => {
+		const loaded = {};
+
+		function isLoaded( url ) {
+			return !! loaded[ url ];
+		}
+
+		function onLoad( url ) {
+			loaded[ url ] = true;
+			updateMedia();
+		}
+
+		return { isLoaded, onLoad };
+	} )();
+
 	updateMedia = debounce( function() {
 		var selectedSite = sites.getSelectedSite(),
 			isTransientDetected = false,
 			transients = 0,
 			isVisualEditMode, content, images;
 
-		if ( ! selectedSite || ! config.isEnabled( 'post-editor/live-image-updates' ) ) {
+		if ( ! selectedSite ) {
 			return;
 		}
 
@@ -196,6 +213,19 @@ function mediaButton( editor ) {
 			};
 			editor.fire( 'BeforeSetWpcomMedia', event );
 
+			// To avoid an undesirable flicker after the image uploads but
+			// hasn't yet been loaded, we preload the image before rendering.
+			const imageUrl = MediaSerialization.deserialize( event.content ).media.URL;
+			if ( ! loadedImages.isLoaded( imageUrl ) ) {
+				const preloadImage = new Image();
+				preloadImage.src = imageUrl;
+				preloadImage.onload = loadedImages.onLoad.bind( null, imageUrl );
+				preloadImage.onerror = preloadImage.onload;
+
+				transients++;
+				return;
+			}
+
 			// The `img` object can be a string or a DOM node. We need a
 			// normalized string to replace the post content markup
 			let imgString;
@@ -247,28 +277,30 @@ function mediaButton( editor ) {
 		renderDropZone( { visible: event.type === 'dragend' } );
 	}
 
+	editor.addCommand( 'wpcomAddMedia', () => {
+		var selectedSite = sites.getSelectedSite();
+		if ( selectedSite ) {
+			MediaActions.clearValidationErrors( selectedSite.ID );
+		}
+
+		renderModal( {
+			visible: true,
+			initialActiveView: MediaModalViews.LIST
+		} );
+	} );
+
 	editor.addButton( 'wpcom_add_media', {
-		classes: 'btn wpcom-button media',
-
+		classes: 'btn wpcom-icon-button media',
+		cmd: 'wpcomAddMedia',
 		title: i18n.translate( 'Add Media' ),
-
 		onPostRender: function() {
-			this.innerHtml( React.renderToStaticMarkup(
+			this.innerHtml( ReactDomServer.renderToStaticMarkup(
 				<button type="button" role="presentation" tabIndex="-1">
+					{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 					<Gridicon icon="image-multiple" size={ 20 } />
+					{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 				</button>
 			) );
-		},
-		onclick: function() {
-			var selectedSite = sites.getSelectedSite();
-			if ( selectedSite ) {
-				MediaActions.clearValidationErrors( selectedSite.ID );
-			}
-
-			renderModal( {
-				visible: true,
-				initialActiveView: MediaModalViews.LIST
-			} );
 		}
 	} );
 
@@ -359,7 +391,7 @@ function mediaButton( editor ) {
 		const caption = editor.dom.getParent( node, '.mceTemp' );
 		if ( caption ) {
 			editor.selection.select( caption );
-			parsed.media.caption = editor.dom.$( '.wp-caption-dd' ).text();
+			parsed.media.caption = editor.dom.$( '.wp-caption-dd', caption ).text();
 		}
 
 		// Attempt to find media in Flux store
@@ -454,6 +486,10 @@ function mediaButton( editor ) {
 		onclick: function() {
 			resize( 1 );
 		}
+	} );
+
+	editor.addCommand( 'WP_Medialib', () => {
+		renderModal( { visible: true } );
 	} );
 
 	editor.addCommand( 'wpcomEditGallery', function( content ) {
@@ -614,6 +650,14 @@ function mediaButton( editor ) {
 
 	editor.on( 'keydown', preventCaptionBackspaceRemove );
 
+	// send contextmenu event up to desktop app
+	if ( config.isEnabled( 'desktop' ) ) {
+		const ipc = require( 'electron' ).ipcRenderer; // From Electron
+		editor.on( 'contextmenu', function( ev ) {
+			ipc.send( 'mce-contextmenu', ev );
+		} );
+	}
+
 	editor.on( 'touchstart touchmove touchend', selectImageOnTap() );
 
 	editor.on( 'init', function() {
@@ -631,7 +675,7 @@ function mediaButton( editor ) {
 
 	editor.on( 'remove', function() {
 		values( nodes ).forEach( function( node ) {
-			React.unmountComponentAtNode( node );
+			ReactDom.unmountComponentAtNode( node );
 			node.parentNode.removeChild( node );
 		} );
 		nodes = {};
@@ -641,6 +685,7 @@ function mediaButton( editor ) {
 	} );
 
 	restrictSize( editor );
+	advanced( editor );
 }
 
 module.exports = function() {

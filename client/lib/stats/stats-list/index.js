@@ -8,15 +8,14 @@ var Emitter = require( 'lib/mixins/emitter'),
  * Internal dependencies
  */
 var wpcom = require( 'lib/wp' ),
-	LocalList = require( 'lib/local-list' ),
 	statsParser = require( './stats-parser' )(),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 var responseHandler,
 	buildExportArray,
 	trackExtraStats = false,
-	documentedEndpoints = [ 'statsVideo', 'statsPublicize', 'statsStreak', 'statsFollowers', 'statsCommentFollowers', 'statsTopAuthors', 'statsTags', 'statsComments', 'statsPostViews', 'statsVideoPlays','stats', 'statsVisits', 'statsReferrers', 'statsTopPosts', 'statsClicks', 'statsCountryViews', 'statsSearchTerms' ],
-	undocumentedEndpoints = [ 'statsEvents', 'statsInsights' ];
+	documentedEndpoints = [ 'statsVideo', 'statsPublicize', 'statsStreak', 'statsFollowers', 'statsCommentFollowers', 'statsTopAuthors', 'statsTags', 'statsComments', 'statsPostViews', 'statsVideoPlays', 'stats', 'statsVisits', 'statsReferrers', 'statsTopPosts', 'statsClicks', 'statsCountryViews', 'statsSearchTerms' ],
+	undocumentedEndpoints = [ 'statsEvents', 'statsInsights', 'statsPodcastDownloads' ];
 
 responseHandler = function() {
 	return function( error, data ) {
@@ -76,8 +75,6 @@ responseHandler = function() {
 			analytics.mc.bumpStat( 'calypso_stats_empty', this.statType.replace( /^stats/, '' ) );
 		}
 
-		// cache data in local store
-		this.local.set( this.localKey, parsedData );
 		this.response = parsedData;
 		debug( 'updated data', this );
 		this.emit( 'change' );
@@ -141,21 +138,6 @@ function StatsList( options ) {
 	this.performRetry = true;
 	this.startedAt = null;
 	this.isDocumentedEndpoint = ( documentedEndpoints.indexOf( this.statType ) >= 0 );
-
-	this.localStoreKey = this.statType + this.siteID;
-
-	// For LocalList
-	this.local = new LocalList( { localStoreKey: this.localStoreKey } );
-	this.localKey = Object.keys( this.options ).map( function( key ) { return this.options[ key ]; }, this ).join( ':' );
-
-	// check for a local cache
-	var localData = this.local.find( this.localKey );
-	if ( localData && ! Array.isArray( localData ) ){
-		debug( 'local cached found', localData.data );
-		this.loading = false;
-		this.response = localData.data;
-	}
-
 	this.fetch();
 
 	return this;
@@ -171,11 +153,17 @@ StatsList.prototype.fetch = function() {
 	var wpcomSite,
 		options = this.options,
 		postIdEndpoints = [ 'statsVideo', 'statsPostViews' ];
+	const siteIdOrDomain = this.siteID || options.domain;
+
+	if ( ! siteIdOrDomain ) {
+		// Never try to fetch stats for a site without a site or domain
+		return;
+	}
 
 	if ( this.isDocumentedEndpoint ) {
-		wpcomSite = wpcom.site( this.siteID );
+		wpcomSite = wpcom.site( siteIdOrDomain );
 	} else {
-		wpcomSite = wpcom.undocumented().site( this.siteID );
+		wpcomSite = wpcom.undocumented().site( siteIdOrDomain );
 	}
 
 	// statsPostViews && statsVideo expect just the post.ID as a param

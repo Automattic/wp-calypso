@@ -2,7 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	forEach = require( 'lodash/collection/forEach' );
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
+	forEach = require( 'lodash/forEach' ),
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies
@@ -19,7 +21,7 @@ var SectionNav = require( 'components/section-nav' ),
 var SectionNavigation = React.createClass( {
 	displayName: 'SectionNav',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return {
@@ -80,14 +82,9 @@ var SectionNavigation = React.createClass( {
 	},
 
 	render: function() {
-		var demoSections = {},
-			dropdownDemoMargin;
+		var demoSections = {};
 
-		dropdownDemoMargin = {
-			marginBottom: 650
-		};
-
-		forEach( this.props, function( prop, key ) {
+		forEach( omit( this.props, 'isolated', 'uniqueInstance' ), function( prop, key ) {
 			demoSections[ key ] = [];
 
 			prop.forEach( function( item, index ) {
@@ -105,11 +102,7 @@ var SectionNavigation = React.createClass( {
 		}.bind( this ) );
 
 		return (
-			<div className="design-assets__group" style={ dropdownDemoMargin }>
-				<h2>
-					<a href="/devdocs/design/section-nav">Section Navigation</a>
-				</h2>
-
+			<div>
 				<h3>Basic Tabs</h3>
 				<SectionNav
 					selectedText={ this.getSelectedText( 'basicTabs' ) }
@@ -145,7 +138,8 @@ var SectionNavigation = React.createClass( {
 					</NavSegmented>
 
 					<Search
-						pinned={ true }
+						pinned
+						fitsContainer
 						onSearch={ this.demoSearch }
 						placeholder={ 'Search ' + this.getSelectedText( 'siblingTabs' ) + '...' }
 					/>

@@ -42,6 +42,14 @@
 	a {
 		word-break: break-all;
 	}
+	blockquote {
+		padding: 10px;
+		margin-bottom: 16px;
+
+		p:last-child {
+			margin-bottom: 0;
+		}
+	}
 }
 
 .plugin-sections__read-more {
@@ -94,4 +102,9 @@
 		left: 50%;
 		margin-left: -8px;
 	}
+}
+
+.plugin-sections__header .card,
+.plugin-sections__header > div {
+	margin-bottom: 0;
 }

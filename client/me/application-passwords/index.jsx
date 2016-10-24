@@ -2,7 +2,10 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:application-passwords' );
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
+	debug = require( 'debug' )( 'calypso:application-passwords' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -21,13 +24,14 @@ var observe = require( 'lib/mixins/data-observe' ),
 	FormSectionHeading = require( 'components/forms/form-section-heading' ),
 	eventRecorder = require( 'me/event-recorder' ),
 	Card = require( 'components/card' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	errorNotice = require( 'state/notices/actions' ).errorNotice;
 
-module.exports = React.createClass( {
+const ApplicationPasswords = React.createClass( {
 
 	displayName: 'ApplicationPasswords',
 
-	mixins: [ observe( 'appPasswordsData' ), React.addons.LinkedStateMixin, eventRecorder ],
+	mixins: [ observe( 'appPasswordsData' ), LinkedStateMixin, eventRecorder ],
 
 	componentDidMount: function() {
 		debug( this.displayName + ' React component is mounted.' );
@@ -58,7 +62,7 @@ module.exports = React.createClass( {
 
 					// handle error case here
 					notices.clearNotices( 'notices' );
-					notices.error( this.translate( 'There was a problem creating your application password. Please try again.' ) );
+					this.props.errorNotice( this.translate( 'There was a problem creating your application password. Please try again.' ) );
 				} else {
 					debug( 'Application password created successfully.' );
 				}
@@ -177,14 +181,16 @@ module.exports = React.createClass( {
 			<div>
 				<SectionHeader label={ this.translate( 'Application Passwords' ) }>
 					<Button compact onClick={ this.recordClickEvent( 'Create Application Password Button', this.toggleNewPassword ) }>
+						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						<Gridicon icon="plus-small" size={ 16 } />
+						{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 						{ this.translate( 'Add New Application Password' ) }
 					</Button>
 				</SectionHeader>
 				<Card>
 
 					{ hasNewPassword
-					 	? this.renderNewAppPassword()
+						? this.renderNewAppPassword()
 						: this.renderNewAppPasswordForm() }
 
 					<p>
@@ -205,3 +211,8 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { errorNotice }, dispatch )
+)( ApplicationPasswords );

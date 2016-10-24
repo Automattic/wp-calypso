@@ -10,20 +10,19 @@ var React = require( 'react' ),
 var config = require( 'config' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	Card = require( 'components/card' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormButton = require( 'components/forms/form-button' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	formBase = require( './form-base' ),
-	SettingsCardFooter = require( './settings-card-footer' ),
-	notices = require( 'notices' );
-
+	notices = require( 'notices' ),
+	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
+	SectionHeader = require( 'components/section-header' ),
+	Button = require( 'components/button' );
 
 module.exports = React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackMonitor',
 
-	mixins: [ React.addons.LinkedStateMixin, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		var settings = {};
@@ -65,21 +64,18 @@ module.exports = React.createClass( {
 
 	prompt: function() {
 		return (
-			<div>
-				<p>{ this.translate( "Automatically monitor your website and make sure it's online." ) }</p>
-				<p>
-					{ this.translate(
-						"We'll periodically check your site from our global network of servers to make sure it's online, and email you if it looks like your site is not responding for any reason."
-					) }
-				</p>
-				<SettingsCardFooter>
-					<FormButton
-						onClick={ this.toggleJetpackModule.bind( this, 'monitor' ) }
-						disabled={ this.disableForm() }
-					>
-						{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate Monitor' ) }
-					</FormButton>
-				</SettingsCardFooter>
+			<div className="site-settings__jetpack-prompt">
+				<img src="/calypso/images/jetpack/illustration-jetpack-monitor.svg" width="128" height="128" />
+
+				<div className="site-settings__jetpack-prompt-text">
+					<p>{ this.translate( "Automatically monitor your website and make sure it's online." ) }</p>
+					<p>
+						{ this.translate(
+							"We'll periodically check your site from our global network of servers to make sure it's online, and email you if it looks like your site is not responding for any reason."
+						) }
+					</p>
+				</div>
+
 			</div>
 		);
 	},
@@ -118,31 +114,52 @@ module.exports = React.createClass( {
 						} ) }
 					</span>
 				</FormLabel>
-
-				<SettingsCardFooter>
-					<FormButton disabled={ this.disableForm() } onClick={ this.saveSettings }>
-						{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
-					</FormButton>
-					<FormButton
-						disabled={ this.disableForm() }
-						className="jetpack-monitor__deactivate is-link"
-						isPrimary={ false }
-						onClick={ this.toggleJetpackModule.bind( this, 'monitor' ) } >
-						{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
-					</FormButton>
-				</SettingsCardFooter>
 			</div>
 		);
 	},
 
 	// updates the state when an error occurs
 	handleError: function() {
-		this.setState( { submittingForm : false, togglingModule: false } );
+		this.setState( { submittingForm: false, togglingModule: false } );
 		this.markSaved();
 	},
 
 	disableForm: function() {
 		return this.state.fetchingSettings || this.state.submittingForm || this.props.site.fetchingModules || this.state.togglingModule;
+	},
+
+	activateFormButtons: function() {
+		return(
+			<Button
+				compact
+				primary
+				onClick={ this.toggleJetpackModule.bind( this, 'monitor' ) }
+				disabled={ this.disableForm() }
+				>
+				{ this.state.togglingModule ? this.translate( 'Activating…' ) : this.translate( 'Activate' ) }
+			</Button>
+		);
+	},
+
+	deactivateFormButtons: function() {
+		return(
+			<div>
+				<Button
+					compact
+					className="jetpack-monitor__deactivate"
+					onClick={ this.toggleJetpackModule.bind( this, 'monitor' ) }
+					>
+					{ this.state.togglingModule ? this.translate( 'Deactivating…' ) : this.translate( 'Deactivate' ) }
+				</Button>
+				<Button
+					compact
+					primary
+					onClick={ this.handleSubmitForm }
+					>
+					{ this.state.submittingForm ? this.translate( 'Saving…' ) : this.translate( 'Save Settings' ) }
+				</Button>
+			</div>
+		);
 	},
 
 	render: function() {
@@ -151,14 +168,23 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<Card className="jetpack-monitor-settings">
-				<FormSectionHeading>{ this.translate( 'Jetpack Monitor' ) }</FormSectionHeading>
-				{
-					( this.state.enabled ) ?
-					this.settings() :
-					this.prompt()
-				}
-			</Card>
+			<div>
+				<SectionHeader label={ this.translate( 'Jetpack Monitor' ) }>
+					{ this.state.enabled
+						? this.deactivateFormButtons()
+						: this.activateFormButtons()
+
+					}
+				</SectionHeader>
+				<Card className="jetpack-monitor-settings">
+					{
+						this.state.enabled
+						? this.settings()
+						: this.prompt()
+					}
+				</Card>
+			</div>
+
 		);
 	}
 

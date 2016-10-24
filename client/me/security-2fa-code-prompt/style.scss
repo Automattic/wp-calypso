@@ -1,5 +1,11 @@
 .security-2fa-code-prompt {
-	@include clear-fix;
+
+	.form-fieldset {
+		margin-bottom: 12px;
+	}
+	.button {
+		margin-top: 8px;
+	}
 }
 
 .security-2fa-code-prompt__verify-code {

@@ -46,7 +46,9 @@ var SiteRedirectStep = React.createClass( {
 						</p>
 					</div>
 
-					<DomainProductPrice price={ price } cart={ this.props.cart } isFinalPrice={ true } />
+					<DomainProductPrice
+						price={ price }
+						requiresPlan={ false } />
 
 					<fieldset>
 						<input
@@ -113,12 +115,12 @@ var SiteRedirectStep = React.createClass( {
 	getValidationErrorMessage: function( domain, error ) {
 		switch ( error.code ) {
 			case 'invalid_domain':
-				return this.translate( 'Sorry but %(domain)s does not appear to be a valid domain name.', {
+				return this.translate( 'Sorry, %(domain)s does not appear to be a valid domain name.', {
 					args: { domain: domain }
 				} );
 
 			case 'invalid_tld':
-				return this.translate( 'Sorry but %(domain)s does not end with a valid domain extension.', {
+				return this.translate( 'Sorry, %(domain)s does not end with a valid domain extension.', {
 					args: { domain: domain }
 				} );
 

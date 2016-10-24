@@ -1,24 +1,19 @@
-.editor-media-modal-detail .header-cake.card,
-.editor-media-modal-detail .header-cake__corner {
-	display: block;
+.editor-media-modal-detail .header-cake.card {
+	padding-top: 0;
+	padding-bottom: 0;
 
 	@include breakpoint( "<660px" ) {
 		margin-bottom: 0;
 	}
 }
 
-.editor-media-modal-detail .header-cake__back {
-	display: inline-block;
+.editor-media-modal-detail .header-cake__title {
+	padding: 6px;
 }
 
-.editor-media-modal-detail__title .editor-media-modal-detail__title-input {
-	@extend .header-cake__title;
-	position: absolute;
-		top: 50%;
-		left: 50%;
-	transform: translate( -50%, -50% );
-	width: 200px;
-	width: calc( 100vw - 150px );
+.editor-media-modal-detail .editor-media-modal-detail__title-input {
+	width: 100%;
+	color: inherit;
 	word-break: normal;
 	white-space: nowrap;
 	overflow: hidden;
@@ -26,10 +21,6 @@
 	border-color: transparent;
 	outline: none;
 	text-align: center;
-
-	@include breakpoint( ">480px" ) {
-		width: 60%;
-	}
 
 	&[readonly]:hover,
 	&[readonly]:focus {
@@ -107,6 +98,28 @@
 	&:before {
 		margin: 0 0 0 3px;
 	}
+}
+
+.editor-media-modal-detail__edit {
+	font-weight: bold;
+	display: none;
+	&.is-desktop {
+		@include breakpoint( ">480px" ) {
+			display: block;
+			position: absolute;
+			top: 8px;
+			right: 8px;
+		}
+	}
+
+	&.is-mobile {
+		@include breakpoint( "<480px" ) {
+			display: block;
+			width: 100%;
+ 			margin-bottom: 16px;
+		}
+	}
+
 }
 
 .editor-media-modal-detail__sidebar {

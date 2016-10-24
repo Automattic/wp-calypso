@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/object/assign' );
+var i18n = require( 'i18n-calypso'),
+	React = require( 'react' ),
+	assign = require( 'lodash/assign' );
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	i18nUtils = require( 'lib/i18n-utils' ),
+var i18nUtils = require( 'lib/i18n-utils' ),
+	switchLocale = require( 'lib/i18n-utils/switch-locale' ),
 	LocaleSuggestionStore = require( 'lib/locale-suggestions' ),
-	SimpleNotice = require( 'notices/simple-notice' );
+	Notice = require( 'components/notice' );
 
 module.exports = React.createClass( {
 	displayName: 'LocaleSuggestions',
@@ -24,7 +25,7 @@ module.exports = React.createClass( {
 
 	componentWillMount: function() {
 		if ( this.props.locale ) {
-			i18n.setLocaleSlug( this.props.locale );
+			switchLocale( this.props.locale );
 		}
 	},
 
@@ -38,7 +39,7 @@ module.exports = React.createClass( {
 
 	componentWillReceiveProps: function( nextProps ) {
 		if ( this.props.locale !== nextProps.locale ) {
-			i18n.setLocaleSlug( nextProps.locale );
+			switchLocale( nextProps.locale );
 		}
 	},
 
@@ -102,9 +103,9 @@ module.exports = React.createClass( {
 
 		return (
 			<div className="locale-suggestions">
-				<SimpleNotice status="is-info" showDismiss={ true } onClick={ this.dismiss }>
+				<Notice icon="globe" showDismiss={ true } onDismissClick={ this.dismiss }>
 					<div className="locale-suggestions__list">{ localeMarkup }</div>
-				</SimpleNotice>
+				</Notice>
 			</div>
 		);
 	}

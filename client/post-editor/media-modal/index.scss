@@ -28,10 +28,11 @@
 .editor-media-modal .dialog__content {
 	position: static;
 	color: $gray-dark;
+	height: 100%;
 }
 
 .editor-media-modal .section-nav {
-	z-index: 10;
+	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .section-nav' );
 	padding: 0 16px;
 
 	@include breakpoint( ">660px" ) {
@@ -128,7 +129,7 @@
 }
 
 .editor-media-modal .notice {
-	z-index: 10;
+	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .notice' );
 	margin-top: -4px;
 }
 
@@ -320,5 +321,13 @@
 		.is-mobile {
 			display: none;
 		}
+	}
+}
+
+.editor-media-modal__plan-storage {
+	display: none;
+
+	@include breakpoint( ">480px" ) {
+		display: inline-block;
 	}
 }

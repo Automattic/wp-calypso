@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react/addons';
+import React, { PropTypes } from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/utility/noop';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
+import Button from 'components/button';
 
 export default React.createClass( {
 	displayName: 'EditorDrawerWell',
@@ -16,6 +17,7 @@ export default React.createClass( {
 	propTypes: {
 		icon: PropTypes.string,
 		label: PropTypes.node,
+		empty: PropTypes.bool,
 		disabled: PropTypes.bool,
 		onClick: PropTypes.func,
 		onRemove: PropTypes.func,
@@ -30,49 +32,46 @@ export default React.createClass( {
 		};
 	},
 
-	renderPlaceholder() {
-		const { icon, onClick, disabled, label } = this.props;
-
-		let iconElement;
-		if ( icon ) {
-			iconElement = <Gridicon icon={ icon } className="editor-drawer-well__icon" />;
-		}
-
-		return (
-			<button type="button" className="editor-drawer-well__placeholder" onClick={ onClick } disabled={ disabled }>
-				{ iconElement }
-				<span className="editor-drawer-well__button button is-secondary">
-					{ label }
-				</span>
-			</button>
-		);
-	},
-
-	renderChildren() {
-		const { children, onRemove } = this.props;
-		let fragments = { children };
-
-		if ( onRemove ) {
-			fragments.remove = (
-				<button type="button" onClick={ onRemove } className="editor-drawer-well__remove">
-					<span className="screen-reader-text">{ this.translate( 'Remove' ) }</span>
-					<span className="editor-drawer-well__remove-icon noticon noticon-close-alt" />
-				</button>
-			);
-		}
-
-		return React.addons.createFragment( fragments );
-	},
-
 	render() {
-		const hasChildren = React.Children.count( this.props.children ) > 0;
+		const { empty, onRemove, onClick, disabled, icon, label, children } = this.props;
 		const classes = classNames( 'editor-drawer-well', {
-			'is-empty': ! hasChildren
+			'is-empty': empty
 		} );
 
 		return (
 			<div className={ classes }>
-				{ hasChildren ? this.renderChildren() : this.renderPlaceholder() }
+				<div className="editor-drawer-well__content">
+					{ children }
+					{ onRemove && (
+						<Button
+							onClick={ onRemove }
+							className="editor-drawer-well__remove">
+							<span className="screen-reader-text">
+								{ this.translate( 'Remove' ) }
+							</span>
+							<Gridicon
+								icon="cross"
+								size={ 24 }
+								className="editor-drawer-well__remove-icon" />
+						</Button>
+					) }
+				</div>
+				{ empty && (
+					<button
+						type="button"
+						onClick={ onClick }
+						disabled={ disabled }
+						className="editor-drawer-well__placeholder">
+						{ icon && (
+							<Gridicon
+								icon={ icon }
+								className="editor-drawer-well__icon" />
+						) }
+						<span className="editor-drawer-well__button button is-secondary">
+							{ label }
+						</span>
+					</button>
+				) }
 			</div>
 		);
 	}

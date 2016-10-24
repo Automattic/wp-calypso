@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	some = require( 'lodash/collection/some' ),
-	where = require( 'lodash/collection/where' );
+	some = require( 'lodash/some' ),
+	filter = require( 'lodash/filter' );
 
 /**
  * Internal dependencies
@@ -13,7 +13,7 @@ var ButtonsLabelEditor = require( './label-editor' ),
 	ButtonsPreviewAction = require( './preview-action' ),
 	ButtonsTray = require( './tray'),
 	decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreview',
@@ -139,7 +139,7 @@ module.exports = React.createClass( {
 	},
 
 	getPreviewButtonsElement: function() {
-		var enabledButtons = where( this.props.buttons, { enabled: true } );
+		var enabledButtons = filter( this.props.buttons, { enabled: true } );
 
 		if ( enabledButtons.length ) {
 			return (

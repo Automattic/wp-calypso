@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	assign = require( 'lodash/object/assign' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
+	assign = require( 'lodash/assign' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' );
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	EmptyContent = require( 'components/empty-content' );
 
 var LoadingError = React.createClass( {
@@ -35,7 +36,7 @@ var LoadingError = React.createClass( {
 		show: function( chunkName ) {
 			console.error( 'Chunk %s could not be loaded', chunkName );
 			analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
-			React.render(
+			ReactDom.render(
 				React.createElement( LoadingError, {} ),
 				document.getElementById( 'primary' )
 			);

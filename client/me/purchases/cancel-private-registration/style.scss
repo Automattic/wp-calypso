@@ -23,4 +23,8 @@
 
 .cancel-private-registration__cancel-button {
 	margin-top: 10px;
+
+	&[disabled] {
+		color: $gray;
+	}
 }

@@ -6,6 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+var Toggle = require( 'components/forms/form-toggle' ),
+	support = require( 'lib/url/support' );
 import analyticsMixin from 'lib/mixins/analytics';
 
 const NameserversToggle = React.createClass( {
@@ -24,15 +26,13 @@ const NameserversToggle = React.createClass( {
 				</span>
 
 				<form className="name-servers__toggle">
-					<input
-						className="toggle"
+					<Toggle
 						id="wp-nameservers"
 						name="wp-nameservers"
 						onChange={ this.handleToggle }
 						type="checkbox"
-						checked={ this.props.enabled ? 'checked' : '' }
+						checked={ this.props.enabled }
 						value="active"/>
-					<label className="toggle-label" htmlFor="wp-nameservers"></label>
 				</form>
 				{ this.renderExplanation() }
 			</div>
@@ -54,8 +54,6 @@ const NameserversToggle = React.createClass( {
 			return null;
 		}
 
-		const nameServersSupportUrl = 'https://support.wordpress.com/domains/change-name-servers/';
-
 		return (
 			<p className="name-servers__explanation">
 				{ this.translate(
@@ -64,8 +62,9 @@ const NameserversToggle = React.createClass( {
 					{
 						components: {
 							a: (
-								<a href={ nameServersSupportUrl }
+								<a href={ support.CHANGE_NAME_SERVERS }
 									target="_blank"
+									rel="noopener noreferrer"
 									onClick={ this.handleLearnMoreClick } />
 							)
 						}

@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	includes = require( 'lodash/collection/includes' ),
-	noop = require( 'lodash/utility/noop' );
+	includes = require( 'lodash/includes' ),
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal dependencies
@@ -20,6 +20,7 @@ module.exports = React.createClass( {
 		site: React.PropTypes.object,
 		basePath: React.PropTypes.string,
 		filter: React.PropTypes.string,
+		filterRequiresUpgrade: React.PropTypes.bool,
 		enabledFilters: React.PropTypes.arrayOf( React.PropTypes.string ),
 		search: React.PropTypes.string,
 		onFilterChange: React.PropTypes.func,
@@ -88,16 +89,7 @@ module.exports = React.createClass( {
 	},
 
 	renderTabItems: function() {
-		var tabs = [ '', 'images', 'documents' ],
-			site = this.props.site;
-
-		if ( site && ( site.options.videopress_enabled || site.jetpack ) ) {
-			tabs.push( 'videos' );
-		}
-
-		if ( site && ( site.options.upgraded_filetypes_enabled || site.jetpack ) ) {
-			tabs.push( 'audio' );
-		}
+		const tabs = [ '', 'images', 'documents', 'videos', 'audio' ];
 
 		return tabs.map( function( filter ) {
 			return (
@@ -118,13 +110,16 @@ module.exports = React.createClass( {
 				<SectionNavTabs>
 					{ this.renderTabItems() }
 				</SectionNavTabs>
-				<Search
-					analyticsGroup="Media"
-					pinned={ true }
-					onSearch={ this.props.onSearch }
-					initialValue={ this.props.search }
-					placeholder={ this.getSearchPlaceholderText() }
-					delaySearch={ true } />
+				{ ! this.props.filterRequiresUpgrade &&
+					<Search
+						analyticsGroup="Media"
+						pinned
+						fitsContainer
+						onSearch={ this.props.onSearch }
+						initialValue={ this.props.search }
+						placeholder={ this.getSearchPlaceholderText() }
+						delaySearch={ true } />
+				}
 			</SectionNav>
 		);
 	}

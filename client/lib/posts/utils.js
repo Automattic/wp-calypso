@@ -2,28 +2,26 @@
  * External dependecies
  */
 var url = require( 'url' ),
-	i18n = require( 'lib/mixins/i18n' ),
+	i18n = require( 'i18n-calypso' ),
 	moment = require( 'moment-timezone' );
+import includes from 'lodash/includes';
 
 /**
  * Internal dependencies
  */
 var postNormalizer = require( 'lib/post-normalizer' ),
-	config = require( 'config' ),
 	sites = require( 'lib/sites-list' )();
 
 var utils = {
 
 	getEditURL: function( post, site ) {
-		var editURL;
+		let basePath = '';
 
-		if ( config.isEnabled( 'post-editor' ) ) {
-			editURL = `/${post.type}/${site.slug}/${post.ID}`;
-		} else {
-			editURL = `//wordpress.com/${post.type}/${site.ID}/${post.ID}/`;
+		if ( ! includes( [ 'post', 'page' ], post.type ) ) {
+			basePath = '/edit';
 		}
 
-		return editURL;
+		return `${basePath}/${post.type}/${site.slug}/${post.ID}`;
 	},
 
 	getPreviewURL: function( post ) {
@@ -49,6 +47,12 @@ var utils = {
 			if ( site.options.is_mapped_domain ) {
 				previewUrl = previewUrl.replace( site.URL, site.options.unmapped_url );
 			}
+			if ( site.options && site.options.frame_nonce ) {
+				parsed = url.parse( previewUrl, true );
+				parsed.query['frame-nonce'] = site.options.frame_nonce;
+				delete parsed.search;
+				previewUrl = url.format( parsed );
+			}
 		}
 
 		return previewUrl;
@@ -65,7 +69,15 @@ var utils = {
 	},
 
 	isPublished: function( post ) {
-		return post && ( post.status === 'publish' || post.status === 'private' );
+		return post && ( post.status === 'publish' || post.status === 'private' || this.isBackDatedPublished( post ) );
+	},
+
+	isPrivate: function( post ) {
+		return post && ( 'private' === post.status );
+	},
+
+	isPending: function( post ) {
+		return post && ( 'pending' === post.status );
 	},
 
 	getEditedTime: function( post ) {
@@ -78,6 +90,14 @@ var utils = {
 		}
 
 		return post.modified;
+	},
+
+	isBackDatedPublished: function( post ) {
+		if ( ! post || post.status !== 'future' ) {
+			return false;
+		}
+
+		return moment( post.date ).isBefore( moment() );
 	},
 
 	isFutureDated: function( post ) {
@@ -113,8 +133,8 @@ var utils = {
 			[
 				postNormalizer.decodeEntities,
 				postNormalizer.stripHTML,
-				postNormalizer.firstPassCanonicalImage,
 				postNormalizer.safeImageProperties( imageWidth ),
+				postNormalizer.firstPassCanonicalImage,
 				postNormalizer.withContentDOM( [
 					postNormalizer.content.removeStyles,
 					postNormalizer.content.safeContentImages( imageWidth )
@@ -144,7 +164,6 @@ var utils = {
 		postNormalizer(
 			post,
 			[
-				postNormalizer.waitForImagesToLoad,
 				postNormalizer.keepValidImages( 72, 72 )
 			],
 			callback
@@ -166,6 +185,17 @@ var utils = {
 		return this.removeSlug( path );
 	},
 
+	getPagePath: function( post ) {
+		if ( ! post ) {
+			return;
+		}
+		if ( ! this.isPublished( post ) ) {
+			return this.getPermalinkBasePath( post );
+		}
+
+		return this.removeSlug( post.URL );
+	},
+
 	removeSlug: function( path ) {
 		if ( ! path ) {
 			return;
@@ -175,14 +205,6 @@ var utils = {
 		pathParts[ pathParts.length - 1 ] = '';
 
 		return pathParts.join( '/' );
-	},
-
-	getSuggestedSlug: function( post ) {
-		if ( ! post || ! post.other_URLs || ! post.other_URLs.suggested_slug ) {
-			return null;
-		}
-
-		return post.other_URLs.suggested_slug;
 	},
 
 	/**

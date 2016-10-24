@@ -4,6 +4,8 @@
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:site-settings' );
 
+var FormLabel = require( 'components/forms/form-label' );
+
 module.exports = React.createClass({
 	displayName: 'RelatedContentPreview',
 
@@ -15,7 +17,7 @@ module.exports = React.createClass({
 
 		return (
 			<div id="settings-reading-relatedposts-preview" className={ this.props.enabled ? null : 'disabled-block' }>
-				<strong>{ this.translate( 'Preview:' ) }</strong>
+				<FormLabel>{ this.translate( 'Preview:' ) }</FormLabel>
 				<div id="jp-relatedposts" className="jp-relatedposts">
 					{ this.props.showHeadline ?
 					<h3 className="jp-relatedposts-headline">{ this.translate( 'Related' ) }</h3>

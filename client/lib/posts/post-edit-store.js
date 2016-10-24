@@ -1,15 +1,13 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
+var assign = require( 'lodash/assign' ),
 	debug = require( 'debug' )( 'calypso:posts:post-edit-store' ),
 	emitter = require( 'lib/mixins/emitter' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	clone = require( 'lodash/lang/clone' ),
-	filter = require( 'lodash/collection/filter' ),
-	without = require( 'lodash/array/without' ),
-	map = require( 'lodash/collection/map' ),
-	pick = require( 'lodash/object/pick' );
+	isEqual = require( 'lodash/isEqual' ),
+	filter = require( 'lodash/filter' ),
+	without = require( 'lodash/without' ),
+	pickBy = require( 'lodash/pickBy' );
 
 /**
  * Internal dependencies
@@ -36,7 +34,6 @@ var _initialRawContent = null,
 	_queueChanges = false,
 	_rawContent = null,
 	_savedPost = null,
-	_suggestedSlug = null,
 	PostEditStore;
 
 function resetState() {
@@ -52,48 +49,7 @@ function resetState() {
 	_queue = [];
 	_queueChanges = false;
 	_rawContent = null;
-	_suggestedSlug = null;
 	_savedPost = null;
-}
-
-function getSlug( post ) {
-	var suggestedSlug = utils.getSuggestedSlug( post );
-
-	if ( ! post ) {
-		return null;
-	}
-
-	if ( utils.isPublished( post ) ) {
-		return post.slug;
-	}
-
-	// if the existing post is using the suggested slug, accept the new suggestion
-	if ( _savedPost &&
-			_savedPost.slug === _suggestedSlug &&
-			suggestedSlug
-	) {
-		return suggestedSlug;
-	}
-
-	// loading a draft if no slug is present, use suggestedSlug
-	if ( ! _savedPost && ! post.slug && suggestedSlug ) {
-		return suggestedSlug;
-	}
-
-	return post.slug || null;
-}
-
-function getCategoryIds( post ) {
-	if ( ! post || ! post.categories ) {
-		return;
-	}
-
-	return map( post.categories, function( category ) {
-		if ( category.ID ) {
-			return category.ID;
-		}
-		return category;
-	} );
 }
 
 function getParentId( post ) {
@@ -118,12 +74,10 @@ function getPageTemplate( post ) {
 function startEditing( post ) {
 	resetState();
 	post = normalize( post );
-	post.slug = getSlug( post );
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
 	_previewUrl = utils.getPreviewURL( post );
-	_suggestedSlug = utils.getSuggestedSlug( post );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_isLoading = false;
@@ -131,12 +85,10 @@ function startEditing( post ) {
 
 function updatePost( post ) {
 	post = normalize( post );
-	post.slug = getSlug( post );
 	if ( post.title ) {
 		post.title = decodeEntities( post.title );
 	}
 	_previewUrl = utils.getPreviewURL( post );
-	_suggestedSlug = utils.getSuggestedSlug( post );
 	_savedPost = Object.freeze( post );
 	_post = _savedPost;
 	_isNew = false;
@@ -199,11 +151,6 @@ function set( attributes ) {
 }
 
 function normalize( post ) {
-	var categoryIds = getCategoryIds( post );
-	if ( categoryIds ) {
-		post.category_ids = categoryIds;
-	}
-
 	post.parent_id = getParentId( post );
 	if ( post.type === 'page' ) {
 		post.page_template = getPageTemplate( post );
@@ -237,34 +184,9 @@ function isContentEmpty( content ) {
 	return ! content || ( content.length < CONTENT_LENGTH_ASSUME_SET && REGEXP_EMPTY_CONTENT.test( content ) );
 }
 
-function receiveCategory( category ) {
-	var existingIndex, temporaryId, postCategories;
-
-	if ( ! category ) {
-		return;
-	}
-
-	postCategories = clone( getCategoryIds( _post ) ) || [];
-	temporaryId = category.temporaryId;
-
-	if ( temporaryId ) {
-		existingIndex = postCategories.indexOf( temporaryId );
-		if ( -1 !== existingIndex ) {
-			postCategories.splice( existingIndex, 1, category.ID );
-		}
-	} else {
-		postCategories.push( category.ID );
-	}
-
-	set( { categories: postCategories } );
-	PostEditStore.emit( 'change' );
-}
-
 function dispatcherCallback( payload ) {
 	var action = payload.action,
-		changed,
-		category,
-		postId;
+		changed;
 
 	switch ( action.type ) {
 
@@ -366,30 +288,6 @@ function dispatcherCallback( payload ) {
 			}
 			PostEditStore.emit( 'change' );
 			break;
-
-		case 'CREATE_TERM':
-		case 'RECEIVE_ADD_TERM':
-			if ( action.error ||
-					! _post ||
-					! action.data ||
-					! action.siteId ||
-					! Array.isArray( action.data.terms ) ||
-					! action.data.terms.length ) {
-				break;
-			}
-
-			category = action.data.terms[ 0 ];
-			postId = _post.ID;
-
-			// Only add term if it is a category, siteId matches, and transient postId if present matches _post.ID
-			if ( action.siteId !== _post.site_ID ||
-					( category.postId && category.postId !== postId ) ||
-					action.data.termType !== 'categories' ) {
-				break;
-			}
-
-			receiveCategory( category );
-			break;
 	}
 }
 
@@ -420,7 +318,7 @@ PostEditStore = {
 			return Object.freeze( {} );
 		}
 
-		changedAttributes = pick( _post, function( value, key ) {
+		changedAttributes = pickBy( _post, function( value, key ) {
 			return value !== _savedPost[ key ] && 'metadata' !== key;
 		} );
 

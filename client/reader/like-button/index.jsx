@@ -1,13 +1,23 @@
-var React = require( 'react' );
+const React = require( 'react' );
 
-var LikeButtonContainer = require( 'components/like-button' ),
-	stats = require( 'reader/stats' );
+const postStore = require( 'lib/feed-post-store' );
 
-var ReaderLikeButton = React.createClass( {
+const LikeButtonContainer = require( 'blocks/like-button' );
+
+import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
+
+const ReaderLikeButton = React.createClass( {
 
 	recordLikeToggle: function( liked ) {
-		stats.recordAction( liked ? 'liked_post' : 'unliked_post' );
-		stats.recordGaEvent( liked ? 'Clicked Like Post' : 'Clicked Unlike Post' );
+		const post = postStore.get( {
+			blogId: this.props.siteId,
+			postId: this.props.postId
+		} );
+
+		recordAction( liked ? 'liked_post' : 'unliked_post' );
+		recordGaEvent( liked ? 'Clicked Like Post' : 'Clicked Unlike Post' );
+		recordTrackForPost( liked ? 'calypso_reader_article_liked' : 'calypso_reader_article_unliked', post,
+				{ context: this.props.fullPost ? 'full-post' : 'card' } );
 	},
 
 	render: function() {

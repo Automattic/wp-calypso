@@ -16,7 +16,10 @@ module.exports = React.createClass({
 
     return (
       <div className="regular-template">Regular template stuff</div>
-      <ReactCSSTransitionGroup transitionName="updated-trans">
+      <ReactCSSTransitionGroup
+        transitionName="updated-trans"
+        transitionEnterTimeout={ 300 }
+        transitionLeaveTimeout={ 300 }>
         { this.buildUpdateTemplate() }
       </ReactCSSTransitionGroup>
     );

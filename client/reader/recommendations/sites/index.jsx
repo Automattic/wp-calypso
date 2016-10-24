@@ -6,7 +6,7 @@ const RecommendedSites = React.createClass( {
 	render() {
 		return (
 			<Main>
-				<Navigation selected='sites' />
+				<Navigation selected="sites" />
 				Sites!
 			</Main>
 			);

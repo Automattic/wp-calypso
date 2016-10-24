@@ -1,8 +1,11 @@
+.draft.card.is-compact {
+	padding: 16px;
+}
 
 .draft__title {
 	display: inline-block;
 	font-family: $serif;
-	font-weight: bold;
+	font-weight: 400;
 	font-size: 14px;
 	white-space: nowrap;
 	overflow: hidden;
@@ -137,18 +140,10 @@
 	margin: 0;
 	color: $gray;
 
-	.time {
+	.post-relative-time-status__time {
 		line-height: 1;
-	}
-
-	.time-text {
 		font-size: 10px;
-		color: $gray;
 		text-transform: uppercase;
-	}
-
-	small {
-		display: none;
 	}
 
 	.is-pending {
@@ -274,6 +269,11 @@
 	}
 }
 
+.draft.is-selected {
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% ), inset -4px 0 0 $blue-medium;
+}
+
 .draft__pending-label {
 	background: $alert-yellow;
 	border-radius: 2px;
@@ -284,4 +284,9 @@
 	margin-right: 8px;
 	padding: 2px 8px;
 	text-transform: uppercase;
+}
+
+.draft .gravatar {
+	margin-right: 8px;
+	vertical-align: middle;
 }

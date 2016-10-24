@@ -2,13 +2,14 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	classNames = require( 'classnames' );
+	classNames = require( 'classnames' ),
+	photon = require( 'photon' );
 
 /**
  * Internal dependencies
  */
-var formatting = require( 'lib/formatting' ),
-	analytics = require( 'analytics' );
+var analytics = require( 'lib/analytics' ),
+	SocialLogo = require( 'components/social-logo' );
 
 module.exports = React.createClass( {
 	displayName: 'SharingButtonsPreviewButton',
@@ -30,10 +31,22 @@ module.exports = React.createClass( {
 	},
 
 	getIcon: function() {
-		if ( 'string' === typeof this.props.button.genericon ) {
-			return <span className="noticon sharing-buttons-preview-button__glyph" aria-hidden="true">{ formatting.unicodeToString( this.props.button.genericon ) }</span>;
+		const shortnameToSocialLogo = {
+			email: 'mail',
+			'google-plus-1': 'google-plus-alt',
+			pinterest: 'pinterest-alt',
+			tumblr: 'tumblr-alt',
+			'jetpack-whatsapp': 'whatsapp',
+			'press-this': 'wordpress',
+			twitter: 'twitter-alt',
+			more: 'share'
+		}
+		if ( ! this.props.button.custom ) {
+			const icon = shortnameToSocialLogo[ this.props.button.ID ] || this.props.button.shortname;
+
+			return <SocialLogo icon={ icon } size={ 18 } />;
 		} else if ( 'string' === typeof this.props.button.icon ) {
-			return <span className="sharing-buttons-preview-button__custom-icon" style={ { backgroundImage: 'url(' + this.props.button.icon + ')' } }></span>;
+			return <span className="sharing-buttons-preview-button__custom-icon" style={ { backgroundImage: 'url(' + photon( this.props.button.icon, { width: 16 } ) + ')' } }></span>;
 		}
 	},
 
@@ -44,7 +57,8 @@ module.exports = React.createClass( {
 
 	render: function() {
 		var classes = classNames( 'sharing-buttons-preview-button', 'style-' + this.props.style, 'share-' + this.props.button.ID, {
-			'is-enabled': this.props.enabled
+			'is-enabled': this.props.enabled,
+			'is-custom': this.props.button.custom
 		} );
 
 		return (

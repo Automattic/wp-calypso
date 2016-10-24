@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import protectForm from 'lib/mixins/protect-form';
 import formBase from 'me/form-base';
@@ -29,7 +29,7 @@ import Main from 'components/main';
 module.exports = React.createClass( {
 	displayName: 'NotificationSubscriptions',
 
-	mixins: [ formBase, React.addons.LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ), eventRecorder ],
+	mixins: [ formBase, LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ), eventRecorder ],
 
 	getDeliveryHourLabel( hour ) {
 		return this.translate(
@@ -44,59 +44,22 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderNotificationsControlPanel() {
-		return (
-			<div>
-				<FormSectionHeading className="is-primary">
-					{ this.translate( 'Notification Emails' ) }
-				</FormSectionHeading>
-
-				<FormFieldset>
-					<FormLegend>{ this.translate( '"Like" Comments' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox
-							checkedLink={ this.valueLink( 'comment_like_notification' ) }
-							disabled={ this.getDisabledState() }
-							id="comment_like_notification"
-							name="comment_like_notification"
-							onClick={ this.recordCheckboxEvent( 'Comment Like Notifications' ) } />
-							{ this.translate( 'Email me when someone Likes one of my comments.' ) }
-					</FormLabel>
-				</FormFieldset>
-
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Mentions' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox
-							checkedLink={ this.valueLink( 'mentions_notification' ) }
-							disabled={ this.getDisabledState() }
-							id="mentions_notification"
-							name="mentions_notification"
-							onClick={ this.recordCheckboxEvent( 'Mention Notifications' ) } />
-							{ this.translate( 'Email me when someone mentions my username.' ) }
-					</FormLabel>
-				</FormFieldset>
-			</div>
-		);
-	},
-
 	render() {
 		return (
-			<Main className="notifications">
+			<Main className="notifications-settings">
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
-				{ config.isEnabled( 'me/notifications-control-panel' ) ? <Navigation path={ this.props.path } /> : null }
+				<Navigation path={ this.props.path } />
 
 				<Card className="me-notification-settings">
 					<form id="notification-settings" onChange={ this.markChanged } onSubmit={ this.submitForm } >
-						{ config.isEnabled( 'me/notifications-control-panel' ) ? null : this.renderNotificationsControlPanel() }
 						<FormSectionHeading>{ this.translate( 'Subscriptions Delivery' ) }</FormSectionHeading>
 						<p>
 							{ this.translate( '{{readerLink}}Use the Reader{{/readerLink}} to adjust delivery settings for your existing subscriptions.',
 								{
 									components: {
-										readerLink: <a rel="external" href="https://wordpress.com/following/edit/" onClick={ this.recordClickEvent( 'Edit Subscriptions in Reader Link' ) } />
+										readerLink: <a href="/following/edit" onClick={ this.recordClickEvent( 'Edit Subscriptions in Reader Link' ) } />
 									}
 								} )
 							}
@@ -126,7 +89,7 @@ module.exports = React.createClass( {
 									id="subscription_delivery_jabber_default"
 									name="subscription_delivery_jabber_default"
 									onClick={ this.recordCheckboxEvent( 'Notification Delivery by Jabber' ) } />
-									{ this.translate( 'Default delivery via Jabber instant message' ) }
+									<span>{ this.translate( 'Default delivery via Jabber instant message' ) }</span>
 							</FormLabel>
 						</FormFieldset>
 
@@ -195,7 +158,7 @@ module.exports = React.createClass( {
 									id="subscription_delivery_email_blocked"
 									name="subscription_delivery_email_blocked"
 									onClick={ this.recordCheckboxEvent( 'Block All Notification Emails' ) }/>
-									{ this.translate( 'Block all email updates from blogs you’re following on WordPress.com' ) }
+									<span>{ this.translate( 'Block all email updates from blogs you’re following on WordPress.com' ) }</span>
 							</FormLabel>
 						</FormFieldset>
 

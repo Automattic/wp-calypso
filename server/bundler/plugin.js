@@ -17,6 +17,8 @@ ChunkFileNames.prototype.apply = function( compiler ) {
 				this.indent( [
 					"// start chunk loading",
 					"installedChunks[ chunkId ] = [ callback ];",
+					"window.__chunkErrors = window.__chunkErrors || {};",
+					"window.__chunkErrors[ " + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId ]=null;",
 					"var head = document.getElementsByTagName('head')[0];",
 					"var script = document.createElement( 'script' );",
 					"var isDebug = window.app.isDebug;",
@@ -27,7 +29,8 @@ ChunkFileNames.prototype.apply = function( compiler ) {
 					this.indent( [
 						"script.onerror = script.onload = script.onreadystatechange = null;",
 						"delete installedChunks[ chunkId ];",
-						"callback.call( null, " + this.requireFn + ", new Error() )"
+						"window.__chunkErrors[ " + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId ]=new Error();",
+						"callback.call( null, " + this.requireFn + ")"
 					] ),
 					"};",
 					"script.src = " + this.requireFn + ".p + (" + JSON.stringify( chunkMaps.name ) + "[chunkId]||chunkId) + '.' + (" + JSON.stringify( chunkMaps.hash ) + "[chunkId]||chunkID) + ( isDebug ? '' : '.min' ) + '.js';",
@@ -41,4 +44,3 @@ ChunkFileNames.prototype.apply = function( compiler ) {
 };
 
 module.exports = ChunkFileNames;
-

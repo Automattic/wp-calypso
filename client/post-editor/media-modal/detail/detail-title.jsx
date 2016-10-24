@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React from 'react';
-import debounce from 'lodash/function/debounce';
+import debounce from 'lodash/debounce';
 
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 import TrackInputChanges from 'components/track-input-changes';
@@ -81,18 +81,16 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<h2 className="editor-media-modal-detail__title">
-				<TrackInputChanges onNewValue={ this.bumpStat }>
-					<FormTextInput
-						onKeyUp={ this.onKeyUp }
-						onChange={ this.onChange }
-						onBlur={ this.saveTitle }
-						value={ this.getTitleValue() }
-						placeholder={ this.translate( 'Untitled' ) }
-						readOnly={ ! userCan( 'upload_files', this.props.site ) }
-						className="editor-media-modal-detail__title-input" />
-				</TrackInputChanges>
-			</h2>
+			<TrackInputChanges onNewValue={ this.bumpStat }>
+				<FormTextInput
+					onKeyUp={ this.onKeyUp }
+					onChange={ this.onChange }
+					onBlur={ this.saveTitle }
+					value={ this.getTitleValue() }
+					placeholder={ this.translate( 'Untitled' ) }
+					readOnly={ ! userCan( 'upload_files', this.props.site ) }
+					className="editor-media-modal-detail__title-input" />
+			</TrackInputChanges>
 		);
 	}
 } );

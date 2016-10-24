@@ -3,9 +3,9 @@
  */
 import React from 'react';
 import classnames from 'classnames';
-import dropRightWhile from 'lodash/array/dropRightWhile';
-import negate from 'lodash/function/negate';
-import identity from 'lodash/utility/identity';
+import dropRightWhile from 'lodash/dropRightWhile';
+import negate from 'lodash/negate';
+import identity from 'lodash/identity';
 
 /**
  * Internal dependencies
@@ -15,7 +15,8 @@ import FormFooter from 'my-sites/upgrades/domain-management/components/form-foot
 import CustomNameserversRow from './custom-nameservers-row';
 import { change, remove } from 'lib/domains/nameservers';
 import analyticsMixin from 'lib/mixins/analytics';
-import SimpleNotice from 'notices/simple-notice';
+import Notice from 'components/notice';
+import support from 'lib/url/support';
 
 const MIN_NAMESERVER_LENGTH = 2,
 	MAX_NAMESERVER_LENGTH = 4;
@@ -35,10 +36,8 @@ const CustomNameserversForm = React.createClass( {
 	},
 
 	warning() {
-		const nameServersSupportUrl = 'https://support.wordpress.com/domains/change-name-servers/';
-
 		return (
-			<SimpleNotice
+			<Notice
 				status="is-warning"
 				showDismiss={ false }>
 				{ this.translate(
@@ -46,12 +45,13 @@ const CustomNameserversForm = React.createClass( {
 					'WordPress.com site to load & other features to be available.'
 				) }
 				{ ' ' }
-				<a href={ nameServersSupportUrl }
+				<a href={ support.CHANGE_NAME_SERVERS }
 						target="_blank"
+						rel="noopener noreferrer"
 						onClick={ this.handleLearnMoreClick }>
 					{ this.translate( 'Learn more.' ) }
 				</a>
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 
@@ -60,14 +60,13 @@ const CustomNameserversForm = React.createClass( {
 	},
 
 	popularHostsMessage() {
-		const newNameServerSupportUrl = 'https://support.wordpress.com/domains/change-name-servers/#finding-out-your-new-name-server';
-
 		return (
 			<div className="custom-nameservers-form__explanation">
 				{ this.translate( 'Not sure what name servers to use?' ) }
 				{ ' ' }
-				<a href={ newNameServerSupportUrl }
+				<a href={ support.CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS }
 						target="_blank"
+						rel="noopener noreferrer"
 						onClick={ this.handleLookUpClick }>
 					{ this.translate( 'Look up the name servers for popular hosts.' ) }
 				</a>
@@ -125,7 +124,7 @@ const CustomNameserversForm = React.createClass( {
 		const classes = classnames( 'button is-primary is-full-width', { disabled: this.props.submitDisabled } );
 
 		if ( ! this.props.nameservers ) {
-			return <div className="custom-nameservers-form is-compact card">{ this.translate( 'Loading…' ) }</div>;
+			return null;
 		}
 
 		return (

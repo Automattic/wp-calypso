@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	property = require( 'lodash/utility/property' ),
-	sortBy = require( 'lodash/collection/sortBy' );
+	property = require( 'lodash/property' ),
+	sortBy = require( 'lodash/sortBy' );
 
 /**
  * Internal dependencies
@@ -12,7 +12,7 @@ var NextStepsBox = require( './next-steps-box' ),
 	MeSidebarNavigation = require( 'me/sidebar-navigation' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	steps = require( './steps' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	productsValues = require( 'lib/products-values' ),
 	sites = require( 'lib/sites-list' )();
 
@@ -103,11 +103,13 @@ module.exports = React.createClass( {
 								bloggingUniversityLink: <a
 									href="https://bloggingu.wordpress.com/"
 									target="_blank"
+									rel="noopener noreferrer"
 									onClick={ this.bloggingUniversityLinkRecordEvent }
 								/>,
 								docsLink: <a
 									href="http://en.support.wordpress.com/"
 									target="_blank"
+									rel="noopener noreferrer"
 									onClick={ this.docsLinkRecordEvent }
 								/>
 							}

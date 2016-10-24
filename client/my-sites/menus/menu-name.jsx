@@ -1,15 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:menus:menu' ); // eslint-disable-line no-unused-vars
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' );
+var analytics = require( 'lib/analytics' );
 
-var MenuName = React.createClass({
+var MenuName = React.createClass( {
 
 	getInitialState: function() {
 		return {
@@ -29,7 +30,11 @@ var MenuName = React.createClass({
 			analytics.ga.recordEvent( 'Menus', 'Clicked Edit Menu Title' );
 		}
 
-		this.setState( { editing: ! editing } );
+		const newEditingState = ! editing;
+		this.setState( { editing: newEditingState } );
+		if ( this.props.onTitleEdit ) {
+			this.props.onTitleEdit( newEditingState );
+		}
 	},
 
 	updateName: function( newValue ) {
@@ -39,6 +44,10 @@ var MenuName = React.createClass({
 		} );
 		if ( this.props.onChange ) {
 			this.props.onChange( newValue );
+		}
+
+		if ( this.props.onTitleEdit ) {
+			this.props.onTitleEdit( false );
 		}
 	},
 
@@ -55,7 +64,7 @@ var MenuName = React.createClass({
 		} else {
 			menuEditable = (
 				<span className={ this.props.className } onTouchTap={ this.toggleEdit }>
-					{ this.state.value }
+					<span>{ this.state.value }</span>
 					<a className="edit" />
 				</span>
 			);
@@ -64,9 +73,9 @@ var MenuName = React.createClass({
 		return menuEditable;
 	}
 
-});
+} );
 
-var TemporaryInput = React.createClass({
+var TemporaryInput = React.createClass( {
 
 	getInitialState: function() {
 		return {
@@ -75,11 +84,11 @@ var TemporaryInput = React.createClass({
 	},
 
 	componentDidMount: function() {
-		var node = React.findDOMNode( this.refs.input );
+		var node = ReactDom.findDOMNode( this.refs.input );
 		node.focus();
 		try {
 			node.setSelectionRange( 0, 999 );
-		} catch (e) {
+		} catch ( e ) {
 			debug( 'setSelectionRange failed' );
 		}
 	},
@@ -110,6 +119,6 @@ var TemporaryInput = React.createClass({
 				value={ this.state.value } />
 		);
 	}
-});
+} );
 
 module.exports = MenuName;

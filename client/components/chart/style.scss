@@ -32,7 +32,7 @@
 // Y-axis marker lines inside each chart__bar
 // (This is needed so that bars overlap correctly)
 .chart__bar-marker {
-	z-index: 1;
+	z-index: z-index( 'root', '.chart__bar-marker' );
 	position: absolute;
 		top: 0;
 	width: 100%;
@@ -168,8 +168,7 @@
 		right: 16%; // 1
 		bottom: 0; // 1
 		left: 16%; // 1
-	z-index: 2;
-	transition: top .3s ease-out; // 2
+	z-index: z-index( 'root', '.chart__bar-section' );
 
 	.chart__bar:hover &.is-bar {
 		background-color: $blue-medium;
@@ -180,7 +179,7 @@
 	}
 
 	&.is-spacer {
-		z-index: 0;
+		z-index: z-index( 'root', '.chart__bar-section.is-spacer' );
 		background-color: $transparent;
 	}
 
@@ -191,7 +190,7 @@
 			top: 160px;
 			bottom: 0;
 			left: 0;
-		z-index: 1;
+		z-index: z-index( 'root', '.chart__bar-section.is-ghost::after' );
 		width: 100%;
 		height: 40px;
 		background-image: linear-gradient(to bottom, $transparent, rgba( lighten( $gray, 30% ), .5 ) ); // TODO: needs to use default color for gradient
@@ -318,7 +317,7 @@
 	font-size: 14px;
 	line-height: 24px;
 	clear: both;
-	z-index: 1;
+	z-index: z-index( 'root', '.chart__empty' );
 }
 
 .chart__empty_notice {
@@ -340,7 +339,7 @@
 		font-size: inherit;
 
 		&::before {
-			@extend %noticon;
+			@include noticon-style;
 			content: '\f456';
 			position: absolute;
 				top: 23px;
@@ -355,94 +354,7 @@
 // Chart tooltip
 
 .chart__tooltip {
-	z-index: 1000;
-	position: absolute;
-	/* default offset for edge-cases: https://github.com/component/tip/pull/12 */
-	top: 0;
-	left: 0 #{"/*rtl:ignore*/"};
-	right: auto #{"/*rtl:ignore*/"};
-
-	&.tip-bottom-left {
-		.tip-arrow {
-			border-color: $transparent;
-			position: absolute;
-
-			&::before {
-				content: '';
-				border: 4px solid $transparent;
-				border-bottom-color: darken( $gray, 30% );
-				position: absolute;
-					left: 231px  #{"/*rtl:ignore*/"};
-					top: -3px;
-
-				.rtl & {
-					left: -18px  #{"/*rtl:ignore*/"};
-					top: -3px;
-				}
-			}
-		}
-	}
-
-	&.tip-bottom-right,
-	&.tip-bottom {
-		.tip-arrow {
-			border-color: $transparent;
-			position: absolute;
-
-			&::before {
-				content: '';
-				border: 4px solid $transparent;
-				border-bottom-color: darken( $gray, 30% );
-				position: absolute;
-					left: 11px  #{"/*rtl:ignore*/"};
-					top: -3px;
-
-				.rtl & {
-					left: -238px  #{"/*rtl:ignore*/"};
-					top: -3px;
-				}
-			}
-		}
-	}
-
-	&.tip-top {
-		.tip-arrow {
-			border-color: $transparent;
-			position: absolute;
-
-			&::before {
-				content: '';
-				border: 4px solid $transparent;
-				border-top-color: darken( $gray, 30% );
-				position: absolute;
-					left: 118px #{"/*rtl:ignore*"};
-					bottom: -40px;
-			}
-		}
-	}
-
-	&.tip-bottom {
-		.tip-arrow {
-			&::before {
-				left: 86px  #{"/*rtl:ignore*/"};
-				top: -4px;
-
-				.rtl & {
-					left: -93px  #{"/*rtl:ignore*/"};
-				}
-			}
-		}
-	}
-
-	.tip-inner {
-		border: 0px;
-		box-shadow: none;
-		border-radius: 2px;
-		color: $white;
-		background: darken( $gray, 30% );
-		font-size: 11px;
-		padding: 6px 10px;
-		margin-top: 5px;
+	.popover__inner {
 		width: 230px;
 		text-align: left;
 
@@ -491,17 +403,8 @@
 	}
 
 	&.is-streak {
-		.tip-arrow {
-			&::before {
-				left: 87px;
-			}
-		}
-
-		.tip-inner {
+		.popover__inner {
 			width: 160px;
-			position: relative;
-			top: -10px;
-
 			li {
 				height: 14px;
 
@@ -538,7 +441,8 @@
 	}
 
 	&.is-published-item {
-			height: 19px;
+
+		height: 19px;
 
 		.label {
 			text-transform: none;

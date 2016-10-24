@@ -13,7 +13,10 @@ export default React.createClass( {
 	displayName: 'Version',
 
 	propTypes: {
-		version: React.PropTypes.number.isRequired,
+		version: React.PropTypes.oneOfType( [
+			React.PropTypes.string,
+			React.PropTypes.number,
+		] ).isRequired,
 		icon: React.PropTypes.string
 	},
 

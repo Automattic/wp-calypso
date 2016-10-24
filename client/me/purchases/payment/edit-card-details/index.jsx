@@ -1,258 +1,97 @@
 /**
  * External Dependencies
  */
-import React from 'react';
-import extend from 'lodash/object/assign';
-import page from 'page';
+import { connect } from 'react-redux';
+import React, { PropTypes } from 'react';
 
 /**
  * Internal Dependencies
  */
-import analytics from 'analytics';
-import camelCase from 'lodash/string/camelCase';
-import Card from 'components/card';
-import CompactCard from 'components/card/compact';
-import CreditCardForm from 'components/upgrades/credit-card-form';
-import FormButton from 'components/forms/form-button';
-import formState from 'lib/form-state';
-import forOwn from 'lodash/object/forOwn';
+import { clearPurchases } from 'state/purchases/actions';
+import CreditCardForm from 'blocks/credit-card-form';
+import CreditCardFormLoadingPlaceholder from 'blocks/credit-card-form/loading-placeholder';
+import { getByPurchaseId, hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
+import { getSelectedSite as getSelectedSiteSelector } from 'state/ui/selectors';
+import { getStoredCardById, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
 import HeaderCake from 'components/header-cake' ;
-import kebabCase from 'lodash/string/kebabCase';
+import { isDataLoading, recordPageView } from 'me/purchases/utils';
+import { isRequestingSites } from 'state/sites/selectors';
 import Main from 'components/main';
-import mapKeys from 'lodash/object/mapKeys';
-import notices from 'notices';
-import { validateCardDetails } from 'lib/credit-card-details';
-import ValidationErrorList from 'notices/validation-error-list';
-import { createPaygateToken } from 'lib/store-transactions';
-import wpcomFactory from 'lib/wp';
-import paths from 'me/purchases/paths';
-import { getPurchase, goToManagePurchase, isDataLoading } from 'me/purchases/utils';
+import PurchaseCardDetails from 'me/purchases/components/purchase-card-details';
+import QueryStoredCards from 'components/data/query-stored-cards';
+import QueryUserPurchases from 'components/data/query-user-purchases';
+import titles from 'me/purchases/titles';
+import userFactory from 'lib/user';
 
-const wpcom = wpcomFactory.undocumented();
+const user = userFactory();
 
-const EditCardDetails = React.createClass( {
-	propTypes: {
-		card: React.PropTypes.object.isRequired,
-		countriesList: React.PropTypes.object.isRequired,
-		selectedPurchase: React.PropTypes.object.isRequired,
-		selectedSite: React.PropTypes.object.isRequired
-	},
-
-	getInitialState() {
-		return {
-			form: null,
-			notice: null
-		};
-	},
-
-	fieldNames: [
-		'name',
-		'number',
-		'cvv',
-		'expirationDate',
-		'country',
-		'postalCode'
-	],
-
-	componentWillReceiveProps( nextProps ) {
-		// Updates the form once with the stored credit card data as soon as they are available
-		if ( nextProps.card && ( ! this.props.card || ( nextProps.card.id !== this.props.card.id ) ) ) {
-			this.setState( {
-				form: formState.initializeFields( this.state.form, this.mergeCard( nextProps.card ) )
-			} );
-		}
-	},
-
-	/**
-	 * Merges the specified card object returned by the StoredCards store into a new object with only properties that
-	 * should be used to prefill the credit card form, and with keys matching the corresponding field names.
-	 *
-	 * @param card
-	 * @param fields
-	 */
-	mergeCard( card, fields: {} ) {
-		return extend( {}, fields, {
-			name: card.name
-		} );
-	},
+class EditCardDetails extends PurchaseCardDetails {
+	static propTypes = {
+		card: PropTypes.object,
+		clearPurchases: PropTypes.func.isRequired,
+		hasLoadedSites: PropTypes.bool.isRequired,
+		hasLoadedStoredCardsFromServer: PropTypes.bool.isRequired,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		selectedPurchase: PropTypes.object,
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
+		] )
+	};
 
 	componentWillMount() {
-		const options = {
-			validatorFunction: this.validate,
-			onNewState: this.setFormState
-		};
+		this.redirectIfDataIsInvalid();
 
-		if ( this.props.card ) {
-			const fields = formState.createNullFieldValues( this.fieldNames );
+		recordPageView( 'edit_card_details', this.props );
+	}
 
-			options.initialState = formState.createInitialFormState( this.mergeCard( this.props.card, fields ) );
-		} else {
-			options.fieldNames = this.fieldNames;
-		}
+	componentWillReceiveProps( nextProps ) {
+		this.redirectIfDataIsInvalid( nextProps );
 
-		this.formStateController = formState.Controller( options );
-
-		this.setState( { form: this.formStateController.getInitialState() } );
-	},
-
-	validate( formValues, onComplete ) {
-		onComplete( null, this.getValidationErrors() );
-	},
-
-	setFormState( form ) {
-		if ( ! this.isMounted() ) {
-			return;
-		}
-
-		const messages = formState.getErrorMessages( form );
-
-		if ( messages.length > 0 ) {
-			const notice = notices.error( <ValidationErrorList messages={ messages } /> );
-
-			this.setState( {
-				form,
-				notice
-			} );
-		} else {
-			if ( this.state.notice ) {
-				notices.removeNotice( this.state.notice );
-			}
-			this.setState( {
-				form,
-				notice: null
-			} );
-		}
-	},
-
-	onFieldChange( rawDetails ) {
-		// Maps params from CreditCardForm component to work with formState.
-		forOwn( rawDetails, ( value, name ) => {
-			this.formStateController.handleFieldChange( {
-				name,
-				value
-			} );
-		} );
-	},
-
-	onSubmit( event ) {
-		event.preventDefault();
-
-		this.formStateController.handleSubmit( ( hasErrors ) => {
-			if ( hasErrors ) {
-				return;
-			}
-
-			this.updateCreditCard();
-		} );
-	},
-
-	updateCreditCard() {
-		const cardDetails = this.getCardDetails();
-
-		analytics.tracks.recordEvent(
-			'calypso_purchases_credit_card_form_submit',
-			{ product_slug: getPurchase( this.props ).productSlug }
-		);
-
-		createPaygateToken( cardDetails, ( paygateError, token ) => {
-			if ( paygateError ) {
-				notices.error( paygateError.message );
-				return;
-			}
-
-			wpcom.updateCreditCard( this.getParamsForApi( token ), ( apiError, response ) => {
-				if ( apiError ) {
-					notices.error( apiError.message );
-					return;
-				}
-
-				if ( response.error ) {
-					notices.error( response.error );
-					return;
-				}
-
-				notices.success( response.success, {
-					persistent: true
-				} );
-
-				page( paths.managePurchase(
-					this.props.selectedSite.domain,
-					this.props.selectedPurchase.data.id
-				) );
-			} );
-		} );
-	},
-
-	getParamsForApi( token ) {
-		const cardDetails = this.getCardDetails();
-
-		return {
-			country: cardDetails.country,
-			zip: cardDetails[ 'postal-code' ],
-			month: cardDetails[ 'expiration-date' ].split( '/' )[ 0 ],
-			year: cardDetails[ 'expiration-date' ].split( '/' )[ 1 ],
-			name: cardDetails.name,
-			paygateToken: token,
-			purchaseId: this.props.selectedPurchase.data.id
-		};
-	},
-
-	isFieldInvalid( name ) {
-		return formState.isFieldInvalid( this.state.form, name );
-	},
-
-	getValidationErrors() {
-		const validationResult = validateCardDetails( this.getCardDetails() );
-
-		// Maps keys from credit card validator to work with formState.
-		return mapKeys( validationResult.errors, ( value, key ) => {
-			return camelCase( key );
-		} );
-	},
-
-	getCardDetails() {
-		// Maps keys from formState to work with CreditCardForm component and credit card validator.
-		return mapKeys( formState.getAllFieldValues( this.state.form ), ( value, key ) => {
-			return kebabCase( key );
-		} );
-	},
+		recordPageView( 'edit_card_details', this.props, nextProps );
+	}
 
 	render() {
-		if ( isDataLoading( this.props ) ) {
+		if ( isDataLoading( this.props ) || ! this.props.hasLoadedStoredCardsFromServer ) {
 			return (
-				<Main className="edit-card-details">
-					{ this.translate( 'Loading…' ) }
-				</Main>
+				<div>
+					<QueryStoredCards />
+
+					<QueryUserPurchases userId={ user.get().ID } />
+
+					<CreditCardFormLoadingPlaceholder title={ titles.editCardDetails } />
+				</div>
 			);
 		}
 
 		return (
-			<Main className="edit-card-details">
-				<HeaderCake onClick={ goToManagePurchase.bind( null, this.props ) }>
-					{ this.translate( 'Edit Card Details', { context: 'Header text', comment: 'Credit card' } ) }
-				</HeaderCake>
+			<Main>
+				<HeaderCake onClick={ this.goToManagePurchase }>{ titles.editCardDetails }</HeaderCake>
 
-				<form onSubmit={ this.onSubmit }>
-					<Card className="edit-card-details__content">
-						<CreditCardForm
-							card={ this.getCardDetails() }
-							countriesList={ this.props.countriesList }
-							eventFormName="Edit Card Details Form"
-							isFieldInvalid={ this.isFieldInvalid }
-							onFieldChange={ this.onFieldChange } />
-					</Card>
-
-					<CompactCard className="edit-card-details__footer">
-						<em>{ this.translate( 'All fields required' ) }</em>
-
-						<FormButton type="submit">
-							{ this.translate( 'Update Card', { context: 'Button label', comment: 'Credit card' } ) }
-						</FormButton>
-					</CompactCard>
-				</form>
+				<CreditCardForm
+					apiParams={ this.getApiParams() }
+					createPaygateToken={ this.createPaygateToken }
+					initialValues={ this.props.card }
+					recordFormSubmitEvent={ this.recordFormSubmitEvent }
+					successCallback={ this.successCallback } />
 			</Main>
 		);
 	}
-} );
+}
 
-export default EditCardDetails;
+const mapStateToProps = ( state, { cardId, purchaseId } ) => {
+	return {
+		card: getStoredCardById( state, cardId ),
+		hasLoadedSites: ! isRequestingSites( state ),
+		hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		selectedPurchase: getByPurchaseId( state, purchaseId ),
+		selectedSite: getSelectedSiteSelector( state )
+	};
+};
+
+const mapDispatchToProps = {
+	clearPurchases
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( EditCardDetails );

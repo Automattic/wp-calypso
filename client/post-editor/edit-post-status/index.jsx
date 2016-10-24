@@ -1,46 +1,55 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' );
+import React, { PropTypes, Component } from 'react';
+import { noop } from 'lodash';
+import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var actions = require( 'lib/posts/actions' ),
-	Button = require( 'components/button' ),
-	FormToggle = require( 'components/forms/form-toggle/compact' ),
-	Revisions = require( 'post-editor/editor-revisions' ),
-	Gridicon = require( 'components/gridicon' ),
-	postUtils = require( 'lib/posts/utils' ),
-	Popover = require( 'components/popover' ),
-	InfoPopover = require( 'components/info-popover' ),
-	Tooltip = require( 'components/tooltip' ),
-	PostSchedule = require( 'components/post-schedule' ),
-	postScheduleUtils = require( 'components/post-schedule/utils' ),
-	siteUtils = require( 'lib/site/utils' ),
-	stats = require( 'lib/posts/stats' );
+import Button from 'components/button';
+import FormToggle from 'components/forms/form-toggle/compact';
+import Revisions from 'post-editor/editor-revisions';
+import Gridicon from 'components/gridicon';
+import postUtils from 'lib/posts/utils';
+import Popover from 'components/popover';
+import InfoPopover from 'components/info-popover';
+import Tooltip from 'components/tooltip';
+import PostSchedule from 'components/post-schedule';
+import postScheduleUtils from 'components/post-schedule/utils';
+import siteUtils from 'lib/site/utils';
+import { recordStat, recordEvent } from 'lib/posts/stats';
+import { editPost } from 'state/posts/actions';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPost } from 'state/posts/selectors';
 
-var EditPostStatus = React.createClass( {
-	propTypes: {
-		post: React.PropTypes.object,
-		savedPost: React.PropTypes.object,
-		type: React.PropTypes.string,
-		onSave: React.PropTypes.func,
-		onDateChange: React.PropTypes.func,
-		site: React.PropTypes.object
-	},
+class EditPostStatus extends Component {
 
-	getInitialState: function() {
-		return {
+	static propTypes = {
+		moment: PropTypes.func,
+		onDateChange: PropTypes.func,
+		onSave: PropTypes.func,
+		post: PropTypes.object,
+		savedPost: PropTypes.object,
+		site: PropTypes.object,
+		translate: PropTypes.func,
+		type: PropTypes.string
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = {
 			showTZTooltip: false,
 			showPostSchedulePopover: false,
 			onDateChange: noop
-		}
-	},
+		};
+	}
 
-	toggleStickyStatus: function() {
-		var stickyStat, stickyEventLabel;
+	toggleStickyStatus = () => {
+		let stickyStat, stickyEventLabel;
 
 		if ( ! this.props.post.sticky ) {
 			stickyStat = 'advanced_sticky_enabled';
@@ -50,48 +59,51 @@ var EditPostStatus = React.createClass( {
 			stickyEventLabel = 'Off';
 		}
 
-		stats.recordStat( stickyStat );
-		stats.recordEvent( 'Changed Sticky Setting', stickyEventLabel );
+		recordStat( stickyStat );
+		recordEvent( 'Changed Sticky Setting', stickyEventLabel );
 
-		actions.edit( { sticky: ! this.props.post.sticky } );
-	},
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			sticky: ! this.props.post.sticky
+		} );
+	};
 
-	togglePendingStatus: function() {
-		var pending = this.props.post.status === 'pending';
+	togglePendingStatus = () => {
+		const pending = this.props.post.status === 'pending';
 
-		stats.recordStat( 'status_changed' );
-		stats.recordEvent( 'Changed Pending Status', pending ? 'Marked Draft' : 'Marked Pending' );
+		recordStat( 'status_changed' );
+		recordEvent( 'Changed Pending Status', pending ? 'Marked Draft' : 'Marked Pending' );
 
-		actions.edit( { status: pending ? 'draft' : 'pending' } );
-	},
+		this.props.editPost( this.props.siteId, this.props.postId, {
+			status: pending ? 'draft' : 'pending'
+		} );
+	};
 
-	togglePostSchedulePopover: function() {
+	togglePostSchedulePopover = () => {
 		this.setState( {
 			showPostSchedulePopover: ! this.state.showPostSchedulePopover
 		} );
-	},
+	};
 
-	revertToDraft: function() {
+	revertToDraft = () => {
 		this.props.onSave( 'draft' );
-	},
+	};
 
-	showTZTooltip: function() {
+	showTZTooltip = () => {
 		this.setState( { showTZTooltip: true } );
-	},
+	};
 
-	hideTZTooltip: function() {
+	hideTZTooltip = () => {
 		this.setState( { showTZTooltip: false } );
-	},
+	};
 
-	render: function() {
-		var isSticky, isPublished, isPending, canPublish, isScheduled;
+	render() {
+		let isSticky, isPublished, isPending, canPublish, isScheduled;
+		const { translate } = this.props;
 
 		if ( this.props.post ) {
 			isSticky = this.props.post.sticky;
-			isPending = this.props.savedPost.status === 'pending' || (
-				this.props.savedPost.status === 'draft' &&
-				this.props.post.status === 'pending' );
-			isPublished = this.props.savedPost.status === 'publish';
+			isPending = postUtils.isPending( this.props.post );
+			isPublished = postUtils.isPublished( this.props.savedPost );
 			isScheduled = this.props.savedPost.status === 'future';
 			canPublish = siteUtils.userCan( 'publish_posts', this.props.site );
 		}
@@ -104,7 +116,7 @@ var EditPostStatus = React.createClass( {
 			( postUtils.getEditedTime( this.props.post ) || new Date() ),
 			siteUtils.timezone( this.props.site ),
 			siteUtils.gmtOffset( this.props.site )
-		).format( 'll LT' )
+		).format( 'll LT' );
 
 		return (
 			<div className="edit-post-status">
@@ -118,7 +130,7 @@ var EditPostStatus = React.createClass( {
 					{
 						postUtils.isFutureDated( this.props.savedPost )
 							? <span className="edit-post-status__future-label">
-									{ this.translate( 'Future' ) }
+									{ translate( 'Future' ) }
 								</span>
 							: <Gridicon icon="time" size={ 18 } />
 					}
@@ -133,30 +145,30 @@ var EditPostStatus = React.createClass( {
 				{ this.props.type === 'post' &&
 					<label className="edit-post-status__sticky">
 						<span className="edit-post-status__label-text">
-							{ this.translate( 'Stick to the front page' ) }
+							{ translate( 'Stick to the front page' ) }
 							<InfoPopover position="top right" gaEventCategory="Editor" popoverName="Sticky Post">
-								{ this.translate( 'Sticky posts will appear at the top of the posts listing.' ) }
+								{ translate( 'Sticky posts will appear at the top of the posts listing.' ) }
 							</InfoPopover>
 						</span>
 						<FormToggle
 							checked={ isSticky }
 							onChange={ this.toggleStickyStatus }
-							aria-label={ this.translate( 'Stick post to the front page' ) }
+							aria-label={ translate( 'Stick post to the front page' ) }
 						/>
 					</label>
 				}
 				{ ( ! isPublished && ! isScheduled && canPublish ) &&
 					<label className="edit-post-status__pending-review">
 						<span className="edit-post-status__label-text">
-							{ this.translate( 'Pending review' ) }
+							{ translate( 'Pending review' ) }
 							<InfoPopover position="top right">
-								{ this.translate( 'Flag this post to be reviewed for approval.' ) }
+								{ translate( 'Flag this post to be reviewed for approval.' ) }
 							</InfoPopover>
 						</span>
 						<FormToggle
 							checked={ isPending }
 							onChange={ this.togglePendingStatus }
-							aria-label={ this.translate( 'Request review for post' ) }
+							aria-label={ translate( 'Request review for post' ) }
 						/>
 					</label>
 				}
@@ -166,18 +178,18 @@ var EditPostStatus = React.createClass( {
 						onClick={ this.revertToDraft }
 						compact={ true }
 					>
-						<Gridicon icon="undo" size={ 18 } /> { this.translate( 'Revert to draft' ) }
+						<Gridicon icon="undo" size={ 18 } /> { translate( 'Revert to draft' ) }
 					</Button>
 				}
 			</div>
 		);
-	},
+	}
 
-	renderPostSchedulePopover: function() {
-		var tz = siteUtils.timezone( this.props.site ),
+	renderPostSchedulePopover() {
+		const tz = siteUtils.timezone( this.props.site ),
 			gmt = siteUtils.gmtOffset( this.props.site ),
 			selectedDay = this.props.post && this.props.post.date
-				? this.moment( this.props.post.date )
+				? this.props.moment( this.props.post.date )
 				: null;
 
 		return (
@@ -197,10 +209,10 @@ var EditPostStatus = React.createClass( {
 				</div>
 			</Popover>
 		);
-	},
+	}
 
-	renderTZTooltop: function() {
-		var timezone = siteUtils.timezone( this.props.site ),
+	renderTZTooltop() {
+		const timezone = siteUtils.timezone( this.props.site ),
 			gmtOffset = siteUtils.gmtOffset( this.props.site );
 
 		if ( ! ( timezone || postScheduleUtils.isValidGMTOffset( gmtOffset ) ) ) {
@@ -231,6 +243,19 @@ var EditPostStatus = React.createClass( {
 			</Tooltip>
 		);
 	}
-} );
+}
 
-module.exports = EditPostStatus;
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const postId = getEditorPostId( state );
+		const post = getEditedPost( state, siteId, postId );
+
+		return {
+			siteId,
+			postId,
+			post
+		};
+	},
+	{ editPost }
+)( localize( EditPostStatus ) );

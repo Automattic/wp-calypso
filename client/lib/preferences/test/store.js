@@ -1,26 +1,30 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	sinon = require( 'sinon' );
+import { expect } from 'chai';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	PreferencesConstants = require( '../constants' );
+import { USER_SETTING_KEY } from '../constants';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PreferencesStore', function() {
-	var PreferencesStore, handler;
+	let Dispatcher, PreferencesStore, handler;
+
+	// makes sure we always load fresh instance of Dispatcher
+	useMockery();
 
 	before( function() {
+		Dispatcher = require( 'dispatcher' );
 		sinon.spy( Dispatcher, 'register' );
+		PreferencesStore = require( '../store' );
+		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		delete require.cache[ require.resolve( '../store' ) ];
-		PreferencesStore = require( '../store' );
-		handler = Dispatcher.register.lastCall.args[ 0 ];
+		PreferencesStore._preferences = undefined;
 	} );
 
 	after( function() {
@@ -28,13 +32,12 @@ describe( 'PreferencesStore', function() {
 	} );
 
 	function dispatchReceivePreferences( preferences ) {
-		var data = {};
-		data[ PreferencesConstants.USER_SETTING_KEY ] = preferences;
-
 		handler( {
 			action: {
 				type: 'RECEIVE_ME_SETTINGS',
-				data: data
+				data: {
+					[ USER_SETTING_KEY ]: preferences
+				}
 			}
 		} );
 	}

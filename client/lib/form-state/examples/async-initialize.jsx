@@ -3,11 +3,11 @@
  */
 import React from 'react';
 import debugModule from 'debug';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import i18n from 'lib/mixins/i18n';
 import { isFieldDisabled } from '../';
 import createFormStore from '../store';
 

@@ -1,22 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var ActionRemove = require( 'me/action-remove' ),
-	eventRecorder = require( 'me/event-recorder' );
+import ActionRemove from 'me/action-remove';
+import safeProtocolUrl from 'lib/safe-protocol-url';
+import eventRecorder from 'me/event-recorder';
+import { withoutHttp } from 'lib/url';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'ProfileLink',
 
 	mixins: [ eventRecorder ],
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			imageSize: 100,
 			title: '',
@@ -33,7 +35,7 @@ module.exports = React.createClass( {
 		slug: React.PropTypes.string.isRequired
 	},
 
-	renderRemove: function() {
+	renderRemove() {
 		return (
 			<ActionRemove
 				className="profile-link__remove"
@@ -42,27 +44,33 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
-		var classes = classNames( {
+	render() {
+		const classes = classNames( {
 				'profile-link': true,
 				'is-placeholder': this.props.isPlaceholder
 			} ),
-			imageSrc = '//s1.wp.com/mshots/v1/' + encodeURIComponent( this.props.url ) + '?w=' + this.props.imageSize,
-			linkHref = this.props.isPlaceholder ? null : this.props.url;
+			imageSrc = '//s1.wp.com/mshots/v1/' + encodeURIComponent( this.props.url ) + '?w=' + this.props.imageSize + '&h=64',
+			linkHref = this.props.isPlaceholder ? null : safeProtocolUrl( this.props.url );
 
 		return (
 			<li className={ classes }>
 				{
 					this.props.isPlaceholder
-					? <div className="profile-link__image" />
-					: <img className="profile-link__image" src={ imageSrc } />
+					? <div className="profile-link__image-link" />
+					: <a
+						href={ linkHref }
+						className="profile-link__image-link" target="_blank" rel="noopener noreferrer"
+						onClick={ this.recordClickEvent( 'Profile Links Site Images Link' ) }
+					>
+						<img className="profile-link__image" src={ imageSrc } />
+					</a>
 				}
-				<a href={ linkHref } target="_blank" onClick={ this.recordClickEvent( 'Profile Links Site Link' ) }>
+				<a href={ linkHref } target="_blank" rel="noopener noreferrer" onClick={ this.recordClickEvent( 'Profile Links Site Link' ) }>
 					<span className="profile-link__title">
 						{ this.props.title }
 					</span>
 					<span className="profile-link__url">
-						{ this.props.url }
+						{ withoutHttp( this.props.url ) }
 					</span>
 				</a>
 

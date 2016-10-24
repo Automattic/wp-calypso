@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:my-sites:pages:pages' );
 
 /**
@@ -16,9 +16,13 @@ var PageList = require( './page-list' ),
 	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
 	URLSearch = require( 'lib/mixins/url-search' ),
 	config = require( 'config' ),
-	notices = require( 'notices' );
+	notices = require( 'notices' ),
+	Main = require( 'components/main' ),
+	PagesFirstView = require( './first-view' );
 
-module.exports = React.createClass({
+const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
+
+module.exports = React.createClass( {
 
 	displayName: 'Pages',
 
@@ -49,57 +53,58 @@ module.exports = React.createClass({
 	},
 
 	render: function() {
-		var siteFilter = this.props.sites.selected ? '/' + this.props.sites.selected : '',
-			statusSlug = this.props.status,
-			searchPlaceholder, selectedText, filterStrings;
-
-		filterStrings = {
-			drafts: this.translate( 'Drafts', { context: 'Filter label for pages list' } ),
+		const status = this.props.status || 'published';
+		const filterStrings = {
 			published: this.translate( 'Published', { context: 'Filter label for pages list' } ),
-			trashed: this.translate( 'Trash', { context: 'Filter label for pages list' } ),
-			status: this.translate( 'Status' )
+			drafts: this.translate( 'Drafts', { context: 'Filter label for pages list' } ),
+			scheduled: this.translate( 'Scheduled', { context: 'Filter label for pages list' } ),
+			trashed: this.translate( 'Trashed', { context: 'Filter label for pages list' } )
 		};
-
-
-
-		switch( statusSlug ) {
-			case 'drafts':
-				searchPlaceholder = this.translate( 'Search drafts…', { context: 'Search placeholder for pages list', textOnly: true } );
-				selectedText = filterStrings.drafts;
-				break;
-			case 'trashed':
-				searchPlaceholder = this.translate( 'Search trash…', { context: 'Search placeholder for pages list', textOnly: true } );
-				selectedText = filterStrings.trashed;
-				break;
-			default:
-				searchPlaceholder = this.translate( 'Search published…', { context: 'Search placeholder for pages list', textOnly: true } );
-				selectedText = filterStrings.published;
-				break;
-		}
-
+		const searchStrings = {
+			published: this.translate( 'Search Published…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			drafts: this.translate( 'Search Drafts…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			scheduled: this.translate( 'Search Scheduled…', { context: 'Search placeholder for pages list', textOnly: true } ),
+			trashed: this.translate( 'Search Trashed…', { context: 'Search placeholder for pages list', textOnly: true } )
+		};
 		return (
-			<div className="main main-column pages" role="main">
+			<Main classname="pages">
+				<PagesFirstView />
 				<SidebarNavigation />
-
-				<SectionNav selectedText={ selectedText }>
-					<NavTabs label={ filterStrings.status }>
-						<NavItem path={ '/pages' + siteFilter } selected={ ! statusSlug }>{ filterStrings.published }</NavItem>
-						<NavItem path={ '/pages/drafts' + siteFilter } selected={ statusSlug === 'drafts' } >{ filterStrings.drafts }</NavItem>
-						<NavItem path={ '/pages/trashed' + siteFilter } selected={ statusSlug === 'trashed' } >{ filterStrings.trashed }</NavItem>
+				<SectionNav selectedText={ filterStrings[ status ] }>
+					<NavTabs label={ this.translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
+						{ this.getNavItems( filterStrings, status ) }
 					</NavTabs>
 					<Search
-						pinned={ true }
+						pinned
+						fitsContainer
 						onSearch={ this.doSearch }
 						initialValue={ this.props.search }
-						placeholder={ searchPlaceholder }
+						placeholder={ searchStrings[ status ] }
 						analyticsGroup="Pages"
 						delaySearch={ true }
 					/>
 				</SectionNav>
-
 				<PageList { ...this.props } />
-			</div>
+			</Main>
 		);
+	},
+
+	getNavItems( filterStrings, currentStatus ) {
+		const siteFilter = this.props.sites.selected ? '/' + this.props.sites.selected : '';
+		return statuses.map( function( status ) {
+			let path = `/pages${ siteFilter }`;
+			if ( status !== 'publish' ) {
+				path = `/pages/${ status }${ siteFilter }`;
+			}
+			return (
+				<NavItem
+					path={ path }
+					selected={ currentStatus === status }
+					key={ `page-filter-${ status }` }>
+					{ filterStrings[ status ] }
+				</NavItem>
+			);
+		} );
 	},
 
 	_setWarning( selectedSite ) {
@@ -110,4 +115,4 @@ module.exports = React.createClass({
 			);
 		}
 	}
-});
+} );

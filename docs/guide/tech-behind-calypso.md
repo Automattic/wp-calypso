@@ -4,7 +4,7 @@ Understanding the technologies and abstractions on which Calypso is built can ma
 
 ## No Big Famous Framework
 
-Calypso is using neither Angular nor Ember; because we are building Calypso for the long haul, updating and improving a home-grown framework is a better long-term approach for us. Currently, we're using React and Flux; they're great, but knowing we have the control to use better technologies as they come along makes us feel more confident in our future. Calypso isn't a small startup project; we know it will need to scale and our technology will need to scale with it.
+Calypso is using neither Angular nor Ember; because we are building Calypso for the long haul, updating and improving a home-grown framework is a better long-term approach for us. Currently, we're using React and Flux/Redux; they're great, but knowing we have the control to use better technologies as they come along makes us feel more confident in our future. Calypso isn't a small startup project; we know it will need to scale and our technology will need to scale with it.
 
 ## Modern Modular JavaScript
 
@@ -54,6 +54,18 @@ Key concepts checklist:
 * [Mixins](http://facebook.github.io/react/docs/reusable-components.html#mixins)
 * [Why shouldn’t we touch the DOM the old way](http://facebook.github.io/react/docs/working-with-the-browser.html)
 
+## Redux
+
+All new code uses [Redux](http://redux.js.org/) to manage state in Calypso – making sure all components work with and react to the same data, living in a single place, instead of scattered between components’ state. Older code uses various [Flux](https://facebook.github.io/flux/) implementations or other data components.
+
+Few, but solid Redux resources:
+
+* [The official website](http://redux.js.org)
+* Probably the best way to learn Redux is via the Egghead [Get Started with Redux](https://egghead.io/courses/getting-started-with-redux) video course
+* When good with the basics, the [Building React Applications with Idiomatic Redux](https://egghead.io/courses/building-react-applications-with-idiomatic-redux) video course is also super useful (though we do few things differently in Calypso, like routing)
+* The [Ecosystem](http://redux.js.org/docs/introduction/Ecosystem.html) page on the official site has a lot of links to tutorials and examples
+* For more Calypso-specific details, see the [Our Approach to Data](../our-approach-to-data.md) document
+
 ## Git
 
 Calypso is developed on Github, and we use Git extensively. Git is extremely powerful, and understanding how it works and controlling it are an important part of our daily workflow.
@@ -90,4 +102,4 @@ The way we use Git with Calypso is described in the [Git Workflow document](../g
 * [webpack](http://webpack.github.io) – building a JavaScript bundle of all of our modules and making sure loading them works just fine
 * [make](http://www.gnu.org/software/make/manual/make.html) – our build tool of choice
 
-Previous: [Hello, World!](hello-world.md) Next: [Contributing to Calypso](../../CONTRIBUTING.md)
+Previous: [Hello, World!](hello-world.md) Next: [Contributing to Calypso](../../.github/CONTRIBUTING.md)

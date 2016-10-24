@@ -1,15 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+import React from 'react';
+import classnames from 'classnames';
 
 module.exports = React.createClass( {
 
 	displayName: 'ProgressBar',
 
-	getDefaultProps: function() {
-		return { total: 100 };
+	getDefaultProps() {
+		return {
+			total: 100,
+			compact: false,
+			isPulsing: false
+		};
 	},
 
 	propTypes: {
@@ -17,15 +21,17 @@ module.exports = React.createClass( {
 		total: React.PropTypes.number,
 		color: React.PropTypes.string,
 		title: React.PropTypes.string,
-		className: React.PropTypes.string
+		compact: React.PropTypes.bool,
+		className: React.PropTypes.string,
+		isPulsing: React.PropTypes.bool
 	},
 
-	renderBar: function() {
-		var styles = { width: Math.ceil( this.props.value / this.props.total * 100 ) + '%' },
-			title = this.props.title
+	renderBar() {
+		const title = this.props.title
 				? <span className="screen-reader-text">{ this.props.title }</span>
 				: null;
 
+		let styles = { width: Math.ceil( this.props.value / this.props.total * 100 ) + '%' };
 		if ( this.props.color ) {
 			styles.backgroundColor = this.props.color;
 		}
@@ -33,9 +39,13 @@ module.exports = React.createClass( {
 		return <div className="progress-bar__progress" style={ styles } >{ title }</div>;
 	},
 
-	render: function() {
+	render() {
+		const classes = classnames( this.props.className, 'progress-bar', {
+			'is-compact': this.props.compact,
+			'is-pulsing': this.props.isPulsing
+		} );
 		return (
-			<div className={ joinClasses( this.props.className, 'progress-bar' ) }>
+			<div className={ classes }>
 				{ this.renderBar() }
 			</div>
 		);

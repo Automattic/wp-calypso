@@ -1,10 +1,7 @@
 Customizer
 ==========
 
-This component enables loading, in an iframe, either:
-
-1. Legacy Customizer (for desktop)
-2. Muse (for mobile)
+This component enables loading, in an iframe, the Legacy Customizer
 
 ### customize.jsx
 

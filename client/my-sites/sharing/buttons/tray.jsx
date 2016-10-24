@@ -2,9 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	where = require( 'lodash/collection/where' ),
-	assign = require( 'lodash/object/assign' ),
-	find = require( 'lodash/collection/find' ),
+	filter = require( 'lodash/filter' ),
+	assign = require( 'lodash/assign' ),
+	find = require( 'lodash/find' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -81,7 +81,7 @@ module.exports = React.createClass( {
 	},
 
 	getButtonsOfCurrentVisibility: function() {
-		return where( this.props.buttons, { visibility: this.props.visibility } );
+		return filter( this.props.buttons, { visibility: this.props.visibility } );
 	},
 
 	onButtonsReordered: function( order ) {

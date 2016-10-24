@@ -1,15 +1,21 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:CountriesList' ),
-	inherits = require( 'inherits' ),
-	store = require( 'store' );
+import debugFactory from 'debug';
+import inherits from 'inherits';
+import store from 'store';
 
 /**
  * Internal dependencies
  */
-var makeEmitter = require( 'lib/mixins/emitter' ),
-	wpcom = require( 'lib/wp' ).undocumented();
+import makeEmitter from 'lib/mixins/emitter';
+import wp from 'lib/wp';
+
+/**
+ * Module variables
+ */
+const wpcom = wp.undocumented();
+const debug = debugFactory( 'calypso:CountriesList' );
 
 /**
  * Initializes a new list of countries.
@@ -40,16 +46,12 @@ CountriesList.prototype.fetch = function() {
 	this.isFetching = true;
 
 	// Sends a request to the API endpoint defined in the subclass
-	this.requestFromEndpoint( function( error, data ) {
-		var countriesList;
-
+	this.requestFromEndpoint( function( error, countriesList ) {
 		if ( error ) {
 			debug( 'Unable to fetch ' + this.key + ' from api', error );
 
 			return;
 		}
-
-		countriesList = this.parse( data );
 
 		debug( this.key + ' fetched from api successfully:', countriesList );
 
@@ -74,7 +76,7 @@ CountriesList.prototype.fetch = function() {
  * @returns {object} the list of countries
  */
 CountriesList.prototype.get = function() {
-	var data;
+	let data;
 
 	if ( ! this.data ) {
 		data = store.get( this.key );
@@ -111,19 +113,6 @@ CountriesList.prototype.initialize = function( data ) {
 	this.data = data;
 
 	this.initialized = true;
-};
-
-/**
- * Parses the specified data retrieved from the server and extracts the list of countries.
- *
- * @param {object} data - raw data
- * @return {object} the list of countries
- */
-CountriesList.prototype.parse = function( data ) {
-	// Removes useless data
-	delete data._headers;
-
-	return data;
 };
 
 /**

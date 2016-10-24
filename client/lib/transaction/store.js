@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var cloneDeep = require( 'lodash/lang/cloneDeep' ),
-	mergeDeep = require( 'lodash/object/merge' ),
-	extend = require( 'lodash/object/assign' ),
-	React = require( 'react/addons' );
+var cloneDeep = require( 'lodash/cloneDeep' ),
+	merge = require( 'lodash/merge' ),
+	assign = require( 'lodash/assign' ),
+	update = require( 'react-addons-update' );
 
 /**
  * Internal dependencies
@@ -14,6 +14,7 @@ var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
 	CartStore = require( 'lib/cart/store' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	Dispatcher = require( 'dispatcher' ),
+	transactionStepTypes = require( 'lib/store-transactions/step-types' ),
 	hasDomainDetails = require( 'lib/store-transactions' ).hasDomainDetails;
 
 var _transaction = createInitialTransaction();
@@ -35,7 +36,7 @@ function createInitialTransaction() {
 	return {
 		errors: {},
 		newCardFormFields: {},
-		step: { name: 'before-submit' },
+		step: { name: transactionStepTypes.BEFORE_SUBMIT },
 		domainDetails: null
 	};
 }
@@ -45,15 +46,15 @@ function reset() {
 }
 
 function setDomainDetails( domainDetails ) {
-	replaceData( mergeDeep( _transaction, { domainDetails: domainDetails } ) );
+	replaceData( merge( _transaction, { domainDetails: domainDetails } ) );
 }
 
 function setPayment( payment ) {
-	replaceData( extend( {}, _transaction, { payment: payment } ) );
+	replaceData( assign( {}, _transaction, { payment: payment } ) );
 }
 
 function setStep( step ) {
-	replaceData( extend( {}, _transaction, {
+	replaceData( assign( {}, _transaction, {
 		step: step,
 		errors: ( step.error ? step.error.message : {} )
 	} ) );
@@ -64,7 +65,7 @@ function setNewCreditCardDetails( options ) {
 		return;
 	}
 
-	var newTransaction = React.addons.update( _transaction, {
+	var newTransaction = update( _transaction, {
 		payment: { newCardDetails: { $merge: options.rawDetails } },
 		newCardFormFields: { $merge: options.maskedDetails }
 	} );
@@ -76,30 +77,30 @@ TransactionStore.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.SET_TRANSACTION_DOMAIN_DETAILS:
+		case UpgradesActionTypes.TRANSACTION_DOMAIN_DETAILS_SET:
 			setDomainDetails( action.domainDetails );
 			break;
 
-		case UpgradesActionTypes.SET_TRANSACTION_PAYMENT:
+		case UpgradesActionTypes.TRANSACTION_PAYMENT_SET:
 			setPayment( action.payment );
 			break;
 
-		case UpgradesActionTypes.SET_TRANSACTION_NEW_CREDIT_CARD_DETAILS:
+		case UpgradesActionTypes.TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET:
 			setNewCreditCardDetails( {
 				rawDetails: action.rawDetails,
 				maskedDetails: action.maskedDetails
 			} );
 			break;
 
-		case UpgradesActionTypes.TRANSACTION_STEP:
+		case UpgradesActionTypes.TRANSACTION_STEP_SET:
 			setStep( action.step );
 			break;
 
-		case UpgradesActionTypes.RESET_TRANSACTION:
+		case UpgradesActionTypes.TRANSACTION_RESET:
 			reset();
 			break;
 
-		case UpgradesActionTypes.REMOVE_CART_ITEM:
+		case UpgradesActionTypes.CART_ITEM_REMOVE:
 			Dispatcher.waitFor( [ CartStore.dispatchToken ] );
 
 			if ( ! cartItems.hasDomainRegistration( CartStore.get() ) && hasDomainDetails( TransactionStore.get() ) ) {

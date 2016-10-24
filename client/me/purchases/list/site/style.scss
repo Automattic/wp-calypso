@@ -1,21 +1,27 @@
 .purchases-site {
 	margin-bottom: 15px;
 
-	&.is-placeholder .purchases-site__header-text {
-		@include placeholder( 23% );
+	.section-header {
+		@include breakpoint( "<660px" ) {
+			display: block;
+		}
 
-		width: 50%;
+		&.card {
+			align-items: stretch;
+		}
 	}
 }
 
-.purchases-site__header {
-	background: white;
-	box-shadow: 0 0 0 1px lighten($gray, 20%), 0 1px 2px lighten( $gray, 30% );
-	padding: 14px 24px;
+.purchases-site__slug {
+	color: darken( $gray, 15% );
+	font-size: 12px;
 }
 
-.purchases-site__header-text {
-	color: $gray-dark;
-	font-size: 12px;
-	text-transform: uppercase;	
+.section-header__label,
+.purchases-site__slug {
+	white-space: nowrap;
+
+	@include breakpoint( "<660px" ) {
+		line-height: 15px;
+	}
 }

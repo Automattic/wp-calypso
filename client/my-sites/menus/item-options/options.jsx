@@ -1,17 +1,19 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var getContentTitle = require( '../menu-utils' ).getContentTitle;
+import { getContentTitle } from '../menu-utils';
+import { isInjectedNewPageItem } from 'lib/menu-data/menu-data';
+import classNames from 'classnames';
 
 /**
  * Component
  */
-var Options = React.createClass( {
+const Options = React.createClass( {
 	propTypes: {
 		item: React.PropTypes.object.isRequired,
 		options: React.PropTypes.array.isRequired,
@@ -30,10 +32,15 @@ var Options = React.createClass( {
 
 	renderItem: function( item ) {
 		var checked = ( item.ID === this.props.item.content_id ) &&
-			( this.props.itemType.name === this.props.item.type ),
-			isPrivate = item.status && item.status === 'private';
+			( this.props.itemType.name === this.props.item.type );
+
+		const classes = classNames( {
+			'option-is-private': item.status && item.status === 'private',
+			'create-new-item': isInjectedNewPageItem( item )
+		} );
+
 		return (
-			<li key={ this.props.itemType.name + '-' + item.ID } className={ isPrivate ? 'option-is-private' : '' } >
+			<li key={ this.props.itemType.name + '-' + item.ID } className={ classes } >
 				<div>
 					<input id={ "option-" + item.ID } type='radio' name='radios' value={ item.ID }
 						onChange={ this.props.onChange.bind( null, item ) }
@@ -57,4 +64,4 @@ var Options = React.createClass( {
 	}
 } );
 
-module.exports = Options;
+export default Options;

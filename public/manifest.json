@@ -1,0 +1,7 @@
+{
+	"name": "WordPress.com",
+	"short_name": "WordPress.com",
+	"start_url": "/",
+	"display": "standalone",
+	"gcm_sender_id": "87234302238"
+}

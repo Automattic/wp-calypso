@@ -8,7 +8,7 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var FormButton = require( 'components/forms/form-button' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 

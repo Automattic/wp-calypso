@@ -2,25 +2,24 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
  */
 import Main from 'components/main';
-import notices from 'notices';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Navigation from '../navigation';
 import Card from 'components/card';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLegend from 'components/forms/form-legend';
-import FormLabel from 'components/forms/form-label';
 import FormSectionHeading from 'components/forms/form-section-heading';
 import ActionButtons from '../settings-form/actions';
 import store from 'lib/notification-settings-store';
 import { fetchSettings, toggleWPcomEmailSetting, saveSettings } from 'lib/notification-settings-store/actions';
+import { successNotice, errorNotice } from 'state/notices/actions';
+import EmailCategory from './email-category';
 
 /**
  * Module variables
@@ -28,10 +27,13 @@ import { fetchSettings, toggleWPcomEmailSetting, saveSettings } from 'lib/notifi
 const options = {
 	marketing: 'marketing',
 	research: 'research',
-	community: 'community'
+	community: 'community',
+	promotion: 'promotion',
+	news: 'news',
+	digest: 'digest'
 };
 
-export default React.createClass( {
+const WPCOMNotifications = React.createClass( {
 	displayName: 'WPCOMNotifications',
 
 	getInitialState() {
@@ -53,11 +55,11 @@ export default React.createClass( {
 		const state = store.getStateFor( 'wpcom' );
 
 		if ( state.error ) {
-			notices.error( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
+			this.props.errorNotice( this.translate( 'There was a problem saving your changes. Please, try again.' ) );
 		}
 
 		if ( state.status === 'success' ) {
-			notices.success( this.translate( 'Settings saved successfully!' ) );
+			this.props.successNotice( this.translate( 'Settings saved successfully!' ) );
 		}
 
 		this.setState( state );
@@ -67,37 +69,60 @@ export default React.createClass( {
 		toggleWPcomEmailSetting( setting );
 	},
 
+	saveSettings() {
+		saveSettings( 'wpcom', this.state.settings );
+	},
+
 	renderWpcomPreferences() {
 		return (
 			<div>
-				<p>{ this.translate( 'We\'ll always send important emails regarding your account, security, privacy, and purchase transactions, but you can get some fun extras, too!' ) }</p>
+				<p>
+					{ this.translate(
+						'We\'ll always send important emails regarding your account, security, ' +
+						'privacy, and purchase transactions, but you can get some fun extras, too!'
+					) }
+				</p>
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Suggestions' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.marketing ) } onChange={ this.toggleSetting.bind( this, options.marketing ) }/>
-						<span>{ this.translate( 'Tips for getting the most out of WordPress.com.' ) }</span>
-					</FormLabel>
-				</FormFieldset>
+				<EmailCategory
+					name={ options.marketing }
+					isEnabled={ this.state.settings.get( options.marketing ) }
+					title={ this.translate( 'Suggestions' ) }
+					description={ this.translate( 'Tips for getting the most out of WordPress.com.' ) }
+				/>
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Research' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.research ) } onChange={ this.toggleSetting.bind( this, options.research ) }/>
-						<span>{ this.translate( 'Opportunities to participate in WordPress.com research & surveys.' ) }</span>
-					</FormLabel>
-				</FormFieldset>
+				<EmailCategory
+					name={ options.research }
+					isEnabled={ this.state.settings.get( options.research ) }
+					title={ this.translate( 'Research' ) }
+					description={ this.translate( 'Opportunities to participate in WordPress.com research & surveys.' ) }
+				/>
 
-				<FormFieldset>
-					<FormLegend>{ this.translate( 'Community' ) }</FormLegend>
-					<FormLabel>
-						<FormCheckbox checked={ this.state.settings.get( options.community ) } onChange={ this.toggleSetting.bind( this, options.community ) }/>
-						<span>{ this.translate( 'Information on WordPress.com courses and events (online & in-person).' ) }</span>
-					</FormLabel>
-				</FormFieldset>
+				<EmailCategory
+					name={ options.community } isEnabled={ this.state.settings.get( options.community ) }
+					title={ this.translate( 'Community' ) }
+					description={ this.translate( 'Information on WordPress.com courses and events (online & in-person).' ) }
+				/>
+
+				<EmailCategory
+					name={ options.promotion } isEnabled={ this.state.settings.get( options.promotion ) }
+					title={ this.translate( 'Promotions' ) }
+					description={ this.translate( 'Promotions and deals on upgrades.' ) }
+				/>
+
+				<EmailCategory
+					name={ options.news } isEnabled={ this.state.settings.get( options.news ) }
+					title={ this.translate( 'News' ) }
+					description={ this.translate( 'WordPress.com news and announcements.' ) }
+				/>
+
+				<EmailCategory
+					name={ options.digest } isEnabled={ this.state.settings.get( options.digest ) }
+					title={ this.translate( 'Digests' ) }
+					description={ this.translate( 'Reading & writing digests, tailored for you.' ) }
+				/>
 
 				<ActionButtons
-					onSave={ () => saveSettings( 'wpcom', this.state.settings ) }
+					onSave={ this.saveSettings }
 					disabled={ ! this.state.hasUnsavedChanges }
 				/>
 			</div>
@@ -119,7 +144,7 @@ export default React.createClass( {
 				<Navigation path={ this.props.path } />
 
 				<Card>
-					<FormSectionHeading className="is-primary">
+					<FormSectionHeading>
 						{ this.translate( 'Email from WordPress.com' ) }
 					</FormSectionHeading>
 					{ this.state.settings ? this.renderWpcomPreferences() : this.renderPlaceholder() }
@@ -128,3 +153,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
+)( WPCOMNotifications );

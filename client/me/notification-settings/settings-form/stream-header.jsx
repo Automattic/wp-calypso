@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import { getLabelForStream } from './locales'
 export default React.createClass( {
 	displayName: 'NotificationSettingsFormHeader',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		stream: PropTypes.string,

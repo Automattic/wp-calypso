@@ -14,7 +14,7 @@ module.exports = React.createClass( {
 
 	componentDidMount: function() {
 		debug( 'submit form' );
-		this.refs.wpcomLoginForm.getDOMNode().submit();
+		this.refs.wpcomLoginForm.submit();
 	},
 
 	action: function() {
@@ -30,6 +30,22 @@ module.exports = React.createClass( {
 		return 'https://' + subdomain + 'wordpress.com/wp-login.php';
 	},
 
+	renderExtraFields: function() {
+		const { extraFields } = this.props;
+
+		if ( ! extraFields ) {
+			return null;
+		}
+
+		return (
+			<div>
+				{ Object.keys( extraFields ).map( function( field ) {
+					return <input key={ field } type="hidden" name={ field } value={ extraFields[ field ] } />;
+				} ) }
+			</div>
+		);
+	},
+
 	render: function() {
 		return (
 			<form method="post" action={ this.action() } ref="wpcomLoginForm">
@@ -37,6 +53,7 @@ module.exports = React.createClass( {
 				<input type="hidden" name="pwd" value={ this.props.pwd } />
 				<input type="hidden" name="authorization" value={ this.props.authorization } />
 				<input type="hidden" name="redirect_to" value={ this.props.redirectTo } />
+				{ this.renderExtraFields() }
 			</form>
 		);
 	}

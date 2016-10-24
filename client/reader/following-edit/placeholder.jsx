@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' );
 
 var Card = require( 'components/card' );
 var SiteIcon = require( 'components/site-icon' );
@@ -17,8 +17,8 @@ module.exports = React.createClass( {
 					<SiteIcon size={ 48 } />
 				</span>
 
-				<h2 className="reader-list-item__title"><span className="placeholder-text">Subscription title</span></h2>
-				<p className="reader-list-item__description"><span className="placeholder-text">Subscription URL</span></p>
+				<h2 className="reader-list-item__title"><span className="placeholder-text">Title</span></h2>
+				<p className="reader-list-item__description"><span className="placeholder-text">URL</span></p>
 			</Card>
 			);
 	}

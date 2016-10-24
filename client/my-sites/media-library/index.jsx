@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies
@@ -15,9 +15,9 @@ var Content = require( './content' ),
 	MediaUtils = require( 'lib/media/utils' ),
 	filterToMimePrefix = require( './filter-to-mime-prefix' ),
 	FilterBar = require( './filter-bar' ),
-	PreferencesData = require( 'components/data/preferences-data' ),
 	MediaValidationData = require( 'components/data/media-validation-data' ),
 	urlSearch = require( 'lib/mixins/url-search' );
+import QueryPreferences from 'components/data/query-preferences';
 
 module.exports = React.createClass( {
 	displayName: 'MediaLibrary',
@@ -90,6 +90,19 @@ module.exports = React.createClass( {
 		this.props.onAddMedia();
 	},
 
+	filterRequiresUpgrade: function() {
+		const { filter, site } = this.props;
+		switch ( filter ) {
+			case 'audio':
+				return ! ( site && site.options.upgraded_filetypes_enabled || site.jetpack );
+
+			case 'videos':
+				return ! ( site && site.options.videopress_enabled || site.jetpack );
+		}
+
+		return false;
+	},
+
 	renderDropZone: function() {
 		return (
 			<MediaLibraryDropZone
@@ -107,11 +120,13 @@ module.exports = React.createClass( {
 			<Content
 				site={ this.props.site }
 				filter={ this.props.filter }
+				filterRequiresUpgrade={ this.filterRequiresUpgrade() }
 				search={ this.props.search }
 				containerWidth={ this.props.containerWidth }
 				single={ this.props.single }
 				scrollable={ this.props.scrollable }
 				onAddMedia={ this.onAddMedia }
+				onAddAndEditImage={ this.props.onAddAndEditImage }
 				onMediaScaleChange={ this.props.onScaleChange }
 				onEditItem={ this.props.onEditItem } />
 		);
@@ -130,17 +145,17 @@ module.exports = React.createClass( {
 
 		return (
 			<div className={ classes }>
+				<QueryPreferences />
 				{ this.renderDropZone() }
 				<FilterBar
 					site={ this.props.site }
 					filter={ this.props.filter }
+					filterRequiresUpgrade={ this.filterRequiresUpgrade() }
 					enabledFilters={ this.props.enabledFilters }
 					search={ this.props.search }
 					onFilterChange={ this.props.onFilterChange }
 					onSearch={ this.doSearch } />
-				<PreferencesData>
-					{ content }
-				</PreferencesData>
+				{ content }
 			</div>
 		);
 	}

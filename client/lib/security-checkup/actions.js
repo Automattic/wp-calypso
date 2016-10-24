@@ -6,7 +6,7 @@
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	actions = require( './constants' ).actions,
 	me = require( 'lib/wp' ).undocumented().me();
 

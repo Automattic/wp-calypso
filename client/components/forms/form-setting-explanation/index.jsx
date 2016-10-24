@@ -1,17 +1,36 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
-	omit = require( 'lodash/object/omit' );
+import React from 'react';
+import classNames from 'classnames';
+import { omit } from 'lodash';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 
 	displayName: 'FormSettingExplanation',
 
-	render: function() {
+	propTypes: {
+		noValidate: React.PropTypes.bool,
+		isIndented: React.PropTypes.bool,
+		className: React.PropTypes.string
+	},
+
+	getDefaultProps() {
+		return {
+			noValidate: false,
+			isIndented: false,
+		};
+	},
+
+	render() {
+		const classes = classNames( this.props.className, 'form-setting-explanation', {
+			'no-validate': this.props.noValidate,
+			'is-indented': this.props.isIndented
+		} );
+
 		return (
-			<p { ...omit( this.props, 'className' ) } className={ joinClasses( this.props.className, 'form-setting-explanation' ) } >
+			<p { ...omit( this.props, 'className', 'noValidate', 'isIndented' ) }
+				className={ classes } >
 				{ this.props.children }
 			</p>
 		);

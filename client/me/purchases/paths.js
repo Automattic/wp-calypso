@@ -1,42 +1,52 @@
-function list() {
-	return '/purchases';
+function purchasesRoot() {
+	return '/me/purchases';
+}
+
+function addCreditCard() {
+	return purchasesRoot() + '/add-credit-card';
+}
+
+function billingHistory() {
+	return purchasesRoot() + '/billing';
+}
+
+function billingHistoryReceipt( receiptId = ':receiptId' ) {
+	return billingHistory() + `/${ receiptId }`;
 }
 
 function managePurchase( siteName = ':site', purchaseId = ':purchaseId' ) {
-	return list() + `/${ siteName }/${ purchaseId }`;
-}
-
-function managePurchaseDestination( siteName = ':site', purchaseId = ':purchaseId', destinationType = ':destinationType?' ) {
-	return managePurchase( siteName, purchaseId ) + `/${ destinationType }`;
+	return purchasesRoot() + `/${ siteName }/${ purchaseId }`;
 }
 
 function cancelPurchase( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel';
 }
 
-function confirmCancelPurchase( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/confirm-cancel';
+function confirmCancelDomain( siteName, purchaseId ) {
+	return managePurchase( siteName, purchaseId ) + '/confirm-cancel-domain';
 }
 
 function cancelPrivateRegistration( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/cancel-private-registration';
 }
 
-function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
-	return editPaymentMethod( siteName, purchaseId ) + `/edit/${ cardId }`;
+function addCardDetails( siteName, purchaseId ) {
+	return managePurchase( siteName, purchaseId ) + '/payment/add';
 }
 
-function editPaymentMethod( siteName, purchaseId ) {
-	return managePurchase( siteName, purchaseId ) + '/payment';
+function editCardDetails( siteName, purchaseId, cardId = ':cardId' ) {
+	return managePurchase( siteName, purchaseId ) + `/payment/edit/${ cardId }`;
 }
 
 export default {
-	cancelPurchase,
-	confirmCancelPurchase,
+	addCardDetails,
+	addCreditCard,
+	billingHistory,
+	billingHistoryReceipt,
 	cancelPrivateRegistration,
+	cancelPurchase,
+	confirmCancelDomain,
 	editCardDetails,
-	editPaymentMethod,
-	list,
 	managePurchase,
-	managePurchaseDestination
+	purchasesRoot
 };

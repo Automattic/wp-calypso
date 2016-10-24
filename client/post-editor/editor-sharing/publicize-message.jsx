@@ -1,26 +1,27 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+const React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var CountedTextarea = require( 'components/forms/counted-textarea' ),
+const CountedTextarea = require( 'components/forms/counted-textarea' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
 	PostActions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	TrackInputChanges = require( 'components/track-input-changes' ),
 	InfoPopover = require( 'components/info-popover' );
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'PublicizeMessage',
 
 	propTypes: {
 		message: React.PropTypes.string,
 		preview: React.PropTypes.string,
 		acceptableLength: React.PropTypes.number,
-		requireCount: React.PropTypes.bool
+		requireCount: React.PropTypes.bool,
+		onChange: React.PropTypes.func
 	},
 
 	getDefaultProps: function() {
@@ -32,7 +33,12 @@ module.exports = React.createClass( {
 	},
 
 	onChange: function( event ) {
-		PostActions.updateMetadata( '_wpas_mess', event.target.value );
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
+		if ( this.props.onChange ) {
+			this.props.onChange( event.target.value );
+		} else {
+			PostActions.updateMetadata( '_wpas_mess', event.target.value );
+		}
 	},
 
 	recordStats: function() {

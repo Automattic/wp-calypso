@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import Immutable from 'immutable';
 import classNames from 'classnames';
 
@@ -15,7 +16,7 @@ import StreamOptions from './stream-options';
 export default React.createClass( {
 	displayName: 'NotificationSettingsFormStream',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		blogId: PropTypes.oneOfType( [
@@ -56,7 +57,7 @@ export default React.createClass( {
 
 		return (
 			<div className={ classNames( 'notification-settings-form-stream', this.props.className ) }>
-				{ () => {
+				{ ( () => {
 					if ( this.props.devices ) {
 						return <DeviceSelector
 							devices={ this.props.devices }
@@ -65,7 +66,7 @@ export default React.createClass( {
 					}
 
 					return ( <StreamHeader stream={ this.props.stream } /> );
-				}() }
+				} )() }
 				<StreamOptions
 					blogId={ this.props.blogId }
 					stream={ stream }

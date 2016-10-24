@@ -1,0 +1,79 @@
+.global-notices {
+	overflow: hidden;
+	text-align: right;
+	pointer-events: none;
+
+	z-index: z-index( 'root', '.global-notices' );
+	position: fixed;
+		top: auto;
+		right: 0;
+		bottom: 0;
+		left: 0;
+
+	@include breakpoint( ">660px" ) {
+			top: 47px + 16px;
+			right: 16px;
+			bottom: auto;
+			left: auto;
+		max-width: calc( 100% - 32px );
+	}
+
+	@include breakpoint( ">960px" ) {
+			top: 47px + 24px;
+			right: 24px;
+		max-width: calc( 100% - 48px );
+	}
+
+	@include breakpoint( ">1040px" ) {
+			right: 32px;
+		max-width: calc( 100% - 64px );
+	}
+}
+
+.global-notices .notice {
+	flex-wrap: nowrap;
+	margin-bottom: 0;
+	text-align: left;
+	pointer-events: auto;
+
+	@include breakpoint( ">660px" ) {
+		display: flex;
+		border-radius: 20px;
+		overflow: hidden;
+		margin-bottom: 24px;
+	}
+}
+
+.global-notices .notice__icon {
+
+	@include breakpoint( ">660px" ) {
+		padding: 8px 0 8px 16px;
+	}
+}
+
+.global-notices .notice__text {
+	padding-left: 16px;
+	flex-basis: auto;
+	flex-grow: 1;
+
+	@include breakpoint( ">660px" ) {
+		flex-grow: 0;
+		padding: 9px 13px;
+	}
+}
+
+.global-notices .notice a.notice__action {
+
+	@include breakpoint( ">660px" ) {
+		font-size: 14px;
+		padding: 9px 16px;
+	}
+}
+
+.global-notices .notice__dismiss {
+	flex-shrink: 0;
+
+	@include breakpoint( ">660px" ) {
+		padding: 8px 16px;
+	}
+}

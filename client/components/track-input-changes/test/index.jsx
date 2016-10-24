@@ -1,13 +1,12 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-import React from 'react/addons';
-import chai from 'chai';
+import ReactDom from 'react-dom';
+import React from 'react';
+import TestUtils from 'react-addons-test-utils';
+import { expect } from 'chai';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Internal dependencies
@@ -17,9 +16,6 @@ var TrackInputChanges = require( '../' );
 /**
  * Module variables
  */
-const expect = chai.use( sinonChai ).expect;
-const TestUtils = React.addons.TestUtils;
-
 const spies = {
 	onNewValue: null,
 	onChange: null,
@@ -41,20 +37,30 @@ const DummyInput = React.createClass( {
 } );
 
 describe( 'TrackInputChanges#onNewValue', function() {
-	let tree, dummyInput;
+	let tree, dummyInput, container;
+
+	useFakeDom.withContainer();
+
+	before( () => {
+		container = useFakeDom.getContainer();
+	} );
+
+	afterEach( () => {
+		ReactDom.unmountComponentAtNode( container );
+	} );
 
 	beforeEach( function() {
-		for ( var spy in spies ) {
+		for ( let spy in spies ) {
 			spies[ spy ] = sinon.spy();
 		}
-		tree = React.render(
+		tree = ReactDom.render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
 				<DummyInput
-					onChange={ spies.onChange}
+					onChange={ spies.onChange }
 					onBlur={ spies.onBlur }
 				/>
 			</TrackInputChanges>,
-			document.body
+			container
 		);
 		dummyInput = TestUtils.findRenderedComponentWithType( tree, DummyInput );
 		// Rendering appears to trigger a 'change' event on the input
@@ -102,18 +108,18 @@ describe( 'TrackInputChanges#onNewValue', function() {
 	} );
 
 	it( 'should throw if multiple child elements', function() {
-		expect( () => React.render(
+		expect( () => ReactDom.render(
 			<TrackInputChanges onNewValue={ spies.onNewValue }>
 				<DummyInput
-					onChange={ spies.onChange}
+					onChange={ spies.onChange }
 					onBlur={ spies.onBlur }
 				/>
 				<DummyInput
-					onChange={ spies.onChange}
+					onChange={ spies.onChange }
 					onBlur={ spies.onBlur }
 				/>
 			</TrackInputChanges>,
-			document.body
-		) ).to.throw( 'Invariant Violation' );
+			container
+		) ).to.throw( 'onlyChild must be passed a children with exactly one child.' );
 	} );
 } );

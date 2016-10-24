@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	ReactCSSTransitionGroup = React.addons.CSSTransitionGroup,
-	find = require( 'lodash/collection/find' ),
+var React = require( 'react' ),
+	ReactCSSTransitionGroup = require( 'react-addons-css-transition-group' ),
+	find = require( 'lodash/find' ),
 	debug = require( 'debug' )( 'calypso:menus:menu-items-list' ); // eslint-disable-line no-unused-vars
 
 /**
@@ -13,7 +13,7 @@ var MenuEditableItem = require( './menu-editable-item' ),
 	siteMenus = require( 'lib/menu-data' ),
 	itemTypes = require( './menu-item-types' ),
 	MenuItemDropTarget = require( './menu-item-drop-target' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 /**
  * Components
@@ -50,7 +50,8 @@ var MenuItemList = React.createClass( {
 							item={ menuItem }
 							items={ menuItem.items }
 							depth={ this.props.depth + 1 }
-							lock={ this.props.lock }
+							getEditItem={ this.props.getEditItem }
+							setEditItem={ this.props.setEditItem }
 							moveState={ this.props.moveState }
 							doMoveItem={ this.props.doMoveItem }
 							addState={ this.props.addState }
@@ -100,22 +101,18 @@ var MenuItem = React.createClass( {
 		};
 	},
 
-	componentWillUnmount: function() {
-		this.props.lock.unlock( this, { silent: true } );
-	},
-
 	edit: function() {
-		this.props.lock.lock( this );
+		this.props.setEditItem( this.props.item.id );
 	},
 
 	cancelCurrentOperation: function() {
-		this.props.lock.unlock( this );
+		this.props.setEditItem( null );
 		this.props.doMoveItem( 'cancel' );
 		this.props.doAddItem( 'cancel' );
 	},
 
 	startMoveItem: function() {
-		this.props.lock.unlock( this );
+		this.props.setEditItem( null );
 		this.props.doMoveItem( 'setSource', this.props.item.id );
 	},
 
@@ -141,7 +138,7 @@ var MenuItem = React.createClass( {
 	},
 
 	isEditing: function() {
-		return this.props.lock.hasLock( this );
+		return this.props.getEditItem() === this.props.item.id;
 	},
 
 	addNewItemInProgress: function() {
@@ -149,7 +146,7 @@ var MenuItem = React.createClass( {
 	},
 
 	canEdit: function() {
-		return ! this.props.lock.mustWait( this ) &&
+		return ! this.props.getEditItem() &&
 			! this.props.moveState.moving &&
 			! this.addNewItemInProgress() &&
 			! this.props.confirmDeleteItem;
@@ -185,7 +182,7 @@ var MenuItem = React.createClass( {
 		var draggedItem = this.props.dragDrop( 'getDraggedItem' );
 		return draggedItem &&
 			( draggedItem.id === this.props.item.id ||
-			  siteMenus.isAncestor( draggedItem, this.props.item ) );
+				siteMenus.isAncestor( draggedItem, this.props.item ) );
 	},
 
 	isCorrupt: function() {
@@ -360,7 +357,10 @@ var MenuItem = React.createClass( {
 
 		return (
 			<div>
-				<ReactCSSTransitionGroup transitionName="menus__droptarget-slidevertical">
+				<ReactCSSTransitionGroup
+					transitionName="menus__droptarget-slidevertical"
+					transitionEnterTimeout={ 200 }
+					transitionLeaveTimeout={ 200 }>
 					{ this.renderDropTarget( 'before' ) }
 				</ReactCSSTransitionGroup>
 
@@ -369,10 +369,16 @@ var MenuItem = React.createClass( {
 				{ this.renderNewItem( 'after' ) }
 				{ this.renderNewItem( 'child' ) }
 
-				<ReactCSSTransitionGroup transitionName="menus__droptarget-slidevertical">
+				<ReactCSSTransitionGroup
+					transitionName="menus__droptarget-slidevertical"
+					transitionEnterTimeout={ 200 }
+					transitionLeaveTimeout={ 200 }>
 					{ this.renderDropTarget( 'after' ) }
 				</ReactCSSTransitionGroup>
-				<ReactCSSTransitionGroup transitionName="menus__droptarget-slidevertical">
+				<ReactCSSTransitionGroup
+					transitionName="menus__droptarget-slidevertical"
+					transitionEnterTimeout={ 200 }
+					transitionLeaveTimeout={ 200 }>
 					{ this.renderDropTarget( 'child' ) }
 				</ReactCSSTransitionGroup>
 
@@ -380,7 +386,8 @@ var MenuItem = React.createClass( {
 					depth={ this.props.depth }
 					menuData={ this.props.menuData }
 					items={ this.props.items }
-					lock={ this.props.lock }
+					setEditItem={ this.props.setEditItem }
+					getEditItem={ this.props.getEditItem }
 					moveState={ this.props.moveState }
 					doMoveItem={ this.props.doMoveItem }
 					addState={ this.props.addState }

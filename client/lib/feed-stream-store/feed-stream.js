@@ -1,14 +1,14 @@
 /**
  * External Dependencies
  */
-var assign = require( 'lodash/object/assign' ),
+var assign = require( 'lodash/assign' ),
 	debug = require( 'debug' )( 'calypso:feed-store:post-list-store' ),
-	filter = require( 'lodash/collection/filter' ),
-	forEach = require( 'lodash/collection/forEach' ),
-	map = require( 'lodash/collection/map' ),
+	filter = require( 'lodash/filter' ),
+	forEach = require( 'lodash/forEach' ),
+	map = require( 'lodash/map' ),
 	moment = require( 'moment' ),
-	noop = require( 'lodash/utility/noop' ),
-	get = require( 'lodash/object/get' ),
+	noop = require( 'lodash/noop' ),
+	get = require( 'lodash/get' ),
 	url = require( 'url' );
 
 /**
@@ -43,6 +43,7 @@ var FeedStream = function( spec ) {
 	this.id = spec.id;
 
 	assign( this, {
+		id: spec.id,
 		postKeys: [], // an array of keys, as determined by the key maker,
 		pendingPostKeys: [],
 		postById: {},
@@ -66,7 +67,8 @@ var FeedStream = function( spec ) {
 			interval: 60 * 1000,
 			leading: false,
 			pauseWhenHidden: false
-		} )
+		} ),
+		startDate: spec.startDate
 	} );
 };
 
@@ -240,10 +242,15 @@ assign( FeedStream.prototype, {
 		return date;
 	},
 
-	hasRecentError: function() {
+	/**
+	 * Checks if an error has occurred in the past minute.
+	 *
+	 * @param {string} errorType - Error type to check. If not provided, we'll check for errors of any type.
+	 */
+	hasRecentError: function( errorType ) {
 		var aMinuteAgo = Date.now() - ( 60 * 1000 );
 		return this.errors.some( function( error ) {
-			return error.timestamp && error.timestamp > aMinuteAgo;
+			return ( error.timestamp && error.timestamp > aMinuteAgo ) && ( ! errorType || errorType === error.error );
 		} );
 	},
 
@@ -372,16 +379,14 @@ assign( FeedStream.prototype, {
 	},
 
 	filterNewPosts: function( posts ) {
+		const postById = this.postById;
 		posts = filter( posts, function( post ) {
-			return ! ( post.ID in this.postById );
-		}, this );
+			return ! ( post.ID in postById );
+		} );
 		posts = this.filterFollowedXPosts( posts );
 		return map( posts, this.keyMaker );
 	},
 
-	/**
- 	 * Process a new page of data and concatenate to the end of the list
- 	**/
 	receivePage: function( id, error, data ) {
 		var posts, postKeys;
 
@@ -416,9 +421,10 @@ assign( FeedStream.prototype, {
 		postKeys = this.filterNewPosts( posts );
 
 		if ( postKeys.length ) {
+			const postById = this.postById;
 			forEach( postKeys, function( postKey ) {
-				this.postById[ postKey.postId ] = true;
-			}, this );
+				postById[ postKey.postId ] = true;
+			} );
 			this.postKeys = this.postKeys.concat( postKeys );
 			this.page++;
 			this.emit( 'change' );
@@ -441,7 +447,7 @@ assign( FeedStream.prototype, {
 			postKeys = this.filterNewPosts( data.posts );
 			if ( postKeys.length > 0 ) {
 				this.pendingPostKeys = postKeys;
-				this.pendingDateAfter = moment( data.date_range.after );
+				this.pendingDateAfter = moment( FeedPostStore.get( this.keyMaker( data.posts[ data.posts.length - 1 ] ) )[ this.dateProperty ] );
 				this.emit( 'change' );
 			}
 		}
@@ -452,9 +458,10 @@ assign( FeedStream.prototype, {
 			return;
 		}
 
+		const postById = this.postById;
 		forEach( this.pendingPostKeys, function( postKey ) {
-			this.postById[ postKey.postId ] = true;
-		}, this );
+			postById[ postKey.postId ] = true;
+		} );
 
 		const mostRecentPostDate = moment( FeedPostStore.get( this.postKeys[ 0 ] )[ this.dateProperty ] );
 

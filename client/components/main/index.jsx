@@ -1,17 +1,23 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+import React from 'react';
+import classNames from 'classnames';
 
-module.exports = React.createClass( {
-	displayName: 'Main',
+export default function Main( {
+	className,
+	children,
+	wideLayout = false
+} ) {
+	const classes = classNames( className, 'main', {
+		'is-wide-layout': wideLayout
+	} );
 
-	render: function() {
-		return (
-			<div className={ joinClasses( this.props.className, 'main' ) } role="main">
-				{ this.props.children }
-			</div>
-		);
-	}
-} );
+	return (
+		<main className={ classes } role="main">
+			{ children }
+		</main>
+	);
+}

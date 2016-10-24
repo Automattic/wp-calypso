@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	omit = require( 'lodash/object/omit' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies
@@ -15,18 +16,18 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 	NoResults = require( 'my-sites/no-results' ),
 	actions = require( 'lib/posts/actions' ),
 	Placeholder = require( './placeholder' ),
-	mapStatus = require( 'lib/route' ).mapPostStatus,
-	config = require( 'config' );
+	mapStatus = require( 'lib/route' ).mapPostStatus;
+
+import BlogPostsPage from './blog-posts-page';
 
 var PageList = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		context: React.PropTypes.object,
 		search: React.PropTypes.string,
 		sites: React.PropTypes.object,
-		statusSlug: React.PropTypes.string,
 		siteID: React.PropTypes.any
 	},
 
@@ -45,7 +46,7 @@ var PageList = React.createClass( {
 	}
 } );
 
-var Pages = React.createClass({
+var Pages = React.createClass( {
 
 	displayName: 'Pages',
 
@@ -60,14 +61,15 @@ var Pages = React.createClass({
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
 		sites: React.PropTypes.object.isRequired,
-		statusSlug: React.PropTypes.string,
-		trackScrollPage: React.PropTypes.func.isRequired
+		trackScrollPage: React.PropTypes.func.isRequired,
+		hasRecentError: React.PropTypes.bool.isRequired
 	},
 
 	getDefaultProps: function() {
 		return {
 			perPage: 20,
 			loading: false,
+			hasRecentError: false,
 			lastPage: false,
 			page: 0,
 			posts: [],
@@ -76,7 +78,7 @@ var Pages = React.createClass({
 	},
 
 	fetchPages: function( options ) {
-		if ( this.props.loading || this.props.lastPage ) {
+		if ( this.props.loading || this.props.lastPage || this.props.hasRecentError ) {
 			return;
 		}
 		if ( options.triggeredByScroll ) {
@@ -116,49 +118,59 @@ var Pages = React.createClass({
 	},
 
 	getNoContentMessage: function() {
-		var selectedSite = this.props.sites.getSelectedSite(),
-			attributes, newPageLink;
+		var attributes, newPageLink;
 
 		if ( this.props.search ) {
 			return <NoResults
 				image="/calypso/images/pages/illustration-pages.svg"
 				text={
-					this.translate( 'No posts match your search for {{searchTerm/}}.', {
+					this.translate( 'No pages match your search for {{searchTerm/}}.', {
 						components: {
 							searchTerm: <em>{ this.props.search }</em>
 						}
-					} )	}
+					} ) }
 			/>;
 		} else {
+			newPageLink = this.props.siteID ? '/page/' + this.props.siteID : '/page';
 
-			if ( config.isEnabled( 'post-editor/pages' ) ) {
-				newPageLink = this.props.siteID ? '/page/' + this.props.siteID : '/page';
+			if ( this.props.hasRecentError ) {
+				attributes = {
+					title: this.translate( 'Oh, no! We couldn\'t fetch your pages.' ),
+					line: this.translate( 'Please check your internet connection.' )
+				};
 			} else {
-				newPageLink = selectedSite ? '//wordpress.com/page/' + selectedSite.ID + '/new' : '//wordpress.com/page';
-			}
-
-			switch( this.props.statusSlug ) {
-				case 'drafts':
-					attributes = {
-						title: this.translate( 'You don\'t have any drafts.' ),
-						line: this.translate( 'Would you like to create one?' ),
-						action: this.translate( 'Start a Page' ),
-						actionURL: newPageLink
-					};
-					break;
-				case 'trashed':
-					attributes = {
-						title: this.translate( 'You don\'t have any pages in your trash folder.' ),
-						line: this.translate( 'Everything you write is solid gold.' )
-					};
-					break;
-				default:
-					attributes = {
-						title: this.translate( 'You haven\'t published any pages yet.' ),
-						line: this.translate( 'Would you like to publish your first page?' ),
-						action: this.translate( 'Start a Page' ),
-						actionURL: newPageLink
-					};
+				const status = this.props.status || 'published';
+				switch ( status ) {
+					case 'drafts':
+						attributes = {
+							title: this.translate( 'You don\'t have any drafts.' ),
+							line: this.translate( 'Would you like to create one?' ),
+							action: this.translate( 'Start a Page' ),
+							actionURL: newPageLink
+						};
+						break;
+					case 'scheduled':
+						attributes = {
+							title: this.translate( 'You don\'t have any scheduled pages yet.' ),
+							line: this.translate( 'Would you like to create one?' ),
+							action: this.translate( 'Start a Page' ),
+							actionURL: newPageLink
+						};
+						break;
+					case 'trashed':
+						attributes = {
+							title: this.translate( 'You don\'t have any pages in your trash folder.' ),
+							line: this.translate( 'Everything you write is solid gold.' )
+						};
+						break;
+					default:
+						attributes = {
+							title: this.translate( 'You haven\'t published any pages yet.' ),
+							line: this.translate( 'Would you like to publish your first page?' ),
+							action: this.translate( 'Start a Page' ),
+							actionURL: newPageLink
+						};
+				}
 			}
 		}
 
@@ -178,10 +190,10 @@ var Pages = React.createClass({
 	addLoadingRows: function( rows, count ) {
 		var i;
 		for ( i = 0; i < count; i++ ) {
-			if ( i % 4 === 0) {
-				rows.push ( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
+			if ( i % 4 === 0 ) {
+				rows.push( <Placeholder.Marker key={ 'placeholder-marker-' + i } /> );
 			}
-			rows.push ( <Placeholder.Page key={ 'placeholder-page-' + i } multisite={ this.props.siteID === false } /> );
+			rows.push( <Placeholder.Page key={ 'placeholder-page-' + i } multisite={ this.props.siteID === false } /> );
 		}
 	},
 
@@ -196,14 +208,14 @@ var Pages = React.createClass({
 				pages = this._insertTimeMarkers( pages );
 			}
 			rows = pages.map( function( page ) {
-					if ( ! ( 'site_ID' in page ) ) {
-						return page;
-					}
+				if ( ! ( 'site_ID' in page ) ) {
+					return page;
+				}
 					// Get the site the page belongs to
-					var site = this.props.sites.getSite( page.site_ID );
+				var site = this.props.sites.getSite( page.site_ID );
 
 					// Render each page
-					return (
+				return (
 						<Page key={ 'page-' + page.global_ID } page={ page } site={ site } multisite={ this.props.siteID === false } />
 					);
 			}, this );
@@ -212,6 +224,17 @@ var Pages = React.createClass({
 				this.addLoadingRows( rows, 1 );
 			}
 
+			const site = this.props.sites.getSelectedSite();
+			const status = this.props.status || 'published';
+
+			if ( site && status === 'published' ) {
+				rows.push(
+					<BlogPostsPage
+						key="blog-posts-page"
+						site={ site }
+					/>
+				);
+			}
 		} else if ( ( ! this.props.loading ) && this.props.sites.initialized ) {
 			rows.push( <div key="page-list-no-results">{ this.getNoContentMessage() }</div> );
 		} else {
@@ -225,6 +248,6 @@ var Pages = React.createClass({
 			</div>
 		);
 	}
-});
+} );
 
 module.exports = PageList;

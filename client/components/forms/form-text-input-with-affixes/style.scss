@@ -40,9 +40,9 @@
 
 .form-text-input-with-affixes__prefix,
 .form-text-input-with-affixes__suffix {
-	background: lighten( $gray, 30% );
+	background: $gray-light;
 	border: 1px solid lighten( $gray, 20% );
-	color: $gray-dark;
+	color: darken( $gray, 20% );
 	padding: 8px 14px;
 	white-space: nowrap;
 }

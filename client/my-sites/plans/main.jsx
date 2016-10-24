@@ -1,83 +1,92 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	PlanList = require( 'components/plans/plan-list' ),
-	siteSpecificPlansDetailsMixin = require( 'components/plans/site-specific-plan-details-mixin' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	UpgradesNavigation = require( 'my-sites/upgrades/navigation' );
+import DocumentHead from 'components/data/document-head';
+import { getPlansBySiteId } from 'state/sites/plans/selectors';
+import { getPlans } from 'state/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import Main from 'components/main';
+import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PlansFeaturesMain from 'my-sites/plans-features-main';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import TrackComponentView from 'lib/analytics/track-component-view';
+import UpgradesNavigation from 'my-sites/upgrades/navigation';
+import QueryPlans from 'components/data/query-plans';
+import QuerySitePlans from 'components/data/query-site-plans';
 
-module.exports = React.createClass( {
-	displayName: 'Plans',
-
-	mixins: [ siteSpecificPlansDetailsMixin, observe( 'sites', 'plans', 'siteSpecificPlansDetailsList' ) ],
-
-	getInitialState: function() {
-		return { openPlan: '' };
+const Plans = React.createClass( {
+	propTypes: {
+		cart: React.PropTypes.object.isRequired,
+		context: React.PropTypes.object.isRequired,
+		intervalType: React.PropTypes.string,
+		plans: React.PropTypes.array.isRequired,
+		selectedSite: React.PropTypes.object.isRequired,
+		selectedSiteId: React.PropTypes.number.isRequired,
+		sitePlans: React.PropTypes.object.isRequired
 	},
 
-	openPlan: function( planId ) {
-		this.setState( { openPlan: planId === this.state.openPlan ? '' : planId } );
+	getDefaultProps() {
+		return {
+			intervalType: 'yearly'
+		};
 	},
 
-	recordComparePlansClick: function() {
-		analytics.ga.recordEvent( 'Upgrades', 'Clicked Compare Plans Link' );
-	},
-
-	comparePlansLink: function() {
-		var url = '/plans/compare',
-			selectedSite = this.props.sites.getSelectedSite();
-
-		if ( this.props.plans.get().length <= 0 ) {
-			return '';
+	componentDidMount() {
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
 		}
-
-		if ( selectedSite ) {
-			url += '/' + selectedSite.slug;
-		}
-
-		return <a href={ url } className="compare-plans-link" onClick={ this.recordComparePlansClick }>{ this.translate( 'Compare Plans' ) }</a>;
 	},
 
-	sidebarNavigation: function() {
-		return <SidebarNavigation />;
-	},
-
-	render: function() {
-		var classNames = 'main main-column ',
-			hasJpphpBundle = this.props.siteSpecificPlansDetailsList &&
-				this.props.siteSpecificPlansDetailsList.hasJpphpBundle( this.props.sites.getSelectedSite().domain );
+	render() {
+		const { selectedSite, selectedSiteId, translate } = this.props;
 
 		return (
-			<div className={ classNames } role="main">
-				{ this.sidebarNavigation() }
-				<div id="plans" className="plans has-sidebar">
-					{ this.sectionNavigation() }
-					<PlanList
-						sites={ this.props.sites }
-						plans={ this.props.plans.get() }
-						siteSpecificPlansDetailsList={ this.props.siteSpecificPlansDetailsList }
-						onOpen={ this.openPlan }
-						onSelectPlan={ this.props.onSelectPlan }
-						cart={ this.props.cart } />
-					{ ! hasJpphpBundle && this.comparePlansLink() }
-				</div>
+			<div>
+				<DocumentHead title={ translate( 'Plans', { textOnly: true } ) } />
+				<PageViewTracker path="/plans/:site" title="Plans" />
+				<TrackComponentView eventName="calypso_plans_view" />
+				<Main wideLayout={ true } >
+					<SidebarNavigation />
+
+					<div id="plans" className="plans has-sidebar">
+						<UpgradesNavigation
+							sitePlans={ this.props.sitePlans }
+							path={ this.props.context.path }
+							cart={ this.props.cart }
+							selectedSite={ selectedSite } />
+
+						<QueryPlans />
+						<QuerySitePlans siteId={ selectedSiteId } />
+
+						<PlansFeaturesMain
+							site={ selectedSite }
+							intervalType={ this.props.intervalType }
+							hideFreePlan={ true }
+							selectedFeature={ this.props.selectedFeature }
+						/>
+					</div>
+				</Main>
 			</div>
-		);
-	},
-
-	sectionNavigation: function() {
-		return (
-			<UpgradesNavigation
-				path={ this.props.context.path }
-				cart={ this.props.cart }
-				selectedSite={ this.props.sites.getSelectedSite() } />
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const selectedSiteId = getSelectedSiteId( state );
+		return {
+			plans: getPlans( state ),
+			sitePlans: getPlansBySiteId( state, selectedSiteId ),
+			selectedSite: getSelectedSite( state ),
+			selectedSiteId: selectedSiteId
+		};
+	}
+)( localize( Plans ) );

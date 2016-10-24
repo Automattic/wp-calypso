@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	DayPicker = require( 'react-day-picker' ),
-	merge = require( 'lodash/object/merge' ),
-	noop = require( 'lodash/utility/noop' );
+import React from 'react';
+import DayPicker from 'react-day-picker';
+import merge from 'lodash/merge';
+import noop from 'lodash/noop';
 
 /**
  * Internal dependencies
  */
-var DayItem = require( 'components/date-picker/day' );
+import DayItem from 'components/date-picker/day';
 
 /* Internal dependencies
  */
@@ -67,6 +67,10 @@ module.exports = React.createClass( {
 		var moment = this.moment,
 			localeData = moment().localeData(),
 			locale = {
+				formatDay: function( date ) {
+					return moment( date ).format( 'llll' );
+				},
+
 				formatMonthTitle: function( date ) {
 					return moment( date ).format( 'MMMM YYYY' );
 				},
@@ -80,7 +84,7 @@ module.exports = React.createClass( {
 				},
 
 				getFirstDayOfWeek: function() {
-					return localeData.firstDayOfWeek();
+					return Number( localeData.firstDayOfWeek() );
 				}
 			};
 
@@ -121,7 +125,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className='date-picker_container' >
+			<div className="date-picker_container">
 				<DayPicker
 					ref="daypicker"
 					className="date-picker"

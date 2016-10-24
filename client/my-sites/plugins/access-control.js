@@ -1,29 +1,45 @@
 /**
+ * External Dependencies
+ */
+import i18n from 'i18n-calypso';
+
+/**
  * Internal Dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	i18n = require( 'lib/mixins/i18n' ),
-	config = require( 'config' ),
-	analytics = require( 'analytics' ),
-	isBusiness = require( 'lib/products-values' ).isBusiness,
-	notices = require( 'notices' ),
-	abtest = require( 'lib/abtest' ).abtest;
+import sitesList from 'lib/sites-list';
+import config from 'config';
+import notices from 'notices';
 
-function hasErrorCondition( site, type ) {
-	var errorConditions = {
-		noBusinessPlan: site && ! site.jetpack && ! isBusiness( site.plan ),
+const sites = sitesList();
+
+const hasErrorCondition = ( site, type ) => {
+	const errorConditions = {
 		notMinimumJetpackVersion: site && ! site.hasMinimumJetpackVersion && site.jetpack,
 		notRightsToManagePlugins: sites.initialized && ! sites.canManageSelectedOrAll()
 	};
 	return errorConditions[ type ];
-}
+};
 
-function hasRestrictedAccess( site ) {
-	var pluginPageError;
+const getWpcomPluginPageError = () => {
+	return {
+		title: i18n.translate( 'Oops! Not supported' ),
+		line: i18n.translate( 'This site doesn\'t support installing plugins. Switch to a self-hosted site to install and manage plugins' ),
+		illustration: '/calypso/images/drake/drake-whoops.svg'
+	};
+};
 
+const hasRestrictedAccess = ( site ) => {
 	site = site || sites.getSelectedSite();
 
-	if ( hasErrorCondition( site, 'notMinimumJetpackVersion' ) ) {
+	// Display a 404 to users that don't have the rights to manage plugins
+	if ( hasErrorCondition( site, 'notRightsToManagePlugins' ) ) {
+		return {
+			title: i18n.translate( 'Not Available' ),
+			line: i18n.translate( 'The page you requested could not be found' ),
+			illustration: '/calypso/images/drake/drake-404.svg',
+			fullWidth: true
+		};
+	} else if ( hasErrorCondition( site, 'notMinimumJetpackVersion' ) ) {
 		notices.warning(
 			i18n.translate( 'Jetpack %(version)s is required to take full advantage of plugin management in %(site)s.', {
 				args: {
@@ -39,31 +55,9 @@ function hasRestrictedAccess( site ) {
 		);
 	}
 
-	// Display a 404 to users that don't have the rights to manage plugins
-	if ( hasErrorCondition( site, 'notRightsToManagePlugins' ) &&
-			! pluginPageError ) {
-		pluginPageError = {
-			title: i18n.translate( 'Not Available' ),
-			line: i18n.translate( 'The page you requested could not be found' ),
-			illustration: '/calypso/images/drake/drake-404.svg',
-			fullWidth: true
-		};
+	if ( ! sites.hasSiteWithPlugins() ) {
+		return getWpcomPluginPageError();
 	}
+};
 
-	if ( abtest( 'businessPluginsNudge' ) === 'drake' && hasErrorCondition( site, 'noBusinessPlan' ) ) {
-		pluginPageError = {
-			title: i18n.translate( 'Want to add a store to your site?' ),
-			line: i18n.translate( 'Support for Shopify, Ecwid, and Gumroad is now available for WordPress.com Business.' ),
-			action: i18n.translate( 'Upgrade Now' ),
-			actionURL: '/plans/' + site.slug,
-			illustration: '/calypso/images/drake/drake-whoops.svg',
-			actionCallback: function() {
-				analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', { cta_name: 'business_plugins' } );
-			}
-		};
-	}
-
-	return pluginPageError;
-}
-
-module.exports = { hasRestrictedAccess: hasRestrictedAccess };
+export default { hasRestrictedAccess };

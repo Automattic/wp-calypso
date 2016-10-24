@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+var React = require( 'react' ),
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies
@@ -20,16 +20,21 @@ module.exports = React.createClass( {
 
 	getInitialState: function() {
 		return {
-			focus: false,
 			toggled: false
 		};
+	},
+
+	componentDidUpdate: function( prevProps, prevState ) {
+		// Focus the input only when the user explicitly clicked the toggle link
+		if ( ! prevState.toggled && this.state.toggled && prevProps.value === this.props.value ) {
+			this.refs.input.focus();
+		}
 	},
 
 	handleClick: function( event ) {
 		event.preventDefault();
 
 		this.setState( {
-			focus: true,
 			toggled: true
 		} );
 	},
@@ -37,14 +42,14 @@ module.exports = React.createClass( {
 	render: function() {
 		if ( this.state.toggled ) {
 			return (
-				<Input { ...this.props } initialFocus={ this.state.focus } />
-			);
-		} else {
-			return (
-				<div className="hidden-input">
-					<a href="" onClick={ this.handleClick }>{ this.props.text }</a>
-				</div>
+				<Input ref="input" { ...this.props } />
 			);
 		}
+
+		return (
+			<div className="hidden-input">
+				<a href="" onClick={ this.handleClick }>{ this.props.text }</a>
+			</div>
+		);
 	}
 } );

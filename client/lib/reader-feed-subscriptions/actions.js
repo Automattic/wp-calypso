@@ -1,7 +1,7 @@
 //var debug = require( 'debug' )( 'calypso:feed-subscription-actions' );
 
 // External dependencies
-var get = require( 'lodash/object/get' );
+var get = require( 'lodash/get' );
 
 // Internal dependencies
 var Dispatcher = require( 'dispatcher' ),
@@ -161,10 +161,31 @@ var FeedSubscriptionActions = {
 			return;
 		}
 
-		// If we received site or feed meta, fire off an action
-		data.subscriptions.forEach( function( subscription ) {
-			receiveSubscriptionMeta( subscription );
+		let sites = [], feeds = [];
+		data.subscriptions.forEach( function( sub ) {
+			const site = get( sub, 'meta.data.site' ),
+				feed = get( sub, 'meta.data.feed' );
+			if ( site ) {
+				sites.push( site );
+			}
+			if ( feed ) {
+				feeds.push( feed );
+			}
 		} );
+
+		if ( sites.length > 0 ) {
+			Dispatcher.handleServerAction( {
+				type: SiteStoreActionTypes.RECEIVE_BULK_UPDATE,
+				data: sites
+			} );
+		}
+
+		if ( feeds.length > 0 ) {
+			Dispatcher.handleServerAction( {
+				type: FeedStoreActionTypes.RECEIVE_BULK_UPDATE,
+				data: feeds
+			} );
+		}
 	},
 };
 
@@ -192,11 +213,6 @@ function receiveSubscriptionMeta( subscription ) {
 	}
 
 	if ( get( subscription, 'meta.data.feed' ) ) {
-		Dispatcher.handleServerAction( {
-			type: FeedStoreActionTypes.FETCH,
-			feedId: subscription.meta.data.feed.feed_ID,
-		} );
-
 		Dispatcher.handleServerAction( {
 			type: FeedStoreActionTypes.RECEIVE_FETCH,
 			feedId: subscription.meta.data.feed.feed_ID,

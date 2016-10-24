@@ -6,8 +6,8 @@ var express = require( 'express' ),
 	fspath = require( 'path' ),
 	marked = require( 'marked' ),
 	lunr = require( 'lunr' ),
-	find = require( 'lodash/collection/find' ),
-	escapeHTML = require( 'lodash/string/escape' );
+	find = require( 'lodash/find' ),
+	escapeHTML = require( 'lodash/escape' );
 
 /**
  * Internal dependencies
@@ -16,7 +16,8 @@ var	config = require( 'config' ),
 	root = fs.realpathSync( fspath.join( __dirname, '..', '..' ) ),
 	searchIndex = require( 'devdocs/search-index' ),
 	docsIndex = lunr.Index.load( searchIndex.index ),
-	documents = searchIndex.documents;
+	documents = searchIndex.documents,
+	componentsUsageStats = require( 'devdocs/components-usage-stats.json' );
 
 /**
  * Constants
@@ -59,18 +60,18 @@ function listDocs( filePaths ) {
 				title: doc.title,
 				snippet: defaultSnippet( doc )
 			};
-		} else {
-			return {
-				path: path,
-				title: 'Not found: ' + path,
-				snippet: ''
-			};
 		}
+
+		return {
+			path: path,
+			title: 'Not found: ' + path,
+			snippet: ''
+		};
 	} );
 	return results;
 }
 
-/**
+/*
  * Extract a snippet from a document, capturing text either side of
  * any term(s) featured in a whitespace-delimited search query.
  * We look for up to 3 matches in a document and concatenate them.
@@ -101,10 +102,10 @@ function makeSnippet( doc, query ) {
 	}
 
 	if ( snippets.length ) {
-		return '...' + snippets.join( ' ... ' ) + '...';
-	} else {
-		return defaultSnippet( doc );
-	}
+		return '…' + snippets.join( ' … ' ) + '…';
+	};
+
+	return defaultSnippet( doc );
 }
 
 function escapeRegexString( str ) {
@@ -115,7 +116,29 @@ function escapeRegexString( str ) {
 
 function defaultSnippet( doc ) {
 	var content = doc.body.substring( 0, DEFAULT_SNIPPET_LENGTH );
-	return escapeHTML( content ) + '&hellip;';
+	return escapeHTML( content ) + '…';
+}
+
+/**
+ * Given an object of { module: dependenciesArray }
+ * it filters out modules that contain the world "docs/"
+ * and that are not components (i.e. they don't start with "components/").
+ * It also removes the "components/" prefix from the modules name.
+ *
+ * @param {object} modulesWithDependences An object of modules - dipendencies pairs
+ * @returns {object} A reduced set of modules.
+ */
+function reduceComponentsUsageStats( modulesWithDependences ) {
+	return Object.keys( modulesWithDependences )
+		.filter( function( moduleName ) {
+			return moduleName.indexOf( 'components/' ) === 0 &&
+				moduleName.indexOf( '/docs' ) === -1;
+		} )
+		.reduce( function( target, moduleName ) {
+			var name = moduleName.replace( 'components/', '' );
+			target[ name ] = modulesWithDependences[ moduleName ];
+			return target;
+		}, {} );
 }
 
 module.exports = function() {
@@ -194,6 +217,12 @@ module.exports = function() {
 		const fileContents = fs.readFileSync( path, { encoding: 'utf8' } );
 
 		response.send( marked( fileContents ) );
+	} );
+
+	// return json for the components usage stats
+	app.get( '/devdocs/service/components-usage-stats', function( request, response ) {
+		var usageStats = reduceComponentsUsageStats( componentsUsageStats );
+		response.json( usageStats );
 	} );
 
 	return app;

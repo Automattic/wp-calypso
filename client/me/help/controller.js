@@ -1,31 +1,66 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import analytics from 'lib/analytics';
+import route from 'lib/route';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import config from 'config';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import HelpComponent from './main';
+import CoursesComponent from './help-courses';
+import ContactComponent from './help-contact';
 
-module.exports = {
-	help: function() {
-		var Help = require( './main' );
+export default {
+	help( context ) {
+		const basePath = route.sectionify( context.path );
 
-		titleActions.setTitle( i18n.translate( 'Help', { textOnly: true } ) );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Help', { textOnly: true } ) ) );
 
-		React.render(
-			React.createElement( Help ),
+		analytics.pageView.record( basePath, 'Help' );
+
+		renderWithReduxStore(
+			<HelpComponent isCoursesEnabled={ config.isEnabled( 'help/courses' ) } />,
+			document.getElementById( 'primary' ),
+			context.store
+		);
+	},
+
+	courses( context ) {
+		const basePath = route.sectionify( context.path );
+
+		analytics.pageView.record( basePath, 'Help > Courses' );
+
+		ReactDom.render(
+			<ReduxProvider store={ context.store } >
+				<CoursesComponent />
+			</ReduxProvider>,
 			document.getElementById( 'primary' )
 		);
 	},
 
-	contact: function() {
-		var ContactComponent = require( './help-contact' );
+	contact( context ) {
+		const basePath = route.sectionify( context.path );
 
-		React.render(
-			<ContactComponent />,
+		analytics.pageView.record( basePath, 'Help > Contact' );
+
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+
+		ReactDom.render(
+			<ReduxProvider store={ context.store } >
+				<ContactComponent clientSlug={ config( 'client_slug' ) } />
+			</ReduxProvider>,
 			document.getElementById( 'primary' )
 		);
 	}

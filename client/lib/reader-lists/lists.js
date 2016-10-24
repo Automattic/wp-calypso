@@ -1,28 +1,49 @@
-var decodeEntities = require( 'lib/formatting' ).decodeEntities,
-	dispatcher = require( 'dispatcher' ),
-	emitter = require( 'lib/mixins/emitter' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+// External dependencies
+import { decodeEntities } from 'lib/formatting';
+import dispatcher from 'dispatcher';
+import emitter from 'lib/mixins/emitter';
+import isEqual from 'lodash/isEqual';
+import last from 'lodash/last';
 
-var lists = {}, ListStore;
+// Internal dependencies
+import { action as actionTypes } from './constants';
+
+var lists = {}, errors = [], updatedLists = {}, isFetching = false, ListStore;
 
 function keyForList( owner, slug ) {
-	return owner + '-' + slug;
+	return decodeURIComponent( owner ) + '-' + decodeURIComponent( slug );
 }
 
 function getListURL( list ) {
-	return '/read/list/' + encodeURIComponent( list.owner ) + '/' + encodeURIComponent( list.slug ) + '/';
+	return '/read/list/' + encodeURIComponent( list.owner ) + '/' + encodeURIComponent( list.slug );
 }
 
 ListStore = {
 	get( owner, slug ) {
 		return lists[ keyForList( owner, slug ) ];
+	},
+
+	getLastError() {
+		return last( errors );
+	},
+
+	isUpdated( listId ) {
+		return !! updatedLists[ listId ];
+	},
+
+	isFetching() {
+		return isFetching;
+	},
+
+	setIsFetching( val ) {
+		isFetching = val;
 	}
 };
 
 emitter( ListStore );
 
 function receiveList( newList ) {
-	var existing = ListStore.get( newList.owner, newList.slug );
+	const existing = ListStore.get( newList.owner, newList.slug );
 
 	newList.URL = getListURL( newList );
 	newList.title = decodeEntities( newList.title );
@@ -31,6 +52,11 @@ function receiveList( newList ) {
 		lists[ keyForList( newList.owner, newList.slug ) ] = newList;
 		ListStore.emit( 'change' );
 	}
+}
+
+function markUpdatedList( newList ) {
+	updatedLists[ newList.ID ] = true;
+	ListStore.emit( 'change' );
 }
 
 function markPending( owner, slug ) {
@@ -50,32 +76,50 @@ function markPending( owner, slug ) {
 	}
 }
 
+function clearUpdatedLists() {
+	updatedLists = {};
+	ListStore.emit( 'change' );
+}
+
 ListStore.dispatchToken = dispatcher.register( function( payload ) {
 	const action = payload.action;
 
-	if ( ! action || action.error ) {
+	if ( ! action ) {
+		return;
+	}
+
+	if ( action.error ) {
+		errors.push( action.error );
 		return;
 	}
 
 	switch ( action.type ) {
-		case 'RECEIVE_READER_LIST':
+		case actionTypes.RECEIVE_READER_LIST:
 			if ( action.data && action.data.list ) {
 				receiveList( action.data.list );
 			}
 			break;
-		case 'RECEIVE_READER_LISTS':
+		case actionTypes.RECEIVE_READER_LISTS:
 			if ( action.data && action.data.lists ) {
 				action.data.lists.forEach( receiveList );
 			}
 			break;
-		case 'RECEIVE_CREATE_READER_LIST':
+		case actionTypes.UPDATE_READER_LIST:
 			receiveList( action.data );
 			break;
-		case 'FOLLOW_LIST':
+		case actionTypes.RECEIVE_CREATE_READER_LIST:
+		case actionTypes.RECEIVE_UPDATE_READER_LIST:
+			receiveList( action.data );
+			markUpdatedList( action.data );
+			break;
+		case actionTypes.FOLLOW_LIST:
 			markPending( action.data.owner, action.data.slug );
 			break;
-		case 'RECEIVE_FOLLOW_LIST':
+		case actionTypes.RECEIVE_FOLLOW_LIST:
 			receiveList( action.data );
+			break;
+		case actionTypes.DISMISS_READER_LIST_NOTICE:
+			clearUpdatedLists();
 			break;
 	}
 } );

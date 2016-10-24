@@ -1,44 +1,48 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
-	omit = require( 'lodash/object/omit' ),
-	classNames = require( 'classnames' );
+import React, { PureComponent, PropTypes } from 'react';
+import classNames from 'classnames';
+import { omit } from 'lodash';
 
-module.exports = React.createClass( {
+export default class FormTextInput extends PureComponent {
+	static propTypes = {
+		isError: PropTypes.bool,
+		isValid: PropTypes.bool,
+		selectOnFocus: PropTypes.bool,
+		className: PropTypes.string
+	};
 
-	displayName: 'FormTextInput',
+	constructor() {
+		super( ...arguments );
 
-	getDefaultProps: function() {
-		return {
-			isError: false,
-			isValid: false,
-			selectOnFocus: false,
-			type: 'text'
-		};
-	},
+		this.selectOnFocus = this.selectOnFocus.bind( this );
+	}
 
-	render: function() {
-		var otherProps = omit( this.props, [ 'className', 'type' ] ),
-			classes = classNames( {
-				'form-text-input': true,
-				'is-error': this.props.isError,
-				'is-valid': this.props.isValid
-			} );
+	focus() {
+		this.refs.textField.focus();
+	}
+
+	selectOnFocus( event ) {
+		if ( this.props.selectOnFocus ) {
+			event.target.select();
+		}
+	}
+
+	render() {
+		const props = omit( this.props, 'isError', 'isValid', 'selectOnFocus' );
+		const classes = classNames( 'form-text-input', this.props.className, {
+			'is-error': this.props.isError,
+			'is-valid': this.props.isValid
+		} );
 
 		return (
 			<input
-				{ ...otherProps }
-				type={ this.props.type }
-				className={ joinClasses( this.props.className, classes ) }
-				onClick={ this.props.selectOnFocus ? this.selectOnFocus : null }
-				/>
+				type="text"
+				{ ...props }
+				ref="textField"
+				className={ classes }
+				onClick={ this.selectOnFocus } />
 		);
-	},
-
-	selectOnFocus: function( event ) {
-		event.target.select();
 	}
-
-} );
+}

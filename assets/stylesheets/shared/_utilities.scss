@@ -21,6 +21,6 @@
 		text-decoration: none;
 		top: 5px;
 		width: auto;
-		z-index: 100000; // Above WP toolbar
+		z-index: z-index( 'screen-reader-text-parent', '.screen-reader-text:focus' ); // Above WP toolbar
 	}
 }

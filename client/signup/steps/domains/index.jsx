@@ -2,8 +2,10 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	defer = require( 'lodash/function/defer' ),
-	page = require( 'page' );
+	{ connect } = require( 'react-redux' ),
+	defer = require( 'lodash/defer' ),
+	page = require( 'page' ),
+	i18n = require( 'i18n-calypso' );
 
 /**
  * Internal dependencies
@@ -12,25 +14,29 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	productsList = require( 'lib/products-list' )(),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	SignupActions = require( 'lib/signup/actions' ),
-	MapDomain = require( 'components/domains/map-domain' ),
+	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	Notice = require( 'components/notice' ),
+	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
+	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
+	analyticsMixin = require( 'lib/mixins/analytics' ),
 	signupUtils = require( 'signup/utils' );
 
-module.exports = React.createClass( {
-	displayName: 'DomainsStep',
+const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
+	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
 
-	basePath: function() {
-		return signupUtils.getStepUrl( this.props.flowName, this.props.stepName, this.props.locale );
-	},
-
+const DomainsStep = React.createClass( {
 	showGoogleApps: function() {
-		page( this.basePath() + '/google' );
+		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'google', this.props.locale ) );
 	},
 
 	showDomainSearch: function() {
-		page( this.basePath() );
+		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
+	},
+
+	getMapDomainUrl: function() {
+		return signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'mapping', this.props.locale );
 	},
 
 	getInitialState: function() {
@@ -55,6 +61,8 @@ module.exports = React.createClass( {
 			suggestion
 		};
 
+		registerDomainAnalytics.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'signup' );
+
 		if ( this.props.step.suggestion &&
 			this.props.step.suggestion.domain_name !== suggestion.domain_name ) {
 			// overwrite the Google Apps data if the user goes back and selects a different domain
@@ -75,20 +83,46 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	isPurchasingTheme: function() {
+		return this.props.queryObject && this.props.queryObject.premium;
+	},
+
+	getThemeSlug: function() {
+		return this.props.queryObject ? this.props.queryObject.theme : undefined;
+	},
+
+	getThemeArgs: function() {
+		const themeSlug = this.getThemeSlug(),
+			themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug ),
+			themeItem = this.isPurchasingTheme()
+			? cartItems.themeItem( themeSlug, 'signup-with-theme' )
+			: undefined;
+
+		return { themeSlug, themeSlugWithRepo, themeItem };
+	},
+
+	getThemeSlugWithRepo: function( themeSlug ) {
+		if ( ! themeSlug ) {
+			return undefined;
+		}
+		const repo = this.isPurchasingTheme() ? 'premium' : 'pub';
+		return `${repo}/${themeSlug}`;
+	},
+
 	submitWithDomain: function( googleAppsCartItem ) {
 		const suggestion = this.props.step.suggestion,
 			isPurchasingItem = Boolean( suggestion.product_slug ),
-			siteUrl = isPurchasingItem ?
-				suggestion.domain_name :
-				suggestion.domain_name.replace( '.wordpress.com', '' ),
-			domainItem = isPurchasingItem ?
-				cartItems.domainRegistration( {
+			siteUrl = isPurchasingItem
+				? suggestion.domain_name
+				: suggestion.domain_name.replace( '.wordpress.com', '' ),
+			domainItem = isPurchasingItem
+				? cartItems.domainRegistration( {
 					domain: suggestion.domain_name,
 					productSlug: suggestion.product_slug
-				} ) :
-				undefined;
+				} )
+				: undefined;
 
-		SignupActions.submitSignupStep( {
+		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain' ),
 			stepName: this.props.stepName,
 			domainItem,
@@ -96,23 +130,26 @@ module.exports = React.createClass( {
 			isPurchasingItem,
 			siteUrl,
 			stepSectionName: this.props.stepSectionName
-		}, [], { domainItem } );
+		}, this.getThemeArgs() ), [], { domainItem } );
 
 		this.props.goToNextStep();
 	},
 
 	handleAddMapping: function( sectionName, domain, state ) {
 		const domainItem = cartItems.domainMapping( { domain } );
+		const isPurchasingItem = true;
 
-		SignupActions.submitSignupStep( {
+		mapDomainAnalytics.recordEvent( 'addDomainButtonClick', domain, 'signup' );
+
+		SignupActions.submitSignupStep( Object.assign( {
 			processingMessage: this.translate( 'Adding your domain mapping' ),
 			stepName: this.props.stepName,
 			[ sectionName ]: state,
 			domainItem,
-			isPurchasingItem: true,
+			isPurchasingItem,
 			siteUrl: domain,
 			stepSectionName: this.props.stepSectionName
-		} );
+		}, this.getThemeArgs() ) );
 
 		this.props.goToNextStep();
 	},
@@ -150,29 +187,35 @@ module.exports = React.createClass( {
 				initialState={ initialState }
 				onAddDomain={ this.handleAddDomain }
 				products={ this.state.products }
-				buttonLabel={ this.translate( 'Select' ) }
 				basePath={ this.props.path }
+				mapDomainUrl={ this.getMapDomainUrl() }
 				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
 				onSave={ this.handleSave.bind( this, 'domainForm' ) }
 				offerMappingOption
 				analyticsSection="signup"
+				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 				includeWordPressDotCom
-				showExampleSuggestions />
+				isSignupStep
+				showExampleSuggestions
+				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
 		);
 	},
 
 	mappingForm: function() {
-		const initialState = this.props.step ? this.props.step.mappingForm : undefined;
+		const initialState = this.props.step ? this.props.step.mappingForm : undefined,
+			initialQuery = this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
 
 		return (
 			<div className="domains-step__section-wrapper">
-				<MapDomain
+				<MapDomainStep
 					initialState={ initialState }
 					path={ this.props.path }
-					onAddDomain={ this.handleAddDomain }
-					onAddMapping={ this.handleAddMapping.bind( this, 'mappingForm' ) }
+					onRegisterDomain={ this.handleAddDomain }
+					onMapDomain={ this.handleAddMapping.bind( this, 'mappingForm' ) }
 					onSave={ this.handleSave.bind( this, 'mappingForm' ) }
-					productsList={ productsList }
+					products={ productsList.get() }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					initialQuery={ initialQuery }
 					analyticsSection="signup" />
 			</div>
 		);
@@ -180,9 +223,9 @@ module.exports = React.createClass( {
 
 	render: function() {
 		let content;
-		const backUrl = this.props.stepSectionName ?
-			signupUtils.getStepUrl( this.props.flowName, this.props.stepName ) :
-			undefined;
+		const backUrl = this.props.stepSectionName
+			? signupUtils.getStepUrl( this.props.flowName, this.props.stepName, undefined, i18n.getLocaleSlug() )
+			: undefined;
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();
@@ -199,9 +242,9 @@ module.exports = React.createClass( {
 		if ( this.props.step && 'invalid' === this.props.step.status ) {
 			content = (
 				<div className="domains-step__section-wrapper">
-					<SimpleNotice status='is-error' showDismiss={ false }>
+					<Notice status="is-error" showDismiss={ false }>
 						{ this.props.step.errors.message }
-					</SimpleNotice>
+					</Notice>
 					{ content }
 				</div>
 			);
@@ -221,3 +264,10 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+module.exports = connect( ( state ) => {
+	return {
+		// no user = DOMAINS_WITH_PLANS_ONLY
+		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true
+	};
+} ) ( DomainsStep );

@@ -1,0 +1,35 @@
+.active-tests {
+	display: none;
+}
+
+.environment-badge .environment.is-tests a.test-helper__variation {
+	font-weight: normal;
+	cursor: pointer;
+	text-transform: initial;
+
+	&.test-helper__current-variation {
+		text-decoration: underline;
+		color: $orange-jazzy;
+	}
+}
+
+.test-helper__test-header {
+	text-transform: initial;
+	margin-top: 5px;
+	font-weight: bolder;
+}
+
+.environment.is-tests:hover .active-tests.card {
+	display: block;
+	max-height: 80vh;
+	overflow-y: scroll;
+	position: absolute;
+		bottom: 0;
+		right: 100%;
+	margin: 0;
+	font-size: 11px;
+}
+
+.test-helper__list {
+	margin: 5px 0 8px 20px;
+}

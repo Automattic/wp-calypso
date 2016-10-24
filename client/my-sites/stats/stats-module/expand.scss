@@ -1,0 +1,49 @@
+.stats-module__expand {
+	line-height: 40px;
+	display: block;
+
+	@include breakpoint( "<480px" ) {
+		line-height: 48px;
+	}
+
+	.stats-module.is-loading &,
+	.stats-module.has-no-data & {
+		display: none;
+	}
+
+	a {
+		@extend %mobile-link-element;
+		border-top: 1px solid $gray-light;
+		display: block;
+		font-size: 14px;
+		padding: 0 24px;
+		position: relative;
+
+		// Hover state
+		@include breakpoint( ">480px" ) {
+			&:hover {
+				background: $gray-light;
+				border-top-color: $white;
+			}
+		}
+
+		// Focus state
+		&:focus {
+			background: $gray-light;
+			border-top-color: $white;
+		}
+
+		@include breakpoint( ">960px" ) {
+			.stats__module-list & {
+				font-size: 12px;
+			}
+		}
+	}
+}
+
+.stats-module__expand-right {
+	color: $gray;
+	position: absolute;
+		right: 24px;
+		top: 0;
+}

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import tinymce from 'tinymce/tinymce';
-import throttle from 'lodash/function/throttle';
+import throttle from 'lodash/throttle';
 
 function touchScrollToolbar( editor ) {
 	/**

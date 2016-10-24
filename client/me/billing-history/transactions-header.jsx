@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	uniq = require( 'lodash/array/uniq' ),
-	pluck = require( 'lodash/collection/pluck' ),
-	range = require( 'lodash/utility/range' ),
+var React = require( 'react' ),
+	uniq = require( 'lodash/uniq' ),
+	map = require( 'lodash/map' ),
+	range = require( 'lodash/range' ),
 	closest = require( 'component-closest' ),
-	last = require( 'lodash/array/last' ),
+	last = require( 'lodash/last' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -14,6 +14,8 @@ var React = require( 'react/addons' ),
  */
 var tableRows = require( './table-rows' ),
 	eventRecorder = require( 'me/event-recorder' );
+
+import Gridicon from 'components/gridicon';
 
 module.exports = React.createClass( {
 	displayName: 'TransactionsHeader',
@@ -50,32 +52,13 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 			<thead>
-				<tr className="header-row">
-					<th className="date header-column">{ this.renderDatePopover() }</th>
-					<th className="trans-app header-column">{ this.renderAppsPopover() }</th>
-					<th className="search-field header-column">
-						<div className="thead-wrap">
-							<form className="search-form" onSubmit={ this.preventEnterKeySubmission }>
-								<input
-									className="search_terms"
-									type="search"
-									placeholder={ this.translate( 'Search…', { textOnly: true } ) }
-									onChange={ this.handleNewSearch }
-									onFocus={ this.recordFocusEvent( 'Billing History Search Field' ) }
-									value={ this.state.searchValue } />
-							</form>
-							<div className="noticon noticon-close-alt reset-search"></div>
-						</div>
-					</th>
+				<tr className="billing-history__header-row">
+					<th className="billing-history__date billing-history__header-column">{ this.renderDatePopover() }</th>
+					<th className="billing-history__trans-app billing-history__header-column">{ this.renderAppsPopover() }</th>
+					<th className="billing-history__search-field billing-history__header-column" />
 				</tr>
 			</thead>
 		);
-	},
-
-	handleNewSearch: function( event ) {
-		var newSearch = event.target.value;
-		this.setState( { searchValue: newSearch } );
-		this.setFilter( { search: newSearch } );
 	},
 
 	setFilter: function( filter ) {
@@ -86,9 +69,8 @@ module.exports = React.createClass( {
 	renderDatePopover: function() {
 		var isVisible = ( 'date' === this.state.activePopover ),
 			classes = classNames( {
-				'thead-wrap': true,
 				'filter-popover': true,
-				popped: isVisible
+				'is-popped': isVisible
 			} ),
 			previousMonths = range( 6 ).map( function( n ) {
 				return this.moment().subtract( n, 'months' );
@@ -106,19 +88,20 @@ module.exports = React.createClass( {
 			}, this );
 
 		return (
-			<div className={classes}>
+			<div className={ classes }>
 				<strong
 					className="filter-popover-toggle date-toggle"
 					onClick={ this.recordClickEvent( 'Toggle Date Popover in Billing History', this.togglePopover.bind( this, 'date' ) ) }
 				>
-					{this.translate( 'Date' )}
+					{ this.translate( 'Date' ) }
+					<Gridicon icon="chevron-down" size={ 18 } />
 				</strong>
 				<div className="filter-popover-content datepicker">
 					<div className="overflow">
 						<table>
 							<thead>
 								<tr>
-									<th colSpan="2">{this.translate( 'Recent Transactions' )}</th>
+									<th colSpan="2">{ this.translate( 'Recent Transactions' ) }</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -200,20 +183,20 @@ module.exports = React.createClass( {
 	renderAppsPopover: function() {
 		var isVisible = ( 'apps' === this.state.activePopover ),
 			classes = classNames( {
-				'thead-wrap': true,
 				'filter-popover': true,
-				popped: isVisible
+				'is-popped': isVisible
 			} ),
 			appPickers = this.getApps().map( function( app ) {
 				return this.renderAppPicker( app, app, 'Specific App' );
 			}, this );
 
 		return (
-			<div className={classes}>
+			<div className={ classes }>
 				<strong
 					className="filter-popover-toggle app-toggle"
 					onClick={ this.recordClickEvent( 'Toggle Apps Popover in Billing History', this.togglePopover.bind( this, 'apps' ) ) }>
 					{ this.translate( 'All Apps' ) }
+					<Gridicon icon="chevron-down" size={ 18 } />
 				</strong>
 				<div className="filter-popover-content app-list">
 					<table>
@@ -234,7 +217,7 @@ module.exports = React.createClass( {
 	},
 
 	getApps: function() {
-		return uniq( pluck( this.props.transactions, 'service' ) );
+		return uniq( map( this.props.transactions, 'service' ) );
 	},
 
 	renderAppPicker: function( title, app, analyticsEvent ) {

@@ -2,15 +2,15 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	classnames = require( 'classnames' ),
+	i18n = require( 'i18n-calypso' ),
 	debug = require( 'debug' )( 'calypso:vip:logs' );
 
 /**
  * Internal dependencies
  */
 var Card = require( 'components/card' ),
-	i18n = require( 'lib/mixins/i18n' ),
 	SectionHeader = require( 'components/section-header' );
 
 module.exports = React.createClass( {
@@ -67,10 +67,10 @@ module.exports = React.createClass( {
 			}
 
 			return (
-				<tr key={ i } className={ joinClasses( 'vip-logs__log', 'vip-logs__log-' + log.type ) }>
+				<tr key={ i } className={ classnames( 'vip-logs__log', 'vip-logs__log-' + log.type ) }>
 					<td className="vip-logs__date"> { this.formatDate( log.timestamp ) }</td>
 					<td className="vip-logs__log">
-						<span className={ joinClasses( 'vip-logs__log-prefix', 'vip-logs__log-prefix-' + log.type ) }>{ prefix }</span>
+						<span className={ classnames( 'vip-logs__log-prefix', 'vip-logs__log-prefix-' + log.type ) }>{ prefix }</span>
 						{ log.log }
 					</td>
 				</tr>

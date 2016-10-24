@@ -25,7 +25,7 @@ button {
 	margin: 0;
 	outline: 0;
 	overflow: hidden;
-	font-weight: 600;
+	font-weight: 500;
 	text-overflow: ellipsis;
 	text-decoration: none;
 	vertical-align: top;
@@ -76,6 +76,18 @@ button {
 			top: 4px;
 			margin-top: -8px;
 		}
+		// Make the left margin of the small plus icon visually less huge
+		.gridicons-plus-small {
+			margin-left: -4px;
+		}
+		// Reset the left margin if the button contains only the plus icon
+		.gridicons-plus-small:last-of-type {
+			margin-left: 0;
+		}
+		// Make plus icon nudged closer to adjacent icons for add-people and add-plugin type buttons
+		.gridicons-plus-small + .gridicon {
+			margin-left: -4px;
+		}
 	}
 	&.hidden {
 		display: none;
@@ -92,7 +104,7 @@ button {
 // Primary buttons
 .button.is-primary {
 	background: $blue-medium;
-	border-color: $blue-wordpress;
+	border-color: darken( $blue-medium, 8% );
 	color: $white;
 
 	&:hover,
@@ -100,7 +112,8 @@ button {
 		border-color: $blue-dark;
 		color: $white;
 	}
-	&[disabled] {
+	&[disabled],
+	&:disabled {
 		background: tint( $blue-light, 50% );
 		border-color: tint( $blue-wordpress, 55% );
 		color: $white;
@@ -111,13 +124,9 @@ button {
 }
 
 // Scary buttons
-.button.is-scary,
-.button.is-dangerous {
+.button.is-scary {
 	color: $alert-red;
 
-	&[disabled] {
-		color: lighten( $alert-red, 30% );
-	}
 	&:hover,
 	&:focus {
 		border-color: $alert-red;
@@ -125,28 +134,127 @@ button {
 	&:focus {
 		box-shadow: 0 0 0 2px lighten( $alert-red, 20% );
 	}
+	&[disabled],
+	&:disabled {
+		color: lighten( $alert-red, 30% );
+		border-color: lighten( $gray, 30% );
+	}
 }
 
-.button.is-primary.is-scary,
-.button.is-destructive {
+.button.is-primary.is-scary {
 	background: $alert-red;
 	border-color: darken( $alert-red, 20% );
 	color: $white;
 
 	&:hover,
 	&:focus {
-		border-color: darken( $alert-red, 30% );
+		border-color: darken( $alert-red, 40% );
 	}
-	&[disabled] {
+	&[disabled],
+	&:disabled {
 		background: lighten( $alert-red, 20% );
 		border-color: tint( $alert-red, 30% );
 	}
 }
 
+.button.is-borderless {
+	border: none;
+	background: none;
+	color: darken( $gray, 10% );
+	padding-left: 0;
+	padding-right: 0;
+	border-radius: 0;
+
+	&:hover,
+	&:focus {
+		box-shadow: none;
+		color: $gray-dark;
+	}
+
+	.gridicon {
+		width: 24px;
+		height: 24px;
+		top: 6px;
+	}
+
+	&[disabled],
+	&:disabled {
+		color: lighten( $gray, 30% );
+		cursor: default;
+
+		&:active {
+			border-width: 0;
+		}
+	}
+	&.is-scary {
+		color: $alert-red;
+
+		&:hover,
+		&:focus {
+			color: darken( $alert-red, 20% );
+		}
+
+		&[disabled] {
+			color: lighten( $alert-red, 30% );
+		}
+	}
+
+	&.is-compact {
+		.gridicon {
+			width: 18px;
+			height: 18px;
+			top: 5px;
+		}
+
+		//arrows sit 1px low in their svg bounding box, need a nudge
+		.gridicons-arrow-left {
+			top: 4px;
+			margin-right: 4px;
+		}
+
+		.gridicons-arrow-right {
+			top: 4px;
+			margin-left: 4px;
+		}
+	}
+}
+
+// ==========================================================================
+// Resets
+// ==========================================================================
+
+// Turn Reset 'buttons' into regular text links
+.layout__content input {
+	&[type=reset],
+	&[type=reset]:hover,
+	&[type=reset]:active,
+	&[type=reset]:focus {
+		background: 0 0;
+		border: 0;
+		padding: 0 2px 1px;
+		width: auto;
+		box-shadow: none;
+	}
+}
+
+// Buttons within sentences sit on the text baseline.
+.layout__content p .button {
+	vertical-align: baseline
+}
+
+// Firefox Junk
+.layout__content button::-moz-focus-inner,
+.layout__content input[type=reset]::-moz-focus-inner,
+.layout__content input[type=button]::-moz-focus-inner,
+.layout__content input[type=submit]::-moz-focus-inner {
+	border-width: 1px 0;
+	border-style: solid none;
+	border-color: transparent;
+	padding: 0
+}
+
 // ==========================================================================
 // Deprecated styles
-//
-// `button.is-destructive` and ``.button.is-dangerous` are also deprecated
 // ==========================================================================
 
 .button.is-link {
@@ -179,38 +287,4 @@ button {
 		font-style: normal;
 		font-weight: normal;
 	}
-}
-
-// ==========================================================================
-// Resets
-// ==========================================================================
-
-// Turn Reset 'buttons' into regular text links
-.wp-content input {
-	&[type=reset],
-	&[type=reset]:hover,
-	&[type=reset]:active,
-	&[type=reset]:focus {
-		background: 0 0;
-		border: 0;
-		padding: 0 2px 1px;
-		width: auto;
-		box-shadow: none;
-	}
-}
-
-// Buttons within sentences sit on the text baseline.
-.wp-content p .button {
-	vertical-align: baseline
-}
-
-// Firefox Junk
-.wp-content button::-moz-focus-inner,
-.wp-content input[type=reset]::-moz-focus-inner,
-.wp-content input[type=button]::-moz-focus-inner,
-.wp-content input[type=submit]::-moz-focus-inner {
-	border-width: 1px 0;
-	border-style: solid none;
-	border-color: transparent;
-	padding: 0
 }

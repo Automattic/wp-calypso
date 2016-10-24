@@ -10,10 +10,10 @@ import resize from 'lib/resize-image-url';
 const REGEXP_ORIGINAL_IMG = /(<img[^>]*?\ssrc=")([^"]*?)("[^>]*?\/?>)/ig;
 const REGEXP_REPLACED_IMG = /(<img[^>]*?\ssrc=")([^"]*?)("[^>]*?)(\sdata-wpmedia-src="([^"]*?)")([^>]*?\/?>)/ig;
 const MEDIA_RETINA = '( -webkit-min-device-pixel-ratio: 1.5 ), ( min--moz-device-pixel-ratio: 1.5 ), ( min-resolution: 1.5dppx )';
-const BASE_MAX_WIDTH = 559;
+const BASE_MAX_WIDTH = 680;
 const MAX_WIDTH = getMaxWidth();
 
-function getMaxWidth() {
+export function getMaxWidth() {
 	if ( isFinite( window.devicePixelRatio ) ) {
 		return Math.round( BASE_MAX_WIDTH * window.devicePixelRatio );
 	}
@@ -43,11 +43,11 @@ function setImageSrc( img, opening, src, closing ) {
 	return `${ opening }${ url }" data-wpmedia-src="${ parsed.media.URL }${ closing }`;
 }
 
-function resetImages( content ) {
+export function resetImages( content ) {
 	return content.replace( REGEXP_REPLACED_IMG, resetImageSrc );
 }
 
-function setImages( content ) {
+export function setImages( content ) {
 	return content.replace( REGEXP_ORIGINAL_IMG, setImageSrc );
 }
 

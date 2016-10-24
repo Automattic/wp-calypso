@@ -1,48 +1,87 @@
 /**
- * External depe;ndencies
+ * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+
 /**
  * Internal dependencies
  */
-var ProgressBar = require( 'components/progress-bar' ),
-	analytics = require( 'analytics' );
+import ProgressBar from 'components/progress-bar';
+import Rating from 'components/rating';
+import analytics from 'lib/analytics';
 
-/**
- * Constants
- */
-const REVIEW_URL = 'https://wordpress.org/support/view/plugin-reviews/';
+export default React.createClass( {
+	displayName: 'PluginRatings',
 
-module.exports = React.createClass( {
+	propTypes: {
+		rating: React.PropTypes.number,
+		ratings: React.PropTypes.object,
+		downloaded: React.PropTypes.number,
+		slug: React.PropTypes.string,
+		numRatings: React.PropTypes.number
+	},
 
 	ratingTiers: [ 5, 4, 3, 2, 1 ],
 
-	displayName: 'PluginRatings',
-
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return { barWidth: 88 };
 	},
 
-	renderRatingTier: function( ratingTier ) {
-		var amountOfRatings = ( this.props.plugin.ratings && this.props.plugin.ratings[ ratingTier ] ) ? this.props.plugin.ratings[ ratingTier ] : 0;
-		return (
-			<div className="plugin-ratings__rating-tier" key={ 'plugins-ratings__tier-' + ratingTier }>
-				<a className="plugin-ratings__rating-container" target="_blank"
-					onClick={ analytics.ga.recordEvent.bind( this, 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', this.props.pluginSlug ) }
-					href={ REVIEW_URL + this.props.plugin.slug }>
-					<span className="plugin-ratings__rating-tier-text"> { this.translate( '%(ratingTier)s stars', { args: { ratingTier: ratingTier } } ) } </span>
-					<span className="plugin_ratings__bar">
-						<ProgressBar value={ amountOfRatings }
-									total={ this.props.plugin.num_ratings }
-									title={ this.translate( '%(numberOfRatings)s ratings', { args: { numberOfRatings: amountOfRatings } } ) } />
-					</span>
-				</a>
+	buildReviewUrl( ratingTier ) {
+		const { slug } = this.props;
+		return `https://wordpress.org/support/plugin/${ slug }/reviews/?filter=${ ratingTier }`;
+	},
+
+	renderPlaceholder() {
+		return ( // eslint-disable-next-line
+			<div className="plugin-ratings is-placeholder">
+				<div className="plugin-ratings__rating-stars">
+					<Rating rating={ 0 } />
+				</div>
+				<div className="plugin-ratings__rating-text">{ this.translate( 'Based on' ) }</div>
 			</div>
 		);
 	},
 
-	renderDownloaded: function() {
-		var downloaded = this.props.plugin.downloaded;
+	renderRatingTier( ratingTier ) {
+		const { ratings, slug, numRatings } = this.props;
+		const numberOfRatings = ( ratings && ratings[ ratingTier ] ) ? ratings[ ratingTier ] : 0;
+		const onClickPluginRatingsLink = () => {
+			analytics.ga.recordEvent( 'Plugins', 'Clicked Plugin Ratings Link', 'Plugin Name', slug );
+		};
+
+		return (
+			<a
+				className="plugin-ratings__rating-container"
+				key={ `plugins-ratings__tier-${ ratingTier }` }
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ onClickPluginRatingsLink }
+				href={ this.buildReviewUrl( ratingTier ) }
+			>
+				<span className="plugin-ratings__rating-tier-text">
+					{
+						this.translate(
+							'%(ratingTier)s star', '%(ratingTier)s stars', {
+								count: ratingTier,
+								args: { ratingTier: ratingTier }
+							}
+						)
+					}
+				</span>
+				<span className="plugin-ratings__bar">
+					<ProgressBar
+						value={ numberOfRatings }
+						total={ numRatings }
+						title={ this.translate( '%(numberOfRatings)s ratings', { args: { numberOfRatings } } ) }
+					/>
+				</span>
+			</a>
+		);
+	},
+
+	renderDownloaded() {
+		let downloaded = this.props.downloaded;
 		if ( downloaded > 100000 ) {
 			downloaded = this.numberFormat( Math.floor( downloaded / 10000 ) * 10000 ) + '+';
 		} else if ( downloaded > 10000 ) {
@@ -51,21 +90,43 @@ module.exports = React.createClass( {
 			downloaded = this.numberFormat( downloaded );
 		}
 
-		return <div className="plugin-ratings__downloads"> { this.translate( '%(installs)s downloads', { args: { installs: downloaded } } ) } </div>;
+		return (
+			<div className="plugin-ratings__downloads">
+				{
+					this.translate( '%(installs)s downloads', {
+						args: { installs: downloaded }
+					} )
+				}
+			</div>
+		);
 	},
 
-	render: function() {
-		var tierViews;
-		if ( ! this.props.plugin.ratings ) {
+	render() {
+		const { placeholder, ratings, rating, numRatings } = this.props;
+
+		if ( placeholder ) {
+			return this.renderPlaceholder();
+		}
+
+		if ( ! ratings ) {
 			return null;
 		}
 
-		tierViews = this.ratingTiers.map( function( tierLevel ) {
-			return this.renderRatingTier( tierLevel );
-		}, this );
+		const tierViews = this.ratingTiers.map( tierLevel => this.renderRatingTier( tierLevel ) );
 		return (
 			<div className="plugin-ratings">
-				{ tierViews }
+				<div className="plugin-ratings__rating-stars">
+					<Rating rating={ rating } />
+				</div>
+				<div className="plugin-ratings__rating-text">
+					{ this.translate( 'Based on %(ratingsNumber)s rating', 'Based on %(ratingsNumber)s ratings', {
+						count: numRatings,
+						args: { ratingsNumber: numRatings }
+					} ) }
+				</div>
+				<div className="plugin-ratings__rating-tiers">
+					{ tierViews }
+				</div>
 				{ this.renderDownloaded() }
 			</div>
 		);

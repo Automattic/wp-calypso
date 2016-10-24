@@ -2,6 +2,7 @@
  * External Dependencies
  */
 var React = require( 'react' ),
+	i18n = require( 'i18n-calypso' ),
 	page = require( 'page' );
 
 /**
@@ -9,11 +10,12 @@ var React = require( 'react' ),
  */
 var sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	titlecase = require( 'to-title-case' ),
 	AdsUtils = require( 'lib/ads/utils' ),
-	titleActions = require( 'lib/screen-title/actions' );
+	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
+	utils = require( 'lib/site/utils' );
+import { renderWithReduxStore } from 'lib/react-helpers';
 
 function _recordPageView( context, analyticsPageTitle ) {
 	var basePath = route.sectionify( context.path );
@@ -25,11 +27,12 @@ function _recordPageView( context, analyticsPageTitle ) {
 }
 
 function _getLayoutTitle( context ) {
+	var title = sites.getSelectedSite().jetpack ? 'AdControl' : 'WordAds';
 	switch ( context.params.section ) {
 		case 'earnings':
-			return i18n.translate( '%(wordads)s Earnings', { args: { wordads: 'WordAds' } } );
+			return i18n.translate( '%(wordads)s Earnings', { args: { wordads: title } } );
 		case 'settings':
-			return i18n.translate( '%(wordads)s Settings', { args: { wordads: 'WordAds' } } );
+			return i18n.translate( '%(wordads)s Settings', { args: { wordads: title } } );
 	}
 }
 
@@ -46,9 +49,9 @@ module.exports = {
 			layoutTitle = _getLayoutTitle( context ),
 			site = sites.getSelectedSite();
 
-		titleActions.setTitle( layoutTitle, { siteID: context.params.site_id } );
+		context.store.dispatch( setTitle( layoutTitle ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-		if ( ! site.user_can_manage ) {
+		if ( ! utils.userCan( 'manage_options', site ) ) {
 			page.redirect( '/stats' + pathSuffix );
 			return;
 		}
@@ -60,13 +63,19 @@ module.exports = {
 
 		_recordPageView( context, layoutTitle );
 
-		React.render(
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+
+		renderWithReduxStore(
 			React.createElement( Ads, {
 				site: site,
 				section: context.params.section,
 				path: context.path,
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	}
 };

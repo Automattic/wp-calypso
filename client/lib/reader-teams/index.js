@@ -4,8 +4,8 @@
 
 // External Dependencies
 var Dispatcher = require( 'dispatcher' ),
-	some = require( 'lodash/collection/some' ),
-	assign = require( 'lodash/object/assign' ),
+	some = require( 'lodash/some' ),
+	assign = require( 'lodash/assign' ),
 	config = require( 'config' );
 
 // Internal Dependencies

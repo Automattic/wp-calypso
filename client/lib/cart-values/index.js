@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	extend = require( 'lodash/object/extend' );
+var update = require( 'react-addons-update' ),
+	i18n = require( 'i18n-calypso' ),
+	extend = require( 'lodash/extend' ),
+	config = require( 'config' );
 
 /**
  * Internal dependencies
@@ -11,17 +12,41 @@ var React = require( 'react/addons' ),
 var cartItems = require( './cart-items' ),
 	productsValues = require( 'lib/products-values' );
 
-function emptyCart( siteID ) {
-	return { blog_id: siteID, products: [] };
+/**
+ * Create a new empty cart.
+ *
+ * A cart has at least a `blog_id` and an empty list of `products`
+ * We can give additional attributes and build new types of empty carts.
+ * For instance you may want to create a temporary this way:
+ * `emptyCart( 123456, { temporary: true } )`
+ *
+ * @param {int} [siteId] The Site Id the cart will be associated with
+ * @param {Object} [attributes] Additional attributes for the cart (optional)
+ * @returns {cart} [emptyCart] The new empty cart created
+ */
+function emptyCart( siteId, attributes ) {
+	return Object.assign( { blog_id: siteId, products: [] }, attributes );
 }
 
 function applyCoupon( coupon ) {
 	return function( cart ) {
-		return React.addons.update( cart, {
+		return update( cart, {
 			coupon: { $set: coupon },
 			is_coupon_applied: { $set: false }
 		} );
 	};
+}
+
+function canRemoveFromCart( cart, cartItem ) {
+	if ( productsValues.isCredits( cartItem ) ) {
+		return false;
+	}
+
+	if ( cartItems.hasRenewalItem( cart ) && productsValues.isPrivateRegistration( cartItem ) ) {
+		return false;
+	}
+
+	return true;
 }
 
 /**
@@ -66,7 +91,7 @@ function isFree( cart ) {
 }
 
 function fillInAllCartItemAttributes( cart, products ) {
-	return React.addons.update( cart, {
+	return update( cart, {
 		products: {
 			$apply: function( items ) {
 				return items.map( function( cartItem ) {
@@ -106,14 +131,26 @@ function getRefundPolicy( cart ) {
 	return 'genericRefund';
 }
 
+function isCreditCardPaymentsEnabled( cart ) {
+	return cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_MoneyPress_Paygate' ) >= 0;
+}
+
+function isPayPalExpressEnabled( cart ) {
+	return config.isEnabled( 'upgrades/paypal' ) &&
+			0 <= cart.allowed_payment_methods.indexOf( 'WPCOM_Billing_PayPal_Express' );
+}
+
 module.exports = {
-	emptyCart: emptyCart,
-	applyCoupon: applyCoupon,
-	getNewMessages: getNewMessages,
-	cartItems: cartItems,
-	isPaidForFullyInCredits: isPaidForFullyInCredits,
-	isFree: isFree,
-	fillInAllCartItemAttributes: fillInAllCartItemAttributes,
-	fillInSingleCartItemAttributes: fillInSingleCartItemAttributes,
-	getRefundPolicy: getRefundPolicy
+	applyCoupon,
+	canRemoveFromCart,
+	cartItems,
+	emptyCart,
+	fillInAllCartItemAttributes,
+	fillInSingleCartItemAttributes,
+	getNewMessages,
+	getRefundPolicy,
+	isFree,
+	isPaidForFullyInCredits,
+	isPayPalExpressEnabled,
+	isCreditCardPaymentsEnabled
 };

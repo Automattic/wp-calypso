@@ -2,10 +2,10 @@
  * External dependencies
  */
 var assert = require( 'assert' ),
-	extend = require( 'lodash/object/assign' ),
-	mapValues = require( 'lodash/object/mapValues' ),
-	constant = require( 'lodash/utility/constant' ),
-	zipObject = require( 'lodash/array/zipObject' );
+	assign = require( 'lodash/assign' ),
+	mapValues = require( 'lodash/mapValues' ),
+	constant = require( 'lodash/constant' ),
+	zipObject = require( 'lodash/zipObject' );
 
 /**
  * Internal dependencies
@@ -45,11 +45,11 @@ function testController( options ) {
 		debounceWait: 0
 	};
 
-	return formState.Controller( extend( defaults, options ) );
+	return formState.Controller( assign( defaults, options ) );
 }
 
-describe( 'form', function() {
-	describe( 'Controller', function() {
+describe( 'index', function() {
+	describe( '#Controller', function() {
 		describe( '#getInitialState', function() {
 			it( 'returns disabled fields', function() {
 				var controller = testController( { fieldNames: [ 'firstName' ] } ),
@@ -60,15 +60,14 @@ describe( 'form', function() {
 		} );
 
 		it( 'enables the fields on the first event', function( done ) {
-			var onNewState,
-				controller;
+			var onNewState;
 
 			onNewState = checkNthState( 0, function( state ) {
 				assert.strictEqual( formState.isFieldDisabled( state, 'firstName' ), false );
 				done();
 			} );
 
-			controller = testController( {
+			testController( {
 				fieldNames: [ 'firstName' ],
 				onNewState: onNewState
 			} );

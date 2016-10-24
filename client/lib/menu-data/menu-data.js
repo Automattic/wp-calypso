@@ -1,41 +1,54 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:menu-data' ),
-	assign = require( 'lodash/object/assign' ),
-	omit = require( 'lodash/object/omit' ),
-	without = require( 'lodash/array/without' ),
-	contains = require( 'lodash/collection/contains' ),
-	find = require( 'lodash/collection/find' ),
-	cloneDeep = require( 'lodash/lang/cloneDeep' ),
-	findIndex = require( 'lodash/array/findIndex' ),
-	createCallback = require( 'lodash/utility/callback' );
+import debugFactory from 'debug';
+import assign from 'lodash/assign';
+import omit from 'lodash/omit';
+import without from 'lodash/without';
+import includes from 'lodash/includes';
+import find from 'lodash/find';
+import cloneDeep from 'lodash/cloneDeep';
+import cloneDeepWith from 'lodash/cloneDeepWith';
+import findIndex from 'lodash/findIndex';
+import iteratee from 'lodash/iteratee';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ),
-	Emitter = require( 'lib/mixins/emitter' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	sites = require( 'lib/sites-list' )(),
-	untrailingslashit = require ( 'lib/route/untrailingslashit' ),
-	trailingslashit = require( 'lib/route/trailingslashit' ),
-	isFrontPage = require( 'my-sites/pages/helpers' ).isFrontPage,
-	Traverser = require ( 'lib/tree-convert/tree-traverser' ),
-	decodeEntities = require( 'lib/formatting' ).decodeEntities;
+import wpcom from 'lib/wp';
+import Emitter from 'lib/mixins/emitter';
+import sitesFactory from 'lib/sites-list';
+import untrailingslashit from 'lib/route/untrailingslashit';
+import trailingslashit from 'lib/route/trailingslashit';
+import { isFrontPage } from 'my-sites/pages/helpers';
+import Traverser from 'lib/tree-convert/tree-traverser';
+import TreeConvert from 'lib/tree-convert';
+import { makePromiseSequence } from 'lib/promises';
+import { decodeEntities } from 'lib/formatting';
+import postEditStore from 'lib/posts/actions';
+
+const debug = debugFactory( 'calypso:menu-data' );
+const sites = sitesFactory();
+const treeConvert = new TreeConvert();
 
 /**
  * Constants
  */
 var DEFAULT_MENU_ID = 0;
 var HOMEPAGE_MENU_ITEM_ID = -99;
+var NEWPAGE_MENU_ITEM_ID = -100;
+
+export function isInjectedNewPageItem( content ) {
+	return content.content_id === NEWPAGE_MENU_ITEM_ID;
+}
 
 /**
  * MenuData component
  *
  * @api public
  */
-function MenuData() {
+export default function MenuData() {
 	this.data = {};
 	this.idCounter = 1;
 	this.hasContentsChanged = false;
@@ -49,18 +62,35 @@ function MenuData() {
  */
 Emitter( MenuData.prototype );
 
-/** Generates a home page menu item
+/**
+ * Generates a home page menu item
  * This is used to inject home page item into pages list
+ *
+ * @param {String} pageNameSuffix - page name suffix
+ * @return {Object} object menu builder
  */
-MenuData.prototype.generateHomePageMenuItem = function ( pageNameSuffix ) {
-	return  {
+MenuData.prototype.generateHomePageMenuItem = function( pageNameSuffix ) {
+	return {
 		ID: HOMEPAGE_MENU_ITEM_ID,
 		content_id: HOMEPAGE_MENU_ITEM_ID,
 		url: trailingslashit( this.site.URL ),
-		name: i18n.translate( 'Home' ) + ( pageNameSuffix ? ': ' +  pageNameSuffix : '' ),
+		name: i18n.translate( 'Home' ) + ( pageNameSuffix ? ': ' + pageNameSuffix : '' ),
 		type: 'page',
 		type_family: 'post_type',
 		tags: [ i18n.translate( 'site' ) ],
+		status: 'publish'
+	};
+};
+
+MenuData.prototype.generateNewPageMenuItem = function() {
+	return {
+		ID: NEWPAGE_MENU_ITEM_ID,
+		content_id: NEWPAGE_MENU_ITEM_ID,
+		url: trailingslashit( this.site.URL ),
+		name: i18n.translate( 'Create a new page for this menu item' ),
+		type: 'page',
+		type_family: 'post_type',
+		tags: [],
 		status: 'publish'
 	};
 };
@@ -88,6 +118,7 @@ MenuData.prototype.updateInstance = function() {
 /**
  * Get menu data from current object
  *
+ * @return {Object} menu data
  * @api public
  */
 MenuData.prototype.get = function() {
@@ -109,7 +140,7 @@ MenuData.prototype.get = function() {
 MenuData.prototype.fetch = function() {
 	var requestedSiteID = this.siteID;
 
-	wpcom.undocumented().menus( this.siteID, function( error, data ) {
+	wpcom.undocumented().menus( this.siteID, ( error, data ) => {
 		if ( error ) {
 			this.emit( 'error', i18n.translate( 'There was a problem fetching your menu data.' ) );
 			debug( 'Error', error, data );
@@ -126,19 +157,23 @@ MenuData.prototype.fetch = function() {
 
 		debug( 'Parsed data:', this.data );
 		this.change( { reset: true } );
-	}.bind( this ) );
+	} );
 };
 
 /**
  * Parse data returned from the API
  *
- * @param {array} data
- * @return {object} locations, menus
+ * @param {Object} data - rest-api response date
+ * @return {Object} locations, menus
  **/
 MenuData.prototype.parse = function( data ) {
 	if ( ! data.locations.length ) {
-		this.emit( 'error', i18n.translate( 'There must be at least one location for a menu in your theme.' ) );
+		this.emit(
+			'error',
+			i18n.translate( 'There must be at least one location for a menu in your theme.' )
+		);
 	}
+
 	return {
 		locations: data.locations.map(
 				this.decodeProperties.bind(
@@ -150,6 +185,9 @@ MenuData.prototype.parse = function( data ) {
 
 /**
  * Parse a menu returned from the API
+ *
+ * @param {Object} menu - rest-api response data
+ * @return {Object} parsed menu
  */
 MenuData.prototype.parseMenu = function( menu ) {
 	menu = this.allocateClientIDs( menu );
@@ -197,8 +235,8 @@ MenuData.prototype.discard = function() {
  * certain action. If there are unsaved changes, check whether they should be
  * discarded (e.g. via user prompt) and, if so, perform the action afterwards.
  *
- * @param {function} shouldDiscard - should return a boolean
- * @param {function} action
+ * @param {Function} shouldDiscard - should return a boolean
+ * @param {Function} action - action function
  */
 MenuData.prototype.ensureContentsSaved = function( shouldDiscard, action ) {
 	if ( this.hasContentsChanged ) {
@@ -261,14 +299,14 @@ MenuData.prototype.allocateClientIDs = function( menu ) {
 /**
  * Entity-decode an object's properties.
  *
- * @param {string[]} properties - names of the object properties to entity-decode
- * @param {object} obj - object whose properties to entity-decode
- * @return {object}
+ * @param {Array} properties - names of the object properties to entity-decode
+ * @param {Object} obj - object whose properties to entity-decode
+ * @return {Object} decoded properties
  */
 MenuData.prototype.decodeProperties = function( properties, obj ) {
-	return cloneDeep( obj, ( value, key ) => (
-		// 'undefined' makes 'cloneDeep' use it's own cloning method vs the value returned here
-		contains( properties, key ) ? decodeEntities( value ) : undefined
+	// 'undefined' makes 'cloneDeep' use it's own cloning method vs the value returned here
+	return cloneDeepWith( obj, ( value, key ) => (
+		includes( properties, key ) ? decodeEntities( value ) : undefined
 	) );
 };
 
@@ -287,7 +325,7 @@ MenuData.prototype.isValidMenu = function( menu ) {
 MenuData.prototype.getPrimaryLocation = function( ) {
 	var primaryLocation;
 
-	if ( ! this.data.locations ) {
+	if ( ! this.data.locations || ! this.data.locations[0] ) {
 		return false;
 	}
 
@@ -302,8 +340,8 @@ MenuData.prototype.getMenu = function( locationName ) {
 		return null;
 	}
 
-	menu = find( this.data.menus, function( menu ) {
-		return contains( menu.locations, locationName );
+	menu = find( this.data.menus, function( _menu ) {
+		return includes( _menu.locations, locationName );
 	} );
 
 	return menu || null;
@@ -314,16 +352,17 @@ MenuData.prototype.getMenu = function( locationName ) {
  */
 
 /**
- * Converts page items with HOMEPAGE_MENU_ITEM_ID to links since they are stored as links in WP.
+ * Converts page items with HOMEPAGE_MENU_ITEM_ID
+ * to links since they are stored as links in WP.
  * This function should be called before saving a menu to WP API.
- * @param menu
- * @returns {*}
+ * @param {Object} menu instance
+ * @returns {*} menu
  */
-MenuData.prototype.interceptSaveForHomepageLink = function ( menu ) {
+MenuData.prototype.interceptSaveForHomepageLink = function( menu ) {
 	var site = this.site;
-	menu.items.filter( function ( item ) {
+	menu.items.filter( function( item ) {
 		return item.type === 'page' && item.content_id === HOMEPAGE_MENU_ITEM_ID;
-	} ).forEach( function ( item ) {
+	} ).forEach( function( item ) {
 		item.type = 'custom';
 		item.type_family = 'custom';
 		item.url = trailingslashit( site.URL );
@@ -334,14 +373,15 @@ MenuData.prototype.interceptSaveForHomepageLink = function ( menu ) {
 /**
  * Converts links directing to home page url to page items with HOMEPAGE_MENU_ITEM_ID
  * This function should be called after loading a menu from WP API.
- * @param menu
- * @returns {*}
+ * @param {Object} menu instance
+ * @returns {*} menu
  */
-MenuData.prototype.interceptLoadForHomepageLink = function ( menu ) {
+MenuData.prototype.interceptLoadForHomepageLink = function( menu ) {
 	var site = this.site;
-	menu.items.filter( function ( item ) {
-		return item.type === 'custom' && untrailingslashit( item.url ) === untrailingslashit( site.URL );
-	} ).forEach( function ( item ) {
+	menu.items.filter( function( item ) {
+		return item.type === 'custom' &&
+			untrailingslashit( item.url ) === untrailingslashit( site.URL );
+	} ).forEach( function( item ) {
 		item.type = 'page';
 		item.type_family = 'post_type';
 		item.content_id = HOMEPAGE_MENU_ITEM_ID;
@@ -349,10 +389,58 @@ MenuData.prototype.interceptLoadForHomepageLink = function ( menu ) {
 	return menu;
 };
 
-/**
- * @param {object} menu
- * @param {function} [optional] callback
- */
+MenuData.prototype.createNewPagePromise = ( menuItem, siteID ) => new Promise(
+	( resolve, reject ) => {
+		postEditStore.startEditingNew( siteID );
+		postEditStore.saveEdited(
+			{
+				title: menuItem.name,
+				ID: 'new',
+				type: 'page',
+				status: 'publish',
+			},
+			( error, data ) => {
+				postEditStore.stopEditing();
+				if ( ! error && data ) {
+					menuItem.url = data.URL;
+					menuItem.content_id = data.ID;
+					resolve();
+					return;
+				}
+				reject( error );
+			}
+		);
+	}
+);
+
+MenuData.prototype.sendMenuToApi = function( menu, callback ) {
+	this.emit( 'saving' );
+	wpcom
+	.undocumented()
+	.menusUpdate(
+		this.siteID,
+		menu.id,
+		this.interceptSaveForHomepageLink( menu ),
+		( error, data ) => {
+			if ( error ) {
+				this.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
+				debug( 'Error', error, data );
+				return;
+			}
+
+			// The response will contain server-allocated
+			// IDs for newly created items
+			const parsedMenu = this.parseMenu( data.menu );
+			parsedMenu.lastSaveTime = Date.now();
+			this.replaceMenu( parsedMenu );
+
+			this.change( { reset: true } );
+			this.emit( 'saved' );
+			callback && callback( null, parsedMenu );
+		}
+	);
+};
+
 MenuData.prototype.saveMenu = function( menu, callback ) {
 	if ( ! menu ) {
 		menu = this.find( { id: this.lastChangedMenuID } );
@@ -374,36 +462,27 @@ MenuData.prototype.saveMenu = function( menu, callback ) {
 
 	debug( 'saveMenu', menu );
 
-	this.emit( 'saving' );
-	wpcom.undocumented().menusUpdate(
-			this.siteID,
-			menu.id,
-			this.interceptSaveForHomepageLink( menu ),
-			function( error, data ) {
-				var parsedMenu;
+	/**
+	 * Below, we check for any new pages that need to be created. The post edit
+	 * store requires this process to be sequential, so we build a chain of
+	 * promises, each of them responsible for the creation of a page.
+	 */
 
-				if ( error ) {
-					this.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
-					debug( 'Error', error, data );
-					return;
-				}
+	const pendingPageItems = treeConvert
+		.untreeify( menu.items )
+		.filter( isInjectedNewPageItem );
 
-				// The response will contain server-allocated
-				// IDs for newly created items
-				parsedMenu = this.parseMenu( data.menu );
-				parsedMenu.lastSaveTime = Date.now();
-				this.replaceMenu( parsedMenu );
+	const createdPages = makePromiseSequence(
+			pendingPageItems,
+			item => this.createNewPagePromise( item, this.siteID )
+	);
 
-				this.change( { reset: true } );
-				this.emit( 'saved' );
-				callback && callback( null, parsedMenu );
-			}.bind( this ) );
+	createdPages.catch( error => {
+		this.emit( 'error', i18n.translate( 'There was a problem saving your menu.' ) );
+		debug( 'Error', error );
+	} ).then( this.sendMenuToApi.bind( this, menu, callback ) );
 };
 
-/**
- * @param {object} menu
- * @param {function} [optional] callback
- */
 MenuData.prototype.deleteMenu = function( menu, callback ) {
 	var menuIndex, menusBackup;
 
@@ -420,7 +499,9 @@ MenuData.prototype.deleteMenu = function( menu, callback ) {
 	this.emit( 'change' );
 	this.emit( 'saving' );
 
-	wpcom.undocumented().menusDelete( this.siteID, menu.id, function( error, data ) {
+	wpcom
+	.undocumented()
+	.menusDelete( this.siteID, menu.id, ( error, data ) => {
 		if ( error || ( data && ! data.deleted ) ) {
 			this.data.menus = menusBackup;
 			this.emit( 'error', i18n.translate( "Sorry, we couldn't delete this menu." ) );
@@ -434,12 +515,12 @@ MenuData.prototype.deleteMenu = function( menu, callback ) {
 
 		callback && callback( null, data );
 		this.emit( 'saved' );
-	}.bind( this ) );
+	} );
 };
 
 /**
- * @param {string} location to restore the menu to
- * @param {function} [optional] callback
+ * @param {String} location - location to restore the menu to
+ * @param {Function} [callback] - callback function
  */
 MenuData.prototype.restoreMenu = function( location, callback ) {
 	var menu;
@@ -455,17 +536,18 @@ MenuData.prototype.restoreMenu = function( location, callback ) {
 
 	delete this.deletedMenu;
 
-	this.addMenu( menu.name, function( error, menu ) {
+	this.addMenu( menu.name, function( error, addedMenu ) {
 		if ( error ) {
 			debug( 'restoreMenu: fail' );
 			callback && callback( new Error( 'Failed to restore menu' ) );
 			return;
 		}
 
-		this.setMenuAtLocation( menu.id, location, {
+		this.setMenuAtLocation( addedMenu.id, location, {
 			associationOnly: false
 		} );
-		this.saveMenu( menu, callback );
+
+		this.saveMenu( addedMenu, callback );
 	}.bind( this ), menu );
 };
 
@@ -489,8 +571,9 @@ MenuData.prototype.setMenuName = function( menuId, name ) {
 
 /**
  * @param {number} menuId - 0 represents No Menu / Default
- * @param {string} locationName
+ * @param {string} locationName - location name
  * @param {object} changeOpts [optional] change flags to pass to the #change call
+ * @return {*} menu
  */
 MenuData.prototype.setMenuAtLocation = function( menuId, locationName, changeOpts ) {
 	var location = find( this.data.locations, { name: locationName } ),
@@ -502,8 +585,8 @@ MenuData.prototype.setMenuAtLocation = function( menuId, locationName, changeOpt
 		return false;
 	}
 
-	previousMenu = find( this.data.menus, function( menu ) {
-		return contains( menu.locations, locationName );
+	previousMenu = find( this.data.menus, function( itemMenu ) {
+		return includes( itemMenu.locations, locationName );
 	} );
 
 	if ( previousMenu ) {
@@ -542,12 +625,11 @@ MenuData.prototype.moveItem = function( sourceId, targetId, position ) {
 			target = this.find( { id: targetId }, menu.items );
 
 		if ( undefined !== source && undefined !== target ) {
-
 			if ( this.isAncestor( source, target ) ) {
 				// Special case – moving an item into the subtree below itself:
 				// Cut it out of the destination subtree before the move by moving
 				// its children up a level.
-				var parent = Traverser.parent( source, menu );
+				let parent = Traverser.parent( source, menu );
 				this.moveItemsToParent( source.items, parent, { silent: true } );
 			}
 
@@ -586,6 +668,10 @@ MenuData.prototype.getPreviousSibling = function( item, parent ) {
 
 /**
  * Returns true if an item has sibling items after it in the list
+ *
+ * @param {*} item - menu item
+ * @param {*} parent - parent
+ * @return {Boolean} has sibling
  */
 MenuData.prototype.hasSubsequentSiblings = function( item, parent ) {
 	var index = findIndex( parent.items, item );
@@ -599,11 +685,12 @@ MenuData.prototype.hasSubsequentSiblings = function( item, parent ) {
  * - an object of key/val pairs, e.g. { id: 42 }
  * - a string to perform a 'pluck'-style find, e.g. 'id'
  *
- * @param {function|object|string} criterion
+ * @param {Function|Object|String} criterion - criterion
+ * @param {Array} menus - menus array
  * @return {object} item
  */
 MenuData.prototype.find = function( criterion, menus ) {
-	var predicate = createCallback( criterion ),
+	var predicate = iteratee( criterion ),
 		i, result;
 
 	menus = menus || this.data.menus;
@@ -620,7 +707,7 @@ MenuData.prototype.findByName = function( name ) {
 };
 
 MenuData.prototype.replaceItem = function( criterion, newItem, menus ) {
-	var predicate = createCallback( criterion ), i;
+	var predicate = iteratee( criterion ), i;
 
 	menus = menus || this.data.menus;
 
@@ -632,9 +719,9 @@ MenuData.prototype.replaceItem = function( criterion, newItem, menus ) {
 /**
  * Moves a single, or an array of items to a specified parent.
  *
- * @param {array|object} a single item, or an array of items to move
- * @param {number|object} a parent item object
- * @param {object} include 'silent: true' property to silence change events
+ * @param {Array|Object} uiItems - a single item, or an array of items to move
+ * @param {Number|Object} parent - a parent item object
+ * @param {Object} options - include 'silent: true' property to silence change events
  */
 MenuData.prototype.moveItemsToParent = function( uiItems, parent, options ) {
 	var hasChanged;
@@ -649,7 +736,7 @@ MenuData.prototype.moveItemsToParent = function( uiItems, parent, options ) {
 		this.data.menus.some( function( menu ) {
 			var item = this.find( { id: uiItem.id }, menu.items );
 			if ( undefined !== item ) {
-				var oldParent = Traverser.parent( uiItem, menu );
+				let oldParent = Traverser.parent( uiItem, menu );
 				oldParent.items = without( oldParent.items, item );
 
 				if ( ! Array.isArray( parent.items ) ) {
@@ -668,12 +755,12 @@ MenuData.prototype.moveItemsToParent = function( uiItems, parent, options ) {
 	}
 };
 
-MenuData.prototype.deleteMenuItem = function ( uiItem ) {
+MenuData.prototype.deleteMenuItem = function( uiItem ) {
 	this.data.menus.some( function( menu ) {
 		var item = this.find( { id: uiItem.id }, menu.items );
 
 		if ( undefined !== item ) {
-			var parent = Traverser.parent( uiItem, menu );
+			let parent = Traverser.parent( uiItem, menu );
 
 			if ( uiItem.items ) {
 				this.moveItemsToParent( uiItem.items, parent, { silent: true } );
@@ -687,10 +774,10 @@ MenuData.prototype.deleteMenuItem = function ( uiItem ) {
 };
 
 /**
- * @param {object} item: the item to add
- * @param {int} targetId
- * @param {string} position: 'before' | 'after' | 'child' | 'first'
- * @param {int} menuId: id of the menu to add to
+ * @param {object} item - the item to add
+ * @param {int} targetId - target identifier
+ * @param {string} position - 'before' | 'after' | 'child' | 'first'
+ * @param {int} menuId - id of the menu to add to
  */
 MenuData.prototype.addItem = function( item, targetId, position, menuId ) {
 	item.id = this.idCounter++;
@@ -723,21 +810,21 @@ MenuData.prototype.addItem = function( item, targetId, position, menuId ) {
  *  - Increments the default menu string, e.g. 'Menu 1' -> 'Menu 2'
  *  - Switches to the new menu, when we have a menu ID for it
  *
- * @param {string} selectedLocation
+ * @param {string} selectedLocation selected location
  */
 MenuData.prototype.addNewMenu = function( selectedLocation ) {
-	this.addMenu( this._incrementMenuName( this.data.menus ), function( err, menu ) {
-		if ( err ) {
+	this.addMenu( this._incrementMenuName( this.data.menus ), ( error, menu ) => {
+		if ( error ) {
 			return;
 		}
 		this.setMenuAtLocation( menu.id, selectedLocation );
-	}.bind( this ) );
+	} );
 };
 
 /**
  * Adds a menu
  *
- * @param {string} name
+ * @param {string} name - menu name
  * @param {function} callback - returns menu object with new id assigned from server
  * @param {object} attributes [optional] - attributes for the new menu
  */
@@ -748,7 +835,9 @@ MenuData.prototype.addMenu = function( name, callback, attributes ) {
 		locations: []
 	}, attributes );
 
-	wpcom.undocumented().menusUpdate( this.siteID, 0, newMenu, function( error, data ) {
+	wpcom
+	.undocumented()
+	.menusUpdate( this.siteID, 0, newMenu, ( error, data ) => {
 		if ( ! error && data.id ) {
 			newMenu.id = data.id;
 			this.data.menus.push( newMenu );
@@ -760,21 +849,21 @@ MenuData.prototype.addMenu = function( name, callback, attributes ) {
 			debug( 'error creating menu', error );
 			callback && callback( error );
 		}
-	}.bind( this ) );
+	} );
 };
 
 // FIXME: this just appends ASCII numerals to the end of the string,
 // and does not account for RTL, or language specific numeric characters.
 MenuData.prototype._incrementMenuName = function( menus ) {
 	var menuString = i18n.translate( 'Menu' ),
-			deletedMenus = this.deletedMenu ? [ this.deletedMenu ] : [],
-			menuNumbers = menus.concat( deletedMenus ).map( function( menu ) {
-				var matches;
-				if ( matches = menu.name.match( RegExp( '^' + menuString + ' (\\d+)$' ) ) ) { // eslint-disable-line no-cond-assign
-					return Number( matches[1] );
-				}
-				return 0;
-			} );
+		deletedMenus = this.deletedMenu ? [ this.deletedMenu ] : [],
+		menuNumbers = menus.concat( deletedMenus ).map( function( menu ) {
+			var matches;
+			if ( matches = menu.name.match( RegExp( '^' + menuString + ' (\\d+)$' ) ) ) { // eslint-disable-line no-cond-assign
+				return Number( matches[1] );
+			}
+			return 0;
+		} );
 
 	// Ensure we pass at least one value to max()
 	menuNumbers.push( 0 );
@@ -799,8 +888,6 @@ MenuData.prototype.replaceMenu = function( newMenu ) {
 		}
 	}, this );
 };
-
-
 
 /**
  * Default Menu extensions
@@ -857,7 +944,9 @@ MenuData.prototype.fetchDefaultMenu = function() {
 	this.data.defaultMenu = false;
 	this.fetchingDefaultMenu = true;
 
-	wpcom.site( requestedSiteID ).postsList( params, function( error, data ) {
+	wpcom
+	.site( requestedSiteID )
+	.postsList( params, ( error, data ) => {
 		this.fetchingDefaultMenu = false;
 		if ( error ) {
 			this.emit( 'error', i18n.translate( 'There was a problem loading the default menu.' ) );
@@ -871,7 +960,7 @@ MenuData.prototype.fetchDefaultMenu = function() {
 		}
 
 		this.setDefaultMenu( data.posts );
-	}.bind( this ) );
+	} );
 };
 
 /**
@@ -881,7 +970,8 @@ MenuData.prototype.fetchDefaultMenu = function() {
  */
 MenuData.prototype.setDefaultMenu = function( pages ) {
 	var items = [],
-		site = sites.getSelectedSite();
+		site = sites.getSelectedSite(),
+		isDefaultMenuSet = !! this.data.defaultMenu;
 
 	pages.forEach( function( page ) {
 		var item = {
@@ -907,8 +997,9 @@ MenuData.prototype.setDefaultMenu = function( pages ) {
 		items: items,
 		locations: [ this.getPrimaryLocation() ]
 	} );
-
-	this.data.menus.unshift( this.data.defaultMenu );
+	if ( ! isDefaultMenuSet ) {
+		this.data.menus.unshift( this.data.defaultMenu );
+	}
 	this.emit( 'change' );
 };
 
@@ -954,8 +1045,11 @@ MenuData.prototype.saveDefaultMenu = function() {
  * Called once the menu has been created on the server, this erases traces of
  * the previously generated default menu and updates the local recently created
  * menu (update name and set location-menu association).
+ *
+ * @param {Object} error - rest-api error response
+ * @param {Object} menu - rest-api menu data response
  */
-MenuData.prototype.onDefaultMenuSaved = function( err, menu ) {
+MenuData.prototype.onDefaultMenuSaved = function( error, menu ) {
 	if ( menu && menu.id ) {
 		this.deleteDefaultMenu();
 
@@ -967,7 +1061,7 @@ MenuData.prototype.onDefaultMenuSaved = function( err, menu ) {
 		menu.locations = [ this.getPrimaryLocation() ];
 		this.saveMenu( menu );
 	} else {
-		debug( 'onDefaultMenuSaved: fail', err );
+		debug( 'onDefaultMenuSaved: fail', error );
 	}
 };
 
@@ -984,8 +1078,3 @@ MenuData.prototype.deleteDefaultMenu = function() {
 	}
 };
 
-
-/**
- * Expose `MenuData`
- */
-module.exports = MenuData;

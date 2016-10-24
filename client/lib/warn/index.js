@@ -1,14 +1,15 @@
+/** @ssr-ready **/
+
 /**
  * Internal Dependencies
  */
-var config = require( 'config' );
+import config from 'config';
 
-function warn() {
-	if ( config( 'env' ) !== 'production' ) {
-		try{
-			window.console.warn.apply( window.console, arguments );
-		} catch( e ) {}
-	}
+let warn;
+if ( config( 'env' ) !== 'production' && 'function' === typeof console.warn ) {
+	warn = ( ...args ) => console.warn( ...args );
+} else {
+	warn = () => {};
 }
 
-module.exports = warn;
+export default warn;

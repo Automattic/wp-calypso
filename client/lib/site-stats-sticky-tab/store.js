@@ -2,7 +2,7 @@
 var Dispatcher = require( 'dispatcher' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	store = require( 'store' ),
-	merge = require( 'lodash/object/merge' );
+	merge = require( 'lodash/merge' );
 
 // Internal dependencies
 var constants = require( './constants' ),

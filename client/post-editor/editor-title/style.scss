@@ -1,10 +1,6 @@
 .editor-title {
 	position: relative;
 
-	&:not( .is-focused ):not( .is-loading )::after {
-		@include long-content-fade( $color: $white );
-	}
-
 	&.is-loading::before {
 		content: '';
 		position: absolute;
@@ -16,12 +12,12 @@
 		background: lighten( $gray, 20% );
 	}
 
-	@include breakpoint( "<660px" ) {
-		margin-left: -24px;
+	@include breakpoint( ">660px" ) {
+		margin-left: 52px;
+	}
 
-		.editor-permalink {
-			display: none;
-		}
+	@include breakpoint( ">1040px" ) {
+		margin-left: 0;
 	}
 }
 
@@ -29,27 +25,34 @@
 	position: absolute;
 		left: -26px;
 		top: 18px;
+	display: none;
+
+	@include breakpoint( ">660px" ) {
+		display: block;
+	}
 }
 
-.editor-title__input[type="text"] {
-	margin-left: 16px;
+.editor-title__input {
+	min-height: 0;
+	padding-left: 10px; /* Intentionally non-standard to align editor body margin (10px) */
+	padding-right: 10px;
 	border: none;
 	font-family: $serif;
 	font-size: 28px;
 	color: $gray-dark;
 	font-weight: 600;
-
+	resize: none;
+	-ms-overflow-y: hidden !important;
 
 	&:focus {
 		box-shadow: none;
 	}
 
 	@include breakpoint( ">480px" ) {
-		margin-left: -4px;
 		font-size: 32px;
 	}
 }
 
-.editor-title.is-loading .editor-title__input[type="text"] {
+.editor-title.is-loading .editor-title__input {
 	color: transparent;
 }

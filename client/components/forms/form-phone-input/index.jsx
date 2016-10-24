@@ -1,10 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	noop = require( 'lodash/utility/noop' ),
-	first = require( 'lodash/array/first' ),
-	where = require( 'lodash/collection/where' );
+var React = require( 'react' );
+import { noop, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -13,15 +11,13 @@ var FormLabel = require( 'components/forms/form-label' ),
 	FormTelInput = require( 'components/forms/form-tel-input' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	CountrySelect = require( 'components/forms/form-country-select' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
+	classnames = require( 'classnames' ),
 	phoneValidation = require( 'lib/phone-validation' );
 
 var CLEAN_REGEX = /^0|[\s.\-()]+/g;
 
 module.exports = React.createClass( {
 	displayName: 'FormPhoneInput',
-
-	mixins: [ React.addons.LinkedStateMixin ],
 
 	propTypes: {
 		initialCountryCode: React.PropTypes.string,
@@ -68,7 +64,7 @@ module.exports = React.createClass( {
 			};
 
 		return (
-			<div className={ joinClasses( this.props.className, 'form-phone-input' ) }>
+			<div className={ classnames( this.props.className, 'form-phone-input' ) }>
 				<FormFieldset className="form-fieldset__country">
 					<FormLabel htmlFor="country_code">{ this.translate( 'Country Code', { context: 'The country code for the phone for the user.' } ) }</FormLabel>
 					<CountrySelect
@@ -97,9 +93,9 @@ module.exports = React.createClass( {
 
 	_getCountryData: function() {
 		// TODO: move this to country-list or CountrySelect
-		return first( where( this.props.countriesList.get(), {
+		return find( this.props.countriesList.get(), {
 			code: this.state.countryCode
-		} ) );
+		} );
 	},
 
 	_handleCountryChange: function( newValue ) {

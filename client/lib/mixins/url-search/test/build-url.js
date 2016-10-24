@@ -8,7 +8,7 @@ var expect = require( 'chai' ).expect;
  */
 var buildUrl = require( '../build-url' );
 
-describe( '#buildUrl()', function() {
+describe( 'build-url', function() {
 	it( 'should accept a path without existing query parameters', function() {
 		var url = buildUrl( '/path', 'terms' );
 

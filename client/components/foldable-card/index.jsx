@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' );
+	noop = require( 'lodash/noop' );
 
 /**
  * Internal Dependencies
@@ -22,9 +22,11 @@ var FoldableCard = React.createClass( {
 		disabled: React.PropTypes.bool,
 		expandedSummary: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] ),
 		expanded: React.PropTypes.bool,
+		icon: React.PropTypes.string,
 		onClick: React.PropTypes.func,
 		onClose: React.PropTypes.func,
 		onOpen: React.PropTypes.func,
+		screenReaderText: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.bool ] ),
 		summary: React.PropTypes.oneOfType( [ React.PropTypes.string, React.PropTypes.element ] )
 	},
 
@@ -39,7 +41,9 @@ var FoldableCard = React.createClass( {
 			onOpen: noop,
 			onClose: noop,
 			cardKey: '',
-			isExpanded: false
+			icon: 'chevron-down',
+			isExpanded: false,
+			screenReaderText: false,
 		};
 	},
 
@@ -83,11 +87,15 @@ var FoldableCard = React.createClass( {
 			);
 		}
 		if ( this.props.children ) {
-			let iconSize = 24;
+			const iconSize = 24;
+			const screenReaderText = this.props.screenReaderText || this.translate( 'More' );
 			return (
-				<button disabled={ this.props.disabled } className="foldable-card__action foldable-card__expand" onClick={ clickAction }>
-					<span className="screen-reader-text">{ this.translate( 'More' ) }</span>
-					<Gridicon icon="chevron-down" size={ iconSize } />
+				<button
+					disabled={ this.props.disabled }
+					className="foldable-card__action foldable-card__expand"
+					onClick={ clickAction }>
+					<span className="screen-reader-text">{ screenReaderText }</span>
+					<Gridicon icon={ this.props.icon } size={ iconSize } />
 				</button>
 			);
 		}
@@ -106,7 +114,8 @@ var FoldableCard = React.createClass( {
 			expandedSummary = this.props.expandedSummary ? <span className="foldable-card__summary_expanded">{ this.props.expandedSummary } </span> : null,
 			headerClickAction = this.props.clickableHeader ? this.getClickAction() : null,
 			headerClasses = classNames( 'foldable-card__header', {
-				'is-clickable': !! this.props.clickableHeader
+				'is-clickable': !! this.props.clickableHeader,
+				'has-border': !! this.props.summary
 			} );
 		return (
 			<div className={ headerClasses } onClick={ headerClickAction }>
@@ -135,7 +144,7 @@ var FoldableCard = React.createClass( {
 		return (
 			<Container className={ itemSiteClasses }>
 				{ this.renderHeader() }
-				{ this.renderContent() }
+				{ this.state.expanded && this.renderContent() }
 			</Container>
 		);
 	}

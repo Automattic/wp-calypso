@@ -1,0 +1,231 @@
+// Module Tabs
+// (currently only used for the bar chart module at the top)
+
+ul.module-tabs {
+	@include clear-fix;
+	border-top: 1px solid $gray-light;
+	list-style: none;
+	background: $white;
+	margin: 0;
+
+	.module-tab {
+		margin: 0;
+		font-size: 16px;
+		clear: none;
+		border-top: 1px solid $gray-light;
+		box-sizing: border-box;
+
+		&:first-child {
+			border-top: none;
+		}
+
+		@include breakpoint( ">480px" ) {
+			border-top: none;
+			border-left: 1px solid $gray-light;
+			float: left;
+			width: 25%;
+			text-align: center;
+
+			&.is-post-summary {
+				width: 33%;
+			}
+
+			&:first-child {
+				border-left: none;
+			}
+		}
+
+		@include breakpoint( "<480px" ) {
+			width: auto;
+			float: none;
+			text-align: left;
+		}
+
+		a {
+			color: $gray-dark;
+		}
+
+		a,
+		.no-link {
+			@extend %mobile-link-element;
+			@include clear-fix;
+			padding: 5px 0 10px;
+			display: block;
+			background: $white;
+
+			@include breakpoint( "<480px" ) {
+				line-height: 24px;
+				padding-top: 10px;
+				-webkit-touch-callout: none;
+			}
+		}
+
+		.label {
+			font-size: 11px;
+			letter-spacing: 0.1em;
+			line-height: inherit;
+			text-transform: uppercase;
+
+			@include breakpoint( "<480px" ) {
+				font-size: 14px;
+				line-height: 24px;
+				float: left;
+			}
+		}
+
+		.gridicon {
+			vertical-align: middle;
+			margin-right: 4px;
+			margin-top: -2px;
+
+			@include breakpoint( "<480px" ) {
+				width: 24px;
+				height: 24px;
+				margin-left: 24px;
+				margin-right: 8px;
+				float: left;
+			}
+		}
+
+		.value {
+			clear: both;
+			display: block;
+			line-height: 24px;
+			color: $blue-wordpress;
+			transition: font-size .3s 0 ease-out;
+
+			@include breakpoint( "<480px" ) {
+				clear: none;
+				float: right;
+				font-size: 16px;
+				margin-right: 24px;
+				padding: 0;
+			}
+		}
+
+		@include breakpoint( ">480px" ) {
+			// Hover state
+			a:hover,
+			a:hover .value,
+			&.is-low a:hover,
+			&.is-low a:hover .value {
+				color: $link-highlight;
+			}
+
+			a:hover {
+				background: rgba(255,255,255,.5);
+			}
+		}
+
+		// Focus state
+		a:focus,
+		a:focus .value,
+		.stats-module &.is-selected a:focus,
+		.stats-module &.is-selected a:focus .value,
+		&.is-low a:focus,
+		&.is-low a:focus .value {
+			color: $link-highlight;
+		}
+
+		a:focus {
+			background: rgba(255,255,255,.5);
+		}
+
+		// Selected state
+		.stats-module &.is-selected a {
+			background: $white;
+			border-top: 1px solid $white;
+			margin-top: -1px;
+			cursor: default;
+		}
+
+		&.is-selected a,
+		&.is-selected.is-low a {
+			color: $gray-dark;
+		}
+
+		&.is-selected a .value,
+		&.is-selected.is-low a .value,
+		&.is-selected a:hover .value {
+			color: $orange-jazzy;
+		}
+
+		// Low state ('disabled')
+		.is-low,
+		&.is-low a .value {
+			color: $gray;
+		}
+
+		// Individual tab loading state
+		&.is-loading a,
+		&.is-loading a:hover {
+			cursor: default;
+		}
+
+		.no-link .value {
+			color: $gray-dark;
+
+			&.is-low {
+				color: $gray;
+			}
+		}
+
+		&.is-loading a .value,
+		&.is-loading a:hover .value,
+		&.is-loading .no-link .value {
+			animation: loading-fade 1.6s ease-in-out infinite;
+			cursor: default;
+			font-size: 110%;
+			color: $gray;
+		}
+
+		&.is-loading.is-selected a .value,
+		&.is-loading.is-selected a:hover .value {
+			color: $gray;
+		}
+	}
+
+	// If there's only one tab (used on the Post/Video Details page)
+	li:only-child {
+		width: auto;
+		float: none;
+		text-align: left;
+
+		a {
+			line-height: 24px;
+			padding-top: 10px;
+		}
+
+		.label {
+			font-size: 14px;
+			line-height: 24px;
+			float: left;
+		}
+
+		.gridicon {
+			width: 24px;
+			height: 24px;
+			margin: 0 8px 0 24px;
+			float: left;
+		}
+
+		.value {
+			clear: none;
+			float: right;
+			margin-right: 24px;
+		}
+	}
+
+	&.is-enabled {
+		background: $gray-light;
+
+		&,
+		li {
+			border-color: $gray-light;
+		}
+
+		a {
+			background: $gray-light;
+		}
+	}
+}

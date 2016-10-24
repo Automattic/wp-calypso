@@ -34,7 +34,7 @@ $range-content-padding: 24px;
 .range__label {
 	position: absolute;
 		bottom: 100%;
-	z-index: 10;
+	z-index: z-index( 'root', '.range__label' );
 	transform: translateX( -50% );
 	padding-bottom: 5px;
 	pointer-events: none;

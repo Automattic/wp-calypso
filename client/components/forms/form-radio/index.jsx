@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	joinClasses = require( 'react/lib/joinClasses' ),
-	omit = require( 'lodash/object/omit' );
+var React = require( 'react' ),
+	classnames = require( 'classnames' ),
+	omit = require( 'lodash/omit' );
 
 module.exports = React.createClass( {
 
@@ -16,7 +16,7 @@ module.exports = React.createClass( {
 			<input
 				{ ...otherProps }
 				type="radio"
-				className={ joinClasses( this.props.className, 'form-radio' ) } />
+				className={ classnames( this.props.className, 'form-radio' ) } />
 		);
 	}
 } );

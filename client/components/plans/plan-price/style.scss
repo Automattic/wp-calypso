@@ -1,30 +1,48 @@
-.plan-header .plan-price {
+.plan-header .plan-price,
+.plan-header .jetpack-plan-price,
+.plan-header .wpcom-plan-price {
 	color: $gray-dark;
 	font-size: 14px;
 	font-weight: 400;
 	line-height: 20px;
-	text-align: right;
 }
 
-.plan-price__billing-period {
+.plan-price__billing-period,
+.jetpack-plan-price__billing-period,
+.wpcom-plan-price__billing-period {
 	font-size: 12px;
 	font-style: italic;
 	color: darken( $gray, 10% );
 }
 
-.plan-price.is-placeholder {
+.plan-header .plan-price__discount,
+.plan-header .jetpack-plan-price__discount,
+.plan-header .wpcom-plan-price__discount,
+.plan-price__discount .plan-price__billing-period,
+.jetpack-plan-price__discount .jetpack-plan-price__billing-period,
+.wpcom-plan-price__discount .wpcom-plan-price__billing-period {
+	color: $alert-green;
+}
+
+.plan-price.is-placeholder,
+.jetpack-plan-price.is-placeholder,
+.wpcom-plan-price.is-placeholder {
 	@include placeholder( 23% );
 }
 
-.plan-price__discounted {
+.plan-price__discounted,
+.jetpack-plan-price__discounted,
+.wpcom-plan-price__discounted {
 	color: $gray;
 	text-decoration: line-through;
 }
 
 .plans-compare {
-	.plan-price {
+	.plan-price,
+	.jetpack-plan-price,
+	.wpcom-plan-price {
 		font-size: 10px;
-		padding: 1em 0;
+		padding: .25em 0;
 
 		@include breakpoint( ">480px" ) {
 			font-size: 12px;
@@ -35,31 +53,64 @@
 		}
 	}
 
-	.plan-price__billing-period {
-		display: block;
+	.plan-price__billing-period,
+	.jetpack-plan-price__billing-period,
+	.wpcom-plan-price__billing-period {
+		display: inline;
 		opacity: .7;
+	}
+
+	.plan-price__discount,
+	.jetpack-plan-price__discount,
+	.wpcom-plan-price__discount {
+		color: $alert-green;
 	}
 }
 
 @mixin plans-collapsed() {
-	.plan-header .plan-price {
-		display: inline-block;
-		padding: 0 0 0 40px;
+	.plan-header .plan-price,
+	.plan-header .jetpack-plan-price,
+	.plan-header .wpcom-plan-price {
+		padding: 0 20px 0 40px;
 	}
 
-	.plan-price__billing-period {
+	.plan-price__billing-period,
+	.jetpack-plan-price__billing-period,
+	.wpcom-plan-price__billing-period {
 		margin-left: 3px;
+	}
+
+	.plans-compare {
+		.plan-header .wpcom-plan-price {
+			font-size: 13px;
+			padding: 0;
+		}
 	}
 }
 
 @mixin plans-in-three-columns() {
-	.plan-header .plan-price {
+	.plan-header .plan-price,
+	.plan-header .jetpack-plan-price,
+	.plan-header .wpcom-plan-price {
 		text-align: center;
 		font-size: 18px;
 	}
 
-	.plan-price__billing-period {
+	.plan-price__billing-period,
+	.jetpack-plan-price__billing-period,
+	.wpcom-plan-price__billing-period {
 		display: block;
+	}
+
+	.plans-compare {
+		.plan-header .plan-price {
+			font-size: 16px;
+
+			.plan-price__billing-period {
+				display: inline;
+				margin-left: 3px;
+			}
+		}
 	}
 }
 

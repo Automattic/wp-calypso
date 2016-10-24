@@ -1,5 +1,5 @@
 import React from 'react';
-import times from 'lodash/utility/times';
+import times from 'lodash/times';
 import url from 'url';
 
 import Main from 'components/main';
@@ -12,11 +12,13 @@ import Description from 'reader/list-item/description';
 import Actions from 'reader/list-item/actions';
 
 import SiteIcon from 'components/site-icon';
-import FollowButton from 'components/follow-button';
+import FollowButton from 'reader/follow-button';
 import RecommendedSites from 'lib/recommended-sites-store/store';
 import { fetchMore } from 'lib/recommended-sites-store/actions';
 import SiteStore from 'lib/reader-site-store';
-import { recordFollow, recordUnfollow } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { getSiteUrl } from 'reader/route';
+import { decodeEntities } from 'lib/formatting';
 
 const RecommendedForYou = React.createClass( {
 
@@ -79,8 +81,8 @@ const RecommendedForYou = React.createClass( {
 
 		times( number, ( i ) => {
 			placeholders.push(
-				<ListItem className="is-placeholder" key={'recommendation-placeholder-' + i}>
-					<Icon><SiteIcon size={48} /></Icon>
+				<ListItem className="is-placeholder" key={ 'recommendation-placeholder-' + i }>
+					<Icon><SiteIcon size={ 48 } /></Icon>
 					<Title>Loading</Title>
 					<Description>Loading the results...</Description>
 				</ListItem>
@@ -94,32 +96,30 @@ const RecommendedForYou = React.createClass( {
 		return 'recommendation-' + rec.blog_id;
 	},
 
-	trackFollowToggle( following ) {
-		if ( following ) {
-			recordFollow();
-		} else {
-			recordUnfollow();
-		}
-	},
-
-	trackSiteClick() {
-		stats.recordAction( 'click_site_on_recommended_for_you' );
-		stats.recordGaEvent( 'Clicked Site on Recommended For You' );
+	trackSiteClick( event ) {
+		const clickedUrl = event.currentTarget.getAttribute( 'href' );
+		recordAction( 'click_site_on_recommended_for_you' );
+		recordGaEvent( 'Clicked Site on Recommended For You' );
+		recordTrack( 'calypso_reader_recommended_site_clicked', {
+			clicked_url: clickedUrl
+		} );
 	},
 
 	renderItem( rec ) {
 		const site = rec.site && rec.site.toJS(),
 			itemKey = this.getItemRef( rec ),
-			title = site.name || ( site.URL && url.parse( site.URL ).hostname );
+			title = site.name || ( site.URL && url.parse( site.URL ).hostname ),
+			siteUrl = getSiteUrl( site.ID );
+
 		return (
 			<ListItem key={ itemKey } ref={ itemKey }>
 				<Icon><SiteIcon site={ site } size={ 48 } /></Icon>
 				<Title>
-					<a href={'/read/blog/id/' + site.ID} onclick={ this.trackSiteClick }>{ title }</a>
+					<a href={ siteUrl } onClick={ this.trackSiteClick }>{ title }</a>
 				</Title>
-				<Description>{ rec.reason }</Description>
+				<Description>{ decodeEntities( rec.reason ) }</Description>
 				<Actions>
-					<FollowButton siteUrl={ site.URL } onFollowToggle={ this.trackFollowToggle } />
+					<FollowButton siteUrl={ site.URL } />
 				</Actions>
 			</ListItem>
 			);
@@ -132,11 +132,11 @@ const RecommendedForYou = React.createClass( {
 					<h1>{ this.translate( 'Recommendations' ) }</h1>
 				</MobileBackToSidebar>
 
-				<h2 className="reader-recommended__heading">{ this.translate( 'We think you\'ll like' )}</h2>
+				<h2 className="reader-recommended__heading">{ this.translate( 'We think you\'ll like' ) }</h2>
 				<InfiniteList
 					items={ this.state.recommendations }
 					fetchingNextPage={ this.state.fetching }
-					lastPage={ this.state.recommendations && this.state.recommendations.length >= 100 }
+					lastPage={ RecommendedSites.isLastPage() }
 					guessedItemHeight={ 300 }
 					fetchNextPage={ this.loadMore }
 					getItemRef={ this.getItemRef }

@@ -1,12 +1,19 @@
-import React from 'react/addons';
-import noop from 'lodash/utility/noop';
+/**
+ * External dependencies
+ */
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import noop from 'lodash/noop';
 
+/**
+ * Internal dependencies
+ */
 import SiteIcon from 'components/site-icon';
 
 const genericFeedIcon = ( <SiteIcon size={ 48 } /> );
 
 const ListItemDescription = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getDefaultProps() {
 		return { onClick: noop };

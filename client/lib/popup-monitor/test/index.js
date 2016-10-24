@@ -1,17 +1,27 @@
-global.window = { screenTop: 0, screenLeft: 0, innerWidth: 1280, innerHeight: 720 };
-
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect;
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
-var PopupMonitor = require( '../' );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import PopupMonitor from '../';
 
 describe( 'PopupMonitor', function() {
 	var popupMonitor;
+
+	useFakeDom();
+
+	before( () => {
+		Object.assign( global.window, {
+			screenTop: 0,
+			screenLeft: 0,
+			innerWidth: 1280,
+			innerHeight: 720
+		} );
+	} );
 
 	beforeEach( function() {
 		popupMonitor = new PopupMonitor();

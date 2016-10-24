@@ -2,20 +2,64 @@
  * External dependencies
  */
 import Immutable from 'immutable';
+import partial from 'lodash/partial';
 
 /**
  * Internal dependencies
  */
-import { fromApi } from './common';
-import { actionTypes, appStates } from './constants';
+import {
+	IMPORTS_AUTHORS_SET_MAPPING,
+	IMPORTS_AUTHORS_START_MAPPING,
+	IMPORTS_FETCH,
+	IMPORTS_FETCH_FAILED,
+	IMPORTS_FETCH_COMPLETED,
+	IMPORTS_IMPORT_CANCEL,
+	IMPORTS_IMPORT_LOCK,
+	IMPORTS_IMPORT_RECEIVE,
+	IMPORTS_IMPORT_RESET,
+	IMPORTS_IMPORT_START,
+	IMPORTS_IMPORT_UNLOCK,
+	IMPORTS_START_IMPORTING,
+	IMPORTS_STORE_RESET,
+	IMPORTS_UPLOAD_FAILED,
+	IMPORTS_UPLOAD_COMPLETED,
+	IMPORTS_UPLOAD_SET_PROGRESS,
+	IMPORTS_UPLOAD_START,
+} from 'state/action-types';
+import { appStates } from 'state/imports/constants';
 import { createReducerStore } from 'lib/store';
 
 /**
  * Module variables
  */
-const initialState = {
+const initialState = Immutable.fromJS( {
 	count: 0,
-	importers: new Immutable.Map
+	importers: {},
+	importerLocks: {},
+	api: {
+		isHydrated: false,
+		isFetching: false,
+		retryCount: 0
+	}
+} );
+
+const equals = ( a, b ) => a === b;
+const increment = a => a + 1;
+
+const removableStates = [ appStates.CANCEL_PENDING, appStates.DEFUNCT ];
+const shouldRemove = importer => removableStates.some( partial( equals, importer.get( 'importerState' ) ) );
+
+const adjustImporterLock = ( state, { action } ) => {
+	switch ( action.type ) {
+		case IMPORTS_IMPORT_LOCK:
+			return state.setIn( [ 'importerLocks', action.importerId ], true );
+
+		case IMPORTS_IMPORT_UNLOCK:
+			return state.setIn( [ 'importerLocks', action.importerId ], false );
+
+		default:
+			return state;
+	}
 };
 
 const ImporterStore = createReducerStore( function( state, payload ) {
@@ -23,40 +67,54 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 		newState;
 
 	switch ( action.type ) {
-		case actionTypes.DEV_SET_STATE:
-			// Convert the importer list into an object
-			action.newState.importers = action.newState.importers
-					.reduce( ( total, importer ) => Object.assign( total, { [ importer.id ]: importer } ), {} );
-
-			newState = Immutable.fromJS( action.newState );
-			newState = Immutable.is( state, newState ) ? state : newState;
+		case IMPORTS_STORE_RESET:
+			// this is here to enable
+			// unit-testing the store
+			newState = initialState;
 			break;
 
-		case actionTypes.CANCEL_IMPORT:
-		case actionTypes.RESET_IMPORT:
+		case IMPORTS_FETCH:
+			newState = state.setIn( [ 'api', 'isFetching' ], true );
+			break;
+
+		case IMPORTS_FETCH_FAILED:
+			newState = state
+				.setIn( [ 'api', 'isFetching' ], false )
+				.updateIn( [ 'api', 'retryCount' ], increment );
+			break;
+
+		case IMPORTS_FETCH_COMPLETED:
+			newState = state
+				.setIn( [ 'api', 'isFetching' ], false )
+				.setIn( [ 'api', 'isHydrated' ], true )
+				.setIn( [ 'api', 'retryCount' ], 0 );
+			break;
+
+		case IMPORTS_IMPORT_CANCEL:
+		case IMPORTS_IMPORT_RESET:
 			// Remove the specified importer from the list of current importers
 			newState = state.update( 'importers', importers => {
-				return importers.filterNot( importer => importer.get( 'id' ) === action.importerId );
+				return importers.filterNot( importer => importer.get( 'importerId' ) === action.importerId );
 			} );
 			break;
 
-		case actionTypes.FAIL_UPLOAD:
+		case IMPORTS_UPLOAD_FAILED:
 			newState = state
 				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.UPLOAD_FAILURE )
 				.setIn( [ 'importers', action.importerId, 'errorData' ], { type: 'uploadError', description: action.error } );
 			break;
 
-		case actionTypes.FINISH_UPLOAD:
+		case IMPORTS_UPLOAD_COMPLETED:
 			newState = state
 				.deleteIn( [ 'importers' ], action.importerId )
-				.setIn( [ 'importers', fromApi( action.importerStatus ).importerId ], Immutable.fromJS( fromApi( action.importerStatus ) ) );
+				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) );
 			break;
 
-		case actionTypes.START_MAPPING_AUTHORS:
+		case IMPORTS_AUTHORS_START_MAPPING:
 			newState = state.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.MAP_AUTHORS );
 			break;
 
-		case actionTypes.MAP_AUTHORS:
+		case IMPORTS_AUTHORS_SET_MAPPING:
 			newState = state.updateIn( [ 'importers', action.importerId, 'customData', 'sourceAuthors' ], authors => (
 				authors.map( author => {
 					if ( action.sourceAuthor.id !== author.get( 'id' ) ) {
@@ -68,30 +126,49 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			) );
 			break;
 
-		case actionTypes.SET_UPLOAD_PROGRESS:
+		case IMPORTS_IMPORT_RECEIVE:
+			newState = state.setIn( [ 'api', 'isHydrated' ], true );
+
+			if ( newState.getIn( [ 'importerLocks', action.importerStatus.importerId ], false ) ) {
+				break;
+			}
+
+			if ( action.importerStatus.importerState === appStates.DEFUNCT ) {
+				newState = newState
+					.deleteIn( [ 'importers', action.importerStatus.importerId ] );
+				break;
+			}
+
+			newState = newState
+				.setIn( [ 'importers', action.importerStatus.importerId ], Immutable.fromJS( action.importerStatus ) )
+				.update( 'importers', importers => importers.filterNot( shouldRemove ) );
+			break;
+
+		case IMPORTS_UPLOAD_SET_PROGRESS:
 			newState = state.setIn( [ 'importers', action.importerId, 'percentComplete' ],
 				action.uploadLoaded / ( action.uploadTotal + Number.EPSILON ) * 100
 			);
 			break;
 
-		case actionTypes.START_IMPORT:
-			let newImporter = Immutable.fromJS( {
-				id: action.importerId,
+		case IMPORTS_IMPORT_START:
+			const newImporter = Immutable.fromJS( {
+				importerId: action.importerId,
 				type: action.importerType,
-				importerState: appStates.READY_FOR_UPLOAD
+				importerState: appStates.READY_FOR_UPLOAD,
+				site: { ID: action.siteId }
 			} );
 
 			newState = state
 				.update( 'count', count => count + 1 )
-				.setIn( [ 'importers', action.importerId ], Immutable.fromJS( newImporter ) );
+				.setIn( [ 'importers', action.importerId ], newImporter );
 			break;
 
-		case actionTypes.START_IMPORTING:
+		case IMPORTS_START_IMPORTING:
 			newState = state
-				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.UPLOADING );
+				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.IMPORTING );
 			break;
 
-		case actionTypes.START_UPLOAD:
+		case IMPORTS_UPLOAD_START:
 			newState = state
 				.setIn( [ 'importers', action.importerId, 'importerState' ], appStates.UPLOADING )
 				.setIn( [ 'importers', action.importerId, 'filename' ], action.filename );
@@ -102,8 +179,10 @@ const ImporterStore = createReducerStore( function( state, payload ) {
 			break;
 	}
 
+	newState = adjustImporterLock( newState, payload );
+
 	return newState;
-}, Immutable.fromJS( initialState ) );
+}, initialState );
 
 export function getState() {
 	return ImporterStore.get().toJS();

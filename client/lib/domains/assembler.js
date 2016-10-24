@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-const find = require( 'lodash/collection/find' ),
-	without = require( 'lodash/array/without' ),
-	mapKeys = require( 'lodash/object/mapKeys' ),
-	camelCase = require( 'lodash/string/camelCase' );
+import find from 'lodash/find';
+import without from 'lodash/without';
+import mapKeys from 'lodash/mapKeys';
+import camelCase from 'lodash/camelCase';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-const domainTypes = require( './constants' ).type,
-	i18n = require( 'lib/mixins/i18n' );
+import { getDomainType } from './utils';
 
 function createDomainObjects( dataTransferObject ) {
 	let domains = [];
@@ -22,21 +22,25 @@ function createDomainObjects( dataTransferObject ) {
 	domains = dataTransferObject.map( ( domain ) => {
 		return {
 			autoRenewalDate: domain.auto_renewal_date,
-			expirationDate: domain.expiry,
-			expirationMoment: domain.expiry && i18n.moment( domain.expiry, 'MMMM D, YYYY', 'en' ).locale( false ),
+			currentUserCanManage: domain.current_user_can_manage,
+			expirationMoment: domain.expiry ? i18n.moment( domain.expiry ) : null,
 			expired: domain.expired,
 			expirySoon: domain.expiry_soon,
 			googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
 			hasPrivacyProtection: domain.has_private_registration,
 			isAutoRenewing: domain.auto_renewing,
+			isWhoisEditable: domain.is_whois_editable,
 			isPendingIcannVerification: domain.is_pending_icann_verification,
 			isPrimary: domain.primary_domain,
 			manualTransferRequired: domain.manual_transfer_required,
 			name: domain.domain,
+			owner: domain.owner,
 			privateDomain: domain.private_domain,
+			pendingTransfer: domain.pending_transfer,
 			registrationDate: domain.registration_date,
 			registrationMoment: domain.registration_date && i18n.moment( domain.registration_date, 'MMMM D, YYYY', 'en' ).locale( false ),
-			transferProhibited: domain.transfer_prohibited,
+			hasZone: domain.has_zone,
+			pointsToWpcom: domain.points_to_wpcom,
 			type: getDomainType( domain )
 		};
 	} );
@@ -50,22 +54,6 @@ function assembleGoogleAppsSubscription( googleAppsSubscription ) {
 	}
 
 	return mapKeys( googleAppsSubscription, ( value, key ) => camelCase( key ) );
-}
-
-function getDomainType( domainFromApi ) {
-	if ( domainFromApi.type === 'redirect' ) {
-		return domainTypes.SITE_REDIRECT;
-	}
-
-	if ( domainFromApi.wpcom_domain ) {
-		return domainTypes.WPCOM;
-	}
-
-	if ( domainFromApi.has_registration ) {
-		return domainTypes.REGISTERED;
-	}
-
-	return domainTypes.MAPPED;
 }
 
 function ensurePrimaryDomainIsFirst( domains ) {

@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-const React = require( 'react/addons' ),
-	groupBy = require( 'lodash/collection/groupBy' ),
-	mapValues = require( 'lodash/object/mapValues' ),
-	map = require( 'lodash/collection/map' ),
+const React = require( 'react' ),
+	update = require( 'react-addons-update' ),
+	groupBy = require( 'lodash/groupBy' ),
+	mapValues = require( 'lodash/mapValues' ),
+	map = require( 'lodash/map' ),
 	page = require( 'page' ),
-	find = require( 'lodash/collection/find' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	find = require( 'lodash/find' ),
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies
@@ -20,7 +21,7 @@ const analyticsMixin = require( 'lib/mixins/analytics' ),
 	FormTextInputWithAffixes = require( 'components/forms/form-text-input-with-affixes' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	paths = require( 'my-sites/upgrades/paths' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	Notice = require( 'components/notice' ),
 	ValidationErrorList = require( 'notices/validation-error-list' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	{ hasGoogleApps, getGoogleAppsSupportedDomains } = require( 'lib/domains' ),
@@ -68,9 +69,9 @@ const AddEmailAddressesCard = React.createClass( {
 	validationErrors: function() {
 		if ( this.state.validationErrors ) {
 			return (
-				<SimpleNotice onClick={ this.removeValidationErrors } status="is-error">
+				<Notice onDismissClick={ this.removeValidationErrors } status="is-error">
 					<ValidationErrorList messages={ this.state.validationErrors } />
-				</SimpleNotice>
+				</Notice>
 			);
 		}
 	},
@@ -97,7 +98,7 @@ const AddEmailAddressesCard = React.createClass( {
 	setDomainFieldsToFirstDomainName() {
 		const firstDomainName = this.getFirstDomainName(),
 			nextFieldsets = this.state.fieldsets.map( ( fieldset ) => {
-				return React.addons.update( fieldset, {
+				return update( fieldset, {
 					domain: { value: { $set: firstDomainName } }
 				} );
 			} );
@@ -132,7 +133,8 @@ const AddEmailAddressesCard = React.createClass( {
 	},
 
 	emailAddressFieldset( index ) {
-		const field = this.state.fieldsets[ index ];
+		const field = this.state.fieldsets[ index ],
+			contactText = this.translate( 'contact', { context: 'part of e-mail address', comment: 'As it would be part of an e-mail address contact@example.com' } );
 		let suffix, select;
 
 		if ( this.props.selectedDomainName ) {
@@ -152,7 +154,7 @@ const AddEmailAddressesCard = React.createClass( {
 				<FormTextInputWithAffixes
 					onChange={ this.handleFieldChange.bind( this, 'username', index ) }
 					onFocus={ this.handleFieldFocus.bind( this, 'Email', index ) }
-					placeholder={ this.translate( 'e.g. contact', { textOnly: true, comment: 'Placeholder example email username: contact@...' } ) }
+					placeholder={ this.translate( 'e.g. %(example)s', { args: { example: contactText } } ) }
 					suffix={ suffix }
 					type="text"
 					value={ field.username.value } />
@@ -173,7 +175,7 @@ const AddEmailAddressesCard = React.createClass( {
 			this.recordEvent( 'domainChange', newValue, index );
 		}
 
-		this.setState( React.addons.update( this.state, command ) );
+		this.setState( update( this.state, command ) );
 	},
 
 	handleFieldFocus( fieldName, index ) {
@@ -263,7 +265,7 @@ const AddEmailAddressesCard = React.createClass( {
 		} );
 		googleAppsCartItems.forEach( upgradesActions.addItem );
 
-		page( '/checkout/' + this.props.selectedSite.domain );
+		page( '/checkout/' + this.props.selectedSite.slug );
 	},
 
 	handleCancel( event ) {
@@ -271,7 +273,7 @@ const AddEmailAddressesCard = React.createClass( {
 
 		this.recordEvent( 'cancelClick', this.props.selectedDomainName );
 
-		page( paths.domainManagementEmail( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+		page( paths.domainManagementEmail( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
 } );
 

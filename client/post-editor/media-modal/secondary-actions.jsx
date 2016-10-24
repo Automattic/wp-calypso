@@ -2,25 +2,31 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
-import values from 'lodash/object/values';
-import noop from 'lodash/utility/noop';
-import some from 'lodash/collection/some';
+import values from 'lodash/values';
+import noop from 'lodash/noop';
+import some from 'lodash/some';
+import every from 'lodash/every';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
+import TrackComponentView from 'lib/analytics/track-component-view';
 import { Views as ModalViews } from './constants';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
 import Gridicon from 'components/gridicon';
-import { userCan } from 'lib/site/utils';
+import { canUserDeleteItem } from 'lib/media/utils';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSiteSlug } from 'state/sites/selectors';
+import PlanStorage from 'my-sites/plan-storage';
 
-export default React.createClass( {
-	displayName: 'MediaModalSecondaryActions',
-
+const MediaModalSecondaryActions = React.createClass( {
 	propTypes: {
+		user: PropTypes.object,
 		site: PropTypes.object,
 		selectedItems: PropTypes.array,
 		activeView: React.PropTypes.oneOf( values( ModalViews ) ),
@@ -60,8 +66,17 @@ export default React.createClass( {
 		this.props.onChangeView( ModalViews.DETAIL );
 	},
 
+	navigateToPlans() {
+		analytics.ga.recordEvent( 'Media', 'Clicked Plan Storage Button' );
+		analytics.tracks.recordEvent( 'calypso_upgrade_nudge_cta_click', {
+			cta_name: 'plan-media-storage'
+		} );
+		page( `/plans/${ this.props.siteSlug }` );
+	},
+
 	getButtons() {
 		const {
+			user,
 			site,
 			selectedItems,
 			activeView,
@@ -80,7 +95,11 @@ export default React.createClass( {
 			} );
 		}
 
-		if ( ModalViews.GALLERY !== activeView && selectedItems.length && userCan( 'upload_files', site ) ) {
+		const canDeleteItems = selectedItems.length && every( selectedItems, ( item ) => {
+			return canUserDeleteItem( item, user, site );
+		} );
+
+		if ( ModalViews.GALLERY !== activeView && canDeleteItems ) {
 			buttons.push( {
 				key: 'delete',
 				value: this.translate( 'Delete' ),
@@ -155,12 +174,36 @@ export default React.createClass( {
 		} );
 	},
 
+	renderPlanStorage() {
+		if ( this.props.selectedItems.length === 0 ) {
+			const eventName = 'calypso_upgrade_nudge_impression';
+			const eventProperties = { cta_name: 'plan-media-storage' };
+			return (
+				<PlanStorage
+					className="editor-media-modal__plan-storage"
+					onClick={ this.navigateToPlans }
+					siteId={ this.props.site.ID } >
+					<TrackComponentView eventName={ eventName } eventProperties={ eventProperties } />
+				</PlanStorage>
+			);
+		}
+		return null;
+	},
+
 	render() {
 		return (
 			<div className="editor-media-modal__secondary-actions">
 				{ this.renderMobileButtons() }
 				{ this.renderDesktopButtons() }
+				{ this.renderPlanStorage() }
 			</div>
 		);
 	}
 } );
+
+export default connect( ( state, ownProps ) => {
+	return {
+		user: getCurrentUser( state ),
+		siteSlug: ownProps.site ? getSiteSlug( state, ownProps.site.ID ) : ''
+	};
+} )( MediaModalSecondaryActions );

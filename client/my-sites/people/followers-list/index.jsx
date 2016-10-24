@@ -2,7 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	omit = require( 'lodash/object/omit' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
+	omit = require( 'lodash/omit' ),
 	debug = require( 'debug' )( 'calypso:my-sites:people:followers-list' );
 
 /**
@@ -10,7 +11,7 @@ var React = require( 'react' ),
  */
 var PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	Card = require( 'components/card' ),
-	SectionHeader = require( 'components/section-header' ),
+	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ),
 	FollowersActions = require( 'lib/followers/actions' ),
 	EmailFollowersActions = require( 'lib/email-followers/actions' ),
 	InfiniteList = require( 'components/infinite-list' ),
@@ -22,7 +23,7 @@ var PeopleListItem = require( 'my-sites/people/people-list-item' ),
 	EmailFollowersStore = require( 'lib/email-followers/store' ),
 	deterministicStringify = require( 'lib/deterministic-stringify' ),
 	accept = require( 'lib/accept' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 const maxFollowers = 1000;
 
@@ -36,7 +37,7 @@ let Followers = React.createClass( {
 		};
 	},
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	renderPlaceholders() {
 		return <PeopleListItem key="people-list-item-placeholder"/>;
@@ -47,9 +48,9 @@ let Followers = React.createClass( {
 			store = 'email' === this.props.type ? EmailFollowersStore : FollowersStore,
 			page = this.props.currentPage + 1,
 			paginationData = store.getPaginationData( this.props.fetchOptions ),
-			analyticsAction = 'email' === this.props.type ?
-				'Fetched more email followers with infinite list' :
-				'Fetched more followers with infinite list';
+			analyticsAction = 'email' === this.props.type
+				? 'Fetched more email followers with infinite list'
+				: 'Fetched more followers with infinite list';
 
 		if ( paginationData && paginationData.followersCurrentPage ) {
 			page = paginationData.followersCurrentPage + 1;
@@ -68,7 +69,7 @@ let Followers = React.createClass( {
 				<p>
 				{
 					this.translate(
-						'If you remove this follower, he or she will not receive notifications about this site.'
+						'If removed, this follower will stop receiving notifications about this site, unless they re-follow.'
 					)
 				}
 				</p>
@@ -90,14 +91,18 @@ let Followers = React.createClass( {
 	},
 
 	renderFollower( follower ) {
+		const removeFollower = () => {
+			this.removeFollower( follower );
+		};
+
 		return (
 			<PeopleListItem
 				key={ follower.ID }
 				user={ follower }
-				type='follower'
+				type="follower"
 				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing }
-				onRemove={ this.removeFollower.bind( this, follower ) }
+				onRemove={ removeFollower }
 			/>
 		);
 	},
@@ -123,7 +128,7 @@ let Followers = React.createClass( {
 
 	render() {
 		let key = deterministicStringify( omit( this.props.fetchOptions, [ 'max', 'page' ] ) ),
-			headerText = this.translate( this.props.label, { context: 'A navigation label.' } ),
+			headerText = this.props.label,
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null,
 			followers,
 			emptyTitle;
@@ -131,7 +136,7 @@ let Followers = React.createClass( {
 		if ( this.noFollowerSearchResults() ) {
 			return (
 				<NoResults
-					image='/calypso/images/people/mystery-person.svg'
+					image="/calypso/images/people/mystery-person.svg"
 					text={
 						this.translate( 'No results found for {{em}}%(searchTerm)s{{/em}}',
 							{
@@ -198,7 +203,11 @@ let Followers = React.createClass( {
 		}
 		return (
 			<div>
-				<SectionHeader label={ headerText } count={ this.props.fetching || this.props.fetchOptions.search ? undefined : this.props.totalFollowers } />
+				<PeopleListSectionHeader
+					isFollower
+					label={ headerText }
+					site={ this.props.site }
+					count={ this.props.fetching || this.props.fetchOptions.search ? null : this.props.totalFollowers } />
 				<Card className={ listClass }>
 					{ followers }
 				</Card>
@@ -211,7 +220,7 @@ let Followers = React.createClass( {
 module.exports = React.createClass( {
 	displayName: 'FollowersList',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render() {
 		let DataComponent;

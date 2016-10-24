@@ -1,143 +1,127 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:steps:plans' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+import React, { Component, PropTypes } from 'react';
+import { isEmpty } from 'lodash';
+import classNames from 'classnames';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var productsList = require( 'lib/products-list' )(),
-	analytics = require( 'analytics' ),
-	featuresList = require( 'lib/features-list' )(),
-	plansList = require( 'lib/plans-list' )(),
-	PlanList = require( 'components/plans/plan-list' ),
-	PlansCompare = require( 'components/plans/plans-compare' ),
-	SignupActions = require( 'lib/signup/actions' ),
-	StepWrapper = require( 'signup/step-wrapper' );
+import analytics from 'lib/analytics';
+import { cartItems } from 'lib/cart-values';
+import SignupActions from 'lib/signup/actions';
+import StepWrapper from 'signup/step-wrapper';
+import PlansFeaturesMain from 'my-sites/plans-features-main';
+import QueryPlans from 'components/data/query-plans';
 
-module.exports = React.createClass( {
-	displayName: 'PlansStep',
+class PlansStep extends Component {
+	constructor( props ) {
+		super( props );
 
-	getInitialState: function() {
-		return { plans: [] };
-	},
+		this.onSelectPlan = this.onSelectPlan.bind( this );
+	}
 
-	componentDidMount: function() {
-		debug( 'PlansStep component mounted' );
-		plansList.on( 'change', this.updatePlans );
-		productsList.on( 'change', this.updatePlans );
-		featuresList.on( 'change', this.updatePlans );
+	onSelectPlan( cartItem ) {
+		const {
+			additionalStepData,
+			stepSectionName,
+			stepName,
+			goToNextStep,
+			translate,
+			signupDependencies: { domainItem }
+		} = this.props,
+			privacyItem = cartItem && domainItem && cartItems.domainPrivacyProtection( { domain: domainItem.meta } );
 
-		this.updatePlans();
-	},
-
-	componentWillUnmount: function() {
-		debug( 'PlansStep component unmounted' );
-		plansList.off( 'change', this.updatePlans );
-		productsList.off( 'change', this.updatePlans );
-		featuresList.off( 'change', this.updatePlans );
-	},
-
-	updatePlans: function() {
-		this.setState( {
-			plans: plansList.get(),
-			features: featuresList.get(),
-			productsList: productsList.get()
-		} );
-	},
-
-	onSelectPlan: function( cartItem ) {
 		if ( cartItem ) {
 			analytics.tracks.recordEvent( 'calypso_signup_plan_select', {
 				product_slug: cartItem.product_slug,
 				free_trial: cartItem.free_trial,
-				from_section: this.props.stepSectionName ? this.props.stepSectionName : 'default'
+				from_section: stepSectionName ? stepSectionName : 'default'
 			} );
 		} else {
 			analytics.tracks.recordEvent( 'calypso_signup_free_plan_select', {
-				from_section: this.props.stepSectionName ? this.props.stepSectionName : 'default'
+				from_section: stepSectionName ? stepSectionName : 'default'
 			} );
 		}
 
 		SignupActions.submitSignupStep( {
-			processingMessage: isEmpty( cartItem ) ? this.translate( 'Free plan selected' ) : this.translate( 'Adding your plan' ),
-			stepName: this.props.stepName,
-			stepSectionName: this.props.stepSectionName,
-			cartItem
-		}, [], { cartItem } );
+			processingMessage: isEmpty( cartItem )
+				? translate( 'Free plan selected' )
+				: translate( 'Adding your plan' ),
+			stepName,
+			stepSectionName,
+			cartItem,
+			privacyItem,
+			...additionalStepData
+		}, [], { cartItem, privacyItem } );
 
-		this.props.goToNextStep();
-	},
+		goToNextStep();
+	}
 
-	comparePlansUrl: function() {
-		return this.props.stepName + '/compare';
-	},
+	plansFeaturesList() {
+		const {	hideFreePlan } = this.props;
 
-	handleComparePlansLinkClick: function( linkLocation ) {
-		analytics.tracks.recordEvent( 'calypso_signup_compare_plans_click', { location: linkLocation } );
-	},
-
-	plansList: function() {
 		return (
 			<div>
-				<PlanList
-					plans={ this.state.plans }
-					comparePlansUrl={ this.comparePlansUrl() }
+				<QueryPlans />
+
+				<PlansFeaturesMain
+					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
-					onSelectPlan={ this.onSelectPlan } />
-				<a
-					href={ this.comparePlansUrl() }
-					className='plans-step__compare-plans-link'
-					onClick={ this.handleComparePlansLinkClick.bind( null, 'footer' ) }>
-					{ this.translate( 'Compare Plans' ) }
-				</a>
+					onUpgradeClick={ this.onSelectPlan }
+					showFAQ={ false }
+				/>
 			</div>
 		);
-	},
+	}
 
-	plansSelection: function() {
-		let headerText = this.translate( 'Pick a plan that\'s right for you.' ),
-			subHeaderText = this.translate(
-				'Not sure which plan to choose? Take a look at our {{a}}plan comparison chart{{/a}}.',
-				{ components: { a: <a
-					href={ this.comparePlansUrl() }
-					onClick={ this.handleComparePlansLinkClick.bind( null, 'header' ) } /> } }
-			);
+	plansFeaturesSelection() {
+		const {
+			flowName,
+			stepName,
+			positionInFlow,
+			signupProgressStore,
+			translate
+		} = this.props;
+
+		const headerText = translate( "Pick a plan that's right for you." );
 
 		return (
 			<StepWrapper
-				flowName={ this.props.flowName }
-				stepName={ this.props.stepName }
-				positionInFlow={ this.props.positionInFlow }
+				flowName={ flowName }
+				stepName={ stepName }
+				positionInFlow={ positionInFlow }
 				headerText={ headerText }
-				subHeaderText={ subHeaderText }
 				fallbackHeaderText={ headerText }
-				fallbackSubHeaderText={ subHeaderText }
-				signupProgressStore={ this.props.signupProgressStore }
-				stepContent={ this.plansList() } />
+				signupProgressStore={ signupProgressStore }
+				isWideLayout={ true }
+				stepContent={ this.plansFeaturesList() } />
 		);
-	},
+	}
 
-	plansCompare: function() {
-		return <PlansCompare
-			className="plans-step__compare"
-			onSelectPlan={ this.onSelectPlan }
-			isInSignup={ true }
-			backUrl={ this.props.path.replace( '/compare', '' ) }
-			plans={ plansList }
-			features={ featuresList }
-			productsList={ productsList } />;
-	},
+	render() {
+		const classes = classNames( 'plans plans-step', {
+			'has-no-sidebar': true,
+			'is-wide-layout': true
+		} );
 
-	render: function() {
-		return <div className="plans plans-step has-no-sidebar">
-			{
-				'compare' === this.props.stepSectionName ?
-				this.plansCompare() :
-				this.plansSelection()
-			}
+		const renderPlansFeatures = () => ( this.plansFeaturesSelection() );
+
+		return <div className={ classes }>
+			{ renderPlansFeatures() }
 		</div>;
 	}
-} );
+}
+
+PlansStep.propTypes = {
+	additionalStepData: PropTypes.object,
+	goToNextStep: PropTypes.func.isRequired,
+	hideFreePlan: PropTypes.bool,
+	stepName: PropTypes.string.isRequired,
+	stepSectionName: PropTypes.string,
+	translate: PropTypes.func.isRequired,
+};
+
+export default localize( PlansStep );

@@ -11,6 +11,10 @@ Callback to fire to obtain search results. By default this gets called `onChange
 ### onSearchChange (optional)
 This is only necessary if `delaySearch` is being used to delay a fetch callback, but you want to respond immediately to the updated value (e.g., show that the user is currently searching). Passes in a string matching the value of the field or `false` when the search field is closed.
 
+### onSearchClose (optional)
+Callback to fire when search input is closed. Useful for styling of elements and used
+to detect that the user wants to finish searching without expecting results.
+
 ### analyticsGroup
 We track usage of the search component, so we need to know where search is being used. E.g., "Posts" for the search instance in the Posts page.
 
@@ -20,10 +24,16 @@ Use this to set the initial value of the field (_not the placeholder, which is d
 `/posts?s=keyword`
 
 ### delaySearch (optional) boolean ( default false )
-Use this prop to delay the `onSearch` callback until after the user has stopped typing. If `delaySearch` is false there is no delay between keyup and the `onSearch` callback. If the filtering is done asynchronously (i.e., via ajax request) `delaySearch` should be true to avoid a request on each keypress.
+Use this prop to delay the `onSearch` callback until after the user has stopped typing. If `delaySearch` is false there is no delay between keyup and the `onSearch` callback. If the filtering is done asynchronously (i.e., via ajax request) `delaySearch` should be true to avoid a request on each keypress. The default delay is 300ms but can be customized using `delayTimeout`.
 
-### pinned (optional)
-Whether to display the search input from collapsed by default and pinned to the right of its container. If not set, the search input will show as already expanded.
+### delayTimeout (optional) number ( default 300 )
+If `delaySearch` is true, this prop can be used to control the number of milliseconds used to determine when the user has stopped typing. It's a good idea to leave this at its default value unless there's a specific reason to change the timeout (e.g., a very expensive search may benefit from a longer timeout).
+
+### pinned (optional) bool ( default false )
+Whether to display the search input from collapsed by default. If not set, the search input will show as already expanded.
+
+### fitsContainer (optional) bool ( default false )
+Position search absolutely, taking the height of the containing element and anchor to the right side.
 
 ### placeholder (optional)
 The label to place inside the search field if/when empty. Defaults to a translated version of "Search…".
@@ -36,6 +46,18 @@ This value is passed to the disabled attribute of the `<input>` element, and det
 
 ### searching (optional) bool ( default false )
 Whether to display a [`<Spinner />`](../spinner/) in place of the search icon.
+
+### dir (optional) string ( default undefined )
+Whether to force a specific writing direction for the search field, regardless of the current global writing direction. Useful for inputting domains, codes, etc that use LTR direction when in a RTL language.
+
+Currently supports forcing a LTR field in a RTL language, but not the other way around.
+
+Supported values are `'ltr'` and `undefined` (the default, which uses the current global writing direction of the app).
+
+### styleOverlay (optional) function ( default undefined )
+Implement this function to add markup to the content of the search box. Current content is supplied as a parameter. Return a string containing the same text but with markup added.
+
+For example, add `<span/>`s around tokens in the content, then add CSS elsewhere to style the `<span/>`s.
 
 ## Methods
 

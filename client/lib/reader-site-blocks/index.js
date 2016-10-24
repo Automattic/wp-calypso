@@ -4,9 +4,9 @@
 //var debug = require( 'debug' )( 'calypso:reader:site-blocks' );
 
 var Dispatcher = require( 'dispatcher' ),
-	reject = require( 'lodash/collection/reject' ),
-	find = require( 'lodash/collection/find' ),
-	findLast = require( 'lodash/collection/findLast' );
+	reject = require( 'lodash/reject' ),
+	find = require( 'lodash/find' ),
+	findLast = require( 'lodash/findLast' );
 
 // Internal Dependencies
 var emitter = require( 'lib/mixins/emitter' ),

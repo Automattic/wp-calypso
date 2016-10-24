@@ -1,35 +1,52 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+import React, { Component, PropTypes } from 'react';
+import classnames from 'classnames';
+import { omit } from 'lodash';
 
-var MenuItem = React.createClass( {
-	getDefaultProps: function() {
-		return {
-			isVisible: false,
-			className: '',
-			focusOnHover: true
-		};
-	},
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'components/gridicon';
 
-	render: function() {
-		var onMouseOver = this.props.focusOnHover ? this._onMouseOver : null;
-		return (
-			<button className={ joinClasses( 'popover__menu-item', this.props.className ) }
-					role="menuitem"
-					disabled={ this.props.disabled }
-					onClick={ this.props.onClick }
-					onMouseOver={ onMouseOver }
-					tabIndex="-1">
-				{ this.props.children }
-			</button>
-		);
-	},
+export default class PopoverMenuItem extends Component {
+	static propTypes = {
+		href: PropTypes.string,
+		className: PropTypes.string,
+		icon: PropTypes.string,
+		focusOnHover: PropTypes.bool,
+		children: PropTypes.node
+	};
 
-	_onMouseOver: function() {
-		this.getDOMNode().focus();
+	static defaultProps = {
+		focusOnHover: true
+	};
+
+	focus( event ) {
+		event.target.focus();
 	}
-} );
 
-module.exports = MenuItem;
+	render() {
+		const { className, href, focusOnHover, icon, children } = this.props;
+		const classes = classnames( 'popover__menu-item', className );
+		const ItemComponent = href ? 'a' : 'button';
+
+		let hoverHandler;
+		if ( focusOnHover ) {
+			hoverHandler = this.focus;
+		}
+
+		return (
+			<ItemComponent
+				role="menuitem"
+				onMouseOver={ hoverHandler }
+				tabIndex="-1"
+				{ ...omit( this.props, 'icon', 'focusOnHover' ) }
+				className={ classes }>
+				{ icon && <Gridicon icon={ icon } size={ 18 } /> }
+				{ children }
+			</ItemComponent>
+		);
+	}
+}

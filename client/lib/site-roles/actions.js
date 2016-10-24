@@ -18,7 +18,7 @@ var RolesActions = {
 			siteId: siteId
 		} );
 
-		wpcom.undocumented().site( siteId ).getRoles( {}, function( error, data ) {
+		wpcom.undocumented().site( siteId ).getRoles( function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_ROLES',
 				action: 'RECEIVE_ROLES',

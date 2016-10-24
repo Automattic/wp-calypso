@@ -1,166 +1,160 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
-	page = require( 'page' );
+import React from 'react';
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-const Main = require( 'components/main' ),
-	Header = require( 'my-sites/upgrades/domain-management/components/header' ),
-	SidebarNavigation = require( 'my-sites/sidebar-navigation' ),
-	AddGoogleAppsCard = require( './add-google-apps-card' ),
-	GoogleAppsUsersCard = require( './google-apps-users-card' ),
-	VerticalNav = require( 'components/vertical-nav' ),
-	VerticalNavItem = require( 'components/vertical-nav/item' ),
-	UpgradesNavigation = require( 'my-sites/upgrades/navigation' ),
-	EmptyContent = require( 'components/empty-content' ),
-	paths = require( 'my-sites/upgrades/paths' ),
-	{ hasGoogleApps, canAddEmail, getSelectedDomain } = require( 'lib/domains' );
+import Main from 'components/main';
+import Header from 'my-sites/upgrades/domain-management/components/header';
+import SidebarNavigation from 'my-sites/sidebar-navigation';
+import AddGoogleAppsCard from './add-google-apps-card';
+import GoogleAppsUsersCard from './google-apps-users-card';
+import Placeholder from './placeholder';
+import VerticalNav from 'components/vertical-nav';
+import VerticalNavItem from 'components/vertical-nav/item';
+import UpgradesNavigation from 'my-sites/upgrades/navigation';
+import EmptyContent from 'components/empty-content';
+import paths from 'my-sites/upgrades/paths';
+import {
+	hasGoogleApps,
+	hasGoogleAppsSupportedDomain,
+	getSelectedDomain,
+	hasMappedDomain
+} from 'lib/domains';
+import { isPlanFeaturesEnabled } from 'lib/plans';
 
 const Email = React.createClass( {
 	propTypes: {
 		domains: React.PropTypes.object.isRequired,
 		products: React.PropTypes.object.isRequired,
-		googleAppsUsers: React.PropTypes.object.isRequired,
 		selectedDomainName: React.PropTypes.string,
 		selectedSite: React.PropTypes.oneOfType( [
 			React.PropTypes.object,
 			React.PropTypes.bool
 		] ).isRequired,
-		user: React.PropTypes.object.isRequired
-	},
-
-	hasGoogleApps() {
-		return hasGoogleApps( getSelectedDomain( this.props ) );
+		sitePlans: React.PropTypes.object.isRequired,
+		user: React.PropTypes.object.isRequired,
+		googleAppsUsers: React.PropTypes.array.isRequired,
+		googleAppsUsersLoaded: React.PropTypes.bool.isRequired
 	},
 
 	render() {
 		return (
-			<Main className="domain-management-email">
+			<Main
+				className="domain-management-email"
+				wideLayout={ isPlanFeaturesEnabled() }
+			>
 				<SidebarNavigation />
 				{ this.headerOrUpgradesNavigation() }
 				{ this.content() }
-				{ this.verticalNav() }
 			</Main>
 		);
 	},
 
 	headerOrUpgradesNavigation() {
-		let component;
-
-		if ( this.isManageDomainFlow() ) {
-			component = (
+		if ( this.props.selectedDomainName ) {
+			return (
 				<Header
-						onClick={ this.goToEditOrList }
-						selectedDomainName={ this.props.selectedDomainName }>
+					onClick={ this.goToEditOrList }
+					selectedDomainName={ this.props.selectedDomainName }>
 					{ this.translate( 'Email' ) }
 				</Header>
 			);
-		} else {
-			component = (
-				<UpgradesNavigation
-					path={ this.props.context.path }
-					cart={ this.props.cart }
-					selectedSite={ this.props.selectedSite } />
-			);
 		}
-
-		return component;
-	},
-
-	isManageDomainFlow() {
-		return !! this.props.selectedDomainName;
+		return (
+			<UpgradesNavigation
+				path={ this.props.context.path }
+				cart={ this.props.cart }
+				selectedSite={ this.props.selectedSite }
+				sitePlans={ this.props.sitePlans } />
+		);
 	},
 
 	content() {
-		let component;
-
-		if ( ! this.props.domains.hasLoadedFromServer ) {
-			component = this.translate( 'Loading…' );
-		} else if ( this.isManageDomainFlow() ) {
-			if ( this.hasGoogleApps() ) {
-				component = this.googleAppsUsersCard();
-			} else if ( canAddEmail( [ getSelectedDomain( this.props ) ] ) ) {
-				component = this.addGoogleAppsCard();
-			}
-		} else if ( canAddEmail( this.props.domains.list ) ) {
-			component = this.addGoogleAppsCard();
-		} else {
-			component = this.emptyContent();
+		if ( ! ( this.props.domains.hasLoadedFromServer && this.props.googleAppsUsersLoaded ) ) {
+			return <Placeholder />;
 		}
 
-		return component;
+		const domainList = this.props.selectedDomainName
+			? [ getSelectedDomain( this.props ) ]
+			: this.props.domains.list;
+
+		if ( domainList.some( hasGoogleApps ) ) {
+			return this.googleAppsUsersCard();
+		} else if ( hasGoogleAppsSupportedDomain( domainList ) ) {
+			return this.addGoogleAppsCard();
+		}
+		return this.emptyContent();
 	},
 
 	emptyContent() {
-		return (
-			<EmptyContent
-				title={ this.translate( "You don't have any domains {{em}}yet{{/em}}.", {
-					components: { em: <em /> }
-				} ) }
-				line={ this.translate( 'Add a domain to your site to make it easier ' +
+		const {
+			selectedSite,
+			selectedDomainName,
+			domains
+			} = this.props;
+		let emptyContentProps;
+
+		if ( selectedDomainName ) {
+			emptyContentProps = {
+				title: this.translate( 'G Suite is not supported on this domain' ),
+				line: this.translate( 'Only domains registered with WordPress.com are eligible for G Suite.' ),
+				secondaryAction: this.translate( 'Add Email Forwarding' ),
+				secondaryActionURL: paths.domainManagementEmailForwarding( selectedSite.slug, selectedDomainName )
+			};
+		} else if ( hasMappedDomain( domains.list ) ) {
+			emptyContentProps = {
+				title: this.translate( 'G Suite is not supported on mapped domains' ),
+				line: this.translate( 'Only domains registered with WordPress.com are eligible for G Suite.' )
+			};
+		} else {
+			emptyContentProps = {
+				title: this.translate( "You don't have any domains yet." ),
+				line: this.translate(
+					'Add a domain to your site to make it easier ' +
 					'to remember and easier to share, and get access to email ' +
-					'forwarding, Google Apps for Work, and other email services.' ) }
-				action={ this.translate( 'Add a Custom Domain' ) }
-				actionURL={ '/domains/add/' + this.props.selectedSite.domain }
-				illustration="/calypso/images/drake/drake-whoops.svg" />
+					'forwarding, G Suite, and other email services.'
+				)
+			};
+		}
+		Object.assign( emptyContentProps, {
+			illustration: '/calypso/images/drake/drake-whoops.svg',
+			action: this.translate( 'Add a Custom Domain' ),
+			actionURL: '/domains/add/' + this.props.selectedSite.slug
+		} );
+
+		return (
+			<EmptyContent { ...emptyContentProps } />
 		);
 	},
 
 	googleAppsUsersCard() {
-		return (
-			<GoogleAppsUsersCard
-				googleAppsUsers={ this.props.googleAppsUsers }
-				selectedSite={ this.props.selectedSite }
-				selectedDomainName={ this.props.selectedDomainName }
-				domains={ this.props.domains }
-				user={ this.props.user } />
-		);
+		return <GoogleAppsUsersCard { ...this.props } />;
 	},
 
 	addGoogleAppsCard() {
 		return (
-			<AddGoogleAppsCard
-				products={ this.props.products }
-				selectedSite={ this.props.selectedSite }
-				selectedDomainName={ this.props.selectedDomainName } />
-		);
-	},
-
-	isVerticalNavShowing() {
-		return (
-			this.isManageDomainFlow() &&
-			this.props.domains.hasLoadedFromServer &&
-			! this.hasGoogleApps()
-		);
-	},
-
-	verticalNav() {
-		if ( ! this.isVerticalNavShowing() ) {
-			return null;
-		}
-
-		return (
-			<VerticalNav>
-				<VerticalNavItem path={ paths.domainManagementEmailForwarding( this.props.selectedSite.domain, this.props.selectedDomainName ) }>
-					{ this.translate( 'Email Forwarding' ) }
-				</VerticalNavItem>
-			</VerticalNav>
+			<div>
+				<AddGoogleAppsCard { ...this.props } />
+				{ this.props.selectedDomainName && <VerticalNav>
+					<VerticalNavItem
+						path={ paths.domainManagementEmailForwarding( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
+						{ this.translate( 'Email Forwarding' ) }
+					</VerticalNavItem>
+				</VerticalNav> }
+			</div>
 		);
 	},
 
 	goToEditOrList() {
-		let path;
-
-		if ( this.isManageDomainFlow() ) {
-			path = paths.domainManagementEdit( this.props.selectedSite.domain, this.props.selectedDomainName );
+		if ( this.props.selectedDomainName ) {
+			page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 		} else {
-			path = paths.domainManagementList( this.props.selectedSite.domain );
+			page( paths.domainManagementList( this.props.selectedSite.slug ) );
 		}
-
-		page( path );
 	}
 } );
 

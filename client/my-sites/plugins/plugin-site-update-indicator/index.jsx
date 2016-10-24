@@ -6,7 +6,7 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	Gridicon = require( 'components/gridicon' ),
 	PluginsActions = require( 'lib/plugins/actions' );
 
@@ -76,9 +76,11 @@ module.exports = React.createClass( {
 			return;
 		}
 		if ( this.props.site.canUpdateFiles &&
-				( this.props.site.plugin.update || this.isUpdating() ) ) {
+				( ( this.props.site.plugin.update && ! this.props.site.plugin.update.recentlyUpdated ) || this.isUpdating() ) ) {
 			if ( ! this.props.expanded ) {
+				/* eslint-disable wpcalypso/jsx-gridicon-size */
 				return <span className="plugin-site-update-indicator"><Gridicon icon="sync" size={ 20 } /></span>;
+				/* eslint-enable wpcalypso/jsx-gridicon-size */
 			}
 
 			return this.renderUpdate();

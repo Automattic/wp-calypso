@@ -2,23 +2,27 @@
  * External dependencies
  */
 import EventEmitter from 'events/';
-import forEach from 'lodash/collection/forEach';
-import pluck from 'lodash/collection/pluck';
-import mapValues from 'lodash/object/mapValues';
-import values from 'lodash/object/values';
+import forEach from 'lodash/forEach';
+import map from 'lodash/map';
+import mapValues from 'lodash/mapValues';
+import values from 'lodash/values';
 
 /**
  * Internal dependencies
  */
 import GalleryView from './gallery-view';
 import EmbedViewManager from './views/embed';
+import ContactFormView from './views/contact-form';
+import * as VideoView from './views/video';
 
 /**
  * Module variables
  */
-const views = {
+let views = {
 	gallery: GalleryView,
-	embed: new EmbedViewManager()
+	embed: new EmbedViewManager(),
+	contactForm: ContactFormView,
+	video: VideoView
 };
 
 const components = mapValues( views, ( view ) => {
@@ -86,7 +90,7 @@ export default {
 			} );
 		} );
 
-		content = pluck( pieces, 'content' ).join( '' );
+		content = map( pieces, 'content' ).join( '' );
 		return content.replace( /<p>\s*<p data-wpview-marker=/g, '<p data-wpview-marker=' ).replace( /<\/p>\s*<\/p>/g, '</p>' );
 	},
 

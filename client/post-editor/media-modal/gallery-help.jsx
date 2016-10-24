@@ -1,7 +1,10 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react/addons';
+import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -12,10 +15,14 @@ import Gridicon from 'components/gridicon';
 import FormCheckbox from 'components/forms/form-checkbox';
 import Button from 'components/button';
 
-export default React.createClass( {
+import { setPreference, savePreference } from 'state/preferences/actions';
+import { getPreference } from 'state/preferences/selectors';
+import QueryPreferences from 'components/data/query-preferences';
+
+const EditorMediaModalGalleryHelp =  React.createClass( {
 	displayName: 'EditorMediaModalGalleryHelp',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		onDismiss: PropTypes.func
@@ -73,7 +80,7 @@ export default React.createClass( {
 				context={ renderContext }
 				position="bottom"
 				isVisible={ ! isMobile() }
-				className="popover is-dialog-visible">
+				className="popover__gallery-help is-dialog-visible">
 				<div className="editor-media-modal__gallery-help-content">
 					<div className="editor-media-modal__gallery-help-instruction">
 						<span className="editor-media-modal__gallery-help-icon">
@@ -86,7 +93,7 @@ export default React.createClass( {
 					<div className="editor-media-modal__gallery-help-actions">
 						<label className="editor-media-modal__gallery-help-remember-dismiss">
 							<FormCheckbox checked={ this.state.rememberDismiss } onChange={ this.toggleRememberDismiss } />
-							<span onClick={ this.toggleRememberDismiss }>
+							<span>
 								{ this.translate( 'Don\'t show again' ) }
 							</span>
 						</label>
@@ -100,10 +107,33 @@ export default React.createClass( {
 	},
 
 	render() {
+		if ( this.props.isMediaModalGalleryInstructionsDismissed ) {
+			return null;
+		}
 		return (
 			<div ref={ this.setRenderContext } className="editor-media-modal__gallery-help">
+				<QueryPreferences />
 				{ this.renderPopover() }
 			</div>
 		);
 	}
 } );
+
+export default connect(
+	state => ( {
+		isMediaModalGalleryInstructionsDismissed: (
+			getPreference( state, 'mediaModalGalleryInstructionsDismissed' ) ||
+			getPreference( state, 'mediaModalGalleryInstructionsDismissedForSession' )
+		)
+	} ),
+	dispatch => bindActionCreators( {
+		onDismiss: options => {
+			if ( options.remember ) {
+				return savePreference( 'mediaModalGalleryInstructionsDismissed', true );
+			} else {
+				return setPreference( 'mediaModalGalleryInstructionsDismissedForSession', true );
+			}
+		}
+	}, dispatch )
+)( EditorMediaModalGalleryHelp );
+

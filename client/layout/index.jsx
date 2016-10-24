@@ -2,44 +2,83 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' ),
-	property = require( 'lodash/utility/property' ),
-	sortBy = require( 'lodash/collection/sortBy' );
+	property = require( 'lodash/property' ),
+	sortBy = require( 'lodash/sortBy' );
 
 /**
  * Internal dependencies
  */
-var Masterbar = require( './masterbar' ),
+var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
+	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	NoticesList = require( 'notices/notices-list' ),
+	GlobalNotices = require( 'components/global-notices' ),
 	notices = require( 'notices' ),
 	translator = require( 'lib/translator-jumpstart' ),
 	TranslatorInvitation = require( './community-translator/invitation' ),
 	TranslatorLauncher = require( './community-translator/launcher' ),
-	EmailVerificationNotice = require( 'components/email-verification/email-verification-notice' ),
+	PushNotificationPrompt = require( 'components/push-notification/prompt' ),
 	Welcome = require( 'my-sites/welcome/welcome' ),
-	WelcomeMessage = require( 'nux-welcome/welcome-message' ),
-	analytics = require( 'analytics' ),
+	WelcomeMessage = require( 'layout/nux-welcome/welcome-message' ),
+	GuidedTours = require( 'layout/guided-tours' ),
+	analytics = require( 'lib/analytics' ),
 	config = require( 'config' ),
+	abtest = require( 'lib/abtest' ).abtest,
 	PulsingDot = require( 'components/pulsing-dot' ),
 	SitesListNotices = require( 'lib/sites-list/notices' ),
+	OfflineStatus = require( 'layout/offline-status' ),
 	PollerPool = require( 'lib/data-poller' ),
-	KeyboardShortcutsMenu;
+	QueryPreferences = require( 'components/data/query-preferences' ),
+	KeyboardShortcutsMenu,
+	Layout,
+	SupportUser,
+	Happychat = require( 'components/happychat' );
+
+import { isOffline } from 'state/application/selectors';
+import { hasSidebar } from 'state/ui/selectors';
+import { isHappychatOpen } from 'state/ui/happychat/selectors';
+import SitePreview from 'blocks/site-preview';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import DocumentHead from 'components/data/document-head';
 
 if ( config.isEnabled( 'keyboard-shortcuts' ) ) {
 	KeyboardShortcutsMenu = require( 'lib/keyboard-shortcuts/menu' );
 }
 
-module.exports = React.createClass( {
+if ( config.isEnabled( 'support-user' ) ) {
+	SupportUser = require( 'support/support-user' );
+}
+
+Layout = React.createClass( {
 	displayName: 'Layout',
 
-	mixins: [ SitesListNotices, observe( 'user', 'focus', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
+	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
 
 	_sitesPoller: null,
 
-	componentWillUpdate: function( nextProps, nextState ) {
-		if ( this.state.section !== nextState.section ) {
-			if ( nextState.section === 'sites' ) {
+	propTypes: {
+		primary: React.PropTypes.element,
+		secondary: React.PropTypes.element,
+		tertiary: React.PropTypes.element,
+		sites: React.PropTypes.object,
+		user: React.PropTypes.object,
+		nuxWelcome: React.PropTypes.object,
+		translatorInvitation: React.PropTypes.object,
+		focus: React.PropTypes.object,
+		// connected props
+		isLoading: React.PropTypes.bool,
+		isSupportUser: React.PropTypes.bool,
+		section: React.PropTypes.oneOfType( [
+			React.PropTypes.bool,
+			React.PropTypes.object,
+		] ),
+		isOffline: React.PropTypes.bool,
+	},
+
+	componentWillUpdate: function( nextProps ) {
+		if ( this.props.section.group !== nextProps.section.group ) {
+			if ( nextProps.section.group === 'sites' ) {
 				setTimeout( function() {
 					if ( ! this.isMounted() || this._sitesPoller ) {
 						return;
@@ -54,13 +93,6 @@ module.exports = React.createClass( {
 
 	componentWillUnmount: function() {
 		this.removeSitesPoller();
-	},
-
-	getInitialState: function() {
-		return {
-			section: false,
-			isLoading: false
-		};
 	},
 
 	removeSitesPoller: function() {
@@ -80,39 +112,128 @@ module.exports = React.createClass( {
 		return sortBy( this.props.sites.get(), property( 'ID' ) ).pop();
 	},
 
-	render: function() {
-		var sectionClass = 'wp layout is-section-' + this.state.section + ' focus-' + this.props.focus.getCurrent(),
-			showWelcome = this.props.nuxWelcome.getWelcome(),
-			newestSite = this.newestSite(),
-			translatorInvitation = this.props.translatorInvitation,
-			showInvitation = ! showWelcome &&
+	renderPushNotificationPrompt: function() {
+		const participantInAbTest = abtest( 'browserNotifications' ) === 'enabled';
+		if ( ! ( config.isEnabled( 'push-notifications' ) && participantInAbTest ) ) {
+			return null;
+		}
+
+		if ( ! this.props.user ) {
+			return null;
+		}
+
+		return <PushNotificationPrompt user={ this.props.user } section={ this.props.section } isLoading={ this.props.isLoading } />;
+	},
+
+	renderMasterbar: function() {
+		if ( 'login' === this.props.section.name ) {
+			return null;
+		}
+
+		if ( ! this.props.user ) {
+			return <MasterbarLoggedOut showSignup={ 'signup' !== this.props.section.name } />;
+		}
+
+		return (
+			<MasterbarLoggedIn
+				user={ this.props.user }
+				section={ this.props.section.group }
+				sites={ this.props.sites } />
+		);
+	},
+
+	renderWelcome: function() {
+		const translatorInvitation = this.props.translatorInvitation;
+
+		if ( ! this.props.user ) {
+			return null;
+		}
+
+		const showWelcome = this.props.nuxWelcome.getWelcome();
+		const newestSite = this.newestSite();
+		const showInvitation = ! showWelcome &&
 				translatorInvitation.isPending() &&
-				translatorInvitation.isValidSection( this.state.section ),
+				translatorInvitation.isValidSection( this.props.section.name );
+
+		return (
+			<span>
+				<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
+					<WelcomeMessage welcomeSite={ newestSite } />
+				</Welcome>
+				<TranslatorInvitation isVisible={ showInvitation } />
+			</span>
+		);
+	},
+
+	renderPreview() {
+		if ( config.isEnabled( 'preview-layout' ) && this.props.section.group === 'sites' ) {
+			return (
+				<SitePreview />
+			);
+		}
+	},
+
+	render: function() {
+		const sectionClass = classnames(
+				'layout',
+				`is-group-${this.props.section.group}`,
+				`is-section-${this.props.section.name}`,
+				`focus-${this.props.currentLayoutFocus}`,
+				{ 'is-support-user': this.props.isSupportUser },
+				{ 'has-no-sidebar': ! this.props.hasSidebar },
+				{ 'wp-singletree-layout': !! this.props.primary },
+				{ 'has-chat': this.props.chatIsOpen }
+			),
 			loadingClass = classnames( {
 				layout__loader: true,
-				'is-active': this.state.isLoading
+				'is-active': this.props.isLoading
 			} );
 
 		return (
 			<div className={ sectionClass }>
+				<DocumentHead />
+				<QueryPreferences />
+				{ config.isEnabled( 'guided-tours' ) ? <GuidedTours /> : null }
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				<Masterbar user={ this.props.user } section={ this.state.section } sites={ this.props.sites }/>
-				<div className={ loadingClass } ><PulsingDot active={ this.state.isLoading } /></div>
-				<div id="content" className="wp-content">
-					<Welcome isVisible={ showWelcome } closeAction={ this.closeWelcome } additionalClassName="NuxWelcome">
-						<WelcomeMessage welcomeSite={ newestSite } />
-					</Welcome>
-					<EmailVerificationNotice user={ this.props.user } />
-					<NoticesList id="notices" notices={ notices.list } forcePinned={ 'post' === this.state.section } />
-					<TranslatorInvitation isVisible={ showInvitation } />
-					<div id="primary" className="wp-primary wp-section" />
-					<div id="secondary" className="wp-secondary" />
+				{ this.renderMasterbar() }
+				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
+				{ this.props.isOffline && <OfflineStatus /> }
+				<div id="content" className="layout__content">
+					{ this.renderWelcome() }
+					{ this.renderPushNotificationPrompt() }
+					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
+					<div id="primary" className="layout__primary">
+						{ this.props.primary }
+					</div>
+					<div id="secondary" className="layout__secondary">
+						{ this.props.secondary }
+					</div>
 				</div>
-				<div id="tertiary" />
+				<div id="tertiary">
+					{ this.props.tertiary }
+				</div>
 				<TranslatorLauncher
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
+				{ this.renderPreview() }
+				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <Happychat /> }
 			</div>
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const { isLoading, section } = state.ui;
+		return {
+			isLoading,
+			isSupportUser: state.support.isSupportUser,
+			section,
+			hasSidebar: hasSidebar( state ),
+			isOffline: isOffline( state ),
+			currentLayoutFocus: getCurrentLayoutFocus( state ),
+			chatIsOpen: isHappychatOpen( state )
+		};
+	}
+)( Layout );

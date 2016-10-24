@@ -6,10 +6,10 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 
-module.exports = React.createClass({
+module.exports = React.createClass( {
 	displayName: 'CartCoupon',
 
 	getInitialState: function() {
@@ -77,6 +77,10 @@ module.exports = React.createClass({
 			return;
 		}
 
+		if ( this.state.hasSubmittedCoupon ) {
+			return;
+		}
+
 		return (
 			<form onSubmit={ this.applyCoupon }>
 				<input type="text" placeholder={ this.translate( 'Enter Coupon Code', { textOnly: true } ) } onChange={ this.handleCouponInput } value={ this.state.couponInputValue } />
@@ -89,10 +93,10 @@ module.exports = React.createClass({
 
 	render: function() {
 		return (
-			<div className='cart-coupon'>
+			<div className="cart-coupon">
 				{ this.getToggleLink() }
 				{ this.getCouponForm() }
 			</div>
 		);
 	}
-});
+} );

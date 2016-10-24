@@ -1,8 +1,8 @@
 /**
  * External Dependenices
  */
-var React = require( 'react/addons' ),
-	find = require( 'lodash/collection/find' );
+var React = require( 'react' ),
+	find = require( 'lodash/find' );
 /**
  * Internal Dependencies
  */
@@ -54,6 +54,7 @@ var Posts = React.createClass( {
 		var posts = this.props.posts.slice();
 		if ( this.props.type === 'page' ) {
 			posts.unshift( siteMenus.generateHomePageMenuItem( this.getHomePageTitle() ) );
+			posts.push( siteMenus.generateNewPageMenuItem() );
 		}
 		return posts;
 	},
@@ -61,15 +62,15 @@ var Posts = React.createClass( {
 	render: function() {
 		return (
 			<OptionList itemType={ this.props.itemType }
-			            onScroll={ actions.fetchNextPage }
-			            onBackClick={ this.props.back }
-			            onSearch={ this.props.onSearch }
-			            isEmpty={ this.props.posts.length === 0 && ! this.props.loading }
-			            isLoading={ this.props.loading && ! this.props.isLastPage } >
+				onScroll={ actions.fetchNextPage }
+				onBackClick={ this.props.back }
+				onSearch={ this.props.onSearch }
+				isEmpty={ this.props.posts.length === 0 && ! this.props.loading }
+				isLoading={ this.props.loading && ! this.props.isLastPage }>
 				<Options item={ this.props.item }
-				         itemType={ this.props.itemType }
-				         options={ this.maybeInjectPosts( this.props.posts ) }
-				         onChange={ this.props.onChange }
+					itemType={ this.props.itemType }
+					options={ this.maybeInjectPosts( this.props.posts ) }
+					onChange={ this.props.onChange }
 					/>
 			</OptionList>
 		);

@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	assign = require( 'lodash/object/assign' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	assign = require( 'lodash/assign' ),
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

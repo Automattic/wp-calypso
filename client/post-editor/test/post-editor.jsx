@@ -1,77 +1,80 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-const chai = require( 'chai' ),
-	React = require( 'react/addons' ),
-	ReactInjection = require( 'react/lib/ReactInjection' ),
-	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
-	mockery = require( 'mockery' );
+import React from 'react';
+import mockery from 'mockery';
+import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-const i18n = require( 'lib/mixins/i18n' ),
-	PostEditStore = require( 'lib/posts/post-edit-store' ),
-	SitesList = require( 'lib/sites-list/list' );
-
-const expect = chai.expect,
-	TestUtils = React.addons.TestUtils;
-
-const MOCK_COMPONENT = React.createClass( {
-	render: function() {
-		return null;
-	}
-} );
-
-chai.use( sinonChai );
-
-// Handle initialization here instead of in `before()` to avoid timeouts due to variability in time it takes for babel to compile
-i18n.initialize();
-ReactInjection.Class.injectMixin( i18n.mixin );
-
-mockery.enable( {
-	warnOnReplace: false,
-	warnOnUnregistered: false
-} );
-mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
-mockery.registerSubstitute( 'query', 'component-query' );
-mockery.registerMock( 'components/tinymce', MOCK_COMPONENT );
-mockery.registerMock( 'components/popover', MOCK_COMPONENT );
-mockery.registerMock( 'components/forms/clipboard-button', MOCK_COMPONENT );
-mockery.registerMock( 'post-editor/editor-mobile-navigation', MOCK_COMPONENT );
-mockery.registerMock( 'post-editor/editor-ground-control', MOCK_COMPONENT );
-mockery.registerMock( 'post-editor/editor-drawer', MOCK_COMPONENT );
-mockery.registerMock( 'post-editor/editor-author', MOCK_COMPONENT );
-mockery.registerMock( 'post-editor/editor-visibility', MOCK_COMPONENT );
-mockery.registerMock( 'post-editor/editor-featured-image', MOCK_COMPONENT );
-mockery.registerMock( './editor-preview', MOCK_COMPONENT );
-mockery.registerMock( 'post-editor/invalid-url-dialog', MOCK_COMPONENT );
-mockery.registerMock( 'post-editor/restore-post-dialog', MOCK_COMPONENT );
-mockery.registerMock( 'post-editor/drafts-button', MOCK_COMPONENT );
-mockery.registerMock( 'my-sites/drafts/draft-list', MOCK_COMPONENT );
-mockery.registerMock( 'lib/layout-focus', {
-	set() {}
-} );
-
-const PostEditor = require( '../post-editor' );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'PostEditor', function() {
-	let sandbox;
+	let sandbox, TestUtils, PostEditor, SitesList, PostEditStore;
 
-	beforeEach( function() {
-		sandbox = sinon.sandbox.create();
+	useFakeDom();
+	useSandbox( ( newSandbox ) => sandbox = newSandbox );
+	useMockery();
+
+	before( () => {
+		TestUtils = require( 'react-addons-test-utils' );
+
+		const MOCK_COMPONENT = React.createClass( {
+			render: function() {
+				return null;
+			}
+		} );
+
+		mockery.registerSubstitute( 'matches-selector', 'component-matches-selector' );
+		mockery.registerSubstitute( 'query', 'component-query' );
+		mockery.registerMock( 'components/tinymce', MOCK_COMPONENT );
+		mockery.registerMock( 'components/popover', MOCK_COMPONENT );
+		mockery.registerMock( 'components/forms/clipboard-button', MOCK_COMPONENT );
+		mockery.registerMock( 'components/notice/notice-action', MOCK_COMPONENT );
+		mockery.registerMock( 'components/notice', MOCK_COMPONENT );
+		mockery.registerMock( 'components/segmented-control', MOCK_COMPONENT );
+		mockery.registerMock( 'components/segmented-control/item', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-document-head', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-action-bar', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-drawer', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-featured-image', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-ground-control', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-title/container', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-page-slug', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-media-advanced', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-author', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-visibility', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-word-count', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-preview', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/invalid-url-dialog', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/restore-post-dialog', MOCK_COMPONENT );
+		mockery.registerMock( 'post-editor/editor-sidebar/header', MOCK_COMPONENT );
+		mockery.registerMock( './editor-preview', MOCK_COMPONENT );
+		mockery.registerMock( 'my-sites/drafts/draft-list', MOCK_COMPONENT );
+		mockery.registerMock( 'lib/preferences/actions', { set() {} } );
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} ),
+			undocumented: noop
+		} );
+		// TODO: REDUX - add proper tests when whole post-editor is reduxified
+		mockery.registerMock( 'react-redux', {
+			connect: () => ( component ) => component
+		} );
+
+		SitesList = require( 'lib/sites-list/list' );
+		PostEditStore = require( 'lib/posts/post-edit-store' );
+		PostEditor = require( '../post-editor' );
+		PostEditor.prototype.translate = ( string ) => string;
 	} );
 
 	afterEach( function() {
 		sandbox.restore();
-	} );
-
-	after( function() {
-		mockery.deregisterAll();
-		mockery.disable();
 	} );
 
 	describe( 'onEditedPostChange', function() {

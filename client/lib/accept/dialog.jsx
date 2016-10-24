@@ -1,24 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Dialog = require( 'components/dialog' );
+import Dialog from 'components/dialog';
 
-module.exports = React.createClass( {
-	displayName: 'AcceptDialog',
-
+const AcceptDialog = React.createClass( {
 	propTypes: {
-		message: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.element
-		] ).isRequired,
-		onClose: React.PropTypes.func.isRequired,
-		confirmButtonText: React.PropTypes.string,
-		cancelButtonText: React.PropTypes.string,
+		translate: PropTypes.func,
+		message: PropTypes.node,
+		onClose: PropTypes.func.isRequired,
+		confirmButtonText: PropTypes.node,
+		cancelButtonText: PropTypes.node
 	},
 
 	getInitialState: function() {
@@ -37,11 +34,11 @@ module.exports = React.createClass( {
 		return [
 			{
 				action: 'cancel',
-				label: this.props.cancelButtonText ? this.props.cancelButtonText : this.translate( 'Cancel' ),
+				label: this.props.cancelButtonText ? this.props.cancelButtonText : this.props.translate( 'Cancel' ),
 			},
 			{
 				action: 'accept',
-				label: this.props.confirmButtonText ? this.props.confirmButtonText : this.translate( 'OK' ),
+				label: this.props.confirmButtonText ? this.props.confirmButtonText : this.props.translate( 'OK' ),
 				isPrimary: true
 			}
 		];
@@ -63,3 +60,5 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default localize( AcceptDialog );

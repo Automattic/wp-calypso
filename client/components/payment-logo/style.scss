@@ -27,5 +27,9 @@
 		background-image: url( '/calypso/images/upgrades/paypal.svg' );
 		background-size: 70px;
 		width: 70px;
+
+		&.is-compact {
+			width: 16px;
+		}
 	}
 }

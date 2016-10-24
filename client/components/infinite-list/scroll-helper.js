@@ -1,55 +1,52 @@
-
-var assign = require( 'lodash/object/assign' ),
-	debug = require( 'debug' )( 'calypso:infinite-list:helper' );
-
 /**
- * Scrolling algorithm extracted as separate object
- *
- * The purpose of extracting it is to make it testable and help the methods
- * to be shorter and readable.
+ * External dependencies
  */
-function ScrollHelper( boundsForRef ) {
-	this.boundsForRef = boundsForRef;
-	this.itemHeights = {};
+import debugFactory from 'debug';
 
-	// Hide levels and context height
-	this.contextHeight = null;
-	this.topHideLevelHard = null;
-	this.topHideLevelSoft = null;
-	this.bottomHideLevelHard = null;
-	this.bottomHideLevelSoft = null;
-	this.bottomHideLevelUltraSoft = null;
+const debug = debugFactory( 'calypso:infinite-list:helper' );
 
-	// set by component
-	this.props = null;
-	this.scrollPosition = null;
+// Scrolling algorithm extracted as separate object
+// The purpose of extracting it is to make it testable and help the methods
+// to be shorter and readable.
+class ScrollHelper {
+	constructor( boundsForRef ) {
+		this.boundsForRef = boundsForRef;
+		this.itemHeights = {};
 
-	// queried directly from placeholder rects
-	this.containerTop = null;
-	this.topPlaceholderHeight = null;
-	this.bottomPlaceholderHeight = null;
-	this.containerBottom = null;
+		// Hide levels and context height
+		this.contextHeight = null;
+		this.topHideLevelHard = null;
+		this.topHideLevelSoft = null;
+		this.bottomHideLevelHard = null;
+		this.bottomHideLevelSoft = null;
+		this.bottomHideLevelUltraSoft = null;
 
-	this.stateUpdated = null;
-	this.firstRenderedIndex = null;
-	this.lastRenderedIndex = null;
-}
+		// set by component
+		this.props = null;
+		this.scrollPosition = null;
 
-assign ( ScrollHelper.prototype, {
+		// queried directly from placeholder rects
+		this.containerTop = null;
+		this.topPlaceholderHeight = null;
+		this.bottomPlaceholderHeight = null;
+		this.containerBottom = null;
 
-	storedItemHeight: function( itemKey ) {
-		var height = this.props.guessedItemHeight;
+		this.stateUpdated = null;
+		this.firstRenderedIndex = null;
+		this.lastRenderedIndex = null;
+	}
+
+	storedItemHeight( itemKey ) {
+		let height = this.props.guessedItemHeight;
 
 		if ( itemKey in this.itemHeights ) {
 			height = this.itemHeights[ itemKey ];
 		}
 
 		return height;
-	},
+	}
 
-	forEachInRow: function( index, callback, context ) {
-		var firstIndexInRow, lastIndexInRow;
-
+	forEachInRow( index, callback, context ) {
 		if ( 'function' !== typeof callback ) {
 			return;
 		}
@@ -58,18 +55,18 @@ assign ( ScrollHelper.prototype, {
 			callback = callback.bind( context );
 		}
 
-		firstIndexInRow = index - ( index % this.props.itemsPerRow );
-		lastIndexInRow = Math.min( firstIndexInRow + this.props.itemsPerRow, this.props.items.length ) - 1;
-		for ( var i = firstIndexInRow; i <= lastIndexInRow; i++ ) {
+		const firstIndexInRow = index - ( index % this.props.itemsPerRow ),
+			lastIndexInRow = Math.min( firstIndexInRow + this.props.itemsPerRow, this.props.items.length ) - 1;
+		for ( let i = firstIndexInRow; i <= lastIndexInRow; i++ ) {
 			callback( this.props.items[ i ], i );
 		}
-	},
+	}
 
-	storeRowItemHeights: function( fromDirection, index ) {
+	storeRowItemHeights( fromDirection, index ) {
 		this.forEachInRow( index, function( item ) {
-			var itemKey = this.props.getItemRef( item ),
-				itemBounds = this.boundsForRef( itemKey ),
-				height;
+			const itemKey = this.props.getItemRef( item ),
+				itemBounds = this.boundsForRef( itemKey );
+			let height;
 
 			if ( itemBounds ) {
 				if ( 'bottom' === fromDirection ) {
@@ -83,30 +80,29 @@ assign ( ScrollHelper.prototype, {
 
 			this.itemHeights[ itemKey ] = height;
 		}, this );
-	},
+	}
 
-	deleteRowItemHeights: function( index ) {
-		this.forEachInRow( index, function( item ) {
-			var itemKey = this.props.getItemRef( item );
+	deleteRowItemHeights( index ) {
+		this.forEachInRow( index, ( item ) => {
+			const itemKey = this.props.getItemRef( item );
 			delete this.itemHeights[ itemKey ];
 		}, this );
-	},
+	}
 
-	getRowHeight: function( index ) {
-		var maxHeight = 0;
+	getRowHeight( index ) {
+		let maxHeight = 0;
 
-		this.forEachInRow( index, function( item ) {
-			var itemKey = this.props.getItemRef( item ),
+		this.forEachInRow( index, ( item ) => {
+			const itemKey = this.props.getItemRef( item ),
 				height = this.storedItemHeight( itemKey );
 
 			maxHeight = Math.max( maxHeight, height );
 		}, this );
 
 		return maxHeight;
-	},
+	}
 
-	updateContextHeight: function( contextHeight ) {
-
+	updateContextHeight( contextHeight ) {
 		if ( this.contextHeight === contextHeight ) {
 			return;
 		}
@@ -137,18 +133,17 @@ assign ( ScrollHelper.prototype, {
 				3 * contextHeight,
 				15 * this.props.guessedItemHeight
 			);
-	},
+	}
 
-	initialLastRenderedIndex: function() {
+	initialLastRenderedIndex() {
 		return Math.min(
 			this.props.items.length - 1,
 			Math.floor( this.bottomHideLevelSoft / this.props.guessedItemHeight ) - 1
 		);
-	},
+	}
 
-
-	updatePlaceholderDimensions: function() {
-		var topPlaceholderRect = this.boundsForRef( 'topPlaceholder' ),
+	updatePlaceholderDimensions() {
+		const topPlaceholderRect = this.boundsForRef( 'topPlaceholder' ),
 			bottomPlaceholderRect = this.boundsForRef( 'bottomPlaceholder' );
 
 		this.topPlaceholderHeight = topPlaceholderRect.height;
@@ -158,9 +153,9 @@ assign ( ScrollHelper.prototype, {
 		// It is important to use placeholder to get container bottom.
 		// Container node is reported longer than it should be in mobile Safari 7.0
 		this.containerBottom = bottomPlaceholderRect.bottom;
-	},
+	}
 
-	scrollChecks: function( state ) {
+	scrollChecks( state ) {
 		this.reset( state );
 
 		this.adjustLastRenderedIndex();
@@ -180,15 +175,15 @@ assign ( ScrollHelper.prototype, {
 		if ( this.shouldLoadNextPage() ) {
 			this.loadNextPage();
 		}
-	},
+	}
 
-	reset: function( state ) {
+	reset( state ) {
 		this.stateUpdated = false;
 		this.firstRenderedIndex = state.firstRenderedIndex;
 		this.lastRenderedIndex = state.lastRenderedIndex;
-	},
+	}
 
-	adjustLastRenderedIndex: function() {
+	adjustLastRenderedIndex() {
 		// last index -1 means everything is rendered - it can happen when
 		// item count is not known when component is mounted
 		const offset = this.initialLastRenderedIndex(),
@@ -213,9 +208,9 @@ assign ( ScrollHelper.prototype, {
 			this.stateUpdated = true;
 			this.lastRenderedIndex = newIndex;
 		}
-	},
+	}
 
-	shouldHideItemsAbove: function() {
+	shouldHideItemsAbove() {
 		//
 		// Hiding Item Above Chart
 		//
@@ -252,10 +247,10 @@ assign ( ScrollHelper.prototype, {
 		//       |
 		//
 		return this.containerTop + this.topPlaceholderHeight < this.topHideLevelSoft;
-	},
+	}
 
-	hideItemsAbove: function() {
-		var rowHeight, rowBottom;
+	hideItemsAbove() {
+		let rowHeight, rowBottom;
 
 		while ( this.firstRenderedIndex < this.props.items.length ) {
 			this.storeRowItemHeights( 'top', this.firstRenderedIndex );
@@ -272,10 +267,9 @@ assign ( ScrollHelper.prototype, {
 			this.stateUpdated = true;
 			debug( 'hiding top item', rowHeight, this.topPlaceholderHeight );
 		}
-	},
+	}
 
-
-	shouldShowItemsAbove: function() {
+	shouldShowItemsAbove() {
 		//
 		// Showing Item Above Chart
 		//
@@ -304,10 +298,10 @@ assign ( ScrollHelper.prototype, {
 		//       |
 		//
 		return this.containerTop + this.topPlaceholderHeight > this.topHideLevelHard;
-	},
+	}
 
-	showItemsAbove: function() {
-		var rowHeight, newPlaceholderBottom;
+	showItemsAbove() {
+		let rowHeight, newPlaceholderBottom;
 
 		while ( this.firstRenderedIndex > 0 ) {
 			rowHeight = this.getRowHeight( this.firstRenderedIndex - this.props.itemsPerRow );
@@ -330,11 +324,9 @@ assign ( ScrollHelper.prototype, {
 			this.stateUpdated = true;
 			debug( 'showing top item', rowHeight, this.topPlaceholderHeight );
 		}
+	}
 
-	},
-
-
-	shouldHideItemsBelow: function() {
+	shouldHideItemsBelow() {
 		//
 		// Hiding Items Below Chart
 		//
@@ -374,12 +366,12 @@ assign ( ScrollHelper.prototype, {
 		//       |
 		//       +---- container bottom relative to context, e.g. 5000
 		//
-		var placeholderTop = this.containerBottom - this.bottomPlaceholderHeight;
+		const placeholderTop = this.containerBottom - this.bottomPlaceholderHeight;
 		return placeholderTop > this.bottomHideLevelUltraSoft;
-	},
+	}
 
-	hideItemsBelow: function() {
-		var rowTop, rowHeight;
+	hideItemsBelow() {
+		let rowTop, rowHeight;
 
 		while ( this.lastRenderedIndex >= 0 ) {
 			this.storeRowItemHeights( 'bottom', this.lastRenderedIndex );
@@ -396,26 +388,24 @@ assign ( ScrollHelper.prototype, {
 			this.stateUpdated = true;
 			debug( 'hiding bottom item', rowHeight, this.bottomPlaceholderHeight );
 		}
-	},
+	}
 
-
-	shouldShowItemsBelow: function() {
-		var placeholderTop = this.containerBottom - this.bottomPlaceholderHeight;
+	shouldShowItemsBelow() {
+		const placeholderTop = this.containerBottom - this.bottomPlaceholderHeight;
 		return placeholderTop < this.bottomHideLevelHard;
-	},
+	}
 
-	showItemsBelow: function() {
-		var rowHeight, itemTop, placeholderTop;
+	showItemsBelow() {
+		let rowHeight, itemTop, placeholderTop;
 
 		while ( this.lastRenderedIndex < this.props.items.length - 1 ) {
-
 			rowHeight = this.getRowHeight( this.lastRenderedIndex + this.props.itemsPerRow );
 			placeholderTop = this.containerBottom - this.bottomPlaceholderHeight;
 			itemTop = placeholderTop + rowHeight;
 
 			if ( itemTop > this.bottomHideLevelSoft &&
-					// always show at least one item when placholder top is above hard limit
-					placeholderTop > this.bottomHideLevelHard
+				// always show at least one item when placholder top is above hard limit
+				placeholderTop > this.bottomHideLevelHard
 			) {
 				break;
 			}
@@ -438,20 +428,19 @@ assign ( ScrollHelper.prototype, {
 			this.stateUpdated = true;
 			debug( 'showing bottom item', rowHeight, this.bottomPlaceholderHeight );
 		}
-	},
+	}
 
-
-	shouldLoadNextPage: function() {
+	shouldLoadNextPage() {
 		if ( this.props.fetchingNextPage || this.props.lastPage ) {
 			return false;
 		}
 
 		return this.bottomPlaceholderHeight === 0 &&
 			this.containerBottom < this.bottomHideLevelHard;
-	},
+	}
 
-	loadNextPage: function() {
-		var triggeredByScroll = this.triggeredByScroll;
+	loadNextPage() {
+		let triggeredByScroll = this.triggeredByScroll;
 
 		debug(
 			'fetching next page',
@@ -467,7 +456,7 @@ assign ( ScrollHelper.prototype, {
 
 		// scroll check may be triggered while dispatching an action,
 		// we cannot create new action while dispatching old one
-		setTimeout( function() {
+		setTimeout( () => {
 			// checking these values again because we shifted the fetch to the next stack
 			if ( this.props.fetchingNextPage || this.props.lastPage ) {
 				return false;
@@ -475,8 +464,8 @@ assign ( ScrollHelper.prototype, {
 			this.props.fetchNextPage( {
 				triggeredByScroll: triggeredByScroll
 			} );
-		}.bind( this ), 0 );
+		}, 0 );
 	}
-} );
+}
 
 module.exports = ScrollHelper;

@@ -1,0 +1,27 @@
+machine:
+  node:
+    version: 6.9.0
+test:
+  pre:
+    - NODE_ENV=test make client/config/index.js:
+        parallel: true
+    - case $CIRCLE_NODE_INDEX in 0) NODE_ENV=test make build-server ;; esac:
+        parallel: true
+  override:
+    - bin/run-lint :
+        parallel: true
+        files:
+          - client/**/*.js
+          - client/**/*.jsx
+          - server/**/*.js
+          - server/**/*.jsx
+    - MOCHA_FILE=./test-results-client.xml npm run test-client -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
+        parallel: true
+    - MOCHA_FILE=./test-results-server.xml npm run test-server -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
+        parallel: true
+    - MOCHA_FILE=./test-results-test.xml npm run test-test -- -R mocha-junit-reporter -t $CIRCLE_NODE_TOTAL -i $CIRCLE_NODE_INDEX:
+        parallel: true
+  post:
+    - mkdir -p $CIRCLE_TEST_REPORTS/junit/ && find . -type f -regex  "./test-results.*\.xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;:
+        parallel: true
+    - if [[ $CIRCLE_BRANCH == "master" ]]; then make translate; mkdir $CIRCLE_ARTIFACTS/translate; cp calypso-strings.pot $CIRCLE_ARTIFACTS/translate/calypso-strings.pot; fi;

@@ -1,19 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	FormButton = require( 'components/forms/form-button' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
-	Site = require( 'my-sites/site' ),
-	sites = require( 'lib/sites-list' )(),
-	eventRecorder = require( 'me/event-recorder' );
+import config from 'config';
+import FormButton from 'components/forms/form-button';
+import Notice from 'components/notice';
+import Site from 'blocks/site';
+import sitesFactory from 'lib/sites-list';
+import eventRecorder from 'me/event-recorder';
 
-module.exports = React.createClass( {
+const sites = sitesFactory();
+
+export default React.createClass( {
 
 	displayName: 'ProfileLinksAddWordPress',
 
@@ -21,26 +23,26 @@ module.exports = React.createClass( {
 
 	// an empty initial state is required to keep render and handleCheckedChange
 	// code simpler / easier to maintain
-	getInitialState: function() {
+	getInitialState() {
 		return {};
 	},
 
-	handleCheckedChanged: function( event ) {
-		var updates = {};
+	handleCheckedChanged( event ) {
+		const updates = {};
 		updates[ event.target.name ] = event.target.checked;
 		this.setState( updates );
 	},
 
-	onSelect: function( inputName, event ) {
-		var updates = {};
+	onSelect( inputName, event ) {
+		const updates = {};
 		event.preventDefault();
 		updates[ inputName ] = ! this.state[ inputName ];
 		this.setState( updates );
 	},
 
-	getCheckedCount: function() {
-		var inputName;
-		var checkedCount = 0;
+	getCheckedCount() {
+		let checkedCount = 0;
+		let inputName;
 		for ( inputName in this.state ) {
 			if ( this.state[ inputName ] ) {
 				checkedCount++;
@@ -49,40 +51,44 @@ module.exports = React.createClass( {
 		return checkedCount;
 	},
 
-	onAddableSubmit: function( event ) {
-		var links = [];
-		var inputName, siteID, site;
+	onAddableSubmit( event ) {
+		const links = [];
+		let siteID, site, inputName;
+
 		event.preventDefault();
 
 		for ( inputName in this.state ) {
-			if ( 'site-' === inputName.substr( 0, 5 ) && this.state[inputName] ) {
+			if ( 'site-' === inputName.substr( 0, 5 ) && this.state[ inputName ] ) {
 				siteID = parseInt( inputName.substr( 5 ), 10 ); // strip leading "site-" from inputName to get siteID
 				site = sites.getSite( siteID );
-				links.push( { title: site.name, value: site.URL } );
+				links.push( {
+					title: site.name,
+					value: site.URL
+				} );
 			}
 		}
 
 		this.props.userProfileLinks.addProfileLinks( links, this.onSubmitResponse );
 	},
 
-	onCancel: function( event ) {
+	onCancel( event ) {
 		event.preventDefault();
 		this.props.onCancel();
 	},
 
-	onCreateSite: function( event ) {
+	onCreateSite( event ) {
 		event.preventDefault();
 		window.open( config( 'signup_url' ) + '?ref=me-profile-links' );
 		this.props.onCancel();
 	},
 
-	onJetpackMe: function( event ) {
+	onJetpackMe( event ) {
 		event.preventDefault();
 		window.open( 'http://jetpack.me/' );
 		this.props.onCancel();
 	},
 
-	onSubmitResponse: function( error, data ) {
+	onSubmitResponse( error, data ) {
 		if ( error ) {
 			this.setState(
 				{
@@ -105,40 +111,43 @@ module.exports = React.createClass( {
 		this.props.onSuccess();
 	},
 
-	clearLastError: function() {
-		this.setState( { lastError: false } );
+	clearLastError() {
+		this.setState( {
+			lastError: false
+		} );
 	},
 
-	possiblyRenderError: function() {
+	possiblyRenderError() {
 		if ( ! this.state.lastError ) {
 			return null;
 		}
 
 		return (
-			<SimpleNotice
+			<Notice
 				className="profile-links-add-wordpress__error"
-				isCompact={ true }
 				status="is-error"
-				onClick={ this.clearLastError }>
+				onDismissClick={ this.clearLastError }>
 				{ this.state.lastError }
-			</SimpleNotice>
+			</Notice>
 		);
 	},
 
-	renderAddableSites: function() {
+	renderAddableSites() {
 		return (
-			sites.getPublic().map( function( site ) {
-				var inputName, checkedState;
+			sites.getPublic().map( ( site ) => {
+				const inputName = 'site-' + site.ID;
+				const checkedState = this.state[ inputName ];
 
 				if ( this.props.userProfileLinks.isSiteInProfileLinks( site ) ) {
 					return null;
 				}
 
-				inputName = 'site-' + site.ID;
-				checkedState = this.state[ inputName ];
-
 				return (
-					<li key={ site.ID } className="profile-links-add-wordpress__item" onClick={ this.recordCheckboxEvent( 'Add WordPress Site' ) }>
+					<li
+						key={ site.ID }
+						className="profile-links-add-wordpress__item"
+						onClick={ this.recordCheckboxEvent( 'Add WordPress Site' ) }
+					>
 						<input
 							className="profile-links-add-wordpress__checkbox"
 							type="checkbox"
@@ -151,12 +160,12 @@ module.exports = React.createClass( {
 							onSelect={ this.onSelect.bind( this, inputName ) } />
 					</li>
 				);
-			}.bind( this ) )
+			} )
 		);
 	},
 
-	renderAddableSitesForm: function() {
-		var checkedCount = this.getCheckedCount();
+	renderAddableSitesForm() {
+		const checkedCount = this.getCheckedCount();
 
 		return (
 			<form className="profile-links-add-wordpress" onSubmit={ this.onAddableSubmit }>
@@ -184,7 +193,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderInvitationForm: function() {
+	renderInvitationForm() {
 		return (
 			<form>
 				<p>
@@ -195,7 +204,11 @@ module.exports = React.createClass( {
 							'sites here after installing {{jetpackLink}}Jetpack{{/jetpackLink}} on them.',
 							{
 								components: {
-									jetpackLink: <a href="#" className="profile-links-add-wordpress__jetpack-link" onClick={ this.recordClickEvent( 'Jetpack Link in Profile Links', this.onJetpackMe ) }/>
+									jetpackLink: <a
+													href="#"
+													className="profile-links-add-wordpress__jetpack-link"
+													onClick={ this.recordClickEvent( 'Jetpack Link in Profile Links', this.onJetpackMe ) }
+												/>
 								}
 							}
 						)
@@ -217,7 +230,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	render: function() {
+	render() {
 		return (
 			<div>
 				{ 0 === sites.getPublic().length ? this.renderInvitationForm() : this.renderAddableSitesForm() }

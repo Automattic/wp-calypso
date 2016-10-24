@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	classNames = require( 'classnames' ),
-	compact = require( 'lodash/array/compact' );
+	compact = require( 'lodash/compact' );
 
 /**
  * Internal dependencies
@@ -26,9 +26,9 @@ module.exports = React.createClass( {
 
 	getSecondaryPluginSites: function( site ) {
 		let secondarySites = allSites.getNetworkSites( site );
-		let secondaryPluginSites = site.plugin ?
-			PluginsStore.getSites( secondarySites, this.props.plugin.slug ) :
-			secondarySites;
+		let secondaryPluginSites = site.plugin
+			? PluginsStore.getSites( secondarySites, this.props.plugin.slug )
+			: secondarySites;
 		return compact( secondaryPluginSites );
 	},
 
@@ -38,7 +38,7 @@ module.exports = React.createClass( {
 				site={ site }
 				secondarySites={ this.getSecondaryPluginSites( site ) }
 				plugin={ this.props.plugin }
-				wporg={ this.props.plugin.wporg }
+				wporg={ this.props.wporg }
 				notices={ this.props.notices } />;
 	},
 

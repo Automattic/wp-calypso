@@ -1,37 +1,38 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	where = require( 'lodash/collection/where' ),
-	some = require( 'lodash/collection/some' ),
-	every = require( 'lodash/collection/every' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	flow = require( 'lodash/function/flow' ),
-	reject = require( 'lodash/collection/reject' ),
-	extend = require( 'lodash/object/assign' ),
-	merge = require( 'lodash/object/merge' ),
-	rest = require( 'lodash/array/rest' );
+var update = require( 'react-addons-update' );
+import { every, assign, flow, isEqual, merge, reject, tail, some, uniq, flatten, filter, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
 var productsValues = require( 'lib/products-values' ),
 	formatProduct = productsValues.formatProduct,
-	isPlan = productsValues.isPlan,
-	isGoogleApps = productsValues.isGoogleApps,
-	isDomainProduct = productsValues.isDomainProduct,
-	isSiteRedirect = productsValues.isSiteRedirect,
-	isDependentProduct = productsValues.isDependentProduct,
-	isDomainRegistration = productsValues.isDomainRegistration,
-	isNoAds = productsValues.isNoAds,
 	isCustomDesign = productsValues.isCustomDesign,
+	isDependentProduct = productsValues.isDependentProduct,
+	isDomainMapping = productsValues.isDomainMapping,
+	isDomainProduct = productsValues.isDomainProduct,
 	isDomainRedemption = productsValues.isDomainRedemption,
-	isVideoPress = productsValues.isVideoPress,
+	isDomainRegistration = productsValues.isDomainRegistration,
+	isGoogleApps = productsValues.isGoogleApps,
+	isNoAds = productsValues.isNoAds,
+	isPlan = productsValues.isPlan,
+	isPremium = productsValues.isPremium,
+	isPrivateRegistration = productsValues.isPrivateRegistration,
+	isSiteRedirect = productsValues.isSiteRedirect,
+	isSpaceUpgrade = productsValues.isSpaceUpgrade,
 	isUnlimitedSpace = productsValues.isUnlimitedSpace,
 	isUnlimitedThemes = productsValues.isUnlimitedThemes,
-	isSpaceUpgrade = productsValues.isSpaceUpgrade,
-	isPrivateRegistration = productsValues.isPrivateRegistration,
-	sortProducts = require( 'lib/products-values/sort' );
+	isVideoPress = productsValues.isVideoPress,
+	isJetpackPlan = productsValues.isJetpackPlan,
+	isWordPressDomain = productsValues.isWordPressDomain,
+	sortProducts = require( 'lib/products-values/sort' ),
+	PLAN_PERSONAL = require( 'lib/plans/constants' ).PLAN_PERSONAL;
+
+import { PLAN_FREE } from 'lib/plans/constants';
 
 /**
  * Adds the specified item to a shopping cart.
@@ -54,17 +55,18 @@ function add( newCartItem ) {
 
 	return function( cart ) {
 		if ( cartItemShouldReplaceCart( newCartItem, cart ) ) {
-			return React.addons.update( cart, { products: { $set: [ newCartItem ] } } );
+			return update( cart, { products: { $set: [ newCartItem ] } } );
 		}
 
-		return React.addons.update( cart, { products: { $apply: appendItem } } );
+		return update( cart, { products: { $apply: appendItem } } );
 	};
 }
 
 /**
- * Determines if the given cart item should replace the cart. Currently, only if
- * the given item will result in mixed renewals/non-renewals or multiple renewals
- * (excluding private registration).
+ * Determines if the given cart item should replace the cart.
+ * This can happen if the given item:
+ * - will result in mixed renewals/non-renewals or multiple renewals (excluding private registration).
+ * - is a free trial plan
  *
  * @param {Object} cartItem - `CartItemValue` object
  * @param {Object} cart - the existing shopping cart
@@ -78,6 +80,17 @@ function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( ! isRenewal( cartItem ) && hasRenewalItem( cart ) ) {
 		// all items should replace the cart if the cart contains a renewal
+		return true;
+	}
+
+	if ( productsValues.isFreeTrial( cartItem ) || hasFreeTrial( cart ) ) {
+		// adding a free trial plan to your cart replaces the cart
+		// adding another product to a cart containing a free trial removes the free trial
+		return true;
+	}
+
+	if ( isJetpackPlan( cartItem ) ) {
+		// adding a jetpack bundle should replace the cart
 		return true;
 	}
 
@@ -101,7 +114,7 @@ function remove( cartItemToRemove ) {
 	}
 
 	return function( cart ) {
-		return React.addons.update( cart, { products: { $apply: rejectItem } } );
+		return update( cart, { products: { $apply: rejectItem } } );
 	};
 }
 
@@ -110,10 +123,11 @@ function remove( cartItemToRemove ) {
  *
  * @param {Object} cartItemToRemove - item as `CartItemValue` object
  * @param {Object} cart - cart as `CartValue` object
+ * @param {bool} domainsWithPlansOnly - Whether we should consider domains as dependents of products
  * @returns {Function} the function that removes the items from a shopping cart
  */
-function removeItemAndDependencies( cartItemToRemove, cart ) {
-	var dependencies = getDependentProducts( cartItemToRemove, cart ),
+function removeItemAndDependencies( cartItemToRemove, cart, domainsWithPlansOnly ) {
+	var dependencies = getDependentProducts( cartItemToRemove, cart, domainsWithPlansOnly ),
 		changes = dependencies.map( remove ).concat( remove( cartItemToRemove ) );
 
 	return flow.apply( null, changes );
@@ -124,12 +138,15 @@ function removeItemAndDependencies( cartItemToRemove, cart ) {
  *
  * @param {Object} cartItem - item as `CartItemValue` object
  * @param {Object} cart - cart as `CartValue` object
+ * @param {bool} domainsWithPlansOnly - Whether we should consider domains as dependents of products
  * @returns {Object[]} the list of dependency items in the shopping cart
  */
-function getDependentProducts( cartItem, cart ) {
-	return getAll( cart ).filter( function( existingCartItem ) {
-		return isDependentProduct( cartItem, existingCartItem );
+function getDependentProducts( cartItem, cart, domainsWithPlansOnly ) {
+	const dependentProducts = getAll( cart ).filter( function( existingCartItem ) {
+		return isDependentProduct( cartItem, existingCartItem, domainsWithPlansOnly );
 	} );
+
+	return uniq( flatten( dependentProducts.concat( dependentProducts.map( dependentProduct => getDependentProducts( dependentProduct, cart ) ) ) ) );
 }
 
 /**
@@ -139,7 +156,7 @@ function getDependentProducts( cartItem, cart ) {
  * @returns {Object[]} the list of items in the shopping cart as `CartItemValue` objects
  */
 function getAll( cart ) {
-	return cart.products;
+	return cart && cart.products || [];
 }
 
 /**
@@ -180,7 +197,11 @@ function hasFreeTrial( cart ) {
  * @returns {boolean} true if there is at least one plan, false otherwise
  */
 function hasPlan( cart ) {
-	return some( getAll( cart ), isPlan );
+	return cart && some( getAll( cart ), isPlan );
+}
+
+function hasPremiumPlan( cart ) {
+	return some( getAll( cart ), isPremium );
 }
 
 function hasDomainCredit( cart ) {
@@ -205,7 +226,7 @@ function getDomainRegistrationTld( cartItem ) {
 											'items.' );
 	}
 
-	return '.' + rest( cartItem.meta.split( '.' ) ).join( '.' );
+	return '.' + tail( cartItem.meta.split( '.' ) ).join( '.' );
 }
 
 /**
@@ -279,17 +300,44 @@ function hasOnlyRenewalItems( cart ) {
 }
 
 /**
+ * Determines whether any product in the specified shopping cart is a renewable subscription.
+ * Will return false if the cart is empty.
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @returns {boolean} true if any product in the cart renews
+ */
+function hasRenewableSubscription( cart ) {
+	return cart.products && some( getAll( cart ), cartItem => cartItem.bill_period > 0 );
+}
+
+/**
  * Creates a new shopping cart item for a plan.
  *
  * @param {Object} productSlug - the unique string that identifies the product
- * @param {boolean} isFreeTrial - specifies if this is a free trial or not
+ * @param {boolean} isFreeTrial - optionally specifies if this is a free trial or not
  * @returns {Object} the new item as `CartItemValue` object
  */
-function planItem( productSlug, isFreeTrial ) {
+function planItem( productSlug, isFreeTrial = false ) {
+	// Free plan doesn't have shopping cart.
+	if ( productSlug === PLAN_FREE ) {
+		return null;
+	}
+
 	return {
 		product_slug: productSlug,
 		free_trial: isFreeTrial
 	};
+}
+
+/**
+ * Creates a new shopping cart item for a Personal plan.
+ *
+ * @param {string} slug - e.g. value_bundle, jetpack_premium
+ * @param {Object} properties - list of properties
+ * @returns {Object} the new item as `CartItemValue` object
+ */
+function personalPlan( slug, properties ) {
+	return planItem( slug, properties.isFreeTrial );
 }
 
 /**
@@ -319,13 +367,16 @@ function businessPlan( slug, properties ) {
  *
  * @param {Object} productSlug - the unique string that identifies the product
  * @param {string} domain - domain name
+ * @param {string} source - optional source for the domain item, e.g. `getdotblog`.
  * @returns {Object} the new item as `CartItemValue` object
  */
-function domainItem( productSlug, domain ) {
-	return {
+function domainItem( productSlug, domain, source ) {
+	var extra = source ? { extra: { source: source } } : undefined;
+
+	return Object.assign( {
 		product_slug: productSlug,
 		meta: domain
-	};
+	}, extra );
 }
 
 function themeItem( themeSlug, source ) {
@@ -345,7 +396,7 @@ function themeItem( themeSlug, source ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRegistration( properties ) {
-	return domainItem( properties.productSlug, properties.domain );
+	return assign( domainItem( properties.productSlug, properties.domain, properties.source ), { is_domain_registration: true } );
 }
 
 /**
@@ -355,7 +406,7 @@ function domainRegistration( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainMapping( properties ) {
-	return domainItem( 'domain_map', properties.domain );
+	return domainItem( 'domain_map', properties.domain, properties.source );
 }
 
 /**
@@ -365,7 +416,7 @@ function domainMapping( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function siteRedirect( properties ) {
-	return domainItem( 'offsite_redirect', properties.domain );
+	return domainItem( 'offsite_redirect', properties.domain, properties.source );
 }
 
 /**
@@ -375,7 +426,7 @@ function siteRedirect( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainPrivacyProtection( properties ) {
-	return domainItem( 'private_whois', properties.domain );
+	return domainItem( 'private_whois', properties.domain, properties.source );
 }
 
 /**
@@ -385,24 +436,30 @@ function domainPrivacyProtection( properties ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function domainRedemption( properties ) {
-	return domainItem( 'domain_redemption', properties.domain );
+	return domainItem( 'domain_redemption', properties.domain, properties.source );
 }
 
 function googleApps( properties ) {
 	var item = domainItem( 'gapps', properties.meta ? properties.meta : properties.domain );
 
-	return extend( item, { extra: { google_apps_users: properties.users } } );
+	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
 function googleAppsExtraLicenses( properties ) {
-	var item = domainItem( 'gapps_extra_license', properties.domain );
+	var item = domainItem( 'gapps_extra_license', properties.domain, properties.source );
 
-	return extend( item, { extra: { google_apps_users: properties.users } } );
+	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
 
 function customDesignItem() {
 	return {
 		product_slug: 'custom-design'
+	};
+}
+
+function guidedTransferItem() {
+	return {
+		product_slug: 'guided_transfer',
 	};
 }
 
@@ -444,13 +501,19 @@ function spaceUpgradeItem( slug ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function getItemForPlan( plan, properties ) {
+	properties = properties || {};
+
 	switch ( plan.product_slug ) {
+		case PLAN_PERSONAL:
+			return personalPlan( plan.product_slug, properties );
 		case 'value_bundle':
 		case 'jetpack_premium':
+		case 'jetpack_premium_monthly':
 			return premiumPlan( plan.product_slug, properties );
 
 		case 'business-bundle':
 		case 'jetpack_business':
+		case 'jetpack_business_monthly':
 			return businessPlan( plan.product_slug, properties );
 
 		default:
@@ -465,7 +528,7 @@ function getItemForPlan( plan, properties ) {
  * @returns {Object} the corresponding item in the shopping cart as `CartItemValue` object
  */
 function findFreeTrial( cart ) {
-	return where( getAll( cart ), { free_trial: true } )[ 0 ];
+	return find( getAll( cart ), { free_trial: true } );
 }
 
 /**
@@ -475,7 +538,7 @@ function findFreeTrial( cart ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 function getDomainRegistrations( cart ) {
-	return where( getAll( cart ), { is_domain_registration: true } );
+	return filter( getAll( cart ), { is_domain_registration: true } );
 }
 
 /**
@@ -485,7 +548,7 @@ function getDomainRegistrations( cart ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 function getDomainMappings( cart ) {
-	return where( getAll( cart ), { product_slug: 'domain_map' } );
+	return filter( getAll( cart ), { product_slug: 'domain_map' } );
 }
 
 /**
@@ -513,7 +576,7 @@ function getRenewalItemFromProduct( product, properties ) {
 	let cartItem;
 
 	if ( isDomainProduct( product ) ) {
-		cartItem = domainItem( product.product_slug, properties.domain );
+		cartItem = domainItem( product.product_slug, properties.domain, properties.source );
 	}
 
 	if ( isPlan( product ) ) {
@@ -582,7 +645,7 @@ function getRenewalItemFromCartItem( cartItem, properties ) {
  * @returns {Object[]} the list of the corresponding items in the shopping cart as `CartItemValue` objects
  */
 function getSiteRedirects( cart ) {
-	return where( getAll( cart ), { product_slug: 'offsite_redirect' } );
+	return filter( getAll( cart ), { product_slug: 'offsite_redirect' } );
 }
 
 function hasDomainInCart( cart, domain ) {
@@ -647,51 +710,106 @@ function getIncludedDomain( cartItem ) {
 	return cartItem.extra && cartItem.extra.includedDomain;
 }
 
+function isNextDomainFree( cart ) {
+	return !! ( cart && cart.next_domain_is_free );
+}
+
+function isDomainBeingUsedForPlan( cart, domain ) {
+	if ( cart && domain && hasPlan( cart ) ) {
+		const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
+			domainProduct = ( domainProducts.shift() || {} );
+		return domain === domainProduct.meta;
+	}
+
+	return false;
+}
+
+function shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestionOrCartItem ) {
+	return withPlansOnly &&
+		// not free or a cart item
+		( isDomainRegistration( suggestionOrCartItem ) ||
+			isDomainMapping( suggestionOrCartItem ) ||
+			( suggestionOrCartItem.domain_name && ! isWordPressDomain( suggestionOrCartItem ) ) ) &&
+		( ! isDomainBeingUsedForPlan( cart, suggestionOrCartItem.domain_name ) ) && // a plan in cart
+		( ! isNextDomainFree( cart ) ) && // domain credit
+		( ! hasPlan( cart ) ) && // already a plan in cart
+		( ! selectedSite || ( selectedSite && selectedSite.plan.product_slug === 'free_plan' ) ); // site has a plan
+}
+
+function getDomainPriceRule( withPlansOnly, selectedSite, cart, suggestion ) {
+	if ( ! suggestion.product_slug || suggestion.cost === 'Free' ) {
+		return 'FREE_DOMAIN';
+	}
+
+	if ( isDomainBeingUsedForPlan( cart, suggestion.domain_name ) ) {
+		return 'FREE_WITH_PLAN';
+	}
+
+	if ( isNextDomainFree( cart ) ) {
+		return 'FREE_WITH_PLAN';
+	}
+
+	if ( shouldBundleDomainWithPlan( withPlansOnly, selectedSite, cart, suggestion ) ) {
+		return 'INCLUDED_IN_PREMIUM';
+	}
+
+	return 'PRICE';
+}
+
 module.exports = {
-	add: add,
-	addPrivacyToAllDomains: addPrivacyToAllDomains,
-	businessPlan: businessPlan,
-	domainMapping: domainMapping,
-	domainPrivacyProtection: domainPrivacyProtection,
-	domainRedemption,
-	googleApps: googleApps,
-	googleAppsExtraLicenses: googleAppsExtraLicenses,
-	domainRegistration: domainRegistration,
-	findFreeTrial: findFreeTrial,
-	getAll: getAll,
-	getAllSorted: getAllSorted,
-	getDomainMappings: getDomainMappings,
-	getDomainRegistrations: getDomainRegistrations,
-	getGoogleApps: getGoogleApps,
-	getIncludedDomain,
-	getRenewalItems,
-	getRenewalItemFromCartItem,
-	getRenewalItemFromProduct: getRenewalItemFromProduct,
-	getItemForPlan: getItemForPlan,
-	getSiteRedirects: getSiteRedirects,
-	hasDomainMapping: hasDomainMapping,
-	hasDomainRegistration: hasDomainRegistration,
-	hasDomainInCart: hasDomainInCart,
-	hasDomainCredit: hasDomainCredit,
-	hasFreeTrial: hasFreeTrial,
-	hasPlan: hasPlan,
-	hasNlTld: hasNlTld,
-	getDomainRegistrationTld: getDomainRegistrationTld,
-	hasOnlyFreeTrial: hasOnlyFreeTrial,
-	hasOnlyProductsOf: hasOnlyProductsOf,
-	hasOnlyRenewalItems,
-	hasProduct: hasProduct,
-	hasRenewalItem,
-	premiumPlan: premiumPlan,
-	remove: remove,
-	removeItemAndDependencies: removeItemAndDependencies,
-	removePrivacyFromAllDomains: removePrivacyFromAllDomains,
-	siteRedirect: siteRedirect,
-	themeItem: themeItem,
+	add,
+	addPrivacyToAllDomains,
+	businessPlan,
 	customDesignItem,
+	domainMapping,
+	domainPrivacyProtection,
+	domainRedemption,
+	domainRegistration,
+	findFreeTrial,
+	getAll,
+	getAllSorted,
+	getDomainMappings,
+	getDomainPriceRule,
+	getDomainRegistrations,
+	getDomainRegistrationsWithoutPrivacy,
+	getDomainRegistrationTld,
+	getGoogleApps,
+	getIncludedDomain,
+	getItemForPlan,
+	getRenewalItemFromCartItem,
+	getRenewalItemFromProduct,
+	getRenewalItems,
+	getSiteRedirects,
+	googleApps,
+	googleAppsExtraLicenses,
+	guidedTransferItem,
+	isNextDomainFree,
+	isDomainBeingUsedForPlan,
+	hasDomainCredit,
+	hasDomainInCart,
+	hasDomainMapping,
+	hasDomainRegistration,
+	hasFreeTrial,
+	hasNlTld,
+	hasOnlyFreeTrial,
+	hasOnlyProductsOf,
+	hasOnlyRenewalItems,
+	hasPlan,
+	hasPremiumPlan,
+	hasProduct,
+	hasRenewableSubscription,
+	hasRenewalItem,
 	noAdsItem,
-	videoPressItem,
+	planItem,
+	premiumPlan,
+	remove,
+	removeItemAndDependencies,
+	removePrivacyFromAllDomains,
+	siteRedirect,
+	shouldBundleDomainWithPlan,
+	spaceUpgradeItem,
+	themeItem,
 	unlimitedSpaceItem,
 	unlimitedThemesItem,
-	spaceUpgradeItem
+	videoPressItem
 };

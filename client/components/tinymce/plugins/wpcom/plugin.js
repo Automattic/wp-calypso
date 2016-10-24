@@ -9,6 +9,7 @@
  * External dependencies
  */
 var tinymce = require( 'tinymce/tinymce' );
+var translate = require( 'i18n-calypso' ).translate;
 
 /**
  * Internal dependencies
@@ -19,12 +20,11 @@ var formatting = require( 'lib/formatting' );
 function wpcomPlugin( editor ) {
 	var DOM = tinymce.DOM,
 		each = tinymce.each,
-		__ = editor.editorManager.i18n.translate,
 		style;
 
 	editor.on( 'focus', function() {
-        window.wpActiveEditor = editor.id;
-    } );
+		window.wpActiveEditor = editor.id;
+	} );
 
 	// Replace Read More/Next Page tags with images and apply wpautop
 	editor.on( 'BeforeSetContent', function( event ) {
@@ -32,7 +32,7 @@ function wpcomPlugin( editor ) {
 
 		if ( event.content ) {
 			if ( event.content.indexOf( '<!--more' ) !== -1 ) {
-				title = __( 'Read more...' );
+				title = translate( 'Read more…' );
 
 				event.content = event.content.replace( /<!--more(.*?)-->/g, function( match, moretext ) {
 					return '<img src="' + tinymce.Env.transparentSrc + '" data-wp-more="more" data-wp-more-text="' + moretext + '" ' +
@@ -41,7 +41,7 @@ function wpcomPlugin( editor ) {
 			}
 
 			if ( event.content.indexOf( '<!--nextpage-->' ) !== -1 ) {
-				title = __( 'Page break' );
+				title = translate( 'Page break' );
 
 				event.content = event.content.replace( /<!--nextpage-->/g,
 					'<img src="' + tinymce.Env.transparentSrc + '" data-wp-more="nextpage" class="wp-more-tag mce-wp-nextpage" ' +
@@ -93,8 +93,9 @@ function wpcomPlugin( editor ) {
 
 		tag = tag || 'more';
 		classname += ' mce-wp-' + tag;
-		title = tag === 'more' ? 'Read more...' : 'Next page';
-		title = __( title );
+		title = tag === 'more'
+			? translate( 'Read more…' )
+			: translate( 'Next page' );
 		html = '<img src="' + tinymce.Env.transparentSrc + '" title="' + title + '" class="' + classname + '" ' +
 			'data-wp-more="' + tag + '" data-mce-resize="false" data-mce-placeholder="1" />';
 
@@ -134,39 +135,39 @@ function wpcomPlugin( editor ) {
 
 	// Register buttons
 	editor.addButton( 'wp_more', {
-		tooltip: 'Insert Read More tag',
+		tooltip: translate( 'Insert Read More tag' ),
 		onclick: function() {
 			editor.execCommand( 'WP_More', 'more' );
 		}
 	} );
 
 	editor.addButton( 'wp_page', {
-		tooltip: 'Page break',
+		tooltip: translate( 'Page break' ),
 		onclick: function() {
 			editor.execCommand( 'WP_More', 'nextpage' );
 		}
 	} );
 
 	editor.addButton( 'wp_help', {
-		tooltip: 'Keyboard Shortcuts',
-		cmd: 'Wpcom_Help'
+		tooltip: translate( 'Keyboard Shortcuts' ),
+		cmd: 'WP_Help'
 	} );
 
 	editor.addButton( 'wp_charmap', {
 		icon: 'charmap',
-		tooltip: 'Special Characters',
+		tooltip: translate( 'Special Characters' ),
 		cmd: 'Wpcom_CharMap'
 	} );
 
 	editor.addButton( 'wp_code', {
-		tooltip: 'Code',
+		tooltip: translate( 'Code' ),
 		cmd: 'WP_Code',
 		stateSelector: 'code'
 	} );
 
 	// Insert "Read More..."
 	editor.addMenuItem( 'wp_more', {
-		text: 'Insert Read More tag',
+		text: translate( 'Insert Read More tag' ),
 		icon: 'wp_more',
 		context: 'insert',
 		onclick: function() {
@@ -176,7 +177,7 @@ function wpcomPlugin( editor ) {
 
 	// Insert "Next Page"
 	editor.addMenuItem( 'wp_page', {
-		text: 'Page break',
+		text: translate( 'Page break' ),
 		icon: 'wp_page',
 		context: 'insert',
 		onclick: function() {
@@ -630,9 +631,9 @@ function wpcomPlugin( editor ) {
 			if ( activeToolbar ) {
 				activeToolbar.hide();
 
-				if ( event.type === 'hide' ) {
+				if ( event.type === 'hide' || event.type === 'blur' ) {
 					activeToolbar = false;
-				} else if ( event.type === 'resize' || event.type === 'scroll' ) {
+				} else if ( event.type === 'resizewindow' || event.type === 'scrollwindow' ) {
 					clearTimeout( timeout );
 
 					timeout = setTimeout( function() {
@@ -659,6 +660,5 @@ function wpcomPlugin( editor ) {
 
 module.exports = function() {
 	// Set the minimum value for the modals z-index higher than #wpadminbar (100000)
-	tinymce.ui.FloatPanel.zIndex = 100100;
 	tinymce.PluginManager.add( 'wpcom', wpcomPlugin );
 };

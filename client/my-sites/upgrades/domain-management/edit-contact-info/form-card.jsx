@@ -2,9 +2,11 @@
  * External dependencies
  */
 const React = require( 'react' ),
-	endsWith = require( 'lodash/string/endsWith' ),
-	omit = require( 'lodash/object/omit' ),
-	page = require( 'page' );
+	endsWith = require( 'lodash/endsWith' ),
+	omit = require( 'lodash/omit' ),
+	page = require( 'page' ),
+	bindActionCreators = require( 'redux' ).bindActionCreators,
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -20,9 +22,9 @@ const Card = require( 'components/card' ),
 	formState = require( 'lib/form-state' ),
 	notices = require( 'notices' ),
 	paths = require( 'my-sites/upgrades/paths' ),
-	statesList = require( 'lib/states-list' ).forDomainRegistrations(),
 	upgradesActions = require( 'lib/upgrades/actions' ),
-	wpcom = require( 'lib/wp' ).undocumented();
+	wpcom = require( 'lib/wp' ).undocumented(),
+	successNotice = require( 'state/notices/actions' ).successNotice;
 
 const EditContactInfoFormCard = React.createClass( {
 	propTypes: {
@@ -102,7 +104,7 @@ const EditContactInfoFormCard = React.createClass( {
 					<div className="edit-contact-info-form-card__form-content">
 						{ this.getField( FormInput, {
 							name: 'first-name',
-							autofocus: true,
+							autoFocus: true,
 							label: this.translate( 'First Name', {
 								context: 'Domain Edit Contact Info form.',
 								textOnly: true
@@ -174,7 +176,6 @@ const EditContactInfoFormCard = React.createClass( {
 						} ) }
 						{ this.getField( FormStateSelect, {
 							countryCode: formState.getFieldValue( this.state.form, 'countryCode' ),
-							statesList,
 							name: 'state',
 							label: this.translate( 'State', {
 								context: 'Domain Edit Contact Info form.',
@@ -217,7 +218,7 @@ const EditContactInfoFormCard = React.createClass( {
 				{ ...props }
 				additionalClasses="edit-contact-info-field"
 				disabled={ this.state.formSubmitting || formState.isFieldDisabled( this.state.form, name ) }
-				invalid={ formState.isFieldInvalid( this.state.form, name ) }
+				isError={ formState.isFieldInvalid( this.state.form, name ) }
 				value={ formState.getFieldValue( this.state.form, name ) }
 				onChange={ this.onChange } />
 		);
@@ -255,7 +256,7 @@ const EditContactInfoFormCard = React.createClass( {
 	},
 
 	goToContactsPrivacy() {
-		page( paths.domainManagementContactsPrivacy( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+		page( paths.domainManagementContactsPrivacy( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	},
 
 	saveContactInfo( event ) {
@@ -275,7 +276,7 @@ const EditContactInfoFormCard = React.createClass( {
 			upgradesActions.updateWhois( this.props.selectedDomainName, formState.getAllFieldValues( this.state.form ), ( error, data ) => {
 				this.setState( { formSubmitting: false } );
 				if ( data && data.success ) {
-					notices.success( this.translate( 'The contact info has been updated. There may be a short delay before the changes show up in the public records.' ) );
+					this.props.successNotice( this.translate( 'The contact info has been updated. There may be a short delay before the changes show up in the public records.' ) );
 				} else if ( error && error.message ) {
 					notices.error( error.message );
 				} else {
@@ -286,4 +287,7 @@ const EditContactInfoFormCard = React.createClass( {
 	}
 } );
 
-module.exports = EditContactInfoFormCard;
+module.exports = connect(
+	null,
+	dispatch => bindActionCreators( { successNotice }, dispatch )
+)( EditContactInfoFormCard );

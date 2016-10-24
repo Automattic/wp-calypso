@@ -1,0 +1,31 @@
+.post-type-list:not( .is-empty ) {
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
+		0 1px 2px lighten( $gray, 30% );
+}
+
+.post-type-list__post-thumbnail-wrapper {
+	display: none;
+	position: relative;
+	width: 80px;
+	align-self: stretch;
+	margin: -8px 0;
+	overflow: hidden;
+
+	&.has-image,
+	.post-item.is-placeholder & {
+		display: block;
+	}
+
+	.post-item.is-placeholder & {
+		@include placeholder;
+	}
+}
+
+.post-type-list__post-thumbnail {
+	position: absolute;
+		top: 50%;
+		left: 50%;
+	transform: translate( -50%, -50% );
+	max-height: 100%;
+	max-width: none;
+}

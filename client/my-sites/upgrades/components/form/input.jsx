@@ -1,31 +1,34 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	classNames = require( 'classnames' );
+import ReactDom from 'react-dom';
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	FocusMixin = require( './focus-mixin.js' );
 
-module.exports = React.createClass( {
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
+import FormInputValidation from 'components/forms/form-input-validation';
+import analytics from 'lib/analytics';
+import scrollIntoViewport from 'lib/scroll-into-viewport';
+
+export default React.createClass( {
 	displayName: 'Input',
 
-	mixins: [ FocusMixin( 'input' ) ],
-
-	getDefaultProps: function() {
-		return { type: 'text', autofocus: false };
+	getDefaultProps() {
+		return { autoFocus: false, autoComplete: 'on' };
 	},
 
-	componentDidMount: function() {
+	componentDidMount() {
 		this.setupInputModeHandlers();
-		this.autofocusInput();
+		this.autoFocusInput();
 	},
 
-	setupInputModeHandlers: function() {
-		var inputElement = React.findDOMNode( this.refs.input );
+	setupInputModeHandlers() {
+		const inputElement = ReactDom.findDOMNode( this.refs.input );
 
 		if ( this.props.inputMode === 'numeric' ) {
 			// This forces mobile browsers to use a numeric keyboard. We have to
@@ -34,15 +37,10 @@ module.exports = React.createClass( {
 			//
 			// This workaround is based on the following StackOverflow post:
 			// http://stackoverflow.com/a/19998430/821706
-			inputElement.addEventListener( 'touchstart', function() {
-				inputElement.pattern = '\\d*';
-			} );
+			inputElement.addEventListener( 'touchstart', () => inputElement.pattern = '\\d*' );
 
-			[ 'keydown', 'blur' ].forEach( function( eventName ) {
-				inputElement.addEventListener( eventName, function() {
-					inputElement.pattern = '.*';
-				} );
-			} );
+			[ 'keydown', 'blur' ].forEach( ( eventName ) =>
+				inputElement.addEventListener( eventName, () => inputElement.pattern = '.*' ) );
 		}
 	},
 
@@ -50,45 +48,48 @@ module.exports = React.createClass( {
 		if ( oldProps.disabled && ! this.props.disabled ) {
 			// We focus when the state goes from disabled to enabled. This is needed because we show a disabled input
 			// until we receive data from the server.
-			this.autofocusInput();
+			this.autoFocusInput();
 		}
 	},
 
-	autofocusInput() {
-		if ( this.props.autofocus ) {
-			React.findDOMNode( this.refs.input ).focus();
+	focus() {
+		const node = ReactDom.findDOMNode( this.refs.input );
+		node.focus();
+		scrollIntoViewport( node );
+	},
+
+	autoFocusInput() {
+		if ( this.props.autoFocus ) {
+			this.focus();
 		}
 	},
 
-	recordFieldClick: function() {
+	recordFieldClick() {
 		if ( this.props.eventFormName ) {
 			analytics.ga.recordEvent( 'Upgrades', `Clicked ${ this.props.eventFormName } Field`, this.props.name );
 		}
 	},
 
-	render: function() {
-		var classes = classNames( this.props.additionalClasses, this.props.name, this.props.labelClass, {
-			focus: this.state.focus,
-			active: Boolean( this.props.value ),
-			invalid: this.props.invalid
-		}, this.props.classes );
+	render() {
+		const classes = classNames( this.props.additionalClasses, this.props.name, this.props.labelClass, this.props.classes );
 
 		return (
 			<div className={ classes }>
-				<label htmlFor={ this.props.name } className="form-label">{ this.props.label }</label>
-				<input
-					type={ this.props.type }
-					placeholder={ this.props.label }
+				<FormLabel htmlFor={ this.props.name }>{ this.props.label }</FormLabel>
+				<FormTextInput
+					placeholder={ this.props.placeholder ? this.props.placeholder : this.props.label }
 					id={ this.props.name }
 					value={ this.props.value }
 					name={ this.props.name }
 					ref="input"
-					autofocus={ this.props.autofocus }
+					autoFocus={ this.props.autoFocus }
+					autoComplete={ this.props.autoComplete }
 					disabled={ this.props.disabled }
+					maxLength={ this.props.maxLength }
 					onChange={ this.props.onChange }
 					onClick={ this.recordFieldClick }
-					onBlur={ this.handleBlur }
-					onFocus={ this.handleFocus } />
+					isError={ this.props.isError } />
+				{ this.props.errorMessage && <FormInputValidation text={ this.props.errorMessage } isError /> }
 			</div>
 		);
 	}

@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	find = require( 'lodash/collection/find' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
+	find = require( 'lodash/find' ),
+	isEqual = require( 'lodash/isEqual' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -11,7 +11,7 @@ var React = require( 'react' ),
  */
 var Dialog = require( 'components/dialog' ),
 	AccountDialogAccount = require( './account-dialog-account' ),
-	Notice = require( 'notices/notice' );
+	Notice = require( 'components/notice' );
 
 module.exports = React.createClass( {
 	displayName: 'AccountDialog',

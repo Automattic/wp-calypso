@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
+var React = require( 'react' ),
+	isEmpty = require( 'lodash/isEmpty' ),
 	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
  */
-var CreditCardForm = require( 'components/upgrades/credit-card-form' ),
+var CreditCardFormFields = require( 'components/credit-card-form-fields' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
 
 module.exports = React.createClass( {
@@ -40,7 +40,7 @@ module.exports = React.createClass( {
 
 					<span className={ classes }>{ this.translate( 'All fields required' ) }</span>
 
-					<CreditCardForm
+					<CreditCardFormFields
 						card={ this.props.transaction.newCardFormFields }
 						countriesList={ this.props.countriesList }
 						eventFormName="Checkout Form"

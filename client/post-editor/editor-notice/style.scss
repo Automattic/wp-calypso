@@ -1,0 +1,24 @@
+.editor-notice {
+	.notice {
+		margin: -8px 0 24px;
+
+		@include breakpoint( ">480px" ) {
+			margin-top: -16px;
+		}
+
+		@include breakpoint( ">660px" ) {
+			margin-top: -24px;
+		}
+	}
+
+	.notice__text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		display: inline-block;
+
+		a {
+			text-decoration: underline;
+			background-image: none;
+		}
+	}
+}

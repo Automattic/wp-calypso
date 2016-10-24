@@ -1,25 +1,17 @@
 .form-input-validation {
 	color: $alert-green;
 	position: relative;
-	padding: 6px 24px 11px 28px;
+	padding: 6px 24px 11px 34px;
 	border-radius: 1px;
 	box-sizing: border-box;
 	font-size: 14px;
 	animation: appear .3s ease-in-out;
 
-	&:before {
-		@include noticon( '\f418', 16px );
-		position: absolute;
-		left: 0;
-		font-size: 24px;
-		line-height: 1;
-	}
-
 	&.is-error {
 		color: $alert-red;
-
-		&:before {
-			content: "\f424"
-		}
+	}
+	.gridicon {
+		float: left;
+		margin-left: -34px;
 	}
 }

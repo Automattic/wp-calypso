@@ -8,7 +8,7 @@ var expect = require( 'chai' ).expect;
  */
 var PostMetadata = require( '../' );
 
-describe( 'PostMetadata', function() {
+describe( 'index', function() {
 	describe( '#publicizeMessage()', function() {
 		it( 'should return undefined if passed a falsey value', function() {
 			var value = PostMetadata.publicizeMessage( undefined );

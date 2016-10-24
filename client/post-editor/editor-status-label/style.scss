@@ -1,0 +1,54 @@
+.editor-status-label {
+	color: $gray;
+	cursor: pointer;
+	display: block;
+	font-size: 11px;
+	line-height: 1.65;
+	padding-left: 18px;
+	text-align: left;
+	text-transform: uppercase;
+
+	.gridicon {
+		display: inline-block;
+		fill: lighten( $gray, 10% );
+		position: absolute;
+			left: 14px;
+	}
+
+	strong {
+		color: darken( $gray, 10% );
+		display: block;
+	}
+
+	&.is-publish strong {
+		display: inline;
+	}
+
+	&.is-pending strong {
+		color: $alert-yellow;
+	}
+
+	&.is-trash strong {
+		color: $orange-fire;
+	}
+}
+
+.editor-status-label__placeholder {
+	padding-left: 0;
+}
+
+.editor-status-label__full-date {
+	color: darken( $gray, 10% );
+	display: block;
+	font-size: 13px;
+	padding: 8px 16px;
+}
+
+.editor-status-label__full-date__tooltip {
+	color: lighten( $gray, 10% );
+	display: block;
+	font-size: 11px;
+	padding: 2px 10px 2px;
+	margin-top: -8px;
+	margin-bottom: 6px;
+}

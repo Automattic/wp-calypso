@@ -2,22 +2,21 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	isFunction = require( 'lodash/lang/isFunction' ),
-	classNames = require( 'classnames' );
+	isFunction = require( 'lodash/isFunction' );
 
 /**
  * Internal dependencies
  */
 var DocService = require( './service' ),
+	Card = require( 'components/card' ),
 	Main = require( 'components/main' ),
 	SearchCard = require( 'components/search-card' );
 
 var DEFAULT_FILES = [
 		'docs/guide/index.md',
 		'README.md',
-		'CONTRIBUTING.md',
+		'.github/CONTRIBUTING.md',
 		'docs/coding-guidelines.md',
-		'client/lib/mixins/i18n/README.md',
 		'docs/coding-guidelines/javascript.md',
 		'docs/coding-guidelines/css.md',
 		'docs/coding-guidelines/html.md'
@@ -113,14 +112,22 @@ module.exports = React.createClass( {
 
 		searchResults = this.state.inputValue ? this.state.results : this.state.defaultResults;
 		return searchResults.map( function( result ) {
+			let url = '/devdocs/' + result.path;
+
+			if ( this.state.term ) {
+				url += '?term=' + encodeURIComponent( this.state.term );
+			}
+
 			return (
-				<div className="devdocs__result" key={ result.path }>
-					<header>
-						<h1><a href={ '/devdocs/' + result.path + '?term=' + encodeURIComponent( this.state.term ) }>{ result.title }</a></h1>
-						<h2>{ result.path }</h2>
+				<Card compact className="devdocs__result" key={ result.path }>
+					<header className="devdocs__result-header">
+						<h1 className="devdocs__result-title">
+							<a className="devdocs__result-link" href={ url }>{ result.title }</a>
+						</h1>
+						<h2 className="devdocs__result-path">{ result.path }</h2>
 					</header>
 					{ this.snippet( result ) }
-				</div>
+				</Card>
 			);
 		}, this );
 	},

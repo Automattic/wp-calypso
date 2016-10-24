@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var isEqual = require( 'lodash/lang/isEqual' ),
+var isEqual = require( 'lodash/isEqual' ),
 	debug = require( 'debug' )( 'calypso:posts' );
 
 /**
@@ -23,20 +23,28 @@ function setPost( post ) {
 	_posts[ post.global_ID ] = post;
 }
 
-function normalizePost( attributes ) {
-	if ( ! attributes.global_ID ) {
-		debug( 'global_ID is required for a post' );
+function normalizePost( responseSource, attributes ) {
+	const { global_ID } = attributes || {};
+	if ( ! global_ID ) {
+		debug( 'global_ID is required for a post', attributes );
 		return;
 	}
 
-	// these methods are synchronous
+	// do not overwrite existing records with localResponse data
+	const cachedPost = PostsStore.get( global_ID );
+	if ( cachedPost && responseSource === 'local' ) {
+		debug( 'existing record (%o), do not overwrite with local response', cachedPost );
+		return;
+	}
+
 	utils.normalizeSync( attributes, function( error, post ) {
 		setPost( post );
 	} );
 }
 
-function setAll( posts ) {
-	posts.forEach( normalizePost );
+function setAll( posts, responseSource ) {
+	const boundNormalizePost = normalizePost.bind( null, responseSource );
+	posts.forEach( boundNormalizePost );
 }
 
 PostsStore = {
@@ -52,13 +60,14 @@ PostsStore.dispatchToken = Dispatcher.register( function( payload ) {
 		case 'RECEIVE_POSTS_PAGE':
 		case 'RECEIVE_UPDATED_POSTS':
 			if ( ! action.error && action.data.posts ) {
-				setAll( action.data.posts );
+				const responseSource = action.data.__sync && action.data.__sync.responseSource;
+				setAll( action.data.posts, responseSource );
 			}
 			break;
 
 		case 'RECEIVE_UPDATED_POST':
 			if ( ! action.error ) {
-				normalizePost( action.post );
+				normalizePost( 'server', action.post );
 			}
 			break;
 	}

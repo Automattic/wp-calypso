@@ -1,4 +1,4 @@
-.profile-links {
+.profile-links__list {
 	margin: 0;
 	list-style: none;
 }
@@ -13,8 +13,6 @@
 	margin-bottom: 1.5em;
 }
 
-@include breakpoint( "<480px" ) {
-	.profile-links button {
-		margin-bottom: 10px;
-	}
+.button.add-buttons__add-wp-site{
+	margin-left: 8px;
 }

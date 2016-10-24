@@ -1,0 +1,511 @@
+// child components
+@import 'placeholder';
+@import 'expand';
+
+// Select Dropdown
+.stats-module__select-dropdown-wrapper {
+	padding: 16px;
+	text-align: center;
+
+	.select-dropdown__container {
+		position: relative;
+	}
+
+	.stats-module.is-loading &,
+	.stats-module.has-no-data & {
+		display: none;
+	}
+}
+
+.card.stats-module {
+	padding: 0;
+	margin-bottom: 16px;
+}
+// Site sections
+.stats__module-list {
+	@include clear-fix;
+}
+
+.stats-insights__nonperiodic {
+	&.has-no-recent {
+		color: $gray-dark;
+		font-weight: 300;
+
+		p {
+			@include breakpoint( "<660px" ) {
+				margin-left: 24px;
+				margin-right: 24px;
+			}
+
+			@include breakpoint( "<480px" ) {
+				text-align: center;
+			}
+		}
+	}
+}
+
+// Section title
+
+.stats-section-title {
+	@include heading;
+
+	@include breakpoint( "<660px" ) {
+		margin-left: 24px;
+		margin-right: 24px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		text-align: center;
+	}
+}
+
+// Module Expand
+// (link that shows only if there are more results than we can show in the overview)
+
+.module-expand {
+	line-height: 40px;
+	display: block;
+
+	@include breakpoint( "<480px" ) {
+		line-height: 48px;
+	}
+
+	.stats-module.is-loading &,
+	.stats-module.has-no-data & {
+		display: none;
+	}
+
+	a {
+		@extend %mobile-link-element;
+		border-top: 1px solid $gray-light;
+		display: block;
+		font-size: 14px;
+		padding: 0 24px;
+		position: relative;
+
+		// Hover state
+		@include breakpoint( ">480px" ) {
+			&:hover {
+				background: $gray-light;
+				border-top-color: $white;
+			}
+		}
+
+		// Focus state
+		&:focus {
+			background: $gray-light;
+			border-top-color: $white;
+		}
+
+		@include breakpoint( ">960px" ) {
+			.stats__module-list & {
+				font-size: 12px;
+			}
+		}
+	}
+
+	.right {
+		color: $gray;
+		position: absolute;
+			right: 24px;
+			top: 0;
+	}
+}
+
+// Module Header
+
+.module-header {
+	background: $white;
+	height: 40px;
+	line-height: 40px;
+	padding-left: 24px;
+	position: relative;
+
+	.stats-module.is-loading & {
+		cursor: default;
+		height: 40px;
+	}
+
+	.stats-module.summary & {
+		cursor: default;
+	}
+}
+
+// Module Header Title
+// 1: If really long titles wrap, hide the excess
+
+.module-header-title {
+	@extend %mobile-interface-element;
+	@extend %placeholder;
+
+	color: $gray-dark;
+	font-weight: 600;
+	height: 40px; // 1
+	overflow: hidden; // 1
+	width: auto;
+}
+
+// Module Header Actions
+// 1: To align optically to right line and create bigger touch target
+// 2: So the focus outline isn't covered by the fading pseudo-element
+
+ul.module-header-actions {
+	background: $white;
+	height: 40px;
+	list-style: none;
+	margin: 0;
+	position: absolute;
+		right: 0;
+		top: 0;
+
+	// Fade really long module titles
+	&::before {
+		@include stats-fade-text($white);
+	}
+
+	.module-header-action {
+		display: inline-block;
+
+		&:last-child .module-header-action-link {
+			&,
+			&::after {
+				padding-right: 12px; // 1
+			}
+		}
+
+		.summary &.toggle-services {
+			display: none;
+		}
+	}
+
+	.gridicon {
+		vertical-align: middle;
+
+		.stats-module.is-loading & {
+			animation: loading-fade 1.6s ease-in-out infinite;
+		}
+
+		.stats-module.is-loading &:hover::before,
+		.stats-module.is-loading &::before,
+		.stats-module.is-loading &:hover,
+		.stats-module.is-loading & {
+			color: $gray-light;
+			fill: $gray-light;
+		}
+	}
+
+	.module-header-action-link {
+		@extend %mobile-interface-element;
+		color: $gray;
+		display: inline-block;
+		height: 40px;
+		line-height: 40px;
+		min-width: 40px;
+		position: relative; // 2
+		text-align: center;
+		z-index: z-index( 'root', 'ul.module-header-actions .module-header-action-link' ); // 2
+
+		.stats-module.is-loading & {
+			cursor: default;
+		}
+	}
+
+	// Hover state
+	@include breakpoint( ">480px" ) {
+		.stats-module:hover & .module-header-action-link {
+			color: $blue-wordpress;
+		}
+
+		.module-header & .module-header-action-link:hover {
+			color: $link-highlight;
+		}
+	}
+
+	// Focus state
+	.module-header & .module-header-action-link:focus {
+		color: $link-highlight;
+	}
+
+	// Info button
+	.toggle-info {
+
+		&,
+		.stats-module.is-loading & {
+			display: none;
+		}
+
+		.stats-module.is-expanded & {
+			display: inline-block;
+		}
+	}
+
+	// Toggle
+	.toggle-services .gridicon {
+		transition: .2s transform ease-out;
+		transform: translate3d(0,0,0);
+	}
+
+	.stats-module.is-expanded & .toggle-services .gridicon {
+		transform: rotate(180deg);
+	}
+}
+
+.module-content .upgrade-nudge.card {
+	 margin: 16px;
+}
+
+// Module Content Text
+
+.module-content-text {
+	box-sizing: border-box;
+	color: $gray-dark;
+	font-size: 13px;
+	padding: 16px 16px 0 16px;
+	min-height: 1em;
+	width: 100%;
+	text-align: center;
+
+	a {
+		display: block;
+
+		@include breakpoint( ">480px" ) {
+			display: inline;
+		}
+	}
+
+	@include breakpoint( ">960px" ) {
+		.stats__module-list & {
+			font-size: 12px;
+		}
+	}
+
+	// Don't show text when loading, even if it's info text and the module is empty
+	.stats-module.has-no-data &,
+	.stats-module.is-loading & {
+		display: none;
+	}
+
+	// Hidden info box
+	&-info {
+		background: $gray-light;
+		box-shadow: inset 0 1px 0 $gray-light;
+		color: $gray-dark;
+		display: none;
+		position: relative;
+
+		.stats-module.is-showing-info & {
+			display: inline-block; // 1
+		}
+
+		.stats-module.is-loading.is-showing-info & {
+			display: none; // 2
+		}
+	}
+
+	ul,
+	ol {
+		margin: 0;
+	}
+
+	// Representation of what the published status looks like within a list of posts and pages
+	.legend.published {
+		border-left: 4px solid $orange-jazzy;
+		padding-left: 12px;
+	}
+
+	.legend.achievement {
+		color: $alert-yellow;
+	}
+
+	// Hide legends if there is no data
+	.stats-module.has-no-data & .legend {
+		display: none;
+	}
+
+	.gridicon {
+		margin-right: 4px;
+		vertical-align: middle;
+	}
+
+	// List of associated FAQ items, support pages, tips and tricks, etc
+	.documentation {
+		list-style: none;
+
+		li {
+			font-size: 14px;
+			line-height: 2em;
+
+			@include breakpoint( ">960px" ) {
+				.stats__module-list & {
+					font-size: 12px;
+				}
+			}
+
+			@include breakpoint( "<480px" ) {
+				border-bottom: 1px solid $gray-light;
+
+				&:last-child {
+					border: 0;
+					margin-bottom: -12px;
+				}
+			}
+		}
+
+		a {
+			@extend %mobile-link-element;
+			display: block;
+			position: relative;
+			padding: 6px 0 6px 0;
+
+			@include breakpoint( "<480px" ) {
+				padding-top: 12px;
+				padding-bottom: 12px;
+			}
+		}
+	}
+}
+
+.tab-email-followers .tab-content.email-followers,
+.tab-wpcom-followers .tab-content.wpcom-followers,
+.tab-top-authors .tab-content.top-authors,
+.tab-top-content .tab-content.top-content {
+	display: block;
+}
+
+// Module Content Table
+
+.module-content-table {
+	position: relative;
+
+	.module-content-table-scroll {
+		min-height: 210px;
+		overflow: auto;
+		overflow-x: auto;
+		overflow-y: visible;
+	}
+
+	// Table cells
+	// 1: Make sure table cells are always only on one line, otherwise the sticky left tds don't have the right size
+	// 2: Make right padding much greater to accommodate for increased gradient
+	td,
+	th {
+		border-bottom: 1px solid $gray-light;
+		border-right: 1px solid $gray-light;
+		font-size: 12px;
+		padding: 8px 12px;
+		white-space: nowrap; // 1
+
+		&:first-child {
+			padding-left: 24px;
+		}
+
+		&:last-child {
+			border-right: none;
+			padding-right: 60px; // 2
+		}
+	}
+
+	tbody tr:last-child th,
+	tbody tr:last-child td {
+		border-bottom: none;
+	}
+
+	tbody th:first-child {
+		background: $white;
+		position: absolute;
+		z-index: z-index( 'root', '.module-content-table tbody th:first-child' );
+	}
+
+	// Left this modifier as-is because these tables are likely going to change
+	// a lot or otherwise be removed, and at least it's directly dependent on
+	// being associated with a td in this structure
+	@include breakpoint( ">480px" ) {
+		.stats-module & td.has-no-data:hover, // 1
+		tbody tr:hover td,
+		tbody tr:hover th {
+			background: $gray-light;
+		}
+
+		.stats-module & td.highest-count:hover,
+		tbody tr td:hover {
+			background: $gray-light;
+			color: $gray-dark;
+		}
+	}
+
+	.stats-module & td.highest-count {
+		color: $alert-yellow;
+		position: relative;
+	}
+
+	.spacer {
+		color: transparent;
+	}
+
+	.stats-detail-weeks__date,
+	.stats-detail-weeks__value {
+		white-space: nowrap;
+	}
+
+	.stats-detail-weeks__value {
+		display: block;
+		font-size: 12px;
+
+		&.is-rising {
+			color: $alert-green;
+		}
+
+		&.is-falling {
+			color: $alert-red;
+		}
+
+		&.is-same {
+			color: $gray;
+		}
+
+		&.is-rising,
+		&.is-falling,
+		&.is-same {
+			margin-top: -2px;
+		}
+
+		.gridicon {
+			margin: 0 2px -3px -4px;
+			width: 15px;
+		}
+	}
+
+	thead th,
+	.stats-detail-weeks__date {
+		color: $gray;
+	}
+
+	.stats-detail-weeks__date {
+		display: block;
+		font-size: 11px;
+		letter-spacing: .1em;
+		text-transform: uppercase;
+	}
+
+	// Fade out sides of tables to hint at horizontal scrolling
+	// 1: 16px should cover for any scrollbar
+	// 2: Much wider to show horizontal scrolling better (since the window loads scrolled to the left)
+	&::before,
+	&::after {
+		content: "";
+		display: block;
+		position: absolute;
+			bottom: 16px; // 1
+			left: 0;
+			top: 0;
+		width: 20px;
+		z-index: z-index( 'root', '.module-content-table::after' );
+	}
+
+	&::after {
+		left: auto;
+		right: 0;
+		width: 60px; // 2
+		@include long-content-fade( $color: $white, $size: 15% );
+	}
+}

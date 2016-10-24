@@ -1,33 +1,36 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	classNames = require( 'classnames' ),
-	omit = require( 'lodash/object/omit' );
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
+import classNames from 'classnames';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
  */
-var Gravatar = require( 'components/gravatar' );
+import Gravatar from 'components/gravatar';
 
 module.exports = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+	displayName: 'PeopleProfile',
 
-	getRole: function() {
-		var user = this.props.user;
+	mixins: [ PureRenderMixin ],
+
+	getRole() {
+		const user = this.props.user;
 		if ( ! user ) {
 			return 'subscriber';
 		}
 
-		if ( user && user.roles && user.roles[0] ) {
-			return this.props.user.roles[0];
+		if ( user && user.roles && user.roles[ 0 ] ) {
+			return this.props.user.roles[ 0 ];
 		}
 
 		return;
 	},
 
-	getRoleBadgeText: function( role ) {
-		var text;
+	getRoleBadgeText( role ) {
+		let text;
 		role = 'undefined' === typeof role ? this.getRole() : role;
 
 		switch ( role ) {
@@ -56,13 +59,14 @@ module.exports = React.createClass( {
 		return text;
 	},
 
-	getRoleBadgeClass: function( role ) {
+	getRoleBadgeClass( role ) {
 		role = 'undefined' === typeof role ? this.getRole() : role;
 		return 'role-' + role;
 	},
 
-	renderName: function() {
-		let name, user = this.props.user;
+	renderName() {
+		const user = this.props.user;
+		let name;
 		if ( ! user ) {
 			name = this.translate( 'Loading Users', { context: 'Placeholder text while fetching users.' } );
 		} else if ( user.name ) {
@@ -82,8 +86,8 @@ module.exports = React.createClass( {
 		return name;
 	},
 
-	renderLogin: function() {
-		var login;
+	renderLogin() {
+		let login;
 		if ( ! this.props.user ) {
 			login = this.translate( 'Loading Users', { context: 'Placeholder text while fetching users.' } );
 		} else if ( this.props.user.login ) {
@@ -101,8 +105,8 @@ module.exports = React.createClass( {
 		return login;
 	},
 
-	renderRole: function() {
-		var superAdminBadge,
+	renderRole() {
+		let superAdminBadge,
 			roleBadge;
 
 		if ( this.props.user && this.props.user.is_super_admin ) {
@@ -133,7 +137,7 @@ module.exports = React.createClass( {
 		);
 	},
 
-	renderSubscribedDate: function() {
+	renderSubscribedDate() {
 		if ( ! this.props.user || ! this.props.user.date_subscribed ) {
 			return;
 		}
@@ -152,18 +156,18 @@ module.exports = React.createClass( {
 		);
 	},
 
-	isFollowerType: function() {
+	isFollowerType() {
 		return this.props.user && ! this.props.user.roles && this.props.user.date_subscribed;
 	},
 
 	render: function() {
-		var user = this.props.user,
+		const user = this.props.user,
 			classes = classNames( 'people-profile', {
 				'is-placeholder': ! user
 			} );
 
 		return (
-			<div { ...omit( this.props, 'className' ) } className={ classes }>
+			<div { ...omit( this.props, 'className', 'user' ) } className={ classes }>
 				<div className="people-profile__gravatar">
 					<Gravatar user={ user } size={ 72 } />
 				</div>

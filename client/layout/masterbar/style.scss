@@ -1,0 +1,282 @@
+$masterbar-height: 46px;
+$autobar-height: 20px;
+
+// The WordPress.com Masterbar
+.masterbar {
+	background: $masterbar-color;
+	border-bottom: 1px solid darken( $masterbar-color, 4% );
+	color: $white;
+	font-size: 16px;
+	display: flex;
+	height: $masterbar-height;
+	margin: 0;
+	position: fixed;
+		left: 0;
+		top: 0;
+	width: 100%;
+	z-index: z-index( 'root', '.masterbar' );
+	-webkit-font-smoothing: subpixel-antialiased;
+	transition: transform 0.2s ease-out;
+
+	.is-support-user & {
+		background: $orange-jazzy;
+		border-bottom: 1px solid darken( $orange-jazzy, 4% );
+	}
+
+	.is-section-theme & {
+		border: none;
+	}
+
+	@include breakpoint( ">660px" ) {
+		backface-visibility: hidden;
+	}
+}
+
+.masterbar__item {
+	flex: 0 1 auto;
+	display: flex;
+		align-items: center;
+	position: relative;
+	color: $white;
+	font-size: 14px;
+	height: $masterbar-height;
+	line-height: $masterbar-height;
+	padding: 0 15px;
+	text-decoration: none;
+	cursor: default;
+	transition: all 150ms ease-in;
+
+	&:visited {
+		color: $white;
+	}
+
+	&[href] {
+		cursor: pointer;
+	}
+
+	.masterbar__item-content {
+		color: $white;
+	}
+
+	.gridicon + .masterbar__item-content {
+		padding: 0 0 0 6px;
+	}
+
+	&:hover,
+	&:focus {
+		background: lighten( $masterbar-color, 5% );
+		color: $white;
+		outline: 0;
+	}
+
+	&.is-active {
+		background: darken( $masterbar-color, 17% );
+	}
+
+	.is-support-user &.is-active {
+		background: darken( $orange-jazzy, 10% );
+	}
+
+	@include breakpoint( "<480px" ) {
+		flex: 1 1 auto;
+
+		.gridicon {
+			margin: 0 auto;
+		}
+
+		.masterbar__item-content {
+			display: none;
+		}
+	}
+}
+
+.masterbar__item-logo {
+	flex: 0 0 auto;
+	padding: 0 0 0 8px;
+
+	.masterbar__wpcom-logo {
+		height: 24px;
+		width: 164px;
+		position: relative;
+			top: 6px;
+			left: -4px;
+	}
+
+	@include breakpoint( "<480px" ) {
+		& {
+			margin-right: 10px;
+		}
+
+		.masterbar__item-content {
+			display: block;
+			margin: 0 auto;
+			width: 30px;
+			overflow: hidden;
+		}
+	}
+
+	&:hover,
+	&:focus {
+		background: transparent;
+	}
+}
+
+.masterbar__item-title {
+	flex: 0 0 auto;
+	padding-left: 0;
+	text-transform: uppercase;
+
+	.masterbar__item-content {
+		display: block;
+	}
+
+	&:hover,
+	&:focus {
+		background: transparent;
+	}
+}
+
+.masterbar__item-new {
+	background: $white;
+	border-radius: 3px;
+	color: $blue-wordpress;
+	height: 36px;
+	margin: 5px 8px;
+
+	&:visited {
+		color: $blue-wordpress;
+	}
+
+	&.is-active {
+		color: $white;
+	}
+
+	&:hover,
+	&:focus {
+		background: $gray-light;
+		color: $blue-wordpress;
+	}
+
+	.masterbar__item-content {
+		display: none;
+	}
+
+	.is-support-user &,
+	.is-support-user &:focus,
+	.is-support-user &:hover,
+	.is-support-user &:visited {
+		color: $orange-jazzy;
+	}
+
+	.is-support-user &.is-active {
+		color: $white;
+	}
+}
+
+.masterbar__item-me {
+	.gravatar {
+		position: absolute;
+		left: 16px;
+		top: 12px;
+		width: 18px;
+		height: 18px;
+
+		border: 2px solid $white;
+	}
+
+	.gridicon + .masterbar__item-content {
+		padding: 0;
+	}
+
+	.masterbar__item-me-label {
+		display: none;
+	}
+}
+
+.masterbar__item-notifications {
+	margin-right: 12px;
+
+	@include breakpoint( "<480px" ) {
+		margin-right: 0;
+	}
+
+	.gridicon + .masterbar__item-content {
+		padding: 0;
+
+		@include breakpoint( "<480px" ) {
+			display: block;
+		}
+	}
+
+	.masterbar__item-notifications-label {
+		display: none;
+	}
+
+	.masterbar__notifications-bubble {
+		border: solid 2px $masterbar-color;
+		border-radius: 50%;
+		display: none;
+		font-size: 8px;
+		height: 8px;
+		letter-spacing: 0;
+		line-height: 12px;
+		margin: 0 0 0 -12px;
+		padding: 0;
+		position: absolute;
+			top: 9px;
+			left: 50%;
+		width: 8px;
+		z-index: z-index( '.masterbar', '.masterbar__notifications-bubble' );
+
+		// Animation
+		transform: translateZ(0);
+		animation: bubble-unread-indication .5s linear both;
+		transition: all 150ms ease-in;
+	}
+
+	&:hover .masterbar__notifications-bubble {
+		border-color: lighten( $masterbar-color, 5% );
+	}
+
+	&.is-active .masterbar__notifications-bubble {
+		border-color: darken( $masterbar-color, 10% );
+	}
+
+	&.has-unread .masterbar__notifications-bubble {
+		display: block;
+		background: $orange-jazzy;
+	}
+
+	&.is-initial-load .masterbar__notifications-bubble {
+		animation: none;
+	}
+}
+
+@keyframes bubble-unread-indication {
+	30% {
+		transform: scale(1.5);
+	}
+	60% {
+		transform: scale(.85);
+	}
+	80% {
+		transform: scale(1.1);
+	}
+}
+
+.masterbar__login-links {
+	display: flex;
+	margin-left: auto;
+	margin-right: 5px;
+
+	.masterbar__item-content {
+		display: block;
+		padding-left: 0;
+	}
+}
+
+.masterbar__reader {
+	@include breakpoint( ">480px" ) {
+		margin-right: auto;
+	}
+}

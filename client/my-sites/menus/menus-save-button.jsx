@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	debug = require( 'debug' )( 'calypso:menus:save-button' ); // eslint-disable-line no-unused-vars
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' );
+var analytics = require( 'lib/analytics' );
 
 var MenuSaveButton = React.createClass( {
 	componentWillMount: function() {

@@ -1,0 +1,62 @@
+.ribbon {
+	position: absolute;
+	right: -5px;
+	top: -5px;
+	z-index: z-index( 'root', '.ribbon' );
+	overflow: hidden;
+	width: 75px;
+	height: 75px;
+	text-align: right;
+}
+.ribbon .ribbon__title {
+	font-size: 10px;
+	font-weight: normal;
+	color: $white;
+	text-align: center;
+	line-height: 20px;
+	transform: rotate( 45deg );
+	-webkit-transform: rotate( 45deg );
+	width: 100px;
+	display: block;
+	background: $blue-medium;
+	position: absolute;
+	top: 19px;
+	right: -21px;
+	text-transform: uppercase;
+}
+.ribbon .ribbon__title::before {
+	content: "";
+	position: absolute;
+	left: 0px;
+	top: 100%;
+	z-index: z-index( '.ribbon', '.ribbon__title::before' );
+	border-left: 3px solid $blue-dark;
+	border-right: 3px solid transparent;
+	border-bottom: 3px solid transparent;
+	border-top: 3px solid $blue-dark;
+}
+.ribbon .ribbon__title::after {
+	content: "";
+	position: absolute;
+	right: 0;
+	top: 100%;
+	z-index: z-index( '.ribbon', '.ribbon__title::after' );
+	border-left: 3px solid transparent;
+	border-right: 3px solid $blue-dark;
+	border-bottom: 3px solid transparent;
+	border-top: 3px solid $blue-dark;
+}
+
+.ribbon.is-green {
+	.ribbon__title {
+		background-color: $alert-green
+	}
+	.ribbon__title::before {
+		border-left-color: darken( $alert-green, 20% );
+		border-top-color: darken( $alert-green, 20% );
+	}
+	.ribbon__title::after {
+		border-right-color: darken( $alert-green, 20% );
+		border-top-color: darken( $alert-green, 20% );
+	}
+}

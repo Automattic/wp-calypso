@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import isEqual from 'lodash/lang/isEqual';
+import isEqual from 'lodash/isEqual';
 
 /**
  * Internal dependencies

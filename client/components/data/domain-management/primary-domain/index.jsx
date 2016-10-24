@@ -18,7 +18,7 @@ function getStateFromStores( props ) {
 	let domains;
 
 	if ( props.selectedSite ) {
-		domains = DomainsStore.getForSite( props.selectedSite.ID );
+		domains = DomainsStore.getBySite( props.selectedSite.ID );
 	}
 
 	return {
@@ -46,9 +46,7 @@ export default React.createClass( {
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() }>
-				{ this.props.children }
-			</StoreConnection>
+				selectedSite={ this.props.sites.getSelectedSite() } />
 		);
 	}
 } );

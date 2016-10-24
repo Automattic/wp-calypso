@@ -2,8 +2,8 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:lib:security-checkup:account-recovery-store' ),
-	assign = require( 'lodash/object/assign' ),
-	isEmpty = require( 'lodash/lang/isEmpty' );
+	assign = require( 'lodash/assign' ),
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies

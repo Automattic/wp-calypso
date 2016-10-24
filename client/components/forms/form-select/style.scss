@@ -1,5 +1,27 @@
 .form-select {
 	margin-bottom: 1em;
+
+	&.is-error {
+		border-color: $alert-red;
+	}
+
+	&.is-error:hover {
+		border-color: darken( $alert-red, 10 );
+	}
+
+	&:disabled {
+		color: lighten( $gray, 10% );
+	}
+
+	&:focus {
+		&.is-error {
+			box-shadow: 0 0 0 2px lighten( $alert-red, 35 );
+		}
+
+		&.is-error:hover {
+			box-shadow: 0 0 0 2px lighten( $alert-red, 25 );
+		}
+	}
 }
 
 // According to CSS tricks, browser support is IE9+

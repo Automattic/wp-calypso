@@ -3,8 +3,8 @@
  */
 var debug = require( 'debug' )( 'calypso:connected-applications-data' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	_filter = require( 'lodash/collection/filter' ),
-	_find = require( 'lodash/collection/find' );
+	filter = require( 'lodash/filter' ),
+	find = require( 'lodash/find' );
 
 /**
  * Internal dependencies
@@ -81,9 +81,9 @@ ConnectedApplications.prototype.revoke = function( connectionID, callback ) {
 			return;
 		}
 
-		this.data = _filter( this.data, function( connectedApp ) {
+		this.data = filter( this.data, function( connectedApp ) {
 			return parseInt( connectedApp.ID, 10 ) !== connectionID;
-		}, this );
+		} );
 
 		callback( null, data );
 		this.emit( 'change' );
@@ -103,7 +103,7 @@ ConnectedApplications.prototype.getApplication = function( connectionID ) {
 		return;
 	}
 
-	application = _find( this.data, function( application ) {
+	application = find( this.data, function( application ) {
 		return parseInt( connectionID, 10 ) === parseInt( application.ID, 10 );
 	} );
 

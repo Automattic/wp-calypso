@@ -1,0 +1,41 @@
+.themes-related-card__themes{
+	display: flex;
+	margin-top: 16px;
+	margin-left: 0px;
+	flex-flow: row nowrap;
+	justify-content: space-around;
+
+	@include breakpoint( "<660px" ) {
+		flex-flow: column nowrap;
+	}
+
+	li{
+		list-style-type: none;
+	}
+
+	li:not(:last-child){
+		margin: 0 16px 0 0;
+	}
+
+	@include breakpoint( "<660px" ) {
+		li:not(:last-child){
+			margin: 0 0 0 0;
+		}
+	}
+
+}
+
+.themes-related-card__card {
+	padding: 0;
+}
+
+.themes-related-card__link {
+
+	p {
+		text-align: center;
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+}

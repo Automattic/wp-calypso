@@ -2,15 +2,15 @@
  * External dependencies
  */
 var store = require( 'store' ),
-	forOwn = require( 'lodash/object/forOwn' ),
+	forOwn = require( 'lodash/forOwn' ),
 	wpcom = require( 'lib/wp' ).undocumented();
 
 /**
  * Internal dependencies
  */
 var Dispatcher = require( 'dispatcher' ),
-	PreferencesConstants = require( './constants' );
-
+	PreferencesConstants = require( './constants' ),
+	userUtils = require( 'lib/user/utils' );
 /**
  * Module variables
  */
@@ -21,7 +21,7 @@ function getLocalStorage() {
 	return store.get( PreferencesConstants.LOCALSTORAGE_KEY );
 }
 
-function mergePreferencesToLocalStorage( preferences ) {
+PreferencesActions.mergePreferencesToLocalStorage = function( preferences ) {
 	var storage = getLocalStorage() || {};
 
 	forOwn( preferences, function( value, key ) {
@@ -33,10 +33,14 @@ function mergePreferencesToLocalStorage( preferences ) {
 	} );
 
 	store.set( PreferencesConstants.LOCALSTORAGE_KEY, storage );
-}
+};
 
 PreferencesActions.fetch = function() {
 	var localStorage = getLocalStorage();
+
+	if ( ! userUtils.isLoggedIn() ) {
+		return;
+	}
 
 	Dispatcher.handleViewAction( {
 		type: 'FETCH_ME_SETTINGS'
@@ -49,9 +53,9 @@ PreferencesActions.fetch = function() {
 		} );
 	}
 
-	wpcom.me().settings( function( error, data ) {
+	wpcom.me().settings().get( function( error, data ) {
 		if ( ! error && data ) {
-			mergePreferencesToLocalStorage( data[ PreferencesConstants.USER_SETTING_KEY ] );
+			PreferencesActions.mergePreferencesToLocalStorage( data[ PreferencesConstants.USER_SETTING_KEY ] );
 		}
 
 		Dispatcher.handleServerAction( {
@@ -74,10 +78,10 @@ PreferencesActions.set = function( key, value ) {
 		data: settings
 	} );
 
-	mergePreferencesToLocalStorage( preferences );
+	PreferencesActions.mergePreferencesToLocalStorage( preferences );
 
 	_pendingUpdates++;
-	wpcom.me().saveSettings( JSON.stringify( settings ), function( error, data ) {
+	wpcom.me().settings().update( JSON.stringify( settings ), function( error, data ) {
 		if ( --_pendingUpdates ) {
 			return;
 		}

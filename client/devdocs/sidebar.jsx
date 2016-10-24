@@ -1,59 +1,88 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Sidebar from 'layout/sidebar';
+import SidebarHeading from 'layout/sidebar/heading';
+import SidebarMenu from 'layout/sidebar/menu';
+import SidebarItem from 'layout/sidebar/item';
 
 export default React.createClass( {
 
 	displayName: 'DevdocsSidebar',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render() {
 		return (
-			<div className="wpcom-sidebar sidebar devdocs__sidebar">
-				<h1 className="devdocs__title">Calypso Docs</h1>
-				<ul className="sidebar-menu">
-					<li className="devdocs__navigation-item">
-						<Gridicon icon="search" />
-						<a className="devdocs__sidebar-item" href="/devdocs">
-							Search
-						</a>
-					</li>
-					<li className="devdocs__navigation-item">
-						<Gridicon icon="location" />
-						<a className="devdocs__sidebar-item" href="/devdocs/docs/guide/index.md">
-							The Calypso Guide
-						</a>
-					</li>
-					<li className="devdocs__navigation-item">
-						<Gridicon icon="pencil" />
-						<a className="devdocs__sidebar-item" href="/devdocs/CONTRIBUTING.md">
-							Contributing
-						</a>
-					</li>
-				</ul>
-				<h2 className="sidebar-heading">Live Docs</h2>
-				<ul className="sidebar-menu">
-					<li className="devdocs__navigation-item">
-						<Gridicon icon="layout-blocks" />
-						<a className="devdocs__sidebar-item" href="/devdocs/design">
-							UI Components
-						</a>
-					</li>
-					<li className="devdocs__navigation-item">
-						<Gridicon icon="types" />
-						<a className="devdocs__sidebar-item" href="/devdocs/docs/icons.md">
-							Icons
-						</a>
-					</li>
-				</ul>
-			</div>
+			<Sidebar>
+				<a href="/devdocs">
+					<h1 className="devdocs__title">Calypso Docs</h1>
+				</a>
+				<SidebarMenu>
+					<ul>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="search"
+							label="Search"
+							link="/devdocs"
+							selected={ '/devdocs' === this.props.path }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="location"
+							label="The Calypso Guide"
+							link="/devdocs/docs/guide/index.md"
+							selected={ '/devdocs/docs/guide/index.md' === this.props.path }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="pencil"
+							label="Contributing"
+							link="/devdocs/.github/CONTRIBUTING.md"
+							selected={ '/devdocs/.github/CONTRIBUTING.md' === this.props.path }
+						/>
+					</ul>
+				</SidebarMenu>
+				<SidebarHeading>Live Docs</SidebarHeading>
+				<SidebarMenu>
+					<ul>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="layout-blocks"
+							label="UI Components"
+							link="/devdocs/design"
+							selected={ '/devdocs/design' === this.props.path }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="custom-post-type"
+							label="Blocks"
+							link="/devdocs/blocks"
+							selected={ '/devdocs/blocks' === this.props.path }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="heading"
+							label="Typography"
+							link="/devdocs/design/typography"
+							selected={ '/devdocs/design/typography' === this.props.path }
+						/>
+						<SidebarItem
+							className="devdocs__navigation-item"
+							icon="types"
+							label="Icons"
+							link="/devdocs/docs/icons.md"
+							selected={ '/devdocs/docs/icons.md' === this.props.path }
+						/>
+					</ul>
+				</SidebarMenu>
+			</Sidebar>
 		);
 	}
 } );

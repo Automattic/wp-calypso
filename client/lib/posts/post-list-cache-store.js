@@ -1,77 +1,73 @@
 /**
  * External dependencies
  */
-var intersection = require( 'lodash/array/intersection' );
+import intersection from 'lodash/intersection';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var sites = require( 'lib/sites-list' )(),
-	Dispatcher = require( 'dispatcher' );
+import sitesFactory from 'lib/sites-list';
+import Dispatcher from 'dispatcher';
+import { cacheIndex } from 'lib/wp/sync-handler/cache-index';
 
-var _cache = {},
-	TTL_IN_MS = 5 * 60 * 1000; // five minutes
+let cache = {};
+const _canonicalCache = {};
+const TTL_IN_MS = 5 * 60 * 1000; // five minutes
+const sites = sitesFactory();
+const PostsListCache = {
+	get,
+	_reset: function() {
+		cache = {};
+	}
+};
+const debug = debugFactory( 'calypso:posts-list:cache' );
 
 function isStale( list ) {
-	var now = new Date().getTime(),
-		timeSaved = list.timeSaved;
+	const now = new Date().getTime();
+	const { timeSaved } = list;
 	return ( now - timeSaved ) > TTL_IN_MS;
 }
 
-function getCacheKey( options ) {
-	var cacheKey = '',
-		keys = Object.keys( options ).sort();
-
-	keys.forEach( function( key ) {
-		if ( cacheKey.length ) {
-			cacheKey += ':';
-		}
-
-		cacheKey += key + '-' + options[ key ];
-	} );
-
-	return cacheKey;
-}
-
-function get( query ) {
-	var key = getCacheKey( query );
-
-	if ( _cache[ key ] && ! isStale( _cache[ key ] ) && ! _cache[ key ].dirty ) {
-		return _cache[ key ].list;
+function get( listKey ) {
+	if ( isListKeyFresh( listKey ) ) {
+		return cache[ listKey ].list;
 	}
 
-	// We assume that when a consumer attempts to access a dirty key that we can safely delete it
-	// because the consumer will get new data to freshen the cache
-	if ( _cache[ key ] && _cache[ key ].dirty ) {
-		delete _cache[ key ];
+	// Delete the dirty cache to force a request for new data
+	if ( cache[ listKey ] && cache[ listKey ].dirty ) {
+		debug( 'delete cached list %o', listKey );
+		delete cache[ listKey ];
+		delete _canonicalCache[ listKey ];
 	}
 }
 
 function set( list ) {
-	var key = getCacheKey( list.query );
+	const listKey = getCacheKey( list.query );
 
 	// To make sure that a list marked dirty is reset the next time
 	// it is retrieved we skip updating entries that are dirty
-	if ( ! _cache[ key ] || ! _cache[ key ].dirty ) {
-		_cache[ key ] = {
+	if ( ! cache[ listKey ] || ! cache[ listKey ].dirty ) {
+		cache[ listKey ] = {
 			timeStored: new Date().getTime(),
-			list: list,
-			dirty: false
+			dirty: false,
+			list,
+			listKey,
 		};
 	}
 }
 
 function markDirty( post, oldStatus ) {
-	var site = sites.getSite( post.site_ID ),
-		affectedSites = [ site.slug, site.ID, false ],
-		affectedStatuses = [ post.status, oldStatus ],
-		listStatuses, key, entry, list;
+	const site = sites.getSite( post.site_ID );
+	const affectedSites = [ site.slug, site.ID, false ];
+	const affectedStatuses = [ post.status, oldStatus ];
+	let listStatuses, key, entry, list;
 
-	for( key in _cache ) {
-		if ( !_cache.hasOwnProperty( key ) ) {
+	for ( key in cache ) {
+		if ( ! cache.hasOwnProperty( key ) ) {
 			continue;
 		}
-		entry = _cache[ key ];
+		entry = cache[ key ];
 
 		list = entry.list;
 
@@ -92,19 +88,33 @@ function markDirty( post, oldStatus ) {
 		entry.dirty = true;
 	}
 
+	// clear api cache for records with matching site/status
+	cacheIndex.clearRecordsByParamFilter( ( reqParams ) => {
+		const siteIdentifiers = affectedSites.slice( 0, -1 ); // remove the `false` value from above
+		const affectedPaths = [ '/me/posts', ...siteIdentifiers.map( status => `/sites/${status}/posts` ) ]; // construct matching api routes
+		const recordStatuses = ( reqParams.query && reqParams.query.status ) ? reqParams.query.status.split( ',' ) : [];
+		const intersectingStatuses = intersection( recordStatuses, affectedStatuses );
+		if ( affectedPaths.indexOf( reqParams.path ) === -1 ) {
+			return false;
+		}
+		if ( ! intersectingStatuses.length ) {
+			return false;
+		}
+		return true;
+	} );
 }
 
-var PostsListCache = {
-	get: get
-};
+function isListKeyFresh( listKey ) {
+	return ( cache[ listKey ] && ! isStale( cache[ listKey ] ) && ! cache[ listKey ].dirty );
+}
 
 PostsListCache.dispatchToken = Dispatcher.register( function( payload ) {
 	var action = payload.action,
-		PostListStore = require( './post-list-store' );
+		PostListStore = require( './post-list-store-factory' )();
 
 	Dispatcher.waitFor( [ PostListStore.dispatchToken ] );
 
-	switch( action.type ) {
+	switch ( action.type ) {
 		case 'FETCH_NEXT_POSTS_PAGE':
 			set( PostListStore.get() );
 			break;
@@ -124,7 +134,45 @@ PostsListCache.dispatchToken = Dispatcher.register( function( payload ) {
 			}
 			break;
 	}
-
 } );
 
-module.exports = PostsListCache;
+export function getCacheKey( options ) {
+	const cacheKey = [];
+	const keys = Object.keys( options ).sort();
+	keys.forEach( function( key ) {
+		cacheKey.push( `${ key }-${ options[ key ] }` );
+	} );
+	return cacheKey.join( ':' );
+}
+
+export function setCanonicalList( listKey, requestKey, list ) {
+	debug( 'setCanonicalList %o %o (%o)', listKey, requestKey, list );
+	_canonicalCache[ listKey ] = _canonicalCache[ listKey ] || {};
+	_canonicalCache[ listKey ][ requestKey ] = list;
+}
+
+export function getCanonicalList( listKey, requestKey ) {
+	debug( 'getCanonicalList %o %o', listKey, requestKey );
+	const stream = _canonicalCache[ listKey ];
+	if ( ! stream || typeof stream !== 'object' ) {
+		return false;
+	}
+	const keys = Object.keys( stream );
+	if ( keys[0] !== requestKey ) {
+		// requests processing out of order, clear cache
+		delete cache[ listKey ];
+		delete _canonicalCache[ listKey ];
+		return false;
+	}
+	return stream[ requestKey ];
+}
+
+export function deleteCanonicalList( listKey, requestKey ) {
+	debug( 'deleteCanonicalList %o %o', listKey, requestKey );
+	const stream = _canonicalCache[ listKey ];
+	if ( stream && stream[ requestKey ] ) {
+		delete stream[ requestKey ];
+	}
+}
+
+export default PostsListCache;

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const find = require( 'lodash/collection/find' );
+const find = require( 'lodash/find' );
 
 function createDomainObject( dataTransferObject ) {
 	const contactInformation = find( dataTransferObject, 'type', 'registrant' ) || {};

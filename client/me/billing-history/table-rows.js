@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var i18n = require( 'lib/mixins/i18n' ),
-	some = require( 'lodash/collection/some' ),
-	values = require( 'lodash/object/values' ),
-	isDate = require( 'lodash/lang/isDate' ),
-	omit = require( 'lodash/object/omit' ),
-	flatten = require( 'lodash/array/flatten' );
+var i18n = require( 'i18n-calypso' ),
+	some = require( 'lodash/some' ),
+	values = require( 'lodash/values' ),
+	isDate = require( 'lodash/isDate' ),
+	omit = require( 'lodash/omit' ),
+	flatten = require( 'lodash/flatten' );
 
 function formatDate( date ) {
 	return i18n.moment( date ).format( 'MMM D, YYYY' );
@@ -14,7 +14,8 @@ function formatDate( date ) {
 
 function getSearchableStrings( transaction ) {
 	var rootStrings = values( omit( transaction, 'items' ) ),
-		itemStrings = flatten( transaction.items.map( values ) );
+		transactionItems = transaction.items || [],
+		itemStrings = flatten( transactionItems.map( values ) );
 
 	return rootStrings.concat( itemStrings );
 }

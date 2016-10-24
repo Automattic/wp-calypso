@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
-import noop from 'lodash/utility/noop';
+import React from 'react';
+import noop from 'lodash/noop';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 import FormTextInput from 'components/forms/form-text-input';
 import MediaActions from 'lib/media/actions';
 import Gridicon from 'components/gridicon';

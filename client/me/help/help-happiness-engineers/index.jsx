@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -14,7 +15,7 @@ var HappinessEngineersStore = require( 'lib/happiness-engineers/store' ),
 module.exports = React.createClass( {
 	displayName: 'HelpHappinessEngineers',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	componentDidMount: function() {
 		HappinessEngineersStore.on( 'change', this.refreshHappinessEngineers );
@@ -41,8 +42,12 @@ module.exports = React.createClass( {
 		}
 		return (
 			<div className="help-happiness-engineers">
-				<FormSectionHeading>{ this.translate( 'We care about your happiness!' ) }</FormSectionHeading>
-				<p className="help-happiness-engineers__description">{ this.translate( 'They don\'t call us Happiness Engineers for nothing. If you need help, we\'re here for you!' ) }</p>
+				{ this.translate( '{{headline}}We care about your happiness!{{/headline}}{{p}}They don\'t call us Happiness Engineers for nothing. If you need help, we\'re here for you!{{/p}}', {
+					components: {
+						headline: <FormSectionHeading />,
+						p: <p className="help-happiness-engineers__description" />
+					}
+				} ) }
 				<div className="help-happiness-engineers__tray">
 					{ this.state.happinessEngineers.map( happinessEngineer => <Gravatar key={ happinessEngineer.avatar_URL } user={ { avatar_URL: happinessEngineer.avatar_URL } } size={ 42 } /> ) }
 				</div>

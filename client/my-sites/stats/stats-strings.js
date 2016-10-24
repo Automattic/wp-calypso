@@ -1,4 +1,4 @@
-var i18n = require( 'lib/mixins/i18n' );
+var i18n = require( 'i18n-calypso' );
 
 module.exports = function() {
 	var statsStrings = {};
@@ -45,6 +45,13 @@ module.exports = function() {
 		empty: i18n.translate( 'No videos played', { context: 'Stats: Info box label when the Videos module is empty' } )
 	};
 
+	statsStrings.podcastdownloads = {
+		title: i18n.translate( 'Podcasts', { context: 'Stats: title of module' } ),
+		item: i18n.translate( 'Episodes', { context: 'Stats: module row header for podcast.' } ),
+		value: i18n.translate( 'Downloads', { context: 'Stats: module row header for number of downloads per podcast episode.' } ),
+		empty: i18n.translate( 'No episodes downloaded', { context: 'Stats: Info box label when the Podcasts module is empty' } )
+	};
+
 	statsStrings.tags = {
 		title: i18n.translate( 'Tags & Categories', { context: 'Stats: title of module' } ),
 		item: i18n.translate( 'Topic', { context: 'Stats: module row header for tags and categories.' } ),
@@ -58,6 +65,6 @@ module.exports = function() {
 		value: i18n.translate( 'Followers', { context: 'Stats: module row header for number of followers on the service.' } ),
 		empty: i18n.translate( 'No publicize followers recorded', { context: 'Stats: Info box label when the publicize module is empty' } )
 	};
-	
+
 	return statsStrings;
 };

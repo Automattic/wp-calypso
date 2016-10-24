@@ -1,0 +1,111 @@
+.current-plan__header {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: space-between;
+}
+
+.current-plan__header-item {
+	display: flex;
+	width: 100%;
+	margin-bottom: 12px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+
+	@include breakpoint( ">1040px" ) {
+		width: calc( 50% - 6px );
+		margin-bottom: 0;
+	}
+}
+
+.current-plan__header-item-content {
+	background-color: $white;
+	border-top: 1px solid lighten( $gray, 30% );
+	padding: 32px;
+
+	@include breakpoint( ">660px" ) {
+		border: 1px solid lighten( $gray, 30% );
+		text-align: left;
+	}
+
+}
+
+.current-plan__header-icon {
+	margin: 0 auto;
+	width: 80px;
+	height: 80px;
+}
+
+.current-plan__header-copy {
+	width: 100%;
+}
+
+.current-plan__header-heading,
+.current-plan__header-text {
+	clear: none;
+}
+
+.current-plan__header-heading {
+	font-size: 24px;
+	font-weight: 400;
+	margin: 24px 0 8px 0;
+}
+
+.current-plan__header-text {
+	font-size: 18px;
+	font-weight: 300;
+}
+
+.current-plan__header.is-placeholder {
+	.current-plan__header-icon {
+		display: none;
+	}
+
+	.current-plan__header-heading,
+	.current-plan__header-text {
+		@include placeholder( 23% );
+
+		display: block;
+
+		@include breakpoint( "<660px" ) {
+			margin: 0 auto;
+		}
+	}
+
+	.current-plan__header-heading {
+		width: 50%;
+	}
+
+	.current-plan__header-text {
+		line-height: 2em;
+		margin-bottom: 8px;
+		margin-top: 15px;
+		width: 90%;
+
+		@include breakpoint( ">660px" ) {
+			margin-bottom: 18px;
+			margin-top: 18px;
+		}
+	}
+}
+
+.current-plan__header-purchase-info-wrapper.card.is-compact {
+	margin: 24px -32px -32px;
+}
+
+.current-plan__header-purchase-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&.is-expiring {
+		.current-plan__expires-in {
+			color: $alert-red;
+		}
+	}
+}
+
+.current-plan__header-expires-in {
+	color: $gray;
+}

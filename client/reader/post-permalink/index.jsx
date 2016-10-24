@@ -4,7 +4,8 @@
 var React = require( 'react' );
 
 // Internal Dependencies
-var stats = require( 'reader/stats' );
+var ExternalLink = require( 'components/external-link' ),
+	stats = require( 'reader/stats' );
 
 var PostPermalink = React.createClass( {
 
@@ -23,13 +24,15 @@ var PostPermalink = React.createClass( {
 			return null;
 		}
 
+		/* eslint-disable react/jsx-no-target-blank */
 		return (
 			<li className="post-permalink" onClick={ this.recordClick }>
-				<a href={ this.props.postUrl } rel="external" target="_blank">
+				<ExternalLink href={ this.props.postUrl } target="_blank" icon={ true } iconSize={ 16 }>
 					{ this.translate( 'Visit', { comment: 'Visit the post on the original site' } ) }
-				</a>
+				</ExternalLink>
 			</li>
 		);
+		/* eslint-enable react/jsx-no-target-blank */
 	}
 } );
 

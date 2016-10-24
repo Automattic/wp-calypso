@@ -1,46 +1,48 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:profile' );
+import React from 'react';
+import LinkedStateMixin from 'react-addons-linked-state-mixin';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
-	formBase = require( 'me/form-base' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	FormButton = require( 'components/forms/form-button' ),
-	FormFieldset = require( 'components/forms/form-fieldset' ),
-	FormLabel = require( 'components/forms/form-label' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	FormTextarea = require( 'components/forms/form-textarea' ),
-	ProfileLinks = require( 'me/profile-links' ),
-	userProfileLinks = require( 'lib/user-profile-links' ),
-	ReauthRequired = require( 'me/reauth-required' ),
-	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	Card = require( 'components/card' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	eventRecorder = require( 'me/event-recorder' ),
-	Main = require( 'components/main' );
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import protectForm from 'lib/mixins/protect-form';
+import formBase from 'me/form-base';
+import FormButton from 'components/forms/form-button';
+import FormFieldset from 'components/forms/form-fieldset';
+import FormLabel from 'components/forms/form-label';
+import FormTextInput from 'components/forms/form-text-input';
+import FormTextarea from 'components/forms/form-textarea';
+import ProfileLinks from 'me/profile-links';
+import userProfileLinks from 'lib/user-profile-links';
+import ReauthRequired from 'me/reauth-required';
+import twoStepAuthorization from 'lib/two-step-authorization';
+import Card from 'components/card';
+import observe from 'lib/mixins/data-observe';
+import eventRecorder from 'me/event-recorder';
+import Main from 'components/main';
 
-module.exports = React.createClass( {
+const debug = debugFactory( 'calypso:me:profile' );
+
+export default React.createClass( {
 
 	displayName: 'Profile',
 
-	mixins: [ formBase, React.addons.LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ), eventRecorder ],
+	mixins: [ formBase, LinkedStateMixin, protectForm.mixin, observe( 'userSettings' ), eventRecorder ],
 
-	componentDidMount: function() {
-		debug( this.constructor.displayName + ' component is mounted.' );
+	componentDidMount() {
+		debug( this.displayName + ' component is mounted.' );
 	},
 
-	componentWillUnmount: function() {
-		debug( this.constructor.displayName + ' component is unmounting.' );
+	componentWillUnmount() {
+		debug( this.displayName + ' component is unmounting.' );
 	},
 
-	render: function() {
-		var gravatarProfileLink = 'https://gravatar.com/' + this.props.userSettings.getSetting( 'user_login' );
+	render() {
+		const gravatarProfileLink = 'https://gravatar.com/' + this.props.userSettings.getSetting( 'user_login' );
 
 		return (
 			<Main className="profile">
@@ -58,6 +60,7 @@ module.exports = React.createClass( {
 											onClick={ this.recordClickEvent( 'My Profile Link' ) }
 											href={ gravatarProfileLink }
 											target="_blank"
+											rel="noopener noreferrer"
 										/>
 									),
 									hovercardslink: (
@@ -65,6 +68,7 @@ module.exports = React.createClass( {
 											onClick={ this.recordClickEvent( 'Gravatar Hovercards Link' ) }
 											href="https://support.wordpress.com/gravatar-hovercards/"
 											target="_blank"
+											rel="noopener noreferrer"
 										/>
 									)
 								}
@@ -124,13 +128,8 @@ module.exports = React.createClass( {
 					</form>
 				</Card>
 
-				<Card>
-					<FormSectionHeading>{ this.translate( 'Profile Links' ) }</FormSectionHeading>
-					<p>
-						{ this.translate( 'Manage which sites appear in your profile.' ) }
-					</p>
-					<ProfileLinks userProfileLinks={ userProfileLinks } />
-				</Card>
+				<ProfileLinks userProfileLinks={ userProfileLinks } />
+
 			</Main>
 		);
 	}

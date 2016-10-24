@@ -2,16 +2,22 @@ var React = require( 'react' ),
 	url = require( 'url' );
 
 var EmptyContent = require( './empty' ),
-	FollowingStream = require( 'reader/following-stream' ),
+	DocumentHead = require( 'components/data/document-head' ),
+	Stream = require( 'reader/stream' ),
 	FeedHeader = require( 'reader/feed-header' ),
 	FeedStore = require( 'lib/feed-store' ),
 	FeedStoreActions = require( 'lib/feed-store/actions' ),
 	FeedStoreState = require( 'lib/feed-store/constants' ).state,
 	FeedError = require( 'reader/feed-error' ),
+	HeaderBack = require( 'reader/header-back' ),
 	SiteStore = require( 'lib/reader-site-store' ),
 	SiteState = require( 'lib/reader-site-store/constants' ).state;
 
 var FeedStream = React.createClass( {
+
+	getDefaultProps: function() {
+		return { showBack: true };
+	},
 
 	getInitialState: function() {
 		var feed = this.getFeed(),
@@ -130,18 +136,16 @@ var FeedStream = React.createClass( {
 		var feed = FeedStore.get( this.props.feedId ),
 			emptyContent = ( <EmptyContent /> );
 
-		if ( this.props.setPageTitle ) {
-			this.props.setPageTitle( this.state.title );
-		}
-
 		if ( feed && feed.state === FeedStoreState.ERROR ) {
-			return <FeedError listName={ this.state.title } />;
+			return <FeedError sidebarTitle={ this.state.title } />;
 		}
 
 		return (
-			<FollowingStream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } >
+			<Stream { ...this.props } listName={ this.state.title } emptyContent={ emptyContent } showPostHeader={ false }>
+				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: this.state.title } ) } />
+				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader feed={ feed } site={ this.state.site } />
-			</FollowingStream>
+			</Stream>
 		);
 	}
 

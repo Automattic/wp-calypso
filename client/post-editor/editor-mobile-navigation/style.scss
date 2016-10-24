@@ -3,19 +3,21 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	background-color: $gray-light;
 
 	@include breakpoint( ">660px" ) {
 		display: none;
 	}
+}
 
-	.gridicon {
-		cursor: pointer;
-		margin-right: 4px;
-		padding: 8px;
-		&:hover {
-			cursor: button;
-			fill: $gray-dark;
-		}
+.editor-mobile-navigation__close {
+	cursor: pointer;
+	margin-right: 4px;
+	padding: 8px;
+
+	&:hover {
+		cursor: button;
+		fill: $gray-dark;
 	}
 }
 
@@ -26,6 +28,11 @@
 
 	.site__domain {
 		display: none;
+	}
+
+	.site__title::after,
+	.site__domain::after {
+		@include long-content-fade( $color: $gray-light );
 	}
 }
 

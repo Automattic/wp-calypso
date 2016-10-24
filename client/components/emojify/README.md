@@ -5,34 +5,46 @@ This module includes functionality for converting strings that could possibly co
 
 This is desirable since implementations are inconsistent or non-existant.
 
-# Usage
+## Usage
 ```js
 // require the module
 var Emojify = require( 'components/emojify' ),
 	textToEmojify = 'This will be converted 🙈🙉🙊';
 
-React.render( <div><p>This text will be unaffected</p><Emojify size="72">{ textToEmojify }</Emojify></div> );
+	// more component stuff
+	// ...
+	render( <div><p>This text will be unaffected</p><Emojify size="72">{ textToEmojify }</Emojify></div> );
 
 ```
 
-CSS
-```css
-// Emoji!!
-.emojified__emoji {
-	height: 18px;
-	width: 18px;
-	vertical-align: middle;
-}
+## Props
 
-```
+### `children`
 
-* The `<Emojify>` component requires exactly one child and it must be a text node.
-* The `size` property is optional:
-	* It defaults to `'36x36'`
-	* Available options are determined by your CDN
+<table>
+	<tr><th>Type</th><td>Text|Components</td></tr>
+	<tr><th>Required</th><td>Yes</td></tr>
+	<tr><th>Default</th><td><code>none</code></td></tr>
+</table>
 
-# Requires
-### [punycode](https://github.com/bestiejs/punycode.js/) -- built into node since v0.6.2
+Typically a string that you want to search for UTF emoji
 
-# Attributions
-The parsing code was adapted from [this gist](https://gist.github.com/thomasboyt/b5ef9ed8606ce6d93982)
+### `size`
+
+<table>
+	<tr><th>Type</th><td>String</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>32x32</code></td></tr>
+</table>
+
+The size of emoji image to use - determined by CDN support
+
+### `className`
+
+<table>
+	<tr><th>Type</th><td>String</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td><code>emojify__emoji</code></td></tr>
+</table>
+
+classname applied to the image

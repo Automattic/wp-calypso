@@ -2,8 +2,10 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:security:2fa-enable' ),
-	QRCode = require( 'qrcode.react' );
+	QRCode = require( 'qrcode.react' ),
+	classNames = require( 'classnames' );
 
 /**
  * Internal dependencies
@@ -11,17 +13,19 @@ var React = require( 'react' ),
 var FormButton = require( 'components/forms/form-button' ),
 	FormLabel = require( 'components/forms/form-label' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	FormTelInput = require( 'components/forms/form-tel-input' ),
+	Notice = require( 'components/notice' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' ),
+	constants = require( 'me/constants' ),
+	FormButtonsBar = require( 'components/forms/form-buttons-bar' );
 
 module.exports = React.createClass( {
 
 	displayName: 'Security2faEnable',
 
-	mixins: [ React.addons.LinkedStateMixin ],
+	mixins: [ LinkedStateMixin ],
 
 	codeRequestTimer: false,
 
@@ -178,22 +182,58 @@ module.exports = React.createClass( {
 		}
 	},
 
-	renderQRCode: function() {
+	getToggleLink: function() {
 		return (
-			<div>
-				<p>
-					{ this.translate( 'Scan this QR code with your mobile app:' ) }
+			<a
+				className="security-2fa-enable__toggle"
+				onClick={ function( event ) {
+					this.toggleMethod( event );
+					analytics.ga.recordEvent( 'Me', 'Clicked On Barcode Toggle Link', 'current-method', this.state.method );
+				}.bind( this ) }
+			/>
+		);
+	},
+
+	renderQRCode: function() {
+		var qrClasses = classNames( 'security-2fa-enable__qr-code', {
+			'is-placeholder': ! this.state.otpAuthUri
+		} );
+
+		return (
+			<div className="security-2fa-enable__qr-code-block">
+				<p className="security-2fa-enable__qr-instruction">
+					{
+						this.translate(
+							"Scan this QR code with your mobile app. {{toggleMethodLink}}Can't scan the code?{{/toggleMethodLink}}", {
+								components: {
+									toggleMethodLink: this.getToggleLink()
+								}
+							}
+						)
+					}
 				</p>
-				{ this.state.otpAuthUri ? <QRCode value={ this.state.otpAuthUri } size={ 150 } /> : null }
+				<div className={ qrClasses }>
+					{ this.state.otpAuthUri &&
+						<QRCode value={ this.state.otpAuthUri } size={ 150 } />
+					}
+				</div>
 			</div>
 		);
 	},
 
 	renderTimeCode: function() {
 		return (
-			<div>
-				<p>
-					{ this.translate( 'Enter this time code into your mobile app:' ) }
+			<div className="security-2fa-enable__time-code-block">
+				<p className="security-2fa-enable__time-instruction">
+					{
+						this.translate(
+							'Enter this time code into your mobile app. {{toggleMethodLink}}Prefer to scan the code?{{/toggleMethodLink}}', {
+								components: {
+									toggleMethodLink: this.getToggleLink()
+								}
+							}
+						)
+					}
 				</p>
 				<p className="security-2fa-enable__time-code">
 					{ this.state.timeCode }
@@ -208,11 +248,8 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="security-2fa-enable__first">
-				<p className="security-2fa-enable__first-label">
-					{ this.translate( 'First', { context: 'The first thing we want the user to do for Two-Step setup.' } ) }
-				</p>
-				{ ( 'scan' === this.state.method ) ? this.renderQRCode() : this.renderTimeCode() }
+			<div className="security-2fa-enable__code-block">
+				{ 'scan' === this.state.method ? this.renderQRCode() : this.renderTimeCode() }
 			</div>
 		);
 	},
@@ -226,11 +263,7 @@ module.exports = React.createClass( {
 
 		return (
 			<p>
-				{
-					'scan' === this.state.method
-					? this.translate( 'Enter the code your app gives you after scanning:' )
-					: this.translate( 'Enter the code your app gives you after entering the time code:' )
-				}
+				{ this.translate( 'Then enter the six digit code provided by the app:' ) }
 			</p>
 		);
 	},
@@ -259,6 +292,7 @@ module.exports = React.createClass( {
 									authyLink: <a
 										href="https://www.authy.com/users/"
 										target="_blank"
+										rel="noopener noreferrer"
 										onClick={ function() {
 											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download Authy App Link' );
 										} }
@@ -266,6 +300,7 @@ module.exports = React.createClass( {
 									googleAuthenticatorLink: <a
 										href="https://support.google.com/accounts/answer/1066447?hl=en"
 										target="_blank"
+										rel="noopener noreferrer"
 										onClick={ function() {
 											analytics.ga.recordEvent( 'Me', 'Clicked On 2fa Download Google Authenticator Link' );
 										} }
@@ -274,17 +309,6 @@ module.exports = React.createClass( {
 							}
 						)
 					}
-				</p>
-				<p>
-					<a
-						className="security-2fa-enable__toggle"
-						onClick={ function( event ) {
-							analytics.ga.recordEvent( 'Me', 'Clicked On Barcode Toggle Link', 'current-method', this.state.method );
-							this.toggleMethod( event );
-						}.bind( this ) }
-					>
-						{ 'scan' === this.state.method ? this.translate( "Can't scan the barcode?" ) : this.translate( 'Prefer to scan the barcode?' ) }
-					</a>
 				</p>
 			</div>
 		);
@@ -300,10 +324,9 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<SimpleNotice
-				isCompact
+			<Notice
 				status={ this.state.lastErrorType }
-				onClick={ this.clearLastError }
+				onDismissClick={ this.clearLastError }
 				text={ this.state.lastError }
 			/>
 		);
@@ -312,22 +335,13 @@ module.exports = React.createClass( {
 	renderInputBlock: function() {
 		return (
 			<div className="security-2fa-enable__next">
-				{
-					'sms' !== this.state.method
-					? (
-						<p className="security-2fa-enable__next-label">
-							{ this.translate( 'Next', { context: 'The next thing we want the user to do for Two-Step setup.' } ) }
-						</p>
-					)
-					: null
-				}
 				{ this.renderInputHelp() }
-				<FormTextInput
+				<FormTelInput
 					autoComplete="off"
+					autoFocus
 					disabled={ this.state.submittingForm }
 					name="verification-code"
-					placeholder="123456"
-					type="text"
+					placeholder={ 'sms' === this.state.method ? constants.sevenDigit2faPlaceholder : constants.sixDigit2faPlaceholder }
 					valueLink={ this.linkState( 'verificationCode' ) }
 					onFocus={ function() {
 						analytics.ga.recordEvent( 'Me', 'Focused On 2fa Enable Verification Code Input' );
@@ -355,7 +369,7 @@ module.exports = React.createClass( {
 
 	renderButtons: function() {
 		return (
-			<div>
+			<FormButtonsBar className="security-2fa-enable__buttons-bar">
 				<FormButton
 					className="security-2fa-enable__verify"
 					disabled={ this.getFormDisabled() }
@@ -404,7 +418,7 @@ module.exports = React.createClass( {
 					)
 
 				}
-			</div>
+			</FormButtonsBar>
 		);
 	},
 

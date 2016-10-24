@@ -2,11 +2,11 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:posts' ),
-	defer = require( 'lodash/function/defer' ),
+	defer = require( 'lodash/defer' ),
 	store = require( 'store' ),
-	clone = require( 'lodash/lang/clone' ),
-	zipObject = require( 'lodash/array/zipObject' ),
-	assign = require( 'lodash/object/assign' );
+	clone = require( 'lodash/clone' ),
+	fromPairs = require( 'lodash/fromPairs' ),
+	assign = require( 'lodash/assign' );
 
 /**
  * Internal dependencies
@@ -14,13 +14,14 @@ var debug = require( 'debug' )( 'calypso:posts' ),
 var wpcom = require( 'lib/wp' ),
 	PostsStore = require( './posts-store' ),
 	PostEditStore = require( './post-edit-store' ),
-	PostListStore = require( './post-list-store' ),
+	postListStoreFactory = require( './post-list-store-factory' ),
 	PreferencesStore = require( 'lib/preferences/store' ),
 	sites = require( 'lib/sites-list' )(),
 	utils = require( './utils' ),
 	versionCompare = require( 'lib/version-compare' ),
 	Dispatcher = require( 'dispatcher' ),
 	stats = require( './stats' );
+import { normalizeTermsForApi } from 'state/posts/utils';
 
 var PostActions;
 
@@ -45,7 +46,7 @@ function handleMetadataOperation( key, value, operation ) {
 		// Normalize a string or array of string keys to an object of key value
 		// pairs. To accomodate both, we coerce the key into an array before
 		// mapping to pull the object pairs.
-		key = zipObject( [].concat( key ).map( ( meta ) => [ meta, value ] ) );
+		key = fromPairs( [].concat( key ).map( ( meta ) => [ meta, value ] ) );
 	}
 
 	// Overwrite duplicates based on key
@@ -83,15 +84,10 @@ function handleMetadataOperation( key, value, operation ) {
  */
 function normalizeApiAttributes( attributes ) {
 	attributes = clone( attributes );
+	attributes = normalizeTermsForApi( attributes );
 
 	if ( attributes.author ) {
 		attributes.author = attributes.author.ID;
-	}
-
-	if ( attributes.categories ) {
-		attributes.categories_by_id = attributes.categories;
-		delete attributes.category_ids;
-		delete attributes.categories;
 	}
 
 	return attributes;
@@ -101,16 +97,16 @@ PostActions = {
 	/**
 	 * Start keeping track of edits to a new post
 	 *
-	 * @param {Number|String} site - site identifier
-	 * @param {Object} options - edit options
+	 * @param {Number} siteId  Site ID
+	 * @param {Object} options Edit options
 	 */
-	startEditingNew: function( site, options ) {
+	startEditingNew: function( siteId, options ) {
 		var args;
 		options = options || {};
 
 		args = {
 			type: 'DRAFT_NEW_POST',
-			siteId: site.ID,
+			siteId: siteId,
 			postType: options.type || 'post',
 			title: options.title,
 			content: options.content,
@@ -122,28 +118,28 @@ PostActions = {
 	/**
 	 * Load an existing post and keep track of edits to it
 	 *
-	 * @param {object} site to load post from
-	 * @param {number} postId ID of post to load
+	 * @param {Number} siteId Site ID to load post from
+	 * @param {Number} postId Post ID to load
 	 */
-	startEditingExisting: function( site, postId ) {
+	startEditingExisting: function( siteId, postId ) {
 		var currentPost = PostEditStore.get(),
 			postHandle;
 
-		if ( ! site.ID ) {
+		if ( ! siteId ) {
 			return;
 		}
 
-		if ( currentPost && currentPost.site_ID === site.ID && currentPost.ID === postId ) {
+		if ( currentPost && currentPost.site_ID === siteId && currentPost.ID === postId ) {
 			return; // already editing same post
 		}
 
 		Dispatcher.handleViewAction( {
 			type: 'START_EDITING_POST',
-			siteId: site.ID,
+			siteId: siteId,
 			postId: postId
 		} );
 
-		postHandle = wpcom.site( site.ID ).post( postId );
+		postHandle = wpcom.site( siteId ).post( postId );
 
 		postHandle.get( { context: 'edit', meta: 'autosave' }, function( error, data ) {
 			Dispatcher.handleServerAction( {
@@ -289,6 +285,7 @@ PostActions = {
 	 *
 	 * @param {object} attributes post attributes to change before saving
 	 * @param {function} callback receives ( err, post ) arguments
+	 * @param {object} options object with optional recordSaveEvent property. True if you want to record the save event.
 	 */
 	saveEdited: function( attributes, callback, options ) {
 		var post, postHandle, query, changedAttributes, rawContent, mode, isNew;
@@ -406,7 +403,7 @@ PostActions = {
 	trash: function( post, callback ) {
 		var postHandle = wpcom.site( post.site_ID ).post( post.ID );
 
-		postHandle.del( PostActions.receiveUpdate.bind( null, callback ) );
+		postHandle.delete( PostActions.receiveUpdate.bind( null, callback ) );
 	},
 
 	/**
@@ -421,10 +418,11 @@ PostActions = {
 		postHandle.restore( PostActions.receiveUpdate.bind( null, callback ) );
 	},
 
-	queryPosts: function( options ) {
+	queryPosts: function( options, postListStoreId = 'default' ) {
 		Dispatcher.handleViewAction( {
 			type: 'QUERY_POSTS',
-			options: options
+			options: options,
+			postListStoreId: postListStoreId
 		} );
 	},
 
@@ -433,69 +431,81 @@ PostActions = {
 	*
 	* @api public
 	*/
-	fetchNextPage: function() {
-		var params, id, siteID;
+	fetchNextPage: function( postListStoreId = 'default' ) {
+		var params, id, siteID, postListStore;
 
-		if ( PostListStore.isLastPage() ) {
+		postListStore = postListStoreFactory( postListStoreId );
+
+		if ( postListStore.isLastPage() || postListStore.isFetchingNextPage() ) {
 			return;
 		}
 
 		Dispatcher.handleViewAction( {
-			type: 'FETCH_NEXT_POSTS_PAGE'
+			type: 'FETCH_NEXT_POSTS_PAGE',
+			postListStoreId: postListStoreId
 		} );
 
-		id = PostListStore.getID();
-		params = PostListStore.getNextPageParams();
-		siteID = PostListStore.getSiteID();
+		id = postListStore.getID();
+		params = postListStore.getNextPageParams();
+		siteID = postListStore.getSiteID();
 
 		if ( siteID ) {
 			wpcom
 				.site( siteID )
-				.postsList( params, PostActions.receivePage.bind( null, id ) );
+				.postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
 		} else {
 			wpcom
 				.me()
-				.postsList( params, PostActions.receivePage.bind( null, id ) );
+				.postsList( params, PostActions.receivePage.bind( null, id, postListStoreId ) );
 		}
 	},
 
-	receivePage: function( id, error, data ) {
+	receivePage: function( id, postListStoreId, error, data ) {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_POSTS_PAGE',
 			id: id,
+			postListStoreId: postListStoreId,
 			error: error,
 			data: data
 		} );
 	},
 
-	fetchUpdated: function() {
-		var id, params, siteID;
+	fetchUpdated: function( postListStoreId = 'default' ) {
+		var id, params, siteID, postListStore;
+
+		postListStore = postListStoreFactory( postListStoreId );
+
+		if ( postListStore.isFetchingNextPage() ) {
+			return;
+		}
 
 		Dispatcher.handleViewAction( {
-			type: 'FETCH_UPDATED_POSTS'
+			type: 'FETCH_UPDATED_POSTS',
+			postListStoreId: postListStoreId
 		} );
 
-		id = PostListStore.getID();
-		params = PostListStore.getUpdatesParams();
-		siteID = PostListStore.getSiteID();
+		id = postListStore.getID();
+		params = postListStore.getUpdatesParams();
+		siteID = postListStore.getSiteID();
 
 		if ( siteID ) {
 			debug( 'Fetching posts that have been updated for %s since %s %o', siteID, params.modified_after, params );
 			wpcom
 				.site( siteID )
-				.postsList( params, PostActions.receiveUpdated.bind( null, id ) );
+				.postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
 		} else {
 			debug( 'Fetching posts that have been updated since %s %o', params.modified_after, params );
 			wpcom
 				.me()
-				.postsList( params, PostActions.receiveUpdated.bind( null, id ) );
+				.postsList( params, PostActions.receiveUpdated.bind( null, id, postListStoreId ) );
 		}
 	},
 
-	receiveUpdated: function( id, error, data ) {
+	receiveUpdated: function( id, postListStoreId, error, data ) {
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_UPDATED_POSTS',
 			id: id,
+			postListStoreId: postListStoreId,
 			error: error,
 			data: data
 		} );
@@ -523,7 +533,7 @@ PostActions = {
 			siteId: siteId
 		} );
 
-		wpcom.site( siteId ).postCounts( options, function( error, data ) {
+		wpcom.undocumented().site( siteId ).postCounts( options, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_POST_COUNTS',
 				error: error,

@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:menus:delete-button' ); // eslint-disable-line no-unused-vars
 
 /**
  * Internal dependencies
  */
 var siteMenus = require( 'lib/menu-data' ),
-	analytics = require( 'analytics' ),
+	analytics = require( 'lib/analytics' ),
 	notices = require( 'notices' );
 
 var MenuDeleteButton = React.createClass( {

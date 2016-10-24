@@ -1,15 +1,15 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	joinClasses = require( 'react/lib/joinClasses' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var PluginIcon = require( 'my-sites/plugins/plugin-icon/plugin-icon' ),
 	PluginsStore = require( 'lib/plugins/store' ),
-	Rating = require( 'components/rating/' );
+	Rating = require( 'components/rating/' ),
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 
@@ -34,6 +34,13 @@ module.exports = React.createClass( {
 			return PluginsStore.getSites( this.props.currentSites, this.props.plugin.slug );
 		}
 		return [];
+	},
+
+	trackPluginLinkClick: function() {
+		analytics.tracks.recordEvent( 'calypso_plugin_browser_item_click', {
+			site: this.props.site,
+			plugin: this.props.plugin.slug
+		} );
 	},
 
 	renderInstalledIn: function() {
@@ -69,7 +76,7 @@ module.exports = React.createClass( {
 		}
 		return (
 			<li className="plugins-browser-item">
-				<a href={ this.getPluginLink() } className="plugins-browser-item__link" >
+				<a href={ this.getPluginLink() } className="plugins-browser-item__link" onClick={ this.trackPluginLinkClick }>
 					<div className="plugins-browser-item__info">
 						<PluginIcon size={ this.props.iconSize } image={ this.props.plugin.icon } isPlaceholder={ this.props.isPlaceholder } />
 						<div className="plugins-browser-item__title">{ this.props.plugin.name }</div>

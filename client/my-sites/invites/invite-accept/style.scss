@@ -1,0 +1,16 @@
+.invite-accept .locale-suggestions {
+	margin-top: 0;
+}
+
+.invite-accept__form {
+	margin: 0 auto;
+	max-width: 400px;
+
+	&.is-error {
+		max-width: none;
+	}
+}
+
+.invite-accept .notice__text {
+	word-wrap: break-word;
+}

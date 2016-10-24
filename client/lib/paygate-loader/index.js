@@ -12,6 +12,7 @@ var loadScript = require( 'lib/load-script' );
  * PaygateLoader component
  *
  * @api public
+ * @returns { PaygateLoader } - an instance of PaygateLoader
  */
 function PaygateLoader() {
 	if ( ! ( this instanceof PaygateLoader ) ) {
@@ -24,6 +25,9 @@ function PaygateLoader() {
  * `callback` with the `Paygate` class as its first argument
  *
  * @api public
+ * @param {string} paygateUrl - the URL to fetch the paygate script
+ * @param {function} callback - the callback function
+ * @returns {void}
  */
 PaygateLoader.prototype.ready = function( paygateUrl, callback ) {
 	if ( window.Paygate ) {

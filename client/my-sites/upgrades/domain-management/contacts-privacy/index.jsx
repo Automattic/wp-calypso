@@ -32,6 +32,9 @@ const ContactsPrivacy = React.createClass( {
 			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
 		}
 
+		const domain = getSelectedDomain( this.props ),
+			{ hasPrivacyProtection, privateDomain, currentUserCanManage } = domain;
+
 		return (
 			<Main className="domain-management-contacts-privacy">
 				<Header
@@ -45,16 +48,18 @@ const ContactsPrivacy = React.createClass( {
 						contactInformation= { this.props.whois.data }
 						selectedDomainName={ this.props.selectedDomainName }
 						selectedSite={ this.props.selectedSite }
-						privacyProtectionEnabled={ this.isPrivacyProtectionEnabled() } />
+						hasPrivacyProtection={ hasPrivacyProtection }
+						privateDomain={ privateDomain }
+						currentUserCanManage={ currentUserCanManage } />
 
 					<VerticalNavItem
-							path={ paths.domainManagementEditContactInfo( this.props.selectedSite.domain, this.props.selectedDomainName ) }>
+							path={ paths.domainManagementEditContactInfo( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
 						{ this.translate( 'Edit Contact Info' ) }
 					</VerticalNavItem>
 
-					{ this.isPrivacyProtectionEnabled() ? null : (
+					{ ! hasPrivacyProtection && (
 						<VerticalNavItem
-							path={ paths.domainManagementPrivacyProtection( this.props.selectedSite.domain, this.props.selectedDomainName ) }>
+							path={ paths.domainManagementPrivacyProtection( this.props.selectedSite.slug, this.props.selectedDomainName ) }>
 							{ this.translate( 'Privacy Protection' ) }
 						</VerticalNavItem>
 					) }
@@ -67,14 +72,8 @@ const ContactsPrivacy = React.createClass( {
 		return ( ! getSelectedDomain( this.props ) || ! this.props.whois.hasLoadedFromServer );
 	},
 
-	isPrivacyProtectionEnabled() {
-		const domain = getSelectedDomain( this.props );
-
-		return domain && domain.hasPrivacyProtection;
-	},
-
 	goToEdit() {
-		page( paths.domainManagementEdit( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+		page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
 } );
 

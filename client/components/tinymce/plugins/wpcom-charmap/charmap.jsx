@@ -305,8 +305,11 @@ export default React.createClass( {
 	},
 
 	onCellClick( event ) {
-		var target = event.target;
-		this.props.editor.execCommand( 'mceInsertContent', false, tinymce.trim( target.innerText || target.textContent ) );
+		this.props.editor.execCommand(
+			'mceInsertContent',
+			false,
+			event.target.textContent.trim()
+		);
 	},
 
 	getButtons() {

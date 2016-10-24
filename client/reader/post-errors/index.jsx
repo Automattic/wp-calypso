@@ -1,13 +1,13 @@
 // External dependencies
 var React = require( 'react' ),
-	shallowEqual = require( 'react/lib/shallowEqual' ),
+	shallowEqual = require( 'react-pure-render/shallowEqual' ),
 	debug = require( 'debug' )( 'calypso:reader:post-options-error' ); //eslint-disable-line no-unused-vars
 
 // Internal dependencies
 var FeedSubscriptionStore = require( 'lib/reader-feed-subscriptions/index' ),
 	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
 	FeedSubscriptionStoreErrorTypes = require( 'lib/reader-feed-subscriptions/constants' ).error,
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
 	SiteBlockStore = require( 'lib/reader-site-blocks/index' ),
 	SiteBlockActions = require( 'lib/reader-site-blocks/actions' ),
 	SiteBlockStoreErrorTypes = require( 'lib/reader-site-blocks/constants' ).error,
@@ -105,10 +105,12 @@ var PostError = React.createClass( {
 			FeedSubscriptionActions.dismissError( error );
 			stats.recordAction( 'dismiss_follow_error' );
 			stats.recordGaEvent( 'Clicked Dismiss Follow Error' );
+			stats.recordTrack( 'calypso_reader_follow_error_dismissed' );
 		} else if ( error.errorType === SiteBlockStoreErrorTypes.UNABLE_TO_BLOCK ) {
 			SiteBlockActions.dismissError( error );
 			stats.recordAction( 'dismiss_block_error' );
 			stats.recordGaEvent( 'Clicked Dismiss Block Error' );
+			stats.recordTrack( 'calypso_reader_block_error_dismissed' );
 		}
 	},
 
@@ -121,7 +123,7 @@ var PostError = React.createClass( {
 		}
 
 		return (
-			<Notice isCompact={ true } text={ message } className="reader-post-errors__notice" raw={ { onRemoveCallback: this.dismissError } } status="is-error" />
+			<Notice isCompact={ true } text={ message } className="reader-post-errors__notice" onDismissClick={ this.dismissError } status="is-error" />
 		);
 	}
 

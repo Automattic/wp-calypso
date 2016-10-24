@@ -35,7 +35,8 @@
 }
 
 // <Page> component
-.page {
+.page,
+.pages__blog-posts-page {
 
 	.site-icon {
 		display: none;
@@ -50,19 +51,26 @@
 }
 
 .page__title,
-.page__title:visited {
+.page__title:visited,
+.pages__blog-posts-page__title,
+.pages__blog-posts-page__title:visited {
 	display: inline;
 	color: $gray-dark;
 	font-weight: 500;
 	font-family: $serif;
 	margin-right: 33px;
 
-	.noticon-home:before {
+	.gridicon {
 		color: $gray;
-		font-size: 24px;
-		margin-left: -3px;
-		margin-right: 4px;
+		margin: 2px 8px -2px 0;
 	}
+}
+
+.page__posts-page {
+	color: $gray;
+	display: block;
+	font-size: 12px;
+	margin-top: -3px;
 }
 
 .page__site-url {
@@ -79,25 +87,54 @@
 	font-size: 24px;
 	margin: 17px 24px;
 	position: absolute;
-	right: 0;
-	top: 0;
+		right: 0;
+		top: 0;
+	transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+	&.is-active {
+		color: $blue-medium;
+		transform: rotate( 90deg );
+	}
 }
 
-.page__popover-more-info {
+.page__popover-more-info,
+.pages__blog-posts-page__popover-more-info {
 	color: $gray;
 	padding: 4px 16px 8px;
 	font-size: 12px;
-	max-width: 200px;
+	max-width: 150px;
 	text-align: left;
 }
 
-.page__trash-item.popover__menu-item {
+.pages__blog-posts-page__popover-more-info {
+	padding: 8px 16px;
+}
+
+.pages__blog-posts-page__not-used-label {
+	background-color: $gray;
+	border-radius: 3px;
+	color: $white;
+	float: left;
+	font-size: 12px;
+	margin: 6px 24px 0 0;
+	padding: 5px 16px;
+}
+
+.pages__blog-posts-page__info {
+	color: $gray;
+	font-size: 12px;
+	max-width: 300px;
+	line-height: 24px;
+	margin: -6px 33px 0px 26px;
+}
+
+.page__delete-item.popover__menu-item {
 	&:hover,
 	&:focus {
 		background-color: $alert-red;
 		border: 0;
 		box-shadow: none;
-		color: white;
+		color: $white;
 	}
 }
 
@@ -107,4 +144,3 @@
 		display: inline;
 	}
 }
-

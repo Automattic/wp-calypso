@@ -1,12 +1,13 @@
 // External Dependencies
-var forEach = require( 'lodash/collection/forEach' ),
-	get = require( 'lodash/object/get' );
+var forEach = require( 'lodash/forEach' ),
+	get = require( 'lodash/get' );
 
 // Internal dependencies
 var Dispatcher = require( 'dispatcher' ),
 	ActionType = require( './constants' ).action,
 	FeedPostStoreActions = require( 'lib/feed-post-store/actions' ),
 	feedPostListCache = require( './feed-stream-cache' ),
+	SiteStoreActions = require( 'lib/reader-site-store/actions' ),
 	FeedStreamActions;
 
 function getNextPageParams( store ) {
@@ -23,6 +24,9 @@ function getNextPageParams( store ) {
 		// only fetch four items for the initial page
 		// speeds up the initial fetch a fair bit
 		params.number = 4;
+		if ( store.startDate ) {
+			params.before = store.startDate;
+		}
 	}
 
 	return params;
@@ -58,6 +62,8 @@ FeedStreamActions = {
 		//
 		// This also lets other stores that are interested in posts pick them up. Handling it internally to the post store
 		// would rob them of that chance.
+		//
+		// TODO add a new action that receives an array of posts, so we can batch up this change and only emit once
 		if ( ! error && data && data.posts ) {
 			forEach( data.posts, function( post ) {
 				if ( post && get( post, 'meta.data.discover_original_post' ) ) {
@@ -66,16 +72,22 @@ FeedStreamActions = {
 						blogId: post.meta.data.discover_original_post.site_ID,
 						postId: post.meta.data.discover_original_post.ID
 					} );
-				} else if ( post && get( post, 'meta.data.post' ) ) {
+				}
+
+				if ( get( post, 'meta.data.site' ) ) {
+					SiteStoreActions.receiveFetch( post.site_ID, null, post.meta.data.site );
+				}
+
+				if ( post && get( post, 'meta.data.post' ) ) {
 					FeedPostStoreActions.receivePost( null, post.meta.data.post, {
 						feedId: post.feed_ID,
 						postId: post.ID
 					} );
-				} else if ( post && post.feed_ID ) {
+				} else if ( post && post.feed_ID && post.feed_item_ID ) {
 					// 1.2 style
 					FeedPostStoreActions.receivePost( null, post, {
 						feedId: post.feed_ID,
-						postId: post.ID
+						postId: post.feed_item_ID
 					} );
 				} else if ( post && post.site_ID ) {
 					// this looks like a full post object

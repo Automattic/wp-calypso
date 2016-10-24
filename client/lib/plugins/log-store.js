@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-var reject = require( 'lodash/collection/reject' ),
-	isArray = require( 'lodash/lang/isArray' ),
-	clone = require( 'lodash/lang/clone' ),
-	indexOf = require( 'lodash/array/indexOf' ),
-	findIndex = require( 'lodash/array/findIndex' ),
-	pullAt = require( 'lodash/array/pullAt' ),
+var reject = require( 'lodash/reject' ),
+	isArray = require( 'lodash/isArray' ),
+	clone = require( 'lodash/clone' ),
+	indexOf = require( 'lodash/indexOf' ),
+	findIndex = require( 'lodash/findIndex' ),
+	pullAt = require( 'lodash/pullAt' ),
 	debug = require( 'debug' )( 'calypso:my-sites:plugins:log-store' );
 
 /**

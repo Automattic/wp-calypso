@@ -14,7 +14,7 @@ Supported routes:
 - `/domains/manage/:site/edit/:domain` - displays domain details
 - `/domains/manage/:site/edit-contact-info/:domain` - manages contact information for a domain
 - `/domains/manage/:site/email-forwarding/:domain` - manages email forwarding information for a domain
-- `/domains/manage/:site/name-servers/:domain` - manages nameservers for a domain
+- `/domains/manage/:site/name-servers/:domain` - manages name servers for a domain
 - `/domains/manage/:site/primary-domain/:domain` - changes primary domain for a site
 - `/domains/manage/:site/privacy-protection/:domain` - adds privacy protection for a domain
 - `/domains/manage/:site/redirect-settings/:domain` - changes redirect settings for a domain

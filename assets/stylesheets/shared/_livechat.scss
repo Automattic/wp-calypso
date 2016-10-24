@@ -340,7 +340,7 @@
 
 #habla_window_div.habla_window_div_base {
 	display:block!important;
-	z-index:99999999;
+	z-index: z-index( 'root', '#habla_window_div.habla_window_div_base' );
 }
 
 #habla_window_div #olark-callout-bubble,
@@ -386,7 +386,7 @@
 }
 
 #habla_window_div #habla_conversation_div {
-	padding:6px 10px 0;
+	padding:6px 10px 10px;
 	margin:-6px -10px 0;
 }
 
@@ -435,10 +435,10 @@
 
 #habla_window_div.olrk-fixed-bottom #habla_topbar_div,
 #habla_window_div.olrk-fixed-bottom .habla_panel_border {
-	// -moz-border-radius-topleft:5px;
-	// -moz-border-radius-topright:5px;
-	// border-top-left-radius:5px;
-	// border-top-right-radius:5px;
+	-moz-border-radius-topleft: 0 !important;
+	-moz-border-radius-topright: 0 !important;
+	border-top-left-radius: 0 !important;
+	border-top-right-radius: 0 !important;
 }
 
 #habla_window_div.olrk-fixed-top .habla_panel_border {
@@ -489,9 +489,9 @@
 	background:0 0;
 	color:#000;
 	padding:0;
-	margin:0 0 0 20px;
-	text-indent:-20px;
+	margin: 8px 0 0 0;
 	overflow:visible;
+	text-indent: 0px !important;
 }
 
 #habla_window_div .habla_conversation_person1 {
@@ -615,6 +615,7 @@
 	height:16px;
 	cursor:pointer!important;
 	overflow:hidden;
+	background-image: none !important;
 }
 
 #habla_window_div .habla_button:hover {
@@ -624,7 +625,7 @@
 #habla_window_div #habla_sizebutton_a {
 
 	&:before {
-		display: inline-block;
+		display: block;
 		width: 16px;
 		height: 16px;
 		font: 16px/1 Noticons;
@@ -635,7 +636,7 @@
 .olrk-state-expanded #habla_window_div #habla_sizebutton_a {
 
 	&:before {
-		display: inline-block;
+		display: block;
 		width: 16px;
 		height: 16px;
 		font: 16px/1 Noticons;
@@ -644,22 +645,15 @@
 }
 
 #habla_window_div #habla_sizebutton_a:hover {
-	background-color: rgba(255, 255, 255, 0.15);
+	background-color: transparent !important;
+}
+
+.olrk-state-compressed #habla_window_div #habla_sizebutton_a:hover {
+	background-color: lighten($blue-wordpress, 20%) !important;
 }
 
 #habla_window_div #habla_closebutton_a {
-
-	&:before {
-		display: inline-block;
-		width: 16px;
-		height: 16px;
-		font: 16px/1 Noticons;
-		content: '\f405';
-	}
-}
-
-#habla_window_div #habla_closebutton_a:hover {
-	background-color: rgba(255, 255, 255, 0.15);
+	display: none;
 }
 
 #habla_window_div #habla_popout_a {
@@ -669,6 +663,7 @@
 		height: 16px;
 		font: 16px/1 Noticons;
 		content: '\f442';
+		display: block;
 	}
 }
 
@@ -843,11 +838,55 @@
 	color:$gray-dark!important;
 }
 
+#habla_conversation_div .habla_conversation_notification_nickname {
+	display: none;
+}
+
 #habla_conversation_div .habla_conversation_notification {
-	float: left;
 	color: $gray;
 	font-style: italic;
 	margin: 1em 0;
+	display: block;
+}
+
+#habla_conversation_div .habla_conversation_text_span.hbl_pal_main_fg {
+	display: block;
+	margin-left: 48px;
+}
+
+#habla_conversation_div .hbl_pal_local_fg,
+#habla_conversation_div .hbl_pal_remote_fg {
+	font: 14px/20px $sans;
+	font-weight: bold;
+	color: $gray-dark;
+	text-transform: capitalize;
+	display: inline-block;
+	white-space: nowrap;
+}
+
+#habla_conversation_div .olrk_avatar {
+	display: none;
+}
+
+#habla_conversation_div .gravatar {
+	width: 32px;
+	height: 32px;
+	line-height: 32px;
+	border-radius: 50%;
+	margin-bottom: -20px;
+	margin-right: 16px;
+}
+
+#habla_conversation_div .staff-label {
+	border-radius: 2px;
+	background-color: $blue-medium;
+	color: $white;
+	font: 11px/14px $sans;
+	font-weight: bold;
+	text-transform: uppercase;
+	display: inline-block;
+	margin-left: 3px;
+	padding: 1px 4px;
 }
 
 @-webkit-keyframes pulse {
@@ -885,7 +924,7 @@
 }
 
 .olrk-state-compressed .olrk-fixed-bottom #habla_topbar_div {
-	-webkit-animation-name:tab_in_bottom;
+	-webkit-animation-name: none !important;
 	-webkit-animation-duration:1s;
 	-webkit-animation-iteration-count:1;
 	-webkit-animation-direction:alternate;
@@ -995,6 +1034,9 @@ div.hbl_pal_main_width {
 .olrk-state-compressed #habla_window_div #habla_topbar_div {
 	margin-right: -10px;
 	background: transparent;
+	padding: 0;
+	width: 32px;
+	height: 32px;
 }
 
 .olrk-state-compressed #habla_panel_div {
@@ -1003,8 +1045,11 @@ div.hbl_pal_main_width {
 
 .olrk-state-compressed #habla_window_div #habla_sizebutton_a {
 	background-color: $blue-medium;
-	padding: 5px 5px 3px 5px;
+	transition: background-color .2s;
+	padding: 8px;
 	text-decoration: none;
+	margin: 0 !important;
+	border-radius: 0 !important;
 }
 
 .olrk-state-compressed #habla_window_div #habla_closebutton_a {
@@ -1015,5 +1060,5 @@ div.hbl_pal_main_width {
 }
 
 .olrk-state-compressed div.hbl_pal_main_width {
-    width: 28px !important;
+	width: 32px !important;
 }

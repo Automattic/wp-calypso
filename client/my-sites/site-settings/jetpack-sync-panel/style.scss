@@ -1,0 +1,44 @@
+.jetpack-sync-panel__action {
+	margin-top: 16px
+}
+
+@include breakpoint( ">660px" ) {
+	.jetpack-sync-panel__action-group {
+		display: flex;
+	}
+
+	.jetpack-sync-panel__description {
+		display: block;
+		flex-grow: 1;
+		padding-right: 8px;
+	}
+
+	.jetpack-sync-panel__action {
+		align-self: center;
+		flex-grow: 1;
+		flex-shrink: 0;
+		margin-top: 0;
+		padding-left: 8px;
+	}
+}
+
+.jetpack-sync-panel .progress-bar {
+	margin-top: 8px;
+}
+
+.jetpack-sync-panel .notice {
+	margin-top: 16px;
+}
+
+.jetpack-sync-panel__status-notice {
+	background: none;
+	color: $gray;
+}
+
+.jetpack-sync-panel .jetpack-sync-panel__status-notice .notice__text {
+	padding-left: 0;
+}
+
+.jetpack-sync-panel__status-notice .notice__icon {
+	display: none;
+}

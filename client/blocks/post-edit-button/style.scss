@@ -1,0 +1,38 @@
+.post-edit-button {
+	align-items: center;
+	box-sizing: border-box;
+	color: lighten( $gray, 10% );
+	cursor: pointer;
+	display: inline-flex;
+	list-style-type: none;
+	padding: 4px;
+	position: relative;
+
+	&:hover,
+	&:focus,
+	&:active {
+		color: $blue-light;
+	}
+
+	.post-edit-button__label {
+
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+	}
+}
+
+.post-edit-button__label {
+	font-size: 14px;
+	margin-left: 4px;
+
+	@include breakpoint( "<480px" ) {
+		display: none;
+	}
+}
+
+.post-edit-button__icon {
+	fill: lighten( $gray, 10% );
+	position: relative;
+		top: 1px;
+}

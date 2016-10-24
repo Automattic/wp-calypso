@@ -6,9 +6,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import DeleteEmailForwardsDialog from './delete-email-forwards-dialog';
 import DnsRecord from './dns-record';
 import notices from 'notices';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { deleteDns as deleteDnsAction, addDns as addDnsAction } from 'lib/upgrades/actions';
+import { isDeletingLastMXRecord } from 'lib/domains/dns';
 
 const DnsList = React.createClass( {
 	propTypes: {
@@ -20,32 +22,96 @@ const DnsList = React.createClass( {
 		] ).isRequired
 	},
 
-	deleteDns: function( record ) {
-		upgradesActions.deleteDns( this.props.selectedDomainName, record, ( error ) => {
+	getInitialState: function() {
+		return { dialog: this.noDialog() };
+	},
+
+	noDialog: function() {
+		return {
+			type: null,
+			onClose: null
+		};
+	},
+
+	openDialog( type, onClose ) {
+		this.setState( {
+			dialog: {
+				type,
+				onClose
+			}
+		} );
+	},
+
+	handleDialogClose( result ) {
+		this.state.dialog.onClose( result );
+		this.setState( { dialog: this.noDialog() } );
+	},
+
+	deleteDns: function( record, confirmed = false ) {
+		const { records } = this.props.dns;
+
+		if ( ! confirmed && isDeletingLastMXRecord( record, records ) ) {
+			this.openDialog( 'deleteEmailForwards', ( result ) => {
+				if ( result.shouldDeleteEmailForwards ) {
+					this.deleteDns( record, true );
+				}
+			} );
+
+			return;
+		}
+
+		deleteDnsAction( this.props.selectedDomainName, record, ( error ) => {
 			if ( error ) {
 				notices.error( error.message || this.translate( 'The DNS record has not been deleted.' ) );
-
-				upgradesActions.fetchDns( this.props.selectedDomainName );
 			} else {
-				notices.success( this.translate( 'The DNS record has been deleted.' ) );
+				const notice = notices.success( this.translate( 'The DNS record has been deleted.' ), {
+					showDismiss: false,
+					duration: 5000,
+					button: this.translate( 'Undo' ),
+					onClick: () => {
+						notices.removeNotice( notice );
+						this.addDns( record );
+					}
+				} );
+			}
+		} );
+	},
+
+	addDns: function( record ) {
+		addDnsAction( this.props.selectedDomainName, record, ( error ) => {
+			if ( error ) {
+				notices.error( error.message || this.translate( 'The DNS record could not be restored.' ) );
+			} else {
+				notices.success( this.translate( 'The DNS record has been restored.' ), {
+					duration: 5000
+				} );
 			}
 		} );
 	},
 
 	render: function() {
-		const dnsRecordsList = this.props.dns.records.map( function( dnsRecord, index ) {
-			return (
-				<DnsRecord
-					key={ index }
-					dnsRecord={ dnsRecord }
-					deleteDns={ this.deleteDns }
-					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ this.props.selectedSite } />
-			);
-		}, this );
+		const { dialog } = this.state,
+			{ dns, selectedDomainName, selectedSite } = this.props,
+			dnsRecordsList = dns.records.map( function( dnsRecord, index ) {
+				return (
+					<DnsRecord
+						key={ index }
+						dnsRecord={ dnsRecord }
+						onDeleteDns={ this.deleteDns }
+						selectedDomainName={ selectedDomainName }
+						selectedSite={ selectedSite } />
+				);
+			}, this );
 
 		return (
-			<ul className="dns__list">{ dnsRecordsList }</ul>
+			<div className="dns__list">
+				<DeleteEmailForwardsDialog
+					visible={ dialog.type === 'deleteEmailForwards' }
+					onClose={ this.handleDialogClose }
+					selectedDomainName={ selectedDomainName }
+					selectedSite={ selectedSite } />
+				<ul>{ dnsRecordsList }</ul>
+			</div>
 		);
 	}
 } );

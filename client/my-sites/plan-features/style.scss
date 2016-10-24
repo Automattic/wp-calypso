@@ -1,0 +1,435 @@
+$plan-features-header-banner-height: 20px;
+$plan-features-sidebar-width: 272px;
+
+/* Breakpoints 1150px, */
+
+.plan-features__content {
+	margin: -16px -16px 0 -16px;
+	padding-top: $plan-features-header-banner-height;
+}
+
+.is-section-plans .plan-features__mobile {
+	display: block;
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
+		display: none;
+	}
+}
+
+.plan-features__notice {
+	margin-bottom: 16px;
+
+	@include breakpoint( ">1040px" ) {
+		margin-bottom: 32px;
+		margin-top: -19px;
+	}
+}
+
+.plan-features__mobile {
+	color: $gray;
+	margin: 0 16px;
+	display: block;
+
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
+
+	.foldable-card {
+		box-shadow: none;
+	}
+
+	.foldable-card.card.is-expanded { //original rule has this specificity
+		margin-bottom: 0;
+	}
+
+	.foldable-card.is-expanded .foldable-card__content { //original rule has this specificity
+		padding: 0;
+	}
+
+	.plan-features__header-banner {
+		display: none;
+	}
+
+	.plan-features__item {
+		border-bottom: solid 1px lighten( $gray, 27% );
+		font-size: 14px;
+	}
+
+	.plan-features__item:last-child {
+		border-bottom: none;
+	}
+}
+
+.plan-features__mobile .plan-features__header .plan-features__header-figure,
+.plan-features__table.has-1-cols .plan-features__header-figure,
+.plan-features__table.has-2-cols .plan-features__header-figure {
+	display: block;
+	width: 50px;
+	height: 50px;
+}
+
+.plan-features__mobile-plan {
+	font-size: 14px;
+	border: solid 1px lighten( $gray, 27% );
+	background-color: lighten( $gray, 35% );
+	margin-bottom: 24px;
+}
+
+.is-section-plans .plan-features__table {
+	display: none;
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
+		display: table;
+	}
+}
+
+.plan-features__table {
+	font-size: 14px;
+	color: $gray;
+	border-spacing: 16px 0;
+	margin-top: -16px;
+	display: none;
+	table-layout: fixed;
+
+	@include breakpoint( ">660px" ) {
+		display: table;
+	}
+
+	@include breakpoint( "<1040px" ) {
+		border-spacing: 0;
+		margin: 0 15px;
+		width: calc( 100% - 30px );
+	}
+}
+
+.plan-features__row {
+	background: $white;
+}
+
+.plan-features__table-item {
+	border-right: solid 1px lighten( $gray, 27% );
+	border-left: solid 1px lighten( $gray, 27% );
+	background-color: lighten( $gray, 35% );
+	position: relative;
+
+	&.is-highlighted {
+		border: 1px solid $blue-wordpress;
+		background-color: rgba( $blue-wordpress, 0.1 );
+		position: relative;
+			top: -1px;
+
+		.plan-features__item-checkmark {
+			fill: $blue-wordpress;
+		}
+
+		&.has-partial-border::after {
+			display: none;
+		}
+	}
+
+	&.is-selected {
+		display: table-cell;
+	}
+}
+
+.plan-features__table-item.has-partial-border {
+	&::after {
+		content: '';
+		display: block;
+		height: 1px;
+		width: calc( 100% - 48px );
+		border-bottom: 1px solid lighten( $gray, 27% );
+		position: absolute;
+		bottom: 0;
+		margin: 0 24px;
+
+		@include breakpoint( "<1040px" ) {
+			margin: 0 12px;
+			width: calc( 100% - 24px );
+		}
+	}
+}
+
+.plan-features__table-item.has-border-bottom {
+	border-bottom: solid 1px lighten( $gray, 27% );
+}
+
+.plan-features__table-item.has-border-top {
+	border-top: solid 1px lighten( $gray, 27% );
+}
+
+.plan-features__table-item.is-placeholder {
+	.spinner-line {
+		margin: 0;
+		position: absolute;
+		top: -3px;
+		width: 100%;
+	}
+}
+
+.plan-features__table-item.is-bottom-buttons {
+	padding-top: 33px;
+}
+
+.plan-features__table-item.is-top-buttons {
+	padding-top: 8px;
+}
+
+.plan-features__header {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	padding: 12px 24px 0 15px;
+	border-bottom: solid 2px lighten( $gray, 20% );
+	background-color: $white;
+
+	@include breakpoint( "<960px" ) {
+		padding: 12px 12px 0 12px;
+	}
+
+	&.is-personal-plan {
+		border-bottom: solid 2px $alert-yellow;
+	}
+
+	&.is-premium-plan {
+		border-bottom: solid 2px $alert-green;
+	}
+
+	&.is-business-plan {
+		border-bottom: solid 2px $alert-purple;
+	}
+}
+
+.plan-features__header-figure {
+	position: relative;
+	width: 50px;
+	height: 50px;
+	margin-right: 15px;
+	border: solid 6px $gray-light;
+	border-radius: 50%;
+}
+
+.is-section-plans .plan-features__header-figure {
+	@include breakpoint( "<1280px" ) {
+		width: 20px;
+		height: 20px;
+		border: solid 2px $gray-light;
+		margin-right: 10px;
+	}
+}
+
+.plan-features__header-figure,
+.plan-features__table.has-1-cols .plan-features__header-figure,
+.plan-features__table.has-2-cols .plan-features__header-figure {
+	@include breakpoint( "<1040px" ) {
+		display: none;
+	}
+}
+
+.plan-features__header-checkmark {
+	position: absolute;
+	top: -3px;
+	right: -3px;
+	transform: translate( 25%, -25% );
+	fill: $alert-green;
+
+	@include breakpoint( "<1280px" ) {
+		display: none;
+	}
+}
+
+.plan-features__header-text {
+	flex: 1;
+	padding: 6px 0 0 0;
+}
+
+.plan-features__header-title {
+	font-size: 22px;
+	color: $blue-wordpress;
+	line-height: 0.7;
+
+	@include breakpoint( "<960px" ) {
+		font-size: 20px;
+	}
+}
+
+.plan-features__header-price-group {
+	display: flex;
+	flex-flow: row wrap;
+}
+
+.plan-features__header-timeframe {
+	margin-bottom: 1.4em;
+	font-size: 12px;
+	font-style: italic;
+	font-weight: 400;
+	color: $gray;
+	line-height: .6;
+	white-space: nowrap;
+
+	&.is-placeholder {
+		@include placeholder( 23% );
+		width: 140px;
+		height: 12px;
+		margin-bottom: 15px;
+
+		@include breakpoint( "<960px" ) {
+			margin-bottom: 9px;
+		}
+	}
+}
+
+.plan-features__price {
+	&.is-placeholder {
+		@include placeholder( 23% );
+		width: 45px;
+		height: 25px;
+		margin-top: 9px;
+		margin-bottom: 5px;
+	}
+}
+
+.plan-features__price-jetpack {
+	&.is-placeholder {
+		@include placeholder( 23% );
+		height: 32px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		width: 140px;
+
+		@include breakpoint( "<960px" ) {
+			height: 26px;
+		}
+	}
+}
+
+.plan-features__interval-type {
+	margin-bottom: 1.4em;
+
+	&.is-placeholder {
+		height: 36px;
+
+		@include breakpoint( "<660px" ) {
+			height: auto;
+		}
+	}
+}
+
+.plan-features__header-banner {
+	box-sizing: border-box;
+	position: absolute;
+	left: -1px;
+	right: -1px;
+	top: 0;
+	transform: translateY( -21px );
+	padding: 0 8px;
+	background: $gray-dark;
+	font-size: 10px;
+	line-height: $plan-features-header-banner-height;
+	text-align: center;
+	text-transform: uppercase;
+	color: $white;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.plan-features__description {
+	margin: 0;
+	padding: 24px 24px 0 24px;
+
+	@include breakpoint( "<1040px" ) {
+		padding: 12px 12px 0 12px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		padding: 20px 20px 0 20px;
+	}
+}
+
+.plan-features__targeted-description-heading {
+	display: block;
+	color: lighten( $gray-dark, 25% );
+}
+
+.plan-features__item {
+	position: relative;
+	margin: 0 24px;
+	padding: 12px 20px 12px 30px;
+	font-size: 14px;
+	color: $gray-dark;
+
+	@include breakpoint( "<1040px" ) {
+		margin: 0 12px;
+	}
+
+	@include breakpoint( "<960px" ) {
+		font-size: 12px;
+	}
+}
+
+.plan-features__item-checkmark {
+	position: absolute;
+	left: 0;
+	top: 14px;
+	fill: $blue-wordpress;
+}
+
+.plan-features__item-tip-info {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	width: 18px;
+	height: 18px;
+	margin-top: -9px;
+	color: lighten( $gray, 20% );
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		color: $gray-dark;
+	}
+}
+
+.popover__plan-features {
+	.popover__inner {
+		width: 200px;
+	}
+}
+
+.plan-features__actions {
+	padding: 0 24px 24px 24px;
+
+	@include breakpoint( "<1040px" ) {
+		padding: 0 12px 12px 12px;
+	}
+
+	@include breakpoint( "<660px" ) {
+		padding: 0 20px 20px 20px;
+		border-bottom: solid 1px $gray-light;
+	}
+}
+
+.plan-features__actions-buttons {
+	text-align: center;
+}
+
+.plan-features__actions-button {
+	width: 100%;
+	margin-top: 8px;
+
+	&.is-current {
+
+		.gridicon {
+			fill: $alert-green;
+			margin-right: 8px;
+		}
+	}
+
+	&.is-popular {
+		background-color: $alert-green;
+		border-color: darken( $alert-green, 20% );
+	}
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 20px;
+	}
+}

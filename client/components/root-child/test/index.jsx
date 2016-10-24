@@ -1,20 +1,21 @@
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	React = require( 'react' );
+import { expect } from 'chai';
+import ReactDom from 'react-dom';
+import React from 'react';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import { mount } from 'enzyme';
 
 /**
  * Internal dependencies
  */
-var RootChild = require( '../' );
+import RootChild from '../';
 
 /**
  * Module variables
  */
-var Greeting = React.createClass( {
+const Greeting = React.createClass( {
 	getDefaultProps: function() {
 		return { toWhom: 'World' };
 	},
@@ -34,44 +35,42 @@ var Greeting = React.createClass( {
 describe( 'RootChild', function() {
 	var container;
 
+	useFakeDom();
+
 	before( function() {
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 	} );
 
 	afterEach( function() {
-		React.unmountComponentAtNode( container );
+		ReactDom.unmountComponentAtNode( container );
 	} );
 
 	describe( 'rendering', function() {
-		it( 'should render any children as descendents of body', function() {
-			var tree = React.render( React.createElement( Greeting ), container );
+		it( 'should render any children as descendants of body', function() {
+			var tree = ReactDom.render( React.createElement( Greeting ), container );
 
 			expect( tree.refs.parentChild
-				.getDOMNode()
 				.parentNode.className
 			).to.equal( 'parent' );
 
 			expect( tree.refs.rootChild
-				.getDOMNode()
 				.parentNode
 				.parentNode
 			).to.eql( document.body );
 		} );
 
 		it( 'accepts props to be added to a wrapper element', function() {
-			var tree = React.render( React.createElement( Greeting, {
+			var tree = ReactDom.render( React.createElement( Greeting, {
 				rootChildProps: { className: 'wrapper' }
 			} ), container );
 
 			expect( tree.refs.rootChild
-				.getDOMNode()
 				.parentNode
 				.className )
 			.to.equal( 'wrapper' );
 
 			expect( tree.refs.rootChild
-				.getDOMNode()
 				.parentNode
 				.parentNode
 				.parentNode
@@ -79,20 +78,20 @@ describe( 'RootChild', function() {
 		} );
 
 		it( 'should update the children if parent is re-rendered', function() {
-			var tree = React.render( React.createElement( Greeting ), container );
+			var tree = mount( React.createElement( Greeting ), { attachTo: container } );
 			tree.setProps( { toWhom: 'Universe' } );
 
-			expect( tree.refs.rootChild
-				.getDOMNode()
-				.textContent
+			expect( tree.ref( 'rootChild' )
+				.text()
 			).to.equal( 'Hello Universe!' );
+			tree.detach();
 		} );
 	} );
 
 	describe( 'unmounting', function() {
 		it( 'should destroy the root child when the component is unmounted', function() {
-			React.render( React.createElement( Greeting ), container );
-			React.unmountComponentAtNode( container );
+			ReactDom.render( React.createElement( Greeting ), container );
+			ReactDom.unmountComponentAtNode( container );
 
 			expect( [].slice.call(
 				document.body.querySelectorAll( '*' )

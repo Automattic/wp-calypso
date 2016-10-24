@@ -1,90 +1,59 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:community-translator' ),
-	React = require( 'react' ),
-	ReactElement = require( 'react/lib/ReactElement' );
+import debugModule from 'debug';
+import React from 'react';
+import i18n from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var config = require( 'config' ),
-	loadScript = require( 'lib/load-script' ),
-	user = require( 'lib/user' )(),
-	userSettings = require( 'lib/user-settings' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	isMobile = require( 'lib/viewport' ).isMobile,
-	analytics = require( 'analytics' ),
-	hasTouch = require( 'lib/touch-detect' ).hasTouch;
+import config from 'config';
+import loadScript from 'lib/load-script';
+import User from 'lib/user';
+import userSettings from 'lib/user-settings';
+import { isMobile } from 'lib/viewport';
+import analytics from 'lib/analytics';
 
-/**
- * Local variables
- */
-var communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
-	communityTranslatorVersion = '1',
+const debug = debugModule( 'calypso:community-translator' );
+
+const user = new User(),
+	communityTranslatorBaseUrl = 'https://widgets.wp.com/community-translator/',
+	communityTranslatorVersion = '1.160728',
 	translationDataFromPage = {
 		localeCode: 'en',
 		languageName: 'English',
 		pluralForms: 'nplurals=2; plural=(n != 1)',
-		contentChangedCallback: function() {},
+		contentChangedCallback() {},
 		glotPress: {
 			url: 'https://translate.wordpress.com',
 			project: 'test'
 		}
-	},
-	communityTranslatorJumpstart, injectUrl, initialized,
-	previousEnabledSetting,
-	_shouldWrapTranslations = false;
-
-var communityTranslatorToString = function() {
-	if ( typeof this.props.children === 'string' ) {
-		return this.props.children;
-	}
-	return Object.prototype.toString.call( this );
-};
+	};
 
 /**
- * When a translation is used in an html attribute, the ReactElement-wrapped translation
- * is treated as a string and .toString() is called implicitly on it. To avoid undesired
- * [object Object] display, we return the plain text translation from the ReactElement by
- * overriding ReactElement.prototype's .toString() method.
- *
- * We bail out of the override for safety if ReactElement.prototype.toString() isn't
- * initially what we expect.
+ * Local variables
  */
-function overrideReactElementToString() {
-	if ( ReactElement.prototype.toString !== Object.prototype.toString ) {
-		debug( 'Aborted ReactElement.prototype.toString override: unexpected value!' );
-		return;
-	}
-	ReactElement.prototype.toString = communityTranslatorToString;
-}
 
-// We restore the original ReactElement.prototype.toString behaviour when CT is disabled.
-function restoreReactElementToString() {
-	if ( ReactElement.prototype.toString !== communityTranslatorToString ) {
-		debug( 'Aborted ReactElement.prototype.toString restore: unexpected value!' );
-		return;
-	}
-	ReactElement.prototype.toString = Object.prototype.toString;
-}
+var	injectUrl, initialized,
+	previousEnabledSetting,
+	_shouldWrapTranslations = false;
 
 /* "Enabled" means that the user has opted in on the settings page
  *     ( but it's false until userSettings has loaded)
  * "Activated" means that the translator is toggled on, and wrapTranslate()
  *     will add the data tags that the translator needs.
  */
-communityTranslatorJumpstart = {
-	isEnabled: function() {
-		var currentUser;
-
+const communityTranslatorJumpstart = {
+	isEnabled() {
 		if ( ! config.isEnabled( 'community-translator' ) ) {
 			return false;
 		}
 
-		currentUser = user.get();
+		const currentUser = user.get();
 
-		if ( 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
+		if ( ! currentUser || 'en' === currentUser.localeSlug || ! currentUser.localeSlug ) {
 			return false;
 		}
 
@@ -103,13 +72,11 @@ communityTranslatorJumpstart = {
 
 		return true;
 	},
-	isActivated: function() {
+	isActivated() {
 		return _shouldWrapTranslations;
 	},
 
-	wrapTranslation: function( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
-		var props;
-
+	wrapTranslation( originalFromPage, displayedTranslationFromPage, optionsFromPage ) {
 		if ( ! this.isEnabled() || ! this.isActivated() ) {
 			return displayedTranslationFromPage;
 		}
@@ -118,14 +85,15 @@ communityTranslatorJumpstart = {
 			optionsFromPage = {};
 		}
 
-		props = { className: 'translatable' };
-
-		if ( 'string' === typeof originalFromPage ) {
-			props.value = originalFromPage;
-		} else {
+		if ( 'string' !== typeof originalFromPage ) {
 			debug( 'unknown original format' );
 			return displayedTranslationFromPage;
 		}
+
+		const props = {
+			className: 'translatable',
+			'data-singular': originalFromPage
+		};
 
 		// Has Context
 		if ( 'string' === typeof optionsFromPage.context ) {
@@ -137,11 +105,20 @@ communityTranslatorJumpstart = {
 			props[ 'data-plural' ] = optionsFromPage.plural;
 		}
 
-		return React.DOM.data( props, displayedTranslationFromPage );
+		// React.DOM.data returns a frozen object, therefore we make a copy so that we can modify it below
+		const dataElement = Object.assign( {}, React.DOM.data( props, displayedTranslationFromPage ) );
+
+		// now we can override the toString function which would otherwise return [object Object]
+		dataElement.toString = () => displayedTranslationFromPage;
+
+		// freeze the object again to certify the same behavior as the original ReactElement object
+		Object.freeze( dataElement );
+
+		return dataElement;
 	},
 
-	init: function() {
-		var languageJson = i18n.getLocale() || { '': {} },
+	init() {
+		const languageJson = i18n.getLocale() || { '': {} },
 			localeCode = languageJson[ '' ].localeSlug;
 
 		if ( localeCode && languageJson ) {
@@ -172,9 +149,8 @@ communityTranslatorJumpstart = {
 		initialized = true;
 	},
 
-	updateTranslationData: function( localeCode, languageJson ) {
-		var languages = config( 'languages' ),
-			i;
+	updateTranslationData( localeCode, languageJson ) {
+		const languages = config( 'languages' );
 
 		if ( translationDataFromPage.localeCode === localeCode ) {
 			// if the locale code has already been assigned then assume it is up to date
@@ -184,15 +160,15 @@ communityTranslatorJumpstart = {
 
 		debug( 'Translator Jumpstart: loading locale file for ' + localeCode );
 		translationDataFromPage.localeCode = localeCode;
-		translationDataFromPage.pluralForms = languageJson[ '' ].plural_forms || languageJson[ '' ][ 'Plural-Forms' ] || languageJson[ '' ][ 'plural-forms' ] || translationDataFromPage.pluralForms;
+		translationDataFromPage.pluralForms = languageJson[ '' ].plural_forms ||
+			languageJson[ '' ][ 'Plural-Forms' ] ||
+			languageJson[ '' ][ 'plural-forms' ] ||
+			translationDataFromPage.pluralForms;
 		translationDataFromPage.currentUserId = user.data.ID;
 
-		// extract the active language's name out of Calypso lanaguage data
-		for ( i = 0; i < languages.length; i++ ) {
-			if ( languages[ i ].langSlug === localeCode ) {
-				translationDataFromPage.languageName = languages[ i ].name.replace( /^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/, '' );
-				break;
-			}
+		const currentLocale = find( languages, lang => lang.langSlug === localeCode );
+		if ( currentLocale ) {
+			translationDataFromPage.languageName = currentLocale.name.replace( /^(?:[a-z]{2,3}|[a-z]{2}-[a-z]{2})\s+-\s+/, '' );
 		}
 
 		this.setInjectionURL( 'community-translator.min.js' );
@@ -203,16 +179,15 @@ communityTranslatorJumpstart = {
 		}
 	},
 
-	setInjectionURL: function( jsFile ) {
-		debug( 'setting Injection URL' );
+	setInjectionURL( jsFile ) {
 		injectUrl = communityTranslatorBaseUrl + jsFile + '?v=' + communityTranslatorVersion;
 		debug( 'setting injection url', injectUrl );
 	},
 
-	toggle: function() {
-		var unregisteredHandleWarning = false;
+	toggle() {
+		let unregisteredHandleWarning = false;
 
-		translationDataFromPage.contentChangedCallback = function() {
+		translationDataFromPage.contentChangedCallback = () => {
 			if ( ! unregisteredHandleWarning ) {
 				debug( 'Translator notified of page change, but handler was not registered' );
 				unregisteredHandleWarning = true;
@@ -222,7 +197,6 @@ communityTranslatorJumpstart = {
 		function activate() {
 			// Wrap DOM elements and then activate the translator
 			_shouldWrapTranslations = true;
-			overrideReactElementToString();
 			i18n.reRenderTranslations();
 			window.communityTranslator.load();
 			debug( 'Translator activated' );
@@ -233,7 +207,6 @@ communityTranslatorJumpstart = {
 			window.communityTranslator.unload();
 			// Remove all the data tags from the DOM
 			_shouldWrapTranslations = false;
-			restoreReactElementToString();
 			i18n.reRenderTranslations();
 			debug( 'Translator deactivated' );
 			return false;
@@ -273,8 +246,8 @@ communityTranslatorJumpstart = {
 	},
 
 	// Merge a Community Translator TranslationPair into the i18n locale
-	updateTranslation: function( newTranslation ) {
-		var locale = i18n.getLocale(),
+	updateTranslation( newTranslation ) {
+		const locale = i18n.getLocale(),
 			key = newTranslation.key,
 			plural = newTranslation.plural,
 			translations = newTranslation.translations;
@@ -287,11 +260,7 @@ communityTranslatorJumpstart = {
 		i18n.setLocale( locale );
 	},
 
-	isValidBrowser: function() {
-		if ( hasTouch() ) {
-			return false;
-		}
-
+	isValidBrowser() {
 		if ( isMobile() ) {
 			return false;
 		}
@@ -301,24 +270,24 @@ communityTranslatorJumpstart = {
 };
 
 // wrap translations from i18n
-i18n.registerTranslateHook( function( translation, options ) {
+i18n.registerTranslateHook( ( translation, options ) => {
 	return communityTranslatorJumpstart.wrapTranslation( options.original, translation, options );
 } );
 
 // callback when translated component changes.
 // the callback is overwritten by the the translator on load/unload, so we're returning it within an anonymous function.
-i18n.registerComponentUpdateHook( function() {
+i18n.registerComponentUpdateHook( () => {
 	if ( typeof translationDataFromPage.contentChangedCallback === 'function' ) {
 		return translationDataFromPage.contentChangedCallback();
 	}
 } );
 
 function trackTranslatorStatus() {
-	var newSetting = userSettings.getOriginalSetting( 'enable_translator' ),
+	const newSetting = userSettings.getOriginalSetting( 'enable_translator' ),
 		changed = previousEnabledSetting !== newSetting,
-		tracksEvent = newSetting ?
-			'calypso_community_translator_enabled' :
-			'calypso_community_translator_disabled';
+		tracksEvent = newSetting
+			? 'calypso_community_translator_enabled'
+			: 'calypso_community_translator_disabled';
 
 	if ( changed && previousEnabledSetting !== undefined ) {
 		debug( tracksEvent );
@@ -334,4 +303,4 @@ user.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJu
 userSettings.on( 'change', trackTranslatorStatus );
 userSettings.on( 'change', communityTranslatorJumpstart.init.bind( communityTranslatorJumpstart ) );
 
-module.exports = communityTranslatorJumpstart;
+export default communityTranslatorJumpstart;

@@ -54,6 +54,7 @@ function minify( files ) {
 
 Error.stackTrackLimit = 30;
 
+// Build bundles from webpack config
 webpack( webpackConfig, function( error, stats ) {
 	var files, assets;
 
@@ -69,6 +70,12 @@ webpack( webpackConfig, function( error, stats ) {
 	}
 
 	process.stdout.write( stats.toString( outputOptions ) + "\n");
+	if ( process.env.WEBPACK_OUTPUT_JSON ) {
+		fs.writeFile(
+			path.join( process.cwd(), 'stats.json' ),
+			JSON.stringify( stats.toJson() )
+		);
+	}
 
 	assets = utils.getAssets( stats.toJson() );
 

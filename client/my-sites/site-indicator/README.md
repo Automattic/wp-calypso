@@ -14,3 +14,21 @@ render: function() {
     );
 }
 ```
+
+## Props
+
+### `site`
+
+<table>
+	<tr><th>Type</th><td>Object</td></tr>
+	<tr><th>Required</th><td>Yes</td></tr>
+</table>
+
+The site object. 
+
+### `onSelect`
+
+<table>
+	<tr><th>Type</th><td>Function</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>

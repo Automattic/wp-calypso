@@ -8,6 +8,7 @@ var debug = require( 'debug' )( 'calypso:auth:store' );
  */
 import { createReducerStore } from 'lib/store';
 import { actions as ActionTypes } from './constants';
+import { errors as errorTypes } from './constants';
 import * as OAuthToken from 'lib/oauth-token';
 
 /**
@@ -20,9 +21,6 @@ const initialState = {
 	errorMessage: false
 };
 
-const ERROR_REQUIRES_2FA = 'needs_2fa';        // Comes from WP API
-const ERROR_INVALID_OTP = 'invalid_otp';       // Comes from WP API
-
 function handleAuthError( error, data ) {
 	let stateChanges = { errorLevel: 'is-error', requires2fa: false, inProgress: false };
 
@@ -31,10 +29,10 @@ function handleAuthError( error, data ) {
 	debug( 'Error processing login: ' + stateChanges.errorMessage );
 
 	if ( data && data.body ) {
-		if ( data.body.error === ERROR_REQUIRES_2FA ) {
+		if ( data.body.error === errorTypes.ERROR_REQUIRES_2FA ) {
 			stateChanges.requires2fa = true;
 			stateChanges.errorLevel = 'is-info';
-		} else if ( data.body.error === ERROR_INVALID_OTP ) {
+		} else if ( data.body.error === errorTypes.ERROR_INVALID_OTP ) {
 			stateChanges.requires2fa = true;
 		}
 	}

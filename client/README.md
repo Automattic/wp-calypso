@@ -16,16 +16,21 @@ These are some of the key modules of the application, kept in `client`'s root fo
 
 The `/components` folder holds all the internal React components used to build the Calypso UI across sections. Most of these are rendered in `/devdocs/design` for reference.
 
+### State
+
+The `/state` folder holds the structure of the application global state and data flows.
+
 ### Lib
 
 The `/lib` folder holds internal modules and utilities that power Calypso.
 
 ### Core Sections
 
-These represent the top section in the masterbar and handle the controllers for the entire app. Most React components live within their specific section.
+These represent the top section in the masterbar as well as other significant areas of the app. Within these all the controllers for the entire app are expressed. Most React app-components live within their specific section and not in `client/components`.
 
 * `my-sites`: the site related admin functionality. Akin to wp-admin.
 * `reader`: the home of all Reader sections.
 * `notifications`: the notifications panel.
 * `me`: the sections under the `/me` route.
-
+* `post-editor`: the editor.
+* `signup`: the signup flows.

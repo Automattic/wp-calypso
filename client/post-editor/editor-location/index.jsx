@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	qs = require( 'querystring' );
 
 /**
  * Internal dependencies
  */
-var PostActions = require( 'lib/posts/actions' ),
+const PostActions = require( 'lib/posts/actions' ),
 	EditorDrawerWell = require( 'post-editor/editor-drawer-well' ),
-	SimpleNotice = require( 'notices/simple-notice' ),
+	Notice = require( 'components/notice' ),
 	stats = require( 'lib/posts/stats' ),
 	EditorLocationSearch = require( './search' );
 
 /**
  * Module variables
  */
-var GOOGLE_MAPS_BASE_URL = 'http://maps.google.com/maps/api/staticmap?';
+const GOOGLE_MAPS_BASE_URL = 'https://maps.google.com/maps/api/staticmap?';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorLocation',
 
 	propTypes: {
@@ -42,6 +42,7 @@ module.exports = React.createClass( {
 			locating: false
 		} );
 
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.updateMetadata( {
 			geo_latitude: position.coords.latitude,
 			geo_longitude: position.coords.longitude
@@ -82,6 +83,7 @@ module.exports = React.createClass( {
 	},
 
 	clear: function() {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.deleteMetadata( [ 'geo_latitude', 'geo_longitude' ] );
 	},
 
@@ -93,14 +95,12 @@ module.exports = React.createClass( {
 	},
 
 	renderCurrentLocation: function() {
-		var src;
-
 		if ( ! this.props.coordinates ) {
 			return;
 		}
 
-		src = GOOGLE_MAPS_BASE_URL + qs.stringify( {
-			center: this.props.coordinates.join( ',' ),
+		const src = GOOGLE_MAPS_BASE_URL + qs.stringify( {
+			markers: this.props.coordinates.join( ',' ),
 			zoom: 8,
 			size: '400x300'
 		} );
@@ -113,9 +113,9 @@ module.exports = React.createClass( {
 
 		if ( this.state.error ) {
 			error = (
-				<SimpleNotice status="is-error" onClick={ this.resetError } isCompact>
+				<Notice status="is-error" onDismissClick={ this.resetError } isCompact>
 					{ this.translate( 'We couldn\'t find your current location.', { context: 'Post editor geolocation' } ) }
-				</SimpleNotice>
+				</Notice>
 			);
 		}
 
@@ -131,6 +131,7 @@ module.exports = React.createClass( {
 				<EditorDrawerWell
 					icon="location"
 					label={ buttonText }
+					empty={ ! this.props.coordinates }
 					onClick={ this.geolocate }
 					onRemove={ this.clear }
 					disabled={ this.state.locating }>

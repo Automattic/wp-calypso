@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	throttle = require( 'lodash/function/throttle' ),
-	debounce = require( 'lodash/function/debounce' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
+	throttle = require( 'lodash/throttle' ),
+	debounce = require( 'lodash/debounce' ),
 	debug = require( 'debug' )( 'calypso:menus:option-list' ); // eslint-disable-line no-unused-vars
 
 /**
@@ -11,7 +12,8 @@ var React = require( 'react' ),
  */
 var MenuPanelBackButton = require( '../menu-panel-back-button' ),
 		EmptyPlaceholder = require( './empty-placeholder' ),
-		LoadingPlaceholder = require( './loading-placeholder' );
+		LoadingPlaceholder = require( './loading-placeholder' ),
+		Gridicon = require( 'components/gridicon' );
 /**
  * Constants
  */
@@ -23,6 +25,7 @@ var SCROLL_THROTTLE_TIME_MS = 400,
  */
 var Search = React.createClass( {
 	propTypes: {
+		itemType: React.PropTypes.string,
 		searchTerm: React.PropTypes.string,
 		onSearch: React.PropTypes.func.isRequired
 	},
@@ -30,7 +33,7 @@ var Search = React.createClass( {
 	render: function() {
 		return (
 			<div className="search-container">
-				<div className="noticon noticon-search" />
+				<Gridicon icon="search" size={ 18 } />
 				<input type="search" className="search-box"
 					placeholder={ this.translate( 'Search…', { textOnly: true } ) }
 					value={ this.props.searchTerm }
@@ -70,7 +73,7 @@ var OptionList = React.createClass( {
 	},
 
 	checkScrollPosition: throttle( function() {
-		var node = React.findDOMNode( this );
+		var node = ReactDom.findDOMNode( this );
 
 		if ( node.scrollTop + node.clientHeight >= node.scrollHeight ) {
 			this.props.onScroll();
@@ -95,6 +98,7 @@ var OptionList = React.createClass( {
 					{ this.props.isLoading && <LoadingPlaceholder/> }
 					{ this.props.isEmpty &&
 						<EmptyPlaceholder isSearch={ !! ( this.state.searchTerm && this.state.searchTerm.length ) }
+							notFoundLabel={ this.props.itemType.notFoundLabel }
 							createLink={ this.props.itemType.createLink }
 							typeName={ this.props.itemType.name } />
 					}

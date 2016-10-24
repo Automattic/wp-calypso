@@ -2,17 +2,16 @@
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/utility/noop';
-import assign from 'lodash/object/assign';
-import omit from 'lodash/object/omit';
-import some from 'lodash/collection/some';
-import isEqual from 'lodash/lang/isEqual';
+import noop from 'lodash/noop';
+import assign from 'lodash/assign';
+import omitBy from 'lodash/omitBy';
+import some from 'lodash/some';
+import isEqual from 'lodash/isEqual';
 
 /**
  * Internal dependencies
  */
 import HeaderCake from 'components/header-cake';
-import BackToLibrary from '../back-to-library';
 import MediaStore from 'lib/media/store';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
@@ -116,7 +115,7 @@ export default React.createClass( {
 
 		// Merge object of settings with existing set
 		let updatedSettings = assign( {}, this.props.settings, setting );
-		updatedSettings = omit( updatedSettings, ( updatedValue ) => null === updatedValue );
+		updatedSettings = omitBy( updatedSettings, ( updatedValue ) => null === updatedValue );
 		this.props.onUpdateSettings( updatedSettings );
 	},
 
@@ -132,7 +131,7 @@ export default React.createClass( {
 				<EditorMediaModalGalleryDropZone
 					site={ site }
 					onInvalidItemAdded={ () => this.setState( { invalidItemDropped: true } ) } />
-				<HeaderCake onClick={ this.returnToList } backText={ <BackToLibrary /> } />
+				<HeaderCake onClick={ this.returnToList } backText={ this.translate( 'Media Library' ) } />
 				<div className="editor-media-modal-gallery__content editor-media-modal__content">
 					<EditorMediaModalGalleryPreview
 						site={ site }

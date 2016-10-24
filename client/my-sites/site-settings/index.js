@@ -11,24 +11,27 @@ var config = require( 'config' ),
 	settingsController = require( './controller' );
 
 module.exports = function() {
-	/**
-	 * Site Settings
-	 */
 	page( '/settings', controller.siteSelection, settingsController.redirectToGeneral );
+	page( '/settings/general/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
+	page( '/settings/writing/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
+	page( '/settings/discussion/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
+	page( '/settings/analytics/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
+	page( '/settings/security/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
 
-	if ( config.isEnabled( 'manage/import' ) ) {
-		page( '/settings/import/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
-		page( '/settings/import/:subsection/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
-		page( '/settings/import/:subsection(upload)/:importerID/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
+	page( '/settings/import/:site_id', controller.siteSelection, controller.navigation, settingsController.importSite );
+
+	if ( config.isEnabled( 'manage/export/guided-transfer' ) ) {
+		page( '/settings/export/guided/:host_slug?/:site_id', controller.siteSelection, controller.navigation, settingsController.guidedTransfer );
 	}
+
 	if ( config.isEnabled( 'manage/export' ) ) {
 		page( '/settings/export/:site_id', controller.siteSelection, controller.navigation, settingsController.exportSite );
 	}
+
 	if ( config.isEnabled( 'manage/site-settings/delete-site' ) ) {
 		page( '/settings/delete-site/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.deleteSite );
 		page( '/settings/start-over/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.startOver );
 	}
-	page( '/settings/:section/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
-	page( '/settings/:section/:subsection/:site_id', controller.siteSelection, controller.navigation, settingsController.setScroll, settingsController.siteSettings );
+
 	page( '/settings/:section', settingsController.legacyRedirects, controller.siteSelection, controller.sites );
 };

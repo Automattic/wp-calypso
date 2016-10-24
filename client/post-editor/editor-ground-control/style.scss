@@ -1,48 +1,7 @@
 .editor-ground-control {
-	.site__content {
-		transition: all 0.15s cubic-bezier( 0.770, 0.000, 0.175, 1.000 );
-	}
-}
-
-.editor-ground-control .sticky-panel__content {
-	width: 269px;
-	padding: 16px 0 24px;
-
-	@include breakpoint( "<960px" ) {
-		width: 100%;
-	}
-
-	&::before {
-		// Cause content visible in gap above Ground Control to be obscured by
-		// emulating body background, extending beyond shadow of accordions
-		content: '';
-		position: absolute;
-			top: 0;
-			right: -1px;
-			left: -1px;
-		height: 16px;
-		background-color: $gray-light;
-	}
-}
-
-.editor-ground-control.is-sticky .sticky-panel__content {
-	padding-bottom: 0;
-	z-index: 180;
-}
-
-.editor-ground-control .sticky-panel__shadow {
-	margin-top: -24px;
-}
-
-.editor-ground-control .card {
 	padding: 16px;
 	margin-bottom: 0;
 	transition: 0.3s box-shadow;
-}
-
-.editor-ground-control.is-sticky .card {
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 2px 4px lighten( $gray, 20% );
 }
 
 .editor-ground-control .site {
@@ -119,32 +78,61 @@
 	padding: 16px;
 }
 
-// Collapse site component
-.editor-ground-control.is-sticky {
-	.site__content {
-		padding: 0;
-	}
-	.site-icon {
-		border: none;
-	}
-	.site__info {
-		display: flex;
-	}
-	.site__title {
-		align-items: center;
+.editor-ground-control__view-site-tooltip {
+	font-size: 12px;
+}
+
+.editor-ground-control__email-verification-notice {
+	font-size: 12px;
+	padding: 16px 16px 16px 48px;
+	background: white;
+	margin: 16px -16px -16px;
+	position: relative;
+	color: $blue-wordpress;
+	border-top: 1px solid lighten( $gray, 20% );
+	cursor: pointer;
+	fill: $blue-wordpress;
+
+	&::before {
+		content: '';
 		display: block;
-		font-size: 13px;
-		padding-top: 7px;
-		padding-right: 7px;
+		width: 10px;
+		height: 10px;
+		background: white;
+		position: absolute;
+		top: -6px;
+		left: 50%;
+		transform: translate(-50%) rotate(45deg);
+		border-top: 1px solid lighten( $gray, 20% );
+		border-left: 1px solid lighten( $gray, 20% );
 	}
-	.site__domain {
-		display: none;
+
+	&:focus:not(:active)::before {
+		box-shadow: -1px -1px 0 1px $blue-light;
+		border-top-color: $gray;
+		border-left-color: $gray;
 	}
-	.site.is-private .site__title::before {
-		margin-bottom: 0;
+
+	&:focus:not(:active) {
+		box-shadow: 0 0 0 2px $blue-light;
+		z-index: 1;
+		border-top-color: $gray;
+		border-bottom: 1px solid $gray;
+		margin-bottom: -17px;
+	}
+
+	&:hover {
+		color: $blue-medium;
+		fill: $blue-medium;
 	}
 }
 
-.editor-ground-control__view-site-tooltip {
-	font-size: 12px;
+.editor-ground-control__email-verification-notice-icon {
+	position: absolute;
+	left: 16px;
+	top: 16px;
+}
+
+.editor-ground-control__email-verification-notice-more {
+	text-decoration: underline;
 }

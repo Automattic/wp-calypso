@@ -3,20 +3,19 @@
  */
 var debug = require( 'debug' )( 'calypso:signup:flow-controller' ), // eslint-disable-line no-unused-vars
 	store = require( 'store' ),
-	assign = require( 'lodash/object/assign' ),
-	defer = require( 'lodash/function/defer' ),
-	keys = require( 'lodash/object/keys' ),
-	difference = require( 'lodash/array/difference' ),
-	every = require( 'lodash/collection/every' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	compact = require( 'lodash/array/compact' ),
-	flatten = require( 'lodash/array/flatten' ),
-	map = require( 'lodash/collection/map' ),
-	reject = require( 'lodash/collection/reject' ),
-	where = require( 'lodash/collection/where' ),
-	find = require( 'lodash/collection/find' ),
-	pick = require( 'lodash/object/pick' ),
-	keys = require( 'lodash/object/keys' );
+	assign = require( 'lodash/assign' ),
+	defer = require( 'lodash/defer' ),
+	difference = require( 'lodash/difference' ),
+	every = require( 'lodash/every' ),
+	isEmpty = require( 'lodash/isEmpty' ),
+	compact = require( 'lodash/compact' ),
+	flatten = require( 'lodash/flatten' ),
+	map = require( 'lodash/map' ),
+	reject = require( 'lodash/reject' ),
+	filter = require( 'lodash/filter' ),
+	find = require( 'lodash/find' ),
+	pick = require( 'lodash/pick' ),
+	keys = require( 'lodash/keys' );
 
 /**
  * Internal dependencies
@@ -47,6 +46,8 @@ function SignupFlowController( options ) {
 	this._boundProcess = this._process.bind( this );
 
 	this._assertFlowHasValidDependencies();
+
+	this._reduxStore = options.reduxStore;
 
 	SignupProgressStore.on( 'change', this._boundProcess );
 
@@ -89,7 +90,7 @@ assign( SignupFlowController.prototype, {
 				'are not provided in the ' + this._flowName + ' flow.' );
 			}
 			return true;
-		}, this );
+		}.bind( this ) );
 	},
 
 	_assertFlowProvidedRequiredDependencies: function() {
@@ -105,7 +106,7 @@ assign( SignupFlowController.prototype, {
 				' step but were not provided by it [ current flow: ' + this._flowName + ' ].' );
 			}
 			return true;
-		}, this );
+		}.bind( this ) );
 	},
 
 	_canMakeAuthenticatedRequests: function() {
@@ -120,8 +121,8 @@ assign( SignupFlowController.prototype, {
 
 	_process: function() {
 		var signupProgress = SignupProgressStore.get(),
-			pendingSteps = where( signupProgress, { status: 'pending' } ),
-			completedSteps = where( signupProgress, { status: 'completed' } ),
+			pendingSteps = filter( signupProgress, { status: 'pending' } ),
+			completedSteps = filter( signupProgress, { status: 'completed' } ),
 			bearerToken = SignupDependencyStore.get().bearer_token,
 			dependencies = SignupDependencyStore.get();
 
@@ -168,10 +169,12 @@ assign( SignupFlowController.prototype, {
 
 			SignupActions.processSignupStep( step );
 
-			steps[ step.stepName ].apiRequestFunction( function( errors, providedDependencies ) {
+			const apiFunction = steps[ step.stepName ].apiRequestFunction.bind( this );
+
+			apiFunction( ( errors, providedDependencies ) => {
 				this._processingSteps[ step.stepName ] = false;
 				SignupActions.processedSignupStep( step, errors, providedDependencies );
-			}.bind( this ), dependenciesFound, step );
+			}, dependenciesFound, step );
 		}
 	},
 

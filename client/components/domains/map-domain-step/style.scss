@@ -19,9 +19,14 @@
 	}
 
 	.domain-product-price {
-		@include breakpoint( ">660px" ) {
+		float: left;
+		margin-bottom: 20px;
+		min-width: 0;
+
+		@include breakpoint( ">960px" ) {
 			float: right;
 			margin-top: -5px;
+			margin-bottom: 0;
 		}
 	}
 
@@ -31,7 +36,8 @@
 }
 
 .map-domain-step__domain-description {
-	@include breakpoint( ">660px" ) {
+	@include breakpoint( ">960px" ) {
+		max-width: 75%;
 		float: left;
 		margin-bottom: 20px;
 	}

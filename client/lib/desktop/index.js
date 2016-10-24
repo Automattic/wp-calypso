@@ -15,7 +15,7 @@ var siteStatsStickyTabStore = require( 'lib/site-stats-sticky-tab/store' ),
 	store = require( 'store' ),
 	oAuthToken = require( 'lib/oauth-token' ),
 	userUtilities = require( 'lib/user/utils' ),
-	location = require( './page-notifier' );
+	location = require( 'lib/route/page-notifier' );
 
 /**
  * Module variables
@@ -37,6 +37,7 @@ var Desktop = {
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
 		ipc.on( 'cookie-auth-complete', this.onCookieAuthComplete.bind( this ) );
+		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 
 		window.addEventListener( 'message', this.receiveMessage.bind( this ) );
 
@@ -86,20 +87,26 @@ var Desktop = {
 		ipc.send( 'unread-notices-count', count );
 	},
 
-	clearNotificationBar: function() {
-		// todo find a better way. seems to be react component state based
-		var bar = document.querySelector( '#wpnt-notes-panel2' );
+	getNotificationLinkElement: function() {
+		return document.querySelector( '.masterbar__item-notifications' );
+	},
 
-		if ( bar.style.display === 'block' ) {
-			this.onToggleNotifications();
+	clearNotificationBar: function() {
+		// TODO: find a better way. seems to be react component state based
+		const notificationsLink = this.getNotificationLinkElement();
+		if ( notificationsLink && notificationsLink.className && notificationsLink.className.indexOf( 'is-active' ) !== -1 ) {
+			notificationsLink.click();
 		}
 	},
 
 	onToggleNotifications: function() {
-		// todo find a better way of doing this - masterbar seems to use state to toggle this
+		// TODO: find a better way of doing this - masterbar seems to use state to toggle this
 		debug( 'Toggle notifications' );
 
-		document.querySelector( '.notifications a' ).click();
+		const notificationsLink = this.getNotificationLinkElement();
+		if ( notificationsLink ) {
+			notificationsLink.click();
+		}
 	},
 
 	onSignout: function() {
@@ -141,6 +148,17 @@ var Desktop = {
 	onCookieAuthComplete: function() {
 		var iframe = document.querySelector( '#wpnt-notes-iframe2' );
 		iframe.src = iframe.src;
+	},
+
+	onShowHelp: function() {
+		debug( 'Showing help' );
+
+		this.clearNotificationBar();
+		page( '/help' );
+	},
+
+	print: function( title, html ) {
+		ipc.send( 'print', title, html );
 	}
 };
 

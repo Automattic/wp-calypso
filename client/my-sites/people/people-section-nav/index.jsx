@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	config = require( 'config' ),
-	findWhere = require( 'lodash/collection/findWhere' ),
-	includes = require( 'lodash/collection/includes' );
+	find = require( 'lodash/find' ),
+	includes = require( 'lodash/includes' );
 
 /**
  * Internal dependencies
@@ -23,6 +23,7 @@ let PeopleSearch = React.createClass( {
 		return (
 			<Search
 				pinned
+				fitsContainer
 				onSearch={ this.doSearch }
 				initialValue={ this.props.search }
 				ref="url-search"
@@ -140,7 +141,7 @@ module.exports = React.createClass( {
 			search = <PeopleSearch { ...this.props } />;
 		}
 
-		selectedText = findWhere( this.getFilters(), { id: this.props.filter } ).title;
+		selectedText = find( this.getFilters(), { id: this.props.filter } ).title;
 		return (
 			<SectionNav selectedText={ selectedText } hasPinnedItems={ hasPinnedItems }>
 				<PeopleNavTabs { ...this.props } selectedText={ selectedText } filters={ this.getNavigableFilters() } />

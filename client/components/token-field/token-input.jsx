@@ -1,33 +1,37 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 var TokenInput = React.createClass( {
 	propTypes: {
 		onChange: React.PropTypes.func,
 		onBlur: React.PropTypes.func,
-		value: React.PropTypes.string
+		value: React.PropTypes.string,
+		disabled: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
 			onChange: function() {},
 			onBlur: function() {},
-			value: ''
+			value: '',
+			disabled: false
 		};
 	},
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render: function() {
+		const props = { ...this.props, onChange: this._onChange };
+
 		return (
 			<input
+				ref="input"
 				type="text"
-				value={ this.props.value }
-			 	size={ this.props.value.length + 1 }
-				onBlur={ this.props.onBlur }
-				onChange={ this._onChange }
+				{ ...props }
+				size={ this.props.value.length + 1 }
 				className="token-field__input"
 			/>
 		);
@@ -35,12 +39,12 @@ var TokenInput = React.createClass( {
 
 	focus: function() {
 		if ( this.isMounted() ) {
-			this.getDOMNode().focus();
+			this.refs.input.focus();
 		}
 	},
 
 	hasFocus: function() {
-		return this.isMounted() && this.getDOMNode() === document.activeElement;
+		return this.isMounted() && this.refs.input === document.activeElement;
 	},
 
 	_onChange: function( event ) {

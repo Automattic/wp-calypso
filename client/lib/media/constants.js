@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import keyMirror from 'react/lib/keyMirror';
+import keyMirror from 'key-mirror';
 
 /**
  * An enum set of possible media validation errors.
@@ -11,9 +11,12 @@ import keyMirror from 'react/lib/keyMirror';
  */
 export const ValidationErrors = keyMirror( {
 	FILE_TYPE_UNSUPPORTED: null,
+	FILE_TYPE_NOT_IN_PLAN: null,
 	SERVER_ERROR: null,
 	UPLOAD_VIA_URL_404: null,
-	EXCEEDS_MAX_UPLOAD_SIZE: null
+	EXCEEDS_MAX_UPLOAD_SIZE: null,
+	EXCEEDS_PLAN_STORAGE_LIMIT: null,
+	NOT_ENOUGH_SPACE: null
 } );
 
 export const ThumbnailSizeDimensions = {
@@ -30,6 +33,18 @@ export const ThumbnailSizeDimensions = {
 		height: 1024
 	}
 };
+
+export const VideoPressFileTypes = [
+	'ogv',
+	'mp4',
+	'm4v',
+	'mov',
+	'wmv',
+	'avi',
+	'mpg',
+	'3gp',
+	'3g2'
+];
 
 export const GalleryColumnedTypes = [ 'default', 'circle', 'square' ];
 export const GallerySizeableTypes = [ 'default' ];

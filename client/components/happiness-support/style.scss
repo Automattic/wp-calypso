@@ -1,0 +1,80 @@
+.happiness-support.is-placeholder {
+	.happiness-support__heading,
+	.happiness-support__text {
+		@include placeholder( 23% );
+	}
+
+	.happiness-support__heading {
+		width: 78%;
+	}
+
+	.happiness-support__text {
+		width: 82%;
+	}
+
+	.happiness-support__gravatar {
+		display: none;
+	}
+
+	.happiness-support__buttons {
+		.button {
+			@include placeholder( 23% );
+		}
+	}
+}
+
+.happiness-support__heading {
+	color: darken( $gray, 20% );
+	clear: none;
+	font-size: 21px;
+}
+
+.happiness-support__text {
+	color: darken( $gray, 10% );
+	margin-bottom: 16px;
+	margin-top: 16px;
+}
+
+.happiness-support__gravatar {
+	float: right;
+	margin-left: 30px;
+	text-align: center;
+
+	.gravatar {
+		display: block;
+
+		@include breakpoint( "<660px" ) {
+			height: 68px;
+			width: 68px;
+		}
+	}
+}
+
+.happiness-support__gravatar-name {
+	color: $gray;
+	font-size: 14px;
+}
+
+.happiness-support__buttons {
+	clear: both;
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 6px;
+		text-align: center;
+	}
+
+	.button {
+		@include breakpoint( "<660px" ) {
+			margin-top: 10px;
+			width: 80%;
+		}
+
+		@include breakpoint( ">660px" ) {
+			margin-top: 10px;
+
+			&:first-of-type {
+				margin-right: 16px;
+			}
+		}
+	}
+}

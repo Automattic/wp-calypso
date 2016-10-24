@@ -11,11 +11,11 @@
 }
 
 .importer__section-title {
-	margin-bottom: 1em;
-
-	font-size: 24px;
-	font-weight: 200;
+	font-size: 21px;
+	font-weight: 300;
+	line-height: 24px;
 	color: $gray-dark;
+	margin-bottom: 16px;
 }
 
 .importer__section-description {
@@ -24,43 +24,41 @@
 }
 
 .importer__service-icon {
-	$noticon-size: 40px;
-	width: 50px;
-	height: 45px;
-	padding-bottom: 5px;
-
-	position: absolute;
-		left: 20px;
-		top: 20px;
+	box-sizing: border-box;
+	float: left;
+	width: 40px;
+	height: 40px;
+	padding: 2px;
+	margin-right: 16px;
 
 	background-color: $gray-dark;
-	stroke: $white;
-	stroke-width: 0.1;
 	fill: $white;
-	border-radius: 5px;
+	border-radius: 4px;
 
-	&.is-ghost {
-		stroke: $gray;
-		fill: $gray;
+	&.wordpress {
+		background-color: $blue-wordpress;
 	}
 
-	&.is-wordpress {
-		background-color: $blue-wordpress;
+	&.medium {
+		background-color: #00AB6C;
+	}
+
+	@include breakpoint(">960px") {
+		width: 56px;
+		height: 56px;
+		padding: 4px;
 	}
 }
 
 .importer__service-info {
-	padding-top: 70px;
-
 	@include breakpoint(">480px") {
-		padding-top: inherit;
 		margin-left: 60px;
 	}
 }
 
 .importer__service-title {
 	font-size: 21px;
-	font-weight: 200;
+	font-weight: 300;
 	color: $gray;
 
 	@include breakpoint(">480px") {
@@ -99,12 +97,6 @@
 	transform: translateY( -50% );
 }
 
-.importer__upload-icon {
-	&:before {
-		@include noticon( '\f441', 32px );
-	}
-}
-
 .importer__upload-progress,
 .importer__import-progress {
 	width: 80%;
@@ -116,6 +108,12 @@
 	&.is-complete .progress-bar__progress {
 		background-color: $alert-green;
 	}
+}
+
+.importer__import-spinner {
+	position: absolute;
+		left: 50%;
+	transform: translateX( -50% );
 }
 
 .importer__start {
@@ -144,6 +142,14 @@
 	color: $gray;
 
 	@include clear-fix;
+}
+
+.importer__mapping-description {
+	margin-bottom: 16px;
+
+	& strong {
+		white-space: nowrap;
+	}
 }
 
 .importer__mapping-source-title {
@@ -186,10 +192,5 @@
 
 .importer__mapping-relation {
 	float: left;
-
-	&:before {
-		color: lighten( $gray, 10% );
-
-		@include noticon( '\f429', 32px );
-	}
+	color: lighten( $gray, 10% );
 }

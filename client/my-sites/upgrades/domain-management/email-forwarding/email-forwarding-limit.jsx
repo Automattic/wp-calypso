@@ -3,6 +3,11 @@
  */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
+import { emailForwardingPlanLimit } from 'lib/domains/email-forwarding';
+
 const EmailForwardingLimit = React.createClass( {
 	render() {
 		const used = this.props.emailForwarding.list.length;
@@ -16,7 +21,7 @@ const EmailForwardingLimit = React.createClass( {
 				'You are using %(used)s out of %(available)s email forwards.', {
 					args: {
 						used,
-						available: 5
+						available: emailForwardingPlanLimit( this.props.selectedSite.plan )
 					}
 				} ) }</div>
 		);

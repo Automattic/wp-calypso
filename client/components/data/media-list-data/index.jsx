@@ -2,8 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	assign = require( 'lodash/object/assign' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	assign = require( 'lodash/assign' ),
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies

@@ -1,39 +1,21 @@
-/**
- * Icon composite for All My Sites
- */
-
 .all-sites-icon {
-	margin-right: 12px;
-	position: relative;
-		left: 0;
-		top: 0;
-	height: 32px;
-	width: 32px;
+	display: flex;
+	margin: 3px 8px 5px 0;
 
-	.site-icon.is-blank::before {
-		display: none;
+	.site-icon:nth-child( 6 ) {
+		opacity: 0.9;
 	}
-
-	&.is-shape-3::before,
-	&.is-shape-2::before,
-	&.is-shape-2::after,
-	&.is-shape-1::before,
-	&.is-shape-1::after {
-		background: $gray-dark;
-		content: '';
-		display: block;
-		height: 9px;
-		width: 9px;
-		position: absolute;
-			left: 17px;
-			top: 17px;
+	.site-icon:nth-child( 7 ) {
+		opacity: 0.7;
 	}
-
-	&.is-shape-2::after,
-	&.is-shape-1::after {
-		position: absolute;
-			left: 6px;
-			top: 6px;
+	.site-icon:nth-child( 8 ) {
+		opacity: 0.5;
+	}
+	.site-icon:nth-child( 9 ) {
+		opacity: 0.3;
+	}
+	.site-icon:nth-child( 10 ) {
+		opacity: 0.1;
 	}
 }
 
@@ -41,65 +23,6 @@
 	align-self: auto;
 	background: $gray;
 	border: none;
-	margin-right: 0;
-	height: 15px;
-	width: 15px;
-	position: absolute;
-}
-
-// Shape with one icon
-.all-sites-icon.is-shape-1 {
-	.site-icon {
-		overflow: visible;
-
-		&::after {
-			background: $gray;
-			content: '';
-			display: block;
-			position: absolute;
-				left: -17px;
-				top: 17px;
-			height: 15px;
-			width: 15px;
-		}
-	}
-}
-
-// Shape with two icons
-.all-sites-icon.is-shape-1 .site-icon,
-.all-sites-icon.is-shape-2 .site-icon {
-	left: auto;
-	right: 0;
-	top: 0;
-
-	& + .site-icon {
-		left: 0;
-		right: auto;
-		bottom: 0;
-		top: auto;
-	}
-}
-
-// Shape with three or more icons
-.all-sites-icon.is-shape-3 .site-icon {
-	// Top left
-	left: 0;
-	right: auto;
-	top: 0;
-
-	& + .site-icon {
-		// Bottom left
-		bottom: 0;
-		left: 0;
-		right: auto;
-		top: auto;
-	}
-
-	& + .site-icon + .site-icon {
-		// Top right
-		bottom: auto;
-		left: auto;
-		right: 0;
-		top: 0;
-	}
+	margin-right: 1px;
+	display: inline-block;
 }

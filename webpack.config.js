@@ -10,19 +10,24 @@ var webpack = require( 'webpack' ),
  * Internal dependencies
  */
 var config = require( './server/config' ),
-	ChunkFileNamePlugin = require( './server/bundler/plugin' );
+	sections = require( './client/sections' ),
+	ChunkFileNamePlugin = require( './server/bundler/plugin' ),
+	HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 
 /**
  * Internal variables
  */
 var CALYPSO_ENV = process.env.CALYPSO_ENV || 'development',
-	PORT = process.env.PORT || 3000,
 	jsLoader,
 	webpackConfig;
 
+const sectionCount = sections.length;
+
 webpackConfig = {
+	bail: CALYPSO_ENV !== 'development',
 	cache: true,
 	entry: {},
+	devtool: '#eval',
 	output: {
 		path: path.join( __dirname, 'public' ),
 		publicPath: '/calypso/',
@@ -30,7 +35,6 @@ webpackConfig = {
 		chunkFilename: '[name].[chunkhash].js',
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]'
 	},
-	devtool: '#eval',
 	module: {
 		loaders: [
 			{
@@ -58,7 +62,14 @@ webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '', '.json', '.js', '.jsx' ],
-		modulesDirectories: [ 'node_modules', path.join( __dirname, 'client' ), path.join( __dirname, 'shared' ) ]
+		root: [ path.join( __dirname, 'client' ) ],
+		modulesDirectories: [ 'node_modules' ],
+		alias: {
+			'react-virtualized': 'react-virtualized/dist/commonjs'
+		}
+	},
+	resolveLoader: {
+		root: [ __dirname ]
 	},
 	node: {
 		console: false,
@@ -76,8 +87,7 @@ webpackConfig = {
 			}
 		} ),
 		new webpack.optimize.OccurenceOrderPlugin( true ),
-		new webpack.IgnorePlugin( /^props$/ ),
-		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ )
+		new webpack.IgnorePlugin( /^props$/ )
 	],
 	externals: [ 'electron' ]
 };
@@ -85,30 +95,65 @@ webpackConfig = {
 if ( CALYPSO_ENV === 'desktop' || CALYPSO_ENV === 'desktop-mac-app-store' ) {
 	webpackConfig.output.filename = '[name].js';
 } else {
-	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom-unpublished', 'jed', 'debug' ];
+	webpackConfig.entry.vendor = [ 'react', 'store', 'page', 'wpcom', 'jed', 'debug' ];
 	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( 'vendor', '[name].[hash].js' ) );
+	webpackConfig.plugins.push( new webpack.optimize.CommonsChunkPlugin( {
+		children: true,
+		minChunks: Math.floor( sectionCount * 0.25 ),
+		async: true,
+		filename: 'commons.[hash].js'
+	} ) );
 	webpackConfig.plugins.push( new ChunkFileNamePlugin() );
+	// jquery is only needed in the build for the desktop app
+	// see electron bug: https://github.com/atom/electron/issues/254
+	webpackConfig.externals.push( 'jquery' );
 }
 
 jsLoader = {
 	test: /\.jsx?$/,
 	exclude: /node_modules/,
-	loaders: [ 'babel-loader?cacheDirectory&optional[]=runtime' ]
+	loaders: [ 'babel-loader?cacheDirectory' ]
 };
 
 if ( CALYPSO_ENV === 'development' ) {
+	const DashboardPlugin = require( 'webpack-dashboard/plugin' );
+	webpackConfig.plugins.splice( 0, 0, new DashboardPlugin() );
 	webpackConfig.plugins.push( new webpack.HotModuleReplacementPlugin() );
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = [
-		'webpack-dev-server/client?http://calypso.localhost:' + PORT,
+		'webpack-dev-server/client?/',
 		'webpack/hot/only-dev-server',
 		path.join( __dirname, 'client', 'boot' )
 	];
 
-	// Add react hot loader before babel-loader
-	jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
+	if ( config.isEnabled( 'use-source-maps' ) ) {
+		webpackConfig.debug = true;
+		webpackConfig.devtool = '#eval-cheap-module-source-map';
+		webpackConfig.module.preLoaders = webpackConfig.module.preLoaders || [];
+		webpackConfig.module.preLoaders.push( {
+			test: /\.jsx?$/,
+			loader: 'source-map-loader'
+		} );
+	} else {
+		// Add react hot loader before babel-loader.
+		// It's loaded by default since `use-source-maps` is disabled by default.
+		jsLoader.loaders = [ 'react-hot' ].concat( jsLoader.loaders );
+	}
 } else {
 	webpackConfig.entry[ 'build-' + CALYPSO_ENV ] = path.join( __dirname, 'client', 'boot' );
+	webpackConfig.debug = false;
 	webpackConfig.devtool = false;
+}
+
+if ( CALYPSO_ENV === 'production' ) {
+	webpackConfig.plugins.push( new webpack.NormalModuleReplacementPlugin(
+		/^debug$/,
+		path.join( __dirname, 'client', 'lib', 'debug-noop' )
+	) );
+}
+
+if ( config.isEnabled( 'webpack/persistent-caching' ) ) {
+	webpackConfig.recordsPath = path.join( __dirname, '.webpack-cache', 'client-records.json' ),
+	webpackConfig.plugins.unshift( new HardSourceWebpackPlugin( { cacheDirectory: path.join( __dirname, '.webpack-cache', 'client' ) } ) );
 }
 
 webpackConfig.module.loaders = [ jsLoader ].concat( webpackConfig.module.loaders );

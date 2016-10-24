@@ -1,8 +1,10 @@
+/** @ssr-ready **/
+
 /**
  * External Dependencies
  */
 var React = require( 'react' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
+	isEqual = require( 'lodash/isEqual' ),
 	classNames = require( 'classnames' );
 
 /**

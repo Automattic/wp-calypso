@@ -1,0 +1,32 @@
+
+// Module container
+
+@include breakpoint( ">960px" ) {
+	.stats__module-column {
+		float: left;
+		width: 48.8%;
+		width: calc(50% - 0.5em);
+
+		&:last-child {
+			float: right;
+		}
+	}
+}
+
+.old-stats-link .button .gridicon {
+	margin-bottom: -2px;
+	margin-left: 4px;
+}
+
+// Welcome Stats message
+// -- extends .welcome-message /assets/stylesheets/shared/welcome.scss
+
+.stats-message {
+
+	// Container for 'Visit the old stats layout' link
+	@include breakpoint( "<480px" ) {
+		&.switch-stats {
+			text-align: center;
+		}
+	}
+}

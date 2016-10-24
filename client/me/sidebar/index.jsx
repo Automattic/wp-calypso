@@ -1,46 +1,73 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:me:sidebar' );
+import React from 'react';
+import debugFactory from 'debug';
+import { connect } from 'react-redux';
+
+const debug = debugFactory( 'calypso:me:sidebar' );
 
 /**
  * Internal dependencies
  */
-var MenuItem = require( './sidebar-item' ),
+const Sidebar = require( 'layout/sidebar' ),
+	SidebarHeading = require( 'layout/sidebar/heading' ),
+	SidebarItem = require( 'layout/sidebar/item' ),
+	SidebarMenu = require( 'layout/sidebar/menu' ),
 	config = require( 'config' ),
 	ProfileGravatar = require( 'me/profile-gravatar' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	FormButton = require( 'components/forms/form-button' ),
 	userUtilities = require( 'lib/user/utils' );
 
-module.exports = React.createClass( {
+import Button from 'components/button';
+import purchasesPaths from 'me/purchases/paths';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { getCurrentUser } from 'state/current-user/selectors';
 
-	displayName: 'MeSidebar',
+const MeSidebar = React.createClass( {
 
-	mixins: [ eventRecorder, observe( 'user' ) ],
+	mixins: [ eventRecorder ],
 
 	componentDidMount: function() {
 		debug( 'The MeSidebar React component is mounted.' );
 	},
 
+	onNavigate: function() {
+		this.props.setNextLayoutFocus( 'content' );
+		window.scrollTo( 0, 0 );
+	},
+
+	onSignOut: function() {
+		const currentUser = this.props.currentUser;
+
+		// If user is using en locale, redirect to app promo page on sign out
+		const isEnLocale = ( currentUser && currentUser.localeSlug === 'en' );
+		let redirect = null;
+		if ( isEnLocale && ! config.isEnabled( 'desktop' ) ) {
+			redirect = '/?apppromo';
+		}
+		userUtilities.logout( redirect );
+		this.recordClickEvent( 'Sidebar Sign Out Link' );
+	},
+
 	render: function() {
-		var context = this.props.context,
-			filterMap = {
-				'/me': 'profile',
-				'/me/security/two-step': 'security',
-				'/me/security/connected-applications': 'security',
-				'/me/security/checkup': 'security',
-				'/me/notifications/comments': 'notifications',
-				'/me/notifications/updates': 'notifications',
-				'/me/notifications/subscriptions': 'notifications',
-				'/help/contact': 'help',
-				'/purchases': 'billing',
-				'/me/billing': 'billing'
-			},
-			filteredPath = context.path.replace( /\/\d+$/, '' ), // Remove ID from end of path
-			selected;
+		const context = this.props.context;
+		const filterMap = {
+			'/me': 'profile',
+			'/me/security/two-step': 'security',
+			'/me/security/connected-applications': 'security',
+			'/me/security/checkup': 'security',
+			'/me/notifications/comments': 'notifications',
+			'/me/notifications/updates': 'notifications',
+			'/me/notifications/subscriptions': 'notifications',
+			'/help/contact': 'help',
+			[ purchasesPaths.purchasesRoot() ]: 'purchases',
+			[ purchasesPaths.billingHistory() ]: 'purchases',
+			[ purchasesPaths.addCreditCard() ]: 'purchases',
+			'/me/chat': 'happychat'
+		};
+		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
+		let selected;
 
 		/*
 		 * Determine currently-active path to use for 'selected' menu highlight
@@ -55,97 +82,120 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="me-sidebar__menu">
-				<ul className="wpcom-sidebar sidebar">
-
-					<ProfileGravatar user={ this.props.user.get() } />
-
-					<FormButton
-						className="me-sidebar__menu__signout"
-						isPrimary={false}
-						onClick={ this.recordClickEvent( 'Sidebar Sign Out Link', userUtilities.logout ) }
+			<Sidebar>
+				<ProfileGravatar user={ this.props.currentUser } />
+				<div className="me-sidebar__signout">
+					<Button
+						compact
+						className="me-sidebar__signout-button"
+						onClick={ this.onSignOut }
 						title={ this.translate( 'Sign out of WordPress.com', { textOnly: true } ) }
 					>
 						{ this.translate( 'Sign Out' ) }
-					</FormButton>
+					</Button>
+				</div>
+				<SidebarMenu>
+					<SidebarHeading>{ this.translate( 'Profile' ) }</SidebarHeading>
+					<ul>
+						<SidebarItem
+							selected={ selected === 'profile' }
+							link={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
+							label={ this.translate( 'My Profile' ) }
+							icon="user"
+							onNavigate={ this.onNavigate }
+						/>
 
-					<li className="sidebar-menu me-profile">
-						<h2 className="sidebar-heading">{ this.translate( 'Profile' ) }</h2>
-						<ul>
-							<MenuItem
-								selected={ selected === 'profile' }
-								href={ config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile' }
-								label={ this.translate( 'My Profile' ) }
-								icon="user"
-							/>
+						<SidebarItem
+							selected={ selected === 'account' }
+							link={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
+							label={ this.translate( 'Account Settings' ) }
+							icon="cog"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="account"
+						/>
 
-							<MenuItem
-								selected={ selected === 'account' }
-								href={ config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account' }
-								label={ this.translate( 'Account Settings' ) }
-								icon="cog"
-							/>
+						<SidebarItem
+							selected={ selected === 'purchases' }
+							link={ purchasesPaths.purchasesRoot() }
+							label={ this.translate( 'Manage Purchases' ) }
+							icon="credit-card"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="purchases"
+						/>
 
-							{ config.isEnabled( 'upgrades/purchases/list' )
-								? <MenuItem
-									selected={ selected === 'billing' }
-									href="/purchases"
-									label={ this.translate( 'Manage Purchases' ) }
-									icon="credit-card"
-								/>
-								: <MenuItem
-									selected={ selected === 'billing' }
-									href={ config.isEnabled( 'me/billing-history' ) ? '/me/billing' : '//wordpress.com/me/billing' }
-									label={ this.translate( 'Billing History' ) }
-									icon="credit-card"
-								/>
-							}
+						<SidebarItem
+							selected={ selected === 'security' }
+							link={ config.isEnabled( 'me/security' ) ? '/me/security' : '//wordpress.com/me/security' }
+							label={ this.translate( 'Security' ) }
+							icon="lock"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="security"
+						/>
 
-							<MenuItem
-								selected={ selected === 'security' }
-								href={ config.isEnabled( 'me/security' ) ? '/me/security' : '//wordpress.com/me/security' }
-								label={ this.translate( 'Security' ) }
-								icon="lock"
-							/>
+						<SidebarItem
+							selected={ selected === 'notifications' }
+							link={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
+							label={ this.translate( 'Notifications' ) }
+							icon="bell"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="notification-settings"
+						/>
 
-							<MenuItem
-								selected={ selected === 'notifications' }
-								href={ config.isEnabled( 'me/notifications' ) ? '/me/notifications' : '//wordpress.com/me/notifications' }
-								label={ this.translate( 'Notifications' ) }
-								icon="bell"
-							/>
-
-						</ul>
-					</li>
-					<li className="sidebar-menu me-extras">
-						<h2 className="sidebar-heading">{ this.translate( 'Special' ) }</h2>
-						<ul>
-							{ this.renderNextStepsItem( selected ) }
-							<MenuItem
-								selected={ selected === 'help' }
-								href={ config.isEnabled( 'help' ) ? '/help' : '//support.wordpress.com' }
-								label={ this.translate( 'Help' ) }
-								external={ config.isEnabled( 'help' ) ? 'false' : 'true' }
-								icon="help-outline"
-							/>
-						</ul>
-					</li>
-				</ul>
-			</div>
+					</ul>
+				</SidebarMenu>
+				<SidebarMenu>
+					<SidebarHeading>{ this.translate( 'Special' ) }</SidebarHeading>
+					<ul>
+						<SidebarItem
+							selected={ selected === 'get-apps' }
+							link={ '/me/get-apps' }
+							label={ this.translate( 'Get Apps' ) }
+							icon="my-sites"
+							onNavigate={ this.onNavigate }
+						/>
+						{ this.renderNextStepsItem( selected ) }
+						<SidebarItem
+							selected={ selected === 'help' }
+							link={ config.isEnabled( 'help' ) ? '/help' : '//support.wordpress.com' }
+							label={ this.translate( 'Help' ) }
+							external={ config.isEnabled( 'help' ) ? 'false' : 'true' }
+							icon="help-outline"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="help"
+						/>
+						{ config.isEnabled( 'happychat' ) && <SidebarItem
+								selected= { selected === 'happychat' }
+								link="/me/chat"
+								icon="comment"
+								label= { this.translate( 'Support Chat' ) }
+								preloadSectionName="happychat"
+								onNavigate={ this.onNavigate } /> }
+					</ul>
+				</SidebarMenu>
+			</Sidebar>
 		);
 	},
 
 	renderNextStepsItem: function( selected ) {
-		var currentUser = this.props.user.get();
+		const currentUser = this.props.currentUser;
 		if ( config.isEnabled( 'me/next-steps' ) && currentUser && currentUser.site_count > 0 ) {
 			return (
-				<MenuItem
+				<SidebarItem
 					selected={ selected === 'next' }
-					href="/me/next"
+					link="/me/next"
 					label={ this.translate( 'Next Steps' ) }
 					icon="list-checkmark"
+					onNavigate={ this.onNavigate }
 				/>
 			);
 		}
 	}
 } );
+
+function mapStateToProps( state ) {
+	return {
+		currentUser: getCurrentUser( state ),
+	};
+}
+
+export default connect( mapStateToProps, { setNextLayoutFocus } )( MeSidebar );

@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	where = require( 'lodash/collection/where' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
+	filter = require( 'lodash/filter' ),
+	isEqual = require( 'lodash/isEqual' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -74,16 +75,19 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 	},
 
 	detectWidgetPreviewChanges: function( event ) {
-		var data, preview, offset;
+		var preview, offset;
 
 		// Ensure this only triggers in the context of an official preview
 		if ( ! this.refs.iframe ) {
 			return;
 		}
-		preview = this.refs.iframe.getDOMNode();
+		preview = ReactDom.findDOMNode( this.refs.iframe );
 
 		// Parse the JSON message data
-		data = JSON.parse( event.data );
+		let data;
+		try {
+			data = JSON.parse( event.data );
+		} catch ( error ) {}
 
 		if ( data && event.source === preview.contentWindow ) {
 			if ( 'more-show' === data.action ) {
@@ -127,11 +131,11 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 		if ( 'official' === this.props.style ) {
 			// To show the more preview when rendering official style buttons,
 			// we request that the frame emit a show message with the offset
-			this.refs.iframe.getDOMNode().contentWindow.postMessage( 'more-show', '*' );
+			ReactDom.findDOMNode( this.refs.iframe ).contentWindow.postMessage( 'more-show', '*' );
 		} else {
 			// For custom styles, we can calculate the offset using the
 			// position of the rendered button
-			moreButton = this.refs.moreButton.getDOMNode();
+			moreButton = ReactDom.findDOMNode( this.refs.moreButton );
 			offset = {
 				top: moreButton.offsetTop + moreButton.clientHeight,
 				left: moreButton.offsetLeft
@@ -169,7 +173,7 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 		// to include the non-enabled icons in a preview. Non-enabled icons are
 		// only needed in the button selection tray, where official buttons are
 		// rendered in the text-only style.
-		var buttons = where( this.props.buttons, { visibility: this.props.visibility } ),
+		var buttons = filter( this.props.buttons, { visibility: this.props.visibility } ),
 			previewUrl = previewWidget.generatePreviewUrlFromButtons( buttons, this.props.showMore );
 
 		return <ResizableIframe ref="iframe" src={ previewUrl } width="100%" frameBorder="0" className="official-preview" />;
@@ -211,7 +215,7 @@ var SharingButtonsPreviewButtons = module.exports = React.createClass( {
 
 		// The more preview is only ever used to show hidden buttons, so we
 		// filter on the current set of buttons
-		hiddenButtons = where( this.props.buttons, { visibility: 'hidden' } );
+		hiddenButtons = filter( this.props.buttons, { visibility: 'hidden' } );
 
 		return (
 			<div ref="more" className={ classes } style={ this.state.morePreviewOffset }>

@@ -1,21 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	ReactInjection = require( 'react/lib/ReactInjection' ),
-	TestUtils = React.addons.TestUtils,
-	expect = require( 'chai' ).expect;
+	TestUtils = require( 'react-addons-test-utils' ),
+	expect = require( 'chai' ).expect,
+	i18n = require( 'i18n-calypso' );
 
-/**
- * Internal dependencies
- */
-var i18n = require( 'lib/mixins/i18n' );
-
-describe( 'CountedTextarea', function() {
+describe( 'index', function() {
 	var CountedTextarea, renderer;
 
 	before( function() {
-		i18n.initialize();
 		ReactInjection.Class.injectMixin( i18n.mixin );
 		CountedTextarea = require( '../' );
 	} );

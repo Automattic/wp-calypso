@@ -2,12 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
 import PostSchedule from 'components/post-schedule';
-import TimezoneDropdown from 'components/timezone-dropdown';
+import Timezone from 'components/timezone';
 import Gridicon from 'components/gridicon';
 import Card from 'components/card';
 
@@ -17,12 +18,12 @@ import Card from 'components/card';
 export default React.createClass( {
 	displayName: 'PostSchedule',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState() {
-		var date = new Date(),
-			tz = 'America/Los_Angeles',
-			tomorrow = ( new Date() ).setDate( date.getDate() + 1 );
+		let date = new Date();
+		const tz = 'America/Los_Angeles';
+		const tomorrow = ( new Date() ).setDate( date.getDate() + 1 );
 
 		date.setDate( date.getDate() + 3 );
 		date.setMilliseconds( 0 );
@@ -43,6 +44,12 @@ export default React.createClass( {
 					id: 2,
 					title: 'Tomorrow is tomorrow',
 					date: tomorrow
+				},
+				{
+					id: 3,
+					title: 'WordCamp Lima 2016!',
+					date: new Date( '2016-07-16T09:00:00' ),
+					type: 'wordcamp-event'
 				}
 			],
 			gmtOffset: 1,
@@ -90,11 +97,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/post-schedule">PostSchedule</a>
-				</h2>
-
+			<div>
 				<Card style={ {
 					width: '300px',
 					verticalAlign: 'top',
@@ -120,7 +123,7 @@ export default React.createClass( {
 					<Card className="card__component-instance">
 						<h3>
 							<span>owner</span>
-							<Gridicon icon="arrow-right" size={ 16 } />
+							<Gridicon icon="arrow-right" size={ 18 } />
 							<span>ownee</span>
 						</h3>
 
@@ -133,7 +136,7 @@ export default React.createClass( {
 								{ this.state.timezone || 'not defined' }
 							</div>
 
-							<TimezoneDropdown
+							<Timezone
 								selectedZone={ this.state.timezone }
 								onSelect={ this.setTimezone }
 							/>
@@ -196,7 +199,7 @@ export default React.createClass( {
 					<Card className="card__component-instance">
 						<h3>
 							<span>owner</span>
-							<Gridicon icon="arrow-left" size={ 16 } />
+							<Gridicon icon="arrow-left" size={ 18 } />
 							<span>ownee</span>
 						</h3>
 

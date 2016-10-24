@@ -1,0 +1,9 @@
+.plans-features-main__group {
+	@include breakpoint( ">1040px" ) {
+		padding-top: 19px; // popular banner height adjustment
+	}
+
+	+ .faq {
+		margin-top: 20px;
+	}
+}

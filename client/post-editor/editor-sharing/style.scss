@@ -43,27 +43,7 @@ input[type="text"].editor-sharing__shortlink-field {
 }
 
 .editor-sharing__broken-publicize-connection {
-	padding: 8px 16px 8px 41px;
 	margin: 8px -16px;
-
-	@include breakpoint( "<660px" ) {
-		padding-left: 16px;
-	}
-
-	&:before {
-		top: 21px;
-		left: 22px;
-		font-size: 20px;
-	}
-
-	.notice__text {
-		padding: 0;
-	}
-
-	.gridicon {
-		float: right;
-		margin: 1px 0 0 4px;
-	}
 }
 
 .editor-sharing__broken-publicize-connection-button {
@@ -71,4 +51,13 @@ input[type="text"].editor-sharing__shortlink-field {
 	color: white;
 	font-weight: bold;
 	text-decoration: underline;
+}
+
+.editor-sharing__publicize-message {
+	margin-top: 16px;
+}
+
+.editor-sharing__publicize-share-button {
+	display: block;
+	width: 100%;
 }

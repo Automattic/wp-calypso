@@ -1,27 +1,13 @@
 /**
  * External dependencies
  */
-var page = require( 'page' );
+import page from 'page';
 
 /**
  * Internal dependencies
  */
-var controller = require( './controller' ),
-	config = require( 'config' );
-
-var lastRoute = null;
-
-function saveLastRoute( context, next ) {
-	lastRoute = context.path;
-	next();
-}
-
-function setLastRoute( context, next ) {
-	if ( lastRoute ) {
-		context.lastRoute = lastRoute;
-	}
-	next();
-}
+import controller from './controller';
+import config from 'config';
 
 function forceTeamA8C( context, next ) {
 	context.params.team = 'a8c';
@@ -30,52 +16,48 @@ function forceTeamA8C( context, next ) {
 
 module.exports = function() {
 	if ( config.isEnabled( 'reader' ) ) {
-		page( '/', controller.loadSubscriptions );
-		page( '/read/*', controller.loadSubscriptions );
+		page( '/',
+			controller.preloadReaderBundle,
+			controller.loadSubscriptions,
+			controller.checkForColdStart,
+			controller.initAbTests,
+			controller.updateLastRoute,
+			controller.removePost,
+			controller.sidebar,
+			controller.following );
 
-		page( '/', saveLastRoute, controller.removePost, controller.sidebar, controller.following );
+		// Old and incomplete paths that should be redirected to /
+		page( '/read/following', '/' );
+		page( '/read', '/' );
+		page( '/read/blogs', '/' );
+		page( '/read/feeds', '/' );
+		page( '/read/blog', '/' );
+		page( '/read/post', '/' );
+		page( '/read/feed', '/' );
 
-		page( '/read/blog/feed/:feed_id', saveLastRoute, controller.removePost, controller.sidebar, controller.feedListing );
-		page.exit( '/read/blog/feed/:feed_id', controller.resetTitle );
+		// Feed stream
+		page( '/read/*', controller.preloadReaderBundle, controller.loadSubscriptions, controller.initAbTests );
+		page( '/read/blog/feed/:feed_id', controller.legacyRedirects );
+		page( '/read/feeds/:feed_id/posts', controller.incompleteUrlRedirects );
+		page( '/read/feeds/:feed_id',
+			controller.updateLastRoute,
+			controller.prettyRedirects,
+			controller.removePost,
+			controller.sidebar,
+			controller.feedDiscovery,
+			controller.feedListing );
 
-		page( '/read/post/feed/:feed/:post', setLastRoute, controller.feedPost );
-		page.exit( '/read/post/feed/:feed/:post', controller.resetTitle );
-
-		page( '/read/blog/id/:blog_id', saveLastRoute, controller.removePost, controller.sidebar, controller.blogListing );
-		page( '/read/post/id/:blog/:post', setLastRoute, controller.blogPost );
-		page.exit( '/read/post/id/:blog/:post', controller.resetTitle );
-
-		page( '/tag/:tag', saveLastRoute, controller.removePost, controller.sidebar, controller.tagListing );
+		// Blog stream
+		page( '/read/blog/id/:blog_id', controller.legacyRedirects );
+		page( '/read/blogs/:blog_id/posts', controller.incompleteUrlRedirects );
+		page( '/read/blogs/:blog_id',
+			controller.updateLastRoute,
+			controller.prettyRedirects,
+			controller.removePost,
+			controller.sidebar,
+			controller.blogListing );
 	}
 
-	if ( config.isEnabled( 'reader/teams' ) ) {
-		page( '/read/a8c', saveLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
-	}
-
-	if ( config.isEnabled( 'reader/lists' ) ) {
-		page( '/read/list/:user/:list', saveLastRoute, controller.removePost, controller.sidebar, controller.listListing );
-	}
-
-	if ( config.isEnabled( 'reader/list-management' ) ) {
-		page( '/read/list/:user/:list/edit', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementContents );
-		page( '/read/list/:user/:list/description/edit', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementDescriptionEdit );
-		page( '/read/list/:user/:list/followers', saveLastRoute, controller.removePost, controller.sidebar, controller.listManagementFollowers );
-	}
-
-	if ( config.isEnabled( 'reader/activities' ) ) {
-		page( '/activities/likes', controller.loadSubscriptions, saveLastRoute, controller.removePost, controller.sidebar, controller.likes );
-	}
-
-	if ( config.isEnabled( 'reader/following-edit' ) ) {
-		page( '/following/edit', controller.loadSubscriptions, saveLastRoute, controller.removePost, controller.sidebar, controller.followingEdit );
-	}
-
-	if ( config.isEnabled( 'reader/recommendations' ) ) {
-		page( '/recommendations', controller.loadSubscriptions, saveLastRoute, controller.removePost, controller.sidebar, controller.recommendedForYou );
-		page( '/tags', controller.loadSubscriptions, saveLastRoute, controller.removePost, controller.sidebar, controller.recommendedTags );
-	}
-
-	if ( config.isEnabled( 'reader/discover' ) ) {
-		page( '/discover', setLastRoute, controller.removePost, controller.sidebar, controller.discover );
-	}
+	// Automattic Employee Posts
+	page( '/read/a8c', controller.updateLastRoute, controller.removePost, controller.sidebar, forceTeamA8C, controller.readA8C );
 };

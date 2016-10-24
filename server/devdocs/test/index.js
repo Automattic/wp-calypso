@@ -5,36 +5,42 @@ import fs from 'fs';
 import fspath from 'path';
 import request from 'superagent';
 import mockery from 'mockery';
+import useMockery from 'test/helpers/use-mockery';
 import { expect } from 'chai';
-
-/**
- * Test setup
- */
-mockery.enable( {
-	warnOnReplace: false,
-	warnOnUnregistered: false
-} );
-mockery.registerMock( 'config', {
-	isEnabled: () => true
-} );
-// for speed - the real search index is very large
-mockery.registerMock( 'devdocs/search-index', {
-	index: {}
-} );
-mockery.registerMock( 'lunr', {
-	Index: {
-		load: () => null
-	}
-} );
+import { allowNetworkAccess } from 'test/helpers/nock-control';
 
 /**
  * Internal dependencies
  */
-const devdocs = require( '../' );
+var devdocs;
 
 /**
  * Module variables
  */
+
+const componentsEntries = {
+	valid: {
+		'components/foo': { count: 10 }
+	},
+	invalid: {
+		'components/foo/docs/': { count: 1 },
+		'foo/components/bar': { count: 1 },
+		'my-page/index.js': { count: 1 }
+	},
+	expected: {
+		'foo': { count: 10 }
+	}
+};
+
+function getComponentsUsageStatsMock() {
+	return Object.assign( {}, componentsEntries.valid, componentsEntries.invalid );
+}
+
+function getComponentsUsageStats( cb ) {
+	request.get( 'http://localhost:9993/devdocs/service/components-usage-stats' )
+		.end( cb );
+}
+
 function getDocument( base, path, cb ) {
 	if ( typeof path === 'function' ) {
 		cb = path;
@@ -50,17 +56,34 @@ function getDocument( base, path, cb ) {
 		} );
 }
 
-describe( 'devdocs server', () => {
+describe( 'devdocs', () => {
 	let app, server;
 
+	allowNetworkAccess();
+	useMockery();
+
 	before( done => {
+		mockery.registerMock( 'config', {
+			isEnabled: () => true
+		} );
+		// for speed - the real search index is very large
+		mockery.registerMock( 'devdocs/search-index', {
+			index: {}
+		} );
+		mockery.registerMock( 'lunr', {
+			Index: {
+				load: () => null
+			}
+		} );
+
+		mockery.registerMock( 'devdocs/components-usage-stats.json', getComponentsUsageStatsMock() );
+
+		devdocs = require( '../' );
 		app = devdocs();
 		server = app.listen( 9993, done );
 	} );
 
 	after( done => {
-		mockery.deregisterAll();
-		mockery.disable();
 		server.close( done );
 	} );
 
@@ -70,7 +93,7 @@ describe( 'devdocs server', () => {
 			( err, res ) => {
 				expect( err ).to.be.null;
 				expect( res.statusCode ).to.equal( 200 );
-				expect( res.text ).to.contain( '<a href="CONTRIBUTING.md">' );
+				expect( res.text ).to.contain( '<a href="./.github/CONTRIBUTING.md">' );
 				done();
 			} );
 	} );
@@ -121,5 +144,24 @@ describe( 'devdocs server', () => {
 				expect( res.text ).to.equal( 'File does not exist' );
 				done();
 			} );
+	} );
+
+	describe( 'components usage stats endpoint', () => {
+		it( 'should return stats', done => {
+			getComponentsUsageStats( ( err, res ) => {
+				expect( err ).to.be.null;
+				expect( res.statusCode ).to.equal( 200 );
+				expect( res.type ).to.equal( 'application/json' );
+				expect( res.body ).not.to.be.empty;
+				done();
+			} );
+		} );
+
+		it( 'should return components stats only', done => {
+			getComponentsUsageStats( ( err, res ) => {
+				expect( res.body ).to.eql( componentsEntries.expected );
+				done();
+			} );
+		} );
 	} );
 } );

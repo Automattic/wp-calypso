@@ -1,26 +1,27 @@
 /**
  * External dependencies
  */
-var debug = require( 'debug' )( 'calypso:protect-form' ),
-	page = require( 'page' );
+import debugModule from 'debug';
+import page from 'page';
+import i18n from 'i18n-calypso';
+import { without } from 'lodash';
 
 /**
- * Internal dependencies
+ * Module variables
  */
-var i18n = require( 'lib/mixins/i18n' );
+const debug = debugModule( 'calypso:protect-form' );
+const confirmText = i18n.translate( 'You have unsaved changes. Are you sure you want to leave this page?' );
+const beforeUnloadText = i18n.translate( 'You have unsaved changes.' );
+let formsChanged = [];
 
-var confirmText = i18n.translate( 'You have unsaved changes. Are you sure you want to leave this page?' ),
-	beforeUnloadText = i18n.translate( 'You have unsaved changes.' ),
-	formsChanged = [];
-
-module.exports =  {
-
+module.exports = {
 	mixin: {
 		componentDidMount: function() {
 			window.addEventListener( 'beforeunload', this.warnIfChanged );
 		},
 		componentWillUnmount: function() {
 			window.removeEventListener( 'beforeunload', this.warnIfChanged );
+			formsChanged = without( formsChanged, this );
 		},
 		warnIfChanged: function( event ) {
 			if ( ! formsChanged.length ) {
@@ -44,7 +45,7 @@ module.exports =  {
 		}
 	},
 	checkFormHandler: function( context, next ) {
-		if( ! formsChanged.length ) {
+		if ( ! formsChanged.length ) {
 			return next();
 		}
 		debug( 'unsaved form changes detected' );
@@ -52,9 +53,11 @@ module.exports =  {
 			formsChanged = [];
 			next();
 		} else {
+			// save off the current path just in case context changes after this call
+			const currentPath = context.canonicalPath;
 			setTimeout( function() {
-				page.replace( context.prevPath , null, false, false);
-			}, 0);
+				page.replace( currentPath, null, false, false );
+			}, 0 );
 		}
 	}
 

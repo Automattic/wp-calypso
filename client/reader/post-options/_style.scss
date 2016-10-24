@@ -25,7 +25,7 @@
 		color: $blue-medium;
 
 		.gridicon__ellipsis {
-			fill: $blue-medium;
+			fill: $blue-dark;
 			transform: rotate( 90deg );
 		}
 	}
@@ -55,6 +55,13 @@
 }
 
 .popover__menu .follow-button {
+
+	.gridicon {
+		position: absolute;
+			left: 14px;
+			top: 11px;
+	}
+
 	&:hover,
 	&:focus {
 		background-color: $blue-medium;
@@ -66,6 +73,7 @@
 	}
 
 	&.is-following {
+
 		&:hover,
 		&:focus {
 			color: $white;
@@ -76,4 +84,8 @@
 			}
 		}
 	}
+}
+
+.popover__menu .follow-button__label {
+	display: inline-block;
 }

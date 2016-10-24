@@ -1,50 +1,59 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var FormRadio = require( 'components/forms/form-radio' ),
-	Gridicon = require( 'components/gridicon' ),
-	PostActions = require( 'lib/posts/actions' ),
-	stats = require( 'lib/posts/stats' ),
-	AccordionSection = require( 'components/accordion/section' );
+import FormRadio from 'components/forms/form-radio';
+import Gridicon from 'components/gridicon';
+import QueryPostFormats from 'components/data/query-post-formats';
+import PostActions from 'lib/posts/actions';
+import { recordStat, recordEvent } from 'lib/posts/stats';
+import AccordionSection from 'components/accordion/section';
+import EditorThemeHelp from 'post-editor/editor-theme-help';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPostFormats } from 'state/post-formats/selectors';
 
-module.exports = React.createClass( {
-	displayName: 'EditorPostFormats',
-
+const EditorPostFormats = React.createClass( {
 	propTypes: {
-		post: React.PropTypes.object,
-		value: React.PropTypes.string,
-		postFormats: React.PropTypes.arrayOf( React.PropTypes.shape( {
-			slug: React.PropTypes.string,
-			label: React.PropTypes.string
-		} ) )
+		siteId: PropTypes.number,
+		value: PropTypes.string,
+		postFormats: PropTypes.object
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			value: 'standard'
 		};
 	},
 
-	getPostFormats: function() {
-		var formats = [ {
-			slug: 'standard',
-			label: this.translate( 'Standard', { context: 'Post format' } )
-		} ];
+	getSelectedPostFormat() {
+		const { value } = this.props;
+		const isSupportedFormat = !! this.getPostFormats()[ value ];
+
+		return isSupportedFormat ? value : 'standard';
+	},
+
+	getPostFormats() {
+		let formats = {
+			standard: this.translate( 'Standard', {
+				context: 'Post format'
+			} )
+		};
 
 		if ( this.props.postFormats ) {
-			formats = formats.concat( this.props.postFormats );
+			formats = Object.assign( formats, this.props.postFormats );
 		}
 
 		return formats;
 	},
 
-	getPostFormatIcon: function( postFormat ) {
-		var icons = {
+	getPostFormatIcon( postFormatSlug ) {
+		const icons = {
 			aside: 'aside',
 			image: 'image',
 			video: 'video-camera',
@@ -56,43 +65,51 @@ module.exports = React.createClass( {
 			chat: 'comment'
 		};
 
-		return icons[ postFormat.slug ] ? icons[ postFormat.slug ] : 'posts';
+		return icons[ postFormatSlug ] ? icons[ postFormatSlug ] : 'posts';
 	},
 
-	onChange: function( event ) {
+	onChange( event ) {
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			format: event.target.value
 		} );
 
-		stats.recordStat( 'post_format_changed' );
-		stats.recordEvent( 'Changed Post Format', event.target.value );
+		recordStat( 'post_format_changed' );
+		recordEvent( 'Changed Post Format', event.target.value );
 	},
 
-	renderPostFormats: function() {
-		return this.getPostFormats().map( function( postFormat ) {
+	renderPostFormats() {
+		const selectedFormat = this.getSelectedPostFormat();
+
+		return map( this.getPostFormats(), ( postFormatLabel, postFormatSlug ) => {
 			return (
-				<li key={ postFormat.slug } className="editor-post-formats__format">
+				<li key={ postFormatSlug } className="editor-post-formats__format">
 					<label>
 						<FormRadio
 							name="format"
-							value={ postFormat.slug }
-							checked={ postFormat.slug === this.props.value }
-							onChange={ this.onChange } />
+							value={ postFormatSlug }
+							checked={ postFormatSlug === selectedFormat }
+							onChange={ this.onChange }
+						/>
 						<span className="editor-post-formats__format-label">
 							<span className={ 'editor-post-formats__format-icon' } >
-								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } />
+								{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
+								<Gridicon icon={ this.getPostFormatIcon( postFormatSlug ) } size={ 20 } />
+								{ /* eslint-enable wpcalypso/jsx-gridicon-size */ }
 							</span>
-							{ postFormat.label }
+							{ postFormatLabel }
 						</span>
 					</label>
 				</li>
 			);
-		}, this );
+		} );
 	},
 
-	render: function() {
+	render() {
 		return (
 			<AccordionSection>
+				<EditorThemeHelp className="editor-post-formats__help-link" />
+				<QueryPostFormats siteId={ this.props.siteId } />
 				<ul className="editor-post-formats">
 					{ this.renderPostFormats() }
 				</ul>
@@ -100,3 +117,14 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteId,
+			postFormats: getPostFormats( state, siteId )
+		};
+	}
+)( EditorPostFormats );

@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react/addons';
-import pick from 'lodash/object/pick';
+import React, { PropTypes, PureComponent } from 'react';
 
 /**
  * Internal Dependencies
@@ -10,24 +9,16 @@ import pick from 'lodash/object/pick';
 import EditorSlug from 'post-editor/editor-slug';
 import Gridicon from 'components/gridicon';
 
-export default React.createClass( {
-	displayName: 'PostEditorPageSlug',
-
-	mixins: [ React.addons.PureRenderMixin ],
-
-	propTypes: {
-		path: PropTypes.string,
-		slug: PropTypes.string
-	},
+export default class PostEditorPageSlug extends PureComponent {
+	static propTypes = {
+		path: PropTypes.string
+	};
 
 	render() {
 		return (
-			<EditorSlug
-				{ ...pick( this.props, 'path', 'slug' ) }
-				instanceName="page-permalink"
-			>
+			<EditorSlug path={ this.props.path } instanceName="page-permalink">
 				<Gridicon icon="link" />
 			</EditorSlug>
 		);
 	}
-} );
+}

@@ -1,9 +1,10 @@
 /**
  * External dependencies
  */
-var extend = require( 'lodash/object/assign' ),
-	partialRight = require( 'lodash/function/partialRight' ),
-	compose = require( 'lodash/function/compose' );
+var assign = require( 'lodash/assign' ),
+	partialRight = require( 'lodash/partialRight' ),
+	flowRight = require( 'lodash/flowRight' ),
+	flow = require( 'lodash/flow' );
 
 /**
  * Internal dependencies
@@ -21,8 +22,6 @@ var UpgradesActionTypes = require( 'lib/upgrades/constants' ).action,
 	applyCoupon = cartValues.applyCoupon,
 	cartItems = cartValues.cartItems;
 
-var POLLING_INTERVAL = 5000;
-
 var _selectedSiteID = null,
 	_synchronizer = null,
 	_poller = null;
@@ -31,7 +30,7 @@ var CartStore = {
 	get: function() {
 		var value = hasLoadedFromServer() ? _synchronizer.getLatestValue() : {};
 
-		return extend( {}, value, {
+		return assign( {}, value, {
 			hasLoadedFromServer: hasLoadedFromServer(),
 			hasPendingServerUpdates: hasPendingServerUpdates()
 		} );
@@ -60,10 +59,6 @@ function setSelectedSite() {
 		return;
 	}
 
-	if ( ! selectedSite.isUpgradeable() ) {
-		return;
-	}
-
 	if ( _synchronizer && _poller ) {
 		PollerPool.remove( _poller );
 		_synchronizer.off( 'change', emitChange );
@@ -74,7 +69,7 @@ function setSelectedSite() {
 	_synchronizer = cartSynchronizer( selectedSite.ID, wpcom );
 	_synchronizer.on( 'change', emitChange );
 
-	_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ), { interval: POLLING_INTERVAL } );
+	_poller = PollerPool.add( CartStore, _synchronizer._poll.bind( _synchronizer ) );
 }
 
 function emitChange() {
@@ -86,7 +81,7 @@ function update( changeFunction ) {
 		previousCart,
 		nextCart;
 
-	wrappedFunction = compose(
+	wrappedFunction = flowRight(
 		partialRight( cartValues.fillInAllCartItemAttributes, productsList.get() ),
 		changeFunction
 	);
@@ -98,36 +93,28 @@ function update( changeFunction ) {
 	cartAnalytics.recordEvents( previousCart, nextCart );
 }
 
-CartStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		cartItem;
-
-	if ( action.cartItem ) {
-		cartItem = cartValues.fillInSingleCartItemAttributes(
-			action.cartItem,
-			productsList.get()
-		);
-	}
+CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
+	const { action } = payload;
 
 	switch ( action.type ) {
-		case UpgradesActionTypes.ADD_PRIVACY_TO_ALL_DOMAIN_CART_ITEMS:
+		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_ADD:
 			update( cartItems.addPrivacyToAllDomains( CartStore.get() ) );
 			break;
 
-		case UpgradesActionTypes.REMOVE_PRIVACY_FROM_ALL_DOMAIN_CART_ITEMS:
+		case UpgradesActionTypes.CART_PRIVACY_PROTECTION_REMOVE:
 			update( cartItems.removePrivacyFromAllDomains( CartStore.get() ) );
 			break;
 
-		case UpgradesActionTypes.ADD_CART_ITEM:
-			update( cartItems.add( cartItem ) );
+		case UpgradesActionTypes.CART_ITEMS_ADD:
+			update( flow( ...action.cartItems.map( cartItem => cartItems.add( cartItem ) ) ) );
 			break;
 
-		case UpgradesActionTypes.APPLY_CART_COUPON:
+		case UpgradesActionTypes.CART_COUPON_APPLY:
 			update( applyCoupon( action.coupon ) );
 			break;
 
-		case UpgradesActionTypes.REMOVE_CART_ITEM:
-			update( cartItems.removeItemAndDependencies( cartItem, CartStore.get() ) );
+		case UpgradesActionTypes.CART_ITEM_REMOVE:
+			update( cartItems.removeItemAndDependencies( action.cartItem, CartStore.get(), action.domainsWithPlansOnly ) );
 			break;
 	}
 } );

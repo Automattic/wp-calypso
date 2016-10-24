@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
+	LinkedStateMixin = require( 'react-addons-linked-state-mixin' ),
 	debug = require( 'debug' )( 'calypso:me:reauth-required' );
 
 /**
@@ -16,15 +17,16 @@ var Dialog = require( 'components/dialog' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
 	eventRecorder = require( 'me/event-recorder' ),
-	userUtilities = require( 'lib/user/utils' );
+	userUtilities = require( 'lib/user/utils' ),
+	constants = require( 'me/constants' );
 
 module.exports = React.createClass( {
 
 	displayName: 'ReauthRequired',
 
-	mixins: [ React.addons.LinkedStateMixin, observe( 'twoStepAuthorization' ), eventRecorder ],
+	mixins: [ LinkedStateMixin, observe( 'twoStepAuthorization' ), eventRecorder ],
 
 	getInitialState: function() {
 		return {
@@ -97,6 +99,10 @@ module.exports = React.createClass( {
 		} );
 	},
 
+	preValidateAuthCode: function() {
+		return this.state.code.length && this.state.code.length > 5;
+	},
+
 	renderSendSMSButton: function() {
 		var button;
 		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
@@ -138,7 +144,6 @@ module.exports = React.createClass( {
 		return (
 			<div className="reauth-required__send-sms-throttled">
 				<Notice
-					isCompact={ true }
 					showDismiss={ false }
 					text={ this.translate(
 						'SMS codes are limited to once per minute. Please wait and try again.'
@@ -148,14 +153,13 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
-		var codePlaceholder = '123456';
-
-		if ( this.props.twoStepAuthorization.isTwoStepSMSEnabled() ) {
-			codePlaceholder = '1234567';
-		}
+		var codePlaceholder = this.props.twoStepAuthorization.isTwoStepSMSEnabled()
+			? constants.sevenDigit2faPlaceholder
+			: constants.sixDigit2faPlaceholder;
 
 		return (
 			<Dialog
+				autoFocus={ false }
 				className="reauth-required__dialog"
 				isFullScreen={ false }
 				isVisible={ this.props.twoStepAuthorization.isReauthRequired() }
@@ -177,11 +181,13 @@ module.exports = React.createClass( {
 					<FormFieldset>
 						<FormLabel htmlFor="code">{ this.translate( 'Verification Code' ) }</FormLabel>
 						<FormTelInput
+							autoFocus={ true }
 							id="code"
 							isError={ this.props.twoStepAuthorization.codeValidationFailed() }
 							name="code"
 							placeholder={ codePlaceholder }
 							onFocus={ this.recordFocusEvent( 'Reauth Required Verification Code Field' ) }
+							ref="code"
 							valueLink={ this.linkState( 'code' ) } />
 
 						{ this.renderFailedValidationMsg() }
@@ -201,7 +207,10 @@ module.exports = React.createClass( {
 					{ this.renderSMSResendThrottled() }
 
 					<FormButtonsBar>
-						<FormButton disabled={ this.state.validatingCode } onClick={ this.recordClickEvent( 'Submit Validation Code on Reauth Required' ) } >
+						<FormButton
+							disabled={ this.state.validatingCode || ! this.preValidateAuthCode() }
+							onClick={ this.recordClickEvent( 'Submit Validation Code on Reauth Required' ) }
+						>
 							{ this.translate( 'Verify' ) }
 						</FormButton>
 

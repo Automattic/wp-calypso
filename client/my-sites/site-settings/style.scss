@@ -1,0 +1,345 @@
+.site-settings {
+	fieldset {
+		clear: both;
+		margin-bottom: 24px;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	label {
+		display: block;
+	}
+
+	input {
+		display: inline-block;
+	}
+
+	.short-settings {
+		display: block;
+		min-width: 200px;
+	}
+
+	select + label {
+		margin-top: 24px; // Give labels some margin when they immediately follow a select
+	}
+
+	input[type="number"] {
+		padding: 0;
+		width: 50px;
+		text-align: center;
+	}
+
+	input[type="text"] {
+		-webkit-appearance: none;
+	}
+
+	legend,
+	label {
+		margin-bottom: 5px;
+		font-size: 14px;
+		font-weight: 600;
+	}
+
+	legend + label,
+	label + label,
+	li label,
+	input[type="checkbox"] + label,
+	input[type="radio"] + label,
+	label input[type="checkbox"],
+	label input[type="radio"] {
+		font-weight: normal;
+	}
+
+	.is-primary {
+		float: right;
+	}
+
+	.empty-content {
+		.is-primary {
+			float: none;
+		}
+	}
+
+	p.form-setting-explanation {
+		display: block;
+		margin: 5px 0;
+		font-size: 13px;
+		font-style: italic;
+		font-weight: 400;
+		color: $gray;
+		&.is-indented {
+			margin-left: 24px;
+		}
+	}
+
+	p.settings-alert {
+		font-weight: 400;
+		color: $alert-red;
+	}
+
+	ul li,
+	ol li {
+		margin-bottom: 0;
+	}
+
+	.analytics-settings {
+		padding-top: 20px;
+	}
+
+	.site-settings__blogaddress-settings {
+		@include breakpoint( ">660px" ) {
+			display: flex;
+		}
+
+		.button {
+			width: 100%;
+			margin-left: 0;
+			margin-top: 5px;
+
+			@include breakpoint( ">660px" ) {
+				width: 45%;
+				margin-left: 16px;
+				margin-top: 0;
+			}
+		}
+	}
+
+	.seo-settings__seo-form .form-text-input-with-affixes__prefix {
+		min-width: 60px;
+		text-align: center;
+	}
+
+	.seo-settings__seo-sitemap {
+		word-wrap: break-word;
+		word-break: break-word;
+	}
+
+	.verification-code-error {
+		color: $alert-red;
+		font-weight: bold;
+	}
+
+	.seo-settings__seo-form .counted-textarea {
+		&.is-exceeding-acceptable-length {
+			background: $alert-yellow;
+		}
+	}
+
+	.seo-settings__seo-form .section-header {
+		margin-top: 32px;
+	}
+
+	.seo-settings__seo-form .seo-settings__preview-button {
+		display: block;
+		float: left;
+		margin-right: 24px;
+	}
+
+	.seo-settings__seo-form .seo-settings__preview-explanation {
+		display: block;
+		float: left;
+		line-height: 40px;
+	}
+
+	fieldset.site-icon-setting {
+		margin-bottom: 24px;
+	}
+}
+
+.site-settings__amp {
+	.section-header__actions {
+		display: flex;
+
+		button {
+			margin-left: 15px;
+		}
+	}
+}
+
+.site-settings__footer-credit-container {
+	margin-bottom: 16px;
+}
+
+.site-settings__footer-credit-nudge.card.upgrade-nudge {
+	margin: 0;
+}
+
+.site-settings__footer-credit-change {
+	width: 175px;
+	text-align:center;
+}
+
+.site-settings__footer-credit-explanation {
+	display:flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+
+.writing-settings,
+.general-settings {
+	@include breakpoint( "<660px" ) {
+		select{
+			width: 100%;
+		}
+	}
+}
+
+.site-settings__custom-post-type .form-toggle__label {
+	margin-bottom: 0;
+}
+
+.site-settings .site-settings__custom-post-type p.form-setting-explanation {
+	margin: 0 0 16px;
+}
+
+.site-settings__custom-post-type-fieldset .feature-example__content {
+	box-sizing: border-box;
+	padding: 1px; // Example overflow is hidden, obscuring border effect from box-shadow
+}
+
+.site-settings__custom-post-type-fieldset .feature-example__gradient {
+	background: linear-gradient( to bottom, rgba( $white, 0.4 ), rgba( $white, 1 ) );
+}
+
+.press-this {
+	/* press this isn't functional on a touch device */
+	.touch & {
+		display: none;
+	}
+
+	p.pressthis {
+		margin: 20px 0;
+
+		a,
+		a:hover,
+		a:focus,
+		a:active {
+			display: inline-block;
+			position: relative;
+			cursor: move;
+			padding: 10px;
+			font-style: normal;
+			line-height: 16px;
+			font-size: 14px;
+			text-decoration: none;
+			color: #333;
+			background: lighten( $gray, 30% );
+			border-radius: 3px;
+			border: 1px solid lighten( $gray, 20% );
+		}
+
+		a span {
+			display: inline-block;
+			margin: 0 10px 0 0;
+			font-family: $sans;
+
+			&:before {
+				color: #777;
+				font-family: Noticons;
+			}
+		}
+	}
+}
+
+#settings-reading-relatedposts-preview .form-label {
+	font-weight: 600;
+	margin-top: 16px;
+}
+
+.jp-relatedposts {
+	position: relative;
+	margin-top: 8px;
+	padding: 16px 8px;
+	width: 100%;
+	background: $gray-light;
+	box-sizing: border-box;
+
+	@include clear-fix;
+
+	.jp-relatedposts-headline {
+ 		margin: 0 0 1em 8px;
+ 		font-size: 11px;
+ 		font-weight: 600;
+ 	}
+
+	.jp-relatedposts-items {
+
+
+		@include breakpoint( ">480px" ) {
+			display: flex;
+			flex-wrap: wrap;
+			.jp-relatedposts-post {
+				width: 50%;
+			}
+		}
+
+		@include breakpoint( ">960px" ) {
+			flex-wrap: nowrap;
+		}
+	}
+
+	.jp-relatedposts-post .jp-relatedposts-post-title a {
+		font-weight: normal;
+		text-decoration: none;
+		opacity: 1;
+	}
+
+	.jp-relatedposts-post {
+		box-sizing: border-box;
+		margin: 0;
+		padding: 0 8px;
+	}
+
+	.jp-relatedposts-post span {
+		display: block;
+		max-width: 90%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.jp-relatedposts-post .jp-relatedposts-post-context {
+		opacity: .6;
+	}
+}
+
+.jetpack-protect__deactivate,
+.jetpack-protect__edit-settings,
+.jetpack-scan__deactivate,
+.jetpack-monitor__deactivate,
+.disconnect-jetpack-button,
+.jetpack-protect__edit-settings,
+.jetpack-scan__deactivate,
+.jetpack-monitor__deactivate,
+.disconnect-jetpack-button {
+	margin-right: 8px;
+}
+
+// @TODO: Remove has-divider once all instances have been replaced with .site-settings__has-divider
+.has-divider, .site-settings__has-divider {
+	margin: 0 -24px;
+	padding: 24px 24px 16px 24px;
+	border: 1px lighten( $gray, 30% ) solid;
+	border-width: 1px 0;
+
+	&.is-top-only {
+		border-bottom: 0px;
+		padding-bottom: 0px;
+	}
+}
+
+.site-settings__jetpack-prompt {
+	display: flex;
+
+	img {
+		width: 128px;
+		flex: 1;
+		margin-right: 16px;
+	}
+}
+
+.site-settings__jetpack-prompt-text {
+	flex: 4;
+}

@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var Connection = require( './connection' ),
 	serviceConnections = require( './service-connections' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 	displayName: 'SharingServiceConnectedAccounts',
@@ -56,7 +56,7 @@ module.exports = React.createClass( {
 	},
 
 	getConnectAnotherElement: function() {
-		if ( serviceConnections.supportsMultipleConnectionsPerSite( this.props.service.name ) ) {
+		if ( serviceConnections.supportsMultipleConnectionsPerSite( this.props.service.ID ) ) {
 			return (
 				<a onClick={ this.connectAnother } className="button new-account">
 					{ this.translate( 'Connect a different account', { comment: 'Sharing: Publicize connections' } ) }
@@ -67,13 +67,12 @@ module.exports = React.createClass( {
 
 	connectAnother: function() {
 		this.props.onAddConnection();
-		analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.name );
+		analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.ID );
 	},
 
 	render: function() {
 		return (
 			<div className="sharing-service-accounts-detail">
-				<h2>{ this.translate( 'Connected Account', 'Connected Accounts', { count: this.props.connections.length } ) }</h2>
 				<ul className="sharing-service-connected-accounts">
 					{ this.getConnectionElements() }
 				</ul>

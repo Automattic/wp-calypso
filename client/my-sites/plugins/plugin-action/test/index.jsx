@@ -1,66 +1,70 @@
 /**
  * External dependencies
  */
-var assert = require( 'assert' ),
-	React = require( 'react/addons' ),
-	TestUtils = React.addons.TestUtils;
+import { expect } from 'chai';
+import mockery from 'mockery';
+import { shallow } from 'enzyme';
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var PluginAction = require( '../plugin-action' );
-
-require( 'lib/react-test-env-setup' )();
+import EmptyComponent from 'test/helpers/react/empty-component';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 describe( 'PluginAction', function() {
-	afterEach( function() {
-		React.unmountComponentAtNode( document.body );
+	let mount, PluginAction;
+
+	useFakeDom();
+	useMockery();
+
+	before( () => {
+		mount = require( 'enzyme' ).mount;
+		mockery.registerMock( 'components/info-popover', EmptyComponent );
+
+		PluginAction = require( '../plugin-action' );
 	} );
 
 	describe( 'rendering with form toggle', function() {
 		it( 'should have plugin-action class', function() {
-			var rendered = TestUtils.renderIntoDocument( <PluginAction /> ),
-				pluginAction = TestUtils.scryRenderedDOMComponentsWithClass( rendered, 'plugin-action' );
+			const wrapper = shallow( <PluginAction /> );
 
-			assert( 0 < pluginAction.length, 'a plugin action was rendered' );
+			expect( wrapper.find( '.plugin-action' ) ).to.have.lengthOf( 1 );
 		} );
 
 		it( 'should render compact form toggle when no children passed', function() {
-			var rendered = TestUtils.renderIntoDocument( <PluginAction /> ),
-				formToggle = TestUtils.scryRenderedDOMComponentsWithClass( rendered, 'form-toggle' );
+			const wrapper = mount( <PluginAction /> );
 
-			assert( 1 === formToggle.length, 'a form toggle was rendered' );
+			expect( wrapper.find( '.form-toggle' ) ).to.have.lengthOf( 1 );
 		} );
 
 		it( 'should render a plugin action label', function() {
-			var rendered = TestUtils.renderIntoDocument( <PluginAction label="hello"><span/></PluginAction> ),
-				label = TestUtils.scryRenderedDOMComponentsWithClass( rendered, 'plugin-action__label' );
+			const wrapper = shallow( <PluginAction label="hello"><span /></PluginAction> );
 
-			assert( 1 === label.length, 'a plugin action label was rendered' );
+			expect( wrapper.find( '.plugin-action__label' ) ).to.have.lengthOf( 1 );
 		} );
 	} );
 
 	describe( 'rendering children', function() {
 		it( 'should not render a form toggle when children exist', function() {
-			var rendered = TestUtils.renderIntoDocument( <PluginAction><span/></PluginAction> ),
-				formToggle = TestUtils.scryRenderedDOMComponentsWithClass( rendered, 'form-toggle' );
+			const wrapper = mount( <PluginAction><span /></PluginAction> );
 
-			assert( 0 === formToggle.length, 'a form toggle was not rendered' );
+			expect( wrapper.find( '.form-toggle' ) ).to.have.lengthOf( 0 );
 		} );
 
 		it( 'should render child within plugin-action__children container', function() {
-			var rendered = TestUtils.renderIntoDocument( <PluginAction><span/></PluginAction> ),
-				children = TestUtils.scryRenderedDOMComponentsWithClass( rendered, 'plugin-action__children' );
+			const wrapper = mount( <PluginAction><span /></PluginAction> ),
+				children = wrapper.find( '.plugin-action__children' );
 
-			assert( 1 === children.length, 'a plugin-action__children container was rendered' );
-			assert( 'span' === children[ 0 ].props.children.type, 'a span was found within the plugin-action__children container' );
+			expect( children.length ).to.equal( 1 );
+			expect( children.props().children.type ).to.equal( 'span' );
 		} );
 
 		it( 'should render a plugin action label', function() {
-			var rendered = TestUtils.renderIntoDocument( <PluginAction label="hello"><span/></PluginAction> ),
-				label = TestUtils.scryRenderedDOMComponentsWithClass( rendered, 'plugin-action__label' );
+			const wrapper = mount( <PluginAction label="hello"><span /></PluginAction> );
 
-			assert( 1 === label.length, 'a plugin action label was rendered' );
+			expect( wrapper.find( '.plugin-action__label' ) ).to.have.lengthOf( 1 );
 		} );
 	} );
 } );

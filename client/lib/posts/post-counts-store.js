@@ -3,15 +3,21 @@
  * External dependencies
  */
 
-var sum = require( 'lodash/math/sum' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
+var isEqual = require( 'lodash/isEqual' ),
 	debug = require( 'debug' )( 'calypso:posts:post-counts-store' );
+
+const sum = obj => {
+	return Object.keys( obj )
+		.reduce( function( _sum, key ) {
+			return _sum + parseFloat( obj[ key ] );
+		}, 0 );
+}
 
 /**
  * Internal dependencies
  */
 var emitter = require( 'lib/mixins/emitter' ),
-	PostListStore = require( './post-list-store' ),
+	PostListStore = require( './post-list-store-factory' )(),
 	PostsStore = require( './posts-store' ),
 	sites = require( 'lib/sites-list' )(),
 	postUtils = require( 'lib/posts/utils' ),
@@ -102,14 +108,16 @@ PostCountsStore.dispatchToken = Dispatcher.register( function( payload ) {
 	switch ( action.type ) {
 		case 'RECEIVE_UPDATED_POSTS':
 		case 'RECEIVE_POSTS_PAGE':
-			if ( data.meta && data.meta.data && data.meta.data.counts ) {
-				setPostCounts( data.meta.data.counts );
+			if ( data && data.meta && data.meta.data && data.meta.data.counts ) {
+				const responseSource = data.__sync && data.__sync.responseSource;
+				setPostCounts( responseSource, data.meta.data.counts );
 			}
 			break;
 
 		case 'RECEIVE_POST_COUNTS':
-			if ( data.counts && action.siteId ) {
-				setPostCounts( data, action.siteId );
+			if ( data && data.counts && action.siteId ) {
+				const responseSource = data.__sync && data.__sync.responseSource;
+				setPostCounts( responseSource, data, action.siteId );
 			}
 			break;
 
@@ -133,15 +141,21 @@ PostCountsStore.dispatchToken = Dispatcher.register( function( payload ) {
 /**
  * Store post counts
  *
+ * @param {String} responseSource - source of response object; server|local
  * @param {Object} counts - post counts
  * @param {String|Number} siteID - identifier for the site
  * @return {void}
  */
-function setPostCounts( counts, siteID ) {
+function setPostCounts( responseSource, counts, siteID ) {
 	var siteId = getSiteId( siteID );
 
 	if ( isEqual( counts, _counts[ siteId ] ) ) {
 		return debug( 'No changes' );
+	}
+
+	if ( _counts[ siteId ] && responseSource === 'local' ) {
+		debug( 'do not override post-counts with local response data' );
+		return;
 	}
 
 	_counts[ siteId ] = counts.counts;
@@ -181,7 +195,7 @@ function updateCountsWhenPostChanges( post, original ) {
 	PostCountsStore.emit( 'change' );
 }
 
- /*
+/*
  * Update post counts when a post is created
  *
  * @param {Object} post - current post state

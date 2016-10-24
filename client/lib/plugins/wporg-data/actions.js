@@ -8,7 +8,7 @@ var debug = require( 'debug' )( 'calypso:wporg-data:actions' );
  */
 var Dispatcher = require( 'dispatcher' ),
 	wporg = require( 'lib/wporg' ),
-	debounce = require( 'lodash/function/debounce' ),
+	debounce = require( 'lodash/debounce' ),
 	utils = require( 'lib/plugins/utils' );
 
 /**
@@ -20,32 +20,12 @@ var _LIST_DEFAULT_SIZE = 24,
 /**
  *  Local variables;
  */
-var _fetching = {},
-	_fetchingLists = {},
+var _fetchingLists = {},
 	_currentSearchTerm = null,
 	_lastFetchedPagePerCategory = {},
 	_totalPagesPerCategory = {};
 
 var PluginsDataActions = {
-	fetchPluginData: function( pluginSlug ) {
-		if ( _fetching[ pluginSlug ] ) {
-			return;
-		}
-
-		_fetching[ pluginSlug ] = true;
-
-		wporg.fetchPluginInformation( pluginSlug, function( error, data ) {
-			_fetching[ pluginSlug ] = null;
-			debug( 'plugin details fetched from .org', pluginSlug, error, data );
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_WPORG_PLUGIN_DATA',
-				pluginSlug: pluginSlug,
-				data: data ? utils.normalizePluginData( { detailsFetched: Date.now() }, data ) : null,
-				error: error
-			} );
-		} );
-	},
-
 	fetchPluginsList: debounce( function( category, page, searchTerm ) {
 		// We need to debounce this method to avoid mixing diferent dispatch batches (and get an invariant violation from react)
 		// Since the infinite scroll mixin is launching a bunch of fetch requests at the same time, without debounce is too easy
@@ -119,7 +99,6 @@ var PluginsDataActions = {
 	},
 
 	reset: function() {
-		_fetching = {};
 		_fetchingLists = {};
 		_lastFetchedPagePerCategory = {};
 		_totalPagesPerCategory = {};

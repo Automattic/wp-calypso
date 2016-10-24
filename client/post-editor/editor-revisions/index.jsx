@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -12,7 +13,7 @@ export default React.createClass( {
 
 	displayName: 'EditorRevisions',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		adminUrl: React.PropTypes.string,
@@ -37,6 +38,7 @@ export default React.createClass( {
 			<a className="editor-revisions"
 				href={ revisionsLink }
 				target="_blank"
+				rel="noopener noreferrer"
 				aria-label={ this.translate( 'Open list of revisions' ) }
 			>
 				<Gridicon icon="history" size={ 18 } />

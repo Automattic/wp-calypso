@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
-import sortBy from 'lodash/collection/sortBy';
+import findIndex from 'lodash/findIndex';
+import update from 'react-addons-update';
+import sortBy from 'lodash/sortBy';
 
 /**
  * Internal dependencies
@@ -31,7 +32,7 @@ function updateDomainState( state, domainName, data ) {
 		}
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 /**
@@ -43,16 +44,20 @@ function updateDomainState( state, domainName, data ) {
  * @return {Object} New state
  */
 function deleteTemporaryMailbox( state, domainName, mailbox ) {
+	const index = findIndex( state[ domainName ].list, { mailbox } );
+
+	if ( index === -1 ) {
+		return state;
+	}
+
 	const command = {
 		[ domainName ]: {
-			list: {
-				$apply: list => list.filter( item => item.mailbox !== mailbox )
-			},
+			list: { $splice: [ [ index, 1 ] ] },
 			needsUpdate: { $set: true }
 		}
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 /**
@@ -73,7 +78,7 @@ function addTemporaryMailbox( state, domainName, mailboxData ) {
 		}
 	};
 
-	return React.addons.update( state, command );
+	return update( state, command );
 }
 
 function reducer( state, payload ) {

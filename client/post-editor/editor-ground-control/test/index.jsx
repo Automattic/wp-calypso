@@ -1,92 +1,97 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var chai = require( 'chai' ),
-	moment = require( 'moment' ),
-	React = require( 'react/addons' ),
-	sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
-	mockery = require( 'mockery' );
+import { expect } from 'chai';
+import moment from 'moment';
+import { noop } from 'lodash';
+import React from 'react';
+import sinon from 'sinon';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-var EditorGroundControl;
+import EmptyComponent from 'test/helpers/react/empty-component';
+import useMockery from 'test/helpers/use-mockery';
+import useFakeDom from 'test/helpers/use-fake-dom';
 
 /**
  * Module variables
  */
-var MOCK_COMPONENT = React.createClass( {
-	render: function() {
-		return null;
-	}
-} );
-
-var MOCK_SITE = {
+const MOCK_SITE = {
 	capabilities: {
 		publish_posts: true
 	},
 	options: {}
 };
 
-var expect = chai.expect;
+const MOCK_USER = {
+	email_verified: true
+};
 
-chai.use( sinonChai );
+const MOCK_USER_UTILS = {
+	needsVerificationForSite: function( site ) { // eslint-disable-line no-unused-vars
+		return ! MOCK_USER.email_verified;
+	}
+};
 
 describe( 'EditorGroundControl', function() {
-	before( function() {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false
-		} );
-		mockery.registerMock( 'components/card', MOCK_COMPONENT );
-		mockery.registerMock( 'components/popover', MOCK_COMPONENT );
-		mockery.registerMock( 'my-sites/site', MOCK_COMPONENT );
-		mockery.registerMock( 'post-editor/edit-post-status', MOCK_COMPONENT );
-		mockery.registerMock( 'post-editor/status-label', MOCK_COMPONENT );
-		mockery.registerMock( 'components/sticky-panel', MOCK_COMPONENT );
-		mockery.registerMock( 'components/post-schedule', MOCK_COMPONENT );
-		EditorGroundControl = require( '../' );
-		EditorGroundControl.prototype.__reactAutoBindMap.translate = sinon.stub().returnsArg( 0 );
-		EditorGroundControl.prototype.__reactAutoBindMap.moment = moment;
-	} );
+	let shallow, i18n, EditorGroundControl;
 
-	beforeEach( function() {
-		React.unmountComponentAtNode( document.body );
+	useMockery();
+	useFakeDom();
+
+	before( function() {
+		shallow = require( 'enzyme' ).shallow;
+		i18n = require( 'i18n-calypso' );
+
+		mockery.registerMock( 'components/card', EmptyComponent );
+		mockery.registerMock( 'components/popover', EmptyComponent );
+		mockery.registerMock( 'blocks/site', EmptyComponent );
+		mockery.registerMock( 'post-editor/edit-post-status', EmptyComponent );
+		mockery.registerMock( 'post-editor/editor-status-label', EmptyComponent );
+		mockery.registerMock( 'components/sticky-panel', EmptyComponent );
+		mockery.registerMock( 'components/post-list-fetcher', EmptyComponent );
+		mockery.registerMock( 'components/post-schedule', EmptyComponent );
+		mockery.registerMock( 'lib/posts/actions', { edit: noop } );
+		mockery.registerMock( 'lib/posts/stats', {
+			recordEvent: noop,
+			recordStat: noop
+		} );
+		mockery.registerMock( 'lib/user/utils', {
+			needsVerificationForSite: () => ! MOCK_USER.email_verified,
+		} );
+		EditorGroundControl = require( '../' );
+
+		EditorGroundControl.prototype.translate = i18n.translate;
+		EditorGroundControl.prototype.moment = i18n.moment;
 	} );
 
 	after( function() {
-		delete EditorGroundControl.prototype.__reactAutoBindMap.translate;
-		delete EditorGroundControl.prototype.__reactAutoBindMap.moment;
-		mockery.deregisterAll();
-		mockery.disable();
+		delete EditorGroundControl.prototype.translate;
+		delete EditorGroundControl.prototype.moment;
 	} );
 
 	describe( '#getPreviewLabel()', function() {
 		it( 'should return View if the site is a Jetpack site and the post is published', function() {
-			var tree = React.render(
+			var tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'publish' } }
 					site={ { jetpack: true } }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPreviewLabel() ).to.equal( 'View' );
 		} );
 
 		it( 'should return Preview if the post was not originally published', function() {
-			var tree = React.render(
+			var tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'draft' } }
 					post={ { status: 'publish' } }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPreviewLabel() ).to.equal( 'Preview' );
 		} );
@@ -94,27 +99,25 @@ describe( 'EditorGroundControl', function() {
 
 	describe( '#getPrimaryButtonLabel()', function() {
 		it( 'should return Update if the post was originally published and is still slated to be published', function() {
-			var tree = React.render(
+			var tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'publish' } }
 					post={ { status: 'publish' } }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Update' );
 		} );
 
 		it( 'should return Update if the post was originally published and is currently reverted to non-published status', function() {
-			var tree = React.render(
+			var tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'publish' } }
 					post={ { status: 'draft' } }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Update' );
 		} );
@@ -124,14 +127,13 @@ describe( 'EditorGroundControl', function() {
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'draft' } }
 					post={ { date: nextMonth } }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Schedule' );
 		} );
@@ -141,14 +143,13 @@ describe( 'EditorGroundControl', function() {
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'draft' } }
 					post={ { date: nextMonth } }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Schedule' );
 		} );
@@ -158,14 +159,13 @@ describe( 'EditorGroundControl', function() {
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'future', date: nextMonth } }
 					post={ { title: 'change', status: 'future', date: nextMonth } }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Update' );
 		} );
@@ -175,14 +175,13 @@ describe( 'EditorGroundControl', function() {
 				nextMonth = now.month( now.month() + 1 ).format(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'future', date: nextMonth } }
 					post={ { title: 'change', status: 'draft', date: nextMonth } }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Update' );
 		} );
@@ -192,32 +191,46 @@ describe( 'EditorGroundControl', function() {
 				lastMonth = now.month( now.month() - 1 ).format(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'future', date: lastMonth } }
 					post={ { title: 'change', status: 'future', date: lastMonth } }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Publish' );
 		} );
 
+		it( 'should return Update if the post was originally published and is scheduled with date in the past', function() {
+			var now = moment(),
+				lastMonth = now.month( now.month() - 1 ).format(),
+				tree;
+
+			tree = shallow(
+				<EditorGroundControl
+					savedPost={ { status: 'publish', date: lastMonth } }
+					post={ { title: 'change', status: 'future', date: lastMonth } }
+					site={ MOCK_SITE }
+				/>
+			).instance();
+
+			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Update' );
+		} );
+
 		it( 'should return Publish if the post is a draft', function() {
-			var tree = React.render(
+			var tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'draft' } }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Publish' );
 		} );
 
 		it( 'should return "Submit for Review" if the post is a draft and user can\'t publish', function() {
-			var tree = React.render(
+			var tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'draft' } }
 					site={ {
@@ -225,9 +238,8 @@ describe( 'EditorGroundControl', function() {
 							publish_posts: false
 						}
 					} }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			expect( tree.getPrimaryButtonLabel() ).to.equal( 'Submit for Review' );
 		} );
@@ -235,37 +247,37 @@ describe( 'EditorGroundControl', function() {
 
 	describe( '#isSaveEnabled()', function() {
 		it( 'should return false if form is saving', function() {
-			var tree = React.render( <EditorGroundControl isSaving />, document.body );
+			var tree = shallow( <EditorGroundControl isSaving /> ).instance();
 
 			expect( tree.isSaveEnabled() ).to.be.false;
 		} );
 
 		it( 'should return false if saving is blocked', function() {
-			var tree = React.render( <EditorGroundControl isSaveBlocked />, document.body );
+			var tree = shallow( <EditorGroundControl isSaveBlocked /> ).instance();
 
 			expect( tree.isSaveEnabled() ).to.be.false;
 		} );
 
 		it( 'should return false if post does not exist', function() {
-			var tree = React.render( <EditorGroundControl isSaving={ false } hasContent isDirty />, document.body );
+			var tree = shallow( <EditorGroundControl isSaving={ false } hasContent isDirty /> ).instance();
 
 			expect( tree.isSaveEnabled() ).to.be.false;
 		} );
 
 		it( 'should return true if dirty and post has content and post is not published', function() {
-			var tree = React.render( <EditorGroundControl isSaving={ false } post={ {} } hasContent isDirty />, document.body );
+			var tree = shallow( <EditorGroundControl isSaving={ false } post={ {} } hasContent isDirty /> ).instance();
 
 			expect( tree.isSaveEnabled() ).to.be.true;
 		} );
 
 		it( 'should return false if dirty, but post has no content', function() {
-			var tree = React.render( <EditorGroundControl isSaving={ false } isDirty />, document.body );
+			var tree = shallow( <EditorGroundControl isSaving={ false } isDirty /> ).instance();
 
 			expect( tree.isSaveEnabled() ).to.be.false;
 		} );
 
 		it( 'should return false if dirty and post is published', function() {
-			var tree = React.render( <EditorGroundControl isSaving={ false } post={ { status: 'publish' } } isDirty />, document.body );
+			var tree = shallow( <EditorGroundControl isSaving={ false } post={ { status: 'publish' } } isDirty /> ).instance();
 
 			expect( tree.isSaveEnabled() ).to.be.false;
 		} );
@@ -273,31 +285,31 @@ describe( 'EditorGroundControl', function() {
 
 	describe( '#isPreviewEnabled()', function() {
 		it( 'should return true if post is not empty', function() {
-			var tree = React.render( <EditorGroundControl post={ {} } isNew hasContent isDirty />, document.body );
+			var tree = shallow( <EditorGroundControl post={ {} } isNew hasContent isDirty /> ).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.true;
 		} );
 
 		it( 'should return false if saving is blocked', function() {
-			var tree = React.render( <EditorGroundControl isSaveBlocked />, document.body );
+			var tree = shallow( <EditorGroundControl isSaveBlocked /> ).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.false;
 		} );
 
 		it( 'should return true even if form is publishing', function() {
-			var tree = React.render( <EditorGroundControl post={ {} } hasContent isPublishing />, document.body );
+			var tree = shallow( <EditorGroundControl post={ {} } hasContent isPublishing /> ).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.true;
 		} );
 
 		it( 'should return false if not dirty', function() {
-			var tree = React.render( <EditorGroundControl post={ {} } isDirty={ false } isNew />, document.body );
+			var tree = shallow( <EditorGroundControl post={ {} } isDirty={ false } isNew /> ).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.false;
 		} );
 
 		it( 'should return false if post has no content', function() {
-			var tree = React.render( <EditorGroundControl post={ {} } hasContent={ false } />, document.body );
+			var tree = shallow( <EditorGroundControl post={ {} } hasContent={ false } /> ).instance();
 
 			expect( tree.isPreviewEnabled() ).to.be.false;
 		} );
@@ -305,31 +317,45 @@ describe( 'EditorGroundControl', function() {
 
 	describe( '#isPrimaryButtonEnabled()', function() {
 		it( 'should return true if form is not publishing and post is not empty', function() {
-			var tree = React.render( <EditorGroundControl isPublishing={ false } post={ {} } hasContent isDirty isNew />, document.body );
+			var tree = shallow( <EditorGroundControl isPublishing={ false } post={ {} } hasContent isDirty isNew /> ).instance();
+
+			expect( tree.isPrimaryButtonEnabled() ).to.be.true;
+		} );
+
+		it( 'should return false if form is not publishing and post is not empty, but user is not verified', function() {
+			MOCK_USER.email_verified = false;
+			let tree = shallow( <EditorGroundControl isPublishing={ false } post={ {} } user={ MOCK_USER } userUtils={ MOCK_USER_UTILS } hasContent isDirty isNew /> ).instance();
+
+			expect( tree.isPrimaryButtonEnabled() ).to.be.false;
+			MOCK_USER.email_verified = true;
+		} );
+
+		it( 'should return true if form is not publishind and post is new and has content, but is not dirty', function() {
+			var tree = shallow( <EditorGroundControl isPublishing={ false } post={ {} } hasContent isDirty={ false } isNew /> ).instance();
 
 			expect( tree.isPrimaryButtonEnabled() ).to.be.true;
 		} );
 
 		it( 'should return false if form is publishing', function() {
-			var tree = React.render( <EditorGroundControl isPublishing />, document.body );
+			var tree = shallow( <EditorGroundControl isPublishing /> ).instance();
 
 			expect( tree.isPrimaryButtonEnabled() ).to.be.false;
 		} );
 
 		it( 'should return false if saving is blocked', function() {
-			var tree = React.render( <EditorGroundControl isSaveBlocked />, document.body );
+			var tree = shallow( <EditorGroundControl isSaveBlocked /> ).instance();
 
 			expect( tree.isPrimaryButtonEnabled() ).to.be.false;
 		} );
 
-		it( 'should return false if not dirty', function() {
-			var tree = React.render( <EditorGroundControl post={ {} } isDirty={ false } isNew />, document.body );
+		it( 'should return false if not dirty and has no content', function() {
+			var tree = shallow( <EditorGroundControl post={ {} } isDirty={ false } hasContent={ false } isNew /> ).instance();
 
 			expect( tree.isPrimaryButtonEnabled() ).to.be.false;
 		} );
 
 		it( 'should return false if post has no content', function() {
-			var tree = React.render( <EditorGroundControl post={ {} } hasContent={ false } />, document.body );
+			var tree = shallow( <EditorGroundControl post={ {} } hasContent={ false } /> ).instance();
 
 			expect( tree.isPrimaryButtonEnabled() ).to.be.false;
 		} );
@@ -340,14 +366,13 @@ describe( 'EditorGroundControl', function() {
 			var onPublish = sinon.spy(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					post={ { status: 'draft' } }
 					site={ MOCK_SITE }
 					onPublish={ onPublish }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			tree.onPrimaryButtonClick();
 
@@ -357,43 +382,41 @@ describe( 'EditorGroundControl', function() {
 		it( 'should schedule a posted dated in future', function() {
 			var now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
-				onSave = sinon.spy(),
+				onPublish = sinon.spy(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'draft', date: nextMonth } }
 					post={ { title: 'change', status: 'draft', date: nextMonth } }
-					onSave={ onSave }
+					onPublish={ onPublish }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			tree.onPrimaryButtonClick();
 
-			expect( onSave ).to.have.been.calledWith( 'future' );
+			expect( onPublish ).to.have.been.called;
 		} );
 
 		it( 'should save a scheduled post dated in future', function() {
 			var now = moment( new Date() ),
 				nextMonth = now.month( now.month() + 1 ).format(),
-				onSave = sinon.spy(),
+				onPublish = sinon.spy(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'future', date: nextMonth } }
 					post={ { title: 'change', status: 'future', date: nextMonth } }
-					onSave={ onSave }
+					onPublish={ onPublish }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			tree.onPrimaryButtonClick();
 
-			expect( onSave ).to.have.been.calledWith( 'future' );
+			expect( onPublish ).to.have.been.called;
 		} );
 
 		it( 'should publish a scheduled post dated in past', function() {
@@ -402,15 +425,14 @@ describe( 'EditorGroundControl', function() {
 				onPublish = sinon.spy(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'future', date: lastMonth } }
 					post={ { title: 'change', status: 'future', date: lastMonth } }
 					onPublish={ onPublish }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			tree.onPrimaryButtonClick();
 
@@ -421,15 +443,34 @@ describe( 'EditorGroundControl', function() {
 			var onSave = sinon.spy(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'publish' } }
 					post={ { title: 'change', status: 'draft' } }
 					onSave={ onSave }
 					site={ MOCK_SITE }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
+
+			tree.onPrimaryButtonClick();
+
+			expect( onSave ).to.have.been.called;
+		} );
+
+		it( 'should update a published post scheduled in the past', function() {
+			var now = moment( new Date() ),
+				lastMonth = now.month( now.month() - 1 ).format(),
+				onSave = sinon.spy(),
+				tree;
+
+			tree = shallow(
+				<EditorGroundControl
+					savedPost={ { status: 'publish' } }
+					post={ { title: 'change', status: 'future', date: lastMonth } }
+					onSave={ onSave }
+					site={ MOCK_SITE }
+				/>
+			).instance();
 
 			tree.onPrimaryButtonClick();
 
@@ -440,7 +481,7 @@ describe( 'EditorGroundControl', function() {
 			var onSave = sinon.spy(),
 				tree;
 
-			tree = React.render(
+			tree = shallow(
 				<EditorGroundControl
 					savedPost={ { status: 'draft' } }
 					onSave={ onSave }
@@ -449,9 +490,8 @@ describe( 'EditorGroundControl', function() {
 							publish_posts: false
 						}
 					} }
-				/>,
-				document.body
-			);
+				/>
+			).instance();
 
 			tree.onPrimaryButtonClick();
 

@@ -12,9 +12,12 @@ var ServiceTip = require( './service-tip' ),
 	ServiceAction = require( './service-action' ),
 	ServiceConnectedAccounts = require( './service-connected-accounts' ),
 	notices = require( 'notices' ),
+	observe = require( 'lib/mixins/data-observe' ),
 	sites = require( 'lib/sites-list' )(),
 	serviceConnections = require( './service-connections' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' ),
+	FoldableCard = require( 'components/foldable-card' ),
+	SocialLogo = require( 'components/social-logo' );
 
 module.exports = React.createClass( {
 	displayName: 'SharingService',
@@ -29,6 +32,8 @@ module.exports = React.createClass( {
 		onRefreshConnection: React.PropTypes.func,       // Handler for refreshing a Keyring connection for this service
 		onToggleSitewideConnection: React.PropTypes.func // Handler to invoke when toggling a connection to be shared sitewide
 	},
+
+	mixins: [ observe( 'connections' ) ],
 
 	getInitialState: function() {
 		return {
@@ -144,7 +149,7 @@ module.exports = React.createClass( {
 		if ( 'undefined' === typeof connections ) {
 			// If connections is undefined, assume that all connections for
 			// this service are to be removed.
-			connections = serviceConnections.getRemovableConnections( this.props.service.name );
+			connections = serviceConnections.getRemovableConnections( this.props.service.ID );
 		}
 
 		this.setState( { isDisconnecting: true } );
@@ -161,87 +166,101 @@ module.exports = React.createClass( {
 		if ( ! connection ) {
 			// When triggering a refresh from the primary action button, find
 			// the first broken connection owned by the current user.
-			connection = serviceConnections.getRefreshableConnections( this.props.service.name )[0];
+			connection = serviceConnections.getRefreshableConnections( this.props.service.ID )[ 0 ];
 		}
 		this.props.onRefreshConnection( connection );
 	},
 
 	performAction: function() {
-		var connectionStatus = serviceConnections.getConnectionStatus( this.props.service.name );
+		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID );
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
-		if ( 'connected' === connectionStatus && serviceConnections.getRemovableConnections( this.props.service.name ).length ) {
+		if ( 'connected' === connectionStatus && serviceConnections.getRemovableConnections( this.props.service.ID ).length ) {
 			this.disconnect();
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.name );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
 		} else if ( 'reconnect' === connectionStatus ) {
 			this.refresh();
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.name );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
 		} else {
 			this.connect();
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Button', this.props.service.name );
-		}
-	},
-
-	toggleOpen: function() {
-		var isNowOpen = ! this.state.isOpen;
-		this.setState( { isOpen: isNowOpen } );
-
-		if ( isNowOpen ) {
-			analytics.ga.recordEvent( 'Sharing', 'Expanded Service', this.props.service.name );
-		} else {
-			analytics.ga.recordEvent( 'Sharing', 'Collapsed Service', this.props.service.name );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
 		}
 	},
 
 	render: function() {
-		var connectionStatus = serviceConnections.getConnectionStatus( this.props.service.name ),
-			connections = serviceConnections.getConnections( this.props.service.name ),
-			elementClass;
+		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID ),
+			connections = serviceConnections.getConnections( this.props.service.ID ),
+			elementClass = [
+				'sharing-service',
+				this.props.service.ID,
+				connectionStatus,
+				this.state.isOpen ? 'is-open' : ''
+			].join( ' ' ),
+			iconsMap = {
+				Facebook: 'facebook',
+				Twitter: 'twitter',
+				'Google+': 'google-plus',
+				LinkedIn: 'linkedin',
+				Tumblr: 'tumblr',
+				Path: 'path',
+				Eventbrite: 'eventbrite'
+			};
 
-		elementClass = [
-			'sharing-service',
-			this.props.service.name,
-			connectionStatus,
-			this.state.isOpen ? 'is-open' : ''
-		].join( ' ' );
+		const header = (
+			<div>
+				<SocialLogo
+					icon={ iconsMap[ this.props.service.label ] }
+					size={ 48 }
+					className="sharing-service__logo" />
 
-		return (
-			<li className={ elementClass }>
-				<header className="sharing-service__overview" onClick={ this.toggleOpen }>
-					<span className={ 'sharing-service__content-toggle noticon noticon-' + ( this.state.isOpen ? 'collapse' : 'expand' ) } />
-
-					<div className="sharing-service__icon">
-						<span className={ [ 'sharing-service__glyph', 'noticon', 'noticon-' + this.props.service.genericon.class ].join( ' ' ) }></span>
-					</div>
-
-					<h3 className="sharing-service__name">{ this.props.service.label }</h3>
-					<ServiceDescription service={ this.props.service } status={ connectionStatus } numberOfConnections={ connections.length } />
-
-					<ServiceAction
+				<div className="sharing-service__name">
+					<h2>{ this.props.service.label }</h2>
+					<ServiceDescription
+						service={ this.props.service }
 						status={ connectionStatus }
-						service={ this.props.service }
-						onAction={ this.performAction }
-						isConnecting={ this.state.isConnecting }
-						isRefreshing={ this.state.isRefreshing }
-						isDisconnecting={ this.state.isDisconnecting } />
-				</header>
-				<div className={ 'sharing-service__content ' + ( serviceConnections.isFetchingAccounts() ? 'is-placeholder' : '' ) }>
-					<ServiceExamples service={ this.props.service } site={ sites.getSelectedSite() } />
-					<ServiceConnectedAccounts
-						site={ this.props.site }
-						user={ this.props.user }
-						service={ this.props.service }
-						connections={ connections }
-						onAddConnection={ this.connect }
-						onRemoveConnection={ this.disconnect }
-						isDisconnecting={ this.state.isDisconnecting }
-						onRefreshConnection={ this.refresh }
-						isRefreshing={ this.state.isRefreshing }
-						onToggleSitewideConnection={ this.props.onToggleSitewideConnection } />
-					<ServiceTip service={ this.props.service } />
+						numberOfConnections={ connections.length } />
 				</div>
-			</li>
+			</div>
+		);
+
+		const content = (
+			<div
+				className={ 'sharing-service__content ' + ( serviceConnections.isFetchingAccounts() ? 'is-placeholder' : '' ) }>
+				<ServiceExamples service={ this.props.service } site={ sites.getSelectedSite() } />
+				<ServiceConnectedAccounts
+					site={ this.props.site }
+					user={ this.props.user }
+					service={ this.props.service }
+					connections={ connections }
+					onAddConnection={ this.connect }
+					onRemoveConnection={ this.disconnect }
+					isDisconnecting={ this.state.isDisconnecting }
+					onRefreshConnection={ this.refresh }
+					isRefreshing={ this.state.isRefreshing }
+					onToggleSitewideConnection={ this.props.onToggleSitewideConnection } />
+				<ServiceTip service={ this.props.service } />
+			</div> );
+
+		const action = (
+			<ServiceAction
+				status={ connectionStatus }
+				service={ this.props.service }
+				onAction={ this.performAction }
+				isConnecting={ this.state.isConnecting }
+				isRefreshing={ this.state.isRefreshing }
+				isDisconnecting={ this.state.isDisconnecting } />
+		);
+		return (
+			<FoldableCard
+				className={ elementClass }
+				header={ header }
+				clickableHeader
+				compact
+				summary={ action }
+				expandedSummary={ action } >
+				{ content }
+			</FoldableCard>
 		);
 	}
 } );

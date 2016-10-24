@@ -4,6 +4,7 @@ body {
 	font-size: 15px;
 	line-height: 1.7;
 	margin-top: 32px;
+	margin-bottom: 72px;
 }
 
 p {
@@ -27,6 +28,23 @@ a:hover,
 a:active {
 	color: $blue-light;
 	outline: 0;
+}
+
+code {
+	background: lighten( $gray, 30% );
+	font-family: $code;
+	padding: 4px 8px;
+}
+
+pre {
+	background: lighten( $gray, 34% );
+	font-family: $code;
+	padding: 8px;
+
+	code {
+		background: none;
+		padding: 0;
+	}
 }
 
 // Images and captions

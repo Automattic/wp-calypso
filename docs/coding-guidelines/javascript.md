@@ -3,7 +3,7 @@ JavaScript Coding Guidelines
 
 ## Spacing
 
-Use spaces liberally throughout your code. “When in doubt, space it out.”
+Use spacing liberally throughout your code. “When in doubt, space it out.”
 
 These rules encourage liberal spacing for improved developer readability. The minification process creates a file that is optimized for browsers to read and process.
 
@@ -79,16 +79,6 @@ foo( function() {
     // Do stuff
 }, options );
 
-```
-
-
-Exceptions:
-
-```js
-// For consistency with our PHP standards, do not include a space around
-// string literals or integers used as key values in array notation:
-prop = object['default'];
-firstArrayElement = arr[0];
 ```
 
 ## Examples of Good Spacing
@@ -189,25 +179,21 @@ if ( firstCondition() && secondCondition() &&
 
 ## Assignments and Globals
 
-### Declaring Variables With `var`
+### Variable Declarations
 
-Each function should begin with a single comma-delimited var statement that declares any local variables necessary. If a function does not declare a variable using var, that variable can leak into an outer scope (which is frequently the global scope, a worst-case scenario), and can unwittingly refer to and modify that data.
+When possible, variables should be declared using a `const` declaration. Use 
+`let` only when you anticipate that the variable value will be reassigned 
+during runtime. `var` should not be used in any new code.
 
-Assignments within the var statement should be listed on individual lines, while declarations can be grouped on a single line. Any additional lines should be indented with an additional tab. Objects and functions that occupy more than a handful of lines should be assigned outside of the var statement, to avoid over-indentation.
+Note that `const` does not protect against mutations to an object, so do not
+use it as an indicator of immutability.
 
+```javascript
+const foo = {};
+foo.bar = true;
 
-```js
-// Good
-var k, m, length,
-    // Indent subsequent lines by one tab
-    value = 'WordPress';
-
-// Bad
-var foo = true;
-var bar = false;
-var a;
-var b;
-var c;
+let counter = 0;
+counter++;
 ```
 
 ### Globals
@@ -230,10 +216,20 @@ var userIdToDelete, siteUrl;
 var userIDToDelete, siteURL;
 ```
 
-Constructors intended for use with new should have a capital first letter (UpperCamelCase).
-
 Names should be descriptive, but not excessively so. Exceptions are allowed for iterators, such as the use of `i` to represent the index in a loop.
 
+Constructors intended for use with new should have a capital first letter (UpperCamelCase).
+
+Variables intended to be used as a [constant](https://en.wikipedia.org/wiki/Constant_(computer_programming)) can be defined with the [SCREAMING_SNAKE_CASE naming convention](https://en.wikipedia.org/wiki/Snake_case). Note that while any variable declared using `const` could be considered a constant, in the context of our application this usage should usually be limited to top-level or exported module values.
+
+```js
+const DUMMY_VALUE = 10;
+
+function getIncrementedDummyValue() {
+	const incrementedValue = DUMMY_VALUE + 1;
+	return incrementedValue;
+}
+```
 
 ## Comments
 
@@ -354,7 +350,7 @@ Use single-quotes for string literals:
 var myStr = 'strings should be contained in single quotes';
 ```
 
-When a string contains single quotes, they need to be escaped with a backslash (\):
+When a string contains single quotes, they need to be escaped with a backslash (\\):
 
 Double quotes can be used in cases where there is a single quote in the string or in JSX attributes.
 
@@ -366,15 +362,12 @@ var component = <div className="post"></div>;
 
 ## Switch Statements
 
-The usage of switch statements is generally discouraged, but can be useful when there are a large
-number of cases – especially when multiple cases can be handled by the same block, or fall-through
-logic (the default case) can be leveraged.
+Switch statements can be useful when there are a large number of cases – especially when multiple cases can be handled by the same block (using fall-through), or the default case can be leveraged.
 
 When using switch statements:
 
-- Use a break for each case other than default. When allowing statements to “fall through,” note that explicitly.
+- Note intentional cases of fall-through explicitly, as it is a common error to omit a break by accident.
 - Indent case statements one tab within the switch.
-
 
 ```js
 switch ( event.keyCode ) {
@@ -389,28 +382,6 @@ switch ( event.keyCode ) {
         break;
     default:
         z();
-}
-```
-It is not recommended to return a value from within a switch statement: use the case blocks to set values, then return those values at the end.
-
-
-```js
-function getKeyCode( keyCode ) {
-    var result;
-
-    switch ( event.keyCode ) {
-        case constants.keyCode.ENTER:
-        case constants.keyCode.SPACE:
-            result = 'commit';
-            break;
-        case constants.keyCode.ESCAPE:
-            result = 'exit';
-            break;
-        default:
-            result = 'default';
-    }
-
-    return result;
 }
 ```
 
@@ -434,7 +405,7 @@ const shouldFlop = true;
 
 ### Function names
 
-The first word of a variable name should be a verb (not a noun) to avoid confusion with variables.
+The first word of a function name should be a verb (not a noun) to avoid confusion with variables.
 
 ```js
 // bad
@@ -455,7 +426,7 @@ function isValid() {
 
 ### Arrays
 
-Creating arrays in JavaScript should be done using the shorthand [] constructor rather than the new Array() notation.
+Creating arrays in JavaScript should be done using the shorthand `[]` constructor rather than the `new Array()` notation.
 
 ```js
 var myArray = [];
@@ -565,7 +536,7 @@ If you find that you have many separate rendering functions, or rendering functi
 
 ## ES6
 
-We support and encourage ES6 features thanks to [Babel](https://babeljs.io/) transpilation and the accompanying polyfill. There are still a couple of minor caveats to be aware of [regarding Classes](https://babeljs.io/docs/advanced/caveats/).
+We support and encourage ES6 features thanks to [Babel](https://babeljs.io/) transpilation and the accompanying polyfill. There are still a couple of minor caveats to be aware of [regarding Classes](https://babeljs.io/docs/learn-es2015/#subclassable-built-ins).
 
 ### Let and Const
 
@@ -1004,7 +975,7 @@ More about:
 
 ## ESLint
 
-To help encourages folks to follow the coding standards, there is a [ESLint](http://eslint.org/) configuration file ```.eslintrc``` that configures ESLint to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [eslint-plugin-react](https://github.com/yannickcr/eslint-plugin-react), which we use in our configuration.
+To help encourages folks to follow the coding standards, there is a [ESLint](http://eslint.org/) configuration file ```.eslintrc``` that configures ESLint to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [`eslint-plugin-wpcalypso`](https://github.com/yannickcr/eslint-plugin-wpcalypso), which we use in our configuration.
 
 There are [integrations](http://eslint.org/docs/user-guide/integrations) for many editors that will automatically detect the configuration file and run the checks.
 
@@ -1069,7 +1040,7 @@ If you are using Sublime Text, you can use the `SublimeLinter-eslint` plugin to 
 Before following these instructions, you'll want to globally install ESLint and related dependencies by running the following command in your terminal:
 
 ```bash
-npm install -g eslint eslint-plugin-react babel-eslint
+npm install -g eslint eslint-plugin-wpcalypso eslint-plugin-react babel-eslint
 ```
 
 #### Identifying Spaces with Sublime Text

@@ -1,26 +1,27 @@
 /**
  * External dependencies
  */
-const includes = require( 'lodash/collection/includes' ),
-	mapValues = require( 'lodash/object/mapValues' );
+import { endsWith, filter, find, includes, mapValues, startsWith, trimStart, without, matches, negate, some } from 'lodash';
 
-function validateAllFields( fieldValues ) {
+function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
 		const isValid = validateField( {
+			value,
+			domainName,
 			name: fieldName,
-			value: value,
-			type: fieldValues.type
+			type: fieldValues.type,
 		} );
 
 		return isValid ? [] : [ 'Invalid' ];
 	} );
 }
 
-function validateField( { name, value, type } ) {
+function validateField( { name, value, type, domainName } ) {
 	switch ( name ) {
 		case 'name':
+			return isValidName( value, type, domainName );
 		case 'target':
-			return isValidName( value );
+			return isValidDomain( value, type );
 		case 'data':
 			return isValidData( value, type );
 		case 'protocol':
@@ -36,8 +37,25 @@ function validateField( { name, value, type } ) {
 	}
 }
 
-function isValidName( name ) {
-	return /^([\da-z-]+\.)+[\da-z-]+$/i.test( name );
+function isValidDomain( name ) {
+	if ( name.length > 253 ) {
+		return false;
+	}
+	return /^([a-z0-9-_]{1,63}\.)*[a-z0-9-]{1,63}\.[a-z]{2,63}$/i.test( name );
+}
+
+function isValidName( name, type, domainName ) {
+	if ( isRootDomain( name, domainName ) && canBeRootDomain( type ) ) {
+		return true;
+	}
+
+	switch ( type ) {
+		case 'A':
+		case 'AAAA':
+			return /^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)*[a-z0-9]([a-z0-9-]*[a-z0-9])?$/i.test( name );
+		default:
+			return /^([a-z0-9-_]{1,63}\.)*([a-z0-9-_]{1,63})$/i.test( name );
+	}
 }
 
 function isValidData( data, type ) {
@@ -48,40 +66,118 @@ function isValidData( data, type ) {
 			return data.match( /^[a-f0-9\:]+$/i );
 		case 'CNAME':
 		case 'MX':
-			return isValidName( data );
+			return isValidDomain( data );
 		case 'TXT':
-			return data.length < 256;
+			return data.length > 0 && data.length < 256;
 	}
 }
 
-function getNormalizedData( fieldValues, selectedDomainName ) {
-	var data = fieldValues;
-
-	data.data = getFieldWithDot( data.data );
-
-	if ( includes( [ 'A', 'AAAA' ], data.type ) ) {
-		data.name = removeTrailingDomain( data.name, selectedDomainName );
+function getNormalizedData( record, selectedDomainName ) {
+	const normalizedRecord = Object.assign( {}, record );
+	normalizedRecord.data = getFieldWithDot( record.data );
+	normalizedRecord.name = getNormalizedName( record.name, record.type, selectedDomainName );
+	if ( record.target ) {
+		normalizedRecord.target = getFieldWithDot( record.target );
+	}
+	// The leading '_' in SRV's service field is a convention
+	// The record itself should not contain it
+	if ( record.service ) {
+		normalizedRecord.service = trimStart( record.service, '_' );
 	}
 
-	data.name = getFieldWithDot( data.name );
-
-	if ( data.target ) {
-		data.target = getFieldWithDot( data.target );
-	}
-
-	return data;
+	return normalizedRecord;
 }
 
-function removeTrailingDomain( domain, trailing ) {
-	return domain.replace( new RegExp( '\\.+' + trailing + '\\.?$', 'i' ), '' );
+function getNormalizedName( name, type, selectedDomainName ) {
+	const endsWithDomain = endsWith( name, '.' + selectedDomainName );
+
+	if ( isRootDomain( name, selectedDomainName ) && canBeRootDomain( type ) ) {
+		return selectedDomainName + '.';
+	}
+
+	if ( endsWithDomain ) {
+		return name.replace( new RegExp( '\\.+' + selectedDomainName + '\\.?$', 'i' ), '' );
+	}
+
+	return name;
+}
+
+function isRootDomain( name, domainName ) {
+	const rootDomainVariations = [
+		'@',
+		domainName,
+		domainName + '.',
+		'@.' + domainName,
+		'@.' + domainName + '.' ];
+	return ! name || includes( rootDomainVariations, name );
+}
+
+function canBeRootDomain( type ) {
+	return includes( [ 'A', 'MX', 'SRV', 'TXT' ], type );
 }
 
 function getFieldWithDot( field ) {
 	// something that looks like domain but doesn't end with a dot
-	return ( typeof field === 'string' && field.match( /^([a-z0-9-]+\.)+\.?[a-z]+$/i ) ) ? field + '.' : field;
+	return ( typeof field === 'string' && field.match( /^([a-z0-9-_]+\.)+\.?[a-z]+$/i ) ) ? field + '.' : field;
 }
 
-module.exports = {
+function isWpcomRecord( record ) {
+	return startsWith( record.id, 'wpcom:' );
+}
+
+function isRootARecord( domain ) {
+	return matches( {
+		type: 'A',
+		name: `${domain}.`
+	} );
+}
+
+function removeDuplicateWpcomRecords( domain, records ) {
+	const rootARecords = filter( records, isRootARecord( domain ) ),
+		wpcomARecord = find( rootARecords, isWpcomRecord ),
+		customARecord = find( rootARecords, negate( isWpcomRecord ) );
+
+	if ( wpcomARecord && customARecord ) {
+		return without( records, wpcomARecord );
+	}
+
+	return records;
+}
+
+function addMissingWpcomRecords( domain, records ) {
+	if ( ! some( records, isRootARecord( domain ) ) ) {
+		const defaultRootARecord = {
+			domain,
+			id: `wpcom:A:${domain}.:${domain}`,
+			name: `${domain}.`,
+			protected_field: true,
+			type: 'A'
+		};
+
+		return records.concat( [ defaultRootARecord ] );
+	}
+
+	return records;
+}
+
+function isBeingProcessed( record ) {
+	return record.isBeingDeleted || record.isBeingAdded;
+}
+
+function isDeletingLastMXRecord( recordToDelete, records ) {
+	const currentMXRecords = filter( records, { type: 'MX' } );
+
+	return (
+		recordToDelete.type === 'MX' &&
+		currentMXRecords.length === 1
+	);
+}
+
+export {
+	addMissingWpcomRecords,
+	getNormalizedData,
+	removeDuplicateWpcomRecords,
 	validateAllFields,
-	getNormalizedData
+	isBeingProcessed,
+	isDeletingLastMXRecord
 };

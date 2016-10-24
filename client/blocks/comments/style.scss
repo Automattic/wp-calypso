@@ -1,0 +1,378 @@
+// The main comment list wrapper
+.comments__comment-list {
+	border-top: 1px solid lighten( $gray, 20% );
+	clear: both;
+	margin: 36px 0 0;
+	padding-top: 11px;
+}
+
+
+// Comment Counter
+.comments__count {
+	text-align: center;
+	color: $gray;
+	float: right;
+}
+
+// Add a New Comment Form
+.comments__form {
+	position: relative;
+	padding: 0 0 0 48px;
+	margin-top: 24px;
+
+	.gravatar {
+		position: absolute;
+			top: 0;
+			left: 8px;
+		border-radius: 48px;
+	}
+
+	input {
+		font-size: 14px;
+		padding: 5px 10px;
+	}
+
+	// The inner working of these styles is covered here: http://alistapart.com/article/expanding-text-areas-made-elegant
+	.expanding-area {
+		position: relative;
+		$initial-focused-height: 70px;
+
+		pre,
+		textarea {
+			max-height: 400px;
+			min-height: 33px;
+			margin: 0;
+			padding: 5px 60px 5px 5px;
+			font-size: 14px;
+			font-family: $serif;
+			line-height: 21px;
+
+			white-space: pre-wrap;
+			word-wrap: break-word;
+		}
+
+		textarea {
+			position: absolute;
+				top: 0;
+				left: 0;
+			height: 100%;
+			resize: none;
+		}
+
+		pre {
+			border: 1px solid $gray;
+			box-sizing: border-box;
+			display: block;
+			visibility: hidden;
+		}
+
+		&.focused {
+			min-height: $initial-focused-height;
+		}
+	}
+
+	button {
+		opacity: 0;
+		position: absolute;
+		  top: 4px;
+		  right: 16px;
+		padding: 4px;
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		color: lighten( $gray, 10% );
+		transition: all 0.2s ease-in-out;
+
+		&.is-active {
+			color: $blue-medium;
+			cursor: pointer;
+		}
+
+		&.is-visible {
+			opacity: 1;
+		}
+	}
+
+	button:focus {
+		outline: dotted 1px $blue-medium;
+		color: $blue-wordpress;
+	}
+
+	.comments__cancel-reply {
+		font-size: 12px;
+		cursor: pointer;
+	}
+}
+
+.comments__form-closed {
+	color: $gray;
+	margin-top: 20px;
+	margin-bottom: -3px;
+	font-family: $sans;
+	text-align: center;
+	border-top: 1px solid lighten( $gray, 30% );
+	padding-top: 22px;
+	font-size: 14px;
+}
+
+
+// A list of comments
+.comments__list {
+	list-style: none;
+	margin: 0;
+
+	&.is-root {
+		margin-top: 0 !important; // the !important can go when the old reader/comments is retired
+	}
+
+	&.is-children {
+		margin-left: -2px;
+		border-left: 2px solid lighten( $gray, 10% );
+
+		.comments__comment-author .gravatar {
+			left: -15px;
+		}
+	}
+
+	.comments__form {
+		margin-top: 10px;
+	}
+}
+
+
+// Individual Comment
+.comments__comment {
+	padding: 6px 0 0;
+	margin: 24px 0 0;
+	position: relative;
+
+	&.depth-0, &.depth-1, &.depth-2 {
+		padding-left: 48px;
+		margin-top: 12px;
+
+		> .comments__comment-author .gravatar {
+			left: 8px;
+		}
+	}
+
+	&.depth-2 {
+		.comments__view-replies-btn {
+			margin-left: -40px;
+		}
+	}
+
+	&.is-child {
+		background: transparent;
+	}
+
+	&.is-error {
+		padding: 0;
+
+		.notice {
+			margin-top: 10px;
+		}
+	}
+}
+
+.comments__comment-author {
+	font-weight: 600;
+	color: darken( $gray, 30% );
+
+	.gravatar {
+		position: absolute;
+			top: 14px;
+			left: -41px;
+		border-radius: 48px;
+
+		@include breakpoint( "<480px" ) {
+			top: 12px;
+		}
+	}
+}
+
+.comments__comment-trackbackicon {
+	position: absolute;
+		top: 12px;
+		left: 8px;
+	border-radius: 50%;
+	background-color: $gray-light;
+	width: 32px;
+	height: 32px;
+
+	.gridicon {
+		height: 24px;
+	  	fill: lighten( $gray, 10% );
+	  	position: absolute;
+	  		top: 50%;
+	  		margin-top: -12px;
+	  		left: 50%;
+	  		margin-left: -12px;
+	}
+}
+
+.comments__comment-username {
+	font-size: 15px;
+	color: darken( $gray, 30% );
+}
+
+a.comments__comment-username {
+	color: $blue-medium;
+
+	&:hover {
+		color: $blue-light;
+	}
+}
+
+.comments__comment-timestamp {
+	margin-top: -8px;
+
+	@include breakpoint( "<480px" ) {
+		margin-top: -4px;
+	}
+}
+
+.comments__comment-timestamp a {
+	font-weight: normal;
+	font-size: 13px;
+	color: lighten( $gray, 10% );
+	text-decoration: none;
+
+	&:hover {
+		color: $link-highlight;
+	}
+}
+
+.comments__comment-moderation {
+	color: $gray;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	font-size: 12px;
+}
+
+.comments__comment-content {
+	@extend %content-font;
+	padding-top: 4px;
+	font-size: 14px;
+	line-height: 1.8;
+	word-break: break-word;
+
+	p {
+		color: darken( $gray, 30% );
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	blockquote {
+		padding: 8px 16px;
+		margin: 8px 0 16px;
+		border-left: 2px solid $gray;
+		color: darken( $gray, 30% );
+		background: lighten( $gray, 30% );
+	}
+}
+
+
+// Actions for Individual Comments
+.comments__comment-actions {
+	list-style: none;
+	margin-left: -4px;
+	color: $gray;
+	font-size: 14px;
+
+	button {
+		display: inline-block;
+		color: $gray;
+		padding: 4px;
+		margin-right: 8px;
+		cursor: pointer;
+		font-size: 14px;
+
+		.like-button__like-icons {
+			margin-right: 18px;
+		}
+
+		&.comments__comment-actions-reply {
+			.gridicon {
+				position: relative;
+					top: 4px;
+				margin-right: 4px;
+				transform: rotate( 180deg );
+			}
+		}
+
+		&.like-button {
+			.gridicon {
+				top: 4px;
+			}
+		}
+
+		&:hover {
+			color: $blue-medium;
+		}
+
+		&.comments__comment-actions-cancel-reply {
+			float: right;
+			margin-top: 4px;
+			margin-right: 0;
+		}
+	}
+
+	@include breakpoint( "<480px" ) {
+		.like-button .like-button__label-status {
+			display: inline;
+		}
+	}
+}
+
+.comments__info-bar {
+	margin: 0 24px -24px 0;
+	overflow: auto;
+
+	&.is-no-comments {
+	  display: none;
+	}
+}
+
+.comments__view-earlier {
+	color: $gray;
+	cursor: pointer;
+	display: block !important; // to overwrite inline-block rule
+	font-size: 14px;
+	line-height: 1;
+	margin-bottom: 15px !important; // to overwrite 10px value
+
+	&:hover {
+		color: $blue-light;
+	}
+}
+
+.comments__view-replies-btn {
+	cursor: pointer;
+	background-color: $gray-light;
+	width: 100%;
+	color: darken( $gray, 10% );
+	text-align: left;
+	margin-top: 15px;
+	padding: 5px 10px 10px 12px;
+
+	.gridicon {
+		position: relative;
+			top: 4px;
+		margin-right: 4px;
+		transform: rotate( 180deg );
+	}
+}
+
+.comments__comment-count {
+	color: lighten( $gray, 10% );
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 1;
+	margin: 8px 0 17px;
+}
+
+.comments__comment-count-phrase {
+	text-transform: uppercase;
+}

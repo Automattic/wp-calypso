@@ -30,6 +30,15 @@
 	vertical-align: top;
 	text-transform: uppercase;
 	cursor: pointer;
+
+	.is-disabled & {
+		color: lighten( $gray, 30% );
+		cursor: default;
+	}
+
+	.has-disabled-info & {
+		cursor: pointer;
+	}
 }
 
 .plugin-action .form-toggle__label .form-toggle__switch {
@@ -42,4 +51,12 @@
 
 .plugin-action__children .noticon {
 	margin-left: 8px;
+}
+.plugin-action__disabled-info.info-popover {
+	float: right;
+	margin: 0 3px;
+}
+
+.plugin-action__disabled-info-list {
+	margin-left: 16px;
 }

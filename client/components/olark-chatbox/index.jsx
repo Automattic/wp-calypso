@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:olark:chatbox' );
 
 /**
@@ -90,7 +91,7 @@ module.exports = React.createClass( {
 		this.expandChatbox();
 
 		// Change the parent of the widget to our DOM node and save a refrence to it
-		this.olarkDOMNode = React.findDOMNode( this ).appendChild( olarkWidget );
+		this.olarkDOMNode = ReactDom.findDOMNode( this ).appendChild( olarkWidget );
 
 		debug( 'bind the olark chat widget' );
 	},
@@ -104,8 +105,14 @@ module.exports = React.createClass( {
 			return;
 		}
 
+		const conversationDiv = document.getElementById( 'habla_conversation_div' );
+		const scrollTop = conversationDiv.scrollTop;
+
 		// Return the olark widget to its original DOM node
 		this.originalDOMParent.appendChild( this.olarkDOMNode );
+
+		// The conversation scroll position gets lost when changing the dom parent so lets set it to what it was before.
+		conversationDiv.scrollTop = scrollTop;
 
 		debug( 'release the olark chat widget' );
 	},

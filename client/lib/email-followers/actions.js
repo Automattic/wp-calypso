@@ -11,17 +11,19 @@ var Dispatcher = require( 'dispatcher' ),
 	EmailFollowersStore = require( 'lib/email-followers/store' );
 
 var EmailFollowersActions = {
-	fetchFollowers: fetchOptions => {
+	fetchFollowers: ( fetchOptions, silentUpdate = false ) => {
 		Object.assign( fetchOptions, { type: 'email' } );
 		const paginationData = EmailFollowersStore.getPaginationData( fetchOptions );
 		if ( paginationData.fetchingUsers ) {
 			return;
 		}
 		debug( 'fetchFollowers', fetchOptions );
-		Dispatcher.handleViewAction( {
-			type: 'FETCHING_EMAIL_FOLLOWERS',
-			fetchOptions: fetchOptions
-		} );
+		if ( ! silentUpdate ) {
+			Dispatcher.handleViewAction( {
+				type: 'FETCHING_EMAIL_FOLLOWERS',
+				fetchOptions: fetchOptions
+			} );
+		}
 		wpcom.site( fetchOptions.siteId ).statsFollowers( fetchOptions, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_EMAIL_FOLLOWERS',

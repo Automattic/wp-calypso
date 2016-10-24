@@ -4,12 +4,12 @@
 
 // External Dependencies
 const Dispatcher = require( 'dispatcher' ),
-	reject = require( 'lodash/collection/reject' ),
-	findLast = require( 'lodash/collection/findLast' ),
-	get = require( 'lodash/object/get' ),
-	last = require( 'lodash/array/last' ),
+	reject = require( 'lodash/reject' ),
+	findLast = require( 'lodash/findLast' ),
+	get = require( 'lodash/get' ),
+	last = require( 'lodash/last' ),
 	Immutable = require( 'immutable' ),
-	forEach = require( 'lodash/collection/forEach' );
+	forEach = require( 'lodash/forEach' );
 
 // Internal Dependencies
 const Emitter = require( 'lib/mixins/emitter' ),
@@ -18,13 +18,13 @@ const Emitter = require( 'lib/mixins/emitter' ),
 	States = require( './constants' ).state,
 	FeedSubscriptionActionTypes = require( 'lib/reader-feed-subscriptions/constants' ).action;
 
-var subscriptions = {},
+let subscriptions = {},
 	errors = [],
 	subscriptionTemplate = Immutable.Map( { // eslint-disable-line
 		state: States.SUBSCRIBED
 	} );
 
-var CommentEmailSubscriptionStore = {
+const CommentEmailSubscriptionStore = {
 
 	// Tentatively add the new subscription
 	// We haven't received confirmation from the API yet, but we want to update the UI
@@ -47,7 +47,7 @@ var CommentEmailSubscriptionStore = {
 	},
 
 	receiveSubscribeResponse: function( action ) {
-		var updatedSubscriptionInfo;
+		let updatedSubscriptionInfo;
 
 		if ( ! action.error && action.data && action.data.subscribed ) {
 			// The subscribe worked - discard any existing errors for this site
@@ -121,7 +121,7 @@ var CommentEmailSubscriptionStore = {
 	},
 
 	removeErrorsForBlog: function( blogId ) {
-		var newErrors = reject( errors, { blogId: blogId } );
+		const newErrors = reject( errors, { blogId: blogId } );
 
 		if ( newErrors.length === errors.length ) {
 			return false;
@@ -147,10 +147,11 @@ var CommentEmailSubscriptionStore = {
 
 	// Receive incoming subscriptions from feed subscription API response
 	receiveFeedSubscriptions: function( action ) {
-		var addedSubscriptionCount = 0,
+		let addedSubscriptionCount = 0,
 			emailSubscription;
 
-		if ( action.data && ( action.data.errors || ! action.data.subscriptions ) ) {
+		if ( ! action.data || (
+			action.data && ( action.data.errors || ! action.data.subscriptions ) ) ) {
 			return;
 		}
 
@@ -235,7 +236,7 @@ Emitter( CommentEmailSubscriptionStore ); // eslint-disable-line
 CommentEmailSubscriptionStore.setMaxListeners( 200 );
 
 CommentEmailSubscriptionStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action;
+	const action = payload.action;
 
 	if ( ! action ) {
 		return;

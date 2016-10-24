@@ -1,22 +1,21 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	where = require( 'lodash/collection/where' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	analytics = require( 'analytics' ),
-	SharingServicesGroup = require( './services-group' ),
-	AccountDialog = require( './account-dialog' ),
-	serviceConnections = require( './service-connections' );
+import observe from 'lib/mixins/data-observe';
+import analytics from 'lib/analytics';
+import SharingServicesGroup from './services-group';
+import AccountDialog from './account-dialog';
+import serviceConnections from './service-connections';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'SharingConnections',
 
-	mixins: [ observe( 'sites', 'services', 'connections', 'user' ) ],
+	mixins: [ observe( 'sites', 'connections', 'user' ) ],
 
 	getInitialState: function() {
 		return { selectingAccountForService: null };
@@ -25,13 +24,13 @@ module.exports = React.createClass( {
 	getConnections: function() {
 		if ( this.props.sites.selected ) {
 			return this.props.connections.get( this.props.sites.getSelectedSite().ID );
-		} else {
-			return this.props.connections.get();
 		}
+
+		return this.props.connections.get();
 	},
 
 	addConnection: function( service, keyringConnectionId, externalUserId ) {
-		var siteId;
+		let siteId;
 		if ( this.props.sites.selected ) {
 			siteId = this.props.sites.getSelectedSite().ID;
 		}
@@ -45,19 +44,19 @@ module.exports = React.createClass( {
 			// authorization to occur, then display with the available connections
 			if ( ! keyringConnectionId ) {
 				this.props.connections.once( 'connect', function() {
-					if ( serviceConnections.didKeyringConnectionSucceed( service.name, siteId ) &&
-							serviceConnections.isServiceForPublicize( service.name ) ) {
+					if ( serviceConnections.didKeyringConnectionSucceed( service.ID, siteId ) &&
+							serviceConnections.isServiceForPublicize( service.ID ) ) {
 						this.setState( { selectingAccountForService: service } );
 					}
 				}.bind( this ) );
 			} else {
-				analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Button in Modal', this.state.selectingAccountForService.name );
+				analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Button in Modal', this.state.selectingAccountForService.ID );
 			}
 		} else {
 			// If an account wasn't selected from the dialog or the user cancels
 			// the connection, the dialog should simply close
 			this.props.connections.emit( 'create:error', { cancel: true } );
-			analytics.ga.recordEvent( 'Sharing', 'Clicked Cancel Button in Modal', this.state.selectingAccountForService.name );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Cancel Button in Modal', this.state.selectingAccountForService.ID );
 		}
 
 		// Reset active account selection
@@ -78,15 +77,15 @@ module.exports = React.createClass( {
 	},
 
 	getAccountDialog: function() {
-		var isSelectingAccount = !! this.state.selectingAccountForService,
-			accounts, siteId;
+		const isSelectingAccount = !! this.state.selectingAccountForService;
+		let accounts, siteId;
 
 		if ( isSelectingAccount ) {
 			if ( this.props.sites.selected ) {
 				siteId = this.props.sites.getSelectedSite().ID;
 			}
 
-			accounts = serviceConnections.getAvailableExternalAccounts( this.state.selectingAccountForService.name, siteId );
+			accounts = serviceConnections.getAvailableExternalAccounts( this.state.selectingAccountForService.ID, siteId );
 		}
 
 		return (
@@ -99,15 +98,15 @@ module.exports = React.createClass( {
 	},
 
 	renderServiceGroups: function() {
-		var commonGroupProps = {
+		const commonGroupProps = {
 			user: this.props.user,
 			connections: this.props.connections,
 			onAddConnection: this.addConnection,
 			onRemoveConnection: this.removeConnection,
 			onRefreshConnection: this.refreshConnection,
 			onToggleSitewideConnection: this.toggleSitewideConnection,
-			initialized: this.props.services.initialized && !! this.props.sites.selected
-		}, services = this.props.services.get();
+			initialized: !! this.props.sites.selected
+		};
 
 		if ( this.props.sites.selected ) {
 			commonGroupProps.site = this.props.sites.getSelectedSite();
@@ -116,13 +115,12 @@ module.exports = React.createClass( {
 		return (
 			<div>
 				<SharingServicesGroup
-					services={ where( services, { type: 'publicize' } ) }
-					title={ this.translate( 'Publicize', { context: 'Sharing: Connections' } ) }
-					description={ this.translate( 'Connect social media services to automatically share new posts.' ) }
+					type="publicize"
+					title={ this.translate( 'Publicize Your Posts' ) }
 					{ ...commonGroupProps } />
 				<SharingServicesGroup
-					services={ where( services, { type: 'other' } ) }
-					title={ this.translate( 'Other Connections', { context: 'Sharing: Connections' } ) }
+					type="other"
+					title={ this.translate( 'Other Connections' ) }
 					description={ this.translate( 'Connect any of these additional services to further enhance your site.' ) }
 					{ ...commonGroupProps } />
 			</div>

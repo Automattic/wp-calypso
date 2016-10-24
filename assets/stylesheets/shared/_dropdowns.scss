@@ -7,7 +7,7 @@
 	position: absolute;
 		right: 0;
 		top: 130%;
-	z-index: 9999;
+	z-index: z-index( 'root', '.dropdown-menu' );
 	display: none;
 	float: left;
 	margin: 2px 0 0;
@@ -103,7 +103,7 @@
 		width: 28px;
 		line-height: 28px;
 		text-align: center;
-		z-index: 0;
+		z-index: z-index( 'root', '.gear-dropdown:after' );
 		box-shadow: 0 1px 1px rgba($gray-dark,0.1);
 	}
 

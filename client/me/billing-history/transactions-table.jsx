@@ -2,9 +2,9 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	defer = require( 'lodash/function/defer' ),
-	pick = require( 'lodash/object/pick' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
+	defer = require( 'lodash/defer' ),
+	pick = require( 'lodash/pick' ),
+	isEmpty = require( 'lodash/isEmpty' ),
 	titleCase = require( 'to-title-case' ),
 	capitalPDangit = require( 'lib/formatting' ).capitalPDangit;
 
@@ -14,6 +14,8 @@ var React = require( 'react' ),
 var TransactionsHeader = require( './transactions-header' ),
 	tableRows = require( './table-rows' ),
 	eventRecorder = require( 'me/event-recorder' );
+
+import SearchCard from 'components/search-card';
 
 var TransactionsTable = React.createClass( {
 	displayName: 'TransactionsTable',
@@ -51,6 +53,10 @@ var TransactionsTable = React.createClass( {
 	filterTransactions: function( filter ) {
 		var newFilter, newTransactions;
 
+		if ( ! this.props.transactions ) {
+			return;
+		}
+
 		if ( filter.search ) {
 			// In this case the user is typing in the search box. We remove any other
 			// filter parameters besides the text we're searching for.
@@ -69,6 +75,10 @@ var TransactionsTable = React.createClass( {
 		} );
 	},
 
+	onSearch: function( terms ) {
+		this.filterTransactions( { search: terms } );
+	},
+
 	render: function() {
 		var header;
 
@@ -80,10 +90,16 @@ var TransactionsTable = React.createClass( {
 		}
 
 		return (
-			<table className="transactions">
-				{ header }
-				<tbody>{ this.renderRows() }</tbody>
-			</table>
+			<div>
+				<SearchCard
+					placeholder={ this.translate( 'Search all receipts…', { textOnly: true } ) }
+					onSearch={ this.onSearch }
+				/>
+				<table className="billing-history__transactions">
+					{ header }
+					<tbody>{ this.renderRows() }</tbody>
+				</table>
+			</div>
 		);
 	},
 
@@ -123,14 +139,22 @@ var TransactionsTable = React.createClass( {
 	renderRows: function() {
 		if ( ! this.state.transactions ) {
 			return (
-				<tr className="transactions__no-results">
-					<td className="no-results-cell" colSpan="3">{ this.translate( 'Loading…' ) }</td>
+				<tr className="billing-history__no-results">
+					<td className="billing-history__no-results-cell" colSpan="3">{ this.translate( 'Loading…' ) }</td>
 				</tr>
 			);
-		} else if ( isEmpty( this.state.transactions ) ) {
+		}
+
+		if ( isEmpty( this.state.transactions ) ) {
+			let noResultsText;
+			if ( this.state.filter !== this.props.initialFilter ) {
+				noResultsText = this.props.noFilterResultsText;
+			} else {
+				noResultsText = this.props.emptyTableText;
+			}
 			return (
-				<tr className="transactions__no-results">
-					<td className="no-results-cell" colSpan="3">{ this.translate( 'No matching receipts found' ) }</td>
+				<tr className="billing-history__no-results">
+					<td className="billing-history__no-results-cell" colSpan="3">{ noResultsText }</td>
 				</tr>
 			);
 		}
@@ -139,17 +163,17 @@ var TransactionsTable = React.createClass( {
 			var date = tableRows.formatDate( transaction.date );
 
 			return (
-				<tr key={ transaction.id } className="transaction">
+				<tr key={ transaction.id } className="billing-history__transaction">
 					<td className="date">{ date }</td>
-					<td className="trans-app">
-						<div className="trans-wrap">
-							<div className="service-description">
-								<div className="service-name">{ this.serviceName( transaction ) }</div>
-								{ this.props.description.call( this, transaction ) }
+					<td className="billing-history__trans-app">
+						<div className="billing-history__trans-wrap">
+							<div className="billing-history__service-description">
+								<div className="billing-history__service-name">{ this.serviceName( transaction ) }</div>
+								{ this.props.transactionRenderer.call( this, transaction ) }
 							</div>
 						</div>
 					</td>
-					<td className="amount">{ transaction.amount }</td>
+					<td className="billing-history__amount">{ transaction.amount }</td>
 				</tr>
 			);
 		}, this );

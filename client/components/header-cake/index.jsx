@@ -1,54 +1,56 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes, Component } from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Card = require( 'components/card' );
+import Card from 'components/card';
+import HeaderCakeBack from './back';
 
-module.exports = React.createClass( {
-	displayName: 'HeaderCake',
-
-	propTypes: {
-		onClick: React.PropTypes.func.isRequired,
-		onTitleClick: React.PropTypes.func,
-		backText: React.PropTypes.oneOfType( [
-			React.PropTypes.element,
-			React.PropTypes.string
-		] )
-	},
-
-	getDefaultProps: function() {
-		return {
-			isCompact: false
-		};
-	},
-
-	render: function() {
-		var classes = classNames(
+export default class HeaderCake extends Component {
+	render() {
+		const { backText, backHref } = this.props;
+		const classes = classNames(
 			'header-cake',
 			this.props.className,
-			{
-				'is-compact': this.props.isCompact
-			}
+			{ 'is-compact': this.props.isCompact }
 		);
 
 		return (
 			<Card className={ classes }>
-				<div className="header-cake__corner">
-					<a className="header-cake__back" onClick={ this.props.onClick }>
-						<span className="noticon noticon-collapse" />
-						<span className="header-cake__back-text">{ this.props.backText || this.translate( 'Back' ) }</span>
-					</a>
-				</div>
-				<span className="header-cake__title" onClick={ this.props.onTitleClick }>
+				<HeaderCakeBack
+					text={ backText }
+					href={ backHref }
+					onClick={ this.props.onClick }
+				/>
+
+				<div
+					className="header-cake__title"
+					onClick={ this.props.onTitleClick }
+				>
 					{ this.props.children }
-				</span>
-				<div className="header-cake__corner" />
+				</div>
+
+				<HeaderCakeBack text={ backText } href={ backHref } spacer />
 			</Card>
 		);
 	}
-} );
+}
+
+HeaderCake.displayName = 'HeaderCake';
+
+HeaderCake.propTypes = {
+	onClick: PropTypes.func,
+	onTitleClick: PropTypes.func,
+	backText: PropTypes.string,
+	backHref: PropTypes.string,
+};
+
+HeaderCake.defaultProps = {
+	isCompact: false
+};

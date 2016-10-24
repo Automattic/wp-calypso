@@ -1,5 +1,6 @@
 // External Dependencies
-var trim = require( 'lodash/string/trim' );
+var trim = require( 'lodash/trim' );
+var has = require( 'lodash/has' );
 
 // Internal Dependencies
 var Dispatcher = require( 'dispatcher' ),
@@ -37,6 +38,10 @@ var ReaderTagActions = {
 
 		wpcom.undocumented().readTag( { slug }, function( error, data ) {
 			delete tagsLoading[ slug ];
+
+			if ( ! error && ( data && has( data, 'tag.error_data' ) ) ) {
+				error = data.tag.error_data;
+			}
 
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_READER_TAG',

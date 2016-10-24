@@ -1,12 +1,8 @@
 /**
  * External dependencies
  */
-var phone = require( 'phone' );
-
-/**
- * Internal dependencies
- */
-var i18n = require( 'lib/mixins/i18n' );
+var phone = require( 'phone' ),
+	i18n = require( 'i18n-calypso' );
 
 module.exports = function( phoneNumber ) {
 	var phoneNumberWithoutPlus = phoneNumber.replace( /\+/, '' );

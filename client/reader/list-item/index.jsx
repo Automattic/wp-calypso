@@ -1,12 +1,17 @@
-// External dependencies
-import React from 'react/addons';
+/**
+ * External dependencies
+ */
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 import classnames from 'classnames';
 
-// Internal dependencies
+/**
+ * Internal dependencies
+ */
 import Card from 'components/card/compact';
 
 const ListItem = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	render() {
 		const classes = classnames( 'reader-list-item__card', this.props.className );

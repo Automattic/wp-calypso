@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -13,7 +14,7 @@ var Card = require( 'components/card' ),
  * Date Picker Demo
  */
 var datePicker = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		var date = new Date();
@@ -54,20 +55,13 @@ var datePicker = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/date-picker">DatePicker</a>
-				</h2>
-
-				<Card style={ { width: '300px', margin: 0 } }>
-					<DatePicker
-						events={ this.state.events }
-						onSelectDay={ this.selectDay }
-						selectedDay={ this.state.selectedDay }>
-					</DatePicker>
-				</Card>
-
-			</div>
+			<Card style={ { width: '300px', margin: 0 } }>
+				<DatePicker
+					events={ this.state.events }
+					onSelectDay={ this.selectDay }
+					selectedDay={ this.state.selectedDay }>
+				</DatePicker>
+			</Card>
 		);
 	}
 } );

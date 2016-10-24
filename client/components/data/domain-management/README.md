@@ -35,11 +35,10 @@ const MyComponent = React.createClass( {
 	render() {
 		return (
 			<DomainManagementData
+				component={ MyChildComponent }
 				context={ context }
 				productsList={ productsList }
-				sites={ sites }>
-				{ MyChildComponent }
-			</DomainManagementData>
+				sites={ sites } />
 		);
 	}
 } );
@@ -51,17 +50,19 @@ The component expects to receive all listed props:
 
 * `context` - a request context
 * `productsList` - a collection of all the products users can have on WordPress.com
+* `selectedDomainName` - the domain name currently selected (optional)
 * `sites` - a list of user sites 
 
 The child component should receive processed props defined during the render:
 
 * `context` - a request context
 * `products` - a collection of all the products users can have on WordPress.com
+* `selectedDomainName` - the domain name currently selected (optional)
 * `selectedSite` - the site currently selected 
 
 As well as:
 
 * `cart` - products added to the cart, it's the result of a call to `CartStore.get`  
-* `domains` - a list of domains, it's the result of a call to `DomainsStore.getForSite` for the current site
+* `domains` - a list of domains, it's the result of a call to `DomainsStore.getBySite` for the current site
 
 It's updated whenever CartStore`, `DomainStore`, `productsList` or `sites` changes.

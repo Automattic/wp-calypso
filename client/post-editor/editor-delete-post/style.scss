@@ -1,10 +1,4 @@
-.editor-delete-post {
-	color: lighten( $gray, 20% );
-	cursor: pointer;
-	font-size: 13px;
-	margin-left: 12px;
-	transition: color 200ms;
-
+.editor-delete-post.button {
 	&:hover {
 		color: $orange-fire;
 	}
@@ -13,4 +7,8 @@
 		color: $orange-fire;
 		animation: loading-dot-pulse 0.8s ease-in-out infinite;
 	}
+}
+
+.editor-delete-post__tooltip .popover__inner {
+	white-space: nowrap;
 }

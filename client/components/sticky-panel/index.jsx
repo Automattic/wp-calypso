@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	throttle = require( 'lodash/function/throttle' ),
-	raf = require( 'raf' ),
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
+	throttle = require( 'lodash/throttle' ),
 	classNames = require( 'classnames' );
 
 /**
@@ -25,7 +25,7 @@ module.exports = React.createClass( {
 	componentDidMount: function() {
 		// Determine and cache vertical threshold from rendered element's
 		// offset relative the document
-		this.threshold = React.findDOMNode( this ).offsetTop;
+		this.threshold = ReactDom.findDOMNode( this ).offsetTop;
 		this.throttleOnResize = throttle( this.onWindowResize, 200 );
 
 		window.addEventListener( 'scroll', this.onWindowScroll );
@@ -36,17 +36,17 @@ module.exports = React.createClass( {
 	componentWillUnmount: function() {
 		window.removeEventListener( 'scroll', this.onWindowScroll );
 		window.removeEventListener( 'resize', this.throttleOnResize );
-		raf.cancel( this.rafHandle );
+		window.cancelAnimationFrame( this.rafHandle );
 	},
 
 	onWindowScroll: function() {
-		this.rafHandle = raf( this.updateIsSticky );
+		this.rafHandle = window.requestAnimationFrame( this.updateIsSticky );
 	},
 
 	onWindowResize: function() {
 		this.setState( {
-			spacerHeight: this.state.isSticky ? React.findDOMNode( this ).clientHeight : 0,
-			blockWidth: this.state.isSticky ? React.findDOMNode( this ).clientWidth : 0
+			spacerHeight: this.state.isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
+			blockWidth: this.state.isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0
 		} );
 	},
 
@@ -60,8 +60,8 @@ module.exports = React.createClass( {
 		if ( isSticky !== this.state.isSticky ) {
 			this.setState( {
 				isSticky: isSticky,
-				spacerHeight: isSticky ? React.findDOMNode( this ).clientHeight : 0,
-				blockWidth: isSticky ? React.findDOMNode( this ).clientWidth : 0
+				spacerHeight: isSticky ? ReactDom.findDOMNode( this ).clientHeight : 0,
+				blockWidth: isSticky ? ReactDom.findDOMNode( this ).clientWidth : 0
 			} );
 		}
 	},
@@ -72,7 +72,7 @@ module.exports = React.createClass( {
 		if ( this.state.isSticky ) {
 			// Offset to account for Master Bar by finding body visual top
 			// relative the current scroll position
-			offset = document.getElementById( 'primary' ).getBoundingClientRect().top;
+			offset = document.getElementById( 'content' ).getBoundingClientRect().top;
 
 			return {
 				top: offset + window.pageYOffset,

@@ -10,26 +10,26 @@ Drop Zone is a React component which can be used to illustrate areas on the page
 Render the component in the context of a parent element which is assigned a `relative` position style, or specify the `fullScreen` to occupy the entire page.
 
 ```jsx
-var React = require( 'react' ),
-	DropZone = require( 'components/drop-zone' );
+import React, { Component } from 'react';
+import DropZone from 'components/drop-zone';
 
-module.exports = React.createClass( {
-	displayName: 'MyComponent',
-
-	onFilesDrop: function( files ) {
+class MyComponent extends Component {
+	onFilesDrop( files ) {
 		console.log( 'You dropped some files: %s', files.map( function( file ) {
 			return file.name;
 		}.join( ', ' ) );
-	},
+	}
 
-	render: function() {
+	render() {
 		return (
 			<div className="my-component">
 				<DropZone onFilesDrop={ this.onFilesDrop } />
 			</div>
 		);
 	}
-} );
+};
+
+export default MyComponent;
 ```
 
 ## Props

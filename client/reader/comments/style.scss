@@ -2,16 +2,15 @@
 .comments {
 	clear: both;
 	margin-top: 32px;
-	border-top: 1px solid lighten( $gray, 30 );
+	border-top: 1px solid lighten( $gray, 20% );
 }
 
 
 // Comment Counter
 .comments__count {
-	margin: 0 0 24px;
 	text-align: center;
 	color: $gray;
-	display: none;
+	float: right;
 }
 
 // Add a New Comment Form
@@ -19,7 +18,6 @@
 	position: relative;
 	padding: 0 0 0 48px;
 	margin-top: 24px;
-	margin-bottom: -12px;
 
 	.gravatar {
 		position: absolute;
@@ -28,23 +26,50 @@
 		border-radius: 48px;
 	}
 
-	input, textarea {
+	input {
 		font-size: 14px;
 		padding: 5px 10px;
 	}
 
-	textarea {
-		min-height: 33px;
-		padding-right: 60px;
-		resize: vertical;
-		font-family: $serif;
+	// The inner working of these styles is covered here: http://alistapart.com/article/expanding-text-areas-made-elegant
+	.expanding-area {
+		position: relative;
+
+		pre,
+		textarea {
+			max-height: 400px;
+			min-height: 80px;
+			margin: 0;
+			padding: 5px 60px 5px 5px;
+			font-size: 14px;
+			font-family: $serif;
+			line-height: 21px;
+
+			white-space: pre-wrap;
+			word-wrap: break-word;
+		}
+
+		textarea {
+			position: absolute;
+				top: 0;
+				left: 0;
+			height: 100%;
+			resize: none;
+		}
+
+		pre {
+			border: 1px solid $gray;
+			box-sizing: border-box;
+			display: block;
+			visibility: hidden;
+		}
 	}
 
 	button {
 		opacity: 0;
 		position: absolute;
-		top: 4px;
-		right: 12px;
+		  top: 4px;
+		  right: 16px;
 		padding: 4px;
 		font-size: 12px;
 		font-weight: 600;
@@ -79,7 +104,7 @@
 	margin-bottom: -3px;
 	font-family: $sans;
 	text-align: center;
-	border-top: 1px solid lighten( $gray, 30 );
+	border-top: 1px solid lighten( $gray, 30% );
 	padding-top: 22px;
 	font-size: 14px;
 }
@@ -96,7 +121,7 @@
 
 	&.is-children {
 		margin-left: -2px;
-		border-left: 2px solid lighten( $gray, 10 );
+		border-left: 2px solid lighten( $gray, 10% );
 
 		.comment__author .gravatar {
 			left: -15px;
@@ -111,8 +136,8 @@
 
 // Individual Comment
 .comment {
-	padding: 6px 0 0 0;
-	margin: 24px 0 0 0;
+	padding: 6px 0 0;
+	margin: 24px 0 0;
 	position: relative;
 
 	&.depth-0, &.depth-1, &.depth-2 {
@@ -123,7 +148,11 @@
 		}
 	}
 
-	&.is-parent {}
+	&.depth-2 {
+		.comments__view-replies-btn {
+			margin-left: -40px;
+		}
+	}
 
 	&.is-child {
 		background: transparent;
@@ -139,7 +168,8 @@
 }
 
 .comment__author {
-	color: darken( $gray, 30 );
+	font-weight: bold;
+	color: darken( $gray, 30% );
 
 	.gravatar {
 		position: absolute;
@@ -149,15 +179,52 @@
 	}
 }
 
+.comment__trackbackicon {
+	position: absolute;
+		top: 1px;
+		left: 8px;
+	border-radius: 50%;
+	background-color: $gray-light;
+	width: 32px;
+	height: 32px;
+
+	.gridicon {
+		height: 24px;
+	  	fill: lighten( $gray, 10% );
+	  	position: absolute;
+	  		top: 50%;
+	  		margin-top: -12px;
+	  		left: 50%;
+	  		margin-left: -12px;
+	}
+}
+
 .comment__username {
 	font-size: 16px;
+
+	.gridicon {
+		height: 16px;
+		fill: lighten( $gray, 10% );
+		margin-left: 2px;
+		position: relative;
+			top: 2px;
+	}
+
+	&:hover .gridicon {
+		fill: $link-highlight;
+	}
 }
 
 .comment__timestamp a {
+	font-weight: normal;
 	font-size: 13px;
-	color: lighten( $gray, 10 );
+	color: lighten( $gray, 10% );
 	margin-left: 8px;
 	text-decoration: none;
+
+	&:hover {
+		color: $link-highlight;
+	}
 }
 
 .comment__moderation {
@@ -172,9 +239,10 @@
 	padding-top: 4px;
 	font-size: 14px;
 	line-height: 1.8;
+	word-break: break-word;
 
 	p {
-		color: darken( $gray, 30 );
+		color: darken( $gray, 30% );
 
 		&:last-child {
 			margin-bottom: 0;
@@ -183,10 +251,10 @@
 
 	blockquote {
 		padding: 8px 16px;
-		margin: 8px 0 16px 0;
+		margin: 8px 0 16px;
 		border-left: 2px solid $gray;
-		color: darken( $gray, 30 );
-		background: lighten( $gray, 30 );
+		color: darken( $gray, 30% );
+		background: lighten( $gray, 30% );
 	}
 }
 
@@ -207,37 +275,73 @@
 		cursor: pointer;
 		font-size: 14px;
 
-		.gridicon__wrapper {
+		.like-button__like-icons {
 			margin-right: 18px;
 		}
 
-		.gridicon {
-			top: 4px;
+		&.comment__actions-reply {
+			.gridicon {
+				position: relative;
+					top: 4px;
+				margin-right: 4px;
+				transform: rotate( 180deg );
+			}
 		}
 
-		.gridicon__like-empty {
-			fill: $gray;
+		&.like-button {
+			.gridicon {
+				top: 4px;
+			}
 		}
 
 		&:hover {
 			color: $blue-medium;
+		}
 
-			.gridicon__like-empty {
-				fill: $blue-medium;
-			}
+		&.comment__actions-cancel-reply {
+			float: right;
+			margin-top: 4px;
+			margin-right: 0;
+		}
+	}
+
+	@include breakpoint( "<480px" ) {
+		.like-button .like-button__label-status {
+			display: inline;
 		}
 	}
 }
 
-.comment__actions-reply {
-	&:before {
-		@include noticon( '\f412', 16px );
-		margin-right: 4px;
-		position: relative;
-		top: 2px;
+.comments__top-bar {
+	margin: 24px 48px 24px 0;
+	overflow: auto;
+
+	&.is-no-comments {
+	  display: none;
 	}
 }
 
-.comment__actions-like-count {
-	display: none;
+.comments__view-earlier {
+	color: $gray;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 14px;
+	margin-bottom: 10px;
+}
+
+.comments__view-replies-btn {
+	cursor: pointer;
+	background-color: $gray-light;
+	width: 100%;
+	color: darken( $gray, 10% );
+	text-align: left;
+	margin-top: 15px;
+	padding: 5px 10px 10px 12px;
+
+	.gridicon {
+		position: relative;
+			top: 4px;
+		margin-right: 4px;
+		transform: rotate( 180deg );
+	}
 }

@@ -1,13 +1,17 @@
+import find from 'lodash/find';
 import { fromJS } from 'immutable';
 
-import { appStates } from './constants';
+import { appStates } from 'state/imports/constants';
 
 // Left( UI ) - Right( API )
 const importerStateMap = [
+	[ appStates.CANCEL_PENDING, 'cancel' ],
+	[ appStates.DEFUNCT, 'importStopped' ],
 	[ appStates.DISABLED, 'disabled' ],
-	[ appStates.IMPORT_FAILURE, 'importer-import-failure' ],
-	[ appStates.IMPORT_SUCCESS, 'importer-import-success' ],
-	[ appStates.IMPORTING, 'importer-importing' ],
+	[ appStates.EXPIRE_PENDING, 'expire' ],
+	[ appStates.IMPORT_FAILURE, 'importFailure' ],
+	[ appStates.IMPORT_SUCCESS, 'importSuccess' ],
+	[ appStates.IMPORTING, 'importing' ],
 	[ appStates.INACTIVE, 'importer-inactive' ],
 	[ appStates.MAP_AUTHORS, 'importer-map-authors' ],
 	[ appStates.READY_FOR_UPLOAD, 'importer-ready-for-upload' ],
@@ -17,13 +21,17 @@ const importerStateMap = [
 ];
 
 function apiToAppState( state ) {
-	return importerStateMap
-		.find( ( [ , api ] ) => api === state )[0];
+	return find(
+		importerStateMap,
+		( [ , api ] ) => api === state
+	)[0];
 }
 
 function appStateToApi( state ) {
-	return importerStateMap
-		.find( ( [ appState ] ) => appState === state )[1];
+	return find(
+		importerStateMap,
+		( [ appState ] ) => appState === state
+	)[1];
 }
 
 function generateSourceAuthorIds( customData ) {
@@ -51,14 +59,15 @@ function replaceUserInfoWithIds( customData ) {
 }
 
 export function fromApi( state ) {
-	const { importId: importerId, importStatus, type, progress, customData } = state;
+	const { importId: importerId, importStatus, type, progress, customData, siteId } = state;
 
 	return {
 		importerId,
 		importerState: apiToAppState( importStatus ),
 		type: `importer-type-${ type }`,
 		progress: fromJS( progress ),
-		customData: fromJS( generateSourceAuthorIds( customData ) )
+		customData: fromJS( generateSourceAuthorIds( customData ) ),
+		site: { ID: siteId }
 	};
 }
 
@@ -67,9 +76,9 @@ export function toApi( state ) {
 
 	return Object.assign( {},
 		{ importerId, progress },
-		{ importerState: appStateToApi( importerState ) },
+		{ importStatus: appStateToApi( importerState ) },
 		site && site.ID ? { siteId: site.ID } : {},
-		{ type: type.replace( 'importer-type-', '' ) },
+		type && { type: type.replace( 'importer-type-', '' ) },
 		customData ? { customData: replaceUserInfoWithIds( customData ) } : {}
 	);
 }

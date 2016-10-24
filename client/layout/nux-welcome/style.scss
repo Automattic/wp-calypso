@@ -1,0 +1,164 @@
+.NuxWelcome {
+	background: none;
+	position: relative;
+	padding: 24px 18px 0;
+	margin-bottom: 66px;
+	box-shadow: none;
+	&:before {
+		content: '';
+		position: absolute;
+		top: 100%;
+			left: 0;
+			right: 0;
+		height: 1px;
+		margin-top: 35px;
+		z-index: z-index( 'root', '.NuxWelcome:before' );
+		background: linear-gradient(to right, fade-out(lighten( $gray, 20% ), 1) 0%, lighten( $gray, 20% ) 20%, lighten( $gray, 20% ) 80%, fade-out(lighten( $gray, 20% ), 1) 100%);
+	}
+	&:after {
+		@include noticon( '\f205', 22px );
+		position: absolute;
+			top: 100%;
+			left: 50%;
+		height: 22px;
+		margin-left: -11px;
+		margin-top: 24px;
+		color: $gray;
+		padding: 0 8px;
+		background-color: lighten( $gray, 30% );
+		visibility: visible;
+	}
+	.close-button {
+		padding: 6px;
+	}
+}
+
+.NuxWelcomeMessage__title {
+	color: $gray-dark;
+	font-family: $serif;
+	font-weight: 600;
+	font-size: 24px;
+	line-height: 32px;
+	margin-bottom: 12px;
+	padding-right: 24px;
+}
+
+.NuxWelcomeMessage__primary-content {
+	font-size: 16px;
+	line-height: 24px;
+	// margin-bottom: 20px;
+	p {
+		margin-bottom: 20px;
+	}
+	.button {
+		display: block;
+		width: 100%;
+		padding: 12px 24px;
+		margin-bottom: 8px;
+		text-align: center;
+	}
+	img {
+		display: none;
+		@media only screen and (max-width: 930px) {
+			max-height: 106px;
+		}
+	}
+}
+
+.NuxWelcomeMessage__intro {
+	a {
+		color: $blue-medium;
+		text-shadow: 1px 0 lighten( $gray, 30% ), 2px 0 lighten( $gray, 30% ), -1px 0 lighten( $gray, 30% ), -2px 0 lighten( $gray, 30% );
+		background-image: linear-gradient(to bottom, transparent 50%, $blue-medium 50%);
+		background-repeat: repeat-x;
+		background-size: 2px 2px;
+		background-position: 0 85%;
+	}
+}
+
+.NuxWelcomeMessage__label {
+	color: $gray-dark;
+	font-size: 14px;
+	line-height: 18px;
+	font-weight: 600;
+	margin-bottom: 10px;
+}
+
+.NuxWelcomeMessage__list {
+	list-style-position: inside;
+	margin-left: 0;
+	li {
+		font-size: 14px;
+		line-height: 18px;
+		margin-bottom: 6px;
+	}
+}
+
+@include breakpoint( ">660px" ) {
+
+	.NuxWelcome {
+		padding: 12px 0 0;
+		.close-button {
+			&:before,
+			&:after {
+				content: '';
+				position: absolute;
+					top: 0;
+					right: 0;
+			}
+			&:before {
+				width: 108px;
+				height: 1px;
+				background: linear-gradient(to right, fade-out(lighten( $gray, 20% ), 1) 0%, lighten( $gray, 20% ) 100%);
+			}
+			&:after {
+				width: 1px;
+				height: 108px;
+				background: linear-gradient(to bottom, lighten( $gray, 20% ) 0%, fade-out(lighten( $gray, 20% ), 1) 100%);
+			}
+		}
+		.notouch & {
+			.close-button {
+				&:before,
+				&:after {
+					transition: transform 0.2s ease;
+				}
+				&:before {
+					transform-origin: right;
+				}
+				&:after {
+					transform-origin: top;
+				}
+				&:hover {
+					&:before {
+						transform: scaleX(1.4);
+					}
+					&:after {
+						transform: scaleY(1.4);
+					}
+				}
+			}
+		}
+	}
+
+	.NuxWelcomeMessage__title {
+		clear: none;
+	}
+
+	.NuxWelcomeMessage__primary-content {
+		margin-bottom: 0;
+		.button {
+			display: inline-block;
+			width: auto;
+			padding: 7px 24px;
+			margin-right: 24px;
+		}
+		img {
+			display: block;
+			float: right;
+			width: (212 / 960) * 100%;
+			margin: 6px 48px 24px 12px;
+		}
+	}
+
+}

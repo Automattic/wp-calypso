@@ -4,6 +4,7 @@ var React = require( 'react' );
 
 // Internal dependencies
 var siteStatsStickyTabStore = require( 'lib/site-stats-sticky-tab/store' );
+var sections = require( 'sections-preload' );
 
 var SiteStatsStickyLink = React.createClass( {
 
@@ -11,6 +12,8 @@ var SiteStatsStickyLink = React.createClass( {
 		title: React.PropTypes.string,
 		onClick: React.PropTypes.func
 	},
+
+	_preloaded: false,
 
 	getInitialState: function() {
 		return {
@@ -26,18 +29,6 @@ var SiteStatsStickyLink = React.createClass( {
 		siteStatsStickyTabStore.off( 'change', this.handleStatsStickyTabChange );
 	},
 
-	shouldComponentUpdate: function( nextProps, nextState ) {
-		if (
-			nextState.url !== this.state.url ||
-			nextProps.onClick !== this.props.onClick ||
-			nextProps.title !== this.props.title
-		) {
-			return true;
-		}
-
-		return false;
-	},
-
 	handleStatsStickyTabChange: function() {
 		var url = siteStatsStickyTabStore.getUrl();
 
@@ -48,11 +39,23 @@ var SiteStatsStickyLink = React.createClass( {
 		}
 	},
 
+	preload: function() {
+		if ( ! this._preloaded ) {
+			this._preloaded = true;
+			sections.preload( 'stats' );
+		}
+	},
+
 	render: function() {
 		return (
-			<a href={ this.state.url } onClick={ this.props.onClick } title={ this.props.title }>{
-				this.props.children
-			}</a>
+			<a
+				href={ this.state.url }
+				onClick={ this.props.onClick }
+				title={ this.props.title }
+				onMouseEnter={ this.preload }
+			>
+				{ this.props.children }
+			</a>
 		);
 	}
 } );

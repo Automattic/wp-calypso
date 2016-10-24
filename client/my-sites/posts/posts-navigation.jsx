@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-import React from 'react/addons';
+import React from 'react';
 import Debug from 'debug';
 
 /**
@@ -12,20 +12,15 @@ import NavTabs from 'components/section-nav/tabs';
 import NavSegmented from 'components/section-nav/segmented';
 import NavItem from 'components/section-nav/item';
 import Search from 'components/search';
-
 import URLSearch from 'lib/mixins/url-search';
 import PostCountsStore from 'lib/posts/post-counts-store';
+import Gravatar from 'components/gravatar';
+import userLib from 'lib/user';
 
-/**
- * Debug instance
- */
+const debug = new Debug( 'calypso:posts-navigation' );
+const user = userLib();
 
-var debug = new Debug( 'calypso:posts-navigation' );
-
-/**
- * Path converter
- */
-
+// Path converter
 const statusToDescription = {
 	publish: 'published',
 	draft: 'drafts',
@@ -102,7 +97,7 @@ export default React.createClass( {
 		};
 
 		this.filterScope = {
-			me: this.translate( 'Only Me', { context: 'Filter label for posts list' } ),
+			me: this.translate( 'Me', { context: 'Filter label for posts list' } ),
 			everyone: this.translate( 'Everyone', { context: 'Filter label for posts list' } )
 		};
 
@@ -133,7 +128,8 @@ export default React.createClass( {
 					authorSegmented.element : null
 				}
 				<Search
-					pinned={ true }
+					pinned
+					fitsContainer
 					onSearch={ this.doSearch }
 					initialValue={ this.props.search }
 					placeholder={ 'Search ' + statusTabs.selectedText + '...' }
@@ -145,12 +141,10 @@ export default React.createClass( {
 
 	_getStatusTabs( author, siteFilter ) {
 		var statusItems = [],
-			isJetpackSite = this.props.sites.getSelectedSite().jetpack,
 			status, selectedText, selectedCount;
 
 		for ( status in this.filterStatuses ) {
-			if ( 'undefined' === typeof this.state.counts[ status ] &&
-				( ! isJetpackSite ) ) {
+			if ( 'undefined' === typeof this.state.counts[ status ] && 'publish' !== status ) {
 				continue;
 			}
 
@@ -160,26 +154,26 @@ export default React.createClass( {
 
 			let textItem = this.filterStatuses[ status ];
 
-			let count = ( ! isJetpackSite ) && false !== this.state.counts[ status ]
+			let count = false !== this.state.counts[ status ]
 				? this.state.counts[ status ]
 				: false;
 
 			if ( path === this.props.context.pathname ) {
 				selectedText = textItem;
 
-				if ( ! isJetpackSite ) {
-					selectedCount = count;
-				}
+				selectedCount = count;
+			}
+
+			if ( 'publish' === status && ! count ) {
+				count = 0;
 			}
 
 			statusItems.push(
 				<NavItem
+					className={ 'is-' + status }
 					key={ 'statusTabs' + path }
 					path={ path }
-					count={ null === this.props.sites.selected || isJetpackSite ?
-						false :
-						count
-					}
+					count={ null === this.props.sites.selected || count }
 					value={ textItem }
 					selected={ path === this.props.context.pathname }>
 					{ textItem }
@@ -213,7 +207,8 @@ export default React.createClass( {
 
 		for ( scope in this.filterScope ) {
 			let textItem = this.filterScope[ scope ];
-			let path = ( 'me' === scope ? '/posts/my' : '/posts' ) + statusSlug + siteFilter;
+			const isMe = 'me' === scope;
+			let path = ( isMe ? '/posts/my' : '/posts' ) + statusSlug + siteFilter;
 
 			if ( path === this.props.context.pathname ) {
 				selectedText = textItem;
@@ -226,6 +221,7 @@ export default React.createClass( {
 					selected={ path === this.props.context.pathname }
 				>
 					{ textItem }
+					{ isMe && <Gravatar size={ 16 } user={ user.get() } /> }
 				</NavItem>
 			);
 		}
@@ -368,14 +364,10 @@ export default React.createClass( {
 	 * Return count of the given status
 	 *
 	 * @param {String} status - status type
-	 * @return {String|Boolean} return count of the given status
+	 * @return {Number|Null} return count of the given status
 	 */
 	getCountByStatus( status ) {
-		var count = false;
-		if ( false !== this.state.counts[ status ] ) {
-			count = this.numberFormat( this.state.counts[ status ] );
-		}
-
-		return count;
+		let count = this.state.counts[ status ];
+		return ( count !== false ) ? count : null;
 	}
 } );

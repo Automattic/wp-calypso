@@ -7,7 +7,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
- var Gridicon = require( 'components/gridicon' );
+var Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
 

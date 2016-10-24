@@ -6,12 +6,12 @@ import React, { PropTypes } from 'react';
 /**
  * Internal dependencies
  */
-import SimpleNotice from 'notices/simple-notice';
-import GalleryShortcode from 'components/gallery-shortcode';
+import Notice from 'components/notice';
 import SegmentedControl from 'components/segmented-control';
 import SegmentedControlItem from 'components/segmented-control/item';
-import markup from '../markup';
 import EditorMediaModalGalleryEdit from './edit';
+import EditorMediaModalGalleryPreviewShortcode from './preview-shortcode';
+import EditorMediaModalGalleryPreviewIndividual from './preview-individual';
 
 export default React.createClass( {
 	displayName: 'EditorMediaModalGalleryPreview',
@@ -26,7 +26,7 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			isOrdering: false
+			isEditing: false
 		};
 	},
 
@@ -43,13 +43,13 @@ export default React.createClass( {
 		return (
 			<SegmentedControl className="editor-media-modal-gallery__preview-toggle" compact={ true }>
 				<SegmentedControlItem
-					selected={ ! this.state.isOrdering }
-					onClick={ () => this.setState( { isOrdering: false } ) }>
+					selected={ ! this.state.isEditing }
+					onClick={ () => this.setState( { isEditing: false } ) }>
 					{ this.translate( 'Preview' ) }
 				</SegmentedControlItem>
 				<SegmentedControlItem
-					selected={ this.state.isOrdering }
-					onClick={ () => this.setState( { isOrdering: true } ) }>
+					selected={ this.state.isEditing }
+					onClick={ () => this.setState( { isEditing: true } ) }>
 					{ this.translate( 'Edit' ) }
 				</SegmentedControlItem>
 			</SegmentedControl>
@@ -63,7 +63,7 @@ export default React.createClass( {
 			return;
 		}
 
-		if ( this.state.isOrdering ) {
+		if ( this.state.isEditing ) {
 			return (
 				<EditorMediaModalGalleryEdit
 					site={ site }
@@ -72,34 +72,17 @@ export default React.createClass( {
 			);
 		}
 
-		if ( settings && 'individual' === settings.type ) {
+		if ( 'individual' === settings.type ) {
 			return (
-				<div className="editor-media-modal-gallery__preview-individual">
-					<div className="editor-media-modal-gallery__preview-individual-content">
-						{ settings.items.map( ( item ) => {
-							const caption = markup.caption( item );
-
-							if ( null === caption ) {
-								return <div key={ item.ID } dangerouslySetInnerHTML={ { __html: markup.get( item ) } } />;
-							}
-
-							return React.cloneElement( caption, { key: item.ID } );
-						} ) }
-					</div>
-				</div>
+				<EditorMediaModalGalleryPreviewIndividual
+					items={ settings.items } />
 			);
 		}
 
 		return (
-			<GalleryShortcode
+			<EditorMediaModalGalleryPreviewShortcode
 				siteId={ site.ID }
-				items={ settings.items }
-				type={ settings.type }
-				columns={ settings.columns }
-				orderBy={ settings.orderBy }
-				link={ settings.link }
-				size={ settings.size }
-				className="editor-media-modal-gallery__preview-iframe" />
+				settings={ settings } />
 		);
 	},
 
@@ -107,9 +90,9 @@ export default React.createClass( {
 		return (
 			<div className="editor-media-modal-gallery__preview">
 				{ this.props.invalidItemDropped && (
-					<SimpleNotice status="is-warning" onClick={ this.props.onDismissInvalidItemDropped } isCompact>
+					<Notice status="is-warning" onDismissClick={ this.props.onDismissInvalidItemDropped } isCompact>
 						{ this.translate( 'Galleries can only include images. All other uploads will be added to your media library.' ) }
-					</SimpleNotice>
+					</Notice>
 				) }
 				<div className="editor-media-modal-gallery__preview-wrapper">
 					{ this.renderPreview() }

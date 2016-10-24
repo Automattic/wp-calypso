@@ -32,6 +32,30 @@ const UsersActions = {
 		} );
 	},
 
+	fetchUpdated: fetchOptions => {
+		const paginationData = UsersStore.getPaginationData( fetchOptions );
+		if ( paginationData.fetchingUsers ) {
+			return;
+		}
+
+		Dispatcher.handleViewAction( {
+			type: 'FETCHING_UPDATED_USERS',
+			fetchOptions: fetchOptions
+		} );
+
+		const updatedFetchOptions = UsersStore.getUpdatedParams( fetchOptions );
+		debug( 'Updated fetchOptions: ' + JSON.stringify( updatedFetchOptions ) );
+
+		wpcom.site( fetchOptions.siteId ).usersList( updatedFetchOptions, ( error, data ) => {
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_UPDATED_USERS',
+				fetchOptions: fetchOptions,
+				data: data,
+				error: error
+			} );
+		} );
+	},
+
 	deleteUser: ( siteId, userId, reassignUserId ) => {
 		debug( 'deleteUser', userId );
 		const user = UsersStore.getUser( siteId, userId );

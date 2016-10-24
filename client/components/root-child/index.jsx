@@ -1,10 +1,22 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import ReactDom from 'react-dom';
+import React, { PropTypes } from 'react';
+import { Provider as ReduxProvider } from 'react-redux';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'RootChild',
+
+	propTypes: {
+		children: PropTypes.node
+	},
+
+	contextTypes: {
+		store: PropTypes.object
+	},
 
 	componentDidMount: function() {
 		this.container = document.createElement( 'div' );
@@ -21,7 +33,7 @@ module.exports = React.createClass( {
 			return;
 		}
 
-		React.unmountComponentAtNode( this.container );
+		ReactDom.unmountComponentAtNode( this.container );
 		document.body.removeChild( this.container );
 		delete this.container;
 	},
@@ -37,7 +49,17 @@ module.exports = React.createClass( {
 			content = this.props.children;
 		}
 
-		React.render( content, this.container );
+		// Context is lost when creating a new render hierarchy, so ensure that
+		// we preserve the context that we care about
+		if ( this.context.store ) {
+			content = (
+				<ReduxProvider store={ this.context.store }>
+					{ content }
+				</ReduxProvider>
+			);
+		}
+
+		ReactDom.render( content, this.container );
 	},
 
 	render: function() {

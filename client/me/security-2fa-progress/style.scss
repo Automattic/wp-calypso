@@ -1,5 +1,9 @@
 .security-2fa-progress__container {
-	margin: 0 -24px 24px;
+	margin: 0 -16px 16px;
+
+	@include breakpoint( ">480px" ) {
+		margin: 0 -24px 24px;
+	}
 
 	.security-2fa-progress__inner-container {
 		display: flex;

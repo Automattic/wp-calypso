@@ -1,25 +1,41 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var StepHeader = require( 'signup/step-header' ),
-	SkipStepButton = require( 'signup/skip-step-button' ),
-	PreviousStepButton = require( 'signup/previous-step-button' );
+import StepHeader from 'signup/step-header';
+import NavigationLink from 'signup/navigation-link';
+import config from 'config';
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'StepWrapper',
+
+	renderBack: function() {
+		return (
+			<NavigationLink
+				direction="back"
+				flowName={ this.props.flowName }
+				positionInFlow={ this.props.positionInFlow }
+				stepName={ this.props.stepName }
+				stepSectionName={ this.props.stepSectionName }
+				backUrl={ this.props.backUrl }
+				signupProgressStore={ this.props.signupProgressStore } />
+		);
+	},
 
 	renderSkip: function() {
 		if ( this.props.goToNextStep ) {
 			return (
-				<SkipStepButton
+				<NavigationLink
+					direction="forward"
 					goToNextStep={ this.props.goToNextStep }
-					stepName={ this.props.stepName }
-					defaultDependencies={ this.props.defaultDependencies } />
+					defaultDependencies={ this.props.defaultDependencies }
+					flowName={ this.props.flowName }
+					stepName={ this.props.stepName } />
 			);
 		}
 	},
@@ -51,20 +67,26 @@ module.exports = React.createClass( {
 	},
 
 	render: function() {
+		const { stepContent, headerButton } = this.props;
+		const classes = classNames( 'step-wrapper', {
+			'is-wide-layout': this.props.isWideLayout
+		} );
+
 		return (
-			<div className="step-wrapper">
+			<div className={ classes }>
 				<StepHeader
 					headerText={ this.headerText() }
-					subHeaderText={ this.subHeaderText() } />
-				<div className="is-animated-content">
-					{ this.props.stepContent }
-					{ this.renderSkip() }
-					<PreviousStepButton
-						flowName={ this.props.flowName }
-						positionInFlow={ this.props.positionInFlow }
-						stepName={ this.props.stepName }
-						backUrl={ this.props.backUrl }
-						signupProgressStore={ this.props.signupProgressStore } />
+					subHeaderText={ this.subHeaderText() }>
+					{ config.isEnabled( 'jetpack/connect' )
+						? ( headerButton )
+						: null }
+				</StepHeader>
+				<div className="step-wrapper__content is-animated-content">
+					{ stepContent }
+					<div className="step-wrapper__buttons">
+						{ this.renderBack() }
+						{ this.renderSkip() }
+					</div>
 				</div>
 			</div>
 		);

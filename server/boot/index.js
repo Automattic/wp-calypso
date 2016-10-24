@@ -28,8 +28,11 @@ function setup() {
 	app.set( 'view engine', 'jade' );
 
 	if ( 'development' === config( 'env' ) ) {
-		// only do `make build` upon every request in "development"
-		app.use( build() );
+		// use legacy CSS rebuild system if css-hot-reload is disabled
+		if ( ! config.isEnabled( 'css-hot-reload' ) ) {
+			// only do `make build` upon every request in "development"
+			app.use( build() );
+		}
 
 		bundler = require( 'bundler' );
 		bundler( app );
@@ -46,6 +49,9 @@ function setup() {
 
 	// attach the static file server to serve the `public` dir
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', 'public' ) ) );
+
+	// service-worker needs to be served from root to avoid scope issues
+	app.use( '/service-worker.js', express.static( path.resolve( __dirname, '..', '..', 'client', 'lib', 'service-worker', 'service-worker.js' ) ) );
 
 	// serve files when not in production so that the source maps work correctly
 	if ( 'development' === config( 'env' ) ) {

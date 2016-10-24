@@ -91,7 +91,8 @@
 }
 
 .earnings_history__status {
-	padding-bottom: 10px
+	padding-bottom: 10px;
+	text-align: left;
 }
 
 .earnings-history__header {
@@ -120,4 +121,30 @@
 	.settings__state{
 		max-width: 75%;
 	}
+}
+
+.rads__activate-header-title {
+	font-weight: 600;
+}
+
+.rads__activate-notice {
+	margin: 0;
+}
+
+.rads__activate-header-toggle, .rads__activate-header-title {
+	margin: auto 0 auto 0;
+}
+.rads__activate-wrapper {
+	padding: 0;
+}
+.rads__activate-header {
+	padding: 24px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.rads__activate-description {
+	border-top: 1px solid #e9eff3;
+	padding: 24px;
 }

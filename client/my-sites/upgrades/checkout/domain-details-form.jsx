@@ -1,31 +1,31 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	extend = require( 'lodash/object/assign' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classNames from 'classnames';
+import map from 'lodash/map';
+import camelCase from 'lodash/camelCase';
+import kebabCase from 'lodash/kebabCase';
+import head from 'lodash/head';
 
 /**
  * Internal dependencies
  */
-var CountrySelect = require( 'my-sites/upgrades/components/form/country-select' ),
-	StateSelect = require( 'my-sites/upgrades/components/form/state-select' ),
-	Input = require( 'my-sites/upgrades/components/form/input' ),
-	HiddenInput = require( 'my-sites/upgrades/components/form/hidden-input' ),
-	PrivacyProtection = require( './privacy-protection' ),
-	PaymentBox = require( './payment-box' ),
-	cartItems = require( 'lib/cart-values' ).cartItems,
-	hasNlTld = cartItems.hasNlTld,
-	countriesList = require( 'lib/countries-list' ).forDomainRegistrations(),
-	statesList = require( 'lib/states-list' ).forDomainRegistrations(),
-	notices = require( 'notices' ),
-	ValidationErrorList = require( 'notices/validation-error-list' ),
-	wpcom = require( 'lib/wp' ).undocumented(),
-	analytics = require( 'analytics' ),
-	formState = require( 'lib/form-state' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import { CountrySelect, StateSelect, Input, HiddenInput } from 'my-sites/upgrades/components/form';
+import PrivacyProtection from './privacy-protection';
+import PaymentBox from './payment-box';
+import { cartItems } from 'lib/cart-values';
+import { forDomainRegistrations as countriesListForDomainRegistrations } from 'lib/countries-list';
+import analytics from 'lib/analytics';
+import formState from 'lib/form-state';
+import { addPrivacyToAllDomains, removePrivacyFromAllDomains, setDomainDetails } from 'lib/upgrades/actions';
+import FormButton from 'components/forms/form-button';
 
-module.exports = React.createClass( {
+// Cannot convert to ES6 import
+const wpcom = require( 'lib/wp' ).undocumented(),
+	countriesList = countriesListForDomainRegistrations();
+
+export default React.createClass( {
 	displayName: 'DomainDetailsForm',
 
 	fieldNames: [
@@ -43,17 +43,19 @@ module.exports = React.createClass( {
 		'fax'
 	],
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			form: null,
-			isDialogVisible: false
+			isDialogVisible: false,
+			submissionCount: 0
 		};
 	},
 
-	componentWillMount: function() {
+	componentWillMount() {
 		this.formStateController = formState.Controller( {
 			fieldNames: this.fieldNames,
 			loadFunction: wpcom.getDomainContactInformation.bind( wpcom ),
+			sanitizerFunction: this.sanitize,
 			validatorFunction: this.validate,
 			onNewState: this.setFormState,
 			onError: this.handleFormControllerError
@@ -62,49 +64,50 @@ module.exports = React.createClass( {
 		this.setState( { form: this.formStateController.getInitialState() } );
 	},
 
-	componentDidMount: function() {
-		analytics.pageView.record( '/checkout/domain-registration-details', 'Checkout > Domain Registration Details' );
+	componentDidMount() {
+		analytics.pageView.record( '/checkout/domain-contact-information', 'Checkout > Domain Contact Information' );
 	},
 
-	validate: function( fieldNames, onComplete ) {
-		var cart = this.props.cart,
-			domainRegistrations = cartItems.getDomainRegistrations( cart ),
-			domainNames = domainRegistrations.map( function( domainRegistration ) {
-				return domainRegistration.meta;
-			} );
+	sanitize( fieldValues, onComplete ) {
+		const sanitizedFieldValues = Object.assign( {}, fieldValues );
+		this.fieldNames.forEach( ( fieldName ) => {
+			if ( typeof fieldValues[ fieldName ] === 'string' ) {
+				sanitizedFieldValues[ fieldName ] = fieldValues[ fieldName ].trim();
+				if ( fieldName === 'postalCode' ) {
+					sanitizedFieldValues[ fieldName ] = sanitizedFieldValues[ fieldName ].toUpperCase();
+				}
+			}
+		} );
 
-		wpcom.validateDomainContactInformation( fieldNames, domainNames, function( error, data ) {
-			var messages = data && data.messages ? data.messages : {};
+		onComplete( sanitizedFieldValues );
+	},
+
+	validate( fieldValues, onComplete ) {
+		const domainNames = map( cartItems.getDomainRegistrations( this.props.cart ), 'meta' );
+
+		wpcom.validateDomainContactInformation( fieldValues, domainNames, ( error, data ) => {
+			const messages = data && data.messages || {};
 			onComplete( error, messages );
 		} );
 	},
 
-	setFormState: function( state ) {
+	setFormState( form ) {
 		if ( ! this.isMounted() ) {
 			return;
 		}
 
-		const messages = formState.getErrorMessages( state );
-
-		if ( messages.length > 0 ) {
-			const notice = notices.error( <ValidationErrorList messages={ messages } /> );
-			this.setState( {
-				form: state,
-				notice: notice
-			} );
-		} else {
-			if ( this.state.notice ) {
-				notices.removeNotice( this.state.notice );
-			}
-			this.setState( { form: state } );
+		if ( ! this.needsFax() ) {
+			delete form.fax;
 		}
+
+		this.setState( { form } );
 	},
 
-	handleFormControllerError: function( error ) {
+	handleFormControllerError( error ) {
 		throw error;
 	},
 
-	handleChangeEvent: function( event ) {
+	handleChangeEvent( event ) {
 		// Resets the state field every time the user selects a different country
 		if ( event.target.name === 'country-code' ) {
 			this.formStateController.handleFieldChange( {
@@ -120,125 +123,141 @@ module.exports = React.createClass( {
 		} );
 	},
 
-	getNumberOfDomainRegistrations: function() {
-		var cart = this.props.cart,
-			domainRegistrations = cartItems.getDomainRegistrations( cart );
-
-		return domainRegistrations.length;
+	getNumberOfDomainRegistrations() {
+		return cartItems.getDomainRegistrations( this.props.cart ).length;
 	},
 
-	field: function( componentClass, props ) {
-		var name = props.name;
-
-		return React.createElement( componentClass, extend( {}, props, {
+	getFieldProps( name ) {
+		return {
+			name,
+			ref: name,
 			additionalClasses: 'checkout-field',
 			value: formState.getFieldValue( this.state.form, name ),
-			invalid: formState.isFieldInvalid( this.state.form, name ),
+			isError: formState.isFieldInvalid( this.state.form, name ),
 			disabled: formState.isFieldDisabled( this.state.form, name ),
 			onChange: this.handleChangeEvent,
+			// The keys are mapped to snake_case when going to API and camelCase when the response is parsed and we are using
+			// kebab-case for HTML, so instead of using different variations all over the place, this accepts kebab-case and
+			// converts it to camelCase which is the format stored in the formState.
+			errorMessage: ( formState.getFieldErrorMessages( this.state.form, camelCase( name ) ) || [] ).join( '\n' ),
 			eventFormName: 'Checkout Form'
-		} ) );
+		};
 	},
 
-	showFax: function() {
-		var cart = this.props.cart,
-			countryCode = formState.getFieldValue( this.state.form, 'countryCode' );
-
-		return countryCode === 'NL' && hasNlTld( cart );
+	needsFax() {
+		return formState.getFieldValue( this.state.form, 'countryCode' ) === 'NL' && cartItems.hasNlTld( this.props.cart );
 	},
 
-	fields: function() {
-		var countryCode = formState.getFieldValue( this.state.form, 'countryCode' );
+	allDomainRegistrationsHavePrivacy() {
+		return cartItems.getDomainRegistrationsWithoutPrivacy( this.props.cart ).length === 0;
+	},
+
+	renderSubmitButton() {
+		return (
+			<FormButton className="checkout__domain-details-form-submit-button" onClick={ this.handleSubmitButtonClick }>
+				{ this.translate( 'Continue to Checkout' ) }
+			</FormButton>
+		);
+	},
+
+	renderPrivacySection() {
+		return (
+			<PrivacyProtection
+				cart={ this.props.cart }
+				countriesList={ countriesList }
+				disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
+				fields={ this.state.form }
+				isChecked={ this.allDomainRegistrationsHavePrivacy() }
+				onCheckboxChange={ this.handleCheckboxChange }
+				onDialogClose={ this.closeDialog }
+				onDialogOpen={ this.openDialog }
+				onDialogSelect={ this.handlePrivacyDialogSelect }
+				isDialogVisible={ this.state.isDialogVisible }
+				productsList={ this.props.productsList }/>
+		);
+	},
+
+	fields() {
+		const countryCode = formState.getFieldValue( this.state.form, 'countryCode' ),
+			fieldProps = ( name ) => this.getFieldProps( name ),
+			textOnly = true;
 
 		return (
 			<div>
-				{ this.field( Input, {
-					name: 'first-name',
-					autofocus: true,
-					label: this.translate( 'First Name', { textOnly: true } )
-				} ) }
-				{ this.field( Input, {
-					name: 'last-name',
-					label: this.translate( 'Last Name', { textOnly: true } )
-				} ) }
-				{ this.field( HiddenInput, {
-					name: 'organization',
-					label: this.translate( 'Organization', { textOnly: true } ),
-					text: this.translate(
+				<Input
+					autoFocus
+					label={ this.translate( 'First Name', { textOnly } ) }
+					{ ...fieldProps( 'first-name' ) }/>
+
+				<Input label={ this.translate( 'Last Name', { textOnly } ) } { ...fieldProps( 'last-name' ) }/>
+
+				<HiddenInput
+					label={ this.translate( 'Organization' ) }
+					text={ this.translate(
 						'Registering this domain for a company? + Add Organization Name',
 						'Registering these domains for a company? + Add Organization Name',
 						{
-							context: 'Domain registration details page',
+							context: 'Domain contact information page',
 							comment: 'Count specifies the number of domain registrations',
 							count: this.getNumberOfDomainRegistrations(),
 							textOnly: true
 						}
-					)
-				} ) }
-				{ this.field( Input, {
-					name: 'email',
-					label: this.translate( 'Email', { textOnly: true } )
-				} ) }
-				{ this.field( Input, {
-					name: 'phone',
-					label: this.translate( 'Phone', { textOnly: true } )
-				} ) }
-				{ this.field( CountrySelect, {
-					name: 'country-code',
-					label: this.translate( 'Country', { textOnly: true } ),
-					countriesList: countriesList
-				} ) }
-				{ this.showFax() ? this.field( Input, {
-					name: 'fax',
-					label: this.translate( 'Fax', { textOnly: true } )
-				} ) : null }
-				{ this.field( Input, {
-					name: 'address-1',
-					label: this.translate( 'Address', { textOnly: true } )
-				} ) }
-				{ this.field( HiddenInput, {
-					name: 'address-2',
-					label: this.translate( 'Address Line 2', { textOnly: true } ),
-					text: this.translate( '+ Add Address Line 2', { textOnly: true } )
-				} ) }
-				{ this.field( Input, {
-					name: 'city',
-					label: this.translate( 'City', { textOnly: true } )
-				} ) }
-				{ this.field( StateSelect, {
-					name: 'state',
-					label: this.translate( 'State', { textOnly: true } ),
-					countryCode: countryCode,
-					statesList: statesList
-				} ) }
-				{ this.field( Input, {
-					name: 'postal-code',
-					label: this.translate( 'Postal Code', { textOnly: true } )
-				} ) }
-				<PrivacyProtection
-					cart={ this.props.cart }
-					countriesList= { countriesList }
-					disabled={ formState.isSubmitButtonDisabled( this.state.form ) }
-					fields={ this.state.form }
-					onButtonSelect={ this.handleButtonSelect }
-					onDialogClose={ this.handleDialogClose }
-					onDialogOpen={ this.handleDialogOpen }
-					onDialogSelect={ this.handleDialogSelect }
-					isDialogVisible={ this.state.isDialogVisible }
-					productsList={ this.props.productsList } />
+					) }
+					{ ...fieldProps( 'organization' ) }/>
+
+				<Input label={ this.translate( 'Email', { textOnly } ) } { ...fieldProps( 'email' ) }/>
+				<Input
+					label={ this.translate( 'Phone', { textOnly } ) }
+					placeholder={ this.translate(
+						'e.g. +1.555.867.5309',
+						{
+							context: 'Domain contact info phone placeholder',
+							comment: 'Please use the phone number format most common for your language, but it must begin with just the country code in the format \'+1\' - no parenthesis, leading zeros, etc.'
+						}
+					) }
+					{ ...fieldProps( 'phone' ) }/>
+
+				<CountrySelect
+					label={ this.translate( 'Country', { textOnly } ) }
+					countriesList={ countriesList }
+					{ ...fieldProps( 'country-code' ) }/>
+
+				{ this.needsFax() && <Input label={ this.translate( 'Fax', { textOnly } ) } { ...fieldProps( 'fax' ) }/> }
+				<Input label={ this.translate( 'Address', { textOnly } ) } maxLength={ 40 } { ...fieldProps( 'address-1' ) }/>
+
+				<HiddenInput
+					label={ this.translate( 'Address Line 2', { textOnly } ) }
+					text={ this.translate( '+ Add Address Line 2', { textOnly } ) }
+					maxLength={ 40 }
+					{ ...fieldProps( 'address-2' ) }/>
+
+				<Input label={ this.translate( 'City', { textOnly } ) } { ...fieldProps( 'city' ) }/>
+
+				<StateSelect
+					label={ this.translate( 'State', { textOnly: true } ) }
+					countryCode={ countryCode }
+					{ ...fieldProps( 'state' ) }/>
+
+				<Input label={ this.translate( 'Postal Code', { textOnly } ) } { ...fieldProps( 'postal-code' ) }/>
+
+				{ this.renderSubmitButton() }
 			</div>
 		);
 	},
 
-	handleDialogClose: function() {
+	handleCheckboxChange() {
+		this.setPrivacyProtectionSubscriptions( ! this.allDomainRegistrationsHavePrivacy() );
+	},
+
+	closeDialog() {
 		this.setState( { isDialogVisible: false } );
 	},
 
-	handleDialogOpen: function() {
+	openDialog() {
 		this.setState( { isDialogVisible: true } );
 	},
 
-	content: function() {
+	content() {
 		return (
 			<form>
 				{ this.fields() }
@@ -246,73 +265,88 @@ module.exports = React.createClass( {
 		);
 	},
 
-	handleButtonSelect: function( options ) {
-		this.formStateController.handleSubmit( function( hasErrors ) {
+	focusFirstError() {
+		this.refs[ kebabCase( head( map( formState.getInvalidFields( this.state.form ), 'name' ) ) ) ].focus();
+	},
+
+	handleSubmitButtonClick( event ) {
+		event.preventDefault();
+
+		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
 
 			if ( hasErrors ) {
+				this.focusFirstError();
 				return;
 			}
 
-			if ( options.addPrivacy ) {
-				this.finish( { addPrivacy: true } );
-			} else if ( options.skipPrivacyDialog ) {
-				this.finish( { addPrivacy: false } );
-			} else {
-				this.setState( { isDialogVisible: true } );
+			if ( ! this.allDomainRegistrationsHavePrivacy() ) {
+				this.openDialog();
+				return;
 			}
-		}.bind( this ) );
-	},
 
-	recordSubmit: function() {
-		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', {
-			errors: formState.getErrorMessages( this.state.form )
+			this.finish();
 		} );
 	},
 
-	handleDialogSelect: function( options ) {
-		this.formStateController.handleSubmit( function( hasErrors ) {
-			this.setState( { isDialogVisible: false } );
+	recordSubmit() {
+		const errors = formState.getErrorMessages( this.state.form );
+		analytics.tracks.recordEvent( 'calypso_contact_information_form_submit', {
+			errors,
+			errors_count: errors && errors.length || 0,
+			submission_count: this.state.submissionCount + 1
+		} );
+		this.setState( { submissionCount: this.state.submissionCount + 1 } );
+	},
+
+	handlePrivacyDialogSelect( options ) {
+		this.formStateController.handleSubmit( ( hasErrors ) => {
 			this.recordSubmit();
 
-			if ( hasErrors ) {
+			if ( hasErrors || options.skipFinish ) {
+				this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
+				this.closeDialog();
 				return;
 			}
 
 			this.finish( options );
-		}.bind( this ) );
+		} );
 	},
 
-	finish: function( options ) {
-		if ( options.addPrivacy ) {
-			upgradesActions.addPrivacyToAllDomains();
+	finish( options = {} ) {
+		this.setPrivacyProtectionSubscriptions( options.addPrivacy !== false );
+
+		setDomainDetails( formState.getAllFieldValues( this.state.form ) );
+	},
+
+	setPrivacyProtectionSubscriptions( enable ) {
+		if ( enable ) {
+			addPrivacyToAllDomains();
 		} else {
-			upgradesActions.removePrivacyFromAllDomains();
+			removePrivacyFromAllDomains();
 		}
-
-		upgradesActions.setDomainDetails( formState.getAllFieldValues( this.state.form ) );
 	},
 
-	render: function() {
-		var classSet = classNames( {
+	render() {
+		const classSet = classNames( {
 			'domain-details': true,
 			selected: true
 		} );
 
 		return (
-			<PaymentBox
-				classSet={ classSet }
-				title={ this.translate(
-					'Domain Registration Details',
-					'Domain Registration Details',
-					{
-						context: 'Domain registration details page',
-						comment: 'Count specifies the number of domain registrations',
-						count: this.getNumberOfDomainRegistrations(),
-						textOnly: true
-					} ) }>
-				{ this.content() }
-			</PaymentBox>
+			<div>
+				{ this.renderPrivacySection() }
+				<PaymentBox
+					classSet={ classSet }
+					title={ this.translate(
+						'Domain Contact Information',
+						{
+							context: 'Domain contact information page',
+							textOnly: true
+						} ) }>
+					{ this.content() }
+				</PaymentBox>
+			</div>
 		);
 	}
 } );

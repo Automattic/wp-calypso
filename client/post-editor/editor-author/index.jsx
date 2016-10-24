@@ -1,21 +1,26 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+const React = require( 'react' );
 
 /**
  * Internal dependencies
  */
-var Gravatar = require( 'components/gravatar' ),
+const Gravatar = require( 'components/gravatar' ),
 	user = require( 'lib/user' )(),
-	AuthorSelector = require( 'components/author-selector' ),
+	AuthorSelector = require( 'blocks/author-selector' ),
 	PostActions = require( 'lib/posts/actions' ),
 	touchDetect = require( 'lib/touch-detect' ),
 	sites = require( 'lib/sites-list' )(),
-	config = require( 'config' ),
 	stats = require( 'lib/posts/stats' );
 
-var EditorAuthor = React.createClass( {
+export default React.createClass( {
+	displayName: 'EditorAuthor',
+
+	propTypes: {
+		post: React.PropTypes.object,
+		isNew: React.PropTypes.bool
+	},
 
 	render: function() {
 		// if it's not a new post and we are still loading
@@ -55,6 +60,7 @@ var EditorAuthor = React.createClass( {
 	onSelect: function( author ) {
 		stats.recordStat( 'advanced_author_changed' );
 		stats.recordEvent( 'Changed Author' );
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( { author: author } );
 	},
 
@@ -72,5 +78,3 @@ var EditorAuthor = React.createClass( {
 	},
 
 } );
-
-module.exports = EditorAuthor;

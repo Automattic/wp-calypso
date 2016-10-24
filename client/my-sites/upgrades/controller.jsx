@@ -2,26 +2,25 @@
  * External Dependencies
  */
 var page = require( 'page' ),
+	qs = require( 'qs' ),
+	i18n = require( 'i18n-calypso' ),
+	ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
 
 /**
  * Internal Dependencies
  */
-var analytics = require( 'analytics' ),
+var analytics = require( 'lib/analytics' ),
 	sites = require( 'lib/sites-list' )(),
 	route = require( 'lib/route' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	ThemeActions = require( 'lib/themes/flux-actions' ),
 	Main = require( 'components/main' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
-	titleActions = require( 'lib/screen-title/actions' ),
-	productsList = require( 'lib/products-list' )();
+	setTitle = require( 'state/document-head/actions' ).setDocumentHeadTitle,
+	setSection = require( 'state/ui/actions' ).setSection,
+	productsList = require( 'lib/products-list' )(),
+	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore;
 
 module.exports = {
-
-	domainSearchIndex: function() {
-		page.redirect( '/domains/add' + ( sites.getSelectedSite() ? ( '/' + sites.getSelectedSite().slug ) : '' ) );
-	},
 
 	domainsAddHeader: function( context, next ) {
 		context.getSiteSelectionHeaderText = function() {
@@ -44,13 +43,17 @@ module.exports = {
 			DomainSearch = require( './domain-search' ),
 			basePath = route.sectionify( context.path );
 
-		titleActions.setTitle( i18n.translate( 'Domain Search' ), {
-			siteID: context.params.domain
-		} );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Domain Search' ) ) );
 
 		analytics.pageView.record( basePath, 'Domain Search > Domain Registration' );
 
-		React.render(
+		// Scroll to the top
+		if ( typeof window !== 'undefined' ) {
+			window.scrollTo( 0, 0 );
+		}
+
+		renderWithReduxStore(
 			(
 				<CartData>
 					<DomainSearch
@@ -60,7 +63,8 @@ module.exports = {
 						productsList={ productsList } />
 				</CartData>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -69,13 +73,12 @@ module.exports = {
 			SiteRedirect = require( './domain-search/site-redirect' ),
 			basePath = route.sectionify( context.path );
 
-		titleActions.setTitle( i18n.translate( 'Redirect a Site' ), {
-			siteID: context.params.domain
-		} );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Redirect a Site' ) ) );
 
 		analytics.pageView.record( basePath, 'Domain Search > Site Redirect' );
 
-		React.render(
+		renderWithReduxStore(
 			(
 				<CartData>
 					<SiteRedirect
@@ -83,48 +86,47 @@ module.exports = {
 						sites={ sites } />
 				</CartData>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
 	mapDomain: function( context ) {
 		var CartData = require( 'components/data/cart' ),
-			MapDomain = require( 'components/domains/map-domain' ),
+			MapDomain = require( 'my-sites/upgrades/map-domain' ),
 			basePath = route.sectionify( context.path );
 
-		titleActions.setTitle( i18n.translate( 'Map a Domain' ), {
-			siteID: context.params.domain
-		} );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Map a Domain' ) ) );
 
 		analytics.pageView.record( basePath, 'Domain Search > Domain Mapping' );
-
-		React.render(
+		renderWithReduxStore(
 			(
 				<Main>
 					<CartData>
 						<MapDomain
+							store={ context.store }
 							productsList={ productsList }
+							initialQuery={ context.query.initialQuery }
 							sites={ sites } />
 					</CartData>
 				</Main>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
 	googleAppsWithRegistration: function( context ) {
 		var CartData = require( 'components/data/cart' ),
-			GoogleApps = require( 'components/upgrades/google-apps' ),
-			basePath = route.sectionify( context.path );
+			GoogleApps = require( 'components/upgrades/google-apps' );
 
-		titleActions.setTitle(
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle(
 			i18n.translate( 'Register %(domain)s', {
 				args: { domain: context.params.registerDomain }
-			} ),
-			{
-				siteID: context.params.domain
-			}
-		);
+			} )
+		) );
 
 		const handleAddGoogleApps = function( googleAppsCartItem ) {
 			upgradesActions.addItem( googleAppsCartItem );
@@ -139,9 +141,9 @@ module.exports = {
 			page( '/checkout/' + sites.getSelectedSite().slug );
 		};
 
-		analytics.pageView.record( basePath, 'Domain Search > Domain Registration > Google Apps' );
+		analytics.pageView.record( '/domains/add/:site/google-apps', 'Domain Search > Domain Registration > Google Apps' );
 
-		React.render(
+		renderWithReduxStore(
 			(
 				<Main>
 					<CartData>
@@ -154,7 +156,8 @@ module.exports = {
 					</CartData>
 				</Main>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
@@ -163,63 +166,68 @@ module.exports = {
 			CheckoutData = require( 'components/data/checkout' ),
 			CartData = require( 'components/data/cart' ),
 			SecondaryCart = require( './cart/secondary-cart' ),
-			storedCards = require( 'lib/stored-cards' )(),
-			basePath = route.sectionify( context.path );
+			basePath = route.sectionify( context.path ),
+			product = context.params.product,
+			selectedFeature = context.params.feature;
+
+		if ( 'thank-you' === product ) {
+			return;
+		}
 
 		analytics.pageView.record( basePath, 'Checkout' );
 
-		titleActions.setTitle( i18n.translate( 'Checkout' ), {
-			siteID: context.params.domain
-		} );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-		React.render(
+		renderWithReduxStore(
 			(
 				<CheckoutData>
 					<Checkout
-						cards={ storedCards }
+						product={ product }
 						productsList={ productsList }
+						selectedFeature={ selectedFeature }
 						sites={ sites } />
 				</CheckoutData>
 			),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
-		React.render(
+		renderWithReduxStore(
 			(
 				<CartData>
 					<SecondaryCart selectedSite={ sites.getSelectedSite() } />
 				</CartData>
 			),
-			document.getElementById( 'secondary' )
+			document.getElementById( 'secondary' ),
+			context.store
 		);
 	},
 
 	checkoutThankYou: function( context ) {
-		var CheckoutThankYouComponent = require( './checkout/thank-you' ),
-			lastTransaction = CheckoutThankYouComponent.getLastTransaction(),
-			basePath = route.sectionify( context.path );
+		var CheckoutThankYouComponent = require( './checkout-thank-you' ),
+			basePath = route.sectionify( context.path ),
+			receiptId = Number( context.params.receiptId );
 
 		analytics.pageView.record( basePath, 'Checkout Thank You' );
 
-		if ( ! lastTransaction ) {
-			page.redirect( '/plans' );
+		context.store.dispatch( setSection( { name: 'checkout-thank-you' }, { hasSidebar: false } ) );
 
-			return;
-		}
+		context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 
-		titleActions.setTitle( i18n.translate( 'Thank You' ) );
-
-		React.render(
-			React.createElement( CheckoutThankYouComponent, {
-				lastTransaction: lastTransaction,
-				productsList: productsList
-			} ),
-			document.getElementById( 'primary' )
+		renderWithReduxStore(
+			(
+				<CheckoutThankYouComponent
+					productsList={ productsList }
+					receiptId={ receiptId }
+					selectedFeature={ context.params.feature }
+					selectedSite={ sites.getSelectedSite() } />
+			),
+			document.getElementById( 'primary' ),
+			context.store
 		);
 
-		React.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-
-		CheckoutThankYouComponent.setLastTransaction( null );
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	},
 
 	redirectIfNoSite: function( redirectTo ) {
@@ -234,21 +242,17 @@ module.exports = {
 		};
 	},
 
-	redirectIfThemePurchased: function( context, next ) {
-		var CheckoutThankYouComponent = require( './checkout/thank-you' ),
-			cartItems = require( 'lib/cart-values' ).cartItems,
-			lastTransaction = CheckoutThankYouComponent.getLastTransaction(),
-			selectedSite = lastTransaction.selectedSite,
-			cart = lastTransaction.cart,
-			cartAllItems = cartItems.getAll( cart );
+	redirectToAddMappingIfVipSite: function() {
+		return function( context, next ) {
+			const selectedSite = sites.getSelectedSite(),
+				domain = context.params.domain ? `/${ context.params.domain }` : '',
+				query = qs.stringify( { initialQuery: context.params.suggestion } );
 
-		if ( cartItems.hasOnlyProductsOf( cart, 'premium_theme' ) ) {
-			const { meta, extra: { source } } = cartAllItems[ 0 ];
-			ThemeActions.activated( meta, selectedSite, source, true );
-			page.redirect( '/design/' + selectedSite.slug );
-			return;
-		}
+			if ( selectedSite && selectedSite.is_vip ) {
+				return page.redirect( `/domains/add/mapping${ domain }?${ query }` );
+			}
 
-		next();
+			next();
+		};
 	}
 };

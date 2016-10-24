@@ -2,15 +2,14 @@
  * External dependencies
  */
 import React from 'react';
-import assign from 'lodash/object/assign';
-import classNames from 'classnames';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import Button from 'components/button';
 import DisconnectJetpackDialog from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-dialog';
-import analytics from 'analytics';
+import analytics from 'lib/analytics';
 
 export default React.createClass( {
 
@@ -21,6 +20,7 @@ export default React.createClass( {
 		redirect: React.PropTypes.string.isRequired,
 		disabled: React.PropTypes.bool,
 		linkDisplay: React.PropTypes.bool,
+		isMock: React.PropTypes.bool,
 		text: React.PropTypes.string
 	},
 
@@ -32,28 +32,27 @@ export default React.createClass( {
 
 	render() {
 		const { site, redirect, linkDisplay } = this.props;
-		const buttonElement = linkDisplay ? 'button' : Button;
 
-		const buttonClasses = classNames( {
-			button: true,
-			'disconnect-jetpack-button': true,
-			'is-link': linkDisplay
-		} );
-
-		const buttonProps = assign( {}, this.props, {
+		const omitProps = [ 'site', 'redirect', 'isMock', 'linkDisplay', 'text' ];
+		const buttonProps = {
+			...omit( this.props, omitProps ),
 			id: `disconnect-jetpack-${ site.ID }`,
-			className: buttonClasses,
+			className: 'disconnect-jetpack-button',
 			compact: true,
+			disabled: this.props.disabled,
 			scary: true,
+			borderless: linkDisplay,
 			onClick: ( event ) => {
 				event.preventDefault();
+				if ( this.props.isMock ) {
+					return;
+				}
 				this.refs.dialog.open();
 				analytics.ga.recordEvent( 'Jetpack', 'Clicked To Open Disconnect Jetpack Dialog' );
 			}
-		} );
+		};
 
 		let { text } = this.props;
-		let buttonChildren;
 
 		if ( ! text ) {
 			text = this.translate( 'Disconnect', {
@@ -61,13 +60,13 @@ export default React.createClass( {
 			} );
 		}
 
-		buttonChildren = (
+		const buttonChildren = (
 			<div>
 				{ text }
 				<DisconnectJetpackDialog site={ site } ref="dialog" redirect={ redirect } />
 			</div>
 		);
 
-		return React.createElement( buttonElement, buttonProps, buttonChildren );
+		return React.createElement( Button, buttonProps, buttonChildren );
 	}
 } );

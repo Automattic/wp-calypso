@@ -1,0 +1,222 @@
+/**
+ * Site
+ */
+
+.site {
+	box-sizing: border-box;
+	display: flex;
+	flex: 1 0 auto;
+	justify-content: space-between;
+	padding: 0;
+	position: relative;
+
+	&.is-loading {
+		.site-icon {
+			animation: pulse-light 0.8s ease-in-out infinite;
+		}
+
+		.site__title,
+		.site__domain {
+			animation: pulse-light 0.8s ease-in-out infinite;
+			background-color: lighten( $gray, 30% );
+			color: transparent;
+			width: 95%;
+
+			&::after {
+				display: none;
+			}
+		}
+
+		.notouch .sites-popover &:hover {
+			.site__title,
+			.site__domain {
+				color: transparent;
+			}
+		}
+
+	}
+}
+
+// Wraps the anchor element
+.site__content {
+	display: flex;
+	justify-content: space-between;
+	overflow: hidden;
+	padding: 16px 4px 16px 16px;
+	position: relative;
+	width: 100%;
+
+	&:focus {
+		outline: none;
+	}
+}
+
+// Adjusts the SiteIcon component for use
+// within a Site item
+.site .site-icon {
+	position: relative;
+	background: lighten( $gray, 20% );
+	border: 1px solid white;
+	height: 30px;
+	width: 30px;
+	overflow: hidden;
+	align-self: center;
+	margin-right: 8px;
+}
+
+// The group of site title and domain
+.site__info {
+	width: 0; // Firefox needs explicit width (even 0)
+	flex: 1 0 auto;
+}
+
+.site__title {
+	color: $gray-dark;
+	display: block;
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.4;
+}
+
+.site__domain {
+	color: $gray;
+	display: block;
+	max-width: 95%;
+	font-size: 11px;
+	line-height: 1.4;
+}
+
+.site__title,
+.site__domain {
+	overflow: hidden;
+	white-space: nowrap;
+	&::after {
+		@include long-content-fade();
+	}
+}
+
+.site__home {
+	background: $blue-medium;
+	color: $white;
+	display: block;
+	width: 32px;
+	height: 32px;
+	text-align: center;
+	text-transform: none;
+	overflow: initial;
+	opacity: 0;
+	transition: opacity 0.2s;
+	transform: translate3d(0, 0, 0);
+	position: absolute;
+		left: 17px;
+		top: 17px;
+
+	.gridicon {
+		margin-top: 5px;
+		vertical-align: middle;
+	}
+
+	&:hover {
+		color: $white;
+	}
+
+	@include breakpoint( "<660px" ) {
+		display: none;
+	}
+}
+
+.site__content:hover .site__home {
+	opacity: 1;
+}
+
+.site__toggle-more-options {
+	color: $gray;
+	cursor: pointer;
+	padding-right: 16px;
+	line-height: 0;
+	.gridicon {
+		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+	}
+	&:hover {
+		.gridicon {
+			color: darken( $gray, 20% );
+		}
+	}
+}
+
+.site.is-toggled {
+	.site__toggle-more-options .gridicon {
+		transform: rotate( 90deg );
+	}
+	.site-indicator {
+		display: none;
+	}
+}
+
+.site.is-toggled.has-edit-capabilities {
+	.site-icon {
+		border: 1px dashed $gray-dark;
+		opacity: 0.8;
+	}
+}
+
+.site__actions {
+	align-items: center;
+	display: flex;
+	flex: 1 0 0;
+	justify-content: flex-end;
+	animation: appear .3s ease-in-out;
+}
+
+.site__edit-icon-text {
+	animation: appear .3s ease-in-out;
+	font-size: 10px;
+	max-width: 60px;
+}
+
+.site__edit-icon,
+.site__edit-icon:visited {
+	color: darken( $gray, 10% );
+	font-weight: 600;
+	font-size: 11px;
+	text-transform: uppercase;
+	display: flex;
+	align-items: center;
+	&:hover {
+		color: $blue-medium;
+	}
+	.gridicons-external {
+		top: -1px;
+	}
+}
+
+.site__star {
+	color: $gray;
+	cursor: pointer;
+	line-height: 0;
+
+	&:hover .gridicons-star-outline {
+		color: $alert-yellow;
+	}
+
+	.gridicons-star {
+		color: $alert-yellow;
+	}
+}
+
+a.site__cog {
+	color: $gray;
+	line-height: 0;
+
+	&:hover {
+		color: darken( $gray, 20% );
+	}
+}
+
+.site__badge {
+	color: $gray;
+	padding-right: 4px;
+	line-height: 0;
+	position: relative;
+	vertical-align: middle;
+}

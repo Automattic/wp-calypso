@@ -1,18 +1,24 @@
 /**
+ * Internal dependencies
+ */
+import { isSupportUserSession, boot as supportUserBoot } from 'lib/user/support-user-interop';
+
+/**
  * External dependencies
  */
 var store = require( 'store' ),
 	debug = require( 'debug' )( 'calypso:user' ),
 	config = require( 'config' ),
 	qs = require( 'qs' ),
-	isEqual = require( 'lodash/lang/isEqual' );
+	isEqual = require( 'lodash/isEqual' );
 
 /**
  * Internal dependencies
  */
 var wpcom = require( 'lib/wp' ),
 	Emitter = require( 'lib/mixins/emitter' ),
-	userUtils = require( './shared-utils' );
+	userUtils = require( './shared-utils' ),
+	localforage = require( 'lib/localforage' );
 
 /**
  * User component
@@ -25,6 +31,10 @@ function User() {
 	this.initialize();
 }
 
+/**
+ * Constants
+ */
+const VERIFICATION_POLL_INTERVAL = 15000;
 
 /**
  * Mixins
@@ -38,6 +48,18 @@ User.prototype.initialize = function() {
 	debug( 'Initializing User' );
 	this.fetching = false;
 	this.initialized = false;
+
+	this.on( 'change', this.checkVerification.bind( this ) );
+
+	if ( isSupportUserSession() ) {
+		this.data = false;
+
+		supportUserBoot();
+		this.fetch();
+
+		// We're booting into support user mode, skip initialization of the main user.
+		return;
+	}
 
 	if ( config( 'wpcom_user_bootstrap' ) ) {
 		this.data = window.currentUser || false;
@@ -61,6 +83,7 @@ User.prototype.initialize = function() {
 
 	if ( this.data ) {
 		this.initialized = true;
+		this.emit( 'change' );
 	}
 };
 
@@ -207,6 +230,9 @@ User.prototype.clear = function() {
 	this.data = [];
 	delete this.settings;
 	store.clear();
+	if ( config.isEnabled( 'persist-redux' ) ) {
+		localforage.removeItem( 'redux-state' );
+	}
 };
 
 /**
@@ -236,6 +262,91 @@ User.prototype.set = function( attributes ) {
 	}
 
 	return changed;
+};
+
+/**
+ * Called every VERIFICATION_POLL_INTERVAL milliseconds
+ * if the email is not verified.
+ *
+ * May also be called by a localStorage event, on which case
+ * the `signal` parameter is set to true.
+ *
+ * @private
+ */
+
+User.prototype.verificationPollerCallback = function( signal ) {
+	// skip server poll if page is hidden or there are no listeners
+	// and this was not triggered by a localStorage signal
+	if ( ( document.hidden || this.listeners( 'verify' ).length === 0 ) && !signal ) {
+		return;
+	}
+
+	debug( 'Verification: POLL' );
+
+	this.once( 'change', () => {
+		if ( this.get().email_verified ) {
+			// email is verified, stop polling
+			clearInterval( this.verificationPoller );
+			this.verificationPoller = null;
+			debug( 'Verification: VERIFIED' );
+			this.emit( 'verify' );
+		}
+	} );
+
+	this.fetch();
+};
+
+/**
+ * Checks if the user email is verified, and starts polling
+ * for verification if that's not the case.
+ *
+ * Also registers a listener to localStorage events.
+ *
+ * @private
+ */
+
+User.prototype.checkVerification = function() {
+	if ( !this.get() ) {
+		// not loaded, do nothing
+		return;
+	}
+
+	if ( this.get().email_verified ) {
+		// email already verified, do nothing
+		return;
+	}
+
+	if ( this.verificationPoller ) {
+		// already polling, do nothing
+		return;
+	}
+
+	this.verificationPoller = setInterval( this.verificationPollerCallback.bind( this ), VERIFICATION_POLL_INTERVAL );
+
+	// wait for localStorage event (from other windows)
+	window.addEventListener( 'storage', ( e ) => {
+		if ( e.key === '__email_verified_signal__' && e.newValue ) {
+			debug( 'Verification: RECEIVED SIGNAL' );
+			window.localStorage.removeItem( '__email_verified_signal__' );
+			this.verificationPollerCallback( true );
+		}
+	} );
+};
+
+/**
+ * Writes to local storage, signalling all other windows
+ * that the user has been verified.
+ *
+ * This should be called from the verification successful
+ * message, so that all the windows update instantaneously
+ */
+
+User.prototype.signalVerification = function() {
+	if ( window.localStorage ) {
+		// use localStorage to signal to other browser windows that the user's email was verified
+		window.localStorage.setItem( '__email_verified_signal__', 1 );
+		debug( 'Verification: SENT SIGNAL' );
+	}
 };
 
 /**

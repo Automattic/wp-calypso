@@ -2,7 +2,8 @@
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
-	pluck = require( 'lodash/collection/pluck' );
+	map = require( 'lodash/map' ),
+	useFakeDom = require( 'test/helpers/use-fake-dom' );
 
 /**
  * Internal dependencies
@@ -11,6 +12,8 @@ var JetpackSite = require( 'lib/site/jetpack' ),
 	MediaUtils = require( '../utils' );
 
 describe( 'MediaUtils', function() {
+	useFakeDom();
+
 	describe( '#url()', function() {
 		var media;
 
@@ -46,7 +49,7 @@ describe( 'MediaUtils', function() {
 				photon: true
 			} );
 
-			expect( url ).to.equal( 'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6' );
+			expect( url ).to.equal( 'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?ssl=1' );
 		} );
 
 		it( 'should generate the correct width-constrained photon URL', function() {
@@ -55,7 +58,7 @@ describe( 'MediaUtils', function() {
 				maxWidth: 450
 			} );
 
-			expect( url ).to.equal( 'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?w=450' );
+			expect( url ).to.equal( 'https://i2.wp.com/secure.gravatar.com/blavatar/4e21d703d81809d215ceaabbf07efbc6?ssl=1&w=450' );
 		} );
 
 		it( 'should generate the correct width-constrained URL', function() {
@@ -81,6 +84,48 @@ describe( 'MediaUtils', function() {
 			} );
 
 			expect( url ).to.be.undefined;
+		} );
+	} );
+
+	describe( '#getFileExtension()', function() {
+		it( 'should return undefined for a falsey media value', function() {
+			expect( MediaUtils.getFileExtension() ).to.be.undefined;
+		} );
+
+		it( 'should detect extension from file name', function() {
+			expect( MediaUtils.getFileExtension( 'example.gif' ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should handle reserved url characters in filename', function() {
+			expect( MediaUtils.getFileExtension( 'example#?#?.gif' ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from HTML5 File object', function() {
+			expect( MediaUtils.getFileExtension( new window.File( [''], 'example.gif' ) ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from HTML5 File object with reserved url chars', function() {
+			expect( MediaUtils.getFileExtension( new window.File( [''], 'example#?#?.gif' ) ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from object file property', function() {
+			expect( MediaUtils.getFileExtension( { file: 'example.gif' } ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from already computed extension property', function() {
+			expect( MediaUtils.getFileExtension( { extension: 'gif' } ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from object URL property', function() {
+			expect( MediaUtils.getFileExtension( { URL: 'example.gif' } ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from object guid property', function() {
+			expect( MediaUtils.getFileExtension( { guid: 'example.gif' } ) ).to.equal( 'gif' );
+		} );
+
+		it( 'should detect extension from URL string with query parameters', function() {
+			expect( MediaUtils.getFileExtension( 'https://example.com/example.gif?w=110' ) ).to.equal( 'gif' );
 		} );
 	} );
 
@@ -111,6 +156,18 @@ describe( 'MediaUtils', function() {
 			expect( MediaUtils.getMimeType( 'example.gif' ) ).to.equal( 'image/gif' );
 		} );
 
+		it( 'should detect mime type with reserved url characters in filename', function() {
+			expect( MediaUtils.getMimeType( 'example#?#?.gif' ) ).to.equal( 'image/gif' );
+		} );
+
+		it( 'should ignore invalid filenames', function() {
+			expect( MediaUtils.getMimeType( 'example#?#?.gif?w=100' ) ).to.be.undefined;
+		} );
+
+		it( 'should detect mime type from HTML5 File object', function() {
+			expect( MediaUtils.getMimeType( new window.File( [ '' ], 'example.gif', { type: 'image/gif' } ) ) ).to.equal( 'image/gif' );
+		} );
+
 		it( 'should detect mime type from object file property', function() {
 			expect( MediaUtils.getMimeType( { file: 'example.gif' } ) ).to.equal( 'image/gif' );
 		} );
@@ -121,6 +178,10 @@ describe( 'MediaUtils', function() {
 
 		it( 'should ignore query string parameters', function() {
 			expect( MediaUtils.getMimeType( { URL: 'example.gif?w=110' } ) ).to.equal( 'image/gif' );
+		} );
+
+		it( 'should ignore query string parameters in URL strings', function() {
+			expect( MediaUtils.getMimeType( 'https://example.com/example.gif?w=110' ) ).to.equal( 'image/gif' );
 		} );
 
 		it( 'should detect mime type from object guid property', function() {
@@ -164,7 +225,7 @@ describe( 'MediaUtils', function() {
 		} );
 
 		it( 'should return a new array array, sorted descending by date', function() {
-			expect( pluck( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
+			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
 		it( 'should return the item with the the greater ID if the dates are not set', function() {
@@ -173,7 +234,7 @@ describe( 'MediaUtils', function() {
 				return item;
 			} );
 
-			expect( pluck( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
+			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
 		it( 'should return the item with the the greater ID if the dates are equal', function() {
@@ -182,7 +243,7 @@ describe( 'MediaUtils', function() {
 				return item;
 			} );
 
-			expect( pluck( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
+			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
 		it( 'should parse dates in string format', function() {
@@ -191,12 +252,12 @@ describe( 'MediaUtils', function() {
 				return item;
 			} );
 
-			expect( pluck( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
+			expect( map( MediaUtils.sortItemsByDate( items ), 'ID' ) ).to.eql( [ 2, 1 ] );
 		} );
 
 		it( 'should not mutate the original array', function() {
 			MediaUtils.sortItemsByDate( items );
-			expect( pluck( items, 'ID' ) ).to.eql( [ 1, 2 ] );
+			expect( map( items, 'ID' ) ).to.eql( [ 1, 2 ] );
 		} );
 	} );
 
@@ -458,6 +519,72 @@ describe( 'MediaUtils', function() {
 			} );
 
 			expect( value ).to.equal( '[gallery ids="100,200" type="rectangular"]' );
+		} );
+	} );
+
+	describe( '#canUserDeleteItem()', () => {
+		const item = { author_ID: 73705554 };
+
+		it( 'should return false if the user ID matches the item author but user cannot delete posts', () => {
+			const user = { ID: 73705554 };
+			const site = {
+				capabilities: {
+					delete_posts: false
+				}
+			};
+
+			expect( MediaUtils.canUserDeleteItem( item, user, site ) ).to.be.false;
+		} );
+
+		it( 'should return true if the user ID matches the item author and user can delete posts', () => {
+			const user = { ID: 73705554 };
+			const site = {
+				capabilities: {
+					delete_posts: true
+				}
+			};
+
+			expect( MediaUtils.canUserDeleteItem( item, user, site ) ).to.be.true;
+		} );
+
+		it( 'should return false if the user ID does not match the item author and user cannot delete others posts', () => {
+			const user = { ID: 73705672 };
+			const site = {
+				capabilities: {
+					delete_others_posts: false
+				}
+			};
+
+			expect( MediaUtils.canUserDeleteItem( item, user, site ) ).to.be.false;
+		} );
+
+		it( 'should return true if the user ID does not match the item author but user can delete others posts', () => {
+			const user = { ID: 73705672 };
+			const site = {
+				capabilities: {
+					delete_others_posts: true
+				}
+			};
+
+			expect( MediaUtils.canUserDeleteItem( item, user, site ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#isItemBeingUploaded()', () => {
+		it( 'should return null if item was not specified', () => {
+			expect( MediaUtils.isItemBeingUploaded() ).to.be.null;
+		} );
+
+		it( 'should return true if the item is currently being uploaded', () => {
+			const item = { 'transient': true };
+
+			expect( MediaUtils.isItemBeingUploaded( item ) ).to.be.true;
+		} );
+
+		it( 'should return false if the item is not being uploaded', () => {
+			const item = {};
+
+			expect( MediaUtils.isItemBeingUploaded( item ) ).to.be.false;
 		} );
 	} );
 } );

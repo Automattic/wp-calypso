@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -10,7 +11,7 @@ import Gridicon from 'components/gridicon';
 import FormSectionHeading from 'components/forms/form-section-heading';
 
 module.exports = React.createClass( {
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		title: PropTypes.string.isRequired,

@@ -3,7 +3,7 @@
  */
 var React = require( 'react' ),
 	page = require( 'page' ),
-	startsWith = require( 'lodash/string/startsWith' );
+	startsWith = require( 'lodash/startsWith' );
 
 var CartEmpty = React.createClass({
 	render: function() {

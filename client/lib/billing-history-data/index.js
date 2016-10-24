@@ -4,13 +4,13 @@
 var debug = require( 'debug' )( 'calypso:my-sites:billing-history:billing-data' ),
 	Emitter = require( 'lib/mixins/emitter' ),
 	store = require( 'store' ),
-	assign = require( 'lodash/object/assign' );
+	i18n = require( 'i18n-calypso' );
+import { assign, find } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var wpcom = require( 'lib/wp' ).undocumented(),
-	i18n = require( 'lib/mixins/i18n' );
+var wpcom = require( 'lib/wp' ).undocumented();
 
 function BillingData() {
 	if ( ! ( this instanceof BillingData ) ) {
@@ -66,9 +66,7 @@ BillingData.prototype.getTransaction = function( id ) {
 		return null;
 	}
 
-	return this.data.billingHistory.filter( function( transaction ) {
-		return id === transaction.id;
-	} )[ 0 ];
+	return find( this.data.billingHistory, { id } );
 };
 
 module.exports = new BillingData();

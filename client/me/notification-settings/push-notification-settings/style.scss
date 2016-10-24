@@ -1,0 +1,142 @@
+.notification-settings-push-notification-settings__instruction {
+	margin: 24px 0 0 0;
+}
+
+.notification-settings-push-notification-settings__instruction-dialog {
+	position: relative;
+}
+
+.notification-settings-push-notification-settings__instruction-image {
+	svg {
+		width: 180px;
+		height: 180px;
+	}
+}
+
+.notification-settings-push-notification-settings__instruction-dismiss {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	padding: 0;
+	cursor: pointer;
+	color: $gray;
+
+	&:hover,
+	&:focus {
+		color: $gray-dark;
+	}
+}
+
+.notification-settings-push-notification-settings__instruction-content {
+	max-width: 500px;
+	text-align: center;
+
+	@include breakpoint( "<660px" ) {
+		text-align: left;
+	}
+}
+
+.notification-settings-push-notification-settings__instruction-title {
+	font-weight: 500;
+	display: block;
+	margin-bottom: 24px;
+}
+
+.notification-settings-push-notification-settings__instruction-step {
+	width: 50%;
+	box-sizing: border-box;
+	display: inline-block;
+	padding: 0 24px;
+
+	p {
+		margin: 16px 0 0 0;
+	}
+
+	@include breakpoint( "<660px" ) {
+		width: 100%;
+		min-height: 80px;
+		position: relative;
+		text-align: left;
+		padding: 11px 16px 0 82px;
+
+		img {
+			position: absolute;
+			top: 8px;
+			left: 8px;
+			max-width: 60px;
+		}
+	}
+}
+
+.card.notification-settings-push-notification-settings__settings {
+	padding-left: 48px;
+	position: relative;
+}
+
+.notification-settings-push-notification-settings__settings-heading {
+	font-weight: 600;
+	position: relative;
+	margin-bottom: 8px;
+}
+
+.notification-settings-push-notification-settings__settings-icon {
+	position: absolute;
+	top: 0;
+	left: -32px;
+}
+
+.push-notification-settings__instruction-refresh-notice {
+	text-align: left;
+	margin-top: 32px;
+	margin-bottom: 0;
+	color: $gray-dark;
+}
+
+.notification-settings-push-notification-settings__settings-state {
+	font-size: 13px;
+	font-weight: 500;
+	margin-left: 8px;
+	text-transform: uppercase;
+	color: lighten( $gray, 10 );
+
+	&.is-enabled {
+		color: $alert-green;
+	}
+}
+
+.notification-settings-push-notification-settings__settings-description {
+	margin-bottom: 0;
+
+	@include breakpoint( ">660px" ) {
+		margin-right: 130px;
+	}
+}
+
+.notification-settings-push-notification-settings__settings-button {
+	margin-top: 8px;
+
+	@include breakpoint( ">660px" ) {
+		margin-top: 0;
+		position: absolute;
+	 	bottom: 24px;
+		right: 24px;
+	}
+
+	&.is-enable {
+		background: $blue-medium;
+		border-color: $blue-wordpress;
+		color: $white;
+
+		&:hover,
+		&:focus {
+			border-color: $blue-dark;
+			color: $white;
+		}
+		&[disabled],
+		&:disabled {
+			background: tint( $blue-light, 50% );
+			border-color: tint( $blue-wordpress, 55% );
+			color: $white;
+		}
+	}
+}

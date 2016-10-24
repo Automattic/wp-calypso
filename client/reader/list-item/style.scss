@@ -14,6 +14,7 @@
 }
 
 .reader-list-item__card.is-placeholder {
+
 	.reader-list-item__title,
 	.reader-list-item__description {
 		pointer-events: none;
@@ -54,8 +55,8 @@
 
 .reader-list-item__icon {
 	position: absolute;
-		top: 14px;
 		left: 16px;
+		top: 14px;
 	height: 48px;
 	width: 48px;
 	text-align: center;
@@ -64,30 +65,40 @@
 		background: lighten( $gray, 20 );
 		fill: $white;
 		position: relative;
-			top: 12px;
+			top: 1px;
+	}
+
+	.site-icon {
+		border: 0;
 	}
 }
 
 .reader-list-item__actions {
 	position: absolute;
-	top: 16px;
-	bottom: 0;
-	right: 0;
+		bottom: 0;
+		right: 20px;
+		top: 18px;
 
-	.follow-button {
-		.gridicon {
-			left: 18px;
+	.follow-button__label {
+
+		@include breakpoint( "<660px" ) {
+			display: none;
 		}
 	}
 }
 
 .foldable-card {
+
 	.reader-list-item__icon {
 		left: 42px;
 	}
 
 	.reader-list-item__title,
 	.reader-list-item__description {
-		margin-left: 90px;
+		margin: 0 100px 0 90px;
+
+		@include breakpoint( "<660px" ) {
+			margin: 0 30px 0 90px;
+		}
 	}
 }

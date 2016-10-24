@@ -1,0 +1,40 @@
+.themes-list {
+	display: flex;
+	flex-flow: row wrap;
+	list-style: none;
+	padding: 0;
+	margin: 0 -10px; // items flush against list edge
+
+	.feature-example & {
+		max-width: 1000px;
+		margin: auto;
+	}
+}
+
+.themes-list--spacer {
+	width: 230px;
+	height: 0px;
+	margin: 0 10px;
+	flex-grow: 1;
+}
+
+.themes-list__upload-container {
+	padding: 32px;
+	text-align: center;
+	background: none;
+	box-shadow: none;
+	border: 2px dashed #a8bece;
+}
+
+.themes-list__upload-icon {
+	color: #a8bece;
+}
+
+.themes-list__upload-button {
+	margin: 16px;
+}
+
+.themes-list__upload-text {
+	font-size: 17px;
+	color: #6a86a1;
+}

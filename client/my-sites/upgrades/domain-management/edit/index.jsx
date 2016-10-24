@@ -20,7 +20,7 @@ import { getSelectedDomain } from 'lib/domains';
 
 const Edit = React.createClass( {
 	render() {
-		const domain = getSelectedDomain( this.props ),
+		const domain = this.props.domains && getSelectedDomain( this.props ),
 			Details = this.getDetailsForType( domain && domain.type );
 
 		if ( ! domain || ! Details ) {
@@ -61,7 +61,7 @@ const Edit = React.createClass( {
 	},
 
 	goToDomainManagement() {
-		page( paths.domainManagementList( this.props.selectedSite.domain ) );
+		page( paths.domainManagementList( this.props.selectedSite.slug ) );
 	}
 } );
 

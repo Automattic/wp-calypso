@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-const React = require( 'react/addons' );
+const React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -15,16 +16,16 @@ const Card = require( 'components/card' ),
 	FormRadio = require( 'components/forms/form-radio' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	AuthorSelector = require( 'components/author-selector' ),
+	AuthorSelector = require( 'blocks/author-selector' ),
 	UsersActions = require( 'lib/users/actions' ),
 	Gravatar = require( 'components/gravatar' ),
 	accept = require( 'lib/accept' ),
-	analytics = require( 'analytics' );
+	analytics = require( 'lib/analytics' );
 
 module.exports = React.createClass( {
 	displayName: 'DeleteUser',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		isMultisite: React.PropTypes.bool.isRequired,

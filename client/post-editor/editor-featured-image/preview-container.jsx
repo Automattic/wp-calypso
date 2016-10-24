@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import defer from 'lodash/function/defer';
+import defer from 'lodash/defer';
 
 /**
  * Internal dependencies
@@ -70,6 +70,7 @@ export default React.createClass( {
 
 		defer( () => {
 			if ( image && image.ID !== this.props.itemId ) {
+				// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 				PostActions.edit( {
 					featured_image: image.ID
 				} );

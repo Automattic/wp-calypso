@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	omit = require( 'lodash/object/omit' ),
+	omit = require( 'lodash/omit' ),
 	debug = require( 'debug' )( 'calypso:forms:multi-checkbox' );
 
 var MultiCheckbox = module.exports = React.createClass({
@@ -54,7 +54,7 @@ var MultiCheckbox = module.exports = React.createClass({
 			return (
 				<label key={ option.value }>
 					<input name={ this.props.name + '[]' } type="checkbox" value={ option.value } checked={ isChecked } onChange={ this.handleChange } disabled={ this.props.disabled } />
-					{ option.label }
+					<span>{ option.label }</span>
 				</label>
 			);
 		}, this );
@@ -63,4 +63,4 @@ var MultiCheckbox = module.exports = React.createClass({
 	render: function() {
 		return <div className="form-checkbox-group" { ...omit( this.props, Object.keys( MultiCheckbox.propTypes ) ) }>{ this.getCheckboxElements() }</div>;
 	}
-});
+} );

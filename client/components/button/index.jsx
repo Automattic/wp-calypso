@@ -1,46 +1,48 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
-import React from 'react';
-import assign from 'lodash/object/assign';
+import { PropTypes, createElement, PureComponent } from 'react';
 import classNames from 'classnames';
-import noop from 'lodash/utility/noop';
+import { omit } from 'lodash';
 
-export default React.createClass( {
+export default class Button extends PureComponent {
+	static propTypes = {
+		compact: PropTypes.bool,
+		primary: PropTypes.bool,
+		scary: PropTypes.bool,
+		type: PropTypes.string,
+		href: PropTypes.string,
+		borderless: PropTypes.bool,
+		target: PropTypes.string,
+		rel: PropTypes.string
+	};
 
-	displayName: 'Button',
-
-	propTypes: {
-		disabled: React.PropTypes.bool,
-		compact: React.PropTypes.bool,
-		primary: React.PropTypes.bool,
-		scary: React.PropTypes.bool,
-		type: React.PropTypes.string,
-		href: React.PropTypes.string,
-		onClick: React.PropTypes.func
-	},
-
-	getDefaultProps() {
-		return {
-			disabled: false,
-			type: 'button',
-			onClick: noop
-		};
-	},
+	static defaultProps = {
+		type: 'button'
+	};
 
 	render() {
-		const element = this.props.href ? 'a' : 'button';
-		const buttonClasses = classNames( {
-			button: true,
-			'is-compact': this.props.compact,
-			'is-primary': this.props.primary,
-			'is-scary': this.props.scary
-		} );
+		const omitProps = [ 'compact', 'primary', 'scary', 'borderless' ];
 
-		const props = assign( {}, this.props, {
-			className: classNames( this.props.className, buttonClasses )
-		} );
+		let tag;
+		if ( this.props.href ) {
+			tag = 'a';
+			omitProps.push( 'type' );
+		} else {
+			tag = 'button';
+			omitProps.push( 'target', 'rel' );
+		}
 
-		return React.createElement( element, props, this.props.children );
+		return createElement( tag, {
+			...omit( this.props, omitProps ),
+			className: classNames( 'button', this.props.className, {
+				'is-compact': this.props.compact,
+				'is-primary': this.props.primary,
+				'is-scary': this.props.scary,
+				'is-borderless': this.props.borderless
+			} )
+		} );
 	}
-} );
+}

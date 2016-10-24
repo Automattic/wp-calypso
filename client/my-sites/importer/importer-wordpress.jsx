@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -19,7 +20,7 @@ const importerData = {
 export default React.createClass( {
 	displayName: 'ImporterWordPress',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		importerStatus: PropTypes.shape( {
@@ -38,7 +39,7 @@ export default React.createClass( {
 	render: function() {
 		importerData.description = this.translate(
 			'Import posts, pages, and media ' +
-			'from a WordPress export file.'
+			'from a WordPress export\u00A0file.'
 		);
 
 		importerData.uploadDescription = this.translate(

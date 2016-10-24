@@ -2,7 +2,8 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:wpcom-followers-store' ),
-	_omit = require( 'lodash/object/omit' );
+	omit = require( 'lodash/omit' ),
+	endsWith = require( 'lodash/endsWith' );
 
 /**
  * Internal dependencies
@@ -99,12 +100,12 @@ function updateFollowers( fetchOptions, followers, total ) {
 }
 
 function getNamespace( fetchOptions ) {
-	return deterministicStringify( _omit( fetchOptions, [ 'page', 'max' ] ) );
+	return deterministicStringify( omit( fetchOptions, [ 'page', 'max' ] ) );
 }
 
 function decrementPaginationData( siteId, followerId ) {
 	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
+		if ( endsWith( namespace, 'siteId=' + siteId ) && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
 			_totalFollowersByNamespace[ namespace ]--;
 			_followersFetchedByNamespace[ namespace ]--;
 			_pageByNamespace[ namespace ]--;
@@ -114,7 +115,7 @@ function decrementPaginationData( siteId, followerId ) {
 
 function incrementPaginationData( siteId, followerId ) {
 	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
+		if ( endsWith( namespace, 'siteId=' + siteId ) && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
 			_totalFollowersByNamespace[ namespace ]++;
 			_followersFetchedByNamespace[ namespace ]++;
 			_pageByNamespace[ namespace ]++;
@@ -132,7 +133,7 @@ function removeFollowerFromSite( siteId, followerId ) {
 
 function removeFollowerFromNamespaces( siteId, followerId ) {
 	Object.keys( _followerIDsByNamespace ).forEach( function( namespace ) {
-		if ( namespace.endsWith( 'siteId=' + siteId ) && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
+		if ( endsWith( namespace, 'siteId=' + siteId ) && _followerIDsByNamespace[ namespace ].has( followerId ) ) {
 			delete _followerIDsByNamespace[ namespace ][ followerId ];
 		}
 	} );

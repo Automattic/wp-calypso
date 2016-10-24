@@ -1,8 +1,10 @@
 /**
  * External dependencies
  */
+import ReactDom from 'react-dom';
 import React from 'react';
 import debugFactory from 'debug';
+import { omit } from 'lodash';
 
 /**
  * Globals
@@ -56,7 +58,7 @@ export default React.createClass( {
 	},
 
 	getFrameBody: function() {
-		return React.findDOMNode( this.refs.iframe ).contentDocument.body;
+		return ReactDom.findDOMNode( this.refs.iframe ).contentDocument.body;
 	},
 
 	maybeConnect: function() {
@@ -69,7 +71,7 @@ export default React.createClass( {
 			return;
 		}
 
-		let script = document.createElement( 'script' );
+		const script = document.createElement( 'script' );
 		script.innerHTML = `
 			( function() {
 				var observer;
@@ -96,6 +98,24 @@ export default React.createClass( {
 					subtree: true
 				} );
 
+				window.addEventListener( 'load', sendResize, true );
+
+				// Hack: Remove viewport unit styles, as these are relative
+				// the iframe root and interfere with our mechanism for
+				// determining the unconstrained page bounds.
+				function removeViewportStyles( ruleOrNode ) {
+					[ 'width', 'height', 'minHeight', 'maxHeight' ].forEach( function( style ) {
+						if ( /^\\d+(vmin|vmax|vh|vw)$/.test( ruleOrNode.style[ style ] ) ) {
+							ruleOrNode.style[ style ] = '';
+						}
+					} );
+				}
+
+				Array.prototype.forEach.call( document.querySelectorAll( '[style]' ), removeViewportStyles );
+				Array.prototype.forEach.call( document.styleSheets, function( stylesheet ) {
+					Array.prototype.forEach.call( stylesheet.cssRules || stylesheet.rules, removeViewportStyles );
+				} );
+
 				document.body.style.position = 'absolute';
 				document.body.setAttribute( 'data-resizable-iframe-connected', '' );
 
@@ -114,7 +134,7 @@ export default React.createClass( {
 	},
 
 	checkMessageForResize: function( event ) {
-		const iframe = React.findDOMNode( this.refs.iframe );
+		const iframe = ReactDom.findDOMNode( this.refs.iframe );
 
 		// Attempt to parse the message data as JSON if passed as string
 		let data = event.data || {};
@@ -148,10 +168,11 @@ export default React.createClass( {
 	},
 
 	render: function() {
+		const omitProps = [ 'onResize' ];
 		return (
 			<iframe
 				ref="iframe"
-				{ ...this.props }
+				{ ...omit( this.props, omitProps ) }
 				onLoad={ this.onLoad }
 				width={ this.props.width || this.state.width }
 				height={ this.props.height || this.state.height } />

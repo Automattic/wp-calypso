@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var map = require( 'lodash/collection/map' ),
-	React = require( 'react/addons' ),
+var map = require( 'lodash/map' ),
+	React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	classNames = require( 'classnames' ),
 	scrollIntoView = require( 'dom-scroll-into-view' );
 
@@ -10,7 +11,7 @@ var SuggestionsList = React.createClass( {
 	propTypes: {
 		isExpanded: React.PropTypes.bool,
 		match: React.PropTypes.string,
-		valueTransform: React.PropTypes.func.isRequired,
+		displayTransform: React.PropTypes.func.isRequired,
 		onSelect: React.PropTypes.func,
 		suggestions: React.PropTypes.array,
 		selectedIndex: React.PropTypes.number
@@ -26,7 +27,7 @@ var SuggestionsList = React.createClass( {
 		};
 	},
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	componentDidUpdate: function( prevProps ) {
 		var node;
@@ -35,7 +36,7 @@ var SuggestionsList = React.createClass( {
 		// when already expanded
 		if ( prevProps.isExpanded && this.props.isExpanded && this.props.selectedIndex > -1 && this.props.scrollIntoView ) {
 			this._scrollingIntoView = true;
-			node = this.getDOMNode();
+			node = this.refs.list;
 
 			scrollIntoView( node.children[ this.props.selectedIndex ], node, {
 				onlyScrollIfNeeded: true
@@ -48,14 +49,14 @@ var SuggestionsList = React.createClass( {
 	},
 
 	_computeSuggestionMatch: function( suggestion ) {
-		var match = this.props.valueTransform( this.props.match || '' ).toLocaleLowerCase(),
+		var match = this.props.displayTransform( this.props.match || '' ).toLocaleLowerCase(),
 			indexOfMatch;
 
 		if ( match.length === 0 ) {
 			return null;
 		}
 
-		suggestion = this.props.valueTransform( suggestion );
+		suggestion = this.props.displayTransform( suggestion );
 		indexOfMatch = suggestion.toLocaleLowerCase().indexOf( match );
 
 		return {
@@ -75,7 +76,7 @@ var SuggestionsList = React.createClass( {
 		// why, since usually a div isn't focusable by default
 		// TODO does this still apply now that it's a <ul> and not a <div>?
 		return (
-			<ul className={ classes } tabIndex="-1">
+			<ul ref="list" className={ classes } tabIndex="-1">
 				{ this._renderSuggestions() }
 			</ul>
 		);
@@ -93,6 +94,7 @@ var SuggestionsList = React.createClass( {
 				<li
 					className={ classes }
 					key={ suggestion }
+					onMouseDown={ this._handleMouseDown }
 					onClick={ this._handleClick( suggestion ) }
 					onMouseEnter={ this._handleHover( suggestion ) }>
 					{ match ?
@@ -104,7 +106,7 @@ var SuggestionsList = React.createClass( {
 							{ match.suggestionAfterMatch }
 						</span>
 					:
-						this.props.valueTransform( suggestion )
+						this.props.displayTransform( suggestion )
 					}
 				</li>
 			);
@@ -123,6 +125,11 @@ var SuggestionsList = React.createClass( {
 		return function() {
 			this.props.onSelect( suggestion );
 		}.bind( this );
+	},
+
+	_handleMouseDown: function( e ) {
+		// By preventing default here, we will not lose focus of <input> when clicking a suggestion
+		e.preventDefault();
 	}
 } );
 

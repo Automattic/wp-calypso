@@ -1,17 +1,15 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	assign = require( 'lodash/object/assign' ),
-	rewire = require( 'rewire' ),
-	mockery = require( 'mockery' ),
-	sinon = require( 'sinon' );
+import { expect } from 'chai';
+import assign from 'lodash/assign';
+import mockery from 'mockery';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	MediaValidationErrors = require( '../constants' ).ValidationErrors;
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables
@@ -20,9 +18,14 @@ var DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_OBJECT = { ID: 100, title: 'Image', extension: 'exe' };
 
 describe( 'MediaValidationStore', function() {
-	var sandbox, MediaValidationStore, handler;
+	let sandbox, MediaValidationStore, handler, Dispatcher, MediaValidationErrors;
+
+	useMockery();
 
 	before( function() {
+		Dispatcher = require( 'dispatcher' );
+		MediaValidationErrors = require( '../constants' ).ValidationErrors;
+
 		// Sinon
 		sandbox = sinon.sandbox.create();
 		sandbox.spy( Dispatcher, 'register' );
@@ -43,12 +46,12 @@ describe( 'MediaValidationStore', function() {
 		} );
 
 		// Load store
-		MediaValidationStore = rewire( '../validation-store' );
+		MediaValidationStore = require( '../validation-store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		MediaValidationStore.__set__( '_errors', {} );
+		MediaValidationStore._errors = {};
 	} );
 
 	after( function() {
@@ -90,19 +93,19 @@ describe( 'MediaValidationStore', function() {
 		var validateItem;
 
 		before( function() {
-			validateItem = MediaValidationStore.__get__( 'validateItem' );
+			validateItem = MediaValidationStore.validateItem;
 		} );
 
 		it( 'should have no effect for a valid file', function() {
 			validateItem( DUMMY_SITE_ID, Object.assign( {}, DUMMY_MEDIA_OBJECT, { extension: 'gif' } ) );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {} );
+			expect( MediaValidationStore._errors ).to.eql( {} );
 		} );
 
 		it( 'should set an error array for an invalid file', function() {
 			validateItem( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {
+			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {
 					[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.FILE_TYPE_UNSUPPORTED ]
 				}
@@ -112,7 +115,7 @@ describe( 'MediaValidationStore', function() {
 		it( 'should set an error array for a file exceeding acceptable size', function() {
 			validateItem( DUMMY_SITE_ID, Object.assign( {}, DUMMY_MEDIA_OBJECT, { size: 2048, extension: 'gif' } ) );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {
+			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {
 					[ DUMMY_MEDIA_OBJECT.ID ]: [ MediaValidationErrors.EXCEEDS_MAX_UPLOAD_SIZE ]
 				}
@@ -122,7 +125,7 @@ describe( 'MediaValidationStore', function() {
 		it( 'should accumulate multiple validation errors', function() {
 			validateItem( DUMMY_SITE_ID, Object.assign( {}, DUMMY_MEDIA_OBJECT, { size: 2048 } ) );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {
+			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {
 					[ DUMMY_MEDIA_OBJECT.ID ]: [
 						MediaValidationErrors.FILE_TYPE_UNSUPPORTED,
@@ -137,7 +140,7 @@ describe( 'MediaValidationStore', function() {
 		var clearValidationErrors;
 
 		before( function() {
-			clearValidationErrors = MediaValidationStore.__get__( 'clearValidationErrors' );
+			clearValidationErrors = MediaValidationStore.clearValidationErrors;
 		} );
 
 		it( 'should remove validation errors for a single item on a given site', function() {
@@ -145,7 +148,7 @@ describe( 'MediaValidationStore', function() {
 
 			clearValidationErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {
+			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {}
 			} );
 		} );
@@ -155,7 +158,7 @@ describe( 'MediaValidationStore', function() {
 
 			clearValidationErrors( DUMMY_SITE_ID );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {} );
+			expect( MediaValidationStore._errors ).to.eql( {} );
 		} );
 	} );
 
@@ -163,7 +166,7 @@ describe( 'MediaValidationStore', function() {
 		var clearValidationErrorsByType;
 
 		before( function() {
-			clearValidationErrorsByType = MediaValidationStore.__get__( 'clearValidationErrorsByType' );
+			clearValidationErrorsByType = MediaValidationStore.clearValidationErrorsByType;
 		} );
 
 		it( 'should remove errors for all items containing that error type on a given site', function() {
@@ -176,7 +179,7 @@ describe( 'MediaValidationStore', function() {
 
 			clearValidationErrorsByType( DUMMY_SITE_ID, MediaValidationErrors.FILE_TYPE_UNSUPPORTED );
 
-			expect( MediaValidationStore.__get__( '_errors' ) ).to.eql( {
+			expect( MediaValidationStore._errors ).to.eql( {
 				[ DUMMY_SITE_ID ]: {}
 			} );
 		} );
@@ -252,6 +255,42 @@ describe( 'MediaValidationStore', function() {
 			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
 
 			expect( errors ).to.eql( [ MediaValidationErrors.UPLOAD_VIA_URL_404 ] );
+		} );
+
+		it( 'should detect a not enough space error from received item', function() {
+			var errors;
+
+			dispatchReceiveMediaItem( {
+				error: {
+					statusCode: 400,
+					errors: [ {
+						error: 'upload_error',
+						file: 'https://wordpress.com/hifive.gif',
+						message: 'Not enough space to upload. 20 KB needed.'
+					} ]
+				}
+			} );
+			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+
+			expect( errors ).to.eql( [ MediaValidationErrors.NOT_ENOUGH_SPACE ] );
+		} );
+
+		it( 'should detect an exceeds plan storage limit error from received item', function() {
+			var errors;
+
+			dispatchReceiveMediaItem( {
+				error: {
+					statusCode: 400,
+					errors: [ {
+						error: 'upload_error',
+						file: 'https://wordpress.com/hifive.gif',
+						message: 'You have used your space quota. Please delete files before uploading.'
+					} ]
+				}
+			} );
+			errors = MediaValidationStore.getErrors( DUMMY_SITE_ID, DUMMY_MEDIA_OBJECT.ID );
+
+			expect( errors ).to.eql( [ MediaValidationErrors.EXCEEDS_PLAN_STORAGE_LIMIT ] );
 		} );
 
 		it( 'should detect general server error from received item', function() {

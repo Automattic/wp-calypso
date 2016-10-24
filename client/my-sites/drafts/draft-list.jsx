@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
-	omit = require( 'lodash/object/omit' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies
@@ -17,7 +18,7 @@ var PostListFetcher = require( 'components/post-list-fetcher' ),
 
 var DraftList = React.createClass( {
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		search: React.PropTypes.string,
@@ -25,12 +26,14 @@ var DraftList = React.createClass( {
 		siteID: React.PropTypes.any,
 		trackScrollPage: React.PropTypes.func,
 		onTitleClick: React.PropTypes.func,
-		showAllActionsMenu: React.PropTypes.bool
+		showAllActionsMenu: React.PropTypes.bool,
+		selectedId: React.PropTypes.number
 	},
 
 	getDefaultProps: function() {
 		return {
-			showAllActionsMenu: true
+			showAllActionsMenu: true,
+			selectedId: false
 		}
 	},
 
@@ -46,6 +49,7 @@ var DraftList = React.createClass( {
 				<Drafts
 					{ ...omit( this.props, 'children' ) }
 					status="draft"
+					selectedId={ this.props.selectedId }
 				/>
 			</PostListFetcher>
 		);
@@ -67,7 +71,8 @@ var Drafts = React.createClass( {
 		postImages: React.PropTypes.object.isRequired,
 		search: React.PropTypes.string,
 		siteID: React.PropTypes.any,
-		showAllActionsMenu: React.PropTypes.bool
+		showAllActionsMenu: React.PropTypes.bool,
+		selectedId: React.PropTypes.number
 	},
 
 	getDefaultProps: function() {
@@ -78,7 +83,8 @@ var Drafts = React.createClass( {
 			postImages: {},
 			posts: [],
 			trackScrollPage: function() {},
-			showAllActionsMenu: true
+			showAllActionsMenu: true,
+			selectedId: false
 		};
 	},
 
@@ -117,6 +123,7 @@ var Drafts = React.createClass( {
 						postImages={ this.props.postImages[ post.global_ID ] }
 						sites={ this.props.sites }
 						showAllActions={ this.props.showAllActionsMenu && hasTouch() }
+						selected={ this.props.selectedId === post.ID }
 					/>
 				);
 			}, this );

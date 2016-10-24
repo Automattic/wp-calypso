@@ -1,5 +1,11 @@
 .help-results {
-	margin-top: 1px;
+	margin-bottom: 16px;
+
+	&.is-placeholder {
+		@include placeholder();
+		height: 380px;
+		margin-bottom: 15px;
+	}
 }
 
 .help-results__header.card.is-compact,
@@ -7,49 +13,28 @@
 	padding: 8px 16px;
 }
 
-.help-results__header {
-	font: 11px/16px $sans;
-	font-weight: 600;
-	text-transform: uppercase;
-	color: darken( $gray, 20% );
-	background: $gray-light;
-}
-
 .help-results__footer {
-	padding-right: 56px;
 	font: 14px/24px $sans;
-	color: $gray;
 }
 
 .help-result {
 	&:hover {
-		background-color: $blue-medium;
-		.help-result__title,
-		.help-result__description {
-			color: $white;
+		.help-result__title {
+			color: $blue-medium;
 		}
-		.help-result__icon-path {
-			fill: $white;
-		}
-	}
-}
-
-.help-result__wrapper {
-	&:hover {
-		background-color: $blue-medium;
 	}
 }
 
 .help-result__icon {
 	position: absolute;
 	margin: -2px 16px 0px -8px;
+	fill: $gray;
 }
 
 .help-result__title {
 	margin: -2px 0px 0px 32px;
 	color: $blue-wordpress;
 	font: 16px/20px $sans;
-	font-weight: 600;
 }
 
 .help-result__description {

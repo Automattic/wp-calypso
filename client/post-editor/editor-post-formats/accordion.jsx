@@ -1,80 +1,91 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	pick = require( 'lodash/object/pick' ),
-	find = require( 'lodash/collection/find' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
+import { has, isEmpty } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-var Accordion = require( 'components/accordion' ),
-	Gridicon = require( 'components/gridicon' ),
-	siteUtils = require( 'lib/site/utils' ),
-	PostFormats = require( './' );
+import Accordion from 'components/accordion';
+import Gridicon from 'components/gridicon';
+import QueryPostFormats from 'components/data/query-post-formats';
+import siteUtils from 'lib/site/utils';
+import PostFormats from './';
+import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
+import { getPostFormats } from 'state/post-formats/selectors';
 
-module.exports = React.createClass( {
-	displayName: 'EditorPostFormatsAccordion',
-
+const EditorPostFormatsAccordion = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		postFormats: React.PropTypes.arrayOf( React.PropTypes.shape( {
-			slug: React.PropTypes.string,
-			label: React.PropTypes.string
-		} ) )
+		siteId: PropTypes.number,
+		site: PropTypes.object,
+		post: PropTypes.object,
+		postFormats: PropTypes.object
 	},
 
-	getFormatValue: function() {
-		if ( ! this.props.post ) {
+	getFormatValue() {
+		const { post, site } = this.props;
+		if ( ! post ) {
 			return;
 		}
 
-		if ( this.props.post.format ) {
-			return this.props.post.format;
+		if ( post.format ) {
+			return post.format;
 		}
 
-		return siteUtils.getDefaultPostFormat( this.props.site );
+		return siteUtils.getDefaultPostFormat( site );
 	},
 
-	getSubtitle: function() {
-		var postFormat;
+	getSubtitle() {
+		const formatValue = this.getFormatValue();
+		const { post, postFormats } = this.props;
 
-		if ( ! this.props.post || ! this.props.postFormats ) {
-			return this.translate( 'Loading…' );
+		if ( ! post || ! postFormats ) {
+			return;
 		}
 
-		postFormat = find( this.props.postFormats, {
-			slug: this.getFormatValue() || 'standard'
+		if ( has( postFormats, formatValue ) ) {
+			return postFormats[ formatValue ];
+		}
+
+		return this.translate( 'Standard', {
+			context: 'Post format'
 		} );
-
-		if ( postFormat ) {
-			return postFormat.label;
-		}
-
-		return this.translate( 'Standard', { context: 'Post format' } );
 	},
 
-	render: function() {
-		var classes = classNames( 'editor-post-formats__accordion', this.props.className, {
-			'is-loading': ! this.props.post || ! this.props.postFormats
+	render() {
+		const { className, post, postFormats } = this.props;
+		const classes = classNames( 'editor-post-formats__accordion', className, {
+			'is-loading': ! post || ! postFormats
 		} );
-
-		if ( ! this.props.postFormats || this.props.postFormats.length <= 1 ) {
-			return null;
-		}
 
 		return (
-			<Accordion
-				title={ this.translate( 'Post Format' ) }
-				subtitle={ this.getSubtitle() }
-				icon={ <Gridicon icon="types" /> }
-				className={ classes }>
-				<PostFormats
-					{ ...pick( this.props, 'post', 'postFormats' ) }
-					value={ this.getFormatValue() } />
-			</Accordion>
+			<div>
+				<QueryPostFormats siteId={ this.props.siteId } />
+				{ ! isEmpty( postFormats ) && (
+					<Accordion
+						title={ this.translate( 'Post Format' ) }
+						subtitle={ this.getSubtitle() }
+						icon={ <Gridicon icon="types" /> }
+						className={ classes }>
+						<PostFormats value={ this.getFormatValue() } />
+					</Accordion>
+				) }
+			</div>
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+
+		return {
+			siteId,
+			site: getSelectedSite( state ),
+			postFormats: getPostFormats( state, siteId )
+		};
+	}
+)( EditorPostFormatsAccordion );

@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	pick = require( 'lodash/object/pick' );
+const React = require( 'react' ),
+	pick = require( 'lodash/pick' );
 
 /**
  * Internal dependencies
  */
-var EditorFieldset = require( 'post-editor/editor-fieldset' ),
+const EditorFieldset = require( 'post-editor/editor-fieldset' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	PostActions = require( 'lib/posts/actions' ),
 	InfoPopover = require( 'components/info-popover' ),
@@ -21,7 +21,7 @@ function statusToBoolean( status ) {
 	return 'open' === status;
 }
 
-module.exports = React.createClass( {
+export default React.createClass( {
 	displayName: 'EditorDiscussion',
 
 	propTypes: {
@@ -72,6 +72,7 @@ module.exports = React.createClass( {
 		stats.recordStat( statName );
 		stats.recordEvent( gaEvent, newStatus );
 
+		// TODO: REDUX - remove flux actions when whole post-editor is reduxified
 		PostActions.edit( {
 			discussion: discussion
 		} );
@@ -101,7 +102,7 @@ module.exports = React.createClass( {
 						checked={ statusToBoolean( discussion.ping_status ) }
 						disabled={ ! this.props.post }
 						onChange={ this.onChange } />
-					{ this.translate( 'Allow Pingbacks & Trackbacks' ) }
+					<span>{ this.translate( 'Allow Pingbacks & Trackbacks' ) }</span>
 				</label>
 			</EditorFieldset>
 		);

@@ -72,7 +72,7 @@ const SiteRedirect = React.createClass( {
 			this.recordEvent( 'updateSiteRedirectClick', this.props.selectedDomainName, this.state.location, success );
 
 			if ( success ) {
-				page( paths.domainManagementRedirectSettings( this.props.selectedSite.domain, this.state.location ) );
+				page( paths.domainManagementRedirectSettings( this.props.selectedSite.slug, this.state.location ) );
 			}
 		} );
 	},
@@ -146,7 +146,7 @@ const SiteRedirect = React.createClass( {
 	goToEdit() {
 		this.recordEvent( 'cancelClick', this.props.selectedDomainName );
 
-		page( paths.domainManagementEdit( this.props.selectedSite.domain, this.props.selectedDomainName ) );
+		page( paths.domainManagementEdit( this.props.selectedSite.slug, this.props.selectedDomainName ) );
 	}
 } );
 

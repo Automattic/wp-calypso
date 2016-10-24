@@ -1,3 +1,19 @@
 .form-buttons-bar {
 	@include clear-fix;
+
+	@include breakpoint( '<480px' ) {
+		align-items: flex-end;
+		display: flex;
+		flex-direction: column-reverse;
+
+		.button {
+			display: block;
+			margin-top: 8px;
+		}
+
+		.form-button {
+			float: none;
+			margin-left: 0;
+		}
+	}
 }

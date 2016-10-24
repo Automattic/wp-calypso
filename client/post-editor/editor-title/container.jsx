@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
@@ -18,7 +19,7 @@ const sites = sitesList();
 export default React.createClass( {
 	displayName: 'EditorTitleContainer',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState() {
 		return this.getState();

@@ -8,8 +8,12 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	tinymce = require( 'tinymce/tinymce' );
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' ),
+	tinymce = require( 'tinymce/tinymce' ),
+	translate = require( 'i18n-calypso' ).translate;
+
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -19,6 +23,23 @@ var LinkDialog = require( './dialog' );
 function wpLink( editor ) {
 	var node, toolbar;
 
+	function render( visible = true ) {
+		ReactDom.render(
+			React.createElement( ReduxProvider, { store: editor.getParam( 'redux_store' ) },
+				React.createElement( LinkDialog, {
+					visible: visible,
+					editor: editor,
+					onClose: () => render( false )
+				} )
+			),
+			node
+		);
+
+		if ( ! visible ) {
+			editor.focus();
+		}
+	}
+
 	editor.on( 'init', function() {
 		node = editor.getContainer().appendChild(
 			document.createElement( 'div' )
@@ -26,30 +47,23 @@ function wpLink( editor ) {
 	} );
 
 	editor.on( 'remove', function() {
-		React.unmountComponentAtNode( node );
+		ReactDom.unmountComponentAtNode( node );
 		node.parentNode.removeChild( node );
 		node = null;
 	} );
 
 	editor.addCommand( 'WP_Link', function() {
-		React.render(
-			React.createElement( LinkDialog, {
-				visible: true,
-				editor: editor
-			} ),
-			node
-		);
+		return render();
 	} );
 
 	// WP default shortcut
-	editor.addShortcut( 'Alt+Shift+A', '', 'WP_Link' );
-
+	editor.addShortcut( 'access+a', '', 'WP_Link' );
 	// The "de-facto standard" shortcut, see #27305
-	editor.addShortcut( 'Meta+K', '', 'WP_Link' );
+	editor.addShortcut( 'meta+k', '', 'WP_Link' );
 
 	editor.addButton( 'link', {
 		icon: 'link',
-		tooltip: 'Insert/edit link',
+		tooltip: translate( 'Insert/edit link' ),
 		cmd: 'WP_Link',
 		stateSelector: 'a[href]'
 	} );
@@ -62,7 +76,7 @@ function wpLink( editor ) {
 
 	editor.addMenuItem( 'link', {
 		icon: 'link',
-		text: 'Insert/edit link',
+		text: translate( 'Insert/edit link' ),
 		cmd: 'WP_Link',
 		stateSelector: 'a[href]',
 		context: 'insert',
@@ -95,7 +109,7 @@ function wpLink( editor ) {
 		renderHtml: function() {
 			return (
 				'<div id="' + this._id + '" class="wp-link-preview">' +
-					'<a href="' + this.url + '" target="_blank" tabindex="-1">' + this.url + '</a>' +
+					'<a href="' + this.url + '" target="_blank" rel="noopener noreferrer" tabindex="-1">' + this.url + '</a>' +
 				'</div>'
 			);
 		},

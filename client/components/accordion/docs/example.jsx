@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' );
 
 /**
  * Internal dependencies
@@ -10,9 +11,9 @@ var Accordion = require( 'components/accordion' ),
 	Gridicon = require( 'components/gridicon' );
 
 module.exports = React.createClass( {
-	displayName: 'Accordions',
+	displayName: 'AccordionExample',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState: function() {
 		return {
@@ -28,11 +29,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/accordions">Accordions</a>
-				</h2>
-
+			<div>
 				<div style={ { paddingBottom: '10px' } }>
 					<label>
 						<input
@@ -40,7 +37,7 @@ module.exports = React.createClass( {
 							checked={ this.state.showSubtitles }
 							onChange={ this._toggleShowSubtitles }
 						/>
-						Show subtitles
+						<span>Show subtitles</span>
 					</label>
 				</div>
 

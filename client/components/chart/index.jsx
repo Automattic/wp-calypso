@@ -2,9 +2,8 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	debug = require( 'debug' )( 'calypso:chart' ),
-	noop = require( 'lodash/utility/noop' ),
-	throttle = require( 'lodash/function/throttle' );
+	debug = require( 'debug' )( 'calypso:chart' );
+import { some, noop, throttle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -61,7 +60,7 @@ module.exports = React.createClass( {
 
 	resize: function() {
 		if ( this.isMounted() ) {
-			var node = this.getDOMNode(),
+			var node = this.refs.chart,
 				width = node.clientWidth - 82,
 				maxBars;
 
@@ -110,11 +109,7 @@ module.exports = React.createClass( {
 	},
 
 	isEmptyChart: function( values ) {
-		values = values.filter( function( value ) {
-			return value > 0;
-		}, this );
-
-		return values.length === 0;
+		return ! some( values, ( value ) => value > 0 );
 	},
 
 	render: function() {
@@ -141,7 +136,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className='chart'>
+			<div ref="chart" className='chart'>
 				<div className="chart__y-axis-markers">
 					<div className="chart__y-axis-marker is-hundred"></div>
 					<div className="chart__y-axis-marker is-fifty"></div>

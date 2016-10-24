@@ -45,6 +45,20 @@ const olarkActions = {
 		} );
 	},
 
+	setClosed( isSupportClosed ) {
+		dispatcher.handleServerAction( {
+			isSupportClosed,
+			type: ActionTypes.OLARK_SET_CLOSED
+		} );
+	},
+
+	setExpanded( isOlarkExpanded ) {
+		dispatcher.handleServerAction( {
+			isOlarkExpanded,
+			type: ActionTypes.OLARK_SET_EXPANDED
+		} );
+	},
+
 	updateDetails() {
 		olarkApi( 'api.visitor.getDetails', ( details ) => {
 			dispatcher.handleServerAction( {
@@ -52,6 +66,10 @@ const olarkActions = {
 				type: ActionTypes.OLARK_DETAILS,
 			} );
 		} );
+	},
+
+	sendNotificationToVisitor( body ) {
+		olarkApi( 'api.chat.sendNotificationToVisitor', { body } );
 	},
 
 	sendNotificationToOperator( body ) {

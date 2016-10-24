@@ -1,62 +1,61 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	Gridicon = require( 'components/gridicon' ),
-	classNames = require( 'classnames' );
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { map, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-var Accordion = require( 'components/accordion' ),
-	FormTextInput = require( 'components/forms/form-text-input' ),
-	serviceConnections = require( 'my-sites/sharing/connections/service-connections' ),
-	PostMetadata = require( 'lib/post-metadata' ),
-	Sharing = require( './' ),
-	AccordionSection = require( 'components/accordion/section' ),
-	postUtils = require( 'lib/posts/utils' );
+import Accordion from 'components/accordion';
+import FormTextInput from 'components/forms/form-text-input';
+import Gridicon from 'components/gridicon';
+import serviceConnections from 'my-sites/sharing/connections/service-connections';
+import PostMetadata from 'lib/post-metadata';
+import Sharing from './';
+import AccordionSection from 'components/accordion/section';
+import postUtils from 'lib/posts/utils';
+import QueryPublicizeConnections from 'components/data/query-publicize-connections';
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEditorPostId } from 'state/ui/editor/selectors';
+import { getEditedPostValue } from 'state/posts/selectors';
+import { isJetpackModuleActive, getSiteOption } from 'state/sites/selectors';
+import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
+import { postTypeSupports } from 'state/post-types/selectors';
+import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
 
-module.exports = React.createClass( {
-	displayName: 'EditorSharingAccordion',
-
+const EditorSharingAccordion = React.createClass( {
 	propTypes: {
-		site: React.PropTypes.object,
-		post: React.PropTypes.object,
-		isNew: React.PropTypes.bool,
-		connections: React.PropTypes.array,
-		fetchConnections: React.PropTypes.func
+		site: PropTypes.object,
+		post: PropTypes.object,
+		isNew: PropTypes.bool,
+		connections: PropTypes.array,
+		isPublicizeEnabled: PropTypes.bool,
+		isSharingActive: PropTypes.bool,
+		isLikesActive: PropTypes.bool
 	},
 
 	getSubtitle: function() {
-		var skipped, targeted;
-
-		if ( this.props.site && (
-				( this.props.site.jetpack && ! this.props.site.isModuleActive( 'publicize' ) ) ||
-				this.props.site.options.publicize_permanently_disabled
-		) ) {
+		const { isPublicizeEnabled, post, connections } = this.props;
+		if ( ! isPublicizeEnabled || ! post || ! connections ) {
 			return;
 		}
 
-		if ( postUtils.isPage( this.props.post ) ) {
-			return;
-		}
-
-		if ( ! this.props.post || ! this.props.connections ) {
-			return this.translate( 'Loading…' );
-		}
-
-		skipped = PostMetadata.publicizeSkipped( this.props.post );
-		targeted = this.props.connections.filter( function( connection ) {
-			return -1 === skipped.indexOf( connection.keyring_connection_ID );
+		const skipped = PostMetadata.publicizeSkipped( post );
+		const targeted = connections.filter( ( connection ) => {
+			return ! includes( skipped, connection.keyring_connection_ID );
 		} );
+		const targetedServices = serviceConnections.getServicesFromConnections( targeted );
 
-		return serviceConnections.getServicesFromConnections( targeted ).map( function( service ) {
-			return service.label;
-		} ).join( ', ' );
+		return map( targetedServices, 'label' ).join( ', ' );
 	},
 
 	renderShortUrl: function() {
-		var classes = classNames( 'editor-sharing__shortlink', {
+		const classes = classNames( 'editor-sharing__shortlink', {
 			'is-standalone': this.hideSharing()
 		} );
 
@@ -64,7 +63,7 @@ module.exports = React.createClass( {
 			return null;
 		}
 
-		return(
+		return (
 			<div className={ classes }>
 				<label
 					className="editor-sharing__shortlink-label"
@@ -85,18 +84,15 @@ module.exports = React.createClass( {
 	},
 
 	hideSharing: function() {
-		return this.props.site &&
-			this.props.site.jetpack &&
-			! this.props.site.isModuleActive( 'publicize' ) &&
-			! this.props.site.isModuleActive( 'sharedaddy' ) &&
-			! this.props.site.isModuleActive( 'likes' );
+		const { isSharingActive, isLikesActive, isPublicizeEnabled } = this.props;
+		return ! isSharingActive && ! isLikesActive && ! isPublicizeEnabled;
 	},
 
 	render: function() {
-		var hideSharing = this.hideSharing(),
-			classes = classNames( 'editor-sharing__accordion', this.props.className, {
-				'is-loading': ! this.props.post || ! this.props.connections
-			} );
+		const hideSharing = this.hideSharing();
+		const classes = classNames( 'editor-sharing__accordion', this.props.className, {
+			'is-loading': ! this.props.post || ! this.props.connections
+		} );
 
 		// if sharing is hidden, and post is not published (no short URL yet),
 		// then do not render this accordion
@@ -110,15 +106,12 @@ module.exports = React.createClass( {
 				subtitle={ this.getSubtitle() }
 				icon={ <Gridicon icon="share" /> }
 				className={ classes }>
+				{ this.props.site && (
+					<QueryPublicizeConnections siteId={ this.props.site.ID } />
+				) }
 				<AccordionSection>
 					{ ! hideSharing && (
-						<Sharing
-							site={ this.props.site }
-							post={ this.props.post }
-							isNew={ this.props.isNew }
-							connections={ this.props.connections }
-							fetchConnections={ this.props.fetchConnections }
-						/>
+						<Sharing site={ this.props.site } post={ this.props.post } />
 					) }
 					{ this.renderShortUrl() }
 				</AccordionSection>
@@ -126,3 +119,31 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => {
+		const siteId = getSelectedSiteId( state );
+		const userId = getCurrentUserId( state );
+		const postId = getEditorPostId( state );
+		const postType = getEditedPostValue( state, siteId, postId, 'type' );
+		const isPublicizeEnabled = (
+			false !== isJetpackModuleActive( state, siteId, 'publicize' ) &&
+			true !== getSiteOption( state, siteId, 'publicize_permanently_disabled' ) &&
+			postTypeSupports( state, siteId, postType, 'publicize' )
+		);
+		const isSharingActive = false !== isJetpackModuleActive( state, siteId, 'sharedaddy' );
+		const isLikesActive = false !== isJetpackModuleActive( state, siteId, 'likes' );
+
+		return {
+			connections: getSiteUserConnections( state, siteId, userId ),
+			isSharingActive,
+			isLikesActive,
+			isPublicizeEnabled
+		};
+	},
+	( dispatch ) => {
+		return bindActionCreators( {
+			requestConnections
+		}, dispatch );
+	}
+)( EditorSharingAccordion );

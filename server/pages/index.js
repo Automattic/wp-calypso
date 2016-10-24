@@ -1,15 +1,26 @@
-var express = require( 'express' ),
-	fs = require( 'fs' ),
-	crypto = require( 'crypto' ),
-	qs = require( 'qs' ),
-	cookieParser = require( 'cookie-parser' ),
-	i18nUtils = require( 'lib/i18n-utils' ),
-	debug = require( 'debug' )( 'calypso:pages' );
+/**
+ * External dependencies
+ */
+import express from 'express';
+import fs from 'fs';
+import crypto from 'crypto';
+import qs from 'qs';
+import { execSync } from 'child_process';
+import cookieParser from 'cookie-parser';
+import debugFactory from 'debug';
 
-var config = require( 'config' ),
-	sanitize = require( 'sanitize' ),
-	utils = require( 'bundler/utils' ),
-	sections = require( '../../client/sections' );
+/**
+ * Internal dependencies
+ */
+import config from 'config';
+import sanitize from 'sanitize';
+import utils from 'bundler/utils';
+import sectionsModule from '../../client/sections';
+import { serverRouter } from 'isomorphic-routing';
+import { serverRender } from 'render';
+import { createReduxStore } from 'state';
+
+const debug = debugFactory( 'calypso:pages' );
 
 var HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
@@ -24,13 +35,7 @@ var staticFiles = [
 	{ path: 'style-rtl.css' }
 ];
 
-var chunksByPath = {};
-
-sections.forEach( function( section ) {
-	section.paths.forEach( function( path ) {
-		chunksByPath[ path ] = section.name;
-	} );
-} );
+var sections = sectionsModule.get();
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -78,39 +83,38 @@ function generateStaticUrls( request ) {
 	assets = request.app.get( 'assets' );
 
 	assets.forEach( function( asset ) {
-		urls[ asset.name ] = asset.url;
+		let name = asset.name;
+		if ( ! name ) {
+			// this is for auto-generated chunks that don't have names, like the commons chunk
+			name = asset.url.replace( /\/calypso\/(\w+)\..*/, '_$1' );
+		}
+		urls[ name ] = asset.url;
 		if ( config( 'env' ) !== 'development' ) {
-			urls[ asset.name + '-min' ] = asset.url.replace( '.js', '.min.js' );
+			urls[ name + '-min' ] = asset.url.replace( '.js', '.min.js' );
 		}
 	} );
 
 	return urls;
 }
 
-function getChunk( path ) {
-	var regex, chunkPath;
+function getCurrentBranchName() {
+	try {
+		return execSync( 'git rev-parse --abbrev-ref HEAD' ).toString().replace( /\s/gm, '' );
+	} catch ( err ) {
+		return undefined;
+	}
+}
 
-	for ( chunkPath in chunksByPath ) {
-		if ( chunkPath === path ) {
-			return chunksByPath[ chunkPath ];
-		}
-
-		if ( chunkPath === '/' ) {
-			continue;
-		}
-
-		regex = utils.pathToRegExp( chunkPath );
-
-		if ( regex.test( path ) ) {
-			return chunksByPath[ chunkPath ];
-		}
+function getCurrentCommitShortChecksum() {
+	try {
+		return execSync( 'git rev-parse --short HEAD' ).toString().replace( /\s/gm, '' );
+	} catch ( err ) {
+		return undefined;
 	}
 }
 
 function getDefaultContext( request ) {
-	var context, chunk;
-
-	context = {
+	var context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
@@ -123,8 +127,10 @@ function getDefaultContext( request ) {
 		jsFile: 'build',
 		faviconURL: '//s1.wp.com/i/favicon.ico',
 		isFluidWidth: !! config.isEnabled( 'fluid-width' ),
-		devDocsURL: '/devdocs'
-	};
+		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
+		devDocsURL: '/devdocs',
+		store: createReduxStore()
+	} );
 
 	context.app = {
 		// use ipv4 address when is ipv4 mapped address
@@ -137,7 +143,7 @@ function getDefaultContext( request ) {
 	if ( CALYPSO_ENV === 'wpcalypso' ) {
 		context.badge = CALYPSO_ENV;
 		context.devDocs = true;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-wpcalypso.ico';
 	}
 
@@ -149,55 +155,32 @@ function getDefaultContext( request ) {
 
 	if ( CALYPSO_ENV === 'stage' ) {
 		context.badge = 'staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-staging.ico';
 	}
 
 	if ( CALYPSO_ENV === 'development' ) {
 		context.badge = 'dev';
 		context.devDocs = true;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/new';
+		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.faviconURL = '/calypso/images/favicons/favicon-development.ico';
-	}
-
-	if ( config.isEnabled( 'code-splitting' ) ) {
-		chunk = getChunk( request.path );
-
-		if ( chunk ) {
-			context.chunk = chunk;
-		}
+		context.branchName = getCurrentBranchName();
+		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	return context;
 }
 
-function renderLoggedOutRoute( req, res ) {
-	var context = getDefaultContext( req ),
-		language;
-
+function setUpLoggedOutRoute( req, res, next ) {
+	req.context = getDefaultContext( req );
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN'
 	} );
 
-	// Set up the locale in case it has ended up in the flow param
-	req.params = i18nUtils.setUpLocale( req.params );
-
-	language = i18nUtils.getLanguage( req.params.lang );
-	if ( language ) {
-		context.lang = req.params.lang;
-		if ( language.rtl ) {
-			context.isRTL = true;
-		}
-	}
-
-	if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
-		context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
-	}
-
-	res.render( 'index.jade', context );
+	next();
 }
 
-function renderLoggedInRoute( req, res ) {
+function setUpLoggedInRoute( req, res, next ) {
 	var redirectUrl, protocol, start, context;
 
 	res.set( {
@@ -257,10 +240,6 @@ function renderLoggedInRoute( req, res ) {
 				context.lang = data.localeSlug;
 			}
 
-			if ( context.lang !== config( 'i18n_default_locale_slug' ) ) {
-				context.i18nLocaleScript = '//widgets.wp.com/languages/calypso/' + context.lang + '.js';
-			}
-
 			if ( req.path === '/' && req.query ) {
 				searchParam = req.query.s || req.query.q;
 				if ( searchParam ) {
@@ -281,13 +260,28 @@ function renderLoggedInRoute( req, res ) {
 				}
 			}
 
-			res.render( 'index.jade', context );
+			req.context = context;
+			next();
 		} );
-	} else if ( config.isEnabled( 'desktop' ) ) {
-		res.render( 'desktop.jade', context );
 	} else {
-		res.render( 'index.jade', context );
+		req.context = context;
+		next();
 	}
+}
+
+function setUpRoute( req, res, next ) {
+	if ( req.cookies.wordpress_logged_in ) {
+		// the user is probably logged in
+		setUpLoggedInRoute( req, res, next );
+	} else {
+		setUpLoggedOutRoute( req, res, next );
+	}
+}
+
+function render404( request, response ) {
+	response.status( 404 ).render( '404.jade', {
+		urls: generateStaticUrls( request )
+	} );
 }
 
 module.exports = function() {
@@ -323,74 +317,55 @@ module.exports = function() {
 		res.redirect( redirectUrl );
 	} );
 
-	app.get( '/calypso/?*', function( request, response ) {
-		response.status( 404 ).render( '404.jade', {
-			urls: generateStaticUrls( request )
-		} );
-	} );
-
-	if ( config.isEnabled( 'login' ) ) {
-		app.get( '/log-in/:lang?', function( req, res ) {
-			renderLoggedOutRoute( req, res );
-		} );
-	}
-
-	app.get( '/start/:flowName?/:stepName?/:stepSectionName?/:lang?', function( req, res ) {
-		if ( req.cookies.wordpress_logged_in ) {
-			// the user is probably logged in
-			renderLoggedInRoute( req, res );
-		} else {
-			renderLoggedOutRoute( req, res );
-		}
-	} );
-
-	app.get( '/design', function( req, res ) {
-		if ( req.cookies.wordpress_logged_in || ! config.isEnabled( 'manage/themes/logged-out' ) ) {
-			// the user is probably logged in
-			renderLoggedInRoute( req, res );
-		} else {
-			renderLoggedOutRoute( req, res );
-		}
-	} );
-
-	app.get( '/accept-invite/:site_id/:invitation_key', function( req, res ) {
-		if ( req.cookies.wordpress_logged_in ) {
-			// the user is probably logged in
-			renderLoggedInRoute( req, res );
-		} else {
-			renderLoggedOutRoute( req, res );
-		}
-	} );
-
-	if ( config.isEnabled( 'phone_signup' ) ) {
-		app.get( '/phone/:lang?', function( req, res ) {
-			renderLoggedOutRoute( req, res );
-		} );
-	}
-
-	if ( config.isEnabled( 'mailing-lists/unsubscribe' ) ) {
-		app.get( '/mailing-lists/unsubscribe', function( req, res ) {
-			if ( req.cookies.wordpress_logged_in ) {
-				// the user is probably logged in
-				renderLoggedInRoute( req, res );
+	if ( config( 'env' ) !== 'development' ) {
+		app.get( '/discover', function( req, res, next ) {
+			if ( ! req.cookies.wordpress_logged_in ) {
+				res.redirect( config( 'discover_logged_out_redirect_url' ) );
 			} else {
-				renderLoggedOutRoute( req, res );
+				next();
+			}
+		} );
+
+		app.get( '/plans', function( req, res, next ) {
+			if ( ! req.cookies.wordpress_logged_in ) {
+				const queryFor = req.query && req.query.for;
+				if ( queryFor && 'jetpack' === queryFor ) {
+					res.redirect( 'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans' );
+				} else {
+					res.redirect( 'https://wordpress.com/pricing' );
+				}
+			} else {
+				next();
 			}
 		} );
 	}
 
-	if ( config.isEnabled( 'reader/discover' ) ) {
-		app.get( '/discover', function( req, res ) {
-			if ( req.cookies.wordpress_logged_in ) {
-				renderLoggedInRoute( req, res );
-			} else {
-				res.redirect( 'https://discover.wordpress.com' );
+	app.get( '/theme', ( req, res ) => res.redirect( '/design' ) );
+
+	sections
+		.forEach( section => {
+			section.paths.forEach( path => {
+				const pathRegex = utils.pathToRegExp( path );
+
+				app.get( pathRegex, function( req, res, next ) {
+					if ( config.isEnabled( 'code-splitting' ) ) {
+						req.context = Object.assign( {}, req.context, { chunk: section.name } );
+					}
+					next();
+				} );
+
+				if ( ! section.isomorphic ) {
+					app.get( pathRegex, section.enableLoggedOut ? setUpRoute : setUpLoggedInRoute, serverRender );
+				}
+			} );
+
+			if ( section.isomorphic ) {
+				sectionsModule.require( section.module )( serverRouter( app, setUpRoute, section ) );
 			}
 		} );
-	}
 
-	// catchall path to serve shell for all non-static-file requests (other than auth routes)
-	app.get( '*', renderLoggedInRoute );
+	// catchall to render 404 for all routes not whitelisted in client/sections
+	app.get( '*', render404 );
 
 	return app;
 };

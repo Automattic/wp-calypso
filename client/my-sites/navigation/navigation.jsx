@@ -1,69 +1,43 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var observe = require( 'lib/mixins/data-observe' ),
-	SitePicker = require( 'my-sites/picker' ),
-	Sidebar = require( 'my-sites/sidebar' );
+import observe from 'lib/mixins/data-observe';
+import SitePicker from 'my-sites/picker';
+import Sidebar from 'my-sites/sidebar';
 
-var SITE_HEIGHT = 66,
-	EXTRA_SITE_ITEMS_HEIGHT = 200,
-	MAX_SIDEBAR_HEIGHT = 1200;
-
-module.exports = React.createClass( {
+const MySitesNavigation = React.createClass( {
 	displayName: 'MySitesNavigation',
 
-	mixins: [ observe( 'sites', 'user', 'layoutFocus' ) ],
+	mixins: [ observe( 'sites' ) ],
 
-	/**
-	 * Calculate the height of the sites list based on how many sites
-	 * the user has to be displayed
-	 *
-	 * @return {number}
-	 */
-	getSitesHeight: function() {
-		var count = this.props.user.get().visible_site_count;
-		return ( count * SITE_HEIGHT ) + EXTRA_SITE_ITEMS_HEIGHT;
-	},
-
-	preventPickerDefault: function( event ) {
+	preventPickerDefault( event ) {
 		event.preventDefault();
 		event.stopPropagation();
 	},
 
-	render: function() {
-		var layoutFocus = this.props.layoutFocus,
-			containerHeight = MAX_SIDEBAR_HEIGHT;
-
-		// When layout focus is on sites list
-		// Calculate the height of the navigation block
-		if ( layoutFocus.getCurrent() === 'sites' ) {
-			containerHeight = this.getSitesHeight();
-		}
-
+	render() {
 		return (
 			<div className="sites-navigation">
 				<SitePicker
-					layoutFocus={ layoutFocus }
 					sites={ this.props.sites }
 					allSitesPath={ this.props.allSitesPath }
 					siteBasePath={ this.props.siteBasePath }
-					user={ this.props.user }
 					onClose={ this.preventPickerDefault }
 				/>
 				<Sidebar
-					layoutFocus={ layoutFocus }
 					sites={ this.props.sites }
 					allSitesPath={ this.props.allSitesPath }
 					path={ this.props.path }
 					siteBasePath={ this.props.siteBasePath }
-					user={ this.props.user }
 				/>
 			</div>
 		);
 	}
 } );
+
+module.exports = MySitesNavigation;

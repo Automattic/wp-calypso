@@ -1,11 +1,37 @@
 module.exports = {
-	statsDefaultFilter: {
-		datestamp: '20150601',
+	// `browserNotifications` controls whether or not users see the
+	// nudge notice to enable browser notifications at the top of
+	// some Calypso screens; any users with this enabled will also
+	// have the preference available in /me/notifications;
+	// note: not renaming this test at this point in time so that we don't
+	// mess with any users that were put in the `enabled` variation -- don't
+	// want to take their browser notifications preference away from them!
+	browserNotifications: {
+		datestamp: '20160628',
 		variations: {
-			day: 90,
-			insights: 10
+			disabled: 95,
+			enabled: 5,
 		},
-		defaultVariation: 'day'
+		defaultVariation: 'disabled',
+		allowExistingUsers: true,
+	},
+	coldStartReader: {
+		datestamp: '20160901',
+		variations: {
+			noEmailColdStart: 33,
+			noEmailColdStartWithAutofollows: 33,
+			noChanges: 34
+		},
+		defaultVariation: 'noChanges',
+		allowExistingUsers: false,
+	},
+	domainSuggestionClickableRow: {
+		datestamp: '20160802',
+		variations: {
+			clickableRow: 20,
+			clickableButton: 80
+		},
+		defaultVariation: 'clickableButton'
 	},
 	multiDomainRegistrationV1: {
 		datestamp: '20200721',
@@ -16,42 +42,96 @@ module.exports = {
 		},
 		defaultVariation: 'singlePurchaseFlow'
 	},
-	translatorInvitation: {
-		datestamp: '20150910',
+	signupStore: {
+		datestamp: '20160927',
 		variations: {
-			noNotice: 1,
-			startNow: 1,
-			helpUs: 1,
-			tryItNow: 1,
-			startTranslating: 1,
-			improve: 1
+			designTypeWithoutStore: 0,
+			designTypeWithStore: 100,
 		},
-		defaultVariation: 'noNotice',
-		allowAnyLocale: true
+		defaultVariation: 'designTypeWithStore',
+		allowExistingUsers: false,
 	},
-	plansPageBusinessAATest: {
-		datestamp: '20151104',
+	signupStoreBenchmarking: {
+		datestamp: '20160927',
 		variations: {
-			originalA: 50,
-			originalB: 50
+			pressable: 97,
+			bluehost: 1,
+			bluehostWithWoo: 1,
+			siteground: 1
 		},
-		defaultVariation: 'originalA'
+		defaultVariation: 'pressable',
+		allowExistingUsers: false,
 	},
-	nuxTrampoline: {
-		datestamp: '20151113',
+	signupThemeUpload: {
+		datestamp: '20160928',
 		variations: {
-			main: 10,
-			'landing-main': 10,
-			notTested: 80
+			showThemeUpload: 10,
+			hideThemeUpload: 90,
 		},
-		defaultVariation: 'main'
+		defaultVariation: 'hideThemeUpload',
+		allowExistingUsers: false,
 	},
-	businessPluginsNudge: {
-		datestamp: '20151119',
+	signupSurveyStep: {
+		datestamp: '20161020',
 		variations: {
-			drake: 50,
+			surveyStepV1: 50,
+			surveyStepV2: 50,
+		},
+		defaultVariation: 'surveyStepV1',
+		allowAnyLocale: true,
+	},
+	readerSearchSuggestions: {
+		datestamp: '20160804',
+		variations: {
+			staffSuggestions: 50,
+			popularSuggestions: 50
+		},
+		defaultVariation: 'staffSuggestions',
+		allowExistingUsers: true
+	},
+	domainSuggestionPopover: {
+		datestamp: '20160809',
+		variations: {
+			showPopover: 80,
+			hidePopover: 20,
+		},
+		defaultVariation: 'showPopover',
+		allowExistingUsers: false,
+	},
+	paidNuxStreamlined: {
+		datestamp: '20161020',
+		variations: {
+			original: 50,
+			streamlined: 50,
+		},
+		defaultVariation: 'original',
+		allowAnyLocale: true,
+	},
+	readerFullPost: {
+		datestamp: '20160929',
+		variations: {
+			current: 50,
+			refreshed: 50
+		},
+		defaultVariation: 'current',
+		allowExistingUsers: true
+	},
+	siteTitleStep: {
+		datestamp: '20160928',
+		variations: {
+			showSiteTitleStep: 5,
+			hideSiteTitleStep: 95,
+		},
+		defaultVariation: 'hideSiteTitleStep',
+		allowExistingUsers: false
+	},
+	domainToPersonalPlanNudge2: {
+		datestamp: '20161018',
+		variations: {
+			original: 50,
 			nudge: 50
 		},
-		defaultVariation: 'drake'
-	},
+		defaultVariation: 'original',
+		allowExistingUsers: true
+	}
 };

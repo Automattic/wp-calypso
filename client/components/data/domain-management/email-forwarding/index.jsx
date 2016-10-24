@@ -47,9 +47,7 @@ const EmailForwardingData = React.createClass( {
 				stores={ [ EmailForwardingStore ] }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() }>
-				{ this.props.children }
-			</StoreConnection>
+				selectedSite={ this.props.sites.getSelectedSite() } />
 		);
 	}
 } );

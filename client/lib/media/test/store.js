@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	rewire = require( 'rewire' ),
-	sinon = require( 'sinon' );
+import { expect } from 'chai';
+import { noop } from 'lodash';
+import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 var DUMMY_SITE_ID = 1,
 	DUMMY_MEDIA_ID = 10,
@@ -19,20 +20,32 @@ var DUMMY_SITE_ID = 1,
 	};
 
 describe( 'MediaStore', function() {
-	var sandbox, MediaStore, handler;
+	let Dispatcher, sandbox, MediaStore, handler;
+
+	useFakeDom();
+	useMockery( mockery => {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} ),
+			site: noop
+		} );
+	} );
 
 	before( function() {
+		Dispatcher = require( 'dispatcher' );
+
 		sandbox = sinon.sandbox.create();
 		sandbox.spy( Dispatcher, 'register' );
 		sandbox.stub( Dispatcher, 'waitFor' ).returns( true );
 
-		MediaStore = rewire( '../store' );
+		MediaStore = require( '../store' );
 		handler = Dispatcher.register.lastCall.args[ 0 ];
 	} );
 
 	beforeEach( function() {
-		MediaStore.__set__( '_media', {} );
-		MediaStore.__set__( '_pointers', {} );
+		MediaStore._media = {};
+		MediaStore._pointers = {};
 	} );
 
 	after( function() {
@@ -83,16 +96,16 @@ describe( 'MediaStore', function() {
 		} );
 
 		it( 'should resolve a pointer to another image item', function() {
-			MediaStore.__set__( '_media', {
+			MediaStore._media = {
 				[ DUMMY_SITE_ID ]: {
 					[ DUMMY_MEDIA_ID ]: DUMMY_MEDIA_OBJECT
 				}
-			} );
-			MediaStore.__set__( '_pointers', {
+			};
+			MediaStore._pointers = {
 				[ DUMMY_SITE_ID ]: {
 					[ DUMMY_MEDIA_ID + 1 ]: DUMMY_MEDIA_ID
 				}
-			} );
+			};
 
 			expect( MediaStore.get( DUMMY_SITE_ID, DUMMY_MEDIA_ID + 1 ) ).to.equal( DUMMY_MEDIA_OBJECT );
 		} );

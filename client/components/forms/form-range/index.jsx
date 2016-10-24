@@ -2,7 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	omit = require( 'lodash/object/omit' ),
+	omit = require( 'lodash/omit' ),
 	classnames = require( 'classnames' );
 
 module.exports = React.createClass( {
@@ -20,21 +20,21 @@ module.exports = React.createClass( {
 
 	componentDidMount: function() {
 		if ( this.shouldNormalizeChange() ) {
-			this.refs.range.getDOMNode().addEventListener( 'change', this.onChange );
+			this.refs.range.addEventListener( 'change', this.onChange );
 		}
 	},
 
 	componentWillUnmount: function() {
-		this.refs.range.getDOMNode().removeEventListener( 'change', this.onChange );
+		this.refs.range.removeEventListener( 'change', this.onChange );
 	},
 
 	shouldNormalizeChange: function() {
-	    var ua = window.navigator.userAgent;
+		var ua = window.navigator.userAgent;
 
-	    // Internet Explorer doesn't trigger the normal "input" event as the
-	    // user drags the thumb. Instead, it emits the equivalent event on
-	    // "change", so we watch the change event and emit a simulated event.
-	    return -1 !== ua.indexOf( 'MSIE' ) || -1 !== ua.indexOf( 'Trident/' );
+		// Internet Explorer doesn't trigger the normal "input" event as the
+		// user drags the thumb. Instead, it emits the equivalent event on
+		// "change", so we watch the change event and emit a simulated event.
+		return -1 !== ua.indexOf( 'MSIE' ) || -1 !== ua.indexOf( 'Trident/' );
 	},
 
 	onChange: function( event ) {

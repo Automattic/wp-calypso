@@ -17,6 +17,7 @@ The following events can be sent to Calypso from Electron via IPC:
 - `signout` - Trigger a Calypso sign out event
 - `toggle-notification-bar` - Toggle the visibility of the notification client
 - `cookie-auth-complete` - Forces the notification client to refresh (with new cookie details)
+- `page-help` - Navigate to the help page
 
 #### Output Events
 

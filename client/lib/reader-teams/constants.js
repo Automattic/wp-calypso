@@ -1,5 +1,5 @@
 // External Dependencies
-var keyMirror = require( 'react/lib/keyMirror' );
+var keyMirror = require( 'key-mirror' );
 
 module.exports.action = keyMirror( {
 	RECEIVE_TEAMS: null,

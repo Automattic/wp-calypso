@@ -15,16 +15,10 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="design-assets__group">
-				<h2>
-					<a href="/devdocs/design/external-link">External Link</a>
-				</h2>
-				<Card>
-					<p><ExternalLink icon={ true } href="https://wordpress.org" >WordPress.org</ExternalLink></p>
-					<p><ExternalLink href="https://wordpress.org">WordPress.org</ExternalLink></p>
-				</Card>
-
-			</div>
+			<Card>
+				<p><ExternalLink icon={ true } href="https://wordpress.org" >WordPress.org</ExternalLink></p>
+				<p><ExternalLink href="https://wordpress.org">WordPress.org</ExternalLink></p>
+			</Card>
 		);
 	}
 } );

@@ -14,7 +14,7 @@ A good code review should catch:
 4. Problematic HTML and CSS at our scale.
 5. Unnecessary copy and paste.
 6. Code that doesn't adhere to our guidelines.
-7. Inconsistencies with other code in the codebase
+7. Inconsistencies with other code in the codebase.
 8. Bugs.
 
 Code reviews are also a great way for us to learn from each other in a distributed environment. Feel free to share techniques that you have picked up that make code simpler and more readable. At the end of the day, Calypso is our code, not the code of a set of individuals glued together.
@@ -24,4 +24,4 @@ Take a look at [our merge checklist](merge-checklist.md) for a list of things to
 The Code Review Mindset
 -----------------------
 
-Code reviews can be uncomfortable for both the author of the changes and also the reviewer. To make the process less painful, both the author and reviewer need to maintain a positive mindet. We're all working together to try to make Calypso and the WordPress user experience awesome.
+Code reviews can be uncomfortable for both the author of the changes and also the reviewer. To make the process less painful, both the author and reviewer need to maintain a positive mindset. We're all working together to try to make Calypso and the WordPress user experience awesome.

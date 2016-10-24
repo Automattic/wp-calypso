@@ -1,13 +1,8 @@
 /**
  * External dependencies
  */
-var assign = require( 'lodash/object/assign' ),
-	isArray = require( 'lodash/lang/isArray' ),
-	debug = require( 'debug' )( 'calypso:sites-plugins:sites-plugins-store' ),
-	_sortBy = require( 'lodash/collection/sortBy' ),
-	_uniq = require( 'lodash/array/uniq' ),
-	_compact = require( 'lodash/array/compact' ),
-	_values = require( 'lodash/object/values' );
+var debug = require( 'debug' )( 'calypso:sites-plugins:sites-plugins-store' );
+import { assign, isArray, sortBy, uniq, compact, values, find } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,11 +22,13 @@ var Dispatcher = require( 'dispatcher' ),
  * Constants
  */
 var _CACHE_TIME_TO_LIVE = 10 * 1000, // 10 sec
+	// time to wait until a plugin recentlyUpdate flag is cleared once it's updated
+	_UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000,
 	_STORAGE_LIST_NAME = 'CachedPluginsBySite';
+
 // Stores the plugins of each site.
 var _fetching = {},
 	_pluginsBySite = {},
-	_selectedPlugins = {},
 	PluginsStore,
 	_filters = {
 		none: function() {
@@ -96,9 +93,7 @@ function update( site, slug, plugin ) {
 	if ( ! _pluginsBySite[ site.ID ][ slug ] ) {
 		_pluginsBySite[ site.ID ][ slug ] = { slug: slug };
 	}
-	plugin = assign( {}, plugin, { wpcom: ! site.jetpack } );
 	plugin = PluginUtils.normalizePluginData( plugin );
-	plugin = PluginUtils.addWpcomIcon( plugin );
 	_pluginsBySite[ site.ID ][ slug ] = assign( {}, _pluginsBySite[ site.ID ][ slug ], plugin );
 
 	debug( 'update to ', _pluginsBySite[ site.ID ][ slug ] );
@@ -166,8 +161,6 @@ PluginsStore = {
 			}, this );
 		} );
 
-		pluginData.selected = _selectedPlugins[ pluginData.slug ];
-
 		if ( ! fetched ) {
 			return;
 		}
@@ -196,23 +189,19 @@ PluginsStore = {
 					plugins[ plugin.slug ] = assign( {}, plugin, { sites: [] } );
 				}
 				plugins[ plugin.slug ].sites.push( assign( {}, site, { plugin: plugin } ) );
-
-				plugins[ plugin.slug ].selected = _selectedPlugins[ plugin.slug ];
 			}, this );
 		} );
 		if ( ! fetched ) {
 			return;
 		}
-		plugins = _sortBy( plugins, function( plugin ) {
+		plugins = sortBy( plugins, function( plugin ) {
 			return plugin.slug;
 		} );
 		if ( ! plugins ) {
 			return [];
 		}
 
-		plugins = PluginUtils.duplicateHybridPlugins( plugins );
-
-		if ( plugins.filter && !! pluginFilter ) {
+		if ( plugins.filter && !! pluginFilter && _filters[ pluginFilter ] ) {
 			plugins = plugins.filter( _filters[ pluginFilter ] );
 		}
 		return plugins;
@@ -234,7 +223,7 @@ PluginsStore = {
 		if ( ! _pluginsBySite[ site.ID ] ) {
 			return _pluginsBySite[ site.ID ];
 		}
-		return _values( _pluginsBySite[ site.ID ] );
+		return values( _pluginsBySite[ site.ID ] );
 	},
 
 	getSitePlugin: function( site, pluginSlug ) {
@@ -242,8 +231,8 @@ PluginsStore = {
 		if ( ! plugins ) {
 			return plugins;
 		}
-		plugins = plugins.filter( _filters.isEqual.bind( this, pluginSlug ) );
-		return plugins[ 0 ];
+
+		return find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
 	},
 
 	// Array of sites with a particular plugin.
@@ -254,19 +243,19 @@ PluginsStore = {
 		if ( ! plugins ) {
 			return;
 		}
-		plugins = plugins.filter( _filters.isEqual.bind( this, pluginSlug ) );
-		plugin = plugins.pop();
+
+		plugin = find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
 		if ( ! plugin ) {
 			return null;
 		}
 
-		pluginSites = _uniq(
-			_compact(
+		pluginSites = uniq(
+			compact(
 				plugin.sites.map( function( site ) {
 					// we create a copy of the site to avoid any possible modification down the line affecting the main list
-					let pluginSite = site.jetpack ?
-						new JetpackSite( sitesList.getSite( site.ID ) ) :
-						new Site( sitesList.getSite( site.ID ) );
+					let pluginSite = site.jetpack
+						? new JetpackSite( sitesList.getSite( site.ID ) )
+						: new Site( sitesList.getSite( site.ID ) );
 					pluginSite.plugin = site.plugin;
 					if ( site.visible ) {
 						return pluginSite;
@@ -306,15 +295,15 @@ PluginsStore = {
 	}
 };
 
-PluginsStore.dispatchToken = Dispatcher.register( function( payload ) {
-	var action = payload.action,
-		plugins;
-	debug( 'register event Type', action.type, payload );
+PluginsStore.dispatchToken = Dispatcher.register( function( { action } ) {
+	debug( 'register event Type', action.type, action );
 
 	switch ( action.type ) {
 		case 'RECEIVE_PLUGINS':
+			_fetching[ action.site.ID ] = false;
 			if ( action.error ) {
-				// bail if there is an error since there will be nothing to update
+				updatePlugins( action.site, [] );
+				PluginsStore.emitChange();
 				return;
 			}
 
@@ -328,30 +317,12 @@ PluginsStore.dispatchToken = Dispatcher.register( function( payload ) {
 			PluginsStore.emitChange();
 			break;
 
-		case 'TOGGLE_PLUGIN_SELECTION':
-			if ( _selectedPlugins[ action.plugin.slug ] ) {
-				delete _selectedPlugins[ action.plugin.slug ];
-			} else {
-				_selectedPlugins[ action.plugin.slug ] = true;
-			}
+		case 'AUTOUPDATE_PLUGIN':
+		case 'UPDATE_PLUGIN':
 			PluginsStore.emitChange();
 			break;
 
-		case 'SELECT_FILTER_PLUGINS':
-			_selectedPlugins = {};
-			if ( action.sites.length ) {
-				plugins = PluginsStore.getPlugins( action.sites, action.filter ) || [];
-				plugins.forEach( function( plugin ) {
-					_selectedPlugins[ plugin.slug ] = true;
-				} );
-				if ( ! action.options || ! action.options.silent ) {
-					PluginsStore.emitChange();
-				}
-			}
-			break;
-
-		case 'AUTOUPDATE_PLUGIN':
-		case 'UPDATE_PLUGIN':
+		case 'REMOVE_PLUGINS_UPDATE_INFO':
 			update( action.site, action.plugin.slug, { update: null } );
 			PluginsStore.emitChange();
 			break;
@@ -364,8 +335,12 @@ PluginsStore.dispatchToken = Dispatcher.register( function( payload ) {
 				// still needs to be updated
 				update( action.site, action.plugin.slug, { update: action.plugin.update } );
 			} else {
-				update( action.site, action.plugin.slug, action.data );
+				update( action.site,
+					action.plugin.slug,
+					Object.assign( { update: { recentlyUpdated: true } }, action.data )
+				);
 				sitesList.onUpdatedPlugin( action.site );
+				setTimeout( PluginsActions.removePluginUpdateInfo.bind( PluginsActions, action.site, action.plugin ), _UPDATED_PLUGIN_INFO_TIME_TO_LIVE );
 			}
 			PluginsStore.emitChange();
 			break;

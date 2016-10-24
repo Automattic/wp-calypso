@@ -2,26 +2,26 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	isEmpty = require( 'lodash/lang/isEmpty' ),
-	assign = require('lodash/object/assign' );
+	isEmpty = require( 'lodash/isEmpty' );
 
 /**
  * Internal dependencies
  */
 var notices = require( 'notices' ),
-	getNewMessages = require( 'lib/cart-values' ).getNewMessages,
-	CartStore = require( 'lib/cart/store' );
+	getNewMessages = require( 'lib/cart-values' ).getNewMessages;
 
 module.exports = {
-	componentDidMount: function() {
-		CartStore.on( 'change', this._displayCartMessages );
+	componentWillReceiveProps( nextProps ) {
+		if ( ! nextProps.cart.hasLoadedFromServer ) {
+			return;
+		}
+
+		if ( this.props.cart.messages !== nextProps.cart.messages ) {
+			this.displayCartMessages( nextProps.cart );
+		}
 	},
 
-	componentWillUnmount: function() {
-		CartStore.off( 'change', this._displayCartMessages );
-	},
-
-	_getChargebackErrorMessage: function() {
+	getChargebackErrorMessage: function() {
 		return this.translate(
 			"{{strong}}Warning:{{/strong}} One or more transactions linked to this site were refunded due to a contested charge. This may have happened because of a chargeback by the credit card holder or a PayPal investigation. Each contested charge carries a fine. To resolve the issue and re-enable posting, please {{a}}pay for the chargeback fine{{/a}}.",
 			{
@@ -33,26 +33,38 @@ module.exports = {
 		);
 	},
 
-	_getPrettyErrorMessages: function( messages ) {
+	getBlockedPurchaseErrorMessage: function() {
+		return this.translate(
+			"Purchases are currently disabled. Please {{a}}contact us{{/a}} to re-enable purchases.",
+			{
+				components: {
+					a: <a href={ 'https://wordpress.com/error-report/?url=payment@' + this.props.selectedSite.slug } target="_blank" rel="noopener noreferrer" />
+				}
+			}
+		);
+	},
+
+	getPrettyErrorMessages: function( messages ) {
 		if ( ! messages ) {
 			return [];
 		}
 
 		return messages.map( function( error ) {
 			if ( error.code === 'chargeback' ) {
-				return assign( {}, error, { message: this._getChargebackErrorMessage() } );
+				return Object.assign( error, { message: this.getChargebackErrorMessage() } );
+			} else if ( error.code === 'blocked' ) {
+				return Object.assign( error, { message: this.getBlockedPurchaseErrorMessage() } );
 			} else {
 				return error;
 			}
 		}, this );
 	},
 
-	_displayCartMessages: function() {
-		var newCart = this.props.cart,
-			previousCart = ( this.state ) ? this.state.previousCart : null,
+	displayCartMessages: function( newCart ) {
+		var previousCart = ( this.state ) ? this.state.previousCart : null,
 			messages = getNewMessages( previousCart, newCart );
 
-		messages.errors = this._getPrettyErrorMessages( messages.errors );
+		messages.errors = this.getPrettyErrorMessages( messages.errors );
 
 		this.setState( { previousCart: newCart } );
 

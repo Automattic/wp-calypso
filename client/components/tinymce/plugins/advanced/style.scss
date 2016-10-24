@@ -1,25 +1,18 @@
 .mce-toolbar .mce-advanced button {
-	@extend .button.noticon;
-	@extend .noticon:before;
-	@extend .button.noticon:before;
-
 	transition: transform 0.15s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
-	font-size: 0;
+}
 
-	&:before {
-		content: '\f476';
-		font-size: 24px;
-	}
+.mce-toolbar .mce-advanced .gridicon {
+	width: 28px;
+	height: 28px;
+}
+
+.mce-toolbar .mce-active.mce-advanced button {
+	transform: rotate( 90deg );
 }
 
 .mce-toolbar .mce-advanced.mce-btn button {
 	display: none;
-	color: $gray-dark;
-	padding: 0px 2px;
-
-	&:hover {
-		color: $gray;
-	}
 
 	@include breakpoint( ">960px" ) {
 		display: block;
@@ -27,32 +20,8 @@
 }
 
 .mce-toolbar .mce-btn-group .mce-advanced.mce-btn.mce-last {
+	background-color: $transparent;
 	position: absolute;
-		top: 3px;
-		right: 16px;
-
-		&:hover {
-			border-color: $white;
-			background: $white;
-		}
-}
-
-// active
-
-.mce-toolbar .mce-btn-group .mce-btn.mce-active.mce-advanced {
-	background: $white;
-	border-color: $white;
-
-	&:hover {
-		border-color: $white;
-		background: $white;
-	}
-}
-
-.mce-toolbar .mce-active.mce-advanced button {
-	transform: rotate( 90deg );
-
-	&:hover {
-		color: $gray;
-	}
+		top: 0;
+		right: 8px;
 }

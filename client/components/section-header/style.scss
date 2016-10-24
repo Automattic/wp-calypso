@@ -1,5 +1,6 @@
 .section-header.card {
 	display: flex;
+	align-items: center;
 	padding-top: 11px;
 	padding-bottom: 11px;
 	position: relative;
@@ -10,9 +11,12 @@
 }
 
 .section-header__label {
+	display: flex;
+		align-items: center;
 	flex-grow: 1;
 	line-height: 28px;
 	position: relative;
+
 
 	&:before {
 		@include long-content-fade( $color : $white );
@@ -20,30 +24,28 @@
 
 	.count {
 		margin-left: 8px;
-		opacity: 0.5;
-		font-size: 11px;
 	}
 }
 
 .section-header__actions {
 	flex-grow: 0;
+	position: relative;
+
 	@include clear-fix;
 }
 
-.section-header__label,
-.section-header__button {
+.section-header__label {
 	color: $gray;
-	font-size: 12px;
-	text-transform: uppercase;
+	font-size: 14px;
 }
 
-.section-header__button {
-	background: none;
-	float: let;
-	margin-right: 8px;
-	padding: 2px 8px;
+.section-header__actions {
+	.button {
+		float: left;
+		margin-right: 8px;
+	}
 
-	&:last-child {
+	& > .button:last-child {
 		margin-right: 0;
 	}
 }

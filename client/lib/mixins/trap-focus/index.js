@@ -1,8 +1,9 @@
 /**
  * External dependencies
  */
-var without = require( 'lodash/array/without' ),
-	difference = require( 'lodash/array/difference' );
+var ReactDom = require( 'react-dom' ),
+	without = require( 'lodash/without' ),
+	difference = require( 'lodash/difference' );
 
 var allowedCssClasses = [],
 	components = [];
@@ -65,7 +66,7 @@ function onFocus( event ) {
 		}
 
 		topMostComponent = components[ components.length - 1 ];
-		node = topMostComponent.getDOMNode();
+		node = ReactDom.findDOMNode( topMostComponent );
 
 		if ( node.contains( event.target ) ) {
 			return true;

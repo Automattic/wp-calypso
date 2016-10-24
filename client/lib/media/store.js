@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var values = require( 'lodash/object/values' );
+var values = require( 'lodash/values' );
 
 /**
  * Internal dependencies
@@ -10,38 +10,50 @@ var Dispatcher = require( 'dispatcher' ),
 	emitter = require( 'lib/mixins/emitter' ),
 	MediaValidationStore = require( './validation-store' );
 
+import { isItemBeingUploaded } from 'lib/media/utils';
+
 /**
  * Module variables
  */
-var MediaStore = {},
-	_media = {},
-	_pointers = {};
+const MediaStore = {
+	_media: {},
+	_pointers: {}
+};
 
 emitter( MediaStore );
 
 function receiveSingle( siteId, item, itemId ) {
-	if ( ! ( siteId in _media ) ) {
-		_media[ siteId ] = {};
+	if ( ! ( siteId in MediaStore._media ) ) {
+		MediaStore._media[ siteId ] = {};
 	}
 
 	if ( itemId ) {
-		if ( ! ( siteId in _pointers ) ) {
-			_pointers[ siteId ] = {};
+		if ( ! ( siteId in MediaStore._pointers ) ) {
+			MediaStore._pointers[ siteId ] = {};
 		}
 
-		_pointers[ siteId ][ itemId ] = item.ID;
-		delete _media[ siteId ][ itemId ];
+		MediaStore._pointers[ siteId ][ itemId ] = item.ID;
+
+		const maybeTransientMediaItem = MediaStore._media[ siteId ][ itemId ];
+
+		if ( isItemBeingUploaded( maybeTransientMediaItem ) ) {
+			item.description = maybeTransientMediaItem.description;
+			item.alt = maybeTransientMediaItem.alt;
+			item.caption = maybeTransientMediaItem.caption;
+		}
+
+		delete MediaStore._media[ siteId ][ itemId ];
 	}
 
-	_media[ siteId ][ item.ID ] = item;
+	MediaStore._media[ siteId ][ item.ID ] = item;
 }
 
 function removeSingle( siteId, item ) {
-	if ( ! ( siteId in _media ) ) {
+	if ( ! ( siteId in MediaStore._media ) ) {
 		return;
 	}
 
-	delete _media[ siteId ][ item.ID ];
+	delete MediaStore._media[ siteId ][ item.ID ];
 }
 
 function receivePage( siteId, items ) {
@@ -51,23 +63,23 @@ function receivePage( siteId, items ) {
 }
 
 MediaStore.get = function( siteId, postId ) {
-	if ( ! ( siteId in _media ) ) {
+	if ( ! ( siteId in MediaStore._media ) ) {
 		return;
 	}
 
-	if ( siteId in _pointers && postId in _pointers[ siteId ] ) {
-		return MediaStore.get( siteId, _pointers[ siteId ][ postId ] );
+	if ( siteId in MediaStore._pointers && postId in MediaStore._pointers[ siteId ] ) {
+		return MediaStore.get( siteId, MediaStore._pointers[ siteId ][ postId ] );
 	}
 
-	return _media[ siteId ][ postId ];
+	return MediaStore._media[ siteId ][ postId ];
 };
 
 MediaStore.getAll = function( siteId ) {
-	if ( ! ( siteId in _media ) ) {
+	if ( ! ( siteId in MediaStore._media ) ) {
 		return;
 	}
 
-	return values( _media[ siteId ] );
+	return values( MediaStore._media[ siteId ] );
 };
 
 MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
@@ -122,6 +134,12 @@ MediaStore.dispatchToken = Dispatcher.register( function( payload ) {
 			} );
 
 			MediaStore.emit( 'change' );
+			break;
+		case 'FETCH_MEDIA_LIMITS':
+			if ( ! action.siteId ) {
+				break;
+			}
+			MediaStore.emit( 'fetch-media-limits' );
 			break;
 	}
 } );

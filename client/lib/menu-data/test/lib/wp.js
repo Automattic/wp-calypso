@@ -3,7 +3,7 @@
  **/
 
 var fixtures = require( '../fixtures' ),
-	cloneDeep = require( 'lodash/lang/cloneDeep' );
+	cloneDeep = require( 'lodash/cloneDeep' );
 
 function WP() {
 }

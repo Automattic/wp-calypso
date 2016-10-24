@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
@@ -23,7 +24,7 @@ module.exports = function( message, callback, confirmButtonText, cancelButtonTex
 		}
 	}
 
-	React.render(
+	ReactDom.render(
 		React.createElement( AcceptDialog, {
 			message: message,
 			onClose: onClose,

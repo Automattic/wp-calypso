@@ -73,7 +73,7 @@ ProductsList.prototype.fetch = function() {
 			return;
 		}
 
-		productsList = this.parse( data );
+		productsList = data;
 
 		debug( 'ProductsList fetched from api:', productsList );
 
@@ -97,21 +97,6 @@ ProductsList.prototype.fetch = function() {
 ProductsList.prototype.initialize = function( productsList ) {
 	this.data = productsList;
 	this.initialized = true;
-};
-
-/**
- * Parses data returned from the API.
- *
- * @param {array} data
- * @return {array}
- **/
-ProductsList.prototype.parse = function( data ) {
-	/**
-	 * Remove the _headers
-	 */
-	delete data._headers;
-
-	return data;
 };
 
 /**

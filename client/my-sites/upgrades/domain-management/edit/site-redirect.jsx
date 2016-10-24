@@ -13,8 +13,7 @@ const analyticsMixin = require( 'lib/mixins/analytics' ),
 	SubscriptionSettings = require( './card/subscription-settings' ),
 	VerticalNav = require( 'components/vertical-nav' ),
 	VerticalNavItem = require( 'components/vertical-nav/item' ),
-	paths = require( 'my-sites/upgrades/paths' ),
-	config = require( 'config' );
+	paths = require( 'my-sites/upgrades/paths' );
 
 const SiteRedirect = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'edit' ) ],
@@ -32,7 +31,7 @@ const SiteRedirect = React.createClass( {
 
 		return (
 			<Property label={ this.translate( 'Redirect expires on' ) }>
-				{ domain.expirationDate }
+				{ domain.expirationMoment.format( 'MMMM D, YYYY' ) }
 			</Property>
 		);
 	},
@@ -67,12 +66,8 @@ const SiteRedirect = React.createClass( {
 	},
 
 	siteRedirectNavItem() {
-		if ( ! config.isEnabled( 'upgrades/domain-management/site-redirect' ) ) {
-			return;
-		}
-
 		return (
-			<VerticalNavItem path={ paths.domainManagementRedirectSettings( this.props.selectedSite.domain, this.props.domain.name ) }>
+			<VerticalNavItem path={ paths.domainManagementRedirectSettings( this.props.selectedSite.slug, this.props.domain.name ) }>
 				{ this.translate( 'Redirect Settings' ) }
 			</VerticalNavItem>
 		);

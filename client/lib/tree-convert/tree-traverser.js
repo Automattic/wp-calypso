@@ -2,8 +2,8 @@
  * External dependencies
  */
 
-var findIndex = require( 'lodash/array/findIndex' ),
-	some = require( 'lodash/collection/some' );
+var findIndex = require( 'lodash/findIndex' ),
+	some = require( 'lodash/some' );
 
 /**
  * Given a node within a tree, return the node's parent or the tree

@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var reject = require( 'lodash/collection/reject' ),
-	filter = require( 'lodash/collection/filter' ),
-	clone = require( 'lodash/lang/clone' ),
+var reject = require( 'lodash/reject' ),
+	filter = require( 'lodash/filter' ),
+	clone = require( 'lodash/clone' ),
 	debug = require( 'debug' )( 'calypso:sites-list:log-store' );
 
 /**

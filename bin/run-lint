@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+const child_process = require( 'child_process' );
+const path = require( 'path' );
+var args = [ '--cache', '--quiet', '--ext=.js',  '--ext=.jsx' ];
+if ( process.argv.length > 2 ) {
+	args = args.concat( process.argv.slice( 2 ) );
+} else {
+	args = args.concat( [ '.' ] );
+}
+
+const results = child_process.spawnSync( path.join( '.', 'node_modules', '.bin', 'eslint' ), args );
+
+if ( results.stdout ) {
+	process.stdout.write( results.stdout );
+}
+if ( results.stderr ) {
+	process.stderr.write( results.stderr );
+}
+process.on( 'exit', function() {
+	process.exit( results.status );
+} );

@@ -1,14 +1,13 @@
 /**
  * External dependencies
  */
-import { Component, PropTypes } from 'react';
+import { cloneElement, Component, PropTypes } from 'react';
 import { Container } from 'flux/utils';
-import pick from 'lodash/object/pick';
+import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
  */
-import passToChildren from 'lib/react-pass-to-children';
 import ShortcodesStore from 'lib/shortcodes/store';
 
 class ShortcodeData extends Component {
@@ -25,8 +24,9 @@ class ShortcodeData extends Component {
 	}
 
 	render() {
+		const { children, filterRenderResult } = this.props;
 		const props = pick( this.state.data, 'body', 'scripts', 'styles' );
-		return passToChildren( this, this.props.filterRenderResult( props ) );
+		return cloneElement( children, filterRenderResult( props ) );
 	}
 }
 

@@ -1,52 +1,53 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import classNames from 'classnames';
-import times from 'lodash/utility/times';
+import React from 'react';
+import times from 'lodash/times';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import PurchaseItem from '../item';
+import SectionHeader from 'components/section-header';
 
-const PurchasesSite = React.createClass( {
-	propTypes: {
-		domain: React.PropTypes.string,
-		name: React.PropTypes.string,
-		purchases: React.PropTypes.array,
-		isPlaceholder: React.PropTypes.bool
-	},
+const PurchasesSite = ( { isPlaceholder, name, purchases, slug, domain } ) => {
+	let items, label = name;
 
-	placeholders() {
-		return times( 2, index => <PurchaseItem isPlaceholder key={ index } /> );
-	},
+	if ( isPlaceholder ) {
+		items = times( 2, index => (
+			<PurchaseItem
+				isPlaceholder key={ index } />
+		) );
 
-	render() {
-		const { isPlaceholder } = this.props,
-			classes = classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } );
-
-		return (
-			<div className={ classes }>
-				<div className="purchases-site__header">
-					<div className="purchases-site__header-text">
-						{ isPlaceholder ? this.translate( 'Loading…' ) : this.props.name }
-					</div>
-				</div>
-				{
-					isPlaceholder ?
-					this.placeholders() :
-					this.props.purchases.map( purchase => (
-						<PurchaseItem
-							key={ purchase.id }
-							domain={ this.props.domain }
-							purchase={ purchase } />
-						)
-					)
-				}
-			</div>
-		);
+		label = i18n.translate( 'Loading…' );
+	} else {
+		items = purchases.map( purchase => (
+			<PurchaseItem
+				key={ purchase.id }
+				slug={ slug }
+				purchase={ purchase } />
+		) );
 	}
-} );
+
+	return (
+		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
+			<SectionHeader label={ label }>
+				<span className="purchases-site__slug">{ domain }</span>
+			</SectionHeader>
+
+			{ items }
+		</div>
+	);
+};
+
+PurchasesSite.propTypes = {
+	domain: React.PropTypes.string,
+	isPlaceholder: React.PropTypes.bool,
+	name: React.PropTypes.string,
+	purchases: React.PropTypes.array,
+	slug: React.PropTypes.string
+};
 
 export default PurchasesSite;

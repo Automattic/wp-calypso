@@ -1,10 +1,21 @@
-.drafts-button {
-	color: $gray-dark;
-	cursor: pointer;
-	font-size: 11px;
-	text-transform: uppercase;
+.drafts-button.button.is-borderless {
+	line-height: 22px;
+	white-space: nowrap;
+
+	&[disabled],
+	&:disabled {
+		cursor: not-allowed;
+		color: lighten( $gray, 10% );
+	}
+
+	&:hover {
+		.count {
+			border-color: $gray-dark;
+			color: $gray-dark;
+		}
+	}
 
 	.count {
-		margin-left: 8px;
+		margin-left: 4px;
 	}
 }

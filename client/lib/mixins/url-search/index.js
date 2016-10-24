@@ -26,21 +26,12 @@ module.exports = {
 	},
 
 	doSearch: function( keywords ) {
+		var searchURL;
+
 		this.setState( {
 			searchOpen: ( false !== keywords )
 		} );
 
-		// don't wait to clear out search
-		if ( false === keywords && this.props.search ) {
-			this.handleSearch( keywords );
-			return;
-		}
-
-		this.handleSearch( keywords );
-	},
-
-	handleSearch: function( keywords ) {
-		var searchURL;
 		if ( this.onSearch ) {
 			this.onSearch( keywords );
 			return;

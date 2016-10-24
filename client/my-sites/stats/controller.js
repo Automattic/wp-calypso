@@ -1,46 +1,32 @@
 /**
  * External Dependencies
  */
-var React = require( 'react' ),
-	store = require( 'store' ),
-	page = require( 'page' ),
-	querystring = require( 'querystring' );
+import React from 'react';
+import page from 'page';
+import i18n from 'i18n-calypso';
+import { find } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-var user = require( 'lib/user' )(),
-	sites = require( 'lib/sites-list' )(),
-	route = require( 'lib/route' ),
-	analytics = require( 'analytics' ),
-	titlecase = require( 'to-title-case' ),
-	i18n = require( 'lib/mixins/i18n' ),
-	analyticsPageTitle = 'Stats',
-	layoutFocus = require( 'lib/layout-focus' ),
-	titleActions = require( 'lib/screen-title/actions' );
+import config from 'config';
+import userFactory from 'lib/user';
+import sitesFactory from 'lib/sites-list';
+import route from 'lib/route';
+import analytics from 'lib/analytics';
+import titlecase from 'to-title-case';
+import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { renderWithReduxStore } from 'lib/react-helpers';
+import { savePreference } from 'state/preferences/actions';
+import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
+import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 
-function getVisitDates() {
-	var statsVisitDates = store.get( 'statVisits' ) || [];
-	return statsVisitDates;
-}
-
-function recordVisitDate() {
-	var statsVisitDates = getVisitDates(),
-		visitDate = i18n.moment().format( 'YYYY-MM-DD' );
-
-	if ( statsVisitDates.indexOf( visitDate ) === -1 ) {
-		statsVisitDates.push( visitDate );
-	}
-
-	if ( statsVisitDates.length > 10 ) {
-		statsVisitDates = statsVisitDates.slice( statsVisitDates.length - 10 );
-	}
-
-	store.set( 'statVisits', statsVisitDates );
-}
+const user = userFactory();
+const sites = sitesFactory();
+const analyticsPageTitle = 'Stats';
 
 function rangeOfPeriod( period, date ) {
-	var periodRange = {
+	const periodRange = {
 		period: period,
 		startOf: date.clone().startOf( period ),
 		endOf: date.clone().endOf( period )
@@ -62,9 +48,9 @@ function rangeOfPeriod( period, date ) {
 }
 
 function getNumPeriodAgo( momentSiteZone, date, period ) {
-	var endOfCurrentPeriod = momentSiteZone.endOf( period ),
-		durationAgo = i18n.moment.duration( endOfCurrentPeriod.diff( date ) ),
-		numPeriodAgo;
+	const endOfCurrentPeriod = momentSiteZone.endOf( period );
+	const durationAgo = i18n.moment.duration( endOfCurrentPeriod.diff( date ) );
+	let numPeriodAgo;
 
 	switch ( period ) {
 		case 'day':
@@ -84,7 +70,7 @@ function getNumPeriodAgo( momentSiteZone, date, period ) {
 }
 
 function getSiteFilters( siteId ) {
-	var filters = [
+	const filters = [
 		{ title: i18n.translate( 'Insights' ), path: '/stats/insights/' + siteId, id: 'stats-insights' },
 		{ title: i18n.translate( 'Days' ), path: '/stats/day/' + siteId, id: 'stats-day', period: 'day' },
 		{ title: i18n.translate( 'Weeks' ), path: '/stats/week/' + siteId, id: 'stats-week', period: 'week' },
@@ -96,13 +82,17 @@ function getSiteFilters( siteId ) {
 }
 
 module.exports = {
+	resetFirstView( context ) {
+		context.store.dispatch( savePreference( 'firstViewHistory', [] ) );
+	},
 
 	redirectToDefaultSitePage: function( context, next ) {
-		var siteFragment = route.getSiteFragment( context.path );
+		const siteFragment = route.getSiteFragment( context.path );
 
 		if ( siteFragment ) {
 			// if we are redirecting we need to retain our intended layout-focus
-			layoutFocus.setNext( layoutFocus.getCurrent() );
+			const currentLayoutFocus = getCurrentLayoutFocus( context.store.getState() );
+			context.store.dispatch( setNextLayoutFocus( currentLayoutFocus ) );
 			page.redirect( route.getStatsDefaultSitePage( siteFragment ) );
 		} else {
 			next();
@@ -110,47 +100,21 @@ module.exports = {
 	},
 
 	insights: function( context, next ) {
-		var Insights = require( 'my-sites/stats/insights' ),
-			StatsList = require( 'lib/stats/stats-list' ),
-			StatsSummaryList = require( 'lib/stats/summary-list' ),
-			NuxInsights = require( 'my-sites/stats/nux/insights' ),
-			FollowList = require( 'lib/follow-list' ),
-			site,
-			siteId = context.params.site_id,
-			filters = getSiteFilters.bind( null, siteId ),
-			activeFilter = false,
-			basePath = route.sectionify( context.path ),
-			followList,
-			streakList,
-			allTimeList,
-			insightsList,
-			statSummaryList,
-			commentsList,
-			tagsList,
-			publicizeList,
-			wpcomFollowersList,
-			emailFollowersList,
-			commentFollowersList,
-			summaryDate,
-			summarySites = [],
-			startDate = i18n.moment().subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
-			endDate = i18n.moment().endOf( 'month' ).format( 'YYYY-MM-DD' ),
-			momentSiteZone = i18n.moment(),
-			StatsComponent = Insights,
-			twoWeeksAgo = i18n.moment().subtract( 2, 'week' ),
-			siteCreated,
-			isNux;
+		const Insights = require( 'my-sites/stats/stats-insights' );
+		const StatsList = require( 'lib/stats/stats-list' );
+		const FollowList = require( 'lib/follow-list' );
+		let siteId = context.params.site_id;
+		const basePath = route.sectionify( context.path );
+		const followList = new FollowList();
+		let summaryDate;
+		const summarySites = [];
+		let momentSiteZone = i18n.moment();
+		const StatsComponent = Insights;
 
-		followList = new FollowList();
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
-		titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ) );
-
-		activeFilter = filters().filter( function( filter ) {
-			return 'stats-insights' === filter.id;
-		} );
-		activeFilter = activeFilter.shift();
-
-		site = sites.getSite( siteId );
+		let site = sites.getSite( siteId );
 		if ( ! site ) {
 			site = sites.getSite( parseInt( siteId, 10 ) );
 		}
@@ -172,188 +136,126 @@ module.exports = {
 			momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
 			summaryDate = momentSiteZone.format( 'YYYY-MM-DD' );
 			summarySites.push( { ID: siteId, date: summaryDate } );
-			siteCreated = i18n.moment( site.options.created_at );
 		}
 
-		allTimeList = new StatsList( { siteID: siteId, statType: 'stats' } );
-		streakList = new StatsList( { siteID: siteId, statType: 'statsStreak', startDate: startDate, endDate: endDate, max: 3000 } );
-		statSummaryList = new StatsSummaryList( { period: 'day', sites: summarySites } );
-		insightsList = new StatsList( { siteID: siteId, statType: 'statsInsights' } );
-		commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: site.slug } );
-		tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: site.slug } );
-		publicizeList = new StatsList( { siteID: siteId, statType: 'statsPublicize', domain: site.slug } );
-		wpcomFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'wpcom', domain: site.slug, max: 7 } );
-		emailFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'email', domain: site.slug, max: 7 } );
-		commentFollowersList = new StatsList( { siteID: siteId, statType: 'statsCommentFollowers', domain: site.slug, max: 7 } );
+		const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
+			? site.slug : route.getSiteFragment( context.path );
+
+		const commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: siteDomain } );
+		const tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: siteDomain } );
+		const wpcomFollowersList = new StatsList( {
+			siteID: siteId, statType: 'statsFollowers', type: 'wpcom', domain: siteDomain, max: 7 } );
+		const emailFollowersList = new StatsList( {
+			siteID: siteId, statType: 'statsFollowers', type: 'email', domain: siteDomain, max: 7 } );
+		const commentFollowersList = new StatsList( {
+			siteID: siteId, statType: 'statsCommentFollowers', domain: siteDomain, max: 7 } );
 
 		analytics.pageView.record( basePath, analyticsPageTitle + ' > Insights' );
 
-		if ( site.post_count <= 2 &&
-				twoWeeksAgo.isBefore( siteCreated ) &&
-				( ! site.jetpack ) ) {
-			isNux = true;
-		}
-
-		if ( isNux ) {
-			StatsComponent = NuxInsights;
-		}
-
-		React.render(
+		renderWithReduxStore(
 			React.createElement( StatsComponent, {
 				site: site,
 				followList: followList,
-				streakList: streakList,
-				allTimeList: allTimeList,
-				statSummaryList: statSummaryList,
-				insightsList: insightsList,
 				commentsList: commentsList,
 				tagsList: tagsList,
-				publicizeList: publicizeList,
 				wpcomFollowersList: wpcomFollowersList,
 				emailFollowersList: emailFollowersList,
 				commentFollowersList: commentFollowersList,
 				summaryDate: summaryDate
 			} ),
-			document.getElementById( 'primary' )
+			document.getElementById( 'primary' ),
+			context.store
 		);
 	},
 
 	overview: function( context, next ) {
-		var StatsComponent = require( 'my-sites/stats/stats-overview' ),
-			StatsSummaryList = require( 'lib/stats/summary-list' ),
-			filters = function() {
-				return [
-					{ title: i18n.translate( 'Days' ), path: '/stats/day', altPaths: ['/stats'], id: 'stats-day', period: 'day' },
-					{ title: i18n.translate( 'Weeks' ), path: '/stats/week', id: 'stats-week', period: 'week' },
-					{ title: i18n.translate( 'Months' ), path: '/stats/month', id: 'stats-month', period: 'month' },
-					{ title: i18n.translate( 'Years' ), path: '/stats/year', id: 'stats-year', period: 'year' }
-				];
-			},
-			activeFilter = false,
-			queryOptions = querystring.parse( context.querystring ),
-			basePath = route.sectionify( context.path ),
-			statSummaryList,
-			summarySites;
+		const StatsComponent = require( './overview' );
+		const filters = function() {
+			return [
+				{ title: i18n.translate( 'Days' ), path: '/stats/day', altPaths: [ '/stats' ], id: 'stats-day', period: 'day' },
+				{ title: i18n.translate( 'Weeks' ), path: '/stats/week', id: 'stats-week', period: 'week' },
+				{ title: i18n.translate( 'Months' ), path: '/stats/month', id: 'stats-month', period: 'month' },
+				{ title: i18n.translate( 'Years' ), path: '/stats/year', id: 'stats-year', period: 'year' }
+			];
+		};
+		const basePath = route.sectionify( context.path );
 
-		titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ) );
+		window.scrollTo( 0, 0 );
 
-		activeFilter = filters().filter( function( filter ) {
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
+
+		const activeFilter = find( filters(), ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
-		}, this );
+		} );
 
 		// Validate that date filter is legit
-		if ( 0 === activeFilter.length ) {
+		if ( ! activeFilter ) {
 			next();
 		} else {
-			if ( queryOptions.from ) {
-				// For setting the oldStatsLink back to my-stats or wp-admin, depending on source
-				store.set( 'oldStatsLink', queryOptions.from );
-			}
-
-			summarySites = sites.getVisible().map( function( site ) {
-				var momentSiteZone = i18n.moment();
-				if ( 'object' === typeof( site.options ) && 'undefined' !== typeof( site.options.gmt_offset ) ) {
-					momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
-				}
-
-				return {
-					ID: site.ID,
-					date: momentSiteZone.endOf( activeFilter.period ).format( 'YYYY-MM-DD' )
-				};
-			} );
-
-			activeFilter = activeFilter.shift();
-			statSummaryList = new StatsSummaryList( {
-				period: activeFilter.period,
-				sites: summarySites
-			} );
-
 			analytics.mc.bumpStat( 'calypso_stats_overview_period', activeFilter.period );
 			analytics.pageView.record( basePath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
 
-			recordVisitDate();
-
-			React.render(
+			renderWithReduxStore(
 				React.createElement( StatsComponent, {
 					period: activeFilter.period,
 					sites: sites,
-					statSummaryList: statSummaryList,
 					path: context.pathname,
 					user: user
 				} ),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	},
 
 	site: function( context, next ) {
-		var currentSite,
-			siteId = context.params.site_id,
-			siteFragment = route.getSiteFragment( context.path ),
-			queryOptions = querystring.parse( context.querystring ),
-			FollowList = require( 'lib/follow-list' ),
-			SiteStatsComponent = require( 'my-sites/stats/site' ),
-			NuxSite = require( 'my-sites/stats/nux/site' ),
-			StatsList = require( 'lib/stats/stats-list' ),
-			filters = getSiteFilters.bind( null, siteId ),
-			activeFilter = false,
-			followList,
-			activeTabVisitsList,
-			visitsList,
-			date,
-			charts = function() {
-				return [
-					{ attr: 'views', legendOptions: [ 'visitors' ], className: 'visible', label: i18n.translate( 'Views', { context: 'noun' } ) },
-					{ attr: 'visitors', className: 'user', label: i18n.translate( 'Visitors', { context: 'noun' } ) },
-					{ attr: 'likes', className: 'star', label: i18n.translate( 'Likes', { context: 'noun' } ) },
-					{ attr: 'comments', className: 'comment', label: i18n.translate( 'Comments', { context: 'noun' } ) }
-				];
-			},
-			chartDate,
-			chartTab,
-			visitsListFields,
-			startDate,
-			endDate,
-			chartEndDate,
-			postsPagesList,
-			tagsList,
-			referrersList,
-			clicksList,
-			authorsList,
-			period,
-			chartPeriod,
-			countriesList,
-			videoPlaysList,
-			commentsList,
-			wpcomFollowersList,
-			emailFollowersList,
-			commentFollowersList,
-			publicizeList,
-			searchTermsList,
-			siteOffset = 0,
-			momentSiteZone = i18n.moment(),
-			numPeriodAgo = 0,
-			basePath = route.sectionify( context.path ),
-			baseAnalyticsPath,
-			chartQuantity = 10,
-			siteComponent,
-			twoWeeksAgo = i18n.moment().subtract( 2, 'week' ),
-			siteCreated,
-			isNux;
+		let siteId = context.params.site_id;
+		const siteFragment = route.getSiteFragment( context.path );
+		const queryOptions = context.query;
+		const FollowList = require( 'lib/follow-list' );
+		const SiteStatsComponent = require( 'my-sites/stats/site' );
+		const StatsList = require( 'lib/stats/stats-list' );
+		const filters = getSiteFilters.bind( null, siteId );
+		let date;
+		const charts = function() {
+			return [
+				{ attr: 'views', legendOptions: [ 'visitors' ], gridicon: 'visible',
+					label: i18n.translate( 'Views', { context: 'noun' } ) },
+				{ attr: 'visitors', gridicon: 'user', label: i18n.translate( 'Visitors', { context: 'noun' } ) },
+				{ attr: 'likes', gridicon: 'star', label: i18n.translate( 'Likes', { context: 'noun' } ) },
+				{ attr: 'comments', gridicon: 'comment', label: i18n.translate( 'Comments', { context: 'noun' } ) }
+			];
+		};
+		let chartDate;
+		let chartTab;
+		let visitsListFields;
+		let endDate;
+		let chartEndDate;
+		let period;
+		let chartPeriod;
+		let siteOffset = 0;
+		let momentSiteZone = i18n.moment();
+		let numPeriodAgo = 0;
+		const basePath = route.sectionify( context.path );
+		let baseAnalyticsPath;
+		let chartQuantity = 10;
+		let siteComponent;
 
-		titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ) );
+		// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+		context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 
-		currentSite = sites.getSite( siteId );
+		let currentSite = sites.getSite( siteId );
 		if ( ! currentSite ) {
 			currentSite = sites.getSite( parseInt( siteId, 10 ) );
 		}
 		siteId = currentSite ? ( currentSite.ID || 0 ) : 0;
 
-		activeFilter = filters().filter( function( filter ) {
+		const activeFilter = find( filters(), ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
-		}, this );
+		} );
 
-		if ( ( ! siteFragment ) || ( 0 === activeFilter.length ) ) {
+		if ( ! siteFragment || ! activeFilter ) {
 			next();
 		} else {
 			if ( 0 === siteId ) {
@@ -367,20 +269,20 @@ module.exports = {
 			}
 
 			if ( currentSite && currentSite.domain ) {
-				titleActions.setTitle( i18n.translate( 'Stats', { textOnly: true } ), { siteID: currentSite.domain } );
+				// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
+				context.store.dispatch( setTitle( i18n.translate( 'Stats', { textOnly: true } ) ) );
 			}
 
-			if ( 'object' === typeof( currentSite.options ) && 'undefined' !== typeof( currentSite.options.gmt_offset ) ) {
+			if ( currentSite && 'object' === typeof currentSite.options && 'undefined' !== typeof currentSite.options.gmt_offset ) {
 				siteOffset = currentSite.options.gmt_offset;
 			}
 			momentSiteZone = i18n.moment().utcOffset( siteOffset );
-			activeFilter = activeFilter.shift();
-			chartDate = rangeOfPeriod( activeFilter.period, momentSiteZone.clone() ).endOf;
+			chartDate = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).endOf;
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
-				date = i18n.moment( queryOptions.startDate );
+				date = i18n.moment( queryOptions.startDate ).locale( 'en' );
 				numPeriodAgo = getNumPeriodAgo( momentSiteZone, date, activeFilter.period );
 			} else {
-				date = rangeOfPeriod( activeFilter.period, momentSiteZone.clone() ).startOf;
+				date = rangeOfPeriod( activeFilter.period, momentSiteZone.clone().locale( 'en' ) ).startOf;
 			}
 
 			numPeriodAgo = parseInt( numPeriodAgo, 10 );
@@ -398,37 +300,16 @@ module.exports = {
 			analytics.mc.bumpStat( 'calypso_stats_site_period', activeFilter.period + numPeriodAgo );
 			analytics.pageView.record( baseAnalyticsPath, analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) );
 
-			recordVisitDate();
-
 			period = rangeOfPeriod( activeFilter.period, date );
 			chartPeriod = rangeOfPeriod( activeFilter.period, chartDate );
-			startDate = period.startOf.format( 'YYYY-MM-DD' );
 			endDate = period.endOf.format( 'YYYY-MM-DD' );
 			chartEndDate = chartPeriod.endOf.format( 'YYYY-MM-DD' );
 
-			if ( queryOptions.from ) {
-				// For setting the oldStatsLink back to my-stats or wp-admin, depending on source
-				store.set( 'oldStatsLink', queryOptions.from );
-			}
-
-			// If there is saved tab in store, use it then remove
-			if ( store.get( 'statTab' + siteId ) ) {
-				chartTab = store.get( 'statTab' + siteId );
-				store.remove( 'statTab' + siteId );
-			} else {
-				chartTab = 'views';
-			}
-
+			chartTab = queryOptions.tab || 'views';
 			visitsListFields = chartTab;
 			// If we are on the default Tab, grab visitors too
 			if ( 'views' === visitsListFields ) {
 				visitsListFields = 'views,visitors';
-			}
-
-			if ( queryOptions.tab ) {
-				store.set( 'statTab' + siteId, queryOptions.tab );
-				// We don't want to persist tab throughout navigation, it's only for selecting original tab
-				page.redirect( context.pathname );
 			}
 
 			switch ( activeFilter.period ) {
@@ -448,110 +329,127 @@ module.exports = {
 					break;
 			}
 
-			followList = new FollowList();
-			activeTabVisitsList = new StatsList( { siteID: siteId, statType: 'statsVisits', unit: activeFilter.period, quantity: chartQuantity, date: chartEndDate, stat_fields: visitsListFields } );
-			visitsList = new StatsList( { siteID: siteId, statType: 'statsVisits', unit: activeFilter.period, quantity: chartQuantity, date: chartEndDate, stat_fields: 'views,visitors,likes,comments,post_titles' } );
-			postsPagesList = new StatsList( { siteID: siteId, statType: 'statsTopPosts', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			referrersList = new StatsList( { siteID: siteId, statType: 'statsReferrers', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			clicksList = new StatsList( { siteID: siteId, statType: 'statsClicks', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			authorsList = new StatsList( { siteID: siteId, statType: 'statsTopAuthors', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			countriesList = new StatsList( { siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			videoPlaysList = new StatsList( { siteID: siteId, statType: 'statsVideoPlays', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			searchTermsList = new StatsList( { siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, domain: currentSite.slug } );
-			tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: currentSite.slug } );
-			commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: currentSite.slug } );
-			wpcomFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'wpcom', domain: currentSite.slug, max: 7 } );
-			emailFollowersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', type: 'email', domain: currentSite.slug, max: 7 } );
-			commentFollowersList = new StatsList( { siteID: siteId, statType: 'statsCommentFollowers', domain: currentSite.slug, max: 7 } );
-			publicizeList = new StatsList( { siteID: siteId, statType: 'statsPublicize', domain: currentSite.slug } );
+			const siteDomain = ( currentSite && ( typeof currentSite.slug !== 'undefined' ) )
+					? currentSite.slug : siteFragment;
+
+			const followList = new FollowList();
+			const activeTabVisitsList = new StatsList( {
+				siteID: siteId, statType: 'statsVisits', unit: activeFilter.period,
+				quantity: chartQuantity, date: chartEndDate, stat_fields: visitsListFields, domain: siteDomain } );
+			const visitsList = new StatsList( {
+				siteID: siteId, statType: 'statsVisits', unit: activeFilter.period,
+				quantity: chartQuantity, date: chartEndDate,
+				stat_fields: 'views,visitors,likes,comments,post_titles', domain: siteDomain } );
+			const postsPagesList = new StatsList( {
+				siteID: siteId, statType: 'statsTopPosts', period: activeFilter.period, date: endDate, domain: siteDomain } );
+			const referrersList = new StatsList( {
+				siteID: siteId, statType: 'statsReferrers', period: activeFilter.period, date: endDate, domain: siteDomain } );
+			const clicksList = new StatsList( {
+				siteID: siteId, statType: 'statsClicks', period: activeFilter.period, date: endDate, domain: siteDomain } );
+			const authorsList = new StatsList( {
+				siteID: siteId, statType: 'statsTopAuthors', period: activeFilter.period, date: endDate, domain: siteDomain } );
+			const countriesList = new StatsList( {
+				siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period, date: endDate, domain: siteDomain } );
+			const videoPlaysList = new StatsList( {
+				siteID: siteId, statType: 'statsVideoPlays', period: activeFilter.period, date: endDate, domain: siteDomain } );
+			const searchTermsList = new StatsList( {
+				siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, domain: siteDomain } );
+			const tagsList = new StatsList( { siteID: siteId, statType: 'statsTags', domain: siteDomain } );
+			const commentsList = new StatsList( { siteID: siteId, statType: 'statsComments', domain: siteDomain } );
+			const wpcomFollowersList = new StatsList( {
+				siteID: siteId, statType: 'statsFollowers', type: 'wpcom', domain: siteDomain, max: 7 } );
+			const emailFollowersList = new StatsList( {
+				siteID: siteId, statType: 'statsFollowers', type: 'email', domain: siteDomain, max: 7 } );
+			const commentFollowersList = new StatsList( {
+				siteID: siteId, statType: 'statsCommentFollowers', domain: siteDomain, max: 7 } );
 
 			siteComponent = SiteStatsComponent;
+			const siteComponentChildren = {
+				date,
+				charts,
+				chartDate,
+				chartTab,
+				context,
+				sites,
+				activeTabVisitsList,
+				visitsList,
+				postsPagesList,
+				referrersList,
+				clicksList,
+				authorsList,
+				countriesList,
+				videoPlaysList,
+				siteId,
+				period,
+				chartPeriod,
+				tagsList,
+				commentsList,
+				wpcomFollowersList,
+				emailFollowersList,
+				commentFollowersList,
+				followList,
+				searchTermsList,
+				slug: siteDomain,
+				path: context.pathname,
+			};
 
-			if ( currentSite && currentSite.options ) {
-				siteCreated = i18n.moment( currentSite.options.created_at );
+			if ( config.isEnabled( 'manage/stats/podcasts' ) ) {
+				siteComponentChildren.podcastDownloadsList = new StatsList( {
+					siteID: siteId,
+					statType: 'statsPodcastDownloads',
+					period: activeFilter.period,
+					date: endDate,
+					domain: siteDomain
+				} );
 			}
 
-			if ( currentSite.post_count <= 2 &&
-					twoWeeksAgo.isBefore( siteCreated ) &&
-					( ! currentSite.jetpack ) ) {
-				isNux = true;
-			}
-
-			if ( isNux ) {
-				siteComponent = NuxSite;
-			}
-
-			React.render(
-				React.createElement( siteComponent, {
-					date: date,
-					charts: charts,
-					chartDate: chartDate,
-					chartTab: chartTab,
-					path: context.pathname,
-					context: context,
-					sites: sites,
-					activeTabVisitsList: activeTabVisitsList,
-					visitsList: visitsList,
-					postsPagesList: postsPagesList,
-					referrersList: referrersList,
-					clicksList: clicksList,
-					authorsList: authorsList,
-					countriesList: countriesList,
-					videoPlaysList: videoPlaysList,
-					siteId: siteId,
-					period: period,
-					chartPeriod: chartPeriod,
-					tagsList: tagsList,
-					commentsList: commentsList,
-					wpcomFollowersList: wpcomFollowersList,
-					emailFollowersList: emailFollowersList,
-					commentFollowersList: commentFollowersList,
-					publicizeList: publicizeList,
-					followList: followList,
-					searchTermsList: searchTermsList,
-					slug: currentSite.slug
-				} ),
-				document.getElementById( 'primary' )
+			renderWithReduxStore(
+				React.createElement( siteComponent, siteComponentChildren ),
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	},
 
 	summary: function( context, next ) {
-		var site,
-			siteId = context.params.site_id,
-			siteFragment = route.getSiteFragment( context.path ),
-			queryOptions = querystring.parse( context.querystring ),
-			StatsList = require( 'lib/stats/stats-list' ),
-			FollowList = require( 'lib/follow-list' ),
-			StatsSummaryComponent = require( 'my-sites/stats/summary' ),
-			filters = function( contextModule, siteId ) {
-				return [
-					{ title: i18n.translate( 'Days' ), path: '/stats/' + contextModule + '/' + siteId, altPaths: [ '/stats/day/' + contextModule + '/' + siteId ], id: 'stats-day', period: 'day', back: '/stats/' + siteId },
-					{ title: i18n.translate( 'Weeks' ), path: '/stats/week/' + contextModule + '/' + siteId, id: 'stats-week', period: 'week', back: '/stats/week/' + siteId },
-					{ title: i18n.translate( 'Months' ), path: '/stats/month/' + contextModule + '/' + siteId, id: 'stats-month', period: 'month', back: '/stats/month/' + siteId },
-					{ title: i18n.translate( 'Years' ), path: '/stats/year/' + contextModule + '/' + siteId, id: 'stats-year', period: 'year', back: '/stats/year/' + siteId }
-				];
-			}.bind( null, context.params.module, siteId ),
-			activeFilter = false,
-			date,
-			endDate,
-			period,
-			summaryList,
-			visitsList,
-			followList = new FollowList(),
-			validModules = [ 'posts', 'referrers', 'clicks', 'countryviews', 'authors', 'videoplays', 'videodetails', 'searchterms' ],
-			momentSiteZone = i18n.moment(),
-			basePath = route.sectionify( context.path );
+		let siteId = context.params.site_id;
+		const siteFragment = route.getSiteFragment( context.path );
+		const queryOptions = context.query;
+		const StatsList = require( 'lib/stats/stats-list' );
+		const FollowList = require( 'lib/follow-list' );
+		const StatsSummaryComponent = require( 'my-sites/stats/summary' );
+		const filters = function( contextModule, _siteId ) {
+			return [
+				{ title: i18n.translate( 'Days' ), path: '/stats/' + contextModule + '/' + _siteId,
+					altPaths: [ '/stats/day/' + contextModule + '/' + _siteId ], id: 'stats-day',
+						period: 'day', back: '/stats/' + _siteId },
+				{ title: i18n.translate( 'Weeks' ), path: '/stats/week/' + contextModule + '/' + _siteId,
+					id: 'stats-week', period: 'week', back: '/stats/week/' + _siteId },
+				{ title: i18n.translate( 'Months' ), path: '/stats/month/' + contextModule + '/' + _siteId,
+					id: 'stats-month', period: 'month', back: '/stats/month/' + _siteId },
+				{ title: i18n.translate( 'Years' ), path: '/stats/year/' + contextModule + '/' + _siteId,
+					id: 'stats-year', period: 'year', back: '/stats/year/' + _siteId }
+			];
+		}.bind( null, context.params.module, siteId );
+		let date;
+		let endDate;
+		let period;
+		let summaryList;
+		let visitsList;
+		const followList = new FollowList();
+		const validModules = [ 'posts', 'referrers', 'clicks', 'countryviews', 'authors', 'videoplays', 'videodetails', 'podcastdownloads', 'searchterms' ];
+		let momentSiteZone = i18n.moment();
+		const basePath = route.sectionify( context.path );
 
-		site = sites.getSite( siteId );
+		let site = sites.getSite( siteId );
 		if ( ! site ) {
 			site = sites.getSite( parseInt( siteId, 10 ) );
 		}
 		siteId = site ? ( site.ID || 0 ) : 0;
 
-		activeFilter = filters().filter( function( filter ) {
+		const activeFilter = find( filters(), ( filter ) => {
 			return context.pathname === filter.path || ( filter.altPaths && -1 !== filter.altPaths.indexOf( context.pathname ) );
-		}, this );
+		} );
 
 		// if we have a siteFragment, but no siteId, wait for the sites list
 		if ( siteFragment && 0 === siteId ) {
@@ -563,13 +461,12 @@ module.exports = {
 				// site is not in the user's site list
 				window.location = '/stats';
 			}
-		} else if ( 0 === activeFilter.length || -1 === validModules.indexOf( context.params.module ) ) {
+		} else if ( ! activeFilter || -1 === validModules.indexOf( context.params.module ) ) {
 			next();
 		} else {
 			if ( 'object' === typeof( site.options ) && 'undefined' !== typeof( site.options.gmt_offset ) ) {
 				momentSiteZone = i18n.moment().utcOffset( site.options.gmt_offset );
 			}
-			activeFilter = activeFilter.shift();
 			if ( queryOptions.startDate && i18n.moment( queryOptions.startDate ).isValid ) {
 				date = i18n.moment( queryOptions.startDate );
 			} else {
@@ -578,41 +475,62 @@ module.exports = {
 			period = rangeOfPeriod( activeFilter.period, date );
 			endDate = period.endOf.format( 'YYYY-MM-DD' );
 
+			const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
+				? site.slug : siteFragment;
+
 			switch ( context.params.module ) {
 
 				case 'posts':
-					visitsList = new StatsList( { statType: 'statsVisits', unit: activeFilter.period, siteID: siteId, quantity: 10, date: endDate } );
-					summaryList = new StatsList( { statType: 'statsTopPosts', siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					visitsList = new StatsList( {
+						statType: 'statsVisits', unit: activeFilter.period, siteID: siteId,
+						quantity: 10, date: endDate, domain: siteDomain } );
+					summaryList = new StatsList( { statType: 'statsTopPosts', siteID: siteId,
+						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
 					break;
 
 				case 'referrers':
-					summaryList = new StatsList( { siteID: siteId, statType: 'statsReferrers', period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( {
+						siteID: siteId, statType: 'statsReferrers', period: activeFilter.period,
+						date: endDate, max: 0, domain: siteDomain } );
 					break;
 
 				case 'clicks':
-					summaryList = new StatsList( { statType: 'statsClicks', siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( {
+						statType: 'statsClicks', siteID: siteId, period: activeFilter.period,
+						date: endDate, max: 0, domain: siteDomain } );
 					break;
 
 				case 'countryviews':
-					summaryList = new StatsList( { siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( {
+						siteID: siteId, statType: 'statsCountryViews', period: activeFilter.period,
+						date: endDate, max: 0, domain: siteDomain } );
 					break;
 
 				case 'authors':
-					summaryList = new StatsList( { statType: 'statsTopAuthors', siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( {
+						statType: 'statsTopAuthors', siteID: siteId, period: activeFilter.period,
+						date: endDate, max: 0, domain: siteDomain } );
 					break;
 
 				case 'videoplays':
-					summaryList = new StatsList( { statType: 'statsVideoPlays', siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( { statType: 'statsVideoPlays', siteID: siteId,
+						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
 					break;
 
 				case 'videodetails':
-					summaryList = new StatsList( { statType: 'statsVideo', post: queryOptions.post, siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( { statType: 'statsVideo', post: queryOptions.post,
+						siteID: siteId, period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
 					break;
 
 				case 'searchterms':
-					summaryList = new StatsList( { siteID: siteId, statType: 'statsSearchTerms', period: activeFilter.period, date: endDate, max: 0, domain: site.slug } );
+					summaryList = new StatsList( { siteID: siteId, statType: 'statsSearchTerms',
+						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
 					break;
 
+				case 'podcastdownloads':
+					summaryList = new StatsList( { statType: 'statsPodcastDownloads', siteID: siteId,
+						period: activeFilter.period, date: endDate, max: 0, domain: siteDomain } );
+					break;
 			}
 
 			analytics.pageView.record(
@@ -620,7 +538,7 @@ module.exports = {
 				analyticsPageTitle + ' > ' + titlecase( activeFilter.period ) + ' > ' + titlecase( context.params.module )
 			);
 
-			React.render(
+			renderWithReduxStore(
 				React.createElement( StatsSummaryComponent, {
 					date: date,
 					context: context,
@@ -633,22 +551,22 @@ module.exports = {
 					siteId: siteId,
 					period: period
 				} ),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	},
 
 	post: function( context ) {
-		var site,
-			siteId = context.params.site_id,
-			postId = parseInt( context.params.post_id, 10 ),
-			StatsPostComponent = require( 'my-sites/stats/post' ),
-			StatsList = require( 'lib/stats/stats-list' ),
-			pathParts = context.path.split( '/' ),
-			postOrPage = pathParts[ 2 ] === 'post' ? 'post' : 'page',
-			postViewsList;
+		let siteId = context.params.site_id;
+		const postId = parseInt( context.params.post_id, 10 );
+		const StatsPostComponent = require( 'my-sites/stats/stats-post-detail' );
+		const StatsList = require( 'lib/stats/stats-list' );
+		const pathParts = context.path.split( '/' );
+		const postOrPage = pathParts[ 2 ] === 'post' ? 'post' : 'page';
+		let postViewsList;
 
-		site = sites.getSite( siteId );
+		let site = sites.getSite( siteId );
 		if ( ! site ) {
 			site = sites.getSite( parseInt( siteId, 10 ) );
 		}
@@ -664,11 +582,15 @@ module.exports = {
 				window.location = '/stats';
 			}
 		} else {
-			postViewsList = new StatsList( { statType: 'statsPostViews', siteID: siteId, post: postId, domain: site.slug } );
+			const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
+				? site.slug : route.getSiteFragment( context.path );
 
-			analytics.pageView.record( '/stats/' + postOrPage + '/:post_id/:site', analyticsPageTitle + ' > Single ' + titlecase( postOrPage ) );
+			postViewsList = new StatsList( { statType: 'statsPostViews', siteID: siteId, post: postId, domain: siteDomain } );
 
-			React.render(
+			analytics.pageView.record( '/stats/' + postOrPage + '/:post_id/:site',
+				analyticsPageTitle + ' > Single ' + titlecase( postOrPage ) );
+
+			renderWithReduxStore(
 				React.createElement( StatsPostComponent, {
 					siteId: siteId,
 					postId: postId,
@@ -677,29 +599,32 @@ module.exports = {
 					path: context.path,
 					postViewsList: postViewsList
 				} ),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	},
 
 	follows: function( context, next ) {
-		var site,
-			siteId = context.params.site_id,
-			FollowList = require( 'lib/follow-list' ),
-			FollowsComponent = require( 'my-sites/stats/follows' ),
-			StatsList = require( 'lib/stats/stats-list' ),
-			validFollowTypes = [ 'wpcom', 'email', 'comment' ],
-			followType = context.params.follow_type,
-			pageNum = context.params.page_num,
-			followList = new FollowList(),
-			followersList,
-			basePath = route.sectionify( context.path );
+		let siteId = context.params.site_id;
+		const FollowList = require( 'lib/follow-list' );
+		const FollowsComponent = require( 'my-sites/stats/follows' );
+		const StatsList = require( 'lib/stats/stats-list' );
+		const validFollowTypes = [ 'wpcom', 'email', 'comment' ];
+		const followType = context.params.follow_type;
+		let pageNum = context.params.page_num;
+		const followList = new FollowList();
+		let followersList;
+		const basePath = route.sectionify( context.path );
 
-		site = sites.getSite( siteId );
+		let site = sites.getSite( siteId );
 		if ( ! site ) {
 			site = sites.getSite( parseInt( siteId, 10 ) );
 		}
 		siteId = site ? ( site.ID || 0 ) : 0;
+
+		const siteDomain = ( site && ( typeof site.slug !== 'undefined' ) )
+			? site.slug : route.getSiteFragment( context.path );
 
 		if ( -1 === validFollowTypes.indexOf( followType ) ) {
 			next();
@@ -721,12 +646,14 @@ module.exports = {
 
 			switch ( followType ) {
 				case 'comment':
-					followersList = new StatsList( { siteID: siteId, statType: 'statsCommentFollowers', domain: site.slug, max: 20, page: pageNum } );
+					followersList = new StatsList( {
+						siteID: siteId, statType: 'statsCommentFollowers', domain: siteDomain, max: 20, page: pageNum } );
 					break;
 
 				case 'email':
 				case 'wpcom':
-					followersList = new StatsList( { siteID: siteId, statType: 'statsFollowers', domain: site.slug, max: 20, page: pageNum, type: followType } );
+					followersList = new StatsList( {
+						siteID: siteId, statType: 'statsFollowers', domain: siteDomain, max: 20, page: pageNum, type: followType } );
 					break;
 			}
 
@@ -735,7 +662,7 @@ module.exports = {
 				analyticsPageTitle + ' > Followers > ' + titlecase( followType )
 			);
 
-			React.render(
+			renderWithReduxStore(
 				React.createElement( FollowsComponent, {
 					path: context.path,
 					sites: sites,
@@ -746,9 +673,10 @@ module.exports = {
 					followersList: followersList,
 					followType: followType,
 					followList: followList,
-					domain: site.slug
+					domain: siteDomain
 				} ),
-				document.getElementById( 'primary' )
+				document.getElementById( 'primary' ),
+				context.store
 			);
 		}
 	}

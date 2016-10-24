@@ -1,23 +1,16 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var sinon = require( 'sinon' ),
-	sinonChai = require( 'sinon-chai' ),
-	expect = require( 'chai' ).use( sinonChai ).expect,
-	rewire = require( 'rewire' ),
-	assign = require( 'lodash/object/assign' ),
-	isPlainObject = require( 'lodash/lang/isPlainObject' ),
-	mockery = require( 'mockery' );
+import sinon from 'sinon';
+import { expect } from 'chai';
+import { assign, isPlainObject, noop } from 'lodash';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-var Dispatcher = require( 'dispatcher' ),
-	PostEditStore = require( 'lib/posts/post-edit-store' ),
-	MediaListStore = require( '../list-store' );
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables
@@ -31,6 +24,13 @@ var DUMMY_SITE_ID = 1,
 		size: 21165,
 		type: 'image/jpeg'
 	},
+	DUMMY_BLOB_UPLOAD = {
+		fileContents: {
+			size: 123456
+		},
+		fileName: 'blob-file.jpg',
+		mimeType: 'image/jpeg'
+	},
 	DUMMY_URL = 'https://wordpress.com/i/stats-icon.gif',
 	DUMMY_API_RESPONSE = {
 		media: [ { title: 'Image' } ],
@@ -39,10 +39,13 @@ var DUMMY_SITE_ID = 1,
 	DUMMY_QUERY = { mime_type: 'audio/' };
 
 describe( 'MediaActions', function() {
-	var mediaGet, mediaList, mediaAdd, mediaAddUrls, mediaUpdate, mediaDelete, MediaActions, sandbox;
+	let mediaGet, mediaList, mediaAdd, mediaAddUrls, mediaUpdate, mediaDelete,
+		MediaActions, sandbox, Dispatcher, PostEditStore, MediaListStore;
+
+	useFakeDom();
+	useMockery();
 
 	before( function() {
-		mockery.enable( { warnOnReplace: false, warnOnUnregistered: false } );
 		mockery.registerMock( './library-selected-store', {
 			getAll: function() {
 				return [ DUMMY_ITEM ];
@@ -54,6 +57,9 @@ describe( 'MediaActions', function() {
 			}
 		} );
 		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} ),
 			site: function( siteId ) {
 				return {
 					addMediaFiles: mediaAdd.bind( siteId ),
@@ -63,16 +69,16 @@ describe( 'MediaActions', function() {
 						return {
 							get: mediaGet.bind( [ siteId, mediaId ].join() ),
 							update: mediaUpdate.bind( [ siteId, mediaId ].join() ),
-							delete: mediaDelete.bind( [ siteId, mediaId ].join() )
+							'delete': mediaDelete.bind( [ siteId, mediaId ].join() )
 						};
 					}
 				};
 			}
 		} );
-		mockery.registerMock( 'lodash/utility/uniqueId', function() {
+		mockery.registerMock( 'lodash/uniqueId', function() {
 			return 'media-1';
 		} );
-		mockery.registerMock( 'lodash/lang/isPlainObject', function( obj ) {
+		mockery.registerMock( 'lodash/isPlainObject', function( obj ) {
 			// In the browser, our DUMMY_UPLOAD will be an instanceof
 			// window.File, but File is not provided by jsdom
 			if ( obj === DUMMY_UPLOAD ) {
@@ -82,7 +88,11 @@ describe( 'MediaActions', function() {
 			return isPlainObject( obj );
 		} );
 
-		MediaActions = rewire( '../actions' );
+		Dispatcher = require( 'dispatcher' );
+		PostEditStore = require( 'lib/posts/post-edit-store' );
+		MediaListStore = require( '../list-store' );
+
+		MediaActions = require( '../actions' );
 	} );
 
 	beforeEach( function() {
@@ -91,11 +101,11 @@ describe( 'MediaActions', function() {
 		sandbox.stub( Dispatcher, 'handleViewAction' );
 		mediaGet = sandbox.stub().callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
 		mediaList = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
-		mediaAdd = sandbox.stub().callsArgWithAsync( 2, null, DUMMY_API_RESPONSE );
-		mediaAddUrls = sandbox.stub().callsArgWithAsync( 2, null, DUMMY_API_RESPONSE );
+		mediaAdd = sandbox.stub().returns( Promise.resolve( DUMMY_API_RESPONSE ) );
+		mediaAddUrls = sandbox.stub().returns( Promise.resolve( DUMMY_API_RESPONSE ) );
 		mediaUpdate = sandbox.stub().callsArgWithAsync( 1, null, DUMMY_API_RESPONSE );
 		mediaDelete = sandbox.stub().callsArgWithAsync( 0, null, DUMMY_API_RESPONSE );
-		MediaActions.__set__( '_fetching', {} );
+		MediaActions._fetching = {};
 		window.FileList = function() {};
 		window.URL = { createObjectURL: sandbox.stub() };
 	} );
@@ -127,7 +137,7 @@ describe( 'MediaActions', function() {
 		it( 'should call to the WordPress.com REST API', function( done ) {
 			Dispatcher.handleViewAction.restore();
 			sandbox.stub( Dispatcher, 'handleViewAction', function() {
-				expect( MediaActions.__get__( '_fetching' ) ).to.have.all.keys( [ [ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join() ] );
+				expect( MediaActions._fetching ).to.have.all.keys( [ [ DUMMY_SITE_ID, DUMMY_ITEM.ID ].join() ] );
 			} );
 
 			MediaActions.fetch( DUMMY_SITE_ID, DUMMY_ITEM.ID );
@@ -185,51 +195,57 @@ describe( 'MediaActions', function() {
 	describe( '#add()', function() {
 		it( 'should accept a single upload', function() {
 			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
-			expect( mediaAdd ).to.have.been.calledOnce;
+			expect( Dispatcher.handleViewAction ).to.have.been.calledOnce;
+			expect( Dispatcher.handleViewAction ).to.have.been.calledWithMatch( {
+				type: 'CREATE_MEDIA_ITEM'
+			} );
 		} );
 
 		it( 'should accept an array of uploads', function() {
 			MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] );
-			expect( mediaAdd ).to.have.been.calledTwice;
+			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
+				type: 'CREATE_MEDIA_ITEM'
+			} );
 		} );
 
 		it( 'should accept a file URL', function() {
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_URL );
-			expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, DUMMY_URL );
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
+				expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, DUMMY_URL );
+			} );
 		} );
 
 		it( 'should accept a FileList of uploads', function() {
 			var uploads = [ DUMMY_UPLOAD, DUMMY_UPLOAD ];
 			uploads.__proto__ = new window.FileList(); // eslint-disable-line no-proto
-			sandbox.stub( Array, 'isArray' ).returns( false );
 			MediaActions.add( DUMMY_SITE_ID, uploads );
-			expect( mediaAdd ).to.have.been.calledTwice;
+			expect( Dispatcher.handleViewAction ).to.have.been.calledTwice;
+			expect( Dispatcher.handleViewAction ).to.have.always.been.calledWithMatch( {
+				type: 'CREATE_MEDIA_ITEM'
+			} );
 		} );
 
-		it( 'should accept a plain object file descriptor', function() {
-			var file = { file: DUMMY_UPLOAD, parent_id: 300 };
-			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
-
-			MediaActions.add( DUMMY_SITE_ID, file );
-
-			expect( mediaAdd ).to.have.been.calledWithMatch( {}, file );
-		} );
-
-		it( 'should call to the WordPress.com REST API', function( done ) {
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
-
-			expect( mediaAdd ).to.have.been.calledWithMatch( {}, DUMMY_UPLOAD );
-
-			process.nextTick( function() {
+		it( 'should accept a Blob object wrapper and pass it as "file" parameter', function() {
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_BLOB_UPLOAD ).then( () => {
+				expect( mediaAdd ).to.have.been.calledWithMatch( {}, { file: DUMMY_BLOB_UPLOAD } );
 				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
 					type: 'RECEIVE_MEDIA_ITEM',
-					error: null,
 					siteId: DUMMY_SITE_ID,
 					id: 'media-1',
 					data: DUMMY_API_RESPONSE.media[ 0 ]
 				} );
+			} );
+		} );
 
-				done();
+		it( 'should call to the WordPress.com REST API', function() {
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+				expect( mediaAdd ).to.have.been.calledWithMatch( {}, DUMMY_UPLOAD );
+				expect( Dispatcher.handleServerAction ).to.have.been.calledWithMatch( {
+					type: 'RECEIVE_MEDIA_ITEM',
+					siteId: DUMMY_SITE_ID,
+					id: 'media-1',
+					data: DUMMY_API_RESPONSE.media[ 0 ]
+				} );
 			} );
 		} );
 
@@ -241,7 +257,7 @@ describe( 'MediaActions', function() {
 				data: {
 					ID: 'media-1',
 					file: DUMMY_UPLOAD.name,
-					transient: true
+					'transient': true
 				}
 			} );
 		} );
@@ -249,22 +265,36 @@ describe( 'MediaActions', function() {
 		it( 'should attach file upload to a post if one is being edited', function() {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD );
-
-			expect( mediaAdd ).to.have.been.calledWithMatch( {}, {
-				file: DUMMY_UPLOAD,
-				parent_id: 200
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_UPLOAD ).then( () => {
+				expect( mediaAdd ).to.have.been.calledWithMatch( {}, {
+					file: DUMMY_UPLOAD,
+					parent_id: 200
+				} );
 			} );
 		} );
 
 		it( 'should attach URL upload to a post if one is being edited', function() {
 			sandbox.stub( PostEditStore, 'get' ).returns( { ID: 200 } );
 
-			MediaActions.add( DUMMY_SITE_ID, DUMMY_URL );
+			return MediaActions.add( DUMMY_SITE_ID, DUMMY_URL ).then( () => {
+				expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, {
+					url: DUMMY_URL,
+					parent_id: 200
+				} );
+			} );
+		} );
 
-			expect( mediaAddUrls ).to.have.been.calledWithMatch( {}, {
-				url: DUMMY_URL,
-				parent_id: 200
+		it( 'should upload in series', () => {
+			// An awkward test, but the idea is that at the point at which
+			// handleServerAction is called for the first received media,
+			// only the first of the two items should have started uploading.
+			Dispatcher.handleServerAction.restore();
+			sandbox.stub( Dispatcher, 'handleServerAction' ).throws();
+
+			return MediaActions.add( DUMMY_SITE_ID, [ DUMMY_UPLOAD, DUMMY_UPLOAD ] ).then( () => {
+				expect( Dispatcher.handleServerAction ).to.have.thrown;
+			} ).catch( () => {
+				expect( mediaAdd ).to.have.been.calledOnce;
 			} );
 		} );
 	} );

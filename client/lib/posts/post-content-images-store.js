@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-var isEqual = require( 'lodash/lang/isEqual' ),
-	pick = require( 'lodash/object/pick' );
+var isEqual = require( 'lodash/isEqual' ),
+	pick = require( 'lodash/pick' );
 
 /**
  * Internal dependencies

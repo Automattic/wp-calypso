@@ -42,3 +42,9 @@ Accepts the props `name` for the item name, and `items` as an array of sub-menu 
 Allows a menu title to be edited, when either the pencil icon or the text itself is clicked. It returns the edited text via the `onChange` callback.
 
 Accepts the props `value` and `onChange`.
+
+### `menu-revert-button.jsx`
+
+Discards any unsaved changes and reloads the menu state from the server.
+
+Accepts the prop `menuData` which should be an instance of `MenuData`.

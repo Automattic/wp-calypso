@@ -1,39 +1,22 @@
 .editor-post-type {
 	color: lighten( $gray, 10% );
 	font-size: 11px;
-	padding: 5px 0;
+	font-weight: 500;
+	margin: 5px 0;
 	text-align: center;
 	text-transform: uppercase;
 
-	.gridicon {
-		margin-left: 4px;
-		vertical-align: bottom;
+	&.is-loading {
+		@include placeholder;
 	}
 
-	&.is-switcher-enabled {
-		cursor: pointer;
-
-		&:hover {
-			color: $gray;
-		}
-	}
-}
-
-.editor-post-type__menu {
-	.popover__menu {
-		min-width: auto;
-	}
-
-	.gridicon {
+	.post-status__text {
 		color: darken( $gray, 10% );
-		margin-right: 8px;
-		vertical-align: bottom;
-	}
-
-	.popover__menu-item:hover,
-	.popover__menu-item:focus {
-		.gridicon {
-			color: $white;
+		margin-left: 4px;
+		vertical-align: baseline;
+		&::before {
+			content: '– ';
+			margin-right: 4px;
 		}
 	}
 }

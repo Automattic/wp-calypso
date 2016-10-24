@@ -1,0 +1,31 @@
+.editor-sidebar__header {
+	display: flex;
+	flex-shrink: 0;
+	justify-content: flex-end;
+	align-items: center;
+	padding: 8px;
+
+	@include breakpoint( ">660px" ) {
+		justify-content: space-between;
+	}
+}
+
+.editor-sidebar__close.button.is-compact.is-borderless {
+	display: none;
+	align-self: center;
+	line-height: 12px;
+	padding: 8px;
+	white-space: nowrap;
+	max-width: 50%;
+
+	@include breakpoint( ">660px" ) {
+		display: block;
+	}
+}
+
+.editor-sidebar__toggle-sidebar {
+	margin-left: 16px;
+	@include breakpoint( ">660px" ) {
+		display: none;
+	}
+}

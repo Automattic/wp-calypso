@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
+	PureRenderMixin = require( 'react-pure-render/mixin' ),
 	url = require( 'url' );
 
 /**
@@ -10,12 +11,12 @@ var React = require( 'react/addons' ),
 var config = require( 'config' ),
 	utils = require( 'lib/posts/utils' ),
 	Gridicon = require( 'components/gridicon'),
-	recordEvent = require( 'analytics' ).ga.recordEvent;
+	recordEvent = require( 'lib/analytics' ).ga.recordEvent;
 
 module.exports = React.createClass( {
 	displayName: 'PostControls',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		post: React.PropTypes.object.isRequired,
@@ -79,7 +80,7 @@ module.exports = React.createClass( {
 				text: this.translate( 'Edit' ),
 				className: 'post-controls__edit',
 				href: this.props.editURL,
-				target: config.isEnabled( 'post-editor' ) ? null : '_blank',
+				target: null,
 				onClick: this.edit,
 				icon: 'pencil'
 			} );
@@ -96,7 +97,7 @@ module.exports = React.createClass( {
 			} );
 
 			if ( config.isEnabled( 'manage/stats' ) ) {
-				statsURL = '/stats/post/' + post.ID + '/' + post.site_ID;
+				statsURL = '/stats/post/' + post.ID + '/' + this.props.site.slug;
 			} else {
 				statsURL = '//wordpress.com/my-stats/?view=post&post=' + post.ID + '&blog=' + post.site_ID;
 			}
@@ -151,8 +152,8 @@ module.exports = React.createClass( {
 		if ( utils.userCan( 'delete_post', post ) ) {
 			if ( post.status === 'trash') {
 				availableControls.push( {
-					text: this.translate( 'Delete' ),
-					className: 'post-controls__trash',
+					text: this.translate( 'Delete Permanently' ),
+					className: 'post-controls__trash is-scary',
 					onClick: this.props.onDelete,
 					icon: 'trash'
 				} );

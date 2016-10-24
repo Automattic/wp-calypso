@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-var React = require( 'react/addons' ),
+var React = require( 'react' ),
 	classnames = require( 'classnames' ),
-	noop = require( 'lodash/utility/noop' ),
+	noop = require( 'lodash/noop' ),
 	url = require( 'url' );
 
 /**
@@ -11,7 +11,8 @@ var React = require( 'react/addons' ),
  */
 var CompactCard = require( 'components/card/compact' ),
 	Gridicon = require( 'components/gridicon' ),
-	Notice = require( 'notices/notice' ),
+	Notice = require( 'components/notice' ),
+	NoticeAction = require( 'components/notice/notice-action' ),
 	SiteIcon = require( 'components/site-icon' ),
 	PostRelativeTimeStatus = require( 'my-sites/post-relative-time-status' ),
 	PopoverMenu = require( 'components/popover/menu' ),
@@ -20,6 +21,9 @@ var CompactCard = require( 'components/card/compact' ),
 	updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	utils = require( 'lib/posts/utils' ),
 	hasTouch = require( 'lib/touch-detect' ).hasTouch;
+
+import Gravatar from 'components/gravatar';
+import photon from 'photon';
 
 module.exports = React.createClass( {
 
@@ -33,13 +37,17 @@ module.exports = React.createClass( {
 		isPlaceholder: React.PropTypes.bool,
 		sites: React.PropTypes.object,
 		onTitleClick: React.PropTypes.func,
-		postImages: React.PropTypes.object
+		postImages: React.PropTypes.object,
+		selected: React.PropTypes.bool,
+		showAuthor: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
 			showAllActions: false,
-			onTitleClick: noop
+			onTitleClick: noop,
+			selected: false,
+			showAuthor: false
 		};
 	},
 
@@ -149,6 +157,16 @@ module.exports = React.createClass( {
 			imageUrl = '//' + image.hostname + image.pathname + '?w=680px';
 		}
 
+		if ( post && post.canonical_image ) {
+			image = url.parse( post.canonical_image.uri, true );
+
+			if ( image.hostname.indexOf( 'files.wordpress.com' ) > 0 ) {
+				imageUrl = '//' + image.hostname + image.pathname + '?w=680px';
+			} else {
+				imageUrl = photon( post.canonical_image.uri, { width: 680 } );
+			}
+		}
+
 		classes = [
 			'draft',
 			{
@@ -158,7 +176,8 @@ module.exports = React.createClass( {
 				'is-trashed': this.props.post.status === 'trash' || this.state.isTrashing,
 				'is-placeholder': this.props.isPlaceholder,
 				'is-restoring': this.state.isRestoring,
-				'is-touch': hasTouch()
+				'is-touch': hasTouch(),
+				'is-selected': this.props.selected
 			}
 		];
 
@@ -172,6 +191,7 @@ module.exports = React.createClass( {
 				<h3 className="draft__title">
 					{ post.status === 'pending' &&
 						<span className="draft__pending-label">{ this.translate( 'Pending' ) }</span> }
+					{ this.props.showAuthor && <Gravatar user={ post.author } size={ 22 } /> }
 					<a href={ editPostURL } onClick={ this.props.onTitleClick }>
 						{ post.format === 'aside' ? excerpt : title }
 					</a>
@@ -214,14 +234,19 @@ module.exports = React.createClass( {
 
 	showStatusChange: function() {
 		if ( this.props.post.status === 'publish' ) {
-			return <Notice isCompact
+			return (
+					<Notice isCompact = { true }
 						status="is-success"
 						text={ 'Post successfully published.' }
 						button={ 'View' }
-						href={ this.props.post.URL }
-						showDismiss={ false } />;
+						showDismiss={ false }>
+						<NoticeAction href={ this.props.post.URL }>
+							{ 'View' }
+						</NoticeAction>
+					</Notice>
+					);
 		} else if ( this.state.hasError ) {
-			return <Notice isCompact
+			return <Notice isCompact = { true }
 						status="is-error"
 						text={ 'There was a problem.' }
 						showDismiss={ false } />;

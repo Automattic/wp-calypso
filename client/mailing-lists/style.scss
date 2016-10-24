@@ -1,0 +1,102 @@
+.mailing-lists {
+	max-width: 680px;
+	margin: 0 auto;
+
+	.mailing-lists__manage-link {
+		text-align: center;
+	}
+}
+
+.mailing-lists__header {
+	position: relative;
+	margin: 40px 24px;
+	padding-left: 40px;
+
+	@include breakpoint( '>480px' ) {
+		padding-top: 8px;
+		padding-left: 80px;
+	}
+
+	.gridicon {
+		position: absolute;
+			top: 0;
+			left: 0;
+
+		&.gridicons-cross {
+			top: 32px;
+			left: 40px;
+		}
+
+		&.gridicons-mail {
+			fill: darken( $gray, 20 );
+
+			@include breakpoint( '<480px' ) {
+				height: 24px;
+				width: 24px;
+			}
+		}
+
+		&.gridicons-cross {
+			fill: white;
+			background: $gray-dark;
+			border-radius: 100%;
+			box-shadow: 0 0 0 3px $gray-light;
+
+			@include breakpoint( '<480px' ) {
+				height: 16px;
+				width: 16px;
+				top: 16px;
+				left: 16px;
+			}
+		}
+	}
+
+	h1 {
+		font-size: 32px;
+		line-height: 1.2;
+		color: $gray-dark;
+
+		@include breakpoint( '<480px' ) {
+			font-size: 24px;
+		}
+	}
+
+	p {
+		color: darken( $gray, 20 );
+		margin: 0;
+	}
+}
+
+.mailing-lists__details {
+	padding: 24px;
+	min-height: 88px;
+
+	@include breakpoint( '>480px' ) {
+		padding-right: 154px;
+	}
+
+	h4 {
+		font-weight: bold;
+		color: darken( $gray, 20 );
+		font-size: 15px;
+	}
+
+	p {
+		color: darken( $gray, 10 );
+		margin: 0;
+		font-size: 15px;
+	}
+
+	.button {
+		@include breakpoint( '<480px' ) {
+			margin-top: 24px;
+			box-sizing: border-box;
+			width: 100%;
+		}
+		@include breakpoint( '>480px' ) {
+			position: absolute;
+				top: 24px;
+				right: 24px;
+		}
+	}
+}

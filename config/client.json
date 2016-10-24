@@ -1,6 +1,7 @@
 [
   "env",
-  "tracks_client_prop",
+  "env_id",
+  "client_slug",
   "hostname",
   "wpcom_user_bootstrap",
   "oauth_response_type",
@@ -11,11 +12,12 @@
   "wpcom_signup_id",
   "wpcom_signup_key",
   "mc_analytics_enabled",
+  "boom_analytics_enabled",
+  "boom_analytics_key",
   "google_analytics_enabled",
   "google_analytics_key",
   "google_adwords_conversion_id",
   "olark",
-  "muse_supported_themes",
   "languages",
   "jetpack_min_version",
   "signup_url",
@@ -23,5 +25,13 @@
   "logout_url",
   "siftscience_key",
   "facebook_api_key",
-  "discover_blog_id"
+  "discover_blog_id",
+  "daily_post_blog_id",
+  "support-user",
+  "sync-handler-defaults",
+  "project",
+  "reader_cold_start_graduation_threshold",
+  "reader_cold_start_graduation_threshold_with_autofollows",
+  "happychat_url",
+  "twemoji_cdn_url"
 ]

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import assign from 'lodash/object/assign';
+import assign from 'lodash/assign';
 
 /**
  * Internal dependencies
@@ -16,45 +16,52 @@ import 'lib/cart/store';
 
 function openCartPopup( options ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.OPEN_CART_POPUP,
+		type: ActionTypes.CART_POPUP_OPEN,
 		options: options || {}
 	} );
 }
 
 function closeCartPopup() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.CLOSE_CART_POPUP
+		type: ActionTypes.CART_POPUP_CLOSE
 	} );
 }
 
 function addPrivacyToAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.ADD_PRIVACY_TO_ALL_DOMAIN_CART_ITEMS
+		type: ActionTypes.CART_PRIVACY_PROTECTION_ADD
 	} );
 }
 
 function removePrivacyFromAllDomains() {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.REMOVE_PRIVACY_FROM_ALL_DOMAIN_CART_ITEMS
+		type: ActionTypes.CART_PRIVACY_PROTECTION_REMOVE
 	} );
 }
 
-function addItem( cartItem ) {
-	const extra = assign( {}, cartItem.extra, {
+function addItem( item ) {
+	addItems( [ item ] );
+}
+
+function addItems( items ) {
+	const extendedItems = items.map( ( item ) => {
+		const extra = assign( {}, item.extra, {
 			context: 'calypstore'
-		} ),
-		newCartItem = assign( {}, cartItem, { extra } );
+		} );
+		return assign( {}, item, { extra } );
+	} );
 
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.ADD_CART_ITEM,
-		cartItem: newCartItem
+		type: ActionTypes.CART_ITEMS_ADD,
+		cartItems: extendedItems
 	} );
 }
 
-function removeItem( cartItem ) {
+function removeItem( item, domainsWithPlansOnly ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.REMOVE_CART_ITEM,
-		cartItem
+		type: ActionTypes.CART_ITEM_REMOVE,
+		cartItem: item,
+		domainsWithPlansOnly
 	} );
 }
 
@@ -74,7 +81,7 @@ function removeDomainFromCart( domainSuggestion ) {
 
 function applyCoupon( coupon ) {
 	Dispatcher.handleViewAction( {
-		type: ActionTypes.APPLY_CART_COUPON,
+		type: ActionTypes.CART_COUPON_APPLY,
 		coupon
 	} );
 }
@@ -82,6 +89,7 @@ function applyCoupon( coupon ) {
 export {
 	addDomainToCart,
 	addItem,
+	addItems,
 	addPrivacyToAllDomains,
 	applyCoupon,
 	closeCartPopup,

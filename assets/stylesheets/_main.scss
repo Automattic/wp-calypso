@@ -1,0 +1,406 @@
+/**
+ * General styles
+ */
+
+$sidebar-width-max: 272px;
+$sidebar-width-min: 228px;
+
+.wpcom-site__logo {
+	color: lighten( $gray, 20% );
+	font-size: 12vw;
+	position: fixed;
+		top: 50%;
+		left: 50%;
+	transform: translate( -50%, -50% );
+
+	@include breakpoint( ">960px" ) {
+		font-size: 120px;
+	}
+}
+
+.wpcom-site__global-noscript {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 6px;
+	color: $white;
+	background: rgba( $gray-dark, 0.8 );
+	text-align: center;
+}
+
+
+/* =Global
+----------------------------------------------- */
+
+@-webkit-viewport { width : device-width; }
+@-moz-viewport { width : device-width; }
+@-ms-viewport { width : device-width; }
+@-o-viewport { width : device-width; }
+@viewport { width : device-width; }
+
+// make sure layout can fill the viewport
+html,
+body,
+.wpcom-site {
+	height: 100%;
+}
+
+* {
+	-webkit-tap-highlight-color: rgba( 0, 0, 0, 0);
+}
+
+body {
+	background: $gray-light;
+	-ms-overflow-style: scrollbar;
+}
+
+::selection {
+	background: rgba( $blue-light, 0.7 );
+	color: $gray-dark;
+}
+
+body,
+button,
+input,
+select,
+textarea,
+.button,
+#footer,
+#footer a.readmore {
+	font-family: $sans;
+}
+
+/*rtl:ignore*/
+body.rtl,
+.rtl button,
+.rtl input,
+.rtl select,
+.rtl textarea,
+.rtl .button,
+.rtl #footer,
+.rtl #footer a.readmore {
+	font-family: $sans-rtl;
+}
+
+/*rtl:ignore*/
+:lang(he) body.rtl,
+:lang(he) .rtl button,
+:lang(he) .rtl input,
+:lang(he) .rtl select,
+:lang(he) .rtl textarea,
+:lang(he) .rtl .button,
+:lang(he) .rtl #footer,
+:lang(he) .rtl #footer a.readmore {
+	font-family: $sans;
+}
+
+/*rtl:ignore*/
+.rtl {
+	.gridicon {
+		&.gridicons-chevron-left,
+		&.gridicons-chevron-right,
+		&.gridicons-arrow-left,
+		&.gridicons-arrow-right,
+		&.gridicons-external,
+		&.gridicons-cart {
+			transform: scaleX( -1 );
+		}
+	}
+
+	.noticon {
+		&.noticon-chevron-left,
+		&.noticon-chevron-right,
+		&.noticon-arrow-left,
+		&.noticon-arrow-right,
+		&.noticon-external,
+		&.noticon-cart {
+			transform: scaleX( -1 );
+		}
+	}
+}
+
+.notifications {
+	display: inherit;
+}
+
+body {
+	color: $gray-dark;
+	font-size: 15px;
+	line-height: 1.5;
+}
+
+noscript {
+	text-align: center;
+	margin-top: 3em;
+	display:block;
+}
+
+/* Headings */
+h1,h2,h3,h4,h5,h6 {
+	clear: both;
+}
+hr {
+	background: lighten( $gray, 20% );
+	border: 0;
+	height: 1px;
+	margin-bottom: 1.5em;
+}
+
+/* Text elements */
+p {
+	margin-bottom: 1.5em;
+}
+ul, ol {
+	margin: 0 0 1.5em 3em;
+}
+ul {
+	list-style: disc;
+}
+ol {
+	list-style: decimal;
+}
+ul ul, ol ol, ul ol, ol ul {
+	margin-bottom: 0;
+	margin-left: 1.5em;
+}
+dt {
+	font-weight: 600;
+}
+dd {
+	margin: 0 1.5em 1.5em;
+}
+b, strong {
+	font-weight: 600;
+}
+dfn, cite, em, i {
+	font-style: italic;
+}
+blockquote {
+	margin: 10px 0 0 0;
+	background: $gray-light;
+	padding: 10px 10px 1px;
+	border-radius: 2px;
+}
+address {
+	margin: 0 0 1.5em;
+}
+pre {
+	background: $gray-light;
+	font-family: $monospace;
+	font-size: 15px;
+	line-height: 1.6;
+	margin-bottom: 1.6em;
+	padding: 1.6em;
+	overflow: auto;
+	max-width: 100%;
+}
+code, kbd, tt, var {
+	font: 15px $code;
+}
+abbr, acronym {
+	border-bottom: 1px dotted darken( $gray, 20% );
+	cursor: help;
+}
+mark, ins {
+	background: lighten( $alert-yellow, 23% );
+	text-decoration: none;
+}
+small {
+	font-size: 75%;
+}
+big {
+	font-size: 125%;
+}
+figure {
+	margin: 0;
+}
+table {
+	margin: 0 0 1.5em;
+	width: 100%;
+}
+th {
+	font-weight: 600;
+}
+
+.hide, .hidden { display: none; }
+
+/* Links */
+a,
+a:visited {
+	color: $blue-wordpress;
+}
+
+a:hover,
+a:focus,
+a:active {
+	color: $link-highlight;
+}
+
+.link--caution,
+.link--caution:visited,
+.is-link.link--caution,
+.is-link.link--caution:visited {
+
+	&,
+	&:hover,
+	&:focus,
+	&:active  {
+		color: $alert-red;
+	}
+}
+
+html.iframed {
+	overflow: hidden;
+}
+
+.noticon:before,
+.noticon:after {
+	@extend %clear-text;
+
+	font-family: Noticons;
+	line-height: 1;
+}
+
+/* Emoji and smileys */
+img.emoji,
+img.wp-smiley {
+	height: 1em;
+	max-height: 1em;
+	display: inline;
+	margin: 0;
+	padding: 0 0.2em;
+	vertical-align: -0.1em;
+}
+
+/* =Media
+----------------------------------------------- */
+
+img {
+	max-width: 100%; /* Fluid images for posts, comments, and widgets */
+	height: auto;
+}
+
+/* Make sure embeds and iframes fit their containers */
+embed,
+iframe,
+object {
+	max-width: 100%;
+}
+
+/* Netter min-height for the SoundCloud embeds */
+.wpcom-soundcloud-player,
+.embed-soundcloud iframe {
+	min-height: 150px;
+}
+
+
+/*
+Disabled blocks of content.
+Used in releated posts settings.
+@todo get rid of it
+*/
+.disabled-block {
+	opacity: 0.5;
+}
+
+/*
+@todo this needs to become a component
+*/
+.environment-badge {
+	padding: 16px 0;
+	position: fixed;
+		bottom: 0;
+		right: 16px;
+	z-index: z-index( 'root', '.environment-badge' );
+	backface-visibility: hidden;
+
+	&:hover .environment {
+		display: inline-block;
+	}
+
+	.bug-report {
+		position: relative;
+		display: inline-block;
+		width: 26px;
+		height: 26px;
+		background-color: $white;
+		border: solid 1px $gray-dark;
+		border-radius: 50%;
+		color: $gray-dark;
+		margin-left: -4px;
+		text-decoration: none;
+		text-align: center;
+		z-index: z-index( '.environment-badge', '.environment-badge .bug-report' );
+		transition: border-radius 0.2s ease-out;
+		&:before {
+			@include noticon( '\f50a', 14px );
+			vertical-align: middle;
+		}
+	}
+
+	.environment {
+		position: relative;
+		display: none;
+		font-size: 9px;
+		font-weight: 600;
+		line-height: 1;
+		text-transform: uppercase;
+		padding: 4px 7px 4px 6px;
+		vertical-align: middle;
+		transition: all 0.2s ease-out;
+		background-color: $white;
+		box-shadow: 0 0 0 1px $gray-dark;
+
+		&.is-env {
+			display: inline-block;
+		}
+		a {
+			text-decoration: none;
+			display: inline-block;
+			color: $gray-dark;
+
+			&:hover {
+				transform: scale( 1.1 );
+			}
+		}
+		&.is-staging {
+			background-color: $alert-yellow;
+		}
+		&.is-wpcalypso {
+			background-color: #B1EED0;
+		}
+		&.is-dev {
+			background-color: $alert-red;
+		}
+		&.is-horizon,
+		&.is-feedback {
+			background-color: $blue-light;
+		}
+		&.branch-name {
+			text-transform: inherit;
+			background-color: $gray-dark;
+			color: $white;
+		}
+	}
+
+	.notouch & {
+		.bug-report {
+			&:hover {
+				border-radius: 4px;
+			}
+		}
+	}
+}
+
+@include breakpoint( "<960px" ) {
+	// Don't show environment badge on smaller screens. It just gets in the way.
+	.environment-badge {
+		display: none;
+	}
+}
+
+// added to the html element when we don't want the background content to scroll
+html.no-scroll {
+	overflow: hidden;
+}

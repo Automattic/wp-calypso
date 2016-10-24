@@ -1,48 +1,76 @@
+/** @ssr-ready **/
+
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
-	debounce = require( 'lodash/function/debounce' ),
-	noop = () => {};
+import ReactDom from 'react-dom';
+import React, { PropTypes } from 'react';
+import classNames from 'classnames';
+import debounce from 'lodash/debounce';
+import noop from 'lodash/noop';
+import i18n from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	Spinner = require( 'components/spinner' );
+import analytics from 'lib/analytics';
+import Spinner from 'components/spinner';
+import Gridicon from 'components/gridicon';
+import { isMobile } from 'lib/viewport';
 
 /**
  * Internal variables
  */
-var _instance = 1,
-	SEARCH_DEBOUNCE_MS = 300;
+const SEARCH_DEBOUNCE_MS = 300;
 
-module.exports = React.createClass( {
+function keyListener( methodToCall, event ) {
+	switch ( event.key ) {
+		case ' ':
+		case 'Enter':
+			this[ methodToCall ]( event );
+			break;
+	}
+}
+
+const Search = React.createClass( {
 
 	displayName: 'Search',
 
+	statics: {
+		instances: 0
+	},
+
 	propTypes: {
-		additionalClasses: React.PropTypes.string,
-		initialValue: React.PropTypes.string,
-		placeholder: React.PropTypes.string,
-		pinned: React.PropTypes.bool,
-		delaySearch: React.PropTypes.bool,
-		onSearch: React.PropTypes.func.isRequired,
-		onSearchChange: React.PropTypes.func,
-		onSearchClose: React.PropTypes.func,
-		analyticsGroup: React.PropTypes.string,
-		autoFocus: React.PropTypes.bool,
-		disabled: React.PropTypes.bool,
-		onKeyDown: React.PropTypes.func,
-		disableAutocorrect: React.PropTypes.bool,
-		onBlur: React.PropTypes.func,
-		searching: React.PropTypes.bool
+		additionalClasses: PropTypes.string,
+		initialValue: PropTypes.string,
+		placeholder: PropTypes.string,
+		pinned: PropTypes.bool,
+		delaySearch: PropTypes.bool,
+		delayTimeout: PropTypes.number,
+		onSearch: PropTypes.func.isRequired,
+		onSearchChange: PropTypes.func,
+		onSearchOpen: PropTypes.func,
+		onSearchClose: PropTypes.func,
+		analyticsGroup: PropTypes.string,
+		overlayStyling: PropTypes.func,
+		autoFocus: PropTypes.bool,
+		disabled: PropTypes.bool,
+		onKeyDown: PropTypes.func,
+		disableAutocorrect: PropTypes.bool,
+		onBlur: PropTypes.func,
+		searching: PropTypes.bool,
+		isOpen: PropTypes.bool,
+		dir: PropTypes.oneOf( [ 'ltr', 'rtl' ] ),
+		fitsContainer: PropTypes.bool,
+		maxLength: PropTypes.number,
+		hideClose: PropTypes.bool
 	},
 
 	getInitialState: function() {
 		return {
-			keyword: this.props.initialValue || ''
+			keyword: this.props.initialValue || '',
+			isOpen: !! this.props.isOpen,
+			hasFocus: false
 		};
 	},
 
@@ -50,22 +78,29 @@ module.exports = React.createClass( {
 		return {
 			pinned: false,
 			delaySearch: false,
+			delayTimeout: SEARCH_DEBOUNCE_MS,
 			autoFocus: false,
 			disabled: false,
 			onSearchChange: noop,
+			onSearchOpen: noop,
 			onSearchClose: noop,
 			onKeyDown: noop,
 			disableAutocorrect: false,
-			searching: false
+			searching: false,
+			isOpen: false,
+			dir: undefined,
+			fitsContainer: false,
+			hideClose: false
 		};
 	},
 
 	componentWillMount: function() {
-		this.id = _instance;
-		_instance++;
-		this.onSearch = this.props.delaySearch
-			? debounce( this.props.onSearch, SEARCH_DEBOUNCE_MS )
-			: this.props.onSearch;
+		this.setState( {
+			instanceId: ++Search.instances
+		} );
+
+		this.closeListener = keyListener.bind( this, 'closeSearch' );
+		this.openListener = keyListener.bind( this, 'openSearch' );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -74,20 +109,24 @@ module.exports = React.createClass( {
 			nextProps.delaySearch !== this.props.delaySearch
 		) {
 			this.onSearch = this.props.delaySearch
-				? debounce( this.props.onSearch, SEARCH_DEBOUNCE_MS )
+				? debounce( this.props.onSearch, this.props.delayTimeout )
 				: this.props.onSearch;
+		}
+
+		if ( nextProps.isOpen ) {
+			this.setState( { isOpen: nextProps.isOpen } );
+		}
+
+		if ( nextProps.initialValue !== this.props.initialValue &&
+				( this.state.keyword === this.props.initialValue || this.state.keyword === '' ) ) {
+			this.setState( { keyword: nextProps.initialValue || '' } );
 		}
 	},
 
 	componentDidUpdate: function( prevProps, prevState ) {
-		// Focus if we aren't disabled and have a value from user, or the
-		// search box was opened, or the autoFocus prop has changed
+		this.scrollOverlay();
+		// Focus if the search box was opened or the autoFocus prop has changed
 		if (
-			(
-				! this.props.disabled &&
-				this.state.keyword &&
-				this.state.keyword !== this.props.initialValue
-			) ||
 			( this.state.isOpen && ! prevState.isOpen ) ||
 			( this.props.autoFocus && ! prevProps.autoFocus )
 		) {
@@ -115,21 +154,36 @@ module.exports = React.createClass( {
 	},
 
 	componentDidMount: function() {
+		this.onSearch = this.props.delaySearch
+			? debounce( this.props.onSearch, this.props.delayTimeout )
+			: this.props.onSearch;
+
 		if ( this.props.autoFocus ) {
-			this.focus();
+			// this hack makes autoFocus work correctly in Dropdown
+			setTimeout( () => this.focus(), 0 );
 		}
 	},
 
+	scrollOverlay: function() {
+		this.refs.overlay && window.requestAnimationFrame( () => {
+			if ( this.refs.overlay && this.refs.searchInput ) {
+				this.refs.overlay.scrollLeft = this.refs.searchInput.scrollLeft;
+			}
+		} );
+	},
+
 	focus: function() {
-		React.findDOMNode( this.refs.searchInput ).focus();
+		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
+		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
+		setTimeout( () => this.refs.searchInput && ReactDom.findDOMNode( this.refs.searchInput ).focus(), 0 );
 	},
 
 	blur: function() {
-		React.findDOMNode( this.refs.searchInput ).blur();
+		ReactDom.findDOMNode( this.refs.searchInput ).blur();
 	},
 
 	getCurrentSearchValue: function() {
-		return React.findDOMNode( this.refs.searchInput ).value;
+		return ReactDom.findDOMNode( this.refs.searchInput ).value;
 	},
 
 	clear: function() {
@@ -140,6 +194,8 @@ module.exports = React.createClass( {
 		if ( this.props.onBlur ) {
 			this.props.onBlur();
 		}
+
+		this.setState( { hasFocus: false } );
 	},
 
 	onChange: function() {
@@ -159,34 +215,37 @@ module.exports = React.createClass( {
 	},
 
 	closeSearch: function( event ) {
-		var input;
-
 		event.preventDefault();
 
 		if ( this.props.disabled ) {
 			return;
 		}
 
-		input = React.findDOMNode( this.refs.searchInput );
+		const input = ReactDom.findDOMNode( this.refs.searchInput );
 
 		this.setState( {
 			keyword: '',
-			isOpen: false
+			isOpen: this.props.isOpen || false
 		} );
 
 		input.value = ''; // will not trigger onChange
 		input.blur();
 
 		if ( this.props.pinned ) {
-			React.findDOMNode( this.refs.openIcon ).focus();
+			ReactDom.findDOMNode( this.refs.openIcon ).focus();
 		}
 
-		this.props.onSearchClose();
+		this.props.onSearchClose( event );
 
 		analytics.ga.recordEvent( this.props.analyticsGroup, 'Clicked Close Search' );
 	},
 
 	keyUp: function( event ) {
+		if ( event.key === 'Enter' && isMobile() ) {
+			//dismiss soft keyboards
+			this.blur();
+		}
+
 		if ( ! this.props.pinned ) {
 			return;
 		}
@@ -194,16 +253,21 @@ module.exports = React.createClass( {
 		if ( event.key === 'Escape' ) {
 			this.closeSearch( event );
 		}
+		this.scrollOverlay();
 	},
 
 	keyDown: function( event ) {
+		this.scrollOverlay();
+		if ( event.key === 'Escape' && event.target.value === '' ) {
+			this.closeSearch( event );
+		}
 		this.props.onKeyDown( event );
 	},
 
 	// Puts the cursor at end of the text when starting
 	// with `initialValue` set.
 	onFocus: function() {
-		var input = React.findDOMNode( this.refs.searchInput ),
+		const input = ReactDom.findDOMNode( this.refs.searchInput ),
 			setValue = input.value;
 
 		if ( setValue ) {
@@ -211,87 +275,107 @@ module.exports = React.createClass( {
 			input.value = '';
 			input.value = setValue;
 		}
+
+		this.setState( { hasFocus: true } );
+		this.props.onSearchOpen( );
 	},
 
 	render: function() {
-		var searchClass,
-			searchValue = this.state.keyword,
-			placeholder = this.props.placeholder ||
-				this.translate( 'Search…', { textOnly: true } ),
+		const searchValue = this.state.keyword;
+		const placeholder = this.props.placeholder ||
+				i18n.translate( 'Search…', { textOnly: true } );
 
-			enableOpenIcon = this.props.pinned && ! this.state.isOpen,
-			isOpenUnpinnedOrQueried = this.state.isOpen ||
+		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
+		const isOpenUnpinnedOrQueried = this.state.isOpen ||
 				! this.props.pinned ||
 				this.props.initialValue;
 
-		const autocorrect = ! this.props.disableAutocorrect && {
+		const autocorrect = this.props.disableAutocorrect && {
 			autoComplete: 'off',
 			autoCorrect: 'off',
-			autoCapitalize: 'off',
 			spellCheck: 'false'
 		};
 
-		searchClass = classNames( this.props.additionalClasses, {
-			'is-pinned': this.props.pinned,
+		const searchClass = classNames( this.props.additionalClasses, this.props.dir, {
+			'is-expanded-to-container': this.props.fitsContainer,
 			'is-open': isOpenUnpinnedOrQueried,
 			'is-searching': this.props.searching,
+			'has-focus': this.state.hasFocus,
 			search: true
 		} );
 
+		const fadeDivClass = classNames( 'search__input-fade', this.props.dir );
+		const inputClass = classNames( 'search__input', this.props.dir );
+
 		return (
-			<div className={ searchClass } role="search">
+			<div dir={ this.props.dir || null } className={ searchClass } role="search">
 				<Spinner />
 				<div
+					className="search__icon-navigation"
 					ref="openIcon"
-					className="noticon noticon-search"
 					onTouchTap={ enableOpenIcon ? this.openSearch : this.focus }
 					tabIndex={ enableOpenIcon ? '0' : null }
 					onKeyDown={ enableOpenIcon
-						? this._keyListener.bind( this, 'openSearch' )
+						? this.openListener
 						: null
 					}
-					aria-controls={ 'search-component-' + this.id }
-					aria-label={ this.translate( 'Open Search', { context: 'button label' } ) }/>
-				<input
-					type="search"
-					id={ 'search-component-' + this.id }
-					className="search__input"
-					placeholder={ placeholder }
-					role="search"
-					value={ searchValue }
-					ref="searchInput"
-					onChange={ this.onChange }
-					onKeyUp={ this.keyUp }
-					onKeyDown={ this.keyDown }
-					onFocus={ this.onFocus }
-					onBlur={ this.onBlur }
-					disabled={ this.props.disabled }
-					aria-hidden={ ! isOpenUnpinnedOrQueried }
-					autoCapitalize="none"
-					{...autocorrect } />
-				{ ( searchValue || this.state.isOpen ) ? this.closeButton() : null }
+					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-label={ i18n.translate( 'Open Search', { context: 'button label' } ) }>
+					<Gridicon icon="search" className="search__open-icon" />
+				</div>
+				<div className={ fadeDivClass }>
+					<input
+						type="search"
+						id={ 'search-component-' + this.state.instanceId }
+						className={ inputClass }
+						placeholder={ placeholder }
+						role="search"
+						value={ searchValue }
+						ref="searchInput"
+						onChange={ this.onChange }
+						onKeyUp={ this.keyUp }
+						onKeyDown={ this.keyDown }
+						onFocus={ this.onFocus }
+						onBlur={ this.onBlur }
+						disabled={ this.props.disabled }
+						aria-hidden={ ! isOpenUnpinnedOrQueried }
+						autoCapitalize="none"
+						dir={ this.props.dir }
+						maxLength={ this.props.maxLength }
+						{ ...autocorrect }
+					/>
+					{ this.props.overlayStyling && this.renderStylingDiv() }
+				</div>
+				{ this.closeButton() }
+			</div>
+		);
+	},
+
+	renderStylingDiv: function() {
+		return (
+			<div className="search__text-overlay" ref="overlay">
+				{ this.props.overlayStyling( this.state.keyword ) }
 			</div>
 		);
 	},
 
 	closeButton: function() {
-		return (
-			<span
-				className="noticon noticon-close-alt"
-				onTouchTap={ this.closeSearch }
-				tabIndex="0"
-				onKeyDown={ this._keyListener.bind( this, 'closeSearch' ) }
-				aria-controls={ 'search-component-' + this.id }
-				aria-label={ this.translate( 'Close Search', { context: 'button label' } ) }/>
-		);
-	},
-
-	_keyListener: function( methodToCall, event ) {
-		switch ( event.key ) {
-			case ' ':
-			case 'Enter':
-				this[ methodToCall ]( event );
-				break;
+		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
+			return (
+				<div
+					className="search__icon-navigation"
+					onTouchTap={ this.closeSearch }
+					tabIndex="0"
+					onKeyDown={ this.closeListener }
+					aria-controls={ 'search-component-' + this.state.instanceId }
+					aria-label={ i18n.translate( 'Close Search', { context: 'button label' } ) }>
+					<Gridicon icon="cross" className="search__close-icon" />
+				</div>
+			);
 		}
+
+		return null;
 	}
 } );
+
+module.exports = Search;

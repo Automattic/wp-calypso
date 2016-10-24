@@ -1,3 +1,4 @@
+.webpack-cache
 .sass-cache
 .vagrant
 .unison
@@ -6,17 +7,23 @@
 .idea
 *.iml
 *.iws
-tags
+/tags
 node_modules
 /npm-debug.log*
 *.sw?
 !*.swf
+.eslintcache
+test-results*.xml
+/stats.json
 
 # script used during docker build that is specific to the environment
 env-config.sh
 
 # added during build
 /config/secrets.json
+
+# config overrides
+/config/*.local.json
 
 /build
 
@@ -25,11 +32,12 @@ env-config.sh
 /public/style*.css.map
 /public/editor*.css
 /server/devdocs/search-index.js
+/server/devdocs/components-usage-stats.json
 /server/bundler/assets-*.json
 
 *.rdb
 *.db
 
-/calypso-strings.php
+/calypso-strings.pot
 cover.html
 .test.log

@@ -1,0 +1,11 @@
+.step-wrapper__buttons {
+	text-align: center;
+}
+
+.step-wrapper__buttons .button.is-borderless {
+	color: darken( $gray, 20 );
+
+	&:hover {
+		color: $gray-dark;
+	}
+}

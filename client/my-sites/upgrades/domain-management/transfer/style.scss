@@ -1,0 +1,34 @@
+.transfer__remove-privacy-dialog {
+	max-width: 480px;
+}
+
+.transfer__section-header {
+	flex-wrap: wrap;
+	button {
+		margin-left: 10px;
+		&:first-of-type {
+			margin-left: 0;
+		}
+	}
+}
+
+.transfer__action-button {
+	float: right;
+	margin-right: 10px;
+	&:first-of-type {
+		margin-right: 0;
+	}
+}
+
+.transfer-card {
+	p {
+		color: darken( $gray, 20% );
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.transfer__small-text {
+	font-size: 12px;
+}

@@ -3,16 +3,17 @@
  */
 var React = require( 'react' ),
 	debug = require( 'debug' )( 'calypso:site-users-fetcher' ),
-	omit = require( 'lodash/object/omit' ),
-	isEqual = require( 'lodash/lang/isEqual' ),
-	includes = require( 'lodash/collection/includes' ),
-	partition = require( 'lodash/collection/partition' );
+	omit = require( 'lodash/omit' ),
+	isEqual = require( 'lodash/isEqual' ),
+	includes = require( 'lodash/includes' ),
+	partition = require( 'lodash/partition' );
 
 /**
  * Internal dependencies
  */
 var UsersStore = require( 'lib/users/store' ),
-	UsersActions = require( 'lib/users/actions' );
+	UsersActions = require( 'lib/users/actions' ),
+	pollers = require( 'lib/data-poller' );
 
 /**
  * Module variables
@@ -41,10 +42,16 @@ module.exports = React.createClass( {
 		debug( 'Mounting SiteUsersFetcher' );
 		UsersStore.on( 'change', this._updateSiteUsers );
 		this._fetchIfEmpty();
+		this._poller = pollers.add(
+			UsersStore,
+			UsersActions.fetchUpdated.bind( UsersActions, this.props.fetchOptions, true ),
+			{ leading: false }
+		);
 	},
 
 	componentWillUnmount: function() {
 		UsersStore.off( 'change', this._updateSiteUsers );
+		pollers.remove( this._poller );
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -54,6 +61,12 @@ module.exports = React.createClass( {
 		if ( ! isEqual( this.props.fetchOptions, nextProps.fetchOptions ) ) {
 			this._updateSiteUsers( nextProps.fetchOptions );
 			this._fetchIfEmpty( nextProps.fetchOptions );
+			pollers.remove( this._poller );
+			this._poller = pollers.add(
+				UsersStore,
+				UsersActions.fetchUpdated.bind( UsersActions, nextProps.fetchOptions, true ),
+				{ leading: false }
+			);
 		}
 	},
 
@@ -111,8 +124,7 @@ module.exports = React.createClass( {
 			if ( paginationData.fetchingUsers ) {
 				return;
 			}
-			UsersActions.fetchUsers( fetchOptions, 0 );
+			UsersActions.fetchUsers( fetchOptions );
 		}, 0 );
 	}
-
 } );

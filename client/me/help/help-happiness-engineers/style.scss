@@ -1,5 +1,7 @@
 .help-happiness-engineers {
-	margin: 4px 0px 64px 0px;
+	margin: 12px 0px 64px 0px;
+	padding: 0 24px;
+
 	@include breakpoint( ">660px" ) {
 		margin: 24px 0px 64px 0px;
 	}
@@ -13,11 +15,10 @@
 
 .help-happiness-engineers__description {
 	margin: -16px 0px 12px 0px;
-	font: 11px/16px $sans;
+	font: 14px/21px $sans;
 	color: darken( $gray, 10% );
 	@include breakpoint( ">660px" ) {
 		margin: -16px 0px 20px 0px;
-		font: 14px/21px $sans;
 	}
 }
 

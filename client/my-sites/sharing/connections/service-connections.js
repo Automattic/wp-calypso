@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-var some = require( 'lodash/collection/some' ),
-	flatten = require( 'lodash/array/flatten' ),
-	filter = require( 'lodash/collection/filter' ),
-	uniq = require( 'lodash/array/uniq' );
+var some = require( 'lodash/some' ),
+	flatten = require( 'lodash/flatten' ),
+	filter = require( 'lodash/filter' ),
+	uniq = require( 'lodash/uniq' );
 
 /**
  * Internal dependencies
@@ -197,10 +197,10 @@ module.exports = {
 	getServicesFromConnections: function( connections ) {
 		return uniq( connections.map( function( connection ) {
 			return {
-				name: connection.service,
+				ID: connection.service,
 				label: connection.label
 			};
-		} ), 'name' );
+		} ), 'ID' );
 	},
 
 	/**

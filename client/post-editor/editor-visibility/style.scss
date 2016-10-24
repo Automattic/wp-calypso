@@ -1,24 +1,11 @@
-.editor-visibility {
-	color: lighten( $gray, 20% );
-	height: 26px;
-	overflow: hidden;
-	display: inline;
-	transition: color 200ms;
-
+.editor-visibility.button {
 	&.is-dialog-open,
 	&.is-touch,
 	&:hover {
-		color: darken( $gray, 10% );
-
 		.editor-visibility__label {
 			color: darken( $gray, 10% );
 		}
 	}
-
-	.gridicon {
-		cursor: pointer;
-	}
-
 }
 
 .editor-visibility__dialog{
@@ -28,6 +15,10 @@
 
 	.form-text-input {
 		font-size: 13px;
+
+		&.is-info-open {
+			margin-top: 8px;
+		}
 	}
 
 	.form-input-validation {
@@ -36,6 +27,10 @@
 
 	.form-setting-explanation {
 		margin: -4px 0 8px 24px;
+
+		&.password {
+			margin-bottom: 0;
+		}
 	}
 
 	.gridicon {
@@ -58,9 +53,13 @@
 	}
 }
 
+.editor-visibility__tooltip .popover__inner {
+	white-space: nowrap;
+}
+
 .popover {
 	&.editor-visibility__popover {
 		/* applying a lower z-index to ensure it is layered behind the masterbar */
-		z-index: 179;
+		z-index: z-index( 'root', '.popover.editor-visibility__popover' );
 	}
 }

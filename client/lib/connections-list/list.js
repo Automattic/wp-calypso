@@ -2,13 +2,12 @@
  * External dependencies
  */
 var debug = require( 'debug' )( 'calypso:connections-list' ),
-	without = require( 'lodash/array/without' ),
-	find = require( 'lodash/collection/find' ),
-	pluck = require( 'lodash/collection/pluck' ),
-	filter = require( 'lodash/collection/filter' ),
-	reject = require( 'lodash/collection/reject' ),
-	findIndex = require( 'lodash/array/findIndex' ),
-	reject = require( 'lodash/collection/reject' );
+	without = require( 'lodash/without' ),
+	find = require( 'lodash/find' ),
+	map = require( 'lodash/map' ),
+	filter = require( 'lodash/filter' ),
+	findIndex = require( 'lodash/findIndex' ),
+	reject = require( 'lodash/reject' );
 
 /**
  * Internal dependencies
@@ -349,7 +348,7 @@ ConnectionsList.prototype.removeKeyringData = function( connections ) {
 		connectionIdsToRemove;
 
 	connections = Array.isArray( connections ) ? connections : [ connections ];
-	connectionIdsToRemove = pluck( connections, 'keyring_connection_ID' );
+	connectionIdsToRemove = map( connections, 'keyring_connection_ID' );
 
 	this.keyringData = this.keyringData.filter( function( connection ) {
 		var isToBeRemoved = -1 !== connectionIdsToRemove.indexOf( connection.keyring_connection_ID );
@@ -484,7 +483,7 @@ ConnectionsList.prototype.fetchkeyringConnections = function() {
 		wpcom.undocumented().mekeyringConnections( function( error, data ) {
 			this.fetchingKeyring = false;
 			this.updateInitialized();
-			
+
 			if ( error ) {
 				debug( 'error fetching ConnectionsList Keyring connections from api', error );
 				return;

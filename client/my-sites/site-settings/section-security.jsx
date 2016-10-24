@@ -35,10 +35,12 @@ module.exports = React.createClass( {
 			);
 		}
 
-		if ( site.modulesFetched && ! site.canManage() ) {
+		if ( ! site.canManage() ) {
 			return (
 				<JetpackManageErrorPage
 					template="optInManage"
+					title= { this.translate( 'Looking to manage this site\'s security settings?' ) }
+					section="security-settings"
 					site={ site }
 				/>
 			);
@@ -57,10 +59,7 @@ module.exports = React.createClass( {
 		return (
 			<div>
 				<JetpackProtect site={ site } />
-				{
-					config.isEnabled( 'settings/security/scan' ) ?
-						<JetpackScan site={ site } /> : ''
-				}
+				{ config.isEnabled( 'settings/security/scan' ) && <JetpackScan site={ site } /> }
 				<JetpackMonitor site={ site } />
 			</div>
 		);

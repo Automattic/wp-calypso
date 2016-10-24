@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import React from 'react/addons';
-import classNames from  'classnames';
-import omit from 'lodash/object/omit';
+import React from 'react';
+import classNames from 'classnames';
+import { keys, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -28,7 +28,7 @@ export default React.createClass( {
 					</span>
 				) }
 
-				<FormTextInput { ...omit( this.props, this.constructor.propTypes ) } />
+				<FormTextInput { ...omit( this.props, keys( this.constructor.propTypes ) ) } />
 
 				{ this.props.suffix && (
 					<span className="form-text-input-with-affixes__suffix">

@@ -2,12 +2,12 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import paths from 'lib/paths';
-import config from 'config';
 
 /**
  * Retrieves selection, title, and URL from current page and pops
@@ -49,9 +49,9 @@ const pressThis = function( postURL ) {
 
 class PressThisLink extends React.Component {
 
-	propTypes: {
+	static propTypes = {
 		site: PropTypes.object.isRequired,
-	}
+	};
 
 	/**
 	 * Legacy press-this pointing to wp-admin. This will be
@@ -85,9 +85,9 @@ class PressThisLink extends React.Component {
 	}
 
 	render() {
-		const pressThisLink = config.isEnabled( 'post-editor' ) ? this.buildPressThisLink() : this.pressThisWPAdmin();
+		const omitProps = [ 'site' ];
 		return (
-			<a {...this.props} href={ pressThisLink }>
+			<a { ...omit( this.props, omitProps ) } href={ this.buildPressThisLink() }>
 				{ this.props.children }
 			</a>
 		);

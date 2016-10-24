@@ -8,7 +8,7 @@ var React = require( 'react' );
  */
 var FoldableCard = require( 'components/foldable-card' ),
 	CompactCard = require( 'components/card/compact' ),
-	AllSitesIcon = require( 'my-sites/all-sites-icon' ),
+	AllSites = require( 'my-sites/all-sites' ),
 	PluginsLog = require( 'lib/plugins/log-store' ),
 	PluginActivateToggle = require( 'my-sites/plugins/plugin-activate-toggle' ),
 	PluginAutoupdateToggle = require( 'my-sites/plugins/plugin-autoupdate-toggle' ),
@@ -16,7 +16,7 @@ var FoldableCard = require( 'components/foldable-card' ),
 	PluginInstallButton = require( 'my-sites/plugins/plugin-install-button' ),
 	PluginRemoveButton = require( 'my-sites/plugins/plugin-remove-button' ),
 	PluginSiteDisabledManage = require( 'my-sites/plugins/plugin-site-disabled-manage' ),
-	Site = require( 'my-sites/site' );
+	Site = require( 'blocks/site' );
 
 module.exports = React.createClass( {
 
@@ -46,15 +46,16 @@ module.exports = React.createClass( {
 	renderMultisiteHeader: function() {
 		return (
 			<div className="plugin-site-network__header">
-				<AllSitesIcon sites={ this.props.secondarySites } />
-				<div className="plugin-site-network__header_info">
-					<div className="site__title">{ this.translate( '%(mainSiteName)s\'s Network', {
+				<AllSites
+					sites={ this.props.secondarySites }
+					count={ this.props.secondarySites.length }
+					domain={ this.props.site.domain }
+					title={ this.translate( '%(mainSiteName)s\'s Network', {
 						args: {
 							mainSiteName: this.props.site.name
 						},
-					} ) } </div>
-					<div className="site__domain">{ this.props.site.domain }</div>
-				</div>
+					} ) }
+				/>
 			</div>
 		);
 	},

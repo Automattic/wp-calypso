@@ -1,37 +1,109 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React from 'react';
+import classnames from 'classnames';
+import { connect } from 'react-redux';
 
-var DomainProductPrice = React.createClass( {
-	render: function() {
-		var freeWithPlan = this.props.cart && this.props.cart.hasLoadedFromServer && this.props.cart.next_domain_is_free && ! this.props.isFinalPrice,
-			classes = classNames( 'domain-product-price', { 'is-free-domain': freeWithPlan }, {
-				'is-placeholder': this.props.isLoading
-			} );
+/**
+ * Internal dependencies
+ */
+import PremiumPopover from 'components/plans/premium-popover';
+import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
+import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
+import { abtest } from 'lib/abtest';
 
-		if ( this.props.isLoading ) {
-			return <div className={ classes }>{ this.translate( 'Loading…' ) }</div>;
-		}
+const DomainProductPrice = React.createClass( {
+	propTypes: {
+		isLoading: React.PropTypes.bool,
+		price: React.PropTypes.string,
+		freeWithPlan: React.PropTypes.bool,
+		requiresPlan: React.PropTypes.bool,
+		domainsWithPlansOnly: React.PropTypes.bool.isRequired
+	},
 
+	renderFreeWithPlan() {
 		return (
-			<div className={ classes }>
-				<span className="domain-product-price__price">
-					{
-						this.props.price ?
-						this.translate( '%(cost)s {{small}}/year{{/small}}', {
-							args: { cost: this.props.price },
-							components: { small: <small /> }
-						} ) :
-						this.translate( 'Free' )
-					}
+			<div
+				className={ classnames(
+					'domain-product-price',
+					'is-free-domain',
+					{ 'no-price': this.props.domainsWithPlansOnly } ) }>
+				{ ! this.props.domainsWithPlansOnly && this.renderFreeWithPlanPrice() }
+				<span className="domain-product-price__free-text" ref="subMessage">
+					{ this.translate( 'Free with your plan' ) }
 				</span>
-
-				{ freeWithPlan ? <span className="domain-product-price__free-text">{ this.translate( 'Free with your plan' ) }</span> : null }
 			</div>
 		);
+	},
+
+	renderFreeWithPlanPrice() {
+		return (
+			<span
+				className="domain-product-price__price">{ this.translate( '%(cost)s {{small}}/year{{/small}}', {
+					args: { cost: this.props.price },
+					components: { small: <small /> }
+				} ) }</span>
+		);
+	},
+
+	renderFree() {
+		return (
+			<div className="domain-product-price">
+				<span className="domain-product-price__price">{ this.translate( 'Free' ) }</span>
+			</div>
+		);
+	},
+
+	renderIncludedInPremium() {
+		return (
+			<div className="domain-product-price is-with-plans-only">
+				<small className="domain-product-price__premium-text" ref="subMessage">
+					<PremiumPopover
+						position="bottom left"
+						textLabel={ this.translate( 'Included in WordPress.com Premium' ) }/>
+				</small>
+			</div>
+		);
+	},
+
+	renderPrice() {
+		return (
+			<div className="domain-product-price">
+				<span className="domain-product-price__price">
+					{ this.translate( '%(cost)s {{small}}/year{{/small}}', {
+						args: { cost: this.props.price },
+						components: { small: <small /> }
+					} ) }
+				</span>
+			</div>
+		);
+	},
+
+	render() {
+		if ( this.props.isLoading ) {
+			return <div className="domain-product-price is-placeholder">{ this.translate( 'Loading…' ) }</div>;
+		}
+
+		const showPopover = abtest( 'domainSuggestionPopover' ) === 'showPopover';
+
+		switch ( this.props.rule ) {
+			case 'FREE_DOMAIN':
+				return showPopover && this.renderFree();
+			case 'FREE_WITH_PLAN':
+				return this.renderFreeWithPlan();
+			case 'INCLUDED_IN_PREMIUM':
+				return showPopover && this.renderIncludedInPremium();
+			case 'PRICE':
+			default:
+				return this.renderPrice();
+		}
 	}
 } );
 
-module.exports = DomainProductPrice;
+export default connect(
+	state => ( { domainsWithPlansOnly: getCurrentUser( state )
+		? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY )
+		: true
+	} )
+)( DomainProductPrice );

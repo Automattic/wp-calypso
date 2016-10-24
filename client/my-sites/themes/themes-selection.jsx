@@ -1,0 +1,152 @@
+/**
+ * External dependencies
+ */
+import React, { PropTypes } from 'react';
+import page from 'page';
+import compact from 'lodash/compact';
+
+/**
+ * Internal dependencies
+ */
+import { trackClick } from './helpers';
+import ThemesData from 'components/data/themes-list-fetcher';
+import ThemesList from 'components/themes-list';
+import StickyPanel from 'components/sticky-panel';
+import analytics from 'lib/analytics';
+import buildUrl from 'lib/mixins/url-search/build-url';
+import {
+	getFilter,
+	getSortedFilterTerms,
+	stripFilters,
+} from './theme-filters.js';
+import config from 'config';
+
+const ThemesSearchCard = config.isEnabled( 'manage/themes/magic-search' )
+	? require( './themes-magic-search-card' )
+	: require( './themes-search-card' );
+
+const ThemesSelection = React.createClass( {
+	propTypes: {
+		selectedSite: PropTypes.oneOfType( [
+			PropTypes.object,
+			PropTypes.bool
+		] ).isRequired,
+		siteId: PropTypes.string,
+		search: PropTypes.string,
+		onScreenshotClick: PropTypes.func,
+		getOptions: React.PropTypes.func,
+		queryParams: PropTypes.object.isRequired,
+		themesList: PropTypes.array.isRequired,
+		getActionLabel: React.PropTypes.func,
+		tier: React.PropTypes.string,
+		filter: React.PropTypes.string,
+		vertical: React.PropTypes.string,
+	},
+
+	getDefaultProps() {
+		return { search: '' };
+	},
+
+	doSearch( searchBoxContent ) {
+		const filter = getSortedFilterTerms( searchBoxContent );
+		const searchString = stripFilters( searchBoxContent );
+		this.updateUrl( this.props.tier || 'all', filter, searchString );
+	},
+
+	prependFilterKeys() {
+		const { filter } = this.props;
+		if ( filter ) {
+			return filter.split( ',' ).map( getFilter ).join( ' ' ) + ' ';
+		}
+		return '';
+	},
+
+	onMoreButtonClick( theme, resultsRank ) {
+		this.recordSearchResultsClick( theme, resultsRank );
+	},
+
+	recordSearchResultsClick( theme, resultsRank ) {
+		const { queryParams, themesList } = this.props;
+		analytics.tracks.recordEvent( 'calypso_themeshowcase_theme_click', {
+			search_term: queryParams.search,
+			theme: theme,
+			results_rank: resultsRank + 1,
+			results: themesList,
+			page_number: queryParams.page
+		} );
+	},
+
+	trackScrollPage() {
+		analytics.tracks.recordEvent( 'calypso_themeshowcase_scroll' );
+		this.props.trackScrollPage();
+	},
+
+	trackLastPage() {
+		analytics.ga.recordEvent( 'Themes', 'Reached Last Page' );
+		analytics.tracks.recordEvent( 'calypso_themeshowcase_last_page_scroll' );
+	},
+
+	onTierSelect( { value: tier } ) {
+		trackClick( 'search bar filter', tier );
+		this.updateUrl( tier, this.props.filter );
+	},
+
+	updateUrl( tier, filter, searchString = this.props.search ) {
+		const { siteId, vertical } = this.props;
+
+		const siteIdSection = siteId ? `/${ siteId }` : '';
+		const verticalSection = vertical ? `/${ vertical }` : '';
+		const tierSection = tier === 'all' ? '' : `/${ tier }`;
+		const filterSection = filter ? `/filter/${ filter }` : '';
+
+		const url = `/design${ verticalSection }${ tierSection }${ filterSection }${ siteIdSection }`;
+		page( buildUrl( url, searchString ) );
+	},
+
+	onScreenshotClick( theme, resultsRank ) {
+		trackClick( 'theme', 'screenshot' );
+		if ( ! theme.active ) {
+			this.recordSearchResultsClick( theme, resultsRank );
+		}
+		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
+	},
+
+	addVerticalToFilters() {
+		const { vertical, filter } = this.props;
+		return compact( [ filter, vertical ] ).join( ',' );
+	},
+
+	render() {
+		const site = this.props.selectedSite;
+
+		return (
+			<div className="themes__selection">
+				<StickyPanel>
+					<ThemesSearchCard
+							site={ site }
+							onSearch={ this.doSearch }
+							search={ this.prependFilterKeys() + this.props.search }
+							tier={ this.props.tier }
+							select={ this.onTierSelect } />
+				</StickyPanel>
+				<ThemesData
+						site={ site }
+						isMultisite={ ! this.props.siteId } // Not the same as `! site` !
+						search={ this.props.search }
+						tier={ this.props.tier }
+						filter={ this.addVerticalToFilters() }
+						onRealScroll={ this.trackScrollPage }
+						onLastPage={ this.trackLastPage } >
+					<ThemesList getButtonOptions={ this.props.getOptions }
+						onMoreButtonClick={ this.onMoreButtonClick }
+						onScreenshotClick={ this.onScreenshotClick }
+						getScreenshotUrl={ this.props.getScreenshotUrl }
+						getActionLabel={ this.props.getActionLabel } />
+				</ThemesData>
+			</div>
+		);
+	},
+
+} );
+
+export default ThemesSelection;

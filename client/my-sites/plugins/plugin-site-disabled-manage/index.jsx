@@ -1,37 +1,47 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var analytics = require( 'analytics' ),
-	DisconnectJetpackButton = require( 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button' );
+import analytics from 'lib/analytics';
+import Button from 'components/button';
+import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 
-module.exports = React.createClass( {
+const PluginSiteDisabledManage = ( { isNetwork, site, plugin, translate } ) => {
+	const url = site.getRemoteManagementURL() + '&section=plugins';
+	const message = isNetwork
+		? translate( 'Network management disabled' )
+		: translate( 'Management disabled' );
+	const onClickEnableManageButton = () => {
+		analytics.ga.recordEvent( 'Jetpack Manage', 'Clicked Enable Jetpack Manage Link' );
+	};
 
-	displayName: 'PluginSiteDisabledManage',
-
-	render: function() {
-		const message = this.props.isNetwork ?
-				this.translate( 'Network management disabled' ) :
-				this.translate( 'Management disabled' ),
-			url = this.props.site.getRemoteManagementURL();
-
-		if ( this.props.plugin.slug === 'jetpack' ) {
-			return (
-				<span className="plugin-site-disabled-manage">
-					<span className="plugin-site-disabled-manage__label">{ message }</span>
-					<DisconnectJetpackButton disabled={ ! this.props.plugin } site={ this.props.site } redirect="/plugins/jetpack" />
-				</span>
-			);
-		}
+	if ( plugin.slug === 'jetpack' ) {
 		return (
 			<span className="plugin-site-disabled-manage">
 				<span className="plugin-site-disabled-manage__label">{ message }</span>
-				<a className="plugin-site-disabled-manage__link" href={ url } onClick={ analytics.ga.recordEvent.bind( analytics, 'Jetpack Manage', 'Clicked Enable Jetpack Manage Link' ) }> { this.translate( 'Enable' ) } </a>
+				<DisconnectJetpackButton disabled={ ! plugin } site={ site } redirect="/plugins/jetpack" />
 			</span>
 		);
 	}
-} );
+
+	return (
+		<span className="plugin-site-disabled-manage">
+			<span className="plugin-site-disabled-manage__label">{ message }</span>
+			<Button
+				compact={ true }
+				className="plugin-site-disabled-manage__link"
+				href={ url }
+				onClick={ onClickEnableManageButton }
+			>
+				{ translate( 'Enable' ) }
+			</Button>
+		</span>
+	);
+};
+
+export default localize( PluginSiteDisabledManage );

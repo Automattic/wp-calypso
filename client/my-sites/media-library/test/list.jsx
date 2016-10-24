@@ -1,39 +1,29 @@
-/* eslint-disable vars-on-top */
-require( 'lib/react-test-env-setup' )();
-
 /**
  * External dependencies
  */
-var expect = require( 'chai' ).expect,
-	React = require( 'react/addons' ),
-	TestUtils = React.addons.TestUtils,
-	toArray = require( 'lodash/lang/toArray' ),
-	mockery = require( 'mockery' );
+import { expect } from 'chai';
+import { noop, toArray } from 'lodash';
+import React from 'react';
+import mockery from 'mockery';
 
 /**
  * Internal dependencies
  */
-var MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' ),
-	MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' ),
-	MediaActions = require( 'lib/media/actions' ),
-	fixtures = require( './fixtures' ),
-	Dispatcher = require( 'dispatcher' ),
-	MediaList;
+import EmptyComponent from 'test/helpers/react/empty-component';
+import useFakeDom from 'test/helpers/use-fake-dom';
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Module variables
  */
-var DUMMY_SITE_ID = 2916284,
-	EMPTY_COMPONENT;
-
-EMPTY_COMPONENT = React.createClass( {
-	render: function() {
-		return <div />;
-	}
-} );
+const DUMMY_SITE_ID = 2916284;
 
 describe( 'MediaLibraryList item selection', function() {
-	var mediaList;
+	let mount, MediaLibrarySelectedData, MediaLibrarySelectedStore,
+		MediaActions, fixtures, Dispatcher, MediaList, wrapper, mediaList;
+
+	useFakeDom();
+	useMockery();
 
 	function toggleItem( itemIndex, shiftClick ) {
 		mediaList.toggleItem( fixtures.media[ itemIndex ], shiftClick );
@@ -48,40 +38,51 @@ describe( 'MediaLibraryList item selection', function() {
 	}
 
 	before( function() {
+		mockery.registerMock( 'lib/wp', {
+			me: () => ( {
+				get: noop
+			} )
+		} );
+		mockery.registerMock( 'components/infinite-list', EmptyComponent );
+		mockery.registerMock( './list-item', EmptyComponent );
+		mockery.registerMock( './list-plan-upgrade-nudge', EmptyComponent );
+
+		mount = require( 'enzyme' ).mount;
+		MediaLibrarySelectedData = require( 'components/data/media-library-selected-data' );
+		MediaLibrarySelectedStore = require( 'lib/media/library-selected-store' );
+		MediaActions = require( 'lib/media/actions' );
+		fixtures = require( './fixtures' );
+		Dispatcher = require( 'dispatcher' );
+
 		Dispatcher.handleServerAction( {
 			type: 'RECEIVE_MEDIA_ITEMS',
 			siteId: DUMMY_SITE_ID,
 			data: fixtures
 		} );
 
-		mockery.enable( { warnOnReplace: false, warnOnUnregistered: false } );
-		mockery.registerMock( './list-item', EMPTY_COMPONENT );
-
-		MediaList = require( '../list' );
+		MediaList = require( '../list' ).MediaLibraryList;
 	} );
 
 	beforeEach( function() {
 		MediaActions.setLibrarySelectedItems( DUMMY_SITE_ID, [] );
-	} );
 
-	afterEach( function() {
-		React.unmountComponentAtNode( document.body );
-	} );
-
-	after( function() {
-		mockery.deregisterAll();
-		mockery.disable();
+		if ( wrapper ) {
+			wrapper.unmount();
+		}
 	} );
 
 	context( 'multiple selection', function() {
-		beforeEach( function() {
-			var tree = React.render(
+		beforeEach( () => {
+			wrapper = mount(
 				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
-					<MediaList site={ { ID: DUMMY_SITE_ID } } media={ fixtures.media } mediaScale={ 0.24 } />
-				</MediaLibrarySelectedData>,
-				document.body
+					<MediaList
+						filterRequiresUpgrade={ false }
+						site={ { ID: DUMMY_SITE_ID } }
+						media={ fixtures.media }
+						mediaScale={ 0.24 } />
+				</MediaLibrarySelectedData>
 			);
-			mediaList = TestUtils.findRenderedComponentWithType( tree, MediaList );
+			mediaList = wrapper.find( MediaList ).get( 0 );
 		} );
 
 		it( 'allows selecting single items', function() {
@@ -153,14 +154,18 @@ describe( 'MediaLibraryList item selection', function() {
 	} );
 
 	context( 'single selection', function() {
-		beforeEach( function() {
-			var tree = React.render(
+		beforeEach( () => {
+			wrapper = mount(
 				<MediaLibrarySelectedData siteId={ DUMMY_SITE_ID }>
-					<MediaList site={ { ID: DUMMY_SITE_ID } } media={ fixtures.media } mediaScale={ 0.24 } single />
-				</MediaLibrarySelectedData>,
-				document.body
+					<MediaList
+						filterRequiresUpgrade={ false }
+						site={ { ID: DUMMY_SITE_ID } }
+						media={ fixtures.media }
+						mediaScale={ 0.24 }
+						single />
+				</MediaLibrarySelectedData>
 			);
-			mediaList = TestUtils.findRenderedComponentWithType( tree, MediaList );
+			mediaList = wrapper.find( MediaList ).get( 0 );
 		} );
 
 		it( 'allows selecting a single item', function() {

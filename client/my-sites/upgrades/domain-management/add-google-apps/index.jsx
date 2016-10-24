@@ -11,7 +11,7 @@ const Main = require( 'components/main' ),
 	Header = require( 'my-sites/upgrades/domain-management/components/header' ),
 	AddEmailAddressesCard = require( './add-email-addresses-card' ),
 	paths = require( 'my-sites/upgrades/paths' ),
-	{ canAddEmail } = require( 'lib/domains' ),
+	{ hasGoogleAppsSupportedDomain } = require( 'lib/domains' ),
 	SectionHeader = require( 'components/section-header' );
 
 const AddGoogleApps = React.createClass( {
@@ -26,12 +26,12 @@ const AddGoogleApps = React.createClass( {
 	ensureCanAddEmail() {
 		const needsRedirect = (
 			this.props.domains.hasLoadedFromServer &&
-			! canAddEmail( this.props.domains.list )
+			! hasGoogleAppsSupportedDomain( this.props.domains.list )
 		);
 
 		if ( needsRedirect ) {
 			const path = paths.domainManagementEmail(
-				this.props.selectedSite.domain,
+				this.props.selectedSite.slug,
 				this.props.selectedDomainName
 			);
 
@@ -45,10 +45,10 @@ const AddGoogleApps = React.createClass( {
 				<Header
 					onClick={ this.goToEmail }
 					selectedDomainName={ this.props.selectedDomainName }>
-					{ this.translate( 'Add Google Apps' ) }
+					{ this.translate( 'Add G Suite' ) }
 				</Header>
 
-				<SectionHeader label={ this.translate( 'Add Google Apps' ) } />
+				<SectionHeader label={ this.translate( 'Add G Suite' ) } />
 
 				<AddEmailAddressesCard
 					domains={ this.props.domains }
@@ -60,7 +60,7 @@ const AddGoogleApps = React.createClass( {
 
 	goToEmail() {
 		const path = paths.domainManagementEmail(
-			this.props.selectedSite.domain,
+			this.props.selectedSite.slug,
 			this.props.selectedDomainName
 		);
 

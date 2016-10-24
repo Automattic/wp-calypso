@@ -1,7 +1,8 @@
 /**
 * External dependencies
 */
-var React = require( 'react' );
+var ReactDom = require( 'react-dom' ),
+	React = require( 'react' );
 
 /**
 * Internal dependencies
@@ -13,7 +14,8 @@ var PopoverMenu = React.createClass( {
 		isVisible: React.PropTypes.bool.isRequired,
 		onClose: React.PropTypes.func.isRequired,
 		position: React.PropTypes.string,
-		className: React.PropTypes.string
+		className: React.PropTypes.string,
+		rootClassName: React.PropTypes.string
 	},
 
 	getDefaultProps: function() {
@@ -37,7 +39,8 @@ var PopoverMenu = React.createClass( {
 				position={ this.props.position }
 				onClose={ this._onClose }
 				onShow={ this._onShow }
-				className={ this.props.className }>
+				className={ this.props.className }
+				rootClassName={ this.props.rootClassName }>
 				<div ref="menu" role="menu" className="popover__menu" onKeyDown={ this._onKeyDown } tabIndex="-1">
 					{ children }
 				</div>
@@ -57,13 +60,13 @@ var PopoverMenu = React.createClass( {
 			onClick = child.props.onClick.bind( null, boundOnClose );
 		}
 
-		return React.addons.cloneWithProps( child, {
+		return React.cloneElement( child, {
 			onClick: onClick
 		} );
 	},
 
 	_onShow: function() {
-		var elementToFocus = React.findDOMNode( this.refs.menu );
+		var elementToFocus = ReactDom.findDOMNode( this.refs.menu );
 
 		this._previouslyFocusedElement = document.activeElement;
 
@@ -83,7 +86,7 @@ var PopoverMenu = React.createClass( {
 	 * bottom.
 	 */
 	_getClosestSibling: function( target, isDownwardMotion = true ) {
-		const menu = React.findDOMNode( this.refs.menu );
+		const menu = ReactDom.findDOMNode( this.refs.menu );
 
 		let first = menu.firstChild,
 			last = menu.lastChild;

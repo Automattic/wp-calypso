@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var identity = require( 'lodash/utility/identity' );
+var identity = require( 'lodash/identity' );
 
 var fieldMasks = {};
 
@@ -14,7 +14,7 @@ fieldMasks['expiration-date'] = {
 
 		// If the user is adding a slash then don't modify it
 		if ( previousValue && previousValue.length === 2 &&
-				 nextValue.length === 3 && nextValue[ 2 ] === '/' ) {
+				nextValue.length === 3 && nextValue[ 2 ] === '/' ) {
 			return nextValue;
 		}
 

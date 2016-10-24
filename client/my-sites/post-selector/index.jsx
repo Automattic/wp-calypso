@@ -2,19 +2,18 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import omit from 'lodash/object/omit';
-import noop from 'lodash/utility/noop';
+import PureRenderMixin from 'react-pure-render/mixin';
+import { reduce, snakeCase } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Selector from './selector';
-import PostListFetcher from 'components/post-list-fetcher';
+import PostSelectorPosts from './selector';
 
 export default React.createClass( {
 	displayName: 'PostSelector',
 
-	mixins: [ React.addons.PureRenderMixin ],
+	mixins: [ PureRenderMixin ],
 
 	propTypes: {
 		type: PropTypes.string,
@@ -24,8 +23,11 @@ export default React.createClass( {
 		onChange: PropTypes.func,
 		selected: PropTypes.number,
 		excludeTree: PropTypes.number,
+		emptyMessage: PropTypes.string,
+		createLink: PropTypes.string,
 		orderBy: PropTypes.oneOf( [ 'title', 'date', 'modified', 'comment_count', 'ID' ] ),
-		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] )
+		order: PropTypes.oneOf( [ 'ASC', 'DESC' ] ),
+		showTypeLabels: PropTypes.bool
 	},
 
 	getDefaultProps() {
@@ -33,7 +35,6 @@ export default React.createClass( {
 			type: 'post',
 			status: 'publish,private',
 			multiple: false,
-			onChange: noop,
 			orderBy: 'title',
 			order: 'ASC'
 		};
@@ -41,32 +42,47 @@ export default React.createClass( {
 
 	getInitialState() {
 		return {
-			searchTerm: null
+			search: ''
 		};
 	},
 
 	onSearch( term ) {
-		if ( term !== this.state.searchTerm ) {
-			this.setState( { searchTerm: term } );
+		if ( term !== this.state.search ) {
+			this.setState( {
+				search: term
+			} );
 		}
 	},
 
+	getQuery() {
+		const { type, status, excludeTree, orderBy, order } = this.props;
+		const { search } = this.state;
+
+		return reduce( { type, status, excludeTree, orderBy, order, search }, ( memo, value, key ) => {
+			if ( null === value || undefined === value ) {
+				return memo;
+			}
+
+			memo[ snakeCase( key ) ] = value;
+			return memo;
+		}, {} );
+	},
+
 	render() {
+		const { siteId, multiple, onChange, emptyMessage, createLink, selected, showTypeLabels } = this.props;
+
 		return (
-			<PostListFetcher
-				type={ this.props.type }
-				siteID={ this.props.siteId }
-				search={ this.state.searchTerm }
-				status={ this.props.status }
-				excludeTree={ this.props.excludeTree }
-				orderBy={ this.props.orderBy }
-				order={ this.props.order }
-			>
-				<Selector
-					{ ...omit( this.props, 'children' ) }
-					onSearch={ this.onSearch }
-				/>
-			</PostListFetcher>
+			<PostSelectorPosts
+				siteId={ siteId }
+				query={ this.getQuery() }
+				onSearch={ this.onSearch }
+				multiple={ multiple }
+				onChange={ onChange }
+				emptyMessage={ emptyMessage }
+				createLink={ createLink }
+				selected={ selected }
+				showTypeLabels={ showTypeLabels }
+			/>
 		);
 	}
 } );

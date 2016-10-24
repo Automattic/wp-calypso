@@ -4,15 +4,6 @@ html {
 	cursor: text;
 }
 
-html.ios {
-	height: 100%;
-}
-
-.ios body#tinymce {
-	height: 200%;
-	max-width: none;
-}
-
 body {
 	font-family: Georgia, "Times New Roman", "Bitstream Charter", Times, serif;
 	font-size: 16px;
@@ -414,6 +405,54 @@ audio {
     content: '';
 	display: table;
     clear: both;
+}
+
+.wpview-type-contact-form {
+	padding: 20px;
+	text-align: center;
+}
+
+.wpview-type-contact-form button {
+	width: 300px;
+	height: 40px;
+	font-size: 16px;
+	background: #fff;
+	color: #2e4453;
+	border: 1px solid #c8d7e1;
+	border-radius: 4px;
+}
+
+.wpview-type-contact-form-field {
+	border: none;
+	padding: 0;
+	width: 300px;
+	margin: 0 auto 10px;
+}
+
+.wpview-type-contact-form-field label,
+.wpview-type-contact-form-field legend {
+	text-align: left;
+	width: 100%;
+}
+
+.wpview-type-contact-form-field label {
+	display: block;
+	margin: 5px 0;
+}
+
+.wpview-type-contact-form-field input[type=text],
+.wpview-type-contact-form-field textarea,
+.wpview-type-contact-form-field select {
+	width: 100%;
+	font-size: 16px;
+	padding: 7px 14px;
+	box-sizing: border-box;
+	border: 1px solid #c8d7e1;
+}
+
+.wpview-type-contact-form-field select {
+	background: #fff;
+	height: 40px;
 }
 
 .gallery img[data-mce-selected]:focus {

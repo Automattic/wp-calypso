@@ -1,4 +1,4 @@
-WPORG Data 
+WPORG Data
 =======
 
 
@@ -50,21 +50,21 @@ Returns a plugin object or null
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var PluginsDataStore = require( 'lib/plugins/wporg-data/store' );
 
-module.exports = React.createClass( { 
+module.exports = React.createClass( {
 
 	displayName: 'yourComponent',
-	
+
 	componentDidMount: function() {
 		PluginsDataStore.on( 'change', this.refreshWPorgPlugins );
 	},
-	
+
 	componentWillUnmount: function() {
 		PluginsDataStore.removeListener( 'change', this.refreshWPorgPlugins );
 	},
@@ -72,7 +72,7 @@ module.exports = React.createClass( {
 	getInitialState: function() {
 		return this.getWPorgPlugins();
 	},
-	
+
 	getWPorgPlugins: function() {
 
 		return {
@@ -83,19 +83,19 @@ module.exports = React.createClass( {
 	refreshWPorgPlugins: function() {
 		this.setState( this.getWPorgPlugins() );
 	},
-	
+
 	render: function() {
-		
+
 	}
-	
+
 } );
 
 ```
 
 ###Actions
-Actions update the data stored in WPorg store. 
+Actions update the data stored in WPorg store.
 
-####Public methods. 
+####Public methods.
 
 Triggers api call to fetch the plugin data and update the store.
 
@@ -109,25 +109,25 @@ Triggers api call to fetch the plugin data and update the store.
 /**
  * External dependencies
  */
-var React = require( 'react/addons' );
+var React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var PluginsDataActions = require( 'lib/plugins/wporg-data/actions' );
 
-module.exports = React.createClass( { 
+module.exports = React.createClass( {
 
 	displayName: 'yourComponent',
-	
+
 	updatePlugin: function() {
 		PluginsDataActions.fetchPluginData( this.props.plugin.slug );
 	},
-	
+
 	render: function() {
 		<button onClick={ this.updatePlugin } >Update { this.props.plugin.name }</button>
 	}
-	
+
 } );
 
 ```
