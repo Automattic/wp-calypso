@@ -50,21 +50,19 @@ function resetData() {
 }
 
 function updatePhone( phone ) {
-	_phone.data = assign( {}, phone );
+	_phone.data = assign( {}, _phone.data, phone );
 }
 
 function resetPhone() {
-	updatePhone( null );
+	_phone.data = {};
 }
 
 function updateEmail( email ) {
-	_email.data = {
-		email: email
-	};
+	_email.data = assign( {}, _email.data, email );
 }
 
 function resetEmail() {
-	updateEmail( null );
+	_email.data = {};
 }
 
 function fetchFromAPIIfNotInitialized() {
@@ -100,12 +98,16 @@ function handleResponse( data ) {
 			countryCode: data.phone.country_code,
 			countryNumericCode: data.phone.country_numeric_code,
 			number: data.phone.number,
-			numberFull: data.phone.number_full
+			numberFull: data.phone.number_full,
+			isValidated: data.phone_validated,
 		} );
 	}
 
 	if ( data.email ) {
-		updateEmail( data.email );
+		updateEmail( {
+			email: data.email,
+			isValidated: data.email_validated,
+		} );
 	}
 
 	emitChange();
@@ -192,7 +194,7 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 			break;
 
 		case actions.UPDATE_ACCOUNT_RECOVERY_EMAIL:
-			updateEmail( action.email );
+			updateEmail( { email: action.email } );
 			emitChange();
 			break;
 
@@ -202,7 +204,7 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 				break;
 			}
 
-			updateEmail( action.email );
+			updateEmail( { email: action.email } );
 			if ( ! action.previousEmail ) {
 				setEmailNotice( messages.EMAIL_ADDED );
 			} else {
