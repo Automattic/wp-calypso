@@ -22,6 +22,10 @@ const getAuthorizationRemoteQueryData = ( state ) => {
 	return get( getAuthorizationData( state ), [ 'queryObject' ] );
 };
 
+const getAuthorizationRemoteSiteUrl = ( state ) => {
+	return get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
+};
+
 const getAuthorizationRemoteSite = ( state ) => {
 	return get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
 };
@@ -104,11 +108,33 @@ const hasXmlrpcError = function( state ) {
 	);
 };
 
+const getJetpackPlanSelected = function( state ) {
+	const selectedPlans = state.jetpackConnect.jetpackConnectSelectedPlans;
+	const siteUrl = state.jetpackConnect.jetpackConnectAuthorize.queryObject.site;
+
+	if ( siteUrl ) {
+		const siteSlug = siteUrl.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
+		if ( selectedPlans && selectedPlans[ siteSlug ] ) {
+			return selectedPlans[ siteSlug ];
+		}
+	}
+	return false;
+};
+
+const getSiteSelectedPlan = function( state, siteSlug ) {
+	return state.jetpackConnect.jetpackConnectSelectedPlans && state.jetpackConnect.jetpackConnectSelectedPlans[ siteSlug ];
+};
+
+const getGlobalSelectedPlan = function( state ) {
+	return state.jetpackConnect.jetpackConnectSelectedPlans && state.jetpackConnect.jetpackConnectSelectedPlans[ '*' ];
+};
+
 export default {
 	getConnectingSite,
 	getAuthorizationData,
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
+	getAuthorizationRemoteSiteUrl,
 	getSessions,
 	getSSOSessions,
 	getSSO,
@@ -117,5 +143,8 @@ export default {
 	isRemoteSiteOnSitesList,
 	getFlowType,
 	getJetpackSiteByUrl,
-	hasXmlrpcError
+	hasXmlrpcError,
+	getJetpackPlanSelected,
+	getSiteSelectedPlan,
+	getGlobalSelectedPlan
 };

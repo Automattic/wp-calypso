@@ -97,6 +97,7 @@ module.exports = {
 		defaultVariation: 'original',
 		allowExistingUsers: true
 	},
+
 	gSuiteOnSignup: {
 		datestamp: '20161025',
 		variations: {
@@ -105,5 +106,16 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true
-	}
+	},
+
+	jetpackConnectPlansFirst: {
+		datestamp: '20161024',
+		variations: {
+			showPlansBeforeAuth: 50,
+			showPlansAfterAuth: 50
+		},
+		defaultVariation: 'showPlansAfterAuth',
+		allowExistingUsers: true
+	},
 };
+
