@@ -101,13 +101,6 @@
 		}
 	}
 
-	// Hide Support Chat link unless you're mobile, the item intentionally only exists for mobile users
-	li.sidebar__menu-happychat {
-		@include breakpoint( ">660px" ) {
-			display: none;
-		}
-	}
-
 	a:first-child {
 		flex: 1 0 auto;
 		width: 0;
