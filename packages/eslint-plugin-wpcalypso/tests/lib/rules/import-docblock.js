@@ -30,6 +30,14 @@ const rule = require( '../../../lib/rules/import-docblock' ),
  * External dependencies
  */
 import eslint from \'eslint\';`
+		},
+		{
+			code:
+`/**
+ * External dependencies
+ */
+import eslint from \'eslint\';`
+		}
 		}
 	],
 

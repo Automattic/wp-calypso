@@ -11,7 +11,7 @@
 //------------------------------------------------------------------------------
 
 const ERROR_MESSAGE = 'Missing external, internal dependencies docblocks';
-const RX_DOCBLOCK = /\/\*\*\n \* (Ex|In)ternal dependencies\n \*\//;
+const RX_DOCBLOCK = /\/\*\*\n \* (Ex|In)ternal dependencies\n \*\//i;
 
 module.exports = {
 	meta: {
