@@ -84,6 +84,23 @@ const ImageEditor = React.createClass( {
 		};
 	},
 
+	componentWillMount() {
+		const {
+			allowedAspectRatios,
+			defaultAspectRatio
+		} = this.props;
+
+		if (
+			allowedAspectRatios &&
+			allowedAspectRatios.length !== 1 &&
+			allowedAspectRatios.indexOf( defaultAspectRatio ) === -1
+		) {
+			// If allowedAspectRatios prop is specified and has more than one item,
+			// defaultAspectRatio prop must contain a value which is included in allowedAspectRatios.
+			throw new Error( 'Image Editor props: defaultAspectRatio not found in allowedAspectRatios' );
+		}
+	},
+
 	getInitialState() {
 		return {
 			canvasError: null
@@ -111,7 +128,16 @@ const ImageEditor = React.createClass( {
 	},
 
 	setDefaultAspectRatio() {
-		const { defaultAspectRatio } = this.props;
+		const {
+			defaultAspectRatio,
+			allowedAspectRatios
+		} = this.props;
+
+		if ( allowedAspectRatios && allowedAspectRatios.length === 1 ) {
+			this.props.setImageEditorAspectRatio( allowedAspectRatios[ 0 ] );
+
+			return;
+		}
 
 		if ( defaultAspectRatio ) {
 			this.props.setImageEditorAspectRatio( defaultAspectRatio );
