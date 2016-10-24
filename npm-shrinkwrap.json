@@ -29,7 +29,7 @@
       "version": "0.8.2"
     },
     "ajv": {
-      "version": "4.8.0",
+      "version": "4.8.2",
       "dev": true
     },
     "ajv-keywords": {
@@ -381,7 +381,7 @@
       "version": "6.16.0"
     },
     "babylon": {
-      "version": "6.12.0"
+      "version": "6.13.0"
     },
     "backo2": {
       "version": "1.0.2"
@@ -531,7 +531,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000559"
+      "version": "1.0.30000566"
     },
     "caseless": {
       "version": "0.11.0"
@@ -909,12 +909,7 @@
       "version": "1.0.0"
     },
     "delegate": {
-      "version": "3.0.2",
-      "dependencies": {
-        "component-closest": {
-          "version": "1.0.1"
-        }
-      }
+      "version": "3.1.0"
     },
     "delegates": {
       "version": "1.0.0"
@@ -1269,7 +1264,7 @@
       "dev": true
     },
     "eslint": {
-      "version": "3.6.1",
+      "version": "3.8.1",
       "dev": true,
       "dependencies": {
         "chalk": {
@@ -1295,15 +1290,15 @@
       }
     },
     "eslint-config-wpcalypso": {
-      "version": "0.5.0",
+      "version": "0.6.0",
       "dev": true
     },
     "eslint-plugin-react": {
-      "version": "6.2.0",
+      "version": "6.4.1",
       "dev": true
     },
     "eslint-plugin-wpcalypso": {
-      "version": "2.0.0",
+      "version": "3.0.2",
       "dev": true
     },
     "espree": {
@@ -1634,13 +1629,13 @@
       "dev": true
     },
     "globule": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "dependencies": {
         "glob": {
-          "version": "7.0.6"
+          "version": "7.1.1"
         },
         "lodash": {
-          "version": "4.9.0"
+          "version": "4.16.4"
         },
         "minimatch": {
           "version": "3.0.3"
@@ -1648,7 +1643,7 @@
       }
     },
     "good-listener": {
-      "version": "1.1.8"
+      "version": "1.2.0"
     },
     "got": {
       "version": "3.3.1",
@@ -1775,7 +1770,7 @@
       "version": "1.5.0"
     },
     "http-proxy": {
-      "version": "1.15.1",
+      "version": "1.15.2",
       "dev": true
     },
     "http-signature": {
@@ -2827,7 +2822,7 @@
       "dev": true
     },
     "postcss": {
-      "version": "5.2.4",
+      "version": "5.2.5",
       "dependencies": {
         "chalk": {
           "version": "1.1.3",
@@ -3160,7 +3155,7 @@
       "version": "1.1.2"
     },
     "repeat-string": {
-      "version": "1.5.4"
+      "version": "1.6.1"
     },
     "repeating": {
       "version": "1.1.3"
@@ -4015,11 +4010,11 @@
           "dev": true
         },
         "engine.io": {
-          "version": "1.7.0",
+          "version": "1.7.2",
           "dev": true
         },
         "engine.io-client": {
-          "version": "1.7.0",
+          "version": "1.7.2",
           "dev": true,
           "dependencies": {
             "component-emitter": {
@@ -4029,7 +4024,7 @@
           }
         },
         "engine.io-parser": {
-          "version": "1.3.0",
+          "version": "1.3.1",
           "dev": true,
           "dependencies": {
             "has-binary": {
@@ -4047,12 +4042,22 @@
           "dev": true
         },
         "socket.io": {
-          "version": "1.5.0",
+          "version": "1.5.1",
           "dev": true
         },
         "socket.io-client": {
-          "version": "1.5.0",
+          "version": "1.5.1",
           "dev": true
+        },
+        "socket.io-parser": {
+          "version": "2.3.1",
+          "dev": true,
+          "dependencies": {
+            "component-emitter": {
+              "version": "1.1.2",
+              "dev": true
+            }
+          }
         },
         "ws": {
           "version": "1.1.1",
