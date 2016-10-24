@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import omit from 'lodash/omit';
-import find from 'lodash/find';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -13,13 +12,12 @@ import { connect } from 'react-redux';
 import Popover from 'components/popover';
 import Gridicon from 'components/gridicon';
 import PlanPrice from 'components/plans/plan-price';
-import { fetchSitePlans } from 'state/sites/plans/actions';
-import { shouldFetchSitePlans } from 'lib/plans';
-import { getPlansBySite } from 'state/sites/plans/selectors';
-import SitesList from 'lib/sites-list';
-import PlansList from 'lib/plans-list';
-const plansList = PlansList();
-const sitesList = SitesList();
+import { getSitePlan } from 'state/sites/plans/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getPlanBySlug } from 'state/plans/selectors';
+import { PLAN_PREMIUM } from 'lib/plans/constants';
+import QuerySitePlans from 'components/data/query-site-plans';
+import QueryPlans from 'components/data/query-plans';
 
 let exclusiveViewLock = null;
 
@@ -37,13 +35,6 @@ const PremiumPopover = React.createClass( {
 			visibleByHover: false
 		};
 	},
-	componentDidMount() {
-		this.props.fetchSitePlans( this.props.sitePlans, this.props.selectedSite );
-		this.props.fetchPlans();
-	},
-	componentWillReceiveProps( nextProps ) {
-		this.props.fetchSitePlans( nextProps.sitePlans, nextProps.selectedSite );
-	},
 	isVisible() {
 		return (
 			this.props.isVisible ||
@@ -57,9 +48,6 @@ const PremiumPopover = React.createClass( {
 			args: { cost: price },
 			components: { small: <small /> }
 		} );
-	},
-	getSitePlan() {
-		return find( ( this.props.sitePlans.data || [] ), ( plan => plan.product_slug === 'value_bundle' ) );
 	},
 	componentWillUnmount() {
 		if ( exclusiveViewLock === this ) {
@@ -91,12 +79,14 @@ const PremiumPopover = React.createClass( {
 		}
 	},
 	render() {
-		const premiumPlan = find( this.props.plans, ( plan => plan.product_slug === 'value_bundle' ) );
+		const { selectedSiteId, premiumPlan, premiumSitePlan } = this.props;
 		const popoverClasses = classNames( this.props.className, 'premium-popover popover' );
 		const context = this.refs && this.refs[ 'popover-premium-reference' ];
 
 		return (
 			<div>
+				<QueryPlans />
+				<QuerySitePlans siteId={ selectedSiteId } />
 				<span
 					onClick={ this.handleClick }
 					onMouseEnter={ this.handleMouseEnter }
@@ -117,7 +107,7 @@ const PremiumPopover = React.createClass( {
 						<div className="premium-popover__header">
 							<h3>{ this.translate( 'Premium', { context: 'Premium Plan' } ) }</h3>
 							{ premiumPlan
-								? <PlanPrice plan={ premiumPlan } sitePlan={ this.getSitePlan() }/>
+								? <PlanPrice plan={ premiumPlan } sitePlan={ premiumSitePlan } />
 								: <h5>Loading</h5> }
 						</div>
 						<ul className="premium-popover__items">
@@ -128,7 +118,7 @@ const PremiumPopover = React.createClass( {
 								this.translate( 'Video Uploads' ),
 								this.translate( 'No Ads' ),
 								this.translate( 'Email and live chat support' )
-							].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark" size={ 18 }/> { message }
+							].map( ( message, i ) => <li key={ i }><Gridicon icon="checkmark" size={ 18 } /> { message }
 							</li> ) }
 						</ul>
 					</div>
@@ -140,19 +130,10 @@ const PremiumPopover = React.createClass( {
 } );
 
 export default connect( ( state ) => {
+	const selectedSiteId = getSelectedSiteId( state );
 	return {
-		sitePlans: getPlansBySite( state, sitesList.getSelectedSite() ),
-		plans: plansList.get()
-	};
-}, ( dispatch ) => {
-	return {
-		fetchSitePlans( sitePlans, site ) {
-			if ( shouldFetchSitePlans( sitePlans, site ) ) {
-				dispatch( fetchSitePlans( site.ID ) );
-			}
-		},
-		fetchPlans() {
-			plansList.fetch();
-		}
+		selectedSiteId,
+		premiumPlan: getPlanBySlug( state, PLAN_PREMIUM ),
+		premiumSitePlan: getSitePlan( state, selectedSiteId, PLAN_PREMIUM )
 	};
 } )( PremiumPopover );
