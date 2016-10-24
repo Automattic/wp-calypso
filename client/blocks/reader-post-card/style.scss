@@ -179,30 +179,6 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	flex-wrap: wrap;
 	flex-direction: row;
 
-	.reader-post-card__featured-image {
-		flex-basis: auto;
-		flex-grow: 1;
-		margin-right: 20px;
-		max-width: 190px;
-
-		@include breakpoint( ">960px" ) {
-			max-width: 250px;
-		}
-
-		@media #{$reader-post-card-breakpoint-medium} {
-
-			ight: 100px;
-			max-width: 100%;
-		}
-
-		@media #{$reader-post-card-breakpoint-small} {
-			height: 100px;
-
-			max-width: none;
-			width: 100%;
-		}
-	}
-
 	.reader-post-card__post-details {
 		flex: 1;
 	}
