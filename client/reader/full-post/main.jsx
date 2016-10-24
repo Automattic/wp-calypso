@@ -135,7 +135,7 @@ FullPostView = React.createClass( {
 	},
 
 	handlePermalinkClick: function() {
-		stats.recordPermalinkClick( 'full_post_title' );
+		stats.recordPermalinkClick( 'full_post_title', this.props.post );
 	},
 
 	pickSite: function( event ) {
