@@ -44,11 +44,8 @@ export const Composer = React.createClass( {
 				onMouseLeave={ this.scrollbleedUnlock }
 				>
 				<div className="happychat__message">
-					<label htmlFor="hc_message_textarea" style={{ display: "none"}}>
-						Enter your support request:
-					</label>
 					<textarea
-						id="hc_message_textarea"
+						aria-label="Enter your support request"
 						ref={ this.setScrollbleedTarget }
 						onFocus={ onFocus }
 						type="text"
