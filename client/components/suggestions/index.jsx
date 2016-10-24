@@ -6,14 +6,20 @@ import {
 	noop,
 	pick,
 	pickBy
-}	from 'lodash';
+} from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { localize } from 'i18n-calypso';
 
 const Suggestions = React.createClass( {
 
 	propTypes: {
 		suggest: React.PropTypes.func,
 		terms: React.PropTypes.object,
-		input: React.PropTypes.string
+		input: React.PropTypes.string,
+		translate: React.PropTypes.func.isRequired
 	},
 
 	getDefaultProps: function() {
@@ -203,12 +209,16 @@ const Suggestions = React.createClass( {
 				continue;
 			}
 
+			const filtered = suggestions[ key ].length.toString();
+			const total = this.props.terms[ key ].length.toString();
 			//Add header
 			rendered.push(
-				<div key={ key }>
-					<span className="suggestions__category">{ key }</span>
+				<div className="suggestions__category" key={ key }>
+					<span className="suggestions__category-name">{ key }</span>
 					<span className="suggestions__category-counter">
-						{ ' ' + suggestions[ key ].length + ' of ' + this.props.terms[ key ].length }
+						{ this.props.translate( '%(filtered)s of %(total)s', {
+							args: { filtered, total }
+						} ) }
 					</span>
 				</div>
 			);
@@ -245,4 +255,4 @@ const Suggestions = React.createClass( {
 
 } );
 
-module.exports = Suggestions;
+module.exports = localize( Suggestions );

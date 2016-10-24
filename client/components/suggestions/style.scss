@@ -7,11 +7,20 @@
 
 	.suggestions__category {
 		background-color: $gray-light;
+		border-width: 0px 0.5px 0.5px 0.5px;
+		border-color: darken( $gray-light, 10% );
+		border-style: solid;
 		text-transform: uppercase;
 		text-indent: 10px;
-		border-width: 0px 0.5px 0.5px 0.5px;
-		border-color: $gray-light;
-		border-style: solid;
+
+		.suggestions__category-name {
+			float: left;
+		}
+
+		.suggestions__category-counter {
+			padding-right: 5px;
+			float: right;
+		}
 	}
 
 	.suggestions__value {
@@ -19,7 +28,7 @@
 		text-indent: 20px;
 		border-width: 0px 0.5px 0.5px 0.5px;
 		height: 24px;
-		border-color: $gray-light;
+		border-color: darken( $gray-light, 10% );
 		border-style: solid;
 
 		.suggestions__value-emphasis {
@@ -47,4 +56,5 @@
 		display: flex;
 		flex-direction: column;
 	}
+
 }
