@@ -51,6 +51,7 @@ import { getFeed } from 'state/reader/feeds/selectors';
 import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
+import ExternalLink from 'components/external-link';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -252,8 +253,14 @@ export class FullPostView extends React.Component {
 				{ post && ! post.is_external && post.site_ID && <QueryReaderSite siteId={ post.site_ID } /> }
 				<div className="reader-full-post__back-container">
 					<Button className="reader-full-post__back" borderless compact onClick={ this.handleBack }>
-						<Gridicon icon="arrow-left" /> { translate( 'Back' ) }
+						<Gridicon icon="arrow-left" />
+						<span className="reader-full-post__back-label">{ translate( 'Back' ) }</span>
 					</Button>
+				</div>
+				<div className="reader-full-post__visit-site-container">
+					<ExternalLink icon={ true } href={ post.URL }>
+						<span className="reader-full-post__visit-site-label">{ translate( 'Visit Site' ) }</span>
+					</ExternalLink>
 				</div>
 				<div className="reader-full-post__content">
 					<div className="reader-full-post__sidebar">
@@ -365,7 +372,7 @@ const ConnectedFullPostView = connect(
 		const props = {};
 
 		if ( ! isExternal && siteId ) {
-			props.site = getSite( state, siteId )
+			props.site = getSite( state, siteId );
 		}
 		if ( feedId ) {
 			props.feed = getFeed( state, feedId );
