@@ -10,6 +10,7 @@ import { get } from 'lodash';
  */
 import ImageEditor from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 
 class ImageEditorExample extends Component {
 	constructor() {
@@ -78,6 +79,7 @@ class ImageEditorExample extends Component {
 						media={ this.state.media }
 						onDone={ this.onImageEditorDone }
 						onReset={ this.onImageEditorReset }
+						defaultAspectRatio={ AspectRatios.ASPECT_3X2 }
 					/>
 				</div>
 

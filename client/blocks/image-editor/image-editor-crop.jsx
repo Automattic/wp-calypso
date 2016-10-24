@@ -80,6 +80,10 @@ class ImageEditorCrop extends Component {
 		};
 	}
 
+	componentWillMount() {
+		this.updateCrop( this.getDefaultState( this.props ), this.props, this.applyCrop );
+	}
+
 	componentWillReceiveProps( newProps ) {
 		const {
 			bounds,

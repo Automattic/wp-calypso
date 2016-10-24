@@ -20,7 +20,8 @@ import closeOnEsc from 'lib/mixins/close-on-esc';
 import {
 	resetImageEditorState,
 	resetAllImageEditorState,
-	setImageEditorFileInfo
+	setImageEditorFileInfo,
+	setImageEditorAspectRatio
 } from 'state/ui/editor/image-editor/actions';
 import {
 	getImageEditorFileInfo,
@@ -29,6 +30,7 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 
 const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
@@ -41,6 +43,22 @@ const ImageEditor = React.createClass( {
 		onCancel: PropTypes.func,
 		onReset: PropTypes.func,
 		className: PropTypes.string,
+		defaultAspectRatio: PropTypes.oneOf( [
+			AspectRatios.FREE,
+			AspectRatios.ORIGINAL,
+			AspectRatios.ASPECT_1X1,
+			AspectRatios.ASPECT_16X9,
+			AspectRatios.ASPECT_4X3,
+			AspectRatios.ASPECT_3X2
+		] ),
+		allowedAspectRatios: PropTypes.arrayOf( PropTypes.oneOf( [
+			AspectRatios.FREE,
+			AspectRatios.ORIGINAL,
+			AspectRatios.ASPECT_1X1,
+			AspectRatios.ASPECT_16X9,
+			AspectRatios.ASPECT_4X3,
+			AspectRatios.ASPECT_3X2
+		] ) ),
 
 		// Redux props
 		site: PropTypes.object,
@@ -56,7 +74,8 @@ const ImageEditor = React.createClass( {
 			onDone: noop,
 			onCancel: null,
 			onReset: noop,
-			isImageLoaded: false
+			isImageLoaded: false,
+			defaultAspectRatio: AspectRatios.FREE
 		};
 	},
 
@@ -75,11 +94,23 @@ const ImageEditor = React.createClass( {
 			this.props.resetAllImageEditorState();
 
 			this.updateFileInfo( newProps.media );
+
+			this.setDefaultAspectRatio();
 		}
 	},
 
 	componentDidMount() {
 		this.updateFileInfo( this.props.media );
+
+		this.setDefaultAspectRatio();
+	},
+
+	setDefaultAspectRatio() {
+		const { defaultAspectRatio } = this.props;
+
+		if ( defaultAspectRatio ) {
+			this.props.setImageEditorAspectRatio( defaultAspectRatio );
+		}
 	},
 
 	updateFileInfo( media ) {
@@ -230,6 +261,7 @@ export default connect(
 	{
 		resetImageEditorState,
 		resetAllImageEditorState,
-		setImageEditorFileInfo
+		setImageEditorFileInfo,
+		setImageEditorAspectRatio
 	}
 )( localize( ImageEditor ) );
