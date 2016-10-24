@@ -43,7 +43,7 @@ export default class FormTextInputWithAction extends Component {
 			focused: false,
 			value: null,
 		};
-	};
+	}
 
 	handleFocus = ( e ) => {
 		this.props.onFocus( e );
@@ -90,7 +90,7 @@ export default class FormTextInputWithAction extends Component {
 			return this.props.defaultValue;
 		}
 		return this.state.value;
-	};
+	}
 
 	render() {
 		return (
@@ -123,5 +123,5 @@ export default class FormTextInputWithAction extends Component {
 				</FormButton>
 			</div>
 		);
-	};
+	}
 }
