@@ -283,6 +283,25 @@ UndocumentedMe.prototype.deleteAccountRecoveryPhone = function( callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
+UndocumentedMe.prototype.newValidationAccountRecoveryPhone = function( callback ) {
+	var args = {
+		apiVersion: '1.1',
+		path: '/me/account-recovery/phone/validation/new',
+	};
+
+	return this.wpcom.req.post( args, callback );
+};
+
+UndocumentedMe.prototype.validateAccountRecoveryPhone = function( code, callback ) {
+	var args = {
+		apiVersion: '1.1',
+		path: '/me/account-recovery/phone/validation',
+		body: { code },
+	};
+
+	return this.wpcom.req.post( args, callback );
+};
+
 UndocumentedMe.prototype.updateAccountRecoveryEmail = function( email, callback ) {
 	var args = {
 		apiVersion: '1.1',
@@ -299,6 +318,15 @@ UndocumentedMe.prototype.deleteAccountRecoveryEmail = function( callback ) {
 	var args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/email/delete'
+	};
+
+	return this.wpcom.req.post( args, callback );
+};
+
+UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function( callback ) {
+	var args = {
+		apiVersion: '1.1',
+		path: '/me/account-recovery/email/validation/new',
 	};
 
 	return this.wpcom.req.post( args, callback );
