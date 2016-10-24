@@ -11,7 +11,7 @@ import {
 /**
  * Internal dependencies
  */
-import { localize } from 'i18n-calypso';
+import i18n from 'i18n-calypso';
 
 const Suggestions = React.createClass( {
 
@@ -19,7 +19,6 @@ const Suggestions = React.createClass( {
 		suggest: React.PropTypes.func,
 		terms: React.PropTypes.object,
 		input: React.PropTypes.string,
-		translate: React.PropTypes.func.isRequired
 	},
 
 	getDefaultProps: function() {
@@ -216,7 +215,7 @@ const Suggestions = React.createClass( {
 				<div className="suggestions__category" key={ key }>
 					<span className="suggestions__category-name">{ key }</span>
 					<span className="suggestions__category-counter">
-						{ this.props.translate( '%(filtered)s of %(total)s', {
+						{ i18n.translate( '%(filtered)s of %(total)s', {
 							args: { filtered, total }
 						} ) }
 					</span>
@@ -255,4 +254,4 @@ const Suggestions = React.createClass( {
 
 } );
 
-module.exports = localize( Suggestions );
+module.exports = Suggestions;
