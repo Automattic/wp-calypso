@@ -128,9 +128,11 @@ const groupMessages = messages => {
 	return grouped.groups.concat( [ grouped.group ] );
 };
 
-const welcomeMessage = () => (
+const welcomeMessage = ( { currentUserEmail } ) => (
 	<div className="happychat__welcome">
-		{ translate( 'Welcome to WordPress.com support chat!' ) }
+		<p>{ translate( 'Welcome to WordPress.com support chat! We\'ll send a transcript to %s at the end of the chat.', {
+			args: currentUserEmail
+		} ) }</p>
 	</div>
 );
 
@@ -174,7 +176,8 @@ const mapProps = state => {
 	return {
 		connectionStatus: getHappychatConnectionStatus( state ),
 		timeline: getHappychatTimeline( state ),
-		isCurrentUser: ( { user_id } ) => user_id === current_user.ID
+		isCurrentUser: ( { user_id } ) => user_id === current_user.ID,
+		currentUserEmail: current_user.email
 	};
 };
 
