@@ -28,9 +28,15 @@ describe( 'reducer', () => {
 	} );
 
 	it( 'should reset the survey on signup complete', () => {
-		expect( signupSurveyReducer( {}, {
-			type: SIGNUP_COMPLETE_RESET,
-			action: {}
-		} ) ).to.be.eql( {} );
+		expect( signupSurveyReducer(
+			{
+				vertical: 'test-survey',
+				otherText: 'test-other-text'
+			},
+			{
+				type: SIGNUP_COMPLETE_RESET,
+				action: {}
+			}
+		) ).to.be.eql( {} );
 	} );
 } );
