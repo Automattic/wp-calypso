@@ -62,7 +62,7 @@ describe( 'index', () => {
 			expect( isCancelable( PLAN_PURCHASE ) ).to.be.true;
 		} );
 
-		it( 'should be cancelable when the purchase can have auto-renew disabled', () => {
+		it( 'should not be cancelable if domain is pending transfer', () => {
 			expect( isCancelable( DOMAIN_PURCHASE_PENDING_TRANSFER ) ).to.be.false;
 		} );
 	} );

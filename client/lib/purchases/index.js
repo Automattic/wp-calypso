@@ -132,7 +132,7 @@ function isPaidWithPaypal( purchase ) {
 }
 
 function isPendingTransfer( purchase ) {
-	return true === purchase.pendingTransfer;
+	return purchase.pendingTransfer;
 }
 
 function isRedeemable( purchase ) {
