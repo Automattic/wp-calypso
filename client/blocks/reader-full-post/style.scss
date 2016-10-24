@@ -65,31 +65,34 @@
 }
 
 .reader-full-post__visit-site-container {
+	background: $white;
+	border-bottom: 1px solid $gray-light;
 	font-size: 11px;
 	font-weight: 500;
+	height: 46px;
 	margin: 0;
 	position: fixed;
 		right: 0;
-		top: 47px;
+		top: 0;
 	text-transform: uppercase;
 	z-index: z-index( '.masterbar', '.reader-visit-site' );
 
 	.external-link .gridicons-external {
 		fill: darken( $gray, 10% );
-		top: 3px;
+		top: 6px;
 
-		@include breakpoint( "<660px" ) {
-			top: 6px;
+		@include breakpoint( ">660px" ) {
+			top: 3px;
 		}
 	}
 
 	.external-link {
 		color: darken( $gray, 10% );
 		display: block;
-		padding: 10px 20px 15px 20px;
+		padding: 10px 10px 15px 6px;
 
-		@include breakpoint( "<660px" ) {
-			padding: 10px 10px 15px 6px;
+		@include breakpoint( ">660px" ) {
+			padding: 10px 20px 15px 20px;
 		}
 
 		&:hover {
@@ -108,12 +111,10 @@
 		}
 	}
 
-	@include breakpoint( "<660px" ) {
-		top: 0;
+	@include breakpoint( ">660px" ) {
+		border: 0;
+		top: 47px;
 		right: 0;
-		height: 46px;
-		background: $white;
-		border-bottom: 1px solid $gray-light;
 	}
 }
 

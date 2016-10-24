@@ -259,7 +259,7 @@ export class FullPostView extends React.Component {
 				</div>
 				<div className="reader-full-post__visit-site-container">
 					<ExternalLink icon={ true } href={ post.URL }>
-						<span className="reader-full-post__visit-site-label">Visit Site</span>
+						<span className="reader-full-post__visit-site-label">{ translate( 'Visit Site' ) }</span>
 					</ExternalLink>
 				</div>
 				<div className="reader-full-post__content">
