@@ -1,0 +1,60 @@
+.suggestions{
+
+	.suggestions__taxonomy {
+			padding-left: 4px;
+			padding-right: 4px;
+	}
+
+	.suggestions__category {
+		background-color: $gray-light;
+		border-width: 0px 0.5px 0.5px 0.5px;
+		border-color: darken( $gray-light, 10% );
+		border-style: solid;
+		text-transform: uppercase;
+		text-indent: 10px;
+
+		.suggestions__category-name {
+			float: left;
+		}
+
+		.suggestions__category-counter {
+			padding-right: 5px;
+			float: right;
+		}
+	}
+
+	.suggestions__value {
+		background-color: $white;
+		text-indent: 20px;
+		border-width: 0px 0.5px 0.5px 0.5px;
+		height: 24px;
+		border-color: darken( $gray-light, 10% );
+		border-style: solid;
+
+		.suggestions__value-emphasis {
+			font-weight: bold;
+			pointer-events: none;
+			color: inherit;
+		}
+
+		.suggestions__value-normal {
+			pointer-events: none;
+			color: inherit;
+		}
+
+		.suggestions__value-category {
+			display: none;
+		}
+	}
+
+	.suggestions__value.has-highlight {
+		background-color: $blue-wordpress;
+		color: $white;
+	}
+
+	.suggestions__suggestions {
+		display: flex;
+		flex-direction: column;
+	}
+
+}
