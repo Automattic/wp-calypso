@@ -31,7 +31,7 @@ const MagicSearchWelcome = React.createClass( {
 	render() {
 		return (
 			<div className="themes-magic-search-card__welcome" >
-				<span className="themes-magic-search-card__welcome-header">SEARCH BY</span>
+				<span className="themes-magic-search-card__welcome-header">{ this.translate('SEARCH BY') }</span>
 				<div className="themes-magic-search-card__welcome-taxonomies">
 					{ this.props.taxonomies.map( taxonomy =>
 						<div
