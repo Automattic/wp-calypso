@@ -90,11 +90,11 @@ MediaActions.fetchNextPage = function( siteId ) {
 };
 
 MediaActions.createTransientMedia = function( id, file, date ) {
-	const transientMedia = {
-		ID: id,
-		'transient': true,
-		date
-	};
+	const transientMedia = { ID: id, 'transient': true };
+
+	if ( date ) {
+		transientMedia.date = date;
+	}
 
 	if ( 'string' === typeof file ) {
 		// Generate from string
@@ -223,22 +223,30 @@ MediaActions.edit = function( siteId, item ) {
 };
 
 MediaActions.update = function( siteId, item ) {
-	var newItem;
-
 	if ( Array.isArray( item ) ) {
 		item.forEach( MediaActions.update.bind( null, siteId ) );
 		return;
 	}
 
-	newItem = assign( {}, MediaStore.get( siteId, item.ID ), item );
+	const mediaId = item.ID;
+	const newItem = assign( {}, MediaStore.get( siteId, mediaId ), item );
 
-	Dispatcher.handleViewAction( {
+	// Let's update the media modal immediately
+	// with a fake transient media item
+	const updateAction = {
 		type: 'RECEIVE_MEDIA_ITEM',
-		siteId: siteId,
+		siteId,
 		data: newItem
-	} );
+	};
 
-	debug( 'Updating media for %o by ID %o to %o', siteId, item.ID, item );
+	if ( item.media ) {
+		// Show a fake transient media item that can be rendered into the list immediately,
+		// even before the media has persisted to the server`
+		updateAction.data = { ...newItem, ...MediaActions.createTransientMedia( mediaId, item.media ) };
+	}
+
+	debug( 'Updating media for %o by ID %o to %o', siteId, mediaId, updateAction );
+	Dispatcher.handleViewAction( updateAction );
 
 	wpcom
 		.site( siteId )
