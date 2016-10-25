@@ -40,6 +40,7 @@ the image to be edited. Use this approach if you want to edit a local image file
 
 It can also contain these optional properties (with defaults if not set):
 - `media.file` `{string}`: the base name of the edited image file (e.g. `full-width1-e1.jpg`), defaults to `default`
+- `media.ID` `{number}`: An ID of the media item.
 - `media.mime_type` `{string}`: the MIME of the edited image (e.g. `image/jpeg`), defaults to `image/png`
 - `media.title` `{string}`: the title of the edited image (e.g. `some image file`), defaults to `default`
 
