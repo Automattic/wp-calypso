@@ -136,43 +136,62 @@
 
 .themes-magic-search-card__welcome {
 	color: $gray;
-	background-color: white;
-	text-transform: uppercase;
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-		0 1px 2px lighten( $gray, 30% );
+	background-color: $white;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	display: flex;
+	flex-direction: column;
+	padding: 10px 18px 18px;
+
+	.themes-magic-search-card__welcome-top-searches,
+	.themes-magic-search-card__welcome-taxonomies {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
 
-		.themes-magic-search-card__welcome-top-searches,
-		.themes-magic-search-card__welcome-taxonomies {
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-		}
+	.themes-magic-search-card__welcome-header {
+		font-size: smaller;
+		text-transform: uppercase;
+	}
+}
 
-		.themes-magic-search-card__welcome-header {
-			padding: 5px 10px 5px 25px;
-			font-size: smaller;
-		}
+.themes-magic-search-card__welcome-taxonomy {
+	display: flex;
+	align-items: center;
+	padding: 4px 8px;
+	margin: 10px 10px 0px 0px;
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
+	border-radius: 3px;
+	font-size: 13px;
+	line-height: 16px;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: all 200ms ease-in;
 
-		.themes-magic-search-card__welcome-taxonomies {
-			padding: 0px 10px 10px 25px;
+	.gridicon {
+		padding-right: 6px;
+	}
 
-			.themes-magic-search-card__welcome-taxonomy {
-				padding: 0px 5px 0px 5px;
-				margin: 0px 10px 0px 0px;
-				box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ),
-					0 1px 2px lighten( $gray, 30% );
-					display: flex;
-					align-items: center;
-			}
+	&:hover {
+		box-shadow: 0 0 0 1px $gray, 0 2px 4px lighten( $gray, 20% );
+	}
+}
 
-
-		}
-
-		.themes-magic-search-card__welcome-taxonomy-icon {
-			width: 20px;
-			height: 20px;
-			padding-right: 4px;
-		}
+.themes-magic-search-card__welcome-taxonomy-type-color {
+	color: rgb( 0, 170, 220 );
+}
+.themes-magic-search-card__welcome-taxonomy-type-column {
+	color: rgb( 144, 19, 254 );
+}
+.themes-magic-search-card__welcome-taxonomy-type-feature {
+	color: rgb( 102, 195, 126 );
+}
+.themes-magic-search-card__welcome-taxonomy-type-layout {
+	color: rgb( 242, 134, 10 );
+}
+.themes-magic-search-card__welcome-taxonomy-type-subject {
+	color: $gray;
+}
+.themes-magic-search-card__welcome-taxonomy-type-style {
+	color: rgb( 241, 56, 59 );
 }
