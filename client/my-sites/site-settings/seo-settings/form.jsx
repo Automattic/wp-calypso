@@ -422,8 +422,8 @@ export const SeoForm = React.createClass( {
 				{ showUpgradeNudge &&
 					<UpgradeNudge
 						feature={ FEATURE_ADVANCED_SEO }
-						title={ this.translate( 'Upgrade to a Business Plan and Enable SEO Tools' ) }
-						message={ this.translate( `By upgrading to a Business Plan you'll enable advanced SEO features on your site.` ) }
+						title={ this.translate( 'Enable SEO Tools by Upgrading to the Business Plan' ) }
+						message={ this.translate( `Adds tools to optimize your site for search engines and social media sharing.` ) }
 						event={ 'calypso_seo_settings_upgrade_nudge' }
 					/>
 				}
