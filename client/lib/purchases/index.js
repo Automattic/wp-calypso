@@ -91,6 +91,10 @@ function isCancelable( purchase ) {
 		return false;
 	}
 
+	if ( isPendingTransfer( purchase ) ) {
+		return false;
+	}
+
 	if ( isExpired( purchase ) ) {
 		return false;
 	}
@@ -125,6 +129,10 @@ function isOneTimePurchase( purchase ) {
 
 function isPaidWithPaypal( purchase ) {
 	return 'paypal' === purchase.payment.type;
+}
+
+function isPendingTransfer( purchase ) {
+	return purchase.pendingTransfer;
 }
 
 function isRedeemable( purchase ) {
@@ -261,4 +269,4 @@ export {
 	paymentLogoType,
 	purchaseType,
 	showCreditCardExpiringWarning,
-}
+};
