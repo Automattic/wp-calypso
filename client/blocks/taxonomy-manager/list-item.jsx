@@ -30,10 +30,11 @@ class TaxonomyManagerListItem extends Component {
 		};
 	}
 
-	togglePopoverMenu = () => {
+	togglePopoverMenu = event => {
+		event.stopPropagation && event.stopPropagation();
 		this.setState( {
 			popoverMenuOpen: ! this.state.popoverMenuOpen
-		} )
+		} );
 	}
 
 	render() {

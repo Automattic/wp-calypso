@@ -14,6 +14,7 @@ import TermsList from './list';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import QueryTaxonomies from 'components/data/query-taxonomies';
+import TermFormDialog from 'blocks/term-form-dialog';
 
 export class TaxonomyManager extends Component {
 	static propTypes = {
@@ -28,7 +29,26 @@ export class TaxonomyManager extends Component {
 	};
 
 	state = {
-		search: null
+		search: null,
+		termFormDialogOpened: false
+	};
+
+	closeTermFormDialog = () => {
+		this.setState( { termFormDialogOpened: false } );
+	};
+
+	newTerm = () => {
+		this.setState( {
+			termFormDialogOpened: true,
+			selectedTerm: undefined
+		} );
+	};
+
+	editTerm = term => {
+		this.setState( {
+			termFormDialogOpened: true,
+			selectedTerm: term
+		} );
 	};
 
 	onSearch = searchTerm => {
@@ -53,12 +73,20 @@ export class TaxonomyManager extends Component {
 				<div className="taxonomy-manager__header">
 					<SearchCard onSearch={ this.onSearch } delaySearch />
 					<div className="taxonomy-manager__actions">
-						<Button compact primary>
+						<Button compact primary onClick={ this.newTerm }>
 							{ labels.add_new_item }
 						</Button>
 					</div>
 				</div>
-				<TermsList query={ query } taxonomy={ taxonomy } />
+				<TermsList query={ query } taxonomy={ taxonomy } onTermClick={ this.editTerm } />
+				<TermFormDialog
+					showDialog={ this.state.termFormDialogOpened }
+					onClose={ this.closeTermFormDialog }
+					taxonomy={ this.props.taxonomy }
+					postType={ this.props.postType }
+					term={ this.state.selectedTerm }
+					showDescriptionInput
+				/>
 			</div>
 		);
 	}
