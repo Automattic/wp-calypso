@@ -31,20 +31,13 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
 import { getForumUrl } from 'my-sites/themes/helpers';
-import { isThemeActive, isPremiumTheme as isPremium } from 'state/themes/selectors';
+import { isPremiumTheme as isPremium } from 'state/themes/utils';
+import { isThemeActive } from 'state/themes/selectors';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
-import {
-	signup,
-	purchase,
-	activate,
-	customize,
-	tryandcustomize,
-	bindOptionsToDispatch,
-	bindOptionsToSite
-} from 'my-sites/themes/theme-options';
+import { ThemeOptions } from 'my-sites/themes/theme-options';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';
@@ -465,46 +458,51 @@ const ThemeSheet = React.createClass( {
 	},
 } );
 
+const ThemeSheetWithOptions = ( props ) => {
+	const { selectedSite: site, isActive, price, isLoggedIn } = props;
+
+	let defaultOption;
+
+	if ( ! isLoggedIn ) {
+		defaultOption = 'signup';
+	} else if ( isActive ) {
+		defaultOption = 'customize';
+	} else if ( price ) {
+		defaultOption = 'purchase';
+		//defaultOption.label = i18n.translate( 'Pick this design' );
+	} else {
+		defaultOption = 'activate';
+		//defaultOption.label = i18n.translate( 'Activate this design' );
+	}
+
+	return (
+		<ThemeOptions site={ site }
+			theme={ props /* TODO: Have ThemeOptions only use theme ID */ }
+			options={ [
+				'signup',
+				'customize',
+				'tryandcustomize',
+				'purchase',
+				'activate'
+			] }
+			defaultOption={ defaultOption }
+			secondaryOption="tryandcustomize"
+			source="showcase-sheet">
+			<ThemeSheet { ...props } />
+		</ThemeOptions>
+	);
+};
+
 const WrappedThemeSheet = ( props ) => {
 	if ( ! props.isLoggedIn || props.selectedSite ) {
-		return <ThemeSheet { ...props } />;
+		return <ThemeSheetWithOptions { ...props } />;
 	}
 
 	return (
 		<ThemesSiteSelectorModal { ...props }
 			sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
-			<ThemeSheet />
+			<ThemeSheetWithOptions />
 		</ThemesSiteSelectorModal>
-	);
-};
-
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { selectedSite: site, isActive, price, isLoggedIn } = stateProps;
-
-	let defaultOption;
-
-	if ( ! isLoggedIn ) {
-		defaultOption = dispatchProps.signup;
-	} else if ( isActive ) {
-		defaultOption = dispatchProps.customize;
-	} else if ( price ) {
-		defaultOption = dispatchProps.purchase;
-		defaultOption.label = i18n.translate( 'Pick this design' );
-	} else {
-		defaultOption = dispatchProps.activate;
-		defaultOption.label = i18n.translate( 'Activate this design' );
-	}
-
-	const dispatchOptions = {
-		defaultOption,
-		secondaryOption: dispatchProps.tryandcustomize
-	};
-
-	return Object.assign(
-		{},
-		ownProps,
-		stateProps,
-		site ? bindOptionsToSite( dispatchOptions, site ) : dispatchOptions,
 	);
 };
 
@@ -529,13 +527,5 @@ export default connect(
 			isCurrentUserPaid,
 			isLoggedIn: !! currentUserId,
 		};
-	},
-	bindOptionsToDispatch( {
-		signup,
-		customize,
-		tryandcustomize,
-		purchase,
-		activate,
-	}, 'showcase-sheet' ),
-	mergeProps
+	}
 )( WrappedThemeSheet );
