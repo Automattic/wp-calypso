@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import {
+	has,
 	noop,
 	pick,
 	pickBy,
@@ -133,7 +134,7 @@ const Suggestions = React.createClass( {
 		if ( filter !== undefined ) {
 			// this means that we have at least taxonomy:
 			// so check if this is a correct taxonomy
-			if ( this.props.terms.hasOwnProperty( taxonomy ) ) {
+			if ( has( this.props.terms, taxonomy ) ) {
 				//so we will only filter elements from this taxonomy
 				terms = pick( this.props.terms, taxonomy );
 				//limit to 5 suggestions
