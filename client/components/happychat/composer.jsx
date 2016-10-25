@@ -45,6 +45,7 @@ export const Composer = React.createClass( {
 				>
 				<div className="happychat__message">
 					<textarea
+						aria-label="Enter your support request"
 						ref={ this.setScrollbleedTarget }
 						onFocus={ onFocus }
 						type="text"
@@ -53,11 +54,10 @@ export const Composer = React.createClass( {
 						onKeyDown={ onKeyDown }
 						value={ message } />
 				</div>
-				<div className="happychat__submit"
-						tabIndex="-1"
+				<button className="happychat__submit"
 						onClick={ sendMessage }>
 						<svg viewBox="0 0 24 24" width="24" height="24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
-				</div>
+				</button>
 			</div>
 		);
 	}
