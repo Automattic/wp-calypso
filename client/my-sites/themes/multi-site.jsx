@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -17,34 +16,12 @@ import {
 	separator,
 	info,
 	support,
-	help,
-	bindOptionsToDispatch
+	help
 } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 
-const ThemesMultiSite = props => (
-	<ThemesSiteSelectorModal { ...props } sourcePath="/design">
-		<ThemeShowcase { ...props }>
-			<SidebarNavigation />
-		</ThemeShowcase>
-	</ThemesSiteSelectorModal>
-);
-
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
-	{},
-	ownProps,
-	stateProps,
-	{
-		options: dispatchProps,
-		defaultOption: dispatchProps.activate,
-		secondaryOption: dispatchProps.tryandcustomize,
-		getScreenshotOption: () => dispatchProps.info
-	}
-);
-
-export default connect(
-	null,
-	bindOptionsToDispatch( {
+export default props => (
+	<ThemesSiteSelectorModal options={ {
 		preview,
 		purchase,
 		activate,
@@ -53,6 +30,15 @@ export default connect(
 		info,
 		support,
 		help,
-	}, 'showcase' ),
-	mergeProps
-)( ThemesMultiSite );
+	} }
+	defaultOption="activate"
+	secondaryOption="tryandcustomize"
+	getScreenshotOption={ function() {
+		return 'info';
+	} }
+	sourcePath="/design">
+		<ThemeShowcase { ...props } source="showcase">
+			<SidebarNavigation />
+		</ThemeShowcase>
+	</ThemesSiteSelectorModal>
+);

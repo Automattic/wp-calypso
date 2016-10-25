@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import defer from 'lodash/defer';
 import omit from 'lodash/omit';
@@ -13,15 +14,19 @@ import mapValues from 'lodash/mapValues';
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
 import { trackClick } from './helpers';
+import { bindOptions } from './theme-options';
 
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
-		options: React.PropTypes.objectOf( React.PropTypes.shape( {
-			label: React.PropTypes.string,
-			header: React.PropTypes.string,
-			action: React.PropTypes.func
+		children: PropTypes.element,
+		options: PropTypes.objectOf( PropTypes.shape( {
+			label: PropTypes.string,
+			header: PropTypes.string,
+			getUrl: PropTypes.func,
+			action: PropTypes.func
 		} ) ),
-		selectedSite: React.PropTypes.object,
+		defaultOption: PropTypes.string,
+		secondaryOption: PropTypes.string,
 		// Will be prepended to site slug for a redirect on selection
 		sourcePath: PropTypes.string.isRequired,
 	},
@@ -102,7 +107,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 					mainAction={ this.trackAndCallAction }
 					mainActionLabel={ selectedOption.label }
 					getMainUrl={ selectedOption.getUrl ? function( site ) {
-						return selectedOption.getUrl( selectedTheme, site );
+						return selectedOption.getUrl( selectedTheme, site.ID );
 					} : null } >
 
 					<Theme isActionable={ false } theme={ selectedTheme } />
@@ -113,4 +118,4 @@ const ThemesSiteSelectorModal = React.createClass( {
 	}
 } );
 
-export default ThemesSiteSelectorModal;
+export default connect( ...bindOptions )( ThemesSiteSelectorModal );

@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import pickBy from 'lodash/pickBy';
 
 /**
  * Internal dependencies
@@ -27,8 +26,8 @@ import {
 	info,
 	support,
 	help,
-	bindOptionsToDispatch,
-	bindOptionsToSite
+	bindToSite,
+	bindOptions
 } from './theme-options';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
@@ -44,7 +43,7 @@ const sites = sitesFactory();
 const JetpackThemeReferrerPage = localize(
 	( { translate, site, analyticsPath, analyticsPageTitle } ) => (
 		<Main className="themes">
-			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle }/>
+			<PageViewTracker path={ analyticsPath } title={ analyticsPageTitle } />
 			<SidebarNavigation />
 			<CurrentTheme
 				site={ site }
@@ -59,7 +58,9 @@ const JetpackThemeReferrerPage = localize(
 	)
 );
 
-const ThemesSingleSite = ( props ) => {
+const BoundThemeShowcase = connect( ...bindOptions )( ThemeShowcase );
+
+const ThemesSingleSiteBase = ( props ) => {
 	const site = sites.getSelectedSite(),
 		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
 		jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
@@ -76,7 +77,7 @@ const ThemesSingleSite = ( props ) => {
 			return (
 				<JetpackThemeReferrerPage site={ site }
 					analyticsPath={ analyticsPath }
-					analyticsPageTitle={ analyticsPageTitle }/>
+					analyticsPageTitle={ analyticsPageTitle } />
 			);
 		}
 		if ( ! site.hasJetpackThemes ) {
@@ -88,11 +89,11 @@ const ThemesSingleSite = ( props ) => {
 	}
 
 	return (
-		<ThemeShowcase { ...props }>
+		<BoundThemeShowcase { ...props }>
 			<SidebarNavigation />
 			<ThanksModal
 				site={ site }
-				source={ 'list' }/>
+				source={ 'list' } />
 			<CurrentTheme
 				site={ site }
 				canCustomize={ site && site.isCustomizable() } />
@@ -102,52 +103,40 @@ const ThemesSingleSite = ( props ) => {
 				feature={ FEATURE_ADVANCED_DESIGN }
 				event="themes_custom_design"
 			/>
-		</ThemeShowcase>
+		</BoundThemeShowcase>
 	);
 };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { selectedSite: site } = stateProps;
-	const options = dispatchProps;
-
-	const filteredOptions = pickBy( options, option =>
-		! ( option.hideForSite && option.hideForSite( stateProps ) )
-	);
-
-	const boundOptions = bindOptionsToSite( filteredOptions, site );
-
-	return Object.assign(
-		{},
-		ownProps,
-		stateProps,
-		{
-			options: boundOptions,
-			defaultOption: boundOptions.activate,
-			secondaryOption: boundOptions.tryandcustomize,
-			getScreenshotOption: theme => theme.active ? boundOptions.customize : boundOptions.info
-		}
-	);
+const bindSingleSite = ( state ) => {
+	const selectedSite = getSelectedSite( state );
+	return {
+		selectedSite,
+		isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+		isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
+	};
 };
 
-export default connect(
-	state => {
-		const selectedSite = getSelectedSite( state );
-		return {
-			selectedSite,
-			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
-		};
-	},
-	bindOptionsToDispatch( {
-		customize,
-		preview,
-		purchase,
-		activate,
-		tryandcustomize,
-		separator,
-		info,
-		support,
-		help
-	}, 'showcase' ),
-	mergeProps
-)( localize( ThemesSingleSite ) );
+const ThemesSingleSite = connect( bindSingleSite )( localize( ThemesSingleSiteBase ) );
+
+const ThemeShowcaseBoundToSite = connect( bindToSite )( ThemesSingleSite );
+
+export default props => (
+	<ThemeShowcaseBoundToSite { ...props }
+		options={ {
+			customize,
+			preview,
+			purchase,
+			activate,
+			tryandcustomize,
+			separator,
+			info,
+			support,
+			help
+		} }
+		defaultOption="activate"
+		secondaryOption="tryandcustomize"
+		getScreenshotOption={ function( theme ) {
+			return theme.active ? 'customize' : 'info';
+		} }
+		source="showcase" />
+);

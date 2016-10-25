@@ -6,6 +6,7 @@
 import { bindActionCreators } from 'redux';
 import i18n from 'i18n-calypso';
 import mapValues from 'lodash/mapValues';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -18,13 +19,16 @@ import {
 	isPremiumTheme as isPremium
 } from 'state/themes/utils';
 import {
-	getSignupUrl,
-	getPurchaseUrl,
-	getCustomizeUrl,
-	getDetailsUrl,
-	getSupportUrl,
-	getHelpUrl
-} from './helpers';
+	getThemeSignupUrl as getSignupUrl,
+	getThemePurchaseUrl as getPurchaseUrl,
+	getThemeCustomizeUrl as	getCustomizeUrl,
+	getThemeDetailsUrl as getDetailsUrl,
+	getThemeSupportUrl as getSupportUrl,
+	getThemeHelpUrl as getHelpUrl
+} from 'state/themes/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 export const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -35,7 +39,7 @@ export const purchase = config.isEnabled( 'upgrades/checkout' )
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
-		getUrl: ( theme, site ) => getPurchaseUrl( theme, site ),
+		getUrl: getPurchaseUrl,
 		hideForTheme: theme => ! theme.price || theme.active || theme.purchased
 	}
 	: {};
@@ -51,8 +55,8 @@ export const customize = {
 	label: i18n.translate( 'Customize' ),
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
-	getUrl: ( theme, site ) => getCustomizeUrl( theme, site ),
-	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
+	getUrl: getCustomizeUrl,
+	hideForSite: ( state, site ) => ! canCurrentUser( state, site, 'edit_theme_options' ),
 	hideForTheme: theme => ! theme.active
 };
 
@@ -61,8 +65,8 @@ export const tryandcustomize = {
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
-	getUrl: ( theme, site ) => getCustomizeUrl( theme, site ),
-	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
+	getUrl: getCustomizeUrl,
+	hideForSite: ( state, site ) => ! canCurrentUser( state, site, 'edit_theme_options' ),
 	hideForTheme: theme => theme.active
 };
 
@@ -72,7 +76,7 @@ export const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
 	} ),
-	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
+	hideForSite: ( state, site ) => isJetpackSite( state, site ),
 	hideForTheme: theme => theme.active
 };
 
@@ -80,7 +84,7 @@ export const signup = {
 	label: i18n.translate( 'Pick this design', {
 		comment: 'when signing up for a WordPress.com account with a selected theme'
 	} ),
-	getUrl: theme => getSignupUrl( theme )
+	getUrl: getSignupUrl
 };
 
 export const separator = {
@@ -92,29 +96,29 @@ export const info = {
 		comment: 'label for displaying the theme info sheet'
 	} ),
 	icon: 'info',
-	getUrl: ( theme, site ) => getDetailsUrl( theme, site ), // TODO: Make this a selector
+	getUrl: getDetailsUrl,
 };
 
 export const support = {
 	label: i18n.translate( 'Setup' ),
 	icon: 'help',
-	getUrl: ( theme, site ) => getSupportUrl( theme, site ),
+	getUrl: getSupportUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
-	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
+	hideForSite: ( state, site ) => isJetpackSite( state, site ),
 	hideForTheme: theme => ! isPremium( theme )
 };
 
 export const help = {
 	label: i18n.translate( 'Support' ),
-	getUrl: ( theme, site ) => getHelpUrl( theme, site ),
+	getUrl: getHelpUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
-	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
+	hideForSite: ( state, site ) => isJetpackSite( state, site ),
 };
 
 export function bindOptionToDispatch( option, source ) {
 	return dispatch => Object.assign(
 		{},
-		option,
+		//option,
 		option.action
 			? { action: bindActionCreators(
 				( theme, site ) => option.action( theme, site, source ),
@@ -124,9 +128,31 @@ export function bindOptionToDispatch( option, source ) {
 	);
 }
 
-export function bindOptionsToDispatch( options, source ) {
-	return dispatch => mapValues( options, option => bindOptionToDispatch( option, source )( dispatch ) );
+export const bindOptionsToDispatch = ( dispatch, { options, source } ) => (
+	mapValues( options, option => bindOptionToDispatch( option, source )( dispatch ) )
+);
+
+function bindOptionToState( option, state ) {
+	return Object.assign(
+		{},
+		option,
+		option.getUrl
+			? { getUrl: ( theme, siteId ) => option.getUrl( state, theme, siteId ) }
+			: {},
+		option.hideForSite
+			? { hideForSite: siteId => option.hideForSite( state, siteId ) }
+			: {},
+	);
 }
+
+// Sig: state, ownProps?
+export function bindOptionsToState( options, state ) {
+	return mapValues( options, option => bindOptionToState( option, state ) );
+}
+
+export const bindToState = ( state, { options } ) => ( {
+	options: bindOptionsToState( options, state )
+} );
 
 // Ideally: same sig as mergeProps. stateProps, dispatchProps, ownProps
 function bindOptionToSite( option, site ) {
@@ -134,14 +160,50 @@ function bindOptionToSite( option, site ) {
 		{},
 		option,
 		option.action
-			? { action: theme => option.action( theme, site ) }
+			? { action: theme => option.action( theme, site ) } // TODO (@ockham): Change actions to use siteId.
 			: {},
 		option.getUrl
-			? { getUrl: theme => option.getUrl( theme, site ) }
-			: {}
+			? { getUrl: ( state, theme ) => option.getUrl( state, theme, site.ID ) }
+			: {},
+		option.hideForSite
+			? { hideForSite: state => option.hideForSite( state, site.ID ) }
+			: {},
 	);
 }
 
 export function bindOptionsToSite( options, site ) {
 	return mapValues( options, option => bindOptionToSite( option, site ) );
 }
+
+export const bindToSite = ( state, { options } ) => ( {
+	options: bindOptionsToSite( options, getSelectedSite( state ) )
+} );
+
+export const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const options = merge(
+		{},
+		stateProps.options,
+		dispatchProps
+	);
+
+	return Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		{
+			options,
+			defaultOption: options[ ownProps.defaultOption ],
+			secondaryOption: options[ ownProps.secondaryOption ],
+			getScreenshotOption: function( theme ) {
+				const screenshotOption = ownProps.getScreenshotOption( theme );
+				return options[ screenshotOption ];
+			}
+		}
+	);
+};
+
+export const bindOptions = [
+	bindToState,
+	bindOptionsToDispatch,
+	mergeProps
+];

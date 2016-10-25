@@ -31,7 +31,7 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { getCurrentUserId } from 'state/current-user/selectors';
 import { isUserPaid } from 'state/purchases/selectors';
 import { getForumUrl } from 'my-sites/themes/helpers';
-import { isPremiumTheme as isPremium } from 'state/themes/utils';
+import { isThemeActive, isPremiumTheme as isPremium } from 'state/themes/selectors';
 import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
@@ -70,9 +70,9 @@ const ThemeSheet = React.createClass( {
 		download: React.PropTypes.string,
 		taxonomies: React.PropTypes.object,
 		stylesheet: React.PropTypes.string,
-		active: React.PropTypes.bool,
 		purchased: React.PropTypes.bool,
 		// Connected props
+		isActive: React.PropTypes.bool,
 		isLoggedIn: React.PropTypes.bool,
 		selectedSite: React.PropTypes.object,
 		siteSlug: React.PropTypes.string,
@@ -327,8 +327,8 @@ const ThemeSheet = React.createClass( {
 	},
 
 	renderPreview() {
-		const { secondaryOption, active, isLoggedIn, defaultOption } = this.props;
-		const showSecondaryButton = secondaryOption && ! active && isLoggedIn;
+		const { secondaryOption, isActive, isLoggedIn, defaultOption } = this.props;
+		const showSecondaryButton = secondaryOption && ! isActive && isLoggedIn;
 		return (
 			<ThemePreview showPreview={ this.state.showPreview }
 				theme={ this.props }
@@ -369,7 +369,7 @@ const ThemeSheet = React.createClass( {
 
 	renderPrice() {
 		let price = this.props.price;
-		if ( ! this.isLoaded() || this.props.active ) {
+		if ( ! this.isLoaded() || this.props.isActive ) {
 			price = '';
 		} else if ( ! isPremium( this.props ) ) {
 			price = i18n.translate( 'Free' );
@@ -479,7 +479,7 @@ const WrappedThemeSheet = ( props ) => {
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { selectedSite: site, active: isActive, price, isLoggedIn } = stateProps;
+	const { selectedSite: site, isActive, price, isLoggedIn } = stateProps;
 
 	let defaultOption;
 
@@ -516,10 +516,12 @@ export default connect(
 		const currentUserId = getCurrentUserId( state );
 		const isCurrentUserPaid = isUserPaid( state, currentUserId );
 		const themeDetails = getThemeDetails( state, props.id );
+		const isActive = selectedSite && isThemeActive( state, props.id, selectedSite.ID );
 
 		return {
 			...themeDetails,
 			id: props.id,
+			isActive,
 			selectedSite,
 			siteSlug,
 			backPath,

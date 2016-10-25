@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -14,29 +15,24 @@ import {
 	info,
 	support,
 	help,
-	bindOptionsToDispatch
+	bindOptions
 } from './theme-options';
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
-	{},
-	ownProps,
-	stateProps,
-	{
-		options: dispatchProps,
-		defaultOption: dispatchProps.signup,
-		getScreenshotOption: () => dispatchProps.info
-	}
-);
+const BoundThemeShowcase = connect( ...bindOptions )( ThemeShowcase );
 
-export default connect(
-	null,
-	bindOptionsToDispatch( {
+export default props => (
+	<BoundThemeShowcase { ...props }
+	options={ {
 		signup,
 		preview,
 		separator,
 		info,
 		support,
 		help
-	}, 'showcase' ),
-	mergeProps
-)( ThemeShowcase );
+	} }
+	defaultOption="signup"
+	getScreenshotOption={ function() {
+		return 'info';
+	} }
+	source="showcase" />
+);
