@@ -111,21 +111,13 @@ const ThemesSingleSiteBase = ( props ) => {
 	);
 };
 
-const bindSingleSite = ( state ) => {
-	const selectedSite = getSelectedSite( state );
-	return {
-		selectedSite,
-		isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-		isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
-	};
-};
-
-const ThemesSingleSite = connect( bindSingleSite )( localize( ThemesSingleSiteBase ) );
-
-// bind To site
-export default props => (
-	<ThemesSingleSite { ...props }
-		getScreenshotOption={ function( theme ) {
-			return theme.active ? customize : info;
-		} } />
-);
+export default connect(
+	( state ) => {
+		const selectedSite = getSelectedSite( state );
+		return {
+			selectedSite,
+			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
+		};
+	}
+)( localize( ThemesSingleSiteBase ) );
