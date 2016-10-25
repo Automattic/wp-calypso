@@ -233,7 +233,6 @@ a.sidebar__button {
 	}
 }
 
-
 // Selected Menu
 @include breakpoint( ">660px" ) {
 	.sidebar__menu .selected {
@@ -360,6 +359,7 @@ a.sidebar__button {
 		flex: 0 1 40px;
 		margin-right: 0;
 		margin-left: 0;
+		outline: 0;
 
 		@include breakpoint( "<660px" ) {
 			flex: 0 1 56px;
@@ -438,6 +438,10 @@ a.sidebar__button {
 			color: $white;
 		}
 	}
+}
+
+.layout.is-section-help .sidebar .sidebar__footer-help {
+	color: $gray-dark;
 }
 
 .sidebar__region {

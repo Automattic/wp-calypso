@@ -11,6 +11,7 @@ const debug = debugFactory( 'calypso:me:sidebar' );
  * Internal dependencies
  */
 const Sidebar = require( 'layout/sidebar' ),
+	SidebarFooter = require( 'layout/sidebar/footer' ),
 	SidebarHeading = require( 'layout/sidebar/heading' ),
 	SidebarItem = require( 'layout/sidebar/item' ),
 	SidebarMenu = require( 'layout/sidebar/menu' ),
@@ -163,15 +164,9 @@ const MeSidebar = React.createClass( {
 							onNavigate={ this.onNavigate }
 							preloadSectionName="help"
 						/>
-						{ config.isEnabled( 'happychat' ) && <SidebarItem
-								selected= { selected === 'happychat' }
-								link="/me/chat"
-								icon="comment"
-								label= { this.translate( 'Support Chat' ) }
-								preloadSectionName="happychat"
-								onNavigate={ this.onNavigate } /> }
 					</ul>
 				</SidebarMenu>
+				<SidebarFooter />
 			</Sidebar>
 		);
 	},
