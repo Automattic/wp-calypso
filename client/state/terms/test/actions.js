@@ -9,6 +9,7 @@ import { expect } from 'chai';
  */
 import useNock from 'test/helpers/use-nock';
 import {
+	POST_EDIT,
 	TERM_REMOVE,
 	TERMS_RECEIVE,
 	TERMS_REQUEST,
@@ -20,8 +21,10 @@ import {
 	receiveTerm,
 	receiveTerms,
 	removeTerm,
-	requestSiteTerms
+	requestSiteTerms,
+	updateTerm
 } from '../actions';
+import PostQueryManager from 'lib/query-manager/post';
 
 /**
  * Module Variables
@@ -180,7 +183,7 @@ describe( 'actions', () => {
 					found: 2,
 					terms: testTerms
 				} )
-				.get( `/rest/v1.1/sites/12345/taxonomies/chicken-and-ribs/terms` )
+				.get( '/rest/v1.1/sites/12345/taxonomies/chicken-and-ribs/terms' )
 				.reply( 400, {
 					message: 'The taxonomy does not exist',
 					error: 'invalid_taxonomy'
@@ -231,6 +234,86 @@ describe( 'actions', () => {
 					query: {},
 					error: sinon.match( { error: 'invalid_taxonomy' } )
 				} );
+			} );
+		} );
+	} );
+
+	describe( 'updateTerm()', () => {
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:rib` )
+				.reply( 200, {
+					ID: 123,
+					name: 'ribs',
+					description: ''
+				} )
+				.post( `/rest/v1.1/sites/${ siteId }/taxonomies/${ taxonomyName }/terms/slug:toto` )
+				.reply( 400, {
+					message: 'The taxonomy does not exist',
+					error: 'invalid_taxonomy'
+				} );
+		} );
+
+		it( 'should dispatch a TERMS_RECEIVE, TERM_REMOVE and POST_EDIT on Success', () => {
+			const postObjects = {
+				[ siteId ]: {
+					'0fcb4eb16f493c19b627438fdc18d57c': {
+						ID: 120,
+						site_ID: siteId,
+						global_ID: 'f0cb4eb16f493c19b627438fdc18d57c',
+						title: 'Steak &amp; Eggs',
+						terms: {
+							[ taxonomyName ]: [
+								{ ID: 10, name: 'old category name', slug: 'old' }
+							]
+						}
+					}
+				}
+			};
+			const state = {
+				posts: {
+					queries: {
+						[ siteId ]: new PostQueryManager( {
+							items: postObjects[ siteId ]
+						} )
+					},
+
+				}
+			};
+			const getState = () => state;
+
+			return updateTerm( siteId, taxonomyName, 10, 'rib', { name: 'ribs' } )( spy, getState ).then( () => {
+				expect( spy ).to.have.been.calledWith( {
+					type: TERM_REMOVE,
+					siteId: siteId,
+					taxonomy: taxonomyName,
+					termId: 10
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: TERMS_RECEIVE,
+					siteId: siteId,
+					taxonomy: taxonomyName,
+					terms: [ { ID: 123, name: 'ribs', description: '' } ],
+					query: undefined,
+					found: undefined
+				} );
+				expect( spy ).to.have.been.calledWith( {
+					type: POST_EDIT,
+					siteId: siteId,
+					postId: 120,
+					post: {
+						terms: {
+							[ taxonomyName ]: [ { ID: 123, name: 'ribs', description: '' } ]
+						}
+					}
+				} );
+			} );
+		} );
+
+		it( 'should not dispatch any action on Failure', () => {
+			return updateTerm( siteId, taxonomyName, 10, 'toto', { name: 'ribs' } )( spy ).catch( () => {
+				expect( spy ).not.to.have.been.called;
 			} );
 		} );
 	} );

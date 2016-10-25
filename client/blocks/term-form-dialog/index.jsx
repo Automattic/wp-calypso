@@ -2,10 +2,9 @@
  * External dependencies
  */
 import React, { PropTypes, Component } from 'react';
-import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { get, find, noop } from 'lodash';
+import { get, find, noop, assign } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,10 +23,12 @@ import viewport from 'lib/viewport';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
 import { getTerms } from 'state/terms/selectors';
-import { addTerm } from 'state/terms/actions';
+import { addTerm, updateTerm } from 'state/terms/actions';
 
 class TermFormDialog extends Component {
 	static initialState = {
+		description: '',
+		name: '',
 		selectedParent: [],
 		isTopLevel: true,
 		isValid: false,
@@ -42,8 +43,9 @@ class TermFormDialog extends Component {
 		showDescriptionInput: PropTypes.bool,
 		showDialog: PropTypes.bool,
 		siteId: PropTypes.number,
-		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
+		term: PropTypes.object,
+		terms: PropTypes.array,
 		translate: PropTypes.func
 	};
 
@@ -54,56 +56,107 @@ class TermFormDialog extends Component {
 		showDialog: false
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = this.constructor.initialState;
-		this.boundCloseDialog = this.closeDialog.bind( this );
-		this.boundOnParentChange = this.onParentChange.bind( this );
-		this.boundOnSearch = this.onSearch.bind( this );
-		this.boundSaveTerm = this.saveTerm.bind( this );
-		this.boundOnTopLevelChange = this.onTopLevelChange.bind( this );
-		this.boundValidateInput = this.validateInput.bind( this );
-	}
-
-	onSearch( searchTerm ) {
+	onSearch = searchTerm => {
 		this.setState( { searchTerm: searchTerm } );
-	}
+	};
 
-	componentWillReceiveProps( newProps ) {
-		if ( newProps.showDialog !== this.props.showDialog ) {
-			this.setState( {
-				selectedParent: []
-			} );
-		}
-	}
-
-	closeDialog() {
+	closeDialog = () => {
 		this.setState( this.constructor.initialState );
 		this.props.onClose();
-	}
+	};
 
-	onParentChange( item ) {
+	onParentChange = item => {
 		this.setState( {
 			selectedParent: [ item.ID ],
 			isTopLevel: false
 		}, this.isValid );
-	}
+	};
 
-	onTopLevelChange() {
+	onTopLevelChange = () => {
 		this.setState( {
 			isTopLevel: ! this.state.isTopLevel,
 			selectedParent: []
 		}, this.isValid );
+	};
+
+	onNameChange = event => {
+		this.setState( {
+			name: event.target.value
+		} );
+	};
+
+	onDescriptionChange = event => {
+		this.setState( {
+			description: event.target.value
+		} );
+	};
+
+	validateInput = event => {
+		if ( 13 === event.keyCode ) {
+			this.saveTerm();
+		} else {
+			this.isValid();
+		}
+	}
+
+	saveTerm = () => {
+		const term = this.getFormValues();
+		if ( ! this.isValid() ) {
+			return;
+		}
+
+		const { siteId, taxonomy } = this.props;
+		const isNew = ! this.props.term;
+		const savePromise = isNew
+			? this.props.addTerm( siteId, taxonomy, term )
+			: this.props.updateTerm( siteId, taxonomy, this.props.term.ID, this.props.term.slug, term );
+
+		savePromise.then( this.props.onSuccess );
+		this.closeDialog();
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = this.constructor.initialState;
+	}
+
+	init( props ) {
+		if ( ! props.term ) {
+			this.setState( this.constructor.initialState );
+			return;
+		}
+
+		const { name, description, parent = false } = props.term;
+		this.setState( assign( {}, this.constructor.initialState, {
+			name,
+			description,
+			isTopLevel: parent ? false : true,
+			selectedParent: parent ? [ parent ] : []
+		} ) );
+	}
+
+	componentWillReceiveProps( newProps ) {
+		if (
+			this.props.term !== newProps.term ||
+			this.props.showDialog !== newProps.showDialog
+		) {
+			this.init( newProps );
+		}
+	}
+
+	componentDidMount() {
+		this.init( this.props );
 	}
 
 	getFormValues() {
-		const name = ReactDom.findDOMNode( this.refs.termName ).value.trim();
+		const name = this.state.name.trim();
 		const formValues = { name };
 		if ( this.props.isHierarchical ) {
 			formValues.parent = this.state.selectedParent.length ? this.state.selectedParent[ 0 ] : 0;
 		}
 		if ( this.props.showDescriptionInput ) {
-			formValues.description = ReactDom.findDOMNode( this.refs.termDescription ).value.trim();
+			const description = this.state.description.trim();
+			formValues.description = description;
 		}
 
 		return formValues;
@@ -121,7 +174,9 @@ class TermFormDialog extends Component {
 		const lowerCasedTermName = values.name.toLowerCase();
 		const matchingTerm = find( this.props.terms, ( term ) => {
 			return ( term.name.toLowerCase() === lowerCasedTermName ) &&
-				( ! this.props.isHierarchical || ( term.parent === values.parent ) );
+				( ! this.props.isHierarchical ||
+					( term.parent === values.parent && ( ! this.props.term || term.ID !== this.props.term.ID ) )
+				);
 		} );
 
 		if ( matchingTerm ) {
@@ -141,28 +196,6 @@ class TermFormDialog extends Component {
 		return ! error;
 	}
 
-	validateInput( event ) {
-		if ( 13 === event.keyCode ) {
-			this.saveTerm();
-		} else {
-			this.isValid();
-		}
-	}
-
-	saveTerm() {
-		const term = this.getFormValues();
-		if ( ! this.isValid() ) {
-			return;
-		}
-
-		const { siteId, taxonomy } = this.props;
-
-		this.props
-			.addTerm( siteId, taxonomy, term )
-			.then( this.props.onSuccess );
-		this.closeDialog();
-	}
-
 	renderParentSelector() {
 		const { labels, siteId, taxonomy, translate } = this.props;
 		const { searchTerm, selectedParent } = this.state;
@@ -170,6 +203,7 @@ class TermFormDialog extends Component {
 		if ( searchTerm && searchTerm.length ) {
 			query.search = searchTerm;
 		}
+		const hideTermAndChildren = get( this.props.term, 'ID' );
 
 		return (
 			<FormFieldset>
@@ -177,32 +211,35 @@ class TermFormDialog extends Component {
 					{ labels.parent_item }
 				</FormLegend>
 				<FormLabel>
-					<FormCheckbox ref="topLevel" checked={ this.state.isTopLevel } onChange={ this.boundOnTopLevelChange } />
+					<FormCheckbox ref="topLevel" checked={ this.state.isTopLevel } onChange={ this.onTopLevelChange } />
 					<span>{ translate( 'Top level', { context: 'Terms: New term being created is top level' } ) }</span>
 				</FormLabel>
 				<TermTreeSelectorTerms
 					siteId={ siteId }
 					taxonomy={ taxonomy }
-					onSearch={ this.boundOnSearch }
-					onChange={ this.boundOnParentChange }
+					onSearch={ this.onSearch }
+					onChange={ this.onParentChange }
 					query={ query }
 					selected={ selectedParent }
+					hideTermAndChildren={ hideTermAndChildren }
 				/>
 			</FormFieldset>
 		);
 	}
 
 	render() {
-		const { isHierarchical, labels, translate, showDescriptionInput, showDialog } = this.props;
+		const { isHierarchical, labels, term, translate, showDescriptionInput, showDialog } = this.props;
+		const { name, description } = this.state;
+		const isNew = ! term;
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' )
 		}, {
-			action: 'add',
-			label: translate( 'Add' ),
+			action: isNew ? 'add' : 'update',
+			label: isNew ? translate( 'Add' ) : translate( 'Update' ),
 			isPrimary: true,
 			disabled: ! this.state.isValid,
-			onClick: this.boundSaveTerm
+			onClick: this.saveTerm
 		} ];
 
 		const isError = this.state.error && !! this.state.error.length;
@@ -212,16 +249,19 @@ class TermFormDialog extends Component {
 				autoFocus={ false }
 				isVisible={ showDialog }
 				buttons={ buttons }
-				onClose={ this.boundCloseDialog }
+				onClose={ this.closeDialog }
 				additionalClassNames="term-form-dialog">
-				<FormSectionHeading>{ labels.add_new_item }</FormSectionHeading>
+				<FormSectionHeading>{ isNew ? labels.add_new_item : labels.edit_item }</FormSectionHeading>
 				<FormFieldset>
 					<FormTextInput
 						autoFocus={ showDialog && ! viewport.isMobile() }
 						placeholder={ labels.new_item_name }
 						ref="termName"
 						isError={ isError }
-						onKeyUp={ this.boundValidateInput } />
+						onKeyUp={ this.validateInput }
+						value={ name }
+						onChange={ this.onNameChange }
+					/>
 					{ isError && <FormInputValidation isError text={ this.state.error } /> }
 				</FormFieldset>
 				{ showDescriptionInput && <FormFieldset>
@@ -230,7 +270,10 @@ class TermFormDialog extends Component {
 						</FormLegend>
 						<FormTextarea
 							ref="termDescription"
-							onKeyUp={ this.boundValidateInput } />
+							onKeyUp={ this.validateInput }
+							value={ description }
+							onChange={ this.onDescriptionChange }
+						/>
 					</FormFieldset>
 				}
 				{ isHierarchical && this.renderParentSelector() }
@@ -254,5 +297,5 @@ export default connect(
 			siteId
 		};
 	},
-	{ addTerm }
+	{ addTerm, updateTerm }
 )( localize( TermFormDialog ) );
