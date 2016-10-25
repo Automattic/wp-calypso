@@ -325,10 +325,6 @@
 		margin-right: 0;
 	}
 
-	@include breakpoint( "<480px" ) {
-		right: 140px;
-	}
-
 	.comment-button__label-status {
 		display: none;
 	}
