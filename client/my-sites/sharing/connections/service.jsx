@@ -246,7 +246,8 @@ module.exports = React.createClass( {
 				onAction={ this.performAction }
 				isConnecting={ this.state.isConnecting }
 				isRefreshing={ this.state.isRefreshing }
-				isDisconnecting={ this.state.isDisconnecting } />
+				isDisconnecting={ this.state.isDisconnecting }
+				removableConnections={ serviceConnections.getRemovableConnections( this.props.service.ID ) } />
 		);
 		return (
 			<FoldableCard
