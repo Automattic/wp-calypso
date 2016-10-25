@@ -241,13 +241,9 @@ export const ThemeOptions = connect(
 		const options = pick( allOptions, optionNames );
 		let mapGetUrl, mapHideForSite;
 
-		if ( site !== undefined ) {
-			let siteId;
-			if ( site !== null ) {
-				siteId = site.ID;
-			} else {
-				siteId = null;
-			}
+		if ( site ) {
+			const siteId = site.ID;
+
 			if ( theme ) { // Bind everything.
 				mapGetUrl = getUrl => () => getUrl( state, theme, siteId );
 				mapHideForSite = hideForSite => () => hideForSite( state, siteId );
