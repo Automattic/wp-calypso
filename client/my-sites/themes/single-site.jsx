@@ -45,7 +45,7 @@ const JetpackThemeReferrerPage = localize(
 		</Main>
 	)
 );
-const ThemesSingleSiteBase = ( props ) => {
+const SingleSiteThemeShowcase = ( props ) => {
 	const site = sites.getSelectedSite(),
 		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
 		jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
@@ -120,4 +120,4 @@ export default connect(
 			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
 		};
 	}
-)( localize( ThemesSingleSiteBase ) );
+)( localize( SingleSiteThemeShowcase ) );
