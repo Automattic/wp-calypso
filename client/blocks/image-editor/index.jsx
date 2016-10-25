@@ -136,12 +136,13 @@ const ImageEditor = React.createClass( {
 		const {
 			src,
 			fileName,
+			media,
 			mimeType,
 			title,
 			site
 		} = this.props;
 
-		return {
+		const imageProperties = {
 			src,
 			fileName,
 			mimeType,
@@ -149,6 +150,12 @@ const ImageEditor = React.createClass( {
 			site,
 			resetAllImageEditorState: this.props.resetAllImageEditorState
 		};
+
+		if ( media && media.ID ) {
+			imageProperties.ID = media.ID;
+		}
+
+		return imageProperties;
 	},
 
 	onLoadCanvasError() {

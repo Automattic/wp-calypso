@@ -172,7 +172,7 @@ export const EditorMediaModal = React.createClass( {
 	},
 
 	deleteMedia: function() {
-		var selectedCount, confirmMessage;
+		let selectedCount;
 
 		if ( ModalViews.DETAIL === this.props.view ) {
 			selectedCount = 1;
@@ -180,7 +180,7 @@ export const EditorMediaModal = React.createClass( {
 			selectedCount = this.props.mediaLibrarySelectedItems.length;
 		}
 
-		confirmMessage = this.translate(
+		const confirmMessage = this.translate(
 			'Are you sure you want to permanently delete this item?',
 			'Are you sure you want to permanently delete these items?',
 			{ count: selectedCount }
@@ -210,36 +210,22 @@ export const EditorMediaModal = React.createClass( {
 		const {
 			fileName,
 			site,
+			ID,
 			resetAllImageEditorState
 		} = imageEditorProps;
 
 		const mimeType = MediaUtils.getMimeType( fileName );
 
-		// check if a title is already post-fixed with '(edited copy)'
-		const editedCopyText = this.translate(
-			'%(title)s (edited copy)', {
-				args: {
-					title: ''
-				}
-			} );
+		const item = {
+			ID: ID,
+			media: {
+				fileName: fileName,
+				fileContents: blob,
+				mimeType: mimeType
+			}
+		};
 
-		let { title } = imageEditorProps;
-
-		if ( title.indexOf( editedCopyText ) === -1 ) {
-			title = this.translate(
-				'%(title)s (edited copy)', {
-					args: {
-						title: title
-					}
-				} );
-		}
-
-		MediaActions.add( site.ID, {
-			fileName: fileName,
-			fileContents: blob,
-			title: title,
-			mimeType: mimeType
-		} );
+		MediaActions.update( site.ID, item );
 
 		resetAllImageEditorState();
 
@@ -417,8 +403,8 @@ export const EditorMediaModal = React.createClass( {
 					mediaLibrarySelectedItems: items
 				} = this.props;
 
-				const selectedIndex = this.getDetailSelectedIndex(),
-					media = items ? items[ selectedIndex ] : null;
+				const selectedIndex = this.getDetailSelectedIndex();
+				const media = items ? items[ selectedIndex ] : null;
 
 				content = (
 					<ImageEditor
