@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React, { PropTypes } from 'react';
-import { throttle, constant, noop, truncate, head, filter, startsWith, get } from 'lodash';
+import { throttle, constant, noop, truncate, head, filter, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
@@ -175,10 +175,8 @@ export default class RefreshPostCard extends React.Component {
 			separator: /,? +/
 		} );
 
-		// grab the first embed from a post
-		const featuredEmbed = head( filter( post.content_embeds, ( embed ) => {
-			return ! startsWith( embed.type, 'special-' );
-		} ) ); // TODO figure out what special means and refactor to make clear
+		// only feature an embed if we know how to thumbnail & autoplay it
+		const featuredEmbed = head( filter( post.content_embeds, ( embed ) => embed.thumbnailUrl && embed.autoplayIframe ) );
 
 		// we only show a featured embed when all of these are true
 		//   - there is no featured image on the post that's big enough to pass as the canonical image
