@@ -1,4 +1,13 @@
 
+5.3.0 / 2016-10-25
+==================
+
+ * add media-example test app
+ * Add `edit()` method and set `1.2` for `get()`
+ * test:site.media: eslint corrections
+ * site: eslint corrections
+ * eslint: update dependencies and rules
+
 5.2.0 / 2016-07-27
 ==================
 

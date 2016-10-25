@@ -65,23 +65,21 @@ test-watch:
 webapp:
 	@$(WEBPACK) -p --config webapp/webpack.config.js
 
-deploy: test-app webapp
+media-editor:
+	@$(WEBPACK) -p --config examples/media-editor/webpack.config.js
+
+deploy: webapp media-editor
 	mkdir -p tmp/
 	rm -rf tmp/*
 	mkdir -p tmp/tests
+	mkdir -p tmp/media-editor
 	cp webapp/index.html tmp/
 	cp webapp/style.css tmp/
 	cp webapp/webapp-bundle.js tmp/
-	cp $(TESTAPP_DIR)/index.html tmp/tests
-	cp $(TESTAPP_DIR)/mocha.css tmp/tests
-	cp $(TESTAPP_DIR)/mocha.js tmp/tests
-	cp $(TESTAPP_DIR)/testing-bundle.js tmp/tests
+	cp examples/media-editor/index.html tmp/media-editor
+	cp examples/media-editor/app.css tmp/media-editor
+	cp -rf examples/media-editor/built/ tmp/media-editor/built
 	git checkout gh-pages
 	cp -rf tmp/* .
-	git add ./ -v
-	git commit -m "built"
-	git push origin gh-pages
-	git checkout -
-
 
 .PHONY: standalone test test-all node_modules lint eslint webapp compile

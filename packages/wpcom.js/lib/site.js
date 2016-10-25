@@ -46,7 +46,7 @@ class Site {
 
 		debug( 'set %o site id', id );
 		this._id = encodeURIComponent( id );
-		this.path = `${root}/${this._id}`;
+		this.path = `${ root }/${ this._id }`;
 	}
 
 	/**
@@ -78,7 +78,7 @@ class Site {
 	 * @return {Function} request handler
 	 */
 	addPost( body, fn ) {
-		var post = new Post( null, this._id, this.wpcom );
+		const post = new Post( null, this._id, this.wpcom );
 		return post.add( body, fn );
 	}
 
@@ -90,7 +90,7 @@ class Site {
 	 * @return {Function} request handler
 	 */
 	deletePost( id, fn ) {
-		var post = new Post( id, this._id, this.wpcom );
+		const post = new Post( id, this._id, this.wpcom );
 		return post.delete( fn );
 	}
 
@@ -113,7 +113,7 @@ class Site {
 	 * @return {Function} request handler
 	 */
 	addMediaFiles( query, files, fn ) {
-		var media = new Media( null, this._id, this.wpcom );
+		const media = new Media( null, this._id, this.wpcom );
 		return media.addFiles( query, files, fn );
 	}
 
@@ -126,7 +126,7 @@ class Site {
 	 * @return {Function} request handler
 	 */
 	addMediaUrls( query, files, fn ) {
-		var media = new Media( null, this._id, this.wpcom );
+		const media = new Media( null, this._id, this.wpcom );
 		return media.addUrls( query, files, fn );
 	}
 
@@ -138,7 +138,7 @@ class Site {
 	 * @return {Function} request handler
 	 */
 	deleteMedia( id, fn ) {
-		var media = new Media( id, this._id, this.wpcom );
+		const media = new Media( id, this._id, this.wpcom );
 		return media.del( fn );
 	}
 
@@ -268,10 +268,10 @@ class Site {
 	postCounts( type = 'post', query, fn ) {
 		if ( 'function' === typeof query ) {
 			fn = query;
-			query = {}
+			query = {};
 		}
 
-		return this.wpcom.req.get( `${this.path}/post-counts/${type}`, query, fn );
+		return this.wpcom.req.get( `${ this.path }/post-counts/${ type }`, query, fn );
 	}
 
 	/**
@@ -291,13 +291,13 @@ class Site {
 
 		if ( 'function' === typeof query ) {
 			fn = query;
-			query = {}
+			query = {};
 		}
 
-		query = query || {}
+		query = query || {};
 		query.shortcode = url;
 
-		return this.wpcom.req.get( `${this.path}/shortcodes/render`, query, fn );
+		return this.wpcom.req.get( `${ this.path }/shortcodes/render`, query, fn );
 	}
 
 	/**
@@ -317,13 +317,13 @@ class Site {
 
 		if ( 'function' === typeof query ) {
 			fn = query;
-			query = {}
+			query = {};
 		}
 
-		query = query || {}
+		query = query || {};
 		query.embed_url = url;
 
-		return this.wpcom.req.get( `${this.path}/embeds/render`, query, fn );
+		return this.wpcom.req.get( `${ this.path }/embeds/render`, query, fn );
 	}
 
 	/**
@@ -334,7 +334,7 @@ class Site {
 	 * @return {Function} request handler
 	 */
 	statsReferrersSpamNew( domain, fn ) {
-		var path = `${this.path}/stats/referrers/spam/new`;
+		const path = `${ this.path }/stats/referrers/spam/new`;
 		return this.wpcom.req.post( path, { domain }, null, fn );
 	}
 
@@ -346,7 +346,7 @@ class Site {
 	 * @return {Function} request handler
 	 */
 	statsReferrersSpamDelete( domain, fn ) {
-		var path = `${this.path}/stats/referrers/spam/delete`;
+		const path = `${ this.path }/stats/referrers/spam/delete`;
 		return this.wpcom.req.post( path, { domain }, null, fn );
 	}
 
@@ -359,11 +359,11 @@ class Site {
 	 * @return {Function} request handler
 	 */
 	statsVideo( videoId, query, fn ) {
-		var path = `${this.path}/stats/video/${videoId}`;
+		const path = `${ this.path }/stats/video/${ videoId }`;
 
 		if ( 'function' === typeof query ) {
 			fn = query;
-			query = {}
+			query = {};
 		}
 
 		return this.wpcom.req.get( path, query, fn );
@@ -378,11 +378,11 @@ class Site {
 	 * @return {Function} request handler
 	 */
 	statsPostViews( postId, query, fn ) {
-		var path = `${this.path}/stats/post/${postId}`;
+		const path = `${ this.path }/stats/post/${ postId }`;
 
 		if ( 'function' === typeof query ) {
 			fn = query;
-			query = {}
+			query = {};
 		}
 
 		return this.wpcom.req.get( path, query, fn );
@@ -394,7 +394,7 @@ class Site {
 	 * *Example:*
 	 *    // Create a SiteWordAds instance
 	 *
-	 *    var wordAds = wpcom
+	 *    const wordAds = wpcom
 	 *      .site( 'my-blog.wordpress.com' )
 	 *      .wordAds();
 	 *
@@ -407,7 +407,7 @@ class Site {
 
 // add methods in runtime
 runtimeBuilder( Site, siteGetMethods, ( methodParams, ctx ) => {
-	return `/sites/${ctx._id}/${methodParams.subpath}`;
+	return `/sites/${ ctx._id }/${ methodParams.subpath }`;
 } );
 
 export default Site;

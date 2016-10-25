@@ -7,6 +7,48 @@ import debugFactory from 'debug';
 const debug = debugFactory( 'wpcom:media' );
 
 /**
+ * Build a formData object to be sent in a POST request
+ *
+ * @param  {Array|File} files - array of files
+ * @return {Array} formData array
+ */
+function buildFormData( files ) {
+	const formData = [];
+	const isArray = Array.isArray( files );
+	files = isArray ? files : [ files ];
+
+	let i, f, k, param;
+	for ( i = 0; i < files.length; i++ ) {
+		f = files[ i ];
+		f = 'string' === typeof f ? fs.createReadStream( f ) : f;
+
+		const isStream = !! f._readableState;
+		const isFile = 'undefined' !== typeof File && f instanceof File;
+
+		debug( 'isStream: %s', isStream );
+		debug( 'isFile: %s', isFile );
+
+		if ( ! isFile && ! isStream ) {
+			// process file attributes like as `title`, `description`, ...
+			for ( k in f ) {
+				debug( 'add %o => %o', k, f[ k ] );
+				if ( 'file' !== k ) {
+					param = 'attrs[' + i + '][' + k + ']';
+					formData.push( [ param, f[ k ] ] );
+				}
+			}
+			// set file path
+			f = f.file;
+			f = 'string' === typeof f ? fs.createReadStream( f ) : f;
+		}
+
+		formData.push( [ 'media[]', f ] );
+	}
+
+	return formData;
+}
+
+/**
  * Media methods
  *
  * @param {String} id - media id
@@ -35,9 +77,23 @@ export default function Media( id, sid, wpcom ) {
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
-Media.prototype.get = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/media/' + this._id;
+Media.prototype.get = function( query = {}, fn ) {
+	query.apiVersion = query.apiVersion || '1.2';
+	const path = '/sites/' + this._sid + '/media/' + this._id;
 	return this.wpcom.req.get( path, query, fn );
+};
+
+/**
+ * Update media
+ *
+ * @param {Object} [query] - query object parameter
+ * @param {Object} body - body object parameter
+ * @param {Function} fn - callback function
+ * @return {Function} request handler
+ */
+Media.prototype.update = function( query, body, fn ) {
+	const params = { path: '/sites/' + this._sid + '/media/' + this._id };
+	return this.wpcom.req.put( params, query, body, fn );
 };
 
 /**
@@ -48,9 +104,27 @@ Media.prototype.get = function( query, fn ) {
  * @param {Function} fn - callback function
  * @return {Function} request handler
  */
-Media.prototype.update = function( query, body, fn ) {
-	var path = '/sites/' + this._sid + '/media/' + this._id;
-	return this.wpcom.req.put( path, query, body, fn );
+Media.prototype.edit = function( query, body, fn ) {
+	if ( typeof body == 'function' || ! body ) {
+		fn = body;
+		body = query;
+		query = {};
+	}
+
+	const params = { path: '/sites/' + this._sid + '/media/' + this._id + '/edit' };
+
+	if ( body && body.media ) {
+		params.formData = [ [ 'media', body.media ] ];
+		delete body.media;
+
+		for ( const k in body ) {
+			params.formData.push( [ `attrs[${ k }]`, body[ k ] ] );
+		}
+
+		body = null;
+	}
+
+	return this.wpcom.req.put( params, query, body, fn );
 };
 
 /**
@@ -73,41 +147,10 @@ Media.prototype.addFiles = function( query, files, fn ) {
 		}
 	}
 
-	let params = {
+	const params = {
 		path: '/sites/' + this._sid + '/media/new',
-		formData: []
+		formData: buildFormData( files )
 	};
-
-	// process formData
-	files = Array.isArray( files ) ? files : [ files ];
-
-	let i, f, isStream, isFile, k, param;
-	for ( i = 0; i < files.length; i++ ) {
-		f = files[i];
-		f = 'string' === typeof f ? fs.createReadStream( f ) : f;
-
-		isStream = !! f._readableState;
-		isFile = 'undefined' !== typeof File && f instanceof File;
-
-		debug( 'is stream: %s', isStream );
-		debug( 'is file: %s', isFile );
-
-		if ( ! isFile && ! isStream ) {
-			// process file attributes like as `title`, `description`, ...
-			for ( k in f ) {
-				debug( 'add %o => %o', k, f[k] );
-				if ( 'file' !== k ) {
-					param = 'attrs[' + i + '][' + k + ']';
-					params.formData.push( [ param, f[k] ] );
-				}
-			}
-			// set file path
-			f = f.file;
-			f = 'string' === typeof f ? fs.createReadStream( f ) : f;
-		}
-
-		params.formData.push( [ 'media[]', f ] );
-	}
 
 	return this.wpcom.req.post( params, query, null, fn );
 };
@@ -132,15 +175,15 @@ Media.prototype.addUrls = function( query, media, fn ) {
 		}
 	}
 
-	let path = '/sites/' + this._sid + '/media/new';
-	let body = { media_urls: [] };
+	const path = '/sites/' + this._sid + '/media/new';
+	const body = { media_urls: [] };
 
 	// process formData
 	let i, m, url, k;
 
 	media = Array.isArray( media ) ? media : [ media ];
 	for ( i = 0; i < media.length; i++ ) {
-		m = media[i];
+		m = media[ i ];
 
 		if ( 'string' === typeof m ) {
 			url = m;
@@ -150,10 +193,10 @@ Media.prototype.addUrls = function( query, media, fn ) {
 			}
 
 			// add attributes
-			body.attrs[i] = {};
+			body.attrs[ i ] = {};
 			for ( k in m ) {
 				if ( 'url' !== k ) {
-					body.attrs[i][k] = m[k];
+					body.attrs[ i ][ k ] = m[ k ];
 				}
 			}
 			url = m.url;
@@ -174,6 +217,6 @@ Media.prototype.addUrls = function( query, media, fn ) {
  * @return {Function} request handler
  */
 Media.prototype.delete = Media.prototype.del = function( query, fn ) {
-	var path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
+	const path = '/sites/' + this._sid + '/media/' + this._id + '/delete';
 	return this.wpcom.req.del( path, query, fn );
 };

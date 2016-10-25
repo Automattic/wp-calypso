@@ -1,6 +1,6 @@
 
 module.exports = {
-	entry: './dist/test/testing-source.js',
+	entry: './build/test/testing-source.js',
 
 	node: {
 		fs: 'empty'

@@ -1,16 +1,15 @@
-
 module.exports = {
-	entry: __dirname + '/main.js',
+	entry: __dirname + '/source.js',
 
 	node: {
 		fs: 'empty'
 	},
 
 	output: {
-		path: __dirname,
-		filename: 'webapp-bundle.js',
+		path: __dirname + '/built',
+		filename: 'app.js',
 		libraryTarget: 'var',
-		library: 'WPCOMWebApp'
+		library: 'WPCOM'
 	},
 
 	module: {
@@ -19,17 +18,12 @@ module.exports = {
 				test: /\.js$/,
 				exclude: /node_modules/,
 				loader: 'babel-loader'
-			},
-			{
-				test: /\.json$/,
-				exclude: /node_modules/,
-				loader: 'json-loader'
 			}
 		]
 	},
 
 	resolve: {
-		extensions: [ '', '.js', '.json' ]
+		extensions: [ '', '.js' ]
 	},
 
 	devtool: 'sourcemap'
