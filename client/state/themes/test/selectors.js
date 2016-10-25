@@ -268,7 +268,7 @@ describe( 'themes selectors', () => {
 		} );
 	} );
 
-	describe( '#getPurchaseUrl', () => {
+	describe( '#getThemePurchaseUrl', () => {
 		it( 'given a free theme and a wpcom site ID, should return null', () => {
 			const purchaseUrl = getThemePurchaseUrl(
 				{
