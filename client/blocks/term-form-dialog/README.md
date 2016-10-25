@@ -1,7 +1,7 @@
 TermFormDialog
 ==============
 
-The `TermFormDialog` component renders a dialog that allows to create Terms.
+The `TermFormDialog` component renders a dialog that allows to create/edit Terms.
 
 ## Usage
 
@@ -71,3 +71,12 @@ A function invoked when the term is saved. It receives the term as a parameter.
 </table>
 
 Toggles the display of the term description field.
+
+### `term`
+
+<table>
+	<tr><th>Type</th><td>Object</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+</table>
+
+The term object to edit. If no term is provided, a new term will be created.

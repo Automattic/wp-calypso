@@ -44,6 +44,7 @@ const ITEM_HEIGHT = 25;
 const TermTreeSelectorList = React.createClass( {
 
 	propTypes: {
+		hideTermAndChildren: PropTypes.number,
 		terms: PropTypes.array,
 		taxonomy: PropTypes.string,
 		multiple: PropTypes.bool,
@@ -226,6 +227,11 @@ const TermTreeSelectorList = React.createClass( {
 			return 0;
 		}
 
+		// If this subtree is excluded, do not render
+		if ( item.ID === this.props.hideTermAndChildren ) {
+			return 0;
+		}
+
 		if ( this.itemHeights[ item.ID ] ) {
 			return this.itemHeights[ item.ID ];
 		}
@@ -294,6 +300,11 @@ const TermTreeSelectorList = React.createClass( {
 	renderItem( item, _recurse = false ) {
 		// if item has a parent and it is in current props.terms, do not render
 		if ( item.parent && ! _recurse && includes( this.termIds, item.parent ) ) {
+			return;
+		}
+
+		// If this subtree is excluded, do not render
+		if ( item.ID === this.props.hideTermAndChildren ) {
 			return;
 		}
 
@@ -431,4 +442,3 @@ export default connect( ( state, ownProps ) => {
 		query
 	};
 } )( localize( TermTreeSelectorList ) );
-
