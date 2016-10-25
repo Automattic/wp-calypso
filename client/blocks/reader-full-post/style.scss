@@ -325,7 +325,7 @@
 		margin-right: 0;
 	}
 
-	@include breakpoint( "<480" ) {
+	@include breakpoint( "<480px" ) {
 		right: 140px;
 	}
 
