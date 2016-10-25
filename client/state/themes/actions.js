@@ -47,7 +47,7 @@ export function fetchThemes( site ) {
 		return wpcom.undocumented().themes( site, queryParams )
 			.then( themes => {
 				const responseTime = ( new Date().getTime() ) - startTime;
-				dispatch( receiveThemes( themes, site, queryParams, responseTime ) );
+				return dispatch( receiveThemes( themes, site, queryParams, responseTime ) );
 			} )
 			.catch( error => receiveServerError( error ) );
 	};
@@ -189,6 +189,8 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 			: themeAction;
 
 		dispatch( action );
+
+		return action;
 	};
 }
 

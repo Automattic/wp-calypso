@@ -12,13 +12,10 @@ import MultiSiteComponent from 'my-sites/themes/multi-site';
 import LoggedOutComponent from './logged-out';
 import trackScrollPage from 'lib/track-scroll-page';
 import { PER_PAGE } from 'state/themes/themes-list/constants';
-import { getQueryParams } from 'state/themes/themes-list/selectors';
-import wpcom from 'lib/wp';
 import {
+	fetchThemes,
 	incrementThemesPage,
-	query,
-	receiveThemes,
-	receiveServerError
+	query
 } from 'state/themes/actions';
 import {
 	getAnalyticsData,
@@ -96,55 +93,36 @@ export function fetchThemeData( context, next ) {
 		return next();
 	}
 
-	const userQueryParams = {
+	const queryParams = {
 		search: context.query.s,
 		tier: context.params.tier,
 		filter: context.params.filter,
 		page: 0,
 		perPage: PER_PAGE,
 	};
-	const queryKey = generateCacheKey( userQueryParams );
-	const queryResults = themesQueryCache.get( queryKey );
-	const startTime = new Date().getTime();
+	const queryKey = generateCacheKey( queryParams );
+	const cachedResponse = themesQueryCache.get( queryKey );
 	const HOUR_IN_MS = 3600000;
 
-	context.store.dispatch( query( userQueryParams ) );
+	context.store.dispatch( query( queryParams ) );
 	context.store.dispatch( incrementThemesPage( false ) );
 
-	const stateQueryParams = getQueryParams( context.store.getState() );
-	if ( queryResults && ( queryResults.timestamp + HOUR_IN_MS > Date.now() ) ) {
+	if ( cachedResponse && ( cachedResponse.timestamp + HOUR_IN_MS > Date.now() ) ) {
 		debug( 'found themes!', queryKey );
-		context.store.dispatch( receiveThemes(
-			queryResults.themes,
-			queryResults.site,
-			queryResults.queryParams,
-			queryResults.responseTime
-		) );
+		context.store.dispatch( cachedResponse.action );
 		return next();
 	}
 
-	wpcom.undocumented().themes( false, stateQueryParams )
-		.then( themes => {
+	context.store.dispatch( fetchThemes( false ) )
+		.then( action => {
+			// Fetch and dispatch is done — cache the action so it can be re-dispatched later
 			const timestamp = Date.now();
-			const responseTime = timestamp - startTime;
-
-			debug( 'caching', queryKey, JSON.stringify( themes ) );
 			themesQueryCache.set( queryKey, {
-				themes,
-				queryParams: stateQueryParams,
-				responseTime,
-				timestamp,
-				site: false
+				action,
+				timestamp
 			} );
-
 			context.renderCacheKey = context.path + timestamp;
-			context.store.dispatch( receiveThemes( themes, false, stateQueryParams, responseTime ) );
 			next();
 		} )
-		.catch( error => {
-			debug( `Error fetching theme showcase for ${ JSON.stringify( userQueryParams ) } details: `, error.message || error );
-			context.store.dispatch( receiveServerError( error ) );
-			context.renderCacheKey = 'themes not found';
-			next();
-		} );
+		.catch( () => next() );
 }
