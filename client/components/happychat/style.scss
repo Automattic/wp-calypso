@@ -499,6 +499,12 @@
 	.has-chat.is-group-editor .editor__switch-mode {
 	    right: 32px;
 	}
+
+	// make space in customizer
+	.has-chat .main.customize.is-iframe {
+		right: 272px;
+	}
+
 }
 
 @include breakpoint( ">1280px" ) {
