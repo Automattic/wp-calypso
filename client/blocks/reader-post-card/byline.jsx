@@ -42,7 +42,7 @@ class PostByline extends React.Component {
 		} );
 	}
 
-	recordDateClick() {
+	recordDateClick = () => {
 		recordPermalinkClick( 'timestamp', this.props.post );
 	}
 
