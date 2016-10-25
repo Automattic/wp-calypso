@@ -8,7 +8,8 @@ import {
 	pick,
 	pickBy,
 	negate,
-	isEmpty
+	isEmpty,
+	take
 } from 'lodash';
 
 const Suggestions = React.createClass( {
@@ -161,9 +162,10 @@ const Suggestions = React.createClass( {
 				continue;
 			}
 
-			filtered[ key ] = terms[ key ].filter(
-				term => term.indexOf( filterTerm ) !== -1
-			).splice( 0, limit );
+			filtered[ key ] = take(
+				terms[ key ].filter( term => term.indexOf( filterTerm ) !== -1 ),
+				limit
+			);
 		}
 
 		return this.removeEmptySuggestions( filtered );
