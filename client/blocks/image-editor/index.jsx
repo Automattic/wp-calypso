@@ -72,10 +72,6 @@ const ImageEditor = React.createClass( {
 		};
 	},
 
-	componentWillMount() {
-		this.checkForValidAspectRatioSettings();
-	},
-
 	getInitialState() {
 		return {
 			canvasError: null
@@ -88,8 +84,6 @@ const ImageEditor = React.createClass( {
 		} = this.props;
 
 		if ( newProps.media && ! isEqual( newProps.media, currentMedia ) ) {
-			this.checkForValidAspectRatioSettings();
-
 			this.props.resetAllImageEditorState();
 
 			this.updateFileInfo( newProps.media );
@@ -104,33 +98,21 @@ const ImageEditor = React.createClass( {
 		this.setDefaultAspectRatio();
 	},
 
-	checkForValidAspectRatioSettings() {
-		const {
-			allowedAspectRatios,
-			defaultAspectRatio
-		} = this.props;
-
-		if (
-			allowedAspectRatios &&
-			allowedAspectRatios.length !== 1 &&
-			allowedAspectRatios.indexOf( defaultAspectRatio ) === -1
-		) {
-			// If allowedAspectRatios prop is specified and has more than one item,
-			// defaultAspectRatio prop must contain a value which is included in allowedAspectRatios.
-			throw new Error( 'Image Editor props: defaultAspectRatio not found in allowedAspectRatios' );
-		}
-	},
-
 	setDefaultAspectRatio() {
 		const {
 			defaultAspectRatio,
 			allowedAspectRatios
 		} = this.props;
 
-		if ( allowedAspectRatios && allowedAspectRatios.length === 1 ) {
-			this.props.setImageEditorAspectRatio( allowedAspectRatios[ 0 ] );
+		if ( allowedAspectRatios && allowedAspectRatios.length >= 1 ) {
+			if (
+				allowedAspectRatios.length === 1 ||
+				allowedAspectRatios.indexOf( defaultAspectRatio ) === -1
+			) {
+				this.props.setImageEditorAspectRatio( allowedAspectRatios[ 0 ] );
 
-			return;
+				return;
+			}
 		}
 
 		if ( defaultAspectRatio ) {
