@@ -16,19 +16,7 @@ import config from 'config';
 import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
-import {
-	customize,
-	preview,
-	purchase,
-	activate,
-	tryandcustomize,
-	separator,
-	info,
-	support,
-	help,
-	bindToSite,
-	bindOptions
-} from './theme-options';
+import { customize, info, ThemeOptions } from './theme-options';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
@@ -57,9 +45,6 @@ const JetpackThemeReferrerPage = localize(
 		</Main>
 	)
 );
-
-const BoundThemeShowcase = connect( ...bindOptions )( ThemeShowcase );
-
 const ThemesSingleSiteBase = ( props ) => {
 	const site = sites.getSelectedSite(),
 		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
@@ -89,21 +74,40 @@ const ThemesSingleSiteBase = ( props ) => {
 	}
 
 	return (
-		<BoundThemeShowcase { ...props }>
-			<SidebarNavigation />
-			<ThanksModal
-				site={ site }
-				source={ 'list' } />
-			<CurrentTheme
-				site={ site }
-				canCustomize={ site && site.isCustomizable() } />
-			<UpgradeNudge
-				title={ translate( 'Get Custom Design with Premium' ) }
-				message={ translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
-				feature={ FEATURE_ADVANCED_DESIGN }
-				event="themes_custom_design"
-			/>
-		</BoundThemeShowcase>
+		<ThemeOptions site={ site }
+			options={ [
+				'customize',
+				'preview',
+				'purchase',
+				'activate',
+				'tryandcustomize',
+				'separator',
+				'info',
+				'support',
+				'help'
+			] }
+			defaultOption="activate"
+			secondaryOption="tryandcustomize"
+			getScreenshotOption={ function( theme ) {
+				return theme.active ? customize : info;
+			} }
+			source="showcase">
+			<ThemeShowcase { ...props }>
+				<SidebarNavigation />
+				<ThanksModal
+					site={ site }
+					source={ 'list' } />
+				<CurrentTheme
+					site={ site }
+					canCustomize={ site && site.isCustomizable() } />
+				<UpgradeNudge
+					title={ translate( 'Get Custom Design with Premium' ) }
+					message={ translate( 'Customize your theme using premium fonts, color palettes, and the CSS editor.' ) }
+					feature={ FEATURE_ADVANCED_DESIGN }
+					event="themes_custom_design"
+				/>
+			</ThemeShowcase>
+		</ThemeOptions>
 	);
 };
 
@@ -118,25 +122,10 @@ const bindSingleSite = ( state ) => {
 
 const ThemesSingleSite = connect( bindSingleSite )( localize( ThemesSingleSiteBase ) );
 
-const ThemeShowcaseBoundToSite = connect( bindToSite )( ThemesSingleSite );
-
+// bind To site
 export default props => (
-	<ThemeShowcaseBoundToSite { ...props }
-		options={ {
-			customize,
-			preview,
-			purchase,
-			activate,
-			tryandcustomize,
-			separator,
-			info,
-			support,
-			help
-		} }
-		defaultOption="activate"
-		secondaryOption="tryandcustomize"
+	<ThemesSingleSite { ...props }
 		getScreenshotOption={ function( theme ) {
-			return theme.active ? 'customize' : 'info';
-		} }
-		source="showcase" />
+			return theme.active ? customize : info;
+		} } />
 );

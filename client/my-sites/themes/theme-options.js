@@ -3,10 +3,11 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
-import mapValues from 'lodash/mapValues';
-import merge from 'lodash/merge';
+import { has, mapValues, merge, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -207,3 +208,101 @@ export const bindOptions = [
 	bindOptionsToDispatch,
 	mergeProps
 ];
+
+class ThemeOptionsComponent extends React.Component {
+	render() {
+		const { options, defaultOption, secondaryOption, getScreenshotOption } = this.props;
+		return React.cloneElement(
+			this.props.children,
+			{
+				options,
+				defaultOption: options[ defaultOption ],
+				secondaryOption: secondaryOption ? options[ secondaryOption ] : null,
+				getScreenshotOption
+			}
+		);
+	}
+}
+
+export const ThemeOptions = connect(
+	( state, { options: optionNames, site, theme } ) => {
+		const allOptions = {
+			customize,
+			preview,
+			purchase,
+			activate,
+			tryandcustomize,
+			signup,
+			separator,
+			info,
+			support,
+			help
+		};
+		const options = pick( allOptions, optionNames );
+		let mapGetUrl, mapHideForSite;
+
+		if ( site !== undefined ) {
+			let siteId;
+			if ( site !== null ) {
+				siteId = site.ID;
+			} else {
+				siteId = null;
+			}
+			if ( theme ) { // Bind everything.
+				mapGetUrl = getUrl => () => getUrl( state, theme, siteId );
+				mapHideForSite = hideForSite => () => hideForSite( state, siteId );
+			} else { // Bind state and site, but not theme.
+				mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
+				mapHideForSite = hideForSite => () => hideForSite( state, siteId );
+			}
+		} else if ( theme ) { // Bind state and theme, but not site.
+			mapGetUrl = getUrl => ( s ) => getUrl( state, theme, s );
+			mapHideForSite = hideForSite => ( s ) => hideForSite( state, s );
+		} else { // Bind only state.
+			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
+			mapHideForSite = hideForSite => ( s ) => hideForSite( state, s );
+		}
+
+		return mapValues( options, option => Object.assign(
+			{},
+			option,
+			option.getUrl
+				? { getUrl: mapGetUrl( option.getUrl ) }
+				: {},
+			option.hideForSite
+				? { hideForSite: mapHideForSite( option.hideForSite ) }
+				: {},
+		) );
+	},
+	( dispatch, { theme, site, source = 'unknown' } ) => {
+		const actions = { activate: activateAction }; // All theme related actions available.
+		let mapAction;
+
+		if ( site !== undefined ) {
+			// TODO (@ockham): Change actions to use siteId.
+			if ( theme ) { // Bind theme and site.
+				mapAction = action => () => action( theme, site, source );
+			} else { // Bind site, but not theme.
+				mapAction = action => ( t ) => action( t, site, source );
+			}
+		} else if ( theme ) { // Bind theme, but not site.
+			mapAction = action => ( s ) => action( theme, s, source );
+		} else { // Bind nothing.
+			mapAction = action => ( t, s ) => action( t, s, source );
+		}
+
+		return bindActionCreators(
+			mapValues( actions, action => mapAction( action ) ),
+			dispatch
+		);
+	},
+	( options, actions, ownProps ) => ( {
+		...ownProps,
+		options: mapValues( options, ( option, name ) => {
+			if ( has( actions, name ) ) {
+				return { ...option, action: actions[ name ] };
+			}
+			return option;
+		} )
+	} )
+)( ThemeOptionsComponent );
