@@ -2,11 +2,8 @@
  * External dependencies
  */
 import React from 'react';
-import noop from 'lodash/noop';
-import assign from 'lodash/assign';
-import omitBy from 'lodash/omitBy';
-import some from 'lodash/some';
-import isEqual from 'lodash/isEqual';
+import { connect } from 'react-redux';
+import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
 
 /**
  * Internal dependencies
@@ -16,18 +13,17 @@ import MediaStore from 'lib/media/store';
 import EditorMediaModalGalleryDropZone from './drop-zone';
 import EditorMediaModalGalleryFields from './fields';
 import EditorMediaModalGalleryPreview from './preview';
-import { Views as MediaViews } from '../constants';
 import { GalleryDefaultAttrs } from 'lib/media/constants';
+import { ModalViews } from 'state/ui/media-modal/constants';
+import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGallery',
-
+const EditorMediaModalGallery = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		items: React.PropTypes.array,
 		settings: React.PropTypes.object,
 		onUpdateSettings: React.PropTypes.func,
-		onChangeView: React.PropTypes.func
+		onReturnToList: React.PropTypes.func
 	},
 
 	getInitialState() {
@@ -38,8 +34,7 @@ export default React.createClass( {
 
 	getDefaultProps() {
 		return {
-			onUpdateSettings: noop,
-			onChangeView: noop
+			onUpdateSettings: noop
 		};
 	},
 
@@ -119,10 +114,6 @@ export default React.createClass( {
 		this.props.onUpdateSettings( updatedSettings );
 	},
 
-	returnToList() {
-		this.props.onChangeView( MediaViews.LIST );
-	},
-
 	render() {
 		const { site, items, settings } = this.props;
 
@@ -131,7 +122,7 @@ export default React.createClass( {
 				<EditorMediaModalGalleryDropZone
 					site={ site }
 					onInvalidItemAdded={ () => this.setState( { invalidItemDropped: true } ) } />
-				<HeaderCake onClick={ this.returnToList } backText={ this.translate( 'Media Library' ) } />
+				<HeaderCake onClick={ this.props.onReturnToList } backText={ this.translate( 'Media Library' ) } />
 				<div className="editor-media-modal-gallery__content editor-media-modal__content">
 					<EditorMediaModalGalleryPreview
 						site={ site }
@@ -152,3 +143,7 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect( null, {
+	onReturnToList: partial( setEditorMediaModalView, ModalViews.LIST )
+} )( EditorMediaModalGallery );
