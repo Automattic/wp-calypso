@@ -89,6 +89,46 @@ MediaActions.fetchNextPage = function( siteId ) {
 	} );
 };
 
+MediaActions.createTransientMedia = function( id, file, date ) {
+	const transientMedia = {
+		ID: id,
+		'transient': true,
+		date
+	};
+
+	if ( 'string' === typeof file ) {
+		// Generate from string
+		assign( transientMedia, {
+			file: file,
+			title: path.basename( file ),
+			extension: MediaUtils.getFileExtension( file ),
+			mime_type: MediaUtils.getMimeType( file )
+		} );
+	} else {
+		// Handle the case where a an object has been passed that wraps a
+		// Blob and contains a fileName
+		const fileContents = file.fileContents || file;
+		const fileName = file.fileName || file.name;
+
+		// Generate from window.File object
+		const fileUrl = window.URL.createObjectURL( fileContents );
+
+		assign( transientMedia, {
+			URL: fileUrl,
+			guid: fileUrl,
+			file: fileName,
+			title: file.title || path.basename( fileName ),
+			extension: MediaUtils.getFileExtension( file.fileName || fileContents ),
+			mime_type: MediaUtils.getMimeType( file.fileName || fileContents ),
+			// Size is not an API media property, though can be useful for
+			// validation purposes if known
+			size: fileContents.size
+		} );
+	}
+
+	return transientMedia;
+};
+
 MediaActions.add = function( siteId, files ) {
 	if ( files instanceof window.FileList ) {
 		files = [ ...files ];
@@ -108,43 +148,12 @@ MediaActions.add = function( siteId, files ) {
 		// Generate a fake transient media item that can be rendered into the list
 		// immediately, even before the media has persisted to the server
 		const id = uniqueId( 'media-' );
-		const transientMedia = {
-			ID: id,
-			'transient': true,
-			// Assign a date such that the first item will be the oldest at the
-			// time of upload, as this is expected order when uploads finish
-			date: new Date( baseTime - ( files.length - i ) ).toISOString()
-		};
 
-		if ( 'string' === typeof file ) {
-			// Generate from string
-			assign( transientMedia, {
-				file: file,
-				title: path.basename( file ),
-				extension: MediaUtils.getFileExtension( file ),
-				mime_type: MediaUtils.getMimeType( file )
-			} );
-		} else {
-			// Handle the case where a an object has been passed that wraps a
-			// Blob and contains a fileName
-			const fileContents = file.fileContents || file;
-			const fileName = file.fileName || file.name;
+		// Assign a date such that the first item will be the oldest at the
+		// time of upload, as this is expected order when uploads finish
+		const mediaDate = new Date( baseTime - ( files.length - i ) ).toISOString();
 
-			// Generate from window.File object
-			const fileUrl = window.URL.createObjectURL( fileContents );
-
-			assign( transientMedia, {
-				URL: fileUrl,
-				guid: fileUrl,
-				file: fileName,
-				title: file.title || path.basename( fileName ),
-				extension: MediaUtils.getFileExtension( file.fileName || fileContents ),
-				mime_type: MediaUtils.getMimeType( file.fileName || fileContents ),
-				// Size is not an API media property, though can be useful for
-				// validation purposes if known
-				size: fileContents.size
-			} );
-		}
+		const transientMedia = MediaActions.createTransientMedia( id, file, mediaDate );
 
 		Dispatcher.handleViewAction( {
 			type: 'CREATE_MEDIA_ITEM',
@@ -182,6 +191,7 @@ MediaActions.add = function( siteId, files ) {
 		}
 
 		debug( 'Uploading media to %d from %o', siteId, file );
+
 		return lastUpload.then( () => {
 			// Achieve series upload by waiting for the previous promise to
 			// resolve before starting this item's upload
