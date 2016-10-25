@@ -16,7 +16,7 @@ import config from 'config';
 import EmptyContent from 'components/empty-content';
 import JetpackUpgradeMessage from './jetpack-upgrade-message';
 import JetpackManageDisabledMessage from './jetpack-manage-disabled-message';
-import { customize, info, ThemeOptions } from './theme-options';
+import { ThemeOptions } from './theme-options';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
@@ -89,7 +89,7 @@ const SingleSiteThemeShowcase = ( props ) => {
 			defaultOption="activate"
 			secondaryOption="tryandcustomize"
 			getScreenshotOption={ function( theme ) {
-				return theme.active ? customize : info;
+				return theme.active ? 'customize' : 'info';
 			} }
 			source="showcase">
 			<ThemeShowcase { ...props }>

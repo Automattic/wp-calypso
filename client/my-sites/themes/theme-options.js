@@ -218,7 +218,7 @@ class ThemeOptionsComponent extends React.Component {
 				options,
 				defaultOption: options[ defaultOption ],
 				secondaryOption: secondaryOption ? options[ secondaryOption ] : null,
-				getScreenshotOption
+				getScreenshotOption: ( theme ) => options[ getScreenshotOption( theme ) ]
 			}
 		);
 	}
