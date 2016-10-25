@@ -10,6 +10,7 @@ import matches from 'lodash/matches';
 /**
  * Internal Dependencies
  */
+import config from 'config';
 import resizeImageUrl from 'lib/resize-image-url';
 import DISPLAY_TYPES from './display-types';
 
@@ -57,6 +58,10 @@ function discoverFullBleedImages( post, dom ) {
 	return post;
 }
 
+const hasShortContent = config.isEnabled( 'reader/refresh/stream' )
+	? post => post.character_count <= 130
+	: post => post.word_count < 100;
+
 /**
  * Attempt to classify the post into a display type
  * @param  {object}   post     A post to classify
@@ -70,7 +75,7 @@ function classifyPost( post ) {
 	if ( post.images &&
 			post.images.length >= 1 &&
 			canonicalImage && canonicalImage.width >= PHOTO_ONLY_MIN_WIDTH &&
-			post.word_count < 100 ) {
+			hasShortContent( post ) ) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
 	}
 
