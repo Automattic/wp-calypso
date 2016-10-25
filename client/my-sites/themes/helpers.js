@@ -5,7 +5,6 @@
  */
 import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
-import startsWith from 'lodash/startsWith';
 import mapValues from 'lodash/mapValues';
 
 /**
@@ -13,8 +12,7 @@ import mapValues from 'lodash/mapValues';
  */
 import config from 'config';
 import route from 'lib/route';
-
-const oldShowcaseUrl = '//wordpress.com/themes/';
+import { oldShowcaseUrl, isPremiumTheme as isPremium } from 'state/themes/utils';
 
 export function getSignupUrl( theme ) {
 	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
@@ -103,22 +101,6 @@ export function getExternalThemesUrl( site ) {
 		return site.options.admin_url + 'theme-install.php';
 	}
 	return oldShowcaseUrl + site.slug;
-}
-
-export function isPremium( theme ) {
-	if ( ! theme ) {
-		return false;
-	}
-
-	if ( theme.stylesheet && startsWith( theme.stylesheet, 'premium/' ) ) {
-		return true;
-	}
-	// The /v1.1/sites/:site_id/themes/mine endpoint (which is used by the
-	// current-theme reducer, selector, and component) does not return a
-	// `stylesheet` attribute. However, it does return a `cost` field (which
-	// contains the correct price even if the user has already purchased that
-	// theme, or if they have an upgrade that includes all premium themes).
-	return !! ( theme.cost && theme.cost.number );
 }
 
 export function trackClick( componentName, eventName, verb = 'click' ) {
