@@ -228,15 +228,19 @@ MediaActions.update = function( siteId, item ) {
 		data: newItem
 	} );
 
-	debug( 'Updating media for %d by ID %d to %o', siteId, item.ID, item );
-	wpcom.site( siteId ).media( item.ID ).update( item, function( error, data ) {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_MEDIA_ITEM',
-			error: error,
-			siteId: siteId,
-			data: data
+	debug( 'Updating media for %o by ID %o to %o', siteId, item.ID, item );
+
+	wpcom
+		.site( siteId )
+		.media( item.ID )
+		.edit( item, function( error, data ) {
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_MEDIA_ITEM',
+				error: error,
+				siteId: siteId,
+				data: data
+			} );
 		} );
-	} );
 };
 
 MediaActions.delete = function( siteId, item ) {
