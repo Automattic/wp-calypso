@@ -18,6 +18,10 @@ function languageFileUrl( localeSlug ) {
 }
 
 export default function switchLocale( localeSlug ) {
+	if ( localeSlug === i18n.getLocaleSlug() ) {
+		return;
+	}
+
 	if ( localeSlug === config( 'i18n_default_locale_slug' ) ) {
 		i18n.configure( { defaultLocaleSlug: localeSlug } );
 		return;
