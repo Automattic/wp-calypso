@@ -175,17 +175,17 @@ const ThemesMagicSearchCard = React.createClass( {
 		);
 	},
 
-	updateInput: function( updatedInput ) {
+	updateInput( updatedInput ) {
 		this.setState( { searchInput: updatedInput } );
 		this.refs[ 'url-search' ].clear();
 	},
 
-	suggest: function( suggestion ) {
+	suggest( suggestion ) {
 		const updatedInput = this.insertSuggestion( suggestion );
 		this.updateInput( updatedInput );
 	},
 
-	insertTextInInput: function( text ) {
+	insertTextInInput( text ) {
 		const updatedInput = this.insertTextAtCursor( text );
 		this.updateInput( updatedInput );
 	},

@@ -16,7 +16,7 @@ const Suggestions = React.createClass( {
 		input: React.PropTypes.string,
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			welcomeSign: noop,
 			suggest: noop,
@@ -25,7 +25,7 @@ const Suggestions = React.createClass( {
 		};
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			taxonomySuggestionsArray: [],
 			suggestionPosition: -1,
@@ -34,7 +34,7 @@ const Suggestions = React.createClass( {
 		};
 	},
 
-	componentWillMount: function() {
+	componentWillMount() {
 		const suggestions = this.narrowDown( this.props.input );
 		this.setState( {
 			suggestions: suggestions,
@@ -43,7 +43,7 @@ const Suggestions = React.createClass( {
 		} );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.input !== this.props.input ) {
 			const suggestions = this.narrowDown( nextProps.input );
 			this.setState( {
@@ -55,19 +55,19 @@ const Suggestions = React.createClass( {
 		}
 	},
 
-	countSuggestions: function() {
+	countSuggestions() {
 		return this.state.taxonomySuggestionsArray.length;
 	},
 
-	getSuggestionForPosition: function( position ) {
+	getSuggestionForPosition( position ) {
 		return this.state.taxonomySuggestionsArray[ position ];
 	},
 
-	getPositionForSuggestion: function( suggestion ) {
+	getPositionForSuggestion( suggestion ) {
 		return this.state.taxonomySuggestionsArray.indexOf( suggestion );
 	},
 
-	incPosition: function() {
+	incPosition() {
 		const position = ( this.state.suggestionPosition + 1 ) % this.countSuggestions();
 		this.setState( {
 			suggestionPosition: position,
@@ -75,7 +75,7 @@ const Suggestions = React.createClass( {
 		} );
 	},
 
-	decPosition: function() {
+	decPosition() {
 		const position = ( this.state.suggestionPosition - 1 ) % this.countSuggestions();
 		this.setState( {
 			suggestionPosition: position,
@@ -83,7 +83,7 @@ const Suggestions = React.createClass( {
 		} );
 	},
 
-	handleKeyEvent: function( event ) {
+	handleKeyEvent( event ) {
 		switch ( event.key ) {
 			case 'ArrowDown' :
 				this.incPosition();
@@ -101,23 +101,23 @@ const Suggestions = React.createClass( {
 		}
 	},
 
-	onMouseDown: function( event ) {
+	onMouseDown( event ) {
 		this.props.suggest( event.target.textContent );
 	},
 
-	onMouseOver: function( event ) {
+	onMouseOver( event ) {
 		this.setState( {
 			suggestionPosition: this.getPositionForSuggestion( event.target.textContent ),
 			currentSuggestion: event.target.textContent,
 		} );
 	},
 
-	removeEmptySuggestions: function( suggestions ) {
+	removeEmptySuggestions( suggestions ) {
 		const hasValues = x => x.length > 0;
 		return pickBy( suggestions, hasValues );
 	},
 
-	narrowDown: function( input ) {
+	narrowDown( input ) {
 		const [ taxonomy, filter ] = input.split( ':' );
 		if ( taxonomy === '' ) {
 			// empty string or just ":" or ":filter" -
@@ -167,7 +167,7 @@ const Suggestions = React.createClass( {
 		return this.removeEmptySuggestions( filtered );
 	},
 
-	createTaxonomySuggestionsArray: function( suggestions ) {
+	createTaxonomySuggestionsArray( suggestions ) {
 		const taxonomySuggestionsArray = [];
 
 		for ( const key in suggestions ) {
@@ -180,7 +180,7 @@ const Suggestions = React.createClass( {
 		return taxonomySuggestionsArray;
 	},
 
-	createTextWithHighlight: function( text, highlighed_text ) {
+	createTextWithHighlight( text, highlighed_text ) {
 		const re = new RegExp( '(' + highlighed_text + ')', 'g' );
 		const parts = text.split( re );
 		const token = parts.map( ( part, i ) => {
@@ -194,7 +194,7 @@ const Suggestions = React.createClass( {
 		return token;
 	},
 
-	createSuggestions: function( suggestions ) {
+	createSuggestions( suggestions ) {
 		let noOfSuggestions = 0;
 		const rendered = [];
 
