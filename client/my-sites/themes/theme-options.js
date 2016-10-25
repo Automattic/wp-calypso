@@ -7,7 +7,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
-import { has, mapValues, merge, pick } from 'lodash';
+import { has, mapValues, pick } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +29,6 @@ import {
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
 
 export const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -115,99 +114,6 @@ export const help = {
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
 	hideForSite: ( state, site ) => isJetpackSite( state, site ),
 };
-
-export function bindOptionToDispatch( option, source ) {
-	return dispatch => Object.assign(
-		{},
-		//option,
-		option.action
-			? { action: bindActionCreators(
-				( theme, site ) => option.action( theme, site, source ),
-				dispatch
-				) }
-			: {}
-	);
-}
-
-export const bindOptionsToDispatch = ( dispatch, { options, source } ) => (
-	mapValues( options, option => bindOptionToDispatch( option, source )( dispatch ) )
-);
-
-function bindOptionToState( option, state ) {
-	return Object.assign(
-		{},
-		option,
-		option.getUrl
-			? { getUrl: ( theme, siteId ) => option.getUrl( state, theme, siteId ) }
-			: {},
-		option.hideForSite
-			? { hideForSite: siteId => option.hideForSite( state, siteId ) }
-			: {},
-	);
-}
-
-// Sig: state, ownProps?
-export function bindOptionsToState( options, state ) {
-	return mapValues( options, option => bindOptionToState( option, state ) );
-}
-
-export const bindToState = ( state, { options } ) => ( {
-	options: bindOptionsToState( options, state )
-} );
-
-// Ideally: same sig as mergeProps. stateProps, dispatchProps, ownProps
-function bindOptionToSite( option, site ) {
-	return Object.assign(
-		{},
-		option,
-		option.action
-			? { action: theme => option.action( theme, site ) } // TODO (@ockham): Change actions to use siteId.
-			: {},
-		option.getUrl
-			? { getUrl: ( state, theme ) => option.getUrl( state, theme, site.ID ) }
-			: {},
-		option.hideForSite
-			? { hideForSite: state => option.hideForSite( state, site.ID ) }
-			: {},
-	);
-}
-
-export function bindOptionsToSite( options, site ) {
-	return mapValues( options, option => bindOptionToSite( option, site ) );
-}
-
-export const bindToSite = ( state, { options } ) => ( {
-	options: bindOptionsToSite( options, getSelectedSite( state ) )
-} );
-
-export const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const options = merge(
-		{},
-		stateProps.options,
-		dispatchProps
-	);
-
-	return Object.assign(
-		{},
-		ownProps,
-		stateProps,
-		{
-			options,
-			defaultOption: options[ ownProps.defaultOption ],
-			secondaryOption: options[ ownProps.secondaryOption ],
-			getScreenshotOption: function( theme ) {
-				const screenshotOption = ownProps.getScreenshotOption( theme );
-				return options[ screenshotOption ];
-			}
-		}
-	);
-};
-
-export const bindOptions = [
-	bindToState,
-	bindOptionsToDispatch,
-	mergeProps
-];
 
 const ThemeOptionsComponent = ( { children, options, defaultOption, secondaryOption, getScreenshotOption } ) => (
 	React.cloneElement(
