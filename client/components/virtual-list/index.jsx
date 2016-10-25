@@ -16,7 +16,7 @@ export class VirtualList extends Component {
 	static propTypes = {
 		items: PropTypes.array,
 		lastPage: PropTypes.number,
-		loading: PropTypes.boolean,
+		loading: PropTypes.bool,
 		getItemHeight: PropTypes.func,
 		renderItem: PropTypes.func,
 		renderQuery: PropTypes.func,
@@ -36,6 +36,7 @@ export class VirtualList extends Component {
 		perPage: 100,
 		loadOffset: 10,
 		height: 300,
+		query: {}
 	};
 
 	constructor( props ) {
