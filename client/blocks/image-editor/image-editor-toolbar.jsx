@@ -87,15 +87,15 @@ class ImageEditorToolbar extends Component {
 			showAspectPopover
 		} = this.state;
 
-		if ( ! popoverContext ) {
-			return;
-		}
-
 		const {
 			translate,
 			aspectRatio,
 			allowedAspectRatios
 		} = this.props;
+
+		if ( ! popoverContext || allowedAspectRatios.length === 1 ) {
+			return;
+		}
 
 		const items = [
 			{
@@ -150,7 +150,10 @@ class ImageEditorToolbar extends Component {
 	}
 
 	renderButtons() {
-		const { translate } = this.props;
+		const {
+			translate,
+			allowedAspectRatios
+		} = this.props;
 
 		const buttons = [
 			{
@@ -159,13 +162,15 @@ class ImageEditorToolbar extends Component {
 				text: translate( 'Rotate' ),
 				onClick: this.rotate
 			},
-			{
-				tool: 'aspect',
-				ref: this.setAspectMenuContext,
-				icon: 'layout',
-				text: translate( 'Aspect' ),
-				onClick: this.onAspectOpen
-			},
+			allowedAspectRatios.length === 1
+				? null
+				: {
+					tool: 'aspect',
+					ref: this.setAspectMenuContext,
+					icon: 'layout',
+					text: translate( 'Aspect' ),
+					onClick: this.onAspectOpen
+				},
 			{
 				tool: 'flip-vertical',
 				icon: 'flip-vertical',
@@ -174,17 +179,21 @@ class ImageEditorToolbar extends Component {
 			}
 		];
 
-		return buttons.map( button => (
-			<button
-				key={ 'image-editor-toolbar-' + button.tool }
-				ref={ button.ref }
-				className={ 'image-editor__toolbar-button' }
-				onClick={ button.onClick }
-			>
-				<Gridicon icon={ button.icon } />
-				<span>{ button.text }</span>
-			</button>
-		) );
+		return buttons.map( button =>
+			button
+				? (
+					<button
+						key={ 'image-editor-toolbar-' + button.tool }
+						ref={ button.ref }
+						className={ 'image-editor__toolbar-button' }
+						onClick={ button.onClick }
+					>
+						<Gridicon icon={ button.icon } />
+						<span>{ button.text }</span>
+					</button>
+				)
+				: null
+		);
 	}
 
 	render() {
