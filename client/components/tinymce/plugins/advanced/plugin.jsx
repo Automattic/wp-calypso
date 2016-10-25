@@ -4,7 +4,6 @@
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import tinymce from 'tinymce/tinymce';
-import throttle from 'lodash/throttle';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -30,7 +29,7 @@ function advanced( editor ) {
 	let isAdvancedVisible = getVisibleState();
 	let menuButton;
 
-	const updateVisibleState = throttle( function() {
+	function updateVisibleState() {
 		const toolbars = editor.theme.panel.find( '.toolbar:not(.menubar)' );
 		const isSmallViewport = isWithinBreakpoint( '<960px' );
 		let containerPadding = 0;
@@ -56,7 +55,7 @@ function advanced( editor ) {
 		if ( menuButton ) {
 			menuButton.active( isAdvancedVisible );
 		}
-	}, 500 );
+	}
 
 	editor.addButton( 'wpcom_advanced', {
 		text: translate( 'Toggle Advanced' ),
