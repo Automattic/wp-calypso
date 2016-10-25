@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
-import { connect } from 'react-redux';
 import page from 'page';
 import defer from 'lodash/defer';
 import omit from 'lodash/omit';
@@ -14,7 +13,6 @@ import mapValues from 'lodash/mapValues';
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
 import { trackClick } from './helpers';
-import { bindOptions } from './theme-options';
 
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
@@ -118,4 +116,4 @@ const ThemesSiteSelectorModal = React.createClass( {
 	}
 } );
 
-export default connect( ...bindOptions )( ThemesSiteSelectorModal );
+export default ThemesSiteSelectorModal;
