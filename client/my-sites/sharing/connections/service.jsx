@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, replace } from 'lodash';
+import { identity, replace, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 
@@ -274,6 +274,33 @@ const SharingService = React.createClass( {
 
 		connections = serviceConnections.filterConnectionsToRemove( connections );
 		this.props.connections.destroy( connections );
+	},
+
+	/**
+	 * Given a service name and optional site ID, returns the current status of the
+	 * service's connection.
+	 *
+	 * @param {string} service The name of the service to check
+	 * @return {string} Connection status.
+	 */
+	getConnectionStatus: function( service ) {
+		let status;
+
+		if ( this.props.isFetching ) {
+			// When connections are still loading, we don't know the status
+			status = 'unknown';
+		} else if ( ! some( this.props.siteConnections, { service } ) ) {
+			// If no connections exist, the service isn't connected
+			status = 'not-connected';
+		} else if ( some( this.props.siteConnections, { status: 'broken', keyring_connection_user_ID: this.props.user.ID } ) ) {
+			// A problematic connection exists
+			status = 'reconnect';
+		} else {
+			// If all else passes, assume service is connected
+			status = 'connected';
+		}
+
+		return status;
 	},
 
 	render: function() {
