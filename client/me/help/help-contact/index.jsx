@@ -30,8 +30,8 @@ import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isHappychatAvailable } from 'state/happychat/selectors';
 import QueryOlark from 'components/data/query-olark';
 import HelpUnverifiedWarning from '../help-unverified-warning';
-import Happychat from '../../happychat/main';
 import { connectChat as connectHappychat } from 'state/happychat/actions';
+import { openChat as openHappychat } from 'state/ui/happychat/actions';
 
 /**
  * Module variables
@@ -39,6 +39,8 @@ import { connectChat as connectHappychat } from 'state/happychat/actions';
 const wpcom = wpcomLib.undocumented();
 const sites = siteList();
 let savedContactForm = null;
+
+const debug = require( 'debug' )( 'happychat:help' );
 
 const HelpContact = React.createClass( {
 
@@ -112,6 +114,12 @@ const HelpContact = React.createClass( {
 
 	clearSavedContactForm: function() {
 		savedContactForm = null;
+	},
+
+	startHappychat: function( contactForm ) {
+		this.props.openHappychat()
+		debug( 'send contact form info', contactForm );
+		page( '/help' )
 	},
 
 	startChat: function( contactForm ) {
@@ -373,9 +381,20 @@ const HelpContact = React.createClass( {
 		}
 	},
 
+	shouldUseHappychat: function() {
+		const { isHappychatAvailable } = this.props;
+
+		// if happychat is disabled in the config, do not use it
+		if ( ! config.isEnabled( 'happychat' ) ) {
+			return false;
+		}
+
+		// if the happychat connection is able to accept chats, use it
+		return isHappychatAvailable;
+	},
+
 	canShowChatbox: function() {
 		const { olark, isChatEnded } = this.state;
-
 		return isChatEnded || ( olark.details.isConversing && olark.isOperatorAvailable );
 	},
 
@@ -385,10 +404,12 @@ const HelpContact = React.createClass( {
 	 */
 	getView: function() {
 		const { olark, confirmation, sitesInitialized, isSubmitting } = this.state;
+		const showHappychatVariation = this.shouldUseHappychat();
 		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
 		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || olark.isUserEligible );
 		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
 		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
+		const showPreloadForm = ! ( olark.isOlarkReady && sitesInitialized ) && ! this.props.olarkTimedOut;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -398,7 +419,7 @@ const HelpContact = React.createClass( {
 			return <HelpContactClosed />;
 		}
 
-		if ( ! ( olark.isOlarkReady && sitesInitialized ) && ! this.props.olarkTimedOut ) {
+		if ( showPreloadForm ) {
 			return (
 				<div className="help-contact__placeholder">
 					<h4 className="help-contact__header">Loading contact form</h4>
@@ -449,6 +470,10 @@ const HelpContact = React.createClass( {
 							strong: <strong />
 						}
 					} )
+			},
+			showHappychatVariation && {
+				onSubmit: this.startHappychat,
+				buttonLabel: this.translate( 'Chat with us (Happychat)' )
 			}
 		);
 
@@ -459,10 +484,6 @@ const HelpContact = React.createClass( {
 	},
 
 	render: function() {
-		if ( config.isEnabled( 'happychat' ) && this.props.isHappychatAvailable ) {
-			return <Happychat />;
-		}
-
 		return (
 			<Main className="help-contact">
 				<HeaderCake onClick={ this.backToHelp } isCompact={ true }>{ this.translate( 'Contact Us' ) }</HeaderCake>
@@ -484,5 +505,5 @@ export default connect(
 			isHappychatAvailable: isHappychatAvailable( state )
 		};
 	},
-	{ connectHappychat }
+	{ connectHappychat, openHappychat }
 )( HelpContact );

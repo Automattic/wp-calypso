@@ -12,7 +12,7 @@ import { getSectionName } from 'state/ui/selectors';
  * @returns {Boolean}
  */
 export const isHappychatOpen = createSelector(
-	state => state.ui.happychat.open && getSectionName( state ) !== 'happychat' && getSectionName( state ) !== 'help',
+	state => state.ui.happychat.open && getSectionName( state ) !== 'happychat',
 	state => [ state.ui.happychat.open, getSectionName( state ) ]
 );
 

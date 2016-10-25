@@ -20,11 +20,17 @@ class Connection extends EventEmitter {
 				const socket = new IO( url );
 				socket
 					.once( 'connect', () => resolve( socket ) )
+					.on( 'reconnect', () => debug( 'reconnected socket' ) )
 					.on( 'init', ( ... args ) => debug( 'initialized', ... args ) )
-					.on( 'identify', () => socket.emit( 'token', token ) )
-					.on( 'token', handler => handler( { signer_user_id: user_id, jwt: token } ) )
+					.on( 'token', handler => {
+						handler( { signer_user_id: user_id, jwt: token } )
+					} )
+					.on( 'typing', isTyping => debug( 'operator typing?', isTyping ) )
 					.on( 'message', message => this.emit( 'message', message ) )
-					.on( 'accept', accept => this.emit( 'accept', accept ) );
+					.on( 'log', log => debug( 'received log', log ) )
+					.on( 'accept', accept => {
+						this.emit( 'accept', accept );
+					} );
 			} );
 		} else {
 			debug( 'socket already initiaized' );

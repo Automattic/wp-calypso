@@ -70,8 +70,6 @@ export const connectChat = () => ( dispatch, getState ) => {
 	const state = getState();
 	const user = getCurrentUser( state );
 
-	debug( 'connect chat', user );
-
 	// if chat is already connected then do nothing
 	if ( getHappychatConnectionStatus( state ) === 'connected' ) {
 		return;
