@@ -209,20 +209,17 @@ export const bindOptions = [
 	mergeProps
 ];
 
-class ThemeOptionsComponent extends React.Component {
-	render() {
-		const { options, defaultOption, secondaryOption, getScreenshotOption } = this.props;
-		return React.cloneElement(
-			this.props.children,
-			{
-				options,
-				defaultOption: options[ defaultOption ],
-				secondaryOption: secondaryOption ? options[ secondaryOption ] : null,
-				getScreenshotOption: ( theme ) => options[ getScreenshotOption( theme ) ]
-			}
-		);
-	}
-}
+const ThemeOptionsComponent = ( { children, options, defaultOption, secondaryOption, getScreenshotOption } ) => (
+	React.cloneElement(
+		children,
+		{
+			options,
+			defaultOption: options[ defaultOption ],
+			secondaryOption: secondaryOption ? options[ secondaryOption ] : null,
+			getScreenshotOption: ( theme ) => options[ getScreenshotOption( theme ) ]
+		}
+	)
+);
 
 export const ThemeOptions = connect(
 	( state, { options: optionNames, site, theme } ) => {
