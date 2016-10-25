@@ -58,7 +58,7 @@ export const connections = createReducer( {}, {
 		...keyBy( action.data.connections, 'ID' )
 	} ),
 	[ PUBLICIZE_CONNECTION_CREATE ]: ( state, { connection } ) => ( { ...state, [ connection.ID ]: connection } ),
-	[ PUBLICIZE_CONNECTION_DELETE ]: ( state, { ID } ) => omit( state, ID ),
+	[ PUBLICIZE_CONNECTION_DELETE ]: ( state, { connection: { ID } } ) => omit( state, ID ),
 }, connectionsSchema );
 
 export default combineReducers( {

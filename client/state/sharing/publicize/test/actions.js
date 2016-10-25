@@ -186,11 +186,13 @@ describe( 'actions', () => {
 
 		it( 'should dispatch delete action when request completes', () => {
 			deleteSiteConnection( { ID: 2, site_ID: 2916284 } )( spy ).then( () => {
-				const action = spy.getCall( 0 ).args[ 0 ];
-
-				expect( action.type ).to.equal( PUBLICIZE_CONNECTION_DELETE );
-				expect( action.connectionId ).to.eql( 2 );
-				expect( action.siteId ).to.eql( 2916284 );
+				expect( spy ).to.have.been.calledWith( {
+					type: PUBLICIZE_CONNECTION_DELETE,
+					connection: {
+						ID: 2,
+						site_ID: 2916284,
+					},
+				} );
 			} );
 		} );
 
@@ -210,8 +212,10 @@ describe( 'actions', () => {
 
 			expect( action ).to.eql( {
 				type: PUBLICIZE_CONNECTION_DELETE,
-				connectionId: 2,
-				siteId: 2916284,
+				connection: {
+					ID: 2,
+					site_ID: 2916284,
+				},
 			} );
 		} );
 	} );

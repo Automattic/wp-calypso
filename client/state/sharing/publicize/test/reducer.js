@@ -163,8 +163,10 @@ describe( 'reducer', () => {
 				2: { ID: 2, site_ID: 2916284 },
 			} ), {
 				type: PUBLICIZE_CONNECTION_DELETE,
-				ID: 2,
-				siteId: 2916284,
+				connection: {
+					ID: 2,
+					site_ID: 2916284,
+				},
 			} );
 
 			expect( state ).to.eql( {

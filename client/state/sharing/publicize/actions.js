@@ -151,8 +151,7 @@ export function deleteSiteConnection( connection ) {
 export function deleteConnection( connection ) {
 	return {
 		type: PUBLICIZE_CONNECTION_DELETE,
-		connectionId: connection.ID,
-		siteId: connection.site_ID,
+		connection,
 	};
 }
 
