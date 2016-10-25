@@ -155,15 +155,6 @@ const MeSidebar = React.createClass( {
 							onNavigate={ this.onNavigate }
 						/>
 						{ this.renderNextStepsItem( selected ) }
-						<SidebarItem
-							selected={ selected === 'help' }
-							link={ config.isEnabled( 'help' ) ? '/help' : '//support.wordpress.com' }
-							label={ this.translate( 'Help' ) }
-							external={ config.isEnabled( 'help' ) ? 'false' : 'true' }
-							icon="help-outline"
-							onNavigate={ this.onNavigate }
-							preloadSectionName="help"
-						/>
 					</ul>
 				</SidebarMenu>
 				<SidebarFooter />
