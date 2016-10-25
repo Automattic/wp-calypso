@@ -5,6 +5,7 @@ import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { isEqual, find } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -20,15 +21,14 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import siteList from 'lib/sites-list';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Module variables
  */
 const sites = siteList();
 
-module.exports = React.createClass( {
-	displayName: 'HelpContactForm',
-
+export const HelpContactForm = React.createClass( {
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
 
 	propTypes: {
@@ -62,7 +62,7 @@ module.exports = React.createClass( {
 				value: null,
 				requestChange: () => {}
 			}
-		}
+		};
 	},
 
 	/**
@@ -70,15 +70,26 @@ module.exports = React.createClass( {
 	 * @return {Object} An object representing our initial state
 	 */
 	getInitialState: function() {
-		const site = sites.getSelectedSite() || sites.getPrimary();
-
 		return this.props.valueLink.value || {
 			howCanWeHelp: 'gettingStarted',
 			howYouFeel: 'unspecified',
 			message: '',
 			subject: '',
-			siteSlug: site ? site.slug : null
+			siteSlug: this.getSiteSlug()
 		};
+	},
+
+	getSiteSlug: function() {
+		if ( this.props.selectedSiteSlug ) {
+			return this.props.selectedSiteSlug;
+		}
+
+		const primarySite = sites.getPrimary();
+		if ( primarySite ) {
+			return primarySite.slug;
+		}
+
+		return null;
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -253,3 +264,9 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	return {
+		selectedSiteSlug: getSelectedSiteSlug( state )
+	};
+} )( HelpContactForm );
