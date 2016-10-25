@@ -34,7 +34,8 @@ describe( 'actions', () => {
 						shortcode
 					} )
 					.reply( 200, {
-						body: '<html></html>',
+						result: '<html></html>',
+						shortcode: '[gallery ids="1,2,3"]',
 						scripts: {},
 						styles: {}
 					}, {
@@ -69,7 +70,8 @@ describe( 'actions', () => {
 							siteId,
 							shortcode,
 							data: {
-								body: '<html></html>',
+								result: '<html></html>',
+								shortcode: '[gallery ids="1,2,3"]',
 								scripts: {},
 								styles: {}
 							}

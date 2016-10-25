@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { has } from 'lodash';
+import { merge } from 'lodash';
 
 /**
  * Internal dependencies
@@ -17,14 +17,11 @@ import {
 } from 'state/action-types';
 
 const requestingShortcode = ( state, siteId, shortcode, requesting ) => {
-	const siteShortcodes = has( state, siteId ) ? state[ siteId ] : {};
-	return {
-		...state,
+	return merge( {}, state, {
 		[ siteId ]: {
-			...siteShortcodes,
 			[ shortcode ]: requesting
 		}
-	};
+	} );
 };
 
 /**
@@ -52,14 +49,11 @@ export const requesting = createReducer( {}, {
  */
 export const items = createReducer( {}, {
 	[ SHORTCODE_RECEIVE ]: ( state, { siteId, shortcode, data } ) => {
-		const siteShortcodes = has( state, siteId ) ? state[ siteId ] : {};
-		return {
-			...state,
+		return merge( {}, state, {
 			[ siteId ]: {
-				...siteShortcodes,
 				[ shortcode ]: data
 			}
-		};
+		} );
 	}
 }, shortcodesSchema );
 

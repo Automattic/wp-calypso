@@ -38,7 +38,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should set shortcode of that site ID to true value if a request is initiated', () => {
-			const state = requesting( undefined, {
+			const state = requesting( {}, {
 				type: SHORTCODE_REQUEST,
 				siteId: 12345678,
 				shortcode: 'test_shortcode'
@@ -47,6 +47,22 @@ describe( 'reducer', () => {
 			expect( state ).to.eql( {
 				12345678: {
 					test_shortcode: true
+				}
+			} );
+		} );
+
+		it( 'should store the requested site IDs faultlessly if the site previously had no shortcodes', () => {
+			const state = requesting( deepFreeze( {
+				12345678: {}
+			} ), {
+				type: SHORTCODE_REQUEST,
+				siteId: 12345678,
+				shortcode: 'another_shortcode'
+			} );
+
+			expect( state ).to.eql( {
+				12345678: {
+					another_shortcode: true
 				}
 			} );
 		} );
@@ -177,7 +193,8 @@ describe( 'reducer', () => {
 
 	describe( '#items()', () => {
 		const shortcodeData = {
-			body: 'body',
+			result: '<html></html>',
+			shortcode: '[gallery ids="1,2,3"]',
 			scripts: {},
 			styles: {}
 		};
@@ -189,7 +206,24 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should index shortcodes by site ID', () => {
-			const state = items( null, {
+			const state = items( {}, {
+				type: SHORTCODE_RECEIVE,
+				siteId: 12345678,
+				shortcode: 'test_shortcode',
+				data: shortcodeData
+			} );
+
+			expect( state ).to.eql( {
+				12345678: {
+					test_shortcode: shortcodeData
+				}
+			} );
+		} );
+
+		it( 'should index shortcodes by site ID faultlessly if the site previously had no shortcodes', () => {
+			const state = items( {
+				12345678: {}
+			}, {
 				type: SHORTCODE_RECEIVE,
 				siteId: 12345678,
 				shortcode: 'test_shortcode',
@@ -212,7 +246,7 @@ describe( 'reducer', () => {
 				type: SHORTCODE_RECEIVE,
 				siteId: 87654321,
 				shortcode: 'test_shortcode',
-				data: { ...shortcodeData, body: '<html></html>' }
+				data: { ...shortcodeData, result: '<html></html>' }
 			} );
 
 			expect( state ).to.eql( {
@@ -220,7 +254,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, body: '<html></html>' }
+					test_shortcode: { ...shortcodeData, result: '<html></html>' }
 				}
 			} );
 		} );
@@ -231,22 +265,22 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, body: '<html></html>' }
+					test_shortcode: { ...shortcodeData, result: '<html></html>' }
 				}
 			} ), {
 				type: SHORTCODE_RECEIVE,
 				siteId: 12345678,
 				shortcode: 'another_shortcode',
-				data: { ...shortcodeData, body: '<html><head></head></html>' }
+				data: { ...shortcodeData, result: '<html><head></head></html>' }
 			} );
 
 			expect( state ).to.eql( {
 				12345678: {
 					test_shortcode: shortcodeData,
-					another_shortcode: { ...shortcodeData, body: '<html><head></head></html>' }
+					another_shortcode: { ...shortcodeData, result: '<html><head></head></html>' }
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, body: '<html></html>' }
+					test_shortcode: { ...shortcodeData, result: '<html></html>' }
 				}
 			} );
 		} );
@@ -257,7 +291,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, body: '<html></html>' }
+					test_shortcode: { ...shortcodeData, result: '<html></html>' }
 				}
 			} ), {
 				type: SHORTCODE_RECEIVE,
@@ -282,7 +316,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, body: '<html></html>' }
+					test_shortcode: { ...shortcodeData, result: '<html></html>' }
 				}
 			} ), {
 				type: SERIALIZE
@@ -293,7 +327,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, body: '<html></html>' }
+					test_shortcode: { ...shortcodeData, result: '<html></html>' }
 				}
 			} );
 		} );
@@ -304,7 +338,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, body: '<html></html>' }
+					test_shortcode: { ...shortcodeData, result: '<html></html>' }
 				}
 			} ), {
 				type: DESERIALIZE
@@ -315,7 +349,7 @@ describe( 'reducer', () => {
 					test_shortcode: shortcodeData
 				},
 				87654321: {
-					test_shortcode: { ...shortcodeData, body: '<html></html>' }
+					test_shortcode: { ...shortcodeData, result: '<html></html>' }
 				}
 			} );
 		} );
