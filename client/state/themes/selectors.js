@@ -69,12 +69,8 @@ export function getThemeSupportUrl( state, theme, siteId ) {
  * @return {?String}        Theme support page URL
  */
 export function getThemeHelpUrl( state, theme, siteId ) {
-	if ( ! theme ) {
+	if ( ! theme || isJetpackSite( state, siteId ) ) {
 		return null;
-	}
-
-	if ( isJetpackSite( state, siteId ) ) {
-		return '//wordpress.org/support/theme/' + theme.id;
 	}
 
 	let baseUrl = oldShowcaseUrl + theme.id;
