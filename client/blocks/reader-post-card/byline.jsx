@@ -59,15 +59,15 @@ class PostByline extends React.Component {
 		const streamUrl = getStreamUrl( feedId, siteId );
 		const siteIcon = get( site, 'icon.img' );
 		const feedIcon = get( feed, 'image' );
-		const hasGravatar = get( post, 'author.has_avatar' );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
 		return (
 			<div className="reader-post-card__byline ignore-click">
 				<ReaderAvatar
-					siteIcon={ hasGravatar ? null : siteIcon }
-					feedIcon={ hasGravatar ? null : feedIcon }
-					author={ hasGravatar ? post.author : {} } />
+					siteIcon={ siteIcon }
+					feedIcon={ feedIcon }
+					author={ post.author }
+					preferGravatar={ true } />
 				<div className="reader-post-card__byline-details">
 					{ shouldDisplayAuthor &&
 						<ReaderAuthorLink
