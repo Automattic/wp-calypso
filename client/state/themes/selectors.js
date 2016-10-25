@@ -117,7 +117,13 @@ export function getThemeCustomizeUrl( state, theme, siteId ) {
 			( theme ? '&theme=' + theme.id : '' );
 	}
 
-	return '/customize/' + getSiteSlug( state, siteId ) + ( theme && theme.stylesheet ? '?theme=' + theme.stylesheet : '' );
+	const customizeUrl = '/customize/' + getSiteSlug( state, siteId );
+
+	if ( theme && theme.stylesheet ) {
+		return customizeUrl + '?theme=' + theme.stylesheet;
+	}
+
+	return customizeUrl;
 }
 
 /**
