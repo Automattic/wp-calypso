@@ -31,12 +31,12 @@ function advanced( editor ) {
 	let menuButton;
 
 	const updateVisibleState = throttle( function() {
-		var toolbars = editor.theme.panel.find( '.toolbar:not(.menubar)' ),
-			isSmallViewport = isWithinBreakpoint( '<960px' ),
-			containerPadding = 0;
+		const toolbars = editor.theme.panel.find( '.toolbar:not(.menubar)' );
+		const isSmallViewport = isWithinBreakpoint( '<960px' );
+		let containerPadding = 0;
 
 		toolbars.each( function( toolbar, i ) {
-			var isToolbarVisible = isSmallViewport || i === 0 || isAdvancedVisible;
+			const isToolbarVisible = isSmallViewport || i === 0 || isAdvancedVisible;
 
 			toolbar.visible( isToolbarVisible );
 
@@ -107,6 +107,6 @@ function advanced( editor ) {
 	} );
 }
 
-module.exports = function() {
+export default function() {
 	tinymce.PluginManager.add( 'wpcom/advanced', advanced );
-};
+}
