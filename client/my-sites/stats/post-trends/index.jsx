@@ -14,6 +14,7 @@ import Month from './month';
 import Card from 'components/card';
 import SectionHeader from 'components/section-header';
 import QuerySiteStats from 'components/data/query-site-stats';
+import { getSiteOption } from 'state/sites/selectors';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import {
 	getSiteStatsPostStreakData,
@@ -181,6 +182,7 @@ export default connect( ( state ) => {
 	const query = {
 		startDate: i18n.moment().locale( 'en' ).subtract( 1, 'year' ).startOf( 'month' ).format( 'YYYY-MM-DD' ),
 		endDate: i18n.moment().locale( 'en' ).endOf( 'month' ).format( 'YYYY-MM-DD' ),
+		gmtOffset: getSiteOption( state, siteId, 'gmt_offset' ),
 		max: 3000
 	};
 
