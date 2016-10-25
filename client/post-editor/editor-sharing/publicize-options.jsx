@@ -206,12 +206,12 @@ const EditorSharingPublicizeOptions = React.createClass( {
 		this.props.dismissShareConfirmation( this.props.siteId, this.props.post.ID );
 	},
 	render: function() {
-		const { isPublicizeEnabled, publicizePermanentlyDisabled, site } = this.props;
+		const { isPublicizeEnabled, publicizePermanentlyDisabled } = this.props;
 		if ( ! isPublicizeEnabled ) {
 			return null;
 		}
 
-		if ( site && publicizePermanentlyDisabled ) {
+		if ( publicizePermanentlyDisabled ) {
 			return (
 				<div className="editor-sharing__publicize-disabled">
 					<p><span>{ this.translate( 'Publicize is disabled on this site.' ) }</span></p>
@@ -219,7 +219,7 @@ const EditorSharingPublicizeOptions = React.createClass( {
 			);
 		}
 
-		if ( site && ! isPublicizeEnabled ) {
+		if ( ! isPublicizeEnabled ) {
 			return (
 				<div className="editor-sharing__publicize-disabled">
 					<p><span>{ this.translate( 'Enable the Publicize module to automatically share new posts to social networks.' ) }</span></p>
