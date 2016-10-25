@@ -228,9 +228,9 @@ class TermFormDialog extends Component {
 	}
 
 	render() {
-		const { isHierarchical, labels, translate, showDescriptionInput, showDialog } = this.props;
+		const { isHierarchical, labels, term, translate, showDescriptionInput, showDialog } = this.props;
 		const { name, description } = this.state;
-		const isNew = ! this.props.term;
+		const isNew = ! term;
 		const buttons = [ {
 			action: 'cancel',
 			label: translate( 'Cancel' )
@@ -250,7 +250,7 @@ class TermFormDialog extends Component {
 				isVisible={ showDialog }
 				buttons={ buttons }
 				onClose={ this.closeDialog }
-				additionalClassNames={ 'term-form-dialog' }>
+				additionalClassNames="term-form-dialog">
 				<FormSectionHeading>{ isNew ? labels.add_new_item : labels.edit_item }</FormSectionHeading>
 				<FormFieldset>
 					<FormTextInput
