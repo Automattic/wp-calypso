@@ -157,7 +157,7 @@ const Suggestions = React.createClass( {
 		this.setState( { filterTerm } );
 
 		for ( const key in terms ) {
-			if ( ! this.props.terms.hasOwnProperty( key ) ) {
+			if ( ! has( this.props.terms, key ) ) {
 				continue;
 			}
 
@@ -173,7 +173,7 @@ const Suggestions = React.createClass( {
 		const taxonomySuggestionsArray = [];
 
 		for ( const key in suggestions ) {
-			if ( ! suggestions.hasOwnProperty( key ) ) {
+			if ( ! has( suggestions, key ) ) {
 				continue;
 			}
 			taxonomySuggestionsArray.push( ... suggestions[ key ].map( value => key + ':' + value ) );
@@ -201,7 +201,7 @@ const Suggestions = React.createClass( {
 		const rendered = [];
 
 		for ( const key in suggestions ) {
-			if ( ! suggestions.hasOwnProperty( key ) ) {
+			if ( ! has( suggestions, key ) ) {
 				continue;
 			}
 
