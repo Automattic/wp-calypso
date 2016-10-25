@@ -23,6 +23,7 @@ import actionLog from './action-log/reducer';
 import layoutFocus from './layout-focus/reducer';
 import preview from './preview/reducer';
 import happychat from './happychat/reducer';
+import section from './section/reducer';
 
 /**
  * Tracks the currently selected site ID.
@@ -37,15 +38,6 @@ export function selectedSiteId( state = null, action ) {
 			return action.siteId || null;
 	}
 
-	return state;
-}
-
-//TODO: do we really want to mix strings and booleans?
-export function section( state = false, action ) {
-	switch ( action.type ) {
-		case SECTION_SET:
-			return ( action.section !== undefined ) ? action.section : state;
-	}
 	return state;
 }
 
