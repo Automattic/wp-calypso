@@ -127,7 +127,7 @@ const ThemeOptionsComponent = ( { children, options, defaultOption, secondaryOpt
 	)
 );
 
-export const ThemeOptions = connect(
+export default connect(
 	( state, { options: optionNames, site, theme } ) => {
 		const allOptions = {
 			customize,

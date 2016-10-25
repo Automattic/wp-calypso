@@ -8,7 +8,7 @@ import React from 'react';
  */
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
-import { ThemeOptions } from './theme-options';
+import ThemeOptions from './theme-options';
 import ThemeShowcase from './theme-showcase';
 
 export default props => (

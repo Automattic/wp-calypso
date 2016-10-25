@@ -11,7 +11,7 @@ import map from 'lodash/map';
  */
 import Card from 'components/card';
 import CurrentThemeButton from './button';
-import { ThemeOptions } from '../theme-options';
+import ThemeOptions from '../theme-options';
 import { trackClick } from '../helpers';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import QueryCurrentTheme from 'components/data/query-current-theme';

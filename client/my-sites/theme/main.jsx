@@ -37,7 +37,7 @@ import ThanksModal from 'my-sites/themes/thanks-modal';
 import QueryCurrentTheme from 'components/data/query-current-theme';
 import QueryUserPurchases from 'components/data/query-user-purchases';
 import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
-import { ThemeOptions } from 'my-sites/themes/theme-options';
+import ThemeOptions from 'my-sites/themes/theme-options';
 import { getBackPath } from 'state/themes/themes-ui/selectors';
 import EmptyContentComponent from 'components/empty-content';
 import ThemePreview from 'my-sites/themes/theme-preview';

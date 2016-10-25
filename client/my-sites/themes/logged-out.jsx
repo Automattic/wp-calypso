@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import ThemeShowcase from './theme-showcase';
-import { ThemeOptions } from './theme-options';
+import ThemeOptions from './theme-options';
 
 export default props => (
 	<ThemeOptions { ...props }
