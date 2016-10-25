@@ -50,7 +50,7 @@ const MagicSearchWelcome = React.createClass( {
 	render() {
 		return (
 			<div className="themes-magic-search-card__welcome" >
-				<span className="themes-magic-search-card__welcome-header">{ this.translate('Search by') }</span>
+				<span className="themes-magic-search-card__welcome-header">{ this.translate( 'Search by' ) }</span>
 				<div className="themes-magic-search-card__welcome-taxonomies">
 					{ this.props.taxonomies.map( taxonomy => this.renderToken( taxonomy ) ) }
 				</div>
