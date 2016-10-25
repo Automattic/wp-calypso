@@ -32,7 +32,7 @@ const HappychatPage = React.createClass( {
 	render() {
 		const { connectionStatus } = this.props;
 		return (
-			<div className="happychat__page">
+			<div className="happychat__page" aria-live="polite" aria-relevant="additions">
 				{ timeline( { connectionStatus } ) }
 				{ composer( { connectionStatus } ) }
 			</div>
