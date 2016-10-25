@@ -1,11 +1,6 @@
 /**
  * Internal dependencies
  */
-import { omit } from 'lodash';
-
-/**
- * Internal dependencies
- */
 import wpcom from 'lib/wp';
 import {
 	SHORTCODE_RECEIVE,
@@ -33,10 +28,7 @@ export function fetchShortcode( siteId, shortcode ) {
 				type: SHORTCODE_RECEIVE,
 				siteId,
 				shortcode,
-				data: {
-					...omit( data, 'shortcode', 'result' ),
-					body: data.result
-				}
+				data
 			} );
 		} ).catch( ( error ) => {
 			dispatch( {
