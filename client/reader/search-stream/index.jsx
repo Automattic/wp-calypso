@@ -186,7 +186,7 @@ const FeedStream = React.createClass( {
 					<SearchInput
 						initialValue={ this.props.query }
 						onSearch={ this.updateQuery }
-						autoFocus={ true }
+						autoFocus={ ! this.props.query }
 						delaySearch={ true }
 						delayTimeout={ 500 }
 						placeholder={ searchPlaceholderText } />
