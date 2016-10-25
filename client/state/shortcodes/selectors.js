@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { has } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Returns true if currently requesting that shortcode for the specified site ID, or
@@ -13,11 +13,7 @@ import { has } from 'lodash';
  * @return {Boolean}           Whether that shortcode is being requested
  */
 export const isRequestingShortcode = ( state, siteId, shortcode ) => {
-	if ( ! has( state, [ 'shortcodes', 'requesting', siteId, shortcode ] ) ) {
-		return false;
-	}
-
-	return !! state.shortcodes.requesting[ siteId ][ shortcode ];
+	return get( state.shortcodes.requesting, [ siteId, shortcode ], false );
 };
 
 /**
@@ -28,9 +24,5 @@ export const isRequestingShortcode = ( state, siteId, shortcode ) => {
  * @return {Object}            Shortcode data
  */
 export const getShortcode = ( state, siteId, shortcode ) => {
-	if ( ! has( state, [ 'shortcodes', 'items', siteId, shortcode ] ) ) {
-		return;
-	}
-
-	return state.shortcodes.items[ siteId ][ shortcode ];
+	return get( state.shortcodes.items, [ siteId, shortcode ] );
 };

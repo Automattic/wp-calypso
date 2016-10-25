@@ -73,7 +73,8 @@ describe( 'selectors', () => {
 				items: {
 					12345678: {
 						'[gallery ids="1,2,3"]': {
-							body: '<html></html>',
+							result: '<html></html>',
+							shortcode: '[gallery ids="1,2,3"]',
 							scripts: {},
 							styles: {}
 						},
@@ -86,7 +87,8 @@ describe( 'selectors', () => {
 			const shortcode = getShortcode( state, 12345678, '[gallery ids="1,2,3"]' );
 
 			expect( shortcode ).to.eql( {
-				body: '<html></html>',
+				result: '<html></html>',
+				shortcode: '[gallery ids="1,2,3"]',
 				scripts: {},
 				styles: {}
 			} );
