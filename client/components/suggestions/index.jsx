@@ -5,7 +5,9 @@ import React from 'react';
 import {
 	noop,
 	pick,
-	pickBy
+	pickBy,
+	negate,
+	isEmpty
 } from 'lodash';
 
 const Suggestions = React.createClass( {
@@ -113,8 +115,7 @@ const Suggestions = React.createClass( {
 	},
 
 	removeEmptySuggestions( suggestions ) {
-		const hasValues = x => x.length > 0;
-		return pickBy( suggestions, hasValues );
+		return pickBy( suggestions, negate( isEmpty ) );
 	},
 
 	narrowDown( input ) {
