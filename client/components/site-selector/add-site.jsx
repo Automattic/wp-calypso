@@ -63,7 +63,7 @@ const SiteSelectorAddSite = React.createClass( {
 	renderButton() {
 		return (
 			<span className="site-selector__add-new-site">
-				<Button compact borderless href={ this.getAddNewSiteUrl() } onClick={ this.recordAddNewSite }>
+				<Button borderless href={ this.getAddNewSiteUrl() } onClick={ this.recordAddNewSite }>
 					<Gridicon icon="add-outline" /> { this.translate( 'Add New Site' ) }
 				</Button>
 			</span>
@@ -72,26 +72,24 @@ const SiteSelectorAddSite = React.createClass( {
 
 	renderButtonWithPopover() {
 		return (
-			<span className="site-selector__add-new-site">
-				<span className="site-selector__popover-target" ref="popoverMenuTarget">
-					<PopoverMenu
-						isVisible={ this.state.showPopoverMenu }
-						onClose={ this.onClosePopover }
-						position={ this.state.popoverPosition }
-						context={ this.refs && this.refs.popoverMenuTarget }
-						>
-						<PopoverMenuItem href={ this.getAddNewSiteUrl() } onClick={ this.recordPopoverAddNewSite }>
-							{ this.translate( 'New WordPress.com site' ) }
-						</PopoverMenuItem>
-						<PopoverMenuItem href="/jetpack/connect" onClick={ this.recordPopoverAddJetpackSite }>
-							{ this.translate( 'Self-hosted WordPress site' ) }
-						</PopoverMenuItem>
-					</PopoverMenu>
+			<span className="site-selector__add-new-site" ref="popoverMenuTarget">
+				<PopoverMenu
+					isVisible={ this.state.showPopoverMenu }
+					onClose={ this.onClosePopover }
+					position={ this.state.popoverPosition }
+					context={ this.refs && this.refs.popoverMenuTarget }
+					>
+					<PopoverMenuItem href={ this.getAddNewSiteUrl() } onClick={ this.recordPopoverAddNewSite }>
+						{ this.translate( 'New WordPress.com site' ) }
+					</PopoverMenuItem>
+					<PopoverMenuItem href="/jetpack/connect" onClick={ this.recordPopoverAddJetpackSite }>
+						{ this.translate( 'Self-hosted WordPress site' ) }
+					</PopoverMenuItem>
+				</PopoverMenu>
 
-					<Button compact borderless onClick={ this.onPopoverButtonClick }>
-						<Gridicon icon="add-outline" /> { this.translate( 'Add Site' ) }
-					</Button>
-				</span>
+				<Button borderless onClick={ this.onPopoverButtonClick }>
+					<Gridicon icon="add-outline" /> { this.translate( 'Add Site' ) }
+				</Button>
 			</span>
 		);
 	},
