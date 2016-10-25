@@ -15,13 +15,15 @@ import {
 	activate as activateAction
 } from 'state/themes/actions';
 import {
+	isPremiumTheme as isPremium
+} from 'state/themes/utils';
+import {
 	getSignupUrl,
 	getPurchaseUrl,
 	getCustomizeUrl,
 	getDetailsUrl,
 	getSupportUrl,
-	getHelpUrl,
-	isPremium
+	getHelpUrl
 } from './helpers';
 
 export const purchase = config.isEnabled( 'upgrades/checkout' )
