@@ -7,6 +7,7 @@ import noop from 'lodash/noop';
 import includes from 'lodash/includes';
 import times from 'lodash/times';
 import fromPairs from 'lodash/fromPairs';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,7 +19,7 @@ import FormCheckbox from 'components/forms/form-checkbox';
 import Button from 'components/button';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
 
-export default React.createClass( {
+export const EditorMediaModalGalleryFields = React.createClass( {
 	displayName: 'EditorMediaModalGalleryFields',
 
 	propTypes: {
@@ -151,10 +152,12 @@ export default React.createClass( {
 	},
 
 	renderReverseOrderButton() {
+		const { translate } = this.props;
+
 		return (
 			<EditorMediaModalFieldset>
 				<Button onClick={ this.updateReverseOrder } disabled={ this.props.settings.orderBy === 'rand' } >
-					{ this.translate( 'Reverse Order' ) }
+					{ translate( 'Reverse Order' ) }
 				</Button>
 			</EditorMediaModalFieldset>
 		);
@@ -177,3 +180,5 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default localize( EditorMediaModalGalleryFields );
