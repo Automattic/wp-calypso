@@ -3,27 +3,9 @@
  */
 const kebabCase = require( 'lodash/kebabCase' );
 
-/**
- * Constants
- */
-const RX_ASYNC_LOADER = /^async-component!/;
-
 module.exports = ( { types: t } ) => {
 	return {
 		visitor: {
-			ImportDeclaration( path ) {
-				// This is a hacky solution to the issue where Mocha becomes
-				// confused by `async-component` Webpack loader, since we do
-				// not run modules through Webpack for tests.
-				if ( ! RX_ASYNC_LOADER.test( path.node.source.value ) ) {
-					return;
-				}
-
-				return path.replaceWith( t.importDeclaration(
-					path.node.specifiers,
-					t.stringLiteral( path.node.source.value.replace( RX_ASYNC_LOADER, '' ) )
-				) );
-			},
 			JSXAttribute( path ) {
 				// We only transform the require prop on AsyncLoad components.
 				// The component could have been imported under a different
