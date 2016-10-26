@@ -118,13 +118,11 @@ const HelpContact = React.createClass( {
 
 	startHappychat: function( contactForm ) {
 		this.props.openHappychat();
-		const { message, howCanWeHelp, howYouFeel, siteSlug } = contactForm;
+		const { message, siteSlug } = contactForm;
 		const site = sites.getSite( siteSlug );
 		debug( 'send contact form info', contactForm );
 
 		const messages = [
-			`How can you help: ${ howCanWeHelp }`,
-			`How I feel: ${ howYouFeel }`,
 			`Site I need help with: ${ site ? site.URL : 'N/A' }`,
 			message
 		];
