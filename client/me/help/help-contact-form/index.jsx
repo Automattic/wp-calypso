@@ -5,6 +5,7 @@ import React from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { isEqual, find } from 'lodash';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -20,13 +21,14 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import siteList from 'lib/sites-list';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Module variables
  */
 const sites = siteList();
 
-module.exports = React.createClass( {
+const HelpContactForm = React.createClass( {
 	displayName: 'HelpContactForm',
 
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
@@ -47,6 +49,8 @@ module.exports = React.createClass( {
 			value: React.PropTypes.any,
 			requestChange: React.PropTypes.func.isRequired
 		} ),
+		// connected props
+		selectedSiteSlug: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
@@ -62,7 +66,7 @@ module.exports = React.createClass( {
 				value: null,
 				requestChange: () => {}
 			}
-		}
+		};
 	},
 
 	/**
@@ -70,15 +74,26 @@ module.exports = React.createClass( {
 	 * @return {Object} An object representing our initial state
 	 */
 	getInitialState: function() {
-		const site = sites.getLastSelectedSite() || sites.getPrimary();
-
 		return this.props.valueLink.value || {
 			howCanWeHelp: 'gettingStarted',
 			howYouFeel: 'unspecified',
 			message: '',
 			subject: '',
-			siteSlug: site ? site.slug : null
+			siteSlug: this.getSiteSlug(),
 		};
+	},
+
+	getSiteSlug: function() {
+		if ( this.props.selectedSiteSlug ) {
+			return this.props.selectedSiteSlug;
+		}
+
+		const primarySite = sites.getPrimary();
+		if ( primarySite ) {
+			return primarySite.slug;
+		}
+
+		return null;
 	},
 
 	componentWillReceiveProps: function( nextProps ) {
@@ -114,7 +129,9 @@ module.exports = React.createClass( {
 	 * The SegmentedControl is used for desktop and the SelectDropdown is used for mobile.
 	 * CSS will control which one is displayed to the user.
 	 *
-	 * @param  {string} selectionName    The name that will be used to store the value of a selected option that appears in selectionOptions.
+	 * @param  {string} selectionName    The name that will be used to store the value of a selected option that appears
+	 *                                   in selectionOptions.
+	 *
 	 * @param  {object} selectionOptions An array of objects consisting of a value and a label. It can also have a property called subtext
 	 *                                   value is used when setting state, label is used for display in the selection component, and subtext
 	 *                                   is used for the second line of text displayed in the SegmentedControl
@@ -182,19 +199,31 @@ module.exports = React.createClass( {
 	 * @return {object} ReactJS JSX object
 	 */
 	render: function() {
-		var howCanWeHelpOptions = [
-				{ value: 'gettingStarted', label: this.translate( 'Help getting started' ), subtext: this.translate( 'Can you show me how to…' ) },
-				{ value: 'somethingBroken', label: this.translate( 'Something is broken' ), subtext: this.translate( 'Can you check this out…' ) },
-				{ value: 'suggestion', label: this.translate( 'I have a suggestion' ), subtext: this.translate( 'I think it would be cool if…' ) }
-			],
-			howYouFeelOptions = [
+		const howCanWeHelpOptions = [
+			{
+				value: 'gettingStarted',
+				label: this.translate( 'Help getting started' ),
+				subtext: this.translate( 'Can you show me how to…' )
+			},
+			{
+				value: 'somethingBroken',
+				label: this.translate( 'Something is broken' ),
+				subtext: this.translate( 'Can you check this out…' )
+			},
+			{
+				value: 'suggestion',
+				label: this.translate( 'I have a suggestion' ),
+				subtext: this.translate( 'I think it would be cool if…' )
+			}
+		];
+		const howYouFeelOptions = [
 				{ value: 'unspecified', label: this.translate( "I'd rather not" ) },
 				{ value: 'happy', label: this.translate( 'Happy' ) },
 				{ value: 'confused', label: this.translate( 'Confused' ) },
 				{ value: 'discouraged', label: this.translate( 'Discouraged' ) },
 				{ value: 'upset', label: this.translate( 'Upset' ) },
 				{ value: 'panicked', label: this.translate( 'Panicked' ) }
-			];
+		];
 
 		const {
 			formDescription,
@@ -241,7 +270,10 @@ module.exports = React.createClass( {
 				) }
 
 				<FormLabel>{ this.translate( 'What are you trying to do?' ) }</FormLabel>
-				<FormTextarea valueLink={ this.linkState( 'message' ) } placeholder={ this.translate( 'Please be descriptive' ) }></FormTextarea>
+				<FormTextarea
+					valueLink={ this.linkState( 'message' ) }
+					placeholder={ this.translate( 'Please be descriptive' ) }>
+				</FormTextarea>
 
 				{ showHelpLanguagePrompt && (
 					<strong className="help-contact-form__help-language-prompt">
@@ -253,3 +285,9 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	return {
+		selectedSiteSlug: getSelectedSiteSlug( state )
+	};
+} )( HelpContactForm );

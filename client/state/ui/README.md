@@ -38,3 +38,9 @@ import { getSelectedSite } from 'state/ui/selectors';
 
 const selectedSite = getSelectedSite( store.getState() );
 ```
+
+
+### `getSelectedSite( state: Object )`
+
+Returns the slug of the currently selected site, or null if no site is selected
+
