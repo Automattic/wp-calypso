@@ -19,10 +19,12 @@ const MagicSearchWelcome = React.createClass( {
 		suggestionsCallback: PropTypes.func,
 	},
 
-	defaultProps: {
-		taxonomies: [],
-		topSearches: [],
-		suggestionsCallback: noop,
+	getDefaultProps() {
+		return {
+			taxonomies: [],
+			topSearches: [],
+			suggestionsCallback: noop,
+		};
 	},
 
 	onMouseDown( event ) {
