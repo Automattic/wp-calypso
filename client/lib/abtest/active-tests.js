@@ -124,5 +124,14 @@ module.exports = {
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true
+	},
+	gSuiteOnSignup: {
+		datestamp: '20161025',
+		variations: {
+			original: 50,
+			removed: 50
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true
 	}
 };
