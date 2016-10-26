@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
 import MeSidebarNavigation from 'me/sidebar-navigation';
 import Main from 'components/main';
 import CompactCard from 'components/card/compact';
-import QueryPreferences from 'components/data/query-preferences';
 import SecuritySectionNav from 'me/security-section-nav';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
@@ -30,7 +29,6 @@ const SecurityCheckup = React.createClass( {
 	render: function() {
 		return (
 			<Main className="security-checkup">
-				<QueryPreferences />
 				<MeSidebarNavigation />
 
 				<SecuritySectionNav path={ this.props.path } />
