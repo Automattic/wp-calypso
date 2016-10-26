@@ -166,6 +166,7 @@ const DomainsStep = React.createClass( {
 
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
+		const isDeveloperFlow = this.props.flowName;
 
 		return (
 			<RegisterDomainStep
@@ -186,6 +187,8 @@ const DomainsStep = React.createClass( {
 				isSignupStep
 				surveyVertical={ this.props.surveyVertical }
 				showExampleSuggestions={ ! isDeveloperFlow }
+				suggestionQuantity={ isDeveloperFlow ? 1 : undefined }
+				initialSuggestionQuantity={ isDeveloperFlow ? 0 : undefined }
 				suggestion={ this.getSuggestion() } />
 		);
 	},

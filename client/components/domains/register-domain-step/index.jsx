@@ -39,10 +39,6 @@ import support from 'lib/url/support';
 
 const domains = wpcom.domains();
 
-// max amount of domain suggestions we should fetch/display
-const SUGGESTION_QUANTITY = 10;
-const INITIAL_SUGGESTION_QUANTITY = 2;
-
 const analytics = analyticsMixin( 'registerDomain' ),
 	searchVendor = 'domainsbot';
 
@@ -57,7 +53,7 @@ function getQueryObject( props ) {
 	}
 	return {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
-		quantity: SUGGESTION_QUANTITY,
+		quantity: this.props.suggestionQuantity,
 		vendor: searchVendor,
 		includeSubdomain: props.includeWordPressDotCom,
 		surveyVertical: props.surveyVertical,
@@ -114,12 +110,16 @@ const RegisterDomainStep = React.createClass( {
 		surveyVertical: React.PropTypes.string,
 		includeWordPressDotCom: React.PropTypes.bool,
 		includeDotBlogSubdomain: React.PropTypes.bool,
+		suggestionQuantity: React.PropTypes.number,
+		initialSuggestionQuantity: React.PropTypes.number
 	},
 
 	getDefaultProps: function() {
 		return {
 			onDomainsAvailabilityChange: noop,
-			analyticsSection: 'domains'
+			analyticsSection: 'domains',
+			suggestionQuantity: 10,
+			initialSuggestionQuantity: 2
 		};
 	},
 
@@ -367,9 +367,10 @@ const RegisterDomainStep = React.createClass( {
 					} );
 				},
 				callback => {
+
 					const query = {
 							query: domain,
-							quantity: SUGGESTION_QUANTITY,
+							quantity: this.props.suggestionQuantity,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
 							include_dotblogsubdomain: this.props.includeDotBlogSubdomain,
 							vendor: searchVendor,
@@ -426,12 +427,12 @@ const RegisterDomainStep = React.createClass( {
 			suggestions;
 
 		if ( this.isLoadingSuggestions() ) {
-			domainRegistrationSuggestions = times( INITIAL_SUGGESTION_QUANTITY + 1, function( n ) {
+			domainRegistrationSuggestions = times( this.props.initialSuggestionQuantity + 1, function( n ) {
 				return <DomainSuggestion.Placeholder key={ 'suggestion-' + n } />;
 			} );
 		} else {
 			// only display two suggestions initially
-			suggestions = this.props.defaultSuggestions ? this.props.defaultSuggestions.slice( 0, INITIAL_SUGGESTION_QUANTITY ) : [];
+			suggestions = this.props.defaultSuggestions ? this.props.defaultSuggestions.slice( 0, this.props.initialSuggestionQuantity ) : [];
 
 			domainRegistrationSuggestions = suggestions.map( function( suggestion ) {
 				return (
@@ -509,7 +510,7 @@ const RegisterDomainStep = React.createClass( {
 				products={ this.props.products }
 				selectedSite={ this.props.selectedSite }
 				offerMappingOption={ this.props.offerMappingOption }
-				placeholderQuantity={ SUGGESTION_QUANTITY }
+				placeholderQuantity={ this.props.suggestionQuantity }
 				cart={ this.props.cart } />
 		);
 	},
