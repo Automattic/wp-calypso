@@ -9,7 +9,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import Connection from './connection';
-import serviceConnections from './service-connections';
 import { recordGoogleEvent } from 'state/analytics/actions';
 
 class SharingServiceConnectedAccounts extends Component {
@@ -36,36 +35,34 @@ class SharingServiceConnectedAccounts extends Component {
 		onToggleSitewideConnection: () => {},
 	};
 
+	connectAnother = () => {
+		this.props.onAddConnection();
+		this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.ID );
+	};
+
 	getConnectionElements() {
 		return this.props.connections.map( ( connection ) =>
 			<Connection
 				key={ connection.keyring_connection_ID }
-				site={ this.props.site }
-				user={ this.props.user }
 				connection={ connection }
-				service={ this.props.service }
-				onDisconnect={ this.props.onRemoveConnection }
 				isDisconnecting={ this.props.isDisconnecting }
-				showDisconnect={ this.props.connections.length > 1 || 'broken' === connection.status }
-				onRefresh={ this.props.onRefreshConnection }
 				isRefreshing={ this.props.isRefreshing }
-				onToggleSitewideConnection={ this.props.onToggleSitewideConnection } />
+				onDisconnect={ this.props.onRemoveConnection }
+				onRefresh={ this.props.onRefreshConnection }
+				onToggleSitewideConnection={ this.props.onToggleSitewideConnection }
+				service={ this.props.service }
+				showDisconnect={ this.props.connections.length > 1 || 'broken' === connection.status } />
 		);
 	}
 
 	getConnectAnotherElement() {
-		if ( serviceConnections.supportsMultipleConnectionsPerSite( this.props.service.ID ) ) {
+		if ( 'publicize' === this.props.service.type ) {
 			return (
 				<a onClick={ this.connectAnother } className="button new-account">
 					{ this.props.translate( 'Connect a different account', { comment: 'Sharing: Publicize connections' } ) }
 				</a>
 			);
 		}
-	}
-
-	connectAnother() {
-		this.props.onAddConnection();
-		this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.ID );
 	}
 
 	render() {

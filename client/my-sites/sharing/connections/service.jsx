@@ -229,16 +229,14 @@ module.exports = React.createClass( {
 				className={ 'sharing-service__content ' + ( serviceConnections.isFetchingAccounts() ? 'is-placeholder' : '' ) }>
 				<ServiceExamples service={ this.props.service } site={ sites.getSelectedSite() } />
 				<ServiceConnectedAccounts
-					site={ this.props.site }
-					user={ this.props.user }
-					service={ this.props.service }
 					connections={ connections }
-					onAddConnection={ this.connect }
-					onRemoveConnection={ this.disconnect }
 					isDisconnecting={ this.state.isDisconnecting }
-					onRefreshConnection={ this.refresh }
 					isRefreshing={ this.state.isRefreshing }
-					onToggleSitewideConnection={ this.props.onToggleSitewideConnection } />
+					onAddConnection={ this.connect }
+					onRefreshConnection={ this.refresh }
+					onRemoveConnection={ this.disconnect }
+					onToggleSitewideConnection={ this.props.onToggleSitewideConnection }
+					service={ this.props.service } />
 				<ServiceTip service={ this.props.service } />
 			</div> );
 
