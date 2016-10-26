@@ -115,7 +115,7 @@ const EditorMediaModalGallery = React.createClass( {
 	},
 
 	reverseOrder( ) {
-		const reverseItems = reverse( this.props.items );
+		const reverseItems = reverse( this.props.settings.items.slice( 0 ) );
 		this.updateSetting( {
 			items: reverseItems
 		} );
