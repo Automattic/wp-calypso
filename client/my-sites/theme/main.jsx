@@ -458,6 +458,19 @@ const ThemeSheet = React.createClass( {
 	},
 } );
 
+const WrappedThemeSheet = ( props ) => {
+	if ( ! props.isLoggedIn || props.selectedSite ) {
+		return <ThemeSheet { ...props } />;
+	}
+
+	return (
+		<ThemesSiteSelectorModal { ...props }
+			sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
+			<ThemeSheet />
+		</ThemesSiteSelectorModal>
+	);
+};
+
 const ThemeSheetWithOptions = ( props ) => {
 	const { selectedSite: site, isActive, price, isLoggedIn } = props;
 
@@ -488,21 +501,8 @@ const ThemeSheetWithOptions = ( props ) => {
 			defaultOption={ defaultOption }
 			secondaryOption="tryandcustomize"
 			source="showcase-sheet">
-			<ThemeSheet { ...props } />
+			<WrappedThemeSheet { ...props } />
 		</ThemeOptions>
-	);
-};
-
-const WrappedThemeSheet = ( props ) => {
-	if ( ! props.isLoggedIn || props.selectedSite ) {
-		return <ThemeSheetWithOptions { ...props } />;
-	}
-
-	return (
-		<ThemesSiteSelectorModal { ...props }
-			sourcePath={ `/theme/${ props.id }${ props.section ? '/' + props.section : '' }` }>
-			<ThemeSheetWithOptions />
-		</ThemesSiteSelectorModal>
 	);
 };
 
@@ -528,4 +528,4 @@ export default connect(
 			isLoggedIn: !! currentUserId,
 		};
 	}
-)( WrappedThemeSheet );
+)( ThemeSheetWithOptions );
