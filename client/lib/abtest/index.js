@@ -13,12 +13,9 @@ import activeTests from 'lib/abtest/active-tests';
 import analytics from 'lib/analytics';
 import userFactory from 'lib/user';
 import wpcom from 'lib/wp';
-import sitesList from 'lib/sites-list';
-import { PLAN_FREE } from 'lib/plans/constants';
 
 const debug = debugFactory( 'calypso:abtests' );
 const user = userFactory();
-const sites = sitesList();
 
 function ABTest( name ) {
 	if ( ! ( this instanceof ABTest ) ) {
@@ -99,8 +96,6 @@ ABTest.prototype.init = function( name ) {
 	this.defaultVariation = testConfig.defaultVariation;
 	this.variationNames = variationNames;
 	this.experimentId = name + '_' + variationDatestamp;
-	this.excludeJetpackSites = testConfig.excludeJetpackSites === true;
-	this.excludeSitesWithPaidPlan = testConfig.excludeSitesWithPaidPlan === true;
 	this.allowAnyLocale = testConfig.allowAnyLocale === true;
 	this.allowExistingUsers = testConfig.allowExistingUsers === true;
 };
@@ -134,7 +129,6 @@ ABTest.prototype.getVariation = function() {
 };
 
 ABTest.prototype.isEligibleForAbTest = function() {
-	const selectedSite = sites.getSelectedSite();
 	const client = ( typeof navigator !== 'undefined' ) ? navigator : {};
 	const clientLanguage = client.language || client.userLanguage || 'en';
 	const clientLanguagesPrimary = ( client.languages && client.languages.length ) ? client.languages[ 0 ] : 'en';
@@ -163,16 +157,6 @@ ABTest.prototype.isEligibleForAbTest = function() {
 			debug( '%s: Logged-out user has a non-English locale in session', this.experimentId );
 			return false;
 		}
-	}
-
-	if ( this.excludeJetpackSites && selectedSite && selectedSite.jetpack ) {
-		debug( '%s: Jetpack site detected when excludeJetpackSites is set to true', this.experimentId );
-		return false;
-	}
-
-	if ( this.excludeSitesWithPaidPlan && selectedSite && selectedSite.plan.product_slug !== PLAN_FREE ) {
-		debug( '%s: Site with paid plan detected when excludeSitesWithPaidPlan is set to true', this.experimentId );
-		return false;
 	}
 
 	if ( this.hasBeenInPreviousSeriesTest() ) {
