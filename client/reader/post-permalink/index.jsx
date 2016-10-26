@@ -16,7 +16,6 @@ var PostPermalink = React.createClass( {
 
 	recordClick: function() {
 		stats.recordPermalinkClick( 'card_visit_link' );
-		stats.recordGaEvent( 'Clicked Card Permalink' );
 	},
 
 	render: function() {
