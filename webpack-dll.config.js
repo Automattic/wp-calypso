@@ -13,7 +13,18 @@ const bundleEnv = config( 'env' );
 
 module.exports = {
 	entry: {
-		vendor: [ path.join( __dirname, 'client', 'vendor-dll.js' ) ]
+		vendor: [
+			'classnames',
+			'debug',
+			'i18n-calypso',
+			'moment',
+			'page',
+			'react',
+			'react-redux',
+			'redux',
+			'store',
+			'wpcom',
+		]
 	},
 	output: {
 		path: path.join( __dirname, 'public' ),
