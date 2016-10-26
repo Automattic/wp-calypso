@@ -4,7 +4,7 @@
 
 import React, { Component } from 'react';
 import { isEmpty } from 'lodash';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -42,7 +42,7 @@ class RecoveryPhone extends Component {
 		if ( twoStepEnabled ) {
 			return {
 				type: 'error',
-				message: translate( 'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
+				message: this.translate( 'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
 					components: {
 						a: <a href="/me/security/two-step" />
 					}
@@ -58,6 +58,7 @@ class RecoveryPhone extends Component {
 		const phone = ! isEmpty( this.state.data ) ? this.state.data : false;
 		const twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
 		const twoStepNotice = this.getTwoStepNotice( twoStepEnabled );
+		const { translate } = this.props;
 
 		return (
 			<ManageContact
@@ -87,7 +88,7 @@ class RecoveryPhone extends Component {
 	}
 
 	onDelete = () => {
-		accept( translate( 'Are you sure you want to remove the SMS number?' ), function( accepted ) {
+		accept( this.translate( 'Are you sure you want to remove the SMS number?' ), function( accepted ) {
 			if ( accepted ) {
 				SecurityCheckupActions.deletePhone();
 			}
@@ -99,4 +100,4 @@ class RecoveryPhone extends Component {
 	}
 }
 
-export default RecoveryPhone;
+export default localize( RecoveryPhone );

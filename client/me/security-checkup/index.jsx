@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -18,7 +18,7 @@ import observe from 'lib/mixins/data-observe';
 import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
 
-module.exports = React.createClass( {
+const SecurityCheckup = React.createClass( {
 	displayName: 'SecurityCheckup',
 
 	mixins: [ observe( 'userSettings' ) ],
@@ -39,7 +39,7 @@ module.exports = React.createClass( {
 
 				<CompactCard className="security-checkup-intro">
 					<p className="security-checkup-intro__text">
-						{ translate( 'Keep your account safe by adding a backup email address and phone number.' +
+						{ this.translate( 'Keep your account safe by adding a backup email address and phone number.' +
 								'If you ever have problems accessing your account, WordPress.com will use what ' +
 								'you enter here to verify your identity.' ) }
 					</p>
@@ -57,3 +57,5 @@ module.exports = React.createClass( {
 		);
 	},
 } );
+
+export default localize( SecurityCheckup );

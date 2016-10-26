@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -39,6 +39,7 @@ class RecoveryEmail extends Component {
 	render() {
 		const email = this.state.data ? this.state.data.email : false;
 		const primaryEmail = this.props.userSettings.getSetting( 'user_email' );
+		const { translate } = this.props;
 
 		return (
 			<ManageContact
@@ -66,7 +67,7 @@ class RecoveryEmail extends Component {
 	}
 
 	onDelete = () => {
-		accept( translate( 'Are you sure you want to remove the email address?' ), function( accepted ) {
+		accept( this.translate( 'Are you sure you want to remove the email address?' ), function( accepted ) {
 			if ( accepted ) {
 				SecurityCheckupActions.deleteEmail();
 			}
@@ -78,4 +79,4 @@ class RecoveryEmail extends Component {
 	}
 }
 
-export default RecoveryEmail;
+export default localize( RecoveryEmail );
