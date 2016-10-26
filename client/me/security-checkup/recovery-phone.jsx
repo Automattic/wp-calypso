@@ -42,7 +42,7 @@ class RecoveryPhone extends Component {
 		if ( twoStepEnabled ) {
 			return {
 				type: 'error',
-				message: this.translate( 'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
+				message: this.props.translate( 'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
 					components: {
 						a: <a href="/me/security/two-step" />
 					}
@@ -88,7 +88,7 @@ class RecoveryPhone extends Component {
 	}
 
 	onDelete = () => {
-		accept( this.translate( 'Are you sure you want to remove the SMS number?' ), function( accepted ) {
+		accept( this.props.translate( 'Are you sure you want to remove the SMS number?' ), function( accepted ) {
 			if ( accepted ) {
 				SecurityCheckupActions.deletePhone();
 			}

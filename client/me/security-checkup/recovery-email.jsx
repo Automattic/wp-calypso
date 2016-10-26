@@ -67,7 +67,7 @@ class RecoveryEmail extends Component {
 	}
 
 	onDelete = () => {
-		accept( this.translate( 'Are you sure you want to remove the email address?' ), function( accepted ) {
+		accept( this.props.translate( 'Are you sure you want to remove the email address?' ), function( accepted ) {
 			if ( accepted ) {
 				SecurityCheckupActions.deleteEmail();
 			}
