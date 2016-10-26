@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -15,12 +14,20 @@ import QueryPreferences from 'components/data/query-preferences';
 import SecuritySectionNav from 'me/security-section-nav';
 import ReauthRequired from 'me/reauth-required';
 import twoStepAuthorization from 'lib/two-step-authorization';
+import observe from 'lib/mixins/data-observe';
 import RecoveryEmail from './recovery-email';
 import RecoveryPhone from './recovery-phone';
-import { getPreference } from 'state/preferences/selectors';
 
-class SecurityCheckup extends Component {
-	render() {
+module.exports = React.createClass( {
+	displayName: 'SecurityCheckup',
+
+	mixins: [ observe( 'userSettings' ) ],
+
+	componentDidMount: function() {
+		this.props.userSettings.getSettings();
+	},
+
+	render: function() {
 		return (
 			<Main className="security-checkup">
 				<QueryPreferences />
@@ -48,13 +55,5 @@ class SecurityCheckup extends Component {
 
 			</Main>
 		);
-	}
-}
-
-const mapStateToProps = ( state ) => {
-	return {
-		userSettings: getPreference( state ),
-	};
-};
-
-export default connect( mapStateToProps )( SecurityCheckup );
+	},
+} );
