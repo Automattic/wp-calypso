@@ -481,7 +481,7 @@ const HelpContact = React.createClass( {
 			},
 			showHappychatVariation && {
 				onSubmit: this.startHappychat,
-				buttonLabel: this.translate( 'Chat with us (Happychat)' )
+				buttonLabel: this.translate( 'Chat with us' )
 			}
 		);
 
