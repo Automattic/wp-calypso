@@ -27,6 +27,10 @@ const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, s
 		stats.recordTrackForPost( 'calypso_reader_edit_post_clicked', post );
 	};
 
+	function onPermalinkVisit() {
+		stats.recordPermalinkClick( 'card', post );
+	}
+
 	const listClassnames = classnames( 'reader-post-actions', className );
 
 	/* eslint-disable react/jsx-no-target-blank */
@@ -34,7 +38,12 @@ const ReaderPostActions = ( { translate, post, site, onCommentClick, showEdit, s
 		<ul className={ listClassnames }>
 			{ showVisit &&
 				<li className="reader-post-actions__item reader-post-actions__visit">
-					<ExternalLink href={ post.URL } target="_blank" icon={ true } showIconFirst={ true } iconSize={ iconSize }>
+					<ExternalLink href={ post.URL }
+						target="_blank"
+						icon={ true }
+						showIconFirst={ true }
+						iconSize={ iconSize }
+						onClick={ onPermalinkVisit }>
 						<span className="reader-post-actions__visit-label">{ translate( 'Visit' ) }</span>
 					</ExternalLink>
 				</li>

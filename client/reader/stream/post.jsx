@@ -208,8 +208,7 @@ const Post = React.createClass( {
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			if ( closest( event.target, '.reader__post-title-link', true, rootNode ) ) {
-				stats.recordPermalinkClick( 'card_title_with_modifier' );
-				stats.recordGaEvent( 'Clicked Post Permalink with Modifier' );
+				stats.recordPermalinkClick( 'card_title_with_modifier', this.props.post );
 			}
 			return;
 		}
