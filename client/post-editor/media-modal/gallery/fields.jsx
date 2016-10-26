@@ -153,7 +153,7 @@ export default React.createClass( {
 	renderReverseOrderButton() {
 		return (
 			<EditorMediaModalFieldset>
-				<Button onClick={ this.updateReverseOrder }>
+				<Button onClick={ this.updateReverseOrder } disabled={ this.props.settings.orderBy === 'rand' } >
 					{ this.translate( 'Reverse Order' ) }
 				</Button>
 			</EditorMediaModalFieldset>
