@@ -40,8 +40,6 @@ const wpcom = wpcomLib.undocumented();
 const sites = siteList();
 let savedContactForm = null;
 
-const debug = require( 'debug' )( 'calypso:happychat:help' );
-
 const HelpContact = React.createClass( {
 
 	componentWillReceiveProps( nextProps ) {
@@ -120,7 +118,6 @@ const HelpContact = React.createClass( {
 		this.props.openHappychat();
 		const { message, siteSlug } = contactForm;
 		const site = sites.getSite( siteSlug );
-		debug( 'send contact form info', contactForm );
 
 		const messages = [
 			`Site I need help with: ${ site ? site.URL : 'N/A' }`,
