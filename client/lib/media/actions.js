@@ -222,7 +222,7 @@ MediaActions.edit = function( siteId, item ) {
 	} );
 };
 
-MediaActions.update = function( siteId, item ) {
+MediaActions.update = function( siteId, item, editMediaFile = false ) {
 	if ( Array.isArray( item ) ) {
 		item.forEach( MediaActions.update.bind( null, siteId ) );
 		return;
@@ -248,10 +248,12 @@ MediaActions.update = function( siteId, item ) {
 	debug( 'Updating media for %o by ID %o to %o', siteId, mediaId, updateAction );
 	Dispatcher.handleViewAction( updateAction );
 
+	const method = editMediaFile ? 'edit' : 'update';
+
 	wpcom
 		.site( siteId )
 		.media( item.ID )
-		.edit( item, function( error, data ) {
+		[ method ]( item, function( error, data ) {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_MEDIA_ITEM',
 				error: error,
