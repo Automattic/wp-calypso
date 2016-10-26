@@ -66,6 +66,9 @@ const SharingService = React.createClass( {
 		siteId: PropTypes.number,                   // The site ID for which connections are created
 		siteUserConnections: PropTypes.arrayOf( PropTypes.object ),
 		translate: PropTypes.func,
+		updateSiteConnection: PropTypes.func,
+		userId: PropTypes.number,                 // ID of the current user
+		warningNotice: PropTypes.func,
 	},
 
 	mixins: [ observe( 'connections' ) ],
@@ -99,6 +102,8 @@ const SharingService = React.createClass( {
 			siteUserConnections: [],
 			translate: identity,
 			updateSiteConnection: () => {},
+			userId: 0,
+			warningNotice: () => {},
 		};
 	},
 
@@ -324,7 +329,7 @@ const SharingService = React.createClass( {
 		} else if ( ! some( this.props.siteConnections, { service } ) ) {
 			// If no connections exist, the service isn't connected
 			status = 'not-connected';
-		} else if ( some( this.props.siteConnections, { status: 'broken', keyring_connection_user_ID: this.props.user.ID } ) ) {
+		} else if ( some( this.props.siteConnections, { status: 'broken', keyring_connection_user_ID: this.props.userId } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
 		} else {
@@ -424,6 +429,7 @@ export default connect(
 			removableConnections: getRemovableConnections( state, service.ID ),
 			siteId,
 			siteUserConnections: getSiteUserConnectionsForService( state, siteId, userId, service.ID ),
+			userId,
 		};
 	},
 	{
