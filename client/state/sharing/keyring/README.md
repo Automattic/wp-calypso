@@ -72,14 +72,14 @@ import { getKeyringConnectionById } from 'state/sharing/keyring/selectors';
 const connection = getKeyringConnectionById( state, 23353);
 ```
 
-#### `getKeyringConnectionByName( state: object, service: string )`
+#### `getKeyringConnectionsByName( state: object, service: string )`
 
-Returns a keyring connection object for a specified service.
+Returns an array of keyring connection objects for a specified service.
 
 ```js
-import { getKeyringConnectionByName } from 'state/sharing/keyring/selectors';
+import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
 
-const twitterConnection = getKeyringConnectionByName( state, 'twitter' );
+const twitterConnections = getKeyringConnectionsByName( state, 'twitter' );
 ```
 
 #### `getUserConnections( state: object,  userId: number  )`
