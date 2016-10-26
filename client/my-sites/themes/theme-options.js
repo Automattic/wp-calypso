@@ -25,7 +25,8 @@ import {
 	getThemeCustomizeUrl as	getCustomizeUrl,
 	getThemeDetailsUrl as getDetailsUrl,
 	getThemeSupportUrl as getSupportUrl,
-	getThemeHelpUrl as getHelpUrl
+	getThemeHelpUrl as getHelpUrl,
+	isThemeActive as isActive
 } from 'state/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
@@ -40,7 +41,7 @@ export const purchase = config.isEnabled( 'upgrades/checkout' )
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
 		getUrl: getPurchaseUrl,
-		hideForTheme: theme => ! theme.price || theme.active || theme.purchased
+		hideForTheme: ( state, theme, site ) => ! theme.price || isActive( state, theme.id, site ) || theme.purchased
 	}
 	: {};
 
@@ -48,7 +49,7 @@ export const activate = {
 	label: i18n.translate( 'Activate' ),
 	header: i18n.translate( 'Activate on:', { comment: 'label for selecting a site on which to activate a theme' } ),
 	action: activateAction,
-	hideForTheme: theme => theme.active || ( theme.price && ! theme.purchased )
+	hideForTheme: ( state, theme, site ) => isActive( state, theme.id, site ) || ( theme.price && ! theme.purchased )
 };
 
 export const customize = {
@@ -57,7 +58,7 @@ export const customize = {
 	icon: 'customize',
 	getUrl: getCustomizeUrl,
 	hideForSite: ( state, site ) => ! canCurrentUser( state, site, 'edit_theme_options' ),
-	hideForTheme: theme => ! theme.active
+	hideForTheme: ( state, theme, site ) => ! isActive( state, theme.id, site )
 };
 
 export const tryandcustomize = {
@@ -67,7 +68,7 @@ export const tryandcustomize = {
 	} ),
 	getUrl: getCustomizeUrl,
 	hideForSite: ( state, site ) => ! canCurrentUser( state, site, 'edit_theme_options' ),
-	hideForTheme: theme => theme.active
+	hideForTheme: ( state, theme, site ) => isActive( state, theme.id, site )
 };
 
 // This is a special option that gets its `action` added by `ThemeShowcase` or `ThemeSheet`,
@@ -77,7 +78,7 @@ export const preview = {
 		comment: 'label for previewing the theme demo website'
 	} ),
 	hideForSite: ( state, site ) => isJetpackSite( state, site ),
-	hideForTheme: theme => theme.active
+	hideForTheme: ( state, theme, site ) => isActive( state, theme.id, site )
 };
 
 export const signup = {
@@ -105,7 +106,7 @@ export const support = {
 	getUrl: getSupportUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
 	hideForSite: ( state, site ) => isJetpackSite( state, site ),
-	hideForTheme: theme => ! isPremium( theme )
+	hideForTheme: ( state, theme ) => ! isPremium( theme )
 };
 
 export const help = {
@@ -147,6 +148,11 @@ export default connect(
 		let options = pick( ALL_THEME_OPTIONS, optionNames );
 		let mapGetUrl = identity, mapHideForSite = identity;
 
+		// We bind hideForTheme to site even if it is null since the selectors
+		// that are used by it are expected to recognize that case as "no site selected"
+		// and work accordingly.
+		const mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, site ? site.ID : null );
+
 		if ( site ) {
 			const siteId = site.ID;
 
@@ -154,15 +160,14 @@ export default connect(
 			options = pickBy( options, option =>
 				! ( option.hideForSite && option.hideForSite( state, siteId ) )
 			);
+			if ( theme ) {
+				options = pickBy( options, option =>
+					! ( option.hideForTheme && option.hideForTheme( state, theme, siteId ) )
+				);
+			}
 		} else {
 			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
 			mapHideForSite = hideForSite => ( s ) => hideForSite( state, s );
-		}
-
-		if ( theme ) {
-			options = pickBy( options, option =>
-				! ( option.hideForTheme && option.hideForTheme( theme ) )
-			);
 		}
 
 		return mapValues( options, option => Object.assign(
@@ -174,6 +179,9 @@ export default connect(
 			option.hideForSite
 				? { hideForSite: mapHideForSite( option.hideForSite ) }
 				: {},
+			option.hideForTheme
+				? { hideForTheme: mapHideForTheme( option.hideForTheme ) }
+				: {}
 		) );
 	},
 	( dispatch, { site, source = 'unknown' } ) => {
