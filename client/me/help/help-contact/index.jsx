@@ -30,7 +30,7 @@ import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
 import { isHappychatAvailable } from 'state/happychat/selectors';
 import QueryOlark from 'components/data/query-olark';
 import HelpUnverifiedWarning from '../help-unverified-warning';
-import { connectChat as connectHappychat } from 'state/happychat/actions';
+import { connectChat as connectHappychat, sendChatMessage as sendHappychatMessage } from 'state/happychat/actions';
 import { openChat as openHappychat } from 'state/ui/happychat/actions';
 
 /**
@@ -40,7 +40,7 @@ const wpcom = wpcomLib.undocumented();
 const sites = siteList();
 let savedContactForm = null;
 
-const debug = require( 'debug' )( 'happychat:help' );
+const debug = require( 'debug' )( 'calypso:happychat:help' );
 
 const HelpContact = React.createClass( {
 
@@ -117,9 +117,21 @@ const HelpContact = React.createClass( {
 	},
 
 	startHappychat: function( contactForm ) {
-		this.props.openHappychat()
+		this.props.openHappychat();
+		const { message, howCanWeHelp, howYouFeel, siteSlug } = contactForm;
+		const site = sites.getSite( siteSlug );
 		debug( 'send contact form info', contactForm );
-		page( '/help' )
+
+		const messages = [
+			`How can you help: ${ howCanWeHelp }`,
+			`How I feel: ${ howYouFeel }`,
+			`Site I need help with: ${ site ? site.URL : 'N/A' }`,
+			message
+		];
+
+		messages.forEach( this.props.sendHappychatMessage );
+
+		page( '/help' );
 	},
 
 	startChat: function( contactForm ) {
@@ -505,5 +517,5 @@ export default connect(
 			isHappychatAvailable: isHappychatAvailable( state )
 		};
 	},
-	{ connectHappychat, openHappychat }
+	{ connectHappychat, openHappychat, sendHappychatMessage }
 )( HelpContact );
