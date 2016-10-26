@@ -1,6 +1,15 @@
 machine:
+  pre:
+    - mkdir ~/.yarn-cache
   node:
     version: 6.9.1
+dependencies:
+  pre:
+    - curl -o- -L https://yarnpkg.com/install.sh | bash
+  cache_directories:
+    - ~/.yarn-cache
+  override:
+    - yarn install
 test:
   pre:
     - NODE_ENV=test make client/config/index.js:
