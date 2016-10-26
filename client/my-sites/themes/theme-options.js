@@ -7,7 +7,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import i18n from 'i18n-calypso';
-import { has, mapValues, pick, pickBy } from 'lodash';
+import { has, identity, mapValues, pick, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -145,42 +145,26 @@ const ALL_THEME_ACTIONS = { activate: activateAction }; // All theme related act
 export default connect(
 	( state, { options: optionNames, site, theme } ) => {
 		let options = pick( ALL_THEME_OPTIONS, optionNames );
-		let mapGetUrl;
+		let mapGetUrl = identity, mapHideForSite = identity;
 
 		if ( site ) {
 			const siteId = site.ID;
-			if ( theme ) { // Bind everything
-				options = pickBy( options, option =>
-					! ( option.hideForSite && option.hideForSite( state, siteId ) ) &&
-					! ( option.hideForTheme && option.hideForTheme( theme ) )
-				);
-				mapGetUrl = getUrl => () => getUrl( state, theme, siteId );
-			} else { // Bind state and site, but not theme.
-				options = pickBy( options, option =>
-					! ( option.hideForSite && option.hideForSite( state, siteId ) )
-				);
-				mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
-			}
 
-			return mapValues( options, option => Object.assign(
-				{},
-				option,
-				option.getUrl
-					? { getUrl: mapGetUrl( option.getUrl ) }
-					: {},
-			) );
+			mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
+			options = pickBy( options, option =>
+				! ( option.hideForSite && option.hideForSite( state, siteId ) )
+			);
+		} else {
+			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
+			mapHideForSite = hideForSite => ( s ) => hideForSite( state, s );
 		}
 
-		// No site selected
-		if ( theme ) { // Bind state and theme, but not site.
+		if ( theme ) {
 			options = pickBy( options, option =>
 				! ( option.hideForTheme && option.hideForTheme( theme ) )
 			);
-			mapGetUrl = getUrl => ( s ) => getUrl( state, theme, s );
-		} else { // Bind only state.
-			mapGetUrl = getUrl => ( t, s ) => getUrl( state, t, s );
 		}
-		const mapHideForSite = hideForSite => ( s ) => hideForSite( state, s );
+
 		return mapValues( options, option => Object.assign(
 			{},
 			option,
@@ -192,19 +176,13 @@ export default connect(
 				: {},
 		) );
 	},
-	( dispatch, { theme, site, source = 'unknown' } ) => {
+	( dispatch, { site, source = 'unknown' } ) => {
 		let mapAction;
 
 		if ( site ) {
 			// TODO (@ockham): Change actions to use siteId.
-			if ( theme ) { // Bind theme and site.
-				mapAction = action => () => action( theme, site, source );
-			} else { // Bind site, but not theme.
-				mapAction = action => ( t ) => action( t, site, source );
-			}
-		} else if ( theme ) { // Bind theme, but not site.
-			mapAction = action => ( s ) => action( theme, s, source );
-		} else { // Bind nothing.
+			mapAction = action => ( t ) => action( t, site, source );
+		} else { // Bind only source.
 			mapAction = action => ( t, s ) => action( t, s, source );
 		}
 
