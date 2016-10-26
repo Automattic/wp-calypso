@@ -32,8 +32,6 @@ You should include the following information:
 
 There are also several optional configuration settings available:
 
-* `excludeJetpackSites` - A/B tests run where a Jetpack site is selected will not be eligible for the test. Default is false (Jetpack sites are eligible).
-* `excludeSitesWithPaidPlan` - A/B tests run on sites with a paid plan is selected will not be eligible for the test. Default is false (sites with paid plans are eligible).
 * `allowAnyLocale` - Relaxes the locale restraint on the A/B test, allowing users of any locale to be allocated to a test.  Don't forget: this means strings will need to be translated.
 
 Next, in your code, require the `abtest` module's `abtest` method:
