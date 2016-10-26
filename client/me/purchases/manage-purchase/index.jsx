@@ -490,7 +490,7 @@ const ManagePurchase = React.createClass( {
 
 			const text = isRenewing( purchase )
 				? this.translate( 'Edit Payment Method' )
-				: this.translate( 'Add Payment Method' );
+				: this.translate( 'Add Credit Card' );
 
 			return (
 				<CompactCard href={ path }>{ text }</CompactCard>
