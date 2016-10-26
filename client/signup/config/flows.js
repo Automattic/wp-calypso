@@ -178,7 +178,7 @@ const flows = {
 		steps: [ 'domains-only', 'user' ],
 		destination: '/devdocs/welcome',
 		description: 'Signup flow for developers in developer environment',
-		lastModified: '2016-06-22'
+		lastModified: '2016-10-26'
 	},
 
 	pressable: {
