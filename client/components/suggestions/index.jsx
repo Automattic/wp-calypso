@@ -222,8 +222,8 @@ const Suggestions = React.createClass( {
 			);
 			//Add values
 			rendered.push( suggestions[ key ].map( ( value, i ) => {
-				const hashighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
-				const className = 'suggestions__value' + ( hashighlight ? ' has-highlight' : '' );
+				const hasHighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
+				const className = 'suggestions__value' + ( hasHighlight ? ' has-highlight' : '' );
 				return (
 					<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
 						<span className="suggestions__value-category">{ key + ':' }</span>
