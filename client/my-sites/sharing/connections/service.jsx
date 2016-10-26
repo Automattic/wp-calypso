@@ -4,7 +4,7 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { identity, filter, replace, some } from 'lodash';
+import { identity, filter, flatten, replace, some } from 'lodash';
 import { localize } from 'i18n-calypso';
 import SocialLogo from 'social-logos';
 
@@ -37,9 +37,9 @@ import observe from 'lib/mixins/data-observe';
 import PopupMonitor from 'lib/popup-monitor';
 import { recordGoogleEvent } from 'state/analytics/actions';
 import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import services from './services';
 import ServiceAction from './service-action';
 import ServiceConnectedAccounts from './service-connected-accounts';
-import serviceConnections from './service-connections';
 import ServiceDescription from './service-description';
 import ServiceExamples from './service-examples';
 import ServiceTip from './service-tip';
@@ -73,16 +73,6 @@ const SharingService = React.createClass( {
 
 	mixins: [ observe( 'connections' ) ],
 
-	getInitialState: function() {
-		return {
-			isOpen: false,          // The service is visually opened
-			isConnecting: false,    // A pending connection is awaiting authorization
-			isDisconnecting: false, // A pending disconnection is awaiting completion
-			isRefreshing: false,    // A pending refresh is awaiting completion
-			isSelectingAccount: false,
-		};
-	},
-
 	getDefaultProps: function() {
 		return {
 			availableExternalAccounts: [],
@@ -107,6 +97,147 @@ const SharingService = React.createClass( {
 		};
 	},
 
+	/**
+	 * Given a Keyring connection ID, external user ID, and an array of
+	 * Publicize connections, returns true if a Publicize connection exists for
+	 * the user, or false otherwise.
+	 *
+	 * @param  {int}    keyringConnectionId The Keyring connection ID to check
+	 * @param  {string} externalUserId      The external user ID to check
+	 * @param  {array}  connections         An array of Publicize connections
+	 *                                      to check for the external user ID
+	 * @return {Boolean} Whether Publicize connection exists for the user
+	 */
+	isExternalUserInConnections: function( keyringConnectionId, externalUserId, connections ) {
+		return some( connections, {
+			keyring_connection_ID: keyringConnectionId,
+			external_ID: externalUserId
+		} );
+	},
+
+	/**
+	 * Given a service name, returns the connections for which the current user is permitted to remove.
+	 *
+	 * @param {string} service The name of the service
+	 * @return {Array} Connections for which the current user is permitted to remove
+	 */
+	getRemovableConnections: function( service ) {
+		const connections = this.props.siteUserConnections.filter( ( connection ) => (
+			this.props.site.capabilities && this.props.site.capabilities.edit_others_posts ||
+				connection.user_ID === this.props.userId
+		), this );
+
+		return this.filter( 'getRemovableConnections', service, connections, arguments );
+	},
+
+	/**
+	 * Given an array of connection objects which are desired to be destroyed,
+	 * returns a filtered set of connection objects to be destroyed. This
+	 * enables service-specific handlers to react to destroy events.
+	 *
+	 * @param {Array|Object} connections A connection or array of connections
+	 * @return {Array} Filtered set of connection objects to be destroyed
+	 */
+	filterConnectionsToRemove: function( connections ) {
+		if ( ! Array.isArray( connections ) ) {
+			connections = [ connections ];
+		}
+
+		return connections.filter( ( connection ) => this.filter( 'filterConnectionToRemove', connection.service, true, arguments ), this );
+	},
+
+	/**
+	 * Given a service, returns a flattened array of all possible accounts for the
+	 * service for which a connection can be created.
+	 *
+	 * @param {string} service The name of the service to check
+	 * @return {Array} Flattened array of all possible accounts for the service
+	 */
+	getAvailableExternalAccounts: function( service ) {
+		// Iterate over Keyring connections for this service and generate a
+		// flattened array of all accounts, including external users
+		const accounts = flatten( this.props.keyringConnections.map( ( keyringConnection ) => {
+			const availableAccounts = [ {
+				name: keyringConnection.external_display || keyringConnection.external_name,
+				picture: keyringConnection.external_profile_picture,
+				keyringConnectionId: keyringConnection.ID,
+				isConnected: this.isExternalUserInConnections(
+					keyringConnection.ID, keyringConnection.external_ID, this.props.siteUserConnections )
+			} ];
+
+			keyringConnection.additional_external_users.forEach( ( externalUser ) => {
+				availableAccounts.push( {
+					ID: externalUser.external_ID,
+					name: externalUser.external_name,
+					picture: externalUser.external_profile_picture,
+					keyringConnectionId: keyringConnection.ID,
+					isConnected: this.isExternalUserInConnections(
+						keyringConnection.ID, externalUser.external_ID, this.props.siteUserConnections ),
+					isExternal: true
+				} );
+			} );
+
+			return availableAccounts;
+		} ) );
+
+		return this.filter( 'getAvailableExternalAccounts', service, accounts, arguments );
+	},
+
+	/**
+	 * Given a service name and optional site ID, returns whether the Keyring
+	 * authorization attempt succeeded in creating new Keyring account options.
+	 *
+	 * @param {string} service The name of the service
+	 * @param {int}    siteId  An optional site ID
+	 * @return {Boolean} Whether the Keyring authorization attempt succeeded
+	 */
+	didKeyringConnectionSucceed: function( service, siteId = 0 ) {
+		const availableExternalAccounts = this.getAvailableExternalAccounts( service, siteId ),
+			isAnyConnectionOptions = some( availableExternalAccounts, { isConnected: false } );
+
+		if ( ! availableExternalAccounts.length ) {
+			// At this point, if there are no available accounts to
+			// select, we must assume the user closed the popup
+			// before completing the authorization step.
+			this.props.connections.emit( 'create:error', { cancel: true } );
+		} else if ( ! isAnyConnectionOptions ) {
+			// Similarly warn user if all options are connected
+			this.props.connections.emit( 'create:error', { connected: true } );
+		}
+
+		return this.filter( 'didKeyringConnectionSucceed', service, availableExternalAccounts.length && isAnyConnectionOptions, arguments );
+	},
+
+	/**
+	 * Passes value through a service-specific handler if one exists, allowing
+	 * for service logic to be performed or the value to be modified.
+	 *
+	 * @param  {string} functionName      A function name to invoke
+	 * @param  {string} serviceName       The name of the service
+	 * @param  {*}      value             The value returned by original logic
+	 * @param  {object} functionArguments An Array-like arguments object
+	 * @return {*} The value returned by original logic.
+	 */
+	filter: function( functionName, serviceName, value, functionArguments ) {
+		if ( serviceName in services && services[ serviceName ][ functionName ] ) {
+			return services[ serviceName ][ functionName ].apply(
+				this, [ value ].concat( Array.prototype.slice.call( functionArguments ) )
+			);
+		}
+
+		return value;
+	},
+
+	getInitialState: function() {
+		return {
+			isOpen: false,          // The service is visually opened
+			isConnecting: false,    // A pending connection is awaiting authorization
+			isDisconnecting: false, // A pending disconnection is awaiting completion
+			isRefreshing: false,    // A pending refresh is awaiting completion
+			isSelectingAccount: false,
+		};
+	},
+
 	componentWillUnmount: function() {
 		this.props.connections.off( 'create:success', this.onConnectionSuccess );
 		this.props.connections.off( 'create:error', this.onConnectionError );
@@ -117,11 +248,11 @@ const SharingService = React.createClass( {
 	},
 
 	performAction: function() {
-		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID );
+		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
-		if ( 'connected' === connectionStatus && serviceConnections.getRemovableConnections( this.props.service.ID ).length ) {
+		if ( 'connected' === connectionStatus && this.getRemovableConnections( this.props.service.ID ).length ) {
 			this.disconnect();
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
 		} else if ( 'reconnect' === connectionStatus ) {
@@ -165,7 +296,7 @@ const SharingService = React.createClass( {
 
 					// In the case that a Keyring connection doesn't exist, wait for app
 					// authorization to occur, then display with the available connections
-					if ( serviceConnections.didKeyringConnectionSucceed( service.ID, this.props.siteId ) && 'publicize' === service.type ) {
+					if ( this.didKeyringConnectionSucceed( service.ID, this.props.siteId ) && 'publicize' === service.type ) {
 						this.setState( { isSelectingAccount: true } );
 					}
 				} );
@@ -188,17 +319,17 @@ const SharingService = React.createClass( {
 		this.props.connections.update( connection, { shared: isSitewide } );
 	},
 
-	refresh: function( connection ) {
+	refresh: function( oldConnection ) {
 		this.setState( { isRefreshing: true } );
 		this.props.connections.once( 'refresh:success', this.onRefreshSuccess );
 		this.props.connections.once( 'refresh:error', this.onRefreshError );
 
-		if ( ! connection ) {
+		if ( ! oldConnection ) {
 			// When triggering a refresh from the primary action button, find
 			// the first broken connection owned by the current user.
-			connection = serviceConnections.getRefreshableConnections( this.props.service.ID )[ 0 ];
+			oldConnection = this.props.siteUserConnections.filter( ( connection ) => ( 'broken' === connection.status ), this );
 		}
-		this.refreshConnection( connection );
+		this.refreshConnection( oldConnection );
 	},
 
 	onConnectionSuccess: function() {
@@ -294,7 +425,7 @@ const SharingService = React.createClass( {
 		if ( 'undefined' === typeof connections ) {
 			// If connections is undefined, assume that all connections for
 			// this service are to be removed.
-			connections = serviceConnections.getRemovableConnections( this.props.service.ID );
+			connections = this.getRemovableConnections( this.props.service.ID );
 		}
 
 		this.setState( { isDisconnecting: true } );
@@ -308,7 +439,7 @@ const SharingService = React.createClass( {
 	},
 
 	removeConnection: function( connections ) {
-		connections = serviceConnections.filterConnectionsToRemove( connections );
+		connections = this.filterConnectionsToRemove( connections );
 		connections.map( this.props.deleteSiteConnection );
 		this.props.connections.destroy( connections );
 	},
@@ -326,10 +457,10 @@ const SharingService = React.createClass( {
 		if ( this.props.isFetching ) {
 			// When connections are still loading, we don't know the status
 			status = 'unknown';
-		} else if ( ! some( this.props.siteConnections, { service } ) ) {
+		} else if ( ! some( this.props.siteUserConnections, { service } ) ) {
 			// If no connections exist, the service isn't connected
 			status = 'not-connected';
-		} else if ( some( this.props.siteConnections, { status: 'broken', keyring_connection_user_ID: this.props.userId } ) ) {
+		} else if ( some( this.props.siteUserConnections, { status: 'broken' } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
 		} else {
@@ -337,17 +468,16 @@ const SharingService = React.createClass( {
 			status = 'connected';
 		}
 
-		return status;
+		return this.filter( 'getConnectionStatus', service, status, arguments );
 	},
 
 	render: function() {
-		const connectionStatus = serviceConnections.getConnectionStatus( this.props.service.ID ),
-			connections = serviceConnections.getConnections( this.props.service.ID );
+		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
 		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
 			'is-open': this.state.isOpen,
 		} );
 		const accounts = this.state.isSelectingAccount
-			? serviceConnections.getAvailableExternalAccounts( this.props.service.ID, this.props.siteId )
+			? this.getAvailableExternalAccounts( this.props.service.ID, this.props.siteId )
 			: [];
 
 		const header = (
@@ -362,7 +492,7 @@ const SharingService = React.createClass( {
 					<ServiceDescription
 						service={ this.props.service }
 						status={ connectionStatus }
-						numberOfConnections={ connections.length } />
+						numberOfConnections={ this.props.siteUserConnections.length } />
 				</div>
 			</div>
 		);
@@ -375,7 +505,7 @@ const SharingService = React.createClass( {
 				isConnecting={ this.state.isConnecting }
 				isRefreshing={ this.state.isRefreshing }
 				isDisconnecting={ this.state.isDisconnecting }
-				removableConnections={ serviceConnections.getRemovableConnections( this.props.service.ID ) } />
+				removableConnections={ this.getRemovableConnections( this.props.service.ID ) } />
 		);
 
 		return (
@@ -392,10 +522,10 @@ const SharingService = React.createClass( {
 					compact
 					summary={ action }
 					expandedSummary={ action } >
-					<div className={ classnames( 'sharing-service__content', { 'is-placeholder': serviceConnections.isFetchingAccounts() } ) }>
+					<div className={ classnames( 'sharing-service__content', { 'is-placeholder': this.props.isFetching } ) }>
 						<ServiceExamples service={ this.props.service } />
 						<ServiceConnectedAccounts connect={ this.connectAnother } service={ this.props.service }>
-							{ connections.map( ( connection ) =>
+							{ this.props.siteUserConnections.map( ( connection ) =>
 								<Connection
 									key={ connection.keyring_connection_ID }
 									connection={ connection }
@@ -405,7 +535,7 @@ const SharingService = React.createClass( {
 									onRefresh={ this.refresh }
 									onToggleSitewideConnection={ this.toggleSitewideConnection }
 									service={ this.props.service }
-									showDisconnect={ connections.length > 1 || 'broken' === connection.status } />
+									showDisconnect={ this.props.siteUserConnections.length > 1 || 'broken' === connection.status } />
 							) }
 						</ServiceConnectedAccounts>
 						<ServiceTip service={ this.props.service } />
