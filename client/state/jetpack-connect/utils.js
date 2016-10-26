@@ -10,5 +10,8 @@ import { JETPACK_CONNECT_TTL } from './constants';
  */
 export function isStale( timestamp ) {
 	const now = new Date().getTime();
+	if ( ! timestamp ) {
+		return false;
+	}
 	return ( now - timestamp ) >= JETPACK_CONNECT_TTL;
 }
