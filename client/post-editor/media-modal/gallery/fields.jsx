@@ -15,6 +15,7 @@ import EditorMediaModalFieldset from '../fieldset';
 import SelectDropdown from 'components/select-dropdown';
 import SelectDropdownItem from 'components/select-dropdown/item';
 import FormCheckbox from 'components/forms/form-checkbox';
+import Button from 'components/button';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
 
 export default React.createClass( {
@@ -144,6 +145,16 @@ export default React.createClass( {
 		);
 	},
 
+	renderReverseOrderButton() {
+		return (
+			<EditorMediaModalFieldset>
+				<Button>
+					{ this.translate( 'Reverse Order' ) }
+				</Button>
+			</EditorMediaModalFieldset>
+		);
+	},
+
 	render() {
 		const types = this.getTypeOptions();
 		const links = this.getLinkOptions();
@@ -151,6 +162,7 @@ export default React.createClass( {
 
 		return (
 			<div className="editor-media-modal-gallery__fields">
+				{ this.renderReverseOrderButton() }
 				{ this.renderDropdown( this.translate( 'Layout' ), types, 'type' ) }
 				{ this.renderColumnsOption() }
 				{ this.renderRandomOption() }
