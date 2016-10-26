@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { noop, assign, omitBy, some, isEqual, partial } from 'lodash';
+import { noop, assign, omitBy, some, isEqual, partial, reverse } from 'lodash';
 
 /**
  * Internal dependencies
@@ -114,6 +114,13 @@ const EditorMediaModalGallery = React.createClass( {
 		this.props.onUpdateSettings( updatedSettings );
 	},
 
+	reverseOrder( ) {
+		const reverseItems = reverse( this.props.items );
+		this.updateSetting( {
+			items: reverseItems
+		} );
+	},
+
 	render() {
 		const { site, items, settings } = this.props;
 
@@ -136,7 +143,8 @@ const EditorMediaModalGallery = React.createClass( {
 							site={ site }
 							settings={ settings }
 							onUpdateSetting={ this.updateSetting }
-							numberOfItems={ items.length } />
+							numberOfItems={ items.length }
+							onReverse = { this.reverseOrder } />
 					</div>
 				</div>
 			</div>

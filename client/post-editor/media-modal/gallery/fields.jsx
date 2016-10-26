@@ -25,6 +25,7 @@ export default React.createClass( {
 		site: PropTypes.object,
 		settings: PropTypes.object,
 		onUpdateSetting: PropTypes.func,
+		onReverse: PropTypes.func,
 		numberOfItems: PropTypes.number
 	},
 
@@ -96,6 +97,10 @@ export default React.createClass( {
 		this.props.onUpdateSetting( 'orderBy', event.target.checked ? 'rand' : null );
 	},
 
+	updateReverseOrder() {
+		this.props.onReverse();
+	},
+
 	renderDropdown( legend, options, settingName ) {
 		const { settings, onUpdateSetting } = this.props;
 
@@ -148,7 +153,7 @@ export default React.createClass( {
 	renderReverseOrderButton() {
 		return (
 			<EditorMediaModalFieldset>
-				<Button>
+				<Button onClick={ this.updateReverseOrder }>
 					{ this.translate( 'Reverse Order' ) }
 				</Button>
 			</EditorMediaModalFieldset>
