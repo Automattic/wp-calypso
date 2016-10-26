@@ -49,7 +49,7 @@ module.exports = {
 				component={ DomainManagement.List.default }
 				context={ pageContext }
 				productsList={ productsList }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -74,7 +74,7 @@ module.exports = {
 				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
@@ -273,7 +273,7 @@ module.exports = {
 				context={ pageContext }
 				productsList={ productsList }
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
