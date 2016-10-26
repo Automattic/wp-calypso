@@ -160,12 +160,24 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	fill: lighten( $gray, 10% );
 }
 
-.reader-post-card .gravatar {
+.reader-post-card .reader-avatar .gravatar,
+.reader-post-card .reader-avatar .site-icon {
 	float: left;
 	height: 32px;
 	margin: 2px 6px 0 0;
 	vertical-align: text-top;
 	width: 32px;
+}
+
+.reader-post-card .reader-avatar .site-icon {
+	width: 32px !important;
+	height: 32px !important;
+	font-size: 32px !important;
+	line-height: 32px !important;
+}
+
+.reader-post-card .has-site-and-author-icon .gravatar {
+	display: none;
 }
 
 .reader-post-card__link,
