@@ -1,8 +1,7 @@
 /**
  * External dependencis
  */
-import isEmpty from 'lodash/isEmpty';
-import omit from 'lodash/omit';
+import { isEmpty, omit, pickBy } from 'lodash';
 import { combineReducers } from 'redux';
 
 /**
@@ -38,6 +37,7 @@ import {
 
 import { isValidStateWithSchema } from 'state/utils';
 import { jetpackConnectSessionsSchema } from './schema';
+import { isStale } from './utils';
 
 const defaultAuthorizeState = {
 	queryObject: {},
@@ -61,7 +61,9 @@ export function jetpackConnectSessions( state = {}, action ) {
 			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url, action.flowType ) );
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
-				return state;
+				return pickBy( state, ( session ) => {
+					return ! isStale( session.timestamp );
+				} );
 			}
 			return {};
 		case SERIALIZE:

@@ -142,8 +142,17 @@ describe( 'reducer', () => {
 			expect( state ).to.be.eql( {} );
 		} );
 
+		it( 'should not restore a state with a property with a stale timestamp', () => {
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
+		} );
+
 		it( 'should not restore a state with a session stored with extra properties', () => {
-			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1, foo: 'bar' } }, {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp, foo: 'bar' } }, {
 				type: DESERIALIZE
 			} );
 
@@ -151,19 +160,33 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should restore a valid state', () => {
-			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp } }, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.be.eql( { 'example.wordpress.com': { timestamp: 1 } } );
+			expect( state ).to.be.eql( { 'example.wordpress.com': { timestamp } } );
 		} );
 
 		it( 'should restore a valid state including dashes, slashes and semicolons', () => {
-			const state = jetpackConnectSessions( { 'https://example.wordpress.com:3000/test-one': { timestamp: 1 } }, {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( { 'https://example.wordpress.com:3000/test-one': { timestamp } }, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.be.eql( { 'https://example.wordpress.com:3000/test-one': { timestamp: 1 } } );
+			expect( state ).to.be.eql( { 'https://example.wordpress.com:3000/test-one': { timestamp } } );
+		} );
+
+		it( 'should restore only sites with non-stale timestamps', () => {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( {
+				'example.wordpress.com': { timestamp: 1 },
+				'automattic.wordpress.com': { timestamp },
+			}, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( { 'automattic.wordpress.com': { timestamp } } );
 		} );
 	} );
 
