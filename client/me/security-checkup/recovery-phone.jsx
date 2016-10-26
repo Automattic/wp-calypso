@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import isEmpty from 'lodash/isEmpty';
+import { isEmpty } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -38,14 +38,9 @@ class RecoveryPhone extends Component {
 		return AccountRecoveryStore.getPhone();
 	}
 
-	render() {
-		const phone = ! isEmpty( this.state.data ) ? this.state.data : false,
-			twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
-
-		let twoStepNotice = null;
-
+	getTwoStepNotice( twoStepEnabled ) {
 		if ( twoStepEnabled ) {
-			twoStepNotice = {
+			return {
 				type: 'error',
 				message: translate( 'To edit your SMS Number, go to {{a}}Two-Step Authentication{{/a}}.', {
 					components: {
@@ -55,6 +50,14 @@ class RecoveryPhone extends Component {
 				showDismiss: false
 			};
 		}
+
+		return null;
+	}
+
+	render() {
+		const phone = ! isEmpty( this.state.data ) ? this.state.data : false;
+		const twoStepEnabled = this.props.userSettings.isTwoStepEnabled();
+		const twoStepNotice = this.getTwoStepNotice( twoStepEnabled );
 
 		return (
 			<ManageContact
@@ -95,7 +98,5 @@ class RecoveryPhone extends Component {
 		SecurityCheckupActions.dismissPhoneNotice();
 	}
 }
-
-RecoveryPhone.displayName = 'SecurityCheckupRecoveryPhone';
 
 export default RecoveryPhone;

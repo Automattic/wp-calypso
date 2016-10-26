@@ -37,8 +37,8 @@ class RecoveryEmail extends Component {
 	}
 
 	render() {
-		const email = this.state.data ? this.state.data.email : false,
-			primaryEmail = this.props.userSettings.getSetting( 'user_email' );
+		const email = this.state.data ? this.state.data.email : false;
+		const primaryEmail = this.props.userSettings.getSetting( 'user_email' );
 
 		return (
 			<ManageContact
@@ -61,10 +61,6 @@ class RecoveryEmail extends Component {
 		);
 	}
 
-	haveEmail() {
-		return !! this.state.data.email;
-	}
-
 	onSave = ( email ) => {
 		SecurityCheckupActions.updateEmail( email, this.state.data.email );
 	}
@@ -81,7 +77,5 @@ class RecoveryEmail extends Component {
 		SecurityCheckupActions.dismissEmailNotice();
 	}
 }
-
-RecoveryEmail.displayName = 'SecurityCheckupRecoveryEmail';
 
 export default RecoveryEmail;

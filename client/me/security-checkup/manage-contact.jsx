@@ -79,19 +79,14 @@ class ManageContact extends Component {
 	}
 
 	renderNotice() {
-		const lastNotice = this.props.lastNotice;
-
-		let notice = null,
-			showDismiss,
-			onClick,
-			isError;
+		const { lastNotice } = this.props;
 
 		if ( lastNotice && lastNotice.message ) {
-			isError = lastNotice.type === 'error';
-			showDismiss = lastNotice.showDismiss !== false;
-			onClick = showDismiss ? this.dismissNotice : null;
+			const isError = lastNotice.type === 'error';
+			const showDismiss = lastNotice.showDismiss !== false;
+			const onClick = showDismiss ? this.dismissNotice : null;
 
-			notice = (
+			return (
 				<Notice
 					status={ isError ? 'is-error' : 'is-success' }
 					onDismissClick={ onClick }
@@ -101,7 +96,8 @@ class ManageContact extends Component {
 				</Notice>
 			);
 		}
-		return notice;
+
+		return null;
 	}
 
 	renderLoading() {
@@ -166,8 +162,6 @@ class ManageContact extends Component {
 		analytics.tracks.recordEvent( event );
 	}
 }
-
-ManageContact.displayName = 'SecurityCheckupRecoveryContact';
 
 ManageContact.propTypes = {
 	type: React.PropTypes.string,
