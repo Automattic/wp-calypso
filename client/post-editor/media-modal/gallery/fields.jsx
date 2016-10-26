@@ -170,12 +170,12 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 
 		return (
 			<div className="editor-media-modal-gallery__fields">
-				{ this.renderReverseOrderButton() }
 				{ this.renderDropdown( this.translate( 'Layout' ), types, 'type' ) }
 				{ this.renderColumnsOption() }
 				{ this.renderRandomOption() }
 				{ this.renderDropdown( this.translate( 'Link To' ), links, 'link' ) }
 				{ this.renderDropdown( this.translate( 'Size' ), sizes, 'size' ) }
+				{ this.renderReverseOrderButton() }
 			</div>
 		);
 	}
