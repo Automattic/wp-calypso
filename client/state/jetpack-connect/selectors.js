@@ -54,7 +54,7 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 	const site = siteSlug.replace( /.*?:\/\//g, '' );
 	const sessions = getSessions( state );
 
-	if ( sessions[ site ] ) {
+	if ( sessions[ site ] && sessions[ site ].timestamp ) {
 		return ! isStale( sessions[ site ].timestamp );
 	}
 
