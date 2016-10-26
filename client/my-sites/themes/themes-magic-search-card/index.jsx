@@ -24,9 +24,9 @@ class ThemesMagicSearchCard extends React.Component {
 		this.state = {
 			isMobile: isMobile(),
 			searchIsOpen: false,
-			searchInput: '',
 			editedSearchElement: '',
 			cursorPosition: 0,
+			searchInput: this.props.search,
 		};
 	}
 
@@ -37,7 +37,6 @@ class ThemesMagicSearchCard extends React.Component {
 	}
 
 	componentDidMount() {
-		this.setState( { searchInput: this.props.search } );
 		this.findTextForSuggestions( this.props.search );
 		window.addEventListener( 'resize', this.onResize );
 	}
