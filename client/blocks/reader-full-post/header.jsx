@@ -20,7 +20,7 @@ const ReaderFullPostHeader = ( { post } ) => {
 	};
 
 	const recordDateClick = () => {
-		recordPermalinkClick( 'timestamp', post );
+		recordPermalinkClick( 'timestamp_full_post', post );
 	};
 
 	const classes = { 'reader-full-post__header': true };
