@@ -390,6 +390,7 @@ const HelpContact = React.createClass( {
 
 	shouldUseHappychat: function() {
 		const { isHappychatAvailable } = this.props;
+		const { olark: { isUserEligible } } = this.state;
 
 		// if happychat is disabled in the config, do not use it
 		if ( ! config.isEnabled( 'happychat' ) ) {
@@ -397,7 +398,7 @@ const HelpContact = React.createClass( {
 		}
 
 		// if the happychat connection is able to accept chats, use it
-		return isHappychatAvailable;
+		return isHappychatAvailable && isUserEligible;
 	},
 
 	canShowChatbox: function() {
