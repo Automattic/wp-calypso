@@ -1684,6 +1684,7 @@ describe( 'selectors', () => {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
+					jetpack: true,
 					is_multisite: false
 				}
 			} );
@@ -1697,6 +1698,7 @@ describe( 'selectors', () => {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
+					jetpack: true,
 					options: {
 						is_multi_network: false
 					}
@@ -1712,6 +1714,7 @@ describe( 'selectors', () => {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
+					jetpack: true,
 					is_multisite: true,
 					options: {
 						is_multi_network: false,
@@ -1729,6 +1732,7 @@ describe( 'selectors', () => {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
+					jetpack: true,
 					is_multisite: true,
 					options: {
 						is_multi_network: false,
@@ -1746,6 +1750,7 @@ describe( 'selectors', () => {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
+					jetpack: true,
 					is_multisite: true,
 					options: {
 						unmapped_url: 'https://secondary.wordpress.com',
@@ -1769,6 +1774,7 @@ describe( 'selectors', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
+					jetpack: false,
 					options: {}
 				}
 			} );
@@ -1876,6 +1882,7 @@ describe( 'selectors', () => {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
+					jetpack: true,
 					options: {
 						unmapped_url: 'https://jetpack.co'
 					}
@@ -1891,6 +1898,7 @@ describe( 'selectors', () => {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
+					jetpack: true,
 					options: {
 						unmapped_url: 'https://jetpacksite.me'
 					}
@@ -1907,6 +1915,7 @@ describe( 'selectors', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
+					jetpack: true,
 					options: {
 						file_mod_disabled: [ 'has_no_file_system_write_access' ]
 					}
@@ -1921,6 +1930,7 @@ describe( 'selectors', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
+					jetpack: true,
 					options: {
 						file_mod_disabled: [ 'disallow_file_mods' ]
 					}
@@ -1935,6 +1945,7 @@ describe( 'selectors', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
+					jetpack: true,
 					options: {
 						file_mod_disabled: [ 'automatic_updater_disabled' ]
 					}
@@ -1949,6 +1960,7 @@ describe( 'selectors', () => {
 			const state = createStateWithItems( {
 				[ siteId ]: {
 					ID: siteId,
+					jetpack: true,
 					options: {
 						file_mod_disabled: [ 'wp_auto_update_core_disabled' ]
 					}
@@ -1971,6 +1983,7 @@ describe( 'selectors', () => {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
+					jetpack: true,
 					options: {
 						is_multi_network: true
 					}
@@ -1986,6 +1999,7 @@ describe( 'selectors', () => {
 				[ siteId ]: {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
+					jetpack: true,
 					is_multisite: false,
 				}
 			} );
@@ -2000,6 +2014,7 @@ describe( 'selectors', () => {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
 					is_multisite: true,
+					jetpack: true,
 					options: {
 						is_multi_network: false,
 						main_network_site: 'https://example.wordpress.com'
@@ -2017,6 +2032,7 @@ describe( 'selectors', () => {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
 					is_multisite: true,
+					jetpack: true,
 					options: {
 						is_multi_network: false,
 						unmapped_url: 'https://example.wordpress.com'
@@ -2034,6 +2050,7 @@ describe( 'selectors', () => {
 					ID: siteId,
 					URL: 'https://jetpacksite.me',
 					is_multisite: true,
+					jetpack: true,
 					options: {
 						is_multi_network: false,
 						unmapped_url: 'https://example.wordpress.com',

@@ -594,7 +594,8 @@ export function hasStaticFrontPage( state, siteId ) {
 }
 
 /**
- * Determines if a Jetpack site has opted in for full-site management
+ * Determines if a Jetpack site has opted in for full-site management.
+ * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
@@ -619,10 +620,11 @@ export function canJetpackSiteManage( state, siteId ) {
 
 /**
  * Determines if a Jetpack site can update its files.
+ * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {Boolean} true if the site can update its file
+ * @return {?Boolean} true if the site can update its file
  */
 export function canJetpackSiteUpdateFiles( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
@@ -657,13 +659,18 @@ export function canJetpackSiteUpdateFiles( state, siteId ) {
 
 /**
  * Determines if a Jetpack site can auto update its files.
- * This function checks if the given Jetpack site can update its files and if the automatic updater is enabled
+ * This function checks if the given Jetpack site can update its files and if the automatic updater is enabled.
+ * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {Boolean} true if the site can auto update
+ * @return {?Boolean} true if the site can auto update
  */
 export function canJetpackSiteAutoUpdateFiles( state, siteId ) {
+	if ( ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
 	if ( ! canJetpackSiteUpdateFiles( state, siteId ) ) {
 		return false;
 	}
@@ -679,35 +686,46 @@ export function canJetpackSiteAutoUpdateFiles( state, siteId ) {
 
 /**
  * Determines if a Jetpack site can auto update WordPress core.
+ * This function is currently identical to canJetpackSiteAutoUpdateFiles.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {Boolean} true if the site can auto update WordPress
+ * @return {?Boolean} true if the site can auto update WordPress
  */
 export function canJetpackSiteAutoUpdateCore( state, siteId ) {
 	return canJetpackSiteAutoUpdateFiles( state, siteId );
 }
 
 /**
- * Determines if the Jetpack plugin of a Jetpack Site has menus
+ * Determines if the Jetpack plugin of a Jetpack Site has menus.
+ * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {Boolean} true if the site has Jetpack menus management
+ * @return {?Boolean} true if the site has Jetpack menus management
  */
 export function hasJetpackSiteJetpackMenus( state, siteId ) {
+	if ( ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
 	return versionCompare( siteJetpackVersion, '3.5-alpha' ) >= 0;
 }
 
 /**
- * Determines if the Jetpack plugin of a Jetpack Site has themes
+ * Determines if the Jetpack plugin of a Jetpack Site has themes.
+ * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {Boolean} true if the site has Jetpack themes management
+ * @return {?Boolean} true if the site has Jetpack themes management
  */
 export function hasJetpackSiteJetpackThemes( state, siteId ) {
+	if ( ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
 	const siteJetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
 	return versionCompare( siteJetpackVersion, '3.7-beta' ) >= 0;
 }
@@ -715,16 +733,17 @@ export function hasJetpackSiteJetpackThemes( state, siteId ) {
 /**
  * Determines if a site is the main site in a Network
  * True if it is either in a non multi-site configuration
- * or if its url matches the `main_network_site` url option
+ * or if its url matches the `main_network_site` url option.
+ * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {Boolean} true if the site is the main site
+ * @return {?Boolean} true if the site is the main site
  */
 export function isJetpackSiteMainNetworkSite( state, siteId ) {
 	const site = getRawSite( state, siteId );
 
-	if ( ! site ) {
+	if ( ! site || ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
 
@@ -754,16 +773,17 @@ export function isJetpackSiteMainNetworkSite( state, siteId ) {
 }
 
 /**
- * Determines if a Jetpack site is a secondary network site
+ * Determines if a Jetpack site is a secondary network site.
+ * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {Boolean} true if the site is a secondary network site
+ * @return {?Boolean} true if the site is a secondary network site
  */
 export function isJetpackSiteSecondaryNetworkSite( state, siteId ) {
 	const site = getRawSite( state, siteId );
 
-	if ( ! site ) {
+	if ( ! site || ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
 
@@ -781,12 +801,13 @@ export function isJetpackSiteSecondaryNetworkSite( state, siteId ) {
 }
 
 /**
- * Determines if all given modules are active for a Jetpack Site
+ * Determines if all given modules are active for a Jetpack Site.
+ * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
  * @param {Array} moduleIds A list of active module ids to verify
- * @return {Boolean} true if the all the given modules are active for this site
+ * @return {?Boolean} true if the all the given modules are active for this site
  */
 export function verifyJetpackModulesActive( state, siteId, moduleIds ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
@@ -801,11 +822,12 @@ export function verifyJetpackModulesActive( state, siteId, moduleIds ) {
 }
 
 /**
- * Returns the remote management url for a Jetpack site
+ * Returns the remote management url for a Jetpack site.
+ * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
- * @return {String} the remote management url for the site
+ * @return {?String} the remote management url for the site
  */
 export function getJetpackSiteRemoteManagementURL( state, siteId ) {
 	if ( ! isJetpackSite( state, siteId ) ) {
@@ -821,16 +843,22 @@ export function getJetpackSiteRemoteManagementURL( state, siteId ) {
 
 /**
  * Checks whether a Jetpack site has a custom mapped URL.
+ * Returns null if the site is not known, is not a Jetpack site
+ * or has an undefined value for `domain` or `unmapped_url`.
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
  * @return {?Boolean} Whether site has custom domain
  */
 export function hasJetpackSiteCustomDomain( state, siteId ) {
-	const site = getRawSite( state, siteId ),
-		domain = getSiteDomain( state, siteId ),
+	if ( ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
+	const domain = getSiteDomain( state, siteId ),
 		unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
-	if ( ! site || ! domain || ! unmappedUrl ) {
+
+	if ( ! domain || ! unmappedUrl ) {
 		return null;
 	}
 
@@ -838,14 +866,20 @@ export function hasJetpackSiteCustomDomain( state, siteId ) {
 }
 
 /**
- * Returns an explanation on why updates are disabled on a Jetpack Site
+ * Returns an explanation on why updates are disabled on a Jetpack Site.
+ * Returns null if the site is not known or is not a Jetpack site.
+ * Can return an empty array if no reason have been found
  *
  * @param {Object} state Global state tree
  * @param {Number} siteId Site ID
  * @param {String} action The update action we wanted to perform on this site
- * @return {?String} The reason why file update is disabled
+ * @return {?Array<String>} The reasons why file update is disabled
  */
 export function getJetpackSiteUpdateFilesDisabledReasons( state, siteId, action = 'modifyFiles' ) {
+	if ( ! isJetpackSite( state, siteId ) ) {
+		return null;
+	}
+
 	const fileModDisabled = getSiteOption( state, siteId, 'file_mod_disabled' );
 
 	return compact( fileModDisabled.map( clue => {
@@ -874,16 +908,13 @@ export function getJetpackSiteUpdateFilesDisabledReasons( state, siteId, action 
 /**
  * Return true is the given Jetpack site has a version equal or greater than
  * the minimum Jetpack version as set by the 'jetpack_min_version' config value.
+ * Returns null if the site is not known or is not a Jetpack site.
  *
  * @param  {Object} state - whole state tree
  * @param  {Number} siteId - site id
- * @return {Boolean} true if the site has minimum jetpack version
+ * @return {?Boolean} true if the site has minimum jetpack version
  */
 export function siteHasMinimumJetpackVersion( state, siteId ) {
-	if ( ! siteId ) {
-		return null;
-	}
-
 	if ( ! isJetpackSite( state, siteId ) ) {
 		return null;
 	}
