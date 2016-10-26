@@ -6,6 +6,7 @@ import { throttle, constant, noop, truncate, head, filter, get } from 'lodash';
 import classnames from 'classnames';
 import ReactDom from 'react-dom';
 import closest from 'component-closest';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -84,7 +85,8 @@ class FeaturedVideo extends React.Component {
 		if ( preferThumbnail && thumbnailUrl ) {
 			return (
 				<FeaturedImage imageUri={ thumbnailUrl } onClick={ this.handleThumbnailClick }>
-					<div className="reader-post-card__play-icon-container">
+					<div className="reader-post-card__play-icon-container"
+						title={ translate( 'Click to Play' ) }>
 						<img className="reader-post-card__play-icon" src="/calypso/images/reader/play-icon.png" />
 					</div>
 				</FeaturedImage>

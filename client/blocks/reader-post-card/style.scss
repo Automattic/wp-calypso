@@ -311,6 +311,11 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	padding: 0;
 	height: 100%;
 	width: 100%;
+	cursor: pointer;
+
+	&:hover .reader-post-card__play-icon {
+		opacity: 1;
+	}
 }
 
 .reader-post-card__play-icon {
@@ -320,6 +325,9 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	bottom: 0;
 	left: 0;
 	right: 0;
+	opacity: .8;
+	transition: opacity .25s;
+
 }
 
 // For these borderless cards to look more presentable on Devdocs
