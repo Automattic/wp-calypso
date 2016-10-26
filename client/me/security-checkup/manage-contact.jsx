@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import keyMirror from 'key-mirror';
-import { translate } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -28,6 +28,7 @@ class ManageContact extends Component {
 
 	renderHeader() {
 		const isEditing = views.EDITING === this.state.currentView;
+		const { translate } = this.props;
 
 		return (
 			<div className="security-checkup-contact__header">
@@ -168,4 +169,4 @@ ManageContact.propTypes = {
 	disabled: React.PropTypes.bool
 };
 
-export default ManageContact;
+export default localize( ManageContact );
