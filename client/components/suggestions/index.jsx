@@ -11,6 +11,7 @@ import {
 	isEmpty,
 	take
 } from 'lodash';
+import classNames from 'classnames';
 
 const Suggestions = React.createClass( {
 
@@ -223,7 +224,7 @@ const Suggestions = React.createClass( {
 			//Add values
 			rendered.push( suggestions[ key ].map( ( value, i ) => {
 				const hasHighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
-				const className = 'suggestions__value' + ( hasHighlight ? ' has-highlight' : '' );
+				const className = classNames( 'suggestions__value', { 'has-highlight': hasHighlight } );
 				return (
 					<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
 						<span className="suggestions__value-category">{ key + ':' }</span>
