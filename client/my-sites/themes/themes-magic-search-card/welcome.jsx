@@ -3,12 +3,13 @@
  */
 import React, { PropTypes } from 'react';
 import { noop } from 'lodash';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import Gridicon from 'components/gridicon';
-import { taxonomyToGridicon, taxonomyToColor } from './taxonomy-styling.js';
+import { taxonomyToGridicon } from './taxonomy-styling.js';
 
 const MagicSearchWelcome = React.createClass( {
 
@@ -28,21 +29,30 @@ const MagicSearchWelcome = React.createClass( {
 		this.props.suggestionsCallback( event.target.textContent + ':' );
 	},
 
+	renderToken( taxonomy ) {
+		const themesTokenTypeClass = classNames(
+			'themes-magic-search-card__welcome-taxonomy',
+			'themes-magic-search-card__welcome-taxonomy-type-' + taxonomy
+		);
+
+		return (
+			<div
+				className={ themesTokenTypeClass }
+				onMouseDown={ this.onMouseDown }
+				key={ taxonomy }
+			>
+				<Gridicon icon={ taxonomyToGridicon( taxonomy ) } className="themes-magic-search-card__welcome-taxonomy-icon" size={ 18 } />
+				{ taxonomy }
+			</div>
+		);
+	},
+
 	render() {
 		return (
 			<div className="themes-magic-search-card__welcome" >
-				<span className="themes-magic-search-card__welcome-header">{ this.translate('SEARCH BY') }</span>
+				<span className="themes-magic-search-card__welcome-header">{ this.translate('Search by') }</span>
 				<div className="themes-magic-search-card__welcome-taxonomies">
-					{ this.props.taxonomies.map( taxonomy =>
-						<div
-							className="themes-magic-search-card__welcome-taxonomy"
-							style={ taxonomyToColor( taxonomy ) }
-							onMouseDown={ this.onMouseDown }
-							key={ taxonomy }
-						>
-							<Gridicon icon={ taxonomyToGridicon( taxonomy ) } className="themes-magic-search-card__welcome-taxonomy-icon" />
-							{taxonomy}
-						</div> ) }
+					{ this.props.taxonomies.map( taxonomy => this.renderToken( taxonomy ) ) }
 				</div>
 			</div>
 		);

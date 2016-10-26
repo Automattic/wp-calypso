@@ -18,19 +18,3 @@ export function taxonomyToGridicon( taxonomy ) {
 	}
 	return 'tag';
 }
-
-const taxonomyToColorMap = {
-	color: { color: 'rgb( 0, 170, 220 )' },
-	column: { color: 'rgb( 144, 19, 254 )' },
-	feature: { color: 'rgb( 102, 195, 126 )' },
-	layout: { color: 'rgb( 242, 134, 10 )' },
-	subject: { color: 'grey' },
-	style: { color: 'rgb( 241, 56, 59 )' },
-};
-
-export function taxonomyToColor( taxonomy ) {
-	if ( taxonomyToColorMap.hasOwnProperty( taxonomy ) ) {
-		return taxonomyToColorMap[ taxonomy ];
-	}
-	return { color: 'purple' };
-}
