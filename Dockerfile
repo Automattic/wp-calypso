@@ -14,7 +14,7 @@ RUN     apt-get -y update && apt-get -y install \
           make \
           build-essential
 
-ENV NODE_VERSION 6.9.0
+ENV NODE_VERSION 6.9.1
 
 RUN     wget https://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz && \
           tar -zxf node-v$NODE_VERSION-linux-x64.tar.gz -C /usr/local && \
