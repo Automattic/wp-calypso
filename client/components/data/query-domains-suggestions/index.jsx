@@ -17,7 +17,7 @@ function getQueryObject( props ) {
 		vendor,
 		quantity,
 		include_wordpressdotcom: includeSubdomain,
-		survey_vertical: surveyVertical,
+		vertical: surveyVertical,
 	};
 }
 

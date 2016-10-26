@@ -349,7 +349,7 @@ const RegisterDomainStep = React.createClass( {
 							quantity: SUGGESTION_QUANTITY,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
 							vendor: searchVendor,
-							survey_vertical: this.props.surveyVertical,
+							vertical: this.props.surveyVertical,
 						},
 						timestamp = Date.now();
 
