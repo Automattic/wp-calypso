@@ -195,7 +195,7 @@ export default connect(
 	( dispatch, { theme, site, source = 'unknown' } ) => {
 		let mapAction;
 
-		if ( site !== undefined ) {
+		if ( site ) {
 			// TODO (@ockham): Change actions to use siteId.
 			if ( theme ) { // Bind theme and site.
 				mapAction = action => () => action( theme, site, source );
