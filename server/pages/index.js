@@ -22,20 +22,21 @@ import { createReduxStore } from 'state';
 
 const debug = debugFactory( 'calypso:pages' );
 
-var HASH_LENGTH = 10,
+let HASH_LENGTH = 10,
 	URL_BASE_PATH = '/calypso',
 	SERVER_BASE_PATH = '/public',
 	CALYPSO_ENV = process.env.CALYPSO_ENV || process.env.NODE_ENV || 'development';
 
-var staticFiles = [
+const staticFiles = [
 	{ path: 'style.css' },
 	{ path: 'editor.css' },
 	{ path: 'tinymce/skins/wordpress/wp-content.css' },
 	{ path: 'style-debug.css' },
-	{ path: 'style-rtl.css' }
+	{ path: 'style-rtl.css' },
+	{ path: 'vendor.' + config( 'env' ) + '.js' }
 ];
 
-var sections = sectionsModule.get();
+let sections = sectionsModule.get();
 
 /**
  * Generates a hash of a files contents to be used as a version parameter on asset requests.
@@ -43,7 +44,7 @@ var sections = sectionsModule.get();
  * @returns {String} A shortened md5 hash of the contents of the file file or a timestamp in the case of failure.
  **/
 function hashFile( path ) {
-	var data, hash,
+	let data, hash,
 		md5 = crypto.createHash( 'md5' );
 
 	try {
@@ -65,7 +66,7 @@ function hashFile( path ) {
  * @returns {Object} Map of asset names to urls
  **/
 function generateStaticUrls( request ) {
-	var urls = {}, assets;
+	const urls = {};
 
 	function getUrl( filename, hash ) {
 		return URL_BASE_PATH + '/' + filename + '?' + qs.stringify( {
@@ -80,7 +81,11 @@ function generateStaticUrls( request ) {
 		urls[ file.path ] = getUrl( file.path, file.hash );
 	} );
 
-	assets = request.app.get( 'assets' );
+	// vendor dll
+	urls.vendor = urls[ 'vendor.' + config( 'env' ) + '.js' ];
+	urls[ 'vendor-min' ] = urls.vendor.replace( '.js', '.min.js' );
+
+	const assets = request.app.get( 'assets' );
 
 	assets.forEach( function( asset ) {
 		let name = asset.name;
@@ -114,7 +119,7 @@ function getCurrentCommitShortChecksum() {
 }
 
 function getDefaultContext( request ) {
-	var context = Object.assign( {}, request.context, {
+	const context = Object.assign( {}, request.context, {
 		compileDebug: config( 'env' ) === 'development' ? true : false,
 		urls: generateStaticUrls( request ),
 		user: false,
@@ -181,7 +186,7 @@ function setUpLoggedOutRoute( req, res, next ) {
 }
 
 function setUpLoggedInRoute( req, res, next ) {
-	var redirectUrl, protocol, start, context;
+	let redirectUrl, protocol, start, context;
 
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN'
@@ -209,7 +214,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		debug( 'Issuing API call to fetch user object' );
 		user( req.get( 'Cookie' ), function( error, data ) {
-			var end, searchParam, errorMessage;
+			let end, searchParam, errorMessage;
 
 			if ( error ) {
 				if ( error.error === 'authorization_required' ) {
@@ -285,7 +290,7 @@ function render404( request, response ) {
 }
 
 module.exports = function() {
-	var app = express();
+	const app = express();
 
 	app.set( 'views', __dirname );
 
@@ -302,7 +307,7 @@ module.exports = function() {
 
 	// redirects to handle old newdash formats
 	app.use( '/sites/:site/:section', function( req, res, next ) {
-		var redirectUrl;
+		let redirectUrl;
 		sections = [ 'posts', 'pages', 'sharing', 'upgrade', 'checkout', 'change-theme' ];
 
 		if ( -1 === sections.indexOf( req.params.section ) ) {
