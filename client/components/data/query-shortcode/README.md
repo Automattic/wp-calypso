@@ -15,7 +15,7 @@ import MySiteShortcodeItemDetail from './item-detail';
 export default function MySiteShortcodeItem( { shortcode } ) {
 	return (
 		<div>
-			<QueryShortcode siteId={ 12345678 } />
+			<QueryShortcode siteId={ 12345678 } shortcode={ '[gallery ids="1,2,3"]' } />
 			<MySiteShortcodeItemDetail shortcode={ shortcode } />
 		</div>
 	);
