@@ -32,6 +32,7 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 		return {
 			settings: Object.freeze( {} ),
 			onUpdateSetting: noop,
+			onReverse: noop,
 			numberOfItems: 0
 		};
 	},
