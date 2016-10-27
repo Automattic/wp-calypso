@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import config from 'config';
 import Main from 'components/main';
 import Card from 'components/card';
 import OlarkChatbox from 'components/olark-chatbox';
@@ -26,8 +27,11 @@ import analytics from 'lib/analytics';
 import i18n from 'lib/i18n-utils';
 import { isOlarkTimedOut } from 'state/ui/olark/selectors';
 import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { isHappychatAvailable } from 'state/happychat/selectors';
 import QueryOlark from 'components/data/query-olark';
 import HelpUnverifiedWarning from '../help-unverified-warning';
+import { connectChat as connectHappychat, sendChatMessage as sendHappychatMessage } from 'state/happychat/actions';
+import { openChat as openHappychat } from 'state/ui/happychat/actions';
 
 /**
  * Module variables
@@ -45,6 +49,10 @@ const HelpContact = React.createClass( {
 	},
 
 	componentDidMount: function() {
+		if ( config.isEnabled( 'happychat' ) ) {
+			this.props.connectHappychat();
+		}
+
 		olarkStore.on( 'change', this.updateOlarkState );
 		olarkEvents.on( 'api.chat.onOperatorsAway', this.onOperatorsAway );
 		olarkEvents.on( 'api.chat.onOperatorsAvailable', this.onOperatorsAvailable );
@@ -104,6 +112,21 @@ const HelpContact = React.createClass( {
 
 	clearSavedContactForm: function() {
 		savedContactForm = null;
+	},
+
+	startHappychat: function( contactForm ) {
+		this.props.openHappychat();
+		const { message, siteSlug } = contactForm;
+		const site = sites.getSite( siteSlug );
+
+		const messages = [
+			`Site I need help with: ${ site ? site.URL : 'N/A' }`,
+			message
+		];
+
+		messages.forEach( this.props.sendHappychatMessage );
+
+		page( '/help' );
 	},
 
 	startChat: function( contactForm ) {
@@ -365,9 +388,21 @@ const HelpContact = React.createClass( {
 		}
 	},
 
+	shouldUseHappychat: function() {
+		const { isHappychatAvailable } = this.props;
+		const { olark: { isUserEligible } } = this.state;
+
+		// if happychat is disabled in the config, do not use it
+		if ( ! config.isEnabled( 'happychat' ) ) {
+			return false;
+		}
+
+		// if the happychat connection is able to accept chats, use it
+		return isHappychatAvailable && isUserEligible;
+	},
+
 	canShowChatbox: function() {
 		const { olark, isChatEnded } = this.state;
-
 		return isChatEnded || ( olark.details.isConversing && olark.isOperatorAvailable );
 	},
 
@@ -377,10 +412,12 @@ const HelpContact = React.createClass( {
 	 */
 	getView: function() {
 		const { olark, confirmation, sitesInitialized, isSubmitting } = this.state;
+		const showHappychatVariation = this.shouldUseHappychat();
 		const showChatVariation = olark.isUserEligible && olark.isOperatorAvailable;
 		const showKayakoVariation = ! showChatVariation && ( olark.details.isConversing || olark.isUserEligible );
 		const showForumsVariation = ! ( showChatVariation || showKayakoVariation );
 		const showHelpLanguagePrompt = ( olark.locale !== i18n.getLocaleSlug() );
+		const showPreloadForm = ! ( olark.isOlarkReady && sitesInitialized ) && ! this.props.olarkTimedOut;
 
 		if ( confirmation ) {
 			return <HelpContactConfirmation { ...confirmation } />;
@@ -390,7 +427,7 @@ const HelpContact = React.createClass( {
 			return <HelpContactClosed />;
 		}
 
-		if ( ! ( olark.isOlarkReady && sitesInitialized ) && ! this.props.olarkTimedOut ) {
+		if ( showPreloadForm ) {
 			return (
 				<div className="help-contact__placeholder">
 					<h4 className="help-contact__header">Loading contact form</h4>
@@ -441,6 +478,10 @@ const HelpContact = React.createClass( {
 							strong: <strong />
 						}
 					} )
+			},
+			showHappychatVariation && {
+				onSubmit: this.startHappychat,
+				buttonLabel: this.translate( 'Chat with us' )
 			}
 		);
 
@@ -469,6 +510,8 @@ export default connect(
 		return {
 			olarkTimedOut: isOlarkTimedOut( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
+			isHappychatAvailable: isHappychatAvailable( state )
 		};
-	}
+	},
+	{ connectHappychat, openHappychat, sendHappychatMessage }
 )( HelpContact );

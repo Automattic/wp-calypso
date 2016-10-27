@@ -130,6 +130,11 @@
 	display: flex;
 	flex-direction: row;
 	padding-left: 10px;
+
+	@include breakpoint( "<660px" ) {
+		margin-top: 16px;
+	}
+
 }
 
 .site-selector__add-new-site .button {
