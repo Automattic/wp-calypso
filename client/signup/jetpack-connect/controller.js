@@ -25,10 +25,8 @@ import i18nUtils from 'lib/i18n-utils';
 import analytics from 'lib/analytics';
 import config from 'config';
 import route from 'lib/route';
-import sitesFactory from 'lib/sites-list';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-
-const sites = sitesFactory();
+import { getSelectedSite } from 'state/ui/selectors';
 
 /**
  * Module variables
@@ -178,7 +176,7 @@ export default {
 	plansLanding( context ) {
 		const Plans = require( './plans' ),
 			CheckoutData = require( 'components/data/checkout' ),
-			site = sites.getSelectedSite(),
+			site = getSelectedSite( context.store.getState() ),
 			analyticsPageTitle = 'Plans',
 			basePath = route.sectionify( context.path ),
 			analyticsBasePath = basePath + '/:site';
@@ -198,7 +196,6 @@ export default {
 		renderWithReduxStore(
 			<CheckoutData>
 				<Plans
-					sites={ sites }
 					context={ context }
 					destinationType={ context.params.destinationType }
 					intervalType={ context.params.intervalType } />

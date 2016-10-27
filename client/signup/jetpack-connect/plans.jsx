@@ -25,17 +25,17 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { requestPlans } from 'state/plans/actions';
 import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 
 const Plans = React.createClass( {
-	mixins: [ observe( 'sites', 'plans' ) ],
+	mixins: [ observe( 'plans' ) ],
 
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		context: React.PropTypes.object.isRequired,
 		destinationType: React.PropTypes.string,
-		sites: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
 		showJetpackFreePlan: React.PropTypes.bool,
 		intervalType: React.PropTypes.string
@@ -163,9 +163,9 @@ const Plans = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => {
+	state => {
 		const user = getCurrentUser( state );
-		const selectedSite = props.sites.getSelectedSite();
+		const selectedSite = getSelectedSite( state );
 
 		const searchPlanBySlug = ( planSlug ) => {
 			return getPlanBySlug( state, planSlug );
