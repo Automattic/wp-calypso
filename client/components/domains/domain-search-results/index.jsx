@@ -47,7 +47,7 @@ var DomainSearchResults = React.createClass( {
 				'domain-search-results__domain-not-available': ! availableDomain
 			} ),
 			lastDomainSearched = this.props.lastDomainSearched,
-			suggestions = this.props.suggestions,
+			suggestions = this.props.suggestions || [],
 			availabilityElement,
 			domainSuggestionElement,
 			mappingOffer;
@@ -77,7 +77,7 @@ var DomainSearchResults = React.createClass( {
 					cart={ this.props.cart }
 					onButtonClick={ this.props.onClickResult.bind( null, availableDomain ) } />
 				);
-		} else if ( suggestions && suggestions.length !== 0 && this.isDomainMappable() && this.props.products.domain_map ) {
+		} else if ( suggestions.length !== 0 && this.isDomainMappable() && this.props.products.domain_map ) {
 			const components = { a: <a href="#" onClick={ this.addMappingAndRedirect } />, small: <small /> };
 			if ( this.props.domainsWithPlansOnly ) {
 				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
