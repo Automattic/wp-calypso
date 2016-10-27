@@ -16,15 +16,10 @@ import {
 	setPageTitle,
 	trackPageLoad
 } from 'reader/controller-helper';
-import { getDocumentHeadTitle as getTitle } from 'state/document-head/selectors';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
 import ReaderFullPost from 'blocks/reader-full-post';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
 const analyticsPageTitle = 'Reader';
-// This holds the last title set on the page. Removing the overlay doesn't trigger a re-render, so we need a way to
-// reset it
-let __lastTitle = null;
 
 function renderPostNotFound() {
 	const sidebarAndPageTitle = i18n.translate( 'Post not found' );
@@ -38,25 +33,11 @@ function renderPostNotFound() {
 	);
 }
 
-function removeFullPostDialog() {
-	ReactDom.unmountComponentAtNode( document.getElementById( 'tertiary' ) );
-}
-
-export function resetTitle( context, next ) {
-	if ( __lastTitle ) {
-		context.store.dispatch( setTitle( __lastTitle ) ); // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
-		__lastTitle = null;
-	}
-	next();
-}
-
 export function blogPost( context ) {
 	const blogId = context.params.blog,
 		postId = context.params.post,
 		basePath = '/read/blogs/:blog_id/posts/:post_id',
 		fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
-
-	__lastTitle = getTitle( context.store.getState() );
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
@@ -69,7 +50,6 @@ export function blogPost( context ) {
 				onClose: function() {
 					page.back( context.lastRoute || '/' );
 				},
-				onClosed: removeFullPostDialog,
 				onPostNotFound: renderPostNotFound
 			} )
 		),
@@ -87,8 +67,6 @@ export function feedPost( context ) {
 		postId = context.params.post,
 		basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
 		fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
-
-	__lastTitle = getTitle( context.store.getState() );
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
