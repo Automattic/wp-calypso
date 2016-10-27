@@ -16,7 +16,8 @@ var Card = require( 'components/card' ),
 	deterministicStringify = require( 'lib/deterministic-stringify' ),
 	NoResults = require( 'my-sites/no-results' ),
 	analytics = require( 'lib/analytics' ),
-	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' );
+	PeopleListSectionHeader = require( 'my-sites/people/people-list-section-header' ),
+	config = require( 'config' );
 
 /**
  * Module Variables
@@ -38,7 +39,8 @@ var Team = React.createClass( {
 		var key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
 			headerText = this.translate( 'Team', { context: 'A navigation label.' } ),
 			listClass = ( this.state.bulkEditing ) ? 'bulk-editing' : null,
-			people;
+			people,
+			showRoles = config.isEnabled( 'manage/people/role-filtering' );
 
 		if ( this.props.fetchInitialized && ! this.props.users.length && this.props.fetchOptions.search && ! this.props.fetchingUsers ) {
 			return (
@@ -95,6 +97,7 @@ var Team = React.createClass( {
 		return (
 			<div>
 				<PeopleListSectionHeader
+					showRoles={ showRoles }
 					label={ headerText }
 					site={ this.props.site }
 					count={ this.props.fetchingUsers || this.props.fetchOptions.search ? null : this.props.totalUsers } />
