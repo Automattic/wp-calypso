@@ -14,6 +14,7 @@ import ButtonGroup from 'components/button-group';
 import Gridicon from 'components/gridicon';
 import Tooltip from 'components/tooltip';
 import config from 'config';
+import RoleSelect from 'my-sites/people/role-select';
 
 export default React.createClass( {
 	displayName: 'PeopleListSectionHeader',
@@ -70,12 +71,24 @@ export default React.createClass( {
 			this.props.className,
 			'people-list-section-header'
 		);
+		const calculatePath = function ( role ) {
+			return `/people/team/role/${role}/${site.slug}`;
+		};
+		const roleSelect = (
+			<RoleSelect
+				id="role"
+				name="role"
+				defaultOption={ { value: '', label: label, path: `/people/team/${this.props.site.slug}` } }
+				siteId={ site.ID }
+				calculatePath={ calculatePath }
+			/>
+		);
 
 		return (
 			<SectionHeader
 				className={ classes }
-				count={ count }
-				label={ label } >
+				count={ this.props.showRoles ? null : count }
+				label={ this.props.showRoles ? roleSelect : label } >
 
 				{ siteLink &&
 					<ButtonGroup>
