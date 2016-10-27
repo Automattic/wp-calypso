@@ -14,6 +14,13 @@ import FeaturedImage from './featured-image';
 
 class FeaturedVideo extends React.Component {
 
+	static propTypes = {
+		thumbnailUrl: React.PropTypes.string,
+		autoplayIframe: React.PropTypes.string,
+		iframe: React.PropTypes.string,
+		videoEmbed: React.PropTypes.object,
+	}
+
 	constructor( props ) {
 		super( props );
 		this.state = {

@@ -89,10 +89,9 @@ export default class RefreshPostCard extends React.Component {
 			separator: /,? +/
 		} );
 		const featuredAsset = ( <FeaturedAsset post={ post } /> );
-		const hasFeaturedAsset = !! featuredAsset;
 
 		const classes = classnames( 'reader-post-card', {
-			'has-thumbnail': hasFeaturedAsset,
+			'has-thumbnail': !! featuredAsset,
 			'is-photo': isPhotoOnly
 		} );
 
@@ -100,7 +99,7 @@ export default class RefreshPostCard extends React.Component {
 			<Card className={ classes } onClick={ this.handleCardClick }>
 				<PostByline post={ post } site={ site } feed={ feed } />
 				<div className="reader-post-card__post">
-					{ hasFeaturedAsset && featuredAsset }
+					{ featuredAsset }
 					<div className="reader-post-card__post-details">
 						<h1 className="reader-post-card__title">
 							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>

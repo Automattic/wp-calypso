@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
+import { noop } from 'lodash';
 
 const FeaturedImage = ( { imageUri, href, children, onClick } ) => {
 	if ( imageUri === undefined ) {
@@ -20,6 +21,16 @@ const FeaturedImage = ( { imageUri, href, children, onClick } ) => {
 			{ children }
 		</a>
 	);
+};
+
+FeaturedImage.propTypes = {
+	imageUri: React.PropTypes.string,
+	href: React.PropTypes.string,
+	onClick: React.PropTypes.func,
+};
+
+FeaturedImage.defaultProps = {
+	onClick: noop,
 };
 
 export default FeaturedImage;
