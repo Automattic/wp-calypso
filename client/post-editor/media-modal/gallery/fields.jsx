@@ -146,18 +146,6 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 		);
 	},
 
-	renderReverseOrderButton() {
-		const { translate } = this.props;
-
-		return (
-			<EditorMediaModalFieldset>
-				<Button onClick={ this.props.onReverse } disabled={ this.props.settings.orderBy === 'rand' } >
-					{ translate( 'Reverse Order' ) }
-				</Button>
-			</EditorMediaModalFieldset>
-		);
-	},
-
 	render() {
 		const types = this.getTypeOptions();
 		const links = this.getLinkOptions();
@@ -170,7 +158,11 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 				{ this.renderRandomOption() }
 				{ this.renderDropdown( this.translate( 'Link To' ), links, 'link' ) }
 				{ this.renderDropdown( this.translate( 'Size' ), sizes, 'size' ) }
-				{ this.renderReverseOrderButton() }
+				<EditorMediaModalFieldset>
+					<Button onClick={ this.props.onReverse } disabled={ this.props.settings.orderBy === 'rand' } >
+						{ this.props.translate( 'Reverse Order' ) }
+					</Button>
+				</EditorMediaModalFieldset>
 			</div>
 		);
 	}
