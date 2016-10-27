@@ -20,8 +20,6 @@ import Button from 'components/button';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
 
 export const EditorMediaModalGalleryFields = React.createClass( {
-	displayName: 'EditorMediaModalGalleryFields',
-
 	propTypes: {
 		site: PropTypes.object,
 		settings: PropTypes.object,
