@@ -4,6 +4,21 @@
 const kebabCase = require( 'lodash/kebabCase' );
 
 module.exports = ( { types: t } ) => {
+	/**
+	 * Nested visitor for `require` function expression hoisting. This is
+	 * assigned here as a shared reference for optimized path traversal.
+	 *
+	 * @see https://github.com/thejameskyle/babel-handbook/blob/master/translations/en/plugin-handbook.md#optimizing-nested-visitors
+	 * @type {Object}
+	 */
+	const asyncAttributeVisitor = {
+		FunctionExpression( path ) {
+			// Hoist using the parent JSXAttribute's scope, since the scopes
+			// from AST parse stage are not valid for replacement expression
+			path.hoist( this.scope );
+		}
+	};
+
 	return {
 		visitor: {
 			JSXAttribute( path ) {
@@ -29,16 +44,17 @@ module.exports = ( { types: t } ) => {
 				// Replace prop string with function which, when invoked, calls
 				// asyncRequire. The asyncRequire call is transformed by the
 				// CallExpression visitor in this plugin
-				const newValue = t.jSXExpressionContainer(
+				path.replaceWith( t.jSXAttribute( name, t.jSXExpressionContainer(
 					t.functionExpression( null, [ t.identifier( 'callback' ) ], t.blockStatement( [
 						t.expressionStatement( t.callExpression( t.identifier( 'asyncRequire' ), [
 							value,
 							t.identifier( 'callback' )
 						] ) )
 					] ) )
-				);
+				) ) );
 
-				path.replaceWith( t.jSXAttribute( name, newValue ) );
+				// Traverse replacement attribute to hoist function expression
+				path.traverse( asyncAttributeVisitor, { scope: path.scope } );
 			},
 			CallExpression( path, state ) {
 				if ( 'asyncRequire' !== path.node.callee.name ) {
