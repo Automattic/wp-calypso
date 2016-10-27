@@ -83,8 +83,6 @@
 		"preview-layout": true,
 		"reader": true,
 		"reader/related-posts": true,
-		"reader/refresh/full-post-ab-test": false,
-		"reader/refresh/force-full-post": true,
 		"reader/search": true,
 		"resume-editing": true,
 		"republicize": false,

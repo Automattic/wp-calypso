@@ -98,15 +98,6 @@ module.exports = {
 		defaultVariation: 'original',
 		allowAnyLocale: true,
 	},
-	readerFullPost: {
-		datestamp: '20160929',
-		variations: {
-			current: 50,
-			refreshed: 50
-		},
-		defaultVariation: 'current',
-		allowExistingUsers: true
-	},
 	siteTitleStep: {
 		datestamp: '20160928',
 		variations: {
