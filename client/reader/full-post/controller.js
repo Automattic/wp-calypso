@@ -18,7 +18,6 @@ import {
 } from 'reader/controller-helper';
 import { getDocumentHeadTitle as getTitle } from 'state/document-head/selectors';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import FullPostDialog from './main';
 import ReaderFullPost from 'blocks/reader-full-post';
 import { renderWithReduxStore } from 'lib/react-helpers';
 
@@ -61,35 +60,6 @@ export function blogPost( context ) {
 
 	trackPageLoad( basePath, fullPageTitle, 'full_post' );
 
-	// this will automatically unmount anything that was already mounted
-	// in #tertiary, so we don't have to check the current state
-	ReactDom.render(
-		React.createElement( ReduxProvider, { store: context.store },
-			React.createElement( FullPostDialog, {
-				blogId: blogId,
-				postId: postId,
-				context: context,
-				onClose: function() {
-					page.back( context.lastRoute || '/' );
-				},
-				onClosed: removeFullPostDialog,
-				onPostNotFound: renderPostNotFound
-			} )
-		),
-		document.getElementById( 'tertiary' )
-	);
-}
-
-export function blogPostNew( context ) {
-	var blogId = context.params.blog,
-		postId = context.params.post,
-		basePath = '/read/blogs/:blog_id/posts/:post_id',
-		fullPageTitle = analyticsPageTitle + ' > Blog Post > ' + blogId + ' > ' + postId;
-
-	__lastTitle = getTitle( context.store.getState() );
-
-	trackPageLoad( basePath, fullPageTitle, 'full_post' );
-
 	ReactDom.render(
 		React.createElement( ReduxProvider, { store: context.store },
 			React.createElement( ReaderFullPost, {
@@ -114,35 +84,6 @@ export function blogPostNew( context ) {
 
 export function feedPost( context ) {
 	const feedId = context.params.feed,
-		postId = context.params.post,
-		basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
-		fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;
-
-	__lastTitle = getTitle( context.store.getState() );
-
-	trackPageLoad( basePath, fullPageTitle, 'full_post' );
-
-	// this will automatically unmount anything that was already mounted
-	// in #tertiary, so we don't have to check the current state of
-	// __fullPostInstance before making another
-	ReactDom.render(
-		React.createElement( ReduxProvider, { store: context.store },
-			React.createElement( FullPostDialog, {
-				feedId: feedId,
-				postId: postId,
-				onClose: function() {
-					page.back( context.lastRoute || '/' );
-				},
-				onClosed: removeFullPostDialog,
-				onPostNotFound: renderPostNotFound
-			} )
-		),
-		document.getElementById( 'tertiary' )
-	);
-}
-
-export function feedPostNew( context ) {
-	var feedId = context.params.feed,
 		postId = context.params.post,
 		basePath = '/read/feeds/:feed_id/posts/:feed_item_id',
 		fullPageTitle = analyticsPageTitle + ' > Feed Post > ' + feedId + ' > ' + postId;

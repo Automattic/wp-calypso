@@ -82,8 +82,6 @@
 		"reader/start": true,
 		"reader/tags-with-elasticsearch": false,
 		"reader/related-posts": true,
-		"reader/refresh/full-post-ab-test": true,
-		"reader/refresh/force-full-post": false,
 		"reader/search": true,
 		"resume-editing": true,
 		"republicize": false,
