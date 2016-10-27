@@ -42,10 +42,8 @@ class QueryShortcode extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		return {
-			requestingShortcode: isRequestingShortcode( state, ownProps.siteId, ownProps.shortcode )
-		};
-	},
+	( state, { siteId, shortcode } ) => ( {
+		requestingShortcode: isRequestingShortcode( state, siteId, shortcode )
+	} ),
 	{ fetchShortcode }
 )( QueryShortcode );
