@@ -124,7 +124,8 @@ function appendActionTracking( option, name ) {
 }
 
 export function getAnalyticsData( path, tier, site_id ) {
-	let basePath = route.sectionify( path );
+	// Since lib/route isn't available in SSR context, check for it before we use it
+	let basePath = route.sectionify && route.sectionify( path );
 	let analyticsPageTitle = 'Themes';
 
 	if ( tier ) {
