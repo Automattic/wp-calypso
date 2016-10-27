@@ -1,7 +1,14 @@
 /**
  * External dependencies
  */
-import { filter, values } from 'lodash';
+import { filter, flatten, some, values } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteUserConnectionsForService } from 'state/sharing/publicize/selectors';
 
 /**
  * Returns an array of keyring connection objects.
@@ -46,6 +53,50 @@ export function getUserConnections( state, userId ) {
 	return filter( state.sharing.keyring.items, ( connection ) => (
 		connection.shared || connection.keyring_connection_user_ID === userId
 	) );
+}
+
+/**
+ * Given a service, returns a flattened array of all possible accounts for the
+ * service for which a connection can be created.
+ *
+ * @param  {Object} state   Global state tree
+ * @param  {String} service The name of the service to check
+ * @return {Array}          Flattened array of all possible accounts for the service
+ */
+export function getAvailableExternalConnections( state, service ) {
+	const siteUserConnectionsForService = getSiteUserConnectionsForService(
+		state, getSelectedSiteId( state ), getCurrentUserId( state ), service
+	);
+
+	// Iterate over Keyring connections for this service and generate a
+	// flattened array of all accounts, including external users
+	return flatten( getKeyringConnectionsByName( state, service ).map( ( keyringConnection ) => {
+		const accounts = [ {
+			name: keyringConnection.external_display || keyringConnection.external_name,
+			picture: keyringConnection.external_profile_picture,
+			keyringConnectionId: keyringConnection.ID,
+			isConnected: some( siteUserConnectionsForService, {
+				keyring_connection_ID: keyringConnection.ID,
+				external_ID: keyringConnection.external_ID,
+			} ),
+		} ];
+
+		keyringConnection.additional_external_users.forEach( ( externalUser ) => {
+			accounts.push( {
+				ID: externalUser.external_ID,
+				name: externalUser.external_name,
+				picture: externalUser.external_profile_picture,
+				keyringConnectionId: keyringConnection.ID,
+				isConnected: some( siteUserConnectionsForService, {
+					keyring_connection_ID: keyringConnection.ID,
+					external_ID: externalUser.external_ID,
+				} ),
+				isExternal: true,
+			} );
+		} );
+
+		return accounts;
+	} ) );
 }
 
 /**

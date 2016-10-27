@@ -11,6 +11,7 @@ import {
 	getKeyringConnectionById,
 	getKeyringConnectionsByName,
 	getUserConnections,
+	getAvailableExternalConnections,
 	isKeyringConnectionsFetching
 } from '../selectors';
 
@@ -24,16 +25,31 @@ describe( 'selectors', () => {
 		}
 	};
 	const activeState = {
+		currentUser: {
+			id: 26957695,
+		},
 		sharing: {
 			keyring: {
 				items: {
-					1: { ID: 1, service: 'twitter', sites: [ '2916284' ] },
-					2: { ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1 },
-					3: { ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
+					1: { ID: 1, service: 'twitter', sites: [ '2916284' ], additional_external_users: [] },
+					2: { ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1, additional_external_users: [] },
+					3: { ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
 				},
 				isFetching: true,
+			},
+			publicize: {
+				connectionsBySiteId: {
+					2916284: [ 1, 2, 3 ]
+				},
+				connections: {
+					1: { ID: 1, site_ID: 2916284, shared: true },
+					2: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695 },
+				}
 			}
-		}
+		},
+		ui: {
+			selectedSiteId: 2916284,
+		},
 	};
 
 	describe( 'getKeyringConnections()', () => {
@@ -47,9 +63,9 @@ describe( 'selectors', () => {
 			const connections = getKeyringConnections( activeState );
 
 			expect( connections ).to.eql( [
-				{ ID: 1, service: 'twitter', sites: [ '2916284' ] },
-				{ ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1 },
-				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
+				{ ID: 1, service: 'twitter', sites: [ '2916284' ], additional_external_users: [] },
+				{ ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1, additional_external_users: [] },
+				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
 			] );
 		} );
 	} );
@@ -65,7 +81,7 @@ describe( 'selectors', () => {
 			const connections = getKeyringConnectionById( activeState, 1 );
 
 			expect( connections ).to.eql(
-				{ ID: 1, service: 'twitter', sites: [ '2916284' ] },
+				{ ID: 1, service: 'twitter', sites: [ '2916284' ], additional_external_users: [] },
 			);
 		} );
 	} );
@@ -81,7 +97,7 @@ describe( 'selectors', () => {
 			const connections = getKeyringConnectionsByName( activeState, 'facebook' );
 
 			expect( connections ).to.eql( [
-				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
+				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
 			] );
 		} );
 	} );
@@ -99,7 +115,7 @@ describe( 'selectors', () => {
 			const connections = getUserConnections( activeState, 3 );
 
 			expect( connections ).to.eql( [
-				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
+				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
 			] );
 		} );
 
@@ -107,8 +123,24 @@ describe( 'selectors', () => {
 			const connections = getUserConnections( activeState, 1 );
 
 			expect( connections ).to.eql( [
-				{ ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1 },
-				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
+				{ ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1, additional_external_users: [] },
+				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
+			] );
+		} );
+	} );
+
+	describe( 'getAvailableExternalConnections()', () => {
+		it( 'should return an empty array for a site which has not yet been fetched', () => {
+			const connections = getAvailableExternalConnections( activeState, 'path' );
+
+			expect( connections ).to.eql( [] );
+		} );
+
+		it( 'should return an array of connection objects that are available to any user', () => {
+			const connections = getAvailableExternalConnections( activeState, 'twitter' );
+
+			expect( connections ).to.eql( [
+				{ isConnected: false, keyringConnectionId: 1, name: undefined, picture: undefined },
 			] );
 		} );
 	} );
