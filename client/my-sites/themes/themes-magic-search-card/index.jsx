@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import debounce from 'lodash/debounce';
 import classNames from 'classnames';
 
@@ -11,74 +11,58 @@ import classNames from 'classnames';
 import Search from 'components/search';
 import SegmentedControl from 'components/segmented-control';
 import Suggestions from 'components/suggestions';
-import { trackClick } from '../helpers';
 import config from 'config';
 import { isMobile } from 'lib/viewport';
 import { filterIsValid, getTaxonomies, } from '../theme-filters.js';
+import { localize } from 'i18n-calypso';
 import MagicSearchWelcome from './welcome';
 
-const ThemesMagicSearchCard = React.createClass( {
-	propTypes: {
-		tier: React.PropTypes.string,
-		select: React.PropTypes.func.isRequired,
-		site: React.PropTypes.oneOfType( [
-			React.PropTypes.object,
-			React.PropTypes.bool
-		] ).isRequired,
-		onSearch: React.PropTypes.func.isRequired,
-		search: React.PropTypes.string
-	},
+class ThemesMagicSearchCard extends React.Component {
+	constructor( props ) {
+		super( props );
 
-	trackClick: trackClick.bind( null, 'search bar' ),
+		this.state = {
+			isMobile: isMobile(),
+			searchIsOpen: false,
+			editedSearchElement: '',
+			cursorPosition: 0,
+			searchInput: this.props.search,
+		};
+	}
 
 	componentWillMount() {
 		this.onResize = debounce( () => {
 			this.setState( { isMobile: isMobile() } );
 		}, 250 );
-	},
+	}
 
 	componentDidMount() {
-		this.setState( { searchInput: this.props.search } );
 		this.findTextForSuggestions( this.props.search );
 		window.addEventListener( 'resize', this.onResize );
-	},
+	}
 
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.onResize );
-	},
+	}
 
-	getInitialState() {
-		return {
-			isMobile: isMobile(),
-			searchIsOpen: false,
-			searchInput: '',
-			editedSearchElement: '',
-			cursorPosition: 0,
-		};
-	},
-
-	getDefaultProps() {
-		return { tier: 'all' };
-	},
-
-	onSearchOpen() {
+	onSearchOpen = () => {
 		this.setState( { searchIsOpen: true } );
-	},
+	}
 
-	onSearchClose() {
+	onSearchClose = () => {
 		this.setState( { searchIsOpen: false } );
-	},
+	}
 
-	onKeyDown( event ) {
+	onKeyDown = ( event ) => {
 		this.findTextForSuggestions( event.target.value );
 		this.refs.suggestions.handleKeyEvent( event );
-	},
+	}
 
-	onClick( event ) {
+	onClick = ( event ) => {
 		this.findTextForSuggestions( event.target.value );
-	},
+	}
 
-	findEditedTokenIndex( tokens, cursorPosition ) {
+	findEditedTokenIndex = ( tokens, cursorPosition ) => {
 		let tokenEnd = 0;
 		for ( let i = 0; i < tokens.length; i++ ) {
 			tokenEnd += tokens[ i ].length;
@@ -107,9 +91,9 @@ const ThemesMagicSearchCard = React.createClass( {
 		}
 
 		return '';
-	},
+	}
 
-	findTextForSuggestions( input ) {
+	findTextForSuggestions = ( input ) => {
 		const val = input;
 		window.requestAnimationFrame( () => {
 			this.setState( { cursorPosition: val.slice( 0, this.refs[ 'url-search' ].refs.searchInput.selectionStart ).length } );
@@ -125,34 +109,34 @@ const ThemesMagicSearchCard = React.createClass( {
 			const text = tokens[ tokenIndex ].trim();
 			this.setState( { editedSearchElement: text } );
 		} );
-	},
+	}
 
-	insertSuggestion( suggestion ) {
+	insertSuggestion = ( suggestion ) => {
 		const tokens = this.state.searchInput.split( /(\s+)/ );
 		// Get rid of empty match at end
 		tokens[ tokens.length - 1 ] === '' && tokens.splice( tokens.length - 1, 1 );
 		const tokenIndex = this.findEditedTokenIndex( tokens, this.state.cursorPosition );
 		tokens[ tokenIndex ] = suggestion;
 		return tokens.join( '' );
-	},
+	}
 
-	insertTextAtCursor( text ) {
+	insertTextAtCursor = ( text ) => {
 		const input = this.state.searchInput;
 		const position = this.state.cursorPosition;
 		return input.slice( 0, position ) + text + input.slice( position );
-	},
+	}
 
-	onSearchChange( input ) {
+	onSearchChange = ( input ) => {
 		this.findTextForSuggestions( input );
 		this.setState( { searchInput: input } );
-	},
+	}
 
-	onBlur( event ) {
+	onBlur = ( event ) => {
 		event.preventDefault();
 		this.setState( { searchIsOpen: false } );
-	},
+	}
 
-	searchTokens( input ) {
+	searchTokens = ( input ) => {
 		const tokens = input.split( /(\s+)/ );
 
 		return (
@@ -173,31 +157,32 @@ const ThemesMagicSearchCard = React.createClass( {
 				return <span className="themes-magic-search-card__search-text" key={ i }>{ token }</span>; // use shortid for key
 			} )
 		);
-	},
+	}
 
-	updateInput: function( updatedInput ) {
+	updateInput = ( updatedInput ) => {
 		this.setState( { searchInput: updatedInput } );
 		this.refs[ 'url-search' ].clear();
-	},
+	}
 
-	suggest: function( suggestion ) {
+	suggest = ( suggestion ) => {
 		const updatedInput = this.insertSuggestion( suggestion );
 		this.updateInput( updatedInput );
-	},
+	}
 
-	insertTextInInput: function( text ) {
+	insertTextInInput = ( text ) => {
 		const updatedInput = this.insertTextAtCursor( text );
 		this.updateInput( updatedInput );
-	},
+	}
 
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
+		const { translate } = this.props;
 
 		const tiers = [
-			{ value: 'all', label: this.translate( 'All' ) },
-			{ value: 'free', label: this.translate( 'Free' ) },
-			{ value: 'premium', label: this.translate( 'Premium' ) },
+			{ value: 'all', label: translate( 'All' ) },
+			{ value: 'free', label: translate( 'Free' ) },
+			{ value: 'premium', label: translate( 'Premium' ) },
 		];
 
 		const taxonomies = getTaxonomies();
@@ -213,7 +198,7 @@ const ThemesMagicSearchCard = React.createClass( {
 				onSearch={ this.props.onSearch }
 				initialValue={ this.state.searchInput }
 				ref="url-search"
-				placeholder={ this.translate( 'What kind of theme are you looking for?' ) }
+				placeholder={ translate( 'What kind of theme are you looking for?' ) }
 				analyticsGroup="Themes"
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
@@ -260,6 +245,22 @@ const ThemesMagicSearchCard = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
 
-export default ThemesMagicSearchCard;
+ThemesMagicSearchCard.propTypes = {
+	tier: PropTypes.string,
+	select: PropTypes.func.isRequired,
+	site: PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.bool
+	] ).isRequired,
+	onSearch: PropTypes.func.isRequired,
+	search: PropTypes.string,
+	translate: PropTypes.func.isRequired,
+};
+
+ThemesMagicSearchCard.defaultProps = {
+	tier: 'all',
+};
+
+export default localize( ThemesMagicSearchCard );
