@@ -97,10 +97,6 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 		this.props.onUpdateSetting( 'orderBy', event.target.checked ? 'rand' : null );
 	},
 
-	updateReverseOrder() {
-		this.props.onReverse();
-	},
-
 	renderDropdown( legend, options, settingName ) {
 		const { settings, onUpdateSetting } = this.props;
 
@@ -155,7 +151,7 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 
 		return (
 			<EditorMediaModalFieldset>
-				<Button onClick={ this.updateReverseOrder } disabled={ this.props.settings.orderBy === 'rand' } >
+				<Button onClick={ this.props.onReverse } disabled={ this.props.settings.orderBy === 'rand' } >
 					{ translate( 'Reverse Order' ) }
 				</Button>
 			</EditorMediaModalFieldset>
