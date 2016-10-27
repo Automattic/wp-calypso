@@ -20,7 +20,7 @@ const sections = config( 'project' ) === 'wordpress-com'
  *  f( '/me/account' ) === 'me"
  *  f( '/read' ) === 'reader'
  */
-const wpcomImplementation = path => {
+export const wpcomImplementation = path => {
 	const match = find( sections, section =>
 			section.paths.some( sectionPath =>
 				startsWith( path, sectionPath ) ) );
@@ -33,7 +33,7 @@ const wpcomImplementation = path => {
  *
  * 	f( '/foo/bar' ) === 'foo'
  */
-const fallbackImplementation = path => {
+export const fallbackImplementation = path => {
 	const match = path.match( /[^/]+/ );
 	return match && match[ 0 ];
 };
