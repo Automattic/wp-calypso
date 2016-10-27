@@ -42,7 +42,7 @@ export function getSiteUserConnections( state, siteId, userId ) {
  * @return {Array}          User connections
  */
 export function getSiteUserConnectionsForService( state, siteId, userId, service ) {
-	return filter( getSiteUserConnections( state, siteId, userId ), ( connection ) => connection.service === service );
+	return filter( getSiteUserConnections( state, siteId, userId ), { service } );
 }
 
 /**
