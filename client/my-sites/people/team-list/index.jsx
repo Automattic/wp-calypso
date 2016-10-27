@@ -57,6 +57,21 @@ var Team = React.createClass( {
 			);
 		}
 
+		if ( this.props.fetchInitialized && ! this.props.users.length && this.props.role && ! this.props.fetchingUsers  ) {
+			return (
+				<NoResults
+					image="/calypso/images/people/mystery-person.svg"
+					text={
+						this.translate( 'Nobody is a {{em}}%(role)s{{/em}} on this site',
+							{
+								args: { role: this.props.role },
+								components: { em: <em /> }
+							}
+						)
+					} />
+			);
+		}
+
 		if ( this.props.site && this.props.users.length ) {
 			if ( this.props.search && this.props.totalUsers ) {
 				headerText = this.translate(
