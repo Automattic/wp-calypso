@@ -13,8 +13,9 @@ var controller = require( 'my-sites/controller' ),
 module.exports = function() {
 	if ( config.isEnabled( 'manage/people' ) ) {
 		if ( config.isEnabled( 'manage/people/role-filtering' ) ) {
+			page( '/people/team/role/:role', controller.siteSelection, controller.sites );
 			page(
-				'/people/team/:role/:site_id',
+				'/people/team/role/:role/:site_id',
 				peopleController.enforceSiteEnding,
 				controller.siteSelection,
 				controller.navigation,
