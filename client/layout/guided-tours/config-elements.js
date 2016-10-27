@@ -14,17 +14,16 @@ import {
 	mapValues,
 	omit,
 	property,
-	startsWith,
 } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import wpSections from 'wordpress-com';
 import Card from 'components/card';
 import Button from 'components/button';
 import ExternalLink from 'components/external-link';
+import pathToSection from 'lib/path-to-section';
 import { ROUTE_SET } from 'state/action-types';
 import { tourBranching } from './config-parsing';
 import {
@@ -34,17 +33,6 @@ import {
 	query,
 	targetForSlug,
 } from './positioning';
-
-// FIXME(mcsf): this is temporarily requiring 'wordpress-com', as requiring
-// 'sections' directly  makes webpack create a lot of new dependencies on
-// chunks 'theme' and 'themes'
-const pathToSection = path => {
-	const match = find( wpSections, section =>
-			section.paths.some( sectionPath =>
-				startsWith( path, sectionPath ) ) );
-
-	return match && match.name;
-};
 
 const debug = debugFactory( 'calypso:guided-tours' );
 const contextTypes = Object.freeze( {
