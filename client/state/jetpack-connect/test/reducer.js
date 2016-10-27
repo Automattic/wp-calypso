@@ -364,13 +364,27 @@ describe( 'reducer', () => {
 		it( 'should load valid persisted state', () => {
 			const originalState = deepFreeze( {
 				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
-				siteUrl: 'https://example.wordpress.com'
+				siteUrl: 'https://example.wordpress.com',
+				timestamp: Date.now()
 			} );
 			const state = jetpackSSOSessions( originalState, {
 				type: DESERIALIZE
 			} );
 
 			expect( state ).to.be.eql( originalState );
+		} );
+
+		it( 'should not load stale state', () => {
+			const originalState = deepFreeze( {
+				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://example.wordpress.com',
+				timestamp: 1
+			} );
+			const state = jetpackSSOSessions( originalState, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
 		} );
 	} );
 
