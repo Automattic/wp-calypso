@@ -1,31 +1,14 @@
 /**
  * External Dependencies
  */
-import { startsWith, every, endsWith, forEach, forOwn, some, toArray, url } from 'lodash';
-import srcset from 'srcset';
+import { filter, include, startsWith, endsWith, forEach, forOwn, some, toArray, url } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import safeImageURL from 'lib/safe-image-url';
-import { maxWidthPhotonishURL } from './utils';
 
 const TRANSPARENT_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-
-function removeUnsafeAttributes( node ) {
-	if ( ! node || ! node.hasAttributes() ) {
-		return;
-	}
-
-	// Have to toArray this because attributes is a live
-	// NodeMap and would node removals would invalidate
-	// the current index as we walked it.
-	forEach( toArray( node.attributes ), function( attr ) {
-		if ( startsWith( attr.name, 'on' ) ) {
-			node.removeAttribute( attr.name );
-		}
-	} );
-}
 
 const bannedUrlParts = [
 	'feeds.feedburner.com',
@@ -38,11 +21,29 @@ const bannedUrlParts = [
 	'pixel.wp.com'
 ];
 
-function imageShouldBeRemovedFromContent( imageUrl ) {
-	return some( bannedUrlParts, function( part ) {
-		return imageUrl && imageUrl.toLowerCase().indexOf( part ) !== -1;
-	} );
-}
+/**
+* @param {Node} node - Takes in a DOM Node and mutates it so that it no longer has an 'on*' event handlers e.g. onClick
+*/
+const removeInlineEventHandlers = ( node ) => {
+	if ( ! node || ! node.hasAttributes() ) {
+		return;
+	}
+
+	const inlineEventHandlerAttributes = filter( node.attributes, ( attr ) => startsWith( attr.name, 'on' ) );
+	inlineEventHandlerAttributes.forEach( ( handler ) => node.removeAttribute( handler ) );
+};
+
+/** Checks whether or not imageUrl shoudl be removed from the dom
+ * @param {string} imageUrl - the url of the image
+ * @returns {boolean} whether or not it should be removed from the dom
+ */
+const imageShouldBeRemovedFromContent = ( imageUrl ) => {
+	if ( ! imageUrl ) {
+		return;
+	}
+
+	return some( bannedUrlParts, ( part ) => include( imageUrl.toLowerCase(), part ) );
+};
 
 const excludedContentImageUrlParts = [
 	'gravatar.com',
@@ -50,82 +51,56 @@ const excludedContentImageUrlParts = [
 ];
 
 function isTrackingPixel( image ) {
-		if ( ! image || ! image.src ) {
-			return false;
-		}
+	if ( ! image || ! image.src ) {
+		return false;
+	}
 
-		const edgeLength = image.height + image.width;
-		// if the image size isn't set (0) or is greater than 2, keep it
-		return edgeLength === 0 || edgeLength > 2;
+	const edgeLength = image.height + image.width;
+	// if the image size isn't set (0) or is greater than 2, keep it
+	return edgeLength === 0 || edgeLength > 2;
 }
 
 function isCandidateForContentImage( imageUrl ) {
-	return ! imageShouldBeRemovedFromContent( imageUrl ) && every( excludedContentImageUrlParts, function( part ) {
-		return imageUrl && imageUrl.toLowerCase().indexOf( part ) === -1;
-	} );
+	if ( ! imageUrl ) {
+		return false;
+	}
+	const imageShouldBeExcludedFromCandidacy = some( excludedContentImageUrlParts,
+		( part ) => include( imageUrl.toLowerCase(), part )
+	);
+
+	return ! imageShouldBeRemovedFromContent( imageUrl ) && ! imageShouldBeExcludedFromCandidacy;
 }
 
 	// push everything, including tracking pixels, over to a safe URL
-let process_image = ( post, image, maxWidth ) => {
-	let imgSource = image.getAttribute( 'src' ),
-		parsedImgSrc = url.parse( imgSource, false, true ),
-		hostName = parsedImgSrc.hostname;
+const process_image = ( post, image, maxWidth ) => {
+	let imgSource = image.getAttribute( 'src' );
+	let parsedImgSrc = url.parse( imgSource, false, true );
+	const hostName = parsedImgSrc.hostname;
 
-	let safeSource;
+	maxWidth;
 	// if imgSource is relative, prepend post domain so it isn't relative to calypso
 	if ( ! hostName ) {
 		imgSource = url.resolve( post.URL, imgSource );
 		parsedImgSrc = url.parse( imgSource, false, true );
 	}
 
-	safeSource = safeImageURL( imgSource );
-	if ( ! safeSource && parsedImgSrc.search ) {
-		// we can't make externals with a querystring safe.
-		// try stripping it and retry
-		parsedImgSrc.search = null;
-		parsedImgSrc.query = null;
-		safeSource = safeImageURL( url.format( parsedImgSrc ) );
-	}
+	const safeSource = safeImageURL( imgSource );
+	removeInlineEventHandlers( image );
 
-	removeUnsafeAttributes( image );
+	// always remove srcset because they are very difficult to make safe and may not be worth the trouble
+	image.removeAttribute( 'srcset' );
 
+	// trickery to remove it from the dom / not load the image
+	// TODO: test if this is necessary
 	if ( ! safeSource || imageShouldBeRemovedFromContent( imgSource ) ) {
-		image.parentNode.removeChild( image );
+		image.remove();
 		// fun fact: removing the node from the DOM will not prevent it from loading. You actually have to
 		// change out the src to change what loads. The following is a 1x1 transparent gif as a data URL
 		image.setAttribute( 'src', TRANSPARENT_GIF );
-		image.removeAttribute( 'srcset' );
 		return;
 	}
 
-	if ( maxWidth ) {
-		safeSource = maxWidthPhotonishURL( safeSource, maxWidth );
-	}
-
 	image.setAttribute( 'src', safeSource );
-
-	if ( image.hasAttribute( 'srcset' ) ) {
-		let imgSrcSet;
-		try {
-			imgSrcSet = srcset.parse( image.getAttribute( 'srcset' ) );
-		} catch ( ex ) {
-			// if srcset parsing fails, set the srcset to an empty array. This will have the effect of removing the srcset entirely.
-			imgSrcSet = [];
-		}
-		imgSrcSet = imgSrcSet.map( imgSrc => {
-			if ( ! url.parse( imgSrc.url, false, true ).hostname ) {
-				imgSrc.url = url.resolve( post.URL, imgSrc.url );
-			}
-			imgSrc.url = safeImageURL( imgSrc.url );
-			return imgSrc;
-		} ).filter( imgSrc => imgSrc.url );
-		const newSrcSet = srcset.stringify( imgSrcSet );
-		if ( newSrcSet ) {
-			image.setAttribute( 'srcset', newSrcSet );
-		} else {
-			image.removeAttribute( 'srcset' );
-		}
-	}
 
 	if ( isCandidateForContentImage( imgSource ) && ! isTrackingPixel( image ) ) {
 		return {
@@ -166,7 +141,7 @@ const allowedEmbed = ( iframe ) => {
 	return some( iframeWhitelist, function( whitelistedSuffix ) {
 		return endsWith( '.' + iframeSrc, '.' + whitelistedSuffix );
 	} );
-}
+};
 
 //	let embeds = toArray( dom.querySelectorAll( 'iframe' ) );
 const process_embed = ( post, dom, iframe ) => {
@@ -174,7 +149,7 @@ const process_embed = ( post, dom, iframe ) => {
 		return false;
 	}
 
-	var node = iframe,
+	let node = iframe,
 		embedType = null,
 		aspectRatio,
 		width, height,
@@ -229,12 +204,11 @@ const process_embed = ( post, dom, iframe ) => {
 		height: height,
 		mediaType: 'video',
 	};
-}
+};
 
 // TODO add this to querySelectorAll higher up + combine for orderrrr
-let funnyEmbeds = ( dom ) => {
-
-	let content_embeds = [];
+const processFunnyEmbeds = ( dom ) => {
+	const content_embeds = [];
 
 	const funnyEmbedSelectors = {
 		'blockquote[class^="instagram-"]': 'instagram',
@@ -252,8 +226,16 @@ let funnyEmbeds = ( dom ) => {
 			} );
 		} );
 	} );
-}
+};
 
-funnyEmbeds();
-process_embed();
-process_image();
+export default function content_media( post, dom ) {
+	// 1. selector for everything -- that should return it all in the correct order. May be tricky for funny embeds
+
+	// 2. map returned array with a switch on the successful selector - and process accordingly
+
+	// 3. filter falses
+	processFunnyEmbeds();
+	process_embed();
+	process_image();
+	dom;
+}
