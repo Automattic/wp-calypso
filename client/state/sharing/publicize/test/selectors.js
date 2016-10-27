@@ -9,6 +9,7 @@ import { expect } from 'chai';
 import {
 	getConnectionsBySiteId,
 	getSiteUserConnections,
+	getSiteUserConnectionsForService,
 	hasFetchedConnections,
 	isFetchingConnections
 } from '../selectors';
@@ -82,6 +83,43 @@ describe( '#getSiteUserConnections()', () => {
 		expect( connections ).to.eql( [
 			{ ID: 1, site_ID: 2916284, shared: true },
 			{ ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695 }
+		] );
+	} );
+} );
+
+describe( '#getSiteUserConnectionsForService()', () => {
+	it( 'should return an empty array for a site which has not yet been fetched', () => {
+		const connections = getSiteUserConnectionsForService( {
+			sharing: {
+				publicize: {
+					connectionsBySiteId: {},
+					connections: {}
+				}
+			}
+		}, 2916284, 26957695 );
+
+		expect( connections ).to.eql( [] );
+	} );
+
+	it( 'should return an array of connection objects received for the site that are available to the current user', () => {
+		const connections = getSiteUserConnectionsForService( {
+			sharing: {
+				publicize: {
+					connectionsBySiteId: {
+						2916284: [ 1, 2, 3 ]
+					},
+					connections: {
+						1: { ID: 1, site_ID: 2916284, shared: true, service: 'twitter' },
+						2: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695, service: 'twitter' },
+						3: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 18342963, service: 'facebook' }
+					}
+				}
+			}
+		}, 2916284, 26957695, 'twitter' );
+
+		expect( connections ).to.eql( [
+			{ ID: 1, site_ID: 2916284, shared: true, service: 'twitter' },
+			{ ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695, service: 'twitter' }
 		] );
 	} );
 } );

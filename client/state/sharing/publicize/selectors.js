@@ -32,6 +32,20 @@ export function getSiteUserConnections( state, siteId, userId ) {
 }
 
 /**
+ * Returns an array of known connections for the given site ID
+ * that are available to the specified user ID.
+ *
+ * @param  {Object} state   Global state tree
+ * @param  {Number} siteId  Site ID
+ * @param  {Number} userId  User ID to filter
+ * @param  {String} service The name of the service to check
+ * @return {Array}          User connections
+ */
+export function getSiteUserConnectionsForService( state, siteId, userId, service ) {
+	return filter( getSiteUserConnections( state, siteId, userId ), ( connection ) => connection.service === service );
+}
+
+/**
  * Returns true if connections have been fetched for the given site ID.
  *
  * @param  {Object} state  Global state tree
