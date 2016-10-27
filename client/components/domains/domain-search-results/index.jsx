@@ -37,7 +37,7 @@ var DomainSearchResults = React.createClass( {
 		onClickMapping: React.PropTypes.func
 	},
 	isDomainMappable: function() {
-		return this.props.lastDomainError && 'not_available_but_mappable' === this.props.lastDomainError.code;
+		return this.props.lastDomainError && this.props.lastDomainError.code === 'not_available_but_mappable';
 	},
 
 	domainAvailability: function() {
