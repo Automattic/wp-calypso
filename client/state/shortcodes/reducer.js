@@ -16,12 +16,14 @@ import {
 	SHORTCODE_REQUEST_SUCCESS
 } from 'state/action-types';
 
-const requestingShortcode = ( state, siteId, shortcode, requesting ) => {
-	return merge( {}, state, {
-		[ siteId ]: {
-			[ shortcode ]: requesting
-		}
-	} );
+const createRequestingReducer = ( requesting ) => {
+	return ( state, { siteId, shortcode } ) => {
+		return merge( {}, state, {
+			[ siteId ]: {
+				[ shortcode ]: requesting
+			}
+		} );
+	};
 };
 
 /**
@@ -34,9 +36,9 @@ const requestingShortcode = ( state, siteId, shortcode, requesting ) => {
  * @return {Object}        Updated state
  */
 export const requesting = createReducer( {}, {
-	[ SHORTCODE_REQUEST ]: ( state, { siteId, shortcode } ) => requestingShortcode( state, siteId, shortcode, true ),
-	[ SHORTCODE_REQUEST_FAILURE ]: ( state, { siteId, shortcode } ) => requestingShortcode( state, siteId, shortcode, false ),
-	[ SHORTCODE_REQUEST_SUCCESS ]: ( state, { siteId, shortcode } ) => requestingShortcode( state, siteId, shortcode, false ),
+	[ SHORTCODE_REQUEST ]: createRequestingReducer( true ),
+	[ SHORTCODE_REQUEST_FAILURE ]: createRequestingReducer( false ),
+	[ SHORTCODE_REQUEST_SUCCESS ]: createRequestingReducer( false ),
 } );
 
 /**
