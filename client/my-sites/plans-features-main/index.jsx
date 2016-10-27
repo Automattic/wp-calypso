@@ -17,8 +17,10 @@ import {
 	PLAN_BUSINESS,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_BUSINESS,
+	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-	PLAN_JETPACK_BUSINESS_MONTHLY
+	PLAN_JETPACK_BUSINESS_MONTHLY,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'lib/plans/constants';
 import FAQ from 'components/faq';
 import FAQItem from 'components/faq/faq-item';
@@ -45,7 +47,7 @@ class PlansFeaturesMain extends Component {
 		const isPersonalPlanEnabled = isEnabled( 'plans/personal-plan' );
 
 		if ( this.isJetpackSite( site ) && intervalType === 'monthly' ) {
-			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
+			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL_MONTHLY, PLAN_JETPACK_PREMIUM_MONTHLY, PLAN_JETPACK_BUSINESS_MONTHLY ];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
 			}
@@ -65,7 +67,7 @@ class PlansFeaturesMain extends Component {
 		}
 
 		if ( this.isJetpackSite( site ) ) {
-			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ];
+			const jetpackPlans = [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS ];
 			if ( hideFreePlan ) {
 				jetpackPlans.shift();
 			}

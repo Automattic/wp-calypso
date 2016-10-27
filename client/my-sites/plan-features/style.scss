@@ -305,7 +305,7 @@ $plan-features-sidebar-width: 272px;
 	margin-bottom: 1.4em;
 
 	&.is-placeholder {
-		height: 36px;
+		height: 28px;
 
 		@include breakpoint( "<660px" ) {
 			height: auto;

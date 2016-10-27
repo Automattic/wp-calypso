@@ -21,6 +21,8 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
+	PLAN_JETPACK_PERSONAL,
+	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_PERSONAL
 } from 'lib/plans/constants';
 import purchasesPaths from 'me/purchases/paths';
@@ -39,6 +41,8 @@ class CurrentPlanHeader extends Component {
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 			PLAN_JETPACK_PREMIUM,
 			PLAN_JETPACK_PREMIUM_MONTHLY,
+			PLAN_JETPACK_PERSONAL,
+			PLAN_JETPACK_PERSONAL_MONTHLY,
 			PLAN_PERSONAL
 		] ).isRequired,
 		currentPlan: PropTypes.object,
