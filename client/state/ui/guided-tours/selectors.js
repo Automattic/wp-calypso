@@ -3,18 +3,24 @@
 /**
  * External dependencies
  */
-import { get, difference, find, map, noop, startsWith, uniq } from 'lodash';
+import { get, difference, find, includes, map, noop, startsWith, uniq } from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import { ROUTE_SET } from 'state/action-types';
-import { getInitialQueryArguments } from 'state/ui/selectors';
+import { getInitialQueryArguments, getSectionName } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
 import GuidedToursConfig from 'layout/guided-tours/config';
 import createSelector from 'lib/create-selector';
+
+const BLACKLISTED_SECTIONS = [
+	'signup',
+	'upgrades', // checkout
+	'checkout-thank-you', // thank you page
+];
 
 const getToursHistory = state => getPreference( state, 'guided-tours-history' );
 const debug = debugFactory( 'calypso:guided-tours' );
@@ -123,8 +129,13 @@ const findTriggeredTour = state => {
 	} );
 };
 
+const shouldBail = state => {
+	// bail if we're on a blacklisted page
+	return includes( BLACKLISTED_SECTIONS, getSectionName( state ) );
+};
+
 export const findEligibleTour = createSelector(
-	state => findRequestedTour( state ) || findTriggeredTour( state ),
+	state => ! shouldBail( state ) && ( findRequestedTour( state ) || findTriggeredTour( state ) ),
 	[ getActionLog, getToursHistory ]
 );
 
