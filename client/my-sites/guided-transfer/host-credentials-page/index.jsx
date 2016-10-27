@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import Bluehost from './bluehost';
 import ErrorNotice from './error-notice';
 import SiteGround from './siteground';
+import Pressable from './pressable';
 import SectionHeader from 'components/section-header';
 import { cartItems } from 'lib/cart-values';
 import upgradesActions from 'lib/upgrades/actions';
@@ -80,6 +81,8 @@ class HostCredentialsPage extends Component {
 				return <Bluehost { ...props } />;
 			case 'siteground':
 				return <SiteGround { ...props } />;
+			case 'pressable':
+				return <Pressable { ...props } />;
 		}
 
 		return null;
