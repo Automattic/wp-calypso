@@ -610,7 +610,7 @@ const RegisterDomainStep = React.createClass( {
 
 			// Generic error message when domain is not mappable without an explicit unmappability reason
 			case 'not_mappable':
-				message = this.translate( 'This domain cannot be mapped.' );
+				message = this.translate( 'Sorry, this domain cannot be mapped.' );
 				break;
 
 			case 'empty_query':
