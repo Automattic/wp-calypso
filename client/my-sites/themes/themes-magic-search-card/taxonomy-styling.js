@@ -1,9 +1,7 @@
 /**
  * External dependencies
  */
-import {
-	get
-} from 'lodash';
+import { get } from 'lodash';
 
 /**
 	* This is a helper file that establishes designed visual connection between

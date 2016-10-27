@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import debounce from 'lodash/debounce';
 import classNames from 'classnames';
 
@@ -248,15 +248,15 @@ class ThemesMagicSearchCard extends React.Component {
 }
 
 ThemesMagicSearchCard.propTypes = {
-	tier: React.PropTypes.string,
-	select: React.PropTypes.func.isRequired,
-	site: React.PropTypes.oneOfType( [
-		React.PropTypes.object,
-		React.PropTypes.bool
+	tier: PropTypes.string,
+	select: PropTypes.func.isRequired,
+	site: PropTypes.oneOfType( [
+		PropTypes.object,
+		PropTypes.bool
 	] ).isRequired,
-	onSearch: React.PropTypes.func.isRequired,
-	search: React.PropTypes.string,
-	translate: React.PropTypes.func.isRequired,
+	onSearch: PropTypes.func.isRequired,
+	search: PropTypes.string,
+	translate: PropTypes.func.isRequired,
 };
 
 ThemesMagicSearchCard.defaultProps = {
