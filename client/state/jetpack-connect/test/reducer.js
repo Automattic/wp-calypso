@@ -105,7 +105,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should store a timestamp when checking a new url', () => {
-			const nowTime = ( new Date() ).getTime();
+			const nowTime = Date.now();
 			const state = jetpackConnectSessions( undefined, {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: 'https://example.wordpress.com'
@@ -116,7 +116,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should update the timestamp when checking an existent url', () => {
-			const nowTime = ( new Date() ).getTime();
+			const nowTime = Date.now();
 			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: 'https://example.wordpress.com'
@@ -336,7 +336,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should store an integer timestamp when creating new session', () => {
-			const nowTime = ( new Date() ).getTime();
+			const nowTime = Date.now();
 			const state = jetpackSSOSessions( undefined, {
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
@@ -674,7 +674,8 @@ describe( 'reducer', () => {
 				queryObject: {
 					client_id: 'example.com',
 					redirect_uri: 'https://example.com/',
-				}
+				},
+				timestamp: Date.now()
 			} );
 			const state = jetpackConnectAuthorize( originalState, {
 				type: SERIALIZE
@@ -688,13 +689,29 @@ describe( 'reducer', () => {
 				queryObject: {
 					client_id: 'example.com',
 					redirect_uri: 'https://example.com/',
-				}
+				},
+				timestamp: Date.now()
 			} );
 			const state = jetpackConnectAuthorize( originalState, {
 				type: DESERIALIZE
 			} );
 
 			expect( state ).to.be.eql( originalState );
+		} );
+
+		it( 'should not load stale state', () => {
+			const originalState = deepFreeze( {
+				queryObject: {
+					client_id: 'example.com',
+					redirect_uri: 'https://example.com/',
+				},
+				timestamp: 1
+			} );
+			const state = jetpackConnectAuthorize( originalState, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
 		} );
 	} );
 
