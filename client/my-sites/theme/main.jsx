@@ -475,7 +475,7 @@ const WrappedThemeSheet = ( props ) => {
 };
 
 const ThemeSheetWithOptions = ( props ) => {
-	const { selectedSite: site, isActive, price, isLoggedIn } = props;
+	const { siteId, isActive, price, isLoggedIn } = props;
 
 	let defaultOption;
 
@@ -492,7 +492,7 @@ const ThemeSheetWithOptions = ( props ) => {
 	}
 
 	return (
-		<ThemeOptions site={ site }
+		<ThemeOptions siteId={ siteId }
 			theme={ props /* TODO: Have ThemeOptions only use theme ID */ }
 			options={ [
 				'signup',
@@ -545,6 +545,7 @@ export default connect(
 			id: props.id,
 			isActive,
 			selectedSite,
+			siteId: selectedSite && selectedSite.ID,
 			siteSlug,
 			backPath,
 			currentUserId,

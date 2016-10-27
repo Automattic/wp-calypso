@@ -49,7 +49,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 		 */
 		if ( action ) {
 			defer( () => {
-				action( theme, site );
+				action( theme, site.ID );
 			} );
 		}
 	},

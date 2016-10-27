@@ -141,7 +141,7 @@ const CheckoutThankYou = React.createClass( {
 
 	redirectIfThemePurchased() {
 		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
-			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite );
+			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite.ID );
 
 			page.redirect( '/design/' + this.props.selectedSite.slug );
 		}

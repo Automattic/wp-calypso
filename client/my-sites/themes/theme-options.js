@@ -144,18 +144,16 @@ const ALL_THEME_OPTIONS = {
 const ALL_THEME_ACTIONS = { activate: activateAction }; // All theme related actions available.
 
 export default connect(
-	( state, { options: optionNames, site, theme } ) => {
+	( state, { options: optionNames, siteId, theme } ) => {
 		let options = pick( ALL_THEME_OPTIONS, optionNames );
 		let mapGetUrl = identity, mapHideForSite = identity;
 
-		// We bind hideForTheme to site even if it is null since the selectors
+		// We bind hideForTheme to siteId even if it is null since the selectors
 		// that are used by it are expected to recognize that case as "no site selected"
 		// and work accordingly.
-		const mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, site ? site.ID : null );
+		const mapHideForTheme = hideForTheme => ( t ) => hideForTheme( state, t, siteId );
 
-		if ( site ) {
-			const siteId = site.ID;
-
+		if ( siteId ) {
 			mapGetUrl = getUrl => ( t ) => getUrl( state, t, siteId );
 			options = pickBy( options, option =>
 				! ( option.hideForSite && option.hideForSite( state, siteId ) )
@@ -184,12 +182,11 @@ export default connect(
 				: {}
 		) );
 	},
-	( dispatch, { site, source = 'unknown' } ) => {
+	( dispatch, { siteId, source = 'unknown' } ) => {
 		let mapAction;
 
-		if ( site ) {
-			// TODO (@ockham): Change actions to use siteId.
-			mapAction = action => ( t ) => action( t, site, source );
+		if ( siteId ) {
+			mapAction = action => ( t ) => action( t, siteId, source );
 		} else { // Bind only source.
 			mapAction = action => ( t, s ) => action( t, s, source );
 		}

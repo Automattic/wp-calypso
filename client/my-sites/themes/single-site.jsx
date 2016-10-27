@@ -72,7 +72,7 @@ const SingleSiteThemeShowcase = ( props ) => {
 	}
 
 	return (
-		<ThemeOptions site={ site }
+		<ThemeOptions siteId={ site.ID }
 			options={ [
 				'customize',
 				'preview',
