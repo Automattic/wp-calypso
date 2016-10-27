@@ -288,8 +288,9 @@ export function jetpackSSOSessions( state = {}, action ) {
 		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
 			return Object.assign( {}, state, buildNoProtocolUrlObj( action.siteUrl ) );
 		case SERIALIZE:
-		case DESERIALIZE:
 			return state;
+		case DESERIALIZE:
+			return ! isStale( state.timestamp ) ? state : {};
 	}
 	return state;
 }

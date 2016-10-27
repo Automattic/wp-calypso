@@ -60,7 +60,6 @@ import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
-import { isStale } from 'state/jetpack-connect/utils';
 
 /**
  * Constants
@@ -582,12 +581,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 	isSSO() {
 		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
-		if ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] ) {
-			const sessionTimestamp = this.props.jetpackSSOSessions[ site ].timestamp || 0;
-			return ! isStale( sessionTimestamp );
-		}
-
-		return false;
+		return !! ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] );
 	},
 
 	renderNoQueryArgsError() {
