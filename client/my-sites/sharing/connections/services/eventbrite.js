@@ -25,12 +25,7 @@ export function didKeyringConnectionSucceed( value, serviceName, siteId, availab
 
 	if ( site && connection ) {
 		// Update site setting with Eventbrite token details
-		site.saveSettings( {
-			eventbrite_api_token: connection.keyringConnectionId
-		}, function( error, data ) {
-			const success = ! error && Object.keys( data.updated ).length;
-			connectionsList().emit( 'create:' + ( success ? 'success' : 'error' ) );
-		} );
+		site.saveSettings( { eventbrite_api_token: connection.keyringConnectionId } );
 	}
 
 	return value;

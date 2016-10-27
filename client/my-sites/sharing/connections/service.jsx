@@ -151,10 +151,22 @@ const SharingService = React.createClass( {
 			// At this point, if there are no available accounts to
 			// select, we must assume the user closed the popup
 			// before completing the authorization step.
-			this.props.connections.emit( 'create:error', { cancel: true } );
+			this.props.failCreateConnection( {
+				message: this.props.translate( 'The %(service)s connection could not be made because no account was selected.', {
+					args: { service: this.props.service.label },
+					context: 'Sharing: Publicize connection confirmation',
+				} ),
+			} );
+			this.setState( { isConnecting: false } );
 		} else if ( ! isAnyConnectionOptions ) {
 			// Similarly warn user if all options are connected
-			this.props.connections.emit( 'create:error', { connected: true } );
+			this.props.failCreateConnection( {
+				message: this.props.translate( 'The %(service)s connection could not be made because all available accounts are already connected.', {
+					args: { service: this.props.service.label },
+					context: 'Sharing: Publicize connection confirmation',
+				} )
+			} );
+			this.setState( { isConnecting: false } );
 		}
 
 		return this.filter( 'didKeyringConnectionSucceed', service, externalConnections.length && isAnyConnectionOptions, [
@@ -205,8 +217,6 @@ const SharingService = React.createClass( {
 	},
 
 	componentWillUnmount: function() {
-		this.props.connections.off( 'create:success', this.onConnectionSuccess );
-		this.props.connections.off( 'create:error', this.onConnectionError );
 		this.props.connections.off( 'destroy:success', this.onDisconnectionSuccess );
 		this.props.connections.off( 'destroy:error', this.onDisconnectionError );
 		this.props.connections.off( 'refresh:success', this.onRefreshSuccess );
@@ -225,12 +235,14 @@ const SharingService = React.createClass( {
 			this.refresh();
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Reconnect Button', this.props.service.ID );
 		} else {
-			this.connect();
+			this.addConnection();
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Button', this.props.service.ID );
 		}
 	},
 
 	addConnection: function( service, keyringConnectionId, externalUserId = false ) {
+		this.setState( { isConnecting: true } );
+
 		if ( service ) {
 			if ( keyringConnectionId ) {
 				// Since we have a Keyring connection to work with, we can immediately
@@ -298,44 +310,6 @@ const SharingService = React.createClass( {
 		this.refreshConnection( oldConnection );
 	},
 
-	onConnectionSuccess: function() {
-		this.setState( { isConnecting: false } );
-		this.props.connections.off( 'create:error', this.onConnectionError );
-
-		this.props.successNotice( this.props.translate( 'The %(service)s account was successfully connected.', {
-			args: { service: this.props.service.label },
-			context: 'Sharing: Publicize connection confirmation'
-		} ) );
-
-		if ( ! this.state.isOpen ) {
-			this.setState( { isOpen: true } );
-		}
-	},
-
-	onConnectionError: function( reason ) {
-		this.setState( { isConnecting: false } );
-		this.props.connections.off( 'create:success', this.onConnectionSuccess );
-
-		if ( reason && reason.cancel ) {
-			this.props.warningNotice( this.props.translate(
-				'The %(service)s connection could not be made because no account was selected.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize connection confirmation'
-				} ) );
-		} else if ( reason && reason.connected ) {
-			this.props.warningNotice( this.props.translate(
-				'The %(service)s connection could not be made because all available accounts are already connected.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize connection confirmation'
-				} ) );
-		} else {
-			this.props.errorNotice( this.props.translate( 'The %(service)s connection could not be made.', {
-				args: { service: this.props.service.label },
-				context: 'Sharing: Publicize connection confirmation'
-			} ) );
-		}
-	},
-
 	onDisconnectionSuccess: function() {
 		this.setState( { isDisconnecting: false } );
 		this.props.connections.off( 'destroy:error', this.onDisconnectionError );
@@ -378,13 +352,6 @@ const SharingService = React.createClass( {
 
 	connectAnother() {
 		this.props.recordGoogleEvent( 'Sharing', 'Clicked Connect Another Account Button', this.props.service.ID );
-		this.connect();
-	},
-
-	connect: function() {
-		this.setState( { isConnecting: true } );
-		this.props.connections.once( 'create:success', this.onConnectionSuccess );
-		this.props.connections.once( 'create:error', this.onConnectionError );
 		this.addConnection( this.props.service );
 	},
 
