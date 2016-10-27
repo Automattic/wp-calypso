@@ -8,7 +8,7 @@ import { includes, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSite } from 'state/sites/selectors';
+import { getSite, getSiteSlug } from 'state/sites/selectors';
 
 /**
  * Returns the site object for the currently selected site.
@@ -33,6 +33,22 @@ export function getSelectedSite( state ) {
  */
 export function getSelectedSiteId( state ) {
 	return state.ui.selectedSiteId;
+}
+
+/**
+ * Returns the slug of the currently selected site,
+ * or null if no site is selected.
+ *
+ * @param  {Object}  state Global state tree
+ * @return {?String}       Selected site slug
+ */
+export function getSelectedSiteSlug( state ) {
+	const siteId = getSelectedSiteId( state );
+	if ( ! siteId ) {
+		return null;
+	}
+
+	return getSiteSlug( state, siteId );
 }
 
 /**
