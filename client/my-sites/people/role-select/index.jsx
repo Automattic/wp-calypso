@@ -5,10 +5,12 @@ import React from 'react';
 import debugFactory from 'debug';
 import omit from 'lodash/omit';
 import map from 'lodash/map';
+import forEach from 'lodash/forEach';
 
 /**
  * Internal dependencies
  */
+import SelectDropdown from 'components/select-dropdown'
 import RolesStore from 'lib/site-roles/store';
 import RolesActions from 'lib/site-roles/actions';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -108,7 +110,7 @@ export default React.createClass( {
 		}, 0 );
 	},
 
-	render() {
+	renderFormFieldset() {
 		const roleKeys = Object.keys( this.state.roles );
 		return (
 			<FormFieldset key={ this.props.siteId } disabled={ ! roleKeys.length }>
@@ -117,7 +119,7 @@ export default React.createClass( {
 						context: 'Text that is displayed in a label of a form.'
 					} ) }
 				</FormLabel>
-				<FormSelect { ...omit( this.props, [ 'site', 'key', 'siteId', 'includeFollower', 'explanation' ] ) }>
+				<FormSelect { ...omit( this.props, [ 'fieldset', 'site', 'key', 'siteId', 'includeFollower', 'explanation' ] ) }>
 					{
 						map( this.state.roles, ( roleObject, key ) => {
 							return (
@@ -135,5 +137,19 @@ export default React.createClass( {
 				}
 			</FormFieldset>
 		);
+	},
+
+	renderSelect() {
+		const options = [ this.props.defaultOption ];
+		forEach( this.state.roles, ( roleObject, key ) => {
+			options.push( { value: key, label: roleObject.display_name, path: this.props.calculatePath(key) } );
+		} );
+		return (
+			<SelectDropdown compact options={options} onSelect={ this.props.onSelect } />
+		);
+	},
+
+	render() {
+		return this.props.fieldset ? this.renderFormFieldset() : this.renderSelect();
 	}
 } );
