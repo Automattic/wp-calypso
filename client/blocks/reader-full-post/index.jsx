@@ -52,6 +52,7 @@ import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import ExternalLink from 'components/external-link';
+import DocumentHead from 'components/data/document-head';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -255,6 +256,10 @@ export class FullPostView extends React.Component {
 		/*eslint-disable react/jsx-no-target-blank */
 		return (
 			<ReaderMain className={ classNames( classes ) }>
+				{ ! post || post._state === 'pending'
+					? <DocumentHead title={ translate( 'Loading' ) } />
+					: <DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } />
+				}
 				{ post && post.feed_ID && <QueryReaderFeed feedId={ post.feed_ID } /> }
 				{ post && ! post.is_external && post.site_ID && <QueryReaderSite siteId={ post.site_ID } /> }
 				<div className="reader-full-post__back-container">
