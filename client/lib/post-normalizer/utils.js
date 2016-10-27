@@ -31,7 +31,7 @@ export function imageSizeFromAttachments( post, imageUrl ) {
 }
 
 export function maxWidthPhotonishURL( imageURL, width ) {
-	if ( ! imageURL ) {
+	if ( ! imageURL || ! width ) {
 		return imageURL;
 	}
 

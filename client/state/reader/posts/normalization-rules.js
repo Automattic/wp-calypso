@@ -6,6 +6,7 @@ import flow from 'lodash/flow';
 import forEach from 'lodash/forEach';
 import url from 'url';
 import matches from 'lodash/matches';
+import partial from 'lodash/partial';
 
 /**
  * Internal Dependencies
@@ -36,6 +37,7 @@ import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
+import contentMedia from 'lib/post-normalizer/rule-content-media';
 
 /**
  * Module vars
@@ -147,7 +149,9 @@ const fastPostNormalizationRules = flow( [
 		disableAutoPlayOnMedia,
 		detectEmbeds,
 		detectPolls,
-		wordCount
+		wordCount,
+		partial( contentMedia, partial.placeholder, partial.placeholder,
+			READER_CONTENT_WIDTH ),
 	] ),
 	createBetterExcerpt,
 	classifyPost

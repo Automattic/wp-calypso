@@ -1,37 +1,44 @@
 /**
  * External Dependencies
  */
-import { filter, include, startsWith, endsWith, forEach, forOwn, some, toArray, url } from 'lodash';
+import url from 'url';
+import { map, compact, filter, includes, startsWith, endsWith, some, toArray } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import safeImageURL from 'lib/safe-image-url';
+import { maxWidthPhotonishURL } from './utils';
 
 const TRANSPARENT_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-
-const bannedUrlParts = [
-	'feeds.feedburner.com',
-	'feeds.wordpress.com/',
-	'.feedsportal.com',
-	'wp-includes',
-	'wp-content/themes',
-	'wp-content/plugins',
-	'stats.wordpress.com',
-	'pixel.wp.com'
-];
 
 /**
 * @param {Node} node - Takes in a DOM Node and mutates it so that it no longer has an 'on*' event handlers e.g. onClick
 */
-const removeInlineEventHandlers = ( node ) => {
+const removeUnwantedAttributes = ( node ) => {
 	if ( ! node || ! node.hasAttributes() ) {
 		return;
 	}
 
 	const inlineEventHandlerAttributes = filter( node.attributes, ( attr ) => startsWith( attr.name, 'on' ) );
-	inlineEventHandlerAttributes.forEach( ( handler ) => node.removeAttribute( handler ) );
+	inlineEventHandlerAttributes.forEach( ( a ) => node.removeAttribute( a ) );
+
+	// always remove srcset because they are very difficult to make safe and may not be worth the trouble
+	node.removeAttribute( 'srcset' );
 };
+
+/** Checks whether or not an image is a tracking pixel
+* @param {Node} image - DOM node for an img
+* @returns {boolean} isTrackingPixel - returns true if image is probably a tracking pixel
+*/
+function isTrackingPixel( image ) {
+	if ( ! image || ! image.src ) {
+		return false;
+	}
+
+	const edgeLength = image.height + image.width;
+	return edgeLength === 1 || edgeLength === 2;
+}
 
 /** Checks whether or not imageUrl shoudl be removed from the dom
  * @param {string} imageUrl - the url of the image
@@ -42,53 +49,52 @@ const imageShouldBeRemovedFromContent = ( imageUrl ) => {
 		return;
 	}
 
-	return some( bannedUrlParts, ( part ) => include( imageUrl.toLowerCase(), part ) );
+	const bannedUrlParts = [
+		'feeds.feedburner.com',
+		'feeds.wordpress.com/',
+		'.feedsportal.com',
+		'wp-includes',
+		'wp-content/themes',
+		'wp-content/plugins',
+		'stats.wordpress.com',
+		'pixel.wp.com'
+	];
+
+	return some( bannedUrlParts, ( part ) => includes( imageUrl.toLowerCase(), part ) );
 };
 
-const excludedContentImageUrlParts = [
-	'gravatar.com',
-	'/wpcom-smileys/'
-];
-
-function isTrackingPixel( image ) {
-	if ( ! image || ! image.src ) {
+function isCandidateForContentImage( image ) {
+	if ( ! image || ! image.getAttribute( 'src' ) ) {
 		return false;
 	}
 
-	const edgeLength = image.height + image.width;
-	// if the image size isn't set (0) or is greater than 2, keep it
-	return edgeLength === 0 || edgeLength > 2;
-}
+	const ineligibleCandidateUrlParts = [
+		'gravatar.com',
+		'/wpcom-smileys/',
+	];
 
-function isCandidateForContentImage( imageUrl ) {
-	if ( ! imageUrl ) {
-		return false;
-	}
-	const imageShouldBeExcludedFromCandidacy = some( excludedContentImageUrlParts,
-		( part ) => include( imageUrl.toLowerCase(), part )
+	const imageUrl = image.getAttribute( 'src' );
+
+	const imageShouldBeExcludedFromCandidacy = some( ineligibleCandidateUrlParts,
+		( part ) => includes( imageUrl.toLowerCase(), part )
 	);
 
-	return ! imageShouldBeRemovedFromContent( imageUrl ) && ! imageShouldBeExcludedFromCandidacy;
+	return ! ( isTrackingPixel( image ) || imageShouldBeRemovedFromContent( imageUrl ) ||
+		imageShouldBeExcludedFromCandidacy );
 }
 
-	// push everything, including tracking pixels, over to a safe URL
-const process_image = ( post, image, maxWidth ) => {
+const makeImageSafe = ( post, image, maxWidth ) => {
 	let imgSource = image.getAttribute( 'src' );
-	let parsedImgSrc = url.parse( imgSource, false, true );
+	const parsedImgSrc = url.parse( imgSource, false, true );
 	const hostName = parsedImgSrc.hostname;
 
-	maxWidth;
 	// if imgSource is relative, prepend post domain so it isn't relative to calypso
 	if ( ! hostName ) {
 		imgSource = url.resolve( post.URL, imgSource );
-		parsedImgSrc = url.parse( imgSource, false, true );
 	}
 
-	const safeSource = safeImageURL( imgSource );
-	removeInlineEventHandlers( image );
-
-	// always remove srcset because they are very difficult to make safe and may not be worth the trouble
-	image.removeAttribute( 'srcset' );
+	const safeSource = maxWidthPhotonishURL( safeImageURL( imgSource ), maxWidth );
+	removeUnwantedAttributes( image );
 
 	// trickery to remove it from the dom / not load the image
 	// TODO: test if this is necessary
@@ -102,10 +108,25 @@ const process_image = ( post, image, maxWidth ) => {
 
 	image.setAttribute( 'src', safeSource );
 
-	if ( isCandidateForContentImage( imgSource ) && ! isTrackingPixel( image ) ) {
+	// return original source
+	return imgSource;
+};
+
+/** Processes an image.  This does 2 things:
+* 1. Mutates the dom to make it safe/remove it if necessary
+* 2. Returns extra metadata if it should be considered as a content image
+* @param {post} post - the post whose image to process_image
+* @param {image} image - the image to process
+* @param {maxWidth} maxWidth - the max width with which to request images with from photon-ish urls
+* @returns {content_media} metadata - regarding the image or null
+*/
+const process_image = ( post, image, maxWidth ) => {
+	const originalSrc = makeImageSafe( post, image, maxWidth );
+
+	if ( isCandidateForContentImage( image ) ) {
 		return {
-			src: safeSource,
-			original_src: imgSource,
+			src: image.getAttribute( 'src' ),
+			original_src: originalSrc,
 			width: image.width,
 			height: image.height,
 			mediaType: 'image',
@@ -114,74 +135,45 @@ const process_image = ( post, image, maxWidth ) => {
 	return false;
 };
 
-const iframeWhitelist = [
-	'youtube.com',
-	'youtube-nocookie.com',
-	'videopress.com',
-	'vimeo.com',
-	'cloudup.com',
-	'soundcloud.com',
-	'8tracks.com',
-	'spotify.com',
-	'me.sh',
-	'bandcamp.com',
-	'kickstarter.com',
-	'facebook.com',
-	'embed.itunes.apple.com'
-];
+const isWhitelisted = ( iframe ) => {
+	const iframeWhitelist = [
+		'youtube.com',
+		'youtube-nocookie.com',
+		'videopress.com',
+		'vimeo.com',
+		'cloudup.com',
+		'soundcloud.com',
+		'8tracks.com',
+		'spotify.com',
+		'me.sh',
+		'bandcamp.com',
+		'kickstarter.com',
+		'facebook.com',
+		'embed.itunes.apple.com'
+	];
 
-// hosts that we trust that don't work in a sandboxed iframe
-const iframeNoSandbox = [
-	'spotify.com',
-	'kickstarter.com'
-];
-
-const allowedEmbed = ( iframe ) => {
 	const iframeSrc = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
 	return some( iframeWhitelist, function( whitelistedSuffix ) {
 		return endsWith( '.' + iframeSrc, '.' + whitelistedSuffix );
 	} );
 };
 
-//	let embeds = toArray( dom.querySelectorAll( 'iframe' ) );
-const process_embed = ( post, dom, iframe ) => {
-	if ( ! allowedEmbed( iframe ) ) {
-		return false;
-	}
+// hosts that we trust that don't work in a sandboxed iframe
+const isTrustedHost = ( iframeHost ) => {
+	const iframeNoSandbox = [
+		'spotify.com',
+		'kickstarter.com'
+	];
 
-	let node = iframe,
-		embedType = null,
-		aspectRatio,
-		width, height,
-		matches;
-
-	const iframeHost = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
-	const trustedHost = some( iframeNoSandbox, function( accepted ) {
+	return some( iframeNoSandbox, function( accepted ) {
 		return endsWith( '.' + iframeHost, '.' + accepted );
 	} );
+};
 
-	if ( trustedHost ) {
-		iframe.removeAttribute( 'sandbox' );
-	} else {
-		// we allow featured iframes to use a free-er sandbox
-		iframe.setAttribute( 'sandbox', 'allow-same-origin allow-scripts allow-popups' );
-	}
-
-	if ( iframe.width && iframe.height ) {
-		width = Number( iframe.width );
-		height = Number( iframe.height );
-		if ( ! isNaN( width ) && ! isNaN( height ) ) {
-			aspectRatio = width / height;
-		}
-		if ( isNaN( width ) ) {
-			width = iframe.width;
-		}
-		if ( isNaN( height ) ) {
-			height = iframe.height;
-		}
-	}
-
-	const embedUrl = iframe.getAttribute( 'data-wpcom-embed-url' );
+// TODO: i don't like this.
+const getEmbedType = ( iframe ) => {
+	let node = iframe;
+	let matches;
 
 	do {
 		if ( ! node.className ) {
@@ -189,13 +181,34 @@ const process_embed = ( post, dom, iframe ) => {
 		}
 		matches = node.className.match( /\bembed-([-a-zA-Z0-9_]+)\b/ );
 		if ( matches ) {
-			embedType = matches[ 1 ];
-			break;
+			return ( matches[ 1 ] );
 		}
 	} while ( ( node = node.parentNode ) );
+};
+
+//	let embeds = toArray( dom.querySelectorAll( 'iframe' ) );
+const process_embed = ( post, iframe ) => {
+	if ( ! isWhitelisted( iframe ) ) {
+		return false;
+	}
+
+	const iframeHost = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
+
+	if ( isTrustedHost( iframeHost ) ) {
+		iframe.removeAttribute( 'sandbox' );
+	} else {
+		// we allow featured iframes to use a free-er sandbox
+		iframe.setAttribute( 'sandbox', 'allow-same-origin allow-scripts allow-popups' );
+	}
+
+	const width = Number( iframe.width );
+	const height = Number( iframe.height );
+	const aspectRatio = width / height;
+
+	const embedUrl = iframe.getAttribute( 'data-wpcom-embed-url' );
 
 	return {
-		type: embedType,
+		type: getEmbedType( iframe ),
 		src: iframe.src,
 		embedUrl,
 		iframe: iframe.outerHTML,
@@ -206,36 +219,26 @@ const process_embed = ( post, dom, iframe ) => {
 	};
 };
 
-// TODO add this to querySelectorAll higher up + combine for orderrrr
-const processFunnyEmbeds = ( dom ) => {
-	const content_embeds = [];
+/**  currently an overloaded function. it makes all the media safe AND returns an
+* ordered list of all of the media
+*
+*/
+export default function content_media( post, dom, maxWidth ) {
+	const imageSelector = 'img[src]';
+	const embedSelector = 'iframe';
+	const media = toArray( dom.querySelectorAll( `${ imageSelector }, ${ embedSelector }` ) );
 
-	const funnyEmbedSelectors = {
-		'blockquote[class^="instagram-"]': 'instagram',
-		'blockquote[class^="twitter-"]': 'twitter',
-		'fb\\\:post': 'facebook',
-		'[class^="fb-"]': 'facebook'
-	};
+	const contentMedia = map( media, ( element ) => {
+		const nodeName = element.nodeName.toLowerCase();
 
-	forOwn( funnyEmbedSelectors, function( type, selector ) {
-		const funnyEmbeds = toArray( dom.querySelectorAll( selector ) );
-		forEach( funnyEmbeds, function( node ) {
-			content_embeds.push( {
-				type: 'special-' + type,
-				content: node.outerHTML
-			} );
-		} );
+		if ( nodeName === 'iframe' ) {
+			return process_embed( post, element );
+		} else if ( nodeName === 'img' ) {
+			return process_image( post, element, maxWidth );
+		}
+		return false;
 	} );
-};
 
-export default function content_media( post, dom ) {
-	// 1. selector for everything -- that should return it all in the correct order. May be tricky for funny embeds
-
-	// 2. map returned array with a switch on the successful selector - and process accordingly
-
-	// 3. filter falses
-	processFunnyEmbeds();
-	process_embed();
-	process_image();
-	dom;
+	post.content_media = compact( contentMedia );
+	return post;
 }

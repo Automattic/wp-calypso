@@ -37,7 +37,7 @@ function safeImageURL( imageUrl ) {
 
 	if ( /^([-a-zA-Z0-9_]+\.)*(gravatar.com|wordpress.com|wp.com|a8c.com)$/.test( parsed.hostname ) ) {
 		// wp-hosted domains can be safely promoted to ssl
-		return url.replace( /^http:/, 'https:' );
+		return imageUrl.replace( /^http:/, 'https:' );
 	}
 
 	// we cannot make any external url with a querystring safe, so strip it
