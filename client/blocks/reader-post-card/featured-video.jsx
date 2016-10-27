@@ -4,7 +4,7 @@
 import React from 'react';
 import { throttle, constant } from 'lodash';
 import ReactDom from 'react-dom';
-import { translate } from 'i18n-calypso'; // @todo use localize HOC instead
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
@@ -61,7 +61,7 @@ class FeaturedVideo extends React.Component {
 	}
 
 	render() {
-		const { thumbnailUrl, autoplayIframe, iframe } = this.props;
+		const { thumbnailUrl, autoplayIframe, iframe, translate } = this.props;
 		const preferThumbnail = this.state.preferThumbnail;
 
 		if ( preferThumbnail && thumbnailUrl ) {
@@ -85,4 +85,4 @@ class FeaturedVideo extends React.Component {
 	}
 }
 
-export default FeaturedVideo;
+export default localize( FeaturedVideo );
