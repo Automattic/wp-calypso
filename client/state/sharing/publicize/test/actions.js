@@ -19,13 +19,14 @@ import {
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE
 } from 'state/action-types';
 import {
-	fetchConnections,
 	createSiteConnection,
-	updateSiteConnection,
 	deleteSiteConnection,
 	deleteConnection,
+	failCreateConnection,
+	failConnectionsRequest,
+	fetchConnections,
 	receiveConnections,
-	failConnectionsRequest
+	updateSiteConnection,
 } from '../actions';
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
@@ -215,6 +216,19 @@ describe( 'actions', () => {
 				connection: {
 					ID: 2,
 					site_ID: 2916284,
+				},
+			} );
+		} );
+	} );
+
+	describe( 'failCreateConnection()', () => {
+		it( 'should return an action object', () => {
+			const action = failCreateConnection( { message: 'An error occurred' } );
+
+			expect( action ).to.eql( {
+				type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
+				error: {
+					message: 'An error occurred',
 				},
 			} );
 		} );

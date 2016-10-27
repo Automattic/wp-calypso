@@ -86,10 +86,7 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
 				type: PUBLICIZE_CONNECTION_CREATE,
 				connection,
 			} ) )
-			.catch( ( error ) => dispatch( {
-				type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
-				error,
-			} ) );
+			.catch( ( error ) => dispatch( failCreateConnection( error ) ) );
 }
 
 /**
@@ -137,6 +134,13 @@ export function deleteSiteConnection( connection ) {
 					error,
 				} );
 			} );
+}
+
+export function failCreateConnection( error ) {
+	return {
+		type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
+		error,
+	};
 }
 
 /**
