@@ -531,7 +531,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000568"
+      "version": "1.0.30000569"
     },
     "caseless": {
       "version": "0.11.0"
@@ -2666,7 +2666,7 @@
       "dev": true
     },
     "object.omit": {
-      "version": "2.0.0"
+      "version": "2.0.1"
     },
     "object.values": {
       "version": "1.0.3",
