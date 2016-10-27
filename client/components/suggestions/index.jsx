@@ -185,12 +185,12 @@ const Suggestions = React.createClass( {
 		return taxonomySuggestionsArray;
 	},
 
-	createTextWithHighlight( text, highlighed_text ) {
-		const re = new RegExp( '(' + highlighed_text + ')', 'g' );
+	createTextWithHighlight( text, highlightedText ) {
+		const re = new RegExp( '(' + highlightedText + ')', 'g' );
 		const parts = text.split( re );
 		const token = parts.map( ( part, i ) => {
 			const key = text + i;
-			if ( part === highlighed_text ) {
+			if ( part === highlightedText ) {
 				return <span key={ key } className="suggestions__value-emphasis" >{ part }</span>;
 			}
 			return <span key={ key }className="suggestions__value-normal" >{ part }</span>;
