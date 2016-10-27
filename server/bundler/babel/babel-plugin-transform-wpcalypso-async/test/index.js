@@ -33,18 +33,18 @@ describe( 'babel-plugin-transform-wpcalypso-async', () => {
 		} );
 
 		context( 'async', () => {
-			it( 'should replace a require string prop', () => {
-				const code = transform( '<AsyncLoad require="foo" />' );
+			it( 'should replace a require string prop with hoisting', () => {
+				const code = transform( 'export default () => <AsyncLoad require="foo" />;' );
 
-				expect( code ).to.equal( '<AsyncLoad require={function (callback) {\n  require.ensure("foo", function (require) {\n    callback(require("foo"));\n  }, "async-load-foo");\n}} />;' );
+				expect( code ).to.equal( 'var _ref = function (callback) {\n  require.ensure("foo", function (require) {\n    callback(require("foo"));\n  }, "async-load-foo");\n};\n\nexport default (() => <AsyncLoad require={_ref} />);' );
 			} );
 		} );
 
 		context( 'sync', () => {
-			it( 'should replace a require string prop', () => {
-				const code = transform( '<AsyncLoad require="foo" />', false );
+			it( 'should replace a require string prop with hoisting', () => {
+				const code = transform( 'export default () => <AsyncLoad require="foo" />;', false );
 
-				expect( code ).to.equal( '<AsyncLoad require={function (callback) {\n  callback(require("foo"));\n}} />;' );
+				expect( code ).to.equal( 'var _ref = function (callback) {\n  callback(require("foo"));\n};\n\nexport default (() => <AsyncLoad require={_ref} />);' );
 			} );
 		} );
 	} );
