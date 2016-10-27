@@ -74,11 +74,12 @@ export default React.createClass( {
 		const calculatePath = function ( role ) {
 			return `/people/team/role/${role}/${site.slug}`;
 		};
+		const allLabel = this.translate( 'All', { context: 'A label when displaying team members of all roles.' } )
 		const roleSelect = (
 			<RoleSelect
 				id="role"
 				name="role"
-				defaultOption={ { value: '', label: label, path: `/people/team/${this.props.site.slug}` } }
+				defaultOption={ { value: '', label: allLabel, path: `/people/team/${this.props.site.slug}` } }
 				siteId={ site.ID }
 				calculatePath={ calculatePath }
 			/>
