@@ -283,7 +283,7 @@ UndocumentedMe.prototype.deleteAccountRecoveryPhone = function( callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.newValidationAccountRecoveryPhone = function( callback ) {
+UndocumentedMe.prototype.newAccountRecoveryPhoneValidationCode = function( callback ) {
 	var args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/phone/validation/new',
@@ -323,7 +323,7 @@ UndocumentedMe.prototype.deleteAccountRecoveryEmail = function( callback ) {
 	return this.wpcom.req.post( args, callback );
 };
 
-UndocumentedMe.prototype.newValidationAccountRecoveryEmail = function( callback ) {
+UndocumentedMe.prototype.newAccountRecoveryEmailValidationCode = function( callback ) {
 	var args = {
 		apiVersion: '1.1',
 		path: '/me/account-recovery/email/validation/new',
