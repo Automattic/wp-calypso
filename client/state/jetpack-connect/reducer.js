@@ -39,12 +39,15 @@ import { isValidStateWithSchema } from 'state/utils';
 import { jetpackConnectSessionsSchema } from './schema';
 import { isStale } from './utils';
 
-const defaultAuthorizeState = {
-	queryObject: {},
-	isAuthorizing: false,
-	authorizeSuccess: false,
-	authorizeError: false
-};
+function buildDefaultAuthorizeState() {
+	return {
+		queryObject: {},
+		isAuthorizing: false,
+		authorizeSuccess: false,
+		authorizeError: false,
+		timestamp: Date.now()
+	};
+}
 
 function buildNoProtocolUrlObj( url, flowType ) {
 	const noProtocolUrl = url.replace( /.*?:\/\//g, '' );
@@ -194,7 +197,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			const queryObject = Object.assign( {}, action.queryObject );
 			return Object.assign(
 				{},
-				defaultAuthorizeState,
+				buildDefaultAuthorizeState(),
 				{ queryObject: queryObject }
 			);
 		case JETPACK_CONNECT_QUERY_UPDATE:
@@ -246,7 +249,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case DESERIALIZE:
-			return state;
+			return ! isStale( state.timestamp ) ? state : {};
 		case SERIALIZE:
 			return state;
 	}
