@@ -21,6 +21,7 @@ import {
 	POST_RESTORE_SUCCESS,
 	POST_SAVE_SUCCESS,
 	PUBLICIZE_CONNECTION_CREATE,
+	PUBLICIZE_CONNECTION_CREATE_FAILURE,
 	SITE_FRONT_PAGE_SET_FAILURE
 } from 'state/action-types';
 
@@ -35,6 +36,8 @@ export function dispatchSuccess( message ) {
 export function dispatchError( message ) {
 	return ( dispatch ) => dispatch( errorNotice( message ) );
 }
+
+export const dispatchErrorMessage = ( dispatch, { error } ) => dispatch( errorNotice( error.message ) );
 
 /**
  * Handlers
@@ -111,6 +114,7 @@ export const handlers = {
 	[ POST_RESTORE_SUCCESS ]: dispatchSuccess( translate( 'Post successfully restored' ) ),
 	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
 	[ PUBLICIZE_CONNECTION_CREATE ]: onPublicizeConnectionCreate,
+	[ PUBLICIZE_CONNECTION_CREATE_FAILURE ]: dispatchErrorMessage,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) )
 };
