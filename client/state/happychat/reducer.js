@@ -6,6 +6,7 @@ import concat from 'lodash/concat';
 import {
 	SERIALIZE,
 	DESERIALIZE,
+	HAPPYCHAT_SET_AVAILABLE,
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_CONNECTING,
@@ -97,4 +98,24 @@ const status = ( state = 'disconnected', action ) => {
 	return state;
 };
 
-export default combineReducers( { timeline, message, status } );
+/**
+ * Tracks the availability of happychat. If not available, happychat should
+ * not be displayed or made accessible to users.
+ *
+ * @param  {Boolean} state  Current happychat status
+ * @param  {Object}  action Action playload
+ * @return {Boolean}        Updated happychat status
+ */
+const isAvailable = ( state = false, action ) => {
+	switch ( action.type ) {
+		case SERIALIZE:
+			return false;
+		case DESERIALIZE:
+			return state;
+		case HAPPYCHAT_SET_AVAILABLE:
+			return action.isAvailable;
+	}
+	return state;
+};
+
+export default combineReducers( { timeline, message, status, isAvailable } );
