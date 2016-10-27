@@ -8,28 +8,21 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
+import { localize } from 'i18n-calypso';
 import Gridicon from 'components/gridicon';
 import { taxonomyToGridicon } from './taxonomy-styling.js';
 
-const MagicSearchWelcome = React.createClass( {
+class MagicSearchWelcome extends React.Component {
 
-	propTypes: {
-		taxonomies: PropTypes.array,
-		topSearches: PropTypes.array,
-		suggestionsCallback: PropTypes.func,
-	},
+	constructor( props ) {
+		super( props );
+	}
 
-	defaultProps: {
-		taxonomies: [],
-		topSearches: [],
-		suggestionsCallback: noop,
-	},
-
-	onMouseDown: function( event ) {
+	onMouseDown = ( event ) => {
 		this.props.suggestionsCallback( event.target.textContent + ':' );
-	},
+	}
 
-	renderToken( taxonomy ) {
+	renderToken = ( taxonomy ) => {
 		const themesTokenTypeClass = classNames(
 			'themes-magic-search-card__welcome-taxonomy',
 			'themes-magic-search-card__welcome-taxonomy-type-' + taxonomy
@@ -45,18 +38,31 @@ const MagicSearchWelcome = React.createClass( {
 				{ taxonomy }
 			</div>
 		);
-	},
+	}
 
 	render() {
 		return (
 			<div className="themes-magic-search-card__welcome" >
-				<span className="themes-magic-search-card__welcome-header">{ this.translate('Search by') }</span>
+				<span className="themes-magic-search-card__welcome-header">{ this.props.translate( 'Search by' ) }</span>
 				<div className="themes-magic-search-card__welcome-taxonomies">
 					{ this.props.taxonomies.map( taxonomy => this.renderToken( taxonomy ) ) }
 				</div>
 			</div>
 		);
 	}
-} );
+}
 
-export default MagicSearchWelcome;
+MagicSearchWelcome.propTypes = {
+	taxonomies: PropTypes.array,
+	topSearches: PropTypes.array,
+	suggestionsCallback: PropTypes.func,
+	translate: React.PropTypes.func.isRequired,
+};
+
+MagicSearchWelcome.defaultProps = {
+	taxonomies: [],
+	topSearches: [],
+	suggestionsCallback: noop
+};
+
+export default localize( MagicSearchWelcome );

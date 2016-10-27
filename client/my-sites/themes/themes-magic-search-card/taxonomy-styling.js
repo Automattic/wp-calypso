@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+/**
 	* This is a helper file that establishes designed visual connection between
 	* search taxonomy and its graphical representation.
 	*/
@@ -13,8 +18,5 @@ const taxonomyToGridiconMap = {
 };
 
 export function taxonomyToGridicon( taxonomy ) {
-	if ( taxonomyToGridiconMap.hasOwnProperty( taxonomy ) ) {
-		return taxonomyToGridiconMap[ taxonomy ];
-	}
-	return 'tag';
+	return get( taxonomyToGridiconMap, taxonomy, 'tag' );
 }

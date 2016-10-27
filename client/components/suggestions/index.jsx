@@ -3,10 +3,15 @@
  */
 import React from 'react';
 import {
+	has,
 	noop,
 	pick,
-	pickBy
+	pickBy,
+	negate,
+	isEmpty,
+	take
 } from 'lodash';
+import classNames from 'classnames';
 
 const Suggestions = React.createClass( {
 
@@ -16,7 +21,7 @@ const Suggestions = React.createClass( {
 		input: React.PropTypes.string,
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			welcomeSign: noop,
 			suggest: noop,
@@ -25,7 +30,7 @@ const Suggestions = React.createClass( {
 		};
 	},
 
-	getInitialState: function() {
+	getInitialState() {
 		return {
 			taxonomySuggestionsArray: [],
 			suggestionPosition: -1,
@@ -34,7 +39,7 @@ const Suggestions = React.createClass( {
 		};
 	},
 
-	componentWillMount: function() {
+	componentWillMount() {
 		const suggestions = this.narrowDown( this.props.input );
 		this.setState( {
 			suggestions: suggestions,
@@ -43,7 +48,7 @@ const Suggestions = React.createClass( {
 		} );
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( nextProps.input !== this.props.input ) {
 			const suggestions = this.narrowDown( nextProps.input );
 			this.setState( {
@@ -55,19 +60,19 @@ const Suggestions = React.createClass( {
 		}
 	},
 
-	countSuggestions: function() {
+	countSuggestions() {
 		return this.state.taxonomySuggestionsArray.length;
 	},
 
-	getSuggestionForPosition: function( position ) {
+	getSuggestionForPosition( position ) {
 		return this.state.taxonomySuggestionsArray[ position ];
 	},
 
-	getPositionForSuggestion: function( suggestion ) {
+	getPositionForSuggestion( suggestion ) {
 		return this.state.taxonomySuggestionsArray.indexOf( suggestion );
 	},
 
-	incPosition: function() {
+	incPosition() {
 		const position = ( this.state.suggestionPosition + 1 ) % this.countSuggestions();
 		this.setState( {
 			suggestionPosition: position,
@@ -75,7 +80,7 @@ const Suggestions = React.createClass( {
 		} );
 	},
 
-	decPosition: function() {
+	decPosition() {
 		const position = ( this.state.suggestionPosition - 1 ) % this.countSuggestions();
 		this.setState( {
 			suggestionPosition: position,
@@ -83,7 +88,7 @@ const Suggestions = React.createClass( {
 		} );
 	},
 
-	handleKeyEvent: function( event ) {
+	handleKeyEvent( event ) {
 		switch ( event.key ) {
 			case 'ArrowDown' :
 				this.incPosition();
@@ -101,23 +106,22 @@ const Suggestions = React.createClass( {
 		}
 	},
 
-	onMouseDown: function( event ) {
+	onMouseDown( event ) {
 		this.props.suggest( event.target.textContent );
 	},
 
-	onMouseOver: function( event ) {
+	onMouseOver( event ) {
 		this.setState( {
 			suggestionPosition: this.getPositionForSuggestion( event.target.textContent ),
 			currentSuggestion: event.target.textContent,
 		} );
 	},
 
-	removeEmptySuggestions: function( suggestions ) {
-		const hasValues = x => x.length > 0;
-		return pickBy( suggestions, hasValues );
+	removeEmptySuggestions( suggestions ) {
+		return pickBy( suggestions, negate( isEmpty ) );
 	},
 
-	narrowDown: function( input ) {
+	narrowDown( input ) {
 		const [ taxonomy, filter ] = input.split( ':' );
 		if ( taxonomy === '' ) {
 			// empty string or just ":" or ":filter" -
@@ -132,7 +136,7 @@ const Suggestions = React.createClass( {
 		if ( filter !== undefined ) {
 			// this means that we have at least taxonomy:
 			// so check if this is a correct taxonomy
-			if ( this.props.terms.hasOwnProperty( taxonomy ) ) {
+			if ( has( this.props.terms, taxonomy ) ) {
 				//so we will only filter elements from this taxonomy
 				terms = pick( this.props.terms, taxonomy );
 				//limit to 5 suggestions
@@ -152,26 +156,27 @@ const Suggestions = React.createClass( {
 		const filtered = {};
 
 		// store filtering term for highlithing
-		this.setState( { filterTerm: filterTerm } );
+		this.setState( { filterTerm } );
 
 		for ( const key in terms ) {
-			if ( ! this.props.terms.hasOwnProperty( key ) ) {
+			if ( ! has( this.props.terms, key ) ) {
 				continue;
 			}
 
-			filtered[ key ] = terms[ key ].filter(
-				term => term.indexOf( filterTerm ) !== -1
-			).splice( 0, limit );
+			filtered[ key ] = take(
+				terms[ key ].filter( term => term.indexOf( filterTerm ) !== -1 ),
+				limit
+			);
 		}
 
 		return this.removeEmptySuggestions( filtered );
 	},
 
-	createTaxonomySuggestionsArray: function( suggestions ) {
+	createTaxonomySuggestionsArray( suggestions ) {
 		const taxonomySuggestionsArray = [];
 
 		for ( const key in suggestions ) {
-			if ( ! suggestions.hasOwnProperty( key ) ) {
+			if ( ! has( suggestions, key ) ) {
 				continue;
 			}
 			taxonomySuggestionsArray.push( ... suggestions[ key ].map( value => key + ':' + value ) );
@@ -180,12 +185,12 @@ const Suggestions = React.createClass( {
 		return taxonomySuggestionsArray;
 	},
 
-	createTextWithHighlight: function( text, highlighed_text ) {
-		const re = new RegExp( '(' + highlighed_text + ')', 'g' );
+	createTextWithHighlight( text, highlightedText ) {
+		const re = new RegExp( '(' + highlightedText + ')', 'g' );
 		const parts = text.split( re );
 		const token = parts.map( ( part, i ) => {
 			const key = text + i;
-			if ( part === highlighed_text ) {
+			if ( part === highlightedText ) {
 				return <span key={ key } className="suggestions__value-emphasis" >{ part }</span>;
 			}
 			return <span key={ key }className="suggestions__value-normal" >{ part }</span>;
@@ -194,12 +199,12 @@ const Suggestions = React.createClass( {
 		return token;
 	},
 
-	createSuggestions: function( suggestions ) {
+	createSuggestions( suggestions ) {
 		let noOfSuggestions = 0;
 		const rendered = [];
 
 		for ( const key in suggestions ) {
-			if ( ! suggestions.hasOwnProperty( key ) ) {
+			if ( ! has( suggestions, key ) ) {
 				continue;
 			}
 
@@ -218,8 +223,8 @@ const Suggestions = React.createClass( {
 			);
 			//Add values
 			rendered.push( suggestions[ key ].map( ( value, i ) => {
-				const hashighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
-				const className = 'suggestions__value' + ( hashighlight ? ' has-highlight' : '' );
+				const hasHighlight = ( noOfSuggestions + i ) === this.state.suggestionPosition;
+				const className = classNames( 'suggestions__value', { 'has-highlight': hasHighlight } );
 				return (
 					<span className={ className } onMouseDown={ this.onMouseDown } onMouseOver={ this.onMouseOver } key={ key + '_' + i }>
 						<span className="suggestions__value-category">{ key + ':' }</span>
@@ -249,4 +254,4 @@ const Suggestions = React.createClass( {
 
 } );
 
-module.exports = Suggestions;
+export default Suggestions;
