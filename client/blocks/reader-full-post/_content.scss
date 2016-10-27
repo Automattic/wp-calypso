@@ -1,4 +1,4 @@
-.reader__full-post-content {
+.reader-full-post__story-content {
 	@extend %content-font;
 	margin: 0;
 	padding-top: 16px;
@@ -186,7 +186,7 @@
 }
 
 // Discover-Specific Full Post View Styles
-.blog-53424024 .reader__full-post-content {
+.blog-53424024 .reader-full-post__story-content {
 	.intro {
 		font-size: 20px;
 	    font-weight: 700;
@@ -249,10 +249,32 @@
 			}
 		}
 	}
+
+	sup, sub {
+		position: relative;
+		font-size: 0.83em;
+	}
+
+	sup {
+		top: -0.5em;
+	}
+
+	sub {
+		bottom: -0.5em;
+	}
+
+	table th,
+	table td {
+		padding: 10px;
+	}
+
+	img:first-child {
+		margin-top: 0;
+	}
 }
 
 // Daily Post-Specific Full Post View Styles
-.is-reader-page .blog-489937 .reader__full-post-content {
+.is-reader-page .blog-489937 .reader-full-post__story-content {
 	blockquote.left,
 	blockquote.alignleft,
 	blockquote.align-left,
@@ -297,4 +319,8 @@
 .reader-full-post .jp-relatedposts-headline,
 .reader-full-post .jp-relatedposts {
 	display: none;
+}
+
+.is-reader-page .reader-full-post__story-content {
+	padding-top: 0!important;
 }
