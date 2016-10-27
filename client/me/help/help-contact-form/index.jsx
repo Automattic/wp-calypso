@@ -80,6 +80,18 @@ export const HelpContactForm = React.createClass( {
 		};
 	},
 
+	componentWillReceiveProps( nextProps ) {
+		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
+			return;
+		}
+
+		this.setState( nextProps.valueLink.value );
+	},
+
+	componentDidUpdate() {
+		this.props.valueLink.requestChange( this.state );
+	},
+
 	getSiteSlug() {
 		if ( this.props.selectedSiteSlug ) {
 			return this.props.selectedSiteSlug;
@@ -91,18 +103,6 @@ export const HelpContactForm = React.createClass( {
 		}
 
 		return null;
-	},
-
-	componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
-			return;
-		}
-
-		this.setState( nextProps.valueLink.value );
-	},
-
-	componentDidUpdate() {
-		this.props.valueLink.requestChange( this.state );
 	},
 
 	setSite( siteSlug ) {
