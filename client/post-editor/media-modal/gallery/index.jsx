@@ -144,7 +144,7 @@ const EditorMediaModalGallery = React.createClass( {
 							settings={ settings }
 							onUpdateSetting={ this.updateSetting }
 							numberOfItems={ items.length }
-							onReverse = { this.reverseOrder } />
+							onReverse={ this.reverseOrder } />
 					</div>
 				</div>
 			</div>
