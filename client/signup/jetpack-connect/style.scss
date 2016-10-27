@@ -464,3 +464,26 @@
 .jetpack-connect__error-details {
 	margin-bottom: 16px;
 }
+
+
+.jetpack-connect__plans {
+	.plan-features__header-figure {
+		height: 32px;
+		width: 32px;
+	}
+
+	.plan-features__header-timeframe {
+		height: 20px;
+		margin-top: 11px;
+	}
+
+	.plan-price.is-original {
+		align-self: center;
+		font-size: 16px;
+		margin-top: 6px;
+	}
+
+	.plan-price.is-discounted {
+		margin-right: 0;
+	}
+}
