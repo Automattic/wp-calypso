@@ -177,11 +177,12 @@ class ThemesMagicSearchCard extends React.Component {
 	render() {
 		const isJetpack = this.props.site && this.props.site.jetpack;
 		const isPremiumThemesEnabled = config.isEnabled( 'upgrades/premium-themes' );
+		const { translate } = this.props;
 
 		const tiers = [
-			{ value: 'all', label: this.props.translate( 'All' ) },
-			{ value: 'free', label: this.props.translate( 'Free' ) },
-			{ value: 'premium', label: this.props.translate( 'Premium' ) },
+			{ value: 'all', label: translate( 'All' ) },
+			{ value: 'free', label: translate( 'Free' ) },
+			{ value: 'premium', label: translate( 'Premium' ) },
 		];
 
 		const taxonomies = getTaxonomies();
@@ -197,7 +198,7 @@ class ThemesMagicSearchCard extends React.Component {
 				onSearch={ this.props.onSearch }
 				initialValue={ this.state.searchInput }
 				ref="url-search"
-				placeholder={ this.props.translate( 'What kind of theme are you looking for?' ) }
+				placeholder={ translate( 'What kind of theme are you looking for?' ) }
 				analyticsGroup="Themes"
 				delaySearch={ true }
 				onSearchOpen={ this.onSearchOpen }
@@ -254,7 +255,8 @@ ThemesMagicSearchCard.propTypes = {
 		React.PropTypes.bool
 	] ).isRequired,
 	onSearch: React.PropTypes.func.isRequired,
-	search: React.PropTypes.string
+	search: React.PropTypes.string,
+	translate: React.PropTypes.func.isRequired,
 };
 
 ThemesMagicSearchCard.defaultProps = {
