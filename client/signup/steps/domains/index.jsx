@@ -166,7 +166,7 @@ const DomainsStep = React.createClass( {
 
 	domainForm: function() {
 		const initialState = this.props.step ? this.props.step.domainForm : this.state.domainForm;
-		const isDeveloperFlow = this.props.flowName;
+		const isDeveloperFlow = Boolean( 'developer' === this.props.flowName );
 
 		return (
 			<RegisterDomainStep
