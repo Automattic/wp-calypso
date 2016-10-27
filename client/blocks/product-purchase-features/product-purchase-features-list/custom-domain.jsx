@@ -2,19 +2,17 @@
  * External dependencies
  */
 import React from 'react';
+import pick from 'lodash/pick';
 
 /**
  * Internal dependencies
  */
 import CustomDomainPurchaseDetail from 'my-sites/upgrades/checkout-thank-you/custom-domain-purchase-detail';
 
-export default ( { selectedSite, hasDomainCredit } ) => {
+export default ( props ) => {
 	return (
 		<div className="product-purchase-features-list__item">
-			<CustomDomainPurchaseDetail
-				selectedSite={ selectedSite }
-				hasDomainCredit={ hasDomainCredit }
-			/>
+			<CustomDomainPurchaseDetail { ...pick( props, [ 'selectedSite', 'hasDomainCredit', 'isPressableSite' ] ) } />
 		</div>
 	);
 };
