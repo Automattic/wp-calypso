@@ -236,6 +236,16 @@ const SharingService = React.createClass( {
 		};
 	},
 
+	componentWillReceiveProps: function( nextProps ) {
+		if ( this.props.siteUserConnections.length !== nextProps.siteUserConnections.length ) {
+			this.setState( {
+				isConnecting: false,
+				isDisconnecting: false,
+				isSelectingAccount: false,
+			} );
+		}
+	},
+
 	componentWillUnmount: function() {
 		this.props.connections.off( 'create:success', this.onConnectionSuccess );
 		this.props.connections.off( 'create:error', this.onConnectionError );
