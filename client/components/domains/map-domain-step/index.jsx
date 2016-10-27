@@ -79,7 +79,7 @@ var MapDomainStep = React.createClass( {
 						rule={ cartItems.getDomainPriceRule( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
 						price={ price } />
 
-					<fieldset>
+					<div className="map-domain-step__add-domain" role="group">
 						<input
 							className="map-domain-step__external-domain"
 							type="text"
@@ -95,7 +95,7 @@ var MapDomainStep = React.createClass( {
 								context: 'Upgrades: Label for mapping an existing domain'
 							} ) }
 						</button>
-					</fieldset>
+					</div>
 
 					{ this.domainRegistrationUpsell() }
 				</form>
