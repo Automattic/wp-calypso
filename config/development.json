@@ -123,8 +123,6 @@
 		"reader/list-management": true,
 		"reader/recommendations/posts": true,
 		"reader/related-posts": true,
-		"reader/refresh/full-post-ab-test": true,
-		"reader/refresh/force-full-post": false,
 		"reader/refresh/stream": true,
 		"reader/search": true,
 		"reader/start": true,

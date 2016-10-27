@@ -26,7 +26,6 @@ import { recordTrack } from 'reader/stats';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { requestGraduate } from 'state/reader/start/actions';
 import { isRequestingGraduation } from 'state/reader/start/selectors';
-import { hideReaderFullPost } from 'state/ui/reader/fullpost/actions';
 import { preload } from 'sections-preload';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import ReaderSidebarComponent from 'reader/sidebar';
@@ -311,11 +310,6 @@ module.exports = {
 			document.getElementById( 'primary' ),
 			context.store
 		);
-	},
-
-	removePost: function( context, next ) {
-		context.store.dispatch( hideReaderFullPost() );
-		next();
 	},
 
 	readA8C: function( context ) {

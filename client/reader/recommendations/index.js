@@ -18,7 +18,6 @@ export default function() {
 		readerController.loadSubscriptions,
 		readerController.initAbTests,
 		readerController.updateLastRoute,
-		readerController.removePost,
 		readerController.sidebar,
 		controller.recommendedForYou
 	);
@@ -32,7 +31,6 @@ export default function() {
 					readerController.preloadReaderBundle,
 					readerController.loadSubscriptions,
 					readerController.updateLastRoute,
-					readerController.removePost,
 					readerController.sidebar,
 					controller.recommendedPosts
 		] ) } )
