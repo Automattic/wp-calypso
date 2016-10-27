@@ -4,7 +4,7 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 
-class SharingServiceExample extends Component {
+export default class SharingServiceExample extends Component {
 	static propTypes = {
 		image: PropTypes.shape( {
 			src: PropTypes.string,
@@ -33,5 +33,3 @@ class SharingServiceExample extends Component {
 		);
 	}
 }
-
-export default SharingServiceExample;

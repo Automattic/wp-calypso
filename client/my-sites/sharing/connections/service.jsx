@@ -13,7 +13,6 @@ var ServiceTip = require( './service-tip' ),
 	ServiceConnectedAccounts = require( './service-connected-accounts' ),
 	notices = require( 'notices' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	sites = require( 'lib/sites-list' )(),
 	serviceConnections = require( './service-connections' ),
 	analytics = require( 'lib/analytics' ),
 	FoldableCard = require( 'components/foldable-card' ),
@@ -227,7 +226,7 @@ module.exports = React.createClass( {
 		const content = (
 			<div
 				className={ 'sharing-service__content ' + ( serviceConnections.isFetchingAccounts() ? 'is-placeholder' : '' ) }>
-				<ServiceExamples service={ this.props.service } site={ sites.getSelectedSite() } />
+				<ServiceExamples service={ this.props.service } />
 				<ServiceConnectedAccounts
 					connections={ connections }
 					isDisconnecting={ this.state.isDisconnecting }
