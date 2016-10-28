@@ -22,6 +22,8 @@ import {
 	POST_SAVE_SUCCESS,
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_CREATE_FAILURE,
+	PUBLICIZE_CONNECTION_DELETE,
+	PUBLICIZE_CONNECTION_DELETE_FAILURE,
 	SITE_FRONT_PAGE_SET_FAILURE
 } from 'state/action-types';
 
@@ -90,9 +92,23 @@ export function onPostSaveSuccess( dispatch, action ) {
 	}
 }
 
-export const onPublicizeConnectionCreate = ( dispatch, action ) => dispatch(
+export const onPublicizeConnectionCreate = ( dispatch, { connection } ) => dispatch(
 	successNotice( translate( 'The %(service)s account was successfully connected.', {
-		args: { service: action.connection.label },
+		args: { service: connection.label },
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionDelete = ( dispatch, { connection } ) => dispatch(
+	successNotice( translate( 'The %(service)s account was successfully disconnected.', {
+		args: { service: connection.label },
+		context: 'Sharing: Publicize connection confirmation'
+	} ) )
+);
+
+export const onPublicizeConnectionDeleteFailure = ( dispatch, { error } ) => dispatch(
+	successNotice( translate( 'The %(service)s account was unable to be disconnected.', {
+		args: { service: error.label },
 		context: 'Sharing: Publicize connection confirmation'
 	} ) )
 );
@@ -115,6 +131,8 @@ export const handlers = {
 	[ POST_SAVE_SUCCESS ]: onPostSaveSuccess,
 	[ PUBLICIZE_CONNECTION_CREATE ]: onPublicizeConnectionCreate,
 	[ PUBLICIZE_CONNECTION_CREATE_FAILURE ]: dispatchErrorMessage,
+	[ PUBLICIZE_CONNECTION_DELETE ]: onPublicizeConnectionDelete,
+	[ PUBLICIZE_CONNECTION_DELETE_FAILURE ]: onPublicizeConnectionDeleteFailure,
 	[ GUIDED_TRANSFER_HOST_DETAILS_SAVE_SUCCESS ]: dispatchSuccess( translate( 'Thanks for confirming those details!' ) ),
 	[ SITE_FRONT_PAGE_SET_FAILURE ]: dispatchError( translate( 'An error occurred while setting the homepage' ) )
 };
