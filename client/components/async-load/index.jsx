@@ -19,6 +19,18 @@ export default class AsyncLoad extends Component {
 	}
 
 	componentWillMount() {
+		this.require();
+	}
+
+	componentDidUpdate( prevProps ) {
+		// Our Babel transform will hoist the require function in the rendering
+		// component, so we can compare the reference with confidence
+		if ( this.props.require !== prevProps.require ) {
+			this.require();
+		}
+	}
+
+	require() {
 		this.props.require( ( component ) => {
 			this.setState( { component } );
 		} );
