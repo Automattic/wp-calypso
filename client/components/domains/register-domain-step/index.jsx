@@ -605,7 +605,8 @@ const RegisterDomainStep = React.createClass( {
 				break;
 
 			case 'not_mappable_recently_mapped':
-				message = this.translate( 'This domain has been recently unmapped by a different user - please try again later.' );
+				message = this.translate( 'This domain was recently in use by someone else and is not available to map yet. ' +
+					'Please try again later or contact support.' );
 				break;
 
 			// Generic error message when domain is not mappable without an explicit unmappability reason
