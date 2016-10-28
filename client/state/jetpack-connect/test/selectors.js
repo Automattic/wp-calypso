@@ -15,6 +15,7 @@ import {
 	getSSOSessions,
 	getSSO,
 	isCalypsoStartedConnection,
+	isRemoteSiteOnSitesList,
 	getFlowType,
 	getJetpackSiteByUrl,
 	hasXmlrpcError
@@ -116,16 +117,16 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getAuthorizationRemoteSite()', () => {
-		it( 'should return null if user has not started the authorization flow', () => {
+	describe( '#isRemoteSiteOnSitesList()', () => {
+		it( 'should return false if user has not started the authorization flow', () => {
 			const state = {
 				jetpackConnect: {}
 			};
 
-			expect( getAuthorizationRemoteSite( state ) ).to.be.null;
+			expect( isRemoteSiteOnSitesList( state ) ).to.be.false;
 		} );
 
-		it( 'should return the current authorization site if there is such', () => {
+		it( 'should return true if there site is in the sites list', () => {
 			const state = {
 				sites: {
 					items: {
@@ -150,7 +151,37 @@ describe( 'selectors', () => {
 				}
 			};
 
-			expect( getAuthorizationRemoteSite( state ) ).to.eql( state.sites.items[ 12345678 ] );
+			expect( isRemoteSiteOnSitesList( state ) ).to.be.true;
+		} );
+	} );
+
+	describe( '#getAuthorizationRemoteSite()', () => {
+		it( 'should return null if user has not started the authorization flow', () => {
+			const state = {
+				jetpackConnect: {}
+			};
+
+			expect( getAuthorizationRemoteSite( state ) ).to.be.undefined;
+		} );
+
+		it( 'should return the current authorization url if there is such', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectAuthorize: {
+						queryObject: {
+							_wp_nonce: 'nonce',
+							client_id: '12345678',
+							redirect_uri: 'https://wordpress.com/',
+							scope: 'auth',
+							secret: '1234abcd',
+							state: 12345678,
+							site: 'https://wordpress.com/'
+						}
+					}
+				}
+			};
+
+			expect( getAuthorizationRemoteSite( state ) ).to.eql( state.jetpackConnect.jetpackConnectAuthorize.queryObject.site );
 		} );
 	} );
 
