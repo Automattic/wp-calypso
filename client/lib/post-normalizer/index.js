@@ -110,18 +110,20 @@ normalizePost.withContentDOM = function( transforms ) {
 };
 
 import removeStyles from './rule-content-remove-styles';
-import makeEmbedsSecure from './rule-content-make-embeds-secure';
+import makeEmbedsSafe from './rule-content-safe-embeds';
+import makeImagesSafe from './rule-content-safe-images';
 import wordCountAndReadingTime from './rule-content-word-count';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from './rule-content-disable-autoplay';
 import detectPolls from './rule-content-detect-polls';
-import contentMedia from 'lib/post-normalizer/rule-content-media';
+import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 
 normalizePost.content = {
 	removeStyles,
 	disableAutoPlayOnMedia,
 	disableAutoPlayOnEmbeds,
-	makeEmbedsSecure,
-	contentMedia,
+	makeImagesSafe,
+	makeEmbedsSafe,
+	detectMedia,
 	wordCountAndReadingTime,
 	detectPolls
 };

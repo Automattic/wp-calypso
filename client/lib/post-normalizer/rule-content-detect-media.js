@@ -145,8 +145,8 @@ export default function detectMedia( post, dom ) {
 	} );
 
 	post.content_media = compact( contentMedia );
-	post.content_images = filter( post.contentMedia, ( metadata ) => metadata.mediaType === 'image' );
-	post.content_embeds = filter( post.contentMedia, ( metadata ) => metadata.mediaType === 'video' );
+	post.content_images = filter( post.content_media, ( metadata ) => metadata.mediaType === 'image' );
+	post.content_embeds = filter( post.content_media, ( metadata ) => metadata.mediaType === 'video' );
 
 	return post;
 }

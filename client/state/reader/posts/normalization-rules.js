@@ -20,7 +20,6 @@ import DISPLAY_TYPES from './display-types';
  */
 import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
-import makeEmbedsSecure from 'lib/post-normalizer/rule-content-make-embeds-secure';
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
 import wordCount from 'lib/post-normalizer/rule-content-word-count';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
@@ -35,7 +34,9 @@ import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
-import contentMedia from 'lib/post-normalizer/rule-content-media';
+import makeImagesSafe from 'lib/post-normalizer/rule-content-safe-images';
+import makeEmbedsSafe from 'lib/post-normalizer/rule-content-safe-embeds';
+import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 
 /**
  * Module vars
@@ -140,13 +141,13 @@ const fastPostNormalizationRules = flow( [
 	firstPassCanonicalImage,
 	withContentDom( [
 		removeStyles,
-		makeEmbedsSecure,
+		makeEmbedsSafe,
+		partial( makeImagesSafe, partial.placeholder, partial.placeholder, READER_CONTENT_WIDTH ),
 		disableAutoPlayOnEmbeds,
 		disableAutoPlayOnMedia,
-		partial( contentMedia, partial.placeholder, partial.placeholder,
-			READER_CONTENT_WIDTH ),
 		discoverFullBleedImages,
 		detectPolls,
+		detectMedia,
 		wordCount,
 	] ),
 	createBetterExcerpt,
