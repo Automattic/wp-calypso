@@ -13,8 +13,9 @@ var Security2faBackupCodesPrompt = require( 'me/security-2fa-backup-codes-prompt
 	Card = require( 'components/card' ),
 	eventRecorder = require( 'me/event-recorder' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
-	Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
-	Notice = require( 'components/notice' );
+	Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' );
+
+import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 

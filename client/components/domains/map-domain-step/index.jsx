@@ -9,13 +9,14 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var cartItems = require( 'lib/cart-values' ).cartItems,
-	Notice = require( 'components/notice' ),
 	{ getFixedDomainSearch, canMap, canRegister } = require( 'lib/domains' ),
 	DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
 	DomainProductPrice = require( 'components/domains/domain-product-price' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	{ getCurrentUser } = require( 'state/current-user/selectors' ),
 	support = require( 'lib/url/support' );
+
+import Notice from 'components/notice';
 
 var MapDomainStep = React.createClass( {
 	mixins: [ analyticsMixin( 'mapDomain' ) ],

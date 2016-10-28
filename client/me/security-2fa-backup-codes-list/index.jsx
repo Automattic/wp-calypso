@@ -12,8 +12,9 @@ var	FormButton = require( 'components/forms/form-button' ),
 	FormButtonBar = require( 'components/forms/form-buttons-bar' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
-	config = require( 'config' ),
-	Notice = require( 'components/notice' );
+	config = require( 'config' );
+
+import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 
