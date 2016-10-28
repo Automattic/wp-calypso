@@ -85,7 +85,6 @@ const SharingService = React.createClass( {
 			recordGoogleEvent: () => {},
 			requestKeyringConnections: () => {},
 			removableConnections: [],
-			site: Object.freeze( {} ),
 			siteId: 0,
 			siteUserConnections: [],
 			translate: identity,
@@ -102,21 +101,6 @@ const SharingService = React.createClass( {
 	 */
 	getConnections: function() {
 		return this.filter( 'getConnections', this.props.service.ID, this.props.siteUserConnections, arguments );
-	},
-
-	/**
-	 * Given a service name, returns the connections for which the current user is permitted to remove.
-	 *
-	 * @param {string} service The name of the service
-	 * @return {Array} Connections for which the current user is permitted to remove
-	 */
-	getRemovableConnections: function( service ) {
-		const connections = this.getConnections().filter( ( connection ) => (
-			this.props.site.capabilities && this.props.site.capabilities.edit_others_posts ||
-				connection.user_ID === this.props.userId
-		), this );
-
-		return this.filter( 'getRemovableConnections', service, connections, arguments );
 	},
 
 	/**
@@ -217,8 +201,6 @@ const SharingService = React.createClass( {
 	},
 
 	componentWillUnmount: function() {
-		this.props.connections.off( 'destroy:success', this.onDisconnectionSuccess );
-		this.props.connections.off( 'destroy:error', this.onDisconnectionError );
 		this.props.connections.off( 'refresh:success', this.onRefreshSuccess );
 		this.props.connections.off( 'refresh:error', this.onRefreshError );
 	},
@@ -228,7 +210,7 @@ const SharingService = React.createClass( {
 
 		// Depending on current status, perform an action when user clicks the
 		// service action button
-		if ( 'connected' === connectionStatus && this.getRemovableConnections( this.props.service.ID ).length ) {
+		if ( 'connected' === connectionStatus && this.props.removableConnections.length ) {
 			this.disconnect();
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
 		} else if ( 'reconnect' === connectionStatus ) {
@@ -297,37 +279,17 @@ const SharingService = React.createClass( {
 		this.props.connections.update( connection, { shared: isSitewide } );
 	},
 
-	refresh: function( oldConnection ) {
+	refresh: function( connection ) {
 		this.setState( { isRefreshing: true } );
 		this.props.connections.once( 'refresh:success', this.onRefreshSuccess );
 		this.props.connections.once( 'refresh:error', this.onRefreshError );
 
-		if ( ! oldConnection ) {
+		if ( ! connection ) {
 			// When triggering a refresh from the primary action button, find
 			// the first broken connection owned by the current user.
-			oldConnection = this.props.siteUserConnections.filter( ( connection ) => ( 'broken' === connection.status ), this );
+			connection = filter( this.getConnections(), { status: 'broken' } );
 		}
-		this.refreshConnection( oldConnection );
-	},
-
-	onDisconnectionSuccess: function() {
-		this.setState( { isDisconnecting: false } );
-		this.props.connections.off( 'destroy:error', this.onDisconnectionError );
-
-		this.props.successNotice( this.props.translate( 'The %(service)s account was successfully disconnected.', {
-			args: { service: this.props.service.label },
-			context: 'Sharing: Publicize disconnection confirmation'
-		} ) );
-	},
-
-	onDisconnectionError: function() {
-		this.setState( { isDisconnecting: false } );
-		this.props.connections.off( 'destroy:success', this.onDisconnectionSuccess );
-
-		this.props.errorNotice( this.props.translate( 'The %(service)s account was unable to be disconnected.', {
-			args: { service: this.props.service.label },
-			context: 'Sharing: Publicize disconnection confirmation'
-		} ) );
+		this.refreshConnection( connection );
 	},
 
 	onRefreshSuccess: function() {
@@ -355,27 +317,21 @@ const SharingService = React.createClass( {
 		this.addConnection( this.props.service );
 	},
 
-	disconnect: function( connections ) {
-		if ( 'undefined' === typeof connections ) {
-			// If connections is undefined, assume that all connections for
-			// this service are to be removed.
-			connections = this.getRemovableConnections( this.props.service.ID );
-		}
-
-		this.setState( { isDisconnecting: true } );
-		this.props.connections.once( 'destroy:success', this.onDisconnectionSuccess );
-		this.props.connections.once( 'destroy:error', this.onDisconnectionError );
-		this.removeConnection( connections );
-	},
-
 	refreshConnection: function( connection ) {
 		this.props.connections.refresh( connection );
 	},
 
-	removeConnection: function( connections ) {
+	/**
+	 * Deletes the passed connections.
+	 *
+	 * @param {Array} connections Optional. Connections to be deleted.
+	 *                            Default: All connections for this service.
+	 */
+	removeConnection: function( connections = this.props.removableConnections ) {
+		this.setState( { isDisconnecting: true } );
+
 		connections = this.filterConnectionsToRemove( connections );
 		connections.map( this.props.deleteSiteConnection );
-		this.props.connections.destroy( connections );
 	},
 
 	/**
@@ -436,8 +392,7 @@ const SharingService = React.createClass( {
 				onAction={ this.performAction }
 				isConnecting={ this.state.isConnecting }
 				isRefreshing={ this.state.isRefreshing }
-				isDisconnecting={ this.state.isDisconnecting }
-				removableConnections={ this.getRemovableConnections( this.props.service.ID ) } />
+				isDisconnecting={ this.state.isDisconnecting } />
 		);
 
 		return (
@@ -463,7 +418,7 @@ const SharingService = React.createClass( {
 									connection={ connection }
 									isDisconnecting={ this.state.isDisconnecting }
 									isRefreshing={ this.state.isRefreshing }
-									onDisconnect={ this.disconnect }
+									onDisconnect={ this.removeConnection }
 									onRefresh={ this.refresh }
 									onToggleSitewideConnection={ this.toggleSitewideConnection }
 									service={ this.props.service }

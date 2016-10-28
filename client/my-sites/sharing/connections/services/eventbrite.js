@@ -6,7 +6,6 @@ import { filter, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import connectionsList from 'lib/connections-list';
 import sites from 'lib/sites-list';
 
 export function getConnections( connections, serviceName, siteId ) {
@@ -36,12 +35,7 @@ export function filterConnectionToRemove( shouldDestroy, connection, siteId ) {
 
 	if ( site ) {
 		// Update site setting to remove Eventbrite token details
-		site.saveSettings( {
-			eventbrite_api_token: ''
-		}, function( error, data ) {
-			const success = ! error && Object.keys( data.updated ).length;
-			connectionsList().emit( 'destroy:' + ( success ? 'success' : 'error' ) );
-		} );
+		site.saveSettings( { eventbrite_api_token: '' } );
 	}
 
 	return false;
