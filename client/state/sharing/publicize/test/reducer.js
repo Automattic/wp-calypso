@@ -174,6 +174,20 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should update existing connections', () => {
+			const newConnection = { ID: 1, site_ID: 2916284 },
+				state = connections( deepFreeze( {
+					1: { ID: 1, site_ID: 77203074 },
+				} ), {
+					type: PUBLICIZE_CONNECTION_CREATE,
+					connection: newConnection,
+				} );
+
+			expect( state ).to.eql( {
+				1: newConnection,
+			} );
+		} );
+
 		describe( 'persistence', () => {
 			useSandbox( ( sandbox ) => sandbox.stub( console, 'warn' ) );
 
