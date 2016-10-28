@@ -279,7 +279,7 @@ const LoggedInForm = React.createClass( {
 		if ( activateManageSecret && ! manageActivated ) {
 			return this.activateManageAndRedirect();
 		}
-		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_expired' ) >= 0 ) {
 			window.location.href = queryObject.site + authUrl;
 			return;
 		}
@@ -360,7 +360,7 @@ const LoggedInForm = React.createClass( {
 		if ( authorizeError.message.indexOf( 'already_connected' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="alreadyConnected" />;
 		}
-		if ( authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+		if ( authorizeError.message.indexOf( 'verify_secrets_expired' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
 		}
 		if ( this.props.requestHasXmlrpcError() ) {
@@ -388,7 +388,7 @@ const LoggedInForm = React.createClass( {
 			return this.translate( 'Return to your site' );
 		}
 
-		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_expired' ) >= 0 ) {
 			return this.translate( 'Try again' );
 		}
 
