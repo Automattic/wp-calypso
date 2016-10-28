@@ -38,6 +38,7 @@ import {
 import { isValidStateWithSchema } from 'state/utils';
 import { jetpackConnectSessionsSchema } from './schema';
 import { isStale } from './utils';
+import { JETPACK_CONNECT_AUTHORIZE_TTL } from './constants';
 
 function buildDefaultAuthorizeState() {
 	return {
@@ -249,7 +250,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case DESERIALIZE:
-			return ! isStale( state.timestamp ) ? state : {};
+			return ! isStale( state.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL ) ? state : {};
 		case SERIALIZE:
 			return state;
 	}
