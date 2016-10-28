@@ -118,11 +118,11 @@ import contentMedia from 'lib/post-normalizer/rule-content-media';
 
 normalizePost.content = {
 	removeStyles,
-	contentMedia,
-	makeEmbedsSecure,
-	wordCountAndReadingTime,
 	disableAutoPlayOnMedia,
 	disableAutoPlayOnEmbeds,
+	makeEmbedsSecure,
+	contentMedia,
+	wordCountAndReadingTime,
 	detectPolls
 };
 
