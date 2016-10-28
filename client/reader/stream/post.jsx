@@ -225,7 +225,7 @@ const Post = React.createClass( {
 		}
 
 		// ignore clicks on anchors inside inline content
-		if ( closest( event.target, 'a', true, rootNode ) && closest( event.target, '.reader__full-post-content', true, rootNode ) ) {
+		if ( closest( event.target, 'a', true, rootNode ) && closest( event.target, '.reader-full-post__story-content', true, rootNode ) ) {
 			return;
 		}
 
@@ -363,7 +363,7 @@ const Post = React.createClass( {
 				{ shouldUseFullExcerpt
 					? <EmbedContainer>
 							<div key="full-post-inline"
-								className="reader__full-post-content"
+								className="reader-full-post__story-content"
 								dangerouslySetInnerHTML={ // eslint-disable-line react/no-danger
 									{ __html: post.content }
 								} />
