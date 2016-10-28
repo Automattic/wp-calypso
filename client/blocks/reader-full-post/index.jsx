@@ -312,7 +312,7 @@ export class FullPostView extends React.Component {
 							? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 							: <EmbedContainer>
 									<div
-										className="reader-full-post__story-content reader__full-post-content"
+										className="reader-full-post__story-content"
 										dangerouslySetInnerHTML={ { __html: post.content } } />
 								</EmbedContainer>
 						}
