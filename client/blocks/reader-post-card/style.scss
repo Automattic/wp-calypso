@@ -37,12 +37,14 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 				height: 100px;
 				max-width: none;
 				width: 100%;
+				margin-bottom: 10px;
 			}
 
 			@media #{$reader-post-card-breakpoint-small} {
 				height: 100px;
 				max-width: none;
 				width: 100%;
+				margin-bottom: 10px;
 			}
 		}
 
@@ -53,6 +55,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 					top: 0;
 				height: 225px;
 				margin-right: 0;
+				margin-bottom: 0;
 				max-width: 100%;
 
 				&::before {
@@ -223,7 +226,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card__title-link:visited {
 	color: $gray-dark;
 	cursor: pointer;
-	font-size: 27px;
+	font-size: 25px;
 	font-weight: 600;
 
 	&:hover {
@@ -234,6 +237,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader-post-card__excerpt {
 	font-size: 16px;
 	font-weight: 100;
+	margin-top: 5px;
 }
 
 // Action buttons in post card
