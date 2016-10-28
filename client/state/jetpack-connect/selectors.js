@@ -23,13 +23,17 @@ const getAuthorizationRemoteQueryData = ( state ) => {
 };
 
 const getAuthorizationRemoteSite = ( state ) => {
-	const remoteUrl = get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
+	return get( getAuthorizationRemoteQueryData( state ), [ 'site' ] );
+};
+
+const isRemoteSiteOnSitesList = ( state ) => {
+	const remoteUrl = getAuthorizationRemoteSite( state );
 
 	if ( ! remoteUrl ) {
-		return null;
+		return false;
 	}
 
-	return getSiteByUrl( state, remoteUrl );
+	return !! getSiteByUrl( state, remoteUrl );
 };
 
 const getSessions = ( state ) => {
@@ -103,6 +107,7 @@ export default {
 	getSSOSessions,
 	getSSO,
 	isCalypsoStartedConnection,
+	isRemoteSiteOnSitesList,
 	getFlowType,
 	getJetpackSiteByUrl,
 	hasXmlrpcError
