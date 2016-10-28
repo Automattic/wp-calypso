@@ -22,9 +22,13 @@ const Shortcode = React.createClass( {
 	},
 
 	render() {
-		const { siteId, className, children, filterRenderResult } = this.props;
+		const { siteId, className, children, filterRenderResult, shortcode } = this.props;
 		const classes = classNames( 'shortcode', className );
-		const filteredShortcode = filterRenderResult( this.props.shortcode );
+		let filteredShortcode = {};
+		if ( shortcode ) {
+			shortcode.body = shortcode.result;
+			filteredShortcode = filterRenderResult( omit( shortcode, 'shortcode' ) );
+		}
 		return (
 			<div>
 				<QueryShortcode
@@ -42,10 +46,8 @@ const Shortcode = React.createClass( {
 } );
 
 export default connect(
-	( state, ownProps ) => (
-		{
-			shortcode: getShortcode( state, ownProps.siteId, ownProps.children )
-		}
-	),
+	( state, { siteId, children } ) => ( {
+		shortcode: getShortcode( state, siteId, children )
+	} ),
 	null
 )( Shortcode );
