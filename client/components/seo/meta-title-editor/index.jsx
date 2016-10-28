@@ -23,7 +23,7 @@ const titleTypes = translate => [
 ];
 
 const getValidTokens = translate => ( {
-	siteName: translate( 'Site Name' ),
+	siteName: translate( 'Site Title' ),
 	tagline: translate( 'Tagline' ),
 	postTitle: translate( 'Post Title' ),
 	pageTitle: translate( 'Page Title' ),
