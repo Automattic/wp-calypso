@@ -10,7 +10,6 @@ var page = require( 'page' ),
  * Internal dependencies
  */
 var HeaderCake = require( 'components/header-cake' ),
-	Notice = require( 'components/notice' ),
 	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	{ currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
@@ -19,6 +18,8 @@ var HeaderCake = require( 'components/header-cake' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	wpcom = require( 'lib/wp' ).undocumented(),
 	paths = require( 'my-sites/upgrades/paths' );
+
+import Notice from 'components/notice';
 
 var MapDomain = React.createClass( {
 	mixins: [ observe( 'productsList', 'sites' ) ],

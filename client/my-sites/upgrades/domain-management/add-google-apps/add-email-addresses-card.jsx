@@ -21,7 +21,6 @@ const analyticsMixin = require( 'lib/mixins/analytics' ),
 	FormTextInputWithAffixes = require( 'components/forms/form-text-input-with-affixes' ),
 	cartItems = require( 'lib/cart-values' ).cartItems,
 	paths = require( 'my-sites/upgrades/paths' ),
-	Notice = require( 'components/notice' ),
 	ValidationErrorList = require( 'notices/validation-error-list' ),
 	upgradesActions = require( 'lib/upgrades/actions' ),
 	{ hasGoogleApps, getGoogleAppsSupportedDomains } = require( 'lib/domains' ),
@@ -29,6 +28,8 @@ const analyticsMixin = require( 'lib/mixins/analytics' ),
 	validateUsers = googleAppsLibrary.validate,
 	filterUsers = googleAppsLibrary.filter,
 	DomainsSelect = require( './domains-select' );
+
+import Notice from 'components/notice';
 
 const AddEmailAddressesCard = React.createClass( {
 	mixins: [ analyticsMixin( 'domainManagement', 'addGoogleApps' ) ],
