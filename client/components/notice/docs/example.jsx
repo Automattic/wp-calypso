@@ -7,8 +7,8 @@ var React = require( 'react' ),
 /**
 * Internal dependencies
 */
-var NoticeAction = require( 'components/notice/notice-action' ),
-	Notice = require( 'components/notice' );
+var NoticeAction = require( 'components/notice/notice-action' );
+import Notice from 'components/notice';
 
 var Notices = React.createClass( {
 	mixins: [ PureRenderMixin ],

@@ -7,12 +7,13 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var Notice = require( 'components/notice' ),
-	Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
+var Security2faBackupCodesList = require( 'me/security-2fa-backup-codes-list' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	twoStepAuthorization = require( 'lib/two-step-authorization' ),
 	eventRecorder = require( 'me/event-recorder' ),
 	support = require( 'lib/url/support' );
+
+import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 
