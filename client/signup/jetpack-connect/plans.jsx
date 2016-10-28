@@ -4,7 +4,6 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -14,7 +13,6 @@ import { isCurrentPlanPaid } from 'state/sites/selectors';
 import { getFlowType } from 'state/jetpack-connect/selectors';
 import Main from 'components/main';
 import StepHeader from '../step-header';
-import observe from 'lib/mixins/data-observe';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -24,7 +22,6 @@ import { getAuthorizationData, isCalypsoStartedConnection } from 'state/jetpack-
 import { goBackToWpAdmin } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
-import { requestPlans } from 'state/plans/actions';
 import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
 
@@ -32,8 +29,6 @@ const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLAN_PAGE = '/plans/my-plan/';
 
 const Plans = React.createClass( {
-	mixins: [ observe( 'plans' ) ],
-
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		context: React.PropTypes.object.isRequired,
@@ -79,7 +74,6 @@ const Plans = React.createClass( {
 
 	autoselectPlan() {
 		if ( this.props.flowType === 'pro' ) {
-			this.props.requestPlans();
 			const plan = this.props.getPlanBySlug( 'jetpack_business' );
 			if ( plan ) {
 				this.selectPlan( plan );
@@ -87,7 +81,6 @@ const Plans = React.createClass( {
 			}
 		}
 		if ( this.props.flowType === 'premium' ) {
-			this.props.requestPlans();
 			const plan = this.props.getPlanBySlug( 'jetpack_premium' );
 			if ( plan ) {
 				this.selectPlan( plan );
@@ -187,14 +180,8 @@ export default connect(
 			calypsoStartedConnection: isCalypsoStartedConnection( state, selectedSite.slug )
 		};
 	},
-	( dispatch ) => {
-		return Object.assign( {},
-			bindActionCreators( { goBackToWpAdmin, requestPlans }, dispatch ),
-			{
-				recordTracksEvent( eventName, props ) {
-					dispatch( recordTracksEvent( eventName, props ) );
-				}
-			}
-		);
+	{
+		goBackToWpAdmin,
+		recordTracksEvent
 	}
 )( Plans );
