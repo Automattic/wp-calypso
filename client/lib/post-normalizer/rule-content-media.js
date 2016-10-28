@@ -240,5 +240,8 @@ export default function content_media( post, dom, maxWidth ) {
 	} );
 
 	post.content_media = compact( contentMedia );
+	post.content_images = filter( contentMedia, ( media ) => media.mediaType === 'image' );
+	post.content_embeds = filter( contentMedia, ( media ) => media.mediaType === 'video' );
+
 	return post;
 }

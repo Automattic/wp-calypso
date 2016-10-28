@@ -19,11 +19,9 @@ import DISPLAY_TYPES from './display-types';
  * Rules
  */
 import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
-import detectEmbeds from 'lib/post-normalizer/rule-content-detect-embeds';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
 import makeEmbedsSecure from 'lib/post-normalizer/rule-content-make-embeds-secure';
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
-import safeImages from 'lib/post-normalizer/rule-content-safe-images';
 import wordCount from 'lib/post-normalizer/rule-content-word-count';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
@@ -142,16 +140,14 @@ const fastPostNormalizationRules = flow( [
 	firstPassCanonicalImage,
 	withContentDom( [
 		removeStyles,
-		safeImages( READER_CONTENT_WIDTH ),
+		partial( contentMedia, partial.placeholder, partial.placeholder,
+			READER_CONTENT_WIDTH ),
 		discoverFullBleedImages,
 		makeEmbedsSecure,
 		disableAutoPlayOnEmbeds,
 		disableAutoPlayOnMedia,
-		detectEmbeds,
 		detectPolls,
 		wordCount,
-		partial( contentMedia, partial.placeholder, partial.placeholder,
-			READER_CONTENT_WIDTH ),
 	] ),
 	createBetterExcerpt,
 	classifyPost
