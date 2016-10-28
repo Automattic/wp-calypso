@@ -425,11 +425,7 @@ export const FEATURES_LIST = {
 
 	[ FEATURE_ADVANCED_SEO ]: {
 		getSlug: () => FEATURE_ADVANCED_SEO,
-		getTitle: () => i18n.translate( '{{strong}}Advanced{{/strong}} SEO', {
-			components: {
-				strong: <strong />
-			}
-		} ),
+		getTitle: () => i18n.translate( 'SEO Tools' ),
 		getDescription: () => i18n.translate(
 			'Adds tools to enhance your site\'s content for better results on search engines and social media.'
 		)
