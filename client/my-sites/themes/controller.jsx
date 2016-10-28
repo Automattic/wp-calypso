@@ -1,6 +1,7 @@
 /**
  * External Dependencies
  */
+import compact from 'lodash/compact';
 import debugFactory from 'debug';
 import Lru from 'lru-cache';
 import React from 'react';
@@ -98,7 +99,7 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 	const queryParams = {
 		search: context.query.s,
 		tier: context.params.tier,
-		filter: context.params.filter,
+		filter: compact( [ context.params.filter, context.params.vertical ] ).join( ',' ),
 		page: 0,
 		perPage: PER_PAGE,
 	};
