@@ -14,10 +14,11 @@ var countriesList = require( 'lib/countries-list' ).forSms(),
 	formBase = require( 'me/form-base' ),
 	FormButton = require( 'components/forms/form-button' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
-	Notice = require( 'components/notice' ),
 	protectForm = require( 'lib/mixins/protect-form' ),
 	Security2faProgress = require( 'me/security-2fa-progress' ),
 	analytics = require( 'lib/analytics' );
+
+import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 

@@ -10,8 +10,9 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var Dialog = require( 'components/dialog' ),
-	AccountDialogAccount = require( './account-dialog-account' ),
-	Notice = require( 'components/notice' );
+	AccountDialogAccount = require( './account-dialog-account' );
+
+import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 	displayName: 'AccountDialog',

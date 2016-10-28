@@ -17,10 +17,11 @@ var Dialog = require( 'components/dialog' ),
 	FormButtonsBar = require( 'components/forms/form-buttons-bar' ),
 	FormInputValidation = require( 'components/forms/form-input-validation' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	Notice = require( 'components/notice' ),
 	eventRecorder = require( 'me/event-recorder' ),
 	userUtilities = require( 'lib/user/utils' ),
 	constants = require( 'me/constants' );
+
+import Notice from 'components/notice';
 
 module.exports = React.createClass( {
 

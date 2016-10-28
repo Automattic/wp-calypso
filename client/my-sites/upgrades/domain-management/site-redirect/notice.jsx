@@ -6,9 +6,10 @@ var React = require( 'react' );
 /**
  * Internal dependencies
  */
-var Notice = require( 'components/notice' ),
-	notices = require( 'notices' ),
+var notices = require( 'notices' ),
 	upgradesActions = require( 'lib/upgrades/actions' );
+
+import Notice from 'components/notice';
 
 var SiteRedirectNotice = React.createClass( {
 	propTypes: {

@@ -5,8 +5,9 @@ const React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	page = require( 'page' ),
 	times = require( 'lodash/times' ),
-	includes = require( 'lodash/includes' ),
-	Notice = require( 'components/notice' );
+	includes = require( 'lodash/includes' );
+
+import Notice from 'components/notice';
 
 /**
  * Internal dependencies
