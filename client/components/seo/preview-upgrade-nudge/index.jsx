@@ -68,14 +68,14 @@ const SeoPreviewNudge = ( { translate, domain, plan = {}, businessPlan = {} } ) 
 			<div className="preview-upgrade-nudge__plan">
 				<div className="preview-upgrade-nudge__plan-icon"></div>
 			</div>
-			<h2 className="preview-upgrade-nudge__title">{ translate( 'Advanced SEO Features' ) }</h2>
+			<h2 className="preview-upgrade-nudge__title">{ translate( 'SEO Features' ) }</h2>
 			<div className="preview-upgrade-nudge__features">
 				<FeatureExample>
 					<img src="/calypso/images/advanced-seo-nudge.png" />
 				</FeatureExample>
 				<div className="preview-upgrade-nudge__features-details">
 					<p className="preview-upgrade-nudge__features-title">
-						{ translate( 'By upgrading to a Business Plan you\'ll enable advanced SEO features on your site.' ) }
+						{ translate( 'By upgrading to a Business Plan you\'ll enable SEO Tools on your site.' ) }
 					</p>
 					<ul className="preview-upgrade-nudge__features-list">
 						<li className="preview-upgrade-nudge__features-list-item">

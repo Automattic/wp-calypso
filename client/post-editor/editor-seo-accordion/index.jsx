@@ -17,7 +17,7 @@ import EditorDrawerLabel from 'post-editor/editor-drawer/label';
 function EditorSeoAccordion( { translate, metaDescription = '' } ) {
 	return (
 		<Accordion
-			title={ translate( 'Advanced SEO' ) }
+			title={ translate( 'SEO Description' ) }
 			icon={ <Gridicon icon="search" /> }
 			className="editor-seo-accordion"
 		>
