@@ -19,7 +19,7 @@
 	}
 }
 
-.is-reader-page .reader__full-post-content {
+.is-reader-page .reader-full-post__story-content {
 	margin-top: 0;
 }
 
@@ -33,8 +33,7 @@
 	}
 }
 
-.reader__content,
-.reader__full-post-content {
+.reader__content {
 	sup, sub {
 		position: relative;
 		font-size: 0.83em;
@@ -46,14 +45,6 @@
 
 	sub {
 		bottom: -0.5em;
-	}
-}
-
-.reader__full-post-content {
-
-	table th,
-	table td {
-		padding: 10px;
 	}
 }
 
