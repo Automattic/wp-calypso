@@ -37,7 +37,7 @@ import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
-import sanitizeContent from 'lib/post-normalizer/rule-content-sanitize';
+import removeElementsBySelector from 'lib/post-normalizer/rule-content-remove-elements-by-selector';
 
 /**
  * Module vars
@@ -144,7 +144,7 @@ const fastPostNormalizationRules = flow( [
 	firstPassCanonicalImage,
 	withContentDom( [
 		removeStyles,
-		sanitizeContent,
+		removeElementsBySelector,
 		makeImagesSafe( READER_CONTENT_WIDTH ),
 		discoverFullBleedImages,
 		makeEmbedsSafe,
