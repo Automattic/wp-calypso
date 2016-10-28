@@ -29,6 +29,7 @@ import {
 import {
 	getAuthorizationData,
 	getAuthorizationRemoteSite,
+	isRemoteSiteOnSitesList,
 	getSSOSessions,
 	isCalypsoStartedConnection,
 	hasXmlrpcError
@@ -639,7 +640,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
-		const remoteSite = getAuthorizationRemoteSite( state );
+		const remoteSiteUrl = getAuthorizationRemoteSite( state );
 
 		const requestHasXmlrpcError = () => {
 			return hasXmlrpcError( state );
@@ -648,14 +649,13 @@ export default connect(
 		const isFetchingSites = () => {
 			return isRequestingSites( state );
 		};
-
 		return {
 			jetpackConnectAuthorize: getAuthorizationData( state ),
 			jetpackSSOSessions: getSSOSessions( state ),
-			isAlreadyOnSitesList: !! remoteSite,
+			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingSites,
 			requestHasXmlrpcError,
-			calypsoStartedConnection: remoteSite && isCalypsoStartedConnection( state, remoteSite.URL )
+			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl )
 		};
 	},
 	dispatch => bindActionCreators( {
