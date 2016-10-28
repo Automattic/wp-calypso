@@ -119,3 +119,31 @@ export function thumbIsLikelyImage( thumb ) {
 		return endsWith( pathname, ext );
 	} );
 }
+
+/**
+ * Determines if an iframe is from a source we trust.  We allow these to be the featured media and also give
+ * them a free-er sandbox
+ */
+export function iframeIsWhitelisted( iframe ) {
+	const iframeWhitelist = [
+		'youtube.com',
+		'youtube-nocookie.com',
+		'videopress.com',
+		'vimeo.com',
+		'cloudup.com',
+		'soundcloud.com',
+		'8tracks.com',
+		'spotify.com',
+		'me.sh',
+		'bandcamp.com',
+		'kickstarter.com',
+		'facebook.com',
+		'embed.itunes.apple.com'
+	];
+
+	const iframeSrc = iframe.src && url.parse( iframe.src ).hostname.toLowerCase();
+	return some( iframeWhitelist, function( whitelistedSuffix ) {
+		return endsWith( '.' + iframeSrc, '.' + whitelistedSuffix );
+	} );
+}
+
