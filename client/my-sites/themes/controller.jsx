@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import debugFactory from 'debug';
+import Lru from 'lru-cache';
 import React from 'react';
 
 /**
@@ -17,13 +18,14 @@ import {
 	incrementThemesPage,
 	query
 } from 'state/themes/actions';
-import {
-	getAnalyticsData,
-	generateCacheKey
-} from './helpers';
+import { getAnalyticsData } from './helpers';
 
 const debug = debugFactory( 'calypso:themes' );
-const themesQueryCache = new Map();
+const HOUR_IN_MS = 3600000;
+const themesQueryCache = new Lru( {
+	max: 500,
+	maxAge: HOUR_IN_MS
+} );
 
 function getProps( context ) {
 	const { tier, filter, vertical, site_id: siteId } = context.params;
@@ -88,7 +90,7 @@ export function loggedOut( context, next ) {
 	next();
 }
 
-export function fetchThemeData( context, next ) {
+export function fetchThemeData( context, next, shouldUseCache = false ) {
 	if ( ! context.isServerSide ) {
 		return next();
 	}
@@ -100,29 +102,38 @@ export function fetchThemeData( context, next ) {
 		page: 0,
 		perPage: PER_PAGE,
 	};
-	const queryKey = generateCacheKey( queryParams );
-	const cachedResponse = themesQueryCache.get( queryKey );
-	const HOUR_IN_MS = 3600000;
+	const cacheKey = context.path;
 
 	context.store.dispatch( query( queryParams ) );
 	context.store.dispatch( incrementThemesPage( false ) );
 
-	if ( cachedResponse && ( cachedResponse.timestamp + HOUR_IN_MS > Date.now() ) ) {
-		debug( 'found themes!', queryKey );
-		context.store.dispatch( cachedResponse.action );
-		return next();
+	if ( shouldUseCache ) {
+		const cachedAction = themesQueryCache.get( cacheKey );
+		if ( cachedAction ) {
+			debug( `found theme data in cache key=${ cacheKey }` );
+			context.store.dispatch( cachedAction );
+			return next();
+		}
 	}
 
 	context.store.dispatch( fetchThemes( false ) )
 		.then( action => {
-			// Fetch and dispatch is done — cache the action so it can be re-dispatched later
-			const timestamp = Date.now();
-			themesQueryCache.set( queryKey, {
-				action,
-				timestamp
-			} );
-			context.renderCacheKey = context.path + timestamp;
+			if ( shouldUseCache ) {
+				const timestamp = Date.now();
+				themesQueryCache.set( cacheKey, action );
+				context.renderCacheKey = context.path + timestamp;
+				debug( `caching theme data key=${ cacheKey }` );
+			}
 			next();
 		} )
 		.catch( () => next() );
+}
+
+export function fetchThemeDataWithCaching( context, next ) {
+	if ( Object.keys( context.query ).length > 0 ) {
+		// Don't cache URLs with query params for now
+		return fetchThemeData( context, next, false );
+	}
+
+	return fetchThemeData( context, next, true );
 }

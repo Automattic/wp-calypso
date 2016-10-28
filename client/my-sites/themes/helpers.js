@@ -13,20 +13,6 @@ import config from 'config';
 import route from 'lib/route';
 import { oldShowcaseUrl, isPremiumTheme as isPremium } from 'state/themes/utils';
 
-/**
- * Turn a plain object into a sorted string to be used as a cache key. Objects
- * with the same keys and values will return the same result, regardless of how
- * the keys are sorted internally.
- * @param {object} params - The query params that generated the cached results
- * @returns {string} key - The key representing the stringified object
- */
-export function generateCacheKey( params ) {
-	return Object.keys( params )
-		.sort()
-		.map( ( key ) => `${ key }=${ params[ key ] }` )
-		.join( '&' );
-}
-
 export function getSignupUrl( theme ) {
 	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
 
