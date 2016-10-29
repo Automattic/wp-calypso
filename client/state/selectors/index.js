@@ -26,6 +26,7 @@ export getMediaUrl from './get-media-url';
 export getPastBillingTransaction from './get-past-billing-transaction';
 export getSiteIconId from './get-site-icon-id';
 export getSiteIconUrl from './get-site-icon-url';
+export hasBrokenSiteUserConnection from './has-broken-site-user-connection';
 export isAutomatedTransferActive from './is-automated-transfer-active';
 export isDomainOnlySite from './is-domain-only-site';
 export isPrivateSite from './is-private-site';
