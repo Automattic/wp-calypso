@@ -109,7 +109,7 @@ module.exports = {
 		apiRequestFunction: stepActions.createSiteWithCart,
 		stepName: 'get-dot-blog-plans',
 		dependencies: [ 'cartItem' ],
-		providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem' ]
+		providesDependencies: [ 'cartItem', 'siteSlug', 'siteId', 'domainItem', 'themeItem', 'privacyItem' ]
 	},
 
 	'get-dot-blog-themes': {
