@@ -65,21 +65,23 @@ export default React.createClass( {
 	},
 
 	render() {
-		const { label, count, site } = this.props;
+		const { label, count, site, role } = this.props;
 		const siteLink = this.getAddLink();
 		const classes = classNames(
 			this.props.className,
 			'people-list-section-header'
 		);
 		const calculatePath = function ( role ) {
-			return `/people/team/role/${role}/${site.slug}`;
+			return role ? `/people/team/role/${role}/${site.slug}` : `/people/team/${site.slug}`;
 		};
 		const allLabel = this.translate( 'All', { context: 'A label when displaying team members of all roles.' } )
 		const roleSelect = (
 			<RoleSelect
 				id="role"
 				name="role"
-				defaultOption={ { value: '', label: allLabel, path: `/people/team/${this.props.site.slug}` } }
+				selectedText={ role || allLabel }
+				selectedCount={ count }
+				defaultOption={ { value: '', label: allLabel, path: calculatePath() } }
 				siteId={ site.ID }
 				calculatePath={ calculatePath }
 			/>

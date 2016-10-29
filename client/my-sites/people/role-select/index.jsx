@@ -145,7 +145,12 @@ export default React.createClass( {
 			options.push( { value: key, label: roleObject.display_name, path: this.props.calculatePath(key) } );
 		} );
 		return (
-			<SelectDropdown compact options={options} onSelect={ this.props.onSelect } />
+			<SelectDropdown
+				compact
+				selectedCount={ this.props.selectedCount }
+				selectedText={ this.props.selectedText }
+				options={ options }
+				onSelect={ this.props.onSelect } />
 		);
 	},
 

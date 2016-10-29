@@ -97,6 +97,7 @@ var Team = React.createClass( {
 		return (
 			<div>
 				<PeopleListSectionHeader
+					role={ this.props.role }
 					showRoles={ showRoles }
 					label={ headerText }
 					site={ this.props.site }
