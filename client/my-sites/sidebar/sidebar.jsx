@@ -15,7 +15,6 @@ import { connect } from 'react-redux';
  */
 var config = require( 'config' ),
 	CurrentSite = require( 'my-sites/current-site' ),
-	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
 	Gridicon = require( 'components/gridicon' ),
 	productsValues = require( 'lib/products-values' ),
 	PublishMenu = require( './publish-menu' ),
@@ -31,6 +30,8 @@ import SidebarButton from 'layout/sidebar/button';
 import SidebarFooter from 'layout/sidebar/footer';
 import { isPersonal, isPremium, isBusiness } from 'lib/products-values';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { getThemeCustomizeUrl as getCustomizeUrl } from 'state/themes/selectors';
 import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
 
 export const MySitesSidebar = React.createClass( {
@@ -198,7 +199,7 @@ export const MySitesSidebar = React.createClass( {
 				icon="themes"
 				preloadSectionName="themes"
 			>
-				<SidebarButton href={ getCustomizeUrl( null, site ) } preloadSectionName="customize">
+				<SidebarButton href={ this.props.customizeUrl } preloadSectionName="customize">
 					{ this.translate( 'Customize' ) }
 				</SidebarButton>
 			</SidebarItem>
@@ -760,8 +761,10 @@ export const MySitesSidebar = React.createClass( {
 } );
 
 function mapStateToProps( state ) {
+	const selectedSiteId = getSelectedSiteId( state );
 	return {
 		currentUser: getCurrentUser( state ),
+		customizeUrl: getCustomizeUrl( state, null, selectedSiteId )
 	};
 }
 
