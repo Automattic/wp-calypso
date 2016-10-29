@@ -7,6 +7,7 @@ import noop from 'lodash/noop';
 import includes from 'lodash/includes';
 import times from 'lodash/times';
 import fromPairs from 'lodash/fromPairs';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -15,15 +16,15 @@ import EditorMediaModalFieldset from '../fieldset';
 import SelectDropdown from 'components/select-dropdown';
 import SelectDropdownItem from 'components/select-dropdown/item';
 import FormCheckbox from 'components/forms/form-checkbox';
+import Button from 'components/button';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryFields',
-
+export const EditorMediaModalGalleryFields = React.createClass( {
 	propTypes: {
 		site: PropTypes.object,
 		settings: PropTypes.object,
 		onUpdateSetting: PropTypes.func,
+		onReverse: PropTypes.func,
 		numberOfItems: PropTypes.number
 	},
 
@@ -31,6 +32,7 @@ export default React.createClass( {
 		return {
 			settings: Object.freeze( {} ),
 			onUpdateSetting: noop,
+			onReverse: noop,
 			numberOfItems: 0
 		};
 	},
@@ -156,7 +158,14 @@ export default React.createClass( {
 				{ this.renderRandomOption() }
 				{ this.renderDropdown( this.translate( 'Link To' ), links, 'link' ) }
 				{ this.renderDropdown( this.translate( 'Size' ), sizes, 'size' ) }
+				<EditorMediaModalFieldset>
+					<Button onClick={ this.props.onReverse } disabled={ this.props.settings.orderBy === 'rand' } >
+						{ this.props.translate( 'Reverse Order' ) }
+					</Button>
+				</EditorMediaModalFieldset>
 			</div>
 		);
 	}
 } );
+
+export default localize( EditorMediaModalGalleryFields );
