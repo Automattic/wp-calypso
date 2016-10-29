@@ -11,11 +11,14 @@ $accordion-background-expanded: $white;
 	position: relative;
 }
 
+.accordion__header {
+	position: relative;
+}
+
 .accordion__toggle {
 	display: block;
 	width: 100%;
 	cursor: pointer;
-	position: relative;
 	margin: 0;
 	padding: $accordion-padding;
 	padding-right: ( $accordion-padding + 22px );
@@ -79,6 +82,10 @@ $accordion-background-expanded: $white;
 	.accordion.has-icon & {
 		padding-left: 28px;
 	}
+
+	.accordion.has-status & {
+		padding-right: 28px;
+	}
 }
 
 .accordion__subtitle {
@@ -129,4 +136,55 @@ $accordion-background-expanded: $white;
 
 .accordion__section:last-child {
 	margin-bottom: 0;
+}
+
+.accordion__status {
+	position: absolute;
+		right: ( $accordion-padding + 20px + 4px );
+		top: 50%;
+	transform: translateY( -50% );
+	padding: 4px;
+
+	&::before {
+		content: '';
+		position: absolute;
+			top: 4px;
+			left: 4px;
+		width: 14px;
+		height: 14px;
+		background-color: $white;
+		border-radius: 50%;
+	}
+
+	.gridicon {
+		position: relative;
+		display: block;
+		width: 18px;
+		height: 18px;
+		margin: -2px;
+	}
+
+	&.is-warning {
+		color: $alert-yellow;
+
+		&:hover {
+			color: lighten( $alert-yellow, 5% );
+		}
+	}
+
+	&.is-error {
+		color: $alert-red;
+
+		&:hover {
+			color: lighten( $alert-red, 5% );
+		}
+	}
+
+	&.is-info {
+		color: $blue-wordpress;
+
+		&:hover {
+			color: lighten( $blue-wordpress, 5% );
+		}
+	}
 }

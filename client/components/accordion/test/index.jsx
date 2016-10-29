@@ -8,10 +8,18 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
+import useFakeDom from 'test/helpers/use-fake-dom';
 import Gridicon from 'components/gridicon';
-import Accordion from '../';
 
 describe( 'Accordion', function() {
+	let Accordion, AccordionStatus;
+
+	useFakeDom();
+	before( () => {
+		Accordion = require( '../' );
+		AccordionStatus = require( '../status' );
+	} );
+
 	it( 'should render as expected with a title and content', function() {
 		const wrapper = shallow( <Accordion title="Section">Content</Accordion> );
 
@@ -38,6 +46,14 @@ describe( 'Accordion', function() {
 
 		expect( wrapper ).to.have.className( 'has-subtitle' );
 		expect( wrapper.find( '.accordion__subtitle' ) ).to.have.text( 'Subtitle' );
+	} );
+
+	it( 'should accept a status prop to be rendered in the toggle', () => {
+		const status = { type: 'error', text: 'Warning!', url: 'https://wordpress.com', position: 'top left', onClick() {} };
+		const wrapper = shallow( <Accordion title="Section" status={ status }>Content</Accordion> );
+
+		expect( wrapper ).to.have.className( 'has-status' );
+		expect( wrapper.find( AccordionStatus ).props() ).to.eql( status );
 	} );
 
 	context( 'events', () => {
