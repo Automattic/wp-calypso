@@ -4,6 +4,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import React from 'react';
 import Card from 'components/card';
 import i18n from 'i18n-calypso';
 import SectionHeader from 'components/section-header';
-import { getDetailsUrl } from 'my-sites/themes/helpers';
+import { getThemeDetailsUrl } from 'state/themes/selectors';
 
 const ThemesRelatedCard = React.createClass( {
 
@@ -58,8 +59,8 @@ const ThemesRelatedCard = React.createClass( {
 					{ themes.map( theme => (
 						<li key={ theme.id }>
 							<Card className="themes-related-card__card">
-								<a href={ getDetailsUrl( theme ) }>
-									<img src={ theme.screenshot + '?w=' + '660' }/>
+								<a href={ this.props.getDetailsUrl( theme ) }>
+									<img src={ theme.screenshot + '?w=' + '660' } />
 								</a>
 							</Card>
 						</li>
@@ -70,4 +71,8 @@ const ThemesRelatedCard = React.createClass( {
 	}
 } );
 
-export default ThemesRelatedCard;
+export default connect(
+	state => ( {
+		getDetailsUrl: getThemeDetailsUrl.bind( null, state )
+	} )
+)( ThemesRelatedCard );
