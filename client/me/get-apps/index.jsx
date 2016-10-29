@@ -19,12 +19,13 @@ module.exports = React.createClass( {
 		return (
 			<Main className="get-apps">
 				<MeSidebarNavigation />
-
-				<h1 className="get-apps__title">{ this.translate( 'Get Apps' ) }</h1>
-				<p className="get-apps__subheading">{ this.translate( 'Manage all your WordPress.com and Jetpack-enabled sites in one place. On your desktop, or on the go.' ) }</p>
-
-				<h2 className="form-section-heading">{ this.translate( 'Desktop apps' ) }</h2>
+				
 				<Card className="get-apps__desktop">
+
+					<h1 className="get-apps__title">{ this.translate( 'Get Apps' ) }</h1>
+					<p className="get-apps__subheading">{ this.translate( 'Manage all your WordPress.com and Jetpack-enabled sites in one place. On your desktop, or on the go.' ) }</p>
+
+					<h2 className="form-section-heading">{ this.translate( 'Desktop apps' ) }</h2>
 
 					<section className="get-apps__app">
 						<div className="get-apps__app-icon">
