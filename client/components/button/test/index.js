@@ -12,6 +12,9 @@ import Button from '../';
 import Gridicon from 'components/gridicon';
 
 describe( 'Button', () => {
+	const blank = '_blank';
+	const relString = 'noopener noreferrer';
+
 	describe( 'renders', () => {
 		it( 'with modifiers', () => {
 			const button = shallow( <Button scary primary borderless compact /> );
@@ -44,55 +47,47 @@ describe( 'Button', () => {
 		} );
 	} );
 
-	describe( 'link', () => {
-		const blank = '_blank';
-		const relString = 'noopener noreferrer';
+	describe( 'with href prop', () => {
+		const address = 'https://wordpress.com/';
+		const button = shallow( <Button href={ address } target={ blank } rel={ relString } type="submit" /> );
 
-		describe( '< a > element', () => {
-			const address = 'https://wordpress.com/';
-			const button = shallow( <Button href={ address } target={ blank } rel={ relString } type='submit' /> );
-
-			it( 'is rendered', () => {
-				expect( button ).to.match( 'a' );
-			} );
-
-			it( 'omits type property', () => {
-				expect( button ).to.not.have.prop( 'type' );
-			} );
-
-			it( 'has href, target and rel property', () => {
-				expect( button ).to.have.prop( 'href' ).equal( address );
-				expect( button ).to.have.prop( 'target' ).equal( blank );
-				expect( button ).to.have.prop( 'rel' ).equal( relString );
-			} );
+		it( 'renders as a link', () => {
+			expect( button ).to.match( 'a' );
 		} );
 
-		describe( '< button > element', () => {
-			const button = shallow( <Button target={ blank } rel={ relString } /> );
+		it( 'ignores type prop and renders a link without type attribute', () => {
+			expect( button ).to.not.have.prop( 'type' );
+		} );
 
-			it( 'is rendered', () => {
-				expect( button ).to.match( 'button' );
-			} );
+		it( 'including target and rel props renders a link with target and rel attributes', () => {
+			expect( button ).to.have.prop( 'href' ).equal( address );
+			expect( button ).to.have.prop( 'target' ).equal( blank );
+			expect( button ).to.have.prop( 'rel' ).equal( relString );
+		} );
+	} );
 
-			it( 'renders with `type` prop assigned to `button` by default', () => {
-				expect( button ).to.have.prop( 'type' ).equal( 'button' );
-			} );
+	describe( 'without href prop', () => {
+		const button = shallow( <Button target={ blank } rel={ relString } /> );
 
-			it( '`type` prop changes when overridden', () => {
-				const typeProp = 'submit';
-				const submitButton = shallow( <Button target={ blank } rel={ relString } type={ typeProp } /> );
+		it( 'renders as a button', () => {
+			expect( button ).to.match( 'button' );
+			expect( button ).to.not.have.prop( 'href' );
+		} );
 
-				expect( submitButton ).to.have.prop( 'type' ).equal( typeProp );
-			} );
+		it( 'renders button with type attribute set to "button" by default', () => {
+			expect( button ).to.have.prop( 'type' ).equal( 'button' );
+		} );
 
-			it( 'omits rel and target property', () => {
-				expect( button ).to.not.have.prop( 'target' );
-				expect( button ).to.not.have.prop( 'rel' );
-			} );
+		it( 'renders button with type attribute set to type prop if specified', () => {
+			const typeProp = 'submit';
+			const submitButton = shallow( <Button target={ blank } rel={ relString } type={ typeProp } /> );
 
-			it( 'has not href property', () => {
-				expect( button ).to.not.have.prop( 'href' );
-			} );
+			expect( submitButton ).to.have.prop( 'type' ).equal( typeProp );
+		} );
+
+		it( 'renders button without rel and target attributes', () => {
+			expect( button ).to.not.have.prop( 'target' );
+			expect( button ).to.not.have.prop( 'rel' );
 		} );
 	} );
 } );
