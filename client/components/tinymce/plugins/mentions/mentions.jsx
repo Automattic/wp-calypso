@@ -30,22 +30,18 @@ export class Mentions extends React.Component {
 			popoverContext: null,
 			showPopover: false,
 		};
-
-		this.setPopoverContext = this.setPopoverContext.bind( this );
-		this.handleClick = this.handleClick.bind( this );
-		this.handleClose = this.handleClose.bind( this );
 	}
 
 	componentDidMount() {
 		const { editor } = this.props;
 
-		editor.on( 'keyup', this.onKeyUp.bind( this ) );
+		editor.on( 'keyup', this.onKeyUp );
 		editor.on( 'click', () => {
 			this.setState( { showPopover: false } );
 		} );
 	}
 
-	setPopoverContext( popoverContext ) {
+	setPopoverContext = ( popoverContext ) => {
 		if ( popoverContext ) {
 			this.setState( { popoverContext } );
 		}
@@ -64,7 +60,7 @@ export class Mentions extends React.Component {
 		return null;
 	}
 
-	onKeyUp( { keyCode } ) {
+	onKeyUp = ( { keyCode } ) => {
 		if ( includes( [ VK.ENTER, VK.SPACEBAR, VK.UP, VK.DOWN, 27 /* ESCAPE */ ], keyCode ) ) {
 			return this.setState( { showPopover: false } );
 		}
@@ -77,7 +73,7 @@ export class Mentions extends React.Component {
 		} );
 	}
 
-	handleClick( suggestion ) {
+	handleClick = ( suggestion ) => {
 		const { editor } = this.props;
 		const re = /@\S*/;
 		const markup = <EditorMention username={ suggestion.user_login } />;
@@ -95,7 +91,7 @@ export class Mentions extends React.Component {
 		editor.getBody().focus();
 	}
 
-	handleClose() {
+	handleClose = () => {
 		this.setState( {
 			showPopover: false
 		} );
