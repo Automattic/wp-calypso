@@ -18,22 +18,7 @@ import SelectDropdownItem from 'components/select-dropdown/item';
 import FormCheckbox from 'components/forms/form-checkbox';
 import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
 
-export const EditorMediaModalGalleryFields = React.createClass( {
-
-	propTypes: {
-		site: PropTypes.object,
-		settings: PropTypes.object,
-		onUpdateSetting: PropTypes.func,
-		numberOfItems: PropTypes.number
-	},
-
-	getDefaultProps() {
-		return {
-			settings: Object.freeze( {} ),
-			onUpdateSetting: noop,
-			numberOfItems: 0
-		};
-	},
+export class EditorMediaModalGalleryFields extends React.Component {
 
 	getTypeOptions() {
 		const { site } = this.props;
@@ -59,7 +44,7 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 		}
 
 		return options;
-	},
+	}
 
 	getLinkOptions() {
 		if ( 'individual' === this.props.settings.type ) {
@@ -71,7 +56,7 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 			file: this.props.translate( 'Media File' ),
 			none: this.props.translate( 'None' ),
 		};
-	},
+	}
 
 	getSizeOptions() {
 		if ( ! includes( GallerySizeableTypes, this.props.settings.type ) ) {
@@ -84,16 +69,16 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 			large: this.props.translate( 'Large' ),
 			full: this.props.translate( 'Full Size' ),
 		};
-	},
+	}
 
 	getColumnOptions() {
 		const max = Math.min( this.props.numberOfItems, 9 );
 		return fromPairs( times( max, ( n ) => [ n + 1, ( n + 1 ).toString() ] ) );
-	},
+	}
 
 	updateRandomOrder( event ) {
 		this.props.onUpdateSetting( 'orderBy', event.target.checked ? 'rand' : null );
-	},
+	}
 
 	renderDropdown( legend, options, settingName ) {
 		const { settings, onUpdateSetting } = this.props;
@@ -120,7 +105,7 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 				</SelectDropdown>
 			</EditorMediaModalFieldset>
 		);
-	},
+	}
 
 	renderColumnsOption() {
 		if ( ! includes( GalleryColumnedTypes, this.props.settings.type ) ) {
@@ -128,7 +113,7 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 		}
 
 		return this.renderDropdown( this.props.translate( 'Columns' ), this.getColumnOptions(), 'columns' );
-	},
+	}
 
 	renderRandomOption() {
 		const { settings } = this.props;
@@ -142,7 +127,7 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 				<FormCheckbox onChange={ this.updateRandomOrder } checked={ settings.orderBy === 'rand' } />
 			</EditorMediaModalFieldset>
 		);
-	},
+	}
 
 	render() {
 		const types = this.getTypeOptions();
@@ -159,6 +144,19 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+EditorMediaModalGalleryFields.propTypes = {
+	site: PropTypes.object,
+	settings: PropTypes.object,
+	onUpdateSetting: PropTypes.func,
+	numberOfItems: PropTypes.number
+};
+
+EditorMediaModalGalleryFields.defaultProps = {
+	settings: Object.freeze( {} ),
+	onUpdateSetting: noop,
+	numberOfItems: 0
+};
 
 export default localize( EditorMediaModalGalleryFields );
