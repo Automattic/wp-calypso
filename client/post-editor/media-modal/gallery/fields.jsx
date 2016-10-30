@@ -38,9 +38,9 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 	getTypeOptions() {
 		const { site } = this.props;
 
-		let options = {
+		const options = {
 			individual: this.props.translate( 'Individual Images' ),
-			default: this.props.translate( 'Thumbnail Grid' )
+			'default': this.props.translate( 'Thumbnail Grid' )
 		};
 
 		if ( site && ( ! site.jetpack || site.isModuleActive( 'tiled-gallery' ) ) ) {
@@ -104,14 +104,14 @@ export const EditorMediaModalGalleryFields = React.createClass( {
 
 		return (
 			<EditorMediaModalFieldset legend={ legend } className={ 'for-setting-' + settingName }>
-				<SelectDropdown selectedText={ options[ settings[settingName] ] }>
+				<SelectDropdown selectedText={ options[ settings[ settingName ] ] }>
 					{ Object.keys( options ).map( ( value ) => {
 						const label = options[ value ];
 
 						return (
 							<SelectDropdownItem
 								key={ 'value-' + value }
-								selected={ value === settings[settingName] }
+								selected={ value === settings[ settingName ] }
 								onClick={ () => onUpdateSetting( settingName, isFinite( parseInt( value ) ) ? +value : value ) }>
 								{ label }
 							</SelectDropdownItem>
