@@ -135,6 +135,7 @@ export default React.createClass( {
 					{ ...this.props }
 					onFilterChange={ this.onFilterChange }
 					site={ site }
+					single={ true }
 					onEditItem={ this.openDetailsModal }
 					containerWidth={ this.state.containerWidth } />
 			</div>
