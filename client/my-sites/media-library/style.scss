@@ -5,6 +5,10 @@
 @import 'upload-button';
 @import 'upload-url';
 
+.main.media {
+	max-width: 100%;
+}
+
 .media-library__header {
 	position: relative;
 	margin-bottom: 14px;
