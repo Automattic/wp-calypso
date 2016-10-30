@@ -11,7 +11,7 @@ import MediaLibrary from 'my-sites/media-library';
 import SidebarNavigation from 'my-sites/sidebar-navigation';
 import observe from 'lib/mixins/data-observe';
 import Dialog from 'components/dialog';
-import MediaModalDetail from 'post-editor/media-modal/detail';
+import { EditorMediaModalDetail } from 'post-editor/media-modal/detail';
 
 export default React.createClass( {
 	displayName: 'Media',
@@ -68,11 +68,12 @@ export default React.createClass( {
 						onClickOutside={ this.closeDetailsModal }
 						onClose={ this.closeDetailsModal }
 					>
-						<MediaModalDetail
+
+						<EditorMediaModalDetail
 							site={ site }
 							items={ [ this.state.editedItem ] }
 							selectedIndex={ 0 }
-							onChangeView={ this.closeDetailsModal }
+							onReturnToList={ this.closeDetailsModal }
 						/>
 					</Dialog>
 				}
