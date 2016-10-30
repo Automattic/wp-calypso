@@ -25,13 +25,12 @@ export default class RefreshPostCard extends React.Component {
 		feed: PropTypes.object,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
-		showFollow: PropTypes.bool
+		showPrimaryFollowButton: PropTypes.bool
 	};
 
 	static defaultProps = {
 		onClick: noop,
-		onCommentClick: noop,
-		showFollow: true
+		onCommentClick: noop
 	};
 
 	propagateCardClick = () => {
@@ -85,7 +84,7 @@ export default class RefreshPostCard extends React.Component {
 	}
 
 	render() {
-		const { post, site, feed, onCommentClick, showFollow } = this.props;
+		const { post, site, feed, onCommentClick, showPrimaryFollowButton } = this.props;
 		const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
 		const title = truncate( post.title, {
 			length: 140,
@@ -99,14 +98,14 @@ export default class RefreshPostCard extends React.Component {
 		} );
 
 		let followUrl;
-		if ( showFollow ) {
+		if ( showPrimaryFollowButton ) {
 			followUrl = feed ? feed.feed_URL : post.site_URL;
 		}
 
 		return (
 			<Card className={ classes } onClick={ this.handleCardClick }>
 				<PostByline post={ post } site={ site } feed={ feed } />
-				{ showFollow && <FollowButton siteUrl={ followUrl } /> }
+				{ showPrimaryFollowButton && <FollowButton siteUrl={ followUrl } /> }
 				<div className="reader-post-card__post">
 					{ featuredAsset }
 					<div className="reader-post-card__post-details">

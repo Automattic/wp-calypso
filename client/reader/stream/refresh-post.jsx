@@ -41,7 +41,8 @@ export class ReaderPostCardAdapter extends React.Component {
 				site={ this.props.site }
 				feed={ this.props.feed }
 				onClick={ this.onClick }
-				onCommentClick={ this.onCommentClick } >
+				onCommentClick={ this.onCommentClick }
+				showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards }>
 				{ feedId && <QueryReaderFeed feedId={ feedId } includeMeta={ false } /> }
 				{ ! isExternal && siteId && <QueryReaderSite siteId={ +siteId } includeMeta={ false } /> }
 			</ReaderPostCard>
