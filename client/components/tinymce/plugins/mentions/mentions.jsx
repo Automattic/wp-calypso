@@ -21,6 +21,26 @@ import { getUserSuggestions } from 'state/users/suggestions/selectors';
  */
 const VK = tinymce.util.VK;
 
+const getMatchingSuggestions = function( suggestions, query ) {
+	const matcher = new RegExp( '^' + query + '| ' + query, 'ig' ); // Start of string or preceded by a space.
+	let matchingSuggestions = suggestions;
+
+	if ( ( query !== null ) && ( query.length > 0 ) ) {
+		matchingSuggestions = [];
+
+		for ( let i = 0, len = suggestions.length; i < len; i++ ) {
+			const suggestion = suggestions[ i ];
+			const name = suggestion.name || suggestion.user_login + ' ' + suggestion.display_name;
+
+			if ( name.toLowerCase().match( matcher ) ) {
+				matchingSuggestions.push( suggestion );
+			}
+		}
+	}
+
+	return matchingSuggestions.slice( 0, 10 );
+};
+
 export class Mentions extends React.Component {
 	constructor( props ) {
 		super( props );
@@ -68,7 +88,7 @@ export class Mentions extends React.Component {
 		const query = this.getQueryText();
 
 		this.setState( {
-			showPopover: typeof query === 'string',
+			showPopover: query !== null,
 			query,
 		} );
 	}
@@ -100,16 +120,21 @@ export class Mentions extends React.Component {
 	render() {
 		const { siteId, suggestions } = this.props;
 		const { query, showPopover, popoverContext } = this.state;
+		let matchingSuggestions = null;
+
+		if ( ( suggestions !== null ) && ( suggestions.length > 1 ) ) {
+			matchingSuggestions = getMatchingSuggestions( suggestions, query );
+		}
 
 		return (
 			<div ref={ this.setPopoverContext }>
-				{ ( ! suggestions || suggestions.length > 1 ) &&
+				{ ( ( suggestions === null ) || ( suggestions.length > 1 ) ) &&
 					<QueryUsersSuggestions siteId={ siteId } />
 				}
-				{ suggestions && suggestions.length > 1 && showPopover &&
+				{ ( matchingSuggestions !== null ) && ( matchingSuggestions.length > 0 ) && showPopover &&
 					<SuggestionList
 						query={ query }
-						suggestions={ suggestions }
+						suggestions={ matchingSuggestions }
 						popoverContext={ popoverContext }
 						onClick={ this.handleClick }
 						onClose={ this.handleClose } />
