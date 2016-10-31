@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -15,7 +16,14 @@ export default React.createClass( {
 
 	propTypes: {
 		site: PropTypes.object,
-		item: PropTypes.object.isRequired
+		item: PropTypes.object.isRequired,
+		onLoad: PropTypes.func,
+	},
+
+	getDefaultProps: function() {
+		return {
+			onLoad: noop
+		};
 	},
 
 	render() {
@@ -29,6 +37,7 @@ export default React.createClass( {
 				width={ this.props.item.width }
 				height={ this.props.item.height }
 				placeholder={ <Spinner /> }
+				onLoad={ this.props.onLoad }
 				alt={ this.props.item.alt || this.props.item.title }
 				className="editor-media-modal-detail__preview is-image" />
 		);
