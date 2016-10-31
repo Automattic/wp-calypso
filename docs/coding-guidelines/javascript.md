@@ -268,14 +268,6 @@ Multi-line comments that are not a jsdoc comment should use `//`:
 // over the span of multiple lines.
 ```
 
-Inline comments are allowed as an exception when used to annotate special arguments in formal parameter lists:
-
-```js
-function foo( types, selector, data, fn, /* INTERNAL */ one ) {
-    // Do stuff
-}
-```
-
 ## Equality
 
 Strict equality checks (===) must be used in favor of abstract equality checks (==). The only exception is when checking for both undefined and null by way of null.
