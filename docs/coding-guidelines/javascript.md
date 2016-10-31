@@ -615,9 +615,7 @@ To help encourage developers to follow our coding standards, we include an [ESLi
 
 There are [integrations](http://eslint.org/docs/user-guide/integrations) for many editors that will automatically detect the configuration file and run the checks.
 
-In cases where ESLint incorrectly identifies code as not following our standards, you can [disable rules using inline comments](http://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments).
-
-**WARNING:** Before you disable a rule, be certain and vocal that you understand the reason for it needing to be disabled. Our ESLint configuration is very well-tuned, and disabling a rule is not appropriate as an escape valve for poorly written code.
+In cases where ESLint incorrectly identifies code as not following our standards, you can [disable rules using inline comments](http://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments). Before disabling a rule, be certain and vocal that you understand the reason for it needing to be disabled. Our ESLint configuration is very well-tuned, and disabling a rule is not appropriate as an escape valve for poorly written code. If you don't understand or disagree with the existence of a rule, open an issue to start a discussion.
 
 ### [Automatically Run ESLint Against Your Changesets](#setting-up-githooks)
 
