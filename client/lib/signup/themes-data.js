@@ -54,12 +54,12 @@ export const themes = [
 		verticals: []
 	},
 	{
-		name: 'Ecto',
-		slug: 'ecto',
+		name: 'Intergalactic',
+		slug: 'intergalactic',
 		repo: 'pub',
 		fallback: true,
 		design: 'blog',
-		demo_uri: 'https://ectodemo.wordpress.com',
+		demo_uri: 'https://intergalacticdemo.wordpress.com',
 		verticals: []
 	},
 	{
