@@ -4,12 +4,13 @@
 import React from 'react';
 import { noop } from 'lodash';
 
-const FeaturedImage = ( { imageUri, href, children, onClick } ) => {
+const FeaturedImage = ( { style, imageUri, href, children, onClick } ) => {
 	if ( imageUri === undefined ) {
 		return null;
 	}
 
 	const featuredImageStyle = {
+		...style,
 		backgroundImage: 'url(' + imageUri + ')',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
