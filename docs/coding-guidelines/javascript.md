@@ -414,8 +414,11 @@ function name() {
 function getName() {
     return 'John';
 }
+```
 
-// good
+You may prefix a function by `is` or `has` to indicate a Boolean return value.
+
+```js
 function isValid() {
     return true;
 }
