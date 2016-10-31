@@ -12,6 +12,7 @@ import {
 	withoutHttp,
 	addSchemeIfMissing,
 	setUrlScheme,
+	urlToSlug,
 } from '../';
 
 describe( 'withoutHttp', () => {
@@ -188,5 +189,51 @@ describe( 'setUrlScheme()', () => {
 		const actual = setUrlScheme( source, 'http' );
 
 		expect( actual ).to.equal( expected );
+	} );
+} );
+
+describe( 'urlToSlug()', () => {
+	it( 'should return null if URL is not provided', () => {
+		expect( urlToSlug() ).to.be.null;
+	} );
+
+	it( 'should return empty string if URL is empty string', () => {
+		const urlEmptyString = '';
+
+		expect( urlToSlug( urlEmptyString ) ).to.be.null;
+	} );
+
+	it( 'should return URL without initial http', () => {
+		const urlWithHttp = 'http://example.com';
+		const urlWithoutHttp = urlToSlug( urlWithHttp );
+
+		expect( urlWithoutHttp ).to.equal( 'example.com' );
+	} );
+
+	it( 'should return URL without initial https', () => {
+		const urlWithHttps = 'https://example.com';
+		const urlWithoutHttps = urlToSlug( urlWithHttps );
+
+		expect( urlWithoutHttps ).to.equal( 'example.com' );
+	} );
+
+	it( 'should return URL without initial http and query string if has any', () => {
+		const urlWithHttpAndQueryString = 'http://example.com?foo=bar#anchor';
+		const urlWithoutHttpAndQueryString = urlToSlug( urlWithHttpAndQueryString );
+
+		expect( urlWithoutHttpAndQueryString ).to.equal( 'example.com?foo=bar#anchor' );
+	} );
+
+	it( "should return provided URL if it doesn't include http(s)", () => {
+		const urlWithoutHttp = 'example.com';
+
+		expect( urlToSlug( urlWithoutHttp ) ).to.equal( urlWithoutHttp );
+	} );
+
+	it( 'should return a slug with forward slashes converted to double colons', () => {
+		const urlWithHttp = 'http://example.com/example/test123';
+		const urlWithoutHttp = urlToSlug( urlWithHttp );
+
+		expect( urlWithoutHttp ).to.equal( 'example.com::example::test123' );
 	} );
 } );
