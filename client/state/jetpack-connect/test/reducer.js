@@ -105,7 +105,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should store a timestamp when checking a new url', () => {
-			const nowTime = ( new Date() ).getTime();
+			const nowTime = Date.now();
 			const state = jetpackConnectSessions( undefined, {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: 'https://example.wordpress.com'
@@ -116,7 +116,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should update the timestamp when checking an existent url', () => {
-			const nowTime = ( new Date() ).getTime();
+			const nowTime = Date.now();
 			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
 				type: JETPACK_CONNECT_CHECK_URL,
 				url: 'https://example.wordpress.com'
@@ -142,8 +142,17 @@ describe( 'reducer', () => {
 			expect( state ).to.be.eql( {} );
 		} );
 
+		it( 'should not restore a state with a property with a stale timestamp', () => {
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
+		} );
+
 		it( 'should not restore a state with a session stored with extra properties', () => {
-			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1, foo: 'bar' } }, {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp, foo: 'bar' } }, {
 				type: DESERIALIZE
 			} );
 
@@ -151,19 +160,33 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should restore a valid state', () => {
-			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp: 1 } }, {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( { 'example.wordpress.com': { timestamp } }, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.be.eql( { 'example.wordpress.com': { timestamp: 1 } } );
+			expect( state ).to.be.eql( { 'example.wordpress.com': { timestamp } } );
 		} );
 
 		it( 'should restore a valid state including dashes, slashes and semicolons', () => {
-			const state = jetpackConnectSessions( { 'https://example.wordpress.com:3000/test-one': { timestamp: 1 } }, {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( { 'https://example.wordpress.com:3000/test-one': { timestamp } }, {
 				type: DESERIALIZE
 			} );
 
-			expect( state ).to.be.eql( { 'https://example.wordpress.com:3000/test-one': { timestamp: 1 } } );
+			expect( state ).to.be.eql( { 'https://example.wordpress.com:3000/test-one': { timestamp } } );
+		} );
+
+		it( 'should restore only sites with non-stale timestamps', () => {
+			const timestamp = Date.now();
+			const state = jetpackConnectSessions( {
+				'example.wordpress.com': { timestamp: 1 },
+				'automattic.wordpress.com': { timestamp },
+			}, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( { 'automattic.wordpress.com': { timestamp } } );
 		} );
 	} );
 
@@ -313,7 +336,7 @@ describe( 'reducer', () => {
 		} );
 
 		it( 'should store an integer timestamp when creating new session', () => {
-			const nowTime = ( new Date() ).getTime();
+			const nowTime = Date.now();
 			const state = jetpackSSOSessions( undefined, {
 				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
 				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
@@ -341,13 +364,27 @@ describe( 'reducer', () => {
 		it( 'should load valid persisted state', () => {
 			const originalState = deepFreeze( {
 				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
-				siteUrl: 'https://example.wordpress.com'
+				siteUrl: 'https://example.wordpress.com',
+				timestamp: Date.now()
 			} );
 			const state = jetpackSSOSessions( originalState, {
 				type: DESERIALIZE
 			} );
 
 			expect( state ).to.be.eql( originalState );
+		} );
+
+		it( 'should not load stale state', () => {
+			const originalState = deepFreeze( {
+				ssoUrl: 'https://example.wordpress.com?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://example.wordpress.com',
+				timestamp: 1
+			} );
+			const state = jetpackSSOSessions( originalState, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
 		} );
 	} );
 
@@ -651,7 +688,8 @@ describe( 'reducer', () => {
 				queryObject: {
 					client_id: 'example.com',
 					redirect_uri: 'https://example.com/',
-				}
+				},
+				timestamp: Date.now()
 			} );
 			const state = jetpackConnectAuthorize( originalState, {
 				type: SERIALIZE
@@ -665,13 +703,29 @@ describe( 'reducer', () => {
 				queryObject: {
 					client_id: 'example.com',
 					redirect_uri: 'https://example.com/',
-				}
+				},
+				timestamp: Date.now()
 			} );
 			const state = jetpackConnectAuthorize( originalState, {
 				type: DESERIALIZE
 			} );
 
 			expect( state ).to.be.eql( originalState );
+		} );
+
+		it( 'should not load stale state', () => {
+			const originalState = deepFreeze( {
+				queryObject: {
+					client_id: 'example.com',
+					redirect_uri: 'https://example.com/',
+				},
+				timestamp: 1
+			} );
+			const state = jetpackConnectAuthorize( originalState, {
+				type: DESERIALIZE
+			} );
+
+			expect( state ).to.be.eql( {} );
 		} );
 	} );
 

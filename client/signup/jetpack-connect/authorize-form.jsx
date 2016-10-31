@@ -66,7 +66,6 @@ import NoticeAction from 'components/notice/notice-action';
  */
 const PLANS_PAGE = '/jetpack/connect/plans/';
 const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
-const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
 const SiteCard = React.createClass( {
 	render() {
@@ -582,13 +581,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 	isSSO() {
 		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
-		if ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] ) {
-			const currentTime = ( new Date() ).getTime();
-			const sessionTimestamp = this.props.jetpackSSOSessions[ site ].timestamp || 0;
-			return ( currentTime - sessionTimestamp < JETPACK_CONNECT_TTL );
-		}
-
-		return false;
+		return !! ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] );
 	},
 
 	renderNoQueryArgsError() {

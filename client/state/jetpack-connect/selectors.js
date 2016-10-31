@@ -7,8 +7,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { getSiteByUrl } from 'state/sites/selectors';
-
-const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // an hour
+import { isStale } from './utils';
 
 const getConnectingSite = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectSite' ] );
@@ -55,9 +54,8 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 	const site = siteSlug.replace( /.*?:\/\//g, '' );
 	const sessions = getSessions( state );
 
-	if ( sessions[ site ] ) {
-		const currentTime = ( new Date() ).getTime();
-		return ( currentTime - sessions[ site ].timestamp < JETPACK_CONNECT_TTL );
+	if ( sessions[ site ] && sessions[ site ].timestamp ) {
+		return ! isStale( sessions[ site ].timestamp );
 	}
 
 	return false;
