@@ -24,6 +24,8 @@ These rules encourage liberal spacing for improved developer readability. The mi
 
 Don't forget to [remove trailing whitespace](trailing-whitespace.md).
 
+We specify an [EditorConfig](http://editorconfig.org/) configuration and encourage you to install a plugin for your editor to simplify following many of our spacing guidelines.
+
 ## Objects
 
 Object declarations can be made on a single line if they are short (remember the line length guidelines). When an object declaration is too long to fit on one line, there must be one property per line. Property names only need to be quoted if they are reserved words or contain special characters:
