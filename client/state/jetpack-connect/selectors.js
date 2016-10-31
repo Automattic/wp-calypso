@@ -51,7 +51,7 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 	if ( ! siteSlug ) {
 		return false;
 	}
-	const site = siteSlug.replace( /.*?:\/\//g, '' );
+	const site = siteSlug.replace( /.*?:\/\//g, '' ).replace( /\//g, '::' );
 	const sessions = getSessions( state );
 
 	if ( sessions[ site ] && sessions[ site ].timestamp ) {
@@ -63,6 +63,8 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 
 const getFlowType = function( state, siteSlug ) {
 	const sessions = getSessions( state );
+	siteSlug = siteSlug.replace( /\//g, '::' );
+
 	if ( siteSlug && sessions[ siteSlug ] ) {
 		return sessions[ siteSlug ].flowType;
 	}
