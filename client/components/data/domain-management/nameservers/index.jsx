@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import DomainsStore from 'lib/domains/store';
 import NameserversStore from 'lib/domains/nameservers/store';
-import observe from 'lib/mixins/data-observe';
 import StoreConnection from 'components/data/store-connection';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { fetchDomains, fetchNameservers } from 'lib/upgrades/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const stores = [
 	DomainsStore,
@@ -32,38 +33,36 @@ function getStateFromStores( props ) {
 	};
 }
 
-const NameserversData = React.createClass( {
-	propTypes: {
-		component: React.PropTypes.func.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		sites: React.PropTypes.object.isRequired
-	},
+export class NameserversData extends Component {
+	static propTypes = {
+		component: PropTypes.func.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.object,
+	};
 
-	mixins: [ observe( 'sites' ) ],
+	constructor( props ) {
+		super( props );
 
-	componentWillMount() {
-		this.loadDomains();
-		this.loadNameservers();
-	},
-
-	componentWillUpdate() {
-		this.loadDomains();
-		this.loadNameservers();
-	},
-
-	loadDomains() {
-		const selectedSite = this.props.sites.getSelectedSite();
-
-		if ( this.prevSelectedSite !== selectedSite ) {
-			upgradesActions.fetchDomains( selectedSite.ID );
-
-			this.prevSelectedSite = selectedSite;
+		if ( props.selectedSite ) {
+			this.loadDomains( props.selectedSite.ID );
 		}
-	},
 
-	loadNameservers() {
-		upgradesActions.fetchNameservers( this.props.selectedDomainName );
-	},
+		this.loadNameservers();
+	}
+
+	componentWillUpdate( nextProps ) {
+		const { selectedSite: nextSite } = nextProps;
+		const { selectedSite: prevSite } = this.props;
+
+		if ( nextSite && nextSite !== prevSite ) {
+			this.loadDomains( nextSite.ID );
+		}
+
+		this.loadNameservers();
+	}
+
+	loadDomains = siteId => fetchDomains( siteId );
+	loadNameservers = () => fetchNameservers( this.props.selectedDomainName );
 
 	render() {
 		return (
@@ -72,9 +71,14 @@ const NameserversData = React.createClass( {
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() } />
+				selectedSite={ this.props.selectedSite }
+			/>
 		);
 	}
+}
+
+const mapStateToProps = state => ( {
+	selectedSite: getSelectedSite( state ),
 } );
 
-export default NameserversData;
+export default connect( mapStateToProps )( NameserversData );
