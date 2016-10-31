@@ -29,20 +29,21 @@ Don't forget to [remove trailing whitespace](trailing-whitespace.md).
 Object declarations can be made on a single line if they are short (remember the line length guidelines). When an object declaration is too long to fit on one line, there must be one property per line. Property names only need to be quoted if they are reserved words or contain special characters:
 
 ```js
+let map;
+
 // Preferred
-var map = {
+map = {
     ready: 9,
     when: 4,
     'you are': 15
 };
 
 // Acceptable for small objects
-var map = { ready: 9, when: 4, 'you are': 15 };
+map = { ready: 9, when: 4, 'you are': 15 };
 
 // Bad
-var map = { ready: 9,
+map = { ready: 9,
     when: 4, 'you are': 15 };
-
 ```
 
 ## Arrays and Function Calls
@@ -50,7 +51,7 @@ var map = { ready: 9,
 Always include extra spaces around elements and arguments:
 
 ```js
-array = [ a, b ];
+const array = [ a, b ];
 
 foo( arg );
 
@@ -78,14 +79,11 @@ foo( function() {
 foo( function() {
     // Do stuff
 }, options );
-
 ```
 
 ## Examples of Good Spacing
 
 ```js
-var i;
-
 if ( condition ) {
     doSomething( 'with a string' );
 } else if ( otherCondition ) {
@@ -103,7 +101,7 @@ while ( ! condition ) {
     iterating++;
 }
 
-for ( i = 0; i < 100; i++ ) {
+for ( let i = 0; i < 100; i++ ) {
     object[ array[ i ] ] = someFn( i );
     $( '.container' ).val( array[ i ] );
 }
@@ -130,7 +128,7 @@ Tabs should be used for indentation.
 if, else, for, while, and try blocks should always use braces, and always go on multiple lines. The opening brace should be on the same line as the function definition, the conditional, or the loop. The closing brace should be on the line directly following the last statement of the block.
 
 ```js
-var a, b, c;
+let a, b, c;
 
 if ( myFunction() ) {
     // Expressions
@@ -146,23 +144,27 @@ if ( myFunction() ) {
 When a statement is too long to fit on one line, line breaks must occur after an operator.
 
 ```js
+let html;
+
 // Bad
-var html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c
+html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c
     + ' is ' + ( a + b + c );
 
 // Good
-var html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c +
+html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c +
     ' is ' + ( a + b + c );
 ```
 
 Lines should be broken into logical groups if it improves readability, such as splitting each expression of a ternary operator onto its own line, even if both will fit on a single line.
 
 ```js
+let baz;
+
 // Acceptable
-var baz = ( true === conditionalStatement() ) ? 'thing 1' : 'thing 2';
+baz = ( true === conditionalStatement() ) ? 'thing 1' : 'thing 2';
 
 // Better
-var baz = firstCondition( foo ) && secondCondition( bar )
+baz = firstCondition( foo ) && secondCondition( bar )
     ? qux( foo, bar )
     : foo;
 ```
@@ -201,7 +203,7 @@ counter++;
 Globals should almost never be used. If they are used or you need to reference a pre-existing global do so via `window`.
 
 ```js
-var userId = window.currentUser.ID;
+const userId = window.currentUser.ID;
 ```
 
 ## Naming Conventions
@@ -210,10 +212,10 @@ Variable and function names should be full words, using camel case with a lowerc
 
 ```js
 // Good
-var userIdToDelete, siteUrl;
+let userIdToDelete, siteUrl;
 
 // Bad
-var userIDToDelete, siteURL;
+let userIDToDelete, siteURL;
 ```
 
 Names should be descriptive, but not excessively so. Exceptions are allowed for iterators, such as the use of `i` to represent the index in a loop.
@@ -241,7 +243,7 @@ Single line comments:
 someStatement();
 
 // Explanation of something complex on the next line
-$( 'p' ).doSomething();
+Array.prototype.forEach.call( document.querySelectorAll( 'p' ), doSomething );
 ```
 
 When adding documentation, use the [jsdoc](http://usejsdoc.org/) format.
@@ -262,7 +264,6 @@ function Book(title, author) {
 Multi-line comments that are not a jsdoc comment should use `//`:
 
 ```js
-//
 // This is a comment that is long enough to warrant being stretched
 // over the span of multiple lines.
 ```
@@ -347,7 +348,7 @@ if ( object && object.desired ) { ... }
 Use single-quotes for string literals:
 
 ```js
-var myStr = 'strings should be contained in single quotes';
+const myStr = 'strings should be contained in single quotes';
 ```
 
 When a string contains single quotes, they need to be escaped with a backslash (\\):
@@ -355,9 +356,9 @@ When a string contains single quotes, they need to be escaped with a backslash (
 Double quotes can be used in cases where there is a single quote in the string or in JSX attributes.
 
 ```js
-var myStr = "You're amazing just the way you are.";
+const myStr = "You're amazing just the way you are.";
 
-var component = <div className="post"></div>;
+const component = <div className="post"></div>;
 ```
 
 ## Switch Statements
@@ -429,13 +430,13 @@ function isValid() {
 Creating arrays in JavaScript should be done using the shorthand `[]` constructor rather than the `new Array()` notation.
 
 ```js
-var myArray = [];
+const myArray = [];
 ```
 
 You can initialize an array during construction:
 
 ```js
-var myArray = [ 1, 'WordPress', 2, 'Blog' ];
+const myArray = [ 1, 'WordPress', 2, 'Blog' ];
 ```
 
 In JavaScript, associative arrays are defined as objects.
@@ -445,13 +446,13 @@ In JavaScript, associative arrays are defined as objects.
 There are many ways to create objects in JavaScript. Object literal notation, `{}`, is both the most performant, and also the easiest to read.
 
 ```js
-var myObj = {};
+const myObj = {};
 ```
 
 Object literal notation should be used unless the object requires a specific prototype, in which case the object should be created by calling a constructor function with new.
 
 ```js
-var myObj = new ConstructorMethod();
+const myObj = new ConstructorMethod();
 ```
 
 Object properties should be accessed via dot notation, unless the key is a variable, a reserved word, or a string that would not be a valid identifier:
@@ -472,7 +473,7 @@ Since we require strict equality checks, we are not going to enforce "Yoda" cond
 The functional programming inspired methods that were added in ECMA5 improve readability. Use them throughout.
 
 ```js
-var posts = postList.map( function( post ) {
+const posts = postList.map( function( post ) {
 	return <Post post={ post } key={ post.global_ID } />;
 } );
 ```
@@ -480,17 +481,15 @@ var posts = postList.map( function( post ) {
 When iterating over a large collection using a for loop, it is recommended to store the loop’s max value as a variable rather than re-computing the maximum every time:
 
 ```js
-// Good & Efficient
-var i, max;
-
+// Good & Efficient:
 // getItemCount() gets called once
-for ( i = 0, max = getItemCount(); i < max; i++ ) {
+for ( let i = 0, max = getItemCount(); i < max; i++ ) {
     // Do stuff
 }
 
 // Bad & Potentially Inefficient:
 // getItemCount() gets called every time
-for ( i = 0; i < getItemCount(); i++ ) {
+for ( let i = 0; i < getItemCount(); i++ ) {
     // Do stuff
 }
 ```
@@ -545,13 +544,11 @@ You can use `const` for all of your references.
 > Why? This ensures that you can't reassign your references (mutation), which can lead to bugs and difficult to comprehend code.
 
 ```javascript
-// good
-var a = 1,
-    b = 2;
+// bad
+var a = 1;
 
-// better
-const a = 1,
-    b = 2;
+// good
+const a = 1;
 ```
 
 If you must mutate references, you can use `let`. Otherwise `const` is preferred.
@@ -559,13 +556,13 @@ If you must mutate references, you can use `let`. Otherwise `const` is preferred
 > Why? `let` is block-scoped rather than function-scoped like `var`.
 
 ```javascript
-// good
+// bad
 var count = 1;
 if ( true ) {
     count += 1;
 }
 
-// better
+// good
 let count = 1;
 if ( true ) {
     count += 1;
