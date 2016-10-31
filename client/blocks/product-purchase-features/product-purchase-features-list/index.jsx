@@ -34,12 +34,21 @@ import JetpackSurveysPolls from './jetpack-surveys-polls';
 import JetpackWordPressCom from './jetpack-wordpress-com';
 import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
 import { hasDomainCredit } from 'state/sites/plans/selectors';
+import { isPressableSite } from 'state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 
 class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes
-			.oneOf( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ] )
+			.oneOf( [ PLAN_FREE,
+				PLAN_PERSONAL,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS,
+				PLAN_JETPACK_FREE,
+				PLAN_JETPACK_BUSINESS,
+				PLAN_JETPACK_BUSINESS_MONTHLY,
+				PLAN_JETPACK_PREMIUM,
+				PLAN_JETPACK_PREMIUM_MONTHLY ] )
 			.isRequired,
 		isPlaceholder: PropTypes.bool
 	};
@@ -51,13 +60,15 @@ class ProductPurchaseFeaturesList extends Component {
 	getBusinessFeatures() {
 		const {
 			selectedSite,
-			planHasDomainCredit
+			planHasDomainCredit,
+			isPressableSite
 		} = this.props;
 
 		return [
 			<CustomDomain
 				selectedSite={ selectedSite }
 				hasDomainCredit={ planHasDomainCredit }
+				isPressableSite={ isPressableSite }
 				key="customDomainFeature"
 			/>,
 			<AdvertisingRemoved
@@ -255,6 +266,7 @@ export default connect(
 
 		return {
 			selectedSite,
+			isPressableSite: !! isPressableSite( state, selectedSiteId ),
 			planHasDomainCredit: hasDomainCredit( state, selectedSiteId )
 		};
 	}

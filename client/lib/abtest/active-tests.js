@@ -98,15 +98,6 @@ module.exports = {
 		defaultVariation: 'original',
 		allowAnyLocale: true,
 	},
-	readerFullPost: {
-		datestamp: '20160929',
-		variations: {
-			current: 50,
-			refreshed: 50
-		},
-		defaultVariation: 'current',
-		allowExistingUsers: true
-	},
 	siteTitleStep: {
 		datestamp: '20160928',
 		variations: {
@@ -121,6 +112,15 @@ module.exports = {
 		variations: {
 			original: 50,
 			nudge: 50
+		},
+		defaultVariation: 'original',
+		allowExistingUsers: true
+	},
+	gSuiteOnSignup: {
+		datestamp: '20161025',
+		variations: {
+			original: 50,
+			removed: 50
 		},
 		defaultVariation: 'original',
 		allowExistingUsers: true

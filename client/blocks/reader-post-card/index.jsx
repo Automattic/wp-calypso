@@ -15,16 +15,7 @@ import DisplayTypes from 'state/reader/posts/display-types';
 import ReaderPostActions from 'blocks/reader-post-actions';
 import * as stats from 'reader/stats';
 import PostByline from './byline';
-
-function FeaturedImage( { image, href } ) {
-	return (
-		<a className="reader-post-card__featured-image" href={ href } style={ {
-			backgroundImage: 'url(' + image.uri + ')',
-			backgroundSize: 'cover',
-			backgroundRepeat: 'no-repeat',
-			backgroundPosition: '50% 50%'
-		} } ></a> );
-}
+import FeaturedAsset from './featured-asset';
 
 export default class RefreshPostCard extends React.Component {
 	static propTypes = {
@@ -57,8 +48,7 @@ export default class RefreshPostCard extends React.Component {
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {
 			if ( closest( event.target, '.reader-post-card__title-link', true, rootNode ) ) {
-				stats.recordPermalinkClick( 'card_title_with_modifier' );
-				stats.recordGaEvent( 'Clicked Post Permalink with Modifier' );
+				stats.recordPermalinkClick( 'card_title_with_modifier', this.props.post );
 			}
 			return;
 		}
@@ -93,14 +83,15 @@ export default class RefreshPostCard extends React.Component {
 
 	render() {
 		const { post, site, feed, onCommentClick } = this.props;
-		const featuredImage = post.canonical_image;
 		const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
 		const title = truncate( post.title, {
 			length: 140,
 			separator: /,? +/
 		} );
+		const featuredAsset = ( <FeaturedAsset post={ post } /> );
+
 		const classes = classnames( 'reader-post-card', {
-			'has-thumbnail': !! featuredImage,
+			'has-thumbnail': !! featuredAsset,
 			'is-photo': isPhotoOnly
 		} );
 
@@ -108,7 +99,7 @@ export default class RefreshPostCard extends React.Component {
 			<Card className={ classes } onClick={ this.handleCardClick }>
 				<PostByline post={ post } site={ site } feed={ feed } />
 				<div className="reader-post-card__post">
-					{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
+					{ featuredAsset }
 					<div className="reader-post-card__post-details">
 						<h1 className="reader-post-card__title">
 							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>

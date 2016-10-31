@@ -162,6 +162,7 @@ module.exports = {
 		if ( ! siteID ) {
 			sites.selectAll();
 			context.store.dispatch( setAllSitesSelected() );
+			siteStatsStickyTabActions.saveFilterAndSlug( false, '' );
 			return next();
 		}
 

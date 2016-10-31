@@ -63,7 +63,7 @@ EditorPostType.propTypes = {
 	isNew: PropTypes.bool,
 	typeSlug: PropTypes.string,
 	type: PropTypes.object,
-	globalId: PropTypes.number
+	globalId: PropTypes.string
 };
 
 export default connect( ( state ) => {

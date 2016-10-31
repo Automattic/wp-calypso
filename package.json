@@ -128,11 +128,10 @@
     "wpcom": "5.3.0",
     "wpcom-oauth": "0.3.3",
     "wpcom-proxy-request": "3.0.0",
-    "wpcom-xhr-request": "1.0.0",
-    "xgettext-js": "1.0.0"
+    "wpcom-xhr-request": "1.0.0"
   },
   "engines": {
-    "node": "6.9.0",
+    "node": "6.9.1",
     "npm": "3.10.8"
   },
   "scripts": {

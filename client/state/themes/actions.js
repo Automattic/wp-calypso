@@ -44,7 +44,7 @@ export function fetchThemes( site ) {
 
 		debug( 'Query params', queryParams );
 
-		wpcom.undocumented().themes( site, queryParams )
+		return wpcom.undocumented().themes( site, queryParams )
 			.then( themes => {
 				const responseTime = ( new Date().getTime() ) - startTime;
 				dispatch( receiveThemes( themes, site, queryParams, responseTime ) );
@@ -56,7 +56,7 @@ export function fetchThemes( site ) {
 export function fetchNextPage( site ) {
 	return dispatch => {
 		dispatch( incrementThemesPage( site ) );
-		dispatch( fetchThemes( site ) );
+		return dispatch( fetchThemes( site ) );
 	};
 }
 

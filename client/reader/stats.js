@@ -18,14 +18,21 @@ export function recordGaEvent( action, label, value ) {
 	ga.recordEvent( 'Reader', action, label, value );
 }
 
-export function recordPermalinkClick( where ) {
+export function recordPermalinkClick( where, post ) {
 	mc.bumpStat( {
 		reader_actions: 'visited_post_permalink',
 		reader_permalink_source: where
 	} );
-	recordTrack( 'calypso_reader_permalink_click', {
+	recordGaEvent( 'Clicked Post Permalink', where )
+	const trackEvent = 'calypso_reader_permalink_click';
+	const args = {
 		source: where
-	} );
+	};
+	if ( post ) {
+		recordTrackForPost( trackEvent, post, args );
+	} else {
+		recordTrack( trackEvent, args );
+	}
 }
 
 function getLocation() {
@@ -108,6 +115,7 @@ tracksRailcarEventWhitelist
 	.add( 'calypso_reader_startcard_clicked' )
 	.add( 'calypso_reader_searchcard_clicked' )
 	.add( 'calypso_reader_author_link_clicked' )
+	.add( 'calypso_reader_permalink_click' )
 ;
 
 export function recordTracksRailcar( action, eventName, railcar ) {

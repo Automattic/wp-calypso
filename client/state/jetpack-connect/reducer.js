@@ -1,8 +1,7 @@
 /**
  * External dependencis
  */
-import isEmpty from 'lodash/isEmpty';
-import omit from 'lodash/omit';
+import { isEmpty, omit, pickBy } from 'lodash';
 import { combineReducers } from 'redux';
 
 /**
@@ -38,13 +37,18 @@ import {
 
 import { isValidStateWithSchema } from 'state/utils';
 import { jetpackConnectSessionsSchema } from './schema';
+import { isStale } from './utils';
+import { JETPACK_CONNECT_AUTHORIZE_TTL } from './constants';
 
-const defaultAuthorizeState = {
-	queryObject: {},
-	isAuthorizing: false,
-	authorizeSuccess: false,
-	authorizeError: false
-};
+function buildDefaultAuthorizeState() {
+	return {
+		queryObject: {},
+		isAuthorizing: false,
+		authorizeSuccess: false,
+		authorizeError: false,
+		timestamp: Date.now()
+	};
+}
 
 function buildNoProtocolUrlObj( url, flowType ) {
 	const noProtocolUrl = url.replace( /.*?:\/\//g, '' );
@@ -61,7 +65,9 @@ export function jetpackConnectSessions( state = {}, action ) {
 			return Object.assign( {}, state, buildNoProtocolUrlObj( action.url, action.flowType ) );
 		case DESERIALIZE:
 			if ( isValidStateWithSchema( state, jetpackConnectSessionsSchema ) ) {
-				return state;
+				return pickBy( state, ( session ) => {
+					return ! isStale( session.timestamp );
+				} );
 			}
 			return {};
 		case SERIALIZE:
@@ -192,7 +198,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 			const queryObject = Object.assign( {}, action.queryObject );
 			return Object.assign(
 				{},
-				defaultAuthorizeState,
+				buildDefaultAuthorizeState(),
 				{ queryObject: queryObject }
 			);
 		case JETPACK_CONNECT_QUERY_UPDATE:
@@ -244,7 +250,7 @@ export function jetpackConnectAuthorize( state = {}, action ) {
 		case JETPACK_CONNECT_REDIRECT_WP_ADMIN:
 			return Object.assign( {}, state, { isRedirectingToWpAdmin: true } );
 		case DESERIALIZE:
-			return state;
+			return ! isStale( state.timestamp, JETPACK_CONNECT_AUTHORIZE_TTL ) ? state : {};
 		case SERIALIZE:
 			return state;
 	}
@@ -283,8 +289,9 @@ export function jetpackSSOSessions( state = {}, action ) {
 		case JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS:
 			return Object.assign( {}, state, buildNoProtocolUrlObj( action.siteUrl ) );
 		case SERIALIZE:
-		case DESERIALIZE:
 			return state;
+		case DESERIALIZE:
+			return ! isStale( state.timestamp ) ? state : {};
 	}
 	return state;
 }

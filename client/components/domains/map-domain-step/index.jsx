@@ -9,13 +9,14 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var cartItems = require( 'lib/cart-values' ).cartItems,
-	Notice = require( 'components/notice' ),
 	{ getFixedDomainSearch, canMap, canRegister } = require( 'lib/domains' ),
 	DomainRegistrationSuggestion = require( 'components/domains/domain-registration-suggestion' ),
 	DomainProductPrice = require( 'components/domains/domain-product-price' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	{ getCurrentUser } = require( 'state/current-user/selectors' ),
 	support = require( 'lib/url/support' );
+
+import Notice from 'components/notice';
 
 var MapDomainStep = React.createClass( {
 	mixins: [ analyticsMixin( 'mapDomain' ) ],
@@ -79,7 +80,7 @@ var MapDomainStep = React.createClass( {
 						rule={ cartItems.getDomainPriceRule( this.props.domainsWithPlansOnly, this.props.selectedSite, this.props.cart, suggestion ) }
 						price={ price } />
 
-					<fieldset>
+					<div className="map-domain-step__add-domain" role="group">
 						<input
 							className="map-domain-step__external-domain"
 							type="text"
@@ -95,7 +96,7 @@ var MapDomainStep = React.createClass( {
 								context: 'Upgrades: Label for mapping an existing domain'
 							} ) }
 						</button>
-					</fieldset>
+					</div>
 
 					{ this.domainRegistrationUpsell() }
 				</form>

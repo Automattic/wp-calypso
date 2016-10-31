@@ -42,9 +42,8 @@ class PostByline extends React.Component {
 		} );
 	}
 
-	recordDateClick() {
-		recordPermalinkClick( 'timestamp' );
-		recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
+	recordDateClick = () => {
+		recordPermalinkClick( 'timestamp_card', this.props.post );
 	}
 
 	render() {

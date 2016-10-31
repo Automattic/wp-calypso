@@ -24,6 +24,7 @@ import Button from 'components/button';
 import purchasesPaths from 'me/purchases/paths';
 import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { isHappychatAvailable } from 'state/happychat/selectors';
 
 const MeSidebar = React.createClass( {
 
@@ -52,7 +53,7 @@ const MeSidebar = React.createClass( {
 	},
 
 	render: function() {
-		const context = this.props.context;
+		const { context } = this.props;
 		const filterMap = {
 			'/me': 'profile',
 			'/me/security/two-step': 'security',
@@ -190,6 +191,7 @@ const MeSidebar = React.createClass( {
 function mapStateToProps( state ) {
 	return {
 		currentUser: getCurrentUser( state ),
+		isHappychatAvailable: isHappychatAvailable( state )
 	};
 }
 

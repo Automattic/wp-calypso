@@ -1,10 +1,12 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import LinkedStateMixin from 'react-addons-linked-state-mixin';
 import PureRenderMixin from 'react-pure-render/mixin';
 import { isEqual, find } from 'lodash';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -20,36 +22,35 @@ import FormTextInput from 'components/forms/form-text-input';
 import FormButton from 'components/forms/form-button';
 import SitesDropdown from 'components/sites-dropdown';
 import siteList from 'lib/sites-list';
+import { getSelectedSiteSlug } from 'state/ui/selectors';
 
 /**
  * Module variables
  */
 const sites = siteList();
 
-module.exports = React.createClass( {
-	displayName: 'HelpContactForm',
-
+export const HelpContactForm = React.createClass( {
 	mixins: [ LinkedStateMixin, PureRenderMixin ],
 
 	propTypes: {
-		formDescription: React.PropTypes.node,
-		buttonLabel: React.PropTypes.string.isRequired,
-		onSubmit: React.PropTypes.func.isRequired,
-		showHowCanWeHelpField: React.PropTypes.bool,
-		showHowYouFeelField: React.PropTypes.bool,
-		showSubjectField: React.PropTypes.bool,
-		showSiteField: React.PropTypes.bool,
-		showHelpLanguagePrompt: React.PropTypes.bool,
-		siteFilter: React.PropTypes.func,
-		siteList: React.PropTypes.object,
-		disabled: React.PropTypes.bool,
-		valueLink: React.PropTypes.shape( {
-			value: React.PropTypes.any,
-			requestChange: React.PropTypes.func.isRequired
+		formDescription: PropTypes.node,
+		buttonLabel: PropTypes.string.isRequired,
+		onSubmit: PropTypes.func.isRequired,
+		showHowCanWeHelpField: PropTypes.bool,
+		showHowYouFeelField: PropTypes.bool,
+		showSubjectField: PropTypes.bool,
+		showSiteField: PropTypes.bool,
+		showHelpLanguagePrompt: PropTypes.bool,
+		siteFilter: PropTypes.func,
+		siteList: PropTypes.object,
+		disabled: PropTypes.bool,
+		valueLink: PropTypes.shape( {
+			value: PropTypes.any,
+			requestChange: PropTypes.func.isRequired
 		} ),
 	},
 
-	getDefaultProps: function() {
+	getDefaultProps() {
 		return {
 			formDescription: '',
 			showHowCanWeHelpField: false,
@@ -62,26 +63,24 @@ module.exports = React.createClass( {
 				value: null,
 				requestChange: () => {}
 			}
-		}
+		};
 	},
 
 	/**
 	 * Setup our initial state
 	 * @return {Object} An object representing our initial state
 	 */
-	getInitialState: function() {
-		const site = sites.getLastSelectedSite() || sites.getPrimary();
-
+	getInitialState() {
 		return this.props.valueLink.value || {
 			howCanWeHelp: 'gettingStarted',
 			howYouFeel: 'unspecified',
 			message: '',
 			subject: '',
-			siteSlug: site ? site.slug : null
+			siteSlug: this.getSiteSlug()
 		};
 	},
 
-	componentWillReceiveProps: function( nextProps ) {
+	componentWillReceiveProps( nextProps ) {
 		if ( ! nextProps.valueLink.value || isEqual( nextProps.valueLink.value, this.state ) ) {
 			return;
 		}
@@ -89,15 +88,28 @@ module.exports = React.createClass( {
 		this.setState( nextProps.valueLink.value );
 	},
 
-	componentDidUpdate: function() {
+	componentDidUpdate() {
 		this.props.valueLink.requestChange( this.state );
 	},
 
-	setSite: function( siteSlug ) {
+	getSiteSlug() {
+		if ( this.props.selectedSiteSlug ) {
+			return this.props.selectedSiteSlug;
+		}
+
+		const primarySite = sites.getPrimary();
+		if ( primarySite ) {
+			return primarySite.slug;
+		}
+
+		return null;
+	},
+
+	setSite( siteSlug ) {
 		this.setState( { siteSlug } );
 	},
 
-	trackClickStats: function( selectionName, selectedOption ) {
+	trackClickStats( selectionName, selectedOption ) {
 		const tracksEvent = {
 			howCanWeHelp: 'calypso_help_how_can_we_help_click',
 			howYouFeel: 'calypso_help_how_you_feel_click'
@@ -114,13 +126,14 @@ module.exports = React.createClass( {
 	 * The SegmentedControl is used for desktop and the SelectDropdown is used for mobile.
 	 * CSS will control which one is displayed to the user.
 	 *
-	 * @param  {string} selectionName    The name that will be used to store the value of a selected option that appears in selectionOptions.
+	 * @param  {string} selectionName    The name that will be used to store the value of a selected option appearing in selectionOptions.
 	 * @param  {object} selectionOptions An array of objects consisting of a value and a label. It can also have a property called subtext
 	 *                                   value is used when setting state, label is used for display in the selection component, and subtext
 	 *                                   is used for the second line of text displayed in the SegmentedControl
 	 * @return {object}                  A JSX object containing both the SegmentedControl and the SelectDropdown.
 	 */
-	renderFormSelection: function( selectionName, selectionOptions ) {
+	renderFormSelection( selectionName, selectionOptions ) {
+		const { translate } = this.props;
 		const options = selectionOptions.map( option => ( {
 			label: option.label,
 			subtext: option.subtext ? <span className="help-contact-form__selection-subtext">{ option.subtext }</span> : null,
@@ -135,7 +148,6 @@ module.exports = React.createClass( {
 				}
 			}
 		} ) );
-
 		const selectedItem = find( options, 'props.selected' );
 
 		return (
@@ -143,7 +155,7 @@ module.exports = React.createClass( {
 				<SegmentedControl primary>
 					{ options.map( option => <ControlItem { ...option.props }>{ option.label }{ option.subtext }</ControlItem> ) }
 				</SegmentedControl>
-				<SelectDropdown selectedText={ selectedItem ? selectedItem.label : this.translate( 'Select an option' ) }>
+				<SelectDropdown selectedText={ selectedItem ? selectedItem.label : translate( 'Select an option' ) }>
 					{ options.map( option => <DropdownItem { ...option.props }>{ option.label }</DropdownItem> ) }
 				</SelectDropdown>
 			</div>
@@ -154,7 +166,7 @@ module.exports = React.createClass( {
 	 * Determine if this form is ready to submit
 	 * @return {bool}	Return true if this form can be submitted
 	 */
-	canSubmitForm: function() {
+	canSubmitForm() {
 		const { disabled, showSubjectField } = this.props;
 		const { subject, message } = this.state;
 
@@ -173,7 +185,7 @@ module.exports = React.createClass( {
 	 * Start a chat using the info set in state
 	 * @param  {object} event Event object
 	 */
-	submitForm: function() {
+	submitForm() {
 		this.props.onSubmit( this.state );
 	},
 
@@ -181,21 +193,7 @@ module.exports = React.createClass( {
 	 * Render the contact form
 	 * @return {object} ReactJS JSX object
 	 */
-	render: function() {
-		var howCanWeHelpOptions = [
-				{ value: 'gettingStarted', label: this.translate( 'Help getting started' ), subtext: this.translate( 'Can you show me how to…' ) },
-				{ value: 'somethingBroken', label: this.translate( 'Something is broken' ), subtext: this.translate( 'Can you check this out…' ) },
-				{ value: 'suggestion', label: this.translate( 'I have a suggestion' ), subtext: this.translate( 'I think it would be cool if…' ) }
-			],
-			howYouFeelOptions = [
-				{ value: 'unspecified', label: this.translate( "I'd rather not" ) },
-				{ value: 'happy', label: this.translate( 'Happy' ) },
-				{ value: 'confused', label: this.translate( 'Confused' ) },
-				{ value: 'discouraged', label: this.translate( 'Discouraged' ) },
-				{ value: 'upset', label: this.translate( 'Upset' ) },
-				{ value: 'panicked', label: this.translate( 'Panicked' ) }
-			];
-
+	render() {
 		const {
 			formDescription,
 			buttonLabel,
@@ -204,7 +202,21 @@ module.exports = React.createClass( {
 			showSubjectField,
 			showSiteField,
 			showHelpLanguagePrompt,
+			translate,
 		} = this.props;
+		const howCanWeHelpOptions = [
+			{ value: 'gettingStarted', label: translate( 'Help getting started' ), subtext: translate( 'Can you show me how to…' ) },
+			{ value: 'somethingBroken', label: translate( 'Something is broken' ), subtext: translate( 'Can you check this out…' ) },
+			{ value: 'suggestion', label: translate( 'I have a suggestion' ), subtext: translate( 'I think it would be cool if…' ) }
+		];
+		const howYouFeelOptions = [
+			{ value: 'unspecified', label: translate( "I'd rather not" ) },
+			{ value: 'happy', label: translate( 'Happy' ) },
+			{ value: 'confused', label: translate( 'Confused' ) },
+			{ value: 'discouraged', label: translate( 'Discouraged' ) },
+			{ value: 'upset', label: translate( 'Upset' ) },
+			{ value: 'panicked', label: translate( 'Panicked' ) }
+		];
 
 		return (
 			<div className="help-contact-form">
@@ -212,21 +224,21 @@ module.exports = React.createClass( {
 
 				{ showHowCanWeHelpField && (
 					<div>
-						<FormLabel>{ this.translate( 'How can we help?' ) }</FormLabel>
+						<FormLabel>{ translate( 'How can we help?' ) }</FormLabel>
 						{ this.renderFormSelection( 'howCanWeHelp', howCanWeHelpOptions ) }
 					</div>
 				) }
 
 				{ showHowYouFeelField && (
 					<div>
-						<FormLabel>{ this.translate( 'Mind sharing how you feel?' ) }</FormLabel>
+						<FormLabel>{ translate( 'Mind sharing how you feel?' ) }</FormLabel>
 						{ this.renderFormSelection( 'howYouFeel', howYouFeelOptions ) }
 					</div>
 				) }
 
 				{ showSiteField && (
 					<div className="help-contact-form__site-selection">
-						<FormLabel>{ this.translate( 'Which site do you need help with?' ) }</FormLabel>
+						<FormLabel>{ translate( 'Which site do you need help with?' ) }</FormLabel>
 						<SitesDropdown
 							selected={ this.state.siteSlug }
 							onSiteSelect={ this.setSite } />
@@ -235,17 +247,17 @@ module.exports = React.createClass( {
 
 				{ showSubjectField && (
 					<div className="help-contact-form__subject">
-						<FormLabel>{ this.translate( 'Subject' ) }</FormLabel>
+						<FormLabel>{ translate( 'Subject' ) }</FormLabel>
 						<FormTextInput valueLink={ this.linkState( 'subject' ) } />
 					</div>
 				) }
 
-				<FormLabel>{ this.translate( 'What are you trying to do?' ) }</FormLabel>
-				<FormTextarea valueLink={ this.linkState( 'message' ) } placeholder={ this.translate( 'Please be descriptive' ) }></FormTextarea>
+				<FormLabel>{ translate( 'What are you trying to do?' ) }</FormLabel>
+				<FormTextarea valueLink={ this.linkState( 'message' ) } placeholder={ translate( 'Please be descriptive' ) } />
 
 				{ showHelpLanguagePrompt && (
 					<strong className="help-contact-form__help-language-prompt">
-						{ this.translate( 'Note: Support is only available in English at the moment.' ) }
+						{ translate( 'Note: Support is only available in English at the moment.' ) }
 					</strong>
 				) }
 				<FormButton disabled={ ! this.canSubmitForm() } type="button" onClick={ this.submitForm }>{ buttonLabel }</FormButton>
@@ -253,3 +265,9 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect( ( state ) => {
+	return {
+		selectedSiteSlug: getSelectedSiteSlug( state )
+	};
+} )( localize( HelpContactForm ) );

@@ -10,6 +10,7 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import { getPlansBySite } from 'state/sites/plans/selectors';
+import { isCurrentPlanPaid } from 'state/sites/selectors';
 import { getFlowType } from 'state/jetpack-connect/selectors';
 import Main from 'components/main';
 import StepHeader from '../step-header';
@@ -25,17 +26,18 @@ import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { requestPlans } from 'state/plans/actions';
 import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
+const CALYPSO_PLAN_PAGE = '/plans/my-plan/';
 
 const Plans = React.createClass( {
-	mixins: [ observe( 'sites', 'plans' ) ],
+	mixins: [ observe( 'plans' ) ],
 
 	propTypes: {
 		cart: React.PropTypes.object.isRequired,
 		context: React.PropTypes.object.isRequired,
 		destinationType: React.PropTypes.string,
-		sites: React.PropTypes.object.isRequired,
 		sitePlans: React.PropTypes.object.isRequired,
 		showJetpackFreePlan: React.PropTypes.bool,
 		intervalType: React.PropTypes.string
@@ -58,22 +60,21 @@ const Plans = React.createClass( {
 	},
 
 	componentDidUpdate() {
-		if ( this.hasPlan( this.props.selectedSite ) ) {
-			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
-		}
-		if ( ! this.props.canPurchasePlans ) {
-			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
-		}
+		if ( this.props.calypsoStartedConnection ) {
+			if ( this.props.hasPaidPlan ) {
+				page.redirect( CALYPSO_PLAN_PAGE + this.props.selectedSite.slug );
+			}
+			if ( ! this.props.canPurchasePlans ) {
+				page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
+			}
 
-		if ( ! this.props.isRequestingPlans && ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) ) {
-			return this.autoselectPlan();
+			if ( ! this.props.isRequestingPlans && ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) ) {
+				return this.autoselectPlan();
+			}
+		} else if ( this.props.hasPaidPlan || ! this.props.canPurchasePlans ) {
+			const { queryObject } = this.props.jetpackConnectAuthorize;
+			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
 		}
-	},
-
-	hasPlan( site ) {
-		return site &&
-			site.plan &&
-			( site.plan.product_slug === 'jetpack_business' || site.plan.product_slug === 'jetpack_premium' );
 	},
 
 	autoselectPlan() {
@@ -100,7 +101,7 @@ const Plans = React.createClass( {
 			user: this.props.userId
 		} );
 		if ( this.props.calypsoStartedConnection ) {
-			page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
+			page.redirect( CALYPSO_PLAN_PAGE + this.props.selectedSite.slug );
 		} else {
 			const { queryObject } = this.props.jetpackConnectAuthorize;
 			this.props.goBackToWpAdmin( queryObject.redirect_after_auth );
@@ -131,7 +132,7 @@ const Plans = React.createClass( {
 			return null;
 		}
 
-		if ( ! this.props.canPurchasePlans || this.hasPlan( this.props.selectedSite ) ) {
+		if ( ! this.props.canPurchasePlans || this.props.hasPaidPlan ) {
 			return null;
 		}
 
@@ -150,7 +151,7 @@ const Plans = React.createClass( {
 						<div id="plans">
 							<PlansFeaturesMain
 								site={ this.props.selectedSite }
-								isInSignup={ true }
+								isInSignup={ ! this.props.hasPaidPlan }
 								isInJetpackConnect={ true }
 								onUpgradeClick={ this.selectPlan }
 								intervalType={ this.props.intervalType } />
@@ -163,16 +164,19 @@ const Plans = React.createClass( {
 } );
 
 export default connect(
-	( state, props ) => {
+	state => {
 		const user = getCurrentUser( state );
-		const selectedSite = props.sites.getSelectedSite();
+		const selectedSite = getSelectedSite( state );
 
 		const searchPlanBySlug = ( planSlug ) => {
 			return getPlanBySlug( state, planSlug );
 		};
 
+		const hasPaidPlan = isCurrentPlanPaid( state, selectedSite.ID );
+
 		return {
 			selectedSite,
+			hasPaidPlan: hasPaidPlan,
 			sitePlans: getPlansBySite( state, selectedSite ),
 			jetpackConnectAuthorize: getAuthorizationData( state ),
 			userId: user ? user.ID : null,

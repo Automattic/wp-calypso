@@ -9,19 +9,18 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import ExternalLink from 'components/external-link';
-import { recordPermalinkClick, recordGaEvent } from 'reader/stats';
+import { recordPermalinkClick } from 'reader/stats';
 import PostTime from 'reader/post-time';
 import ReaderFullPostHeaderTags from './header-tags';
 import Gridicon from 'components/gridicon';
 
 const ReaderFullPostHeader = ( { post } ) => {
 	const handlePermalinkClick = ( { } ) => {
-		recordPermalinkClick( 'full_post_title' );
+		recordPermalinkClick( 'full_post_title', post );
 	};
 
-	const recordDateClick = ( { } ) => {
-		recordPermalinkClick( 'timestamp' );
-		recordGaEvent( 'Clicked Post Permalink', 'timestamp' );
+	const recordDateClick = () => {
+		recordPermalinkClick( 'timestamp_full_post', post );
 	};
 
 	const classes = { 'reader-full-post__header': true };

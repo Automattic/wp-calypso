@@ -32,7 +32,7 @@ import DailyPostButton from 'reader/daily-post';
 import { shouldShowLikes } from 'reader/like-helper';
 import { shouldShowComments } from 'blocks/comments/helper';
 import CommentButton from 'blocks/comment-button';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrackForPost, recordPermalinkClick } from 'reader/stats';
 import Comments from 'blocks/comments';
 import scrollTo from 'lib/scroll-to';
 import PostExcerptLink from 'reader/post-excerpt-link';
@@ -52,6 +52,7 @@ import { getSite } from 'state/reader/sites/selectors';
 import QueryReaderSite from 'components/data/query-reader-site';
 import QueryReaderFeed from 'components/data/query-reader-feed';
 import ExternalLink from 'components/external-link';
+import DocumentHead from 'components/data/document-head';
 
 export class FullPostView extends React.Component {
 	constructor( props ) {
@@ -59,6 +60,7 @@ export class FullPostView extends React.Component {
 		[
 			'handleBack',
 			'handleCommentClick',
+			'handleVisitSiteClick',
 			'handleLike',
 			'handleRelatedPostFromSameSiteClicked',
 			'handleRelatedPostFromOtherSiteClicked',
@@ -155,6 +157,10 @@ export class FullPostView extends React.Component {
 		recordTrackForPost( 'calypso_reader_related_post_from_same_site_clicked', this.props.post );
 	}
 
+	handleVisitSiteClick() {
+		recordPermalinkClick( 'full_post_visit_link', this.props.post );
+	}
+
 	handleRelatedPostFromOtherSiteClicked() {
 		recordTrackForPost( 'calypso_reader_related_post_from_other_site_clicked', this.props.post );
 	}
@@ -246,10 +252,15 @@ export class FullPostView extends React.Component {
 			classes[ 'feed-' + post.feed_ID ] = true;
 		}
 
-		/*eslint-disable react/no-danger*/
+		/*eslint-disable react/no-danger */
+		/*eslint-disable react/jsx-no-target-blank */
 		return (
 			<ReaderMain className={ classNames( classes ) }>
-				{ post && post.feed_ID && <QueryReaderFeed feedId={ post.feed_ID } /> }
+				{ ! post || post._state === 'pending'
+					? <DocumentHead title={ translate( 'Loading' ) } />
+					: <DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } />
+				}
+				{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
 				{ post && ! post.is_external && post.site_ID && <QueryReaderSite siteId={ post.site_ID } /> }
 				<div className="reader-full-post__back-container">
 					<Button className="reader-full-post__back" borderless compact onClick={ this.handleBack }>
@@ -258,7 +269,7 @@ export class FullPostView extends React.Component {
 					</Button>
 				</div>
 				<div className="reader-full-post__visit-site-container">
-					<ExternalLink icon={ true } href={ post.URL }>
+					<ExternalLink icon={ true } href={ post.URL } onClick={ this.handleVisitSiteClick } target="_blank">
 						<span className="reader-full-post__visit-site-label">{ translate( 'Visit Site' ) }</span>
 					</ExternalLink>
 				</div>
@@ -301,7 +312,7 @@ export class FullPostView extends React.Component {
 							? <PostExcerpt content={ post.better_excerpt ? post.better_excerpt : post.excerpt } />
 							: <EmbedContainer>
 									<div
-										className="reader-full-post__story-content reader__full-post-content"
+										className="reader-full-post__story-content"
 										dangerouslySetInnerHTML={ { __html: post.content } } />
 								</EmbedContainer>
 						}

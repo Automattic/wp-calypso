@@ -17,11 +17,13 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
-	Notice = require( 'components/notice' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
-	signupUtils = require( 'signup/utils' );
+	signupUtils = require( 'signup/utils' ),
+	abtest = require( 'lib/abtest' ).abtest;
+
+import Notice from 'components/notice';
 
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
@@ -75,7 +77,7 @@ const DomainsStep = React.createClass( {
 
 		defer( () => {
 			// we must defer here because `submitWithDomain` also dispatches an action
-			if ( isPurchasingItem ) {
+			if ( isPurchasingItem && abtest( 'gSuiteOnSignup' ) === 'original' ) {
 				this.showGoogleApps();
 			} else {
 				this.submitWithDomain();

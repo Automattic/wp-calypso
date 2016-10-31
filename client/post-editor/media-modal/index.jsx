@@ -225,7 +225,7 @@ export const EditorMediaModal = React.createClass( {
 			}
 		};
 
-		MediaActions.update( site.ID, item );
+		MediaActions.update( site.ID, item, true );
 
 		resetAllImageEditorState();
 
