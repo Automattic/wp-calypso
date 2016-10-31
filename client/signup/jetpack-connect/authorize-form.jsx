@@ -54,7 +54,7 @@ import { requestSites } from 'state/sites/actions';
 import { isRequestingSites } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
-import { withoutHttp } from 'lib/url';
+import { urlToSlug } from 'lib/url';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -477,7 +477,7 @@ const LoggedInForm = React.createClass( {
 	getRedirectionTarget() {
 		const { queryObject } = this.props.jetpackConnectAuthorize;
 		const site = queryObject.site;
-		const siteSlug = withoutHttp( site ).replace( /\//g, '::' );
+		const siteSlug = urlToSlug( site );
 		return PLANS_PAGE + siteSlug;
 	},
 
@@ -580,7 +580,7 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 	mixins: [ observe( 'userModule' ) ],
 
 	isSSO() {
-		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
+		const site = urlToSlug( this.props.jetpackConnectAuthorize.queryObject.site );
 		return !! ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] );
 	},
 

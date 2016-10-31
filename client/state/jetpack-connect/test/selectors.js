@@ -311,6 +311,21 @@ describe( 'selectors', () => {
 			expect( isCalypsoStartedConnection( state, 'sitetest' ) ).to.be.true;
 		} );
 
+		it( 'should return true if the user has just started a session in calypso and site contains a forward slash', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectSessions: {
+						'example.com::example123': {
+							timestamp: Date.now(),
+							flow: ''
+						}
+					}
+				}
+			};
+
+			expect( isCalypsoStartedConnection( state, 'example.com/example123' ) ).to.be.true;
+		} );
+
 		it( 'should return false if the user haven\'t started a session in calypso  ', () => {
 			const state = {
 				jetpackConnect: {
@@ -355,14 +370,29 @@ describe( 'selectors', () => {
 			expect( getFlowType( state, 'sitetest' ) ).to.eql( 'pro' );
 		} );
 
-		it( 'should return the false if there\'s no session for a site', () => {
+		it( 'should return the flow of the session for a site with slash in the site slug', () => {
+			const state = {
+				jetpackConnect: {
+					jetpackConnectSessions: {
+						'example.com::example123': {
+							timestamp: new Date( Date.now() - 59 * 60 * 1000 ).getTime(),
+							flowType: 'pro'
+						}
+					}
+				}
+			};
+
+			expect( getFlowType( state, 'example.com/example123' ) ).to.eql( 'pro' );
+		} );
+
+		it( 'should return false if there\'s no session for a site', () => {
 			const state = {
 				jetpackConnect: {
 					jetpackConnectSessions: {}
 				}
 			};
 
-			expect( getFlowType( state, { slug: 'sitetest' } ) ).to.be.false;
+			expect( getFlowType( state, 'sitetest' ) ).to.be.false;
 		} );
 	} );
 
