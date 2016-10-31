@@ -126,7 +126,7 @@ Tabs should be used for indentation.
 Try to return early from a function to avoid deeply tabbed functions akin to ["Callback Hell"](http://callbackhell.com/).
 
 ```js
-// bad
+// Bad
 function getSiteTitle( site ) {
 	if ( site ) {
 		if ( site.name ) {
@@ -143,8 +143,7 @@ function getSiteTitle( site ) {
 	}
 }
 
-
-// good
+// Good
 function getSiteTitle( site ) {
 	if ( ! site ) {
 		return null;
@@ -181,7 +180,7 @@ if ( myFunction() ) {
 When all paths of a set of `if` or `else if` statements `return` a value, do not include an `else` block.
 
 ```js
-// bad
+// Bad
 function getStatusLabel() {
 	if ( isValid() ) {
 		return 'OK';
@@ -190,7 +189,7 @@ function getStatusLabel() {
 	}
 }
 
-// good
+// Good
 function getStatusLabel() {
 	if ( isValid() ) {
 		return 'OK';
@@ -456,10 +455,10 @@ The first word of a variable name should be a noun or adjective (not a verb) to 
 You can prefix a variable with verb only for boolean values when it makes code easier to read.
 
 ```js
-// bad
+// Bad
 const play = false;
 
-// good
+// Good
 const name = 'John';
 const blueCar = new Car( 'blue' );
 const shouldFlop = true;
@@ -470,12 +469,12 @@ const shouldFlop = true;
 The first word of a function name should be a verb (not a noun) to avoid confusion with variables.
 
 ```js
-// bad
+// Bad
 function name() {
 	return 'John';
 }
 
-// good
+// Good
 function getName() {
 	return 'John';
 }
@@ -545,13 +544,13 @@ const posts = postList.map( function( post ) {
 When iterating over a large collection using a for loop, it is recommended to store the loop’s max value as a variable rather than re-computing the maximum every time:
 
 ```js
-// Good & Efficient:
+// Good & efficient:
 // getItemCount() gets called once
 for ( let i = 0, max = getItemCount(); i < max; i++ ) {
 	// Do stuff
 }
 
-// Bad & Potentially Inefficient:
+// Bad & potentially inefficient:
 // getItemCount() gets called every time
 for ( let i = 0; i < getItemCount(); i++ ) {
 	// Do stuff
