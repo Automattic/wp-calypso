@@ -85,7 +85,7 @@
 
 		.value {
 			clear: both;
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 10% );
 			display: block;
 			float: none;
 			line-height: 24px;

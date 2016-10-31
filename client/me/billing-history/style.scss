@@ -161,7 +161,7 @@
 	position: absolute;
 	top: -25px;
 	left: 21px;
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 10% );
 	content: '\f500';
 	font-family: Noticons;
 	font-size: 20px;
@@ -212,7 +212,7 @@
 	padding: 8px 10px;
 	font-size: 13px;
 	border-top: 1px dotted rgba(0,0,0,0.1);
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 10% );
 }
 .filter-popover-content td.descriptor {
 	font-weight: 400;

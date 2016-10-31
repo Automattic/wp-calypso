@@ -179,7 +179,7 @@
 		}
 
 		.follow-button__label {
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 10% );
 		}
 
 		&:hover {

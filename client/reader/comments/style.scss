@@ -89,7 +89,7 @@
 
 	button:focus {
 		outline: dotted 1px $blue-medium;
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 	}
 
 	.comments__cancel-reply {

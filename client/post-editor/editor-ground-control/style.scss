@@ -88,7 +88,7 @@
 	background: white;
 	margin: 16px -16px -16px;
 	position: relative;
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 10% );
 	border-top: 1px solid lighten( $gray, 20% );
 	cursor: pointer;
 	fill: $blue-wordpress;

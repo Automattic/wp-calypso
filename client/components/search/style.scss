@@ -27,7 +27,7 @@
 		flex: 0 0 auto;
 		width: 50px;
 		z-index: z-index( '.search', '.search .search__open-icon' );
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 		cursor: pointer;
 
 		.accessible-focus &:focus {

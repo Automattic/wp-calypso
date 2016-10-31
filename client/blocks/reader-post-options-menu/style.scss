@@ -12,7 +12,7 @@
 	}
 
 	&.is-menu-visible .button.is-borderless {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 	}
 }
 

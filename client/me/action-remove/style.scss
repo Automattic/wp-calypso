@@ -11,7 +11,7 @@
 	&:hover,
 	&:focus,
 	&:active {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 	}
 
 	&:after {

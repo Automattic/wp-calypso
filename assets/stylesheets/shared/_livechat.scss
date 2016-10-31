@@ -501,7 +501,7 @@
 }
 
 #habla_window_div .habla_conversation_person2 {
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 10% );
 	padding-right:5px;
 }
 
@@ -677,7 +677,7 @@
 #habla_window_div #habla_panel_div #habla_expanded_div a,
 #habla_window_div #habla_panel_div #habla_expanded_div a:active,
 #habla_window_div #habla_panel_div #habla_expanded_div a:visited {
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 10% );
 }
 
 #habla_conversation_div .habla_conversation_p_item {

@@ -67,7 +67,7 @@
 		&.conf-alert--trashing,
 		&.conf-alert--updating {
 			border-color: $blue-wordpress;
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 10% );
 			.loading-dot {
 				animation-name: loading-dot-pulse;
 				animation-duration: 0.5s;

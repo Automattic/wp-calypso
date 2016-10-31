@@ -1899,7 +1899,7 @@ div.wp-link-preview {
 }
 
 div.wp-link-preview a {
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 10% );
 	text-decoration: underline;
 	transition-property: border, background, color;
 	transition-duration: .05s;

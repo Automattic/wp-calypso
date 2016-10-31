@@ -18,7 +18,7 @@
 	}
 
 	&.is-active {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 
 		.gridicon {
 			fill: $blue-wordpress;

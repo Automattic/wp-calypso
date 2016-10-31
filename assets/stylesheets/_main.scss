@@ -228,7 +228,7 @@ th {
 /* Links */
 a,
 a:visited {
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 10% );
 }
 
 a:hover,

@@ -28,7 +28,7 @@
 		}
 
 		&:hover {
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 10% );
 		}
 	}
 
@@ -59,7 +59,7 @@
 	}
 
 	&:hover {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 	}
 }
 
@@ -90,7 +90,7 @@
 		color: lighten( $gray, 10% );
 
 		&:hover {
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 10% );
 		}
 	}
 }

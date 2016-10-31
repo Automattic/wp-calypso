@@ -71,7 +71,7 @@
 	}
 
 	h1 {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 		font-size: 47px;
 		line-height: 1.333;
 	}

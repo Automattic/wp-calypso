@@ -141,7 +141,7 @@
 }
 
 .cart-items__expander {
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 10% );
 	text-decoration: none;
 	font-size: 12px;
 }

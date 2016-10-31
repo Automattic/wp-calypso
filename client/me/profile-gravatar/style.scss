@@ -15,7 +15,7 @@
 	line-height: 150px;
 	border-radius: 50%;
 	background: rgba( $gray-dark, 0 );
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 10% );
 	transition: all 0.3s ease-in-out;
 	-webkit-appearance: preserve-3d;
 

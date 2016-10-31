@@ -139,12 +139,12 @@ $autobar-height: 20px;
 .masterbar__item-new {
 	background: $white;
 	border-radius: 3px;
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 10% );
 	height: 36px;
 	margin: 5px 8px;
 
 	&:visited {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 	}
 
 	&.is-active {
@@ -154,7 +154,7 @@ $autobar-height: 20px;
 	&:hover,
 	&:focus {
 		background: $gray-light;
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 	}
 
 	.masterbar__item-content {

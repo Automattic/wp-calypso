@@ -666,7 +666,7 @@ ul.module-content-list-legend {
 
 	// Change colors to highlight label when row is highlighted
 	.module-content-list-item-label {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 	}
 
 	// Highlight main action (usually what's indicated in the label)

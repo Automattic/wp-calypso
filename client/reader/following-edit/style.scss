@@ -107,7 +107,7 @@
 	padding: 0;
 
 	.gridicons-search {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 10% );
 	}
 
 	&.button.is-borderless .gridicons-search {
