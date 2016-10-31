@@ -35,9 +35,9 @@ let map;
 
 // Preferred
 map = {
-    ready: 9,
-    when: 4,
-    'you are': 15
+	ready: 9,
+	when: 4,
+	'you are': 15
 };
 
 // Acceptable for small objects
@@ -45,7 +45,7 @@ map = { ready: 9, when: 4, 'you are': 15 };
 
 // Bad
 map = { ready: 9,
-    when: 4, 'you are': 15 };
+	when: 4, 'you are': 15 };
 ```
 
 ## Arrays and Function Calls
@@ -71,15 +71,15 @@ foo( {
 } );
 
 foo( data, function() {
-    // Do stuff
+	// Do stuff
 } );
 
 foo( function() {
-    // Do stuff
+	// Do stuff
 }.bind( this ) );
 
 foo( function() {
-    // Do stuff
+	// Do stuff
 }, options );
 ```
 
@@ -87,29 +87,29 @@ foo( function() {
 
 ```js
 if ( condition ) {
-    doSomething( 'with a string' );
+	doSomething( 'with a string' );
 } else if ( otherCondition ) {
-    otherThing( {
-        key: value,
-        otherKey: otherValue
-    } );
+	otherThing( {
+		key: value,
+		otherKey: otherValue
+	} );
 } else {
-    somethingElse( true );
+	somethingElse( true );
 }
 
 while ( ! condition ) {
-    iterating++;
+	iterating++;
 }
 
 for ( let i = 0; i < 100; i++ ) {
-    object[ array[ i ] ] = someFn( i );
-    $( '.container' ).val( array[ i ] );
+	object[ array[ i ] ] = someFn( i );
+	$( '.container' ).val( array[ i ] );
 }
 
 try {
-    // Expressions
+	// Expressions
 } catch ( e ) {
-    // Expressions
+	// Expressions
 }
 ```
 
@@ -170,11 +170,11 @@ function getSiteTitle( site ) {
 let a, b, c;
 
 if ( myFunction() ) {
-    // Expressions
+	// Expressions
 } else if ( ( a && b ) || c ) {
-    // Expressions
+	// Expressions
 } else {
-    // Expressions
+	// Expressions
 }
 ```
 
@@ -196,7 +196,7 @@ function getStatusLabel() {
 		return 'OK';
 	}
 
-	return 'Not OK';	
+	return 'Not OK';
 }
 ```
 
@@ -209,19 +209,19 @@ let html;
 
 // Bad
 html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c
-    + ' is ' + ( a + b + c );
+	+ ' is ' + ( a + b + c );
 
 // Good
 html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c +
-    ' is ' + ( a + b + c );
+	' is ' + ( a + b + c );
 ```
 
 When a conditional is too long to fit on one line, successive lines should be indented one extra level to distinguish them from the body.
 
 ```js
 if ( firstCondition() && secondCondition() &&
-        thirdCondition() ) {
-    doStuff();
+		thirdCondition() ) {
+	doStuff();
 }
 ```
 
@@ -327,7 +327,7 @@ Strict equality checks (===) must be used in favor of abstract equality checks (
 ```js
 // Check for both undefined and null values, for some important reason.
 if ( undefOrNull == null ) {
-    // Expressions
+	// Expressions
 }
 ```
 
@@ -434,16 +434,16 @@ When using switch statements:
 ```js
 switch ( event.keyCode ) {
 
-    // ENTER and SPACE both trigger x()
-    case constants.keyCode.ENTER:
-    case constants.keyCode.SPACE:
-        x();
-        break;
-    case constants.keyCode.ESCAPE:
-        y();
-        break;
-    default:
-        z();
+	// ENTER and SPACE both trigger x()
+	case constants.keyCode.ENTER:
+	case constants.keyCode.SPACE:
+		x();
+		break;
+	case constants.keyCode.ESCAPE:
+		y();
+		break;
+	default:
+		z();
 }
 ```
 
@@ -472,12 +472,12 @@ The first word of a function name should be a verb (not a noun) to avoid confusi
 ```js
 // bad
 function name() {
-    return 'John';
+	return 'John';
 }
 
 // good
 function getName() {
-    return 'John';
+	return 'John';
 }
 ```
 
@@ -485,7 +485,7 @@ You may prefix a function by `is` or `has` to indicate a Boolean return value.
 
 ```js
 function isValid() {
-    return true;
+	return true;
 }
 ```
 
@@ -548,13 +548,13 @@ When iterating over a large collection using a for loop, it is recommended to st
 // Good & Efficient:
 // getItemCount() gets called once
 for ( let i = 0, max = getItemCount(); i < max; i++ ) {
-    // Do stuff
+	// Do stuff
 }
 
 // Bad & Potentially Inefficient:
 // getItemCount() gets called every time
 for ( let i = 0; i < getItemCount(); i++ ) {
-    // Do stuff
+	// Do stuff
 }
 ```
 
