@@ -123,6 +123,45 @@ Indentation and line breaks add readability to complex statements.
 
 Tabs should be used for indentation.
 
+Try to return early from a function to avoid deeply tabbed functions akin to ["Callback Hell"](http://callbackhell.com/).
+
+```js
+// bad
+function getSiteTitle( site ) {
+	if ( site ) {
+		if ( site.name ) {
+			if ( site.name.length <= 50 ) {
+				return site.name;
+			} else {
+				return site.name.slice( 0, 50 ) + '…';
+			}
+		} else {
+			return site.slug;
+		}
+	} else {
+		return null;
+	}
+}
+
+
+// good
+function getSiteTitle( site ) {
+	if ( ! site ) {
+		return null;
+	}
+
+	if ( ! site.name ) {
+		return site.slug;
+	}
+
+	if ( site.name.length > 50 ) {
+		return site.name.slice( 0, 50 ) + '…';
+	}
+
+	return site.name;
+}
+```
+
 ## Blocks and Curly Braces
 
 if, else, for, while, and try blocks should always use braces, and always go on multiple lines. The opening brace should be on the same line as the function definition, the conditional, or the loop. The closing brace should be on the line directly following the last statement of the block.
