@@ -7,7 +7,7 @@ import React, { PropTypes } from 'react';
  * Internal dependencies
  */
 import Notice from 'components/notice';
-import { withoutHttp } from 'lib/url';
+import { urlToSlug } from 'lib/url';
 
 export default React.createClass( {
 	displayName: 'JetpackConnectNotices',
@@ -120,7 +120,7 @@ export default React.createClass( {
 	},
 
 	render() {
-		const urlSlug = this.props.url ? withoutHttp( this.props.url ).replace( /\//g, '::' ) : '';
+		const urlSlug = this.props.url ? urlToSlug( this.props.url ) : '';
 		const values = this.getNoticeValues( urlSlug );
 		if ( values ) {
 			return (
