@@ -40,7 +40,15 @@ import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 class ProductPurchaseFeaturesList extends Component {
 	static propTypes = {
 		plan: PropTypes
-			.oneOf( [ PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS ] )
+			.oneOf( [ PLAN_FREE,
+				PLAN_PERSONAL,
+				PLAN_PREMIUM,
+				PLAN_BUSINESS,
+				PLAN_JETPACK_FREE,
+				PLAN_JETPACK_BUSINESS,
+				PLAN_JETPACK_BUSINESS_MONTHLY,
+				PLAN_JETPACK_PREMIUM,
+				PLAN_JETPACK_PREMIUM_MONTHLY ] )
 			.isRequired,
 		isPlaceholder: PropTypes.bool
 	};
