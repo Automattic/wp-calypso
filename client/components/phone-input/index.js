@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import noop from 'lodash';
+import noop from 'lodash/noop';
 import React from 'react';
 
 /**
@@ -41,7 +41,7 @@ const PhoneInput = React.createClass( {
 	componentDidUpdate( prevProps, prevState ) {
 		if ( this.state.value && this.state.selectedCountry !== prevState.selectedCountry ) {
 			this.setState( {
-				formattedNumber: formatNumber( this.state.value, this.state.selectedCountry.format )
+				formattedNumber: formatNumber( this.state.value, this.state.selectedCountry )
 			} );
 		}
 	},
@@ -116,6 +116,7 @@ const PhoneInput = React.createClass( {
 						<FormCountrySelect
 							className="phone-input__country-select"
 							onChange={ this.handleCountrySelection }
+							value={ ( this.state.selectedCountry.isoCode || '' ).toUpperCase() }
 							countriesList={ this.props.countriesList } />
 						<CountryFlag countryCode={ this.state.selectedCountry.isoCode } />
 					</div>
