@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
+import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	POST_STATS_RECEIVE,
 	POST_STATS_REQUEST,
@@ -19,12 +19,8 @@ import {
 import { requesting, items } from '../reducer';
 
 describe( 'reducer', () => {
-	before( () => {
-		sinon.stub( console, 'warn' );
-	} );
-
-	after( () => {
-		console.warn.restore();
+	useSandbox( ( sandbox ) => {
+		sandbox.stub( console, 'warn' );
 	} );
 
 	describe( '#requesting()', () => {
@@ -334,7 +330,6 @@ describe( 'reducer', () => {
 			const state = items( previousInvalidState, { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
-			expect( console.warn ).to.have.been.calledOnce;
 		} );
 	} );
 } );

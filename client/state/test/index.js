@@ -1,12 +1,14 @@
+/* eslint-disable no-console */
+
 /**
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
+import { useSandbox } from 'test/helpers/use-sinon';
 import { createReduxStore } from '../';
 import currentUser from 'state/current-user/reducer';
 
@@ -32,12 +34,8 @@ describe( 'index', () => {
 		} );
 
 		describe( 'invalid data', () => {
-			before( () => {
-				sinon.stub( console, 'error' );
-			} );
-
-			after( () => {
-				console.error.restore();
+			useSandbox( ( sandbox ) => {
+				sandbox.stub( console, 'error' );
 			} );
 
 			it( 'ignores non-existent keys', () => {

@@ -215,7 +215,6 @@ describe( 'reducer', () => {
 			} ), { type: DESERIALIZE } );
 
 			expect( state ).to.eql( {} );
-			expect( console.warn ).to.have.been.calledOnce;
 		} );
 	} );
 } );
