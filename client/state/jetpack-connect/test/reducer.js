@@ -104,6 +104,15 @@ describe( 'reducer', () => {
 			expect( state ).to.have.property( 'example.wordpress.com' ).to.be.a( 'object' );
 		} );
 
+		it( 'should convert forward slashes to double colon when checking a new url', () => {
+			const state = jetpackConnectSessions( undefined, {
+				type: JETPACK_CONNECT_CHECK_URL,
+				url: 'https://example.wordpress.com/example123'
+			} );
+
+			expect( state ).to.have.property( 'example.wordpress.com::example123' ).to.be.a( 'object' );
+		} );
+
 		it( 'should store a timestamp when checking a new url', () => {
 			const nowTime = Date.now();
 			const state = jetpackConnectSessions( undefined, {
@@ -347,6 +356,17 @@ describe( 'reducer', () => {
 				.to.be.a( 'object' );
 			expect( state[ 'example.wordpress.com' ] ).to.have.property( 'timestamp' )
 				.to.be.at.least( nowTime );
+		} );
+
+		it( 'should convert forward slashes to double colon when creating a new session', () => {
+			const state = jetpackSSOSessions( undefined, {
+				type: JETPACK_CONNECT_SSO_AUTHORIZE_SUCCESS,
+				ssoUrl: 'https://example.wordpress.com/example123?action=jetpack-sso&result=success&sso_nonce={$nonce}&user_id={$user_id}',
+				siteUrl: 'https://example.wordpress.com/example123'
+			} );
+
+			expect( state ).to.have.property( 'example.wordpress.com::example123' )
+				.to.be.a( 'object' );
 		} );
 
 		it( 'should persist state', () => {
