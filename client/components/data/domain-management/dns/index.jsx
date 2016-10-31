@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var StoreConnection = require( 'components/data/store-connection' ),
-	DnsStore = require( 'lib/domains/dns/store' ),
-	DomainsStore = require( 'lib/domains/store' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import StoreConnection from 'components/data/store-connection';
+import DnsStore from 'lib/domains/dns/store';
+import DomainsStore from 'lib/domains/store';
+import upgradesActions from 'lib/upgrades/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const stores = [
 	DomainsStore,
@@ -32,28 +33,26 @@ function getStateFromStores( props ) {
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'DnsData',
+export class DnsData extends Component {
+	static propTypes = {
+		component: PropTypes.func.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.object,
+	};
 
-	propTypes: {
-		component: React.PropTypes.func.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		sites: React.PropTypes.object.isRequired
-	},
+	constructor( props ) {
+		super( props );
 
-	mixins: [ observe( 'sites' ) ],
-
-	componentWillMount() {
 		this.loadDns();
-	},
+	}
 
 	componentWillUpdate() {
 		this.loadDns();
-	},
+	}
 
-	loadDns() {
+	loadDns = () => {
 		upgradesActions.fetchDns( this.props.selectedDomainName );
-	},
+	};
 
 	render() {
 		return (
@@ -62,7 +61,14 @@ module.exports = React.createClass( {
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() } />
+				selectedSite={ this.props.selectedSite }
+			/>
 		);
 	}
+}
+
+const mapStateToProps = state => ( {
+	selectedSite: getSelectedSite( state ),
 } );
+
+export default connect( mapStateToProps )( DnsData );
