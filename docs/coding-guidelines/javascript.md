@@ -123,7 +123,7 @@ Indentation and line breaks add readability to complex statements.
 
 Tabs should be used for indentation.
 
-Try to return early from a function to avoid deeply tabbed functions akin to ["Callback Hell"](http://callbackhell.com/).
+Try to return early from a function to avoid functions with deep indentation akin to ["Callback Hell"](http://callbackhell.com/).
 
 ```js
 // Bad
