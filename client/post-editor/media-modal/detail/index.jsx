@@ -23,7 +23,8 @@ const EditorMediaModalDetail = React.createClass( {
 		selectedIndex: React.PropTypes.number,
 		onSelectedIndexChange: React.PropTypes.func,
 		onReturnToList: React.PropTypes.func,
-		onEdit: React.PropTypes.func
+		onEdit: React.PropTypes.func,
+		onRestore: React.PropTypes.func,
 	},
 
 	getDefaultProps: function() {
@@ -56,23 +57,34 @@ const EditorMediaModalDetail = React.createClass( {
 	},
 
 	render: function() {
-		const { items } = this.props;
+		const {
+			items,
+			selectedIndex,
+			site,
+
+			onEditItem,
+			onRestoreItem,
+			onReturnToList,
+		} = this.props;
+
+		const item = items[ selectedIndex ];
 
 		return (
 			<div className="editor-media-modal-detail">
-				<HeaderCake onClick={ this.props.onReturnToList } backText={ this.translate( 'Media Library' ) }>
+				<HeaderCake onClick={ onReturnToList } backText={ this.translate( 'Media Library' ) }>
 					<EditorMediaModalDetailTitle
-						site={ this.props.site }
-						item={ items[ this.props.selectedIndex ] } />
+						site={ site }
+						item={ items[ selectedIndex ] } />
 				</HeaderCake>
 				<DetailItem
-					site={ this.props.site }
-					item={ items[ this.props.selectedIndex ] }
-					hasPreviousItem={ this.props.selectedIndex - 1 >= 0 }
-					hasNextItem={ this.props.selectedIndex + 1 < items.length }
+					site={ site }
+					item={ item }
+					hasPreviousItem={ selectedIndex - 1 >= 0 }
+					hasNextItem={ selectedIndex + 1 < items.length }
 					onShowPreviousItem={ this.incrementIndex.bind( this, -1 ) }
 					onShowNextItem={ this.incrementIndex.bind( this, 1 ) }
-					onEdit={ this.props.onEditItem } />
+					onRestore={ onRestoreItem }
+					onEdit={ onEditItem } />
 			</div>
 		);
 	}
