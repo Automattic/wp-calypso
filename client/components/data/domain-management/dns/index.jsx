@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -35,9 +35,9 @@ function getStateFromStores( props ) {
 
 export const DnsData = React.createClass( {
 	propTypes: {
-		component: React.PropTypes.func.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		sites: React.PropTypes.object.isRequired
+		component: PropTypes.func.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.object,
 	},
 
 	componentWillMount() {
