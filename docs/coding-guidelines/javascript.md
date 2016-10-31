@@ -465,7 +465,7 @@ prop = object[ 'key-with-hyphens' ];
 
 ## “Yoda” Conditions #
 
-Since we require strict equality checks, we are not going to enforce "Yoda" conditionals. You're welcome to use them, but the most important consideration should be readability of the conditional.
+Since we require strict equality checks, we are not going to enforce [Yoda conditions](https://en.wikipedia.org/wiki/Yoda_conditions). You're welcome to use them, but the most important consideration should be readability of the conditional.
 
 ## Iteration
 
