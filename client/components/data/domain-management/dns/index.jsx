@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 /**
@@ -33,24 +33,26 @@ function getStateFromStores( props ) {
 	};
 }
 
-export const DnsData = React.createClass( {
-	propTypes: {
+export class DnsData extends Component {
+	static propTypes = {
 		component: PropTypes.func.isRequired,
 		selectedDomainName: PropTypes.string.isRequired,
 		selectedSite: PropTypes.object,
-	},
+	};
 
-	componentWillMount() {
+	constructor( props ) {
+		super( props );
+
 		this.loadDns();
-	},
+	}
 
 	componentWillUpdate() {
 		this.loadDns();
-	},
+	}
 
-	loadDns() {
+	loadDns = () => {
 		upgradesActions.fetchDns( this.props.selectedDomainName );
-	},
+	};
 
 	render() {
 		return (
@@ -59,10 +61,11 @@ export const DnsData = React.createClass( {
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.selectedSite} />
+				selectedSite={ this.props.selectedSite }
+			/>
 		);
 	}
-} );
+}
 
 const mapStateToProps = state => ( {
 	selectedSite: getSelectedSite( state ),
