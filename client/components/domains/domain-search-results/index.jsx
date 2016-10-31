@@ -4,8 +4,7 @@
 const React = require( 'react' ),
 	classNames = require( 'classnames' ),
 	page = require( 'page' ),
-	times = require( 'lodash/times' ),
-	includes = require( 'lodash/includes' );
+	times = require( 'lodash/times' );
 
 import Notice from 'components/notice';
 
@@ -37,9 +36,8 @@ var DomainSearchResults = React.createClass( {
 		onAddMapping: React.PropTypes.func,
 		onClickMapping: React.PropTypes.func
 	},
-	isDomainUnavailable: function() {
-		return this.props.lastDomainError &&
-			includes( [ 'not_available', 'not_available_but_mappable' ], this.props.lastDomainError.code );
+	isDomainMappable: function() {
+		return this.props.lastDomainError && this.props.lastDomainError.code === 'not_available_but_mappable';
 	},
 
 	domainAvailability: function() {
@@ -49,6 +47,7 @@ var DomainSearchResults = React.createClass( {
 				'domain-search-results__domain-not-available': ! availableDomain
 			} ),
 			lastDomainSearched = this.props.lastDomainSearched,
+			suggestions = this.props.suggestions || [],
 			availabilityElement,
 			domainSuggestionElement,
 			mappingOffer;
@@ -78,33 +77,31 @@ var DomainSearchResults = React.createClass( {
 					cart={ this.props.cart }
 					onButtonClick={ this.props.onClickResult.bind( null, availableDomain ) } />
 				);
-		} else if ( this.props.suggestions && this.props.suggestions.length !== 0 && this.isDomainUnavailable() ) {
-			if ( this.props.products.domain_map && this.props.lastDomainError.code === 'not_available_but_mappable' ) {
-				const components = { a: <a href="#" onClick={ this.addMappingAndRedirect }/>, small: <small /> };
-				if ( this.props.domainsWithPlansOnly ) {
-					mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
-						' with WordPress.com Premium.{{/small}}', {
-							args: { domain: lastDomainSearched },
-							components
-						}
-					);
-				} else {
-					if ( isNextDomainFree( this.props.cart ) ) {
-						mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}', {
-							args: {
-								domain: lastDomainSearched
-							},
-							components
-						} );
-					} else {
-						mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}', {
-							args: {
-								domain: lastDomainSearched,
-								cost: this.props.products.domain_map.cost_display
-							},
-							components
-						} );
+		} else if ( suggestions.length !== 0 && this.isDomainMappable() && this.props.products.domain_map ) {
+			const components = { a: <a href="#" onClick={ this.addMappingAndRedirect } />, small: <small /> };
+			if ( this.props.domainsWithPlansOnly ) {
+				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}}' +
+					' with WordPress.com Premium.{{/small}}', {
+						args: { domain: lastDomainSearched },
+						components
 					}
+				);
+			} else {
+				if ( isNextDomainFree( this.props.cart ) ) {
+					mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}', {
+						args: {
+							domain: lastDomainSearched
+						},
+						components
+					} );
+				} else {
+					mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}', {
+						args: {
+							domain: lastDomainSearched,
+							cost: this.props.products.domain_map.cost_display
+						},
+						components
+					} );
 				}
 			}
 
@@ -155,7 +152,7 @@ var DomainSearchResults = React.createClass( {
 		} );
 	},
 
-	suggestions: function() {
+	domainSuggestions: function() {
 		var suggestionElements,
 			mappingOffer;
 
@@ -198,7 +195,7 @@ var DomainSearchResults = React.createClass( {
 		return (
 			<div className="domain-search-results">
 				{ this.domainAvailability() }
-				{ this.suggestions() }
+				{ this.domainSuggestions() }
 			</div>
 		);
 	}
