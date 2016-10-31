@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { noop } from 'lodash';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
+import url from 'url';
 
 /**
  * Internal dependencies
@@ -95,6 +96,14 @@ class EditorMediaModalDetailItem extends Component {
 			item,
 			translate
 		} = this.props;
+
+		//do a simple guid vs url check
+		const guidParts = url.parse( item.guid );
+		const URLParts = url.parse( item.URL );
+
+		if ( guidParts.pathname === URLParts.pathname ) {
+			return false;
+		}
 
 		return (
 			<Button
