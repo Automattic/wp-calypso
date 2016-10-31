@@ -246,7 +246,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	font-size: 14px;
 
 	&.reader-post-actions__visit .gridicon {
-		fill: lighten( $gray, 10% );
+		fill: darken( $gray, 18% );
 		position: relative;
 			left: -8px;
 			top: -1px;
