@@ -88,7 +88,9 @@ module.exports = React.createClass( {
 				<tbody>
 					<tr>
 						<th>{ this.translate( 'File Name' ) }</th>
-						<td title={ this.getItemValue( 'file' ) }>{ this.getItemValue( 'file' ) }</td>
+						<td title={ this.getItemValue( 'file' ) }>
+							<span>{ this.getItemValue( 'file' ) }</span>
+						</td>
 					</tr>
 					<tr>
 						<th>{ this.translate( 'File Type' ) }</th>
