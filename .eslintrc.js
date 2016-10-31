@@ -28,7 +28,6 @@ module.exports = {
 		'new-cap': [ 1, { capIsNew: false, newIsCap: true } ],
 		'no-else-return': 1,
 		'no-extra-semi': 1,
-		'no-lonely-if': 1,
 		'no-multiple-empty-lines': [ 1, { max: 1 } ],
 		'no-multi-spaces': 1,
 		'no-nested-ternary': 1,

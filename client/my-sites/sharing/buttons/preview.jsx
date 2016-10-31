@@ -86,13 +86,11 @@ module.exports = React.createClass( {
 			} else {
 				return this.translate( 'Add sharing buttons', { context: 'Sharing: Buttons edit label' } );
 			}
-		} else {
-			if ( enabledButtonsExist ) {
-				return this.translate( 'Edit “More” buttons', { context: 'Sharing: Buttons edit label' } );
-			} else {
-				return this.translate( 'Add “More” button', { context: 'Sharing: Buttons edit label' } );
-			}
+		} else if ( enabledButtonsExist ) {
+			return this.translate( 'Edit “More” buttons', { context: 'Sharing: Buttons edit label' } );
 		}
+
+		return this.translate( 'Add “More” button', { context: 'Sharing: Buttons edit label' } );
 	},
 
 	getButtonsTrayToggleButtonElement: function( visibility ) {
