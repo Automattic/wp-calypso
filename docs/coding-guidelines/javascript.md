@@ -178,7 +178,7 @@ if ( myFunction() ) {
 }
 ```
 
-When all paths of set of `if` or `else if` statements `return`, then do not include an `else` block.
+When all paths of a set of `if` or `else if` statements `return` a value, do not include an `else` block.
 
 ```js
 // bad
