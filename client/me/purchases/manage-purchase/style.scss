@@ -91,7 +91,7 @@
 }
 
 .manage-purchase__subtitle {
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 11px;
 	text-transform: uppercase;
@@ -169,7 +169,7 @@
 	}
 
 	@include breakpoint( ">660px" ) {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		display: block;
 		font-family: $sans;
 		font-size: 10px;

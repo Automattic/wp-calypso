@@ -46,7 +46,7 @@
 		}
 
 		.product-domain {
-			color: darken( $gray, 10% );
+			color: darken( $gray, 18% );
 			display: block;
 			font-size: 12px;
 			text-overflow: ellipsis;
@@ -58,7 +58,7 @@
 		}
 
 		.product-price {
-			color: darken( $gray, 10% );
+			color: darken( $gray, 18% );
 			display: block;
 			font-size: 13px;
 		}
@@ -94,7 +94,7 @@
 	}
 
 	.cart-total {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		font-weight: 600;
 		font-size: 14px;
 

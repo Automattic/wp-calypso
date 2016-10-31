@@ -205,7 +205,7 @@
 			cursor: pointer;
 			&:before {
 				@include noticon( '\f411', 16px );
-				color: darken( $gray, 10% );
+				color: darken( $gray, 18% );
 				vertical-align: baseline;
 			}
 		}
@@ -333,7 +333,7 @@
 
 		.menu-item-action {
 			float: left;
-			color: darken( $gray, 10% );
+			color: darken( $gray, 18% );
 			margin: -5px 0 -5px;
 			padding: 8px 6px 8px;
 			text-transform: uppercase;
@@ -741,7 +741,7 @@
 				&.menu-item-options__term-tree-selector {
 					padding: 10px 0px 10px 13px;
 					overflow-y: hidden;
-					
+
 					.term-tree-selector {
 						border: 0;
 					}

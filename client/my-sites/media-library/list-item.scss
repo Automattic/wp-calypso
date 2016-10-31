@@ -2,7 +2,7 @@
 	position: relative;
 	display: inline-block;
 	cursor: pointer;
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	user-select: none;
 
 	&.is-selected::after {
