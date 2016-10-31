@@ -459,8 +459,8 @@ Object properties should be accessed via dot notation, unless the key is a varia
 ```js
 prop = object.propertyName;
 prop = object[ variableKey ];
-prop = object['default'];
-prop = object['key-with-hyphens'];
+prop = object[ 'default' ];
+prop = object[ 'key-with-hyphens' ];
 ```
 
 ## “Yoda” Conditions #
