@@ -164,7 +164,7 @@ function getSiteTitle( site ) {
 
 ## Blocks and Curly Braces
 
-if, else, for, while, and try blocks should always use braces, and always go on multiple lines. The opening brace should be on the same line as the function definition, the conditional, or the loop. The closing brace should be on the line directly following the last statement of the block.
+`if`, `else`, `for`, `while`, and `try` blocks should always use braces, and always go on multiple lines. The opening brace should be on the same line as the function definition, the conditional, or the loop. The closing brace should be on the line directly following the last statement of the block.
 
 ```js
 let a, b, c;
@@ -175,6 +175,28 @@ if ( myFunction() ) {
     // Expressions
 } else {
     // Expressions
+}
+```
+
+When all paths of set of `if` or `else if` statements `return`, then do not include an `else` block.
+
+```js
+// bad
+function getStatusLabel() {
+	if ( isValid() ) {
+		return 'OK';
+	} else {
+		return 'Not OK';
+	}
+}
+
+// good
+function getStatusLabel() {
+	if ( isValid() ) {
+		return 'OK';
+	}
+
+	return 'Not OK';	
 }
 ```
 
