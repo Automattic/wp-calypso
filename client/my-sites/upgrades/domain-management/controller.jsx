@@ -207,7 +207,7 @@ module.exports = {
 			<DnsData
 				component={ DomainManagement.Dns }
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
