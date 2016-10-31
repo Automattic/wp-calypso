@@ -82,7 +82,7 @@ const PublishMenu = React.createClass( {
 			{
 				name: 'media',
 				label: this.translate( 'Media' ),
-				className: 'media',
+				className: 'media-section',
 				capability: 'upload_files',
 				queryable: true,
 				config: 'manage/media',
