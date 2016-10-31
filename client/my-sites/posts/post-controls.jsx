@@ -108,45 +108,38 @@ module.exports = React.createClass( {
 				onClick: this.viewStats,
 				icon: 'stats-alt'
 			} );
-		} else {
-			if ( post.status !== 'trash' ) {
-				parsed = url.parse( post.URL, true );
-				parsed.query.preview = 'true';
-				// NOTE: search needs to be cleared in order to rebuild query
-				// http://nodejs.org/api/url.html#url_url_format_urlobj
-				parsed.search = '';
-				previewURL = url.format( parsed );
+		} else if ( post.status !== 'trash' ) {
+			parsed = url.parse( post.URL, true );
+			parsed.query.preview = 'true';
+			// NOTE: search needs to be cleared in order to rebuild query
+			// http://nodejs.org/api/url.html#url_url_format_urlobj
+			parsed.search = '';
+			previewURL = url.format( parsed );
 
+			availableControls.push( {
+				text: this.translate( 'Preview' ),
+				className: 'post-controls__view',
+				href: previewURL,
+				target: '_blank',
+				onClick: this.preview,
+				icon: 'external'
+			} );
+
+			if ( utils.userCan( 'publish_post', post ) ) {
 				availableControls.push( {
-					text: this.translate( 'Preview' ),
-					className: 'post-controls__view',
-					href: previewURL,
-					target: '_blank',
-					onClick: this.preview,
-					icon: 'external'
+					text: this.translate( 'Publish' ),
+					className: 'post-controls__publish',
+					onClick: this.props.onPublish,
+					icon: 'reader'
 				} );
-
-				if ( utils.userCan( 'publish_post', post ) ) {
-					availableControls.push( {
-						text: this.translate( 'Publish' ),
-						className: 'post-controls__publish',
-						onClick: this.props.onPublish,
-						icon: 'reader'
-					} );
-				}
-
-			} else {
-
-				if ( utils.userCan( 'delete_post', post ) ) {
-					availableControls.push( {
-						text: this.translate( 'Restore' ),
-						className: 'post-controls__restore',
-						onClick: this.props.onRestore,
-						icon: 'undo'
-					} );
-				}
-
 			}
+		} else if ( utils.userCan( 'delete_post', post ) ) {
+			availableControls.push( {
+				text: this.translate( 'Restore' ),
+				className: 'post-controls__restore',
+				onClick: this.props.onRestore,
+				icon: 'undo'
+			} );
 		}
 
 		if ( utils.userCan( 'delete_post', post ) ) {
