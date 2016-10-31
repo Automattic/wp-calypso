@@ -250,8 +250,13 @@ counter++;
 Globals should almost never be used. If they are used or you need to reference a pre-existing global do so via `window`.
 
 ```js
-const userId = window.currentUser.ID;
+let userId;
+if ( typeof window !== 'undefined' ) {
+	userId = window.currentUser.ID;
+}
 ```
+
+Note that because parts of our application are [rendered on the server](https://github.com/Automattic/wp-calypso/blob/master/docs/server-side-rendering.md), we cannot always assume that a `window` global is present. Therefore, if you must reference a `window` global, always perform a `typeof` check to verify that it exists.
 
 ## Naming Conventions
 
