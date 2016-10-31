@@ -51,7 +51,7 @@ function buildDefaultAuthorizeState() {
 }
 
 function buildNoProtocolUrlObj( url, flowType ) {
-	const noProtocolUrl = url.replace( /.*?:\/\//g, '' );
+	const noProtocolUrl = url.replace( /.*?:\/\//g, '' ).replace( /\//g, '::' );
 	const sessionValue = {
 		timestamp: Date.now(),
 		flowType: flowType || ''
