@@ -192,7 +192,7 @@ export function receiveThemes( data, site, queryParams, responseTime ) {
 	};
 }
 
-export function activate( theme, site, source = 'unknown' ) {
+export function activate( theme, site, source = 'unknown', purchased = false ) {
 	return dispatch => {
 		dispatch( {
 			type: THEME_ACTIVATE,
@@ -202,7 +202,7 @@ export function activate( theme, site, source = 'unknown' ) {
 
 		wpcom.undocumented().activateTheme( theme, site.ID )
 			.then( () => {
-				dispatch( activated( theme, site, source ) );
+				dispatch( activated( theme, site, source, purchased ) );
 			} )
 			.catch( error => {
 				dispatch( receiveServerError( error ) );
@@ -217,6 +217,19 @@ export function activated( theme, site, source = 'unknown', purchased = false ) 
 
 		if ( typeof theme !== 'object' ) {
 			theme = getThemeById( getState(), theme );
+		}
+
+		console.log( 'theme', theme );
+
+		if ( ! theme ) {
+			wpcom.undocumented().activeTheme( site.ID )
+				.then( maybeTheme => {
+					dispatch( activate( maybeTheme, site, source ) );
+				} )
+				.catch( error => {
+					dispatch( receiveServerError( error ) );
+				} );
+			return;
 		}
 
 		const action = {
