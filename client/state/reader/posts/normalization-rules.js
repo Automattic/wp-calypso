@@ -59,7 +59,7 @@ function discoverFullBleedImages( post, dom ) {
 }
 
 const hasShortContent = config.isEnabled( 'reader/refresh/stream' )
-	? post => post.character_count <= 130
+	? post => post.character_count <= 100
 	: post => post.word_count < 100;
 
 /**
