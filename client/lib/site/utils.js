@@ -189,6 +189,6 @@ export default {
 	},
 
 	isModuleActive( site, moduleId ) {
-		return site.modules && site.modules.indexOf( moduleId ) > -1;
+		return site.options.active_modules && site.options.active_modules.indexOf( moduleId ) > -1;
 	}
 };

@@ -56,7 +56,7 @@ function mediaButton( editor ) {
 
 	let nodes = {},
 		resizeEditor,
-		updateMedia;
+		updateMedia;  // eslint-disable-line
 
 	const getSelectedSiteFromState = () => getSelectedSite( getState() );
 
@@ -520,15 +520,20 @@ function mediaButton( editor ) {
 		};
 
 		// Determine the next usable size
+		// In order to get the next usable size, we compute the ratio of all the default sizes and compare them to the current ratio
+		// If we are increasing the size, we select the default size that has the closest greater ratio
+		// While decreasing we take the closest lower ratio
 		const sizeRatios = SIZE_ORDER
 			.map( size => computeRatio( MediaUtils.getThumbnailSizeDimensions( size, selectedSite ) ) );
 		const sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
 		const displayedRatio = sizeIndex !== -1 ? sizeRatios[ sizeIndex ] : computeRatio( parsed.media );
 		const isMatchingSize = ( currentSize, index ) => {
+			// Exclude all the sizes that are greater than the full size of the media
 			if ( sizeRatios[ index ] > 1 ) {
 				return false;
 			}
 
+			// If we are increasing the size, the ratio should be greater than the current ratio and lower instead
 			if ( increment > 0 ) {
 				return sizeRatios[ index ] > displayedRatio;
 			}
@@ -566,25 +571,21 @@ function mediaButton( editor ) {
 		}
 
 		const parsed = deserialize( event.element );
-		const media = assign( { width: Infinity, height: Infinity }, MediaStore.get( selectedSite.ID, parsed.media.ID ) );
 
 		// Hide sizing toggles if the image is transient
 		const isHidden = !! parsed.media.transient;
 		this.classes.toggle( 'hidden', isHidden );
 
-		// Disable decrease button when smaller than the smallest thumbnail size
-		// and the full size is bigger than the current size
-		if ( ! increase ) {
-			const thumb = MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], selectedSite );
-			const isDisabled =
-				( parsed.media.width || Infinity ) <= media.width &&
-				( parsed.media.width || Infinity ) <= thumb.width;
-			this.disabled( isDisabled );
-		}
-
-		// Disable increase button when we select full-size
 		if ( increase ) {
+			// Disable increase button when we select full-size
+			const media = assign( { width: Infinity, height: Infinity }, MediaStore.get( selectedSite.ID, parsed.media.ID ) );
 			const isDisabled = ( parsed.media.width || Infinity ) >= media.width;
+			this.disabled( isDisabled );
+		} else {
+			// Disable decrease button when smaller than the smallest thumbnail size
+			// and the full size is bigger than the current size
+			const thumb = MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], selectedSite );
+			const isDisabled = ( parsed.media.width || Infinity ) <= thumb.width;
 			this.disabled( isDisabled );
 		}
 	}
@@ -666,7 +667,7 @@ function mediaButton( editor ) {
 		} );
 	} );
 
-	resizeEditor = debounce( function() {
+	resizeEditor = debounce( function() {  // eslint-disable-line
 		editor.execCommand( 'wpcomAutoResize', null, null, { skip_focus: true } );
 	}, 400, { leading: true } );
 
