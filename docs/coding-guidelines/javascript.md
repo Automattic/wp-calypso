@@ -216,20 +216,6 @@ html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c +
     ' is ' + ( a + b + c );
 ```
 
-Lines should be broken into logical groups if it improves readability, such as splitting each expression of a ternary operator onto its own line, even if both will fit on a single line.
-
-```js
-let baz;
-
-// Acceptable
-baz = ( true === conditionalStatement() ) ? 'thing 1' : 'thing 2';
-
-// Better
-baz = firstCondition( foo ) && secondCondition( bar )
-    ? qux( foo, bar )
-    : foo;
-```
-
 When a conditional is too long to fit on one line, successive lines should be indented one extra level to distinguish them from the body.
 
 ```js
