@@ -33,7 +33,7 @@ $accordion-background-expanded: $white;
 			top: 50%;
 			right: $accordion-padding;
 		transform: translateY( -50% );
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 
 	.accordion.has-subtitle & {

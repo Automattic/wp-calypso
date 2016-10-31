@@ -58,7 +58,7 @@
 
 .delete-site-options__link:hover {
 	.delete-site-options__noticon {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 }
 

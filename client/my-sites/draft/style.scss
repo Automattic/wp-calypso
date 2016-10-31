@@ -212,7 +212,7 @@
 	background: $gray-light;
 
 	.draft__title a {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 
 	.draft__title {

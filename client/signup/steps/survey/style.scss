@@ -75,7 +75,7 @@
 	vertical-align: bottom;
 	margin-top: -2px;
 	margin-right: 16px;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 
 	.survey-step__vertical:hover & {
 		color: darken( $gray, 18% );

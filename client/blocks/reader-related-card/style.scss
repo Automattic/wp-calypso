@@ -72,12 +72,12 @@
 }
 
 .reader-related-card__byline-author-and-site {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	margin-right: 6px;
 }
 
 .reader-related-card__author-and-site {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	margin-right: 10px;
 }
 
@@ -87,7 +87,7 @@
 
 	.reader-related-card__byline-link,
 	.reader-related-card__byline-link:visited {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 
 		&:hover {
 			color: darken( $blue-wordpress, 10% );

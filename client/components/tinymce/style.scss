@@ -633,7 +633,7 @@ div.mce-path {
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled i.mce-ico {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 }
 
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled:hover,

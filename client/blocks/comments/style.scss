@@ -80,7 +80,7 @@
 		font-size: 12px;
 		font-weight: 600;
 		text-transform: uppercase;
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
@@ -234,7 +234,7 @@ a.comments__comment-username {
 .comments__comment-timestamp a {
 	font-weight: normal;
 	font-size: 13px;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	text-decoration: none;
 
 	&:hover {
@@ -366,7 +366,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-count {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1;

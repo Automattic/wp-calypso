@@ -7,7 +7,7 @@
 
 		&:hover .mce-open i.mce-caret,
 		&:focus .mce-open i.mce-caret {
-			color: lighten( $gray, 10% );
+			color: darken( $gray, 18% );
 		}
 
 		&:hover .gridicons-add-outline,

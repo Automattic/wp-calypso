@@ -42,7 +42,7 @@
 	&:disabled {
 		background: $gray-light;
 		border-color: lighten( $gray, 30% );
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 		opacity: 1;
 		-webkit-text-fill-color: lighten( $gray, 10% );
 
@@ -51,7 +51,7 @@
 		}
 
 		&::placeholder {
-			color: lighten( $gray, 10% );
+			color: darken( $gray, 18% );
 		}
 	}
 }
@@ -139,7 +139,7 @@ input[type=checkbox] {
 		color: darken( $blue-medium, 20% );
 	}
 	&:disabled:checked:before {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 }
 

@@ -28,7 +28,7 @@
 	}
 
 	.wpcom-plan-price__billing-period {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 
 		&:before {
 			content: ' ';

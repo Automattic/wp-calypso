@@ -338,7 +338,7 @@
 		}
 
 		.all-fields-required {
-			color: lighten( $gray, 10% );
+			color: darken( $gray, 18% );
 			display: block;
 			font-size: 12px;
 			font-style: italic;
@@ -459,7 +459,7 @@
 		}
 
 		li {
-			color: lighten( $gray, 10% );
+			color: darken( $gray, 18% );
 			text-align: center;
 
 			@include breakpoint( ">660px" ) {
@@ -489,7 +489,7 @@
 
 	.credit-card-supporting-text__refund-link {
 		white-space: nowrap;
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 		text-decoration: underline;
 	}
 

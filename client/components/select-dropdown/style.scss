@@ -234,7 +234,7 @@ $compact-header-height: 35;
 
 .select-dropdown__label {
 	display: block;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	line-height: 20px;
 
 	label {
