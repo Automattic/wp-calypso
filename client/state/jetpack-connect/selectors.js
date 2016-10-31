@@ -8,6 +8,7 @@ import { get } from 'lodash';
  */
 import { getSiteByUrl } from 'state/sites/selectors';
 import { isStale } from './utils';
+import { urlToSlug } from 'lib/url';
 
 const getConnectingSite = ( state ) => {
 	return get( state, [ 'jetpackConnect', 'jetpackConnectSite' ] );
@@ -51,7 +52,7 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 	if ( ! siteSlug ) {
 		return false;
 	}
-	const site = siteSlug.replace( /.*?:\/\//g, '' ).replace( /\//g, '::' );
+	const site = urlToSlug( siteSlug );
 	const sessions = getSessions( state );
 
 	if ( sessions[ site ] && sessions[ site ].timestamp ) {
@@ -63,7 +64,7 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 
 const getFlowType = function( state, siteSlug ) {
 	const sessions = getSessions( state );
-	siteSlug = siteSlug.replace( /\//g, '::' );
+	siteSlug = urlToSlug( siteSlug );
 
 	if ( siteSlug && sessions[ siteSlug ] ) {
 		return sessions[ siteSlug ].flowType;
