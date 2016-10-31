@@ -16,7 +16,7 @@
 }
 
 .editor-fieldset__legend {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 11px;
 	text-transform: uppercase;

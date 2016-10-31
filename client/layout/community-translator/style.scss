@@ -122,7 +122,7 @@ body {
 	.community-translator__translator-invitation__decoration {
 		// copied from noticons styling
 		background-color: $gray-light;
-		color: $gray;
+		color: darken( $gray, 18% );
 		height: 22px;
 		margin-left: -11px;
 		margin-top: 24px;

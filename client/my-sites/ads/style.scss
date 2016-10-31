@@ -96,7 +96,7 @@
 }
 
 .earnings-history__header {
-	color: $gray;
+	color: darken( $gray, 18% );
 	border: 1px solid $gray-light;
 	border-left: none;
 	border-right: none;

@@ -64,7 +64,7 @@
 		}
 
 		.product-monthly-price {
-			color: $gray;
+			color: darken( $gray, 18% );
 			display: block;
 			font-size: 11px;
 			font-style: italic;

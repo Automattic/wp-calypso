@@ -188,7 +188,7 @@ $compact-header-height: 35;
 
 	&.is-disabled {
 		background-color: $white;
-		color: $gray;
+		color: darken( $gray, 18% );
 		cursor: default;
 		opacity: .5;
 	}

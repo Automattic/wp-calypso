@@ -100,7 +100,7 @@
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
-		color: $gray;
+		color: darken( $gray, 18% );
 		a {
 			color: inherit;
 		}
@@ -189,7 +189,7 @@
 		font-size: (14 / 15) * 1em;
 		padding-top: (16 / 10) * 1rem;
 		padding-bottom: (16 / 10) * 1rem;
-		color: $gray;
+		color: darken( $gray, 18% );
 		overflow: hidden;
 		@include breakpoint( ">660px" ) {
 			padding-top: (20 / 10) * 1rem;
@@ -224,7 +224,7 @@
 			white-space: nowrap;
 			text-overflow: ellipsis;
 			margin-left: (15 / 14) * 1em;
-			color: $gray;
+			color: darken( $gray, 18% );
 			vertical-align: top;
 			&:first-child {
 				margin-left: 0;
@@ -329,7 +329,7 @@
 			.post__title {
 				&:before {
 					@include noticon( '\f470', 1em );
-					color: $gray;
+					color: darken( $gray, 18% );
 					margin-right: (4 / 24) * 1em;
 				}
 			}
@@ -394,7 +394,7 @@
 }
 .post__author {
 	display: block;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 12px;
 	padding-left: 48px;
 }
@@ -580,7 +580,7 @@
 }
 
 .posts__recent-drafts .no-results {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 14px;
 	margin-left: 16px;
 	line-height: 1.4;

@@ -27,7 +27,7 @@
 
 		.domain-suggestion__content {
 			h3, .domain-product-price {
-				color: $gray;
+				color: darken( $gray, 18% );
 			}
 		}
 	}
@@ -108,7 +108,7 @@
 
 	margin-left: 10px;
 	flex: 1 0 auto;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	.is-placeholder & {
 		animation: loading-fade 1.6s ease-in-out infinite;

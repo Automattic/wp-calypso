@@ -36,7 +36,7 @@
 }
 
 .most-popular__percentage {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	margin-top: -1em;
 	font-size: 14px;

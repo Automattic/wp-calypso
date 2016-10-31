@@ -59,7 +59,7 @@
 .importer__service-title {
 	font-size: 21px;
 	font-weight: 300;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	@include breakpoint(">480px") {
 		clear: none;
@@ -80,7 +80,7 @@
 	fill: lighten( $gray, 10% );
 	font-size: 14px;
 	font-weight: 600;
-	color: $gray;
+	color: darken( $gray, 18% );
 	text-align: center;
 
 	& input {
@@ -126,7 +126,7 @@
 
 .importer__status-message {
 	font-style: italic;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .importer__mapping-pane {
@@ -139,7 +139,7 @@
 	padding-bottom: 8px;
 
 	font-size: 11px;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	@include clear-fix;
 }

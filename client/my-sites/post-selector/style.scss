@@ -107,7 +107,7 @@ input[type=checkbox].post-selector__input {
 	flex-shrink: 0;
 	font-size: 11px;
 	text-transform: uppercase;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	.post-selector.is-type-labels-visible & {
 		display: block;

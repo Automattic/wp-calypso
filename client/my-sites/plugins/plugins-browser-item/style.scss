@@ -93,7 +93,7 @@
 }
 
 .plugins-browser-item__author {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 10px;
 	text-transform: uppercase;
 }
@@ -119,7 +119,7 @@
 	position: absolute;
 		bottom: 8px;
 		right: 16px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 10px;
 	text-transform: uppercase;
 	animation: appear .15s ease-in;

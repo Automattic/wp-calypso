@@ -109,7 +109,7 @@
 
 .feed-header__follow-count {
 	background-color: $gray-light;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 13px;
 	font-style: italic;
 	padding: 0 8px;

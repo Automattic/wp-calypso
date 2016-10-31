@@ -52,7 +52,7 @@
 	align-items: center;
 	text-transform: uppercase;
 	justify-content: center;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 11px;
 	padding: 10px;
 
@@ -86,7 +86,7 @@
 }
 
 .notification-settings-form-stream-options {
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin: 20px 0 10px;
 	display: block;
 }

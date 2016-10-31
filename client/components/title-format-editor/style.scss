@@ -82,7 +82,7 @@
 }
 
 .title-format-editor__preview {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-style: italic;
 	margin-top: 5px;
 	font-size: 13px;

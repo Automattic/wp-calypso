@@ -735,7 +735,7 @@
 			}
 
 			.privacy-price {
-				color: $gray;
+				color: darken( $gray, 18% );
 				font-size: 13px;
 				font-style: italic;
 				font-weight: 400;
@@ -838,13 +838,13 @@
 }
 
 .checkout__privacy-protection-checkbox-text {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-style: italic;
 	margin: 4px 0 0 0;
 }
 
 .checkout__privacy-protection-price-text {
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin: 4px 0 0 0;
 	font-size: 15px;
 

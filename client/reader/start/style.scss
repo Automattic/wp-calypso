@@ -259,7 +259,7 @@
 }
 
 .reader-start-card__follower-count {
-	color: $gray;
+	color: darken( $gray, 18% );
 	float: left;
 	font-size: 11px;
 	display: block;
@@ -296,7 +296,7 @@
 
 .reader-start-post-preview__featured-label {
 	background-color: $white;
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: inline;
 	font-size: 10px;
 	font-weight: 600;
@@ -508,7 +508,7 @@
 }
 
 .reader-start-post-preview__byline {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 12px;
 	margin-bottom: 10px;
 

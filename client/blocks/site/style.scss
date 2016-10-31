@@ -79,7 +79,7 @@
 }
 
 .site__domain {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	max-width: 95%;
 	font-size: 11px;
@@ -130,7 +130,7 @@
 }
 
 .site__toggle-more-options {
-	color: $gray;
+	color: darken( $gray, 18% );
 	cursor: pointer;
 	padding-right: 16px;
 	line-height: 0;
@@ -191,7 +191,7 @@
 }
 
 .site__star {
-	color: $gray;
+	color: darken( $gray, 18% );
 	cursor: pointer;
 	line-height: 0;
 
@@ -205,7 +205,7 @@
 }
 
 a.site__cog {
-	color: $gray;
+	color: darken( $gray, 18% );
 	line-height: 0;
 
 	&:hover {
@@ -214,7 +214,7 @@ a.site__cog {
 }
 
 .site__badge {
-	color: $gray;
+	color: darken( $gray, 18% );
 	padding-right: 4px;
 	line-height: 0;
 	position: relative;

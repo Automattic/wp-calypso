@@ -105,7 +105,7 @@
 	}
 
 	.right {
-		color: $gray;
+		color: darken( $gray, 18% );
 		position: absolute;
 			right: 24px;
 			top: 0;
@@ -196,7 +196,7 @@ ul.module-header-actions {
 
 	.module-header-action-link {
 		@extend %mobile-interface-element;
-		color: $gray;
+		color: darken( $gray, 18% );
 		display: inline-block;
 		height: 40px;
 		line-height: 40px;
@@ -460,7 +460,7 @@ ul.module-header-actions {
 		}
 
 		&.is-same {
-			color: $gray;
+			color: darken( $gray, 18% );
 		}
 
 		&.is-rising,
@@ -477,7 +477,7 @@ ul.module-header-actions {
 
 	thead th,
 	.stats-detail-weeks__date {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 
 	.stats-detail-weeks__date {

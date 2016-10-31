@@ -33,7 +33,7 @@
 .plan-price__discounted,
 .jetpack-plan-price__discounted,
 .wpcom-plan-price__discounted {
-	color: $gray;
+	color: darken( $gray, 18% );
 	text-decoration: line-through;
 }
 

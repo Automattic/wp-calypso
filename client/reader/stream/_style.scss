@@ -312,7 +312,7 @@
 .reader__x-post-to {
 	font-size: 13px;
 	font-family: $sans;
-	color: $gray;
+	color: darken( $gray, 18% );
 	position: relative;
 }
 

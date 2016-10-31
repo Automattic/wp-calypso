@@ -7,7 +7,7 @@
 	li {
 		margin: 0 16px 0 0;
 		display: inline-block;
-		color: $gray;
+		color: darken( $gray, 18% );
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;

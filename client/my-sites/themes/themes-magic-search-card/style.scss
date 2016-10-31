@@ -135,7 +135,7 @@
 }
 
 .themes-magic-search-card__welcome {
-	color: $gray;
+	color: darken( $gray, 18% );
 	background-color: $white;
 	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 ), 0 1px 2px lighten( $gray, 30% );
 	display: flex;
@@ -190,7 +190,7 @@
 	color: rgb( 242, 134, 10 );
 }
 .themes-magic-search-card__welcome-taxonomy-type-subject {
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 .themes-magic-search-card__welcome-taxonomy-type-style {
 	color: rgb( 241, 56, 59 );

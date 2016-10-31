@@ -10,7 +10,7 @@
 // Comment Counter
 .comments__count {
 	text-align: center;
-	color: $gray;
+	color: darken( $gray, 18% );
 	float: right;
 }
 
@@ -105,7 +105,7 @@
 }
 
 .comments__form-closed {
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin-top: 20px;
 	margin-bottom: -3px;
 	font-family: $sans;
@@ -243,7 +243,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-moderation {
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin-top: 0.5em;
 	margin-bottom: 0.5em;
 	font-size: 12px;
@@ -278,12 +278,12 @@ a.comments__comment-username {
 .comments__comment-actions {
 	list-style: none;
 	margin-left: -4px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 14px;
 
 	button {
 		display: inline-block;
-		color: $gray;
+		color: darken( $gray, 18% );
 		padding: 4px;
 		margin-right: 8px;
 		cursor: pointer;
@@ -336,7 +336,7 @@ a.comments__comment-username {
 }
 
 .comments__view-earlier {
-	color: $gray;
+	color: darken( $gray, 18% );
 	cursor: pointer;
 	display: block !important; // to overwrite inline-block rule
 	font-size: 14px;

@@ -62,11 +62,11 @@
 
 				.noticon {
 					background: lighten( $gray, 20% );
-					color: $gray;
+					color: darken( $gray, 18% );
 				}
 
 				label {
-					color: $gray;
+					color: darken( $gray, 18% );
 				}
 			}
 

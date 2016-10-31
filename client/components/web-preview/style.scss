@@ -94,7 +94,7 @@
 .web-preview__close,
 .web-preview__external,
 .web-preview__device-button {
-	color: $gray;
+	color: darken( $gray, 18% );
 	border-right: 1px solid lighten( $gray, 20% );
 	padding: 12px 16px;
 
@@ -206,7 +206,7 @@
 }
 
 .web-preview__loading-message {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 18px;
 	font-weight: 300;
 	text-align: center;

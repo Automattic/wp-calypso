@@ -23,7 +23,7 @@
 }
 
 .plugin-action__label {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 11px;
 	line-height: 16px;
 	margin-right: 8px;

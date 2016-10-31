@@ -21,7 +21,7 @@
 	}
 
 	.wpcom-plan-price {
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-size: 12px;
 		font-style: italic;
 		margin: 0;
@@ -46,7 +46,7 @@
 
 		li {
 			line-height: 1.9em;
-			color: $gray;
+			color: darken( $gray, 18% );
 			margin: 0;
 		}
 

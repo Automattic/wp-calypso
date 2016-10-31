@@ -1,6 +1,6 @@
 
 .reader-related-card__site-info-title {
-	color: $gray;
+	color: darken( $gray, 18% );
 	float: left;
 	width: 100%;
 }
@@ -10,7 +10,7 @@
 }
 
 .reader-related-card__site-info {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 13px;
 	margin-right: 120px;
@@ -20,7 +20,7 @@
 	width: 100%;
 
 	a {
-		color: $gray;
+		color: darken( $gray, 18% );
 		text-decoration: none;
 
 		&:visited {

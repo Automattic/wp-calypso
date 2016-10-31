@@ -100,7 +100,7 @@
 
 	.search__open-icon,
 	.search__close-icon {
-		color: $gray;
+		color: darken( $gray, 18% );
 		width: 32px;
 		height: 18px;
 	}
@@ -118,7 +118,7 @@
 }
 
 .site-selector__no-results {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-style: italic;
 	padding: 10px 20px;
 }
@@ -181,13 +181,13 @@
 }
 
 .site-selector__hidden-sites-message {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 12px;
 	padding: 16px 16px 24px;
 
 	.site-selector__manage-hidden-sites {
-		color: $gray;
+		color: darken( $gray, 18% );
 		text-decoration: underline;
 	}
 }

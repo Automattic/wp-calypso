@@ -843,7 +843,7 @@
 }
 
 #habla_conversation_div .habla_conversation_notification {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-style: italic;
 	margin: 1em 0;
 	display: block;

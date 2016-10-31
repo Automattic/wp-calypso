@@ -75,7 +75,7 @@
 
 	.seo-preview-pane__description {
 		font-size: 12px;
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 
 	@include breakpoint( ">660px" ) {

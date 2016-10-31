@@ -183,7 +183,7 @@
 .plugin-item__count {
 	font-size: 11px;
 	line-height: 18px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	text-transform: uppercase;
 }
 
@@ -202,7 +202,7 @@
 }
 
 .plugin-item__last_updated {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 12px;
 	line-height: 1;
 	padding: 6px 0;

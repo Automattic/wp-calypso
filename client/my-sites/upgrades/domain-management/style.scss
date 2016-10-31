@@ -107,7 +107,7 @@
 
 .domain-management-list-item__meta {
 	font-size: 12px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	min-height: 20px;
 	text-overflow: ellipsis;
 	overflow: hidden;
@@ -173,7 +173,7 @@ input[type=radio].domain-management-list-item__radio {
 .domain-management-primary-domain {
 
 	.primary-domain-explanation {
-		color: $gray;
+		color: darken( $gray, 18% );
 		display: block;
 		font-size: 13px;
 		font-style: italic;
@@ -193,7 +193,7 @@ input[type=radio].domain-management-list-item__radio {
 
 .contacts-privacy-card {
 	.settings-explanation {
-		color: $gray;
+		color: darken( $gray, 18% );
 		display: block;
 		font-size: 13px;
 		font-style: italic;
@@ -213,7 +213,7 @@ input[type=radio].domain-management-list-item__radio {
 			background-color: $gray-light;
 			border: 1px solid lighten( $gray, 30% );
 			border-bottom: 0;
-			color: $gray;
+			color: darken( $gray, 18% );
 			font-size: 11px;
 			font-weight: 600;
 			line-height: 1;
@@ -291,7 +291,7 @@ input[type=radio].domain-management-list-item__radio {
 	text-align: center;
 
 	a {
-		color: $gray;
+		color: darken( $gray, 18% );
 		display: block;
 		font-size: 12px;
 		font-weight: 400;
@@ -301,7 +301,7 @@ input[type=radio].domain-management-list-item__radio {
 }
 
 .edit-contact-info-privacy-enabled-card__settings-explanation {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 13px;
 	font-style: italic;
@@ -411,7 +411,7 @@ input[type=radio].domain-management-list-item__radio {
 
 	p {
 		clear: left;
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-size: 12px;
 		margin: 0;
 
@@ -496,14 +496,14 @@ input[type=radio].domain-management-list-item__radio {
 		}
 
 		span {
-			color: $gray;
+			color: darken( $gray, 18% );
 			font-size: 12px;
 			font-weight: normal;
 		}
 	}
 
 	.add-google-apps-card__price-separator {
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-size: 12px;
 	}
 
@@ -554,7 +554,7 @@ input[type=radio].domain-management-list-item__radio {
 	font-size: 13px;
 	font-style: italic;
 	font-weight: 400;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .email-forwarding-card,
@@ -627,7 +627,7 @@ ul.email-forwarding__list {
 			}
 
 			em {
-				color: $gray;
+				color: darken( $gray, 18% );
 			}
 		}
 
@@ -640,7 +640,7 @@ ul.email-forwarding__list {
 
 .email-forwarding__limit {
 	font-size: 13px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	line-height: 3em;
 	margin-bottom: 15px;
 }
@@ -693,7 +693,7 @@ ul.email-forwarding__list {
 
 	.privacy-protection-card__price-per-user {
 		display: inline-block;
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-size: 12px;
 
 		strong {
@@ -778,7 +778,7 @@ ul.email-forwarding__list {
 
 	p {
 		clear: left;
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-size: 12px;
 		margin: 0;
 
@@ -838,7 +838,7 @@ ul.email-forwarding__list {
 	}
 	.name-servers__explanation {
 		animation: appear 0.5s ease-in-out;
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-size: 13px;
 		font-style: italic;
 		margin-bottom: 0;

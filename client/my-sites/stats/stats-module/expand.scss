@@ -42,7 +42,7 @@
 }
 
 .stats-module__expand-right {
-	color: $gray;
+	color: darken( $gray, 18% );
 	position: absolute;
 		right: 24px;
 		top: 0;

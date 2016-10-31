@@ -556,7 +556,7 @@ div.mce-path {
 
 	&::before {
 		@include noticon( '\f429', 20px );
-		color: $gray;
+		color: darken( $gray, 18% );
 		margin: 0 -8px 0 4px;
 		visibility: visible;
 	}
@@ -640,14 +640,14 @@ div.mce-path {
 #wp-fullscreen-buttons .mce-btn.mce-disabled:hover,
 .mce-toolbar .mce-btn-group .mce-btn.mce-disabled:focus,
 #wp-fullscreen-buttons .mce-btn.mce-disabled:focus {
-	color: $gray;
+	color: darken( $gray, 18% );
 	background: none;
 	border-color: $white;
 	text-shadow: none;
 	box-shadow: none;
 
 	i.mce-ico {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }
 
@@ -749,7 +749,7 @@ div.mce-path {
 	right: 18px;
 	margin: 2px 0 0 -13px #{"/*rtl:ignore*/"};
 	border: none;
-	color: $gray;
+	color: darken( $gray, 18% );
 	&::before {
 		@include noticon( '\f431' , 16px );
 	}

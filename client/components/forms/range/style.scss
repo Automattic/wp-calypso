@@ -16,7 +16,7 @@ $range-content-padding: 24px;
 	position: absolute;
 	top: 50%;
 	transform: translateY( -50% );
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	&.is-min {
 		left: ( -1 * $range-content-padding );

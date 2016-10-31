@@ -65,7 +65,7 @@
 .profile-link__url {
 	font-size: 11px;
 	line-height: 1.4;
-	color: $gray;
+	color: darken( $gray, 18% );
 	float: left;
 	clear: left;
 }

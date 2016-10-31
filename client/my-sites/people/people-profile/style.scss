@@ -78,7 +78,7 @@
 }
 
 .people-profile__subscribed {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 11px;
 	margin-top: 4px;
 	text-transform: uppercase;
@@ -89,7 +89,7 @@
 	background: $white;
 	border: 1px solid $gray;
 	border-radius: 2px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: inline-block;
 	font-size: 11px;
 	margin-left: 8px;

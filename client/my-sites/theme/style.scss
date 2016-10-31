@@ -167,12 +167,12 @@
 	}
 
 	.wp-caption-text {
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-size: 12px;
 	}
 
 	h2 {
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-size: 14px;
 		font-weight: 400;
 
@@ -242,7 +242,7 @@
 		line-height: 21px;
 
 		&>p:first-child {
-			color: $gray;
+			color: darken( $gray, 18% );
 			font-weight: 600;
 			margin: 0 0 14px;
 		}
@@ -353,7 +353,7 @@
 
 	small {
 		display: block;
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }
 

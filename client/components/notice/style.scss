@@ -115,7 +115,7 @@
 		flex-shrink: 0;
 	padding: 11px 16px;
 	cursor: pointer;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	@include breakpoint( ">660px" ) {
 		padding: 13px 16px;
@@ -127,7 +127,7 @@
 	}
 
 	.notice & {
-		color: $gray;
+		color: darken( $gray, 18% );
 		opacity: 0.85;
 
 		&:hover,

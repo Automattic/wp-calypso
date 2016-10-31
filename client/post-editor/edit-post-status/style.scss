@@ -40,7 +40,7 @@
 	cursor: pointer;
 
 	.gridicon {
-		color: $gray;
+		color: darken( $gray, 18% );
 		margin-left: -2px;
 		margin-right: 8px;
 		vertical-align: bottom;

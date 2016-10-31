@@ -109,7 +109,7 @@
 	label {
 		pointer-events: none; /* click through :D */
 		font-size: 0.8em;
-		color: $gray;
+		color: darken( $gray, 18% );
 		position: absolute;
 		top: 10px;
 		left: 10px;
@@ -500,7 +500,7 @@
 
 		.menu-item-name,
 		.menu-item-name::before {
-			color: $gray;
+			color: darken( $gray, 18% );
 		}
 	}
 
@@ -517,7 +517,7 @@
 	float: right;
 	padding: 10px 25px 2px 0;
 
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 10px;
 	text-transform: uppercase;
 
@@ -622,7 +622,7 @@
 
 				display: block;
 				line-height: 2.4;
-				color: $gray;
+				color: darken( $gray, 18% );
 				font-size: 10px;
 				text-transform: uppercase;
 			}
@@ -828,7 +828,7 @@
 
 					display: block;
 					padding: 0 0 10px 0;
-					color: $gray;
+					color: darken( $gray, 18% );
 					font-size: 11px;
 					font-weight: 600;
 					text-transform: uppercase;
@@ -866,10 +866,10 @@
 				}
 
 				.is-empty-content {
-					color: $gray;
+					color: darken( $gray, 18% );
 
 					a {
-						color: $gray;
+						color: darken( $gray, 18% );
 						text-decoration: underline;
 					}
 				}
@@ -938,7 +938,7 @@
 			}
 
 			p, small {
-				color: $gray;
+				color: darken( $gray, 18% );
 			}
 
 			p {

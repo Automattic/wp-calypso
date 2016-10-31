@@ -203,7 +203,7 @@
 	}
 
 	&:visited {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }
 

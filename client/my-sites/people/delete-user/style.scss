@@ -3,7 +3,7 @@
 }
 
 .delete-user__explanation {
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .delete-user .author-selector__author-toggle .gravatar {

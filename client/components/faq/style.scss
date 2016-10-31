@@ -14,7 +14,7 @@
 	margin-bottom: 32px;
 	font-size: 24px;
 	font-weight: 300;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .faq__list {
@@ -59,7 +59,7 @@
 
 .faq__answer {
 	margin-bottom: 1em;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	a {
 		color: darken( $blue-medium, 20% );

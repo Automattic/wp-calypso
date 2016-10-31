@@ -78,7 +78,7 @@
 	color: lighten( $gray, 10% );
 
 	.survey-step__vertical:hover & {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }
 

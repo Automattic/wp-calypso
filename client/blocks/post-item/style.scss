@@ -36,7 +36,7 @@ a.post-item__title-link {
 	}
 
 	.post-item.is-untitled & {
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-style: italic;
 	}
 

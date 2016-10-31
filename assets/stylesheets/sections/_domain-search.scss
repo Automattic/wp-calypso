@@ -210,7 +210,7 @@ form.google-apps-dialog {
 
 	.google-apps-dialog__add-another-user-button {
 		border: 2px dashed lighten( $gray, 20% );
-		color: $gray;
+		color: darken( $gray, 18% );
 		cursor: pointer;
 		margin: 0 0 30px;
 		padding: 12px 18px 12px 45px;

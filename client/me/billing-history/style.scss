@@ -9,7 +9,7 @@
 }
 
 .billing-history__no-results-cell {
-	color: $gray;
+	color: darken( $gray, 18% );
 	padding: 24px;
 }
 
@@ -101,7 +101,7 @@
 	}
 
 	small {
-		color: $gray;
+		color: darken( $gray, 18% );
 		display: block;
 		font-size: 12px;
 		font-style: italic;
@@ -229,7 +229,7 @@
 .filter-popover-toggle {
 	padding: 5px 10px;
 	border-radius: 3px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 13px;
 	cursor: pointer;
 	border-radius: 3px;
@@ -289,7 +289,7 @@
 	}
 
 	.billing-history__transaction-date {
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-size: 13px;
 		font-style: italic;
 		padding: 5px 0 0 0;
@@ -361,7 +361,7 @@
 
 		th {
 			border-bottom: 2px solid lighten( $gray, 25% );
-			color: $gray;
+			color: darken( $gray, 18% );
 			font-size: 12px;
 			font-weight: 400;
 			text-transform: uppercase;
@@ -383,20 +383,20 @@
 		}
 
 		.billing-history__receipt-amount {
-			color: $gray;
+			color: darken( $gray, 18% );
 			text-align: right;
 			vertical-align: middle;
 		}
 
 		.billing-history__receipt-item-name {
 			small {
-				color: $gray;
+				color: darken( $gray, 18% );
 				font-size: 13px;
 				margin-left: 5px;
 				text-transform: lowercase;
 			}
 			em {
-				color: $gray;
+				color: darken( $gray, 18% );
 				display: block;
 				font-size: 13px;
 			}

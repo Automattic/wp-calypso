@@ -32,7 +32,7 @@
 
 .jetpack-sync-panel__status-notice {
 	background: none;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .jetpack-sync-panel .jetpack-sync-panel__status-notice .notice__text {

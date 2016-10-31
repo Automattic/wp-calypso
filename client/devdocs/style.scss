@@ -45,7 +45,7 @@
 .devdocs__result-path {
 	font-size: ( 12 / 15 ) * 1em;
 	clear: none;
-	color: $gray;
+	color: darken( $gray, 18% );
 	float: right;
 	margin: 8px 0 0;
 }

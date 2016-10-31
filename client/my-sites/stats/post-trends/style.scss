@@ -196,7 +196,7 @@
 
 .post-trends__key-label {
 	font-size: 11px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	letter-spacing: .1em;
 	text-transform: uppercase;
 }
