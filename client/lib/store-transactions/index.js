@@ -4,7 +4,8 @@
 var debug = require( 'debug' )( 'calypso:store-transactions' ),
 	isEmpty = require( 'lodash/isEmpty' ),
 	Readable = require( 'stream' ).Readable,
-	inherits = require( 'inherits' );
+	inherits = require( 'inherits' ),
+	omit = require( 'lodash/omit' );
 
 /**
  * Internal dependencies
@@ -154,7 +155,7 @@ TransactionFlow.prototype._createPaygateToken = function( callback ) {
 TransactionFlow.prototype._submitWithPayment = function( payment ) {
 	var onComplete = this.push.bind( this, null ), // End the stream when the transaction has finished
 		transaction = {
-			cart: this._initialData.cart,
+			cart: omit( this._initialData.cart, [ 'messages'] ), // messages contain reference to DOMNode
 			domain_details: this._initialData.domainDetails,
 			payment: payment
 		};
