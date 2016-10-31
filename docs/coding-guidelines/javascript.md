@@ -493,44 +493,44 @@ for ( let i = 0; i < getItemCount(); i++ ) {
 }
 ```
 
-### React method names
+### React components
 
-* Methods that return JSX partial code should start with `render`.
-* Methods that navigate to a different page should start with `go`.
-* Methods that are bound to event handlers should have descriptive names. Don't name methods after event handlers like `onClick`, `onSubmit`, etc. You can use fat arrow functions if it makes handling the event cleaner.
-* Avoid prefixing method names with `_`.
+- Use [stateless function components or the `React.Component` class](https://facebook.github.io/react/docs/components-and-props.html#functional-and-class-components) instead of `React.createClass`
+  - Unlike `React.createClass`, methods of components extending `React.Component` are not automatically bound to the instance. Instead, you will need to bind the functions in your component's constructor or use [class instance property initializers](https://github.com/tc39/proposal-class-public-fields)
+- Use [PropTypes](https://facebook.github.io/react/docs/typechecking-with-proptypes.html) to validate prop types and help set usage expectations for other developers
+- Use [JSX](https://facebook.github.io/jsx/) for creating React elements, like those returned from a component's `render` function
+- Methods that are bound to event handlers should have descriptive names. 
+  - Avoid naming methods after event handlers like `onClick`, `onSubmit`, etc.
+  - You can use fat arrow functions if it makes handling the event cleaner.
+- Avoid prefixing method names with `_`.
+- If you find that your render logic becomes complex, it might be a sign that you should split the component into separate individual components.
 
-```js
-// good
-const CartComponent = React.createClass( {
-    ...
+```jsx
+import React, { Component, PropTypes } from 'react';
 
-    renderActionButton() {
-        if ( this.isLoading() ) {
-            return null;
-        }
+export default class Link extends Component {
+	static propTypes = {
+		href: PropTypes.string,
+		onNavigate: PropTypes.func,
+		children: PropTypes.node
+	};
 
-        if ( this.canGoToCheckout() ) {
-            return <Button onClick={ this.goToCheckout }>{ this.translate( 'Go to checkout' ) }</Button>;
-        } else {
-            return <Button onClick={ this.confirmCart }>{ this.translate( 'Confirm cart' ) }</Button>;
-        }
-    },
+	navigate = ( event ) => {
+		event.preventDefault();
+		this.props.onNavigate();
+	}
 
-    confirmCart() {
-        actions.confirmCart( () => {
-             this.enableCheckoutStep();
-        } );
-    },
+	render() {
+		const { href, children } = this.props;
 
-    goToCheckout() {
-        page( this.getCheckoutPath() );
-    }
-} );
+		return (
+			<a href={ href } onClick={ this.navigate }>
+				{ children }
+			</a>
+		);
+	}
+}
 ```
-
-JSX is pretty easy to read as standard HTML. That's why separate meta `renderSomething` methods should only be used if there is meaningful functionality happening within the code, not just to break up content.
-If you find that you have many separate rendering functions, or rendering functions that include more than a basic amount of logic, it might be a sign that there’s room for splitting off separate new components.
 
 ## ES6
 
