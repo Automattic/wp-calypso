@@ -83,6 +83,14 @@ function setUrlScheme( url, scheme ) {
 	return url.replace( schemeRegex, schemeWithSlashes );
 }
 
+function urlToSlug( url ) {
+	if ( ! url ) {
+		return null;
+	}
+
+	return withoutHttp( url ).replace( /\//g, '::' );
+}
+
 export default {
 	isOutsideCalypso,
 	isExternal,
@@ -90,4 +98,5 @@ export default {
 	withoutHttp,
 	addSchemeIfMissing,
 	setUrlScheme,
+	urlToSlug,
 };
