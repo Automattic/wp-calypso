@@ -20,7 +20,7 @@ export const jetpackConnectAuthorizeSchema = {
 	patternProperties: {
 		'^.+$': {
 			type: 'object',
-			required: [ 'queryObject' ],
+			required: [ 'queryObject', 'timestamp' ],
 			properties: {
 				activateManageSecret: { type: 'string' },
 				authorizationCode: { type: 'string ' },
@@ -54,6 +54,7 @@ export const jetpackConnectAuthorizeSchema = {
 					},
 					additionalProperties: false
 				},
+				timestamp: { type: 'number' },
 				siteReceived: { type: 'boolean' }
 			},
 			additionalProperties: false
