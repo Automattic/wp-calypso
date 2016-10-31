@@ -2,7 +2,6 @@
  * External dependencies
  */
 var expect = require( 'chai' ).expect,
-	sinon = require( 'sinon' ),
 	useMockery = require( 'test/helpers/use-mockery' );
 
 describe( 'Count', function() {
@@ -78,10 +77,4 @@ describe( 'Count', function() {
 
 		expect( result.props.children ).to.equal( '3' );
 	} );
-
-	it( 'should warn when passing something that is not a number', sinon.test( function() {
-		this.stub( console, 'error' );
-		renderer.render( <Count count={ "17" } /> );
-		expect( console.error ).to.have.been.called;
-	} ) );
 } );

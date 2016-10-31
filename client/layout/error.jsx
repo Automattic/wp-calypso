@@ -6,12 +6,18 @@ var ReactDom = require( 'react-dom' ),
 	assign = require( 'lodash/assign' ),
 	url = require( 'url' ),
 	qs = require( 'querystring' );
+import debug from 'debug';
 
 /**
  * Internal dependencies
  */
 var analytics = require( 'lib/analytics' ),
 	EmptyContent = require( 'components/empty-content' );
+
+/**
+ * Module variables
+ */
+const log = debug( 'calypso:layout' );
 
 var LoadingError = React.createClass( {
 
@@ -34,7 +40,7 @@ var LoadingError = React.createClass( {
 		},
 
 		show: function( chunkName ) {
-			console.error( 'Chunk %s could not be loaded', chunkName );
+			log( 'Chunk %s could not be loaded', chunkName );
 			analytics.mc.bumpStat( 'calypso_chunk_error', chunkName );
 			ReactDom.render(
 				React.createElement( LoadingError, {} ),
