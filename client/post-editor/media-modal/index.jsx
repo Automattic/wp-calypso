@@ -200,6 +200,13 @@ export const EditorMediaModal = React.createClass( {
 		this.props.setView( ModalViews.IMAGE_EDITOR );
 	},
 
+	restoreOriginalMedia: function( siteId, item ) {
+		if ( ! siteId || ! item ) {
+			return;
+		}
+		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+	},
+
 	onImageEditorDone( error, blob, imageEditorProps ) {
 		if ( error ) {
 			this.onImageEditorCancel( imageEditorProps );
@@ -229,8 +236,8 @@ export const EditorMediaModal = React.createClass( {
 
 		resetAllImageEditorState();
 
-		MediaActions.setLibrarySelectedItems( this.props.site.ID, [] );
-		this.props.setView( ModalViews.LIST );
+		this.props.setView( ModalViews.DETAIL );
+
 	},
 
 	onImageEditorCancel: function( imageEditorProps ) {
@@ -383,6 +390,7 @@ export const EditorMediaModal = React.createClass( {
 						site={ this.props.site }
 						items={ this.props.mediaLibrarySelectedItems }
 						selectedIndex={ this.getDetailSelectedIndex() }
+						onRestoreItem={ this.restoreOriginalMedia }
 						onSelectedIndexChange={ this.setDetailSelectedIndex } />
 				);
 				break;
