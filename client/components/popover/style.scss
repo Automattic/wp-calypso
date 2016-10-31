@@ -107,7 +107,7 @@
 
 	// inner
 	&.is-top .popover__inner,
-	&.is-top-left .popover__inner, 
+	&.is-top-left .popover__inner,
 	&.is-top-right .popover__inner {
 		top: -10px #{"/*rtl:ignore*/"};
 	}
@@ -119,7 +119,7 @@
 	}
 
 	&.is-bottom .popover__inner,
-	&.is-bottom-left .popover__inner, 
+	&.is-bottom-left .popover__inner,
 	&.is-bottom-right .popover__inner {
 		top: 10px #{"/*rtl:ignore*/"};
 	}
@@ -199,7 +199,7 @@
 
 	// with gridicons
 	.gridicon {
-		color: lighten( $gray, 10 );
+		color: darken( $gray, 18 );
 		vertical-align: bottom;
 		margin-right: 8px;
 	}
