@@ -172,7 +172,7 @@ export default connect(
 			return getPlanBySlug( state, planSlug );
 		};
 
-		const hasPaidPlan = isCurrentPlanPaid( state, selectedSite.id );
+		const hasPaidPlan = isCurrentPlanPaid( state, selectedSite.ID );
 
 		return {
 			selectedSite,
