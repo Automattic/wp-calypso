@@ -26,7 +26,6 @@ module.exports = {
 		'keyword-spacing': 1,
 		'max-len': [ 1, { code: 140 } ],
 		'new-cap': [ 1, { capIsNew: false, newIsCap: true } ],
-		'no-console': 1,
 		'no-else-return': 1,
 		'no-extra-semi': 1,
 		'no-lonely-if': 1,

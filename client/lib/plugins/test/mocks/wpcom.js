@@ -60,20 +60,17 @@ var pluginsInstallCalls = 0,
 	},
 
 	siteMock = {
-		plugin: function( pluginId ) {
-			console.log( 'Create %s plugin', pluginId );
+		plugin: function() {
 			return pluginMock;
 		},
 
-		wpcomPlugin: function( pluginId ) {
-			console.log( 'Create %s wpcom plugin', pluginId );
+		wpcomPlugin: function() {
 			return wpcomPluginMock;
 		}
 	},
 
 	mock = {
-		site: function( siteId ) {
-			console.log( 'Create %s site', siteId );
+		site: function() {
 			return siteMock;
 		},
 
