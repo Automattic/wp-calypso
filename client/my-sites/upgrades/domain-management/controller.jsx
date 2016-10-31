@@ -186,7 +186,7 @@ module.exports = {
 			<EmailForwardingData
 				component={ DomainManagement.EmailForwarding }
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
