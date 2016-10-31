@@ -95,6 +95,13 @@ const flows = {
 		lastModified: '2016-01-27'
 	},
 
+	subdomain: {
+		steps: [ 'design-type', 'themes', 'domains', 'plans', 'survey-user' ],
+		destination: getSiteDestination,
+		description: 'Provide a vertical for subdomains',
+		lastModified: '2016-10-31'
+	},
+
 	main: {
 		steps: [ 'survey', 'design-type', 'themes', 'domains', 'plans', 'user' ],
 		destination: getSiteDestination,
