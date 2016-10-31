@@ -97,8 +97,6 @@ if ( condition ) {
     somethingElse( true );
 }
 
-// Unlike jQuery, WordPress prefers a space after the ! negation operator.
-// This is also done to conform to our PHP standards.
 while ( ! condition ) {
     iterating++;
 }
