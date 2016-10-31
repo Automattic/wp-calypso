@@ -103,7 +103,6 @@ while ( ! condition ) {
 
 for ( let i = 0; i < 100; i++ ) {
 	object[ array[ i ] ] = someFn( i );
-	$( '.container' ).val( array[ i ] );
 }
 
 try {
