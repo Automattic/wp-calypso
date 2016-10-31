@@ -546,44 +546,13 @@ Resources:
 
 ## ESLint
 
-To help encourages folks to follow the coding standards, there is a [ESLint](http://eslint.org/) configuration file ```.eslintrc``` that configures ESLint to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [`eslint-plugin-wpcalypso`](https://github.com/yannickcr/eslint-plugin-wpcalypso), which we use in our configuration.
+To help encourage developers to follow our coding standards, we include an [ESLint](http://eslint.org/) configuration file [`.eslintrc.js`](../../.eslintrc.js) that configures [ESLint](http://eslint.org/) to detect code that doesn't follow the guidelines. ESLint also catches basic syntax errors, and natively supports both ES6 and JSX. It can be extended by plugins, such as [`eslint-plugin-wpcalypso`](https://github.com/Automattic/eslint-plugin-wpcalypso), which we use in our configuration.
 
 There are [integrations](http://eslint.org/docs/user-guide/integrations) for many editors that will automatically detect the configuration file and run the checks.
 
-In cases where ESLint is not happy with awesome code, you can tell ESLint to ignore a set of lines:
+In cases where ESLint incorrectly identifies code as not following our standards, you can [disable rules using inline comments](http://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments).
 
-```js
-/* eslint-disable */
-// Code here will be ignored when linted by ESLint.
-/* eslint-enable */
-```
-
-You can also selectively disable and re-enable warnings of specific rules:
-
-```js
-/* eslint-disable no-console, no-alert */
-
-console.log( 'word' );
-alert( 'press' );
-
-/* eslint-enable no-console */
-```
-
-You can also ignore a single line:
-
-```js
-if ( a != b ) { // eslint-disable-line
-	// do stuff
-}
-```
-
-Or a specific rule on a single line:
-
-```js
-if ( a != b ) { // eslint-disable-line eqeqeq
-	// do stuff
-}
-```
+**WARNING:** Before you disable a rule, be certain and vocal that you understand the reason for it needing to be disabled. Our ESLint configuration is very well-tuned, and disabling a rule is not appropriate as an escape valve for poorly written code.
 
 ### [Automatically Run ESLint Against Your Changesets](#setting-up-githooks)
 
