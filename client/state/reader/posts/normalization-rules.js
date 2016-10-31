@@ -6,6 +6,7 @@ import flow from 'lodash/flow';
 import forEach from 'lodash/forEach';
 import url from 'url';
 import matches from 'lodash/matches';
+import partial from 'lodash/partial';
 
 /**
  * Internal Dependencies
@@ -18,12 +19,8 @@ import DISPLAY_TYPES from './display-types';
  * Rules
  */
 import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
-import detectEmbeds from 'lib/post-normalizer/rule-content-detect-embeds';
-import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
-import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
-import makeImagesSafe from 'lib/post-normalizer/rule-content-make-images-safe';
 import wordCount from 'lib/post-normalizer/rule-content-word-count';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
@@ -37,6 +34,9 @@ import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
+import makeImagesSafe from 'lib/post-normalizer/rule-content-make-images-safe';
+import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
+import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 
 /**
  * Module vars
@@ -141,15 +141,14 @@ const fastPostNormalizationRules = flow( [
 	firstPassCanonicalImage,
 	withContentDom( [
 		removeStyles,
-		makeImagesSafe( READER_CONTENT_WIDTH ),
-		discoverFullBleedImages,
 		makeEmbedsSafe,
+		partial( makeImagesSafe, partial.placeholder, partial.placeholder, READER_CONTENT_WIDTH ),
 		disableAutoPlayOnEmbeds,
 		disableAutoPlayOnMedia,
-		detectEmbeds,
-		detectMedia,
 		detectPolls,
-		wordCount
+		detectMedia,
+		discoverFullBleedImages,
+		wordCount,
 	] ),
 	createBetterExcerpt,
 	classifyPost

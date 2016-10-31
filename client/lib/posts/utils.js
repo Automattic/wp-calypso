@@ -4,7 +4,7 @@
 var url = require( 'url' ),
 	i18n = require( 'i18n-calypso' ),
 	moment = require( 'moment-timezone' );
-import includes from 'lodash/includes';
+import { partial, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -137,7 +137,7 @@ var utils = {
 				postNormalizer.firstPassCanonicalImage,
 				postNormalizer.withContentDOM( [
 					postNormalizer.content.removeStyles,
-					postNormalizer.content.makeImagesSafe( imageWidth )
+					partial( postNormalizer.content.makeImagesSafe, partial.placeholder, partial.placeholder, imageWidth ),
 				] )
 			],
 			callback
