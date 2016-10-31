@@ -14,9 +14,10 @@ import {
 } from 'state/action-types';
 
 // Doesn't reset image file info (src, fileName, etc).
-export function resetImageEditorState() {
+export function resetImageEditorState( additionalData = {} ) {
 	return {
-		type: IMAGE_EDITOR_STATE_RESET
+		type: IMAGE_EDITOR_STATE_RESET,
+		additionalData
 	};
 }
 

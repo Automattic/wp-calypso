@@ -6,7 +6,9 @@ import { connect } from 'react-redux';
 import {
 	noop,
 	isEqual,
-	values as objectValues
+	values as objectValues,
+	indexOf,
+	get
 } from 'lodash';
 import path from 'path';
 import { localize } from 'i18n-calypso';
@@ -73,7 +75,10 @@ const ImageEditor = React.createClass( {
 	},
 
 	getInitialState() {
+		const { defaultAspectRatio } = this.props;
+
 		return {
+			defaultAspectRatio,
 			canvasError: null
 		};
 	},
@@ -100,24 +105,25 @@ const ImageEditor = React.createClass( {
 
 	setDefaultAspectRatio() {
 		const {
-			defaultAspectRatio,
+			defaultAspectRatio: propsDefaultAspectRatio,
 			allowedAspectRatios
 		} = this.props;
 
-		if ( allowedAspectRatios && allowedAspectRatios.length >= 1 ) {
-			if (
-				allowedAspectRatios.length === 1 ||
-				allowedAspectRatios.indexOf( defaultAspectRatio ) === -1
-			) {
-				this.props.setImageEditorAspectRatio( allowedAspectRatios[ 0 ] );
+		let defaultAspectRatio = propsDefaultAspectRatio;
 
-				return;
-			}
+		// If defaultAspectRatio was not specified or is not included in allowedAspectRatio.
+		if ( indexOf( allowedAspectRatios, propsDefaultAspectRatio ) === -1 ) {
+			defaultAspectRatio = get( allowedAspectRatios, '0', -1 );
 		}
 
-		if ( defaultAspectRatio ) {
-			this.props.setImageEditorAspectRatio( defaultAspectRatio );
+		// If default aspect ratio is not valid.
+		if ( ! AspectRatios[ defaultAspectRatio ] ) {
+			throw new Error( 'Specified defaultAspectRatio or allowedAspectRatios is not valid.' +
+				' Refer to README please.' );
 		}
+
+		this.props.setImageEditorAspectRatio( defaultAspectRatio );
+		this.setState( { defaultAspectRatio } );
 	},
 
 	updateFileInfo( media ) {
@@ -165,7 +171,9 @@ const ImageEditor = React.createClass( {
 	},
 
 	onReset() {
-		this.props.resetImageEditorState();
+		const { defaultAspectRatio } = this.state;
+
+		this.props.resetImageEditorState( { aspectRatio: defaultAspectRatio } );
 
 		this.props.onReset( this.getImageEditorProps() );
 	},
