@@ -391,6 +391,19 @@ if ( object && 'desired' in object ) { ... }
 if ( object && object.desired ) { ... }
 ```
 
+Note that the `in` operator checks all inherited properties of an object prototype, which can lead to some unexpected scenarios:
+
+```js
+'valueOf' in {}; // true
+```
+
+If testing the presence of a object key using variable input, it's recommended that you use [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) instead.
+
+```js
+const key = 'valueOf';
+{}.hasOwnProperty( key ); // false
+```
+
 ## Strings
 
 Use single-quotes for string literals:
