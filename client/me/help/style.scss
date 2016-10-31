@@ -16,7 +16,7 @@
 
 .help__support-link .help__support-link-title {
 	&:hover {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 	}
 }
 

@@ -803,7 +803,7 @@ div.mce-path {
 .mce-container.mce-menu .mce-menu-item:hover,
 .mce-container.mce-menu .mce-menu-item.mce-selected,
 .mce-container.mce-menu .mce-menu-item:focus {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	background-color: $white;
 	background-image: none;
 	filter: none;
@@ -815,7 +815,7 @@ div.mce-path {
 .mce-container.mce-menu .mce-menu-item:hover .mce-text,
 .mce-container.mce-menu .mce-menu-item.mce-active:hover .mce-text,
 .mce-container.mce-menu .mce-menu-item.mce-selected .mce-text {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 }
 
 .mce-container.mce-menu .mce-menu-item.mce-active:hover {

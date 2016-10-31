@@ -22,7 +22,7 @@ q {
 }
 a:link,
 a:visited {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 }
 a:hover,
 a:active {

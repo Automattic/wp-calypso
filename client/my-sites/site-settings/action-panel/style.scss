@@ -26,7 +26,7 @@
 }
 
 a.settings-action-panel__body-text-link {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	text-decoration: underline;
 
 	&:hover {

@@ -92,10 +92,10 @@
 
 	&:hover {
 		.survey__vertical-label {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 		.survey__vertical-chevron {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			animation: survey__vertical-chevron-wiggle 1.5s ease infinite;
 		}
 	}

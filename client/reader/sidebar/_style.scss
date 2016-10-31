@@ -66,7 +66,7 @@
 			}
 
 			&:hover {
-				color: $blue-medium;
+				color: darken( $blue-medium, 20% );
 				background-color: $gray-light;
 
 				.gridicon {

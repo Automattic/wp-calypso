@@ -183,7 +183,7 @@
 	display: flex;
 	align-items: center;
 	&:hover {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 	}
 	.gridicons-external {
 		top: -1px;

@@ -35,7 +35,7 @@
 
 		.discover-attribution__author,
 		.discover-attribution__blog {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			text-decoration: none;
 			text-transform: none;
 

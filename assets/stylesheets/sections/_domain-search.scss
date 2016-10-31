@@ -147,7 +147,7 @@ form.google-apps-dialog {
 	}
 
 	.google-apps-dialog__price-per-user {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 		font-size: 18px;
 		font-weight: 600;
 	}
@@ -246,7 +246,7 @@ form.google-apps-dialog {
 	}
 
 	.google-apps-dialog__cancel-link {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 		display: block;
 		font-size: 13px;
 		text-align: center;

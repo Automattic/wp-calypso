@@ -196,7 +196,7 @@ $theme-info-height: 54px;
 		background-color: transparentize( $gray-light, 0.7 );
 
 		.noticon {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 
 		&.is-active .noticon {

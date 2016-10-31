@@ -23,7 +23,7 @@
 		}
 
 		.follow-button__label {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 
 
 			@include breakpoint( "<660px" ) {
@@ -72,7 +72,7 @@
 .author-compact-profile__site-link,
 .author-compact-profile__follow {
 	align-items: center;
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	display: flex;
 	justify-content: center;
 

@@ -306,7 +306,7 @@
 
 	&.is-active {
 		.following-edit__form-toggle-status	{
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 	}
 

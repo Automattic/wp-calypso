@@ -132,7 +132,7 @@
 			position: absolute;
 			top: 7px;
 			right: 0;
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 	}
 
@@ -302,7 +302,7 @@
 		&:before {
 			font-size: 16px;
 			margin-right: 12px;
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			vertical-align: -2px;
 		}
 
@@ -351,7 +351,7 @@
 			/* Icon Buttons */
 			&:before {
 				content: "";
-				color: $blue-medium;
+				color: darken( $blue-medium, 20% );
 				float: left;
 				font-size: 16px;
 				text-indent: 0;
@@ -373,7 +373,7 @@
 			}
 
 			&.move {
-				color: $blue-medium;
+				color: darken( $blue-medium, 20% );
 				text-indent: 0;
 				width: auto;
 
@@ -447,7 +447,7 @@
 			&:before {
 				font-size: 16px;
 				margin-right: 12px;
-				color: $blue-medium;
+				color: darken( $blue-medium, 20% );
 				vertical-align: -2px;
 			}
 		}
@@ -525,7 +525,7 @@
 
 	&:after {
 		content: "\2191"; /* Up arrow */
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 		font-size: 16px;
 		padding: 0 0 0 10px;
 	}
@@ -683,10 +683,10 @@
 					}
 
 					&:hover {
-						color: $blue-medium;
+						color: darken( $blue-medium, 20% );
 
 						&:before {
-							color: $blue-medium;
+							color: darken( $blue-medium, 20% );
 						}
 					}
 				}
@@ -714,10 +714,10 @@
 					}
 
 					& > label {
-						color: $blue-medium;
+						color: darken( $blue-medium, 20% );
 
 						&:before {
-							color: $blue-medium;
+							color: darken( $blue-medium, 20% );
 						}
 					}
 				}
@@ -852,7 +852,7 @@
 						color: $gray-dark;
 
 						&:hover {
-							color: $blue-medium;
+							color: darken( $blue-medium, 20% );
 						}
 					}
 				}

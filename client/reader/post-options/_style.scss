@@ -22,7 +22,7 @@
 	}
 
 	&.is-triggered {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 
 		.gridicon__ellipsis {
 			fill: $blue-dark;

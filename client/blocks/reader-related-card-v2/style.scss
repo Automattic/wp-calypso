@@ -43,7 +43,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__link,
 .reader-related-card-v2__link:visited {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	font-family: $sans;
 
 	&:hover {
@@ -345,7 +345,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 
 .reader-related-card-v2__byline-author,
 .reader-related-card-v2__byline-site {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
@@ -371,7 +371,7 @@ $reader-related-card-v2-breakpoint-small: "( max-width: 535px )";
 	}
 
 	.follow-button__label {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 
 		@include breakpoint( "<960px" ) {
 			display: none;

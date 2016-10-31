@@ -50,7 +50,7 @@
 
 	&:not( :disabled ):hover {
 		cursor: pointer;
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 	}
 
 	&:disabled {

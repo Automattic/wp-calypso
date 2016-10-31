@@ -332,7 +332,7 @@
 		}
 
 		.new-card-header {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			font-weight: 400;
 			margin-bottom: 15px;
 		}
@@ -420,7 +420,7 @@
 			position: relative;
 
 			&::before {
-				color: $blue-medium;
+				color: darken( $blue-medium, 20% );
 				left: 10px;
 				position: absolute;
 				top: 15px;
@@ -428,7 +428,7 @@
 			}
 
 			> h6 {
-				color: $blue-medium;
+				color: darken( $blue-medium, 20% );
 				font-size: 18px;
 			}
 

@@ -167,7 +167,7 @@ body {
 }
 
 .community-translator__translator-invitation__link {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	text-shadow: 1px 0 lighten( $gray, 30% ), 2px 0 lighten( $gray, 30% ), -1px 0 lighten( $gray, 30% ), -2px 0 lighten( $gray, 30% );
 	background-image: linear-gradient( to bottom, transparent 50%, $blue-medium 50% );
 	background-repeat: repeat-x;

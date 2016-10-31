@@ -126,7 +126,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 }
 
 .reader-post-card__byline-details {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	margin-top: -2px;
 	width: 100%;
 }
@@ -185,7 +185,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card__link,
 .reader-post-card__link:visited {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	cursor: pointer;
 }
 

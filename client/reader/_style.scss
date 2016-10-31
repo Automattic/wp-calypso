@@ -25,7 +25,7 @@
 
 .reader__content {
 	a {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 
 		&:hover {
 			color: $blue-light;

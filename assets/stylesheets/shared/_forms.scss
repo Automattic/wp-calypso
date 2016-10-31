@@ -136,7 +136,7 @@ input[type=checkbox] {
 		width: 16px;
 		font: 400 23px/1 Noticons;
 		speak: none;
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 	}
 	&:disabled:checked:before {
 		color: lighten( $gray, 10% );

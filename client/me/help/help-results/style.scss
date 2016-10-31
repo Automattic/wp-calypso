@@ -20,7 +20,7 @@
 .help-result {
 	&:hover {
 		.help-result__title {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 	}
 }

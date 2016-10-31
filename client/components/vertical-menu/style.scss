@@ -31,7 +31,7 @@
 	}
 
 	&:not(.is-selected):hover {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 	}
 }
 

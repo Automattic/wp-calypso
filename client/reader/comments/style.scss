@@ -78,7 +78,7 @@
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			cursor: pointer;
 		}
 
@@ -295,7 +295,7 @@
 		}
 
 		&:hover {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 
 		&.comment__actions-cancel-reply {

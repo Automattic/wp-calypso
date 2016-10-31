@@ -92,7 +92,7 @@
 	transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
 	&.is-active {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 		transform: rotate( 90deg );
 	}
 }

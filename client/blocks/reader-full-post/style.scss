@@ -279,7 +279,7 @@
 
 	a.reader-author-link,
 	a.author-compact-profile__site-link {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 
 		&:hover {
 			color: $blue-light;

@@ -260,7 +260,7 @@
 }
 
 .sharing-service__overview:hover .sharing-service__content-toggle {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 }
 
 .sharing-service__icon {
@@ -666,7 +666,7 @@
 .sharing-buttons-preview__like .noticon {
 	vertical-align: top;
 	margin: 3px 4px 0 0;
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 }
 
 .sharing-buttons-preview__like .noticon {
@@ -711,7 +711,7 @@
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 	}
 
 	&.is-active {

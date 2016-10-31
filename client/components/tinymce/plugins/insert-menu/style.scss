@@ -71,7 +71,7 @@
 	&:focus {
 
 		.wpcom-insert-menu__menu-label {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 
 		.wpcom-insert-menu__menu-icon {

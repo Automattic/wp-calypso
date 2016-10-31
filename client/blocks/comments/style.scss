@@ -84,7 +84,7 @@
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			cursor: pointer;
 		}
 
@@ -216,7 +216,7 @@
 }
 
 a.comments__comment-username {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 
 	&:hover {
 		color: $blue-light;
@@ -309,7 +309,7 @@ a.comments__comment-username {
 		}
 
 		&:hover {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 
 		&.comments__comment-actions-cancel-reply {

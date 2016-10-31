@@ -48,7 +48,7 @@
 	width: 100%;
 	border-width: 1px;
 	border-color: $blue-medium;
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	font-weight: 400;
 }
 

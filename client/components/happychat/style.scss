@@ -371,7 +371,7 @@
 	margin-left: 0;
 
 	a {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 		text-decoration: underline;
 	}
 
