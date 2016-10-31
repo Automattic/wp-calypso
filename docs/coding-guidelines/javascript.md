@@ -299,9 +299,9 @@ a plain object, consider using [Lodash's `_.isPlainObject`](https://lodash.com/d
 
 ## Existence and Shape Checks
 
-Prefer using the [power](http://www.ecma-international.org/ecma-262/5.1/#sec-9.2)
-of "truthy" in JavaScript boolean expressions to validate the existence and shape
-of an object to using `typeof`.
+Prefer using the [power of "truthy"](http://www.ecma-international.org/ecma-262/6.0/#sec-toboolean)
+in JavaScript boolean expressions to validate the existence and shape of an 
+object to using `typeof`.
 
 The following are all false in boolean expressions:
 
