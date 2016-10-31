@@ -293,6 +293,10 @@ These are the preferred ways of checking the type of an object:
 However, you don't generally have to know the type of an object. Prefer testing
 the object's existence and shape over its type.
 
+`typeof object === 'object'` can be misleading, as non-plain-object types test
+as true for this check (e.g. Arrays). If you need to test whether a variable is
+a plain object, consider using [Lodash's `_.isPlainObject`](https://lodash.com/docs/#isPlainObject)
+
 ## Existence and Shape Checks
 
 Prefer using the [power](http://www.ecma-international.org/ecma-262/5.1/#sec-9.2)
