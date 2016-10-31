@@ -175,6 +175,7 @@
 .editor-media-modal-detail__file-info tr {
 	display: block;
 	flex-basis: 50%;
+	width: 100%;
 }
 
 .editor-media-modal-detail__file-info th,
@@ -199,6 +200,10 @@
 
 	&::after {
 		@include long-content-fade( $color: $white );
+	}
+
+	span {
+		display: block;
 	}
 }
 
