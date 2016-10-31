@@ -1,16 +1,17 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var StoreConnection = require( 'components/data/store-connection' ),
-	DnsStore = require( 'lib/domains/dns/store' ),
-	DomainsStore = require( 'lib/domains/store' ),
-	observe = require( 'lib/mixins/data-observe' ),
-	upgradesActions = require( 'lib/upgrades/actions' );
+import StoreConnection from 'components/data/store-connection';
+import DnsStore from 'lib/domains/dns/store';
+import DomainsStore from 'lib/domains/store';
+import upgradesActions from 'lib/upgrades/actions';
+import { getSelectedSite } from 'state/ui/selectors';
 
 const stores = [
 	DomainsStore,
@@ -32,16 +33,12 @@ function getStateFromStores( props ) {
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'DnsData',
-
+export const DnsData = React.createClass( {
 	propTypes: {
 		component: React.PropTypes.func.isRequired,
 		selectedDomainName: React.PropTypes.string.isRequired,
 		sites: React.PropTypes.object.isRequired
 	},
-
-	mixins: [ observe( 'sites' ) ],
 
 	componentWillMount() {
 		this.loadDns();
@@ -62,7 +59,13 @@ module.exports = React.createClass( {
 				stores={ stores }
 				getStateFromStores={ getStateFromStores }
 				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() } />
+				selectedSite={ this.props.selectedSite} />
 		);
 	}
 } );
+
+const mapStateToProps = state => ( {
+	selectedSite: getSelectedSite( state ),
+} );
+
+export default connect( mapStateToProps )( DnsData );
