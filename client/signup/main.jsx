@@ -11,6 +11,7 @@ import startsWith from 'lodash/startsWith';
 import sortBy from 'lodash/sortBy';
 import last from 'lodash/last';
 import find from 'lodash/find';
+import filter from 'lodash/filter';
 import some from 'lodash/some';
 import defer from 'lodash/defer';
 import delay from 'lodash/delay';
@@ -135,7 +136,13 @@ const Signup = React.createClass( {
 
 		this.loadProgressFromStore();
 
-		if ( SignupProgressStore.get().length > 0 ) {
+		const flowSteps = flows.getFlow( this.props.flowName ).steps;
+		const flowStepsInProgressStore = filter(
+			SignupProgressStore.get(),
+			step => ( -1 !== flowSteps.indexOf( step.name ) ),
+		);
+
+		if ( flowStepsInProgressStore.length > 0 ) {
 			// we loaded progress from local storage, attempt to resume progress
 			return this.resumeProgress();
 		}
