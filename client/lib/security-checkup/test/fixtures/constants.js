@@ -9,7 +9,8 @@ const EMAIL = 'test@example.com',
 		countryCode: PHONE_COUNTRY,
 		countryNumericCode: PHONE_COUNTRY_NUMERIC,
 		number: PHONE_NUMBER,
-		numberFull: PHONE_NUMBER_FULL
+		numberFull: PHONE_NUMBER_FULL,
+		isValidated: false,
 	};
 
 export default {
@@ -32,18 +33,18 @@ export default {
 
 	DUMMY_ACCOUNT_RECOVERY_RESPONSE: {
 		email: EMAIL,
+		email_validated: false,
 		phone: {
 			country_code: PHONE_COUNTRY,
 			country_numeric_code: PHONE_COUNTRY_NUMERIC,
 			number: PHONE_NUMBER,
 			number_full: PHONE_NUMBER_FULL
-		}
+		},
+		phone_validated: false,
 	},
 	DUMMY_STORE_EMAIL_OBJECT_LOADING: {
 		loading: true,
-		data: {
-			email: null
-		}
+		data: {}
 	},
 	DUMMY_STORE_PHONE_OBJECT_LOADING: {
 		loading: true,
@@ -52,7 +53,8 @@ export default {
 	DUMMY_STORE_EMAIL_OBJECT: {
 		loading: false,
 		data: {
-			email: EMAIL
+			email: EMAIL,
+			isValidated: false,
 		}
 	},
 	DUMMY_STORE_PHONE_OBJECT: {
