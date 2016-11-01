@@ -1,10 +1,15 @@
-var untrailingslashit = require( 'lib/route/untrailingslashit' );
+/**
+ * External Dependencies
+ */
 
-module.exports = {
-	// Prepare site URL for use with the FeedSubscriptionStore
-	prepareSiteUrl: function( url ) {
-		// Convert https:// to http://, remove trailing /
-		var preparedUrl = url && untrailingslashit( url.replace( 'https://', 'http://' ) );
-		return preparedUrl;
-	}
-};
+
+/**
+ * Internal Dependencies
+ */
+import untrailingslashit from 'lib/route/untrailingslashit';
+
+// Prepare site URL for use with the FeedSubscriptionStore
+export function prepareSiteUrl( url ) {
+	// remove trailing /
+	return url && untrailingslashit( url );
+}
