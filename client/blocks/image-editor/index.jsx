@@ -3,12 +3,11 @@
  */
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
 	noop,
 	isEqual,
-	values as objectValues,
-	indexOf,
-	get
+	partial
 } from 'lodash';
 import path from 'path';
 import { localize } from 'i18n-calypso';
@@ -36,9 +35,11 @@ import {
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { getSite } from 'state/sites/selectors';
 import QuerySites from 'components/data/query-sites';
-import { AspectRatios } from 'state/ui/editor/image-editor/constants';
-
-const aspectRatiosValues = objectValues( AspectRatios );
+import {
+	AspectRatios,
+	AspectRatiosValues
+} from 'state/ui/editor/image-editor/constants';
+import { getDefaultAspectRatio } from './utils';
 
 const ImageEditor = React.createClass( {
 	mixins: [ closeOnEsc( 'onCancel' ) ],
@@ -51,8 +52,8 @@ const ImageEditor = React.createClass( {
 		onCancel: PropTypes.func,
 		onReset: PropTypes.func,
 		className: PropTypes.string,
-		defaultAspectRatio: PropTypes.oneOf( aspectRatiosValues ),
-		allowedAspectRatios: PropTypes.arrayOf( PropTypes.oneOf( aspectRatiosValues ) ),
+		defaultAspectRatio: PropTypes.oneOf( AspectRatiosValues ),
+		allowedAspectRatios: PropTypes.arrayOf( PropTypes.oneOf( AspectRatiosValues ) ),
 
 		// Redux props
 		site: PropTypes.object,
@@ -70,15 +71,12 @@ const ImageEditor = React.createClass( {
 			onReset: noop,
 			isImageLoaded: false,
 			defaultAspectRatio: AspectRatios.FREE,
-			allowedAspectRatios: aspectRatiosValues
+			allowedAspectRatios: AspectRatiosValues
 		};
 	},
 
 	getInitialState() {
-		const { defaultAspectRatio } = this.props;
-
 		return {
-			defaultAspectRatio,
 			canvasError: null
 		};
 	},
@@ -104,26 +102,9 @@ const ImageEditor = React.createClass( {
 	},
 
 	setDefaultAspectRatio() {
-		const {
-			defaultAspectRatio: propsDefaultAspectRatio,
-			allowedAspectRatios
-		} = this.props;
+		const {	defaultAspectRatio } = this.props;
 
-		let defaultAspectRatio = propsDefaultAspectRatio;
-
-		// If defaultAspectRatio was not specified or is not included in allowedAspectRatio.
-		if ( indexOf( allowedAspectRatios, propsDefaultAspectRatio ) === -1 ) {
-			defaultAspectRatio = get( allowedAspectRatios, '0', -1 );
-		}
-
-		// If default aspect ratio is not valid.
-		if ( ! AspectRatios[ defaultAspectRatio ] ) {
-			throw new Error( 'Specified defaultAspectRatio or allowedAspectRatios is not valid.' +
-				' Refer to README please.' );
-		}
-
-		this.props.setImageEditorAspectRatio( defaultAspectRatio );
-		this.setState( { defaultAspectRatio } );
+		this.props.setImageEditorAspectRatio( getDefaultAspectRatio( defaultAspectRatio ) );
 	},
 
 	updateFileInfo( media ) {
@@ -171,9 +152,7 @@ const ImageEditor = React.createClass( {
 	},
 
 	onReset() {
-		const { defaultAspectRatio } = this.state;
-
-		this.props.resetImageEditorState( { aspectRatio: defaultAspectRatio } );
+		this.props.resetImageEditorState();
 
 		this.props.onReset( this.getImageEditorProps() );
 	},
@@ -276,10 +255,18 @@ export default connect(
 			isImageLoaded: isImageEditorImageLoaded( state )
 		};
 	},
-	{
-		resetImageEditorState,
-		resetAllImageEditorState,
-		setImageEditorFileInfo,
-		setImageEditorAspectRatio
+	( dispatch, ownProp ) => {
+		const defaultAspectRatio = getDefaultAspectRatio( ownProp.defaultAspectRatio );
+		const resetActionsAdditionalData = {
+			aspectRatio: defaultAspectRatio
+		};
+
+		return bindActionCreators( {
+			setImageEditorFileInfo,
+			setImageEditorAspectRatio,
+			resetImageEditorState: partial( resetImageEditorState, resetActionsAdditionalData ),
+			resetAllImageEditorState: partial( resetAllImageEditorState, resetActionsAdditionalData )
+
+		}, dispatch );
 	}
 )( localize( ImageEditor ) );

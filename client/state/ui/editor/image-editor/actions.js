@@ -14,6 +14,7 @@ import {
 } from 'state/action-types';
 
 // Doesn't reset image file info (src, fileName, etc).
+// additionalData can contain arbitrarily needed data.
 export function resetImageEditorState( additionalData = {} ) {
 	return {
 		type: IMAGE_EDITOR_STATE_RESET,
@@ -22,9 +23,11 @@ export function resetImageEditorState( additionalData = {} ) {
 }
 
 // Resets image file info as well (src, fileName, etc).
-export function resetAllImageEditorState() {
+// additionalData can contain arbitrarily needed data.
+export function resetAllImageEditorState( additionalData = {} ) {
 	return {
-		type: IMAGE_EDITOR_STATE_RESET_ALL
+		type: IMAGE_EDITOR_STATE_RESET_ALL,
+		additionalData
 	};
 }
 
