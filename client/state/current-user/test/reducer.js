@@ -29,7 +29,8 @@ describe( 'reducer', () => {
 			'id',
 			'currencyCode',
 			'capabilities',
-			'flags'
+			'flags',
+			'gravatarStatus'
 		] );
 	} );
 
