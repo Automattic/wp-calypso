@@ -139,7 +139,7 @@ const Signup = React.createClass( {
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
 		const flowStepsInProgressStore = filter(
 			SignupProgressStore.get(),
-			step => ( -1 !== flowSteps.indexOf( step.name ) ),
+			step => ( -1 !== flowSteps.indexOf( step.stepName ) ),
 		);
 
 		if ( flowStepsInProgressStore.length > 0 ) {
