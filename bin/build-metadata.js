@@ -9,6 +9,7 @@ var fs = require( 'fs' );
 var forIn = require( 'lodash/forIn' );
 var mapValues = require( 'lodash/mapValues' );
 var orderBy = require( 'lodash/orderBy' );
+var last = require( 'lodash/last' );
 
 var areaCodes = {
 	CA: [ "204", "236", "249", "250", "289", "306", "343", "365", "387", "403", "416", "418", "431", "437", "438", "450", "506", "514", "519", "548", "579", "581", "587", "604", "613", "639", "647", "672", "705", "709", "742", "778", "780", "782", "807", "819", "825", "867", "873", "902", "905" ],
@@ -77,6 +78,7 @@ var libPhoneNumberIndexes = {
 var numberFormatIndexes = {
 	PATTERN: 1,
 	FORMAT: 2,
+	LEADING_DIGIT_PATTERN: 3,
 	NATIONAL_CALLING_FORMAT: 4
 };
 
@@ -114,7 +116,8 @@ function processNumberFormat( format ) {
 	return {
 		match: format[ numberFormatIndexes.PATTERN ],
 		replace: format[ numberFormatIndexes.FORMAT ],
-		nationalFormat: format.length > numberFormatIndexes.NATIONAL_CALLING_FORMAT && format[ numberFormatIndexes.NATIONAL_CALLING_FORMAT ] || undefined
+		nationalFormat: format[ numberFormatIndexes.NATIONAL_CALLING_FORMAT ] || undefined,
+		leadingDigitPattern: last( format[ numberFormatIndexes.LEADING_DIGIT_PATTERN ] || [] )
 	}
 }
 
