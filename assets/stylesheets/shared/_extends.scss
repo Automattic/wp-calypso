@@ -1,10 +1,5 @@
-%clear-text {
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-}
-
 %noticon {
-	@extend %clear-text;
+	@include clear-text;
 	display: inline-block;
 	font: normal 16px/1 Noticons;
 	vertical-align: middle;
