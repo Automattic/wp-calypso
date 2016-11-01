@@ -12,7 +12,7 @@ import SiteIcon from 'components/site-icon';
 import { localize } from 'i18n-calypso';
 import classnames from 'classnames';
 
-const ReaderAvatar = ( { author, siteIcon, feedIcon, preferGravatar = false } ) => {
+const ReaderAvatar = ( { author, siteIcon, feedIcon, siteUrl, preferGravatar = false } ) => {
 	let fakeSite;
 	if ( siteIcon ) {
 		fakeSite = {
@@ -32,14 +32,14 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, preferGravatar = false } ) 
 	let hasAvatar = !! ( author && author.has_avatar );
 
 	if ( hasSiteIcon && hasAvatar ) {
-		// do these both reference the same image? disregard querystring params.
+		// Do these both reference the same image? Disregard query string params.
 		const [ withoutQuery, ] = siteIcon.split( '?' );
 		if ( startsWith( author.avatar_URL, withoutQuery ) ) {
 			hasAvatar = false;
 		}
 	}
 
-	// if we have an avatar and we prefer it, don't even consider the site icon
+	// If we have an avatar and we prefer it, don't even consider the site icon
 	if ( hasAvatar && preferGravatar ) {
 		hasSiteIcon = false;
 	}
@@ -55,12 +55,23 @@ const ReaderAvatar = ( { author, siteIcon, feedIcon, preferGravatar = false } ) 
 		}
 	);
 
+	const siteIconElement = hasSiteIcon && <SiteIcon key="site-icon" size={ 96 } site={ fakeSite } />;
+	const feedIconElement = hasAvatar && <Gravatar key="feed-icon" user={ author } size={ hasBothIcons ? 32 : 96 } />;
+	const iconElements = [ siteIconElement, feedIconElement ];
+
 	return (
 		<div className={ classes }>
-			{ hasSiteIcon && <SiteIcon size={ 96 } site={ fakeSite } /> }
-			{ hasAvatar && <Gravatar user={ author } size={ hasBothIcons ? 32 : 96 } /> }
+			{ siteUrl ? <a href={ siteUrl }>{ iconElements }</a> : iconElements }
 		</div>
 	);
+};
+
+ReaderAvatar.propTypes = {
+	author: React.PropTypes.object,
+	siteIcon: React.PropTypes.string,
+	feedIcon: React.PropTypes.string,
+	siteUrl: React.PropTypes.string,
+	preferGravatar: React.PropTypes.bool
 };
 
 export default localize( ReaderAvatar );
