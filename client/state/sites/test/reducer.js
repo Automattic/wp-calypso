@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import sinon from 'sinon';
 import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
  */
+import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	SITE_FRONT_PAGE_SET_SUCCESS,
 	SITE_RECEIVE,
@@ -26,11 +26,8 @@ import {
 import reducer, { items, requestingAll, requesting } from '../reducer';
 
 describe( 'reducer', () => {
-	before( function() {
-		sinon.stub( console, 'warn' );
-	} );
-	after( function() {
-		console.warn.restore();
+	useSandbox( ( sandbox ) => {
+		sandbox.stub( console, 'warn' );
 	} );
 
 	it( 'should export expected reducer keys', () => {

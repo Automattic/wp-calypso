@@ -3,11 +3,17 @@
  */
 import localforage from 'localforage';
 import reduce from 'lodash/reduce';
+import debug from 'debug';
 
 /**
  * Internal dependencies
  */
 import localforageBypass from './localforage-bypass';
+
+/**
+ * Module variables
+ */
+const log = debug( 'calypso:localforage' );
 
 const config = {
 	name: 'calypso',
@@ -29,7 +35,7 @@ const localForagePromise = localforage.defineDriver( localforageBypass )
 		_ready = true;
 		return localforage;
 	} )
-	.catch( ( error ) => console.error( 'Configuring localforage: %s', error ) );
+	.catch( ( error ) => log( 'Configuring localforage: %s', error ) );
 
 // Wraps a function to run after waiting until a promise has resolved.
 // The promise should contain the original object for context.
@@ -58,7 +64,7 @@ const localForageProxy = reduce(
 
 localForageProxy.bypass = () => {
 	if ( _ready ) {
-		console.error( 'Cannot bypass localforage after initialization' );
+		log( 'Cannot bypass localforage after initialization' );
 	} else {
 		config.driver = [ localforageBypass._driver ];
 	}

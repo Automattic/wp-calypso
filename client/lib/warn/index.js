@@ -1,4 +1,5 @@
 /** @ssr-ready **/
+/* eslint-disable no-console */
 
 /**
  * Internal Dependencies
