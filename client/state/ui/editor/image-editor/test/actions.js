@@ -37,7 +37,19 @@ describe( 'actions', () => {
 			const action = resetImageEditorState();
 
 			expect( action ).to.eql( {
-				type: IMAGE_EDITOR_STATE_RESET
+				type: IMAGE_EDITOR_STATE_RESET,
+				additionalData: {}
+			} );
+		} );
+
+		it( 'should return an action object with additional data if specified', () => {
+			const action = resetImageEditorState( { aspectRatio: AspectRatios.FREE } );
+
+			expect( action ).to.eql( {
+				type: IMAGE_EDITOR_STATE_RESET,
+				additionalData: {
+					aspectRatio: AspectRatios.FREE
+				}
 			} );
 		} );
 	} );
