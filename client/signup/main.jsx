@@ -255,8 +255,11 @@ const Signup = React.createClass( {
 	},
 
 	firstUnsubmittedStepName() {
-		const signupProgress = SignupProgressStore.get(),
-			currentSteps = flows.getFlow( this.props.flowName ).steps,
+		const currentSteps = flows.getFlow( this.props.flowName ).steps,
+			signupProgress = filter(
+				SignupProgressStore.get(),
+				step => ( -1 !== currentSteps.indexOf( step.stepName ) ),
+			),
 			nextStepName = currentSteps[ signupProgress.length ],
 			firstInProgressStep = find( signupProgress, { status: 'in-progress' } ) || {},
 			firstInProgressStepName = firstInProgressStep.stepName;
@@ -268,7 +271,11 @@ const Signup = React.createClass( {
 		// Update the Flows object to know that the signup flow is being resumed.
 		flows.resumingFlow = true;
 
-		const signupProgress = SignupProgressStore.get(),
+		const flowSteps = flows.getFlow( this.props.flowName ).steps,
+			signupProgress = filter(
+				SignupProgressStore.get(),
+				step => ( -1 !== flowSteps.indexOf( step.stepName ) ),
+			),
 			lastUpdatedStep = sortBy( signupProgress, 'lastUpdated' ).reverse()[ 0 ],
 			lastUpdatedStepName = lastUpdatedStep.stepName,
 			stepSectionName = lastUpdatedStep.stepSectionName,
