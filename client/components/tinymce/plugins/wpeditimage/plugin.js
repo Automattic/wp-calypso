@@ -458,21 +458,19 @@ function wpEditImage( editor ) {
 							dom.remove( parent );
 						}
 					}
-				} else {
-					if ( wrap ) {
-						// Remove the caption wrapper and place the image in new paragraph
-						if ( imgNode.parentNode.nodeName === 'A' ) {
-							html = dom.getOuterHTML( imgNode.parentNode );
-						} else {
-							html = dom.getOuterHTML( imgNode );
-						}
-
-						parent = dom.create( 'p', {}, html );
-						dom.insertAfter( parent, wrap.parentNode );
-						editor.selection.select( parent );
-						editor.nodeChanged();
-						dom.remove( wrap.parentNode );
+				} else if ( wrap ) {
+					// Remove the caption wrapper and place the image in new paragraph
+					if ( imgNode.parentNode.nodeName === 'A' ) {
+						html = dom.getOuterHTML( imgNode.parentNode );
+					} else {
+						html = dom.getOuterHTML( imgNode );
 					}
+
+					parent = dom.create( 'p', {}, html );
+					dom.insertAfter( parent, wrap.parentNode );
+					editor.selection.select( parent );
+					editor.nodeChanged();
+					dom.remove( wrap.parentNode );
 				}
 			}
 
