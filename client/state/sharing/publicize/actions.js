@@ -138,6 +138,13 @@ export function deleteSiteConnection( connection ) {
 			} );
 }
 
+/**
+ * Returns an action object to be used in signalling that creating a Publicize
+ * connection has failed.
+ *
+ * @param  {Object} error Error object
+ * @return {Object}       Action object
+ */
 export function failCreateConnection( error ) {
 	return {
 		type: PUBLICIZE_CONNECTION_CREATE_FAILURE,
@@ -150,8 +157,6 @@ export function failCreateConnection( error ) {
  * removing a Publicize connection has been received.
  *
  * @param  {Object} connection         Connection to be deleted.
- * @param  {Number} connection.site_ID Site ID for which the connection is deleted.
- * @param  {Number} connection.ID      ID of the connection to be deleted.
  * @return {Object}                    Action object
  */
 export function deleteConnection( connection ) {
