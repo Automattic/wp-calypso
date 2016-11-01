@@ -117,7 +117,6 @@ describe( 'reducer', () => {
 			const state = geo( original, { type: DESERIALIZE } );
 
 			expect( state ).to.be.null;
-			expect( console.warn ).to.have.been.called; // eslint-disable-line no-console
 		} );
 	} );
 } );

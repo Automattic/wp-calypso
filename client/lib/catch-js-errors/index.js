@@ -1,7 +1,27 @@
+/**
+ * External dependencies
+ */
 import TraceKit from 'tracekit';
+import debug from 'debug';
 
-// Interval for error reports so we don't flood te endpoint. More frequent reports get throttled.
+/**
+ * Module variables
+ */
+
+/**
+ * Interval for error reports so we don't flood te endpoint. More frequent
+ * reports get throttled.
+ *
+ * @type {Number}
+ */
 const REPORT_INTERVAL = 60000;
+
+/**
+ * Debug logger
+ *
+ * @type {Function}
+ */
+const log = debug( 'calypso:error-logger' );
 
 export default class ErrorLogger {
 	constructor() {
@@ -79,7 +99,7 @@ export default class ErrorLogger {
 				this.saveDiagnosticData( diagnosticReducer() );
 			} catch ( e ) {
 				this.saveDiagnosticData( { diagnosticError: e.message } );
-				console.warn( 'diagnostic', this.diagnosticData );
+				log( 'diagnostic: %o', this.diagnosticData );
 			}
 		} );
 

@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 /**
  * External dependencies
  */
@@ -9,26 +11,24 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import createSelector from '../';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 describe( 'index', () => {
 	let selector, getSitePosts;
 
-	before( () => {
-		selector = sinon.spy( ( state, siteId ) => {
+	useSandbox( ( sandbox ) => {
+		sandbox.stub( console, 'warn' );
+		selector = sandbox.spy( ( state, siteId ) => {
 			return filter( state.posts, { site_ID: siteId } );
 		} );
+	} );
+
+	before( () => {
 		getSitePosts = createSelector( selector, ( state ) => state.posts );
-		sinon.stub( console, 'warn' );
 	} );
 
 	beforeEach( () => {
-		console.warn.reset();
-		selector.reset();
 		getSitePosts.memoizedSelector.cache.clear();
-	} );
-
-	after( () => {
-		console.warn.restore();
 	} );
 
 	it( 'should expose its memoized function', () => {
