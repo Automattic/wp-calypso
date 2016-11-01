@@ -134,7 +134,7 @@ export default React.createClass( {
 				<MediaLibrary
 					{ ...this.props }
 					onFilterChange={ this.onFilterChange }
-					site={ site }
+					site={ site || false }
 					single={ true }
 					onEditItem={ this.openDetailsModal }
 					containerWidth={ this.state.containerWidth } />
