@@ -5,6 +5,12 @@ import filter from 'lodash/filter';
 import get from 'lodash/get';
 
 /**
+ * Internal dependencies
+ */
+import { getCurrentUserId } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
+
+/**
  * Returns an array of known connections for the given site ID.
  *
  * @param  {Object} state  Global state tree
@@ -43,6 +49,29 @@ export function getSiteUserConnections( state, siteId, userId ) {
  */
 export function getSiteUserConnectionsForService( state, siteId, userId, service ) {
 	return filter( getSiteUserConnections( state, siteId, userId ), { service } );
+}
+
+/**
+ * Given a service name, returns the connections that the current user is
+ * allowed to remove.
+ *
+ * For them to be allowed to remove a connection they need to have either the
+ * `edit_others_posts` capability or it's a connection to one of
+ * their accounts.
+ *
+ * @param  {Object} state   Global state tree
+ * @param  {string} service The name of the service
+ * @return {Array}          Connections for which the current user is
+ *                          permitted to remove.
+ */
+export function getRemovableConnections( state, service ) {
+	const site = getSelectedSite( state );
+	const userId = getCurrentUserId( state );
+	const siteUserConnectionsForService = getSiteUserConnectionsForService( state, site.ID, userId, service );
+
+	return siteUserConnectionsForService.filter( ( connection ) => (
+		site.capabilities && site.capabilities.edit_others_posts || connection.user_ID === userId
+	) );
 }
 
 /**
