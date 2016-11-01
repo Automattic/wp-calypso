@@ -189,7 +189,6 @@ module.exports = {
 		// set site visibility to just that site on the picker
 		if ( sites.select( siteID ) ) {
 			onSelectedSiteAvailable();
-			next();
 		} else {
 			// if sites has fresh data and siteID is invalid
 			// redirect to allSitesPath
@@ -211,15 +210,14 @@ module.exports = {
 					waitingNotice = notices.info( i18n.translate( 'Finishing set up…' ), { showDismiss: false } );
 					sites.once( 'change', selectOnSitesChange );
 					sites.fetch();
-					return;
 				} else {
 					page.redirect( allSitesPath );
 				}
-				next();
 			};
 			// Otherwise, check when sites has loaded
 			sites.once( 'change', selectOnSitesChange );
 		}
+		next();
 	},
 
 	awaitSiteLoaded( context, next ) {
