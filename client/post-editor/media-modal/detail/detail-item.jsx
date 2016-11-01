@@ -4,7 +4,6 @@
 import React, { Component, PropTypes } from 'react';
 import classNames from 'classnames';
 import { noop } from 'lodash';
-import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 
@@ -22,8 +21,6 @@ import Gridicon from 'components/gridicon';
 import { userCan, isJetpack } from 'lib/site/utils';
 import MediaUtils, { isItemBeingUploaded } from 'lib/media/utils';
 import config from 'config';
-
-const debug = debugFactory( 'calypso:post-editor:media:detail-item' );
 
 class EditorMediaModalDetailItem extends Component {
 	static propTypes = {
@@ -54,18 +51,7 @@ class EditorMediaModalDetailItem extends Component {
 			translate
 		} = this.props;
 
-		// Do not render edit button for private sites
-		if ( site.is_private ) {
-			debug( 'Do not show `Edit button` for private sites' );
-			return null;
-		}
-
-		if (
-			! config.isEnabled( 'post-editor/image-editor' ) ||
-			! userCan( 'upload_files', site ) ||
-			isJetpack( site ) ||
-			! item
-		) {
+		if ( ! userCan( 'upload_files', site ) ) {
 			return null;
 		}
 
@@ -124,14 +110,8 @@ class EditorMediaModalDetailItem extends Component {
 	renderImageEditorButtons( item, classname = 'is-desktop' ) {
 		const { site } = this.props;
 
-		// Do not render edit button for private sites
-		if ( site.is_private ) {
-			debug( 'Do not show `Restore button` for private sites' );
-
-			return null;
-		}
-
 		if (
+			site.is_private ||
 			! config.isEnabled( 'post-editor/image-editor' ) ||
 			isJetpack( site ) ||
 			! item
