@@ -106,7 +106,7 @@ try {
 
 ## Semicolons
 
-Use them. Never rely on Automatic Semicolon Insertion (ASI).
+Use them. Never rely on [Automatic Semicolon Insertion (ASI)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Lexical_grammar#Automatic_semicolon_insertion).
 
 ## Indentation and Line Breaks
 
