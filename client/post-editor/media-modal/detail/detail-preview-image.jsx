@@ -31,23 +31,26 @@ export default React.createClass( {
 		const src = url( this.props.item, {
 			photon: this.props.site && ! this.props.site.is_private
 		} );
+		const loading = isItemBeingUploaded( this.props.item );
 
 		const classes = classNames(
 			'editor-media-modal-detail__preview',
-			'is-image',
-			{
-				'is-loading': isItemBeingUploaded( this.props.item )
+			'is-image', {
+				'is-loading': loading
 			}
 		);
 		return (
-			<ImagePreloader
-				src={ src }
-				width={ this.props.item.width }
-				height={ this.props.item.height }
-				placeholder={ <Spinner /> }
-				onLoad={ this.props.onLoad }
-				alt={ this.props.item.alt || this.props.item.title }
-				className={ classes } />
+			<div>
+				<ImagePreloader
+					src={ src }
+					width={ this.props.item.width }
+					height={ this.props.item.height }
+					placeholder={ <span /> }
+					onLoad={ this.props.onLoad }
+					alt={ this.props.item.alt || this.props.item.title }
+					className={ classes } />
+				{ loading && <Spinner /> }
+			</div>
 		);
 	}
 } );
