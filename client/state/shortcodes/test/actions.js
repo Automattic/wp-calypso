@@ -7,12 +7,13 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	SHORTCODE_MEDIA_UPDATE,
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
 	SHORTCODE_REQUEST_FAILURE,
 	SHORTCODE_REQUEST_SUCCESS
 } from 'state/action-types';
-import { fetchShortcode } from '../actions';
+import { fetchShortcode, updateShortcodes } from '../actions';
 import { useSandbox } from 'test/helpers/use-sinon';
 import useNock from 'test/helpers/use-nock';
 import wpcom from 'lib/wp';
@@ -110,6 +111,29 @@ describe( 'actions', () => {
 						} );
 					}
 				);
+			} );
+		} );
+	} );
+
+	describe( '#updateShortcodes()', () => {
+		const siteId = 12345678;
+		const data = {
+			media: [
+				{
+					ID: 123456,
+					URL: 'https://wordpress.com/example.jpg',
+					title: 'test_image'
+				}
+			]
+		};
+
+		it( 'should trigger a shortcode media update action with the specified data and site', () => {
+			updateShortcodes( siteId, data )( spy );
+
+			expect( spy ).to.have.been.calledWith( {
+				type: SHORTCODE_MEDIA_UPDATE,
+				siteId,
+				data
 			} );
 		} );
 	} );

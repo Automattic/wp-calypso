@@ -3,6 +3,7 @@
  */
 import wpcom from 'lib/wp';
 import {
+	SHORTCODE_MEDIA_UPDATE,
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
 	SHORTCODE_REQUEST_FAILURE,
@@ -37,6 +38,16 @@ export function fetchShortcode( siteId, shortcode ) {
 				shortcode,
 				error
 			} );
+		} );
+	};
+}
+
+export function updateShortcodes( siteId, data ) {
+	return ( dispatch ) => {
+		dispatch( {
+			type: SHORTCODE_MEDIA_UPDATE,
+			siteId,
+			data
 		} );
 	};
 }
