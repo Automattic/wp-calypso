@@ -22,7 +22,7 @@
 	box-sizing: border-box;
 
 	&::placeholder {
-		color: darken( $gray, 18% );
+		color: $gray;
 	}
 
 	&:hover {
@@ -42,7 +42,7 @@
 	&:disabled {
 		background: $gray-light;
 		border-color: lighten( $gray, 30% );
-		color: darken( $gray, 18% );
+		color: lighten( $gray, 10% );
 		opacity: 1;
 		-webkit-text-fill-color: lighten( $gray, 10% );
 
@@ -51,7 +51,7 @@
 		}
 
 		&::placeholder {
-			color: darken( $gray, 18% );
+			color: lighten( $gray, 10% );
 		}
 	}
 }
@@ -139,7 +139,7 @@ input[type=checkbox] {
 		color: darken( $blue-medium, 20% );
 	}
 	&:disabled:checked:before {
-		color: darken( $gray, 18% );
+		color: lighten( $gray, 10% );
 	}
 }
 
