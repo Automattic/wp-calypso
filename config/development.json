@@ -96,7 +96,6 @@
 		"manage/themes/logged-out": true,
 		"manage/themes/magic-search": true,
 		"me/account": true,
-		"me/edit-gravatar": false,
 		"me/find-friends": false,
 		"me/my-profile": true,
 		"me/next-steps": true,
