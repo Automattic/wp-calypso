@@ -92,7 +92,7 @@ module.exports = {
 
 		renderWithReduxStore(
 			<DomainManagement.PrimaryDomain
-				selectedDomainname={ pageContext.params.domain }
+				selectedDomainName={ pageContext.params.domain }
 			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store

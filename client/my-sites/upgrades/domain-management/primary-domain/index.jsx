@@ -50,6 +50,7 @@ const PrimaryDomain = React.createClass( {
 
 	handleCancelClick() {
 		this.recordEvent( 'cancelClick', getSelectedDomain( this.props ) );
+
 		page( this.getEditPath() );
 	},
 
