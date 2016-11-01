@@ -4,28 +4,19 @@
 import React from 'react';
 import url from 'url';
 import qs from 'querystring';
-import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import safeImageURL from 'lib/safe-image-url';
-import {
-	getUserTempGravatar
-} from 'state/current-user/gravatar-status/selectors';
 
-export const Gravatar = React.createClass( {
+module.exports = React.createClass( {
 	displayName: 'Gravatar',
 
 	propTypes: {
 		user: React.PropTypes.object,
 		size: React.PropTypes.number,
-		imgSize: React.PropTypes.number,
-		// connected props:
-		tempImage: React.PropTypes.oneOfType( [
-			React.PropTypes.string,
-			React.PropTypes.bool
-		] ),
+		imgSize: React.PropTypes.number
 	},
 
 	getDefaultProps() {
@@ -73,16 +64,10 @@ export const Gravatar = React.createClass( {
 		}
 
 		const alt = this.props.alt || this.props.user.display_name;
-
-		const avatarURL = this.props.tempImage ||
-			this.getResizedImageURL( safeImageURL( this.props.user.avatar_URL ) );
+		const avatarURL = this.getResizedImageURL( safeImageURL( this.props.user.avatar_URL ) );
 
 		return (
 			<img alt={ alt } className="gravatar" src={ avatarURL } width={ size } height={ size } onError={ this.onError } />
 		);
 	}
 } );
-
-export default connect( ( state, ownProps ) => ( {
-	tempImage: getUserTempGravatar( state, ownProps.user.ID ),
-} ) )( Gravatar );
