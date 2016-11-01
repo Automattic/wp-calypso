@@ -2,6 +2,7 @@
  * External Dependencies
  */
 import { map, compact, includes, some } from 'lodash';
+import getVideoId from 'get-video-id';
 
 /**
  * Internal Dependencies
@@ -21,6 +22,10 @@ function isTrackingPixel( image ) {
 	return edgeLength === 1 || edgeLength === 2;
 }
 
+/** Returns true if image should be considered
+ * @param {Node} image - DOM node for an image
+ * @returns {boolean} true/false depending on if it should be included as a potential featured image
+ */
 function isCandidateForContentImage( image ) {
 	if ( ! image || ! image.getAttribute( 'src' ) ) {
 		return false;
@@ -40,7 +45,7 @@ function isCandidateForContentImage( image ) {
 	return ! ( isTrackingPixel( image ) || imageShouldBeExcludedFromCandidacy );
 }
 
-/** detects and returns  metadata if it should be considered as a content image
+/** Detects and returns metadata if it should be considered as a content image
 * @param {image} image - the image
 * @returns {object} metadata - regarding the image or null
 */
@@ -56,7 +61,10 @@ const detectImage = ( image ) => {
 	return false;
 };
 
-// get the iframe src that autoplays the embed if we know how to, else null
+/**  For an iframe we know how to process, return a string for an autoplaying iframe
+ * @param {Node} iframe - DOM node for an iframe
+ * @returns {string} html src for an iframe that autoplays if from a source we understand.  else null;
+ */
 const getAutoplayIframe = ( iframe ) => {
 	if ( iframe.src.indexOf( 'youtube' ) > 0 ) {
 		const autoplayIframe = iframe.cloneNode();
@@ -70,13 +78,13 @@ const getAutoplayIframe = ( iframe ) => {
 	return null;
 };
 
-// get a picture thumnail version of the embed if it exists, else null
+/** For an iframe we know how to process, return the url of a thumbnail
+ * @param {Node} iframe - the DOM node for the iframe
+ * @returns {string} thumbnailUrl - the url for a thumbnail of the video, null if we cannot determine it
+ */
 const getThumbnailUrl = ( iframe ) => {
 	if ( iframe.src.indexOf( 'youtube' ) > 0 ) {
-		// grabbed from: http://stackoverflow.com/questions/3452546/javascript-regex-how-to-get-youtube-video-id-from-url
-		const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-		const match = iframe.src.match( regExp );
-		const videoId = match && ( match && match[ 2 ].length === 11 ) ? match[ 2 ] : false;
+		const videoId = getVideoId( iframe.src );
 
 		return videoId ? `https://img.youtube.com/vi/${ videoId }/mqdefault.jpg` : null;
 	}
@@ -100,6 +108,10 @@ const getEmbedType = ( iframe ) => {
 	return null;
 };
 
+/** Detects and returns metadata if it should be considered as a content iframe
+ * @param {Node} iframe - a DOM node for an iframe
+ * @returns {metadata} metadata - metadata for an embed
+ */
 const detectEmbed = ( iframe ) => {
 	if ( ! iframeIsWhitelisted( iframe ) ) {
 		return false;
@@ -126,9 +138,10 @@ const detectEmbed = ( iframe ) => {
 };
 
 /** Adds an ordered list of all of the content_media to the post
-* @param {post} post - the post object to add content_media to
-* @param {dom} dom - the dom of the post to scan for media
-*/
+ * @param {post} post - the post object to add content_media to
+ * @param {dom} dom - the dom of the post to scan for media
+ * @returns {PostMetadata} post - the post object mutated to also have content_media
+ */
 export default function detectMedia( post, dom ) {
 	const imageSelector = 'img[src]';
 	const embedSelector = 'iframe';
