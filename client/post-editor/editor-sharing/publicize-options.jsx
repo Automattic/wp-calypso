@@ -219,19 +219,6 @@ const EditorSharingPublicizeOptions = React.createClass( {
 			);
 		}
 
-		if ( ! isPublicizeEnabled ) {
-			return (
-				<div className="editor-sharing__publicize-disabled">
-					<p><span>{ this.translate( 'Enable the Publicize module to automatically share new posts to social networks.' ) }</span></p>
-					<button
-							className="editor-sharing__jetpack-modules-button button is-secondary"
-							onClick={ this.jetpackModulePopup } >
-						{ this.translate( 'View Module Settings' ) }
-					</button>
-				</div>
-			);
-		}
-
 		const classes = classNames( 'editor-sharing__publicize-options', {
 			'has-connections': this.hasConnections(),
 			'has-add-option': this.props.userCanPublishPosts
