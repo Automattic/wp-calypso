@@ -16,7 +16,6 @@ import EmailData from 'components/data/domain-management/email' ;
 import EmailForwardingData from 'components/data/domain-management/email-forwarding' ;
 import NameserversData from 'components/data/domain-management/nameservers';
 import paths from 'my-sites/upgrades/paths';
-import PrimaryDomainData from 'components/data/domain-management/primary-domain';
 import ProductsList from 'lib/products-list';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import SiteRedirectData from 'components/data/domain-management/site-redirect';
@@ -92,10 +91,8 @@ module.exports = {
 		);
 
 		renderWithReduxStore(
-			<PrimaryDomainData
-				component={ DomainManagement.PrimaryDomain }
-				context={ pageContext }
-				selectedDomainName={ pageContext.params.domain }
+			<DomainManagement.PrimaryDomain
+				selectedDomainname={ pageContext.params.domain }
 			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
