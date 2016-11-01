@@ -31,15 +31,25 @@ export default React.createClass( {
 			photon: this.props.site && ! this.props.site.is_private
 		} );
 
+		const { item, onLoad } = this.props;
+		const { alt, height, width, title } = item;
+
 		return (
-			<ImagePreloader
-				src={ src }
-				width={ this.props.item.width }
-				height={ this.props.item.height }
-				placeholder={ <Spinner /> }
-				onLoad={ this.props.onLoad }
-				alt={ this.props.item.alt || this.props.item.title }
-				className="editor-media-modal-detail__preview is-image" />
+			<div>
+				<img
+					className="editor-media-modal-detail__preview is-image is-fake"
+					src={ src }
+					width={ width }
+					height={ height } />
+				<ImagePreloader
+					src={ src }
+					width={ width }
+					height={ height }
+					placeholder={ <Spinner /> }
+					onLoad={ onLoad }
+					alt={ alt || title }
+					className="editor-media-modal-detail__preview is-image" />
+			</div>
 		);
 	}
 } );
