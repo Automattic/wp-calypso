@@ -31,6 +31,11 @@ const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLAN_PAGE = '/plans/my-plan/';
 
 class Plans extends Component {
+	constructor() {
+		super();
+		this.selectPlan = this.selectPlan.bind( this );
+	}
+
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
 		context: PropTypes.object.isRequired,
