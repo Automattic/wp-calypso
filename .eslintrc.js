@@ -30,7 +30,6 @@ module.exports = {
 		'no-extra-semi': 1,
 		'no-multiple-empty-lines': [ 1, { max: 1 } ],
 		'no-multi-spaces': 1,
-		'no-nested-ternary': 1,
 		'no-shadow': 1,
 		'no-spaced-func': 1,
 		'no-trailing-spaces': 1,
