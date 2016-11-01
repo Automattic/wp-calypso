@@ -116,8 +116,8 @@
 
 	@include breakpoint( ">660px" ) {
 		border: 0;
-		top: 47px;
-		right: 0;
+		position: absolute;
+		z-index: 0;
 	}
 }
 
