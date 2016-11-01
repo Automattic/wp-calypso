@@ -39,7 +39,7 @@ export function getKeyringConnectionById( state, keyringConnectionId ) {
  * @return {Array}         Keyring connections, if known.
  */
 export function getKeyringConnectionsByName( state, service ) {
-	return filter( getKeyringConnections( state ), { service } ) || [];
+	return filter( getKeyringConnections( state ), { service } );
 }
 
 /**
