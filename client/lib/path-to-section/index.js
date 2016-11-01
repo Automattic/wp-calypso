@@ -31,6 +31,7 @@ export const wpcomImplementation = path => {
 /*
  * Dead-simple alternative implementation where
  *
+ * 	f( '/' ) === null
  * 	f( '/foo/bar' ) === 'foo'
  */
 export const fallbackImplementation = path => {
