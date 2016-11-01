@@ -204,6 +204,7 @@ export const EditorMediaModal = React.createClass( {
 		if ( ! siteId || ! item ) {
 			return;
 		}
+
 		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
 	},
 
@@ -237,7 +238,6 @@ export const EditorMediaModal = React.createClass( {
 		resetAllImageEditorState();
 
 		this.props.setView( ModalViews.DETAIL );
-
 	},
 
 	onImageEditorCancel: function( imageEditorProps ) {
