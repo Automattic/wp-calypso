@@ -19,6 +19,7 @@ import assign from 'lodash/assign';
 import matchesProperty from 'lodash/matchesProperty';
 import indexOf from 'lodash/indexOf';
 import reject from 'lodash/reject';
+import { setSurvey } from 'state/signup/steps/survey/actions';
 
 /**
  * Internal dependencies
@@ -101,6 +102,11 @@ const Signup = React.createClass( {
 		const vertical = this.props.queryObject.vertical;
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
 		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
+			this.props.setSurvey( {
+				vertical,
+				otherText: '',
+			} );
+
 			SignupActions.submitSignupStep(
 				{	stepName: 'survey' }, [],	{ surveySiteType: 'blog', surveyQuestion: vertical }
 			);
@@ -448,6 +454,6 @@ export default connect(
 		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
 		signupDependencies: getSignupDependencyStore( state ),
 	} ),
-	() => ( {} ),
+	{ setSurvey },
 	undefined,
 	{ pure: false } )( Signup );
