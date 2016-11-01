@@ -18,13 +18,13 @@ import PlansFeaturesMain from 'my-sites/plans-features-main';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
 import * as upgradesActions from 'lib/upgrades/actions';
-import { userCan } from 'lib/site/utils';
 import { getAuthorizationData, isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import { goBackToWpAdmin } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
 import QuerySitePlans from 'components/data/query-site-plans';
 import { isRequestingPlans, getPlanBySlug } from 'state/plans/selectors';
 import { getSelectedSite } from 'state/ui/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
 
 const CALYPSO_REDIRECTION_PAGE = '/posts/';
 const CALYPSO_PLAN_PAGE = '/plans/my-plan/';
@@ -174,7 +174,7 @@ export default connect(
 			sitePlans: getPlansBySite( state, selectedSite ),
 			jetpackConnectAuthorize: getAuthorizationData( state ),
 			userId: user ? user.ID : null,
-			canPurchasePlans: userCan( 'manage_options', selectedSite ),
+			canPurchasePlans: canCurrentUser( state, selectedSite.ID, 'manage_options' ),
 			flowType: getFlowType( state, selectedSite && selectedSite.slug ),
 			isRequestingPlans: isRequestingPlans( state ),
 			getPlanBySlug: searchPlanBySlug,
