@@ -86,23 +86,21 @@ var DomainSearchResults = React.createClass( {
 						components
 					}
 				);
+			} else if ( isNextDomainFree( this.props.cart ) ) {
+				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}', {
+					args: {
+						domain: lastDomainSearched
+					},
+					components
+				} );
 			} else {
-				if ( isNextDomainFree( this.props.cart ) ) {
-					mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}', {
-						args: {
-							domain: lastDomainSearched
-						},
-						components
-					} );
-				} else {
-					mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}', {
-						args: {
-							domain: lastDomainSearched,
-							cost: this.props.products.domain_map.cost_display
-						},
-						components
-					} );
-				}
+				mappingOffer = this.translate( '{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for %(cost)s.{{/small}}', {
+					args: {
+						domain: lastDomainSearched,
+						cost: this.props.products.domain_map.cost_display
+					},
+					components
+				} );
 			}
 
 			const domainUnavailableMessage = this.translate( '%(domain)s is taken.', {
