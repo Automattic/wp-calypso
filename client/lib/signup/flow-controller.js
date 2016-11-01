@@ -88,7 +88,7 @@ assign( SignupFlowController.prototype, {
 			dependenciesNotProvided = difference( step.dependencies, keys( dependenciesFound ), this._getFlowProvidesDependencies() );
 			if ( ! isEmpty( dependenciesNotProvided ) ) {
 				throw new Error( 'The ' + step.stepName + ' step requires dependencies [' + dependenciesNotProvided + '] which ' +
-				'are not provided in the ' + this._flowName + ' flow and are not already present in the redux store.' );
+				'are not provided in the ' + this._flowName + ' flow and are not already present in the store.' );
 			}
 			return true;
 		}.bind( this ) );
