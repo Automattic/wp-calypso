@@ -2,6 +2,7 @@
  * External dependencies
  */
 import noop from 'lodash/noop';
+import find from 'lodash/find';
 import React from 'react';
 
 /**
@@ -94,8 +95,23 @@ const PhoneInput = React.createClass( {
 
 	handleCountrySelection( event ) {
 		const countryCode = event.target.value.toLowerCase();
+		let selectedCountry = countries[ countryCode ];
+		// Special cases where the country is in a disputed region and not globally recognized.
+		// At this point this should only be used for: Canary islands, Kosovo, Netherlands Antilles
+		if ( ! selectedCountry ) {
+			const data = find( this.props.countriesList.get() || [],
+				country => country.code.toLowerCase() === countryCode );
+			if ( data ) {
+				selectedCountry = {
+					isoCode: countryCode,
+					dialCode: data.numeric_code.replace('+', ''),
+					nationalPrefix: ''
+				}
+			}
+		}
+
 		this.setState( {
-			selectedCountry: countries[ countryCode ],
+			selectedCountry,
 			freezeSelection: true
 		} );
 	},
