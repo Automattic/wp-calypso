@@ -516,29 +516,47 @@ Since we require strict equality checks, we are not going to enforce [Yoda condi
 
 ## Iteration
 
-The functional programming inspired methods that were added in ECMA5 improve readability. Use them throughout.
+Starting in [ECMAScript 5](https://en.wikipedia.org/wiki/ECMAScript#5th_Edition), JavaScript includes many methods and patterns inspired by functional programming.
+
+We encourage you to make use of these methods in favor of traditional `for` and `while` loops:
+
+- [`Array#map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map)
+- [`Array#filter`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter)
+- [`Array#reduce`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce)
+- [`Array#some`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some)
+- [`Array#every`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every)
+
+While ES2015 and beyond include many more Array prototype methods, these cannot be used due to complications with polyfills. Instead, you are encouraged to use their [Lodash](https://lodash.com/) equivalents, among many other Lodash methods:
+
+- [`_.find`](https://lodash.com/docs/#find) ([`Array#find`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find))
+- [`_.findIndex`](https://lodash.com/docs/#findIndex) ([`Array#findIndex`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex))
+- [`_.includes`](https://lodash.com/docs/#includes) ([`Array#includes`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes))
+
+Introduced in ES2015, [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) provide a shorter syntax for function expressions while preserving the parent scope's `this` context. Arrow functions are especially well-suited for iteration method callbacks.
+
+__Examples:__
+
+Creating an array of React elements from an array of post objects:
 
 ```js
-const posts = postList.map( ( post ) => (
+posts.map( ( post ) => (
 	<Post post={ post } key={ post.global_ID } />
 ) );
 ```
 
-When iterating over a large collection using a for loop, it is recommended to store the loop’s max value as a variable rather than re-computing the maximum every time:
+Check whether every post in an array of post objects is published:
 
 ```js
-// Bad & potentially inefficient:
-// getItemCount() gets called every time
-for ( let i = 0; i < getItemCount(); i++ ) {
-	// Do stuff
-}
+posts.every( ( post ) => post.status === 'publish' );
 ```
+
+Group an array of post objects by status:
+
 ```js
-// Good & efficient:
-// getItemCount() gets called once
-for ( let i = 0, max = getItemCount(); i < max; i++ ) {
-	// Do stuff
-}
+posts.reduce( ( memo, post ) => {
+	memo[ post.status ] = ( memo[ post.status ] || [] ).concat( post );
+	return memo;
+}, {} );
 ```
 
 ### React components
