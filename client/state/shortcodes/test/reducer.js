@@ -8,6 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	SHORTCODE_MEDIA_UPDATE,
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
 	SHORTCODE_REQUEST_FAILURE,
@@ -203,6 +204,53 @@ describe( 'reducer', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.eql( {} );
+		} );
+
+		it( 'should remove gallery shortcodes that have media updates', () => {
+			const state = items( {
+				12345678: {
+					test_shortcode: shortcodeData,
+					another_shortcode: { ...shortcodeData, shortcode: '[gallery ids="4,5,6"]' }
+				}
+			}, {
+				type: SHORTCODE_MEDIA_UPDATE,
+				siteId: 12345678,
+				data: {
+					media: [
+						{ ID: 1 },
+						{ ID: 7 },
+					]
+				}
+			} );
+
+			expect( state ).to.eql( {
+				12345678: {
+					another_shortcode: { ...shortcodeData, shortcode: '[gallery ids="4,5,6"]' }
+				}
+			} );
+		} );
+
+		it( 'should not remove gallery shortcodes that don\'t have media updates', () => {
+			const state = items( {
+				12345678: {
+					another_shortcode: { ...shortcodeData, shortcode: '[gallery ids="4,5,6"]' }
+				}
+			}, {
+				type: SHORTCODE_MEDIA_UPDATE,
+				siteId: 12345678,
+				data: {
+					media: [
+						{ ID: 1 },
+						{ ID: 7 },
+					]
+				}
+			} );
+
+			expect( state ).to.eql( {
+				12345678: {
+					another_shortcode: { ...shortcodeData, shortcode: '[gallery ids="4,5,6"]' }
+				}
+			} );
 		} );
 
 		it( 'should index shortcodes by site ID', () => {
