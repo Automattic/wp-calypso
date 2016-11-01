@@ -89,7 +89,7 @@ class EditorMediaModalDetailItem extends Component {
 	handleOnRestoreClick = () => {
 		const { site, item, onRestore } = this.props;
 		onRestore( site && site.ID, item );
-	}
+	};
 
 	renderRestoreButton() {
 		const {

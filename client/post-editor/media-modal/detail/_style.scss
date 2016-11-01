@@ -33,12 +33,6 @@
 	}
 }
 
-.editor-media-modal-detail.is-original-loaded {
-	.image-preloader {
-		opacity: 0.5;
-	}
-}
-
 .editor-media-modal-detail__preview-wrapper {
 	flex: 2 0 0%;
 	position: relative;
@@ -68,7 +62,7 @@
 		height: auto;
 	}
 
-	&.is-fake {
+	&.is-image.is-loading {
 		opacity: 0.5;
 	}
 }
