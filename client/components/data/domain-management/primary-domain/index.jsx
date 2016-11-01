@@ -1,52 +1,47 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import StoreConnection from 'components/data/store-connection';
-import DomainsStore from 'lib/domains/store';
-import observe from 'lib/mixins/data-observe';
+import QuerySiteDomains from 'components/data/query-site-domains';
+import { getDomainsBySite } from 'state/sites/domains/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
-const stores = [
-	DomainsStore
-];
-
-function getStateFromStores( props ) {
-	let domains;
-
-	if ( props.selectedSite ) {
-		domains = DomainsStore.getBySite( props.selectedSite.ID );
-	}
-
-	return {
-		domains,
-		selectedDomainName: props.selectedDomainName,
-		selectedSite: props.selectedSite
+export class PrimaryDomainData extends Component {
+	static propTypes = {
+		component: PropTypes.func.isRequired,
+		selectedDomainName: PropTypes.string.isRequired,
+		selectedSite: PropTypes.object,
 	};
-}
-
-export default React.createClass( {
-	displayName: 'PrimaryDomainData',
-
-	propTypes: {
-		component: React.PropTypes.func.isRequired,
-		selectedDomainName: React.PropTypes.string.isRequired,
-		sites: React.PropTypes.object.isRequired
-	},
-
-	mixins: [ observe( 'sites' ) ],
 
 	render() {
+		const {
+			component: SubComponent,
+			domains,
+			selectedDomainName,
+			selectedSite,
+		} = this.props;
+
 		return (
-			<StoreConnection
-				component={ this.props.component }
-				stores={ stores }
-				getStateFromStores={ getStateFromStores }
-				selectedDomainName={ this.props.selectedDomainName }
-				selectedSite={ this.props.sites.getSelectedSite() } />
+			<div>
+				<QuerySiteDomains siteId={ selectedSite && selectedSite.ID } />
+				<SubComponent { ...{ domains, selectedDomainName, selectedSite } } />
+			</div>
 		);
 	}
-} );
+}
+
+const mapStateToProps = state => {
+	const selectedSite = getSelectedSite( state );
+
+	return {
+		domains: getDomainsBySite( state, selectedSite ),
+		selectedSite: getSelectedSite( state ),
+	};
+};
+
+export default connect( mapStateToProps )( PrimaryDomainData );

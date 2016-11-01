@@ -96,7 +96,7 @@ module.exports = {
 				component={ DomainManagement.PrimaryDomain }
 				context={ pageContext }
 				selectedDomainName={ pageContext.params.domain }
-				sites={ sites } />,
+			/>,
 			document.getElementById( 'primary' ),
 			pageContext.store
 		);
