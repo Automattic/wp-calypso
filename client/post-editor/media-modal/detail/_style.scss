@@ -67,6 +67,10 @@
 		width: auto;
 		height: auto;
 	}
+
+	&.is-fake {
+		opacity: 0.5;
+	}
 }
 
 .editor-media-modal-detail__previous,
