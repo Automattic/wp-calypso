@@ -239,6 +239,32 @@ AccountRecoveryStore.dispatchToken = Dispatcher.register( function( payload ) {
 			resetPhoneNotice();
 			emitChange();
 			break;
+
+		// TODO
+		// The following action handlers will be implemented later
+		case actions.RESEND_ACCOUNT_RECOVERY_PHONE_VALIDATION_CODE:
+			emitChange();
+			break;
+
+		case actions.RECEIVE_RESEND_ACCOUNT_RECOVERY_PHONE_VALIDATION_CODE:
+			emitChange();
+			break;
+
+		case actions.VALIDATE_ACCOUNT_RECOVERY_PHONE:
+			emitChange();
+			break;
+
+		case actions.RECEIVE_VALIDATE_ACCOUNT_RECOVERY_PHONE:
+			emitChange();
+			break;
+
+		case actions.RESEND_ACCOUNT_RECOVERY_EMAIL_VALIDATION_CODE:
+			emitChange();
+			break;
+
+		case actions.RECEIVE_RESEND_ACCOUNT_RECOVERY_EMAIL_VALIDATION_CODE:
+			emitChange();
+			break;
 	}
 } );
 
