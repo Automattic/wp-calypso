@@ -16,6 +16,7 @@ import FormFieldset from 'components/forms/form-fieldset';
 import FormLabel from 'components/forms/form-label';
 import FormTextInput from 'components/forms/form-text-input';
 import FormTextarea from 'components/forms/form-textarea';
+import EditGravatar from 'blocks/edit-gravatar';
 import ProfileLinks from 'me/profile-links';
 import userProfileLinks from 'lib/user-profile-links';
 import ReauthRequired from 'me/reauth-required';
@@ -24,6 +25,7 @@ import Card from 'components/card';
 import observe from 'lib/mixins/data-observe';
 import eventRecorder from 'me/event-recorder';
 import Main from 'components/main';
+import { isEnabled } from 'config';
 
 const debug = debugFactory( 'calypso:me:profile' );
 
@@ -75,6 +77,8 @@ export default React.createClass( {
 							}
 						) }
 					</p>
+
+					{ isEnabled( 'me/edit-gravatar' ) && <EditGravatar /> }
 
 					<form onSubmit={ this.submitForm } onChange={ this.markChanged }>
 						<FormFieldset>
