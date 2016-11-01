@@ -1,9 +1,13 @@
-/** External Dependencies **/
+/**
+ * External Dependencies
+ */
 import React from 'react';
 import page from 'page';
 import { connect } from 'react-redux';
 
-/** Internal Dependencies **/
+/**
+ * Internal Dependencies
+ */
 import analyticsMixin from 'lib/mixins/analytics';
 import Main from 'components/main';
 import Card from 'components/card/compact';
