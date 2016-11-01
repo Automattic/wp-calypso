@@ -199,6 +199,20 @@ describe( 'reducer', () => {
 			scripts: {},
 			styles: {}
 		};
+		const mediaUpdateAction = {
+			type: SHORTCODE_MEDIA_UPDATE,
+			siteId: 12345678,
+			data: {
+				media: [
+					{ ID: 1 },
+					{ ID: 7 },
+				]
+			}
+		};
+		const anotherShortcodeData = {
+			...shortcodeData,
+			shortcode: '[gallery ids="4,5,6"]'
+		};
 
 		it( 'should default to an empty object', () => {
 			const state = items( undefined, {} );
@@ -210,22 +224,13 @@ describe( 'reducer', () => {
 			const state = items( {
 				12345678: {
 					test_shortcode: shortcodeData,
-					another_shortcode: { ...shortcodeData, shortcode: '[gallery ids="4,5,6"]' }
+					another_shortcode: anotherShortcodeData
 				}
-			}, {
-				type: SHORTCODE_MEDIA_UPDATE,
-				siteId: 12345678,
-				data: {
-					media: [
-						{ ID: 1 },
-						{ ID: 7 },
-					]
-				}
-			} );
+			}, mediaUpdateAction );
 
 			expect( state ).to.eql( {
 				12345678: {
-					another_shortcode: { ...shortcodeData, shortcode: '[gallery ids="4,5,6"]' }
+					another_shortcode: anotherShortcodeData
 				}
 			} );
 		} );
@@ -233,22 +238,13 @@ describe( 'reducer', () => {
 		it( 'should not remove gallery shortcodes that don\'t have media updates', () => {
 			const state = items( {
 				12345678: {
-					another_shortcode: { ...shortcodeData, shortcode: '[gallery ids="4,5,6"]' }
+					another_shortcode: anotherShortcodeData
 				}
-			}, {
-				type: SHORTCODE_MEDIA_UPDATE,
-				siteId: 12345678,
-				data: {
-					media: [
-						{ ID: 1 },
-						{ ID: 7 },
-					]
-				}
-			} );
+			}, mediaUpdateAction );
 
 			expect( state ).to.eql( {
 				12345678: {
-					another_shortcode: { ...shortcodeData, shortcode: '[gallery ids="4,5,6"]' }
+					another_shortcode: anotherShortcodeData
 				}
 			} );
 		} );
