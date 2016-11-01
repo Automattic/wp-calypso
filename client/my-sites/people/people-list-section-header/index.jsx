@@ -79,7 +79,7 @@ export default React.createClass( {
 			<RoleSelect
 				id="role"
 				name="role"
-				selectedText={ role || allLabel }
+				selectedValue={ role || '' }
 				selectedCount={ count }
 				defaultOption={ { value: '', label: allLabel, path: calculatePath() } }
 				siteId={ site.ID }

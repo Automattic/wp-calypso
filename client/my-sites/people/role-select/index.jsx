@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
+import find from 'lodash/find';
 import omit from 'lodash/omit';
 import map from 'lodash/map';
 import forEach from 'lodash/forEach';
@@ -140,17 +141,25 @@ export default React.createClass( {
 	},
 
 	renderSelect() {
-		const options = [ this.props.defaultOption ];
+		const { selectedValue, defaultOption, selectedCount, onSelect, calculatePath } = this.props;
+
+		const options = [ defaultOption ];
+
 		forEach( this.state.roles, ( roleObject, key ) => {
-			options.push( { value: key, label: roleObject.display_name, path: this.props.calculatePath(key) } );
+			options.push( { value: key, label: roleObject.display_name, path: calculatePath(key) } );
 		} );
+
+		const selectedOption = find(options, ( option ) => option.value === selectedValue );
+
+		const selectedText = selectedOption ? selectedOption.label : selectedValue;
+
 		return (
 			<SelectDropdown
 				compact
-				selectedCount={ this.props.selectedCount }
-				selectedText={ this.props.selectedText }
+				selectedCount={ selectedCount }
+				selectedText={ selectedText }
 				options={ options }
-				onSelect={ this.props.onSelect } />
+				onSelect={ onSelect } />
 		);
 	},
 
