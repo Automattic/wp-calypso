@@ -9,6 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { PLAN_JETPACK_FREE, PLAN_JETPACK_PREMIUM, PLAN_JETPACK_BUSINESS } from 'lib/plans/constants';
 import { getPlansBySite } from 'state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'state/sites/selectors';
 import { getFlowType } from 'state/jetpack-connect/selectors';
@@ -73,14 +74,14 @@ class Plans extends Component {
 
 	autoselectPlan() {
 		if ( this.props.flowType === 'pro' ) {
-			const plan = this.props.getPlanBySlug( 'jetpack_business' );
+			const plan = this.props.getPlanBySlug( PLAN_JETPACK_BUSINESS );
 			if ( plan ) {
 				this.selectPlan( plan );
 				return;
 			}
 		}
 		if ( this.props.flowType === 'premium' ) {
-			const plan = this.props.getPlanBySlug( 'jetpack_premium' );
+			const plan = this.props.getPlanBySlug( PLAN_JETPACK_PREMIUM );
 			if ( plan ) {
 				this.selectPlan( plan );
 				return;
@@ -102,15 +103,15 @@ class Plans extends Component {
 
 	selectPlan( cartItem ) {
 		const checkoutPath = `/checkout/${ this.props.selectedSite.slug }`;
-		if ( cartItem.product_slug === 'jetpack_free' ) {
+		if ( cartItem.product_slug === PLAN_JETPACK_FREE ) {
 			return this.selectFreeJetpackPlan();
 		}
-		if ( cartItem.product_slug === 'jetpack_premium' ) {
+		if ( cartItem.product_slug === PLAN_JETPACK_PREMIUM ) {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_99', {
 				user: this.props.userId
 			} );
 		}
-		if ( cartItem.product_slug === 'jetpack_business' ) {
+		if ( cartItem.product_slug === PLAN_JETPACK_BUSINESS ) {
 			this.props.recordTracksEvent( 'calypso_jpc_plans_submit_299', {
 				user: this.props.userId
 			} );
