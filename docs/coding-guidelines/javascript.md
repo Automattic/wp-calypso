@@ -31,21 +31,21 @@ We specify an [EditorConfig](http://editorconfig.org/) configuration and encoura
 Object declarations can be made on a single line if they are short (remember the line length guidelines). When an object declaration is too long to fit on one line, there must be one property per line. Property names only need to be quoted if they are reserved words or contain special characters:
 
 ```js
-let map;
-
-// Preferred
-map = {
-	ready: 9,
-	when: 4,
-	'you are': 15
-};
-
-// Acceptable for small objects
-map = { ready: 9, when: 4, 'you are': 15 };
-
 // Bad
-map = { ready: 9,
-	when: 4, 'you are': 15 };
+const labels = { facebook: 'Facebook',
+	twitter: 'Twitter', 'google-plus': 'Google Plus' };
+```
+```js
+// Acceptable for small objects
+const labels = { 'google-plus': 'Google Plus' };
+```
+```js
+// Good
+const labels = {
+	facebook: 'Facebook',
+	twitter: 'Twitter',
+	'google-plus': 'Google Plus'
+};
 ```
 
 ## Arrays and Function Calls
@@ -118,37 +118,29 @@ Try to return early from a function to avoid functions with deep indentation aki
 
 ```js
 // Bad
-function getSiteTitle( site ) {
-	if ( site ) {
-		if ( site.name ) {
-			if ( site.name.length <= 50 ) {
-				return site.name;
-			} else {
-				return site.name.slice( 0, 50 ) + '…';
-			}
+function isFreshData( data ) {
+	let isFresh;
+	if ( data ) {
+		if ( data.timestamp > Date.now() - ( 20 * 60 * 1000 ) ) {
+			isFresh = true;
 		} else {
-			return site.slug;
+			isFresh = false;
 		}
 	} else {
-		return null;
+		isFresh = false;
 	}
+
+	return isFresh;
 }
-
+```
+```js
 // Good
-function getSiteTitle( site ) {
-	if ( ! site ) {
-		return null;
+function isFreshData( data ) {
+	if ( data && data.timestamp > Date.now() - ( 20 * 60 * 1000 ) ) {
+		return true;
 	}
 
-	if ( ! site.name ) {
-		return site.slug;
-	}
-
-	if ( site.name.length > 50 ) {
-		return site.name.slice( 0, 50 ) + '…';
-	}
-
-	return site.name;
+	return false;
 }
 ```
 
@@ -157,11 +149,9 @@ function getSiteTitle( site ) {
 `if`, `else`, `for`, `while`, and `try` blocks should always use braces, and always go on multiple lines. The opening brace should be on the same line as the function definition, the conditional, or the loop. The closing brace should be on the line directly following the last statement of the block.
 
 ```js
-let a, b, c;
-
-if ( myFunction() ) {
+if ( isLarge() ) {
 	// Expressions
-} else if ( ( a && b ) || c ) {
+} else if ( isMedium() ) {
 	// Expressions
 } else {
 	// Expressions
@@ -195,14 +185,13 @@ function getStatusLabel() {
 When a statement is too long to fit on one line, line breaks must occur after an operator.
 
 ```js
-let html;
-
 // Bad
-html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c
 	+ ' is ' + ( a + b + c );
-
+```js
+```js
 // Good
-html = '<p>The sum of ' + a + ' and ' + b + ' plus ' + c +
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
 	' is ' + ( a + b + c );
 ```
 
@@ -253,11 +242,12 @@ Note that because parts of our application are [rendered on the server](https://
 Variable and function names should be full words, using camel case with a lowercase first letter. This also applies to abbreviations and acronyms.
 
 ```js
-// Good
-let userIdToDelete, siteUrl;
-
 // Bad
 let userIDToDelete, siteURL;
+```
+```js
+// Good
+let userIdToDelete, siteUrl;
 ```
 
 Names should be descriptive, but not excessively so. Exceptions are allowed for iterators, such as the use of `i` to represent the index in a loop.
@@ -448,7 +438,8 @@ You can prefix a variable with verb only for boolean values when it makes code e
 ```js
 // Bad
 const play = false;
-
+```
+```js
 // Good
 const name = 'John';
 const blueCar = new Car( 'blue' );
@@ -464,7 +455,8 @@ The first word of a function name should be a verb (not a noun) to avoid confusi
 function name() {
 	return 'John';
 }
-
+```
+```js
 // Good
 function getName() {
 	return 'John';
@@ -535,15 +527,16 @@ const posts = postList.map( ( post ) => (
 When iterating over a large collection using a for loop, it is recommended to store the loop’s max value as a variable rather than re-computing the maximum every time:
 
 ```js
-// Good & efficient:
-// getItemCount() gets called once
-for ( let i = 0, max = getItemCount(); i < max; i++ ) {
-	// Do stuff
-}
-
 // Bad & potentially inefficient:
 // getItemCount() gets called every time
 for ( let i = 0; i < getItemCount(); i++ ) {
+	// Do stuff
+}
+```
+```js
+// Good & efficient:
+// getItemCount() gets called once
+for ( let i = 0, max = getItemCount(); i < max; i++ ) {
 	// Do stuff
 }
 ```
