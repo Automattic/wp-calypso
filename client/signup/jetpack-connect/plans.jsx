@@ -18,7 +18,7 @@ import StepHeader from '../step-header';
 import PlansFeaturesMain from 'my-sites/plans-features-main';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { getCurrentUser } from 'state/current-user/selectors';
-import * as upgradesActions from 'lib/upgrades/actions';
+import { addItem } from 'lib/upgrades/actions';
 import { getAuthorizationData, isCalypsoStartedConnection } from 'state/jetpack-connect/selectors';
 import { goBackToWpAdmin } from 'state/jetpack-connect/actions';
 import QueryPlans from 'components/data/query-plans';
@@ -116,7 +116,7 @@ class Plans extends Component {
 				user: this.props.userId
 			} );
 		}
-		upgradesActions.addItem( cartItem );
+		addItem( cartItem );
 		page( checkoutPath );
 	}
 
