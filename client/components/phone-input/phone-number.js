@@ -72,7 +72,12 @@ export function findCountryFromNumber( inputNumber ) {
 }
 
 export const findPattern = ( inputNumber, patterns ) => (
-	find( patterns, ( { match } ) => new RegExp( '^' + match + '$' ).test( inputNumber ) )
+	find( patterns, ( { match, leadingDigitPattern } ) => {
+		if ( leadingDigitPattern && inputNumber.search( leadingDigitPattern ) !== 0 ) {
+			return false;
+		}
+		return new RegExp( '^(?:' + match + ')$' ).test( inputNumber )
+	} )
 );
 
 /**
@@ -86,6 +91,9 @@ export const findPattern = ( inputNumber, patterns ) => (
 export function makeTemplate( phoneNumber, patterns ) {
 	const selectedPattern = find( patterns, pattern => {
 		if ( includes( pattern.format, '|' ) ) {
+			return false;
+		}
+		if ( pattern.leadingDigitPattern && phoneNumber.search( pattern.leadingDigitPattern ) !== 0 ) {
 			return false;
 		}
 		debug( 'pattern.match = ', pattern );
