@@ -54,7 +54,7 @@ class Plans extends Component {
 			user: this.props.userId
 		} );
 
-		if ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) {
+		if ( this.isFlowTypePaid() ) {
 			return this.autoselectPlan();
 		}
 	}
@@ -68,7 +68,7 @@ class Plans extends Component {
 				page.redirect( CALYPSO_REDIRECTION_PAGE + this.props.selectedSite.slug );
 			}
 
-			if ( ! this.props.isRequestingPlans && ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) ) {
+			if ( ! this.props.isRequestingPlans && this.isFlowTypePaid() ) {
 				return this.autoselectPlan();
 			}
 		} else if ( this.props.hasPaidPlan || ! this.props.canPurchasePlans ) {
@@ -77,20 +77,26 @@ class Plans extends Component {
 		}
 	}
 
+	isFlowTypePaid() {
+		return this.props.flowType === 'pro' || this.props.flowType === 'premium';
+	}
+
 	autoselectPlan() {
-		if ( this.props.flowType === 'pro' ) {
-			const plan = this.props.getPlanBySlug( PLAN_JETPACK_BUSINESS );
-			if ( plan ) {
-				this.selectPlan( plan );
-				return;
-			}
+		if ( ! this.isFlowTypePaid() ) {
+			return;
 		}
-		if ( this.props.flowType === 'premium' ) {
-			const plan = this.props.getPlanBySlug( PLAN_JETPACK_PREMIUM );
-			if ( plan ) {
-				this.selectPlan( plan );
-				return;
-			}
+
+		let planSlug = '';
+		if ( this.props.flowType === 'pro' ) {
+			planSlug = PLAN_JETPACK_BUSINESS;
+		} else if ( this.props.flowType === 'premium' ) {
+			planSlug = PLAN_JETPACK_PREMIUM;
+		}
+
+		const plan = this.props.getPlanBySlug( planSlug );
+		if ( plan ) {
+			this.selectPlan( plan );
+			return;
 		}
 	}
 
@@ -128,7 +134,7 @@ class Plans extends Component {
 	render() {
 		const { translate } = this.props;
 
-		if ( this.props.flowType === 'pro' || this.props.flowType === 'premium' ) {
+		if ( this.isFlowTypePaid() ) {
 			return null;
 		}
 
