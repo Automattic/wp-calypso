@@ -7,6 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import {
+	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
@@ -14,13 +15,15 @@ import {
 	DESERIALIZE
 } from 'state/action-types';
 import reducer, {
-	isUploading
+	isUploading,
+	tempImage
 } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'exports expected reducer keys', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'isUploading',
+			'tempImage'
 		] );
 	} );
 
@@ -80,6 +83,31 @@ describe( 'reducer', () => {
 			expect( isUploading( true, {
 				type: DESERIALIZE
 			} ) ).to.equal( false );
+		} );
+	} );
+
+	describe( '#tempImage', () => {
+		it( 'returns empty object by default', () => {
+			const state = tempImage( undefined, {} );
+			expect( state ).to.eql( {} );
+		} );
+
+		it( 'returns temp image src when response is received', () => {
+			const state = tempImage( undefined, {
+				type: GRAVATAR_UPLOAD_RECEIVE,
+				src: 'imageString'
+			} );
+			expect( state ).to.eql( {
+				src: 'imageString'
+			} );
+		} );
+
+		it( 'never persists state', () => {
+			const state = {
+				src: 'imageString'
+			};
+			expect( tempImage( state, { type: SERIALIZE } ) ).to.eql( {} );
+			expect( tempImage( state, { type: DESERIALIZE } ) ).to.eql( {} );
 		} );
 	} );
 } );

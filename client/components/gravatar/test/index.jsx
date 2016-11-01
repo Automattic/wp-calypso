@@ -9,7 +9,7 @@ var assert = require( 'assert' ),
 /**
  * Internal dependencies
  */
-var Gravatar = require( '../' );
+import { Gravatar } from '../';
 
 /**
  * Pass in a react-generated html string to remove react-specific attributes

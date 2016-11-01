@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,18 +35,29 @@ describe( 'actions', () => {
 		} );
 
 		describe( 'successful request', () => {
+			const tempImageSrc = 'tempImageSrc';
 			useNock( ( nock ) => {
 				nock( 'https://api.gravatar.com' )
 					.persist()
 					.post( '/v1/upload-image' )
 					.reply( 200, 'Successful request' );
 			} );
+			before( () => {
+				window.FileReader = sandbox.stub().returns( {
+					readAsDataURL: noop,
+					addEventListener: function( event, callback ) {
+						this.result = tempImageSrc;
+						callback();
+					}
+				} );
+			} );
 
 			it( 'dispatches receive action', () => {
 				return uploadGravatar( 'file', 'bearerToken', 'email' )( spy )
 					.then( () => {
 						expect( spy ).to.have.been.calledWith( {
-							type: GRAVATAR_UPLOAD_RECEIVE
+							type: GRAVATAR_UPLOAD_RECEIVE,
+							src: tempImageSrc
 						} );
 					} );
 			} );
