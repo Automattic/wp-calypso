@@ -241,7 +241,7 @@ MediaActions.update = function( siteId, item, editMediaFile = false ) {
 
 	if ( item.media ) {
 		// Show a fake transient media item that can be rendered into the list immediately,
-		// even before the media has persisted to the server`
+		// even before the media has persisted to the server
 		updateAction.data = { ...newItem, ...MediaActions.createTransientMedia( mediaId, item.media ) };
 	} else if ( editMediaFile && item.media_url ) {
 		updateAction.data = { ...newItem, ...MediaActions.createTransientMedia( mediaId, item.media_url ) };
