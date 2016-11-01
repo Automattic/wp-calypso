@@ -30,7 +30,7 @@
 	}
 
 	.upgrade-nudge-expanded__title {
-		color: darken( $blue-wordpress, 10% );
+		color: darken( $blue-wordpress, 4% );
 		display: flex;
 		margin-bottom: 10px;
 	}
@@ -71,7 +71,7 @@
 	}
 
 	.upgrade-nudge-expanded__feature-item-checkmark {
-		color: darken( $blue-wordpress, 10% );
+		color: darken( $blue-wordpress, 4% );
 		flex: 0 0 auto;
 		margin-right: 5px;
 	}

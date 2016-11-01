@@ -310,11 +310,11 @@
 		display: block;
 		width: auto;
 		padding: 16px 16px 14px 16px;
-		color: darken( $blue-wordpress, 10% );
+		color: darken( $blue-wordpress, 4% );
 		font-weight: 400;
 
 		&:visited {
-			color: darken( $blue-wordpress, 10% );
+			color: darken( $blue-wordpress, 4% );
 		}
 
 		.is-selected & {

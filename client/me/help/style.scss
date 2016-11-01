@@ -43,7 +43,7 @@
 
 .help__support-link-title {
 	font-size: 16px;
-	color: darken( $blue-wordpress, 10% );
+	color: darken( $blue-wordpress, 4% );
 	@include breakpoint( ">660px" ) {
 		font-size: 21px;
 	}
@@ -83,7 +83,7 @@
 }
 
 .help__help-teaser-button-icon {
-	color: darken( $blue-wordpress, 10% );
+	color: darken( $blue-wordpress, 4% );
 	border-radius: 50%;
 	margin-right: 16px;
 	background-color: $white;

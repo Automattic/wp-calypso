@@ -704,7 +704,7 @@
 	background-color: $white;
 	text-align: left;
 	line-height: 1;
-	color: darken( $blue-wordpress, 10% );
+	color: darken( $blue-wordpress, 4% );
 
 	@include breakpoint( "<480px") {
 		padding-right: 0;

@@ -213,7 +213,7 @@ ul.module-header-actions {
 	// Hover state
 	@include breakpoint( ">480px" ) {
 		.stats-module:hover & .module-header-action-link {
-			color: darken( $blue-wordpress, 10% );
+			color: darken( $blue-wordpress, 4% );
 		}
 
 		.module-header & .module-header-action-link:hover {
