@@ -2,16 +2,16 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import MediaActions from 'lib/media/actions';
 import FormTextInput from 'components/forms/form-text-input';
+import { updateShortcodes } from 'state/shortcodes/actions';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalGalleryCaption',
-
+const EditorMediaModalGalleryCaption = React.createClass( {
 	propTypes: {
 		siteId: PropTypes.number,
 		item: PropTypes.object
@@ -51,7 +51,7 @@ export default React.createClass( {
 			return;
 		}
 
-		MediaActions.update( siteId, Object.assign( {}, item, { caption } ) );
+		MediaActions.update( siteId, Object.assign( {}, item, { caption } ), false, this.props.updateShortcodes );
 	},
 
 	render() {
@@ -66,3 +66,10 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	{
+		updateShortcodes
+	}
+)( EditorMediaModalGalleryCaption );

@@ -5,7 +5,8 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	debounce = require( 'lodash/debounce' ),
 	assign = require( 'lodash/assign' ),
-	debug = require( 'debug' )( 'calypso:editor-media-modal' );
+	debug = require( 'debug' )( 'calypso:editor-media-modal' ),
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -17,11 +18,10 @@ var analytics = require( 'lib/analytics' ),
 	FormTextarea = require( 'components/forms/form-textarea' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	TrackInputChanges = require( 'components/track-input-changes' ),
-	EditorMediaModalFieldset = require( '../fieldset' );
+	EditorMediaModalFieldset = require( '../fieldset' ),
+	updateShortcodes = require( 'state/shortcodes/actions' ).updateShortcodes;
 
-module.exports = React.createClass( {
-	displayName: 'EditorMediaModalDetailFields',
-
+const EditorMediaModalDetailFields = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		item: React.PropTypes.object
@@ -73,7 +73,7 @@ module.exports = React.createClass( {
 		}
 
 		debug( 'Update media to %o', this.state.modifiedItem );
-		MediaActions.update( this.props.site.ID, this.state.modifiedItem );
+		MediaActions.update( this.props.site.ID, this.state.modifiedItem, false, this.props.updateShortcodes );
 	},
 
 	onChange: function( event ) {
@@ -143,3 +143,10 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	{
+		updateShortcodes
+	}
+)( EditorMediaModalDetailFields );

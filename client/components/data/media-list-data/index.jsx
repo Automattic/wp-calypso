@@ -3,7 +3,8 @@
  */
 var React = require( 'react' ),
 	assign = require( 'lodash/assign' ),
-	isEqual = require( 'lodash/isEqual' );
+	isEqual = require( 'lodash/isEqual' ),
+	connect = require( 'react-redux' ).connect;
 
 /**
  * Internal dependencies
@@ -11,7 +12,8 @@ var React = require( 'react' ),
 var MediaActions = require( 'lib/media/actions' ),
 	MediaListStore = require( 'lib/media/list-store' ),
 	passToChildren = require( 'lib/react-pass-to-children' ),
-	utils = require( './utils' );
+	utils = require( './utils' ),
+	updateShortcodes = require( 'state/shortcodes/actions' ).updateShortcodes;
 
 function getStateData( siteId ) {
 	return {
@@ -21,9 +23,7 @@ function getStateData( siteId ) {
 	};
 }
 
-module.exports = React.createClass( {
-	displayName: 'MediaListData',
-
+const MediaListData = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.number.isRequired,
 		filter: React.PropTypes.string,
@@ -70,7 +70,7 @@ module.exports = React.createClass( {
 	},
 
 	fetchData: function() {
-		MediaActions.fetchNextPage( this.props.siteId );
+		MediaActions.fetchNextPage( this.props.siteId, this.props.updateShortcodes );
 	},
 
 	updateStateData: function() {
@@ -83,3 +83,10 @@ module.exports = React.createClass( {
 		} ) );
 	}
 } );
+
+export default connect(
+	null,
+	{
+		updateShortcodes
+	}
+)( MediaListData );

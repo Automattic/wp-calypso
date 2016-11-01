@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import noop from 'lodash/noop';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,10 +12,9 @@ import analytics from 'lib/analytics';
 import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
+import { updateShortcodes } from 'state/shortcodes/actions';
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryDropZone',
-
+const MediaLibraryDropZone = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		fullScreen: React.PropTypes.bool,
@@ -36,7 +36,7 @@ module.exports = React.createClass( {
 		}
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site.ID, files );
+		MediaActions.add( this.props.site.ID, files, this.props.updateShortcodes );
 		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {
@@ -80,3 +80,10 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	{
+		updateShortcodes
+	}
+)( MediaLibraryDropZone );

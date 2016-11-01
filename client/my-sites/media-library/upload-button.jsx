@@ -5,6 +5,7 @@ import ReactDom from 'react-dom';
 import React from 'react';
 import noop from 'lodash/noop';
 import classNames from 'classnames';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,10 +15,9 @@ import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import uniq from 'lodash/uniq';
 import { VideoPressFileTypes } from 'lib/media/constants';
+import { updateShortcodes } from 'state/shortcodes/actions';
 
-module.exports = React.createClass( {
-	displayName: 'MediaLibraryUploadButton',
-
+const MediaLibraryUploadButton = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		onAddMedia: React.PropTypes.func,
@@ -33,7 +33,7 @@ module.exports = React.createClass( {
 	uploadFiles: function( event ) {
 		if ( event.target.files && this.props.site ) {
 			MediaActions.clearValidationErrors( this.props.site.ID );
-			MediaActions.add( this.props.site.ID, event.target.files );
+			MediaActions.add( this.props.site.ID, event.target.files, this.props.updateShortcodes );
 		}
 
 		ReactDom.findDOMNode( this.refs.form ).reset();
@@ -75,3 +75,10 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	{
+		updateShortcodes
+	}
+)( MediaLibraryUploadButton );

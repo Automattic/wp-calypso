@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import defer from 'lodash/defer';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -11,10 +12,9 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
+import { updateShortcodes } from 'state/shortcodes/actions';
 
-export default React.createClass( {
-	displayName: 'EditorFeaturedImagePreviewContainer',
-
+const EditorFeaturedImagePreviewContainer = React.createClass( {
 	propTypes: {
 		siteId: PropTypes.number.isRequired,
 		itemId: PropTypes.oneOfType( [
@@ -55,7 +55,7 @@ export default React.createClass( {
 			}
 
 			defer( () => {
-				MediaActions.fetch( this.props.siteId, this.props.itemId );
+				MediaActions.fetch( this.props.siteId, this.props.itemId, this.props.updateShortcodes );
 			} );
 		} );
 	},
@@ -86,3 +86,10 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	{
+		updateShortcodes
+	}
+)( EditorFeaturedImagePreviewContainer );

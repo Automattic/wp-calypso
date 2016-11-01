@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import debounce from 'lodash/debounce';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,10 +13,9 @@ import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 import TrackInputChanges from 'components/track-input-changes';
 import FormTextInput from 'components/forms/form-text-input';
+import { updateShortcodes } from 'state/shortcodes/actions';
 
-export default React.createClass( {
-	displayName: 'EditorMediaModalDetailTitle',
-
+const EditorMediaModalDetailTitle = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		item: React.PropTypes.object
@@ -67,7 +67,7 @@ export default React.createClass( {
 			MediaActions.update( this.props.site.ID, {
 				ID: this.props.item.ID,
 				title: this.state.title
-			} );
+			}, false, this.props.updateShortcodes );
 		}
 
 		if ( this.isMounted() ) {
@@ -94,3 +94,10 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	{
+		updateShortcodes
+	}
+)( EditorMediaModalDetailTitle );
