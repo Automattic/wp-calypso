@@ -66,7 +66,8 @@ class PostByline extends React.Component {
 					siteIcon={ siteIcon }
 					feedIcon={ feedIcon }
 					author={ post.author }
-					preferGravatar={ true } />
+					preferGravatar={ true }
+					siteUrl={ streamUrl } />
 				<div className="reader-post-card__byline-details">
 					{ shouldDisplayAuthor &&
 						<ReaderAuthorLink
