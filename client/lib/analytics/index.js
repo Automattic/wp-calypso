@@ -250,6 +250,10 @@ var analytics = {
 					};
 				}
 				window.ga( 'create', config( 'google_analytics_key' ), 'auto', parameters );
+
+				// Load the Ecommerce Plugin
+				window.ga( 'require', 'ecommerce' );
+
 				analytics.ga.initialized = true;
 			}
 		},

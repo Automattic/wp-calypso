@@ -259,14 +259,20 @@ function recordOrder( cart, orderId ) {
 
 	// Purchase tracking happens in one of three ways:
 
-	// 1. Fire a tracking event for each product purchased
+	// 1. Fire one tracking event that includes details about the entire order
+	recordOrderInAtlas( cart, orderId );
+	recordOrderInCriteo( cart, orderId );
+
+	// This has to come before we add the items to the Google Analytics cart
+	recordOrderInGoogleAnalytics( cart, orderId );
+
+	// 2. Fire a tracking event for each product purchased
 	cart.products.forEach( product => {
 		recordProduct( product, orderId );
 	} );
 
-	// 2. Fire one tracking event that includes details about each product purchased
-	recordOrderInAtlas( cart, orderId );
-	recordOrderInCriteo( cart, orderId );
+	// Ensure we submit the cart to Google Analytics
+	window.ga( 'ecommerce:send' );
 
 	// 3. Fire a single tracking event without any details about what was purchased
 	new Image().src = ONE_BY_AOL_CONVERSION_PIXEL_URL;
@@ -328,7 +334,7 @@ function recordProduct( product, orderId ) {
 			window.uetq.push( bingParams );
 		}
 
-		// Google
+		// Google AdWords
 		if ( window.google_trackConversion ) {
 			window.google_trackConversion( {
 				google_conversion_id: GOOGLE_CONVERSION_ID,
@@ -345,6 +351,14 @@ function recordProduct( product, orderId ) {
 				google_remarketing_only: false
 			} );
 		}
+
+		// Google Analytics
+		window.ga( 'ecommerce:addItem', {
+			id: orderId,
+			name: product.product_slug,
+			price: product.cost,
+			currency: product.currency
+		} );
 
 		if ( isSupportedCurrency( product.currency ) ) {
 			// Quantcast
@@ -535,6 +549,28 @@ function criteoSiteType() {
 	}
 
 	return 'd';
+}
+
+/**
+ * Records an order in Google Analytics
+ *
+ * @see https://developers.google.com/analytics/devguides/collection/analyticsjs/ecommerce
+ *
+ * @param {Object} cart - cart as `CartValue` object
+ * @param {Number} orderId - the order id
+ * @returns {void}
+ */
+function recordOrderInGoogleAnalytics( cart, orderId ) {
+	if ( ! config.isEnabled( 'ad-tracking' ) ) {
+		return;
+	}
+
+	window.ga( 'ecommerce:addTransaction', {
+		id: orderId,
+		affiliation: 'WordPress.com',
+		revenue: cart.total_cost,
+		currency: cart.currency
+	} );
 }
 
 /**
