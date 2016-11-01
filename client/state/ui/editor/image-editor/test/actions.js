@@ -59,7 +59,19 @@ describe( 'actions', () => {
 			const action = resetAllImageEditorState();
 
 			expect( action ).to.eql( {
-				type: IMAGE_EDITOR_STATE_RESET_ALL
+				type: IMAGE_EDITOR_STATE_RESET_ALL,
+				additionalData: {}
+			} );
+		} );
+
+		it( 'should return an action object with additional data if specified', () => {
+			const action = resetAllImageEditorState( { aspectRatio: AspectRatios.FREE } );
+
+			expect( action ).to.eql( {
+				type: IMAGE_EDITOR_STATE_RESET_ALL,
+				additionalData: {
+					aspectRatio: AspectRatios.FREE
+				}
 			} );
 		} );
 	} );
