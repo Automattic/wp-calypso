@@ -70,17 +70,9 @@ foo( {
 	b: 'beta'
 } );
 
-foo( data, function() {
+foo( data, () => {
 	// Do stuff
 } );
-
-foo( function() {
-	// Do stuff
-}.bind( this ) );
-
-foo( function() {
-	// Do stuff
-}, options );
 ```
 
 ## Examples of Good Spacing
@@ -535,9 +527,9 @@ Since we require strict equality checks, we are not going to enforce [Yoda condi
 The functional programming inspired methods that were added in ECMA5 improve readability. Use them throughout.
 
 ```js
-const posts = postList.map( function( post ) {
-	return <Post post={ post } key={ post.global_ID } />;
-} );
+const posts = postList.map( ( post ) => (
+	<Post post={ post } key={ post.global_ID } />
+) );
 ```
 
 When iterating over a large collection using a for loop, it is recommended to store the loop’s max value as a variable rather than re-computing the maximum every time:
