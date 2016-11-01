@@ -102,9 +102,9 @@ export function createSiteConnection( siteId, keyringConnectionId, externalUserI
 export function updateSiteConnection( connection, attributes ) {
 	return ( dispatch ) =>
 		wpcom.undocumented().updateConnection( connection.site_ID, connection.ID, attributes )
-			.then( ( connection ) => dispatch( {
+			.then( ( response ) => dispatch( {
 				type: PUBLICIZE_CONNECTION_UPDATE,
-				connection,
+				connection: response,
 			} ) )
 			.catch( ( error ) => dispatch( {
 				type: PUBLICIZE_CONNECTION_UPDATE_FAILURE,
