@@ -244,6 +244,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 // Action buttons in post card
 .reader-post-card.card .reader-post-actions__item {
 	font-size: 14px;
+	height: 22px;
 
 	&.reader-post-actions__visit .gridicon {
 		fill: lighten( $gray, 10% );
@@ -288,6 +289,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 		@include breakpoint( "<660px" ) {
 			display: none;
 		}
+	}
+
+	.ellipsis-menu .button.is-borderless .gridicon {
+		top: -2px;
 	}
 }
 
