@@ -402,6 +402,18 @@ const myStr = "You're amazing just the way you are.";
 const component = <div className="post"></div>;
 ```
 
+[ES2015 template literals](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) are available as an alternative to string concatenation when including variables in a string.
+
+```js
+// Before
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
+	' is ' + ( a + b + c );
+```
+```js
+// After
+const sumLabel = `The sum of ${ a } and ${ b } plus ${ c } is ${ a + b + c }`;
+```
+
 ## Switch Statements
 
 Switch statements can be useful when there are a large number of cases – especially when multiple cases can be handled by the same block (using fall-through), or the default case can be leveraged.
