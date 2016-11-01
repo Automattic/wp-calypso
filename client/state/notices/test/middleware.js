@@ -11,6 +11,7 @@ import { noop } from 'lodash';
 import PostQueryManager from 'lib/query-manager/post';
 import noticesMiddleware, {
 	handlers,
+	dispatchError,
 	dispatchSuccess,
 	onPostDeleteFailure,
 	onPostRestoreFailure,
@@ -70,6 +71,20 @@ describe( 'middleware', () => {
 					notice: {
 						status: 'is-success',
 						text: 'Success!'
+					}
+				} );
+			} );
+		} );
+
+		describe( 'dispatchError()', () => {
+			it( 'should return a function which upon being called dispatches the specified error message', () => {
+				dispatchError( 'Error!' )( dispatch );
+
+				expect( dispatch ).to.have.been.calledWithMatch( {
+					type: NOTICE_CREATE,
+					notice: {
+						status: 'is-error',
+						text: 'Error!'
 					}
 				} );
 			} );
