@@ -189,7 +189,7 @@ var FormFields = React.createClass( {
 					</FormButtonsBar>
 				</Card>
 
-				<Card id="form-section">
+				<Card>
 					<FormSectionHeading>Form Section Heading</FormSectionHeading>
 
 					<FormFieldset>
