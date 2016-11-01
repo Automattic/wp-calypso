@@ -43,6 +43,7 @@ import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
 import * as oauthToken from 'lib/oauth-token';
 import DocumentHead from 'components/data/document-head';
 import { translate } from 'i18n-calypso';
+import SignupActions from 'lib/signup/actions';
 
 /**
  * Constants
@@ -92,11 +93,23 @@ const Signup = React.createClass( {
 		}
 	},
 
+	submitQueryDependencies() {
+		let vertical = this.props.queryObject.vertical;
+		let steps = flows.getFlow( this.props.flowName ).steps;
+		if ( 'undefined' !== typeof vertical && -1 === find( steps, { stepName: 'survey' } ) ) {
+			SignupActions.submitSignupStep(
+				{	stepName: 'survey' }, [],	{ surveyQuestion: this.props.vertical }
+			);
+		}
+	},
+
 	componentWillMount() {
 		analytics.tracks.recordEvent( 'calypso_signup_start', {
 			flow: this.props.flowName,
 			ref: this.props.refParameter
 		} );
+
+		this.submitQueryDependencies();
 
 		this.signupFlowController = new SignupFlowController( {
 			flowName: this.props.flowName,
