@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -176,9 +177,10 @@ const ThanksModal = React.createClass( {
 	},
 
 	render() {
+		const visitSiteText = this.props.hasActivated ? translate( 'Visit site' ) : translate( 'Switching themes…' );
 		const buttons = [
-			{ action: 'back', label: this.translate( 'Back to themes' ), onClick: this.goBack },
-			{ action: 'visitSite', label: this.translate( 'Visit site' ), isPrimary: true, disabled: ! this.props.hasActivated, onClick: this.visitSite },
+			{ action: 'back', label: translate( 'Back to themes' ), onClick: this.goBack },
+			{ action: 'visitSite', label: visitSiteText, isPrimary: true, disabled: ! this.props.hasActivated, onClick: this.visitSite },
 		];
 
 		return (
