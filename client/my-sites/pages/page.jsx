@@ -23,8 +23,7 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/posts/utils' ),
 	classNames = require( 'classnames' ),
-	config = require( 'config' ),
-	sites = require( 'lib/sites-list' )();
+	config = require( 'config' );
 
 import MenuSeparator from 'components/popover/menu-separator';
 import { hasStaticFrontPage } from 'state/sites/selectors';
@@ -34,7 +33,9 @@ import {
 } from 'state/pages/selectors';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
+import sitesFactory from 'lib/sites-list';
 
+const sites = sitesFactory();
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
