@@ -152,6 +152,13 @@ export function aspectRatio( state = AspectRatios.FREE, action ) {
 			return action.ratio;
 		case IMAGE_EDITOR_STATE_RESET:
 		case IMAGE_EDITOR_STATE_RESET_ALL:
+			const { additionalData = {} } = action;
+			const { aspectRatio: payloadAspectRatio } = additionalData;
+
+			if ( payloadAspectRatio && AspectRatios[ payloadAspectRatio ] ) {
+				return payloadAspectRatio;
+			}
+
 			return AspectRatios.FREE;
 	}
 

@@ -10,11 +10,12 @@ import { get } from 'lodash';
  */
 import ImageEditor from '../';
 import { getCurrentUser } from 'state/current-user/selectors';
+import { AspectRatios } from 'state/ui/editor/image-editor/constants';
 
 class ImageEditorExample extends Component {
 	constructor() {
 		super();
-		
+
 		this.state = {
 			media: {
 				URL: 'https://cldup.com/mA_hqNVj0w.jpg'
@@ -28,7 +29,7 @@ class ImageEditorExample extends Component {
 		if ( error ) {
 			return;
 		}
-		
+
 		const imageUrl = window.URL.createObjectURL( blob );
 
 		this.getTestingImage().src = imageUrl;
@@ -37,18 +38,18 @@ class ImageEditorExample extends Component {
 	onImageEditorReset = () => {
 		this.getTestingImage().src = this.state.media.URL || this.state.media.src;
 	};
-	
+
 	componentDidMount() {
 		const fileInput = document.querySelector( '#devdocs-example-image-editor-file-input' );
-		
+
 		fileInput.addEventListener( 'change', this.onImageUpload );
 	}
 
 	onImageUpload = ( e ) => {
 		const imageFile = e.target.files[ 0 ];
-		
+
 		const imageObjectUrl = URL.createObjectURL( imageFile );
-		
+
 		this.setState( {
 			media: {
 				src: imageObjectUrl
@@ -62,7 +63,7 @@ class ImageEditorExample extends Component {
 		const {
 			primarySiteId
 		} = this.props;
-		
+
 		return (
 			<div>
 				<div style={ {
@@ -78,6 +79,12 @@ class ImageEditorExample extends Component {
 						media={ this.state.media }
 						onDone={ this.onImageEditorDone }
 						onReset={ this.onImageEditorReset }
+						allowedAspectRatios={ [
+							AspectRatios.ASPECT_1X1,
+							AspectRatios.ASPECT_4X3,
+							AspectRatios.ASPECT_16X9
+						] }
+						defaultAspectRatio={ AspectRatios.ASPECT_1X1 }
 					/>
 				</div>
 
