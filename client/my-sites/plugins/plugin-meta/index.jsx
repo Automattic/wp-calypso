@@ -13,6 +13,7 @@ import analytics from 'lib/analytics';
 import Card from 'components/card';
 import Count from 'components/count';
 import NoticeAction from 'components/notice/notice-action';
+import ExternalLink from 'components/external-link';
 import Notice from 'components/notice';
 import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
 import PluginsActions from 'lib/plugins/actions';
@@ -107,9 +108,9 @@ export default React.createClass( {
 			return;
 		}
 		const linkToAuthor = (
-			<a className="plugin-meta__author" href={ safeProtocolUrl( this.props.plugin.author_url ) }>
+			<ExternalLink className="plugin-meta__author" href={ safeProtocolUrl( this.props.plugin.author_url ) } target="_blank">
 				{ this.props.plugin.author_name }
-			</a>
+			</ExternalLink>
 		);
 
 		return this.translate( 'By {{linkToAuthor/}}', {
