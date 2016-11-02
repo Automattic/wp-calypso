@@ -69,7 +69,7 @@ export const items = createReducer( {}, {
 		return Object.assign( {}, state, {
 			[ siteId ]: pickBy( state[ siteId ], ( shortcode ) => {
 				const parsed = Shortcode.parse( shortcode.shortcode );
-				if ( parsed.tag !== 'gallery' || ! parsed.attrs.named || ! parsed.attrs.named.ids ) {
+				if ( parsed.tag !== 'gallery' || ! parsed.attrs || ! parsed.attrs.named || ! parsed.attrs.named.ids ) {
 					return true;
 				}
 

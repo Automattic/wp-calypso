@@ -235,6 +235,52 @@ describe( 'reducer', () => {
 			} );
 		} );
 
+		it( 'should remove gallery shortcodes that have a single media update', () => {
+			const state = items( {
+				12345678: {
+					test_shortcode: shortcodeData,
+					another_shortcode: anotherShortcodeData
+				}
+			}, {
+				...mediaUpdateAction,
+				data: { ID: 1 }
+			} );
+
+			expect( state ).to.eql( {
+				12345678: {
+					another_shortcode: anotherShortcodeData
+				}
+			} );
+		} );
+
+		it( 'should not remove gallery shortcodes other than the gallery one', () => {
+			const shortcodes = {
+				test_shortcode: { ...shortcodeData, shortcode: '[anothergallery ids="1,2,3"]' },
+				another_shortcode: { ...anotherShortcodeData, shortcode: '[testgallery ids="1,2,3"]' },
+			};
+			const state = items( {
+				12345678: shortcodes
+			}, mediaUpdateAction );
+
+			expect( state ).to.eql( {
+				12345678: shortcodes
+			} );
+		} );
+
+		it( 'should not remove gallery shortcodes that don\'t have id attribute specified', () => {
+			const shortcodes = {
+				test_shortcode: { ...shortcodeData, shortcode: '[gallery columns="2"]' },
+				another_shortcode: { ...anotherShortcodeData, shortcode: '[gallery]' },
+			};
+			const state = items( {
+				12345678: shortcodes
+			}, mediaUpdateAction );
+
+			expect( state ).to.eql( {
+				12345678: shortcodes
+			} );
+		} );
+
 		it( 'should not remove gallery shortcodes that don\'t have media updates', () => {
 			const state = items( {
 				12345678: {
