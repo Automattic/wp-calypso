@@ -8,7 +8,6 @@ var React = require( 'react' ),
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import store from 'store';
 
 /**
  * Internal dependencies
@@ -33,9 +32,7 @@ import {
 } from 'state/pages/selectors';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
-import sitesFactory from 'lib/sites-list';
-
-const sites = sitesFactory();
+import { updateSitesList } from './helpers';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -112,12 +109,7 @@ const Page = React.createClass( {
 
 	setAsHomepage: function() {
 		this.setState( { showPageActions: false } );
-		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID, function() {
-			// This gives us a means to fix the `SitesList` cache outside of actions
-			// @todo Remove this when `SitesList` is Reduxified
-			store.remove( 'SitesList' );
-			sites.fetch();
-		} );
+		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID, updateSitesList );
 	},
 
 	getSetAsHomepageItem: function() {

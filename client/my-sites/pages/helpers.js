@@ -1,3 +1,13 @@
+/**
+ * External dependencies
+ */
+import store from 'store';
+
+/**
+ * Internal dependencies
+ */
+import sitesFactory from 'lib/sites-list';
+
 module.exports = {
 	editLinkForPage: function( page, site ) {
 		if ( ! ( page && page.ID ) || ! ( site && site.ID ) ) {
@@ -13,5 +23,14 @@ module.exports = {
 			return false;
 		}
 		return site.options.page_on_front === page.ID;
-	}
+	},
+
+	// This gives us a means to fix the `SitesList` cache outside of actions
+	// @todo Remove this when `SitesList` is Reduxified
+	updateSitesList: function() {
+		const sites = sitesFactory();
+
+		store.remove( 'SitesList' );
+		sites.fetch();
+	},
 };

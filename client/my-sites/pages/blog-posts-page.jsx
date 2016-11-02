@@ -5,7 +5,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import classNames from 'classnames';
-import store from 'store';
 
 /**
  * Internal dependencies
@@ -14,13 +13,11 @@ import CompactCard from 'components/card/compact';
 import Gridicon from 'components/gridicon';
 import PopoverMenu from 'components/popover/menu';
 import PopoverMenuItem from 'components/popover/menu-item';
-import sitesFactory from 'lib/sites-list';
 import { isEnabled } from 'config';
 import { getSiteFrontPageType, getSitePostsPage } from 'state/sites/selectors';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
-
-const sites = sitesFactory();
+import { updateSitesList } from './helpers';
 
 const BlogPostsPage = React.createClass( {
 	propTypes() {
@@ -41,12 +38,7 @@ const BlogPostsPage = React.createClass( {
 
 	setAsHomepage: function() {
 		this.setState( { showPageActions: false } );
-		this.props.setFrontPage( this.props.site.ID, 0, function() {
-			// This gives us a means to fix the `SitesList` cache outside of actions
-			// @todo Remove this when `SitesList` is Reduxified
-			store.remove( 'SitesList' );
-			sites.fetch();
-		}  );
+		this.props.setFrontPage( this.props.site.ID, 0, updateSitesList );
 	},
 
 	getSetAsHomepageItem: function() {
