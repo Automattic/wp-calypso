@@ -24,9 +24,6 @@ describe( 'selectors', () => {
 		}
 	};
 	const activeState = {
-		currentUser: {
-			id: 26957695,
-		},
 		sharing: {
 			keyring: {
 				items: {
@@ -35,20 +32,8 @@ describe( 'selectors', () => {
 					3: { ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
 				},
 				isFetching: true,
-			},
-			publicize: {
-				connectionsBySiteId: {
-					2916284: [ 1, 2, 3 ]
-				},
-				connections: {
-					1: { ID: 1, site_ID: 2916284, shared: true },
-					2: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695 },
-				}
 			}
-		},
-		ui: {
-			selectedSiteId: 2916284,
-		},
+		}
 	};
 
 	describe( 'getKeyringConnections()', () => {
