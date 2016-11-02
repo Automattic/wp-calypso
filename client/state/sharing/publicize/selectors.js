@@ -7,8 +7,8 @@ import get from 'lodash/get';
 /**
  * Internal dependencies
  */
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { canCurrentUser, getCurrentUserId } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
 
 /**
  * Returns an array of known connections for the given site ID.
@@ -65,13 +65,15 @@ export function getSiteUserConnectionsForService( state, siteId, userId, service
  *                          permitted to remove.
  */
 export function getRemovableConnections( state, service ) {
-	const site = getSelectedSite( state );
+	const siteId = getSelectedSiteId( state );
 	const userId = getCurrentUserId( state );
-	const siteUserConnectionsForService = getSiteUserConnectionsForService( state, site.ID, userId, service );
+	const siteUserConnectionsForService = getSiteUserConnectionsForService( state, siteId, userId, service );
 
-	return siteUserConnectionsForService.filter( ( connection ) => (
-		site.capabilities && site.capabilities.edit_others_posts || connection.user_ID === userId
-	) );
+	if ( canCurrentUser( state, siteId, 'edit_others_posts' ) ) {
+		return siteUserConnectionsForService;
+	}
+
+	return filter( siteUserConnectionsForService, { user_ID: userId } );
 }
 
 /**

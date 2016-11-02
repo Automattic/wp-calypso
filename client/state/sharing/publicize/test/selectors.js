@@ -129,6 +129,11 @@ describe( '#getRemovableConnections()', () => {
 	const state = {
 		currentUser: {
 			id: 26957695,
+			capabilities: {
+				2916284: {
+					edit_others_posts: true,
+				},
+			},
 		},
 		sharing: {
 			publicize: {
@@ -178,7 +183,7 @@ describe( '#getRemovableConnections()', () => {
 	} );
 
 	it( 'should return an array of connection objects for the current user that are removable by that same user', () => {
-		state.sites.items[ 2916284 ].capabilities.edit_others_posts = false;
+		state.currentUser.capabilities[ 2916284 ].edit_others_posts = false;
 		const connections = getRemovableConnections( state, 'twitter' );
 
 		expect( connections ).to.eql( [
