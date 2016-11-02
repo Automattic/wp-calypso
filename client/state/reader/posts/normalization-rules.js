@@ -21,9 +21,9 @@ import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt'
 import detectEmbeds from 'lib/post-normalizer/rule-content-detect-embeds';
 import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
-import makeEmbedsSecure from 'lib/post-normalizer/rule-content-make-embeds-secure';
+import makeEmbedsSafe from 'lib/post-normalizer/rule-content-make-embeds-safe';
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
-import safeImages from 'lib/post-normalizer/rule-content-safe-images';
+import makeImagesSafe from 'lib/post-normalizer/rule-content-make-images-safe';
 import wordCount from 'lib/post-normalizer/rule-content-word-count';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
@@ -141,9 +141,9 @@ const fastPostNormalizationRules = flow( [
 	firstPassCanonicalImage,
 	withContentDom( [
 		removeStyles,
-		safeImages( READER_CONTENT_WIDTH ),
+		makeImagesSafe( READER_CONTENT_WIDTH ),
 		discoverFullBleedImages,
-		makeEmbedsSecure,
+		makeEmbedsSafe,
 		disableAutoPlayOnEmbeds,
 		disableAutoPlayOnMedia,
 		detectEmbeds,
