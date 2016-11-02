@@ -102,9 +102,14 @@ const ImageEditor = React.createClass( {
 	},
 
 	setDefaultAspectRatio() {
-		const {	defaultAspectRatio } = this.props;
+		const {
+			defaultAspectRatio,
+			allowedAspectRatios
+		} = this.props;
 
-		this.props.setImageEditorAspectRatio( getDefaultAspectRatio( defaultAspectRatio ) );
+		this.props.setImageEditorAspectRatio(
+			getDefaultAspectRatio( defaultAspectRatio, allowedAspectRatios )
+		);
 	},
 
 	updateFileInfo( media ) {
@@ -256,7 +261,11 @@ export default connect(
 		};
 	},
 	( dispatch, ownProp ) => {
-		const defaultAspectRatio = getDefaultAspectRatio( ownProp.defaultAspectRatio );
+		const defaultAspectRatio = getDefaultAspectRatio(
+			ownProp.defaultAspectRatio,
+			ownProp.allowedAspectRatios
+		);
+
 		const resetActionsAdditionalData = {
 			aspectRatio: defaultAspectRatio
 		};
