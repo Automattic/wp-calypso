@@ -192,8 +192,8 @@ function mediaButton( editor ) {
 
 				// When merging, allow any updated field to be used if it doesn't
 				// already exist in the current markup, but otherwise only force
-				// update ID and URL attributes to their new values
-				const merged = assign( {}, media, current.media, pick( media, 'ID', 'URL' ), {
+				// update ID, URL, width and height attributes to their new values
+				const merged = assign( {}, media, current.media, pick( media, 'ID', 'URL', 'width', 'height' ), {
 					transient: !! media.transient
 				} );
 				const options = assign( {}, current.appearance, {
