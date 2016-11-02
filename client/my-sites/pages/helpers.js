@@ -27,10 +27,15 @@ module.exports = {
 
 	// This gives us a means to fix the `SitesList` cache outside of actions
 	// @todo Remove this when `SitesList` is Reduxified
-	updateSitesList: function() {
+	updateSitesList: function( { siteId, pageId } ) {
 		const sites = sitesFactory();
+		let site = sites.getSite( siteId ) ;
 
 		store.remove( 'SitesList' );
+		if ( site ) {
+			site.options.page_on_front = pageId;
+			sites.updateSite( site );
+		}
 		sites.fetch();
 	},
 };

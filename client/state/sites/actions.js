@@ -119,7 +119,10 @@ export function setFrontPage( siteId, pageId, successCallback ) {
 			// This gives us a means to fix the `SitesList` cache outside of actions
 			// @todo Remove this when `SitesList` is Reduxified
 			if ( 'function' === typeof( successCallback ) ) {
-				successCallback();
+				successCallback( {
+					siteId,
+					pageId,
+				} );
 			}
 
 			dispatch( recordTracksEvent( 'calypso_front_page_set', {
