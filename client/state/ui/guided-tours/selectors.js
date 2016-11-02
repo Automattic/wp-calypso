@@ -3,13 +3,23 @@
 /**
  * External dependencies
  */
-import { get, difference, find, includes, map, noop, startsWith, uniq } from 'lodash';
+import {
+	get,
+	difference,
+	find,
+	findLast,
+	includes,
+	map,
+	noop,
+	startsWith,
+	uniq,
+} from 'lodash';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { ROUTE_SET } from 'state/action-types';
+import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
 import { getInitialQueryArguments, getSectionName } from 'state/ui/selectors';
 import { getActionLog } from 'state/ui/action-log/selectors';
 import { getPreference } from 'state/preferences/selectors';
@@ -93,6 +103,15 @@ const hasJustSeenTour = createSelector(
 );
 
 /*
+ * When applicable, returns the name of the tour that has been started and not
+ * yet finished or dimissed according to the action log.
+ */
+const findOngoingTour = state => {
+	const last = findLast( getActionLog( state ), { type: GUIDED_TOUR_UPDATE } );
+	return last && ( last.shouldShow === undefined ) && last.tour;
+};
+
+/*
  * Returns the name of the tour requested via URL query arguments if it hasn't
  * "just" been seen (i.e., in the current Calypso session).
  */
@@ -135,7 +154,11 @@ const shouldBail = state => {
 };
 
 export const findEligibleTour = createSelector(
-	state => ! shouldBail( state ) && ( findRequestedTour( state ) || findTriggeredTour( state ) ),
+	state => ! shouldBail( state ) && (
+		findOngoingTour( state ) ||
+		findRequestedTour( state ) ||
+		findTriggeredTour( state )
+	),
 	[ getActionLog, getToursHistory ]
 );
 

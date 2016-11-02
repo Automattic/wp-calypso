@@ -23,8 +23,9 @@ class GuidedTours extends Component {
 		return this.props.tourState !== nextProps.tourState;
 	}
 
-	start = ( { tour, tourVersion: tour_version } ) => {
+	start = ( { tour, tourVersion: tour_version, step } ) => {
 		if ( tour && tour_version ) {
+			this.props.nextGuidedTourStep( { tour, step } );
 			tracks.recordEvent( 'calypso_guided_tours_start', {
 				tour,
 				tour_version,
