@@ -52,6 +52,7 @@ export default React.createClass( {
 				icon={ true }
 				href={ this.props.plugin.plugin_url }
 				onClick={ recordEvent }
+				target="_blank"
 				className="plugin-information__external-link" >
 				{ this.translate( 'Plugin homepage' ) }
 			</ExternalLink>
@@ -68,6 +69,7 @@ export default React.createClass( {
 				icon={ true }
 				href={ 'https://' + this._WPORG_PLUGINS_URL + this.props.plugin.slug + '/' }
 				onClick={ recordEvent }
+				target="_blank"
 				className="plugin-information__external-link" >
 				{ this.translate( 'WordPress.org Plugin page' ) }
 			</ExternalLink>
