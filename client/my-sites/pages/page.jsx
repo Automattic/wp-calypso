@@ -8,6 +8,7 @@ var React = require( 'react' ),
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import store from 'store';
 
 /**
  * Internal dependencies
@@ -22,7 +23,8 @@ var updatePostStatus = require( 'lib/mixins/update-post-status' ),
 	analytics = require( 'lib/analytics' ),
 	utils = require( 'lib/posts/utils' ),
 	classNames = require( 'classnames' ),
-	config = require( 'config' );
+	config = require( 'config' ),
+	sites = require( 'lib/sites-list' )();
 
 import MenuSeparator from 'components/popover/menu-separator';
 import { hasStaticFrontPage } from 'state/sites/selectors';
@@ -109,7 +111,12 @@ const Page = React.createClass( {
 
 	setAsHomepage: function() {
 		this.setState( { showPageActions: false } );
-		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID );
+		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID, function() {
+			// This gives us a means to fix the `SitesList` cache outside of actions
+			// @todo Remove this when `SitesList` is Reduxified
+			store.remove( 'SitesList' );
+			sites.fetch();
+		} );
 	},
 
 	getSetAsHomepageItem: function() {

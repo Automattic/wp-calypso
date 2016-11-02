@@ -102,7 +102,7 @@ export function requestSite( siteId ) {
 	};
 }
 
-export function setFrontPage( siteId, pageId ) {
+export function setFrontPage( siteId, pageId, successCallback ) {
 	return ( dispatch ) => {
 		dispatch( {
 			type: SITE_FRONT_PAGE_SET,
@@ -116,6 +116,12 @@ export function setFrontPage( siteId, pageId ) {
 		};
 
 		return wpcom.undocumented().setSiteHomepageSettings( siteId, requestData ).then( () => {
+			// This gives us a means to fix the `SitesList` cache outside of actions
+			// @todo Remove this when `SitesList` is Reduxified
+			if ( 'function' === typeof( successCallback ) ) {
+				successCallback();
+			}
+
 			dispatch( recordTracksEvent( 'calypso_front_page_set', {
 				siteId,
 				pageId,
