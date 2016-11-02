@@ -170,7 +170,7 @@ const AddEmailAddressesCard = React.createClass( {
 		let command = { fieldsets: {} };
 
 		command.fieldsets[ index ] = {};
-		command.fieldsets[ index ][ fieldName ] = { value: { $set: newValue } };
+		command.fieldsets[ index ][ fieldName ] = { value: { $set: newValue.trim() } };
 
 		if ( fieldName === 'domain' ) {
 			this.recordEvent( 'domainChange', newValue, index );
@@ -286,7 +286,7 @@ function getGoogleAppsCartItems( { domains, fieldsets } ) {
 	groups = mapValues( groups, function( group ) {
 		return map( group, function( fieldset ) {
 			return {
-				email: fieldset.username.value + '@' + fieldset.domain.value
+				email: `${ fieldset.username.value }@${ fieldset.domain.value }`.toLowerCase()
 			};
 		} );
 	} );
