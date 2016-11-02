@@ -7,6 +7,9 @@ module.exports = {
 		mocha: true,
 		node: true
 	},
+	globals: {
+		asyncRequire: true
+	},
 	// Ideally, we should not have a `rules` block here at all, save for some
 	// Calypso-specific rules (no-unused-expressions, camelcase). The remainder
 	// are rules we cannot yet flag as errors, and should be removed over time
