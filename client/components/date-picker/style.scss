@@ -32,7 +32,7 @@ $date-picker_nav_button_size: 20px;
 	}
 
 	&:hover {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 }
 
@@ -110,7 +110,7 @@ $date-picker_nav_button_size: 20px;
 }
 
 .DayPicker-NavButton--prev {
-	color: $gray;
+	color: darken( $gray, 18% );
 	left: 0;
 
 	&:before {
@@ -120,7 +120,7 @@ $date-picker_nav_button_size: 20px;
 }
 
 .DayPicker-NavButton--next {
-	color: $gray;
+	color: darken( $gray, 18% );
 	right: 0;
 
 	&:before {
@@ -131,7 +131,7 @@ $date-picker_nav_button_size: 20px;
 
 .DayPicker-Caption {
 	display: table-caption;
-	color: $gray;
+	color: darken( $gray, 18% );
 	text-align: center;
 	height: $date-picker_caption_height;
 	line-height: $date-picker_caption_height;
@@ -189,7 +189,7 @@ $date-picker_nav_button_size: 20px;
 	cursor: pointer;
 	font-size: 11px;
 	font-weight: 600;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .DayPicker--interactionDisabled .DayPicker-Day {

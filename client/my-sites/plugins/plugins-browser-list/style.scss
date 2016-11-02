@@ -18,7 +18,7 @@
 .plugins-browser-list__title {
 	display: inline-block;
 	padding: 6px 0px 7px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 11px;
 	line-height: 1.6;
 	text-transform: uppercase;

@@ -25,6 +25,6 @@
 	margin-top: 10px;
 
 	&[disabled] {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }

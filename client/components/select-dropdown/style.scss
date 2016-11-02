@@ -85,7 +85,7 @@ $compact-header-height: 35;
 	.is-compact & {
 		height: #{$compact-header-height }px;
 		line-height: #{$compact-header-height - 3 }px;
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		font-size: 11px;
 		text-transform: uppercase;
 
@@ -188,7 +188,7 @@ $compact-header-height: 35;
 
 	&.is-disabled {
 		background-color: $white;
-		color: $gray;
+		color: darken( $gray, 18% );
 		cursor: default;
 		opacity: .5;
 	}
@@ -196,7 +196,7 @@ $compact-header-height: 35;
 	.notouch & {
 		// Make sure :visited links stay blue
 		&:hover {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 
 		&.is-selected:hover {
@@ -234,7 +234,7 @@ $compact-header-height: 35;
 
 .select-dropdown__label {
 	display: block;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	line-height: 20px;
 
 	label {

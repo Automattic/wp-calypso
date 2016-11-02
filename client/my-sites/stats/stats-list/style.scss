@@ -561,7 +561,7 @@ ul.module-content-list-legend {
 .module-content-list-legend .module-content-list-item .module-content-list-item-label {
 	@extend %placeholder;
 
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-weight: bold;
 
 	// Limit width when loading for placeholders to take less visual space
@@ -586,7 +586,7 @@ ul.module-content-list-legend {
 
 	.module-content-list-item-value,
 	.module-content-list-item-label {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }
 
@@ -666,7 +666,7 @@ ul.module-content-list-legend {
 
 	// Change colors to highlight label when row is highlighted
 	.module-content-list-item-label {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 4% );
 	}
 
 	// Highlight main action (usually what's indicated in the label)
@@ -712,7 +712,7 @@ ul.module-content-list-legend {
 	}
 
 	> .module-content-list-item-wrapper .module-content-list-item-value {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 
 	> .module-content-list-item-wrapper .module-content-list-item-right::before {

@@ -15,7 +15,7 @@
 }
 
 .edit-post-status__label-text {
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	font-size: 13px;
 	line-height: 1.7;
 }
@@ -32,7 +32,7 @@
 }
 
 .edit-post-status__full-date {
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	font-size: 13px;
 	display: inline-block;
 	margin-bottom: 12px;
@@ -40,7 +40,7 @@
 	cursor: pointer;
 
 	.gridicon {
-		color: $gray;
+		color: darken( $gray, 18% );
 		margin-left: -2px;
 		margin-right: 8px;
 		vertical-align: bottom;

@@ -25,7 +25,7 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__mobile {
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin: 0 16px;
 	display: block;
 
@@ -83,7 +83,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__table {
 	font-size: 14px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	border-spacing: 16px 0;
 	margin-top: -16px;
 	display: none;
@@ -243,7 +243,7 @@ $plan-features-sidebar-width: 272px;
 
 .plan-features__header-title {
 	font-size: 22px;
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 4% );
 	line-height: 0.7;
 
 	@include breakpoint( "<960px" ) {
@@ -261,7 +261,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: 12px;
 	font-style: italic;
 	font-weight: 400;
-	color: $gray;
+	color: darken( $gray, 18% );
 	line-height: .6;
 	white-space: nowrap;
 

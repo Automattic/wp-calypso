@@ -42,7 +42,7 @@
 
 a.card:hover {
 	.card__link-indicator {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 }
 

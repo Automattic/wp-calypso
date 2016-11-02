@@ -95,7 +95,7 @@
 		-moz-osx-font-smoothing: grayscale;
 		font: normal 18px/1 Noticons;
 		content: '\f445';
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		position: absolute;
 			top: 0;
 			left: 0;
@@ -108,7 +108,7 @@
 	}
 
 	&:hover:after {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 
 	&.gear-open {

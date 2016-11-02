@@ -4,7 +4,7 @@
 		font-size: 13px;
 		font-family: $sans;
 		text-transform: lowercase;
-		color: $gray;
+		color: darken( $gray, 18% );
 		position: relative;
 		margin-top: 13px;
 		margin-bottom: 8px;
@@ -35,7 +35,7 @@
 
 		.discover-attribution__author,
 		.discover-attribution__blog {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			text-decoration: none;
 			text-transform: none;
 
@@ -61,7 +61,7 @@
 			border: none;
 			padding: 0;
 			vertical-align: text-bottom;
-			color: lighten( $gray, 10% );
+			color: darken( $gray, 18% );
 			font-size: 13px;
 			line-height: 16px;
 			background: transparent;

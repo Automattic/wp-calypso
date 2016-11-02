@@ -66,14 +66,14 @@
 	padding-top: 12px;
 	padding-bottom: 16px;
 	background: $white;
-	color: $gray;
+	color: darken( $gray, 18% );
 	cursor: pointer;
 	font-size: 12px;
 	text-transform: uppercase;
 
 	&:focus {
 		.plugin-sections__read-more-text {
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 4% );
 			outline: solid $gray 1px;
 		}
 	}

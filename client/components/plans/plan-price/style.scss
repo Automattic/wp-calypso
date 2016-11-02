@@ -12,7 +12,7 @@
 .wpcom-plan-price__billing-period {
 	font-size: 12px;
 	font-style: italic;
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 }
 
 .plan-header .plan-price__discount,
@@ -33,7 +33,7 @@
 .plan-price__discounted,
 .jetpack-plan-price__discounted,
 .wpcom-plan-price__discounted {
-	color: $gray;
+	color: darken( $gray, 18% );
 	text-decoration: line-through;
 }
 

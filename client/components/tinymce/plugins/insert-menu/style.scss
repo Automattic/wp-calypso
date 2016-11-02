@@ -7,7 +7,7 @@
 
 		&:hover .mce-open i.mce-caret,
 		&:focus .mce-open i.mce-caret {
-			color: lighten( $gray, 10% );
+			color: darken( $gray, 18% );
 		}
 
 		&:hover .gridicons-add-outline,
@@ -71,7 +71,7 @@
 	&:focus {
 
 		.wpcom-insert-menu__menu-label {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 
 		.wpcom-insert-menu__menu-icon {

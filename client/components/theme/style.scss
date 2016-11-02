@@ -83,7 +83,7 @@ $theme-info-height: 54px;
 		padding-top: 36%;
 		cursor: pointer;
 
-		color: $gray;
+		color: darken( $gray, 18% );
 		text-transform: uppercase;
 		font-size: 11px;
 		font-weight: 600;
@@ -167,7 +167,7 @@ $theme-info-height: 54px;
 
 	button {
 		cursor: pointer;
-		color: $gray;
+		color: darken( $gray, 18% );
 		padding: 15px 19px;
 		font-size: 20px;
 		font-weight: 600;
@@ -196,7 +196,7 @@ $theme-info-height: 54px;
 		background-color: transparentize( $gray-light, 0.7 );
 
 		.noticon {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 
 		&.is-active .noticon {

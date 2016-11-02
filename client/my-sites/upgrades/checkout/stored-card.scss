@@ -12,7 +12,7 @@
 	padding: 15px 15px 15px 95px;
 
 	.stored-card__name {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 
 	.stored-card__number {
@@ -22,7 +22,7 @@
 	}
 
 	.stored-card__expiration-date {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		font-style: italic;
 		opacity: 0.7;
 		white-space: nowrap;

@@ -68,7 +68,7 @@
 }
 
 .plugin-meta__meta {
-	color: $gray;
+	color: darken( $gray, 18% );
 	white-space: pre;
 	text-overflow: ellipsis;
 	float: left;
@@ -148,7 +148,7 @@
 }
 
 a.plugin-meta__settings-link {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 11px;
 	line-height: 16px;

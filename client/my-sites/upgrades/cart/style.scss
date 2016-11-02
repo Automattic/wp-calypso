@@ -46,7 +46,7 @@
 		}
 
 		.product-domain {
-			color: darken( $gray, 10% );
+			color: darken( $gray, 18% );
 			display: block;
 			font-size: 12px;
 			text-overflow: ellipsis;
@@ -58,13 +58,13 @@
 		}
 
 		.product-price {
-			color: darken( $gray, 10% );
+			color: darken( $gray, 18% );
 			display: block;
 			font-size: 13px;
 		}
 
 		.product-monthly-price {
-			color: $gray;
+			color: darken( $gray, 18% );
 			display: block;
 			font-size: 11px;
 			font-style: italic;
@@ -94,7 +94,7 @@
 	}
 
 	.cart-total {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		font-weight: 600;
 		font-size: 14px;
 
@@ -114,7 +114,7 @@
 		font-size: 11px;
 
 		a {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			outline: none;
 		}
 
@@ -141,7 +141,7 @@
 }
 
 .cart-items__expander {
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 4% );
 	text-decoration: none;
 	font-size: 12px;
 }

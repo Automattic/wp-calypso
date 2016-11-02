@@ -1,7 +1,7 @@
 .reader-share_button {
 	align-items: center;
 	box-sizing: border-box;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	display: inline-flex;
 	padding: 4px;
 	position: relative;
@@ -18,7 +18,7 @@
 	}
 
 	&.is-active {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 4% );
 
 		.gridicon {
 			fill: $blue-wordpress;

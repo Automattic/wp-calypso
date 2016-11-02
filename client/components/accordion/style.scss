@@ -33,7 +33,7 @@ $accordion-background-expanded: $white;
 			top: 50%;
 			right: $accordion-padding;
 		transform: translateY( -50% );
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 
 	.accordion.has-subtitle & {
@@ -84,7 +84,7 @@ $accordion-background-expanded: $white;
 .accordion__subtitle {
 	font-size: 0.8em;
 	font-style: italic;
-	color: $gray;
+	color: darken( $gray, 18% );
 	white-space: nowrap;
 	overflow-x: hidden;
 	position: relative;

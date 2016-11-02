@@ -20,7 +20,7 @@
 .notification-settings-blog-settings-header,
 .notification-settings-blog-settings-placeholder__header {
 	display: flex;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	@include breakpoint( ">480px" ) {
 		cursor: pointer;

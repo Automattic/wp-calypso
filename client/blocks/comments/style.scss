@@ -10,7 +10,7 @@
 // Comment Counter
 .comments__count {
 	text-align: center;
-	color: $gray;
+	color: darken( $gray, 18% );
 	float: right;
 }
 
@@ -80,11 +80,11 @@
 		font-size: 12px;
 		font-weight: 600;
 		text-transform: uppercase;
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 		transition: all 0.2s ease-in-out;
 
 		&.is-active {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			cursor: pointer;
 		}
 
@@ -95,7 +95,7 @@
 
 	button:focus {
 		outline: dotted 1px $blue-medium;
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 4% );
 	}
 
 	.comments__cancel-reply {
@@ -105,7 +105,7 @@
 }
 
 .comments__form-closed {
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin-top: 20px;
 	margin-bottom: -3px;
 	font-family: $sans;
@@ -216,7 +216,7 @@
 }
 
 a.comments__comment-username {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 
 	&:hover {
 		color: $blue-light;
@@ -234,7 +234,7 @@ a.comments__comment-username {
 .comments__comment-timestamp a {
 	font-weight: normal;
 	font-size: 13px;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	text-decoration: none;
 
 	&:hover {
@@ -243,7 +243,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-moderation {
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin-top: 0.5em;
 	margin-bottom: 0.5em;
 	font-size: 12px;
@@ -278,12 +278,12 @@ a.comments__comment-username {
 .comments__comment-actions {
 	list-style: none;
 	margin-left: -4px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 14px;
 
 	button {
 		display: inline-block;
-		color: $gray;
+		color: darken( $gray, 18% );
 		padding: 4px;
 		margin-right: 8px;
 		cursor: pointer;
@@ -309,7 +309,7 @@ a.comments__comment-username {
 		}
 
 		&:hover {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 
 		&.comments__comment-actions-cancel-reply {
@@ -336,7 +336,7 @@ a.comments__comment-username {
 }
 
 .comments__view-earlier {
-	color: $gray;
+	color: darken( $gray, 18% );
 	cursor: pointer;
 	display: block !important; // to overwrite inline-block rule
 	font-size: 14px;
@@ -352,7 +352,7 @@ a.comments__comment-username {
 	cursor: pointer;
 	background-color: $gray-light;
 	width: 100%;
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	text-align: left;
 	margin-top: 15px;
 	padding: 5px 10px 10px 12px;
@@ -366,7 +366,7 @@ a.comments__comment-username {
 }
 
 .comments__comment-count {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	font-size: 14px;
 	font-weight: 600;
 	line-height: 1;

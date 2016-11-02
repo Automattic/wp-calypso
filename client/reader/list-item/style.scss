@@ -46,10 +46,10 @@
 .reader-list-item__description {
 	font-style: italic;
 	font-size: 13px;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	a {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }
 

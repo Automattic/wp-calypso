@@ -26,7 +26,7 @@
 }
 
 .editor-drawer-well__placeholder .gridicon {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	width: 48px;
 	height: 48px;
@@ -61,5 +61,5 @@
 	width: 24px;
 	height: 24px;
 	margin: 0;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 }

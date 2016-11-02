@@ -3,7 +3,7 @@
 }
 
 .credit-card-form__card-terms {
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	margin: 5px 0 0 0;
 	padding: 0;
 	text-align: center;
@@ -39,7 +39,7 @@
 	justify-content: space-between;
 
 	em {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 
 	button {

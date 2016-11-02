@@ -1,6 +1,6 @@
 .rating {
 	width: 80px;
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	line-height: 1;
 
 	.noticon-rating-empty {

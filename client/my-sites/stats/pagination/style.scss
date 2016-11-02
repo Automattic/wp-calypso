@@ -31,7 +31,7 @@
 .stats-pagination__list-item.stats-pagination__arrow {
 	&,
 	&:hover {
-		color: $gray;
+		color: darken( $gray, 18% );
 		cursor: default;
 	}
 
@@ -55,7 +55,7 @@
 .stats-pagination__list-item,
 .stats-pagination__list-item.is-active {
 	cursor: pointer;
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 4% );
 }
 
 .stats-pagination__list-item.is-active .gridicon {
@@ -83,6 +83,6 @@
 .stats-pagination__ellipsis,
 .stats-pagination__ellipsis:hover {
 	@extend %mobile-interface-element;
-	color: $gray;
+	color: darken( $gray, 18% );
 	cursor: default;
 }

@@ -8,7 +8,7 @@
 }
 
 .google-voucher-code__help-link {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	text-decoration: underline;
 }
 .google-voucher-advice {
@@ -83,7 +83,7 @@
 
 li.google-voucher__terms-and-conditions {
 	line-height: 1.6em;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	margin-bottom: 15px;
 }
 

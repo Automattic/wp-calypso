@@ -19,7 +19,7 @@
 	right: 8px;
 	padding: 0;
 	cursor: pointer;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	&:hover,
 	&:focus {

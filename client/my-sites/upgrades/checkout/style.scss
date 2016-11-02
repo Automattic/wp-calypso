@@ -131,7 +131,7 @@
 	}
 
 	h5 {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		font-size: 15px;
 		font-weight: 600;
 		opacity: 0.7;
@@ -215,7 +215,7 @@
 	// =============================================
 
 	.checkout-terms {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		margin: 16px 0;
 		padding: 0;
 		text-align: center;
@@ -325,20 +325,20 @@
 		}
 
 		.new-card-toggle {
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 4% );
 			padding: 15px 15px 15px 12px;
 			border: 0;
 			background: transparent;
 		}
 
 		.new-card-header {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			font-weight: 400;
 			margin-bottom: 15px;
 		}
 
 		.all-fields-required {
-			color: lighten( $gray, 10% );
+			color: darken( $gray, 18% );
 			display: block;
 			font-size: 12px;
 			font-style: italic;
@@ -420,7 +420,7 @@
 			position: relative;
 
 			&::before {
-				color: $blue-medium;
+				color: darken( $blue-medium, 20% );
 				left: 10px;
 				position: absolute;
 				top: 15px;
@@ -428,12 +428,12 @@
 			}
 
 			> h6 {
-				color: $blue-medium;
+				color: darken( $blue-medium, 20% );
 				font-size: 18px;
 			}
 
 			> span {
-				color: darken( $gray, 10% );
+				color: darken( $gray, 18% );
 				font-size: 15px;
 			}
 
@@ -459,7 +459,7 @@
 		}
 
 		li {
-			color: lighten( $gray, 10% );
+			color: darken( $gray, 18% );
 			text-align: center;
 
 			@include breakpoint( ">660px" ) {
@@ -489,7 +489,7 @@
 
 	.credit-card-supporting-text__refund-link {
 		white-space: nowrap;
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 		text-decoration: underline;
 	}
 
@@ -735,7 +735,7 @@
 			}
 
 			.privacy-price {
-				color: $gray;
+				color: darken( $gray, 18% );
 				font-size: 13px;
 				font-style: italic;
 				font-weight: 400;
@@ -838,13 +838,13 @@
 }
 
 .checkout__privacy-protection-checkbox-text {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-style: italic;
 	margin: 4px 0 0 0;
 }
 
 .checkout__privacy-protection-price-text {
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin: 4px 0 0 0;
 	font-size: 15px;
 

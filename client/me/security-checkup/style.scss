@@ -77,7 +77,7 @@
 	display: block;
 	font-size: 1em;
 	font-style: italic;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .security-checkup-contact__detail {
@@ -85,7 +85,7 @@
 }
 
 .security-checkup-contact__remove {
-	color: $gray;
+	color: darken( $gray, 18% );
 	float: left;
 	cursor: pointer;
 	padding: 9px 0;

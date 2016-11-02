@@ -3,7 +3,7 @@
 }
 
 .editor-drawer__description {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 12px;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .editor-drawer__label-text {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 11px;
 	line-height: 18px;

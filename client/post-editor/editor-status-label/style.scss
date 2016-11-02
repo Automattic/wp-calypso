@@ -1,5 +1,5 @@
 .editor-status-label {
-	color: $gray;
+	color: darken( $gray, 18% );
 	cursor: pointer;
 	display: block;
 	font-size: 11px;
@@ -16,7 +16,7 @@
 	}
 
 	strong {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		display: block;
 	}
 
@@ -38,14 +38,14 @@
 }
 
 .editor-status-label__full-date {
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 13px;
 	padding: 8px 16px;
 }
 
 .editor-status-label__full-date__tooltip {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 11px;
 	padding: 2px 10px 2px;

@@ -59,7 +59,7 @@
 		margin: 8px 0;
 		padding: 0;
 		font-size: 14px;
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 
 		.gravatar {
 			height: 16px;
@@ -312,7 +312,7 @@
 .reader__x-post-to {
 	font-size: 13px;
 	font-family: $sans;
-	color: $gray;
+	color: darken( $gray, 18% );
 	position: relative;
 }
 

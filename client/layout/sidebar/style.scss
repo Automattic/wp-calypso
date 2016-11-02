@@ -198,7 +198,7 @@
 			top: 15px;
 			right: 19px;
 		z-index: z-index( 'icon-parent', '.sidebar__menu .noticon-external' );
-		color: $gray;
+		color: darken( $gray, 18% );
 
 		@include breakpoint( "<660px" ) {
 			top: 9px;
@@ -277,7 +277,7 @@ a.sidebar__button {
 		background-color: lighten( $sidebar-bg-color, 3% );
 
 		a {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 
 			&:first-child:after {
 				background: linear-gradient(
@@ -301,7 +301,7 @@ a.sidebar__button {
 		background-color: $gray-light;
 
 		a {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 
 			&:first-child:after {
 				background: linear-gradient(
@@ -324,7 +324,7 @@ a.sidebar__button {
 
 .notouch .sidebar__menu li:not(.selected) a {
 	&.sidebar__button:hover {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 	}
 }
 
@@ -349,7 +349,7 @@ a.sidebar__button {
 	font-size: 11px;
 	font-weight: 600;
 	padding: 8px;
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	line-height: 2.1;
 	margin-right: auto;
 
@@ -419,18 +419,18 @@ a.sidebar__button {
 }
 
 .layout.is-group-sites .sidebar .drafts-button.button.is-borderless {
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	line-height: 0;
 	padding: 0;
 	margin: 0;
 	text-transform: none;
 
 	.count {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 
 		.count {
 			background: $blue-medium;

@@ -2,7 +2,7 @@
 .reader-post-options-menu .ellipsis-menu {
 
 	.button.is-borderless {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 
 		&:hover,
 		&:focus,
@@ -12,7 +12,7 @@
 	}
 
 	&.is-menu-visible .button.is-borderless {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 4% );
 	}
 }
 

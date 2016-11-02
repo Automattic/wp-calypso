@@ -7,7 +7,7 @@
 	align-items: center;
 
 	&.embed {
-			color: $gray;
+			color: darken( $gray, 18% );
 			height: 100%;
 			position: initial;
 			margin-right: 16px;
@@ -28,7 +28,7 @@
 
 	.plugin-install-button__installing {
 		font-size: 10px;
-		color: $gray;
+		color: darken( $gray, 18% );
 		text-transform: uppercase;
 		display: block;
 	}
@@ -47,7 +47,7 @@
 .plugin-install-button__warning {
 	margin-right: 8px;
 	font-size: 11px;
-	color:  $gray;
+	color: darken( $gray, 18% );
 	text-transform: uppercase;
 	white-space: nowrap;
 }

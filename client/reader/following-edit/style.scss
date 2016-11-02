@@ -48,7 +48,7 @@
 	}
 
 	.button {
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-weight: 600;
 		font-size: 12px;
 		text-transform: capitalize;
@@ -90,7 +90,7 @@
 	}
 
 	.is-compact {
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-size: 12px;
 		line-height: 1.3;
 		margin-left: 0;
@@ -107,7 +107,7 @@
 	padding: 0;
 
 	.gridicons-search {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 4% );
 	}
 
 	&.button.is-borderless .gridicons-search {
@@ -277,7 +277,7 @@
 }
 
 .following-edit-navigation__site-count {
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .following-edit__notification-settings-card {
@@ -294,7 +294,7 @@
 	}
 
 	&.is-impossible-to-send-email {
-		color: $gray;
+		color: darken( $gray, 18% );
 		padding-left: 22px;
 
 		p {
@@ -306,7 +306,7 @@
 
 	&.is-active {
 		.following-edit__form-toggle-status	{
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 	}
 

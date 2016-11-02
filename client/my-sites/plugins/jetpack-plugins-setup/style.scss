@@ -47,7 +47,7 @@ $polldaddy-red:  #D45458;
 }
 
 .jetpack-plugins-setup .plugin-item__finished {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 12px;
 	line-height: 1;
 	padding: 6px 0;

@@ -8,7 +8,7 @@
 	position: absolute;
 	z-index: z-index( '.popover', '.post-schedule__header' );
 	top: 47px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 18px;
 	font-weight: 300;
 	width: 80%;
@@ -38,7 +38,7 @@
 	position: relative;
 	text-align: center;
 	font-size: 12px;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	height: 20;
 	line-height: 20px;
 	padding: 0 5px;
@@ -53,10 +53,10 @@
 	left: 0;
 	height: 16px;
 	cursor: pointer;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 
 	&:hover {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }
 
@@ -71,7 +71,7 @@
 .post-schedule__clock {
 	text-align: center;
 	margin: 15px auto 10px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 12px;
 }
 
@@ -89,7 +89,7 @@ input.post-schedule__clock_time {
 	width: 42px;
 	text-align: center;
 	padding: 0;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	font-size: 12px;
 }
 
@@ -99,7 +99,7 @@ input.post-schedule__clock_time {
 
 .info-popover__tooltip.post-schedule__timezone-info,
 .post-schedule__clock-timezone {
-	color: $gray;
+	color: darken( $gray, 18% );
 	line-height: 20px;
 }
 

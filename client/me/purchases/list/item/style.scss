@@ -65,7 +65,7 @@
 }
 
 .purchase-item__purchase-type {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 11px;
 	margin: 0 0 2px;
 	overflow: hidden;

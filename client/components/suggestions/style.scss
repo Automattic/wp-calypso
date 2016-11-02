@@ -23,7 +23,7 @@
 
 	.suggestions__category-counter {
 		float: right;
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }
 

@@ -6,7 +6,7 @@
 .profile-links__no-links {
 	display: block;
 	font-style: italic;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .profile-links .notice {

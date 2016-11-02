@@ -49,7 +49,7 @@
 }
 
 .upgrade-nudge__message {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 12px;
 	display: block;
 }

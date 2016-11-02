@@ -88,12 +88,12 @@ input[type="text"].token-field__input {
 
 		.token-field__token-text {
 			background: transparent;
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 4% );
 		}
 
 		.token-field__remove-token {
 			background: transparent;
-			color: $gray;
+			color: darken( $gray, 18% );
 			position: absolute;
 			top: 1px;
 			right: 0;
@@ -174,7 +174,7 @@ input[type="text"].token-field__input {
 }
 
 .token-field__suggestion {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 13px;
 	padding: 4px 8px;

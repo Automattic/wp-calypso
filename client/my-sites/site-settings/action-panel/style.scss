@@ -17,7 +17,7 @@
 .settings-action-panel__body {
 	font-size: 14px;
 	line-height: 20px;
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	overflow: hidden;
 
 	p {
@@ -26,7 +26,7 @@
 }
 
 a.settings-action-panel__body-text-link {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	text-decoration: underline;
 
 	&:hover {

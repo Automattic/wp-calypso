@@ -16,7 +16,7 @@
 
 .help__support-link .help__support-link-title {
 	&:hover {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 	}
 }
 
@@ -43,7 +43,7 @@
 
 .help__support-link-title {
 	font-size: 16px;
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 4% );
 	@include breakpoint( ">660px" ) {
 		font-size: 21px;
 	}
@@ -83,7 +83,7 @@
 }
 
 .help__help-teaser-button-icon {
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 4% );
 	border-radius: 50%;
 	margin-right: 16px;
 	background-color: $white;
@@ -98,7 +98,7 @@
 }
 
 .help__help-teaser-button-description {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 12px;
 	display: block;
 	padding-right: 15px;

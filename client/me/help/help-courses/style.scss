@@ -22,7 +22,7 @@
 .help-courses__course-videos-label,
 .help-courses__header-cake .header-cake__title,
 .help-courses__course-label {
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .help-courses__course-video-title,
@@ -57,7 +57,7 @@
 }
 
 .help-courses__course-schedule-item {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: flex;
 	align-items: center;
 }
@@ -99,7 +99,7 @@
 }
 
 .help-courses__course-video-date {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 13px;
 }
 

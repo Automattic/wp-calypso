@@ -30,7 +30,7 @@
 }
 
 .happiness-support__text {
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	margin-bottom: 16px;
 	margin-top: 16px;
 }
@@ -51,7 +51,7 @@
 }
 
 .happiness-support__gravatar-name {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 14px;
 }
 

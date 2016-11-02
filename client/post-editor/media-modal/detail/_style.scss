@@ -161,7 +161,7 @@
 }
 
 .editor-media-modal-detail__file-info th {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 11px;
 	margin-bottom: 4px;

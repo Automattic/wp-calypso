@@ -86,7 +86,7 @@
 	small {
 		margin-left: 5px;
 		font-size: 11px;
-		color: $gray;
+		color: darken( $gray, 18% );
 		font-weight: 600;
 		text-transform: uppercase;
 	}
@@ -168,7 +168,7 @@
 	margin-bottom: 8px;
 	padding: 0 15px;
 	font-size: 11px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-weight: 600;
 	text-transform: uppercase;
 	line-height: 12px;
@@ -296,7 +296,7 @@
 
 	.notouch & {
 		&:hover {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 	}
 
@@ -310,11 +310,11 @@
 		display: block;
 		width: auto;
 		padding: 16px 16px 14px 16px;
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 4% );
 		font-weight: 400;
 
 		&:visited {
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 4% );
 		}
 
 		.is-selected & {

@@ -45,7 +45,7 @@
 	max-height: 0;
 	overflow: hidden;
 	font-size: 14px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin: 0;
 	transition: all 0.15s ease-in-out;
 }

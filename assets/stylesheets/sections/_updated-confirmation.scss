@@ -40,7 +40,7 @@
 		.undo {
 			display: block;
 			font-size: (12 / 16) * 1em;
-			color: $gray;
+			color: darken( $gray, 18% );
 			padding: (10 / 12) * 1em 0 0;
 			&:hover {
 				cursor: pointer;
@@ -67,7 +67,7 @@
 		&.conf-alert--trashing,
 		&.conf-alert--updating {
 			border-color: $blue-wordpress;
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 4% );
 			.loading-dot {
 				animation-name: loading-dot-pulse;
 				animation-duration: 0.5s;

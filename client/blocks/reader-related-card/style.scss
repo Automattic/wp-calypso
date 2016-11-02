@@ -1,6 +1,6 @@
 
 .reader-related-card__site-info-title {
-	color: $gray;
+	color: darken( $gray, 18% );
 	float: left;
 	width: 100%;
 }
@@ -10,7 +10,7 @@
 }
 
 .reader-related-card__site-info {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: block;
 	font-size: 13px;
 	margin-right: 120px;
@@ -20,7 +20,7 @@
 	width: 100%;
 
 	a {
-		color: $gray;
+		color: darken( $gray, 18% );
 		text-decoration: none;
 
 		&:visited {
@@ -28,7 +28,7 @@
 		}
 
 		&:hover {
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 4% );
 		}
 	}
 
@@ -59,7 +59,7 @@
 	}
 
 	&:hover {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 4% );
 	}
 }
 
@@ -72,12 +72,12 @@
 }
 
 .reader-related-card__byline-author-and-site {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	margin-right: 6px;
 }
 
 .reader-related-card__author-and-site {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	margin-right: 10px;
 }
 
@@ -87,10 +87,10 @@
 
 	.reader-related-card__byline-link,
 	.reader-related-card__byline-link:visited {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 
 		&:hover {
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 4% );
 		}
 	}
 }

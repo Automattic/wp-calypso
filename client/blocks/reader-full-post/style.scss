@@ -90,7 +90,7 @@
 	}
 
 	.external-link {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		display: block;
 		padding: 10px 10px 15px 6px;
 
@@ -275,11 +275,11 @@
 }
 
 .reader-full-post .reader-full-post__sidebar {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 
 	a.reader-author-link,
 	a.author-compact-profile__site-link {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 
 		&:hover {
 			color: $blue-light;
@@ -423,7 +423,7 @@
 
 .reader-full-post__header-date-link,
 .reader-full-post__header-date-link:visited {
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	&:hover {
 		color: $blue-light;
@@ -448,7 +448,7 @@
 }
 
 .reader-full-post__header-tag-list {
-	color: $gray;
+	color: darken( $gray, 18% );
 	list-style: none;
 	margin: 0;
 	padding: 0;
@@ -464,7 +464,7 @@
 }
 
 .reader-full-post__header-tag-list-item {
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: inline;
 	margin-right: 5px;
 
@@ -483,7 +483,7 @@
 
 .reader-full-post__header-tag-list-item-link,
 .reader-full-post__header-tag-list-item-link:visited {
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	&:hover {
 		color: $blue-light;

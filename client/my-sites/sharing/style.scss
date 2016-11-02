@@ -260,7 +260,7 @@
 }
 
 .sharing-service__overview:hover .sharing-service__content-toggle {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 }
 
 .sharing-service__icon {
@@ -440,7 +440,7 @@
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .sharing-connection__account-sitewide-connection {
@@ -632,7 +632,7 @@
 	margin: 5px 0;
 	font-size: 13px;
 	font-style: italic;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .sharing-buttons-preview {
@@ -666,7 +666,7 @@
 .sharing-buttons-preview__like .noticon {
 	vertical-align: top;
 	margin: 3px 4px 0 0;
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 }
 
 .sharing-buttons-preview__like .noticon {
@@ -683,7 +683,7 @@
 }
 
 .sharing-buttons-preview__fake-like {
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	font-size: 11px;
 	font-weight: 300;
 }
@@ -704,14 +704,14 @@
 	background-color: $white;
 	text-align: left;
 	line-height: 1;
-	color: $blue-wordpress;
+	color: darken( $blue-wordpress, 4% );
 
 	@include breakpoint( "<480px") {
 		padding-right: 0;
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 	}
 
 	&.is-active {
@@ -841,7 +841,7 @@
 	font-weight: bold;
 	text-transform: uppercase;
 	text-align: center;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .sharing-buttons-preview.is-placeholder .sharing-buttons-preview__label,
@@ -1053,7 +1053,7 @@
 .sharing-buttons-preview__panel-instructions,
 .sharing-buttons-preview__panel-notice {
 	display: block;
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin: 8px 0;
 }
 

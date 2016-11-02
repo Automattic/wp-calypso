@@ -133,7 +133,7 @@ form.google-apps-dialog {
 
 	.google-apps-dialog__file-storage,
 	.google-apps-dialog__professional-email {
-		color: darken( $gray, 10% );
+		color: darken( $gray, 18% );
 		font-size: 13px;
 		font-weight: 600;
 		line-height: 130%;
@@ -147,13 +147,13 @@ form.google-apps-dialog {
 	}
 
 	.google-apps-dialog__price-per-user {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 		font-size: 18px;
 		font-weight: 600;
 	}
 
 	.google-apps-dialog__billing-period {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 		font-size: 12px;
 		text-transform: uppercase;
 	}
@@ -210,7 +210,7 @@ form.google-apps-dialog {
 
 	.google-apps-dialog__add-another-user-button {
 		border: 2px dashed lighten( $gray, 20% );
-		color: $gray;
+		color: darken( $gray, 18% );
 		cursor: pointer;
 		margin: 0 0 30px;
 		padding: 12px 18px 12px 45px;
@@ -246,7 +246,7 @@ form.google-apps-dialog {
 	}
 
 	.google-apps-dialog__cancel-link {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 		display: block;
 		font-size: 13px;
 		text-align: center;

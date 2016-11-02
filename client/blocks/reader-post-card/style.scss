@@ -115,13 +115,13 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 .reader__content .reader-post-card__timestamp-link,
 .reader__content .reader-post-card__tag-link
 {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	margin-top: 2px;
 	cursor: pointer;
 }
 
 .reader-post-card__byline-details {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	margin-top: -2px;
 	width: 100%;
 }
@@ -180,7 +180,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 .reader-post-card__link,
 .reader-post-card__link:visited {
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	cursor: pointer;
 }
 
@@ -243,7 +243,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	height: 22px;
 
 	&.reader-post-actions__visit .gridicon {
-		fill: lighten( $gray, 10% );
+		fill: darken( $gray, 18% );
 		position: relative;
 			left: -8px;
 			top: -1px;

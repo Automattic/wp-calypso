@@ -1,6 +1,6 @@
 .credit-cards__no-results {
 	display: block;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	@include breakpoint( "<480px" ) {
 		padding: 8px;

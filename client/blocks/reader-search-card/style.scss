@@ -36,7 +36,7 @@
 		}
 
 		.follow-button__label {
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 4% );
 		}
 
 		&:hover {
@@ -203,7 +203,7 @@
 	}
 
 	&:visited {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }
 
@@ -263,7 +263,7 @@
 	}
 
 	.follow-button__label {
-		color: $blue-wordpress;
+		color: darken( $blue-wordpress, 4% );
 
 		@include breakpoint( "<660px" )
 			display: inline;
@@ -276,7 +276,7 @@
 		}
 
 		.follow-button__label {
-			color: lighten( $gray, 10% );
+			color: darken( $gray, 18% );
 		}
 	}
 
@@ -301,7 +301,7 @@
 			}
 
 			.follow-button__label {
-				color: $blue-wordpress;
+				color: darken( $blue-wordpress, 4% );
 			}
 		}
 	}

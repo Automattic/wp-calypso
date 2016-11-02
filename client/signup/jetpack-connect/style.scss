@@ -135,7 +135,7 @@
 }
 
 .jetpack-connect__install-step-text {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 12px;
 	margin: 8px 0 16px 0;
 	flex-grow: 2;
@@ -311,7 +311,7 @@
 .example-components__site-url-input-container .example-components__site-address-container .example-components__browser-chrome-url {
 	height: 40px;
 	font-size: 12px;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .jetpack-connect__sso-user-profile {
@@ -335,7 +335,7 @@
 }
 
 .jetpack-connect__sso-user-email {
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	font-weight: 400;
 	text-align: center;
 }

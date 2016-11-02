@@ -75,10 +75,10 @@
 	vertical-align: bottom;
 	margin-top: -2px;
 	margin-right: 16px;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 
 	.survey-step__vertical:hover & {
-		color: $gray;
+		color: darken( $gray, 18% );
 	}
 }
 
@@ -92,10 +92,10 @@
 
 	&:hover {
 		.survey__vertical-label {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 		}
 		.survey__vertical-chevron {
-			color: $blue-medium;
+			color: darken( $blue-medium, 20% );
 			animation: survey__vertical-chevron-wiggle 1.5s ease infinite;
 		}
 	}

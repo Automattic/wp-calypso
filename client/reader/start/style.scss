@@ -23,7 +23,7 @@
 }
 
 .reader-start__description, .reader-start__subtitle {
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	font-size: 16px;
 	font-weight: 100;
 	line-height: 1.5;
@@ -179,7 +179,7 @@
 		}
 
 		.follow-button__label {
-			color: $blue-wordpress;
+			color: darken( $blue-wordpress, 4% );
 		}
 
 		&:hover {
@@ -259,7 +259,7 @@
 }
 
 .reader-start-card__follower-count {
-	color: $gray;
+	color: darken( $gray, 18% );
 	float: left;
 	font-size: 11px;
 	display: block;
@@ -296,7 +296,7 @@
 
 .reader-start-post-preview__featured-label {
 	background-color: $white;
-	color: $gray;
+	color: darken( $gray, 18% );
 	display: inline;
 	font-size: 10px;
 	font-weight: 600;
@@ -508,7 +508,7 @@
 }
 
 .reader-start-post-preview__byline {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-size: 12px;
 	margin-bottom: 10px;
 
@@ -577,7 +577,7 @@
 }
 
 .reader-start__manage {
-	color: darken( $gray, 10% );
+	color: darken( $gray, 18% );
 	margin: 20px 0 130px;
 	text-align: center;
 

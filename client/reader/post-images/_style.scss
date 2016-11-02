@@ -1,5 +1,5 @@
 .reader-post-images {
-	color: $gray;
+	color: darken( $gray, 18% );
 	margin: 24px 0 0 0;
 	padding: 8px;
 	border-top: 1px solid lighten( $gray, 30 );
@@ -53,7 +53,7 @@
 
 .reader-post-images__label {
 	font-size: 14px;
-	color: $blue-medium;
+	color: darken( $blue-medium, 20% );
 	line-height: 1;
 	display: block;
 	position: relative;
@@ -62,7 +62,7 @@
 
 .reader-post-images__count {
 	font-size: 12px;
-	color: $gray;
+	color: darken( $gray, 18% );
 	line-height: 1;
 	position: relative;
 		top: 2px;

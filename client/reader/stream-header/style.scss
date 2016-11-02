@@ -53,7 +53,7 @@
 
 .stream-header__description {
 	margin: 0;
-	color: $gray;
+	color: darken( $gray, 18% );
 }
 
 .stream-header__follow {

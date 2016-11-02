@@ -52,7 +52,7 @@
 	}
 
 	&:hover {
-		color: $blue-medium;
+		color: darken( $blue-medium, 20% );
 	}
 }
 
@@ -77,12 +77,12 @@
 
 .title-format-editor__token-close {
 	margin-left: 10px;
-	color: lighten( $gray, 10% );
+	color: darken( $gray, 18% );
 	font-size: 10px;
 }
 
 .title-format-editor__preview {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-style: italic;
 	margin-top: 5px;
 	font-size: 13px;

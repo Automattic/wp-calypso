@@ -32,7 +32,7 @@
 	font-weight: 300;
 
 	.gridicon {
-		color: $gray;
+		color: darken( $gray, 18% );
 		vertical-align: text-bottom;
 		margin-right: 8px;
 	}
@@ -48,7 +48,7 @@
 }
 
 .draft__untitled {
-	color: $gray;
+	color: darken( $gray, 18% );
 	font-style: italic;
 	font-weight: 400;
 }
@@ -129,7 +129,7 @@
 }
 
 .draft__actions-toggle {
-	color: $gray;
+	color: darken( $gray, 18% );
 	cursor: pointer;
 	font-size: 24px;
 	margin-left: 10px;
@@ -138,7 +138,7 @@
 .draft .post-relative-time-status {
 	display: inline-block;
 	margin: 0;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	.post-relative-time-status__time {
 		line-height: 1;
@@ -212,7 +212,7 @@
 	background: $gray-light;
 
 	.draft__title a {
-		color: lighten( $gray, 10% );
+		color: darken( $gray, 18% );
 	}
 
 	.draft__title {
@@ -248,7 +248,7 @@
 		right: 16px;
 		top: 0;
 		bottom: 0;
-	color: $gray;
+	color: darken( $gray, 18% );
 
 	.gridicon {
 		margin-right: 4px;

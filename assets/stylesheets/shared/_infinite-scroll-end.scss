@@ -21,7 +21,7 @@
   }
   &:after {
     @include noticon( '\f205', (24 / 15) * 1em );
-    color: $gray;
+   	color: $gray;
     font-size: (22 / 15) * 1em;
     padding: 0 (8 / 22) * 1em;
     background-color: $gray-light;
