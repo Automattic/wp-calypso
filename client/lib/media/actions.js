@@ -41,7 +41,7 @@ MediaActions.setQuery = function( siteId, query ) {
 // `updateShortcodes` shouldn't be passed as an argument anymore,
 // but directly imported and dispatch()ed from inside `fetch()`,
 // which needs to be turned into a Redux thunk.
-MediaActions.fetch = function( siteId, itemId, updateShortcodes ) {
+MediaActions.fetch = function( siteId, itemId, updateShortcodes = null ) {
 	var fetchKey = [ siteId, itemId ].join();
 	if ( MediaActions._fetching[ fetchKey ] ) {
 		return;
@@ -75,7 +75,7 @@ MediaActions.fetch = function( siteId, itemId, updateShortcodes ) {
 // `updateShortcodes` shouldn't be passed as an argument anymore,
 // but directly imported and dispatch()ed from inside `fetchNextPage()`,
 // which needs to be turned into a Redux thunk.
-MediaActions.fetchNextPage = function( siteId, updateShortcodes ) {
+MediaActions.fetchNextPage = function( siteId, updateShortcodes = null ) {
 	var query;
 
 	if ( MediaListStore.isFetchingNextPage( siteId ) ) {
@@ -149,7 +149,7 @@ MediaActions.createTransientMedia = function( id, file, date ) {
 // `updateShortcodes` shouldn't be passed as an argument anymore,
 // but directly imported and dispatch()ed from inside `add()`,
 // which needs to be turned into a Redux thunk.
-MediaActions.add = function( siteId, files, updateShortcodes ) {
+MediaActions.add = function( siteId, files, updateShortcodes = null ) {
 	if ( files instanceof window.FileList ) {
 		files = [ ...files ];
 	}
@@ -241,7 +241,7 @@ MediaActions.add = function( siteId, files, updateShortcodes ) {
 // `updateShortcodes` shouldn't be passed as an argument anymore,
 // but directly imported and dispatch()ed from inside `edit()`,
 // which needs to be turned into a Redux thunk.
-MediaActions.edit = function( siteId, item, updateShortcodes ) {
+MediaActions.edit = function( siteId, item, updateShortcodes = null ) {
 	var newItem = assign( {}, MediaStore.get( siteId, item.ID ), item );
 
 	Dispatcher.handleViewAction( {
@@ -259,9 +259,9 @@ MediaActions.edit = function( siteId, item, updateShortcodes ) {
 // `updateShortcodes` shouldn't be passed as an argument anymore,
 // but directly imported and dispatch()ed from inside `update()`,
 // which needs to be turned into a Redux thunk.
-MediaActions.update = function( siteId, item, editMediaFile = false, updateShortcodes ) {
+MediaActions.update = function( siteId, item, editMediaFile = false, updateShortcodes = null ) {
 	if ( Array.isArray( item ) ) {
-		item.forEach( MediaActions.update.bind( null, siteId ) );
+		item.forEach( singleItem => MediaActions.update( siteId, singleItem, editMediaFile, updateShortcodes ) );
 		return;
 	}
 
