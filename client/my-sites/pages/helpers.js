@@ -29,7 +29,7 @@ module.exports = {
 	// @todo Remove this when `SitesList` is Reduxified
 	updateSitesList: function( { siteId, pageId } ) {
 		const sites = sitesFactory();
-		let site = sites.getSite( siteId ) ;
+		const site = sites.getSite( siteId );
 
 		store.remove( 'SitesList' );
 		if ( site ) {
