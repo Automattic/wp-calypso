@@ -3,8 +3,8 @@
 /**
  * External Dependencies
  */
-var photon = require( 'photon' ),
-	uri = require( 'url' );
+const photon = require( 'photon' );
+const url = require( 'url' );
 
 /**
  * Internal Dependencies
@@ -20,27 +20,31 @@ var photon = require( 'photon' ),
  *
  * We special case gravatar, because we control them.
  *
- * @param  {string} url The URL to secure
+ * @param  {string} imageUrl The URL to secure
  * @return {string}     The secured URL, or null if we couldn't make it safe
  */
-function safeImageURL( url ) {
-	if ( typeof url !== 'string' ) {
+function safeImageURL( imageUrl ) {
+	if ( typeof imageUrl !== 'string' ) {
 		return null;
 	}
 
 	// if it's relative, return it
-	if ( /^\/[^/]/.test( url ) ) {
-		return url;
+	if ( /^\/[^/]/.test( imageUrl ) ) {
+		return imageUrl;
 	}
 
-	const parsed = uri.parse( url, false, true );
+	const parsed = url.parse( imageUrl, false, true );
 
 	if ( /^([-a-zA-Z0-9_]+\.)*(gravatar.com|wordpress.com|wp.com|a8c.com)$/.test( parsed.hostname ) ) {
 		// wp-hosted domains can be safely promoted to ssl
-		return url.replace( /^http:/, 'https:' );
+		return imageUrl.replace( /^http:/, 'https:' );
 	}
 
-	return photon( url );
+	// we cannot make any external url with a querystring safe, so strip it
+	parsed.search = null;
+	parsed.query = null;
+
+	return photon( url.format( parsed ) );
 }
 
 module.exports = safeImageURL;

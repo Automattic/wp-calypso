@@ -6,6 +6,7 @@ import flow from 'lodash/flow';
 import forEach from 'lodash/forEach';
 import url from 'url';
 import matches from 'lodash/matches';
+import partial from 'lodash/partial';
 
 /**
  * Internal Dependencies
@@ -18,11 +19,8 @@ import DISPLAY_TYPES from './display-types';
  * Rules
  */
 import createBetterExcerpt from 'lib/post-normalizer/rule-create-better-excerpt';
-import detectEmbeds from 'lib/post-normalizer/rule-content-detect-embeds';
 import detectPolls from 'lib/post-normalizer/rule-content-detect-polls';
-import makeEmbedsSecure from 'lib/post-normalizer/rule-content-make-embeds-secure';
 import removeStyles from 'lib/post-normalizer/rule-content-remove-styles';
-import safeImages from 'lib/post-normalizer/rule-content-safe-images';
 import wordCount from 'lib/post-normalizer/rule-content-word-count';
 import { disableAutoPlayOnMedia, disableAutoPlayOnEmbeds } from 'lib/post-normalizer/rule-content-disable-autoplay';
 import decodeEntities from 'lib/post-normalizer/rule-decode-entities';
@@ -36,6 +34,9 @@ import withContentDom from 'lib/post-normalizer/rule-with-content-dom';
 import keepValidImages from 'lib/post-normalizer/rule-keep-valid-images';
 import pickCanonicalImage from 'lib/post-normalizer/rule-pick-canonical-image';
 import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-load';
+import makeImagesSafe from 'lib/post-normalizer/rule-content-safe-images';
+import makeEmbedsSafe from 'lib/post-normalizer/rule-content-safe-embeds';
+import detectMedia from 'lib/post-normalizer/rule-content-detect-media';
 
 /**
  * Module vars
@@ -140,14 +141,14 @@ const fastPostNormalizationRules = flow( [
 	firstPassCanonicalImage,
 	withContentDom( [
 		removeStyles,
-		safeImages( READER_CONTENT_WIDTH ),
-		discoverFullBleedImages,
-		makeEmbedsSecure,
+		makeEmbedsSafe,
+		partial( makeImagesSafe, partial.placeholder, partial.placeholder, READER_CONTENT_WIDTH ),
 		disableAutoPlayOnEmbeds,
 		disableAutoPlayOnMedia,
-		detectEmbeds,
+		discoverFullBleedImages,
 		detectPolls,
-		wordCount
+		detectMedia,
+		wordCount,
 	] ),
 	createBetterExcerpt,
 	classifyPost

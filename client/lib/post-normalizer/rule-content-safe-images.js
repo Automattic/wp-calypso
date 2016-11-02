@@ -1,160 +1,86 @@
 /**
- * External Dependencies
- */
-import filter from 'lodash/filter';
-import forEach from 'lodash/forEach';
-import every from 'lodash/every';
-import some from 'lodash/some';
-import startsWith from 'lodash/startsWith';
-import toArray from 'lodash/toArray';
+* External Dependencies
+*/
 import url from 'url';
-import srcset from 'srcset';
+import { forEach, startsWith, some, includes, filter } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import safeImageURL from 'lib/safe-image-url';
 import { maxWidthPhotonishURL } from './utils';
-
+import safeImageURL from 'lib/safe-image-url';
 const TRANSPARENT_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
-function removeUnsafeAttributes( node ) {
+/**
+* @param {Node} node - Takes in a DOM Node and mutates it so that it no longer has an 'on*' event handlers e.g. onClick
+*/
+const removeUnwantedAttributes = ( node ) => {
 	if ( ! node || ! node.hasAttributes() ) {
 		return;
 	}
 
-	// Have to toArray this because attributes is a live
-	// NodeMap and would node removals would invalidate
-	// the current index as we walked it.
-	forEach( toArray( node.attributes ), function( attr ) {
-		if ( startsWith( attr.name, 'on' ) ) {
-			node.removeAttribute( attr.name );
-		}
-	} );
-}
+	const inlineEventHandlerAttributes = filter( node.attributes, ( attr ) => startsWith( attr.name, 'on' ) );
+	inlineEventHandlerAttributes.forEach( ( a ) => node.removeAttribute( a ) );
 
-const bannedUrlParts = [
-	'feeds.feedburner.com',
-	'feeds.wordpress.com/',
-	'.feedsportal.com',
-	'wp-includes',
-	'wp-content/themes',
-	'wp-content/plugins',
-	'stats.wordpress.com',
-	'pixel.wp.com'
-];
+	// always remove srcset because they are very difficult to make safe and may not be worth the trouble
+	node.removeAttribute( 'srcset' );
+};
 
-function imageShouldBeRemovedFromContent( imageUrl ) {
-	return some( bannedUrlParts, function( part ) {
-		return imageUrl && imageUrl.toLowerCase().indexOf( part ) !== -1;
-	} );
-}
+/** Checks whether or not imageUrl shoudl be removed from the dom
+ * @param {string} imageUrl - the url of the image
+ * @returns {boolean} whether or not it should be removed from the dom
+ */
+const imageShouldBeRemovedFromContent = ( imageUrl ) => {
+	if ( ! imageUrl ) {
+		return;
+	}
 
-const excludedContentImageUrlParts = [
-	'gravatar.com',
-	'/wpcom-smileys/'
-];
+	const bannedUrlParts = [
+		'feeds.feedburner.com',
+		'feeds.wordpress.com/',
+		'.feedsportal.com',
+		'wp-includes',
+		'wp-content/themes',
+		'wp-content/plugins',
+		'stats.wordpress.com',
+		'pixel.wp.com'
+	];
 
-function isCandidateForContentImage( imageUrl ) {
-	return ! imageShouldBeRemovedFromContent( imageUrl ) && every( excludedContentImageUrlParts, function( part ) {
-		return imageUrl && imageUrl.toLowerCase().indexOf( part ) === -1;
-	} );
-}
+	return some( bannedUrlParts, ( part ) => includes( imageUrl.toLowerCase(), part ) );
+};
 
-export default function( maxWidth ) {
-	return function safeContentImages( post, dom ) {
-		let content_images = [],
-			images;
+const makeImageSafe = ( post, image, maxWidth ) => {
+	let imgSource = image.getAttribute( 'src' );
+	const parsedImgSrc = url.parse( imgSource, false, true );
+	const hostName = parsedImgSrc.hostname;
 
-		if ( ! dom ) {
-			throw new Error( 'this transform must be used as part of withContentDOM' );
-		}
-		images = dom.querySelectorAll( 'img[src]' );
+	// if imgSource is relative, prepend post domain so it isn't relative to calypso
+	if ( ! hostName ) {
+		imgSource = url.resolve( post.URL, imgSource );
+	}
 
-		// push everything, including tracking pixels, over to a safe URL
-		forEach( images, function( image ) {
-			let imgSource = image.getAttribute( 'src' ),
-				parsedImgSrc = url.parse( imgSource, false, true ),
-				hostName = parsedImgSrc.hostname;
+	const safeSource = maxWidthPhotonishURL( safeImageURL( imgSource ), maxWidth );
+	removeUnwantedAttributes( image );
 
-			let safeSource;
-			// if imgSource is relative, prepend post domain so it isn't relative to calypso
-			if ( ! hostName ) {
-				imgSource = url.resolve( post.URL, imgSource );
-				parsedImgSrc = url.parse( imgSource, false, true );
-			}
+	// trickery to remove it from the dom / not load the image
+	// TODO: test if this is necessary
+	if ( ! safeSource || imageShouldBeRemovedFromContent( imgSource ) ) {
+		image.remove();
+		// fun fact: removing the node from the DOM will not prevent it from loading. You actually have to
+		// change out the src to change what loads. The following is a 1x1 transparent gif as a data URL
+		image.setAttribute( 'src', TRANSPARENT_GIF );
+		return;
+	}
 
-			safeSource = safeImageURL( imgSource );
-			if ( ! safeSource && parsedImgSrc.search ) {
-				// we can't make externals with a querystring safe.
-				// try stripping it and retry
-				parsedImgSrc.search = null;
-				parsedImgSrc.query = null;
-				safeSource = safeImageURL( url.format( parsedImgSrc ) );
-			}
+	image.setAttribute( 'src', safeSource );
 
-			removeUnsafeAttributes( image );
+	// return original source
+	return imgSource;
+};
 
-			if ( ! safeSource || imageShouldBeRemovedFromContent( imgSource ) ) {
-				image.parentNode.removeChild( image );
-				// fun fact: removing the node from the DOM will not prevent it from loading. You actually have to
-				// change out the src to change what loads. The following is a 1x1 transparent gif as a data URL
-				image.setAttribute( 'src', TRANSPARENT_GIF );
-				image.removeAttribute( 'srcset' );
-				return;
-			}
+export default function makeImagesSafe( post, dom, maxWidth ) {
+	const images = dom.querySelectorAll( 'image[src]' );
+	forEach( images, ( image ) => makeImageSafe( post, image, maxWidth ) );
 
-			if ( maxWidth ) {
-				safeSource = maxWidthPhotonishURL( safeSource, maxWidth );
-			}
-
-			image.setAttribute( 'src', safeSource );
-
-			if ( image.hasAttribute( 'srcset' ) ) {
-				let imgSrcSet;
-				try {
-					imgSrcSet = srcset.parse( image.getAttribute( 'srcset' ) );
-				} catch ( ex ) {
-					// if srcset parsing fails, set the srcset to an empty array. This will have the effect of removing the srcset entirely.
-					imgSrcSet = [];
-				}
-				imgSrcSet = imgSrcSet.map( imgSrc => {
-					if ( ! url.parse( imgSrc.url, false, true ).hostname ) {
-						imgSrc.url = url.resolve( post.URL, imgSrc.url );
-					}
-					imgSrc.url = safeImageURL( imgSrc.url );
-					return imgSrc;
-				} ).filter( imgSrc => imgSrc.url );
-				const newSrcSet = srcset.stringify( imgSrcSet );
-				if ( newSrcSet ) {
-					image.setAttribute( 'srcset', newSrcSet );
-				} else {
-					image.removeAttribute( 'srcset' );
-				}
-			}
-
-			if ( isCandidateForContentImage( imgSource ) ) {
-				content_images.push( {
-					src: safeSource,
-					original_src: imgSource,
-					width: image.width,
-					height: image.height
-				} );
-			}
-		} );
-
-		// grab all of the non-tracking pixels and push them into content_images
-		content_images = filter( content_images, function( image ) {
-			if ( ! image.src ) return false;
-			const edgeLength = image.height + image.width;
-			// if the image size isn't set (0) or is greater than 2, keep it
-			return edgeLength === 0 || edgeLength > 2;
-		} );
-
-		if ( content_images.length ) {
-			post.content_images = content_images;
-		}
-
-		return post;
-	};
+	return post;
 }
