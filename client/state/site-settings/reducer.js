@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -62,7 +61,7 @@ export const items = createReducer( {}, {
 	[ SITE_SETTINGS_UPDATE ]: ( state, { siteId, settings } ) => ( {
 		...state,
 		[ siteId ]: {
-			...( get( state, [ siteId ], {} ) ),
+			...state[ siteId ],
 			...settings
 		}
 	} )

@@ -13,7 +13,7 @@ import {
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( '#isRequestingSiteSettings()', () => {
+	describe( 'isRequestingSiteSettings()', () => {
 		it( 'should return false if the site is not attached', () => {
 			const state = {
 				siteSettings: {
@@ -54,7 +54,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isSavingSiteSettings()', () => {
+	describe( 'isSavingSiteSettings()', () => {
 		it( 'should return false if the site is not attached', () => {
 			const state = {
 				siteSettings: {
@@ -95,7 +95,7 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getSiteSettings()', () => {
+	describe( 'getSiteSettings()', () => {
 		it( 'should return null if the site is not tracked', () => {
 			const state = {
 				siteSettings: {

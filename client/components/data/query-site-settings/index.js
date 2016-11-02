@@ -12,10 +12,7 @@ import { requestSiteSettings } from 'state/site-settings/actions';
 
 class QuerySiteSettings extends Component {
 	componentWillMount() {
-		const { requestingSiteSettings, siteId } = this.props;
-		if ( ! requestingSiteSettings && siteId ) {
-			this.props.requestSiteSettings( siteId );
-		}
+		this.requestSettings( this.props );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -24,7 +21,14 @@ class QuerySiteSettings extends Component {
 			return;
 		}
 
-		nextProps.requestSiteSettings( nextProps.siteId );
+		this.requestSettings( nextProps );
+	}
+
+	requestSettings( props ) {
+		const { requestingSiteSettings, siteId } = props;
+		if ( ! requestingSiteSettings && siteId ) {
+			props.requestSiteSettings( siteId );
+		}
 	}
 
 	render() {

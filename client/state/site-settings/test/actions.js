@@ -8,6 +8,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import useNock from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
@@ -26,13 +27,10 @@ import {
 } from '../actions';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
+	let spy;
+	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 
-	beforeEach( () => {
-		spy.reset();
-	} );
-
-	describe( '#receiveSiteSettings()', () => {
+	describe( 'receiveSiteSettings()', () => {
 		it( 'should return an action object', () => {
 			const settings = { default_category: 'cat' };
 			const action = receiveSiteSettings( 2916284, settings );
@@ -45,7 +43,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#updateSiteSettings()', () => {
+	describe( 'updateSiteSettings()', () => {
 		it( 'should return an action object', () => {
 			const settings = { default_category: 'cat' };
 			const action = updateSiteSettings( 2916284, settings );
@@ -58,7 +56,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#requestSiteSettings()', () => {
+	describe( 'requestSiteSettings()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -116,7 +114,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( '#saveSiteSettings()', () => {
+	describe( 'saveSiteSettings()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()

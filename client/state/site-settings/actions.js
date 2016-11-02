@@ -57,29 +57,27 @@ export function requestSiteSettings( siteId ) {
 			siteId
 		} );
 
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().settings( siteId, ( error, data ) => {
-				error ? reject( error ) : resolve( data );
-			} );
-		} ).then( ( { name, description, settings } ) => {
-			const savedSettings = {
-				...settings,
-				blogname: name,
-				blogdescription: description
-			};
+		return wpcom.undocumented().settings( siteId )
+			.then( ( { name, description, settings } ) => {
+				const savedSettings = {
+					...settings,
+					blogname: name,
+					blogdescription: description
+				};
 
-			dispatch( receiveSiteSettings( siteId, savedSettings ) );
-			dispatch( {
-				type: SITE_SETTINGS_REQUEST_SUCCESS,
-				siteId
+				dispatch( receiveSiteSettings( siteId, savedSettings ) );
+				dispatch( {
+					type: SITE_SETTINGS_REQUEST_SUCCESS,
+					siteId
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: SITE_SETTINGS_REQUEST_FAILURE,
+					siteId,
+					error
+				} );
 			} );
-		} ).catch( error => {
-			dispatch( {
-				type: SITE_SETTINGS_REQUEST_FAILURE,
-				siteId,
-				error
-			} );
-		} );
 	};
 }
 
@@ -90,24 +88,22 @@ export function saveSiteSettings( siteId, settings ) {
 			siteId
 		} );
 
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().settings( siteId, 'post', settings, ( error, data ) => {
-				error ? reject( error ) : resolve( data );
-			} );
-		} ).then( ( { updated } ) => {
-			dispatch( updateSiteSettings( siteId, updated ) );
-			dispatch( {
-				type: SITE_SETTINGS_SAVE_SUCCESS,
-				siteId
-			} );
-		} ).catch( error => {
-			dispatch( {
-				type: SITE_SETTINGS_SAVE_FAILURE,
-				siteId,
-				error
-			} );
+		return wpcom.undocumented().settings( siteId, 'post', settings )
+			.then( ( { updated } ) => {
+				dispatch( updateSiteSettings( siteId, updated ) );
+				dispatch( {
+					type: SITE_SETTINGS_SAVE_SUCCESS,
+					siteId
+				} );
+			} )
+			.catch( error => {
+				dispatch( {
+					type: SITE_SETTINGS_SAVE_FAILURE,
+					siteId,
+					error
+				} );
 
-			return Promise.reject( error );
-		} );
+				return Promise.reject( error );
+			} );
 	};
 }
