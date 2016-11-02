@@ -10,6 +10,7 @@ import { keyBy, omit, omitBy } from 'lodash';
 import {
 	PUBLICIZE_CONNECTION_CREATE,
 	PUBLICIZE_CONNECTION_DELETE,
+	PUBLICIZE_CONNECTION_UPDATE,
 	PUBLICIZE_CONNECTIONS_REQUEST,
 	PUBLICIZE_CONNECTIONS_RECEIVE,
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
@@ -58,7 +59,8 @@ export const connections = createReducer( {}, {
 		...keyBy( action.data.connections, 'ID' )
 	} ),
 	[ PUBLICIZE_CONNECTION_CREATE ]: ( state, { connection } ) => ( { ...state, [ connection.ID ]: connection } ),
-	[ PUBLICIZE_CONNECTION_DELETE ]: ( state, { ID } ) => omit( state, ID ),
+	[ PUBLICIZE_CONNECTION_DELETE ]: ( state, { connection: { ID } } ) => omit( state, ID ),
+	[ PUBLICIZE_CONNECTION_UPDATE ]: ( state, { connection } ) => ( { ...state, [ connection.ID ]: connection } ),
 }, connectionsSchema );
 
 export default combineReducers( {

@@ -9,7 +9,7 @@ import { expect } from 'chai';
 import {
 	getKeyringConnections,
 	getKeyringConnectionById,
-	getKeyringConnectionByName,
+	getKeyringConnectionsByName,
 	getUserConnections,
 	isKeyringConnectionsFetching
 } from '../selectors';
@@ -70,19 +70,19 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getKeyringConnectionByName()', () => {
+	describe( 'getKeyringConnectionsByName()', () => {
 		it( 'should return null for a connection which has not yet been fetched', () => {
-			const connections = getKeyringConnectionByName( activeState, 'tumblr' );
+			const connections = getKeyringConnectionsByName( activeState, 'tumblr' );
 
-			expect( connections ).to.be.null;
+			expect( connections ).to.be.empty;
 		} );
 
 		it( 'should return the connection object for the ID', () => {
-			const connections = getKeyringConnectionByName( activeState, 'facebook' );
+			const connections = getKeyringConnectionsByName( activeState, 'facebook' );
 
-			expect( connections ).to.eql(
+			expect( connections ).to.eql( [
 				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
-			);
+			] );
 		} );
 	} );
 

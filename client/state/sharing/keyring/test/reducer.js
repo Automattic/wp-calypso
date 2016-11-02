@@ -112,8 +112,10 @@ describe( 'reducers', () => {
 				1: { ID: 1, sites: [ '2916284' ] }
 			} ), {
 				type: PUBLICIZE_CONNECTION_CREATE,
-				ID: 1,
-				siteId: '77203074',
+				connection: {
+					keyring_connection_ID: 1,
+					site_ID: '77203074',
+				},
 			} );
 
 			expect( state ).to.eql( {
@@ -126,8 +128,10 @@ describe( 'reducers', () => {
 				1: { ID: 1, sites: [ '2916284', '77203074' ] }
 			} ), {
 				type: PUBLICIZE_CONNECTION_DELETE,
-				ID: 1,
-				siteId: 77203074,
+				connection: {
+					keyring_connection_ID: 1,
+					site_ID: 77203074,
+				},
 			} );
 
 			expect( state ).to.eql( {
