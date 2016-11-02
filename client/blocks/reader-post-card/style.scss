@@ -194,6 +194,14 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 
 	.reader-post-card__post-details {
 		flex: 1;
+
+		@media #{$reader-post-card-breakpoint-medium} {
+			margin-top: 8px;
+		}
+
+		@media #{$reader-post-card-breakpoint-small} {
+			margin-top: 8px;
+		}
 	}
 
 	@media #{$reader-post-card-breakpoint-large} {
