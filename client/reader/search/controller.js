@@ -52,6 +52,7 @@ export default {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				showBack: false,
+				showPrimaryFollowButtonOnCards: false,
 				onQueryChange: function( newValue ) {
 					let searchUrl = '/read/search';
 					if ( newValue ) {

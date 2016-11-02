@@ -212,6 +212,7 @@ module.exports = {
 					key: 'following',
 					listName: i18n.translate( 'Followed Sites' ),
 					store: followingStore,
+					showPrimaryFollowButtonOnCards: false,
 					trackScrollPage: trackScrollPage.bind(
 						null,
 						basePath,
@@ -339,6 +340,7 @@ module.exports = {
 						analyticsPageTitle,
 						mcKey
 					),
+					showPrimaryFollowButtonOnCards: false,
 					onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey )
 				} ),
 			),

@@ -17,7 +17,7 @@ const ANALYTICS_PAGE_TITLE = 'Reader';
 
 export default {
 	discover( context ) {
-		var blogId = config( 'discover_blog_id' ),
+		const blogId = config( 'discover_blog_id' ),
 			SiteStream = require( 'reader/site-stream' ),
 			basePath = route.sectionify( context.path ),
 			fullAnalyticsPageTitle = ANALYTICS_PAGE_TITLE + ' > Site > ' + blogId,
@@ -44,6 +44,7 @@ export default {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				suppressSiteNameLink: true,
+				showPrimaryFollowButtonOnCards: false,
 				showBack: false
 			} ),
 			document.getElementById( 'primary' ),
