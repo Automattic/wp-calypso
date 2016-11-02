@@ -17,6 +17,7 @@ import { isEnabled } from 'config';
 import { getSiteFrontPageType, getSitePostsPage } from 'state/sites/selectors';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
+import { updateSitesList } from './helpers';
 
 const BlogPostsPage = React.createClass( {
 	propTypes() {
@@ -37,7 +38,7 @@ const BlogPostsPage = React.createClass( {
 
 	setAsHomepage: function() {
 		this.setState( { showPageActions: false } );
-		this.props.setFrontPage( this.props.site.ID, 0 );
+		this.props.setFrontPage( this.props.site.ID, 0, updateSitesList );
 	},
 
 	getSetAsHomepageItem: function() {

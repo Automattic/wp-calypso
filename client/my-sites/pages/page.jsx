@@ -32,7 +32,7 @@ import {
 } from 'state/pages/selectors';
 import { setFrontPage } from 'state/sites/actions';
 import { userCan } from 'lib/site/utils';
-
+import { updateSitesList } from './helpers';
 
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Pages', eventAction );
@@ -109,7 +109,7 @@ const Page = React.createClass( {
 
 	setAsHomepage: function() {
 		this.setState( { showPageActions: false } );
-		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID );
+		this.props.setFrontPage( this.props.page.site_ID, this.props.page.ID, updateSitesList );
 	},
 
 	getSetAsHomepageItem: function() {
