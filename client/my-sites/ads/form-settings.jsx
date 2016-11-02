@@ -24,19 +24,21 @@ var Card = require( 'components/card' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	WordadsActions = require( 'lib/ads/actions' ),
 	SettingsStore = require( 'lib/ads/settings-store' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
 	sites = require( 'lib/sites-list' )();
 
 import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
+import { protectForm } from 'components/hoc/protect-form';
 
 const AdsFormSettings = React.createClass( {
 
 	displayName: 'AdsFormSettings',
 
-	mixins: [ LinkedStateMixin, protectForm.mixin ],
+	mixins: [ LinkedStateMixin ],
 
 	propTypes: {
 		site: React.PropTypes.object.isRequired,
+		markChanged: React.PropTypes.func.isRequired,
+		markSaved: React.PropTypes.func.isRequired
 	},
 
 	componentWillMount: function() {
@@ -112,7 +114,7 @@ const AdsFormSettings = React.createClass( {
 		event.preventDefault();
 		WordadsActions.updateSettings( sites.getSelectedSite(), this.packageState() );
 		this.setState( { notice: null, error: null } );
-		this.markSaved();
+		this.props.markSaved();
 	},
 
 	getSettingsFromStore: function( siteInstance ) {
@@ -380,7 +382,7 @@ const AdsFormSettings = React.createClass( {
 	render: function() {
 		return (
 			<Card className="settings">
-				<form id="wordads-settings" onSubmit={ this.submitForm } onChange={ this.markChanged }>
+				<form id="wordads-settings" onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
 					<FormButtonsBar>
 						<FormButton
 							disabled={ this.state.isLoading || this.state.isSubmitting }>
@@ -406,4 +408,4 @@ const AdsFormSettings = React.createClass( {
 	}
 } );
 
-export default connect( null, { dismissWordAdsSuccess } )( AdsFormSettings );
+export default connect( null, { dismissWordAdsSuccess } )( protectForm( AdsFormSettings ) );

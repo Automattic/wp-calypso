@@ -16,7 +16,7 @@ import LanguageSelector from 'components/forms/language-selector';
 import DisconnectJetpackButton from 'my-sites/plugins/disconnect-jetpack/disconnect-jetpack-button';
 import SectionHeader from 'components/section-header';
 import config from 'config';
-import protectForm from 'lib/mixins/protect-form';
+import { protectForm } from 'components/hoc/protect-form';
 import notices from 'notices';
 import analytics from 'lib/analytics';
 import dirtyLinkedState from 'lib/mixins/dirty-linked-state';
@@ -38,7 +38,7 @@ import { FEATURE_NO_BRANDING } from 'lib/plans/constants';
 const FormGeneral = React.createClass( {
 	displayName: 'SiteSettingsFormGeneral',
 
-	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, formBase ],
 
 	getSettingsFromSite( site ) {
 		site = site || this.props.site;
@@ -449,7 +449,7 @@ const FormGeneral = React.createClass( {
 
 		return (
 			<CompactCard>
-				<form onChange={ this.markChanged }>
+				<form onChange={ this.props.markChanged }>
 					<ul id="settings-jetpack">
 						<li>
 							<FormLabel>
@@ -581,7 +581,7 @@ const FormGeneral = React.createClass( {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<form onChange={ this.markChanged }>
+					<form onChange={ this.props.markChanged }>
 						{ this.siteOptions() }
 						{ this.blogAddress() }
 						{ this.languageOptions() }
@@ -605,7 +605,7 @@ const FormGeneral = React.createClass( {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<form onChange={ this.markChanged }>
+					<form onChange={ this.props.markChanged }>
 						{ this.visibilityOptions() }
 					</form>
 				</Card>
@@ -649,7 +649,7 @@ const FormGeneral = React.createClass( {
 					</Button>
 				</SectionHeader>
 				<Card>
-					<form onChange={ this.markChanged }>
+					<form onChange={ this.props.markChanged }>
 						{ this.relatedPostsOptions() }
 					</form>
 				</Card>
@@ -707,4 +707,4 @@ const FormGeneral = React.createClass( {
 	}
 } );
 
-export default FormGeneral;
+export default protectForm( FormGeneral );

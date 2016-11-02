@@ -18,7 +18,7 @@ import { bindActionCreators } from 'redux';
  */
 import LanguageSelector from 'components/forms/language-selector';
 import MeSidebarNavigation from 'me/sidebar-navigation';
-import protectForm from 'lib/mixins/protect-form';
+import { protectForm } from 'components/hoc/protect-form';
 import formBase from 'me/form-base';
 import config from 'config';
 import Card from 'components/card';
@@ -62,7 +62,6 @@ const Account = React.createClass( {
 	mixins: [
 		formBase,
 		LinkedStateMixin,
-		protectForm.mixin,
 		observe( 'userSettings', 'username' ),
 		eventRecorder
 	],
@@ -214,7 +213,7 @@ const Account = React.createClass( {
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 
 		if ( ! this.props.userSettings.hasUnsavedSettings() ) {
-			this.markSaved();
+			this.props.markSaved();
 		}
 	},
 
@@ -228,7 +227,7 @@ const Account = React.createClass( {
 			if ( error ) {
 				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
 			} else {
-				this.markSaved();
+				this.props.markSaved();
 
 				// We reload here to refresh cookies, user object, and user settings.
 				// @TODO: Do not require reload here.
@@ -580,7 +579,7 @@ const Account = React.createClass( {
 								displayName: user.get().display_name
 							},
 							components: {
-								myProfileLink: <a href="/me" onClick={ this.recordClickEvent( 'My Profile Link in Username Change', this.markSaved ) } />,
+								myProfileLink: <a href="/me" onClick={ this.recordClickEvent( 'My Profile Link in Username Change', this.props.markSaved ) } />,
 								strong: <strong />
 							}
 						}
@@ -621,7 +620,7 @@ const Account = React.createClass( {
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<Card className="account__settings">
-					<form onChange={ this.markChanged } onSubmit={ this.submitForm } >
+					<form onChange={ this.props.markChanged } onSubmit={ this.submitForm } >
 						<FormFieldset>
 							<FormLabel htmlFor="username">{ this.translate( 'Username' ) }</FormLabel>
 								<FormTextInput
@@ -654,4 +653,4 @@ const Account = React.createClass( {
 export default connect(
 	null,
 	dispatch => bindActionCreators( { successNotice, errorNotice }, dispatch )
-)( Account );
+)( protectForm( Account ) );

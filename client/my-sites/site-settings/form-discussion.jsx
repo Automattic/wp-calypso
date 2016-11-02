@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var formBase = require( './form-base' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
 	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
 	FormFieldset = require( 'components/forms/form-fieldset' ),
 	FormLabel = require( 'components/forms/form-label' ),
@@ -21,12 +20,13 @@ var formBase = require( './form-base' ),
 	Card = require( 'components/card' ),
 	Button = require( 'components/button' ),
 	SectionHeader = require( 'components/section-header' );
+import { protectForm } from 'components/hoc/protect-form';
 
-module.exports = React.createClass( {
+module.exports = protectForm( React.createClass( {
 
 	displayName: 'SiteSettingsFormDiscussion',
 
-	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, formBase ],
 
 	discussionAttributes: [
 		'default_pingback_flag',
@@ -428,7 +428,7 @@ module.exports = React.createClass( {
 	render: function() {
 		return (
 
-			<form id="site-settings" onSubmit={ this.handleSubmitForm } onChange={ this.markChanged }>
+			<form id="site-settings" onSubmit={ this.handleSubmitForm } onChange={ this.props.markChanged }>
 				<SectionHeader label={ this.translate( 'Discussion Settings' ) }>
 					<Button
 						primary
@@ -449,4 +449,4 @@ module.exports = React.createClass( {
 			</form>
 		);
 	}
-} );
+} ) );

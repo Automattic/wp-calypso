@@ -25,7 +25,7 @@ import MetaTitleEditor from 'components/seo/meta-title-editor';
 import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import notices from 'notices';
-import protectForm from 'lib/mixins/protect-form';
+import { protectForm } from 'components/hoc/protect-form';
 import FormInput from 'components/forms/form-text-input-with-affixes';
 import FormInputValidation from 'components/forms/form-input-validation';
 import FormFieldset from 'components/forms/form-fieldset';
@@ -105,8 +105,6 @@ function isValidCode( serviceName = '', content = '' ) {
 
 export const SeoForm = React.createClass( {
 	displayName: 'SiteSettingsFormSEO',
-
-	mixins: [ protectForm.mixin ],
 
 	getInitialState() {
 		return {
@@ -305,7 +303,7 @@ export const SeoForm = React.createClass( {
 				this.setState( { isSubmittingForm: false } );
 			} else {
 				notices.success( this.translate( 'Settings saved!' ) );
-				this.markSaved();
+				this.props.markSaved();
 				this.setState( { isSubmittingForm: false } );
 
 				site.fetchSettings();
@@ -514,7 +512,7 @@ export const SeoForm = React.createClass( {
 					</div>
 				}
 
-				<form onChange={ this.markChanged } className="seo-settings__seo-form">
+				<form onChange={ this.props.markChanged } className="seo-settings__seo-form">
 					{ showAdvancedSeo && config.isEnabled( 'manage/advanced-seo/custom-title' ) &&
 						<div>
 							<SectionHeader label={ this.translate( 'Page Title Structure' ) }>
@@ -770,4 +768,4 @@ export default connect(
 	mapDispatchToProps,
 	undefined,
 	{ pure: false } // defaults to true, but this component has internal state
-)( SeoForm );
+)( protectForm( SeoForm ) );

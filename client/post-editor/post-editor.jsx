@@ -22,7 +22,6 @@ const actions = require( 'lib/posts/actions' ),
 	EditorGroundControl = require( 'post-editor/editor-ground-control' ),
 	EditorTitleContainer = require( 'post-editor/editor-title/container' ),
 	EditorPageSlug = require( 'post-editor/editor-page-slug' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
 	TinyMCE = require( 'components/tinymce' ),
 	EditorWordCount = require( 'post-editor/editor-word-count' ),
 	SegmentedControl = require( 'components/segmented-control' ),
@@ -54,6 +53,7 @@ import { getPreference } from 'state/preferences/selectors';
 import QueryPreferences from 'components/data/query-preferences';
 import SidebarFooter from 'layout/sidebar/footer';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { protectForm } from 'components/hoc/protect-form';
 
 const PostEditor = React.createClass( {
 	propTypes: {
@@ -65,13 +65,14 @@ const PostEditor = React.createClass( {
 		sites: React.PropTypes.object,
 		user: React.PropTypes.object,
 		userUtils: React.PropTypes.object,
-		editPath: React.PropTypes.string
+		editPath: React.PropTypes.string,
+		markChanged: React.PropTypes.func.isRequired,
+		markSaved: React.PropTypes.func.isRequired
 	},
 
 	_previewWindow: null,
 
 	mixins: [
-		protectForm.mixin,
 		observe( 'sites' )
 	],
 
@@ -123,9 +124,9 @@ const PostEditor = React.createClass( {
 		}
 
 		if ( nextState.isDirty || nextProps.dirty ) {
-			this.markChanged();
+			this.props.markChanged();
 		} else {
-			this.markSaved();
+			this.props.markSaved();
 		}
 	},
 
@@ -510,7 +511,7 @@ const PostEditor = React.createClass( {
 		} else {
 			stats.recordStat( isPage ? 'page_trashed' : 'post_trashed' );
 			stats.recordEvent( isPage ? 'Clicked Trash Page Button' : 'Clicked Trash Post Button' );
-			this.markSaved();
+			this.props.markSaved();
 			this.onClose();
 		}
 	},
@@ -801,4 +802,4 @@ export default connect(
 	},
 	null,
 	{ pure: false }
-)( PostEditor );
+)( protectForm( PostEditor ) );

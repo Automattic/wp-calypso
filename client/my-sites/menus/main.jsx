@@ -8,8 +8,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var protectForm = require( 'lib/mixins/protect-form' ),
-	observe = require( 'lib/mixins/data-observe' ),
+var observe = require( 'lib/mixins/data-observe' ),
 	notices = require( 'notices' ),
 	LocationPicker = require( './location-picker' ),
 	MenuPicker = require( './menu-picker' ),
@@ -22,14 +21,15 @@ var protectForm = require( 'lib/mixins/protect-form' ),
 	analytics = require( 'lib/analytics' ),
 	EmailVerificationGate = require( 'components/email-verification/email-verification-gate' ),
 	JetpackManageErrorPage = require( 'my-sites/jetpack-manage-error-page' );
+import { protectForm } from 'components/hoc/protect-form';
 
 var Menus = React.createClass( {
 
-	mixins: [ protectForm.mixin, observe( 'site', 'siteMenus', 'itemTypes' ) ],
+	mixins: [ observe( 'site', 'siteMenus', 'itemTypes' ) ],
 
 	componentWillMount: function() {
 		this.props.siteMenus.on( 'change', this.maybeMarkChanged );
-		this.props.siteMenus.on( 'saved', this.markSaved );
+		this.props.siteMenus.on( 'saved', this.props.markSaved );
 		this.props.siteMenus.on( 'error', this.displayError );
 		window.addEventListener( 'unload', this.recordUnloadEvent );
 		this.props.itemTypes.get();
@@ -40,7 +40,7 @@ var Menus = React.createClass( {
 			analytics.ga.recordEvent( 'Menus', 'Navigate Away with Unsaved Changes' );
 		}
 		this.props.siteMenus.off( 'change', this.maybeMarkChanged );
-		this.props.siteMenus.off( 'saved', this.markSaved );
+		this.props.siteMenus.off( 'saved', this.props.markSaved );
 		this.props.siteMenus.off( 'error', this.displayError );
 		window.removeEventListener( 'unload', this.recordUnloadEvent );
 	},
@@ -54,7 +54,7 @@ var Menus = React.createClass( {
 
 	maybeMarkChanged: function() {
 		if ( this.props.siteMenus.get().hasChanged ) {
-			this.markChanged();
+			this.props.markChanged();
 		}
 	},
 
@@ -292,4 +292,4 @@ var Menus = React.createClass( {
 	}
 } );
 
-module.exports = Menus;
+module.exports = protectForm( Menus );

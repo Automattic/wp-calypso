@@ -15,17 +15,16 @@ import FormButtonsBar from 'components/forms/form-buttons-bar';
 import Notice from 'components/notice';
 import { updateListDetails, dismissListNotice, updateTitle, updateDescription } from 'state/reader/lists/actions';
 import { isUpdatedList, hasError } from 'state/reader/lists/selectors';
-import protectForm from 'lib/mixins/protect-form';
+import { protectForm } from 'components/hoc/protect-form';
 
 const ListManagementDescriptionEdit = React.createClass( {
-
-	mixins: [ protectForm.mixin ],
-
 	propTypes: {
 		list: React.PropTypes.shape( {
 			owner: React.PropTypes.string.isRequired,
 			slug: React.PropTypes.string.isRequired
-		} )
+		} ),
+		markChanged: React.PropTypes.func.isRequired,
+		markSaved: React.PropTypes.func.isRequired
 	},
 
 	componentWillReceiveProps( nextProps ) {
@@ -42,7 +41,7 @@ const ListManagementDescriptionEdit = React.createClass( {
 		event.preventDefault();
 		this.handleDismissNotice();
 		this.props.updateListDetails( this.props.list );
-		this.markSaved();
+		this.props.markSaved();
 	},
 
 	handleDismissNotice() {
@@ -50,12 +49,12 @@ const ListManagementDescriptionEdit = React.createClass( {
 	},
 
 	onTitleChange( event ) {
-		this.markChanged();
+		this.props.markChanged();
 		this.props.updateTitle( this.props.list.ID, event.target.value );
 	},
 
 	onDescriptionChange( event ) {
-		this.markChanged();
+		this.props.markChanged();
 		this.props.updateDescription( this.props.list.ID, event.target.value );
 	},
 
@@ -132,4 +131,4 @@ export default connect(
 			updateDescription
 		}, dispatch );
 	}
-)( ListManagementDescriptionEdit );
+)( protectForm( ListManagementDescriptionEdit ) );

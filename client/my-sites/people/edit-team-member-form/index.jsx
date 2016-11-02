@@ -25,7 +25,7 @@ import PeopleProfile from 'my-sites/people/people-profile';
 import UsersStore from 'lib/users/store';
 import UsersActions from 'lib/users/actions';
 import userModule from 'lib/user';
-import protectForm from 'lib/mixins/protect-form';
+import { protectForm } from 'components/hoc/protect-form';
 import DeleteUser from 'my-sites/people/delete-user';
 import PeopleNotices from 'my-sites/people/people-notices';
 import PeopleLog from 'lib/people/log-store';
@@ -235,10 +235,10 @@ const EditUserForm = React.createClass( {
 	}
 } );
 
-module.exports = React.createClass( {
+module.exports = protectForm( React.createClass( {
 	displayName: 'EditTeamMemberForm',
 
-	mixins: [ PureRenderMixin, protectForm.mixin ],
+	mixins: [ PureRenderMixin ],
 
 	getInitialState() {
 		return ( {
@@ -284,7 +284,7 @@ module.exports = React.createClass( {
 		} );
 
 		if ( removeUserSuccessful.length ) {
-			this.markSaved();
+			this.props.markSaved();
 			const redirect = this.props.siteSlug ? '/people/team/' + this.props.siteSlug : '/people/team';
 			page.redirect( redirect );
 		}
@@ -340,8 +340,8 @@ module.exports = React.createClass( {
 						disabled={ this.state.removingUser }
 						siteId={ this.props.siteId }
 						isJetpack={ this.props.isJetpack }
-						markChanged={ this.markChanged }
-						markSaved={ this.markSaved }
+						markChanged={ this.props.markChanged }
+						markSaved={ this.props.markSaved }
 					/>
 				</Card>
 				{
@@ -355,4 +355,4 @@ module.exports = React.createClass( {
 			</Main>
 		);
 	}
-} );
+} ) );

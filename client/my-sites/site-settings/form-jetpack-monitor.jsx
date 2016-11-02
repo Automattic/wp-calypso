@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var config = require( 'config' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
 	Card = require( 'components/card' ),
 	FormCheckbox = require( 'components/forms/form-checkbox' ),
 	FormLabel = require( 'components/forms/form-label' ),
@@ -17,12 +16,13 @@ var config = require( 'config' ),
 	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
 	SectionHeader = require( 'components/section-header' ),
 	Button = require( 'components/button' );
+import { protectForm } from 'components/hoc/protect-form';
 
-module.exports = React.createClass( {
+module.exports = protectForm( React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackMonitor',
 
-	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, formBase ],
 
 	getSettingsFromSite: function( site ) {
 		var settings = {};
@@ -90,7 +90,7 @@ module.exports = React.createClass( {
 				return;
 			}
 			notices.success( this.translate( 'Settings saved successfully!' ) );
-			this.markSaved();
+			this.props.markSaved();
 			this.setState( { submittingForm: false } );
 		} ).bind( this ) );
 	},
@@ -121,7 +121,7 @@ module.exports = React.createClass( {
 	// updates the state when an error occurs
 	handleError: function() {
 		this.setState( { submittingForm: false, togglingModule: false } );
-		this.markSaved();
+		this.props.markSaved();
 	},
 
 	disableForm: function() {
@@ -188,4 +188,4 @@ module.exports = React.createClass( {
 		);
 	}
 
-} );
+} ) );

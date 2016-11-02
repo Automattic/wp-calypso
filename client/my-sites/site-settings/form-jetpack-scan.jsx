@@ -8,7 +8,6 @@ var React = require( 'react' ),
  * Internal dependencies
  */
 var formBase = require( 'my-sites/site-settings/form-base' ),
-	protectForm = require( 'lib/mixins/protect-form' ),
 	Card = require( 'components/card' ),
 	FormSettingExplanation = require( 'components/forms/form-setting-explanation' ),
 	FormInput = require( 'components/forms/form-text-input' ),
@@ -21,12 +20,13 @@ var formBase = require( 'my-sites/site-settings/form-base' ),
 	dirtyLinkedState = require( 'lib/mixins/dirty-linked-state' ),
 	SectionHeader = require( 'components/section-header' ),
 	Button = require( 'components/button' );
+import { protectForm } from 'components/hoc/protect-form';
 
-module.exports = React.createClass( {
+module.exports = protectForm( React.createClass( {
 
 	displayName: 'SiteSettingsFormJetpackScan',
 
-	mixins: [ dirtyLinkedState, protectForm.mixin, formBase ],
+	mixins: [ dirtyLinkedState, formBase ],
 
 	settingsTimer: false,
 
@@ -224,7 +224,7 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<form id="jetpack-scan-settings" onChange={ this.markChanged } onSubmit={ this.onSubmit }>
+			<form id="jetpack-scan-settings" onChange={ this.props.markChanged } onSubmit={ this.onSubmit }>
 				<p>{ this.translate(
 					'Please enter SSH login credentials for your web server. ' +
 					'Jetpack Scan will look for known threats and alert you in case it finds anything.'
@@ -344,7 +344,7 @@ module.exports = React.createClass( {
 			submittingForm: false,
 			togglingModule: false
 		} );
-		this.markSaved();
+		this.props.markSaved();
 		if ( error ) {
 			debug( 'An error has occurred when processing SSH credentials', error );
 			notices.error( this.translate( 'We could not activate Jetpack Scan for your site.' ) );
@@ -530,4 +530,4 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+} ) );
