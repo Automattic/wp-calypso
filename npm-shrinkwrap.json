@@ -531,7 +531,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000570"
+      "version": "1.0.30000572"
     },
     "caseless": {
       "version": "0.11.0"
@@ -1318,7 +1318,7 @@
       }
     },
     "esprima": {
-      "version": "3.1.0"
+      "version": "3.1.1"
     },
     "esrecurse": {
       "version": "4.1.0",
@@ -1584,6 +1584,9 @@
     "get-stdin": {
       "version": "4.0.1"
     },
+    "get-video-id": {
+      "version": "1.1.0"
+    },
     "getpass": {
       "version": "0.1.6",
       "dependencies": {
@@ -1641,7 +1644,7 @@
           "version": "7.1.1"
         },
         "lodash": {
-          "version": "4.16.4"
+          "version": "4.16.5"
         },
         "minimatch": {
           "version": "3.0.3"
