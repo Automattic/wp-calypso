@@ -44,6 +44,30 @@ It can also contain these optional properties (with defaults if not set):
 - `media.mime_type` `{string}`: the MIME of the edited image (e.g. `image/jpeg`), defaults to `image/png`
 - `media.title` `{string}`: the title of the edited image (e.g. `some image file`), defaults to `default`
 
+### `defaultAspectRatio`
+
+<table>
+	<tr><th>Type</th><td>string</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td>'FREE'</td></tr>
+</table>
+
+Default, pre-selected aspect ratio for the image editor. If `allowedAspectRatios` prop is present as well,
+it must include the `defaultAspectRatio`. For the list of all possible aspect ratios, see
+`client/state/ui/editor/image-editor/constants`.
+
+### `allowedAspectRatios`
+
+<table>
+	<tr><th>Type</th><td>array</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td>all possible aspect ratios</td></tr>
+</table>
+
+List allowed aspect ratios user can select when editing an image. If there is only a single specified aspect ratio in
+the `allowedAspectRatios` array, it will be set as `defaultAspectRatio` as well.
+For the list of all possible aspect ratios, see `client/state/ui/editor/image-editor/constants`.
+
 ### `onDone`
 
 <table>
