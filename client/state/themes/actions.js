@@ -60,10 +60,35 @@ export function fetchNextPage( site ) {
 	};
 }
 
-export function query( params ) {
-	return {
-		type: THEMES_QUERY,
-		params: params
+function haveQueryParamsChanged( oldQueryParams, newQueryParams ) {
+	const relevantParams = [ 'search', 'filter', 'tier', 'perPage' ];
+	return relevantParams.filter(
+		param => oldQueryParams[ param ] !== newQueryParams[ param ]
+	).length > 0;
+}
+
+/**
+ * If the passed-in query params differ from the current ones, reset the query
+ * state using the new params and fetch the first page of data
+ *
+ * @return {Object}  Promise representing the first page of data fetched, or an empty object if no fetch is made
+ */
+export function query( { params, site } ) {
+	return ( dispatch, getState ) => {
+		const currentQueryParams = getQueryParams( getState() );
+		if ( ! haveQueryParamsChanged( currentQueryParams, params ) ) {
+			// These are the same query params we've been working with, do nothing
+			return Promise.resolve( { } );
+		}
+
+		// The query params have changed. Reset the query and the list of themes...
+		dispatch( {
+			type: THEMES_QUERY,
+			params: params
+		} );
+
+		// ... and fetch the first page of new data using these new queries
+		return dispatch( fetchNextPage( site ) );
 	};
 }
 

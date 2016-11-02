@@ -21,6 +21,8 @@ import {
 
 const defaultQuery = fromJS( {
 	search: '',
+	filter: '',
+	tier: '',
 	perPage: PER_PAGE,
 	page: 0
 } );
@@ -103,7 +105,7 @@ export default ( state = initialState, action ) => {
 		case DESERIALIZE:
 			return initialState;
 		case SERVER_DESERIALIZE:
-			return query( fromJS( state ) );
+			return fromJS( state ).set( 'list', state.list );
 		case SERIALIZE:
 			return {};
 	}

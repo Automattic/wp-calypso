@@ -11,7 +11,7 @@ import MultiSiteComponent from 'my-sites/themes/multi-site';
 import LoggedOutComponent from './logged-out';
 import trackScrollPage from 'lib/track-scroll-page';
 import { getAnalyticsData } from './helpers';
-import { fetchNextPage, query } from 'state/themes/actions';
+import { query } from 'state/themes/actions';
 import { PER_PAGE } from 'state/themes/themes-list/constants';
 
 function getProps( context ) {
@@ -83,13 +83,16 @@ export function fetchThemeData( context, next ) {
 	}
 
 	const queryParams = {
-		search: context.query.s,
-		tier: context.params.tier,
-		filter: context.params.filter,
-		page: 0,
+		search: context.query.s || '',
+		tier: context.params.tier || '',
+		filter: context.params.filter || '',
 		perPage: PER_PAGE,
 	};
 
-	context.store.dispatch( query( queryParams ) );
-	context.store.dispatch( fetchNextPage( false ) ).then( () => next() );
+	context.store.dispatch(
+		query( {
+			params: queryParams,
+			site: false
+		} )
+	).then( () => next() );
 }
