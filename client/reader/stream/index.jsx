@@ -86,7 +86,7 @@ module.exports = React.createClass( {
 			onShowUpdates: noop,
 			className: '',
 			showDefaultEmptyContentIfMissing: true,
-			showPrimaryFollowButtonOnCards: false,
+			showPrimaryFollowButtonOnCards: true,
 			showMobileBackToSidebar: true
 		};
 	},
