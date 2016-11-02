@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
-import { removeNotice, successNotice, errorNotice } from '../actions';
+import { NOTICE_CLEAR, NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
+import { clearNotices, removeNotice, successNotice, errorNotice } from '../actions';
 
 describe( 'actions', function() {
 	describe( 'removeNotice()', function() {
@@ -40,7 +40,6 @@ describe( 'actions', function() {
 				showDismiss: true
 			} );
 		} );
-
 	} );
 
 	describe( 'errorNotice()', function() {
@@ -52,6 +51,16 @@ describe( 'actions', function() {
 			expect( action.notice ).to.include( {
 				text,
 				status: 'is-error'
+			} );
+		} );
+	} );
+
+	describe( 'clearNotices()', function() {
+		it( 'should return an action object', function() {
+			const action = clearNotices();
+
+			expect( action ).to.eql( {
+				type: NOTICE_CLEAR
 			} );
 		} );
 	} );
