@@ -25,7 +25,8 @@ export default class RefreshPostCard extends React.Component {
 		feed: PropTypes.object,
 		onClick: PropTypes.func,
 		onCommentClick: PropTypes.func,
-		showPrimaryFollowButton: PropTypes.bool
+		showPrimaryFollowButton: PropTypes.bool,
+		originalPost: PropTypes.object // used for Discover only
 	};
 
 	static defaultProps = {
@@ -34,13 +35,10 @@ export default class RefreshPostCard extends React.Component {
 	};
 
 	propagateCardClick = () => {
-		const postToOpen = this.props.post;
-
-		// @todo
-		// For Discover posts (but not site picks), open the original post in full post view
-		// https://github.com/Automattic/wp-calypso/issues/8696
-
-		this.props.onClick( { post: postToOpen, site: this.props.site, feed: this.props.feed } );
+		// If we have an original post available (e.g. for a Discover pick), send the original post
+		// to the full post view
+		const postToOpen = this.props.originalPost ? this.props.originalPost : this.props.post;
+		this.props.onClick( postToOpen );
 	}
 
 	handleCardClick = ( event ) => {
@@ -84,7 +82,7 @@ export default class RefreshPostCard extends React.Component {
 	}
 
 	render() {
-		const { post, site, feed, onCommentClick, showPrimaryFollowButton } = this.props;
+		const { post, originalPost, site, feed, onCommentClick, showPrimaryFollowButton } = this.props;
 		const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
 		const title = truncate( post.title, {
 			length: 140,
@@ -115,7 +113,7 @@ export default class RefreshPostCard extends React.Component {
 						{ ! isPhotoOnly && <div className="reader-post-card__excerpt">{ post.short_excerpt }</div> }
 						{ post &&
 							<ReaderPostActions
-								post={ post }
+								post={ originalPost ? originalPost : post }
 								showVisit={ true }
 								showMenu={ true }
 								onCommentClick={ onCommentClick }
