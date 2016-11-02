@@ -163,12 +163,28 @@ describe( 'reducer', () => {
 				2: { ID: 2, site_ID: 2916284 },
 			} ), {
 				type: PUBLICIZE_CONNECTION_DELETE,
-				ID: 2,
-				siteId: 2916284,
+				connection: {
+					ID: 2,
+					site_ID: 2916284,
+				},
 			} );
 
 			expect( state ).to.eql( {
 				1: { ID: 1, site_ID: 2916284 },
+			} );
+		} );
+
+		it( 'should update existing connections', () => {
+			const newConnection = { ID: 1, site_ID: 2916284 },
+				state = connections( deepFreeze( {
+					1: { ID: 1, site_ID: 77203074 },
+				} ), {
+					type: PUBLICIZE_CONNECTION_CREATE,
+					connection: newConnection,
+				} );
+
+			expect( state ).to.eql( {
+				1: newConnection,
 			} );
 		} );
 
