@@ -13,7 +13,7 @@ import analytics from 'lib/analytics';
 import FormTextInput from 'components/forms/form-text-input';
 import MediaActions from 'lib/media/actions';
 import Gridicon from 'components/gridicon';
-import { updateShortcodes } from 'state/shortcodes/actions';
+import { receiveMediaItems } from 'state/media/actions';
 
 const MediaLibraryUploadUrl = React.createClass( {
 	propTypes: {
@@ -49,7 +49,7 @@ const MediaLibraryUploadUrl = React.createClass( {
 		}
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site.ID, this.state.value, this.props.updateShortcodes );
+		MediaActions.add( this.props.site.ID, this.state.value, this.props.receiveMediaItems );
 
 		this.replaceState( this.getInitialState() );
 		this.props.onAddMedia();
@@ -106,6 +106,6 @@ const MediaLibraryUploadUrl = React.createClass( {
 export default connect(
 	null,
 	{
-		updateShortcodes
+		receiveMediaItems
 	}
 )( MediaLibraryUploadUrl );

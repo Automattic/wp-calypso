@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  */
 import MediaActions from 'lib/media/actions';
 import FormTextInput from 'components/forms/form-text-input';
-import { updateShortcodes } from 'state/shortcodes/actions';
+import { receiveMediaItems } from 'state/media/actions';
 
 const EditorMediaModalGalleryCaption = React.createClass( {
 	propTypes: {
@@ -51,7 +51,7 @@ const EditorMediaModalGalleryCaption = React.createClass( {
 			return;
 		}
 
-		MediaActions.update( siteId, Object.assign( {}, item, { caption } ), false, this.props.updateShortcodes );
+		MediaActions.update( siteId, Object.assign( {}, item, { caption } ), false, this.props.receiveMediaItems );
 	},
 
 	render() {
@@ -70,6 +70,6 @@ const EditorMediaModalGalleryCaption = React.createClass( {
 export default connect(
 	null,
 	{
-		updateShortcodes
+		receiveMediaItems
 	}
 )( EditorMediaModalGalleryCaption );

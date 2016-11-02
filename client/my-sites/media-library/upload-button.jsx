@@ -15,7 +15,7 @@ import MediaActions from 'lib/media/actions';
 import MediaUtils from 'lib/media/utils';
 import uniq from 'lodash/uniq';
 import { VideoPressFileTypes } from 'lib/media/constants';
-import { updateShortcodes } from 'state/shortcodes/actions';
+import { receiveMediaItems } from 'state/media/actions';
 
 const MediaLibraryUploadButton = React.createClass( {
 	propTypes: {
@@ -33,7 +33,7 @@ const MediaLibraryUploadButton = React.createClass( {
 	uploadFiles: function( event ) {
 		if ( event.target.files && this.props.site ) {
 			MediaActions.clearValidationErrors( this.props.site.ID );
-			MediaActions.add( this.props.site.ID, event.target.files, this.props.updateShortcodes );
+			MediaActions.add( this.props.site.ID, event.target.files, this.props.receiveMediaItems );
 		}
 
 		ReactDom.findDOMNode( this.refs.form ).reset();
@@ -79,6 +79,6 @@ const MediaLibraryUploadButton = React.createClass( {
 export default connect(
 	null,
 	{
-		updateShortcodes
+		receiveMediaItems
 	}
 )( MediaLibraryUploadButton );

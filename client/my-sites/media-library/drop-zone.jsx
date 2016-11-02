@@ -12,7 +12,7 @@ import analytics from 'lib/analytics';
 import DropZone from 'components/drop-zone';
 import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
-import { updateShortcodes } from 'state/shortcodes/actions';
+import { receiveMediaItems } from 'state/media/actions';
 
 const MediaLibraryDropZone = React.createClass( {
 	propTypes: {
@@ -36,7 +36,7 @@ const MediaLibraryDropZone = React.createClass( {
 		}
 
 		MediaActions.clearValidationErrors( this.props.site.ID );
-		MediaActions.add( this.props.site.ID, files, this.props.updateShortcodes );
+		MediaActions.add( this.props.site.ID, files, this.props.receiveMediaItems );
 		this.props.onAddMedia();
 
 		if ( this.props.trackStats ) {
@@ -84,6 +84,6 @@ const MediaLibraryDropZone = React.createClass( {
 export default connect(
 	null,
 	{
-		updateShortcodes
+		receiveMediaItems
 	}
 )( MediaLibraryDropZone );

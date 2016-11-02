@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
-	SHORTCODE_MEDIA_UPDATE,
+	MEDIA_ITEMS_RECEIVE,
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
 	SHORTCODE_REQUEST_FAILURE,
@@ -200,7 +200,7 @@ describe( 'reducer', () => {
 			styles: {}
 		};
 		const mediaUpdateAction = {
-			type: SHORTCODE_MEDIA_UPDATE,
+			type: MEDIA_ITEMS_RECEIVE,
 			siteId: 12345678,
 			data: {
 				media: [

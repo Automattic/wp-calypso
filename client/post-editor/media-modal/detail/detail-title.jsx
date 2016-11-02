@@ -13,7 +13,7 @@ import MediaActions from 'lib/media/actions';
 import { userCan } from 'lib/site/utils';
 import TrackInputChanges from 'components/track-input-changes';
 import FormTextInput from 'components/forms/form-text-input';
-import { updateShortcodes } from 'state/shortcodes/actions';
+import { receiveMediaItems } from 'state/media/actions';
 
 const EditorMediaModalDetailTitle = React.createClass( {
 	propTypes: {
@@ -67,7 +67,7 @@ const EditorMediaModalDetailTitle = React.createClass( {
 			MediaActions.update( this.props.site.ID, {
 				ID: this.props.item.ID,
 				title: this.state.title
-			}, false, this.props.updateShortcodes );
+			}, false, this.props.receiveMediaItems );
 		}
 
 		if ( this.isMounted() ) {
@@ -98,6 +98,6 @@ const EditorMediaModalDetailTitle = React.createClass( {
 export default connect(
 	null,
 	{
-		updateShortcodes
+		receiveMediaItems
 	}
 )( EditorMediaModalDetailTitle );

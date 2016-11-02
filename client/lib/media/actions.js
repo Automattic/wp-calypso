@@ -38,10 +38,10 @@ MediaActions.setQuery = function( siteId, query ) {
 };
 
 // TODO: Once this entire module is converted to Redux,
-// `updateShortcodes` shouldn't be passed as an argument anymore,
+// `receiveMediaItems` shouldn't be passed as an argument anymore,
 // but directly imported and dispatch()ed from inside `fetch()`,
 // which needs to be turned into a Redux thunk.
-MediaActions.fetch = function( siteId, itemId, updateShortcodes = null ) {
+MediaActions.fetch = function( siteId, itemId, receiveMediaItems = null ) {
 	var fetchKey = [ siteId, itemId ].join();
 	if ( MediaActions._fetching[ fetchKey ] ) {
 		return;
@@ -63,8 +63,8 @@ MediaActions.fetch = function( siteId, itemId, updateShortcodes = null ) {
 			data: data
 		} );
 
-		if ( updateShortcodes ) {
-			updateShortcodes( siteId, data );
+		if ( receiveMediaItems ) {
+			receiveMediaItems( siteId, data );
 		}
 
 		delete MediaActions._fetching[ fetchKey ];
@@ -72,10 +72,10 @@ MediaActions.fetch = function( siteId, itemId, updateShortcodes = null ) {
 };
 
 // TODO: Once this entire module is converted to Redux,
-// `updateShortcodes` shouldn't be passed as an argument anymore,
+// `receiveMediaItems` shouldn't be passed as an argument anymore,
 // but directly imported and dispatch()ed from inside `fetchNextPage()`,
 // which needs to be turned into a Redux thunk.
-MediaActions.fetchNextPage = function( siteId, updateShortcodes = null ) {
+MediaActions.fetchNextPage = function( siteId, receiveMediaItems = null ) {
 	var query;
 
 	if ( MediaListStore.isFetchingNextPage( siteId ) ) {
@@ -99,8 +99,8 @@ MediaActions.fetchNextPage = function( siteId, updateShortcodes = null ) {
 			query: query
 		} );
 
-		if ( updateShortcodes ) {
-			updateShortcodes( siteId, data );
+		if ( receiveMediaItems ) {
+			receiveMediaItems( siteId, data );
 		}
 	} );
 };
@@ -146,10 +146,10 @@ MediaActions.createTransientMedia = function( id, file, date ) {
 };
 
 // TODO: Once this entire module is converted to Redux,
-// `updateShortcodes` shouldn't be passed as an argument anymore,
+// `receiveMediaItems` shouldn't be passed as an argument anymore,
 // but directly imported and dispatch()ed from inside `add()`,
 // which needs to be turned into a Redux thunk.
-MediaActions.add = function( siteId, files, updateShortcodes = null ) {
+MediaActions.add = function( siteId, files, receiveMediaItems = null ) {
 	if ( files instanceof window.FileList ) {
 		files = [ ...files ];
 	}
@@ -221,8 +221,8 @@ MediaActions.add = function( siteId, files, updateShortcodes = null ) {
 					data: data.media[ 0 ]
 				} ) );
 
-				if ( updateShortcodes ) {
-					updateShortcodes( siteId, data );
+				if ( receiveMediaItems ) {
+					receiveMediaItems( siteId, data );
 				}
 
 				// also refetch media limits
@@ -238,10 +238,10 @@ MediaActions.add = function( siteId, files, updateShortcodes = null ) {
 };
 
 // TODO: Once this entire module is converted to Redux,
-// `updateShortcodes` shouldn't be passed as an argument anymore,
+// `receiveMediaItems` shouldn't be passed as an argument anymore,
 // but directly imported and dispatch()ed from inside `edit()`,
 // which needs to be turned into a Redux thunk.
-MediaActions.edit = function( siteId, item, updateShortcodes = null ) {
+MediaActions.edit = function( siteId, item, receiveMediaItems = null ) {
 	var newItem = assign( {}, MediaStore.get( siteId, item.ID ), item );
 
 	Dispatcher.handleViewAction( {
@@ -250,18 +250,18 @@ MediaActions.edit = function( siteId, item, updateShortcodes = null ) {
 		data: newItem
 	} );
 
-	if ( updateShortcodes ) {
-		updateShortcodes( siteId, newItem );
+	if ( receiveMediaItems ) {
+		receiveMediaItems( siteId, newItem );
 	}
 };
 
 // TODO: Once this entire module is converted to Redux,
-// `updateShortcodes` shouldn't be passed as an argument anymore,
+// `receiveMediaItems` shouldn't be passed as an argument anymore,
 // but directly imported and dispatch()ed from inside `update()`,
 // which needs to be turned into a Redux thunk.
-MediaActions.update = function( siteId, item, editMediaFile = false, updateShortcodes = null ) {
+MediaActions.update = function( siteId, item, editMediaFile = false, receiveMediaItems = null ) {
 	if ( Array.isArray( item ) ) {
-		item.forEach( singleItem => MediaActions.update( siteId, singleItem, editMediaFile, updateShortcodes ) );
+		item.forEach( singleItem => MediaActions.update( siteId, singleItem, editMediaFile, receiveMediaItems ) );
 		return;
 	}
 
@@ -292,8 +292,8 @@ MediaActions.update = function( siteId, item, editMediaFile = false, updateShort
 	debug( 'Updating media for %o by ID %o to %o', siteId, mediaId, updateAction );
 	Dispatcher.handleViewAction( updateAction );
 
-	if ( updateShortcodes ) {
-		updateShortcodes( siteId, updateAction.data );
+	if ( receiveMediaItems ) {
+		receiveMediaItems( siteId, updateAction.data );
 	}
 
 	const method = editMediaFile ? 'edit' : 'update';
@@ -311,8 +311,8 @@ MediaActions.update = function( siteId, item, editMediaFile = false, updateShort
 					: data
 			} );
 
-			if ( updateShortcodes ) {
-				updateShortcodes( siteId, data );
+			if ( receiveMediaItems ) {
+				receiveMediaItems( siteId, data );
 			}
 		} );
 };

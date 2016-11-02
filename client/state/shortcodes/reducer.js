@@ -10,7 +10,7 @@ import { merge, intersection, pickBy } from 'lodash';
 import { shortcodesSchema } from './schema';
 import { createReducer } from 'state/utils';
 import {
-	SHORTCODE_MEDIA_UPDATE,
+	MEDIA_ITEMS_RECEIVE,
 	SHORTCODE_RECEIVE,
 	SHORTCODE_REQUEST,
 	SHORTCODE_REQUEST_FAILURE,
@@ -52,7 +52,7 @@ export const requesting = createReducer( {}, {
  * @return {Object}        Updated state
  */
 export const items = createReducer( {}, {
-	[ SHORTCODE_MEDIA_UPDATE ]: ( state, { siteId, data } ) => {
+	[ MEDIA_ITEMS_RECEIVE ]: ( state, { siteId, data } ) => {
 		if ( ! state.hasOwnProperty( siteId ) ) {
 			return state;
 		}

@@ -12,7 +12,7 @@ import MediaActions from 'lib/media/actions';
 import MediaStore from 'lib/media/store';
 import PostActions from 'lib/posts/actions';
 import EditorFeaturedImagePreview from './preview';
-import { updateShortcodes } from 'state/shortcodes/actions';
+import { receiveMediaItems } from 'state/media/actions';
 
 const EditorFeaturedImagePreviewContainer = React.createClass( {
 	propTypes: {
@@ -55,7 +55,7 @@ const EditorFeaturedImagePreviewContainer = React.createClass( {
 			}
 
 			defer( () => {
-				MediaActions.fetch( this.props.siteId, this.props.itemId, this.props.updateShortcodes );
+				MediaActions.fetch( this.props.siteId, this.props.itemId, this.props.receiveMediaItems );
 			} );
 		} );
 	},
@@ -90,6 +90,6 @@ const EditorFeaturedImagePreviewContainer = React.createClass( {
 export default connect(
 	null,
 	{
-		updateShortcodes
+		receiveMediaItems
 	}
 )( EditorFeaturedImagePreviewContainer );

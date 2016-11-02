@@ -19,7 +19,7 @@ var analytics = require( 'lib/analytics' ),
 	FormTextInput = require( 'components/forms/form-text-input' ),
 	TrackInputChanges = require( 'components/track-input-changes' ),
 	EditorMediaModalFieldset = require( '../fieldset' ),
-	updateShortcodes = require( 'state/shortcodes/actions' ).updateShortcodes;
+	receiveMediaItems = require( 'state/media/actions' ).receiveMediaItems;
 
 const EditorMediaModalDetailFields = React.createClass( {
 	propTypes: {
@@ -73,7 +73,7 @@ const EditorMediaModalDetailFields = React.createClass( {
 		}
 
 		debug( 'Update media to %o', this.state.modifiedItem );
-		MediaActions.update( this.props.site.ID, this.state.modifiedItem, false, this.props.updateShortcodes );
+		MediaActions.update( this.props.site.ID, this.state.modifiedItem, false, this.props.receiveMediaItems );
 	},
 
 	onChange: function( event ) {
@@ -147,6 +147,6 @@ const EditorMediaModalDetailFields = React.createClass( {
 export default connect(
 	null,
 	{
-		updateShortcodes
+		receiveMediaItems
 	}
 )( EditorMediaModalDetailFields );

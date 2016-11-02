@@ -13,7 +13,7 @@ var MediaActions = require( 'lib/media/actions' ),
 	MediaListStore = require( 'lib/media/list-store' ),
 	passToChildren = require( 'lib/react-pass-to-children' ),
 	utils = require( './utils' ),
-	updateShortcodes = require( 'state/shortcodes/actions' ).updateShortcodes;
+	receiveMediaItems = require( 'state/media/actions' ).receiveMediaItems;
 
 function getStateData( siteId ) {
 	return {
@@ -70,7 +70,7 @@ const MediaListData = React.createClass( {
 	},
 
 	fetchData: function() {
-		MediaActions.fetchNextPage( this.props.siteId, this.props.updateShortcodes );
+		MediaActions.fetchNextPage( this.props.siteId, this.props.receiveMediaItems );
 	},
 
 	updateStateData: function() {
@@ -87,6 +87,6 @@ const MediaListData = React.createClass( {
 export default connect(
 	null,
 	{
-		updateShortcodes
+		receiveMediaItems
 	}
 )( MediaListData );
