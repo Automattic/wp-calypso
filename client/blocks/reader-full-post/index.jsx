@@ -261,7 +261,7 @@ export class FullPostView extends React.Component {
 					: <DocumentHead title={ `${ post.title } ‹ ${ siteName } ‹ Reader` } />
 				}
 				{ post && post.feed_ID && <QueryReaderFeed feedId={ +post.feed_ID } /> }
-				{ post && ! post.is_external && post.site_ID && <QueryReaderSite siteId={ post.site_ID } /> }
+				{ post && ! post.is_external && post.site_ID && <QueryReaderSite siteId={ +post.site_ID } /> }
 				<div className="reader-full-post__back-container">
 					<Button className="reader-full-post__back" borderless compact onClick={ this.handleBack }>
 						<Gridicon icon="arrow-left" />
