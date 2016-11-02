@@ -54,15 +54,21 @@
 	max-height: 100%;
 	max-width: 100%;
 	transform: translate( -50%, -50% );
+
+	.spinner__border {
+		fill: transparent;
+	}
 }
 
 .editor-media-modal-detail__preview {
 	&.is-image {
 		width: auto;
 		height: auto;
+		transition: opacity 200ms ease-in-out;
 	}
 
-	&.is-image.is-loading {
+	&.is-uploading,
+	&.is-loading {
 		opacity: 0.5;
 	}
 }
@@ -111,8 +117,8 @@
 		@include breakpoint( ">480px" ) {
 			display: block;
 			position: absolute;
-		    top: 8px;
-		    right: 8px;
+			    top: 8px;
+			    right: 8px;
 
 		    button {
 		    	margin-left: 8px;
