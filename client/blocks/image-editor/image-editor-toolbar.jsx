@@ -3,7 +3,10 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { noop } from 'lodash';
+import {
+	noop,
+	values as objectValues
+} from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -27,13 +30,15 @@ class ImageEditorToolbar extends Component {
 		aspectRatio: PropTypes.string,
 		imageEditorRotateCounterclockwise: PropTypes.func,
 		imageEditorFlip: PropTypes.func,
-		setImageEditorAspectRatio: PropTypes.func
+		setImageEditorAspectRatio: PropTypes.func,
+		allowedAspectRatios: PropTypes.array
 	};
 
 	static defaultProps = {
 		imageEditorRotateCounterclockwise: noop,
 		imageEditorFlip: noop,
-		setImageEditorAspectRatio: noop
+		setImageEditorAspectRatio: noop,
+		allowedAspectRatios: objectValues( AspectRatios )
 	};
 
 	constructor( props ) {
@@ -82,14 +87,15 @@ class ImageEditorToolbar extends Component {
 			showAspectPopover
 		} = this.state;
 
-		if ( ! popoverContext ) {
-			return;
-		}
-
 		const {
 			translate,
-			aspectRatio
+			aspectRatio,
+			allowedAspectRatios
 		} = this.props;
+
+		if ( ! popoverContext || allowedAspectRatios.length === 1 ) {
+			return;
+		}
 
 		const items = [
 			{
@@ -126,23 +132,28 @@ class ImageEditorToolbar extends Component {
 				className="image-editor__toolbar-popover popover is-dialog-visible"
 			>
 				{ items.map( item => (
-					<PopoverMenuItem
-						key={ 'image-editor-toolbar-aspect-' + item.action }
-						action={ item.action }>
-						{
-							aspectRatio === item.action
-								? <Gridicon icon="checkmark" size={ 12 } />
-								: false
-						}
-						{ item.label }
-					</PopoverMenuItem>
+					allowedAspectRatios.indexOf( item.action ) !== -1
+						? <PopoverMenuItem
+							key={ 'image-editor-toolbar-aspect-' + item.action }
+							action={ item.action }>
+							{
+								aspectRatio === item.action
+									? <Gridicon icon="checkmark" size={ 12 } />
+									: false
+							}
+							{ item.label }
+						</PopoverMenuItem>
+						: null
 				) ) }
 			</PopoverMenu>
 		);
 	}
 
 	renderButtons() {
-		const { translate } = this.props;
+		const {
+			translate,
+			allowedAspectRatios
+		} = this.props;
 
 		const buttons = [
 			{
@@ -151,13 +162,15 @@ class ImageEditorToolbar extends Component {
 				text: translate( 'Rotate' ),
 				onClick: this.rotate
 			},
-			{
-				tool: 'aspect',
-				ref: this.setAspectMenuContext,
-				icon: 'layout',
-				text: translate( 'Aspect' ),
-				onClick: this.onAspectOpen
-			},
+			allowedAspectRatios.length === 1
+				? null
+				: {
+					tool: 'aspect',
+					ref: this.setAspectMenuContext,
+					icon: 'layout',
+					text: translate( 'Aspect' ),
+					onClick: this.onAspectOpen
+				},
 			{
 				tool: 'flip-vertical',
 				icon: 'flip-vertical',
@@ -166,17 +179,21 @@ class ImageEditorToolbar extends Component {
 			}
 		];
 
-		return buttons.map( button => (
-			<button
-				key={ 'image-editor-toolbar-' + button.tool }
-				ref={ button.ref }
-				className={ 'image-editor__toolbar-button' }
-				onClick={ button.onClick }
-			>
-				<Gridicon icon={ button.icon } />
-				<span>{ button.text }</span>
-			</button>
-		) );
+		return buttons.map( button =>
+			button
+				? (
+					<button
+						key={ 'image-editor-toolbar-' + button.tool }
+						ref={ button.ref }
+						className={ 'image-editor__toolbar-button' }
+						onClick={ button.onClick }
+					>
+						<Gridicon icon={ button.icon } />
+						<span>{ button.text }</span>
+					</button>
+				)
+				: null
+		);
 	}
 
 	render() {

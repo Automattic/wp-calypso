@@ -80,6 +80,10 @@ class ImageEditorCrop extends Component {
 		};
 	}
 
+	componentWillMount() {
+		this.updateCrop( this.getDefaultState( this.props ), this.props, this.applyCrop );
+	}
+
 	componentWillReceiveProps( newProps ) {
 		const {
 			bounds,
@@ -94,12 +98,18 @@ class ImageEditorCrop extends Component {
 			const newBottom = newTop + newProps.crop.heightRatio * imageHeight;
 			const newRight = newLeft + newProps.crop.widthRatio * imageWidth;
 
-			this.setState( {
+			const newBounds = {
 				top: newTop,
 				left: newLeft,
 				bottom: newBottom,
 				right: newRight
-			} );
+			};
+
+			this.setState( newBounds );
+
+			// We need to update crop even after clicking on the "Reset" button so let's
+			// always update it on receiving new props (without calling the applyCrop callback).
+			this.updateCrop( newBounds );
 		}
 
 		if ( aspectRatio !== newProps.aspectRatio ) {
