@@ -9,6 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import analytics from 'lib/analytics';
+import config from 'config';
 import { renderWithReduxStore } from 'lib/react-helpers';
 import route from 'lib/route';
 import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
@@ -31,6 +32,12 @@ export default {
 		// if site loaded, but user cannot manage site, redirect
 		if ( site && ! utils.userCan( 'manage_options', site ) ) {
 			page.redirect( '/stats' );
+			return;
+		}
+
+		// redirect SEO to general if SEO tools are not enabled for Jetpack sites
+		if ( site.jetpack && ! config.isEnabled( 'jetpack/seo-tools' ) ) {
+			page.redirect( '/settings/general/' + site.slug );
 			return;
 		}
 

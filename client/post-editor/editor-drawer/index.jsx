@@ -231,7 +231,15 @@ const EditorDrawer = React.createClass( {
 	},
 
 	renderSeo: function() {
-		if ( ! config.isEnabled( 'manage/advanced-seo' ) || ! this.props.site ) {
+		if ( ! this.props.site ) {
+			return;
+		}
+
+		if ( ! this.props.site.jetpack && ! config.isEnabled( 'manage/advanced-seo' ) ) {
+			return;
+		}
+
+		if ( this.props.site.jetpack && ! config.isEnabled( 'jetpack/seo-tools' ) ) {
 			return;
 		}
 
