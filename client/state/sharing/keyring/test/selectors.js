@@ -11,7 +11,6 @@ import {
 	getKeyringConnectionById,
 	getKeyringConnectionsByName,
 	getUserConnections,
-	getAvailableExternalConnections,
 	isKeyringConnectionsFetching
 } from '../selectors';
 
@@ -125,22 +124,6 @@ describe( 'selectors', () => {
 			expect( connections ).to.eql( [
 				{ ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1, additional_external_users: [] },
 				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
-			] );
-		} );
-	} );
-
-	describe( 'getAvailableExternalConnections()', () => {
-		it( 'should return an empty array for a site which has not yet been fetched', () => {
-			const connections = getAvailableExternalConnections( activeState, 'path' );
-
-			expect( connections ).to.eql( [] );
-		} );
-
-		it( 'should return an array of connection objects that are available to any user', () => {
-			const connections = getAvailableExternalConnections( activeState, 'twitter' );
-
-			expect( connections ).to.eql( [
-				{ isConnected: false, keyringConnectionId: 1, name: undefined, picture: undefined },
 			] );
 		} );
 	} );
