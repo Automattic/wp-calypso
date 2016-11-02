@@ -30,33 +30,33 @@ describe( 'reducer', () => {
 
 	describe( 'requesting()', () => {
 		it( 'should default to false', () => {
-			const isRequesting = requesting( undefined, {} );
+			const isRequestingHappinessEngineers = requesting( undefined, {} );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequestingHappinessEngineers ).to.be.false;
 		} );
 
 		it( 'should return true if request is in progress', () => {
-			const isRequesting = requesting( undefined, {
+			const isRequestingHappinessEngineers = requesting( undefined, {
 				type: HAPPINESS_ENGINEERS_FETCH
 			} );
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequestingHappinessEngineers ).to.be.true;
 		} );
 
 		it( 'should return false if request was successful', () => {
-			const isRequesting = requesting( undefined, {
+			const isRequestingHappinessEngineers = requesting( undefined, {
 				type: HAPPINESS_ENGINEERS_FETCH_SUCCESS
 			} );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequestingHappinessEngineers ).to.be.false;
 		} );
 
 		it( 'should return false if request failed', () => {
-			const isRequesting = requesting( undefined, {
+			const isRequestingHappinessEngineers = requesting( undefined, {
 				type: HAPPINESS_ENGINEERS_FETCH_FAILURE
 			} );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequestingHappinessEngineers ).to.be.false;
 		} );
 	} );
 

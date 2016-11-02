@@ -7,14 +7,14 @@ import assert from 'assert';
  * Internal dependencies
  */
 import {
-	isRequesting,
+	isRequestingHappinessEngineers,
 	getHappinessEngineers
 } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( 'isRequesting()', () => {
+	describe( 'isRequestingHappinessEngineers()', () => {
 		it( 'should return the value', () => {
-			assert( isRequesting( { happinessEngineers: { requesting: false } } ) === false );
+			assert( isRequestingHappinessEngineers( { happinessEngineers: { requesting: false } } ) === false );
 		} );
 	} );
 

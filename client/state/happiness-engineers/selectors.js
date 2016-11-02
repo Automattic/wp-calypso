@@ -1,29 +1,17 @@
 /**
- * Internal dependencies
- */
-import createSelector from 'lib/create-selector';
-
-function getHappinessEngineersState( state ) {
-	return state.happinessEngineers;
-}
-
-function createHappinessEngineersSelector( fn ) {
-	return createSelector( fn, ( state ) => [ getHappinessEngineersState( state ) ] );
-}
-
-/**
  * Returns happiness engineers
- * @returns [] happiness engineers
+ * @param {{}} state - Previous state
+ * @returns {Array} happiness engineers
  */
-export const getHappinessEngineers = createHappinessEngineersSelector(
-	( state ) => getHappinessEngineersState( state ).items
-);
+export function getHappinessEngineers( state ) {
+	return state.happinessEngineers.items;
+}
 
 /**
  * Returns whether we have loaded some data. Always false when fetching data
  * @param {{}} state - Previous state
  * @returns {boolean} - Whether we loaded some data or not
  */
-export function isRequesting( state ) {
-	return getHappinessEngineersState( state ).requesting;
+export function isRequestingHappinessEngineers( state ) {
+	return state.happinessEngineers.requesting;
 }

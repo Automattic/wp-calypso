@@ -7,12 +7,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequesting } from 'state/happiness-engineers/selectors';
+import { isRequestingHappinessEngineers } from 'state/happiness-engineers/selectors';
 import { fetchHappinessEngineers } from 'state/happiness-engineers/actions';
 
 class QueryHappinessEngineers extends Component {
 	componentWillMount() {
-		if ( ! this.props.isRequesting ) {
+		if ( ! this.props.isRequestingHappinessEngineers ) {
 			this.props.fetchHappinessEngineers();
 		}
 	}
@@ -23,7 +23,7 @@ class QueryHappinessEngineers extends Component {
 }
 
 QueryHappinessEngineers.propTypes = {
-	isRequesting: PropTypes.bool,
+	isRequestingHappinessEngineers: PropTypes.bool,
 	fetchHappinessEngineers: PropTypes.func
 };
 
@@ -34,7 +34,7 @@ QueryHappinessEngineers.defaultProps = {
 export default connect(
 	state => {
 		return {
-			isRequesting: isRequesting( state )
+			isRequestingHappinessEngineers: isRequestingHappinessEngineers( state )
 		};
 	},
 	{ fetchHappinessEngineers }

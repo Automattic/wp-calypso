@@ -10,7 +10,6 @@ import { expect } from 'chai';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	HAPPINESS_ENGINEERS_FETCH,
-
 	HAPPINESS_ENGINEERS_RECEIVE,
 	HAPPINESS_ENGINEERS_FETCH_FAILURE,
 	HAPPINESS_ENGINEERS_FETCH_SUCCESS
@@ -90,7 +89,6 @@ describe( 'actions', () => {
 				return fetchHappinessEngineers()( spy ).then( () => {
 					expect( spy ).to.have.been.calledWith( {
 						type: HAPPINESS_ENGINEERS_FETCH_FAILURE,
-
 						error: match( { error: 'Server Error' } )
 					} );
 				} );
