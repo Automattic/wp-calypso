@@ -26,7 +26,8 @@ import analytics from 'lib/analytics';
 import config from 'config';
 import route from 'lib/route';
 import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 
 /**
  * Module variables
@@ -176,12 +177,14 @@ export default {
 	plansLanding( context ) {
 		const Plans = require( './plans' ),
 			CheckoutData = require( 'components/data/checkout' ),
-			site = getSelectedSite( context.store.getState() ),
+			state = context.store.getState(),
+			siteId = getSelectedSiteId( state ),
+			isJetpack = isJetpackSite( state, siteId ),
 			analyticsPageTitle = 'Plans',
 			basePath = route.sectionify( context.path ),
 			analyticsBasePath = basePath + '/:site';
 
-		if ( ! site || ! site.jetpack || ! config.isEnabled( 'jetpack/connect' ) ) {
+		if ( ! config.isEnabled( 'jetpack/connect' ) || ! isJetpack ) {
 			return;
 		}
 
