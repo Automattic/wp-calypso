@@ -2,7 +2,6 @@
  * External dependencies
  */
 var React = require( 'react' ),
-	endsWith = require( 'lodash/endsWith' ),
 	{ connect } = require( 'react-redux' );
 
 /**
@@ -154,15 +153,11 @@ var MapDomainStep = React.createClass( {
 	},
 
 	handleFormSubmit: function( event ) {
-		var domain = getFixedDomainSearch( this.state.searchQuery );
+		const domain = getFixedDomainSearch( this.state.searchQuery );
 
 		event.preventDefault();
 		this.recordEvent( 'formSubmit', this.state.searchQuery );
 		this.setState( { suggestion: null, notice: null } );
-
-		if ( endsWith( domain, '.blog' ) ) {
-			return this.handleValidationErrorMessage( domain, { code: 'dotblog_domain' } );
-		}
 
 		canMap( domain, error => {
 			if ( error ) {
@@ -184,24 +179,10 @@ var MapDomainStep = React.createClass( {
 	},
 
 	handleValidationErrorMessage: function( domain, error ) {
-		let message,
-			severity = 'error';
+		let message;
+		const severity = 'error';
 
 		switch ( error.code ) {
-			case 'dotblog_domain':
-				message = this.translate(
-					'.blog domains are not available yet. {{a}}Sign up{{/a}} to get updates on the launch.', {
-						components: {
-							a: <a
-								target="_blank"
-								rel="noopener noreferrer"
-								href={ `https://dotblog.wordpress.com/
-								?email=${ this.props.currentUser && encodeURIComponent( this.props.currentUser.email ) || '' }
-								&domain=${ domain }` }/>
-						}
-					} );
-				severity = 'info';
-				break;
 			case 'not_mappable':
 				message = this.translate( 'Sorry, %(domain)s has not been registered yet therefore cannot be mapped.', {
 					args: { domain: domain }
