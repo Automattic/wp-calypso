@@ -441,7 +441,8 @@ a.sidebar__button {
 }
 
 .layout.is-section-help .sidebar .sidebar__footer-help {
-	color: $gray-dark;
+	background-color: $sidebar-selected-color;
+	color: $white;
 }
 
 .sidebar__region {
