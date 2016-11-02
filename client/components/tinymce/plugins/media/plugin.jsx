@@ -178,6 +178,8 @@ function mediaButton( editor ) {
 			const media = MediaStore.get( selectedSite.ID, current.media.ID );
 			if ( current.media.transient && ( ! media || ! media.transient ) ) {
 				transients--;
+			} else if ( ! media.transient ) {
+				return;
 			}
 
 			let markup;
