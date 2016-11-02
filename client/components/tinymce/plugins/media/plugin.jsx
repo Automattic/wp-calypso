@@ -490,6 +490,16 @@ function mediaButton( editor ) {
 		}
 	} );
 
+	// Compute the ratio of size compared to baseSize
+	// This ratio is used to order image sizes
+	const computeRatio = ( size, baseSize ) => {
+		const { width, height } = { ...baseSize, ...size };
+		return Math.min(
+			( width / baseSize.width ) || Infinity,
+			( height / baseSize.height ) || Infinity
+		);
+	};
+
 	function resize( increment ) {
 		const node = editor.selection.getStart(),
 			parsed = deserialize( node ),
@@ -511,22 +521,14 @@ function mediaButton( editor ) {
 		delete media.caption;
 		media = assign( {}, parsed.media, media );
 
-		// Compute a ratio used to order media sizes
-		const computeRatio = ( { width = media.width, height = media.height } ) => {
-			return Math.min(
-				( width / media.width ) || Infinity,
-				( height / media.height ) || Infinity
-			);
-		};
-
 		// Determine the next usable size
 		// In order to get the next usable size, we compute the ratio of all the default sizes and compare them to the current ratio
 		// If we are increasing the size, we select the default size that has the closest greater ratio
 		// While decreasing we take the closest lower ratio
 		const sizeRatios = SIZE_ORDER
-			.map( size => computeRatio( MediaUtils.getThumbnailSizeDimensions( size, selectedSite ) ) );
+			.map( size => computeRatio( MediaUtils.getThumbnailSizeDimensions( size, selectedSite ), media ) );
 		const sizeIndex = SIZE_ORDER.indexOf( parsed.appearance.size );
-		const displayedRatio = sizeIndex !== -1 ? sizeRatios[ sizeIndex ] : computeRatio( parsed.media );
+		const displayedRatio = sizeIndex !== -1 ? sizeRatios[ sizeIndex ] : computeRatio( parsed.media, media );
 		const isMatchingSize = ( currentSize, index ) => {
 			// Exclude all the sizes that are greater than the full size of the media
 			if ( sizeRatios[ index ] > 1 ) {
@@ -571,21 +573,22 @@ function mediaButton( editor ) {
 		}
 
 		const parsed = deserialize( event.element );
+		const media = assign( { width: Infinity, height: Infinity }, MediaStore.get( selectedSite.ID, parsed.media.ID ) );
+		const currentRatio = computeRatio( parsed.media, media );
 
 		// Hide sizing toggles if the image is transient
 		const isHidden = !! parsed.media.transient;
 		this.classes.toggle( 'hidden', isHidden );
 
 		if ( increase ) {
-			// Disable increase button when we select full-size
-			const media = assign( { width: Infinity, height: Infinity }, MediaStore.get( selectedSite.ID, parsed.media.ID ) );
-			const isDisabled = ( parsed.media.width || Infinity ) >= media.width;
+			// Disable increase button when the ratio is bigger or equal 1
+			const isDisabled = currentRatio >= 1;
 			this.disabled( isDisabled );
 		} else {
-			// Disable decrease button when smaller than the smallest thumbnail size
-			// and the full size is bigger than the current size
-			const thumb = MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], selectedSite );
-			const isDisabled = ( parsed.media.width || Infinity ) <= thumb.width;
+			// Disable decrease button when it's ratio is smaller than the thumbnail's ratio
+			// Or when the current selected size is the thumbnail size
+			const thumbRatio = computeRatio( MediaUtils.getThumbnailSizeDimensions( SIZE_ORDER[ 0 ], selectedSite ), media );
+			const isDisabled = currentRatio <= thumbRatio || SIZE_ORDER[ 0 ] === parsed.appearance.size;
 			this.disabled( isDisabled );
 		}
 	}
