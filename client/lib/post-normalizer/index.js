@@ -110,8 +110,8 @@ normalizePost.withContentDOM = function( transforms ) {
 };
 
 import removeStyles from './rule-content-remove-styles';
-import safeContentImages from './rule-content-safe-images';
-import makeEmbedsSecure from './rule-content-make-embeds-secure';
+import makeImagesSafe from './rule-content-make-images-safe';
+import makeEmbedsSafe from './rule-content-make-embeds-safe';
 import wordCountAndReadingTime from './rule-content-word-count';
 import detectEmbeds from './rule-content-detect-embeds';
 import detectMedia from './rule-content-detect-media';
@@ -120,8 +120,8 @@ import detectPolls from './rule-content-detect-polls';
 
 normalizePost.content = {
 	removeStyles,
-	safeContentImages,
-	makeEmbedsSecure,
+	makeImagesSafe,
+	makeEmbedsSafe,
 	wordCountAndReadingTime,
 	detectEmbeds,
 	detectMedia,
