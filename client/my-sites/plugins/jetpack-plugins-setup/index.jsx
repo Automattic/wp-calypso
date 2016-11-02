@@ -24,13 +24,12 @@ import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
 import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
 import analytics from 'lib/analytics';
 import JetpackSite from 'lib/site/jetpack';
-import sitesFactory from 'lib/sites-list';
-const sites = sitesFactory();
 import support from 'lib/url/support';
 import utils from 'lib/site/utils';
 
 // Redux actions & selectors
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite, isRequestingSites } from 'state/sites/selectors';
 import { getPlugin } from 'state/plugins/wporg/selectors';
 import { fetchPluginData } from 'state/plugins/wporg/actions';
 import { requestSites } from 'state/sites/actions';
@@ -428,7 +427,7 @@ const PlansSetup = React.createClass( {
 	render() {
 		const site = this.props.selectedSite;
 
-		if ( ! site && sites.fetching ) {
+		if ( ! site && this.props.isRequestingSites ) {
 			return this.renderPlaceholder();
 		}
 
@@ -441,7 +440,7 @@ const PlansSetup = React.createClass( {
 		}
 
 		if ( site &&
-			! sites.fetching &&
+			! this.props.isRequestingSites &&
 			! this.props.isRequesting &&
 			! PluginsStore.isFetchingSite( site ) &&
 			! this.props.plugins.length ) {
@@ -493,7 +492,7 @@ const PlansSetup = React.createClass( {
 export default connect(
 	( state, ownProps ) => {
 		const siteId = getSelectedSiteId( state );
-		const site = sites.getSelectedSite();
+		const site = getSelectedSite( state );
 		const whitelist = ownProps.whitelist || false;
 
 		return {
@@ -505,7 +504,8 @@ export default connect(
 			plugins: getPluginsForSite( state, siteId, whitelist ),
 			activePlugin: getActivePlugin( state, siteId, whitelist ),
 			nextPlugin: getNextPlugin( state, siteId, whitelist ),
-			selectedSite: site && site.jetpack ? JetpackSite( site ) : site,
+			selectedSite: site && isJetpackSite( state, siteId ) ? JetpackSite( site ) : site,
+			isRequestingSites: isRequestingSites( state ),
 			siteId
 		};
 	},
