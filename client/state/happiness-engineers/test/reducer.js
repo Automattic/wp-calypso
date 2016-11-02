@@ -61,10 +61,10 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
-		it( 'should default to an empty object', () => {
+		it( 'should default to an empty array', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.eql( [] );
 		} );
 
 		it( 'should save the received happiness engineers', () => {
@@ -76,10 +76,7 @@ describe( 'reducer', () => {
 				]
 			} );
 
-			expect( state ).to.eql( {
-				'test 1': { avatar_URL: 'test 1' },
-				'test 2': { avatar_URL: 'test 2' }
-			} );
+			expect( state ).to.eql( [ 'test 1', 'test 2' ] );
 		} );
 
 		it( 'should rewrite old state with received', () => {
@@ -95,31 +92,21 @@ describe( 'reducer', () => {
 				]
 			} );
 
-			expect( state ).to.eql( {
-				'test 3': { avatar_URL: 'test 3' }
-			} );
+			expect( state ).to.eql( [ 'test 3' ] );
 		} );
 
 		it( 'should persist state', () => {
-			const original = deepFreeze( {
-				'test 3': { avatar_URL: 'test 3' }
-			} );
+			const original = deepFreeze( [ 'test 3' ] );
 			const state = items( original, { type: SERIALIZE } );
 
-			expect( state ).to.eql( {
-				'test 3': { avatar_URL: 'test 3' }
-			} );
+			expect( state ).to.eql( [ 'test 3' ] );
 		} );
 
 		it( 'should load valid persisted state', () => {
-			const original = deepFreeze( {
-				'test 3': { avatar_URL: 'test 3' }
-			} );
+			const original = deepFreeze( [ 'test 3' ] );
 			const state = items( original, { type: DESERIALIZE } );
 
-			expect( state ).to.eql( {
-				'test 3': { avatar_URL: 'test 3' }
-			} );
+			expect( state ).to.eql( [ 'test 3' ] );
 		} );
 
 		it( 'should not load invalid persisted state', () => {
@@ -128,7 +115,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 
-			expect( state ).to.eql( {} );
+			expect( state ).to.eql( [] );
 		} );
 	} );
 } );

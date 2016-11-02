@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { combineReducers } from 'redux';
-import { keyBy } from 'lodash';
+import { map } from 'lodash';
 
 /**
  * Internal dependencies
@@ -37,11 +37,11 @@ export const requesting = createReducer( false, {
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Action object
- * @return {Object}        Updated state
+ * @return {Array}         Updated state
  */
-export const items = createReducer( {}, {
+export const items = createReducer( [], {
 	[ HAPPINESS_ENGINEERS_RECEIVE ]: ( state, { happinessEngineers } ) => {
-		return { ...keyBy( happinessEngineers, 'avatar_URL' ) };
+		return map( happinessEngineers, 'avatar_URL' );
 	}
 }, itemsSchema );
 

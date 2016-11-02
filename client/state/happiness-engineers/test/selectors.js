@@ -14,17 +14,14 @@ import {
 describe( 'selectors', () => {
 	describe( 'isRequesting()', () => {
 		it( 'should return the value', () => {
-			assert( isRequesting( { happinessengineers: { requesting: false } } ) === false );
+			assert( isRequesting( { happinessEngineers: { requesting: false } } ) === false );
 		} );
 	} );
 
 	const getState = () => (
 		{
-			happinessengineers: {
-				items: {
-					'test 1': { avatar_URL: 'test 1' },
-					'test 2': { avatar_URL: 'test 2' }
-				}
+			happinessEngineers: {
+				items: [ 'test 1', 'test 2' ]
 			}
 		}
 	);
@@ -33,10 +30,7 @@ describe( 'selectors', () => {
 		it( 'should return happiness engineers', () => {
 			assert.deepEqual(
 				getHappinessEngineers( getState() ),
-				{
-					'test 1': { avatar_URL: 'test 1' },
-					'test 2': { avatar_URL: 'test 2' }
-				}
+				[ 'test 1', 'test 2' ]
 			);
 		} );
 	} );

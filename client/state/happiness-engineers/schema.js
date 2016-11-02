@@ -1,13 +1,4 @@
 export const itemsSchema = {
-	type: 'object',
+	type: 'array',
 	additionalProperties: false,
-	patternProperties: {
-		'^.+$': {
-			type: 'object',
-			required: [ 'avatar_URL' ],
-			properties: {
-				avatar_URL: { type: 'string' }
-			}
-		}
-	}
 };

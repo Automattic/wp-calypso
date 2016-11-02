@@ -4,7 +4,7 @@
 import createSelector from 'lib/create-selector';
 
 function getHappinessEngineersState( state ) {
-	return state.happinessengineers;
+	return state.happinessEngineers;
 }
 
 function createHappinessEngineersSelector( fn ) {
@@ -13,7 +13,7 @@ function createHappinessEngineersSelector( fn ) {
 
 /**
  * Returns happiness engineers
- * @returns {[]} happiness engineers
+ * @returns [] happiness engineers
  */
 export const getHappinessEngineers = createHappinessEngineersSelector(
 	( state ) => getHappinessEngineersState( state ).items

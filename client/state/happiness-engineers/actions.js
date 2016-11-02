@@ -19,7 +19,7 @@ import {
 export function receiveHappinessEngineers( happinessEngineers ) {
 	return {
 		type: HAPPINESS_ENGINEERS_RECEIVE,
-		happinessEngineers: happinessEngineers
+		happinessEngineers
 	};
 }
 
