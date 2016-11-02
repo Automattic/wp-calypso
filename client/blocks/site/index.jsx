@@ -202,7 +202,10 @@ export default React.createClass( {
 							href={ this.props.homeLink ? site.URL : this.props.href }
 							data-tip-target={ this.props.tipTarget }
 							target={ this.props.externalLink && ! this.state.showMoreActions && '_blank' }
-							title={ this.translate( 'Preview your site' ) }
+							title={ this.props.homeLink
+								? this.translate( 'Preview this site' )
+								: this.translate( 'Open this site' )
+							}
 							onTouchTap={ this.onSelect }
 							onClick={ this.props.onClick }
 							onMouseEnter={ this.onMouseEnter }
