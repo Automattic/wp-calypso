@@ -42,8 +42,8 @@ describe( 'index', function() {
 			normalizer.withContentDOM(),
 			normalizer.withContentDOM( [
 				normalizer.content.removeStyles,
-				normalizer.content.safeContentImages( 300 ),
-				normalizer.content.makeEmbedsSecure,
+				normalizer.content.makeImagesSafe( 300 ),
+				normalizer.content.makeEmbedsSafe,
 				normalizer.content.detectEmbeds,
 				normalizer.content.wordCountAndReadingTime
 			] ),
@@ -387,13 +387,13 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.safeContentImages', function() {
+	describe( 'content.makeImagesSafe', function() {
 		it( 'can route all images through wp-safe-image if no size specified', function( done ) {
 			normalizer(
 				{
 					content: '<img src="http://example.com/example.jpg"><img src="http://example.com/example2.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE"><img src="http://example.com/example2.jpg-SAFE">' );
 					done( err );
 				}
@@ -406,7 +406,7 @@ describe( 'index', function() {
 					URL: 'http://example.wordpress.com/?post=123',
 					content: '<img src="/example.jpg"><img src="example2.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.wordpress.com/example.jpg-SAFE"><img src="http://example.wordpress.com/example2.jpg-SAFE">' );
 					done( err );
 				}
@@ -419,7 +419,7 @@ describe( 'index', function() {
 					URL: 'http://example.wordpress.com/2015/01/my-post/',
 					content: '<img src="../../../example.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.wordpress.com/example.jpg-SAFE">' );
 					done( err );
 				}
@@ -431,7 +431,7 @@ describe( 'index', function() {
 				{
 					content: '<img src="http://example.com/example.jpg"><img src="http://example.com/example2.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages( 400 ) ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE?w=400&amp;quality=80&amp;strip=info"><img src="http://example.com/example2.jpg-SAFE?w=400&amp;quality=80&amp;strip=info">' );
 					done( err );
 				}
@@ -444,7 +444,7 @@ describe( 'index', function() {
 				{
 					content: '<img width="700" height="700" src="http://example.com/example.jpg?nope">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages( 400 ) ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '' );
 					done( err );
 				}
@@ -457,7 +457,7 @@ describe( 'index', function() {
 				{
 					content: '<img onload="hi" onerror="there" src="http://example.com/example.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
@@ -469,7 +469,7 @@ describe( 'index', function() {
 				{
 					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100.jpg 100w, http://example.com/example-600.jpg 600w">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE" srcset="http://example.com/example-100.jpg-SAFE 100w, http://example.com/example-600.jpg-SAFE 600w">' );
 					done( err );
 				}
@@ -481,7 +481,7 @@ describe( 'index', function() {
 				{
 					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100-and-a-half.jpg 100.5w, http://example.com/example-600.jpg 600w">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.safeContentImages() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
@@ -712,13 +712,13 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.makeEmbedsSecure', function() {
+	describe( 'content.makeEmbedsSafe', function() {
 		it( 'makes iframes safe, rewriting to ssl and sandboxing', function( done ) {
 			normalizer(
 				{
 					content: '<iframe src="http://example.com"></iframe>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSecure ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
 					assert.strictEqual( normalized.content, '<iframe src="https://example.com/" sandbox=""></iframe>' );
 					done( err );
 				}
@@ -730,7 +730,7 @@ describe( 'index', function() {
 				{
 					content: '<iframe src=""></iframe>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSecure ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
 					assert.strictEqual( normalized.content, '' );
 					done( err );
 				}
@@ -743,7 +743,7 @@ describe( 'index', function() {
 					is_external: true,
 					content: '<object data="data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="></object>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSecure ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
 					assert.strictEqual( normalized.content, '' );
 					done( err );
 				}
@@ -756,7 +756,7 @@ describe( 'index', function() {
 					is_external: true,
 					content: '<embed src="data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSecure ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe ] ) ], function( err, normalized ) {
 					assert.strictEqual( normalized.content, '' );
 					done( err );
 				}

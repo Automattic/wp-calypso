@@ -15,7 +15,7 @@ function noopFactory() {
 
 fakeNormalize.content = {};
 
-[ 'safeContentImages' ].forEach( function( prop ) {
+[ 'makeImagesSafe' ].forEach( function( prop ) {
 	fakeNormalize.content[ prop ] = noopFactory;
 } );
 

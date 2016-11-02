@@ -137,7 +137,7 @@ var utils = {
 				postNormalizer.firstPassCanonicalImage,
 				postNormalizer.withContentDOM( [
 					postNormalizer.content.removeStyles,
-					postNormalizer.content.safeContentImages( imageWidth )
+					postNormalizer.content.makeImagesSafe( imageWidth )
 				] )
 			],
 			callback

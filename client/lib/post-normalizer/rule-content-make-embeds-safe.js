@@ -8,7 +8,7 @@ import startsWith from 'lodash/startsWith';
  * Internal Dependencies
  */
 
-export default function makeEmbedsSecure( post, dom ) {
+export default function makeEmbedsSafe( post, dom ) {
 	if ( ! dom ) {
 		throw new Error( 'this transform must be used as part of withContentDOM' );
 	}
