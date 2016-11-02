@@ -4,6 +4,7 @@
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
+import { shuffle } from 'lodash';
 
 /**
  * Internal dependencies
@@ -27,14 +28,14 @@ function HelpHappinessEngineers( props ) {
 				}
 				) }
 			<div className="help-happiness-engineers__tray">
-				{ props.happinessEngineers.map(
+				{ shuffle( props.happinessEngineers ).map(
 					happinessEngineer => <Gravatar
 						key={ happinessEngineer }
 						user={ { avatar_URL: happinessEngineer } }
 						size={ 42 } /> )
 				}
 			</div>
-			<QueryHappinessEngineers />
+			{ props.happinessEngineers.length === 0 && <QueryHappinessEngineers /> }
 		</div>
 	);
 }
