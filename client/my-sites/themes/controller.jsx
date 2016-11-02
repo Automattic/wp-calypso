@@ -109,10 +109,11 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 	context.store.dispatch( incrementThemesPage( false ) );
 
 	if ( shouldUseCache ) {
-		const cachedAction = themesQueryCache.get( cacheKey );
-		if ( cachedAction ) {
+		const cachedData = themesQueryCache.get( cacheKey );
+		if ( cachedData ) {
 			debug( `found theme data in cache key=${ cacheKey }` );
-			context.store.dispatch( cachedAction );
+			context.store.dispatch( cachedData.action );
+			context.renderCacheKey = context.path + cachedData.timestamp;
 			return next();
 		}
 	}
@@ -121,7 +122,7 @@ export function fetchThemeData( context, next, shouldUseCache = false ) {
 		.then( action => {
 			if ( shouldUseCache ) {
 				const timestamp = Date.now();
-				themesQueryCache.set( cacheKey, action );
+				themesQueryCache.set( cacheKey, { action, timestamp } );
 				context.renderCacheKey = context.path + timestamp;
 				debug( `caching theme data key=${ cacheKey }` );
 			}
