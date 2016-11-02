@@ -242,10 +242,10 @@ const InvitePeople = React.createClass( {
 
 		analytics.tracks.recordEvent( 'calypso_invite_people_form_submit', {
 			role,
-			numberInvitees: usernamesOrEmails.length,
-			numberUsernameInvitees: groupedInvitees.username ? groupedInvitees.username.length : 0,
-			numberEmailInvitees: groupedInvitees.email ? groupedInvitees.email.length : 0,
-			hasCustomMessage: 'string' === typeof message && !! message.length,
+			number_invitees: usernamesOrEmails.length,
+			number_username_invitees: groupedInvitees.username ? groupedInvitees.username.length : 0,
+			number_email_invitees: groupedInvitees.email ? groupedInvitees.email.length : 0,
+			has_custom_message: 'string' === typeof message && !! message.length,
 		} );
 	},
 
