@@ -1,57 +1,61 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	PureRenderMixin = require( 'react-pure-render/mixin' );
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
+import React from 'react';
+import PureRenderMixin from 'react-pure-render/mixin';
 
 /**
  * Internal dependencies
  */
-var HappinessEngineersStore = require( 'lib/happiness-engineers/store' ),
-	HappinessEngineersActions = require( 'lib/happiness-engineers/actions' ),
-	FormSectionHeading = require( 'components/forms/form-section-heading' ),
-	Gravatar = require( 'components/gravatar' );
+import FormSectionHeading from 'components/forms/form-section-heading';
+import Gravatar from 'components/gravatar';
+import QueryHappinessEngineers from 'components/data/query-happiness-engineers';
+import { getHappinessEngineers } from 'state/happiness-engineers/selectors';
 
-module.exports = React.createClass( {
-	displayName: 'HelpHappinessEngineers',
-
-	mixins: [ PureRenderMixin ],
-
-	componentDidMount: function() {
-		HappinessEngineersStore.on( 'change', this.refreshHappinessEngineers );
-		HappinessEngineersActions.fetch();
-	},
-
-	componentWillUnmount: function() {
-		HappinessEngineersStore.removeListener( 'change', this.refreshHappinessEngineers );
-	},
-
-	getInitialState: function() {
-		return {
-			happinessEngineers: HappinessEngineersStore.getHappinessEngineers()
-		};
-	},
-
-	refreshHappinessEngineers: function() {
-		this.setState( { happinessEngineers: HappinessEngineersStore.getHappinessEngineers() } );
-	},
-
-	render: function() {
-		if ( this.state.happinessEngineers.length === 0 ) {
-			return null;
-		}
+class HelpHappinessEngineers extends React.Component {
+	render() {
 		return (
 			<div className="help-happiness-engineers">
-				{ this.translate( '{{headline}}We care about your happiness!{{/headline}}{{p}}They don\'t call us Happiness Engineers for nothing. If you need help, we\'re here for you!{{/p}}', {
-					components: {
-						headline: <FormSectionHeading />,
-						p: <p className="help-happiness-engineers__description" />
+				<QueryHappinessEngineers />
+				{ this.props.translate( '{{headline}}We care about your happiness!{{/headline}}' +
+								'{{p}}They don\'t call us Happiness Engineers for nothing. ' +
+								'If you need help, we\'re here for you!{{/p}}',
+					{
+						components: {
+							headline: <FormSectionHeading />,
+							p: <p className="help-happiness-engineers__description" />
+						}
 					}
-				} ) }
+					) }
 				<div className="help-happiness-engineers__tray">
-					{ this.state.happinessEngineers.map( happinessEngineer => <Gravatar key={ happinessEngineer.avatar_URL } user={ { avatar_URL: happinessEngineer.avatar_URL } } size={ 42 } /> ) }
+					{ this.props.happinessEngineers.map(
+						happinessEngineer => <Gravatar
+							key={ happinessEngineer }
+							user={ { avatar_URL: happinessEngineer } }
+							size={ 42 } /> )
+					}
 				</div>
 			</div>
 		);
 	}
-} );
+}
+
+HelpHappinessEngineers.mixins = [ PureRenderMixin ];
+
+HelpHappinessEngineers.propTypes = {
+	happinessEngineers: React.PropTypes.array
+};
+
+HelpHappinessEngineers.defaultProps = {
+	happinessEngineers: []
+};
+
+export default connect(
+	( state ) => {
+		return {
+			happinessEngineers: getHappinessEngineers( state )
+		};
+	}
+)( localize( HelpHappinessEngineers ) );
