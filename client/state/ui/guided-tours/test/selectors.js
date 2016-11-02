@@ -86,6 +86,20 @@ describe( 'selectors', () => {
 			path: '/test',
 		};
 
+		const mainTourStarted = {
+			type: 'GUIDED_TOUR_UPDATE',
+			tour: 'main',
+		};
+
+		const mainTourAborted = {
+			type: 'GUIDED_TOUR_UPDATE',
+			shouldShow: false,
+			shouldReallyShow: false,
+			tour: 'main',
+			stepName: 'init',
+			finished: false,
+		};
+
 		const mainTourSeen = {
 			tourName: 'main',
 			timestamp: 1337,
@@ -125,6 +139,17 @@ describe( 'selectors', () => {
 			const tour = findEligibleTour( state );
 
 			expect( tour ).to.equal( undefined );
+		} );
+		it( 'should see to it that an ongoing tour is selected', () => {
+			const havingStartedTour = makeState( {
+				actionLog: [ mainTourStarted, navigateToThemes ],
+			} );
+			const havingQuitTour = makeState( {
+				actionLog: [ mainTourStarted, mainTourAborted, navigateToThemes ],
+			} );
+
+			expect( findEligibleTour( havingStartedTour ) ).to.equal( 'main' );
+			expect( findEligibleTour( havingQuitTour ) ).to.equal( 'themes' );
 		} );
 		it( 'should favor a tour launched via query arguments', () => {
 			const state = makeState( {
