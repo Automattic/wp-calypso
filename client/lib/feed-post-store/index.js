@@ -121,6 +121,8 @@ FeedPostStore.dispatchToken = Dispatcher.register( function( payload ) {
 	}
 } );
 
+FeedPostStore.setMaxListeners( 100 );
+
 function _setFeedPost( id, post ) {
 	if ( ! id ) {
 		return false;
