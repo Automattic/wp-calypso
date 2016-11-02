@@ -9,6 +9,8 @@ import { expect } from 'chai';
 import {
 	getConnectionsBySiteId,
 	getSiteUserConnections,
+	getSiteUserConnectionsForService,
+	getRemovableConnections,
 	hasFetchedConnections,
 	isFetchingConnections
 } from '../selectors';
@@ -82,6 +84,110 @@ describe( '#getSiteUserConnections()', () => {
 		expect( connections ).to.eql( [
 			{ ID: 1, site_ID: 2916284, shared: true },
 			{ ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695 }
+		] );
+	} );
+} );
+
+describe( '#getSiteUserConnectionsForService()', () => {
+	it( 'should return an empty array for a site which has not yet been fetched', () => {
+		const connections = getSiteUserConnectionsForService( {
+			sharing: {
+				publicize: {
+					connectionsBySiteId: {},
+					connections: {}
+				}
+			}
+		}, 2916284, 26957695 );
+
+		expect( connections ).to.eql( [] );
+	} );
+
+	it( 'should return an array of connection objects received for the site that are available to the current user', () => {
+		const connections = getSiteUserConnectionsForService( {
+			sharing: {
+				publicize: {
+					connectionsBySiteId: {
+						2916284: [ 1, 2, 3 ]
+					},
+					connections: {
+						1: { ID: 1, site_ID: 2916284, shared: true, service: 'twitter' },
+						2: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695, service: 'twitter' },
+						3: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 18342963, service: 'facebook' }
+					}
+				}
+			}
+		}, 2916284, 26957695, 'twitter' );
+
+		expect( connections ).to.eql( [
+			{ ID: 1, site_ID: 2916284, shared: true, service: 'twitter' },
+			{ ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695, service: 'twitter' }
+		] );
+	} );
+} );
+
+describe( '#getRemovableConnections()', () => {
+	const state = {
+		currentUser: {
+			id: 26957695,
+			capabilities: {
+				2916284: {
+					edit_others_posts: true,
+				},
+			},
+		},
+		sharing: {
+			publicize: {
+				connectionsBySiteId: {
+					2916284: [ 1, 2, 3 ]
+				},
+				connections: {
+					1: { ID: 1, site_ID: 2916284, shared: true, service: 'twitter', user_ID: 0 },
+					2: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695, service: 'twitter', user_ID: 26957695 },
+					3: { ID: 2, site_ID: 2916284, keyring_connection_user_ID: 18342963, service: 'facebook' }
+				},
+			},
+		},
+		sites: {
+			items: {
+				2916284: {
+					ID: 2916284,
+					capabilities: {
+						edit_others_posts: true,
+					},
+					name: 'WordPress.com Example Blog',
+					options: {
+						unmapped_url: 'https://example.wordpress.com'
+					},
+					URL: 'https://example.com',
+				}
+			}
+		},
+		ui: {
+			selectedSiteId: 2916284,
+		},
+	};
+
+	it( 'should return an empty array for a site which has not yet been fetched', () => {
+		const connections = getRemovableConnections( state, 'path' );
+
+		expect( connections ).to.eql( [] );
+	} );
+
+	it( 'should return an array of connection objects that are removable by the current user', () => {
+		const connections = getRemovableConnections( state, 'twitter' );
+
+		expect( connections ).to.eql( [
+			{ ID: 1, site_ID: 2916284, shared: true, service: 'twitter', user_ID: 0 },
+			{ ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695, service: 'twitter', user_ID: 26957695 },
+		] );
+	} );
+
+	it( 'should return an array of connection objects for the current user that are removable by that same user', () => {
+		state.currentUser.capabilities[ 2916284 ].edit_others_posts = false;
+		const connections = getRemovableConnections( state, 'twitter' );
+
+		expect( connections ).to.eql( [
+			{ ID: 2, site_ID: 2916284, keyring_connection_user_ID: 26957695, service: 'twitter', user_ID: 26957695 },
 		] );
 	} );
 } );

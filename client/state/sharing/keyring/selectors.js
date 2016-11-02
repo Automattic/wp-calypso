@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, find, values } from 'lodash';
+import { filter, values } from 'lodash';
 
 /**
  * Returns an array of keyring connection objects.
@@ -25,14 +25,14 @@ export function getKeyringConnectionById( state, keyringConnectionId ) {
 }
 
 /**
- * Returns a keyring connection object for a specified service.
+ * Returns an array of keyring connection objects for a specified service.
  *
  * @param  {Object} state   Global state tree
  * @param  {String} service Service slug.
- * @return {?Object}        Keyring connection, if known.
+ * @return {Array}         Keyring connections, if known.
  */
-export function getKeyringConnectionByName( state, service ) {
-	return find( state.sharing.keyring.items, { service } ) || null;
+export function getKeyringConnectionsByName( state, service ) {
+	return filter( getKeyringConnections( state ), { service } );
 }
 
 /**

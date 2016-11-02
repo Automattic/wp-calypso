@@ -28,12 +28,20 @@ export const isFetching = createReducer( false, {
 // Stores the list of available keyring connections
 export const items = createReducer( {}, {
 	[ KEYRING_CONNECTIONS_RECEIVE ]: ( state, { connections } ) => ( { ...keyBy( connections, 'ID' ) } ),
-	[ PUBLICIZE_CONNECTION_CREATE ]: ( state, { ID, siteId } ) => ( { ...state, [ ID ]: {
-		...state[ ID ], sites: [ ...state[ ID ].sites, siteId.toString() ]
-	} } ),
-	[ PUBLICIZE_CONNECTION_DELETE ]: ( state, { ID, siteId } ) => ( { ...state, [ ID ]: {
-		...state[ ID ], sites: without( state[ ID ].sites, siteId.toString() )
-	} } ),
+	[ PUBLICIZE_CONNECTION_CREATE ]: ( state, { connection } ) => {
+		const { keyring_connection_ID: id, site_ID: siteId } = connection;
+		const keyringConnection = state[ id ];
+		const sites = [ ...keyringConnection.sites, siteId.toString() ];
+
+		return { ...state, [ id ]: { ...keyringConnection, sites } };
+	},
+	[ PUBLICIZE_CONNECTION_DELETE ]: ( state, { connection } ) => {
+		const { keyring_connection_ID: id, site_ID: siteId } = connection;
+		const keyringConnection = state[ id ];
+		const sites = without( keyringConnection.sites, siteId.toString() );
+
+		return { ...state, [ id ]: { ...keyringConnection, sites } };
+	},
 }, itemSchema );
 
 export default combineReducers( {
