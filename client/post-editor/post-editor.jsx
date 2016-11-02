@@ -9,6 +9,7 @@ const ReactDom = require( 'react-dom' ),
 	throttle = require( 'lodash/throttle' );
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -55,7 +56,7 @@ import SidebarFooter from 'layout/sidebar/footer';
 import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import { protectForm } from 'components/hoc/protect-form';
 
-const PostEditor = React.createClass( {
+export const PostEditor = React.createClass( {
 	propTypes: {
 		siteId: React.PropTypes.number,
 		preferences: React.PropTypes.object,
@@ -67,7 +68,8 @@ const PostEditor = React.createClass( {
 		userUtils: React.PropTypes.object,
 		editPath: React.PropTypes.string,
 		markChanged: React.PropTypes.func.isRequired,
-		markSaved: React.PropTypes.func.isRequired
+		markSaved: React.PropTypes.func.isRequired,
+		translate: React.PropTypes.func.isRequired
 	},
 
 	_previewWindow: null,
@@ -231,13 +233,13 @@ const PostEditor = React.createClass( {
 									<SegmentedControlItem
 										selected={ mode === 'tinymce' }
 										onClick={ this.switchEditorVisualMode }
-										title={ this.translate( 'Edit with a visual editor' ) }>
-										{ this.translate( 'Visual', { context: 'Editor writing mode' } ) }
+										title={ this.props.translate( 'Edit with a visual editor' ) }>
+										{ this.props.translate( 'Visual', { context: 'Editor writing mode' } ) }
 									</SegmentedControlItem>
 									<SegmentedControlItem
 										selected={ mode === 'html' }
 										onClick={ this.switchEditorHtmlMode }
-										title={ this.translate( 'Edit the raw HTML code' ) }>
+										title={ this.props.translate( 'Edit the raw HTML code' ) }>
 										HTML
 									</SegmentedControlItem>
 								</SegmentedControl>
@@ -802,4 +804,4 @@ export default connect(
 	},
 	null,
 	{ pure: false }
-)( protectForm( PostEditor ) );
+)( protectForm( localize( PostEditor ) ) );
