@@ -30,9 +30,9 @@ describe( 'selectors', () => {
 		sharing: {
 			keyring: {
 				items: {
-					1: { ID: 1, service: 'twitter', sites: [ '2916284' ], additional_external_users: [] },
-					2: { ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1, additional_external_users: [] },
-					3: { ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
+					1: { ID: 1, service: 'twitter', sites: [ '2916284' ] },
+					2: { ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1 },
+					3: { ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
 				},
 				isFetching: true,
 			},
@@ -62,9 +62,9 @@ describe( 'selectors', () => {
 			const connections = getKeyringConnections( activeState );
 
 			expect( connections ).to.eql( [
-				{ ID: 1, service: 'twitter', sites: [ '2916284' ], additional_external_users: [] },
-				{ ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1, additional_external_users: [] },
-				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
+				{ ID: 1, service: 'twitter', sites: [ '2916284' ] },
+				{ ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1 },
+				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
 			] );
 		} );
 	} );
@@ -80,7 +80,7 @@ describe( 'selectors', () => {
 			const connections = getKeyringConnectionById( activeState, 1 );
 
 			expect( connections ).to.eql(
-				{ ID: 1, service: 'twitter', sites: [ '2916284' ], additional_external_users: [] },
+				{ ID: 1, service: 'twitter', sites: [ '2916284' ] },
 			);
 		} );
 	} );
@@ -96,7 +96,7 @@ describe( 'selectors', () => {
 			const connections = getKeyringConnectionsByName( activeState, 'facebook' );
 
 			expect( connections ).to.eql( [
-				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
+				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
 			] );
 		} );
 	} );
@@ -114,7 +114,7 @@ describe( 'selectors', () => {
 			const connections = getUserConnections( activeState, 3 );
 
 			expect( connections ).to.eql( [
-				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
+				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
 			] );
 		} );
 
@@ -122,8 +122,8 @@ describe( 'selectors', () => {
 			const connections = getUserConnections( activeState, 1 );
 
 			expect( connections ).to.eql( [
-				{ ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1, additional_external_users: [] },
-				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true, additional_external_users: [] },
+				{ ID: 2, service: 'insta', sites: [ '77203074' ], keyring_connection_user_ID: 1 },
+				{ ID: 3, service: 'facebook', sites: [ '2916284', '77203074' ], shared: true },
 			] );
 		} );
 	} );
