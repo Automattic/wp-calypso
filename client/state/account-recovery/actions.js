@@ -11,6 +11,10 @@ import {
 	ACCOUNT_RECOVERY_PHONE_UPDATE,
 	ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
 	ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+
+	ACCOUNT_RECOVERY_PHONE_DELETE,
+	ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS,
+	ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
 } from 'state/action-types';
 
 export const accountRecoveryFetchSuccess = ( accountRecoverySettings ) => {
@@ -66,3 +70,29 @@ export const updateAccountRecoveryPhone = ( countryCode, number ) => ( dispatch 
 	} );
 };
 
+export const deleteAccountRecoveryPhoneSuccess = () => {
+	return {
+		type: ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS,
+	};
+};
+
+export const deleteAccountRecoveryPhoneFailed = ( error ) => {
+	return {
+		type: ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
+		error,
+	};
+};
+
+export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
+	return new Promise( ( resolve, reject ) => {
+		dispatch( { type: ACCOUNT_RECOVERY_PHONE_DELETE } );
+
+		wpcom.undocumented().me().deleteAccountRecoveryPhone( ( error ) => {
+			error ? reject( error ) : resolve();
+		} );
+	} ).then( () => {
+		dispatch( deleteAccountRecoveryPhoneSuccess() );
+	} ).catch( ( error ) => {
+		dispatch( deleteAccountRecoveryPhoneFailed( error ) );
+	} );
+};
