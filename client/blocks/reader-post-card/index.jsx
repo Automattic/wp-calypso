@@ -17,6 +17,7 @@ import * as stats from 'reader/stats';
 import PostByline from './byline';
 import FeaturedAsset from './featured-asset';
 import FollowButton from 'reader/follow-button';
+import PostGallery from './gallery';
 
 export default class RefreshPostCard extends React.Component {
 	static propTypes = {
@@ -83,17 +84,19 @@ export default class RefreshPostCard extends React.Component {
 
 	render() {
 		const { post, originalPost, site, feed, onCommentClick, showPrimaryFollowButton } = this.props;
-		const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
+		const isPhotoOnly = !! ( post.display_type & DisplayTypes.PHOTO_ONLY );
+		const isGallery = !! ( post.display_type & DisplayTypes.GALLERY );
 		const title = truncate( post.title, {
 			length: 140,
 			separator: /,? +/
 		} );
 		const featuredAsset = ( <FeaturedAsset post={ post } /> );
-
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! featuredAsset,
-			'is-photo': isPhotoOnly
+			'is-photo': isPhotoOnly,
+			'is-gallery': isGallery
 		} );
+		const showExcerpt = ! isPhotoOnly;
 
 		let followUrl;
 		if ( showPrimaryFollowButton ) {
@@ -105,12 +108,13 @@ export default class RefreshPostCard extends React.Component {
 				<PostByline post={ post } site={ site } feed={ feed } />
 				{ showPrimaryFollowButton && <FollowButton siteUrl={ followUrl } /> }
 				<div className="reader-post-card__post">
-					{ featuredAsset }
+					{ ! isGallery && featuredAsset }
+					{ isGallery && <PostGallery post={ post } /> }
 					<div className="reader-post-card__post-details">
 						<h1 className="reader-post-card__title">
 							<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>
 						</h1>
-						{ ! isPhotoOnly && <div className="reader-post-card__excerpt">{ post.short_excerpt }</div> }
+						{ showExcerpt && <div className="reader-post-card__excerpt">{ post.short_excerpt }</div> }
 						{ post &&
 							<ReaderPostActions
 								post={ originalPost ? originalPost : post }
