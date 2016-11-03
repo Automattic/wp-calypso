@@ -205,7 +205,8 @@ export const PLANS_LIST = {
 			FEATURE_STANDARD_SECURITY_TOOLS,
 			FEATURE_SITE_STATS,
 			FEATURE_TRAFFIC_TOOLS,
-			FEATURE_MANAGE
+			FEATURE_MANAGE,
+			FEATURE_ADVANCED_SEO
 		],
 		getBillingTimeFrame: () => i18n.translate( 'for life' )
 	},
@@ -226,7 +227,8 @@ export const PLANS_LIST = {
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_EMAIL_LIVE_CHAT_SUPPORT
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_ADVANCED_SEO
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed yearly' )
 	},
@@ -246,7 +248,8 @@ export const PLANS_LIST = {
 			FEATURE_AUTOMATED_RESTORES,
 			FEATURE_SPAM_AKISMET_PLUS,
 			FEATURE_EASY_SITE_MIGRATION,
-			FEATURE_EMAIL_LIVE_CHAT_SUPPORT
+			FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+			FEATURE_ADVANCED_SEO
 		],
 		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' )
 	},

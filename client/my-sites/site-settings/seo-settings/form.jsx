@@ -43,8 +43,7 @@ import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
 import {
 	isBusiness,
-	isEnterprise,
-	isJetpackBusiness
+	isEnterprise
 } from 'lib/products-values';
 import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 
@@ -59,7 +58,7 @@ const serviceIds = {
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
 
-const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
+const hasBusinessPlan = overSome( isBusiness, isEnterprise );
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
@@ -397,10 +396,6 @@ export const SeoForm = React.createClass( {
 			return includes( invalidCodes, service );
 		};
 
-		const nudgeTitle = jetpack
-			? this.translate( 'Enable Advanced SEO Features by Upgrading to Jetpack Pro' )
-			: this.translate( 'Enable Advanced SEO Features by Upgrading to the Business Plan' );
-
 		const submitButton = (
 			<Button
 				compact={ true }
@@ -443,7 +438,7 @@ export const SeoForm = React.createClass( {
 						status="is-warning"
 						showDismiss={ false }
 						text={ this.translate(
-							'Advanced SEO requires a newer version of Jetpack.'
+							'SEO Tools require a newer version of Jetpack.'
 						) }
 					>
 						<NoticeAction href={ jetpackUpdateUrl }>
@@ -455,8 +450,8 @@ export const SeoForm = React.createClass( {
 				{ showUpgradeNudge &&
 					<UpgradeNudge
 						feature={ FEATURE_ADVANCED_SEO }
-						title={ this.translate( 'Enable SEO Tools by Upgrading to the Business Plan' ) }
-						message={ this.translate( `Adds tools to optimize your site for search engines and social media sharing.` ) }
+						title={ this.translate( 'Enable SEO Tools Features by Upgrading to the Business Plan' ) }
+						message={ this.translate( 'Adds tools to optimize your site for search engines and social media sharing.' ) }
 						event={ 'calypso_seo_settings_upgrade_nudge' }
 						jetpack={ jetpack }
 					/>
@@ -693,16 +688,19 @@ export const SeoForm = React.createClass( {
 
 const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
-	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
+	// SEO Tools are available with Business plan on WordPress.com, and with Free plan on Jetpack sites
+	const isAdvancedSeoEligible = site && ( site.plan && hasBusinessPlan( site.plan ) || site.jetpack );
+	const seoFeatureEnabled = site && ( ! site.jetpack && config.isEnabled( 'manage/advanced-seo' ) ||
+										site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) );
 	const siteId = get( site, 'ID', 0 );
 
 	return {
 		selectedSite: getSelectedSite( state ),
 		storedTitleFormats: getSeoTitleFormatsForSite( getSelectedSite( state ) ),
-		showAdvancedSeo: isAdvancedSeoEligible && config.isEnabled( 'manage/advanced-seo' ),
+		showAdvancedSeo: isAdvancedSeoEligible && seoFeatureEnabled,
 		showWebsiteMeta: !! get( site, 'options.advanced_seo_front_page_description', '' ),
 		showUpgradeNudge: config.isEnabled( 'manage/advanced-seo' ),
-		jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.3.1' ), // TODO: Update to SEO Jetpack version
+		jetpackVersionSupportsSeo: isJetpackMinimumVersion( state, siteId, '4.4.0' ),
 	};
 };
 
