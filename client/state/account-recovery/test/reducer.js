@@ -12,8 +12,6 @@ import {
 } from 'state/action-types';
 
 import dummyData from './test-data';
-
-
 import reducer from '../reducer';
 
 describe( 'account-recovery reducer', () => {
