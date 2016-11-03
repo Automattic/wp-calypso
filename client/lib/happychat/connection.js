@@ -1,4 +1,4 @@
-/*
+/**
  * External dependencies
  */
 import IO from 'socket.io-client';
@@ -20,17 +20,20 @@ class Connection extends EventEmitter {
 				const socket = new IO( url );
 				socket
 					.once( 'connect', () => resolve( socket ) )
-					.on( 'reconnect', () => debug( 'reconnected socket' ) )
 					.on( 'init', ( ... args ) => debug( 'initialized', ... args ) )
 					.on( 'token', handler => {
-						handler( { signer_user_id: user_id, jwt: token } )
+						handler( { signer_user_id: user_id, jwt: token } );
 					} )
+					// Received a typing indicator
 					.on( 'typing', isTyping => debug( 'operator typing?', isTyping ) )
+					// Received a chat message
 					.on( 'message', message => this.emit( 'message', message ) )
+					// Received back log of chat
 					.on( 'log', log => debug( 'received log', log ) )
-					.on( 'accept', accept => {
-						this.emit( 'accept', accept );
-					} );
+					// Received chat status new/assigning/assigned/missed
+					.on( 'status', status => this.emit( 'status', status ) )
+					// If happychat is currently accepting chats
+					.on( 'accept', accept => this.emit( 'accept', accept ) );
 			} );
 		} else {
 			debug( 'socket already initiaized' );
