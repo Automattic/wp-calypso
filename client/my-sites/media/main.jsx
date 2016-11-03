@@ -99,6 +99,13 @@ export default React.createClass( {
 		resetAllImageEditorState();
 		this.setState( { openedDetails: null, editedItem: null } );
 	},
+	restoreOriginalMedia: function( siteId, item ) {
+		if ( ! siteId || ! item ) {
+			return;
+		}
+		MediaActions.update( siteId, { ID: item.ID, media_url: item.guid }, true );
+		this.setState( { openedDetails: null, editedItem: null } );
+	},
 
 	render: function() {
 		const site = this.props.sites.getSelectedSite();
@@ -119,6 +126,7 @@ export default React.createClass( {
 							selectedIndex={ 0 }
 							onReturnToList={ this.closeDetailsModal }
 							onEditItem={ this.editImage }
+							onRestoreItem={ this.restoreOriginalMedia }
 						/>
 					}
 					{ this.state.editedItem &&
