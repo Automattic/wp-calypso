@@ -59,7 +59,8 @@ function getQueryObject( props ) {
 		query: props.selectedSite.domain.split( '.' )[ 0 ],
 		quantity: SUGGESTION_QUANTITY,
 		vendor: searchVendor,
-		includeSubdomain: props.includeWordPressDotCom
+		includeSubdomain: props.includeWordPressDotCom,
+		surveyVertical: props.surveyVertical,
 	};
 }
 
@@ -109,7 +110,8 @@ const RegisterDomainStep = React.createClass( {
 		basePath: React.PropTypes.string.isRequired,
 		suggestion: React.PropTypes.string,
 		domainsWithPlansOnly: React.PropTypes.bool,
-		isSignupStep: React.PropTypes.bool
+		isSignupStep: React.PropTypes.bool,
+		surveyVertical: React.PropTypes.string,
 	},
 
 	getDefaultProps: function() {
@@ -346,7 +348,8 @@ const RegisterDomainStep = React.createClass( {
 							query: domain,
 							quantity: SUGGESTION_QUANTITY,
 							include_wordpressdotcom: this.props.includeWordPressDotCom,
-							vendor: searchVendor
+							vendor: searchVendor,
+							vertical: this.props.surveyVertical,
 						},
 						timestamp = Date.now();
 

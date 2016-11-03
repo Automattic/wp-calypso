@@ -19,6 +19,7 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	GoogleApps = require( 'components/upgrades/google-apps' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
+	{ getSurveyVertical } = require( 'state/signup/steps/survey/selectors.js' ),
 	analyticsMixin = require( 'lib/mixins/analytics' ),
 	signupUtils = require( 'signup/utils' ),
 	abtest = require( 'lib/abtest' ).abtest;
@@ -199,6 +200,7 @@ const DomainsStep = React.createClass( {
 				includeWordPressDotCom
 				isSignupStep
 				showExampleSuggestions
+				surveyVertical={ this.props.surveyVertical }
 				suggestion={ this.props.queryObject ? this.props.queryObject.new : '' } />
 		);
 	},
@@ -270,6 +272,7 @@ const DomainsStep = React.createClass( {
 module.exports = connect( ( state ) => {
 	return {
 		// no user = DOMAINS_WITH_PLANS_ONLY
-		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true
+		domainsWithPlansOnly: getCurrentUser( state ) ? currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ) : true,
+		surveyVertical: getSurveyVertical( state ),
 	};
 } ) ( DomainsStep );
