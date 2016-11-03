@@ -45,7 +45,7 @@ describe( 'EditorMediaModal', function() {
 
 		// Mockery
 		mockery.registerMock( 'my-sites/media-library', EMPTY_COMPONENT );
-		mockery.registerMock( './detail', { 'default': EMPTY_COMPONENT } );
+		mockery.registerMock( './detail', EMPTY_COMPONENT );
 		mockery.registerMock( './gallery', EMPTY_COMPONENT );
 		mockery.registerMock( './markup', { get: identity } );
 		mockery.registerMock( './secondary-actions', EMPTY_COMPONENT );
