@@ -1,27 +1,25 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' );
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
 
-module.exports = React.createClass( {
-	displayName: 'SharingServiceExample',
-
-	propTypes: {
-		image: React.PropTypes.shape( {
-			src: React.PropTypes.string,
-			alt: React.PropTypes.string
+class SharingServiceExample extends Component {
+	static propTypes = {
+		image: PropTypes.shape( {
+			src: PropTypes.string,
+			alt: PropTypes.string
 		} ),
-		label: React.PropTypes.node,
-		single: React.PropTypes.bool
-	},
+		label: PropTypes.node,
+		single: PropTypes.bool,
+	};
 
-	getDefaultProps: function() {
-		return { single: false };
-	},
+	static defaultProps = {
+		single: false,
+	};
 
-	render: function() {
-		var classes = classNames( 'sharing-service-example', {
+	render() {
+		const classes = classNames( 'sharing-service-example', {
 			'is-single': this.props.single
 		} );
 
@@ -34,4 +32,6 @@ module.exports = React.createClass( {
 			</div>
 		);
 	}
-} );
+}
+
+export default SharingServiceExample;

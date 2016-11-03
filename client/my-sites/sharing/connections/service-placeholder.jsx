@@ -1,17 +1,22 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React, { Component, PropTypes } from 'react';
+import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
 import Button from 'components/button';
 import FoldableCard from 'components/foldable-card';
 import GridIcon from 'components/gridicon';
 
-module.exports = React.createClass( {
-	displayName: 'SharingServicePlaceholder',
+class SharingServicePlaceholder extends Component {
+	static propTypes = {
+		translate: PropTypes.func,
+	};
 
-	render: function() {
-
+	render() {
 		const header = (
 			<div>
 				<GridIcon
@@ -20,19 +25,15 @@ module.exports = React.createClass( {
 					className="sharing-service__logo" />
 
 				<div className="sharing-service__name">
-					<h2></h2>
-					<p className="sharing-service__description"></p>
+					<h2 />
+					<p className="sharing-service__description" />
 				</div>
 			</div>
 		);
 
 		const summary = (
-			<Button
-				compact
-				disabled
-				>{ this.translate( 'Loading' ) }</Button>
+			<Button compact disabled>{ this.props.translate( 'Loading' ) }</Button>
 		);
-
 
 		return (
 			<li className="sharing-service is-placeholder">
@@ -40,11 +41,12 @@ module.exports = React.createClass( {
 					header={ header }
 					summary={ summary }
 					className="sharing-service"
-					compact
-					>
-					<div></div>
+					compact>
+					<div />
 				</FoldableCard>
 			</li>
 		);
 	}
-} );
+}
+
+export default localize( SharingServicePlaceholder );

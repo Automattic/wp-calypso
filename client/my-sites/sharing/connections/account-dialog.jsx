@@ -1,51 +1,54 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	find = require( 'lodash/find' ),
-	isEqual = require( 'lodash/isEqual' ),
-	classNames = require( 'classnames' );
+import React, { Component, PropTypes } from 'react';
+import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { filter, find, isEqual } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-var Dialog = require( 'components/dialog' ),
-	AccountDialogAccount = require( './account-dialog-account' );
+import AccountDialogAccount from './account-dialog-account';
+import Dialog from 'components/dialog';
+import { warningNotice } from 'state/notices/actions';
 
-import Notice from 'components/notice';
+class AccountDialog extends Component {
+	static propTypes = {
+		accounts: PropTypes.arrayOf( React.PropTypes.object ),
+		isVisible: PropTypes.bool,
+		onAccountSelected: PropTypes.func,
+		service: PropTypes.object,
+	};
 
-module.exports = React.createClass( {
-	displayName: 'AccountDialog',
+	static defaultProps = {
+		accounts: Object.freeze( [] ),
+		isVisible: true,
+		onAccountSelected: () => {},
+		service: Object.freeze( {} ),
+	};
 
-	propTypes: {
-		accounts: React.PropTypes.arrayOf( React.PropTypes.object ),
-		onAccountSelected: React.PropTypes.func,
-		service: React.PropTypes.object,
-		isVisible: React.PropTypes.bool
-	},
+	constructor( props ) {
+		super( props );
 
-	getInitialState: function() {
-		return { selectedAccount: null };
-	},
-
-	getDefaultProps: function() {
-		return {
-			accounts: Object.freeze( [] ),
-			onAccountSelected: function() {},
-			service: Object.freeze( {} ),
-			isVisible: true
+		this.state = {
+			selectedAccount: null
 		};
-	},
 
-	componentWillReceiveProps: function( nextProps ) {
+		this.onClose = this.onClose.bind( this );
+		this.onSelectedAccountChanged = this.onSelectedAccountChanged.bind( this );
+	}
+
+	componentWillReceiveProps( nextProps ) {
 		// When the account dialog is closed, reset the selected account so
 		// that the state doesn't leak into a future dialog
 		if ( ! nextProps.visible ) {
 			this.setState( { selectedAccount: null } );
 		}
-	},
+	}
 
-	getSelectedAccount: function() {
+	getSelectedAccount() {
 		if ( this.state.selectedAccount ) {
 			return this.state.selectedAccount;
 		}
@@ -53,134 +56,126 @@ module.exports = React.createClass( {
 		// If no selection has been made, find the first unconnected account
 		// from the set of available accounts
 		return find( this.props.accounts, { isConnected: false } );
-	},
+	}
 
-	getAccountsByConnectedStatus: function( isConnected ) {
-		return this.props.accounts.filter( function( account ) {
-			return isConnected === account.isConnected;
-		} );
-	},
+	getAccountsByConnectedStatus( isConnected ) {
+		return filter( this.props.accounts, { isConnected } );
+	}
 
-	getAccountToConnect: function() {
-		var selectedAccount = this.getSelectedAccount();
+	getAccountToConnect() {
+		const selectedAccount = this.getSelectedAccount();
 
 		if ( selectedAccount && ! selectedAccount.isConnected ) {
 			return selectedAccount;
 		}
-	},
+	}
 
-	areAccountsConflicting: function( account, otherAccount ) {
+	areAccountsConflicting( account, otherAccount ) {
 		return account.keyringConnectionId === otherAccount.keyringConnectionId && account.ID !== otherAccount.ID;
-	},
+	}
 
-	isSelectedAccountConflicting: function() {
-		var selectedAccount = this.getSelectedAccount();
+	isSelectedAccountConflicting() {
+		const selectedAccount = this.getSelectedAccount();
 
-		return selectedAccount && this.props.accounts.some( function( maybeConnectedAccount ) {
-			return maybeConnectedAccount.isConnected && this.areAccountsConflicting( maybeConnectedAccount, selectedAccount );
-		}, this );
-	},
+		return selectedAccount && this.props.accounts.some( ( maybeConnectedAccount ) =>
+			maybeConnectedAccount.isConnected && this.areAccountsConflicting( maybeConnectedAccount, selectedAccount )
+		);
+	}
 
-	onSelectedAccountChanged: function( account ) {
+	onSelectedAccountChanged( account ) {
 		this.setState( { selectedAccount: account } );
-	},
+	}
 
-	getAccountElements: function( accounts ) {
-		var selectedAccount = this.getSelectedAccount();
+	getAccountElements( accounts ) {
+		const selectedAccount = this.getSelectedAccount();
 
-		return accounts.map( function( account ) {
-			return (
-				<AccountDialogAccount
-					key={ [ account.keyringConnectionId, account.ID ].join() }
-					account={ account }
-					selected={ isEqual( selectedAccount, account ) }
-					conflicting={ account.isConnected && selectedAccount && this.areAccountsConflicting( account, selectedAccount ) }
-					onChange={ this.onSelectedAccountChanged.bind( null, account ) } />
-			);
-		}, this );
-	},
+		return accounts.map( ( account ) =>
+			<AccountDialogAccount
+				key={ [ account.keyringConnectionId, account.ID ].join() }
+				account={ account }
+				selected={ isEqual( selectedAccount, account ) }
+				conflicting={ account.isConnected && selectedAccount && this.areAccountsConflicting( account, selectedAccount ) }
+				onChange={ this.onSelectedAccountChanged.bind( null, account ) } />
+		);
+	}
 
-	getDisconnectWarning: function() {
-		if ( this.isSelectedAccountConflicting() ) {
-			return (
-				<Notice
-					type="message"
-					status="is-warning"
-					text={ this.translate( 'The connection marked {{icon/}} will be replaced with your selection.', {
-						components: { icon: <span className="noticon noticon-warning" /> },
-						context: 'Sharing: Publicize confirmation'
-					} ) }
-					isCompact={ true }
-					showDismiss={ false } />
-			);
-		}
-	},
-
-	getConnectedAccountsContent: function() {
-		var connectedAccounts = this.getAccountsByConnectedStatus( true );
+	getConnectedAccountsContent() {
+		const connectedAccounts = this.getAccountsByConnectedStatus( true );
 
 		if ( connectedAccounts.length ) {
 			return (
 				<div className="account-dialog__connected-accounts">
-					<h3 className="account-dialog__connected-accounts-heading">{ this.translate( 'Connected' ) }</h3>
+					<h3 className="account-dialog__connected-accounts-heading">{ this.props.translate( 'Connected' ) }</h3>
 					<ul className="account-dialog__accounts">
 						{ this.getAccountElements( connectedAccounts ) }
 					</ul>
 				</div>
 			);
 		}
-	},
+	}
 
-	getDisclaimerText: function() {
+	getDisclaimerText() {
 		if ( 1 === this.props.accounts.length ) {
 			// If a single account is available, show a simple confirmation
 			// prompt to ask the user to confirm their connection.
-			return this.translate( 'Confirm this is the account you would like to authorize. Note that your posts will be automatically shared to this account.', {
-				context: 'Sharing: Publicize connection confirmation'
-			} );
-		} else {
-			// Otherwise, we assume that multiple connections exist for a
-			// single Keyring connection, and the user must choose which
-			// account to connect.
-			return this.translate( 'Select the account you wish to authorize. Note that your posts will be shared to the selected account automatically.', {
-				context: 'Sharing: Publicize connection confirmation'
-			} );
+			return this.props.translate(
+				'Confirm this is the account you would like to authorize. Note that your posts will be automatically shared to this account.', {
+					context: 'Sharing: Publicize connection confirmation'
+				} );
 		}
-	},
 
-	onClose: function( action ) {
-		var accountToConnect = this.getAccountToConnect();
+		// Otherwise, we assume that multiple connections exist for a
+		// single Keyring connection, and the user must choose which
+		// account to connect.
+		return this.props.translate(
+			'Select the account you wish to authorize. Note that your posts will be shared to the selected account automatically.', {
+				context: 'Sharing: Publicize connection confirmation'
+			} );
+	}
+
+	onClose( action ) {
+		const accountToConnect = this.getAccountToConnect();
 
 		if ( 'connect' === action && accountToConnect ) {
 			this.props.onAccountSelected( this.props.service, accountToConnect.keyringConnectionId, accountToConnect.ID );
 		} else {
 			this.props.onAccountSelected();
 		}
-	},
+	}
 
-	render: function() {
-		var classes = classNames( 'account-dialog', {
-			'single-account': 1 === this.props.accounts.length
-		} ), buttons;
+	render() {
+		const classes = classNames( 'account-dialog', {
+				'single-account': 1 === this.props.accounts.length
+			} ),
+			buttons = [
+				{ action: 'cancel', label: this.props.translate( 'Cancel' ) },
+				{ action: 'connect', label: this.props.translate( 'Connect' ), isPrimary: true }
+			];
 
-		buttons = [
-			{ action: 'cancel', label: this.translate( 'Cancel' ) },
-			{ action: 'connect', label: this.translate( 'Connect' ), isPrimary: true }
-		];
+		if ( this.isSelectedAccountConflicting() ) {
+			this.props.warningNotice( this.props.translate( 'The connection marked {{icon/}} will be replaced with your selection.', {
+				components: { icon: <span className="noticon noticon-warning" /> },
+				context: 'Sharing: Publicize confirmation',
+			} ), { showDismiss: false } );
+		}
 
 		return (
 			<Dialog isVisible={ this.props.isVisible } buttons={ buttons } additionalClassNames={ classes } onClose={ this.onClose }>
 				<h2 className="account-dialog__authorizing-service">
-					{ this.translate( 'Connecting %(service)s', {
+					{ this.props.translate( 'Connecting %(service)s', {
 						args: { service: this.props.service ? this.props.service.label : '' },
-						context: 'Sharing: Publicize connection confirmation'
+						context: 'Sharing: Publicize connection confirmation',
 					} ) }
 				</h2>
 				<p className="account-dialog__authorizing-disclaimer">{ this.getDisclaimerText() }</p>
 				<ul className="account-dialog__accounts">{ this.getAccountElements( this.getAccountsByConnectedStatus( false ) ) }</ul>
 				{ this.getConnectedAccountsContent() }
-				{ this.getDisconnectWarning() }
 			</Dialog>
 		);
 	}
-} );
+}
+
+export default connect(
+	null,
+	{ warningNotice },
+)( localize( AccountDialog ) );
