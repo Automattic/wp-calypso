@@ -20,6 +20,8 @@ class AccountDialog extends Component {
 		isVisible: PropTypes.bool,
 		onAccountSelected: PropTypes.func,
 		service: PropTypes.object,
+		translate: PropTypes.func,
+		warningNotice: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -27,7 +29,21 @@ class AccountDialog extends Component {
 		isVisible: true,
 		onAccountSelected: () => {},
 		service: Object.freeze( {} ),
+		translate: () => {},
+		warningNotice: () => {},
 	};
+
+	onClose = ( action ) => {
+		const accountToConnect = this.getAccountToConnect();
+
+		if ( 'connect' === action && accountToConnect ) {
+			this.props.onAccountSelected( this.props.service, accountToConnect.keyringConnectionId, accountToConnect.ID );
+		} else {
+			this.props.onAccountSelected();
+		}
+	};
+
+	onSelectedAccountChanged = ( account ) => this.setState( { selectedAccount: account } );
 
 	constructor( props ) {
 		super( props );
@@ -35,9 +51,6 @@ class AccountDialog extends Component {
 		this.state = {
 			selectedAccount: null
 		};
-
-		this.onClose = this.onClose.bind( this );
-		this.onSelectedAccountChanged = this.onSelectedAccountChanged.bind( this );
 	}
 
 	componentWillReceiveProps( nextProps ) {
@@ -80,10 +93,6 @@ class AccountDialog extends Component {
 		return selectedAccount && this.props.accounts.some( ( maybeConnectedAccount ) =>
 			maybeConnectedAccount.isConnected && this.areAccountsConflicting( maybeConnectedAccount, selectedAccount )
 		);
-	}
-
-	onSelectedAccountChanged( account ) {
-		this.setState( { selectedAccount: account } );
 	}
 
 	getAccountElements( accounts ) {
@@ -131,16 +140,6 @@ class AccountDialog extends Component {
 			'Select the account you wish to authorize. Note that your posts will be shared to the selected account automatically.', {
 				context: 'Sharing: Publicize connection confirmation'
 			} );
-	}
-
-	onClose( action ) {
-		const accountToConnect = this.getAccountToConnect();
-
-		if ( 'connect' === action && accountToConnect ) {
-			this.props.onAccountSelected( this.props.service, accountToConnect.keyringConnectionId, accountToConnect.ID );
-		} else {
-			this.props.onAccountSelected();
-		}
 	}
 
 	render() {
