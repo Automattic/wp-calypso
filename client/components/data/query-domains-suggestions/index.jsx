@@ -11,12 +11,13 @@ import { isRequestingDomainsSuggestions } from 'state/domains/suggestions/select
 import { requestDomainsSuggestions } from 'state/domains/suggestions/actions';
 
 function getQueryObject( props ) {
-	const { query, vendor, quantity, includeSubdomain } = props;
+	const { query, vendor, quantity, includeSubdomain, surveyVertical } = props;
 	return {
 		query,
 		vendor,
 		quantity,
-		include_wordpressdotcom: includeSubdomain
+		include_wordpressdotcom: includeSubdomain,
+		vertical: surveyVertical,
 	};
 }
 
