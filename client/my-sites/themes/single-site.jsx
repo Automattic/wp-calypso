@@ -33,7 +33,12 @@ import {
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getSiteOption, hasJetpackSiteJetpackThemes, isJetpackSite } from 'state/sites/selectors';
+import {
+	canJetpackSiteManage,
+	getSiteOption,
+	hasJetpackSiteJetpackThemes,
+	isJetpackSite
+} from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ThemeShowcase from './theme-showcase';
@@ -59,6 +64,7 @@ const ThemesSingleSite = ( props ) => {
 		adminUrl,
 		analyticsPath,
 		analyticsPageTitle,
+		canManage,
 		hasJetpackThemes,
 		isCustomizable,
 		isJetpack,
@@ -87,7 +93,7 @@ const ThemesSingleSite = ( props ) => {
 		if ( ! hasJetpackThemes ) {
 			return <JetpackUpgradeMessage site={ site } />;
 		}
-		if ( ! site.canManage() ) {
+		if ( ! canManage ) {
 			return <JetpackManageDisabledMessage site={ site } />;
 		}
 	}
@@ -140,7 +146,8 @@ export default connect(
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
 			adminUrl: getSiteOption( state, selectedSite.ID, 'admin_url' ),
-			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, selectedSite.ID )
+			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, selectedSite.ID ),
+			canManage: canJetpackSiteManage( state, selectedSite.ID )
 		};
 	},
 	bindOptionsToDispatch( {
