@@ -69,6 +69,11 @@
 	display: block;
 	padding: 0 16px;
 	width: 237px;
+
+	.async-load {
+		margin: 16px 0;
+		width: auto;
+	}
 }
 
 .editor-ground-control .edit-post-status {
