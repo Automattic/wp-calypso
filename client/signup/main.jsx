@@ -101,16 +101,16 @@ const Signup = React.createClass( {
 		}
 		const vertical = this.props.queryObject.vertical;
 		const flowSteps = flows.getFlow( this.props.flowName ).steps;
-		if ( 'undefined' !== typeof vertical && -1 === flowSteps.indexOf( 'survey' ) ) {
-			this.props.setSurvey( {
-				vertical,
-				otherText: '',
-			} );
-
-			SignupActions.submitSignupStep(
-				{ stepName: 'survey' }, [], { surveySiteType: 'blog', surveyQuestion: vertical }
-			);
+		if ( 'undefined' === typeof vertical || -1 !== flowSteps.indexOf( 'survey' ) ) {
+			return;
 		}
+		this.props.setSurvey( {
+			vertical,
+			otherText: '',
+		} );
+		SignupActions.submitSignupStep(
+			{ stepName: 'survey' }, [], { surveySiteType: 'blog', surveyQuestion: vertical }
+		);
 	},
 
 	componentWillMount() {
