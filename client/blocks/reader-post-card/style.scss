@@ -101,6 +101,10 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			}
 		}
 	}
+
+	&.is-gallery .reader-post-card__post {
+		flex-direction: column;
+	}
 }
 
 .reader-post-card__byline {
@@ -386,7 +390,38 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	right: 0;
 	opacity: .8;
 	transition: opacity .25s;
+}
 
+// Gallery cards
+.reader-post-card__gallery {
+	display: flex;
+	margin: 0 0 20px;
+	padding: 0;
+}
+
+.reader-post-card__gallery-item {
+	cursor: pointer;
+	flex: 1;
+	list-style-type: none;
+	margin-right: 1px;
+
+	&:last-child {
+
+		@media #{$reader-post-card-breakpoint-medium}  {
+			display: none;
+		}
+	}
+
+	&:nth-last-of-type(-n+2) {
+
+		@include breakpoint( "<480px" ) {
+			display: none;
+		}
+	}
+}
+
+.reader-post-card__gallery-image {
+	height: 130px;
 }
 
 // For these borderless cards to look more presentable on Devdocs
