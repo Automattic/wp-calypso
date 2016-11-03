@@ -15,6 +15,7 @@ import {
 	isCurrentPlanExpiring
 } from 'state/sites/plans/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
 import TrackComponentView from 'lib/analytics/track-component-view';
 import PlansNavigation from 'my-sites/upgrades/navigation';
 import ProductPurchaseFeatures from 'blocks/product-purchase-features';
@@ -97,7 +98,8 @@ class CurrentPlan extends Component {
 			sitePlans,
 			context,
 			currentPlan,
-			isExpiring
+			isExpiring,
+			isJetpack
 		} = this.props;
 
 		const currentPlanSlug = selectedSite.plan.product_slug,
@@ -109,7 +111,7 @@ class CurrentPlan extends Component {
 			<Main className="current-plan" wideLayout>
 				<QuerySites siteId={ selectedSiteId } />
 				<QuerySitePlans siteId={ selectedSiteId } />
-				{ selectedSiteId && <QuerySiteDomains siteId={ selectedSiteId } /> }
+				{ selectedSiteId && ! isJetpack && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
 				<PlansNavigation
 					sitePlans={ sitePlans }
@@ -117,7 +119,7 @@ class CurrentPlan extends Component {
 					selectedSite={ selectedSite }
 				/>
 
-				{ this.renderDomainWarnings() }
+				{ ! isJetpack && this.renderDomainWarnings() }
 
 				<ProductPurchaseFeatures>
 					<CurrentPlanHeader
@@ -151,8 +153,9 @@ export default connect(
 			selectedSiteId,
 			sitePlans: getPlansBySite( state, selectedSite ),
 			context: ownProps.context,
-			currentPlan: getCurrentPlan( state, getSelectedSiteId( state ) ),
-			isExpiring: isCurrentPlanExpiring( state, getSelectedSiteId( state ) ),
+			currentPlan: getCurrentPlan( state, selectedSiteId ),
+			isExpiring: isCurrentPlanExpiring( state, selectedSiteId ),
+			isJetpack: isJetpackSite( state, selectedSiteId ),
 			domains: getDecoratedSiteDomains( state, selectedSiteId ),
 			hasDomainsLoaded: ! isRequestingSiteDomains( state, selectedSiteId )
 		};
