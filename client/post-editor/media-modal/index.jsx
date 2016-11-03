@@ -15,6 +15,7 @@ var MediaLibrary = require( 'my-sites/media-library' ),
 	PostActions = require( 'lib/posts/actions' ),
 	PostStats = require( 'lib/posts/stats' ),
 	MediaModalSecondaryActions = require( './secondary-actions' ),
+	MediaModalDetail = require( './detail' ),
 	MediaModalGallery = require( './gallery' ),
 	MediaActions = require( 'lib/media/actions' ),
 	MediaUtils = require( 'lib/media/utils' ),
@@ -26,7 +27,6 @@ import { resetMediaModalView } from 'state/ui/media-modal/actions';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
 import ImageEditor from 'blocks/image-editor';
-import MediaModalDetail from './detail';
 
 export const EditorMediaModal = React.createClass( {
 	propTypes: {

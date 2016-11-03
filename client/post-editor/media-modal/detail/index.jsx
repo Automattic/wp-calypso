@@ -16,7 +16,7 @@ var DetailItem = require( './detail-item' ),
 import { ModalViews } from 'state/ui/media-modal/constants';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 
-export const EditorMediaModalDetail = React.createClass( {
+const EditorMediaModalDetail = React.createClass( {
 	propTypes: {
 		site: React.PropTypes.object,
 		items: React.PropTypes.array,
