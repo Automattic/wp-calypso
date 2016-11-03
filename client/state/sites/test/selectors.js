@@ -10,6 +10,8 @@ import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	getSite,
+	getPrimarySiteId,
+	isPrimarySiteId,
 	getSiteCollisions,
 	isSiteConflicting,
 	isSingleUserSite,
@@ -85,6 +87,114 @@ describe( 'selectors', () => {
 					unmapped_url: 'https://example.wordpress.com'
 				}
 			} );
+		} );
+	} );
+
+	describe( '#getPrimarySiteId', () => {
+		it( 'should return null if there are no sites', () => {
+			const primarySiteId = getPrimarySiteId( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( primarySiteId ).to.be.null;
+		} );
+
+		it( 'should return the primary site properly if there is one', () => {
+			const primarySiteId = getPrimarySiteId( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							is_primary: false
+						},
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							is_primary: true
+						},
+					}
+				}
+			} );
+
+			expect( primarySiteId ).to.eql( 77203199 );
+		} );
+
+		it( 'should return null if there is no primary site', () => {
+			const primarySiteId = getPrimarySiteId( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							is_primary: false
+						},
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							is_primary: false
+						},
+					}
+				}
+			} );
+
+			expect( primarySiteId ).to.be.null;
+		} );
+	} );
+
+	describe( '#isPrimarySiteId()', () => {
+		it( 'should return null if the site is not known', () => {
+			const isPrimary = isPrimarySiteId( {
+				sites: {
+					items: {}
+				}
+			}, 77203074 );
+
+			expect( isPrimary ).to.be.null;
+		} );
+
+		it( 'it should return true if the site is the primary site', () => {
+			const isPrimary = isPrimarySiteId( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							is_primary: false
+						},
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							is_primary: true
+						},
+					}
+				}
+			}, 77203199 );
+
+			expect( isPrimary ).to.be.true;
+		} );
+
+		it( 'it should return false if the site is not the primary site', () => {
+			const isPrimary = isPrimarySiteId( {
+				sites: {
+					items: {
+						77203074: {
+							ID: 77203074,
+							URL: 'https://testonesite2014.wordpress.com',
+							is_primary: false
+						},
+						77203199: {
+							ID: 77203199,
+							URL: 'https://example.com',
+							is_primary: true
+						},
+					}
+				}
+			}, 77203074 );
+
+			expect( isPrimary ).to.be.false;
 		} );
 	} );
 
