@@ -108,7 +108,7 @@ const Signup = React.createClass( {
 			} );
 
 			SignupActions.submitSignupStep(
-				{	stepName: 'survey' }, [],	{ surveySiteType: 'blog', surveyQuestion: vertical }
+				{ stepName: 'survey' }, [], { surveySiteType: 'blog', surveyQuestion: vertical }
 			);
 		}
 	},
