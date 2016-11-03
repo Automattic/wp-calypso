@@ -9,6 +9,7 @@ import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
  */
 import noticesMiddleware from './notices/middleware';
 import application from './application/reducer';
+import accountRecovery from './account-recovery/reducer';
 import comments from './comments/reducer';
 import componentsUsageStats from './components-usage-stats/reducer';
 import countryStates from './country-states/reducer';
@@ -55,6 +56,7 @@ import wordads from './wordads/reducer';
  */
 export const reducer = combineReducers( {
 	application,
+	accountRecovery,
 	comments,
 	componentsUsageStats,
 	countryStates,
@@ -94,7 +96,7 @@ export const reducer = combineReducers( {
 	themes,
 	ui,
 	users,
-	wordads
+	wordads,
 } );
 
 const middleware = [ thunkMiddleware, noticesMiddleware ];
