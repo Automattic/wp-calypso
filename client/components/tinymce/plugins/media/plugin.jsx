@@ -168,6 +168,12 @@ function mediaButton( editor ) {
 				return;
 			}
 
+			const media = MediaStore.get( selectedSite.ID, current.media.ID );
+
+			if ( media.isDirty ) {
+				current.media.transient = true;
+			}
+
 			if ( current.media.transient ) {
 				transients++;
 				isTransientDetected = true;
@@ -175,9 +181,10 @@ function mediaButton( editor ) {
 
 			// We only want to update post contents in cases where the media
 			// transitions to being persisted
-			const media = MediaStore.get( selectedSite.ID, current.media.ID );
 			if ( current.media.transient && ( ! media || ! media.transient ) ) {
 				transients--;
+			} else {
+				return;
 			}
 
 			let markup;
@@ -279,6 +286,10 @@ function mediaButton( editor ) {
 				level.content = level.content.replace( imgString, event.content );
 				return level;
 			} );
+
+			if ( media.isDirty ) {
+				MediaActions.edit( selectedSite.ID, { ...media, isDirty: false } );
+			}
 		} );
 
 		if ( ! transients && PostEditStore.isSaveBlocked( 'MEDIA_MODAL_TRANSIENT_INSERT' ) ) {
