@@ -61,10 +61,10 @@ describe( 'reducer', () => {
 	} );
 
 	describe( 'items()', () => {
-		it( 'should default to an empty array', () => {
+		it( 'should default to null', () => {
 			const state = items( undefined, {} );
 
-			expect( state ).to.eql( [] );
+			expect( state ).to.eql( null );
 		} );
 
 		it( 'should save the received happiness engineers', () => {
@@ -115,7 +115,7 @@ describe( 'reducer', () => {
 			} );
 			const state = items( original, { type: DESERIALIZE } );
 
-			expect( state ).to.eql( [] );
+			expect( state ).to.eql( null );
 		} );
 	} );
 } );

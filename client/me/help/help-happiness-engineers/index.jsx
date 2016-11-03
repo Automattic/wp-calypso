@@ -14,10 +14,10 @@ import Gravatar from 'components/gravatar';
 import QueryHappinessEngineers from 'components/data/query-happiness-engineers';
 import { getHappinessEngineers } from 'state/happiness-engineers/selectors';
 
-function HelpHappinessEngineers( props ) {
+function HelpHappinessEngineers( { translate, happinessEngineers } ) {
 	return (
 		<div className="help-happiness-engineers">
-			{ props.translate( '{{headline}}We care about your happiness!{{/headline}}' +
+			{ translate( '{{headline}}We care about your happiness!{{/headline}}' +
 				'{{p}}They don\'t call us Happiness Engineers for nothing. ' +
 				'If you need help, we\'re here for you!{{/p}}',
 				{
@@ -28,14 +28,14 @@ function HelpHappinessEngineers( props ) {
 				}
 				) }
 			<div className="help-happiness-engineers__tray">
-				{ shuffle( props.happinessEngineers ).map(
+				{ shuffle( happinessEngineers ).map(
 					happinessEngineer => <Gravatar
 						key={ happinessEngineer }
 						user={ { avatar_URL: happinessEngineer } }
 						size={ 42 } /> )
 				}
 			</div>
-			{ props.happinessEngineers.length === 0 && <QueryHappinessEngineers /> }
+			{ happinessEngineers === null && <QueryHappinessEngineers /> }
 		</div>
 	);
 }

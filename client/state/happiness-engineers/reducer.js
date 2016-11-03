@@ -39,7 +39,7 @@ export const requesting = createReducer( false, {
  * @param  {Object} action Action object
  * @return {Array}         Updated state
  */
-export const items = createReducer( [], {
+export const items = createReducer( null, {
 	[ HAPPINESS_ENGINEERS_RECEIVE ]: ( state, { happinessEngineers } ) => {
 		return map( happinessEngineers, 'avatar_URL' );
 	}

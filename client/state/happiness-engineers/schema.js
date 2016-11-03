@@ -1,4 +1,7 @@
 export const itemsSchema = {
-	type: 'array',
+	type: [ 'array', 'null' ],
 	additionalProperties: false,
+	items: {
+		type: 'string'
+	}
 };
