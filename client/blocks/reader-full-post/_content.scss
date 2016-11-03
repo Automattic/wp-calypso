@@ -59,6 +59,10 @@
 		height: auto;
 		display: inline;
 		margin: auto;
+
+		&.emoji {
+			height: 1em;
+		}
 	}
 
 	iframe[class^="twitter-"],
