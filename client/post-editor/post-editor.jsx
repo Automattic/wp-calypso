@@ -29,7 +29,6 @@ const actions = require( 'lib/posts/actions' ),
 	SegmentedControlItem = require( 'components/segmented-control/item' ),
 	EditorMobileNavigation = require( 'post-editor/editor-mobile-navigation' ),
 	observe = require( 'lib/mixins/data-observe' ),
-	DraftList = require( 'my-sites/drafts/draft-list' ),
 	InvalidURLDialog = require( 'post-editor/invalid-url-dialog' ),
 	RestorePostDialog = require( 'post-editor/restore-post-dialog' ),
 	VerifyEmailDialog = require( 'post-editor/verify-email-dialog' ),
@@ -38,6 +37,7 @@ const actions = require( 'lib/posts/actions' ),
 	stats = require( 'lib/posts/stats' ),
 	analytics = require( 'lib/analytics' );
 
+import AsyncLoad from 'components/async-load';
 import { getSelectedSiteId } from 'state/ui/selectors';
 import { setEditorLastDraft, resetEditorLastDraft } from 'state/ui/editor/last-draft/actions';
 import { isEditorDraftsVisible, getEditorPostId, getEditorPath } from 'state/ui/editor/selectors';
@@ -271,7 +271,9 @@ const PostEditor = React.createClass( {
 							allPostsUrl={ this.getAllPostsUrl() }
 							toggleSidebar={ this.toggleSidebar } />
 						{ this.props.showDrafts
-							? <DraftList { ...this.props }
+							? <AsyncLoad
+								require="my-sites/drafts/draft-list"
+								{ ...this.props }
 								onTitleClick={ this.toggleSidebar }
 								showAllActionsMenu={ false }
 								siteID={ site ? site.ID : null }
