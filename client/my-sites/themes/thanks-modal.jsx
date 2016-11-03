@@ -4,6 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import page from 'page';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -57,13 +58,13 @@ const ThanksModal = React.createClass( {
 	},
 
 	renderWpcomInfo() {
-		const features = this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
+		const features = translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
 			components: {
 				a: <a href={ getDetailsUrl( this.props.currentTheme, this.props.site ) }
 					onClick={ this.onLinkClick( 'features' ) }/>
 			}
 		} );
-		const customize = this.translate( '{{a}}Customize{{/a}} this design.', {
+		const customize = translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
 				a: <a href={ getCustomizeUrl( this.props.currentTheme, this.props.site ) }
 					onClick={ this.onLinkClick( 'customize' ) }/>
@@ -75,7 +76,7 @@ const ThanksModal = React.createClass( {
 					{ this.props.source === 'list' ? features : customize }
 				</li>
 			<li>
-				{ this.translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
+				{ translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
 					components: {
 						a: <a href={ getForumUrl( this.props.currentTheme ) }
 							onClick={ this.onLinkClick( 'support' ) }/>
@@ -90,7 +91,7 @@ const ThanksModal = React.createClass( {
 		if ( themeUri ) {
 			return (
 				<li>
-					{ this.translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
+					{ translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
 						components: {
 							a: <a href={ themeUri }
 								onClick={ this.onLinkClick( 'org theme' ) }/>
@@ -105,7 +106,7 @@ const ThanksModal = React.createClass( {
 		if ( authorUri ) {
 			return (
 				<li>
-					{ this.translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
+					{ translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
 						components: {
 							a: <a href={ authorUri }
 								onClick={ this.onLinkClick( 'org author' ) }/>
@@ -119,7 +120,7 @@ const ThanksModal = React.createClass( {
 	renderWporgForumInfo() {
 		return (
 			<li>
-				{ this.translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
+				{ translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
 					components: {
 						a: <a href="https://wordpress.org/support/forum/themes-and-templates"
 							onClick={ this.onLinkClick( 'org forum' ) }/>
@@ -153,7 +154,7 @@ const ThanksModal = React.createClass( {
 		return (
 			<div>
 				<h1>
-					{ this.translate( 'Thanks for choosing {{br/}} %(themeName)s {{br/}} by %(themeAuthor)s', {
+					{ translate( 'Thanks for choosing {{br/}} %(themeName)s {{br/}} by %(themeAuthor)s', {
 						args: { themeName, themeAuthor },
 						components: {
 							br: <br />
@@ -176,9 +177,10 @@ const ThanksModal = React.createClass( {
 	},
 
 	render() {
+		const visitSiteText = this.props.hasActivated ? translate( 'Visit site' ) : translate( 'Switching themes…' );
 		const buttons = [
-			{ action: 'back', label: this.translate( 'Back to themes' ), onClick: this.goBack },
-			{ action: 'visitSite', label: this.translate( 'Visit site' ), isPrimary: true, disabled: ! this.props.hasActivated, onClick: this.visitSite },
+			{ action: 'back', label: translate( 'Back to themes' ), onClick: this.goBack },
+			{ action: 'visitSite', label: visitSiteText, isPrimary: true, disabled: ! this.props.hasActivated, onClick: this.visitSite },
 		];
 
 		return (
