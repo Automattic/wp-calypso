@@ -13,9 +13,14 @@ import {
 	accountRecoveryFetch,
 	accountRecoveryFetchSuccess,
 	accountRecoveryFetchFailed,
+
 	updateAccountRecoveryPhone,
 	updateAccountRecoveryPhoneSuccess,
 	updateAccountRecoveryPhoneFailed,
+
+	deleteAccountRecoveryPhone,
+	deleteAccountRecoveryPhoneSuccess,
+	deleteAccountRecoveryPhoneFailed,
 } from '../actions';
 
 import {
@@ -26,6 +31,10 @@ import {
 	ACCOUNT_RECOVERY_PHONE_UPDATE,
 	ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
 	ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+
+	ACCOUNT_RECOVERY_PHONE_DELETE,
+	ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS,
+	ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
 } from 'state/action-types';
 
 import dummyData from './test-data';
@@ -150,6 +159,46 @@ describe( 'account-recovery actions', () => {
 
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+				error: dummyError,
+			} );
+		} );
+	} );
+
+	describe( '#deleteAccountRecoveryPhone', () => {
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( '/rest/v1.1/me/account-recovery/phone/delete' )
+				.reply( 200 );
+		} );
+
+		it( 'should dispatch delete / success actions', () => {
+			const del = deleteAccountRecoveryPhone()( spy );
+
+			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_DELETE } ) );
+
+			return del.then( () => {
+				assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS } ) );
+			} );
+		} );
+	} );
+
+	describe( '#deleteAccountRecoveryPhoneSuccess', () => {
+		it( 'should return ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS', () => {
+			const action = deleteAccountRecoveryPhoneSuccess();
+
+			assert.deepEqual( action, {
+				type: ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS,
+			} );
+		} );
+	} );
+
+	describe( '#deleteAccountRecoveryPhoneFailed', () => {
+		it( 'should return ACCOUNT_RECOVERY_PHONE_DELETE_FAILED', () => {
+			const dummyError = 'failed';
+			const action = deleteAccountRecoveryPhoneFailed( dummyError );
+
+			assert.deepEqual( action, {
+				type: ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
 				error: dummyError,
 			} );
 		} );
