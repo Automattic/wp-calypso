@@ -177,7 +177,7 @@ const ThanksModal = React.createClass( {
 	},
 
 	render() {
-		const visitSiteText = this.props.hasActivated ? translate( 'Visit site' ) : translate( 'Switching themes…' );
+		const visitSiteText = this.props.hasActivated ? translate( 'Visit site' ) : translate( 'Activating theme…' );
 		const buttons = [
 			{ action: 'back', label: translate( 'Back to themes' ), onClick: this.goBack },
 			{ action: 'visitSite', label: visitSiteText, isPrimary: true, disabled: ! this.props.hasActivated, onClick: this.visitSite },
