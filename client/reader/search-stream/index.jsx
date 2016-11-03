@@ -16,7 +16,6 @@ import EmptyContent from './empty';
 import BlankContent from './blank';
 import HeaderBack from 'reader/header-back';
 import SearchInput from 'components/search';
-import SearchCard from 'blocks/reader-search-card';
 import SiteStore from 'lib/reader-site-store';
 import FeedStore from 'lib/feed-store';
 import { recordTrackForPost } from 'reader/stats';
@@ -24,6 +23,7 @@ import sampleSize from 'lodash/sampleSize';
 import i18nUtils from 'lib/i18n-utils';
 import { staffSuggestions, popularSuggestions } from './suggestions';
 import { abtest } from 'lib/abtest';
+import ReaderPostCard from 'blocks/reader-post-card';
 
 const SearchCardAdapter = React.createClass( {
 	getInitialState() {
@@ -68,7 +68,7 @@ const SearchCardAdapter = React.createClass( {
 	},
 
 	render() {
-		return <SearchCard
+		return <ReaderPostCard
 			post={ this.props.post }
 			site={ this.state.site }
 			feed={ this.state.feed }
