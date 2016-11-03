@@ -117,12 +117,12 @@ describe( 'account-recovery actions', () => {
 				.reply( 200, newPhoneData );
 		} );
 
-		it( 'should dispatch fetch / success actions.', () => {
-			const fetch = updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number )( spy );
+		it( 'should dispatch update / success actions.', () => {
+			const update = updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number )( spy );
 
 			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } ) );
 
-			return fetch.then( () => {
+			return update.then( () => {
 				assert( spy.calledWith( {
 					type: ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
 					phone: newPhoneData,
