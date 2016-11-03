@@ -99,6 +99,14 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 				font-size: 12px;
 				letter-spacing: 0.01em;
 			}
+
+			.reader-post-actions {
+				margin: 8px 0 0;
+			}
+
+			.reader-post-actions .reader-post-actions__visit {
+				margin-left: -3px;
+			}
 		}
 	}
 
@@ -265,11 +273,15 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	font-size: 14px;
 	height: 22px;
 
-	&.reader-post-actions__visit .gridicon {
-		fill: lighten( $gray, 10% );
-		position: relative;
-			left: -8px;
-			top: -1px;
+	&.reader-post-actions__visit {
+		margin-left: -2px;
+
+		.gridicon {
+			fill: lighten( $gray, 10% );
+			position: relative;
+				left: -8px;
+				top: -1px;
+		}
 	}
 
 	.gridicons-external {
