@@ -15,6 +15,10 @@ import {
 	ACCOUNT_RECOVERY_PHONE_DELETE,
 	ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
+
+	ACCOUNT_RECOVERY_EMAIL_UPDATE,
+	ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
+	ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
 } from 'state/action-types';
 
 export const accountRecoveryFetchSuccess = ( accountRecoverySettings ) => {
@@ -94,5 +98,33 @@ export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
 		dispatch( deleteAccountRecoveryPhoneSuccess() );
 	} ).catch( ( error ) => {
 		dispatch( deleteAccountRecoveryPhoneFailed( error ) );
+	} );
+};
+
+export const updateAccountRecoveryEmailSuccess = ( email ) => {
+	return {
+		type: ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
+		email,
+	};
+};
+
+export const updateAccountRecoveryEmailFailed = ( error ) => {
+	return {
+		type: ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
+		error,
+	};
+};
+
+export const updateAccountRecoveryEmail = ( email ) => ( dispatch ) => {
+	dispatch( { type: ACCOUNT_RECOVERY_EMAIL_UPDATE } );
+
+	return new Promise( ( resolve, reject ) => {
+		wpcom.undocumented().me().updateAccountRecoveryEmail( email, ( error, newEmail ) => {
+			error ? reject( error ) : resolve( newEmail );
+		} );
+	} ).then( ( newEmail ) => {
+		dispatch( updateAccountRecoveryEmailSuccess( newEmail ) );
+	} ).catch( ( error ) => {
+		dispatch( updateAccountRecoveryEmailFailed( error ) );
 	} );
 };
