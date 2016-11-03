@@ -37,7 +37,6 @@ var sites = require( 'lib/sites-list' )(),
 import EditorMediaModal from 'post-editor/media-modal';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
-import { withoutHttp } from 'lib/url';
 
 /**
  * Module variables
@@ -136,8 +135,6 @@ function mediaButton( editor ) {
 		return { isLoaded, onLoad };
 	} )();
 
-	const mediaHasChanged = ( media ) => withoutHttp( media.guid ) !== withoutHttp( media.URL );
-
 	updateMedia = debounce( function() {
 		var selectedSite = sites.getSelectedSite(),
 			isTransientDetected = false,
@@ -181,8 +178,6 @@ function mediaButton( editor ) {
 			const media = MediaStore.get( selectedSite.ID, current.media.ID );
 			if ( current.media.transient && ( ! media || ! media.transient ) ) {
 				transients--;
-			} else if ( ! mediaHasChanged( media ) ) {
-				return;
 			}
 
 			let markup;
@@ -195,13 +190,11 @@ function mediaButton( editor ) {
 
 				let useMediaWidthHeight = false;
 
-				if ( mediaHasChanged( media ) ) {
-					if (
-						media.width < current.media.width ||
-						media.height < current.media.height
-					) {
-						useMediaWidthHeight = true;
-					}
+				if (
+					media.width < current.media.width ||
+					media.height < current.media.height
+				) {
+					useMediaWidthHeight = true;
 				}
 
 				// When merging, allow any updated field to be used if it doesn't
