@@ -135,7 +135,7 @@ class CurrentPlan extends Component {
 					/>
 				</ProductPurchaseFeatures>
 
-				<TrackComponentView eventName={ 'calypso_plans_my-plan_view' } />
+				<TrackComponentView eventName={ 'calypso_plans_my_plan_view' } />
 			</Main>
 		);
 	}
