@@ -37,6 +37,7 @@ var sites = require( 'lib/sites-list' )(),
 import EditorMediaModal from 'post-editor/media-modal';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
+import { withoutHttp } from 'lib/url';
 
 /**
  * Module variables
@@ -135,6 +136,8 @@ function mediaButton( editor ) {
 		return { isLoaded, onLoad };
 	} )();
 
+	const mediaHasChanged = ( media ) => withoutHttp( media.guid ) !== withoutHttp( media.URL );
+
 	updateMedia = debounce( function() {
 		var selectedSite = sites.getSelectedSite(),
 			isTransientDetected = false,
@@ -178,7 +181,7 @@ function mediaButton( editor ) {
 			const media = MediaStore.get( selectedSite.ID, current.media.ID );
 			if ( current.media.transient && ( ! media || ! media.transient ) ) {
 				transients--;
-			} else if ( ! media.transient ) {
+			} else if ( ! mediaHasChanged( media ) ) {
 				return;
 			}
 
@@ -190,12 +193,35 @@ function mediaButton( editor ) {
 					return;
 				}
 
+				let useMediaWidthHeight = false;
+
+				if ( mediaHasChanged( media ) ) {
+					if (
+						media.width < current.media.width ||
+						media.height < current.media.height
+					) {
+						useMediaWidthHeight = true;
+					}
+				}
+
 				// When merging, allow any updated field to be used if it doesn't
 				// already exist in the current markup, but otherwise only force
 				// update ID, URL, width and height attributes to their new values
-				const merged = assign( {}, media, current.media, pick( media, 'ID', 'URL', 'width', 'height' ), {
-					transient: !! media.transient
-				} );
+				const merged = assign(
+					{},
+					media,
+					current.media,
+					pick(
+						media,
+						'ID',
+						'URL',
+						useMediaWidthHeight ? 'width' : '',
+						useMediaWidthHeight ? 'height' : ''
+					),
+					{
+						transient: !! media.transient
+					}
+				);
 				const options = assign( {}, current.appearance, {
 					forceResize: ! media.transient && current.media.width && current.media.width !== media.width
 				} );
