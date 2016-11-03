@@ -195,11 +195,15 @@ function mediaButton( editor ) {
 					return;
 				}
 
-				// If an image is edited through image editor and its final size is smaller than the size of
-				// the inserted image, let's update the size of inserted image to the size of edited image.
-				const useMediaSize =
-					media.width < current.media.width ||
-					media.height < current.media.height;
+				let useMediaSize = false;
+
+				if ( media.isDirty ) {
+					// If an image is edited through image editor and its final size is smaller than the size of
+					// the inserted image, let's update the size of inserted image to the size of edited image.
+					useMediaSize =
+						media.width < current.media.width ||
+						media.height < current.media.height;
+				}
 
 				// When merging, allow any updated field to be used if it doesn't
 				// already exist in the current markup, but otherwise only force

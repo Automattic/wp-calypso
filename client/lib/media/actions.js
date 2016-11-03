@@ -260,7 +260,9 @@ MediaActions.update = function( siteId, item, editMediaFile = false ) {
 				type: 'RECEIVE_MEDIA_ITEM',
 				error: error,
 				siteId: siteId,
-				data: { ...data, isDirty: true }
+				data: editMediaFile
+					? { ...data, isDirty: true }
+					: data
 			} );
 		} );
 };
