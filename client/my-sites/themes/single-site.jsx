@@ -33,7 +33,7 @@ import {
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
 import UpgradeNudge from 'my-sites/upgrade-nudge';
 import { getSelectedSite } from 'state/ui/selectors';
-import { getSiteOption, isJetpackMinimumVersion, isJetpackSite } from 'state/sites/selectors';
+import { getSiteOption, hasJetpackSiteJetpackThemes, isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
 import PageViewTracker from 'lib/analytics/page-view-tracker';
 import ThemeShowcase from './theme-showcase';
@@ -140,7 +140,7 @@ export default connect(
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
 			adminUrl: getSiteOption( state, selectedSite.ID, 'admin_url' ),
-			hasJetpackThemes: isJetpackMinimumVersion( state, selectedSite.ID, '3.7-beta' )
+			hasJetpackThemes: hasJetpackSiteJetpackThemes( state, selectedSite.ID )
 		};
 	},
 	bindOptionsToDispatch( {
