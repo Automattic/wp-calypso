@@ -44,7 +44,8 @@ import waitForImagesToLoad from 'lib/post-normalizer/rule-wait-for-images-to-loa
 const READER_CONTENT_WIDTH = 720,
 	DISCOVER_FULL_BLEED_WIDTH = 1082,
 	PHOTO_ONLY_MIN_WIDTH = READER_CONTENT_WIDTH * 0.8,
-	DISCOVER_BLOG_ID = 53424024;
+	DISCOVER_BLOG_ID = 53424024,
+	GALLERY_MIN_IMAGES = 4;
 
 function discoverFullBleedImages( post, dom ) {
 	if ( post.site_ID === DISCOVER_BLOG_ID ) {
@@ -75,6 +76,7 @@ function classifyPost( post ) {
 
 	if ( post.images &&
 			post.images.length >= 1 &&
+			post.content_images.length < GALLERY_MIN_IMAGES &&
 			canonicalImage && canonicalImage.width >= PHOTO_ONLY_MIN_WIDTH &&
 			hasShortContent( post ) ) {
 		displayType ^= DISPLAY_TYPES.PHOTO_ONLY;
@@ -118,7 +120,7 @@ function classifyPost( post ) {
 		}
 	}
 
-	if ( post.content_images && post.content_images.length > 2 ) {
+	if ( post.content_images && post.content_images.length >= GALLERY_MIN_IMAGES ) {
 		displayType ^= DISPLAY_TYPES.GALLERY;
 	}
 
