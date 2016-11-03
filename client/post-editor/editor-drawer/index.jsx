@@ -15,9 +15,6 @@ import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordio
 import AsyncLoad from 'components/async-load';
 import FormTextarea from 'components/forms/form-textarea';
 import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
-import Location from 'post-editor/editor-location';
-import Discussion from 'post-editor/editor-discussion';
-import SeoAccordion from 'post-editor/editor-seo-accordion';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
 import PostMetadata from 'lib/post-metadata';
 import TrackInputChanges from 'components/track-input-changes';
@@ -32,7 +29,7 @@ import { getEditedPostValue } from 'state/posts/selectors';
 import { getPostType } from 'state/post-types/selectors';
 import { isJetpackMinimumVersion } from 'state/sites/selectors';
 import config from 'config';
-import EditorDrawerFeaturedImage from './featured-image';
+
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
@@ -156,9 +153,11 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<EditorDrawerFeaturedImage
+			<AsyncLoad
+				require="./featured-image"
 				site={ this.props.site }
-				post={ this.props.post } />
+				post={ this.props.post }
+			/>
 		);
 	},
 
@@ -206,7 +205,10 @@ const EditorDrawer = React.createClass( {
 		return (
 			<AccordionSection>
 				<EditorDrawerLabel labelText={ this.translate( 'Location' ) } />
-				<Location coordinates={ PostMetadata.geoCoordinates( this.props.post ) } />
+				<AsyncLoad
+					require="post-editor/editor-location"
+					coordinates={ PostMetadata.geoCoordinates( this.props.post ) }
+				/>
 			</AccordionSection>
 		);
 	},
@@ -218,7 +220,8 @@ const EditorDrawer = React.createClass( {
 
 		return (
 			<AccordionSection>
-				<Discussion
+				<AsyncLoad
+					require="post-editor/editor-discussion"
 					site={ this.props.site }
 					post={ this.props.post }
 					isNew={ this.props.isNew }
@@ -239,7 +242,10 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<SeoAccordion metaDescription={ PostMetadata.metaDescription( this.props.post ) } />
+			<AsyncLoad
+				require="post-editor/editor-seo-accordion"
+				metaDescription={ PostMetadata.metaDescription( this.props.post ) }
+			/>
 		);
 	},
 
