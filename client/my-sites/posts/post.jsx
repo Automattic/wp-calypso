@@ -24,6 +24,8 @@ import config from 'config';
 import Comments from 'reader/comments';
 import PostShare from './post-share';
 
+const META_ICON_SIZE = 24; // size used for meta icons (views, comments, & likes)
+
 function recordEvent( eventAction ) {
 	analytics.ga.recordEvent( 'Posts', eventAction );
 }
@@ -267,7 +269,7 @@ module.exports = React.createClass( {
 						title={ commentTitle }
 						onClick={ this.toggleComments }
 					>
-					<Gridicon icon="comment" size={ 24 } />
+					<Gridicon icon="comment" size={ META_ICON_SIZE } />
 
 					<span>{ commentCountDisplay }</span></a>
 				);
@@ -303,7 +305,7 @@ module.exports = React.createClass( {
 						title={ likeTitle }
 						onClick={ this.analyticsEvents.likeIconClick }
 					>
-					<Gridicon icon="star" size={ 24 } />
+					<Gridicon icon="star" size={ META_ICON_SIZE } />
 					<span>{ likeCountDisplay }</span></a>
 				);
 				metaItems.push( likeMeta );
@@ -313,7 +315,10 @@ module.exports = React.createClass( {
 		// If the user can see stats, show how many total views this post has received
 		if ( showStats ) {
 			metaItems.push( (
-				<PostTotalViews post={ post } clickHandler={ this.analyticsEvents.viewStats } />
+				<PostTotalViews
+					post={ post }
+					iconSize={ META_ICON_SIZE }
+					clickHandler={ this.analyticsEvents.viewStats } />
 			) );
 		}
 
@@ -334,7 +339,7 @@ module.exports = React.createClass( {
 		if ( metaItems.length ) {
 			footerMetaItems = metaItems.map( function( item, i ) {
 				const itemKey = 'meta-' + postId + '-' + i;
-				return ( <li key={ itemKey }><span>{ item }</span></li> );
+				return ( <li key={ itemKey }>{ item }</li> );
 			}, this );
 
 			return ( <ul className="post__meta">{ footerMetaItems }</ul> );
@@ -388,7 +393,12 @@ module.exports = React.createClass( {
 					{ this.getPostImage() }
 					{ this.getContent() }
 					<footer className="post__info">
-						<PostRelativeTimeStatus post={ this.props.post } link={ this.getContentLinkURL() } target={ this.getContentLinkTarget() } onClick={ this.analyticsEvents.dateClick }/>
+						<PostRelativeTimeStatus
+							post={ this.props.post }
+							link={ this.getContentLinkURL() }
+							target={ this.getContentLinkTarget() }
+							iconSize={ META_ICON_SIZE }
+							onClick={ this.analyticsEvents.dateClick } />
 						{
 							// Only show meta items for non-drafts
 							( this.props.post.status === 'draft' ) ? null : this.getMeta()

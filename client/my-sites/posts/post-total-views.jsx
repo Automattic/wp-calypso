@@ -21,11 +21,18 @@ var PostTotalViews = React.createClass( {
 	propTypes: {
 		post: PropTypes.object.isRequired,
 		viewCount: PropTypes.number,
+		iconSize: PropTypes.oneOf( [ 18, 24 ] ),
 		clickHandler: PropTypes.func
 	},
 
+	getDefaultProps() {
+		return {
+			iconSize: 24
+		};
+	},
+
 	render() {
-		const { viewCount, post } = this.props,
+		const { viewCount, post, iconSize } = this.props,
 			postId = post.ID,
 			siteId = post.site_ID;
 		let viewsCountDisplay = '',
@@ -54,7 +61,7 @@ var PostTotalViews = React.createClass( {
 				title={ viewsTitle }
 				onClick={ this.props.clickHandler }>
 				<QueryPostStats siteId= { siteId } postId={ postId } stat="views" />
-				<Gridicon icon="visible" size={ 24 } />
+				<Gridicon icon="visible" size={ iconSize } />
 				<StatUpdateIndicator updateOn={ viewsCountDisplay }>{ viewsCountDisplay }</StatUpdateIndicator>
 			</a>
 		);
