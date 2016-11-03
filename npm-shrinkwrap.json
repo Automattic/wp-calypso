@@ -531,7 +531,7 @@
       }
     },
     "caniuse-db": {
-      "version": "1.0.30000572"
+      "version": "1.0.30000574"
     },
     "caseless": {
       "version": "0.11.0"
@@ -1665,7 +1665,7 @@
       }
     },
     "graceful-fs": {
-      "version": "4.1.9"
+      "version": "4.1.10"
     },
     "graceful-readlink": {
       "version": "1.0.1"
