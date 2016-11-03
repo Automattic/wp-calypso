@@ -21,6 +21,10 @@ import {
 	deleteAccountRecoveryPhone,
 	deleteAccountRecoveryPhoneSuccess,
 	deleteAccountRecoveryPhoneFailed,
+
+	updateAccountRecoveryEmail,
+	updateAccountRecoveryEmailSuccess,
+	updateAccountRecoveryEmailFailed,
 } from '../actions';
 
 import {
@@ -35,6 +39,10 @@ import {
 	ACCOUNT_RECOVERY_PHONE_DELETE,
 	ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS,
 	ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
+
+	ACCOUNT_RECOVERY_EMAIL_UPDATE,
+	ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
+	ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
 } from 'state/action-types';
 
 import dummyData from './test-data';
@@ -199,6 +207,52 @@ describe( 'account-recovery actions', () => {
 
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
+				error: dummyError,
+			} );
+		} );
+	} );
+
+	describe( '#updateAccountRecoveryEmail', () => {
+		const newEmail = { email: 'newtest@a8ctest.com' };
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( '/rest/v1.1/me/account-recovery/email' )
+				.reply( 200, newEmail );
+		} );
+
+		it( 'should dispatch update / success actions', () => {
+			const update = updateAccountRecoveryEmail( newEmail )( spy );
+
+			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_EMAIL_UPDATE } ) );
+
+			return update.then( () => {
+				assert( spy.calledWith( {
+					type: ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
+					email: newEmail,
+				} ) );
+			} );
+		} );
+	} );
+
+	describe( '#updateAccountRecoveryEmailSuccess', () => {
+		it( 'should return ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS', () => {
+			const action = updateAccountRecoveryEmailSuccess( dummyData.email );
+
+			assert.deepEqual( action, {
+				type: ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
+				email: dummyData.email,
+			} );
+		} );
+	} );
+
+	describe( '#updateAccountRecoveryEmailFailed', () => {
+		it( 'should return ACCOUNT_RECOVERY_EMAIL_FAILED', () => {
+			const dummyError = 'failed';
+			const action = updateAccountRecoveryEmailFailed( dummyError );
+
+			assert.deepEqual( action, {
+				type: ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
 				error: dummyError,
 			} );
 		} );
