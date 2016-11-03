@@ -195,14 +195,11 @@ function mediaButton( editor ) {
 					return;
 				}
 
-				let useMediaWidthHeight = false;
-
-				if (
+				// If an image is edited through image editor and its final size is smaller than the size of
+				// the inserted image, let's update the size of inserted image to the size of edited image.
+				const useMediaSize =
 					media.width < current.media.width ||
-					media.height < current.media.height
-				) {
-					useMediaWidthHeight = true;
-				}
+					media.height < current.media.height;
 
 				// When merging, allow any updated field to be used if it doesn't
 				// already exist in the current markup, but otherwise only force
@@ -215,8 +212,8 @@ function mediaButton( editor ) {
 						media,
 						'ID',
 						'URL',
-						useMediaWidthHeight ? 'width' : '',
-						useMediaWidthHeight ? 'height' : ''
+						useMediaSize ? 'width' : '',
+						useMediaSize ? 'height' : ''
 					),
 					{
 						transient: !! media.transient
