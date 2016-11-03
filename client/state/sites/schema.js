@@ -55,7 +55,8 @@ export const sitesSchema = {
 						user_is_owner: { type: 'boolean' }
 					}
 				},
-				single_user_site: { type: 'boolean' }
+				single_user_site: { type: 'boolean' },
+				is_primary: { type: 'boolean' }
 			}
 		}
 	},
