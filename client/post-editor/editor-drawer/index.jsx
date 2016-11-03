@@ -14,7 +14,6 @@ import Gridicon from 'components/gridicon';
 import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
 import AsyncLoad from 'components/async-load';
 import FormTextarea from 'components/forms/form-textarea';
-import PostFormatsAccordion from 'post-editor/editor-post-formats/accordion';
 import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
 import PostMetadata from 'lib/post-metadata';
 import TrackInputChanges from 'components/track-input-changes';
@@ -131,7 +130,8 @@ const EditorDrawer = React.createClass( {
 		}
 
 		return (
-			<PostFormatsAccordion
+			<AsyncLoad
+				require="post-editor/editor-post-formats/accordion"
 				post={ this.props.post }
 				className="editor-drawer__accordion"
 			/>
