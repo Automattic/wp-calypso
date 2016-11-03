@@ -15,13 +15,20 @@ import dummyData from './test-data';
 import reducer from '../reducer';
 
 describe( 'account-recovery reducer', () => {
+	const camelDummyData = {
+		email: dummyData.email,
+		emailValidated: dummyData.email_validated,
+		phone: dummyData.phone,
+		phoneValidated: dummyData.phone_validated,
+	};
+
 	it( 'should return an initial object with the settings data.', () => {
 		const initState = reducer( null, {
 			type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
 			accountRecoverySettings: dummyData,
 		} );
 
-		assert.deepEqual( initState, dummyData );
+		assert.deepEqual( initState, camelDummyData );
 	} );
 
 	it( 'should return a new state object with the settings data.', () => {
@@ -37,7 +44,7 @@ describe( 'account-recovery reducer', () => {
 
 		assert.deepEqual( state, {
 			...prevState,
-			...dummyData,
+			...camelDummyData,
 		} );
 	} );
 } );
