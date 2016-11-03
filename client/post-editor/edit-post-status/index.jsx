@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
+import AsyncLoad from 'components/async-load';
 import Button from 'components/button';
 import FormToggle from 'components/forms/form-toggle/compact';
 import Revisions from 'post-editor/editor-revisions';
@@ -17,7 +18,6 @@ import postUtils from 'lib/posts/utils';
 import Popover from 'components/popover';
 import InfoPopover from 'components/info-popover';
 import Tooltip from 'components/tooltip';
-import PostSchedule from 'components/post-schedule';
 import postScheduleUtils from 'components/post-schedule/utils';
 import siteUtils from 'lib/site/utils';
 import { recordStat, recordEvent } from 'lib/posts/stats';
@@ -200,12 +200,13 @@ class EditPostStatus extends Component {
 				onClose={ this.togglePostSchedulePopover }
 			>
 				<div className="edit-post-status__post-schedule">
-					<PostSchedule
+					<AsyncLoad
+						require="components/post-schedule"
 						selectedDay={ selectedDay }
 						timezone={ tz }
 						gmtOffset={ gmt }
-						onDateChange={ this.props.onDateChange }>
-					</PostSchedule>
+						onDateChange={ this.props.onDateChange }
+					/>
 				</div>
 			</Popover>
 		);
