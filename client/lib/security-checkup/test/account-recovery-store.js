@@ -114,12 +114,12 @@ describe( 'AccountRecoveryStore', () => {
 
 		it( 'should delete on DELETE_ACCOUNT_RECOVERY_EMAIL', () => {
 			dispatch( testConstants.DISPATCH_DELETE_ACCOUNT_RECOVERY_EMAIL );
-			expect( AccountRecoveryStore.getEmail() ).to.have.deep.property( 'data.email', null );
+			expect( AccountRecoveryStore.getEmail().data ).to.be.empty;
 		} );
 
 		it( 'should delete and update notice on RECEIVE_DELETED_ACCOUNT_RECOVERY_EMAIL', () => {
 			dispatch( testConstants.DISPATCH_RECEIVE_DELETED_ACCOUNT_RECOVERY_EMAIL );
-			expect( AccountRecoveryStore.getEmail() ).to.have.deep.property( 'data.email', null );
+			expect( AccountRecoveryStore.getEmail().data ).to.be.empty;
 			expect( AccountRecoveryStore.getEmail() ).to.have.property( 'lastNotice' ).that.is.an( 'object' );
 		} );
 

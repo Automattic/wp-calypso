@@ -51,6 +51,38 @@ var SecurityCheckupActions = {
 		} );
 	},
 
+	resendPhoneValidationCode: function() {
+		Dispatcher.handleViewAction( {
+			type: actions.RESEND_ACCOUNT_RECOVERY_PHONE_VALIDATION_CODE,
+		} );
+
+		me.newAccountRecoveryPhoneValidationCode( function( error, data ) {
+			Dispatcher.handleServerAction( {
+				type: actions.RECEIVE_RESEND_ACCOUNT_RECOVERY_PHONE_VALIDATION_CODE,
+				data: data,
+				error: error,
+			} );
+
+			recordEvent( `calypso_security_checkup_phone_validation_code_new`, error );
+		} );
+	},
+
+	validatePhone: function( code ) {
+		Dispatcher.handleViewAction( {
+			type: actions.VALIDATE_ACCOUNT_RECOVERY_PHONE,
+		} );
+
+		me.validateAccountRecoveryPhone( code, function( error, data ) {
+			Dispatcher.handleServerAction( {
+				type: actions.RECEIVE_VALIDATE_ACCOUNT_RECOVERY_PHONE,
+				data: data,
+				error: error,
+			} );
+
+			recordEvent( `calypso_security_checkup_validate_phone`, error );
+		} );
+	},
+
 	updateEmail: function( email, previousEmail ) {
 		Dispatcher.handleViewAction( {
 			type: actions.UPDATE_ACCOUNT_RECOVERY_EMAIL,
@@ -85,6 +117,22 @@ var SecurityCheckupActions = {
 			} );
 
 			recordEvent( `calypso_security_checkup_email_deleted`, error );
+		} );
+	},
+
+	resendEmailValidationCode: function() {
+		Dispatcher.handleViewAction( {
+			type: actions.RESEND_ACCOUNT_RECOVERY_EMAIL_VALIDATION_CODE,
+		} );
+
+		me.newAccountRecoveryEmailValidationCode( function( error, data ) {
+			Dispatcher.handleServerAction( {
+				type: actions.RECEIVE_RESEND_ACCOUNT_RECOVERY_EMAIL_VALIDATION_CODE,
+				data: data,
+				error: error,
+			} );
+
+			recordEvent( `calypso_security_checkup_email_validation_code_new`, error );
 		} );
 	},
 
