@@ -196,7 +196,7 @@ class EditPostStatus extends Component {
 			<Popover
 				context={ this.refs && this.refs.postStatusTooltip }
 				isVisible={ this.state.showPostSchedulePopover }
-				position="right"
+				position="bottom left"
 				onClose={ this.togglePostSchedulePopover }
 			>
 				<div className="edit-post-status__post-schedule">
