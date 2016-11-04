@@ -4,13 +4,13 @@
  * External dependencies
  */
 import {
+	constant,
 	get,
 	difference,
 	find,
 	findLast,
 	includes,
 	map,
-	noop,
 	startsWith,
 	uniq,
 } from 'lodash';
@@ -143,7 +143,7 @@ const findTriggeredTour = state => {
 
 	const newTours = difference( toursFromTriggers, toursToDismiss );
 	return find( newTours, tour => {
-		const { when = noop } = find( relevantFeatures, { tour } );
+		const { when = constant( true ) } = find( relevantFeatures, { tour } );
 		return when( state );
 	} );
 };
