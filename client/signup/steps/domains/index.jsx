@@ -28,9 +28,6 @@ import Notice from 'components/notice';
 const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
 
-const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
-	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
-
 const DomainsStep = React.createClass( {
 	showDomainSearch: function() {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
