@@ -40,7 +40,7 @@ Each thunk action creator must dispatch the API requests and handle the possible
 
 ## Goals and characteristics
 
-This data layer opens up our ability to make Calypso perform well offline, lessons the burden of keeping related data in sync, and provides mechanisms to reduce mobile battery consumption and minimize network bandwidth.
+This data layer opens up our ability to make Calypso perform well offline, lessens the burden of keeping related data in sync, and provides mechanisms to reduce mobile battery consumption and minimize network bandwidth.
 
 Components should be thinking of _what_ their data needs are more than they should be thinking about _how_ to meet them.
 They should _trust_ the framework to make sure those needs are met if indeed it is possible to meet them.
@@ -58,7 +58,7 @@ Instead the components should be able to request that they require such data the
 
 The data layer _intercepts_ Redux actions.
 Once it does this the action will be dropped entirely.
-This is to prevent two middlewares which can both supply a given request from fighting with each other or duplicating the request; consequently it allows for prioritization of data-fetching needs by means of ordering how the middleware are arrange in the chain.
+This is to prevent two middlewares which can both supply a given request from fighting with each other or duplicating the request; consequently it allows for prioritization of data-fetching needs by means of ordering how the middleware are arranged in the chain.
 
 Each middleware intercepts given Redux actions and will correspondingly dispatch new follow-up actions to actually handle their requests.
 The functions that compose to form the middleware _can_ and in most cases _will_ closely resemble what was previously written in `redux-thunk` actions.
