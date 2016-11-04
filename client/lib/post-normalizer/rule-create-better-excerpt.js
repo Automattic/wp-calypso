@@ -71,7 +71,7 @@ export default function createBetterExcerpt( post ) {
 	post.better_excerpt_no_html = stripHTML( post.better_excerpt );
 
 	// also make a shorter excerpt...
-	if ( post.better_excerpt ) {
+	if ( post.better_excerpt_no_html ) {
 		// replace any trailing [...] with an actual ellipsis
 		let shorterExcerpt = post.better_excerpt_no_html.replace( /\[...\]\w*$/, '…' );
 		// limit to 160 characters
