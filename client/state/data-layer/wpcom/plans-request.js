@@ -1,5 +1,5 @@
 /**
- * Internal dependecies
+ * Internal dependencies
  */
 import wpcom from 'lib/wp';
 import {
