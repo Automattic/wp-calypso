@@ -3,6 +3,7 @@
 /**
  * External dependencies
  */
+import analytics from 'lib/analytics';
 import titlecase from 'to-title-case';
 import mapValues from 'lodash/mapValues';
 
@@ -103,11 +104,6 @@ export function getExternalThemesUrl( site ) {
 }
 
 export function trackClick( componentName, eventName, verb = 'click' ) {
-	// The analytics module is highly reliant on BOM and DOM, and while we can mock
-	// the entire module trivially on server build, we can't do the same for test
-	// builds, so importing it at the top level broke tests. This is why we're using
-	// require() in the sole context the module is used.
-	const analytics = require( 'lib/analytics' );
 	const stat = `${ componentName } ${ eventName } ${ verb }`;
 	analytics.ga.recordEvent( 'Themes', titlecase( stat ) );
 }
