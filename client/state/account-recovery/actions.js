@@ -29,13 +29,10 @@ export const accountRecoveryFetchFailed = ( error ) => {
 export const accountRecoveryFetch = () => ( dispatch ) => {
 	dispatch( { type: ACCOUNT_RECOVERY_FETCH } );
 
-	return new Promise( ( resolve, reject ) => {
-		wpcom.undocumented().me().getAccountRecovery( ( error, accountRecoverySettings ) => {
-			error ? reject( error ) : resolve( accountRecoverySettings );
+	return wpcom.undocumented().me().getAccountRecovery()
+		.then( ( accountRecoverySettings ) => {
+			dispatch( accountRecoveryFetchSuccess( accountRecoverySettings ) );
+		} ).catch( ( error ) => {
+			dispatch( accountRecoveryFetchFailed( error ) );
 		} );
-	} ).then( ( accountRecoverySettings ) => {
-		dispatch( accountRecoveryFetchSuccess( accountRecoverySettings ) );
-	} ).catch( ( error ) => {
-		dispatch( accountRecoveryFetchFailed( error ) );
-	} );
 };
