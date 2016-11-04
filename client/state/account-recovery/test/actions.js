@@ -196,27 +196,30 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	describe( '#updateAccountRecoveryEmail', () => {
-		const newEmail = { email: 'newtest@a8ctest.com' };
+	const newEmail = 'newtest@a8ctest.com';
 
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/me/account-recovery/email' )
-				.reply( 200, newEmail );
-		} );
-
-		it( 'should dispatch update / success actions', () => {
-			const update = updateAccountRecoveryEmail( newEmail )( spy );
-
-			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_EMAIL_UPDATE } ) );
-
-			return update.then( () => {
-				assert( spy.calledWith( {
-					type: ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
-					email: newEmail,
-				} ) );
-			} );
-		} );
+	generateSuccessAndFailedTestsForThunk( {
+		testBaseName: '#updateAccountRecoveryEmail',
+		nockSettings: {
+			method: 'post',
+			endpoint: '/rest/v1.1/me/account-recovery/email',
+			successResponse: { email: newEmail },
+			errorResponse: errorResponse,
+		},
+		thunk: () => updateAccountRecoveryEmail( newEmail )( spy ),
+		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_EMAIL_UPDATE } ) ),
+		postConditionSuccess: () => {
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
+				email: newEmail,
+			} ) );
+		},
+		postConditionFailed: () => {
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
+				error: errorResponse,
+			} ) );
+		},
 	} );
 
 	describe( '#updateAccountRecoveryEmailSuccess', () => {
