@@ -626,7 +626,7 @@ Undocumented.prototype.metaKeyring = function( fn ) {
 Undocumented.prototype.getHappinessEngineers = function( fn ) {
 	debug( 'meta/happiness-engineers/ query' );
 
-	this.wpcom.req.get( { path: '/meta/happiness-engineers/' }, fn );
+	return this.wpcom.req.get( { path: '/meta/happiness-engineers/' }, fn );
 };
 
 /**
