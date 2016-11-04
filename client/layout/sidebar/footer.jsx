@@ -12,18 +12,18 @@ import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import config from 'config';
 import HappychatButton from 'components/happychat/button';
-import { isHappychatAvailable } from 'state/happychat/selectors';
+import { isHappychatChatActive } from 'state/happychat/selectors';
 
-const SidebarFooter = ( { translate, children, isHappychatAvailable } ) => (
+const SidebarFooter = ( { translate, children, isHappychatButtonVisible } ) => (
 	<div className="sidebar__footer">
 		{ children }
 		<Button className="sidebar__footer-help" borderless href="/help" title={ translate( 'Help' ) }>
 			<Gridicon icon="help-outline" />
 		</Button>
-		{ isHappychatAvailable && config.isEnabled( 'happychat' ) && <HappychatButton /> }
+		{ isHappychatButtonVisible && config.isEnabled( 'happychat' ) && <HappychatButton /> }
 	</div>
 );
 
-const mapState = ( state ) => ( { isHappychatAvailable: isHappychatAvailable( state ) } );
+const mapState = ( state ) => ( { isHappychatButtonVisible: isHappychatChatActive( state ) } );
 
 export default connect( mapState )( localize( SidebarFooter ) );

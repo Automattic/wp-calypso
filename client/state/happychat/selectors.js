@@ -8,18 +8,38 @@ import map from 'lodash/map';
  */
 import createSelector from 'lib/create-selector';
 
+export const HAPPYCHAT_CHAT_STATUS_DEFAULT = 'default';
+export const HAPPYCHAT_CHAT_STATUS_ASSIGNED = 'assigned';
+export const HAPPYCHAT_CHAT_STATUS_ASSIGNING = 'assigning';
+export const HAPPYCHAT_CHAT_STATUS_PENDING = 'pending';
+export const HAPPYCHAT_CHAT_STATUS_MISSED = 'missed';
+export const HAPPYCHAT_CHAT_STATUS_ABANDONED = 'abandoned';
+
+export const getHappychatChatStatus = createSelector(
+	state => state.happychat.chatStatus
+);
+
 /**
  * Gets the current happychat connection status
  * @param {Object} state - global redux state
  * @return {String} current state value
  */
 export const getHappychatConnectionStatus = createSelector(
-	state => state.happychat.status,
-	state => state.happychat.status
+	state => state.happychat.connectionStatus
+);
+
+export const isHappychatChatActive = createSelector(
+	state => state.happychat.chatStatus !== HAPPYCHAT_CHAT_STATUS_DEFAULT,
+	state => state.happychat.chatStatus
+);
+
+export const isHappychatAcceptingChats = createSelector(
+	state => state.happychat.isAvailable
 );
 
 export const isHappychatAvailable = createSelector(
-	state => state.happychat.isAvailable
+	state => isHappychatAcceptingChats( state ) || isHappychatChatActive( state ),
+	[ isHappychatAcceptingChats, isHappychatChatActive ]
 );
 
 /**
