@@ -2,6 +2,7 @@
  * External dependencies
  */
 var React = require( 'react' );
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -18,18 +19,22 @@ var ServiceTip = require( './service-tip' ),
 	FoldableCard = require( 'components/foldable-card' ),
 	SocialLogo = require( 'components/social-logo' );
 
-module.exports = React.createClass( {
+import AccountDialog from './account-dialog';
+import { getCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSiteId } from 'state/ui/selectors';
+
+const SharingService = React.createClass( {
 	displayName: 'SharingService',
 
 	propTypes: {
-		site: React.PropTypes.object,                    // The site for which connections are created
 		user: React.PropTypes.object,                    // A user object
 		service: React.PropTypes.object.isRequired,      // The single service object
 		connections: React.PropTypes.object.isRequired,  // A collections-list instance
 		onAddConnection: React.PropTypes.func,           // Handler for creating a new connection for this service
 		onRemoveConnection: React.PropTypes.func,        // Handler for removing a connection from this service
 		onRefreshConnection: React.PropTypes.func,       // Handler for refreshing a Keyring connection for this service
-		onToggleSitewideConnection: React.PropTypes.func // Handler to invoke when toggling a connection to be shared sitewide
+		onToggleSitewideConnection: React.PropTypes.func,// Handler to invoke when toggling a connection to be shared sitewide
+		siteId: React.PropTypes.number,                  // The site ID for which connections are created
 	},
 
 	mixins: [ observe( 'connections' ) ],
@@ -39,7 +44,8 @@ module.exports = React.createClass( {
 			isOpen: false,          // The service is visually opened
 			isConnecting: false,    // A pending connection is awaiting authorization
 			isDisconnecting: false, // A pending disconnection is awaiting completion
-			isRefreshing: false     // A pending refresh is awaiting completion
+			isRefreshing: false,    // A pending refresh is awaiting completion
+			selectingAccountForService: null,
 		};
 	},
 
@@ -48,7 +54,8 @@ module.exports = React.createClass( {
 			onAddConnection: function() {},
 			onRemoveConnection: function() {},
 			onRefreshConnection: function() {},
-			onToggleSitewideConnection: function() {}
+			onToggleSitewideConnection: function() {},
+			siteId: 0,
 		};
 	},
 
@@ -59,6 +66,56 @@ module.exports = React.createClass( {
 		this.props.connections.off( 'destroy:error', this.onDisconnectionError );
 		this.props.connections.off( 'refresh:success', this.onRefreshSuccess );
 		this.props.connections.off( 'refresh:error', this.onRefreshError );
+	},
+
+	addConnection: function( service, keyringConnectionId, externalUserId ) {
+		if ( service ) {
+			// Attempt to create a new connection. If a Keyring connection ID
+			// is not provided, the user will need to authorize the app
+			this.props.connections.create( service, this.props.siteId, keyringConnectionId, externalUserId );
+
+			// In the case that a Keyring connection doesn't exist, wait for app
+			// authorization to occur, then display with the available connections
+			if ( ! keyringConnectionId ) {
+				this.props.connections.once( 'connect', function() {
+					if ( serviceConnections.didKeyringConnectionSucceed( service.ID, this.props.siteId ) &&
+						serviceConnections.isServiceForPublicize( service.ID ) ) {
+						this.setState( { selectingAccountForService: service } );
+					}
+				}.bind( this ) );
+			} else {
+				analytics.ga.recordEvent( 'Sharing', 'Clicked Connect Button in Modal', this.state.selectingAccountForService.ID );
+			}
+		} else {
+			// If an account wasn't selected from the dialog or the user cancels
+			// the connection, the dialog should simply close
+			this.props.connections.emit( 'create:error', { cancel: true } );
+			analytics.ga.recordEvent( 'Sharing', 'Clicked Cancel Button in Modal', this.state.selectingAccountForService.ID );
+		}
+
+		// Reset active account selection
+		this.setState( { selectingAccountForService: null } );
+	},
+
+	toggleSitewideConnection: function( connection, isSitewide ) {
+		this.props.connections.update( connection, { shared: isSitewide } );
+	},
+
+	getAccountDialog: function() {
+		const isSelectingAccount = !! this.state.selectingAccountForService;
+		let accounts;
+
+		if ( isSelectingAccount ) {
+			accounts = serviceConnections.getAvailableExternalAccounts( this.state.selectingAccountForService.ID, this.props.siteId );
+		}
+
+		return (
+			<AccountDialog
+				isVisible={ isSelectingAccount }
+				service={ this.state.selectingAccountForService }
+				accounts={ accounts }
+				onAccountSelected={ this.addConnection } />
+		);
 	},
 
 	onConnectionSuccess: function() {
@@ -141,7 +198,7 @@ module.exports = React.createClass( {
 		this.setState( { isConnecting: true } );
 		this.props.connections.once( 'create:success', this.onConnectionSuccess );
 		this.props.connections.once( 'create:error', this.onConnectionError );
-		this.props.onAddConnection( this.props.service );
+		this.addConnection( this.props.service );
 	},
 
 	disconnect: function( connections ) {
@@ -154,7 +211,9 @@ module.exports = React.createClass( {
 		this.setState( { isDisconnecting: true } );
 		this.props.connections.once( 'destroy:success', this.onDisconnectionSuccess );
 		this.props.connections.once( 'destroy:error', this.onDisconnectionError );
-		this.props.onRemoveConnection( connections );
+
+		connections = serviceConnections.filterConnectionsToRemove( connections );
+		this.props.connections.destroy( connections );
 	},
 
 	refresh: function( connection ) {
@@ -167,7 +226,7 @@ module.exports = React.createClass( {
 			// the first broken connection owned by the current user.
 			connection = serviceConnections.getRefreshableConnections( this.props.service.ID )[ 0 ];
 		}
-		this.props.onRefreshConnection( connection );
+		this.props.connections.refresh( connection );
 	},
 
 	performAction: function() {
@@ -226,6 +285,7 @@ module.exports = React.createClass( {
 		const content = (
 			<div
 				className={ 'sharing-service__content ' + ( serviceConnections.isFetchingAccounts() ? 'is-placeholder' : '' ) }>
+				{ this.getAccountDialog() }
 				<ServiceExamples service={ this.props.service } />
 				<ServiceConnectedAccounts
 					connections={ connections }
@@ -234,7 +294,7 @@ module.exports = React.createClass( {
 					onAddConnection={ this.connect }
 					onRefreshConnection={ this.refresh }
 					onRemoveConnection={ this.disconnect }
-					onToggleSitewideConnection={ this.props.onToggleSitewideConnection }
+					onToggleSitewideConnection={ this.toggleSitewideConnection }
 					service={ this.props.service } />
 				<ServiceTip service={ this.props.service } />
 			</div> );
@@ -262,3 +322,10 @@ module.exports = React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	( state ) => ( {
+		siteId: getSelectedSiteId( state ),
+		user: getCurrentUser( state ),
+	} ),
+)( SharingService );

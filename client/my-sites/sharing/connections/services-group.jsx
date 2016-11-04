@@ -22,32 +22,22 @@ import ServicePlaceholder from './service-placeholder';
 const NUMBER_OF_PLACEHOLDERS = 4;
 
 class SharingServicesGroup extends Component {
-
 	static propTypes = {
-		site: PropTypes.object,
-		user: PropTypes.object,
 		connections: PropTypes.object,
-		onAddConnection: PropTypes.func,
-		onRemoveConnection: PropTypes.func,
-		onRefreshConnection: PropTypes.func,
-		onToggleSitewideConnection: PropTypes.func,
-		initialized: PropTypes.bool,
+		description: PropTypes.string,
 		services: PropTypes.array,
 		title: PropTypes.string.isRequired,
-		description: PropTypes.string
 	};
 
 	static defaultProps = {
-		onAddConnection: () => {},
-		onRemoveConnection: () => {},
-		onRefreshConnection: () => {},
-		onToggleSitewideConnection: () => {},
-		initialized: false
+		connections: Object.freeze( {} ),
+		description: '',
+		services: Object.freeze( [] ),
 	};
 
 	render() {
 		const classes = classNames( 'sharing-services-group', {
-			'is-empty': this.props.initialized && ! this.props.services.length
+			'is-empty': ! this.props.services.length
 		} );
 
 		return (
@@ -55,18 +45,12 @@ class SharingServicesGroup extends Component {
 				<QueryKeyringServices />
 				<SectionHeader label={ this.props.title } />
 				<ul className="sharing-services-group__services">
-					{ this.props.initialized
+					{ this.props.services.length
 						? this.props.services.map( ( service ) =>
 							<Service
 								key={ service.ID }
 								connections={ this.props.connections }
-								onAddConnection={ this.props.onAddConnection }
-								onRefreshConnection={ this.props.onRefreshConnection }
-								onRemoveConnection={ this.props.onRemoveConnection }
-								onToggleSitewideConnection={ this.props.onToggleSitewideConnection }
-								service={ service }
-								site={ this.props.site }
-								user={ this.props.user } /> )
+								service={ service } /> )
 						: times( NUMBER_OF_PLACEHOLDERS, ( index ) =>
 							<ServicePlaceholder
 								key={ 'service-placeholder-' + index } /> )
