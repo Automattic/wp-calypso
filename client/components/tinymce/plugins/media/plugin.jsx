@@ -209,7 +209,7 @@ function mediaButton( editor ) {
 		}
 
 		const dirtyImage = MediaStore.getDirtyImage();
-		let numOfImagesToUpdate = 0;
+		let numOfImagesToUpdate = Number.MAX_SAFE_INTEGER;
 
 		isVisualEditMode = ! editor.isHidden();
 
@@ -407,8 +407,8 @@ function mediaButton( editor ) {
 			editor.fire( 'change' );
 		}
 
-		if ( numOfImagesToUpdate === 0 ) {
-			MediaActions.edit(  selectedSite.ID, { ...dirtyImage, isDirty: false } );
+		if ( dirtyImage && dirtyImage.isDirty && numOfImagesToUpdate === 0 ) {
+			MediaActions.edit( selectedSite.ID, { ...dirtyImage, isDirty: false } );
 		}
 	} );
 
