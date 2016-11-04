@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { expect } from 'chai';
 
+/**
+ * Internal dependencies
+ */
 import useNock from 'test/helpers/use-nock';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
@@ -32,7 +38,7 @@ describe( 'wpcom-api', () => {
 		) );
 
 		it( 'should dispatch SUCCESS action when request completes', () => {
-			return requestPlans( { dispatch } )()
+			return requestPlans( { dispatch } )
 				.then( () => (
 					expect( dispatch ).to.have.been.calledWith( ACTION_PLANS_REQUEST_SUCCESS )
 				) );
@@ -42,7 +48,7 @@ describe( 'wpcom-api', () => {
 			const plans = wpcomResponse;
 			const actionResponse = plansReceiveAction( plans );
 
-			return requestPlans( { dispatch } )()
+			return requestPlans( { dispatch } )
 				.then( () => (
 					expect( dispatch ).to.have.been.calledWith( actionResponse )
 				) );

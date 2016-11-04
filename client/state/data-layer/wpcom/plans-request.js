@@ -9,7 +9,7 @@ import {
 	PLANS_REQUEST_FAILURE
 } from 'state/action-types';
 
-export const requestPlans = ( { dispatch } ) => () => (
+export const requestPlans = ( { dispatch } ) => (
 	wpcom
 		.withLocale()
 		.plans()
@@ -27,4 +27,6 @@ export const requestPlans = ( { dispatch } ) => () => (
 		} )
 );
 
-export default [ PLANS_REQUEST, requestPlans ];
+export default {
+	[ PLANS_REQUEST ]: [ requestPlans ],
+};

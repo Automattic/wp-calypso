@@ -1,25 +1,16 @@
 /**
  * External dependencies
  */
-import {
-	fromPairs,
-	has,
-	invoke,
-} from 'lodash';
+import { has } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import wpcom from './wpcom';
+import handlers from './wpcom';
 
-export const handlers = fromPairs( wpcom );
-
-export const middleware = ( { dispatch, getState } ) => next => action => {
-	if ( ! has( handlers, action.type ) ) {
-		return next( action );
-	}
-
-	return invoke( handlers, action.type, { dispatch, getState } )( action );
-};
+export const middleware = store => next => action =>
+	has( handlers, action.type )
+		? handlers[ action.type ].forEach( handler => handler( store, action ) )
+		: next( action );
 
 export default middleware;
