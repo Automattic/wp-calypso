@@ -1,8 +1,14 @@
+/**
+ * External dependencies
+ */
 import { combineReducers } from 'redux';
 import get from 'lodash/get';
 import find from 'lodash/find';
 import concat from 'lodash/concat';
 
+/**
+ * Internal dependencies
+ */
 import {
 	SERIALIZE,
 	DESERIALIZE,
@@ -10,7 +16,8 @@ import {
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_CONNECTING,
-	HAPPYCHAT_CONNECTED
+	HAPPYCHAT_CONNECTED,
+	HAPPYCHAT_SET_CHAT_STATUS
 } from 'state/action-types';
 
 /**
@@ -84,7 +91,7 @@ const message = ( state = '', action ) => {
  * @return {Object}        Updated state
  *
  */
-const status = ( state = 'disconnected', action ) => {
+const connectionStatus = ( state = 'disconnected', action ) => {
 	switch ( action.type ) {
 		case SERIALIZE:
 			return 'disconnected';
@@ -99,8 +106,33 @@ const status = ( state = 'disconnected', action ) => {
 };
 
 /**
- * Tracks the availability of happychat. If not available, happychat should
- * not be displayed or made accessible to users.
+ * Tracks the state of the happychat chat. Valid states
+ *  - default : no chat has been started
+ *  - pending : chat has been started but no operator assigned
+ *  - assigning : system is assigning to an operator
+ *  - assigned : operator has been connected to the chat
+ *  - missed : no operator could be assigned
+ *  - abandoned : operator was disconnected
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @return {Object}        Updated state
+ *
+ */
+const chatStatus = ( state = 'default', action ) => {
+	switch ( action.type ) {
+		case SERIALIZE:
+			return 'default';
+		case DESERIALIZE:
+			return state;
+		case HAPPYCHAT_SET_CHAT_STATUS:
+			return action.status;
+	}
+	return state;
+};
+
+/**
+ * Tracks wether happychat.io is accepting new chats.
  *
  * @param  {Boolean} state  Current happychat status
  * @param  {Object}  action Action playload
@@ -118,4 +150,4 @@ const isAvailable = ( state = false, action ) => {
 	return state;
 };
 
-export default combineReducers( { timeline, message, status, isAvailable } );
+export default combineReducers( { timeline, message, connectionStatus, chatStatus, isAvailable } );

@@ -22,6 +22,5 @@ export const isHappychatOpen = createSelector(
  * @return {String} current state value
  */
 export const isHappychatMinimizing = createSelector(
-	state => state.ui.happychat.isMinimizing,
 	state => state.ui.happychat.isMinimizing
 );
