@@ -58,9 +58,6 @@ const moreOnSameSite = [
 
 const moreOnWordPress = [
 	{
-		site: {
-			title: 'Political Guru'
-		},
 		post: {
 			ID: 3,
 			global_ID: 3,
@@ -72,17 +69,17 @@ const moreOnWordPress = [
 			modified: "2016-09-27T08:20:37+00:00",
 			title: "Why Trump should Win the American Election.",
 			reading_time: 152,
-			better_excerpt: "<p>This presidential race has, to be blunt, a cluster bomb of attacks, lies and outright nonsense rhetoric that has astounded many and made people curse at their screens, newspapers and media agencies they follow.</p>\n<p>To be fair, it came from both sides, but in the defense of trump, most of his rhetoric or so called attacks, weren’t attacks on Clinton, but retaliation in defense of attacks that Clinton has made against trump.</p>\n<p>Now, that being said, Trump is clearly the better candidate.    Clinton supporters are, so far, from what I have seen, outright stupid.    Many support her because Clinton has a vagina.  Yes, you read that correctly.    Many are voting simply to get a woman in the office, instead of voting based on qualifications like, integrity, honesty, having solid reasoning to fix the problems and the intelligence to be able to negotiate deals with other world leaders.</p>",
+			better_excerpt: "This presidential race has, to be blunt, a cluster bomb of attacks, lies and outright nonsense rhetoric that has astounded many and made people curse at their screens, newspapers and media agencies they follow.",
 			short_excerpt: "This presidential race has, to be blunt, a cluster bomb of attacks, lies and outright nonsense rhetoric that has astounded many and made people curse at their…",
 			canonical_image: {
 					uri: "https://freedomsandtruth.files.wordpress.com/2016/09/trump-rally-in-vegas-getty-640x480.jpg?w=720&quality=80&strip=info",
 			}
+		},
+		site: {
+			title: 'All the catsss'
 		}
 	},
 	{
-		site: {
-			title: 'Political Ninja'
-		},
 		post: {
 			ID: 4,
 			global_ID: 4,
@@ -99,6 +96,9 @@ const moreOnWordPress = [
 			canonical_image: {
 					uri: "https://lh4.googleusercontent.com/-eXKU4UhFusI/AAAAAAAAAAI/AAAAAAAAATA/1QahWqsqd-I/s0-c-k-no-ns/photo.jpg",
 			}
+		},
+		site: {
+			title: '99 Problems'
 		}
 	},
 ];
@@ -112,8 +112,8 @@ const RelatedPostCardv2Example = () => (
 					{ moreOnSameSite.map( item =>
 						<li className="reader-related-card-v2__list-item">
 							<RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } />
-						</li> )
-					}
+						</li>
+					) }
 				</ul>
 		</div>
 		<div className="reader-related-card-v2__blocks is-other-site">
@@ -122,8 +122,8 @@ const RelatedPostCardv2Example = () => (
 					{ moreOnWordPress.map( item =>
 						<li className="reader-related-card-v2__list-item">
 							<RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } />
-						</li> )
-					}
+						</li>
+					) }
 				</ul>
 		</div>
 		</Card>
