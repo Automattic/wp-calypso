@@ -68,7 +68,11 @@ function receivePage( siteId, items ) {
 }
 
 MediaStore.getDirtyImage = () => {
-	return MediaStore._dirtyImageRef;
+	if ( MediaStore._dirtyImageRef && MediaStore._dirtyImageRef.isDirty ) {
+		return MediaStore._dirtyImageRef;
+	}
+
+	return null;
 };
 
 MediaStore.get = function( siteId, postId ) {
