@@ -1,9 +1,15 @@
+/**
+ * External dependencies
+ */
 import {
 	fromPairs,
 	has,
 	invoke,
 } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import wpcom from './wpcom';
 
 export const handlers = fromPairs( wpcom );
