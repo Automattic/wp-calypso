@@ -98,12 +98,11 @@ describe( 'account-recovery actions', () => {
 
 	describe( '#accountRecoveryFetchFailed()', () => {
 		it( 'should return ACCOUNT_RECOVERY_FETCH_FAILED', () => {
-			const dummyError = 'failed';
-			const action = accountRecoveryFetchFailed( dummyError );
+			const action = accountRecoveryFetchFailed( errorResponse );
 
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_FETCH_FAILED,
-				error: dummyError,
+				error: errorResponse,
 			} );
 		} );
 	} );
@@ -153,12 +152,11 @@ describe( 'account-recovery actions', () => {
 
 	describe( '#updateAccountRecoveryPhoneFailed', () => {
 		it( 'should return ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED', () => {
-			const dummyError = 'failed';
-			const action = updateAccountRecoveryPhoneFailed( dummyError );
+			const action = updateAccountRecoveryPhoneFailed( errorResponse );
 
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
-				error: dummyError,
+				error: errorResponse,
 			} );
 		} );
 	} );
@@ -194,12 +192,11 @@ describe( 'account-recovery actions', () => {
 
 	describe( '#deleteAccountRecoveryPhoneFailed', () => {
 		it( 'should return ACCOUNT_RECOVERY_PHONE_DELETE_FAILED', () => {
-			const dummyError = 'failed';
-			const action = deleteAccountRecoveryPhoneFailed( dummyError );
+			const action = deleteAccountRecoveryPhoneFailed( errorResponse );
 
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
-				error: dummyError,
+				error: errorResponse,
 			} );
 		} );
 	} );
@@ -243,12 +240,11 @@ describe( 'account-recovery actions', () => {
 
 	describe( '#updateAccountRecoveryEmailFailed', () => {
 		it( 'should return ACCOUNT_RECOVERY_EMAIL_FAILED', () => {
-			const dummyError = 'failed';
-			const action = updateAccountRecoveryEmailFailed( dummyError );
+			const action = updateAccountRecoveryEmailFailed( errorResponse );
 
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
-				error: dummyError,
+				error: errorResponse,
 			} );
 		} );
 	} );
