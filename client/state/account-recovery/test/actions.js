@@ -52,51 +52,34 @@ describe( 'account-recovery actions', () => {
 	let spy;
 	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 
-	describe( '#accountRecoveryFetch() success', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/me/account-recovery' )
-				.reply( 200, dummyData );
-		} );
+	const errorResponse = { status: 400, message: 'Something wrong!' };
 
-		it( 'should dispatch fetch / success actions.', () => {
-			const fetch = accountRecoveryFetch()( spy );
-
+	generateSuccessAndFailedTestsForThunk( {
+		testBaseName: '#accountRecoveryFetch',
+		nockSettings: {
+			method: 'get',
+			endpoint: '/rest/v1.1/me/account-recovery',
+			successResponse: dummyData,
+			errorResponse: errorResponse,
+		},
+		thunk: () => {
+			return accountRecoveryFetch()( spy );
+		},
+		preCondition: () => {
 			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_FETCH } ) );
-
-			return fetch.then( () => {
-				assert( spy.calledWith( {
-					type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
-					...dummyData,
-				} ) );
-			} );
-		} );
-	} );
-
-	describe( '#accountRecoveryFetch() failed', () => {
-		const message = 'something wrong!';
-
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.1/me/account-recovery' )
-				.reply( 400, { message } );
-		} );
-
-		it( 'should dispatch fetch / fail actions.', () => {
-			const fetch = accountRecoveryFetch()( spy );
-
-			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_FETCH } ) );
-
-			return fetch.then( () => {
-				assert( spy.calledWith( {
-					type: ACCOUNT_RECOVERY_FETCH_FAILED,
-					error: {
-						status: 400,
-						message,
-					},
-				} ) );
-			} );
-		} );
+		},
+		postConditionSuccess: () => {
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
+				...dummyData,
+			} ) );
+		},
+		postConditionFailed: () => {
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_FETCH_FAILED,
+				error: errorResponse,
+			} ) );
+		},
 	} );
 
 	describe( '#accountRecoveryFetchSuccess()', () => {
@@ -127,8 +110,6 @@ describe( 'account-recovery actions', () => {
 		number: '8881234567',
 		number_full: '+18881234567',
 	};
-
-	const errorResponse = { status: 400, message: 'Something wrong!' };
 
 	generateSuccessAndFailedTestsForThunk( {
 		testBaseName: '#updateAccountRecoveryPhone',
