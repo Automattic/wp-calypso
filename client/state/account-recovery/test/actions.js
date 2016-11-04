@@ -120,59 +120,82 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	describe( '#updateAccountRecoveryPhone success', () => {
-		const newPhoneData = {
-			country_code: 'US',
-			country_numeric_code: '+1',
-			number: '8881234567',
-			number_full: '+18881234567',
-		};
+	const generateSuccessAndFailedTestsForThunk = ( { testBaseName, nockSettings, thunk, preCondition, postConditionSuccess, postConditionFailed } ) => {
+		const {
+			method,
+			endpoint,
+			successResponse,
+			errorResponse,
+		} = nockSettings;
 
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/me/account-recovery/phone' )
-				.reply( 200, newPhoneData );
-		} );
+		const apiUrl = 'https://public-api.wordpress.com:443';
 
-		it( 'should dispatch update / success actions.', () => {
-			const update = updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number )( spy );
+		describe( testBaseName + ' success', () => {
+			useNock( ( nock ) => {
+				nock( apiUrl )
+					[ method ]( endpoint )
+					.reply( 200, successResponse );
+			} );
 
-			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } ) );
+			it( 'should be successful.', () => {
+				const action = thunk( spy );
 
-			return update.then( () => {
-				assert( spy.calledWith( {
-					type: ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
-					phone: newPhoneData,
-				} ) );
+				preCondition();
+
+				return action.then( postConditionSuccess );
 			} );
 		} );
-	} );
 
-	describe( '#updateAccountRecoveryPhone fail', () => {
-		const message = 'failed!';
-		const status = 400;
+		describe( testBaseName + ' fail', () => {
+			useNock( ( nock ) => {
+				nock( apiUrl )
+					[ method ]( endpoint )
+					.reply( errorResponse.status, errorResponse );
+			} );
 
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/me/account-recovery/phone' )
-				.reply( status, { message } );
-		} );
+			it( 'should be failed', () => {
+				const action = thunk( spy );
 
-		it( 'should dispatch update / fail actions.', () => {
-			const update = updateAccountRecoveryPhone( 'TW', '222' )( spy );
+				preCondition();
 
-			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } ) );
-
-			return update.then( () => {
-				assert( spy.calledWith( {
-					type: ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
-					error: {
-						status,
-						message,
-					},
-				} ) );
+				return action.then( postConditionFailed );
 			} );
 		} );
+	};
+
+	const newPhoneData = {
+		country_code: 'US',
+		country_numeric_code: '+1',
+		number: '8881234567',
+		number_full: '+18881234567',
+	};
+
+	const errorResponse = { status: 400, message: 'Something wrong!' };
+
+	generateSuccessAndFailedTestsForThunk( {
+		testBaseName: '#updateAccountRecoveryPhone',
+		nockSettings: {
+			method: 'post',
+			endpoint: '/rest/v1.1/me/account-recovery/phone',
+			successResponse: newPhoneData,
+			errorResponse: errorResponse,
+		},
+		thunk: updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number ),
+		preCondition: () => {
+			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } ) );
+		},
+		postConditionSuccess: () => {
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
+				phone: newPhoneData,
+			} ) );
+		},
+		postConditionFailed: () => {
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+				error: errorResponse,
+			} ) );
+		},
 	} );
 
 	describe( '#updateAccountRecoveryPhoneSuccess', () => {
