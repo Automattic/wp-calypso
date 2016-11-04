@@ -233,7 +233,7 @@
 	clear: both;
 	overflow: hidden;
 	margin: 0 auto 20px auto;
-	max-width: 500px;
+	max-width: 100%;
 }
 .tiled-gallery img {
 	margin: 2px !important; /* Ensure that this value isn't overridden by themes that give content images blanket margins */
@@ -270,6 +270,7 @@
 }
 
 .tiled-gallery-caption { /* Captions */
+	box-sizing: border-box; /* to make width: 100% work */
 	background: #eee;
 	background: rgba( 255,255,255,0.8 );
 	color: #333;
@@ -279,7 +280,6 @@
 	padding: 10px 20px;
 	position: absolute;
 		bottom: 0;
-	text-overflow: ellipsis;
 	width: 100%;
 	transition: opacity .25s ease-in-out;
 	opacity: 0;
