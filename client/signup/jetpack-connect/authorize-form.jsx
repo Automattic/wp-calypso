@@ -29,11 +29,11 @@ import {
 import {
 	getAuthorizationData,
 	getAuthorizationRemoteSite,
-	getAuthorizationRemoteSiteUrl,
 	getSSOSessions,
 	isCalypsoStartedConnection,
 	hasXmlrpcError,
 	getSiteSelectedPlan,
+	isRemoteSiteOnSitesList,
 	getGlobalSelectedPlan
 } from 'state/jetpack-connect/selectors';
 import { abtest } from 'lib/abtest';
@@ -57,7 +57,7 @@ import { requestSites } from 'state/sites/actions';
 import { isRequestingSites } from 'state/sites/selectors';
 import MainWrapper from './main-wrapper';
 import HelpButton from './help-button';
-import { withoutHttp } from 'lib/url';
+import { urlToSlug } from 'lib/url';
 import LoggedOutFormFooter from 'components/logged-out-form/footer';
 import FormLabel from 'components/forms/form-label';
 import FormSettingExplanation from 'components/forms/form-setting-explanation';
@@ -65,6 +65,7 @@ import Notice from 'components/notice';
 import NoticeAction from 'components/notice/notice-action';
 import Plans from './plans';
 import CheckoutData from 'components/data/checkout';
+
 
 /**
  * Constants
@@ -396,7 +397,7 @@ const LoggedInForm = React.createClass( {
 
 		if ( ! this.props.isAlreadyOnSitesList &&
 			queryObject.already_authorized ) {
-			return this.translate( 'Return to your site' );
+			return this.translate( 'Go back to your site' );
 		}
 
 		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
@@ -487,10 +488,7 @@ const LoggedInForm = React.createClass( {
 	},
 
 	getRedirectionTarget() {
-		const { queryObject } = this.props.jetpackConnectAuthorize;
-		const site = queryObject.site;
-		const siteSlug = withoutHttp( site ).replace( /\//g, '::' );
-		return PLANS_PAGE + siteSlug;
+		return PLANS_PAGE + this.props.siteSlug;
 	},
 
 	renderFooterLinks() {
@@ -676,9 +674,8 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 
 export default connect(
 	state => {
-		const remoteSiteUrl = getAuthorizationRemoteSiteUrl( state );
-		const siteSlug = withoutHttp( remoteSiteUrl ).replace( /\//g, '::' );
-		const remoteSiteInList = getAuthorizationRemoteSite( state );
+		const remoteSiteUrl = getAuthorizationRemoteSite( state );
+		const siteSlug = urlToSlug( remoteSiteUrl );
 		const requestHasXmlrpcError = () => {
 			return hasXmlrpcError( state );
 		};
@@ -694,10 +691,10 @@ export default connect(
 			jetpackConnectAuthorize: getAuthorizationData( state ),
 			plansFirst: abtest( 'jetpackConnectPlansFirst' ) === 'showPlansBeforeAuth',
 			jetpackSSOSessions: getSSOSessions( state ),
-			isAlreadyOnSitesList: !! remoteSiteInList,
+			isAlreadyOnSitesList: isRemoteSiteOnSitesList( state ),
 			isFetchingSites,
 			requestHasXmlrpcError,
-			calypsoStartedConnection: remoteSiteUrl && isCalypsoStartedConnection( state, remoteSiteUrl )
+			calypsoStartedConnection: isCalypsoStartedConnection( state, remoteSiteUrl )
 		};
 	},
 	dispatch => bindActionCreators( {
