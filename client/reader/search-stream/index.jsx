@@ -23,7 +23,9 @@ import sampleSize from 'lodash/sampleSize';
 import i18nUtils from 'lib/i18n-utils';
 import { staffSuggestions, popularSuggestions } from './suggestions';
 import { abtest } from 'lib/abtest';
+import SearchCard from 'blocks/reader-search-card';
 import ReaderPostCard from 'blocks/reader-post-card';
+import config from 'config';
 
 const SearchCardAdapter = React.createClass( {
 	getInitialState() {
@@ -68,13 +70,15 @@ const SearchCardAdapter = React.createClass( {
 	},
 
 	render() {
-		return <ReaderPostCard
-			post={ this.props.post }
-			site={ this.state.site }
-			feed={ this.state.feed }
-			onClick={ this.onCardClick }
-			onCommentClick={ this.onCommentClick }
-			showPrimaryFollowButton={ this.props.showPrimaryFollowButtonOnCards } />;
+		const cardComponent = config.isEnabled( 'reader/refresh/stream' ) ? ReaderPostCard : SearchCard;
+		return React.createElement( cardComponent, {
+			post: this.props.post,
+			site: this.props.site,
+			feed: this.props.feed,
+			onClick: this.onCardClick,
+			onCommentClick: this.onCommentClick,
+			showPrimaryFollowButton: this.props.showPrimaryFollowButtonOnCards
+		} );
 	}
 } );
 
