@@ -53,7 +53,7 @@ const PublishMenu = React.createClass( {
 	getDefaultMenuItems() {
 		const { site } = this.props;
 
-		return [
+		const items = [
 			{
 				name: 'post',
 				label: this.translate( 'Blog Posts' ),
@@ -80,6 +80,21 @@ const PublishMenu = React.createClass( {
 				showOnAllMySites: true,
 			}
 		];
+
+		if ( config.isEnabled( 'manage/media' ) ) {
+			items.push( {
+				name: 'media',
+				label: this.translate( 'Media' ),
+				className: 'media-section',
+				capability: 'upload_files',
+				queryable: true,
+				config: 'manage/media',
+				link: '/media',
+				wpAdminLink: 'upload.php',
+				showOnAllMySites: false,
+			} );
+		}
+		return items;
 	},
 
 	onNavigate( postType ) {
