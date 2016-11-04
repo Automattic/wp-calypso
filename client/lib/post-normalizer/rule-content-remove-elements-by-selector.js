@@ -33,7 +33,7 @@ export default function sanitizeContent( post, dom ) {
 
 	const elements = dom.querySelectorAll( thingsToRemove );
 	// using forEach because qsa doesn't return a real array
-	forEach( elements,  removeElement );
+	forEach( elements, removeElement );
 
 	return post;
 }
