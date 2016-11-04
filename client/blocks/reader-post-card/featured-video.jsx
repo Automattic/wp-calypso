@@ -68,10 +68,10 @@ class FeaturedVideo extends React.Component {
 
 		if ( preferThumbnail && thumbnailUrl ) {
 			return (
-				<FeaturedImage imageUri={ thumbnailUrl } onClick={ this.handleThumbnailClick } style={ { pointer: 'cursor' } }>
+				<FeaturedImage imageUri={ thumbnailUrl } onClick={ this.handleThumbnailClick } >
 					<img className="reader-post-card__play-icon"
 						src="/calypso/images/reader/play-icon.png"
-						title={ translate( 'Click to Play' ) }
+						title={ translate( 'Play Video' ) }
 					/>
 				</FeaturedImage>
 			);

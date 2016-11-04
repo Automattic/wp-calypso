@@ -28,6 +28,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 			flex-grow: 1;
 			margin-right: 20px;
 			max-width: 190px;
+			cursor: pointer;
 
 			@include breakpoint( ">960px" ) {
 				max-width: 250px;
