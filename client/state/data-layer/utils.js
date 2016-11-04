@@ -14,4 +14,4 @@ const concatHandlers = ( left, right ) =>
 export const mergeHandlers = ( ...handlers ) =>
 	handlers.length > 1
 		? mergeWith( {}, ...handlers, concatHandlers )
-		: handlers.shift();
+		: handlers[ 0 ];
