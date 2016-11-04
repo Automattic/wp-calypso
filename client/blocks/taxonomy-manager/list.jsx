@@ -12,6 +12,7 @@ import {
 	memoize,
 	noop,
 	reduce,
+	union,
 } from 'lodash';
 
 /**
@@ -54,6 +55,10 @@ export class TaxonomyManagerList extends Component {
 		onTermClick: noop,
 	};
 
+	state = {
+		requestedPages: [ 1 ]
+	};
+
 	componentWillMount() {
 		this.itemIds = map( this.props.terms, 'ID' );
 		this.getTermChildren = memoize( this.getTermChildren );
@@ -62,15 +67,6 @@ export class TaxonomyManagerList extends Component {
 	getTermChildren( termId ) {
 		const { terms } = this.props;
 		return filter( terms, ( { parent } ) => parent === termId );
-	}
-
-	renderQueryComponent = ( page ) => {
-		const { siteId, taxonomy, query } = this.props;
-		return ( <QueryTerms
-			key={ `query-${ page }` }
-			siteId={ siteId }
-			taxonomy={ taxonomy }
-			query={ { ...query, page } } /> );
 	}
 
 	getItemHeight = ( item, _recurse = false ) => {
@@ -145,21 +141,34 @@ export class TaxonomyManagerList extends Component {
 		);
 	}
 
+	requestPages = pages => {
+		this.setState( {
+			requestedPages: union( this.state.requestedPages, pages )
+		} );
+	}
+
 	render() {
-		const { loading, terms, lastPage, query } = this.props;
+		const { loading, siteId, taxonomy, terms, lastPage, query } = this.props;
 		const classes = classNames( 'taxonomy-manager', {
 			'is-loading': loading
 		} );
 
 		return (
 			<div className={ classes }>
+				{ this.state.requestedPages.map( page => (
+						<QueryTerms
+							key={ `query-${ page }` }
+							siteId={ siteId }
+							taxonomy={ taxonomy }
+							query={ { ...query, page } } />
+				) ) }
 				<VirtualList
 					items={ terms }
 					lastPage={ lastPage }
 					loading={ loading }
 					getRowHeight={ this.getRowHeight }
 					renderRow={ this.renderRow }
-					renderQuery={ this.renderQueryComponent }
+					onRequestPages={ this.requestPages }
 					perPage={ DEFAULT_TERMS_PER_PAGE }
 					loadOffset={ LOAD_OFFSET }
 					searching={ query.search && query.search.length }

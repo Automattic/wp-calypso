@@ -7,7 +7,6 @@ import { localize } from 'i18n-calypso';
 import VirtualScroll from 'react-virtualized/VirtualScroll';
 import {
 	debounce,
-	difference,
 	noop,
 	range,
 } from 'lodash';
@@ -17,13 +16,13 @@ export class VirtualList extends Component {
 		items: PropTypes.array,
 		lastPage: PropTypes.number,
 		loading: PropTypes.bool,
-		getItemHeight: PropTypes.func,
-		renderItem: PropTypes.func,
+		getRowHeight: PropTypes.func,
+		renderRow: PropTypes.func,
 		renderQuery: PropTypes.func,
 		perPage: PropTypes.number,
 		loadOffset: PropTypes.number,
 		query: PropTypes.object,
-		defaultItemHeight: PropTypes.number,
+		defaultRowHeight: PropTypes.number,
 		height: PropTypes.number,
 	};
 
@@ -31,23 +30,18 @@ export class VirtualList extends Component {
 		items: [],
 		lastPage: 0,
 		loading: false,
-		getItemHeight: noop,
-		renderItem: noop,
+		getRowHeight: noop,
+		renderRow: noop,
 		perPage: 100,
 		loadOffset: 10,
 		height: 300,
 		query: {}
 	};
 
-	constructor( props ) {
-		super( props );
-		this.state = {
-			requestedPages: [ 1 ]
-		};
-	}
+	state = {};
 
 	componentWillMount() {
-		this.itemHeights = {};
+		this.rowHeights = {};
 		this.virtualScroll = null;
 
 		this.queueRecomputeRowHeights = debounce( this.recomputeRowHeights );
@@ -87,27 +81,24 @@ export class VirtualList extends Component {
 
 	getPageForIndex( index ) {
 		const { query, lastPage, perPage } = this.props;
-		const itemsPerPage = query.number || perPage;
-		const page = Math.ceil( index / itemsPerPage );
+		const rowsPerPage = query.number || perPage;
+		const page = Math.ceil( index / rowsPerPage );
 
 		return Math.max( Math.min( page, lastPage || Infinity ), 1 );
 	}
 
 	setRequestedPages = ( { startIndex, stopIndex } ) => {
-		const { requestedPages } = this.state;
-		const { loadOffset } = this.props;
-		const pagesToRequest = difference( range(
+		const { loadOffset, onRequestPages } = this.props;
+		const pagesToRequest = range(
 			this.getPageForIndex( startIndex - loadOffset ),
 			this.getPageForIndex( stopIndex + loadOffset ) + 1
-		), requestedPages );
+		);
 
 		if ( ! pagesToRequest.length ) {
 			return;
 		}
 
-		this.setState( {
-			requestedPages: requestedPages.concat( pagesToRequest )
-		} );
+		onRequestPages( pagesToRequest );
 	}
 
 	hasNoSearchResults() {
@@ -116,18 +107,8 @@ export class VirtualList extends Component {
 			( this.props.query.search && !! this.props.query.search.length );
 	}
 
-	hasNoItems() {
+	hasNoRows() {
 		return ! this.props.loading && ( this.props.items && ! this.props.items.length );
-	}
-
-	getItem( index ) {
-		if ( this.props.items ) {
-			return this.props.items[ index ];
-		}
-	}
-
-	isRowLoaded( { index } ) {
-		return this.props.lastPage || !! this.getItem( index );
 	}
 
 	getResultsWidth() {
@@ -158,9 +139,9 @@ export class VirtualList extends Component {
 	}
 
 	renderNoResults = () => {
-		if ( this.hasNoItems() ) {
+		if ( this.hasNoRows() ) {
 			return (
-				<div key="no-results" className="virtual-list__list-item is-empty">
+				<div key="no-results" className="virtual-list__list-row is-empty">
 					No Results Found
 				</div>
 			);
@@ -169,23 +150,20 @@ export class VirtualList extends Component {
 
 	render() {
 		const rowCount = this.getRowCount();
-		const { className, loading, renderQuery, height, defaultItemHeight, getRowHeight } = this.props;
+		const { className, loading, height, defaultRowHeight, getRowHeight } = this.props;
 		const classes = classNames( 'virtual-list', className, {
 			'is-loading': loading
 		} );
 
 		return (
 			<div ref={ this.setSelectorRef } className={ classes }>
-				{ this.state.requestedPages.map( ( page ) => (
-					renderQuery( page )
-				) ) }
 				<VirtualScroll
 					ref={ this.setVirtualScrollRef }
 					width={ this.getResultsWidth() }
 					height={ height }
 					onRowsRendered={ this.setRequestedPages }
 					rowCount={ rowCount }
-					estimatedRowSize={ defaultItemHeight }
+					estimatedRowSize={ defaultRowHeight }
 					rowHeight={ getRowHeight }
 					rowRenderer={ this.props.renderRow }
 					noRowsRenderer={ this.renderNoResults }
