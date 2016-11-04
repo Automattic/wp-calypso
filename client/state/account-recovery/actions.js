@@ -109,13 +109,13 @@ export const updateAccountRecoveryEmailFailed = ( error ) => {
 	};
 };
 
-export const updateAccountRecoveryEmail = ( email ) => ( dispatch ) => {
+export const updateAccountRecoveryEmail = ( newEmail ) => ( dispatch ) => {
 	dispatch( { type: ACCOUNT_RECOVERY_EMAIL_UPDATE } );
 
-	return wpcom.undocumented().me().updateAccountRecoveryEmail( email )
-		.then( ( newEmail ) => {
-			dispatch( updateAccountRecoveryEmailSuccess( newEmail ) );
-		} ).catch( ( error ) => {
-			dispatch( updateAccountRecoveryEmailFailed( error ) );
+	return wpcom.undocumented().me().updateAccountRecoveryEmail( newEmail )
+		.then( ( { email } ) => {
+			dispatch( updateAccountRecoveryEmailSuccess( email ) );
+		} ).catch( ( { status, message } ) => {
+			dispatch( updateAccountRecoveryEmailFailed( { status, message } ) );
 		} );
 };
