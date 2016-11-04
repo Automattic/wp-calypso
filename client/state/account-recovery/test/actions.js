@@ -25,6 +25,10 @@ import {
 	updateAccountRecoveryEmail,
 	updateAccountRecoveryEmailSuccess,
 	updateAccountRecoveryEmailFailed,
+
+	deleteAccountRecoveryEmail,
+	deleteAccountRecoveryEmailSuccess,
+	deleteAccountRecoveryEmailFailed,
 } from '../actions';
 
 import {
@@ -43,6 +47,10 @@ import {
 	ACCOUNT_RECOVERY_EMAIL_UPDATE,
 	ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
 	ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
+
+	ACCOUNT_RECOVERY_EMAIL_DELETE,
+	ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS,
+	ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED,
 } from 'state/action-types';
 
 import dummyData from './test-data';
@@ -241,6 +249,46 @@ describe( 'account-recovery actions', () => {
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
 				error: dummyError,
+			} );
+		} );
+	} );
+
+	generateSuccessAndFailedTestsForThunk( {
+		testBaseName: '#deleteAccountRecoveryEmail',
+		nockSettings: {
+			method: 'post',
+			endpoint: '/rest/v1.1/me/account-recovery/email/delete',
+			successResponse: {},
+			errorResponse: errorResponse,
+		},
+		thunk: () => deleteAccountRecoveryEmail()( spy ),
+		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_EMAIL_DELETE } ) ),
+		postConditionSuccess: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS } ) ),
+		postConditionFailed: () => {
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED,
+				error: errorResponse,
+			} ) );
+		},
+	} );
+
+	describe( '#deleteAccountRecoveryEmailSuccess', () => {
+		it( 'should return ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS', () => {
+			const action = deleteAccountRecoveryEmailSuccess();
+
+			assert.deepEqual( action, {
+				type: ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS,
+			} );
+		} );
+	} );
+
+	describe( '#deleteAccountRecoveryEmailFailed', () => {
+		it( 'should return ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED', () => {
+			const action = deleteAccountRecoveryEmailFailed( errorResponse );
+
+			assert.deepEqual( action, {
+				type: ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED,
+				error: errorResponse,
 			} );
 		} );
 	} );
