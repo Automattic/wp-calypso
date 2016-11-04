@@ -587,12 +587,6 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 	displayName: 'JetpackConnectAuthorizeForm',
 	mixins: [ observe( 'userModule' ) ],
 
-	getInitialState: function() {
-		return {
-			plan: null
-		};
-	},
-
 	isSSO() {
 		const site = urlToSlug( this.props.jetpackConnectAuthorize.queryObject.site );
 		return !! ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] );
