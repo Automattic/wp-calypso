@@ -14,13 +14,19 @@ export default React.createClass( {
 	displayName: 'JetpackPlansGrid',
 
 	renderConnectHeader() {
-		const headerText = this.props.showFirst || this.props.isLanding
-			? this.translate( 'You are moments away from connecting your site' )
-			: this.translate( 'Your site is now connected!' );
+		let headerText = this.translate( 'Your site is now connected!' );
+		let subheaderText = this.translate( 'Now pick a plan that\'s right for you.' );
+		if ( this.props.showFirst ) {
+			headerText = this.translate( 'You are moments away from connecting your site' );
+		}
+		if ( this.props.isLanding ) {
+			headerText = this.translate( 'Pick a plan that\'s right for you.' );
+			subheaderText = '';
+		}
 		return (
 			<StepHeader
 				headerText={ headerText }
-				subHeaderText={ this.translate( 'Now pick a plan that\'s right for you.' ) }
+				subHeaderText={ subheaderText }
 				step={ 1 }
 				steps={ 3 } />
 		);
