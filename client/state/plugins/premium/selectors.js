@@ -24,6 +24,12 @@ const getPluginsForSite = function( state, siteId, whitelist = false ) {
 	if ( typeof pluginList === 'undefined' ) {
 		return [];
 	}
+
+	// patch to solve a bug in jp 4.3 ( https://github.com/Automattic/jetpack/issues/5498 )
+	if ( whitelist === 'backups' ) {
+		whitelist = 'vaultpress';
+	}
+
 	return filter( pluginList, ( plugin ) => {
 		if ( !! whitelist ) {
 			return ( whitelist === plugin.slug );
@@ -33,7 +39,7 @@ const getPluginsForSite = function( state, siteId, whitelist = false ) {
 };
 
 const isFinished = function( state, siteId, whitelist = false ) {
-	let pluginList = getPluginsForSite( state, siteId, whitelist );
+	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	if ( pluginList.length === 0 ) {
 		return true;
 	}
@@ -44,7 +50,7 @@ const isFinished = function( state, siteId, whitelist = false ) {
 };
 
 const isInstalling = function( state, siteId, whitelist = false ) {
-	let pluginList = getPluginsForSite( state, siteId, whitelist );
+	const pluginList = getPluginsForSite( state, siteId, whitelist );
 	if ( pluginList.length === 0 ) {
 		return false;
 	}
