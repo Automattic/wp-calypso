@@ -11,7 +11,6 @@ import {
 	getAuthorizationData,
 	getAuthorizationRemoteQueryData,
 	getAuthorizationRemoteSite,
-	getAuthorizationRemoteSiteUrl,
 	getSessions,
 	getSSOSessions,
 	getSSO,
@@ -116,36 +115,6 @@ describe( 'selectors', () => {
 			};
 
 			expect( getAuthorizationRemoteQueryData( state ) ).to.eql( queryObject );
-		} );
-	} );
-
-	describe( '#getAuthorizationRemoteSiteUrl()', () => {
-		it( 'should return null if user has not started the authorization flow', () => {
-			const state = {
-				jetpackConnect: {}
-			};
-
-			expect( getAuthorizationRemoteSiteUrl( state ) ).to.be.undefined;
-		} );
-
-		it( 'should return the current authorization site if there is such', () => {
-			const state = {
-				jetpackConnect: {
-					jetpackConnectAuthorize: {
-						queryObject: {
-							_wp_nonce: 'nonce',
-							client_id: '12345678',
-							redirect_uri: 'https://wordpress.com/',
-							scope: 'auth',
-							secret: '1234abcd',
-							state: 12345678,
-							site: 'https://wordpress.com/'
-						}
-					}
-				}
-			};
-
-			expect( getAuthorizationRemoteSiteUrl( state ) ).to.eql( 'https://wordpress.com/' );
 		} );
 	} );
 
