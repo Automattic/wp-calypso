@@ -15,7 +15,7 @@ import dummyData from './test-data';
 import reducer from '../reducer';
 
 describe( 'account-recovery reducer', () => {
-	const camelDummyData = {
+	const expectedState = {
 		email: dummyData.email,
 		emailValidated: dummyData.email_validated,
 		phone: dummyData.phone,
@@ -28,7 +28,7 @@ describe( 'account-recovery reducer', () => {
 			accountRecoverySettings: dummyData,
 		} );
 
-		assert.deepEqual( initState, camelDummyData );
+		assert.deepEqual( initState, expectedState );
 	} );
 
 	it( 'should return a new state object with the settings data.', () => {
@@ -44,7 +44,7 @@ describe( 'account-recovery reducer', () => {
 
 		assert.deepEqual( state, {
 			...prevState,
-			...camelDummyData,
+			...expectedState,
 		} );
 	} );
 } );
