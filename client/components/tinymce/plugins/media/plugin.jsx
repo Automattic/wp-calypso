@@ -34,6 +34,7 @@ import config from 'config';
 import { getSelectedSite } from 'state/ui/selectors';
 import { setEditorMediaModalView } from 'state/ui/editor/actions';
 import { ModalViews } from 'state/ui/media-modal/constants';
+import { receiveMediaItems } from 'state/media/actions';
 
 /**
  * Module variables
@@ -53,6 +54,10 @@ function mediaButton( editor ) {
 	}
 
 	const { getState } = store;
+
+	const receiveMediaItemsAction = ( siteId, data ) => {
+		store.dispatch( receiveMediaItems( siteId, data ) );
+	};
 
 	let nodes = {},
 		resizeEditor,
@@ -642,7 +647,7 @@ function mediaButton( editor ) {
 
 			const media = MediaStore.get( selectedSite.ID, id );
 			if ( ! media ) {
-				MediaActions.fetch( selectedSite.ID, id );
+				MediaActions.fetch( selectedSite.ID, id, receiveMediaItemsAction );
 			}
 
 			return assign( { ID: id }, media );
@@ -697,7 +702,7 @@ function mediaButton( editor ) {
 			}
 
 			setTimeout( function() {
-				MediaActions.fetch( selectedSite.ID, parsed.media.ID );
+				MediaActions.fetch( selectedSite.ID, parsed.media.ID, receiveMediaItemsAction );
 			}, 0 );
 		} );
 	}
