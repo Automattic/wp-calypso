@@ -4,16 +4,15 @@
 import page from 'page';
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import sitesList from 'lib/sites-list';
 import Dialog from 'components/dialog';
 import analytics from 'lib/analytics';
 import SitesListActions from 'lib/sites-list/actions';
-
-const sites = sitesList();
+import { getSelectedSite } from 'state/ui/selectors';
 
 const DisconnectJetpackDialog = React.createClass( {
 	getInitialState() {
@@ -42,8 +41,7 @@ const DisconnectJetpackDialog = React.createClass( {
 	},
 
 	disconnectJetpack() {
-		const { site } = this.props;
-		const selectedSite = sites.getSelectedSite();
+		const { site, selectedSite } = this.props;
 
 		// remove any error and completed notices
 		SitesListActions.removeSitesNotices( [ { status: 'error' }, { status: 'completed' } ] );
@@ -104,4 +102,8 @@ const DisconnectJetpackDialog = React.createClass( {
 	}
 } );
 
-export default localize( DisconnectJetpackDialog );
+export default connect(
+	state => ( {
+		selectedSite: getSelectedSite( state )
+	} )
+)( localize( DisconnectJetpackDialog ) );
