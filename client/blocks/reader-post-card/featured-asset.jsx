@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { head, filter, get } from 'lodash';
+import { find } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -10,27 +10,48 @@ import { head, filter, get } from 'lodash';
 import FeaturedVideo from './featured-video';
 import FeaturedImage from './featured-image';
 
+const candidateForFeature = ( media ) => {
+	if ( ! media ) {
+		return false;
+	}
+
+	if ( media.mediaType === 'image' ) {
+		const image = media;
+
+		// image is not wide enough
+		if ( image.naturalWidth < 350 ) {
+			return false;
+		}
+
+		// image does not have enough area
+		if ( ( image.naturalWidth * image.naturalHeight ) < 30000 ) {
+			return false;
+		}
+	} else if ( media.mediaType === 'video' ) {
+		// we do not know how to autoplay it
+		return media.thumbnailUrl && media.autoplayIframe;
+	}
+
+	return true;
+};
+
 const FeaturedAsset = ( { post } ) => {
 	if ( ! post ) {
 		return null;
 	}
 
-	const featuredImage = post.canonical_image;
-	let featuredAsset;
+	// take either the canonical image or if that doesn't exist, the first usable media in the content of the post
+	const featuredMedia = candidateForFeature( post.featured_image )
+		? post.featured_image
+		: find( post.featured_media, candidateForFeature );
 
-	// only feature an embed if we know how to thumbnail & autoplay it
-	const featuredEmbed = head( filter( post.content_embeds, ( embed ) => embed.thumbnailUrl && embed.autoplayIframe ) );
+	if ( ! featuredMedia ) {
+		return null;
+	}
 
-	// we only show a featured embed when all of these are true
-	//   - there is no featured image on the post that's big enough to pass as the canonical image
-	//   - there is an available embed
-	//
-	const useFeaturedEmbed = featuredEmbed &&
-		( ! featuredImage || ( featuredImage !== post.featured_image && featuredImage !== get( post, 'post_thumbnail.URL' ) ) );
-
-	featuredAsset = useFeaturedEmbed
-		? <FeaturedVideo { ...featuredEmbed } videoEmbed={ featuredEmbed } />
-		: <FeaturedImage imageUri={ get( featuredImage, 'uri' ) } href={ post.URL } />;
+	const featuredAsset = featuredMedia.mediaType === 'video'
+		? <FeaturedVideo { ...featuredMedia } videoEmbed={ featuredMedia } />
+		: <FeaturedImage imageUri={ featuredMedia.src } href={ post.URL } />;
 
 	return featuredAsset;
 };
