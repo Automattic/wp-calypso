@@ -19,7 +19,7 @@ import {
 	ACCOUNT_RECOVERY_FETCH,
 	ACCOUNT_RECOVERY_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_FETCH_FAILED,
-} from '../../action-types';
+} from 'state/action-types';
 
 import dummyData from './test-data';
 
