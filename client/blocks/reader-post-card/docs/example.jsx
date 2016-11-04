@@ -7,6 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import RefreshPostCard from 'blocks/reader-post-card';
+import DisplayTypes from 'state/reader/posts/display-types';
 
 const searchItems = [
 	{
@@ -37,7 +38,8 @@ const searchItems = [
 
 			short_excerpt: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
 		}
-	}, {
+	},
+	{
 		post: {
 			ID: 2,
 			title: 'A Post Title for Video Embed',
@@ -70,7 +72,63 @@ const searchItems = [
 			],
 			short_excerpt: 'Scamper destroy couch as revenge. Eat the cat food. Refuse to leave cardboard box meowzer! So get video posted to internet for chasing red dot in the house and running around all day...'
 		}
-	}
+	},
+	{
+		post: {
+			ID: 3,
+			title: 'I\'m a photo only card!',
+			display_type: DisplayTypes.PHOTO_ONLY,
+			content: 'less than 140 characters of content to qualify',
+			site_ID: 3,
+			global_ID: 3,
+			site_URL: 'http://example.com',
+			feed_ID: 1,
+			feed_item_ID: 1,
+			author: {
+				name: 'Sue Smith',
+				email: 'sue@example.com'
+			},
+			discussion: {
+				comment_count: 42
+			},
+			canonical_image: {
+				uri: 'https://placekitten.com/600/400',
+				width: 300,
+				height: 200
+			},
+			date: '1976-09-15T10:12:00Z',
+			site: 'cats.wordpress.com',
+			short_excerpt: 'less than 140 characters of content'
+		}
+	},
+	{
+		post: {
+			ID: 4,
+			title: 'Gallery: Posters that will make you want to go vote',
+			site_ID: 4,
+			global_ID: 4,
+			display_type: DisplayTypes.GALLERY,
+			site_URL: 'http://example.com',
+			feed_ID: 1,
+			feed_item_ID: 1,
+			author: {
+				name: 'Sue Smith',
+				email: 'sue@example.com'
+			},
+			content_images: [
+				{ src: 'https://tedideas.files.wordpress.com/2016/11/miltonglaser11x17.jpg?w=720&quality=80&strip=info' },
+				{ src: 'https://tedideas.files.wordpress.com/2016/11/gotv_posternataliawarren.jpg?w=720&quality=80&strip=info' },
+				{ src: 'https://tedideas.files.wordpress.com/2016/11/new-kind11x17_2.jpg?w=720&quality=80&strip=info' },
+				{ src: 'https://tedideas.files.wordpress.com/2016/11/jesusgarcia_aiga_gotv_yourvotematterseventothem.jpg?w=720&quality=80&strip=info' },
+			],
+			discussion: {
+				comment_count: 99
+			},
+			date: '1976-09-15T10:12:00Z',
+			site: 'cats.wordpress.com',
+			short_excerpt: 'Every four years, the Get Out the Vote campaign invites graphic designers to make posters that rally US voters to go to the polls. Here, 14 posters that rock…'
+		}
+	},
 ];
 
 const RefreshCards = () => (
