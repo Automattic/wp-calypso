@@ -1,3 +1,6 @@
+/**
+ * Internal dependecies
+ */
 import wpcom from 'lib/wp';
 import {
 	PLANS_RECEIVE,
