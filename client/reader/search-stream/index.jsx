@@ -26,6 +26,7 @@ import { abtest } from 'lib/abtest';
 import SearchCard from 'blocks/reader-search-card';
 import ReaderPostCard from 'blocks/reader-post-card';
 import config from 'config';
+import { localize } from 'i18n-calypso';
 
 const SearchCardAdapter = React.createClass( {
 	getInitialState() {
@@ -173,19 +174,19 @@ const FeedStream = React.createClass( {
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
-			searchPlaceholderText = this.translate( 'Search billions of WordPress.com posts…' );
+			searchPlaceholderText = this.props.translate( 'Search billions of WordPress.com posts…' );
 		}
 
 		return (
 			<Stream { ...this.props } store={ store }
-				listName={ this.translate( 'Search' ) }
+				listName={ this.props.translate( 'Search' ) }
 				emptyContent={ emptyContent }
 				showDefaultEmptyContentIfMissing={ this.props.showBlankContent }
 				showFollowInHeader={ true }
 				cardFactory={ this.cardFactory }
 				className="search-stream" >
 				{ this.props.showBack && <HeaderBack /> }
-				<DocumentHead title={ this.translate( '%s ‹ Reader', { args: this.state.title || this.translate( 'Search' ) } ) } />
+				<DocumentHead title={ this.props.translate( '%s ‹ Reader', { args: this.state.title || this.props.translate( 'Search' ) } ) } />
 				<CompactCard className="search-stream__input-card">
 					<SearchInput
 						initialValue={ this.props.query }
@@ -200,4 +201,4 @@ const FeedStream = React.createClass( {
 	}
 } );
 
-export default FeedStream;
+export default localize( FeedStream );
