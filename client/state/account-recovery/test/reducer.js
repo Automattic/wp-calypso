@@ -25,7 +25,7 @@ describe( 'account-recovery reducer', () => {
 	it( 'should return an initial object with the settings data.', () => {
 		const initState = reducer( null, {
 			type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
-			accountRecoverySettings: dummyData,
+			...dummyData,
 		} );
 
 		assert.deepEqual( initState, expectedState );
@@ -39,7 +39,7 @@ describe( 'account-recovery reducer', () => {
 
 		const state = reducer( prevState, {
 			type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
-			accountRecoverySettings: dummyData,
+			...dummyData,
 		} );
 
 		assert.deepEqual( state, {

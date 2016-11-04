@@ -5,23 +5,20 @@
 /**
  * Internal dependencies
  */
+import { createReducer } from 'state/utils';
+
 import {
 	ACCOUNT_RECOVERY_FETCH_SUCCESS,
 } from 'state/action-types';
 
-const reducer = ( state = {}, action ) => {
-	switch ( action.type ) {
-		case ACCOUNT_RECOVERY_FETCH_SUCCESS:
-			const {
-				email,
-				email_validated: emailValidated,
-				phone,
-				phone_validated: phoneValidated,
-			} = action.accountRecoverySettings;
-			return Object.assign( {}, state, { email, emailValidated, phone, phoneValidated } );
-	}
-
-	return state;
-};
+const reducer = createReducer( {}, {
+	[ ACCOUNT_RECOVERY_FETCH_SUCCESS ]: ( state, { email, email_validated, phone, phone_validated } ) => ( {
+		...state,
+		email,
+		emailValidated: email_validated,
+		phone,
+		phoneValidated: phone_validated,
+	} ),
+} );
 
 export default reducer;

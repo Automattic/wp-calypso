@@ -45,7 +45,7 @@ describe( 'account-recovery ctions', () => {
 			return fetch.then( () => {
 				assert( spy.calledWith( {
 					type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
-					accountRecoverySettings: dummyData,
+					...dummyData,
 				} ) );
 			} );
 		} );
@@ -56,7 +56,7 @@ describe( 'account-recovery ctions', () => {
 			const action = accountRecoveryFetchSuccess( dummyData );
 			assert.deepEqual( action, {
 				type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
-				accountRecoverySettings: dummyData,
+				...dummyData,
 			} );
 		} );
 	} );
