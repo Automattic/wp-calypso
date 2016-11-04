@@ -5,6 +5,21 @@
 	max-width: 830px;
 }
 
+.is-reader-page .reader__card.card.is-placeholder {
+	border-bottom: 1px solid lighten( $gray, 30% );
+	box-shadow: none;
+	margin-bottom: 0;
+	padding: 6px 0 30px;
+
+	@include breakpoint( "<660px" ) {
+		margin: 0 15px;
+	}
+
+	.reader__post-footer {
+		margin-left: 0;
+	}
+}
+
 .following {
 
 	@include breakpoint( "<660px" ) {
