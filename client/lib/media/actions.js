@@ -222,7 +222,7 @@ MediaActions.add = function( siteId, files, receiveMediaItems = null ) {
 				} ) );
 
 				if ( receiveMediaItems ) {
-					receiveMediaItems( siteId, data );
+					receiveMediaItems( siteId, data.media[ 0 ] );
 				}
 
 				// also refetch media limits
