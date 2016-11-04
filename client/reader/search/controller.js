@@ -52,7 +52,7 @@ export default {
 				),
 				onUpdatesShown: trackUpdatesLoaded.bind( null, mcKey ),
 				showBack: false,
-				showPrimaryFollowButtonOnCards: false,
+				showPrimaryFollowButtonOnCards: true,
 				onQueryChange: function( newValue ) {
 					let searchUrl = '/read/search';
 					if ( newValue ) {
