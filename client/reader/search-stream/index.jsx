@@ -66,17 +66,25 @@ const SearchCardAdapter = React.createClass( {
 		this.props.handleClick( this.props.post, {} );
 	},
 
+	onRefreshCardClick( post ) {
+		recordTrackForPost( 'calypso_reader_searchcard_clicked', this.props.post );
+
+		event.preventDefault();
+		this.props.handleClick( post, {} );
+	},
+
 	onCommentClick() {
 		this.props.handleClick( this.props.post, { comments: true } );
 	},
 
 	render() {
-		const cardComponent = config.isEnabled( 'reader/refresh/stream' ) ? ReaderPostCard : SearchCard;
+		const isRefreshedStream = config.isEnabled( 'reader/refresh/stream' );
+		const cardComponent = isRefreshedStream ? ReaderPostCard : SearchCard;
 		return React.createElement( cardComponent, {
 			post: this.props.post,
 			site: this.props.site,
 			feed: this.props.feed,
-			onClick: this.onCardClick,
+			onClick: isRefreshedStream ? this.onRefreshCardClick : this.onCardClick,
 			onCommentClick: this.onCommentClick,
 			showPrimaryFollowButton: this.props.showPrimaryFollowButtonOnCards
 		} );
