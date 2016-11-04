@@ -135,6 +135,69 @@ function mediaButton( editor ) {
 		return { isLoaded, onLoad };
 	} )();
 
+	function parseShortcode( content ) {
+		return content.replace( /(?:<p>)?\[(?:wp_)?caption([^\]]+)\]([\s\S]+?)\[\/(?:wp_)?caption\](?:<\/p>)?/g, function( a, b, c ) {
+			var id, align, classes, caption, img, width,
+				trim = tinymce.trim;
+
+			id = b.match( /id=['"]([^'"]*)['"] ?/ );
+			if ( id ) {
+				b = b.replace( id[0], '' );
+			}
+
+			align = b.match( /align=['"]([^'"]*)['"] ?/ );
+			if ( align ) {
+				b = b.replace( align[0], '' );
+			}
+
+			classes = b.match( /class=['"]([^'"]*)['"] ?/ );
+			if ( classes ) {
+				b = b.replace( classes[0], '' );
+			}
+
+			width = b.match( /width=['"]([0-9]*)['"] ?/ );
+			if ( width ) {
+				b = b.replace( width[0], '' );
+			}
+
+			c = trim( c );
+			img = c.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
+
+			if ( img && img[2] ) {
+				caption = trim( img[2] );
+				img = trim( img[1] );
+			} else {
+				// old captions shortcode style
+				caption = trim( b ).replace( /caption=['"]/, '' ).replace( /['"]$/, '' );
+				img = c;
+			}
+
+			id = ( id && id[1] ) ? id[1].replace( /[<>&]+/g,  '' ) : '';
+			align = ( align && align[1] ) ? align[1] : 'alignnone';
+			classes = ( classes && classes[1] ) ? ' ' + classes[1].replace( /[<>&]+/g,  '' ) : '';
+
+			if ( ! width && img ) {
+				width = img.match( /width=['"]([0-9]*)['"]/ );
+			}
+
+			if ( width && width[1] ) {
+				width = width[1];
+			}
+
+			if ( ! width || ! caption ) {
+				return c;
+			}
+
+			width = parseInt( width, 10 );
+			if ( ! editor.getParam( 'wpeditimage_html5_captions' ) ) {
+				width += 10;
+			}
+
+			return '<div class="mceTemp"><dl id="' + id + '" class="wp-caption ' + align + classes + '" style="width: ' + width + 'px">' +
+				'<dt class="wp-caption-dt">'+ img +'</dt><dd class="wp-caption-dd">'+ caption +'</dd></dl></div>';
+		} );
+	}
+
 	updateMedia = debounce( function() {
 		var selectedSite = sites.getSelectedSite(),
 			isTransientDetected = false,
@@ -145,10 +208,19 @@ function mediaButton( editor ) {
 			return;
 		}
 
+		const dirtyImage = MediaStore.getDirtyImage();
+		let numOfImagesToUpdate = 0;
+
 		isVisualEditMode = ! editor.isHidden();
 
 		if ( isVisualEditMode ) {
-			images = editor.dom.select( 'img' );
+			if ( dirtyImage ) {
+				images = editor.dom.select( `img.wp-image-${ dirtyImage.ID }` );
+
+				numOfImagesToUpdate = images.length;
+			} else {
+				images = editor.dom.select( 'img' );
+			}
 		} else {
 			// Attempt to pull the post from the edit store so that the post
 			// contents can be analyzed for images.
@@ -169,9 +241,18 @@ function mediaButton( editor ) {
 			}
 
 			const media = MediaStore.get( selectedSite.ID, current.media.ID );
+			let mediaHasCaption = false;
+			let captionNode = null;
 
 			if ( media.isDirty ) {
 				current.media.transient = true;
+
+				captionNode = editor.dom.getParent( img, '.mceTemp' );
+
+				if ( captionNode ) {
+					media.caption = editor.dom.$( '.wp-caption-dd', captionNode ).text();
+					mediaHasCaption = true;
+				}
 			}
 
 			if ( current.media.transient ) {
@@ -227,12 +308,18 @@ function mediaButton( editor ) {
 					forceResize: ! media.transient && current.media.width && current.media.width !== media.width
 				} );
 
-				// Since we're explicitly targetting the image, don't allow the
-				// caption to be considered in the generated markup
-				delete merged.caption;
+				if ( ! mediaHasCaption ) {
+					// Since we're explicitly targetting the image, don't allow the
+					// caption to be considered in the generated markup
+					delete merged.caption;
+				}
 
 				// Use markup utility to generate replacement element
 				markup = MediaMarkup.get( merged, options );
+
+				if ( mediaHasCaption ) {
+					markup = parseShortcode( markup );
+				}
 			} else {
 				// If there's an unidentifiable blob image in the post content,
 				// we assume that an error occurred, that the image should be
@@ -250,7 +337,7 @@ function mediaButton( editor ) {
 
 			// To avoid an undesirable flicker after the image uploads but
 			// hasn't yet been loaded, we preload the image before rendering.
-			const imageUrl = MediaSerialization.deserialize( event.content ).media.URL;
+			const imageUrl = media.URL;
 			if ( ! loadedImages.isLoaded( imageUrl ) ) {
 				const preloadImage = new Image();
 				preloadImage.src = imageUrl;
@@ -261,22 +348,33 @@ function mediaButton( editor ) {
 				return;
 			}
 
-			// The `img` object can be a string or a DOM node. We need a
-			// normalized string to replace the post content markup
-			let imgString;
-			if ( img.outerHTML ) {
-				imgString = img.outerHTML;
+			let mediaString = '';
+
+			if ( mediaHasCaption ) {
+				if ( captionNode.outerHTML ) {
+					mediaString = captionNode.outerHTML;
+
+					captionNode.outerHTML = event.content;
+				} else {
+					mediaString = captionNode;
+				}
+			} else if ( img.outerHTML ) {
+				mediaString = img.outerHTML;
 
 				// In visual editing mode, we apply the changes immediately by
 				// mutating the DOM node directly
 				img.outerHTML = event.content;
 			} else {
-				imgString = img;
+				mediaString = img;
 			}
+
+			// The `img` object can be a string or a DOM node. We need a
+			// normalized string to replace the post content markup
+			// let imgString;
 
 			// Replace the instance in the original post content
 			if ( content ) {
-				content = content.replace( imgString, event.content );
+				content = content.replace( mediaString, event.content );
 			}
 
 			// Not only should the content be replaced here, but also for every
@@ -284,13 +382,11 @@ function mediaButton( editor ) {
 			//
 			// See: https://github.com/tinymce/tinymce/blob/4.2.4/js/tinymce/classes/EditorUpload.js#L49-L53
 			editor.undoManager.data = editor.undoManager.data.map( function( level ) {
-				level.content = level.content.replace( imgString, event.content );
+				level.content = level.content.replace( mediaString, event.content );
 				return level;
 			} );
 
-			if ( media.isDirty ) {
-				MediaActions.edit( selectedSite.ID, { ...media, isDirty: false } );
-			}
+			numOfImagesToUpdate -= 1;
 		} );
 
 		if ( ! transients && PostEditStore.isSaveBlocked( 'MEDIA_MODAL_TRANSIENT_INSERT' ) ) {
@@ -309,6 +405,10 @@ function mediaButton( editor ) {
 			// Trigger an editor change so that dirty detection and
 			// autosave take effect
 			editor.fire( 'change' );
+		}
+
+		if ( numOfImagesToUpdate === 0 ) {
+			MediaActions.edit(  selectedSite.ID, { ...dirtyImage, isDirty: false } );
 		}
 	} );
 

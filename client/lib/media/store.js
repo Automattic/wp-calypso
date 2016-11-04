@@ -17,7 +17,8 @@ import { isItemBeingUploaded } from 'lib/media/utils';
  */
 const MediaStore = {
 	_media: {},
-	_pointers: {}
+	_pointers: {},
+	_dirtyImageRef: null
 };
 
 emitter( MediaStore );
@@ -46,6 +47,10 @@ function receiveSingle( siteId, item, itemId ) {
 	}
 
 	MediaStore._media[ siteId ][ item.ID ] = item;
+
+	if ( item.isDirty ) {
+		MediaStore._dirtyImageRef = MediaStore._media[ siteId ][ item.ID ];
+	}
 }
 
 function removeSingle( siteId, item ) {
@@ -61,6 +66,10 @@ function receivePage( siteId, items ) {
 		receiveSingle( siteId, item );
 	} );
 }
+
+MediaStore.getDirtyImage = () => {
+	return MediaStore._dirtyImageRef;
+};
 
 MediaStore.get = function( siteId, postId ) {
 	if ( ! ( siteId in MediaStore._media ) ) {
