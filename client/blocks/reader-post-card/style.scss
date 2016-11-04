@@ -266,6 +266,7 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	line-height: 1.6;
 	font-weight: 100;
 	margin-top: 5px;
+	word-break: break-word;
 }
 
 // Action buttons in post card
