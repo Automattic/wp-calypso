@@ -62,12 +62,8 @@ describe( 'account-recovery actions', () => {
 			successResponse: dummyData,
 			errorResponse: errorResponse,
 		},
-		thunk: () => {
-			return accountRecoveryFetch()( spy );
-		},
-		preCondition: () => {
-			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_FETCH } ) );
-		},
+		thunk: () => accountRecoveryFetch()( spy ),
+		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_FETCH } ) ),
 		postConditionSuccess: () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
@@ -119,12 +115,8 @@ describe( 'account-recovery actions', () => {
 			successResponse: newPhoneData,
 			errorResponse: errorResponse,
 		},
-		thunk: () => {
-			return updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number )( spy );
-		},
-		preCondition: () => {
-			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } ) );
-		},
+		thunk: () => updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number )( spy ),
+		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } ) ),
 		postConditionSuccess: () => {
 			assert( spy.calledWith( {
 				type: ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
