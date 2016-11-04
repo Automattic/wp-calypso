@@ -163,22 +163,23 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	describe( '#deleteAccountRecoveryPhone', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.1/me/account-recovery/phone/delete' )
-				.reply( 200 );
-		} );
-
-		it( 'should dispatch delete / success actions', () => {
-			const del = deleteAccountRecoveryPhone()( spy );
-
-			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_DELETE } ) );
-
-			return del.then( () => {
-				assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS } ) );
-			} );
-		} );
+	generateSuccessAndFailedTestsForThunk( {
+		testBaseName: '#deleteAccountRecoveryPhone',
+		nockSettings: {
+			method: 'post',
+			endpoint: '/rest/v1.1/me/account-recovery/phone/delete',
+			successResponse: {},
+			errorResponse: errorResponse,
+		},
+		thunk: () => deleteAccountRecoveryPhone()( spy ),
+		preCondition: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_DELETE } ) ),
+		postConditionSuccess: () => assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_DELETE_SUCCESS } ) ),
+		postConditionFailed: () => {
+			assert( spy.calledWith( {
+				type: ACCOUNT_RECOVERY_PHONE_DELETE_FAILED,
+				error: errorResponse,
+			} ) );
+		},
 	} );
 
 	describe( '#deleteAccountRecoveryPhoneSuccess', () => {
