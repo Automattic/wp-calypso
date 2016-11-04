@@ -66,8 +66,8 @@ export const updateAccountRecoveryPhone = ( countryCode, number ) => ( dispatch 
 	return wpcom.undocumented().me().updateAccountRecoveryPhone( countryCode, number )
 		.then( ( phone ) => {
 			dispatch( updateAccountRecoveryPhoneSuccess( phone ) );
-		} ).catch( ( error ) => {
-			dispatch( updateAccountRecoveryPhoneFailed( error ) );
+		} ).catch( ( { status, message } ) => {
+			dispatch( updateAccountRecoveryPhoneFailed( { status, message } ) );
 		} );
 };
 
