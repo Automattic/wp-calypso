@@ -61,17 +61,14 @@ export const updateAccountRecoveryPhoneFailed = ( error ) => {
 };
 
 export const updateAccountRecoveryPhone = ( countryCode, number ) => ( dispatch ) => {
-	return new Promise( ( resolve, reject ) => {
-		dispatch( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } );
+	dispatch( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } );
 
-		wpcom.undocumented().me().updateAccountRecoveryPhone( countryCode, number, ( error, phone ) => {
-			error ? reject( error ) : resolve( phone );
+	return wpcom.undocumented().me().updateAccountRecoveryPhone( countryCode, number )
+		.then( ( phone ) => {
+			dispatch( updateAccountRecoveryPhoneSuccess( phone ) );
+		} ).catch( ( error ) => {
+			dispatch( updateAccountRecoveryPhoneFailed( error ) );
 		} );
-	} ).then( ( phone ) => {
-		dispatch( updateAccountRecoveryPhoneSuccess( phone ) );
-	} ).catch( ( error ) => {
-		dispatch( updateAccountRecoveryPhoneFailed( error ) );
-	} );
 };
 
 export const deleteAccountRecoveryPhoneSuccess = () => {
@@ -88,17 +85,14 @@ export const deleteAccountRecoveryPhoneFailed = ( error ) => {
 };
 
 export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
-	return new Promise( ( resolve, reject ) => {
-		dispatch( { type: ACCOUNT_RECOVERY_PHONE_DELETE } );
+	dispatch( { type: ACCOUNT_RECOVERY_PHONE_DELETE } );
 
-		wpcom.undocumented().me().deleteAccountRecoveryPhone( ( error ) => {
-			error ? reject( error ) : resolve();
+	return wpcom.undocumented().me().deleteAccountRecoveryPhone()
+		.then( () => {
+			dispatch( deleteAccountRecoveryPhoneSuccess() );
+		} ).catch( ( error ) => {
+			dispatch( deleteAccountRecoveryPhoneFailed( error ) );
 		} );
-	} ).then( () => {
-		dispatch( deleteAccountRecoveryPhoneSuccess() );
-	} ).catch( ( error ) => {
-		dispatch( deleteAccountRecoveryPhoneFailed( error ) );
-	} );
 };
 
 export const updateAccountRecoveryEmailSuccess = ( email ) => {
@@ -118,13 +112,10 @@ export const updateAccountRecoveryEmailFailed = ( error ) => {
 export const updateAccountRecoveryEmail = ( email ) => ( dispatch ) => {
 	dispatch( { type: ACCOUNT_RECOVERY_EMAIL_UPDATE } );
 
-	return new Promise( ( resolve, reject ) => {
-		wpcom.undocumented().me().updateAccountRecoveryEmail( email, ( error, newEmail ) => {
-			error ? reject( error ) : resolve( newEmail );
+	return wpcom.undocumented().me().updateAccountRecoveryEmail( email )
+		.then( ( newEmail ) => {
+			dispatch( updateAccountRecoveryEmailSuccess( newEmail ) );
+		} ).catch( ( error ) => {
+			dispatch( updateAccountRecoveryEmailFailed( error ) );
 		} );
-	} ).then( ( newEmail ) => {
-		dispatch( updateAccountRecoveryEmailSuccess( newEmail ) );
-	} ).catch( ( error ) => {
-		dispatch( updateAccountRecoveryEmailFailed( error ) );
-	} );
 };
