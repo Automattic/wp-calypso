@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assert } from 'chai';
+import deepFreeze from 'deep-freeze';
 
 /**
  * Internal dependencies
@@ -32,10 +33,10 @@ describe( 'account-recovery reducer', () => {
 	} );
 
 	it( 'should return a new state object with the settings data.', () => {
-		const prevState = {
+		const prevState = deepFreeze( {
 			foo: '1',
 			bar: 'bar',
-		};
+		} );
 
 		const state = reducer( prevState, {
 			type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
