@@ -24,13 +24,9 @@ class Connection extends EventEmitter {
 					.on( 'token', handler => {
 						handler( { signer_user_id: user_id, jwt: token } );
 					} )
-					// Received a typing indicator
-					.on( 'typing', isTyping => debug( 'operator typing?', isTyping ) )
 					// Received a chat message
 					.on( 'message', message => this.emit( 'message', message ) )
-					// Received back log of chat
-					.on( 'log', log => debug( 'received log', log ) )
-					// Received chat status new/assigning/assigned/missed
+					// Received chat status new/assigning/assigned/missed/pending/abandoned
 					.on( 'status', status => this.emit( 'status', status ) )
 					// If happychat is currently accepting chats
 					.on( 'accept', accept => this.emit( 'accept', accept ) );

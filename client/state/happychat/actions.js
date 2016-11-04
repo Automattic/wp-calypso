@@ -15,6 +15,7 @@ import {
 	HAPPYCHAT_SET_MESSAGE,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SET_AVAILABLE,
+	HAPPYCHAT_SET_CHAT_STATUS
 } from 'state/action-types';
 import { getHappychatConnectionStatus } from './selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
@@ -43,6 +44,10 @@ const startSession = () => request( {
 );
 
 const connection = buildConnection();
+
+const setHappychatChatStatus = status => ( {
+	type: HAPPYCHAT_SET_CHAT_STATUS, status
+} );
 
 const setChatConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
 const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
@@ -82,12 +87,10 @@ export const connectChat = () => ( dispatch, getState ) => {
 	.then(
 		() => {
 			dispatch( setChatConnected() );
-			connection.on( 'message', ( event ) => {
-				dispatch( receiveChatEvent( event ) );
-			} );
-			connection.on( 'accept', ( isAvailable ) => {
-				dispatch( setHappychatAvailable( isAvailable ) );
-			} );
+			connection
+			.on( 'message', event => dispatch( receiveChatEvent( event ) ) )
+			.on( 'status', status => dispatch( setHappychatChatStatus( status ) ) )
+			.on( 'accept', isAvailable => dispatch( setHappychatAvailable( isAvailable ) ) );
 		},
 		e => debug( 'failed to start happychat session', e, e.stack )
 	);
