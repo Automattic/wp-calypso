@@ -19,6 +19,10 @@ import {
 	ACCOUNT_RECOVERY_EMAIL_UPDATE,
 	ACCOUNT_RECOVERY_EMAIL_UPDATE_SUCCESS,
 	ACCOUNT_RECOVERY_EMAIL_UPDATE_FAILED,
+
+	ACCOUNT_RECOVERY_EMAIL_DELETE,
+	ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS,
+	ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED,
 } from 'state/action-types';
 
 export const accountRecoveryFetchSuccess = ( accountRecoverySettings ) => {
@@ -117,5 +121,29 @@ export const updateAccountRecoveryEmail = ( newEmail ) => ( dispatch ) => {
 			dispatch( updateAccountRecoveryEmailSuccess( email ) );
 		} ).catch( ( { status, message } ) => {
 			dispatch( updateAccountRecoveryEmailFailed( { status, message } ) );
+		} );
+};
+
+export const deleteAccountRecoveryEmailSuccess = () => {
+	return {
+		type: ACCOUNT_RECOVERY_EMAIL_DELETE_SUCCESS,
+	};
+};
+
+export const deleteAccountRecoveryEmailFailed = ( error ) => {
+	return {
+		type: ACCOUNT_RECOVERY_EMAIL_DELETE_FAILED,
+		error,
+	};
+};
+
+export const deleteAccountRecoveryEmail = () => ( dispatch ) => {
+	dispatch( { type: ACCOUNT_RECOVERY_EMAIL_DELETE } );
+
+	return wpcom.undocumented().me().deleteAccountRecoveryEmail()
+		.then( () => {
+			dispatch( deleteAccountRecoveryEmailSuccess() );
+		} ).catch( ( { status, message } ) => {
+			dispatch( deleteAccountRecoveryEmailFailed( { status, message } ) );
 		} );
 };
