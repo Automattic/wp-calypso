@@ -13,7 +13,7 @@ export default React.createClass( {
 
 	render() {
 		return (
-			<div className="editor-media-modal-detail__preview is-document">
+			<div className="media-modal-detail__preview is-document">
 				<Gridicon icon="pages" size={ 120 } />
 			</div>
 		);

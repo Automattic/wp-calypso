@@ -63,7 +63,7 @@ class EditorMediaModalDetailItem extends Component {
 
 		return (
 			<Button
-				className="editor-media-modal-detail__edit"
+				className="media-modal-detail__edit"
 				onClick={ onEdit }
 				disabled={ isItemBeingUploaded( item ) }
 			>
@@ -94,7 +94,7 @@ class EditorMediaModalDetailItem extends Component {
 		return (
 			<Button
 				className={ classNames(
-					'editor-media-modal-detail__restore',
+					'media-modal-detail__restore',
 				) }
 				onClick={ this.handleOnRestoreClick }
 				disabled={ isItemBeingUploaded( item ) }
@@ -119,7 +119,7 @@ class EditorMediaModalDetailItem extends Component {
 			return null;
 		}
 
-		const classes = classNames( 'editor-media-modal-detail__edition-bar', classname );
+		const classes = classNames( 'media-modal-detail__edition-bar', classname );
 
 		return (
 			<div className={ classes }>
@@ -157,7 +157,7 @@ class EditorMediaModalDetailItem extends Component {
 		return (
 			<button
 				onClick={ onShowPreviousItem }
-				className="editor-media-modal-detail__previous">
+				className="media-modal-detail__previous">
 				<Gridicon icon="chevron-left" size={ 36 } />
 				<span className="screen-reader-text">
 					{ translate( 'Previous' ) }
@@ -180,7 +180,7 @@ class EditorMediaModalDetailItem extends Component {
 		return (
 			<button
 				onClick={ onShowNextItem }
-				className="editor-media-modal-detail__next">
+				className="media-modal-detail__next">
 				<Gridicon icon="chevron-right" size={ 36 } />
 				<span className="screen-reader-text">
 					{ translate( 'Next' ) }
@@ -219,22 +219,22 @@ class EditorMediaModalDetailItem extends Component {
 	render() {
 		const { item } = this.props;
 
-		const classes = classNames( 'editor-media-modal-detail__item', {
+		const classes = classNames( 'media-modal-detail__item', {
 			'is-loading': ! item
 		} );
 
 		return (
 			<figure className={ classes }>
-				<div className="editor-media-modal-detail__content editor-media-modal__content">
+				<div className="media-modal-detail__content media-modal__content">
 
-					<div className="editor-media-modal-detail__preview-wrapper">
+					<div className="media-modal-detail__preview-wrapper">
 						{ this.renderItem() }
 						{ this.renderImageEditorButtons( item ) }
 						{ this.renderPreviousItemButton() }
 						{ this.renderNextItemButton() }
 					</div>
 
-					<div className="editor-media-modal-detail__sidebar">
+					<div className="media-modal-detail__sidebar">
 						{ this.renderImageEditorButtons( item, 'is-mobile' ) }
 						{ this.renderFields() }
 						<EditorMediaModalDetailFileInfo

@@ -51,7 +51,7 @@ export default React.createClass( {
 	render() {
 		const { siteId, settings } = this.props;
 		const { isLoading, shortcode } = this.state;
-		const classes = classNames( 'editor-media-modal-gallery__preview-shortcode', {
+		const classes = classNames( 'media-modal-gallery__preview-shortcode', {
 			'is-loading': isLoading || some( settings.items, 'transient' )
 		} );
 

@@ -20,7 +20,7 @@ module.exports = React.createClass( {
 			<audio
 				src={ MediaUtils.url( this.props.item ) }
 				controls
-				className="editor-media-modal-detail__preview is-audio" />
+				className="media-modal-detail__preview is-audio" />
 		);
 	}
 } );

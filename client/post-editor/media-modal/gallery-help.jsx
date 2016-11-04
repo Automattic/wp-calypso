@@ -81,17 +81,17 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 				position="bottom"
 				isVisible={ ! isMobile() }
 				className="popover__gallery-help is-dialog-visible">
-				<div className="editor-media-modal__gallery-help-content">
-					<div className="editor-media-modal__gallery-help-instruction">
-						<span className="editor-media-modal__gallery-help-icon">
+				<div className="media-modal__gallery-help-content">
+					<div className="media-modal__gallery-help-instruction">
+						<span className="media-modal__gallery-help-icon">
 							<Gridicon icon="image-multiple" size={ 20 } />
 						</span>
-						<span className="editor-media-modal__gallery-help-text">
+						<span className="media-modal__gallery-help-text">
 							{ this.translate( 'Select more than one image to create a gallery.' ) }
 						</span>
 					</div>
-					<div className="editor-media-modal__gallery-help-actions">
-						<label className="editor-media-modal__gallery-help-remember-dismiss">
+					<div className="media-modal__gallery-help-actions">
+						<label className="media-modal__gallery-help-remember-dismiss">
 							<FormCheckbox checked={ this.state.rememberDismiss } onChange={ this.toggleRememberDismiss } />
 							<span>
 								{ this.translate( 'Don\'t show again' ) }
@@ -111,7 +111,7 @@ const EditorMediaModalGalleryHelp =  React.createClass( {
 			return null;
 		}
 		return (
-			<div ref={ this.setRenderContext } className="editor-media-modal__gallery-help">
+			<div ref={ this.setRenderContext } className="media-modal__gallery-help">
 				<QueryPreferences />
 				{ this.renderPopover() }
 			</div>

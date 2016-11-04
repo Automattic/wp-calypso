@@ -39,7 +39,7 @@ export default React.createClass( {
 			<button
 				onClick={ this.remove }
 				onMouseDown={ ( event ) => event.stopPropagation() }
-				className="editor-media-modal-gallery__remove">
+				className="media-modal-gallery__remove">
 				<span className="screen-reader-text">{ this.translate( 'Remove' ) }</span>
 				<Gridicon icon="cross" />
 			</button>

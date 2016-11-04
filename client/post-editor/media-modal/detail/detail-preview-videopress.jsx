@@ -41,7 +41,7 @@ module.exports = React.createClass( {
 				width={ this.props.item.width }
 				height={ this.props.item.height }
 				allowFullScreen
-				className="editor-media-modal-detail__preview is-video" />
+				className="media-modal-detail__preview is-video" />
 		);
 	}
 } );

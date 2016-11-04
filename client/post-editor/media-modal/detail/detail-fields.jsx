@@ -5,7 +5,7 @@ var ReactDom = require( 'react-dom' ),
 	React = require( 'react' ),
 	debounce = require( 'lodash/debounce' ),
 	assign = require( 'lodash/assign' ),
-	debug = require( 'debug' )( 'calypso:editor-media-modal' );
+	debug = require( 'debug' )( 'calypso:media-modal' );
 
 /**
  * Internal dependencies
@@ -124,7 +124,7 @@ module.exports = React.createClass( {
 
 	render: function() {
 		return (
-			<div className="editor-media-modal-detail__fields">
+			<div className="media-modal-detail__fields">
 				<EditorMediaModalFieldset legend={ this.translate( 'Caption' ) }>
 					<TrackInputChanges onNewValue={ this.bumpStat.bind( this, 'caption' ) }>
 						<FormTextarea name="caption" value={ this.getItemValue( 'caption' ) } onChange={ this.onChange } />

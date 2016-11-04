@@ -25,7 +25,7 @@ module.exports = React.createClass( {
 			<video
 				src={ MediaUtils.url( this.props.item ) }
 				controls
-				className="editor-media-modal-detail__preview is-video" />
+				className="media-modal-detail__preview is-video" />
 		);
 	}
 } );

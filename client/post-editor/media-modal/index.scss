@@ -1,8 +1,8 @@
-.editor-media-modal {
+.media-modal {
 	padding: 0;
 }
 
-.editor-media-modal.dialog.card {
+.media-modal.dialog.card {
 	position: absolute;
 		top: 0;
 		right: 0;
@@ -25,14 +25,14 @@
 	}
 }
 
-.editor-media-modal .dialog__content {
+.media-modal .dialog__content {
 	position: static;
 	color: $gray-dark;
 	height: 100%;
 }
 
-.editor-media-modal .section-nav {
-	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .section-nav' );
+.media-modal .section-nav {
+	z-index: z-index( '.dialog__backdrop', '.media-modal .section-nav' );
 	padding: 0 16px;
 
 	@include breakpoint( ">660px" ) {
@@ -40,24 +40,24 @@
 	}
 }
 
-.editor-media-modal .header-cake.card {
+.media-modal .header-cake.card {
 	@include breakpoint( "<660px" ) {
 		margin-top: 0;
 		justify-content: left;
 	}
 }
 
-.editor-media-modal .header-cake__corner {
+.media-modal .header-cake__corner {
 	@include breakpoint( "<660px" ) {
 		flex: none;
 	}
 }
 
-.editor-media-modal .media-library__content {
+.media-modal .media-library__content {
 	position: static;
 }
 
-.editor-media-modal .media-library__list {
+.media-modal .media-library__list {
 	padding: 0 16px;
 
 	@include breakpoint( ">660px" ) {
@@ -65,7 +65,7 @@
 	}
 }
 
-.editor-media-modal .media-library__header {
+.media-modal .media-library__header {
 	padding: 0 16px;
 
 	@include breakpoint( ">660px" ) {
@@ -73,8 +73,8 @@
 	}
 }
 
-.editor-media-modal .media-library__scale-toggle,
-.editor-media-modal .media-library__scale-range.range {
+.media-modal .media-library__scale-toggle,
+.media-modal .media-library__scale-range.range {
 	right: 16px;
 
 	@include breakpoint( ">660px" ) {
@@ -82,11 +82,11 @@
 	}
 }
 
-.editor-media-modal .media-library__content .no-results {
+.media-modal .media-library__content .no-results {
 	padding: 0 24px 24px;
 }
 
-.editor-media-modal__content {
+.media-modal__content {
 	display: flex;
 	flex-direction: column;
 	position: absolute;
@@ -96,7 +96,7 @@
 		left: 0;
 	overflow-y: auto;
 
-	&.editor-media-modal-gallery__content {
+	&.media-modal-gallery__content {
 		margin-top: 16px;
 
 		@include breakpoint( ">660px" ) {
@@ -111,8 +111,8 @@
 	}
 }
 
-.editor-media-modal .media-library__list {
-	@extend .editor-media-modal__content;
+.media-modal .media-library__list {
+	@extend .media-modal__content;
 	display: block;
 	top: 117px;
 	right: 0;
@@ -128,17 +128,17 @@
 	}
 }
 
-.editor-media-modal .notice {
-	z-index: z-index( '.dialog__backdrop', '.editor-media-modal .notice' );
+.media-modal .notice {
+	z-index: z-index( '.dialog__backdrop', '.media-modal .notice' );
 	margin-top: -4px;
 }
 
-.editor-media-modal .media-library__upload-url-cancel {
+.media-modal .media-library__upload-url-cancel {
 	padding-right: 0;
 	padding-left: 12px;
 }
 
-.editor-media-modal .empty-content {
+.media-modal .empty-content {
 	position: absolute;
 		top: 50%;
 		left: 50%;
@@ -148,7 +148,7 @@
 	width: 100%;
 }
 
-.editor-media-modal .media-library__content .empty-content__illustration {
+.media-modal .media-library__content .empty-content__illustration {
 	width: 65vh;
 	min-width: 300px;
 	max-width: 37.5vw;
@@ -165,34 +165,34 @@
 	}
 }
 
-.editor-media-modal .media-library__list-item-figure {
+.media-modal .media-library__list-item-figure {
 	background-color: $gray-light;
 	box-shadow: inset 0 0 0 1px lighten( $gray, 25% );
 }
 
-.editor-media-modal .media-library__list-item-file-name {
+.media-modal .media-library__list-item-file-name {
 	&::after {
 		@include long-content-fade( $color: $gray-light );
 	}
 }
 
-.editor-media-modal__gallery-help {
+.media-modal__gallery-help {
 	position: absolute;
 		bottom: 8px;
 		right: 22px;
 }
 
-.editor-media-modal__gallery-help-content {
+.media-modal__gallery-help-content {
 	font-size: 15px;
 	text-align: left;
 }
 
-.editor-media-modal__gallery-help-instruction {
+.media-modal__gallery-help-instruction {
 	padding: 16px;
 	max-width: 280px;
 }
 
-.editor-media-modal__gallery-help-icon {
+.media-modal__gallery-help-icon {
 	position: relative;
 	display: block;
 	width: 34px;
@@ -204,41 +204,41 @@
 	color: $gray-dark;
 }
 
-.editor-media-modal__gallery-help-icon .gridicon {
+.media-modal__gallery-help-icon .gridicon {
 	position: absolute;
 		top: 50%;
 		left: 50%;
 	transform: translate( -50%, -50% );
 }
 
-.editor-media-modal__gallery-help-actions {
+.media-modal__gallery-help-actions {
 	overflow-y: hidden;
 	padding: 8px 16px;
 	border-top: 1px solid lighten( $gray, 30% );
 }
 
-.editor-media-modal__gallery-help-remember-dismiss {
+.media-modal__gallery-help-remember-dismiss {
 	float: left;
 	margin-top: 4px;
 	font-size: 13px;
 }
 
-.editor-media-modal__gallery-help-remember-dismiss .form-checkbox {
+.media-modal__gallery-help-remember-dismiss .form-checkbox {
 	margin-top: 2px;
 }
 
-.editor-media-modal__gallery-help-actions .button {
+.media-modal__gallery-help-actions .button {
 	float: right;
 }
 
-.editor-media-modal__secondary-actions {
+.media-modal__secondary-actions {
 	float: left;
 	display: flex;
 	justify-content: center;
 	height: 40px;
 }
 
-.editor-media-modal__secondary-actions .gridicon {
+.media-modal__secondary-actions .gridicon {
 	position: absolute;
 		top: 50%;
 		left: 50%;
@@ -250,7 +250,7 @@
 	}
 }
 
-.editor-media-modal__secondary-action {
+.media-modal__secondary-action {
 	&.is-mobile {
 		position: relative;
 		min-width: 60px;
@@ -272,7 +272,7 @@
 	}
 }
 
-.editor-media-modal__secondary-action:not( .is-mobile ).editor-media-modal__delete {
+.media-modal__secondary-action:not( .is-mobile ).media-modal__delete {
 	line-height: 1;
 	color: $alert-red;
 
@@ -287,7 +287,7 @@
 	}
 }
 
-.editor-media-modal__secondary-action.is-active {
+.media-modal__secondary-action.is-active {
 	transform: rotate( 90deg );
 
 	.gridicon,
@@ -296,7 +296,7 @@
 	}
 }
 
-.editor-media-modal .dialog__action-buttons {
+.media-modal .dialog__action-buttons {
 	position: absolute;
 		right: 0;
 		bottom: 0;
@@ -304,11 +304,11 @@
 	margin: 0;
 }
 
-.editor-media-modal .dialog__action-buttons .button:first-of-type {
+.media-modal .dialog__action-buttons .button:first-of-type {
 	margin-left: 0;
 }
 
-.editor-media-modal__back-to-library {
+.media-modal__back-to-library {
 	.is-desktop {
 		display: none;
 	}
@@ -324,7 +324,7 @@
 	}
 }
 
-.editor-media-modal__plan-storage {
+.media-modal__plan-storage {
 	display: none;
 
 	@include breakpoint( ">480px" ) {
