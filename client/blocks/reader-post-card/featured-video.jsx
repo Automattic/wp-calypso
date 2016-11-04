@@ -42,7 +42,9 @@ class FeaturedVideo extends React.Component {
 	updateVideoSize = () => {
 		if ( this.videoEmbedRef ) {
 			const iframe = ReactDom.findDOMNode( this.videoEmbedRef ).querySelector( 'iframe' );
-			Object.assign( iframe.style, this.getEmbedSize() );
+			const availableWidth = ReactDom.findDOMNode( this ).parentNode.offsetWidth;
+
+			Object.assign( iframe.style, this.getEmbedSize( availableWidth ) );
 		}
 	}
 
@@ -66,18 +68,18 @@ class FeaturedVideo extends React.Component {
 
 		if ( preferThumbnail && thumbnailUrl ) {
 			return (
-				<FeaturedImage imageUri={ thumbnailUrl } onClick={ this.handleThumbnailClick }>
-					<div className="reader-post-card__play-icon-container"
-						title={ translate( 'Click to Play' ) }>
-						<img className="reader-post-card__play-icon" src="/calypso/images/reader/play-icon.png" />
-					</div>
+				<FeaturedImage imageUri={ thumbnailUrl } onClick={ this.handleThumbnailClick } >
+					<img className="reader-post-card__play-icon"
+						src="/calypso/images/reader/play-icon.png"
+						title={ translate( 'Play Video' ) }
+					/>
 				</FeaturedImage>
 			);
 		}
 
 		/* eslint-disable react/no-danger */
 		return (
-			<div ref={ this.setVideoEmbedRef }
+			<div ref={ this.setVideoEmbedRef } className="reader-post-card__video"
 				dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } }
 			/>
 		);
