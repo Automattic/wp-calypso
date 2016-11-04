@@ -9,7 +9,7 @@ import React from 'react';
 import { RelatedPostCard } from 'blocks/reader-related-card-v2';
 import Card from 'components/card';
 
-const smallItems = [
+const moreOnSameSite = [
 	{
 		post: {
 			ID: 1,
@@ -32,6 +32,75 @@ const smallItems = [
 			title: 'All the catsss'
 		}
 	},
+	{
+		post: {
+			ID: 2,
+			title: 'No Site? No Problem.',
+			site_ID: 99,
+			site_name: '99 Problems',
+			global_ID: 2,
+			author: {
+				name: 'wolvy'
+			},
+			canonical_image: {
+				uri: 'http://lorempixel.com/1024/256/sports/',
+				height: 256,
+				width: 1024
+			},
+			site_URL: 'http://discover.wordpress.com',
+			short_excerpt: 'Turnip greens yarrow ricebean rutabaga endive cauliflower sea lettuce kohlrabi amaranth water spinach avocado daikon napa cabbage asparagus winter purslane kale. Celery potato scallion desert raisin horseradish spinach carrot soko.'
+		},
+		site: {
+			title: '99 Problems'
+		}
+	},
+];
+
+const moreOnWordPress = [
+	{
+		site: {
+			title: 'Political Guru'
+		},
+		post: {
+			ID: 3,
+			global_ID: 3,
+			site_ID: 3,
+			author: {
+				name: "ConservativeJoe",
+			},
+			date: "2016-09-27T08:20:33+00:00",
+			modified: "2016-09-27T08:20:37+00:00",
+			title: "Why Trump should Win the American Election.",
+			reading_time: 152,
+			better_excerpt: "<p>This presidential race has, to be blunt, a cluster bomb of attacks, lies and outright nonsense rhetoric that has astounded many and made people curse at their screens, newspapers and media agencies they follow.</p>\n<p>To be fair, it came from both sides, but in the defense of trump, most of his rhetoric or so called attacks, weren’t attacks on Clinton, but retaliation in defense of attacks that Clinton has made against trump.</p>\n<p>Now, that being said, Trump is clearly the better candidate.    Clinton supporters are, so far, from what I have seen, outright stupid.    Many support her because Clinton has a vagina.  Yes, you read that correctly.    Many are voting simply to get a woman in the office, instead of voting based on qualifications like, integrity, honesty, having solid reasoning to fix the problems and the intelligence to be able to negotiate deals with other world leaders.</p>",
+			short_excerpt: "This presidential race has, to be blunt, a cluster bomb of attacks, lies and outright nonsense rhetoric that has astounded many and made people curse at their…",
+			canonical_image: {
+					uri: "https://freedomsandtruth.files.wordpress.com/2016/09/trump-rally-in-vegas-getty-640x480.jpg?w=720&quality=80&strip=info",
+			}
+		}
+	},
+	{
+		site: {
+			title: 'Political Ninja'
+		},
+		post: {
+			ID: 4,
+			global_ID: 4,
+			site_ID: 4,
+			author: {
+				name: "LiberalJoe",
+			},
+			date: "2016-09-27T08:20:33+00:00",
+			modified: "2016-09-27T08:20:37+00:00",
+			title: "Why Clinton should Win the American Election.",
+			reading_time: 152,
+			better_excerpt: "This presidential race, has, to be blunt, a lorem ipsum of devdocs demos.  HRC deserves the win because shes been playing the game longer than anybody, especially longer than trump. And she's tough.",
+			short_excerpt: "This presidential race has, to be blunt, a cluster bomb of attacks, lies and outright nonsense rhetoric that has astounded many and made people curse at their…",
+			canonical_image: {
+					uri: "https://lh4.googleusercontent.com/-eXKU4UhFusI/AAAAAAAAAAI/AAAAAAAAATA/1QahWqsqd-I/s0-c-k-no-ns/photo.jpg",
+			}
+		}
+	},
 ];
 
 const RelatedPostCardv2Example = () => (
@@ -40,15 +109,21 @@ const RelatedPostCardv2Example = () => (
 		<div className="reader-related-card-v2__blocks is-same-site">
 			<h1 className="reader-related-card-v2__heading">More in <a className="reader-related-card-v2__link">Cats and Furballs</a></h1>
 				<ul className="reader-related-card-v2__list">
-					<li className="reader-related-card-v2__list-item">{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }</li>
-					<li className="reader-related-card-v2__list-item">{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }</li>
+					{ moreOnSameSite.map( item =>
+						<li className="reader-related-card-v2__list-item">
+							<RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } />
+						</li> )
+					}
 				</ul>
 		</div>
 		<div className="reader-related-card-v2__blocks is-other-site">
 			<h1 className="reader-related-card-v2__heading">More in <a className="reader-related-card-v2__link">WordPress.com</a></h1>
 				<ul className="reader-related-card-v2__list">
-					<li className="reader-related-card-v2__list-item">{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }</li>
-					<li className="reader-related-card-v2__list-item">{ smallItems.map( item => <RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } /> ) }</li>
+					{ moreOnWordPress.map( item =>
+						<li className="reader-related-card-v2__list-item">
+							<RelatedPostCard key={ item.post.global_ID } post={ item.post } site={ item.site } />
+						</li> )
+					}
 				</ul>
 		</div>
 		</Card>
