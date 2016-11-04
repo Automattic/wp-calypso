@@ -10,8 +10,7 @@ import config from 'config';
 import { useSandbox } from 'test/helpers/use-sinon';
 import {
 	getSite,
-	getPrimarySiteId,
-	isPrimarySiteId,
+	getPrimarySite,
 	getSiteCollisions,
 	isSiteConflicting,
 	isSingleUserSite,
@@ -90,19 +89,19 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getPrimarySiteId', () => {
+	describe( '#getPrimarySite', () => {
 		it( 'should return null if there are no sites', () => {
-			const primarySiteId = getPrimarySiteId( {
+			const primarySite = getPrimarySite( {
 				sites: {
 					items: {}
 				}
-			}, 77203074 );
+			} );
 
-			expect( primarySiteId ).to.be.null;
+			expect( primarySite ).to.be.null;
 		} );
 
-		it( 'should return the primary site properly if there is one', () => {
-			const primarySiteId = getPrimarySiteId( {
+		it( 'should return the normalized primary site if there is one', () => {
+			const primarySite = getPrimarySite( {
 				sites: {
 					items: {
 						77203074: {
@@ -119,11 +118,24 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( primarySiteId ).to.eql( 77203199 );
+			expect( primarySite ).to.eql( {
+				ID: 77203199,
+				URL: 'https://example.com',
+				is_primary: true,
+				domain: 'example.com',
+				hasConflict: false,
+				is_customizable: false,
+				is_previewable: false,
+				options: {
+					default_post_format: 'standard'
+				},
+				slug: 'example.com',
+				title: 'example.com'
+			} );
 		} );
 
 		it( 'should return null if there is no primary site', () => {
-			const primarySiteId = getPrimarySiteId( {
+			const primarySite = getPrimarySite( {
 				sites: {
 					items: {
 						77203074: {
@@ -140,61 +152,7 @@ describe( 'selectors', () => {
 				}
 			} );
 
-			expect( primarySiteId ).to.be.null;
-		} );
-	} );
-
-	describe( '#isPrimarySiteId()', () => {
-		it( 'should return null if the site is not known', () => {
-			const isPrimary = isPrimarySiteId( {
-				sites: {
-					items: {}
-				}
-			}, 77203074 );
-
-			expect( isPrimary ).to.be.null;
-		} );
-
-		it( 'it should return true if the site is the primary site', () => {
-			const isPrimary = isPrimarySiteId( {
-				sites: {
-					items: {
-						77203074: {
-							ID: 77203074,
-							URL: 'https://testonesite2014.wordpress.com',
-							is_primary: false
-						},
-						77203199: {
-							ID: 77203199,
-							URL: 'https://example.com',
-							is_primary: true
-						},
-					}
-				}
-			}, 77203199 );
-
-			expect( isPrimary ).to.be.true;
-		} );
-
-		it( 'it should return false if the site is not the primary site', () => {
-			const isPrimary = isPrimarySiteId( {
-				sites: {
-					items: {
-						77203074: {
-							ID: 77203074,
-							URL: 'https://testonesite2014.wordpress.com',
-							is_primary: false
-						},
-						77203199: {
-							ID: 77203199,
-							URL: 'https://example.com',
-							is_primary: true
-						},
-					}
-				}
-			}, 77203074 );
-
-			expect( isPrimary ).to.be.false;
+			expect( primarySite ).to.be.null;
 		} );
 	} );
 

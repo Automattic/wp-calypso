@@ -73,35 +73,19 @@ export const getSite = createSelector(
 );
 
 /**
- * Returns a the ID of the primary site.
+ * Returns a the primary site object.
  *
  * @param  {Object}   state  Global state tree
- * @return {?Number}         The ID of the primary site
+ * @return {?Object}         The primary site object
  */
-export function getPrimarySiteId( state ) {
+export function getPrimarySite( state ) {
 	const site = find( state.sites.items, 'is_primary' );
 
 	if ( ! site ) {
 		return null;
 	}
 
-	return site.ID;
-}
-
-/**
- * Returns true if the specified WordPress.com site ID is the ID of the primary site.
- *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @return {?Boolean}       Whether this is the primary site
- */
-export function isPrimarySiteId( state, siteId ) {
-	const site = getRawSite( state, siteId );
-	if ( ! site ) {
-		return null;
-	}
-
-	return site.is_primary;
+	return getSite( state, site.ID );
 }
 
 /**
