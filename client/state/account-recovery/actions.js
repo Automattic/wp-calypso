@@ -90,8 +90,8 @@ export const deleteAccountRecoveryPhone = () => ( dispatch ) => {
 	return wpcom.undocumented().me().deleteAccountRecoveryPhone()
 		.then( () => {
 			dispatch( deleteAccountRecoveryPhoneSuccess() );
-		} ).catch( ( error ) => {
-			dispatch( deleteAccountRecoveryPhoneFailed( error ) );
+		} ).catch( ( { status, message } ) => {
+			dispatch( deleteAccountRecoveryPhoneFailed( { status, message } ) );
 		} );
 };
 
