@@ -51,7 +51,8 @@ var config = require( 'config' ),
 	syncHandler = require( 'lib/wp/sync-handler' ),
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
 	supportUser = require( 'lib/user/support-user-interop' ),
-	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default;
+	createReduxStoreFromPersistedInitialState = require( 'state/initial-state' ).default,
+	reduxFluxSync = require( 'lib/redux-flux-sync' );
 
 import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
 import { setNextLayoutFocus, activateNextLayoutFocus } from 'state/ui/layout-focus/actions';
@@ -185,6 +186,8 @@ function reduxStoreReady( reduxStore ) {
 	let layoutSection, validSections = [];
 
 	bindWpLocaleState( reduxStore );
+
+	reduxFluxSync( reduxStore );
 
 	supportUser.setReduxStore( reduxStore );
 
