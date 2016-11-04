@@ -148,16 +148,15 @@ function mediaButton( editor ) {
 		const dirtyImage = MediaStore.getDirtyImage();
 		let numOfImagesToUpdate = Number.MAX_SAFE_INTEGER;
 
+		if ( dirtyImage ) {
+			const dirtyImages = editor.dom.select( `img.wp-image-${ dirtyImage.ID }` );
+			numOfImagesToUpdate = dirtyImages.length;
+		}
+
 		isVisualEditMode = ! editor.isHidden();
 
 		if ( isVisualEditMode ) {
-			if ( dirtyImage ) {
-				images = editor.dom.select( `img.wp-image-${ dirtyImage.ID }` );
-
-				numOfImagesToUpdate = images.length;
-			} else {
-				images = editor.dom.select( 'img' );
-			}
+			images = editor.dom.select( 'img' );
 		} else {
 			// Attempt to pull the post from the edit store so that the post
 			// contents can be analyzed for images.
@@ -181,7 +180,7 @@ function mediaButton( editor ) {
 			let mediaHasCaption = false;
 			let captionNode = null;
 
-			if ( media.isDirty ) {
+			if ( media && media.isDirty ) {
 				current.media.transient = true;
 
 				captionNode = editor.dom.getParent( img, '.mceTemp' );
