@@ -135,69 +135,6 @@ function mediaButton( editor ) {
 		return { isLoaded, onLoad };
 	} )();
 
-	function parseShortcode( content ) {
-		return content.replace( /(?:<p>)?\[(?:wp_)?caption([^\]]+)\]([\s\S]+?)\[\/(?:wp_)?caption\](?:<\/p>)?/g, function( a, b, c ) {
-			var id, align, classes, caption, img, width,
-				trim = tinymce.trim;
-
-			id = b.match( /id=['"]([^'"]*)['"] ?/ );
-			if ( id ) {
-				b = b.replace( id[0], '' );
-			}
-
-			align = b.match( /align=['"]([^'"]*)['"] ?/ );
-			if ( align ) {
-				b = b.replace( align[0], '' );
-			}
-
-			classes = b.match( /class=['"]([^'"]*)['"] ?/ );
-			if ( classes ) {
-				b = b.replace( classes[0], '' );
-			}
-
-			width = b.match( /width=['"]([0-9]*)['"] ?/ );
-			if ( width ) {
-				b = b.replace( width[0], '' );
-			}
-
-			c = trim( c );
-			img = c.match( /((?:<a [^>]+>)?<img [^>]+>(?:<\/a>)?)([\s\S]*)/i );
-
-			if ( img && img[2] ) {
-				caption = trim( img[2] );
-				img = trim( img[1] );
-			} else {
-				// old captions shortcode style
-				caption = trim( b ).replace( /caption=['"]/, '' ).replace( /['"]$/, '' );
-				img = c;
-			}
-
-			id = ( id && id[1] ) ? id[1].replace( /[<>&]+/g,  '' ) : '';
-			align = ( align && align[1] ) ? align[1] : 'alignnone';
-			classes = ( classes && classes[1] ) ? ' ' + classes[1].replace( /[<>&]+/g,  '' ) : '';
-
-			if ( ! width && img ) {
-				width = img.match( /width=['"]([0-9]*)['"]/ );
-			}
-
-			if ( width && width[1] ) {
-				width = width[1];
-			}
-
-			if ( ! width || ! caption ) {
-				return c;
-			}
-
-			width = parseInt( width, 10 );
-			if ( ! editor.getParam( 'wpeditimage_html5_captions' ) ) {
-				width += 10;
-			}
-
-			return '<div class="mceTemp"><dl id="' + id + '" class="wp-caption ' + align + classes + '" style="width: ' + width + 'px">' +
-				'<dt class="wp-caption-dt">'+ img +'</dt><dd class="wp-caption-dd">'+ caption +'</dd></dl></div>';
-		} );
-	}
-
 	updateMedia = debounce( function() {
 		var selectedSite = sites.getSelectedSite(),
 			isTransientDetected = false,
@@ -318,7 +255,7 @@ function mediaButton( editor ) {
 				markup = MediaMarkup.get( merged, options );
 
 				if ( mediaHasCaption ) {
-					markup = parseShortcode( markup );
+					markup = editor.wpSetImgCaption( markup );
 				}
 			} else {
 				// If there's an unidentifiable blob image in the post content,
@@ -359,6 +296,8 @@ function mediaButton( editor ) {
 					mediaString = captionNode;
 				}
 			} else if ( img.outerHTML ) {
+				// The `img` object can be a string or a DOM node. We need a
+				// normalized string to replace the post content markup
 				mediaString = img.outerHTML;
 
 				// In visual editing mode, we apply the changes immediately by
@@ -367,10 +306,6 @@ function mediaButton( editor ) {
 			} else {
 				mediaString = img;
 			}
-
-			// The `img` object can be a string or a DOM node. We need a
-			// normalized string to replace the post content markup
-			// let imgString;
 
 			// Replace the instance in the original post content
 			if ( content ) {
