@@ -43,7 +43,8 @@ import WebPreview from 'components/web-preview';
 import { requestSite } from 'state/sites/actions';
 import {
 	isBusiness,
-	isEnterprise
+	isEnterprise,
+	isJetpackBusiness
 } from 'lib/products-values';
 import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
 
@@ -58,7 +59,7 @@ const serviceIds = {
 // Not perfect but meets the needs of this component well
 const anyHtmlTag = /<\/?[a-z][a-z0-9]*\b[^>]*>/i;
 
-const hasBusinessPlan = overSome( isBusiness, isEnterprise );
+const hasBusinessPlan = overSome( isBusiness, isEnterprise, isJetpackBusiness );
 
 function getGeneralTabUrl( slug ) {
 	return `/settings/general/${ slug }`;
@@ -396,6 +397,10 @@ export const SeoForm = React.createClass( {
 			return includes( invalidCodes, service );
 		};
 
+		const nudgeTitle = jetpack
+			? this.translate( 'Enable SEO Tools Features by Upgrading to Jetpack Pro' )
+			: this.translate( 'Enable SEO Tools Features by Upgrading to the Business Plan' );
+
 		const submitButton = (
 			<Button
 				compact={ true }
@@ -450,7 +455,7 @@ export const SeoForm = React.createClass( {
 				{ showUpgradeNudge &&
 					<UpgradeNudge
 						feature={ FEATURE_ADVANCED_SEO }
-						title={ this.translate( 'Enable SEO Tools Features by Upgrading to the Business Plan' ) }
+						title={ nudgeTitle }
 						message={ this.translate( 'Adds tools to optimize your site for search engines and social media sharing.' ) }
 						event={ 'calypso_seo_settings_upgrade_nudge' }
 						jetpack={ jetpack }
@@ -689,9 +694,9 @@ export const SeoForm = React.createClass( {
 const mapStateToProps = ( state, ownProps ) => {
 	const { site } = ownProps;
 	// SEO Tools are available with Business plan on WordPress.com, and with Free plan on Jetpack sites
-	const isAdvancedSeoEligible = site && ( site.plan && hasBusinessPlan( site.plan ) || site.jetpack );
-	const seoFeatureEnabled = site && ( ! site.jetpack && config.isEnabled( 'manage/advanced-seo' ) ||
-										site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) );
+	const isAdvancedSeoEligible = site && site.plan && hasBusinessPlan( site.plan );
+	const seoFeatureEnabled = site &&
+		( ! site.jetpack && config.isEnabled( 'manage/advanced-seo' ) || site.jetpack && config.isEnabled( 'jetpack/seo-tools' ) );
 	const siteId = get( site, 'ID', 0 );
 
 	return {

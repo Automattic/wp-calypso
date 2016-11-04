@@ -245,7 +245,7 @@ const EditorDrawer = React.createClass( {
 
 		const { plan } = this.props.site;
 		const hasBusinessPlan = isBusiness( plan ) || isEnterprise( plan );
-		if ( ! this.props.site.jetpack && ! hasBusinessPlan ) {
+		if ( ! hasBusinessPlan ) {
 			return;
 		}
 
