@@ -46,6 +46,7 @@ import {
 } from 'state/action-types';
 
 import dummyData from './test-data';
+import { generateSuccessAndFailedTestsForThunk } from './util';
 
 describe( 'account-recovery actions', () => {
 	let spy;
@@ -120,49 +121,6 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	const generateSuccessAndFailedTestsForThunk = ( { testBaseName, nockSettings, thunk, preCondition, postConditionSuccess, postConditionFailed } ) => {
-		const {
-			method,
-			endpoint,
-			successResponse,
-			errorResponse,
-		} = nockSettings;
-
-		const apiUrl = 'https://public-api.wordpress.com:443';
-
-		describe( testBaseName + ' success', () => {
-			useNock( ( nock ) => {
-				nock( apiUrl )
-					[ method ]( endpoint )
-					.reply( 200, successResponse );
-			} );
-
-			it( 'should be successful.', () => {
-				const action = thunk( spy );
-
-				preCondition();
-
-				return action.then( postConditionSuccess );
-			} );
-		} );
-
-		describe( testBaseName + ' fail', () => {
-			useNock( ( nock ) => {
-				nock( apiUrl )
-					[ method ]( endpoint )
-					.reply( errorResponse.status, errorResponse );
-			} );
-
-			it( 'should be failed', () => {
-				const action = thunk( spy );
-
-				preCondition();
-
-				return action.then( postConditionFailed );
-			} );
-		} );
-	};
-
 	const newPhoneData = {
 		country_code: 'US',
 		country_numeric_code: '+1',
@@ -180,7 +138,9 @@ describe( 'account-recovery actions', () => {
 			successResponse: newPhoneData,
 			errorResponse: errorResponse,
 		},
-		thunk: updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number ),
+		thunk: () => {
+			return updateAccountRecoveryPhone( newPhoneData.country_code, newPhoneData.number )( spy );
+		},
 		preCondition: () => {
 			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } ) );
 		},
