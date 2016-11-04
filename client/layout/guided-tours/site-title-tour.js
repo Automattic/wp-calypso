@@ -1,6 +1,5 @@
 import React from 'react';
 import { translate } from 'i18n-calypso';
-import { overEvery as and } from 'lodash';
 
 import {
 	makeTour,
@@ -12,20 +11,14 @@ import {
 	Link,
 } from 'layout/guided-tours/config-elements';
 import {
-	isEnabled,
-	// inSection,
+	selectedSiteHasDefaultSiteTitle,
 } from 'state/ui/guided-tours/contexts';
-import { getScrollableSidebar } from 'layout/guided-tours/positioning';
 import Gridicon from 'components/gridicon';
-import scrollTo from 'lib/scroll-to';
-
-const scrollSidebarToTop = () =>
-	scrollTo( { y: 0, container: getScrollableSidebar() } );
 
 // TODO (markehrabe): user has unchanged title
 // TODO (markehrabe): what path to use?
 export const SiteTitleTour = makeTour(
-	<Tour name="siteTitle" version="20161010" path="/" when={ and( isEnabled( 'guided-tours/site-title' ) ) }>
+	<Tour name="siteTitle" version="20161010" path="/stats/day/marekhrabe.wordpress.com" when={ selectedSiteHasDefaultSiteTitle }>
 		<Step name="init" placement="right" next="click-settings" className="guided-tours__step-first">
 			<p className="guided-tours__step-text">
 				{
@@ -104,7 +97,7 @@ export const SiteTitleTour = makeTour(
 				}
 			</p>
 			<div className="guided-tours__single-button-row">
-				<Quit onClick={ scrollSidebarToTop } primary>
+				<Quit primary>
 					{ translate( "We're all done!" ) }
 				</Quit>
 			</div>

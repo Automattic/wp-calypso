@@ -2,10 +2,11 @@
  * Internal dependencies
  */
 import config from 'config';
-import { getSectionName, isPreviewShowing as isPreviewShowingSelector, getSelectedSite } from 'state/ui/selectors';
+import { getSectionName, isPreviewShowing as isPreviewShowingSelector, getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
 import { getLastAction } from 'state/ui/action-log/selectors';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { abtest } from 'lib/abtest';
+import { hasDefaultSiteTitle } from 'state/sites/selectors';
 
 export const inSection = sectionName => state =>
 	getSectionName( state ) === sectionName;
@@ -41,3 +42,8 @@ export const isSelectedSiteCustomizable = state =>
 
 export const isAbTestInVariant = ( testName, variant ) => () =>
 	abtest( testName ) === variant;
+
+export const selectedSiteHasDefaultSiteTitle = state => {
+	const siteId = getSelectedSiteId( state );
+	return siteId ? hasDefaultSiteTitle( state, siteId ) : false;
+};
