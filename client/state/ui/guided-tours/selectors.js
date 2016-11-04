@@ -107,6 +107,7 @@ const hasJustSeenTour = createSelector(
  * yet finished or dimissed according to the action log.
  */
 const findOngoingTour = state => {
+	return null;
 	const last = findLast( getActionLog( state ), { type: GUIDED_TOUR_UPDATE } );
 	return last && ( last.shouldShow === undefined ) && last.tour;
 };
