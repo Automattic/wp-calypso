@@ -30,7 +30,7 @@ describe( 'account-recovery ctions', () => {
 		spy.reset();
 	} );
 
-	describe( '#accountRecoveryFetch()', () => {
+	describe( '#accountRecoveryFetch() success', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.get( '/rest/v1.1/me/account-recovery' )
@@ -46,6 +46,32 @@ describe( 'account-recovery ctions', () => {
 				assert( spy.calledWith( {
 					type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
 					...dummyData,
+				} ) );
+			} );
+		} );
+	} );
+
+	describe( '#accountRecoveryFetch() failed', () => {
+		const message = 'something wrong!';
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.get( '/rest/v1.1/me/account-recovery' )
+				.reply( 400, { message } );
+		} );
+
+		it( 'should dispatch fetch / fail actions.', () => {
+			const fetch = accountRecoveryFetch()( spy );
+
+			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_FETCH } ) );
+
+			return fetch.then( () => {
+				assert( spy.calledWith( {
+					type: ACCOUNT_RECOVERY_FETCH_FAILED,
+					error: {
+						status: 400,
+						message,
+					},
 				} ) );
 			} );
 		} );

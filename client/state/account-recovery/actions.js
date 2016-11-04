@@ -36,7 +36,7 @@ export const accountRecoveryFetch = () => ( dispatch ) => {
 	return wpcom.undocumented().me().getAccountRecovery()
 		.then( ( accountRecoverySettings ) => {
 			dispatch( accountRecoveryFetchSuccess( accountRecoverySettings ) );
-		} ).catch( ( error ) => {
-			dispatch( accountRecoveryFetchFailed( error ) );
+		} ).catch( ( { status, message } ) => {
+			dispatch( accountRecoveryFetchFailed( { status, message } ) );
 		} );
 };
