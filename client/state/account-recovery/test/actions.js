@@ -120,7 +120,7 @@ describe( 'account-recovery actions', () => {
 		} );
 	} );
 
-	describe( '#updateAccountRecoveryPhone', () => {
+	describe( '#updateAccountRecoveryPhone success', () => {
 		const newPhoneData = {
 			country_code: 'US',
 			country_numeric_code: '+1',
@@ -143,6 +143,33 @@ describe( 'account-recovery actions', () => {
 				assert( spy.calledWith( {
 					type: ACCOUNT_RECOVERY_PHONE_UPDATE_SUCCESS,
 					phone: newPhoneData,
+				} ) );
+			} );
+		} );
+	} );
+
+	describe( '#updateAccountRecoveryPhone fail', () => {
+		const message = 'failed!';
+		const status = 400;
+
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( '/rest/v1.1/me/account-recovery/phone' )
+				.reply( status, { message } );
+		} );
+
+		it( 'should dispatch update / fail actions.', () => {
+			const update = updateAccountRecoveryPhone( 'TW', '222' )( spy );
+
+			assert( spy.calledWith( { type: ACCOUNT_RECOVERY_PHONE_UPDATE } ) );
+
+			return update.then( () => {
+				assert( spy.calledWith( {
+					type: ACCOUNT_RECOVERY_PHONE_UPDATE_FAILED,
+					error: {
+						status,
+						message,
+					},
 				} ) );
 			} );
 		} );
