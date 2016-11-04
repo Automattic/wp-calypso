@@ -66,13 +66,11 @@ import NoticeAction from 'components/notice/notice-action';
 import Plans from './plans';
 import CheckoutData from 'components/data/checkout';
 
-
 /**
  * Constants
  */
 const PLANS_PAGE = '/jetpack/connect/plans/';
 const authUrl = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true';
-const JETPACK_CONNECT_TTL = 60 * 60 * 1000; // 1 Hour
 
 const SiteCard = React.createClass( {
 	render() {
@@ -291,7 +289,7 @@ const LoggedInForm = React.createClass( {
 		if ( activateManageSecret && ! manageActivated ) {
 			return this.activateManageAndRedirect();
 		}
-		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_expired' ) >= 0 ) {
 			window.location.href = queryObject.site + authUrl;
 			return;
 		}
@@ -372,7 +370,7 @@ const LoggedInForm = React.createClass( {
 		if ( authorizeError.message.indexOf( 'already_connected' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="alreadyConnected" />;
 		}
-		if ( authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+		if ( authorizeError.message.indexOf( 'verify_secrets_expired' ) >= 0 ) {
 			return <JetpackConnectNotices noticeType="secretExpired" siteUrl={ queryObject.site } />;
 		}
 		if ( this.props.requestHasXmlrpcError() ) {
@@ -400,7 +398,7 @@ const LoggedInForm = React.createClass( {
 			return this.translate( 'Go back to your site' );
 		}
 
-		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_missing' ) >= 0 ) {
+		if ( authorizeError && authorizeError.message.indexOf( 'verify_secrets_expired' ) >= 0 ) {
 			return this.translate( 'Try again' );
 		}
 
@@ -596,15 +594,10 @@ const JetpackConnectAuthorizeForm = React.createClass( {
 	},
 
 	isSSO() {
-		const site = this.props.jetpackConnectAuthorize.queryObject.site.replace( /.*?:\/\//g, '' );
-		if ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] ) {
-			const currentTime = ( new Date() ).getTime();
-			const sessionTimestamp = this.props.jetpackSSOSessions[ site ].timestamp || 0;
-			return ( currentTime - sessionTimestamp < JETPACK_CONNECT_TTL );
-		}
-
-		return false;
+		const site = urlToSlug( this.props.jetpackConnectAuthorize.queryObject.site );
+		return !! ( this.props.jetpackSSOSessions && this.props.jetpackSSOSessions[ site ] );
 	},
+
 
 	renderNoQueryArgsError() {
 		return (
