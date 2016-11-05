@@ -35,6 +35,10 @@ var Team = React.createClass( {
 		return this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
 	},
 
+	fetchHasCompleted() {
+		return this.props.fetchInitialized && ! this.props.fetchingUsers;
+	},
+
 	render: function() {
 		var key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
 			headerText = this.translate( 'Team', { context: 'A navigation label.' } ),
@@ -42,7 +46,7 @@ var Team = React.createClass( {
 			people,
 			showRoles = config.isEnabled( 'manage/people/role-filtering' );
 
-		if ( this.props.fetchInitialized && ! this.props.users.length && this.props.fetchOptions.search && ! this.props.fetchingUsers ) {
+		if ( this.fetchHasCompleted() && ! this.props.users.length && this.props.fetchOptions.search ) {
 			return (
 				<NoResults
 					image="/calypso/images/people/mystery-person.svg"
@@ -57,7 +61,7 @@ var Team = React.createClass( {
 			);
 		}
 
-		if ( this.props.site && ( this.props.users.length || this.props.role ) ) {
+		if ( this.fetchHasCompleted() && this.props.site && ( this.props.users.length || this.props.role ) ) {
 			if ( this.props.search && this.props.totalUsers ) {
 				headerText = this.translate(
 					'%(numberPeople)d Person Matching {{em}}"%(searchTerm)s"{{/em}}',
