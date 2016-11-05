@@ -22,12 +22,9 @@ import {
 } from 'state/plans/test/fixture';
 
 describe( 'wpcom-api', () => {
-	let sandbox, dispatch;
+	let dispatch;
 
-	useSandbox( newSandbox => {
-		sandbox = newSandbox;
-		dispatch = sandbox.spy();
-	} );
+	useSandbox( sandbox => ( dispatch = sandbox.spy() ) );
 
 	describe( 'plans request', () => {
 		useNock( nock => (
