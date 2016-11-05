@@ -4,8 +4,12 @@
 import requestPlans from './plans-request';
 import { mergeHandlers } from 'state/data-layer/utils';
 
-export const handlers = mergeHandlers(
-	requestPlans,
-);
+import {
+	PLANS_REQUEST,
+} from 'state/action-types';
+
+export const handlers = mergeHandlers( {
+	[ PLANS_REQUEST ]: requestPlans,
+} );
 
 export default handlers;

@@ -4,7 +4,6 @@
 import wpcom from 'lib/wp';
 import {
 	PLANS_RECEIVE,
-	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE
 } from 'state/action-types';
@@ -27,6 +26,4 @@ export const requestPlans = ( { dispatch } ) => (
 		} )
 );
 
-export default {
-	[ PLANS_REQUEST ]: [ requestPlans ],
-};
+export default requestPlans;
