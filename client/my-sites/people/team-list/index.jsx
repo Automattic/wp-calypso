@@ -75,21 +75,33 @@ var Team = React.createClass( {
 				);
 			}
 
-			people = (
-				<InfiniteList
-					key={ key }
-					items={ this.props.users }
-					className="people-selector__infinite-list"
-					ref="infiniteList"
-					fetchingNextPage={ this.props.fetchingUsers }
-					lastPage={ this.isLastPage() }
-					fetchNextPage={ this._fetchNextPage }
-					getItemRef={ this._getPersonRef }
-					renderLoadingPlaceholders={ this._renderLoadingPeople }
-					renderItem={ this._renderPerson }
-					guessedItemHeight={ 126 }>
-				</InfiniteList>
-			);
+			if ( this.props.role && this.props.users.length === 0 ) {
+				const noResultsMessage = this.translate(
+					'No users have this role on this site'
+				);
+				people = (
+					<NoResults
+						image="/calypso/images/people/mystery-person.svg"
+						text={ noResultsMessage }
+					/>
+				);
+			} else {
+				people = (
+					<InfiniteList
+						key={ key }
+						items={ this.props.users }
+						className="people-selector__infinite-list"
+						ref="infiniteList"
+						fetchingNextPage={ this.props.fetchingUsers }
+						lastPage={ this.isLastPage() }
+						fetchNextPage={ this._fetchNextPage }
+						getItemRef={ this._getPersonRef }
+						renderLoadingPlaceholders={ this._renderLoadingPeople }
+						renderItem={ this._renderPerson }
+						guessedItemHeight={ 126 }>
+					</InfiniteList>
+				);
+			}
 		} else {
 			people = this._renderLoadingPeople();
 		}
