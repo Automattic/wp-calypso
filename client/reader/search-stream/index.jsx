@@ -68,8 +68,6 @@ const SearchCardAdapter = React.createClass( {
 
 	onRefreshCardClick( post ) {
 		recordTrackForPost( 'calypso_reader_searchcard_clicked', this.props.post );
-
-		event.preventDefault();
 		this.props.handleClick( post, {} );
 	},
 
