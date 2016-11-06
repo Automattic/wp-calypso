@@ -111,7 +111,7 @@ var Team = React.createClass( {
 		}
 
 		return (
-			<div style={{"min-height": "300px"}}>
+			<div style={{minHeight: "300px"}}>
 				<PeopleListSectionHeader
 					role={ this.props.role }
 					showRoles={ showRoles }
