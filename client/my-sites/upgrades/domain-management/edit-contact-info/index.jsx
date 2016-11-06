@@ -15,6 +15,7 @@ import Header from 'my-sites/upgrades/domain-management/components/header';
 import Main from 'components/main';
 import paths from 'my-sites/upgrades/paths';
 import { getSelectedDomain } from 'lib/domains';
+import { findRegistrantWhois } from 'lib/domains/whois/utils';
 import SectionHeader from 'components/section-header';
 
 const EditContactInfo = React.createClass( {
@@ -64,7 +65,7 @@ const EditContactInfo = React.createClass( {
 			<div>
 				<SectionHeader label={ this.translate( 'Edit Contact Info' ) } />
 				<EditContactInfoFormCard
-					contactInformation={ this.props.whois.data }
+					contactInformation={ findRegistrantWhois( this.props.whois.data ) }
 					selectedDomainName={ this.props.selectedDomainName }
 					selectedSite={ this.props.selectedSite } />
 			</div>
