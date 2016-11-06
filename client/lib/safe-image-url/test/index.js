@@ -58,11 +58,11 @@ describe( 'index', function() {
 		expect( safeImage( 'https://gravatar.com/' ) ).to.eql( 'https://gravatar.com/' );
 	} );
 
-	it( 'should return null for urls with querystrings', function() {
-		expect( safeImage( 'https://example.com/foo?bar' ) ).to.be.null;
-		expect( safeImage( 'https://example.com/foo.jpg?bar' ) ).to.be.null;
-		expect( safeImage( 'https://example.com/foo.jpeg?bar' ) ).to.be.null;
-		expect( safeImage( 'https://example.com/foo.gif?bar' ) ).to.be.null;
-		expect( safeImage( 'https://example.com/foo.png?bar' ) ).to.be.null;
+	it( 'should strip querystrings from non-wp images before trying to make them safe', function() {
+		expect( safeImage( 'https://example.com/foo?bar' ) ).to.eql( 'https://i1.wp.com/example.com/foo?ssl=1' );
+		expect( safeImage( 'https://example.com/foo.jpg?bar' ) ).to.eql( 'https://i0.wp.com/example.com/foo.jpg?ssl=1' );
+		expect( safeImage( 'https://example.com/foo.jpeg?bar' ) ).to.eql( 'https://i0.wp.com/example.com/foo.jpeg?ssl=1' );
+		expect( safeImage( 'https://example.com/foo.gif?bar' ) ).to.eql( 'https://i2.wp.com/example.com/foo.gif?ssl=1' );
+		expect( safeImage( 'https://example.com/foo.png?bar' ) ).to.eql( 'https://i0.wp.com/example.com/foo.png?ssl=1' );
 	} );
 } );

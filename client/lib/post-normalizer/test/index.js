@@ -4,6 +4,8 @@
 const assert = require( 'chai' ).assert,
 	Spy = require( 'sinon' ).spy;
 
+import { partial } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -23,8 +25,10 @@ function asyncTransform( post, callback ) {
 	process.nextTick( callback );
 }
 
+
 describe( 'index', function() {
-	let normalizer, safeImageUrlFake, allTransforms;
+	let normalizer, safeImageUrlFake, allTransforms, makeImagesSafeWithMaxWidth;
+	const IMAGE_MAX_WIDTH = 200;
 
 	useFakeDom();
 	useFilesystemMocks( __dirname );
@@ -32,6 +36,8 @@ describe( 'index', function() {
 	before( function() {
 		normalizer = require( '../' );
 		safeImageUrlFake = require( 'lib/safe-image-url' );
+		makeImagesSafeWithMaxWidth = partial( normalizer.content.makeImagesSafe, partial.placeholder, partial.placeholder, IMAGE_MAX_WIDTH );
+
 		allTransforms = [
 			normalizer.decodeEntities,
 			normalizer.stripHTML,
@@ -42,9 +48,9 @@ describe( 'index', function() {
 			normalizer.withContentDOM(),
 			normalizer.withContentDOM( [
 				normalizer.content.removeStyles,
-				normalizer.content.makeImagesSafe( 300 ),
+				makeImagesSafeWithMaxWidth,
 				normalizer.content.makeEmbedsSafe,
-				normalizer.content.detectEmbeds,
+				normalizer.content.detectMedia,
 				normalizer.content.wordCountAndReadingTime
 			] ),
 			normalizer.createBetterExcerpt,
@@ -393,7 +399,7 @@ describe( 'index', function() {
 				{
 					content: '<img src="http://example.com/example.jpg"><img src="http://example.com/example2.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE"><img src="http://example.com/example2.jpg-SAFE">' );
 					done( err );
 				}
@@ -406,7 +412,7 @@ describe( 'index', function() {
 					URL: 'http://example.wordpress.com/?post=123',
 					content: '<img src="/example.jpg"><img src="example2.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.wordpress.com/example.jpg-SAFE"><img src="http://example.wordpress.com/example2.jpg-SAFE">' );
 					done( err );
 				}
@@ -419,7 +425,7 @@ describe( 'index', function() {
 					URL: 'http://example.wordpress.com/2015/01/my-post/',
 					content: '<img src="../../../example.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.wordpress.com/example.jpg-SAFE">' );
 					done( err );
 				}
@@ -431,8 +437,8 @@ describe( 'index', function() {
 				{
 					content: '<img src="http://example.com/example.jpg"><img src="http://example.com/example2.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE?w=400&amp;quality=80&amp;strip=info"><img src="http://example.com/example2.jpg-SAFE?w=400&amp;quality=80&amp;strip=info">' );
+				[ normalizer.withContentDOM( [ makeImagesSafeWithMaxWidth ] ) ], function( err, normalized ) {
+					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE?w=200&amp;quality=80&amp;strip=info"><img src="http://example.com/example2.jpg-SAFE?w=200&amp;quality=80&amp;strip=info">' );
 					done( err );
 				}
 			);
@@ -444,7 +450,7 @@ describe( 'index', function() {
 				{
 					content: '<img width="700" height="700" src="http://example.com/example.jpg?nope">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe( 400 ) ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '' );
 					done( err );
 				}
@@ -457,20 +463,20 @@ describe( 'index', function() {
 				{
 					content: '<img onload="hi" onerror="there" src="http://example.com/example.jpg">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
 			);
 		} );
 
-		it( 'fixes up srcsets', function( done ) {
+		it( 'removes valid srcsets', function( done ) {
 			normalizer(
 				{
 					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100.jpg 100w, http://example.com/example-600.jpg 600w">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
-					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE" srcset="http://example.com/example-100.jpg-SAFE 100w, http://example.com/example-600.jpg-SAFE 600w">' );
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe ] ) ], function( err, normalized ) {
+					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
 			);
@@ -481,7 +487,7 @@ describe( 'index', function() {
 				{
 					content: '<img src="http://example.com/example.jpg" srcset="http://example.com/example-100-and-a-half.jpg 100.5w, http://example.com/example-600.jpg 600w">'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe() ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeImagesSafe ] ) ], function( err, normalized ) {
 					assert.equal( normalized.content, '<img src="http://example.com/example.jpg-SAFE">' );
 					done( err );
 				}
@@ -764,18 +770,18 @@ describe( 'index', function() {
 		} );
 	} );
 
-	describe( 'content.contentEmbeds', function() {
+	describe( 'content.detectMedia', function() {
 		it( 'detects whitelisted iframes and alters the sandbox', function( done ) {
 			normalizer(
 				{
-					content: '<iframe width="100" height="50" src="https://youtube.com"></iframe>'
+					content: '<iframe width="100" height="50" src="https://youtube.com/"></iframe>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe, normalizer.content.detectMedia ] ) ], function( err, normalized ) {
 					let embed;
 					assert.lengthOf( normalized.content_embeds, 1 );
 
 					embed = normalized.content_embeds[ 0 ];
-					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://youtube.com" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>' );
+					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://youtube.com/" sandbox="allow-same-origin allow-scripts allow-popups"></iframe>' );
 					assert.strictEqual( embed.height, 50 );
 					assert.strictEqual( embed.width, 100 );
 					assert.isNull( embed.type );
@@ -788,14 +794,14 @@ describe( 'index', function() {
 		it( 'detects trusted iframes and removes the sandbox', function( done ) {
 			normalizer(
 				{
-					content: '<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>'
+					content: '<iframe width="100" height="50" src="https://embed.spotify.com/"></iframe>'
 				},
-				[ normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] ) ], function( err, normalized ) {
+				[ normalizer.withContentDOM( [ normalizer.content.makeEmbedsSafe, normalizer.content.detectMedia ] ) ], function( err, normalized ) {
 					let embed;
 					assert.lengthOf( normalized.content_embeds, 1 );
 
 					embed = normalized.content_embeds[ 0 ];
-					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://embed.spotify.com"></iframe>' );
+					assert.strictEqual( embed.iframe, '<iframe width="100" height="50" src="https://embed.spotify.com/"></iframe>' );
 					done( err );
 				}
 			);
@@ -808,7 +814,7 @@ describe( 'index', function() {
 					'</span></p>',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
 					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'youtube' );
 					done( err );
@@ -823,88 +829,35 @@ describe( 'index', function() {
 					'</div>',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
 					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'vimeo' );
 					done( err );
 				}
 			);
 		} );
-		it( 'detects special instagram embed', function( done ) {
-			normalizer(
-				{
-					content: '<blockquote class="instagram-media"><div></div></blockquote>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-instagram' );
-					done( err );
-				}
-			);
-		} );
-		it( 'detects special twitter embed', function( done ) {
-			normalizer(
-				{
-					content: '<blockquote class="twitter-video"><div></div></blockquote>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-twitter' );
-					done( err );
-				}
-			);
-		} );
-		// skipping for now because jsdom doesn't like namespaced elements
-		it.skip( 'detects special facebook post embed', function( done ) {
-			normalizer(
-				{
-					content: '<fb:post data-href="http://facebook.com"></fb:post>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-facebook' );
-					done( err );
-				}
-			);
-		} );
-		it( 'detects special facebook embed', function( done ) {
-			normalizer(
-				{
-					content: '<div class="fb-video"><div></div></div>'
-				},
-				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
-				], function( err, normalized ) {
-					assert.strictEqual( normalized.content_embeds[ 0 ].type, 'special-facebook' );
-					done( err );
-				}
-			);
-		} );
-		it( 'empty content does not set the array', function( done ) {
+		it( 'empty content yields undefined embeds', function( done ) {
 			normalizer(
 				{
 					content: '',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
 					assert.isUndefined( normalized.content_embeds );
 					done( err );
 				}
 			);
 		} );
-		it( 'content with no embeds does not set the array', function( done ) {
+		it( 'content with no embeds yields an empty array', function( done ) {
 			normalizer(
 				{
 					content: '<p>foo</p>',
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
-					assert.isUndefined( normalized.content_embeds );
+					assert.deepEqual( normalized.content_embeds, [] );
 					done( err );
 				}
 			);
@@ -924,9 +877,9 @@ describe( 'index', function() {
 					content: badContent,
 				},
 				[
-					normalizer.withContentDOM( [ normalizer.content.detectEmbeds ] )
+					normalizer.withContentDOM( [ normalizer.content.detectMedia ] )
 				], function( err, normalized ) {
-					assert.isUndefined( normalized.content_embeds, 'No content_embeds should have been found' );
+					assert.deepEqual( normalized.content_embeds, [], 'No content_embeds should have been found' );
 					done( err );
 				}
 			);
