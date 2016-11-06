@@ -23,6 +23,10 @@ module.exports = React.createClass( {
 		count: React.PropTypes.number
 	},
 
+	getDefaultProps: () => ( {
+		max: Infinity,
+	} ),
+
 	getInitialState: function() {
 		return { showPopover: false };
 	},
@@ -31,7 +35,7 @@ module.exports = React.createClass( {
 		const { active, data, max } = this.props;
 		const { nestedValue, value } = data;
 
-		const percentage = max ? Math.ceil( ( value / max ) * 10000 ) / 100 : 0,
+		const percentage = Math.ceil( ( value / max ) * 10000 ) / 100,
 			remain = 100 - percentage,
 			remainFloor = Math.max( 1, Math.floor( remain ) ),
 			sections = [],
