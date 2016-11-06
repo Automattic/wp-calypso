@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { PropTypes } from 'react';
 import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
@@ -14,6 +14,9 @@ import SectionHeader from 'components/section-header';
 
 const defaultProps = {
   displayName: 'GetApps',
+};
+const propTypes = {
+  translate: PropTypes.func.isRequired,
 };
 const GetApps = ( { translate } ) => (
   <Main className="get-apps">
@@ -96,5 +99,6 @@ const GetApps = ( { translate } ) => (
 
   </Main>
 );
+GetApps.propTypes = propTypes;
 GetApps.defaultProps = defaultProps;
 export default localize( GetApps );
