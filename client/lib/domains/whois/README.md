@@ -19,8 +19,8 @@ The store is a singleton object which offers `get` and `getByDomainName` methods
 ```js
 import WhoisStore from 'lib/domains/whois/store';
 
-DomainsStore.get()
-DomainsStore.getByDomainName( 'example.wordpress.com' )
+WhoisStore.get()
+WhoisStore.getByDomainName( 'example.wordpress.com' )
 ```
 
 To interact with the store, use the actions made available in [`domain-management.js`](../../upgrades/actions/domain-management.js):
