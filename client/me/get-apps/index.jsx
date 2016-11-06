@@ -1,16 +1,16 @@
 /**
  * External dependencies
  */
-var React = require( 'react' );
+import React from 'react';
 
 /**
  * Internal dependencies
  */
-var MeSidebarNavigation = require( 'me/sidebar-navigation' ),
-	Main = require( 'components/main' ),
-	Button = require( 'components/button' ),
-	Card = require( 'components/card' ),
-	SectionHeader = require( 'components/section-header' );
+import MeSidebarNavigation from 'me/sidebar-navigation';
+import Main from 'components/main';
+import Button from 'components/button';
+import Card from 'components/card';
+import SectionHeader from 'components/section-header';
 
 module.exports = React.createClass( {
 
