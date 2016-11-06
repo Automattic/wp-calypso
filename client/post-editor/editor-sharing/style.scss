@@ -1,3 +1,9 @@
+@import "../../../assets/stylesheets/shared/_colors";
+@import "../../../assets/stylesheets/shared/_typography";
+@import "../../../assets/stylesheets/shared/mixins/_clear-fix";
+@import "../../../assets/stylesheets/shared/mixins/_long-content-fade";
+@import "../editor-drawer/style";
+
 @import "publicize-message";
 @import "publicize-options";
 @import "publicize-services";

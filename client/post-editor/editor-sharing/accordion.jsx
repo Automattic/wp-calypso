@@ -28,6 +28,8 @@ import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
 import { postTypeSupports } from 'state/post-types/selectors';
 import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
 
+require('./style.scss');
+
 const EditorSharingAccordion = React.createClass( {
 	propTypes: {
 		site: PropTypes.object,
