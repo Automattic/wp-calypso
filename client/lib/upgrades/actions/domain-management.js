@@ -187,7 +187,7 @@ function fetchWhois( domainName ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.WHOIS_FETCH_COMPLETED,
 				domainName,
-				data: whoisAssembler.createDomainObject( data )
+				data: whoisAssembler.createDomainWhois( data )
 			} );
 		}
 	} );
@@ -196,13 +196,18 @@ function fetchWhois( domainName ) {
 function updateWhois( domainName, contactInformation, onComplete ) {
 	wpcom.updateWhois( domainName, contactInformation, ( error, data ) => {
 		if ( ! error ) {
-			// update may take a few minutes, we try after 1 minute to see if it is already done
+			Dispatcher.handleServerAction( {
+				type: ActionTypes.WHOIS_UPDATE_COMPLETED,
+				domainName
+			} );
+
+			// For WWD the update may take longer
+			// After 1 minute, we mark the WHOIS as needing updating
 			setTimeout( () => {
 				Dispatcher.handleServerAction( {
 					type: ActionTypes.WHOIS_UPDATE_COMPLETED,
 					domainName
 				} );
-				fetchWhois( domainName );
 			}, 60000 );
 		}
 
