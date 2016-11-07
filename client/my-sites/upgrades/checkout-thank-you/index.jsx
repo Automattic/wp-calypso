@@ -116,11 +116,13 @@ const CheckoutThankYou = React.createClass( {
 			return null;
 		}
 
+		const emailNudgeOnTop = abtest( 'paidNuxThankYouPage' ) === 'emailNudgeOnTop';
+
 		return (
 			<Notice
 				className="checkout-thank-you__verification-notice"
 				showDismiss={ false }
-				status="is-warning"
+				status={ emailNudgeOnTop ? 'is-warning' : '' }
 				>
 				{ this.translate( 'We’ve sent a message to {{strong}}%(email)s{{/strong}}. ' +
 					'Please check your email to confirm your address.', {
@@ -185,6 +187,7 @@ const CheckoutThankYou = React.createClass( {
 
 		const userCreatedMoment = moment( this.props.userDate );
 		const isNewUser = userCreatedMoment.isAfter( moment().subtract( 2, 'hours' ) );
+		const emailNudgeOnTop = abtest( 'paidNuxThankYouPage' ) === 'emailNudgeOnTop';
 
 		// this placeholder is using just wp logo here because two possible states do not share a common layout
 		if ( ! purchases && ! this.isGenericReceipt() ) {
@@ -199,9 +202,10 @@ const CheckoutThankYou = React.createClass( {
 		// streamlined paid NUX thanks page
 		if ( isNewUser && wasOnlyDotcomPlanPurchased ) {
 			return (
-				<Main className="checkout-thank-you">
-					{ this.renderConfirmationNotice() }
+				<Main className="checkout-thank-you{ emailNudgeOnTop ? ' checkout-thank-you__email-nudge-top-test' }">
+					{ emailNudgeOnTop ? this.renderConfirmationNotice() : null }
 					<PlanThankYouCard siteId={ this.props.selectedSite.ID } />
+					{ ! emailNudgeOnTop ? this.renderConfirmationNotice() : null }
 				</Main>
 			);
 		}
