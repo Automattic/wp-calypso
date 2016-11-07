@@ -2,7 +2,7 @@ Notices
 ===========
 
 A subtree of state that manages global notices.
-Suported types of notices are `error`, `success`.
+Supported types of notices are `error`, `success`.
 
 ## How to use?
 
