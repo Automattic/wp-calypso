@@ -9,13 +9,10 @@ import {
 	ACCOUNT_RECOVERY_FETCH_FAILED,
 } from 'state/action-types';
 
-export const accountRecoveryFetchSuccess = ( { email, email_validated, phone, phone_validated } ) => {
+export const accountRecoveryFetchSuccess = ( accountRecoverySettings ) => {
 	return {
 		type: ACCOUNT_RECOVERY_FETCH_SUCCESS,
-		email,
-		email_validated,
-		phone,
-		phone_validated,
+		...accountRecoverySettings,
 	};
 };
 
