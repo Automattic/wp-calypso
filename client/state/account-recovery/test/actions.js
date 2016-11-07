@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { assert } from 'chai';
-import sinon from 'sinon';
 
 /**
  * Internal dependencies
  */
 import { useNock } from 'test/helpers/use-nock';
+import { useSandbox } from 'test/helpers/use-sinon';
 
 import {
 	accountRecoveryFetch,
@@ -24,11 +24,8 @@ import {
 import dummyData from './test-data';
 
 describe( 'account-recovery ctions', () => {
-	const spy = sinon.spy();
-
-	beforeEach( () => {
-		spy.reset();
-	} );
+	let spy;
+	useSandbox( ( sandbox ) => spy = sandbox.spy() );
 
 	describe( '#accountRecoveryFetch() success', () => {
 		useNock( ( nock ) => {
