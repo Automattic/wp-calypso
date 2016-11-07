@@ -148,6 +148,7 @@ function mediaButton( editor ) {
 			return;
 		}
 
+
 		isVisualEditMode = ! editor.isHidden();
 
 		if ( isVisualEditMode ) {
@@ -173,6 +174,7 @@ function mediaButton( editor ) {
 
 			const media = MediaStore.get( selectedSite.ID, current.media.ID );
 
+			// If image is edited in image editor, let's update it in post/page editor.
 			if ( media && media.isDirty ) {
 				if (
 					! lastDirtyImage ||
@@ -205,9 +207,12 @@ function mediaButton( editor ) {
 				isTransientDetected = true;
 			}
 
-			// We only want to update post contents in cases where the media
-			// transitions to being persisted
-			if ( current.media.transient && ( ! media || ! media.transient ) ) {
+			if (
+				// We only want to update post contents in cases where the media
+				// transitions to being persisted
+				current.media.transient && ( ! media || ! media.transient ) ||
+				current.media.transient && media && media.isDirty && media.transient
+			) {
 				transients--;
 			} else {
 				return;

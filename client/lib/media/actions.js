@@ -247,6 +247,11 @@ MediaActions.update = function( siteId, item, editMediaFile = false ) {
 		updateAction.data = { ...newItem, ...MediaActions.createTransientMedia( mediaId, item.media_url ) };
 	}
 
+	if ( editMediaFile && updateAction.data ) {
+		// We need this to show a transient (edited) image in post/page editor after it has been edited there.
+		updateAction.data.isDirty = true;
+	}
+
 	debug( 'Updating media for %o by ID %o to %o', siteId, mediaId, updateAction );
 	Dispatcher.handleViewAction( updateAction );
 
