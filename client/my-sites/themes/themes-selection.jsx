@@ -16,6 +16,7 @@ import StickyPanel from 'components/sticky-panel';
 import analytics from 'lib/analytics';
 import buildUrl from 'lib/mixins/url-search/build-url';
 import { getSiteSlug } from 'state/sites/selectors';
+import { isActiveTheme } from 'state/themes/current-theme/selectors';
 import {
 	getFilter,
 	getSortedFilterTerms,
@@ -107,7 +108,7 @@ const ThemesSelection = React.createClass( {
 
 	onScreenshotClick( theme, resultsRank ) {
 		trackClick( 'theme', 'screenshot' );
-		if ( ! theme.active ) {
+		if ( ! this.props.isActiveTheme( theme.id ) ) {
 			this.recordSearchResultsClick( theme, resultsRank );
 		}
 		this.props.onScreenshotClick && this.props.onScreenshotClick( theme );
@@ -153,6 +154,7 @@ const ThemesSelection = React.createClass( {
 
 export default connect(
 	( state, { siteId } ) => ( {
-		siteSlug: getSiteSlug( state, siteId )
+		siteSlug: getSiteSlug( state, siteId ),
+		isActiveTheme: themeId => isActiveTheme( state, themeId, siteId )
 	} )
 )( ThemesSelection );
