@@ -2,7 +2,8 @@
  * External dependencies
  */
 const assert = require( 'chai' ).assert,
-	Spy = require( 'sinon' ).spy;
+	Spy = require( 'sinon' ).spy,
+	trim = require( 'lodash/trim' );
 
 /**
  * Internal dependencies
@@ -42,6 +43,7 @@ describe( 'index', function() {
 			normalizer.withContentDOM(),
 			normalizer.withContentDOM( [
 				normalizer.content.removeStyles,
+				normalizer.content.sanitizeContent,
 				normalizer.content.makeImagesSafe( 300 ),
 				normalizer.content.makeEmbedsSafe,
 				normalizer.content.detectEmbeds,
@@ -944,6 +946,33 @@ describe( 'index', function() {
 					normalizer.withContentDOM( [ normalizer.content.detectPolls ] )
 				], function( err, normalized ) {
 					assert.include( normalized.content, '<p><a target="_blank" rel="external noopener noreferrer" href="https://polldaddy.com/poll/8980420">Take our poll</a></p>' );
+					done( err );
+				}
+			);
+		} );
+
+		it( 'removes elements by selector', function( done ) {
+			normalizer(
+				{
+					content: `
+					<div class="sharedaddy">sharedaddy</div>
+					<script>/*hi*/</script>
+					<div class="jp-relatedposts">jetpack</div>
+					<div class="mc4wp-form">a form</div>
+					<div class="wpcnt">wordads</div>
+					<div class="OUTBRAIN">outbrain content ads</div>
+					<div class="adsbygoogle">google ads</div>
+					<form><input type="text"></form>
+					<input type="password">
+					<select><option>nope</option></select>
+					<button>hi</button>
+					<textarea>noooope</textarea>
+					`,
+				},
+				[
+					normalizer.withContentDOM( [ normalizer.content.removeElementsBySelector ] )
+				], function( err, normalized ) {
+					assert.equal( trim( normalized.content ), '' );
 					done( err );
 				}
 			);
