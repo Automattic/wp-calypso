@@ -161,7 +161,7 @@ $autobar-height: 20px;
 		color: $blue-wordpress;
 		display: none;
 
-		@include breakpoint( ">660px" ) {
+		@include breakpoint( ">960px" ) {
 			display: block;
 		}
 	}
